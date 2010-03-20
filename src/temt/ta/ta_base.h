@@ -615,6 +615,8 @@ public:
   // #IGNORE for items that support an enabled/disabled state; -1=n/a, 0=disabled, 1=enabled (note: (bool)-1 = true)
   virtual void		SetEnabled(bool value) {};
   // #IGNORE
+  virtual int		GetSpecialState() const { return -1; }
+  // #IGNORE for items that support an alternative special state that should be communicated to users via a subtle background color (e.g., a flag of some sort is set that alters behavior in an important way) -- -1 = n/a, 0 = in non-special (default) state, 1..4 = special states -- multiple levels are supported with different colors: 1 = lavender, 2 = light yellow, 3 = light green, 4 = light red (pink)
   virtual bool		SetName(const String& nm) {return false;} 
   // #CAT_ObjectMgmt #SET_name Set the object's name
   virtual String	GetName() const 	{ return _nilString; }

@@ -264,6 +264,13 @@ void DataCol::DataChanged(int dcr, void* op1, void* op2) {
   }
 }
 
+int DataCol::GetSpecialState() const {
+  if(!HasColFlag(SAVE_ROWS)) return 1;
+  if(!HasColFlag(SAVE_DATA)) return 2;
+  if(!HasColFlag(READ_ONLY)) return 3;
+  return 0;
+}
+
 void DataCol::ChangeColType(ValType new_type) {
   if (valType() == new_type) return;
   RemoveHashTable();
@@ -920,6 +927,12 @@ void DataTable::UpdateAfterEdit_impl() {
   // the following is likely redundant:
   //  UpdateColCalcs();
   CheckForCalcs();
+}
+
+int DataTable::GetSpecialState() const {
+  if(!HasDataFlag(SAVE_ROWS)) return 1;
+  if(HasDataFlag(HAS_CALCS)) return 2;
+  return 0;
 }
 
 void DataTable::CheckChildConfig_impl(bool quiet, bool& rval) {

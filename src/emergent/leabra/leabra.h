@@ -946,6 +946,7 @@ public:
   };
 
   bool		trial_fixed;	// keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
+  bool		k_pos_noise;	// #CONDEDIT_ON_trial_fixed a special kind of trial_fixed noise, where k units (according to computed kwta function) chosen at random (permuted list) are given a positive noise.var value of noise, while the remainder get nothing -- approximates a k-softmax in some respects
   AdaptMode 	mode;		// how to adapt noise variance over time
   float		min_pct;	// #CONDEDIT_OFF_mode:FIXED_NOISE,SCHED_CYCLES,SCHED_EPOCHS #DEF_0.5 minimum noise as a percentage (proportion) of overall maximum noise value (which is noise.var in unit spec)
   float		min_pct_c;	// #READ_ONLY 1-min_pct
@@ -1107,6 +1108,9 @@ public:
 
   inline void	Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork* net, float inhib_val);
   // #CAT_Activation apply computed (kwta) inhibition value to unit inhibitory conductance
+  inline void	Compute_ApplyInhib_LoserGain(LeabraUnit* u, LeabraNetwork*, float inhib_thr,
+					     float inhib_top, float inhib_loser);
+  // #CAT_Activation apply computed (kwta) inhibition value to unit inhibitory conductance -- when loser_gain > 1
 
 
   ///////////////////////////////////////////////////////////////////////
@@ -1407,6 +1411,10 @@ public:
   void	Compute_ApplyInhib(LeabraNetwork* net, float inhib_val)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib(this, net, inhib_val); }
   // #CAT_Activation apply computed inhibitory value (kwta) to unit inhibitory conductance
+  void	Compute_ApplyInhib_LoserGain(LeabraNetwork* net, float inhib_thr,
+				     float inhib_top, float inhib_loser)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib_LoserGain(this, net, inhib_thr, inhib_top, inhib_loser); }
+  // #CAT_Activation apply computed inhibitory value (kwta) to unit inhibitory conductance -- loser_gain > 1
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
@@ -1587,18 +1595,16 @@ public:
     KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
     AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
     MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
-    K_SOFTMAX,			// k-softmax algorithm: selects k units to activate according to iterative softmax selection process (i.e., softmax on remainder after each successive one is chosen) -- resulting activations are just hard-clamped with corresponding probability values -- completely bypasses the normal activation dynamics -- smax_cyc determines cycle on which acts are computed -- they remain frozen from there on out
     UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
   };
 
   InhibType	type;		// how to compute inhibition (g_i)
   float		kwta_pt;	// #DEF_0.25;0.6;0.2 [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
   float		min_i;		// minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
+  float		loser_gain;	// #DEF_1 how much extra inhibition to apply to units that are below the kwta cutoff ("losers") -- values greater than 1 result in stronger contrast between the top k units and the remainder -- can use to enforce kwta constraint more strongly
   float		comp_thr;	// #CONDSHOW_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
   float		comp_gain;	// #CONDSHOW_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
   float		gp_pt;		// #CONDSHOW_ON_type:AVG_MAX_PT_INHIB #DEF_0.2 for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
-  int		smax_cyc;	// #CONDSHOW_ON_type:K_SOFTMAX cycle at which softmax is computed -- acts are all off before this, and fixed after this
-  float		smax_gain;	// #CONDSHOW_ON_type:K_SOFTMAX gain on the softmax -- multiplier on the netinput values prior to exp: p = exp(gain * netin) / sum exp(gain * netin)
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(LeabraInhibSpec);
@@ -1811,6 +1817,9 @@ public:
     // #CAT_Activation NOT CALLED DURING STD PROCESSING decay activations and other state between events
     virtual void	Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
+    virtual void	Trial_NoiseInit_KPos_ugp(LeabraLayer* lay, Unit_Group*, 
+						 LeabraInhib* thr, LeabraNetwork* net);
+    // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
     virtual void	Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Learning NOT CALLED DURING STD PROCESSING reset the sender-receiver coproduct average (CtLeabra_X/CAL)
 
@@ -1887,9 +1896,6 @@ public:
     virtual void Compute_Inhib_Max(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
 					  LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of max inhibition computation
-    virtual void Compute_Inhib_KSoftMax(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-					  LeabraNetwork* net, LeabraInhibSpec& ispec);
-    // #IGNORE implementation of K_SoftMax inhibition computation
     virtual void Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* net,
 					       LeabraInhibSpec& ispec);
     // #IGNORE implementation of GPS_THEN_UNITS kwta on groups
@@ -2165,6 +2171,7 @@ public:
   int		avg_netin_n;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
   float		norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
   int		da_updt;	// #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
+  int_Array	unit_idxs;	// #NO_SAVE #HIDDEN #CAT_Activation -- set of unit indexes typically used for permuted selection of units (e.g., k_pos_noise) -- can be used by other functions too
 
 #ifdef DMEM_COMPILE
   DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
@@ -3295,6 +3302,21 @@ inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork*, fl
   u->g_i_raw = inhib_val;
   u->gc.i = inhib_val;
   u->prv_g_i = inhib_val;
+}
+
+inline void LeabraUnitSpec::Compute_ApplyInhib_LoserGain(LeabraUnit* u,
+				 LeabraNetwork*, float inhib_thr, float inhib_top,
+				 float inhib_loser) {
+  if(u->i_thr >= inhib_top) {
+    u->g_i_raw = inhib_top;
+    u->gc.i = inhib_top;
+    u->prv_g_i = inhib_top;
+  }
+  else {
+    u->g_i_raw = inhib_loser;
+    u->gc.i = inhib_loser;
+    u->prv_g_i = inhib_loser;
+  }
 }
 
 inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* net) {

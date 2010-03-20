@@ -389,6 +389,7 @@ public:
   // get the program variable to initialize from in the init_from program -- warn = emit a warning if the variable is not found
 
   override int		GetEnabled() const;
+  override int		GetSpecialState() const;
   override bool		BrowserSelectMe();
   override bool		BrowserExpandAll();
   override bool		BrowserCollapseAll();

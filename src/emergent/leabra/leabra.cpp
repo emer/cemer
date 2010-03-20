@@ -649,6 +649,8 @@ void DaModSpec::Initialize() {
 }
 
 void NoiseAdaptSpec::Initialize() {
+  trial_fixed = true;
+  k_pos_noise = false;
   mode = FIXED_NOISE;
   min_pct = 0.5f;
   min_pct_c = 1.0f - min_pct;
@@ -969,7 +971,8 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::Trial_NoiseInit(LeabraUnit* u, LeabraNetwork* net) {
-  if(noise_type != NO_NOISE && noise_adapt.trial_fixed && (noise.type != Random::NONE)) {
+  if(noise_type != NO_NOISE && noise_adapt.trial_fixed && !noise_adapt.k_pos_noise && 
+     (noise.type != Random::NONE)) {
     u->noise = noise.Gen();
   }
 }
@@ -2345,11 +2348,10 @@ void LeabraInhibSpec::Initialize() {
   type = KWTA_KV2K;
   kwta_pt = .25f;
   min_i = 0.0f;
+  loser_gain = 1.0f;
   comp_thr = .5f;
   comp_gain = 2.0f;
   gp_pt = .2f;
-  smax_cyc = 10;
-  smax_gain = 1.0f;
 }
 
 void KWTASpec::Initialize() {
@@ -2690,16 +2692,48 @@ void LeabraLayerSpec::Trial_DecayState(LeabraLayer* lay, LeabraNetwork* net) {
     u->Trial_DecayState(net);
   }
 }
+
+void LeabraLayerSpec::Trial_NoiseInit_KPos_ugp(LeabraLayer* lay, Unit_Group* ug,
+					       LeabraInhib* thr, LeabraNetwork* net) {
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+  if(lay->unit_idxs.size != ug->leaves) {
+    lay->unit_idxs.SetSize(ug->leaves);
+    lay->unit_idxs.FillSeq();
+  }
+  lay->unit_idxs.Permute();
+  for(int i=0;i<ug->leaves;i++) {
+    LeabraUnit* u = (LeabraUnit*)ug->FastEl(lay->unit_idxs[i]);
+    if(i < thr->kwta.k)
+      u->noise = us->noise.var;
+    else
+      u->noise = 0.0f;
+  }
+}
+
   
 void LeabraLayerSpec::Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(us->noise_adapt.trial_fixed) {
-    LeabraUnit* u;
-    taLeafItr i;
-    FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-      u->Trial_NoiseInit(net);
+  if(!us->noise_adapt.trial_fixed) return;
+
+  if(us->noise_adapt.k_pos_noise) {
+    if((inhib_group != ENTIRE_LAYER) && (lay->units.gp.size > 0)) {
+      for(int g=0; g<lay->units.gp.size; g++) {
+	LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+	Trial_NoiseInit_KPos_ugp(lay, rugp, (LeabraInhib*)rugp, net);
+      }
+    }
+    else {
+      Trial_NoiseInit_KPos_ugp(lay, &(lay->units), (LeabraInhib*)lay, net);
     }
   }
+  // don't do this b/c already done at unit level for this case..
+//   else {
+//     LeabraUnit* u;
+//     taLeafItr i;
+//     FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+//       u->Trial_NoiseInit(net);
+//     }
+//   }
 }
   
 void LeabraLayerSpec::Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net) {
@@ -2991,9 +3025,6 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, Leabr
       break;
     case LeabraInhibSpec::MAX_INHIB:
       Compute_Inhib_Max(lay, ug, thr, net, ispec);
-      break;
-    case LeabraInhibSpec::K_SOFTMAX:
-      Compute_Inhib_KSoftMax(lay, ug, thr, net, ispec);
       break;
     }
     thr->i_val.g_i = thr->i_val.kwta;
@@ -3380,12 +3411,6 @@ void LeabraLayerSpec::Compute_Inhib_Max(LeabraLayer* lay, Unit_Group*, LeabraInh
   thr->kwta.Compute_IThrR();
 }
 
-void LeabraLayerSpec::Compute_Inhib_KSoftMax(LeabraLayer* lay, Unit_Group*, LeabraInhib* thr,
-					     LeabraNetwork*, LeabraInhibSpec& ispec) {
-  // one key issue: gc.a, gc.h influences -- how?
-
-}
-
 void LeabraLayerSpec::Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->learn_rule == LeabraNetwork::LEABRA_CHL) return;
 
@@ -3469,8 +3494,19 @@ void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay, Unit_Group* ug,
 {
   LeabraUnit* u;
   taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    u->Compute_ApplyInhib(net, thr->i_val.g_i);
+  if(inhib.loser_gain > 1.0f) {
+    float inhib_thr = thr->kwta.k_ithr;
+    float inhib_top = thr->i_val.g_i;
+    float inhib_loser = inhib.loser_gain * thr->i_val.g_i;
+    FOR_ITR_EL(LeabraUnit, u, ug->, i) {
+      u->Compute_ApplyInhib_LoserGain(net, inhib_thr, inhib_top, inhib_loser);
+    }
+  }
+  else {
+    float inhib_val = thr->i_val.g_i;
+    FOR_ITR_EL(LeabraUnit, u, ug->, i) {
+      u->Compute_ApplyInhib(net, inhib_val);
+    }
   }
 }
 
@@ -4385,6 +4421,8 @@ void LeabraLayer::InitLinks() {
   taBase::Own(avg_netin, this);
   taBase::Own(avg_netin_sum, this);
 
+  taBase::Own(unit_idxs, this);
+
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_agg_sum, this);
   DMem_InitAggs();
@@ -4844,7 +4882,7 @@ void LeabraNetwork::Trial_Init() {
 
   Trial_Init_Unit(); // performs following at unit-level 
 //   Trial_DecayState();
-//   Trial_NoiseInit();
+  Trial_NoiseInit();		// run for kpos case
 //   Trial_Init_SRAvg();
   Trial_Init_Layer();
 }

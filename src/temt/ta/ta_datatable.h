@@ -437,6 +437,7 @@ public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }
 
   virtual void Init(); // call this *after* creation, or in UAE, to assert matrix geometry
+  override int	GetSpecialState() const;
   override int	GetIndex() const {return col_idx;}
   override void	SetIndex(int value) {col_idx = (short)value;}
   override String GetDesc() const {return desc;}
@@ -1350,6 +1351,7 @@ public:
   override int 		Dump_Load_Value(istream& strm, taBase* par);
   override void		Dump_Save_pre();
   override String 	GetTypeDecoKey() const { return "DataTable"; }
+  override int		GetSpecialState() const;
 
   void	InitLinks();
   void	CutLinks();

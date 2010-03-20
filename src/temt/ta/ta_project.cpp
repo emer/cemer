@@ -2772,6 +2772,14 @@ bool taRootBase::Startup_InitViewColors() {
 					 false, _nilString, true, "red1");
   taMisc::view_colors->FindMakeViewColor("ChildInvalid", "State: child not valid according to CheckConfig",
 					 false, _nilString, true, "orange1");
+  taMisc::view_colors->FindMakeViewColor("SpecialState1", "SpecialState = 1",
+					 false, _nilString, true, "LavenderBlush");
+  taMisc::view_colors->FindMakeViewColor("SpecialState2", "SpecialState = 2",
+					 false, _nilString, true, "LightYellow");
+  taMisc::view_colors->FindMakeViewColor("SpecialState3", "SpecialState = 3",
+					 false, _nilString, true, "PaleGreen");
+  taMisc::view_colors->FindMakeViewColor("SpecialState4", "SpecialState = 4",
+					 false, _nilString, true, "MistyRose");
   taMisc::view_colors->FindMakeViewColor("ProgElNonStd", "State: program element is not standard",
 					 false, _nilString, true, "yellow1");
   taMisc::view_colors->FindMakeViewColor("ProgElNewEl", "State: program element is newly added",
