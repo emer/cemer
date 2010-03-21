@@ -3,14 +3,18 @@
 find_package(Qt4 REQUIRED)
 find_package(Coin REQUIRED)
 find_package(Quarter REQUIRED)
+find_package(OpenGL REQUIRED)
 if (NOT WIN32)
   find_package(Readline REQUIRED)
-  if (NOT APPLE)  
+  if (APPLE)  
+    FIND_LIBRARY(CARBON_LIBRARY Carbon)
+  else (APPLE)
     find_package(Termcap)
   endif (NOT APPLE)
 endif (NOT WIN32)
 find_package(ODE)
 find_package(GSL)
+find_package(ZLIB)
 
 # NOTE: could also do BISON but it is not really required so not worth the hassle
 #find_package(BISON)
@@ -50,15 +54,19 @@ endif (WIN32)
 # all dependency libraries to link to -- used automatically in EMERGENT_LINK_LIBRARIES
 # specify in executables
 set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${QUARTER_LIBRARY} ${QT_LIBRARIES}
-    ${ODE_LIBRARY}
-    ${GSL_LIBRARIES}
+    ${ODE_LIBRARY} ${GSL_LIBRARIES}
+    ${OPENGL_LIBRARIES} ${ZLIB_LIBRARIES}
 )
 if (NOT WIN32)
   set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
     ${READLINE_LIBRARY}
     )
 
-  if (NOT APPLE)  # Termcap on Fedora Core
+  if (APPLE)  # Termcap on Fedora Core
+    set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
+      ${CARBON_LIBRARY}
+      )
+  else (APPLE)
     set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
       ${READLINE_LIBRARY} ${TERMCAP_LIBRARY}
       )

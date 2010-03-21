@@ -2075,7 +2075,7 @@ public slots:
     // expand all nodes under item, ml=-1 for "infinite" levels (there better not be any loops!!!)
   void			CollapseAllUnder(iTreeViewItem* item); // collapse all nodes under item
 
-  void			InsertEl(); // insert new elemente after currently selected item
+  void			InsertEl(bool after=false); // insert new element at or after currently selected item
 
 public: // ISelectableHost i/f
   override bool 	hasMultiSelect() const;

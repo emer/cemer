@@ -7302,7 +7302,7 @@ void iTreeView::CollapseAllUnderInt(void* item) {
   CollapseAllUnder((iTreeViewItem*)item);
 } 
 
-void iTreeView::InsertEl() {
+void iTreeView::InsertEl(bool after) {
   ISelectable* si = curItem();
   if(!si || !si->link()) return;		// nothing selected
   taBase* sb = si->link()->taData();
@@ -7340,6 +7340,7 @@ void iTreeView::InsertEl() {
       }
       else {
 	idx = sbo->FindEl(sb);
+	if(after) idx++;
       }
       if(idx < 0) idx = 0;
       if(idx > sbo->size) idx = sbo->size;
@@ -7544,7 +7545,13 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
   if(ctrl_pressed) {
     if(e->key() == Qt::Key_I) {
       ext_select_on = false;
-      InsertEl();
+      InsertEl();		// at
+      e->accept();
+      return;
+    }
+    if(e->key() == Qt::Key_O) {
+      ext_select_on = false;
+      InsertEl(true);		// after
       e->accept();
       return;
     }
