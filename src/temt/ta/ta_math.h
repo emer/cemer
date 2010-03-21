@@ -79,6 +79,34 @@ public:
   TA_BASEFUNS_NOCOPY(RelationSpec);
 };
 
+class TA_API RelationFloat : public taNBase {
+  // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math counting criteria params
+  INHERITED(taNBase)
+public:
+  enum Relations {
+    EQUAL,		// #LABEL_=
+    NOTEQUAL,		// #LABEL_!=
+    LESSTHAN,		// #LABEL_<
+    GREATERTHAN,	// #LABEL_>
+    LESSTHANOREQUAL,	// #LABEL_<=
+    GREATERTHANOREQUAL 	// #LABEL_>=
+  };
+
+  Relations	rel;		// #LABEL_ relationship to evaluate
+  double	val;		// #LABEL_ comparison value
+  /* bool		use_var;	// if true, use a program variable to specify the relation value */
+  /* ProgVarRef	var;		// #CONDSHOW_ON_use_var:true variable that contains the comparison value (only used if this is embedded in a DataSelectRowsProg program element) -- variable must be a top-level (.args or .vars) variable and not a local one */
+
+  /* bool		CacheVar(RelationFloat& tmp_rel); */
+  // copy rel and cache the variable value in new Relation object (tmp_rel), or copy val -- optimizes repeated actions using same relation object so they don't have to keep getting the variable
+
+  bool 		Evaluate(double cmp) const;
+
+  void  Initialize();
+  void 	Destroy()		{ };
+  TA_SIMPLE_BASEFUNS(RelationFloat);
+};
+
 class TA_API Aggregate : public taNBase {
   // #STEM_BASE ##NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP ##CAT_Math Basic aggregation operations
   INHERITED(taNBase)
@@ -714,10 +742,9 @@ public:
   // #CAT_Matrix transpose a 2d matrix
   static bool mat_slice(double_Matrix* dest, double_Matrix* src, int d0_start = 0, int d0_end = -1, int d1_start = 0, int d1_end = -1);
   // #CAT_Matrix See http://en.wikipedia.org/wiki/Array_slicing. Copies a 2d slice out of the first 2 dimensions of src into dest. If d0_end or d1_end are -1 (default) they will be set to the size of that dimension. See also taDataProc::Slice2D.
-  static bool mat_trim(double_Matrix* dest, double_Matrix* src, Relation& rel,
+  static bool mat_trim(double_Matrix* dest, double_Matrix* src, Relation& thresh, int intol_within = 0, int intol_between = 0,
 		       bool left = true, bool right = true, bool top = true, bool bottom = true);
-  // #CAT_Matrix Trim all consecutive rows/columns starting from top, bottom, left, right that are under thresh. Returns false if the entire matrix so be sure to check the return value.
-
+  // #CAT_Matrix Trim all consecutive rows/columns starting from top, bottom, left and/or right that satisfy thresh. The intolerance params control how greedy the threshold operation is. intol_within controls how many values in this row/col that don't satisfy thresh can be found and the row/col will still be trimmed. intol_between controls how many consecutive rows/cols that don't satisfy thresh can be found, followed by a row/col that DOES satisfy thresh, that will still be trimmed. Returns false if the entire matrix matches so be sure to check the return value.
 
   /////////////////////////////////////////////////////////////////////////////////
   // higher-dimensional matrix frame-based operations (matrix = collection of matricies)
@@ -1146,6 +1173,8 @@ public:
   // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
   static float	vec_count(const float_Matrix* vec, Relation& rel);
   // #CAT_Statistics count number of times relationship is true
+  static float	vec_count_float(const float_Matrix* vec, RelationFloat& rel);
+  // #CAT_Statistics count number of times relationship is true
   static float	vec_median(const float_Matrix* vec);
   // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
   static float	vec_mode(const float_Matrix* vec);
@@ -1292,9 +1321,9 @@ public:
   // #CAT_Matrix transpose a 2d matrix
   static bool mat_slice(float_Matrix* dest, float_Matrix* src, int d0_start = 0, int d0_end = -1, int d1_start = 0, int d1_end = -1);
   // #CAT_Matrix See http://en.wikipedia.org/wiki/Array_slicing. Copies a 2d slice out of the first 2 dimensions of src into dest. If d0_end or d1_end are -1 (default) they will be set to the size of that dimension. See also taDataProc::Slice2D.
-  static bool mat_trim(float_Matrix* dest, float_Matrix* src, Relation& rel,
+  static bool mat_trim(float_Matrix* dest, float_Matrix* src, RelationFloat& thresh, int intol_within = 0, int intol_between = 0,
 		       bool left = true, bool right = true, bool top = true, bool bottom = true);
-  // #CAT_Matrix Trim all consecutive rows/columns starting from top, bottom, left, right that are under thresh. Returns false if the entire matrix so be sure to check the return value.
+  // #CAT_Matrix Trim all consecutive rows/columns starting from top, bottom, left and/or right that satisfy thresh. The intolerance params control how greedy the threshold operation is. intol_within controls how many values in this row/col that don't satisfy thresh can be found and the row/col will still be trimmed. intol_between controls how many consecutive rows/cols that don't satisfy thresh can be found, followed by a row/col that DOES satisfy thresh, that will still be trimmed. Returns false if the entire matrix matches so be sure to check the return value.
 
   /////////////////////////////////////////////////////////////////////////////////
   // higher-dimensional matrix frame-based operations (matrix = collection of matricies)

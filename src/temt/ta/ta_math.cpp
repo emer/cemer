@@ -130,6 +130,53 @@ bool Relation::Evaluate(double cmp) const {
   return false;
 }
 
+//////////////////////////
+//  	RelationFloat     	//
+//////////////////////////
+
+void RelationFloat::Initialize() {
+  rel = LESSTHANOREQUAL;
+  val = 0.0;
+  // use_var = false;
+}
+
+// bool RelationFloat::CacheVar(RelationFloat& tmp_rel) {
+//   tmp_rel.rel = rel;
+//   if(use_var && (bool)var) {
+//     tmp_rel.val = var->GetVar().toDouble();
+//     return true;
+//   }
+//   tmp_rel.val = val;
+//   return false;
+// }
+
+bool RelationFloat::Evaluate(double cmp) const {
+  // if(use_var && (bool)var) {
+  //   eff_val = var->GetVar().toDouble();
+  // }
+    
+  switch(rel) {
+  case EQUAL:
+    if((float)cmp == (float)val)	return true;
+    break;
+  case NOTEQUAL:
+    if((float)cmp != (float)val)	return true;
+    break;
+  case LESSTHAN:
+    if((float)cmp < (float)val)	return true;
+    break;
+  case GREATERTHAN:
+    if((float)cmp > (float)val)	return true;
+    break;
+  case LESSTHANOREQUAL:
+    if((float)cmp <= (float)val)	return true;
+    break;
+  case GREATERTHANOREQUAL:
+    if((float)cmp >= (float)val)	return true;
+    break;
+  }
+  return false;
+}
 
 //////////////////////////
 //  	Aggregate    	//
@@ -2152,51 +2199,79 @@ bool taMath_double::mat_slice(double_Matrix* dest, double_Matrix* src, int d0_st
   return true;
 }
 
-bool taMath_double::mat_trim(double_Matrix* dest, double_Matrix* src, Relation& rel, bool left, bool right, bool top, bool bottom) {
+bool taMath_double::mat_trim(double_Matrix* dest, double_Matrix* src, Relation& thresh, int intol_within, int intol_between,
+			    bool left, bool right, bool top, bool bottom) {
+
   if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new double_Matrix");return false;}
   if(src->dims() != 2) {taMisc::Error("Can only trim a 2d matrix"); return false;}
 
-  int d0_src, d1_src, d0_dest, d1_dest, i, count;
-  int trim_left = 0, trim_right = 0, trim_top = 0, trim_bottom = 0;
+  int trim_left = 0, trim_right = 0, trim_top = 0, trim_bottom = 0, tol_cnt, n;
   double_Matrix* mat = new double_Matrix;
 
-  d0_src = src->dim(0);
-  d1_src = src->dim(1);
+  int d0 = src->dim(0);
+  int d1 = src->dim(1);
 
   if(left) {
-    for(i = 0;i < d0_src;i++) {
+    tol_cnt = 0;
+    for(int i = 0;i < d0;i++) {
       mat_slice(mat,src,i,i);
-      count = vec_count(mat,rel);
-      if(count == d1_src) trim_left++; else break;
+      n = vec_count(mat, thresh);
+      if(n >= d1 - intol_within) {
+	trim_left++;
+	trim_left += tol_cnt;
+	tol_cnt = 0;
+      }
+      else if ((bool)intol_between && tol_cnt < intol_between) tol_cnt++;
+      else break;
     }
-    if(trim_left == d0_src) return false;
+    if(trim_left == d0) return false;
   }
   if(right) {
-    for(i = d0_src-1;i >= 0;i--) {
+    tol_cnt = 0;
+    for(int i = d0-1;i >= 0;i--) {
       mat_slice(mat,src,i,i);
-      count = vec_count(mat,rel);
-      if(count == d1_src) trim_right++; else break;
+      n = vec_count(mat, thresh);
+      if(n >= d1 - intol_within) {
+	trim_right++;
+	trim_right += tol_cnt;
+	tol_cnt = 0;
+      }
+      else if ((bool)intol_between && tol_cnt < intol_between) tol_cnt++;
+      else break;
     }
-    if(trim_right == d0_src) return false;
+    if(trim_right == d0) return false;
   }
   if(top) {
-    for(i = 0;i < d1_src;i++) {
+    tol_cnt = 0;
+    for(int i = 0;i < d1;i++) {
       mat_slice(mat,src,0,-1,i,i);
-      count = vec_count(mat,rel);
-      if(count == d0_src) trim_top++; else break;
+      n = vec_count(mat, thresh);
+      if(n >= d0 - intol_within) {
+	trim_top++;
+	trim_top += tol_cnt;
+	tol_cnt = 0;
+      }
+      else if ((bool)intol_between && tol_cnt < intol_between) tol_cnt++;
+      else break;
     }
-    if(trim_top == d1_src) return false;
+    if(trim_top == d1) return false;
   }
   if(bottom) {
-    for(i = d1_src-1;i >= 0;i--) {
+    tol_cnt = 0;
+    for(int i = d1-1;i >= 0;i--) {
       mat_slice(mat,src,0,-1,i,i);
-      count = vec_count(mat,rel);
-      if(count == d0_src) trim_bottom++; else break;
+      n = vec_count(mat, thresh);
+      if(n >= d0 - intol_within) {
+	trim_bottom++;
+	trim_bottom += tol_cnt;
+	tol_cnt = 0;
+      }
+      else if ((bool)intol_between && tol_cnt < intol_between) tol_cnt++;
+      else break;
     }
-    if(trim_bottom == d1_src) return false;
+    if(trim_bottom == d1) return false;
   }
-
-  mat_slice(dest,src,trim_left,d0_src-1-trim_right,trim_top,d1_src-1-trim_bottom);
+  mat_slice(dest,src,trim_left,d0-1-trim_right,trim_top,d1-1-trim_bottom);
   delete mat;
   return true;
 }
@@ -3781,6 +3856,15 @@ float taMath_float::vec_count(const float_Matrix* vec, Relation& rel) {
   return rval;
 }
 
+float taMath_float::vec_count_float(const float_Matrix* vec, RelationFloat& rel) {
+  if(!vec_check_type(vec)) return false;
+  float rval = 0.0;
+  for(int i=0;i<vec->size;i++) {
+    if(rel.Evaluate(vec->FastEl_Flat(i))) rval += 1.0;
+  }
+  return rval;
+}
+
 float taMath_float::vec_median(const float_Matrix* vec) {
   if(!vec_check_type(vec)) return false;
   if(vec->size == 0) return 0.0f;
@@ -4671,58 +4755,87 @@ bool taMath_float::mat_slice(float_Matrix* dest, float_Matrix* src, int d0_start
   dest->SetGeom(2,d0_dest,d1_dest);
   for (i = d0_start,k = 0; i <= d0_end; i++, k++)
     for (j = d1_start,l = 0; j <= d1_end; j++, l++)
-      dest->Set(src->FastElAsFloat(i,j),k,l);
+      dest->Set(src->FastEl(i,j),k,l);
   return true;
 }
 
-bool taMath_float::mat_trim(float_Matrix* dest, float_Matrix* src, Relation& rel, bool left, bool right, bool top, bool bottom) {
+bool taMath_float::mat_trim(float_Matrix* dest, float_Matrix* src, RelationFloat& thresh, int intol_within, int intol_between,
+			    bool left, bool right, bool top, bool bottom) {
+
   if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new float_Matrix");return false;}
   if(src->dims() != 2) {taMisc::Error("Can only trim a 2d matrix"); return false;}
 
-  int d0_src, d1_src, d0_dest, d1_dest, i, count;
-  int trim_left = 0, trim_right = 0, trim_top = 0, trim_bottom = 0;
+  int trim_left = 0, trim_right = 0, trim_top = 0, trim_bottom = 0, tol_cnt, n;
   float_Matrix* mat = new float_Matrix;
 
-  d0_src = src->dim(0);
-  d1_src = src->dim(1);
+  int d0 = src->dim(0);
+  int d1 = src->dim(1);
 
   if(left) {
-    for(i = 0;i < d0_src;i++) {
+    tol_cnt = 0;
+    for(int i = 0;i < d0;i++) {
       mat_slice(mat,src,i,i);
-      count = vec_count(mat,rel);
-      if(count == d1_src) trim_left++; else break;
+      n = vec_count_float(mat, thresh);
+      if(n >= d1 - intol_within) {
+	trim_left++;
+	trim_left += tol_cnt;
+	tol_cnt = 0;
+      }
+      else if ((bool)intol_between && tol_cnt < intol_between) tol_cnt++;
+      else break;
     }
-    if(trim_left == d0_src) return false;
+    if(trim_left == d0) return false;
   }
   if(right) {
-    for(i = d0_src-1;i >= 0;i--) {
+    tol_cnt = 0;
+    for(int i = d0-1;i >= 0;i--) {
       mat_slice(mat,src,i,i);
-      count = vec_count(mat,rel);
-      if(count == d1_src) trim_right++; else break;
+      n = vec_count_float(mat, thresh);
+      if(n >= d1 - intol_within) {
+	trim_right++;
+	trim_right += tol_cnt;
+	tol_cnt = 0;
+      }
+      else if ((bool)intol_between && tol_cnt < intol_between) tol_cnt++;
+      else break;
     }
-    if(trim_right == d0_src) return false;
+    if(trim_right == d0) return false;
   }
   if(top) {
-    for(i = 0;i < d1_src;i++) {
+    tol_cnt = 0;
+    for(int i = 0;i < d1;i++) {
       mat_slice(mat,src,0,-1,i,i);
-      count = vec_count(mat,rel);
-      if(count == d0_src) trim_top++; else break;
+      n = vec_count_float(mat, thresh);
+      if(n >= d0 - intol_within) {
+	trim_top++;
+	trim_top += tol_cnt;
+	tol_cnt = 0;
+      }
+      else if ((bool)intol_between && tol_cnt < intol_between) tol_cnt++;
+      else break;
     }
-    if(trim_top == d1_src) return false;
+    if(trim_top == d1) return false;
   }
   if(bottom) {
-    for(i = d1_src-1;i >= 0;i--) {
+    tol_cnt = 0;
+    for(int i = d1-1;i >= 0;i--) {
       mat_slice(mat,src,0,-1,i,i);
-      count = vec_count(mat,rel);
-      if(count == d0_src) trim_bottom++; else break;
+      n = vec_count_float(mat, thresh);
+      if(n >= d0 - intol_within) {
+	trim_bottom++;
+	trim_bottom += tol_cnt;
+	tol_cnt = 0;
+      }
+      else if ((bool)intol_between && tol_cnt < intol_between) tol_cnt++;
+      else break;
     }
-    if(trim_bottom == d1_src) return false;
+    if(trim_bottom == d1) return false;
   }
-
-  mat_slice(dest,src,trim_left,d0_src-1-trim_right,trim_top,d1_src-1-trim_bottom);
+  mat_slice(dest,src,trim_left,d0-1-trim_right,trim_top,d1-1-trim_bottom);
   delete mat;
   return true;
 }
+
 
 bool taMath_float::fft_real_transform(float_Matrix* out_mat, const float_Matrix* in_mat,
     bool real_out, bool norm)
