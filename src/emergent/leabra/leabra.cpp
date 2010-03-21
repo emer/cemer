@@ -1199,6 +1199,10 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
     u->net = MAX(u->net, 0.0f);	// negative netin doesn't make any sense
   }
 
+  // add just before computing i_thr -- after all the other stuff is done..
+  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+    u->net += Compute_Noise(u, net);
+  }
   u->i_thr = Compute_IThresh(u, net);
 }
 
@@ -1305,9 +1309,6 @@ void LeabraUnitSpec::Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float
 
 void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayer* lay = u->own_lay();
-  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    u->net += Compute_Noise(u, net);
-  }
 
   if(da_mod.on && (da_mod.mod == DaModSpec::PLUS_CONT)) {
     Compute_DaMod_PlusCont(u,net);

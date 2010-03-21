@@ -2898,7 +2898,8 @@ void GraphPlotView::CopyFromView(GraphPlotView* cp){
 
 void GraphPlotView::UpdateOnFlag() {
   if(on) {
-    if(!GetColPtr()) on = false; // not actually on!
+    if(!GetColPtr())
+      on = false; // not actually on!
   }
 }
 
@@ -2932,7 +2933,8 @@ void GraphAxisView::CopyFromView(GraphAxisView* cp){
 
 void GraphAxisView::UpdateOnFlag() {
   if(on) {
-    if(!row_num && !GetColPtr()) on = false; // not actually on!
+    if(!row_num && !GetColPtr())
+      on = false; // not actually on!
   }
 }
 

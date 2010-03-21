@@ -267,7 +267,7 @@ void DataCol::DataChanged(int dcr, void* op1, void* op2) {
 int DataCol::GetSpecialState() const {
   if(!HasColFlag(SAVE_ROWS)) return 1;
   if(!HasColFlag(SAVE_DATA)) return 2;
-  if(!HasColFlag(READ_ONLY)) return 3;
+  if(HasColFlag(READ_ONLY)) return 4; // light red -- 3 is green
   return 0;
 }
 

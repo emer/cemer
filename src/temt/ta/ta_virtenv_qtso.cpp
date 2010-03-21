@@ -1464,6 +1464,7 @@ VEWorldView* VEWorld::FindView() {
     taDataLinkItr itr;
     VEWorldView* el;
     FOR_DLC_EL_OF_TYPE(VEWorldView, el, dl, itr) {
+//       if(!el->node_so()) continue;
       return el;
     }
   }
