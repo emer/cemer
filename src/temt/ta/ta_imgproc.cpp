@@ -242,7 +242,6 @@ bool taImage::ImageToDataCell(DataTable* dt, Variant col, int row) {
 }
 
 bool taImage::ImageFromDataCell(DataTable* dt, Variant col, int row) {
-  if(TestError(q_img.isNull(), "ImageToDataCell", "Null image")) return false;
   if(TestError(!dt, "ImageToDataCell", "Null data table")) return false;
 
   int ht = q_img.height();

@@ -49,9 +49,9 @@ public:
   // #CAT_Image set the underlying qt image
 #endif
   virtual bool	LoadImage(const String& fname);
-  // #CAT_File #FILE_DIALOG_LOAD load the image from given file name (leave file name blank to get a chooser)
+  // #BUTTON #CAT_File #FILE_DIALOG_LOAD #EXT_png,jpg load the image from given file name (leave file name blank to get a chooser)
   virtual bool	SaveImage(const String& fname);
-  // #CAT_File #FILE_DIALOG_SAVE save the image to given file name (leave file name blank to get a chooser) -- uses extension to determine format
+  // #BUTTON #CAT_File #FILE_DIALOG_SAVE #EXT_png,jpg save the image to given file name (leave file name blank to get a chooser) -- uses extension to determine format
 
   virtual float	GetPixelGrey_float(int x, int y);
   // #CAT_Image get the pixel value as a greyscale for given coordinates
@@ -69,24 +69,24 @@ public:
   // #CAT_Data convert from RGB Matrix floating point image data to this image -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
 
   virtual bool	ImageToDataCell(DataTable* dt, Variant col, int row);
-  // #CAT_Data set image to datatable cell indexed by col (name or number) and row -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
+  // #BUTTON #CAT_Data set image to datatable cell indexed by col (name or number) and row -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
   virtual bool	ImageFromDataCell(DataTable* dt, Variant col, int row);
-  // #CAT_Data set image from data in datatable cell indexed by col (name or number) and row -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
+  // #BUTTON #CAT_Data set image from data in datatable cell indexed by col (name or number) and row -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
   virtual bool	ConfigDataColName(DataTable* dt, const String& col_nm, ValType val_type, 
 				  bool rgb = true);
   // #CAT_Data configure data column with given name (if it doesn't exist, it is created) to represent current image -- if rgb is false, then a greyscale image is configured (2d)
 
   virtual bool	ScaleImage(float sx, float sy, bool smooth=true);
-  // #CAT_Image scale image by given normalized scaling factors in each dimension
+  // #BUTTON #CAT_Image scale image by given normalized scaling factors in each dimension
   virtual bool	RotateImage(float norm_deg, bool smooth=true);
-  // #CAT_Image rotate image by given normalized degrees (1 = 360deg)
+  // #BUTTON #CAT_Image rotate image by given normalized degrees (1 = 360deg)
   virtual bool	TranslateImage(float move_x, float move_y, bool smooth=true);
-  // #CAT_Image translate image by given normalized factors (-1 = all the way left, +1 = all the way right, etc)
+  // #BUTTON #CAT_Image translate image by given normalized factors (-1 = all the way left, +1 = all the way right, etc)
 
   virtual bool	GetImageSize(int& width, int& height);
   // #CAT_Image get size of current image
   virtual bool	SetImageSize(int width, int height);
-  // #CAT_Image set size of current image -- if currently same size, then returns false and nothing happens; otherwise, a new image data structure of given size is created, using ARGB32 format
+  // #BUTTON #CAT_Image set size of current image -- if currently same size, then returns false and nothing happens; otherwise, a new image data structure of given size is created, using ARGB32 format
 
 
   ////////////////////////////////////
