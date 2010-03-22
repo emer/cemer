@@ -3748,7 +3748,6 @@ int Program::CallInit(Program* caller) {
 } 
 
 void Program::Init() {
-  if(AlreadyRunning()) return;	// already running!
   cur_step_prog = NULL;
   ClearStopReq();		// NOTE: newly added 4/18/09 -- check for breakage..
   taProject* proj = GET_MY_OWNER(taProject);
