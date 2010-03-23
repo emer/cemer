@@ -2139,6 +2139,19 @@ DataCol* DataTable::NewColMatrixN_gui(DataCol::ValType val_type, const String& c
   return rval;
 }
 
+DataCol* DataTable::NewColFmMatrix(taMatrix* mat, const String& col_nm) {
+  if(!mat) { taMisc::Error("taDataProc::NewColFmMatrix: mat cannot be NULL"); return false; }  
+  if(col_nm == "") { taMisc::Error("taDataProc::NewColFmMatrix: col_nm must be non-empty"); return false; }  
+
+  ValType val_type = mat->GetDataValType();
+  MatrixGeom geom(mat->dims(), mat->dim(0), mat->dim(1), mat->dim(2), mat->dim(3), mat->dim(4), mat->dim(5), mat->dim(6));
+  int idx;
+  DataCol* rval = NewColMatrixN(val_type, col_nm, geom, idx);
+  if(rows == 0) AddRows();
+  SetValAsMatrix(mat, idx, 0);
+  return rval;
+}
+
 String_Data* DataTable::NewColString(const String& col_nm) {
   return (String_Data*)NewCol(VT_STRING, col_nm);
 }

@@ -842,7 +842,9 @@ public:
   virtual DataCol* 	NewColMatrixN_gui(DataCol::ValType val_type, 
 					  const String& col_nm,  const MatrixGeom& cell_geom);
   // #BUTTON #MENU #LABEL_NewColMatrix #CAT_Columns create new matrix column of data of specified type, with specified cell geom
-  
+  DataCol*      NewColFmMatrix(taMatrix* mat, const String& col_nm);
+  // #CAT_Columns Create a new matrix column in table from mat. Creates a row if there aren't any and copies mat into the first cell of the new column.
+
   virtual double_Data*	NewColDouble(const String& col_nm); 
   // #CAT_Columns create new column of double data
   virtual float_Data*	NewColFloat(const String& col_nm); 
