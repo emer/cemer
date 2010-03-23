@@ -384,6 +384,9 @@ public:
   static bool	ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON concatenate two datatables into one datatable by adding both sets of columns together, merging data on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)).
 
+  static bool	ConcatCols2(DataTable* dest, DataTable* src);
+  // #CAT_Columns #MENU_BUTTON Alternate faster ConcatCols implementation. Concatentates the columns of src onto dest. Doesn't uniquify names and you can't pass in NULL tables. 
+
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_BASEFUNS(taDataProc);
 private:

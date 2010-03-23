@@ -1587,6 +1587,23 @@ bool taDataProc::ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b)
   return true;
 }
 
+bool taDataProc::ConcatCols2(DataTable* dest, DataTable* src) {
+  if(!src || !dest) { taMisc::Error("taDataProc::ConcatCols2: Neither src nor dest can be null"); return false; }
+
+  int src_rows = src->rows;
+  int dest_rows = dest->rows;
+  int src_cols = src->cols();
+
+  if(src_rows > dest_rows) dest->EnforceRows(src_rows);
+  else if(dest_rows > src_rows) src->EnforceRows(dest_rows);
+
+  for (int i=0; i < src_cols; i++) {
+    DataCol* new_col = dest->NewCol(taBase::VT_FLOAT,"tmp_dest_col");
+    new_col->CopyFrom(src->data.FastEl(i));
+  }
+  return true;
+}
+
 /////////////////////////////////////////////////////////
 //   programs to support data operations
 /////////////////////////////////////////////////////////
