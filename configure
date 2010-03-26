@@ -72,6 +72,10 @@ do
       cmake_cmd="$cmake_cmd $generator"
       shift 1
     ;;
+    # needed for MOTU
+    --includedir | --mandir | --infodir | --sysconfdir | --localstatedir | --libexecdir | --disable-maintainer-mode | --disable-dependency-tracking)
+      shift 1
+    ;;
 
     *)
       echo "Invalid argument -- please see above list"
