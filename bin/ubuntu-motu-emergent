@@ -1,13 +1,14 @@
 #!/bin/bash
 
-EMERGENT_VERSION=5.0
+EMERGENT_VERSION=5.0.2
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 
 cd /tmp
-wget ftp://grey.colorado.edu/pub/emergent/emergent-5.tar.gz
-tar -xzf emergent-5.tar.gz
-mv emergent emergent-${EMERGENT_VERSION}
+svn checkout --username anonymous --password emergent http://grey.colorado.edu/svn/emergent/emergent/trunk /tmp/emergent-${EMERGENT_VERSION}
+# wget ftp://grey.colorado.edu/pub/emergent/emergent-5.tar.gz
+# tar -xzf emergent-5.tar.gz
+# mv emergent emergent-${EMERGENT_VERSION}
 tar -czf emergent_${EMERGENT_VERSION}.orig.tar.gz emergent-${EMERGENT_VERSION}
 cd emergent-${EMERGENT_VERSION}
 mkdir debian
@@ -16,7 +17,7 @@ mkdir debian
 # Create debian/changelog
 #################################################
 cat > debian/changelog <<Emergent
-emergent (5.0-0ubuntu1) karmic; urgency=low
+emergent (${EMERGENT_VERSION}-0ubuntu1) lucid; urgency=low
 
   * Initial release (LP: #364748)
 
@@ -32,7 +33,7 @@ Section: science
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsndfile1-dev, cmake
+Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libqt4-opengl-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsndfile1-dev, cmake, zlib1g-dev
 Standards-Version: 3.8.3
 Homepage: http://grey.colorado.edu/emergent
 

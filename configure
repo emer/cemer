@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo Command line: ./configure $@
 # NOTE: this is a simple script wrapper around the cmake command line tools, for
 # those used to the autotools configure script conventions
 # also, cmake has rather lame command-line args so this is generally quite useful
@@ -18,6 +18,8 @@ echo "  --verbose-build (or --verbose or -v) turn on verbose make output: for ma
 echo " "
 echo "  (note: -- before args is optional, and - works too!)"
 echo " "
+
+
 
 cmake_cmd="cmake ../"
 build_dir="build"
@@ -92,7 +94,7 @@ then
   # Also don't try to make or go to the build dir, we are already there
   cmake_cmd="$(echo $cmake_cmd | sed 's/\.\.\///')"
 else
-  mkdir "$build_dir"
+  mkdir -p "$build_dir"
   cd "$build_dir" || exit 1
 fi
 
