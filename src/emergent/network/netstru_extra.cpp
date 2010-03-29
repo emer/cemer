@@ -389,6 +389,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
   // add SEM as corrective factor
   float send_sem = send_no_flt / sqrtf(send_no_flt);
   int send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f);
+  if(send_no > prjn->layer->units.leaves) send_no = prjn->layer->units.leaves;
 
   // pre-allocate connections!
   prjn->layer->RecvConsPreAlloc(recv_no, prjn);
@@ -612,7 +613,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
   // add SEM as corrective factor
   float send_sem = send_no_flt / sqrtf(send_no_flt);
   int send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f); // polar needs some extra insurance
-
+  if(send_no > prjn->layer->units.leaves) send_no = prjn->layer->units.leaves;
 
   // pre-allocate connections!
   prjn->layer->RecvConsPreAlloc(recv_no, prjn);
@@ -924,6 +925,7 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     // add SEM as corrective factor
     float send_sem = send_no_flt / sqrtf(send_no_flt);
     int send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f);
+    if(send_no > rgp->leaves) send_no = rgp->leaves;
 
     // pre-allocate connections!
     Unit* ru, *su;
@@ -1253,9 +1255,7 @@ void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, floa
       // add SEM as corrective factor
       float send_sem = send_no_flt / sqrtf(send_no_flt);
       send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f);
-
       send_no = MIN(ru_gp->size, send_no);
-      send_no = MAX(1, send_no);
 
       if(ru_gp == su_gp)
 	recv_no += 2;		// bit of extra room here too

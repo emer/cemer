@@ -644,6 +644,27 @@ private:
 };
 
 
+class EMERGENT_API MatrixRndPrjnSpec : public ProjectionSpec {
+  // For projections into Matrix layers (Maintenance and Output) -- uses a shared set of random sending projections *per recv group* (stripe), such that all units in the stripe (both maint and output) recv from the same random subset of sending units -- same prjn spec MUST be shared between maint and out gating matrix layers, but must NOT be shared between different Matrix layers (e.g., for other PFC areas within the same model)
+INHERITED(ProjectionSpec)
+public:
+  float		p_con;		// overall probability of connection
+  bool		same_seed;	// use the same random seed each time (same connect pattern)
+  RndSeed	rndm_seed;	// #HIDDEN random seed
+  taBase_List	send_idx_ars;	// #HIDDEN #NO_SAVE list of sending index arrays (int_Array), one per recv unit group
+
+  void 	Connect_impl(Projection* prjn);
+  // Connection function for full connectivity
+
+  TA_SIMPLE_BASEFUNS(MatrixRndPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+
 ////////////////////////////////////////////////////////////////////////
 //	Following is OLD (now obsolete) "Version 1" of PBWM
 

@@ -1764,6 +1764,80 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 
+/////////////////////////////
+//	  MatrixRnd	   //
+/////////////////////////////
+
+void MatrixRndPrjnSpec::Initialize() {
+  p_con = .5f;
+  same_seed = true;
+  rndm_seed.GetCurrent();
+  send_idx_ars.SetBaseType(&TA_int_Array);
+}
+
+void MatrixRndPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(p_con > 1.0f) p_con = 1.0f;
+  if(p_con < 0.0f) p_con = 0.0f;
+}
+
+void MatrixRndPrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+  if(same_seed)
+    rndm_seed.OldSeed();
+
+  int n_rgps = prjn->layer->units.gp.size;
+  if(TestWarning(n_rgps == 0, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
+    return;
+  }
+
+  int n_sends = prjn->from->units.leaves;
+  bool init_idxs = false;
+  if(send_idx_ars.size != n_rgps) {
+    init_idxs = true;
+    send_idx_ars.SetSize(n_rgps);
+  }
+  int_Array* ari = (int_Array*)send_idx_ars[0];
+  if(ari->size != n_sends)
+    init_idxs = true;
+  if(init_idxs) {
+    for(int i=0;i<n_rgps;i++) {
+      int_Array* ari = (int_Array*)send_idx_ars[i];
+      ari->SetSize(n_sends);
+      ari->FillSeq();
+      ari->Permute();
+    }
+  }
+
+  int recv_no = (int)((p_con * ((float)n_sends)) + .5f);
+  if(recv_no <= 0) recv_no = 1;
+
+  // sending number is even distribution across senders plus some imbalance factor
+  float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) / (float)n_sends;
+  // add SEM as corrective factor
+  float send_sem = send_no_flt / sqrtf(n_rgps); // n is n_rgps -- much noisier
+  int send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f);
+  if(send_no > prjn->layer->units.leaves) send_no = prjn->layer->units.leaves;
+
+  // pre-allocate connections!
+  prjn->layer->RecvConsPreAlloc(recv_no, prjn);
+  prjn->from->SendConsPreAlloc(send_no, prjn);
+
+  for(int gpi=0; gpi<n_rgps; gpi++) {
+    Unit_Group* ru_gp = (Unit_Group*)prjn->layer->units.FastGp(gpi);
+    int_Array* ari = (int_Array*)send_idx_ars[gpi];
+    for(int rui=0; rui<ru_gp->leaves; rui++) {
+      Unit* ru = ru_gp->Leaf(rui);
+      for(int sui=0; sui<recv_no; sui++) {
+	Unit* su = prjn->from->units.Leaf(ari->FastEl(sui));
+	ru->ConnectFrom(su, prjn, false, false);
+	// final false change to true = ignore errs -- to be expected
+      }
+    }
+  }
+}
+
 //////////////////////////////////
 //		Wizard		//
 //////////////////////////////////
