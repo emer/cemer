@@ -56,7 +56,7 @@ public:
   
   virtual ProgVar*	AddVar()	{ return (ProgVar*)local_vars.New(1); }
   // #BUTTON add a new variable
-  virtual ProgVar*	AddFloatMatrix() { return (ProgVar*)local_vars.New(1, &TA_float_Matrix); }
+  virtual ProgVar*	AddFloatMatrix();
   // #BUTTON add a new float_Matrix* variable -- these have to be in local vars so are frequently created..
 
   override ProgVar*	FindVarName(const String& var_nm) const;

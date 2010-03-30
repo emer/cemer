@@ -814,6 +814,15 @@ void ProgVar::SetObject(taBase* val) {
   if(object_val) object_type = object_val->GetTypeDef();
 }
 
+void ProgVar::SetObjectType(TypeDef* td) {
+  var_type = T_Object;
+  if(object_type != td) {
+    object_type = td;
+    object_val = NULL;
+  }
+  UpdateAfterEdit();
+}
+
 void ProgVar::SetHardEnum(TypeDef* enum_type, int val) {
   var_type = T_HardEnum;
   int_val = val;
@@ -2712,11 +2721,24 @@ void ProgramCallBase::Initialize() {
 void ProgramCallBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateArgs();		// always do this..  nondestructive and sometimes stuff changes anyway
+  Program* prg = program();
+  if(prg && !HasProgFlag(OFF)) {
+    if(TestError(prg->init_code.IsParentOf(this), "UAE", "Cannot have a program call within init_code -- init_code should generally be very simple and robust code as it is not checked in advance of running (to prevent init-dependent Catch-22 scenarios) -- turning this call OFF"))
+      SetProgFlag(OFF);
+
+  }
 }
 
 void ProgramCallBase::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   prog_args.CheckConfig(quiet, rval);
+  Program* prg = program();
+  if(prg && !HasProgFlag(OFF)) {
+    if(CheckError(prg->init_code.IsParentOf(this), quiet, rval, 
+		  "Cannot have a program call within init_code -- init_code should generally be very simple and robust code as it is not checked in advance of running (to prevent init-dependent Catch-22 scenarios) -- turning this call OFF")) {
+      SetProgFlag(OFF);
+    }
+  }
 }
 
 const String ProgramCallBase::GenCssArgSet_impl(const String trg_var_nm, int indent_level) {

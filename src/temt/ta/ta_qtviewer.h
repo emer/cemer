@@ -1451,6 +1451,8 @@ public:
   void			setPinned(bool value);
   bool			updateOnShow() const {return m_update_on_show;} // usually true, but things like docs don't want it
   void			setUpdateOnShow(bool val);
+  bool			isShowUpdating() const { return m_show_updt; }
+  // true if currently updating due to a show event
 //  DataViewer*		viewer() {return (m_dps) ? m_dps->viewer() : m_tabView->viewer();}
   iTabBar::TabIcon	tabIcon() const;
   iTabBarBase*		tabBar() {return NULL;}
@@ -1500,6 +1502,7 @@ protected:
   bool			m_rendered; // set once rendered
   bool			show_req; // set when we send the SHOW_REQ event
   bool			m_update_on_show;
+  bool			m_show_updt;  // currently updating due to show
   bool			m_update_req; // for when data changes while hidden
   QVBoxLayout* 		layOuter; 
   QScrollArea*		scr; // central scrollview

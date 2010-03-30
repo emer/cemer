@@ -5789,8 +5789,12 @@ String iDataTablePanel::panel_type() const {
 }
 
 void iDataTablePanel::UpdatePanel_impl() {
-  if (dte)
+  if(dte) {
+    // bracket with gui_edit_op to prevent scroll to bottom on show events
+    if(isShowUpdating())   dte->tvTable->gui_edit_op = true;
     dte->Refresh();
+    if(isShowUpdating())   dte->tvTable->gui_edit_op = false;
+  }
   inherited::UpdatePanel_impl();
 }
 

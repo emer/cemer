@@ -5678,6 +5678,7 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
   m_tabView = NULL; // set when added to tabview; remains NULL if in a panelset
   m_pinned = false;
   m_rendered = false;
+  m_show_updt = false;
   m_update_on_show = true; // legacy default for most panels
   m_update_req = true;
   show_req = false;
@@ -5819,8 +5820,11 @@ void iDataPanel::showEvent(QShowEvent* ev) {
   // note: we only call the impl, because each guy gets it, so we don't
   // want sets to then invoke this twice
   if (m_rendered) {
-    if (updateOnShow() || m_update_req)
+    if (updateOnShow() || m_update_req) {
+      m_show_updt = true;
       UpdatePanel_impl();
+      m_show_updt = false;
+    }
   } else            Render();
 }
 

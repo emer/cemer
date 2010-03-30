@@ -104,6 +104,14 @@ ProgVar* ProgVars::FindVarName(const String& var_nm) const {
   return local_vars.FindName(var_nm);
 }
 
+ProgVar* ProgVars::AddFloatMatrix() {
+  ProgVar* rval = (ProgVar*)local_vars.New(1);
+  rval->SetObjectType(&TA_float_Matrix);
+  rval->ClearVarFlag(ProgVar::NULL_CHECK);
+  return rval;
+}
+
+
 //////////////////////////
 //    UserScript	//
 //////////////////////////

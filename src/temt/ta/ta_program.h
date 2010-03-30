@@ -338,6 +338,7 @@ public:
   virtual void	SetString(const String& val);  // set variable type to STRING and set value
   virtual void	SetBool(bool val);  // set variable type to BOOL and set value
   virtual void	SetObject(taBase* val); // #DROP1 set variable type to OBJECT and set value
+  virtual void	SetObjectType(TypeDef* obj_typ); // #DROP1 set variable type to OBJECT and set object_type to given value
   virtual void	SetHardEnum(TypeDef* enum_type, int val); // set variable type to HARD_ENUM and set value
   virtual void	SetDynEnum(int val);  // set variable type to DYN_ENUM and set value
   virtual void	SetDynEnumName(const String& val); //  // set variable type to DYN_ENUM and set value
@@ -1149,7 +1150,7 @@ public:
   ProgEl_List		load_code;
   // #EXPERT_TREE load initialization code: run when the program is loaded from the program library or other external sources (does not appear in standard program -- is compiled and run in a separate css program space). Note: ProgramCall's are automatically initialized according to targ_ld_init_name
   ProgEl_List		init_code;
-  // initialization code: run when the Init button is pressed
+  // initialization code: run when the Init button is pressed -- this must be all local to this program (no ProgramCall to other programs), and should generally be very simple and robust code as it is not checked in advance of running (to prevent init-dependent Catch-22 scenarios)
   ProgEl_List		prog_code;
   // program code: run when the Run/Step button is pressed: this is the main code
   
