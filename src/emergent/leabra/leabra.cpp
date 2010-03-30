@@ -2349,7 +2349,6 @@ void LeabraInhibSpec::Initialize() {
   type = KWTA_KV2K;
   kwta_pt = .25f;
   min_i = 0.0f;
-  loser_gain = 1.0f;
   comp_thr = .5f;
   comp_gain = 2.0f;
   gp_pt = .2f;
@@ -2379,6 +2378,7 @@ void KwtaTieBreak::Initialize() {
   on = false;
   k_thr = 1.0f;
   diff_thr = 0.2f;
+  loser_gain = 2.0f;
 }
 
 void ClampSpec::Initialize() {
@@ -3108,6 +3108,8 @@ void LeabraLayerSpec::Compute_Inhib_BreakTie(LeabraInhib* thr) {
       // we now have an official tie: break it by reducing firing of "others"
       thr->kwta.k1_ithr = (1.0f - tie_brk.diff_thr) * thr->kwta.k_ithr;
       thr->kwta.tie_brk = 1;
+      thr->kwta.eff_loser_gain = 1.0f + (tie_brk.loser_gain * 
+		 ((tie_brk.diff_thr - thr->kwta.ithr_diff) / tie_brk.diff_thr));
     }
   }
 }
@@ -3495,10 +3497,10 @@ void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay, Unit_Group* ug,
 {
   LeabraUnit* u;
   taLeafItr i;
-  if(inhib.loser_gain > 1.0f) {
+  if(thr->kwta.tie_brk == 1) {
     float inhib_thr = thr->kwta.k_ithr;
     float inhib_top = thr->i_val.g_i;
-    float inhib_loser = inhib.loser_gain * thr->i_val.g_i;
+    float inhib_loser = thr->kwta.eff_loser_gain * thr->i_val.g_i;
     FOR_ITR_EL(LeabraUnit, u, ug->, i) {
       u->Compute_ApplyInhib_LoserGain(net, inhib_thr, inhib_top, inhib_loser);
     }
@@ -4307,6 +4309,7 @@ void KWTAVals::Initialize() {
   k1_ithr = 0.0f;
   ithr_r = 0.0f;
   ithr_diff = 0.0f;
+  eff_loser_gain = 1.0f;
   tie_brk = 0;
 }
 
@@ -4319,6 +4322,7 @@ void KWTAVals::Copy_(const KWTAVals& cp) {
   k1_ithr = cp.k1_ithr;
   ithr_r = cp.ithr_r;
   ithr_diff = cp.ithr_diff;
+  eff_loser_gain = cp.eff_loser_gain;
   tie_brk = cp.tie_brk;
 }
 

@@ -1110,7 +1110,7 @@ public:
   // #CAT_Activation apply computed (kwta) inhibition value to unit inhibitory conductance
   inline void	Compute_ApplyInhib_LoserGain(LeabraUnit* u, LeabraNetwork*, float inhib_thr,
 					     float inhib_top, float inhib_loser);
-  // #CAT_Activation apply computed (kwta) inhibition value to unit inhibitory conductance -- when loser_gain > 1
+  // #CAT_Activation apply computed (kwta) inhibition value to unit inhibitory conductance -- when eff_loser_gain in effect
 
 
   ///////////////////////////////////////////////////////////////////////
@@ -1414,7 +1414,7 @@ public:
   void	Compute_ApplyInhib_LoserGain(LeabraNetwork* net, float inhib_thr,
 				     float inhib_top, float inhib_loser)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib_LoserGain(this, net, inhib_thr, inhib_top, inhib_loser); }
-  // #CAT_Activation apply computed inhibitory value (kwta) to unit inhibitory conductance -- loser_gain > 1
+  // #CAT_Activation apply computed inhibitory value (kwta) to unit inhibitory conductance -- when eff_loser_gain in effect
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
@@ -1601,7 +1601,6 @@ public:
   InhibType	type;		// how to compute inhibition (g_i)
   float		kwta_pt;	// #DEF_0.25;0.6;0.2 [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
   float		min_i;		// minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
-  float		loser_gain;	// #DEF_1 how much extra inhibition to apply to units that are below the kwta cutoff ("losers") -- values greater than 1 result in stronger contrast between the top k units and the remainder -- can use to enforce kwta constraint more strongly
   float		comp_thr;	// #CONDSHOW_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
   float		comp_gain;	// #CONDSHOW_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
   float		gp_pt;		// #CONDSHOW_ON_type:AVG_MAX_PT_INHIB #DEF_0.2 for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
@@ -1645,7 +1644,8 @@ INHERITED(taOBase)
 public:
   bool		on;		// whether to perform the tie breaking function at all
   float		k_thr; 		// #CONDEDIT_ON_on:true #DEF_1 threshold on inhibitory threshold (i_thr) for top kwta units before tie break is engaged: don't break ties for weakly activated layers
-  float		diff_thr;	// #CONDEDIT_ON_on:true #DEF_0.2 threshold on difference ratio between top k and rest (k_ithr - k1_ithr) / k_ithr for a tie to be indicated.  This is also how much k1_ithr is reduced relative to k_ithr to fix the tie: sets a lower limit on this value.  larger values mean higher overall activations during ties, but you dont' want to activate the tie mechanism unnecessarily either.
+  float		diff_thr;	// #CONDEDIT_ON_on:true #DEF_0.2 threshold on difference ratio between top k and rest (k_ithr - k1_ithr) / k_ithr for a tie to be indicated.  This is also how much k1_ithr is reduced relative to k_ithr to fix the tie: sets a lower limit on this value.  larger values mean higher overall activations during ties, but you don't want to activate the tie mechanism unnecessarily either.
+  float		loser_gain;	// #CONDEDIT_ON_on:true #DEF_2 how much extra inhibition to apply to units that are below the kwta cutoff ("losers") -- values greater than 1 result in stronger contrast between the top k units and the remainder -- can use to enforce kwta constraint more strongly -- actual value applied is 1 + loser_gain * ((diff_thr - ithr_diff) / diff_thr) -- i.e., it is maximal when the difference is the smallest, and goes to 1 as the diff gets closer to the threshold for engaging the tie break mechanism
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(KwtaTieBreak);
@@ -2083,6 +2083,7 @@ public:
   float		k1_ithr;	// inhib threshold for k+1 unit (other units for kwta_avg)
   float		ithr_r;		// log of ratio of ithr values (indicates signal differentiation)
   float		ithr_diff;	// normalized difference ratio for k vs k+1 ithr values: (k_ithr - k1_ithr) / k_ithr
+  float		eff_loser_gain;	// effective loser gain -- only computed if tie_brk == 1: 1 + loser_gain * ((tie_brk.diff_thr - ithr_diff) / tie_brk.diff_thr)
   int		tie_brk;	// was a tie break operation applied to this layer based on ithr_diff value?
 
   void		Compute_Pct(int n_units);
@@ -3307,7 +3308,7 @@ inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork*, fl
 inline void LeabraUnitSpec::Compute_ApplyInhib_LoserGain(LeabraUnit* u,
 				 LeabraNetwork*, float inhib_thr, float inhib_top,
 				 float inhib_loser) {
-  if(u->i_thr >= inhib_top) {
+  if(u->i_thr >= inhib_thr) {
     u->g_i_raw = inhib_top;
     u->gc.i = inhib_top;
     u->prv_g_i = inhib_top;
