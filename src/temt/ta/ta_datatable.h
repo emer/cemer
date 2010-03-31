@@ -1445,7 +1445,7 @@ TA_SMART_PTRS(DataTable); //
 /////////////////////////////////////////////////////////
 
 class TA_API DataTable_Group : public taGroup<DataTable> {
-  // ##CAT_Data group of data objects
+  // ##CAT_Data ##EXPAND_DEF_1 group of data objects
 INHERITED(taGroup<DataTable>)
 public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }

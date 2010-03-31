@@ -1978,7 +1978,7 @@ private:
 //		Network
 
 class EMERGENT_API Network : public taFBase {
-  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network A network, containing layers, units, etc..
+  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##DEF_NAME_ROOT_Network ##EXPAND_DEF_2 A network, containing layers, units, etc..
 INHERITED(taFBase)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
@@ -2467,7 +2467,7 @@ private:
 };
 
 class EMERGENT_API Network_Group : public taGroup<Network> {
-  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network a group of networks
+  // ##FILETYPE_Network ##EXT_net ##COMPRESS ##CAT_Network ##EXPAND_DEF_2 a group of networks
 INHERITED(taGroup<Network>)
 public:
   

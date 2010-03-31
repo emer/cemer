@@ -405,7 +405,7 @@ private:
 
 // define default base group to not keep tokens
 class TA_API taBase_Group : public taGroup<taBase> {
-  // #NO_TOKENS #NO_UPDATE_AFTER group of objects
+  // #NO_TOKENS #NO_UPDATE_AFTER ##EXPAND_DEF_0 group of objects
 INHERITED(taGroup<taBase>)
 public:
   void	Initialize() 		{ SetBaseType(&TA_taBase); }

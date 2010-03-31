@@ -2748,7 +2748,7 @@ void iBrowseViewer::Init() {
   mnuBrowseNodeDrop_param = -1;
   QVBoxLayout* lay = new QVBoxLayout(this);
   lay->setMargin(0);  lay->setSpacing(0);
-  lvwDataTree = new iTreeView(this);
+  lvwDataTree = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   lay->addWidget(lvwDataTree);
   lvwDataTree->installEventFilter(mainWindowViewer()->widget()); // translate keys..
   lvwDataTree->main_window = mainWindowViewer()->widget();
@@ -7369,23 +7369,20 @@ bool iTreeView::doubleClickExpandsAll() const {
 }
 
 void iTreeView::ExpandAll(int max_levels) {
-  ExpandAll_impl(max_levels, false);
+  ExpandAll_impl(max_levels);
 }
 
-void iTreeView::ExpandAll_impl(int max_levels, bool use_custom_filt) {
-  //NOTE: we can't user iterators for expanding, because we add/remove items which 
+void iTreeView::ExpandAll_impl(int max_levels, int exp_flags) {
+  // NOTE: we can't user iterators for expanding, because we add/remove items which 
   // crashes the iterator
-  taMisc::Busy(true);
   for (int i = 0; i < topLevelItemCount(); ++i) {
     iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(i));
     if (!node) continue;
-    ExpandItem_impl(node, 0, max_levels, use_custom_filt);
+    ExpandItem_impl(node, 0, max_levels, exp_flags);
   }
-//TODO: need to rejig resizing
   if (header()->isVisible() && (header()->count() > 1)) {
     resizeColumnsToContents();
   }
-  taMisc::Busy(false);
 }
 
 void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
@@ -7394,11 +7391,29 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   if (!item) return;
   if (isItemHidden(item)) return;
 
-  // special check for guys that should not be auto-expaneded at all!  may need to do this in child below.
+//   // special check for guys that should not be auto-expaneded at all!  may need to do this in child below.
   taBase* tab = item->link()->taData();
   if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
 
-  bool expand = true; 
+  bool expand = true;
+  if(tab && (exp_flags & EF_DEFAULT)) { // get default info from objs
+    String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
+    if(exp_def_str.nonempty()) {
+      int exp_def = (int)exp_def_str;
+      if(exp_def == 0) {
+	expand = false; // no expand
+      }
+      else {
+	max_levels = exp_def-1;	// remaining levels = val-1
+      }
+    }
+    else {
+      if(!(exp_flags & EF_CUSTOM_FILTER)) {
+	expand = false;		// if no custom filter, default for all other guys is no expandre
+      }
+    }
+  }
+
   if (!(exp_flags & EF_EXPAND_DISABLED)) {
     if (!item->link()->isEnabled())
       expand = false;
@@ -7409,9 +7424,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   if (expand) {
     // first expand the guy...
     if (!isItemExpanded(item)) { // ok, eligible...
-//       if (item->lazyChildren() || (item->childCount() > 0)) {
-        setItemExpanded(item, true); // should trigger CreateChildren for lazy
-//       }
+      setItemExpanded(item, true); // should trigger CreateChildren for lazy
     }
     // check if we've expanded deeply enough 
     // (works for finite (>=1) and infinite (<0) cases)
@@ -7433,9 +7446,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   }
 }
 
-
-void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) 
-{
+void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) {
   if (!item) return;
   taMisc::Busy(true);
   ExpandItem_impl(item, -1, max_levels, EF_EXPAND_DISABLED);

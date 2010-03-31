@@ -2068,15 +2068,15 @@ signals:
 #endif
   
 public slots:
-  void			mnuFindFromHere(taiAction* mel); // called from context 'Find from here'; cast obj to iTreeViewItem*
-  void			ExpandDefault(); 
-    // expand to the default level specified for this tree, or invokes CustomExpand if set 
-  void			ExpandAll(int max_levels = 6); 
-    // expand all nodes, ml=-1 for "infinite" levels (there better not be any loops!!!)
-  void			CollapseAll(); // collapse all nodes
-  void			ExpandAllUnder(iTreeViewItem* item, int max_levels = 6); 
-    // expand all nodes under item, ml=-1 for "infinite" levels (there better not be any loops!!!)
-  void			CollapseAllUnder(iTreeViewItem* item); // collapse all nodes under item
+  virtual void		mnuFindFromHere(taiAction* mel); // called from context 'Find from here'; cast obj to iTreeViewItem*
+  virtual void		ExpandDefault(); 
+  // expand to the default level specified for this tree, or invokes CustomExpand if set 
+  virtual void		ExpandAll(int max_levels = 6); 
+  // expand all nodes, ml=-1 for "infinite" levels (there better not be any loops!!!)
+  virtual void		CollapseAll(); // collapse all nodes
+  virtual void		ExpandAllUnder(iTreeViewItem* item, int max_levels = 6); 
+  // expand all nodes under item, ml=-1 for "infinite" levels (there better not be any loops!!!)
+  virtual void		CollapseAllUnder(iTreeViewItem* item); // collapse all nodes under item
 
   void			InsertEl(bool after=false); // insert new element at or after currently selected item
 
@@ -2105,16 +2105,20 @@ protected:
   String		m_show_context;
   int			in_mouse_press; // ugly hack
   
-  void 			focusInEvent(QFocusEvent* ev); // override
   QFont&		italicFont() const; // so we don't create a new guy each node
-  void 			mousePressEvent(QMouseEvent* ev); //for exp/coll all
-  void 			mouseDoubleClickEvent(QMouseEvent* ev); //for exp/coll all
-  void			showEvent(QShowEvent* ev); // override, for expand all
-  void 			ExpandAll_impl(int max_levels,
-    bool use_custom_filt = false); // inner code
-  void 			ExpandItem_impl(iTreeViewItem* item,
-     int level, int max_levels, int exp_flags = 0); // inner code; level=-1 when not known
-  void			GetSelectedItems(ISelectable_PtrList& lst); // list of the selected datanodes
+
+  override void 	focusInEvent(QFocusEvent* ev); // override
+  override void 	mousePressEvent(QMouseEvent* ev); //for exp/coll all
+  override void 	mouseDoubleClickEvent(QMouseEvent* ev); //for exp/coll all
+  override void		showEvent(QShowEvent* ev); // override, for expand all
+
+  virtual void 		ExpandAll_impl(int max_levels, int exp_flags = 0);
+  // inner code
+  virtual void 		ExpandItem_impl(iTreeViewItem* item, int level, int max_levels,
+					int exp_flags = 0);
+  // inner code; level=-1 when not known
+  virtual void		GetSelectedItems(ISelectable_PtrList& lst);
+  // list of the selected datanodes
 
   override void 	keyPressEvent(QKeyEvent* e);
   override bool		focusNextPrevChild(bool next);
@@ -2133,8 +2137,8 @@ protected slots:
     const QPoint & pos, int col ); //note: should probably rejig to use a virtual method
   void			this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* prev);
   void 			this_itemSelectionChanged();
-  void			ExpandAllUnderInt(void* item); 
-  void			CollapseAllUnderInt(void* item); 
+  virtual void		ExpandAllUnderInt(void* item); 
+  virtual void		CollapseAllUnderInt(void* item); 
 private:
   mutable QFont*	italic_font;
 };

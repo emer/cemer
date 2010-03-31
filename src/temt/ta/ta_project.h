@@ -95,7 +95,7 @@ private:
 };
 
 class TA_API Doc_Group : public taGroup<taDoc> {
-  // ##CAT_Docs group of doc objects
+  // ##CAT_Docs ##EXPAND_DEF_1 group of doc objects
 INHERITED(taGroup<taDoc>)
 public:
   virtual void		AutoEdit();
@@ -126,7 +126,7 @@ private:
 };
 
 class TA_API Wizard_Group : public taGroup<taWizard> {
-  // ##CAT_Wizard group of wizard objects
+  // ##CAT_Wizard ##EXPAND_DEF_1 group of wizard objects
 INHERITED(taGroup<taWizard>)
 public:
   virtual void		AutoEdit();
@@ -144,7 +144,7 @@ private:
 //		SelectEdit -- control panels
 
 class TA_API SelectEdit_Group : public taGroup<SelectEdit> {
-  // ##CAT_Display group of select edit dialog objects
+  // ##CAT_Display ##EXPAND_DEF_1 group of select edit dialog objects
 INHERITED(taGroup<SelectEdit>)
 public:
   virtual void	AutoEdit();
@@ -442,7 +442,7 @@ private:
 
 
 class TA_API taProject : public taFBase {
-  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DUMP_LOAD_POST ##DEF_NAME_ROOT_Project ##CAT_Project Base ##UNDO_BARRIER class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
+  // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DUMP_LOAD_POST ##DEF_NAME_ROOT_Project ##CAT_Project ##UNDO_BARRIER ##EXPAND_DEF_2 Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
   String 		tags;	   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
@@ -617,7 +617,7 @@ protected slots:
 };
 
 class TA_API taRootBase: public taFBase {
-  // ##CAT_Project base class for the root of the structural hierarchy (root. or . in css / paths)
+  // ##CAT_Project ##EXPAND_DEF_2 base class for the root of the structural hierarchy (root. or . in css / paths)
 INHERITED(taFBase)
 public:
   static TypeDef*	root_type; // set in Startup_Main
