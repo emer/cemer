@@ -2315,7 +2315,8 @@ public:
 public: // IDataLinkClient interface
 //  override void*	This() {return (void*)this;}
   override TypeDef*	GetTypeDef() const {return &TA_tabTreeDataNode;}
-  
+protected:
+  override void		DataChanged_impl(int dcr, void* op1, void* op2);
 private:
   void			init(tabDataLink* link_, int dn_flags_); // #IGNORE
 };

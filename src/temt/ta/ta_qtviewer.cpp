@@ -8318,6 +8318,7 @@ void taiTreeDataNode::CreateChildren_impl() {
 //NOTE: keep willHaveChildren_impl in sync with this code
   MemberSpace* ms = &(link()->GetDataTypeDef()->members);
   iTreeView* tree = treeView(); //cache
+  if(!tree) return;
   for (int i = 0; i < ms->size; ++ i) {
     MemberDef* md = ms->FastEl(i);
 /*TODO: replace filters, or nuke    // check for member/type-based filter
@@ -8408,6 +8409,22 @@ tabTreeDataNode::~tabTreeDataNode()
 {
 }
 
+void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
+  inherited::DataChanged_impl(dcr, op1_, op2_);
+  if(dcr == DCR_STRUCT_UPDATE_END) {
+// #ifdef DEBUG
+//     taMisc::Info("tabTreeDataNode DataChanged_impl Struct Update:",tadata()->GetDisplayName());
+// #endif
+    takeChildren();
+    CreateChildren();
+    iTreeView* itv = treeView();
+    if(!itv) return;
+    if(itv->itemCount() > 0) {
+      if(itv->item(0) == this)
+	itv->ExpandDefault();
+    }
+  }
+}
 
 //////////////////////////////////
 //   tabParTreeDataNode 	//
@@ -8500,9 +8517,6 @@ taiTreeDataNode* tabParTreeDataNode::CreateListItem(taiTreeDataNode* par_node,
 
 
 bool tabParTreeDataNode::RebuildChildrenIfNeeded() {
-#ifdef DEBUG
-  taMisc::Info("rebuild children:",tadata()->GetDisplayName());
-#endif
   int st_idx = 0;
   if(last_member_node)
     st_idx = MAX(indexOfChild(last_member_node)+1, 0);
@@ -8518,8 +8532,9 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
   if (!this->children_created) {
     if ((dcr == DCR_LIST_ITEM_INSERT) || (dcr == DCR_LIST_ITEM_REMOVE) ||
-	(dcr == DCR_STRUCT_UPDATE_END))
+	(dcr == DCR_STRUCT_UPDATE_END)) {
       UpdateLazyChildren(); // updates
+    }
     return;
   }
 
