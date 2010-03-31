@@ -1069,11 +1069,17 @@ void T3DataView::CutLinks() {
 
 void T3DataView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(m_transform) {
-    if(m_transform->rotate.x == 0.0f && m_transform->rotate.y == 0.0f && m_transform->rotate.z == 0.0f) {
-      m_transform->rotate.z = 1.0f;	// axis must be defined, even if not used.
-    }
+  if(m_transform) fixTransformAxis();
+}
+
+bool T3DataView::fixTransformAxis() {
+  if(!m_transform) return false;
+  if(m_transform->rotate.x == 0.0f && m_transform->rotate.y == 0.0f &&
+     m_transform->rotate.z == 0.0f) {
+    m_transform->rotate.z = 1.0f;	// axis must be defined, even if not used.
+    return true;
   }
+  return false;
 }
 
 void T3DataView::AddRemoveChildNode(SoNode* node, bool adding) {
@@ -1252,6 +1258,7 @@ void T3DataView::Render_impl() {
 
   T3Node* node = m_node_so.ptr();
   if (m_transform && node) {
+    fixTransformAxis();		// make sure
     m_transform->CopyTo(node->transform());
   }
   inherited::Render_impl();
@@ -1275,6 +1282,7 @@ FloatTransform* T3DataView::transform(bool auto_create) {
   if (!m_transform && auto_create) {
     m_transform = new FloatTransform();
     taBase::Own(m_transform, this);
+    fixTransformAxis();
   }
   return m_transform;
 }

@@ -400,6 +400,8 @@ public:
   virtual void		setExpandable(bool) {}
   DATAVIEW_PARENT(T3DataView) // always a T3DataView (except root guy)
   FloatTransform*	transform(bool auto_create = false);  // transform, in Inventor coords
+  virtual bool		fixTransformAxis();
+  // make sure transform doesn't have a zero axis
 
   override bool		isMapped() const; // only true if in gui mode and gui stuff exists 
   T3Node*		node_so() const {return m_node_so.ptr();} //
