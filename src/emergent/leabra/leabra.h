@@ -1644,8 +1644,9 @@ INHERITED(taOBase)
 public:
   bool		on;		// whether to perform the tie breaking function at all
   float		k_thr; 		// #CONDEDIT_ON_on:true #DEF_1 threshold on inhibitory threshold (i_thr) for top kwta units before tie break is engaged: don't break ties for weakly activated layers
-  float		diff_thr;	// #CONDEDIT_ON_on:true #DEF_0.2 threshold on difference ratio between top k and rest (k_ithr - k1_ithr) / k_ithr for a tie to be indicated.  This is also how much k1_ithr is reduced relative to k_ithr to fix the tie: sets a lower limit on this value.  larger values mean higher overall activations during ties, but you don't want to activate the tie mechanism unnecessarily either.
-  float		loser_gain;	// #CONDEDIT_ON_on:true #DEF_2 how much extra inhibition to apply to units that are below the kwta cutoff ("losers") -- values greater than 1 result in stronger contrast between the top k units and the remainder -- can use to enforce kwta constraint more strongly -- actual value applied is 1 + loser_gain * ((diff_thr - ithr_diff) / diff_thr) -- i.e., it is maximal when the difference is the smallest, and goes to 1 as the diff gets closer to the threshold for engaging the tie break mechanism
+  float		diff_thr;	// #CONDEDIT_ON_on:true #DEF_0.2 threshold for tie breaking mechanisms to be engaged, based on difference ratio between top k and rest: ithr_diff = (k_ithr - k1_ithr) / k_ithr.  ithr_diff value is stored in kwta field of layer or unit group, along with tie_brk_gain which is normalized value of ithr_diff relative to this threshold: (diff_thr - ithr_diff) / diff_thr -- this determines how strongly the tie breaking mechanisms are engaged
+  float		thr_gain;	// #CONDEDIT_ON_on:true #DEF_0.05 how much k1_ithr is reduced relative to k_ithr to fix the tie -- determines how strongly active the tied units are -- actual amount of reduction is a function tie_brk_gain (see diff_thr field for details), so it smoothly transitions to normal inhibitory dynamics as ithr_diff goes above diff_thr
+  float		loser_gain;	// #CONDEDIT_ON_on:true #DEF_2 how much extra inhibition to apply to units that are below the kwta cutoff ("losers") -- loser_gain is additive to a 1.0 gain baseline, so 0 means no additional gain, and any positive number increases the gain -- actual gain is a function tie_brk_gain (see diff_thr field for details), so it smoothly transitions to normal inhibitory dynamics as ithr_diff goes above diff_thr: eff_loser_gain = 1 + loser_gain * tie_brk_gain
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(KwtaTieBreak);
@@ -2083,7 +2084,8 @@ public:
   float		k1_ithr;	// inhib threshold for k+1 unit (other units for kwta_avg)
   float		ithr_r;		// log of ratio of ithr values (indicates signal differentiation)
   float		ithr_diff;	// normalized difference ratio for k vs k+1 ithr values: (k_ithr - k1_ithr) / k_ithr
-  float		eff_loser_gain;	// effective loser gain -- only computed if tie_brk == 1: 1 + loser_gain * ((tie_brk.diff_thr - ithr_diff) / tie_brk.diff_thr)
+  float		tie_brk_gain;	// strength of the tie breaking mechanisms as a function of how bclosely tied the units are -- 1 if maximally tied, 0 if minimally tied -- used to modulate the tie breaking mechanisms: (tie_brk.diff_thr - ithr_diff) / tie_brk.diff_thr)
+  float		eff_loser_gain;	// effective loser gain -- only computed if tie_brk in effect: 1 + loser_gain * tie_brk_gain
   int		tie_brk;	// was a tie break operation applied to this layer based on ithr_diff value?
 
   void		Compute_Pct(int n_units);

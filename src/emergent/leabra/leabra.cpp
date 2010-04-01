@@ -2378,6 +2378,7 @@ void KwtaTieBreak::Initialize() {
   on = false;
   k_thr = 1.0f;
   diff_thr = 0.2f;
+  thr_gain = 0.2f;
   loser_gain = 2.0f;
 }
 
@@ -3106,10 +3107,10 @@ void LeabraLayerSpec::Compute_Inhib_BreakTie(LeabraInhib* thr) {
   if(tie_brk.on && (thr->kwta.k_ithr > tie_brk.k_thr)) {
     if(thr->kwta.ithr_diff < tie_brk.diff_thr) {
       // we now have an official tie: break it by reducing firing of "others"
-      thr->kwta.k1_ithr = (1.0f - tie_brk.diff_thr) * thr->kwta.k_ithr;
       thr->kwta.tie_brk = 1;
-      thr->kwta.eff_loser_gain = 1.0f + (tie_brk.loser_gain * 
-		 ((tie_brk.diff_thr - thr->kwta.ithr_diff) / tie_brk.diff_thr));
+      thr->kwta.tie_brk_gain = (tie_brk.diff_thr - thr->kwta.ithr_diff) / tie_brk.diff_thr;
+      thr->kwta.k1_ithr *= (1.0f - thr->kwta.tie_brk_gain * tie_brk.thr_gain);
+      thr->kwta.eff_loser_gain = 1.0f + (tie_brk.loser_gain * thr->kwta.tie_brk_gain);
     }
   }
 }
@@ -4309,6 +4310,7 @@ void KWTAVals::Initialize() {
   k1_ithr = 0.0f;
   ithr_r = 0.0f;
   ithr_diff = 0.0f;
+  tie_brk_gain = 0.0f;
   eff_loser_gain = 1.0f;
   tie_brk = 0;
 }
@@ -4322,6 +4324,7 @@ void KWTAVals::Copy_(const KWTAVals& cp) {
   k1_ithr = cp.k1_ithr;
   ithr_r = cp.ithr_r;
   ithr_diff = cp.ithr_diff;
+  tie_brk_gain = cp.tie_brk_gain;
   eff_loser_gain = cp.eff_loser_gain;
   tie_brk = cp.tie_brk;
 }
