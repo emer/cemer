@@ -138,7 +138,9 @@ public:
   MatrixGeom		cell_geom;
   // #READ_ONLY #SAVE #SHOW for matrix cols, the geom of each cell
   ColCalcExpr		calc_expr; // #CONDEDIT_ON_col_flags:CALC expression for computing value of this column (only used if CALC flag is set)
+  String_Matrix		dim_names; // special names for the dimensions of a matrix cell -- used for display purposes
   taHashTable*		hash_table; // #READ_ONLY #NO_SAVE #NO_COPY hash table of column (scalar only) values to speed up finding in large fixed tables -- this is created by BuildHashTable() function, and destroyed after any insertion or removal of rows -- it is up to the user to call this when relevant data is all in place -- cannot track value changes
+  
   
   virtual taMatrix* 	AR() = 0;
   // #CAT_Access the matrix pointer -- NOTE: actual member should be called 'ar'
@@ -552,7 +554,6 @@ private:
 
 class TA_API FixedWidthSpec: public taNBase {
   // ##CAT_Data ##TOKENS spec for doing a Fixed Width import of text into a DataTable
-
 INHERITED(taNBase)
 public:
   int		n_skip_lines; // #MIN_0 skip this many header lines

@@ -39,6 +39,7 @@ MatrixTableModel::MatrixTableModel(taMatrix* mat_)
   col_idx = -1;
   m_mat = mat_;
   m_pat_4d = false;
+  m_dim_names = NULL;
 }
 
 MatrixTableModel::~MatrixTableModel() {
@@ -47,6 +48,7 @@ MatrixTableModel::~MatrixTableModel() {
     m_mat->RemoveDataClient(this);
     m_mat = NULL;
   }
+  m_dim_names = NULL;
 }
 
 int MatrixTableModel::columnCount(const QModelIndex& parent) const {
@@ -155,7 +157,16 @@ QVariant MatrixTableModel::headerData(int section,
       // need to break the flat col down 
       div_t qr = div(section, m_mat->dim(0));
       // d2:d0
-      return QString("g%1:x%2").arg(qr.quot).arg(qr.rem);
+      if(m_dim_names) {
+	QString d2nm = m_dim_names->SafeEl_Flat(2);
+	QString d0nm = m_dim_names->SafeEl_Flat(0);
+	if(d2nm.isEmpty()) d2nm = "g";
+	if(d0nm.isEmpty()) d0nm = "x";
+	return QString("%1%2:%3%4").arg(d2nm).arg(qr.quot).arg(d0nm).arg(qr.rem);
+      }
+      else {
+	return QString("g%1:x%2").arg(qr.quot).arg(qr.rem);
+      }
     } else {
       return QString::number(section); //QString("%1").arg(section);
     }
@@ -176,7 +187,16 @@ QVariant MatrixTableModel::headerData(int section,
       int j;
       if (pat_4d) {
         // d3:d1...
-        rval = QString("g%1:y%2").arg(coords[3]).arg(coords[1]);
+	if(m_dim_names) {
+	  QString d3nm = m_dim_names->SafeEl_Flat(3);
+	  QString d1nm = m_dim_names->SafeEl_Flat(1);
+	  if(d3nm.isEmpty()) d3nm = "g";
+	  if(d1nm.isEmpty()) d1nm = "x";
+	  rval = QString("%1%2:%3%4").arg(d3nm).arg(coords[3]).arg(d1nm).arg(coords[1]);
+	}
+	else {
+	  rval = QString("g%1:y%2").arg(coords[3]).arg(coords[1]);
+	}
         j = 4;
       } else {
         // d1...
@@ -228,6 +248,10 @@ bool MatrixTableModel::setData(const QModelIndex& index, const QVariant & value,
     return true;
   }
   return false;
+}
+
+void MatrixTableModel::setDimNames(String_Matrix* dnms) {
+  m_dim_names = dnms;
 }
 
 void MatrixTableModel::setPat4D(bool val, bool notify) {

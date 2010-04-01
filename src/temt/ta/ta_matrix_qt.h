@@ -45,6 +45,10 @@ public:
   taMatrix*		mat() const {return m_mat;}
   inline bool		pat4D() const {return m_pat_4d;} // for dims>=4 whether to group d0/d1 in row (default is true)
   void			setPat4D(bool val, bool notify = true);
+
+  String_Matrix*	dimNames()  { return m_dim_names; }
+  void			setDimNames(String_Matrix* dnms);
+  // use given matrix to provide optional dimension names
   
   void			emit_dataChanged(int row_fr = 0, int col_fr = 0,
     int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
@@ -79,6 +83,7 @@ public: // IDataLinkClient i/f
   
 protected:
   taMatrix*		m_mat;
+  String_Matrix*	m_dim_names;
   taMisc::MatrixView	m_view_layout; //#IGNORE #DEF_TOP_ZERO
   ContextFlag		notifying; // to avoid responding when we sent notify
   bool			m_pat_4d;

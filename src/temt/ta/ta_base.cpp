@@ -2067,8 +2067,8 @@ taBase::ValType taBase::ValTypeForType(TypeDef* td) {
     {
       return VT_FLOAT; 
     }
-    else if(td->DerivesFormal(TA_enum)) { //maybe we should use String's for these???
-      return VT_INT; 
+    else if(td->DerivesFormal(TA_enum)) {
+      return VT_STRING; 
     }
     else if(td->DerivesFrom(TA_taString))
       return VT_STRING;

@@ -6082,7 +6082,8 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
       return *((double*)base); // T_Double
     }
     else if(DerivesFormal(TA_enum)) {
-      return *((int*)base); // T_Int
+      int en_val = *((int*)base);
+      return GetEnumString("", en_val); // T_String
     }
     else if(DerivesFrom(TA_taString))
       return *((String*)base); // T_String

@@ -117,6 +117,7 @@ void DataCol::InitLinks() {
   inherited::InitLinks();
   taBase::Own(cell_geom, this);
   taBase::Own(calc_expr, this);
+  taBase::Own(dim_names, this);
   taMatrix* ar = AR();
   if (ar != NULL)
     taBase::Own(ar, this);
@@ -125,6 +126,7 @@ void DataCol::InitLinks() {
 void DataCol::CutLinks() {
   cell_geom.CutLinks();
   calc_expr.CutLinks();
+  dim_names.CutLinks();
   RemoveHashTable();
   inherited::CutLinks();
 }
@@ -138,6 +140,7 @@ void DataCol::Copy_Common_(const DataCol& cp) {
   is_matrix = cp.is_matrix;
   cell_geom = cp.cell_geom;
   calc_expr = cp.calc_expr;
+  dim_names = cp.dim_names;
 }
 
 void DataCol::Copy_(const DataCol& cp) {
@@ -228,8 +231,10 @@ void DataCol::Init() {
     tdim.SetDims(tdim.dims() + 1);
     tdim.Set(tdim.dims()-1, rows);
     ar->SetGeomN(tdim);
+    dim_names.SetGeom(1,cell_geom.dims());
   } else {
     ar->SetGeom(1, rows);
+    dim_names.SetGeom(1,0);
   }
   // transfer READ_ONLY to mat
   ar->ChangeBaseFlag(BF_GUI_READ_ONLY, (col_flags & READ_ONLY));

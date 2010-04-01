@@ -5627,6 +5627,9 @@ void iDataTableEditor::tvTable_currentChanged(const QModelIndex& index) {
     if (tcell) {
       bool pat_4d = (col->HasColFlag(DataCol::PAT_4D) && tcell->dims() >= 4);
       setCellMat(tcell, index, pat_4d);
+
+      MatrixTableModel* mat_model = tcell->GetTableModel();
+      mat_model->setDimNames(&col->dim_names);
       tvCell->setVisible(true);
       return;
     }

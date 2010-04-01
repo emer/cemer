@@ -2152,6 +2152,7 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
  -- do not load any plugins -- can be useful if some plugins are misbehaving -- may be better to re-make all the plugins (--make_all_plugins) to fix plugin problems though");
 
   taMisc::AddArgName("--make_all_plugins", "MakeAllPlugins");
+  taMisc::AddArgName("--make_plugins", "MakeAllPlugins");
   taMisc::AddArgNameDesc("MakeAllPlugins", "\
  -- (re)make all the plugins located in the user AND system plugin directories -- these are typically installed with a make install from wherever original source is located, and source is installed to same plugin directory -- make will make from this installed source");
 
@@ -2163,7 +2164,8 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("MakeAllSystemPlugins", "\
  -- (re)make all the plugins located in the system plugin directory -- these are typically installed with a make install from wherever original source is located, and source is installed to system plugin directory -- make will make from this installed source");
 
-  taMisc::AddArgName("--clean_user_plugins", "CleanAllPlugins");
+  taMisc::AddArgName("--clean_all_plugins", "CleanAllPlugins");
+  taMisc::AddArgName("--clean_plugins", "CleanAllPlugins");
   taMisc::AddArgNameDesc("CleanAllPlugins", "\
  -- clean (remove) all the plugins (just the library files, not the source) located in the user AND system plugin directories");
 
@@ -2199,6 +2201,7 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
   // process gui flag right away -- has other implications
   if(taMisc::CheckArgByName("GenDoc") || taMisc::CheckArgByName("Version")
      || taMisc::CheckArgByName("Help")) {
+    taMisc::use_plugins = false;		      // no need for plugins for these..
     taMisc::use_gui = false;
     cssMisc::init_interactive = false;
   }
@@ -2221,7 +2224,7 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
     taMisc::use_plugins = false;		      // don't use if making
 
   // need to use Init_Args and entire system because sometimes flags get munged together
-  if(taMisc::CheckArgByName("NoGui"))
+  if(taMisc::CheckArgByName("NoGui")) 
     taMisc::use_gui = false;
   else if(taMisc::CheckArgByName("Gui"))
     taMisc::use_gui = true;
