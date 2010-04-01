@@ -615,6 +615,7 @@ void MatrixRndGoSpec::Initialize() {
   nogo_thr = 50;
   nogo_p = .1f;
   nogo_da = 10.0f;
+  nogo_noise = 0.1f;
   go_bias = 0.0f;
 }
 
@@ -974,6 +975,23 @@ void MatrixLayerSpec::Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork*) {
 
       if(Random::ZeroOne() < rnd_go.nogo_p) {
 	mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
+      }
+
+      int n_go_units = mugp->leaves / 2;
+      lay->unit_idxs.SetSize(n_go_units); // just do go guys
+      lay->unit_idxs.FillSeq();
+      lay->unit_idxs.Permute();
+      int i;
+      for(i=0; i<n_go_units; i++) {
+	LeabraUnit* u = (LeabraUnit*)mugp->FastEl(lay->unit_idxs[i]);
+	if(i < mugp->kwta.k)
+	  u->noise = rnd_go.nogo_noise;
+	else
+	  u->noise = 0.0f;
+      }
+      for(; i<mugp->leaves; i++) {
+	LeabraUnit* u = (LeabraUnit*)mugp->FastEl(i);
+	u->noise = 0.0f;
       }
     }
   }

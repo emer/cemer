@@ -355,6 +355,7 @@ public:
   int		nogo_thr;	// #DEF_50 threshold of number of nogo firing in a row that will trigger NoGo random go firing
   float		nogo_p;		// #DEF_0.1 #MIN_0 #MAX_1 probability of actually firing a nogo random Go once the threshold is exceeded
   float		nogo_da;	// #DEF_10 #MIN_0 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) for a nogo-driven random go firing
+  float		nogo_noise;	// #DEF_0.1 #MIN_0 noise value to apply to a randomly selected subset of k Go units to get them activated
   float		go_bias;	// #DEF_0 #MIN_0 how strong of a performance bias to apply to induce units to fire a Go during a random go firing episode -- this is like the gate_bias -- applied from start of trial -- currently does not appear helpful
 
   void 	Defaults()	{ Initialize(); }
