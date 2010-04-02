@@ -595,7 +595,6 @@ void MatrixGateBiasSpec::Initialize() {
   out_pvr = 1.0f;
   out_empty_nogo = 2.0f;
   mnt_empty_go = 0.0f;
-  mnt_pvr = 0.0f;
 }
 
 void MatrixGateBiasSpec::SetAllBiases(float one_bias) {
@@ -603,7 +602,6 @@ void MatrixGateBiasSpec::SetAllBiases(float one_bias) {
   out_pvr = one_bias;
   out_empty_nogo = one_bias;
   mnt_empty_go = one_bias;
-  mnt_pvr = one_bias;
 }
 
 void MatrixMiscSpec::Initialize() {
@@ -611,12 +609,11 @@ void MatrixMiscSpec::Initialize() {
 }
 
 void MatrixRndGoSpec::Initialize() {
-  sep_out_mnt = true;
-  nogo_thr = 50;
-  nogo_p = .1f;
+  nogo_thr = 30;
+  nogo_rng = 30;
   nogo_da = 10.0f;
-  nogo_noise = 0.1f;
-  go_bias = 0.0f;
+  nogo_noise = 0.0f;
+  go_bias = 5.0f;
 }
 
 void MatrixGoNogoGainSpec::Initialize() {
@@ -811,21 +808,26 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
   float tonic_da = dals->da.tonic_da;
   int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
+  int rnd_go_thr = mugp->misc_state3; // random go threshold for this time
   int gp_sz = mugp->leaves / 2;
   bool nogo_rnd_go = (mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO);
 
   float bias_dav = 0.0f;
 
   if(bg_type == OUTPUT) {	// output gating guy
-    if(nogo_rnd_go) {
-      bias_dav = rnd_go.go_bias; // bias go always
-    }
-    else if(net->pv_detected) {	// PV reward trial -- bias output gating
+    if(net->pv_detected) {	// PV reward trial -- bias output gating
       // only if pfc is maintaining..
-      if(pfc_mnt_cnt > 0)
+      if(pfc_mnt_cnt > 0) {
 	bias_dav = gate_bias.out_pvr;
-      else 
+	if(!nogo_rnd_go && pfc_mnt_cnt > rnd_go_thr) { // no rnd go yet, but over thresh
+	  mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
+	  bias_dav += rnd_go.go_bias; // extra bias when appropriate
+	  Compute_RndGoNoise_ugp(lay, mugp, net);
+	}
+      }
+      else {
 	bias_dav = -gate_bias.out_empty_nogo;
+      }
     }
     else {			// not a PV trial
       if(pfc_mnt_cnt > 0)   	// currently maintaining: bias NoGo for everything
@@ -835,19 +837,16 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
     }
   }
   else {			// MAINT
-    if(nogo_rnd_go) {
-      bias_dav = rnd_go.go_bias; // bias go always
+    if(pfc_mnt_cnt > 0) {   	// currently maintaining: bias NoGo for everything
+      bias_dav = -gate_bias.mnt_nogo;
     }
-    else if(net->pv_detected) {
-      // only if pfc is maintaining, bias mnt gating -- for clear veto case -- otherwise not generally useful
-      if(pfc_mnt_cnt > 0)
-	bias_dav = gate_bias.mnt_pvr;
-    }
-    else {			// not a PV trial
-      if(pfc_mnt_cnt > 0)   	// currently maintaining: bias NoGo for everything
-	bias_dav = -gate_bias.mnt_nogo;
-      else			// otherwise, bias to maintain/update
-	bias_dav = gate_bias.mnt_empty_go;
+    else {			// otherwise, bias to maintain/update
+      bias_dav = gate_bias.mnt_empty_go;
+      if(!nogo_rnd_go && pfc_mnt_cnt < -rnd_go_thr) { // no rnd go yet, but over thresh
+	mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
+	bias_dav += rnd_go.go_bias; // extra bias when appropriate
+	Compute_RndGoNoise_ugp(lay, mugp, net);
+      }
     }
   }
 
@@ -954,53 +953,62 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 void MatrixLayerSpec::Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork*) {
   for(int gi=0; gi<lay->units.gp.size; gi++) {
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
-    if(mugp->misc_state1 >= PFCGateSpec::NOGO_RND_GO)
+    if((mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO) || mugp->misc_state3 == 0) {
       mugp->misc_state1 = PFCGateSpec::INIT_STATE;
-  }
-}
-
-void MatrixLayerSpec::Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork*) {
-  for(int gi=0; gi<lay->units.gp.size; gi++) {
-    LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
-
-    int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
-
-    if((int)fabs((float)mugp->misc_state) > rnd_go.nogo_thr) {
-      if(rnd_go.sep_out_mnt) {
-	if(bg_type == OUTPUT && pfc_mnt_cnt < 0) // no output when empty
-          continue;
-        else if(bg_type == MAINT && pfc_mnt_cnt > 0) // no maint when full
-	  continue;
-      }
-
-      if(Random::ZeroOne() < rnd_go.nogo_p) {
-	mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
-      }
-
-      int n_go_units = mugp->leaves / 2;
-      lay->unit_idxs.SetSize(n_go_units); // just do go guys
-      lay->unit_idxs.FillSeq();
-      lay->unit_idxs.Permute();
-      int i;
-      for(i=0; i<n_go_units; i++) {
-	LeabraUnit* u = (LeabraUnit*)mugp->FastEl(lay->unit_idxs[i]);
-	if(i < mugp->kwta.k)
-	  u->noise = rnd_go.nogo_noise;
-	else
-	  u->noise = 0.0f;
-      }
-      for(; i<mugp->leaves; i++) {
-	LeabraUnit* u = (LeabraUnit*)mugp->FastEl(i);
-	u->noise = 0.0f;
-      }
+      // new treshold for when to fire rnd go next!
+      mugp->misc_state3 = rnd_go.nogo_thr + Random::IntZeroN(rnd_go.nogo_rng);
     }
   }
 }
 
+void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay, LeabraUnit_Group* mugp, 
+					     LeabraNetwork* net) {
+  if(rnd_go.nogo_noise == 0.0f) return;
+
+  int n_go_units = mugp->leaves / 2;
+  lay->unit_idxs.SetSize(n_go_units); // just do go guys
+  lay->unit_idxs.FillSeq();
+  lay->unit_idxs.Permute();
+  int i;
+  for(i=0; i<n_go_units; i++) {
+    LeabraUnit* u = (LeabraUnit*)mugp->FastEl(lay->unit_idxs[i]);
+    if(i < mugp->kwta.k)
+      u->noise = rnd_go.nogo_noise;
+    else
+      u->noise = 0.0f;
+  }
+  for(; i<mugp->leaves; i++) {
+    LeabraUnit* u = (LeabraUnit*)mugp->FastEl(i);
+    u->noise = 0.0f;
+  }
+}
+
+// void MatrixLayerSpec::Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork* net) {
+//   for(int gi=0; gi<lay->units.gp.size; gi++) {
+//     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
+
+//     int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
+
+//     if((int)fabs((float)mugp->misc_state) > rnd_go.nogo_thr) {
+//       if(rnd_go.sep_out_mnt) {
+// 	if(bg_type == OUTPUT && pfc_mnt_cnt < 0) // no output when empty
+//           continue;
+//         else if(bg_type == MAINT && pfc_mnt_cnt > 0) // no maint when full
+// 	  continue;
+//       }
+
+//       if(Random::ZeroOne() < rnd_go.nogo_p) {
+// 	mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
+// 	Compute_RndGoNoise_ugp(lay, mugp, net);
+//       }
+//     }
+//   }
+// }
+
 void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no == 0) {
     Compute_ClearRndGo(lay, net);
-    Compute_NoGoRndGo(lay, net);
+//     Compute_NoGoRndGo(lay, net);
   }
 
   inherited::Compute_HardClamp(lay, net);
@@ -2769,7 +2777,6 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
     snrthalsp->snrthal.go_thr = 0.1f;
 
     matrixsp->gate_bias.SetAllBiases(0.0f);
-    matrixsp->rnd_go.sep_out_mnt = false;
     matrixsp->UpdateAfterEdit();
 
     pfcmsp->gate.out_go_clear = false;
@@ -2793,8 +2800,6 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
     matrixsp->gate_bias.out_pvr = 1.0f;
     matrixsp->gate_bias.out_empty_nogo = 2.0f;
     matrixsp->gate_bias.mnt_empty_go = 0.0f;
-    matrixsp->gate_bias.mnt_pvr = 0.0f;
-    matrixsp->rnd_go.sep_out_mnt = true;
     matrixsp->UpdateAfterEdit();
 
     pfcmsp->gate.out_go_clear = true;

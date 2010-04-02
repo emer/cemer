@@ -2590,7 +2590,7 @@ void LeabraLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->units.gp.size > 0) {
     for(int gi=0;gi<lay->units.gp.size;gi++) {
       LeabraUnit_Group* gp = (LeabraUnit_Group*)lay->units.gp[gi];
-      gp->misc_state = gp->misc_state1 = gp->misc_state2 = 0;
+      gp->misc_state = gp->misc_state1 = gp->misc_state2 = gp->misc_state3 = 0;
     }
   }
   Init_Inhib(lay, net);		// initialize inhibition at start..
@@ -4517,6 +4517,7 @@ void LeabraUnit_Group::Initialize() {
   misc_state = 0;
   misc_state1 = 0;
   misc_state2 = 0;
+  misc_state3 = 0;
   misc_float = 0.0f;
   misc_float1 = 0.0f;
   misc_float2 = 0.0f;
@@ -4543,6 +4544,7 @@ void LeabraUnit_Group::Copy_(const LeabraUnit_Group& cp) {
   misc_state = cp.misc_state;
   misc_state1 = cp.misc_state1;
   misc_state2 = cp.misc_state2;
+  misc_state3 = cp.misc_state3;
   misc_float = cp.misc_float;
   misc_float1 = cp.misc_float1;
   misc_float2 = cp.misc_float2;

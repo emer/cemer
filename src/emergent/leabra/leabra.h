@@ -2392,6 +2392,7 @@ public:
   int		misc_state;	// #CAT_Activation miscellaneous state variable
   int		misc_state1;	// #CAT_Activation second miscellaneous state variable 
   int		misc_state2;	// #CAT_Activation third miscellaneous state variable 
+  int		misc_state3;	// #CAT_Activation fourth miscellaneous state variable 
   float		misc_float;	// #CAT_Activation miscellaneous floating point variable 
   float		misc_float1;	// #CAT_Activation second miscellaneous floating point variable 
   float		misc_float2;	// #CAT_Activation third miscellaneous floating point variable 

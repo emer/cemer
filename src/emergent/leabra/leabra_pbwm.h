@@ -321,7 +321,6 @@ public:
   float		out_pvr;	// #DEF_1:2 for OUTPUT stripes, if PVr detects that this is trial where external rewards are typically provided, amount of OUTPUT Go bias da (positive dopamine) to encourage the output gating units to respond -- only applied for stripes that are maintaining information -- otherwise see out_empty_nogo
   float		out_empty_nogo;	// #DEF_1:2 for OUTPUT stripes that are not maintaining anything, amount of OUTPUT NoGo bias da (negative dopamine) to encourage the output gating units to NOT respond when the stripe is NOT maintaining anything
   float		mnt_empty_go;	// #DEF_0 for empty MAINT stripes, amount of Go bias da (positive dopamine) -- only if not on an output trial as determined by PVr -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
-  float		mnt_pvr;	// #DEF_0 if PVr detects that this is trial where external rewards are typically provided, amount of MAINT Go bias da (positive dopamine) to encourage the maintenance gating units to respond -- this should generally be 0 in most cases
 
   void		SetAllBiases(float one_bias);
 
@@ -351,12 +350,11 @@ class LEABRA_API MatrixRndGoSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc random go specifications -- when stripe has not fired for a long time, encourage some Go firing to get back into the game..
 INHERITED(taOBase)
 public:
-  bool		sep_out_mnt;	// #DEF_true use separate logic for OUTPUT and MAINT Go -- trigger OUTPUT Go for over-maintenance (e.g., for out_go_clear case -- will use and clear info) and MAINT Go for over-empty (will update to new rep)
-  int		nogo_thr;	// #DEF_50 threshold of number of nogo firing in a row that will trigger NoGo random go firing
-  float		nogo_p;		// #DEF_0.1 #MIN_0 #MAX_1 probability of actually firing a nogo random Go once the threshold is exceeded
-  float		nogo_da;	// #DEF_10 #MIN_0 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) for a nogo-driven random go firing
-  float		nogo_noise;	// #DEF_0.1 #MIN_0 noise value to apply to a randomly selected subset of k Go units to get them activated
-  float		go_bias;	// #DEF_0 #MIN_0 how strong of a performance bias to apply to induce units to fire a Go during a random go firing episode -- this is like the gate_bias -- applied from start of trial -- currently does not appear helpful
+  int		nogo_thr;	// #DEF_30 threshold of number of nogo firing in a row that will trigger NoGo random go firing
+  int		nogo_rng;	// #DEF_30 #MIN_1 range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
+  float		nogo_da;	// #DEF_10 #MIN_0 strength of DA for driving learning of random Go units -- does not affect performance, only learning
+  float		nogo_noise;	// #DEF_0 #MIN_0 noise value to apply to a randomly selected subset of k Go units to get them activated during a random Go event
+  float		go_bias;	// #DEF_5 #MIN_0 how strong of a performance bias to apply to induce units to fire a Go during a random go firing episode -- this is like the gate_bias
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixRndGoSpec);
@@ -410,10 +408,10 @@ public:
   virtual void 	Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net);
   // compute u->dav learning dopamine value based on raw dav and gating state, etc -- this dav is then directly used in conspec leraning rule
 
-  virtual void 	Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork* net);
-  // compute random Go for nogo case
+  virtual void Compute_RndGoNoise_ugp(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
+  // compute random-go noise for k randomly selected Go units -- only does this if rnd_go.nogo_noise > 0
   virtual void 	Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork* net);
-  // clear the rnd go signals
+  // clear the rnd go signals at start of trial and compute new rnd go threshold if applicable
 
   virtual void	LabelUnits_impl(Unit_Group* ugp);
   // label units with Go/No (unit group) -- auto done in InitWeights
