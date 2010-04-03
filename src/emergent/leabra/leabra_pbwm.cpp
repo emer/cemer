@@ -611,9 +611,9 @@ void MatrixMiscSpec::Initialize() {
 void MatrixRndGoSpec::Initialize() {
   nogo_thr = 30;
   nogo_rng = 30;
-  nogo_da = 10.0f;
+  nogo_da = 5.0f;
   nogo_noise = 0.0f;
-  go_bias = 5.0f;
+  go_bias = 1.0f;
 }
 
 void MatrixGoNogoGainSpec::Initialize() {

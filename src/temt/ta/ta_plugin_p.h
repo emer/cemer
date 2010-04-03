@@ -21,6 +21,7 @@
 
 #include "ta_plugin.h"
 #include "ta_base.h"
+#include "ta_thread.h"
 
 class iPluginEditor; //
 
@@ -63,6 +64,50 @@ protected:
   override void		El_Done_(void* it) { delete ((taPluginInst*)it);}
 };
 
+////////////////////////////////
+//	PluginMake Threading
+
+class PluginMakeThreadMgr;
+
+class TA_API PluginMakeTask : public taTask {
+  // threading task for compiling plugin
+INHERITED(taTask)
+public:
+  override void run();
+  // runs specified chunk of computation (encode diff)
+
+  PluginMakeThreadMgr* mgr() { return (PluginMakeThreadMgr*)owner->GetOwner(); }
+
+  TA_BASEFUNS_NOCOPY(PluginMakeTask);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class TA_API PluginMakeThreadMgr : public taThreadMgr {
+  // #INLINE thread manager for PluginMake tasks -- manages threads and tasks, and coordinates threads running the tasks
+INHERITED(taThreadMgr)
+public:
+  // following are args for the MakePlugin function that is called
+  bool		make_pending;
+  String	plugin_path;
+  String	plugin_name;
+  bool		system_plugin;
+  bool		full_rebuild;
+
+  void		MakePlugin(const String& plugin_path, const String& plugin_name,
+			   bool system_plugin = false, bool full_rebuild=true);
+  // runs the task for this
+  
+  TA_BASEFUNS_NOCOPY(PluginMakeThreadMgr);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+
+////////////////////////////////
+//	taPlugins -- overall mgr
 
 class TA_API taPlugins { // #NO_INSTANCE global object to manage plugins
 public:
@@ -71,6 +116,8 @@ public:
   static taPluginInst_PList	plugins;
   // plugins that have been loaded -- they remain for the lifetime of program
   static String		logfile;
+  static PluginMakeThreadMgr* make_thread;
+  // manages making of threads
   
   static void		AddPluginFolder(const String& folder);
   // adds a folder, note: ignores duplicates
@@ -99,9 +146,11 @@ public:
   // execute given system command in given working directory, also echoing it to the screen and its results
 
   static bool		MakePlugin(const String& plugin_path, const String& plugin_name,
-				   bool system_plugin = false);
-  // make specified plugin in given full path to plugin source (plugin name only used for info purposes) -- basic interface for making plugins -- if system_plugin, then make command is prefixed with "sudo" and plugin type is set as System (else defaults to user)
-
+				   bool system_plugin = false, bool full_rebuild=true);
+  // make specified plugin in given full path to plugin source (plugin name only used for info purposes) -- basic interface for making plugins -- if system_plugin, then make command is prefixed with "sudo" and plugin type is set as System (else defaults to user) -- full_rebuild does a full cmake and make clean -- otherwise, just does a basic make
+  static bool		MakePlugin_impl(const String& plugin_path, const String& plugin_name,
+					bool system_plugin = false, bool full_rebuild=true);
+  // actually does the job -- above calls thread to do it
 
   static void		CleanAllPlugins();
   // clean all plugins in user and system directories

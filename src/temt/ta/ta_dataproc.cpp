@@ -1547,59 +1547,57 @@ bool taDataProc::ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b)
   bool in_place_req = false;
   GetDest(dest, src_a, "ConcatCols", in_place_req);
   if(in_place_req) {
-    taMisc::Error("taDataProc::ConcatCols -- src_a cannot be same as dest for this operation!");
     delete dest;
-    return false;
-  }
-  dest->StructUpdate(true);
-  dest->Reset();
-  for(int i=0; i < src_a->data.size; i++) {
-    DataCol* sda = src_a->data.FastEl(i);
-    DataCol* nda = (DataCol*)sda->MakeToken();
-    dest->data.Add(nda);
-    nda->Copy_NoData(*sda);
-  }
-  int a_cols = src_a->data.size;
-  for(int i=0; i < src_b->data.size; i++) {
-    DataCol* sdb = src_b->data.FastEl(i);
-    DataCol* nda = (DataCol*)sdb->MakeToken();
-    dest->data.Add(nda);
-    nda->Copy_NoData(*sdb);
-  }    
-  dest->UniqueColNames();	// make them unique!
-  int mx_rows = MIN(src_a->rows, src_b->rows);
-  for(int row=0;row<mx_rows;row++) {
-    dest->AddBlankRow();
-    for(int i=0;i<src_a->data.size; i++) {
-      DataCol* sda = src_a->data.FastEl(i);
-      DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
-      nda->CopyFromRow(row, *sda, row); // just copy
+    src_a->StructUpdate(true);
+
+    if(src_a->rows > src_b->rows) src_b->EnforceRows(src_a->rows);
+    else if(src_b->rows > src_a->rows) src_a->EnforceRows(src_b->rows);
+
+    int src_cols = src_b->cols();
+    for (int i=0; i < src_cols; i++) {
+      DataCol* new_col = src_a->NewCol(taBase::VT_FLOAT,"tmp_dest_col");
+      new_col->CopyFrom(src_b->data.FastEl(i));
     }
-    int col_idx = a_cols;
+    src_a->StructUpdate(false);
+  }
+  else {
+    dest->StructUpdate(true);
+    dest->Reset();
+    for(int i=0; i < src_a->data.size; i++) {
+      DataCol* sda = src_a->data.FastEl(i);
+      DataCol* nda = (DataCol*)sda->MakeToken();
+      dest->data.Add(nda);
+      nda->Copy_NoData(*sda);
+    }
+    int a_cols = src_a->data.size;
     for(int i=0; i < src_b->data.size; i++) {
       DataCol* sdb = src_b->data.FastEl(i);
-      DataCol* nda = dest->data.FastEl(col_idx);
-      nda->CopyFromRow(row, *sdb, row); // just copy
-      col_idx++;
+      DataCol* nda = (DataCol*)sdb->MakeToken();
+      dest->data.Add(nda);
+      nda->Copy_NoData(*sdb);
     }    
-  }
-  dest->StructUpdate(false);
-  return true;
-}
-
-bool taDataProc::ConcatCols2(DataTable* dest, DataTable* src) {
-  if(!src || !dest) { taMisc::Error("taDataProc::ConcatCols2: Neither src nor dest can be null"); return false; }
-
-  int src_rows = src->rows;
-  int dest_rows = dest->rows;
-  int src_cols = src->cols();
-
-  if(src_rows > dest_rows) dest->EnforceRows(src_rows);
-  else if(dest_rows > src_rows) src->EnforceRows(dest_rows);
-
-  for (int i=0; i < src_cols; i++) {
-    DataCol* new_col = dest->NewCol(taBase::VT_FLOAT,"tmp_dest_col");
-    new_col->CopyFrom(src->data.FastEl(i));
+    dest->UniqueColNames();	// make them unique!
+    int mx_rows = MAX(src_a->rows, src_b->rows);
+    for(int row=0;row<mx_rows;row++) {
+      dest->AddBlankRow();
+      if(src_a->rows > row) {
+	for(int i=0;i<src_a->data.size; i++) {
+	  DataCol* sda = src_a->data.FastEl(i);
+	  DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
+	  nda->CopyFromRow(row, *sda, row); // just copy
+	}
+      }
+      if(src_b->rows > row) {
+	int col_idx = a_cols;
+	for(int i=0; i < src_b->data.size; i++) {
+	  DataCol* sdb = src_b->data.FastEl(i);
+	  DataCol* nda = dest->data.FastEl(col_idx);
+	  nda->CopyFromRow(row, *sdb, row); // just copy
+	  col_idx++;
+	}
+      }
+    }
+    dest->StructUpdate(false);
   }
   return true;
 }

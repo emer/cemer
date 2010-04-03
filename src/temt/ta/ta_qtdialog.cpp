@@ -2999,10 +2999,14 @@ void iPluginEditor::init() {
   tool_box->addWidget(tool_bar);
 
   actSave = tool_bar->addAction("Save");
-  actCompile = tool_bar->addAction("Compile");
+  actSave->setToolTip("Save source code to files");
 
+  actCompile = tool_bar->addAction("Compile");
   actCompile->setShortcut(QKeySequence("Ctrl+M"));
-  actCompile->setToolTip("Compile (Make) plugin from current source code -- does a Save first before compiling");
+  actCompile->setToolTip("Compile (Make) plugin from current source code -- assumes the build directory exists and has been made previously -- if unsure, use ReBuild first -- does a Save first before compiling");
+
+  actReBuild = tool_bar->addAction("ReBuild");
+  actReBuild->setToolTip("ReBuild (Make) plugin from current source code, starting everything from scratch at the beginning, including a make clean -- avoids any out-of-date build stuff messing up the compile -- does a Save first before compiling");
 
   split = new iSplitter(main_widg);
   main_vbox->addWidget(split);
@@ -3025,6 +3029,7 @@ void iPluginEditor::init() {
 
   connect(actSave, SIGNAL(triggered()), this, SLOT(save_clicked()) );
   connect(actCompile, SIGNAL(triggered()), this, SLOT(compile_clicked()) );
+  connect(actReBuild, SIGNAL(triggered()), this, SLOT(rebuild_clicked()) );
 }
 
 void iPluginEditor::save_clicked() {
@@ -3034,6 +3039,11 @@ void iPluginEditor::save_clicked() {
 void iPluginEditor::compile_clicked() {
   SaveFiles();
   Compile();
+}
+
+void iPluginEditor::rebuild_clicked() {
+  SaveFiles();
+  ReBuild();
 }
 
 void iPluginEditor::LoadFiles() {
@@ -3087,7 +3097,11 @@ void iPluginEditor::SaveFiles() {
 }
 
 void iPluginEditor::Compile() {
-  taPlugins::MakePlugin(dir_path, file_base, false); // assume user
+  taPlugins::MakePlugin(dir_path, file_base, false, false); // false = assume user, false = no full rebuild
+}
+
+void iPluginEditor::ReBuild() {
+  taPlugins::MakePlugin(dir_path, file_base, false, true); // false = assume user, true = full rebuild
 }
 
 void iPluginEditor::closeEvent(QCloseEvent* ev) {

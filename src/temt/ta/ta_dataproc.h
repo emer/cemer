@@ -382,10 +382,7 @@ public:
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON joins two datatables (src_a and src_b) into dest datatable.  tables are internally sorted first according to the join column.  all matching row values from both tables are included in the result.  for the left join, all rows of src_a are included even if src_b does not match, and vice-versa for the right join.  inner only includes the matches.  all columns are included (without repeating the common column)
 
   static bool	ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b);
-  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON concatenate two datatables into one datatable by adding both sets of columns together, merging data on a row-by-row basis (number of rows = MIN(src_a->rows, src_b_rows)).
-
-  static bool	ConcatCols2(DataTable* dest, DataTable* src);
-  // #CAT_Columns #MENU_BUTTON Alternate faster ConcatCols implementation. Concatentates the columns of src onto dest. Doesn't uniquify names and you can't pass in NULL tables. 
+  // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Columns #MENU_BUTTON concatenate two datatables into one datatable by adding both sets of columns together -- if dest == src_a then the results go into the src_a table directly, and no additional table is created -- if the number of rows is unequal, then result has the maximum of the two sources, with blank padding for the shorter of the two.
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_BASEFUNS(taDataProc);

@@ -2324,8 +2324,8 @@ void DataTable::ChangeColTypeGeom(const String& col_nm, ValType new_type,
   if(!da) return;
   MatrixGeom mg;
   mg.SetGeom(dims, d0, d1, d2, d3, d4, d5, d6);
-  if((!da->is_matrix && (mg.dims() == 0)) ||
-     da->cell_geom.Equal(mg)) return;
+  if((da->valType() == new_type) && 
+     ((!da->is_matrix && (mg.dims() == 0)) || da->cell_geom.Equal(mg))) return;
   ChangeColTypeGeom_impl(da, new_type, mg);
 }
 

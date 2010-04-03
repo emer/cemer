@@ -408,35 +408,66 @@ void VEBodyView::Render_impl() {
 
   SoSeparator* ssep = obv->shapeSeparator();
 
+  float off_size = 1.0e-12f;	// tiny size if it is turned off..
+
   if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     if(ob->HasBodyFlag(VEBody::FM_FILE)) {
       SoTransform* tx = node_so()->txfm_shape();
-      ob->obj_xform.CopyTo(tx);
+      if(ob->HasBodyFlag(VEBody::OFF)) {
+	FloatTransform off_tx = ob->obj_xform;
+	off_tx.scale.SetXYZ(off_size, off_size, off_size);
+	off_tx.CopyTo(tx);
+      }
+      else {
+	ob->obj_xform.CopyTo(tx);
+      }
     }
     else {
       switch(ob->shape) {
       case VEBody::SPHERE: {
 	SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	sp->radius = ob->radius;
+	if(ob->HasBodyFlag(VEBody::OFF))
+	  sp->radius = off_size;
+	else
+	  sp->radius = ob->radius;
 	break;
       }
       case VEBody::CAPSULE: {
 	SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	sp->radius = ob->radius;
-	sp->height = ob->length;
+	if(ob->HasBodyFlag(VEBody::OFF)) {
+	  sp->radius = off_size;
+	  sp->height = off_size;
+	}
+	else {
+	  sp->radius = ob->radius;
+	  sp->height = ob->length;
+	}
 	break;
       }
       case VEBody::CYLINDER: {
 	SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	sp->radius = ob->radius;
-	sp->height = ob->length;
+	if(ob->HasBodyFlag(VEBody::OFF)) {
+	  sp->radius = off_size;
+	  sp->height = off_size;
+	}
+	else {
+	  sp->radius = ob->radius;
+	  sp->height = ob->length;
+	}
 	break;
       }
       case VEBody::BOX: {
 	SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	sp->width = ob->box.x;
-	sp->depth = ob->box.z;
-	sp->height = ob->box.y;
+	if(ob->HasBodyFlag(VEBody::OFF)) {
+	  sp->width = off_size;
+	  sp->depth = off_size;
+	  sp->height = off_size;
+	}
+	else {
+	  sp->width = ob->box.x;
+	  sp->depth = ob->box.z;
+	  sp->height = ob->box.y;
+	}
 	break;
       }
       case VEBody::NO_SHAPE: {
@@ -1256,42 +1287,80 @@ void VEStaticView::Render_impl() {
 
   SoSeparator* ssep = obv->shapeSeparator();
 
+  float off_size = 1.0e-12f;	// tiny size if it is turned off..
+
   if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     if(ob->HasStaticFlag(VEStatic::FM_FILE)) {
-      SoTransform* tx = obv->txfm_shape();
-      ob->obj_xform.CopyTo(tx);
+      if(ob->HasStaticFlag(VEStatic::OFF)) {
+	FloatTransform off_tx = ob->obj_xform;
+	off_tx.scale.SetXYZ(off_size, off_size, off_size);
+	off_tx.CopyTo(tx);
+      }
+      else {
+	SoTransform* tx = obv->txfm_shape();
+	ob->obj_xform.CopyTo(tx);
+      }
     }
     else {
       switch(ob->shape) {
       case VEStatic::SPHERE: {
 	SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	sp->radius = ob->radius;
+	if(ob->HasStaticFlag(VEStatic::OFF))
+	  sp->radius = off_size;
+	else
+	  sp->radius = ob->radius;
 	break;
       }
       case VEStatic::CAPSULE: {
 	SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	sp->radius = ob->radius;
-	sp->height = ob->length;
+	if(ob->HasStaticFlag(VEStatic::OFF)) {
+	  sp->radius = off_size;
+	  sp->height = off_size;
+	}
+	else {
+	  sp->radius = ob->radius;
+	  sp->height = ob->length;
+	}
 	break;
       }
       case VEStatic::CYLINDER: {
 	SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	sp->radius = ob->radius;
-	sp->height = ob->length;
+	if(ob->HasStaticFlag(VEStatic::OFF)) {
+	  sp->radius = off_size;
+	  sp->height = off_size;
+	}
+	else {
+	  sp->radius = ob->radius;
+	  sp->height = ob->length;
+	}
 	break;
       }
       case VEStatic::BOX: {
 	SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	sp->width = ob->box.x;
-	sp->depth = ob->box.z;
-	sp->height = ob->box.y;
+	if(ob->HasStaticFlag(VEStatic::OFF)) {
+	  sp->width = off_size;
+	  sp->depth = off_size;
+	  sp->height = off_size;
+	}
+	else {
+	  sp->width = ob->box.x;
+	  sp->depth = ob->box.z;
+	  sp->height = ob->box.y;
+	}
 	break;
       }
       case VEStatic::PLANE: {
 	SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	sp->height = .01f;
-	sp->width = ob->plane_vis_size.x;
-	sp->depth = ob->plane_vis_size.y;
+	if(ob->HasStaticFlag(VEStatic::OFF)) {
+	  sp->height = off_size;
+	  sp->width = off_size;
+	  sp->depth = off_size;
+	}
+	else {
+	  sp->height = .01f;
+	  sp->width = ob->plane_vis_size.x;
+	  sp->depth = ob->plane_vis_size.y;
+	}
 	break;
       }
       case VEStatic::NO_SHAPE: {

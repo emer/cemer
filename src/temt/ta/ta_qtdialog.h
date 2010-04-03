@@ -865,6 +865,7 @@ public:
   virtual void		LoadFiles(); // load files into editors
   virtual void		SaveFiles(); // save files from editors
   virtual void		Compile(); // compile
+  virtual void		ReBuild(); // full rebuild
 
 #ifndef __MAKETA__ 
 public:
@@ -878,6 +879,7 @@ public:
   QToolBar*		tool_bar;
   QAction* 		  actSave;
   QAction* 		  actCompile;
+  QAction* 		  actReBuild;
   
 protected:
   
@@ -890,6 +892,7 @@ protected:
 protected slots:
   void			save_clicked();
   void			compile_clicked();
+  void			rebuild_clicked();
   
 private:
   void 		init(); // called by constructors

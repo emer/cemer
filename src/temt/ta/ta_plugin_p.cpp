@@ -283,75 +283,124 @@ bool taPlugins::MakeSystemPlugin(const String& plugin_name) {
   return MakePlugin(plug_path, plugin_name, true); // system
 }
 
-class InteractiveProcess : public QProcess {
-  static int stdinClone;
-public:
-  InteractiveProcess(QObject *parent = 0) : QProcess(parent) {
-    if (stdinClone == -1)
-      stdinClone = ::dup(fileno(stdin));
-  }
-protected:
-  void setupChildProcess() {
-    ::dup2(stdinClone, fileno(stdin));
-  }
-};
+// turns out that good ol' system() call works better in mac and windows..
 
-int InteractiveProcess::stdinClone = -1;
+// class InteractiveProcess : public QProcess {
+//   static int stdinClone;
+// public:
+//   InteractiveProcess(QObject *parent = 0) : QProcess(parent) {
+//     if (stdinClone == -1)
+//       stdinClone = ::dup(fileno(stdin));
+//   }
+// protected:
+//   void setupChildProcess() {
+//     ::dup2(stdinClone, fileno(stdin));
+//   }
+// };
+
+// int InteractiveProcess::stdinClone = -1;
 
 bool taPlugins::ExecMakeCmd(const String& cmd, const String& working_dir) {
-  taMisc::Info(cmd);
-#ifdef TA_OS_WIN
-  QProcess proc;
-#else
-  InteractiveProcess proc;
-#endif
-  proc.setWorkingDirectory(working_dir);
-  proc.start(cmd);
-  if(!proc.waitForStarted()) return false;
-  if(!proc.waitForFinished()) return false;
-  QByteArray result = proc.readAll();
-  taMisc::Info(result);
+  cout << cmd << endl;
+  QString curpath = QDir::currentPath();
+  QDir::setCurrent(working_dir);
+  system(cmd);
+  QDir::setCurrent(curpath);	// restore previous
+  return true;
+
+// #ifdef TA_OS_WIN
+//   QProcess proc;
+// #else
+//   InteractiveProcess proc;
+// #endif
+//   proc.setWorkingDirectory(working_dir);
+//   proc.start(cmd);
+//   if(!proc.waitForStarted()) return false;
+//   if(!proc.waitForFinished()) return false;
+//   QByteArray result = proc.readAll();
+//   taMisc::Info(result);
+//   return true;
+}
+
+////////////////////////////
+// 	make plugin threading
+
+PluginMakeThreadMgr* taPlugins::make_thread = NULL;
+
+void PluginMakeTask::Initialize() {
+}
+
+void PluginMakeTask::Destroy() {
+}
+
+void PluginMakeTask::run() {
+  PluginMakeThreadMgr* mkmg = mgr();
+  if(!mkmg) return;
+  if(mkmg->isDestroying()) return; // checks owner..
+  if(!mkmg->make_pending) return;
+
+  taPlugins::MakePlugin_impl(mkmg->plugin_path, mkmg->plugin_name, mkmg->system_plugin,
+			     mkmg->full_rebuild);
+  mkmg->make_pending = false;
+}
+
+void PluginMakeThreadMgr::Initialize() {
+  n_threads = 2;		// don't use 0, just 1..
+  task_type = &TA_PluginMakeTask;
+}
+
+void PluginMakeThreadMgr::Destroy() {
+}
+
+void PluginMakeThreadMgr::MakePlugin(const String& pl_path, const String& pl_name,
+				     bool sys_plugin, bool full_reb) {
+  n_threads = 2;		// don't use 0, just 1..
+  InitAll();
+  make_pending = true;
+  plugin_path = pl_path;
+  plugin_name = pl_name;
+  system_plugin = sys_plugin;
+  full_rebuild = full_reb;
+  RunThreads();			// just run the thread, not main guy
+}
+
+
+bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
+			   bool system_plugin, bool full_rebuild) {
+  if(taMisc::gui_active) {
+    if(!make_thread) {
+      make_thread = new PluginMakeThreadMgr;
+      taBase::Own(make_thread, tabMisc::root); // own by root..
+    }
+    else {
+      if(make_thread->n_running > 0)
+	make_thread->SyncThreads();	// sync now before running again..
+    }
+    make_thread->MakePlugin(plugin_path, plugin_name, system_plugin, full_rebuild);
+  }
+  else {
+    // no gui = just do it now
+    return MakePlugin_impl(plugin_path, plugin_name, system_plugin, full_rebuild);
+  }
   return true;
 }
 
-bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
-			   bool system_plugin) {
-  taMisc::Info("=========================================================================");
-  taMisc::Info("Making Plugin:", plugin_name, "in dir:", plugin_path);
-  taMisc::Info("=========================================================================");
+bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_name,
+			   bool system_plugin, bool full_rebuild) {
+  cout << "=========================================================================" << endl;
+  cout << "Making Plugin: " << plugin_name << " in dir: " << plugin_path << endl;
+  cout << "=========================================================================" << endl;
 
-  String build_dir = "build" + taMisc::build_str;
+  String build_dir = "build";
+  if(taMisc::build_str.nonempty()) build_dir += "_" + taMisc::build_str;
   String build_path = plugin_path + PATH_SEP + build_dir;
 
   String sudo_cmd;
 
-#ifdef TA_OS_WIN
-  QDir qdr(plugin_path);
-  qdr.mkdir(build_dir);
-#else
+#ifndef TA_OS_WIN
   if(system_plugin)
     sudo_cmd = "sudo ";
-
-  String mkdir_cmd = sudo_cmd + "mkdir " + build_dir;
-  if(!ExecMakeCmd(mkdir_cmd, plugin_path)) return false;
-
 #endif
-  String cmake_cmd = sudo_cmd + "cmake ../ ";
-  if(taMisc::build_str.nonempty()) {
-    if(taMisc::build_str.contains("dbg")) {
-      cmake_cmd += "-DCMAKE_BUILD_TYPE=Debug ";
-    }
-    if(taMisc::build_str.contains("mpi")) {
-      cmake_cmd += "-DMPI_BUILD=TRUE ";
-    }
-  }
-  if(system_plugin)
-    cmake_cmd += "-DEMERGENT_PLUGIN_TYPE=System ";
-#ifdef TA_OS_WIN
-  cmake_cmd += "-G \"\"\"NMake Makefiles\"\"\"";
-#endif
-
-  if(!ExecMakeCmd(cmake_cmd, build_path)) return false;
 
   String make_cmd = sudo_cmd;
 #ifdef TA_OS_WIN
@@ -360,9 +409,36 @@ bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
   make_cmd += "make";
 #endif
 
-  // always start off with a make clean to ensure everything is rebuilt
-  String make_clean = make_cmd + " clean";
-  if(!ExecMakeCmd(make_clean, build_path)) return false;
+  if(full_rebuild) {
+#ifdef TA_OS_WIN
+    QDir qdr(plugin_path);
+    qdr.mkdir(build_dir);
+#else
+    String mkdir_cmd = sudo_cmd + "mkdir " + build_dir;
+    if(!ExecMakeCmd(mkdir_cmd, plugin_path)) return false;
+#endif
+
+    String cmake_cmd = sudo_cmd + "cmake ../ ";
+    if(taMisc::build_str.nonempty()) {
+      if(taMisc::build_str.contains("dbg")) {
+	cmake_cmd += "-DCMAKE_BUILD_TYPE=Debug ";
+      }
+      if(taMisc::build_str.contains("mpi")) {
+	cmake_cmd += "-DMPI_BUILD=TRUE ";
+      }
+    }
+    if(system_plugin)
+      cmake_cmd += "-DEMERGENT_PLUGIN_TYPE=System ";
+#ifdef TA_OS_WIN
+    cmake_cmd += "-G \"\"\"NMake Makefiles\"\"\"";
+#endif
+
+    if(!ExecMakeCmd(cmake_cmd, build_path)) return false;
+
+    // always start off with a make clean to ensure everything is rebuilt
+    String make_clean = make_cmd + " clean";
+    if(!ExecMakeCmd(make_clean, build_path)) return false;
+  }
 
   // straight make
   if(!ExecMakeCmd(make_cmd, build_path)) return false;
