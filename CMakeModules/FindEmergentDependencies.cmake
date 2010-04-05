@@ -14,7 +14,12 @@ if (NOT WIN32)
 endif (NOT WIN32)
 find_package(ODE)
 find_package(GSL)
-find_package(ZLIB)
+
+if (WIN32)
+  set(ZLIB_LIBRARIES "")
+else (WIN32)
+  find_package(ZLIB)
+endif (WIN32)
 
 # NOTE: could also do BISON but it is not really required so not worth the hassle
 #find_package(BISON)
