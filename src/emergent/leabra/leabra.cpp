@@ -2378,7 +2378,7 @@ void KwtaTieBreak::Initialize() {
   on = false;
   k_thr = 1.0f;
   diff_thr = 0.2f;
-  thr_gain = 0.05f;
+  thr_gain = 0.005f;
   loser_gain = 1.0f;
 }
 
