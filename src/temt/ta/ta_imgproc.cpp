@@ -4174,7 +4174,7 @@ bool RetinaSpec::LookAtImageName(const String& img_fname, DataTable* dt,
 		     superimpose);
 }
 
-bool RetinaSpec::LookAtImageSeriesName(const String& img_fname, int eyes, int timesteps, bool reverse_timstep_order, DataTable* dt,
+bool RetinaSpec::LookAtImageSeriesName(const String& img_fname, const String& img_fextension, int eyes, int timesteps, bool reverse_timstep_order, DataTable* dt,
 				 RetinalSpacingSpec::Region region,
 				 float box_ll_x, float box_ll_y,
 				 float box_ur_x, float box_ur_y,
@@ -4192,7 +4192,7 @@ bool RetinaSpec::LookAtImageSeriesName(const String& img_fname, int eyes, int ti
 			}
 			
 			String file_mod_name = GetModName(eyes, timesteps,eye,timestep_filenumber);
-			String full_img_fname = img_fname + file_mod_name  + ".png";
+			String full_img_fname = img_fname + file_mod_name  + "." + img_fextension;
 			if(!img.LoadImage(full_img_fname))
 				return false;
 			img.name = full_img_fname;		// explicitly name it
