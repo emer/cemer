@@ -34,7 +34,7 @@ if (WIN32)
   # Windows import/export control -- since we are trying to find it, we assume importing
   add_definitions(-DEMERGENT_DLL)
 else (WIN32)
-  FIND_LIBRARY(EMERGENT_LIBRARY NAMES "emergentlib${EMERGENT_SUFFIX}" PATH
+  FIND_LIBRARY(EMERGENT_LIBRARY NAMES "emergentlib${EMERGENT_SUFFIX}" PATHS
     /usr/local/lib
     /usr/lib
     /opt/local/lib

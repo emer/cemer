@@ -17,21 +17,18 @@ FIND_PATH(SOQT_INCLUDE_DIR SoQt.h
 )
 #MESSAGE("SOQT_INCLUDE_DIR=" ${SOQT_INCLUDE_DIR})
 
-# NOTE: General FIND_LIBRARY not working for some reason on Windows, but we want our own prereq
-# anyways, and must use the debug version (because of runtime linkage) when in Debug anyways
-
 if (WIN32)
   if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    IF (EXISTS ${COINDIR}/lib/soqt1d.lib)
-      SET(SOQT_LIBRARY "${COINDIR}/lib/soqt1d.lib")
-    ENDIF (EXISTS ${COINDIR}/lib/soqt1d.lib)
+    FIND_LIBRARY(SOQT_LIBRARY NAMES soqt1d PATHS
+      "${COINDIR}/lib"
+    )
   else (CMAKE_BUILD_TYPE MATCHES "Debug") 
-    IF (EXISTS ${COINDIR}/lib/soqt1.lib)
-      SET(SOQT_LIBRARY "${COINDIR}/lib/soqt1.lib")
-    ENDIF (EXISTS ${COINDIR}/lib/soqt1.lib)
+    FIND_LIBRARY(SOQT_LIBRARY NAMES soqt1 PATHS
+      "${COINDIR}/lib"
+    )
   endif (CMAKE_BUILD_TYPE MATCHES "Debug")
 else (WIN32)
-  FIND_LIBRARY(SOQT_LIBRARY NAMES SoQt PATH
+  FIND_LIBRARY(SOQT_LIBRARY NAMES SoQt PATHS
     /usr/lib
     /usr/local/lib
     /opt/local/lib
