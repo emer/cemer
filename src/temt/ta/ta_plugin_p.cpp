@@ -411,10 +411,17 @@ bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_
 
   if(full_rebuild) {
 #ifdef TA_OS_WIN
+    // first nuke anything existing!
+    String rmdir_cmd = "rmdir " + build_dir + " /s /q";
+    if(!ExecMakeCmd(rmdir_cmd, plugin_path)) return false;
+
     QDir qdr(plugin_path);
     qdr.mkdir(build_dir);
 #else
-    String mkdir_cmd = sudo_cmd + "mkdir " + build_dir;
+    String rmdir_cmd = sudo_cmd + "/bin/rm -rf " + build_dir;
+    if(!ExecMakeCmd(rmdir_cmd, plugin_path)) return false;
+
+    String mkdir_cmd = sudo_cmd + "/bin/mkdir " + build_dir;
     if(!ExecMakeCmd(mkdir_cmd, plugin_path)) return false;
 #endif
 

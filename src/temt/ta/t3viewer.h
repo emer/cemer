@@ -94,9 +94,9 @@ class TA_API T3SavedView : public taNBase {
 INHERITED(taNBase)
 public:
   bool		view_saved;	// #READ_ONLY #SHOW whether a view is currently saved or not
-  FloatTDCoord	pos;		// #READ_ONLY position of camera in view
-  FloatRotation	orient;		// #READ_ONLY orientation of camera in view
-  float		focal_dist;	// #READ_ONLY focal distance
+  FloatTDCoord	pos;		// #READ_ONLY #EXPERT position of camera in view
+  FloatRotation	orient;		// #READ_ONLY #EXPERT orientation of camera in view
+  float		focal_dist;	// #READ_ONLY #EXPERT focal distance
 
   void		getCameraParams(SoCamera* cam);
   // get the camera parameters into our saved values

@@ -219,6 +219,13 @@ void VEBodyView::Destroy() {
   CutLinks();
 }
 
+bool VEBodyView::ignoreDataChanged() const {
+// #ifdef DEBUG
+//   if(m_vis_cnt <= 0) taMisc::Info("invis updt");
+// #endif
+  return false;			// always update..
+}
+
 bool VEBodyView::SetName(const String& value) { 
   name = value;  
   return true; 

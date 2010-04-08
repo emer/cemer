@@ -4668,6 +4668,16 @@ bool TypeDef::InheritsNonAtomicClass() const {
   return (m_cacheInheritsNonAtomicClass == 1);
 }
 
+bool TypeDef::IsBasePointerType() const {
+#ifndef NO_TA_BASE
+  if(((ptr == 1) && DerivesFrom(TA_taBase)) ||
+     ((ptr == 0) && (DerivesFrom(TA_taSmartPtr) || 
+		     DerivesFrom(TA_taSmartRef))) )
+    return true;
+#endif
+  return false;
+}
+
 TypeDef* TypeDef::GetStemBase() const {
   if(HasOption("STEM_BASE")) return const_cast<TypeDef*>(this);
   // first breadth

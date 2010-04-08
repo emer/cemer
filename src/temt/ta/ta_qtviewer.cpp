@@ -8411,10 +8411,7 @@ tabTreeDataNode::~tabTreeDataNode()
 
 void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-  if(dcr == DCR_STRUCT_UPDATE_END) {
-// #ifdef DEBUG
-//     taMisc::Info("tabTreeDataNode DataChanged_impl Struct Update:",tadata()->GetDisplayName());
-// #endif
+  if(dcr == DCR_STRUCT_UPDATE_ALL) { // special case for post-loading update
     takeChildren();
     CreateChildren();
     iTreeView* itv = treeView();

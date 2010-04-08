@@ -132,6 +132,7 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
   
   DCR_STRUCT_UPDATE_BEGIN = 50, // 50 for some updating, like doing Layer->Build, better for gui to just do one
   DCR_STRUCT_UPDATE_END,  // 51 update operation at the end of everything
+  DCR_STRUCT_UPDATE_ALL,  // 52 special case for rebuilding entire gui display (e.g., tree view browser) associated with an item when changes have occurred that have not been tracked (e.g., during the load process, where changes are blocked)
   DCR_DATA_UPDATE_BEGIN = 60, // 60 for some data changes, like various log updates, better for gui to just do one
   DCR_DATA_UPDATE_END,  // 61 update operation at the end of everything
     

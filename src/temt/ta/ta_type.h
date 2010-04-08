@@ -2253,7 +2253,10 @@ public:
   bool 			DerivesFormal(const TypeDef& it) const
   { return DerivesFormal((TypeDef*)&it); }
 
-  bool			InheritsNonAtomicClass() const; // true *only* for classes that are not considered atoms by the streaming system, i.e. does not include taString and Variant 
+  bool			InheritsNonAtomicClass() const;
+  // true *only* for classes that are not considered atoms by the streaming system, i.e. does not include taString and Variant 
+  bool			IsBasePointerType() const;
+  // true for taBase* and smartref and smartptr types -- any kind of effective pointer class
 
   TypeDef*		GetStemBase() const;
   // for class types: get first (from me) parent with STEM_BASE directive -- defines equivalence class -- returns NULL if not found

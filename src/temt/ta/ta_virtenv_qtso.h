@@ -51,6 +51,8 @@ public:
   virtual void		FixOrientation(bool force=false);
   // fix the orientation of the body for different shape axes (capsule and cylinder) -- if force, do it regardless of whether IsCurShape is true (i.e. for render_pre)
 
+  override bool		ignoreDataChanged() const;
+
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEBodyView& cp);
   TA_BASEFUNS(VEBodyView);

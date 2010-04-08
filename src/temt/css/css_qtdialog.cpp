@@ -495,31 +495,45 @@ void cssiArgDialog::GetImage(bool) {
 }
 
 int cssiArgDialog::Edit(bool modal_, int min_width, int min_height) {
-  // special case for a single stream arg
-  if ((use_argc == 1) && md->arg_types[0]->InheritsFrom(TA_ios)
-     && !md->HasOption("FILE_ARG_EDIT"))
-  {
-    taiStreamArgType* sa = (taiStreamArgType*)type_el.FastEl(0);
-    if (sa->gf == NULL)
-      return cssiEditDialog::Edit(modal_);
-    if (sa->arg_typ->InheritsFrom(TA_ostream)) {
-      if (md->HasOption("QUICK_SAVE"))
-	sa->gf->Save();
-      else if (md->HasOption("APPEND_FILE"))
-	sa->gf->Append();
-      else
-	sa->gf->SaveAs();
+  if(use_argc == 1) {
+    // special cases for single args -- can pop up choosers directly instead
+    TypeDef* argt = md->arg_types[0];
+    if(argt->InheritsFrom(TA_ios) && !md->HasOption("FILE_ARG_EDIT")) {
+      taiStreamArgType* sa = (taiStreamArgType*)type_el.FastEl(0);
+      if (sa->gf == NULL)
+	return cssiEditDialog::Edit(modal_);
+      if (sa->arg_typ->InheritsFrom(TA_ostream)) {
+	if (md->HasOption("QUICK_SAVE"))
+	  sa->gf->Save();
+	else if (md->HasOption("APPEND_FILE"))
+	  sa->gf->Append();
+	else
+	  sa->gf->SaveAs();
+      }
+      else {
+	sa->gf->Open();
+      }
+      state = ACCEPTED;
+      sa->GetValueFromGF();
+      if (sa->err_flag)
+	return false;
+      return true;
     }
-    else {
-      sa->gf->Open();
+    else if(argt->IsBasePointerType()) {
+      taiArgType* art = (taiArgType*)type_el.FastEl(hide_args);
+      taiData* mb_dat = data_el(0).SafeEl(hide_args);
+      if (mb_dat == NULL) return false; // shouldn't happen
+      art->GetImage(mb_dat, root);
+      taiTokenPtrButton* tokbut = (taiTokenPtrButton*)mb_dat;
+      bool ok = tokbut->OpenChooser(); // call chooser now
+      if(ok) {
+	art->GetValue(mb_dat, root);
+      }
+      state = ACCEPTED;
+      return ok;
     }
-    state = ACCEPTED;
-    sa->GetValueFromGF();
-    if (sa->err_flag)
-      return false;
-    return true;
-  } else
-    return cssiEditDialog::Edit(modal_, min_width, min_height);
+  }
+  return cssiEditDialog::Edit(modal_, min_width, min_height);
 }
 
 

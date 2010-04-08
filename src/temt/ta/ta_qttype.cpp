@@ -719,9 +719,7 @@ taiData* gpiArray_Type::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget*
 //////////////////////////////////
 
 int taiTokenPtrType::BidForType(TypeDef* td) {
-  if(((td->ptr == 1) && td->DerivesFrom(TA_taBase)) ||
-     ((td->ptr == 0) && (td->DerivesFrom(TA_taSmartPtr) || 
-			 td->DerivesFrom(TA_taSmartRef))) )
+  if(td->IsBasePointerType())
     return (taiType::BidForType(td) +1);
   return 0;
 }
@@ -781,15 +779,16 @@ TypeDef* taiTokenPtrType::GetMinType(const void* base) {
 
 void taiTokenPtrType::GetImage_impl(taiData* dat, const void* base) {
   TypeDef* npt = typ->GetNonPtrType();
-  bool ro = isReadOnly(dat);
-  if (ro || !npt->tokens.keep) {
-    taiEditButton *ebrval = (taiEditButton*) dat;
-    ebrval->GetImage_(*((void**) base));
-  }
-  else {
+  // this seems out of date:
+//   bool ro = isReadOnly(dat);
+//   if (ro || !npt->tokens.keep) {
+//     taiEditButton *ebrval = (taiEditButton*) dat;
+//     ebrval->GetImage_(*((void**) base));
+//   }
+//   else {
     taiTokenPtrButton* rval = (taiTokenPtrButton*)dat;
     rval->GetImage(*((taBase**)base), npt); // default typ, no scope
-  }
+//   }
 }
 
 void taiTokenPtrType::GetValue_impl(taiData* dat, void* base) {
@@ -1391,11 +1390,8 @@ void taiMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff)
 //////////////////////////////////
 
 int taiTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if(td->InheritsFrom(&TA_taBase) &&
-     ((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)) ||
-     ((md->type->ptr == 0) && ((md->type->DerivesFrom(TA_taSmartPtr) || 
-				md->type->DerivesFrom(TA_taSmartRef)))) )
-     return inherited::BidForMember(md,td) + 1;
+  if(td->InheritsFrom(&TA_taBase) && md->type->IsBasePointerType())
+    return inherited::BidForMember(md,td) + 1;
   return 0;
 }
 
@@ -2845,10 +2841,7 @@ void gpiLinkList::GetMbrValue(taiData*, void*, bool&) {
 //////////////////////////////////
 
 int gpiFromGpTokenPtrMember::BidForMember(MemberDef* md, TypeDef* td) {
-  if(td->InheritsFrom(&TA_taBase) &&
-     (((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase)) ||
-      ((md->type->ptr == 0) && (md->type->DerivesFrom(TA_taSmartPtr) || 
-				md->type->DerivesFrom(TA_taSmartRef))))
+  if(td->InheritsFrom(&TA_taBase) && md->type->IsBasePointerType()
      && md->OptionAfter("FROM_GROUP_").nonempty())
     return taiTokenPtrMember::BidForMember(md,td)+1;
   return 0;

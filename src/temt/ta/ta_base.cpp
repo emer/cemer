@@ -1048,10 +1048,8 @@ int taBase::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) {
   StructUpdate(true);
   Dump_Load_pre();
   int rval = GetTypeDef()->Dump_Load(strm, (void*)this, par, (void**)loaded_obj_ptr); 
-// #ifdef DEBUG
-//   taMisc::Info("load struct update:",GetName());
-// #endif
   StructUpdate(false);
+  DataChanged(DCR_STRUCT_UPDATE_ALL); // during loading, updates are blocked, so now we redo everything
   if(loaded_obj_ptr) {
     if(*loaded_obj_ptr) (*loaded_obj_ptr)->setDirty(false);
   }
