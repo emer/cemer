@@ -11,7 +11,7 @@ FIND_PATH(SNDFILE_INCLUDE_DIR sndfile.hh
     $ENV{INCLUDE}
 )
 
-FIND_LIBRARY(SNDFILE_LIBRARY NAMES sndfile PATH
+FIND_LIBRARY(SNDFILE_LIBRARY NAMES sndfile PATHS
    /usr/lib
    /usr/local/lib
    /opt/local/lib

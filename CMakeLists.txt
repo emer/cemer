@@ -60,26 +60,11 @@ set(EMERGENT_LIB_SOVERSION ${EMERGENT_VERSION_MAJOR})
 #   and plugins -- this insures we have a consistent environment
 include(CMakeModules/EmergentDefaults.cmake)
 
-# we build the lib/bin targets into a common folder, so
-# we can more easily run and debug immediately in-place
-if (WIN32)
-  # on Windows we just build right up into subfolder of {proj}/bin 
-  # this simplifies using the legacy installer
-  # NOTE: for MSVC_IDE {CMAKE_RELEASE_TYPE} subfolder is implicitly added
-  if (MSVC_IDE)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib) #for Win
-  else (MSVC_IDE)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE})
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE}) #for Win
-  endif (MSVC_IDE)
-else (WIN32)
-  # on Unix we use binary dir to preserve clean sep btwn src and build
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-endif (WIN32)
+# use binary dir to preserve clean sep btwn src and build
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
 
 ################################################################
 # Step 3: misc global stuff: paths, finding packages etc
@@ -107,27 +92,12 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${PROJECT_BINARY_DIR}/src/temt/lib
 )
-# if (false) # NUKE
-# include_directories(
-#   ${PROJECT_SOURCE_DIR}
-#   ${PROJECT_SOURCE_DIR}/src/temt/ta
-#   ${PROJECT_SOURCE_DIR}/src/temt/taiqtso
-#   ${PROJECT_SOURCE_DIR}/src/temt/css
-#   ${PROJECT_SOURCE_DIR}/src/emergent/network
-#   ${PROJECT_SOURCE_DIR}/src/emergent/bp
-#   ${PROJECT_SOURCE_DIR}/src/emergent/leabra
-#   ${PROJECT_SOURCE_DIR}/src/emergent/so
-#   ${PROJECT_SOURCE_DIR}/src/emergent/cs
-# )
-# endif (false)
 
 # install destinations
 if (WIN32)
   # Note: contrary to cmake docs, the default CMAKE_INSTALL_PREFIX includes the project
   # so it is C:/Program Files/Emergent
   # we have issues with path spaces, so install to C:/Emergent
-#try default  set(CMAKE_INSTALL_PREFIX "C:/")
-#set(CMAKE_INSTALL_PREFIX "C:/Users/baisa/tmp") #TEST
   # everything gets bundled
   set(EMERGENT_INCLUDE_DEST include)
   set(EMERGENT_SHARE_DEST .)
@@ -307,6 +277,9 @@ if (WIN32)
   install(FILES ${OUR_3RDPARTY_FILES}
     DESTINATION bin
   )
+  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty"
+    DESTINATION 3rdparty
+  )
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images/Emergent.ico
     DESTINATION ${EMERGENT_SHARE_DEST}
   )
@@ -328,25 +301,14 @@ CONFIGURE_FILE(
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
-if (false) #NOTE: see the file for issues -- abandoned for now BA 12/19/08
-if (WIN32)
-CONFIGURE_FILE(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake_custom_install.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/cmake_custom_install.cmake"
-  IMMEDIATE @ONLY)
-  
-install(CODE
-  "execute_process(COMMAND \"${CMAKE_COMMAND}\" -P \"${CMAKE_CURRENT_BINARY_DIR}/cmake_custom_install.cmake\")"
-  )
-endif (WIN32)
-endif (false)
 
 ########### cpack packaging ###############
 
 include(CMakeModules/EmergentCPack.cmake)
 
 ########### special targets and commands ###############
-#BUG: these targets are flakily forcing all the subtargets to become ALL
+
+# BUG: these targets are flakily forcing all the subtargets to become ALL
 # targets on Windows (at least in VS) thus we have to omit them
 if (NOT WIN32)
 # use this to remove all ta files from source tree
@@ -362,7 +324,8 @@ ADD_CUSTOM_TARGET(force_ta
 ADD_CUSTOM_TARGET(distclean
   DEPENDS clean_ta_all
   )
-endif (NOT WIN32)  
+endif (NOT WIN32)
+
 # svn commands b/c otherwise you're living in the build dir and this saves a cd..
 ADD_CUSTOM_TARGET(svn_update
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}

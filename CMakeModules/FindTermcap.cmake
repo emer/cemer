@@ -12,7 +12,7 @@ FIND_PATH(TERMCAP_INCLUDE_DIR termcap.h
     $ENV{INCLUDE}
 )
 
-FIND_LIBRARY(TERMCAP_LIBRARY NAMES termcap PATH
+FIND_LIBRARY(TERMCAP_LIBRARY NAMES termcap PATHS
    /usr/lib
    /usr/local/lib
    /opt/local/lib

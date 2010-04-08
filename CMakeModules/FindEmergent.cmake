@@ -24,10 +24,9 @@ else (WIN32)
 endif (WIN32)
 
 if (WIN32)
-  find_file(EMERGENT_LIBRARY "emergentlib${EMERGENT_SUFFIX}.lib" PATHS
+  find_library(EMERGENT_LIBRARY "emergentlib${EMERGENT_SUFFIX}" PATHS
     "${EMERGENTDIR}/lib"
     "${EMERGENTDIR}/lib/${CMAKE_BUILD_TYPE}" #don't use CMAKE_CFG_INTDIR not valid on "NMake Makefiles"
-    NO_DEFAULT_PATH
   )
   if (NOT EXISTS "${EMERGENT_LIBRARY}")
     message(FATAL_ERROR "EMERGENTDIR environment variable must point to Emergent install directory!")

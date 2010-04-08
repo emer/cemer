@@ -23,16 +23,16 @@ FIND_PATH(COIN_INCLUDE_DIR SbVec3f.h
 
 if (WIN32)
   if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    IF (EXISTS ${COINDIR}/lib/coin3d.lib)
-      SET(COIN_LIBRARY "${COINDIR}/lib/coin3d.lib")
-    ENDIF (EXISTS ${COINDIR}/lib/coin3d.lib)
+    FIND_LIBRARY(COIN_LIBRARY NAMES coin3d PATHS
+      ${COINDIR}/lib
+    )
   else (CMAKE_BUILD_TYPE MATCHES "Debug") 
-    IF (EXISTS ${COINDIR}/lib/coin3.lib)
-      SET(COIN_LIBRARY "${COINDIR}/lib/coin3.lib")
-    ENDIF (EXISTS ${COINDIR}/lib/coin3.lib)
+    FIND_LIBRARY(COIN_LIBRARY NAMES coin3 PATHS
+      ${COINDIR}/lib
+    )
   endif (CMAKE_BUILD_TYPE MATCHES "Debug")
 else (WIN32)
-  FIND_LIBRARY(COIN_LIBRARY NAMES Coin PATH
+  FIND_LIBRARY(COIN_LIBRARY NAMES Coin PATHS
     /usr/lib
     /usr/local/lib
     /opt/local/lib
@@ -46,7 +46,6 @@ else (WIN32)
 IF (APPLE)
   IF (NOT COIN_LIBRARY)
     IF (EXISTS /Library/Frameworks/Inventor.framework/Libraries)
-#      SET(COIN_LIBRARY "/Library/Frameworks/Inventor.framework/Libraries/libCoin.dylib -F/Library/Frameworks/Inventor.framework")
       SET(COIN_LIBRARY "/Library/Frameworks/Inventor.framework")
     ENDIF (EXISTS /Library/Frameworks/Inventor.framework/Libraries)
   ENDIF (NOT COIN_LIBRARY)

@@ -17,26 +17,23 @@ FIND_PATH(QUARTER_INCLUDE_DIR Quarter.h
 )
 #MESSAGE("QUARTER_INCLUDE_DIR=" ${QUARTER_INCLUDE_DIR})
 
-# NOTE: General FIND_LIBRARY not working for some reason on Windows, but we want our own prereq
-# anyways, and must use the debug version (because of runtime linkage) when in Debug anyways
-
 if (WIN32)
   if (CMAKE_BUILD_TYPE MATCHES "Debug")
-    IF (EXISTS ${COINDIR}/lib/quarter1d.lib)
-      SET(QUARTER_LIBRARY "${COINDIR}/lib/quarter1d.lib")
-    ENDIF (EXISTS ${COINDIR}/lib/quarter1d.lib)
+    FIND_LIBRARY(QUARTER_LIBRARY NAMES quarter1d PATHS
+      ${COINDIR}/lib
+    ) 
   else (CMAKE_BUILD_TYPE MATCHES "Debug") 
-    IF (EXISTS ${COINDIR}/lib/quarter1.lib)
-      SET(QUARTER_LIBRARY "${COINDIR}/lib/quarter1.lib")
-    ENDIF (EXISTS ${COINDIR}/lib/quarter1.lib)
+    FIND_LIBRARY(QUARTER_LIBRARY NAMES quarter1 PATHS
+      ${COINDIR}/lib
+    ) 
   endif (CMAKE_BUILD_TYPE MATCHES "Debug")
 else (WIN32)
-  FIND_LIBRARY(QUARTER_LIBRARY NAMES Quarter PATH
+  FIND_LIBRARY(QUARTER_LIBRARY NAMES Quarter PATHS
     /usr/lib
     /usr/local/lib
     /opt/local/lib
   ) 
- endif (WIN32) 
+endif (WIN32) 
 
 # handle the QUIETLY and REQUIRED arguments and set COIN_FOUND to TRUE if 
 # all listed variables are TRUE

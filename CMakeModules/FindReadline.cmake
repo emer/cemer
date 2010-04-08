@@ -11,7 +11,7 @@ FIND_PATH(READLINE_INCLUDE_DIR readline/readline.h
     $ENV{INCLUDE}
 )
 
-FIND_LIBRARY(READLINE_LIBRARY NAMES readline PATH
+FIND_LIBRARY(READLINE_LIBRARY NAMES readline PATHS
    /usr/lib
    /usr/local/lib
    /opt/local/lib

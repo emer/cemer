@@ -430,14 +430,21 @@ bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_
       if(taMisc::build_str.contains("dbg")) {
 	cmake_cmd += "-DCMAKE_BUILD_TYPE=Debug ";
       }
+	  else {
+	cmake_cmd += "-DCMAKE_BUILD_TYPE=RelWithDebInfo ";
+	  }
       if(taMisc::build_str.contains("mpi")) {
 	cmake_cmd += "-DMPI_BUILD=TRUE ";
       }
     }
+	else {
+	cmake_cmd += "-DCMAKE_BUILD_TYPE=RelWithDebInfo ";
+	}
+
     if(system_plugin)
       cmake_cmd += "-DEMERGENT_PLUGIN_TYPE=System ";
 #ifdef TA_OS_WIN
-    cmake_cmd += "-G \"\"\"NMake Makefiles\"\"\"";
+    cmake_cmd += "-G \"NMake Makefiles\"";
 #endif
 
     if(!ExecMakeCmd(cmake_cmd, build_path)) return false;

@@ -22,20 +22,18 @@ else (WIN32)
 endif (WIN32)
 
 if (WIN32)
-  #note: there are issues on windows trying to find libs, so:
-  find_file(TEMT_LIBRARY "temt${EMERGENT_SUFFIX}.lib" PATHS
+  find_library(TEMT_LIBRARY "temt${EMERGENT_SUFFIX}" PATHS
     "${EMERGENTDIR}/lib"
     "${EMERGENTDIR}/lib/${CMAKE_BUILD_TYPE}" #don't use CMAKE_CFG_INTDIR not valid on "NMake Makefiles"
-    NO_DEFAULT_PATH
   )
-message(STATUS "TEMT_LIBRARY=${TEMT_LIBRARY}")
+  message(STATUS "TEMT_LIBRARY=${TEMT_LIBRARY}")
   if (NOT EXISTS "${TEMT_LIBRARY}")
     message(FATAL_ERROR "EMERGENTDIR environment variable must point to Emergent install directory!")
   endif (NOT EXISTS "${TEMT_LIBRARY}")
   # Windows import/export control -- since we are trying to find it, we assume importing
   add_definitions(-DTA_DLL)
 else (WIN32)
-  FIND_LIBRARY(TEMT_LIBRARY NAMES "temt${EMERGENT_SUFFIX}" PATH
+  FIND_LIBRARY(TEMT_LIBRARY NAMES "temt${EMERGENT_SUFFIX}" PATHS
     /usr/local/lib
     /usr/lib
     /opt/local/lib
