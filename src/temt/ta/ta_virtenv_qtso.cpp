@@ -267,7 +267,9 @@ void VEBodyView::Render_pre() {
 	  goto finish;
 	}
       }
-      taMisc::Error("object file:", ob->obj_fname, "not found, reverting to shape");
+      cerr << "object file: " << ob->obj_fname << " not found, reverting to shape" << endl;
+      // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
+//       ob->ClearBodyFlag(VEBody::FM_FILE);
     }
     
     if((bool)ob->texture && wv) {
@@ -1113,7 +1115,9 @@ void VEStaticView::Render_pre() {
 	  goto finish;
 	}
       }
-      taMisc::Error("object file:", ob->obj_fname, "not found, reverting to shape");
+      cerr << "object file: " << ob->obj_fname << " not found, reverting to shape" << endl;
+      // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
+//       ob->ClearStaticFlag(VEStatic::FM_FILE);
     }
 
     if((bool)ob->texture && wv) {

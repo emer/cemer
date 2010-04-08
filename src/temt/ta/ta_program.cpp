@@ -249,8 +249,10 @@ void DynEnumItem_List::DataChanged(int dcr, void* op1, void* op2) {
   // we notify owner, so editing items causes related things to update,
   // typically used by ProgVar to make sure the enum list gets updated in gui
   taBase* own = GetOwner();
-  if (own)
-    own->DataChanged(DCR_CHILD_ITEM_UPDATED, (void*)this);
+  if(own) {
+    if(dcr <= DCR_CHILD_ITEM_UPDATED)
+      own->DataChanged(DCR_CHILD_ITEM_UPDATED, (void*)this);
+  }
   inherited::DataChanged(dcr, op1, op2);
 }
 
