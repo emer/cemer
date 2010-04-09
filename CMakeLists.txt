@@ -278,7 +278,7 @@ if (WIN32)
     DESTINATION bin
   )
   install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty"
-    DESTINATION 3rdparty
+    DESTINATION .
   )
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images/Emergent.ico
     DESTINATION ${EMERGENT_SHARE_DEST}
