@@ -32,7 +32,7 @@ Program .projects[0].programs[0] {
   ProgEl_List @.init_code = [0] {
   };
 
-  ProgEl_List @.prog_code = [25] {
+  ProgEl_List @.prog_code = [27] {
     IfReturn @[0] { };
     RegisterArgs @[1] { };
     PrintExpr @[2] { };
@@ -44,9 +44,11 @@ Program .projects[0].programs[0] {
     ProgVarFmArg @[8] { };
     ProgVarFmArg @[9] { };
     ProgVarFmArg @[10] { };
-    Comment @[11] { };
-    Comment @[12] { };
-    IfElse @[13] { 
+    ProgVarFmArg @[11] { };
+    ProgVarFmArg @[12] { };
+    Comment @[13] { };
+    Comment @[14] { };
+    IfElse @[15] { 
       ProgEl_List @.true_code = [5] {
 	MethodCall @[0] { 
 	  ProgArg_List @.meth_args = [2] {
@@ -97,8 +99,8 @@ Program .projects[0].programs[0] {
 	};
       };
     };
-    Comment @[14] { };
-    MethodCall @[15] { 
+    Comment @[16] { };
+    MethodCall @[17] { 
       ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
@@ -106,16 +108,16 @@ Program .projects[0].programs[0] {
 	ProgArg @[3] { };
       };
     };
-    MethodCall @[16] { 
+    MethodCall @[18] { 
       ProgArg_List @.meth_args = [3] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
 	ProgArg @[2] { };
       };
     };
-    PrintVar @[17] { };
-    Comment @[18] { };
-    MethodCall @[19] { 
+    PrintVar @[19] { };
+    Comment @[20] { };
+    MethodCall @[21] { 
       ProgArg_List @.meth_args = [4] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
@@ -123,17 +125,17 @@ Program .projects[0].programs[0] {
 	ProgArg @[3] { };
       };
     };
-    MethodCall @[20] { 
+    MethodCall @[22] { 
       ProgArg_List @.meth_args = [3] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
 	ProgArg @[2] { };
       };
     };
-    PrintVar @[21] { };
-    OtherProgramVar @[22] { };
-    PrintExpr @[23] { };
-    ProgramCall @[24] { 
+    PrintVar @[23] { };
+    OtherProgramVar @[24] { };
+    PrintExpr @[25] { };
+    ProgramCall @[26] { 
       ProgArg_List @.prog_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
@@ -373,15 +375,29 @@ Program .projects[0].programs[0] {
    var_name="batch";
    arg_name="b_start";
   };
-  Comment @[11] {
+  ProgVarFmArg @[11] {
+   desc=;
+   flags=;
+   prog=$.projects[0].programs.gp[0][1]$;
+   var_name="save_wts_interval";
+   arg_name="save_wts_interval";
+  };
+  ProgVarFmArg @[12] {
+   desc=;
+   flags=;
+   prog=$.projects[0].programs.gp[0][1]$;
+   var_name="save_final_wts";
+   arg_name="save_final_wts";
+  };
+  Comment @[13] {
    desc="= Add your own variables here =";
    flags=;
   };
-  Comment @[12] {
+  Comment @[14] {
    desc="= Below saves log files of standard data tables =";
    flags=;
   };
-  IfElse @[13] {
+  IfElse @[15] {
    desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
    flags=;
    cond {
@@ -637,11 +653,11 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  Comment @[14] {
+  Comment @[16] {
    desc="== Save epoch log -- on by default ==";
    flags=;
   };
-  MethodCall @[15] {
+  MethodCall @[17] {
    desc="last arg is to include dmem proc number";
    flags=;
    result_var=$.projects[0].programs[0].vars[5]$;
@@ -693,7 +709,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MethodCall @[16] {
+  MethodCall @[18] {
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=;
    result_var=NULL;
@@ -735,7 +751,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  PrintVar @[17] {
+  PrintVar @[19] {
    desc=;
    flags=;
    message="Saving epoch log data to:";
@@ -746,11 +762,11 @@ Program .projects[0].programs[0] {
    print_var5=NULL;
    print_var6=NULL;
   };
-  Comment @[18] {
+  Comment @[20] {
    desc="== Save trial log -- OFF by default ==";
    flags=;
   };
-  MethodCall @[19] {
+  MethodCall @[21] {
    desc="last arg is to include dmem proc number";
    flags=OFF;
    result_var=$.projects[0].programs[0].vars[5]$;
@@ -802,7 +818,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  MethodCall @[20] {
+  MethodCall @[22] {
    desc="last arg is to restrict log to dmem_proc = 0";
    flags=OFF;
    result_var=NULL;
@@ -844,7 +860,7 @@ Program .projects[0].programs[0] {
     };
    };
   };
-  PrintVar @[21] {
+  PrintVar @[23] {
    desc=;
    flags=OFF;
    message="Saving trial log data to:";
@@ -855,7 +871,7 @@ Program .projects[0].programs[0] {
    print_var5=NULL;
    print_var6=NULL;
   };
-  OtherProgramVar @[22] {
+  OtherProgramVar @[24] {
    desc="propagate the tag";
    flags=;
    other_prog=.projects[0].programs.gp[0][9]$$<Program,SaveWeights>;
@@ -865,14 +881,14 @@ Program .projects[0].programs[0] {
    var_3=NULL;
    var_4=NULL;
   };
-  PrintExpr @[23] {
+  PrintExpr @[25] {
    desc=;
    flags=;
    expr {
     expr="\"Running: \" << batch.name";
    };
   };
-  ProgramCall @[24] {
+  ProgramCall @[26] {
    desc=;
    flags=;
    prog_args {

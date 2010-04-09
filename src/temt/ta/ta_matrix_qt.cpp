@@ -167,10 +167,18 @@ QVariant MatrixTableModel::headerData(int section,
       else {
 	return QString("g%1:x%2").arg(qr.quot).arg(qr.rem);
       }
-    } else {
-      return QString::number(section); //QString("%1").arg(section);
     }
-  } else {// in form: d1[[:d2]:d3]
+    else {
+      if(m_dim_names) {
+	QString dnm = m_dim_names->SafeEl_Flat(0);
+	return dnm + QString::number(section);
+      }
+      else {
+	return QString::number(section);
+      }
+    }
+  }
+  else {// in form: d1[[:d2]:d3]
     if (m_mat->dims() < 2) {
       return ""; // no dim is applicable, only in cols
     };
@@ -179,7 +187,13 @@ QVariant MatrixTableModel::headerData(int section,
     MatrixGeom coords;
     m_mat->geom.DimsFmIndex(row_flat_idx, coords);
     if (m_mat->dims() == 2) {
-      return QString::number(coords[1]);
+      if(m_dim_names) {
+	QString dnm = m_dim_names->SafeEl_Flat(1);
+	return dnm + QString::number(coords[1]);
+      }
+      else {
+	return QString::number(coords[1]);
+      }
     } else {
       //const int cc = m_mat->colCount(pat_4d);
       //int row_flat_idx = matIndex(index); //eff_row * cc;
