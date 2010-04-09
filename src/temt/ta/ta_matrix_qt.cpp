@@ -194,7 +194,8 @@ QVariant MatrixTableModel::headerData(int section,
       else {
 	return QString::number(coords[1]);
       }
-    } else {
+    }
+    else {
       //const int cc = m_mat->colCount(pat_4d);
       //int row_flat_idx = matIndex(index); //eff_row * cc;
       QString rval;
@@ -212,13 +213,25 @@ QVariant MatrixTableModel::headerData(int section,
 	  rval = QString("g%1:y%2").arg(coords[3]).arg(coords[1]);
 	}
         j = 4;
-      } else {
-        // d1...
-        rval = QString("%1").arg(coords[1]);
+      }
+      else {
+	if(m_dim_names) {
+	  QString dnm = m_dim_names->SafeEl_Flat(1);
+	  rval = dnm + QString("%1").arg(coords[1]);
+	}
+	else {
+	  rval = QString("%1").arg(coords[1]);
+	}
         j = 2;
       }
       for (int i = j; i < coords.dims(); ++i) {
-        rval = QString("%1:").arg(coords[i]) + rval;
+	if(m_dim_names) {
+	  QString dnm = m_dim_names->SafeEl_Flat(i);
+	  rval = dnm + QString("%1:").arg(coords[i]) + rval;
+	}
+	else {
+	  rval = QString("%1:").arg(coords[i]) + rval;
+	}
       }
       return rval;
     }
