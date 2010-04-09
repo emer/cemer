@@ -302,7 +302,8 @@ protected:
   SoDrawStyle*		lineDrawStyle_;
   SoLineSet*		lines;		// we use the vertexProperty for points etc.
   SoLineSet*		errbars;
-  SoMarkerSet*		markerSet_; // created if needed; we use the vertexProperty for points etc.
+  SoSeparator*		marker_sep;
+  SoMarkerSet*		markerSet_; 
   SoSeparator*		textSep_; // optional text separator
   SoComplexity*		complexity_;
   SoFont*		labelFont_;

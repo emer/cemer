@@ -395,9 +395,10 @@ T3GraphLine::T3GraphLine(void* dataView_, float fnt_sz)
   line_sep->addChild(errbars);
 
   markerSet_ = NULL;
+  marker_sep = NULL;
   marker_size_ = MEDIUM;
-  assertMarkerSet();		// just be done with it..
-//   initValueColorMode();
+  assertMarkerSet();		// just be done with it -- needed for batch updates anyway
+  //  initValueColorMode();
 }
 
 T3GraphLine::~T3GraphLine()
@@ -416,9 +417,12 @@ T3GraphLine::~T3GraphLine()
 void T3GraphLine::assertMarkerSet() {
   if (markerSet_) return;
   SoSeparator* ss = this->shapeSeparator(); //cache
+  marker_sep = new SoSeparator();
   markerSet_ = new SoMarkerSet(); //
   markerSet_->vertexProperty.setValue(new SoVertexProperty());
-  ss->addChild(markerSet_);
+  markerSet_->numPoints.setValue(0);
+  marker_sep->addChild(markerSet_);
+  ss->addChild(marker_sep);
   initValueColorMode();
 }
 
@@ -446,9 +450,8 @@ void T3GraphLine::clear() {
   if (markerSet_) {
     SoMFVec3f& marker_point = ((SoVertexProperty*)markerSet_->vertexProperty.getValue())->vertex;
     marker_point.setNum(0);
-    //note: weird bug happens if we go back to no markers -- so we put a dummy NONE instead
-    markerSet_->markerIndex.set1Value(0, SoMarkerSet::NONE);
-    markerSet_->markerIndex.setNum(1);
+    markerSet_->markerIndex.setNum(0);
+    markerSet_->numPoints.setValue(0);
   }
   // easiest for text is just to nuke
   if (textSep_) {
@@ -495,7 +498,8 @@ void T3GraphLine::initValueColorMode() {
     if (valueColorMode()) {
       mb.setValue(SoVertexProperty::PER_PART); // i.e., per point
       orderedRGBA.setNum(0); // must supply colors explicitly
-    } else {
+    }
+    else {
       mb.setValue(SoVertexProperty::OVERALL);
       // set one and only color
       orderedRGBA.setNum(1);
@@ -681,12 +685,9 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
   }
 
   //note: render count is taken from point count, so add marker first
-  //note: we clear by leaving a NONE marker in pos 1, so detect that and overwrite if needed
-  if ((marker.getNum() == 1) && (marker[0] == SoMarkerSet::NONE))
-    marker.set1Value(0, mk_idx);
-  else
-    marker.set1Value(marker.getNum(), mk_idx);
+  marker.set1Value(marker.getNum(), mk_idx);
   point.set1Value(point.getNum(), pt.x, pt.y, -pt.z);
+  markerSet_->numPoints.setValue(marker.getNum());
 }
 
 void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& c) {

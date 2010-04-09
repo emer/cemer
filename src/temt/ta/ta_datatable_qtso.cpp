@@ -4009,6 +4009,7 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl) {
   t3gl->lineTo(ed);
   t3gl->textAt(iVec3f(ed.x + TICK_OFFSET,  ed.y - (.5f * label_font_size), ed.z),
 	       label.chars());
+  t3gl->finishBatch();
 }
 
 void GraphTableView::RenderLegend() {
