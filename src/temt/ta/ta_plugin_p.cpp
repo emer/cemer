@@ -403,8 +403,11 @@ bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_
 #endif
 
   String make_cmd = sudo_cmd;
+  String env_cmd;
 #ifdef TA_OS_WIN
-  make_cmd += "nmake";
+  // pass full environment setup into each make command..
+  env_cmd = taMisc::plugin_make_env_cmd + " & ";
+  make_cmd += env_cmd + "nmake";
 #else
   make_cmd += "make";
 #endif
@@ -425,7 +428,7 @@ bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_
     if(!ExecMakeCmd(mkdir_cmd, plugin_path)) return false;
 #endif
 
-    String cmake_cmd = sudo_cmd + "cmake ../ ";
+    String cmake_cmd = env_cmd + sudo_cmd + "cmake ../ ";
     if(taMisc::build_str.nonempty()) {
       if(taMisc::build_str.contains("dbg")) {
 	cmake_cmd += "-DCMAKE_BUILD_TYPE=Debug ";

@@ -769,7 +769,11 @@ public:
   static ostream*	record_script;  // #IGNORE #CAT_File stream to use for recording a script of interface activity (NULL if no record)
 
   static String		edit_cmd;	// #SAVE #CAT_File how to run editor
-  
+#ifdef TA_OS_WIN
+  static String     plugin_make_env_cmd;
+  // #SAVE #CAT_File command to set the environment for making (compiling) a plugin -- default is: call \"C:\\Program Files\\Microsoft Visual Studio 9.0\\VC\\vcvarsall.bat\" x86 -- change last arg to amd64 for a 64bit platform
+#endif
+
   ////////////////////////////////////////////////////////
   // 	Args
 
