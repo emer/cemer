@@ -1,0 +1,6 @@
+<pkgref spec="1.12" uuid="07DBE52E-000D-468C-85F8-ABA4B4B1A483"><config><identifier>com.Computational Cognitive Neuroscience Lab, University of Colorado at Boulder.emergent</identifier><version>1.0</version><description>DESCRIPTION
+===========
+
+This is an installer created using CPack (http://www.cmake.org). No additional installation instructions provided.
+
+</description><post-install type="none"/><requireAuthorization/><installTo relocatable="true">/</installTo><flags><followSymbolicLinks/><overwriteDirectoryPermissions/></flags><packageStore type="internal"></packageStore><mod>installTo</mod><mod>parent</mod></config><scripts><scripts-dir>/Users/oreilly/emergent/mac_packages/emergent-5.0.2-mac.pkg/Contents/Resources</scripts-dir></scripts><extra><packagePath relative="true">../mac_packages/emergent-5.0.2-mac.pkg</packagePath><title>emergent</title></extra></pkgref>
