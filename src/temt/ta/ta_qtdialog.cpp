@@ -467,7 +467,11 @@ String EditDataPanel::panel_type() const {
 }
 
 void EditDataPanel::UpdatePanel() {
-  iDataPanel::UpdatePanel_impl(); // for tab stuff -- skip our direct inherit!
+  //   iDataPanel::UpdatePanel_impl(); // for tab stuff -- skip our direct inherit!
+  // actually, our refresh has built-in vis testing, so don't do visibility check which
+  // the parent guy does!  this allows edit guy to update buttons even if it is not
+  // itself visible..
+  UpdatePanel_impl();
 }
 
 void EditDataPanel::Render_impl() {
@@ -1226,11 +1230,11 @@ void taiDataHostBase::GetImage_Async() {
   // IMPORTANT: if above getimage_req is honored, then it can end up with some blank 
   // program control panels -- needs the redundant getimage guys..  doesn't happen very often
   // we can get these for DEFERRED as well, for buttons, ex/esp Program panels
-  if ((state & STATE_MASK) >= CANCELED) {
-     cerr << "getimage async cancelled on: " << typ->name << " state: " << (state & STATE_MASK) << endl;
+//   if ((state & STATE_MASK) >= CANCELED) {
+//      cerr << "getimage async cancelled on: " << typ->name << " state: " << (state & STATE_MASK) << endl;
 //     taMisc::FlushConsole();
-    return;
-  }
+//     return;
+//   }
   getimage_req = true;
   taMisc::do_wait_proc = true;
   async_getimage_list.Link(this);
@@ -1415,7 +1419,7 @@ void taiDataHost_impl::DataDataChanged(taDataLink* dl, int dcr, void* op1, void*
 void taiDataHost_impl::Refresh_impl(bool reshow) {
   // if no changes have been made in this instance, then just refresh,
   // otherwise, user will have to decide what to do, i.e., revert
-//   cerr << "Refresh_impl on: " << typ->name << endl;
+//   cerr << "Refresh_impl on: " << typ->name << " reshow: " << reshow << endl;
 //   taMisc::FlushConsole();
 
   if (HasChanged()) {
@@ -2384,7 +2388,12 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id)
 
 void taiEditDataHost::GetButtonImage(bool force) {
   if(!typ || !mwidget || !frmMethButtons)  return;
-  if(!force && !frmMethButtons->isVisible()) return;
+  if(!force && !frmMethButtons->isVisible()) {
+//     cerr << "buttons not visible on: " << typ->name << endl;
+    return;
+  }
+
+//   cerr << "updating buttons on: " << typ->name << endl;
 
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);

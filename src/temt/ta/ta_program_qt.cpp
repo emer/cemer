@@ -1526,6 +1526,10 @@ void iProgramCtrlDataHost::GetImage_Membs()
   Program* prog = this->prog(); //cache
   if (!prog) return;
   
+// #ifdef DEBUG
+//   cerr << "ctrl panel get image on: " << prog->name << endl;
+// #endif
+
   // prog stuff
   if (show_set(MS_PROG) && (data_el(MS_PROG).size > 0)) {
     GetImage_impl(&memb_el(MS_PROG), data_el(MS_PROG), prog);
@@ -1651,6 +1655,9 @@ void iProgramCtrlPanel::OnWindowBind_impl(iTabViewer* itv) {
 }
 
 void iProgramCtrlPanel::UpdatePanel_impl() {
+// #ifdef DEBUG
+//   cerr << "update panel on: " << prog()->name << endl;
+// #endif
   if (pc) pc->ReShow_Async();
 }
 

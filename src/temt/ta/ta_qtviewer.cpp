@@ -6187,6 +6187,9 @@ void iDataPanelSetBase::DataLinkDestroying(taDataLink* dl) {
 } // nothing for us; subpanels handle
 
 void iDataPanelSetBase::UpdatePanel() {
+// #ifdef DEBUG
+//   cerr << "update all panels: " << TabText() << endl;
+// #endif
   for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
     pn->UpdatePanel();

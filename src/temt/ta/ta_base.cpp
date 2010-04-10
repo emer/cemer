@@ -4670,7 +4670,10 @@ void taDataView::SetVisible_impl(DataViewAction act) {
   DoActionChildren_impl(act);
   
   if (do_defer_refresh == 0) return;
-  
+
+#ifdef DEBUG
+  cerr << "doing deferred refresh: " << do_defer_refresh << " on: " << data()->GetName() << endl;
+#endif
   m_defer_refresh = 0;
   if (do_defer_refresh > 0)
     DataDataChanged(NULL, DCR_STRUCT_UPDATE_END, NULL, NULL);

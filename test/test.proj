@@ -5998,7 +5998,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[0] {
       name="update_net_view";
       var_type=T_Bool;
-      bool_val=0;
+      bool_val=1;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
