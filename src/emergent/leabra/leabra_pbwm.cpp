@@ -261,6 +261,7 @@ void SNrThalLayerSpec::Initialize() {
   kwta.pct = .75f;
   SetUnique("tie_brk", true);	// turn on tie breaking by default
   tie_brk.on = true;
+  tie_brk.thr_gain = 0.2f;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
   SetUnique("inhib", true);
@@ -611,9 +612,8 @@ void MatrixMiscSpec::Initialize() {
 void MatrixRndGoSpec::Initialize() {
   nogo_thr = 30;
   nogo_rng = 30;
-  nogo_da = 5.0f;
-  nogo_noise = 0.0f;
-  go_bias = 1.0f;
+  nogo_da = 10.0f;
+  nogo_noise = 0.02f;
 }
 
 void MatrixGoNogoGainSpec::Initialize() {
@@ -821,7 +821,6 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
 	bias_dav = gate_bias.out_pvr;
 	if(!nogo_rnd_go && pfc_mnt_cnt > rnd_go_thr) { // no rnd go yet, but over thresh
 	  mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
-	  bias_dav += rnd_go.go_bias; // extra bias when appropriate
 	  Compute_RndGoNoise_ugp(lay, mugp, net);
 	}
       }
@@ -844,7 +843,6 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
       bias_dav = gate_bias.mnt_empty_go;
       if(!nogo_rnd_go && pfc_mnt_cnt < -rnd_go_thr) { // no rnd go yet, but over thresh
 	mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
-	bias_dav += rnd_go.go_bias; // extra bias when appropriate
 	Compute_RndGoNoise_ugp(lay, mugp, net);
       }
     }
