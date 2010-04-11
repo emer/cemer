@@ -1,1 +1,1 @@
-<pkg-contents spec="1.12"><f n="libgsl.0.dylib" o="root" g="wheel" p="33261" pt="/usr/local/lib/libgsl.0.dylib" m="false" t="file"/></pkg-contents>
+<pkg-contents spec="1.12"><f n="libgsl.la" o="root" g="wheel" p="33261" pt="/usr/local/lib/libgsl.la" m="false" t="file"/></pkg-contents>
