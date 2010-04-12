@@ -262,6 +262,7 @@ void SNrThalLayerSpec::Initialize() {
   SetUnique("tie_brk", true);	// turn on tie breaking by default
   tie_brk.on = true;
   tie_brk.thr_gain = 0.2f;
+//   tie_brk.loser_gain = 0.0f;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
   SetUnique("inhib", true);
@@ -522,9 +523,10 @@ void MatrixUnitSpec::Initialize() {
   SetUnique("noise_type", true);
   noise_type = NETIN_NOISE;
   SetUnique("noise", true);
-  noise.var = 5.0e-5f;
+  noise.var = 0.0002f;
   SetUnique("noise_adapt", true);
   noise_adapt.trial_fixed = true;
+  noise_adapt.k_pos_noise = true;
   noise_adapt.mode = NoiseAdaptSpec::PVLV_LVE;
 }
 
@@ -592,17 +594,22 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
 //////////////////////////////////
 
 void MatrixGateBiasSpec::Initialize() {
-  mnt_nogo = 1.0f;
-  out_pvr = 1.0f;
-  out_empty_nogo = 2.0f;
+  mnt_mnt_nogo = 1.0f;
+  mnt_rew_nogo = 2.0f;
   mnt_empty_go = 0.0f;
+  out_rew_go = 1.0f;
+  out_norew_nogo = 2.0f;
+  out_empty_nogo = 2.0f;
+  cur_trl_mnt = false;
 }
 
-void MatrixGateBiasSpec::SetAllBiases(float one_bias) {
-  mnt_nogo = one_bias;
-  out_pvr = one_bias;
-  out_empty_nogo = one_bias;
-  mnt_empty_go = one_bias;
+void MatrixGateBiasSpec::SetAllBiases(float one_bias, float strong_mult) {
+  mnt_mnt_nogo = one_bias;
+  mnt_rew_nogo = strong_mult * one_bias;
+  //  mnt_empty_go = 0.0f;
+  out_rew_go = one_bias;
+  out_norew_nogo = strong_mult * one_bias;
+  out_empty_nogo = strong_mult * one_bias;
 }
 
 void MatrixMiscSpec::Initialize() {
@@ -808,6 +815,12 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
   float tonic_da = dals->da.tonic_da;
   int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
+  bool pfc_is_mnt = pfc_mnt_cnt > 0;
+  if(gate_bias.cur_trl_mnt) {
+    if(mugp->misc_state2 == PFCGateSpec::GATE_MNT_GO ||
+       mugp->misc_state2 == PFCGateSpec::GATE_OUT_MNT_GO)
+      pfc_is_mnt = true;	// count current trial as mnt!
+  }
   int rnd_go_thr = mugp->misc_state3; // random go threshold for this time
   int gp_sz = mugp->leaves / 2;
   bool nogo_rnd_go = (mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO);
@@ -817,8 +830,8 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
   if(bg_type == OUTPUT) {	// output gating guy
     if(net->pv_detected) {	// PV reward trial -- bias output gating
       // only if pfc is maintaining..
-      if(pfc_mnt_cnt > 0) {
-	bias_dav = gate_bias.out_pvr;
+      if(pfc_is_mnt) {
+	bias_dav = gate_bias.out_rew_go;
 	if(!nogo_rnd_go && pfc_mnt_cnt > rnd_go_thr) { // no rnd go yet, but over thresh
 	  mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
 	  Compute_RndGoNoise_ugp(lay, mugp, net);
@@ -829,21 +842,23 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
       }
     }
     else {			// not a PV trial
-      if(pfc_mnt_cnt > 0)   	// currently maintaining: bias NoGo for everything
-	bias_dav = -gate_bias.mnt_nogo;
-      else			// otherwise, use empty nogo bias
-	bias_dav = -gate_bias.out_empty_nogo;
+      bias_dav = -gate_bias.out_norew_nogo; // blanket no output gating thing
     }
   }
   else {			// MAINT
-    if(pfc_mnt_cnt > 0) {   	// currently maintaining: bias NoGo for everything
-      bias_dav = -gate_bias.mnt_nogo;
+    if(net->pv_detected) {	// PV reward trial -- no maint gating
+      bias_dav = -gate_bias.mnt_rew_nogo;
     }
-    else {			// otherwise, bias to maintain/update
-      bias_dav = gate_bias.mnt_empty_go;
-      if(!nogo_rnd_go && pfc_mnt_cnt < -rnd_go_thr) { // no rnd go yet, but over thresh
-	mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
-	Compute_RndGoNoise_ugp(lay, mugp, net);
+    else {
+      if(pfc_is_mnt) {   	// currently maintaining: bias NoGo for everything
+	bias_dav = -gate_bias.mnt_mnt_nogo;
+      }
+      else {			// otherwise, bias to maintain/update
+	bias_dav = gate_bias.mnt_empty_go;
+	if(!nogo_rnd_go && pfc_mnt_cnt < -rnd_go_thr) { // no rnd go yet, but over thresh
+	  mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
+	  Compute_RndGoNoise_ugp(lay, mugp, net);
+	}
       }
     }
   }
@@ -1051,12 +1066,13 @@ void PFCUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
 //////////////////////////////////
 
 void PFCGateSpec::Initialize() {
-  base_gain = 0.0f;
-  go_gain = 1.0f;
   graded_out_go = true;
-  no_empty_out = true;
   clear_decay = 0.9f;
   mid_minus_min = 10;
+  no_empty_out = true;
+  no_mnt_rew = true;
+  base_gain = 0.0f;
+  go_gain = 1.0f;
   out_go_clear = true;
   off_accom = 0.0f;
 }
@@ -1070,7 +1086,8 @@ void PFCLearnSpec::Initialize() {
   go_learn_base = 0.06f;
   go_learn_mod = 1.0f - go_learn_base;
   go_netin_gain = 0.01f;
-  out_gate_act = OUT_M2;
+  max_maint = 100;
+//   out_gate_act = OUT_M2;
 }
 
 void PFCLearnSpec::UpdateAfterEdit_impl() {
@@ -1352,10 +1369,13 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
        (!gate.no_empty_out || pfc_mnt_cnt > 0)) {
       gate_out = true;
       out_gate_fired = true;	// now it has..
+
+      // compute out_gate multiplier in misc_float1
       float out_go_act = 1.0f;	// activation of output gating unit specifically
       if(gate.graded_out_go)
 	out_go_act = snr_out_u->act_eq;
-      ugp->misc_float1 = gate.base_gain + (gate.go_gain * out_go_act);
+      ugp->misc_float1 = gate.base_gain + (gate.go_gain * out_go_act); // out gate multiplier
+
       // misc_float2 includes param -- update once only!
       Compute_MidMinusAct_ugp(lay, ugp, mg, net);
       snrthalsp_out->Compute_MidMinusAct_ugp(snrthal_out, snrgp_out, mg, net);
@@ -1363,9 +1383,16 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     }
 
     // maintenance gating signal -- can only happen if hasn't happened yet!
-    if(!mnt_gate_fired && snr_mnt_u->act_eq > go_thr_mnt) {
+    if(!mnt_gate_fired && snr_mnt_u->act_eq > go_thr_mnt && 
+       (!gate.no_mnt_rew || !net->pv_detected)) {
       gate_mnt = true;
       mnt_gate_fired = true;	// now it has..
+
+      // compute out_gate multiplier in misc_float1 -- maint gating causes output gating too!
+      float mnt_go_act = 1.0f;	// activation of output gating unit specifically
+      if(gate.graded_out_go)
+	mnt_go_act = snr_mnt_u->act_eq;
+      ugp->misc_float1 = gate.base_gain + (gate.go_gain * mnt_go_act); // out gate multiplier
 
       Compute_MidMinusAct_ugp(lay, ugp, mg, net);
       snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, snrgp_mnt, mg, net);
@@ -1462,6 +1489,7 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
   for(int mg=0;mg<lay->units.gp.size;mg++) {
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
 
+    // misc_state == maintenance/empty counter (maintenance = + numbers, empty = - numbers)
     // basically just update the misc_state counter and implement any
     // delayed STORE or CLEAR actions
 
@@ -1471,17 +1499,24 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
     }
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_NOGO) {
       ugp->misc_state++;	// continue maintaining
+      if(ugp->misc_state > learn.max_maint) {
+	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	ugp->misc_state = 0;			     // empty
+      }
     }
     // look for store condition
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_MNT_GO ||
 	    ugp->misc_state1 == PFCGateSpec::EMPTY_MNT_GO ||
-	    ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_MNT_GO) {
-      Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it (never stored before)
-      ugp->misc_state = 1;	// always reset on new store
+	    ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_MNT_GO ||
+	    ugp->misc_state1 == PFCGateSpec::MAINT_OUT_MNT_GO) {
+      if(learn.max_maint > 0) {			     // if max_maint = 0 then never store
+	Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it (never stored before)
+	ugp->misc_state = 1;	// always reset on new store
+      }
     }
     // or basic output gate with no veto from maint
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_OUT_GO) {
-      if(gate.out_go_clear) {
+      if(gate.out_go_clear && net->pv_detected) {    // only clear on true output trials!
 	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
 	ugp->misc_state = 0;			     // empty
       }
@@ -1491,11 +1526,6 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
     }
     else if(ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_GO) {
       ugp->misc_state--;	// no real issue here..
-    }
-    else if(ugp->misc_state1 == PFCGateSpec::MAINT_OUT_MNT_GO) {
-      // treat like MAINT_MNT_GO -- not clearing!
-      Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it
-      ugp->misc_state = 1;
     }
   }
   // NOTE: Do NOT send final gate states -- empty/maint status checks on other layers
@@ -1628,13 +1658,6 @@ bool PFCOutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     lay->un_geom = pfc_lay->un_geom;
   }
 
-  // this is not right -- should only happen with spec inheritance..
-//   PFCLayerSpec* pfcsp = (PFCLayerSpec*)pfc_lay->spec.SPtr();
-//   kwta = pfcsp->kwta;
-//   gp_kwta = pfcsp->gp_kwta;
-//   inhib_group = pfcsp->inhib_group;
-//   inhib.type = pfcsp->inhib.type;
-//   inhib.kwta_pt = pfcsp->inhib.kwta_pt;
   return true;
 }
 
@@ -1663,15 +1686,15 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
       LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
       LeabraUnit* pfcu = (LeabraUnit*)pfcgp->FastEl(i);
 
-      if(net->ct_cycle > net->mid_minus_cycle) {
-	if(pfcspec->learn.out_gate_act == PFCLearnSpec::OUT_M2)
-	  ru->act = gate_val * pfcu->act_m2; // use memory value, due to updating issues "hand off"
-	else
-	  ru->act = gate_val * pfcu->act_eq; // go live
-      }
-      else {
-	ru->act = gate_val * pfcu->act_eq; // live val is fine
-      }
+//       if(net->ct_cycle > net->mid_minus_cycle) {
+// // 	if(pfcspec->learn.out_gate_act == PFCLearnSpec::OUT_M2)
+// // 	  ru->act = gate_val * pfcu->act_m2; // use memory value, due to updating issues "hand off"
+// // 	else
+// 	ru->act = gate_val * pfcu->act_eq; // go live
+//       }
+//       else {
+      ru->act = gate_val * pfcu->act_eq; // live val is fine
+//       }
       ru->act_eq = ru->act_nd = ru->act;
       ru->da = 0.0f;		// I'm fully settled!
       ru->AddToActBuf(rus->syn_delay);
@@ -2369,8 +2392,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   matrix_units->g_bar.h = .01f; // old syn dep
   matrix_units->g_bar.a = .03f;
   matrix_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
-  matrix_units->noise.var = 5.0e-5f;
+  matrix_units->noise.var = 0.0002f;
   matrix_units->noise_adapt.trial_fixed = true;
+  matrix_units->noise_adapt.k_pos_noise = true;
   matrix_units->noise_adapt.mode = NoiseAdaptSpec::PVLV_LVE;
 
   if(out_gate) {
@@ -2378,9 +2402,10 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     matrixo_units->g_bar.h = .02f; matrixo_units->g_bar.a = .06f; // note: 2x..
     matrixo_units->SetUnique("noise_type", false);
     matrixo_units->SetUnique("noise", true);
-    matrixo_units->noise.var = 0.005f;
+    matrixo_units->noise.var = 0.001f;
     matrixo_units->SetUnique("noise_adapt", true);
     matrixo_units->noise_adapt.trial_fixed = true;
+    matrixo_units->noise_adapt.k_pos_noise = true;
     matrixo_units->noise_adapt.mode = NoiseAdaptSpec::PVLV_PVI;
     matrixo_units->SetUnique("matrix_noise", true);
     matrixo_units->matrix_noise.patch_noise = false;
@@ -2794,9 +2819,7 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
     snrthalsp->snrthal.net_off = 0.0f;
     snrthalsp->snrthal.go_thr = 0.5f;
     
-    matrixsp->gate_bias.mnt_nogo = 1.0f;
-    matrixsp->gate_bias.out_pvr = 1.0f;
-    matrixsp->gate_bias.out_empty_nogo = 2.0f;
+    matrixsp->gate_bias.SetAllBiases(1.0f);
     matrixsp->gate_bias.mnt_empty_go = 0.0f;
     matrixsp->UpdateAfterEdit();
 

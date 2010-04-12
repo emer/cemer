@@ -317,12 +317,16 @@ class LEABRA_API MatrixGateBiasSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating biases depending on different conditions in the network -- helps to get the network performing appropriately for basic maintenance functions, to then be reinforced or overridden by learning
 INHERITED(taOBase)
 public:
-  float		mnt_nogo;	// #DEF_1:2 for stripes that are maintaining, amount of NoGo bias da (negative dopamine) -- only if not on an output trial as determined by PVr -- this is critical for enabling robust maintenance 
-  float		out_pvr;	// #DEF_1:2 for OUTPUT stripes, if PVr detects that this is trial where external rewards are typically provided, amount of OUTPUT Go bias da (positive dopamine) to encourage the output gating units to respond -- only applied for stripes that are maintaining information -- otherwise see out_empty_nogo
-  float		out_empty_nogo;	// #DEF_1:2 for OUTPUT stripes that are not maintaining anything, amount of OUTPUT NoGo bias da (negative dopamine) to encourage the output gating units to NOT respond when the stripe is NOT maintaining anything
-  float		mnt_empty_go;	// #DEF_0 for empty MAINT stripes, amount of Go bias da (positive dopamine) -- only if not on an output trial as determined by PVr -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
+  float		mnt_mnt_nogo;	// #DEF_1 (Weak) #AKA_mnt_nogo for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- this is critical for enabling robust maintenance by reducing Go activity that would then lead to an update
+  float		mnt_rew_nogo;	// #DEF_2 (Strong) for all MAINT stripes (empty or maintaining) on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- adds to any mnt_mnt_nogo -- in general it is not useful to fire maint gating on recall/output trials (see pfc.gate spec -- can prevent entirely with flag there)
+  float		mnt_empty_go;	// #DEF_0 (Very Weak) for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias da (positive dopamine) -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
+  float		out_rew_go;	// #DEF_1 (Weak) #AKA_out_pvr for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias da (positive dopamine) to encourage the output gating units to respond -- see out_empty_nogo for empty (non-maintaining) stripes
+  float		out_norew_nogo;	// #DEF_2 (Strong) for all OUTPUT stripes (empty or maintaining) on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating -- is not generally useful to output gate on store trials
+  float		out_empty_nogo;	// #DEF_2 (Strong) for OUTPUT stripes that are not maintaining anything, on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating if there is nothing being maintained to output gate
+  bool		cur_trl_mnt;	// if true, count current trial maintenance gating as stripe being full -- this is useful for primary motor areas where everything happens with the current trial
 
-  void		SetAllBiases(float one_bias);
+  void		SetAllBiases(float one_bias, float strong_mult=2.0f);
+  // set all the bias values except mnt_empty_go to given value -- strong_mult is a multiplier value that applies to the "strong" biases (which really should never be violated) -- see comments for each variable (and default values) for their relative strengths
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixGateBiasSpec);
@@ -494,13 +498,14 @@ public:
     INIT_STATE = 30,		// initialized state at start of trial
   };
 
-  float		base_gain;	// #DEF_0;0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
-  float		go_gain;	// #READ_ONLY how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
-  bool		no_empty_out; 	// #DEF_true prevent an output gating signal from being generated from an empty stripe (one that is not currently maintaining something) -- this can help focus output gating on maintained information -- logic is that even if Go firing happens, it still takes recurrent activity from PFC to drive it, so if not maintaining, nothing happens..
   float		clear_decay;	// #DEF_0.9 #MIN_0 #MAX_1 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
   int		mid_minus_min;	// minimum number of cycles before computing any gating -- acts like an STN-like function -- must be < network mid_minus_cycle
-  bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- you use it, you lose it..
+  bool		no_empty_out; 	// #DEF_true prevent an output gating signal from being generated from an empty stripe (one that is not currently maintaining something) -- see also matrix gate_bias.out_empty_nogo -- this can help focus output gating on maintained information -- logic is that even if Go firing happens, it still takes recurrent activity from PFC to drive it, so if not maintaining, nothing happens..
+  bool		no_mnt_rew;	// #DEF_true no maintenance gating on reward trials -- see also matrix gate_bias.mnt_rew_nogo -- can potentially cause problems with forgetting info that should be output gated, and is generally not useful, so this just prevents it entirely
+  float		base_gain;	// #DEF_0;0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
+  float		go_gain;	// #READ_ONLY how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
+  bool		out_go_clear;	// #DEF_true #EXPERT an output Go clears the maintenance currents at the end of the trial -- only for reward trials (signalled by PVr) -- you use it, you lose it..
   float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
 
   void 	Defaults()	{ Initialize(); }
@@ -517,15 +522,16 @@ class LEABRA_API PFCLearnSpec : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
 INHERITED(taOBase)
 public:
-  enum OutGateAct {
-    OUT_M2,			// output gating always reflects activations prior to any maintenance updating, i.e., act_m2 -- helps to bridge context for performance and learning
-    OUT_CUR,			// output gating always reflects the current pfc states, even as they are being updated
-  };
+//   enum OutGateAct {
+//     OUT_M2,			// output gating always reflects activations prior to any maintenance updating, i.e., act_m2 -- helps to bridge context for performance and learning
+//     OUT_CUR,			// output gating always reflects the current pfc states, even as they are being updated
+//   };
 
   float		go_learn_base;	// #DEF_0.06 #MIN_0 #MAX_1 how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)
   float		go_learn_mod;	// #READ_ONLY 1 - go_learn_base -- how much learning is actually modulated by go gating activation
   float		go_netin_gain;	// #DEF_0.01 #MIN_0 extra net input to add to active units as a function of gating signal -- applied in the plus phase (post gating) to help drive learning, as in the dopamine signal
-  OutGateAct	out_gate_act;	// #DEF_OUT_M2 what activation state does PFC_out reflect
+//   OutGateAct	out_gate_act;	// #DEF_OUT_M2 what activation state does PFC_out reflect
+  int		max_maint;	// a hard upper-limit on how long the PFC can maintain -- anything over this limit will be cleared.  set to 0 for motor areas that do not maintain but use maintenance gating to scope the set of possible responses
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PFCLearnSpec);
