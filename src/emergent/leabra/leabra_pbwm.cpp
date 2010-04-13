@@ -1100,8 +1100,8 @@ void PFCGateSpec::UpdateAfterEdit_impl() {
 void PFCGateSpec2::Initialize() {
   no_empty_out = true;
   no_mnt_rew = true;
-  no_out_norew = true;
-  out_norew_noclear = false;
+  no_out_norew = false;
+  out_norew_noclear = true;
   out_go_clear = true;
 }
 
