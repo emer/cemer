@@ -358,6 +358,7 @@ public:
   int		nogo_rng;	// #DEF_30 #MIN_1 range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
   float		nogo_da;	// #DEF_10 #MIN_0 strength of DA for driving learning of random Go units -- does not affect performance, only learning
   float		nogo_noise;	// #DEF_0;0.02 #MIN_0 use .02 when using -- noise value to apply to a randomly selected subset of k Go units to get them activated during a random Go event
+  bool		sub_norm;	// keep values normalized by subtracting from others
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixRndGoSpec);

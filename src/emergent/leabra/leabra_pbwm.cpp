@@ -621,6 +621,7 @@ void MatrixRndGoSpec::Initialize() {
   nogo_rng = 30;
   nogo_da = 10.0f;
   nogo_noise = 0.02f;
+  sub_norm = false;
 }
 
 void MatrixGoNogoGainSpec::Initialize() {
@@ -915,6 +916,19 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 // NOTE: misc_state reflects count at time of gating -- not updated at Compute_Gate_Final
 
 void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
+  int n_rnd_go = 0;		// find out if anyone has a rnd go
+  float nogo_da_sub = 0.0f;
+  if(rnd_go.sub_norm) {
+    for(int gi=0; gi<lay->units.gp.size; gi++) {
+      LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
+      if(mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO) n_rnd_go++;
+    }
+    if(n_rnd_go > 0) {
+      nogo_da_sub = rnd_go.nogo_da / (float)(lay->units.gp.size - n_rnd_go);
+      // how much to subtract from other units if one guy gets a random go
+    }
+  }
+    
   for(int gi=0; gi<lay->units.gp.size; gi++) {
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
     int snr_prjn_idx = 0;
@@ -950,6 +964,9 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 
       if(nogo_rnd_go) {
 	lrn_dav += rnd_go.nogo_da; // output gating also gets this too
+      }
+      else {
+	lrn_dav -= nogo_da_sub;	// subtract from others -- keep it normalized -- val is 0 if none
       }
 
       lrn_dav *= matrix.da_gain;
@@ -3568,7 +3585,7 @@ void V1MatrixLayerSpec::Compute_DaLearnMod(LeabraLayer* lay, LeabraUnit_Group* m
   LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_V1SNrThalLayerSpec);
 
   V1PFCGateSpec::GateSignal gate_sig = (V1PFCGateSpec::GateSignal)mugp->misc_state2;
-    
+
   int idx = 0;
   LeabraUnit* u;
   taLeafItr i;
