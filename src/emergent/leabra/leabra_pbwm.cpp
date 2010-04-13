@@ -247,7 +247,7 @@ void SNcLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
 void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
   net_off = 0.0f;
-  rnd_go_inc = 0.2f;
+  rnd_go_inc = 0.1f;
   leak = 1.0f;
 }
 
@@ -850,7 +850,7 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
       bias_dav = -gate_bias.mnt_rew_nogo;
     }
     else {
-      if(pfc_is_mnt) {   	// currently maintaining: bias NoGo for everything
+      if(pfc_mnt_cnt > 0) {   	// currently maintaining: bias NoGo for everything
 	bias_dav = -gate_bias.mnt_mnt_nogo;
       }
       else {			// otherwise, bias to maintain/update
@@ -1069,11 +1069,9 @@ void PFCGateSpec::Initialize() {
   graded_out_go = true;
   clear_decay = 0.9f;
   mid_minus_min = 10;
-  no_empty_out = true;
-  no_mnt_rew = true;
   base_gain = 0.0f;
   go_gain = 1.0f;
-  out_go_clear = true;
+  max_maint = 100;
   off_accom = 0.0f;
 }
 
@@ -1082,11 +1080,18 @@ void PFCGateSpec::UpdateAfterEdit_impl() {
   go_gain = 1.0f - base_gain;
 }
 
+void PFCGateSpec2::Initialize() {
+  no_empty_out = true;
+  no_mnt_rew = true;
+  no_out_norew = true;
+  out_norew_noclear = false;
+  out_go_clear = true;
+}
+
 void PFCLearnSpec::Initialize() {
   go_learn_base = 0.06f;
   go_learn_mod = 1.0f - go_learn_base;
   go_netin_gain = 0.01f;
-  max_maint = 100;
 //   out_gate_act = OUT_M2;
 }
 
@@ -1366,7 +1371,8 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 
     // output gating signal -- can only happen if hasn't happened yet!
     if(!out_gate_fired && snr_out_u && (snr_out_u->act_eq > go_thr_out) &&
-       (!gate.no_empty_out || pfc_mnt_cnt > 0)) {
+       (!gate2.no_empty_out || pfc_mnt_cnt > 0) &&
+       (!gate2.no_out_norew || net->pv_detected)) {
       gate_out = true;
       out_gate_fired = true;	// now it has..
 
@@ -1384,7 +1390,7 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 
     // maintenance gating signal -- can only happen if hasn't happened yet!
     if(!mnt_gate_fired && snr_mnt_u->act_eq > go_thr_mnt && 
-       (!gate.no_mnt_rew || !net->pv_detected)) {
+       (!gate2.no_mnt_rew || !net->pv_detected)) {
       gate_mnt = true;
       mnt_gate_fired = true;	// now it has..
 
@@ -1499,7 +1505,7 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
     }
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_NOGO) {
       ugp->misc_state++;	// continue maintaining
-      if(ugp->misc_state > learn.max_maint) {
+      if(ugp->misc_state > gate.max_maint) {
 	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
 	ugp->misc_state = 0;			     // empty
       }
@@ -1509,14 +1515,15 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
 	    ugp->misc_state1 == PFCGateSpec::EMPTY_MNT_GO ||
 	    ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_MNT_GO ||
 	    ugp->misc_state1 == PFCGateSpec::MAINT_OUT_MNT_GO) {
-      if(learn.max_maint > 0) {			     // if max_maint = 0 then never store
+      if(gate.max_maint > 0) {			     // if max_maint = 0 then never store
 	Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it (never stored before)
 	ugp->misc_state = 1;	// always reset on new store
       }
     }
     // or basic output gate with no veto from maint
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_OUT_GO) {
-      if(gate.out_go_clear && net->pv_detected) {    // only clear on true output trials!
+      if(gate2.out_go_clear &&
+	 (!gate2.out_norew_noclear || net->pv_detected)) { // only clear on true output trials
 	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
 	ugp->misc_state = 0;			     // empty
       }
@@ -2802,8 +2809,8 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
     matrixsp->gate_bias.SetAllBiases(0.0f);
     matrixsp->UpdateAfterEdit();
 
-    pfcmsp->gate.out_go_clear = false;
-    pfcmsp->gate.no_empty_out = false;
+    pfcmsp->gate2.out_go_clear = false;
+    pfcmsp->gate2.no_empty_out = false;
     pfcmsp->gate.base_gain = 0.5f;
     pfcmsp->UpdateAfterEdit();
   }
@@ -2823,7 +2830,7 @@ bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
     matrixsp->gate_bias.mnt_empty_go = 0.0f;
     matrixsp->UpdateAfterEdit();
 
-    pfcmsp->gate.out_go_clear = true;
+    pfcmsp->gate2.out_go_clear = true;
     pfcmsp->UpdateAfterEdit();
   }
 
