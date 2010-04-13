@@ -1099,7 +1099,8 @@ void PFCGateSpec::UpdateAfterEdit_impl() {
 
 void PFCGateSpec2::Initialize() {
   no_empty_out = true;
-  no_mnt_rew = true;
+  no_mnt_rew = false;
+  out_gate_act_m2 = true;
   no_out_norew = false;
   out_norew_noclear = true;
   out_go_clear = true;
@@ -1412,10 +1413,12 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       mnt_gate_fired = true;	// now it has..
 
       // compute out_gate multiplier in misc_float1 -- maint gating causes output gating too!
-      float mnt_go_act = 1.0f;	// activation of output gating unit specifically
-      if(gate.graded_out_go)
-	mnt_go_act = snr_mnt_u->act_eq;
-      ugp->misc_float1 = gate.base_gain + (gate.go_gain * mnt_go_act); // out gate multiplier
+      if(!out_gate_fired) {	 // only if output gating did not otherwise fire
+	float mnt_go_act = 1.0f;	// activation of output gating unit specifically
+	if(gate.graded_out_go)
+	  mnt_go_act = snr_mnt_u->act_eq;
+	ugp->misc_float1 = gate.base_gain + (gate.go_gain * mnt_go_act); // out gate multiplier
+      }
 
       Compute_MidMinusAct_ugp(lay, ugp, mg, net);
       snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, snrgp_mnt, mg, net);
@@ -1700,9 +1703,11 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
     rugp->misc_float = pfcgp->misc_float;
     rugp->misc_float1 = pfcgp->misc_float1;
 
-    float gate_val = rugp->misc_float1;
-    if(net->ct_cycle <= net->mid_minus_cycle) {
-      gate_val = pfcspec->gate.base_gain; // everyone is at base gain prior to output gate
+    float gate_val = rugp->misc_float1; // goes live whenver it goes live..
+    bool out_gate_fired = false;
+    if((rugp->misc_state2 == PFCGateSpec::GATE_OUT_GO) ||
+       (rugp->misc_state2 == PFCGateSpec::GATE_OUT_MNT_GO)) {
+      out_gate_fired = true;
     }
     
     for(int i=0;i<rugp->size;i++) {
@@ -1710,15 +1715,13 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
       LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
       LeabraUnit* pfcu = (LeabraUnit*)pfcgp->FastEl(i);
 
-//       if(net->ct_cycle > net->mid_minus_cycle) {
-// // 	if(pfcspec->learn.out_gate_act == PFCLearnSpec::OUT_M2)
-// // 	  ru->act = gate_val * pfcu->act_m2; // use memory value, due to updating issues "hand off"
-// // 	else
-// 	ru->act = gate_val * pfcu->act_eq; // go live
-//       }
-//       else {
-      ru->act = gate_val * pfcu->act_eq; // live val is fine
-//       }
+      float pfc_act_val = pfcu->act_eq;
+      if(pfcspec->gate2.out_gate_act_m2) {
+	if(out_gate_fired) {
+	  pfc_act_val = pfcu->act_eq;
+	}
+      }
+      ru->act = gate_val * pfc_act_val;
       ru->act_eq = ru->act_nd = ru->act;
       ru->da = 0.0f;		// I'm fully settled!
       ru->AddToActBuf(rus->syn_delay);
