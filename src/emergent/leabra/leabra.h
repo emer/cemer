@@ -896,6 +896,7 @@ class LEABRA_API MaxDaSpec : public taOBase {
 INHERITED(taOBase)
 public:
   enum dAValue {
+    NO_MAX_DA,			// these units do not contribute to maxda computation at all -- value always zero
     DA_ONLY,			// just use da
     INET_ONLY,			// just use inet
     INET_DA			// use inet if no activity, then use da

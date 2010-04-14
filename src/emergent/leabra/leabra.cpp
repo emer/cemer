@@ -1577,16 +1577,22 @@ float LeabraUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
 
 float LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayer* lay = u->own_lay();
-  float fda;
-  if(maxda.val == MaxDaSpec::DA_ONLY)
+  float fda = 0.0f;
+  switch(maxda.val) {
+  case MaxDaSpec::NO_MAX_DA:
+    break;
+  case MaxDaSpec::DA_ONLY:
     fda = fabsf(u->da);
-  else if(maxda.val == MaxDaSpec::INET_ONLY)
+    break;
+  case MaxDaSpec::INET_ONLY:
     fda = fabsf(maxda.inet_scale * u->I_net);
-  else {
+    break;
+  case MaxDaSpec::INET_DA:
     if(lay->acts.avg <= maxda.lay_avg_thr)
       fda = fabsf(maxda.inet_scale * u->I_net);
     else
       fda = fabsf(u->da);
+    break;
   }
   return fda;
 }

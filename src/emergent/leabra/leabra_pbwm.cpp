@@ -303,6 +303,11 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   SetUnique("decay", true);
   decay.clamp_phase2 = false;
 
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+  
+  us->SetUnique("maxda", true);
+  us->maxda.val = MaxDaSpec::NO_MAX_DA;
+
 //  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
@@ -520,6 +525,9 @@ void MatrixUnitSpec::Initialize() {
   SetUnique("act", true);
   act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
 
+  SetUnique("maxda", true);
+  maxda.val = MaxDaSpec::NO_MAX_DA;
+
   SetUnique("noise_type", true);
   noise_type = NETIN_NOISE;
   SetUnique("noise", true);
@@ -711,6 +719,9 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   }
 
   us->SetUnique("g_bar", true);
+
+  us->SetUnique("maxda", true);
+  us->maxda.val = MaxDaSpec::NO_MAX_DA;
 
   // must have these not initialized every trial!
   if(lay->CheckError(us->hyst.init, quiet, rval,
