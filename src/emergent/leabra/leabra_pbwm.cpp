@@ -1718,7 +1718,7 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
       float pfc_act_val = pfcu->act_eq;
       if(pfcspec->gate2.out_gate_act_m2) {
 	if(out_gate_fired) {
-	  pfc_act_val = pfcu->act_eq;
+	  pfc_act_val = pfcu->act_m2;
 	}
       }
       ru->act = gate_val * pfc_act_val;
