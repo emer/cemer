@@ -603,11 +603,11 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
 
 void MatrixGateBiasSpec::Initialize() {
   mnt_mnt_nogo = 1.0f;
-  mnt_rew_nogo = 2.0f;
+  mnt_rew_nogo = 10.0f;
   mnt_empty_go = 0.0f;
   out_rew_go = 1.0f;
   out_norew_nogo = 2.0f;
-  out_empty_nogo = 2.0f;
+  out_empty_nogo = 10.0f;
   cur_trl_mnt = false;
 }
 
@@ -829,8 +829,7 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
   int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
   bool pfc_is_mnt = pfc_mnt_cnt > 0;
   if(gate_bias.cur_trl_mnt) {
-    if(mugp->misc_state2 == PFCGateSpec::GATE_MNT_GO ||
-       mugp->misc_state2 == PFCGateSpec::GATE_OUT_MNT_GO)
+    if(mugp->misc_state2 == PFCGateSpec::GATE_MNT_GO)
       pfc_is_mnt = true;	// count current trial as mnt!
   }
   int rnd_go_thr = mugp->misc_state3; // random go threshold for this time
@@ -1375,28 +1374,12 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     }
 
     int pfc_mnt_cnt = ugp->misc_state; // is pfc maintaining or not?
-
-    bool out_gate_fired = false;
-    bool mnt_gate_fired = false;
-    if((ugp->misc_state2 == PFCGateSpec::GATE_OUT_GO) ||
-       (ugp->misc_state2 == PFCGateSpec::GATE_OUT_MNT_GO)) {
-      out_gate_fired = true;
-    }
-    if((ugp->misc_state2 == PFCGateSpec::GATE_MNT_GO) ||
-       (ugp->misc_state2 == PFCGateSpec::GATE_OUT_MNT_GO)) {
-      mnt_gate_fired = true;
-    }
+    bool out_gate_fired = (ugp->misc_state2 == PFCGateSpec::GATE_OUT_GO);
+    bool mnt_gate_fired = (ugp->misc_state2 == PFCGateSpec::GATE_MNT_GO);
     bool gate_fired = mnt_gate_fired || out_gate_fired;
-
-    // what we do on this trial
-    bool gate_out = false;
-    bool gate_mnt = false;
 
     // maintenance gating signal -- can only happen if hasn't happened yet and mutex with out
     if(!gate_fired && (snr_mnt_u->act_eq > go_thr_mnt)) {
-      gate_mnt = true;
-      mnt_gate_fired = true;	// now it has..
-
       // compute out_gate multiplier in misc_float1 -- maint gating causes output gating too!
       float mnt_go_act = 1.0f;	// activation of output gating unit specifically
       if(gate.graded_out_go)
@@ -1409,14 +1392,23 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 
       if(pfc_mnt_cnt > 0) // full stripe
 	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);	 // clear maint currents if full -- toggle off
+
+      // update state info
+      ugp->misc_state2 = PFCGateSpec::GATE_MNT_GO;
+      if(pfc_mnt_cnt > 0) // full stripe
+	ugp->misc_state1 = PFCGateSpec::MAINT_MNT_GO;
+      else
+	ugp->misc_state1 = PFCGateSpec::EMPTY_MNT_GO;
+
+      // misc_float has the go_learn_base factor incorporated
+      float lrn_go_act = snr_mnt_u->act_eq;
+      ugp->misc_float = learn.go_learn_base + (learn.go_learn_mod * lrn_go_act);
+      ugp->misc_float2 = learn.go_netin_gain * lrn_go_act;
     }
 
     // output gating signal -- can only happen if hasn't happened yet, and mutex with mnt gating
     if(!gate_fired && snr_out_u && (snr_out_u->act_eq > go_thr_out) &&
        (!gate.no_empty_out || pfc_mnt_cnt > 0)) {
-      gate_out = true;
-      out_gate_fired = true;	// now it has..
-
       // compute out_gate multiplier in misc_float1
       float out_go_act = 1.0f;	// activation of output gating unit specifically
       if(gate.graded_out_go)
@@ -1427,40 +1419,16 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       Compute_MidMinusAct_ugp(lay, ugp, mg, net);
       snrthalsp_out->Compute_MidMinusAct_ugp(snrthal_out, snrgp_out, mg, net);
       // snrthal and associated matrix layer grab act_m2 vals based on current state!
-    }
 
-    // todo: if mutex looks good, then can drop all the combined gating stuff!!
-    if(gate_mnt || gate_out) {	// something happened
-      float lrn_go_act = 0.0f;	// activation of go gating unit (out or mnt depending -- used for learning)
-      if(mnt_gate_fired) {
-	if(out_gate_fired) {  // both output and maint gating fired..
-	  ugp->misc_state2 = PFCGateSpec::GATE_OUT_MNT_GO;
-	  if(pfc_mnt_cnt > 0) // full stripe
-	    ugp->misc_state1 = PFCGateSpec::MAINT_OUT_MNT_GO;
-	  else
-	    ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_MNT_GO;
-	  lrn_go_act = MAX(snr_mnt_u->act_m2, snr_out_u->act_m2);
-	}
-	else {
-	  // only maintenance fired
-	  ugp->misc_state2 = PFCGateSpec::GATE_MNT_GO;
-	  if(pfc_mnt_cnt > 0) // full stripe
-	    ugp->misc_state1 = PFCGateSpec::MAINT_MNT_GO;
-	  else
-	    ugp->misc_state1 = PFCGateSpec::EMPTY_MNT_GO;
-	  lrn_go_act = snr_mnt_u->act_m2;
-	}
-      }
-      else if(out_gate_fired) {	// just out gate fired
-	ugp->misc_state2 = PFCGateSpec::GATE_OUT_GO;
-	if(pfc_mnt_cnt > 0) // full stripe
-	  ugp->misc_state1 = PFCGateSpec::MAINT_OUT_GO;
-	else
-	  ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_GO;
-	lrn_go_act = snr_out_u->act_m2;
-      }
+      // update state info
+      ugp->misc_state2 = PFCGateSpec::GATE_OUT_GO;
+      if(pfc_mnt_cnt > 0) // full stripe
+	ugp->misc_state1 = PFCGateSpec::MAINT_OUT_GO;
+      else
+	ugp->misc_state1 = PFCGateSpec::EMPTY_OUT_GO;
 
       // misc_float has the go_learn_base factor incorporated
+      float lrn_go_act = snr_out_u->act_eq;
       ugp->misc_float = learn.go_learn_base + (learn.go_learn_mod * lrn_go_act);
       ugp->misc_float2 = learn.go_netin_gain * lrn_go_act;
     }
@@ -1534,9 +1502,7 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
     }
     // look for store condition
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_MNT_GO ||
-	    ugp->misc_state1 == PFCGateSpec::EMPTY_MNT_GO ||
-	    ugp->misc_state1 == PFCGateSpec::EMPTY_OUT_MNT_GO ||
-	    ugp->misc_state1 == PFCGateSpec::MAINT_OUT_MNT_GO) {
+	    ugp->misc_state1 == PFCGateSpec::EMPTY_MNT_GO) {
       if(gate.max_maint > 0) {			     // if max_maint = 0 then never store
 	Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it (never stored before)
 	ugp->misc_state = 1;	// always reset on new store

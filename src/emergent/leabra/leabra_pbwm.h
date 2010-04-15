@@ -318,11 +318,11 @@ class LEABRA_API MatrixGateBiasSpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		mnt_mnt_nogo;	// #DEF_1 (Weak) #AKA_mnt_nogo for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- this is critical for enabling robust maintenance by reducing Go activity that would then lead to an update
-  float		mnt_rew_nogo;	// #DEF_2 (Strong) for all MAINT stripes (empty or maintaining) on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- adds to any mnt_mnt_nogo -- in general it is not useful to fire maint gating on recall/output trials (see pfc.gate spec -- can prevent entirely with flag there)
+  float		mnt_rew_nogo;	// #DEF_10 (Very Strong) for all MAINT stripes (empty or maintaining) on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- adds to any mnt_mnt_nogo -- in general it is not useful to fire maint gating on recall/output trials (see pfc.gate spec -- can prevent entirely with flag there)
   float		mnt_empty_go;	// #DEF_0 (Very Weak) for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias da (positive dopamine) -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
   float		out_rew_go;	// #DEF_1 (Weak) #AKA_out_pvr for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias da (positive dopamine) to encourage the output gating units to respond -- see out_empty_nogo for empty (non-maintaining) stripes
   float		out_norew_nogo;	// #DEF_2 (Strong) for all OUTPUT stripes (empty or maintaining) on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating -- is not generally useful to output gate on store trials
-  float		out_empty_nogo;	// #DEF_2 (Strong) for OUTPUT stripes that are not maintaining anything, on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating if there is nothing being maintained to output gate
+  float		out_empty_nogo;	// #DEF_10 (Very Strong) for OUTPUT stripes that are not maintaining anything, on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating if there is nothing being maintained to output gate
   bool		cur_trl_mnt;	// if true, count current trial maintenance gating as stripe being full -- this is useful for primary motor areas where everything happens with the current trial
 
   void		SetAllBiases(float one_bias, float strong_mult=2.0f);
@@ -483,17 +483,17 @@ public:
     GATE_NOGO = 1,		// gate NoGo unit fired
     GATE_MNT_GO = 2,		// gate maintenance Go unit fired 
     GATE_OUT_GO = 3,		// gate output Go unit fired 
-    GATE_OUT_MNT_GO = 4,	// gate maint and output Go units fired 
+    GATE_OUT_MNT_GO = 4,	// gate maint and output Go units fired (not currently possible with mutex logic)
   };
 
   enum	GateState {		// what happened on last gating action, stored in misc_state1 on unit group -- for debugging etc
     EMPTY_MNT_GO = 0,		// stripe was empty, got MAINT Go
     EMPTY_OUT_GO = 1,		// stripe was empty, got OUTPUT Go
-    EMPTY_OUT_MNT_GO = 2,	// stripe was empty, got OUTPUT then MAINT Go
+    EMPTY_OUT_MNT_GO = 2,	// stripe was empty, got OUTPUT then MAINT Go (not currently possible with mutex logic)
     EMPTY_NOGO = 3,		// stripe was empty, got NoGo
     MAINT_MNT_GO = 4,		// stripe was already maintaining, got MAINT Go: cleared, encoded
     MAINT_OUT_GO = 5,		// stripe was already maintaining, got OUTPUT Go
-    MAINT_OUT_MNT_GO = 6,	// stripe was already maintaining, got OUTPUT then MAINT Go
+    MAINT_OUT_MNT_GO = 6,	// stripe was already maintaining, got OUTPUT then MAINT Go (not currently possible with mutex logic)
     MAINT_NOGO = 7,		// stripe was already maintaining, got NoGo
     NOGO_RND_GO = 20,		// random go for stripes constantly firing nogo
     INIT_STATE = 30,		// initialized state at start of trial
