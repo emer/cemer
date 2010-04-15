@@ -505,6 +505,8 @@ public:
   float		base_gain;	// #DEF_0;0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
   float		go_gain;	// #READ_ONLY how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   int		max_maint;	// a hard upper-limit on how long the PFC can maintain -- anything over this limit will be cleared.  set to 0 for motor areas that do not maintain but use maintenance gating to scope the set of possible responses
+  bool		no_empty_out; 	// #DEF_true prevent an output gating signal from being generated from an empty stripe (one that is not currently maintaining something) -- see also matrix gate_bias.out_empty_nogo -- this can help focus output gating on maintained information -- logic is that even if Go firing happens, it still takes recurrent activity from PFC to drive it, so if not maintaining, nothing happens..
+  bool		out_go_clear;	// #DEF_true #EXPERT an output Go clears the maintenance currents at the end of the trial -- only for reward trials (signalled by PVr) -- you use it, you lose it..
   float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
 
   void 	Defaults()	{ Initialize(); }
@@ -512,24 +514,6 @@ public:
 protected:
   void  UpdateAfterEdit_impl();
 
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
-
-class LEABRA_API PFCGateSpec2 : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra more gating specifications for basal ganglia gating of PFC maintenance layer -- this one mostly has the flags
-INHERITED(taOBase)
-public:
-  bool		no_empty_out; 	// #DEF_true prevent an output gating signal from being generated from an empty stripe (one that is not currently maintaining something) -- see also matrix gate_bias.out_empty_nogo -- this can help focus output gating on maintained information -- logic is that even if Go firing happens, it still takes recurrent activity from PFC to drive it, so if not maintaining, nothing happens..
-  bool		no_mnt_rew;	// #DEF_false no maintenance gating on reward trials -- see also matrix gate_bias.mnt_rew_nogo -- can potentially cause problems with forgetting info that should be output gated, and is generally not useful, so this just prevents it entirely
-  bool		out_gate_act_m2; // #DEF_true if output gate is active, then activation on the pfc_out layer reflects pfc_maint act_m2, otherwise it reflects current act_eq -- output gating works on delayed information whereas when maint go firing updates it drives pfc_out with current wave of maint activity
-  bool		no_out_norew;	// #DEF_false no output gating on non-reward trials -- see also matrix gate_bias.out_norew_nogo -- can potentially cause problems with forgetting info that should be maintained, and is generally not useful, so this just prevents it entirely
-  bool		out_norew_noclear; // #DEF_true if output gating does occur on non-reward trials (see no_out_norew to prevent this in the first place) then this prevents the clearing of the maintained information at the end of the trial that would otherwise occur (and always occurs on reward trials with output gating) -- this allows internal top-down biasing via output gating without loss of maintained info 
-  bool		out_go_clear;	// #DEF_true #EXPERT an output Go clears the maintenance currents at the end of the trial -- only for reward trials (signalled by PVr) -- you use it, you lose it..
-
-  void 	Defaults()	{ Initialize(); }
-  TA_SIMPLE_BASEFUNS(PFCGateSpec2);
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -563,7 +547,6 @@ public:
   };
 
   PFCGateSpec	gate;		// parameters controlling the gating of pfc units
-  PFCGateSpec2	gate2;		// more parameters controlling the gating of pfc units
   PFCLearnSpec	learn;		// parameters controlling the learning in pfc units (as modulated by BG gating signals)
 
   virtual void	GetSNrThalLayers(LeabraLayer* lay, LeabraLayer*& snrthal_mnt, LeabraLayer*& snrthal_out);
