@@ -1411,6 +1411,10 @@ void taProject::SaveRecoverFile() {
 
 bool taProject::AutoSave(bool force) {
   if(!force) {
+    if(!isDirty()) {			// don't save until dirty
+      auto_save_timer.StartTimer(true); // reset
+      return false;
+    }
     if(auto_save_timer.start.tot == 0) { // first timer..
       auto_save_timer.StartTimer(true); // reset
       return false;

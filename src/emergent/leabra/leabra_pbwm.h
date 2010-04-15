@@ -323,10 +323,6 @@ public:
   float		out_rew_go;	// #DEF_1 (Weak) #AKA_out_pvr for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias da (positive dopamine) to encourage the output gating units to respond -- see out_empty_nogo for empty (non-maintaining) stripes
   float		out_norew_nogo;	// #DEF_2 (Strong) for all OUTPUT stripes (empty or maintaining) on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating -- is not generally useful to output gate on store trials
   float		out_empty_nogo;	// #DEF_10 (Very Strong) for OUTPUT stripes that are not maintaining anything, on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating if there is nothing being maintained to output gate
-  bool		cur_trl_mnt;	// if true, count current trial maintenance gating as stripe being full -- this is useful for primary motor areas where everything happens with the current trial
-
-  void		SetAllBiases(float one_bias, float strong_mult=2.0f);
-  // set all the bias values except mnt_empty_go to given value -- strong_mult is a multiplier value that applies to the "strong" biases (which really should never be violated) -- see comments for each variable (and default values) for their relative strengths
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixGateBiasSpec);
@@ -471,7 +467,7 @@ private:
 // * pfc ugp->misc_state1 = GateState -- what happened on last gating action in terms of PFC state and gating signal action
 // * pfc ugp->misc_state2 = GateSignal -- what gating signal(s) happened on most recent trial
 // * pfc ugp->misc_float = current Go activation value (mnt or out) -- used by units to boost netin -- already multiplied by gate.mnt/out_go_netin
-// * pfc ugp->misc_float1 = current output gating Go activation value with base_gain and go_gain factored in -- used for graded Go -- just multiply directly by this number
+// * pfc ugp->misc_float1 = current output gating Go activation value for graded Go -- just multiply directly by this number
 // * pfc ugp->misc_float2 = current Go activation value (mnt or out) for modulating netinput of units in proportion to gating signals -- requires PFCUnitSpec to do that -- already multiplied by gate.go_netin_gain
 
 class LEABRA_API PFCGateSpec : public taOBase {
@@ -502,8 +498,6 @@ public:
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
   float		clear_decay;	// #DEF_0.9 #MIN_0 #MAX_1 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
   int		mid_minus_min;	// minimum number of cycles before computing any gating -- acts like an STN-like function -- must be < network mid_minus_cycle
-  float		base_gain;	// #DEF_0;0.5 #MIN_0 #MAX_1 how much activation gets through even without a Go gating signal
-  float		go_gain;	// #READ_ONLY how much extra to add for a Go signal -- automatically computed to be 1.0 - base_gain
   int		max_maint;	// a hard upper-limit on how long the PFC can maintain -- anything over this limit will be cleared.  set to 0 for motor areas that do not maintain but use maintenance gating to scope the set of possible responses
   bool		no_empty_out; 	// #DEF_true prevent an output gating signal from being generated from an empty stripe (one that is not currently maintaining something) -- see also matrix gate_bias.out_empty_nogo -- this can help focus output gating on maintained information -- logic is that even if Go firing happens, it still takes recurrent activity from PFC to drive it, so if not maintaining, nothing happens..
   bool		out_go_clear;	// #DEF_true #EXPERT an output Go clears the maintenance currents at the end of the trial -- only for reward trials (signalled by PVr) -- you use it, you lose it..
@@ -511,8 +505,8 @@ public:
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PFCGateSpec);
-protected:
-  void  UpdateAfterEdit_impl();
+// protected:
+//   void  UpdateAfterEdit_impl();
 
 private:
   void	Initialize();

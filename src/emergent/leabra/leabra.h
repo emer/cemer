@@ -3386,11 +3386,6 @@ class LEABRA_API LeabraWizard : public Wizard {
   // #STEM_BASE ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
-  enum PBWMMode {
-    GATE_BIAS,			// uses the gate biases and out_go_clear to provide a scaffolding of generally good gating dynamics, which learning can then shape as appropriate -- this is the current default behavior -- somewhat slower learning but more sensible overall behavior
-    PROMISCUOUS,		// promiscuous Go firing with no gate_bias and no out_go_clear -- basically in perpetual updating mode -- learns very fast and reliably, but the resulting gating dynamic is often fairly random and hard to interpret -- this was the way it worked prior to 10/2009 and version 5.0.1 of the software
-  };
-
   override bool StdNetwork(TypeDef* net_type = &TA_LeabraNetwork, Network* net = NULL);
   override bool	UpdateInputDataFmNet(Network* net, DataTable* data_table);
 
@@ -3422,8 +3417,6 @@ public:
 		     int n_stripes=4, bool out_gate=true,
 		     bool no_lrn_pfc=false);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated;  da_mod_all = have da value modulate all the regular units in the network; out_gate = each PFC layer has separate output gated layer and corresponding matrix output gates; nolrn_pfc = pfc does not learn -- just copies input acts directly (useful for demonstration but not as realistic or powerful)
-  virtual bool 	PBWM_Mode(LeabraNetwork* net, PBWMMode mode);
-  // #MENU_BUTTON change the general behavior of the model by adjusting a set of parameters in concert to achieve different overall dynamics -- network must already be configured as a PBWM model *WITH* output gating (difference only really applies in this case)
 
   virtual bool 	PBWM_CvtV1_impl(String& proj_str);
   // #IGNORE do the actual gsub conversions to V1

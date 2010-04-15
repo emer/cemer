@@ -216,8 +216,7 @@ void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
       if(tol->lesioned())	continue;
       LeabraLayerSpec* ls = (LeabraLayerSpec*)tol->spec.SPtr();
       float send_val = snc_u->act;
-      if(snc.lv_mnt_pv_out && //ls->InheritsFrom(&TA_MatrixBaseLayerSpec)) {
-	 ls->InheritsFrom(&TA_MatrixLayerSpec)) {
+      if(snc.lv_mnt_pv_out && ls->InheritsFrom(&TA_MatrixLayerSpec)) {
 	if(((MatrixLayerSpec*)ls)->bg_type == MatrixLayerSpec::OUTPUT)
 	  send_val = pv_da * da.da_gain; // send PV to output
 	else
@@ -608,16 +607,6 @@ void MatrixGateBiasSpec::Initialize() {
   out_rew_go = 1.0f;
   out_norew_nogo = 2.0f;
   out_empty_nogo = 10.0f;
-  cur_trl_mnt = false;
-}
-
-void MatrixGateBiasSpec::SetAllBiases(float one_bias, float strong_mult) {
-  mnt_mnt_nogo = one_bias;
-  mnt_rew_nogo = strong_mult * one_bias;
-  //  mnt_empty_go = 0.0f;
-  out_rew_go = one_bias;
-  out_norew_nogo = strong_mult * one_bias;
-  out_empty_nogo = strong_mult * one_bias;
 }
 
 void MatrixMiscSpec::Initialize() {
@@ -828,10 +817,6 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
   float tonic_da = dals->da.tonic_da;
   int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
   bool pfc_is_mnt = pfc_mnt_cnt > 0;
-  if(gate_bias.cur_trl_mnt) {
-    if(mugp->misc_state2 == PFCGateSpec::GATE_MNT_GO)
-      pfc_is_mnt = true;	// count current trial as mnt!
-  }
   int rnd_go_thr = mugp->misc_state3; // random go threshold for this time
   int gp_sz = mugp->leaves / 2;
   bool nogo_rnd_go = (mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO);
@@ -1023,32 +1008,9 @@ void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay, LeabraUnit_Group*
   }
 }
 
-// void MatrixLayerSpec::Compute_NoGoRndGo(LeabraLayer* lay, LeabraNetwork* net) {
-//   for(int gi=0; gi<lay->units.gp.size; gi++) {
-//     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
-
-//     int pfc_mnt_cnt = mugp->misc_state; // is pfc maintaining or not?
-
-//     if((int)fabs((float)mugp->misc_state) > rnd_go.nogo_thr) {
-//       if(rnd_go.sep_out_mnt) {
-// 	if(bg_type == OUTPUT && pfc_mnt_cnt < 0) // no output when empty
-//           continue;
-//         else if(bg_type == MAINT && pfc_mnt_cnt > 0) // no maint when full
-// 	  continue;
-//       }
-
-//       if(Random::ZeroOne() < rnd_go.nogo_p) {
-// 	mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
-// 	Compute_RndGoNoise_ugp(lay, mugp, net);
-//       }
-//     }
-//   }
-// }
-
 void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no == 0) {
     Compute_ClearRndGo(lay, net);
-//     Compute_NoGoRndGo(lay, net);
   }
 
   inherited::Compute_HardClamp(lay, net);
@@ -1096,24 +1058,15 @@ void PFCGateSpec::Initialize() {
   graded_out_go = true;
   clear_decay = 0.9f;
   mid_minus_min = 10;
-  base_gain = 0.0f;
-  go_gain = 1.0f;
   max_maint = 100;
   off_accom = 0.0f;
-  no_empty_out = true;
   out_go_clear = true;
-}
-
-void PFCGateSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  go_gain = 1.0f - base_gain;
 }
 
 void PFCLearnSpec::Initialize() {
   go_learn_base = 0.06f;
   go_learn_mod = 1.0f - go_learn_base;
   go_netin_gain = 0.01f;
-//   out_gate_act = OUT_M2;
 }
 
 void PFCLearnSpec::UpdateAfterEdit_impl() {
@@ -1381,10 +1334,9 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     // maintenance gating signal -- can only happen if hasn't happened yet and mutex with out
     if(!gate_fired && (snr_mnt_u->act_eq > go_thr_mnt)) {
       // compute out_gate multiplier in misc_float1 -- maint gating causes output gating too!
-      float mnt_go_act = 1.0f;	// activation of output gating unit specifically
+      ugp->misc_float1 = 1.0f; // out gate multiplier
       if(gate.graded_out_go)
-	mnt_go_act = snr_mnt_u->act_eq;
-      ugp->misc_float1 = gate.base_gain + (gate.go_gain * mnt_go_act); // out gate multiplier
+	ugp->misc_float1 = snr_mnt_u->act_eq; // out gate multiplier
 
       Compute_MidMinusAct_ugp(lay, ugp, mg, net);
       snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, snrgp_mnt, mg, net);
@@ -1407,13 +1359,11 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     }
 
     // output gating signal -- can only happen if hasn't happened yet, and mutex with mnt gating
-    if(!gate_fired && snr_out_u && (snr_out_u->act_eq > go_thr_out) &&
-       (!gate.no_empty_out || pfc_mnt_cnt > 0)) {
+    if(!gate_fired && snr_out_u && (snr_out_u->act_eq > go_thr_out)) {
       // compute out_gate multiplier in misc_float1
-      float out_go_act = 1.0f;	// activation of output gating unit specifically
+      ugp->misc_float1 = 1.0f; // out gate multiplier
       if(gate.graded_out_go)
-	out_go_act = snr_out_u->act_eq;
-      ugp->misc_float1 = gate.base_gain + (gate.go_gain * out_go_act); // out gate multiplier
+	ugp->misc_float1 = snr_out_u->act_eq; // out gate multiplier
 
       // misc_float2 includes param -- update once only!
       Compute_MidMinusAct_ugp(lay, ugp, mg, net);
@@ -2678,139 +2628,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   if(proj) {
     proj->undo_mgr.SaveUndo(net, "Wizard::PBWM -- actually saves network specifically");
   }
-  return true;
-}
-
-bool LeabraWizard::PBWM_Mode(LeabraNetwork* net, PBWMMode mode) {
-  if(TestError(!net, "PBWM", "network must be specified and have PBWM already configured on it -- aborting!"))
-    return false;
-
-  bool out_gate = true;		// only for out gate case!
-
-  String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
-  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
-  String vtanm = "VTA";
-
-  //////////////////////////////////////////////////////////////////////////////////
-  // make specs
-
-  BaseSpec_Group* units = net->FindMakeSpecGp("PFC_BG_Units");
-  BaseSpec_Group* cons = net->FindMakeSpecGp("PFC_BG_Cons");
-  BaseSpec_Group* layers = net->FindMakeSpecGp("PFC_BG_Layers");
-  BaseSpec_Group* prjns = net->FindMakeSpecGp("PFC_BG_Prjns");
-  if(units == NULL || cons == NULL || layers == NULL || prjns == NULL) return false;
-
-  LeabraUnitSpec* pv_units = (LeabraUnitSpec*)units->FindMakeSpec("PVUnits", &TA_LeabraUnitSpec);
-  LeabraUnitSpec* lv_units = (LeabraUnitSpec*)pv_units->FindMakeChild("LVUnits", &TA_LeabraUnitSpec);
-  LeabraUnitSpec* da_units = (LeabraUnitSpec*)units->FindMakeSpec("DaUnits", &TA_LeabraUnitSpec);
-
-  LeabraUnitSpec* pfc_units = (LeabraUnitSpec*)units->FindMakeSpec("PFCUnits", &TA_LeabraUnitSpec);
-  LeabraUnitSpec* matrix_units = (LeabraUnitSpec*)units->FindMakeSpec("MatrixUnits", &TA_MatrixUnitSpec);
-  LeabraUnitSpec* snrthal_units = (LeabraUnitSpec*)units->FindMakeSpec("SNrThalUnits", &TA_LeabraUnitSpec);
-  if(pfc_units == NULL || matrix_units == NULL) return false;
-  MatrixUnitSpec* matrixo_units = NULL;
-  if(out_gate) {
-    matrixo_units = (MatrixUnitSpec*)matrix_units->FindMakeChild("MatrixOut", &TA_MatrixUnitSpec);
-  }
-
-  LeabraConSpec* learn_cons = (LeabraConSpec*)cons->FindMakeSpec("LearnCons", &TA_LeabraConSpec);
-  if(!learn_cons) return false;
-
-  LeabraConSpec* pvi_cons = (LeabraConSpec*)learn_cons->FindMakeChild("PVi", &TA_PVConSpec);
-  LeabraConSpec* pvr_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("PVr", &TA_PVrConSpec);
-  LeabraConSpec* lve_cons = (LeabraConSpec*)pvi_cons->FindMakeChild("LVe", &TA_PVConSpec);
-  LeabraConSpec* lvi_cons = (LeabraConSpec*)lve_cons->FindMakeChild("LVi", &TA_PVConSpec);
-  LeabraConSpec* nv_cons =  (LeabraConSpec*)pvi_cons->FindMakeChild("NV", &TA_PVConSpec);
-
-  LeabraConSpec* topfc_cons = (LeabraConSpec*)learn_cons->FindMakeChild("ToPFC", &TA_LeabraConSpec);
-  if(topfc_cons == NULL) return false;
-  LeabraConSpec* intra_pfc = (LeabraConSpec*)topfc_cons->FindMakeChild("IntraPFC", &TA_LeabraConSpec);
-  LeabraConSpec* pfc_bias = (LeabraConSpec*)topfc_cons->FindMakeChild("PFCBias", &TA_LeabraBiasSpec);
-  MatrixConSpec* matrix_cons = (MatrixConSpec*)learn_cons->FindMakeChild("MatrixCons", &TA_MatrixConSpec);
-  MatrixConSpec* mfmpfc_cons = (MatrixConSpec*)matrix_cons->FindMakeChild("MatrixFmPFC", &TA_MatrixConSpec);
-
-  MatrixConSpec* matrixo_cons = NULL;
-  MatrixConSpec* mofmpfc_cons = NULL;
-  if(out_gate) {
-    matrixo_cons = (MatrixConSpec*)matrix_cons->FindMakeChild("Matrix_out", &TA_MatrixConSpec);
-    mofmpfc_cons = (MatrixConSpec*)matrixo_cons->FindMakeChild("Matrix_out_FmPFC", &TA_MatrixConSpec);
-  }
-  MatrixBiasSpec* matrix_bias = (MatrixBiasSpec*)matrix_cons->FindMakeChild("MatrixBias", &TA_MatrixBiasSpec);
-
-  LeabraConSpec* marker_cons = (LeabraConSpec*)cons->FindMakeSpec("MarkerCons", &TA_MarkerConSpec);
-  LeabraConSpec* pfc_self = (LeabraConSpec*)cons->FindMakeSpec("PFCSelfCon", &TA_LeabraConSpec);
-
-  LeabraConSpec* bg_bias = (LeabraConSpec*)learn_cons->FindMakeChild("BgBias", &TA_LeabraBiasSpec);
-  if(bg_bias == NULL) return false;
-
-  if(pfc_self == NULL || intra_pfc == NULL || matrix_cons == NULL || marker_cons == NULL 
-     || matrix_bias == NULL)
-    return false;
-
-  LVeLayerSpec* lvesp = (LVeLayerSpec*)layers->FindMakeSpec(lvenm + "Layer", &TA_LVeLayerSpec);
-  LViLayerSpec* lvisp = (LViLayerSpec*)lvesp->FindMakeChild(lvinm + "Layer", &TA_LViLayerSpec);
-  NVLayerSpec* nvsp = (NVLayerSpec*)layers->FindMakeSpec(nvnm + "Layer", &TA_NVLayerSpec);
-  PatchLayerSpec* patchsp = (PatchLayerSpec*)lvesp->FindMakeChild("PatchLayer", &TA_PatchLayerSpec);
-
-  PVLVDaLayerSpec* dasp = (PVLVDaLayerSpec*)layers->FindType(&TA_PVLVDaLayerSpec);
-  SNcLayerSpec* sncsp = (SNcLayerSpec*)dasp->FindMakeChild("SNcLayer", &TA_SNcLayerSpec);
-
-  PFCLayerSpec* pfcmsp = (PFCLayerSpec*)layers->FindMakeSpec("PFCLayer", &TA_PFCLayerSpec);
-  PFCOutLayerSpec* pfcosp = NULL;
-  if(out_gate)
-    pfcosp = (PFCOutLayerSpec*)pfcmsp->FindMakeChild("PFCOutLayer", &TA_PFCOutLayerSpec);
-  MatrixLayerSpec* matrixsp = (MatrixLayerSpec*)layers->FindMakeSpec("MatrixLayer", &TA_MatrixLayerSpec);
-  if(pfcmsp == NULL || matrixsp == NULL) return false;
-
-  MatrixLayerSpec* matrixosp = NULL;
-  if(out_gate)
-    matrixosp = (MatrixLayerSpec*)matrixsp->FindMakeChild("Matrix_out", &TA_MatrixLayerSpec);
-
-  SNrThalLayerSpec* snrthalsp = (SNrThalLayerSpec*)layers->FindMakeSpec("SNrThalLayer", &TA_SNrThalLayerSpec);
-  SNrThalLayerSpec* snrthalosp = NULL;
-  if(out_gate)
-    snrthalosp = (SNrThalLayerSpec*)snrthalsp->FindMakeChild("SNrThalOut", &TA_SNrThalLayerSpec);
-
-  if(mode == PROMISCUOUS) {
-    lvesp->lv.min_lvi = 0.1f;
-    nvsp->nv.da_gain = 1.0f;
-    dasp->da.pv_gain = 1.0f;
-    dasp->da.da_gain = 1.0f;
-    matrixsp->matrix.da_gain = 0.1f;
-    
-    sncsp->snc.lv_mnt_pv_out= false;
-
-    snrthalsp->snrthal.net_off = 0.2f;
-    snrthalsp->snrthal.go_thr = 0.1f;
-
-    matrixsp->gate_bias.SetAllBiases(0.0f);
-    matrixsp->UpdateAfterEdit();
-
-    pfcmsp->gate.out_go_clear = false;
-    pfcmsp->gate.no_empty_out = false;
-    pfcmsp->gate.base_gain = 0.5f;
-    pfcmsp->UpdateAfterEdit();
-  }
-  else if(mode == GATE_BIAS) {
-    lvesp->lv.min_lvi = 0.4f;
-    nvsp->nv.da_gain = 0.1f;
-    dasp->da.pv_gain = 0.1f;
-    dasp->da.da_gain = 1.0f;
-    matrixsp->matrix.da_gain = 0.1f;
-
-    sncsp->snc.lv_mnt_pv_out= true;
-
-    snrthalsp->snrthal.net_off = 0.0f;
-    snrthalsp->snrthal.go_thr = 0.5f;
-    
-    matrixsp->gate_bias.SetAllBiases(1.0f);
-    matrixsp->gate_bias.mnt_empty_go = 0.0f;
-    matrixsp->UpdateAfterEdit();
-
-    pfcmsp->gate.out_go_clear = true;
-    pfcmsp->UpdateAfterEdit();
-  }
-
   return true;
 }
 
