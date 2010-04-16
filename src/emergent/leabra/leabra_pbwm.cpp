@@ -838,7 +838,12 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
       }
     }
     else {			// not a PV trial
-      bias_dav = -gate_bias.out_norew_nogo; // blanket no output gating thing
+      if(pfc_is_mnt) {
+	bias_dav = -gate_bias.out_empty_nogo;
+      }
+      else {
+	bias_dav = -gate_bias.out_norew_nogo; // blanket no output gating thing
+      }
     }
   }
   else {			// MAINT
