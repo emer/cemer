@@ -2,7 +2,7 @@
 Program .projects[1].programs.gp[0][7] { 
   ProgObjList @.objs = [2] {
     NetMonitor @[0] { 
-      NetMonItem_List @.items = [34] {
+      NetMonItem_List @.items = [32] {
 	NetMonItem @[0] { };
 	NetMonItem @[1] { };
 	NetMonItem @[2] { };
@@ -35,8 +35,6 @@ Program .projects[1].programs.gp[0][7] {
 	NetMonItem @[29] { };
 	NetMonItem @[30] { };
 	NetMonItem @[31] { };
-	NetMonItem @[32] { };
-	NetMonItem @[33] { };
       };
     };
     SimpleMathSpec @[1] { };
@@ -49,7 +47,7 @@ Program .projects[1].programs.gp[0][7] {
     ProgVar @[0] { };
   };
 
-  ProgVar_List @.vars = [23] {
+  ProgVar_List @.vars = [21] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -71,8 +69,6 @@ Program .projects[1].programs.gp[0][7] {
     ProgVar @[18] { };
     ProgVar @[19] { };
     ProgVar @[20] { };
-    ProgVar @[21] { };
-    ProgVar @[22] { };
   };
 
   Function_List @.functions = [0] {
@@ -176,7 +172,7 @@ Program .projects[1].programs.gp[0][7] {
     AssignExpr @[24] { };
     AssignExpr @[25] { };
     ForLoop @[26] { 
-      ProgEl_List @.loop_code = [14] {
+      ProgEl_List @.loop_code = [12] {
 	If @[0] { 
 	  ProgEl_List @.true_code = [7] {
 	    MethodCall @[0] { 
@@ -234,8 +230,6 @@ Program .projects[1].programs.gp[0][7] {
 	VarIncr @[9] { };
 	VarIncr @[10] { };
 	VarIncr @[11] { };
-	VarIncr @[12] { };
-	VarIncr @[13] { };
       };
     };
     DataVarProg @[27] { };
@@ -1046,70 +1040,6 @@ Program .projects[1].programs.gp[0][7] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[24] {
-     name="n_empty_mnt_out";
-     computed=1;
-     object_type=LeabraLayer;
-     object=NULL;
-     variable="dav";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=0;
-     data_src=NULL;
-     agg_col {
-      col_name=;
-     };
-     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name=;
-      on=1;
-      rel=EQUAL;
-      use_var=0;
-      cmp 0 1;
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[25] {
-     name="n_mnt_mnt_out";
-     computed=1;
-     object_type=LeabraLayer;
-     object=NULL;
-     variable="dav";
-     var_label=;
-     name_style=MY_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=0;
-     data_src=NULL;
-     agg_col {
-      col_name=;
-     };
-     agg {name="": op=NONE: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name=;
-      on=1;
-      rel=EQUAL;
-      use_var=0;
-      cmp 0 1;
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[26] {
      name="n_emty_nogo";
      computed=1;
      object_type=LeabraLayer;
@@ -1141,7 +1071,7 @@ Program .projects[1].programs.gp[0][7] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[27] {
+    NetMonItem @[25] {
      name="n_mnt_nogo";
      computed=1;
      object_type=LeabraLayer;
@@ -1173,7 +1103,7 @@ Program .projects[1].programs.gp[0][7] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[28] {
+    NetMonItem @[26] {
      name="n_rnd_go";
      computed=1;
      object_type=LeabraLayer;
@@ -1205,7 +1135,7 @@ Program .projects[1].programs.gp[0][7] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[29] {
+    NetMonItem @[27] {
      name="s_mgo";
      computed=1;
      object_type=LeabraLayer;
@@ -1237,7 +1167,7 @@ Program .projects[1].programs.gp[0][7] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[30] {
+    NetMonItem @[28] {
      name="s_mnt_netin";
      computed=1;
      object_type=LeabraLayer;
@@ -1269,7 +1199,7 @@ Program .projects[1].programs.gp[0][7] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[31] {
+    NetMonItem @[29] {
      name="s_ogo";
      computed=1;
      object_type=LeabraLayer;
@@ -1301,7 +1231,7 @@ Program .projects[1].programs.gp[0][7] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[32] {
+    NetMonItem @[30] {
      name="s_mnt";
      computed=1;
      object_type=LeabraLayer;
@@ -1333,7 +1263,7 @@ Program .projects[1].programs.gp[0][7] {
      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[33] {
+    NetMonItem @[31] {
      name="s_gate";
      computed=1;
      object_type=LeabraLayer;
@@ -1483,7 +1413,7 @@ Program .projects[1].programs.gp[0][7] {
   ProgVar @[8] {
    name="n_ogo";
    var_type=T_Real;
-   real_val=0;
+   real_val=1;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1493,7 +1423,7 @@ Program .projects[1].programs.gp[0][7] {
   ProgVar @[9] {
    name="max_mnt";
    var_type=T_Real;
-   real_val=9;
+   real_val=6;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1503,7 +1433,7 @@ Program .projects[1].programs.gp[0][7] {
   ProgVar @[10] {
    name="min_mnt";
    var_type=T_Real;
-   real_val=-2;
+   real_val=-3;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1543,7 +1473,7 @@ Program .projects[1].programs.gp[0][7] {
   ProgVar @[14] {
    name="n_mnt_out";
    var_type=T_Real;
-   real_val=0;
+   real_val=1;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1551,26 +1481,6 @@ Program .projects[1].programs.gp[0][7] {
    init_from=NULL;
   };
   ProgVar @[15] {
-   name="n_empty_mnt_out";
-   var_type=T_Real;
-   real_val=0;
-   objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
-   reference=0;
-   desc=;
-   init_from=NULL;
-  };
-  ProgVar @[16] {
-   name="n_mnt_mnt_out";
-   var_type=T_Real;
-   real_val=0;
-   objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
-   reference=0;
-   desc=;
-   init_from=NULL;
-  };
-  ProgVar @[17] {
    name="n_emty_nogo";
    var_type=T_Real;
    real_val=1;
@@ -1580,17 +1490,17 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[18] {
+  ProgVar @[16] {
    name="n_mnt_nogo";
    var_type=T_Real;
-   real_val=5;
+   real_val=3;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
   };
-  ProgVar @[19] {
+  ProgVar @[17] {
    name="n_rnd_go";
    var_type=T_Real;
    real_val=0;
@@ -1600,7 +1510,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[20] {
+  ProgVar @[18] {
    name="gate_state";
    var_type=T_HardEnum;
    int_val=7;
@@ -1611,7 +1521,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[21] {
+  ProgVar @[19] {
    name="gate_str";
    var_type=T_String;
    string_val="MAINT_NOGO";
@@ -1621,7 +1531,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[22] {
+  ProgVar @[20] {
    name="nop_simple_math";
    var_type=T_Object;
    object_type=SimpleMathSpec;
@@ -2097,7 +2007,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[16] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[17]$$;
+   result_var=.projects[1].programs.gp[0][7].vars[15]$$;
    expr {
     expr="0";
    };
@@ -2121,7 +2031,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[19] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[18]$$;
+   result_var=.projects[1].programs.gp[0][7].vars[16]$$;
    expr {
     expr="0";
    };
@@ -2137,7 +2047,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[21] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[16]$$;
+   result_var=NULL;
    expr {
     expr="0";
    };
@@ -2145,7 +2055,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[22] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[15]$$;
+   result_var=NULL;
    expr {
     expr="0";
    };
@@ -2153,7 +2063,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[23] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[19]$$;
+   result_var=.projects[1].programs.gp[0][7].vars[17]$$;
    expr {
     expr="0";
    };
@@ -2402,7 +2312,7 @@ Program .projects[1].programs.gp[0][7] {
       AssignExpr @[4] {
        desc=;
        flags=;
-       result_var=.projects[1].programs.gp[0][7].vars[20]$$;
+       result_var=.projects[1].programs.gp[0][7].vars[18]$$;
        expr {
 	expr="pfc_layer.units.gp[i].misc_state1";
        };
@@ -2410,7 +2320,7 @@ Program .projects[1].programs.gp[0][7] {
       AssignExpr @[5] {
        desc=;
        flags=;
-       result_var=.projects[1].programs.gp[0][7].vars[21]$$;
+       result_var=.projects[1].programs.gp[0][7].vars[19]$$;
        expr {
 	expr="gate_state";
        };
@@ -2506,7 +2416,7 @@ Program .projects[1].programs.gp[0][7] {
      flags=;
      var=$.projects[1].programs.gp[0][7].vars[11]$;
      expr {
-      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_MNT_GO) || (pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_OUT_MNT_GO)";
+      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_MNT_GO)";
      };
     };
     VarIncr @[6] {
@@ -2514,7 +2424,7 @@ Program .projects[1].programs.gp[0][7] {
      flags=;
      var=$.projects[1].programs.gp[0][7].vars[12]$;
      expr {
-      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_MNT_GO) || (pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_OUT_MNT_GO)";
+      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_MNT_GO)";
      };
     };
     VarIncr @[7] {
@@ -2522,7 +2432,7 @@ Program .projects[1].programs.gp[0][7] {
      flags=;
      var=$.projects[1].programs.gp[0][7].vars[13]$;
      expr {
-      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_OUT_GO) || (pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_OUT_MNT_GO)";
+      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_OUT_GO)";
      };
     };
     VarIncr @[8] {
@@ -2530,7 +2440,7 @@ Program .projects[1].programs.gp[0][7] {
      flags=;
      var=$.projects[1].programs.gp[0][7].vars[14]$;
      expr {
-      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_OUT_GO) || (pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_OUT_MNT_GO)";
+      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_OUT_GO)";
      };
     };
     VarIncr @[9] {
@@ -2538,7 +2448,7 @@ Program .projects[1].programs.gp[0][7] {
      flags=;
      var=$.projects[1].programs.gp[0][7].vars[15]$;
      expr {
-      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_OUT_MNT_GO)";
+      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_NOGO)";
      };
     };
     VarIncr @[10] {
@@ -2546,29 +2456,13 @@ Program .projects[1].programs.gp[0][7] {
      flags=;
      var=$.projects[1].programs.gp[0][7].vars[16]$;
      expr {
-      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_OUT_MNT_GO)";
+      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_NOGO)";
      };
     };
     VarIncr @[11] {
      desc=;
      flags=;
      var=$.projects[1].programs.gp[0][7].vars[17]$;
-     expr {
-      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_NOGO)";
-     };
-    };
-    VarIncr @[12] {
-     desc=;
-     flags=;
-     var=$.projects[1].programs.gp[0][7].vars[18]$;
-     expr {
-      expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_NOGO)";
-     };
-    };
-    VarIncr @[13] {
-     desc=;
-     flags=;
-     var=$.projects[1].programs.gp[0][7].vars[19]$;
      expr {
       expr="(network.layers.Matrix_mnt.units.gp[i].misc_state1 == PFCGateSpec::NOGO_RND_GO)";
      };
@@ -2594,7 +2488,7 @@ Program .projects[1].programs.gp[0][7] {
    quiet=1;
    var_1=$.projects[1].programs.gp[0][7].vars[7]$;
    var_2=$.projects[1].programs.gp[0][7].vars[8]$;
-   var_3=$.projects[1].programs.gp[0][7].vars[19]$;
+   var_3=$.projects[1].programs.gp[0][7].vars[17]$;
    var_4=NULL;
   };
   DataVarProg @[28] {
@@ -2631,10 +2525,10 @@ Program .projects[1].programs.gp[0][7] {
    row_spec=CUR_ROW;
    row_var=NULL;
    quiet=1;
-   var_1=$.projects[1].programs.gp[0][7].vars[17]$;
-   var_2=$.projects[1].programs.gp[0][7].vars[18]$;
-   var_3=$.projects[1].programs.gp[0][7].vars[16]$;
-   var_4=$.projects[1].programs.gp[0][7].vars[15]$;
+   var_1=$.projects[1].programs.gp[0][7].vars[15]$;
+   var_2=$.projects[1].programs.gp[0][7].vars[16]$;
+   var_3=NULL;
+   var_4=NULL;
   };
   MethodCall @[31] {
    desc="update after writing new data to monitor data table";

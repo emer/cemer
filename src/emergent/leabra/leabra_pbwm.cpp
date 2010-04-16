@@ -839,10 +839,10 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
     }
     else {			// not a PV trial
       if(pfc_is_mnt) {
-	bias_dav = -gate_bias.out_empty_nogo;
+	bias_dav = -gate_bias.out_norew_nogo; // blanket no output gating thing
       }
       else {
-	bias_dav = -gate_bias.out_norew_nogo; // blanket no output gating thing
+	bias_dav = -gate_bias.out_empty_nogo;
       }
     }
   }
@@ -1257,6 +1257,9 @@ void PFCLayerSpec::Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net) 
     ugp->misc_float1 = 0.0f;
     ugp->misc_float2 = 0.0f;
   }
+  // this makes sure that misc_state is sent to all layers at the start of trial
+  // so that biases are based on maintenance status at end of last trial!
+  SendGateStates(lay, net);
 }
 
 void PFCLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
@@ -1432,7 +1435,7 @@ void PFCLayerSpec::Compute_Gating_MidMinus(LeabraLayer* lay, LeabraNetwork* net)
     }
   }
   
-  // now have full set of info -- send it along!
+  // now have full set of info -- send it along -- provides an update
   SendGateStates(lay, net);
 }
 
@@ -1477,9 +1480,9 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
       ugp->misc_state--;	// no real issue here..
     }
   }
-  // NOTE: Do NOT send final gate states -- empty/maint status checks on other layers
+  // NOTE: Do NOT send final gate states -- this would corrupt the LearnDaVal
   // need to reflect status at time of gating computation (mid minus)
-  //  SendGateStates(lay, net);
+  // SendGateStates(lay, net);
 }
 
 void PFCLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork* net) {
