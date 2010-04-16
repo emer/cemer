@@ -34,12 +34,9 @@ class LEABRA_API PatchLayerSpec : public LVeLayerSpec {
   // Patch version of the LVe layer -- functionally identical to LVe and just so-named so that other layers can use its functionality appropriately
 INHERITED(LVeLayerSpec)
 public:
-  bool	learn_mnt_only;		// only learn for stripes that are currently maintaining!
-
   virtual void	Send_LVeToMatrix(LeabraLayer* lay, LeabraNetwork* net);
   // send the LVe value computed by the patch units to misc_1 field in any MarkerCons prjn to MatrixLayerSpec layers -- used for noise modulation
 
-  override void Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   TA_SIMPLE_BASEFUNS(PatchLayerSpec);
@@ -443,11 +440,9 @@ private:
 //	PFC Unit Spec	
 
 class LEABRA_API PFCUnitSpec : public LeabraUnitSpec {
-  // Prefrontal cortex units: activation output is modulated by basal ganglia gating signal -- can improve learning
+  // Prefrontal cortex units -- actually nothing different from normal units at this point
 INHERITED(LeabraUnitSpec)
 public:
-
-  override void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
 
   TA_BASEFUNS_NOCOPY(PFCUnitSpec);
 private:
@@ -468,7 +463,6 @@ private:
 // * pfc ugp->misc_state2 = GateSignal -- what gating signal(s) happened on most recent trial
 // * pfc ugp->misc_float = current Go activation value (mnt or out) -- used by units to boost netin -- already multiplied by gate.mnt/out_go_netin
 // * pfc ugp->misc_float1 = current output gating Go activation value for graded Go -- just multiply directly by this number
-// * pfc ugp->misc_float2 = current Go activation value (mnt or out) for modulating netinput of units in proportion to gating signals -- requires PFCUnitSpec to do that -- already multiplied by gate.go_netin_gain
 
 class LEABRA_API PFCGateSpec : public taOBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
@@ -518,7 +512,6 @@ INHERITED(taOBase)
 public:
   float		go_learn_base;	// #DEF_0.06 #MIN_0 #MAX_1 how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)
   float		go_learn_mod;	// #READ_ONLY 1 - go_learn_base -- how much learning is actually modulated by go gating activation
-  float		go_netin_gain;	// #DEF_0.01 #MIN_0 extra net input to add to active units as a function of gating signal -- applied in the plus phase (post gating) to help drive learning, as in the dopamine signal
 
   void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PFCLearnSpec);

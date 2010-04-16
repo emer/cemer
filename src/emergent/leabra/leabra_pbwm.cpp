@@ -27,7 +27,6 @@
 void PatchLayerSpec::Initialize() {
   SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
-  learn_mnt_only = false;
 }
 
 void PatchLayerSpec::Send_LVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
@@ -53,31 +52,6 @@ void PatchLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   ScalarValLayerSpec::Compute_CycleStats(lay, net);
   // do NOT report lvi value!
   Send_LVeToMatrix(lay, net);
-}
-
-
-void PatchLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
-  if(!learn_mnt_only) {
-    inherited::Compute_LVPlusPhaseDwt(lay, net);
-    return;
-  }
-  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-  if(!er_avail) return;					  // just let it ride..
-
-  float pve_val = net->norew_val;
-  if(net->ext_rew_avail) {
-    pve_val = net->ext_rew;
-  }
-
-  for(int gi=0; gi < lay->units.gp.size; gi++) {
-    LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[gi];
-    LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
-    if(ugp->misc_state > 0) {	// stripe was maintaining at mid minus gating point
-       u->ext = pve_val;
-       ClampValue_ugp(ugp, net); 		// apply new value
-       Compute_ExtToPlus_ugp(ugp, net); 	// copy ext values to act_p
-    }
-  }
 }
 
 //////////////////////////////////////////////////////
@@ -1046,15 +1020,6 @@ void PFCUnitSpec::Initialize() {
   
 }
 
-void PFCUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraUnit_Group* ugp = (LeabraUnit_Group*)u->owner; // assume..
-  if(net->ct_cycle > net->mid_minus_cycle)  // only after gating computed, in plus phase!
-    u->net += u->act_eq * ugp->misc_float2;
-  // misc_float contains fully parameterized "go netin gain" value 
-  inherited::Compute_Conduct(u, net);
-}
-
-
 //////////////////////////////////
 //	PFC Layer Spec		//
 //////////////////////////////////
@@ -1071,7 +1036,6 @@ void PFCGateSpec::Initialize() {
 void PFCLearnSpec::Initialize() {
   go_learn_base = 0.06f;
   go_learn_mod = 1.0f - go_learn_base;
-  go_netin_gain = 0.01f;
 }
 
 void PFCLearnSpec::UpdateAfterEdit_impl() {
@@ -1363,7 +1327,6 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       // misc_float has the go_learn_base factor incorporated
       float lrn_go_act = snr_mnt_u->act_eq;
       ugp->misc_float = learn.go_learn_base + (learn.go_learn_mod * lrn_go_act);
-      ugp->misc_float2 = learn.go_netin_gain * lrn_go_act;
     }
 
     // output gating signal -- can only happen if hasn't happened yet, and mutex with mnt gating
@@ -1373,7 +1336,6 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       if(gate.graded_out_go)
 	ugp->misc_float1 = snr_out_u->act_eq; // out gate multiplier
 
-      // misc_float2 includes param -- update once only!
       Compute_MidMinusAct_ugp(lay, ugp, mg, net);
       snrthalsp_out->Compute_MidMinusAct_ugp(snrthal_out, snrgp_out, mg, net);
       // snrthal and associated matrix layer grab act_m2 vals based on current state!
@@ -1388,7 +1350,6 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       // misc_float has the go_learn_base factor incorporated
       float lrn_go_act = snr_out_u->act_eq;
       ugp->misc_float = learn.go_learn_base + (learn.go_learn_mod * lrn_go_act);
-      ugp->misc_float2 = learn.go_netin_gain * lrn_go_act;
     }
   }
 }

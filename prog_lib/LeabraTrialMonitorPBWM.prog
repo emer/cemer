@@ -1,5 +1,5 @@
 // ta_Dump File v3.0 -- code v5.0.2.0
-Program .projects[1].programs.gp[0][7] { 
+Program .projects[0].programs.gp[0][7] { 
   ProgObjList @.objs = [2] {
     NetMonitor @[0] { 
       NetMonItem_List @.items = [32] {
@@ -96,7 +96,7 @@ Program .projects[1].programs.gp[0][7] {
     };
   };
 
-  ProgEl_List @.prog_code = [34] {
+  ProgEl_List @.prog_code = [32] {
     AssignExpr @[0] { };
     AssignExpr @[1] { };
     MethodCall @[2] { 
@@ -169,9 +169,7 @@ Program .projects[1].programs.gp[0][7] {
     AssignExpr @[21] { };
     AssignExpr @[22] { };
     AssignExpr @[23] { };
-    AssignExpr @[24] { };
-    AssignExpr @[25] { };
-    ForLoop @[26] { 
+    ForLoop @[24] { 
       ProgEl_List @.loop_code = [12] {
 	If @[0] { 
 	  ProgEl_List @.true_code = [7] {
@@ -232,21 +230,21 @@ Program .projects[1].programs.gp[0][7] {
 	VarIncr @[11] { };
       };
     };
+    DataVarProg @[25] { };
+    DataVarProg @[26] { };
     DataVarProg @[27] { };
     DataVarProg @[28] { };
-    DataVarProg @[29] { };
-    DataVarProg @[30] { };
-    MethodCall @[31] { 
+    MethodCall @[29] { 
       ProgArg_List @.meth_args = [0] {
       };
     };
-    MethodCall @[32] { 
+    MethodCall @[30] { 
       ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
       };
     };
-    MethodCall @[33] { 
+    MethodCall @[31] { 
       ProgArg_List @.meth_args = [3] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
@@ -255,7 +253,7 @@ Program .projects[1].programs.gp[0][7] {
     };
   };
 };
-Program .projects[1].programs.gp[0][7] {
+Program .projects[0].programs.gp[0][7] {
  name="LeabraTrialMonitorPBWM";
  short_nm="M";
  tags="Leabra, Trial, Monitor, PBWM";
@@ -275,7 +273,7 @@ Program .projects[1].programs.gp[0][7] {
      name="batch";
      computed=0;
      object_type=LeabraNetwork;
-     object=.projects[1].networks[0]$$<LeabraNetwork,Net_Patch>;
+     object=.projects[0].networks[0]$$<LeabraNetwork,Net_Patch>;
      variable="batch";
      var_label=;
      name_style=AUTO_NAME;
@@ -307,7 +305,7 @@ Program .projects[1].programs.gp[0][7] {
      name="epoch";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[1].networks[0]$;
+     object=$.projects[0].networks[0]$;
      variable="epoch";
      var_label=;
      name_style=AUTO_NAME;
@@ -339,7 +337,7 @@ Program .projects[1].programs.gp[0][7] {
      name="trial";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[1].networks[0]$;
+     object=$.projects[0].networks[0]$;
      variable="trial";
      var_label=;
      name_style=AUTO_NAME;
@@ -371,7 +369,7 @@ Program .projects[1].programs.gp[0][7] {
      name="trial_name";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[1].networks[0]$;
+     object=$.projects[0].networks[0]$;
      variable="trial_name";
      var_label=;
      name_style=AUTO_NAME;
@@ -403,7 +401,7 @@ Program .projects[1].programs.gp[0][7] {
      name="group_name";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[1].networks[0]$;
+     object=$.projects[0].networks[0]$;
      variable="group_name";
      var_label=;
      name_style=AUTO_NAME;
@@ -435,7 +433,7 @@ Program .projects[1].programs.gp[0][7] {
      name="phase_no";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[1].networks[0]$;
+     object=$.projects[0].networks[0]$;
      variable="phase_no";
      var_label=;
      name_style=AUTO_NAME;
@@ -467,7 +465,7 @@ Program .projects[1].programs.gp[0][7] {
      name="minus_cycles";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[1].networks[0]$;
+     object=$.projects[0].networks[0]$;
      variable="minus_cycles";
      var_label=;
      name_style=AUTO_NAME;
@@ -499,7 +497,7 @@ Program .projects[1].programs.gp[0][7] {
      name="sse";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[1].networks[0]$;
+     object=$.projects[0].networks[0]$;
      variable="sse";
      var_label=;
      name_style=AUTO_NAME;
@@ -531,7 +529,7 @@ Program .projects[1].programs.gp[0][7] {
      name="ext_rew";
      computed=0;
      object_type=LeabraNetwork;
-     object=$.projects[1].networks[0]$;
+     object=$.projects[0].networks[0]$;
      variable="ext_rew";
      var_label=;
      name_style=AUTO_NAME;
@@ -1296,8 +1294,8 @@ Program .projects[1].programs.gp[0][7] {
      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
     };
    };
-   network=$.projects[1].networks[0]$;
-   data=.projects[1].data.gp[1][0]$$<DataTable,TrialOutputData>;
+   network=$.projects[0].networks[0]$;
+   data=.projects[0].data.gp[1][0]$$<DataTable,TrialOutputData>;
    rmv_orphan_cols=1;
   };
   SimpleMathSpec @[1] {name="nop_simple_math": opr=NONE: arg=0: lw=-1: hi=1: };
@@ -1315,7 +1313,7 @@ Program .projects[1].programs.gp[0][7] {
    name="network";
    var_type=T_Object;
    object_type=Network;
-   object_val=$.projects[1].networks[0]$;
+   object_val=$.projects[0].networks[0]$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1331,7 +1329,7 @@ Program .projects[1].programs.gp[0][7] {
    name="trial_mon_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=$.projects[1].data.gp[1][0]$;
+   object_val=$.projects[0].data.gp[1][0]$;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1342,7 +1340,7 @@ Program .projects[1].programs.gp[0][7] {
    name="trial_netmon";
    var_type=T_Object;
    object_type=NetMonitor;
-   object_val=.projects[1].programs.gp[0][7].objs[0]$$;
+   object_val=.projects[0].programs.gp[0][7].objs[0]$$;
    objs_ptr=1;
    flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1393,7 +1391,7 @@ Program .projects[1].programs.gp[0][7] {
    name="pfc_layer";
    var_type=T_Object;
    object_type=LeabraLayer;
-   object_val=.projects[1].networks[0].layers.gp[2][0]$$<LeabraLayer,PFC_mnt>;
+   object_val=.projects[0].networks[0].layers.gp[2][0]$$<LeabraLayer,PFC_mnt>;
    objs_ptr=0;
    flags=USED|EDIT_VAL;
    reference=0;
@@ -1535,7 +1533,7 @@ Program .projects[1].programs.gp[0][7] {
    name="nop_simple_math";
    var_type=T_Object;
    object_type=SimpleMathSpec;
-   object_val=.projects[1].programs.gp[0][7].objs[1]$$;
+   object_val=.projects[0].programs.gp[0][7].objs[1]$$;
    objs_ptr=1;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1561,7 +1559,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=.projects[1].programs.gp[0][7].vars[1]$$;
+   obj=.projects[0].programs.gp[0][7].vars[1]$$;
    method=NetMonitor::SetDataNetwork;
    meth_args {
     name=;
@@ -1593,7 +1591,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[1]$;
+   obj=$.projects[0].programs.gp[0][7].vars[1]$;
    method=taBase::CheckConfig;
    meth_args {
     name=;
@@ -1615,7 +1613,7 @@ Program .projects[1].programs.gp[0][7] {
    desc="update the monitor items and data schema";
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[1]$;
+   obj=$.projects[0].programs.gp[0][7].vars[1]$;
    method=NetMonitor::UpdateMonitors;
    meth_args {
     name=;
@@ -1641,7 +1639,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[0] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[6]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[6]$$;
    expr {
     expr="network.layers.FindLeafName(pfc_layer_name)";
    };
@@ -1649,7 +1647,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[1] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[3]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[3]$$;
    expr {
     expr="pfc_layer.units.gp.size";
    };
@@ -1658,7 +1656,7 @@ Program .projects[1].programs.gp[0][7] {
    desc="add a new blank row to the data";
    flags=;
    result_var=NULL;
-   obj=.projects[1].programs.gp[0][7].vars[0]$$;
+   obj=.projects[0].programs.gp[0][7].vars[0]$$;
    method=DataTable::AddBlankRow;
    meth_args {
     name=;
@@ -1670,7 +1668,7 @@ Program .projects[1].programs.gp[0][7] {
    desc="get the new monitor data.";
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[1]$;
+   obj=$.projects[0].programs.gp[0][7].vars[1]$;
    method=NetMonitor::GetMonVals;
    meth_args {
     name=;
@@ -1686,7 +1684,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=" ";
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[0]$;
+   obj=$.projects[0].programs.gp[0][7].vars[0]$;
    method=DataTable::SetVal;
    meth_args {
     name=;
@@ -1728,7 +1726,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[0]$;
+   obj=$.projects[0].programs.gp[0][7].vars[0]$;
    method=DataTable::SetVal;
    meth_args {
     name=;
@@ -1770,7 +1768,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[0]$;
+   obj=$.projects[0].programs.gp[0][7].vars[0]$;
    method=DataTable::SetVal;
    meth_args {
     name=;
@@ -1812,7 +1810,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[0]$;
+   obj=$.projects[0].programs.gp[0][7].vars[0]$;
    method=DataTable::SetVal;
    meth_args {
     name=;
@@ -1854,7 +1852,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[0]$;
+   obj=$.projects[0].programs.gp[0][7].vars[0]$;
    method=DataTable::SetVal;
    meth_args {
     name=;
@@ -1896,7 +1894,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[0]$;
+   obj=$.projects[0].programs.gp[0][7].vars[0]$;
    method=DataTable::SetVal;
    meth_args {
     name=;
@@ -1938,7 +1936,7 @@ Program .projects[1].programs.gp[0][7] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[0]$;
+   obj=$.projects[0].programs.gp[0][7].vars[0]$;
    method=DataTable::SetVal;
    meth_args {
     name=;
@@ -1983,7 +1981,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[13] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[7]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[7]$$;
    expr {
     expr="0";
    };
@@ -1991,7 +1989,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[14] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[8]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[8]$$;
    expr {
     expr="0";
    };
@@ -1999,7 +1997,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[15] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[11]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[11]$$;
    expr {
     expr="0";
    };
@@ -2007,7 +2005,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[16] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[15]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[15]$$;
    expr {
     expr="0";
    };
@@ -2015,7 +2013,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[17] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[13]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[13]$$;
    expr {
     expr="0";
    };
@@ -2023,7 +2021,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[18] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[12]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[12]$$;
    expr {
     expr="0";
    };
@@ -2031,7 +2029,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[19] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[16]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[16]$$;
    expr {
     expr="0";
    };
@@ -2039,7 +2037,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[20] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[14]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[14]$$;
    expr {
     expr="0";
    };
@@ -2047,7 +2045,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[21] {
    desc=;
    flags=;
-   result_var=NULL;
+   result_var=.projects[0].programs.gp[0][7].vars[17]$$;
    expr {
     expr="0";
    };
@@ -2055,7 +2053,7 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[22] {
    desc=;
    flags=;
-   result_var=NULL;
+   result_var=.projects[0].programs.gp[0][7].vars[9]$$;
    expr {
     expr="0";
    };
@@ -2063,28 +2061,12 @@ Program .projects[1].programs.gp[0][7] {
   AssignExpr @[23] {
    desc=;
    flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[17]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[10]$$;
    expr {
     expr="0";
    };
   };
-  AssignExpr @[24] {
-   desc=;
-   flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[9]$$;
-   expr {
-    expr="0";
-   };
-  };
-  AssignExpr @[25] {
-   desc=;
-   flags=;
-   result_var=.projects[1].programs.gp[0][7].vars[10]$$;
-   expr {
-    expr="0";
-   };
-  };
-  ForLoop @[26] {
+  ForLoop @[24] {
    desc=;
    flags=;
    loop_code {
@@ -2105,7 +2087,7 @@ Program .projects[1].programs.gp[0][7] {
        desc=;
        flags=;
        result_var=NULL;
-       obj=$.projects[1].programs.gp[0][7].vars[0]$;
+       obj=$.projects[0].programs.gp[0][7].vars[0]$;
        method=DataTable::SetMatrixFlatVal;
        meth_args {
 	name=;
@@ -2157,7 +2139,7 @@ Program .projects[1].programs.gp[0][7] {
        desc=;
        flags=;
        result_var=NULL;
-       obj=$.projects[1].programs.gp[0][7].vars[0]$;
+       obj=$.projects[0].programs.gp[0][7].vars[0]$;
        method=DataTable::SetMatrixFlatVal;
        meth_args {
 	name=;
@@ -2209,7 +2191,7 @@ Program .projects[1].programs.gp[0][7] {
        desc=;
        flags=;
        result_var=NULL;
-       obj=$.projects[1].programs.gp[0][7].vars[0]$;
+       obj=$.projects[0].programs.gp[0][7].vars[0]$;
        method=DataTable::SetMatrixFlatVal;
        meth_args {
 	name=;
@@ -2261,7 +2243,7 @@ Program .projects[1].programs.gp[0][7] {
        desc=;
        flags=;
        result_var=NULL;
-       obj=$.projects[1].programs.gp[0][7].vars[0]$;
+       obj=$.projects[0].programs.gp[0][7].vars[0]$;
        method=DataTable::SetMatrixFlatVal;
        meth_args {
 	name=;
@@ -2312,7 +2294,7 @@ Program .projects[1].programs.gp[0][7] {
       AssignExpr @[4] {
        desc=;
        flags=;
-       result_var=.projects[1].programs.gp[0][7].vars[18]$$;
+       result_var=.projects[0].programs.gp[0][7].vars[18]$$;
        expr {
 	expr="pfc_layer.units.gp[i].misc_state1";
        };
@@ -2320,7 +2302,7 @@ Program .projects[1].programs.gp[0][7] {
       AssignExpr @[5] {
        desc=;
        flags=;
-       result_var=.projects[1].programs.gp[0][7].vars[19]$$;
+       result_var=.projects[0].programs.gp[0][7].vars[19]$$;
        expr {
 	expr="gate_state";
        };
@@ -2329,7 +2311,7 @@ Program .projects[1].programs.gp[0][7] {
        desc=;
        flags=;
        result_var=NULL;
-       obj=$.projects[1].programs.gp[0][7].vars[0]$;
+       obj=$.projects[0].programs.gp[0][7].vars[0]$;
        method=DataTable::SetMatrixFlatVal;
        meth_args {
 	name=;
@@ -2382,7 +2364,7 @@ Program .projects[1].programs.gp[0][7] {
     VarIncr @[1] {
      desc=;
      flags=;
-     var=$.projects[1].programs.gp[0][7].vars[7]$;
+     var=$.projects[0].programs.gp[0][7].vars[7]$;
      expr {
       expr="(pfc_layer.units.gp[i].misc_state2 == PFCGateSpec::GATE_MNT_GO) || (pfc_layer.units.gp[i].misc_state2 == PFCGateSpec::GATE_OUT_MNT_GO)";
      };
@@ -2390,7 +2372,7 @@ Program .projects[1].programs.gp[0][7] {
     VarIncr @[2] {
      desc=;
      flags=;
-     var=$.projects[1].programs.gp[0][7].vars[8]$;
+     var=$.projects[0].programs.gp[0][7].vars[8]$;
      expr {
       expr="(pfc_layer.units.gp[i].misc_state2 == PFCGateSpec::GATE_OUT_GO) || (pfc_layer.units.gp[i].misc_state2 == PFCGateSpec::GATE_OUT_MNT_GO)";
      };
@@ -2398,7 +2380,7 @@ Program .projects[1].programs.gp[0][7] {
     AssignExpr @[3] {
      desc=;
      flags=;
-     result_var=$.projects[1].programs.gp[0][7].vars[9]$;
+     result_var=$.projects[0].programs.gp[0][7].vars[9]$;
      expr {
       expr="MAX(max_mnt, (pfc_layer.units.gp[i].misc_state))";
      };
@@ -2406,7 +2388,7 @@ Program .projects[1].programs.gp[0][7] {
     AssignExpr @[4] {
      desc=;
      flags=;
-     result_var=$.projects[1].programs.gp[0][7].vars[10]$;
+     result_var=$.projects[0].programs.gp[0][7].vars[10]$;
      expr {
       expr="MIN(min_mnt, (pfc_layer.units.gp[i].misc_state))";
      };
@@ -2414,7 +2396,7 @@ Program .projects[1].programs.gp[0][7] {
     VarIncr @[5] {
      desc=;
      flags=;
-     var=$.projects[1].programs.gp[0][7].vars[11]$;
+     var=$.projects[0].programs.gp[0][7].vars[11]$;
      expr {
       expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_MNT_GO)";
      };
@@ -2422,7 +2404,7 @@ Program .projects[1].programs.gp[0][7] {
     VarIncr @[6] {
      desc=;
      flags=;
-     var=$.projects[1].programs.gp[0][7].vars[12]$;
+     var=$.projects[0].programs.gp[0][7].vars[12]$;
      expr {
       expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_MNT_GO)";
      };
@@ -2430,7 +2412,7 @@ Program .projects[1].programs.gp[0][7] {
     VarIncr @[7] {
      desc=;
      flags=;
-     var=$.projects[1].programs.gp[0][7].vars[13]$;
+     var=$.projects[0].programs.gp[0][7].vars[13]$;
      expr {
       expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_OUT_GO)";
      };
@@ -2438,7 +2420,7 @@ Program .projects[1].programs.gp[0][7] {
     VarIncr @[8] {
      desc=;
      flags=;
-     var=$.projects[1].programs.gp[0][7].vars[14]$;
+     var=$.projects[0].programs.gp[0][7].vars[14]$;
      expr {
       expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_OUT_GO)";
      };
@@ -2446,7 +2428,7 @@ Program .projects[1].programs.gp[0][7] {
     VarIncr @[9] {
      desc=;
      flags=;
-     var=$.projects[1].programs.gp[0][7].vars[15]$;
+     var=$.projects[0].programs.gp[0][7].vars[15]$;
      expr {
       expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::EMPTY_NOGO)";
      };
@@ -2454,7 +2436,7 @@ Program .projects[1].programs.gp[0][7] {
     VarIncr @[10] {
      desc=;
      flags=;
-     var=$.projects[1].programs.gp[0][7].vars[16]$;
+     var=$.projects[0].programs.gp[0][7].vars[16]$;
      expr {
       expr="(pfc_layer.units.gp[i].misc_state1 == PFCGateSpec::MAINT_NOGO)";
      };
@@ -2462,7 +2444,7 @@ Program .projects[1].programs.gp[0][7] {
     VarIncr @[11] {
      desc=;
      flags=;
-     var=$.projects[1].programs.gp[0][7].vars[17]$;
+     var=$.projects[0].programs.gp[0][7].vars[17]$;
      expr {
       expr="(network.layers.Matrix_mnt.units.gp[i].misc_state1 == PFCGateSpec::NOGO_RND_GO)";
      };
@@ -2478,63 +2460,63 @@ Program .projects[1].programs.gp[0][7] {
     expr="i++";
    };
   };
-  DataVarProg @[27] {
+  DataVarProg @[25] {
    desc=;
    flags=;
-   data_var=$.projects[1].programs.gp[0][7].vars[0]$;
+   data_var=$.projects[0].programs.gp[0][7].vars[0]$;
    set_data=1;
    row_spec=CUR_ROW;
    row_var=NULL;
    quiet=1;
-   var_1=$.projects[1].programs.gp[0][7].vars[7]$;
-   var_2=$.projects[1].programs.gp[0][7].vars[8]$;
-   var_3=$.projects[1].programs.gp[0][7].vars[17]$;
+   var_1=$.projects[0].programs.gp[0][7].vars[7]$;
+   var_2=$.projects[0].programs.gp[0][7].vars[8]$;
+   var_3=$.projects[0].programs.gp[0][7].vars[17]$;
    var_4=NULL;
   };
-  DataVarProg @[28] {
+  DataVarProg @[26] {
    desc=;
    flags=;
-   data_var=$.projects[1].programs.gp[0][7].vars[0]$;
+   data_var=$.projects[0].programs.gp[0][7].vars[0]$;
    set_data=1;
    row_spec=CUR_ROW;
    row_var=NULL;
    quiet=1;
-   var_1=$.projects[1].programs.gp[0][7].vars[9]$;
-   var_2=$.projects[1].programs.gp[0][7].vars[10]$;
+   var_1=$.projects[0].programs.gp[0][7].vars[9]$;
+   var_2=$.projects[0].programs.gp[0][7].vars[10]$;
    var_3=NULL;
    var_4=NULL;
   };
-  DataVarProg @[29] {
+  DataVarProg @[27] {
    desc=;
    flags=;
-   data_var=$.projects[1].programs.gp[0][7].vars[0]$;
+   data_var=$.projects[0].programs.gp[0][7].vars[0]$;
    set_data=1;
    row_spec=CUR_ROW;
    row_var=NULL;
    quiet=0;
-   var_1=$.projects[1].programs.gp[0][7].vars[11]$;
-   var_2=$.projects[1].programs.gp[0][7].vars[12]$;
-   var_3=$.projects[1].programs.gp[0][7].vars[13]$;
-   var_4=$.projects[1].programs.gp[0][7].vars[14]$;
+   var_1=$.projects[0].programs.gp[0][7].vars[11]$;
+   var_2=$.projects[0].programs.gp[0][7].vars[12]$;
+   var_3=$.projects[0].programs.gp[0][7].vars[13]$;
+   var_4=$.projects[0].programs.gp[0][7].vars[14]$;
   };
-  DataVarProg @[30] {
+  DataVarProg @[28] {
    desc=;
    flags=;
-   data_var=$.projects[1].programs.gp[0][7].vars[0]$;
+   data_var=$.projects[0].programs.gp[0][7].vars[0]$;
    set_data=1;
    row_spec=CUR_ROW;
    row_var=NULL;
    quiet=1;
-   var_1=$.projects[1].programs.gp[0][7].vars[15]$;
-   var_2=$.projects[1].programs.gp[0][7].vars[16]$;
+   var_1=$.projects[0].programs.gp[0][7].vars[15]$;
+   var_2=$.projects[0].programs.gp[0][7].vars[16]$;
    var_3=NULL;
    var_4=NULL;
   };
-  MethodCall @[31] {
+  MethodCall @[29] {
    desc="update after writing new data to monitor data table";
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].vars[0]$;
+   obj=$.projects[0].programs.gp[0][7].vars[0]$;
    method=DataBlock::WriteClose;
    meth_args {
     name=;
@@ -2542,11 +2524,11 @@ Program .projects[1].programs.gp[0][7] {
     el_def=0;
    };
   };
-  MethodCall @[32] {
+  MethodCall @[30] {
    desc="only functional for dmem projects: synchronizes trial data across processes";
    flags=;
    result_var=NULL;
-   obj=.projects[1].programs.gp[0][7].args[0]$$;
+   obj=.projects[0].programs.gp[0][7].args[0]$$;
    method=Network::DMem_ShareTrialData;
    meth_args {
     name=;
@@ -2574,11 +2556,11 @@ Program .projects[1].programs.gp[0][7] {
     };
    };
   };
-  MethodCall @[33] {
+  MethodCall @[31] {
    desc=;
    flags=;
    result_var=NULL;
-   obj=$.projects[1].programs.gp[0][7].args[0]$;
+   obj=$.projects[0].programs.gp[0][7].args[0]$;
    method=Network::Snapshot;
    meth_args {
     name=;
