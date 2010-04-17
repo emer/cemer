@@ -283,11 +283,13 @@ public:
   void	Copy_(const ConSpec& cp);
   TA_BASEFUNS(ConSpec);
 protected:
+  SPEC_DEFAULTS;
   override bool 	CheckType_impl(TypeDef* td);
   override bool		CheckObjectType_impl(taBase* obj); // don't do checking on 1st con group in units
 private:
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
+  void	Defaults_init() 	{ };
 };
 
 SpecPtr_of(ConSpec);
@@ -773,6 +775,7 @@ public:
   void 	Copy_(const UnitSpec& cp);
   TA_BASEFUNS(UnitSpec);
 protected:
+  SPEC_DEFAULTS;
   override void  	UpdateAfterEdit_impl();
   override void		CheckThisConfig_impl(bool quiet, bool& ok);
   override bool 	CheckType_impl(TypeDef* td);
@@ -780,6 +783,7 @@ protected:
 private:
   void 	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 SpecPtr_of(UnitSpec);
@@ -1080,12 +1084,16 @@ public:
   void 	InitLinks();
   SIMPLE_COPY(ProjectionSpec);
   TA_BASEFUNS(ProjectionSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
+  void	Defaults_init() 	{ };
 };
 TA_SMART_PTRS(ProjectionSpec)
 SpecPtr_of(ProjectionSpec);
+
 
 class EMERGENT_API Projection: public taNBase {
   // #STEM_BASE ##CAT_Network ##SCOPE_Network Projection describes connectivity between layers (from receivers perspective)
@@ -1386,9 +1394,12 @@ public:
   void 	InitLinks();
   void	CutLinks();
   TA_BASEFUNS_NOCOPY(LayerSpec); //
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
+  void	Defaults_init() 	{ };
 };
 
 class EMERGENT_API LayerDistances : public taOBase {

@@ -181,6 +181,38 @@ bool BaseSpec_Group::RemoveSpec(const char* nm, TypeDef* tp) {
   return false;
 }
 
+void BaseSpec_Group::Defaults() {
+  BaseSpec* bs;
+  taLeafItr i;
+  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+    bs->Defaults();
+    bs->children.Defaults();
+  }
+}
+
+//////////////////////////////////
+//	SpecMemberBase		//
+//////////////////////////////////
+
+void SpecMemberBase::Defaults() {
+  Defaults_impl();
+  DefaultsMembers();
+  UpdateAfterEdit();
+}
+
+void SpecMemberBase::DefaultsMembers() {
+  TypeDef* td = GetTypeDef();
+  for(int i=TA_SpecMemberBase.members.size; i< td->members.size; i++) {
+    MemberDef* md = td->members[i];
+    if(md->type->InheritsFrom(&TA_BaseSpec)) {
+      ((BaseSpec*)md->GetOff((void*)this))->Defaults();
+    }
+    if(md->type->InheritsFrom(&TA_SpecMemberBase)) {
+      ((SpecMemberBase*)md->GetOff((void*)this))->Defaults();
+    }
+  }
+}
+
 //////////////////////////////////
 //	BaseSpec		//
 //////////////////////////////////
@@ -220,21 +252,28 @@ void BaseSpec::CutLinks() {
   inherited::CutLinks();
 }
 
-/*nn void BaseSpec::UpdateAfterEdit() {
-  //note: this is probably unnecessary, but added it in "just in case"
-  // get the "substantive" owner, will typically be the network for net specs
-  taBase* own = GetOwner();
-  while (own && (own->InheritsFrom(&TA_BaseSpec) ||
-    own->InheritsFrom(&TA_BaseSpec_Group)))
-    own = own->GetOwner();
-  if (!own || own->isDestroying()) return;
-  
-  inherited::UpdateAfterEdit();
-} */
-
 void BaseSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateSpec();
+}
+
+void BaseSpec::Defaults() {
+  DefaultsMembers();	// members has to come first, so they can be overridden by master!
+  Defaults_impl();
+  UpdateAfterEdit();
+}
+
+void BaseSpec::DefaultsMembers() {
+  TypeDef* td = GetTypeDef();
+  for(int i=TA_BaseSpec.members.size; i< td->members.size; i++) {
+    MemberDef* md = td->members[i];
+    if(md->type->InheritsFrom(&TA_BaseSpec)) {
+      ((BaseSpec*)md->GetOff((void*)this))->Defaults();
+    }
+    if(md->type->InheritsFrom(&TA_SpecMemberBase)) {
+      ((SpecMemberBase*)md->GetOff((void*)this))->Defaults();
+    }
+  }
 }
 
 void BaseSpec::CheckChildConfig_impl(bool quiet, bool& rval) {

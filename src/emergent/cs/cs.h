@@ -93,10 +93,12 @@ public:
   SIMPLE_COPY(CsConSpec);
   TA_BASEFUNS(CsConSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init();
 };
 
 // the following functions are possible weight decay functions
@@ -192,10 +194,12 @@ public:
   SIMPLE_COPY(CsUnitSpec);
   TA_BASEFUNS(CsUnitSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init();
 };
 
 class CS_API SigmoidUnitSpec : public CsUnitSpec {

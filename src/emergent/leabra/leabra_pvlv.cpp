@@ -26,6 +26,20 @@
 //////////////////////////////////////////
 
 void PVConSpec::Initialize() {
+  SetUnique("lrate", true);
+  lrate = .01f;
+  cur_lrate = .01f;
+
+  SetUnique("lrate_sched", true); // not to have any lrate schedule!!
+  SetUnique("lrs_value", true); // not to have any lrate schedule!!
+  lrs_value = NO_LRS;
+
+  send_act = ACT_P;
+  
+  Defaults_init();
+}
+
+void PVConSpec::Defaults_init() {
   SetUnique("lmix", true);
   lmix.hebb = 0.0f;
   lmix.err = 1.0f;
@@ -40,16 +54,6 @@ void PVConSpec::Initialize() {
 
   SetUnique("wt_sig", true);
   wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
-
-  SetUnique("lrate", true);
-  lrate = .01f;
-  cur_lrate = .01f;
-
-  SetUnique("lrate_sched", true); // not to have any lrate schedule!!
-  SetUnique("lrs_value", true); // not to have any lrate schedule!!
-  lrs_value = NO_LRS;
-
-  send_act = ACT_P;
 }
 
 void PVConSpec::UpdateAfterEdit_impl() {
@@ -66,7 +70,7 @@ void PVConSpec::UpdateAfterEdit_impl() {
 
 void PVMiscSpec::Initialize() {
   min_pvi = 0.4f;
-  prior_discount = 1.0f;
+  prior_gain = 1.0f;
   er_reset_prior = true;
 }
 
@@ -83,12 +87,6 @@ void PViLayerSpec::Initialize() {
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
-}
-
-void PViLayerSpec::Defaults() {
-  inherited::Defaults();
-  Initialize();
-  pv.Defaults();
 }
 
 void PViLayerSpec::HelpConfig() {
@@ -229,7 +227,7 @@ void PViLayerSpec::Update_PVPrior_ugp(Unit_Group* pvi_ugp, bool er_avail) {
     u->misc_1 = 0.0f;
   }
   else {
-    u->misc_1 = pv.prior_discount * u->dav;	// already stored in da value: note includes min_pvi, which is appropriate -- this was missing prior to 2/12/2009
+    u->misc_1 = pv.prior_gain * u->dav;	// already stored in da value: note includes min_pvi, which is appropriate -- this was missing prior to 2/12/2009
   }
 }
 
@@ -306,11 +304,6 @@ void PVrLayerSpec::Initialize() {
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
-}
-
-void PVrLayerSpec::Defaults() {
-  inherited::Defaults();
-  Initialize();
 }
 
 void PVrLayerSpec::HelpConfig() {
@@ -448,7 +441,7 @@ bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 void LVMiscSpec::Initialize() {
   min_lvi = 0.1f;
   lrn_pv_only = true;
-  prior_discount = 1.0f;
+  prior_gain = 1.0f;
   er_reset_prior = true;
 }
 
@@ -465,12 +458,6 @@ void LVeLayerSpec::Initialize() {
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
-}
-
-void LVeLayerSpec::Defaults() {
-  inherited::Defaults();
-  Initialize();
-  lv.Defaults();
 }
 
 void LVeLayerSpec::HelpConfig() {
@@ -626,7 +613,7 @@ void LVeLayerSpec::Update_LVPrior_ugp(Unit_Group* lve_ugp, bool er_avail) {
     lveu->misc_1 = 0.0f;
   }
   else {
-    lveu->misc_1 = lv.prior_discount * lveu->dav;	// already stored in da value: note includes min_lvi, which is appropriate -- this was missing prior to 2/12/2009
+    lveu->misc_1 = lv.prior_gain * lveu->dav;	// already stored in da value: note includes min_lvi, which is appropriate -- this was missing prior to 2/12/2009
   }
 }
 
@@ -704,7 +691,7 @@ void NVConSpec::Initialize() {
 void NVSpec::Initialize() {
   da_gain = 1.0f;
   val_thr = 0.1f;
-  prior_discount = 1.0f;
+  prior_gain = 1.0f;
   er_reset_prior = true;
 }
 
@@ -721,12 +708,6 @@ void NVLayerSpec::Initialize() {
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
-}
-
-void NVLayerSpec::Defaults() {
-  inherited::Defaults();
-  Initialize();
-  nv.Defaults();
 }
 
 void NVLayerSpec::UpdateAfterEdit_impl() {
@@ -826,7 +807,7 @@ void NVLayerSpec::Update_NVPrior(LeabraLayer* lay, LeabraNetwork* net) {
     nvsu->misc_1 = 0.0f;
   }
   else {
-    nvsu->misc_1 = nv.prior_discount * nvsu->dav;	// previous da value
+    nvsu->misc_1 = nv.prior_gain * nvsu->dav;	// previous da value
   }
 }
 
@@ -891,12 +872,6 @@ void PVLVDaLayerSpec::Initialize() {
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
-}
-
-void PVLVDaLayerSpec::Defaults() {
-  inherited::Defaults();
-  da.Defaults();
-  Initialize();
 }
 
 void PVLVDaLayerSpec::HelpConfig() {
@@ -1357,6 +1332,10 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   pv_units->g_bar.h = .03f;  pv_units->g_bar.a = .09f;
   pv_units->dt.vm = .05f;
   pv_units->dt.vm_eq_cyc = 100; // go straight to equilibrium!
+  pv_units->SetUnique("maxda", true);
+  pv_units->maxda.val = MaxDaSpec::NO_MAX_DA;
+  pv_units->SetUnique("act", true);
+  pv_units->act.avg_dt = 0.0f;
 
   pvi_cons->SetUnique("lmix", true);
   pvi_cons->lmix.err_sb = false; 
@@ -1369,6 +1348,19 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   nv_cons->lrate = .0005f;
   lve_cons->lrate = .05f;
   lvi_cons->lrate = .001f;
+
+  da_units->SetUnique("act_range", true);
+  da_units->act_range.max = 2.0f;
+  da_units->act_range.min = -2.0f;
+  da_units->act_range.UpdateAfterEdit();
+  da_units->SetUnique("clamp_range", true);
+  da_units->clamp_range.max = 2.0f;
+  da_units->clamp_range.min = -2.0f;
+  da_units->clamp_range.UpdateAfterEdit();
+  da_units->SetUnique("maxda", true);
+  da_units->maxda.val = MaxDaSpec::NO_MAX_DA;
+  da_units->SetUnique("act", true);
+  da_units->act.avg_dt = 0.0f;
 
   if(output_lays.size > 0)
     pvesp->rew_type = ExtRewLayerSpec::OUT_ERR_REW;

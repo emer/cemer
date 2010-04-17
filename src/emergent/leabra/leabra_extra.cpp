@@ -53,9 +53,13 @@ void LeabraContextLayerSpec::Initialize() {
   updt.fm_hid = 1.0f;
   updt.to_out = 1.0f;
   SetUnique("decay", true);
+  update_criteria = UC_TRIAL;
+  Defaults_init();
+}
+
+void LeabraContextLayerSpec::Defaults_init() {
   decay.event = 0.0f;
   decay.phase = 0.0f;
-  update_criteria = UC_TRIAL;
 }
 
 // void LeabraContextLayerSpec::UpdateAfterEdit-impl() {
@@ -69,11 +73,6 @@ bool LeabraContextLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
 //   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   return rval;
-}
-
-void LeabraContextLayerSpec::Defaults() {
-  inherited::Defaults();
-  Initialize();
 }
 
 taBase::DumpQueryResult LeabraContextLayerSpec::Dump_QuerySaveMember(MemberDef* md) {
@@ -170,11 +169,6 @@ void LeabraLinUnitSpec::Initialize() {
   act.gain = 2;
 }
 
-void LeabraLinUnitSpec::Defaults() {
-  LeabraUnitSpec::Defaults();
-  Initialize();
-}
-
 void LeabraLinUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   float new_act = u->net * act.gain; // use linear netin as act
 
@@ -183,6 +177,15 @@ void LeabraLinUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
     new_act += Compute_Noise(u, net);
   }
   u->act = u->act_nd = u->act_eq = act_range.Clip(new_act);
+}
+
+//////////////////////////
+// 	NegBias		//
+//////////////////////////
+
+void LeabraNegBiasSpec::Initialize() {
+  decay = 0.0f;
+  updt_immed = false;
 }
 
 //////////////////////////////////
@@ -212,15 +215,6 @@ void XCalMlTraceConSpec::Initialize() {
 void XCalMlTraceConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   sm_mix = 1.0f - ml_mix;
-}
-
-//////////////////////////
-// 	NegBias		//
-//////////////////////////
-
-void LeabraNegBiasSpec::Initialize() {
-  decay = 0.0f;
-  updt_immed = false;
 }
 
 //////////////////////////////////
@@ -581,7 +575,6 @@ void ScalarValSpec::Initialize() {
   un_width = .3f;
   norm_width = false;
   clamp_pat = false;
-  min_sum_act = 0.2f;
   clip_val = true;
   send_thr = false;
   init_nms = true;
@@ -589,6 +582,12 @@ void ScalarValSpec::Initialize() {
   min = val = 0.0f;
   range = incr = 1.0f;
   un_width_eff = un_width;
+
+  Defaults_init();
+}
+
+void ScalarValSpec::Defaults_init() {
+  min_sum_act = 0.2f;
 }
 
 void ScalarValSpec::InitRange(float umin, float urng) {
@@ -647,18 +646,21 @@ void ScalarValBias::Initialize() {
 }
 
 void ScalarValLayerSpec::Initialize() {
-  SetUnique("kwta", true);
-  kwta.k_from = KWTASpec::USE_K;
-  kwta.k = 1;
-  gp_kwta.k_from = KWTASpec::USE_K;
-  gp_kwta.k = 1;
-  SetUnique("inhib_group", true);
-  inhib_group = ENTIRE_LAYER;
-  SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = .9f;
+  Defaults_init();
+}
 
+void ScalarValLayerSpec::Defaults_init() {
+  SetUnique("kwta", true);
+  SetUnique("gp_kwta", true);
+  SetUnique("inhib", true);
   if(scalar.rep == ScalarValSpec::GAUSSIAN) {
+    kwta.k_from = KWTASpec::USE_K;
+    kwta.k = 3;
+    gp_kwta.k_from = KWTASpec::USE_K;
+    gp_kwta.k = 3;
+    inhib.type = LeabraInhibSpec::KWTA_INHIB;
+    inhib.kwta_pt = 0.25f;
+
     unit_range.min = -0.5f;   unit_range.max = 1.5f;
     unit_range.UpdateAfterEdit_NoGui();
     scalar.InitRange(unit_range.min, unit_range.range); // needed for un_width_eff
@@ -666,10 +668,19 @@ void ScalarValLayerSpec::Initialize() {
     val_range.max = unit_range.max - (.5f * scalar.un_width_eff);
   }
   else if(scalar.rep == ScalarValSpec::LOCALIST) {
+    kwta.k_from = KWTASpec::USE_K;
+    kwta.k = 1;
+    gp_kwta.k_from = KWTASpec::USE_K;
+    gp_kwta.k = 1;
+    inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+    inhib.kwta_pt = .9f;
+
     unit_range.min = 0.0f;  unit_range.max = 1.0f;
     unit_range.UpdateAfterEdit_NoGui();
     val_range.min = unit_range.min;
     val_range.max = unit_range.max;
+
+    scalar.min_sum_act = .2f;
   }
   val_range.UpdateAfterEdit_NoGui();
 }
@@ -4062,8 +4073,8 @@ void LeabraV1Layer::ResetSortBuf() {
 }
 
 void V1FeatInhibSpec::Initialize() {
-  feat_gain = .1f;
-  dist_sigma = .5f;
+  feat_gain = .01f;
+  dist_sigma = .25f;
   i_rat_thr = .5f;
 }
 

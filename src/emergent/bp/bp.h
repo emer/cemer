@@ -103,10 +103,12 @@ public:
   SIMPLE_COPY(BpConSpec);
   TA_BASEFUNS(BpConSpec);
 protected:
+  SPEC_DEFAULTS;
   override void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init();
 };
 
 // the following functions are possible weight decay functions
@@ -181,9 +183,12 @@ public:
   void	InitLinks();
   SIMPLE_COPY(BpUnitSpec);
   TA_BASEFUNS(BpUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void 	Destroy()		{ CutLinks(); }
+  void	Defaults_init();
 };
 
 // the following functions are possible error functions.
@@ -340,9 +345,12 @@ public:
   inline float 		Compute_dEdA(BpSendCons* cg, BpUnit* su);
 
   TA_SIMPLE_BASEFUNS(ErrScaleBpConSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize()	{ err_scale = 1.0f; }
   void 	Destroy()	{ };
+  void	Defaults_init() { };
 };
 
 inline float ErrScaleBpConSpec::C_Compute_dEdA(BpCon* cn, BpUnit* ru, BpUnit*) {
@@ -383,10 +391,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(DeltaBarDeltaBpConSpec);
 protected:
+  SPEC_DEFAULTS;
   override void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init();
 };
 
 inline void DeltaBarDeltaBpConSpec::C_UpdateLrate
@@ -487,10 +497,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(BpContextSpec);
 protected:
+  SPEC_DEFAULTS;
   override void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class BP_API LinearBpUnitSpec : public BpUnitSpec {
@@ -502,10 +514,12 @@ public:
 
   TA_BASEFUNS(LinearBpUnitSpec);
 protected:
+  SPEC_DEFAULTS;
   override void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ Initialize(); }
 };
 
 class BP_API ThreshLinBpUnitSpec : public BpUnitSpec {
@@ -519,10 +533,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(ThreshLinBpUnitSpec);
 protected:
+  SPEC_DEFAULTS;
   override void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class BP_API NoisyBpUnitSpec : public BpUnitSpec {
@@ -534,9 +550,12 @@ public:
   override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
 
   TA_SIMPLE_BASEFUNS(NoisyBpUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class BP_API StochasticBpUnitSpec : public BpUnitSpec {
@@ -546,9 +565,12 @@ public:
   override void Compute_Act(Unit* u, Network* net, int thread_no=-1);
 
   TA_BASEFUNS_NOCOPY(StochasticBpUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize()		{ };
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class BP_API RBFBpUnitSpec : public BpUnitSpec {
@@ -565,10 +587,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(RBFBpUnitSpec);
 protected:
+  SPEC_DEFAULTS;
   override void	UpdateAfterEdit_impl();
 private:
   void  Initialize();
   void  Destroy()               { };
+  void	Defaults_init() 	{ };
 };
 
 class BP_API BumpBpUnitSpec : public BpUnitSpec {
@@ -584,10 +608,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(BumpBpUnitSpec);
 protected:
+  SPEC_DEFAULTS;
   override void	UpdateAfterEdit_impl();
 private:
   void  Initialize();
   void  Destroy()               { };
+  void	Defaults_init() 	{ };
 };
 
 class BP_API ExpBpUnitSpec : public BpUnitSpec {
@@ -598,9 +624,12 @@ public:
   override void	Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no=-1);
 
   TA_BASEFUNS_NOCOPY(ExpBpUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void  Initialize()	{ };
   void  Destroy()	{ };
+  void	Defaults_init() { };
 };
 
 class BP_API SoftMaxBpUnitSpec : public BpUnitSpec {
@@ -618,9 +647,12 @@ public:
   override void Compute_Weights(Unit*, Network* net, int thread_no=-1)	{ };
 
   TA_BASEFUNS_NOCOPY(SoftMaxBpUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void  Initialize()	{ };
   void  Destroy()	{ };
+  void	Defaults_init() { };
 };
 
 class BP_API BpLayer : public Layer {

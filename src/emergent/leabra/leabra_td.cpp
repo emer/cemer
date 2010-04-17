@@ -42,11 +42,6 @@ void LeabraTdUnitSpec::Initialize() {
   lambda = 0.0f;
 }
 
-void LeabraTdUnitSpec::Defaults() {
-  inherited::Defaults();
-  Initialize();
-}
-
 void LeabraTdUnitSpec::Init_Acts(Unit* u, Network* net) {
   inherited::Init_Acts(u, net);
   LeabraTdUnit* lu = (LeabraTdUnit*)u;
@@ -113,14 +108,6 @@ void ExtRewLayerSpec::Initialize() {
 //   unit_range.UpdateAfterEdit_NoGui();
 //   val_range.min = unit_range.min;
 //   val_range.max = unit_range.max;
-}
-
-void ExtRewLayerSpec::Defaults() {
-  inherited::Defaults();
-  rew.Defaults();
-  avg_rew.Defaults();
-  out_err.Defaults();
-  Initialize();
 }
 
 void ExtRewLayerSpec::UpdateAfterEdit_impl() {
@@ -449,11 +436,6 @@ void TDRewPredLayerSpec::Initialize() {
   ct_inhib_mod.trough_i = 0.0f;
 }
 
-void TDRewPredLayerSpec::Defaults() {
-  inherited::Defaults();
-  Initialize();
-}
-
 void TDRewPredLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
@@ -626,11 +608,6 @@ void TDRewIntegLayerSpec::Initialize() {
   ct_inhib_mod.trough_i = 0.0f;
 }
 
-void TDRewIntegLayerSpec::Defaults() {
-  inherited::Defaults();
-  Initialize();
-}
-
 void TDRewIntegLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   rew_integ.UpdateAfterEdit_NoGui();
@@ -791,11 +768,6 @@ void TdLayerSpec::Initialize() {
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
-}
-
-void TdLayerSpec::Defaults() {
-  inherited::Defaults();
-  Initialize();
 }
 
 void TdLayerSpec::HelpConfig() {

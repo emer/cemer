@@ -54,6 +54,10 @@ InitProcRegistrar mod_init_cs(cs_module_init);
 void CsConSpec::Initialize() {
   min_obj_type = &TA_CsCon;
   wt_limits.sym = true;		// default is to have symmetric initial weights!
+  Defaults_init();
+}
+
+void CsConSpec::Defaults_init() {
   lrate = .01f;
   momentum = 0.0f;
   momentum_c = 1.0f;
@@ -97,6 +101,13 @@ void CsUnitSpec::Initialize() {
   min_obj_type = &TA_CsUnit;
   bias_con_type = &TA_CsCon;
   bias_spec.SetBaseType(&TA_CsConSpec);
+  use_annealing = false;
+  use_sharp = false;
+
+  Defaults_init();
+}
+
+void CsUnitSpec::Defaults_init() {
   act_range.min = -1.0f;
   act_range.max = 1.0f;
   real_range.min = -.98f;
@@ -110,8 +121,6 @@ void CsUnitSpec::Initialize() {
   clamp_gain = 5.0f;
   initial_act.type = Random::NONE;
   state_decay = 0.5f;
-  use_annealing = false;
-  use_sharp = false;
 }
 
 void CsUnitSpec::InitLinks() {

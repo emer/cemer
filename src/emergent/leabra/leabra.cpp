@@ -115,6 +115,10 @@ void SAvgCorSpec::Initialize() {
 
 void AdaptRelNetinSpec::Initialize() {
   on = false;
+  Defaults_init();
+}
+
+void AdaptRelNetinSpec::Defaults_init() {
   trg_fm_input = .85f;
   trg_fm_output = .15f;
   trg_lateral = 0.0f;
@@ -143,11 +147,6 @@ bool AdaptRelNetinSpec::CheckInTolerance(float trg, float val) {
 
 void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
-  wt_limits.min = 0.0f;
-  wt_limits.max = 1.0f;
-  wt_limits.sym = true;
-  wt_limits.type = WeightLimits::MIN_MAX;
-
   learn_rule = LEABRA_CHL;
   inhib = false;
 
@@ -164,12 +163,22 @@ void LeabraConSpec::Initialize() {
   wt_sig_fun_lst.off = -1;   wt_sig_fun_lst.gain = -1; // trigger an update
   wt_sig_fun_res = -1.0;
 
+  lrs_value = EPOCH;
+  lrate_sched.interpolate = false;
+
+  Defaults_init();
+}
+
+void LeabraConSpec::Defaults_init() {
+  wt_limits.min = 0.0f;
+  wt_limits.max = 1.0f;
+  wt_limits.sym = true;
+  wt_limits.type = WeightLimits::MIN_MAX;
+
   rnd.mean = .5f;
   rnd.var = .25f;
   lrate = .01f;
   cur_lrate = .01f;
-  lrs_value = EPOCH;
-  lrate_sched.interpolate = false;
 }
 
 void LeabraConSpec::InitLinks() {
@@ -191,16 +200,6 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   CreateWtSigFun();
   lmix.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui();
-}
-
-void LeabraConSpec::Defaults() {
-  wt_scale.Defaults();
-  wt_scale_init.Defaults();
-  wt_sig.Defaults();
-  lmix.Defaults();
-  xcal.Defaults();
-  savg_cor.Defaults();
-  Initialize();
 }
 
 bool LeabraConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
@@ -427,6 +426,11 @@ void LeabraBiasSpec::Initialize() {
   SetUnique("wt_limits", true);
   SetUnique("wt_scale", true);
   SetUnique("wt_scale_init", true);
+
+  Defaults_init();
+}
+
+void LeabraBiasSpec::Defaults_init() {
   rnd.mean = 0.0f;
   rnd.var = 0.0f;
   wt_limits.min = -1.0f;
@@ -443,22 +447,21 @@ bool LeabraBiasSpec::CheckObjectType_impl(taBase* obj) {
   return true;
 }
 
-void LeabraBiasSpec::Defaults() {
-  inherited::Defaults();
-  Initialize();
-}
-
 //////////////////////////
 //  	Unit, Spec	//
 //////////////////////////
 
 void ActFunSpec::Initialize() {
+  i_thr = STD;
+  Defaults_init();
+}
+
+void ActFunSpec::Defaults_init() {
   thr = .25f;
   gain = 600.0f;
   nvar = .005f;
   avg_dt = .005f;
   avg_init = 0.15f;
-  i_thr = STD;
 }
 
 void ActFunSpec::UpdateAfterEdit_impl() {
@@ -519,6 +522,10 @@ void SpikeMiscSpec::UpdateAfterEdit_impl() {
 
 void ActAdaptSpec::Initialize() {
   on = false;
+  Defaults_init();
+}
+
+void ActAdaptSpec::Defaults_init() {
   dt_rate = 0.02f;
   dt_time = 1.0f / dt_rate;
   vm_gain = 0.1f;
@@ -533,6 +540,10 @@ void ActAdaptSpec::UpdateAfterEdit_impl() {
 
 void DepressSpec::Initialize() {
   on = false;
+  Defaults_init();
+}
+
+void DepressSpec::Defaults_init() {
   rec = .2f;
   asymp_act = .5f;
   depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
@@ -563,13 +574,17 @@ void OptThreshSpec::Initialize() {
 }
 
 void LeabraDtSpec::Initialize() {
+  vm_eq_cyc = 0;
+  Defaults_init();
+}
+
+void LeabraDtSpec::Defaults_init() {
   vm = 0.25f;			// .3 is too fast!
   vm_time = 1.0f / vm;
   net = 0.7f;
   net_time = 1.0f / net;
   d_vm_max = 0.025f;
   midpoint = false;
-  vm_eq_cyc = 0;
   vm_eq_dt = 1.0f;
 }
 
@@ -644,14 +659,22 @@ void VChanBasis::Copy_(const VChanBasis& cp) {
 
 void DaModSpec::Initialize() {
   on = false;
-  mod = PLUS_CONT;
   gain = .1f;
+  Defaults_init();
+}
+
+void DaModSpec::Defaults_init() {
+  mod = PLUS_CONT;
 }
 
 void NoiseAdaptSpec::Initialize() {
   trial_fixed = true;
   k_pos_noise = false;
   mode = FIXED_NOISE;
+  Defaults_init();
+}
+
+void NoiseAdaptSpec::Defaults_init() {
   min_pct = 0.5f;
   min_pct_c = 1.0f - min_pct;
 }
@@ -672,10 +695,29 @@ void LeabraUnitSpec::Initialize() {
   bias_con_type = &TA_LeabraCon;
   bias_spec.SetBaseType(&TA_LeabraBiasSpec);
 
-  sse_tol = .5f;
-
   act_fun = NOISY_XX1;
 
+  noise_type = NO_NOISE;
+  noise.type = Random::GAUSSIAN;
+  noise.var = .001f;
+
+  noise_conv.x_range.min = -.05f;
+  noise_conv.x_range.max = .05f;
+  noise_conv.res = .001f;
+  noise_conv.UpdateAfterEdit_NoGui();
+
+  nxx1_fun.x_range.min = -.03f;
+  nxx1_fun.x_range.max = .20f;
+  nxx1_fun.res = .001f;
+  nxx1_fun.UpdateAfterEdit_NoGui();
+
+  Defaults_init();
+
+  CreateNXX1Fun();
+}
+
+void LeabraUnitSpec::Defaults_init() {
+  sse_tol = .5f;
   clamp_range.min = .0f;
   clamp_range.max = .95f;
   clamp_range.UpdateAfterEdit_NoGui();
@@ -709,36 +751,6 @@ void LeabraUnitSpec::Initialize() {
   hyst.b_dec_dt = .05f;
   hyst.a_thr = .8f;
   hyst.d_thr = .7f;
-
-  noise_type = NO_NOISE;
-  noise.type = Random::GAUSSIAN;
-  noise.var = .001f;
-
-  noise_conv.x_range.min = -.05f;
-  noise_conv.x_range.max = .05f;
-  noise_conv.res = .001f;
-  noise_conv.UpdateAfterEdit_NoGui();
-
-  nxx1_fun.x_range.min = -.03f;
-  nxx1_fun.x_range.max = .20f;
-  nxx1_fun.res = .001f;
-  nxx1_fun.UpdateAfterEdit_NoGui();
-
-  CreateNXX1Fun();
-}
-
-void LeabraUnitSpec::Defaults() {
-  act.Defaults();
-  spike.Defaults();
-  spike_misc.Defaults();
-  adapt.Defaults();
-  depress.Defaults();
-  syn_delay.Defaults();
-  opt_thresh.Defaults();
-  dt.Defaults();
-  noise_adapt.Defaults();
-  Initialize();
-  //  bias_spec.SetSpec(bias_spec.SPtr());
 }
 
 void LeabraUnitSpec::InitLinks() {
@@ -2352,9 +2364,24 @@ void LeabraPrjn::DMem_ComputeAggs(MPI_Comm comm) {
 //////////////////////////
 
 void LeabraInhibSpec::Initialize() {
-  type = KWTA_KV2K;
-  kwta_pt = .25f;
+  type = KWTA_AVG_INHIB;
   min_i = 0.0f;
+  Defaults_init();
+}
+
+void LeabraInhibSpec::Defaults_init() {
+  switch(type) {
+  case KWTA_INHIB:
+  case KWTA_KV2K:
+    kwta_pt = .25f;
+    break;
+  case KWTA_AVG_INHIB:
+    kwta_pt = .6f;
+    break;
+  case AVG_MAX_PT_INHIB:
+    kwta_pt = .2f;
+    break;
+  }
   comp_thr = .5f;
   comp_gain = 2.0f;
   gp_pt = .2f;
@@ -2371,8 +2398,28 @@ void KWTASpec::Initialize() {
   gp_g = .5f;
 }
 
+void KWTASpec::Defaults_init() {
+  pat_q = .5f;
+}
+
+void KwtaTieBreak::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void KwtaTieBreak::Defaults_init() {
+  k_thr = 1.0f;
+  diff_thr = 0.2f;
+  thr_gain = 0.005f;
+  loser_gain = 1.0f;
+}
+
 void AdaptISpec::Initialize() {
   type = NONE;
+  Defaults_init();
+}
+
+void AdaptISpec::Defaults_init() {
   tol = .02f;			// allow to be off by this amount before taking action
   p_dt = .1f;			// take reasonably quick action..
   mx_d = .9f;			// move this far in either direction
@@ -2380,16 +2427,12 @@ void AdaptISpec::Initialize() {
   a_dt = .005f;			// time averaging
 }
 
-void KwtaTieBreak::Initialize() {
-  on = false;
-  k_thr = 1.0f;
-  diff_thr = 0.2f;
-  thr_gain = 0.005f;
-  loser_gain = 1.0f;
-}
-
 void ClampSpec::Initialize() {
   hard = true;
+  gain = .2f;
+}
+
+void ClampSpec::Defaults_init() {
   gain = .2f;
 }
 
@@ -2410,6 +2453,10 @@ void CtLayerInhibMod::Initialize() {
 
 void LayAbsNetAdaptSpec::Initialize() {
   on = false;
+  Defaults_init();
+}
+
+void LayAbsNetAdaptSpec::Defaults_init() {
   trg_net = .5f;
   tol = .1f;
   abs_lrate = .2f;
@@ -2424,11 +2471,8 @@ void LeabraLayerSpec::Initialize() {
   old_gp_i_pt = -1.0f;
 }
 
-void LeabraLayerSpec::Defaults() {
-  adapt_i.Defaults();
-  clamp.Defaults();
-  decay.Defaults();
-  Initialize();
+void LeabraLayerSpec::Defaults_init() {
+  // nothing at this level..
 }
 
 void LeabraLayerSpec::UpdateAfterEdit_impl() {
@@ -4382,14 +4426,14 @@ void LeabraInhib::Inhib_Initialize() {
   kwta.k = 1;
   kwta.pct = .25;
   kwta.pct_c = .75;
-  i_val.Defaults();
+  i_val.Init();
   phase_dif_ratio = 1.0f;
   maxda = 0.0f;
   un_g_i.cmpt = false;		// don't compute by default
 }
 
 void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
-  i_val.Defaults();
+  i_val.Init();
   netin.InitVals();
   i_thrs.InitVals();
   acts.InitVals();

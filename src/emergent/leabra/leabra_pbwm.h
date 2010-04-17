@@ -40,26 +40,29 @@ public:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   TA_SIMPLE_BASEFUNS(PatchLayerSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
-class LEABRA_API SNcMiscSpec : public taOBase {
+class LEABRA_API SNcMiscSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc parameters for SNc layer spec
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		stripe_lv_pct;	// #MIN_0 #MAX_1 #DEF_0.5 proportion of total LV dopamine value determined by stripe-wise LV signals from the patch layer -- remainder is from global LV signal
   float		global_lv_pct;	// #READ_ONLY #SHOW 1 - stripe_lv_pct -- proportion of total LV dopamine value determined by global LV signals
-  bool		lv_mnt_pv_out;	// #DEF_true send LV-based da signals to maintenance matrix layers, and PV-based da to output matrix layers
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SNcMiscSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API SNcLayerSpec : public PVLVDaLayerSpec {
@@ -76,30 +79,34 @@ public:
 
   TA_SIMPLE_BASEFUNS(SNcLayerSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 //////////////////////////////////////////////////////////////////
 //	  SNrThalLayer: Integrate Matrix and compute Gating 	//
 //////////////////////////////////////////////////////////////////
 
-class LEABRA_API SNrThalMiscSpec : public taOBase {
+class LEABRA_API SNrThalMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the snrthal layer
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		net_off;	// #DEF_0 #MIN_-1 #MAX_1 netinput offset -- how much to add to each unit's baseline netinput -- positive values make it more likely that some stripe will always fire, even if it has a net nogo activation state in the matrix -- very useful for preventing all nogo situations -- if net_off is .2 then act.gain should be 600, if net_off is 0 then act.gain should be 20 (dynamic range is diff)
   float		go_thr;		// #DEF_0.5 #MIN_0 #MAX_1 threshold in snrthal activation required to trigger a Go gating event
   float		rnd_go_inc;	// #DEF_0.1:0.2 #MIN_0 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
   float		leak;		// #DEF_1 #MIN_0 a leak-like term for the netinput computation -- just a constant added to the denominator in computing net input: (go - nogo) / (go + nogo + leak)
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(SNrThalMiscSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API SNrThalLayerSpec : public LeabraLayerSpec {
@@ -120,6 +127,11 @@ public:
   // hook for new netin goes here:
   override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
 
+  virtual void	Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net);
+  // compute act_eq reflecting the mutex on maint vs. output gating -- if the other has gated, then we turn our act_eq off to reflect that
+  // hook for gated acts goes here:
+  override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
   virtual void 	Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group* ugp, 
 					int gp_idx, LeabraNetwork* net);
@@ -135,12 +147,14 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(SNrThalLayerSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init();
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -151,9 +165,12 @@ class LEABRA_API MatrixBaseLayerSpec : public LeabraLayerSpec {
 INHERITED(LeabraLayerSpec)
 public:
   TA_BASEFUNS_NOCOPY(MatrixBaseLayerSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class LEABRA_API PFCBaseLayerSpec : public LeabraLayerSpec {
@@ -161,9 +178,12 @@ class LEABRA_API PFCBaseLayerSpec : public LeabraLayerSpec {
 INHERITED(LeabraLayerSpec)
 public:
   TA_BASEFUNS_NOCOPY(PFCBaseLayerSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -239,10 +259,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(MatrixConSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init();
 };
 
 class LEABRA_API MatrixBiasSpec : public LeabraBiasSpec {
@@ -267,22 +289,27 @@ public:
   }
   
   TA_BASEFUNS(MatrixBiasSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init();
 };
 
-class LEABRA_API MatrixNoiseSpec : public taOBase {
+class LEABRA_API MatrixNoiseSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra unit noise specs for matrix units
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   bool  patch_noise;		// get noise value from patch units (overrides netin_adapt setting if set to true) -- must have a patch layer spec prjn with marker con specs
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixNoiseSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API MatrixUnitSpec : public LeabraUnitSpec {
@@ -296,73 +323,78 @@ public:
   virtual void Compute_MidMinusAct(LeabraUnit* u, LeabraNetwork* net);
   // save the effective mid-minus (gating) activation state for subsequent learning
 
-  void	Defaults();
-
   void	InitLinks();
   SIMPLE_COPY(MatrixUnitSpec);
   TA_BASEFUNS(MatrixUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init();
 };
 
 //////////////////////////////////
 //	  Matrix Layer Spec	//
 //////////////////////////////////
 
-class LEABRA_API MatrixGateBiasSpec : public taOBase {
+class LEABRA_API MatrixGateBiasSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating biases depending on different conditions in the network -- helps to get the network performing appropriately for basic maintenance functions, to then be reinforced or overridden by learning
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		mnt_mnt_nogo;	// #DEF_1 (Weak) #AKA_mnt_nogo for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- this is critical for enabling robust maintenance by reducing Go activity that would then lead to an update
   float		mnt_rew_nogo;	// #DEF_10 (Very Strong) for all MAINT stripes (empty or maintaining) on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- adds to any mnt_mnt_nogo -- in general it is not useful to fire maint gating on recall/output trials (see pfc.gate spec -- can prevent entirely with flag there)
-  float		mnt_empty_go;	// #DEF_0 (Very Weak) for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias da (positive dopamine) -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
+  float		mnt_empty_go;	// #DEF_0 for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias da (positive dopamine) -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
   float		out_rew_go;	// #DEF_1 (Weak) #AKA_out_pvr for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias da (positive dopamine) to encourage the output gating units to respond -- see out_empty_nogo for empty (non-maintaining) stripes
   float		out_norew_nogo;	// #DEF_2 (Strong) for all OUTPUT stripes (empty or maintaining) on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating -- is not generally useful to output gate on store trials
   float		out_empty_nogo;	// #DEF_10 (Very Strong) for OUTPUT stripes that are not maintaining anything, on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating if there is nothing being maintained to output gate
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixGateBiasSpec);
-// protected:
+protected:
+  SPEC_DEFAULTS;
 //   void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
-class LEABRA_API MatrixMiscSpec : public taOBase {
+class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixMiscSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { };
 };
 
-class LEABRA_API MatrixRndGoSpec : public taOBase {
+class LEABRA_API MatrixRndGoSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc random go specifications -- when stripe has not fired for a long time, encourage some Go firing to get back into the game..
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
-  int		nogo_thr;	// #DEF_30 threshold of number of nogo firing in a row that will trigger NoGo random go firing
-  int		nogo_rng;	// #DEF_30 #MIN_1 range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
+  int		nogo_thr;	// #DEF_50 threshold of number of nogo firing in a row that will trigger NoGo random go firing
+  int		nogo_rng;	// #DEF_50 #MIN_1 range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
   float		nogo_da;	// #DEF_10 #MIN_0 strength of DA for driving learning of random Go units -- does not affect performance, only learning
   float		nogo_noise;	// #DEF_0;0.02 #MIN_0 use .02 when using -- noise value to apply to a randomly selected subset of k Go units to get them activated during a random Go event
-  bool		sub_norm;	// keep values normalized by subtracting from others
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixRndGoSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
-class LEABRA_API MatrixGoNogoGainSpec : public taOBase {
+class LEABRA_API MatrixGoNogoGainSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   bool		on;		// #DEF_false enable the application of these go and nogo gain factors
   float		go_p;		// #CONDSHOW_ON_on #DEF_1 +DA gain for go neurons
@@ -370,11 +402,13 @@ public:
   float		nogo_p;		// #CONDSHOW_ON_on #DEF_1 +DA gain for nogo neurons
   float		nogo_n;		// #CONDSHOW_ON_on #DEF_1 -DA gain for nogo neurons
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(MatrixGoNogoGainSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { };
 };
 
 // matrix unit/layer misc_ var docs
@@ -426,28 +460,15 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(MatrixLayerSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
-};
-
-//////////////////////////////////////////
-//	PFC Unit Spec	
-
-class LEABRA_API PFCUnitSpec : public LeabraUnitSpec {
-  // Prefrontal cortex units -- actually nothing different from normal units at this point
-INHERITED(LeabraUnitSpec)
-public:
-
-  TA_BASEFUNS_NOCOPY(PFCUnitSpec);
-private:
-  void	Initialize();
-  void	Destroy()		{ };
+  void	Defaults_init();
 };
 
 //////////////////////////////////////////
@@ -464,9 +485,9 @@ private:
 // * pfc ugp->misc_float = current Go activation value (mnt or out) -- used by units to boost netin -- already multiplied by gate.mnt/out_go_netin
 // * pfc ugp->misc_float1 = current output gating Go activation value for graded Go -- just multiply directly by this number
 
-class LEABRA_API PFCGateSpec : public taOBase {
+class LEABRA_API PFCGateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   enum	GateSignal {
     GATE_GO = 0,		// gate Go unit fired
@@ -496,31 +517,32 @@ public:
   bool		out_go_clear;	// #DEF_true #EXPERT an output Go clears the maintenance currents at the end of the trial -- only for reward trials (signalled by PVr) -- you use it, you lose it..
   float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PFCGateSpec);
-// protected:
+protected:
+  SPEC_DEFAULTS;
 //   void  UpdateAfterEdit_impl();
-
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
-class LEABRA_API PFCLearnSpec : public taOBase {
+class LEABRA_API PFCLearnSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
-  float		go_learn_base;	// #DEF_0.06 #MIN_0 #MAX_1 how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)
+  float		go_learn_base;	// #DEF_0.05 #MIN_0 #MAX_1 how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)
   float		go_learn_mod;	// #READ_ONLY 1 - go_learn_base -- how much learning is actually modulated by go gating activation
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(PFCLearnSpec);
 protected:
+  SPEC_DEFAULTS;
   void  UpdateAfterEdit_impl();
 
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API PFCLayerSpec : public PFCBaseLayerSpec {
@@ -565,15 +587,16 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(PFCLayerSpec);
 protected:
+  SPEC_DEFAULTS;
   void  UpdateAfterEdit_impl();
 
 private:
   void 	Initialize();
   void	Destroy()		{ CutLinks(); }
+  void	Defaults_init()		{ };
 };
 
 //////////////////////////////////////////
@@ -598,12 +621,14 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(PFCOutLayerSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ CutLinks(); }
+  void	Defaults_init() 	{ };
 };
 
 
@@ -622,9 +647,12 @@ public:
   void	Connect_impl(Projection* prjn);
 
   TA_BASEFUNS_NOCOPY(PFCLVPrjnSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize()		{ };
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 
@@ -642,10 +670,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(MatrixRndPrjnSpec);
 protected:
+  SPEC_DEFAULTS;
   override void UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 
@@ -808,7 +838,6 @@ public:
   int	nogo_thr;		// threshold number of sequential NOGO's per stripe before onset of nogo noise increment
   float	nogo_gain;		// how much to increase noise amplitude per every trial beyond nogo_thr: noise_amp += nogo_gain * (nogos - nogo_thr)
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(V1MatrixNoiseSpec);
 private:
   void	Initialize();
@@ -825,8 +854,6 @@ public:
 
   override void Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no);
   override float Compute_Noise(LeabraUnit* u, LeabraNetwork* net);
-
-  void	Defaults();
 
   void	InitLinks();
   SIMPLE_COPY(V1MatrixUnitSpec);
@@ -848,7 +875,6 @@ public:
   float		nogo_p;		// #DEF_0.1;0 probability of actually firing a nogo random Go once the threshold is exceeded
   float		nogo_da;	// #DEF_10 strength of DA for activating Go (gc.h) and inhibiting NoGo (gc.a) for a nogo-driven random go firing
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(V1MatrixRndGoSpec);
 private:
   void	Initialize();
@@ -865,7 +891,6 @@ public:
   float		snr_err_da;	// dopamine value to add if the corresponding snrthal unit has a COMP targ value greater than 0.5 and the stripe did not fire Go -- achieves error-driven learning via snr modulation of da
   bool		no_snr_mod;	// #DEF_false #EXPERT disable the Da learning modulation by SNrThal ativation (this is only to demonstrate how important it is)
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(V1MatrixMiscSpec);
 private:
   void	Initialize();
@@ -884,7 +909,6 @@ public:
   float		nogo_p;		// #CONDSHOW_OFF_one_val [0.5 for maint, 1 for out] proportion of da * gate_act for DA+ on NOGO units: contrast enhancement
   float		nogo_n;		// #CONDSHOW_OFF_one_val [0.5 for maint, 1 for out] proportion of da * gate_act for DA- on NOGO units: contrast reduction
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(V1ContrastSpec);
 private:
   void	Initialize();
@@ -901,7 +925,6 @@ public:
   float		nogo_p;		// #CONDSHOW_ON_on #DEF_1 +DA gain for nogo neurons
   float		nogo_n;		// #CONDSHOW_ON_on #DEF_1 -DA gain for nogo neurons
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(V1MatrixGoNogoGainSpec);
 private:
   void	Initialize();
@@ -958,7 +981,6 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(V1MatrixLayerSpec);
 protected:
@@ -980,7 +1002,6 @@ public:
   float		go_thr;		// #DEF_0.1 threshold in snrthal activation required to trigger a Go gating event
   float		rnd_go_inc;	// #DEF_0.2 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(V1SNrThalMiscSpec);
 private:
   void	Initialize();
@@ -1007,7 +1028,6 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(V1SNrThalLayerSpec);
 private:
@@ -1042,7 +1062,6 @@ public:
   bool		out_gate_learn_mod; // #HIDDEN NOTE: not currently functional!  modulate the learning as a function of whether the corresponding output gating layer fired Go, to enforce appropriate credit assignment to only learn when given stripe participated in output -- this is a discrete modulation (all or nothing)
   bool		allow_clamp;	// #DEF_false allow external hard clamp of layer (e.g., for testing)
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(V1PFCGateSpec);
 private:
   void	Initialize();
@@ -1080,7 +1099,6 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(V1PFCLayerSpec);
 private:
@@ -1106,7 +1124,6 @@ public:
     go_gain = 1.0f - base_gain; }
   // set base gain value with limits enforced and go_gain updated
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(V1PFCOutGateSpec);
 protected:
   void  UpdateAfterEdit_impl();
@@ -1149,7 +1166,6 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(V1PFCOutLayerSpec);
 protected:

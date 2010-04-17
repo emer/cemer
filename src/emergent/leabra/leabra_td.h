@@ -70,60 +70,68 @@ public:
   override void Init_Weights(Unit* u, Network* net);
   override void EncodeState(LeabraUnit* u, LeabraNetwork* net);
 
-  void	Defaults();
   TA_SIMPLE_BASEFUNS(LeabraTdUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 //////////////////////////////////////////
 //	External Reward Layer		//
 //////////////////////////////////////////
 
-class LEABRA_API AvgExtRewSpec : public taOBase {
+class LEABRA_API AvgExtRewSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing average external rewards
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   bool		sub_avg;	// #DEF_false subtract average reward value in computing rewards
   float		avg_dt;		// #DEF_0.005 time constant for integrating average reward value
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(AvgExtRewSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
-class LEABRA_API OutErrSpec : public taOBase {
+class LEABRA_API OutErrSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards based on output performance of network
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		err_tol;	// #DEF_0.5 error tolerance for counting an activation wrong
   bool		graded;		// #DEF_false compute a graded reward signal as a function of number of correct output values
   bool		no_off_err;	// #DEF_false do not count a unit wrong if it is off but target says on -- only count wrong units that are on but should be off
   float		scalar_val_max;	// #CONDEDIT_ON_graded maximum value for scalar value output layers when using a graded value -- reward is error normalized by this value, and clipped at min/max
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(OutErrSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
-class LEABRA_API ExtRewSpec : public taOBase {
+class LEABRA_API ExtRewSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing external rewards
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		err_val;	// #DEF_0 reward value for errors (when network does not respond correctly)
   float		norew_val;	// #DEF_0.5 reward value when no feedback information is present
   float		rew_val;	// #DEF_1 reward value for correct responses (positive rewards)
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(ExtRewSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API ExtRewLayerSpec : public ScalarValLayerSpec {
@@ -172,14 +180,15 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(ExtRewLayerSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 //////////////////////////////////////////////////////////
@@ -229,9 +238,12 @@ public:
   }
 
   TA_BASEFUNS_NOCOPY(TDRewPredConSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 //////////////////////////////////////////////////
@@ -261,32 +273,35 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_BASEFUNS_NOCOPY(TDRewPredLayerSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 //////////////////////////////////////////
 //	TD Reward Integration Layer	//
 //////////////////////////////////////////
 
-class LEABRA_API TDRewIntegSpec : public taOBase {
+class LEABRA_API TDRewIntegSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for TDRewIntegLayerSpec
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
   bool		max_r_v;	// represent the maximum of extrew (r) and tdrewpred estimate of V(t+1) instead of the sum of these two factors -- produces a kind of "absorbing" reward function instead of a cumulative reward function
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(TDRewIntegSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { };
 };
 
 class LEABRA_API TDRewIntegLayerSpec : public ScalarValLayerSpec {
@@ -305,14 +320,15 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(TDRewIntegLayerSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 //////////////////////////
@@ -342,12 +358,14 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
-  void	Defaults();
 
   TA_SIMPLE_BASEFUNS(TdLayerSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 #endif // leabra_td_h

@@ -64,11 +64,15 @@ InitProcRegistrar mod_init_bp(bp_module_init);
 
 void BpConSpec::Initialize() {
   min_obj_type = &TA_BpCon;
-  lrate = .25f;
-  cur_lrate = .25f;
+  Defaults_init();
+}
+
+void BpConSpec::Defaults_init() {
+  lrate = .2f;
+  cur_lrate = .2f;
   lrate_sched.interpolate = false;
   momentum_type = BEFORE_LRATE;
-  momentum = .9f;
+  momentum = 0.0f;
   momentum_c = .1f;
   decay = 0.0f;
   decay_fun = NULL;
@@ -119,6 +123,12 @@ void BpUnitSpec::Initialize() {
   bias_spec.SetBaseType(&TA_BpConSpec);
   err_tol = 0.0f;
   err_fun = Bp_Squared_Error;
+}
+
+void BpUnitSpec::Defaults_init() {
+  err_tol = 0.05f;
+  sse_tol = 0.5f;
+  err_fun = Bp_CrossEnt_Error;
 }
 
 void BpUnitSpec::InitLinks() {
@@ -256,6 +266,10 @@ void BpUnit::Copy_(const BpUnit& cp) {
 
 void DeltaBarDeltaBpConSpec::Initialize() {
   min_obj_type = &TA_DeltaBarDeltaBpCon;
+  Defaults_init();
+}
+
+void DeltaBarDeltaBpConSpec::Defaults_init() {
   lrate_incr = .1f;
   lrate_decr = .9f;
   act_lrate_incr = lrate * lrate_incr;

@@ -56,9 +56,9 @@ private:
 // 	Context Layer for Sequential	//
 //////////////////////////////////////////
 
-class LEABRA_API CtxtUpdateSpec : public taOBase {
+class LEABRA_API CtxtUpdateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context updating specifications
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		fm_hid;		// from hidden (inputs to context layer)
   float		fm_prv;		// from previous context layer values (maintenance)
@@ -66,22 +66,28 @@ public:
 
   SIMPLE_COPY(CtxtUpdateSpec);
   TA_BASEFUNS(CtxtUpdateSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-class LEABRA_API CtxtNSpec : public taBase {
+class LEABRA_API CtxtNSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra context counting specifications
-INHERITED(taBase)
+INHERITED(SpecMemberBase)
 public:
   int		n_trials;	// #MIN_1 update every n trials
   int		n_offs;		// #MIN_0 offset of n during count, ex using 2 lays with 0 and N/2 gives half alternating offset
 
   TA_SIMPLE_BASEFUNS(CtxtNSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
-  void	Initialize() {n_trials = 2; n_offs = 0;}
+  void	Initialize() 	{ n_trials = 2; n_offs = 0; }
   void 	Destroy()	{ };
+  void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
 class LEABRA_API LeabraContextLayerSpec : public LeabraLayerSpec {
@@ -110,12 +116,11 @@ public:
 
   void TriggerUpdate(LeabraLayer* lay); // manually trigger an update of the context layer -- generally called at end of a Trial -- can always be called even if not on MANUAL
   
-  void	Defaults();
-
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md);
   TA_SIMPLE_BASEFUNS(LeabraContextLayerSpec);
   
 protected:
+  SPEC_DEFAULTS;
   STATIC_CONST String do_update_key;
   virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net);
   // get context source value for given context unit
@@ -123,6 +128,7 @@ protected:
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init();
 };
 
 //////////////////////////////////////////
@@ -135,12 +141,13 @@ INHERITED(LeabraUnitSpec)
 public:
   void 	Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net);
   
-  void	Defaults();
-
   TA_BASEFUNS(LeabraLinUnitSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 // note: the following is not compatible with the leabra unit equations
@@ -173,7 +180,6 @@ private:
 //   }
 //   // initial rec value based on initial vm value (equilibrium point)
 
-//   void 	Defaults()	{ Initialize(); }
 //   TA_SIMPLE_BASEFUNS(IzhikevichSpec);
 // protected:
 //   void	UpdateAfterEdit_impl();
@@ -215,9 +221,12 @@ public:
 
   SIMPLE_COPY(LeabraNegBiasSpec);
   TA_BASEFUNS(LeabraNegBiasSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() { };	
 };
 
 
@@ -247,10 +256,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(XCalHebbConSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class LEABRA_API XCalMlTraceConSpec : public LeabraConSpec {
@@ -284,10 +295,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(XCalMlTraceConSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
-  void	Destroy()		{ };
+  void	Destroy()	{ };
+  void	Defaults_init() { };
 };
 
 
@@ -304,18 +317,21 @@ public:
   TrialSynDepCon() { effwt = 0.0f; }
 };
 
-class LEABRA_API TrialSynDepSpec : public taOBase {
+class LEABRA_API TrialSynDepSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		rec;		// #DEF_1 rate of recovery from depression
   float		depl;		// #DEF_1.1 rate of depletion of synaptic efficacy as a function of sender-receiver activations
 
   SIMPLE_COPY(TrialSynDepSpec);
   TA_BASEFUNS(TrialSynDepSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { };
 };
 
 class LEABRA_API TrialSynDepConSpec : public LeabraConSpec {
@@ -424,11 +440,13 @@ public:
 
   TA_SIMPLE_BASEFUNS(TrialSynDepConSpec);
 protected:
+  SPEC_DEFAULTS;
   void 	UpdateAfterEdit_impl();
 
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 ////////////////////////////////////////////////////////////////
@@ -443,9 +461,9 @@ public:
   CycleSynDepCon() { effwt = 0.0f; }
 };
 
-class LEABRA_API CycleSynDepSpec : public taOBase {
+class LEABRA_API CycleSynDepSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for synaptic depression
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		rec;		// #DEF_0.002 rate of recovery from depression
   float		asymp_act;	// #DEF_0.4 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl rate value)
@@ -462,11 +480,13 @@ public:
   SIMPLE_COPY(CycleSynDepSpec);
   TA_BASEFUNS(CycleSynDepSpec);
 protected:
+  SPEC_DEFAULTS;
   void UpdateAfterEdit_impl();
 
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API CycleSynDepConSpec : public LeabraConSpec {
@@ -558,11 +578,13 @@ public:
 
   TA_SIMPLE_BASEFUNS(CycleSynDepConSpec);
 protected:
+  SPEC_DEFAULTS;
   void 	UpdateAfterEdit_impl();
 
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 ////////////////////////////////////////////////////////////////
@@ -578,9 +600,9 @@ public:
   CaiSynDepCon() { effwt = 0.0f; cai = 0.0f; }
 };
 
-class LEABRA_API CaiSynDepSpec : public taOBase {
+class LEABRA_API CaiSynDepSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra specs for synaptic depression based in synaptic integration of calcium
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		ca_inc;		// #DEF_0.2 time constant for increases in Ca_i (from NMDA etc currents) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
   float		ca_dec;		// #DEF_0.2 time constant for decreases in Ca_i (from Ca pumps pushing Ca back out into the synapse) -- default base value is .01 per cycle -- multiply by network->ct_learn.syndep_int to get this value (default = 20)
@@ -602,11 +624,13 @@ public:
   SIMPLE_COPY(CaiSynDepSpec);
   TA_BASEFUNS(CaiSynDepSpec);
 protected:
+  SPEC_DEFAULTS;
   void UpdateAfterEdit_impl();
 
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API CaiSynDepConSpec : public LeabraConSpec {
@@ -716,11 +740,13 @@ public:
 
   TA_SIMPLE_BASEFUNS(CaiSynDepConSpec);
 protected:
+  SPEC_DEFAULTS;
   void 	UpdateAfterEdit_impl();
 
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 /////////////////////////////////////////////////
@@ -737,9 +763,9 @@ public:
   FastWtCon() { swt = sdwt = 0.0f; }
 };
 
-class LEABRA_API FastWtSpec : public taOBase {
+class LEABRA_API FastWtSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specificiations for fast weights
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   enum DecayMode {
     ALWAYS,			// always decay all weights toward slow weight (swt)
@@ -756,9 +782,12 @@ public:
 
   SIMPLE_COPY(FastWtSpec);
   TA_BASEFUNS(FastWtSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 // TODO: the decay in this code cannot be parallelized over dwt's because the dynamics will
@@ -862,18 +891,21 @@ public:
   }
 
   TA_SIMPLE_BASEFUNS(FastWtConSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 
 //////////////////////////////////////////////////////////////////////////
 //	Activation Trace Hebbian learning (Foldiak, Rolls etc)
 
-class LEABRA_API ActAvgHebbMixSpec : public taOBase {
+class LEABRA_API ActAvgHebbMixSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra mixture of average activation hebbian learning and regular hebbian learning (on current act value)
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		act_avg;	// what proportion of average activation to include in hebbian receiving unit activation learning term
   float		cur_act;	// #READ_ONLY #SHOW 1.0 - act_avg -- proportion of current activation for hebbian learning
@@ -881,10 +913,12 @@ public:
   SIMPLE_COPY(ActAvgHebbMixSpec);
   TA_BASEFUNS(ActAvgHebbMixSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API ActAvgHebbConSpec : public LeabraConSpec {
@@ -918,10 +952,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(ActAvgHebbConSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class LEABRA_API LeabraDeltaConSpec : public LeabraConSpec {
@@ -970,10 +1006,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(LeabraDeltaConSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ Initialize(); }
 };
 
 //////////////////////////////////////////////////
@@ -1001,15 +1039,15 @@ public:
   }
 };
 
-class LEABRA_API XCALSpikeSpec : public taOBase {
+class LEABRA_API XCALSpikeSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra XCAL purely spiking learning rule based on Urakubo et al 2008
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
-  bool		ss_sr;		// #DEF_false do super-short sender-recv multiplication instead of full Urakubo thing -- just for testing/debugging
+  bool		ss_sr;	   // #DEF_false do super-short sender-recv multiplication instead of full Urakubo thing -- just for testing/debugging
 
-  float		ca_norm;  // #DEF_5 normalization factor for ca -- divide all ca constants by this amount
-  float		k_ca;	  // #READ_ONLY #SHOW (.3 in original units) effective Ca that gives 50% inhibition of maximal NMDA receptor activity
-  float		ca_vgcc;  // #READ_ONLY #SHOW (1.3 in original units) Ca influx resulting from receiver spiking (due to voltage gated calcium channels)
+  float		ca_norm;   // #DEF_5 normalization factor for ca -- divide all ca constants by this amount
+  float		k_ca;	   // #READ_ONLY #SHOW (.3 in original units) effective Ca that gives 50% inhibition of maximal NMDA receptor activity
+  float		ca_vgcc;   // #READ_ONLY #SHOW (1.3 in original units) Ca influx resulting from receiver spiking (due to voltage gated calcium channels)
   float		ca_v_nmda; // #READ_ONLY #SHOW (0.0223 in original units) Ca influx due to membrane-potential (voltage) driven NMDA receptor activation
   float		ca_nmda;   // #READ_ONLY #SHOW (0.5 in original units) Ca influx from NMDA that is NOT driven by membrane potential 
   float		ca_dt;     // #DEF_20 time constant (in msec) for decay of Ca 
@@ -1020,10 +1058,12 @@ public:
   
   TA_SIMPLE_BASEFUNS(XCALSpikeSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API LeabraXCALSpikeConSpec : public LeabraConSpec {
@@ -1123,10 +1163,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(LeabraXCALSpikeConSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 
@@ -1173,30 +1215,34 @@ public:
 
   SIMPLE_COPY(LeabraLimPrecConSpec);
   TA_BASEFUNS(LeabraLimPrecConSpec);
-// protected:
+protected:
+  SPEC_DEFAULTS;
 //   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init()		{ };
 };
 
 ////////////////////////////////////////////////////////////////////////
 //	da-noise modulated learning as in MazzoniAndersenJordan91
 
-class LEABRA_API LeabraDaNoise : public taBase {
+class LEABRA_API LeabraDaNoise : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra da-noise modulated learning as in MazzoniAndersenJordan91
-INHERITED(taBase)
+INHERITED(SpecMemberBase)
 public:
   float		da_noise;	// #DEF_0:1 amount to add of additional reinforcement-learning term based on unit dopamine value (dav) and TRIAL_VM_NOISE noise value, as in MazzoniAndersenJordan91: dwt = dav * (ru_act_p+noise - ru_act_p-noise) * su_act -- activation with noise (std acts as computed) minus activation without noise (specially computed given noise value) times sending activation times dopamine value -- if it does better and noise made unit more active, then make it more active next time (and so on for all other permutations)
   float		std_leabra;	// #DEF_0:1 how much of standard leabra learning to include in addition to the da_noise term
 
   SIMPLE_COPY(LeabraDaNoise);
   TA_BASEFUNS(LeabraDaNoise);
-  //protected:
+protected:
+  SPEC_DEFAULTS;
   //  void UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API LeabraDaNoiseConSpec : public LeabraConSpec {
@@ -1265,11 +1311,13 @@ public:
   // todo: add xcal version perhaps if promising..  not.. so maybe not..
 
   TA_SIMPLE_BASEFUNS(LeabraDaNoiseConSpec);
-// protected:
+protected:
+  SPEC_DEFAULTS;
 //   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 
@@ -1288,9 +1336,9 @@ private:
 // group units, producing a random sensory representation.  not really necc. for S2 
 // spikes, because of syndep..
 
-class LEABRA_API ScalarValSpec : public taOBase {
+class LEABRA_API ScalarValSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -1322,14 +1370,17 @@ public:
   // get target value associated with unit at given index: MUST CALL InitVal first!
 
   TA_SIMPLE_BASEFUNS(ScalarValSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init();
 };
 
-class LEABRA_API ScalarValBias : public taOBase {
+class LEABRA_API ScalarValBias : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -1357,9 +1408,12 @@ public:
 
   SIMPLE_COPY(ScalarValBias);
   TA_BASEFUNS(ScalarValBias);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { }; 	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
 class LEABRA_API ScalarValLayerSpec : public LeabraLayerSpec {
@@ -1435,10 +1489,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(ScalarValLayerSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init();
 };
 
 class LEABRA_API ScalarValSelfPrjnSpec : public ProjectionSpec {
@@ -1455,14 +1511,17 @@ public:
   // uses weight values as specified in the tesselel's
 
   TA_SIMPLE_BASEFUNS(ScalarValSelfPrjnSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
-class LEABRA_API MotorForceSpec : public taOBase {
+class LEABRA_API MotorForceSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for scalar values
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		pos_width;	// sigma parameter of a gaussian specifying the tuning width of the coarse-coded integration over position (in pos_range or normalized units, depending on norm_width)
   float		vel_width;	// sigma parameter of a gaussian specifying the tuning width of the coarse-coded integration over velocity (in vel_range or normalized units, depending on norm_width)
@@ -1489,9 +1548,12 @@ public:
   // #CAT_MotorForce get weighting factor for position & velocity group at given indexes: MUST CALL InitVal first!
 
   TA_SIMPLE_BASEFUNS(MotorForceSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { };
 };
 
 class LEABRA_API MotorForceLayerSpec : public ScalarValLayerSpec {
@@ -1515,10 +1577,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(MotorForceLayerSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 
@@ -1592,9 +1656,9 @@ private:
   void 	Destroy()		{ };
 };
 
-class LEABRA_API TwoDValSpec : public taOBase {
+class LEABRA_API TwoDValSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for two-dimensional values
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -1634,14 +1698,17 @@ public:
 
   SIMPLE_COPY(TwoDValSpec);
   TA_BASEFUNS(TwoDValSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { };
 };
 
-class LEABRA_API TwoDValBias : public taOBase {
+class LEABRA_API TwoDValBias : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for scalar value units
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -1663,9 +1730,12 @@ public:
 
   SIMPLE_COPY(TwoDValBias);
   TA_BASEFUNS(TwoDValBias);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { };	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
 class LEABRA_API TwoDValLayerSpec : public LeabraLayerSpec {
@@ -1728,10 +1798,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(TwoDValLayerSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class LEABRA_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
@@ -1833,9 +1905,9 @@ private:
   void 	Destroy()		{ };
 };
 
-class LEABRA_API FourDValSpec : public taOBase {
+class LEABRA_API FourDValSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for four-dimensional values
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   enum	RepType {
     GAUSSIAN,			// gaussian bump, with value = weighted average of tuned unit values
@@ -1875,14 +1947,17 @@ public:
 
   SIMPLE_COPY(FourDValSpec);
   TA_BASEFUNS(FourDValSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { };
 };
 
-class LEABRA_API FourDValBias : public taOBase {
+class LEABRA_API FourDValBias : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial bias for given activation value for four-d value units
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
@@ -1904,9 +1979,12 @@ public:
 
   SIMPLE_COPY(FourDValBias);
   TA_BASEFUNS(FourDValBias);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { };
 };
 
 class LEABRA_API FourDValLayerSpec : public LeabraLayerSpec {
@@ -2008,10 +2086,12 @@ public:
 
   TA_SIMPLE_BASEFUNS(V1RFPrjnSpec);
 protected:
+  SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class LEABRA_API SaliencyPrjnSpec : public ProjectionSpec {
@@ -2040,9 +2120,12 @@ public:
   // #BUTTON #NULL_OK plot the DoG center-surround weights into data table and generate a grid view
 
   TA_SIMPLE_BASEFUNS(SaliencyPrjnSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class LEABRA_API GpAggregatePrjnSpec : public ProjectionSpec {
@@ -2053,9 +2136,12 @@ public:
   void 		Connect_impl(Projection* prjn);
 
   TA_SIMPLE_BASEFUNS(GpAggregatePrjnSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class LEABRA_API VisDisparityPrjnSpec : public ProjectionSpec {
@@ -2076,9 +2162,12 @@ public:
   override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
 
   TA_SIMPLE_BASEFUNS(VisDisparityPrjnSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 class LEABRA_API LeabraV1Layer : public LeabraLayer {
@@ -2097,19 +2186,21 @@ private:
   void 	Destroy()		{ };
 };
 
-class LEABRA_API V1FeatInhibSpec : public taOBase {
+class LEABRA_API V1FeatInhibSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for V1 layer units based on feature-level inhibition
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
-  float		feat_gain;	// multiplier for feature-level inhibition
-  float		dist_sigma;	// Gaussian std deviation (sigma) for weighting competitors based on distance, in normalized units relative to max x,y size dimension of the layer group geometry
-  float		i_rat_thr;	// optimization threshold of unit i_thr relative to group's inhib threshold -- if less than this threshold, no distance costs are assessed
+  float		feat_gain;	// #MIN_0 #DEF_0.01:0.1 multiplier for feature-level inhibition
+  float		dist_sigma;	// #MIN_0 #DEF_0.25:0.5 Gaussian std deviation (sigma) for weighting competitors based on distance, in normalized units relative to max x,y size dimension of the layer group geometry
+  float		i_rat_thr;	// #DEF_0.5 optimization threshold of unit i_thr relative to group's inhib threshold -- if less than this threshold, no distance costs are assessed
 
-  void 	Defaults()	{ Initialize(); }
   TA_SIMPLE_BASEFUNS(V1FeatInhibSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API LeabraV1LayerSpec : public LeabraLayerSpec {
@@ -2126,9 +2217,12 @@ public:
   override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
   
   TA_SIMPLE_BASEFUNS(LeabraV1LayerSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 
@@ -2161,9 +2255,12 @@ public:
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
 
   TA_SIMPLE_BASEFUNS(CerebConj2PrjnSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
 };
 
 
