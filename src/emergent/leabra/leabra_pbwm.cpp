@@ -612,10 +612,17 @@ void MatrixMiscSpec::Initialize() {
 }
 
 void MatrixRndGoSpec::Initialize() {
-  nogo_thr = 50;
-  nogo_rng = 50;
+  nogo_thr = 30;
+  rng_eq_thr = true;
+  nogo_rng = nogo_thr;
   nogo_da = 10.0f;
   nogo_noise = 0.02f;
+}
+
+void MatrixRndGoSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(rng_eq_thr)
+    nogo_rng = nogo_thr;
 }
 
 void MatrixGoNogoGainSpec::Initialize() {
@@ -657,6 +664,7 @@ void MatrixLayerSpec::Defaults_init() {
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   gate_bias.UpdateAfterEdit_NoGui();
+  rnd_go.UpdateAfterEdit_NoGui();
 }
 
 void MatrixLayerSpec::HelpConfig() {

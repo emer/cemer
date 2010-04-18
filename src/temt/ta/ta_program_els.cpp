@@ -110,6 +110,30 @@ ProgVar* ProgVars::AddFloatMatrix() {
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
 }
+ProgVar* ProgVars::AddDoubleMatrix() {
+  ProgVar* rval = (ProgVar*)local_vars.New(1);
+  rval->SetObjectType(&TA_double_Matrix);
+  rval->ClearVarFlag(ProgVar::NULL_CHECK);
+  return rval;
+}
+ProgVar* ProgVars::AddIntMatrix() {
+  ProgVar* rval = (ProgVar*)local_vars.New(1);
+  rval->SetObjectType(&TA_int_Matrix);
+  rval->ClearVarFlag(ProgVar::NULL_CHECK);
+  return rval;
+}
+ProgVar* ProgVars::AddStringMatrix() {
+  ProgVar* rval = (ProgVar*)local_vars.New(1);
+  rval->SetObjectType(&TA_String_Matrix);
+  rval->ClearVarFlag(ProgVar::NULL_CHECK);
+  return rval;
+}
+ProgVar* ProgVars::AddVarMatrix() {
+  ProgVar* rval = (ProgVar*)local_vars.New(1);
+  rval->SetObjectType(&TA_Variant_Matrix);
+  rval->ClearVarFlag(ProgVar::NULL_CHECK);
+  return rval;
+}
 
 
 //////////////////////////

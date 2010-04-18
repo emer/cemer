@@ -58,6 +58,14 @@ public:
   // #BUTTON add a new variable
   virtual ProgVar*	AddFloatMatrix();
   // #BUTTON add a new float_Matrix* variable -- these have to be in local vars so are frequently created..
+  virtual ProgVar*	AddDoubleMatrix();
+  // #BUTTON add a new double_Matrix* variable -- these have to be in local vars so are frequently created..
+  virtual ProgVar*	AddIntMatrix();
+  // #BUTTON add a new int_Matrix* variable -- these have to be in local vars so are frequently created..
+  virtual ProgVar*	AddStringMatrix();
+  // #BUTTON add a new String_Matrix* variable -- these have to be in local vars so are frequently created..
+  virtual ProgVar*	AddVarMatrix();
+  // #BUTTON add a new Variant_Matrix* variable -- these have to be in local vars so are frequently created..
 
   override ProgVar*	FindVarName(const String& var_nm) const;
 
