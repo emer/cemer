@@ -483,6 +483,8 @@ public:
   float			wt_line_width;	// width of weight lines
   float			wt_line_thr;	// threshold on fabs(wt) value -- don't display below this value
   bool			wt_line_swt;	// plot sending weights instead of recv weights
+  float			wt_prjn_k_un;	// number of top-k units to project weights through
+  float			wt_prjn_k_gp;	// number of top-k unit groups to project weights through
   LayerRef		wt_prjn_lay; 	// #NO_COPY layer to display projected weights for
   bool			snap_bord_disp;	// display snapshot value snap as a border around units
   float			snap_bord_width; // width of snapshot border lines
@@ -645,6 +647,10 @@ public:
   taiField*		    fldWtLineWdth;
   QLabel*		    lblWtLineThr;
   taiField*		    fldWtLineThr;
+  QLabel*		    lblWtPrjnKUn;
+  taiField*		    fldWtPrjnKUn;
+  QLabel*		    lblWtPrjnKGp;
+  taiField*		    fldWtPrjnKGp;
   QLabel*		    lblWtPrjnLay;
   taiGroupElsButton*	    gelWtPrjnLay;
 

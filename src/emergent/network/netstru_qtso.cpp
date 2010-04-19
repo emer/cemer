@@ -2317,8 +2317,10 @@ void NetView::Initialize() {
   unit_text_disp = UTD_NONE;
   wt_line_disp = false;
   wt_line_width = 4.0f;
-  wt_line_thr = .5f;
+  wt_line_thr = .8f;
   wt_line_swt = false;
+  wt_prjn_k_un = 4;
+  wt_prjn_k_gp = 1;
   snap_bord_disp = false;
   snap_bord_width = 4.0f;
 
@@ -3167,44 +3169,52 @@ void NetView::Render_wt_lines() {
 
   bool swt = wt_line_swt;
 
-  for(int g=0;g<(swt ? unit_src->send.size : unit_src->recv.size);g++) {
-    taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
-    Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
-    if(!prjn || !prjn->from || !prjn->layer) continue;
-    if(prjn->from->Iconified()) continue;
+  if(wt_line_width >= 0.0f) {
+    for(int g=0;g<(swt ? unit_src->send.size : unit_src->recv.size);g++) {
+      taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
+      Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
+      if(!prjn || !prjn->from || !prjn->layer) continue;
+      if(prjn->from->Iconified()) continue;
 
-    n_prjns++;
-    int n_con = 0;
-    for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
-      float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
-      if(wt >= wt_line_thr) n_con++;
+      n_prjns++;
+      int n_con = 0;
+      for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
+	float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
+	if(wt >= wt_line_thr) n_con++;
+      }
+
+      n_vtx += 1 + n_con;   // one for recv + senders
+      n_coord += 3 * n_con; // start, end -1 for each coord
+      n_mat += n_con;       // one per line
     }
-
-    n_vtx += 1 + n_con;   // one for recv + senders
-    n_coord += 3 * n_con; // start, end -1 for each coord
-    n_mat += n_con;       // one per line
   }
 
   if((bool)wt_prjn_lay) {
     // this does all the heavy lifting: projecting into unit wt_prjn
-    net()->ProjectUnitWeights(unit_src, wt_line_thr, swt);
+    // if wt_line_thr < 0 then zero intermediates
+    net()->ProjectUnitWeights(unit_src, wt_prjn_k_un, wt_prjn_k_gp, swt, 
+			      (wt_prjn_k_un > 0 && wt_line_thr < 0.0f));
 
-    int n_con = 0;
-    Unit* u;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, u, wt_prjn_lay->units., ui) {
-      if(fabsf(u->wt_prjn) >= wt_line_thr) n_con++;
+    if(wt_line_width >= 0.0f) {
+      int n_con = 0;
+      Unit* u;
+      taLeafItr ui;
+      FOR_ITR_EL(Unit, u, wt_prjn_lay->units., ui) {
+	if(fabsf(u->wt_prjn) >= wt_line_thr) n_con++;
+      }
+
+      n_vtx += 1 + n_con;   // one for recv + senders
+      n_coord += 3 * n_con; // start, end -1 for each coord
+      n_mat += n_con;       // one per line
     }
-
-    n_vtx += 1 + n_con;   // one for recv + senders
-    n_coord += 3 * n_con; // start, end -1 for each coord
-    n_mat += n_con;       // one per line
   }
 
   vertex.setNum(n_vtx);
   coords.setNum(n_coord);
   color.setNum(n_mat);
   mats.setNum(n_mat);
+
+  if(wt_line_width < 0.0f) return;
 
   SbVec3f* vertex_dat = vertex.startEditing();
   int32_t* coords_dat = coords.startEditing();
@@ -3717,7 +3727,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblWtLineThr = taiM->NewLabel("Thr", widg, font_spec);
-  lblWtLineThr->setToolTip("Threshold for displaying weight lines: weight magnitudes below this value are not shown.");
+  lblWtLineThr->setToolTip("Threshold for displaying weight lines: weight magnitudes below this value are not shown -- if a layer to project onto is selected (Wt Prjn) then if this value is < 0, intermediate units in the weight projection that are below the K un threshold will be zeroed.");
   layColorScaleCtrls->addWidget(lblWtLineThr);
   fldWtLineThr = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineThr->GetRep());
@@ -3731,6 +3741,23 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addWidget(lblWtPrjnLay);
   gelWtPrjnLay = dl.Add(new taiGroupElsButton(&TA_Layer_Group, this, NULL, widg, list_flags));
   layColorScaleCtrls->addWidget(gelWtPrjnLay->GetRep());
+
+  lblWtPrjnKUn = taiM->NewLabel("K un", widg, font_spec);
+  lblWtPrjnKUn->setToolTip("Number of top K strongest units to propagate weight projection values through to other layers -- smaller numbers produce more selective and often interpretable results, though they are somewhat less representative.");
+  layColorScaleCtrls->addWidget(lblWtPrjnKUn);
+  fldWtPrjnKUn = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  layColorScaleCtrls->addWidget(fldWtPrjnKUn->GetRep());
+  ((iLineEdit*)fldWtPrjnKUn->GetRep())->setCharWidth(6);
+  layColorScaleCtrls->addSpacing(taiM->hsep_c);
+
+  lblWtPrjnKGp = taiM->NewLabel("K gp", widg, font_spec);
+  lblWtPrjnKGp->setToolTip("Number of top K strongest unit groups (where groups are present) to propagate weight projection values through to other layers (-1 or 0 to turn off this feature) -- smaller numbers produce more selective and often interpretable results, though they are somewhat less representative.");
+  layColorScaleCtrls->addWidget(lblWtPrjnKGp);
+  fldWtPrjnKGp = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  layColorScaleCtrls->addWidget(fldWtPrjnKGp->GetRep());
+  ((iLineEdit*)fldWtPrjnKGp->GetRep())->setCharWidth(6);
+  layColorScaleCtrls->addSpacing(taiM->hsep_c);
+
   layColorScaleCtrls->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
@@ -3938,6 +3965,8 @@ void NetViewPanel::UpdatePanel_impl() {
   chkWtLineSwt->setChecked(nv->wt_line_swt);
   fldWtLineWdth->GetImage((String)nv->wt_line_width);
   fldWtLineThr->GetImage((String)nv->wt_line_thr);
+  fldWtPrjnKUn->GetImage((String)nv->wt_prjn_k_un);
+  fldWtPrjnKGp->GetImage((String)nv->wt_prjn_k_gp);
   gelWtPrjnLay->GetImage(&(nv->net()->layers), nv->wt_prjn_lay.ptr());
 
   fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
@@ -4012,6 +4041,8 @@ void NetViewPanel::GetValue_impl() {
   nv->wt_line_swt = chkWtLineSwt->isChecked();
   nv->wt_line_width = (float)fldWtLineWdth->GetValue();
   nv->wt_line_thr = (float)fldWtLineThr->GetValue();
+  nv->wt_prjn_k_un = (float)fldWtPrjnKUn->GetValue();
+  nv->wt_prjn_k_gp = (float)fldWtPrjnKGp->GetValue();
   nv->wt_prjn_lay = (Layer*)gelWtPrjnLay->GetValue();
   nv->view_params.xy_square = chkXYSquare->isChecked();
   nv->view_params.show_laygp = chkLayGp->isChecked();

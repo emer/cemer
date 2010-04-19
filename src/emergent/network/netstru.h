@@ -2361,8 +2361,9 @@ public:
   virtual bool	VarToVal(const String& dest_var, float val);
   // #CAT_Structure set variable to given value for all units within this network (must be a float type variable)
 
-  virtual void	ProjectUnitWeights(Unit* un, float wt_thr = 0.5f, bool swt = false);
-  // #CAT_Statistic project given unit's weights (receiving unless swt = true) through all layers (without any loops) -- results stored in anal1 on each unit (anal2 is used as a sum variable)  wt_thr is threshold on max-normalized weights (max=1) for following a given weight value to accumulate (so weaker weights are excluded).  values are always normalized at each layer to prevent exponential decrease/increase effects, so results are only relative indications of influence
+  virtual void	ProjectUnitWeights(Unit* un, int top_k_un = 5, int top_k_gp=1, bool swt = false,
+				   bool zero_sub_hiddens=false);
+  // #CAT_Statistic project given unit's weights (receiving unless swt = true) through all layers (without any loops) -- results stored in wt_prjn on each unit (tmp_calc1 is used as a sum variable).  top_k_un (< 1 = all) is number of strongest units to allow to pass information further down the chain -- lower numbers generally make the info more interpretable.  top_k_gp is number of unit groups to process for filtering through, if layer has sub groups (< 1 = ignore subgroups). values are always normalized at each layer to prevent exponential decrease/increase effects, so results are only relative indications of influence -- if zero_sub_hiddens then intermediate hidden units (indicated by layer_type == HIDDEN) that have sub-threshold values zeroed
 
   virtual bool	UpdateUnitSpecs(bool force = false);
   // #CAT_Structure update unit specs for entire network (calls layer version of this function)

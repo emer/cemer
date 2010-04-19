@@ -7768,8 +7768,48 @@ bool Network::VarToVal(const String& dest_var, float val) {
   return true;
 }
 
-void Network::ProjectUnitWeights(Unit* src_u, float wt_thr, bool swt) {
+static bool net_project_wts_propagate(Unit* u, bool swt) {
+  bool got_some = false;
+  // propagate!
+  for(int g = 0; g < (swt ? u->send.size : u->recv.size); g++) {
+    taOBase* cg = (swt ? (taOBase*)u->send.FastEl(g) : (taOBase*)u->recv.FastEl(g));
+    Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
+    if(!prjn) continue;
+    Layer* slay = (swt ? prjn->layer : prjn->from);
+
+    if(slay->lesioned() || (prjn->from.ptr() == prjn->layer) ||
+       slay->HasLayerFlag(Layer::PROJECT_WTS_DONE)) continue;
+    slay->SetLayerFlag(Layer::PROJECT_WTS_NEXT); // next..
+    got_some = true;			       // keep going..
+
+    if(swt) {
+      SendCons* scg = (SendCons*)cg;
+      for(int ci = 0; ci < scg->size; ci++) {
+	float wtv = scg->Cn(ci)->wt;
+	Unit* su = scg->Un(ci);
+	su->wt_prjn += u->wt_prjn * wtv;
+	su->tmp_calc1 += u->wt_prjn;
+      }
+    }
+    else {
+      RecvCons* scg = (RecvCons*)cg;
+      for(int ci = 0; ci < scg->size; ci++) {
+	float wtv = scg->Cn(ci)->wt;
+	Unit* su = scg->Un(ci);
+	su->wt_prjn += u->wt_prjn * wtv;
+	su->tmp_calc1 += u->wt_prjn;
+      }
+    }
+  }
+  return got_some;
+}
+
+void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool swt,
+				 bool zero_sub_hiddens) {
   if(!src_u) return;
+
+  float_Matrix topk_un_vec;		// for computing kwta
+  float_Matrix topk_gp_vec;		// for computing kwta
 
   // first initialize all vars
   Layer* lay;
@@ -7825,53 +7865,86 @@ void Network::ProjectUnitWeights(Unit* src_u, float wt_thr, bool swt) {
       if(lay->lesioned() || !lay->HasLayerFlag(Layer::PROJECT_WTS_NEXT)) continue;
 
       lay->SetLayerFlag(Layer::PROJECT_WTS_DONE); // we're done!
-      
+
+      topk_un_vec.SetGeom(1, lay->units.leaves);
       // first normalize the weights on this guy
       float abs_max = 0.0f;
       Unit* u;
       taLeafItr ui;
+      int uidx = 0;
       FOR_ITR_EL(Unit, u, lay->units., ui) {
 	if(u->tmp_calc1 > 0.0f)
 	  u->wt_prjn /= u->tmp_calc1;
 	abs_max = MAX(abs_max, fabsf(u->wt_prjn));
+	topk_un_vec.FastEl_Flat(uidx) = u->wt_prjn;
+	uidx++;
       }
-
       if(abs_max == 0.0f) abs_max = 1.0f;
 
-      FOR_ITR_EL(Unit, u, lay->units., ui) {
-	u->wt_prjn /= abs_max;	// normalize
-	if(u->wt_prjn < wt_thr) continue; // bail
+      if(lay->layer_type == Layer::HIDDEN && lay->units.gp.size > 0 && top_k_gp > 0) {
+	// units group version -- only for hidden layers..
 
-	// propagate!
-	for(int g = 0; g < (swt ? u->send.size : u->recv.size); g++) {
-	  taOBase* cg = (swt ? (taOBase*)u->send.FastEl(g) : (taOBase*)u->recv.FastEl(g));
-	  Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
-	  if(!prjn) continue;
-	  Layer* slay = (swt ? prjn->layer : prjn->from);
+	// pick the top k groups in terms of weighting for top-k guys from that group -- not all..
+	float k_val = lay->units.gp.size * top_k_un;
+	float thr_eff = taMath_float::vec_kwta(&topk_un_vec, k_val, true); // descending
 
-	  if(slay->lesioned() || (prjn->from.ptr() == prjn->layer) ||
-	     slay->HasLayerFlag(Layer::PROJECT_WTS_DONE)) continue;
-	  slay->SetLayerFlag(Layer::PROJECT_WTS_NEXT); // next..
-	  got_some = true;			       // keep going..
+	topk_gp_vec.SetGeom(1, lay->units.gp.size);
 
-	  if(swt) {
-	    SendCons* scg = (SendCons*)cg;
-	    for(int ci = 0; ci < scg->size; ci++) {
-	      float wtv = scg->Cn(ci)->wt;
-	      Unit* su = scg->Un(ci);
-	      su->wt_prjn += u->wt_prjn * wtv;
-	      su->tmp_calc1 += u->wt_prjn;
-	    }
+	for(int gi=0;gi<lay->units.gp.size;gi++) {
+	  Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
+	  float gp_val = 0.0f;
+	  Unit* u;
+	  taLeafItr ui;
+	  FOR_ITR_EL(Unit, u, ug->, ui) {
+	    if(u->wt_prjn > thr_eff) // only for those above threshold
+	      gp_val += u->wt_prjn;
 	  }
-	  else {
-	    RecvCons* scg = (RecvCons*)cg;
-	    for(int ci = 0; ci < scg->size; ci++) {
-	      float wtv = scg->Cn(ci)->wt;
-	      Unit* su = scg->Un(ci);
-	      su->wt_prjn += u->wt_prjn * wtv;
-	      su->tmp_calc1 += u->wt_prjn;
-	    }
+	  topk_gp_vec.FastEl_Flat(gi) = gp_val;
+	}
+
+	float gp_thr_eff = taMath_float::vec_kwta(&topk_gp_vec, top_k_gp, true); // descending
+	for(int gi=0;gi<lay->units.gp.size;gi++) {
+	  Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
+	  topk_un_vec.SetGeom(1, ug->leaves);
+
+	  Unit* u;
+	  taLeafItr ui;
+	  int uidx = 0;
+	  FOR_ITR_EL(Unit, u, ug->, ui) {
+	    topk_un_vec.FastEl_Flat(uidx) = u->wt_prjn;
+	    uidx++;
 	  }
+
+	  float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
+	  FOR_ITR_EL(Unit, u, ug->, ui) {
+	    float prjval = u->wt_prjn;
+	    u->wt_prjn /= abs_max;	// normalize -- 
+	    if((top_k_un > 0 && prjval < thr_eff) || 
+	       (topk_gp_vec.FastEl_Flat(gi) < gp_thr_eff)) {
+	      if(zero_sub_hiddens)
+		u->wt_prjn = 0.0f; // these are always HIDDEN so no need to check.
+	      continue;
+	    }
+
+	    bool got = net_project_wts_propagate(u, swt);
+	    got_some |= got;
+	  }
+	}
+      }
+      else {						// flat layer version
+	float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
+
+	FOR_ITR_EL(Unit, u, lay->units., ui) {
+	  float prjval = u->wt_prjn;
+	  u->wt_prjn /= abs_max;	// normalize
+	  if(top_k_un > 0 && prjval < thr_eff) {
+	    if(lay->layer_type == Layer::HIDDEN && zero_sub_hiddens)
+	      u->wt_prjn = 0.0f;
+	    continue; // bail
+	  }
+
+	  bool got = net_project_wts_propagate(u, swt);
+	  got_some |= got;
 	}
       }
     }
