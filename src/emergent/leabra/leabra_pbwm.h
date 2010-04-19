@@ -378,9 +378,9 @@ class LEABRA_API MatrixRndGoSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc random go specifications -- when stripe has not fired for a long time, encourage some Go firing to get back into the game..
 INHERITED(SpecMemberBase)
 public:
-  int		nogo_thr;	// #DEF_30 threshold of number of nogo firing in a row that will trigger NoGo random go firing
+  int		nogo_thr;	// #DEF_20 threshold of number of nogo firing in a row that will trigger NoGo random go firing
   bool		rng_eq_thr;	// #DEF_true set the nogo_rng value to be the same as nogo_thr -- this generally makes sense and is characteristic of the Poisson distribution, and reduces the number of parameters to confront..
-  int		nogo_rng;	// #CONDEDIT_OFF_rng_eq_thr #DEF_30 #MIN_1 range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
+  int		nogo_rng;	// #CONDEDIT_OFF_rng_eq_thr #DEF_20 #MIN_1 range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
   float		nogo_da;	// #DEF_10 #MIN_0 strength of DA for driving learning of random Go units -- does not affect performance, only learning
   float		nogo_noise;	// #DEF_0;0.02 #MIN_0 use .02 when using -- noise value to apply to a randomly selected subset of k Go units to get them activated during a random Go event
 

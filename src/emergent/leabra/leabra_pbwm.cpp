@@ -612,7 +612,7 @@ void MatrixMiscSpec::Initialize() {
 }
 
 void MatrixRndGoSpec::Initialize() {
-  nogo_thr = 30;
+  nogo_thr = 20;
   rng_eq_thr = true;
   nogo_rng = nogo_thr;
   nogo_da = 10.0f;
