@@ -830,8 +830,10 @@ void ProjectBase::UpdateAfterEdit_impl() {
 }
 
 void ProjectBase::Dump_Load_post() {
-  inherited::Dump_Load_post();
+  //  inherited::Dump_Load_post(); -- don't do this -- need to do in correct order
+  taFBase::Dump_Load_post();	      // parent of taProject
   if(taMisc::is_undo_loading) return; // none of this.
+  DoView();
   taVersion v502(5, 0, 2);
   if(taMisc::loading_version < v502) { // fix old programs for < 5.0.2
     Wizard* wiz = (Wizard*)wizards.SafeEl(0);
@@ -839,6 +841,10 @@ void ProjectBase::Dump_Load_post() {
   }
   AutoBuildNets();
   setDirty(false);		// nobody should start off dirty!
+  if(!cssMisc::init_interactive) {
+    bool startup_run = programs.RunStartupProgs();	// run startups as last step..
+    if(!taMisc::gui_active && startup_run) taiMC_->Quit();
+  }
 }
 
 void ProjectBase::SaveRecoverFile_strm(ostream& strm) {

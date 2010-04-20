@@ -1042,6 +1042,10 @@ void taProject::Dump_Load_post() {
   inherited::Dump_Load_post();
   DoView();
   setDirty(false);		// nobody should start off dirty!
+  if(!cssMisc::init_interactive) {
+    bool startup_run = programs.RunStartupProgs();	// run startups now..
+    if(!taMisc::gui_active && startup_run) taiMC_->Quit();
+  }
 }
 
 void taProject::DoView() {
@@ -1482,12 +1486,7 @@ int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) {
 int Project_Group::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) {
   int prj_sz = leaves;
   int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
-//   for(int i=prj_sz;i<leaves;i++) {
-//     taProject* prj = Leaf(i);
-// //     tabMisc::DelayedFunCall_gui(prj,"PostLoadAutos");
-//     // do it delayed to allow everything to happen first
-//     //    prj->PostLoadAutos();
-//   }
+  // note: used to do Dump_Load_post here but now it is done where it should be..
   return rval;
 }
 
@@ -3047,14 +3046,8 @@ bool taRootBase::Startup_ProcessArgs() {
 
 bool taRootBase::Startup_RunStartupScript() {
   cssMisc::TopShell->RunStartupScript();
-
-  bool startup_run = false;
-  if(tabMisc::root->projects.size == 1) {
-    taProject* prj = tabMisc::root->projects[0];
-    startup_run = prj->programs.RunStartupProgs();
-  }
-  if(!cssMisc::init_interactive || (!taMisc::gui_active && startup_run)) taiMC_->Quit();
-
+  if(!taMisc::gui_active && !cssMisc::init_interactive)
+    taiMC_->Quit();
   return true;
 }
 
