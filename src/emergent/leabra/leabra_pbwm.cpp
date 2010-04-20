@@ -633,6 +633,7 @@ void MatrixGoNogoGainSpec::Initialize() {
 /////////////////////////////////////////////////////
 
 void MatrixLayerSpec::Initialize() {
+//   SetUnique("tie_brk", true);	// turn on tie breaking by default
   //  SetUnique("decay", true);
   decay.phase = 0.0f;
   decay.phase2 = 0.0f;
@@ -659,6 +660,11 @@ void MatrixLayerSpec::Defaults_init() {
   //  SetUnique("gp_kwta", true);
   gp_kwta.k_from = KWTASpec::USE_K;
   gp_kwta.k = 4;
+
+  tie_brk.on = true;
+  tie_brk.diff_thr = 0.2f;
+  tie_brk.thr_gain = 0.005f;
+  tie_brk.loser_gain = 1.0f;
 }
 
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
