@@ -525,6 +525,34 @@ Program_Group* Wizard::TestProgs_impl(const String& prog_nm, Program* call_test_
   return (Program_Group*)pg;
 }
 
+bool Wizard::FixOldProgs() {
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  Program* prg;
+  taLeafItr i;
+  FOR_ITR_EL(Program, prg, proj->programs., i) {
+    if(prg->name.contains("Apply") || prg->name.contains("Input")) {
+      prg->SetProgFlag(Program::NO_STOP_STEP);
+      prg->short_nm = "AplyIn";
+    }
+    else if(prg->name.contains("Mon")) {
+      prg->SetProgFlag(Program::NO_STOP_STEP);
+      if(prg->name.contains("Trial"))
+	prg->short_nm = "TrlMon";
+      else if(prg->name.contains("Epoch"))
+	prg->short_nm = "EpcMon";
+    }
+    else if(prg->name.contains("Save")) {
+      prg->SetProgFlag(Program::NO_STOP_STEP);
+      prg->short_nm = "SvWts";
+    }
+    else if(prg->name.contains("Startup")) {
+      prg->SetProgFlag(Program::NO_STOP_STEP);
+      prg->short_nm = "Start";
+    }
+  }
+  return true;
+}
+
 /* TEMP
 
 void Wizard::NetAutoSave(SchedProcess* proc, bool just_weights) {
@@ -804,7 +832,13 @@ void ProjectBase::UpdateAfterEdit_impl() {
 void ProjectBase::Dump_Load_post() {
   inherited::Dump_Load_post();
   if(taMisc::is_undo_loading) return; // none of this.
+  taVersion v502(5, 0, 2);
+  if(taMisc::loading_version < v502) { // fix old programs for < 5.0.2
+    Wizard* wiz = (Wizard*)wizards.SafeEl(0);
+    if(wiz) wiz->FixOldProgs();
+  }
   AutoBuildNets();
+  setDirty(false);		// nobody should start off dirty!
 }
 
 void ProjectBase::SaveRecoverFile_strm(ostream& strm) {

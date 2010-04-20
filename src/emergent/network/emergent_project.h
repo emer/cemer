@@ -109,6 +109,8 @@ public:
   virtual Program_Group* TestProgs_impl(const String& prog_nm, Program* call_test_from,
 					bool call_in_loop=true, int call_modulus=1);
   // #IGNORE impl that actually loads progs from proglib with given name; returns new program group or NULL if not found
+  virtual bool	FixOldProgs();
+  // #MENU_BUTTON #MENU_ON_Programs #MENU_SEP_BEFORE #CONFIRM fix programs from versions earlier than 5.0.2 to have default NO_STOP_STEP flags and short names..
 
   void	UpdateAfterEdit();
   void 	InitLinks();

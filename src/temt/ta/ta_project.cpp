@@ -1038,7 +1038,8 @@ MainWindowViewer* taProject::GetDefaultProjectViewer() {
   return NULL;
 }
 
-void taProject::PostLoadAutos() {
+void taProject::Dump_Load_post() {
+  inherited::Dump_Load_post();
   DoView();
   setDirty(false);		// nobody should start off dirty!
 }
@@ -1481,12 +1482,12 @@ int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) {
 int Project_Group::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) {
   int prj_sz = leaves;
   int rval = inherited::Load_strm(strm, par, loaded_obj_ptr);
-  for(int i=prj_sz;i<leaves;i++) {
-    taProject* prj = Leaf(i);
-    tabMisc::DelayedFunCall_gui(prj,"PostLoadAutos");
-    // do it delayed to allow everything to happen first
-    //    prj->PostLoadAutos();
-  }
+//   for(int i=prj_sz;i<leaves;i++) {
+//     taProject* prj = Leaf(i);
+// //     tabMisc::DelayedFunCall_gui(prj,"PostLoadAutos");
+//     // do it delayed to allow everything to happen first
+//     //    prj->PostLoadAutos();
+//   }
   return rval;
 }
 
