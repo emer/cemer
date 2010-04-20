@@ -842,7 +842,7 @@ LeabraProject .projects[0] {
 	  Projection_Group @.projections = [0] {
 	  };
 
-	  Unit_Group @.units = [1296] {
+	  Unit_Group @.units = [0] {
 	  };
 	};
 	LeabraLayer @[1] { 
@@ -850,7 +850,7 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[0] { };
 	  };
 
-	  Unit_Group @.units = [576] {
+	  Unit_Group @.units = [0] {
 	  };
 	};
 	LeabraLayer @[2] { 
@@ -858,7 +858,7 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[0] { };
 	  };
 
-	  Unit_Group @.units = [144] {
+	  Unit_Group @.units = [0] {
 	  };
 	};
 	LeabraLayer @[3] { 
@@ -866,7 +866,7 @@ LeabraProject .projects[0] {
 	    LeabraPrjn @[0] { };
 	  };
 
-	  Unit_Group @.units = [144] {
+	  Unit_Group @.units = [0] {
 	  };
 	};
       };
@@ -1050,6 +1050,7 @@ LeabraProject .projects[0] {
   el_def=0;
   taDoc @[0] {
    name="ProjectionSpecDocs";
+   desc=;
    auto_open=1;
    web_doc=1;
    wiki="emergent";
@@ -1065,9 +1066,8 @@ LeabraProject .projects[0] {
 ";
    html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\"><head>
 <title>ProjectionSpec - Emergent</title>
-<meta name=\"generator\" content=\"MediaWiki 1.16alpha-wmf\">
+<meta name=\"generator\" content=\"MediaWiki 1.16wmf3\">
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
-<link rel=\"stylesheet\" href=\"/emergent/extensions/Drafts/Drafts.css?3\">
 <link rel=\"stylesheet\" media=\"screen, projection\" href=\"/emergent/extensions/HeaderTabs/skins/combined-min.css\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
@@ -1076,7 +1076,6 @@ LeabraProject .projects[0] {
 <link rel=\"stylesheet\" href=\"/emergent/skins/emer/main-ltr.css?257\" media=\"screen\">
 <link rel=\"stylesheet\" href=\"/emergent/skins/common/shared.css?257\" media=\"screen\">
 <link rel=\"stylesheet\" href=\"/emergent/skins/common/commonPrint.css?257\" media=\"print\">
-<link rel=\"stylesheet\" href=\"/emergent/extensions/AjaxLogin/AjaxLogin.css\">
 <link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:Common.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\">
 <link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:Print.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" media=\"print\">
 <link rel=\"stylesheet\" href=\"/emergent/index.php?title=MediaWiki:emer.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\">
@@ -1084,6 +1083,7 @@ LeabraProject .projects[0] {
 <script>
 var skin=\"emer\",
 stylepath=\"/emergent/skins\",
+wgUrlProtocols=\"http\\\\:\\\\/\\\\/|https\\\\:\\\\/\\\\/|ftp\\\\:\\\\/\\\\/|irc\\\\:\\\\/\\\\/|gopher\\\\:\\\\/\\\\/|telnet\\\\:\\\\/\\\\/|nntp\\\\:\\\\/\\\\/|worldwind\\\\:\\\\/\\\\/|mailto\\\\:|news\\\\:|svn\\\\:\\\\/\\\\/\",
 wgArticlePath=\"/emergent/index.php/$1\",
 wgScriptPath=\"/emergent\",
 wgScriptExtension=\".php\",
@@ -1105,7 +1105,7 @@ wgUserLanguage=\"en\",
 wgContentLanguage=\"en\",
 wgBreakFrames=false,
 wgCurRevisionId=4508,
-wgVersion=\"1.16alpha-wmf\",
+wgVersion=\"1.16wmf3\",
 wgEnableAPI=true,
 wgEnableWriteAPI=true,
 wgSeparatorTransformTable=[\"\", \"\"],
@@ -1113,16 +1113,16 @@ wgDigitTransformTable=[\"\", \"\"],
 wgMainPageTitle=\"Main Page\",
 wgFormattedNamespaces={\"-2\": \"Media\", \"-1\": \"Special\", \"0\": \"\", \"1\": \"Talk\", \"2\": \"User\", \"3\": \"User talk\", \"4\": \"Emergent\", \"5\": \"Emergent talk\", \"6\": \"File\", \"7\": \"File talk\", \"8\": \"MediaWiki\", \"9\": \"MediaWiki talk\", \"10\": \"Template\", \"11\": \"Template talk\", \"12\": \"Help\", \"13\": \"Help talk\", \"14\": \"Category\", \"15\": \"Category talk\"},
 wgNamespaceIds={\"media\": -2, \"special\": -1, \"\": 0, \"talk\": 1, \"user\": 2, \"user_talk\": 3, \"emergent\": 4, \"emergent_talk\": 5, \"file\": 6, \"file_talk\": 7, \"mediawiki\": 8, \"mediawiki_talk\": 9, \"template\": 10, \"template_talk\": 11, \"help\": 12, \"help_talk\": 13, \"category\": 14, \"category_talk\": 15, \"image\": 6, \"image_talk\": 7},
+wgMWSuggestTemplate=\"http://grey.colorado.edu/emergent/api.php?action=opensearch\\x26search={searchTerms}\\x26namespace={namespaces}\\x26suggest\",
+wgDBname=\"pdpwiki\",
+wgSearchNamespaces=[0],
+wgMWSuggestMessages=[\"with suggestions\", \"no suggestions\"],
 wgRestrictionEdit=[],
-wgRestrictionMove=[],
-wgEnableAjaxLogin=true;
+wgRestrictionMove=[];
 </script>
-<script src=\"/emergent/skins/common/wikibits.js?urid=257_1257107915\"></script>
+<script src=\"/emergent/skins/common/wikibits.js?urid=257_1267416510\"></script>
 <script src=\"/emergent/skins/common/ajax.js?urid=257_1247772050\"></script>
-<script type=\"text/javascript\" src=\"/emergent/extensions/Drafts/Drafts.js?3\"></script>
-<script src=\"/emergent/extensions/AjaxLogin/jquery-1.3.2.js?urid=257\"></script>
-<script src=\"/emergent/extensions/AjaxLogin/jqModal.js?urid=257\"></script>
-<script src=\"/emergent/extensions/AjaxLogin/AjaxLogin.js?urid=257\"></script>
+<script src=\"/emergent/skins/common/mwsuggest.js?urid=257_1254854293\"></script>
 <script type=\"text/javascript\" src=\"/emergent/extensions/HeaderTabs/skins/combined-history-min.js\"></script>
 <!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/emer/csshover.htc\")}</style><![endif]-->
 <!--[if lt IE 7]><script type=\"text/javascript\" src=\"/emergent/skins/common/IEFixes.js?257\"></script><meta http-equiv=\"imagetoolbar\" content=\"no\" /><![endif]-->
@@ -1227,36 +1227,10 @@ Template argument size: 24/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:301-0!1!0!!en!2!edit=0 and timestamp 20100226101039 -->
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:301-0!1!0!!en!2!edit=0 and timestamp 20100420090127 -->
 <div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php/ProjectionSpec\">http://grey.colorado.edu/emergent/index.php/ProjectionSpec</a>\"</div>
-<!--[if lt IE 9]><style type=\"text/css\">#userloginRound { width: 350px !important; }</style><![endif]-->
-	<div id=\"userloginRound\" class=\"roundedDiv jqmWindow jqmID1\">
-	<b class=\"xtop\"><b class=\"xb1\"></b><b class=\"xb2\"></b><b class=\"xb3\"></b><b class=\"xb4\"></b></b>
-	<div class=\"r_boxContent\">
-		<div>
-			<div name=\"wpClose\" id=\"wpClose\" value=\"&lt;close&gt;\" style=\"float:right;cursor:pointer;\"><a href=\"#\" tabindex=\"108\"><font size=\"4\" color=\"white\"><b>X</b></font></a>
-			</div>
-			<div class=\"boxHeader color1\">
-		Log in
-		</div>
-	</div>
-		<form action=\"\" method=\"post\" name=\"userajaxloginform\" id=\"userajaxloginform\" style=\"margin:5px\">
-			<div id=\"wpError\" style=\"width: 250px; line-height: 1.4em;\"></div>
-			<label>You must have cookies enabled to log in to Emergent.</label><br><br>
-			<label for=\"wpName1\">Username:</label><br>
-			<input type=\"text\" class=\"loginText\" name=\"wpName\" id=\"wpName1\" tabindex=\"101\" size=\"20\"><br>
-			<label for=\"wpPassword1\">Password:</label><br>
-			<input type=\"password\" class=\"loginPassword\" name=\"wpPassword\" id=\"wpPassword1\" tabindex=\"102\" size=\"20\"><br>
-			<div style=\"padding-bottom:3px\">
-				<input type=\"checkbox\" name=\"wpRemember\" tabindex=\"104\" value=\"1\" id=\"wpRemember1\">
-				<label for=\"wpRemember1\">Remember my login on this computer</label><br>
-			</div>
-			<input style=\"margin:0;padding:0 .25em;width:auto;overflow:visible;\" type=\"submit\" name=\"wpLoginattempt\" id=\"wpLoginattempt\" tabindex=\"105\" value=\"Log in\"><br><input style=\"margin:3px 0;padding:0 .25em;width:auto;overflow:visible;font-size:0.9em\" type=\"submit\" name=\"wpMailmypassword\" id=\"wpMailmypassword\" tabindex=\"106\" value=\"E-mail new password\"><br><a id=\"wpAjaxRegister\" tabindex=\"107\" href=\"/emergent/index.php?title=Special:UserLogin&amp;type=signup\">Create an account</a>
-		</form>
-	</div>
-	<b class=\"xbottom\"><b class=\"xb4\"></b><b class=\"xb3\"></b><b class=\"xb2\"></b><b class=\"xb1\"></b></b>
-</div>				<!-- /bodytext -->
+				<!-- /bodytext -->
 								<!-- catlinks -->
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- /catlinks -->
 												<div class=\"visualClear\"></div>
@@ -1339,9 +1313,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\"><span>View source</span><
 <!-- TOOLBOX -->
 					<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/ProjectionSpec\" title=\"List of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
 						<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/ProjectionSpec\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
-																																										<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"List of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
-									<li id=\"t-print\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;printable=yes\" rel=\"alternate\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>
-						<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;oldid=4508\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
+																																					<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [ctrl-alt-u]\" accesskey=\"u\">Upload file</a></li>
+											<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"List of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
+											<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=ProjectionSpec&amp;oldid=4508\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
 		
 <!-- /TOOLBOX -->
 
@@ -1356,7 +1330,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\"><span>View source</span><
 
 <!-- 2 -->
 <div id=\"p-search\">
-<div id=\"cse\"><div class=\"gsc-control-cse\"><form class=\"gsc-search-box\" accept-charset=\"utf-8\"><table cellspacing=\"0\" cellpadding=\"0\" class=\"gsc-search-box\"><tbody><tr><td class=\"gsc-input\"><input autocomplete=\"off\" type=\"text\" size=\"10\" class=\" gsc-input\" name=\"search\" title=\"search\" style=\"background-image: url(http://www.google.com/coop/intl/en/images/google_custom_search_watermark.gif); background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgb(255, 255, 255); background-position: 0% 50%; background-repeat: no-repeat no-repeat; \"></td><td class=\"gsc-search-button\"><input type=\"submit\" value=\"Search\" class=\"gsc-search-button\" title=\"search\"></td><td class=\"gsc-clear-button\"><div class=\"gsc-clear-button\" title=\"clear results\">&nbsp;</div></td></tr></tbody></table><table cellspacing=\"0\" cellpadding=\"0\" class=\"gsc-branding\"><tbody><tr><td class=\"gsc-branding-user-defined\"></td><td class=\"gsc-branding-text\"><div class=\"gsc-branding-text\">powered by</div></td><td class=\"gsc-branding-img\"><img src=\"http://www.google.com/uds/css/small-logo.png\" class=\"gsc-branding-img\"></td></tr></tbody></table></form><div class=\"gsc-tabsAreaInvisible\"><div class=\" gsc-tabHeader gsc-tabhActive\">Custom Search Control</div><span class=\"gs-spacer\"> </span></div><div class=\"gsc-adBlockInvisible\"></div><div class=\"gsc-wrapper\"><div class=\"gsc-adBlockInvisible\"></div><div class=\"gsc-resultsbox-invisible\"><div class=\"gsc-resultsRoot gsc-tabData gsc-tabdActive\"><table cellspacing=\"0\" cellpadding=\"0\" class=\"gsc-resultsHeader\"><tbody><tr><td class=\"gsc-twiddleRegionCell\"><div class=\"gsc-twiddle\"><div class=\"gsc-title\">Web</div></div><div class=\"gsc-stats\"></div><div class=\"gsc-results-selector gsc-all-results-active\"><div class=\"gsc-result-selector gsc-one-result\" title=\"show one result\">&nbsp;</div><div class=\"gsc-result-selector gsc-more-results\" title=\"show more results\">&nbsp;</div><div class=\"gsc-result-selector gsc-all-results\" title=\"show all results\">&nbsp;</div></div></td><td class=\"gsc-configLabelCell\"></td></tr></tbody></table><div class=\"gsc-results gsc-webResult\"></div></div></div></div></div></div><script src=\"http://www.google.com/jsapi\" type=\"text/javascript\"></script><script type=\"text/javascript\">google.load('search', '1');google.setOnLoadCallback(function(){new google.search.CustomSearchControl('001223136417691641822:3aawef4fybc').draw('cse');}, true);</script><script src=\"http://www.google.com/uds/?file=search&amp;v=1\" type=\"text/javascript\"></script><link href=\"http://www.google.com/uds/api/search/1.0/457a1b12dfe20ca00fd65f9ad5d52ccd/default.css\" type=\"text/css\" rel=\"stylesheet\"><script src=\"http://www.google.com/uds/api/search/1.0/457a1b12dfe20ca00fd65f9ad5d52ccd/default+en.I.js\" type=\"text/javascript\"></script>
+<div id=\"cse\"><div class=\"gsc-control-cse\"><form class=\"gsc-search-box\" accept-charset=\"utf-8\"><table cellspacing=\"0\" cellpadding=\"0\" class=\"gsc-search-box\"><tbody><tr><td class=\"gsc-input\"><input autocomplete=\"off\" type=\"text\" size=\"10\" class=\" gsc-input\" name=\"search\" title=\"search\" style=\"background-image: url(http://www.google.com/coop/intl/en/images/google_custom_search_watermark.gif); background-attachment: initial; background-origin: initial; background-clip: initial; background-color: rgb(255, 255, 255); background-position: 0% 50%; background-repeat: no-repeat no-repeat; \"></td><td class=\"gsc-search-button\"><input type=\"submit\" value=\"Search\" class=\"gsc-search-button\" title=\"search\"></td><td class=\"gsc-clear-button\"><div class=\"gsc-clear-button\" title=\"clear results\">&nbsp;</div></td></tr></tbody></table><table cellspacing=\"0\" cellpadding=\"0\" class=\"gsc-branding\"><tbody><tr><td class=\"gsc-branding-user-defined\"></td><td class=\"gsc-branding-text\"><div class=\"gsc-branding-text\">powered by</div></td><td class=\"gsc-branding-img\"><img src=\"http://www.google.com/uds/css/small-logo.png\" class=\"gsc-branding-img\"></td></tr></tbody></table></form><div class=\"gsc-tabsAreaInvisible\"><div class=\" gsc-tabHeader gsc-tabhActive\">Custom Search Control</div><span class=\"gs-spacer\"> </span></div><div class=\"gsc-adBlockInvisible\"></div><div class=\"gsc-wrapper\"><div class=\"gsc-adBlockInvisible\"></div><div class=\"gsc-resultsbox-invisible\"><div class=\"gsc-resultsRoot gsc-tabData gsc-tabdActive\"><table cellspacing=\"0\" cellpadding=\"0\" class=\"gsc-resultsHeader\"><tbody><tr><td class=\"gsc-twiddleRegionCell\"><div class=\"gsc-twiddle\"><div class=\"gsc-title\">Web</div></div><div class=\"gsc-stats\"></div><div class=\"gsc-results-selector gsc-all-results-active\"><div class=\"gsc-result-selector gsc-one-result\" title=\"show one result\">&nbsp;</div><div class=\"gsc-result-selector gsc-more-results\" title=\"show more results\">&nbsp;</div><div class=\"gsc-result-selector gsc-all-results\" title=\"show all results\">&nbsp;</div></div></td><td class=\"gsc-configLabelCell\"></td></tr></tbody></table><div class=\"gsc-results gsc-webResult\"></div></div></div></div></div></div><script src=\"http://www.google.com/jsapi\" type=\"text/javascript\"></script><script type=\"text/javascript\">google.load('search', '1');google.setOnLoadCallback(function(){new google.search.CustomSearchControl('001223136417691641822:3aawef4fybc').draw('cse');}, true);</script><script src=\"http://www.google.com/uds/?file=search&amp;v=1\" type=\"text/javascript\"></script><link href=\"http://www.google.com/uds/api/search/1.0/0d1387b3e5382602334d81b4d44132ae/default.css\" type=\"text/css\" rel=\"stylesheet\"><script src=\"http://www.google.com/uds/api/search/1.0/0d1387b3e5382602334d81b4d44132ae/default+en.I.js\" type=\"text/javascript\"></script>
 </div>
 </div>
 
@@ -1368,7 +1342,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\"><span>View source</span><
 		<div id=\"footer\">
 											<ul id=\"footer-info\">
 																	<li id=\"footer-info-lastmod\"> This page was last modified on 13 August 2009, at 17:09.</li>
-																							<li id=\"footer-info-viewcount\">This page has been accessed 754 times.</li>
+																							<li id=\"footer-info-viewcount\">This page has been accessed 812 times.</li>
 															</ul>
 															<ul id=\"footer-places\">
 																	<li id=\"footer-places-about\"><a href=\"/emergent/index.php/Emergent:About\" title=\"Emergent:About\">About Emergent</a></li>
@@ -1384,7 +1358,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\"><span>View source</span><
 		<!-- /fixalpha -->
 		
 <script>if (window.runOnloadHook) runOnloadHook();</script>
-		<!-- Served in 0.186 secs. -->			
+		<!-- Served in 0.168 secs. -->			
 
 </body></html>";
   };
@@ -1620,11 +1594,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	   laygp_width=1;
+	   show_laygp=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
 	  wt_line_thr=0.5;
 	  wt_line_swt=0;
+	  wt_prjn_k_un=4;
+	  wt_prjn_k_gp=1;
 	  wt_prjn_lay=NULL;
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
@@ -1761,11 +1738,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	   laygp_width=1;
+	   show_laygp=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
 	  wt_line_thr=0.5;
 	  wt_line_swt=0;
+	  wt_prjn_k_un=4;
+	  wt_prjn_k_gp=1;
 	  wt_prjn_lay=NULL;
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
@@ -1902,11 +1882,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	   laygp_width=1;
+	   show_laygp=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
 	  wt_line_thr=0.5;
 	  wt_line_swt=0;
+	  wt_prjn_k_un=4;
+	  wt_prjn_k_gp=1;
 	  wt_prjn_lay=NULL;
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
@@ -2043,11 +2026,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	   laygp_width=1;
+	   show_laygp=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
 	  wt_line_thr=0.5;
 	  wt_line_swt=0;
+	  wt_prjn_k_un=4;
+	  wt_prjn_k_gp=1;
 	  wt_prjn_lay=NULL;
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
@@ -2184,11 +2170,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	   laygp_width=1;
+	   show_laygp=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
 	  wt_line_thr=0.5;
 	  wt_line_swt=0;
+	  wt_prjn_k_un=4;
+	  wt_prjn_k_gp=1;
 	  wt_prjn_lay=NULL;
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
@@ -2325,11 +2314,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	   laygp_width=1;
+	   show_laygp=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
 	  wt_line_thr=0.5;
 	  wt_line_swt=0;
+	  wt_prjn_k_un=4;
+	  wt_prjn_k_gp=1;
 	  wt_prjn_lay=NULL;
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
@@ -2596,7 +2588,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
      noise {name="": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
+     noise_adapt {trial_fixed=0: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
      noise_sched {
       name=;
       el_typ=SchedItem;
@@ -2670,7 +2662,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-     tie_brk {on=0: k_thr=1: diff_thr=0.2: };
+     tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
      clamp {hard=1: gain=0.2: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
@@ -2856,7 +2848,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -2946,7 +2938,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -3036,7 +3028,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -3127,7 +3119,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -3444,7 +3436,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
      noise {name="": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
+     noise_adapt {trial_fixed=0: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
      noise_sched {
       name=;
       el_typ=SchedItem;
@@ -3518,7 +3510,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-     tie_brk {on=0: k_thr=1: diff_thr=0.2: };
+     tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
      clamp {hard=1: gain=0.2: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
@@ -4040,7 +4032,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -4130,7 +4122,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -4220,7 +4212,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -4311,7 +4303,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -4628,7 +4620,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
      noise {name="": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
+     noise_adapt {trial_fixed=0: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
      noise_sched {
       name=;
       el_typ=SchedItem;
@@ -4702,7 +4694,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-     tie_brk {on=0: k_thr=1: diff_thr=0.2: };
+     tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
      clamp {hard=1: gain=0.2: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
@@ -4878,7 +4870,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -4966,7 +4958,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -4974,6 +4966,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -4995,7 +4988,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5003,6 +4996,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5024,7 +5018,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5032,6 +5026,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5053,7 +5048,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5061,6 +5056,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5082,7 +5078,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5090,6 +5086,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5111,7 +5108,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5119,6 +5116,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5140,7 +5138,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5148,6 +5146,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5169,7 +5168,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5177,6 +5176,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5198,7 +5198,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5206,6 +5206,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5227,7 +5228,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5235,6 +5236,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5256,7 +5258,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5264,6 +5266,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5285,7 +5288,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5293,6 +5296,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5314,7 +5318,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5322,6 +5326,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5343,7 +5348,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5351,6 +5356,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5372,7 +5378,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5380,6 +5386,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5401,7 +5408,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5409,6 +5416,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5430,7 +5438,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5438,6 +5446,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5459,7 +5468,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5467,6 +5476,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5488,7 +5498,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5496,6 +5506,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5517,7 +5528,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5525,6 +5536,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5546,7 +5558,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5554,6 +5566,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5575,7 +5588,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5583,6 +5596,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5604,7 +5618,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5612,6 +5626,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5633,7 +5648,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5641,6 +5656,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5662,7 +5678,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5670,6 +5686,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5693,7 +5710,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5781,7 +5798,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5789,6 +5806,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5810,7 +5828,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5818,6 +5836,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5839,7 +5858,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5847,6 +5866,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5868,7 +5888,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5876,6 +5896,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5897,7 +5918,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5905,6 +5926,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5926,7 +5948,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5934,6 +5956,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5955,7 +5978,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5963,6 +5986,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -5984,7 +6008,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -5992,6 +6016,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -6013,7 +6038,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -6021,6 +6046,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -6044,7 +6070,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -6361,7 +6387,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
      noise {name="": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
+     noise_adapt {trial_fixed=0: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
      noise_sched {
       name=;
       el_typ=SchedItem;
@@ -6435,7 +6461,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-     tie_brk {on=0: k_thr=1: diff_thr=0.2: };
+     tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
      clamp {hard=1: gain=0.2: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
@@ -6676,7 +6702,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -6766,7 +6792,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -6856,7 +6882,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -6946,7 +6972,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -7018,7 +7044,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
    n_units=252;
-   n_cons=1798;
+   n_cons=1800;
    max_size {x=14: y=14: z=2: };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;
@@ -7263,7 +7289,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
      noise {name="": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
+     noise_adapt {trial_fixed=0: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
      noise_sched {
       name=;
       el_typ=SchedItem;
@@ -7337,7 +7363,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-     tie_brk {on=0: k_thr=1: diff_thr=0.2: };
+     tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
      clamp {hard=1: gain=0.2: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
@@ -7578,7 +7604,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -7668,7 +7694,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -7758,7 +7784,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -7848,7 +7874,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8165,7 +8191,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
      noise {name="RandomSpec_21": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
-     noise_adapt {trial_fixed=1: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
+     noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
      noise_sched {
       name=;
       el_typ=SchedItem;
@@ -8239,7 +8265,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      };
      kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
-     tie_brk {on=0: k_thr=1: diff_thr=0.2: };
+     tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
      clamp {hard=1: gain=0.2: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
@@ -8526,7 +8552,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8534,6 +8560,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8555,7 +8582,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8563,6 +8590,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8584,7 +8612,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8592,6 +8620,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8613,7 +8642,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8621,6 +8650,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8642,7 +8672,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8650,6 +8680,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8671,7 +8702,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8679,6 +8710,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8700,7 +8732,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8708,6 +8740,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8729,7 +8762,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8737,6 +8770,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8758,7 +8792,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8766,6 +8800,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8789,7 +8824,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8877,7 +8912,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8885,6 +8920,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8906,7 +8942,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8914,6 +8950,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8935,7 +8972,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8943,6 +8980,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8964,7 +9002,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -8972,6 +9010,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -8995,7 +9034,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -9083,7 +9122,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -9091,6 +9130,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -9112,7 +9152,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -9120,6 +9160,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -9141,7 +9182,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -9149,6 +9190,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -9170,7 +9212,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        phase_dif_ratio=1;
        acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
        acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
        i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
        un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
        adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -9178,6 +9220,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        misc_state=0;
        misc_state1=0;
        misc_state2=0;
+       misc_state3=0;
        misc_float=0;
        misc_float1=0;
        misc_float2=0;
@@ -9201,7 +9244,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
      un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
@@ -9273,7 +9316,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
    n_units=257;
-   n_cons=3211;
+   n_cons=3334;
    max_size {x=17: y=17: z=2: };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;

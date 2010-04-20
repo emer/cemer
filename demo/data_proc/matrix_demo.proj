@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.0.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -150,24 +150,27 @@ LeabraProject .projects[0] {
 	      };
 	    };
 	    MethodCall @[13] { 
-	      ProgArg_List @.meth_args = [3] {
+	      ProgArg_List @.meth_args = [4] {
 		ProgArg @[0] { };
 		ProgArg @[1] { };
 		ProgArg @[2] { };
+		ProgArg @[3] { };
 	      };
 	    };
 	    MethodCall @[14] { 
-	      ProgArg_List @.meth_args = [3] {
+	      ProgArg_List @.meth_args = [4] {
 		ProgArg @[0] { };
 		ProgArg @[1] { };
 		ProgArg @[2] { };
+		ProgArg @[3] { };
 	      };
 	    };
 	    MethodCall @[15] { 
-	      ProgArg_List @.meth_args = [3] {
+	      ProgArg_List @.meth_args = [4] {
 		ProgArg @[0] { };
 		ProgArg @[1] { };
 		ProgArg @[2] { };
+		ProgArg @[3] { };
 	      };
 	    };
 	    DoneWritingDataRow @[16] { };
@@ -257,6 +260,7 @@ LeabraProject .projects[0] {
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="LeabraWizard_0";
@@ -323,6 +327,7 @@ LeabraProject .projects[0] {
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_base";
@@ -335,6 +340,7 @@ LeabraProject .projects[0] {
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_anal";
@@ -347,6 +353,7 @@ LeabraProject .projects[0] {
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_gen";
@@ -359,6 +366,7 @@ LeabraProject .projects[0] {
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="image_proc";
@@ -368,11 +376,11 @@ LeabraProject .projects[0] {
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=NULL;
   tags=;
   desc=;
   Program @[0] {
    name="MatrixMathDemo";
+   short_nm="Demo";
    tags=;
    desc="demonstration for how to create and manipulate matrix objects";
    flags=;
@@ -396,6 +404,9 @@ LeabraProject .projects[0] {
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [2] ;;       };
        ar {
 	name=;
 	      [5 5 1] -0.66586292;0.92779601;0.7826072;-0.51080108;0.63808089;-0.12493658;0.74799222;0.49851945;-0.078386933;-0.10575757;
@@ -410,6 +421,9 @@ LeabraProject .projects[0] {
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [2] ;;       };
        ar {
 	name=;
 	      [5 5 1] -0.035879467;0.19032873;0.21571298;0.95686007;0.019349791;0.47465798;-0.43239984;-0.7183789;0.26630786;-0.027240891;
@@ -424,6 +438,9 @@ LeabraProject .projects[0] {
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [1] ;       };
        ar {
 	name=;
 	      [5 1] 3.8506782;-3.2911561;1.0499464;-0.65607333;0.62591773;       };
@@ -453,7 +470,7 @@ LeabraProject .projects[0] {
      name="Random_0";
      var_type=T_Object;
      object_type=Random;
-     object_val=.projects[0].programs[0].objs[0]$0$;
+     object_val=.projects[0].programs[0].objs[0]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -484,7 +501,7 @@ LeabraProject .projects[0] {
      name="Results";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[0].objs[1]$1$;
+     object_val=.projects[0].programs[0].objs[1]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -563,7 +580,7 @@ LeabraProject .projects[0] {
       AssignExpr @[1] {
        desc="create a new object for our variable to point to -- this is essential!";
        flags=;
-       result_var=.projects[0].programs[0].prog_code[0].prog_code[0].local_vars[0]$2$;
+       result_var=.projects[0].programs[0].prog_code[0].prog_code[0].local_vars[0]$$;
        expr {
 	expr="new float_Matrix";
        };
@@ -571,7 +588,7 @@ LeabraProject .projects[0] {
       AssignExpr @[2] {
        desc="all \"return values\" in math functions assume matrix object exists already, even if they configure geom for it";
        flags=;
-       result_var=.projects[0].programs[0].prog_code[0].prog_code[0].local_vars[2]$3$;
+       result_var=.projects[0].programs[0].prog_code[0].prog_code[0].local_vars[2]$$;
        expr {
 	expr="new float_Matrix";
        };
@@ -579,7 +596,7 @@ LeabraProject .projects[0] {
       AssignExpr @[3] {
        desc="all \"return values\" in math functions assume matrix object exists already, even if they configure geom for it";
        flags=;
-       result_var=.projects[0].programs[0].prog_code[0].prog_code[0].local_vars[1]$4$;
+       result_var=.projects[0].programs[0].prog_code[0].prog_code[0].local_vars[1]$$;
        expr {
 	expr="new float_Matrix";
        };
@@ -588,7 +605,7 @@ LeabraProject .projects[0] {
        desc="Manually set to be a 5x5 2 dimensional matrix";
        flags=;
        result_var=NULL;
-       obj=$2$;
+       obj=$.projects[0].programs[0].prog_code[0].prog_code[0].local_vars[0]$;
        method=taMatrix::SetGeom;
        meth_args {
 	name=;
@@ -690,7 +707,7 @@ LeabraProject .projects[0] {
 	 arg_type=float_Matrix_ptr;
 	 type="float_Matrix*";
 	 name="mat";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="my_mat";
@@ -700,7 +717,7 @@ LeabraProject .projects[0] {
 	 arg_type=const_Random_ref;
 	 type="const Random&";
 	 name="rnd_spec";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="Random_0";
@@ -711,7 +728,7 @@ LeabraProject .projects[0] {
       MathCall @[6] {
        desc="compute mean of matrix";
        flags=;
-       result_var=.projects[0].programs[0].vars[1]$5$;
+       result_var=.projects[0].programs[0].vars[1]$$;
        object_type=taMath_float;
        method=taMath_float::vec_mean;
        meth_args {
@@ -722,7 +739,7 @@ LeabraProject .projects[0] {
 	 arg_type=const_float_Matrix_ptr;
 	 type="const float_Matrix*";
 	 name="vec";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="my_mat";
@@ -733,7 +750,7 @@ LeabraProject .projects[0] {
       MathCall @[7] {
        desc="compute std dev of matrix";
        flags=;
-       result_var=.projects[0].programs[0].vars[2]$6$;
+       result_var=.projects[0].programs[0].vars[2]$$;
        object_type=taMath_float;
        method=taMath_float::vec_std_dev;
        meth_args {
@@ -796,7 +813,7 @@ LeabraProject .projects[0] {
 	 arg_type=const_float_Matrix_ptr;
 	 type="const float_Matrix*";
 	 name="A";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="my_mat";
@@ -806,7 +823,7 @@ LeabraProject .projects[0] {
 	 arg_type=float_Matrix_ptr;
 	 type="float_Matrix*";
 	 name="eigen_vals";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="eigen_values";
@@ -816,7 +833,7 @@ LeabraProject .projects[0] {
 	 arg_type=float_Matrix_ptr;
 	 type="float_Matrix*";
 	 name="eigen_vecs";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="eigen_vectors";
@@ -842,8 +859,8 @@ LeabraProject .projects[0] {
        desc=;
        flags=;
        message="stats on matrix are:";
-       print_var=$5$;
-       print_var2=$6$;
+       print_var=$.projects[0].programs[0].vars[1]$;
+       print_var2=$.projects[0].programs[0].vars[2]$;
        print_var3=NULL;
        print_var4=NULL;
        print_var5=NULL;
@@ -853,7 +870,7 @@ LeabraProject .projects[0] {
        desc="make sure has exactly one row";
        flags=;
        result_var=NULL;
-       obj=.projects[0].programs[0].vars[3]$7$;
+       obj=.projects[0].programs[0].vars[3]$$;
        method=DataTable::EnforceRows;
        meth_args {
 	name=;
@@ -863,7 +880,7 @@ LeabraProject .projects[0] {
 	 arg_type=int;
 	 type="int";
 	 name="n_rows";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="1";
@@ -875,7 +892,7 @@ LeabraProject .projects[0] {
        desc="write our matrix data to a data table, which is very convenient for visualization";
        flags=;
        result_var=NULL;
-       obj=$7$;
+       obj=$.projects[0].programs[0].vars[3]$;
        method=DataTable::SetValAsMatrixColName;
        meth_args {
 	name=;
@@ -885,7 +902,7 @@ LeabraProject .projects[0] {
 	 arg_type=const_taMatrix_ptr;
 	 type="const taMatrix*";
 	 name="val";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="my_mat";
@@ -895,7 +912,7 @@ LeabraProject .projects[0] {
 	 arg_type=const_taString_ref;
 	 type="const taString&";
 	 name="col_name";
-	 required=0;
+	 required=1;
 	 def_val="\"\"";
 	 expr {
 	  expr="\"noise_data\"";
@@ -905,10 +922,20 @@ LeabraProject .projects[0] {
 	 arg_type=int;
 	 type="int";
 	 name="row";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="0";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="quiet";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr=;
 	 };
 	};
        };
@@ -917,7 +944,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=;
        result_var=NULL;
-       obj=$7$;
+       obj=$.projects[0].programs[0].vars[3]$;
        method=DataTable::SetValAsMatrixColName;
        meth_args {
 	name=;
@@ -927,7 +954,7 @@ LeabraProject .projects[0] {
 	 arg_type=const_taMatrix_ptr;
 	 type="const taMatrix*";
 	 name="val";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="eigen_values";
@@ -937,7 +964,7 @@ LeabraProject .projects[0] {
 	 arg_type=const_taString_ref;
 	 type="const taString&";
 	 name="col_name";
-	 required=0;
+	 required=1;
 	 def_val="\"\"";
 	 expr {
 	  expr="\"eigen_values\"";
@@ -947,10 +974,20 @@ LeabraProject .projects[0] {
 	 arg_type=int;
 	 type="int";
 	 name="row";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="0";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="quiet";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr=;
 	 };
 	};
        };
@@ -959,7 +996,7 @@ LeabraProject .projects[0] {
        desc=;
        flags=;
        result_var=NULL;
-       obj=$7$;
+       obj=$.projects[0].programs[0].vars[3]$;
        method=DataTable::SetValAsMatrixColName;
        meth_args {
 	name=;
@@ -969,7 +1006,7 @@ LeabraProject .projects[0] {
 	 arg_type=const_taMatrix_ptr;
 	 type="const taMatrix*";
 	 name="val";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="eigen_vectors";
@@ -979,7 +1016,7 @@ LeabraProject .projects[0] {
 	 arg_type=const_taString_ref;
 	 type="const taString&";
 	 name="col_name";
-	 required=0;
+	 required=1;
 	 def_val="\"\"";
 	 expr {
 	  expr="\"eigen_vectors\"";
@@ -989,10 +1026,20 @@ LeabraProject .projects[0] {
 	 arg_type=int;
 	 type="int";
 	 name="row";
-	 required=0;
+	 required=1;
 	 def_val=;
 	 expr {
 	  expr="0";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="quiet";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr=;
 	 };
 	};
        };
@@ -1000,11 +1047,13 @@ LeabraProject .projects[0] {
       DoneWritingDataRow @[16] {
        desc="this triggers a display update";
        flags=;
-       data_var=$7$;
+       data_var=$.projects[0].programs[0].vars[3]$;
       };
      };
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
  };
  viewers {
@@ -1012,8 +1061,8 @@ LeabraProject .projects[0] {
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$8$;
    name="Browser2";
+   m_data=.projects[0]$$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -1024,8 +1073,8 @@ LeabraProject .projects[0] {
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     m_data=NULL;
      name="Application";
+     m_data=NULL;
      visible=0;
      lft=0;
      top=0;
@@ -1037,31 +1086,32 @@ LeabraProject .projects[0] {
     el_typ=FrameViewer;
     el_def=0;
     tabBrowseViewer @[0] {
-     m_data=NULL;
      name="Tree";
+     m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$8$;
+     m_root=$.projects[0]$;
     };
     PanelViewer @[1] {
-     m_data=NULL;
      name="Panels";
+     m_data=NULL;
      visible=1;
     };
     T3DataViewer @[2] {
-     m_data=NULL;
      name="T3Frames";
+     m_data=NULL;
      visible=1;
      frames {
       name=;
       el_typ=T3DataViewFrame;
       el_def=0;
       T3DataViewFrame @[0] {
-       m_data=NULL;
        name="Results";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -1069,16 +1119,17 @@ LeabraProject .projects[0] {
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$1$;
+	  name=;
+	  m_data=$.projects[0].programs[0].objs[1]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].programs[0].objs[1].data[0]$9$;
-	    m_transform=NULL;
 	    name="noise_data";
+	    m_data=.projects[0].programs[0].objs[1].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
 	    scale_on=1;
@@ -1087,9 +1138,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].programs[0].objs[1].data[1]$10$;
-	    m_transform=NULL;
 	    name="eigen_vectors";
+	    m_data=.projects[0].programs[0].objs[1].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
 	    scale_on=1;
@@ -1098,9 +1149,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].programs[0].objs[1].data[2]$11$;
-	    m_transform=NULL;
 	    name="eigen_values";
+	    m_data=.projects[0].programs[0].objs[1].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
 	    scale_on=1;
@@ -1130,7 +1181,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$12$;
+	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -1208,8 +1259,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     m_data=NULL;
      name="Tools";
+     m_data=NULL;
      visible=1;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;

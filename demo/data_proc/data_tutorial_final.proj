@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.0.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -944,6 +944,7 @@ LeabraProject .projects[0] {
   el_def=0;
   taDoc @[0] {
    name="ProjectDocs";
+   desc=;
    auto_open=1;
    web_doc=0;
    wiki=;
@@ -1017,6 +1018,7 @@ Each document involves creating a separate Program with its own data tables, so 
   };
   taDoc @[1] {
    name="DataGenDoc";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -1358,6 +1360,7 @@ You can extend the program by adding variables for the constants in the random n
   };
   taDoc @[2] {
    name="DataAnalysisDoc";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -1529,6 +1532,7 @@ Next, we turn to the data base-style operations in <a href=\"ta:.docs.DataBaseDo
   };
   taDoc @[3] {
    name="DataBaseDoc";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -1668,6 +1672,7 @@ Next, we'll explore an even more Swiss-army-knife like system, the DataCalcLoop 
   };
   taDoc @[4] {
    name="DataCalcLoopDoc";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -1817,6 +1822,7 @@ That's it for calc stuff for now -- next up is matrix data in <a href=\"ta:.docs
   };
   taDoc @[5] {
    name="MatrixDataDoc";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -1946,6 +1952,7 @@ There are several functions available in the HighDim toolkit that you are free t
   };
   taDoc @[6] {
    name="WikiDoc";
+   desc=;
    auto_open=0;
    web_doc=1;
    wiki="emergent";
@@ -2181,6 +2188,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="LeabraWizard_0";
@@ -2238,6 +2246,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="batch";
@@ -2248,6 +2257,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [40] 0;1;2;3;4;5;6;7;8;9;
@@ -2264,6 +2276,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="cond1";
@@ -2274,6 +2287,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [40] 0;0;0;0;0;0;0;0;0;0;
@@ -2290,6 +2306,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [40] "LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";
@@ -2306,6 +2325,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="cond2";
@@ -2316,6 +2336,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [40] 0;0;0;0;0;0;0;0;0;0;
@@ -2332,6 +2355,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [40] "SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";
@@ -2349,6 +2375,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [40] "LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";
@@ -2365,6 +2394,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="cycles";
@@ -2375,6 +2405,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [40] 20;19;15;18;20;23;14;26;14;27;
@@ -2392,6 +2425,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [40] 10.625034;10.150656;8.856576;9.7241659;12.316755;9.7326889;11.256651;10.328391;9.4780741;9.7257805;
@@ -2430,6 +2466,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_base";
@@ -2442,6 +2479,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_anal";
@@ -2454,6 +2492,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_gen";
@@ -2466,6 +2505,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="image_proc";
@@ -2475,11 +2515,11 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=NULL;
   tags=;
   desc=;
   Program @[0] {
    name="DataGenProg";
+   short_nm="Prog";
    tags=;
    desc="program for generating data";
    flags=;
@@ -2606,7 +2646,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="MyRandomData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[0][0]$0$;
+     object_val=.projects[0].data.gp[0][0]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -2617,7 +2657,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="cond1_lbl";
      var_type=T_DynEnum;
      dyn_enum_val {
-      enum_type=.projects[0].programs[0].types[0]$1$;
+      enum_type=.projects[0].programs[0].types[0]$$;
       value=1;
      };
      objs_ptr=0;
@@ -2630,7 +2670,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="cond2_lbl";
      var_type=T_DynEnum;
      dyn_enum_val {
-      enum_type=.projects[0].programs[0].types[1]$2$;
+      enum_type=.projects[0].programs[0].types[1]$$;
       value=1;
      };
      objs_ptr=0;
@@ -2672,7 +2712,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     ResetDataRows @[0] {
      desc=;
      flags=;
-     data_var=.projects[0].programs[0].vars[6]$3$;
+     data_var=.projects[0].programs[0].vars[6]$$;
     };
     ForLoop @[1] {
      desc=;
@@ -2698,7 +2738,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	  AssignExpr @[0] {
 	   desc=;
 	   flags=;
-	   result_var=.projects[0].programs[0].vars[7]$4$;
+	   result_var=.projects[0].programs[0].vars[7]$$;
 	   expr {
 	    expr="cond1";
 	   };
@@ -2706,7 +2746,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	  AssignExpr @[1] {
 	   desc=;
 	   flags=;
-	   result_var=.projects[0].programs[0].vars[8]$5$;
+	   result_var=.projects[0].programs[0].vars[8]$$;
 	   expr {
 	    expr="cond2";
 	   };
@@ -2714,7 +2754,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	  AssignExpr @[2] {
 	   desc=;
 	   flags=;
-	   result_var=.projects[0].programs[0].vars[9]$6$;
+	   result_var=.projects[0].programs[0].vars[9]$$;
 	   expr {
 	    expr="(String)cond1_lbl + \"_\" + cond2_lbl";
 	   };
@@ -2722,36 +2762,38 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	  AddNewDataRow @[3] {
 	   desc=;
 	   flags=;
-	   data_var=$3$;
+	   data_var=$.projects[0].programs[0].vars[6]$;
 	  };
 	  DataVarProg @[4] {
 	   desc=;
 	   flags=;
-	   data_var=$3$;
+	   data_var=$.projects[0].programs[0].vars[6]$;
 	   set_data=1;
 	   row_spec=CUR_ROW;
 	   row_var=NULL;
-	   var_1=.projects[0].programs[0].vars[1]$7$;
-	   var_2=.projects[0].programs[0].vars[2]$8$;
-	   var_3=.projects[0].programs[0].vars[0]$9$;
+	   quiet=0;
+	   var_1=.projects[0].programs[0].vars[1]$$;
+	   var_2=.projects[0].programs[0].vars[2]$$;
+	   var_3=.projects[0].programs[0].vars[0]$$;
 	   var_4=NULL;
 	  };
 	  DataVarProg @[5] {
 	   desc=;
 	   flags=;
-	   data_var=$3$;
+	   data_var=$.projects[0].programs[0].vars[6]$;
 	   set_data=1;
 	   row_spec=CUR_ROW;
 	   row_var=NULL;
-	   var_1=$4$;
-	   var_2=$5$;
-	   var_3=$6$;
+	   quiet=0;
+	   var_1=$.projects[0].programs[0].vars[7]$;
+	   var_2=$.projects[0].programs[0].vars[8]$;
+	   var_3=$.projects[0].programs[0].vars[9]$;
 	   var_4=NULL;
 	  };
 	  RandomCall @[6] {
 	   desc=;
 	   flags=;
-	   result_var=.projects[0].programs[0].vars[3]$10$;
+	   result_var=.projects[0].programs[0].vars[3]$$;
 	   object_type=Random;
 	   method=Random::Gauss;
 	   meth_args {
@@ -2762,7 +2804,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	     arg_type=double;
 	     type="double";
 	     name="stdev";
-	     required=0;
+	     required=1;
 	     def_val=;
 	     expr {
 	      expr="5";
@@ -2773,7 +2815,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	  VarIncr @[7] {
 	   desc=;
 	   flags=;
-	   var=$10$;
+	   var=$.projects[0].programs[0].vars[3]$;
 	   expr {
 	    expr="20 + cond1 * 4 + cond2 * 6 + cond1 * cond2 * 1";
 	   };
@@ -2781,7 +2823,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	  RandomCall @[8] {
 	   desc=;
 	   flags=;
-	   result_var=.projects[0].programs[0].vars[4]$11$;
+	   result_var=.projects[0].programs[0].vars[4]$$;
 	   object_type=Random;
 	   method=Random::Gauss;
 	   meth_args {
@@ -2792,7 +2834,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	     arg_type=double;
 	     type="double";
 	     name="stdev";
-	     required=0;
+	     required=1;
 	     def_val=;
 	     expr {
 	      expr="2";
@@ -2803,7 +2845,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	  VarIncr @[9] {
 	   desc=;
 	   flags=;
-	   var=$11$;
+	   var=$.projects[0].programs[0].vars[4]$;
 	   expr {
 	    expr="10 + cond1 * 2 + cond2 * 3 + cond1 * cond2 * 1";
 	   };
@@ -2811,12 +2853,13 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	  DataVarProg @[10] {
 	   desc=;
 	   flags=;
-	   data_var=$3$;
+	   data_var=$.projects[0].programs[0].vars[6]$;
 	   set_data=1;
 	   row_spec=CUR_ROW;
 	   row_var=NULL;
-	   var_1=$10$;
-	   var_2=$11$;
+	   quiet=1;
+	   var_1=$.projects[0].programs[0].vars[3]$;
+	   var_2=$.projects[0].programs[0].vars[4]$;
 	   var_3=NULL;
 	   var_4=NULL;
 	  };
@@ -2854,9 +2897,12 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      };
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
   Program @[1] {
    name="DataAnalProg";
+   short_nm="Prog";
    tags=;
    desc="data analysis program";
    flags=;
@@ -2879,6 +2925,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cond1_group";
@@ -2889,6 +2936,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 0;0;1;1;       };
@@ -2901,6 +2951,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cond2_group";
@@ -2911,6 +2962,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 0;1;0;1;       };
@@ -2924,6 +2978,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] "LOC_SRC";"LOC_TRG";"OBJ_SRC";"OBJ_TRG";       };
@@ -2936,6 +2993,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cycles_mean";
@@ -2946,6 +3004,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 19.6;23.9;26.799999;31.799999;       };
@@ -2958,6 +3019,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cycles_sem";
@@ -2968,6 +3030,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 1.4696939;1.1298968;1.2183778;1.5114379;       };
@@ -2981,6 +3046,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 10.219478;14.24326;13.435506;16.492161;       };
@@ -2994,6 +3062,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 0.31249163;0.67172688;0.68811679;0.54908848;       };
@@ -3019,6 +3090,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="batch";
@@ -3029,6 +3101,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 0;1;2;3;4;5;6;7;8;9;
@@ -3045,6 +3120,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cond1";
@@ -3055,6 +3131,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 0;0;0;0;0;0;0;0;0;0;
@@ -3071,6 +3150,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] "LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";
@@ -3087,6 +3169,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cond2";
@@ -3097,6 +3180,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 0;0;0;0;0;0;0;0;0;0;
@@ -3113,6 +3199,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] "SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";
@@ -3130,6 +3219,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] "LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";
@@ -3146,6 +3238,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cycles";
@@ -3156,6 +3249,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 20;19;15;18;20;23;14;26;14;27;
@@ -3173,6 +3269,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 10.625034;10.150656;8.856576;9.7241659;12.316755;9.7326889;11.256651;10.328391;9.4780741;9.7257805;
@@ -3189,6 +3288,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cycles_flt";
@@ -3199,6 +3299,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 20;19;15;18;20;23;14;26;14;27;
@@ -3245,7 +3348,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="MyRandomData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=$0$;
+     object_val=$.projects[0].data.gp[0][0]$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -3256,7 +3359,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="grouped_data";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[0]$12$;
+     object_val=.projects[0].programs[1].objs[0]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -3277,7 +3380,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="float_cycles";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[1]$13$;
+     object_val=.projects[0].programs[1].objs[1]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -3288,7 +3391,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="data_labeled";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[2]$14$;
+     object_val=.projects[0].programs[1].objs[2]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -3318,8 +3421,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     DataGroupProg @[0] {
      desc=;
      flags=;
-     src_data_var=.projects[0].programs[1].vars[0]$15$;
-     dest_data_var=.projects[0].programs[1].vars[1]$16$;
+     src_data_var=.projects[0].programs[1].vars[0]$$;
+     dest_data_var=.projects[0].programs[1].vars[1]$$;
      group_spec {
       name="group_spec";
       ops {
@@ -3362,7 +3465,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[1].vars[3]$17$;
+     obj=.projects[0].programs[1].vars[3]$$;
      method=taBase::CopyFrom;
      meth_args {
       name=;
@@ -3372,7 +3475,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=taBase_ptr;
        type="taBase*";
        name="cpy_from";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="MyRandomData";
@@ -3384,7 +3487,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      desc=;
      flags=;
      result_var=NULL;
-     obj=$17$;
+     obj=$.projects[0].programs[1].vars[3]$;
      method=DataTable::NewColFloat;
      meth_args {
       name=;
@@ -3394,7 +3497,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=const_taString_ref;
        type="const taString&";
        name="col_nm";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"cycles_flt\"";
@@ -3412,7 +3515,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     MathCall @[4] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[1].vars[2]$18$;
+     result_var=.projects[0].programs[1].vars[2]$$;
      object_type=taMath_float;
      method=taMath_float::vec_correl;
      meth_args {
@@ -3423,7 +3526,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=const_float_Matrix_ptr;
        type="const float_Matrix*";
        name="vec";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="MyRandomData[\"sse\"].ar";
@@ -3433,7 +3536,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=const_float_Matrix_ptr;
        type="const float_Matrix*";
        name="oth_vec";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="float_cycles[\"cycles_flt\"].ar";
@@ -3442,9 +3545,12 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      };
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
   Program @[2] {
    name="DataBaseProg";
+   short_nm="Prog";
    tags=;
    desc="program for data-base style operations";
    flags=;
@@ -3467,6 +3573,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="batch";
@@ -3477,6 +3584,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [20] 0;1;2;3;4;5;6;7;8;9;
@@ -3491,6 +3601,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cond1";
@@ -3501,6 +3612,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [20] 0;0;0;0;0;0;0;0;0;0;
@@ -3515,6 +3629,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [20] "LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";
@@ -3529,6 +3646,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cond2";
@@ -3539,6 +3657,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [20] 0;0;0;0;0;0;0;0;0;0;
@@ -3553,6 +3674,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [20] "SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";
@@ -3568,6 +3692,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [20] "LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";
@@ -3582,6 +3709,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cycles";
@@ -3592,6 +3720,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [20] 20;19;15;18;20;23;14;26;14;27;
@@ -3607,6 +3738,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [20] 10.625034;10.150656;8.856576;9.7241659;12.316755;9.7326889;11.256651;10.328391;9.4780741;9.7257805;
@@ -3634,6 +3768,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] "LOC_SRC";"LOC_TRG";"OBJ_SRC";"OBJ_TRG";       };
@@ -3646,6 +3783,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 30;20;25;22;       };
@@ -3658,6 +3798,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 2;1;3;2;       };
@@ -3683,6 +3826,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] "LOC_SRC";"LOC_TRG";"OBJ_SRC";"OBJ_SRC";       };
@@ -3695,6 +3841,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 30;20;25;22;       };
@@ -3707,6 +3856,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 2;1;3;2;       };
@@ -3732,6 +3884,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="batch";
@@ -3742,6 +3895,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 9;3;8;1;5;7;2;0;6;4;
@@ -3758,6 +3914,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cond1";
@@ -3768,6 +3925,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 0;0;0;0;0;0;0;0;0;0;
@@ -3784,6 +3944,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] "LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";
@@ -3800,6 +3963,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cond2";
@@ -3810,6 +3974,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 0;0;0;0;0;0;0;0;0;0;
@@ -3826,6 +3993,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] "SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";
@@ -3843,6 +4013,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] "LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";
@@ -3859,6 +4032,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cycles";
@@ -3869,6 +4043,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 27;18;14;19;23;26;15;20;14;20;
@@ -3886,6 +4063,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 9.7257805;9.7241659;9.4780741;10.150656;9.7326889;10.328391;8.856576;10.625034;11.256651;12.316755;
@@ -3902,6 +4082,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 30;30;30;30;30;30;30;30;30;30;
@@ -3918,6 +4101,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 2;2;2;2;2;2;2;2;2;2;
@@ -3951,7 +4137,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="MyRandomData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=$0$;
+     object_val=$.projects[0].data.gp[0][0]$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -3962,7 +4148,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="SelectedData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[2].objs[0]$19$;
+     object_val=.projects[0].programs[2].objs[0]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -3973,7 +4159,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="CondData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[2].objs[1]$20$;
+     object_val=.projects[0].programs[2].objs[1]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -3984,7 +4170,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="JoinedData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[2].objs[3]$21$;
+     object_val=.projects[0].programs[2].objs[3]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -3995,7 +4181,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="OnlySomeConds";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[2].objs[2]$22$;
+     object_val=.projects[0].programs[2].objs[2]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -4025,8 +4211,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     DataSelectRowsProg @[0] {
      desc=;
      flags=;
-     src_data_var=.projects[0].programs[2].vars[0]$23$;
-     dest_data_var=.projects[0].programs[2].vars[1]$24$;
+     src_data_var=.projects[0].programs[2].vars[0]$$;
+     dest_data_var=.projects[0].programs[2].vars[1]$$;
      select_spec {
       name="select_spec";
       ops {
@@ -4049,9 +4235,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     DataJoinProg @[1] {
      desc=;
      flags=;
-     src_data_var=$23$;
-     dest_data_var=.projects[0].programs[2].vars[3]$25$;
-     src_b_data_var=.projects[0].programs[2].vars[4]$26$;
+     src_data_var=$.projects[0].programs[2].vars[0]$;
+     dest_data_var=.projects[0].programs[2].vars[3]$$;
+     src_b_data_var=.projects[0].programs[2].vars[4]$$;
      join_spec {
       name="join_spec";
       col_a {
@@ -4065,9 +4251,12 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      };
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
   Program @[3] {
    name="DataCalcLoopProg";
+   short_nm="Prog";
    tags=;
    desc="exploration of the data calc loop system";
    flags=;
@@ -4090,6 +4279,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="batch";
@@ -4100,6 +4290,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 0;1;2;3;4;5;6;7;8;9;
@@ -4116,6 +4309,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cond1";
@@ -4126,6 +4320,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 0;0;0;0;0;0;0;0;0;0;
@@ -4142,6 +4339,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] "LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";"LOC";
@@ -4158,6 +4358,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cond2";
@@ -4168,6 +4369,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 0;0;0;0;0;0;0;0;0;0;
@@ -4184,6 +4388,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] "SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";"SRC";
@@ -4201,6 +4408,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] "LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";"LOC_SRC";
@@ -4217,6 +4427,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="NARROW";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="cycles";
@@ -4227,6 +4438,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 20;19;15;18;20;23;14;26;14;27;
@@ -4244,6 +4458,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 10.625034;10.150656;8.856576;9.7241659;12.316755;9.7326889;11.256651;10.328391;9.4780741;9.7257805;
@@ -4260,6 +4477,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr="sse * cycles";
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [40] 212.50069;192.86246;132.84863;175.03499;246.33511;223.85184;157.59311;268.53818;132.69304;262.59607;
@@ -4293,7 +4513,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="MyRandomData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=$0$;
+     object_val=$.projects[0].data.gp[0][0]$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -4304,7 +4524,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="DataCalcDest";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[3].objs[0]$27$;
+     object_val=.projects[0].programs[3].objs[0]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -4335,7 +4555,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[3].vars[1]$28$;
+     obj=.projects[0].programs[3].vars[1]$$;
      method=DataTable::Copy_NoData;
      meth_args {
       name=;
@@ -4345,7 +4565,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=const_DataTable_ref;
        type="const DataTable&";
        name="cp";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="MyRandomData";
@@ -4357,7 +4577,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      desc=;
      flags=;
      result_var=NULL;
-     obj=$28$;
+     obj=$.projects[0].programs[3].vars[1]$;
      method=DataTable::NewColFloat;
      meth_args {
       name=;
@@ -4367,7 +4587,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=const_taString_ref;
        type="const taString&";
        name="col_nm";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"calc_val\"";
@@ -4378,8 +4598,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     DataCalcLoop @[2] {
      desc=;
      flags=;
-     src_data_var=.projects[0].programs[3].vars[0]$29$;
-     dest_data_var=$28$;
+     src_data_var=.projects[0].programs[3].vars[0]$$;
+     dest_data_var=$.projects[0].programs[3].vars[1]$;
      src_cols {
       name="src_cols";
       el_typ=DataOpEl;
@@ -4406,20 +4626,20 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       DataCalcAddDestRow @[0] {
        desc=;
        flags=;
-       src_data_var=$29$;
-       dest_data_var=$28$;
+       src_data_var=$.projects[0].programs[3].vars[0]$;
+       dest_data_var=$.projects[0].programs[3].vars[1]$;
       };
       DataCalcCopyCommonCols @[1] {
        desc=;
        flags=;
-       src_data_var=$29$;
-       dest_data_var=$28$;
+       src_data_var=$.projects[0].programs[3].vars[0]$;
+       dest_data_var=$.projects[0].programs[3].vars[1]$;
        only_named_cols=0;
       };
       AssignExpr @[2] {
        desc=;
        flags=;
-       result_var=.projects[0].programs[3].prog_code[2].dest_col_vars[0]$30$;
+       result_var=.projects[0].programs[3].prog_code[2].dest_col_vars[0]$$;
        expr {
 	expr="s_sse * s_cycles";
        };
@@ -4427,10 +4647,11 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       DataCalcSetDestRow @[3] {
        desc=;
        flags=;
-       src_data_var=$29$;
-       dest_data_var=$28$;
+       src_data_var=$.projects[0].programs[3].vars[0]$;
+       dest_data_var=$.projects[0].programs[3].vars[1]$;
       };
      };
+     use_col_numbers=0;
      src_col_vars {
       name=;
       el_typ=ProgVar;
@@ -4473,9 +4694,12 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      };
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
   Program @[4] {
    name="MatrixDataProg";
+   short_nm="Prog";
    tags=;
    desc=;
    flags=;
@@ -4498,6 +4722,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] "0";"1";"2";"3";       };
@@ -4510,6 +4737,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [2] ;;       };
        ar {
 	name=;
 	      [5 5 4] 0;1;0;0;0;0;0;0;0;1;
@@ -4545,6 +4775,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [24] "0";"0";"0";"0";"0";"0";"1";"1";"1";"1";
@@ -4559,6 +4792,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [2] ;;       };
        ar {
 	name=;
 	      [5 5 24] 0;1;0;0;1;0;0;0;0;0;
@@ -4637,10 +4873,12 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       UserDataItem @[0] {
        name="N_ROWS";
        value 2 0=1;
+       val_type_fixed=0;
       };
       UserDataItem @[1] {
        name="AUTO_SCALE";
        value 1 0=1;
+       val_type_fixed=0;
       };
      };
      name="ProtoDists";
@@ -4657,6 +4895,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] "0";"1";"2";"3";       };
@@ -4669,6 +4910,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 0;10;10;10;       };
@@ -4681,6 +4925,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 10;0;10;10;       };
@@ -4693,6 +4940,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 10;10;0;10;       };
@@ -4705,6 +4955,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [4] 10;10;10;0;       };
@@ -4723,10 +4976,12 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       UserDataItem @[0] {
        name="N_ROWS";
        value 2 0=1;
+       val_type_fixed=0;
       };
       UserDataItem @[1] {
        name="AUTO_SCALE";
        value 1 0=1;
+       val_type_fixed=0;
       };
      };
      name="ItemDists";
@@ -4743,6 +4998,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="TOP_ZERO";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="ItemData_DistMatrix";
@@ -4752,6 +5008,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [2] ;;       };
        ar {
 	name=;
 	      [24 24 1] 0;4;4;4;4;2;10;10;8;8;
@@ -4834,10 +5093,12 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="X_AXIS";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
 	UserDataItem @[1] {
 	 name="MAX";
 	 value 6 0=14.42077922821045;
+	 val_type_fixed=0;
 	};
        };
        name="X";
@@ -4847,6 +5108,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [175] 0;0;0;0;0;3.1257772;3.1257772;5.1257772;3.1257772;3.1257772;
@@ -4876,14 +5140,17 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="PLOT_1";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
 	UserDataItem @[1] {
 	 name="MAX";
 	 value 6 0=23.79999923706055;
+	 val_type_fixed=0;
 	};
 	UserDataItem @[2] {
 	 name="MIN";
 	 value 6 0=0.2000000029802322;
+	 val_type_fixed=0;
 	};
        };
        name="Y";
@@ -4893,6 +5160,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [175] 7.6166668;7.6166668;7.6166668;7.6166668;2.6666667;2.6666667;0.5;0.5;0.5;0.5;
@@ -4922,6 +5192,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="PLOT_2";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="Label";
@@ -4931,6 +5202,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [175] ;;;;;;;"0";;;
@@ -4966,6 +5240,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
       UserDataItem @[0] {
        name="PLOT_STYLE";
        value 9 0="POINTS";
+       val_type_fixed=0;
       };
      };
      name="ItemPCA";
@@ -4982,6 +5257,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="PLOT_2";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="Name";
@@ -4991,6 +5267,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [24] "0";"0";"0";"0";"0";"0";"1";"1";"1";"1";
@@ -5005,6 +5284,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="X_AXIS";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="x_prjn";
@@ -5014,6 +5294,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [24] -0.24508342;-0.055133317;0.080080777;0.14336033;0.11473627;-0.2872735;-0.49527052;0.78000599;0.20999052;-0.20469405;
@@ -5028,6 +5311,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	UserDataItem @[0] {
 	 name="PLOT_1";
 	 value 1 0=1;
+	 val_type_fixed=0;
 	};
        };
        name="y_prjn";
@@ -5037,6 +5321,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [0]        };
        ar {
 	name=;
 	      [24] -0.25117224;-0.81240624;0.17246984;0.90234572;0.39395204;-0.498797;-0.29284555;0.13025233;0.16395372;-0.2670109;
@@ -5064,6 +5351,9 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [2] ;;       };
        ar {
 	name=;
 	      [5 5 25] 0;0.0057832794;-0.1652265;-0.38529229;-0.027065465;0.16343965;0.038918693;0.081892632;-0.067622714;0.34130692;
@@ -5155,7 +5445,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="ProtoData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[4].objs[0]$31$;
+     object_val=.projects[0].programs[4].objs[0]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -5166,7 +5456,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="ProtoDists";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[4].objs[2]$32$;
+     object_val=.projects[0].programs[4].objs[2]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -5177,7 +5467,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="ItemData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[4].objs[1]$33$;
+     object_val=.projects[0].programs[4].objs[1]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -5188,7 +5478,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="ItemDists";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[4].objs[3]$34$;
+     object_val=.projects[0].programs[4].objs[3]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -5199,7 +5489,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="ItemCluster";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[4].objs[4]$35$;
+     object_val=.projects[0].programs[4].objs[4]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -5210,7 +5500,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="ItemPCA";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[4].objs[5]$36$;
+     object_val=.projects[0].programs[4].objs[5]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -5221,7 +5511,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      name="ItemEigens";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[4].objs[6]$37$;
+     object_val=.projects[0].programs[4].objs[6]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -5251,13 +5541,13 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     ResetDataRows @[0] {
      desc=;
      flags=;
-     data_var=.projects[0].programs[4].vars[0]$38$;
+     data_var=.projects[0].programs[4].vars[0]$$;
     };
     MethodCall @[1] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=$38$;
+     obj=$.projects[0].programs[4].vars[0]$;
      method=DataTable::AddRows;
      meth_args {
       name=;
@@ -5279,7 +5569,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      desc=;
      flags=;
      result_var=NULL;
-     obj=$38$;
+     obj=$.projects[0].programs[4].vars[0]$;
      method=DataTable::InitValsToRowNo;
      meth_args {
       name=;
@@ -5289,7 +5579,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=Variant;
        type="Variant";
        name="col";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="\"Name\"";
@@ -5495,7 +5785,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=DataTable_ptr;
        type="DataTable*";
        name="dest";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="ItemData";
@@ -5505,7 +5795,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=DataTable_ptr;
        type="DataTable*";
        name="src";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="ProtoData";
@@ -5515,7 +5805,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=int;
        type="int";
        name="n_repl";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="6";
@@ -5537,7 +5827,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=DataTable_ptr;
        type="DataTable*";
        name="data";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="ItemData";
@@ -5547,7 +5837,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=const_taString_ref;
        type="const taString&";
        name="col_nm";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"Input\"";
@@ -5557,7 +5847,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=int;
        type="int";
        name="n_off";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -5567,7 +5857,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=int;
        type="int";
        name="n_on";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -5865,7 +6155,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=DataTable_ptr;
        type="DataTable*";
        name="pca_data";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="ItemEigens";
@@ -5875,7 +6165,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=bool;
        type="bool";
        name="view";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="true";
@@ -5885,7 +6175,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=DataTable_ptr;
        type="DataTable*";
        name="src_data";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="ItemData";
@@ -5895,7 +6185,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
        arg_type=const_taString_ref;
        type="const taString&";
        name="data_col_nm";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"Input\"";
@@ -5904,6 +6194,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      };
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
  };
  viewers {
@@ -5911,8 +6203,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$39$;
    name="Browser2";
+   m_data=.projects[0]$$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -5923,8 +6215,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     m_data=NULL;
      name="Application";
+     m_data=NULL;
      visible=0;
      lft=0;
      top=0;
@@ -5936,31 +6228,32 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     el_typ=FrameViewer;
     el_def=0;
     tabBrowseViewer @[0] {
-     m_data=NULL;
      name="Tree";
+     m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$39$;
+     m_root=$.projects[0]$;
     };
     PanelViewer @[1] {
-     m_data=NULL;
      name="Panels";
+     m_data=NULL;
      visible=1;
     };
     T3DataViewer @[2] {
-     m_data=NULL;
      name="T3Frames";
+     m_data=NULL;
      visible=1;
      frames {
       name=;
       el_typ=T3DataViewFrame;
       el_def=0;
       T3DataViewFrame @[0] {
-       m_data=NULL;
        name="MyRandomData";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -5968,72 +6261,73 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$0$;
+	  name=;
+	  m_data=$.projects[0].data.gp[0][0]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[0][0].data[0]$40$;
-	    m_transform=NULL;
 	    name="batch";
+	    m_data=.projects[0].data.gp[0][0].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=9: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[0][0].data[1]$41$;
-	    m_transform=NULL;
 	    name="cond1";
+	    m_data=.projects[0].data.gp[0][0].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[0][0].data[2]$42$;
-	    m_transform=NULL;
 	    name="cond1_lbl";
+	    m_data=.projects[0].data.gp[0][0].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[0][0].data[3]$43$;
-	    m_transform=NULL;
 	    name="cond2";
+	    m_data=.projects[0].data.gp[0][0].data[3]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[0][0].data[4]$44$;
-	    m_transform=NULL;
 	    name="cond2_lbl";
+	    m_data=.projects[0].data.gp[0][0].data[4]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data.gp[0][0].data[5]$45$;
-	    m_transform=NULL;
 	    name="cond_lbl";
+	    m_data=.projects[0].data.gp[0][0].data[5]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=14: fix_max=0: max=38: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].data.gp[0][0].data[6]$46$;
-	    m_transform=NULL;
 	    name="cycles";
+	    m_data=.projects[0].data.gp[0][0].data[6]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=14: fix_max=0: max=39: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=.projects[0].data.gp[0][0].data[7]$47$;
-	    m_transform=NULL;
 	    name="sse";
+	    m_data=.projects[0].data.gp[0][0].data[7]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=8.85658: fix_max=0: max=20.0929: };
 	    data_range {min=0: max=0: };
@@ -6058,6 +6352,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -6072,6 +6367,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6086,6 +6382,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -6102,6 +6399,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6118,6 +6416,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6134,6 +6433,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6150,6 +6450,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6166,6 +6467,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6182,6 +6484,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6198,6 +6501,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6219,6 +6523,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6235,6 +6540,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6251,6 +6557,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6267,6 +6574,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6283,6 +6591,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6299,6 +6608,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6315,6 +6625,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6331,6 +6642,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6350,6 +6662,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6370,10 +6683,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$48$;
+	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6450,10 +6764,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[1] {
-       m_data=NULL;
        name="grouped_data";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -6461,64 +6776,65 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$12$;
+	  name=;
+	  m_data=$.projects[0].programs[1].objs[0]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].programs[1].objs[0].data[0]$49$;
-	    m_transform=NULL;
 	    name="cond1_group";
+	    m_data=.projects[0].programs[1].objs[0].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].programs[1].objs[0].data[1]$50$;
-	    m_transform=NULL;
 	    name="cond2_group";
+	    m_data=.projects[0].programs[1].objs[0].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=-0.9: fix_max=1: max=3.9: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].programs[1].objs[0].data[2]$51$;
-	    m_transform=NULL;
 	    name="cond_lbl_first";
+	    m_data=.projects[0].programs[1].objs[0].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=-0.5: fix_max=1: max=3.5: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].programs[1].objs[0].data[3]$52$;
-	    m_transform=NULL;
 	    name="cycles_mean";
+	    m_data=.projects[0].programs[1].objs[0].data[3]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=19.6: fix_max=0: max=31.8: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].programs[1].objs[0].data[4]$53$;
-	    m_transform=NULL;
 	    name="cycles_sem";
+	    m_data=.projects[0].programs[1].objs[0].data[4]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].programs[1].objs[0].data[5]$54$;
-	    m_transform=NULL;
 	    name="sse_mean";
+	    m_data=.projects[0].programs[1].objs[0].data[5]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=10.2195: fix_max=0: max=16.4922: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].programs[1].objs[0].data[6]$55$;
-	    m_transform=NULL;
 	    name="sse_sem";
+	    m_data=.projects[0].programs[1].objs[0].data[6]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -6543,6 +6859,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -6557,6 +6874,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=1;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6571,6 +6889,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -6587,6 +6906,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -6603,6 +6923,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6619,6 +6940,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6635,6 +6957,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6651,6 +6974,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6667,6 +6991,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6683,6 +7008,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6704,6 +7030,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -6720,6 +7047,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -6736,6 +7064,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6752,6 +7081,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6768,6 +7098,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6784,6 +7115,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6800,6 +7132,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6816,6 +7149,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6835,6 +7169,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=FIXED_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6855,10 +7190,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$48$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -6935,10 +7271,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[2] {
-       m_data=NULL;
        name="ProtoDists";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -6946,16 +7283,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$32$;
+	  name=;
+	  m_data=$.projects[0].programs[4].objs[2]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].programs[4].objs[2].data[0]$56$;
-	    m_transform=NULL;
 	    name="Name";
+	    m_data=.projects[0].programs[4].objs[2].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=16;
 	    scale_on=1;
@@ -6964,9 +7302,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].programs[4].objs[2].data[1]$57$;
-	    m_transform=NULL;
 	    name="0";
+	    m_data=.projects[0].programs[4].objs[2].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
@@ -6975,9 +7313,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].programs[4].objs[2].data[2]$58$;
-	    m_transform=NULL;
 	    name="1";
+	    m_data=.projects[0].programs[4].objs[2].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
@@ -6986,9 +7324,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[3] {
-	    m_data=.projects[0].programs[4].objs[2].data[3]$59$;
-	    m_transform=NULL;
 	    name="2";
+	    m_data=.projects[0].programs[4].objs[2].data[3]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
@@ -6997,9 +7335,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[4] {
-	    m_data=.projects[0].programs[4].objs[2].data[4]$60$;
-	    m_transform=NULL;
 	    name="3";
+	    m_data=.projects[0].programs[4].objs[2].data[4]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=8;
 	    scale_on=1;
@@ -7029,7 +7367,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$48$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=1;
 	  };
 	  grid_margin=0.01;
@@ -7100,10 +7438,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[3] {
-       m_data=NULL;
        name="ProtoData";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -7111,16 +7450,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$31$;
+	  name=;
+	  m_data=$.projects[0].programs[4].objs[0]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].programs[4].objs[0].data[0]$61$;
-	    m_transform=NULL;
 	    name="Name";
+	    m_data=.projects[0].programs[4].objs[0].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=16;
 	    scale_on=1;
@@ -7129,9 +7469,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].programs[4].objs[0].data[1]$62$;
-	    m_transform=NULL;
 	    name="Input";
+	    m_data=.projects[0].programs[4].objs[0].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
 	    scale_on=1;
@@ -7161,7 +7501,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$48$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -7232,10 +7572,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[4] {
-       m_data=NULL;
        name="ItemDists";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -7243,16 +7584,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$34$;
+	  name=;
+	  m_data=$.projects[0].programs[4].objs[3]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].programs[4].objs[3].data[0]$63$;
-	    m_transform=NULL;
 	    name="ItemData_DistMatrix";
+	    m_data=.projects[0].programs[4].objs[3].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=24;
 	    scale_on=1;
@@ -7282,7 +7624,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=12;
 	   range=12;
 	   zero=0;
-	   spec=$48$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=1;
 	  };
 	  grid_margin=0.01;
@@ -7353,10 +7695,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[5] {
-       m_data=NULL;
        name="ItemData";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -7364,16 +7707,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$33$;
+	  name=;
+	  m_data=$.projects[0].programs[4].objs[1]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].programs[4].objs[1].data[0]$64$;
-	    m_transform=NULL;
 	    name="Name";
+	    m_data=.projects[0].programs[4].objs[1].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=16;
 	    scale_on=1;
@@ -7382,9 +7726,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].programs[4].objs[1].data[1]$65$;
-	    m_transform=NULL;
 	    name="Input";
+	    m_data=.projects[0].programs[4].objs[1].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
 	    scale_on=1;
@@ -7414,7 +7758,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$48$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -7485,10 +7829,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[6] {
-       m_data=NULL;
        name="ItemCluster";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -7496,32 +7841,33 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$35$;
+	  name=;
+	  m_data=$.projects[0].programs[4].objs[4]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].programs[4].objs[4].data[0]$66$;
-	    m_transform=NULL;
 	    name="X";
+	    m_data=.projects[0].programs[4].objs[4].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].programs[4].objs[4].data[1]$67$;
-	    m_transform=NULL;
 	    name="Y";
+	    m_data=.projects[0].programs[4].objs[4].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].programs[4].objs[4].data[2]$68$;
-	    m_transform=NULL;
 	    name="Label";
+	    m_data=.projects[0].programs[4].objs[4].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -7546,6 +7892,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -7560,6 +7907,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7574,6 +7922,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -7590,6 +7939,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -7606,6 +7956,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7622,6 +7973,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7638,6 +7990,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7654,6 +8007,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7670,6 +8024,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7686,6 +8041,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7707,6 +8063,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7723,6 +8080,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7739,6 +8097,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7755,6 +8114,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7771,6 +8131,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7787,6 +8148,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7803,6 +8165,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7819,6 +8182,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7838,6 +8202,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7858,10 +8223,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$48$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -7938,10 +8304,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[7] {
-       m_data=NULL;
        name="ItemPCA";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -7949,32 +8316,33 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$36$;
+	  name=;
+	  m_data=$.projects[0].programs[4].objs[5]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].programs[4].objs[5].data[0]$69$;
-	    m_transform=NULL;
 	    name="Name";
+	    m_data=.projects[0].programs[4].objs[5].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].programs[4].objs[5].data[1]$70$;
-	    m_transform=NULL;
 	    name="x_prjn";
+	    m_data=.projects[0].programs[4].objs[5].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].programs[4].objs[5].data[2]$71$;
-	    m_transform=NULL;
 	    name="y_prjn";
+	    m_data=.projects[0].programs[4].objs[5].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -7999,6 +8367,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -8013,6 +8382,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8027,6 +8397,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -8043,6 +8414,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -8059,6 +8431,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8075,6 +8448,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8091,6 +8465,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8107,6 +8482,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8123,6 +8499,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8139,6 +8516,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8160,6 +8538,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8176,6 +8555,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8192,6 +8572,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8208,6 +8589,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8224,6 +8606,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8240,6 +8623,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8256,6 +8640,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8272,6 +8657,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8291,6 +8677,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8311,10 +8698,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$48$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -8391,10 +8779,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[8] {
-       m_data=NULL;
        name="ItemEigens";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -8402,16 +8791,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$37$;
+	  name=;
+	  m_data=$.projects[0].programs[4].objs[6]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].programs[4].objs[6].data[0]$72$;
-	    m_transform=NULL;
 	    name="Input_PCAEigens";
+	    m_data=.projects[0].programs[4].objs[6].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
 	    scale_on=1;
@@ -8441,7 +8831,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$48$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -8519,8 +8909,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     m_data=NULL;
      name="Tools";
+     m_data=NULL;
      visible=1;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;

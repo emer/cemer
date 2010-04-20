@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.0.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -366,6 +366,7 @@ LeabraProject .projects[0] {
   el_def=0;
   taDoc @[0] {
    name="ProjectDocs";
+   desc=;
    auto_open=1;
    web_doc=0;
    wiki=;
@@ -420,6 +421,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="LeabraWizard_0";
@@ -473,6 +475,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
       };
      };
      name="batch";
@@ -482,6 +485,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      calc_expr {
       expr=;
      };
+     dim_names {
+      name=;
+	  [0]      };
     };
     int_Data @[1] {
      UserDataItem_List @*(.user_data_) {
@@ -491,6 +497,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
       };
      };
      name="epoch";
@@ -500,6 +507,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      calc_expr {
       expr=;
      };
+     dim_names {
+      name=;
+	  [0]      };
     };
     float_Data @[2] {
      name="avg_sse";
@@ -509,6 +519,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      calc_expr {
       expr=;
      };
+     dim_names {
+      name=;
+	  [0]      };
     };
     float_Data @[3] {
      name="cnt_err";
@@ -518,6 +531,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      calc_expr {
       expr=;
      };
+     dim_names {
+      name=;
+	  [0]      };
     };
     float_Data @[4] {
      name="avg_ext_rew";
@@ -527,6 +543,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      calc_expr {
       expr=;
      };
+     dim_names {
+      name=;
+	  [0]      };
     };
     float_Data @[5] {
      name="avg_cycles";
@@ -536,6 +555,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      calc_expr {
       expr=;
      };
+     dim_names {
+      name=;
+	  [0]      };
     };
     float_Data @[6] {
      name="epoch_time_tot";
@@ -545,6 +567,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      calc_expr {
       expr=;
      };
+     dim_names {
+      name=;
+	  [0]      };
     };
     float_Data @[7] {
      name="epoch_time_usr";
@@ -554,6 +579,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      calc_expr {
       expr=;
      };
+     dim_names {
+      name=;
+	  [0]      };
     };
    };
    data_flags=AUTO_CALC;
@@ -590,6 +618,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="batch_group";
@@ -599,6 +628,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
      int_Data @[1] {
       UserDataItem_List @*(.user_data_) {
@@ -608,6 +640,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="epoch_last";
@@ -617,6 +650,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
      float_Data @[2] {
       name="cnt_err_find_first";
@@ -626,6 +662,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
      float_Data @[3] {
       name="cnt_err_min";
@@ -635,6 +674,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
     };
     data_flags=AUTO_CALC;
@@ -657,6 +699,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="batch";
@@ -666,6 +709,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
      int_Data @[1] {
       UserDataItem_List @*(.user_data_) {
@@ -675,6 +721,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="epoch";
@@ -684,6 +731,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
      float_Data @[2] {
       name="avg_sse";
@@ -693,6 +743,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
      float_Data @[3] {
       name="cnt_err";
@@ -702,6 +755,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
      float_Data @[4] {
       name="avg_ext_rew";
@@ -711,6 +767,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
      float_Data @[5] {
       name="avg_cycles";
@@ -720,6 +779,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
      float_Data @[6] {
       name="epoch_time_tot";
@@ -729,6 +791,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
      float_Data @[7] {
       name="epoch_time_usr";
@@ -738,6 +803,9 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
      };
     };
     data_flags=AUTO_CALC;
@@ -759,6 +827,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_base";
@@ -771,6 +840,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_anal";
@@ -783,6 +853,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_gen";
@@ -795,6 +866,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="image_proc";
@@ -804,11 +876,11 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=NULL;
   tags=;
   desc=;
   Program @[0] {
    name="EpochsToTrain";
+   short_nm="Train";
    tags="Data, Analysis, Epoch, Training";
    desc="performs various stats on epochs to train to criterion, across multiple batches, including an additional err threshold that can be different than the training stopping criterion, and also the minimum error value achieved across batches";
    flags=STARTUP_RUN;
@@ -876,7 +948,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      name="EpochData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data[0]$0$;
+     object_val=.projects[0].data[0]$$;
      objs_ptr=0;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -887,7 +959,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      name="EpochData_Group";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[2][0]$1$;
+     object_val=.projects[0].data.gp[2][0]$$;
      objs_ptr=0;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -938,7 +1010,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      name="EpochData_SmoothGauss";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[2][1]$2$;
+     object_val=.projects[0].data.gp[2][1]$$;
      objs_ptr=0;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -949,7 +1021,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      name="EpochsToTrain";
      var_type=T_Object;
      object_type=Program;
-     object_val=.projects[0].programs[0]$3$;
+     object_val=.projects[0].programs[0]$$;
      objs_ptr=0;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -960,7 +1032,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      name="rel";
      var_type=T_Object;
      object_type=Relation;
-     object_val=.projects[0].programs[0].objs[0]$4$;
+     object_val=.projects[0].programs[0].objs[0]$$;
      objs_ptr=1;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -1005,7 +1077,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        arg_type=const_taString_ref;
        type="const taString&";
        name="flag";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"logfile=\"";
@@ -1015,7 +1087,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        arg_type=const_taString_ref;
        type="const taString&";
        name="name";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"LogFile\"";
@@ -1037,7 +1109,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        arg_type=const_taString_ref;
        type="const taString&";
        name="flag";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"log=\"";
@@ -1047,7 +1119,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        arg_type=const_taString_ref;
        type="const taString&";
        name="name";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"LogFile\"";
@@ -1069,7 +1141,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        arg_type=const_taString_ref;
        type="const taString&";
        name="flag";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"err_thresh=\"";
@@ -1079,7 +1151,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        arg_type=const_taString_ref;
        type="const taString&";
        name="name";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"ErrThresh\"";
@@ -1103,7 +1175,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[10]$5$;
+     obj=.projects[0].programs[0].vars[10]$$;
      method=Program::SetVarFmArg;
      meth_args {
       name=;
@@ -1145,7 +1217,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      result_var=NULL;
-     obj=$5$;
+     obj=$.projects[0].programs[0].vars[10]$;
      method=Program::SetVarFmArg;
      meth_args {
       name=;
@@ -1191,7 +1263,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[3]$6$;
+     obj=.projects[0].programs[0].vars[3]$$;
      method=DataTable::RemoveAllRows;
      meth_args {
       name=;
@@ -1203,7 +1275,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      result_var=NULL;
-     obj=$6$;
+     obj=$.projects[0].programs[0].vars[3]$;
      method=DataTable::LoadData;
      meth_args {
       name=;
@@ -1264,8 +1336,8 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     DataGroupProg @[10] {
      desc=;
      flags=;
-     src_data_var=$6$;
-     dest_data_var=.projects[0].programs[0].vars[4]$7$;
+     src_data_var=$.projects[0].programs[0].vars[3]$;
+     dest_data_var=.projects[0].programs[0].vars[4]$$;
      group_spec {
       name="group_spec";
       ops {
@@ -1282,7 +1354,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        };
        DataGroupEl @[2] {
 	col_name="cnt_err";
-	agg {name="": op=FIND_FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=.projects[0].programs[0].vars[0]$8$: }: };
+	agg {name="": op=FIND_FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=.projects[0].programs[0].vars[0]$$: }: };
        };
        DataGroupEl @[3] {
 	col_name="cnt_err";
@@ -1295,7 +1367,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     MemberMethodCall @[11] {
      desc="convert to float so that subsequent stats can use that";
      flags=;
-     obj=$7$;
+     obj=$.projects[0].programs[0].vars[4]$;
      path="data.epoch_last";
      result_var=NULL;
      method=DataCol::ChangeColType;
@@ -1307,7 +1379,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        arg_type=taBase::ValType;
        type="taBase::ValType";
        name="new_type";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="taBase::VT_FLOAT";
@@ -1325,8 +1397,8 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     MethodCall @[13] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[5]$9$;
-     obj=$7$;
+     result_var=.projects[0].programs[0].vars[5]$$;
+     obj=$.projects[0].programs[0].vars[4]$;
      method=DataTable::ColStats;
      meth_args {
       name=;
@@ -1336,7 +1408,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        arg_type=Variant;
        type="Variant";
        name="col";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="\"epoch_last\"";
@@ -1348,7 +1420,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
      desc=;
      flags=;
      message=;
-     print_var=$9$;
+     print_var=$.projects[0].programs[0].vars[5]$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -1358,7 +1430,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
     MathCall @[15] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[7]$10$;
+     result_var=.projects[0].programs[0].vars[7]$$;
      object_type=taMath_float;
      method=taMath_float::vec_max;
      meth_args {
@@ -1369,7 +1441,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        arg_type=const_float_Matrix_ptr;
        type="const float_Matrix*";
        name="vec";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="EpochData_Group.data.epoch_last.ar";
@@ -1379,7 +1451,7 @@ where err_thresh is the threshold on the cnt_err variable to count as having lea
        arg_type=int_ref;
        type="int&";
        name="idx";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="max_idx";
@@ -1406,8 +1478,8 @@ cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_las
     MethodCall @[18] {
      desc=;
      flags=;
-     result_var=$9$;
-     obj=$7$;
+     result_var=$.projects[0].programs[0].vars[5]$;
+     obj=$.projects[0].programs[0].vars[4]$;
      method=DataTable::ColStats;
      meth_args {
       name=;
@@ -1417,7 +1489,7 @@ cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_las
        arg_type=Variant;
        type="Variant";
        name="col";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="\"cnt_err_find_first\"";
@@ -1429,7 +1501,7 @@ cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_las
      desc=;
      flags=;
      message=;
-     print_var=$9$;
+     print_var=$.projects[0].programs[0].vars[5]$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -1456,8 +1528,8 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
     MethodCall @[22] {
      desc=;
      flags=;
-     result_var=$9$;
-     obj=$7$;
+     result_var=$.projects[0].programs[0].vars[5]$;
+     obj=$.projects[0].programs[0].vars[4]$;
      method=DataTable::ColStats;
      meth_args {
       name=;
@@ -1467,7 +1539,7 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
        arg_type=Variant;
        type="Variant";
        name="col";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="\"cnt_err_min\"";
@@ -1479,7 +1551,7 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
      desc=;
      flags=;
      message=;
-     print_var=$9$;
+     print_var=$.projects[0].programs[0].vars[5]$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
@@ -1489,7 +1561,7 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
     MathCall @[24] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[8]$11$;
+     result_var=.projects[0].programs[0].vars[8]$$;
      object_type=taMath_float;
      method=taMath_float::vec_min;
      meth_args {
@@ -1500,7 +1572,7 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
        arg_type=const_float_Matrix_ptr;
        type="const float_Matrix*";
        name="vec";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="EpochData_Group.data.cnt_err_min.ar";
@@ -1510,7 +1582,7 @@ cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_f
        arg_type=int_ref;
        type="int&";
        name="idx";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="max_idx";
@@ -1630,6 +1702,8 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
      };
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
  };
  viewers {
@@ -1637,8 +1711,8 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$12$;
    name=;
+   m_data=.projects[0]$$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -1649,8 +1723,8 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     m_data=NULL;
      name="Application";
+     m_data=NULL;
      visible=0;
      lft=0;
      top=0;
@@ -1662,31 +1736,32 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
     el_typ=FrameViewer;
     el_def=0;
     tabBrowseViewer @[0] {
-     m_data=NULL;
      name=;
+     m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$12$;
+     m_root=$.projects[0]$;
     };
     PanelViewer @[1] {
-     m_data=NULL;
      name=;
+     m_data=NULL;
      visible=1;
     };
     T3DataViewer @[2] {
-     m_data=NULL;
      name="Frame1";
+     m_data=NULL;
      visible=1;
      frames {
       name=;
       el_typ=T3DataViewFrame;
       el_def=0;
       T3DataViewFrame @[0] {
-       m_data=NULL;
        name="EpochData";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -1694,72 +1769,73 @@ cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_m
 	 el_typ=T3DataView;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$0$;
+	  name=;
+	  m_data=$.projects[0].data[0]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data[0].data[0]$13$;
-	    m_transform=NULL;
 	    name="batch";
+	    m_data=.projects[0].data[0].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=9: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data[0].data[1]$14$;
-	    m_transform=NULL;
 	    name="epoch";
+	    m_data=.projects[0].data[0].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=239: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data[0].data[2]$15$;
-	    m_transform=NULL;
 	    name="avg_sse";
+	    m_data=.projects[0].data[0].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data[0].data[3]$16$;
-	    m_transform=NULL;
 	    name="cnt_err";
+	    m_data=.projects[0].data[0].data[3]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=25: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data[0].data[4]$17$;
-	    m_transform=NULL;
 	    name="avg_ext_rew";
+	    m_data=.projects[0].data[0].data[4]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data[0].data[5]$18$;
-	    m_transform=NULL;
 	    name="avg_cycles";
+	    m_data=.projects[0].data[0].data[5]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].data[0].data[6]$19$;
-	    m_transform=NULL;
 	    name="epoch_time_tot";
+	    m_data=.projects[0].data[0].data[6]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=.projects[0].data[0].data[7]$20$;
-	    m_transform=NULL;
 	    name="epoch_time_usr";
+	    m_data=.projects[0].data[0].data[7]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -1784,6 +1860,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -1798,6 +1875,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -1812,6 +1890,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -1828,6 +1907,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1844,6 +1924,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1860,6 +1941,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1876,6 +1958,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1892,6 +1975,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1908,6 +1992,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1924,6 +2009,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1945,6 +2031,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1961,6 +2048,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1977,6 +2065,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1993,6 +2082,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2009,6 +2099,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2025,6 +2116,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2041,6 +2133,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2057,6 +2150,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2076,6 +2170,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2096,10 +2191,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$21$;
+	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2176,10 +2272,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[1] {
-       m_data=NULL;
        name="EpochData_SmoothGauss";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -2187,72 +2284,73 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataView;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$2$;
+	  name=;
+	  m_data=$.projects[0].data.gp[2][1]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[2][1].data[0]$22$;
-	    m_transform=NULL;
 	    name="batch";
+	    m_data=.projects[0].data.gp[2][1].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[2][1].data[1]$23$;
-	    m_transform=NULL;
 	    name="epoch";
+	    m_data=.projects[0].data.gp[2][1].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[2][1].data[2]$24$;
-	    m_transform=NULL;
 	    name="avg_sse";
+	    m_data=.projects[0].data.gp[2][1].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[2][1].data[3]$25$;
-	    m_transform=NULL;
 	    name="cnt_err";
+	    m_data=.projects[0].data.gp[2][1].data[3]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[2][1].data[4]$26$;
-	    m_transform=NULL;
 	    name="avg_ext_rew";
+	    m_data=.projects[0].data.gp[2][1].data[4]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data.gp[2][1].data[5]$27$;
-	    m_transform=NULL;
 	    name="avg_cycles";
+	    m_data=.projects[0].data.gp[2][1].data[5]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[6] {
-	    m_data=.projects[0].data.gp[2][1].data[6]$28$;
-	    m_transform=NULL;
 	    name="epoch_time_tot";
+	    m_data=.projects[0].data.gp[2][1].data[6]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[7] {
-	    m_data=.projects[0].data.gp[2][1].data[7]$29$;
-	    m_transform=NULL;
 	    name="epoch_time_usr";
+	    m_data=.projects[0].data.gp[2][1].data[7]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -2277,6 +2375,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -2291,6 +2390,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -2305,6 +2405,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -2321,6 +2422,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2337,6 +2439,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2353,6 +2456,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2369,6 +2473,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2385,6 +2490,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2401,6 +2507,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2417,6 +2524,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2438,6 +2546,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2454,6 +2563,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2470,6 +2580,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2486,6 +2597,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2502,6 +2614,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2518,6 +2631,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2534,6 +2648,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2550,6 +2665,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2569,6 +2685,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2589,10 +2706,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$21$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2676,8 +2794,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     m_data=NULL;
      name="Tools";
+     m_data=NULL;
      visible=1;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;

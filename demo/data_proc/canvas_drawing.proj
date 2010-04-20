@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.0.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -498,6 +498,7 @@ LeabraProject .projects[0] {
   el_def=0;
   taDoc @[0] {
    name="ProjectDocs";
+   desc=;
    auto_open=1;
    web_doc=0;
    wiki=;
@@ -546,6 +547,7 @@ There are two different programs, for each type of coordinate system: Normalized
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="LeabraWizard_0";
@@ -612,6 +614,7 @@ There are two different programs, for each type of coordinate system: Normalized
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_base";
@@ -624,6 +627,7 @@ There are two different programs, for each type of coordinate system: Normalized
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_anal";
@@ -636,6 +640,7 @@ There are two different programs, for each type of coordinate system: Normalized
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_gen";
@@ -648,6 +653,7 @@ There are two different programs, for each type of coordinate system: Normalized
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="image_proc";
@@ -657,11 +663,11 @@ There are two different programs, for each type of coordinate system: Normalized
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=NULL;
   tags=;
   desc=;
   Program @[0] {
    name="CanvasDemo_Normalized";
+   short_nm="Normalized";
    tags=;
    desc="demo of the taCanvas drawing system -- using normalized coordinates";
    flags=;
@@ -688,6 +694,9 @@ There are two different programs, for each type of coordinate system: Normalized
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [3] ;;;       };
        ar {
 	name=;
 	      [256 256 3 1] 1;1;1;1;1;1;1;1;1;1;
@@ -20397,7 +20406,7 @@ There are two different programs, for each type of coordinate system: Normalized
      name="Canvas";
      var_type=T_Object;
      object_type=taCanvas;
-     object_val=.projects[0].programs[0].objs[0]$0$;
+     object_val=.projects[0].programs[0].objs[0]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -20408,7 +20417,7 @@ There are two different programs, for each type of coordinate system: Normalized
      name="DataDisplay";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[0].objs[1]$1$;
+     object_val=.projects[0].programs[0].objs[1]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -20438,13 +20447,13 @@ There are two different programs, for each type of coordinate system: Normalized
     ResetDataRows @[0] {
      desc=;
      flags=;
-     data_var=.projects[0].programs[0].vars[3]$2$;
+     data_var=.projects[0].programs[0].vars[3]$$;
     };
     MethodCall @[1] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[2]$3$;
+     obj=.projects[0].programs[0].vars[2]$$;
      method=taImage::SetImageSize;
      meth_args {
       name=;
@@ -20454,7 +20463,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=int;
        type="int";
        name="width";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="canvas_width";
@@ -20464,7 +20473,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=int;
        type="int";
        name="height";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="canvas_height";
@@ -20476,7 +20485,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taImage::ConfigDataColName;
      meth_args {
       name=;
@@ -20527,13 +20536,13 @@ There are two different programs, for each type of coordinate system: Normalized
     AddNewDataRow @[3] {
      desc=;
      flags=;
-     data_var=$2$;
+     data_var=$.projects[0].programs[0].vars[3]$;
     };
     MethodCall @[4] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::InitCanvas;
      meth_args {
       name=;
@@ -20545,7 +20554,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::EraseRGBA;
      meth_args {
       name=;
@@ -20555,7 +20564,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="r";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -20565,7 +20574,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="g";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -20575,7 +20584,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="b";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -20585,7 +20594,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="a";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -20597,7 +20606,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::PenColorRGBA;
      meth_args {
       name=;
@@ -20607,7 +20616,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="r";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1.0";
@@ -20617,7 +20626,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="g";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="0";
@@ -20627,7 +20636,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="b";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="0";
@@ -20637,7 +20646,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="a";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -20649,7 +20658,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::PenWidth;
      meth_args {
       name=;
@@ -20659,7 +20668,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="width";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".01";
@@ -20671,7 +20680,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::Line;
      meth_args {
       name=;
@@ -20681,7 +20690,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x1";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".24";
@@ -20691,7 +20700,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y1";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".12";
@@ -20701,7 +20710,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x2";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".7";
@@ -20711,7 +20720,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y2";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".25";
@@ -20727,7 +20736,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::FillColorRGBA;
      meth_args {
       name=;
@@ -20737,7 +20746,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="r";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".5";
@@ -20747,7 +20756,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="g";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".5";
@@ -20757,7 +20766,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="b";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".5";
@@ -20767,7 +20776,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="a";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -20779,7 +20788,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::FillRect;
      meth_args {
       name=;
@@ -20789,7 +20798,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="l";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".8";
@@ -20799,7 +20808,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="b";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".8";
@@ -20809,7 +20818,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="r";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".9";
@@ -20819,7 +20828,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="t";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".9";
@@ -20831,7 +20840,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::FillEllipse;
      meth_args {
       name=;
@@ -20841,7 +20850,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".5";
@@ -20851,7 +20860,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".5";
@@ -20861,7 +20870,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="rx";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".1";
@@ -20871,7 +20880,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="ry";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".05";
@@ -20887,7 +20896,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::PenColorName;
      meth_args {
       name=;
@@ -20897,7 +20906,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=const_taString_ref;
        type="const taString&";
        name="name";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"green\"";
@@ -20909,7 +20918,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::NewPath;
      meth_args {
       name=;
@@ -20921,7 +20930,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::MoveTo;
      meth_args {
       name=;
@@ -20931,7 +20940,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".1";
@@ -20941,7 +20950,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".8";
@@ -20953,7 +20962,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::LineTo;
      meth_args {
       name=;
@@ -20963,7 +20972,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".1";
@@ -20973,7 +20982,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".6";
@@ -20985,7 +20994,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::LineTo;
      meth_args {
       name=;
@@ -20995,7 +21004,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".2";
@@ -21005,7 +21014,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".6";
@@ -21017,7 +21026,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::LineTo;
      meth_args {
       name=;
@@ -21027,7 +21036,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".1";
@@ -21037,7 +21046,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".85";
@@ -21049,7 +21058,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::DrawPath;
      meth_args {
       name=;
@@ -21065,7 +21074,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::SetFont;
      meth_args {
       name=;
@@ -21117,7 +21126,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::PenColorName;
      meth_args {
       name=;
@@ -21127,7 +21136,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=const_taString_ref;
        type="const taString&";
        name="name";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"pink\"";
@@ -21139,7 +21148,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taCanvas::TextLeft;
      meth_args {
       name=;
@@ -21149,7 +21158,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=const_taString_ref;
        type="const taString&";
        name="txt";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"Testing!\"";
@@ -21159,7 +21168,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".3";
@@ -21169,7 +21178,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".9";
@@ -21185,7 +21194,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$3$;
+     obj=$.projects[0].programs[0].vars[2]$;
      method=taImage::ImageToDataCellName;
      meth_args {
       name=;
@@ -21195,7 +21204,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=DataTable_ptr;
        type="DataTable*";
        name="dt";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="DataDisplay";
@@ -21205,7 +21214,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=const_taString_ref;
        type="const taString&";
        name="col_nm";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"Canvas\"";
@@ -21215,7 +21224,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=int;
        type="int";
        name="row";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="-1";
@@ -21226,12 +21235,15 @@ There are two different programs, for each type of coordinate system: Normalized
     DoneWritingDataRow @[27] {
      desc=;
      flags=;
-     data_var=$2$;
+     data_var=$.projects[0].programs[0].vars[3]$;
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
   Program @[1] {
    name="CanvasDemo_Pixels";
+   short_nm="Pixels";
    tags=;
    desc="demo of the taCanvas drawing system -- using pixel coordinates";
    flags=;
@@ -21258,6 +21270,9 @@ There are two different programs, for each type of coordinate system: Normalized
        calc_expr {
 	expr=;
        };
+       dim_names {
+	name=;
+	      [3] ;;;       };
        ar {
 	name=;
 	      [256 256 3 1] 1;1;1;1;1;1;1;1;1;1;
@@ -40967,7 +40982,7 @@ There are two different programs, for each type of coordinate system: Normalized
      name="Canvas";
      var_type=T_Object;
      object_type=taCanvas;
-     object_val=.projects[0].programs[1].objs[0]$4$;
+     object_val=.projects[0].programs[1].objs[0]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -40978,7 +40993,7 @@ There are two different programs, for each type of coordinate system: Normalized
      name="DataDisplay";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].programs[1].objs[1]$5$;
+     object_val=.projects[0].programs[1].objs[1]$$;
      objs_ptr=1;
      flags=NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -41008,13 +41023,13 @@ There are two different programs, for each type of coordinate system: Normalized
     ResetDataRows @[0] {
      desc=;
      flags=;
-     data_var=.projects[0].programs[1].vars[3]$6$;
+     data_var=.projects[0].programs[1].vars[3]$$;
     };
     MethodCall @[1] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[1].vars[2]$7$;
+     obj=.projects[0].programs[1].vars[2]$$;
      method=taImage::SetImageSize;
      meth_args {
       name=;
@@ -41024,7 +41039,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=int;
        type="int";
        name="width";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="canvas_width";
@@ -41034,7 +41049,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=int;
        type="int";
        name="height";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="canvas_height";
@@ -41046,7 +41061,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taImage::ConfigDataColName;
      meth_args {
       name=;
@@ -41097,13 +41112,13 @@ There are two different programs, for each type of coordinate system: Normalized
     AddNewDataRow @[3] {
      desc=;
      flags=;
-     data_var=$6$;
+     data_var=$.projects[0].programs[1].vars[3]$;
     };
     MethodCall @[4] {
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::InitCanvas;
      meth_args {
       name=;
@@ -41115,7 +41130,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::EraseRGBA;
      meth_args {
       name=;
@@ -41125,7 +41140,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="r";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -41135,7 +41150,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="g";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -41145,7 +41160,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="b";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -41155,7 +41170,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="a";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -41167,7 +41182,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::PenColorRGBA;
      meth_args {
       name=;
@@ -41177,7 +41192,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="r";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1.0";
@@ -41187,7 +41202,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="g";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="0";
@@ -41197,7 +41212,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="b";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="0";
@@ -41207,7 +41222,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="a";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -41219,7 +41234,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::PenWidth;
      meth_args {
       name=;
@@ -41229,7 +41244,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="width";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="2";
@@ -41241,7 +41256,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::Line;
      meth_args {
       name=;
@@ -41251,7 +41266,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x1";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="24";
@@ -41261,7 +41276,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y1";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="12";
@@ -41271,7 +41286,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x2";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="220";
@@ -41281,7 +41296,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y2";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="25";
@@ -41297,7 +41312,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::FillColorRGBA;
      meth_args {
       name=;
@@ -41307,7 +41322,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="r";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".5";
@@ -41317,7 +41332,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="g";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".5";
@@ -41327,7 +41342,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="b";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr=".5";
@@ -41337,7 +41352,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="a";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="1";
@@ -41349,7 +41364,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::FillRect;
      meth_args {
       name=;
@@ -41359,7 +41374,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="l";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="190";
@@ -41369,7 +41384,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="b";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="190";
@@ -41379,7 +41394,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="r";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="230";
@@ -41389,7 +41404,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="t";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="230";
@@ -41401,7 +41416,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::FillEllipse;
      meth_args {
       name=;
@@ -41411,7 +41426,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="128";
@@ -41421,7 +41436,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="128";
@@ -41431,7 +41446,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="rx";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="16";
@@ -41441,7 +41456,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="ry";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="32";
@@ -41457,7 +41472,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::PenColorName;
      meth_args {
       name=;
@@ -41467,7 +41482,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=const_taString_ref;
        type="const taString&";
        name="name";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"green\"";
@@ -41479,7 +41494,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::NewPath;
      meth_args {
       name=;
@@ -41491,7 +41506,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::MoveTo;
      meth_args {
       name=;
@@ -41501,7 +41516,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="10";
@@ -41511,7 +41526,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="200";
@@ -41523,7 +41538,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::LineTo;
      meth_args {
       name=;
@@ -41533,7 +41548,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="10";
@@ -41543,7 +41558,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="140";
@@ -41555,7 +41570,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::LineTo;
      meth_args {
       name=;
@@ -41565,7 +41580,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="40";
@@ -41575,7 +41590,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="140";
@@ -41587,7 +41602,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::LineTo;
      meth_args {
       name=;
@@ -41597,7 +41612,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="10";
@@ -41607,7 +41622,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="210";
@@ -41619,7 +41634,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::DrawPath;
      meth_args {
       name=;
@@ -41635,7 +41650,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::SetFont;
      meth_args {
       name=;
@@ -41687,7 +41702,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::PenColorName;
      meth_args {
       name=;
@@ -41697,7 +41712,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=const_taString_ref;
        type="const taString&";
        name="name";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"pink\"";
@@ -41709,7 +41724,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taCanvas::TextLeft;
      meth_args {
       name=;
@@ -41719,7 +41734,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=const_taString_ref;
        type="const taString&";
        name="txt";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"Testing!\"";
@@ -41729,7 +41744,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="x";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="70";
@@ -41739,7 +41754,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=float;
        type="float";
        name="y";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="220";
@@ -41755,7 +41770,7 @@ There are two different programs, for each type of coordinate system: Normalized
      desc=;
      flags=;
      result_var=NULL;
-     obj=$7$;
+     obj=$.projects[0].programs[1].vars[2]$;
      method=taImage::ImageToDataCellName;
      meth_args {
       name=;
@@ -41765,7 +41780,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=DataTable_ptr;
        type="DataTable*";
        name="dt";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="DataDisplay";
@@ -41775,7 +41790,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=const_taString_ref;
        type="const taString&";
        name="col_nm";
-       required=0;
+       required=1;
        def_val="\"\"";
        expr {
 	expr="\"Canvas\"";
@@ -41785,7 +41800,7 @@ There are two different programs, for each type of coordinate system: Normalized
        arg_type=int;
        type="int";
        name="row";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="-1";
@@ -41796,9 +41811,11 @@ There are two different programs, for each type of coordinate system: Normalized
     DoneWritingDataRow @[27] {
      desc=;
      flags=;
-     data_var=$6$;
+     data_var=$.projects[0].programs[1].vars[3]$;
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
  };
  viewers {
@@ -41806,8 +41823,8 @@ There are two different programs, for each type of coordinate system: Normalized
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$8$;
    name="Browser";
+   m_data=.projects[0]$$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -41818,8 +41835,8 @@ There are two different programs, for each type of coordinate system: Normalized
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     m_data=NULL;
      name="Application";
+     m_data=NULL;
      visible=0;
      lft=0;
      top=0;
@@ -41831,31 +41848,32 @@ There are two different programs, for each type of coordinate system: Normalized
     el_typ=FrameViewer;
     el_def=0;
     tabBrowseViewer @[0] {
-     m_data=NULL;
      name="Tree";
+     m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$8$;
+     m_root=$.projects[0]$;
     };
     PanelViewer @[1] {
-     m_data=NULL;
      name="Panels";
+     m_data=NULL;
      visible=1;
     };
     T3DataViewer @[2] {
-     m_data=NULL;
      name="T3Frames";
+     m_data=NULL;
      visible=1;
      frames {
       name=;
       el_typ=T3DataViewFrame;
       el_def=0;
       T3DataViewFrame @[0] {
-       m_data=NULL;
        name="DataDisplay_Normalized";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -41863,16 +41881,17 @@ There are two different programs, for each type of coordinate system: Normalized
 	 el_typ=T3DataView;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$1$;
+	  name=;
+	  m_data=$.projects[0].programs[0].objs[1]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].programs[0].objs[1].data[0]$9$;
-	    m_transform=NULL;
 	    name="Canvas";
+	    m_data=.projects[0].programs[0].objs[1].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=256;
 	    scale_on=1;
@@ -41902,7 +41921,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$10$;
+	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -41973,10 +41992,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[1] {
-       m_data=NULL;
        name="DataDisplay_Pixels";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -41984,16 +42004,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataView;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$5$;
+	  name=;
+	  m_data=$.projects[0].programs[1].objs[1]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].programs[1].objs[1].data[0]$11$;
-	    m_transform=NULL;
 	    name="Canvas";
+	    m_data=.projects[0].programs[1].objs[1].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=256;
 	    scale_on=1;
@@ -42023,7 +42044,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$10$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -42101,8 +42122,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     m_data=NULL;
      name="Tools";
+     m_data=NULL;
      visible=1;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;

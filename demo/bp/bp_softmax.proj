@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.0.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 BpProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -614,17 +614,19 @@ BpProject .projects[0] {
 	  };
 	  AssignExpr @[2] { };
 	  MethodCall @[3] { 
-	    ProgArg_List @.meth_args = [3] {
+	    ProgArg_List @.meth_args = [4] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	      ProgArg @[2] { };
+	      ProgArg @[3] { };
 	    };
 	  };
 	  MethodCall @[4] { 
-	    ProgArg_List @.meth_args = [3] {
+	    ProgArg_List @.meth_args = [4] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	      ProgArg @[2] { };
+	      ProgArg @[3] { };
 	    };
 	  };
 	  MethodCall @[5] { 
@@ -1052,6 +1054,7 @@ BpProject .projects[0] {
   el_def=0;
   taDoc @[0] {
    name="ProjectDocs";
+   desc=;
    auto_open=1;
    web_doc=0;
    wiki=;
@@ -1065,7 +1068,7 @@ BpProject .projects[0] {
 
 * go to the [[.PanelTab.ControlPanel]] to set parameters and train the network.
 
-* seems like you can increase the ExpBpUnitSpec gain from 1 to 2 or 3 *after* training has progressed for a hundred epochs or so, but high values at the start of training are not good.  Probably just need to decrease the initial random weight variance or something like that.
+* The '''ExpBpUnitSpec gain''' parameter is key -- should start it out at .1 or even .01, then increase after first few epochs, and then can increase to 1 to 2 or 3 *after* training has progressed for a hundred epochs or so, but high values at the start of training are not good.
 
 </body>
 </html>
@@ -1075,7 +1078,7 @@ BpProject .projects[0] {
 <p>
 </p><ul><li> go to the <a href=\"ta:.PanelTab.ControlPanel\">ControlPanel</a> to set parameters and train the network.
 </li></ul>
-<ul><li> seems like you can increase the ExpBpUnitSpec gain from 1 to 2 or 3 *after* training has progressed for a hundred epochs or so, but high values at the start of training are not good.  Probably just need to decrease the initial random weight variance or something like that.
+<ul><li> The  <b>ExpBpUnitSpec gain</b>  parameter is key -- should start it out at .1 or even .01, then increase after first few epochs, and then can increase to 1 to 2 or 3 *after* training has progressed for a hundred epochs or so, but high values at the start of training are not good.
 </li></ul>
 
 
@@ -1083,6 +1086,7 @@ BpProject .projects[0] {
   };
   taDoc @[1] {
    name="HelpDoc";
+   desc=;
    auto_open=0;
    web_doc=1;
    wiki="emergent";
@@ -1430,6 +1434,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="BpWizard_0";
@@ -1474,20 +1479,47 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     EditMbrItem @[0] {
      label="BpConSpec_0 lrate";
      desc=" learning rate";
-     base=.projects[0].networks[0].specs[1]$0$;
+     cust_desc=0;
+     base=.projects[0].networks[0].specs[1]$$;
      mbr=BpConSpec::lrate;
+     is_numeric=1;
+     param_search {
+      search=0;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
     };
     EditMbrItem @[1] {
      label="ExpBpUnitSpec_0 act range";
      desc=" range of activation for units<br>  min:  minimum value<br>  max:  maximum value";
-     base=.projects[0].networks[0].specs[0].children[0]$1$;
+     cust_desc=0;
+     base=.projects[0].networks[0].specs[0].children[0]$$;
      mbr=UnitSpec::act_range;
+     is_numeric=0;
+     param_search {
+      search=0;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
     };
     EditMbrItem @[2] {
      label="ExpBpUnitSpec_0 sig";
      desc=" sigmoid activation parameters<br>  off:  offset for .5 point<br>  gain:  gain";
-     base=$1$;
+     cust_desc=0;
+     base=$.projects[0].networks[0].specs[0].children[0]$;
      mbr=BpUnitSpec::sig;
+     is_numeric=0;
+     param_search {
+      search=0;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
     };
    };
    mths {
@@ -1498,25 +1530,29 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     EditMthItem @[0] {
      label="Train Init";
      desc=" set the program state back to the beginning";
-     base=.projects[0].programs.gp[0][1]$2$;
+     cust_desc=0;
+     base=.projects[0].programs.gp[0][1]$$;
      mth=Program::Init;
     };
     EditMthItem @[1] {
      label="Train Run";
-     desc=" run the program";
-     base=$2$;
-     mth=Program::Run;
+     desc=" run the program -- if not yet Init, will run Init first";
+     cust_desc=0;
+     base=$.projects[0].programs.gp[0][1]$;
+     mth=Program::Run_Gui;
     };
     EditMthItem @[2] {
      label="Train Step";
-     desc=" step the program, at the previously selected step level (see SetAsStep or the program group control panel)";
-     base=$2$;
-     mth=Program::Step;
+     desc=" step the program at the level of the given program -- if NULL then step_prog default value will be used";
+     cust_desc=0;
+     base=$.projects[0].programs.gp[0][1]$;
+     mth=Program::Step_Gui;
     };
     EditMthItem @[3] {
      label="Train Stop";
      desc=" stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)";
-     base=$2$;
+     cust_desc=0;
+     base=$.projects[0].programs.gp[0][1]$;
      mth=Program::Stop;
     };
    };
@@ -1545,6 +1581,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [4] "Proto_0";"Proto_1";"Proto_2";"Proto_3";      };
@@ -1557,6 +1596,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [2] ;;      };
       ar {
        name=;
 	    [4 4 4] 0;0;0;1;0;1;1;0;0;0;
@@ -1575,6 +1617,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [2] ;;      };
       ar {
        name=;
 	    [4 1 4] 1;0;0;1;0;0;0;0;0;0;
@@ -1601,6 +1646,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [16] "Ex_0_0";"Ex_0_1";"Ex_0_2";"Ex_0_3";"Ex_1_0";"Ex_1_1";"Ex_1_2";"Ex_1_3";"Ex_2_0";"Ex_2_1";
@@ -1614,6 +1662,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [2] ;;      };
       ar {
        name=;
 	    [4 4 16] 0;0;0;0;0;1;1;0;0;0;
@@ -1651,6 +1702,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [2] ;;      };
       ar {
        name=;
 	    [4 1 16] 1;0;0;0;1;0;0;0;1;0;
@@ -1687,6 +1741,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="batch";
@@ -1696,6 +1751,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1708,6 +1766,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="epoch";
@@ -1717,6 +1776,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1729,6 +1791,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="trial";
@@ -1738,6 +1801,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1750,6 +1816,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1762,6 +1831,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1774,6 +1846,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1799,6 +1874,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="batch";
@@ -1808,6 +1884,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1820,6 +1899,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        UserDataItem @[0] {
 	name="NARROW";
 	value 1 0=1;
+	val_type_fixed=0;
        };
       };
       name="epoch";
@@ -1829,6 +1909,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1841,6 +1924,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1853,6 +1939,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1865,6 +1954,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1877,6 +1969,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [0]       };
@@ -1907,6 +2002,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [1000] -5;-4.9899998;-4.9799995;-4.9699993;-4.9599991;-4.9499989;-4.9399986;-4.9299984;-4.9199982;-4.9099979;
@@ -2019,6 +2117,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [1000] 1.3887944e-11;1.460001e-11;1.5348587e-11;1.6135544e-11;1.6962851e-11;1.7832576e-11;1.8746893e-11;1.9708088e-11;2.0718567e-11;2.1780857e-11;
@@ -2143,6 +2244,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_base";
@@ -2155,6 +2257,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_anal";
@@ -2167,6 +2270,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_gen";
@@ -2179,6 +2283,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="image_proc";
@@ -2188,21 +2293,20 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=NULL;
   tags=;
   desc=;
   Program_Group @.gp[0] {
    name="BpAll_Std";
    el_typ=Program;
    el_def=0;
-   step_prog=.projects[0].programs.gp[0][3]$3$;
    tags="Bp, Std, All";
    desc="The full set of programs for training a standard Backpropagation network";
    Program @[0] {
     name="BpBatch";
+    short_nm="Batch";
     tags="Bp, Std";
     desc="Iterate over training runs (a batch of training runs) -- just a simple loop that calls training program";
-    flags=SHOW_STEP;
+    flags=;
     objs {
      name=;
      el_typ=taOBase;
@@ -2221,7 +2325,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=.projects[0].networks[0]$4$;
+      object_val=.projects[0].networks[0]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -2232,7 +2336,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].data.gp[0][0]$5$;
+      object_val=.projects[0].data.gp[0][0]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
@@ -2282,8 +2386,8 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
       flags=;
-      network_var=.projects[0].programs.gp[0][0].args[0]$6$;
-      local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$7$;
+      network_var=.projects[0].programs.gp[0][0].args[0]$$;
+      local_ctr_var=.projects[0].programs.gp[0][0].vars[0]$$;
       counter=Network::batch;
       update_after=0;
      };
@@ -2295,8 +2399,8 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      NetCounterInit @[0] {
       desc="initializes local batch counter and batch field on network";
       flags=;
-      network_var=$6$;
-      local_ctr_var=$7$;
+      network_var=$.projects[0].programs.gp[0][0].args[0]$;
+      local_ctr_var=$.projects[0].programs.gp[0][0].vars[0]$;
       counter=Network::batch;
       update_after=0;
      };
@@ -2310,8 +2414,6 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        ProgramCall @[0] {
 	desc="run the training program -- sets the network and input_data args";
 	flags=;
-	target=$2$;
-	targ_ld_init="*BpTrain*";
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2347,12 +2449,14 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	  };
 	 };
 	};
+	target=$.projects[0].programs.gp[0][1]$;
+	targ_ld_init="*BpTrain*";
        };
        NetCounterIncr @[1] {
 	desc="increment the local batch counter and copy to network";
 	flags=;
-	network_var=$6$;
-	local_ctr_var=$7$;
+	network_var=$.projects[0].programs.gp[0][0].args[0]$;
+	local_ctr_var=$.projects[0].programs.gp[0][0].vars[0]$;
 	counter=Network::batch;
 	update_after=0;
        };
@@ -2362,19 +2466,22 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       };
      };
     };
+    step_prog=NULL;
+    step_n=1;
    };
    Program @[1] {
     name="BpTrain";
+    short_nm="Train";
     tags="Bp, Std";
     desc="A complete training run of a Backpropagation network: iterating over epochs until the network has learned the task";
-    flags=SHOW_STEP;
+    flags=;
     objs {
      name=;
      el_typ=RndSeed;
      el_def=0;
      RndSeed @[0] {
       name="rnd_seed";
-      seed{ -725239770;1720742810;1377341225;1382343371;-357461066;101589870;1418451052;419018760;-432413904;-1982730712;-210931556;-1010072122;-297454651;-60005589;770410198;552515709;-2041270687;-646920160;1636741345;806594675;-1676935053;-1408260694;-1452588194;-438186141;-1246678792;1358175419;-725295236;-37739466;1235330565;-927292495;-1524967592;1548492961;-1948352704;-1817147605;-1155972017;-1331681404;16797186;-1997809425;647916199;1646555914;54478463;-1507211452;-452324152;-139995326;-701450799;591601159;-1698850831;784530958;-1488602698;1389336629;-574168906;1856668828;-964077787;1037875251;336394069;2026705344;1336887901;393712261;1564015539;1074499445;1350610176;-966735198;-2029577533;979752804;-1641120076;-1994300401;823291491;34441298;1602792094;-1835833344;1725897488;-453458180;2107505123;1195083891;-912271548;-315232690;1927887277;1234488617;630675734;-1963136003;940413675;-1989690872;113360964;1278295847;742604882;-835566929;-1573496270;-855292601;1241626668;595115802;-828485732;2120909078;448478575;1103668264;488748427;591463222;-1848104274;-204283331;1694003416;1817683712;-1543803703;-587755652;703566977;1032167500;982837860;1726741981;-1493572554;-920462097;-1653639800;832977375;883305577;909293276;1440866620;-1470987646;568589554;1676561901;-1507063152;50744847;128701281;-1366274372;1749335918;-40178108;1872036221;502854247;566346271;1697459640;1683622779;-1878994527;-1074270001;2118825570;-1882591087;1685034370;-1315039181;61392090;484725896;1191846447;-896787794;-1706550326;-1748435342;-1484369221;1230152841;123712053;1519561847;-1184681699;-1522206517;-1227310882;-59593890;-495099580;293036183;518712104;949956446;2058944173;-235239820;1796062348;976083259;1374963682;-888285141;1312534629;-777118702;-684905388;-68284941;1810952273;-656826318;300772600;-1127958916;-457740709;-1965842082;1079830003;2102606626;1584468088;1136345447;-1062575127;-1508399618;151804185;691832971;163660422;-1618807410;-890843923;-1824769896;-717045899;-536498110;-1420274854;1171978862;1819489666;732706919;1676828764;45927019;-910417934;-806906927;-1758022505;-1152648057;-1832858056;805595042;2057344427;555288276;324216423;-1607711129;1810289566;-156592767;-1981968623;-478175673;283628957;-804041541;615759203;-1661422629;2102204010;1901468677;1074999907;1178030970;2078131032;1870115823;1560697785;1017096300;-2028781711;-676228043;-153460699;-358201898;1405848290;-1932114071;1420783890;1749010523;-1244121505;737163407;-1007429558;-2081266003;1784621804;234866019;-1874863118;1500853908;1602700974;-671380751;-1204333471;1555187447;-1291213321;-1303275629;1430545952;-175442703;126232167;1129006737;-2090473537;1919128449;1941484145;-1603512542;658407571;1987864051;859880303;-790537535;1439211905;-1592444808;-336686309;-411049614;-1691325552;-1398172778;1475178081;1163783390;803916794;-1700707166;-1346784223;1721748945;1658881043;1572847134;-532833728;-340739979;1655303573;-868552596;-2064301100;-655668616;1829582482;-1703922677;844913050;-1248279344;1616382441;1163989400;1491456878;-1394879779;-1364424178;373744592;-1265487323;1301653881;-167438993;-294895436;-128419764;-244138171;1837886905;980697780;175941153;1325151523;-304207479;396836498;594924219;-1302382615;-1387558;-101468479;-515707473;-1068707326;616064140;-94201756;726024396;-2131182170;1595643615;296834242;178275255;58238817;1876161396;-1877234855;-1122283752;1523654772;-32281508;-1388209745;-1512425610;-1427048966;-1099250673;-1313517735;-1283652832;619540388;-538455825;-1414022568;581742783;-2114915431;1135284326;622172387;579587536;-755202990;715558456;2035946844;-410766346;-559309329;2145557347;1362936050;1524575272;-909287817;180246799;-567596233;-544022319;-1929308632;-1989133855;-1586081057;-2045642878;1191847634;-1987232366;1234918180;1209320430;-1131072095;2080859558;534936379;183120544;-2049074566;1096821427;-2069357674;2116097729;393919262;-1218387403;-1781944301;71471382;-1920858864;612410237;1923704501;-1548232087;408514717;-925338536;-1507353521;-2107580214;-839141294;808063584;-2062638772;-1539677389;1819630787;-96506887;396649746;-1452244085;1955018623;41767977;-1499781471;-1789363516;688285588;-503246117;1634338992;374548558;1367516736;189489696;-81733604;-1535714120;1745120;817453535;-212742789;75712985;-1690286817;-987575564;639190007;-1659371272;1372859944;1686710452;-1982272015;2140269928;914283767;-1559339522;-421858824;-1044525932;1316980769;1896470063;532815798;277408351;1208635405;826016335;-300797505;1441742017;-1742358186;-1201925189;-1729049963;1904983596;-1004331429;562041427;1167763291;-989253089;-684342614;1275150156;-562483199;-930151317;-1465882966;214985195;-1605005733;2069744578;-1268662123;1925368890;-3987473;-3142203;752772808;-399010157;997292156;-928848231;-1679595920;396914345;-884270243;-841409593;-656418298;1847636652;-784329483;876211395;1474545061;689815403;-2078684689;1823965498;-2060742399;366990058;-443321842;361756126;-311308204;-54082798;-1706684299;62205876;-1427167290;855545367;728008663;1446815896;-1537775837;1519606476;-1890219607;991483200;1873503242;662002978;1142092342;-761659264;-929214339;-1315556987;-1082930413;970078342;1675232432;-564292440;69741643;-40198548;-170726751;-1640675903;430891719;-523437732;1206598485;1373265407;-513407726;-714270062;2100958739;-1338484487;11956199;1831716612;531903451;-1059739062;-529776207;1572613919;-1572362564;364017885;-1675430375;1849462160;-258116321;898576887;1425860447;-617965565;1797650926;1111852090;-624050121;-1602966923;-1702759963;-1861611242;-2086112552;853670903;448829801;502577508;176138860;-1350169963;-106037619;2093051393;-1104254980;-572000461;-1306707986;-1548773;61864312;322348633;-335264737;317054223;-681164817;50365985;233018891;73602910;237733918;1138148319;-1247865184;-1051811339;-1905488358;1267132805;298698530;-273759111;-294727630;-1132896666;337757062;-476128271;-318813554;-1518804810;232586522;-1621571751;942889983;-1065892684;-1668838067;2101545286;-2141541857;194618510;881847332;1730375763;1381315706;1745914280;-137313585;-516945761;-1731009616;2028738911;1749766716;1885673784;787576485;-1740300734;-466275990;642560408;578054948;54561633;-1900746637;618344388;-714752380;-842306444;965639205;-156644916;111503327;250696752;-1735136986;-367312533;-1667663808;196462147;-1784277591;-1479798350;617229484;2120199705;-225277514;1064645544;192564104;1784911593;1164227530;-746613670;1378364001;-1859773915;-753388887;1448016217;1107327488;226602414;-505567760;-941193686;853401977;92452874;1633024064;-1634943756;-782224034;-921774846;-2116119369;-950498628;1734866607;-1781959941;399548307;1807327830;-58810965;-1880416863;773058217;-1422615544;797502542;1704786723;1329744072;-2019997012;-80505082;-196131750;961059455;1103883646;705080447;1919616896;197460299;-1082677250;2063541460;-281901198;-914232577;-1008299049;702597392;280552893;-1878013185;-1832420032;      };
+      seed{ -2129704368;-1173605285;-381466593;-773427441;984300480;1791513285;1219464026;-766333458;-148016247;948531067;-885076335;173121957;-919006427;2093868043;-527805952;512423486;1313625222;17471572;-1359016650;-719517289;1369504632;1197864914;-2019577515;-2058779030;2076684064;1751630110;320981077;-153319772;-1952350465;-1198031122;-282763462;4395676;1370477484;409016418;-1761013556;-835461271;-252911882;1165497294;-1985833007;2066403686;-1345995573;545918070;-698609480;811838706;1098825126;1309684240;27646435;557740478;-860647898;1491853770;561166409;1826670080;346793881;630784146;1386830800;-307555668;-1471740349;-31112994;913562731;-1483196046;1742444908;-1397105346;-111319830;1798865196;245828609;-312785498;13289307;-1406313942;-1975780852;1625105867;-788593928;-435060658;548131753;-307301642;1723725811;306271429;-1752768763;46251280;-1341315170;1688673499;-430633902;-446941882;1724248459;1294017989;-475673944;948664524;1346360530;-1478958442;-337733444;-272008524;-64333427;-2122034335;-175513237;-1294035355;1092580865;-1047556513;-447322452;1523788396;-67169693;-317218749;-1865123420;880268515;1785297141;-1409069909;99790869;-443697742;184248383;1303566406;993940335;-700034504;1331496117;673394547;2053850063;1983708855;156886080;157109683;1145664275;-49477489;462113714;-1823137871;275860759;-292177524;-1471628059;-266656098;-1934933651;-1013041080;127490325;1539269320;501123789;682588258;-1756040916;701941161;623013169;-1151644198;144068286;581091197;-1155894823;2035949296;-1615581537;-246191748;1339463335;2094155275;-390660992;-387400898;1253082273;251524017;661773927;146988598;-1723428382;-1173852683;502108681;-1138725084;-1504628586;-720150787;795633872;1468836523;880431022;-1096315325;855828803;1406133006;-621765493;-865433015;-1441781292;731777041;740378713;-1085788990;1353476198;1723158602;1670238527;211794975;-1349857307;-1369987634;1222809128;1793077210;-687074027;715593821;646013537;190364150;-750779200;2309282;-372793698;-1578198618;-153656726;-1551694556;-864264522;783498018;1296664356;626532180;802443488;875284765;-1078862289;-531776128;-1951670161;887414978;1474461516;-644387036;1632352807;143181763;1261644725;796889803;-1435464225;-1755431430;2032151458;-159354086;-1342911831;448166212;834616482;-128737607;-2012927438;-722643519;886417500;-1712805601;387333701;-755204338;1391924727;1475760357;-340529460;611516292;-1732742162;-1304229641;-823089531;-2085000773;566867931;-1292452538;-2088890188;-1800929617;-2142433245;955254504;-88284564;112967088;-1872427178;-1407985397;1043952245;-937572846;2033532575;-1361689791;-1084463781;1126145546;1566195269;-2083981885;-1374404843;-245287932;-1604172107;27186726;-2024877070;-1659564379;414656473;1736759956;-965281087;-1401896573;378626527;1976890614;1524487535;-826338461;-631175714;2037749296;-1608811691;-214288044;1678323541;490709287;1936290919;783254339;861054325;1549395248;2071307869;133554005;-1344759149;-1323068096;-625461738;909218902;1078693116;1663895008;1309653973;-897216587;378804704;1600591475;-2083725810;-990115887;1717336304;-640962260;-1686630493;-266185570;-1457625077;-1561666136;-1091604690;287926649;-585670949;1944192087;316128526;-156494425;821382870;131244433;1703368793;118813661;-388989865;1125515851;-2031189414;-1874688543;-249934151;-761750899;-489883342;-1466922366;-1532680786;-301667829;1332125272;514399054;1064731896;-1179439349;1025269953;1564505690;-364747235;1739217165;-1892643084;727977543;34513469;-800872372;1307357031;1007209083;-785336635;561124189;32074225;1012909654;-951630032;983458658;-212162322;564558790;1230359652;201241120;1739548648;-366038730;-1783347149;806991264;867649900;261014761;957571643;2010404246;-206269213;1544199601;-1906087998;905818131;-455760941;-677121435;2033269140;-1756400096;-880816446;-1034363778;-25631829;824097443;-1317675349;2051558154;-1610907723;1737708434;31368543;2096109276;-1560261741;-1266324840;-2132444634;803370393;-663337021;-1454370777;-1304613631;-1907466600;-1547583956;-445077615;1195720710;-507051216;782208909;832641296;979924160;586207537;223134407;-1695131402;1467461048;1514048626;1862006229;-926780901;-2106729232;1664331507;-1398699788;348172425;-297928567;742058479;871904201;-1960705844;75141318;-650177121;-541588466;1444908964;1742076573;617438481;592106043;-1700559410;1035073284;92510749;221271035;1088386706;1889760395;1369495039;1223384260;1592002632;2120570717;1296020701;1408243806;1499297294;-730424193;-470934911;-357693216;-1147142618;-937653812;1370171204;-9605933;253181867;1189847827;582613431;1107523025;-568734545;-1754673796;573080151;1813839093;91906535;-922861369;-766217479;-911267768;213387838;-238470626;-414682086;-1100599161;1038832420;-749595936;-1817055172;947320868;-357094429;1407136016;197621350;-1462219280;-1733606355;-1806168257;-846157370;1162897775;-1423476707;45350131;-771368808;1299605985;1400940315;1424283902;2036536664;200478427;-1781198554;-885520140;-1666663884;-105750768;-1782206654;-1400412668;-651266013;1451132518;-156686486;917684021;-750006606;1096566431;-1048286175;-2079662794;-451536047;-1919571160;1523319649;-1746159952;732059659;611819817;479234048;1439541716;1792671710;-452375599;16534961;888496557;-573562854;1358498999;1527344041;-957586652;644087616;-1546848738;-631892245;-1231998104;-609024845;-604828846;1395184088;-262738559;-1376499665;1362858151;-378345115;50834726;297445351;-305144051;314802289;905258881;-60579630;1981107555;1920924569;568696040;1793528185;-271901110;-296286784;113222371;1878769796;1207772015;1054267997;-97849943;-473579509;1359023394;-1519981622;675352548;1382566641;-1613757778;20126683;-99667353;1521641333;99346118;1811678241;360891044;-113471303;728671592;-1090262001;1715083305;-185536047;-919155740;-1123151058;889462376;-742545131;-253067844;-1912089238;-266085352;1470974904;1928585999;-65203047;-1883927338;617219513;-724351725;-1430269593;1518316529;-84785207;-662212916;1130660038;-654159969;-674765143;586480944;309761551;763378955;-477103496;-1841911895;-1460163686;95620380;1030498865;-241704837;1532217727;-1990922530;-94766347;-1853379784;733911565;-184631731;410703091;-1156509427;-1153055718;-1256245336;1740698179;-1466767300;-1578053463;-1671767893;-2039943710;802339734;228674149;1446340881;935069065;-1897692601;-866364300;-1931344849;-1566393090;-1136955990;-256299641;17210196;-1610138011;739360741;-1107999588;-1144085862;1068597309;1548959575;-48822987;408483478;1026134391;-1904208579;-325051610;1672774885;-1013812159;-1899154856;2136803793;245707104;137944369;1696956327;2124756177;-1843320732;-2005038957;-275546997;982313983;-1948412685;-2118664594;1197076214;69105870;609085858;-1070407353;-411285966;1827597492;-1411169591;-420151432;465477865;-1464783024;1131974590;-1514737728;-1379308560;1725569761;-2003927864;-1031448549;-1553425438;919626187;1964587651;617720247;-1836325215;-1038861378;      };
       mti=624;
      };
     };
@@ -2411,7 +2518,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=$4$;
+      object_val=$.projects[0].networks[0]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -2422,7 +2529,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].data.gp[0][1]$8$;
+      object_val=.projects[0].data.gp[0][1]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -2479,7 +2586,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="rnd_init";
       var_type=T_DynEnum;
       dyn_enum_val {
-       enum_type=.projects[0].programs.gp[0][1].types[0]$9$;
+       enum_type=.projects[0].programs.gp[0][1].types[0]$$;
        value=1;
       };
       objs_ptr=0;
@@ -2502,7 +2609,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="rnd_seed";
       var_type=T_Object;
       object_type=RndSeed;
-      object_val=.projects[0].programs.gp[0][1].objs[0]$10$;
+      object_val=.projects[0].programs.gp[0][1].objs[0]$$;
       objs_ptr=1;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -2513,7 +2620,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="train_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects[0].networks[0].train_time$11$;
+      object_val=.projects[0].networks[0].train_time$$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -2538,7 +2645,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      AssignExpr @[0] {
       desc=;
       flags=;
-      result_var=.projects[0].programs.gp[0][1].args[2]$12$;
+      result_var=.projects[0].programs.gp[0][1].args[2]$$;
       expr {
        expr="false";
       };
@@ -2547,7 +2654,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       desc="check network to make sure it is ready to be run";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][1].args[0]$13$;
+      obj=.projects[0].programs.gp[0][1].args[0]$$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -2568,7 +2675,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      AssignExpr @[2] {
       desc="get our pointer to the network training time object";
       flags=;
-      result_var=.projects[0].programs.gp[0][1].vars[6]$14$;
+      result_var=.projects[0].programs.gp[0][1].vars[6]$$;
       expr {
        expr="network.train_time";
       };
@@ -2587,7 +2694,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	desc="restore previous random seed (all runs produce same results)";
 	flags=;
 	result_var=NULL;
-	obj=.projects[0].programs.gp[0][1].vars[5]$15$;
+	obj=.projects[0].programs.gp[0][1].vars[5]$$;
 	method=RndSeed::OldSeed;
 	meth_args {
 	 name=;
@@ -2604,7 +2711,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	desc="new random numbers each time";
 	flags=;
 	result_var=NULL;
-	obj=$15$;
+	obj=$.projects[0].programs.gp[0][1].vars[5]$;
 	method=RndSeed::NewSeed;
 	meth_args {
 	 name=;
@@ -2628,7 +2735,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=;
 	result_var=NULL;
-	obj=$13$;
+	obj=$.projects[0].programs.gp[0][1].args[0]$;
 	method=Network::Init_Weights;
 	meth_args {
 	 name=;
@@ -2648,7 +2755,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      AssignExpr @[5] {
       desc="always get current epoch counter";
       flags=;
-      result_var=.projects[0].programs.gp[0][1].vars[1]$16$;
+      result_var=.projects[0].programs.gp[0][1].vars[1]$$;
       expr {
        expr="network.epoch";
       };
@@ -2661,7 +2768,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      AssignExpr @[0] {
       desc="get our pointer to the network training time object";
       flags=;
-      result_var=$14$;
+      result_var=$.projects[0].programs.gp[0][1].vars[6]$;
       expr {
        expr="network.train_time";
       };
@@ -2670,7 +2777,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       desc="start timer to keep track of how long it takes to run entire training run";
       flags=;
       result_var=NULL;
-      obj=$14$;
+      obj=$.projects[0].programs.gp[0][1].vars[6]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name=;
@@ -2691,7 +2798,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      MemberAssign @[2] {
       desc="set network's training mode to our local value";
       flags=;
-      obj=$13$;
+      obj=$.projects[0].programs.gp[0][1].args[0]$;
       path="train_mode";
       expr {
        expr="train_mode";
@@ -2712,7 +2819,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	desc="initialize network weights: could also load pre-set weights or something else here";
 	flags=;
 	result_var=NULL;
-	obj=$13$;
+	obj=$.projects[0].programs.gp[0][1].args[0]$;
 	method=Network::Init_Weights;
 	meth_args {
 	 name=;
@@ -2737,7 +2844,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      AssignExpr @[4] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=;
-      result_var=$16$;
+      result_var=$.projects[0].programs.gp[0][1].vars[1]$;
       expr {
        expr="network.epoch";
       };
@@ -2752,8 +2859,6 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        ProgramCall @[0] {
 	desc="run the epoch program (one epoch), passes our network and input_data";
 	flags=;
-	target=.projects[0].programs.gp[0][2]$17$;
-	targ_ld_init="*BpEpoch*";
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -2779,12 +2884,14 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	  };
 	 };
 	};
+	target=.projects[0].programs.gp[0][2]$$;
+	targ_ld_init="*BpEpoch*";
        };
        NetCounterIncr @[1] {
 	desc="increment the epoch counter (locally and on network)";
 	flags=;
-	network_var=$13$;
-	local_ctr_var=$16$;
+	network_var=$.projects[0].programs.gp[0][1].args[0]$;
+	local_ctr_var=$.projects[0].programs.gp[0][1].vars[1]$;
 	counter=Network::epoch;
 	update_after=0;
        };
@@ -2804,7 +2911,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       desc="stop the timer -- time elapsed is now recorded in this object, and can be displayed or recorded to a data table";
       flags=;
       result_var=NULL;
-      obj=$14$;
+      obj=$.projects[0].programs.gp[0][1].vars[6]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name=;
@@ -2813,12 +2920,15 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       };
      };
     };
+    step_prog=NULL;
+    step_n=1;
    };
    Program @[2] {
     name="BpEpoch";
+    short_nm="Epoch";
     tags="Bp, Std";
     desc="iterates over all of the items in a data table and calls BpTrial process on them";
-    flags=SHOW_STEP;
+    flags=;
     objs {
      name=;
      el_typ=taOBase;
@@ -2837,7 +2947,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=$4$;
+      object_val=$.projects[0].networks[0]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -2848,7 +2958,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$8$;
+      object_val=$.projects[0].data.gp[0][1]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -2886,7 +2996,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=.projects[0].data.gp[1][0]$18$;
+      object_val=.projects[0].data.gp[1][0]$$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -2897,7 +3007,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=.projects[0].networks[0].epoch_time$19$;
+      object_val=.projects[0].networks[0].epoch_time$$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -2932,15 +3042,15 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=;
-      network_var=.projects[0].programs.gp[0][2].args[0]$20$;
-      local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$21$;
+      network_var=.projects[0].programs.gp[0][2].args[0]$$;
+      local_ctr_var=.projects[0].programs.gp[0][2].vars[1]$$;
       counter=Network::trial;
       update_after=0;
      };
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
       flags=;
-      result_var=.projects[0].programs.gp[0][2].vars[3]$22$;
+      result_var=.projects[0].programs.gp[0][2].vars[3]$$;
       expr {
        expr="network.epoch_time";
       };
@@ -2953,15 +3063,15 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      NetCounterInit @[0] {
       desc="initialize trial counter (local variable and in the network)";
       flags=;
-      network_var=$20$;
-      local_ctr_var=$21$;
+      network_var=$.projects[0].programs.gp[0][2].args[0]$;
+      local_ctr_var=$.projects[0].programs.gp[0][2].vars[1]$;
       counter=Network::trial;
       update_after=0;
      };
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
       flags=;
-      result_var=$22$;
+      result_var=$.projects[0].programs.gp[0][2].vars[3]$;
       expr {
        expr="network.epoch_time";
       };
@@ -2970,7 +3080,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       desc="start the epoch timer to record computation time per epoch";
       flags=;
       result_var=NULL;
-      obj=$22$;
+      obj=$.projects[0].programs.gp[0][2].vars[3]$;
       method=TimeUsed::StartTimer;
       meth_args {
        name=;
@@ -2992,7 +3102,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][2].vars[2]$23$;
+      obj=.projects[0].programs.gp[0][2].vars[2]$$;
       method=DataTable::ResetData;
       meth_args {
        name=;
@@ -3010,8 +3120,6 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
        ProgramCall @[0] {
 	desc="run the trial program, passing network and input_data";
 	flags=;
-	target=$3$;
-	targ_ld_init="*BpTrial*";
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -3037,6 +3145,8 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	  };
 	 };
 	};
+	target=.projects[0].programs.gp[0][3]$$;
+	targ_ld_init="*BpTrial*";
        };
        IfElse @[1] {
 	desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
@@ -3052,7 +3162,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	  desc="update the weight values based on changes computed by trial program";
 	  flags=;
 	  result_var=NULL;
-	  obj=$20$;
+	  obj=$.projects[0].programs.gp[0][2].args[0]$;
 	  method=Network::Compute_Weights;
 	  meth_args {
 	   name=;
@@ -3068,9 +3178,9 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	};
        };
       };
-      data_var=.projects[0].programs.gp[0][2].args[1]$24$;
-      index_var=.projects[0].programs.gp[0][2].vars[4]$25$;
-      order_var=.projects[0].programs.gp[0][2].vars[0]$26$;
+      data_var=.projects[0].programs.gp[0][2].args[1]$$;
+      index_var=.projects[0].programs.gp[0][2].vars[4]$$;
+      order_var=.projects[0].programs.gp[0][2].vars[0]$$;
       order=PERMUTED;
       item_idx_list{ 6;15;9;10;12;3;14;7;13;8;5;2;4;0;1;11;      };
       update_after=0;
@@ -3091,7 +3201,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	desc="final update of weights based on accumulated changes";
 	flags=;
 	result_var=NULL;
-	obj=$20$;
+	obj=$.projects[0].programs.gp[0][2].args[0]$;
 	method=Network::Compute_Weights;
 	meth_args {
 	 name=;
@@ -3110,7 +3220,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=;
       result_var=NULL;
-      obj=$20$;
+      obj=$.projects[0].programs.gp[0][2].args[0]$;
       method=LeabraNetwork::Compute_EpochStats;
       meth_args {
        name=;
@@ -3122,7 +3232,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       desc="done with the computation in the epoch -- record time it took";
       flags=;
       result_var=NULL;
-      obj=$22$;
+      obj=$.projects[0].programs.gp[0][2].vars[3]$;
       method=TimeUsed::EndTimer;
       meth_args {
        name=;
@@ -3133,8 +3243,6 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
      ProgramCall @[8] {
       desc="run program that records data from network and possibly other sources about the epoch";
       flags=;
-      target=.projects[0].programs.gp[0][6]$27$;
-      targ_ld_init="*BpEpochMonitor*";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -3150,11 +3258,16 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
 	};
        };
       };
+      target=.projects[0].programs.gp[0][6]$$;
+      targ_ld_init="*BpEpochMonitor*";
      };
     };
+    step_prog=NULL;
+    step_n=1;
    };
    Program @[3] {
     name="BpTrial";
+    short_nm="Trial";
     tags="Bp, Std";
     desc="Backpropagation processing of a single input/output event or external information";
     flags=;
@@ -3176,7 +3289,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="network";
       var_type=T_Object;
       object_type=BpNetwork;
-      object_val=$4$;
+      object_val=$.projects[0].networks[0]$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3187,7 +3300,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$8$;
+      object_val=$.projects[0].data.gp[0][1]$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3233,7 +3346,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][3].args[0]$28$;
+      obj=.projects[0].programs.gp[0][3].args[0]$$;
       method=Network::Init_InputData;
       meth_args {
        name=;
@@ -3245,8 +3358,6 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit<
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
       flags=;
-      target=.projects[0].programs.gp[0][4]$29$;
-      targ_ld_init="*ApplyInputs*";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -3272,12 +3383,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
+      target=.projects[0].programs.gp[0][4]$$;
+      targ_ld_init="*ApplyInputs*";
      };
      MethodCall @[2] {
       desc="initializes various counters at start of trial";
       flags=;
       result_var=NULL;
-      obj=$28$;
+      obj=$.projects[0].programs.gp[0][3].args[0]$;
       method=BpNetwork::Trial_Run;
       meth_args {
        name=;
@@ -3289,7 +3402,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc=;
       flags=;
       result_var=NULL;
-      obj=$28$;
+      obj=$.projects[0].programs.gp[0][3].args[0]$;
       method=LeabraNetwork::Compute_TrialStats;
       meth_args {
        name=;
@@ -3300,8 +3413,6 @@ this program can be extended to do arbitrary things to generate data and apply i
      ProgramCall @[4] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
       flags=;
-      target=.projects[0].programs.gp[0][5]$30$;
-      targ_ld_init="*BpTrialMonitor*";
       prog_args {
        name=;
        el_typ=ProgArg;
@@ -3317,28 +3428,33 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
+      target=.projects[0].programs.gp[0][5]$$;
+      targ_ld_init="*BpTrialMonitor*";
      };
      NetUpdateView @[5] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=;
-      network_var=$28$;
-      update_var=.projects[0].programs.gp[0][3].vars[0]$31$;
+      network_var=$.projects[0].programs.gp[0][3].args[0]$;
+      update_var=.projects[0].programs.gp[0][3].vars[0]$$;
      };
     };
+    step_prog=NULL;
+    step_n=1;
    };
    Program @[4] {
     name="ApplyInputs";
+    short_nm="AplyIn";
     tags="Network, InputData, Apply";
     desc="apply the current input data to the network as external input and target values";
-    flags=;
+    flags=NO_STOP_STEP;
     objs {
      name=;
      el_typ=LayerWriter;
      el_def=0;
      LayerWriter @[0] {
       name="LayerWriter_0";
-      data=$8$;
-      network=$4$;
+      data=$.projects[0].data.gp[0][1]$;
+      network=$.projects[0].networks[0]$;
       layer_data {
        name=;
        el_typ=LayerWriterEl;
@@ -3389,7 +3505,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=$4$;
+      object_val=$.projects[0].networks[0]$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3400,7 +3516,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$8$;
+      object_val=$.projects[0].data.gp[0][1]$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3416,7 +3532,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="LayerWriter_0";
       var_type=T_Object;
       object_type=LayerWriter;
-      object_val=.projects[0].programs.gp[0][4].objs[0]$32$;
+      object_val=.projects[0].programs.gp[0][4].objs[0]$$;
       objs_ptr=1;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3442,7 +3558,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][4].vars[0]$33$;
+      obj=.projects[0].programs.gp[0][4].vars[0]$$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name=;
@@ -3452,7 +3568,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=DataBlock_ptr;
 	type="DataBlock*";
 	name="db";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="input_data";
@@ -3462,7 +3578,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=Network_ptr;
 	type="Network*";
 	name="net";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="network";
@@ -3474,7 +3590,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=;
       result_var=NULL;
-      obj=$33$;
+      obj=$.projects[0].programs.gp[0][4].vars[0]$;
       method=taList_impl::CheckConfig;
       meth_args {
        name=;
@@ -3501,7 +3617,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="apply inputs to the network!  layer writer has all the key specs";
       flags=;
       result_var=NULL;
-      obj=$33$;
+      obj=$.projects[0].programs.gp[0][4].vars[0]$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        name=;
@@ -3510,12 +3626,15 @@ this program can be extended to do arbitrary things to generate data and apply i
       };
      };
     };
+    step_prog=NULL;
+    step_n=1;
    };
    Program @[5] {
     name="BpTrialMonitor";
+    short_nm="TrlMon";
     tags="Bp, Std, Monitor";
     desc="monitor trial-level data from the network (and potentially other sources) -- stores results in datatable (TrialOutputData typically) that can be used for graph/grid views and further analysis ";
-    flags=;
+    flags=NO_STOP_STEP;
     objs {
      name=;
      el_typ=NetMonitor;
@@ -3530,7 +3649,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$.projects[0].networks[0]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3562,7 +3681,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$.projects[0].networks[0]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3594,7 +3713,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="trial";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$.projects[0].networks[0]$;
 	variable="trial";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3626,7 +3745,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="trial_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$.projects[0].networks[0]$;
 	variable="trial_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3658,7 +3777,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="group_name";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$.projects[0].networks[0]$;
 	variable="group_name";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3690,7 +3809,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$.projects[0].networks[0]$;
 	variable="sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3719,8 +3838,8 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$4$;
-      data=$18$;
+      network=$.projects[0].networks[0]$;
+      data=$.projects[0].data.gp[1][0]$;
       rmv_orphan_cols=1;
      };
     };
@@ -3737,7 +3856,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$4$;
+      object_val=$.projects[0].networks[0]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3753,7 +3872,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$18$;
+      object_val=$.projects[0].data.gp[1][0]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3764,7 +3883,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="trial_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][5].objs[0]$34$;
+      object_val=.projects[0].programs.gp[0][5].objs[0]$$;
       objs_ptr=1;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -3790,7 +3909,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="set the network and datatable for the NetMonitor";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][5].vars[1]$35$;
+      obj=.projects[0].programs.gp[0][5].vars[1]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name=;
@@ -3800,7 +3919,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=DataTable_ptr;
 	type="DataTable*";
 	name="dt";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="trial_mon_data";
@@ -3810,7 +3929,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=Network_ptr;
 	type="Network*";
 	name="net";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="network";
@@ -3822,7 +3941,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
       flags=;
       result_var=NULL;
-      obj=$35$;
+      obj=$.projects[0].programs.gp[0][5].vars[1]$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -3844,7 +3963,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="update the monitor items and data schema based on current settings of the NetMonitor object";
       flags=;
       result_var=NULL;
-      obj=$35$;
+      obj=$.projects[0].programs.gp[0][5].vars[1]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name=;
@@ -3871,7 +3990,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="add a new blank row to the data";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][5].vars[0]$36$;
+      obj=.projects[0].programs.gp[0][5].vars[0]$$;
       method=DataTable::AddBlankRow;
       meth_args {
        name=;
@@ -3883,7 +4002,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get the new monitor data from the network and other sources -- this does the main work";
       flags=;
       result_var=NULL;
-      obj=$35$;
+      obj=$.projects[0].programs.gp[0][5].vars[1]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name=;
@@ -3895,7 +4014,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="update views and other things after writing new data to monitor data table";
       flags=;
       result_var=NULL;
-      obj=$36$;
+      obj=$.projects[0].programs.gp[0][5].vars[0]$;
       method=DataBlock::WriteClose;
       meth_args {
        name=;
@@ -3907,7 +4026,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][5].args[0]$37$;
+      obj=.projects[0].programs.gp[0][5].args[0]$$;
       method=Network::DMem_ShareTrialData;
       meth_args {
        name=;
@@ -3936,12 +4055,15 @@ this program can be extended to do arbitrary things to generate data and apply i
       };
      };
     };
+    step_prog=NULL;
+    step_n=1;
    };
    Program @[6] {
     name="BpEpochMonitor";
+    short_nm="EpcMon";
     tags="Bp, Std, Monitor";
     desc="monitor epoch-level data from the network to a datatable (EpochOutputData typically) for use in graphing and viewing and further analysis";
-    flags=;
+    flags=NO_STOP_STEP;
     objs {
      name=;
      el_typ=NetMonitor;
@@ -3956,7 +4078,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="batch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$.projects[0].networks[0]$;
 	variable="batch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -3988,7 +4110,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="epoch";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$.projects[0].networks[0]$;
 	variable="epoch";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4020,7 +4142,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="avg_sse";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$.projects[0].networks[0]$;
 	variable="avg_sse";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4052,7 +4174,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="cnt_err";
 	computed=0;
 	object_type=LeabraNetwork;
-	object=$4$;
+	object=$.projects[0].networks[0]$;
 	variable="cnt_err";
 	var_label=;
 	name_style=AUTO_NAME;
@@ -4145,8 +4267,8 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
-      network=$4$;
-      data=.projects[0].data.gp[1][1]$38$;
+      network=$.projects[0].networks[0]$;
+      data=.projects[0].data.gp[1][1]$$;
       rmv_orphan_cols=1;
      };
     };
@@ -4163,7 +4285,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$4$;
+      object_val=$.projects[0].networks[0]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -4179,7 +4301,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_mon_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$38$;
+      object_val=$.projects[0].data.gp[1][1]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -4190,7 +4312,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_netmon";
       var_type=T_Object;
       object_type=NetMonitor;
-      object_val=.projects[0].programs.gp[0][6].objs[0]$39$;
+      object_val=.projects[0].programs.gp[0][6].objs[0]$$;
       objs_ptr=1;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -4201,7 +4323,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="epoch_timer";
       var_type=T_Object;
       object_type=TimeUsed;
-      object_val=$19$;
+      object_val=$.projects[0].networks[0].epoch_time$;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -4226,7 +4348,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      AssignExpr @[0] {
       desc="get the epoch timer from current network";
       flags=;
-      result_var=.projects[0].programs.gp[0][6].vars[2]$40$;
+      result_var=.projects[0].programs.gp[0][6].vars[2]$$;
       expr {
        expr="network.epoch_time";
       };
@@ -4235,7 +4357,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="set data and network on NetMonitor object";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][6].vars[1]$41$;
+      obj=.projects[0].programs.gp[0][6].vars[1]$$;
       method=NetMonitor::SetDataNetwork;
       meth_args {
        name=;
@@ -4245,7 +4367,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=DataTable_ptr;
 	type="DataTable*";
 	name="dt";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="epoch_mon_data";
@@ -4255,7 +4377,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=Network_ptr;
 	type="Network*";
 	name="net";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="network";
@@ -4267,7 +4389,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="check configuration and emit errors/warnings for problems";
       flags=;
       result_var=NULL;
-      obj=$41$;
+      obj=$.projects[0].programs.gp[0][6].vars[1]$;
       method=taBase::CheckConfig;
       meth_args {
        name=;
@@ -4289,7 +4411,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="update the monitor items and data schema based on current settings of NetMonitor";
       flags=;
       result_var=NULL;
-      obj=$41$;
+      obj=$.projects[0].programs.gp[0][6].vars[1]$;
       method=NetMonitor::UpdateMonitors;
       meth_args {
        name=;
@@ -4316,7 +4438,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="add a new blank row to the data";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[0][6].vars[0]$42$;
+      obj=.projects[0].programs.gp[0][6].vars[0]$$;
       method=DataTable::AddBlankRow;
       meth_args {
        name=;
@@ -4328,7 +4450,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="get the new monitor data and stor it into the data table -- this does the main job here";
       flags=;
       result_var=NULL;
-      obj=$41$;
+      obj=$.projects[0].programs.gp[0][6].vars[1]$;
       method=NetMonitor::GetMonVals;
       meth_args {
        name=;
@@ -4339,7 +4461,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      AssignExpr @[2] {
       desc="get the epoch timer from current network";
       flags=;
-      result_var=$40$;
+      result_var=$.projects[0].programs.gp[0][6].vars[2]$;
       expr {
        expr="network.epoch_time";
       };
@@ -4348,7 +4470,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="set the total time to compute the epoch (epoch_time_tot -- wall clock time) to time used data from network timer";
       flags=;
       result_var=NULL;
-      obj=$42$;
+      obj=$.projects[0].programs.gp[0][6].vars[0]$;
       method=DataTable::SetValColName;
       meth_args {
        name=;
@@ -4358,7 +4480,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=const_Variant_ref;
 	type="const Variant&";
 	name="val";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="epoch_timer.used.GetTotSecs()";
@@ -4368,7 +4490,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=const_taString_ref;
 	type="const taString&";
 	name="col_name";
-	required=0;
+	required=1;
 	def_val="\"\"";
 	expr {
 	 expr="\"epoch_time_tot\"";
@@ -4378,10 +4500,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=int;
 	type="int";
 	name="row";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="-1";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=bool;
+	type="bool";
+	name="quiet";
+	required=0;
+	def_val="false";
+	expr {
+	 expr=;
 	};
        };
       };
@@ -4390,7 +4522,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
       flags=;
       result_var=NULL;
-      obj=$42$;
+      obj=$.projects[0].programs.gp[0][6].vars[0]$;
       method=DataTable::SetValColName;
       meth_args {
        name=;
@@ -4400,7 +4532,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=const_Variant_ref;
 	type="const Variant&";
 	name="val";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="epoch_timer.used.GetUsrSecs()";
@@ -4410,7 +4542,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=const_taString_ref;
 	type="const taString&";
 	name="col_name";
-	required=0;
+	required=1;
 	def_val="\"\"";
 	expr {
 	 expr="\"epoch_time_usr\"";
@@ -4420,10 +4552,20 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=int;
 	type="int";
 	name="row";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="-1";
+	};
+       };
+       ProgArg @[3] {
+	arg_type=bool;
+	type="bool";
+	name="quiet";
+	required=0;
+	def_val="false";
+	expr {
+	 expr=;
 	};
        };
       };
@@ -4432,7 +4574,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="update after writing new data to monitor data table";
       flags=;
       result_var=NULL;
-      obj=$42$;
+      obj=$.projects[0].programs.gp[0][6].vars[0]$;
       method=DataBlock::WriteClose;
       meth_args {
        name=;
@@ -4441,12 +4583,15 @@ this program can be extended to do arbitrary things to generate data and apply i
       };
      };
     };
+    step_prog=NULL;
+    step_n=1;
    };
    Program @[7] {
     name="SaveWeights";
+    short_nm="SvWts";
     tags="Network, Weights";
     desc="save network's current weight values to file using WriteWeights function, with file name based on project name + batch + epoch values";
-    flags=;
+    flags=NO_STOP_STEP;
     objs {
      name=;
      el_typ=taOBase;
@@ -4465,7 +4610,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="network";
       var_type=T_Object;
       object_type=Network;
-      object_val=$4$;
+      object_val=$.projects[0].networks[0]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -4567,7 +4712,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      MiscCall @[1] {
       desc="get current batch counter for file name, with leading zeros to length 3";
       flags=;
-      result_var=.projects[0].programs.gp[0][7].vars[4]$43$;
+      result_var=.projects[0].programs.gp[0][7].vars[4]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -4578,7 +4723,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=int;
 	type="int";
 	name="num";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="network.batch";
@@ -4588,7 +4733,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=int;
 	type="int";
 	name="len";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="2";
@@ -4599,7 +4744,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      MiscCall @[2] {
       desc="get current epoch counter with leading zeros to length 4";
       flags=;
-      result_var=.projects[0].programs.gp[0][7].vars[3]$44$;
+      result_var=.projects[0].programs.gp[0][7].vars[3]$$;
       object_type=taMisc;
       method=taMisc::LeadingZeros;
       meth_args {
@@ -4610,7 +4755,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=int;
 	type="int";
 	name="num";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="network.epoch";
@@ -4620,7 +4765,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	arg_type=int;
 	type="int";
 	name="len";
-	required=0;
+	required=1;
 	def_val=;
 	expr {
 	 expr="4";
@@ -4631,7 +4776,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      AssignExpr @[3] {
       desc="string 'tag' to identify the batch, epoch, and other user id info for the weights";
       flags=;
-      result_var=.projects[0].programs.gp[0][7].vars[5]$45$;
+      result_var=.projects[0].programs.gp[0][7].vars[5]$$;
       expr {
        expr="tag + \".\" + batch_str + \"_\" + epoch_str";
       };
@@ -4639,8 +4784,8 @@ this program can be extended to do arbitrary things to generate data and apply i
      MethodCall @[4] {
       desc="get a file name based on the project's current file name, for saving the weights";
       flags=;
-      result_var=.projects[0].programs.gp[0][7].vars[2]$46$;
-      obj=.projects[0].programs.gp[0][7].args[0]$47$;
+      result_var=.projects[0].programs.gp[0][7].vars[2]$$;
+      obj=.projects[0].programs.gp[0][7].args[0]$$;
       method=taBase::GetFileNameFmProject;
       meth_args {
        name=;
@@ -4692,7 +4837,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       desc="save the weights to that file name";
       flags=;
       result_var=NULL;
-      obj=$47$;
+      obj=$.projects[0].programs.gp[0][7].args[0]$;
       method=Network::SaveWeights;
       meth_args {
        name=;
@@ -4721,6 +4866,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       };
      };
     };
+    step_prog=NULL;
+    step_n=1;
    };
   };
  };
@@ -4729,8 +4876,8 @@ this program can be extended to do arbitrary things to generate data and apply i
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$48$;
    name="Browser3";
+   m_data=.projects[0]$$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -4741,8 +4888,8 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     m_data=NULL;
      name="Application";
+     m_data=NULL;
      visible=0;
      lft=0;
      top=0;
@@ -4754,31 +4901,32 @@ this program can be extended to do arbitrary things to generate data and apply i
     el_typ=FrameViewer;
     el_def=0;
     tabBrowseViewer @[0] {
-     m_data=NULL;
      name="Tree";
+     m_data=NULL;
      visible=1;
      root_typ=BpProject;
      root_md=NULL;
-     m_root=$48$;
+     m_root=$.projects[0]$;
     };
     PanelViewer @[1] {
-     m_data=NULL;
      name="Panels";
+     m_data=NULL;
      visible=1;
     };
     T3DataViewer @[2] {
-     m_data=NULL;
      name="T3Frames";
+     m_data=NULL;
      visible=1;
      frames {
       name=;
       el_typ=T3DataViewFrame;
       el_def=0;
       T3DataViewFrame @[0] {
-       m_data=NULL;
        name="SoftMax_Net";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -4786,7 +4934,8 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 NetView @[0] {
-	  m_data=$4$;
+	  name=;
+	  m_data=$.projects[0].networks[0]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  display=1;
@@ -4794,7 +4943,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  net_text=1;
 	  net_text_xform {scale={x=0.6999999: y=0.6999998: z=0.6999998: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0.1074312: y=0.8633766: z=-0.9999952: }: };
 	  net_text_rot=-90;
-	  ordered_uvg_list{ act;	  };
+	  cur_unit_vals{ act;	  };
+	  unit_src_path=".layers[4].units[0]";
+	  hist_idx=0;
+	  hist_save=1;
+	  hist_max=100;
+	  hist_ff=5;
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=4: y=5: z=2.333333: };
@@ -4817,11 +4971,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	   laygp_width=1;
+	   show_laygp=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
 	  wt_line_thr=0.5;
 	  wt_line_swt=0;
+	  wt_prjn_k_un=4;
+	  wt_prjn_k_gp=1;
 	  wt_prjn_lay=NULL;
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
@@ -4832,7 +4989,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=.colorspecs[0]$49$;
+	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -4927,10 +5084,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        };
       };
       T3DataViewFrame @[1] {
-       m_data=NULL;
        name="Standard_Net";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -4938,7 +5096,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 NetView @[0] {
-	  m_data=.projects[0].networks[1]$50$;
+	  name=;
+	  m_data=.projects[0].networks[1]$$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: rot=0.35: }: translate={x=0: y=0: z=0: }: };
 	  display=1;
@@ -4946,7 +5105,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	  net_text=1;
 	  net_text_xform {scale={x=0.7: y=0.6999999: z=0.6999999: }: rotate={x=1: y=0: z=0: rot=1.570796: }: translate={x=0.05201041: y=0.6911638: z=-0.9999974: }: };
 	  net_text_rot=-90;
-	  ordered_uvg_list{ act;	  };
+	  cur_unit_vals{ 	  };
+	  unit_src_path=;
+	  hist_idx=0;
+	  hist_save=1;
+	  hist_max=100;
+	  hist_ff=5;
 	  unit_disp_mode=UDM_BLOCK;
 	  unit_text_disp=UTD_NONE;
 	  max_size {x=4: y=4: z=2.333333: };
@@ -4969,11 +5133,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   lay_trans=0.5;
 	   unit_trans=0.6;
 	   laygp_width=1;
+	   show_laygp=1;
 	  };
 	  wt_line_disp=0;
 	  wt_line_width=4;
 	  wt_line_thr=0.5;
 	  wt_line_swt=0;
+	  wt_prjn_k_un=4;
+	  wt_prjn_k_gp=1;
 	  wt_prjn_lay=NULL;
 	  snap_bord_disp=0;
 	  snap_bord_width=4;
@@ -4984,7 +5151,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$49$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  scale_ranges {
@@ -5055,10 +5222,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
        };
       };
       T3DataViewFrame @[2] {
-       m_data=NULL;
        name="Prototypes";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -5066,16 +5234,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$5$;
+	  name=;
+	  m_data=$.projects[0].data.gp[0][0]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[0][0].data[0]$51$;
-	    m_transform=NULL;
 	    name="Name";
+	    m_data=.projects[0].data.gp[0][0].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=16;
 	    scale_on=1;
@@ -5084,9 +5253,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].data.gp[0][0].data[1]$52$;
-	    m_transform=NULL;
 	    name="Input";
+	    m_data=.projects[0].data.gp[0][0].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=4;
 	    scale_on=1;
@@ -5095,9 +5264,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].data.gp[0][0].data[2]$53$;
-	    m_transform=NULL;
 	    name="Output_SoftMax";
+	    m_data=.projects[0].data.gp[0][0].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=4;
 	    scale_on=1;
@@ -5127,7 +5296,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$49$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -5198,10 +5367,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[3] {
-       m_data=NULL;
        name="Exemplars";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -5209,16 +5379,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GridTableView @[0] {
-	  m_data=$8$;
+	  name=;
+	  m_data=$.projects[0].data.gp[0][1]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @[0] {
-	    m_data=.projects[0].data.gp[0][1].data[0]$54$;
-	    m_transform=NULL;
 	    name="Name";
+	    m_data=.projects[0].data.gp[0][1].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=16;
 	    scale_on=1;
@@ -5227,9 +5398,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[1] {
-	    m_data=.projects[0].data.gp[0][1].data[1]$55$;
-	    m_transform=NULL;
 	    name="Input";
+	    m_data=.projects[0].data.gp[0][1].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=4;
 	    scale_on=1;
@@ -5238,9 +5409,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[2] {
-	    m_data=.projects[0].data.gp[0][1].data[2]$56$;
-	    m_transform=NULL;
 	    name="Output_SoftMax";
+	    m_data=.projects[0].data.gp[0][1].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    text_width=4;
 	    scale_on=1;
@@ -5270,7 +5441,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=1;
 	   zero=0;
-	   spec=$49$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  grid_margin=0.01;
@@ -5341,10 +5512,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[4] {
-       m_data=NULL;
        name="EpochOutputData";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -5352,56 +5524,57 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$38$;
+	  name=;
+	  m_data=$.projects[0].data.gp[1][1]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[1][1].data[0]$57$;
-	    m_transform=NULL;
 	    name="batch";
+	    m_data=.projects[0].data.gp[1][1].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[1][1].data[1]$58$;
-	    m_transform=NULL;
 	    name="epoch";
+	    m_data=.projects[0].data.gp[1][1].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=93: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[1][1].data[2]$59$;
-	    m_transform=NULL;
 	    name="avg_sse";
+	    m_data=.projects[0].data.gp[1][1].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=0: max=0.978264: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[1][1].data[3]$60$;
-	    m_transform=NULL;
 	    name="cnt_err";
+	    m_data=.projects[0].data.gp[1][1].data[3]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[1][1].data[4]$61$;
-	    m_transform=NULL;
 	    name="epoch_time_tot";
+	    m_data=.projects[0].data.gp[1][1].data[4]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[5] {
-	    m_data=.projects[0].data.gp[1][1].data[5]$62$;
-	    m_transform=NULL;
 	    name="epoch_time_usr";
+	    m_data=.projects[0].data.gp[1][1].data[5]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -5426,6 +5599,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -5440,6 +5614,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5454,6 +5629,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -5470,6 +5646,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5486,6 +5663,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5502,6 +5680,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5518,6 +5697,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5534,6 +5714,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5550,6 +5731,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5566,6 +5748,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5587,6 +5770,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5603,6 +5787,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5619,6 +5804,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5635,6 +5821,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5651,6 +5838,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5667,6 +5855,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5683,6 +5872,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5699,6 +5889,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5718,6 +5909,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5738,10 +5930,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$49$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -5825,8 +6018,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     m_data=NULL;
      name="Tools";
+     m_data=NULL;
      visible=1;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
@@ -5847,46 +6040,57 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     UserDataItem @[0] {
      name="sse";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[1] {
      name="output_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[2] {
      name="trial_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[3] {
      name="group_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[4] {
      name="time";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[5] {
      name="cycle";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[6] {
      name="tick";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[7] {
      name="trial";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[8] {
      name="group";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[9] {
      name="epoch";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[10] {
      name="batch";
      value 1 0=1;
+     val_type_fixed=1;
     };
    };
    name="SoftMax_Net";
@@ -5914,7 +6118,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
        act_range {min=0: max=1e+08: range=1e+08: scale=1e-08: };
        bias_con_type=BpCon;
-       bias_spec {type=BpConSpec: spec=$0$: };
+       bias_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1]$: };
        sse_tol=0;
        sig {off=0: gain=1: };
        err_tol=0;
@@ -5931,7 +6135,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
        act_range {min=0: max=1: range=1: scale=1: };
        bias_con_type=BpCon;
-       bias_spec {type=BpConSpec: spec=.projects[0].networks[0].specs[1].children[1]$63$: };
+       bias_spec {type=BpConSpec: spec=.projects[0].networks[0].specs[1].children[1]$$: };
        sse_tol=0;
        sig {off=0: gain=1: };
        err_tol=0;
@@ -5948,7 +6152,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
        act_range {min=-1e+20: max=1e+20: range=2e+20: scale=5e-21: };
        bias_con_type=BpCon;
-       bias_spec {type=BpConSpec: spec=$63$: };
+       bias_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1].children[1]$: };
        sse_tol=0;
        sig {off=0: gain=1: };
        err_tol=0;
@@ -5957,7 +6161,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=BpCon;
-     bias_spec {type=BpConSpec: spec=$0$: };
+     bias_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1]$: };
      sse_tol=0;
      sig {off=0: gain=1: };
      err_tol=0;
@@ -6115,7 +6319,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=BpUnitSpec: spec=.projects[0].networks[0].specs[0]$64$: };
+     unit_spec {type=BpUnitSpec: spec=.projects[0].networks[0].specs[0]$$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -6146,12 +6350,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[0]$65$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$66$: };
+       from=.projects[0].networks[0].layers[0]$$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[0].specs[2]$$: };
        con_type=BpCon;
        recvcons_type=BpRecvCons;
        sendcons_type=BpSendCons;
-       con_spec {type=BpConSpec: spec=$0$: };
+       con_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -6176,7 +6380,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=BpUnitSpec: spec=$64$: };
+     unit_spec {type=BpUnitSpec: spec=$.projects[0].networks[0].specs[0]$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -6207,12 +6411,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Hidden";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[1]$67$;
-       spec {type=FullPrjnSpec: spec=$66$: };
+       from=.projects[0].networks[0].layers[1]$$;
+       spec {type=FullPrjnSpec: spec=$.projects[0].networks[0].specs[2]$: };
        con_type=BpCon;
        recvcons_type=BpRecvCons;
        sendcons_type=BpSendCons;
-       con_spec {type=BpConSpec: spec=$0$: };
+       con_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -6238,7 +6442,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=ExpBpUnitSpec: spec=$1$: };
+     unit_spec {type=ExpBpUnitSpec: spec=$.projects[0].networks[0].specs[0].children[0]$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -6269,12 +6473,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Output_Exp";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[2]$68$;
-       spec {type=FullPrjnSpec: spec=$66$: };
+       from=.projects[0].networks[0].layers[2]$$;
+       spec {type=FullPrjnSpec: spec=$.projects[0].networks[0].specs[2]$: };
        con_type=BpCon;
        recvcons_type=BpRecvCons;
        sendcons_type=BpSendCons;
-       con_spec {type=BpConSpec: spec=.projects[0].networks[0].specs[1].children[0]$69$: };
+       con_spec {type=BpConSpec: spec=.projects[0].networks[0].specs[1].children[0]$$: };
        recv_idx=0;
        send_idx=1;
        recv_n=1;
@@ -6299,7 +6503,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=LinearBpUnitSpec: spec=.projects[0].networks[0].specs[0].children[2]$70$: };
+     unit_spec {type=LinearBpUnitSpec: spec=.projects[0].networks[0].specs[0].children[2]$$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -6330,12 +6534,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Output_Exp";
        from_type=CUSTOM;
-       from=$68$;
-       spec {type=OneToOnePrjnSpec: spec=.projects[0].networks[0].specs[3]$71$: };
+       from=$.projects[0].networks[0].layers[2]$;
+       spec {type=OneToOnePrjnSpec: spec=.projects[0].networks[0].specs[3]$$: };
        con_type=BpCon;
        recvcons_type=BpRecvCons;
        sendcons_type=BpSendCons;
-       con_spec {type=BpConSpec: spec=$69$: };
+       con_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1].children[0]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -6346,12 +6550,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[1] {
        name="Fm_Output_Sum";
        from_type=CUSTOM;
-       from=.projects[0].networks[0].layers[3]$72$;
-       spec {type=FullPrjnSpec: spec=$66$: };
+       from=.projects[0].networks[0].layers[3]$$;
+       spec {type=FullPrjnSpec: spec=$.projects[0].networks[0].specs[2]$: };
        con_type=BpCon;
        recvcons_type=BpRecvCons;
        sendcons_type=BpSendCons;
-       con_spec {type=BpConSpec: spec=$69$: };
+       con_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1].children[0]$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
@@ -6375,7 +6579,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=SoftMaxBpUnitSpec: spec=.projects[0].networks[0].specs[0].children[1]$73$: };
+     unit_spec {type=SoftMaxBpUnitSpec: spec=.projects[0].networks[0].specs[0].children[1]$$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -6455,46 +6659,57 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     UserDataItem @[0] {
      name="sse";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[1] {
      name="output_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[2] {
      name="trial_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[3] {
      name="group_name";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[4] {
      name="time";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[5] {
      name="cycle";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[6] {
      name="tick";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[7] {
      name="trial";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[8] {
      name="group";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[9] {
      name="epoch";
      value 1 0=1;
+     val_type_fixed=1;
     };
     UserDataItem @[10] {
      name="batch";
      value 1 0=1;
+     val_type_fixed=1;
     };
    };
    name="Standard_Net";
@@ -6522,7 +6737,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
        act_range {min=0.01: max=0.99: range=0.98: scale=1.020408: };
        bias_con_type=BpCon;
-       bias_spec {type=BpConSpec: spec=$0$: };
+       bias_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1]$: };
        sse_tol=0;
        sig {off=0: gain=1: };
        err_tol=0;
@@ -6539,7 +6754,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
        act_range {min=0: max=1: range=1: scale=1: };
        bias_con_type=BpCon;
-       bias_spec {type=BpConSpec: spec=$63$: };
+       bias_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1].children[1]$: };
        sse_tol=0;
        sig {off=0: gain=1: };
        err_tol=0;
@@ -6556,7 +6771,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
        act_range {min=-1e+20: max=1e+20: range=2e+20: scale=5e-21: };
        bias_con_type=BpCon;
-       bias_spec {type=BpConSpec: spec=$63$: };
+       bias_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1].children[1]$: };
        sse_tol=0;
        sig {off=0: gain=1: };
        err_tol=0;
@@ -6565,7 +6780,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      act_range {min=0: max=1: range=1: scale=1: };
      bias_con_type=BpCon;
-     bias_spec {type=BpConSpec: spec=$0$: };
+     bias_spec {type=BpConSpec: spec=$.projects[0].networks[0].specs[1]$: };
      sse_tol=0;
      sig {off=0: gain=1: };
      err_tol=0;
@@ -6723,7 +6938,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=BpUnitSpec: spec=.projects[0].networks[1].specs[0]$74$: };
+     unit_spec {type=BpUnitSpec: spec=.projects[0].networks[1].specs[0]$$: };
      ext_flag=EXT;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -6754,12 +6969,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Input";
        from_type=CUSTOM;
-       from=.projects[0].networks[1].layers[0]$75$;
-       spec {type=FullPrjnSpec: spec=.projects[0].networks[1].specs[2]$76$: };
+       from=.projects[0].networks[1].layers[0]$$;
+       spec {type=FullPrjnSpec: spec=.projects[0].networks[1].specs[2]$$: };
        con_type=BpCon;
        recvcons_type=BpRecvCons;
        sendcons_type=BpSendCons;
-       con_spec {type=BpConSpec: spec=.projects[0].networks[1].specs[1]$77$: };
+       con_spec {type=BpConSpec: spec=.projects[0].networks[1].specs[1]$$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -6784,7 +6999,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=BpUnitSpec: spec=$74$: };
+     unit_spec {type=BpUnitSpec: spec=$.projects[0].networks[1].specs[0]$: };
      ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
@@ -6815,12 +7030,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       Projection @[0] {
        name="Fm_Hidden";
        from_type=CUSTOM;
-       from=.projects[0].networks[1].layers[1]$78$;
-       spec {type=FullPrjnSpec: spec=$76$: };
+       from=.projects[0].networks[1].layers[1]$$;
+       spec {type=FullPrjnSpec: spec=$.projects[0].networks[1].specs[2]$: };
        con_type=BpCon;
        recvcons_type=BpRecvCons;
        sendcons_type=BpSendCons;
-       con_spec {type=BpConSpec: spec=$77$: };
+       con_spec {type=BpConSpec: spec=$.projects[0].networks[1].specs[1]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
@@ -6844,7 +7059,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       units_lesioned=0;
       output_name=;
      };
-     unit_spec {type=BpUnitSpec: spec=$74$: };
+     unit_spec {type=BpUnitSpec: spec=$.projects[0].networks[1].specs[0]$: };
      ext_flag=TARG;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {

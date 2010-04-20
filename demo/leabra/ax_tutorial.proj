@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.1.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -129,6 +129,7 @@ LeabraProject .projects[0] {
   el_def=0;
   taDoc @[0] {
    name="ProjectDocs";
+   desc=;
    auto_open=1;
    web_doc=0;
    wiki=;
@@ -218,6 +219,7 @@ In the same directory where you loaded this project is a <code>ax_tutorial_final
   };
   taDoc @[1] {
    name="BuildNet";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -345,6 +347,7 @@ To do this, select the <b>red arrow</b> tool, and you'll see that transparent pu
   };
   taDoc @[2] {
    name="InputData";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -438,6 +441,7 @@ The next step is to create <a href=\"ta:.docs.Programs\">Programs</a> to control
   };
   taDoc @[3] {
    name="Programs";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -485,48 +489,51 @@ The next step is more clearly monitor the performance of the network as it learn
 </body>
 </html>
 ";
-   html_text="<html><head></head><body>
-<p>
-</p><h1> Programs for Controlling the Simulation </h1>
-<p>
+   html_text="<html>
+<head></head>
+<body>
+<P>
+<h1> Programs for Controlling the Simulation </h1>
+<P>
 Again return to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> wizard panel, and now select <a href=\"ta:.wizards.LeabraWizard_0.StdProgs()\">Programs/Std Progs</a> from the bottom menu.  (return to these docs by clicking back on <code>docs/Programs</code> in the browser).
-</p><p>
+<P>
 This created a set of standard programs that organize the presentation of input patterns to the network into a hierarchy of time scales:
-</p><p>
-</p><ul><li> LeabraBatch -- iterates over multiple simulated \"subjects\" -- each having their own different random initial weights (we won't use this initially).
-</li><li> LeabraTrain -- a complete training of the network from random initial weights to final correct performance, by iterating over multiple \"epochs\"
-</li><li> LeabraEpoch -- one full pass through all of the different task input patterns
-</li><li> LeabraTrial -- processes one input pattern, using two  <i>phases</i>  of settling -- the minus phase presents the input stimulus, and allows the network to come up with its own best guess as to the correct response, and the plus phase presents the correct answer to allow the network to learn to perform the task correctly.
-</li><li> LeabraSettle -- multiple updates of neural unit activations to process a given input/output pattern.
-</li><li> LeabraCycle -- a single cycle of updating of neural unit activation states (roughly 5-10msec of simulated real time)
-</li></ul>
+<P>
+<ul><li> LeabraBatch -- iterates over multiple simulated \"subjects\" -- each having their own different random initial weights (we won't use this initially).
+<li> LeabraTrain -- a complete training of the network from random initial weights to final correct performance, by iterating over multiple \"epochs\"
+<li> LeabraEpoch -- one full pass through all of the different task input patterns
+<li> LeabraTrial -- processes one input pattern, using two  <i>phases</i>  of settling -- the minus phase presents the input stimulus, and allows the network to come up with its own best guess as to the correct response, and the plus phase presents the correct answer to allow the network to learn to perform the task correctly.
+<li> LeabraSettle -- multiple updates of neural unit activations to process a given input/output pattern.
+<li> LeabraCycle -- a single cycle of updating of neural unit activation states (roughly 5-10msec of simulated real time)
+</ul>
 There are also some other supporting programs that we'll discuss later.
-<p>
+<P>
 You might notice that the ApplyInputs program is opened up to show the LayerWriter_0 object -- this was auto-configured to apply the input data values to the appropriate (same name) layers in the network.  If you change the layer names or add additional layers, etc, you may need to go back to this object and hit the AutoConfig button to reconfigure it.  We'll do this later in the tutorial.
-</p><p>
-</p><h2> Running the Simulation </h2>
-<p>
+<P>
+<h2> Running the Simulation </h2>
+<P>
 First, make sure you're viewing the <a href=\"ta:.T3Tab.Network_0\">Network_0</a> network view tab, and then click on the 
  <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain\">LeabraTrain</a> program.  Press the 
  <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a> button at the bottom of the window, followed by 
 the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a> button (these links will actually do this for you!).
-</p><p>
+<P>
 You should then see the network processing each of the input patterns for the task multiple times, as it iterates over epochs of trials of settles of cycles of processing.  Depending on your hardware, this may wiz by in quite a blur.
-</p><p>
+<P>
 Once it finishes, you can see more clearly what it is doing by hitting the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Step()\">Step</a> button, 
 which will perform one phase of settling at a time.  You should observe that the network gets the correct output unit active in the minus phase (look for <code>MINUS_PHASE</code> or <code>PLUS_PHASE</code> in the text region at the bottom of the network 3d view display.  It has successfully learned the task!
-</p><p>
+<P>
 We'll learn a lot more about how programs work when we write one from scratch to generate our input data for training the network.  If you're adventurous, you can click on them and hit the EditProgram button to see the underlying \"guts\" that make the programs do what they do.  Everything that happens in running the simulation is explicitly listed out, and can be modified in any way that you might want -- this is very powerful and probably a bit dangerous too.. :)  Don't do anything to modify the programs at this point.
-</p><p>
+<P>
 The next step is more clearly monitor the performance of the network as it learns, by recording 
 <a href=\"ta:.docs.OutputData\">OutputData</a> from the network.
-</p><p>
-
-
-</p></body></html>";
+<P>
+</body>
+</html>
+";
   };
   taDoc @[4] {
    name="OutputData";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -601,75 +608,78 @@ There are many more things one could do, but hopefully this gives a flavor.  The
 </body>
 </html>
 ";
-   html_text="<html><head></head><body>
+   html_text="<html>
+<head></head>
+<body>
 <h1> Monitoring, Analyzing, and Displaying Output Data </h1>
-<p>
+<P>
 In this section we explore various ways of understanding better how the network is performing.
-</p><p>
-</p><h2> Graphing Learning Performance over Epochs </h2>
-<p>
+<P>
+<h2> Graphing Learning Performance over Epochs </h2>
+<P>
 To see how your network is learning a given task, the first step is to generate a graph of the learning performance (sum squared error on the training patterns) over epochs.  Fortunately, the default programs are already collecting this data for us, so we just need to display the graph.
-</p><p>
+<P>
 The data is being recorded in the <a href=\"ta:.data.gp.OutputData.EpochOutputData\">EpochOutputData</a> data table object in the <code>data/OutputData subgroup</code>.  You should see a few rows of data from the previous run, and you should notice that the <code>avg_sse</code> column shows a general decrease in average sum-squared-error on the training patterns, ending in a 0, which is what stopped the training.
-</p><p>
+<P>
 To graph this data, you just generate a graph view of this data table.  As a general rule in the software, all view information is always generated by a given main object like a datatable or a network -- you don't create a graph and then associate data with it -- it goes the other way.  The menu selection to create the graph view is <a href=\"ta:.data.gp.OutputData.EpochOutputData.NewGraphView()\">View/New Graph View</a>.  This time, let's be adventurous and instead of putting this graph in a separate view frame, put it in the <code>Network_0</code> frame.
-</p><p>
+<P>
 If you happened to have put it in the wrong frame initially, don't worry -- just do the context menu over the frame view tab on the right (should be called EpochOutputData), and select Delete Frame.  Note that there can be multiple views of the same underlying data.
-</p><p>
+<P>
 You should see a graph appear in the upper right of your network display, showing a decreasing line from left to right.  By default the line is (redundantly) color coded for the plot value.  You can control this and many other features of the graph display in the graph control panel.
-</p><p>
+<P>
 But wait, where is that panel?  You should only see a <a href=\"ta:.PanelTab.Network_0\">Network_0</a> tab in the middle panel tabs.  If you click on that guy, and look at the bottom, you'll see selectors for the different view objects within this one view frame (Network_0 and EpochOutputData Graph).  Select the graph view tab at the bottom, and again mouse over the various controls and play around with them.  As you can see, there are many different ways of
 configuring the graphs -- feel free to explore.  Note that there are several other variables that you could plot, including average cycles to settle, and a count of the number of errors made across trials. Also see the wiki <a href=\"ta:.Wiki.GraphView\">GraphView</a> page for more details.
-</p><p>
+<P>
 To see your graph updating in real-time, you can re-init and run the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain\">LeabraTrain</a> program:
  <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a> 
 <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a>.
-</p><p>
-</p><h3> Arranging the 3d View </h3>
-<p>
+<P>
+<h3> Arranging the 3d View </h3>
+<P>
 Although the <a href=\"ta:.T3Tab.Network_0\">Network_0</a> view is sufficient, it could be configured to look better.  We could shrink the graph view a bit, and orient it better.  To do this (optional), click on the <b>red arrow</b> button to the right of the view, and then grab the upper horizontal bar of the small purple box in the lower-left hand corner of the graph view display.  Drag this slowly down -- you'll see the green frame rotating as you do.  Do this to the point where graph is angled more \"head on\".  Similarly, you can grab the left vertical bar and rotate the graph to the left a bit to make it more face on.  Next, grab any corner of the box, and shrink the view a bit (maybe to half or so of its original size).  Finally, you can move the view down and to the right a bit, by clicking on the face of the cube (not on any of the purple elements), to fit in between the Hidden and Output layers.
-</p><p>
+<P>
 When you've got it the way you want, you can press the <b>eye</b> button to resize the display to fit, and maybe Dolly zoom in a bit.  You could perhaps pan to the right a bit with shift-mouse.  When it looks good, hit the <b>blueprint house</b> button (\"save home\"), which saves this view configuration.
-</p><p>
-</p><h2> Recording Network Activations for a Grid View </h2>
-<p>
+<P>
+<h2> Recording Network Activations for a Grid View </h2>
+<P>
 Another common analysis task is to look at the pattern of activations across trials.  To do this, we need to record activation values to our trial-level output data table (which was automatically created by the wizard).  The easiest way to do this is to select the network object in the network view by clicking on the thin green frame surrounding the text display at the bottom of the network, and then using the right mouse button to get the context menu, and select <a href=\"ta:.networks[0].MonitorVar()\">MonitorVar</a>.  For the <code>net_mon</code> field, click and select the <code>trial_netmon</code>, which is for monitoring information at the trial level (the other one is for the epoch level).  For the <code>variable</code> field, type in \"act_m\" (no quotes), to record minus-phase activations (the monitor runs at the end of the trial, after the plus phase).  This will record activations for all three layers in the network in one easy step (you could alternatively do MonitorVar on each of the layers individually, or on any other object in the network for that matter, and record any variable).
-</p><p>
+<P>
 Next, we need to make a Grid View of the resulting data, which will be recorded in the <a href=\"ta:.data.gp.OutputData.TrialOutputData\">TrialOutputData</a> object -- do a 
 <a href=\"ta:.data.gp.OutputData.TrialOutputData.NewGridView()\">View/New Grid View</a>, and again let's put this in the Network_0 frame.  Follow the same general steps as before (see Arranging the 3d View above) to position this new grid view into the bottom right hand region of the view.
-</p><p>
+<P>
 The grid view will not contain the new information until the  <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain\">LeabraTrain</a> program is <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a> and <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a> again.  After doing that, you need to scroll the grid view display all the way over to the right -- there are too many columns to fit within the 5 columns that the standard grid view is configured to display.  To do this, select the <b>red arrow</b> tool and drag the purple bar at the bottom of the <code>TrialOutputData</code> gridview all the way to the right.  You should see some colored squares with the Input, Hidden, and Output column headers.
-</p><p>
+<P>
 To really make things clean, you can select the column headers of the columns you don't want to display (e.g., ext_rew, minus cycles) and do context menu/View Properties and then hit the Hide button at the bottom of the dialog that comes up.  Ideally, you'd just want to see the trial name, sse, and the different layer activation columns.
-</p><p>
+<P>
 Also, because there are just 6 events, we can set the rows to display to 6 in the grid view panel, to make the display fit just right.
-</p><p>
+<P>
 Again, you can run your program and see it update the display.
-</p><p>
-</p><h2> Analyzing the Hidden Layer Representations </h2>
-<p>
+<P>
+<h2> Analyzing the Hidden Layer Representations </h2>
+<P>
 Now that we have some data from the network, we can perform some powerful analysis techniques on that data. 
-</p><p>
+<P>
 First, we can make a cluster plot of the Hidden Layer activations, to see if we can understand better what is being encoded.  To do this, find the <a href=\"ta:.data_proc.data_anal\">data_anal</a> object under <code>data_proc/data_anal</code> in the left browser.  This contains many useful analysis tools, organized by different topics in the buttons at the bottom.  Select
  <a href=\"ta:.data_proc.data_anal.Cluster()\">HighDim/Cluster</a>, and set the following parameters (leave the rest at their defaults):
-</p><ul><li> view = on (generate a graph of the cluster data)
-</li><li> src_data = TrialOutputData
-</li><li> data_col_nm = Hidden_act_m   (specifies the column of data that we want to cluster)
-</li><li> name_col_name = trial_name (specifies the column with labels for the cluster nodes)
-</li></ul>
+<ul><li> view = on (generate a graph of the cluster data)
+<li> src_data = TrialOutputData
+<li> data_col_nm = Hidden_act_m   (specifies the column of data that we want to cluster)
+<li> name_col_name = trial_name (specifies the column with labels for the cluster nodes)
+</ul>
 You should see a new graph show up, with the A,B,C,X,Y,Z labels grouped together into different clusters.  Most likely, you should observe in a trained network that the A and X are grouped together, separate from the other items.  Can you figure out why this would be the case?
-<p>
+<P>
 Another way to process this high-dimensional activation pattern data is to project it down into 2 dimensions.  Two techniques for this are principal components analysis (PCA) and multidimensiona scaling (MDS).  To try PCA, select
 <a href=\"ta:.data_proc.data_anal.PCA2dPrjn()\">HighDim/PCA2dPrjn</a> -- fill in the same info you did for the Cluster plot.  You should see that the labels are distributed as points in a two-dimensional space, with the X-axis being the dimension (principal component) of the hidden layer activation patterns that captures the greatest amount of variance across patterns, and the Y-axis being the second strongest component.  Accordingly, you should see A and X on the left or the right side of the graph, and the others on the other side.  It is not clear what the vertical axis represents..
-</p><p>
+<P>
 There are many more things one could do, but hopefully this gives a flavor.  The next step: <a href=\"ta:.docs.TaskProgram\">TaskProgram</a> is to write a program to automatically generate our input patterns for training the network -- initially we'll start out with the simple task we ran already, but then we'll progressively expand to more complex tasks.  
-</p><p>
-
-
-</p></body></html>";
+<P>
+</body>
+</html>
+";
   };
   taDoc @[5] {
    name="TaskProgram";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -818,149 +828,152 @@ You have now done a little bit of each of the critical main elements of simulati
 </body>
 </html>
 ";
-   html_text="<html><head></head><body>
+   html_text="<html>
+<head></head>
+<body>
 <h1> Programming the Task Environment </h1>
-<p>
+<P>
 The goal here is to write a Program that will automatically generate a set of input/output patterns to train the network.  Because the task is so easy (at least to start), this will not represent a savings in time, but will hopefully generate understanding of how Programs work, and will also provide a basis for making more complex programs.
-</p><p>
+<P>
 The major steps involved are:
-</p><ol><li> Create the new Program object
-</li><li> Initialize \"enums\" based on unit names -- allows us to refer to units by name (an enum is geek-speak for an enumerated set of labeled values -- more later).
-</li><li> Iterate over the input units and generate the appropriate output response.
-</li><li> Write the appropriate information into the input data table.
-</li></ol>
+<ol><li> Create the new Program object
+<li> Initialize \"enums\" based on unit names -- allows us to refer to units by name (an enum is geek-speak for an enumerated set of labeled values -- more later).
+<li> Iterate over the input units and generate the appropriate output response.
+<li> Write the appropriate information into the input data table.
+</ol>
 <h2>  Create the Program </h2>
-<p>
+<P>
 In the context menu (right mouse or ctrl+mouse on mac) on the <code>programs</code> item in the left browser, select <a href=\"ta:.programs.New_gui()\">New</a> -- default parameters are fine, so then hit OK.
 This should have created a <a href=\"ta:.programs.Program_11\">Program_11</a> program, which you should now click on, and change the name to: <code>AXTaskGen</code> (the rest of the links here will assume this name, so do enter exactly that name).
-</p><p>
+<P>
 It is good to get in the habit of entering descriptions of various objects in your simluation, especially programs, so enter something like \"generates the simple A-X target detection task\" in the <code>desc</code> field.
-</p><p>
+<P>
 Note that there are three sub-tabs or sub-panels for a Program: 
-</p><p>
-</p><ul><li> <code>Program Ctrl</code>: For the \"end user\" to control the running and key parameters of the program
-</li><li> <code>Edit Program</code>: For writing the program.
-</li><li> <code>Properties</code>: For setting overall parameters of the program object, including <code>tags</code> which help people find this program if it is uploaded to a common repository, and <code>flags</code> that determine various advanced properties.
-</li></ul>
+<P>
+<ul><li> <code>Program Ctrl</code>: For the \"end user\" to control the running and key parameters of the program
+<li> <code>Edit Program</code>: For writing the program.
+<li> <code>Properties</code>: For setting overall parameters of the program object, including <code>tags</code> which help people find this program if it is uploaded to a common repository, and <code>flags</code> that determine various advanced properties.
+</ul>
 Select <code>Edit Program</code> and we can get started doing that!
-<p>
-</p><h2> Overview of Programing Process </h2>
-<p>
+<P>
+<h2> Overview of Programing Process </h2>
+<P>
 Programming in this system mostly consists of dragging program elements from the toolbar at the very left edge of the display into your program, and then configuring their properties (drag-and-drop and duplicate are also very handy here).
-</p><p>
+<P>
 The Program object has several different locations for different types of program elements:
-</p><ul><li> objs -- place to put misc objects that contain local data for the program (e.g., a local DataTable that might hold some intermediate processing data for the program).
-</li><li> types -- special user-defined types that define properties of corresponding variables (e.g., the enums we'll be using).
-</li><li> args -- (short for arguments) this is where you put variables that other programs will set when they run  this program.
-</li><li> vars -- place for other non-argument variables that are used in the program.
-</li><li> functions -- you can define subroutines (functions) that can be called within a program to perform a given task that needs to be done repeatedly.  These functions are only accessible from <i>within</i> this given program.
-</li><li> init_code -- actions to be performed when the user presses the Init button -- to initialize the program and other objects that it operates on (e.g., initializing the network weights, as the LeabraTrain process does).
-</li><li> prog_code -- finally, this is where the main code for your program goes!  because it can depend on any of the preceding elements, it logically comes last (and it is typically the largest).
-</li></ul>
+<ul><li> objs -- place to put misc objects that contain local data for the program (e.g., a local DataTable that might hold some intermediate processing data for the program).
+<li> types -- special user-defined types that define properties of corresponding variables (e.g., the enums we'll be using).
+<li> args -- (short for arguments) this is where you put variables that other programs will set when they run  this program.
+<li> vars -- place for other non-argument variables that are used in the program.
+<li> functions -- you can define subroutines (functions) that can be called within a program to perform a given task that needs to be done repeatedly.  These functions are only accessible from <i>within</i> this given program.
+<li> init_code -- actions to be performed when the user presses the Init button -- to initialize the program and other objects that it operates on (e.g., initializing the network weights, as the LeabraTrain process does).
+<li> prog_code -- finally, this is where the main code for your program goes!  because it can depend on any of the preceding elements, it logically comes last (and it is typically the largest).
+</ul>
 In the Toolbox, the program elements are organized into various sub-categories (Network, Ctrl, Var/Fun, etc).  Take a look through these categories and use the mouse-over to see what kinds of things are available.
-<p>
-</p><h2> Initialize Unit Names and Enums </h2>
-<p>
+<P>
+<h2> Initialize Unit Names and Enums </h2>
+<P>
 To begin your program, locate the Network category, and drag (click and hold and move the mouse) the <code>init nm units</code> element into the <code>init_code</code> section of your program.
-</p><p>
+<P>
 This Init nm units is a very powerful program element, which does a lot of configuration when it is first dropped into place.  You'll see various things being created in your project, and you should get an error message indicating that it could not find the input_data table.  Just hit OK to the error message, and let's take stock of what just happened (and fix the error).
-</p><p>
+<P>
 You should see that a variable named <code>input_data</code> was created in the <code>args</code> section, and <code>unit_names</code> was created in the <code>vars</code> section.  These are both \"pointer\" variables that provide a local \"handle\" within the program to refer to objects that actually live outside of the program, in the <code>data</code> section of the overall project.
-</p><p>
+<P>
 Click on the <a href=\"ta:.programs.AXTaskGen.args.input_data\">input_data</a> object, and take some time to mouse over the various fields and read the tooltips.  We want to set the <code>object_val</code> field to point to our StdInputData data table -- click on it and select it.
-</p><p>
+<P>
 Now go down to the  <a href=\"ta:.programs.AXTaskGen.vars.unit_names\">unit_names</a> object, and note that it is already set to point to the UnitNames data table, which was automatically created in the <code>data/InputData subgroup</code> section of the project.  This new datatable will contain a single row of data, with labels for each of the units in the StdInputData data table.  However, right now it is empty, because we hadn't set the input_data variable yet.
-</p><p>
-</p><h3> Entering UnitNames </h3>
-<p>
+<P>
+<h3> Entering UnitNames </h3>
+<P>
 Now that we have set input_data, we can go back to the InitNamedUnits guy in the init_code, and hit the <a href=\"ta:.programs.AXTaskGen.init_code[0].InitNamesTable()\">Init Names Table</a> button.  This will pull up an informational dialog -- hit OK.
 Now go back up to the <a href=\"ta:.data.gp.InputData.UnitNames\">UnitNames</a> data table, and you should see two columns: Input and Output, with a single row of data.  Click on the Input matrix and enter text labels for each of the units, as follows:
-</p><p>
+<P>
 <table>
-<tbody><tr><td>X</td><td>Y</td><td>Z</td></tr>
+<tr><td>X</td><td>Y</td><td>Z</td></tr>
 <tr><td>A</td><td>B</td><td>C</td></tr>
-</tbody></table>
-</p><p>
+</table>
+<P>
 For the Output matrix, you can enter N and T (for non-target and target, respectively).
-</p><p>
-</p><h3> View Data Legend </h3>
-<p>
+<P>
+<h3> View Data Legend </h3>
+<P>
 Next, go back to the <a href=\"ta:.programs.AXTaskGen.init_code[0]\">InitNamedUnits</a> object, and select
 <a href=\"ta:.programs.AXTaskGen.init_code[0].ViewDataLegend()\">View Data Legend</a> -- this will configure a new view frame with the input data patterns, plus a legend from the UnitNames table showing what each of the unit names are.  These same names can also be applied directly to the network to label the units -- we'll do that later.  You might want to remove your other view frame for StdInputData (without the legend) -- do context menu and select Delete Frame.
-</p><p>
-</p><h3> Creating Enums </h3>
-<p>
+<P>
+<h3> Creating Enums </h3>
+<P>
 Next, we'll create those enums mentioned previously.  Click on <a href=\"ta:.programs.AXTaskGen.init_code[0].InitDynEnums()\">Init Dyn Enums</a>.  You will see two new entries in the <code>types</code> section of your program -- Input and Output.
-</p><p>
+<P>
 Under the Input type, you should see 6 items with names like I_A, I_B, etc., plus a final NInputs that indicates the total number of input units.  Under the Output type, you see O_N and O_T (plus NOutputs).  The first letter is taken from the first letter of the layer (I = Input, O = Output), and the remainder after the underbar is the name entered in the UnitNames table.
-</p><p>
+<P>
 The purpose of these enum types is to allow you to use a symbol to refer to a unit. If you want to activate the X input unit, you can use the I_X enum value to do that.  It represents the <i>index</i> of the X unit within the input layer -- when you click on I_X, you can see that it has a value of 3.  enums have both numeric and symbolic (name-like) properties, and can be converted to and from names and numbers.  You'll understand more about why they are so useful as we go along.
-</p><p>
+<P>
 We are done with the unit names for now, and can move on to writing our program.
-</p><p>
-</p><h2> Iterating over the Inputs </h2>
-<p>
+<P>
+<h2> Iterating over the Inputs </h2>
+<P>
 The core of our program will be to <i>loop</i> or <i>iterate</i> over each of the possible input units, and then generate an appropriate output for each.  We can use a <b>for loop</b> for this purpose.
-</p><p>
+<P>
 In the left Toolbox, click on the <code>Ctrl</code> category (for \"control\"), and drag the <code>for</code> element into your program code (<code>prog_code</code>).
-</p><p>
+<P>
 You should now see a set of 3 main fields for the for loop object: <code>init, test, iter</code> -- the default values produce a loop that goes from 0 to 9:
-</p><ul><li> Init is for initializing your looping variable (<code>i = 0</code>), where i is the integer variable that keeps track of where we are in the loop -- it was automatically created by the for loop element. 
-</li><li> Test is for testing when to terminate the loop (<code>i &lt; 10</code>) -- as long as the i variable remains less than 10, we continue looping.
-</li><li> iter is what to do on each iteration prior to the test (<code>i++</code>) -- i.e., increment the loop variable.  
-</li></ul>
+<ul><li> Init is for initializing your looping variable (<code>i = 0</code>), where i is the integer variable that keeps track of where we are in the loop -- it was automatically created by the for loop element. 
+<li> Test is for testing when to terminate the loop (<code>i &lt; 10</code>) -- as long as the i variable remains less than 10, we continue looping.
+<li> iter is what to do on each iteration prior to the test (<code>i++</code>) -- i.e., increment the loop variable.  
+</ul>
 To see this in action, let's drag the <code>print_var</code> guy from the <code>Print..</code> category of program elements into our <code>loop_code</code> of the for loop.  This is where we put the program elements (\"code\") that we want to run during each iteration of the loop.  Select the <code>i</code> variable for the <code>print_var</code> field.  
-<p>
+<P>
 Now we can <a href=\"ta:.programs.AXTaskGen.Init()\">Init</a> 
 and <a href=\"ta:.programs.AXTaskGen.Run()\">Run</a> our simple program.  You should see a sequence of \"i=0, i=1...i=9\" in the console window (typically located below the main project window).  It is a very good idea to keep that window visible during programming, as various informative messages may show up there.
-</p><p>
-Although perhaps fascinating for new programmers, this for loop is not exactly what we want.  We want to iterate over the input units, not just over the numbers from 0-9.  To do that, we need to click on the <a href=\"ta:.programs.AXTaskGen.vars.i\">i</a> variable in the <code>vars</code> section of the program.  Change the <code>var_type</code> to DynEnum instead of Int.  Then, click on the enum_type field and select the Input type (which is what we created earlier).  You can also change the name of this variable to something more expressive, like <code>input_unit</code>.  Note that when you apply this name change, the for loop code automatically updates to use this new name, as does the print var guy.
-</p><p>
+<P>
+Although perhaps fascinating for new programmers, this for loop is not exactly what we want.  We want to iterate over the input units, not just over the numbers from 0-9.  To do that, we need to click on the <a href=\"ta:.programs.AXTaskGen.vars.i\">i</a> variable in the <code>vars</code> section of the program.  Change the <code>var_type</code> to DynEnum instead of Int.  Then, click on the </code>enum_type</code> field and select the Input type (which is what we created earlier).  You can also change the name of this variable to something more expressive, like <code>input_unit</code>.  Note that when you apply this name change, the for loop code automatically updates to use this new name, as does the print var guy.
+<P>
 Let's go back to that <a href=\"ta:.programs.AXTaskGen.prog_code[0]\">for</a> loop guy, and change the <code>test</code> field to: <code>input_unit &lt;= I_Z</code>.  Note how you can just type in I_Z and this is automatically treated as a number -- this is what enums do. 
 <a href=\"ta:.programs.AXTaskGen.Init()\">Init</a> 
 and <a href=\"ta:.programs.AXTaskGen.Run()\">Run</a> that.  Everything should be fine, up until the very end, when it tries to go beyond the I_Z case -- this will generate an error message (as it should -- one of the many advantages of using enums is that they provide built-in error-checking like this).
-</p><p>
+<P>
 To get around this issue, we need to add a test inside of our loop that bails out when we get to I_Z, so that final ++ increment does not occur.  In the <code>Ctrl</code> elements, there is an <code>if.break</code> guy that does just this -- drag it into the loop_code so it appears at the end (note that you need to drop it on the loop_code guy itself to put it at the end, or go just after the print var and you'll see a thin horizontal line -- dropping there should work too).  In the <code>cond</code> field, enter <code>input_unit == I_Z</code> (note that you can do this without much typing by selecting lookup_var and lookup_enum to choose those guys off of a list).  This will break the loop at the last item (I_Z).
 <a href=\"ta:.programs.AXTaskGen.Init()\">Init</a> 
 and <a href=\"ta:.programs.AXTaskGen.Run()\">Run</a> to confirm.
-</p><p>
-</p><h3> Generating the Correct Output </h3>
-<p>
+<P>
+<h3> Generating the Correct Output </h3>
+<P>
 Next, we need to generate the correct output for each input.  To do this, we first need to create a variable to hold the output value.  Goto <code>Var/Fun</code> in the toolbox, and drag the first <code>Var</code> item into your program <code>vars</code> (select \"Copy Here\", not \"Add Var To\", when you drop -- we'll explain later).  Set the name to <code>output_unit</code> and change the type to DynEnum with enum_type selected as Output.
-</p><p>
+<P>
 Now we just need to set this variable inside our for loop code, depending on the value of the input_unit variable.  The Ctrl/if.else guy will do this for us -- drag it into the loop_code and drop on top of the PrintVar (it will become the first element in the program).  In the <code>cond</code> condition expression, enter: <code>input_unit == I_A || input_unit == I_X</code> (again note that you can use the var and enum lookup to save some typing and make sure you've spelled them correctly).  The == is the logical test for equality, and the || is the logical OR operator (this is standard C++ syntax -- any valid C++ expression can be entered here).  This is the condition for a target.
-</p><p>
+<P>
 We need to assign our output_unit variable to the target value when this \"if condition\" is true, and to the non-target case otherwise.  To assign a variable value, drag <code>var=</code> from the Var/Fun category to the true_code section of your if guy.  For the <code>result_var</code>, select output_unit, and for the <code>expr</code> expression, enter O_T (or choose from the enum_lookup).  This sets output_unit to O_T (target).  As a timesaver, drag this AssignExpr guy from true_code into false_code -- then you can just change O_T to O_N very quickly.
-</p><p>
+<P>
 Finally, go to your PrintVar and select output_unit for print_var1 (or print_var2 if that is easier to see).  <a href=\"ta:.programs.AXTaskGen.Init()\">Init</a> 
 and <a href=\"ta:.programs.AXTaskGen.Run()\">Run</a>, and you should see the correct values for input_unit and output_unit being displayed in your console! 
-</p><p>
-</p><h2> Writing the Data to the Input Data Table </h2>
-<p>
+<P>
+<h2> Writing the Data to the Input Data Table </h2>
+<P>
 Now that you have all the key logic of your task, you just need to write the results to the input data table.  There are three main steps for this:
-</p><p>
-</p><ol><li> Erase any existing data at the start
-</li><li> In the for loop, add a new row, and write the data for each input/output pattern
-</li><li> Tell the system that we're done writing to each row so it can update the view
-</li></ol>
+<P>
+<ol><li> Erase any existing data at the start
+<li> In the for loop, add a new row, and write the data for each input/output pattern
+<li> Tell the system that we're done writing to each row so it can update the view
+</ol>
 The first step is achieved by dragging a <code>reset_rows</code> guy from the Data toolbox to the first line of the program code (drop right on top of the for loop).  Then select the input_data variable for the data_var.
-<p>
+<P>
 Next, drag the <code>new_row</code> guy into the loop_code, right before the final IfBreak guy (drop on top of it).  Again select input_data as the data_var.  This will add a new blank row to the data table.  Then, drag <code>set units var</code> from the Network toolbox into the loop_code, again on top of IfBreak.  This is a magic little program element that uses the name of the DynEnum type of a variable, plus its value, to determine which unit to activate in the input data table.  All you have to do is select input_unit for unit1, and output_unit for unit2, and you're done -- it automatically located the input_data datatable (based on its name).  Note that you want to make sure you don't put one of the vars as the offset variable, which allows you to have for example multiple slots of the same units repeated in an input layer -- the offset determines which slot to put things in.
-</p><p>
+<P>
 Finally, go back to the Data toolbox, and drag the row_done guy on top of IfBreak -- this just lets the system know that you're done writing to the current row of data, and that it can update any relevant displays.
-</p><p>
+<P>
 Congratulations -- you're done!!!  Select the <a href=\"ta:.T3Tab.StdInputData\">StdInputData</a> tab in the 3d view area, and then do
 <a href=\"ta:.programs.AXTaskGen.Init()\">Init</a> 
 and <a href=\"ta:.programs.AXTaskGen.Run()\">Run</a> -- you should see the display update with the correct patterns freshly generated by your program!
-</p><p>
+<P>
 You have now done a little bit of each of the critical main elements of simulating using this system.  The next few steps in the tutorial take this simple starting point and go all the way to a more scientifically interesting model of an actual psychological task: the CPT-AX task: <a href=\"ta:.docs.CPTAX_Program\">CPTAX_Program</a>.
-</p><p>
-
-
-</p></body></html>";
+<P>
+</body>
+</html>
+";
   };
   taDoc @[6] {
    name="CPTAX_Program";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -1074,114 +1087,117 @@ In the next and final segment, we give this network some working memory, and see
 </body>
 </html>
 ";
-   html_text="<html><head></head><body>
+   html_text="<html>
+<head></head>
+<body>
 <h1> CPT-AX Program </h1>
-<p>
+<P>
 The next challenge is to write a program that will generate the CPT-AX task (CPT stands for continuous performance task), which is the logical extension of our simple AX task to the  <i>sequential</i>  domain.  Instead of A and X each being targets, the target is now
 an A  <i>followed by</i>  an X in sequence.  Other sequences such as A followed by Y or B followed by X are 
-non-target sequences, which nevertheless overlap with the target sequence.  In our simplified version of this task (and in several of the actual experiments on people), we restrict the sequences to cue-probe pairs, where cues are A,B,C and probes are X,Y,Z.  See e.g., Braver, T.S., Barch, D.M. &amp; Cohen, J.D. (1999). Cognition and control in schizophrenia: A computational model of dopamine and prefrontal function.  <i>Biological Psychiatry, 46,</i>  312-328, for an application of this task and further discussion and references.
-</p><p>
+non-target sequences, which nevertheless overlap with the target sequence.  In our simplified version of this task (and in several of the actual experiments on people), we restrict the sequences to cue-probe pairs, where cues are A,B,C and probes are X,Y,Z.  See e.g., Braver, T.S., Barch, D.M. & Cohen, J.D. (1999). Cognition and control in schizophrenia: A computational model of dopamine and prefrontal function.  <i>Biological Psychiatry, 46,</i>  312-328, for an application of this task and further discussion and references.
+<P>
 One implementational detail in how this task is run is key for generating interesting behavioral and neural data: the frequency of the A-X target sequence is set to be relatively high (typically 70%), so that it becomes the default expectation.  Then, the two related non-target sequences become much more interesting.  For A-Y, there should be a strong expectation of getting an X, which will be influenced by the extent to which the A cue is well remembered.  Errors on this trial type, where people might press \"target\" at the Y, would actually suggest strong maintenance of the A cue.  A similar argument applies to B-X, where the X is typically a target, but if you remember the B cue, you should not press the target key.  The C,Z items serve as baseline controls, as does the B-Y sequence.
-</p><p>
-</p><h2> Plan for the Program </h2>
-<p>
+<P>
+<h2> Plan for the Program </h2>
+<P>
 With the above in mind, we can sketch out the logic of our overall program:
-</p><ul><li> Flip a weighted coin to determine whether we want to generate a target sequence or not.  70% of the time we generate a target sequence, in which case we just produce A followed by X and that is easy.
-</li><li> Generating a non-target sequence is harder.  We need to randomly select from the cues (A,B,C) and the probes (X,Y,Z), while ensuring that we don't randomly pick A-X.  We'll discuss a couple of different strategies for this.
-</li><li> We can do the above cue-probe generation process multiple times to generate a larger set of trials that we will run on a given epoch worth of network training.  That is just a simple for loop around the above code.
-</li></ul>
+<ul><li> Flip a weighted coin to determine whether we want to generate a target sequence or not.  70% of the time we generate a target sequence, in which case we just produce A followed by X and that is easy.
+<li> Generating a non-target sequence is harder.  We need to randomly select from the cues (A,B,C) and the probes (X,Y,Z), while ensuring that we don't randomly pick A-X.  We'll discuss a couple of different strategies for this.
+<li> We can do the above cue-probe generation process multiple times to generate a larger set of trials that we will run on a given epoch worth of network training.  That is just a simple for loop around the above code.
+</ul>
 <h2> List of Variables </h2>
-<p>
+<P>
 Once we have this plan in place, we can create a set of variables that we'll need -- the general flow of programming in this system involves creating variables and then opearating on them, so getting the variables down is the key first step:
-</p><ul><li> pct_target -- how frequent should the target sequence be?  this is actually a proportion, but pct is a much simpler label -- for the default case it should be .7
-</li><li> rnd_number -- a random number between 0 and 1 (floating point or Real) that we'll generate to simulate the flipping of a weighted coin.
-</li><li> cue -- the identity of the cue input (A,B, or C) represented as a DynEnum of type Input, taking on values I_A, I_B, or I_C.
-</li><li> probe -- the identity of the probe input (X,Y, or Z), represented by an Input DynEnum as well.
-</li><li> output_unit -- correct answer for the output layer (DynEnum of type Output) -- we'll have the model respond \"non-target\" for all the cue items, and \"target\" for the targets.
-</li></ul>
+<ul><li> pct_target -- how frequent should the target sequence be?  this is actually a proportion, but pct is a much simpler label -- for the default case it should be .7
+<li> rnd_number -- a random number between 0 and 1 (floating point or Real) that we'll generate to simulate the flipping of a weighted coin.
+<li> cue -- the identity of the cue input (A,B, or C) represented as a DynEnum of type Input, taking on values I_A, I_B, or I_C.
+<li> probe -- the identity of the probe input (X,Y, or Z), represented by an Input DynEnum as well.
+<li> output_unit -- correct answer for the output layer (DynEnum of type Output) -- we'll have the model respond \"non-target\" for all the cue items, and \"target\" for the targets.
+</ul>
 <h2> Getting Started: Copy and Modify </h2>
-<p>
+<P>
 The easiest way to get started is to duplicate and modify the existing AXTaskGen program (this is a general rule -- if there is a program that has several elements that you want, just copy and modify instead of starting from scratch).  To do this, click on the AXTaskGen program in the left browser, and use the context menu to select Duplicate.  In the new program, enter the name as CPTAXGen, and update the description to reflect what we're doing.
-</p><p>
+<P>
 Now go to EditProgram, and click on the ForLoop object in the prog_code, and use the context menu to Delete that object -- this will also delete everything within it, which is almost all of the code from the previous program.  All that should remain is the ResetDataRows at the start (which we can use in any case).
-</p><p>
+<P>
 We can now setup our variables as indicated above.  Just rename input_unit to cue, then duplicate it and call it probe.  Then drag a new var (from Var/Fun toolbox) into vars and call it \"pct_target\", and set the type to Real, and enter a value of .7.  Duplicate it, and call it \"rnd_number\".  It would be a good idea to enter the descriptions for each variable in their desc fields (you can copy and paste from the above text if you want).
-</p><p>
-</p><h2> Flipping a Weighted Coin For the Target </h2>
-<p>
+<P>
+<h2> Flipping a Weighted Coin For the Target </h2>
+<P>
 The first step in our actual program code is to flip a weighted coin to decide if it is a target sequence or not.  We do this by generating a random number (rnd_number) which is uniformly distributed between 0 and 1.  We then see if this number is  <i>less than</i>  our target percent value -- this will be true 70% of the time for a value of .7, and that is what we want!
-</p><p>
-</p><ul><li> in the Toolbox, Misc Fun, there is a random() guy -- grab that and put it at the end of your program (drop on prog_code or after the reset data rows).  Set the result_var to rnd_number, and click on the method -- in the browser window that comes up, you can select different categories (in the menu at the top) of random numbers to generate -- select \"Float\", and then pick ZeroOne.  This will set rnd_number = a random number between 0 and 1.
-</li><li> Go to Ctrl toolbox and drag <code>if</code> to the end of your program.  In the cond expression, type/select: <code>rnd_number &lt; pct_target</code>.
-</li></ul>
+<P>
+<ul><li> in the Toolbox, Misc Fun, there is a random() guy -- grab that and put it at the end of your program (drop on prog_code or after the reset data rows).  Set the result_var to rnd_number, and click on the method -- in the browser window that comes up, you can select different categories (in the menu at the top) of random numbers to generate -- select \"Float\", and then pick ZeroOne.  This will set rnd_number = a random number between 0 and 1.
+<li> Go to Ctrl toolbox and drag <code>if</code> to the end of your program.  In the cond expression, type/select: <code>rnd_number &lt; pct_target</code>.
+</ul>
 The true_code for this if is now the target case, and the false_code is the non-target.  To set the target values, we just need to assign cue and probe to A and X respectively.  Drag var= from the Var/Fun toolbox into true_code, and set the result_var to cue, and choose the I_A enum from the enum_lookup button.  Drag var= again and set probe = I_X.  Finally, drag var= and set output_unit = O_T.
-<p>
-</p><h2> Generating the Non-Target </h2>
-<p>
+<P>
+<h2> Generating the Non-Target </h2>
+<P>
 There are two strategies for generating the non-target sequence that excludes A-X:
-</p><ul><li> Brute force: randomly generate a cue and a probe and check that they aren't A-X -- if they are, then repeat the process until they aren't.  This is not particularly efficient, but it is easy to code.
-</li><li> Choose from a list: generate a list of all possible cue-probe combinations, remove A-X from this list, and then randomly select an item from this list.  This is more efficient overall, but harder to code.  It is left as an excercise for later, as it demonstrates some important techniques.
-</li></ul>
+<ul><li> Brute force: randomly generate a cue and a probe and check that they aren't A-X -- if they are, then repeat the process until they aren't.  This is not particularly efficient, but it is easy to code.
+<li> Choose from a list: generate a list of all possible cue-probe combinations, remove A-X from this list, and then randomly select an item from this list.  This is more efficient overall, but harder to code.  It is left as an excercise for later, as it demonstrates some important techniques.
+</ul>
 To do the brute-force method, you need to enclose the random generation code in a \"do\" loop, which does some things (generates the random cue/probe) and then tests whether it should loop again (if it is A-X) or not.
-<p>
-Drag the <b>do</b> guy from Ctrl into your false_code of the target if test.  Enter/lookup <code>cue == I_A &amp;&amp; probe == I_X</code> as the test for continuing to loop ( == is the equality operator, and &amp;&amp; is logical AND).
-</p><p>
+<P>
+Drag the <b>do</b> guy from Ctrl into your false_code of the target if test.  Enter/lookup <code>cue == I_A && probe == I_X</code> as the test for continuing to loop ( == is the equality operator, and && is logical AND).
+<P>
 Now inside the loop_code, we need to randomly generate a cue and a probe.  Drag the random() guy from Misc Fun in there, and set the result_var to cue.  For the method, select the Int category, and choose IntMinMax -- we'll specify a minimum and maximum value to generate random numbers between.  Notice that the min and max arguments open up below this element -- these are the values that will be passed to the IntMinMax function.  Click on min, and enter/lookup I_A.  For the max, enter I_C + 1, because this IntMinMax function generates values  <i>exclusive</i>  of max (this is consistent with the C programming language convention, where values go between 0 and n-1 instead of 1 to n).
-</p><p>
-Just duplicate this RandomCall element, and change cue -&gt; probe and min = I_X, max = I_Z+1.  Finally, drag var= and set output_unit = O_N to show that this is a non-target case (quicker to drag AssignExpr guy from true_code and change O_T to O_N).
-</p><p>
+<P>
+Just duplicate this RandomCall element, and change cue -> probe and min = I_X, max = I_Z+1.  Finally, drag var= and set output_unit = O_N to show that this is a non-target case (quicker to drag AssignExpr guy from true_code and change O_T to O_N).
+<P>
 To test the program at this point, you can drag a print var object to the end of the code, and select cue, probe, and output_unit for the vars to print, and do Init and Run and see that it tends to produce a predominance of A-X and O_T.  To really test it, set pct_target = 0, and Run some more.  You should never see an A-X, and only O_N.
-</p><p>
-</p><h2> Generating the Input Data Patterns </h2>
-<p>
+<P>
+<h2> Generating the Input Data Patterns </h2>
+<P>
 The last step is to produce the input data patterns for the values we have generated.  This is just a matter of adding a couple of <code>new row</code> guys from the Data toolbox and <code>set units var</code> from the Network toolbox to set the units.
-</p><ul><li> drag the <code>new row</code> from Data Toolbox to the end of the program (drop on prog_code) and set data_var to input_data.
-</li><li> drag the <code>set units var</code> from Network toobox to the end, and set unit 1 to the cue variable.
-</li><li> Because the output is a literal in this case (O_N or non-target), we cannot set it using this element, which requires a variable.  So, you need to drag the <code>set units lit</code> to the end, and set the enum_type to Output, and the value to O_N.
-</li><li> drag and drop the AddNewDataRow and SetUnitsVar guys on top of prog_code and select Copy Into to duplicate them at the end of the program, and change cue to probe in the set units var, and select output_unit for unit 2 to also set that guy.
-</li><li> finally, drag a Data/row done guy to the end to tell it to update the view (select input_data as the data_var).
-</li></ul>
+<ul><li> drag the <code>new row</code> from Data Toolbox to the end of the program (drop on prog_code) and set data_var to input_data.
+<li> drag the <code>set units var</code> from Network toobox to the end, and set unit 1 to the cue variable.
+<li> Because the output is a literal in this case (O_N or non-target), we cannot set it using this element, which requires a variable.  So, you need to drag the <code>set units lit</code> to the end, and set the enum_type to Output, and the value to O_N.
+<li> drag and drop the AddNewDataRow and SetUnitsVar guys on top of prog_code and select Copy Into to duplicate them at the end of the program, and change cue to probe in the set units var, and select output_unit for unit 2 to also set that guy.
+<li> finally, drag a Data/row done guy to the end to tell it to update the view (select input_data as the data_var).
+</ul>
 <a href=\"ta:.programs.CPTAXGen.Init()\">Init</a>
 and <a href=\"ta:.programs.CPTAXGen.Run()\">Run</a> the program while looking at the 
 <a href=\"ta:.T3Tab.StdInputData\">StdInputData</a> view tab.  You should see it generate a valid cue-probe input that matches what is printed out on the console.  Keep running to see a range of inputs.
-<p>
-</p><h2> Generating Multiple Cue-Probe Trials </h2>
-<p>
+<P>
+<h2> Generating Multiple Cue-Probe Trials </h2>
+<P>
 The last bit of programming needed is to simply loop over the existing set of code multiple times to create several cue-probe sets per epoch for the network to train on.  Drag a for loop from Ctrl on top of the 2nd line of the program (RandomCall).  Then, multi-select the rest of the program code (only the guys at the main level, not the true_code or false_code within the if statement (this is done with alt-click on linux or mac-command-click on the mac -- note that order matters so select down in order!), and then drag the whole thing into the loop_code of the for guy.  Pretty slick.
-</p><p>
+<P>
 If you just Run it like this, you'll get 10 trials.  It would be good to make the number of trials a variable that can be set.  Drag a var into vars and call it \"n_trials\", and set it to 50 (Int = integer type).  Then, click on the for loop and replace the 10 in the test expression with n_trials.
-</p><p>
+<P>
 You can probably turn off the console printout by now -- just click on the PrintVar guy and click the OFF flag -- this keeps it around in case you want to do some debugging or something later, but it is not actually used in the code.
-</p><p>
-</p><h2> Updating the Control Panel </h2>
-<p>
+<P>
+<h2> Updating the Control Panel </h2>
+<P>
 If you go back to the Program Ctrl tab for the CPTAXGen program (instead of Edit Program where we've been), you'll see that all of the args and vars are present there.  However, some of those vars are actually more internal variables that the end-user doesn't need to set or configure.  So, we should remove those from the control panel, leaving only the pct_target and n_trials variables.  To do this, go back to Edit Program and click on each of the vars, and turn off the CTRL_PANEL flag for all but pct_target and n_trials.  Then go back and marvel at the clean interface you've provided for your grateful user!  The mouse-over tooltip even shows whatever comment you entered in the desc field for that variable.  This can provide a quick but quite usable interface for many different programs.
-</p><p>
-</p><h2> Calling from the Epoch Program </h2>
-<p>
+<P>
+<h2> Calling from the Epoch Program </h2>
+<P>
 The final final step is to call the CPTAXGen program every epoch, so that we get a new random selection of trials every epoch (keeps the network from simply memorizing the particular sample we happen to have generated).  To do this, we go to the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraEpoch\">LeabraEpoch</a> program in the LeabraAll_Std subgroup of programs, and do Edit Program.  Then drag the prog() guy from the Var/Fun toolbox just after the 3rd line of the prog_code, which starts the timer recording how long the epoch takes to process (it is a MethodCall, in blue).  Then select CPTAXGen for the target.  Note that this automatically brings up the input_data arg, and it even automatically fills this in with the input_data variable in the LeabraEpoch program -- if an arg has the same name as a variable in the calling program, it is used automatically (of course you can always change it if that isn't right).
-</p><p>
+<P>
 There is one additional and <b>very critical</b> final step with the LeabraEpoch program.  Go to the Program Ctrl tab, and observe the set of program vars available for you to set.  The first one, called <code>data_loop_order</code> is set to <code>PERMUTED</code> by default -- this means that the trials (rows of the input data table) are presented in a shuffled random order (without replacment, so each trial only appears once).  Clearly this is not going to be good for our <i>sequential</i> input data.  So, change it to <code>SEQUENTIAL</code>, which will present the trials in sequential order.  Given that we're doing the randomization within our program, this should be just fine.  There is also another way of doing this that involves creating grouped trials (i.e., cue-probe), where you can randomize the order of the groups, but present the trials within the group in sequential order.  The LeabraEpochGpData program available in the standard program library does this, but that is beyond the scope of this project.
-</p><p>
-</p><h2> Running the Network </h2>
-<p>
+<P>
+<h2> Running the Network </h2>
+<P>
 Now you're finally ready to run the network on this CPT-AX task!  Go back to the LeabraTrain process, do Init and Run on it (initialize the weights) and see what happens!?
-</p><p>
+<P>
 You should see that it will run and run and never fully learn the task (it will stop training if the error goes to zero).  There is some chance that it might get there just by virtue of a lucky set of trials -- try hitting Run again -- it should not stay at zero, and will keep running.
-</p><p>
+<P>
 You probably want to turn off the network and trial output data views at some point -- just click off the display button on their respective control panels under the Network_0 view tab.
-</p><p>
+<P>
 It shouldn't come as that much of a surprise that the network doesn't fully learn the task -- this task requires working memory, and this network hasn't got any!  In fact, it is quite surprising that it is able to learn as well as it can.  Turns out it can learn to use weight changes as a kind of fairly unreliable form of working memory.  Plus, the default target of AX is highly frequent, so it can get pretty far by focusing a lot on that.
-</p><p>
+<P>
 In the next and final segment, we give this network some working memory, and see if that helps: <a href=\"ta:.docs.PfcBg\">PfcBg</a>
-</p><p>
-</p><p>
-
-
-</p></body></html>";
+<P>
+<P>
+</body>
+</html>
+";
   };
   taDoc @[7] {
    name="PfcBg";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -1331,6 +1347,7 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
   };
   taDoc @[8] {
    name="WikiDoc";
+   desc=;
    auto_open=0;
    web_doc=1;
    wiki="emergent";
@@ -1662,6 +1679,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="LeabraWizard_0";
@@ -1728,6 +1746,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_base";
@@ -1740,6 +1759,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_anal";
@@ -1752,6 +1772,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_gen";
@@ -1764,6 +1785,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="image_proc";
@@ -1773,7 +1795,6 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=NULL;
   tags=;
   desc=;
  };
@@ -1783,7 +1804,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
   el_def=0;
   MainWindowViewer @[0] {
    name="Browser";
-   m_data=.projects[0]$0$;
+   m_data=.projects[0]$$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -1812,7 +1833,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$0$;
+     m_root=$.projects[0]$;
     };
     PanelViewer @[1] {
      name="Panels";

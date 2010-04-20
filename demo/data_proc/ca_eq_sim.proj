@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.0.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -289,6 +289,7 @@ LeabraProject .projects[0] {
   el_def=0;
   taDoc @[0] {
    name="ChangeLog";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -324,6 +325,7 @@ LeabraProject .projects[0] {
   };
   taDoc @[1] {
    name="ProjDoc";
+   desc=;
    auto_open=1;
    web_doc=0;
    wiki=;
@@ -370,6 +372,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="LeabraWizard_0";
@@ -437,6 +440,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       calc_expr {
        expr="row";
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [1100] 0;1;2;3;4;5;6;7;8;9;
@@ -560,6 +566,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       calc_expr {
        expr=".5";
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [1100] 0;0;0;0;0;0;0;0;0;0;
@@ -683,6 +692,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [1100] 0;0;0;0;0;0;0;0;0;0;
@@ -806,6 +818,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [1100] 1;1;1;1;1;1;1;1;1;1;
@@ -929,6 +944,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [1100] 1;1;1;1;1;1;1;1;1;1;
@@ -1064,6 +1082,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       calc_expr {
        expr=".5";
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [11] 0;0.1;0.2;0.30000001;0.40000001;0.5;0.60000002;0.69999999;0.80000001;0.89999998;
@@ -1078,6 +1099,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [11] 0;0.1586293;0.27755603;0.36869574;0.42389196;0.45339054;0.47693223;0.49646035;0.51307571;0.52748394;
@@ -1092,6 +1116,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [11] 1;1;1;1;0.92194581;0.82994974;0.75999969;0.70431167;0.65859801;0.62019843;
@@ -1106,6 +1133,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [11] 1;0.9525885;0.909392;0.86989301;0.83365065;0.80028802;0.76948172;0.74095333;0.71446204;0.68979913;
@@ -1119,6 +1149,9 @@ The CaData DataTable and associated graph show the time evolution as a function 
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [11] 0;0.16218604;0.27725887;0.36651629;0.43944493;0.50110519;0.55451775;0.60163099;0.64377517;0.68189925;
@@ -1144,6 +1177,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_base";
@@ -1156,6 +1190,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_anal";
@@ -1168,6 +1203,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_gen";
@@ -1180,6 +1216,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="image_proc";
@@ -1189,11 +1226,11 @@ The CaData DataTable and associated graph show the time evolution as a function 
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=NULL;
   tags=;
   desc=;
   Program @[0] {
    name="CaSim";
+   short_nm="Sim";
    tags=;
    desc=;
    flags=;
@@ -1220,7 +1257,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="CaData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[2][0]$0$;
+     object_val=.projects[0].data.gp[2][0]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -1231,7 +1268,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      name="CaEnd";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[2][1]$1$;
+     object_val=.projects[0].data.gp[2][1]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -1461,7 +1498,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
     AssignExpr @[0] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[2]$2$;
+     result_var=.projects[0].programs[0].vars[2]$$;
      expr {
       expr="0";
      };
@@ -1469,7 +1506,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
     AssignExpr @[1] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[4]$3$;
+     result_var=.projects[0].programs[0].vars[4]$$;
      expr {
       expr="1";
      };
@@ -1477,7 +1514,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
     AssignExpr @[2] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[18]$4$;
+     result_var=.projects[0].programs[0].vars[18]$$;
      expr {
       expr="1";
      };
@@ -1485,7 +1522,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
     AssignExpr @[3] {
      desc=;
      flags=;
-     result_var=.projects[0].programs[0].vars[21]$5$;
+     result_var=.projects[0].programs[0].vars[21]$$;
      expr {
       expr="sdo_rec * (1.0 - sdo_asymp)";
      };
@@ -1494,7 +1531,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[0]$6$;
+     obj=.projects[0].programs[0].vars[0]$$;
      method=DataTable::EnforceRows;
      meth_args {
       name=;
@@ -1504,7 +1541,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
        arg_type=int;
        type="int";
        name="n_rows";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="drive_steps * steps_per_drive";
@@ -1516,7 +1553,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
      desc=;
      flags=;
      result_var=NULL;
-     obj=.projects[0].programs[0].vars[1]$7$;
+     obj=.projects[0].programs[0].vars[1]$$;
      method=DataTable::EnforceRows;
      meth_args {
       name=;
@@ -1526,7 +1563,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
        arg_type=int;
        type="int";
        name="n_rows";
-       required=0;
+       required=1;
        def_val=;
        expr {
 	expr="drive_steps";
@@ -1537,7 +1574,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
     DataCalcLoop @[6] {
      desc=;
      flags=;
-     src_data_var=$6$;
+     src_data_var=$.projects[0].programs[0].vars[0]$;
      dest_data_var=NULL;
      src_cols {
       name="src_cols";
@@ -1571,7 +1608,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[0] {
        desc="integer index for drive value (0..n)";
        flags=;
-       result_var=.projects[0].programs[0].vars[11]$8$;
+       result_var=.projects[0].programs[0].vars[11]$$;
        expr {
 	expr="src_row / steps_per_drive";
        };
@@ -1579,7 +1616,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[1] {
        desc="actual drive value";
        flags=;
-       result_var=.projects[0].programs[0].vars[6]$9$;
+       result_var=.projects[0].programs[0].vars[6]$$;
        expr {
 	expr="drive_inc * drive_idx";
        };
@@ -1587,7 +1624,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[2] {
        desc="time value";
        flags=;
-       result_var=.projects[0].programs[0].prog_code[6].src_col_vars[0]$10$;
+       result_var=.projects[0].programs[0].prog_code[6].src_col_vars[0]$$;
        expr {
 	expr="src_row % steps_per_drive";
        };
@@ -1595,7 +1632,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[3] {
        desc="store the drive before we turn it off!";
        flags=;
-       result_var=.projects[0].programs[0].prog_code[6].src_col_vars[1]$11$;
+       result_var=.projects[0].programs[0].prog_code[6].src_col_vars[1]$$;
        expr {
 	expr="drive";
        };
@@ -1613,7 +1650,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	AssignExpr @[0] {
 	 desc=;
 	 flags=;
-	 result_var=$9$;
+	 result_var=$.projects[0].programs[0].vars[6]$;
 	 expr {
 	  expr="0";
 	 };
@@ -1623,7 +1660,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[5] {
        desc="Key equation!";
        flags=NEW_EL;
-       result_var=$2$;
+       result_var=$.projects[0].programs[0].vars[2]$;
        expr {
 	expr="cai + ca_inc * (1.0 - cai) * drive * pfire - ca_dec * cai";
        };
@@ -1631,7 +1668,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[6] {
        desc="old std syndep eq";
        flags=;
-       result_var=$4$;
+       result_var=$.projects[0].programs[0].vars[18]$;
        expr {
 	expr="sdo + sdo_rec * (1.0 - sdo) - sdo_depl * drive * sdo";
        };
@@ -1649,7 +1686,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	AssignExpr @[0] {
 	 desc=;
 	 flags=;
-	 result_var=$2$;
+	 result_var=$.projects[0].programs[0].vars[2]$;
 	 expr {
 	  expr="0";
 	 };
@@ -1657,7 +1694,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	AssignExpr @[1] {
 	 desc=;
 	 flags=;
-	 result_var=$4$;
+	 result_var=$.projects[0].programs[0].vars[18]$;
 	 expr {
 	  expr="1";
 	 };
@@ -1667,7 +1704,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[8] {
        desc="threshold gives delay before ca depletion starts to take effect";
        flags=;
-       result_var=.projects[0].programs[0].vars[3]$12$;
+       result_var=.projects[0].programs[0].vars[3]$$;
        expr {
 	expr="(cai > pfire_thr) ? (cai-pfire_thr) / (1.0 - pfire_thr) : 0.0";
        };
@@ -1675,7 +1712,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[9] {
        desc="probability of firing based on extracellular ca = 1.0 - cai";
        flags=NEW_EL;
-       result_var=$3$;
+       result_var=$.projects[0].programs[0].vars[4]$;
        expr {
 	expr="pfire_gain * (1.0 - cai_thr)*(1.0 - cai_thr)";
        };
@@ -1683,7 +1720,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[10] {
        desc="store computed values";
        flags=;
-       result_var=.projects[0].programs[0].prog_code[6].src_col_vars[2]$13$;
+       result_var=.projects[0].programs[0].prog_code[6].src_col_vars[2]$$;
        expr {
 	expr="cai";
        };
@@ -1691,7 +1728,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[11] {
        desc=;
        flags=;
-       result_var=.projects[0].programs[0].prog_code[6].src_col_vars[3]$14$;
+       result_var=.projects[0].programs[0].prog_code[6].src_col_vars[3]$$;
        expr {
 	expr="pfire";
        };
@@ -1699,7 +1736,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       AssignExpr @[12] {
        desc=;
        flags=;
-       result_var=.projects[0].programs[0].prog_code[6].src_col_vars[4]$15$;
+       result_var=.projects[0].programs[0].prog_code[6].src_col_vars[4]$$;
        expr {
 	expr="sdo";
        };
@@ -1707,7 +1744,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
       DataCalcSetSrcRow @[13] {
        desc=;
        flags=;
-       src_data_var=$6$;
+       src_data_var=$.projects[0].programs[0].vars[0]$;
        dest_data_var=NULL;
       };
       If @[14] {
@@ -1723,7 +1760,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	AssignExpr @[0] {
 	 desc="attempt to fit cai value with a log function to show that it is log shaped..";
 	 flags=;
-	 result_var=.projects[0].programs[0].vars[5]$16$;
+	 result_var=.projects[0].programs[0].vars[5]$$;
 	 expr {
 	  expr="log_mult * log(1.0 + log_gain * drive)";
 	 };
@@ -1731,23 +1768,25 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	DataVarProg @[1] {
 	 desc=;
 	 flags=;
-	 data_var=$7$;
+	 data_var=$.projects[0].programs[0].vars[1]$;
 	 set_data=1;
 	 row_spec=ROW_NUM;
-	 row_var=$8$;
-	 var_1=$9$;
-	 var_2=$2$;
-	 var_3=$16$;
-	 var_4=$3$;
+	 row_var=$.projects[0].programs[0].vars[11]$;
+	 quiet=1;
+	 var_1=$.projects[0].programs[0].vars[6]$;
+	 var_2=$.projects[0].programs[0].vars[2]$;
+	 var_3=$.projects[0].programs[0].vars[5]$;
+	 var_4=$.projects[0].programs[0].vars[4]$;
 	};
 	DataVarProg @[2] {
 	 desc=;
 	 flags=;
-	 data_var=$7$;
+	 data_var=$.projects[0].programs[0].vars[1]$;
 	 set_data=1;
 	 row_spec=ROW_NUM;
-	 row_var=$8$;
-	 var_1=$4$;
+	 row_var=$.projects[0].programs[0].vars[11]$;
+	 quiet=0;
+	 var_1=$.projects[0].programs[0].vars[18]$;
 	 var_2=NULL;
 	 var_3=NULL;
 	 var_4=NULL;
@@ -1755,6 +1794,7 @@ The CaData DataTable and associated graph show the time evolution as a function 
        };
       };
      };
+     use_col_numbers=0;
      src_col_vars {
       name=;
       el_typ=ProgVar;
@@ -1819,9 +1859,11 @@ The CaData DataTable and associated graph show the time evolution as a function 
     DoneWritingDataRow @[7] {
      desc="triggers update of CaEnd graph";
      flags=;
-     data_var=$7$;
+     data_var=$.projects[0].programs[0].vars[1]$;
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
  };
  viewers {
@@ -1829,8 +1871,8 @@ The CaData DataTable and associated graph show the time evolution as a function 
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$17$;
    name="Browser2";
+   m_data=.projects[0]$$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -1841,8 +1883,8 @@ The CaData DataTable and associated graph show the time evolution as a function 
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     m_data=NULL;
      name="Application";
+     m_data=NULL;
      visible=0;
      lft=0;
      top=0;
@@ -1854,31 +1896,32 @@ The CaData DataTable and associated graph show the time evolution as a function 
     el_typ=FrameViewer;
     el_def=0;
     tabBrowseViewer @[0] {
-     m_data=NULL;
      name="Tree";
+     m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$17$;
+     m_root=$.projects[0]$;
     };
     PanelViewer @[1] {
-     m_data=NULL;
      name="Panels";
+     m_data=NULL;
      visible=1;
     };
     T3DataViewer @[2] {
-     m_data=NULL;
      name="T3Frames";
+     m_data=NULL;
      visible=1;
      frames {
       name=;
       el_typ=T3DataViewFrame;
       el_def=0;
       T3DataViewFrame @[0] {
-       m_data=NULL;
        name="CaData";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -1886,48 +1929,49 @@ The CaData DataTable and associated graph show the time evolution as a function 
 	 el_typ=T3DataView;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$0$;
+	  name=;
+	  m_data=$.projects[0].data.gp[2][0]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[2][0].data[0]$18$;
-	    m_transform=NULL;
 	    name="time";
+	    m_data=.projects[0].data.gp[2][0].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=99: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[2][0].data[1]$19$;
-	    m_transform=NULL;
 	    name="drive";
+	    m_data=.projects[0].data.gp[2][0].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[2][0].data[2]$20$;
-	    m_transform=NULL;
 	    name="cai";
+	    m_data=.projects[0].data.gp[2][0].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[2][0].data[3]$21$;
-	    m_transform=NULL;
 	    name="pfire";
+	    m_data=.projects[0].data.gp[2][0].data[3]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[2][0].data[4]$22$;
-	    m_transform=NULL;
 	    name="sdo";
+	    m_data=.projects[0].data.gp[2][0].data[4]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
 	    data_range {min=0: max=0: };
@@ -1952,6 +1996,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -1966,6 +2011,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -1980,6 +2026,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -1996,6 +2043,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -2012,6 +2060,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -2028,6 +2077,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2044,6 +2094,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2060,6 +2111,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2076,6 +2128,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2092,6 +2145,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2113,6 +2167,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2129,6 +2184,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2145,6 +2201,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2161,6 +2218,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2177,6 +2235,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2193,6 +2252,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2209,6 +2269,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2225,6 +2286,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2244,6 +2306,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=FIXED_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2264,10 +2327,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$23$;
+	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2344,10 +2408,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
       };
       T3DataViewFrame @[1] {
-       m_data=NULL;
        name="CaEnd";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -2355,48 +2420,49 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_typ=T3DataView;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$1$;
+	  name=;
+	  m_data=$.projects[0].data.gp[2][1]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[2][1].data[0]$24$;
-	    m_transform=NULL;
 	    name="drive";
+	    m_data=.projects[0].data.gp[2][1].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[2][1].data[1]$25$;
-	    m_transform=NULL;
 	    name="cai";
+	    m_data=.projects[0].data.gp[2][1].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[2][1].data[2]$26$;
-	    m_transform=NULL;
 	    name="pfire";
+	    m_data=.projects[0].data.gp[2][1].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.245501: fix_max=0: max=1: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[2][1].data[3]$27$;
-	    m_transform=NULL;
 	    name="sdo";
+	    m_data=.projects[0].data.gp[2][1].data[3]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.111243: fix_max=0: max=0.707093: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[4] {
-	    m_data=.projects[0].data.gp[2][1].data[4]$28$;
-	    m_transform=NULL;
 	    name="cai_fit";
+	    m_data=.projects[0].data.gp[2][1].data[4]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.716704: };
 	    data_range {min=0: max=0: };
@@ -2421,6 +2487,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -2435,6 +2502,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2449,6 +2517,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -2465,6 +2534,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -2481,6 +2551,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -2497,6 +2568,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -2513,6 +2585,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2529,6 +2602,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2545,6 +2619,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2561,6 +2636,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2582,6 +2658,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2598,6 +2675,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2614,6 +2692,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2630,6 +2709,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2646,6 +2726,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2662,6 +2743,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2678,6 +2760,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2694,6 +2777,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2713,6 +2797,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=FIXED_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2733,10 +2818,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=$23$;
+	   spec=$.colorspecs[0]$;
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -2820,8 +2906,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     m_data=NULL;
      name="Tools";
+     m_data=NULL;
      visible=1;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;

@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.0.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -239,6 +239,7 @@ LeabraProject .projects[0] {
   el_def=0;
   taDoc @[0] {
    name="DataCalcLoopDocs";
+   desc=;
    auto_open=1;
    web_doc=0;
    wiki=;
@@ -289,6 +290,7 @@ The program should be well enough documented to follow along in the Edit Program
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="LeabraWizard_0";
@@ -351,6 +353,9 @@ The program should be well enough documented to follow along in the Edit Program
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [10] "train_a";"train_b";"train_c";"train_d";"train_e";"test_a";"test_b";"test_c";"test_d";"test_e";
@@ -364,6 +369,9 @@ The program should be well enough documented to follow along in the Edit Program
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [10] 0.40000001;0.5;0.2;0.69999999;0.30000001;0.5;0.69999999;0.40000001;0.80000001;0.40000001;
@@ -377,6 +385,9 @@ The program should be well enough documented to follow along in the Edit Program
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [10] 0.30000001;0.60000002;0.30000001;0.60000002;0.40000001;0.30000001;0.80000001;0.5;0.89999998;0.30000001;
@@ -391,6 +402,9 @@ The program should be well enough documented to follow along in the Edit Program
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [10] 0.35000002;0.55000001;0.25;0.64999998;0.35000002;0.40000001;0.75;0.44999999;0.85000002;0.35000002;
@@ -422,6 +436,9 @@ The program should be well enough documented to follow along in the Edit Program
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [5] "train_a";"train_b";"train_c";"train_d";"train_e";      };
@@ -434,6 +451,9 @@ The program should be well enough documented to follow along in the Edit Program
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [5] 0.40000001;0.5;0.2;0.69999999;0.30000001;      };
@@ -446,6 +466,9 @@ The program should be well enough documented to follow along in the Edit Program
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [5] 0.30000001;0.60000002;0.30000001;0.60000002;0.40000001;      };
@@ -459,6 +482,9 @@ The program should be well enough documented to follow along in the Edit Program
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [5] 0.35000002;0.55000001;0.25;0.64999998;0.35000002;      };
@@ -471,6 +497,9 @@ The program should be well enough documented to follow along in the Edit Program
       calc_expr {
        expr=;
       };
+      dim_names {
+       name=;
+	    [0]       };
       ar {
        name=;
 	    [5] 0.40000001;0.60000002;0.30000001;0.69999999;0.40000001;      };
@@ -495,6 +524,7 @@ The program should be well enough documented to follow along in the Edit Program
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_base";
@@ -507,6 +537,7 @@ The program should be well enough documented to follow along in the Edit Program
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_anal";
@@ -519,6 +550,7 @@ The program should be well enough documented to follow along in the Edit Program
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_gen";
@@ -531,6 +563,7 @@ The program should be well enough documented to follow along in the Edit Program
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="image_proc";
@@ -540,11 +573,11 @@ The program should be well enough documented to follow along in the Edit Program
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=NULL;
   tags=;
   desc=;
   Program @[0] {
    name="DataCalcLoopDemo";
+   short_nm="Demo";
    tags=;
    desc=;
    flags=;
@@ -566,7 +599,7 @@ The program should be well enough documented to follow along in the Edit Program
      name="SomeData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[1][0]$0$;
+     object_val=.projects[0].data.gp[1][0]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -577,7 +610,7 @@ The program should be well enough documented to follow along in the Edit Program
      name="TrainData";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects[0].data.gp[2][0]$1$;
+     object_val=.projects[0].data.gp[2][0]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -616,7 +649,7 @@ The program should be well enough documented to follow along in the Edit Program
     DataCalcLoop @[1] {
      desc=;
      flags=;
-     src_data_var=.projects[0].programs[0].args[0]$2$;
+     src_data_var=.projects[0].programs[0].args[0]$$;
      dest_data_var=NULL;
      src_cols {
       name="src_cols";
@@ -647,7 +680,7 @@ The program should be well enough documented to follow along in the Edit Program
       AssignExpr @[0] {
        desc="use AssignExpr to compute columns from other s_values";
        flags=;
-       result_var=.projects[0].programs[0].prog_code[1].src_col_vars[3]$3$;
+       result_var=.projects[0].programs[0].prog_code[1].src_col_vars[3]$$;
        expr {
 	expr=".5 * (s_Value1 +  s_Value2)";
        };
@@ -655,10 +688,11 @@ The program should be well enough documented to follow along in the Edit Program
       DataCalcSetSrcRow @[1] {
        desc="apply any source column computations back to source data table";
        flags=;
-       src_data_var=$2$;
+       src_data_var=$.projects[0].programs[0].args[0]$;
        dest_data_var=NULL;
       };
      };
+     use_col_numbers=0;
      src_col_vars {
       name=;
       el_typ=ProgVar;
@@ -717,13 +751,13 @@ The program should be well enough documented to follow along in the Edit Program
     ResetDataRows @[3] {
      desc="reset train data so its ready";
      flags=;
-     data_var=.projects[0].programs[0].args[1]$4$;
+     data_var=.projects[0].programs[0].args[1]$$;
     };
     DataCalcLoop @[4] {
      desc="IMPORTANT: only add the dest_cols you are actually going to compute values for -- use CopyCommonCols to copy any other values that just need to be copied";
      flags=;
-     src_data_var=$2$;
-     dest_data_var=$4$;
+     src_data_var=$.projects[0].programs[0].args[0]$;
+     dest_data_var=$.projects[0].programs[0].args[1]$;
      src_cols {
       name="src_cols";
       el_typ=DataOpEl;
@@ -766,20 +800,20 @@ The program should be well enough documented to follow along in the Edit Program
 	DataCalcAddDestRow @[0] {
 	 desc="add a new row";
 	 flags=;
-	 src_data_var=$2$;
-	 dest_data_var=$4$;
+	 src_data_var=$.projects[0].programs[0].args[0]$;
+	 dest_data_var=$.projects[0].programs[0].args[1]$;
 	};
 	DataCalcCopyCommonCols @[1] {
 	 desc="first, copy over everything in common between two tables";
 	 flags=;
-	 src_data_var=$2$;
-	 dest_data_var=$4$;
+	 src_data_var=$.projects[0].programs[0].args[0]$;
+	 dest_data_var=$.projects[0].programs[0].args[1]$;
 	 only_named_cols=0;
 	};
 	AssignExpr @[2] {
 	 desc="compute new destination column value";
 	 flags=;
-	 result_var=.projects[0].programs[0].prog_code[4].dest_col_vars[0]$5$;
+	 result_var=.projects[0].programs[0].prog_code[4].dest_col_vars[0]$$;
 	 expr {
 	  expr="MAX(s_Value1, s_Value2)";
 	 };
@@ -787,8 +821,8 @@ The program should be well enough documented to follow along in the Edit Program
 	DataCalcSetDestRow @[3] {
 	 desc="last step is to write d_ variables into the actual data table";
 	 flags=;
-	 src_data_var=$2$;
-	 dest_data_var=$4$;
+	 src_data_var=$.projects[0].programs[0].args[0]$;
+	 dest_data_var=$.projects[0].programs[0].args[1]$;
 	};
        };
        false_code {
@@ -798,6 +832,7 @@ The program should be well enough documented to follow along in the Edit Program
        };
       };
      };
+     use_col_numbers=0;
      src_col_vars {
       name=;
       el_typ=ProgVar;
@@ -860,6 +895,8 @@ The program should be well enough documented to follow along in the Edit Program
      };
     };
    };
+   step_prog=NULL;
+   step_n=1;
   };
  };
  viewers {
@@ -867,8 +904,8 @@ The program should be well enough documented to follow along in the Edit Program
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$6$;
    name="Browser";
+   m_data=.projects[0]$$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -879,8 +916,8 @@ The program should be well enough documented to follow along in the Edit Program
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     m_data=NULL;
      name="Application";
+     m_data=NULL;
      visible=0;
      lft=0;
      top=0;
@@ -892,31 +929,32 @@ The program should be well enough documented to follow along in the Edit Program
     el_typ=FrameViewer;
     el_def=0;
     tabBrowseViewer @[0] {
-     m_data=NULL;
      name="Tree";
+     m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$6$;
+     m_root=$.projects[0]$;
     };
     PanelViewer @[1] {
-     m_data=NULL;
      name="Panels";
+     m_data=NULL;
      visible=1;
     };
     T3DataViewer @[2] {
-     m_data=NULL;
      name="T3Frames";
+     m_data=NULL;
      visible=1;
      frames {
       name=;
       el_typ=T3DataViewFrame;
       el_def=0;
       T3DataViewFrame @[0] {
-       m_data=NULL;
        name="SomeData";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -924,40 +962,41 @@ The program should be well enough documented to follow along in the Edit Program
 	 el_typ=T3DataView;
 	 el_def=0;
 	 GraphTableView @[0] {
-	  m_data=$0$;
+	  name=;
+	  m_data=$.projects[0].data.gp[1][0]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @[0] {
-	    m_data=.projects[0].data.gp[1][0].data[0]$7$;
-	    m_transform=NULL;
 	    name="Name";
+	    m_data=.projects[0].data.gp[1][0].data[0]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=-1: fix_max=1: max=10: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[1] {
-	    m_data=.projects[0].data.gp[1][0].data[1]$8$;
-	    m_transform=NULL;
 	    name="Value1";
+	    m_data=.projects[0].data.gp[1][0].data[1]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.2: fix_max=0: max=0.8: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[2] {
-	    m_data=.projects[0].data.gp[1][0].data[2]$9$;
-	    m_transform=NULL;
 	    name="Value2";
+	    m_data=.projects[0].data.gp[1][0].data[2]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0.3: fix_max=0: max=0.9: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @[3] {
-	    m_data=.projects[0].data.gp[1][0].data[3]$10$;
-	    m_transform=NULL;
 	    name="AvgValue";
+	    m_data=.projects[0].data.gp[1][0].data[3]$$;
+	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
@@ -982,6 +1021,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -996,6 +1036,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=1;
 	  };
 	  z_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1010,6 +1051,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   row_num=0;
 	  };
 	  plot_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -1026,6 +1068,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -1042,6 +1085,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -1058,6 +1102,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1074,6 +1119,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1090,6 +1136,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1106,6 +1153,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1122,6 +1170,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  plot_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1143,6 +1192,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  alt_y_4=0;
 	  alt_y_5=0;
 	  err_1 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1159,6 +1209,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_2 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1175,6 +1226,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_3 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1191,6 +1243,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_4 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1207,6 +1260,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_5 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1223,6 +1277,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_6 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1239,6 +1294,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_7 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1255,6 +1311,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   alt_y=0;
 	  };
 	  err_8 {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1274,6 +1331,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  err_bar_width=0.02;
 	  color_mode=FIXED_COLOR;
 	  color_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1294,10 +1352,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   max=1;
 	   range=0;
 	   zero=0;
-	   spec=.colorspecs[0]$11$;
+	   spec=.colorspecs[0]$$<ColorScaleSpec,C_ColdHot>;
 	   auto_scale=0;
 	  };
 	  raster_axis {
+	   name=;
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -1381,8 +1440,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     m_data=NULL;
      name="Tools";
+     m_data=NULL;
      visible=1;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;

@@ -1,4 +1,4 @@
-// ta_Dump File v2.0 -- code v5.0.0.0
+// ta_Dump File v3.0 -- code v5.0.2.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -127,6 +127,7 @@ LeabraProject .projects[0] {
   el_def=0;
   taDoc @[0] {
    name="ProjectDocs";
+   desc=;
    auto_open=1;
    web_doc=0;
    wiki=;
@@ -200,6 +201,7 @@ Each document involves creating a separate Program with its own data tables, so 
   };
   taDoc @[1] {
    name="DataGenDoc";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -541,6 +543,7 @@ You can extend the program by adding variables for the constants in the random n
   };
   taDoc @[2] {
    name="DataAnalysisDoc";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -712,6 +715,7 @@ Next, we turn to the data base-style operations in <a href=\"ta:.docs.DataBaseDo
   };
   taDoc @[3] {
    name="DataBaseDoc";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -851,6 +855,7 @@ Next, we'll explore an even more Swiss-army-knife like system, the DataCalcLoop 
   };
   taDoc @[4] {
    name="DataCalcLoopDoc";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -1000,6 +1005,7 @@ That's it for calc stuff for now -- next up is matrix data in <a href=\"ta:.docs
   };
   taDoc @[5] {
    name="MatrixDataDoc";
+   desc=;
    auto_open=0;
    web_doc=0;
    wiki=;
@@ -1129,6 +1135,7 @@ There are several functions available in the HighDim toolkit that you are free t
   };
   taDoc @[6] {
    name="WikiDoc";
+   desc=;
    auto_open=0;
    web_doc=1;
    wiki="emergent";
@@ -1364,6 +1371,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="LeabraWizard_1";
@@ -1430,6 +1438,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_base";
@@ -1442,6 +1451,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_anal";
@@ -1454,6 +1464,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="data_gen";
@@ -1466,6 +1477,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     UserDataItem @[0] {
      name="NO_CLIP";
      value 1 0=1;
+     val_type_fixed=0;
     };
    };
    name="image_proc";
@@ -1475,7 +1487,6 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
   name=;
   el_typ=Program;
   el_def=0;
-  step_prog=NULL;
   tags=;
   desc=;
  };
@@ -1484,8 +1495,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
   el_typ=TopLevelViewer;
   el_def=0;
   MainWindowViewer @[0] {
-   m_data=.projects[0]$0$;
    name="Browser3";
+   m_data=.projects[0]$$;
    visible=1;
    m_is_root=0;
    m_is_viewer_xor_browser=0;
@@ -1496,8 +1507,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     el_typ=ToolBar;
     el_def=0;
     ToolBar @[0] {
-     m_data=NULL;
      name="Application";
+     m_data=NULL;
      visible=0;
      lft=0;
      top=0;
@@ -1509,31 +1520,32 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     el_typ=FrameViewer;
     el_def=0;
     tabBrowseViewer @[0] {
-     m_data=NULL;
      name="Tree";
+     m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
-     m_root=$0$;
+     m_root=$.projects[0]$;
     };
     PanelViewer @[1] {
-     m_data=NULL;
      name="Panels";
+     m_data=NULL;
      visible=1;
     };
     T3DataViewer @[2] {
-     m_data=NULL;
      name="T3Frames";
+     m_data=NULL;
      visible=1;
      frames {
       name=;
       el_typ=T3DataViewFrame;
       el_def=0;
       T3DataViewFrame @[0] {
-       m_data=NULL;
        name="Frame10";
+       m_data=NULL;
        visible=1;
        root_view {
+	name=;
 	m_data=NULL;
 	m_transform=NULL;
 	children {
@@ -1602,8 +1614,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
     el_typ=DockViewer;
     el_def=0;
     ToolBoxDockViewer @[0] {
-     m_data=NULL;
      name="Tools";
+     m_data=NULL;
      visible=1;
      dock_flags=DV_MOVABLE|DV_FLOATABLE;
      dock_area=1;
