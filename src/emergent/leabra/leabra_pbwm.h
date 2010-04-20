@@ -514,6 +514,8 @@ public:
 
   bool		graded_out_go;	// #DEF_true use actual activation level of output Go signal to drive output activation level
   float		clear_decay;	// #DEF_0.9 #MIN_0 #MAX_1 how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse
+  float		go_learn_base;	// #DEF_0.05 #MIN_0 #MAX_1 how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)
+  float		go_learn_mod;	// #READ_ONLY 1 - go_learn_base -- how much learning is actually modulated by go gating activation
   int		mid_minus_min;	// minimum number of cycles before computing any gating -- acts like an STN-like function -- must be < network mid_minus_cycle
   int		max_maint;	// a hard upper-limit on how long the PFC can maintain -- anything over this limit will be cleared.  set to 0 for motor areas that do not maintain but use maintenance gating to scope the set of possible responses
   bool		out_go_clear;	// #DEF_true #EXPERT an output Go clears the maintenance currents at the end of the trial -- only for reward trials (signalled by PVr) -- you use it, you lose it..
@@ -522,25 +524,7 @@ public:
   TA_SIMPLE_BASEFUNS(PFCGateSpec);
 protected:
   SPEC_DEFAULTS;
-//   void  UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
-};
-
-class LEABRA_API PFCLearnSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
-INHERITED(SpecMemberBase)
-public:
-  float		go_learn_base;	// #DEF_0.05 #MIN_0 #MAX_1 how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)
-  float		go_learn_mod;	// #READ_ONLY 1 - go_learn_base -- how much learning is actually modulated by go gating activation
-
-  TA_SIMPLE_BASEFUNS(PFCLearnSpec);
-protected:
-  SPEC_DEFAULTS;
   void  UpdateAfterEdit_impl();
-
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -557,7 +541,6 @@ public:
   };
 
   PFCGateSpec	gate;		// parameters controlling the gating of pfc units
-  PFCLearnSpec	learn;		// parameters controlling the learning in pfc units (as modulated by BG gating signals)
 
   virtual void	GetSNrThalLayers(LeabraLayer* lay, LeabraLayer*& snrthal_mnt, LeabraLayer*& snrthal_out);
   // find maintenance (required) and output (optional) snrthal input layers

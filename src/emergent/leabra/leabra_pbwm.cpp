@@ -1048,18 +1048,15 @@ void MatrixLayerSpec::LabelUnits(LeabraLayer* lay) {
 void PFCGateSpec::Initialize() {
   graded_out_go = true;
   clear_decay = 0.9f;
+  go_learn_base = 0.05f;
+  go_learn_mod = 1.0f - go_learn_base;
   mid_minus_min = 10;
   max_maint = 100;
   off_accom = 0.0f;
   out_go_clear = true;
 }
 
-void PFCLearnSpec::Initialize() {
-  go_learn_base = 0.05f;
-  go_learn_mod = 1.0f - go_learn_base;
-}
-
-void PFCLearnSpec::UpdateAfterEdit_impl() {
+void PFCGateSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   go_learn_mod = 1.0f - go_learn_base;
 }
@@ -1083,7 +1080,6 @@ void PFCLayerSpec::Initialize() {
 void PFCLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   gate.UpdateAfterEdit_NoGui();
-  learn.UpdateAfterEdit_NoGui();
 }
 
 void PFCLayerSpec::HelpConfig() {
@@ -1231,7 +1227,7 @@ void PFCLayerSpec::Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net) 
     LeabraUnit_Group* ugp = (LeabraUnit_Group*)lay->units.gp[mg];
     ugp->misc_state1 = PFCGateSpec::INIT_STATE;
     ugp->misc_state2 = PFCGateSpec::GATE_NOGO;
-    ugp->misc_float = learn.go_learn_base;
+    ugp->misc_float = gate.go_learn_base;
     ugp->misc_float1 = 0.0f;
     ugp->misc_float2 = 0.0f;
   }
@@ -1340,7 +1336,7 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 
       // misc_float has the go_learn_base factor incorporated
       float lrn_go_act = snr_mnt_u->act_eq;
-      ugp->misc_float = learn.go_learn_base + (learn.go_learn_mod * lrn_go_act);
+      ugp->misc_float = gate.go_learn_base + (gate.go_learn_mod * lrn_go_act);
       SendGateStates(lay, net);	// update snrthal for turning act_eq guys off
     }
 
@@ -1364,7 +1360,7 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 
       // misc_float has the go_learn_base factor incorporated
       float lrn_go_act = snr_out_u->act_eq;
-      ugp->misc_float = learn.go_learn_base + (learn.go_learn_mod * lrn_go_act);
+      ugp->misc_float = gate.go_learn_base + (gate.go_learn_mod * lrn_go_act);
       SendGateStates(lay, net);	// update snrthal for turning act_eq guys off
     }
   }
@@ -1408,7 +1404,7 @@ void PFCLayerSpec::Compute_Gating_MidMinus(LeabraLayer* lay, LeabraNetwork* net)
       snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, snrgp_mnt, mg, net);
 
       // misc_float has the go_learn_base factor incorporated
-      ugp->misc_float = learn.go_learn_base;
+      ugp->misc_float = gate.go_learn_base;
     }
   }
   
