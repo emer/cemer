@@ -3000,6 +3000,14 @@ void NetView::Render_impl() {
 
     Render_net_text();
   }
+
+  if((bool)wt_prjn_lay) {
+    // this does all the heavy lifting: projecting into unit wt_prjn
+    // if wt_line_thr < 0 then zero intermediates
+    net()->ProjectUnitWeights(unit_src, wt_prjn_k_un, wt_prjn_k_gp, wt_line_swt, 
+			      (wt_prjn_k_un > 0 && wt_line_thr < 0.0f));
+  }
+
   Render_wt_lines();
 
   inherited::Render_impl();
@@ -3189,24 +3197,17 @@ void NetView::Render_wt_lines() {
     }
   }
 
-  if((bool)wt_prjn_lay) {
-    // this does all the heavy lifting: projecting into unit wt_prjn
-    // if wt_line_thr < 0 then zero intermediates
-    net()->ProjectUnitWeights(unit_src, wt_prjn_k_un, wt_prjn_k_gp, swt, 
-			      (wt_prjn_k_un > 0 && wt_line_thr < 0.0f));
-
-    if(wt_line_width >= 0.0f) {
-      int n_con = 0;
-      Unit* u;
-      taLeafItr ui;
-      FOR_ITR_EL(Unit, u, wt_prjn_lay->units., ui) {
-	if(fabsf(u->wt_prjn) >= wt_line_thr) n_con++;
-      }
-
-      n_vtx += 1 + n_con;   // one for recv + senders
-      n_coord += 3 * n_con; // start, end -1 for each coord
-      n_mat += n_con;       // one per line
+  if((bool)wt_prjn_lay && (wt_line_width >= 0.0f)) {
+    int n_con = 0;
+    Unit* u;
+    taLeafItr ui;
+    FOR_ITR_EL(Unit, u, wt_prjn_lay->units., ui) {
+      if(fabsf(u->wt_prjn) >= wt_line_thr) n_con++;
     }
+
+    n_vtx += 1 + n_con;   // one for recv + senders
+    n_coord += 3 * n_con; // start, end -1 for each coord
+    n_mat += n_con;       // one per line
   }
 
   vertex.setNum(n_vtx);
@@ -3719,7 +3720,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblWtLineWdth = taiM->NewLabel("Wdth", widg, font_spec);
-  lblWtLineWdth->setToolTip("Width of weight lines"); 
+  lblWtLineWdth->setToolTip("Width of weight lines -- 0 = thinnest lines (-1 = no lines, redundant with turning wt_lines off)"); 
   layColorScaleCtrls->addWidget(lblWtLineWdth);
   fldWtLineWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineWdth->GetRep());
@@ -3737,7 +3738,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   int list_flags = taiData::flgNullOk | taiData::flgAutoApply;
 
   lblWtPrjnLay = taiM->NewLabel("Wt\nPrjn", widg, font_spec);
-  lblWtPrjnLay->setToolTip("Layer to display weight projection values onto for selected unit (values are visible on all units in the wt_prjn unit variable if this setting is non-null)");
+  lblWtPrjnLay->setToolTip("Layer to project weight values onto, from currently selected unit in view -- values are visible on all units in the wt_prjn unit variable if this setting is non-null -- setting this value causes expensive weight projection computation for every update");
   layColorScaleCtrls->addWidget(lblWtPrjnLay);
   gelWtPrjnLay = dl.Add(new taiGroupElsButton(&TA_Layer_Group, this, NULL, widg, list_flags));
   layColorScaleCtrls->addWidget(gelWtPrjnLay->GetRep());

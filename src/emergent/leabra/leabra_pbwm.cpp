@@ -2597,7 +2597,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
 
   snrthalsp->SetUnique("kwta", true);
   snrthalsp->kwta.k_from = KWTASpec::USE_K;
-  snrthalsp->kwta.k = 4;
+  snrthalsp->kwta.k = 2;
 
   snrthalsp->bg_type = SNrThalLayerSpec::MAINT;
 

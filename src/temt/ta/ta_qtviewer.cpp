@@ -7399,7 +7399,8 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
 
   bool expand = true;
-  if(tab && (exp_flags & EF_DEFAULT)) { // get default info from objs
+  if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT)) {
+    // get default info from objs
     String exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
     if(exp_def_str.nonempty()) {
       int exp_def = (int)exp_def_str;
@@ -7411,9 +7412,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       }
     }
     else {
-      if(!(exp_flags & EF_CUSTOM_FILTER)) {
-	expand = false;		// if no custom filter, default for all other guys is no expandre
-      }
+      expand = false;		// if no custom filter, default for all other guys is no expandre
     }
   }
 
