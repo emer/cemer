@@ -31,7 +31,7 @@ else (WIN32)
     SET(CPACK_PACKAGE_FILE_NAME "emergent-${EMERGENT_VERSION}-mac")
   else (APPLE)
     SET(CPACK_GENERATOR "DEB")
-    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode, libquarter")
+    SET(CPACK_DEBIAN_PACKAGE_DEPENDS "subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, zlib1g-dev, libode, libquarter")
   endif (APPLE)
 endif (WIN32)
 
