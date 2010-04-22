@@ -2885,7 +2885,7 @@ bool taRootBase::Startup_MakeMainWin() {
   // create the default application window
   MainWindowViewer* vwr = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
   // try to size fairly large to avoid scrollbars
-  vwr->SetUserData("view_win_wd", 0.6f);
+  vwr->SetUserData("view_win_wd", 0.7f);
   float ht = 0.5f; // no console
 //  iSize s(1024, 480); // no console  (note: values obtained empirically)
   if ((console_type == taMisc::CT_GUI) && (!(console_options & taMisc::CO_GUI_TRACKING))) {
