@@ -885,6 +885,13 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
 }
 
 void MatrixLayerSpec::Compute_UnitBiasDaMod(LeabraUnit* u, float bias_dav, int go_no) {
+  // no bias for no netin..
+//   if(u->net < 0.001f) {
+//     u->vcb.g_h = 0.0f;
+//     u->vcb.g_a = 0.0f;
+//     return;
+//   }
+
   if(go_no == (int)PFCGateSpec::GATE_NOGO) {
     if(bias_dav >= 0.0f) {
       u->vcb.g_h = 0.0f;
@@ -2862,6 +2869,8 @@ bool LeabraWizard::PBWM_Remove(LeabraNetwork* net) {
     proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_Remove before -- actually saves network specifically");
   }
 
+  net->StructUpdate(true);
+
   net->RemoveUnits();
   net->layers.gp.RemoveName("PBWM_PFC");
   net->layers.gp.RemoveName("PBWM_BG");
@@ -2873,6 +2882,8 @@ bool LeabraWizard::PBWM_Remove(LeabraNetwork* net) {
   net->specs.gp.RemoveName("PFC_BG_Units");
 
   net->CheckSpecs();		// could have nuked dependent specs!
+
+  net->StructUpdate(false);
 
   if(proj) {
     proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_Remove after -- actually saves network specifically");
