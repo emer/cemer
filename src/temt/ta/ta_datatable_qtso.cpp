@@ -5515,16 +5515,17 @@ iDataTableEditor::~iDataTableEditor() {
 void iDataTableEditor::ConfigView() {
   DataTable* dt = this->dt(); // cache
   if (!dt) return;
-  bool show_cell = false; // false if not in mode, or no mat cols
-  if (true) { // in cell mode
-    for (int i = 0; i < dt->data.size; ++i) {
-      DataCol* dc = dt->data.FastEl(i);
-      if (dc->is_matrix) {
-        show_cell = true;
-        break;
-      }
-    }
-  }
+  bool show_cell = (bool)m_cell; // if we have a cell, show it..
+  // false if not in mode, or no mat cols
+//   if (true) { // in cell mode
+//     for (int i = 0; i < dt->data.size; ++i) {
+//       DataCol* dc = dt->data.FastEl(i);
+//       if (dc->is_matrix) {
+//         show_cell = true;
+//         break;
+//       }
+//     }
+//   }
   tvCell->setVisible(show_cell);
   // make sure orphan cell viewer goes away...
   if (dt->rows == 0) {
