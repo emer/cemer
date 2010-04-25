@@ -364,6 +364,9 @@ class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
+  bool		bias_mult;	// biases are multiplicative on netinputs, instead of using the gc.a gc.h mechanisms -- (1 + gain * bias) * net for positive, (1 - gain * bias) * net for negative
+  float		mult_gain;	// #CONDSHOW_ON_bias_mult gain for multiplicative bias factors -- how much total effect do they have -- makes it easier to switch between mult and non-mult instead of manually redoing all the biases
+
 
   TA_SIMPLE_BASEFUNS(MatrixMiscSpec);
 protected:
@@ -431,10 +434,12 @@ public:
   MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 
+  override void Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr);
+
   override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
   virtual void Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
   // save the effective mid-minus (gating) activation state for subsequent learning -- for specific unit group (stripe)
-  virtual void 	Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
+  virtual float	Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
   // compute gate_bias da modulation to influence gating -- continuously throughout settling
     virtual void Compute_UnitBiasDaMod(LeabraUnit* u, float bias_dav, int go_no);
     // apply bias da modulation to individual unit

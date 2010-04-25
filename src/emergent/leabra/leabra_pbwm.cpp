@@ -593,7 +593,6 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
   return noise_amp * rval;
 }
 
-
 //////////////////////////////////
 //	Matrix Layer Spec	//
 //////////////////////////////////
@@ -609,6 +608,8 @@ void MatrixGateBiasSpec::Initialize() {
 
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
+  bias_mult = false;
+  mult_gain = .1f;
 }
 
 void MatrixRndGoSpec::Initialize() {
@@ -808,16 +809,51 @@ void MatrixLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group
   }
 }
 
+void MatrixLayerSpec::Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr) {
+  if(!matrix.bias_mult) {
+    inherited::Compute_NetinStats_ugp(ug, thr);
+    return;
+  }
+
+  LeabraLayer* lay = (LeabraLayer*)ug->own_lay;
+
+  float bias_dav = Compute_BiasDaMod(lay, (LeabraUnit_Group*)ug, (LeabraNetwork*)lay->own_net);
+
+  thr->netin.InitVals();  thr->i_thrs.InitVals();
+  int gp_sz = ug->leaves / 2;
+  
+  LeabraUnit* u;
+  taLeafItr i;
+  int lf = 0;
+  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
+    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(lf / gp_sz);
+    float netin_mult = 1.0f;
+    if(go_no == (int)PFCGateSpec::GATE_NOGO) {
+      netin_mult -= matrix.mult_gain * bias_dav;
+    }
+    else {			// must be a GO
+      netin_mult += matrix.mult_gain * bias_dav;
+    }
+    u->net *= netin_mult;
+    u->misc_2 = netin_mult;	// record
+    thr->netin.UpdtVals(u->net, lf);    thr->i_thrs.UpdtVals(u->i_thr, lf);
+    lf++;
+  }
+  thr->netin.CalcAvg(ug->leaves);  thr->i_thrs.CalcAvg(ug->leaves);
+}
+
 void MatrixLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_ApplyInhib(lay, net);
   
-  for(int gi=0; gi<lay->units.gp.size; gi++) {
-    LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
-    Compute_BiasDaMod(lay, mugp, net); // always just compute this one
+  if(!matrix.bias_mult) {
+    for(int gi=0; gi<lay->units.gp.size; gi++) {
+      LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
+      Compute_BiasDaMod(lay, mugp, net); // always just compute this one
+    }
   }
 }
 
-void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp, 
+float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp, 
 					LeabraNetwork* net) {
   int da_prjn_idx;
   LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
@@ -874,14 +910,17 @@ void MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp
 
   float tot_dav = bias_dav + tonic_da;
 
-  int idx = 0;
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz);
-    Compute_UnitBiasDaMod(u, tot_dav, go_no);
-    idx++;
+  if(!matrix.bias_mult) {
+    int idx = 0;
+    LeabraUnit* u;
+    taLeafItr i;
+    FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
+      PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz);
+      Compute_UnitBiasDaMod(u, tot_dav, go_no);
+      idx++;
+    }
   }
+  return tot_dav;
 }
 
 void MatrixLayerSpec::Compute_UnitBiasDaMod(LeabraUnit* u, float bias_dav, int go_no) {

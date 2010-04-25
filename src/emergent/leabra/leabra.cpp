@@ -54,8 +54,18 @@ InitProcRegistrar mod_init_leabra(leabra_module_init);
 //////////////////////////
 
 void WtScaleSpec::Initialize() {
+  old = false;
   rel = 1.0f;
   abs = 1.0f;
+  sem_extra = 2;
+}
+
+void WtScaleSpec::Defaults_init() {
+  if(old) {			// make it new!
+    old = false;
+    rel = 1.0f;
+    abs = 1.0f;
+  }
 }
 
 void WtScaleSpecInit::Initialize() {
@@ -1059,10 +1069,30 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     WtScaleSpec& wt_scale = cs->wt_scale;
     float savg = lay->kwta.pct;
-    if(cs->savg_cor.norm_con_n)	// sometimes it makes sense to just do it by the group n
-      recv_gp->scale_eff = wt_scale.NetScale() * (1.0f / ((float)recv_gp->size * savg));
-    else
-      recv_gp->scale_eff = wt_scale.NetScale() * (1.0f / ((float)lay->units.leaves * savg));
+    float lay_sz = (float)lay->units.leaves;
+    float n_cons = (float)recv_gp->size;
+    int slay_act_n = (int)(savg * lay_sz + .5f); // sending layer actual # active
+    slay_act_n = MAX(slay_act_n, 1);
+    int r_avg_act_n = (int)(savg * n_cons + .5f);// recv average actual # active if uniform
+    r_avg_act_n = MAX(r_avg_act_n, 1);
+    if(wt_scale.old) {
+      if(cs->savg_cor.norm_con_n)	// this is default
+	recv_gp->scale_eff = wt_scale.NetScale() / (float)r_avg_act_n;
+      else
+	recv_gp->scale_eff = wt_scale.NetScale() / (float)slay_act_n;
+    }
+    else {			// new way!
+      if(n_cons == lay_sz) {	// no diff if full connectivity
+	recv_gp->scale_eff = wt_scale.NetScale() / (float)slay_act_n;
+      }
+      else {					     // partial connectivity
+	int r_max_act_n = MIN(n_cons, slay_act_n); // max number we could get
+	// standard err of mean = std dev / sqrt(n) -- assume binomial according to savg act
+	int r_exp_act_n = r_avg_act_n + wt_scale.sem_extra;
+	r_exp_act_n = MIN(r_exp_act_n, r_max_act_n);
+	recv_gp->scale_eff = wt_scale.NetScale() / (float)r_exp_act_n;
+      }
+    }
     u->net_scale += wt_scale.rel;
   }
   // add the bias weight into the netinput, scaled by 1/n

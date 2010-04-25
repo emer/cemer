@@ -2132,7 +2132,7 @@ void NetViewFontSizes::Initialize() {
 void NetViewParams::Initialize() {
   xy_square = false;
   unit_spacing = .05f;
-  prjn_disp = L_R_F;
+  prjn_disp = L_R_B;
   prjn_name = false;
   prjn_width = .002f;
   prjn_trans = .5f;
