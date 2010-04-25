@@ -609,7 +609,8 @@ void MatrixGateBiasSpec::Initialize() {
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
   mult_bias = false;
-  bias_gain = .1f;
+  bias_gain = .05f;
+  bias_pos_gain = 1.0f;
 }
 
 void MatrixRndGoSpec::Initialize() {
@@ -827,15 +828,16 @@ void MatrixLayerSpec::Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr) {
   int lf = 0;
   FOR_ITR_EL(LeabraUnit, u, ug->, i) {
     PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(lf / gp_sz);
-    float netin_mult = 1.0f;
+    float netin_extra = 0.0f;
     if(go_no == (int)PFCGateSpec::GATE_NOGO) {
-      netin_mult -= matrix.bias_gain * bias_dav;
+      netin_extra = -matrix.bias_gain * bias_dav;
     }
     else {			// must be a GO
-      netin_mult += matrix.bias_gain * bias_dav;
+      netin_extra = matrix.bias_gain * bias_dav;
     }
-    u->net *= netin_mult;
-    u->misc_2 = netin_mult;	// record
+    if(netin_extra > 0.0f) netin_extra *= matrix.bias_pos_gain;
+    u->net *= (1.0f + netin_extra);
+    u->misc_2 = netin_extra;	// record
     thr->netin.UpdtVals(u->net, lf);    thr->i_thrs.UpdtVals(u->i_thr, lf);
     lf++;
   }
