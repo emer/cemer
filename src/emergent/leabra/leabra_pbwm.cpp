@@ -599,18 +599,18 @@ float MatrixUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
 
 void MatrixGateBiasSpec::Initialize() {
   mnt_mnt_nogo = 1.0f;
-  mnt_rew_nogo = 10.0f;
+  mnt_rew_nogo = 5.0f;
   mnt_empty_go = 0.0f;
   out_rew_go = 1.0f;
   out_norew_nogo = 2.0f;
-  out_empty_nogo = 10.0f;
+  out_empty_nogo = 5.0f;
 }
 
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
   mult_bias = false;
-  bias_gain = .05f;
-  bias_pos_gain = 1.0f;
+  bias_gain = .1f;
+  bias_pos_gain = 0.0f;
 }
 
 void MatrixRndGoSpec::Initialize() {
