@@ -130,10 +130,10 @@ class LEABRA_API WtScaleSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weight scaling specification
 INHERITED(SpecMemberBase)
 public:
-  bool		old;		// #DEF_false use old way of computing netinput scaling factors -- please convert projects to using the new way (as of version 5.1.0) -- only affects connections with < full connectivity: does a much better job of normalizing these cases, and you should be able to just have abs/rel = 1 with no diff_act_pct on layer and it should just work -- see wiki for full docs and equations
   float		abs;		// #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
   float		rel;		// [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
   int		sem_extra;	// #CONDSHOW_OFF_old #DEF_2 #MIN_0 standard-error-of-the-mean (SEM) extra value to add to the average expected number of active connections to receive, for purposes of computing scaling factors with partial connectivity -- for 25% layer activity, binomial SEM = sqrt(p(1-p)) = .43, so 3x = 1.3 so 2 is a reasonable default, but can use different value to make scaling work better
+  bool		old;		// #DEF_false use old way of computing netinput scaling factors -- please convert projects to using the new way (as of version 5.1.0) -- only affects connections with < full connectivity: does a much better job of normalizing these cases, and you should be able to just have abs/rel = 1 with no diff_act_pct on layer and it should just work -- see wiki for full docs and equations
 
   inline float	NetScale() 	{ return abs * rel; }
 
