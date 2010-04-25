@@ -608,8 +608,8 @@ void MatrixGateBiasSpec::Initialize() {
 
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
-  bias_mult = false;
-  mult_gain = .1f;
+  mult_bias = false;
+  bias_gain = .1f;
 }
 
 void MatrixRndGoSpec::Initialize() {
@@ -810,7 +810,7 @@ void MatrixLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group
 }
 
 void MatrixLayerSpec::Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr) {
-  if(!matrix.bias_mult) {
+  if(!matrix.mult_bias) {
     inherited::Compute_NetinStats_ugp(ug, thr);
     return;
   }
@@ -829,10 +829,10 @@ void MatrixLayerSpec::Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr) {
     PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(lf / gp_sz);
     float netin_mult = 1.0f;
     if(go_no == (int)PFCGateSpec::GATE_NOGO) {
-      netin_mult -= matrix.mult_gain * bias_dav;
+      netin_mult -= matrix.bias_gain * bias_dav;
     }
     else {			// must be a GO
-      netin_mult += matrix.mult_gain * bias_dav;
+      netin_mult += matrix.bias_gain * bias_dav;
     }
     u->net *= netin_mult;
     u->misc_2 = netin_mult;	// record
@@ -845,7 +845,7 @@ void MatrixLayerSpec::Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr) {
 void MatrixLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_ApplyInhib(lay, net);
   
-  if(!matrix.bias_mult) {
+  if(!matrix.mult_bias) {
     for(int gi=0; gi<lay->units.gp.size; gi++) {
       LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
       Compute_BiasDaMod(lay, mugp, net); // always just compute this one
@@ -910,7 +910,7 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mug
 
   float tot_dav = bias_dav + tonic_da;
 
-  if(!matrix.bias_mult) {
+  if(!matrix.mult_bias) {
     int idx = 0;
     LeabraUnit* u;
     taLeafItr i;

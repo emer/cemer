@@ -364,8 +364,8 @@ class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
-  bool		bias_mult;	// biases are multiplicative on netinputs, instead of using the gc.a gc.h mechanisms -- (1 + gain * bias) * net for positive, (1 - gain * bias) * net for negative
-  float		mult_gain;	// #CONDSHOW_ON_bias_mult gain for multiplicative bias factors -- how much total effect do they have -- makes it easier to switch between mult and non-mult instead of manually redoing all the biases
+  bool		mult_bias;	// biases are multiplicative on netinputs, instead of using the gc.a gc.h mechanisms -- (1 + gain * bias) * net for positive, (1 - gain * bias) * net for negative
+  float		bias_gain;	// #CONDSHOW_ON_mult_bias gain for multiplicative bias factors -- how much total effect do they have -- makes it easier to switch between mult and non-mult instead of manually redoing all the biases
 
 
   TA_SIMPLE_BASEFUNS(MatrixMiscSpec);
