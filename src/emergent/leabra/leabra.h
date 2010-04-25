@@ -137,6 +137,13 @@ public:
 
   inline float	NetScale() 	{ return abs * rel; }
 
+  float	SLayActScale(float savg, float lay_sz, float n_cons);
+  // compute scaling factor (new version) based on sending layer activity level (savg) and number of connections and overall layer size
+
+  inline float	FullScale(float savg, float lay_sz, float n_cons)
+  { return NetScale() * SLayActScale(savg, lay_sz, n_cons); }
+  // full scaling factor -- product of above two sub-factors
+
   TA_SIMPLE_BASEFUNS(WtScaleSpec);
 protected:
   SPEC_DEFAULTS;
@@ -270,7 +277,7 @@ INHERITED(SpecMemberBase)
 public:
   float		cor;		// #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply (0=none, 1=all, .5=half, etc)
   float		thresh;		// #DEF_0.001 #MIN_0 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
-  bool		norm_con_n;	// #DEF_true #AKA_div_gp_n in normalizing netinput, divide by the actual number of connections (recv group n), not the overall number of units in the sending layer -- THIS SHOULD ALWAYS BE ON AND IS THE NEW DEFAULT
+  bool		norm_con_n;	// #DEF_true #AKA_div_gp_n #OBSOLETE WARNING: this is now obsolete and only used if wt_scale.old = true -- in normalizing netinput, divide by the actual number of connections (recv group n), not the overall number of units in the sending layer -- THIS SHOULD ALWAYS BE ON AND IS THE NEW DEFAULT
 
   TA_SIMPLE_BASEFUNS(SAvgCorSpec);
 protected:
@@ -503,6 +510,9 @@ public:
   virtual void	GraphXCalSoftBoundFun(DataTable* graph_data = NULL);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the xcal soft weight bounding function (NULL = new data table)
 
+  virtual void 	WtScaleCvt(float slay_kwta_pct=.25, int slay_n_units=100, int n_recv_cons=5,
+			   bool norm_con_n=true);
+  // #BUTTON helper for converting from old wt_scale computation to new one -- enter parameters for the sending layer kwta pct (overall layer activit), number of receiving connections, and whether the norm_con_n flag was on or off (effectively always on in new version) -- it reports what the effective weight scaling was in the old version, what it is in the new version, and what you should set the wt_scale.abs to to get equivalent performance, assuming wt_scale.abs reflects what was set previously
 
   override bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);
   // check for for misc configuration settings required by different algorithms

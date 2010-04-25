@@ -61,11 +61,25 @@ void WtScaleSpec::Initialize() {
 }
 
 void WtScaleSpec::Defaults_init() {
-  if(old) {			// make it new!
-    old = false;
-    rel = 1.0f;
-    abs = 1.0f;
+}
+
+
+float WtScaleSpec::SLayActScale(float savg, float lay_sz, float n_cons) {
+  int slay_act_n = (int)(savg * lay_sz + .5f); // sending layer actual # active
+  slay_act_n = MAX(slay_act_n, 1);
+  float rval = 1.0f;
+  if(n_cons == lay_sz) {
+    rval = 1.0f / (float)slay_act_n;
   }
+  else {
+    int r_max_act_n = MIN(n_cons, slay_act_n); // max number we could get
+    int r_avg_act_n = (int)(savg * n_cons + .5f);// recv average actual # active if uniform
+    r_avg_act_n = MAX(r_avg_act_n, 1);
+    int r_exp_act_n = r_avg_act_n + sem_extra;
+    r_exp_act_n = MIN(r_exp_act_n, r_max_act_n);
+    rval = 1.0f / (float)r_exp_act_n;
+  }
+  return rval;
 }
 
 void WtScaleSpecInit::Initialize() {
@@ -405,6 +419,33 @@ void LeabraConSpec::GraphXCalSoftBoundFun(DataTable* graph_data) {
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
 }
+
+void LeabraConSpec::WtScaleCvt(float savg, int lay_sz, int n_cons,
+			       bool norm_con_n) {
+  int slay_act_n = (int)(savg * lay_sz + .5f); // sending layer actual # active
+  slay_act_n = MAX(slay_act_n, 1);
+  int r_avg_act_n = (int)(savg * n_cons + .5f);// recv average actual # active if uniform
+  r_avg_act_n = MAX(r_avg_act_n, 1);
+  float old_val;
+  if(norm_con_n)
+    old_val = 1.0f / (float)(savg * n_cons);
+  else
+    old_val = 1.0f / (float)slay_act_n;
+  float new_val = wt_scale.SLayActScale(savg, lay_sz, n_cons);
+  float new_old_rat = new_val / old_val;
+  float old_new_rat = old_val / new_val;
+  taMisc::Info("old_scale:", String(old_val), "new_scale:", String(new_val),
+	       "new / old:", String(new_old_rat), "old / new:", String(old_new_rat),
+	       String("cur wt_scale.abs: ") + String(wt_scale.abs) + String(" new abs to remain same: ") +
+	       String(old_new_rat * wt_scale.abs));
+  // new = new_abs.* new_sc
+  // old = old_abs * old_sc
+  // new_abs * new_sc = old_abs * old_sc
+  // new_abs = old_abs * (old_sc / new_sc)
+}
+
+/////////////////////////////////////////////////////
+//	LeabraRecvCons
 
 void LeabraRecvCons::Initialize() {
   ClearBaseFlag(OWN_CONS);	// recv does NOT own!
@@ -1071,27 +1112,14 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
     float savg = lay->kwta.pct;
     float lay_sz = (float)lay->units.leaves;
     float n_cons = (float)recv_gp->size;
-    int slay_act_n = (int)(savg * lay_sz + .5f); // sending layer actual # active
-    slay_act_n = MAX(slay_act_n, 1);
-    int r_avg_act_n = (int)(savg * n_cons + .5f);// recv average actual # active if uniform
-    r_avg_act_n = MAX(r_avg_act_n, 1);
     if(wt_scale.old) {
       if(cs->savg_cor.norm_con_n)	// this is default
-	recv_gp->scale_eff = wt_scale.NetScale() / (float)r_avg_act_n;
+	recv_gp->scale_eff = wt_scale.NetScale() / (n_cons * savg);
       else
-	recv_gp->scale_eff = wt_scale.NetScale() / (float)slay_act_n;
+	recv_gp->scale_eff = wt_scale.NetScale() / (lay_sz * savg);
     }
     else {			// new way!
-      if(n_cons == lay_sz) {	// no diff if full connectivity
-	recv_gp->scale_eff = wt_scale.NetScale() / (float)slay_act_n;
-      }
-      else {					     // partial connectivity
-	int r_max_act_n = MIN(n_cons, slay_act_n); // max number we could get
-	// standard err of mean = std dev / sqrt(n) -- assume binomial according to savg act
-	int r_exp_act_n = r_avg_act_n + wt_scale.sem_extra;
-	r_exp_act_n = MIN(r_exp_act_n, r_max_act_n);
-	recv_gp->scale_eff = wt_scale.NetScale() / (float)r_exp_act_n;
-      }
+      recv_gp->scale_eff = wt_scale.FullScale(savg, lay_sz, n_cons); 
     }
     u->net_scale += wt_scale.rel;
   }
