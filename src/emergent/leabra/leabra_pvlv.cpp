@@ -70,6 +70,7 @@ void PVConSpec::UpdateAfterEdit_impl() {
 
 void PVMiscSpec::Initialize() {
   min_pvi = 0.4f;
+  pvi_scale_min = false;
   prior_gain = 1.0f;
   er_reset_prior = true;
 }
@@ -192,6 +193,9 @@ float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val, LeabraN
   float pv_da = 0.0f;
   if(net->phase_no > 0) {
     pvd = pve_val - MAX(u->act_m, pv.min_pvi);
+    if(pv.pvi_scale_min && (pvd < 0.0f) && (u->act_m < pv.min_pvi)) {
+      pvd *= (u->act_m / pv.min_pvi); // scale by how negative relative to min
+    }
     pv_da = pvd - u->misc_1; // delta relative to prior
   }
 
@@ -440,6 +444,7 @@ bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 
 void LVMiscSpec::Initialize() {
   min_lvi = 0.1f;
+  lvi_scale_min = false;
   lrn_pv_only = true;
   prior_gain = 1.0f;
   er_reset_prior = true;
@@ -552,6 +557,9 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, L
   LeabraUnit* lviu = (LeabraUnit*)lvi_ugp->FastEl(0);
 
   float lvd = lveu->act_eq - MAX(lviu->act_eq, lv.min_lvi);
+  if(lv.lvi_scale_min && (lvd < 0.0f) && (lviu->act_eq < lv.min_lvi)) {
+    lvd *= (lviu->act_eq / lv.min_lvi); // scale by how negative relative to min
+  }
   float lv_da = lvd - lveu->misc_1;
 
   for(int i=0;i<lve_ugp->size;i++) {

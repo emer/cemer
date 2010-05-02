@@ -126,6 +126,7 @@ class LEABRA_API PVMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		min_pvi;	// #DEF_0.4 minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the PV delta value: pvd = PVe - MAX(PVi,min_pvi)
+  bool	       	pvi_scale_min;	// if both the PVe and PVi values are below min_pvi, then scale the result by (PVi/min_pvi) -- as PVi gets lower, meaning that it expects to be doing poorly, then punish the system less (but still punish it)
   float		prior_gain;	// #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how of the prior PV delta value (pvd = PVe - MAX(PVi,min_pvi)) to subtract away in computing the net PV dopamine signal (PV DA = pvd_t - prior_gain * pvd_t-1)
   bool		er_reset_prior;	// #EXPERT #DEF_true reset prior delta value (pvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
 
@@ -290,6 +291,7 @@ class LEABRA_API LVMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		min_lvi;	// #DEF_0.1;0.4 minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)
+  bool	       	lvi_scale_min;	// if both the LVe and LVi values are below min_lvi, then scale the result by (LVi/min_lvi) -- as LVi gets lower, meaning that it expects to be doing poorly, then punish the system less (but still punish it)
   bool		lrn_pv_only;	// #DEF_true only compute weight changes on trials where primary rewards are expected or actually received -- the target PV value is only presented on such trials, but if this flag is off, it actually learns on other trials, but with whatever plus phase activation state happens to arise
   float		prior_gain;	// #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the the prior time step LV delta value (lvd = LVe - MAX(LVi,min_lvi)) to subtract away in computing the net LV dopamine signal (LV DA = lvd_t - prior_gain * lvd_t-1)
   bool		er_reset_prior;	// #EXPERT #DEF_true reset prior delta value (lvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
