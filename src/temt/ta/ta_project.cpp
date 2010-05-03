@@ -3045,8 +3045,8 @@ bool taRootBase::Startup_ProcessArgs() {
 }
 
 bool taRootBase::Startup_RunStartupScript() {
-  cssMisc::TopShell->RunStartupScript();
-  if(!taMisc::gui_active && !cssMisc::init_interactive)
+  bool ran = cssMisc::TopShell->RunStartupScript();
+  if(ran && !taMisc::gui_active && !cssMisc::init_interactive)
     taiMC_->Quit();
   return true;
 }
