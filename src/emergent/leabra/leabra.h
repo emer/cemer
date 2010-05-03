@@ -3465,8 +3465,9 @@ public:
   virtual bool 	PBWM_CvtV1File(const String& proj_file_nm, bool load_after = true);
   // #MENU_BUTTON #CAT_File #EXT_proj #FILE_DIALOG_LOAD convert an older "version 1" (anything prior to version 5.0.1 of emergent) PBWM project file to use the V1 specs, which replicates the exact prior funcionality -- these projects can typically also be run using the new basic specs, using the PARSIMONIUS PBWM_Mode -- once converted, if load_after, then THIS FILE IS THEN LOADED OVER EXISTING PROJECT (and can then be saved to a new file name -- must be reloaded to get views to update) -- otherwise THE ORIGINAL PROJECT IS OVERWRITTEN
 
-  virtual bool PBWM_SetNStripes(LeabraNetwork* net, int n_stripes=6, int n_units=-1);
-  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units)
+  virtual bool PBWM_SetNStripes(LeabraNetwork* net, int n_stripes=6, int n_units=-1,
+				int gp_geom_x=-1, int gp_geom_y=-1);
+  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) throughout the entire set of pfc/bg layers (n_units = -1 = use current # of units) -- can also specify a target group geometry if gp_geom values are not -1
   virtual bool PBWM_ToLayerGroups(LeabraNetwork* net);
   // #MENU_BUTTON move all the PBWM layers to PBWM_BG and PBWM_PFC layer groups, which is the new default way of organizing these layers
   virtual bool PBWM_Remove(LeabraNetwork* net);

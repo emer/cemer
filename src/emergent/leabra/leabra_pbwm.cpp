@@ -1892,12 +1892,19 @@ bool LeabraWizard::PBWM_ToLayerGroups(LeabraNetwork* net) {
   return true;
 }
 
-static void lay_set_geom(LeabraLayer* lay, int n_stripes, int n_units = -1, bool sp = true) {
+static void lay_set_geom(LeabraLayer* lay, int n_stripes, int n_units = -1, bool sp = true,
+			 int gp_geom_x=-1, int gp_geom_y=-1) {
   lay->unit_groups = true;
   lay->SetNUnitGroups(n_stripes);
-  if(n_stripes <= 5) {
-    lay->gp_geom.x = n_stripes;
-    lay->gp_geom.y = 1;
+  if(gp_geom_x > 0 && gp_geom_y > 0) {
+    lay->gp_geom.x = gp_geom_x;
+    lay->gp_geom.y = gp_geom_y;
+  }
+  else {
+    if(n_stripes <= 5) {
+      lay->gp_geom.x = n_stripes;
+      lay->gp_geom.y = 1;
+    }
   }
   if(n_units > 0) {
     lay->SetNUnits(n_units);
@@ -1910,14 +1917,15 @@ static void lay_set_geom(LeabraLayer* lay, int n_stripes, int n_units = -1, bool
 }
 
 static void set_n_stripes(LeabraNetwork* net, const char* nm, int n_stripes,
-  int n_units, bool sp)
+			  int n_units, bool sp, int gp_geom_x=-1, int gp_geom_y=-1)
 {
   LeabraLayer* lay = (LeabraLayer*)net->FindLayer(nm);
   if(lay == NULL) return;
-  lay_set_geom(lay, n_stripes, n_units, sp);
+  lay_set_geom(lay, n_stripes, n_units, sp, gp_geom_x, gp_geom_y);
 }
 
-bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_units) {
+bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_units,
+				    int gp_geom_x, int gp_geom_y) {
   if(TestError(!net, "PBWM_SetNStripes", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
     return false;
 
@@ -1928,19 +1936,19 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_uni
 //     proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_SetNStripes -- actually saves network specifically");
 //   }
 
-  set_n_stripes(net, "PFC", n_stripes, n_units, true);
-  set_n_stripes(net, "PFC_mnt", n_stripes, n_units, true);
-  set_n_stripes(net, "PFC_out", n_stripes, n_units, true);
-  set_n_stripes(net, "Matrix", n_stripes, -1, true);
-  set_n_stripes(net, "Matrix_mnt", n_stripes, -1, true);
-  set_n_stripes(net, "Matrix_out", n_stripes, -1, true);
-  set_n_stripes(net, "SNrThal", n_stripes, -1, false);
-  set_n_stripes(net, "SNrThal_mnt", n_stripes, -1, false);
-  set_n_stripes(net, "SNrThal_out", n_stripes, -1, false);
-  set_n_stripes(net, "LVe", 1, -1, false);
-  set_n_stripes(net, "LVi", 1, -1, false);
-  set_n_stripes(net, "Patch", n_stripes, -1, false);
-  set_n_stripes(net, "SNc", n_stripes, -1, false);
+  set_n_stripes(net, "PFC", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "PFC_mnt", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "PFC_out", n_stripes, n_units, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "Matrix", n_stripes, -1, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "Matrix_mnt", n_stripes, -1, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "Matrix_out", n_stripes, -1, true, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "SNrThal", n_stripes, -1, false, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "SNrThal_mnt", n_stripes, -1, false, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "SNrThal_out", n_stripes, -1, false, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "LVe", 1, -1, false, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "LVi", 1, -1, false, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "Patch", n_stripes, -1, false, gp_geom_x, gp_geom_y);
+  set_n_stripes(net, "SNc", n_stripes, -1, false, gp_geom_x, gp_geom_y);
   net->LayoutUnitGroups();
   net->Build();
   return true;
