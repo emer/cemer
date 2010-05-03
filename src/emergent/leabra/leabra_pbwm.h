@@ -359,36 +359,6 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-class LEABRA_API MatrixAdaptBiasSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adaptive gating bias
-INHERITED(SpecMemberBase)
-public:
-  bool		adapt;		// turn on adaptation of gate biases
-  float		mnt_empty_go_eff; // #READ_ONLY #SHOW #CONDSHOW_ON_adapt current effective value of the maint empty go bias based on adaptive parameters below
-  float		mego_decay;	// #CONDSHOW_ON_adapt #DEF_0.01 rate of decay of mnt_empty_go back to baseline value specified in gate_bias (multiplicative, exponential decay)
-  float		mego_inc; 	// #CONDSHOW_ON_adapt #DEF_0.1 when all stripes fire NoGo during a maint trial, increment the effective mnt_empty_go bias upward by this amount (additive)
-  float		mego_asymp_val;	   // #READ_ONLY #SHOW #CONDSHOW_ON_adapt asymptotically large value of mnt_empty_go based on current params (where decay balances new increments, assuming that increments happen every trial) dk * val = inc; val = inc / dk
-
-  void		Compute_Inc() {
-    mnt_empty_go_eff += mego_inc;
-  }
-  // increment -- call when all nogo on a mnt trial
-
-  void		Compute_Decay(float mego_trg) {
-    mnt_empty_go_eff += mego_decay * (mego_trg - mnt_empty_go_eff);
-  }
-  // decay toward target value -- call on every trial
-
-  TA_SIMPLE_BASEFUNS(MatrixAdaptBiasSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
-};
-
 class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc specs for the matrix layer
 INHERITED(SpecMemberBase)
@@ -461,7 +431,6 @@ public:
   BGType		bg_type;	// type of basal ganglia/frontal component system: both output and maintenance operate in most areas, but output gating is most relevant for motor output control, and maintenance is most relevant for working-memory updating
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   MatrixGateBiasSpec 	gate_bias;	// gating biases depending on different conditions in the network -- helps to get the network performing appropriately for basic maintenance functions, to then be reinforced or overridden by learning
-  MatrixAdaptBiasSpec 	adapt_bias;	// adapt gating bias over time as a function of network behavior
   MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 
