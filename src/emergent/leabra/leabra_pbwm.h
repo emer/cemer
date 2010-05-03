@@ -343,16 +343,46 @@ class LEABRA_API MatrixGateBiasSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		mnt_mnt_nogo;	// #DEF_1 (Weak) #AKA_mnt_nogo for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- this is critical for enabling robust maintenance by reducing Go activity that would then lead to an update
-  float		mnt_rew_nogo;	// #DEF_10 (Very Strong) for all MAINT stripes (empty or maintaining) on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- adds to any mnt_mnt_nogo -- in general it is not useful to fire maint gating on recall/output trials (see pfc.gate spec -- can prevent entirely with flag there)
+  float		mnt_rew_nogo;	// #DEF_5;10 (Very Strong) for all MAINT stripes (empty or maintaining) on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- adds to any mnt_mnt_nogo -- in general it is not useful to fire maint gating on recall/output trials (see pfc.gate spec -- can prevent entirely with flag there)
   float		mnt_empty_go;	// #DEF_0 for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias da (positive dopamine) -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
   float		out_rew_go;	// #DEF_1 (Weak) #AKA_out_pvr for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias da (positive dopamine) to encourage the output gating units to respond -- see out_empty_nogo for empty (non-maintaining) stripes
   float		out_norew_nogo;	// #DEF_2 (Strong) for all OUTPUT stripes (empty or maintaining) on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating -- is not generally useful to output gate on store trials
-  float		out_empty_nogo;	// #DEF_10 (Very Strong) for OUTPUT stripes that are not maintaining anything, on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating if there is nothing being maintained to output gate
+  float		out_empty_nogo;	// #DEF_5;10 (Very Strong) for OUTPUT stripes that are not maintaining anything, on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating if there is nothing being maintained to output gate
 
   TA_SIMPLE_BASEFUNS(MatrixGateBiasSpec);
 protected:
   SPEC_DEFAULTS;
 //   void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
+};
+
+class LEABRA_API MatrixAdaptBiasSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adaptive gating bias
+INHERITED(SpecMemberBase)
+public:
+  bool		adapt;		// turn on adaptation of gate biases
+  float		mnt_empty_go_eff; // #READ_ONLY #SHOW #CONDSHOW_ON_adapt current effective value of the maint empty go bias based on adaptive parameters below
+  float		mego_decay;	// #CONDSHOW_ON_adapt #DEF_0.01 rate of decay of mnt_empty_go back to baseline value specified in gate_bias (multiplicative, exponential decay)
+  float		mego_inc; 	// #CONDSHOW_ON_adapt #DEF_0.1 when all stripes fire NoGo during a maint trial, increment the effective mnt_empty_go bias upward by this amount (additive)
+  float		mego_asymp_val;	   // #READ_ONLY #SHOW #CONDSHOW_ON_adapt asymptotically large value of mnt_empty_go based on current params (where decay balances new increments, assuming that increments happen every trial) dk * val = inc; val = inc / dk
+
+  void		Compute_Inc() {
+    mnt_empty_go_eff += mego_inc;
+  }
+  // increment -- call when all nogo on a mnt trial
+
+  void		Compute_Decay(float mego_trg) {
+    mnt_empty_go_eff += mego_decay * (mego_trg - mnt_empty_go_eff);
+  }
+  // decay toward target value -- call on every trial
+
+  TA_SIMPLE_BASEFUNS(MatrixAdaptBiasSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -431,6 +461,7 @@ public:
   BGType		bg_type;	// type of basal ganglia/frontal component system: both output and maintenance operate in most areas, but output gating is most relevant for motor output control, and maintenance is most relevant for working-memory updating
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   MatrixGateBiasSpec 	gate_bias;	// gating biases depending on different conditions in the network -- helps to get the network performing appropriately for basic maintenance functions, to then be reinforced or overridden by learning
+  MatrixAdaptBiasSpec 	adapt_bias;	// adapt gating bias over time as a function of network behavior
   MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 

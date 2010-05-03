@@ -3166,7 +3166,7 @@ void NetView::Render_wt_lines() {
   TDCoord src_lay_pos; src_lay->GetAbsPos(src_lay_pos);
   
   drw->style = SoDrawStyleElement::LINES;
-  drw->lineWidth = wt_line_width;
+  drw->lineWidth = MAX(wt_line_width, 0.0f);
   vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED); // part = line segment = same as FACE but likely to be faster to compute line segs?
 
   // count the number of lines etc

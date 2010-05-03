@@ -606,6 +606,19 @@ void MatrixGateBiasSpec::Initialize() {
   out_empty_nogo = 5.0f;
 }
 
+void MatrixAdaptBiasSpec::Initialize() {
+  adapt = false;
+  mnt_empty_go_eff = 0.0f;
+  mego_decay = 0.01f;
+  mego_inc = 0.1f;
+  mego_asymp_val = mego_inc / mego_decay;
+}
+
+void MatrixAdaptBiasSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  mego_asymp_val = mego_inc / mego_decay;
+}  
+
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
   mult_bias = false;
@@ -672,6 +685,7 @@ void MatrixLayerSpec::Defaults_init() {
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   gate_bias.UpdateAfterEdit_NoGui();
+  adapt_bias.UpdateAfterEdit_NoGui();
   rnd_go.UpdateAfterEdit_NoGui();
 }
 
@@ -793,6 +807,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
 void MatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Init_Weights(lay, net);
+  adapt_bias.mnt_empty_go_eff = gate_bias.mnt_empty_go;
   LabelUnits(lay);
 }
 
@@ -901,7 +916,10 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mug
 	bias_dav = -gate_bias.mnt_mnt_nogo;
       }
       else {			// otherwise, bias to maintain/update
-	bias_dav = gate_bias.mnt_empty_go;
+	if(adapt_bias.adapt)
+	  bias_dav = adapt_bias.mnt_empty_go_eff;
+	else
+	  bias_dav = gate_bias.mnt_empty_go;
 	if(!nogo_rnd_go && pfc_mnt_cnt < -rnd_go_thr) { // no rnd go yet, but over thresh
 	  mugp->misc_state1 = PFCGateSpec::NOGO_RND_GO;
 	  Compute_RndGoNoise_ugp(lay, mugp, net);
@@ -973,6 +991,7 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 
 void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   int n_rnd_go = 0;		// find out if anyone has a rnd go
+  int n_go = 0;
   float nogo_da_sub = 0.0f;
 
   // subtract the average -- this turns out to be important for preventing global
@@ -980,6 +999,7 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   for(int gi=0; gi<lay->units.gp.size; gi++) {
     LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
     if(mugp->misc_state1 == PFCGateSpec::NOGO_RND_GO) n_rnd_go++;
+    else if(mugp->misc_state2 == PFCGateSpec::GATE_MNT_GO) n_go++;
   }
   if(n_rnd_go > 0) {
     nogo_da_sub = rnd_go.nogo_da / (float)(lay->units.gp.size - n_rnd_go);
@@ -1034,6 +1054,14 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       u->dav = lrn_dav;		// re-store back to da value, which is used in conspec lrule
       idx++;
     }
+  }
+
+  // special adapting bias code
+  if(adapt_bias.adapt) {
+    if(!net->pv_detected && n_go == 0) { // maint trial and all nogo
+      adapt_bias.Compute_Inc();
+    }
+    adapt_bias.Compute_Decay(gate_bias.mnt_empty_go);
   }
 }
 

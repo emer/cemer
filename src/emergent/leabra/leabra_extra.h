@@ -46,9 +46,12 @@ public:
   // these connections always need to be there on all nodes..
 
   TA_BASEFUNS_NOCOPY(MarkerConSpec);
+protected:
+  SPEC_DEFAULTS;
 private:
   void 	Initialize();
   void	Destroy()		{ };
+  void	Defaults_init();
 };
 
 

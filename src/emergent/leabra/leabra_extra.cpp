@@ -24,6 +24,10 @@
 //////////////////////////////////
 
 void MarkerConSpec::Initialize() {
+  Defaults_init();
+}
+
+void MarkerConSpec::Defaults_init() {
   SetUnique("rnd", true);
   rnd.mean = 0.0f; rnd.var = 0.0f;
   SetUnique("wt_limits", true);
