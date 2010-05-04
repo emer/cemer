@@ -608,7 +608,6 @@ void MatrixGateBiasSpec::Initialize() {
 
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
-  mult_bias = false;
   bias_gain = .1f;
   bias_pos_gain = 0.0f;
 }
@@ -811,48 +810,14 @@ void MatrixLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay, LeabraUnit_Group
 }
 
 void MatrixLayerSpec::Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr) {
-  if(!matrix.mult_bias) {
-    inherited::Compute_NetinStats_ugp(ug, thr);
-    return;
-  }
-
   LeabraLayer* lay = (LeabraLayer*)ug->own_lay;
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  LeabraUnit_Group* mugp = (LeabraUnit_Group*)ug;
 
-  float bias_dav = Compute_BiasDaMod(lay, (LeabraUnit_Group*)ug, (LeabraNetwork*)lay->own_net);
+  float bias_dav = Compute_BiasDaMod(lay, mugp, net);
+  Compute_MultBias(lay, mugp, net, bias_dav);
 
-  thr->netin.InitVals();  thr->i_thrs.InitVals();
-  int gp_sz = ug->leaves / 2;
-  
-  LeabraUnit* u;
-  taLeafItr i;
-  int lf = 0;
-  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(lf / gp_sz);
-    float netin_extra = 0.0f;
-    if(go_no == (int)PFCGateSpec::GATE_NOGO) {
-      netin_extra = -matrix.bias_gain * bias_dav;
-    }
-    else {			// must be a GO
-      netin_extra = matrix.bias_gain * bias_dav;
-    }
-    if(netin_extra > 0.0f) netin_extra *= matrix.bias_pos_gain;
-    u->net *= (1.0f + netin_extra);
-    u->misc_2 = netin_extra;	// record
-    thr->netin.UpdtVals(u->net, lf);    thr->i_thrs.UpdtVals(u->i_thr, lf);
-    lf++;
-  }
-  thr->netin.CalcAvg(ug->leaves);  thr->i_thrs.CalcAvg(ug->leaves);
-}
-
-void MatrixLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_ApplyInhib(lay, net);
-  
-  if(!matrix.mult_bias) {
-    for(int gi=0; gi<lay->units.gp.size; gi++) {
-      LeabraUnit_Group* mugp = (LeabraUnit_Group*)lay->units.gp[gi];
-      Compute_BiasDaMod(lay, mugp, net); // always just compute this one
-    }
-  }
+  inherited::Compute_NetinStats_ugp(ug, thr);
 }
 
 float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp, 
@@ -911,51 +876,28 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mug
   }
 
   float tot_dav = bias_dav + tonic_da;
-
-  if(!matrix.mult_bias) {
-    int idx = 0;
-    LeabraUnit* u;
-    taLeafItr i;
-    FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
-      PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(idx / gp_sz);
-      Compute_UnitBiasDaMod(u, tot_dav, go_no);
-      idx++;
-    }
-  }
   return tot_dav;
 }
 
-void MatrixLayerSpec::Compute_UnitBiasDaMod(LeabraUnit* u, float bias_dav, int go_no) {
-  // no bias for no netin..
-//   if(u->net < 0.001f) {
-//     u->vcb.g_h = 0.0f;
-//     u->vcb.g_a = 0.0f;
-//     return;
-//   }
-
-  if(go_no == (int)PFCGateSpec::GATE_NOGO) {
-    if(bias_dav >= 0.0f) {
-      u->vcb.g_h = 0.0f;
-      u->vcb.g_a = bias_dav;
-      if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.nogo_p;
+void MatrixLayerSpec::Compute_MultBias(LeabraLayer* lay, LeabraUnit_Group* mugp, 
+				       LeabraNetwork* net, float bias_dav) {	
+  int gp_sz = mugp->leaves / 2;
+  LeabraUnit* u;
+  taLeafItr i;
+  int lf = 0;
+  FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
+    PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(lf / gp_sz);
+    float netin_extra = 0.0f;
+    if(go_no == (int)PFCGateSpec::GATE_NOGO) {
+      netin_extra = -matrix.bias_gain * bias_dav;
     }
-    else {
-      u->vcb.g_h = -bias_dav;
-      if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.nogo_n;
-      u->vcb.g_a = 0.0f;
+    else {			// must be a GO
+      netin_extra = matrix.bias_gain * bias_dav;
     }
-  }
-  else {			// must be a GO
-    if(bias_dav >= 0.0f)  { 
-      u->vcb.g_h = bias_dav;
-      if(go_nogo_gain.on) u->vcb.g_h *= go_nogo_gain.go_p;
-      u->vcb.g_a = 0.0f;
-    }
-    else {
-      u->vcb.g_h = 0.0f;
-      u->vcb.g_a = -bias_dav;
-      if(go_nogo_gain.on) u->vcb.g_a *= go_nogo_gain.go_n;
-    }
+    if(netin_extra > 0.0f) netin_extra *= matrix.bias_pos_gain;
+    u->net *= (1.0f + netin_extra);
+    u->misc_2 = netin_extra;	// record
+    lf++;
   }
 }
 

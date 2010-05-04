@@ -342,12 +342,12 @@ class LEABRA_API MatrixGateBiasSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating biases depending on different conditions in the network -- helps to get the network performing appropriately for basic maintenance functions, to then be reinforced or overridden by learning
 INHERITED(SpecMemberBase)
 public:
-  float		mnt_mnt_nogo;	// #DEF_1 (Weak) #AKA_mnt_nogo for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- this is critical for enabling robust maintenance by reducing Go activity that would then lead to an update
-  float		mnt_rew_nogo;	// #DEF_5;10 (Very Strong) for all MAINT stripes (empty or maintaining) on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) -- adds to any mnt_mnt_nogo -- in general it is not useful to fire maint gating on recall/output trials (see pfc.gate spec -- can prevent entirely with flag there)
-  float		mnt_empty_go;	// #DEF_0 for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias da (positive dopamine) -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
-  float		out_rew_go;	// #DEF_1 (Weak) #AKA_out_pvr for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias da (positive dopamine) to encourage the output gating units to respond -- see out_empty_nogo for empty (non-maintaining) stripes
-  float		out_norew_nogo;	// #DEF_2 (Strong) for all OUTPUT stripes (empty or maintaining) on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating -- is not generally useful to output gate on store trials
-  float		out_empty_nogo;	// #DEF_5;10 (Very Strong) for OUTPUT stripes that are not maintaining anything, on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias da (negative dopamine) to discourage output gating if there is nothing being maintained to output gate
+  float		mnt_mnt_nogo;	// #DEF_1 (Weak) #AKA_mnt_nogo for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) -- this is critical for enabling robust maintenance by reducing Go activity that would then lead to an update
+  float		mnt_rew_nogo;	// #DEF_5;10 (Very Strong) for all MAINT stripes (empty or maintaining) on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) -- adds to any mnt_mnt_nogo -- in general it is not useful to fire maint gating on recall/output trials (see pfc.gate spec -- can prevent entirely with flag there)
+  float		mnt_empty_go;	// #DEF_0 for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias (favors Go over NoGo) -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
+  float		out_rew_go;	// #DEF_1 (Weak) #AKA_out_pvr for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias (favors Go over NoGo) to encourage the output gating units to respond -- see out_empty_nogo for empty (non-maintaining) stripes
+  float		out_norew_nogo;	// #DEF_2 (Strong) for all OUTPUT stripes (empty or maintaining) on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) to discourage output gating -- is not generally useful to output gate on store trials
+  float		out_empty_nogo;	// #DEF_5;10 (Very Strong) for OUTPUT stripes that are not maintaining anything, on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) to discourage output gating if there is nothing being maintained to output gate
 
   TA_SIMPLE_BASEFUNS(MatrixGateBiasSpec);
 protected:
@@ -364,9 +364,8 @@ class LEABRA_API MatrixMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
-  bool		mult_bias;	// #DEF_true biases are multiplicative on netinputs, instead of using the gc.a gc.h mechanisms -- (1 + gain * bias) * net for positive, (1 - gain * bias) * net for negative
-  float		bias_gain;	// #CONDSHOW_ON_mult_bias #DEF_0.1 gain for multiplicative bias factors -- how much total effect do they have -- makes it easier to switch between mult and non-mult instead of manually redoing all the biases
-  float		bias_pos_gain;	// #CONDSHOW_ON_mult_bias #DEF_0 extra gain for positive factors -- can be bad to increase netinput too much so a lower value here prevents that
+  float		bias_gain;	// #DEF_0.1 overall gain factor for the gating biases as they are translated into multipliers on the net input values of Go vs. NoGo units -- allows the bias values to be expressed in standardized relative units and then overall impact can be dialed with this setting
+  float		bias_pos_gain;	// #DEF_0 extra multiplicative gain for positive bias terms -- it is in general not great to increase netinput levels on units beyond their natural values, so setting this to zero (default) puts all the bias work on decreasing the relative netinputs for the non-favored population (biologically can be going into a down state)
 
   TA_SIMPLE_BASEFUNS(MatrixMiscSpec);
 protected:
@@ -441,8 +440,9 @@ public:
   // save the effective mid-minus (gating) activation state for subsequent learning -- for specific unit group (stripe)
   virtual float	Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net);
   // compute gate_bias da modulation to influence gating -- continuously throughout settling
-    virtual void Compute_UnitBiasDaMod(LeabraUnit* u, float bias_dav, int go_no);
-    // apply bias da modulation to individual unit
+  virtual void	Compute_MultBias(LeabraLayer* lay, LeabraUnit_Group* mugp, LeabraNetwork* net,
+				 float bias_dav);
+  // apply multiplicative bias to netinputs of units
   virtual void 	Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net);
   // compute u->dav learning dopamine value based on raw dav and gating state, etc -- this dav is then directly used in conspec leraning rule
 
@@ -457,7 +457,6 @@ public:
   // label units with Go/No -- auto done in InitWeights
 
   override void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
-  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
 
