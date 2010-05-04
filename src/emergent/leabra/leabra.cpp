@@ -2449,7 +2449,7 @@ void KWTASpec::Initialize() {
   k_from = USE_PCT;
   k = 12;
   pct = .25f;
-  pat_q = .5f;
+  pat_q = .2f;
   diff_act_pct = false;
   act_pct = .1f;
   gp_i = false;

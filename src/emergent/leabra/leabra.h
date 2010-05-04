@@ -1652,13 +1652,13 @@ public:
   };
 
   K_From	k_from;		// how is the active_k determined: directly by k, by pct, or by no. of units where ext > pat_q
-  int		k;		// #CONDEDIT_ON_k_from:USE_K desired number of active units in the layer
-  float		pct;		// #CONDEDIT_ON_k_from:USE_PCT desired proportion of activity (used to compute a k value based on layer size, .25 std)
-  float		pat_q;		// #HIDDEN #DEF_0.5 threshold for pat_k based activity level: add to k if ext > pat_q
+  int		k;		// #CONDSHOW_ON_k_from:USE_K desired number of active units in the layer
+  float		pct;		// #CONDSHOW_ON_k_from:USE_PCT desired proportion of activity (used to compute a k value based on layer size, .25 std)
+  float		pat_q;		// #CONDSHOW_ON_k_from:USE_PAT_K #DEF_0.2 threshold for pat_k based activity level: add to k if ext > pat_q
   bool		diff_act_pct;	// #DEF_false if true, use different actual percent activity for overall layer activation
-  float		act_pct;	// #CONDEDIT_ON_diff_act_pct:true actual percent activity to put in kwta.pct field of layer
+  float		act_pct;	// #CONDSHOW_ON_diff_act_pct:true actual percent activity to put in kwta.pct field of layer
   bool		gp_i;		// compute inhibition including all of the layers in the same group, or unit groups within the layer: each items computed inhib vals are multipled by gp_g scaling, then MAX'd, and each item's inhib is the MAX of this pooled MAX value and its original own value
-  float		gp_g;		// #CONDEDIT_ON_gp_i:true how much this item (layer or unit group) contributes to the pooled layer group values
+  float		gp_g;		// #CONDSHOW_ON_gp_i:true how much this item (layer or unit group) contributes to the pooled layer group values
 
   TA_SIMPLE_BASEFUNS(KWTASpec);
 protected:
