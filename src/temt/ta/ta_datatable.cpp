@@ -2329,6 +2329,23 @@ void DataTable::ChangeColTypeGeom(const String& col_nm, ValType new_type,
   ChangeColTypeGeom_impl(da, new_type, mg);
 }
 
+void DataTable::ChangeColType(Variant col, ValType new_type) {
+  DataCol* da = GetColData(col);
+  if(!da) return;
+  if(da->valType() == new_type) return;
+  MatrixGeom cell_geom;
+  if(da->is_matrix) cell_geom = da->cell_geom; 
+  ChangeColTypeGeom_impl(da, new_type, cell_geom);
+}
+
+void DataTable::ChangeAllColsOfType(ValType cur_val_type, ValType new_val_type) {
+  for(int i=data.size-1; i>=0; i--) {
+    DataCol* da = data[i];
+    if(da->valType() != cur_val_type) continue;
+    ChangeColType(i, new_val_type);
+  }
+}
+
 bool DataTable::MatrixColToScalars(Variant mtx_col, const String& scalar_col_name_stub) {
   return MatrixColToScalarsCol(GetColData(mtx_col), scalar_col_name_stub); 
 }
@@ -2359,19 +2376,33 @@ bool DataTable::MatrixColFmScalars(Variant mtx_col, const String& scalar_col_nam
 
 bool DataTable::MatrixColFmScalarsCol(DataCol* da, const String& scalar_col_name_stub) {
   if(!da || da->not_matrix_err()) return false;
-  String clstub;
-  if(scalar_col_name_stub.nonempty())
-    clstub = scalar_col_name_stub;
-  else
-    clstub = da->name;
-  clstub += "_";
-  int cls = da->cell_size();
   StructUpdate(true);
-  for(int i=0;i<cls;i++) {
-    DataCol* scda = FindMakeCol(clstub + String(i), da->valType());
-    for(int j=0;j<rows;j++) {
-      Variant var = scda->GetVal(j);
-      da->SetMatrixFlatVal(var, j, i);
+  if(scalar_col_name_stub.nonempty()) {
+    String clstub = scalar_col_name_stub;
+    clstub += "_";
+    int cls = da->cell_size();
+    for(int i=0;i<cls;i++) {
+      DataCol* scda = FindColName(clstub + String(i));
+      if(scda) {
+	for(int j=0;j<rows;j++) {
+	  Variant var = scda->GetVal(j);
+	  da->SetMatrixFlatVal(var, j, i);
+	}
+      }
+    }
+  }
+  else {
+    int cls = da->cell_size();
+    int cur_idx = 0;
+    for(int i=0;i<data.size;i++) {
+      DataCol* scda = data[i];
+      if(scda->isMatrix() || scda->valType() != da->valType()) continue;
+      for(int j=0;j<rows;j++) {
+	Variant var = scda->GetVal(j);
+	da->SetMatrixFlatVal(var, j, cur_idx);
+      }
+      cur_idx++;
+      if(cur_idx >= cls) break;	// all done
     }
   }
   StructUpdate(false);

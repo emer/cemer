@@ -886,7 +886,12 @@ public:
   virtual void 		ChangeColTypeGeom(const String& col_nm, ValType val_type, int dims = 0,
 					  int d0=0, int d1=0, int d2=0, int d3=0,
 					  int d4=0, int d5=0, int d6=0);
-  // #CAT_Columns change type and/or geometry of column with given name 
+  // #CAT_Columns change type and/or geometry of column with given name -- preserves as much data as possible subject to these changes
+
+  virtual void 		ChangeColType(Variant col, ValType new_val_type);
+  // #CAT_Columns change data type of column -- preserves data subject to constraints of type change
+  virtual void 		ChangeAllColsOfType(ValType cur_val_type, ValType new_val_type);
+  // #CAT_Columns change data type of all columns that are currently of cur_val_type to new_val_type -- preserves data subject to constraints of type change
 
   USING(inherited::GetColData)
   virtual DataCol* 	GetColData(Variant col, bool quiet = false) const {
@@ -931,9 +936,9 @@ public:
 
   virtual bool		MatrixColFmScalarsCol(DataCol* mtx_col,
 					      const String& scalar_col_name_stub="");
-  // #CAT_XpertColumns #MENU #FROM_GROUP_data #LABEL_MatrixColFmScalars convert a sequence of sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes -- matrix column must already exist and be configured properly
+  // #CAT_XpertColumns #MENU #FROM_GROUP_data #LABEL_MatrixColFmScalars convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
   virtual bool		MatrixColFmScalars(Variant mtx_col, const String& scalar_col_name_stub="");
-  // #CAT_Columns convert a sequence of sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes -- matrix column must already exist and be configured properly
+  // #CAT_Columns convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix numeric fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
 
   /////////////////////////////////////////////////////////
   // rows

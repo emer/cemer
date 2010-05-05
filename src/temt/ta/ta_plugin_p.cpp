@@ -1222,7 +1222,7 @@ bool PluginWizard::SaveWiz() {
     "PluginWizard::SaveWiz", 
     "You must Create the plugin before you can save the wizard file"))
     return false;
-  String fname = plugin_location + PATH_SEP + "PluingWizard.wiz";
+  String fname = plugin_location + PATH_SEP + "PluginWizard.wiz";
   SaveAs(fname);
   return true;
 }
