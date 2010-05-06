@@ -369,6 +369,20 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->background.UpdateAfterEdit_NoGui();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
+  cs->name = "C_Jet";
+  cs->clr.Add(new RGBA(0.0, 0.0, 0.5));
+  cs->clr.Add(new RGBA(0.0, 0.0, 1.0));
+  cs->clr.Add(new RGBA(0.0, 0.5, 1.0));
+  cs->clr.Add(new RGBA(0.0, 1.0, 1.0));
+  cs->clr.Add(new RGBA(0.5, 1.0, 0.5));
+  cs->clr.Add(new RGBA(1.0, 1.0, 0.0));
+  cs->clr.Add(new RGBA(1.0, 0.5, 0.0));
+  cs->clr.Add(new RGBA(1.0, 0.0, 0.0));
+  cs->clr.Add(new RGBA(0.5, 0.0, 0.0));
+  cs->background.name = "grey80";
+  cs->background.UpdateAfterEdit_NoGui();
+
+  cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
   cs->name = "C_DarkLight";
   cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 1.0, 1.0));

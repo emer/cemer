@@ -2560,7 +2560,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   pfc_self->rnd.mean = 0.9f;
   pfc_self->rnd.var = 0.0f;
   pfc_self->SetUnique("wt_scale", true);
-  pfc_self->wt_scale.rel = .03f;
+  pfc_self->wt_scale.rel = 0.2f;
   pfc_self->SetUnique("savg_cor", true);
   pfc_self->savg_cor.norm_con_n = true;
 
