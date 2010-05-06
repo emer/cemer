@@ -2383,8 +2383,16 @@ bool taRootBase::Startup_InitTA_AppFolders() {
   // note: Qt docs say it returns the '/' version...
   bin_dir.gsub("/", "\\");
   if (bin_dir.contains("\\bin\\")) {
+    if (bin_dir.contains("\\build")) {
+      app_dir = bin_dir.before("\\build");
+      if (isAppDir(app_dir, &app_plugin_dir)) {
+	taMisc::Info("Note: running development executable: not loading plugins.");
+	taMisc::use_plugins = false;
+	goto have_app_dir;
+      }
+    }
     app_dir = bin_dir.before("\\bin\\");
-    if (isAppDir(app_dir)) goto have_app_dir;
+    if (isAppDir(app_dir, &app_plugin_dir)) goto have_app_dir;
   }
   app_dir = getenv("EMERGENTDIR");
   if (app_dir.nonempty() && isAppDir(app_dir)) {
@@ -2415,11 +2423,19 @@ bool taRootBase::Startup_InitTA_AppFolders() {
   if (bin_dir.endsWith("/bin")) {
     if (bin_dir.contains("/build")) {
       app_dir = bin_dir.before("/build");
-      if (isAppDir(app_dir, &app_plugin_dir)) goto have_app_dir;
-    } else { 
-      app_dir = bin_dir.at(0, bin_dir.length() - 4);
-      if (isAppDir(app_dir, &app_plugin_dir)) goto have_app_dir;
+      if (isAppDir(app_dir, &app_plugin_dir)) {
+	taMisc::Info("Note: running development executable: not loading plugins.");
+	taMisc::use_plugins = false;
+	goto have_app_dir;
+      }
     }
+
+    // always try to find share install guy first
+    String tmp_dir = bin_dir.at(0, bin_dir.length() - 4);
+    app_dir = tmp_dir + "/share/" + taMisc::default_app_install_folder_name;
+    if (isAppDir(app_dir, &app_plugin_dir)) goto have_app_dir;
+    app_dir = tmp_dir;
+    if (isAppDir(app_dir, &app_plugin_dir)) goto have_app_dir;
   }
   // positional heuristics of prefix_dir:
   // -2:env var; -1: default prefix implied by bin dir
@@ -2458,17 +2474,6 @@ have_app_dir:
 #ifdef TA_OS_WIN
   taMisc::app_dir.gsub("/", "\\"); // clean it up, so it never causes issues
 #endif
-
-#ifdef TA_OS_WIN
-  // taMisc::Info("app dir:", taMisc::app_dir);
-  // todo: do this for windows  -- no need to do this probably
-#else
-  if(!taMisc::app_dir.contains("share")) { // if we don't have share, then we're in compile dir
-    taMisc::Info("Note: running development executable: not loading plugins");
-    taMisc::use_plugins = false;
-  }
-#endif
-
 
 /* We search for plugin path in following order:
    1. app_plugin_dir command line switch
