@@ -1,4 +1,0 @@
-#!/bin/sh
-
-export COIN_FONT_PATH=/Library/Fonts
-exec /usr/local/bin/emergent
