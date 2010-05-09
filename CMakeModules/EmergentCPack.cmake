@@ -13,7 +13,7 @@ SET(CPACK_PACKAGE_VERSION_PATCH "${EMERGENT_VERSION_PATCH}")
 if (WIN32)
 # There is a bug in NSI that does not handle full unix paths properly. 
 # Make sure there is at least one set of four (4) backlasshes.
-  SET(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\Emergent.ico")
+  SET(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images\\\\emergent.ico")
   SET(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images\\\\emergent_16x16x256.ico")
   SET(CPACK_PACKAGE_FILE_NAME "emergent-${EMERGENT_VERSION}-win32")
   SET(CPACK_NSIS_MODIFY_PATH ON)
