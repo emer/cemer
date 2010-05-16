@@ -28,7 +28,7 @@ class EMERGENT_API FullPrjnSpec : public ProjectionSpec {
   // Full connectivity between layers
 INHERITED(ProjectionSpec)
 public:
-  void 	Connect_impl(Projection* prjn);
+  override void Connect_impl(Projection* prjn);
   // Connection function for full connectivity
   int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 
@@ -77,8 +77,8 @@ public:
   String	last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
   String	last_weights_cmd; // #READ_ONLY #SHOW shows the last Weights.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
 
-  void		Connect_impl(Projection* prjn);
-  void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+  override void	Connect_impl(Projection* prjn);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // uses weight values as specified in the tesselel's
 
   virtual void	GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc);
@@ -115,7 +115,7 @@ public:
   int	recv_start;		// starting unit index for recv connections
   int 	send_start;		// starting unit index for sending connections
 
-  void	Connect_impl(Projection* prjn);
+  override void	Connect_impl(Projection* prjn);
 
   TA_SIMPLE_BASEFUNS(OneToOnePrjnSpec);
 private:
@@ -132,8 +132,7 @@ public:
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
-  void 	Connect_impl(Projection* prjn);
-  // Connection function for full connectivity
+  override void Connect_impl(Projection* prjn);
 
   TA_SIMPLE_BASEFUNS(UniformRndPrjnSpec);
 protected:
@@ -163,9 +162,8 @@ public:
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
-  void	Connect_impl(Projection* prjn);
-
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+  override void	Connect_impl(Projection* prjn);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // uses weight values equal to the distance probability
 
   static float	UnitDist(UnitDistType typ, Projection* prjn,
@@ -190,7 +188,7 @@ class EMERGENT_API SymmetricPrjnSpec : public ProjectionSpec {
   // connects units with receiving connection where sending one already exists
 INHERITED(ProjectionSpec)
 public:
-  void 	Connect_impl(Projection* prjn);
+  override void Connect_impl(Projection* prjn);
 
   TA_BASEFUNS_NOCOPY(SymmetricPrjnSpec);
 private:
@@ -250,7 +248,8 @@ class EMERGENT_API CustomPrjnSpec : public ProjectionSpec {
 INHERITED(ProjectionSpec)
 public:
 
-  void	Connect(Projection* prjn);	// do nothing
+  override void	Connect(Projection* prjn);	// do nothing
+
   TA_BASEFUNS_NOCOPY(CustomPrjnSpec);
 private:
   void	Initialize()	{ };
@@ -265,7 +264,7 @@ class EMERGENT_API GpOneToOnePrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-one connectivity (all in 1st group to all in 1st group, etc)
 INHERITED(OneToOnePrjnSpec)
 public:
-  void	Connect_impl(Projection* prjn);
+  override void	Connect_impl(Projection* prjn);
 
   TA_BASEFUNS_NOCOPY(GpOneToOnePrjnSpec);
 private:
@@ -281,7 +280,7 @@ public:
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
-  void	Connect_impl(Projection* prjn);
+  override void	Connect_impl(Projection* prjn);
 
   TA_SIMPLE_BASEFUNS(RndGpOneToOnePrjnSpec);
 protected:
@@ -306,8 +305,8 @@ public:
   virtual void 	GetNGroups(Projection* prjn, int& r_n_ugp, int& s_n_ugp);
   // get number of connection groups for the projection
 
-  void	PreConnect(Projection* prjn);
-  void	Connect_impl(Projection* prjn);
+  override void	PreConnect(Projection* prjn);
+  override void	Connect_impl(Projection* prjn);
 
   TA_SIMPLE_BASEFUNS(GpOneToManyPrjnSpec);
 private:
@@ -355,7 +354,7 @@ public:
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
-  void		Connect_impl(Projection* prjn);
+  override void	Connect_impl(Projection* prjn);
 
   virtual void	GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc);
   // get center of sender coords from receiving coords
@@ -421,7 +420,7 @@ public:
 
   virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes
 
-  void 	Connect_impl(Projection* prjn);
+  override void Connect_impl(Projection* prjn);
   int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 
   virtual void	SelectRF(Projection* prjn);
@@ -445,7 +444,7 @@ public:
   TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
   TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
-  void 	Connect_impl(Projection* prjn);
+  override void Connect_impl(Projection* prjn);
   virtual void 	Connect_Reciprocal(Projection* prjn);
   int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 
@@ -472,7 +471,7 @@ public:
 
   virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes
 
-  void 	Connect_impl(Projection* prjn);
+  override void Connect_impl(Projection* prjn);
   virtual void 	Connect_Reciprocal(Projection* prjn);
 //   int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 

@@ -233,8 +233,11 @@ public:
   //	for performing algorithm-specific activation and learning
 
   inline virtual void	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su);
+  // #CAT_Learning initialize weight state variables (ie. at beginning of training)
+  inline virtual void	C_AddRndWeights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su);
+  // #CAT_Learning add random noise to existing weight variables -- for add_rnd_wts after prjn spec init_wts based initialization
   inline virtual void 	Init_Weights(RecvCons* cg, Unit* ru);
-  // #CAT_Learning initialize state variables (ie. at beginning of training)
+  // #CAT_Learning initialize weight state variables (ie. at beginning of training)
   inline virtual void	C_Init_Weights_post(BaseCons*, Connection*, Unit*, Unit*) { };
   // #IGNORE
   inline virtual void 	Init_Weights_post(BaseCons* cg, Unit* ru);
@@ -1052,6 +1055,7 @@ INHERITED(BaseSpec)
 public:
   bool		self_con;	// #CAT_Structure whether to create self-connections or not (if applicable)
   bool		init_wts;	// #CAT_Structure whether this projection spec does weight init (else conspec)
+  bool		add_rnd_wts;	// #CONDEDIT_ON_init_wts if init_wts is set, use the random weight settings on the conspect to add random values to the weights set by the projection spec -- NOTE: this typically will work best by setting the rnd.mean value to 0
 
   virtual void 	Connect(Projection* prjn);
   // #CAT_Structure connects the network, doing PreConnect, Connect_impl, then Init_Weights -- generally do not override this function
@@ -1077,7 +1081,7 @@ public:
   // #CAT_ObjectMgmt check if projection is connected
 
   virtual void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
-  // #CAT_Weights custom initialize weights in this con group for given receiving unit ru
+  // #CAT_Weights custom initialize weights in this con group for given receiving unit ru -- any derived version MUST call the base inherited version so that other init weights variables are also initialized
 
   override String 	GetTypeDecoKey() const { return "ProjectionSpec"; }
 
@@ -2516,10 +2520,25 @@ inline void ConSpec::C_Init_Weights(RecvCons*, Connection* cn, Unit* ru, Unit* s
   C_ApplyLimits(cn,ru,su);
 }
 
+inline void ConSpec::C_AddRndWeights(RecvCons*, Connection* cn, Unit* ru, Unit* su) {
+  if(rnd.type != Random::NONE)	{ // don't do anything (e.g. so connect fun can do it)
+    cn->wt += rnd.Gen();
+  }
+  else {
+    rnd.Gen();		// keep random seeds syncronized for dmem
+  }
+  C_ApplyLimits(cn,ru,su);
+}
+
 inline void ConSpec::Init_Weights(RecvCons* cg, Unit* ru) {
-  if(cg->prjn->spec->init_wts) {
-       cg->prjn->C_Init_Weights(cg, ru);
-  } else {
+  Projection* prjn = cg->prjn;
+  if(prjn->spec->init_wts) {
+    prjn->C_Init_Weights(cg, ru); // NOTE: this must call PrjnSpec::C_Init_Weights which does basic ConSpec C_Init_Weights
+    if(prjn->spec->add_rnd_wts) {
+      CON_GROUP_LOOP(cg, C_AddRndWeights(cg, cg->Cn(i), ru, cg->Un(i)));
+    }
+  }
+  else {
     CON_GROUP_LOOP(cg, C_Init_Weights(cg, cg->Cn(i), ru, cg->Un(i)));
   }
 

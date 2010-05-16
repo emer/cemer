@@ -3069,6 +3069,11 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   // initSaturn("");		// store in current wd
 #endif
 
+#ifdef TA_OS_MAC
+  // this is necessary to get coin to use system fonts wit freetype
+  setenv("COIN_FONT_PATH", "/Library/Fonts", 1);
+#endif
+
   // just create the adapter obj, whether needed or not
   root_adapter = new taRootBaseAdapter;
   cssMisc::prompt = taMisc::app_name; // the same

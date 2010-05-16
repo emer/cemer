@@ -270,7 +270,8 @@ void TesselPrjnSpec::WeightsFromGausDist(float scale, float sigma) {
 
 // todo: this assumes that things are in order.. (can't really check otherwise)
 // which breaks for clipped patterns
-void TesselPrjnSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit*) {
+void TesselPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
   int mxi = MIN(cg->size, send_offs.size);
   int i;
   for(i=0; i<mxi; i++) {
@@ -656,6 +657,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 void PolarRndPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
   int i;
   for(i=0; i<cg->size; i++) {
     cg->Cn(i)->wt = GetDistProb(prjn, ru, cg->Un(i));
@@ -2210,6 +2212,8 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 void GaussRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
+
 //  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
 //  int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
   
@@ -2218,12 +2222,14 @@ void GaussRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   if(rf_half_wd * 2 == rf_width) // even
     rf_ctr -= .5f;
 
+  float sig_sq = gauss_sigma * gauss_sigma;
+
   for(int i=0; i<cg->size; i++) {
     int su_x = i % rf_width.x;
     int su_y = i / rf_width.x;
 
     float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
-    float wt = expf(-0.5 * dst / (gauss_sigma * gauss_sigma));
+    float wt = expf(-0.5 * dst / sig_sq);
 
     cg->Cn(i)->wt = wt;
   }
