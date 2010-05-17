@@ -667,23 +667,10 @@ private:
   void	Defaults_init() 	{ };
 };
 
-class LEABRA_API MatrixGradRFPrjnSpec : public FullPrjnSpec {
+class LEABRA_API MatrixGradRFPrjnSpec : public GradientWtsPrjnSpec {
   // For projections into Matrix layers -- establishes a gradient of weight strengths into the matrix units to help different stripes specialize on encoding different things in the input -- MUST have init_wts on for it to do anything (also recommend add_rnd_wts) -- this is a much softer constraint than the MatrixRndPrjnSpec where connections either exist or not
-INHERITED(FullPrjnSpec)
+INHERITED(GradientWtsPrjnSpec)
 public:
-  enum GradType {		// type of gradient to establish
-    LINEAR,			// linear fall-off as a function of distance
-    GAUSSIAN,			// gaussian fall-off as a function of distance
-  };
-
-  MinMaxRange	wt_range;	// range of weakest (min) to strongest (max) weight values generated
-  bool		grad_x;		// compute a gradient over the x dimension of the sending layer, based on x axis location of the matrix stripe unit group
-  bool		grad_y;		// compute a gradient over the y dimension of the sending layer, based on y axis location of the matrix stripe unit group
-  GradType	grad_type;	// type of gradient to make -- applies to both axes
-  float		gauss_sig;	// #CONDSHOW_ON_grad_type:GAUSSIAN gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0 
-
-  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
-
   TA_BASEFUNS_NOCOPY(MatrixGradRFPrjnSpec);
 protected:
   SPEC_DEFAULTS;

@@ -511,6 +511,40 @@ private:
 };
 
 
+class EMERGENT_API GradientWtsPrjnSpec : public FullPrjnSpec {
+  // full connectivity with a gradient of weight strengths (requires init_wts = true, otherwise is just like Full Prjn), where weights are strongest from sending units in same relative location as the receiving unit, and fall off from there (either linearly or as a Guassian) -- if recv layer has unit groups, then it is the unit group position that counts, and all units within the recv group have the same connectivity (can override with use_gps flag)
+INHERITED(FullPrjnSpec)
+public:
+  enum GradType {		// type of gradient to establish
+    LINEAR,			// linear fall-off as a function of distance
+    GAUSSIAN,			// gaussian fall-off as a function of distance
+  };
+
+  MinMaxRange	wt_range;	// range of weakest (min) to strongest (max) weight values generated
+  bool		grad_x;		// compute a gradient over the x dimension of the sending layer, based on x axis location of the matrix stripe unit group
+  bool		grad_y;		// compute a gradient over the y dimension of the sending layer, based on y axis location of the matrix stripe unit group
+  bool		wrap;		// wrap weight values around relevant dimension(s) -- the closest location wins -- this ensures that all units have the same overall weight strengths
+  bool		use_gps;	// if recv layer has unit groups, use them for determining relative position to compare with sending unit locations (unit group information is never used for the sending layer)
+  GradType	grad_type;	// type of gradient to make -- applies to both axes
+  float		gauss_sig;	// #CONDSHOW_ON_grad_type:GAUSSIAN gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0 
+
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  virtual void	InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Unit* ru);
+  // for recv unit group case
+  virtual void 	InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, Unit* ru);
+  // for flat recv layer case (just unit positions)
+
+  TA_SIMPLE_BASEFUNS(GradientWtsPrjnSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+  void	Defaults_init();
+};
+
+
 
 //////////////////////////////////////////////////////////
 //	Other misc classes

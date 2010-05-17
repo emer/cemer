@@ -1793,70 +1793,15 @@ void MatrixRndPrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
-
-/////////////////////////////////////
-//	  MatrixGradRFPrjnSpec	   //
-/////////////////////////////////////
-
 void MatrixGradRFPrjnSpec::Initialize() {
-  wt_range.min = 0.3f;
-  wt_range.max = 0.5f;
-  wt_range.UpdateAfterEdit_NoGui();
-  grad_x = false;
-  grad_y = true;
-  grad_type = LINEAR;
-  gauss_sig = 0.3f;
   Defaults_init();
 }
 
 void MatrixGradRFPrjnSpec::Defaults_init() {
-  init_wts = true;
-  add_rnd_wts = true;
-}
-
-void MatrixGradRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  LeabraLayer* mtx_lay = (LeabraLayer*)prjn->layer;
-  LeabraLayer* send_lay = (LeabraLayer*)prjn->from.ptr();
-  LeabraUnit* lru = (LeabraUnit*)ru;
-  LeabraUnit_Group* rugp = lru->own_ugp();
-  TwoDCoord rgp_pos = rugp->GetGpGeomPos(); // position relative to overall gp geom
-  FloatTwoDCoord rgp_rel;
-  rgp_rel.x = (float)rgp_pos.x / (float)MAX(mtx_lay->gp_geom.x-1, 1);
-  rgp_rel.y = (float)rgp_pos.y / (float)MAX(mtx_lay->gp_geom.y-1, 1);
-
-  float max_dist = 1.0f;
-  if(grad_x && grad_y)
-    max_dist = sqrtf(2);
-
-  for(int i=0; i<cg->size; i++) {
-    Unit* su = cg->Un(i);
-    TwoDCoord su_pos;
-    su->GetLayerAbsPos(su_pos);
-    float su_x = (float)su_pos.x / (float)MAX(send_lay->act_geom.x-1, 1);
-    float su_y = (float)su_pos.y / (float)MAX(send_lay->act_geom.y-1, 1);
-
-    float dist;
-    if(grad_x && grad_y) {
-      dist = taMath_float::euc_dist(su_x, su_y, rgp_rel.x, rgp_rel.y);
-    }
-    else if(grad_x) {
-      dist = fabsf(su_x - rgp_rel.x);
-    }
-    else if(grad_y) {
-      dist = fabsf(su_y - rgp_rel.y);
-    }
-    dist /= max_dist;		// keep it normalized
-
-    float wt_val;
-    if(grad_type == LINEAR) {
-      wt_val = wt_range.max - dist * wt_range.Range();
-    }
-    else if(grad_type == GAUSSIAN) {
-      float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
-      wt_val = wt_range.min + gaus * wt_range.Range();
-    }
-    cg->Cn(i)->wt = wt_val;
-  }
+  wt_range.min = 0.0f;
+  wt_range.max = 0.1f;
+  wt_range.UpdateAfterEdit_NoGui();
+  use_gps = true;
 }
 
 

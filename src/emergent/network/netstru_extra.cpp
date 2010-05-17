@@ -2272,3 +2272,168 @@ bool GaussRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   DataChanged(DCR_ITEM_UPDATED);
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
+
+
+/////////////////////////////////////
+//	  GradientWtsPrjnSpec	   //
+/////////////////////////////////////
+
+void GradientWtsPrjnSpec::Initialize() {
+  wt_range.min = 0.0f;
+  wt_range.max = 0.5f;
+  wt_range.UpdateAfterEdit_NoGui();
+  grad_x = true;
+  grad_y = true;
+  wrap = true;
+  grad_type = LINEAR;
+  use_gps = true;
+  gauss_sig = 0.3f;
+  Defaults_init();
+}
+
+void GradientWtsPrjnSpec::Defaults_init() {
+  init_wts = true;
+  add_rnd_wts = true;
+}
+
+
+void GradientWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  if(use_gps && prjn->layer->units.gp.size > 0 && ru->owner->InheritsFrom(&TA_Unit_Group))
+    InitWeights_RecvGps(prjn, cg, ru);
+  else
+    InitWeights_RecvFlat(prjn, cg, ru);
+}
+
+void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Unit* ru) {
+  Layer* recv_lay = (Layer*)prjn->layer;
+  Layer* send_lay = (Layer*)prjn->from.ptr();
+  Unit* lru = (Unit*)ru;
+  Unit_Group* rugp = (Unit_Group*)lru->owner;
+  TwoDCoord rgp_pos = rugp->GetGpGeomPos(); // position relative to overall gp geom
+  float rgp_x = (float)rgp_pos.x / (float)MAX(recv_lay->gp_geom.x-1, 1);
+  float rgp_y = (float)rgp_pos.y / (float)MAX(recv_lay->gp_geom.y-1, 1);
+
+  float max_dist = 1.0f;
+  if(grad_x && grad_y)
+    max_dist = sqrtf(2.0f);
+
+  for(int i=0; i<cg->size; i++) {
+    Unit* su = cg->Un(i);
+    TwoDCoord su_pos;
+    su->GetLayerAbsPos(su_pos);
+    float su_x = (float)su_pos.x / (float)MAX(send_lay->act_geom.x-1, 1);
+    float su_y = (float)su_pos.y / (float)MAX(send_lay->act_geom.y-1, 1);
+
+    float dist;
+    if(grad_x && grad_y) {
+      dist = taMath_float::euc_dist(su_x, su_y, rgp_x, rgp_y);
+      if(wrap) {
+	float wrp_dist = taMath_float::euc_dist((1.0f - su_x), su_y, rgp_x, rgp_y);
+	if(wrp_dist < dist) {
+	  dist = wrp_dist;
+	  float wrp_dist = taMath_float::euc_dist((1.0f - su_x), (1.0f - su_y), rgp_x, rgp_y);
+	  if(wrp_dist < dist)
+	    dist = wrp_dist;
+	}
+	else {
+	  float wrp_dist = taMath_float::euc_dist(su_x, (1.0f - su_y), rgp_x, rgp_y);
+	  if(wrp_dist < dist)
+	    dist = wrp_dist;
+	}
+      }
+    }
+    else if(grad_x) {
+      dist = fabsf(su_x - rgp_x);
+      if(wrap) {
+	float wrp_dist = fabsf((1.0f - su_x) - rgp_x);
+	if(wrp_dist < dist) dist = wrp_dist;
+      }
+    }
+    else if(grad_y) {
+      dist = fabsf(su_y - rgp_y);
+      if(wrap) {
+	float wrp_dist = fabsf((1.0f - su_y) - rgp_y);
+	if(wrp_dist < dist) dist = wrp_dist;
+      }
+    }
+
+    dist /= max_dist;		// keep it normalized
+
+    float wt_val;
+    if(grad_type == LINEAR) {
+      wt_val = wt_range.max - dist * wt_range.Range();
+    }
+    else if(grad_type == GAUSSIAN) {
+      float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
+      wt_val = wt_range.min + gaus * wt_range.Range();
+    }
+    cg->Cn(i)->wt = wt_val;
+  }
+}
+
+void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, Unit* ru) {
+  Layer* recv_lay = (Layer*)prjn->layer;
+  Layer* send_lay = (Layer*)prjn->from.ptr();
+  TwoDCoord ru_pos;
+  ru->GetLayerAbsPos(ru_pos);
+  float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->act_geom.x-1, 1);
+  float ru_y = (float)ru_pos.y / (float)MAX(recv_lay->act_geom.y-1, 1);
+
+  float max_dist = 1.0f;
+  if(grad_x && grad_y)
+    max_dist = sqrtf(2.0f);
+
+  for(int i=0; i<cg->size; i++) {
+    Unit* su = cg->Un(i);
+    TwoDCoord su_pos;
+    su->GetLayerAbsPos(su_pos);
+    float su_x = (float)su_pos.x / (float)MAX(send_lay->act_geom.x-1, 1);
+    float su_y = (float)su_pos.y / (float)MAX(send_lay->act_geom.y-1, 1);
+
+    float dist;
+    if(grad_x && grad_y) {
+      dist = taMath_float::euc_dist(su_x, su_y, ru_x, ru_y);
+      if(wrap) {
+	float wrp_dist = taMath_float::euc_dist((1.0f - su_x), su_y, ru_x, ru_y);
+	if(wrp_dist < dist) {
+	  dist = wrp_dist;
+	  float wrp_dist = taMath_float::euc_dist((1.0f - su_x), (1.0f - su_y), ru_x, ru_y);
+	  if(wrp_dist < dist)
+	    dist = wrp_dist;
+	}
+	else {
+	  float wrp_dist = taMath_float::euc_dist(su_x, (1.0f - su_y), ru_x, ru_y);
+	  if(wrp_dist < dist)
+	    dist = wrp_dist;
+	}
+      }
+    }
+    else if(grad_x) {
+      dist = fabsf(su_x - ru_x);
+      if(wrap) {
+	float wrp_dist = fabsf((1.0f - su_x) - ru_x);
+	if(wrp_dist < dist) dist = wrp_dist;
+      }
+    }
+    else if(grad_y) {
+      dist = fabsf(su_y - ru_y);
+      if(wrap) {
+	float wrp_dist = fabsf((1.0f - su_y) - ru_y);
+	if(wrp_dist < dist) dist = wrp_dist;
+      }
+    }
+
+    dist /= max_dist;		// keep it normalized
+
+    float wt_val;
+    if(grad_type == LINEAR) {
+      wt_val = wt_range.max - dist * wt_range.Range();
+    }
+    else if(grad_type == GAUSSIAN) {
+      float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
+      wt_val = wt_range.min + gaus * wt_range.Range();
+    }
+    cg->Cn(i)->wt = wt_val;
+  }
+}
+
