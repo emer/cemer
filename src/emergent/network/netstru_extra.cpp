@@ -2317,26 +2317,37 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
   if(grad_x && grad_y)
     max_dist = sqrtf(2.0f);
 
+  float mxs_x = (float)MAX(send_lay->act_geom.x-1, 1);
+  float mxs_y = (float)MAX(send_lay->act_geom.y-1, 1);
+
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
     TwoDCoord su_pos;
     su->GetLayerAbsPos(su_pos);
-    float su_x = (float)su_pos.x / (float)MAX(send_lay->act_geom.x-1, 1);
-    float su_y = (float)su_pos.y / (float)MAX(send_lay->act_geom.y-1, 1);
+    float su_x = (float)su_pos.x / mxs_x;
+    float su_y = (float)su_pos.y / mxs_y;
+
+    float wrp_x, wrp_y;
+    if(wrap) {
+      if(rgp_x > .5f)   wrp_x = (float)(su_pos.x + send_lay->act_geom.x) / mxs_x;
+      else	      	wrp_x = (float)(su_pos.x - send_lay->act_geom.x) / mxs_x;
+      if(rgp_y > .5f)   wrp_y = (float)(su_pos.y + send_lay->act_geom.y) / mxs_y;
+      else	      	wrp_y = (float)(su_pos.y - send_lay->act_geom.y) / mxs_y;
+    }
 
     float dist;
     if(grad_x && grad_y) {
       dist = taMath_float::euc_dist(su_x, su_y, rgp_x, rgp_y);
       if(wrap) {
-	float wrp_dist = taMath_float::euc_dist((1.0f - su_x), su_y, rgp_x, rgp_y);
+	float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, rgp_x, rgp_y);
 	if(wrp_dist < dist) {
 	  dist = wrp_dist;
-	  float wrp_dist = taMath_float::euc_dist((1.0f - su_x), (1.0f - su_y), rgp_x, rgp_y);
+	  float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, rgp_x, rgp_y);
 	  if(wrp_dist < dist)
 	    dist = wrp_dist;
 	}
 	else {
-	  float wrp_dist = taMath_float::euc_dist(su_x, (1.0f - su_y), rgp_x, rgp_y);
+	  float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, rgp_x, rgp_y);
 	  if(wrp_dist < dist)
 	    dist = wrp_dist;
 	}
@@ -2345,14 +2356,14 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
     else if(grad_x) {
       dist = fabsf(su_x - rgp_x);
       if(wrap) {
-	float wrp_dist = fabsf((1.0f - su_x) - rgp_x);
+	float wrp_dist = fabsf(wrp_x - rgp_x);
 	if(wrp_dist < dist) dist = wrp_dist;
       }
     }
     else if(grad_y) {
       dist = fabsf(su_y - rgp_y);
       if(wrap) {
-	float wrp_dist = fabsf((1.0f - su_y) - rgp_y);
+	float wrp_dist = fabsf(wrp_y - rgp_y);
 	if(wrp_dist < dist) dist = wrp_dist;
       }
     }
@@ -2383,26 +2394,37 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
   if(grad_x && grad_y)
     max_dist = sqrtf(2.0f);
 
+  float mxs_x = (float)MAX(send_lay->act_geom.x-1, 1);
+  float mxs_y = (float)MAX(send_lay->act_geom.y-1, 1);
+
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
     TwoDCoord su_pos;
     su->GetLayerAbsPos(su_pos);
-    float su_x = (float)su_pos.x / (float)MAX(send_lay->act_geom.x-1, 1);
-    float su_y = (float)su_pos.y / (float)MAX(send_lay->act_geom.y-1, 1);
+    float su_x = (float)su_pos.x / mxs_x;
+    float su_y = (float)su_pos.y / mxs_y;
+
+    float wrp_x, wrp_y;
+    if(wrap) {
+      if(ru_x > .5f)   	wrp_x = (float)(su_pos.x + send_lay->act_geom.x) / mxs_x;
+      else	      	wrp_x = (float)(su_pos.x - send_lay->act_geom.x) / mxs_x;
+      if(ru_y > .5f)   	wrp_y = (float)(su_pos.y + send_lay->act_geom.y) / mxs_y;
+      else	      	wrp_y = (float)(su_pos.y - send_lay->act_geom.y) / mxs_y;
+    }
 
     float dist;
     if(grad_x && grad_y) {
       dist = taMath_float::euc_dist(su_x, su_y, ru_x, ru_y);
       if(wrap) {
-	float wrp_dist = taMath_float::euc_dist((1.0f - su_x), su_y, ru_x, ru_y);
+	float wrp_dist = taMath_float::euc_dist(wrp_x, su_y, ru_x, ru_y);
 	if(wrp_dist < dist) {
 	  dist = wrp_dist;
-	  float wrp_dist = taMath_float::euc_dist((1.0f - su_x), (1.0f - su_y), ru_x, ru_y);
+	  float wrp_dist = taMath_float::euc_dist(wrp_x, wrp_y, ru_x, ru_y);
 	  if(wrp_dist < dist)
 	    dist = wrp_dist;
 	}
 	else {
-	  float wrp_dist = taMath_float::euc_dist(su_x, (1.0f - su_y), ru_x, ru_y);
+	  float wrp_dist = taMath_float::euc_dist(su_x, wrp_y, ru_x, ru_y);
 	  if(wrp_dist < dist)
 	    dist = wrp_dist;
 	}
@@ -2411,14 +2433,14 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
     else if(grad_x) {
       dist = fabsf(su_x - ru_x);
       if(wrap) {
-	float wrp_dist = fabsf((1.0f - su_x) - ru_x);
+	float wrp_dist = fabsf(wrp_x - ru_x);
 	if(wrp_dist < dist) dist = wrp_dist;
       }
     }
     else if(grad_y) {
       dist = fabsf(su_y - ru_y);
       if(wrap) {
-	float wrp_dist = fabsf((1.0f - su_y) - ru_y);
+	float wrp_dist = fabsf(wrp_y - ru_y);
 	if(wrp_dist < dist) dist = wrp_dist;
       }
     }
