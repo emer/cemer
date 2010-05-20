@@ -511,7 +511,6 @@ void MatrixNoiseSpec::Initialize() {
 
 void MatrixUnitSpec::Initialize() {
   SetUnique("bias_spec", true);
-  bias_spec.SetBaseType(&TA_LeabraConSpec); // can't be bias spec b/c matrix derives from con
   bias_spec.type = &TA_MatrixBiasSpec;
   SetUnique("g_bar", true);
   g_bar.a = .03f;
@@ -2136,6 +2135,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   // set bias specs for unit specs
   pfc_units->bias_spec.SetSpec(pfc_bias);
   matrix_units->bias_spec.SetSpec(matrix_bias);
+  snrthal_units->bias_spec.SetSpec(bg_bias);
 
   patch->SetLayerSpec(patchsp); patch->SetUnitSpec(lv_units);
   snc->SetLayerSpec(sncsp); snc->SetUnitSpec(da_units);
