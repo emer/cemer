@@ -535,6 +535,8 @@ public:
   // for recv unit group case
   virtual void 	InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, Unit* ru);
   // for flat recv layer case (just unit positions)
+  virtual void 	SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist, int cg_idx);
+  // actually set the weight value from distance value -- util used by both of above main routines -- can overload to implement different gradient functions -- cg_idx is index within con group, and dist is computed normalized distance value (0-1)
 
   TA_SIMPLE_BASEFUNS(GradientWtsPrjnSpec);
 protected:

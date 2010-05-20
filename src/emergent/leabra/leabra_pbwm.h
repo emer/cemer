@@ -671,7 +671,11 @@ class LEABRA_API MatrixGradRFPrjnSpec : public GradientWtsPrjnSpec {
   // For projections into Matrix layers -- establishes a gradient of weight strengths into the matrix units to help different stripes specialize on encoding different things in the input -- MUST have init_wts on for it to do anything (also recommend add_rnd_wts) -- this is a much softer constraint than the MatrixRndPrjnSpec where connections either exist or not
 INHERITED(GradientWtsPrjnSpec)
 public:
-  TA_BASEFUNS_NOCOPY(MatrixGradRFPrjnSpec);
+  bool		invert_nogo;	// NoGo units get inverted weight pattern -- produces a net Go bias for sending units in corresponding topological location with associated stripes
+
+  override void SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist, int cg_idx);
+
+  TA_SIMPLE_BASEFUNS(MatrixGradRFPrjnSpec);
 protected:
   SPEC_DEFAULTS;
 private:

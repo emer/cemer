@@ -887,7 +887,7 @@ void MatrixLayerSpec::Compute_MultBias(LeabraLayer* lay, LeabraUnit_Group* mugp,
   FOR_ITR_EL(LeabraUnit, u, mugp->, i) {
     PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(lf / gp_sz);
     float netin_extra = 0.0f;
-    if(go_no == (int)PFCGateSpec::GATE_NOGO) {
+    if(go_no == PFCGateSpec::GATE_NOGO) {
       netin_extra = -matrix.bias_gain * bias_dav;
     }
     else {			// must be a GO
@@ -1793,16 +1793,34 @@ void MatrixRndPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 void MatrixGradRFPrjnSpec::Initialize() {
+  invert_nogo = false;
+  wt_range.min = 0.0f;
+  wt_range.max = 0.1f;
+  wt_range.UpdateAfterEdit_NoGui();
   Defaults_init();
 }
 
 void MatrixGradRFPrjnSpec::Defaults_init() {
-  wt_range.min = 0.0f;
-  wt_range.max = 0.1f;
-  wt_range.UpdateAfterEdit_NoGui();
   use_gps = true;
 }
 
+void MatrixGradRFPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
+				       int cg_idx) {
+  int ru_idx = ru->GetIndex();
+  Unit_Group* ru_ug = (Unit_Group*)ru->owner;
+  bool save_invert = invert;
+
+  int gp_sz = ru_ug->leaves / 2;
+  PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(ru_idx / gp_sz);
+  if(go_no == PFCGateSpec::GATE_NOGO) {
+    invert = true;
+  }
+  else {
+    invert = false;
+  }
+  inherited::SetWtFmDist(prjn, cg, ru, dist, cg_idx);
+  invert = save_invert;
+}
 
 //////////////////////////////////
 //		Wizard		//

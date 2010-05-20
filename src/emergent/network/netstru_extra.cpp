@@ -2305,6 +2305,26 @@ void GradientWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
     InitWeights_RecvFlat(prjn, cg, ru);
 }
 
+
+void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist, 
+				      int cg_idx) {
+  float wt_val;
+  if(grad_type == LINEAR) {
+    if(invert)
+      wt_val = wt_range.min + dist * wt_range.Range();
+    else
+      wt_val = wt_range.max - dist * wt_range.Range();
+  }
+  else if(grad_type == GAUSSIAN) {
+    float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
+    if(invert)
+      wt_val = wt_range.max - gaus * wt_range.Range();
+    else
+      wt_val = wt_range.min + gaus * wt_range.Range();
+  }
+  cg->Cn(cg_idx)->wt = wt_val;
+}
+
 void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Unit* ru) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
@@ -2371,21 +2391,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
 
     dist /= max_dist;		// keep it normalized
 
-    float wt_val;
-    if(grad_type == LINEAR) {
-      if(invert)
-	wt_val = wt_range.min + dist * wt_range.Range();
-      else
-	wt_val = wt_range.max - dist * wt_range.Range();
-    }
-    else if(grad_type == GAUSSIAN) {
-      float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
-      if(invert)
-	wt_val = wt_range.max - gaus * wt_range.Range();
-      else
-	wt_val = wt_range.min + gaus * wt_range.Range();
-    }
-    cg->Cn(i)->wt = wt_val;
+    SetWtFmDist(prjn, cg, ru, dist, i);
   }
 }
 
@@ -2454,21 +2460,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
 
     dist /= max_dist;		// keep it normalized
 
-    float wt_val;
-    if(grad_type == LINEAR) {
-      if(invert)
-	wt_val = wt_range.min + dist * wt_range.Range();
-      else
-	wt_val = wt_range.max - dist * wt_range.Range();
-    }
-    else if(grad_type == GAUSSIAN) {
-      float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
-      if(invert)
-	wt_val = wt_range.max - gaus * wt_range.Range();
-      else
-	wt_val = wt_range.min + gaus * wt_range.Range();
-    }
-    cg->Cn(i)->wt = wt_val;
+    SetWtFmDist(prjn, cg, ru, dist, i);
   }
 }
 
