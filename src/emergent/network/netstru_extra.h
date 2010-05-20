@@ -521,6 +521,7 @@ public:
   };
 
   MinMaxRange	wt_range;	// range of weakest (min) to strongest (max) weight values generated
+  bool		invert;		// invert the gradient, such that the min is located "below" the recv units, and the max is furthest away
   bool		grad_x;		// compute a gradient over the x dimension of the sending layer, based on x axis location of the matrix stripe unit group
   bool		grad_y;		// compute a gradient over the y dimension of the sending layer, based on y axis location of the matrix stripe unit group
   bool		wrap;		// wrap weight values around relevant dimension(s) -- the closest location wins -- this ensures that all units have the same overall weight strengths

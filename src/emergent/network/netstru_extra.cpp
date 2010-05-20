@@ -2282,6 +2282,7 @@ void GradientWtsPrjnSpec::Initialize() {
   wt_range.min = 0.0f;
   wt_range.max = 0.5f;
   wt_range.UpdateAfterEdit_NoGui();
+  invert = false;
   grad_x = true;
   grad_y = true;
   wrap = true;
@@ -2372,11 +2373,17 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
 
     float wt_val;
     if(grad_type == LINEAR) {
-      wt_val = wt_range.max - dist * wt_range.Range();
+      if(invert)
+	wt_val = wt_range.min + dist * wt_range.Range();
+      else
+	wt_val = wt_range.max - dist * wt_range.Range();
     }
     else if(grad_type == GAUSSIAN) {
       float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
-      wt_val = wt_range.min + gaus * wt_range.Range();
+      if(invert)
+	wt_val = wt_range.max - gaus * wt_range.Range();
+      else
+	wt_val = wt_range.min + gaus * wt_range.Range();
     }
     cg->Cn(i)->wt = wt_val;
   }
@@ -2449,11 +2456,17 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
 
     float wt_val;
     if(grad_type == LINEAR) {
-      wt_val = wt_range.max - dist * wt_range.Range();
+      if(invert)
+	wt_val = wt_range.min + dist * wt_range.Range();
+      else
+	wt_val = wt_range.max - dist * wt_range.Range();
     }
     else if(grad_type == GAUSSIAN) {
       float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
-      wt_val = wt_range.min + gaus * wt_range.Range();
+      if(invert)
+	wt_val = wt_range.max - gaus * wt_range.Range();
+      else
+	wt_val = wt_range.min + gaus * wt_range.Range();
     }
     cg->Cn(i)->wt = wt_val;
   }
