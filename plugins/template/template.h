@@ -7,7 +7,7 @@
 
 // The following is an example class -- replace with actual object name you want to use
 
-class TEMPLATE_API TemplatePluginExampleClass : public taNBase {
+class TEMPLATE_API TemplateClass : public taNBase {
   // TODO: describe your class
   INHERITED(taNBase) // declares 'inherited' keyword for safer base-class references
 public:
@@ -28,7 +28,7 @@ public:
   void			MyCodeMethod(); // example of a method that will be used by your code, but not available to the user in a menu -- it will be availabe in the CSS scripting language
 
 
-  TA_SIMPLE_BASEFUNS(TemplatePluginExampleClass);
+  TA_SIMPLE_BASEFUNS(TemplateClass);
   // defines a default set of constructors and copy code -- all the infrastructure 
 protected:
   // use the 'override' pseudo-keyword to indicate overridden virtual methods

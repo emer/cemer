@@ -970,7 +970,13 @@ void PluginWizard::UpdateAfterEdit_impl() {
   validated = false;
   // modify it to force it to be C-valid
   plugin_name = taMisc::StringCVar(plugin_name);
-  class_name_prefix = capitalize(plugin_name);
+  if(plugin_name.length() > 0) {
+    class_name_prefix = plugin_name;
+    if(islower(plugin_name[0])) {
+      // just cap first letter -- capitalize also downcases the rest of the thing..
+      class_name_prefix = String((char)toupper(plugin_name[0])) + plugin_name.after(0);
+    }
+  }
 #ifdef TA_OS_WIN
   plugin_location.gsub("/", "\\");
 #endif
