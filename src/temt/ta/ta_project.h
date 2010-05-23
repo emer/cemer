@@ -819,9 +819,13 @@ public:
   String		plugin_location;
   // folder where to create the plugin (folder name should usually be same as plugin_name)
   String		desc;
+  // description of the plugin -- what does it do?  the more you can provide here, the better it will be for others who might want to use your plugin..
   String		uniqueId;
+  // IMPORTANT: this MUST actually be a unique identifier string -- if two plugins have the same uniqueId, only the last one encountered will be loaded
   String		url;
+  // can be a website where the plugin is described, or avail for download, etc
   taVersion		version;
+  // current version number of the plugin -- can later be updated by editing the CMakeLists.txt file in the plugin directory
   
   virtual bool		Validate();
   // #BUTTON validate all the provided parameters, prior to making the Plugin
@@ -830,11 +834,11 @@ public:
   virtual bool		Compile();
   // #BUTTON #CONDEDIT_ON_created  compile the plugin from the existing source code -- must be created first -- does a make and a make install
   virtual bool		Clean();
-  // #BUTTON #CONDEDIT_ON_created remove (clean) the plugin -- prevents it from being loaded
+  // #BUTTON #CONDEDIT_ON_created #CONFIRM remove (clean) the plugin, e.g., to prevent it from being loaded if it is causing problems -- this just removes the compiled library object file and does not remove the source code from the install directory, so it can be regenerated from that later if desired
   virtual bool		Editor();
   // #BUTTON open the plugin file editor to edit plugin source files right here..
   virtual bool		LoadWiz(const String& wiz_file);
-  // #BUTTON #FILE_DIALOG_LOAD #FILETYPE_PluginWizard #EXT_wiz load an existing wizard configuration file saved from a prior wizard create step
+  // #BUTTON #FILE_DIALOG_LOAD #FILETYPE_PluginWizard #EXT_wiz load an existing wizard configuration file saved from a prior wizard create step -- do this first to enable the Editor and Compile functions to work if you haven't just Created a new plugin
   virtual bool		SaveWiz();
   // #BUTTON save current wizard configuration info to the PluginWizard.wiz file into the current plugin_location directory (only valid after directory created)
 

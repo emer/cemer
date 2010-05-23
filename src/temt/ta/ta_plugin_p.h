@@ -214,11 +214,11 @@ public:
   // #BUTTON open the Options dialog for this plugin (if it has one)
 
   virtual bool		Compile();
-  // #BUTTON compile the plugin from the existing source code -- does a make and a make install
+  // #BUTTON #CONFIRM compile the plugin (make and make install) from the INSTALLED source code -- this is NOT going to reflect any changes you might have made to the source code in the actual plugin home source directory, which have not been compiled yet -- it is ONLY intended for freshening an existing install after a rebuild of the main emergent codebase -- please do LoadWiz and Compile from the PluginWizard to compile new source changes 
   virtual bool		Clean();
-  // #BUTTON remove (clean) the plugin -- prevents it from being loaded
+  // #BUTTON #CONFIRM remove (clean) the plugin, e.g., to prevent it from being loaded if it is causing problems -- this just removes the compiled library object file and does not remove the source code from the install directory, so it can be regenerated from that later if desired
   virtual bool		LoadWiz();
-  // #BUTTON load an existing wizard configuration file saved from a prior wizard create step
+  // #BUTTON load an existing wizard configuration file saved from a prior wizard create step -- this then enables further interaction with the plugin code via the PluginWizard (editing, compiling etc) -- importantly, the PluginWizard operates on the original source code.
   virtual bool		Editor();
   // #BUTTON open the plugin file editor to edit plugin source files -- does LoadWiz() and then calls Editor on that, to get back to the original source files and not the installed source files
 

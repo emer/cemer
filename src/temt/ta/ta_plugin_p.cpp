@@ -961,7 +961,7 @@ void PluginWizard::Initialize() {
   plugin_location = taMisc::user_dir + PATH_SEP + "plugins" + PATH_SEP +
         plugin_name;
   desc = "enter description of your plugin";
-  uniqueId = "pluginname.dept.organization.org";
+  uniqueId = "myplugin.dept.organization.org";
   url = "(replace this with a url for help or information on the plugin)";
 }
 
@@ -976,6 +976,10 @@ void PluginWizard::UpdateAfterEdit_impl() {
       // just cap first letter -- capitalize also downcases the rest of the thing..
       class_name_prefix = String((char)toupper(plugin_name[0])) + plugin_name.after(0);
     }
+  }
+  if(plugin_name != "myplugin") {
+    if(uniqueId.contains("myplugin")) uniqueId.gsub("myplugin", plugin_name);
+    if(plugin_location.contains("myplugin")) plugin_location.gsub("myplugin", plugin_name);
   }
 #ifdef TA_OS_WIN
   plugin_location.gsub("/", "\\");
@@ -995,10 +999,16 @@ void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
   //TODO: do our name conflict checks!
   //TODO: check if a plugin already exists there!
 
+  CheckError(plugin_name != "myplugin" && uniqueId.startsWith("myplugin."), quiet, ok,
+	     "the uniqueId cannot start with the default 'myplugin.' -- it MUST actually be unique!");
+  CheckError(uniqueId.contains(".dept.organization."), quiet, ok,
+	     "the uniqueId cannot contain the initial '.dept.organization.' -- it MUST actually be unique -- please change to be your actual department and organization -- make one up if you need to!");
+  
   QFileInfo qfi(plugin_location);
   CheckError((qfi.isDir()), quiet, ok,
 	     "plugin location already exists:", plugin_location,
 	     "you can move out of way or load wiz from that location to compile");
+
 }
 
 bool PluginWizard::Validate() {
