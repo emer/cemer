@@ -35,43 +35,9 @@ bool NetBaseProgEl::NetProgVarFilter(void* base_, void* var_) {
 void NetDataLoop::Initialize() {
   order = SEQUENTIAL;
   update_after = false;
-}
-
-const String NetDataLoop::GenCssPre_impl(int indent_level) {
-  String id1 = cssMisc::Indent(indent_level+1);
-  String id2 = cssMisc::Indent(indent_level+2);
-  String id3 = cssMisc::Indent(indent_level+3);
-  if(!data_var || !index_var) return id1 + "// NetDataLoop ERROR vars not set!\n";
-  String data_nm = data_var->name;
-  String idx_nm = index_var->name;
-
-  String rval = cssMisc::Indent(indent_level) + "{ // NetDataLoop " + data_nm + "\n";
-  rval += id1 + "NetDataLoop* data_loop = this" + GetPath(NULL,program()) + ";\n";
-  rval += id1 + "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value\n";
-  rval += id1 + "data_loop->DMem_Initialize(network); // note: this assumes network variable exists!\n";
-  rval += id1 + "data_loop->item_idx_list.SetSize(" + data_nm + "->ItemCount());\n";
-  rval += id1 + "data_loop->item_idx_list.FillSeq();\n";
-  rval += id1 + "if(data_loop->order == NetDataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
-  rval += id1 + "int st_idx = data_loop->dmem_this_proc; // start with different items in dmem (0 if not)\n";
-  rval += id1 + "int inc_idx = data_loop->dmem_nprocs;  // this is 1 if no dmem\n";
-  rval += id1 + "int mx_idx = data_loop->item_idx_list.size;\n";
-  rval += id1 + "bool dmem_even = true; // is the total number an even multiple of dmem_nprocs?\n";
-  rval += id1 + "if(mx_idx % inc_idx != 0) {\n";
-  rval += id2 + "dmem_even = false;  mx_idx = ((mx_idx / inc_idx) + 1) * inc_idx; // round up\n";
-  rval += id1 + "}\n";
-  rval += id1 + "for(" + idx_nm + " = st_idx; " + idx_nm + " < mx_idx; " + idx_nm + " += inc_idx) {\n";
-  rval += id2 + "int data_row_idx;\n";
-  // note: cannot use random call here to select if over size because this throws off random
-  // seed consistency between dmem processes!!!
-  rval += id2 + "if(data_loop->order == NetDataLoop::RANDOM) data_row_idx = Random::IntZeroN(data_loop->item_idx_list.size);\n";
-  rval += id2 + "else data_row_idx = data_loop->item_idx_list[" + idx_nm + " % data_loop->item_idx_list.size ];\n";
-  rval += id2 + "if(!" + data_nm + "->ReadItem(data_row_idx)) break;\n";
-  rval += id2 + data_nm + "->WriteItem(data_row_idx); // set write to same as read, just in case some mods are happening along the way\n";
-  rval += id2 + "trial = " + idx_nm + "; network.trial = " + idx_nm + ";\n";
-  if(update_after) {
-    rval += id2 + "network.UpdateAfterEdit();\n";
-  }
-  return rval;
+  grouped = false;
+  group_col = "Group";
+  group_order = PERMUTED;
 }
 
 void NetDataLoop::DMem_Initialize(Network* net) {
@@ -84,16 +50,198 @@ void NetDataLoop::DMem_Initialize(Network* net) {
 #endif
 }
 
+void NetDataLoop::GetOrderVal() {
+  inherited::GetOrderVal();
+  if(!grouped) return;
+
+  if(!group_order_var) GetOrderVar();
+  else {
+    group_order = (Order)group_order_var->int_val;
+  }
+}
+
+void NetDataLoop::GetOrderVar() {
+  inherited::GetOrderVar();
+  if(!grouped) return;
+
+  Program* my_prog = program();
+  if(!my_prog) return;
+  if(!group_order_var || group_order_var->name != "group_order") {
+    if(!(group_order_var = my_prog->vars.FindName("group_order"))) {
+      group_order_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+      group_order_var->name = "group_order";
+      group_order_var->DataChanged(DCR_ITEM_UPDATED);
+    }
+  }
+  group_order_var->var_type = ProgVar::T_HardEnum;
+  group_order_var->hard_enum_type = TA_NetDataLoop.sub_types.FindName("Order");
+  group_order = (Order)group_order_var->int_val;
+}
+
+void NetDataLoop::GetIndexVar() {
+  inherited::GetIndexVar();
+  if(!grouped) return;
+
+  Program* my_prog = program();
+  if(!my_prog) return;
+  if(!group_index_var) {
+    if(!(group_index_var = my_prog->vars.FindName("group_index"))) {
+      group_index_var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+      group_index_var->name = "group_index";
+      group_index_var->ClearVarFlag(ProgVar::CTRL_PANEL); // generally not needed there
+      group_index_var->DataChanged(DCR_ITEM_UPDATED);
+    }
+  }
+  group_index_var->var_type = ProgVar::T_Int;
+}
+
+void NetDataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(!grouped) return;
+
+  CheckError(!group_index_var, quiet, rval, "group_index_var = NULL");
+  CheckError(!group_order_var, quiet, rval, "group_order_var = NULL");
+}
+
+void NetDataLoop::GetGroupList() {
+  DataTable* dt = (DataTable*)data_var->object_val.ptr();
+  group_idx_list.Reset();
+  String prv_gp_nm;
+  for(int i=0;i<dt->ItemCount();i++) {
+    String gp_nm = dt->GetValAsString(group_col, i);
+    if(gp_nm != prv_gp_nm) {
+      group_idx_list.Add(i);
+      prv_gp_nm = gp_nm;
+    }
+  }
+}
+
+void NetDataLoop::GetItemList(int group_idx) {
+  DataTable* dt = (DataTable*)data_var->object_val.ptr();
+  item_idx_list.Reset();
+  String prv_gp_nm = dt->GetValAsString(group_col, group_idx);
+  for(int i=group_idx;i<dt->ItemCount();i++) {
+    String gp_nm = dt->GetValAsString(group_col, i);
+    if(gp_nm != prv_gp_nm)
+      break;
+    item_idx_list.Add(i);
+  }
+}
+
+const String NetDataLoop::GenCssPre_impl(int indent_level) {
+  String id1 = cssMisc::Indent(indent_level+1);
+  String id2 = cssMisc::Indent(indent_level+2);
+  String id3 = cssMisc::Indent(indent_level+3);
+  if(!data_var || !index_var) return id1 + "// NetDataLoop ERROR vars not set!\n";
+  String rval;
+  String data_nm = data_var->name;
+  String idx_nm = index_var->name;
+  if(!grouped) {
+    rval = cssMisc::Indent(indent_level) + "{ // NetDataLoop " + data_nm + "\n";
+    rval += id1 + "NetDataLoop* data_loop = this" + GetPath(NULL,program()) + ";\n";
+    rval += id1 + "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value\n";
+    rval += id1 + "data_loop->DMem_Initialize(network); // note: this assumes network variable exists!\n";
+    rval += id1 + "data_loop->item_idx_list.SetSize(" + data_nm + "->ItemCount());\n";
+    rval += id1 + "data_loop->item_idx_list.FillSeq();\n";
+    rval += id1 + "if(data_loop->order == NetDataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
+    rval += id1 + "int st_idx = data_loop->dmem_this_proc; // start with different items in dmem (0 if not)\n";
+    rval += id1 + "int inc_idx = data_loop->dmem_nprocs;  // this is 1 if no dmem\n";
+    rval += id1 + "int mx_idx = data_loop->item_idx_list.size;\n";
+    rval += id1 + "bool dmem_even = true; // is the total number an even multiple of dmem_nprocs?\n";
+    rval += id1 + "if(mx_idx % inc_idx != 0) {\n";
+    rval += id2 + "dmem_even = false;  mx_idx = ((mx_idx / inc_idx) + 1) * inc_idx; // round up\n";
+    rval += id1 + "}\n";
+    rval += id1 + "for(" + idx_nm + " = st_idx; " + idx_nm + " < mx_idx; " + idx_nm + " += inc_idx) {\n";
+    rval += id2 + "int data_row_idx;\n";
+    // note: cannot use random call here to select if over size because this throws off random
+    // seed consistency between dmem processes!!!
+    rval += id2 + "if(data_loop->order == NetDataLoop::RANDOM) data_row_idx = Random::IntZeroN(data_loop->item_idx_list.size);\n";
+    rval += id2 + "else data_row_idx = data_loop->item_idx_list[" + idx_nm + " % data_loop->item_idx_list.size ];\n";
+    rval += id2 + "if(!" + data_nm + "->ReadItem(data_row_idx)) break;\n";
+    rval += id2 + data_nm + "->WriteItem(data_row_idx); // set write to same as read, just in case some mods are happening along the way\n";
+    rval += id2 + "trial = " + idx_nm + "; network.trial = " + idx_nm + ";\n";
+    if(update_after) {
+      rval += id2 + "network.UpdateAfterEdit();\n";
+    }
+  }
+  else {
+    if(!group_index_var) return id1 + "// NetDataLoop ERROR vars not set!\n";
+    String gp_idx_nm = group_index_var->name;
+
+    rval = cssMisc::Indent(indent_level) + "{ // NetDataLoop " + data_nm + "\n";
+    rval += id1 + "NetDataLoop* data_loop = this" + GetPath(NULL,program()) + ";\n";
+    rval += id1 + "data_loop->GetOrderVal(); // order_var variables control order -- make sure we have current values\n";
+    rval += id1 + "data_loop->GetGroupList();\n";
+    rval += id1 + "if(data_loop->group_order == NetDataLoop::PERMUTED) data_loop->group_idx_list.Permute();\n";
+    rval += id1 + "for(" + gp_idx_nm + " = 0; " + gp_idx_nm + " < data_loop->group_idx_list.size; " + gp_idx_nm + "++) {\n";
+    rval += id2 + "network.group = " + gp_idx_nm + ";\n";
+    rval += id2 + "network.Init_Sequence(); // some algorithms use this to initialize at start\n";
+    rval += id2 + "int group_data_row_idx;\n";
+    rval += id2 + "if(data_loop->group_order == NetDataLoop::RANDOM) \n";
+    rval += id2 + "   group_data_row_idx = data_loop->group_idx_list[Random::IntZeroN(data_loop->group_idx_list.size)];\n";
+    rval += id2 + "else group_data_row_idx = data_loop->group_idx_list[" + gp_idx_nm + "];\n";
+    rval += id2 + "data_loop->GetItemList(group_data_row_idx);\n";
+    rval += id2 + "if(data_loop->order == NetDataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
+    rval += id2 + "for(" + idx_nm + " = 0; " + idx_nm + " < data_loop->item_idx_list.size; " + idx_nm + "++) {\n";
+    rval += id3 + "int item_data_row_idx;\n";
+    rval += id3 + "if(data_loop->order == NetDataLoop::RANDOM) \n";
+    rval += id3 + "   item_data_row_idx = data_loop->item_idx_list[Random::IntZeroN(data_loop->item_idx_list.size)];\n";
+    rval += id3 + "else item_data_row_idx = data_loop->item_idx_list[" + idx_nm + "];\n";
+    rval += id3 + "if(!" + data_nm + "->ReadItem(item_data_row_idx)) break;\n";
+    rval += id3 + data_nm + "->WriteItem(item_data_row_idx); // set write to same as read, in case mods happening along the way\n";
+    rval += id3 + "trial = " + idx_nm + "; network.trial = " + idx_nm + ";\n";
+    if(update_after) {
+      rval += id3 + "network.UpdateAfterEdit();\n";
+    }
+  }
+  return rval;
+}
+
+const String NetDataLoop::GenCssBody_impl(int indent_level) {
+  if(!grouped)
+    return inherited::GenCssBody_impl(indent_level);
+  return loop_code.GenCss(indent_level + 3);
+}
+
+const String NetDataLoop::GenCssPost_impl(int indent_level) {
+  if(!grouped)
+    return inherited::GenCssPost_impl(indent_level);
+
+  if(!data_var || !group_index_var || !index_var) return "// NetDataLoop ERROR vars not set!\n";
+  String rval = cssMisc::Indent(indent_level+2) + "} // item for loop\n";
+  rval += cssMisc::Indent(indent_level+1) + "} // group for loop\n";
+  rval += cssMisc::Indent(indent_level) + "} // NetDataLoop " + data_var->name + "\n";
+  return rval;
+}
+
 String NetDataLoop::GetDisplayName() const {
-  ((NetDataLoop*)this)->GetOrderVal();
-  String ord_str = GetTypeDef()->GetEnumString("Order", order);
-  String data_nm;
-  if(data_var) data_nm = data_var->name;
-  else data_nm = "ERROR: data_var not set!";
-  String index_nm;
-  if(index_var) index_nm = index_var->name;
-  else index_nm = "ERROR: index_var not set!";
-  return "Net Data Loop (" + ord_str + " over: " + data_nm + " index: " + index_nm +")";
+  if(grouped) {
+    String group_ord_str = GetTypeDef()->GetEnumString("Order", group_order);
+    String item_ord_str = GetTypeDef()->GetEnumString("Order", order);
+    String data_nm;
+    if(data_var) data_nm = data_var->name;
+    else data_nm = "ERROR: data_var not set!";
+    String group_index_nm;
+    if(group_index_var) group_index_nm = group_index_var->name;
+    else group_index_nm = "ERROR: group_index_var not set!";
+    String item_index_nm;
+    if(index_var) item_index_nm = index_var->name;
+    else item_index_nm = "ERROR: index_var not set!";
+    return "Net Data Loop (gp: " + group_ord_str + "\n itm: " + item_ord_str
+      + " over: " + data_nm + " group index: " + group_index_nm
+      + " item index: " + item_index_nm +")";
+  }
+  else {
+    ((NetDataLoop*)this)->GetOrderVal();
+    String ord_str = GetTypeDef()->GetEnumString("Order", order);
+    String data_nm;
+    if(data_var) data_nm = data_var->name;
+    else data_nm = "ERROR: data_var not set!";
+    String index_nm;
+    if(index_var) index_nm = index_var->name;
+    else index_nm = "ERROR: index_var not set!";
+    return "Net Data Loop (" + ord_str + " over: " + data_nm + " index: " + index_nm +")";
+  }
 }
 
 

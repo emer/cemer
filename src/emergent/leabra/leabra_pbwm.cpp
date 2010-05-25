@@ -609,6 +609,7 @@ void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
   bias_gain = .1f;
   bias_pos_gain = 0.0f;
+  mnt_only = false;
 }
 
 void MatrixRndGoSpec::Initialize() {
@@ -857,7 +858,7 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay, LeabraUnit_Group* mug
     }
   }
   else {			// MAINT
-    if(net->pv_detected) {	// PV reward trial -- no maint gating
+    if(!matrix.mnt_only && net->pv_detected) {	// PV reward trial -- no maint gating
       bias_dav = -gate_bias.mnt_rew_nogo;
     }
     else {
@@ -1422,10 +1423,15 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
       ugp->misc_state--;	// stay empty
     }
     else if(ugp->misc_state1 == PFCGateSpec::MAINT_NOGO) {
-      ugp->misc_state++;	// continue maintaining
-      if(ugp->misc_state > gate.max_maint) {
-	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
-	ugp->misc_state = 0;			     // empty
+      if(gate.max_maint > 0) {			     // if max_maint = 0 then never store
+	ugp->misc_state++;	// continue maintaining
+	if(ugp->misc_state > gate.max_maint) {
+	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
+	  ugp->misc_state = 0;			     // empty
+	}
+      }
+      else {
+	ugp->misc_state--;			     // nogo longer
       }
     }
     // look for store condition
@@ -1434,6 +1440,9 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
       if(gate.max_maint > 0) {			     // if max_maint = 0 then never store
 	Compute_MaintUpdt_ugp(ugp, STORE, lay, net);     // store it (never stored before)
 	ugp->misc_state = 1;	// always reset on new store
+      }
+      else {
+	ugp->misc_state = 0;	// this go resets counter
       }
     }
     // or basic output gate with no veto from maint
@@ -1794,6 +1803,7 @@ void MatrixRndPrjnSpec::Connect_impl(Projection* prjn) {
 
 void MatrixGradRFPrjnSpec::Initialize() {
   invert_nogo = false;
+  nogo_offset = 0.0f;
   wt_range.min = 0.0f;
   wt_range.max = 0.1f;
   wt_range.UpdateAfterEdit_NoGui();
@@ -1819,6 +1829,9 @@ void MatrixGradRFPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru,
     invert = false;
   }
   inherited::SetWtFmDist(prjn, cg, ru, dist, cg_idx);
+  if(go_no == PFCGateSpec::GATE_NOGO) {
+    cg->Cn(cg_idx)->wt += nogo_offset;
+  }
   invert = save_invert;
 }
 

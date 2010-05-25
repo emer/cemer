@@ -366,6 +366,7 @@ public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
   float		bias_gain;	// #DEF_0.1 overall gain factor for the gating biases as they are translated into multipliers on the net input values of Go vs. NoGo units -- allows the bias values to be expressed in standardized relative units and then overall impact can be dialed with this setting
   float		bias_pos_gain;	// #DEF_0 extra multiplicative gain for positive bias terms -- it is in general not great to increase netinput levels on units beyond their natural values, so setting this to zero (default) puts all the bias work on decreasing the relative netinputs for the non-favored population (biologically can be going into a down state)
+  bool		mnt_only;	// set to true if there is only a MAINT matrix layer -- affects the way that rnd go is computed -- should also have PFCLayerSpec.gate.max_maint = 0
 
   TA_SIMPLE_BASEFUNS(MatrixMiscSpec);
 protected:
@@ -672,6 +673,7 @@ class LEABRA_API MatrixGradRFPrjnSpec : public GradientWtsPrjnSpec {
 INHERITED(GradientWtsPrjnSpec)
 public:
   bool		invert_nogo;	// NoGo units get inverted weight pattern -- produces a net Go bias for sending units in corresponding topological location with associated stripes
+ float		nogo_offset;	// how much to add to NoGo weights (can be + or - -- e.g., subtracting a fixed amount from all weights produces an overall Go Bias)
 
   override void SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist, int cg_idx);
 
