@@ -566,6 +566,7 @@ public:
   float		length;		// length of the gaussian perpendicular to the wave direction
   float		width;		// width of the gaussian in the wave direction
   float		amp;		// amplitude (maximum value)
+  float phase_mod; // value to add onto the phase for all filters
 
   void 	Initialize();
   void	Destroy() { };
@@ -622,6 +623,7 @@ public:
   TwoDCoord 	rf_width;	// width of the receptive field into the retinal inputs -- enforced to be even numbers, to enable the 1/2 overlap constraint for neighboring rf's
 
   TwoDCoord 	rf_ovlp;	//  half-width of the receptive field into the retinal inputs, which is the amount that the receptive fields overlap   CONDEDIT_ON_filter_type:COPY
+  bool rf_ovlp_auto; //turn off/on autosizing the RF overlap.
   int		n_filters;	// #READ_ONLY #SHOW number of filters -- computed from appropriate _rf specifications in terms of number of angles/sizes etc.
   GaborRFSpec	gabor_rf;	// #CONDEDIT_ON_filter_type:GABOR parameters for gabor filter specs
   BlobRFSpec	blob_rf;	// #CONDEDIT_ON_filter_type:BLOB parameters for blob filter specs

@@ -1640,6 +1640,8 @@ void GaborRFSpec::Initialize() {
   width = 2.0f;
   length = 2.0f;
   amp = .9f;
+  phase_mod = 0.0f;
+  
 }
 
 void MotionDispGaborRFSpec::Initialize() {
@@ -1666,6 +1668,7 @@ void GaborV1SpecBase::Initialize() {
   motiondisp_gabor_specs.SetBaseType(&TA_MotionDispGaborFilterSpec);
   rf_ovlp = 2;
   rf_width = rf_ovlp * 2;
+  rf_ovlp_auto = true;
   filter_type = GABOR;
   n_filters = gabor_rf.n_angles * 2;
 }
@@ -1708,7 +1711,7 @@ bool GaborV1SpecBase::InitFilters_Gabor() {
 		gf->ctr_x = (float)(gf->x_size - 1.0f) / 2.0f;
 		gf->ctr_y = (float)(gf->y_size - 1.0f) / 2.0f;
 		gf->angle = taMath_float::pi * angle_dx / (float)gabor_rf.n_angles;
-		gf->phase = taMath_float::pi * phase_dx;
+		gf->phase = taMath_float::pi * phase_dx + gabor_rf.phase_mod;
 		gf->freq = gabor_rf.freq;
 		gf->length = gabor_rf.length;
 		gf->width = gabor_rf.width;
@@ -1892,9 +1895,11 @@ void GaborV1Spec::UpdateGeoms() {
       trg_input_size = (un_geom +1)* input_ovlp;
   }
   else {
-    rf_ovlp = rf_width / 2;
-    rf_ovlp.SetGtEq(1);		// min 1.. if rf_width = 1, then just moves along
-    rf_width = rf_ovlp * 2;	// ensure even
+    if(rf_ovlp_auto) {
+      rf_ovlp = rf_width / 2;
+      rf_ovlp.SetGtEq(1);		// min 1.. if rf_width = 1, then just moves along
+      rf_width = rf_ovlp * 2;	// ensure even
+    }
     tot_filter_gps = n_filter_gps * n_filters_per_gp;
     filter_gp_ovlp = tot_filter_gps / 2;
     filter_gp_ovlp.SetGtEq(1);
@@ -1914,19 +1919,19 @@ void GaborV1Spec::UpdateGeoms() {
 
   if(filter_type != COPY) {
     gp_gauss_mat.SetGeom(2, tot_filter_gps.x, tot_filter_gps.y);
-
+    
     if(tot_filter_gps.n > 1) {
       float ctr_x = (float)tot_filter_gps.x * .5f;;
       float ctr_y = (float)tot_filter_gps.y * .5f;;
       float eff_sig_x = gp_gauss_sigma * ctr_x;
       float eff_sig_y = gp_gauss_sigma * ctr_y;
       for(int yi=0; yi< tot_filter_gps.y; yi++) {
-	float y = ((float)yi - ctr_y) / eff_sig_y;
-	for(int xi=0; xi< tot_filter_gps.x; xi++) {
-	  float x = ((float)xi - ctr_y) / eff_sig_x;
-	  float gv = expf(-(x*x + y*y)/2.0f);
-	  gp_gauss_mat.FastEl(xi, yi) = gv;
-	}
+        float y = ((float)yi - ctr_y) / eff_sig_y;
+        for(int xi=0; xi< tot_filter_gps.x; xi++) {
+          float x = ((float)xi - ctr_y) / eff_sig_x;
+          float gv = expf(-(x*x + y*y)/2.0f);
+          gp_gauss_mat.FastEl(xi, yi) = gv;
+        }
       }
     }
     else {
@@ -2050,39 +2055,39 @@ bool GaborV1Spec::FilterInput_Gabor(int cmp_idx) {
   for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
     for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
       if(wrap)
-	ugpof = (ugp-1) * input_ovlp;
+        ugpof = (ugp-1) * input_ovlp;
       else
-	ugpof = ugp * input_ovlp;
+        ugpof = ugp * input_ovlp;
       float max_val = 0.0f;	// output is max val
       // filter groups
       for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-	int ymod = fgp.y % n_filters_per_gp;
-	for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-	  int xmod = (fgp.x + ymod) % n_filters_per_gp;
-	  if(xmod != fgpdx) continue; // not our spot
-	  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-	  fgpof = ugpof + (fgp * rf_ovlp);
-	  // now actually apply the filter itself
-	  float flt_sum = 0.0f;
-	  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-	    for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-	      in = fgpof + fc;
-	      if(in.WrapClip(wrap, trg_input_size)) continue;
-	      float fval = gf->filter.FastEl(fc.x, fc.y);
-	      float oval;
-	      if(fval > 0.0f) oval = fval * cur_on_input->FastEl(in.x, in.y);
-	      else	      oval = -fval * cur_off_input->FastEl(in.x, in.y);
-	      flt_sum += oval;
-	    }
-	  }
-	  flt_sum *= gmult;
-	  max_val = MAX(max_val, flt_sum);
-	}
+        int ymod = fgp.y % n_filters_per_gp;
+        for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+          int xmod = (fgp.x + ymod) % n_filters_per_gp;
+          if(xmod != fgpdx) continue; // not our spot
+          float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+          fgpof = ugpof + (fgp * rf_ovlp);
+          // now actually apply the filter itself
+          float flt_sum = 0.0f;
+          for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+            for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+              in = fgpof + fc;
+              if(in.WrapClip(wrap, trg_input_size)) continue;
+              float fval = gf->filter.FastEl(fc.x, fc.y);
+              float oval;
+              if(fval > 0.0f) oval = fval * cur_on_input->FastEl(in.x, in.y);
+              else	      oval = -fval * cur_off_input->FastEl(in.x, in.y);
+              flt_sum += oval;
+            }
+          }
+          flt_sum *= gmult;
+          max_val = MAX(max_val, flt_sum);
+        }
       }
       if(cur_superimpose)
-	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
+        cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
       else
-	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
+        cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
     }
   }
   return true;
@@ -2108,37 +2113,37 @@ bool GaborV1Spec::FilterInput_Blob(int cmp_idx) {
   for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
     for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
       if(wrap)
-	ugpof = (ugp-1) * input_ovlp;
+        ugpof = (ugp-1) * input_ovlp;
       else
-	ugpof = ugp * input_ovlp;
+        ugpof = ugp * input_ovlp;
       float max_val = 0.0f;	// result is max over locs
       // filter groups
       for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-	int ymod = fgp.y % n_filters_per_gp;
-	for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-	  int xmod = (fgp.x + ymod) % n_filters_per_gp;
-	  if(xmod != fgpdx) continue; // not our spot
-	  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-	  fgpof = ugpof + (fgp * rf_ovlp);
-	  // now actually apply the filter itself
-	  float flt_sum = 0.0f;
-	  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-	    for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-	      in = fgpof + fc;
-	      if(in.WrapClip(wrap, trg_input_size)) continue;
-	      float oval = (gf->on_filter.FastEl(fc.x, fc.y) * cur_on_input->FastEl(in.x, in.y) - 
-			    gf->off_filter.FastEl(fc.x, fc.y) * cur_off_input->FastEl(in.x, in.y));
-	      flt_sum += oval;
-	    }
-	  }
-	  flt_sum *= gmult;
-	  max_val = MAX(max_val, flt_sum);
-	}
+        int ymod = fgp.y % n_filters_per_gp;
+        for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+          int xmod = (fgp.x + ymod) % n_filters_per_gp;
+          if(xmod != fgpdx) continue; // not our spot
+          float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+          fgpof = ugpof + (fgp * rf_ovlp);
+          // now actually apply the filter itself
+          float flt_sum = 0.0f;
+          for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+            for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+              in = fgpof + fc;
+              if(in.WrapClip(wrap, trg_input_size)) continue;
+              float oval = (gf->on_filter.FastEl(fc.x, fc.y) * cur_on_input->FastEl(in.x, in.y) - 
+                            gf->off_filter.FastEl(fc.x, fc.y) * cur_off_input->FastEl(in.x, in.y));
+              flt_sum += oval;
+            }
+          }
+          flt_sum *= gmult;
+          max_val = MAX(max_val, flt_sum);
+        }
       }
       if(cur_superimpose)
-	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
+        cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
       else
-	cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
+        cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
     }
   }
   return true;
@@ -2703,140 +2708,140 @@ bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
   for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
     for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
       if(wrap) {
-	ugpof = (ugp-1) * input_ovlp;
+        ugpof = (ugp-1) * input_ovlp;
       }
       else {
-	ugpof = ugp * input_ovlp;
+        ugpof = ugp * input_ovlp;
       }
       float max_val[3] = {0,0,0};
       // filter groups
       for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-	int ymod = fgp.y % n_filters_per_gp;
-	for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-	  int xmod = (fgp.x + ymod) % n_filters_per_gp;
-	  if(xmod != fgpdx) {
-	    continue; // not our spot
-	  }
-	  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-	  fgpof = ugpof + (fgp * rf_ovlp);
+        int ymod = fgp.y % n_filters_per_gp;
+        for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+          int xmod = (fgp.x + ymod) % n_filters_per_gp;
+          if(xmod != fgpdx) {
+            continue; // not our spot
+          }
+          float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+          fgpof = ugpof + (fgp * rf_ovlp);
 					
-	  // now actually apply the filter itself
-	  float flt_sum[3] = {0,0,0};
-	  float flt_sum_right[3] = {0,0,0};
-	  float flt_sum_left[3] = {0,0,0};
+          // now actually apply the filter itself
+          float flt_sum[3] = {0,0,0};
+          float flt_sum_right[3] = {0,0,0};
+          float flt_sum_left[3] = {0,0,0};
 					
-	  for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
-	    for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
+          for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
+            for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
 							
 							
-	      float cur_disp_mult = disp_gauss_mat.SafeEl(disp_i);
-	      float oval_right[3] = {0,0,0};
-	      float oval_left[3] = {0,0,0};
-	      for(int t = 0; t < 3; t++) {
-		switch(t) {
-		case 0:
-		  cur_on_left_input = cur_on_left_input1;
-		  cur_off_left_input = cur_off_left_input1;
-		  cur_on_right_input = cur_on_right_input1;
-		  cur_off_right_input = cur_off_right_input1;
-		  break;
-		case 1:
-		  cur_on_left_input = cur_on_left_input2;
-		  cur_off_left_input = cur_off_left_input2;
-		  cur_on_right_input = cur_on_right_input2;
-		  cur_off_right_input = cur_off_right_input2;
-		  break;
-		case 2:
-		  cur_on_left_input = cur_on_left_input3;
-		  cur_off_left_input = cur_off_left_input3;
-		  cur_on_right_input = cur_on_right_input3;
-		  cur_off_right_input = cur_off_right_input3;
-		  break;
-		}
+              float cur_disp_mult = disp_gauss_mat.SafeEl(disp_i);
+              float oval_right[3] = {0,0,0};
+              float oval_left[3] = {0,0,0};
+              for(int t = 0; t < 3; t++) {
+                switch(t) {
+                  case 0:
+                    cur_on_left_input = cur_on_left_input1;
+                    cur_off_left_input = cur_off_left_input1;
+                    cur_on_right_input = cur_on_right_input1;
+                    cur_off_right_input = cur_off_right_input1;
+                    break;
+                  case 1:
+                    cur_on_left_input = cur_on_left_input2;
+                    cur_off_left_input = cur_off_left_input2;
+                    cur_on_right_input = cur_on_right_input2;
+                    cur_off_right_input = cur_off_right_input2;
+                    break;
+                  case 2:
+                    cur_on_left_input = cur_on_left_input3;
+                    cur_off_left_input = cur_off_left_input3;
+                    cur_on_right_input = cur_on_right_input3;
+                    cur_off_right_input = cur_off_right_input3;
+                    break;
+                }
 								
 								
-		for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-		  for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+                for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+                  for(fc.x=0;fc.x<rf_width.x;fc.x++) {
 										
 										
-		    in_left = fgpof + fc;
-		    in_left.x +=  ((disp_lvl_i - 1) * disparity_offset) + (disp_i - (disparity_width / 2));
-		    if(in_left.WrapClip(wrap, trg_input_size)) continue;
-		    in_right = fgpof + fc;
-		    in_right.x +=  ((1 - disp_lvl_i) * disparity_offset) + ((disparity_width / 2) - disp_i);
-		    if(in_right.WrapClip(wrap, trg_input_size)) continue;
+                    in_left = fgpof + fc;
+                    in_left.x +=  ((disp_lvl_i - 1) * disparity_offset) + (disp_i - (disparity_width / 2));
+                    if(in_left.WrapClip(wrap, trg_input_size)) continue;
+                    in_right = fgpof + fc;
+                    in_right.x +=  ((1 - disp_lvl_i) * disparity_offset) + ((disparity_width / 2) - disp_i);
+                    if(in_right.WrapClip(wrap, trg_input_size)) continue;
 										
 										
-		    float fval = gf->filter.FastEl(fc.x, fc.y, t);
+                    float fval = gf->filter.FastEl(fc.x, fc.y, t);
 										
 										
-		    if(fval > 0.0f) {
-		      //oval += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
-		      //oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
+                    if(fval > 0.0f) {
+                      //oval += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
+                      //oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
 											
-		      float left_val, right_val;
+                      float left_val, right_val;
 											
 											
-		      right_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
-		      left_val = cur_on_right_input->FastEl(in_right.x, in_right.y);
+                      right_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
+                      left_val = cur_on_right_input->FastEl(in_right.x, in_right.y);
                       
 											
-		      oval_left[disp_lvl_i] += fval * left_val;
-		      oval_right[disp_lvl_i] += fval * right_val;
-		      //oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
-		    }
-		    else {
-		      //oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
-		      //oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
-		      float right_val = 0;
-		      float left_val = 0;
+                      oval_left[disp_lvl_i] += fval * left_val;
+                      oval_right[disp_lvl_i] += fval * right_val;
+                      //oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
+                    }
+                    else {
+                      //oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
+                      //oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
+                      float right_val = 0;
+                      float left_val = 0;
                       
-		      right_val = cur_off_right_input->FastEl(in_right.x, in_right.y);
-		      left_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
+                      right_val = cur_off_right_input->FastEl(in_right.x, in_right.y);
+                      left_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
                       
-		      oval_left[disp_lvl_i] += -fval * left_val;
-		      oval_right[disp_lvl_i] += -fval * right_val;
-		      //oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
-		    }
+                      oval_left[disp_lvl_i] += -fval * left_val;
+                      oval_right[disp_lvl_i] += -fval * right_val;
+                      //oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
+                    }
 										
-		  }
+                  }
 									
-		}
+                }
 								
-	      }
-	      if(max_in_disparity) {
-		flt_sum_right[disp_lvl_i] = MAX(oval_right[disp_lvl_i],flt_sum_right[disp_lvl_i]);
-		flt_sum_left[disp_lvl_i] = MAX(oval_left[disp_lvl_i],flt_sum_left[disp_lvl_i]);
-	      }
-	      else {
-		flt_sum_right[disp_lvl_i] += oval_right[disp_lvl_i] * cur_disp_mult;
-		flt_sum_left[disp_lvl_i] += oval_left[disp_lvl_i] * cur_disp_mult;
-	      }
-	    }
-	  }
+              }
+              if(max_in_disparity) {
+                flt_sum_right[disp_lvl_i] = MAX(oval_right[disp_lvl_i],flt_sum_right[disp_lvl_i]);
+                flt_sum_left[disp_lvl_i] = MAX(oval_left[disp_lvl_i],flt_sum_left[disp_lvl_i]);
+              }
+              else {
+                flt_sum_right[disp_lvl_i] += oval_right[disp_lvl_i] * cur_disp_mult;
+                flt_sum_left[disp_lvl_i] += oval_left[disp_lvl_i] * cur_disp_mult;
+              }
+            }
+          }
 					
-	  flt_sum[0] = flt_sum_left[0] + flt_sum_right[0];
-	  flt_sum[0] *= gmult;
-	  max_val[0] = MAX(max_val[0], flt_sum[0]);
-	  flt_sum[1] = flt_sum_left[1] + flt_sum_right[1];
-	  flt_sum[1] *= gmult;
-	  max_val[1] = MAX(max_val[1], flt_sum[1]);
-	  flt_sum[2] = flt_sum_left[2] + flt_sum_right[2];
-	  flt_sum[2] *= gmult;
-	  max_val[2] = MAX(max_val[2], flt_sum[2]);
-	}
+          flt_sum[0] = flt_sum_left[0] + flt_sum_right[0];
+          flt_sum[0] *= gmult;
+          max_val[0] = MAX(max_val[0], flt_sum[0]);
+          flt_sum[1] = flt_sum_left[1] + flt_sum_right[1];
+          flt_sum[1] *= gmult;
+          max_val[1] = MAX(max_val[1], flt_sum[1]);
+          flt_sum[2] = flt_sum_left[2] + flt_sum_right[2];
+          flt_sum[2] *= gmult;
+          max_val[2] = MAX(max_val[2], flt_sum[2]);
+        }
       }
 			
       if(cur_superimpose) {
-	cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[0];
-	cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[1];
-	cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[2];
+        cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[0];
+        cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[1];
+        cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[2];
 				
       }
       else {
-	cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[0];
-	cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[1];
-	cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[2];
+        cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[0];
+        cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[1];
+        cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[2];
       }
     }
   }
