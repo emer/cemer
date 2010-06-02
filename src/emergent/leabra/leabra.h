@@ -2646,6 +2646,7 @@ public:
   int		cyc_fm_inc;	// number of cycles since an increase was detected
   int		cyc_fm_dec;	// number of cycles since a decrease was detected
   float		loc_max;	// local maximum value of davg_smd -- jolt detection happens on the local peak of davg_m
+  float		lrn_max;	// local maximum value of davg_smd that actually drove learning -- recorded for stats purposes
   float		lrn_trig;	// learning trigger variable -- determines when to learn -- starts counting up from 0 to 1 when threshold is met -- learning happens at 1
   int		lrn;		// did layer learn on this cycle -- 1 if true, 0 if false
 

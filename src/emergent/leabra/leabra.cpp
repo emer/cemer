@@ -4733,11 +4733,12 @@ void CtLrnTrigVals::Initialize() {
   davg_s = 0.0f;
   davg_m = 0.0f;
   davg_smd = 0.0f;
-  davg_l = 0.001f;
-  davg_max = 0.0015f;
+  davg_l = 0.0f;
+  davg_max = 0.001f;
   cyc_fm_inc = 0;
   cyc_fm_dec = 0;
-  loc_max = 0.0001f;
+  loc_max = 0.001f;
+  lrn_max = 0.0f;
   lrn_trig = 0.0f;
   lrn = 0;
 
@@ -4987,10 +4988,10 @@ void LeabraNetwork::Init_Weights() {
   lrn_trig.cyc_fm_inc = 0;
   lrn_trig.cyc_fm_dec = 0;
   lrn_trig.loc_max = 0.0f;
+  lrn_trig.lrn_max = 0.0f;
 
   lrn_trig.lrn_trig = 0.0f;
   lrn_trig.lrn = 0.0f;
-  lrn_trig.loc_max = 0.0f;
 }
 
 void LeabraNetwork::DecayState(float decay) {
@@ -5811,6 +5812,7 @@ void LeabraNetwork::Compute_XCalC_dWt() {
   else if((lrn_trig.cyc_fm_dec == 0) && // going down
 	  (lrn_trig.cyc_fm_inc == ct_lrn_trig.loc_max_cyc) && // x amount from inc
 	  (lrn_trig.loc_max >= thr_min_eff && lrn_trig.loc_max <= thr_max_eff)) { // max in range
+    lrn_trig.lrn_max = lrn_trig.loc_max;
     lrn_trig.lrn_trig = ct_lrn_trig.lrn_delay_inc; // start counting
   }
 
@@ -5834,17 +5836,17 @@ void LeabraNetwork::Compute_XCalC_dWt() {
     if(phase_no == 0) {
       lrn_trig.lrn_min_sum += 1.0f;
       lrn_trig.lrn_min_cyc_sum += cycle;
-      lrn_trig.lrn_min_thr_sum += lrn_trig.loc_max;
+      lrn_trig.lrn_min_thr_sum += lrn_trig.lrn_max;
     }
     else if(phase_no == 1) {
       lrn_trig.lrn_plus_sum += 1.0f;
       lrn_trig.lrn_plus_cyc_sum += cycle;
-      lrn_trig.lrn_plus_thr_sum += lrn_trig.loc_max;
+      lrn_trig.lrn_plus_thr_sum += lrn_trig.lrn_max;
     }
     else {
       lrn_trig.lrn_noth_sum += 1.0f;
       lrn_trig.lrn_noth_cyc_sum += cycle;
-      lrn_trig.lrn_noth_thr_sum += lrn_trig.loc_max;
+      lrn_trig.lrn_noth_thr_sum += lrn_trig.lrn_max;
     }
   }
   else {
@@ -6091,19 +6093,31 @@ void LeabraNetwork::Compute_CtLrnTrigAvgs() {
       lrn_trig.lrn_min_cyc = lrn_trig.lrn_min_cyc_sum / lrn_trig.lrn_min_sum;
       lrn_trig.lrn_min_thr = lrn_trig.lrn_min_thr_sum / lrn_trig.lrn_min_sum;
     }
+    else {
+      lrn_trig.lrn_min_cyc = 0.0f;
+      lrn_trig.lrn_min_thr = 0.0f;
+    }
     lrn_trig.lrn_min = lrn_trig.lrn_min_sum / ltrign;
 
     if(lrn_trig.lrn_plus_sum > 0.0f) {
       lrn_trig.lrn_plus_cyc = lrn_trig.lrn_plus_cyc_sum / lrn_trig.lrn_plus_sum;
       lrn_trig.lrn_plus_thr = lrn_trig.lrn_plus_thr_sum / lrn_trig.lrn_plus_sum;
     }
-    lrn_trig.lrn_plus_thr = lrn_trig.lrn_plus_thr_sum / ltrign;
+    else {
+      lrn_trig.lrn_plus_cyc = 0.0f;
+      lrn_trig.lrn_plus_thr = 0.0f;
+    }
+    lrn_trig.lrn_plus = lrn_trig.lrn_plus_sum / ltrign;
 
     if(lrn_trig.lrn_noth_sum > 0.0f) {
       lrn_trig.lrn_noth_cyc = lrn_trig.lrn_noth_cyc_sum / lrn_trig.lrn_noth_sum;
       lrn_trig.lrn_noth_thr = lrn_trig.lrn_noth_thr_sum / lrn_trig.lrn_noth_sum;
     }
-    lrn_trig.lrn_noth_thr = lrn_trig.lrn_noth_thr_sum / ltrign;
+    else {
+      lrn_trig.lrn_noth_cyc = 0.0f;
+      lrn_trig.lrn_noth_thr = 0.0f;
+    }
+    lrn_trig.lrn_noth = lrn_trig.lrn_noth_sum / ltrign;
   }
   lrn_trig.Init_Stats_Sums();
 }
