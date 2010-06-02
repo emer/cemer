@@ -523,7 +523,7 @@ public:
   float		go_learn_mod;	// #READ_ONLY 1 - go_learn_base -- how much learning is actually modulated by go gating activation
   int		mid_minus_min;	// minimum number of cycles before computing any gating -- acts like an STN-like function -- must be < network mid_minus_cycle
   int		max_maint;	// a hard upper-limit on how long the PFC can maintain -- anything over this limit will be cleared.  set to 0 for motor areas that do not maintain but use maintenance gating to scope the set of possible responses
-  bool		out_go_clear;	// #DEF_true #EXPERT an output Go clears the maintenance currents at the end of the trial -- only for reward trials (signalled by PVr) -- you use it, you lose it..
+  bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- only for reward trials (signalled by PVr) -- you use it, you lose it..
   float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
 
   TA_SIMPLE_BASEFUNS(PFCGateSpec);

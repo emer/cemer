@@ -958,6 +958,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->avg_ss = act.avg_init;
   lu->avg_s = act.avg_init;
   lu->avg_m = act.avg_init;
+  lu->davg = 0.0f;
   lu->dav = 0.0f;
   lu->noise = 0.0f;
   lu->maint_h = 0.0f;
@@ -1264,7 +1265,8 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
     Compute_NetinInteg_Spike(u,net);
   }
   else {
-    u->net = u->prv_net + dt.net * (tot_net - u->prv_net);
+    float dnet = dt.net * (tot_net - u->prv_net);
+    u->net = u->prv_net + dnet;
     u->prv_net = u->net;
     u->net = MAX(u->net, 0.0f);	// negative netin doesn't make any sense
   }
@@ -1287,7 +1289,8 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike(LeabraUnit* u, LeabraNetwork* net)
       sum += u->spike_buf.CircSafeEl(t);
     }
     sum /= (float)spike.window;	// normalize over window
-    u->net = u->prv_net + spike.gg_decay * sum - (u->prv_net * spike.oneo_decay);
+    float dnet = spike.gg_decay * sum - (u->prv_net * spike.oneo_decay);
+    u->net = u->prv_net + dnet;
     u->prv_net = u->net;
   }
   else {
@@ -1299,7 +1302,8 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike(LeabraUnit* u, LeabraNetwork* net)
     }
     u->net = sum;
     // from compute_netinavg
-    u->net = u->prv_net + dt.net * (u->net - u->prv_net);
+    float dnet =  dt.net * (u->net - u->prv_net);
+    u->net = u->prv_net + dnet;
     u->prv_net = u->net;
   }
 }
@@ -1840,7 +1844,10 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
   if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
     // note: this is cascade version -- each builds upon the other
     u->avg_ss += act_avg.ss_dt * (ru_act - u->avg_ss);
-    u->avg_s += act_avg.s_dt * (u->avg_ss - u->avg_s);
+    float ds = act_avg.s_dt * (u->avg_ss - u->avg_s);
+    u->avg_s += ds;
+    u->davg += net->ct_lrn_trig.davg_dt * (ds - u->davg);
+
     u->avg_m += act_avg.m_dt * (u->avg_s - u->avg_m);
     u->avg_ml += act_avg.ml_dt * (u->avg_m - u->avg_ml); // driven by avg_m
     u->avg_l += act_avg.l_dt * (u->avg_m - u->avg_l);	 // driven by avg_m
@@ -1879,13 +1886,6 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
 }
 
 void LeabraUnitSpec::Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL ||
-     net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
-    if(net->epoch < net->ct_time.n_avg_only_epcs) { // no learning while gathering data!
-      return;
-    }
-  }
-
   for(int g = 0; g < u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
@@ -1901,13 +1901,6 @@ void LeabraUnitSpec::Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, in
 }
 
 void LeabraUnitSpec::Compute_dWt_SecondPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL ||
-     net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
-    if(net->epoch < net->ct_time.n_avg_only_epcs) { // no learning while gathering data!
-      return;
-    }
-  }
-
   for(int g = 0; g < u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
@@ -1923,13 +1916,6 @@ void LeabraUnitSpec::Compute_dWt_SecondPlus(LeabraUnit* u, LeabraNetwork* net, i
 }
 
 void LeabraUnitSpec::Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL ||
-     net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
-    if(net->epoch < net->ct_time.n_avg_only_epcs) { // no learning while gathering data!
-      return;
-    }
-  }
-
   for(int g = 0; g < u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
@@ -2239,6 +2225,7 @@ void LeabraUnit::Initialize() {
   avg_l = 0.15f;
   avg_ml = 0.15f;
   l_thr = 0.15f;
+  davg = 0.0f;
   act_p = act_m = act_dif = 0.0f;
   act_m2 = act_p2 = act_dif2 = 0.0f;
   da = 0.0f;
@@ -2293,6 +2280,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   avg_ml = cp.avg_ml;
   avg_l = cp.avg_l;
   l_thr = cp.l_thr;
+  davg = cp.davg;
   act_m = cp.act_m;
   act_p = cp.act_p;
   act_dif = cp.act_dif;
@@ -4126,10 +4114,6 @@ bool LeabraLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork
       net->learn_rule != LeabraNetwork::CTLEABRA_XCAL_C)) { // xcal_c learns on 1st plus!
     return false;
   }
-  if((net->learn_rule != LeabraNetwork::LEABRA_CHL) &&
-     (net->sravg_vals.m_sum == 0.0f)) return false;
-  // shouldn't happen, but just in case..
-
   return true;
 }
 
@@ -4138,8 +4122,6 @@ bool LeabraLayerSpec::Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwor
 }
 
 bool LeabraLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  if((net->learn_rule != LeabraNetwork::LEABRA_CHL) &&
-     (net->sravg_vals.m_sum == 0.0f)) return false;
   // shouldn't happen, but just in case..
   if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) return false; // only 1st plus
   return true; 		// all types learn here..
@@ -4714,6 +4696,86 @@ void CtFinalInhibMod::Initialize() {
   inhib_i = 0.0f;
 }
 
+void CtLrnTrigSpec::Initialize() {
+  plus_lrn_cyc = -1;
+  davg_dt = 0.1f;
+  davg_s_dt = 0.05f;
+  davg_m_dt = 0.03f;
+  davg_l_dt = 0.0005f;
+  thr_min = 0.0f;
+  thr_max = 0.5f;
+  loc_max_cyc = 8;
+  lrn_delay = 40;
+  davg_l_init = 0.0f;
+  davg_max_init = 0.001f;
+
+  davg_time = 1.0f / davg_dt;
+  davg_s_time = 1.0f / davg_s_dt;
+  davg_m_time = 1.0f / davg_m_dt;
+  davg_l_time = 1.0f / davg_l_dt;
+
+  lrn_delay_inc = 1.0f / MAX(1.0f, (float)lrn_delay);
+}
+
+void CtLrnTrigSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  
+  davg_time = 1.0f / davg_dt;
+  davg_s_time = 1.0f / davg_s_dt;
+  davg_m_time = 1.0f / davg_m_dt;
+  davg_l_time = 1.0f / davg_l_dt;
+
+  lrn_delay_inc = 1.0f / MAX(1.0f, (float)lrn_delay);
+}
+
+void CtLrnTrigVals::Initialize() {
+  davg = 0.0f;
+  davg_s = 0.0f;
+  davg_m = 0.0f;
+  davg_smd = 0.0f;
+  davg_l = 0.001f;
+  davg_max = 0.0015f;
+  cyc_fm_inc = 0;
+  cyc_fm_dec = 0;
+  loc_max = 0.0001f;
+  lrn_trig = 0.0f;
+  lrn = 0;
+
+  Init_Stats();
+}
+
+void CtLrnTrigVals::Init_Stats() {
+  lrn_min = 0.0f;
+  lrn_min_cyc = 0.0f;
+  lrn_min_thr = 0.0f;
+
+  lrn_plus = 0.0f;
+  lrn_plus_cyc = 0.0f;
+  lrn_plus_thr = 0.0f;
+
+  lrn_noth = 0.0f;
+  lrn_noth_cyc = 0.0f;
+  lrn_noth_thr = 0.0f;
+
+  Init_Stats_Sums();
+}
+
+void CtLrnTrigVals::Init_Stats_Sums() {
+  lrn_stats_n = 0;
+
+  lrn_min_sum = 0.0f;
+  lrn_min_cyc_sum = 0.0f;
+  lrn_min_thr_sum = 0.0f;
+
+  lrn_plus_sum = 0.0f;
+  lrn_plus_cyc_sum = 0.0f;
+  lrn_plus_thr_sum = 0.0f;
+
+  lrn_noth_sum = 0.0f;
+  lrn_noth_cyc_sum = 0.0f;
+  lrn_noth_thr_sum = 0.0f;
+}
+
 void LeabraNetwork::GraphInhibMod(bool flip_sign, DataTable* graph_data) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
@@ -4816,6 +4878,7 @@ void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 void LeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   ct_time.UpdateAfterEdit_NoGui();
+  ct_lrn_trig.UpdateAfterEdit_NoGui();
 
   if(TestWarning(ct_sravg.plus_s_st >= ct_time.plus, "UAE",
 	       "ct_sravg.plus_s_st is higher than ct_time.plus (# of cycles in plus phase)"
@@ -4896,6 +4959,8 @@ void LeabraNetwork::Init_Stats() {
   avg_norm_err = 1.0f;
   avg_norm_err_sum = 0.0f;
   avg_norm_err_n = 0;
+
+  lrn_trig.Init_Stats();
 }
 
 void LeabraNetwork::Init_Sequence() {
@@ -4911,6 +4976,21 @@ void LeabraNetwork::Init_Sequence() {
 void LeabraNetwork::Init_Weights() {
   inherited::Init_Weights();
   sravg_vals.InitVals();
+
+  lrn_trig.davg = ct_lrn_trig.davg_l_init;
+  lrn_trig.davg_s = ct_lrn_trig.davg_l_init;
+  lrn_trig.davg_m = ct_lrn_trig.davg_l_init;
+  lrn_trig.davg_smd = 0.0f;
+  lrn_trig.davg_l = ct_lrn_trig.davg_l_init;
+  lrn_trig.davg_max = ct_lrn_trig.davg_max_init;
+
+  lrn_trig.cyc_fm_inc = 0;
+  lrn_trig.cyc_fm_dec = 0;
+  lrn_trig.loc_max = 0.0f;
+
+  lrn_trig.lrn_trig = 0.0f;
+  lrn_trig.lrn = 0.0f;
+  lrn_trig.loc_max = 0.0f;
 }
 
 void LeabraNetwork::DecayState(float decay) {
@@ -5286,6 +5366,7 @@ void LeabraNetwork::Cycle_Run() {
   Compute_CycSynDep();
 
   Compute_SRAvg();		// note: only ctleabra variants do con-level compute here
+  Compute_XCalC_dWt();
   Compute_MidMinus();		// check for mid-minus and run if so (PBWM)
 
   ct_cycle++;
@@ -5681,6 +5762,96 @@ void LeabraNetwork::Compute_dWt_SRAvg() {
     sravg_vals.s_nrm = 1.0f;
 }
 
+void LeabraNetwork::Compute_XCalC_dWt() {
+  if(learn_rule != CTLEABRA_XCAL_C) return;
+
+  bool do_lrn = false;
+
+  float tmp_davg = 0.0f;
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    tmp_davg += fabsf(un->davg);
+  }
+  lrn_trig.davg = tmp_davg / (float)units_flat.size;
+  lrn_trig.davg_s += ct_lrn_trig.davg_s_dt * (lrn_trig.davg - lrn_trig.davg_s);
+  lrn_trig.davg_m += ct_lrn_trig.davg_m_dt * (lrn_trig.davg_s - lrn_trig.davg_m);
+  float nw_smd = lrn_trig.davg_s - lrn_trig.davg_m;
+  float d_smd = nw_smd - lrn_trig.davg_smd;
+  lrn_trig.davg_smd = nw_smd;
+
+  lrn_trig.davg_l += ct_lrn_trig.davg_l_dt * (lrn_trig.davg_smd - lrn_trig.davg_l);
+  if(lrn_trig.davg_smd >= lrn_trig.davg_max) {
+    lrn_trig.davg_max = lrn_trig.davg_smd;
+  }
+  else {
+    lrn_trig.davg_max += ct_lrn_trig.davg_l_dt * (lrn_trig.davg_l - lrn_trig.davg_max);
+  }
+
+  if(d_smd > 0.0f) {
+    lrn_trig.loc_max = lrn_trig.davg_smd; // indicate local max
+    lrn_trig.cyc_fm_inc = 0;
+    lrn_trig.cyc_fm_dec++;
+  }
+  else {
+    lrn_trig.cyc_fm_dec = 0;
+    lrn_trig.cyc_fm_inc++;
+  }
+
+  float maxldif = lrn_trig.davg_max - lrn_trig.davg_l;
+  float thr_min_eff = lrn_trig.davg_l +  ct_lrn_trig.thr_min * maxldif;
+  float thr_max_eff = lrn_trig.davg_l +  ct_lrn_trig.thr_max * maxldif;
+
+  if(lrn_trig.lrn_trig > 0.0f) {	// already met thresh, counting up to learn time
+    lrn_trig.lrn_trig += ct_lrn_trig.lrn_delay_inc;
+    if(lrn_trig.lrn_trig >= 1.0f) {
+      do_lrn = true;
+      lrn_trig.lrn_trig = 0.0f;	// reset this
+    }
+  }
+  else if((lrn_trig.cyc_fm_dec == 0) && // going down
+	  (lrn_trig.cyc_fm_inc == ct_lrn_trig.loc_max_cyc) && // x amount from inc
+	  (lrn_trig.loc_max >= thr_min_eff && lrn_trig.loc_max <= thr_max_eff)) { // max in range
+    lrn_trig.lrn_trig = ct_lrn_trig.lrn_delay_inc; // start counting
+  }
+
+  if(ct_lrn_trig.plus_lrn_cyc > 0) {
+    // fake it override!
+    do_lrn = (ct_cycle == (ct_time.minus + ct_lrn_trig.plus_lrn_cyc));
+  }
+
+  if(do_lrn) {
+    // this is all the std code from Compute_dWt_FirstPlus
+    Compute_dWt_SRAvg();
+    Compute_dWt_Layer_pre();
+    lrn_trig.lrn = 1;
+    ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstPlus);
+    if(thread_flags & DWT)
+      threads.Run(&un_call, 0.6f);
+    else
+      threads.Run(&un_call, -1.0f); // -1 = always run localized
+
+    lrn_trig.lrn_stats_n++;
+    if(phase_no == 0) {
+      lrn_trig.lrn_min_sum += 1.0f;
+      lrn_trig.lrn_min_cyc_sum += cycle;
+      lrn_trig.lrn_min_thr_sum += lrn_trig.loc_max;
+    }
+    else if(phase_no == 1) {
+      lrn_trig.lrn_plus_sum += 1.0f;
+      lrn_trig.lrn_plus_cyc_sum += cycle;
+      lrn_trig.lrn_plus_thr_sum += lrn_trig.loc_max;
+    }
+    else {
+      lrn_trig.lrn_noth_sum += 1.0f;
+      lrn_trig.lrn_noth_cyc_sum += cycle;
+      lrn_trig.lrn_noth_thr_sum += lrn_trig.loc_max;
+    }
+  }
+  else {
+    lrn_trig.lrn = 0;
+  }
+}
+
 void LeabraNetwork::Compute_dWt_Layer_pre() {
   LeabraLayer* lay;
   taLeafItr l;
@@ -5691,6 +5862,10 @@ void LeabraNetwork::Compute_dWt_Layer_pre() {
 }
 
 void LeabraNetwork::Compute_dWt_FirstPlus() {
+  if(learn_rule == CTLEABRA_XCAL_C) return; // done separately
+  if(learn_rule == LeabraNetwork::CTLEABRA_XCAL && epoch < ct_time.n_avg_only_epcs) {    
+    return; // no learning while gathering data!
+  }
   Compute_dWt_SRAvg();
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_FirstPlus);
@@ -5701,6 +5876,10 @@ void LeabraNetwork::Compute_dWt_FirstPlus() {
 }
 
 void LeabraNetwork::Compute_dWt_SecondPlus() {
+  if(learn_rule == CTLEABRA_XCAL_C) return; // done separately
+  if(learn_rule == LeabraNetwork::CTLEABRA_XCAL && epoch < ct_time.n_avg_only_epcs) {    
+    return; // no learning while gathering data!
+  }
   Compute_dWt_SRAvg();
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_SecondPlus);
@@ -5711,6 +5890,10 @@ void LeabraNetwork::Compute_dWt_SecondPlus() {
 }
 
 void LeabraNetwork::Compute_dWt_Nothing() {
+  if(learn_rule == CTLEABRA_XCAL_C) return; // done separately
+  if(learn_rule == LeabraNetwork::CTLEABRA_XCAL && epoch < ct_time.n_avg_only_epcs) {    
+    return; // no learning while gathering data!
+  }
   Compute_dWt_SRAvg();
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_Nothing);
@@ -5901,12 +6084,37 @@ void LeabraNetwork::Compute_AvgNormErr() {
   avg_norm_err_n = 0;
 }
 
+void LeabraNetwork::Compute_CtLrnTrigAvgs() {
+  if(lrn_trig.lrn_stats_n > 0) {
+    float ltrign = (float)lrn_trig.lrn_stats_n;
+    if(lrn_trig.lrn_min_sum > 0.0f) {
+      lrn_trig.lrn_min_cyc = lrn_trig.lrn_min_cyc_sum / lrn_trig.lrn_min_sum;
+      lrn_trig.lrn_min_thr = lrn_trig.lrn_min_thr_sum / lrn_trig.lrn_min_sum;
+    }
+    lrn_trig.lrn_min = lrn_trig.lrn_min_sum / ltrign;
+
+    if(lrn_trig.lrn_plus_sum > 0.0f) {
+      lrn_trig.lrn_plus_cyc = lrn_trig.lrn_plus_cyc_sum / lrn_trig.lrn_plus_sum;
+      lrn_trig.lrn_plus_thr = lrn_trig.lrn_plus_thr_sum / lrn_trig.lrn_plus_sum;
+    }
+    lrn_trig.lrn_plus_thr = lrn_trig.lrn_plus_thr_sum / ltrign;
+
+    if(lrn_trig.lrn_noth_sum > 0.0f) {
+      lrn_trig.lrn_noth_cyc = lrn_trig.lrn_noth_cyc_sum / lrn_trig.lrn_noth_sum;
+      lrn_trig.lrn_noth_thr = lrn_trig.lrn_noth_thr_sum / lrn_trig.lrn_noth_sum;
+    }
+    lrn_trig.lrn_noth_thr = lrn_trig.lrn_noth_thr_sum / ltrign;
+  }
+  lrn_trig.Init_Stats_Sums();
+}
+
 void LeabraNetwork::Compute_EpochStats() {
   inherited::Compute_EpochStats();
   Compute_AvgCycles();
   Compute_AvgNormErr();
   Compute_AvgExtRew();
   Compute_AvgSendPct();
+  Compute_CtLrnTrigAvgs();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

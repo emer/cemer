@@ -433,6 +433,14 @@ public:
 
 
   /////////////////////////////////////
+  // CtLeabraXCalC code -- note that this is RECEIVER BASED due to triggered nature of learning
+
+  inline void 	C_Compute_dWt_CtLeabraXCalC(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su);
+  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning -- fully continuous version (XCAL_C)
+  virtual void 	Compute_dWt_CtLeabraXCalC(LeabraRecvCons* cg, LeabraUnit* ru);
+  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning -- fully continuous version (XCAL_C)
+
+  /////////////////////////////////////
   // CtLeabraCAL code
 
   inline void C_Compute_SRAvg_m(LeabraSRAvgCon* cn, float ru_act, float su_act);
@@ -560,6 +568,10 @@ INHERITED(RecvCons)
 public:
   float		scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin -- copied to send cons group where it is actually used, but it is computed here
   float		net;		// #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
+
+  void	Compute_dWt_CtLeabraXCalC(LeabraUnit* ru)
+  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraXCalC(this, ru); }
+  // #CAT_Learning compute weight changes: CtLeabra XCalC version
 
   void	Copy_(const LeabraRecvCons& cp);
   TA_BASEFUNS(LeabraRecvCons);
@@ -856,7 +868,7 @@ public:
   float		ml_dt;		// #DEF_0.4;0.004 #MIN_0 #MAX_1 time constant (rate) for updating the medium-to-long time-scale avg_ml value, which integrates over recent history of medium (trial level) averages, used for XCAL learning rules
   float		m_dt;		// #DEF_0.1;0.01 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
   float		s_dt;		// #DEF_0.2;0.02 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the short time-scale avg_s value
-  float		ss_dt;		// #DEF_1;0.05 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value
+  float		ss_dt;		// #DEF_1;0.08 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value
   bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing averages (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
 
   float		l_time;		// #READ_ONLY #SHOW time constant (in trials for XCAL, cycles for XCAL_C, 1/l_dt) for continuously updating the long time-scale avg_l value
@@ -1305,12 +1317,6 @@ public:
   float		act_eq;		// #VIEW_HOT #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act)
   float		act_nd;		// #CAT_Activation non-depressed rate-code equivalent activity value (time-averaged spikes or just act) -- used for final phase-based variables used in learning and stats
   float		act_avg;	// #CAT_Activation average activation (of final plus phase activation state) over long time intervals (dt = act.avg_dt)
-  float		avg_ss;		// #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration, important specifically for spiking networks using the XCAL_C algorithm -- otherwise ss_dt = 1 and this is just the current activation
-  float		avg_s;		// #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
-  float		avg_m;		// #CAT_Activation medium time-scale activation average -- integrates over entire trial of activation, and represents the minus phase for learning in XCAL algorithms
-  float		avg_ml;		// #CAT_Activation medium-to-long time-scale average activation (as computed in the bias connection and spec) which integrates over recent history of medium (trial level) averages, used for rapid adaptation of l_thr = LTP vs LTD learning threshold in XCAL, and for learning based on receiver average activations with a trace of prior activations, and optionally used for learning based on receiver average activations with a trace of prior activations, 
-  float		avg_l;		// #CAT_Activation long time-scale average of medium-time scale (trial level) activation (as computed in the bias connection and spec), used for the BCM-style floating threshold in XCAL
-  float		l_thr;		// #CAT_Activation long time-scale LTP vs LTD learning threshold in XCAL BCM-style learning -- l_gain * MAX(avg_l, avg_ml) (as computed in the bias connection and spec)
   float		act_m;		// #VIEW_HOT #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
   float		act_p;		// #VIEW_HOT #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
   float		act_dif;	// #VIEW_HOT #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
@@ -1318,6 +1324,13 @@ public:
   float		act_p2;		// #CAT_Activation second plus_phase activation (act_nd), set after settling, used for learning and performance stats
   float		act_dif2;	// #CAT_Activation difference between second set of phases, where relevant (e.g., act_p - act_m2 for MINUS_PLUS_NOTHING, or act_p2 - act_p for MINUS_PLUS_PLUS)
   float		da;		// #NO_SAVE #CAT_Activation delta activation: change in act from one cycle to next, used to stop settling
+  float		avg_ss;		// #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration, important specifically for spiking networks using the XCAL_C algorithm -- otherwise ss_dt = 1 and this is just the current activation
+  float		avg_s;		// #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
+  float		avg_m;		// #CAT_Activation medium time-scale activation average -- integrates over entire trial of activation, and represents the minus phase for learning in XCAL algorithms
+  float		avg_ml;		// #CAT_Activation medium-to-long time-scale average activation (as computed in the bias connection and spec) which integrates over recent history of medium (trial level) averages, used for rapid adaptation of l_thr = LTP vs LTD learning threshold in XCAL, and for learning based on receiver average activations with a trace of prior activations, and optionally used for learning based on receiver average activations with a trace of prior activations, 
+  float		avg_l;		// #CAT_Activation long time-scale average of medium-time scale (trial level) activation (as computed in the bias connection and spec), used for the BCM-style floating threshold in XCAL
+  float		l_thr;		// #CAT_Activation long time-scale LTP vs LTD learning threshold in XCAL BCM-style learning -- l_gain * MAX(avg_l, avg_ml) (as computed in the bias connection and spec)
+  float		davg;		// #CAT_Activation delta average activation -- computed from changes in the short time-scale activation average (avg_s) -- used for detecting jolts or transitions in the network, to drive learning
   VChanBasis	vcb;		// #CAT_Activation voltage-gated channel basis variables
   LeabraUnitChans gc;		// #DMEM_SHARE_SET_1 #NO_SAVE #CAT_Activation current unit channel conductances
   float		I_net;		// #NO_SAVE #CAT_Activation net current produced by all channels
@@ -2044,11 +2057,12 @@ public:
   virtual void	AdaptKWTAPt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation adapt the kwta point based on average activity
 
+  virtual bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning test whether to compute sravg values -- default is true, but some layers might opt out for various reasons
+
   virtual void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) { };
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
-  virtual bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning test whether to compute sravg values -- default is true, but some layers might opt out for various reasons
   virtual bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning test whether to compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
   virtual bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
@@ -2588,6 +2602,84 @@ private:
   void 	Destroy()	{ };
 };
 
+class LEABRA_API CtLrnTrigSpec : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra continuous-time learning trigger -- based on overall rate of change of the short-term average activation in the layer
+INHERITED(taOBase)
+public:
+  int		plus_lrn_cyc;	// #DEF_-1 if this is > 0, then do learning at this number of cycles into the plus phase, instead of what would be computed by the parameters here -- allows for debugging of other network parameters and comparison with an 'optimal' learning trigger
+  float		davg_dt;	// #DEF_0.1 #MIN_0 #MAX_1 time constant (rate) for continuously updating the delta-average activation value (davg) -- provides some level of initial smoothing over the instantaneous delta-avg_s value, which can otherwise be somewhat noisy
+  float		davg_s_dt;	// #DEF_0.05 #MIN_0 #MAX_1 time constant (rate) for continuously updating the short-time frame average of the davg value -- this is contrasted with davg_m to give a smooth acceleration term to measure jolt
+  float		davg_m_dt;	// #DEF_0.03 #MIN_0 #MAX_1 time constant (rate) for continuously updating the medium-time frame average of the davg value -- this is contrasted with davg_s to give a smooth acceleration term to measure jolt
+  float		davg_l_dt;	// #DEF_0.0005 #MIN_0 #MAX_1 time constant (rate) for continuously updating the long-term average of davg_smd (davg_l) and the long-term maximum (davg_max) -- provides the range for the threshold value computation
+  float		thr_min;	// #DEF_0 #MIN_0 minimum threshold for learning as a proportion of distance between davg_l and davg_max -- current local maximum davg_smd value is compared to this threshold
+  float		thr_max;	// #DEF_0.5 #MIN_0 maximum threshold for learning as a proportion of distance between davg_l and davg_max -- current local maximum davg_smd value is compared to this threshold -- changes can be too big for learning -- typically representing transitions between disparate events, so this value should be < 1
+  int		loc_max_cyc;	// #DEF_8 #MIN_1 how many cycles of downward-going davg_m values are required past a local peak, before that peak value is used for checking against the thresholds
+  int		lrn_delay;	// #DEF_40:80 #MIN_1 how many cycles after learning is triggered does it actually take place?
+  float		davg_l_init; 	// #DEF_0 #MIN_0 initial value for davg_l
+  float		davg_max_init; 	// #DEF_0.001 #MIN_0 initial value for davg_max
+
+  float		davg_time;	// #READ_ONLY #SHOW time constant (in cycles, 1/davg_dt) for continuously updating davg
+  float		davg_s_time; 	// #READ_ONLY #SHOW time constant (in cycles, 1/davg_m_dt) for continuously updating davg_m
+  float		davg_m_time; 	// #READ_ONLY #SHOW time constant (in cycles, 1/davg_m_dt) for continuously updating davg_m
+  float		davg_l_time; 	// #READ_ONLY #SHOW time constant (in cycles, 1/davg_l_dt) for continuously updating davg_l
+
+  float		lrn_delay_inc;	// #READ_ONLY #HIDDEN 1.0f / lrn_delay_inc -- increment per count to compute normalized lrn_trig
+
+  TA_SIMPLE_BASEFUNS(CtLrnTrigSpec);
+protected:
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
+class LEABRA_API CtLrnTrigVals : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra state variables for continuous-time learning trigger -- based on overall rate of change of the short-term average activation in the layer
+INHERITED(taOBase)
+public:
+  float		davg;		// average absolute value of davg delta average activation change across entire network
+  float		davg_s;		// shorter time average of the davg value 
+  float		davg_m;		// medium time average of the davg value
+  float		davg_smd;	// davg_s - davg_m -- local acceleration of the curve
+  float		davg_l; 	// long-term average of davg_smd -- used for enabling normalized thresholds between this long-term average and the long-term max davg_max
+  float		davg_max; 	// long-term maximum of davg_smd -- used for enabling normalized thresholds between davg_l and this long-term max 
+  int		cyc_fm_inc;	// number of cycles since an increase was detected
+  int		cyc_fm_dec;	// number of cycles since a decrease was detected
+  float		loc_max;	// local maximum value of davg_smd -- jolt detection happens on the local peak of davg_m
+  float		lrn_trig;	// learning trigger variable -- determines when to learn -- starts counting up from 0 to 1 when threshold is met -- learning happens at 1
+  int		lrn;		// did layer learn on this cycle -- 1 if true, 0 if false
+
+  float		lrn_min;	// #CAT_Statistic what proportion of times did it learn in first minus phase -- computed every epoch
+  float		lrn_min_cyc;	// #CAT_Statistic how many cycles into first minus phase did it learn on average -- computed every epoch
+  float		lrn_min_thr;	// #CAT_Statistic average value of threshold-determining variable (davg_smd) for first minus phase learning -- computed every epoch
+  float		lrn_min_sum;	// #CAT_Statistic #READ_ONLY sum
+  float		lrn_min_cyc_sum; // #CAT_Statistic #READ_ONLY sum
+  float		lrn_min_thr_sum; // #CAT_Statistic #READ_ONLY sum
+
+  float		lrn_plus;	// #CAT_Statistic what proportion of times did it learn in plus phase -- computed every epoch
+  float		lrn_plus_cyc;	// #CAT_Statistic how many cycles into plus phase did it learn on average -- computed every epoch
+  float		lrn_plus_thr;	// #CAT_Statistic average value of threshold-determining variable (davg_smd) for plus phase learning -- computed every epoch
+  float		lrn_plus_sum;	// #CAT_Statistic #READ_ONLY sum
+  float		lrn_plus_cyc_sum; // #CAT_Statistic #READ_ONLY sum
+  float		lrn_plus_thr_sum; // #CAT_Statistic #READ_ONLY sum
+
+  float		lrn_noth;	// #CAT_Statistic what proportion of times did it learn in nothing phase -- computed every epoch
+  float		lrn_noth_cyc;	// #CAT_Statistic how many cycles into nothing phase did it learn on average -- computed every epoch
+  float		lrn_noth_thr;	// #CAT_Statistic average value of threshold-determining variable (davg_smd) for nothing phase learning -- computed every epoch
+  float		lrn_noth_sum;	// #CAT_Statistic #READ_ONLY sum
+  float		lrn_noth_cyc_sum; // #CAT_Statistic #READ_ONLY sum
+  float		lrn_noth_thr_sum; // #CAT_Statistic #READ_ONLY sum
+
+  int		lrn_stats_n;	// #CAT_Statistic #READ_ONLY count of number of times stats have been incremented
+
+  void		Init_Stats();	// initialize stats vars (all to 0)
+  void		Init_Stats_Sums(); // initialize stats sums (all to 0)
+
+  TA_SIMPLE_BASEFUNS(CtLrnTrigVals);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
 
 class LEABRA_API LeabraNetwork : public Network {
   // #STEM_BASE ##CAT_Leabra network that uses the Leabra algorithms and objects
@@ -2658,11 +2750,13 @@ public:
   int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_15:35 minimum number of cycles to settle for
   int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_35 minimum number of cycles to settle for in second phase
 
-  CtTrialTiming	 ct_time;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
-  CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
-  CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
-  CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDEDIT_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
+  CtTrialTiming	 ct_time;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
+  CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
+  CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
+  CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
   CtSRAvgVals	sravg_vals;	// #CAT_Learning #READ_ONLY #EXPERT sender-receiver average computation values, e.g., for normalizing sravg values
+  CtLrnTrigSpec	ct_lrn_trig;	// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C learning trigger parameters based on changes in short-term average activation value -- determines when CTLEABRA_XCAL_C learns
+  CtLrnTrigVals	lrn_trig; 	// #CAT_Learning #EXPERT #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C learning trigger values -- based on changes in short-term average activation value -- determines when CTLEABRA_XCAL_C learns
   ThreadFlags	thread_flags;	// #CAT_Structure #EXPERT #NO_SAVE flags for controlling the parallel threading process (which functions are threaded) -- this is just for testing and debugging purposes, and not for general use -- they are not saved
 
   float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
@@ -2878,6 +2972,8 @@ public:
   // #CAT_Learning compute sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- called at the Cycle_Run level, and threaded down to unit level
     virtual bool Compute_SRAvg_Now();
     // #CAT_Learning determine if it is time to compute SRAvg -- this includes unit-level avg terms as well
+  virtual void 	Compute_XCalC_dWt();
+  // #CAT_Learning compute CT_LEABRA_XCA_C learning rule
 
   virtual void 	Compute_dWt_SRAvg();
   // #CAT_Learning compute sravg vals at start of dwt computation (nrm terms)
@@ -2927,6 +3023,8 @@ public:
   // #CAT_Statistic compute average norm_err (at an epoch-level timescale)
   virtual void	Compute_AvgSendPct();
   // #CAT_Statistic compute average sending pct (at an epoch-level timescale)
+  virtual void	Compute_CtLrnTrigAvgs();
+  // #CAT_Statistic compute Ct learning trigger stats averages (at an epoch-level timescale)
   override void	Compute_EpochStats();
   // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
   override void	SetProjectionDefaultTypes(Projection* prjn);
@@ -3157,6 +3255,26 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, Leab
   //  ApplyLimits(cg, ru); limits are automatically enforced anyway
 }
 
+
+//////////////////////////////////////////////////////////////////////////////////
+//     Computing dWt: CtLeabra_XCalC -- receiver based for triggered learning..
+
+inline void LeabraConSpec::
+C_Compute_dWt_CtLeabraXCalC(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+  // todo: add some further modulation by avg_ds???
+  float srs = ru->avg_s * su->avg_s;
+  float srm = ru->avg_m * su->avg_m;
+  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * su->avg_m * ru->l_thr;
+  cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+}
+
+inline void LeabraConSpec::Compute_dWt_CtLeabraXCalC(LeabraRecvCons* cg, LeabraUnit* ru) {
+  for(int i=0; i<cg->size; i++) {
+    LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+    C_Compute_dWt_CtLeabraXCalC((LeabraCon*)cg->PtrCn(i), ru, su);
+  }
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //     Computing dWt: CtLeabra_CAL -- NOTE: Requires LeabraSRAvgCon connections!
