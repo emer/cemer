@@ -790,8 +790,7 @@ public:
   float		asymp_act;	// #CONDEDIT_ON_on #DEF_0.2:0.5 #MIN_0 #MAX_1 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
   float		depl;		// #CONDEDIT_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
   int		interval;	// #CONDEDIT_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
-  float		max_amp;	// #CONDEDIT_ON_on #MIN_0 maximum spike amplitude -- this is the multiplier factor for activation values -- set to clamp_norm_max_amp to maintain asymptotic values at normal hard clamp levels, or set to 1 to retain usual normalized activation values (val is copied to act_range.max)
-  float		clamp_norm_max_amp;	// #CONDEDIT_ON_on #READ_ONLY #SHOW maximum spike amplitude required to maintain asymptotic firing at normal clamp levels -- set max_amp to this value for delta-based learning rules to normalize against large diffs across phases
+  float		max_amp;	// #CONDEDIT_ON_on #MIN_0 maximum spike amplitude (spk_amp, which is the multiplier factor for activation values) -- values greater than 1 create an extra reservoir where depletion does not yet affect the sending activations, because spk_amp is capped at a maximum of 1 -- this can be useful for creating a more delayed effect of depletion, where an initial wave of activity can propagate unimpeded, followed by actual depression as spk_amp goes below 1
 
   TA_SIMPLE_BASEFUNS(DepressSpec);
 protected:
@@ -866,7 +865,7 @@ public:
   float		l_gain;		// #DEF_3 #MIN_0 gain on the long-time scale receiving average activation (avg_l) value as it enters into the learning threshold l_thr
   float		l_dt;		// #DEF_0.0001:0.01 [0.005 std for XCAL, .0002 for XCAL_C] #MIN_0 #MAX_1 time constant (rate) for updating the long time-scale avg_l value, used for XCAL learning rules
   float		ml_dt;		// #DEF_0.4;0.004 #MIN_0 #MAX_1 time constant (rate) for updating the medium-to-long time-scale avg_ml value, which integrates over recent history of medium (trial level) averages, used for XCAL learning rules
-  float		m_dt;		// #DEF_0.1;0.01 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
+  float		m_dt;		// #DEF_0.1;0.017 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
   float		s_dt;		// #DEF_0.2;0.02 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the short time-scale avg_s value
   float		ss_dt;		// #DEF_1;0.08 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value
   bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing averages (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
@@ -2611,8 +2610,8 @@ public:
   float		davg_s_dt;	// #DEF_0.05 #MIN_0 #MAX_1 time constant (rate) for continuously updating the short-time frame average of the davg value -- this is contrasted with davg_m to give a smooth acceleration term to measure jolt
   float		davg_m_dt;	// #DEF_0.03 #MIN_0 #MAX_1 time constant (rate) for continuously updating the medium-time frame average of the davg value -- this is contrasted with davg_s to give a smooth acceleration term to measure jolt
   float		davg_l_dt;	// #DEF_0.0005 #MIN_0 #MAX_1 time constant (rate) for continuously updating the long-term average of davg_smd (davg_l) and the long-term maximum (davg_max) -- provides the range for the threshold value computation
-  float		thr_min;	// #DEF_0 #MIN_0 minimum threshold for learning as a proportion of distance between davg_l and davg_max -- current local maximum davg_smd value is compared to this threshold
-  float		thr_max;	// #DEF_0.5 #MIN_0 maximum threshold for learning as a proportion of distance between davg_l and davg_max -- current local maximum davg_smd value is compared to this threshold -- changes can be too big for learning -- typically representing transitions between disparate events, so this value should be < 1
+  float		thr_min;	// #DEF_-0.15 minimum threshold for learning as a proportion of distance between davg_l and davg_max -- current local maximum davg_smd value is compared to this threshold
+  float		thr_max;	// #DEF_0.5 maximum threshold for learning as a proportion of distance between davg_l and davg_max -- current local maximum davg_smd value is compared to this threshold -- changes can be too big for learning -- typically representing transitions between disparate events, so this value should be < 1
   int		loc_max_cyc;	// #DEF_8 #MIN_1 how many cycles of downward-going davg_m values are required past a local peak, before that peak value is used for checking against the thresholds
   int		lrn_delay;	// #DEF_40:80 #MIN_1 how many cycles after learning is triggered does it actually take place?
   float		davg_l_init; 	// #DEF_0 #MIN_0 initial value for davg_l

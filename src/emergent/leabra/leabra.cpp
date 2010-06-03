@@ -600,7 +600,6 @@ void DepressSpec::Defaults_init() {
   depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
   interval = 1;
   max_amp = 1.0f;
-  clamp_norm_max_amp = (.95f * depl + rec) / rec;
 }
 
 void DepressSpec::UpdateAfterEdit_impl() {
@@ -610,7 +609,6 @@ void DepressSpec::UpdateAfterEdit_impl() {
   if(asymp_act > 1.0f) asymp_act = 1.0f;
   depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
   depl = MAX(depl, 0.0f);
-  clamp_norm_max_amp = (.95f * depl + rec) / rec;
 }
 
 void SynDelaySpec::Initialize() {
@@ -825,8 +823,6 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   act_avg.UpdateAfterEdit_NoGui();
   noise_adapt.UpdateAfterEdit_NoGui();
   CreateNXX1Fun();
-  if(depress.on)
-    act_range.max = depress.max_amp;
   e_rev_sub_thr.e = e_rev.e - act.thr;
   e_rev_sub_thr.l = e_rev.l - act.thr;
   e_rev_sub_thr.i = e_rev.i - act.thr;
@@ -971,7 +967,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
 
   lu->i_thr = 0.0f;
   if(depress.on)
-    lu->spk_amp = act_range.max;
+    lu->spk_amp = depress.max_amp;
   lu->act_buf.Reset();
   lu->spike_buf.Reset();
 }
@@ -995,7 +991,7 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork*, float decay) {
   if(acc.on && !acc.trl)
     u->vcb.acc -= decay * u->vcb.acc;
   if(depress.on)
-    u->spk_amp += (act_range.max - u->spk_amp) * decay;
+    u->spk_amp += (depress.max_amp - u->spk_amp) * decay;
 
   // reset the rest of this stuff just for clarity and accurate computation 
   u->act_sent = 0.0f;
@@ -1523,7 +1519,7 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   float new_act = Compute_ActValFmVmVal_rate(u->v_m);
   if(depress.on) {		     // synaptic depression
     u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
-    new_act *= u->spk_amp;
+    new_act *= MIN(u->spk_amp, 1.0f);
     if((net->ct_cycle+1) % depress.interval == 0) {
       u->spk_amp += -new_act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
     }
@@ -1577,7 +1573,7 @@ void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
   u->act_nd = new_nd;
 
   if(depress.on) {
-    u->act *= u->spk_amp;	// after eq
+    u->act *= MIN(u->spk_amp, 1.0f);	// after eq
     u->spk_amp += -u->act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
     if(u->spk_amp < 0.0f) 			u->spk_amp = 0.0f;
     else if(u->spk_amp > depress.max_amp)	u->spk_amp = depress.max_amp;
