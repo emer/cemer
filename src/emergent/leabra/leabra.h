@@ -867,7 +867,7 @@ public:
   float		ml_dt;		// #DEF_0.4;0.004 #MIN_0 #MAX_1 time constant (rate) for updating the medium-to-long time-scale avg_ml value, which integrates over recent history of medium (trial level) averages, used for XCAL learning rules
   float		m_dt;		// #DEF_0.1;0.017 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
   float		s_dt;		// #DEF_0.2;0.02 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the short time-scale avg_s value
-  float		ss_dt;		// #DEF_1;0.08 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value
+  float		ss_dt;		// #DEF_1;0.1 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value
   bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing averages (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
 
   float		l_time;		// #READ_ONLY #SHOW time constant (in trials for XCAL, cycles for XCAL_C, 1/l_dt) for continuously updating the long time-scale avg_l value
@@ -2612,8 +2612,10 @@ public:
   float		davg_l_dt;	// #DEF_0.0005 #MIN_0 #MAX_1 time constant (rate) for continuously updating the long-term average of davg_smd (davg_l) and the long-term maximum (davg_max) -- provides the range for the threshold value computation
   float		thr_min;	// #DEF_-0.15 minimum threshold for learning as a proportion of distance between davg_l and davg_max -- current local maximum davg_smd value is compared to this threshold
   float		thr_max;	// #DEF_0.5 maximum threshold for learning as a proportion of distance between davg_l and davg_max -- current local maximum davg_smd value is compared to this threshold -- changes can be too big for learning -- typically representing transitions between disparate events, so this value should be < 1
-  int		loc_max_cyc;	// #DEF_8 #MIN_1 how many cycles of downward-going davg_m values are required past a local peak, before that peak value is used for checking against the thresholds
-  int		lrn_delay;	// #DEF_40:80 #MIN_1 how many cycles after learning is triggered does it actually take place?
+  int		loc_max_cyc;	// #DEF_8 #MIN_1 how many cycles of downward-going davg_smd values are required past a local peak, before that peak value is used for checking against the thresholds -- this is an exact number -- if doesn't meet criteria at this point, it is skipped until next peak
+  float		loc_max_dec;	// #DEF_0.01 #MIN_0 how much must the current davg_smd value drop below the local max value before learning can take place -- this ensures that the peak was not just a tiny wiggle -- expressed as a positive number 
+  int		lrn_delay;	// #DEF_40 #MIN_1 how many cycles after learning is triggered does it actually take place?
+  int		lrn_refract;	// #DEF_100 #MIN_1 refractory period after learning before any learning can take place again
   float		davg_l_init; 	// #DEF_0 #MIN_0 initial value for davg_l
   float		davg_max_init; 	// #DEF_0.001 #MIN_0 initial value for davg_max
 
@@ -2623,6 +2625,7 @@ public:
   float		davg_l_time; 	// #READ_ONLY #SHOW time constant (in cycles, 1/davg_l_dt) for continuously updating davg_l
 
   float		lrn_delay_inc;	// #READ_ONLY #HIDDEN 1.0f / lrn_delay_inc -- increment per count to compute normalized lrn_trig
+  float		lrn_refract_inc; // #READ_ONLY #HIDDEN 1.0f / lrn_refract_inc -- increment per count to compute normalized lrn_trig
 
   TA_SIMPLE_BASEFUNS(CtLrnTrigSpec);
 protected:

@@ -4701,7 +4701,9 @@ void CtLrnTrigSpec::Initialize() {
   thr_min = 0.0f;
   thr_max = 0.5f;
   loc_max_cyc = 8;
+  loc_max_dec = 0.01f;
   lrn_delay = 40;
+  lrn_refract = 100;
   davg_l_init = 0.0f;
   davg_max_init = 0.001f;
 
@@ -4711,6 +4713,7 @@ void CtLrnTrigSpec::Initialize() {
   davg_l_time = 1.0f / davg_l_dt;
 
   lrn_delay_inc = 1.0f / MAX(1.0f, (float)lrn_delay);
+  lrn_refract_inc = 1.0f / MAX(1.0f, (float)lrn_refract);
 }
 
 void CtLrnTrigSpec::UpdateAfterEdit_impl() {
@@ -4722,6 +4725,7 @@ void CtLrnTrigSpec::UpdateAfterEdit_impl() {
   davg_l_time = 1.0f / davg_l_dt;
 
   lrn_delay_inc = 1.0f / MAX(1.0f, (float)lrn_delay);
+  lrn_refract_inc = 1.0f / MAX(1.0f, (float)lrn_refract);
 }
 
 void CtLrnTrigVals::Initialize() {
@@ -5798,15 +5802,24 @@ void LeabraNetwork::Compute_XCalC_dWt() {
   float thr_min_eff = lrn_trig.davg_l +  ct_lrn_trig.thr_min * maxldif;
   float thr_max_eff = lrn_trig.davg_l +  ct_lrn_trig.thr_max * maxldif;
 
+  float loc_dec_norm = (lrn_trig.loc_max - lrn_trig.davg_smd) / maxldif;
+
   if(lrn_trig.lrn_trig > 0.0f) {	// already met thresh, counting up to learn time
     lrn_trig.lrn_trig += ct_lrn_trig.lrn_delay_inc;
     if(lrn_trig.lrn_trig >= 1.0f) {
       do_lrn = true;
-      lrn_trig.lrn_trig = 0.0f;	// reset this
+      lrn_trig.lrn_trig = -1.0f;  // begin refractory period
+    }
+  }
+  else if(lrn_trig.lrn_trig < 0.0f) {	// already learned, counting down to refract
+    lrn_trig.lrn_trig += ct_lrn_trig.lrn_refract_inc;
+    if(lrn_trig.lrn_trig >= 0.0f) {
+      lrn_trig.lrn_trig = 0.0f;	// reset -- eligible for learning again
     }
   }
   else if((lrn_trig.cyc_fm_dec == 0) && // going down
 	  (lrn_trig.cyc_fm_inc == ct_lrn_trig.loc_max_cyc) && // x amount from inc
+	  (loc_dec_norm >= ct_lrn_trig.loc_max_dec) && // x inc
 	  (lrn_trig.loc_max >= thr_min_eff && lrn_trig.loc_max <= thr_max_eff)) { // max in range
     lrn_trig.lrn_max = lrn_trig.loc_max;
     lrn_trig.lrn_trig = ct_lrn_trig.lrn_delay_inc; // start counting
