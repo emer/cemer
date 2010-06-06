@@ -530,7 +530,7 @@ bool taDataProc::ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b,
 }
 
 bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val_type,
-				  const String& col_nm_contains) {
+				    const String& col_nm_contains, const String& dest_col_nm) {
   bool in_place_req = false;
   GetDest(dest, src, "AllDataToOneCell", in_place_req);
   if(in_place_req) {
@@ -561,7 +561,7 @@ bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val
     int dst_cel_sz = src_cel_sz / xsize;
     ysize = dst_cel_sz * src->rows;
 
-    DataCol* dda = dest->FindMakeColMatrix(first_da->name, val_type, 2, xsize, ysize);
+    DataCol* dda = dest->FindMakeColMatrix(dest_col_nm, val_type, 2, xsize, ysize);
     dest->EnforceRows(1);
     for(int row=0;row<src->rows;row++) {
       for(int cell=0;cell<src_cel_sz;cell++) {
@@ -572,7 +572,7 @@ bool taDataProc::AllDataToOne2DCell(DataTable* dest, DataTable* src, ValType val
   }
   else {	
     ysize = src->rows;
-    DataCol* dda = dest->FindMakeColMatrix("One2dCell", val_type, 2, xsize, ysize);
+    DataCol* dda = dest->FindMakeColMatrix(dest_col_nm, val_type, 2, xsize, ysize);
     dest->EnforceRows(1);
 
     for(int row=0;row<src->rows;row++) {
@@ -1545,18 +1545,19 @@ bool taDataProc::ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b)
   if(!src_a) { taMisc::Error("taDataProc::ConcatCols: src_a is NULL"); return false; }
   if(!src_b) { taMisc::Error("taDataProc::ConcatCols: src_b is NULL"); return false; }
   bool in_place_req = false;
-  GetDest(dest, src_a, "ConcatCols", in_place_req);
-  if(in_place_req) {
-    delete dest;
+
+  // This is not good. The in place op here should PRESERVE ALL DATA!
+  // concatenation does not involve deleting anything.
+  // GetDest(dest, src_a, "ConcatCols", in_place_req);
+
+  if(dest == src_a) {
     src_a->StructUpdate(true);
-
-    if(src_a->rows > src_b->rows) src_b->EnforceRows(src_a->rows);
-    else if(src_b->rows > src_a->rows) src_a->EnforceRows(src_b->rows);
-
+    if(src_b->rows > src_a->rows) src_a->EnforceRows(src_b->rows);
     int src_cols = src_b->cols();
     for (int i=0; i < src_cols; i++) {
-      DataCol* new_col = src_a->NewCol(taBase::VT_FLOAT,"tmp_dest_col");
-      new_col->CopyFrom(src_b->data.FastEl(i));
+      DataCol* src_col = src_b->data.FastEl(i);
+      DataCol* new_col = src_a->NewCol(src_col->valType(), src_col->name);
+      new_col->CopyFrom(src_col);
     }
     src_a->StructUpdate(false);
   }

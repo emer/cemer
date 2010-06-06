@@ -24,12 +24,14 @@
 #include "ta_platform.h"
 
 #ifdef HAVE_LIBGSL
+# include <gsl/gsl_blas.h>
 # include <gsl/gsl_errno.h>
 # include <gsl/gsl_eigen.h>
 # include <gsl/gsl_linalg.h>
 # include <gsl/gsl_fit.h>
 # include <gsl/gsl_fft_real.h>
 # include <gsl/gsl_fft_halfcomplex.h>
+# include <gsl/gsl_multifit.h>
 #include  <gsl/gsl_sf.h>
 #endif
 
@@ -1353,6 +1355,85 @@ static int double_vec_sort_cmp(double v1, double v2) {
   return -1;
 }
 
+bool taMath_double::vec_uniq(const taMatrix* src_vec, taMatrix* dest_vec, const bool& sort_first) {
+  if (!dest_vec || !src_vec) { taMisc::Error("vec_uniq - both src_vec and dest_vec must be defined. try dest_vec = new double_Matrix.");return false;}
+  dest_vec->SetGeom(1,1);
+  Variant cur_val, prv_val;
+
+  if (sort_first) { // `uniq -s' output a list of truly unique elements
+    for (int i=0; i < src_vec->size; i++) {
+      cur_val = src_vec->FastElAsVar_Flat(i);
+      if (i==0) {
+	dest_vec->SetFmVar(cur_val, i);
+	continue;
+      }
+      if (dest_vec->FindVal_Flat(src_vec->FastElAsVar_Flat(i), 0) == -1) {
+	dest_vec->AddFrame();
+	dest_vec->SetFmVar(cur_val, dest_vec->size-1);
+      }
+    }
+  }
+  else { // `uniq' remove all consecutive elements 
+    for (int i=0; i < src_vec->size; i++) {
+      cur_val = src_vec->FastElAsVar_Flat(i);
+      if (i==0) {
+	prv_val = cur_val; 
+	dest_vec->SetFmVar(cur_val, i);
+	continue;
+      }
+      if (cur_val != prv_val) {
+	prv_val = cur_val;
+	dest_vec->AddFrame();
+	dest_vec->SetFmVar(cur_val, dest_vec->size-1);
+      }
+    }
+  }
+  return true;
+}
+
+bool taMath_double::mat_concat(const taMatrix* src_a_mat, const taMatrix* src_b_mat,
+			       taMatrix* dest_mat, const int& dim) {
+  
+  if (!src_a_mat||!src_b_mat||!dest_mat) { taMisc::Error("mat_concat - a, b and dest matrices must all be defined"); return false; }
+
+  int a_dims = src_a_mat->dims();
+  if (a_dims != 2) {taMisc::Error("mat_concat - a and b must have 2 dimensions"); return false;};
+  int a_d0 = src_a_mat->dim(0);
+  int a_d1 = src_a_mat->dim(1);
+
+  int b_dims = src_b_mat->dims();
+  if (b_dims != 2) {taMisc::Error("mat_concat - a and b must have 2 dimensions"); return false;};
+  int b_d0 = src_b_mat->dim(0);
+  int b_d1 = src_b_mat->dim(1);
+
+  Variant val;
+
+  cout << a_d0 << " " << b_d0 << " " << a_d1 << " " << b_d1 << "\n";    cout << a_d0 << " " << b_d0 << " " << a_d1 << " " << b_d1 << "\n";
+
+  if(dim == 0) { // col concat
+    if (a_d1 != b_d1) {taMisc::Error("mat_concat - col concat specified (d0) but a and b do not have the same number of rows (d1)"); return false;}
+
+    dest_mat->SetGeom(2, a_d0 + b_d0, a_d1);
+
+    // fill a into dest
+    for (int i=0; i < a_d0; i++) {
+      for (int j=0; j < a_d1; j++) {
+	val = src_a_mat->SafeElAsVar(i, j);
+// 	cout << val;
+// 	dest_mat->SetFmVar(val, i, j);
+      }
+    }
+  }
+  else { // row concat
+    if (a_d0 != b_d0) {
+      taMisc::Error("mat_concat - row concat specified (d1) but a and b do not have the same number of cols (d0)");
+      return false;
+    }
+  }
+  return true;
+}
+
+
 void taMath_double::vec_sort(double_Matrix* vec, bool descending) {
   if(!vec_check_type(vec)) return;
   if(vec->size <= 1) return;
@@ -1420,6 +1501,27 @@ bool taMath_double::vec_regress_lin(const double_Matrix* x_vec, const double_Mat
 #endif
 }
 
+bool taMath_double::vec_regress_multi_lin(double_Matrix* X, double_Matrix* Y,
+					  double_Matrix* C, double_Matrix* cov, double& chisq) {
+#ifdef HAVE_LIBGSL
+  gsl_matrix gsl_X, gsl_cov;
+  gsl_vector gsl_Y, gsl_C;
+  mat_get_gsl_fm_ta(&gsl_X, X);
+  mat_get_gsl_fm_ta(&gsl_cov, cov);
+  vec_get_gsl_fm_ta(&gsl_Y, Y);
+  vec_get_gsl_fm_ta(&gsl_C, C);
+
+  gsl_multifit_linear_workspace* work = gsl_multifit_linear_alloc(X->dim(1), X->dim(0));
+  gsl_multifit_linear(&gsl_X, &gsl_Y, &gsl_C, &gsl_cov, &chisq, work);
+  gsl_multifit_linear_free(work);
+
+  return true;
+#else 
+  return false;
+#endif
+
+}
+
 bool taMath_double::vec_jitter_gauss(double_Matrix* vec, double stdev) {
   if(!vec_check_type(vec)) return false;
   if(vec->size == 0) return false;
@@ -1460,6 +1562,53 @@ bool taMath_double::vec_jitter_gauss(double_Matrix* vec, double stdev) {
       new_index = -1;
     }
   }
+
+  return true;
+}
+
+bool taMath_double::vec_dot_product(double& dot, const double_Matrix* src_a, 
+				    const double_Matrix* src_b) {
+  gsl_vector src_a_gsl;
+  vec_get_gsl_fm_ta(&src_a_gsl, src_a);
+  const gsl_vector* src_a_gsl_ptr = &src_a_gsl;
+
+  gsl_vector src_b_gsl;
+  vec_get_gsl_fm_ta(&src_b_gsl, src_b);
+  const gsl_vector* src_b_gsl_ptr = &src_b_gsl;
+
+  gsl_blas_ddot(src_a_gsl_ptr, src_b_gsl_ptr, &dot);
+
+  return true;
+}
+
+bool taMath_double::mat_vec_product(const double_Matrix* A, const double_Matrix* x, 
+				    double_Matrix* y) {
+  if (!A||!x||!y) {
+    taMisc::Error("mat_vec_product - you must specify matrix A and vectors x,y.");
+    return false;
+  }
+  if (x->dims()!=1||y->dims()!=1) {
+    taMisc::Error("mat_vec_product - x and y must be one dimensional vectors");
+    return false;
+  }
+  if (A->dims()!=2) {
+    taMisc::Error("mat_vec_product - A must be a 2 dimensional matrix");
+    return false;
+  }  
+
+  gsl_matrix A_gsl;
+  mat_get_gsl_fm_ta(&A_gsl, A);
+  const gsl_matrix* A_gsl_ptr = &A_gsl;
+
+  gsl_vector x_gsl;
+  vec_get_gsl_fm_ta(&x_gsl, x);
+  const gsl_vector* x_gsl_ptr = &x_gsl;
+
+  gsl_vector y_gsl;
+  vec_get_gsl_fm_ta(&y_gsl, y);
+  gsl_vector* y_gsl_ptr = &y_gsl;
+
+  gsl_blas_dgemv(CblasNoTrans, 1.0, A_gsl_ptr, x_gsl_ptr, 0.0, y_gsl_ptr);
 
   return true;
 }

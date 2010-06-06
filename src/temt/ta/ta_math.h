@@ -611,13 +611,32 @@ public:
   static void	vec_sort(double_Matrix* vec, bool descending = false);
   // #CAT_Statistics sort the given vector values in numerical order (in place)
 
+  static bool 	vec_uniq(const taMatrix* src_vec, taMatrix* dest_vec, const bool& sort_first = false);
+  // #CAT_Statistics Uniqify the vector, removing all consecutive elements that are the same. use vec_sort first to get a vector of unique elements. 
+
+  static bool 	mat_concat(const taMatrix* src_a_mat, const taMatrix* src_b_mat,
+			   taMatrix* dest_mat, const int& dim = 0);
+  // #CAT_Statistics Concatenate a and b into dest. If dim = 0 (default) concatenate the columns. If dim = 1 concatenate the rows. 
+
+
   static bool	vec_regress_lin(const double_Matrix* x_vec, const double_Matrix* y_vec,
 				double& b, double& m, double& cov00, double& cov01,
 				double& cov11, double& sum_sq);
   // #CAT_Statistics computes the best-fit linear regression coefficients (b,m) of the model y = b + mx for the dataset (x, y). The variance-covariance matrix for the parameters (c0, c1) is estimated from the scatter of the points around the best-fit line and returned via the parameters (cov00, cov01, cov11). The sum of squares of the residuals from the best-fit line is returned in sum_sq.  See vec_correl to compute the correlation coefficient.
 
+  static bool vec_regress_multi_lin(double_Matrix* X, double_Matrix* Y, double_Matrix* C, 
+				    double_Matrix* cov, double& chisq);
+  // #CAT_Statistics This function computes the best-fit parameters c of the model y = X c for the observations y and the matrix of predictor variables X. The variance-covariance matrix of the model parameters cov is estimated from the scatter of the observations about the best-fit. The sum of squares of the residuals from the best-fit, chi^2, is returned in chisq. The best-fit is found by singular value decomposition of the matrix X using the preallocated workspace provided in work. The modified Golub-Reinsch SVD algorithm is used, with column scaling to improve the accuracy of the singular values. Any components which have zero singular value (to machine precision) are discarded from the fit.
+
   static bool vec_jitter_gauss(double_Matrix* vec, double stdev);
   // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev rounded to the nearest int. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter
+
+  static bool vec_dot_product(double& dot, const double_Matrix* src_a, 
+			      const double_Matrix* src_b);
+  // #CAT_Statistics Takes the dot product of the two vectors
+  static bool mat_vec_product(const double_Matrix* A, const double_Matrix* x, 
+			      double_Matrix* y);
+  // #CAT_Statistics computes the matrix-vector product y=Ax
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
@@ -740,7 +759,7 @@ public:
   // perform multidimensional scaling of matrix A (must be square symmetric matrix, e.g., a distance matrix), returning two-dimensional coordinates that best capture the distance relationships among the items (rows, columns) in x,y coordinates using specified components -- first copies the matrix A so it is not overwritten
   static bool mat_transpose(double_Matrix* dest, double_Matrix* src);
   // #CAT_Matrix transpose a 2d matrix
-  static bool mat_slice(double_Matrix* dest, double_Matrix* src, int d0_start = 0, int d0_end = -1, int d1_start = 0, int d1_end = -1);
+   static bool mat_slice(double_Matrix* dest, double_Matrix* src, int d0_start = 0, int d0_end = -1, int d1_start = 0, int d1_end = -1);
   // #CAT_Matrix See http://en.wikipedia.org/wiki/Array_slicing. Copies a 2d slice out of the first 2 dimensions of src into dest. If d0_end or d1_end are -1 (default) they will be set to the size of that dimension. See also taDataProc::Slice2D.
   static bool mat_trim(double_Matrix* dest, double_Matrix* src, Relation& thresh, int intol_within = 0, int intol_between = 0,
 		       bool left = true, bool right = true, bool top = true, bool bottom = true);

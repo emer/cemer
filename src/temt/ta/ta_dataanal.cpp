@@ -529,6 +529,335 @@ String taDataAnal::RegressLinear(DataTable* src_data, const String& x_data_col_n
   return rval;
 }
 
+bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data,
+							     DataTable* dest_data,
+							     const String& data_col_nm,
+							     const String& name_col_nm,
+							     const String& class_col_nm,
+							     const String& mode_col_nm) {
+  
+  String fun_name = "MultiClassClassificationViaLinearRegression";
+
+  if (!src_data) {
+    taMisc::Error(fun_name + " - src_data cannot be NULL");return false;}
+
+  int src_rows = src_data->rows;
+
+  if (src_rows < 2) {
+    taMisc::Error(fun_name + " - src_data must have at least 2 rows");return false;}
+
+  // dest_data - one row only
+  GetDest(dest_data, src_data, fun_name);
+
+  // work - workspace with one row only. users can request to save this data in dest_data
+  DataTable* work = new DataTable; taBase::Ref(work);
+
+  // *_col - check for existence
+  DataCol* data_col = src_data->FindColName(data_col_nm);
+  DataCol* name_col = src_data->FindColName(name_col_nm);
+  DataCol* class_col = src_data->FindColName(class_col_nm);
+  DataCol* mode_col = src_data->FindColName(mode_col_nm);
+
+  if (!data_col || !name_col || !class_col || !mode_col) { 
+    taMisc::Error(fun_name + " - data, name class and mode_col_nm's must point to existing columns in the table."); return false;}
+
+  if (data_col->valType() != VT_FLOAT &&
+      data_col->valType() != VT_DOUBLE) {
+    taMisc::Error(fun_name + " - data_col must contain either float or double data."); return false;}        
+
+  if (name_col->valType() != VT_STRING ||
+      class_col->valType() != VT_STRING ||
+      mode_col->valType() != VT_STRING) {
+    taMisc::Error(fun_name + " - data, name class and mode_col_nm's must all be of type string."); return false;}    
+
+  // sorted_src_data - sort src_data by mode (train/test), class and name
+  DataTable* sorted_src_data = new DataTable; taBase::Ref(sorted_src_data);
+  DataSortSpec* sort_spec = new DataSortSpec; taBase::Ref(sort_spec);
+  sort_spec->AddColumn(mode_col_nm, src_data);
+  sort_spec->AddColumn(class_col_nm, src_data);
+  sort_spec->AddColumn(name_col_nm, src_data);
+  taDataProc::Sort(sorted_src_data, src_data, sort_spec);
+
+  // *_col - point at sorted_src_data instead of src_data and rename
+  // X - vectors of data; N - names; C - target class; M - training mode
+  data_col =  sorted_src_data->FindColName(data_col_nm);   data_col->name = "X";
+  name_col =  sorted_src_data->FindColName(name_col_nm);   name_col->name = "N"; 
+  class_col = sorted_src_data->FindColName(class_col_nm);  class_col->name = "C";
+  mode_col =  sorted_src_data->FindColName(mode_col_nm);   mode_col->name = "M";
+
+  // Check the matrix geometry of data. If the dims are 2 then
+  // make the 2nd dim 1 and flatten all along the first dimension
+  // TODO: Could support arbitrary dimensions
+  int data_dims = data_col->GetValAsMatrix(0)->dims();
+  int data_d0, data_d1;
+  if (data_dims == 2) {
+    data_d0 = data_col->GetValAsMatrix(0)->dim(0);
+    data_d1 = data_col->GetValAsMatrix(0)->dim(1);
+    sorted_src_data->ChangeColTypeGeom("X", data_col->valType(), 2, data_d0 * data_d1, 1);
+  }
+
+  // classes - a vector of unique class names, giving them numerical order
+  taDataProc::AllDataToOne2DCell(work, sorted_src_data, class_col->valType(), "C");
+  work->FindColName("One2dCell")->name = "C";
+  String_Matrix* classes_full = (String_Matrix*)work->GetValAsMatrix("C",0);
+  String_Matrix* classes = new String_Matrix; taBase::Ref(classes);
+  taMath_double::vec_uniq(classes_full, classes, true);
+
+  // split data by conjunctions of mode/class (the reason we sorted)
+  // and send each col of each split to a matrix col in the workspace
+  DataSelectSpec* select_spec = new DataSelectSpec; taBase::Ref(select_spec);
+  DataSelectEl* M = (DataSelectEl*)select_spec->AddColumn("M", sorted_src_data);
+  String mode, category, cmp_category;
+  int TRAIN_C_d1, TEST_C_d1, TRAIN_X_d0;
+  double chisq;
+
+  // One vs. All classification - For each class all other classes are the negative class
+
+  for (int i=0; i < classes->size; i++) {
+
+    DataTable* select_tmp = new DataTable; taBase::Ref(select_tmp);
+    DataTable* one_cell_tmp = new DataTable; taBase::Ref(one_cell_tmp);
+
+    category = classes->FastEl(i);
+
+    M->cmp = "TRAIN";
+    taDataProc::SelectRows(select_tmp, sorted_src_data, select_spec);
+    taDataProc::AllDataToOne2DCell(work, select_tmp, data_col->valType(), "X", "TRAIN_X_" + category);
+    taDataProc::AllDataToOne2DCell(work, select_tmp, class_col->valType(), "C", "TRAIN_C_" + category);
+    taDataProc::AllDataToOne2DCell(work, select_tmp, name_col->valType(), "N", "TRAIN_N_" + category);
+
+    M->cmp = "TEST";
+    taDataProc::SelectRows(select_tmp, sorted_src_data, select_spec);
+    taDataProc::AllDataToOne2DCell(work, select_tmp, data_col->valType(), "X", "TEST_X_" + category);
+    taDataProc::AllDataToOne2DCell(work, select_tmp, class_col->valType(), "C", "TEST_C_" + category);
+    taDataProc::AllDataToOne2DCell(work, select_tmp, name_col->valType(), "N", "TEST_N_" + category);
+
+    TRAIN_C_d1 = work->FindColName("TRAIN_C_" + category)->GetCellGeom(1);
+    TEST_C_d1 = work->FindColName("TEST_C_" + category)->GetCellGeom(1);
+    TRAIN_X_d0 = work->FindColName("TRAIN_X_" + category)->GetCellGeom(0);
+
+    // T - Target value (integer 0/1)
+    work->FindMakeColMatrix("TRAIN_T_" + category, VT_DOUBLE, 1, TRAIN_C_d1);
+    work->FindMakeColMatrix("TEST_T_" + category, VT_DOUBLE, 1, TEST_C_d1);
+
+    // CO - Regression coefficients
+    work->FindMakeColMatrix("TRAIN_CO_" + category, VT_DOUBLE, 1, TRAIN_X_d0); 
+    work->FindMakeColMatrix("TRAIN_COV_" + category, VT_DOUBLE, 2, TRAIN_X_d0, TRAIN_X_d0); // COV - Covariance matrix
+    work->FindMakeColMatrix("TRAIN_YPRIME_" + category, VT_DOUBLE, 1, TRAIN_C_d1); // YPRIME - test set values
+    work->FindMakeColMatrix("TEST_YPRIME_" + category, VT_DOUBLE, 1, TEST_C_d1); // YPRIME - test set values
+    work->FindMakeCol("TRAIN_CHISQ_" + category, VT_INT); // CHISQ
+
+    // C - Class names - sets all other classes to 0, this class to 1
+    for (int j=0; j < TRAIN_C_d1; j++) {
+      cmp_category = work->GetMatrixVal("TRAIN_C_" + category, 0, j);
+      if (cmp_category == category)
+	work->SetMatrixVal(1, "TRAIN_T_" + category, 0, j);
+      else
+	work->SetMatrixVal(0, "TRAIN_T_" + category, 0, j);
+    }
+
+    for (int j=0; j < TEST_C_d1; j++) {
+      cmp_category = work->GetMatrixVal("TEST_C_" + category, 0, j);
+      if (cmp_category == category)
+	work->SetMatrixVal(1, "TEST_T_" + category, 0, j);
+      else
+	work->SetMatrixVal(0, "TEST_T_" + category, 0, j);
+    }
+
+    double_Matrix* TRAIN_X = (double_Matrix*)work->FindColName("TRAIN_X_" + category)->GetValAsMatrix(0);
+    double_Matrix* TEST_X = (double_Matrix*)work->FindColName("TEST_X_" + category)->GetValAsMatrix(0);
+
+    double_Matrix* TRAIN_X_dbl = new double_Matrix;  taBase::Ref(TRAIN_X_dbl);
+    double_Matrix* TEST_X_dbl = new double_Matrix; taBase::Ref(TEST_X_dbl);
+
+    // Convert float data to double
+
+    ValType X_type = TRAIN_X->GetDataValType();
+    if (X_type == VT_FLOAT) {
+      taMath::mat_cvt_float_to_double(TRAIN_X_dbl, (float_Matrix*)TRAIN_X);
+      taMath::mat_cvt_float_to_double(TEST_X_dbl, (float_Matrix*)TEST_X);
+    }
+    else if (X_type == VT_DOUBLE) {
+      TRAIN_X_dbl = TRAIN_X;
+      TEST_X_dbl = TEST_X;
+    }
+    else {
+      taMisc::Error("X must be either a float_Matrix or double_Matrix");
+      return false;
+    }
+
+    double_Matrix* T = (double_Matrix*)work->FindColName("TRAIN_T_" + category)->GetValAsMatrix(0);
+    double_Matrix* CO = (double_Matrix*)work->FindColName("TRAIN_CO_" + category)->GetValAsMatrix(0);
+    double_Matrix* COV = (double_Matrix*)work->FindColName("TRAIN_COV_" + category)->GetValAsMatrix(0);
+    double_Matrix* TRAIN_YPRIME = (double_Matrix*)work->FindColName("TRAIN_YPRIME_" + category)->GetValAsMatrix(0);
+    double_Matrix* TEST_YPRIME = (double_Matrix*)work->FindColName("TEST_YPRIME_" + category)->GetValAsMatrix(0);
+
+    taMath_double::vec_regress_multi_lin(TRAIN_X_dbl, T, CO, COV, chisq);
+    taMath_double::mat_vec_product(TRAIN_X_dbl, CO, TRAIN_YPRIME);
+    taMath_double::mat_vec_product(TEST_X_dbl, CO, TEST_YPRIME);
+
+    work->SetVal(chisq, "TRAIN_CHISQ_" + category, 0);
+
+    taBase::unRefDone(TRAIN_X_dbl);
+    taBase::unRefDone(TEST_X_dbl);
+    taBase::unRefDone(select_tmp);    
+    taBase::unRefDone(one_cell_tmp);
+  }
+
+  // Create class-level confusion matrix
+  DataTable* confusion = new DataTable; taBase::Ref(confusion);
+  String col_nm = "TEST_YPRIME_" + classes->FastEl(0);
+  String cm = "ConfusionMatrix";
+  DataCol* TEST_YPRIME_0 = work->FindColName(col_nm);
+  int d0 = TEST_YPRIME_0->GetCellGeom(0);
+  ValType val_type = TEST_YPRIME_0->valType();
+  taDataProc::AllDataToOne2DCell(confusion, work, val_type, "TEST_YPRIME_", cm);
+  confusion->ChangeColTypeGeom(cm, val_type, 2, d0, classes->size);
+
+  // Create target confusion matrix
+  DataTable* confusion_target = new DataTable; taBase::Ref(confusion_target);
+  col_nm = "TEST_T_" + classes->FastEl(0);
+  cm = "ConfusionMatrixTarget";
+  DataCol* TEST_T_0 = work->FindColName(col_nm);
+  d0 = TEST_T_0->GetCellGeom(0);
+  val_type = TEST_T_0->valType();
+  taDataProc::AllDataToOne2DCell(confusion_target, work, val_type, "TEST_T_", cm);
+  confusion_target->ChangeColTypeGeom(cm, val_type, 2, d0, classes->size);
+
+  // class lengths - how many stimuli are in each test class?
+  DataTable* class_lengths = new DataTable; taBase::Ref(class_lengths);
+  Relation* rel = new Relation; taBase::Ref(rel);
+  double_Matrix* class_mat;
+  double length;
+  rel->rel = (Relation::Relations)0;
+  rel->val = 1;
+  class_lengths->NewColMatrix(VT_INT, "CL", 1, classes->size);
+  class_lengths->AddRows();
+  int_Matrix* class_lengths_mat = (int_Matrix*)class_lengths->FindColName("CL")->GetValAsMatrix(0);
+
+  for (int i=0; i < classes->size; i++) {
+    class_mat = (double_Matrix*)work->FindColName("TEST_T_" + (String)classes->FastEl(i))->GetValAsMatrix(0);
+    length = taMath_double::vec_count(class_mat, *rel);
+    class_lengths->SetMatrixFlatVal(length, "CL", 0, i);
+  }
+
+  // Compute Confusion Matrix, ROC Accuracy, Precision, Recall, F-Measure
+
+  String class_nm;
+
+  double_Matrix* ConfusionMatrix = (double_Matrix*)confusion->FindColName("ConfusionMatrix")->GetValAsMatrix(0);
+
+  double tp = 0.0f, fp = 0.0f, tn = 0.0f, fn = 0.0f;     // True/False Positive/Negative counts
+  double ctp = 0.0f, cfp = 0.0f, ctn = 0.0f, cfn = 0.0f;
+  double fpr = 0.0f, tpr = 0.0f;                         // True/False Positive Rate
+  double ctpr = 0.0f, cfpr = 0.0f;
+  double precision = 0.0f, recall = 0.0f;                // Precision and Recall
+  double cprecision = 0.0f, crecall = 0.0f;
+  double fm = 0.0f;                                      // F-measure
+  double cfm = 0.0f;
+  double acc = 0.0f;                                     // Accuracy 
+  double cacc = 0.0f;
+  double roc_acc = 0.0f;                                 // ROC Accuracy
+  double croc_acc = 0.0f;
+
+  // c_mat - Final class-level confusion matrix
+  // ConfusionMatrix (above and below) is the raw item-level classifier outputs
+  double_Matrix* c_mat = new double_Matrix; taBase::Ref(c_mat);
+  c_mat->SetGeom(2, classes->size, classes->size);
+
+  // slice - for tmp usage below
+  double_Matrix* slice = new double_Matrix; taBase::Ref(slice);
+
+  int max_index = 0; // Index of the classifier with the largest response
+  double max = 0.0f; // Actual max value. Not Used.
+  int ctr = 0; // Iterator used to keep track of the stimulus
+  int class_length; // Number of stimuli in this class
+  int n_classes = classes->size;
+
+  // Iterate over all the stimuli once and select the 
+  // maximal classifier response
+  for (int j=0; j < n_classes; j++) {
+
+    class_length = class_lengths_mat->FastEl(j);
+
+    for (int k=0; k < class_length; k++) {
+
+      taMath_double::mat_slice(slice, ConfusionMatrix, ctr, ctr);
+      max = taMath_double::vec_max(slice, max_index);
+
+      // If max_index is this class then score one true positive and
+      // one true negative for every other class
+      if (max_index == j) {
+	c_mat->Set(c_mat->FastElAsDouble(j, j) + 1, j, j);
+	tp++;
+	tn += n_classes - 1;
+      }
+      // If max_index is not this class then score one false positive
+      // for the max class, one false negative for the target class,
+      // and n-2 true negatives for the other classes
+      else {
+	c_mat->Set(c_mat->FastElAsDouble(j, max_index) + 1.0f, j, max_index);
+	fp++;
+	tn += n_classes - 2;
+	fn++;
+      }
+      ctr++;
+    }
+  }
+
+  tpr = tp / (tp + fn);
+  fpr = fp / (tn + fp);
+  precision = tp / (tp + fp);
+  recall = tp / (tp + fn);
+  fm = 2.0f / ((1.0f / precision) + (1.0f / recall));
+  acc = (tp + tn) / (tp + tn + fp + fn);
+  roc_acc = 1.0f - sqrt(fpr*fpr + 1.0f - 2.0f*tpr + tpr*tpr);
+
+
+//   cout << fun_name << " results: \n";
+
+//   cout << "----------------------\n";
+//   cout << "         True    False\n";
+//   cout << "True   " << tp << "   " << fp << "\n";
+//   cout << "False  " << fn << "   " << tn << "\n";
+//   cout << "----------------------\n";
+//   cout << "Note: Since false positives and false negatives mirror eachother in this\n";
+//   cout << "          multiclass classifier the Sensitivity, Precision and Recall measures are equal\n";
+//   cout << "Note: The ROC Accuracy measure is the distance to a perfect classifier on the\n";
+//   cout << "          Receiver Operator Characteristic curve and it is recommended that you use\n";
+//   cout << "          this metric to evaluate the classifier.\n";
+//   cout << "Recall / Sensitivity / True Positive Rate (TPR) = TP/(TP+FN) = " << tpr << "\n";
+//   cout << "Precision / Positive Prediction Value = TP/(TP+FP) = " << precision << "\n";
+//   cout << "Specificity / True Negative Rate (TNR) = TN/(TN+FP) = " << tn / (tn+fp) << "\n";
+//   cout << "False Positive Rate (FPR) = FP/(FP+TN) = " << fpr << "\n";
+  cout << "ROC Accuracy = 1-SQRT[FPR^2 + (TPR-1)^2] = " << roc_acc << "\n";
+  taMisc::FlushConsole();
+
+  dest_data->Reset();
+//   dest_data->NewColFmMatrix(c_mat, "ConfusionMatrix");
+
+//   taDataProc::ConcatCols(dest_data, dest_data, work);
+
+  // TODO: Do this for the rest of these stats..
+  dest_data->NewColDouble("ROC_Accuracy");
+  dest_data->AddRows();
+  dest_data->SetVal(roc_acc, "ROC_Accuracy", 0);
+
+
+  taBase::unRefDone(work);
+  taBase::unRefDone(sorted_src_data);
+  taBase::unRefDone(sort_spec);
+  taBase::unRefDone(select_spec);
+  taBase::unRefDone(confusion);
+  taBase::unRefDone(confusion_target);
+  taBase::unRefDone(class_lengths);
+  taBase::unRefDone(rel);
+  taBase::unRef(ConfusionMatrix);
+
+  return true;
+
+};
+
 ////////////////////////////////////////////////////////////////////////////////////
 //	distance matricies
 

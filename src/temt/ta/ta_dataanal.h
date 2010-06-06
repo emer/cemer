@@ -117,6 +117,14 @@ public:
 			      const String& y_data_col_nm, bool render_line = true);
   // #CAT_Stats #MENU_BUTTON #MENU_ON_Stats compute linear regression (least squares fit of function y = mx + b) to given data -- if render_line, a column called "regress_line" is created and the function is generated into it as data.  Returns a string descriptor of the regression equation and r value
 
+  static bool	MultiClassClassificationViaLinearRegression(DataTable* src_data,
+							    DataTable* dest_data = NULL,
+							    const String& data_col_nm = "Data",
+							    const String& name_col_nm = "Name",
+							    const String& class_col_nm = "Class",
+							    const String& mode_col_nm = "Mode");
+  // #Cat_Stats #MENU_BUTTON #MENU_ON_Stats #SHORTCUT_Ctrl+1 #NULL_OK_1 #NULL_TEXT_1_NewDataTable #TYPE_1_DataTable #NULL_TEXT_0_SelectSourceTable
+
   ///////////////////////////////////////////////////////////////////
   // distance matricies
 
