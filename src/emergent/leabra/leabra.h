@@ -158,8 +158,8 @@ class LEABRA_API WtScaleSpecInit : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		init;		// use these scaling values to initialize the wt_scale parameters during InitWeights (if false, these values have no effect at all)
-  float		abs;		// #CONDEDIT_ON_init #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
-  float		rel;		// #CONDEDIT_ON_init [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
+  float		abs;		// #CONDSHOW_ON_init #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
+  float		rel;		// #CONDSHOW_ON_init [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
 
   TA_SIMPLE_BASEFUNS(WtScaleSpecInit);
 protected:
@@ -293,14 +293,14 @@ class LEABRA_API AdaptRelNetinSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// whether to adapt relative netinput values for this connection (only applied if AdaptAbsNetin is called, after AbsRelNetin and AvgAbsRelNetin)
-  float		trg_fm_input;	// #CONDEDIT_ON_on:true (typically 0.85) #MIN_0 #MAX_1 target relative netinput for fm_input projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_output and lateral should sum to 1. if other types are missing, this is increased in proportion
-  float		trg_fm_output;	// #CONDEDIT_ON_on:true (typically 0.10) #MIN_0 #MAX_1 target relative netwinput for fm_output projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_input and lateral should sum to 1. if other types are missing, this is increased in proportion
-  float		trg_lateral;	// #CONDEDIT_ON_on:true (typically 0.05) #MIN_0 #MAX_1 target relative netinput for lateral projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)  -- this plus fm_input and lateral should sum to 1.  if other types are missing, this is increased in proportion
-  float		trg_sum;	// #READ_ONLY #SHOW sum of trg values -- should be 1!
+  float		trg_fm_input;	// #CONDSHOW_ON_on (typically 0.85) #MIN_0 #MAX_1 target relative netinput for fm_input projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_output and lateral should sum to 1. if other types are missing, this is increased in proportion
+  float		trg_fm_output;	// #CONDSHOW_ON_on (typically 0.10) #MIN_0 #MAX_1 target relative netwinput for fm_output projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_input and lateral should sum to 1. if other types are missing, this is increased in proportion
+  float		trg_lateral;	// #CONDSHOW_ON_on (typically 0.05) #MIN_0 #MAX_1 target relative netinput for lateral projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)  -- this plus fm_input and lateral should sum to 1.  if other types are missing, this is increased in proportion
+  float		trg_sum;	// #CONDSHOW_ON_on #READ_ONLY #SHOW sum of trg values -- should be 1!
 
-  float		tol_lg;		// #CONDEDIT_ON_on:true #DEF_0.05 #MIN_0 #MAX_1 tolerance from target value (as a proportion of target value) on large numbers (>.25), within which parameters are not adapted
-  float		tol_sm;		// #CONDEDIT_ON_on:true #DEF_0.2 #MIN_0 #MAX_1 tolerance from target value (as a proportion of target value) on small numbers (<.25), within which parameters are not adapted
-  float		rel_lrate;	// #CONDEDIT_ON_on:true #DEF_0.2 #MIN_0 #MAX_1 adpatation 'learning' rate on wt_scale.rel parameter
+  float		tol_lg;		// #CONDSHOW_ON_on #DEF_0.05 #MIN_0 #MAX_1 tolerance from target value (as a proportion of target value) on large numbers (>.25), within which parameters are not adapted
+  float		tol_sm;		// #CONDSHOW_ON_on #DEF_0.2 #MIN_0 #MAX_1 tolerance from target value (as a proportion of target value) on small numbers (<.25), within which parameters are not adapted
+  float		rel_lrate;	// #CONDSHOW_ON_on #DEF_0.2 #MIN_0 #MAX_1 adpatation 'learning' rate on wt_scale.rel parameter
 
   virtual bool	CheckInTolerance(float trg, float val);
   // check if value is inside the tolerance from trg
@@ -649,8 +649,8 @@ class LEABRA_API DtSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		set_time;	// if true, time constant is entered in terms of time, otherwise, in terms of rate
-  float		rate;		// #CONDEDIT_OFF_set_time rate factor = 1/time -- used for multiplicative update equations
-  float		time;		// #CONDEDIT_ON_set_time temporal duration for the time constant -- how many msec or sec long (typically to reach a 1/e level with exponential dynamics) = 1/rate
+  float		rate;		// #CONDSHOW_OFF_set_time rate factor = 1/time -- used for multiplicative update equations
+  float		time;		// #CONDSHOW_ON_set_time temporal duration for the time constant -- how many msec or sec long (typically to reach a 1/e level with exponential dynamics) = 1/rate
 
   TA_SIMPLE_BASEFUNS(DtSpec);
 protected:
@@ -786,11 +786,11 @@ class LEABRA_API DepressSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
-  float		rec;		// #CONDEDIT_ON_on #DEF_0.2;0.015 #MIN_0 #MAX_1 rate of recovery of spike amplitude (determines overall time constant of depression function)
-  float		asymp_act;	// #CONDEDIT_ON_on #DEF_0.2:0.5 #MIN_0 #MAX_1 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
-  float		depl;		// #CONDEDIT_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
-  int		interval;	// #CONDEDIT_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
-  float		max_amp;	// #CONDEDIT_ON_on #MIN_0 maximum spike amplitude (spk_amp, which is the multiplier factor for activation values) -- values greater than 1 create an extra reservoir where depletion does not yet affect the sending activations, because spk_amp is capped at a maximum of 1 -- this can be useful for creating a more delayed effect of depletion, where an initial wave of activity can propagate unimpeded, followed by actual depression as spk_amp goes below 1
+  float		rec;		// #CONDSHOW_ON_on #DEF_0.2;0.015 #MIN_0 #MAX_1 rate of recovery of spike amplitude (determines overall time constant of depression function)
+  float		asymp_act;	// #CONDSHOW_ON_on #DEF_0.2:0.5 #MIN_0 #MAX_1 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
+  float		depl;		// #CONDSHOW_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
+  int		interval;	// #CONDSHOW_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
+  float		max_amp;	// #CONDSHOW_ON_on #MIN_0 maximum spike amplitude (spk_amp, which is the multiplier factor for activation values) -- values greater than 1 create an extra reservoir where depletion does not yet affect the sending activations, because spk_amp is capped at a maximum of 1 -- this can be useful for creating a more delayed effect of depletion, where an initial wave of activity can propagate unimpeded, followed by actual depression as spk_amp goes below 1
 
   TA_SIMPLE_BASEFUNS(DepressSpec);
 protected:
@@ -807,7 +807,7 @@ class LEABRA_API SynDelaySpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// is synaptic delay active?
-  int		delay;		// #CONDEDIT_ON_on #MIN_0 number of cycles to delay for
+  int		delay;		// #CONDSHOW_ON_on #MIN_0 number of cycles to delay for
 
   TA_SIMPLE_BASEFUNS(SynDelaySpec);
 protected:
@@ -908,13 +908,13 @@ class LEABRA_API VChanSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;		// #DEF_false true if channel is on
-  float		b_inc_dt;	// #CONDEDIT_ON_on:true #AKA_b_dt time constant for increases in basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
-  float		b_dec_dt;	// #CONDEDIT_ON_on:true time constant for decreases in basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
-  float		a_thr;		// #CONDEDIT_ON_on:true activation threshold of the channel: when basis > a_thr, conductance starts to build up (channels open)
-  float		d_thr;		// #CONDEDIT_ON_on:true deactivation threshold of the channel: when basis < d_thr, conductance diminshes (channels close)
-  float		g_dt;		// #CONDEDIT_ON_on:true time constant for changing conductance (activating or deactivating) -- if = 1, then gc is equal to the basis if channel is on
-  bool		init;		// #CONDEDIT_ON_on:true initialize variables when state is intialized between trials (else with weights)
-  bool		trl;		// #CONDEDIT_ON_on:true update after every trial instead of every cycle -- time constants need to be much larger in general
+  float		b_inc_dt;	// #CONDSHOW_ON_on #AKA_b_dt time constant for increases in basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
+  float		b_dec_dt;	// #CONDSHOW_ON_on time constant for decreases in basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
+  float		a_thr;		// #CONDSHOW_ON_on activation threshold of the channel: when basis > a_thr, conductance starts to build up (channels open)
+  float		d_thr;		// #CONDSHOW_ON_on deactivation threshold of the channel: when basis < d_thr, conductance diminshes (channels close)
+  float		g_dt;		// #CONDSHOW_ON_on time constant for changing conductance (activating or deactivating) -- if = 1, then gc is equal to the basis if channel is on
+  bool		init;		// #CONDSHOW_ON_on initialize variables when state is intialized between trials (else with weights)
+  bool		trl;		// #CONDSHOW_ON_on update after every trial instead of every cycle -- time constants need to be much larger in general
 
   void	UpdateBasis(float& basis, bool& on_off, float& gc, float act) {
     float del = act - basis;
@@ -972,8 +972,8 @@ public:
   };
 
   bool		on;		// whether to actually modulate activations by da values
-  ModType	mod;		// #CONDEDIT_ON_on:true #DEF_PLUS_CONT how to apply DA modulation
-  float		gain;		// #CONDEDIT_ON_on:true #MIN_0 gain multiplier of da values
+  ModType	mod;		// #CONDSHOW_ON_on #DEF_PLUS_CONT how to apply DA modulation
+  float		gain;		// #CONDSHOW_ON_on #MIN_0 gain multiplier of da values
 
   TA_SIMPLE_BASEFUNS(DaModSpec);
 protected:
@@ -998,9 +998,9 @@ public:
   };
 
   bool		trial_fixed;	// keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
-  bool		k_pos_noise;	// #CONDEDIT_ON_trial_fixed a special kind of trial_fixed noise, where k units (according to computed kwta function) chosen at random (permuted list) are given a positive noise.var value of noise, while the remainder get nothing -- approximates a k-softmax in some respects
+  bool		k_pos_noise;	// #CONDSHOW_ON_trial_fixed a special kind of trial_fixed noise, where k units (according to computed kwta function) chosen at random (permuted list) are given a positive noise.var value of noise, while the remainder get nothing -- approximates a k-softmax in some respects
   AdaptMode 	mode;		// how to adapt noise variance over time
-  float		min_pct;	// #CONDEDIT_OFF_mode:FIXED_NOISE,SCHED_CYCLES,SCHED_EPOCHS #DEF_0.5 minimum noise as a percentage (proportion) of overall maximum noise value (which is noise.var in unit spec)
+  float		min_pct;	// #CONDSHOW_OFF_mode:FIXED_NOISE,SCHED_CYCLES,SCHED_EPOCHS #DEF_0.5 minimum noise as a percentage (proportion) of overall maximum noise value (which is noise.var in unit spec)
   float		min_pct_c;	// #READ_ONLY 1-min_pct
 
   TA_SIMPLE_BASEFUNS(NoiseAdaptSpec);
@@ -1054,9 +1054,9 @@ public:
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
   NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
-  RandomSpec	noise;		// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
-  NoiseAdaptSpec noise_adapt;	// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation how to adapt the noise variance (var) value
-  Schedule	noise_sched;	// #CONDEDIT_OFF_noise_type:NO_NOISE #CAT_Activation schedule of noise variance -- time scale depends on noise_adapt parameter (cycles, epochs, etc)
+  RandomSpec	noise;		// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
+  NoiseAdaptSpec noise_adapt;	// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation how to adapt the noise variance (var) value
+  Schedule	noise_sched;	// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation schedule of noise variance -- time scale depends on noise_adapt parameter (cycles, epochs, etc)
 
   FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
   FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
@@ -1686,10 +1686,10 @@ class LEABRA_API KwtaTieBreak : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// whether to perform the tie breaking function at all
-  float		k_thr; 		// #CONDEDIT_ON_on:true #DEF_1 threshold on inhibitory threshold (i_thr) for top kwta units before tie break is engaged: don't break ties for weakly activated layers
-  float		diff_thr;	// #CONDEDIT_ON_on:true #DEF_0.2 threshold for tie breaking mechanisms to be engaged, based on difference ratio between top k and rest: ithr_diff = (k_ithr - k1_ithr) / k_ithr.  ithr_diff value is stored in kwta field of layer or unit group, along with tie_brk_gain which is normalized value of ithr_diff relative to this threshold: (diff_thr - ithr_diff) / diff_thr -- this determines how strongly the tie breaking mechanisms are engaged
-  float		thr_gain;	// #CONDEDIT_ON_on:true #DEF_0.005:0.2 how much k1_ithr is reduced relative to k_ithr to fix the tie -- determines how strongly active the tied units are -- actual amount of reduction is a function tie_brk_gain (see diff_thr field for details), so it smoothly transitions to normal inhibitory dynamics as ithr_diff goes above diff_thr
-  float		loser_gain;	// #CONDEDIT_ON_on:true #DEF_1 how much extra inhibition to apply to units that are below the kwta cutoff ("losers") -- loser_gain is additive to a 1.0 gain baseline, so 0 means no additional gain, and any positive number increases the gain -- actual gain is a function tie_brk_gain (see diff_thr field for details), so it smoothly transitions to normal inhibitory dynamics as ithr_diff goes above diff_thr: eff_loser_gain = 1 + loser_gain * tie_brk_gain
+  float		k_thr; 		// #CONDSHOW_ON_on #DEF_1 threshold on inhibitory threshold (i_thr) for top kwta units before tie break is engaged: don't break ties for weakly activated layers
+  float		diff_thr;	// #CONDSHOW_ON_on #DEF_0.2 threshold for tie breaking mechanisms to be engaged, based on difference ratio between top k and rest: ithr_diff = (k_ithr - k1_ithr) / k_ithr.  ithr_diff value is stored in kwta field of layer or unit group, along with tie_brk_gain which is normalized value of ithr_diff relative to this threshold: (diff_thr - ithr_diff) / diff_thr -- this determines how strongly the tie breaking mechanisms are engaged
+  float		thr_gain;	// #CONDSHOW_ON_on #DEF_0.005:0.2 how much k1_ithr is reduced relative to k_ithr to fix the tie -- determines how strongly active the tied units are -- actual amount of reduction is a function tie_brk_gain (see diff_thr field for details), so it smoothly transitions to normal inhibitory dynamics as ithr_diff goes above diff_thr
+  float		loser_gain;	// #CONDSHOW_ON_on #DEF_1 how much extra inhibition to apply to units that are below the kwta cutoff ("losers") -- loser_gain is additive to a 1.0 gain baseline, so 0 means no additional gain, and any positive number increases the gain -- actual gain is a function tie_brk_gain (see diff_thr field for details), so it smoothly transitions to normal inhibitory dynamics as ithr_diff goes above diff_thr: eff_loser_gain = 1 + loser_gain * tie_brk_gain
 
   TA_SIMPLE_BASEFUNS(KwtaTieBreak);
 protected:
@@ -1699,6 +1699,31 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init();
 };
+
+
+class LEABRA_API InhibNetinMod : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra modulate inhibition as a function of the ratio of netinput of the top k units relative to a maximum netin parameter -- restores some gradedness to unit activations under kwta which otherwise tends to be normalized away
+INHERITED(SpecMemberBase)
+public:
+  bool		on;		// whether to perform netin modulation at all
+  float		mod_gain;	// #CONDSHOW_ON_on multiplier for how much modulation to apply -- multiplies ratio of max_top_k / cur_top_k 
+  float		max_top_k; 	// #CONDSHOW_ON_on #DEF_0.4 maximum top-k average netinput value to compare against
+  float		min_top_k;	// #CONDSHOW_ON_on #DEF_0.1 #MIN_0.01 minimum current top-k average netinput value to allow for computing the ratio -- max / min determines the maximum size of the modulation -- generally should be reasonably high to prevent huge modulation effects
+
+  float		ModFactor(float cur_top_k) {
+    cur_top_k = MAX(min_top_k, cur_top_k); cur_top_k = MIN(max_top_k, cur_top_k);
+    return 1.0f + mod_gain * ((max_top_k / cur_top_k) - 1.0f);
+  }
+
+  TA_SIMPLE_BASEFUNS(InhibNetinMod);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
 
 class LEABRA_API AdaptISpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies adaptive kwta specs (esp for avg-based)
@@ -1712,11 +1737,11 @@ public:
   };
 
   AdaptType	type;		// what to adapt, or none for nothing
-  float		tol;		// #CONDEDIT_OFF_type:NONE #DEF_0.02 tolerance around target avg act before changing parameter
-  float		p_dt;		// #CONDEDIT_OFF_type:NONE #DEF_0.1 #AKA_pt_dt time constant for changing the parameter (i_kwta_pt or g_bar.i)
-  float		mx_d;		// #CONDEDIT_OFF_type:NONE #DEF_0.9 maximum deviation (proportion) from initial parameter setting allowed
-  float		l;		// #CONDEDIT_ON_type:G_BAR_IL proportion of difference from target activation to allocate to the leak in G_BAR_IL mode
-  float		a_dt;		// #CONDEDIT_ON_type:KWTA_PT #DEF_0.005 time constant for integrating average average activation, which is basis for adapting i_kwta_pt
+  float		tol;		// #CONDSHOW_OFF_type:NONE #DEF_0.02 tolerance around target avg act before changing parameter
+  float		p_dt;		// #CONDSHOW_OFF_type:NONE #DEF_0.1 #AKA_pt_dt time constant for changing the parameter (i_kwta_pt or g_bar.i)
+  float		mx_d;		// #CONDSHOW_OFF_type:NONE #DEF_0.9 maximum deviation (proportion) from initial parameter setting allowed
+  float		l;		// #CONDSHOW_ON_type:G_BAR_IL proportion of difference from target activation to allocate to the leak in G_BAR_IL mode
+  float		a_dt;		// #CONDSHOW_ON_type:KWTA_PT #DEF_0.005 time constant for integrating average average activation, which is basis for adapting i_kwta_pt
 
   TA_SIMPLE_BASEFUNS(AdaptISpec);
 protected:
@@ -1732,7 +1757,7 @@ class LEABRA_API ClampSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		hard;		// #DEF_true whether to hard clamp inputs where activation is directly set to external input value (act = ext, computed once at start of settle) or do soft clamping where ext is added into net input (net += gain * ext)
-  float		gain;		// #CONDEDIT_OFF_hard:true #DEF_0.2;0.5 soft clamp gain factor (net += gain * ext)
+  float		gain;		// #CONDSHOW_OFF_hard:true #DEF_0.2;0.5 soft clamp gain factor (net += gain * ext)
 
   TA_SIMPLE_BASEFUNS(ClampSpec);
 protected:
@@ -1766,10 +1791,10 @@ class LEABRA_API CtLayerInhibMod : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		use_sin;	// if on, actually use layer-level sinusoidal values (burst_i, trough_i) -- else use network level
-  float		burst_i;	// #CONDEDIT_ON_use_sin [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
-  float		trough_i;	// #CONDEDIT_ON_use_sin [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
+  float		burst_i;	// #CONDSHOW_ON_use_sin [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
+  float		trough_i;	// #CONDSHOW_ON_use_sin [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
   bool		use_fin;	// if on, actually use layer-level final values (inhib_i) -- else use network level
-  float		inhib_i;	// #CONDEDIT_ON_use_fin [.05 when in use] maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
+  float		inhib_i;	// #CONDSHOW_ON_use_fin [.05 when in use] maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
 
   SIMPLE_COPY(CtLayerInhibMod);
   TA_BASEFUNS(CtLayerInhibMod);
@@ -1786,9 +1811,9 @@ class LEABRA_API LayAbsNetAdaptSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// whether to apply layer netinput rescaling
-  float		trg_net; 	// #CONDEDIT_ON_on:true #DEF_0.5 target maximum netinput value
-  float		tol;		// #CONDEDIT_ON_on:true #DEF_0.1 tolerance around target value -- if actual value is within this tolerance from target, then do not adapt
-  float		abs_lrate;	// #CONDEDIT_ON_on:true #DEF_0.2 learning rate for adapting the wt_scale.abs parameters for all projections into layer
+  float		trg_net; 	// #CONDSHOW_ON_on #DEF_0.5 target maximum netinput value
+  float		tol;		// #CONDSHOW_ON_on #DEF_0.1 tolerance around target value -- if actual value is within this tolerance from target, then do not adapt
+  float		abs_lrate;	// #CONDSHOW_ON_on #DEF_0.2 learning rate for adapting the wt_scale.abs parameters for all projections into layer
 
   TA_SIMPLE_BASEFUNS(LayAbsNetAdaptSpec);
 protected:
@@ -1814,6 +1839,7 @@ public:
   KWTASpec	kwta;		// #CONDEDIT_OFF_inhib_group:UNIT_GROUPS #CAT_Activation desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   KWTASpec	gp_kwta;	// #CONDEDIT_OFF_inhib_group:ENTIRE_LAYER #CAT_Activation desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
+  InhibNetinMod	i_netin_mod;	// #CAT_Activation modulate inhibition as a function of the ratio of netinput of the top k units relative to a maximum netin parameter -- restores some gradedness to unit activations under kwta which otherwise tends to be normalized away
   AdaptISpec	adapt_i;	// #CAT_Activation adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
@@ -2176,6 +2202,7 @@ public:
   float		g_i;		// overall value of the inhibition
   float		gp_g_i;		// g_i from the layer or unit group, if applicable
   float		g_i_orig; 	// original value of the inhibition (before any layer group effects set in)
+  float		i_netin_mod;	// additional multiplier on inhibition as a function of netinput -- more inhibition for lower netinputs
 
   void	Init() 	{ Initialize(); }
   void	Copy_(const InhibVals& cp);
@@ -2194,6 +2221,7 @@ public:
   LeabraSort 	inact_2k_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of 2k inactive units
 
   AvgMaxVals	netin;		// #READ_ONLY #EXPERT #CAT_Activation net input values for the layer
+  AvgMaxVals	netin_top_k;	// #READ_ONLY #EXPERT #CAT_Activation net input values for the top k units in the layer
   AvgMaxVals	i_thrs;		// #READ_ONLY #EXPERT #CAT_Activation inhibitory threshold values for the layer
   AvgMaxVals	acts;		// #READ_ONLY #EXPERT #CAT_Activation activation values for the layer
   AvgMaxVals	acts_p;		// #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
@@ -2469,7 +2497,7 @@ class LEABRA_API LeabraNetMisc : public taOBase {
 INHERITED(taOBase)
 public:
   bool		cyc_syn_dep;	// if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation)
-  int		syn_dep_int;	// [20] #CONDEDIT_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
+  int		syn_dep_int;	// [20] #CONDSHOW_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
 
   SIMPLE_COPY(LeabraNetMisc);
   TA_BASEFUNS(LeabraNetMisc);

@@ -2456,6 +2456,17 @@ void KwtaTieBreak::Defaults_init() {
   loser_gain = 1.0f;
 }
 
+void InhibNetinMod::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void InhibNetinMod::Defaults_init() {
+  mod_gain = 0.01f;
+  max_top_k = 0.4f;
+  min_top_k = 0.1f;
+}
+
 void AdaptISpec::Initialize() {
   type = NONE;
   Defaults_init();
@@ -3008,6 +3019,18 @@ void LeabraLayerSpec::Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr) {
     lf++;
   }
   thr->netin.CalcAvg(ug->leaves);  thr->i_thrs.CalcAvg(ug->leaves);
+
+  if(i_netin_mod.on) {
+    // also do netin_top_k
+    thr->netin_top_k.InitVals();
+    int k_eff = thr->kwta.k;	// keep cutoff at k
+    if(k_eff <= 0 || thr->active_buf.size != k_eff) return; // no can do
+
+    for(int j=0; j < k_eff; j++) {
+      thr->netin_top_k.UpdtVals(thr->active_buf[j]->net, j);
+    }
+    thr->netin_top_k.CalcAvg(k_eff);
+  }
 }
 
 void LeabraLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -3590,16 +3613,19 @@ void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay, Unit_Group* ug,
 {
   LeabraUnit* u;
   taLeafItr i;
+  float inhib_val = thr->i_val.g_i;
+  if(i_netin_mod.on) {
+    thr->i_val.i_netin_mod = i_netin_mod.ModFactor(thr->netin_top_k.avg);
+    inhib_val *= thr->i_val.i_netin_mod;
+  }
   if(thr->kwta.tie_brk == 1) {
     float inhib_thr = thr->kwta.k_ithr;
-    float inhib_top = thr->i_val.g_i;
     float inhib_loser = thr->kwta.eff_loser_gain * thr->i_val.g_i;
     FOR_ITR_EL(LeabraUnit, u, ug->, i) {
-      u->Compute_ApplyInhib_LoserGain(net, inhib_thr, inhib_top, inhib_loser);
+      u->Compute_ApplyInhib_LoserGain(net, inhib_thr, inhib_val, inhib_loser);
     }
   }
   else {
-    float inhib_val = thr->i_val.g_i;
     FOR_ITR_EL(LeabraUnit, u, ug->, i) {
       u->Compute_ApplyInhib(net, inhib_val);
     }
@@ -4449,6 +4475,7 @@ void InhibVals::Initialize() {
   g_i = 0.0f;
   gp_g_i = 0.0f;
   g_i_orig = 0.0f;
+  i_netin_mod = 0.0f;
 }
 
 void InhibVals::Copy_(const InhibVals& cp) {
@@ -4456,6 +4483,7 @@ void InhibVals::Copy_(const InhibVals& cp) {
   g_i = cp.g_i;
   gp_g_i = cp.gp_g_i;
   g_i_orig = cp.g_i_orig;
+  i_netin_mod = cp.i_netin_mod;
 }
 
 void LeabraInhib::Inhib_Initialize() {
