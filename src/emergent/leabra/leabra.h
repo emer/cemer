@@ -1668,9 +1668,9 @@ public:
   float		pct;		// #CONDSHOW_ON_k_from:USE_PCT desired proportion of activity (used to compute a k value based on layer size, .25 std)
   float		pat_q;		// #CONDSHOW_ON_k_from:USE_PAT_K #DEF_0.2;0.5 threshold for pat_k based activity level: add to k if ext > pat_q
   bool		diff_act_pct;	// #DEF_false if true, use different actual percent activity for overall layer activation
-  float		act_pct;	// #CONDSHOW_ON_diff_act_pct:true actual percent activity to put in kwta.pct field of layer
+  float		act_pct;	// #CONDSHOW_ON_diff_act_pct actual percent activity to put in kwta.pct field of layer
   bool		gp_i;		// compute inhibition including all of the layers in the same group, or unit groups within the layer: each items computed inhib vals are multipled by gp_g scaling, then MAX'd, and each item's inhib is the MAX of this pooled MAX value and its original own value
-  float		gp_g;		// #CONDSHOW_ON_gp_i:true how much this item (layer or unit group) contributes to the pooled layer group values
+  float		gp_g;		// #CONDSHOW_ON_gp_i how much this item (layer or unit group) contributes to the pooled layer group values
 
   TA_SIMPLE_BASEFUNS(KWTASpec);
 protected:
@@ -1702,17 +1702,18 @@ private:
 
 
 class LEABRA_API InhibNetinMod : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra modulate inhibition as a function of the ratio of netinput of the top k units relative to a maximum netin parameter -- restores some gradedness to unit activations under kwta which otherwise tends to be normalized away
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra modulate inhibition as a function of the netinput of the top k units relative to a maximum top k netin parameter, to restore some gradedness in unit activations under kwta which otherwise tends to be normalized away.  extra inhibition = max_mod * (x / (x+1)) where x = mod_gain * (max_top_k - cur_top_k) 
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// whether to perform netin modulation at all
-  float		mod_gain;	// #CONDSHOW_ON_on multiplier for how much modulation to apply -- multiplies ratio of max_top_k / cur_top_k 
+  float		max_mod;	// #CONDSHOW_ON_on #DEF_0.01:0.04 #MIN_0 maximum amount of extra inhibition modulation to apply -- asymptotically approaches this value as netin goes to zero
+  float		mod_gain;	// #CONDSHOW_ON_on #DEF_10:20 multiplier for how much modulation to apply -- multiplies ratio of max_top_k / cur_top_k 
   float		max_top_k; 	// #CONDSHOW_ON_on #DEF_0.4 maximum top-k average netinput value to compare against
-  float		min_top_k;	// #CONDSHOW_ON_on #DEF_0.1 #MIN_0.01 minimum current top-k average netinput value to allow for computing the ratio -- max / min determines the maximum size of the modulation -- generally should be reasonably high to prevent huge modulation effects
 
   float		ModFactor(float cur_top_k) {
-    cur_top_k = MAX(min_top_k, cur_top_k); cur_top_k = MIN(max_top_k, cur_top_k);
-    return 1.0f + mod_gain * ((max_top_k / cur_top_k) - 1.0f);
+    float xdif = max_top_k - cur_top_k; if(xdif < 0.0f) xdif = 0.0f;
+    xdif *= mod_gain;
+    return 1.0f + max_mod * (xdif / (xdif + 1.0f));
   }
 
   TA_SIMPLE_BASEFUNS(InhibNetinMod);
@@ -1757,7 +1758,10 @@ class LEABRA_API ClampSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		hard;		// #DEF_true whether to hard clamp inputs where activation is directly set to external input value (act = ext, computed once at start of settle) or do soft clamping where ext is added into net input (net += gain * ext)
-  float		gain;		// #CONDSHOW_OFF_hard:true #DEF_0.2;0.5 soft clamp gain factor (net += gain * ext)
+  float		gain;		// #CONDSHOW_OFF_hard #DEF_0.2;0.5 soft clamp gain factor (net += gain * ext)
+  bool		max_plus;	// #CONDSHOW_ON_hard when hard clamping target activation values, the clamped activations are set to the maximum activation in the minus phase plus some fixed offset
+  float		plus;		// #CONDSHOW_ON_hard&&max_plus #DEF_0.05 the amount to add to max minus phase activation in clamping the plus phase
+  float		min_clamp;	// #CONDSHOW_ON_hard&&max_plus #DEF_0.5 the minimum clamp value allowed in the max_plus clamping system
 
   TA_SIMPLE_BASEFUNS(ClampSpec);
 protected:
@@ -1839,7 +1843,7 @@ public:
   KWTASpec	kwta;		// #CONDEDIT_OFF_inhib_group:UNIT_GROUPS #CAT_Activation desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   KWTASpec	gp_kwta;	// #CONDEDIT_OFF_inhib_group:ENTIRE_LAYER #CAT_Activation desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
-  InhibNetinMod	i_netin_mod;	// #CAT_Activation modulate inhibition as a function of the ratio of netinput of the top k units relative to a maximum netin parameter -- restores some gradedness to unit activations under kwta which otherwise tends to be normalized away
+  InhibNetinMod	i_netin_mod;	// #CAT_Activation modulate inhibition as a function of the netinput of the top k units relative to a maximum top k netin parameter, to restore some gradedness in unit activations under kwta which otherwise tends to be normalized away.  extra inhibition = max_mod * (x / (x+1)) where x = mod_gain * (max_top_k - cur_top_k) 
   AdaptISpec	adapt_i;	// #CAT_Activation adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
@@ -2132,6 +2136,9 @@ public:
   // #CAT_Structure find a layer that given layer receives from based on the type of layer spec: uses exact type match, not inherits!
   static  LeabraLayer* FindLayerFmSpecNet(Network* net, TypeDef* layer_spec);
   // #CAT_Structure find a layer in network based on the type of layer spec
+
+  virtual void	GraphINetinModFun(DataTable* graph_data, float incr = .01f);
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the inhibitory netin modulation function (i_netin_mod field) (NULL = new graph data)
 
   virtual void	HelpConfig();	// #BUTTON #CAT_Structure get help message for configuring this spec
   override bool CheckConfig_Layer(Layer* lay, bool quiet=false);

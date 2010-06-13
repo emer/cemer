@@ -2462,9 +2462,9 @@ void InhibNetinMod::Initialize() {
 }
 
 void InhibNetinMod::Defaults_init() {
-  mod_gain = 0.01f;
+  max_mod = 0.01f;
+  mod_gain = 10.0f;
   max_top_k = 0.4f;
-  min_top_k = 0.1f;
 }
 
 void AdaptISpec::Initialize() {
@@ -2483,6 +2483,9 @@ void AdaptISpec::Defaults_init() {
 void ClampSpec::Initialize() {
   hard = true;
   gain = .2f;
+  max_plus = false;
+  plus = 0.05f;
+  min_clamp = 0.5f;
 }
 
 void ClampSpec::Defaults_init() {
@@ -2975,6 +2978,19 @@ void LeabraLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   }
   lay->hard_clamped = true;	// cache this flag
   lay->Inhib_SetVals(inhib.kwta_pt);		// assume 0 - 1 clamped inputs
+
+  if(clamp.max_plus && net->phase == LeabraNetwork::PLUS_PHASE && net->phase_no > 0 &&
+     lay->HasExtFlag(Unit::TARG)) {
+    float min_max = lay->acts_m.max;
+    float clmp = min_max + clamp.plus;
+    clmp = MAX(clmp, clamp.min_clamp);
+    
+    LeabraUnit* u;
+    taLeafItr i;
+    FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+      u->ext *= clmp;		// modify!
+    }
+  }
 
   LeabraUnit* u;
   taLeafItr i;
@@ -4397,6 +4413,27 @@ void LeabraLayer::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(!spec->CheckConfig_Layer(this, quiet)) {
     rval = false;
   }
+}
+
+void LeabraLayerSpec::GraphINetinModFun(DataTable* graph_data, float incr) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_INetinModFun", true);
+  }
+  int idx;
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  DataCol* nt = graph_data->FindMakeColName("top_k_netin", idx, VT_FLOAT);
+  DataCol* ei = graph_data->FindMakeColName("extra_inhib", idx, VT_FLOAT);
+
+  for(float x = 0.0f; x <= i_netin_mod.max_top_k; x += incr) {
+    float imod = i_netin_mod.ModFactor(x);
+    graph_data->AddBlankRow();
+    nt->SetValAsFloat(x, -1);
+    ei->SetValAsFloat(imod - 1.0f, -1);
+  }
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
 }
 
 //////////////////////////
