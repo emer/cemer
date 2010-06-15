@@ -2462,7 +2462,7 @@ void InhibNetinMod::Initialize() {
 }
 
 void InhibNetinMod::Defaults_init() {
-  max_mod = 0.01f;
+  max_mod = 0.02f;
   mod_gain = 10.0f;
   max_top_k = 0.4f;
 }
@@ -2482,9 +2482,9 @@ void AdaptISpec::Defaults_init() {
 
 void ClampSpec::Initialize() {
   hard = true;
-  gain = .2f;
+  gain = 0.2f;
   max_plus = false;
-  plus = 0.05f;
+  plus = 0.01f;
   min_clamp = 0.5f;
 }
 

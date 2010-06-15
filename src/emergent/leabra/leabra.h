@@ -1758,9 +1758,9 @@ class LEABRA_API ClampSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		hard;		// #DEF_true whether to hard clamp inputs where activation is directly set to external input value (act = ext, computed once at start of settle) or do soft clamping where ext is added into net input (net += gain * ext)
-  float		gain;		// #CONDSHOW_OFF_hard #DEF_0.2;0.5 soft clamp gain factor (net += gain * ext)
+  float		gain;		// #CONDSHOW_OFF_hard #DEF_0.02:0.5 soft clamp gain factor (net += gain * ext)
   bool		max_plus;	// #CONDSHOW_ON_hard when hard clamping target activation values, the clamped activations are set to the maximum activation in the minus phase plus some fixed offset
-  float		plus;		// #CONDSHOW_ON_hard&&max_plus #DEF_0.05 the amount to add to max minus phase activation in clamping the plus phase
+  float		plus;		// #CONDSHOW_ON_hard&&max_plus #DEF_0:0.05 the amount to add to max minus phase activation in clamping the plus phase
   float		min_clamp;	// #CONDSHOW_ON_hard&&max_plus #DEF_0.5 the minimum clamp value allowed in the max_plus clamping system
 
   TA_SIMPLE_BASEFUNS(ClampSpec);
