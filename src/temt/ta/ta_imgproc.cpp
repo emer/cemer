@@ -2072,9 +2072,6 @@ void DoGRegionSpec::Initialize() {
   dog_feat_geom.n = 6;
   dog_img_geom = 320;
   
-  dog_circ_r.matrix = &dog_out_r;
-  dog_circ_l.matrix = &dog_out_l;
-
   cur_img_r = NULL;
   cur_img_l = NULL;
   cur_img = NULL;
@@ -2144,6 +2141,9 @@ bool DoGRegionSpec::InitFilters() {
 }
 
 bool DoGRegionSpec::InitOutMatrix() {
+  dog_circ_r.matrix = &dog_out_r;
+  dog_circ_l.matrix = &dog_out_l;
+
   if(motion_frames == 0) {
     dog_out_r.SetGeom(4, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
     if(ocularity == BINOCULAR)
@@ -2670,9 +2670,6 @@ void V1RegionSpec::Initialize() {
   v1c_save = SAVE_DATA;
   v1c_feat_geom.SetXYN(4, 2, 8);
 
-  v1s_circ_r.matrix = &v1s_out_r;
-  v1s_circ_l.matrix = &v1s_out_l;
-
   cur_dog = NULL;
   cur_dog_circ = NULL;
   mot_feat_y = 0;
@@ -2954,6 +2951,9 @@ bool V1RegionSpec::InitFilters_V1Complex() {
 
 bool V1RegionSpec::InitOutMatrix() {
   inherited::InitOutMatrix();
+
+  v1s_circ_r.matrix = &v1s_out_r;
+  v1s_circ_l.matrix = &v1s_out_l;
 
   if(motion_frames == 0) {
     v1s_out_r.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
@@ -3707,7 +3707,7 @@ void V1RegionSpec::GridFilterInput(DataTable* graph_data, int unit_no, int gp_sk
 // 		Full Retinal Spec
 
 void RetinaProc::Initialize() {
-  edge_mode = taImageProc::BORDER;
+  edge_mode = taImageProc::WRAP;
   fade_width = -1;
 }
 
