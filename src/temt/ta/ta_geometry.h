@@ -215,7 +215,19 @@ public:
 
   void operator=(const TwoDCoord& cp);
 
-  override bool	FitN(int n);
+  inline void 	SetXYN(int xx, int yy, int nn)
+  { x = xx; y = yy; n = nn; UpdateFlag(); }
+  // set x, y, and n in one step
+
+  inline void	UpdateFlag() 	{ n_not_xy = (x*y != n); }
+  // update the n_not_xy flag from the current x,y,n values
+  inline void	UpdateXYfmN() 	{ FitN(n); }
+  // update x,y from existing n, including updating the n_not_xy flag
+  inline void	UpdateNfmXY() 	{ n = x * y; UpdateFlag(); }
+  // update x,y from N
+
+  override bool	FitN(int no)
+  { bool rval = inherited::FitN(no); n = no; UpdateFlag(); return rval; }
 
   TA_BASEFUNS_LITE(XYNGeom);
 protected:

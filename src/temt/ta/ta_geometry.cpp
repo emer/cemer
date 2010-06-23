@@ -118,16 +118,8 @@ void XYNGeom::UpdateAfterEdit_impl() {
   }
 }
 
-bool XYNGeom::FitN(int no) {
-  bool rval = inherited::FitN(no);
-  n = no;
-  if(x * y == n) n_not_xy = false;
-  else n_not_xy = true;
-  return rval;
-}
-
 void XYNGeom::operator=(const TwoDCoord& cp) {
-  x = cp.x; y = cp.y; UpdateAfterEdit();
+  x = cp.x; y = cp.y; UpdateAfterEdit_NoGui();
 }
 
 TDCoord::TDCoord(const FloatTDCoord& cp) {

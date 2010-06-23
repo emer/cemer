@@ -3382,212 +3382,212 @@ float FourDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 ////////////////////////////////////////////////////////////
 //	V1RFPrjnSpec
 
-void V1RFPrjnSpec::Initialize() {
-  init_wts = true;
-  wrap = false;
-  dog_surr_mult = 1.0f;
-}
+// void V1RFPrjnSpec::Initialize() {
+//   init_wts = true;
+//   wrap = false;
+//   dog_surr_mult = 1.0f;
+// }
 
-void V1RFPrjnSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  rf_spec.name = name + "_rf_spec";
-}
+// void V1RFPrjnSpec::UpdateAfterEdit_impl() {
+//   inherited::UpdateAfterEdit_impl();
+//   rf_spec.name = name + "_rf_spec";
+// }
 
-void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
-  if(!(bool)prjn->from)	return;
-  if(prjn->layer->units.leaves == 0) // an empty layer!
-    return;
-  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
-		 "requires recv layer to have unit groups!")) {
-    return;
-  }
+// void V1RFPrjnSpec::Connect_impl(Projection* prjn) {
+//   if(!(bool)prjn->from)	return;
+//   if(prjn->layer->units.leaves == 0) // an empty layer!
+//     return;
+//   if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+// 		 "requires recv layer to have unit groups!")) {
+//     return;
+//   }
 
-  rf_spec.InitFilters();	// this one call initializes all filter info once and for all!
-  // renorm the dog net filter to 1 abs max!
-  if(rf_spec.filter_type == GaborV1Spec::BLOB) {
-    for(int i=0;i<rf_spec.blob_specs.size;i++) {
-      DoGFilterSpec* df = (DoGFilterSpec*)rf_spec.blob_specs.FastEl(i);
-      taMath_float::vec_norm_abs_max(&(df->net_filter));
-    }
-  }
-  TestWarning(rf_spec.n_filters != prjn->layer->un_geom.n,
-	      "number of filters from rf_spec:", (String)rf_spec.n_filters,
-	      "does not match layer un_geom.n:", (String)prjn->layer->un_geom.n);
+//   rf_spec.InitFilters();	// this one call initializes all filter info once and for all!
+//   // renorm the dog net filter to 1 abs max!
+//   if(rf_spec.filter_type == GaborV1Spec::BLOB) {
+//     for(int i=0;i<rf_spec.blob_specs.size;i++) {
+//       DoGFilter* df = (DoGFilter*)rf_spec.blob_specs.FastEl(i);
+//       taMath_float::vec_norm_abs_max(&(df->net_filter));
+//     }
+//   }
+//   TestWarning(rf_spec.n_filters != prjn->layer->un_geom.n,
+// 	      "number of filters from rf_spec:", (String)rf_spec.n_filters,
+// 	      "does not match layer un_geom.n:", (String)prjn->layer->un_geom.n);
 
-  TwoDCoord rf_width = rf_spec.rf_width;
-  int n_cons = rf_width.Product();
-  TwoDCoord rf_half_wd = rf_width / 2;
-  TwoDCoord ru_geo = prjn->layer->gp_geom;
+//   TwoDCoord rf_width = rf_spec.rf_width;
+//   int n_cons = rf_width.Product();
+//   TwoDCoord rf_half_wd = rf_width / 2;
+//   TwoDCoord ru_geo = prjn->layer->gp_geom;
 
-  TwoDCoord su_geo = prjn->from->un_geom;
+//   TwoDCoord su_geo = prjn->from->un_geom;
 
-  TwoDCoord ruc;
-  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
-    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
+//   TwoDCoord ruc;
+//   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+//     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+//       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
 
-	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
-	if(ru_gp == NULL) continue;
+// 	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+// 	if(ru_gp == NULL) continue;
 
-	TwoDCoord su_st;
-	if(wrap) {
-	  su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
-	  su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
-	}
-	else {
-	  su_st.x = (int)floor((float)ruc.x * rf_move.x);
-	  su_st.y = (int)floor((float)ruc.y * rf_move.y);
-	}
+// 	TwoDCoord su_st;
+// 	if(wrap) {
+// 	  su_st.x = (int)floor((float)ruc.x * rf_move.x) - rf_half_wd.x;
+// 	  su_st.y = (int)floor((float)ruc.y * rf_move.y) - rf_half_wd.y;
+// 	}
+// 	else {
+// 	  su_st.x = (int)floor((float)ruc.x * rf_move.x);
+// 	  su_st.y = (int)floor((float)ruc.y * rf_move.y);
+// 	}
 
-	su_st.WrapClip(wrap, su_geo);
-	TwoDCoord su_ed = su_st + rf_width;
-	if(wrap) {
-	  su_ed.WrapClip(wrap, su_geo); // just wrap ends too
-	}
-	else {
-	  if(su_ed.x > su_geo.x) {
-	    su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
-	  }
-	  if(su_ed.y > su_geo.y) {
-	    su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
-	  }
-	}
+// 	su_st.WrapClip(wrap, su_geo);
+// 	TwoDCoord su_ed = su_st + rf_width;
+// 	if(wrap) {
+// 	  su_ed.WrapClip(wrap, su_geo); // just wrap ends too
+// 	}
+// 	else {
+// 	  if(su_ed.x > su_geo.x) {
+// 	    su_ed.x = su_geo.x; su_st.x = su_ed.x - rf_width.x;
+// 	  }
+// 	  if(su_ed.y > su_geo.y) {
+// 	    su_ed.y = su_geo.y; su_st.y = su_ed.y - rf_width.y;
+// 	  }
+// 	}
 
-	for(int rui=0;rui<ru_gp->size;rui++) {
-	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	  if(!alloc_loop)
-	    ru_u->RecvConsPreAlloc(n_cons, prjn);
+// 	for(int rui=0;rui<ru_gp->size;rui++) {
+// 	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+// 	  if(!alloc_loop)
+// 	    ru_u->RecvConsPreAlloc(n_cons, prjn);
 
-	  TwoDCoord suc;
-	  TwoDCoord suc_wrp;
-	  for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
-	    for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
-	      suc_wrp = su_st + suc;
-	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-		continue;
-	      Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
-	      if(su_u == NULL) continue;
-	      if(!self_con && (su_u == ru_u)) continue;
-	      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
-	    }
-	  }
-	}
-      }
-    }
-    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
-    }
-  }
-}
+// 	  TwoDCoord suc;
+// 	  TwoDCoord suc_wrp;
+// 	  for(suc.y = 0; suc.y < rf_width.y; suc.y++) {
+// 	    for(suc.x = 0; suc.x < rf_width.x; suc.x++) {
+// 	      suc_wrp = su_st + suc;
+// 	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+// 		continue;
+// 	      Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+// 	      if(su_u == NULL) continue;
+// 	      if(!self_con && (su_u == ru_u)) continue;
+// 	      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
+// 	    }
+// 	  }
+// 	}
+//       }
+//     }
+//     if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+//       prjn->from->SendConsPostAlloc(prjn);
+//     }
+//   }
+// }
 
-void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
-  int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
+// void V1RFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+//   Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
+//   int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
   
-  bool on_rf = true;
-  if(prjn->from->name.contains("_off"))
-    on_rf = false;
-  DoGFilterSpec::ColorChannel col_chan = DoGFilterSpec::BLACK_WHITE;
-  if(prjn->from->name.contains("_rg_"))
-    col_chan = DoGFilterSpec::RED_GREEN;
-  else if(prjn->from->name.contains("_by_"))
-    col_chan = DoGFilterSpec::BLUE_YELLOW;
+//   bool on_rf = true;
+//   if(prjn->from->name.contains("_off"))
+//     on_rf = false;
+//   DoGFilter::ColorChannel col_chan = DoGFilter::BLACK_WHITE;
+//   if(prjn->from->name.contains("_rg_"))
+//     col_chan = DoGFilter::RED_GREEN;
+//   else if(prjn->from->name.contains("_by_"))
+//     col_chan = DoGFilter::BLUE_YELLOW;
 
-  int send_x = rf_spec.rf_width.x;
-  if(rf_spec.filter_type == GaborV1Spec::BLOB) {
-    // color is outer-most dimension, and if it doesn't match, then bail
-    int clr_dx = (recv_idx / (rf_spec.blob_rf.n_sizes * 2) % 2);
-    DoGFilterSpec* df = (DoGFilterSpec*)rf_spec.blob_specs.SafeEl(recv_idx);
-    if(!df) return;		// oops
-    if(col_chan != DoGFilterSpec::BLACK_WHITE) {
-      // outer-most mod is color, after phases (2) and sizes (inner)
-      if((clr_dx == 0 && col_chan == DoGFilterSpec::BLUE_YELLOW) ||
-	 (clr_dx == 1 && col_chan == DoGFilterSpec::RED_GREEN)) {
-	for(int i=0; i<cg->size; i++)
-	  cg->Cn(i)->wt = 0.0f;
-	return;			// bail if not our channel.
-      }
-    }
-    for(int i=0; i<cg->size; i++) {
-      int su_x = i % send_x;
-      int su_y = i / send_x;
-      float val = rf_spec.gabor_rf.amp * df->net_filter.SafeEl(su_x, su_y);
-      if(on_rf) {
-	if(df->on_sigma > df->off_sigma) val *= dog_surr_mult;
-	if(val > 0.0f) cg->Cn(i)->wt = val;
-	else	       cg->Cn(i)->wt = 0.0f;
-      }
-      else {
-	if(df->off_sigma > df->on_sigma) val *= dog_surr_mult;
-	if(val < 0.0f) 	cg->Cn(i)->wt = -val;
-	else		cg->Cn(i)->wt = 0.0f;
-      }
-    }
-  }
-  else {			// GABOR
-    GaborFilterSpec* gf = (GaborFilterSpec*)rf_spec.gabor_specs.SafeEl(recv_idx);
-    if(!gf) return;		// oops
-    for(int i=0; i<cg->size; i++) {
-      int su_x = i % send_x;
-      int su_y = i / send_x;
-      float val = gf->filter.SafeEl(su_x, su_y);
-      if(on_rf) {
-	if(val > 0.0f) cg->Cn(i)->wt = val;
-	else	       cg->Cn(i)->wt = 0.0f;
-      }
-      else {
-	if(val < 0.0f) 	cg->Cn(i)->wt = -val;
-	else		cg->Cn(i)->wt = 0.0f;
-      }
-    }
-  }
-}
+//   int send_x = rf_spec.rf_width.x;
+//   if(rf_spec.filter_type == GaborV1Spec::BLOB) {
+//     // color is outer-most dimension, and if it doesn't match, then bail
+//     int clr_dx = (recv_idx / (rf_spec.blob_rf.n_sizes * 2) % 2);
+//     DoGFilter* df = (DoGFilter*)rf_spec.blob_specs.SafeEl(recv_idx);
+//     if(!df) return;		// oops
+//     if(col_chan != DoGFilter::BLACK_WHITE) {
+//       // outer-most mod is color, after phases (2) and sizes (inner)
+//       if((clr_dx == 0 && col_chan == DoGFilter::BLUE_YELLOW) ||
+// 	 (clr_dx == 1 && col_chan == DoGFilter::RED_GREEN)) {
+// 	for(int i=0; i<cg->size; i++)
+// 	  cg->Cn(i)->wt = 0.0f;
+// 	return;			// bail if not our channel.
+//       }
+//     }
+//     for(int i=0; i<cg->size; i++) {
+//       int su_x = i % send_x;
+//       int su_y = i / send_x;
+//       float val = rf_spec.gabor_rf.amp * df->net_filter.SafeEl(su_x, su_y);
+//       if(on_rf) {
+// 	if(df->on_sigma > df->off_sigma) val *= dog_surr_mult;
+// 	if(val > 0.0f) cg->Cn(i)->wt = val;
+// 	else	       cg->Cn(i)->wt = 0.0f;
+//       }
+//       else {
+// 	if(df->off_sigma > df->on_sigma) val *= dog_surr_mult;
+// 	if(val < 0.0f) 	cg->Cn(i)->wt = -val;
+// 	else		cg->Cn(i)->wt = 0.0f;
+//       }
+//     }
+//   }
+//   else {			// GABOR
+//     GaborFilterSpec* gf = (GaborFilterSpec*)rf_spec.gabor_specs.SafeEl(recv_idx);
+//     if(!gf) return;		// oops
+//     for(int i=0; i<cg->size; i++) {
+//       int su_x = i % send_x;
+//       int su_y = i / send_x;
+//       float val = gf->filter.SafeEl(su_x, su_y);
+//       if(on_rf) {
+// 	if(val > 0.0f) cg->Cn(i)->wt = val;
+// 	else	       cg->Cn(i)->wt = 0.0f;
+//       }
+//       else {
+// 	if(val < 0.0f) 	cg->Cn(i)->wt = -val;
+// 	else		cg->Cn(i)->wt = 0.0f;
+//       }
+//     }
+//   }
+// }
 
-bool V1RFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
-  trg_send_geom.x = send_x;
-  trg_send_geom.y = send_y;
+// bool V1RFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
+//   trg_send_geom.x = send_x;
+//   trg_send_geom.y = send_y;
 
-  if(wrap)
-    trg_recv_geom = (trg_send_geom / rf_move);
-  else
-    trg_recv_geom = (trg_send_geom / rf_move) - 1;
+//   if(wrap)
+//     trg_recv_geom = (trg_send_geom / rf_move);
+//   else
+//     trg_recv_geom = (trg_send_geom / rf_move) - 1;
 
-  // now fix it the other way
-  if(wrap)
-    trg_send_geom = (trg_recv_geom * rf_move);
-  else
-    trg_send_geom = ((trg_recv_geom +1) * rf_move);
+//   // now fix it the other way
+//   if(wrap)
+//     trg_send_geom = (trg_recv_geom * rf_move);
+//   else
+//     trg_send_geom = ((trg_recv_geom +1) * rf_move);
 
-  DataChanged(DCR_ITEM_UPDATED);
-  return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
-}
+//   DataChanged(DCR_ITEM_UPDATED);
+//   return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
+// }
 
-bool V1RFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
-  trg_recv_geom.x = recv_x;
-  trg_recv_geom.y = recv_y;
+// bool V1RFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
+//   trg_recv_geom.x = recv_x;
+//   trg_recv_geom.y = recv_y;
 
-  if(wrap)
-    trg_send_geom = (trg_recv_geom * rf_move);
-  else
-    trg_send_geom = ((trg_recv_geom+1) * rf_move);
+//   if(wrap)
+//     trg_send_geom = (trg_recv_geom * rf_move);
+//   else
+//     trg_send_geom = ((trg_recv_geom+1) * rf_move);
 
-  // now fix it the other way
-  if(wrap)
-    trg_recv_geom = (trg_send_geom / rf_move);
-  else
-    trg_recv_geom = (trg_send_geom / rf_move) - 1;
+//   // now fix it the other way
+//   if(wrap)
+//     trg_recv_geom = (trg_send_geom / rf_move);
+//   else
+//     trg_recv_geom = (trg_send_geom / rf_move) - 1;
 
-  DataChanged(DCR_ITEM_UPDATED);
-  return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
-}
+//   DataChanged(DCR_ITEM_UPDATED);
+//   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
+// }
 
-void V1RFPrjnSpec::GraphFilter(DataTable* graph_data, int recv_unit_no) {
-  rf_spec.GraphFilter(graph_data, recv_unit_no);
-}
+// void V1RFPrjnSpec::GraphFilter(DataTable* graph_data, int recv_unit_no) {
+//   rf_spec.GraphFilter(graph_data, recv_unit_no);
+// }
 
-void V1RFPrjnSpec::GridFilter(DataTable* graph_data) {
-  rf_spec.GridFilter(graph_data);
-}
+// void V1RFPrjnSpec::GridFilter(DataTable* graph_data) {
+//   rf_spec.GridFilter(graph_data);
+// }
 
 ////////////////////////////////////////////////////////////
 //	SaliencyPrjnSpec
@@ -3598,7 +3598,6 @@ void SaliencyPrjnSpec::Initialize() {
   reciprocal = false;
   feat_only = true;
   feat_gps = 2;
-  dog_wts.color_chan = DoGFilterSpec::BLACK_WHITE;
   dog_wts.filter_width = 3;
   dog_wts.filter_size = 7;
   dog_wts.on_sigma = 1;

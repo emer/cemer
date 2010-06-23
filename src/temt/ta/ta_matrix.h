@@ -1251,7 +1251,7 @@ class TA_API CircMatrix : public taNBase {
   // ##TOKENS #CAT_Data Circular buffer logic on top of a matrix -- efficient way to store a fixed window of state information without actually shifting memory around -- use CircAdd to initially populate and CircShiftLeft to make room for new items -- the *LAST* dimension is the circular one (i.e., the "frame" dimension)
 INHERITED(taNBase)
 public:
-  taMatrixRef	matrix;		// the matrix to control using circ buffer logic -- must be set -- routines to not ensure validity of this pointer!
+  taMatrixRef	matrix;		// the matrix to control using circ buffer logic -- must be set -- routines do not ensure validity of this pointer!
   int		st_idx;		// #READ_ONLY index in matrix frame where the list starts (i.e., the position of the logical 0 index) -- updated by functions and should not be set manually
   int		length;		// #READ_ONLY logical length of the list -- is controlled by adding and shifting, and should NOT be set manually
 
@@ -1261,6 +1261,10 @@ public:
   int	CircIdx(int cidx) const
   { int rval = cidx+st_idx; if(rval >= matrix->frames()) rval -= matrix->frames(); return rval; }
   // #CAT_CircAccess gets physical index from logical circular index
+
+  int	CircIdx_Last() const
+  { return CircIdx(length-1); }
+  // #CAT_CircAccess gets physical index from logical circular index for the last item on the list (most recently added)
 
   /////////////////////////////////////////////////////////
   //	Special Modify Routines

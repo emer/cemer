@@ -2062,40 +2062,42 @@ private:
 // 	V1RF Prjn Spec
 //////////////////////////////////////
 
-class LEABRA_API V1RFPrjnSpec : public ProjectionSpec {
-  // V1 receptive field projection spec: does overlapping tiled receptive fields with Gabor and Blob filter weights - rf_spec.rf_width specifies the width of the receptive field, and rf_move specifies how much to move in input coordinates per each recv group
-INHERITED(ProjectionSpec)
-public:
-  GaborV1SpecBase rf_spec;	// #SHOW_TREE receptive field specs
-  FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving layer group
-  bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
-  float		dog_surr_mult;	// multiplier on surround weight values for DoG -- can be used to turn off surround entirely or to amplify it
+// this is invalidated by rewrite
 
-  TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
-  TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+// class LEABRA_API V1RFPrjnSpec : public ProjectionSpec {
+//   // V1 receptive field projection spec: does overlapping tiled receptive fields with Gabor and Blob filter weights - rf_spec.rf_width specifies the width of the receptive field, and rf_move specifies how much to move in input coordinates per each recv group
+// INHERITED(ProjectionSpec)
+// public:
+//   GaborV1SpecBase rf_spec;	// #SHOW_TREE receptive field specs
+//   FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving layer group
+//   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
+//   float		dog_surr_mult;	// multiplier on surround weight values for DoG -- can be used to turn off surround entirely or to amplify it
+
+//   TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+//   TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
  
-  void 		Connect_impl(Projection* prjn);
-  void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+//   void 		Connect_impl(Projection* prjn);
+//   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
 
-  virtual bool	TrgRecvFmSend(int send_x, int send_y);
-  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
-  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
-  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
+//   virtual bool	TrgRecvFmSend(int send_x, int send_y);
+//   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
+//   virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+//   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
 
-  virtual void	GraphFilter(DataTable* disp_data, int recv_unit_no);
-  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph of a given unit number's gabor / blob filter
-  virtual void	GridFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view of all the gabor or blob filters
+//   virtual void	GraphFilter(DataTable* disp_data, int recv_unit_no);
+//   // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a graph of a given unit number's gabor / blob filter
+//   virtual void	GridFilter(DataTable* disp_data);
+//   // #BUTTON #NULL_OK plot the filter gaussian into data table and generate a grid view of all the gabor or blob filters
 
-  TA_SIMPLE_BASEFUNS(V1RFPrjnSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
-};
+//   TA_SIMPLE_BASEFUNS(V1RFPrjnSpec);
+// protected:
+//   SPEC_DEFAULTS;
+//   void	UpdateAfterEdit_impl();
+// private:
+//   void	Initialize();
+//   void 	Destroy()		{ };
+//   void	Defaults_init() 	{ };
+// };
 
 class LEABRA_API SaliencyPrjnSpec : public ProjectionSpec {
   // Saliency projection spec from V1 layer: receiving layer must have a unit group for each feature, with each unit group having the V1 unit group geometry -- gets excitatory connection from feature corresponding to group index, and from all-but that feature in surrounding sending areas, producing a contrast enhancement effect.  Competition within group and across whole layer produces pop-out dynamics
@@ -2105,7 +2107,7 @@ public:
   bool		reciprocal;	// opposite direction connection: feedback to the features 
   bool		feat_only;	// only get excitatory input from feature only -- no DoG or anything else -- just pure feature aggregation (for use with kwta-based popout dynamics)
   int		feat_gps;	// number of feature groups contained within V1 unit group -- surround connections are only for within-group connections
-  DoGFilterSpec	dog_wts;	// #CONDEDIT_OFF_feat_only Difference of Gaussians filter for setting the weights -- determines the width of the projection, etc -- where the net filter values are positive, receives excitation from the target feature, else from all-but the target feature
+  DoGFilter	dog_wts;	// #CONDEDIT_OFF_feat_only Difference of Gaussians filter for setting the weights -- determines the width of the projection, etc -- where the net filter values are positive, receives excitation from the target feature, else from all-but the target feature
   float		wt_mult;	// #CONDEDIT_OFF_feat_only multiplier on weight values coming from the dog_wts 
   float		surr_mult;	// #CONDEDIT_OFF_feat_only multiplier on surround weight values -- DoG has very weak surround in general so it can be useful to increase that
 

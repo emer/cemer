@@ -723,8 +723,7 @@ void ImgProcCallThreadMgr::Run(ThreadImgProcCall* img_proc_call, int n_cmp_un) {
 ///////////////////////////////////////////
 //	DoG Filter
 
-void DoGFilterSpec::Initialize() {
-  color_chan = BLACK_WHITE;
+void DoGFilter::Initialize() {
   filter_width = 8;
   filter_size = filter_width * 2 + 1;
   on_sigma = 2.0f;
@@ -735,30 +734,41 @@ void DoGFilterSpec::Initialize() {
   net_filter.SetGeom(2, filter_size, filter_size);
 }
 
-void DoGFilterSpec::UpdateAfterEdit_impl() {
+void DoGFilter::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   filter_size = filter_width * 2 + 1;
   UpdateFilter();
 }
 
-float DoGFilterSpec::FilterPoint(int x, int y, float r_val, float g_val, float b_val) {
-  if(color_chan == BLACK_WHITE) {
-    float grey = r_val + g_val + b_val;
-    return grey * net_filter.FastEl(x+filter_width, y+filter_width);
+float DoGFilter::FilterPoint_rgb(int x, int y, ColorChannel color,
+				 float r_val, float g_val, float b_val) {
+  float flt = net_filter.FastEl(x+filter_width, y+filter_width);
+  switch(color) {
+  case LUMINANCE: {
+    float grey = 0.33333f * (r_val + g_val + b_val);
+    return grey * flt;
   }
-  else if(color_chan == RED_GREEN) {
-    return (on_filter.FastEl(x+filter_width, y+filter_width) * r_val - 
-	    off_filter.FastEl(x+filter_width, y+filter_width) * g_val);
+  case RED_CYAN: {
+    float r_v_c = r_val - 0.5f * (g_val + b_val);
+    return r_v_c * flt;
   }
-  else if(color_chan == BLUE_YELLOW) {
-    float y_val = .5f * (r_val + g_val);
-    return (on_filter.FastEl(x+filter_width, y+filter_width) * b_val - 
-	    off_filter.FastEl(x+filter_width, y+filter_width) * y_val);
+  case GREEN_MAGENTA: {
+    float g_v_m = g_val - 0.5f * (r_val + b_val);
+    return g_v_m * flt;
+  }
+  case BLUE_YELLOW: {
+    float b_v_y = b_val - 0.5f * (r_val + g_val);
+    return b_v_y * flt;
+  }
+  case YELLOW_BLUE: {
+    float y_v_b = 0.5f * (r_val + g_val) - b_val;
+    return y_v_b * flt;
+  }
   }
   return 0.0f;
 }
 
-void DoGFilterSpec::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
+void DoGFilter::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
 				 float_Matrix& net_flt) {
   on_flt.SetGeom(2, filter_size, filter_size);
   off_flt.SetGeom(2, filter_size, filter_size);
@@ -788,11 +798,11 @@ void DoGFilterSpec::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
   //  taMath_float::vec_norm_abs_max(&net_flt); // max norm = 1
 }
 
-void DoGFilterSpec::UpdateFilter() {
+void DoGFilter::UpdateFilter() {
   RenderFilter(on_filter, off_filter, net_filter);
 }
 
-void DoGFilterSpec::GraphFilter(DataTable* graph_data) {
+void DoGFilter::GraphFilter(DataTable* graph_data) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_GraphFilter", true);
@@ -823,7 +833,7 @@ void DoGFilterSpec::GraphFilter(DataTable* graph_data) {
   graph_data->FindMakeGraphView();
 }
 
-void DoGFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
+void DoGFilter::GridFilter(DataTable* graph_data, bool reset) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
@@ -840,7 +850,7 @@ void DoGFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   graph_data->SetUserData("N_ROWS", 3);
   graph_data->SetUserData("SCALE_MIN", -maxv);
   graph_data->SetUserData("SCALE_MAX", maxv);
-  graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
+  graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
 
   for(int i=0;i<3;i++) {
     float_Matrix* mat;
@@ -867,7 +877,7 @@ void DoGFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
 //////////////////////////////////////////////////////////
 //  	Gabor Filters!
 
-void GaborFilterSpec::Initialize() {
+void GaborFilter::Initialize() {
   x_size = 2;
   y_size = 2;
   ctr_x = .5f * x_size;
@@ -882,7 +892,7 @@ void GaborFilterSpec::Initialize() {
   // for some reason this initialization fails in Windows
 }
 
-float GaborFilterSpec::Eval(float x, float y) {
+float GaborFilter::Eval(float x, float y) {
   // normalize into normal coords, where sin goes along x axis 
   float cx = x - ctr_x;
   float cy = y - ctr_y;
@@ -899,7 +909,7 @@ float GaborFilterSpec::Eval(float x, float y) {
   return rval;
 }
 
-void GaborFilterSpec::RenderFilter(float_Matrix& flt) {
+void GaborFilter::RenderFilter(float_Matrix& flt) {
   flt.SetGeom(2, x_size, y_size);
   for(int y=0;y<y_size;y++) {
     for(int x=0;x<x_size;x++) {
@@ -908,11 +918,11 @@ void GaborFilterSpec::RenderFilter(float_Matrix& flt) {
   }
 }
 
-void GaborFilterSpec::UpdateFilter() {
+void GaborFilter::UpdateFilter() {
   RenderFilter(filter);
 }
 
-float GaborFilterSpec::GetParam(GaborParam param) {
+float GaborFilter::GetParam(GaborParam param) {
   switch(param) {
   case CTR_X: 	return ctr_x;
   case CTR_Y: 	return ctr_y;
@@ -927,7 +937,7 @@ float GaborFilterSpec::GetParam(GaborParam param) {
 }
 
 
-void GaborFilterSpec::GraphFilter(DataTable* graph_data) {
+void GaborFilter::GraphFilter(DataTable* graph_data) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
@@ -958,7 +968,7 @@ void GaborFilterSpec::GraphFilter(DataTable* graph_data) {
   graph_data->FindMakeGraphView();
 }
 
-void GaborFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
+void GaborFilter::GridFilter(DataTable* graph_data, bool reset) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
@@ -975,7 +985,7 @@ void GaborFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   graph_data->SetUserData("N_ROWS", 1);
   graph_data->SetUserData("SCALE_MIN", -maxv);
   graph_data->SetUserData("SCALE_MAX", maxv);
-  graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
+  graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
 
   graph_data->AddBlankRow();
   matda->SetValAsMatrix(&filter, -1);
@@ -984,7 +994,7 @@ void GaborFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   graph_data->FindMakeGridView();
 }
 
-void GaborFilterSpec::OutputParams(ostream& strm) {
+void GaborFilter::OutputParams(ostream& strm) {
   strm << "ctr: " << ctr_x << ", " << ctr_y << ", angle: " << angle
        << ", phase: " << phase << ", freq: " << freq
        << ", length: " << length << ", width: " << width
@@ -995,7 +1005,7 @@ void GaborFilterSpec::OutputParams(ostream& strm) {
 
 
 
-void MotionDispGaborFilterSpec::Initialize() {
+void MotionGaborFilter::Initialize() {
 /*
   x_size = 2;
   y_size = 2;
@@ -1031,34 +1041,34 @@ void MotionDispGaborFilterSpec::Initialize() {
   filter.SetGeom(3, x_size, y_size, t_size);
 }
 
-float MotionDispGaborFilterSpec::Eval(float x, float y, float t) {
-	// normalize into normal coords, where sin goes along x axis 
-	float cx = x - ctr_x;
-	float cy = y - ctr_y;
-	float ct = time_angle*(t - ctr_t);
+float MotionGaborFilter::Eval(float x, float y, float t) {
+  // normalize into normal coords, where sin goes along x axis 
+  float cx = x - ctr_x;
+  float cy = y - ctr_y;
+  float ct = time_angle*(t - ctr_t);
 	
 	
-	float r = sqrtf(cx*cx + cy*cy);
-	float thet = atan2(cy, cx);
-	float totang = thet - spat_angle;
-	float n_x = r * cos(totang);
-	float n_y = r * sin(totang);
+  float r = sqrtf(cx*cx + cy*cy);
+  float thet = atan2(cy, cx);
+  float totang = thet - spat_angle;
+  float n_x = r * cos(totang);
+  float n_y = r * sin(totang);
 	
-	float rval = 0;
-	if(use_3d_gabors) {
-		rval = amp * cos(phase + freq * n_y + freq_t*ct) * 
-		exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length) + (ct*ct)/(width_t*width_t) ));
-	}
-	else {
-		n_y += (t - ctr_t) * freq_t;
-		rval = amp * cos(phase + freq * n_y) * 
-		exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length)));
-	}
+  float rval = 0;
+  if(use_3d_gabors) {
+    rval = amp * cos(phase + freq * n_y + freq_t*ct) * 
+      exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length) + (ct*ct)/(width_t*width_t) ));
+  }
+  else {
+    n_y += (t - ctr_t) * freq_t;
+    rval = amp * cos(phase + freq * n_y) * 
+      exp(-.5f * ((n_y * n_y) / (width * width) + (n_x * n_x) / (length * length)));
+  }
 	
-	return rval;
+  return rval;
 }
 
-void MotionDispGaborFilterSpec::RenderFilter(float_Matrix& flt) {
+void MotionGaborFilter::RenderFilter(float_Matrix& flt) {
   flt.SetGeom(3, x_size, y_size, t_size);
   for(int y=0;y<y_size;y++) {
     for(int x=0;x<x_size;x++) {
@@ -1070,11 +1080,11 @@ void MotionDispGaborFilterSpec::RenderFilter(float_Matrix& flt) {
   }
 }
 
-void MotionDispGaborFilterSpec::UpdateFilter() {
+void MotionGaborFilter::UpdateFilter() {
   RenderFilter(filter);
 }
 
-float MotionDispGaborFilterSpec::GetParam(MotionDispGaborParam param) {
+float MotionGaborFilter::GetParam(MotionGaborParam param) {
   switch(param) {
   case CTR_X: 	return ctr_x;
   case CTR_Y: 	return ctr_y;
@@ -1093,7 +1103,7 @@ float MotionDispGaborFilterSpec::GetParam(MotionDispGaborParam param) {
 }
 
 
-void MotionDispGaborFilterSpec::GraphFilter(DataTable* graph_data) {
+void MotionGaborFilter::GraphFilter(DataTable* graph_data) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
@@ -1126,7 +1136,7 @@ void MotionDispGaborFilterSpec::GraphFilter(DataTable* graph_data) {
   graph_data->FindMakeGraphView();
 }
 
-void MotionDispGaborFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
+void MotionGaborFilter::GridFilter(DataTable* graph_data, bool reset) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
@@ -1143,7 +1153,7 @@ void MotionDispGaborFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   graph_data->SetUserData("N_ROWS", 1);
   graph_data->SetUserData("SCALE_MIN", -maxv);
   graph_data->SetUserData("SCALE_MAX", maxv);
-  graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
+  graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
 
   graph_data->AddBlankRow();
   matda->SetValAsMatrix(&filter, -1);
@@ -1152,7 +1162,7 @@ void MotionDispGaborFilterSpec::GridFilter(DataTable* graph_data, bool reset) {
   graph_data->FindMakeGridView();
 }
 
-void MotionDispGaborFilterSpec::OutputParams(ostream& strm) {
+void MotionGaborFilter::OutputParams(ostream& strm) {
   strm << "ctr: " << ctr_x << ", " << ctr_y << ", angle: " << spat_angle
        << ", phase: " << phase << ", freq: " << freq
        << ", length: " << length << ", width: " << width
@@ -1174,7 +1184,7 @@ static inline float gfs_sqdist(const float f1, const float f2) {
   return d * d;
 }
 
-float GaborFitter::ParamDist(const GaborFilterSpec& oth) {
+float GaborFitter::ParamDist(const GaborFilter& oth) {
   return sqrtf(gfs_sqdist(ctr_x, oth.ctr_x) + gfs_sqdist(ctr_y, oth.ctr_y)
 	       + gfs_sqdist(angle, oth.angle) + gfs_sqdist(phase, oth.phase) 
 	       + gfs_sqdist(freq, oth.freq)  + gfs_sqdist(length, oth.length) 
@@ -1404,1452 +1414,6 @@ float GaborFitter::ParamDist(const GaborFilterSpec& oth) {
 //   GridFilter(NULL);
 //   return min_d;
 // }
-
-////////////////////////////////////////////////////////////////////
-//		Retinal Processing (DoG model)
-
-
-///////////////////////////////////////////////////////////
-// 		Retinal Spacing
-
-void RetinalSpacingSpec::Initialize() {
-  region = PARAFOVEA;
-  res = MED_RES;
-  retina_size.x = 321;
-  retina_size.y = 241;
-  output_units = 0;
-}
-
-void RetinalSpacingSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  spacing.x = MAX(spacing.x, 1);
-  spacing.y = MAX(spacing.y, 1);
-  UpdateSizes();
-}
-
-void RetinalSpacingSpec::UpdateSizes() {
-  // 0 1 2 3 4 5 6 7 8 	retina_size = 9
-  // b b .   .   . b b 	border = 2, spacing = 2: input_size = 5, output_size = 3
-  //     sc        ec
-
-  input_size = (retina_size - 2 * border);
-  output_size = ((input_size - 1) / spacing) + 1;
-  output_units = output_size.x * output_size.y;
-
-//   if((input_size.x - 1) % spacing.x != 0) {
-//     taMisc::Warning("Filter:",name,"x spacing:",String(spacing.x),
-// 		  "is not even multiple of input size:",String(input_size.x));
-//   }
-//   if((input_size.y - 1) % spacing.y != 0) {
-//     taMisc::Warning("Filter:",name,"y spacing:",String(spacing.y),
-// 		  "is not even multiple of input size:",String(input_size.y));
-//   }
-}
-
-void RetinalSpacingSpec::PlotSpacing(DataTable* graph_data, float val) {
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_PlotSpacing", true);
-  }
-  graph_data->StructUpdate(true);
-  int idx;
-  DataCol* matda = graph_data->FindMakeColName("Spacing", idx, VT_FLOAT, 2,
-						      retina_size.x,
-						      retina_size.y);
-  graph_data->SetUserData("N_ROWS", 1);
-  graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
-  graph_data->SetUserData("WIDTH", retina_size.x / retina_size.y);
-
-  if(graph_data->rows < 1)
-    graph_data->AddBlankRow();
-
-  float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-  if(mat) {
-    TwoDCoord ic;
-    int x,y;
-    for(y=border.y; y<= retina_size.y-border.y; y+= spacing.y) {
-      for(x=border.x; x<= retina_size.x-border.x; x+=spacing.x) {
-	ic.y = y; ic.x = x;
-	ic.WrapClip(true, retina_size);
-	mat->FastEl(x,y) += val;
-      }
-    }
-  }
-
-  graph_data->StructUpdate(false);
-  graph_data->FindMakeGridView();
-}
-
-///////////////////////////////////////////////////////////
-// 		DoG + Retinal Spacing
-
-void DoGRetinaSpec::Initialize() {
-  dog.name = name;
-  spacing.name = name;
-}
-
-void DoGRetinaSpec::UpdateAfterEdit_impl() {
-  dog.name = name;
-  spacing.name = name;
-  dog.UpdateAfterEdit_NoGui();
-  spacing.UpdateAfterEdit_NoGui();
-}
-
-void DoGRetinaSpec::GraphFilter(DataTable* graph_data) {
-  dog.GraphFilter(graph_data);
-}
-
-void DoGRetinaSpec::GridFilter(DataTable* graph_data) {
-  dog.GridFilter(graph_data);
-}
-
-void DoGRetinaSpec::PlotSpacing(DataTable* graph_data, float val) {
-  spacing.PlotSpacing(graph_data, val);
-}
-
-bool DoGRetinaSpec::FilterRetina(float_Matrix& on_output, float_Matrix& off_output,
-				 float_Matrix& retina_img, bool superimpose,
-				 EdgeMode edge) {
-
-  TwoDCoord img_size = spacing.retina_size;
-
-  if((retina_img.dim(0) != img_size.x) || (retina_img.dim(1) != img_size.y)) {
-    taMisc::Error("DoGFilterImage: retina_img is not appropriate size!");
-    return false;
-  }
-
-  if((on_output.dim(0) != spacing.output_size.x) || 
-     (on_output.dim(1) != spacing.output_size.y)) {
-    taMisc::Error("DoGFilterImage: on_output is not appropriate size: spacing.output_size!");
-    return false;
-  }
-  if((off_output.dim(0) != spacing.output_size.x) || 
-     (off_output.dim(1) != spacing.output_size.y)) {
-    taMisc::Error("DoGFilterImage: off_output is not appropriate size: spacing.output_size!");
-    return false;
-  }
-
-  float_Matrix* on_out = &on_output;
-  float_Matrix* off_out = &off_output;
-  float_Matrix tmp_on_out(false);  taBase::Ref(tmp_on_out);
-  float_Matrix tmp_off_out(false); taBase::Ref(tmp_off_out);
-
-  if(superimpose) {
-    tmp_on_out.SetGeom(2, spacing.output_size.x, spacing.output_size.y);
-    tmp_off_out.SetGeom(2, spacing.output_size.x, spacing.output_size.y);
-    tmp_on_out.InitVals(0.0f);
-    tmp_off_out.InitVals(0.0f);
-    on_out = &tmp_on_out;
-    off_out = &tmp_off_out;
-  }
-  else {
-    on_output.InitVals(0.0f);
-    off_output.InitVals(0.0f);
-  }
-
-  bool rgb_img = false;
-  if(retina_img.dims() == 3) rgb_img = true;
-
-  TwoDCoord st = spacing.border;
-
-  bool wrap = (edge == WRAP);
-
-  TwoDCoord icc;
-  TwoDCoord ic;
-  for(int yo = 0; yo < spacing.output_size.y; yo++) {
-    icc.y = st.y + yo * spacing.spacing.y; 
-    for(int xo = 0; xo < spacing.output_size.x; xo++) {
-      icc.x = st.x + xo * spacing.spacing.x; 
-      // now convolve with dog filter
-      float cnvl = 0.0f;
-      for(int yf = -dog.filter_width; yf <= dog.filter_width; yf++) {
-			ic.y = icc.y + yf;
-			for(int xf = -dog.filter_width; xf <= dog.filter_width; xf++) {
-				ic.x = icc.x + xf;
-				if(ic.WrapClip(wrap, img_size)) {
-					if(edge == CLIP) continue; // bail on clipping only
-				}
-				if(rgb_img) {
-					cnvl += dog.FilterPoint(xf, yf, retina_img.FastEl(ic.x, ic.y,0),
-					 retina_img.FastEl(ic.x, ic.y, 1),
-					 retina_img.FastEl(ic.x, ic.y, 2));
-				}
-				else {
-					float gval = retina_img.FastEl(ic.x, ic.y);
-					cnvl += dog.FilterPoint(xf, yf, gval, gval, gval);
-				}
-			}
-      }
-      if(cnvl > 0.0f)
-		  on_out->FastEl(xo, yo) = cnvl;
-      else 
-		  off_out->FastEl(xo, yo) = -cnvl;
-    }
-  }
-
-  // note: used to do separate normalization of on/off channels here..
-  // this is important for superimpose, but it is not good for full
-  // color filtering, because things get artificially strong..
-  // to do superimpose, only renorm after the final superimpose!!
-  
-  if(superimpose) {			// add them back in!
-    taMath_float::vec_add(&on_output, on_out);
-    taMath_float::vec_add(&off_output, off_out);
-  }
-  return true;
-}
-
-DoGRetinaSpec* DoGRetinaSpecList::FindRetinalRegion(RetinalSpacingSpec::Region reg) {
-  for(int i=0;i<size;i++) {
-    DoGRetinaSpec* fs = (DoGRetinaSpec*)FastEl(i);
-    if(fs->spacing.region == reg)
-      return fs;
-  }
-  return NULL;
-}
-
-DoGRetinaSpec* DoGRetinaSpecList::FindRetinalRes(RetinalSpacingSpec::Resolution res) {
-  for(int i=0;i<size;i++) {
-    DoGRetinaSpec* fs = (DoGRetinaSpec*)FastEl(i);
-    if(fs->spacing.res == res)
-      return fs;
-  }
-  return NULL;
-}
-
-DoGRetinaSpec* DoGRetinaSpecList::FindRetinalRegionRes(RetinalSpacingSpec::Region reg,
-						       RetinalSpacingSpec::Resolution res) {
-  for(int i=0;i<size;i++) {
-    DoGRetinaSpec* fs = (DoGRetinaSpec*)FastEl(i);
-    if((fs->spacing.region == reg) && (fs->spacing.res == res))
-      return fs;
-  }
-  DoGRetinaSpec* rval = FindRetinalRes(res);
-  if(rval) return rval;
-  rval = FindRetinalRegion(reg);
-  if(rval) return rval;
-  return NULL;
-}
-
-///////////////////////////////////////////////////////////
-// 		GaborV1SpecBase
-
-void GaborRFSpec::Initialize() {
-  n_angles = 4;
-  freq = 1.5f;
-  width = 2.0f;
-  length = 2.0f;
-  amp = .9f;
-  phase_mod = 0.0f;
-  
-}
-
-void MotionDispGaborRFSpec::Initialize() {
-  n_angles = 8;
-  freq = 1.5f;
-  freq_t = 2.0f;
-  width = 2.0f;
-  width_t = 6.0f;
-  length = 2.0f;
-  amp = .9f;
-  timesteps = 3;
-	t_mult = 1;
-}
-
-void BlobRFSpec::Initialize() {
-  n_sizes = 1;
-  width_st = 1.0;
-  width_inc = 2.0;
-}
-
-void GaborV1SpecBase::Initialize() {
-  gabor_specs.SetBaseType(&TA_GaborFilterSpec);
-  blob_specs.SetBaseType(&TA_DoGFilterSpec);
-  motiondisp_gabor_specs.SetBaseType(&TA_MotionDispGaborFilterSpec);
-  rf_ovlp = 2;
-  rf_width = rf_ovlp * 2;
-  rf_ovlp_auto = true;
-  filter_type = GABOR;
-  n_filters = gabor_rf.n_angles * 2;
-}
-
-void GaborV1SpecBase::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  /*if(filter_type != COPY) {
-    rf_ovlp = rf_width / 2;
-    rf_width = rf_ovlp * 2;	// ensure even
-  }*/
-  rf_ovlp.SetGtEq(1);		// min 1.. if rf_width = 1, then just moves along
-  InitFilters();
-}
-
-bool GaborV1SpecBase::InitFilters() {
-  if(filter_type == GABOR)
-    return InitFilters_Gabor();
-  else if(filter_type == MOTIONDISP_GABOR)
-    return InitFilters_MotionDispGabor();
-  else if(filter_type == BLOB)
-    return InitFilters_Blob();
-  else // COPY
-    return InitFilters_Copy();
-}
-
-bool GaborV1SpecBase::InitFilters_Gabor() {
-	
-	n_filters = gabor_rf.n_angles * 2;
-	
-	gabor_specs.SetSize(n_filters);
-	
-	for(int i=0;i<n_filters;i++) {
-		float angle_dx = (float)(i % gabor_rf.n_angles); // angle is inner dim
-		float phase_dx = (float)((i / gabor_rf.n_angles) % 2); // then phase
-		
-		GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs[i];
-		
-		gf->x_size = rf_width.x;
-		gf->y_size = rf_width.y;
-		gf->ctr_x = (float)(gf->x_size - 1.0f) / 2.0f;
-		gf->ctr_y = (float)(gf->y_size - 1.0f) / 2.0f;
-		gf->angle = taMath_float::pi * angle_dx / (float)gabor_rf.n_angles;
-		gf->phase = taMath_float::pi * phase_dx + gabor_rf.phase_mod;
-		gf->freq = gabor_rf.freq;
-		gf->length = gabor_rf.length;
-		gf->width = gabor_rf.width;
-		gf->amp = gabor_rf.amp;
-		gf->UpdateFilter();
-	}
-	
-	return true;
-}
-
-bool GaborV1SpecBase::InitFilters_MotionDispGabor() {
-	
-	if(two_phase) {	
-		n_filters = motiondisp_gabor_rf.n_angles * 2;
-		
-	}
-	else {
-		n_filters = motiondisp_gabor_rf.n_angles;
-	}
-  motiondisp_gabor_specs.SetSize(n_filters);
-
-  for(int i=0;i<n_filters;i++) {
-    float angle_dx = (float)(i % motiondisp_gabor_rf.n_angles); // angle is inner dim
-    float phase_dx = (float)((i / motiondisp_gabor_rf.n_angles) % 2); // then phase
-
-    MotionDispGaborFilterSpec* mdgf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs[i];
-
-    mdgf->x_size = rf_width.x;
-    mdgf->y_size = rf_width.y;
-    mdgf->t_size = motiondisp_gabor_rf.timesteps;
-    mdgf->ctr_x = (float)(mdgf->x_size - 1.0f) / 2.0f;
-    mdgf->ctr_y = (float)(mdgf->y_size - 1.0f) / 2.0f;
-    mdgf->ctr_t = (float)(mdgf->t_size - 1.0f) / 2.0f;
-    mdgf->spat_angle = (2 * taMath_float::pi * angle_dx) / (float)motiondisp_gabor_rf.n_angles;
-    mdgf->time_angle = 1.0f; 
-    mdgf->phase = taMath_float::pi * phase_dx;
-    mdgf->freq = motiondisp_gabor_rf.freq;
-	mdgf->time_angle = motiondisp_gabor_rf.t_mult;
-    mdgf->freq_t = motiondisp_gabor_rf.freq_t;
-    mdgf->length = motiondisp_gabor_rf.length;
-    mdgf->width = motiondisp_gabor_rf.width;
-    mdgf->width_t = motiondisp_gabor_rf.width_t;
-    mdgf->amp = motiondisp_gabor_rf.amp;
-	  mdgf->use_3d_gabors = use_3d_gabors;
-    mdgf->UpdateFilter();
-  }
-  return true;
-}
-
-bool GaborV1SpecBase::InitFilters_Blob() {
-  // 2 for phase and 2 for color channel -- blobs are only relevant for color channels!
-  n_filters = blob_rf.n_sizes * 4;
-  blob_specs.SetSize(n_filters);
-
-  for(int i=0;i<n_filters;i++) {
-    float sz_dx = (float)(i % blob_rf.n_sizes); // size is inner dim
-    int phase_dx = ((i / blob_rf.n_sizes) % 2); // then phase
-    int clr_dx = (i / (blob_rf.n_sizes * 2) % 2); // then color
-
-    DoGFilterSpec* df = (DoGFilterSpec*)blob_specs[i];
-
-    df->filter_width = (rf_width.x) / 2; // assume x-y symmetric!
-    df->filter_size = df->filter_width * 2 + 1;
-    df->circle_edge = true;
-    df->color_chan = (DoGFilterSpec::ColorChannel)(DoGFilterSpec::RED_GREEN + clr_dx);
-    if(phase_dx == 0) {
-      df->on_sigma = blob_rf.width_st + blob_rf.width_inc * sz_dx;
-      df->off_sigma = 2.0f * df->on_sigma;
-      df->UpdateFilter();
-      float sc_fact = taMath_float::vec_norm_max(&df->on_filter); // on is most active
-      for(int i=0;i<df->off_filter.size;i++)
-	df->off_filter.FastEl_Flat(i) *= sc_fact;
-    }
-    else {
-      df->off_sigma = blob_rf.width_st + blob_rf.width_inc * sz_dx;
-      df->on_sigma = 2.0f * df->off_sigma;
-      df->UpdateFilter();
-      float sc_fact = taMath_float::vec_norm_max(&df->off_filter); // off is most active
-      for(int i=0;i<df->on_filter.size;i++)
-	df->on_filter.FastEl_Flat(i) *= sc_fact;
-    }
-  }
-  return true;
-}
-
-bool GaborV1SpecBase::InitFilters_Copy() {
-  return true;			// nothing to do
-}
-
-void GaborV1SpecBase::GraphFilter(DataTable* graph_data, int unit_no) {
-  if(filter_type == GABOR) {
-    GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(unit_no);
-    if(gf)
-      gf->GraphFilter(graph_data);
-  }
-  else if(filter_type == MOTIONDISP_GABOR) {
-    MotionDispGaborFilterSpec* gf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs.SafeEl(unit_no);
-    if(gf)
-      gf->GraphFilter(graph_data);
-  }
-  else if(filter_type == BLOB) {
-    DoGFilterSpec* df = (DoGFilterSpec*)blob_specs.SafeEl(unit_no);
-    if(df)
-      df->GraphFilter(graph_data);
-  }
-  else { // COPY
-//     DoGFilterSpec* df = (DoGFilterSpec*)blob_specs.SafeEl(unit_no);
-//     if(df)
-//       df->GraphFilter(graph_data);
-  }
-}
-
-void GaborV1SpecBase::GridFilter(DataTable* graph_data) {
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
-  }
-  graph_data->StructUpdate(true);
-  graph_data->ResetData();
-
-  if(filter_type == GABOR) {
-    for(int i=0;i<gabor_specs.size;i++) {
-      GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(i);
-      gf->GridFilter(graph_data, false); // don't reset!
-    }
-  }
-  else if(filter_type == MOTIONDISP_GABOR) {
-    for(int i=0;i<motiondisp_gabor_specs.size;i++) {
-      MotionDispGaborFilterSpec* gf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs.SafeEl(i);
-      gf->GridFilter(graph_data, false); // don't reset!
-    }
-  }
-  else if(filter_type == BLOB) {
-    for(int i=0;i<blob_specs.size;i++) {
-      DoGFilterSpec* df = (DoGFilterSpec*)blob_specs.SafeEl(i);
-      df->GridFilter(graph_data, false); // don't reset!
-    }
-  }
-  else {			// COPY
-//     for(int i=0;i<blob_specs.size;i++) {
-//       DoGFilterSpec* df = (DoGFilterSpec*)blob_specs.SafeEl(i);
-//       df->GridFilter(graph_data, false); // don't reset!
-//     }
-  }
-  graph_data->StructUpdate(false);
-  graph_data->FindMakeGridView();
-}
-
-///////////////////////////////////////////////////////////
-// 		GaborV1Spec
-
-void GaborV1Spec::Initialize() {
-  region = RetinalSpacingSpec::FOVEA;
-  res = RetinalSpacingSpec::MED_RES;
-  un_geom.SetXY(4,4);
-  gp_geom.SetXY(8,8);
-  wrap = true;
-  n_filter_gps.SetXY(3,3);
-  n_filters_per_gp = 3;
-  gp_gauss_sigma = 0.5f;
-  threads.min_units = 1;
-  UpdateGeoms();
-}
-
-void GaborV1Spec::UpdateGeoms() {
-  if(filter_type == COPY) {
-    rf_ovlp.SetGtEq(1);		// min 1.. if rf_width = 1, then just moves along
-    if(wrap)
-      trg_input_size = gp_geom * input_ovlp;
-    else
-      trg_input_size = (gp_geom+1)* input_ovlp;
-    n_filters = 0;
-    n_filter_gps = 1;
-    n_filters_per_gp = 1;
-    tot_filter_gps = 1;
-    filter_gp_ovlp = 0;
-    input_ovlp = rf_ovlp;
-    if(wrap)
-      trg_input_size = un_geom * input_ovlp;
-    else
-      trg_input_size = (un_geom +1)* input_ovlp;
-  }
-  else {
-    if(rf_ovlp_auto) {
-      rf_ovlp = rf_width / 2;
-      rf_ovlp.SetGtEq(1);		// min 1.. if rf_width = 1, then just moves along
-      rf_width = rf_ovlp * 2;	// ensure even
-    }
-    tot_filter_gps = n_filter_gps * n_filters_per_gp;
-    filter_gp_ovlp = tot_filter_gps / 2;
-    filter_gp_ovlp.SetGtEq(1);
-    input_ovlp = filter_gp_ovlp * rf_ovlp;
-    if(wrap)
-      trg_input_size = gp_geom * input_ovlp;
-    else
-      trg_input_size = (gp_geom +1)* input_ovlp;
-  }
-
-  rf_ovlp.UpdateAfterEdit_NoGui();
-  rf_width.UpdateAfterEdit_NoGui();
-  tot_filter_gps.UpdateAfterEdit_NoGui();
-  filter_gp_ovlp.UpdateAfterEdit_NoGui();
-  input_ovlp.UpdateAfterEdit_NoGui();
-  trg_input_size.UpdateAfterEdit_NoGui();
-
-  if(filter_type != COPY) {
-    gp_gauss_mat.SetGeom(2, tot_filter_gps.x, tot_filter_gps.y);
-    
-    if(tot_filter_gps.n > 1) {
-      float ctr_x = (float)tot_filter_gps.x * .5f;;
-      float ctr_y = (float)tot_filter_gps.y * .5f;;
-      float eff_sig_x = gp_gauss_sigma * ctr_x;
-      float eff_sig_y = gp_gauss_sigma * ctr_y;
-      for(int yi=0; yi< tot_filter_gps.y; yi++) {
-        float y = ((float)yi - ctr_y) / eff_sig_y;
-        for(int xi=0; xi< tot_filter_gps.x; xi++) {
-          float x = ((float)xi - ctr_y) / eff_sig_x;
-          float gv = expf(-(x*x + y*y)/2.0f);
-          gp_gauss_mat.FastEl(xi, yi) = gv;
-        }
-      }
-    }
-    else {
-      gp_gauss_mat.FastEl(0,0) = 1.0f;
-    }
-  }
-}
-
-void GaborV1Spec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  un_geom.UpdateAfterEdit_NoGui();
-  gp_geom.UpdateAfterEdit_NoGui();
-  UpdateGeoms();
-}
-
-bool GaborV1Spec::SetGpGeomFmInputSize(TwoDCoord& input_size) {
-  UpdateGeoms();
-  if(filter_type == COPY) {
-    if(wrap) {
-      un_geom = (input_size / input_ovlp);
-    }
-    else {
-      un_geom = (input_size / input_ovlp) - 1;
-    }
-  }
-  else {
-    if(wrap) {
-      gp_geom = (input_size / input_ovlp);
-    }
-    else {
-      gp_geom = (input_size / input_ovlp) - 1;
-    }
-  }
-  UpdateGeoms();
-  return input_size == trg_input_size;
-}
-
-bool GaborV1Spec::SetGpGeomFmRetSpec(DoGRetinaSpecList& dogs) {
-  DoGRetinaSpec* rs = dogs.FindRetinalRegionRes(region, res);
-  if(!rs) return false;
-  return SetGpGeomFmInputSize(rs->spacing.output_size);
-}
-
-bool GaborV1Spec::InitFilters_Gabor() {
-  int n_filters = gabor_rf.n_angles * 2 * n_filters_per_gp;
-  un_geom.FitN(n_filters);
-  return inherited::InitFilters_Gabor();
-}
-
-bool GaborV1Spec::InitFilters_Blob() {
-  // 2 for phase and 2 for color channel -- blobs are only relevant for color channels!
-  int n_filters = blob_rf.n_sizes * 4 * n_filters_per_gp;
-  un_geom.FitN(n_filters);
-  return inherited::InitFilters_Gabor();
-}
-
-bool GaborV1Spec::FilterInput(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
-			      float_Matrix& on_input, float_Matrix& off_input,
-			      bool superimpose) {
-  TwoDCoord input_size;
-  input_size.x = on_input.dim(0);
-  input_size.y = on_input.dim(1);
-
-  if(input_size != trg_input_size) {
-    taMisc::Error("GaborV1Spec: input size",input_size.GetStr(),
-		  "is not correct size, should be:", trg_input_size.GetStr());
-    return false;
-  }
-
-  if(filter_type == COPY) {
-    v1_output.SetGeom(2, un_geom.x, un_geom.y);
-  }
-  else {
-    v1_output.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-  }
-  if(!superimpose)
-    v1_output.InitVals();		// reset all vals to 0
-
-  cur_v1_output = &v1_output;
-  cur_c_chan = c_chan;
-  cur_on_input = &on_input;
-  cur_off_input = &off_input;
-  cur_superimpose = cur_superimpose;
-
-  threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
-  threads.nibble_chunk = 1;
-  ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
-  threads.Run(&ip_call, un_geom.n);
-  return true;
-}
-
-void GaborV1Spec::Filter_Thread(int cmp_idx, int thread_no) {
-  if(filter_type == GABOR) {
-    FilterInput_Gabor(cmp_idx);
-  }
-  else if(filter_type == BLOB) {
-    FilterInput_Blob(cmp_idx);
-  }
-  else { // COPY
-    FilterInput_Copy(cmp_idx);
-  }
-}
-
-bool GaborV1Spec::FilterInput_Gabor(int cmp_idx) {
-  TwoDCoord un;			// units within group
-  TwoDCoord ugp;		// unit groups
-  TwoDCoord fgp;		// filter groups
-  TwoDCoord ugpof;		// offset from ugps
-  TwoDCoord fgpof;		// offset from fgps
-  TwoDCoord fc;			// filter coords
-  TwoDCoord in;			// input coords
-  int uidx = cmp_idx;
-  un.y = uidx / un_geom.x;
-  un.x = uidx % un_geom.x;
-  int fidx = uidx / n_filters_per_gp;
-  int fgpdx = uidx % n_filters_per_gp;
-  GaborFilterSpec* gf = (GaborFilterSpec*)gabor_specs.SafeEl(fidx);
-  if(!gf) return false;			     // shouldn't happen
-  // for each unit, process entire input:
-  for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
-    for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
-      if(wrap)
-        ugpof = (ugp-1) * input_ovlp;
-      else
-        ugpof = ugp * input_ovlp;
-      float max_val = 0.0f;	// output is max val
-      // filter groups
-      for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-        int ymod = fgp.y % n_filters_per_gp;
-        for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-          int xmod = (fgp.x + ymod) % n_filters_per_gp;
-          if(xmod != fgpdx) continue; // not our spot
-          float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-          fgpof = ugpof + (fgp * rf_ovlp);
-          // now actually apply the filter itself
-          float flt_sum = 0.0f;
-          for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-            for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-              in = fgpof + fc;
-              if(in.WrapClip(wrap, trg_input_size)) continue;
-              float fval = gf->filter.FastEl(fc.x, fc.y);
-              float oval;
-              if(fval > 0.0f) oval = fval * cur_on_input->FastEl(in.x, in.y);
-              else	      oval = -fval * cur_off_input->FastEl(in.x, in.y);
-              flt_sum += oval;
-            }
-          }
-          flt_sum *= gmult;
-          max_val = MAX(max_val, flt_sum);
-        }
-      }
-      if(cur_superimpose)
-        cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
-      else
-        cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
-    }
-  }
-  return true;
-}
-
-bool GaborV1Spec::FilterInput_Blob(int cmp_idx) {
-  TwoDCoord un;			// units within group
-  TwoDCoord ugp;		// unit groups
-  TwoDCoord fgp;		// filter groups
-  TwoDCoord ugpof;		// offset from ugps
-  TwoDCoord fgpof;		// offset from fgps
-  TwoDCoord fc;			// filter coords
-  TwoDCoord in;			// input coords
-  int uidx = cmp_idx;
-  un.y = uidx / un_geom.x;
-  un.x = uidx % un_geom.x;
-  int fidx = uidx / n_filters_per_gp;
-  int fgpdx = uidx % n_filters_per_gp;
-  DoGFilterSpec* gf = (DoGFilterSpec*)blob_specs.SafeEl(fidx);
-  if(!gf) return false;			     // shouldn't happen
-  if(gf->color_chan != cur_c_chan) return false; // doesn't match
-  // for each unit, process entire input:
-  for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
-    for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
-      if(wrap)
-        ugpof = (ugp-1) * input_ovlp;
-      else
-        ugpof = ugp * input_ovlp;
-      float max_val = 0.0f;	// result is max over locs
-      // filter groups
-      for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-        int ymod = fgp.y % n_filters_per_gp;
-        for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-          int xmod = (fgp.x + ymod) % n_filters_per_gp;
-          if(xmod != fgpdx) continue; // not our spot
-          float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-          fgpof = ugpof + (fgp * rf_ovlp);
-          // now actually apply the filter itself
-          float flt_sum = 0.0f;
-          for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-            for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-              in = fgpof + fc;
-              if(in.WrapClip(wrap, trg_input_size)) continue;
-              float oval = (gf->on_filter.FastEl(fc.x, fc.y) * cur_on_input->FastEl(in.x, in.y) - 
-                            gf->off_filter.FastEl(fc.x, fc.y) * cur_off_input->FastEl(in.x, in.y));
-              flt_sum += oval;
-            }
-          }
-          flt_sum *= gmult;
-          max_val = MAX(max_val, flt_sum);
-        }
-      }
-      if(cur_superimpose)
-        cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
-      else
-        cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
-    }
-  }
-  return true;
-}
-
-bool GaborV1Spec::FilterInput_Copy(int cmp_idx) {
-  TwoDCoord un;			// units within group
-  TwoDCoord inof;		// offset to input layer from units
-  TwoDCoord in;			// input coords
-  TwoDCoord fc;			// "filter" coords
-  int uidx = cmp_idx;
-  un.y = uidx / un_geom.x;
-  un.x = uidx % un_geom.x;
-  if(wrap && rf_width.x > 1)	// only if has some width does this make sense
-    inof = (un-1) * input_ovlp;
-  else
-    inof = un * input_ovlp;
-
-  float norm = rf_width.Product();
-
-  float flt_sum = 0.0f;
-  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-    for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-      in = inof + fc;
-      if(in.WrapClip(wrap, trg_input_size)) continue;
-      float oval = cur_on_input->FastEl(in.x, in.y) + cur_off_input->FastEl(in.x, in.y);
-      flt_sum += oval;
-    }
-  }
-
-  flt_sum /= norm;
-
-  if(cur_superimpose)
-    cur_v1_output->FastEl(un.x, un.y) += flt_sum;
-  else
-    cur_v1_output->FastEl(un.x, un.y) = flt_sum;
-
-  return true;
-}
-
-void GaborV1Spec::GridFilterInput(DataTable* graph_data, int unit_no, int gp_skip, bool ctrs_only) {
-  if(filter_type == COPY) return; // not supported
-
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilterInput", true);
-  }
-  graph_data->StructUpdate(true);
-  int idx;
-  DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2,
-					       trg_input_size.x, trg_input_size.y);
-  graph_data->EnforceRows(1);
-  float_Matrix* gmat = (float_Matrix*)matda->GetValAsMatrix(0);
-  taBase::Ref(gmat);
-  gmat->InitVals();
-
-  graph_data->SetUserData("N_ROWS", 1);
-//   graph_data->SetUserData("SCALE_MIN", -maxv);
-//   graph_data->SetUserData("SCALE_MAX", maxv);
-//   graph_data->SetUserData("BLOCK_HEIGHT", 2.0f);
-
-  TwoDCoord ugp;		// unit groups
-  TwoDCoord fgp;		// filter groups
-  TwoDCoord ugpof;		// offset from ugps
-  TwoDCoord fgpof;		// offset from fgps
-  TwoDCoord fc;			// filter coords
-  TwoDCoord in;			// input coords
-
-  int uidx = unit_no;
-  int fidx = uidx / n_filters_per_gp;
-  int fgpdx = uidx % n_filters_per_gp;
-  DoGFilterSpec* dgf = NULL;
-  GaborFilterSpec* ggf = NULL;
-  if(filter_type == GABOR)
-    ggf = (GaborFilterSpec*)gabor_specs.SafeEl(fidx);
-  else if(filter_type == BLOB)
-    dgf = (DoGFilterSpec*)blob_specs.SafeEl(fidx);
-  // nothing for COPY
-  // for each unit, process entire input:
-  for(ugp.y=0;ugp.y<gp_geom.y;ugp.y+= gp_skip) {
-    for(ugp.x=0;ugp.x<gp_geom.x;ugp.x+= gp_skip) {
-      if(wrap)
-	ugpof = (ugp-1) * input_ovlp;
-      else
-	ugpof = ugp * input_ovlp;
-      // filter groups
-      for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-	int ymod = fgp.y % n_filters_per_gp;
-	for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-	  int xmod = (fgp.x + ymod) % n_filters_per_gp;
-	  if(xmod != fgpdx) continue; // not our spot
-	  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-	  fgpof = ugpof + (fgp * rf_ovlp);
-	  // now actually apply the filter itself
-	  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-	    for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-	      in = fgpof + fc;
-	      if(in.WrapClip(wrap, trg_input_size)) continue;
-	      float fval;
-	      if(filter_type == GABOR) {
-		fval = ggf->filter.FastEl(fc.x, fc.y);
-	      }
-	      else if(filter_type == BLOB) {
-		fval = (dgf->on_filter.FastEl(fc.x, fc.y) - 
-			dgf->off_filter.FastEl(fc.x, fc.y));
-	      }
-	      else {		// COPY
-		fval = 1.0f;
-	      }
-	      if(ctrs_only) {
-		if(fc == rf_ovlp) fval = 1.0f;
-		else fval = 0.0f;
-	      }
-	      gmat->FastEl(in.x, in.y) += gmult * fval;
-	    }
-	  }
-	}
-      }
-    }
-  }
-  taBase::unRefDone(gmat);
-  graph_data->StructUpdate(false);
-  graph_data->FindMakeGridView();
-}
-
-
-
-bool GaborV1SpecList::UpdateSizesFmRetina(DoGRetinaSpecList& dogs) {
-  bool rval = true;
-  for(int i=0;i<size;i++) {
-    GaborV1Spec* sp = FastEl(i);
-    bool rv = sp->SetGpGeomFmRetSpec(dogs);
-    if(!rv)
-      rval = false;
-  }
-  return rval;
-}
-
-bool MotionDispGaborV1SpecList::UpdateSizesFmRetina(DoGRetinaSpecList& dogs) {
-  bool rval = true;
-  for(int i=0;i<size;i++) {
-    MotionDispGaborV1Spec* sp = FastEl(i);
-    bool rv = sp->SetGpGeomFmRetSpec(dogs);
-    if(!rv)
-      rval = false;
-  }
-  return rval;
-}
-
-
-
-
-///////////////////////////////////////////////////////////
-// 		MotionDispGaborV1Spec
-
-void MotionDispGaborV1Spec::Initialize() {
-  region = RetinalSpacingSpec::FOVEA;
-  res = RetinalSpacingSpec::MED_RES;
-  un_geom.SetXY(4,4);
-  gp_geom.SetXY(8,8);
-  wrap = true;
-  n_filter_gps.SetXY(3,3);
-  n_filters_per_gp = 3;
-  gp_gauss_sigma = 0.5f;
-  threads.min_units = 1;
-  rf_time = 3;
-  disp_gauss_sigma = 0.4f;
-  disparity_width = 1;
-  disparity_offset = 1;
-  max_in_disparity = false;
-  UpdateGeoms();
-}
-
-void MotionDispGaborV1Spec::UpdateGeoms() {
-  if(filter_type == COPY) {
-    rf_ovlp.SetGtEq(1);		// min 1.. if rf_width = 1, then just moves along
-    if(wrap)
-      trg_input_size = gp_geom * input_ovlp;
-    else
-      trg_input_size = (gp_geom+1)* input_ovlp;
-    n_filters = 0;
-    n_filter_gps = 1;
-    n_filters_per_gp = 1;
-    tot_filter_gps = 1;
-    filter_gp_ovlp = 0;
-    input_ovlp = rf_ovlp;
-    if(wrap)
-      trg_input_size = un_geom * input_ovlp;
-    else
-      trg_input_size = (un_geom +1)* input_ovlp;
-  }
-  else {
-    //rf_ovlp = rf_width / 2;
-    rf_ovlp.SetGtEq(1);		// min 1.. if rf_width = 1, then just moves along
-    //rf_width = rf_ovlp * 2;	// ensure even
-    tot_filter_gps = n_filter_gps * n_filters_per_gp;
-    filter_gp_ovlp = tot_filter_gps / 2;
-    filter_gp_ovlp.SetGtEq(1);
-    input_ovlp = filter_gp_ovlp * rf_ovlp;
-    if(wrap)
-      trg_input_size = gp_geom * input_ovlp;
-    else
-      trg_input_size = (gp_geom +1)* input_ovlp;
-  }
-
-  rf_ovlp.UpdateAfterEdit_NoGui();
-  rf_width.UpdateAfterEdit_NoGui();
-  tot_filter_gps.UpdateAfterEdit_NoGui();
-  filter_gp_ovlp.UpdateAfterEdit_NoGui();
-  input_ovlp.UpdateAfterEdit_NoGui();
-  trg_input_size.UpdateAfterEdit_NoGui();
-
-  if(filter_type != COPY) {
-    gp_gauss_mat.SetGeom(2, tot_filter_gps.x, tot_filter_gps.y);
-		
-    if(tot_filter_gps.n > 1) {
-      float ctr_x = (float)tot_filter_gps.x * .5f;;
-      float ctr_y = (float)tot_filter_gps.y * .5f;;
-      float eff_sig_x = gp_gauss_sigma * ctr_x;
-      float eff_sig_y = gp_gauss_sigma * ctr_y;
-      for(int yi=0; yi< tot_filter_gps.y; yi++) {
-	float y = ((float)yi - ctr_y) / eff_sig_y;
-	for(int xi=0; xi< tot_filter_gps.x; xi++) {
-	  float x = ((float)xi - ctr_x) / eff_sig_x;
-	  float gv = expf(-(x*x + y*y)/2.0f);
-	  gp_gauss_mat.FastEl(xi, yi) = gv;
-	}
-      }
-    }
-    else {
-      gp_gauss_mat.FastEl(0,0) = 1.0f;
-    }
-		
-    disp_gauss_mat.SetGeom(1, disparity_width);
-    float ctr_x = (float)disparity_width* .5f;
-    float eff_sig_x = disp_gauss_sigma * ctr_x;
-    for(int xi=0; xi< disparity_width; xi++) {
-      float x = ((float)xi - ctr_x) / eff_sig_x;
-      float gv = expf(-(x*x)/2.0f);
-      disp_gauss_mat.FastEl(xi) = gv;
-    }
-  }
-}
-
-void MotionDispGaborV1Spec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  un_geom.UpdateAfterEdit_NoGui();
-  gp_geom.UpdateAfterEdit_NoGui();
-  UpdateGeoms();
-}
-
-bool MotionDispGaborV1Spec::SetGpGeomFmInputSize(TwoDCoord& input_size) {
-  UpdateGeoms();
-  if(filter_type == COPY) {
-    if(wrap) {
-      un_geom = (input_size / input_ovlp);
-    }
-    else {
-      un_geom = (input_size / input_ovlp) - 1;
-    }
-  }
-  else {
-    if(wrap) {
-      gp_geom = (input_size / input_ovlp);
-    }
-    else {
-      gp_geom = (input_size / input_ovlp) - 1;
-    }
-  }
-  UpdateGeoms();
-  return input_size == trg_input_size;
-}
-
-bool MotionDispGaborV1Spec::SetGpGeomFmRetSpec(DoGRetinaSpecList& dogs) {
-  DoGRetinaSpec* rs = dogs.FindRetinalRegionRes(region, res);
-  if(!rs) return false;
-  return SetGpGeomFmInputSize(rs->spacing.output_size);
-}
-
-bool MotionDispGaborV1Spec::InitFilters_Gabor() {
-  int n_filters = gabor_rf.n_angles * 2 * n_filters_per_gp;
-  un_geom.FitN(n_filters);
-  return inherited::InitFilters_Gabor();
-}
-
-bool MotionDispGaborV1Spec::InitFilters_Blob() {
-  // 2 for phase and 2 for color channel -- blobs are only relevant for color channels!
-  int n_filters = blob_rf.n_sizes * 4 * n_filters_per_gp;
-  un_geom.FitN(n_filters);
-  return inherited::InitFilters_Gabor();
-}
-
-/*
-  bool MotionDispGaborV1Spec::FilterMultiInput(float_Matrix& v1_output_left, float_Matrix& v1_output_right, int eyes, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input,float_Matrix& off_left_input,float_Matrix& on_right_input,float_Matrix& off_right_input, bool superimpose) {
-  TwoDCoord input_size;
-  input_size.x = on_left_input.dim(0);
-  input_size.y = off_left_input.dim(1);
-	
-  if(input_size != trg_input_size) {
-  taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-  "is not correct size, should be:", trg_input_size.GetStr());
-  return false;
-  }
-	
-  if(filter_type == COPY) {
-  v1_output_left.SetGeom(2, un_geom.x, un_geom.y);
-  v1_output_right.SetGeom(2, un_geom.x, un_geom.y);
-  }
-  else {
-  v1_output_left.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-  v1_output_right.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-  }
-  if(!superimpose) {
-  v1_output_left.InitVals();		// reset all vals to 0
-  v1_output_right.InitVals();		// reset all vals to 0
-  }
-	
-	
-  cur_v1_output_left = &v1_output_left;
-  cur_v1_output_right = &v1_output_right;
-  cur_c_chan = c_chan;
-  cur_on_left_input = &on_left_input;
-  cur_off_left_input = &off_left_input;
-  cur_on_right_input = &on_right_input;
-  cur_off_right_input = &off_right_input;
-  cur_superimpose = cur_superimpose;
-  cur_eyes = eyes;
-	
-  threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
-  threads.nibble_chunk = 1;
-  ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
-  threads.Run(&ip_call, un_geom.n);
-  return true;
-  }*/
-
-bool MotionDispGaborV1Spec::FilterMultiInputDisp(float_Matrix& v1_output1, float_Matrix& v1_output2, float_Matrix& v1_output3, int eyes, int disp, DoGFilterSpec::ColorChannel c_chan,float_Matrix& on_left_input1,float_Matrix& off_left_input1,float_Matrix& on_left_input2,float_Matrix& off_left_input2,float_Matrix& on_left_input3,float_Matrix& off_left_input3,float_Matrix& on_right_input1,float_Matrix& off_right_input1,float_Matrix& on_right_input2,float_Matrix& off_right_input2,float_Matrix& on_right_input3,float_Matrix& off_right_input3, bool superimpose) {
-  TwoDCoord input_size;
-  input_size.x = on_left_input1.dim(0);
-  input_size.y = off_left_input1.dim(1);
-	
-  if(input_size != trg_input_size) {
-    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-		  "is not correct size, should be:", trg_input_size.GetStr());
-    return false;
-  }
-  input_size.x = on_left_input3.dim(0);
-  input_size.y = off_left_input3.dim(1);
-	
-  if(input_size != trg_input_size) {
-    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-		  "is not correct size, should be:", trg_input_size.GetStr());
-    return false;
-  }
-  input_size.x = on_left_input3.dim(0);
-  input_size.y = off_left_input3.dim(1);
-	
-  if(input_size != trg_input_size) {
-    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-		  "is not correct size, should be:", trg_input_size.GetStr());
-    return false;
-  }
-  input_size.x = on_right_input1.dim(0);
-  input_size.y = off_right_input1.dim(1);
-	
-  if(input_size != trg_input_size) {
-    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-		  "is not correct size, should be:", trg_input_size.GetStr());
-    return false;
-  }
-  input_size.x = on_right_input3.dim(0);
-  input_size.y = off_right_input3.dim(1);
-	
-  if(input_size != trg_input_size) {
-    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-		  "is not correct size, should be:", trg_input_size.GetStr());
-    return false;
-  }
-  input_size.x = on_right_input3.dim(0);
-  input_size.y = off_right_input3.dim(1);
-	
-  if(input_size != trg_input_size) {
-    taMisc::Error(" MotionDispGaborV1Spec: input size",input_size.GetStr(),
-		  "is not correct size, should be:", trg_input_size.GetStr());
-    return false;
-  }
-	
-  if(filter_type == COPY) {
-    v1_output1.SetGeom(2, un_geom.x, un_geom.y);
-    v1_output2.SetGeom(2, un_geom.x, un_geom.y);
-    v1_output3.SetGeom(2, un_geom.x, un_geom.y);
-  }
-  else {
-    v1_output1.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-    v1_output2.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-    v1_output3.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
-  }
-  if(!superimpose) {
-    v1_output1.InitVals();		// reset all vals to 0
-    v1_output2.InitVals();		// reset all vals to 0
-    v1_output3.InitVals();		// reset all vals to 0
-  }
-	
-	
-  cur_v1_output1 = &v1_output1;
-  cur_v1_output2 = &v1_output2;
-  cur_v1_output3 = &v1_output3;
-  cur_c_chan = c_chan;
-  cur_superimpose = cur_superimpose;
-  cur_eyes = eyes;
-  cur_disp = disp;
-	
-  cur_on_left_input1 = &on_left_input1;
-  cur_off_left_input1 = &off_left_input1;
-  cur_on_right_input1 = &on_right_input1;
-  cur_off_right_input1 = &off_right_input1;
-  cur_on_left_input2 = &on_left_input2;
-  cur_off_left_input2 = &off_left_input2;
-  cur_on_right_input2 = &on_right_input2;
-  cur_off_right_input2 = &off_right_input2;
-  cur_on_left_input3 = &on_left_input3;
-  cur_off_left_input3 = &off_left_input3;
-  cur_on_right_input3 = &on_right_input3;
-  cur_off_right_input3 = &off_right_input3;
-	
-	
-	
-	
-  threads.n_threads = MIN(un_geom.n, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
-  threads.nibble_chunk = 1;
-  ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
-  threads.Run(&ip_call, un_geom.n);
-		
-	
-  return true;
-}
-
-void MotionDispGaborV1Spec::Filter_Thread(int cmp_idx, int thread_no) {
-  if(filter_type == MOTIONDISP_GABOR) {
-    FilterInput_MotionDispGabor(cmp_idx);
-  }
-}
-
-/*
-  bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
-  TwoDCoord un;			// units within group
-  TwoDCoord ugp;		// unit groups
-  TwoDCoord fgp;		// filter groups
-  TwoDCoord ugpof;		// offset from ugps
-  TwoDCoord fgpof;		// offset from fgps
-  TwoDCoord fc;			// filter coords
-  TwoDCoord in;			// input coords
-  int t;			// filter timestep coord
-  int uidx = cmp_idx;
-  un.y = uidx / un_geom.x;
-  un.x = uidx % un_geom.x;
-  int fidx = uidx / n_filters_per_gp;
-  int fgpdx = uidx % n_filters_per_gp;
-  MotionDispGaborFilterSpec* gf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs.SafeEl(fidx);
-  if(!gf) return false;			     // shouldn't happen
-  float_Matrix*  cur_on_input;
-  float_Matrix*  cur_off_input;
-  float_Matrix*  cur_v1_output;
-  //for each eye	
-  for(int eye = 0; eye < cur_eyes; eye++) {
-  if(eye == 0) {
-  cur_on_input = cur_on_left_input;
-  cur_off_input = cur_off_left_input;
-  cur_v1_output = cur_v1_output_left;
-  }
-  else {
-  cur_on_input = cur_on_right_input;
-  cur_off_input = cur_off_right_input;
-  cur_v1_output = cur_v1_output_right;
-  }
-  // for each unit, process entire input:
-  for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
-  for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
-  if(wrap) {
-  ugpof = (ugp-1) * input_ovlp;
-  }
-  else {
-  ugpof = ugp * input_ovlp;
-  }
-  float max_val = 0.0f;	// output is max val
-  // filter groups
-  for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-  int ymod = fgp.y % n_filters_per_gp;
-  for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-  int xmod = (fgp.x + ymod) % n_filters_per_gp;
-  if(xmod != fgpdx) {
-  continue; // not our spot
-  }
-  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-  fgpof = ugpof + (fgp * rf_ovlp);
-
-  // now actually apply the filter itself
-  float flt_sum = 0.0f;
-  for(t=0;t<rf_time;t++) {
-  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-  for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-				  
-				  
-  in = fgpof + fc;
-  if(in.WrapClip(wrap, trg_input_size)) continue;
-  float fval = gf->filter.FastEl(fc.x, fc.y, t);
-  float oval;
-  if(fval > 0.0f) {
-  oval = fval * cur_on_input->FastEl(in.x, in.y, t);
-  //oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
-  }
-  else {
-  oval = -fval * cur_off_input->FastEl(in.x, in.y, t);
-  //oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
-  }
-  flt_sum += oval;
-  }
-  }
-  }
-  flt_sum *= gmult;
-  max_val = MAX(max_val, flt_sum);
-  }
-  }
-			
-  if(cur_superimpose)
-  cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val;
-  else
-  cur_v1_output->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val;
-  }
-  }
-  }
-  return true;
-  }
-*/
-
-bool MotionDispGaborV1Spec::FilterInput_MotionDispGabor(int cmp_idx) {
-  TwoDCoord un;			// units within group
-  TwoDCoord ugp;		// unit groups
-  TwoDCoord fgp;		// filter groups
-  TwoDCoord ugpof;		// offset from ugps
-  TwoDCoord fgpof;		// offset from fgps
-  TwoDCoord fc;			// filter coords
-  TwoDCoord in_left;			// input coords
-  TwoDCoord in_right;			// input coords
-  int t;			// filter timestep coord
-  int uidx = cmp_idx;
-  un.y = uidx / un_geom.x;
-  un.x = uidx % un_geom.x;
-  int fidx = uidx / n_filters_per_gp;
-  int fgpdx = uidx % n_filters_per_gp;
-  MotionDispGaborFilterSpec* gf = (MotionDispGaborFilterSpec*)motiondisp_gabor_specs.SafeEl(fidx);
-  if(!gf) return false;			     // shouldn't happen
-  float_Matrix*  cur_on_left_input;
-  float_Matrix*  cur_off_left_input;
-  float_Matrix* cur_on_right_input;
-  float_Matrix* cur_off_right_input;
-	
-	
-	
-  // for each unit, process entire input:
-  for(ugp.y=0;ugp.y<gp_geom.y;ugp.y++) {
-    for(ugp.x=0;ugp.x<gp_geom.x;ugp.x++) {
-      if(wrap) {
-        ugpof = (ugp-1) * input_ovlp;
-      }
-      else {
-        ugpof = ugp * input_ovlp;
-      }
-      float max_val[3] = {0,0,0};
-      // filter groups
-      for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
-        int ymod = fgp.y % n_filters_per_gp;
-        for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
-          int xmod = (fgp.x + ymod) % n_filters_per_gp;
-          if(xmod != fgpdx) {
-            continue; // not our spot
-          }
-          float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
-          fgpof = ugpof + (fgp * rf_ovlp);
-					
-          // now actually apply the filter itself
-          float flt_sum[3] = {0,0,0};
-          float flt_sum_right[3] = {0,0,0};
-          float flt_sum_left[3] = {0,0,0};
-					
-          for(int disp_lvl_i = 0; disp_lvl_i < 3; disp_lvl_i++) {
-            for(int disp_i = 0; disp_i < disparity_width; disp_i++) {
-							
-							
-              float cur_disp_mult = disp_gauss_mat.SafeEl(disp_i);
-              float oval_right[3] = {0,0,0};
-              float oval_left[3] = {0,0,0};
-              for(int t = 0; t < 3; t++) {
-                switch(t) {
-                  case 0:
-                    cur_on_left_input = cur_on_left_input1;
-                    cur_off_left_input = cur_off_left_input1;
-                    cur_on_right_input = cur_on_right_input1;
-                    cur_off_right_input = cur_off_right_input1;
-                    break;
-                  case 1:
-                    cur_on_left_input = cur_on_left_input2;
-                    cur_off_left_input = cur_off_left_input2;
-                    cur_on_right_input = cur_on_right_input2;
-                    cur_off_right_input = cur_off_right_input2;
-                    break;
-                  case 2:
-                    cur_on_left_input = cur_on_left_input3;
-                    cur_off_left_input = cur_off_left_input3;
-                    cur_on_right_input = cur_on_right_input3;
-                    cur_off_right_input = cur_off_right_input3;
-                    break;
-                }
-								
-								
-                for(fc.y=0;fc.y<rf_width.y;fc.y++) {
-                  for(fc.x=0;fc.x<rf_width.x;fc.x++) {
-										
-										
-                    in_left = fgpof + fc;
-                    in_left.x +=  ((disp_lvl_i - 1) * disparity_offset) + (disp_i - (disparity_width / 2));
-                    if(in_left.WrapClip(wrap, trg_input_size)) continue;
-                    in_right = fgpof + fc;
-                    in_right.x +=  ((1 - disp_lvl_i) * disparity_offset) + ((disparity_width / 2) - disp_i);
-                    if(in_right.WrapClip(wrap, trg_input_size)) continue;
-										
-										
-                    float fval = gf->filter.FastEl(fc.x, fc.y, t);
-										
-										
-                    if(fval > 0.0f) {
-                      //oval += fval * cur_on_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
-                      //oval += fval * cur_on_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
-											
-                      float left_val, right_val;
-											
-											
-                      right_val = cur_on_left_input->FastEl(in_left.x, in_left.y);
-                      left_val = cur_on_right_input->FastEl(in_right.x, in_right.y);
-                      
-											
-                      oval_left[disp_lvl_i] += fval * left_val;
-                      oval_right[disp_lvl_i] += fval * right_val;
-                      //oval -= fval * cur_off_input->FastEl(in.x, in.y, t);
-                    }
-                    else {
-                      //oval += -fval * cur_off_left_input->FastEl(in_left.x, in_left.y, t) * cur_disp_mult * 0.5f;
-                      //oval += -fval * cur_off_right_input->FastEl(in_right.x, in_right.y, t) * cur_disp_mult * 0.5f;
-                      float right_val = 0;
-                      float left_val = 0;
-                      
-                      right_val = cur_off_right_input->FastEl(in_right.x, in_right.y);
-                      left_val = cur_off_left_input->FastEl(in_left.x, in_left.y);
-                      
-                      oval_left[disp_lvl_i] += -fval * left_val;
-                      oval_right[disp_lvl_i] += -fval * right_val;
-                      //oval -= -fval * cur_on_input->FastEl(in.x, in.y, t);
-                    }
-										
-                  }
-									
-                }
-								
-              }
-              if(max_in_disparity) {
-                flt_sum_right[disp_lvl_i] = MAX(oval_right[disp_lvl_i],flt_sum_right[disp_lvl_i]);
-                flt_sum_left[disp_lvl_i] = MAX(oval_left[disp_lvl_i],flt_sum_left[disp_lvl_i]);
-              }
-              else {
-                flt_sum_right[disp_lvl_i] += oval_right[disp_lvl_i] * cur_disp_mult;
-                flt_sum_left[disp_lvl_i] += oval_left[disp_lvl_i] * cur_disp_mult;
-              }
-            }
-          }
-					
-          flt_sum[0] = flt_sum_left[0] + flt_sum_right[0];
-          flt_sum[0] *= gmult;
-          max_val[0] = MAX(max_val[0], flt_sum[0]);
-          flt_sum[1] = flt_sum_left[1] + flt_sum_right[1];
-          flt_sum[1] *= gmult;
-          max_val[1] = MAX(max_val[1], flt_sum[1]);
-          flt_sum[2] = flt_sum_left[2] + flt_sum_right[2];
-          flt_sum[2] *= gmult;
-          max_val[2] = MAX(max_val[2], flt_sum[2]);
-        }
-      }
-			
-      if(cur_superimpose) {
-        cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[0];
-        cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[1];
-        cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) += max_val[2];
-				
-      }
-      else {
-        cur_v1_output1->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[0];
-        cur_v1_output2->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[1];
-        cur_v1_output3->FastEl(un.x, un.y, ugp.x, ugp.y) = max_val[2];
-      }
-    }
-  }
-  
-  return true;
-}
-
-
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -3446,19 +2010,6 @@ bool taImageProc::SampleImageWindow_float(float_Matrix& out_img, float_Matrix& i
 }
 
 
-bool taImageProc::DoGFilterRetina(float_Matrix& on_output, float_Matrix& off_output,
-				  float_Matrix& retina_img, DoGRetinaSpec& spec,
-				  bool superimpose, EdgeMode edge) {
-  return spec.FilterRetina(on_output, off_output, retina_img, superimpose,
-			   (DoGRetinaSpec::EdgeMode)edge);
-}
-
-bool taImageProc::GaborFilterV1(float_Matrix& v1_output, DoGFilterSpec::ColorChannel c_chan,
-				float_Matrix& on_input, float_Matrix& off_input,
-				GaborV1Spec& spec, bool superimpose, EdgeMode edge) {
-  return spec.FilterInput(v1_output, c_chan, on_input, off_input, superimpose);
-}
-
 bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
   TwoDCoord img_size(mat.dim(0), mat.dim(1));
   TwoDCoord img_ctr = img_size / 2;
@@ -3487,341 +2038,1733 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
   return true;
 }
 
+///////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////
+//		Retinal Processing (DoG model)
+
+
+// for thread function calling:
+typedef void (DoGRegionSpec::*DoGRegionMethod)(int, int);
+
+void DoGRegionSpec::Initialize() {
+  save_mode = FIRST_ROW;
+  image_save = (DataSave)(SAVE_DATA | ONLY_GUI);
+  ocularity = MONOCULAR;
+  region = FOVEA;
+  res = HI_RES;
+  color = COLOR;
+  motion_frames = 0;
+  retina_size = 144;
+  border = 0;
+  input_size = 144;
+  edge_mode= WRAP;
+  dog_specs.filter_width = 4;
+  dog_specs.on_sigma = 1;
+  dog_specs.off_sigma = 2;
+  dog_specs.circle_edge = 2;
+  dog_spacing = 1;
+  dog_renorm = LOG_RENORM;
+  renorm_thr = 1.0e-5f;
+  dog_save = SAVE_DATA;
+  dog_feat_geom.x = 2;
+  dog_feat_geom.y = 3;
+  dog_feat_geom.n = 6;
+  dog_img_geom = 320;
+  
+  dog_circ_r.matrix = &dog_out_r;
+  dog_circ_l.matrix = &dog_out_l;
+
+  cur_img_r = NULL;
+  cur_img_l = NULL;
+  cur_img = NULL;
+  cur_out = NULL;
+  cur_circ = NULL;
+  rgb_img = false;
+  wrap = false;
+}
+
+void DoGRegionSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  dog_specs.name = name;
+  dog_specs.UpdateAfterEdit_NoGui();
+  dog_spacing.x = MAX(dog_spacing.x, 1);
+  dog_spacing.y = MAX(dog_spacing.y, 1);
+  motion_frames = MAX(motion_frames, 0);
+  UpdateGeom();
+}
+
+void DoGRegionSpec::UpdateGeom() {
+  // 0 1 2 3 4 5 6 7 8 	retina_size = 9
+  // b b .   .   . b b 	border = 2, spacing = 2: input_size = 5, output_size = 3
+
+  // wrap mode:
+  // 0 1 2 3 4 5 6 7  retina_size = 8
+  // .   .   .   .    border = 0, spacing = 2; input_size = 8, output_size = 4
+
+  input_size = (retina_size - 2 * border);
+  if(edge_mode == WRAP) {
+    dog_img_geom = input_size / dog_spacing;
+  }
+  else {
+    dog_img_geom = ((input_size - 1) / dog_spacing) + 1;
+  }
+  if(color == COLOR) {
+    dog_feat_geom.SetXYN(2,3,6);
+  }
+  else {
+    dog_feat_geom.SetXYN(2,1,2);
+  }
+}
+
+String DoGRegionSpec::GetDoGFiltName(int flt_no) {
+  String nm;
+  switch(flt_no) {
+  case 0: nm = "on"; break;
+  case 1: nm = "off"; break;
+  case 2: nm = "rvc"; break;
+  case 3: nm = "gvm"; break;
+  case 4: nm = "bvy"; break;
+  case 5: nm = "yvb"; break;
+  }
+  return nm;
+}
+
+bool DoGRegionSpec::Init() {
+  bool rval = InitFilters();
+  rval &= InitOutMatrix();
+  rval &= InitDataTable();
+  return rval;
+}
+
+bool DoGRegionSpec::InitFilters() {
+  UpdateGeom();
+  dog_specs.UpdateFilter();
+  return true;
+}
+
+bool DoGRegionSpec::InitOutMatrix() {
+  if(motion_frames == 0) {
+    dog_out_r.SetGeom(4, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
+    if(ocularity == BINOCULAR)
+      dog_out_l.SetGeom(4, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
+    else
+      dog_out_l.SetGeom(1,1);	// free memory
+  }
+  else {
+    dog_out_r.SetGeom(5, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y,
+		      motion_frames);
+    if(ocularity == BINOCULAR)
+      dog_out_l.SetGeom(5, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y,
+			motion_frames);
+    else
+      dog_out_l.SetGeom(1,1);	// free memory
+  }
+  dog_circ_r.Reset();
+  dog_circ_l.Reset();
+
+  return true;
+}
+
+////////////////////////////////////////////////////////////////////
+//	DoGRegion 	Filtering
+
+bool DoGRegionSpec::FilterImage(float_Matrix* right_eye_image, float_Matrix* left_eye_image) {
+  // this is not typically overwritten -- just all the checks -- see _impl
+  if(TestWarning((dog_out_r.dims() < 4) ||
+		 (dog_out_r.dim(0) * dog_out_r.dim(1) != dog_feat_geom.n) ||
+		 (dog_out_r.dim(2) != dog_img_geom.x) ||
+		 (dog_out_r.dim(3) != dog_img_geom.y),
+		 "FilterImage", "not properly initialized to current geom -- running Init now")) {
+    Init();
+  }  
+
+  if(TestError(!right_eye_image, "FilterIMage", "right_eye_image is NULL -- must pass image"))
+    return false;
+
+  if(TestError((right_eye_image->dim(0) != retina_size.x) ||
+	       (right_eye_image->dim(1) != retina_size.y),
+	       "FilterImage", "right_eye_image is not appropriate size -- must be same as retina_size!"))
+    return false;
+
+  if(ocularity == BINOCULAR) {
+    if(TestWarning((dog_out_l.dims() < 4) ||
+		   (dog_out_l.dim(0) * dog_out_l.dim(1) != dog_feat_geom.n) ||
+		   (dog_out_l.dim(2) != dog_img_geom.x) ||
+		   (dog_out_l.dim(3) != dog_img_geom.y),
+		   "FilterImage", "not properly initialized to current geom -- running Init now")) {
+      Init();
+    }  
+
+    if(TestError(!left_eye_image, "FilterIMage", "left_eye_image is NULL -- must pass image"))
+      return false;
+
+    if(TestError((left_eye_image->dim(0) != retina_size.x) ||
+		 (left_eye_image->dim(1) != retina_size.y),
+		 "FilterImage", "left_eye_image is not appropriate size -- must be same as retina_size!"))
+      return false;
+
+    cur_img_l = left_eye_image;
+  }
+
+  cur_img_r = right_eye_image;
+
+  bool rval = FilterImage_impl();
+
+  cur_img_r = NULL;
+  cur_img_l = NULL;
+
+  return rval;
+}
+
+void DoGRegionSpec::IncrTime() {
+  if(motion_frames <= 1) {
+    return;
+  }
+  else {
+    dog_circ_r.CircAddLimit(motion_frames);
+    if(ocularity == BINOCULAR) {
+      dog_circ_l.CircAddLimit(motion_frames);
+    }
+  }
+}
+
+bool DoGRegionSpec::FilterImage_impl() {
+  IncrTime();
+  bool rval = DoGFilterImage(cur_img_r, &dog_out_r, &dog_circ_r);
+  if(rval && ocularity == BINOCULAR) {
+    rval &= DoGFilterImage(cur_img_l, &dog_out_l, &dog_circ_l);
+  }
+
+  if(!data_table || save_mode == NONE_SAVE) // bail now
+    return rval;
+
+  if(save_mode == FIRST_ROW) {
+    data_table->EnforceRows(1);
+    data_table->WriteItem(0);
+    data_table->ReadItem(0);
+  }
+  else
+    data_table->AddBlankRow();
+
+  if(image_save & SAVE_DATA && !(!taMisc::gui_active && image_save & ONLY_GUI)) {
+    ImageToTable(data_table, cur_img_r, cur_img_l);
+  }
+  if(dog_save & SAVE_DATA && !(!taMisc::gui_active && dog_save & ONLY_GUI)) {
+    DoGOutputToTable(data_table);
+  }
+
+  return rval;
+}
+
+bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out, CircMatrix* circ) {
+  cur_img = image;
+  cur_out = out;
+  cur_circ = circ;
+  rgb_img = (cur_img->dims() == 3);
+  wrap = (edge_mode == WRAP);
+
+  int n_run = dog_img_geom.Product();
+
+  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.min_units = 1;
+  threads.nibble_chunk = 1;	// small chunks
+
+  ThreadImgProcCall ip_call((ThreadImgProcMethod)(DoGRegionMethod)&DoGRegionSpec::DoGFilterImage_thread);
+  threads.Run(&ip_call, n_run);
+
+  // renormalize -- todo: could thread this perhaps, but chunk size would have to be larger probably
+  if(dog_renorm != NO_RENORM) {
+    RenormOutput_Frames(dog_renorm, out, circ);
+  }
+  return true;
+}
+
+void DoGRegionSpec::DoGFilterImage_thread(int dog_idx, int thread_no) {
+  TwoDCoord dc;			// dog coords
+  dc.x = dog_idx % dog_img_geom.x;
+  dc.y = dog_idx / dog_img_geom.x;
+  TwoDCoord icc = border + dog_spacing * dc; // image coords center
+
+  int mot_idx = cur_circ->CircIdx_Last(); // always write to last position
+  int mx_chan = dog_feat_geom.n - 1; // on/off is 2 feats but 1 chan -- others are pos only!
+
+  TwoDCoord ic;			// image coord
+  for(int chan = 0; chan < mx_chan; chan++) {
+    DoGFilter::ColorChannel cchan = (DoGFilter::ColorChannel)chan;
+    int feat_idx = (chan == 0) ? 0 : chan + 1; // offset +1 for on/off in luminance
+
+    TwoDCoord fc;		// feature coords
+    fc.x = feat_idx % dog_feat_geom.x;
+    fc.y = feat_idx / dog_feat_geom.x;
+
+    float cnv_sum = 0.0f;		// convolution sum
+    for(int yf = -dog_specs.filter_width; yf <= dog_specs.filter_width; yf++) {
+      ic.y = icc.y + yf;
+      for(int xf = -dog_specs.filter_width; xf <= dog_specs.filter_width; xf++) {
+	ic.x = icc.x + xf;
+	if(ic.WrapClip(wrap, retina_size)) {
+	  if(edge_mode == CLIP) continue; // bail on clipping only
+	}
+	if(rgb_img) {
+	  cnv_sum += dog_specs.FilterPoint_rgb(xf, yf, cchan, cur_img->FastEl(ic.x, ic.y,0),
+					 cur_img->FastEl(ic.x, ic.y, 1),
+					 cur_img->FastEl(ic.x, ic.y, 2));
+	}
+	else {
+	  cnv_sum += dog_specs.FilterPoint_grey(xf, yf, cur_img->FastEl(ic.x, ic.y));
+	}
+      }
+    }
+    if(motion_frames <= 1) {
+      if(chan == 0) {		// luminance
+	if(cnv_sum > 0.0f) {
+	  cur_out->FastEl(fc.x, fc.y, dc.x, dc.y) = cnv_sum; // on
+	  cur_out->FastEl(fc.x+1, fc.y, dc.x, dc.y) = 0.0f;  // off
+	}
+	else {
+	  cur_out->FastEl(fc.x, fc.y, dc.x, dc.y) = 0.0f; 	// on
+	  cur_out->FastEl(fc.x+1, fc.y, dc.x, dc.y) = -cnv_sum; // off
+	}
+      }
+      else {
+	cur_out->FastEl(fc.x, fc.y, dc.x, dc.y) = MAX(cnv_sum, 0.0f); // pos rectify
+      }
+    }
+    else {
+      if(chan == 0) {		// luminance
+	if(cnv_sum > 0.0f) {
+	  cur_out->FastEl(fc.x, fc.y, dc.x, dc.y, mot_idx) = cnv_sum; // on
+	  cur_out->FastEl(fc.x+1, fc.y, dc.x, dc.y, mot_idx) = 0.0f;  // off
+	}
+	else {
+	  cur_out->FastEl(fc.x, fc.y, dc.x, dc.y, mot_idx) = 0.0f; 	// on
+	  cur_out->FastEl(fc.x+1, fc.y, dc.x, dc.y, mot_idx) = -cnv_sum; // off
+	}
+      }
+      else {
+	cur_out->FastEl(fc.x, fc.y, dc.x, dc.y, mot_idx) = MAX(cnv_sum, 0.0f); // pos rectify
+      }
+    }
+  }
+}
+
+bool DoGRegionSpec::RenormOutput_Frames(RenormMode mode, float_Matrix* out, CircMatrix* circ) {
+  bool rval = false;
+  float_Matrix* mat = out;
+  if(motion_frames > 1) {
+    mat = (float_Matrix*)out->GetFrameSlice(circ->CircIdx_Last());
+    taBase::Ref(mat);
+  }
+  int idx;
+  float max_val = taMath_float::vec_max(mat, idx);
+  if(max_val > renorm_thr) {
+    rval = true;
+    if(mode == LIN_RENORM) {
+      taMath_float::vec_mult_scalar(mat, 1.0f / max_val);
+    }
+    else if(mode == LOG_RENORM) {
+      float rescale = 1.0f / logf(1.0f + max_val);
+      for(int j=0;j<mat->size;j++) {
+	float& vl = mat->FastEl_Flat(j);
+	vl = logf(1.0f + vl) * rescale;
+      }
+    }
+  }
+  if(motion_frames > 1) {
+    taBase::unRefDone(mat);
+  }
+  return rval;
+}
+
+bool DoGRegionSpec::RenormOutput_NoFrames(RenormMode mode, float_Matrix* mat) {
+  bool rval = false;
+  int idx;
+  float max_val = taMath_float::vec_max(mat, idx);
+  if(max_val > renorm_thr) {
+    rval = true;
+    if(mode == LIN_RENORM) {
+      taMath_float::vec_mult_scalar(mat, 1.0f / max_val);
+    }
+    else if(mode == LOG_RENORM) {
+      float rescale = 1.0f / logf(1.0f + max_val);
+      for(int j=0;j<mat->size;j++) {
+	float& vl = mat->FastEl_Flat(j);
+	vl = logf(1.0f + vl) * rescale;
+      }
+    }
+  }
+  return rval;
+}
+
+bool DoGRegionSpec::DoGInvertFilter(float_Matrix* image, float_Matrix* out) {
+  return true;
+}
+
+
+////////////////////////////////////////////////////////////////////
+//	DoGRegion 	Data Table Output
+
+bool DoGRegionSpec::InitDataTable() {
+  if(!data_table) {
+    if(!(image_save & SAVE_DATA) && !(dog_save & SAVE_DATA)) return true;
+    return false;
+  }
+  int idx;
+  if(image_save & SAVE_DATA) {
+    DataCol* col;
+    String sufx = "_r";
+
+    if(color == COLOR)
+      col = data_table->FindMakeColName(name + "_image" + sufx, idx, DataTable::VT_FLOAT, 3,
+					retina_size.x, retina_size.y, 3);
+    else
+      col = data_table->FindMakeColName(name + "_image" + sufx, idx, DataTable::VT_FLOAT, 2,
+					retina_size.x, retina_size.y);
+    col->SetUserData("IMAGE", true);
+
+    if(ocularity == BINOCULAR) {
+      sufx = "_l";
+      if(color == COLOR)
+	col = data_table->FindMakeColName(name + "_image" + sufx, idx, DataTable::VT_FLOAT, 3,
+					  retina_size.x, retina_size.y, 3);
+      else
+	col = data_table->FindMakeColName(name + "_image" + sufx, idx, DataTable::VT_FLOAT, 2,
+					  retina_size.x, retina_size.y);
+      col->SetUserData("IMAGE", true);
+    }
+  }
+  if(dog_save & SAVE_DATA) {
+    if(dog_save & SEP_MATRIX) {
+      for(int i=0;i<dog_feat_geom.n;i++) {
+	String nm = name + GetDoGFiltName(i) + "_dog";
+	data_table->FindMakeColName(nm+ "_r", idx, DataTable::VT_FLOAT, 2,
+				    dog_img_geom.x, dog_img_geom.y);
+	if(ocularity == BINOCULAR) {
+	  data_table->FindMakeColName(nm+ "_l", idx, DataTable::VT_FLOAT, 2,
+				      dog_img_geom.x, dog_img_geom.y);
+	}
+      }
+    }
+    else {
+      data_table->FindMakeColName(name + "_dog_r", idx, DataTable::VT_FLOAT, 4,
+				  dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
+      if(ocularity == BINOCULAR) {
+	data_table->FindMakeColName(name + "_dog_l", idx, DataTable::VT_FLOAT, 4,
+				    dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
+      }
+    }
+  }
+  return true;
+}
+
+bool DoGRegionSpec::ImageToTable(DataTable* dtab, float_Matrix* right_eye_image,
+				 float_Matrix* left_eye_image) {
+  ImageToTable_impl(dtab, right_eye_image, "_r");
+  if(ocularity == BINOCULAR) 
+    ImageToTable_impl(dtab, left_eye_image, "_l");
+  return true;
+}
+
+bool DoGRegionSpec::ImageToTable_impl(DataTable* dtab, float_Matrix* img,
+				      const String& col_sufx) {
+  DataCol* col;
+  int idx;
+  if(color == COLOR)
+    col = data_table->FindMakeColName(name + "_image" + col_sufx, idx, DataTable::VT_FLOAT, 3,
+				      retina_size.x, retina_size.y, 3);
+  else
+    col = data_table->FindMakeColName(name + "_image" + col_sufx, idx, DataTable::VT_FLOAT, 2,
+				      retina_size.x, retina_size.y);
+
+  float_MatrixPtr ret_img; ret_img = (float_Matrix*)col->GetValAsMatrix(-1);
+  ret_img->CopyFrom(img);
+  return true;
+}
+
+bool DoGRegionSpec::DoGOutputToTable(DataTable* dtab) {
+  DoGOutputToTable_impl(dtab, &dog_out_r, &dog_circ_r, "_r");
+  if(ocularity == BINOCULAR) 
+    DoGOutputToTable_impl(dtab, &dog_out_l, &dog_circ_l, "_l");
+  return true;
+}
+
+bool DoGRegionSpec::DoGOutputToTable_impl(DataTable* dtab, float_Matrix* out, CircMatrix* circ,
+					  const String& col_sufx) {
+  DataCol* col;
+  int idx;
+  if(dog_save & SEP_MATRIX) {
+    // todo: write this
+//     for(int i=0;i<dog_feat_geom.n;i++) {
+//       String nm = name + GetDoGName(i) + "_dog";
+//       data_table->FindMakeColName(nm+ col_sufx, idx, DataTable::VT_FLOAT, 2,
+// 				  dog_img_geom.x, dog_img_geom.y);
+//       if(ocularity == BINOCULAR)
+// 	data_table->FindMakeColName(nm+ col_sufx, idx, DataTable::VT_FLOAT, 2,
+// 				    dog_img_geom.x, dog_img_geom.y);
+//     }
+  }
+  else {
+    col = data_table->FindMakeColName(name + "_dog" + col_sufx, idx, DataTable::VT_FLOAT, 4,
+				      dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    if(motion_frames <= 1) {
+      dout->CopyFrom(out);
+    }
+    else {
+      float_MatrixPtr lstfrm; lstfrm = (float_Matrix*)out->GetFrameSlice(circ->CircIdx_Last());
+      dout->CopyFrom(lstfrm);
+    }
+  }
+  return true;
+}
+
+bool DoGRegionSpec::InvertFilters(float_Matrix* right_eye_image, float_Matrix* left_eye_image) {
+  // todo: write this!
+  return true;
+}
+
+// bool DoGInvertFilter::DoGInvertFilter(float_Matrix* image, float_Matrix* out) {
+//   // todo: write this!
+// }
+
+void DoGRegionSpec::GraphDoGFilter(DataTable* graph_data) {
+  dog_specs.GraphFilter(graph_data);
+}
+
+void DoGRegionSpec::GridDoGFilter(DataTable* graph_data) {
+  dog_specs.GridFilter(graph_data);
+}
+
+void DoGRegionSpec::PlotDoGSpacing(DataTable* graph_data, float val) {
+//   taProject* proj = GET_MY_OWNER(taProject);
+//   if(!graph_data) {
+//     graph_data = proj->GetNewAnalysisDataTable(name + "_PlotSpacing", true);
+//   }
+//   graph_data->StructUpdate(true);
+//   int idx;
+//   DataCol* matda = graph_data->FindMakeColName("Spacing", idx, VT_FLOAT, 2,
+// 						      retina_size.x,
+// 						      retina_size.y);
+//   graph_data->SetUserData("N_ROWS", 1);
+//   graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
+//   graph_data->SetUserData("WIDTH", retina_size.x / retina_size.y);
+
+//   if(graph_data->rows < 1)
+//     graph_data->AddBlankRow();
+
+//   float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+//   if(mat) {
+//     TwoDCoord ic;
+//     int x,y;
+//     for(y=border.y; y<= retina_size.y-border.y; y+= spacing.y) {
+//       for(x=border.x; x<= retina_size.x-border.x; x+=spacing.x) {
+// 	ic.y = y; ic.x = x;
+// 	ic.WrapClip(true, retina_size);
+// 	mat->FastEl(x,y) += val;
+//       }
+//     }
+//   }
+
+//   graph_data->StructUpdate(false);
+//   graph_data->FindMakeGridView();
+}
+
+DoGRegionSpec* DoGRegionSpecList::FindRetinalRegion(DoGRegionSpec::Region reg) {
+  for(int i=0;i<size;i++) {
+    DoGRegionSpec* fs = (DoGRegionSpec*)FastEl(i);
+    if(fs->region == reg)
+      return fs;
+  }
+  return NULL;
+}
+
+DoGRegionSpec* DoGRegionSpecList::FindRetinalRes(DoGRegionSpec::Resolution res) {
+  for(int i=0;i<size;i++) {
+    DoGRegionSpec* fs = (DoGRegionSpec*)FastEl(i);
+    if(fs->res == res)
+      return fs;
+  }
+  return NULL;
+}
+
+DoGRegionSpec* DoGRegionSpecList::FindRetinalRegionRes(DoGRegionSpec::Region reg,
+						       DoGRegionSpec::Resolution res) {
+  for(int i=0;i<size;i++) {
+    DoGRegionSpec* fs = (DoGRegionSpec*)FastEl(i);
+    if((fs->region == reg) && (fs->res == res))
+      return fs;
+  }
+  DoGRegionSpec* rval = FindRetinalRes(res);
+  if(rval) return rval;
+  rval = FindRetinalRegion(reg);
+  if(rval) return rval;
+  return NULL;
+}
+
+////////////////////////////////////////////////////////////////////
+//		V1 Processing -- basic RF's
+
+///////////////////////////////////////////////////////////
+// 		GaborRFSpecBase
+
+void V1SimpleSpec::Initialize() {
+  n_angles = 4;
+  rf_size = 4;
+  spacing = 4;
+  border = 2;
+  rf_norm = 1.0f / rf_size;
+}
+
+void V1SimpleSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  n_angles = 4;			// clamped!
+  rf_size = 4;
+  if(spacing != 4 && spacing != 2) // must be one of these two
+    spacing = 4;
+  rf_norm = 1.0f / rf_size;
+}
+
+void V1MotionSpec::Initialize() {
+  n_speeds = 1;
+  extra_width = 1;
+  gauss_sig = 0.5f;
+}
+
+void V1BinocularSpec::Initialize() {
+  n_disps = 1;
+  disp_off = 2;
+  extra_width = 1;
+  gauss_sig = 0.5f;
+}
+
+void V1ComplexSpec::Initialize() {
+  filters = CF_BASIC;
+  spat_rf = 6;
+  spat_rf_half = 3;
+  spacing = 3;
+  border = 0;
+  gauss_sig = 0.5f;
+  focal_wt = 2.0f;
+  focal_wt_eff = focal_wt / (focal_wt + 2.0f);
+  nonfocal_wt_eff = 1.0f / (focal_wt + 2.0f);
+}
+
+void V1ComplexSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  spat_rf_half = spat_rf / 2;
+  focal_wt_eff = focal_wt / (focal_wt + 2.0f);
+  nonfocal_wt_eff = 1.0f / (focal_wt + 2.0f);
+}
+
+
+// for thread function calling:
+typedef void (V1RegionSpec::*V1RegionMethod)(int, int);
+
+void V1RegionSpec::Initialize() {
+  v1s_renorm = NO_RENORM;
+  v1m_renorm = NO_RENORM;
+  v1s_save = SAVE_DATA;
+  v1s_feat_geom.SetXYN(4, 6, 24);
+  v1b_save = SAVE_DATA;
+  v1c_save = SAVE_DATA;
+  v1c_feat_geom.SetXYN(4, 2, 8);
+
+  v1s_circ_r.matrix = &v1s_out_r;
+  v1s_circ_l.matrix = &v1s_out_l;
+
+  cur_dog = NULL;
+  cur_dog_circ = NULL;
+  mot_feat_y = 0;
+}
+
+void V1RegionSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  v1s_specs.UpdateAfterEdit_NoGui();
+  v1c_specs.UpdateAfterEdit_NoGui();
+  // UpdateGeom is called in parent..
+}
+
+void V1RegionSpec::UpdateGeom() {
+  static bool redo = false;
+  inherited::UpdateGeom();
+
+  int n_dogs = dog_feat_geom.n;	// 2 or 6
+  int n_static = v1s_specs.n_angles * n_dogs;
+  mot_feat_y = n_static;
+  int n_motion = 0;
+  if(motion_frames > 1) {
+    n_motion = 2 * 2 * v1s_specs.n_angles * v1s_motion.n_speeds; // 2 polarity, 2 direction
+  }
+  v1s_feat_geom.x = v1s_specs.n_angles;
+  v1s_feat_geom.n = n_static + n_motion;
+  v1s_feat_geom.y = v1s_feat_geom.n / v1s_feat_geom.x;
+
+
+  // 0 1 2 3 4 5 6 7 8 	retina_size = 9
+  // b b .   .   . b b 	border = spacing = 2: input_size = 5, output_size = 3
+
+  // wrap mode, spacing = 1/2 rf_size
+  // 0 1 2 3 4 5 6 7  retina_size = 8
+  // .   .   .   .    border = 0, spacing = 2; input_size = 8, output_size = 4
+
+  // spacing = rf_size = special case regardless of wrap
+  // 0 1 2 3 4 5 6 7   retina_size = 8
+  //     .  |    .  |  border = 0, spacing = 2; input_size = 8, output_size = 4
+
+  // todo: report and correct mismatches to make sure everything is evenly distributed
+
+  if(v1s_specs.spacing == v1s_specs.rf_size) {
+    v1s_specs.border = v1s_specs.rf_size / 2;
+    v1s_img_geom = dog_img_geom / v1s_specs.rf_size;
+  }
+  else {
+    if(edge_mode == WRAP) {
+      v1s_specs.border = 0;
+      v1s_img_geom = dog_img_geom / v1s_specs.spacing;
+    }
+    else {
+      v1s_specs.border = v1s_specs.rf_size / 2; // always
+      v1s_img_geom = (((dog_img_geom - 2 * v1s_specs.border)-1) / v1s_specs.spacing) + 1;
+    }
+  } 
+
+  int n_cmplx = 0;
+  if(v1c_specs.filters & V1ComplexSpec::END_STOP)
+    n_cmplx += v1s_specs.n_angles;
+  if(v1c_specs.filters & V1ComplexSpec::LEN_SUM)
+    n_cmplx += v1s_specs.n_angles;
+  if(v1c_specs.filters & V1ComplexSpec::DISP_EDGE)
+    n_cmplx += 2;		// on/off
+  if(v1c_specs.filters & V1ComplexSpec::MOTION_EDGE)
+    n_cmplx += 2;		// on/off
+
+  v1c_feat_geom.x = v1s_specs.n_angles;
+  v1c_feat_geom.n = n_cmplx;
+  v1c_feat_geom.y = v1c_feat_geom.n / v1c_feat_geom.x;
+
+  if(edge_mode == WRAP) {
+    v1c_specs.border = 0;
+    v1c_img_geom = v1s_img_geom / v1c_specs.spacing;
+  }
+  else {
+    v1c_specs.border = v1c_specs.spacing;
+    v1c_img_geom = (((v1s_img_geom - 2 * v1c_specs.border)-1) / v1c_specs.spacing) + 1;
+  }
+
+  ///////////////////////////////////////
+  //  Double-check geom from top down 
+
+  if(redo) {			// if doing a redo, stop here and bail
+    redo = false;
+    return;
+  }
+
+  TwoDCoord v1s_fm_v1c;
+  if(edge_mode == WRAP) {
+    v1s_fm_v1c = v1c_specs.spacing * v1c_img_geom;
+  }
+  else {
+//     cg = ((sg - 2b - 1) / sp) + 1;
+//     cg - 1 = ((sg - 2b - 1) / sp);
+//     sp (cg - 1) = (sg - 2b - 1);
+//     sp (cg - 1) + 2b + 1 = sg;
+    v1s_fm_v1c = v1c_specs.spacing * (v1c_img_geom - 1) + 2 * v1c_specs.border + 1;
+  }
+
+  if(v1s_fm_v1c != v1s_img_geom) { // mismatch!
+    taMisc::Info("V1RegionSpec:", name,
+		 "v1s_img_geom:", v1s_img_geom.GetStr(),
+		 "is not an even multiple of v1c_specs.spacing:", v1c_specs.spacing.GetStr(),
+		 "this geometry is:", v1s_fm_v1c.GetStr(),
+		 "Now recomputing image size to fit this -- you might want to increment by some multiple of spacing to get closer to desired input size");
+    v1s_img_geom = v1s_fm_v1c;
+    redo = true;		// recompute from here
+  }
+
+  TwoDCoord dog_fm_v1s;
+  if(v1s_specs.spacing == v1s_specs.rf_size) {
+    dog_fm_v1s = v1s_img_geom * v1s_specs.rf_size;
+  }
+  else {
+    if(edge_mode == WRAP) {
+      dog_fm_v1s = v1s_img_geom * v1s_specs.spacing;
+    }
+    else {
+      dog_fm_v1s = v1s_specs.spacing * (v1s_img_geom - 1) + 2 * v1s_specs.border + 1;
+    }
+  } 
+
+  if(dog_fm_v1s != dog_img_geom) { // mismatch!
+    if(!redo) {			   // only err if not already redoing
+      taMisc::Info("V1RegionSpec:", name,
+		   "dog_img_geom:", dog_img_geom.GetStr(),
+		   "is not an even multiple of v1s_specs.spacing:", v1c_specs.spacing.GetStr(),
+		   "this geometry is:", dog_fm_v1s.GetStr(),
+		   "Now recomputing image size to fit this -- you might want to increment by some multiple of spacing to get closer to desired input size");
+    }
+    dog_img_geom = dog_fm_v1s;
+    redo = true;		// recompute from here
+  }
+
+  TwoDCoord inp_fm_dog;
+  if(edge_mode == WRAP) {
+    inp_fm_dog = dog_img_geom * dog_spacing;
+  }
+  else {
+    inp_fm_dog = dog_spacing * (dog_img_geom - 1) + 1;
+  }
+
+  if(inp_fm_dog != input_size) { // mismatch!
+    if(!redo) {			   // only err if not already redoing
+      taMisc::Info("V1RegionSpec:", name,
+		   "input_size:", input_size.GetStr(),
+		   "is not an even multiple of dog_spacing:", dog_spacing.GetStr(),
+		   "this geometry is:", inp_fm_dog.GetStr(),
+		   "Recomputing image size to fit this -- you might want to increment by some multiple of spacing to get closer to desired input size");
+    }
+    input_size = inp_fm_dog;
+    retina_size = input_size + 2 * border;
+    redo = true;		// recompute from here
+  }
+}
+
+bool V1RegionSpec::InitFilters() {
+  inherited::InitFilters();
+  InitFilters_V1Simple();
+  if(motion_frames > 1)
+    InitFilters_V1Motion();
+  if(ocularity == BINOCULAR)
+    InitFilters_V1Binocular();
+  InitFilters_V1Complex();
+  return true;
+}
+
+bool V1RegionSpec::InitFilters_V1Simple() {
+  // 0,0 = lower left of rf
+
+  // config: x,y coords by rf_size = 1 line, by rf_size = averages over lines, by angles
+  v1s_stencils.SetGeom(4, 2, v1s_specs.rf_size, v1s_specs.rf_size, v1s_specs.n_angles);
+
+  // angle ordering = 0 = horiz, 1 = 45, 2 = vert, 3 = 135
+
+  // horizontal lines
+  for(int pos=0; pos<v1s_specs.rf_size; pos++) {
+    for(int px=0; px<v1s_specs.rf_size; px++) {
+      v1s_stencils.FastEl(0, px, pos, 0) = px; // x = px
+      v1s_stencils.FastEl(1, px, pos, 0) = pos; // y = pos
+    }
+  }
+  // vertical lines
+  for(int pos=0; pos<v1s_specs.rf_size; pos++) {
+    for(int px=0; px<v1s_specs.rf_size; px++) {
+      v1s_stencils.FastEl(0, px, pos, 2) = pos; // x = pos
+      v1s_stencils.FastEl(1, px, pos, 2) = px; // y = px
+    }
+  }
+  // diagonal right
+  for(int pos=0; pos<v1s_specs.rf_size; pos++) {
+    int xs = 1 - pos / 2;	// move up-left, left every other even
+    int ys = -1 + (pos+1) / 2;	// move up-left, up every other odd
+    for(int px=0; px<v1s_specs.rf_size; px++) {
+      v1s_stencils.FastEl(0, px, pos, 1) = xs + px; // x = pos
+      v1s_stencils.FastEl(1, px, pos, 1) = ys + px; // y = px
+    }
+  }
+  // diagonal left
+  for(int pos=0; pos<v1s_specs.rf_size; pos++) {
+    int xs = 2 + pos / 2;	// move up-left, left every other even
+    int ys = -1 + (pos+1) / 2;	// move up-left, up every other odd
+    for(int px=0; px<v1s_specs.rf_size; px++) {
+      v1s_stencils.FastEl(0, px, pos, 3) = xs - px; // x = pos
+      v1s_stencils.FastEl(1, px, pos, 3) = ys + px; // y = px
+    }
+  }
+  return true;
+}
+
+bool V1RegionSpec::InitFilters_V1Motion() {
+  v1m_weights.SetGeom(1, 1 + 2 * v1s_motion.extra_width);
+  if(v1s_motion.extra_width > 0) {
+    float eff_sig = v1s_motion.gauss_sig * (float)v1s_motion.extra_width;
+    int idx = 0;
+    for(int x=-v1s_motion.extra_width; x<=v1s_motion.extra_width; x++, idx++) {
+      float fx = (float)x / (float)v1s_motion.extra_width;
+      v1m_weights.FastEl(idx) = taMath_float::gauss_den_sig(fx, eff_sig);
+    }
+  }
+  taMath_float::vec_norm_sum(&v1m_weights); // make sure sums to 1.0
+  return true;
+}
+
+bool V1RegionSpec::InitFilters_V1Binocular() {
+  v1b_weights.SetGeom(1, 1 + 2 * v1b_specs.extra_width);
+  if(v1b_specs.extra_width > 0) {
+    float eff_sig = v1b_specs.gauss_sig * (float)v1b_specs.extra_width;
+    int idx = 0;
+    for(int x=-v1b_specs.extra_width; x<=v1b_specs.extra_width; x++, idx++) {
+      float fx = (float)x / (float)v1b_specs.extra_width;
+      v1b_weights.FastEl(idx) = taMath_float::gauss_den_sig(fx, eff_sig);
+    }
+  }
+  taMath_float::vec_norm_sum(&v1b_weights); // make sure sums to 1.0
+  return true;
+}
+
+bool V1RegionSpec::InitFilters_V1Complex() {
+  v1c_weights.SetGeom(2, v1c_specs.spat_rf.x, v1c_specs.spat_rf.y);
+  float eff_sig_x = v1c_specs.gauss_sig * (float)v1c_specs.spat_rf.x;
+  float eff_sig_y = v1c_specs.gauss_sig * (float)v1c_specs.spat_rf.y;
+  float ctr_x = (float)v1c_specs.spat_rf.x * .5f;;
+  float ctr_y = (float)v1c_specs.spat_rf.y * .5f;;
+  for(int yi=0; yi< v1c_specs.spat_rf.y; yi++) {
+    float y = ((float)yi - ctr_y) / eff_sig_y;
+    for(int xi=0; xi< v1c_specs.spat_rf.x; xi++) {
+      float x = ((float)xi - ctr_y) / eff_sig_x;
+      float gv = expf(-(x*x + y*y)/2.0f);
+      v1c_weights.FastEl(xi, yi) = gv;
+    }
+  }
+  taMath_float::vec_norm_sum(&v1c_weights); // make sure sums to 1.0
+
+  // config: x,y coords by 1 line, by angles -- only the end points -- center point is always same! 0,0
+  v1c_stencils.SetGeom(3, 2, 2, v1s_specs.n_angles);
+
+  // angle ordering = 0 = horiz, 1 = 45, 2 = vert, 3 = 135
+
+  // horizontal
+  int ln = 0;
+  v1c_stencils.FastEl(0, 0, ln) = -1; v1c_stencils.FastEl(1, 0, ln) = 0;
+  v1c_stencils.FastEl(0, 1, ln) = 1;  v1c_stencils.FastEl(1, 1, ln) = 0;
+  ln++;
+  // 45
+  v1c_stencils.FastEl(0, 0, ln) = -1; v1c_stencils.FastEl(1, 0, ln) = -1;
+  v1c_stencils.FastEl(0, 1, ln) = 1;  v1c_stencils.FastEl(1, 1, ln) = 1;
+  ln++;
+  // vertical
+  v1c_stencils.FastEl(0, 0, ln) = 0; v1c_stencils.FastEl(1, 0, ln) = -1;
+  v1c_stencils.FastEl(0, 1, ln) = 0; v1c_stencils.FastEl(1, 1, ln) = 1;
+  ln++;
+  // 135
+  v1c_stencils.FastEl(0, 0, ln) = 1;  v1c_stencils.FastEl(1, 0, ln) = -1;
+  v1c_stencils.FastEl(0, 1, ln) = -1; v1c_stencils.FastEl(1, 1, ln) = 1;
+
+  return true;
+}
+
+bool V1RegionSpec::InitOutMatrix() {
+  inherited::InitOutMatrix();
+
+  if(motion_frames == 0) {
+    v1s_out_r.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+    if(ocularity == BINOCULAR)
+      v1s_out_l.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+    else
+      v1s_out_l.SetGeom(1,1);	// free memory
+  }
+  else {
+    v1s_out_r.SetGeom(5, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y,
+		      motion_frames);
+    if(ocularity == BINOCULAR)
+      v1s_out_l.SetGeom(5, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y,
+			motion_frames);
+    else
+      v1s_out_l.SetGeom(1,1);	// free memory
+  }
+  v1s_circ_r.Reset();
+  v1s_circ_l.Reset();
+
+  if(ocularity == BINOCULAR)
+    v1b_out.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+  else
+    v1s_out_l.SetGeom(1,1);	// free memory
+
+  v1c_out.SetGeom(4, v1c_feat_geom.x, v1c_feat_geom.y, v1c_img_geom.x, v1c_img_geom.y);
+
+  return true;
+}
+
+void V1RegionSpec::IncrTime() {
+  inherited::IncrTime();
+
+  if(motion_frames <= 1) {
+    return;		// nop
+  }
+  else {
+    v1s_circ_r.CircAddLimit(motion_frames);
+    if(ocularity == BINOCULAR) {
+      v1s_circ_l.CircAddLimit(motion_frames);
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////
+//	V1Region 	Filtering
+
+bool V1RegionSpec::FilterImage_impl() {
+  inherited::FilterImage_impl(); // do dogs first
+
+  // todo: maybe check rval for fail and bail -- not currently used..
+
+  wrap = (edge_mode == WRAP);
+
+  bool rval = V1SimpleFilter_Static(&dog_out_r, &dog_circ_r, &v1s_out_r, &v1s_circ_r);
+  if(rval && ocularity == BINOCULAR) {
+    rval &= V1SimpleFilter_Static(&dog_out_l, &dog_circ_l, &v1s_out_l, &v1s_circ_l);
+  }
+
+  if(motion_frames > 1) {
+    rval &= V1SimpleFilter_Motion(&v1s_out_r, &v1s_circ_r);
+    if(rval && ocularity == BINOCULAR) {
+      rval &= V1SimpleFilter_Motion(&v1s_out_l, &v1s_circ_l);
+    }
+  }
+
+  if(rval && ocularity == BINOCULAR) {
+    rval &= V1BinocularFilter();
+  }
+
+  if(rval) {
+    rval &= V1ComplexFilter();
+  }
+
+  if(!data_table || save_mode == NONE_SAVE) // bail now
+    return rval;
+
+  if(v1s_save & SAVE_DATA && !(!taMisc::gui_active && v1s_save & ONLY_GUI)) {
+    V1SOutputToTable(data_table);
+  }
+  if(ocularity == BINOCULAR && v1b_save & SAVE_DATA && !(taMisc::gui_active && v1b_save & ONLY_GUI)) {
+    V1BOutputToTable(data_table);
+  }
+  if(v1c_save & SAVE_DATA && !(!taMisc::gui_active && v1c_save & ONLY_GUI)) {
+    V1COutputToTable(data_table);
+  }
+
+  return rval;
+}
+
+bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* dog, CircMatrix* dog_circ,
+					 float_Matrix* out, CircMatrix* circ) {
+  cur_dog = dog;
+  cur_dog_circ = dog_circ;
+  cur_out = out;
+  cur_circ = circ;
+
+  int n_run = v1s_img_geom.Product();
+
+  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.min_units = 1;
+  threads.nibble_chunk = 1;	// small chunks
+
+  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Static_thread);
+  threads.Run(&ip_call, n_run);
+
+  if(v1s_renorm != NO_RENORM) {
+    V1SRenormOutput_Static(out, circ); // only do static, separate from motion
+  }
+  return true;
+}
+
+void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
+  TwoDCoord sc;			// simple coords
+  sc.x = v1s_idx % v1s_img_geom.x;
+  sc.y = v1s_idx / v1s_img_geom.x;
+  TwoDCoord dcs = v1s_specs.spacing * sc; // dog coords start
+  dcs += v1s_specs.border;
+  dcs -= v1s_specs.rf_size / 2;	// convert to lower-left starting position, not center
+
+  int dog_mot_idx = cur_dog_circ->CircIdx_Last(); // always write to last position
+  int mot_idx = cur_circ->CircIdx_Last(); // always write to last position
+
+  TwoDCoord dc;			// dog coord
+  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+      TwoDCoord dfc;		// dog feature coords
+      dfc.x = dog % dog_feat_geom.x;
+      dfc.y = dog / dog_feat_geom.x;
+
+      TwoDCoord fc;		// v1s feature coords
+      fc.x = ang;
+      fc.y = dog;
+
+      float max_line = 0.0f;
+      for(int lpos = 0; lpos < v1s_specs.rf_size; lpos++) { // line starting positions
+	float line_sum = 0.0f;
+	for(int lpx = 0; lpx < v1s_specs.rf_size; lpx++) { // line pixels
+	  int xp = v1s_stencils.FastEl(0,lpx,lpos,ang);
+	  int yp = v1s_stencils.FastEl(1,lpx,lpos,ang);
+	  dc.x = dcs.x + xp;
+	  dc.y = dcs.y + yp;
+
+	  if(dc.WrapClip(wrap, dog_img_geom)) {
+	    if(edge_mode == CLIP) continue; // bail on clipping only
+	  }
+
+	  float dogval;
+	  if(motion_frames <= 1)
+	    dogval = cur_dog->FastEl(dfc.x, dfc.y, dc.x, dc.y);
+	  else
+	    dogval = cur_dog->FastEl(dfc.x, dfc.y, dc.x, dc.y, dog_mot_idx);
+	  line_sum += dogval;
+	}
+	line_sum *= v1s_specs.rf_norm;
+	max_line = MAX(max_line, line_sum);
+      }
+
+      if(motion_frames <= 1)
+	cur_out->FastEl(fc.x, fc.y, sc.x, sc.y) = max_line;
+      else
+	cur_out->FastEl(fc.x, fc.y, sc.x, sc.y, mot_idx) = max_line;
+    }
+  }
+}
+
+bool V1RegionSpec::V1SRenormOutput_Static(float_Matrix* out, CircMatrix* circ) {
+  bool rval = false;
+  float_Matrix* mat = out;
+  if(motion_frames > 1) {
+    mat = (float_Matrix*)out->GetFrameSlice(circ->CircIdx_Last());
+    taBase::Ref(mat);
+  }
+  float max_val = 0.0f;
+  TwoDCoord sc;		// simple coords
+  TwoDCoord fc;		// v1s feature coords
+  for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
+    for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
+      for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+	for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	  fc.x = ang;
+	  fc.y = dog;
+	  float val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
+	  max_val = MAX(val, max_val);
+	}
+      }
+    }
+  }
+  if(max_val > renorm_thr) {
+    rval = true;
+    if(v1s_renorm == LIN_RENORM) {
+      float rescale = 1.0f / max_val;
+      for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
+	for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
+	  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      fc.x = ang;
+	      fc.y = dog;
+	      float& val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
+	      val = val * rescale;
+	    }
+	  }
+	}
+      }
+    }
+    else if(v1s_renorm == LOG_RENORM) {
+      float rescale = 1.0f / logf(1.0f + max_val);
+      for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
+	for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
+	  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      fc.x = ang;
+	      fc.y = dog;
+	      float& val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
+	      val = logf(1.0f + val) * rescale;
+	    }
+	  }
+	}
+      }
+    }
+  }
+  if(motion_frames > 1) {
+    taBase::unRefDone(mat);
+  }
+  return rval;
+}
+
+bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* out, CircMatrix* circ) {
+  cur_out = out;	
+  cur_circ = circ;
+
+  int n_run = v1s_img_geom.Product();
+
+  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.min_units = 1;
+  threads.nibble_chunk = 1;	// small chunks
+
+  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_thread);
+  threads.Run(&ip_call, n_run);
+  return true;
+
+  if(v1m_renorm != NO_RENORM) {
+    V1SRenormOutput_Motion(out, circ); // only do static, separate from motion
+  }
+}
+
+void V1RegionSpec::V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no) {
+  // todo: write this -- reads off of the v1s static filters through time history..
+}
+
+bool V1RegionSpec::V1SRenormOutput_Motion(float_Matrix* out, CircMatrix* circ) {
+  bool rval = false;
+  float_Matrix* mat = out;
+  if(motion_frames > 1) {
+    mat = (float_Matrix*)out->GetFrameSlice(circ->CircIdx_Last());
+    taBase::Ref(mat);
+  }
+  float max_val = 0.0f;
+  TwoDCoord sc;		// simple coords
+  TwoDCoord fc;		// v1s feature coords
+  for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
+    for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
+      for(int mot = mot_feat_y; mot < v1s_feat_geom.y; mot++) { // motion
+	fc.y = mot;
+	for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	  fc.x = ang;
+	  float val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
+	  max_val = MAX(val, max_val);
+	}
+      }
+    }
+  }
+  if(max_val > renorm_thr) {
+    rval = true;
+    if(v1m_renorm == LIN_RENORM) {
+      float rescale = 1.0f / max_val;
+      for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
+	for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
+	  for(int mot = mot_feat_y; mot < v1s_feat_geom.y; mot++) { // motion
+	    fc.y = mot;
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      fc.x = ang;
+	      float& val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
+	      val = val * rescale;
+	    }
+	  }
+	}
+      }
+    }
+    else if(v1m_renorm == LOG_RENORM) {
+      float rescale = 1.0f / logf(1.0f + max_val);
+      for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
+	for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
+	  for(int mot = mot_feat_y; mot < v1s_feat_geom.y; mot++) { // motion
+	    fc.y = mot;
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      fc.x = ang;
+	      float& val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
+	      val = logf(1.0f + val) * rescale;
+	    }
+	  }
+	}
+      }
+    }
+  }
+  if(motion_frames > 1) {
+    taBase::unRefDone(mat);
+  }
+  return rval;
+}
+
+bool V1RegionSpec::V1BinocularFilter() {
+  int n_run = v1s_img_geom.Product();
+
+  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.min_units = 1;
+  threads.nibble_chunk = 1;	// small chunks
+
+  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_thread);
+  threads.Run(&ip_call, n_run);
+  return true;
+}
+
+void V1RegionSpec::V1BinocularFilter_thread(int v1b_idx, int thread_no) {
+  // todo: write this -- compute offsets
+}
+
+bool V1RegionSpec::V1ComplexFilter() {
+  cur_out = &v1c_out;
+
+  int n_run = v1c_img_geom.Product();
+
+  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.min_units = 1;
+  threads.nibble_chunk = 1;	// small chunks
+
+  if(ocularity == BINOCULAR) {
+    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Binocular_thread);
+    threads.Run(&ip_call, n_run);
+  }
+  else {
+    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Monocular_thread);
+    threads.Run(&ip_call, n_run);
+  }
+  return true;
+}
+
+void V1RegionSpec::V1ComplexFilter_Monocular_thread(int v1c_idx, int thread_no) {
+  TwoDCoord cc;			// complex coords
+  cc.x = v1c_idx % v1c_img_geom.x;
+  cc.y = v1c_idx / v1c_img_geom.x;
+  TwoDCoord scs = v1c_specs.spacing * cc; // v1s coords start
+  scs += v1c_specs.border;
+  scs -= v1c_specs.spat_rf_half; // convert to lower-left starting position, not center
+
+  int v1s_mot_idx = v1s_circ_r.CircIdx_Last();
+
+  int cfidx = 0;		// complex feature index
+  TwoDCoord sc;			// simple coord
+  TwoDCoord sce;		// simple coord, ends
+  TwoDCoord fc;			// v1c feature coords
+  for(int cfeat = 0; cfeat < 2; cfeat++) {
+    if(cfeat == 0 && !(v1c_specs.filters & V1ComplexSpec::END_STOP)) continue;
+    if(cfeat == 1 && !(v1c_specs.filters & V1ComplexSpec::LEN_SUM)) continue;
+    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+      fc.x = ang;
+      fc.y = cfidx;
+
+      float max_sf = 0.0f;	// max over simple features
+      int v1sf_other = 1;
+      for(int v1sf = 0; v1sf < v1s_feat_geom.y; v1sf++, v1sf_other++) {
+	if(v1sf_other > 1) v1sf_other = 0; // alternate 1,0,1,0..
+	// v1 simple features -- for end-stop, designates the sign of the center..
+	if(cfeat == 0 && color == COLOR && v1sf >= 2 && v1sf <= 6) continue;
+	// skip the colors -- no obvious "off" tuning so we don't use them for end stop
+	TwoDCoord sfc_ctr;	// simple feature coords for the central point
+	sfc_ctr.x = ang;
+	sfc_ctr.y = v1sf;
+	TwoDCoord sfc_end;	// simple feature coords for the end point
+	sfc_end.x = ang;
+	if(cfeat == 0)
+	  sfc_end.y = v1sf_other;
+	else
+	  sfc_end.y = v1sf;
+
+	float max_rf = 0.0f;   // max over spatial rfield
+	for(int ys = 0; ys < v1c_specs.spat_rf.y; ys++) { // ysimple
+	  sc.y = scs.y + ys;
+	  for(int xs = 0; xs < v1c_specs.spat_rf.x; xs++) { // xsimple
+	    sc.x = scs.x + xs;
+
+	    // first get central value -- always the same
+	    float ctr_val;
+	    if(motion_frames <= 1)
+	      ctr_val = v1s_out_r.FastEl(sfc_ctr.x, sfc_ctr.y, sc.x, sc.y);
+	    else
+	      ctr_val = v1s_out_r.FastEl(sfc_ctr.x, sfc_ctr.y, sc.x, sc.y, v1s_mot_idx);
+	    // now get the end points
+	    float line_sum = ctr_val;
+	    for(int lnp=0; lnp < 2; lnp++) {
+	      int xp = v1c_stencils.FastEl(0,lnp,ang);
+	      int yp = v1c_stencils.FastEl(1,lnp,ang);
+	      sce.x = sc.x + xp;
+	      sce.y = sc.y + yp;
+
+	      if(sce.WrapClip(wrap, v1s_img_geom)) {
+		if(edge_mode == CLIP) continue; // bail on clipping only
+	      }
+
+	      float end_val;
+	      if(motion_frames <= 1)
+		end_val = v1s_out_r.FastEl(sfc_end.x, sfc_end.y, sce.x, sce.y);
+	      else
+		end_val = v1s_out_r.FastEl(sfc_end.x, sfc_end.y, sce.x, sce.y, v1s_mot_idx);
+	      line_sum += end_val;
+	    }
+	    line_sum *= 0.3333333f;
+	    line_sum *= v1c_weights.FastEl(xs, ys); // spatial rf weighting
+	    max_rf = MAX(max_rf, line_sum);
+	  }
+	}
+	
+	max_sf = MAX(max_sf, max_rf); // max over all simple features -- very general
+      } // for v1sf
+      cur_out->FastEl(fc.x, fc.y, cc.x, cc.y) = max_sf;
+    }  // for ang
+    cfidx++;			// increment on success
+  }
+
+  // todo: do depth edge and motion edge!
+}
+
+void V1RegionSpec::V1ComplexFilter_Binocular_thread(int v1c_idx, int thread_no) {
+  // todo: write this -- same as monoc but integrate over disparities with weights
+}
+
+
+////////////////////////////////////////////////////////////////////
+//	V1Region 	Data Table Output
+
+bool V1RegionSpec::InitDataTable() {
+  inherited::InitDataTable();
+  if(!data_table) {
+    if(!(image_save & SAVE_DATA) && !(dog_save & SAVE_DATA)) return true;
+    return false;
+  }
+
+  int idx;
+  DataCol* col;
+  // SIMPLE
+  if(v1s_save & SAVE_DATA) {
+    if(v1s_save & SEP_MATRIX) {
+      // break out into sub-structure: bw, color, motion
+      data_table->FindMakeColName(name + "_v1s_bw_r", idx, DataTable::VT_FLOAT, 4,
+			    v1s_feat_geom.x, 2, v1s_img_geom.x, v1s_img_geom.y);
+      if(ocularity == BINOCULAR)
+	data_table->FindMakeColName(name + "_v1s_bw_l", idx, DataTable::VT_FLOAT, 4,
+			    v1s_feat_geom.x, 2, v1s_img_geom.x, v1s_img_geom.y);
+      if(color == COLOR) {
+	data_table->FindMakeColName(name + "_v1s_clr_r", idx, DataTable::VT_FLOAT, 4,
+				    v1s_feat_geom.x, 4, v1s_img_geom.x, v1s_img_geom.y);
+	if(ocularity == BINOCULAR)
+	  data_table->FindMakeColName(name + "_v1s_clr_l", idx, DataTable::VT_FLOAT, 4,
+				      v1s_feat_geom.x, 4, v1s_img_geom.x, v1s_img_geom.y);
+      }
+      if(motion_frames > 1) {
+	data_table->FindMakeColName(name + "_v1s_mot_r", idx, DataTable::VT_FLOAT, 4,
+		    v1s_feat_geom.x, 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
+	if(ocularity == BINOCULAR)
+	  data_table->FindMakeColName(name + "_v1s_mot_l", idx, DataTable::VT_FLOAT, 4,
+		      v1s_feat_geom.x, 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
+      }
+    }
+    else {
+      col = data_table->FindMakeColName(name + "_v1s_r", idx, DataTable::VT_FLOAT, 4,
+		v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+      if(ocularity == BINOCULAR)
+	col = data_table->FindMakeColName(name + "_v1s_l", idx, DataTable::VT_FLOAT, 4,
+		v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+    }
+  }
+
+  // BINOCULAR
+  if(ocularity == BINOCULAR && v1b_save & SAVE_DATA) {
+    if(v1b_save & SEP_MATRIX) {
+      // break out into sub-structure: bw, color, motion
+      data_table->FindMakeColName(name + "_v1b_bw", idx, DataTable::VT_FLOAT, 4,
+			    v1b_feat_geom.x, 3 * 2, v1s_img_geom.x, v1s_img_geom.y);
+      if(color == COLOR) {
+	data_table->FindMakeColName(name + "_v1b_clr", idx, DataTable::VT_FLOAT, 4,
+				    v1b_feat_geom.x, 3 * 4, v1s_img_geom.x, v1s_img_geom.y);
+      }
+      if(motion_frames > 1) {
+	data_table->FindMakeColName(name + "_v1b_mot", idx, DataTable::VT_FLOAT, 4,
+		    v1b_feat_geom.x, 3 * 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
+      }
+    }
+    else {
+      col = data_table->FindMakeColName(name + "_v1b", idx, DataTable::VT_FLOAT, 4,
+		v1b_feat_geom.x, v1b_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+    }
+  }
+
+  // COMPLEX
+  if(v1c_save & SAVE_DATA) {
+    if(v1c_save & SEP_MATRIX) {
+      // break out into sub-structure: end-stop/len-sum, other edges -- assumes both of each present
+      if(v1c_specs.filters & V1ComplexSpec::CF_BASIC) {
+	data_table->FindMakeColName(name + "_v1c_esls", idx, DataTable::VT_FLOAT, 4,
+				    v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
+      }
+      if(v1c_specs.filters & V1ComplexSpec::CF_EDGES) {
+	data_table->FindMakeColName(name + "_v1c_edge", idx, DataTable::VT_FLOAT, 4,
+				    v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
+      }
+    }
+    else {
+      col = data_table->FindMakeColName(name + "_v1c", idx, DataTable::VT_FLOAT, 4,
+		v1c_feat_geom.x, v1c_feat_geom.y, v1c_img_geom.x, v1c_img_geom.y);
+    }
+  }
+  return true;
+}
+
+bool V1RegionSpec::V1SOutputToTable(DataTable* dtab) {
+  V1SOutputToTable_impl(dtab, &v1s_out_r, &v1s_circ_r, "_r");
+  if(ocularity == BINOCULAR) 
+    V1SOutputToTable_impl(dtab, &v1s_out_l, &v1s_circ_l, "_l");
+  return true;
+}
+
+bool V1RegionSpec::V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out, CircMatrix* circ,
+					 const String& col_sufx) {
+  DataCol* col;
+  int idx;
+  if(v1s_save & SEP_MATRIX) {
+    // todo: write this
+//     data_table->FindMakeColName(name + "_v1s_bw_r", idx, DataTable::VT_FLOAT, 4,
+// 				v1s_feat_geom.x, 2, v1s_img_geom.x, v1s_img_geom.y);
+//     if(color == COLOR) {
+//       data_table->FindMakeColName(name + "_v1s_clr_r", idx, DataTable::VT_FLOAT, 4,
+// 				  v1s_feat_geom.x, 4, v1s_img_geom.x, v1s_img_geom.y);
+//     }
+//     if(motion_frames > 1) {
+//       data_table->FindMakeColName(name + "_v1s_mot_r", idx, DataTable::VT_FLOAT, 4,
+// 				  v1s_feat_geom.x, 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
+//     }
+  }
+  else {
+    col = data_table->FindMakeColName(name + "_v1s" + col_sufx, idx, DataTable::VT_FLOAT, 4,
+	      v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    if(motion_frames <= 1) {
+      dout->CopyFrom(out);
+    }
+    else {
+      float_MatrixPtr lstfrm; lstfrm = (float_Matrix*)out->GetFrameSlice(circ->CircIdx_Last());
+      dout->CopyFrom(lstfrm);
+    }
+  }
+  return true;
+}
+
+bool V1RegionSpec::V1BOutputToTable(DataTable* dtab) {
+  DataCol* col;
+  int idx;
+  if(v1b_save & SEP_MATRIX) {
+    // todo: write this
+    // break out into sub-structure: bw, color, motion
+//     data_table->FindMakeColName(name + "_v1b_bw", idx, DataTable::VT_FLOAT, 4,
+// 				v1b_feat_geom.x, 3 * 2, v1s_img_geom.x, v1s_img_geom.y);
+//     if(color == COLOR) {
+//       data_table->FindMakeColName(name + "_v1b_clr", idx, DataTable::VT_FLOAT, 4,
+// 				  v1b_feat_geom.x, 3 * 4, v1s_img_geom.x, v1s_img_geom.y);
+//     }
+//     if(motion_frames > 1) {
+//       data_table->FindMakeColName(name + "_v1b_mot", idx, DataTable::VT_FLOAT, 4,
+// 				  v1b_feat_geom.x, 3 * 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
+//     }
+  }
+  else {
+    col = data_table->FindMakeColName(name + "_v1b", idx, DataTable::VT_FLOAT, 4,
+		      v1b_feat_geom.x, v1b_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    dout->CopyFrom(&v1b_out);
+  }
+  return true;
+}
+
+bool V1RegionSpec::V1COutputToTable(DataTable* dtab) {
+  DataCol* col;
+  int idx;
+  if(v1c_save & SEP_MATRIX) {
+    // todo: write this
+    // break out into sub-structure: end-stop/len-sum, other edges -- assumes both of each present
+//     if(v1c_specs.filters & V1ComplexSpec::CF_BASIC) {
+//       data_table->FindMakeColName(name + "_v1c_esls", idx, DataTable::VT_FLOAT, 4,
+// 				  v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
+//     }
+//     if(v1c_specs.filters & V1ComplexSpec::CF_EDGES) {
+//       data_table->FindMakeColName(name + "_v1c_edge", idx, DataTable::VT_FLOAT, 4,
+// 				  v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
+//     }
+  }
+  else {
+    col = data_table->FindMakeColName(name + "_v1c", idx, DataTable::VT_FLOAT, 4,
+		      v1c_feat_geom.x, v1c_feat_geom.y, v1c_img_geom.x, v1c_img_geom.y);
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    dout->CopyFrom(&v1c_out);
+  }
+  return true;
+}
+
+
+void V1RegionSpec::GraphV1Filter(DataTable* graph_data, V1Filters filter, int unit_no) {
+//   if(filter_type == GABOR) {
+//     GaborFilter* gf = (GaborFilter*)gabor_filters.SafeEl(unit_no);
+//     if(gf)
+//       gf->GraphFilter(graph_data);
+//   }
+//   else if(filter_type == MOTIONDISP_GABOR) {
+//     MotionGaborFilter* gf = (MotionGaborFilter*)motion_filters.SafeEl(unit_no);
+//     if(gf)
+//       gf->GraphFilter(graph_data);
+//   }
+//   else if(filter_type == BLOB) {
+//     DoGFilter* df = (DoGFilter*)blob_filters.SafeEl(unit_no);
+//     if(df)
+//       df->GraphFilter(graph_data);
+//   }
+}
+
+void V1RegionSpec::GridV1Filter(DataTable* graph_data, V1Filters filter) {
+//   taProject* proj = GET_MY_OWNER(taProject);
+//   if(!graph_data) {
+//     graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
+//   }
+//   graph_data->StructUpdate(true);
+//   graph_data->ResetData();
+
+//   if(filter_type == GABOR) {
+//     for(int i=0;i<gabor_filters.size;i++) {
+//       GaborFilter* gf = (GaborFilter*)gabor_filters.SafeEl(i);
+//       gf->GridFilter(graph_data, false); // don't reset!
+//     }
+//   }
+//   else if(filter_type == MOTIONDISP_GABOR) {
+//     for(int i=0;i<motion_filters.size;i++) {
+//       MotionGaborFilter* gf = (MotionGaborFilter*)motion_filters.SafeEl(i);
+//       gf->GridFilter(graph_data, false); // don't reset!
+//     }
+//   }
+//   else if(filter_type == BLOB) {
+//     for(int i=0;i<blob_filters.size;i++) {
+//       DoGFilter* df = (DoGFilter*)blob_filters.SafeEl(i);
+//       df->GridFilter(graph_data, false); // don't reset!
+//     }
+//   }
+//   else {			// COPY
+//   graph_data->StructUpdate(false);
+//   graph_data->FindMakeGridView();
+}
+
+void V1RegionSpec::GridFilterInput(DataTable* graph_data, int unit_no, int gp_skip, bool ctrs_only) {
+//   taProject* proj = GET_MY_OWNER(taProject);
+//   if(!graph_data) {
+//     graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilterInput", true);
+//   }
+//   graph_data->StructUpdate(true);
+//   int idx;
+//   DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2,
+// 					       trg_input_size.x, trg_input_size.y);
+//   graph_data->EnforceRows(1);
+//   float_Matrix* gmat = (float_Matrix*)matda->GetValAsMatrix(0);
+//   taBase::Ref(gmat);
+//   gmat->InitVals();
+
+//   graph_data->SetUserData("N_ROWS", 1);
+// //   graph_data->SetUserData("SCALE_MIN", -maxv);
+// //   graph_data->SetUserData("SCALE_MAX", maxv);
+// //   graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
+
+//   TwoDCoord ugp;		// unit groups
+//   TwoDCoord fgp;		// filter groups
+//   TwoDCoord ugpof;		// offset from ugps
+//   TwoDCoord fgpof;		// offset from fgps
+//   TwoDCoord fc;			// filter coords
+//   TwoDCoord in;			// input coords
+
+//   int uidx = unit_no;
+//   int fidx = uidx / n_filters_per_gp;
+//   int fgpdx = uidx % n_filters_per_gp;
+//   DoGFilter* dgf = NULL;
+//   GaborFilter* ggf = NULL;
+//   if(filter_type == GABOR)
+//     ggf = (GaborFilter*)gabor_filters.SafeEl(fidx);
+//   else if(filter_type == BLOB)
+//     dgf = (DoGFilter*)blob_filters.SafeEl(fidx);
+//   // nothing for COPY
+//   // for each unit, process entire input:
+//   for(ugp.y=0;ugp.y<gp_geom.y;ugp.y+= gp_skip) {
+//     for(ugp.x=0;ugp.x<gp_geom.x;ugp.x+= gp_skip) {
+//       if(wrap)
+// 	ugpof = (ugp-1) * input_ovlp;
+//       else
+// 	ugpof = ugp * input_ovlp;
+//       // filter groups
+//       for(fgp.y=0;fgp.y<tot_filter_gps.y;fgp.y++) {
+// 	int ymod = fgp.y % n_filters_per_gp;
+// 	for(fgp.x=0;fgp.x<tot_filter_gps.x;fgp.x++) {
+// 	  int xmod = (fgp.x + ymod) % n_filters_per_gp;
+// 	  if(xmod != fgpdx) continue; // not our spot
+// 	  float gmult = gp_gauss_mat.FastEl(fgp.x, fgp.y);
+// 	  fgpof = ugpof + (fgp * rf_ovlp);
+// 	  // now actually apply the filter itself
+// 	  for(fc.y=0;fc.y<rf_width.y;fc.y++) {
+// 	    for(fc.x=0;fc.x<rf_width.x;fc.x++) {
+// 	      in = fgpof + fc;
+// 	      if(in.WrapClip(wrap, trg_input_size)) continue;
+// 	      float fval;
+// 	      if(filter_type == GABOR) {
+// 		fval = ggf->filter.FastEl(fc.x, fc.y);
+// 	      }
+// 	      else if(filter_type == BLOB) {
+// 		fval = (dgf->on_filter.FastEl(fc.x, fc.y) - 
+// 			dgf->off_filter.FastEl(fc.x, fc.y));
+// 	      }
+// 	      else {		// COPY
+// 		fval = 1.0f;
+// 	      }
+// 	      if(ctrs_only) {
+// 		if(fc == rf_ovlp) fval = 1.0f;
+// 		else fval = 0.0f;
+// 	      }
+// 	      gmat->FastEl(in.x, in.y) += gmult * fval;
+// 	    }
+// 	  }
+// 	}
+//       }
+//     }
+//   }
+//   taBase::unRefDone(gmat);
+//   graph_data->StructUpdate(false);
+//   graph_data->FindMakeGridView();
+}
+
+
 //////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////
 // 		Full Retinal Spec
 
-void RetinaSpec::Initialize() {
-  color_type = MONOCHROME;
+void RetinaProc::Initialize() {
   edge_mode = taImageProc::BORDER;
   fade_width = -1;
-  renorm_thr = 0.00001f;
-  retina_size.x = 321; retina_size.y = 241;
-  threads.min_units = 1;
 }
 
-void RetinaSpec::UpdateRetinaSize() {
-  for(int i=0;i<dogs.size; i++) {
-    DoGRetinaSpec* sp = dogs[i];
-    sp->spacing.retina_size = retina_size;
-    sp->spacing.UpdateAfterEdit_NoGui();
-  }
-}
-
-void RetinaSpec::UpdateAfterEdit_impl() {
+void RetinaProc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateRetinaSize();
 }
 
-void RetinaSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
+void RetinaProc::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
-  dogs.CheckConfig(quiet, rval);
-}
-
-void RetinaSpec::DefaultFilters() {
-  StructUpdate(false);
-  if(color_type == COLOR)
-    dogs.SetSize(5);
-  else
-    dogs.SetSize(3);
-  UpdateRetinaSize();
-  DoGRetinaSpec* sp;
-  int cnt = 0;
-  if(color_type == MONOCHROME) {
-    sp = dogs[cnt++];
-    sp->name = "high_freq_bw";
-    sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
-    sp->dog.filter_width = 8;
-    sp->dog.on_sigma = 2;
-    sp->dog.off_sigma = 4;
-    sp->spacing.region = RetinalSpacingSpec::FOVEA;
-    sp->spacing.res = RetinalSpacingSpec::HI_RES;
-    sp->spacing.border.x = 0; sp->spacing.border.y = 0;
-    sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
-    sp->UpdateAfterEdit();
-
-    sp = dogs[cnt++];
-    sp->name = "med_freq_bw";
-    sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
-    sp->dog.filter_width = 16;
-    sp->dog.on_sigma = 4;
-    sp->dog.off_sigma = 8;
-    sp->spacing.region = RetinalSpacingSpec::FOVEA;
-    sp->spacing.res = RetinalSpacingSpec::MED_RES;
-    sp->spacing.border.x = 6; sp->spacing.border.y = 14;
-    sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
-    sp->UpdateAfterEdit();
-	  
-
-    sp = dogs[cnt++];
-    sp->name = "low_freq_bw";
-    sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
-    sp->dog.filter_width = 32;
-    sp->dog.on_sigma = 8;
-    sp->dog.off_sigma = 16;
-    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
-    sp->spacing.res = RetinalSpacingSpec::LOW_RES;
-    sp->spacing.border.x = 8; sp->spacing.border.y = 16;
-    sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
-    sp->UpdateAfterEdit();
-  }
-  else if(color_type == COLOR) {
-    sp = dogs[cnt++];
-    sp->name = "high_freq_rg";
-    sp->dog.color_chan = DoGFilterSpec::RED_GREEN;
-    sp->dog.filter_width = 8;
-    sp->dog.on_sigma = 2;
-    sp->dog.off_sigma = 4;
-    sp->spacing.region = RetinalSpacingSpec::FOVEA;
-    sp->spacing.res = RetinalSpacingSpec::HI_RES;
-    sp->spacing.border.x = 109; sp->spacing.border.y = 85;
-    sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
-    sp->UpdateAfterEdit();
-
-    sp = dogs[cnt++];
-    sp->name = "high_freq_by";
-    sp->dog.color_chan = DoGFilterSpec::BLUE_YELLOW;
-    sp->dog.filter_width = 8;
-    sp->dog.on_sigma = 2;
-    sp->dog.off_sigma = 4;
-    sp->spacing.region = RetinalSpacingSpec::FOVEA;
-    sp->spacing.res = RetinalSpacingSpec::HI_RES;
-    sp->spacing.border.x = 109; sp->spacing.border.y = 85;
-    sp->spacing.spacing.x = 2; sp->spacing.spacing.y = 2;
-    sp->UpdateAfterEdit();
-
-    sp = dogs[cnt++];
-    sp->name = "med_freq_rg";
-    sp->dog.color_chan = DoGFilterSpec::RED_GREEN;
-    sp->dog.filter_width = 16;
-    sp->dog.on_sigma = 4;
-    sp->dog.off_sigma = 8;
-    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
-    sp->spacing.res = RetinalSpacingSpec::MED_RES;
-    sp->spacing.border.x = 6; sp->spacing.border.y = 14;
-    sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
-    sp->UpdateAfterEdit();
-
-    sp = dogs[cnt++];
-    sp->name = "med_freq_by";
-    sp->dog.color_chan = DoGFilterSpec::BLUE_YELLOW;
-    sp->dog.filter_width = 16;
-    sp->dog.on_sigma = 4;
-    sp->dog.off_sigma = 8;
-    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
-    sp->spacing.res = RetinalSpacingSpec::MED_RES;
-    sp->spacing.border.x = 6; sp->spacing.border.y = 14;
-    sp->spacing.spacing.x = 4; sp->spacing.spacing.y = 4;
-    sp->UpdateAfterEdit();
-
-    sp = dogs[cnt++];
-    sp->name = "low_freq_bw";
-    sp->dog.color_chan = DoGFilterSpec::BLACK_WHITE;
-    sp->dog.filter_width = 32;
-    sp->dog.on_sigma = 8;
-    sp->dog.off_sigma = 16;
-    sp->spacing.region = RetinalSpacingSpec::PARAFOVEA;
-    sp->spacing.res = RetinalSpacingSpec::LOW_RES;
-    sp->spacing.border.x = 8; sp->spacing.border.y = 16;
-    sp->spacing.spacing.x = 8; sp->spacing.spacing.y = 8;
-    sp->UpdateAfterEdit();
-  }
-  StructUpdate(true);
-}
-
-void RetinaSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!dt) {
-    DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
-    dt = dgp->NewEl(1, &TA_DataTable);
-    if(!name.empty())
-      dt->name = name + "_InputData";
-    else
-      dt->name = "RetinaSpec_InputData";
-  }
-  dt->ResetData();
-  if(reset_cols) dt->Reset();
-  dt->StructUpdate(true);
-  int idx =0;
-  dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0);
-  dt->FindMakeColName("LookBox", idx, DataTable::VT_FLOAT, 1, 4);
-  dt->FindMakeColName("ImageSize", idx, DataTable::VT_FLOAT, 1, 2);
-  dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2);
-  dt->FindMakeColName("Scale", idx, DataTable::VT_FLOAT, 0);
-  dt->FindMakeColName("Rotate", idx, DataTable::VT_FLOAT, 0);
-  DataCol* col;
-  if(color_type == COLOR)
-    col = dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 3,
-			retina_size.x, retina_size.y, 3);
-  else
-    col = dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 2,
-			retina_size.x, retina_size.y);
-  col->SetUserData("IMAGE", true);
-  for(int i=0;i<dogs.size; i++) {
-    DoGRetinaSpec* sp = dogs[i];
-    dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
-				sp->spacing.output_size.x, sp->spacing.output_size.y);
-    dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT, 2,
-				sp->spacing.output_size.x, sp->spacing.output_size.y);
-  }
-  dt->StructUpdate(false);
-}
-
-void RetinaSpec::PlotSpacing(DataTable* graph_data) {
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_PlotSpacing", true);
-  }
-
-  graph_data->StructUpdate(true);
-  for(int i=0;i<dogs.size; i++) {
-    DoGRetinaSpec* sp = dogs[i];
-    float val = (float)i / (float)(dogs.size * 2);
-    sp->PlotSpacing(graph_data, val);
-  }
-  graph_data->StructUpdate(false);
-  graph_data->FindMakeGridView();
+  regions.CheckConfig(quiet, rval);
 }
 
 ///////////////////////////////////////////////////////////////////////
-// Basic functions operating on float image data: transform image, apply dog filters
+// 		Basic impl routines
 
-
-int RetinaSpec::EffFadeWidth() {
-  if(fade_width >= 0) return fade_width;
-  int max_off_width = 4;	// use for fading edges
-  for(int i=0;i<dogs.size;i++) {
-    DoGRetinaSpec* sp = dogs[i];
-    max_off_width = MAX(max_off_width, (int)sp->dog.off_sigma);
+bool RetinaProc::Init() {
+  if(regions.size == 0) return false;
+  for(int ri=0; ri < regions.size; ri++) {
+    DoGRegionSpec* reg = regions[ri];
+    reg->Init();
   }
-  return max_off_width;
+  return true;
 }
 
-DataCol* RetinaSpec::GetRetImageColumn(DataTable* dt) {
-  int idx;
-  DataCol* da_ret;
-  if(color_type == COLOR)
-    da_ret = dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 3,
-				 retina_size.x, retina_size.y, 3);
-  else
-    da_ret = dt->FindMakeColName("RetinaImage", idx, DataTable::VT_FLOAT, 2,
-				 retina_size.x, retina_size.y);
-  return da_ret;
-}
-
-DataCol* RetinaSpec::GetRetImageSeriesColumn(DataTable* dt, String mod_name) {
-  int idx;
-  DataCol* da_ret;
-  if(color_type == COLOR)
-    da_ret = dt->FindMakeColName("RetinaImage" + mod_name, idx, DataTable::VT_FLOAT, 3,
-				 retina_size.x, retina_size.y, 3);
-  else
-    da_ret = dt->FindMakeColName("RetinaImage" + mod_name, idx, DataTable::VT_FLOAT, 2,
-				 retina_size.x, retina_size.y);
-  return da_ret;
-}
-
-bool RetinaSpec::TransformImageData(float_Matrix& img_data, DataTable* dt,
-				    float move_x, float move_y,
-				    float scale, float rotate,
-				    bool superimpose)
+bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
+					 float_Matrix& xform_image,
+					 float move_x, float move_y,
+					 float scale, float rotate)
 {
-  if(dogs.size == 0) return false;
-  if (!dt) return false;
-  dt->EnforceRows(1);
-  dt->WriteItem(0);
-  dt->ReadItem(0);
-
-  int eff_fd_wd = 0;
-  if(edge_mode == taImageProc::BORDER) eff_fd_wd = EffFadeWidth();
-
-  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
+  if(regions.size == 0) return false;
+  DoGRegionSpec* reg = regions[0]; // take params from first
 
   float ctr_x = .5f + .5 * move_x;
   float ctr_y = .5f + .5 * move_y;
 
-  DataCol* da_ret = GetRetImageColumn(dt);
-  da_ret->SetUserData("IMAGE", true); // the one place we set this!
-  float_MatrixPtr ret_img; ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
-
-  taImageProc::SampleImageWindow_float(*ret_img, img_data, retina_size.x, retina_size.y, 
+  taImageProc::SampleImageWindow_float(xform_image, eye_image, reg->retina_size.x,
+				       reg->retina_size.y, 
 				       ctr_x, ctr_y, rotate, scale, edge_mode);
-  if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(*ret_img);
-
-  if(edge_mode == taImageProc::BORDER && eff_fd_wd > 0) {
-    taImageProc::FadeEdgesToBorder_float(*ret_img, eff_fd_wd); 
+  if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(xform_image);
+  if(edge_mode == taImageProc::BORDER && fade_width > 0) {
+    taImageProc::FadeEdgesToBorder_float(xform_image, fade_width); 
   }
-
-  int idx;
-  float_MatrixPtr isz_mat; isz_mat = (float_Matrix*)dt->FindMakeColName("ImageSize", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
-  isz_mat->FastEl(0) = img_size.x; isz_mat->FastEl(1) = img_size.y;
-  
-  float_MatrixPtr mv_mat; mv_mat = (float_Matrix*)dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
-  mv_mat->FastEl(0) = move_x; mv_mat->FastEl(1) = move_y;
-
-  dt->FindMakeColName("Scale", idx, DataTable::VT_FLOAT, 0)->SetValAsFloat(scale, -1);
-  dt->FindMakeColName("Rotate", idx, DataTable::VT_FLOAT, 0)->SetValAsFloat(rotate, -1);
   return true;
 }
 
-
-bool RetinaSpec::TransformImageSeriesData(float_Matrix& img_data, String mod_name, DataTable* dt,
-				    float move_x, float move_y,
-				    float scale, float rotate,
-				    bool superimpose)
+bool RetinaProc::LookAtImageData_impl(float_Matrix& eye_image,
+				      float_Matrix& xform_image,
+				      DoGRegionSpec::Region region,
+				      float box_ll_x, float box_ll_y,
+				      float box_ur_x, float box_ur_y,
+				      float move_x, float move_y,
+				      float scale, float rotate) 
 {
-  if(dogs.size == 0) return false;
-  if (!dt) return false;
-  dt->EnforceRows(1);
-  dt->WriteItem(0);
-  dt->ReadItem(0);
-
-  int eff_fd_wd = 0;
-  if(edge_mode == taImageProc::BORDER) eff_fd_wd = EffFadeWidth();
-
-  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
-
-  float ctr_x = .5f + .5 * move_x;
-  float ctr_y = .5f + .5 * move_y;
-
-  DataCol* da_ret = GetRetImageSeriesColumn(dt, mod_name);
-  da_ret->SetUserData("IMAGE", true); // the one place we set this!
-  float_MatrixPtr ret_img; ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
-
-  taImageProc::SampleImageWindow_float(*ret_img, img_data, retina_size.x, retina_size.y, 
-				       ctr_x, ctr_y, rotate, scale, edge_mode);
-  if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(*ret_img);
-
-  if(edge_mode == taImageProc::BORDER && eff_fd_wd > 0) {
-    taImageProc::FadeEdgesToBorder_float(*ret_img, eff_fd_wd); 
-  }
-
-  int idx;
-  float_MatrixPtr isz_mat; isz_mat = (float_Matrix*)dt->FindMakeColName("ImageSize", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
-  isz_mat->FastEl(0) = img_size.x; isz_mat->FastEl(1) = img_size.y;
-  
-  float_MatrixPtr mv_mat; mv_mat = (float_Matrix*)dt->FindMakeColName("Move", idx, DataTable::VT_FLOAT, 1, 2)->GetValAsMatrix(-1);
-  mv_mat->FastEl(0) = move_x; mv_mat->FastEl(1) = move_y;
-
-  dt->FindMakeColName("Scale", idx, DataTable::VT_FLOAT, 0)->SetValAsFloat(scale, -1);
-  dt->FindMakeColName("Rotate", idx, DataTable::VT_FLOAT, 0)->SetValAsFloat(rotate, -1);
-  return true;
-}
-
-
-bool RetinaSpec::LookAtImageData(float_Matrix& img_data, DataTable* dt,
-				 RetinalSpacingSpec::Region region,
-				 float box_ll_x, float box_ll_y,
-				 float box_ur_x, float box_ur_y,
-				 float move_x, float move_y,
-				 float scale, float rotate, 
-				 bool superimpose) {
-  if(dogs.size == 0) return false;
-
-  // find the fovea filter: one with smallest input_size
-  DoGRetinaSpec* fov_spec = dogs.FindRetinalRegion(region);
-  if(!fov_spec) return false;
+  // todo: add error messages on all these..
+  if(regions.size == 0) return false;
+  DoGRegionSpec* trg_reg = regions.FindRetinalRegion(region);
+  if(!trg_reg) return false;
 
   // translation: find the middle of the box
   FloatTwoDCoord obj_ctr((float) (0.5 * (float) (box_ll_x + box_ur_x)),
@@ -3832,16 +3775,16 @@ bool RetinaSpec::LookAtImageData(float_Matrix& img_data, DataTable* dt,
   move_x -= obj_ctr_off.x;
   move_y -= obj_ctr_off.y;
   
-  // now, scale the thing to fit in fov_spec->input_size
-  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
+  // now, scale the thing to fit in trg_reg->input_size
+  TwoDCoord img_size(eye_image.dim(0), eye_image.dim(1));
 
   // height and width in pixels of box:
   float pix_x = (box_ur_x - box_ll_x) * img_size.x;
   float pix_y = (box_ur_y - box_ll_y) * img_size.y;
 
   // scale to fit within input size of filter or retina
-  float sc_x = (float)fov_spec->spacing.input_size.x / pix_x;
-  float sc_y = (float)fov_spec->spacing.input_size.y / pix_y;
+  float sc_x = (float)trg_reg->input_size.x / pix_x;
+  float sc_y = (float)trg_reg->input_size.y / pix_y;
 
   float fov_sc = MIN(sc_x, sc_y);
   scale *= fov_sc;
@@ -3850,1089 +3793,191 @@ bool RetinaSpec::LookAtImageData(float_Matrix& img_data, DataTable* dt,
   if(scale < .01f)
     scale = .01f;
 
-  bool rval = TransformImageData(img_data, dt, move_x, move_y, scale, rotate,
-				 superimpose);
-
-  if(rval) {
-    int idx;
-    float_MatrixPtr box_mat; box_mat = (float_Matrix*)dt->FindMakeColName("LookBox", idx, DataTable::VT_FLOAT, 1, 4)->GetValAsMatrix(-1);
-    box_mat->FastEl(0) = box_ll_x; box_mat->FastEl(1) = box_ll_y;
-    box_mat->FastEl(2) = box_ur_x; box_mat->FastEl(1) = box_ur_y;
-  }
+  bool rval = TransformImageData_impl(eye_image, xform_image, move_x, move_y, scale, rotate);
   return rval;
 }
 
-bool RetinaSpec::LookAtImageSeriesData(float_Matrix& img_data, String mod_name, DataTable* dt,
-				 RetinalSpacingSpec::Region region,
-				 float box_ll_x, float box_ll_y,
-				 float box_ur_x, float box_ur_y,
-				 float move_x, float move_y,
-				 float scale, float rotate, 
-				 bool superimpose) {
-  if(dogs.size == 0) return false;
-
-  // find the fovea filter: one with smallest input_size
-  DoGRetinaSpec* fov_spec = dogs.FindRetinalRegion(region);
-  if(!fov_spec) return false;
-
-  // translation: find the middle of the box
-  FloatTwoDCoord obj_ctr((float) (0.5 * (float) (box_ll_x + box_ur_x)),
-                       (float) (0.5 * (float) (box_ll_y + box_ur_y)));
-  // convert into center-relative coords:
-  FloatTwoDCoord obj_ctr_off = 2.0f * (obj_ctr - 0.5f);
-
-  move_x -= obj_ctr_off.x;
-  move_y -= obj_ctr_off.y;
-  
-  // now, scale the thing to fit in fov_spec->input_size
-  TwoDCoord img_size(img_data.dim(0), img_data.dim(1));
-
-  // height and width in pixels of box:
-  float pix_x = (box_ur_x - box_ll_x) * img_size.x;
-  float pix_y = (box_ur_y - box_ll_y) * img_size.y;
-
-  // scale to fit within input size of filter or retina
-  float sc_x = (float)fov_spec->spacing.input_size.x / pix_x;
-  float sc_y = (float)fov_spec->spacing.input_size.y / pix_y;
-
-  float fov_sc = MIN(sc_x, sc_y);
-  scale *= fov_sc;
-  if(scale > 100.0f)
-    scale = 100.0f;
-  if(scale < .01f)
-    scale = .01f;
-
-  bool rval = TransformImageSeriesData(img_data, mod_name, dt, move_x, move_y, scale, rotate,
-				 superimpose);
-
-  if(rval) {
-    int idx;
-    float_MatrixPtr box_mat; box_mat = (float_Matrix*)dt->FindMakeColName("LookBox", idx, DataTable::VT_FLOAT, 1, 4)->GetValAsMatrix(-1);
-    box_mat->FastEl(0) = box_ll_x; box_mat->FastEl(1) = box_ll_y;
-    box_mat->FastEl(2) = box_ur_x; box_mat->FastEl(1) = box_ur_y;
+bool RetinaProc::FilterImageData() {
+  if(regions.size == 0) return false;
+  for(int ri=0; ri < regions.size; ri++) {
+    DoGRegionSpec* reg = regions[ri];
+    reg->FilterImage(&xform_image_r, &xform_image_l);
   }
-  return rval;
-}
-
-bool RetinaSpec::FilterImageData(DataTable* dt, bool superimpose, int renorm) {
-  if (!dt) return false;
-  if(dogs.size == 0) return false;
-  if(superimpose) {
-    if(dt->rows <= 0) superimpose = false; // can't do it!
-  }
-
-  cur_dt = dt;
-  cur_superimpose = superimpose;
-  cur_renorm = renorm;
-  cur_filter = "";
-
-  max_vals.SetGeom(1, dogs.size);
-  max_vals.InitVals();
-
-  // this is shared across threads so needs to be setup in advance
-  DataCol* da_ret = GetRetImageColumn(cur_dt);
-  cur_ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
-  taBase::Ref(cur_ret_img);
-
-  threads.n_threads = MIN(dogs.size, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
-  threads.nibble_chunk = 1;
-  ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
-
-  cur_phase = 0;
-  threads.Run(&ip_call, dogs.size);
-  if(renorm > 0) {
-    int idx;
-    float max_val = taMath_float::vec_max(&max_vals, idx);
-//     cerr << "max val: " << max_val << endl;
-//     cerr << "vals: " << max_vals.GetValStr() << endl;
-    if(max_val > renorm_thr) {
-      cur_rescale = 1.0f;
-      cur_renorm_factor = (float)(renorm - 1);
-      if(renorm >= 2)
-	cur_rescale = 1.0f / logf(1.0f + cur_renorm_factor * max_val);
-      else
-	cur_rescale = 1.0f / max_val;
-      cur_phase = 1;
-      threads.Run(&ip_call, dogs.size);
-    }
-  }
-
-  taBase::unRefDone(cur_ret_img);
   return true;
 }
 
+//////////////////////////////////////////////////////
+// 		Various front-ends
 
-bool RetinaSpec::FilterImageSeriesData(DataTable* dt, int eyes, int timesteps, bool superimpose, int renorm) {
-	if (!dt) return false;
-	if(dogs.size == 0) return false;
-	if(superimpose) {
-		if(dt->rows <= 0) superimpose = false; // can't do it!
-	}
-	
-	cur_dt = dt;
-	cur_superimpose = superimpose;
-	cur_renorm = renorm;
-	
-	max_vals.SetGeom(1, dogs.size);
-	max_vals.InitVals();
-	String mod_name ;
-	
-	threads.n_threads = MIN(dogs.size, taMisc::thread_defaults.n_threads); // keep in range..
-	threads.min_units = 1;
-	threads.nibble_chunk = 1;
-	ThreadImgProcCall ip_call(&ImgProcThreadBase::Filter_Thread);
-	
-	// this is shared across threads so needs to be setup in advance
-	for(int eye = 0; eye < eyes || eye == 0; eye++) {
-		for(int t = 0; t < timesteps || t == 0; t++) {
-			mod_name = GetModName(eyes,timesteps,eye,t);
-			cur_filter = mod_name;
-			DataCol* da_ret = GetRetImageSeriesColumn(cur_dt, mod_name);
-			cur_ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
-			taBase::Ref(cur_ret_img);  
-			
-			
-			//testing block
-			/* DoGRetinaSpec* sp = dogs[0];
-			 String full_name = sp->name + cur_filter;
-			 DataCol* da_on = cur_dt->FindColName(full_name + "_on", true);
-			 if(false) {
-			 return false;
-			 }
-			 float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-			 on_mat->Set(t,0,0);*/
-			
-			
-			cur_phase = 0;
-			threads.Run(&ip_call, dogs.size);
-			if(renorm > 0) {
-				int idx;
-				float max_val = taMath_float::vec_max(&max_vals, idx);
-				//       cerr << "max val: " << max_val << endl;
-				//       cerr << "vals: " << max_vals.GetValStr() << endl;
-				if(max_val > renorm_thr) {
-					cur_rescale = 1.0f;
-					cur_renorm_factor = (float)(renorm - 1);
-					if(renorm >= 2)
-						cur_rescale = 1.0f / logf(1.0f + cur_renorm_factor * max_val);
-					else
-						cur_rescale = 1.0f / max_val;
-					cur_phase = 1;
-					threads.Run(&ip_call, dogs.size);
-				}
-			}
-			
-			taBase::unRefDone(cur_ret_img);
-		}
-	}
-	return true;
-}
-
-
-
-void RetinaSpec::Filter_Thread(int cmp_idx, int thread_no) {
-	if(cur_phase == 0) {
-		DoGRetinaSpec* sp = dogs[cmp_idx];
-		DataCol* da_on = cur_dt->FindColName(sp->name + cur_filter + "_on",true);
-		DataCol* da_off = cur_dt->FindColName(sp->name + cur_filter + "_off",true);
-		float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-		float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
-		taBase::Ref(on_mat);    taBase::Ref(off_mat);
-		taImageProc::DoGFilterRetina(*on_mat, *off_mat, *cur_ret_img, *sp, cur_superimpose, edge_mode);
-		if(cur_renorm > 0) {
-			int idx;
-			float on_max = taMath_float::vec_max(on_mat, idx);
-			float off_max = taMath_float::vec_max(off_mat, idx);
-			on_max = MAX(on_max, off_max);
-			max_vals.FastEl(cmp_idx) = on_max;
-		}
-		taBase::unRefDone(on_mat);    taBase::unRefDone(off_mat);
-	}
-	else {
-		// normalize with single max for all channels, so they are all on a comparable scale
-		DoGRetinaSpec* sp = dogs[cmp_idx];
-		DataCol* da_on = cur_dt->FindColName(sp->name + cur_filter + "_on",true);
-		DataCol* da_off = cur_dt->FindColName(sp->name + cur_filter + "_off",true);
-		float_Matrix* on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-		float_Matrix* off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
-		taBase::Ref(on_mat);    taBase::Ref(off_mat);
-		if(cur_renorm >= 2) {
-			for(int j=0;j<on_mat->size;j++)
-				on_mat->FastEl_Flat(j) = logf(1.0f + cur_renorm_factor * on_mat->FastEl_Flat(j)) * cur_rescale;
-			for(int j=0;j<off_mat->size;j++)
-				off_mat->FastEl_Flat(j) = logf(1.0f + cur_renorm_factor * off_mat->FastEl_Flat(j)) * cur_rescale;
-		}
-		else {
-			taMath_float::vec_mult_scalar(on_mat, cur_rescale);
-			taMath_float::vec_mult_scalar(off_mat, cur_rescale);
-		}
-		taBase::unRefDone(on_mat);    taBase::unRefDone(off_mat);
+bool RetinaProc::TransformImageData(float_Matrix* right_eye_image,
+				    float_Matrix* left_eye_image,
+				    float move_x, float move_y,
+				    float scale, float rotate)
+{
+  if(regions.size == 0) return false;
+  if(right_eye_image) {
+    raw_image_r.CopyFrom(right_eye_image);
+    TransformImageData_impl(raw_image_r, xform_image_r, move_x, move_y, scale, rotate);
   }
+  if(left_eye_image) {
+    raw_image_l.CopyFrom(left_eye_image);
+    TransformImageData_impl(raw_image_l, xform_image_l, move_x, move_y, scale, rotate);
+  }
+  return true;
 }
 
-///////////////////////////////////////////////////////////////////////
-// Transform Routines taking different sources for image input data
+bool RetinaProc::LookAtImageData(float_Matrix* right_eye_image,
+				 float_Matrix* left_eye_image,
+				 DoGRegionSpec::Region region,
+				 float box_ll_x, float box_ll_y,
+				 float box_ur_x, float box_ur_y,
+				 float move_x, float move_y,
+				 float scale, float rotate) 
+{
+  if(regions.size == 0) return false;
+  if(right_eye_image) {
+    raw_image_r.CopyFrom(right_eye_image);
+    LookAtImageData_impl(raw_image_r, xform_image_r, region, box_ll_x, box_ll_y,
+			 box_ur_x, box_ur_y, move_x, move_y, scale, rotate);
+  }
+  if(left_eye_image) {
+    raw_image_l.CopyFrom(left_eye_image);
+    LookAtImageData_impl(raw_image_l, xform_image_l, region, box_ll_x, box_ll_y,
+			 box_ur_x, box_ur_y, move_x, move_y, scale, rotate);
+  }
+  return true;
+}
 
-bool RetinaSpec::ConvertImageToMatrix(taImage& img, float_Matrix& img_data) {
-  if(color_type == COLOR) {
-    img.ImageToMatrix_rgb(img_data);
+bool RetinaProc::ConvertImageToMatrix(float_Matrix& img_data, taImage* img, 
+				      DoGRegionSpec::Color color) {
+  if(color == DoGRegionSpec::COLOR) {
+    img->ImageToMatrix_rgb(img_data);
   }
   else {
-    img.ImageToMatrix_grey(img_data);
+    img->ImageToMatrix_grey(img_data);
   }
   return true;
 }
 
-bool RetinaSpec::RecordImageName(taImage& img, DataTable* dt) {
-  int idx;
-  String imgnm = img.name;
-  int n_slash = imgnm.freq('/');
-  if(n_slash > 2) {
-    for(int i=0;i<n_slash-2;i++)
-      imgnm = imgnm.after('/'); // get rid of all but last 2
-  }
-  dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0)->SetValAsString(imgnm, -1);
-  return true;
-}
-
-bool RetinaSpec::RecordImageSeriesName(taImage& img, taString mod_mod, DataTable* dt) {
-  int idx;
-  String imgnm = img.name + mod_mod;
-  int n_slash = imgnm.freq('/');
-  if(n_slash > 2) {
-    for(int i=0;i<n_slash-2;i++)
-      imgnm = imgnm.after('/'); // get rid of all but last 2
-  }
-  dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0)->SetValAsString(imgnm, -1);
-  return true;
-}
-
-bool RetinaSpec::TransformImage(taImage& img, DataTable* dt,
-				float move_x, float move_y,
-				float scale, float rotate,
-				bool superimpose)
+bool RetinaProc::TransformImage(taImage* right_eye_image, taImage* left_eye_image,
+				float move_x, float move_y, float scale, float rotate)
 {
-  if (!dt) return false;
-  float_Matrix img_data(false);
-  taBase::Ref(img_data);	// make sure it isn't killed by some other ops..
-  ConvertImageToMatrix(img, img_data);
-
-  bool rval = TransformImageData(img_data, dt, move_x, move_y, scale, rotate,
-				 superimpose);
-  if(rval) {
-    RecordImageName(img, dt);
+  if(regions.size == 0) return false;
+  DoGRegionSpec* reg = regions[0]; // take params from first
+  if(right_eye_image) {
+    ConvertImageToMatrix(raw_image_r, right_eye_image, reg->color);
+    TransformImageData_impl(raw_image_r, xform_image_r, move_x, move_y, scale, rotate);
   }
-  return rval;
+  if(left_eye_image) {
+    ConvertImageToMatrix(raw_image_l, left_eye_image, reg->color);
+    TransformImageData_impl(raw_image_l, xform_image_l, move_x, move_y, scale, rotate);
+  }
+  return true;
 }
 
-
-
-bool RetinaSpec::TransformImageName(const String& img_fname, DataTable* dt,
+bool RetinaProc::TransformImageName(const String& right_eye_img_fname,
+				    const String& left_eye_img_fname,
 				    float move_x, float move_y,
-				    float scale, float rotate,
-				    bool superimpose)
+				    float scale, float rotate)
 {
-  if (!dt) return false;
-  taImage img;
-  if(!img.LoadImage(img_fname)) return false;
-  img.name = img_fname;		// explicitly name it
-  return TransformImage(img, dt, move_x, move_y, scale, rotate,
-			superimpose);
+  if(regions.size == 0) return false;
+  taImage img_r;
+  if(!img_r.LoadImage(right_eye_img_fname)) return false;
+  img_r.name = right_eye_img_fname;		// explicitly name it
+  if(left_eye_img_fname.nonempty()) {
+    taImage img_l;
+    if(!img_l.LoadImage(left_eye_img_fname)) return false;
+    img_l.name = left_eye_img_fname;		// explicitly name it
+    return TransformImage(&img_r, &img_l, move_x, move_y, scale, rotate);
+  }
+  else {
+    return TransformImage(&img_r, NULL, move_x, move_y, scale, rotate);
+  }
 }
 
 ///////////// Look At
 
-bool RetinaSpec::LookAtImage(taImage& img, DataTable* dt,
-			     RetinalSpacingSpec::Region region,
+bool RetinaProc::LookAtImage(taImage* right_eye_image,
+			     taImage* left_eye_image,
+			     DoGRegionSpec::Region region,
 			     float box_ll_x, float box_ll_y,
 			     float box_ur_x, float box_ur_y,
 			     float move_x, float move_y,
-			     float scale, float rotate, 
-			     bool superimpose) {
-  float_Matrix img_data(false);
-  taBase::Ref(img_data);	// make sure it isn't killed by some other ops..
-  ConvertImageToMatrix(img, img_data);
-
-  bool rval = LookAtImageData(img_data, dt, region,
-			      box_ll_x, box_ll_y, box_ur_x, box_ur_y,
-			      move_x, move_y, scale, rotate,
-			      superimpose);
-  if(rval) {
-    RecordImageName(img, dt);
+			     float scale, float rotate)
+{
+  if(regions.size == 0) return false;
+  DoGRegionSpec* reg = regions[0]; // take params from first
+  if(right_eye_image) {
+    ConvertImageToMatrix(raw_image_r, right_eye_image, reg->color);
+    LookAtImageData_impl(raw_image_r, xform_image_r, region, box_ll_x, box_ll_y,
+			 box_ur_x, box_ur_y, move_x, move_y, scale, rotate);
   }
-  return rval;
+  if(left_eye_image) {
+    ConvertImageToMatrix(raw_image_l, left_eye_image, reg->color);
+    LookAtImageData_impl(raw_image_l, xform_image_l, region, box_ll_x, box_ll_y,
+			 box_ur_x, box_ur_y, move_x, move_y, scale, rotate);
+  }
+  return true;
 }
 
-bool RetinaSpec::LookAtImageName(const String& img_fname, DataTable* dt,
-				 RetinalSpacingSpec::Region region,
+bool RetinaProc::LookAtImageName(const String& right_eye_img_fname,
+				 const String& left_eye_img_fname,
+				 DoGRegionSpec::Region region,
 				 float box_ll_x, float box_ll_y,
 				 float box_ur_x, float box_ur_y,
 				 float move_x, float move_y,
-				 float scale, float rotate, 
-				 bool superimpose) {
-  taImage img;
-  if(!img.LoadImage(img_fname)) return false;
-  img.name = img_fname;		// explicitly name it
-  return LookAtImage(img, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
-		     move_x, move_y, scale, rotate,
-		     superimpose);
-}
-
-bool RetinaSpec::LookAtImageSeriesName(const String& img_fname, const String& img_fextension, int eyes, int timesteps, bool reverse_timstep_order, DataTable* dt,
-				 RetinalSpacingSpec::Region region,
-				 float box_ll_x, float box_ll_y,
-				 float box_ur_x, float box_ur_y,
-				 float move_x, float move_y,
-				 float scale, float rotate, 
-				 bool superimpose) {
- 
-	for(int eye = 0; eye < eyes || eye == 0; eye++) {
-		
-		for(int t = 0; t < timesteps || t == 0; t++) {
-			taImage img;
-			int timestep_filenumber = t;
-			if (reverse_timstep_order) {
-				timestep_filenumber = timesteps - 1 - t;
-			}
-			
-			String file_mod_name = GetModName(eyes, timesteps,eye,timestep_filenumber);
-			String full_img_fname = img_fname + file_mod_name  + "." + img_fextension;
-			if(!img.LoadImage(full_img_fname))
-				return false;
-			img.name = full_img_fname;		// explicitly name it
-			
-			String mod_name = GetModName(eyes, timesteps,eye,t);
-			if(!LookAtImageSeries(img, mod_name, dt, region, box_ll_x, box_ll_y, box_ur_x, box_ur_y,
-								  move_x, move_y, scale, rotate,
-								  superimpose))
-				return false;
-		}
-	}
-	return true;
-}
-
-String RetinaSpec::GetModName(int eyes, int timesteps, int curr_eye, int curr_time) {
-  String eye_name = "";
-  String eye_num = curr_eye;
-  if(eyes > 0) {
-    eye_name = "_eye";
-    eye_name += eye_num;
-  }
-  String time_name = "";
-  String time_num = curr_time;
-  if(timesteps > 0) {
-    time_name = "_timestep";
-    time_name += time_num;
-  }
-  return eye_name + time_name;
-}
-
-bool RetinaSpec::LookAtImageSeries(taImage& img, String mod_name, DataTable* dt,
-			     RetinalSpacingSpec::Region region,
-			     float box_ll_x, float box_ll_y,
-			     float box_ur_x, float box_ur_y,
-			     float move_x, float move_y,
-			     float scale, float rotate, 
-			     bool superimpose) {
-  float_Matrix img_data(false);
-  taBase::Ref(img_data);	// make sure it isn't killed by some other ops..
-  ConvertImageToMatrix(img, img_data);
-
-  bool rval = LookAtImageSeriesData(img_data, mod_name, dt, region,
-			      box_ll_x, box_ll_y, box_ur_x, box_ur_y,
-			      move_x, move_y, scale, rotate,
-			      superimpose);
-  if(rval) {
-    RecordImageSeriesName(img, mod_name,dt);
-  }
-  return rval;
-}
-
-
-///////////////////////////////////////////////////////////////////////
-// Full end-to-end functionality of routines
-
-bool RetinaSpec::XFormFilterImageData(float_Matrix& img_data, DataTable* dt,
-				      float move_x, float move_y,
-				      float scale, float rotate,
-				      bool superimpose, int renorm)
+				 float scale, float rotate)
 {
-  bool rval = TransformImageData(img_data, dt, move_x, move_y, scale, rotate,
-				 superimpose);
-  if(rval)
-    rval = FilterImageData(dt, superimpose, renorm);
-  if(rval)
-    dt->WriteClose();
-  return rval;
-}
-
-bool RetinaSpec::XFormFilterImage(taImage& img, DataTable* dt,
-				  float move_x, float move_y,
-				  float scale, float rotate,
-				  bool superimpose, int renorm)
-{
-  bool rval = TransformImage(img, dt, move_x, move_y, scale, rotate,
-			     superimpose);
-  if(rval)
-    rval = FilterImageData(dt, superimpose, renorm);
-  if(rval)
-    dt->WriteClose();
-  return rval;
-}
-
-bool RetinaSpec::XFormFilterImageName(const String& img_fname, DataTable* dt,
-				      float move_x, float move_y,
-				      float scale, float rotate,
-				      bool superimpose, int renorm)
-{
-  bool rval = TransformImageName(img_fname, dt, move_x, move_y, scale, rotate,
-				 superimpose);
-  if(rval)
-    rval = FilterImageData(dt, superimpose, renorm);
-  if(rval)
-    dt->WriteClose();
-  return rval;
-}
-
-bool RetinaSpec::LookAtFilterImageData(float_Matrix& img_data, DataTable* dt,
-				       RetinalSpacingSpec::Region region,
-				       float box_ll_x, float box_ll_y,
-				       float box_ur_x, float box_ur_y,
-				       float move_x, float move_y,
-				       float scale, float rotate, 
-				       bool superimpose, int renorm) {
-  bool rval = LookAtImageData(img_data, dt, region,
-			      box_ll_x, box_ll_y, box_ur_x, box_ur_y,
-			      move_x, move_y, scale, rotate, 
-			      superimpose);
-  if(rval)
-    rval = FilterImageData(dt, superimpose, renorm);
-  if(rval)
-    dt->WriteClose();
-  return rval;
-}
-
-bool RetinaSpec::LookAtFilterImage(taImage& img, DataTable* dt,
-				   RetinalSpacingSpec::Region region,
-				   float box_ll_x, float box_ll_y,
-				   float box_ur_x, float box_ur_y,
-				   float move_x, float move_y,
-				   float scale, float rotate, 
-				   bool superimpose, int renorm) {
-  bool rval = LookAtImage(img, dt, region,
-			  box_ll_x, box_ll_y, box_ur_x, box_ur_y,
-			  move_x, move_y, scale, rotate,
-			  superimpose);
-  if(rval)
-    rval = FilterImageData(dt, superimpose, renorm);
-  if(rval)
-    dt->WriteClose();
-  return rval;
-}
-
-bool RetinaSpec::LookAtFilterImageName(const String& img_fname, DataTable* dt,
-				       RetinalSpacingSpec::Region region,
-				       float box_ll_x, float box_ll_y,
-				       float box_ur_x, float box_ur_y,
-				       float move_x, float move_y,
-				       float scale, float rotate, 
-				       bool superimpose, int renorm) {
-  bool rval = LookAtImageName(img_fname, dt, region,
-			      box_ll_x, box_ll_y, box_ur_x, box_ur_y,
-			      move_x, move_y, scale, rotate,
-			      superimpose);
-  if(rval)
-    rval = FilterImageData(dt, superimpose, renorm);
-  if(rval)
-    dt->WriteClose();
-  return rval;
+  if(regions.size == 0) return false;
+  taImage img_r;
+  if(!img_r.LoadImage(right_eye_img_fname)) return false;
+  img_r.name = right_eye_img_fname;		// explicitly name it
+  if(left_eye_img_fname.nonempty()) {
+    taImage img_l;
+    if(!img_l.LoadImage(left_eye_img_fname)) return false;
+    img_l.name = left_eye_img_fname;		// explicitly name it
+    return LookAtImage(&img_r, &img_l, region, box_ll_x, box_ll_y,
+			 box_ur_x, box_ur_y, move_x, move_y, scale, rotate);
+  }
+  else {
+    return LookAtImage(&img_r, NULL, region, box_ll_x, box_ll_y,
+			 box_ur_x, box_ur_y, move_x, move_y, scale, rotate);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
 // Misc other processing operations
 
-bool RetinaSpec::AttendRegion(DataTable* dt, RetinalSpacingSpec::Region region) {
-  DoGRetinaSpec* fov_spec = dogs.FindRetinalRegion(region);
-  if(!fov_spec) return false;
+bool RetinaProc::AttendRegion(DataTable* dt, DoGRegionSpec::Region region) {
+//   DoGRegionSpec* fov_spec = regions.FindRetinalRegion(region);
+//   if(!fov_spec) return false;
 
-  float fov_x_pct = (float)fov_spec->spacing.input_size.x / (float)retina_size.x;
-  float fov_y_pct = (float)fov_spec->spacing.input_size.y / (float)retina_size.y;
-  float fov_pct = taMath_float::max(fov_x_pct, fov_y_pct);
+//   float fov_x_pct = (float)fov_spec->spacing.input_size.x / (float)retina_size.x;
+//   float fov_y_pct = (float)fov_spec->spacing.input_size.y / (float)retina_size.y;
+//   float fov_pct = taMath_float::max(fov_x_pct, fov_y_pct);
 
-  int idx;
-  for(int i=0;i<dogs.size;i++) {
-    DoGRetinaSpec* sp = dogs[i];
-    if(sp->spacing.region <= region) continue; // don't filter this region -- only ones above it!
-    DataCol* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
-						sp->spacing.output_size.x, sp->spacing.output_size.y);
-    DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
-						 2, sp->spacing.output_size.x, sp->spacing.output_size.y);
+//   int idx;
+//   for(int i=0;i<regions.size;i++) {
+//     DoGRegionSpec* sp = regions[i];
+//     if(sp->spacing.region <= region) continue; // don't filter this region -- only ones above it!
+//     DataCol* da_on = dt->FindMakeColName(sp->name + "_on", idx, DataTable::VT_FLOAT, 2,
+// 						sp->spacing.output_size.x, sp->spacing.output_size.y);
+//     DataCol* da_off = dt->FindMakeColName(sp->name + "_off", idx, DataTable::VT_FLOAT,
+// 						 2, sp->spacing.output_size.x, sp->spacing.output_size.y);
 
-    float_MatrixPtr on_mat; on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
-    float_MatrixPtr off_mat; off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
-    taImageProc::AttentionFilter(*on_mat, fov_pct);
-    taImageProc::AttentionFilter(*off_mat, fov_pct);
-  }
+//     float_MatrixPtr on_mat; on_mat = (float_Matrix*)da_on->GetValAsMatrix(-1);
+//     float_MatrixPtr off_mat; off_mat = (float_Matrix*)da_off->GetValAsMatrix(-1);
+//     taImageProc::AttentionFilter(*on_mat, fov_pct);
+//     taImageProc::AttentionFilter(*off_mat, fov_pct);
+//   }
   return true;
 }
 
-bool RetinaSpec::RenderOccluder(DataTable* dt, float llx, float lly, float urx, float ury) {
-  if(!dt) return false;
-  DataCol* da_ret = GetRetImageColumn(dt);
-  float_MatrixPtr ret_img; ret_img = (float_Matrix*)da_ret->GetValAsMatrix(-1);
-
-  taImageProc::RenderOccluderBorderColor_float(*ret_img, llx, lly, urx, ury);
-  
-  return true;
+void V1RetinaProc::Initialize() {
+  regions.SetDefaultElType(&TA_V1RegionSpec);
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// 		Full V1 Spec
-
-void V1GaborSpec::Initialize() {
-  norm_max = .95f;
-  norm_thr = 0.01f;
-}
-
-void V1GaborSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  // todo: anything here??
-}
-
-void V1GaborSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckChildConfig_impl(quiet, rval);
-  gabors.CheckConfig(quiet, rval);
-}
-
-void V1GaborSpec::DefaultFilters() {
-  if(!retina) {
-    taMisc::Error("V1GaborSpec::DefaultFilters -- requires the retina spec pointer to be set to get needed information!");
-    return;
-  }
-  StructUpdate(false);
-  if(retina->color_type == RetinaSpec::COLOR)
-    gabors.SetSize(5);
-  else
-    gabors.SetSize(3);
-  GaborV1Spec* sp;
-  int cnt = 0;
-  sp = gabors[cnt++];
-  sp->name = "V1_high";
-  sp->filter_type = GaborV1Spec::GABOR;
-  sp->region = RetinalSpacingSpec::FOVEA;
-  sp->res = RetinalSpacingSpec::HI_RES;
-  sp->rf_width = 4;
-  sp->gabor_rf.n_angles = 4;
-  sp->gabor_rf.freq = 1.5f;
-  sp->gabor_rf.length = 2.0f;
-  sp->gabor_rf.width = 2.0f;
-  sp->gabor_rf.amp = .9f;
-  sp->UpdateAfterEdit();
-
-  sp = gabors[cnt++];
-  sp->name = "V1_med";
-  sp->filter_type = GaborV1Spec::GABOR;
-  sp->region = RetinalSpacingSpec::FOVEA;
-  sp->res = RetinalSpacingSpec::MED_RES;
-  sp->rf_width = 4;
-  sp->gabor_rf.n_angles = 4;
-  sp->gabor_rf.freq = 1.5f;
-  sp->gabor_rf.length = 2.0f;
-  sp->gabor_rf.width = 2.0f;
-  sp->gabor_rf.amp = .9f;
-  sp->UpdateAfterEdit();
-
-  sp = gabors[cnt++];
-  sp->name = "V1_low";
-  sp->filter_type = GaborV1Spec::GABOR;
-  sp->region = RetinalSpacingSpec::FOVEA;
-  sp->res = RetinalSpacingSpec::LOW_RES;
-  sp->rf_width = 4;
-  sp->gabor_rf.n_angles = 4;
-  sp->gabor_rf.freq = 1.5f;
-  sp->gabor_rf.length = 2.0f;
-  sp->gabor_rf.width = 2.0f;
-  sp->gabor_rf.amp = .9f;
-  sp->UpdateAfterEdit();
-
-  if(retina->color_type == RetinaSpec::COLOR) {
-    sp = gabors[cnt++];
-    sp->name = "V1_hblob";
-    sp->filter_type = GaborV1Spec::BLOB;
-    sp->region = RetinalSpacingSpec::FOVEA;
-    sp->res = RetinalSpacingSpec::HI_RES;
-    sp->rf_width = 4;
-    sp->blob_rf.n_sizes = 1;
-    sp->blob_rf.width_st = 1.0f;
-    sp->blob_rf.width_inc = 2.0f;
-    sp->UpdateAfterEdit();
-
-    sp = gabors[cnt++];
-    sp->name = "V1_mblob";
-    sp->filter_type = GaborV1Spec::BLOB;
-    sp->region = RetinalSpacingSpec::FOVEA;
-    sp->res = RetinalSpacingSpec::MED_RES;
-    sp->rf_width = 4;
-    sp->blob_rf.n_sizes = 1;
-    sp->blob_rf.width_st = 1.0f;
-    sp->blob_rf.width_inc = 2.0f;
-    sp->UpdateAfterEdit();
-  }
-  StructUpdate(true);
-}
-
-bool V1GaborSpec::UpdateSizesFmRetina() {
-  if(!retina) {
-    taMisc::Error("V1GaborSpec::UpdateSizesFmRetina -- requires the retina spec pointer to be set to get needed information!");
-    return false;
-  }
-  bool rval = gabors.UpdateSizesFmRetina(retina->dogs);
-  if(!rval) {
-    taMisc::Error("V1GaborSpec::UpdateSizesFmRetina -- did not get all clean sizes!");
-    return false;
-  }
-  return true;
-}
-
-void V1GaborSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
-  if(!UpdateSizesFmRetina()) return;
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!dt) {
-    DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
-    dt = dgp->NewEl(1, &TA_DataTable);
-    if(!name.empty())
-      dt->name = name + "_InputData";
-    else
-      dt->name = "V1GaborSpec_InputData";
-  }
-  dt->ResetData();
-  if(reset_cols) dt->Reset();
-  dt->StructUpdate(true);
-  int idx =0;
-  dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0);
-  for(int i=0;i<gabors.size; i++) {
-    GaborV1Spec* sp = gabors[i];
-    if(sp->filter_type == GaborV1Spec::COPY) {
-      dt->FindMakeColName(sp->name, idx, DataTable::VT_FLOAT, 2,
-			  sp->un_geom.x, sp->un_geom.y);
-    }
-    else {
-      dt->FindMakeColName(sp->name, idx, DataTable::VT_FLOAT, 4,
-			  sp->un_geom.x, sp->un_geom.y, sp->gp_geom.x, sp->gp_geom.y);
-    }
-  }
-  dt->StructUpdate(false);
-}
-
-bool V1GaborSpec::FilterRetinaData(DataTable* v1_out_dt, DataTable* ret_in_dt) {
-  if(!retina) {
-    taMisc::Error("V1GaborSpec::FilterRetinaData -- requires the retina spec pointer to be set to get needed information!");
-    return false;
-  }
-  if(!v1_out_dt || !ret_in_dt) {
-    taMisc::Error("V1GaborSpec::FilterRetinaData -- requires non-null input and output data tables");
-    return false;
-  }
-  v1_out_dt->StructUpdate(true);
-  v1_out_dt->EnforceRows(1);
-  v1_out_dt->WriteItem(0);
-  v1_out_dt->ReadItem(0);
-  for(int i=0;i<gabors.size; i++) {
-    GaborV1Spec* sp = gabors[i];
-    float_Matrix* out_mat = (float_Matrix*)v1_out_dt->GetSinkMatrixByName(sp->name);
-
-    bool first = true;
-    for(int j=0;j<retina->dogs.size; j++) {
-      DoGRetinaSpec* dog = retina->dogs[j];
-      if(dog->spacing.region != sp->region || dog->spacing.res != sp->res) continue;
-      float_Matrix* on_mat = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + "_on");
-      if(!on_mat) continue;
-      taBase::Ref(on_mat);
-      float_Matrix* off_mat = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + "_off");
-      if(!off_mat) continue;
-      taBase::Ref(off_mat);
-
-      sp->FilterInput(*out_mat, dog->dog.color_chan, *on_mat, *off_mat, !first);
-
-      taBase::unRefDone(on_mat);
-      taBase::unRefDone(off_mat);
-      first = false;
-    }
-
-    if(norm_max > 0.0f) {
-      int idx;
-      float max_val = taMath_float::vec_max(out_mat, idx);
-      if(max_val > norm_thr) {
-	float rescale = norm_max / max_val;
-	taMath_float::vec_mult_scalar(out_mat, rescale);
-      }
-    }
-    taBase::unRefDone(out_mat);
-  }
-  v1_out_dt->SetDataByName(ret_in_dt->GetDataByName("Name"), "Name"); // transfer over the name
-  v1_out_dt->StructUpdate(false);
-  return true;
-}
-
-
-
-
-///////////////////////////////////////////////////////////
-// 		Full V1 Motion Spec
-
-void MotionDispV1GaborSpec::Initialize() {
-  norm_max = .95f;
-  norm_thr = 0.01f;
-}
-
-void MotionDispV1GaborSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  // todo: anything here??
-}
-
-void MotionDispV1GaborSpec::CheckChildConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckChildConfig_impl(quiet, rval);
-  gabors.CheckConfig(quiet, rval);
-}
-
-void MotionDispV1GaborSpec::DefaultFilters() {
-  if(!retina) {
-    taMisc::Error("MotionDispV1GaborSpec::DefaultFilters -- requires the retina spec pointer to be set to get needed information!");
-    return;
-  }
-  StructUpdate(false);
-  if(retina->color_type == RetinaSpec::COLOR)
-    gabors.SetSize(5);
-  else
-    gabors.SetSize(3);
-  MotionDispGaborV1Spec* sp;
-  int cnt = 0;
-  sp = gabors[cnt++];
-  sp->name = "V1_motiondisp_high";
-  sp->filter_type = MotionDispGaborV1Spec::MOTIONDISP_GABOR;
-  sp->region = RetinalSpacingSpec::FOVEA;
-  sp->res = RetinalSpacingSpec::HI_RES;
-  sp->rf_width = 6;
-  sp->rf_time = 3;
-  sp->motiondisp_gabor_rf.n_angles = 8;
-  sp->motiondisp_gabor_rf.freq = 1.5f;
-  sp->motiondisp_gabor_rf.freq_t = 2.0f;
-  sp->motiondisp_gabor_rf.length = 2.0f;
-  sp->motiondisp_gabor_rf.width = 2.0f;
-  sp->motiondisp_gabor_rf.width_t = 6.0f;
-  sp->motiondisp_gabor_rf.amp = .9f;
-  sp->UpdateAfterEdit();
-
-  sp = gabors[cnt++];
-  sp->name = "V1_motiondisp_med";
-  sp->filter_type = MotionDispGaborV1Spec::MOTIONDISP_GABOR;
-  sp->region = RetinalSpacingSpec::FOVEA;
-  sp->res = RetinalSpacingSpec::MED_RES;
-  sp->rf_width = 6;
-  sp->rf_time = 3;
-  sp->motiondisp_gabor_rf.n_angles = 8;
-  sp->motiondisp_gabor_rf.freq = 1.5f;
-  sp->motiondisp_gabor_rf.freq_t = 2.0f;
-  sp->motiondisp_gabor_rf.length = 2.0f;
-  sp->motiondisp_gabor_rf.width = 2.0f;
-  sp->motiondisp_gabor_rf.width_t = 6.0f;
-  sp->motiondisp_gabor_rf.amp = .9f;
-  sp->UpdateAfterEdit();
-	
-
-  sp = gabors[cnt++];
-  sp->name = "V1_motiondisp_low";
-  sp->filter_type = MotionDispGaborV1Spec::MOTIONDISP_GABOR;
-  sp->region = RetinalSpacingSpec::FOVEA;
-  sp->res = RetinalSpacingSpec::LOW_RES;
-  sp->rf_width = 6;
-  sp->rf_time = 3;
-  sp->motiondisp_gabor_rf.n_angles = 8;
-  sp->motiondisp_gabor_rf.freq = 1.5f;
-  sp->motiondisp_gabor_rf.freq_t = 2.0f;
-  sp->motiondisp_gabor_rf.length = 2.0f;
-  sp->motiondisp_gabor_rf.width = 2.0f;
-  sp->motiondisp_gabor_rf.width_t = 6.0f;
-  sp->motiondisp_gabor_rf.amp = .9f;
-  sp->UpdateAfterEdit();
-
-  StructUpdate(true);
-}
-
-bool MotionDispV1GaborSpec::UpdateSizesFmRetina() {
-  if(!retina) {
-    taMisc::Error("MotionDispV1GaborSpec::UpdateSizesFmRetina -- requires the retina spec pointer to be set to get needed information!");
-    return false;
-  }
-  bool rval = gabors.UpdateSizesFmRetina(retina->dogs);
-  if(!rval) {
-    taMisc::Error("MotionDispV1GaborSpec::UpdateSizesFmRetina -- did not get all clean sizes!");
-    return false;
-  }
-  return true;
-}
-
-void MotionDispV1GaborSpec::ConfigDataTable(DataTable* dt, bool reset_cols) {
-  if(!UpdateSizesFmRetina()) return;
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!dt) {
-    DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
-    dt = dgp->NewEl(1, &TA_DataTable);
-    if(!name.empty())
-      dt->name = name + "_InputData";
-    else
-      dt->name = "MotionDispV1GaborSpec_InputData";
-  }
-  dt->ResetData();
-  if(reset_cols) dt->Reset();
-  dt->StructUpdate(true);
-  int idx =0;
-  dt->FindMakeColName("Name", idx, DataTable::VT_STRING, 0);
-  for(int i=0;i<gabors.size; i++) {
-    MotionDispGaborV1Spec* sp = gabors[i];
-    if(sp->filter_type == GaborV1Spec::COPY) {
-      dt->FindMakeColName(sp->name, idx, DataTable::VT_FLOAT, 2,
-			  sp->un_geom.x, sp->un_geom.y);
-    }
-    else {
-      dt->FindMakeColName(sp->name, idx, DataTable::VT_FLOAT, 4,
-			  sp->un_geom.x, sp->un_geom.y, sp->gp_geom.x, sp->gp_geom.y);
-    }
-  }
-  dt->StructUpdate(false);
-}
-
-bool MotionDispV1GaborSpec::FilterRetinaData(DataTable* v1_out_dt, DataTable* ret_in_dt, int eyes, int disp) {
-	if(!retina) {
-		taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- requires the retina spec pointer to be set to get needed information!");
-		return false;
-	}
-	if(!v1_out_dt || !ret_in_dt) {
-		taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- requires non-null input and output data tables");
-		return false;
-	}
-	v1_out_dt->StructUpdate(true);
-	v1_out_dt->EnforceRows(1);
-	v1_out_dt->WriteItem(0);
-	v1_out_dt->ReadItem(0);
-	for(int i=0;i<gabors.size; i++) {
-		MotionDispGaborV1Spec* sp = gabors[i];
-		//String left_num = "_eye0";
-		//String right_num = "_eye1";
-		//float_Matrix* out_mat_left = (float_Matrix*)v1_out_dt->GetSinkMatrixByName(sp->name + left_num);
-		//float_Matrix* out_mat_right = (float_Matrix*)v1_out_dt->GetSinkMatrixByName(sp->name + right_num);
-		
-		
-		
-		
-		
-		
-		String disp_num = disp;
-		String disp_str = "_disp";
-		disp_str += disp_num;
-		float_Matrix* out_mat3 = (float_Matrix*)v1_out_dt->GetSinkMatrixByName(sp->name + disp_str);
-		if(!out_mat3) { 
-			taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Out matrix: " + sp->name + disp_str + " not found");
-			continue;
-		}
-		
-		float_Matrix* out_mat2 = (float_Matrix*)v1_out_dt->GetSinkMatrixByName(sp->name + "_disp0");
-		if(!out_mat2) { 
-			taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Out matrix: " + sp->name + "_disp0" + " not found");
-			continue;
-		}
-		
-		disp_str = "_dispn";
-		disp_str += disp_num;
-		float_Matrix* out_mat1 = (float_Matrix*)v1_out_dt->GetSinkMatrixByName(sp->name + disp_str);
-		if(!out_mat1) { 
-			taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Out matrix: " + sp->name + disp_str + " not found");
-			continue;
-		}
-		
-		bool first = true;
-		for(int j=0;j<retina->dogs.size; j++) {
-			DoGRetinaSpec* dog = retina->dogs[j];
-			if(dog->spacing.region != sp->region || dog->spacing.res != sp->res) continue;
-			
-			
-			float_Matrix *on_mats_left1;
-			float_Matrix *off_mats_left1;
-			float_Matrix *on_mats_right1;
-			float_Matrix *off_mats_right1;
-			float_Matrix *on_mats_left2;
-			float_Matrix *off_mats_left2;
-			float_Matrix *on_mats_right2;
-			float_Matrix *off_mats_right2;
-			float_Matrix *on_mats_left3;
-			float_Matrix *off_mats_left3;
-			float_Matrix *on_mats_right3;
-			float_Matrix *off_mats_right3;
-			
-			
-			//left
-			String mod_name = retina->GetModName(eyes,sp->rf_time,0,0);
-			on_mats_left1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
-			if(!on_mats_left1) { 
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On left matrix: " + dog->name + mod_name + "_on not found");
-				continue;
-			}
-			taBase::Ref(on_mats_left1);
-			off_mats_left1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
-			if(!off_mats_left1) {
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off left matrix: " + dog->name + mod_name + "_off not found");
-				continue;
-			}
-			taBase::Ref(off_mats_left1);
-			mod_name = retina->GetModName(eyes,sp->rf_time,0,1);
-			on_mats_left2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
-			if(!on_mats_left2) { 
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On left matrix: " + dog->name + mod_name + "_on not found");
-				continue;
-			}
-			taBase::Ref(on_mats_left2);
-			off_mats_left2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
-			if(!off_mats_left2) {
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off left matrix: " + dog->name + mod_name + "_off not found");
-				continue;
-			}
-			taBase::Ref(on_mats_left1);
-			mod_name = retina->GetModName(eyes,sp->rf_time,0,2);
-			on_mats_left3 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
-			if(!on_mats_left3) { 
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On left matrix: " + dog->name + mod_name + "_on not found");
-				continue;
-			}
-			taBase::Ref(on_mats_left3);
-			off_mats_left3 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
-			if(!off_mats_left3) {
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off left matrix: " + dog->name + mod_name + "_off not found");
-				continue;
-			}
-			taBase::Ref(off_mats_left3);
-			
-			//right
-			mod_name = retina->GetModName(eyes,sp->rf_time,1,0);
-			on_mats_right1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
-			if(!on_mats_right1) { 
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On right matrix: " + dog->name + mod_name + "_on not found");
-				continue;
-			}
-			taBase::Ref(on_mats_right1);
-			off_mats_right1 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
-			if(!off_mats_right1) {
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off right matrix: " + dog->name + mod_name + "_off not found");
-				continue;
-			}
-			taBase::Ref(off_mats_right1);
-			mod_name = retina->GetModName(eyes,sp->rf_time,1,1);
-			on_mats_right2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
-			if(!on_mats_right2) { 
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On right matrix: " + dog->name + mod_name + "_on not found");
-				continue;
-			}
-			taBase::Ref(on_mats_right2);
-			off_mats_right2 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
-			if(!off_mats_right2) {
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off right matrix: " + dog->name + mod_name + "_off not found");
-				continue;
-			}
-			taBase::Ref(off_mats_right2);
-			mod_name = retina->GetModName(eyes,sp->rf_time,1,2);
-			on_mats_right3 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_on");
-			if(!on_mats_right3) { 
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- On right matrix: " + dog->name + mod_name + "_on not found");
-				continue;
-			}
-			taBase::Ref(on_mats_right3);
-			off_mats_right3 = (float_Matrix*)ret_in_dt->GetMatrixDataByName(dog->name + mod_name + "_off");
-			if(!off_mats_right3) {
-				taMisc::Error("MotionDispV1GaborSpec::FilterRetinaData -- Off right matrix: " + dog->name + mod_name + "_off not found");
-				continue;
-			}
-			taBase::Ref(off_mats_right3);
-			
-			
-			
-			//sp->FilterMultiInput(*out_mat_left, *out_mat_right, eyes, dog->dog.color_chan, on_mats_left, off_mats_left, on_mats_right, off_mats_right, !first);
-			sp->FilterMultiInputDisp(*out_mat1, *out_mat2, *out_mat3, eyes, disp, dog->dog.color_chan, *on_mats_left1, *off_mats_left1, *on_mats_left2, *off_mats_left2,
-									 *on_mats_left3, *off_mats_left3, *on_mats_right1, *off_mats_right1, *on_mats_right2, *off_mats_right2, *on_mats_right3, *off_mats_right3, !first);
-			// taBase::unRefDone(on_mats_left);
-			// taBase::unRefDone(off_mats_left);
-			// taBase::unRefDone(on_mats_right);
-			// taBase::unRefDone(off_mats_right);
-			taBase::unRefDone(on_mats_left1);
-			taBase::unRefDone(on_mats_left2);
-			taBase::unRefDone(on_mats_left3);
-			taBase::unRefDone(off_mats_left1);
-			taBase::unRefDone(off_mats_left2);
-			taBase::unRefDone(off_mats_left3);
-			taBase::unRefDone(on_mats_right1);
-			taBase::unRefDone(on_mats_right2);
-			taBase::unRefDone(on_mats_right3);
-			taBase::unRefDone(off_mats_right1);
-			taBase::unRefDone(off_mats_right2);
-			taBase::unRefDone(off_mats_right3);
-			first = false;
-			
-		}
-		
-		/*if(norm_max > 0.0f) {
-			int idx;
-			float max_val = taMath_float::vec_max(out_mat_left, idx);
-			if(max_val > norm_thr) {
-				float rescale = norm_max / max_val;
-				taMath_float::vec_mult_scalar(out_mat_left, rescale);
-			}
-		}
-		
-		if(eyes > 1) {
-			int idx;
-			float max_val = taMath_float::vec_max(out_mat_right, idx);
-			if(max_val > norm_thr) {
-				float rescale = norm_max / max_val;
-				taMath_float::vec_mult_scalar(out_mat_right, rescale);
-			}
-			
-		}
-		taBase::unRefDone(out_mat_left);
-		taBase::unRefDone(out_mat_right);*/
-		if(norm_max > 0.0f) {
-			int idx;
-			float max_val = taMath_float::vec_max(out_mat1, idx);
-			if(max_val > norm_thr) {
-				float rescale = norm_max / max_val;
-				taMath_float::vec_mult_scalar(out_mat1, rescale);
-			}
-			max_val = taMath_float::vec_max(out_mat2, idx);
-			if(max_val > norm_thr) {
-				float rescale = norm_max / max_val;
-				taMath_float::vec_mult_scalar(out_mat2, rescale);
-			}
-			max_val = taMath_float::vec_max(out_mat3, idx);
-			if(max_val > norm_thr) {
-				float rescale = norm_max / max_val;
-				taMath_float::vec_mult_scalar(out_mat3, rescale);
-			}
-		}
-		
-
-		taBase::unRefDone(out_mat1);
-		taBase::unRefDone(out_mat2);
-		taBase::unRefDone(out_mat3);
-		
-	}
-	v1_out_dt->SetDataByName(ret_in_dt->GetDataByName("Name"), "Name"); // transfer over the name
-	v1_out_dt->StructUpdate(false);
-	return true;
-}
-
-
 
 ///////////////////////////////////////////////////////////
 // 		program stuff
