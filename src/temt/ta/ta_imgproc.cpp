@@ -2922,7 +2922,7 @@ bool V1RegionSpec::InitFilters_V1Complex() {
       v1c_weights.FastEl(xi, yi) = gv;
     }
   }
-  taMath_float::vec_norm_sum(&v1c_weights); // make sure sums to 1.0
+  taMath_float::vec_norm_max(&v1c_weights, 1.0f); // make sure sums to 1.0f
 
   // config: x,y coords by 1 line, by angles -- only the end points -- center point is always same! 0,0
   v1c_stencils.SetGeom(3, 2, 2, v1s_specs.n_angles);
