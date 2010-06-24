@@ -3334,7 +3334,7 @@ void V1RegionSpec::V1ComplexFilter_Monocular_thread(int v1c_idx, int thread_no) 
 	sfc_ctr.y = v1sf;
 	TwoDCoord sfc_end;	// simple feature coords for the end point
 	sfc_end.x = ang;
-	if(cfeat == 0)
+	if(cfeat == 0)		// end stop
 	  sfc_end.y = v1sf_other;
 	else
 	  sfc_end.y = v1sf;
@@ -3363,11 +3363,25 @@ void V1RegionSpec::V1ComplexFilter_Monocular_thread(int v1c_idx, int thread_no) 
 		if(edge_mode == CLIP) continue; // bail on clipping only
 	      }
 
-	      float end_val;
-	      if(motion_frames <= 1)
-		end_val = v1s_out_r.FastEl(sfc_end.x, sfc_end.y, sce.x, sce.y);
-	      else
-		end_val = v1s_out_r.FastEl(sfc_end.x, sfc_end.y, sce.x, sce.y, v1s_mot_idx);
+	      float end_val = 0.0f;
+	      if(cfeat == 0) {
+		// end-stop -- compute max over other angles -- any opposite polarity angle will do
+		for(int opang=0; opang<v1s_specs.n_angles; opang++) {
+		  sfc_end.x = opang; // angle
+		  float ev;
+		  if(motion_frames <= 1)
+		    ev = v1s_out_r.FastEl(sfc_end.x, sfc_end.y, sce.x, sce.y);
+		  else
+		    ev = v1s_out_r.FastEl(sfc_end.x, sfc_end.y, sce.x, sce.y, v1s_mot_idx);
+		  end_val = MAX(end_val, ev);
+		}
+	      }
+	      else {		// length-sum -- just use end
+		if(motion_frames <= 1)
+		  end_val = v1s_out_r.FastEl(sfc_end.x, sfc_end.y, sce.x, sce.y);
+		else
+		  end_val = v1s_out_r.FastEl(sfc_end.x, sfc_end.y, sce.x, sce.y, v1s_mot_idx);
+	      }
 	      line_sum += end_val;
 	    }
 	    line_sum *= 0.3333333f;
