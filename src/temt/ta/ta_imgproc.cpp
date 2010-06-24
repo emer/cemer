@@ -805,10 +805,10 @@ void DoGFilter::UpdateFilter() {
 void DoGFilter::GraphFilter(DataTable* graph_data) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_GraphFilter", true);
+    graph_data = proj->GetNewAnalysisDataTable(name + "_DoG_GraphFilter", true);
   }
   graph_data->StructUpdate(true);
-  graph_data->ResetData();
+  graph_data->Reset();
   int idx;
   DataCol* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
   DataCol* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
@@ -836,11 +836,11 @@ void DoGFilter::GraphFilter(DataTable* graph_data) {
 void DoGFilter::GridFilter(DataTable* graph_data, bool reset) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
+    graph_data = proj->GetNewAnalysisDataTable(name + "_DoG_GridFilter", true);
   }
   graph_data->StructUpdate(true);
   if(reset)
-    graph_data->ResetData();
+    graph_data->Reset();
   int idx;
   DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
   DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 2, filter_size, filter_size);
@@ -941,10 +941,10 @@ void GaborFilter::GraphFilter(DataTable* graph_data) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_GraphFilter", true);
+    graph_data = proj->GetNewAnalysisDataTable(name + "_Gabor_GraphFilter", true);
   }
   graph_data->StructUpdate(true);
-  graph_data->ResetData();
+  graph_data->Reset();
   int idx;
   DataCol* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
   DataCol* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
@@ -972,7 +972,7 @@ void GaborFilter::GridFilter(DataTable* graph_data, bool reset) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
+    graph_data = proj->GetNewAnalysisDataTable(name + "_Gabor_GridFilter", true);
   }
   graph_data->StructUpdate(true);
   if(reset)
@@ -1001,8 +1001,6 @@ void GaborFilter::OutputParams(ostream& strm) {
        << ", amp: " << amp
        << endl;
 }
-
-
 
 
 void MotionGaborFilter::Initialize() {
@@ -1107,10 +1105,10 @@ void MotionGaborFilter::GraphFilter(DataTable* graph_data) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_GraphFilter", true);
+    graph_data = proj->GetNewAnalysisDataTable(name + "_MotionGabor_GraphFilter", true);
   }
   graph_data->StructUpdate(true);
-  graph_data->ResetData();
+  graph_data->Reset();
   int idx;
   DataCol* xda = graph_data->FindMakeColName("X", idx, VT_FLOAT);
   DataCol* zda = graph_data->FindMakeColName("Z", idx, VT_FLOAT);
@@ -1140,11 +1138,11 @@ void MotionGaborFilter::GridFilter(DataTable* graph_data, bool reset) {
   UpdateFilter();
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
+    graph_data = proj->GetNewAnalysisDataTable(name + "_MotionGabor_GridFilter", true);
   }
   graph_data->StructUpdate(true);
   if(reset)
-    graph_data->ResetData();
+    graph_data->Reset();
   int idx;
   DataCol* matda = graph_data->FindMakeColName("Filter", idx, VT_FLOAT, 3, x_size, y_size, t_size);
 
@@ -2536,38 +2534,39 @@ void DoGRegionSpec::GridDoGFilter(DataTable* graph_data) {
   dog_specs.GridFilter(graph_data);
 }
 
-void DoGRegionSpec::PlotDoGSpacing(DataTable* graph_data, float val) {
-//   taProject* proj = GET_MY_OWNER(taProject);
-//   if(!graph_data) {
-//     graph_data = proj->GetNewAnalysisDataTable(name + "_PlotSpacing", true);
-//   }
-//   graph_data->StructUpdate(true);
-//   int idx;
-//   DataCol* matda = graph_data->FindMakeColName("Spacing", idx, VT_FLOAT, 2,
-// 						      retina_size.x,
-// 						      retina_size.y);
-//   graph_data->SetUserData("N_ROWS", 1);
-//   graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
-//   graph_data->SetUserData("WIDTH", retina_size.x / retina_size.y);
+void DoGRegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_DoG_PlotSpacing", true);
+  }
+  graph_data->StructUpdate(true);
+  if(reset)
+    graph_data->Reset();
+  int idx;
+  DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
+  DataCol* matda = graph_data->FindMakeColName("Spacing", idx, VT_FLOAT, 2,
+					      retina_size.x, retina_size.y);
+  graph_data->SetUserData("N_ROWS", 1);
+  graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
+  graph_data->SetUserData("BLOCK_SPACE", 20.0f);
+  graph_data->SetUserData("WIDTH", 1.0f + (float)retina_size.x / (float)retina_size.y);
 
-//   if(graph_data->rows < 1)
-//     graph_data->AddBlankRow();
+  graph_data->AddBlankRow();
+  nmda->SetValAsString("DoG", -1);
+  float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+  if(mat) {
+    TwoDCoord ic;
+    int x,y;
+    for(y=border.y; y<= retina_size.y-border.y; y+= dog_spacing.y) {
+      for(x=border.x; x<= retina_size.x-border.x; x+=dog_spacing.x) {
+	ic.y = y; ic.x = x;
+	ic.WrapClip(true, retina_size);	mat->FastEl(ic.x,ic.y) = 1.0f;
+      }
+    }
+  }
 
-//   float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-//   if(mat) {
-//     TwoDCoord ic;
-//     int x,y;
-//     for(y=border.y; y<= retina_size.y-border.y; y+= spacing.y) {
-//       for(x=border.x; x<= retina_size.x-border.x; x+=spacing.x) {
-// 	ic.y = y; ic.x = x;
-// 	ic.WrapClip(true, retina_size);
-// 	mat->FastEl(x,y) += val;
-//       }
-//     }
-//   }
-
-//   graph_data->StructUpdate(false);
-//   graph_data->FindMakeGridView();
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGridView();
 }
 
 DoGRegionSpec* DoGRegionSpecList::FindRetinalRegion(DoGRegionSpec::Region reg) {
@@ -2611,6 +2610,7 @@ DoGRegionSpec* DoGRegionSpecList::FindRetinalRegionRes(DoGRegionSpec::Region reg
 void V1SimpleSpec::Initialize() {
   n_angles = 4;
   rf_size = 4;
+  rf_half = rf_size / 2;
   spacing = 4;
   border = 2;
   rf_norm = 1.0f / rf_size;
@@ -2620,6 +2620,7 @@ void V1SimpleSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   n_angles = 4;			// clamped!
   rf_size = 4;
+  rf_half = rf_size / 2;
   if(spacing != 4 && spacing != 2) // must be one of these two
     spacing = 4;
   rf_norm = 1.0f / rf_size;
@@ -2877,6 +2878,51 @@ bool V1RegionSpec::InitFilters_V1Simple() {
       v1s_stencils.FastEl(1, px, pos, 3) = ys + px; // y = px
     }
   }
+
+  if(motion_frames > 1) {
+    v1m_stencils.SetGeom(6, 2, 1 + 2*v1s_motion.extra_width, motion_frames, 2, 
+			 v1s_specs.n_angles, v1s_motion.n_speeds);
+
+    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+      for(int dir = 0; dir < 2; dir++) { // directions
+	int dx, dy;   // motion vec, going *back in time* so opposite of normal
+	switch(ang) {
+	case 0:			// horiz
+	  if(dir == 0) 	{ dx = 0; dy = -1; } // up
+	  else		{ dx = 0; dy = 1; }  // down
+	  break;
+	case 1:			// 45deg
+	  if(dir == 0) 	{ dx = 1; dy = -1; } // up-left
+	  else		{ dx = -1; dy = 1; } // down-right
+	  break;
+	case 2:			// vert
+	  if(dir == 0) 	{ dx = 1; dy = 0; } // left
+	  else		{ dx = -1; dy = 0; } // right
+	  break;
+	case 3:			// 135
+	  if(dir == 0) 	{ dx = -1; dy = -1; } // up-right
+	  else		{ dx = 1;  dy = 1; }  // down-left
+	  break;
+	}
+	for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
+	  int spd_off = 1 << speed;
+	  taMisc::Info("spd_off",String(spd_off));
+	  for(int mot = 0; mot < motion_frames; mot++) { // time steps back in time
+	    for(int ew = -v1s_motion.extra_width; ew <= v1s_motion.extra_width; ew++) {
+	      int ox = (spd_off*mot + ew) * dx;
+	      int oy = (spd_off*mot + ew) * dy;
+	      v1m_stencils.FastEl(0, v1s_motion.extra_width+ew, mot, dir, ang, speed) = ox;
+	      v1m_stencils.FastEl(1, v1s_motion.extra_width+ew, mot, dir, ang, speed) = oy;
+	    }
+	  }
+	}
+      }
+    }
+  }
+  else {
+    v1m_stencils.SetGeom(1,1);
+  }
+
   return true;
 }
 
@@ -3201,7 +3247,50 @@ bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* out, CircMatrix* circ) {
 }
 
 void V1RegionSpec::V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no) {
-  // todo: write this -- reads off of the v1s static filters through time history..
+  // reads off of the v1s static filters through time history..
+  TwoDCoord sc;			// complex coords
+  sc.x = v1s_idx % v1s_img_geom.x;
+  sc.y = v1s_idx / v1s_img_geom.x;
+
+  int cur_mot_idx = cur_circ->CircIdx_Last();
+  int mot_len = cur_circ->length;
+
+  TwoDCoord fc;			// v1s feature coords -- destination
+  TwoDCoord sfc;		// v1s feature coords -- source
+  for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
+    for(int dir = 0; dir < 2; dir++) { // directions
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	for(int pol = 0; pol < 2; pol++) { // polarities that we care about
+	  fc.x = ang;
+	  fc.y = mot_feat_y + speed * 4 * v1s_specs.n_angles + dir * 2 * v1s_specs.n_angles +
+	    pol * v1s_specs.n_angles;
+	  sfc.x = ang;
+	  sfc.y = pol;		// polarity
+
+	  float sum_mot = 0.0f;
+	  for(int mot = 0; mot < motion_frames; mot++) { // time steps back in time
+	    if(mot >= mot_len) continue;	 // off end
+	    for(int ew = -v1s_motion.extra_width; ew <= v1s_motion.extra_width; ew++) {
+	      int ewidx = v1s_motion.extra_width+ew;
+	      int xp = v1m_stencils.FastEl(0, ewidx, mot, dir, ang, speed);
+	      int yp = v1m_stencils.FastEl(1, ewidx, mot, dir, ang, speed);
+
+	      TwoDCoord mo;
+	      mo.x = sc.x + xp;
+	      mo.y = sc.y + yp;
+	      if(mo.WrapClip(wrap, v1s_img_geom)) {
+		if(edge_mode == CLIP) continue; // bail on clipping only
+	      }
+
+	      float val = cur_out->FastEl(sfc.x, sfc.y, mo.x, mo.y, mot_len - mot-1);
+	      sum_mot += val * v1m_weights.FastEl(ewidx);
+	    }
+	  }
+	  cur_out->FastEl(fc.x, fc.y, sc.x, sc.y) = sum_mot;
+	}
+      }
+    }
+  }
 }
 
 bool V1RegionSpec::V1SRenormOutput_Motion(float_Matrix* out, CircMatrix* circ) {
@@ -3587,25 +3676,7 @@ bool V1RegionSpec::V1COutputToTable(DataTable* dtab) {
 }
 
 
-void V1RegionSpec::GraphV1Filter(DataTable* graph_data, V1Filters filter, int unit_no) {
-//   if(filter_type == GABOR) {
-//     GaborFilter* gf = (GaborFilter*)gabor_filters.SafeEl(unit_no);
-//     if(gf)
-//       gf->GraphFilter(graph_data);
-//   }
-//   else if(filter_type == MOTIONDISP_GABOR) {
-//     MotionGaborFilter* gf = (MotionGaborFilter*)motion_filters.SafeEl(unit_no);
-//     if(gf)
-//       gf->GraphFilter(graph_data);
-//   }
-//   else if(filter_type == BLOB) {
-//     DoGFilter* df = (DoGFilter*)blob_filters.SafeEl(unit_no);
-//     if(df)
-//       df->GraphFilter(graph_data);
-//   }
-}
-
-void V1RegionSpec::GridV1Filter(DataTable* graph_data, V1Filters filter) {
+void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
 //   taProject* proj = GET_MY_OWNER(taProject);
 //   if(!graph_data) {
 //     graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilter", true);
@@ -3636,7 +3707,7 @@ void V1RegionSpec::GridV1Filter(DataTable* graph_data, V1Filters filter) {
 //   graph_data->FindMakeGridView();
 }
 
-void V1RegionSpec::GridFilterInput(DataTable* graph_data, int unit_no, int gp_skip, bool ctrs_only) {
+// void V1RegionSpec::GridFilterInput(DataTable* graph_data, int unit_no, int gp_skip, bool ctrs_only) {
 //   taProject* proj = GET_MY_OWNER(taProject);
 //   if(!graph_data) {
 //     graph_data = proj->GetNewAnalysisDataTable(name + "_GridFilterInput", true);
@@ -3717,6 +3788,117 @@ void V1RegionSpec::GridFilterInput(DataTable* graph_data, int unit_no, int gp_sk
 //   taBase::unRefDone(gmat);
 //   graph_data->StructUpdate(false);
 //   graph_data->FindMakeGridView();
+// }
+
+void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_V1_PlotSpacing", true);
+  }
+  graph_data->StructUpdate(true);
+  if(reset)
+    graph_data->Reset();
+  int idx;
+  DataCol* nmda = graph_data->FindMakeColName("Name", idx, VT_STRING);
+  nmda->SetUserData("WIDTH", 8);
+  DataCol* matda = graph_data->FindMakeColName("Spacing", idx, VT_FLOAT, 2,
+					      retina_size.x, retina_size.y);
+  graph_data->SetUserData("N_ROWS", 1);
+  graph_data->SetUserData("BLOCK_HEIGHT", 0.0f);
+  graph_data->SetUserData("BLOCK_SPACE", 20.0f);
+  graph_data->SetUserData("WIDTH", .5f + (float)retina_size.x / (float)retina_size.y);
+
+  TwoDCoord ic;
+  int x,y;
+  { // first do dogs
+    graph_data->AddBlankRow();
+    nmda->SetValAsString("DoG", -1);
+    float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+    for(y=border.y; y<= retina_size.y-border.y; y+= dog_spacing.y) {
+      for(x=border.x; x<= retina_size.x-border.x; x+=dog_spacing.x) {
+	ic.y = y; ic.x = x;
+	ic.WrapClip(true, retina_size);	mat->FastEl(ic.x,ic.y) = 1.0f;
+      }
+    }
+  }
+  
+  { // then v1 simple
+    graph_data->AddBlankRow();
+    nmda->SetValAsString("V1_Simple", -1);
+    float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+    TwoDCoord brd(border.x+v1s_specs.border*dog_spacing.x,
+		  border.y+v1s_specs.border*dog_spacing.y);
+    TwoDCoord spc(dog_spacing.x * v1s_specs.spacing, dog_spacing.y * v1s_specs.spacing);
+    // first render borders of RF's, every other
+    for(y=brd.y; y<= retina_size.y-brd.y; y+= 2*spc.y) {
+      for(x=brd.x; x<= retina_size.x-brd.x; x+= 2*spc.x) {
+	ic.y = y; ic.x = x;
+	ic -= v1s_specs.rf_half*dog_spacing; // lower left
+	TwoDCoord ec;
+	int ex,ey;
+	for(ey=0; ey < v1s_specs.rf_size; ey++) {
+	  ec.y = ic.y + ey*dog_spacing.y;  ec.x = ic.x;
+	  ec.WrapClip(true, retina_size); mat->FastEl(ec.x,ec.y) = 0.2f;
+	  ec.y = ic.y + ey*dog_spacing.y;  ec.x = ic.x + dog_spacing.x * (v1s_specs.rf_size-1);
+	  ec.WrapClip(true, retina_size); mat->FastEl(ec.x,ec.y) = 0.2f;
+	}
+	for(ex=0; ex < v1s_specs.rf_size; ex++) {
+	  ec.y = ic.y;	  ec.x = ic.x + ex*dog_spacing.x;
+	  ec.WrapClip(true, retina_size); mat->FastEl(ec.x,ec.y) = 0.2f;
+	  ec.y = ic.y + dog_spacing.y * (v1s_specs.rf_size-1); ec.x = ic.x + ex*dog_spacing.x;
+	  ec.WrapClip(true, retina_size); mat->FastEl(ec.x,ec.y) = 0.2f;
+	}
+      }
+    }
+    // then centers
+    for(y=brd.y; y<= retina_size.y-brd.y; y+= spc.y) {
+      for(x=brd.x; x<= retina_size.x-brd.x; x+=spc.x) {
+	ic.y = y; ic.x = x;
+	ic.WrapClip(true, retina_size);	mat->FastEl(ic.x,ic.y) = 1.0f;
+      }
+    }
+  }
+
+  { // then v1 complex
+    graph_data->AddBlankRow();
+    nmda->SetValAsString("V1_Complex", -1);
+    float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+    TwoDCoord brd(border.x+v1s_specs.border*dog_spacing.x+v1s_specs.border*dog_spacing.x*v1c_specs.border.x,
+		  border.y+v1s_specs.border*dog_spacing.y+v1s_specs.border*dog_spacing.y*v1c_specs.border.y);
+    TwoDCoord spc(dog_spacing.x * v1s_specs.spacing * v1c_specs.spacing.x,
+		  dog_spacing.y * v1s_specs.spacing * v1c_specs.spacing.y);
+    TwoDCoord spcb(dog_spacing.x * v1s_specs.spacing, dog_spacing.y * v1s_specs.spacing);
+    // first render borders of RF's, every other
+    for(y=brd.y; y<= retina_size.y-brd.y; y+= 2*spc.y) {
+      for(x=brd.x; x<= retina_size.x-brd.x; x+= 2*spc.x) {
+	ic.y = y; ic.x = x;
+	ic -= v1c_specs.spat_rf_half*spcb; // lower left
+	TwoDCoord ec;
+	int ex,ey;
+	for(ey=0; ey < v1c_specs.spat_rf.y; ey++) {
+	  ec.y = ic.y + ey*spcb.y;  ec.x = ic.x;
+	  ec.WrapClip(true, retina_size); mat->FastEl(ec.x,ec.y) = 0.2f;
+	  ec.y = ic.y + ey*spcb.y;  ec.x = ic.x + spcb.x * (v1c_specs.spat_rf.x-1);
+	  ec.WrapClip(true, retina_size); mat->FastEl(ec.x,ec.y) = 0.2f;
+	}
+	for(ex=0; ex < v1c_specs.spat_rf.x; ex++) {
+	  ec.y = ic.y;	  ec.x = ic.x + ex*spcb.x;
+	  ec.WrapClip(true, retina_size); mat->FastEl(ec.x,ec.y) = 0.2f;
+	  ec.y = ic.y + spcb.y * (v1c_specs.spat_rf.y-1); ec.x = ic.x + ex*spcb.x;
+	  ec.WrapClip(true, retina_size); mat->FastEl(ec.x,ec.y) = 0.2f;
+	}
+      }
+    }
+    for(y=brd.y; y<= retina_size.y-brd.y; y+= spc.y) {
+      for(x=brd.x; x<= retina_size.x-brd.x; x+=spc.x) {
+	ic.y = y; ic.x = x;
+	ic.WrapClip(true, retina_size);	mat->FastEl(ic.x,ic.y) = 1.0f;
+      }
+    }
+  }
+
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGridView();
 }
 
 

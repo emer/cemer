@@ -785,6 +785,10 @@ void GridColView::InitFromUserData() {
     if(dc->HasUserData("TOP_ZERO"))
       mat_layout = taMisc::TOP_ZERO;
   }
+  else if(dc->isString()) {
+    if(dc->HasUserData("WIDTH"))
+      text_width = dc->GetUserData("WIDTH").toInt();
+  }
 }
 
 void GridColView::UpdateFromDataCol_impl(bool first){
@@ -1028,6 +1032,9 @@ void GridTableView::InitFromUserData() {
   }
   if(dt->HasUserData("BLOCK_HEIGHT")) {
     mat_block_height = dt->GetUserDataAsFloat("BLOCK_HEIGHT");
+  }
+  if(dt->HasUserData("BLOCK_SPACE")) {
+    mat_block_spc = dt->GetUserDataAsFloat("BLOCK_SPACE");
   }
   if(dt->HasUserData("MAT_VAL_TEXT")) {
     mat_val_text = true;

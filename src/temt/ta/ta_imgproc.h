@@ -641,12 +641,12 @@ public:
   // filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering
 
   virtual void	GraphDoGFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter difference-of-gaussians into data table and generate a graph
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #LABEL_GraphDoGFilter plot the filter difference-of-gaussians into data table and generate a graph
   virtual void	GridDoGFilter(DataTable* disp_data);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter difference-of-gaussians into data table and generate a grid view
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #LABEL_GridDoGFilter plot the filter difference-of-gaussians into data table and generate a grid view
 
-  virtual void	PlotDoGSpacing(DataTable* disp_data, float val = 1.0f);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view
+  virtual void	PlotSpacing(DataTable* disp_data, bool reset = true);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_1 plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view
 
   // todo: add CheckConfig!!
 
@@ -780,12 +780,13 @@ public:
     CF_NONE	= 0, // #NO_BIT
     END_STOP	= 0x0001, // end stop cells
     LEN_SUM	= 0x0002, // length summing cells
-    DISP_EDGE	= 0x0004, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
-    MOTION_EDGE	= 0x0008, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
+    COLOR_BLOB	= 0x0004, // color blobs made by integrating over all angles for a given color contrast -- only applicable if color = COLOR -- adds 4 extra units per hypercolumn
+    DISP_EDGE	= 0x0008, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
+    MOTION_EDGE	= 0x0010, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
 #ifndef __MAKETA__
     CF_BASIC	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT just the basic ones
     CF_EDGES	= DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT special complex edges
-    CF_ALL	= END_STOP | LEN_SUM | DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT all complex filters
+    CF_ALL	= END_STOP | LEN_SUM | COLOR_BLOB | DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT all complex filters
 #endif
   };
 
@@ -805,6 +806,9 @@ public:
 protected:
   void 	UpdateAfterEdit_impl();
 };
+
+// todo: add a separate integrator for color at v1c layer that is unoriented "blob" = 4 units
+// separate it out or maybe just keep it in there?? why not..
 
 class TA_API V1RegionSpec : public DoGRegionSpec {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- takes retinal DoG filter inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
@@ -835,7 +839,9 @@ public:
   
   int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells [x,y][1 line: rf_size][n lines: rf_size][angles]
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
+  int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*extra_width][motion_frames][directions:2][angles][speeds] (6d)
   float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular weighting factors (1d)
+  int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: tbd
   float_Matrix	v1c_weights;	// #READ_ONLY #NO_SAVE v1 complex spatial weighting factors (2d)
   int_Matrix	v1c_stencils; 	// #READ_ONLY #NO_SAVE stencils for complex cells [x,y][3 (line_len)][angles]
 
@@ -846,12 +852,9 @@ public:
   float_Matrix	v1b_out;	 // #READ_ONLY #NO_SAVE v1 binocular output [feat.x][feat.y][img.x][img.y] -- only present for BINOCULAR ocularity
   float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [feat.x][feat.y][img.x][img.y]
 
-  virtual void	GridFilterInput(DataTable* disp_data, int unit_no=0, int gp_skip=2, bool ctrs_only=false);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter for a given unit as it will be applied to the entire input data -- gp_skip specifies the number of unit groups to increment -- 2 is good to avoid complete overlap -- ctrs_only will only plot the centers of the filters, not the actual raw filters themselves
-  virtual void	GraphV1Filter(DataTable* disp_data, V1Filters filter, int unit_no);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the selected V1 filter into data table and generate a graph view
-  virtual void	GridV1Filter(DataTable* disp_data, V1Filters filter);
-  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the selected V1 filter into data table and generate a grid view
+  virtual void	GridV1Stencils(DataTable* disp_data);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 stencils into data table and generate a grid view -- these are the effective receptive fields at each level of processing
+  override void	PlotSpacing(DataTable* disp_data, bool reset = true);
 
   void 	Initialize();
   void	Destroy() { };

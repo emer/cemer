@@ -2499,6 +2499,11 @@ void taiEditDataHost::GetImage_impl(const Member_List* ms, const taiDataList& dl
 void taiEditDataHost::GetValue() {
   if ((typ == NULL) || (root == NULL)) return;
   if (state >= ACCEPTED ) return;
+#ifdef DEBUG
+  if(!mwidget->isVisible()) {
+    taMisc::Info("taiEditDataHost::GetValue attempt to GetValue with invisible widget!");
+  }
+#endif
   if (state > DEFERRED1) {
     GetValue_Membs();
   }
@@ -2558,6 +2563,11 @@ void taiEditDataHost::GetValueInline_impl(void* base) const {
 void taiEditDataHost::ResolveChanges(CancelOp& cancel_op, bool* discarded) {
   // called by root on closing, dialog on closing, DCR_RESOLVE_NOW op, etc. etc.
   if (HasChanged()) {
+#ifdef DEBUG
+    if(!mwidget->isVisible()) {
+      taMisc::Info("taiEditDataHost::ResolveChanges attempt to get value with invisible widget!");
+    }
+#endif
     GetValue();
   }
 }
