@@ -3345,12 +3345,17 @@ void V1RegionSpec::V1ComplexFilter_Monocular_thread(int v1c_idx, int thread_no) 
 	  for(int xs = 0; xs < v1c_specs.spat_rf.x; xs++) { // xsimple
 	    sc.x = scs.x + xs;
 
+	    TwoDCoord scc = sc;	// center
+	    if(scc.WrapClip(wrap, v1s_img_geom)) {
+	      if(edge_mode == CLIP) continue; // bail on clipping only
+	    }
+
 	    // first get central value -- always the same
 	    float ctr_val;
 	    if(motion_frames <= 1)
-	      ctr_val = v1s_out_r.FastEl(sfc_ctr.x, sfc_ctr.y, sc.x, sc.y);
+	      ctr_val = v1s_out_r.FastEl(sfc_ctr.x, sfc_ctr.y, scc.x, scc.y);
 	    else
-	      ctr_val = v1s_out_r.FastEl(sfc_ctr.x, sfc_ctr.y, sc.x, sc.y, v1s_mot_idx);
+	      ctr_val = v1s_out_r.FastEl(sfc_ctr.x, sfc_ctr.y, scc.x, scc.y, v1s_mot_idx);
 	    // now get the end points
 	    float line_sum = ctr_val;
 	    for(int lnp=0; lnp < 2; lnp++) {
