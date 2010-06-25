@@ -3198,9 +3198,9 @@ bool V1RegionSpec::V1SRenormOutput_Static(float_Matrix* out, CircMatrix* circ) {
   for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
     for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
       for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+	fc.y = dog;
 	for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
 	  fc.x = ang;
-	  fc.y = dog;
 	  float val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
 	  max_val = MAX(val, max_val);
 	}
@@ -3214,9 +3214,9 @@ bool V1RegionSpec::V1SRenormOutput_Static(float_Matrix* out, CircMatrix* circ) {
       for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
 	for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
 	  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+	    fc.y = dog;
 	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
 	      fc.x = ang;
-	      fc.y = dog;
 	      float& val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
 	      val = val * rescale;
 	    }
@@ -3229,9 +3229,9 @@ bool V1RegionSpec::V1SRenormOutput_Static(float_Matrix* out, CircMatrix* circ) {
       for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
 	for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
 	  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+	    fc.y = dog;
 	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
 	      fc.x = ang;
-	      fc.y = dog;
 	      float& val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
 	      val = logf(1.0f + val) * rescale;
 	    }
@@ -3398,6 +3398,12 @@ bool V1RegionSpec::V1ComplexFilter() {
   threads.min_units = 1;
   threads.nibble_chunk = 1;	// small chunks
 
+  if(v1c_filters & OLD_REPL) {
+    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_OldRepl_thread);
+    threads.Run(&ip_call, n_run);
+    return true;		// bail!
+  }
+
   if(ocularity == BINOCULAR) {
     ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Binocular_thread);
     threads.Run(&ip_call, n_run);
@@ -3513,6 +3519,42 @@ void V1RegionSpec::V1ComplexFilter_Monocular_thread(int v1c_idx, int thread_no) 
 
 void V1RegionSpec::V1ComplexFilter_Binocular_thread(int v1c_idx, int thread_no) {
   // todo: write this -- same as monoc but integrate over disparities with weights
+}
+
+void V1RegionSpec::V1ComplexFilter_OldRepl_thread(int v1c_idx, int thread_no) {
+  TwoDCoord cc;			// complex coords
+  cc.x = v1c_idx % v1c_img_geom.x;
+  cc.y = v1c_idx / v1c_img_geom.x;
+  TwoDCoord scs = v1c_specs.spacing * cc; // v1s coords start
+  scs += v1c_specs.border;
+  scs -= v1c_specs.spat_rf_half; // convert to lower-left starting position, not center
+
+  int cfidx = 0;		// complex feature index
+  TwoDCoord sc;			// simple coord
+  TwoDCoord sce;		// simple coord, ends
+  TwoDCoord fc;			// v1c feature coords
+  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+    fc.y = dog;
+    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+      fc.x = ang;
+      float max_rf = 0.0f;   // max over spatial rfield
+      for(int ys = 0; ys < v1c_specs.spat_rf.y; ys++) { // ysimple
+	sc.y = scs.y + ys;
+	for(int xs = 0; xs < v1c_specs.spat_rf.x; xs++) { // xsimple
+	  sc.x = scs.x + xs;
+	  TwoDCoord scc = sc;	// center
+	  if(scc.WrapClip(wrap, v1s_img_geom)) {
+	    if(edge_mode == CLIP) continue; // bail on clipping only
+	  }
+	  // first get central value -- always the same
+	  float ctr_val = v1s_out_r.FastEl(fc.x, fc.y, scc.x, scc.y);
+	  ctr_val *= v1c_weights.FastEl(xs, ys); // spatial rf weighting
+	  max_rf = MAX(max_rf, ctr_val);
+	}
+      }
+      cur_out->FastEl(fc.x, fc.y, cc.x, cc.y) = max_rf;
+    } // for ang
+  }  // for dog
 }
 
 
@@ -3753,7 +3795,6 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
     }
   }
 
-  
   if(motion_frames > 1) { // v1simple, motion
     for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
       for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
@@ -3787,6 +3828,21 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
 	    }
 	  }
 	}
+      }
+    }
+  }
+
+  { // v1complex, spatial
+    graph_data->AddBlankRow();
+    nmda->SetValAsString("V1 Complex Spat RF", -1);
+    float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+    TwoDCoord sc;
+    for(int ys = 0; ys < v1c_specs.spat_rf.y; ys++) { // ysimple
+      sc.y = brd.y + ys;
+      for(int xs = 0; xs < v1c_specs.spat_rf.x; xs++) { // xsimple
+	sc.x = brd.x + xs;
+
+	if(sc.WrapClip(true, max_sz)); mat->FastEl(sc.x,sc.y) = v1c_weights.FastEl(xs, ys);
       }
     }
   }

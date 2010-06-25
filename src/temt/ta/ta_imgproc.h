@@ -805,9 +805,10 @@ public:
     CF_NONE	= 0, // #NO_BIT
     END_STOP	= 0x0001, // end stop cells
     LEN_SUM	= 0x0002, // length summing cells
-    COLOR_BLOB	= 0x0004, // color blobs made by integrating over all angles for a given color contrast -- only applicable if color = COLOR -- adds 4 extra units per hypercolumn
-    DISP_EDGE	= 0x0008, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
-    MOTION_EDGE	= 0x0010, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
+    OLD_REPL    = 0x0004, // replicate previous version: carry polarity forward and just do basic spatial integration without length integ
+    COLOR_BLOB	= 0x0008, // color blobs made by integrating over all angles for a given color contrast -- only applicable if color = COLOR -- adds 4 extra units per hypercolumn
+    DISP_EDGE	= 0x0010, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
+    MOTION_EDGE	= 0x0020, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
 #ifndef __MAKETA__
     CF_BASIC	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT just the basic ones
     CF_EDGES	= DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT special complex edges
@@ -919,6 +920,8 @@ protected:
   // do complex filters from monocular inputs -- do it
   virtual void 	V1ComplexFilter_Binocular_thread(int v1c_idx, int thread_no);
   // do complex filters from binocular inputs -- do it
+  virtual void 	V1ComplexFilter_OldRepl_thread(int v1c_idx, int thread_no);
+  // do complex filters -- old replication mode
 
   virtual bool V1SOutputToTable(DataTable* dtab);
   // simple to output table
