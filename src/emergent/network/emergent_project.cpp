@@ -286,32 +286,33 @@ bool Wizard::StdNetwork(TypeDef* net_type, Network* net) {
   return true;
 }
 
-bool Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
+bool Wizard::RetinaProcNetwork(RetinaProc* retina_spec, Network* net) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   if(!net) {
-    if(TestError(!proj, "RetinaSpecNetwork", "network is NULL and could not find project owner to make a new one -- aborting!")) return false;
+    if(TestError(!proj, "RetinaProcNetwork", "network is NULL and could not find project owner to make a new one -- aborting!")) return false;
     net = proj->GetNewNetwork();
-    if(TestError(!net, "RetinaSpecNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
+    if(TestError(!net, "RetinaProcNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
   }
-  if(TestError(!retina_spec, "RetinaSpecNetwork", "retina_spec is NULL -- you need to create and configure this in advance, as it is then used to configure the network!")) return false;
+  if(TestError(!retina_spec, "RetinaProcNetwork", "retina_spec is NULL -- you need to create and configure this in advance, as it is then used to configure the network!")) return false;
 
   if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::RetinaSpecNetwork before -- actually saves network specifically");
+    proj->undo_mgr.SaveUndo(net, "Wizard::RetinaProcNetwork before -- actually saves network specifically");
   }
 
+  // todo: fixme
   net->StructUpdate(true);
-  for(int i=0;i<retina_spec->dogs.size; i++) {
-    DoGRetinaSpec* sp = retina_spec->dogs[i];
-    Layer* on_lay = net->FindMakeLayer(sp->name + "_on");
-    on_lay->un_geom.x = sp->spacing.output_size.x;
-    on_lay->un_geom.y = sp->spacing.output_size.y;
-    on_lay->un_geom.n = sp->spacing.output_units;
-    on_lay->layer_type = Layer::INPUT;
-    Layer* off_lay = net->FindMakeLayer(sp->name + "_off");
-    off_lay->un_geom.x = sp->spacing.output_size.x;
-    off_lay->un_geom.y = sp->spacing.output_size.y;
-    off_lay->un_geom.n = sp->spacing.output_units;
-    off_lay->layer_type = Layer::INPUT;
+  for(int i=0;i<retina_spec->regions.size; i++) {
+    DoGRegionSpec* sp = retina_spec->regions[i];
+//     Layer* on_lay = net->FindMakeLayer(sp->name + "_on");
+//     on_lay->un_geom.x = sp->spacing.output_size.x;
+//     on_lay->un_geom.y = sp->spacing.output_size.y;
+//     on_lay->un_geom.n = sp->spacing.output_units;
+//     on_lay->layer_type = Layer::INPUT;
+//     Layer* off_lay = net->FindMakeLayer(sp->name + "_off");
+//     off_lay->un_geom.x = sp->spacing.output_size.x;
+//     off_lay->un_geom.y = sp->spacing.output_size.y;
+//     off_lay->un_geom.n = sp->spacing.output_units;
+//     off_lay->layer_type = Layer::INPUT;
   }
   net->StructUpdate(false);
   if(taMisc::gui_active) {
@@ -319,7 +320,7 @@ bool Wizard::RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net) {
     tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
   }
   if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::RetinaSpecNetwork after -- actually saves network specifically");
+    proj->undo_mgr.SaveUndo(net, "Wizard::RetinaProcNetwork after -- actually saves network specifically");
   }
 
   return true;

@@ -615,7 +615,7 @@ public:
   TwoDCoord	input_size;	// #READ_ONLY #SHOW size of input region in pixels that is actually filtered -- retina_size - 2 * border
   EdgeMode	edge_mode;	// how to deal with image edges, and edges in general throughout the processing cascade
   DoGFilter	dog_specs;	// Difference of Gaussian retinal filter specification
-  TwoDCoord	dog_spacing;	// spacing between centers of DoG filters in input
+  TwoDCoord	dog_spacing;	// spacing between centers of DoG filters in input -- should generally be same as on sigma width in dog_specs
   RenormMode	dog_renorm;	// #DEF_LOG_RENORM how to renormalize the output of filters
   float		renorm_thr;	// #DEF_1e-05 threshold for the max filter output value to max-renormalize filter outputs such that the max is 1 -- below this value, consider the input to be blank and do not renorm
   DataSave	dog_save;	// how to save the DoG outputs for the current time step in the data table
@@ -733,10 +733,12 @@ INHERITED(taOBase)
 public:
   int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
   int		rf_size;	// #DEF_4 number of DoG filters to integrate over to form a line - this also determines the number of stacks to integrate over to make a square RF -- currently only 4 is supported 
+  float		flank_amp;	// #DEF_1 amplitude of opposite-polarity flanks of the receptive field, for a tri-phasic off-on-off or on-off-on structure -- only for luminance rf's -- 0 disables
   int		rf_half;	// #READ_ONLY half rf
-  int		spacing;	// #DEF_4 spacing between neighboring V1S rf's -- should be either 1/2 of rf_size or full rf_size (tiling) -- tradeoff between number of filters (4x overall) vs. discrete edge aliasing problems 
+  int		spacing;	// #DEF_2 spacing between neighboring V1S rf's -- should be either 1/2 of rf_size or full rf_size (tiling) -- tradeoff between number of filters (4x overall) vs. discrete edge aliasing problems 
   int		border;		// #READ_ONLY #SHOW border onto dog filters -- automatically computed based on wrap mode and spacing setting
-  float		rf_norm;	// #READ_ONLY 1 / rf_size -- normalization factor
+  float		rf_norm_bw;	// #READ_ONLY 1 / (rf_size + flank_amp * 2 * rf_size) -- normalization factor for monochromatic simples with tri-phasic flankers
+  float		rf_norm_clr;	// #READ_ONLY 1 / rf_size -- normalization factor for color cells that only get from one central line
 
   void 	Initialize();
   void	Destroy() { };
@@ -751,7 +753,7 @@ INHERITED(taOBase)
 public:
   int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- speeds are 1, 2, 4, 8, etc and extra_width is proportional to speed -- only applicable if motion_frames > 1
   int		extra_width;	// #DEF_1 additional width of encoding around the trajectory for the target speed -- allows for some fuzziness in encoding -- effective value is multiplied by speed, so it gets fuzzier as speed gets higher
-  float		gauss_sig;	// #DEF_0.5 gaussian sigma for weighting the contribution of extra width guys -- normalized by effective extra_width
+  float		gauss_sig;	// #DEF_0.8 gaussian sigma for weighting the contribution of extra width guys -- normalized by effective extra_width
 
   void 	Initialize();
   void	Destroy() { };
@@ -776,21 +778,6 @@ class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 binocular cells
 INHERITED(taOBase)
 public:
-  enum ComplexFilters { // #BITS flags for specifying which complex filters to include
-    CF_NONE	= 0, // #NO_BIT
-    END_STOP	= 0x0001, // end stop cells
-    LEN_SUM	= 0x0002, // length summing cells
-    COLOR_BLOB	= 0x0004, // color blobs made by integrating over all angles for a given color contrast -- only applicable if color = COLOR -- adds 4 extra units per hypercolumn
-    DISP_EDGE	= 0x0008, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
-    MOTION_EDGE	= 0x0010, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
-#ifndef __MAKETA__
-    CF_BASIC	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT just the basic ones
-    CF_EDGES	= DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT special complex edges
-    CF_ALL	= END_STOP | LEN_SUM | COLOR_BLOB | DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT all complex filters
-#endif
-  };
-
-  ComplexFilters filters; 	// which complex cell filtering to perform
   TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field
   TwoDCoord	spat_rf_half;	// #READ_ONLY half rf
   TwoDCoord	spacing;	// how to space out the centers of the complex rfields -- typically 1/2 overlap with spat_rf
@@ -814,11 +801,35 @@ class TA_API V1RegionSpec : public DoGRegionSpec {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- takes retinal DoG filter inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(DoGRegionSpec)
 public:
+  enum ComplexFilters { // #BITS flags for specifying which complex filters to include
+    CF_NONE	= 0, // #NO_BIT
+    END_STOP	= 0x0001, // end stop cells
+    LEN_SUM	= 0x0002, // length summing cells
+    COLOR_BLOB	= 0x0004, // color blobs made by integrating over all angles for a given color contrast -- only applicable if color = COLOR -- adds 4 extra units per hypercolumn
+    DISP_EDGE	= 0x0008, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
+    MOTION_EDGE	= 0x0010, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
+#ifndef __MAKETA__
+    CF_BASIC	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT just the basic ones
+    CF_EDGES	= DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT special complex edges
+    CF_ALL	= END_STOP | LEN_SUM | COLOR_BLOB | DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT all complex filters
+#endif
+  };
+
   enum V1Filters { // different stages of V1 filters
     V1_SIMPLE,	   // V1 Simple oriented, polarity sensitive cells
     V1_BINOCULAR,  // V1 Binocular integration 
     V1_COMPLEX,	   // V1 Complex cells
   };
+
+  enum XY {	   // x, y component of stencils etc -- for clarity in code
+    X,
+    Y,
+  };
+  enum LnOrtho {   // line, orthogonal to the line -- for v1s_ang_slopes
+    LINE,	   // along the direction of the line
+    ORTHO,	   // orthogonal to the line
+  };
+
 
   V1SimpleSpec	v1s_specs;	// specs for V1 simple filters -- first step after DoG -- encode simple oriented edges in same polarities/colors as in DoG layer, plus motion if applicable
   V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||1 specs for V1 motion filters within the simple processing layer
@@ -832,12 +843,14 @@ public:
   DataSave	v1b_save;	// #CONDSHOW_ON_ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
   XYNGeom	v1b_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- 3x v1s_feat_geom -- focus, near, far
 
+  ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
   XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by ..
   
-  int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells [x,y][1 line: rf_size][n lines: rf_size][angles]
+  int_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each fo the angles
+  int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells [x,y][1 line: rf_size][n lines: rf_size + 2][angles] -- includes -1 and rf flanker stencils for opposite polarity off-center coding
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*extra_width][motion_frames][directions:2][angles][speeds] (6d)
   float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular weighting factors (1d)
@@ -855,6 +868,7 @@ public:
   virtual void	GridV1Stencils(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 stencils into data table and generate a grid view -- these are the effective receptive fields at each level of processing
   override void	PlotSpacing(DataTable* disp_data, bool reset = true);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_1 plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view -- one row for each type of filter (scroll to see each in turn) -- light squares show bounding box of rf, skipping every other
 
   void 	Initialize();
   void	Destroy() { };
@@ -1059,295 +1073,5 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 }; 
-
-
-///////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////
-//	     OBSOLETE Code just for loading and converting
-
-class TA_API GaborRFSpec : public taBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image Gabor receptive field spec (for V1)
-  INHERITED(taBase)
-public:
-  int		n_angles;	// number of different angles
-  float		freq;		// frequency of the sine wave
-  float		length;		// length of the gaussian perpendicular to the wave direction
-  float		width;		// width of the gaussian in the wave direction
-  float		amp;		// amplitude (maximum value)
-  float 	phase_off; 	// #AKA_phase_mod phase offset -- constant to add to all phases
-
-  void 	Initialize() { };
-  void	Destroy() { };
-  SIMPLE_COPY(GaborRFSpec);
-  TA_BASEFUNS(GaborRFSpec);
-};
-
-class TA_API MotionRFSpec : public taBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image Gabor receptive field spec (for V1)
-  INHERITED(taBase)
-public:
-  int		n_angles;	// number of different angles
-  float		freq;		// frequency of the sine wave
-  float		freq_t;		// frequency of the sine wave related to time
-  float		length;		// length of the gaussian perpendicular to the wave direction
-  float		width;		// width of the gaussian in the wave direction
-  float		width_t;	// width of the gaussian in the time direction
-  float		t_mult;		// ??
-  float		amp;		// amplitude (maximum value)
-  int       	timesteps;      // number of timesteps a motion sensitive filter responds to
-
-  void 	Initialize() { };
-  void	Destroy() { };
-  SIMPLE_COPY(MotionRFSpec);
-  TA_BASEFUNS(MotionRFSpec);
-};
-
-class TA_API BlobRFSpec : public taBase {
-  // #INLINE #INLINE_DUMP ##CAT_Image Color Blob receptive field specs (for V1)
-  INHERITED(taBase)
-public:
-  int		n_sizes;	// number of different sizes
-  float		width_st;	// starting center width
-  float		width_inc;	// increment of width per unit
-
-  void 	Initialize() { };
-  void	Destroy() { };
-  SIMPLE_COPY(BlobRFSpec);
-  TA_BASEFUNS(BlobRFSpec);
-};
-
-class TA_API RetinalSpacingSpec : public taNBase {
-  // ##OBSOLETE ##STEM_BASE #INLINE ##CAT_Image defines the spacing of a filter relative to a specified retinal image size
-INHERITED(taNBase)
-public:
-  enum Region {			// retinal region
-    FOVEA,
-    PARAFOVEA,
-    PERIPHERY,
-  };
-  enum Resolution {		// level of resolution
-    HI_RES,
-    MED_RES,
-    LOW_RES,
-    VLOW_RES,
-  };
-
-  Region	region;		// retinal region represented by this filter 
-  Resolution	res;		// level of resolution represented by this filter (can use enum or any other arbitrary rating scale -- just for informational/matcing purposes)
-  TwoDCoord	retina_size;	// overall size of the retina
-  TwoDCoord	border;		// border around retina that we don't process NOTE: can be negative for wrap-around case -- code will automatically wrap out-of-range numbers
-  TwoDCoord	spacing;	// spacing between centers of filters in input
-  TwoDCoord	input_size;	// #READ_ONLY #SHOW size of input region in pixels 
-  TwoDCoord	output_size;	// #READ_ONLY #SHOW size of the filter output
-  int		output_units;	// #READ_ONLY #SHOW total number of units to represent filter
-
-  void 	Initialize() { };
-  void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(RetinalSpacingSpec);
-};
-
-class TA_API DoGRetinaSpec : public taNBase {
-  // ##OBSOLETE ##CAT_Image specifies the spacing of Difference-of-Gaussian filters for the retina
-INHERITED(taNBase)
-public:
-  // note: this must be same as one in taImageProc
-  enum EdgeMode {		// how to deal with image edges
-    CLIP,			// just hard clip edges, nothing fancy
-    BORDER,			// render/preserve a 1 pixel border around everything
-    WRAP,			// wrap the image around to the other side: no edges!
-  };
-
-  DoGFilter		dog;		// Difference of Gaussian retinal filters
-  RetinalSpacingSpec	spacing;	// how to space DoG filters in the retina
-
-  void 	Initialize() { };
-  void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(DoGRetinaSpec);
-};
-
-class TA_API DoGRetinaSpecList : public taList<DoGRetinaSpec> {
-  // ##OBSOLETE ##CAT_Image a list of DoG retinal filters
-INHERITED(taList<DoGRetinaSpec>)
-public:
-  TA_BASEFUNS_NOCOPY(DoGRetinaSpecList);
-private:
-  void	Initialize() 		{ SetBaseType(&TA_DoGRetinaSpec); }
-  void 	Destroy()		{ };
-};
-
-class TA_API GaborV1SpecBase : public ImgProcThreadBase {
-  // ##OBSOLETE #STEM_BASE ##CAT_Image basic V1 model as either blob (DOG) or gabor filters with a specified rf width -- used for generating connections or for explicit filter operation in GaborV1Spec
-INHERITED(ImgProcThreadBase)
-public:
-  enum V1FilterType {  
-    GABOR,			// filter using gabors (orientation tuned)
-    BLOB,			// filter using blobs (color contrast tuned)
-    COPY,			// just copy from retinal inputs, summing over on and off fields
-    MOTIONDISP_GABOR			// filter using gabors (orientation tuned) that are oriented in time and space and receive from two retinas
-  };
-
-  V1FilterType	filter_type; 	// what type of filter to use?
-  TwoDCoord 	rf_width;	// width of the receptive field into the retinal inputs -- enforced to be even numbers, to enable the 1/2 overlap constraint for neighboring rf's
-
-  TwoDCoord 	rf_ovlp;	//  half-width of the receptive field into the retinal inputs, which is the amount that the receptive fields overlap   CONDEDIT_ON_filter_type:COPY
-  int		n_filters;	// #READ_ONLY #SHOW number of filters -- computed from appropriate _rf specifications in terms of number of angles/sizes etc.
-  GaborRFSpec	gabor_rf;	// #CONDEDIT_ON_filter_type:GABOR parameters for gabor filter specs
-  BlobRFSpec	blob_rf;	// #CONDEDIT_ON_filter_type:BLOB parameters for blob filter specs
-  MotionRFSpec	motiondisp_gabor_rf;	// #CONDEDIT_ON_filter_type:MOTIONDISP_GABOR parameters for motion/disp gabor filter specs
-
-  bool use_3d_gabors; //motion only
-  bool two_phase;
-
-  void 	Initialize() { };
-  void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(GaborV1SpecBase);
-};
-
-class TA_API GaborV1Spec : public GaborV1SpecBase {
-  // implements Gabor or DoG (Blob) filtering of a DoG filtered input image, as a model of V1 -- supports integration of multiple filters per unit for greater effective resolution without additional network processing cost
-INHERITED(GaborV1SpecBase)
-public:
-  RetinalSpacingSpec::Region region; // retinal region represented by this filter -- for matching up with associated retinal outputs
-  RetinalSpacingSpec::Resolution res; // resolution represented by this filter -- for matching up with associated retinal outputs
-
-  XYNGeom	un_geom;  	// size of one 'hypercolumn' unit of orientation detectors -- sets the datatable geometry -- must include room for number of angles/sizes, on/off and n_filters_per_gp (for COPY mode, this is entire size of layer)
-  XYNGeom	gp_geom;  	// #CONDEDIT_OFF_filter_type:COPY size of full set of groups of hypercolumns to process entire set of inputs: with wrap, is input_size / rf_ovlp, subtract 1 for !wrap
-  bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -input_ovlp (wrapped to right/top) and goes +input_ovlp past the right/top edge (wrapped to left/bottom)
-  XYNGeom	n_filter_gps;	// #CONDEDIT_OFF_filter_type:COPY number of groups of filters in each axis -- replicates filters (in interdigitated fashion if n_filters_per_gp > 1) across multiple adjacent locations and integrates into summary value (with gaussian weighting from center)
-  int		n_filters_per_gp; // #CONDEDIT_OFF_filter_type:COPY number of filters per group -- when n_filter_gps > 1, may be useful to have multiple interdigitated filter units to reduce redundancy and produce better effective resolution
-  XYNGeom	tot_filter_gps;	// #READ_ONLY #SHOW n_filter_gps * n_filters_per_gp -- total number of filter groups per location
-  XYNGeom	filter_gp_ovlp;	// #READ_ONLY #SHOW tot_filter_gps / 2 -- overlap of filter groups, in terms of groups of filters
-  XYNGeom	input_ovlp;	// #READ_ONLY #SHOW filter_gp_ovlp * rf_ovlp + rf_ovlp -- overlap of filter groups, in terms of input coordinates -- how much to move over in input space when processing -- note that each subsequent group moves over an extra rf_ovlp
-  XYNGeom	trg_input_size;	// #READ_ONLY #SHOW target input size: gp_geom * input_ovlp for wrap; (gp_geom - 1) * input_ovlp for !wrap
-  float		gp_gauss_sigma;	  // width of gaussian weighting factor over the filter groups, in normalized terms relative to tot_filter_gps widths
-  float_Matrix	gp_gauss_mat;	  // #READ_ONLY #NO_SAVE #NO_COPY group gaussian vals 
-	
-  void 	Initialize() { };
-  void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(GaborV1Spec);
-};
-
-
-class TA_API MotionDispGaborV1Spec : public GaborV1SpecBase {
-  // implements Gabor or DoG (Blob) filtering of a DoG filtered input image, as a model of V1 -- supports integration of multiple filters per unit for greater effective resolution without additional network processing cost
-INHERITED(GaborV1SpecBase)
-public:
-  RetinalSpacingSpec::Region region; // retinal region represented by this filter -- for matching up with associated retinal outputs
-  RetinalSpacingSpec::Resolution res; // resolution represented by this filter -- for matching up with associated retinal outputs
-
-  int 		rf_time;	// size of rf time dimension
-  XYNGeom	un_geom;  	// size of one 'hypercolumn' unit of orientation detectors -- sets the datatable geometry -- must include room for number of angles/sizes, on/off and n_filters_per_gp (for COPY mode, this is entire size of layer)
-  XYNGeom	gp_geom;  	// #CONDEDIT_OFF_filter_type:COPY size of full set of groups of hypercolumns to process entire set of inputs: with wrap, is input_size / rf_ovlp, subtract 1 for !wrap
-  bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -input_ovlp (wrapped to right/top) and goes +input_ovlp past the right/top edge (wrapped to left/bottom)
-  XYNGeom	n_filter_gps;	// #CONDEDIT_OFF_filter_type:COPY number of groups of filters in each axis -- replicates filters (in interdigitated fashion if n_filters_per_gp > 1) across multiple adjacent locations and integrates into summary value (with gaussian weighting from center)
-  int		n_filters_per_gp; // #CONDEDIT_OFF_filter_type:COPY number of filters per group -- when n_filter_gps > 1, may be useful to have multiple interdigitated filter units to reduce redundancy and produce better effective resolution
-  XYNGeom	tot_filter_gps;	// #READ_ONLY #SHOW n_filter_gps * n_filters_per_gp -- total number of filter groups per location
-  XYNGeom	filter_gp_ovlp;	// #READ_ONLY #SHOW tot_filter_gps / 2 -- overlap of filter groups, in terms of groups of filters
-  XYNGeom	input_ovlp;	// #READ_ONLY #SHOW filter_gp_ovlp * rf_ovlp + rf_ovlp -- overlap of filter groups, in terms of input coordinates -- how much to move over in input space when processing -- note that each subsequent group moves over an extra rf_ovlp
-  XYNGeom	trg_input_size;	// #READ_ONLY #SHOW target input size: gp_geom * input_ovlp for wrap; (gp_geom - 1) * input_ovlp for !wrap
-  float		gp_gauss_sigma;	  // width of gaussian weighting factor over the filter groups, in normalized terms relative to tot_filter_gps widths
-  float_Matrix	gp_gauss_mat;	  // #READ_ONLY #NO_SAVE #NO_COPY group gaussian vals 
-  float disp_gauss_sigma; // width of gaussian weighting factor over the disparity comparison
-  int		disparity_width;	//size of the area to compare disparities
-  int		disparity_offset;	//disparity offset increments
-  bool 		max_in_disparity;
-	
-  float_Matrix  disp_gauss_mat; // #READ_ONLY #NO_SAVE #NO_COPY disparity group gaussian vals
-
-  void 	Initialize() { };
-  void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(MotionDispGaborV1Spec);
-};
-
-class TA_API GaborV1SpecList : public taList<GaborV1Spec> {
-  // ##OBSOLETE ##CAT_Image a list of Gabor V1 filters
-INHERITED(taList<GaborV1Spec>)
-public:
-
-  TA_BASEFUNS_NOCOPY(GaborV1SpecList);
-private:
-  void	Initialize() 		{ SetBaseType(&TA_GaborV1Spec); }
-  void 	Destroy()		{ };
-};
-
-class TA_API MotionDispGaborV1SpecList : public taList<MotionDispGaborV1Spec> {
-  // ##OBSOLETE ##CAT_Image a list of Gabor V1 filters
-INHERITED(taList<MotionDispGaborV1Spec>)
-public:
-  TA_BASEFUNS_NOCOPY(MotionDispGaborV1SpecList);
-private:
-  void	Initialize() 		{ SetBaseType(&TA_MotionDispGaborV1Spec); }
-  void 	Destroy()		{ };
-};
-
-class TA_API RetinaSpec : public ImgProcThreadBase {
-  // ##OBSOLETE #STEM_BASE ##CAT_Image ##DEF_CHILD_dogs ##DEF_CHILDNAME_DOG_Filters full specification of retinal filtering based on difference-of-gaussian filters
-INHERITED(ImgProcThreadBase)
-public:
-  enum ColorType {		// type of color processing to do (determines file loading)
-    MONOCHROME,
-    COLOR,
-  };
-
-  ColorType		color_type;	// type of color processing (determines file processing
-  TwoDCoord		retina_size; 	// overall size of retina (auto copied to retina specs)
-  taImageProc::EdgeMode	edge_mode;	// how to deal with edges
-  int 			fade_width;	// #CONDEDIT_ON_edge_mode:BORDER for border mode -- how wide of a frame to fade in around the border at the end of all the operations (-1 = use width of max off-center DOG sigma, 0 = none)
-  float			renorm_thr;	// #DEF_1e-5 threshold overall maximum intensity value required to perform renormalization -- if below this value, no renorm is performed (i.e., it remains effectively blank)
-  DoGRetinaSpecList	dogs;		// the difference-of-gaussian retinal filters
-
-  override taList_impl*	children_() {return &dogs;}	
-  override void*	GetTA_Element(Variant i, TypeDef*& eltd)
-  { return dogs.GetTA_Element(i, eltd); }
-
-  void 	Initialize() { };
-  void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(RetinaSpec);
-};
-
-SmartRef_Of(RetinaSpec,TA_RetinaSpec); // RetinaSpecRef
-
-class TA_API V1GaborSpec : public taNBase {
-  // ##OBSOLETE #STEM_BASE ##CAT_Image ##DEF_CHILD_gabors ##DEF_CHILDNAME_Gabor_Filters full specification of V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input
-INHERITED(taNBase)
-public:
-  GaborV1SpecList	gabors;		// the gabor (and blob) V1 filters
-  bool			wrap;		// if true, then filtering has a wrap-around structure, starting at -1/2 offset (wrapped to right/top) and goes +1/2 offset past the right/top edge (wrapped to left/bottom)
-  RetinaSpecRef		retina;		// the specs for the retinal filter that we follow
-  float			norm_max;	// #DEF_0.95 max value to normalize output activations to -- set to -1 to turn off normalization
-  float			norm_thr;	// #DEF_0.01 threshold maximum activation value for renormalizing  -- if below this value, no renormalization is applied
-
-  override taList_impl*	children_() {return &gabors;}
-  override void*	GetTA_Element(Variant i, TypeDef*& eltd)
-  { return gabors.GetTA_Element(i, eltd); }
-
-  void 	Initialize() { };
-  void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(V1GaborSpec);
-};
-
-class TA_API MotionDispV1GaborSpec : public taNBase {
-  // ##OBSOLETE #STEM_BASE ##CAT_Image ##DEF_CHILD_gabors ##DEF_CHILDNAME_Gabor_Filters full specification of motion/disparity tuned V1 gabor (oriented edge detectors) filtering -- takes output of RetinaSpec as input.
-INHERITED(taNBase)
-public:
-  MotionDispGaborV1SpecList	gabors;		// the gabor (and blob) V1 filters
-  bool			wrap;		// if true, then filtering has a wrap-around structure, starting at -1/2 offset (wrapped to right/top) and goes +1/2 offset past the right/top edge (wrapped to left/bottom)
-  RetinaSpecRef		retina;		// the specs for the retinal filter that we follow
-  float			norm_max;	// #DEF_0.95 max value to normalize output activations to -- set to -1 to turn off normalization
-  float			norm_thr;	// #DEF_0.01 threshold maximum activation value for renormalizing  -- if below this value, no renormalization is applied
-
-  override taList_impl*	children_() {return &gabors;}
-  override void*	GetTA_Element(Variant i, TypeDef*& eltd)
-  { return gabors.GetTA_Element(i, eltd); }
-
-  void 	Initialize() { };
-  void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(MotionDispV1GaborSpec);
-};
 
 #endif // ta_imgproc_h

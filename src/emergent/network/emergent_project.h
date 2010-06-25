@@ -23,7 +23,7 @@
 
 class Program;
 class Program_Group; //
-class RetinaSpec; //
+class RetinaProc; //
 
 //////////////////////////////////////////////////
 //			Wizard			//
@@ -82,8 +82,8 @@ public:
 
   virtual bool	StdNetwork(TypeDef* net_type, Network* net=NULL);
   // #MENU_BUTTON #MENU_ON_Network #NULL_OK_1 #NULL_TEXT_NewNetwork #TYPE_ON_default_net_type make a standard network according to the current settings (if net == NULL, new network is created)
-  virtual bool	RetinaSpecNetwork(RetinaSpec* retina_spec, Network* net=NULL);
-  // #MENU_BUTTON #NULL_OK_1 #NULL_TEXT_1_NewNetwork configure the input layers of the network to accept the output of the image processing performed by retina_spec (if net == NULL, new network is created)
+  virtual bool	RetinaProcNetwork(RetinaProc* retina_proc, Network* net=NULL);
+  // #MENU_BUTTON #NULL_OK_1 #NULL_TEXT_1_NewNetwork configure the input layers of the network to accept the output of the image processing performed by retina_proc (if net == NULL, new network is created)
 
   virtual bool	StdData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
   // #MENU_BUTTON #MENU_ON_Data #NULL_OK_1 #NULL_TEXT_1_NewDataTable make standard input and output data tables: make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.  also make standard output data to monitor network output
