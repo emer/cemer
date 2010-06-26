@@ -19373,7 +19373,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=0: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=5;
@@ -19529,7 +19529,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
@@ -19544,9 +19544,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  colorscale {
 	   name="ColorScale_0";
 	   chunks=133;
-	   min=-4.384418;
-	   max=4.384418;
-	   range=4.384418;
+	   min=-0;
+	   max=0;
+	   range=0;
 	   zero=0;
 	   spec=$.colorspecs[0]$;
 	   auto_scale=1;
@@ -20065,7 +20065,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  row_num_on=0;
 	  two_d_font=0;
 	  two_d_font_scale=350;
-	  mat_val_text=0;
+	  mat_val_text=1;
 	  colorscale {
 	   name="ColorScale_0";
 	   chunks=133;

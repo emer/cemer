@@ -2623,6 +2623,7 @@ void V1SGaborSpec::Initialize() {
   freq = 1.5f;
   length = 2.0f;
   width = 2.0f;
+  amp = 0.2f;
 }
 
 void V1SimpleSpec::UpdateAfterEdit_impl() {
@@ -2680,6 +2681,7 @@ void V1RegionSpec::Initialize() {
   v1s_feat_geom.SetXYN(4, 6, 24);
   v1b_save = SAVE_DATA;
   v1c_filters = CF_ESLS;
+  v1c_renorm = LOG_RENORM;
   v1c_save = SAVE_DATA;
   v1c_feat_geom.SetXYN(4, 2, 8);
 
@@ -2984,7 +2986,7 @@ bool V1RegionSpec::InitFilters_V1Simple() {
     gf->freq = v1s_gabors.freq;
     gf->length = v1s_gabors.length;
     gf->width = v1s_gabors.width;
-    gf->amp = 1.0f;
+    gf->amp = v1s_gabors.amp;
     gf->UpdateFilter();
   }
 
@@ -3523,6 +3525,11 @@ bool V1RegionSpec::V1ComplexFilter() {
       threads.Run(&ip_call, n_run);
     }
   }
+
+  if(v1c_renorm != NO_RENORM) {
+    RenormOutput_NoFrames(v1c_renorm, cur_out);
+  }
+
   return true;
 }
 

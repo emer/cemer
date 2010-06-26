@@ -755,6 +755,7 @@ public:
   float		freq;		// #CONDSHOW_ON_use #DEF_1.5 frequency of the sine wave
   float		length;		// #CONDSHOW_ON_use #DEF_2 length of the gaussian perpendicular to the wave direction
   float		width;		// #CONDSHOW_ON_use #DEF_2 width of the gaussian in the wave direction
+  float		amp;		// #CONDSHOW_ON_use #DEF_0.2 max amplitude of filter -- multiplier
 
   void 	Initialize();
   void	Destroy() { };
@@ -860,6 +861,7 @@ public:
 
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
+  RenormMode	v1c_renorm;	// #DEF_LOG_RENORM how to renormalize the output of v1c filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
   XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by ..
