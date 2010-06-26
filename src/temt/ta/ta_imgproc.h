@@ -733,7 +733,7 @@ INHERITED(taOBase)
 public:
   int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
   int		rf_size;	// #DEF_4 number of DoG filters to integrate over to form a line - this also determines the number of stacks to integrate over to make a square RF -- currently only 4 is supported 
-  float		flank_amp;	// #DEF_1 amplitude of opposite-polarity flanks of the receptive field, for a tri-phasic off-on-off or on-off-on structure -- only for luminance rf's -- 0 disables
+  float		flank_amp;	// #DEF_0:1 #MIN_0 amplitude of opposite-polarity flanks of the receptive field, for a tri-phasic off-on-off or on-off-on structure -- only for luminance rf's -- 0 disables
   int		rf_half;	// #READ_ONLY half rf
   int		spacing;	// #DEF_2 spacing between neighboring V1S rf's -- should be either 1/2 of rf_size or full rf_size (tiling) -- tradeoff between number of filters (4x overall) vs. discrete edge aliasing problems 
   int		border;		// #READ_ONLY #SHOW border onto dog filters -- automatically computed based on wrap mode and spacing setting
@@ -745,6 +745,20 @@ public:
   TA_SIMPLE_BASEFUNS(V1SimpleSpec);
 protected:
   void 	UpdateAfterEdit_impl();
+};
+
+class TA_API V1SGaborSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for gabor filters for v1 simple cells
+INHERITED(taOBase)
+public:
+  bool		use;		// #DEF_true use gabors instead of simple line element filters
+  float		freq;		// #CONDSHOW_ON_use #DEF_1.5 frequency of the sine wave
+  float		length;		// #CONDSHOW_ON_use #DEF_2 length of the gaussian perpendicular to the wave direction
+  float		width;		// #CONDSHOW_ON_use #DEF_2 width of the gaussian in the wave direction
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1SGaborSpec);
 };
 
 class TA_API V1MotionSpec : public taOBase {
@@ -794,23 +808,20 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
-// todo: add a separate integrator for color at v1c layer that is unoriented "blob" = 4 units
-// separate it out or maybe just keep it in there?? why not..
-
 class TA_API V1RegionSpec : public DoGRegionSpec {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- takes retinal DoG filter inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(DoGRegionSpec)
 public:
   enum ComplexFilters { // #BITS flags for specifying which complex filters to include
     CF_NONE	= 0, // #NO_BIT
-    END_STOP	= 0x0001, // end stop cells
-    LEN_SUM	= 0x0002, // length summing cells
-    OLD_REPL    = 0x0004, // replicate previous version: carry polarity forward and just do basic spatial integration without length integ
+    END_STOP	= 0x0001, // end stop cells -- opposite polarity, any orientation around a central oriented edge, max over all polarities (weighted by gaussian) 
+    LEN_SUM	= 0x0002, // length summing cells -- integrate simple cells along a line, same polarity, max over all polarities (weighted by gaussian) 
+    V1S_MAX    	= 0x0004, // basic max over v1 simple cells (weighted by gaussian) -- preserves polarity -- takes full set of V1S guys forward
     COLOR_BLOB	= 0x0008, // color blobs made by integrating over all angles for a given color contrast -- only applicable if color = COLOR -- adds 4 extra units per hypercolumn
     DISP_EDGE	= 0x0010, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
     MOTION_EDGE	= 0x0020, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
 #ifndef __MAKETA__
-    CF_BASIC	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT just the basic ones
+    CF_ESLS	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT just the basic ones
     CF_EDGES	= DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT special complex edges
     CF_ALL	= END_STOP | LEN_SUM | COLOR_BLOB | DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT all complex filters
 #endif
@@ -833,12 +844,15 @@ public:
 
 
   V1SimpleSpec	v1s_specs;	// specs for V1 simple filters -- first step after DoG -- encode simple oriented edges in same polarities/colors as in DoG layer, plus motion if applicable
+  V1SGaborSpec	v1s_gabors;	// specs for V1 simple gabor filters, can be used instead of simple line elements from v1s specs
   V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||1 specs for V1 motion filters within the simple processing layer
   RenormMode	v1s_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s static filters
   RenormMode	v1m_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s motion filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
   XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles * 2 or 6 polarities (monochrome|color) + 2 polarities * 2 directions * n_speeds * n_angles -- configured automatically with x = n_angles
   XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by dog_img_geom, rf_size and half_ovlp setting
+
+  int		v1s_feat_mot_y;	// #READ_ONLY y axis index for start of motion features in v1s -- x axis is angles
 
   V1BinocularSpec v1b_specs;	// #CONDSHOW_ON_ocularity:BINOCULAR specs for V1 binocular filters -- comes after V1 simple processing in binocular case
   DataSave	v1b_save;	// #CONDSHOW_ON_ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
@@ -849,9 +863,17 @@ public:
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
   XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by ..
-  
+
+  // v1c feat x axis is always angle, except for final edge guys and color blobs -- blobs have 4 colors though, which is nice..
+  int		v1c_feat_es_y;	// #READ_ONLY y axis index for start of end stop features in v1c
+  int		v1c_feat_ls_y;	// #READ_ONLY y axis index for start of length sum features in v1c
+  int		v1c_feat_smax_y; // #READ_ONLY y axis index for start of v1s_max features in v1c
+  int		v1c_feat_cblob_y; // #READ_ONLY y axis index for start of color blob features in v1c
+  int		v1c_feat_edge_y; // #READ_ONLY y axis index for start of edge features in v1c (disp, motion)
+
   int_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each fo the angles
   int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells [x,y][1 line: rf_size][n lines: rf_size + 2][angles] -- includes -1 and rf flanker stencils for opposite polarity off-center coding
+  taBase_List 	gabor_filters; 	// #READ_ONLY #NO_SAVE full set of gabor filters for v1s (type GaborFilter)
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*extra_width][motion_frames][directions:2][angles][speeds] (6d)
   float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular weighting factors (1d)
@@ -866,6 +888,8 @@ public:
   float_Matrix	v1b_out;	 // #READ_ONLY #NO_SAVE v1 binocular output [feat.x][feat.y][img.x][img.y] -- only present for BINOCULAR ocularity
   float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [feat.x][feat.y][img.x][img.y]
 
+  virtual void	GridGaborFilters(DataTable* disp_data);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the v1 simple gabor filters into data table and generate a grid view
   virtual void	GridV1Stencils(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 stencils into data table and generate a grid view -- these are the effective receptive fields at each level of processing
   override void	PlotSpacing(DataTable* disp_data, bool reset = true);
@@ -877,7 +901,6 @@ public:
 protected:
   float_Matrix*	cur_dog;
   CircMatrix*	cur_dog_circ;
-  int		mot_feat_y;	// y axis index for start of motion features
 
   override void	UpdateAfterEdit_impl();
 
@@ -895,11 +918,22 @@ protected:
   override bool	FilterImage_impl();
   override void IncrTime();
 
+
+  inline float&	MatMotEl(float_Matrix* fmat, int fx, int fy, int imx, int imy, int motdx) {
+    if(motion_frames <= 1)
+      return fmat->FastEl(fx, fy, imx, imy);
+    else
+      return fmat->FastEl(fx, fy, imx, imy, motdx);
+  }
+  // convenience for accessing matrix element with either motion or not depending on setting
+
   virtual bool	V1SimpleFilter_Static(float_Matrix* dog, CircMatrix* dog_circ,
 				      float_Matrix* out, CircMatrix* circ);
   // do simple filters, static only on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Static_thread(int v1s_idx, int thread_no);
   // do simple filters, static only on current inputs -- do it
+  virtual void 	V1SimpleFilter_Static_Gabor_thread(int v1s_idx, int thread_no);
+  // do simple filters, static only on current inputs -- do it -- gabor version
 
   virtual bool	V1SimpleFilter_Motion(float_Matrix* out, CircMatrix* circ);
   // do simple filters, static only on current inputs -- dispatch threads
@@ -916,12 +950,24 @@ protected:
 
   virtual bool	V1ComplexFilter();
   // do complex filters -- dispatch threads
-  virtual void 	V1ComplexFilter_Monocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from monocular inputs -- do it
-  virtual void 	V1ComplexFilter_Binocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from binocular inputs -- do it
-  virtual void 	V1ComplexFilter_OldRepl_thread(int v1c_idx, int thread_no);
-  // do complex filters -- old replication mode
+  virtual void 	V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread_no);
+  // do complex filters from monocular inputs -- EndStop & Length Sum
+  virtual void 	V1ComplexFilter_EsLs_Binocular_thread(int v1c_idx, int thread_no);
+  // do complex filters from binocular inputs -- EndStop & Length Sum
+  virtual void 	V1ComplexFilter_V1SMax_Monocular_thread(int v1c_idx, int thread_no);
+  // do complex filters from monocular inputs -- V1Simple Max
+  virtual void 	V1ComplexFilter_V1SMax_Binocular_thread(int v1c_idx, int thread_no);
+  // do complex filters from binocular inputs -- V1Simple Max
+  virtual void 	V1ComplexFilter_ColorBlob_Monocular_thread(int v1c_idx, int thread_no);
+  // do complex filters from monocular inputs -- Color Blob
+  virtual void 	V1ComplexFilter_ColorBlob_Binocular_thread(int v1c_idx, int thread_no);
+  // do complex filters from binocular inputs -- Color Blob
+  virtual void 	V1ComplexFilter_DispEdge_thread(int v1c_idx, int thread_no);
+  // do complex filters from binocular inputs -- disparity edge
+  virtual void 	V1ComplexFilter_MotionEdge_Monocular_thread(int v1c_idx, int thread_no);
+  // do complex filters from monocular inputs -- motion edge
+  virtual void 	V1ComplexFilter_MotionEdge_Binocular_thread(int v1c_idx, int thread_no);
+  // do complex filters from binocular inputs -- motion edge
 
   virtual bool V1SOutputToTable(DataTable* dtab);
   // simple to output table
