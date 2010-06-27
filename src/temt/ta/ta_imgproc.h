@@ -766,13 +766,16 @@ class TA_API V1MotionSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells
 INHERITED(taOBase)
 public:
-  int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- speeds are 1, 2, 4, 8, etc and extra_width is proportional to speed -- only applicable if motion_frames > 1
-  int		extra_width;	// #DEF_1 additional width of encoding around the trajectory for the target speed -- allows for some fuzziness in encoding -- effective value is multiplied by speed, so it gets fuzzier as speed gets higher
-  float		gauss_sig;	// #DEF_0.8 gaussian sigma for weighting the contribution of extra width guys -- normalized by effective extra_width
+  int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- speeds are 1, 2, 4, 8, etc and tuning_width is proportional to speed -- only applicable if motion_frames > 1
+  int		tuning_width;	// #DEF_1 additional width of encoding around the trajectory for the target speed -- allows for some fuzziness in encoding -- effective value is multiplied by speed, so it gets fuzzier as speed gets higher
+  int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
+  float		gauss_sig;	// #DEF_0.8 gaussian sigma for weighting the contribution of extra width guys -- normalized by effective tuning_width
 
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1MotionSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
 };
 
 class TA_API V1BinocularSpec : public taOBase {
@@ -780,13 +783,17 @@ class TA_API V1BinocularSpec : public taOBase {
 INHERITED(taOBase)
 public:
   int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = 1 near and 1 far)
+  int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
   int		disp_off;	// #DEF_2 offset from corresponding location for each disparity step
-  int		extra_width;	// #DEF_1 additional width of encoding around the target disparity -- allows for some fuzziness in encoding
-  float		gauss_sig;	// #DEF_0.5 gaussian sigma for weighting the contribution of extra width guys -- normalized by extra_width
+  int		tuning_width;	// #DEF_1 additional width of encoding around the target disparity -- allows for some fuzziness in encoding
+  int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
+  float		gauss_sig;	// #DEF_0.5 gaussian sigma for weighting the contribution of extra width guys -- normalized by tuning_width
 
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1BinocularSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
 };
 
 class TA_API V1ComplexSpec : public taOBase {
@@ -857,7 +864,7 @@ public:
 
   V1BinocularSpec v1b_specs;	// #CONDSHOW_ON_ocularity:BINOCULAR specs for V1 binocular filters -- comes after V1 simple processing in binocular case
   DataSave	v1b_save;	// #CONDSHOW_ON_ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
-  XYNGeom	v1b_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- 3x v1s_feat_geom -- focus, near, far
+  XYNGeom	v1b_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- (1 + 2*n_disps) * v1s_feat_geom -- order: near, focus, far
 
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
@@ -877,9 +884,9 @@ public:
   int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells [x,y][1 line: rf_size][n lines: rf_size + 2][angles] -- includes -1 and rf flanker stencils for opposite polarity off-center coding
   taBase_List 	gabor_filters; 	// #READ_ONLY #NO_SAVE full set of gabor filters for v1s (type GaborFilter)
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
-  int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*extra_width][motion_frames][directions:2][angles][speeds] (6d)
+  int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
   float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular weighting factors (1d)
-  int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: tbd
+  int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: [
   float_Matrix	v1c_weights;	// #READ_ONLY #NO_SAVE v1 complex spatial weighting factors (2d)
   int_Matrix	v1c_stencils; 	// #READ_ONLY #NO_SAVE stencils for complex cells [x,y][3 (line_len)][angles]
 
