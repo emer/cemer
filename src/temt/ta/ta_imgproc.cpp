@@ -2681,7 +2681,7 @@ void V1RegionSpec::Initialize() {
   v1s_feat_geom.SetXYN(4, 6, 24);
   v1b_save = SAVE_DATA;
   v1c_filters = CF_ESLS;
-  v1c_renorm = LOG_RENORM;
+  v1c_renorm = LIN_RENORM;
   v1c_save = SAVE_DATA;
   v1c_feat_geom.SetXYN(4, 2, 8);
 
@@ -3023,10 +3023,10 @@ bool V1RegionSpec::InitFilters_V1Binocular() {
 
 bool V1RegionSpec::InitFilters_V1Complex() {
   v1c_weights.SetGeom(2, v1c_specs.spat_rf.x, v1c_specs.spat_rf.y);
-  float eff_sig_x = v1c_specs.gauss_sig * (float)v1c_specs.spat_rf.x;
-  float eff_sig_y = v1c_specs.gauss_sig * (float)v1c_specs.spat_rf.y;
   float ctr_x = (float)v1c_specs.spat_rf.x * .5f;;
   float ctr_y = (float)v1c_specs.spat_rf.y * .5f;;
+  float eff_sig_x = v1c_specs.gauss_sig * ctr_x;
+  float eff_sig_y = v1c_specs.gauss_sig * ctr_y;
   for(int yi=0; yi< v1c_specs.spat_rf.y; yi++) {
     float y = ((float)yi - ctr_y) / eff_sig_y;
     for(int xi=0; xi< v1c_specs.spat_rf.x; xi++) {
@@ -3263,8 +3263,8 @@ void V1RegionSpec::V1SimpleFilter_Static_Gabor_thread(int v1s_idx, int thread_no
 	}
 	float fval = gf->filter.FastEl(gc.x, gc.y);
 	float oval;
-	if(fval > 0.0f) oval = fval * MatMotEl(cur_dog, ang, 0, dc.x, dc.y, dog_mot_idx); // 0=on
-	else	        oval = -fval * MatMotEl(cur_dog, ang, 1, dc.x, dc.y, dog_mot_idx); // 1=off
+	if(fval > 0.0f) oval = fval * MatMotEl(cur_dog, 0, 0, dc.x, dc.y, dog_mot_idx); // 0=on
+	else	        oval = -fval * MatMotEl(cur_dog, 1, 0, dc.x, dc.y, dog_mot_idx); // 1=off
 	flt_sum += oval;
       }
     }
