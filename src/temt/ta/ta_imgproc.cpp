@@ -3527,12 +3527,12 @@ bool V1RegionSpec::V1ComplexFilter() {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_EsLs_Binocular_thread);
       threads.Run(&ip_call, n_run);
     }
-    if(v1c_filters & V1S_MAX) {
-      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_V1SMax_Binocular_thread);
-      threads.Run(&ip_call, n_run);
-    }
     if(v1c_filters & BLOB) {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Blob_Binocular_thread);
+      threads.Run(&ip_call, n_run);
+    }
+    if(v1c_filters & V1S_MAX) {
+      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_V1SMax_Binocular_thread);
       threads.Run(&ip_call, n_run);
     }
     if(v1c_filters & DISP_EDGE) {
@@ -3549,12 +3549,12 @@ bool V1RegionSpec::V1ComplexFilter() {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread);
       threads.Run(&ip_call, n_run);
     }
-    if(v1c_filters & V1S_MAX) {
-      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_V1SMax_Monocular_thread);
-      threads.Run(&ip_call, n_run);
-    }
     if(v1c_filters & BLOB) {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Blob_Monocular_thread);
+      threads.Run(&ip_call, n_run);
+    }
+    if(v1c_filters & V1S_MAX) {
+      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_V1SMax_Monocular_thread);
       threads.Run(&ip_call, n_run);
     }
     if(motion_frames > 1 && v1c_filters & MOTION_EDGE) {
