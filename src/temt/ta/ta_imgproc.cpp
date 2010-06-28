@@ -3585,6 +3585,8 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
   TwoDCoord sce;		// simple coord, ends
   TwoDCoord scc;		// simple coord, center
   TwoDCoord fc;			// v1c feature coords
+  TwoDCoord sfc_ctr;		// simple feature coords for the central point
+  TwoDCoord sfc_end;		// simple feature coords for the end point
   for(int cfeat = 0; cfeat < 2; cfeat++) {
     if(cfeat == 0) {
       if(!(v1c_filters & END_STOP)) continue;
@@ -3600,10 +3602,8 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
       for(int v1sf = 0; v1sf < v1s_feat_geom.y; v1sf++) {
 	// v1 simple features -- for end-stop, designates the sign of the center..
 	int v1sf_onst = 2 * (v1sf / 2); // even numbers = start of on-center
-	TwoDCoord sfc_ctr;	// simple feature coords for the central point
 	sfc_ctr.x = ang;
 	sfc_ctr.y = v1sf;
-	TwoDCoord sfc_end;	// simple feature coords for the end point
 	sfc_end.x = ang;
 	if(cfeat == 0)	{	// end stop
 	  sfc_end.y = v1sf_onst + (1 - (v1sf - v1sf_onst)); // opposite polarity -- flip bit in odd/even within same set of 2
@@ -4065,7 +4065,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
       nmda->SetValAsString("V1S " + String(ang * 45), -1);
       float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
       TwoDCoord ic;
-      for(int lpos = 0; lpos < v1s_specs.rf_size+2; lpos++) { // line starting positions
+      for(int lpos = 0; lpos < v1s_specs.rf_size; lpos++) { // line starting positions
 	for(int lpt = 0; lpt < v1s_specs.rf_size; lpt++) { // line pixels
 	  int xp = v1s_stencils.FastEl(X,lpt,lpos,ang);
 	  int yp = v1s_stencils.FastEl(Y,lpt,lpos,ang);
