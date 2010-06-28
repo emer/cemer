@@ -760,10 +760,6 @@ float DoGFilter::FilterPoint_rgb(int x, int y, ColorChannel color,
     float b_v_y = b_val - 0.5f * (r_val + g_val);
     return b_v_y * flt;
   }
-  case YELLOW_BLUE: {
-    float y_v_b = 0.5f * (r_val + g_val) - b_val;
-    return y_v_b * flt;
-  }
   }
   return 0.0f;
 }
@@ -2105,7 +2101,7 @@ void DoGRegionSpec::UpdateGeom() {
     dog_img_geom = ((input_size - 1) / dog_spacing) + 1;
   }
   if(color == COLOR) {
-    dog_feat_geom.SetXYN(2,3,6);
+    dog_feat_geom.SetXYN(2,4,8);
   }
   else {
     dog_feat_geom.SetXYN(2,1,2);
@@ -2118,9 +2114,11 @@ String DoGRegionSpec::GetDoGFiltName(int flt_no) {
   case 0: nm = "on"; break;
   case 1: nm = "off"; break;
   case 2: nm = "rvc"; break;
-  case 3: nm = "gvm"; break;
-  case 4: nm = "bvy"; break;
-  case 5: nm = "yvb"; break;
+  case 3: nm = "cvr"; break;
+  case 4: nm = "gvm"; break;
+  case 5: nm = "mvg"; break;
+  case 6: nm = "bvy"; break;
+  case 7: nm = "yvb"; break;
   }
   return nm;
 }
@@ -2285,64 +2283,39 @@ void DoGRegionSpec::DoGFilterImage_thread(int dog_idx, int thread_no) {
   TwoDCoord icc = border + dog_spacing * dc; // image coords center
 
   int mot_idx = cur_circ->CircIdx_Last(); // always write to last position
-  int mx_chan = dog_feat_geom.n - 1; // on/off is 2 feats but 1 chan -- others are pos only!
 
-  TwoDCoord ic;			// image coord
-  for(int chan = 0; chan < mx_chan; chan++) {
-    DoGFilter::ColorChannel cchan = (DoGFilter::ColorChannel)chan;
-    int feat_idx = (chan == 0) ? 0 : chan + 1; // offset +1 for on/off in luminance
-
-    TwoDCoord fc;		// feature coords
-    fc.x = feat_idx % dog_feat_geom.x;
-    fc.y = feat_idx / dog_feat_geom.x;
+  // x = on/off, y = color channel
+  TwoDCoord ic;		// image coord
+  for(int chan = 0; chan < dog_feat_geom.y; chan++) { 
+    DoGFilter::ColorChannel cchan = (DoGFilter::ColorChannel)(chan/2);
 
     float cnv_sum = 0.0f;		// convolution sum
-    for(int yf = -dog_specs.filter_width; yf <= dog_specs.filter_width; yf++) {
-      for(int xf = -dog_specs.filter_width; xf <= dog_specs.filter_width; xf++) {
-	ic.y = icc.y + yf;
-	ic.x = icc.x + xf;
-	if(ic.WrapClip(wrap, retina_size)) {
-	  if(edge_mode == CLIP) continue; // bail on clipping only
-	}
-	if(rgb_img) {
-	  cnv_sum += dog_specs.FilterPoint_rgb(xf, yf, cchan, cur_img->FastEl(ic.x, ic.y,0),
-					 cur_img->FastEl(ic.x, ic.y, 1),
-					 cur_img->FastEl(ic.x, ic.y, 2));
-	}
-	else {
-	  cnv_sum += dog_specs.FilterPoint_grey(xf, yf, cur_img->FastEl(ic.x, ic.y));
+    if(chan == 0 || rgb_img) {		// only rgb images if chan > 0
+      for(int yf = -dog_specs.filter_width; yf <= dog_specs.filter_width; yf++) {
+	for(int xf = -dog_specs.filter_width; xf <= dog_specs.filter_width; xf++) {
+	  ic.y = icc.y + yf;
+	  ic.x = icc.x + xf;
+	  if(ic.WrapClip(wrap, retina_size)) {
+	    if(edge_mode == CLIP) continue; // bail on clipping only
+	  }
+	  if(rgb_img) {
+	    cnv_sum += dog_specs.FilterPoint_rgb(xf, yf, cchan, cur_img->FastEl(ic.x, ic.y, 0),
+						 cur_img->FastEl(ic.x, ic.y, 1),
+						 cur_img->FastEl(ic.x, ic.y, 2));
+	  }
+	  else {
+	    cnv_sum += dog_specs.FilterPoint_grey(xf, yf, cur_img->FastEl(ic.x, ic.y));
+	  }
 	}
       }
     }
-    if(motion_frames <= 1) {
-      if(chan == 0) {		// luminance
-	if(cnv_sum > 0.0f) {
-	  cur_out->FastEl(fc.x, fc.y, dc.x, dc.y) = cnv_sum; // on
-	  cur_out->FastEl(fc.x+1, fc.y, dc.x, dc.y) = 0.0f;  // off
-	}
-	else {
-	  cur_out->FastEl(fc.x, fc.y, dc.x, dc.y) = 0.0f; 	// on
-	  cur_out->FastEl(fc.x+1, fc.y, dc.x, dc.y) = -cnv_sum; // off
-	}
-      }
-      else {
-	cur_out->FastEl(fc.x, fc.y, dc.x, dc.y) = MAX(cnv_sum, 0.0f); // pos rectify
-      }
+    if(cnv_sum > 0.0f) {
+      MatMotEl(cur_out, 0, chan, dc.x, dc.y, mot_idx) = cnv_sum; // feat x = 0 = on
+      MatMotEl(cur_out, 1, chan, dc.x, dc.y, mot_idx) = 0.0f; 	// feat x = 1 = off
     }
     else {
-      if(chan == 0) {		// luminance
-	if(cnv_sum > 0.0f) {
-	  cur_out->FastEl(fc.x, fc.y, dc.x, dc.y, mot_idx) = cnv_sum; // on
-	  cur_out->FastEl(fc.x+1, fc.y, dc.x, dc.y, mot_idx) = 0.0f;  // off
-	}
-	else {
-	  cur_out->FastEl(fc.x, fc.y, dc.x, dc.y, mot_idx) = 0.0f; 	// on
-	  cur_out->FastEl(fc.x+1, fc.y, dc.x, dc.y, mot_idx) = -cnv_sum; // off
-	}
-      }
-      else {
-	cur_out->FastEl(fc.x, fc.y, dc.x, dc.y, mot_idx) = MAX(cnv_sum, 0.0f); // pos rectify
-      }
+      MatMotEl(cur_out, 0, chan, dc.x, dc.y, mot_idx) = 0.0f; 	// feat x = 0 = on
+      MatMotEl(cur_out, 1, chan, dc.x, dc.y, mot_idx) = -cnv_sum; // feat x = 1 = off
     }
   }
 }
@@ -2395,7 +2368,13 @@ bool DoGRegionSpec::RenormOutput_NoFrames(RenormMode mode, float_Matrix* mat) {
   return rval;
 }
 
+bool DoGRegionSpec::InvertFilters(float_Matrix* right_eye_image, float_Matrix* left_eye_image) {
+  // todo: write this!
+  return true;
+}
+
 bool DoGRegionSpec::DoGInvertFilter(float_Matrix* image, float_Matrix* out) {
+  // todo: do this!
   return true;
 }
 
@@ -2432,6 +2411,7 @@ bool DoGRegionSpec::InitDataTable() {
       col->SetUserData("IMAGE", true);
     }
   }
+
   if(dog_save & SAVE_DATA) {
     if(dog_save & SEP_MATRIX) {
       for(int i=0;i<dog_feat_geom.n;i++) {
@@ -2492,28 +2472,23 @@ bool DoGRegionSpec::DoGOutputToTable_impl(DataTable* dtab, float_Matrix* out, Ci
   DataCol* col;
   int idx;
   if(dog_save & SEP_MATRIX) {
+    TwoDCoord dc;		// dog coords
+    TwoDCoord fc;		// feature coords
     for(int i=0;i<dog_feat_geom.n;i++) {
+      fc.x = i % dog_feat_geom.x;
+      fc.y = i / dog_feat_geom.x;
       String nm = name + "_" + GetDoGFiltName(i) + "_dog";
       col = data_table->FindMakeColName(nm+ col_sufx, idx, DataTable::VT_FLOAT, 2,
 				  dog_img_geom.x, dog_img_geom.y);
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
       int mot_idx = circ->CircIdx_Last();
-      TwoDCoord dc;		// dog coords
-      TwoDCoord fc;		// feature coords
       for(dc.y = 0; dc.y < dog_img_geom.y; dc.y++) {
 	for(dc.x = 0; dc.x < dog_img_geom.x; dc.x++) {
-	  fc.x = i % dog_feat_geom.x;
-	  fc.y = i / dog_feat_geom.x;
-	  float val;
-	  if(motion_frames <= 1)
-	    val = out->FastEl(fc.x, fc.y, dc.x, dc.y);
-	  else
-	    val = out->FastEl(fc.x, fc.y, dc.x, dc.y, mot_idx);
+	  float val = MatMotEl(out, fc.x, fc.y, dc.x, dc.y, mot_idx);
 	  dout->FastEl(dc.x, dc.y) = val;
 	}
       }
     }
-
   }
   else {
     col = data_table->FindMakeColName(name + "_dog" + col_sufx, idx, DataTable::VT_FLOAT, 4,
@@ -2529,15 +2504,6 @@ bool DoGRegionSpec::DoGOutputToTable_impl(DataTable* dtab, float_Matrix* out, Ci
   }
   return true;
 }
-
-bool DoGRegionSpec::InvertFilters(float_Matrix* right_eye_image, float_Matrix* left_eye_image) {
-  // todo: write this!
-  return true;
-}
-
-// bool DoGInvertFilter::DoGInvertFilter(float_Matrix* image, float_Matrix* out) {
-//   // todo: write this!
-// }
 
 void DoGRegionSpec::GraphDoGFilter(DataTable* graph_data) {
   dog_specs.GraphFilter(graph_data);
@@ -2623,16 +2589,14 @@ DoGRegionSpec* DoGRegionSpecList::FindRetinalRegionRes(DoGRegionSpec::Region reg
 void V1SimpleSpec::Initialize() {
   n_angles = 4;
   rf_size = 4;
-  flank_amp = 0.67f;
   rf_half = rf_size / 2;
   spacing = rf_half;
   border = 2;
-  rf_norm_bw = 1.0f / (rf_size + flank_amp * 2.0f * rf_size);
-  rf_norm_clr = 1.0f / rf_size;
+  rf_norm = 1.0f / rf_size;
 }
 
 void V1SGaborSpec::Initialize() {
-  use = true;
+  use = false;
   freq = 1.5f;
   length = 2.0f;
   width = 2.0f;
@@ -2646,8 +2610,7 @@ void V1SimpleSpec::UpdateAfterEdit_impl() {
   rf_half = rf_size / 2;
   if(spacing != 4 && spacing != 2) // must be one of these two
     spacing = 2;
-  rf_norm_bw = 1.0f / (rf_size + flank_amp * 2.0f * rf_size);
-  rf_norm_clr = 1.0f / rf_size;
+  rf_norm = 1.0f / rf_size;
 }
 
 void V1MotionSpec::Initialize() {
@@ -2773,8 +2736,6 @@ void V1RegionSpec::UpdateGeom() {
   // 0 1 2 3 4 5 6 7   retina_size = 8
   //     .  |    .  |  border = 0, spacing = 2; input_size = 8, output_size = 4
 
-  // todo: report and correct mismatches to make sure everything is evenly distributed
-
   if(v1s_specs.spacing == v1s_specs.rf_size) {
     v1s_specs.border = v1s_specs.rf_size / 2;
     v1s_img_geom = dog_img_geom / v1s_specs.rf_size;
@@ -2814,12 +2775,16 @@ void V1RegionSpec::UpdateGeom() {
   else {
     v1c_feat_smax_y = -1;
   }
-  if(v1c_filters & COLOR_BLOB) {
-    n_cmplx += v1s_specs.n_angles;
-    v1c_feat_cblob_y = cmplx_y++;
+  if(v1c_filters & BLOB) {
+    n_cmplx += dog_feat_geom.n;	// one for each unit in dog
+    v1c_feat_blob_y = cmplx_y;
+    if(dog_feat_geom.n == 2)	// monochrome
+      cmplx_y++;
+    else
+      cmplx_y+=2;		// color = 2 full rows
   }
   else {
-    v1c_feat_cblob_y = -1;
+    v1c_feat_blob_y = -1;
   }
   if(v1c_filters & CF_EDGES) {
     v1c_feat_edge_y = cmplx_y++;
@@ -2937,38 +2902,38 @@ bool V1RegionSpec::InitFilters() {
 bool V1RegionSpec::InitFilters_V1Simple() {
   // 0,0 = lower left of rf
   // config: x,y coords by rf_size = 1 line, by rf_size = averages over lines, by angles
-  v1s_stencils.SetGeom(4, 2, v1s_specs.rf_size, v1s_specs.rf_size+2, v1s_specs.n_angles);
+  v1s_stencils.SetGeom(4, 2, v1s_specs.rf_size, v1s_specs.rf_size, v1s_specs.n_angles);
 
   // horizontal lines
-  for(int pos=-1; pos<=v1s_specs.rf_size; pos++) { // starting position of line
+  for(int pos=0; pos<v1s_specs.rf_size; pos++) { // starting position of line
     for(int lpt=0; lpt<v1s_specs.rf_size; lpt++) { // points in line
-      v1s_stencils.FastEl(X, lpt, pos+1, 0) = lpt;
-      v1s_stencils.FastEl(Y, lpt, pos+1, 0) = pos;
+      v1s_stencils.FastEl(X, lpt, pos, 0) = lpt;
+      v1s_stencils.FastEl(Y, lpt, pos, 0) = pos;
     }
   }
   // vertical lines
-  for(int pos=-1; pos<=v1s_specs.rf_size; pos++) {
+  for(int pos=0; pos<v1s_specs.rf_size; pos++) {
     for(int lpt=0; lpt<v1s_specs.rf_size; lpt++) {
-      v1s_stencils.FastEl(X, lpt, pos+1, 2) = pos;
-      v1s_stencils.FastEl(Y, lpt, pos+1, 2) = lpt;
+      v1s_stencils.FastEl(X, lpt, pos, 2) = pos;
+      v1s_stencils.FastEl(Y, lpt, pos, 2) = lpt;
     }
   }
   // diagonal right
-  for(int pos=-1; pos<=v1s_specs.rf_size; pos++) {
+  for(int pos=0; pos<v1s_specs.rf_size; pos++) {
     int xs = 1 - pos / 2;	// move up-left, left every other even
     int ys = -1 + (pos+1) / 2;	// move up-left, up every other odd
     for(int lpt=0; lpt<v1s_specs.rf_size; lpt++) {
-      v1s_stencils.FastEl(X, lpt, pos+1, 1) = xs + lpt;
-      v1s_stencils.FastEl(Y, lpt, pos+1, 1) = ys + lpt;
+      v1s_stencils.FastEl(X, lpt, pos, 1) = xs + lpt;
+      v1s_stencils.FastEl(Y, lpt, pos, 1) = ys + lpt;
     }
   }
   // diagonal left
-  for(int pos=-1; pos<=v1s_specs.rf_size; pos++) {
+  for(int pos=0; pos<v1s_specs.rf_size; pos++) {
     int xs = 2 + pos / 2;	// move up-left, left every other even
     int ys = -1 + (pos+1) / 2;	// move up-left, up every other odd
     for(int lpt=0; lpt<v1s_specs.rf_size; lpt++) {
-      v1s_stencils.FastEl(X, lpt, pos+1, 3) = xs - lpt;
-      v1s_stencils.FastEl(Y, lpt, pos+1, 3) = ys + lpt;
+      v1s_stencils.FastEl(X, lpt, pos, 3) = xs - lpt;
+      v1s_stencils.FastEl(Y, lpt, pos, 3) = ys + lpt;
     }
   }
 
@@ -3000,25 +2965,27 @@ bool V1RegionSpec::InitFilters_V1Simple() {
   }
 
   // Gabor filters for V1s
-  int n_filters = v1s_specs.n_angles * 2;
-  gabor_filters.SetSize(n_filters);
-  for(int i=0;i<n_filters;i++) {
-    float angle_dx = (float)(i % v1s_specs.n_angles); // angle is inner dim
-    float phase_dx = (float)((i / v1s_specs.n_angles) % 2); // then phase
+  if(v1s_gabors.use) {
+    int n_filters = v1s_specs.n_angles * 2;
+    gabor_filters.SetSize(n_filters);
+    for(int i=0;i<n_filters;i++) {
+      float angle_dx = (float)(i % v1s_specs.n_angles); // angle is inner dim
+      float phase_dx = (float)((i / v1s_specs.n_angles) % 2); // then phase
 		
-    GaborFilter* gf = (GaborFilter*)gabor_filters[i];
+      GaborFilter* gf = (GaborFilter*)gabor_filters[i];
 		
-    gf->x_size = v1s_specs.rf_size;
-    gf->y_size = v1s_specs.rf_size;
-    gf->ctr_x = (float)(gf->x_size - 1.0f) / 2.0f;
-    gf->ctr_y = (float)(gf->y_size - 1.0f) / 2.0f;
-    gf->angle = taMath_float::pi * angle_dx / (float)v1s_specs.n_angles;
-    gf->phase = taMath_float::pi * phase_dx;
-    gf->freq = v1s_gabors.freq;
-    gf->length = v1s_gabors.length;
-    gf->width = v1s_gabors.width;
-    gf->amp = v1s_gabors.amp;
-    gf->UpdateFilter();
+      gf->x_size = v1s_specs.rf_size;
+      gf->y_size = v1s_specs.rf_size;
+      gf->ctr_x = (float)(gf->x_size - 1.0f) / 2.0f;
+      gf->ctr_y = (float)(gf->y_size - 1.0f) / 2.0f;
+      gf->angle = taMath_float::pi * angle_dx / (float)v1s_specs.n_angles;
+      gf->phase = taMath_float::pi * phase_dx;
+      gf->freq = v1s_gabors.freq;
+      gf->length = v1s_gabors.length;
+      gf->width = v1s_gabors.width;
+      gf->amp = v1s_gabors.amp;
+      gf->UpdateFilter();
+    }
   }
 
   return true;
@@ -3228,52 +3195,35 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
   int dog_mot_idx = cur_dog_circ->CircIdx_Last(); // always write to last position
   int mot_idx = cur_circ->CircIdx_Last(); // always write to last position
 
-  int flank_off = 1;
-  if(v1s_specs.flank_amp == 0.0f) flank_off = 0;
-
   TwoDCoord dc;			// dog coord
   TwoDCoord fc;			// v1s feature coords
   TwoDCoord dfc;		// dog feature coords
   for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
-    if(dog == 2) flank_off = 0;			   // turn off flankers for color
     dfc.x = dog % dog_feat_geom.x;
     dfc.y = dog / dog_feat_geom.x;
-    int std_dfc_x = dfc.x;
     fc.y = dog;
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
       fc.x = ang;
       float max_line = 0.0f;
-      for(int lpos = 1; lpos <= v1s_specs.rf_size; lpos++) { // line starting positions
+      for(int lpos = 0; lpos < v1s_specs.rf_size; lpos++) { // line starting positions
 	float line_sum = 0.0f;
-	for(int lpd = -flank_off; lpd <= flank_off; lpd++) { // flank offset
-	  dfc.x = std_dfc_x;
-	  if(lpd != 0)
-	    dfc.x = 1 - std_dfc_x; // flip polarity for flankers!  dog polarity is 0,1 in x
-	  for(int lpt = 0; lpt < v1s_specs.rf_size; lpt++) { // line points
-	    int xp = v1s_stencils.FastEl(X,lpt,lpos+lpd,ang);
-	    int yp = v1s_stencils.FastEl(Y,lpt,lpos+lpd,ang);
-	    dc.x = dcs.x + xp;
-	    dc.y = dcs.y + yp;
+	for(int lpt = 0; lpt < v1s_specs.rf_size; lpt++) { // line points
+	  int xp = v1s_stencils.FastEl(X,lpt,lpos,ang);
+	  int yp = v1s_stencils.FastEl(Y,lpt,lpos,ang);
+	  dc.x = dcs.x + xp;
+	  dc.y = dcs.y + yp;
 
-	    if(dc.WrapClip(wrap, dog_img_geom)) {
-	      if(edge_mode == CLIP) continue; // bail on clipping only
-	    }
-
-	    float dogval = MatMotEl(cur_dog, dfc.x, dfc.y, dc.x, dc.y, dog_mot_idx);
-	    if(lpd != 0)
-	      line_sum += v1s_specs.flank_amp * dogval;
-	    else
-	      line_sum += dogval;
+	  if(dc.WrapClip(wrap, dog_img_geom)) {
+	    if(edge_mode == CLIP) continue; // bail on clipping only
 	  }
-	}
-	if(flank_off != 0)
-	  line_sum *= v1s_specs.rf_norm_bw;
-	else
-	  line_sum *= v1s_specs.rf_norm_clr;
-	max_line = MAX(max_line, line_sum);
 
-	MatMotEl(cur_out, fc.x, fc.y, sc.x, sc.y, mot_idx) = max_line;
+	  float dogval = MatMotEl(cur_dog, dfc.x, dfc.y, dc.x, dc.y, dog_mot_idx);
+	  line_sum += dogval;
+	}
+	line_sum *= v1s_specs.rf_norm;
+	max_line = MAX(max_line, line_sum);
       }
+      MatMotEl(cur_out, fc.x, fc.y, sc.x, sc.y, mot_idx) = max_line;
     }
   }
 }
@@ -3581,8 +3531,8 @@ bool V1RegionSpec::V1ComplexFilter() {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_V1SMax_Binocular_thread);
       threads.Run(&ip_call, n_run);
     }
-    if(color == COLOR && v1c_filters & COLOR_BLOB) {
-      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_ColorBlob_Binocular_thread);
+    if(v1c_filters & BLOB) {
+      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Blob_Binocular_thread);
       threads.Run(&ip_call, n_run);
     }
     if(v1c_filters & DISP_EDGE) {
@@ -3603,8 +3553,8 @@ bool V1RegionSpec::V1ComplexFilter() {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_V1SMax_Monocular_thread);
       threads.Run(&ip_call, n_run);
     }
-    if(color == COLOR && v1c_filters & COLOR_BLOB) {
-      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_ColorBlob_Monocular_thread);
+    if(v1c_filters & BLOB) {
+      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Blob_Monocular_thread);
       threads.Run(&ip_call, n_run);
     }
     if(motion_frames > 1 && v1c_filters & MOTION_EDGE) {
@@ -3649,17 +3599,18 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
       float max_sf = 0.0f;	// max over simple features
       for(int v1sf = 0; v1sf < v1s_feat_geom.y; v1sf++) {
 	// v1 simple features -- for end-stop, designates the sign of the center..
-	if(cfeat == 0 && color == COLOR && v1sf >= 2 && v1sf <= 6) continue;
-	// skip the colors -- no obvious "off" tuning so we don't use them for end stop
+	int v1sf_onst = 2 * (v1sf / 2); // even numbers = start of on-center
 	TwoDCoord sfc_ctr;	// simple feature coords for the central point
 	sfc_ctr.x = ang;
 	sfc_ctr.y = v1sf;
 	TwoDCoord sfc_end;	// simple feature coords for the end point
 	sfc_end.x = ang;
-	if(cfeat == 0)		// end stop
-	  sfc_end.y = 1 - v1sf;	// opposite polarity
-	else
+	if(cfeat == 0)	{	// end stop
+	  sfc_end.y = v1sf_onst + (1 - (v1sf - v1sf_onst)); // opposite polarity -- flip bit in odd/even within same set of 2
+	}
+	else {
 	  sfc_end.y = v1sf;
+	}
 
 	float max_rf = 0.0f;   // max over spatial rfield
 	for(int ys = 0; ys < v1c_specs.spat_rf.y; ys++) { // ysimple
@@ -3689,8 +3640,7 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
 	      if(cfeat == 0) {
 		// end-stop -- compute max over other angles -- any opposite polarity angle will do
 		for(int opang=0; opang<v1s_specs.n_angles; opang++) {
-		  sfc_end.x = opang; // angle
-		  float ev = MatMotEl(&v1s_out_r, sfc_end.x, sfc_end.y, sce.x, sce.y, v1s_mot_idx);
+		  float ev = MatMotEl(&v1s_out_r, opang, sfc_end.y, sce.x, sce.y, v1s_mot_idx);
 		  end_val = MAX(end_val, ev);
 		}
 	      }
@@ -3760,7 +3710,7 @@ void V1RegionSpec::V1ComplexFilter_V1SMax_Monocular_thread(int v1c_idx, int thre
 void V1RegionSpec::V1ComplexFilter_V1SMax_Binocular_thread(int v1c_idx, int thread_no) {
 }
 
-void V1RegionSpec::V1ComplexFilter_ColorBlob_Monocular_thread(int v1c_idx, int thread_no) {
+void V1RegionSpec::V1ComplexFilter_Blob_Monocular_thread(int v1c_idx, int thread_no) {
   TwoDCoord cc;			// complex coords
   cc.x = v1c_idx % v1c_img_geom.x;
   cc.y = v1c_idx / v1c_img_geom.x;
@@ -3775,10 +3725,10 @@ void V1RegionSpec::V1ComplexFilter_ColorBlob_Monocular_thread(int v1c_idx, int t
   TwoDCoord scc;		// simple coord, center
   TwoDCoord sfc;		// v1s feature coords
   TwoDCoord fc;			// v1c feature coords
-  for(int dog = 2; dog < dog_feat_geom.n; dog++) { // dog features -- start at color!
+  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features -- includes b/w on/off
     sfc.y = dog;
-    fc.y = v1c_feat_cblob_y;
-    fc.x = dog - 2;		// only works because angles = colors!  n_angles must be 4
+    fc.y = v1c_feat_blob_y + dog / v1c_feat_geom.x;
+    fc.x = dog % v1c_feat_geom.x;
     float max_rf = 0.0f;   // max over spatial rfield
     for(int ys = 0; ys < v1c_specs.spat_rf.y; ys++) { // ysimple
       sc.y = scs.y + ys;
@@ -3800,7 +3750,7 @@ void V1RegionSpec::V1ComplexFilter_ColorBlob_Monocular_thread(int v1c_idx, int t
   }
 }
 
-void V1RegionSpec::V1ComplexFilter_ColorBlob_Binocular_thread(int v1c_idx, int thread_no) {
+void V1RegionSpec::V1ComplexFilter_Blob_Binocular_thread(int v1c_idx, int thread_no) {
 }
 
 void V1RegionSpec::V1ComplexFilter_DispEdge_thread(int v1c_idx, int thread_no) {
@@ -3887,13 +3837,13 @@ bool V1RegionSpec::InitDataTable() {
 	data_table->FindMakeColName(name + "_v1c_esls", idx, DataTable::VT_FLOAT, 4,
 				    v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
       }
+      if(v1c_filters & BLOB) {
+	data_table->FindMakeColName(name + "_v1c_blob", idx, DataTable::VT_FLOAT, 4,
+				    v1c_feat_geom.x, 1, v1c_img_geom.x, v1c_img_geom.y);
+      }
       if(v1c_filters & V1S_MAX) {
 	data_table->FindMakeColName(name + "_v1c_smax", idx, DataTable::VT_FLOAT, 4,
 				    v1c_feat_geom.x, dog_feat_geom.n, v1c_img_geom.x, v1c_img_geom.y);
-      }
-      if(v1c_filters & COLOR_BLOB) {
-	data_table->FindMakeColName(name + "_v1c_clr", idx, DataTable::VT_FLOAT, 4,
-				    v1c_feat_geom.x, 1, v1c_img_geom.x, v1c_img_geom.y);
       }
       if(v1c_filters & CF_EDGES) {
 	data_table->FindMakeColName(name + "_v1c_edge", idx, DataTable::VT_FLOAT, 4,
@@ -4026,13 +3976,13 @@ bool V1RegionSpec::V1COutputToTable(DataTable* dtab) {
 // 	data_table->FindMakeColName(name + "_v1c_esls", idx, DataTable::VT_FLOAT, 4,
 // 				    v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
 //       }
+//       if(v1c_filters & BLOB) {
+// 	data_table->FindMakeColName(name + "_v1c_blob", idx, DataTable::VT_FLOAT, 4,
+// 				    v1c_feat_geom.x, 1, v1c_img_geom.x, v1c_img_geom.y);
+//       }
 //       if(v1c_filters & V1S_MAX) {
 // 	data_table->FindMakeColName(name + "_v1c_smax", idx, DataTable::VT_FLOAT, 4,
 // 				    v1c_feat_geom.x, dog_feat_geom.n, v1c_img_geom.x, v1c_img_geom.y);
-//       }
-//       if(v1c_filters & COLOR_BLOB) {
-// 	data_table->FindMakeColName(name + "_v1c_clr", idx, DataTable::VT_FLOAT, 4,
-// 				    v1c_feat_geom.x, 1, v1c_img_geom.x, v1c_img_geom.y);
 //       }
 //       if(v1c_filters & CF_EDGES) {
 // 	data_table->FindMakeColName(name + "_v1c_edge", idx, DataTable::VT_FLOAT, 4,

@@ -4318,7 +4318,7 @@ void Layer::BuildUnits() {
     units.gp.SetSize(gp_geom.n);
     for(int k=0; k< units.gp.size; k++) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
-      ug->UpdateAfterEdit();
+      ug->UpdateAfterEdit_NoGui();
       if(ug->BuildUnits())
 	units_changed = true;
     }

@@ -300,7 +300,6 @@ public:
     RED_CYAN,			// red vs. G + B = cyan
     GREEN_MAGENTA,		// green vs. R + B = magenta
     BLUE_YELLOW,		// blue vs. R + G = yellow
-    YELLOW_BLUE,		// yellow vs. blue
   };
 
   int		filter_width;	// half-width of the filter (typically 2 * off_sigma)
@@ -619,7 +618,7 @@ public:
   RenormMode	dog_renorm;	// #DEF_LOG_RENORM how to renormalize the output of filters
   float		renorm_thr;	// #DEF_1e-05 threshold for the max filter output value to max-renormalize filter outputs such that the max is 1 -- below this value, consider the input to be blank and do not renorm
   DataSave	dog_save;	// how to save the DoG outputs for the current time step in the data table
-  XYNGeom	dog_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for DoG filtering -- 2 total for monochrome, 6 total for color -- x must be 2, so either 2x1 or 2x3
+  XYNGeom	dog_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for DoG filtering -- x axis = 2 = on/off, y axis = color channel: 0 = monochrome, 1 = red/cyan, 2 = green/magenta, 3 = blue/yellow (2 units total for monochrome, 8 total for color)
   TwoDCoord	dog_img_geom; 	// #READ_ONLY #SHOW size of dog-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and dog_spacing parameters
 
   CircMatrix	dog_circ_r; 	// #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
@@ -658,6 +657,14 @@ protected:
 
   virtual void UpdateGeom();
   // update all geometry info -- called by UAE
+
+  inline float&	MatMotEl(float_Matrix* fmat, int fx, int fy, int imx, int imy, int motdx) {
+    if(motion_frames <= 1)
+      return fmat->FastEl(fx, fy, imx, imy);
+    else
+      return fmat->FastEl(fx, fy, imx, imy, motdx);
+  }
+  // convenience for accessing matrix element with either motion or not depending on setting
 
   virtual bool InitFilters();
   // initialize the filters -- overload for derived types and call parent
@@ -733,12 +740,10 @@ INHERITED(taOBase)
 public:
   int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
   int		rf_size;	// #DEF_4 number of DoG filters to integrate over to form a line - this also determines the number of stacks to integrate over to make a square RF -- currently only 4 is supported 
-  float		flank_amp;	// #DEF_0:1 #MIN_0 amplitude of opposite-polarity flanks of the receptive field, for a tri-phasic off-on-off or on-off-on structure -- only for luminance rf's -- 0 disables
   int		rf_half;	// #READ_ONLY half rf
   int		spacing;	// #DEF_2 spacing between neighboring V1S rf's -- should be either 1/2 of rf_size or full rf_size (tiling) -- tradeoff between number of filters (4x overall) vs. discrete edge aliasing problems 
   int		border;		// #READ_ONLY #SHOW border onto dog filters -- automatically computed based on wrap mode and spacing setting
-  float		rf_norm_bw;	// #READ_ONLY 1 / (rf_size + flank_amp * 2 * rf_size) -- normalization factor for monochromatic simples with tri-phasic flankers
-  float		rf_norm_clr;	// #READ_ONLY 1 / rf_size -- normalization factor for color cells that only get from one central line
+  float		rf_norm;	// #READ_ONLY 1 / rf_size -- normalization factor 
 
   void 	Initialize();
   void	Destroy() { };
@@ -751,7 +756,7 @@ class TA_API V1SGaborSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for gabor filters for v1 simple cells
 INHERITED(taOBase)
 public:
-  bool		use;		// #DEF_true use gabors instead of simple line element filters
+  bool		use;		// #DEF_false use gabors instead of simple line element filters
   float		freq;		// #CONDSHOW_ON_use #DEF_1.5 frequency of the sine wave
   float		length;		// #CONDSHOW_ON_use #DEF_2 length of the gaussian perpendicular to the wave direction
   float		width;		// #CONDSHOW_ON_use #DEF_2 width of the gaussian in the wave direction
@@ -824,14 +829,15 @@ public:
     CF_NONE	= 0, // #NO_BIT
     END_STOP	= 0x0001, // end stop cells -- opposite polarity, any orientation around a central oriented edge, max over all polarities (weighted by gaussian) 
     LEN_SUM	= 0x0002, // length summing cells -- integrate simple cells along a line, same polarity, max over all polarities (weighted by gaussian) 
-    V1S_MAX    	= 0x0004, // basic max over v1 simple cells (weighted by gaussian) -- preserves polarity -- takes full set of V1S guys forward
-    COLOR_BLOB	= 0x0008, // color blobs made by integrating over all angles for a given color contrast -- only applicable if color = COLOR -- adds 4 extra units per hypercolumn
+    BLOB	= 0x0004, // 'blobs' made by integrating over all angles for a given luminance or color contrast -- adds 2 units for white/black per hypercolumn (always avail), and if color = COLOR, adds 6 extra units for red/cyan on/off, green/magenta on/off, blue/yellow on/off
+    V1S_MAX    	= 0x0008, // basic max over v1 simple cells (weighted by gaussian) -- preserves polarity -- takes full set of V1S guys forward
     DISP_EDGE	= 0x0010, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
     MOTION_EDGE	= 0x0020, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
 #ifndef __MAKETA__
     CF_ESLS	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT just the basic ones
+    CF_ESLSB	= CF_ESLS | BLOB, // #IGNORE #NO_BIT just the basic ones + blob
     CF_EDGES	= DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT special complex edges
-    CF_ALL	= END_STOP | LEN_SUM | COLOR_BLOB | DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT all complex filters
+    CF_ALL	= END_STOP | LEN_SUM | BLOB | DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT all complex filters
 #endif
   };
 
@@ -873,15 +879,15 @@ public:
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
   XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by ..
 
-  // v1c feat x axis is always angle, except for final edge guys and color blobs -- blobs have 4 colors though, which is nice..
+  // v1c feat x axis is always angle, except for final edge guys and blobs
   int		v1c_feat_es_y;	// #READ_ONLY y axis index for start of end stop features in v1c
   int		v1c_feat_ls_y;	// #READ_ONLY y axis index for start of length sum features in v1c
   int		v1c_feat_smax_y; // #READ_ONLY y axis index for start of v1s_max features in v1c
-  int		v1c_feat_cblob_y; // #READ_ONLY y axis index for start of color blob features in v1c
+  int		v1c_feat_blob_y; // #READ_ONLY y axis index for start of blob features in v1c
   int		v1c_feat_edge_y; // #READ_ONLY y axis index for start of edge features in v1c (disp, motion)
 
   int_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each fo the angles
-  int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells [x,y][1 line: rf_size][n lines: rf_size + 2][angles] -- includes -1 and rf flanker stencils for opposite polarity off-center coding
+  int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells as dog-lines [x,y][1 line: rf_size][n lines: rf_size][angles]
   taBase_List 	gabor_filters; 	// #READ_ONLY #NO_SAVE full set of gabor filters for v1s (type GaborFilter)
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
@@ -927,15 +933,6 @@ protected:
   override bool	FilterImage_impl();
   override void IncrTime();
 
-
-  inline float&	MatMotEl(float_Matrix* fmat, int fx, int fy, int imx, int imy, int motdx) {
-    if(motion_frames <= 1)
-      return fmat->FastEl(fx, fy, imx, imy);
-    else
-      return fmat->FastEl(fx, fy, imx, imy, motdx);
-  }
-  // convenience for accessing matrix element with either motion or not depending on setting
-
   virtual bool	V1SimpleFilter_Static(float_Matrix* dog, CircMatrix* dog_circ,
 				      float_Matrix* out, CircMatrix* circ);
   // do simple filters, static only on current inputs -- dispatch threads
@@ -967,10 +964,10 @@ protected:
   // do complex filters from monocular inputs -- V1Simple Max
   virtual void 	V1ComplexFilter_V1SMax_Binocular_thread(int v1c_idx, int thread_no);
   // do complex filters from binocular inputs -- V1Simple Max
-  virtual void 	V1ComplexFilter_ColorBlob_Monocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from monocular inputs -- Color Blob
-  virtual void 	V1ComplexFilter_ColorBlob_Binocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from binocular inputs -- Color Blob
+  virtual void 	V1ComplexFilter_Blob_Monocular_thread(int v1c_idx, int thread_no);
+  // do complex filters from monocular inputs -- Blob
+  virtual void 	V1ComplexFilter_Blob_Binocular_thread(int v1c_idx, int thread_no);
+  // do complex filters from binocular inputs -- Blob
   virtual void 	V1ComplexFilter_DispEdge_thread(int v1c_idx, int thread_no);
   // do complex filters from binocular inputs -- disparity edge
   virtual void 	V1ComplexFilter_MotionEdge_Monocular_thread(int v1c_idx, int thread_no);
