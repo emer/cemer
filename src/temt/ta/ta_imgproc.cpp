@@ -3818,6 +3818,11 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
       }
     }
   }
+
+  // keep endstop & lsl linked
+  es_max_val = MAX(es_max_val, lsl_max_val);
+  lsl_max_val = es_max_val;
+
   if(es_max_val > renorm_thr || lsl_max_val > renorm_thr || lss_max_val > renorm_thr) {
     rval = true;
     if(v1c_renorm == LIN_RENORM) {
