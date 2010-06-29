@@ -863,7 +863,7 @@ public:
   RenormMode	v1s_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s static filters
   RenormMode	v1m_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s motion filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
-  XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles * 2 or 6 polarities (monochrome|color) + 2 polarities * 2 directions * n_speeds * n_angles -- configured automatically with x = n_angles
+  XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
   XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by dog_img_geom, rf_size and half_ovlp setting
 
   int		v1s_feat_mot_y;	// #READ_ONLY y axis index for start of motion features in v1s -- x axis is angles
@@ -974,6 +974,9 @@ protected:
   // do complex filters from monocular inputs -- motion edge
   virtual void 	V1ComplexFilter_MotionEdge_Binocular_thread(int v1c_idx, int thread_no);
   // do complex filters from binocular inputs -- motion edge
+
+  virtual bool	V1CRenormOutput_EsLsBlob(float_Matrix* out);
+  // end stop, length sum, blob separate renorm
 
   virtual bool V1SOutputToTable(DataTable* dtab);
   // simple to output table

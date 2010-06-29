@@ -3298,7 +3298,7 @@ bool V1RegionSpec::V1SRenormOutput_Static(float_Matrix* out, CircMatrix* circ) {
 	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
 	      fc.x = ang;
 	      float& val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
-	      val = val * rescale;
+	      val *= rescale;
 	    }
 	  }
 	}
@@ -3425,7 +3425,7 @@ bool V1RegionSpec::V1SRenormOutput_Motion(float_Matrix* out, CircMatrix* circ) {
 	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
 	      fc.x = ang;
 	      float& val = mat->FastEl(fc.x, fc.y, sc.x, sc.y);
-	      val = val * rescale;
+	      val *= rescale;
 	    }
 	  }
 	}
@@ -3565,7 +3565,7 @@ bool V1RegionSpec::V1ComplexFilter() {
   }
 
   if(v1c_renorm != NO_RENORM) {
-    RenormOutput_NoFrames(v1c_renorm, &v1c_out);
+    V1CRenormOutput_EsLsBlob(&v1c_out);
   }
 
   return true;
@@ -3769,6 +3769,149 @@ void V1RegionSpec::V1ComplexFilter_MotionEdge_Monocular_thread(int v1c_idx, int 
 }
 
 void V1RegionSpec::V1ComplexFilter_MotionEdge_Binocular_thread(int v1c_idx, int thread_no) {
+}
+
+bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
+  bool rval = false;
+  float es_max_val = 0.0f;
+  float lsl_max_val = 0.0f;
+  float lss_max_val = 0.0f;
+  float blob_max_val = 0.0f;
+  TwoDCoord cc;		// complex coords
+  TwoDCoord fc;		// v1s feature coords
+  for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
+    for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
+      if(v1c_filters & END_STOP) {
+	fc.y=v1c_feat_es_y;
+	for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	  fc.x = ang;
+	  float val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+	  es_max_val = MAX(val, es_max_val);
+	}
+      }
+      if(v1c_filters & LEN_SUM) {
+	fc.y=v1c_feat_ls_y;
+	for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	  fc.x = ang;
+	  float val = out->FastEl(fc.x, fc.y, cc.x, cc.y); // long
+	  lsl_max_val = MAX(val, lsl_max_val);
+	  val = out->FastEl(fc.x, fc.y+1, cc.x, cc.y); // short
+	  lss_max_val = MAX(val, lss_max_val);
+	}
+      }
+      if(v1c_filters & BLOB) {
+	fc.y=v1c_feat_blob_y;
+	if(color == MONOCHROME) {
+	  for(int pol = 0; pol < 2; pol++) { // polarities
+	    fc.x = pol;
+	    float val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+	    blob_max_val = MAX(val, blob_max_val);
+	  }
+	}
+	else {
+	  for(int pol = 0; pol < 8; pol++) { // polarities
+	    fc.x = pol % v1c_feat_geom.x;
+	    float val = out->FastEl(fc.x, fc.y + pol / v1c_feat_geom.x, cc.x, cc.y);
+	    blob_max_val = MAX(val, blob_max_val);
+	  }
+	}
+      }
+    }
+  }
+  if(es_max_val > renorm_thr || lsl_max_val > renorm_thr || lss_max_val > renorm_thr) {
+    rval = true;
+    if(v1c_renorm == LIN_RENORM) {
+      float es_rescale = 1.0f / (es_max_val > 0.0f ? es_max_val : 1.0f);
+      float lsl_rescale = 1.0f / (lsl_max_val > 0.0f ? lsl_max_val : 1.0f);
+      float lss_rescale = 1.0f/ (lss_max_val > 0.0f ? lss_max_val : 1.0f);
+      float blob_rescale = 1.0f / (blob_max_val > 0.0f ? blob_max_val : 1.0f);
+      for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
+	for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
+	  if(v1c_filters & END_STOP) {
+	    fc.y=v1c_feat_es_y;
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      fc.x = ang;
+	      float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+	      val *= es_rescale;
+	    }
+	  }
+	  if(v1c_filters & LEN_SUM) {
+	    fc.y=v1c_feat_ls_y;
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      fc.x = ang;
+	      float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+	      val *= lsl_rescale;
+	      float& vals = out->FastEl(fc.x, fc.y+1, cc.x, cc.y);
+	      vals *= lss_rescale;
+	    }
+	  }
+	  if(v1c_filters & END_STOP) {
+	    fc.y=v1c_feat_blob_y;
+	    if(color == MONOCHROME) {
+	      for(int pol = 0; pol < 2; pol++) { // polarities
+		fc.x = pol;
+		float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+		val *= blob_rescale;
+	      }
+	    }
+	    else {
+	      for(int pol = 0; pol < 8; pol++) { // polarities
+		fc.x = pol % v1c_feat_geom.x;
+		float& val = out->FastEl(fc.x, fc.y + pol / v1c_feat_geom.x, cc.x, cc.y);
+		val *= blob_rescale;
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    else if(v1c_renorm == LOG_RENORM) {
+      float es_rescale = 1.0f / logf(1.0f + (es_max_val > 0.0f ? es_max_val : 1.0f));
+      float lsl_rescale = 1.0f / logf(1.0f + (lsl_max_val > 0.0f ? lsl_max_val : 1.0f));
+      float lss_rescale = 1.0f / logf(1.0f + (lss_max_val > 0.0f ? lss_max_val : 1.0f));
+      float blob_rescale = 1.0f / logf(1.0f + (blob_max_val > 0.0f ? blob_max_val : 1.0f));
+      for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
+	for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
+	  if(v1c_filters & END_STOP) {
+	    fc.y=v1c_feat_es_y;
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      fc.x = ang;
+	      float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+	      val = logf(1.0f + val) * es_rescale;
+	    }
+	  }
+	  if(v1c_filters & LEN_SUM) {
+	    fc.y=v1c_feat_ls_y;
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      fc.x = ang;
+	      float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+	      val = logf(1.0f + val) * lsl_rescale;
+	      float& vals = out->FastEl(fc.x, fc.y+1, cc.x, cc.y);
+	      vals = logf(1.0f + vals) * lss_rescale;
+	    }
+	  }
+	  if(v1c_filters & END_STOP) {
+	    fc.y=v1c_feat_blob_y;
+	    if(color == MONOCHROME) {
+	      for(int pol = 0; pol < 2; pol++) { // polarities
+		fc.x = pol;
+		float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+		val = logf(1.0f + val) * blob_rescale;
+	      }
+	    }
+	    else {
+	      for(int pol = 0; pol < 8; pol++) { // polarities
+		fc.x = pol % v1c_feat_geom.x;
+		float& val = out->FastEl(fc.x, fc.y + pol / v1c_feat_geom.x, cc.x, cc.y);
+		val = logf(1.0f + val) * blob_rescale;
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+  return rval;
 }
 
 
