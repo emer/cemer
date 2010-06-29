@@ -2309,7 +2309,7 @@ void DoGRegionSpec::DoGFilterImage_thread(int dog_idx, int thread_no) {
 	}
       }
     }
-    if(cnv_sum > 0.0f) {
+    if(cnv_sum >= 0.0f) {
       MatMotEl(cur_out, 0, chan, dc.x, dc.y, mot_idx) = cnv_sum; // feat x = 0 = on
       MatMotEl(cur_out, 1, chan, dc.x, dc.y, mot_idx) = 0.0f; 	// feat x = 1 = off
     }
@@ -2761,8 +2761,9 @@ void V1RegionSpec::UpdateGeom() {
     v1c_feat_es_y = -1;
   }
   if(v1c_filters & LEN_SUM) {
-    n_cmplx += v1s_specs.n_angles;
-    v1c_feat_ls_y = cmplx_y++;
+    n_cmplx += 2 * v1s_specs.n_angles; // long and short both
+    v1c_feat_ls_y = cmplx_y;
+    cmplx_y += 2;
   }
   else {
     v1c_feat_ls_y = -1;
@@ -3587,14 +3588,14 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
   TwoDCoord fc;			// v1c feature coords
   TwoDCoord sfc_ctr;		// simple feature coords for the central point
   TwoDCoord sfc_end;		// simple feature coords for the end point
-  for(int cfeat = 0; cfeat < 2; cfeat++) {
+  for(int cfeat = 0; cfeat < 3; cfeat++) { // end-stop, length-sum long, length-sum short
     if(cfeat == 0) {
       if(!(v1c_filters & END_STOP)) continue;
       fc.y = v1c_feat_es_y;
     }
-    if(cfeat == 1) {
+    else {
       if(!(v1c_filters & LEN_SUM)) continue;
-      fc.y = v1c_feat_ls_y;
+      fc.y = v1c_feat_ls_y + cfeat-1;
     }
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
       fc.x = ang;
@@ -3624,8 +3625,16 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
 
 	    // first get central value -- always the same
 	    float ctr_val = MatMotEl(&v1s_out_r, sfc_ctr.x, sfc_ctr.y, scc.x, scc.y, v1s_mot_idx);
-	    // now get the end points
+
+	    // now get the end points (or not)
 	    float line_sum = ctr_val;
+
+	    if(cfeat == 2) {	// shorts!
+	      line_sum *= v1c_weights.FastEl(xs, ys); // spatial rf weighting
+	      max_rf = MAX(max_rf, line_sum);
+	      continue;		// done!
+	    }
+
 	    for(int lpt=0; lpt < 2; lpt++) {
 	      int xp = v1c_stencils.FastEl(X,lpt,ang);
 	      int yp = v1c_stencils.FastEl(Y,lpt,ang);
