@@ -2673,7 +2673,7 @@ void V1RegionSpec::Initialize() {
   v1s_feat_geom.SetXYN(4, 6, 24);
   v1b_save = SAVE_DATA;
   v1c_filters = CF_DEFAULT;
-  v1c_renorm = LIN_RENORM;
+  v1c_renorm = LOG_RENORM;
   v1c_save = SAVE_DATA;
   v1c_feat_geom.SetXYN(4, 2, 8);
 
