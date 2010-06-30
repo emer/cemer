@@ -3565,7 +3565,9 @@ bool V1RegionSpec::V1ComplexFilter() {
   }
 
   if(v1c_renorm != NO_RENORM) {
-    V1CRenormOutput_EsLsBlob(&v1c_out);
+    // just renorm all:
+    RenormOutput_NoFrames(v1c_renorm, &v1c_out);
+//     V1CRenormOutput_EsLsBlob(&v1c_out);
   }
 
   return true;
