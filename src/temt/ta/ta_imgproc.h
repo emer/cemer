@@ -829,15 +829,17 @@ public:
     CF_NONE	= 0, // #NO_BIT
     END_STOP	= 0x0001, // end stop cells -- opposite polarity, any orientation around a central oriented edge, max over all polarities (weighted by gaussian) 
     LEN_SUM	= 0x0002, // length summing cells -- integrate simple cells along a line, same polarity, max over all polarities (weighted by gaussian) 
-    BLOB	= 0x0004, // 'blobs' made by integrating over all angles for a given luminance or color contrast -- adds 2 units for white/black per hypercolumn (always avail), and if color = COLOR, adds 6 extra units for red/cyan on/off, green/magenta on/off, blue/yellow on/off
-    V1S_MAX    	= 0x0008, // basic max over v1 simple cells (weighted by gaussian) -- preserves polarity -- takes full set of V1S guys forward
+    V1S_MAX    	= 0x0004, // basic max over v1 simple cells (weighted by gaussian) -- preserves polarity -- only for on/off (monochrome) tuning in v1s -- provides useful lower-level, higher-res signals to higher levels and should be on by default
+    BLOB	= 0x0008, // 'blobs' made by integrating over all angles for a given luminance or color contrast -- adds 2 units for white/black per hypercolumn (always avail), and if color = COLOR, adds 6 extra units for red/cyan on/off, green/magenta on/off, blue/yellow on/off
     DISP_EDGE	= 0x0010, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
     MOTION_EDGE	= 0x0020, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
 #ifndef __MAKETA__
-    CF_ESLS	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT just the basic ones
-    CF_ESLSB	= CF_ESLS | BLOB, // #IGNORE #NO_BIT just the basic ones + blob
+    CF_ESLS	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT most basic set
+    CF_ESLSMAX	= END_STOP | LEN_SUM | V1S_MAX, // #IGNORE #NO_BIT this is the default setup
+    CF_DEFAULT  = CF_ESLSMAX,  // #IGNORE #NO_BIT this is the default setup
+    CF_COLOR	= CF_DEFAULT | BLOB, // #IGNORE #NO_BIT default + blob = color setup
     CF_EDGES	= DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT special complex edges
-    CF_ALL	= END_STOP | LEN_SUM | BLOB | DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT all complex filters
+    CF_ALL	= CF_COLOR | CF_EDGES, // #IGNORE #NO_BIT all complex filters
 #endif
   };
 

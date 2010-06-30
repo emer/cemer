@@ -2672,7 +2672,7 @@ void V1RegionSpec::Initialize() {
   v1s_save = SAVE_DATA;
   v1s_feat_geom.SetXYN(4, 6, 24);
   v1b_save = SAVE_DATA;
-  v1c_filters = CF_ESLS;
+  v1c_filters = CF_DEFAULT;
   v1c_renorm = LIN_RENORM;
   v1c_save = SAVE_DATA;
   v1c_feat_geom.SetXYN(4, 2, 8);
@@ -2761,17 +2761,16 @@ void V1RegionSpec::UpdateGeom() {
     v1c_feat_es_y = -1;
   }
   if(v1c_filters & LEN_SUM) {
-    n_cmplx += 2 * v1s_specs.n_angles; // long and short both
-    v1c_feat_ls_y = cmplx_y;
-    cmplx_y += 2;
+    n_cmplx += v1s_specs.n_angles;
+    v1c_feat_ls_y = cmplx_y++;
   }
   else {
     v1c_feat_ls_y = -1;
   }
   if(v1c_filters & V1S_MAX) {
-    n_cmplx += v1s_specs.n_angles * dog_feat_geom.n;	// full dog
+    n_cmplx += v1s_specs.n_angles * 2; // just b/w filters for v1smax
     v1c_feat_smax_y = cmplx_y;
-    cmplx_y += dog_feat_geom.n;
+    cmplx_y += 2;
   }
   else {
     v1c_feat_smax_y = -1;
@@ -3528,12 +3527,12 @@ bool V1RegionSpec::V1ComplexFilter() {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_EsLs_Binocular_thread);
       threads.Run(&ip_call, n_run);
     }
-    if(v1c_filters & BLOB) {
-      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Blob_Binocular_thread);
-      threads.Run(&ip_call, n_run);
-    }
     if(v1c_filters & V1S_MAX) {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_V1SMax_Binocular_thread);
+      threads.Run(&ip_call, n_run);
+    }
+    if(v1c_filters & BLOB) {
+      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Blob_Binocular_thread);
       threads.Run(&ip_call, n_run);
     }
     if(v1c_filters & DISP_EDGE) {
@@ -3550,12 +3549,12 @@ bool V1RegionSpec::V1ComplexFilter() {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread);
       threads.Run(&ip_call, n_run);
     }
-    if(v1c_filters & BLOB) {
-      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Blob_Monocular_thread);
-      threads.Run(&ip_call, n_run);
-    }
     if(v1c_filters & V1S_MAX) {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_V1SMax_Monocular_thread);
+      threads.Run(&ip_call, n_run);
+    }
+    if(v1c_filters & BLOB) {
+      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Blob_Monocular_thread);
       threads.Run(&ip_call, n_run);
     }
     if(motion_frames > 1 && v1c_filters & MOTION_EDGE) {
@@ -3565,9 +3564,8 @@ bool V1RegionSpec::V1ComplexFilter() {
   }
 
   if(v1c_renorm != NO_RENORM) {
-    // just renorm all:
-    RenormOutput_NoFrames(v1c_renorm, &v1c_out);
-//     V1CRenormOutput_EsLsBlob(&v1c_out);
+    V1CRenormOutput_EsLsBlob(&v1c_out);
+    //    RenormOutput_NoFrames(v1c_renorm, &v1c_out);  // this renorms everything together, which is not as good as separately renorming the blob vs. the rest of the guys
   }
 
   return true;
@@ -3590,14 +3588,14 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
   TwoDCoord fc;			// v1c feature coords
   TwoDCoord sfc_ctr;		// simple feature coords for the central point
   TwoDCoord sfc_end;		// simple feature coords for the end point
-  for(int cfeat = 0; cfeat < 3; cfeat++) { // end-stop, length-sum long, length-sum short
+  for(int cfeat = 0; cfeat < 2; cfeat++) { // end-stop, length-sum
     if(cfeat == 0) {
       if(!(v1c_filters & END_STOP)) continue;
       fc.y = v1c_feat_es_y;
     }
     else {
       if(!(v1c_filters & LEN_SUM)) continue;
-      fc.y = v1c_feat_ls_y + cfeat-1;
+      fc.y = v1c_feat_ls_y;
     }
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
       fc.x = ang;
@@ -3627,16 +3625,8 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
 
 	    // first get central value -- always the same
 	    float ctr_val = MatMotEl(&v1s_out_r, sfc_ctr.x, sfc_ctr.y, scc.x, scc.y, v1s_mot_idx);
-
-	    // now get the end points (or not)
+	    // now get the end points
 	    float line_sum = ctr_val;
-
-	    if(cfeat == 2) {	// shorts!
-	      line_sum *= v1c_weights.FastEl(xs, ys); // spatial rf weighting
-	      max_rf = MAX(max_rf, line_sum);
-	      continue;		// done!
-	    }
-
 	    for(int lpt=0; lpt < 2; lpt++) {
 	      int xp = v1c_stencils.FastEl(X,lpt,ang);
 	      int yp = v1c_stencils.FastEl(Y,lpt,ang);
@@ -3692,7 +3682,7 @@ void V1RegionSpec::V1ComplexFilter_V1SMax_Monocular_thread(int v1c_idx, int thre
   TwoDCoord scc;		// simple coord, center
   TwoDCoord sfc;		// v1s feature coords
   TwoDCoord fc;			// v1c feature coords
-  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+  for(int dog = 0; dog < 2; dog++) { // only first monochrome on/off guys
     sfc.y = dog;
     fc.y = v1c_feat_smax_y + dog;
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
@@ -3707,7 +3697,6 @@ void V1RegionSpec::V1ComplexFilter_V1SMax_Monocular_thread(int v1c_idx, int thre
 	  if(scc.WrapClip(wrap, v1s_img_geom)) {
 	    if(edge_mode == CLIP) continue; // bail on clipping only
 	  }
-	  // first get central value -- always the same
 	  float ctr_val = MatMotEl(&v1s_out_r, sfc.x, sfc.y, scc.x, scc.y, v1s_mot_idx);
 	  ctr_val *= v1c_weights.FastEl(xs, ys); // spatial rf weighting
 	  max_rf = MAX(max_rf, ctr_val);
@@ -3774,10 +3763,15 @@ void V1RegionSpec::V1ComplexFilter_MotionEdge_Binocular_thread(int v1c_idx, int 
 }
 
 bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
+  // logic here is to compute max's separately and renorm separately for each 
+  // type of filter, and then combine the max's in the middle to achieve desired
+  // groupings of max's.  results overall indicate that only breaking out blob vs
+  // others is best
+
   bool rval = false;
   float es_max_val = 0.0f;
-  float lsl_max_val = 0.0f;
-  float lss_max_val = 0.0f;
+  float ls_max_val = 0.0f;
+  float smax_max_val = 0.0f;
   float blob_max_val = 0.0f;
   TwoDCoord cc;		// complex coords
   TwoDCoord fc;		// v1s feature coords
@@ -3796,9 +3790,17 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
 	for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
 	  fc.x = ang;
 	  float val = out->FastEl(fc.x, fc.y, cc.x, cc.y); // long
-	  lsl_max_val = MAX(val, lsl_max_val);
-	  val = out->FastEl(fc.x, fc.y+1, cc.x, cc.y); // short
-	  lss_max_val = MAX(val, lss_max_val);
+	  ls_max_val = MAX(val, ls_max_val);
+	}
+      }
+      if(v1c_filters & V1S_MAX) {
+	for(int dog = 0; dog < 2; dog++) {
+	  fc.y=v1c_feat_smax_y + dog;
+	  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	    fc.x = ang;
+	    float val = out->FastEl(fc.x, fc.y, cc.x, cc.y); // long
+	    smax_max_val = MAX(val, smax_max_val);
+	  }
 	}
       }
       if(v1c_filters & BLOB) {
@@ -3821,18 +3823,18 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
     }
   }
 
-  // keep endstop & lsl & lss linked
-//   es_max_val = MAX(es_max_val, lsl_max_val);
-//   es_max_val = MAX(es_max_val, lss_max_val);
-//   lsl_max_val = es_max_val;
-//   lss_max_val = es_max_val;
+  // all the line guys are pooled
+  es_max_val = MAX(es_max_val, ls_max_val);
+  es_max_val = MAX(es_max_val, smax_max_val);
+  ls_max_val = es_max_val;
+  smax_max_val = es_max_val;
 
-  if(es_max_val > renorm_thr || lsl_max_val > renorm_thr || lss_max_val > renorm_thr) {
+  if(es_max_val > renorm_thr || blob_max_val > renorm_thr) {
     rval = true;
     if(v1c_renorm == LIN_RENORM) {
       float es_rescale = 1.0f / (es_max_val > 0.0f ? es_max_val : 1.0f);
-      float lsl_rescale = 1.0f / (lsl_max_val > 0.0f ? lsl_max_val : 1.0f);
-      float lss_rescale = 1.0f/ (lss_max_val > 0.0f ? lss_max_val : 1.0f);
+      float ls_rescale = 1.0f / (ls_max_val > 0.0f ? ls_max_val : 1.0f);
+      float smax_rescale = 1.0f/ (smax_max_val > 0.0f ? smax_max_val : 1.0f);
       float blob_rescale = 1.0f / (blob_max_val > 0.0f ? blob_max_val : 1.0f);
       for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
 	for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
@@ -3849,12 +3851,20 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
 	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
 	      fc.x = ang;
 	      float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
-	      val *= lsl_rescale;
-	      float& vals = out->FastEl(fc.x, fc.y+1, cc.x, cc.y);
-	      vals *= lss_rescale;
+	      val *= ls_rescale;
 	    }
 	  }
-	  if(v1c_filters & END_STOP) {
+	  if(v1c_filters & V1S_MAX) {
+	    for(int dog = 0; dog < 2; dog++) {
+	      fc.y=v1c_feat_smax_y + dog;
+	      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+		fc.x = ang;
+		float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+		val *= smax_rescale;
+	      }
+	    }
+	  }
+	  if(v1c_filters & BLOB) {
 	    fc.y=v1c_feat_blob_y;
 	    if(color == MONOCHROME) {
 	      for(int pol = 0; pol < 2; pol++) { // polarities
@@ -3876,8 +3886,8 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
     }
     else if(v1c_renorm == LOG_RENORM) {
       float es_rescale = 1.0f / logf(1.0f + (es_max_val > 0.0f ? es_max_val : 1.0f));
-      float lsl_rescale = 1.0f / logf(1.0f + (lsl_max_val > 0.0f ? lsl_max_val : 1.0f));
-      float lss_rescale = 1.0f / logf(1.0f + (lss_max_val > 0.0f ? lss_max_val : 1.0f));
+      float ls_rescale = 1.0f / logf(1.0f + (ls_max_val > 0.0f ? ls_max_val : 1.0f));
+      float smax_rescale = 1.0f / logf(1.0f + (smax_max_val > 0.0f ? smax_max_val : 1.0f));
       float blob_rescale = 1.0f / logf(1.0f + (blob_max_val > 0.0f ? blob_max_val : 1.0f));
       for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
 	for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
@@ -3894,12 +3904,20 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
 	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
 	      fc.x = ang;
 	      float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
-	      val = logf(1.0f + val) * lsl_rescale;
-	      float& vals = out->FastEl(fc.x, fc.y+1, cc.x, cc.y);
-	      vals = logf(1.0f + vals) * lss_rescale;
+	      val = logf(1.0f + val) * ls_rescale;
 	    }
 	  }
-	  if(v1c_filters & END_STOP) {
+	  if(v1c_filters & V1S_MAX) {
+	    for(int dog = 0; dog < 2; dog++) {
+	      fc.y=v1c_feat_smax_y + dog;
+	      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+		fc.x = ang;
+		float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+		val = logf(1.0f + val) * smax_rescale;
+	      }
+	    }
+	  }
+	  if(v1c_filters & BLOB) {
 	    fc.y=v1c_feat_blob_y;
 	    if(color == MONOCHROME) {
 	      for(int pol = 0; pol < 2; pol++) { // polarities
