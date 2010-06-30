@@ -2287,7 +2287,7 @@ void DoGRegionSpec::DoGFilterImage_thread(int dog_idx, int thread_no) {
   // x = on/off, y = color channel
   TwoDCoord ic;		// image coord
   for(int chan = 0; chan < dog_feat_geom.y; chan++) { 
-    DoGFilter::ColorChannel cchan = (DoGFilter::ColorChannel)(chan/2);
+    DoGFilter::ColorChannel cchan = (DoGFilter::ColorChannel)chan;
 
     float cnv_sum = 0.0f;		// convolution sum
     if(chan == 0 || rgb_img) {		// only rgb images if chan > 0
