@@ -2820,7 +2820,10 @@ void V1RegionSpec::UpdateGeom() {
       v1s_specs.border = v1s_specs.rf_size / 2; // always
       v1s_img_geom = (((dog_img_geom - 2 * v1s_specs.border)-1) / v1s_specs.spacing) + 1;
     }
-  } 
+  }
+
+  v1b_feat_geom.x = v1s_feat_geom.x;
+  v1b_feat_geom.y = v1s_feat_geom.y * (1 + 2 * v1b_specs.n_disps);
 
   int n_cmplx = 0;
   int cmplx_y = 0;
@@ -3158,7 +3161,7 @@ bool V1RegionSpec::InitOutMatrix() {
   v1s_circ_l.Reset();
 
   if(ocularity == BINOCULAR)
-    v1b_out.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+    v1b_out.SetGeom(4, v1b_feat_geom.x, v1b_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
   else
     v1s_out_l.SetGeom(1,1);	// free memory
 
