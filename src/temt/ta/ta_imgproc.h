@@ -545,6 +545,22 @@ private:
 ////////////////////////////////////////////////////////////////////
 //		Retinal Processing (DoG model)
 
+class TA_API MaxRelFilterSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image filter out values relative to the maximum over a local area
+INHERITED(taOBase)
+public:
+  bool		on;		// do max rel filtering
+  float		filt_thr;	// #DEF_0.2 #CONDSHOW_ON_on threshold relative to the maximum value over the max_rf receptive field group, below which values are filtered (set to 0)
+  TwoDCoord	max_rf;		// #CONDSHOW_ON_on receptive field window over which maximum is computed
+  TwoDCoord	spacing;	// #CONDSHOW_ON_on spacing between neighboring max rf's -- typically 1/2 of rf
+  TwoDCoord	border;		// #READ_ONLY border onto dog filters -- automatically computed based on wrap mode and spacing setting
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(MaxRelFilterSpec);
+};
+
+
 class TA_API DoGRegionSpec : public ImgProcThreadBase {
   // #STEM_BASE ##CAT_Image specifies a region of Difference-of-Gaussian retinal filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(ImgProcThreadBase)
@@ -617,6 +633,7 @@ public:
   TwoDCoord	dog_spacing;	// spacing between centers of DoG filters in input -- should generally be same as on sigma width in dog_specs
   RenormMode	dog_renorm;	// #DEF_LOG_RENORM how to renormalize the output of filters
   float		renorm_thr;	// #DEF_1e-05 threshold for the max filter output value to max-renormalize filter outputs such that the max is 1 -- below this value, consider the input to be blank and do not renorm
+  MaxRelFilterSpec dog_max_rel_flt; // filter out activations that are a certain percentage below the maximum over a given area -- provides a simple form of kwta-like filtering
   DataSave	dog_save;	// how to save the DoG outputs for the current time step in the data table
   XYNGeom	dog_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for DoG filtering -- x axis = 2 = on/off, y axis = color channel: 0 = monochrome, 1 = red/cyan, 2 = green/magenta, 3 = blue/yellow (2 units total for monochrome, 8 total for color)
   TwoDCoord	dog_img_geom; 	// #READ_ONLY #SHOW size of dog-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and dog_spacing parameters
@@ -685,6 +702,9 @@ protected:
   // renormalize output of filters after filtering -- for output having motion frames
   virtual bool RenormOutput_NoFrames(RenormMode mode, float_Matrix* out);
   // renormalize output of filters after filtering -- for output without motion frames
+
+  virtual bool MaxRelFiltOutput_Frames(MaxRelFilterSpec& mrf, float_Matrix* out, CircMatrix* circ);
+  // maximum relative filtering
 
   virtual bool ImageToTable(DataTable* dtab, float_Matrix* right_eye_image,
 				     float_Matrix* left_eye_image = NULL);

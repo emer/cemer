@@ -2037,6 +2037,13 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
 ////////////////////////////////////////////////////////////////////
 //		Retinal Processing (DoG model)
 
+void MaxRelFilterSpec::Initialize() {
+  on = false;
+  filt_thr = 0.2f;
+  max_rf.SetXY(8,8);
+  spacing.SetXY(4,4);
+  border.SetXY(4,4);
+}
 
 // for thread function calling:
 typedef void (DoGRegionSpec::*DoGRegionMethod)(int, int);
@@ -2096,9 +2103,11 @@ void DoGRegionSpec::UpdateGeom() {
   input_size = (retina_size - 2 * border);
   if(edge_mode == WRAP) {
     dog_img_geom = input_size / dog_spacing;
+    dog_max_rel_flt.border = 0;
   }
   else {
     dog_img_geom = ((input_size - 1) / dog_spacing) + 1;
+    dog_max_rel_flt.border = dog_max_rel_flt.max_rf / 2; // always
   }
   if(color == COLOR) {
     dog_feat_geom.SetXYN(2,4,8);
@@ -2273,6 +2282,10 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out, CircM
   if(dog_renorm != NO_RENORM) {
     RenormOutput_Frames(dog_renorm, out, circ);
   }
+
+  if(dog_max_rel_flt.on) {
+    MaxRelFiltOutput_Frames(dog_max_rel_flt, out, circ);
+  }
   return true;
 }
 
@@ -2366,6 +2379,64 @@ bool DoGRegionSpec::RenormOutput_NoFrames(RenormMode mode, float_Matrix* mat) {
     }
   }
   return rval;
+}
+
+bool DoGRegionSpec::MaxRelFiltOutput_Frames(MaxRelFilterSpec& mrf, float_Matrix* out,
+					    CircMatrix* circ) {
+  TwoDCoord max_rf_half = mrf.max_rf / 2;
+
+  float_Matrix* mat = out;
+  if(motion_frames > 1) {
+    mat = (float_Matrix*)out->GetFrameSlice(circ->CircIdx_Last());
+    taBase::Ref(mat);
+  }
+  TwoDCoord dc;
+  TwoDCoord llc;
+  TwoDCoord rc;
+  TwoDCoord vc;
+  TwoDCoord fc;
+  for(dc.x = mrf.border.x; dc.x < dog_img_geom.x; dc.x += mrf.spacing.x) {
+    for(dc.y = mrf.border.y; dc.y < dog_img_geom.y; dc.y += mrf.spacing.y) {
+      llc = dc - max_rf_half;
+      float max_val = 0.0f;
+      for(rc.x = 0; rc.x < mrf.max_rf.x; rc.x++) {
+	for(rc.y = 0; rc.y < mrf.max_rf.y; rc.y++) {
+	  vc = llc + rc;
+	  if(vc.WrapClip(wrap, dog_img_geom)) {
+	    if(edge_mode == CLIP) continue; // bail on clipping only
+	  }
+	  for(int fi=0; fi<dog_feat_geom.n; fi++) {
+	    fc.x = fi % dog_feat_geom.x;
+	    fc.y = fi / dog_feat_geom.x;
+	    float& vl = mat->FastEl(fc.x, fc.y, vc.x, vc.y);
+	    max_val = MAX(max_val, vl);
+	  }
+	}
+      }
+      if(max_val > 0.0f) {
+	float thr_val = mrf.filt_thr * max_val;
+	for(rc.x = 0; rc.x < mrf.max_rf.x; rc.x++) {
+	  for(rc.y = 0; rc.y < mrf.max_rf.y; rc.y++) {
+	    vc = llc + rc;
+	    if(vc.WrapClip(wrap, dog_img_geom)) {
+	      if(edge_mode == CLIP) continue; // bail on clipping only
+	    }
+	    for(int fi=0; fi<dog_feat_geom.n; fi++) {
+	      fc.x = fi % dog_feat_geom.x;
+	      fc.y = fi / dog_feat_geom.x;
+	      float& vl = mat->FastEl(fc.x, fc.y, vc.x, vc.y);
+	      if(vl < thr_val)
+		vl = 0.0f;
+	    }
+	  }
+	}
+      }
+    }
+  }
+  if(motion_frames > 1) {
+    taBase::unRefDone(mat);
+  }
+  return true;
 }
 
 bool DoGRegionSpec::InvertFilters(float_Matrix* right_eye_image, float_Matrix* left_eye_image) {
@@ -3772,7 +3843,8 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
   float es_max_val = 0.0f;
   float ls_max_val = 0.0f;
   float smax_max_val = 0.0f;
-  float blob_max_val = 0.0f;
+  float blob_m_max_val = 0.0f;
+  float blob_c_max_val = 0.0f;
   TwoDCoord cc;		// complex coords
   TwoDCoord fc;		// v1s feature coords
   for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
@@ -3805,18 +3877,16 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
       }
       if(v1c_filters & BLOB) {
 	fc.y=v1c_feat_blob_y;
-	if(color == MONOCHROME) {
-	  for(int pol = 0; pol < 2; pol++) { // polarities
-	    fc.x = pol;
-	    float val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
-	    blob_max_val = MAX(val, blob_max_val);
-	  }
+	for(int pol = 0; pol < 2; pol++) { // polarities
+	  fc.x = pol;
+	  float val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+	  blob_m_max_val = MAX(val, blob_m_max_val);
 	}
-	else {
-	  for(int pol = 0; pol < 8; pol++) { // polarities
+	if(color == COLOR) {
+	  for(int pol = 2; pol < 8; pol++) { // polarities
 	    fc.x = pol % v1c_feat_geom.x;
 	    float val = out->FastEl(fc.x, fc.y + pol / v1c_feat_geom.x, cc.x, cc.y);
-	    blob_max_val = MAX(val, blob_max_val);
+	    blob_c_max_val = MAX(val, blob_c_max_val);
 	  }
 	}
       }
@@ -3829,13 +3899,14 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
   ls_max_val = es_max_val;
   smax_max_val = es_max_val;
 
-  if(es_max_val > renorm_thr || blob_max_val > renorm_thr) {
+  if(es_max_val > renorm_thr) {	// nonblank
     rval = true;
     if(v1c_renorm == LIN_RENORM) {
       float es_rescale = 1.0f / (es_max_val > 0.0f ? es_max_val : 1.0f);
       float ls_rescale = 1.0f / (ls_max_val > 0.0f ? ls_max_val : 1.0f);
       float smax_rescale = 1.0f/ (smax_max_val > 0.0f ? smax_max_val : 1.0f);
-      float blob_rescale = 1.0f / (blob_max_val > 0.0f ? blob_max_val : 1.0f);
+      float blob_m_rescale = 1.0f / (blob_m_max_val > 0.0f ? blob_m_max_val : 1.0f);
+      float blob_c_rescale = 1.0f / (blob_c_max_val > 0.0f ? blob_c_max_val : 1.0f);
       for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
 	for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
 	  if(v1c_filters & END_STOP) {
@@ -3866,18 +3937,16 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
 	  }
 	  if(v1c_filters & BLOB) {
 	    fc.y=v1c_feat_blob_y;
-	    if(color == MONOCHROME) {
-	      for(int pol = 0; pol < 2; pol++) { // polarities
-		fc.x = pol;
-		float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
-		val *= blob_rescale;
-	      }
+	    for(int pol = 0; pol < 2; pol++) { // polarities
+	      fc.x = pol;
+	      float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+	      val *= blob_m_rescale;
 	    }
-	    else {
-	      for(int pol = 0; pol < 8; pol++) { // polarities
+	    if(color == COLOR) {
+	      for(int pol = 2; pol < 8; pol++) { // polarities
 		fc.x = pol % v1c_feat_geom.x;
 		float& val = out->FastEl(fc.x, fc.y + pol / v1c_feat_geom.x, cc.x, cc.y);
-		val *= blob_rescale;
+		val *= blob_c_rescale;
 	      }
 	    }
 	  }
@@ -3888,7 +3957,8 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
       float es_rescale = 1.0f / logf(1.0f + (es_max_val > 0.0f ? es_max_val : 1.0f));
       float ls_rescale = 1.0f / logf(1.0f + (ls_max_val > 0.0f ? ls_max_val : 1.0f));
       float smax_rescale = 1.0f / logf(1.0f + (smax_max_val > 0.0f ? smax_max_val : 1.0f));
-      float blob_rescale = 1.0f / logf(1.0f + (blob_max_val > 0.0f ? blob_max_val : 1.0f));
+      float blob_m_rescale = 1.0f / logf(1.0f + (blob_m_max_val > 0.0f ? blob_m_max_val : 1.0f));
+      float blob_c_rescale = 1.0f / logf(1.0f + (blob_c_max_val > 0.0f ? blob_c_max_val : 1.0f));
       for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
 	for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
 	  if(v1c_filters & END_STOP) {
@@ -3919,18 +3989,16 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
 	  }
 	  if(v1c_filters & BLOB) {
 	    fc.y=v1c_feat_blob_y;
-	    if(color == MONOCHROME) {
-	      for(int pol = 0; pol < 2; pol++) { // polarities
-		fc.x = pol;
-		float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
-		val = logf(1.0f + val) * blob_rescale;
-	      }
+	    for(int pol = 0; pol < 2; pol++) { // polarities
+	      fc.x = pol;
+	      float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
+	      val = logf(1.0f + val) * blob_m_rescale;
 	    }
-	    else {
-	      for(int pol = 0; pol < 8; pol++) { // polarities
+	    if(color == COLOR) {
+	      for(int pol = 2; pol < 8; pol++) { // polarities
 		fc.x = pol % v1c_feat_geom.x;
 		float& val = out->FastEl(fc.x, fc.y + pol / v1c_feat_geom.x, cc.x, cc.y);
-		val = logf(1.0f + val) * blob_rescale;
+		val = logf(1.0f + val) * blob_c_rescale;
 	      }
 	    }
 	  }
