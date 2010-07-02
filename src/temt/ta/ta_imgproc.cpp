@@ -3068,11 +3068,10 @@ bool V1RegionSpec::InitFilters_V1Simple() {
 bool V1RegionSpec::InitFilters_V1Motion() {
   v1m_weights.SetGeom(1, v1s_motion.tot_width);
   if(v1s_motion.tuning_width > 0) {
-    float eff_sig = v1s_motion.gauss_sig * (float)v1s_motion.tuning_width;
     int idx = 0;
     for(int x=-v1s_motion.tuning_width; x<=v1s_motion.tuning_width; x++, idx++) {
       float fx = (float)x / (float)v1s_motion.tuning_width;
-      v1m_weights.FastEl(idx) = taMath_float::gauss_den_sig(fx, eff_sig);
+      v1m_weights.FastEl(idx) = taMath_float::gauss_den_sig(fx, v1s_motion.gauss_sig);
     }
   }
   taMath_float::vec_norm_sum(&v1m_weights); // make sure sums to 1.0
@@ -3082,14 +3081,13 @@ bool V1RegionSpec::InitFilters_V1Motion() {
 bool V1RegionSpec::InitFilters_V1Binocular() {
   v1b_weights.SetGeom(1, v1b_specs.tot_width);
   if(v1b_specs.tuning_width > 0) {
-    float eff_sig = v1b_specs.gauss_sig * (float)v1b_specs.tuning_width;
     int idx = 0;
     for(int x=-v1b_specs.tuning_width; x<=v1b_specs.tuning_width; x++, idx++) {
       float fx = (float)x / (float)v1b_specs.tuning_width;
-      v1b_weights.FastEl(idx) = taMath_float::gauss_den_sig(fx, eff_sig);
+      v1b_weights.FastEl(idx) = taMath_float::gauss_den_sig(fx, v1b_specs.gauss_sig);
     }
   }
-  taMath_float::vec_norm_sum(&v1b_weights); // make sure sums to 1.0
+  taMath_float::vec_norm_max(&v1b_weights); // max norm to 1
 
   v1b_stencils.SetGeom(2, v1b_specs.tot_width, v1b_specs.tot_disps);
   for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
@@ -3106,8 +3104,8 @@ bool V1RegionSpec::InitFilters_V1Binocular() {
 
 bool V1RegionSpec::InitFilters_V1Complex() {
   v1c_weights.SetGeom(2, v1c_specs.spat_rf.x, v1c_specs.spat_rf.y);
-  float ctr_x = (float)v1c_specs.spat_rf.x * .5f;;
-  float ctr_y = (float)v1c_specs.spat_rf.y * .5f;;
+  float ctr_x = (float)(v1c_specs.spat_rf.x-1) * .5f;
+  float ctr_y = (float)(v1c_specs.spat_rf.y-1) * .5f;
   float eff_sig_x = v1c_specs.gauss_sig * ctr_x;
   float eff_sig_y = v1c_specs.gauss_sig * ctr_y;
   for(int yi=0; yi< v1c_specs.spat_rf.y; yi++) {
@@ -4333,22 +4331,22 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
     nmda->SetValAsString("V1b Binoc", -1);
     float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
     TwoDCoord ic;
+    TwoDCoord dc;
     for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
       int didx = disp + v1b_specs.n_disps;
       ic.y = half_sz.y;
-      ic.x = brd.x + disp * bin_rf_max;
+      ic.x = brd.x + v1b_specs.disp_off*v1b_specs.n_disps + didx * bin_rf_max;
 	    
-      ic.y--;
-
       if(ic.WrapClip(true, max_sz));
-      mat->FastEl(ic.x,ic.y) = -0.5f;
+      mat->FastEl(ic.x,ic.y-1) = -0.5f;
 
       for(int tw=-v1b_specs.tuning_width; tw <= v1b_specs.tuning_width; tw++) {
 	int twidx = tw + v1b_specs.tuning_width;
 	int off = v1b_stencils.FastEl(twidx, didx);
-	ic.x += off;
-	if(ic.WrapClip(true, max_sz));
-	mat->FastEl(ic.x,ic.y) = v1b_weights.FastEl(twidx);
+	dc = ic;
+	dc.x += off;
+	if(dc.WrapClip(true, max_sz));
+	mat->FastEl(dc.x,dc.y) = v1b_weights.FastEl(twidx);
       }
     }
   }
