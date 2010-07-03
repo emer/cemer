@@ -634,10 +634,10 @@ inline bool operator< (const Variant& a, uint b) {return a.cmpUInt(b) < 0;}
 inline bool operator<=(const Variant& a, uint b) {return a.cmpUInt(b) <= 0;}
 inline bool operator> (const Variant& a, uint b) {return a.cmpUInt(b) > 0;}
 inline bool operator>=(const Variant& a, uint b) {return a.cmpUInt(b) >= 0;}
-inline bool operator< (uint a, const Variant& b) {return b.cmpUInt(a) >= 0;}
-inline bool operator<=(uint a, const Variant& b) {return b.cmpUInt(a) > 0;}
-inline bool operator> (uint a, const Variant& b) {return b.cmpUInt(a) <= 0;}
-inline bool operator>=(uint a, const Variant& b) {return b.cmpUInt(a) < 0;}
+// inline bool operator< (uint a, const Variant& b) {return b.cmpUInt(a) >= 0;}
+// inline bool operator<=(uint a, const Variant& b) {return b.cmpUInt(a) > 0;}
+// inline bool operator> (uint a, const Variant& b) {return b.cmpUInt(a) <= 0;}
+// inline bool operator>=(uint a, const Variant& b) {return b.cmpUInt(a) < 0;}
 
 inline bool operator==(const Variant& a, ta_int64_t b) {return a.eqInt64(b);}
 inline bool operator!=(const Variant& a, ta_int64_t b) {return !a.eqInt64(b);}

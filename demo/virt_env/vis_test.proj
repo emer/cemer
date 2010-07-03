@@ -9760,7 +9760,7 @@ LeabraProject .projects[0] {
        v1b_save=SAVE_DATA;
        v1b_feat_geom {x=4: y=6: n_not_xy=0: n=1: };
        v1c_filters=END_STOP|LEN_SUM|V1S_MAX;
-       v1c_specs {spat_rf={x=12: y=12: }: spat_rf_half={x=6: y=6: }: spacing={x=6: y=6: }: border={x=0: y=0: }: gauss_sig=0.5: nonfocal_wt=0.5: };
+       v1c_specs {spat_rf={x=12: y=12: }: spat_rf_half={x=6: y=6: }: spacing={x=6: y=6: }: border={x=0: y=0: }: gauss_sig=0.8: nonfocal_wt=0.5: };
        v1c_renorm=LOG_RENORM;
        v1c_save=SAVE_DATA;
        v1c_feat_geom {x=4: y=4: n_not_xy=0: n=16: };
@@ -20727,7 +20727,7 @@ LeabraProject .projects[0] {
      var_type=T_DynEnum;
      dyn_enum_val {
       enum_type=$.projects[0].programs[1].types[0]$;
-      value=1;
+      value=0;
      };
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
@@ -22187,8 +22187,8 @@ LeabraProject .projects[0] {
 	   };
 	  };
 	  ProgArg @[1] {
-	   arg_type=int;
-	   type="int";
+	   arg_type=double;
+	   type="double";
 	   name="ctr_x";
 	   required=1;
 	   def_val=;
@@ -22197,8 +22197,8 @@ LeabraProject .projects[0] {
 	   };
 	  };
 	  ProgArg @[2] {
-	   arg_type=int;
-	   type="int";
+	   arg_type=double;
+	   type="double";
 	   name="ctr_y";
 	   required=1;
 	   def_val=;
@@ -22207,8 +22207,8 @@ LeabraProject .projects[0] {
 	   };
 	  };
 	  ProgArg @[3] {
-	   arg_type=int;
-	   type="int";
+	   arg_type=double;
+	   type="double";
 	   name="angle";
 	   required=1;
 	   def_val=;
