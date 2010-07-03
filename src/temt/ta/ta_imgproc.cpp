@@ -3779,6 +3779,9 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
 		// end-stop -- compute max over other angles -- any opposite polarity angle will do
 		for(int opang=0; opang<v1s_specs.n_angles; opang++) {
 		  float ev = MatMotEl(&v1s_out_r, opang, sfc_end.y, sce.x, sce.y, v1s_mot_idx);
+		  ev = MIN(ev, ctr_val); // cannot exceed central value -- this is the primary
+		  // driver of the cell so ends cannot get it more excited than center --
+		  // otherwise you can get a 2/3 activity of bright ends with a weak ctr
 		  end_val = MAX(end_val, ev);
 		}
 	      }
@@ -3881,6 +3884,9 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Binocular_thread(int v1c_idx, int thread
 		    int didx = disp + v1b_specs.n_disps;
 		    float ev = v1b_out.FastEl(opang, sfc_end.y + didx * v1s_feat_geom.y,
 					      sce.x, sce.y) * v1bc_weights.FastEl(didx);
+		    ev = MIN(ev, ctr_val); // cannot exceed central value -- this is the primary
+		    // driver of the cell so ends cannot get it more excited than center --
+		    // otherwise you can get a 2/3 activity of bright ends with a weak ctr
 		    end_val = MAX(end_val, ev);
 		  }
 		}
