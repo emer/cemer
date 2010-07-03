@@ -793,8 +793,9 @@ INHERITED(taOBase)
 public:
   int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- speeds are 1, 2, 4, 8, etc and tuning_width is proportional to speed -- only applicable if motion_frames > 1
   int		tuning_width;	// #DEF_1 additional width of encoding around the trajectory for the target speed -- allows for some fuzziness in encoding -- effective value is multiplied by speed, so it gets fuzzier as speed gets higher
-  int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for weighting the contribution of extra width guys -- normalized by effective tuning_width
+
+  int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
 
   void 	Initialize();
   void	Destroy() { };
@@ -808,11 +809,15 @@ class TA_API V1BinocularSpec : public taOBase {
 INHERITED(taOBase)
 public:
   int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = 1 near and 1 far)
-  int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
   int		disp_off;	// #DEF_2 offset from corresponding location for each disparity step
-  int		tuning_width;	// #DEF_1 additional width of encoding around the target disparity -- allows for some fuzziness in encoding
-  int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
-  float		gauss_sig;	// #DEF_0.5 gaussian sigma for weighting the contribution of extra width guys -- normalized by tuning_width
+  int		tuning_width; 	// #DEF_2 for non-focal disparities: additional width of encoding around target offset disparity -- allows for some fuzziness in encoding -- last disparity on near/far has extra end_width too
+  int		end_width;	// #DEF_4 extra tuning width on the ends, to extend out and capture all reasonable disparities
+  float		gauss_sig; 	// #DEF_0.5 gaussian sigma for weighting the contribution of tuning width -- normalized by tuning_width -- last disparity on near/far ends does not come back down
+  int		focal_tuning_width; // #DEF_2 for focal tuning: additional width of encoding around the focal disparity -- allows for some fuzziness in encoding
+  float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
+
+ int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
+ int		max_width;	// #READ_ONLY maximum total width (1 + 2 * tuning_width for symmetric, + end_width for ends)
 
   void 	Initialize();
   void	Destroy() { };
@@ -829,10 +834,8 @@ public:
   TwoDCoord	spat_rf_half;	// #READ_ONLY half rf
   TwoDCoord	spacing;	// how to space out the centers of the complex rfields -- typically 1/2 overlap with spat_rf
   TwoDCoord	border;		// #READ_ONLY #SHOW border onto v1s filters -- automatically computed based on wrap mode and spacing setting
-  float		gauss_sig;	// #DEF_0.5 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
-  float		focal_wt;	// #DEF_2 how much stronger should the focal disparity be relative to the others?  only for binocular case
-  float		focal_wt_eff;	// #READ_ONLY normalized
-  float		nonfocal_wt_eff; // #READ_ONLY normalized
+  float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
+  float		nonfocal_wt;	// #DEF_0.5 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
 
   void 	Initialize();
   void	Destroy() { };
@@ -891,6 +894,7 @@ public:
   int		v1s_feat_mot_y;	// #READ_ONLY y axis index for start of motion features in v1s -- x axis is angles
 
   V1BinocularSpec v1b_specs;	// #CONDSHOW_ON_ocularity:BINOCULAR specs for V1 binocular filters -- comes after V1 simple processing in binocular case
+  RenormMode	v1b_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1b filters
   DataSave	v1b_save;	// #CONDSHOW_ON_ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
   XYNGeom	v1b_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- (1 + 2*n_disps) * v1s_feat_geom -- order: near, focus, far
 
@@ -913,8 +917,10 @@ public:
   taBase_List 	gabor_filters; 	// #READ_ONLY #NO_SAVE full set of gabor filters for v1s (type GaborFilter)
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
-  float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular weighting factors (1d)
-  int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: [
+  int_Matrix	v1b_widths; 	// #READ_ONLY #NO_SAVE width of stencils for binocularity detectors 1d: [tot_disps]
+  float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular weighting factors -- for each tuning disparity [max_width][tot_disps] -- only v1b_widths[disp] are used per disparity
+  int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: 2d: [max_width][tot_disps]
+  float_Matrix	v1bc_weights;	// #READ_ONLY #NO_SAVE weighting factors for integration from binocular disparities to complex responses
   float_Matrix	v1c_weights;	// #READ_ONLY #NO_SAVE v1 complex spatial weighting factors (2d)
   int_Matrix	v1c_stencils; 	// #READ_ONLY #NO_SAVE stencils for complex cells [x,y][3 (line_len)][angles]
 

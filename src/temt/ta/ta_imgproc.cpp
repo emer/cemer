@@ -2699,18 +2699,21 @@ void V1MotionSpec::UpdateAfterEdit_impl() {
 
 void V1BinocularSpec::Initialize() {
   n_disps = 1;
-  disp_off = 2;
-  tuning_width = 1;
+  disp_off = 4;
+  tuning_width = 2;
+  end_width = 4;
   gauss_sig = 0.5f;
+  focal_tuning_width = 2;
+  opt_thr = 0.01f;
 
-  tot_width = 1 + 2 * tuning_width;
   tot_disps = 1 + 2 * n_disps;
+  max_width = 1 + 2 * tuning_width + end_width;
 }
 
 void V1BinocularSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  tot_width = 1 + 2 * tuning_width;
   tot_disps = 1 + 2 * n_disps;
+  max_width = 1 + 2 * tuning_width + end_width;
 }
 
 void V1ComplexSpec::Initialize() {
@@ -2718,17 +2721,13 @@ void V1ComplexSpec::Initialize() {
   spat_rf_half = 3;
   spacing = 3;
   border = 0;
-  gauss_sig = 0.5f;
-  focal_wt = 2.0f;
-  focal_wt_eff = focal_wt / (focal_wt + 2.0f);
-  nonfocal_wt_eff = 1.0f / (focal_wt + 2.0f);
+  gauss_sig = 0.8f;
+  nonfocal_wt = 0.5f;
 }
 
 void V1ComplexSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   spat_rf_half = spat_rf / 2;
-  focal_wt_eff = focal_wt / (focal_wt + 2.0f);
-  nonfocal_wt_eff = 1.0f / (focal_wt + 2.0f);
 }
 
 
@@ -2742,6 +2741,7 @@ void V1RegionSpec::Initialize() {
   v1m_renorm = NO_RENORM;
   v1s_save = SAVE_DATA;
   v1s_feat_geom.SetXYN(4, 6, 24);
+  v1b_renorm = LIN_RENORM;
   v1b_save = SAVE_DATA;
   v1c_filters = CF_DEFAULT;
   v1c_renorm = LOG_RENORM;
@@ -3079,25 +3079,69 @@ bool V1RegionSpec::InitFilters_V1Motion() {
 }
 
 bool V1RegionSpec::InitFilters_V1Binocular() {
-  v1b_weights.SetGeom(1, v1b_specs.tot_width);
-  if(v1b_specs.tuning_width > 0) {
-    int idx = 0;
-    for(int x=-v1b_specs.tuning_width; x<=v1b_specs.tuning_width; x++, idx++) {
-      float fx = (float)x / (float)v1b_specs.tuning_width;
-      v1b_weights.FastEl(idx) = taMath_float::gauss_den_sig(fx, v1b_specs.gauss_sig);
-    }
-  }
-  taMath_float::vec_norm_max(&v1b_weights); // max norm to 1
+  v1b_widths.SetGeom(1, v1b_specs.tot_disps);
+  v1b_weights.SetGeom(2, v1b_specs.max_width, v1b_specs.tot_disps);
+  v1b_stencils.SetGeom(2, v1b_specs.max_width, v1b_specs.tot_disps);
 
-  v1b_stencils.SetGeom(2, v1b_specs.tot_width, v1b_specs.tot_disps);
+  v1bc_weights.SetGeom(1, v1b_specs.tot_disps);
+
+  int twe = v1b_specs.tuning_width + v1b_specs.end_width;
+
+  // everything is conditional on the disparity
   for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
     int didx = disp + v1b_specs.n_disps;
-    for(int tw=-v1b_specs.tuning_width; tw <= v1b_specs.tuning_width; tw++) {
-      int twidx = tw + v1b_specs.tuning_width;
-      int off = disp * v1b_specs.disp_off + tw;
-      v1b_stencils.FastEl(twidx, didx) = off;
+    int doff = disp * v1b_specs.disp_off;
+    if(disp == 0) {		// focal
+      v1b_widths.FastEl(didx) = 1 + 2 * v1b_specs.focal_tuning_width;
+      v1bc_weights.FastEl(didx) = 1.0f;
+      for(int tw=-v1b_specs.focal_tuning_width; tw<=v1b_specs.focal_tuning_width; tw++) {
+	int twidx = tw + v1b_specs.focal_tuning_width;
+	float fx = (float)tw / (float)v1b_specs.focal_tuning_width;
+	v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, v1b_specs.gauss_sig);
+	v1b_stencils.FastEl(twidx, didx) = doff + tw;
+      }
+    }
+    else if(disp == -v1b_specs.n_disps) {
+      v1b_widths.FastEl(didx) = 1 + 2 * v1b_specs.tuning_width + v1b_specs.end_width;
+      v1bc_weights.FastEl(didx) = v1c_specs.nonfocal_wt;
+      for(int tw=-twe; tw<=v1b_specs.tuning_width; tw++) {
+	int twidx = tw + twe;
+	if(tw < 0)
+	  v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(0.0f, v1b_specs.gauss_sig);
+	else {
+	  float fx = (float)tw / (float)v1b_specs.tuning_width;
+	  v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, v1b_specs.gauss_sig);
+	}
+	v1b_stencils.FastEl(twidx, didx) = doff + tw;
+      }
+    }
+    else if(disp == v1b_specs.n_disps) {
+      v1b_widths.FastEl(didx) = 1 + 2 * v1b_specs.tuning_width + v1b_specs.end_width;
+      v1bc_weights.FastEl(didx) = v1c_specs.nonfocal_wt;
+      for(int tw=-v1b_specs.tuning_width; tw<=twe; tw++) {
+	int twidx = tw + v1b_specs.tuning_width;
+	if(tw > 0)
+	  v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(0.0f, v1b_specs.gauss_sig);
+	else {
+	  float fx = (float)tw / (float)v1b_specs.tuning_width;
+	  v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, v1b_specs.gauss_sig);
+	}
+	v1b_stencils.FastEl(twidx, didx) = doff + tw;
+      }
+    }
+    else {
+      v1b_widths.FastEl(didx) = 1 + 2 * v1b_specs.tuning_width;
+      v1bc_weights.FastEl(didx) = v1c_specs.nonfocal_wt;
+      for(int tw=-v1b_specs.tuning_width; tw<=v1b_specs.tuning_width; tw++) {
+	int twidx = tw + v1b_specs.tuning_width;
+	float fx = (float)tw / (float)v1b_specs.tuning_width;
+	v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, v1b_specs.gauss_sig);
+	v1b_stencils.FastEl(twidx, didx) = doff + tw;
+      }
     }
   }
+      
+  taMath_float::vec_norm_max(&v1b_weights); // max norm to 1
 
   return true;
 }
@@ -3533,6 +3577,11 @@ bool V1RegionSpec::V1BinocularFilter() {
 
   ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_thread);
   threads.Run(&ip_call, n_run);
+
+  if(v1b_renorm != NO_RENORM) {
+    RenormOutput_NoFrames(v1b_renorm, &v1b_out);
+  }
+
   return true;
 }
 
@@ -3549,38 +3598,54 @@ void V1RegionSpec::V1BinocularFilter_thread(int v1b_idx, int thread_no) {
   TwoDCoord sfc;		// v1s feature coords -- source
   TwoDCoord bo;			// binoc offset
   bo.y = bc.y;			// this will never be wrapped or clipped so can be set once..
-  for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
-    int didx = disp + v1b_specs.n_disps;
-    for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
-      sfc.x = sfi % v1s_feat_geom.x;
-      sfc.y = sfi / v1s_feat_geom.x;
-      fc.x = sfc.x;
-      fc.y = sfc.y + didx * v1s_feat_geom.y;
 
-      float sum_disp = 0.0f;
-      for(int tw=-v1b_specs.tuning_width; tw <= v1b_specs.tuning_width; tw++) {
-	int twidx = tw + v1b_specs.tuning_width;
+  for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
+    sfc.x = sfi % v1s_feat_geom.x;
+    sfc.y = sfi / v1s_feat_geom.x;
+    fc.x = sfc.x;
+
+    // response is anchored at corresponding location on the right (dominant) eye --
+    // this determines the max response at this point in the visual field
+    float rv = MatMotEl(&v1s_out_r, sfc.x, sfc.y, bc.x, bc.y, cur_mot_idx); // note: bc
+
+    if(rv < v1b_specs.opt_thr) {
+      for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
+	int didx = disp + v1b_specs.n_disps;
+	fc.y = sfc.y + didx * v1s_feat_geom.y;
+	v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = 0.0f;
+      }
+      continue;
+    }
+
+    float_Matrix disp_wts;
+    disp_wts.SetGeom(1, v1b_specs.tot_disps);
+    disp_wts.InitVals(0.0f);
+
+    // find max left eye response across each disparity
+    for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
+      int didx = disp + v1b_specs.n_disps;
+      int dwd = v1b_widths.FastEl(didx);
+      float max_lv = 0.0f;
+      for(int twidx = 0; twidx < dwd; twidx++) {
 	int off = v1b_stencils.FastEl(twidx, didx);
 	
-	// right eye -- near = more to the left = -x, far = more to the right = +x
-	bo.x = bc.x + off;
-	if(bo.WrapClip(wrap, v1s_img_geom)) {
-	  if(edge_mode == CLIP) continue; // bail on clipping only
-	}
-	float rv = MatMotEl(&v1s_out_r, sfc.x, sfc.y, bo.x, bo.y, cur_mot_idx);
-
 	// left eye is opposite
 	bo.x = bc.x - off;
 	if(bo.WrapClip(wrap, v1s_img_geom)) {
 	  if(edge_mode == CLIP) continue; // bail on clipping only
 	}
 	float lv = MatMotEl(&v1s_out_l, sfc.x, sfc.y, bo.x, bo.y, cur_mot_idx);
-
-	sum_disp += v1b_weights.FastEl(twidx) * 0.5 * (rv + lv);
-	// note: squaring rv * lv has the beneficial effect of strongly emphasizing match
-	// additive is very weak, but also more robust to small mismatches..
+	lv *= v1b_weights.FastEl(twidx, didx);
+	max_lv = MAX(max_lv, lv);
       }
-      v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = sum_disp;
+      disp_wts.FastEl(didx) = max_lv;
+    }
+
+    taMath_float::vec_norm_max(&disp_wts); // normalize to max = 1
+    for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
+      int didx = disp + v1b_specs.n_disps;
+      fc.y = sfc.y + didx * v1s_feat_geom.y;
+      v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = rv * disp_wts.FastEl(didx); // apportion by norm
     }
   }
 }
@@ -3736,7 +3801,111 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
 }
 
 void V1RegionSpec::V1ComplexFilter_EsLs_Binocular_thread(int v1c_idx, int thread_no) {
-  // todo: write this -- same as monoc but integrate over disparities with weights
+  TwoDCoord cc;			// complex coords
+  cc.x = v1c_idx % v1c_img_geom.x;
+  cc.y = v1c_idx / v1c_img_geom.x;
+  TwoDCoord scs = v1c_specs.spacing * cc; // v1s coords start
+  scs += v1c_specs.border;
+  scs -= v1c_specs.spat_rf_half; // convert to lower-left starting position, not center
+
+  int v1s_mot_idx = v1s_circ_r.CircIdx_Last();
+
+  int cfidx = 0;		// complex feature index
+  TwoDCoord sc;			// simple coord
+  TwoDCoord sce;		// simple coord, ends
+  TwoDCoord scc;		// simple coord, center
+  TwoDCoord fc;			// v1c feature coords
+  TwoDCoord sfc_ctr;		// simple feature coords for the central point
+  TwoDCoord sfc_end;		// simple feature coords for the end point
+  for(int cfeat = 0; cfeat < 2; cfeat++) { // end-stop, length-sum
+    if(cfeat == 0) {
+      if(!(v1c_filters & END_STOP)) continue;
+      fc.y = v1c_feat_es_y;
+    }
+    else {
+      if(!(v1c_filters & LEN_SUM)) continue;
+      fc.y = v1c_feat_ls_y;
+    }
+    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+      fc.x = ang;
+      float max_sf = 0.0f;	// max over simple features
+      for(int v1sf = 0; v1sf < v1s_feat_geom.y; v1sf++) {
+	// v1 simple features -- for end-stop, designates the sign of the center..
+	int v1sf_onst = 2 * (v1sf / 2); // even numbers = start of on-center
+	sfc_ctr.x = ang;
+	sfc_ctr.y = v1sf;
+	sfc_end.x = ang;
+	if(cfeat == 0)	{	// end stop
+	  sfc_end.y = v1sf_onst + (1 - (v1sf - v1sf_onst)); // opposite polarity -- flip bit in odd/even within same set of 2
+	}
+	else {
+	  sfc_end.y = v1sf;
+	}
+
+	float max_rf = 0.0f;   // max over spatial rfield
+	for(int ys = 0; ys < v1c_specs.spat_rf.y; ys++) { // ysimple
+	  sc.y = scs.y + ys;
+	  for(int xs = 0; xs < v1c_specs.spat_rf.x; xs++) { // xsimple
+	    sc.x = scs.x + xs;
+	    scc = sc;	// center
+	    if(scc.WrapClip(wrap, v1s_img_geom)) {
+	      if(edge_mode == CLIP) continue; // bail on clipping only
+	    }
+
+	    // first get central value -- always the same
+	    float ctr_val = 0.0f;
+	    for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
+	      int didx = disp + v1b_specs.n_disps;
+	      float cv = MatMotEl(&v1b_out, sfc_ctr.x, sfc_ctr.y + didx * v1s_feat_geom.y,
+				  scc.x, scc.y, v1s_mot_idx) * v1bc_weights.FastEl(didx);
+	      ctr_val = MAX(ctr_val, cv);
+	    }
+
+	    // now get the end points
+	    float line_sum = ctr_val;
+	    for(int lpt=0; lpt < 2; lpt++) {
+	      int xp = v1c_stencils.FastEl(X,lpt,ang);
+	      int yp = v1c_stencils.FastEl(Y,lpt,ang);
+	      sce.x = sc.x + xp;
+	      sce.y = sc.y + yp;
+
+	      if(sce.WrapClip(wrap, v1s_img_geom)) {
+		if(edge_mode == CLIP) continue; // bail on clipping only
+	      }
+
+	      float end_val = 0.0f;
+	      if(cfeat == 0) {
+		// end-stop -- compute max over other angles -- any opposite polarity angle will do
+		for(int opang=0; opang<v1s_specs.n_angles; opang++) {
+		  for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
+		    int didx = disp + v1b_specs.n_disps;
+		    float ev = v1b_out.FastEl(opang, sfc_end.y + didx * v1s_feat_geom.y,
+					      sce.x, sce.y) * v1bc_weights.FastEl(didx);
+		    end_val = MAX(end_val, ev);
+		  }
+		}
+	      }
+	      else {		// length-sum -- just use end
+		for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
+		  int didx = disp + v1b_specs.n_disps;
+		  float ev = v1b_out.FastEl(sfc_end.x, sfc_end.y + didx * v1s_feat_geom.y,
+					    sce.x, sce.y) * v1bc_weights.FastEl(didx);
+		  end_val = MAX(end_val, ev);
+		}
+	      }
+	      line_sum += end_val;
+	    }
+	    line_sum *= 0.3333333f;
+	    line_sum *= v1c_weights.FastEl(xs, ys); // spatial rf weighting
+	    max_rf = MAX(max_rf, line_sum);
+	  }
+	}
+	max_sf = MAX(max_sf, max_rf); // max over all simple features -- very general
+      } // for v1sf
+      v1c_out.FastEl(fc.x, fc.y, cc.x, cc.y) = max_sf;
+    }  // for ang
+    cfidx++;			// increment on success
+  }
 }
 
 void V1RegionSpec::V1ComplexFilter_V1SMax_Monocular_thread(int v1c_idx, int thread_no) {
@@ -4334,19 +4503,19 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
     TwoDCoord dc;
     for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
       int didx = disp + v1b_specs.n_disps;
+      int dwd = v1b_widths.FastEl(didx);
       ic.y = half_sz.y;
-      ic.x = brd.x + v1b_specs.disp_off*v1b_specs.n_disps + didx * bin_rf_max;
+      ic.x = brd.x + v1b_specs.end_width + v1b_specs.disp_off*v1b_specs.n_disps + didx * bin_rf_max;
 	    
       if(ic.WrapClip(true, max_sz));
       mat->FastEl(ic.x,ic.y-1) = -0.5f;
 
-      for(int tw=-v1b_specs.tuning_width; tw <= v1b_specs.tuning_width; tw++) {
-	int twidx = tw + v1b_specs.tuning_width;
+      for(int twidx = 0; twidx < dwd; twidx++) {
 	int off = v1b_stencils.FastEl(twidx, didx);
 	dc = ic;
 	dc.x += off;
 	if(dc.WrapClip(true, max_sz));
-	mat->FastEl(dc.x,dc.y) = v1b_weights.FastEl(twidx);
+	mat->FastEl(dc.x,dc.y) = v1b_weights.FastEl(twidx, didx);
       }
     }
   }
