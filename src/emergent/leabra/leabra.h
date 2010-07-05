@@ -1048,7 +1048,6 @@ public:
   LeabraActAvgSpec act_avg;	// #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
   LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1, .1, .5] maximal conductances for channels
   LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .15, .15, 1, 0] reversal potentials for each channel
-  LeabraChannels e_rev_sub_thr;	// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
   VChanSpec	hyst;		// #CAT_Activation [Defaults: .05, .8, .7, .1] hysteresis (excitatory) v-gated chan (Ca2+, NMDA)
   VChanSpec	acc;		// #CAT_Activation [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
@@ -1267,6 +1266,9 @@ protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();	// to set _impl sig
   void 	CheckThisConfig_impl(bool quiet, bool& rval);
+
+  LeabraChannels e_rev_sub_thr;	// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
+  float		thr_sub_e_rev_i;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN act.thr - e_rev.i used for compute_ithresh
 
 private:
   void 	Initialize();
@@ -3527,7 +3529,7 @@ inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* ne
   // including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h) /
-	  (act.thr - e_rev.i));
+	  (thr_sub_e_rev_i));
 } 
 
 inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* net) {
@@ -3537,7 +3539,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* ne
   // NOT including the ga term
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.h * e_rev_sub_thr.h) /
-	  (act.thr - e_rev.i));
+	  (thr_sub_e_rev_i));
 } 
 
 inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* net) {
@@ -3547,7 +3549,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* ne
   // NOT including the gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a) /
-	  (act.thr - e_rev.i));
+	  (thr_sub_e_rev_i));
 } 
 
 inline float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* net) {
@@ -3556,14 +3558,14 @@ inline float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* n
     non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
   // NOT including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l) /
-	  (act.thr - e_rev.i));
+	  (thr_sub_e_rev_i));
 } 
 
 inline float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* net) {
   // including the ga and gh terms and bias weights
   return ((u->net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h) /
-	  (act.thr - e_rev.i));
+	  (thr_sub_e_rev_i));
 } 
 
 inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {

@@ -603,7 +603,10 @@ public:
   static double	vec_quantile(const double_Matrix* vec, double quant_pos);
   // #CAT_Statistics compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc
   static double	vec_kwta(double_Matrix* vec, int k, bool descending = true);
-  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the values of the items that are k and k+1 from the highest (lowest if !descending) on the list -- this can be much faster than vec_quantile, which does a full sort
+  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the value of the item that is k from the highest (lowest if !descending) on the list -- this can be much faster than vec_quantile, which does a full sort
+  static void	vec_kwta_avg(double& top_k_avg, double& bot_k_avg, 
+			     double_Matrix* vec, int k, bool descending = true);
+  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the average of the top k values, and average of the bottom k (reversed if !descending) on the list
 
   static String vec_stats(const double_Matrix* vec);
   // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
@@ -1201,7 +1204,10 @@ public:
   static float	vec_quantile(const float_Matrix* vec, float quant_pos);
   // #CAT_Statistics compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc
   static float	vec_kwta(float_Matrix* vec, int k, bool descending = true);
-  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the values of the items that are k and k+1 from the highest (lowest if !descending) on the list -- this can be much faster than vec_quantile, which does a full sort
+  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the value of the item that is k from the highest (lowest if !descending) on the list -- this can be much faster than vec_quantile, which does a full sort
+  static void	vec_kwta_avg(float& top_k_avg, float& bot_k_avg, 
+			     float_Matrix* vec, int k, bool descending = true);
+  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the average of the top k values, and average of the bottom k (reversed if !descending) on the list
 
   static String vec_stats(const float_Matrix* vec);
   // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).

@@ -795,6 +795,7 @@ void LeabraUnitSpec::Defaults_init() {
   e_rev_sub_thr.i = e_rev.i - act.thr;
   e_rev_sub_thr.h = e_rev.h - act.thr;
   e_rev_sub_thr.a = e_rev.a - act.thr;
+  thr_sub_e_rev_i = act.thr - e_rev.i;
 
   hyst.b_inc_dt = .05f;
   hyst.b_dec_dt = .05f;
@@ -828,6 +829,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   e_rev_sub_thr.i = e_rev.i - act.thr;
   e_rev_sub_thr.h = e_rev.h - act.thr;
   e_rev_sub_thr.a = e_rev.a - act.thr;
+  thr_sub_e_rev_i = act.thr - e_rev.i;
 }
 
 void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {

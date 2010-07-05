@@ -32,6 +32,7 @@
 #include "ta_program.h"
 #include "ta_geometry.h"
 #include "ta_datatable.h"
+#include "fun_lookup.h"
 
 #if defined(TA_GUI) && !defined(__MAKETA__)
 # include <QImage>
@@ -754,6 +755,82 @@ private:
 ////////////////////////////////////////////////////////////////////
 //		V1 Processing -- basic RF's
 
+class TA_API V1KwtaSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image k-winners-take-all dynamics for v1 image processing stages -- based on Leabra dynamics with asymptotic activation settling -- see Leabra docs for more info on various parameters (LeabraUnitSpec, LeabraLayerSpec) -- inhibition can only ever *decrease* activation levels from their raw filter values, so gain and nvar are less critical parameters here, as long as they are sufficiently high
+INHERITED(taOBase)
+public:
+  bool		on;	// is kwta active for this stage of processing?
+  bool		max_raw; // #CONDSHOW_ON_on #DEF_true the resulting activation value cannot exceed the original 'raw' input activation resulting from the filtering process -- retains the original graded saliency strengths, countering the tendency of kwta to renormalize everything to the same activation values
+  int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
+  float		gp_g;	// #CONDSHOW_ON_on #DEF_0.1 gain on sharing of group-level inhibition with other unit groups -- spreads inhibition throughout the layer
+  float		min_i;	// #CONDSHOW_ON_on #DEF_0 minimum amount of inhibition to apply, regardless of raw input strength and computed kwta inhib values -- establishes a low cutoff
+  float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.6 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units
+  float		gain;	 // #CONDSHOW_ON_on #DEF_600 gain on the NOISY_XX1 activation function
+  float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
+  float		g_bar_e; // #CONDSHOW_ON_on #DEF_0.5 excitatory conductance multiplier -- multiplies filter input value prior to computing membrane potential -- general target is to have max excitatory input = .5, so with 0-1 normalized inputs, this value should be .5
+  float		g_bar_l; // #CONDSHOW_ON_on #DEF_0.1 leak current conductance value
+
+  float		e_rev_e; // #CONDSHOW_ON_on #DEF_1 #EXPERT excitatory reversal potential -- generally not changed from default value of 1 in normalized units
+  float		e_rev_l; // #CONDSHOW_ON_on #DEF_0.15 #EXPERT leak and inhibition reversal potential -- generally not changed from default value of 0.15 in normalized units
+  float		thr;	 // #CONDSHOW_ON_on #DEF_0.25 #EXPERT firing threshold -- generally not changed from default value of .25 in normalized units
+
+  virtual bool	Compute_Kwta(float_Matrix& inputs, float_Matrix& outputs, float_Matrix& gc_i_mat);
+  // main interface: given the input matrix (raw output of filtering step), compute output activations via kwta function, using gc_i_mat to store inhib values per feature group
+
+  virtual void	Compute_Inhib(float_Matrix& inputs, float_Matrix& gc_i_mat);
+  // inhib impl: given the input matrix (raw output of filtering step), compute inhibitory currrents for each feature group, stored in gc_i matrix
+
+  inline float 	Compute_IThresh(float gc_e) {
+    return ((gc_e * e_rev_sub_thr_e + gbl_e_rev_sub_thr_l) / (thr_sub_e_rev_i));
+  } 
+  // compute inhibitory threshold value -- amount of inhibition to put unit right at firing threshold membrane potential
+
+  inline float 	Compute_EqVm(float gc_e, float gc_i) {
+    float new_v_m = ((gc_e * e_rev_e + gber_l + (gc_i * e_rev_l)) / (gc_e + g_bar_l + gc_i));
+    return new_v_m;
+  }
+  // compute equilibrium membrane potential from excitatory (gc_e) and inhibitory (gc_i) input currents (gc_e = raw filter value, gc_i = inhibition computed from kwta) -- in normalized units (e_rev_e = 1), and inhib e_rev_i = e_rev_l
+  
+  inline float 	Compute_ActFmVm(float vm) {
+    float thr_vm = vm - thr; // thresholded vm
+    float new_act;
+    if(thr_vm <= nxx1_fun.x_range.min) {
+      new_act = 0.0f;
+    }
+    else if(thr_vm >= nxx1_fun.x_range.max) {
+      thr_vm *= gain;
+      new_act = thr_vm / (thr_vm + 1.0f);
+    }
+    else {
+      new_act = nxx1_fun.Eval(thr_vm);
+    }
+    return new_act;
+  }
+
+  inline float Compute_ActFmIn(float gc_e, float gc_i) {
+    return Compute_ActFmVm(Compute_EqVm(gc_e, gc_i));
+  }
+
+  virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1KwtaSpec);
+protected:
+
+#ifndef __MAKETA__
+  FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
+  FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
+#endif
+  float		gber_l;	 // #READ_ONLY #NO_SAVE g_bar_l * e_rev_l -- just a compute time saver
+  float		e_rev_sub_thr_e;// #READ_ONLY #NO_SAVE #HIDDEN e_rev_e - thr -- used for compute_ithresh
+  float		gbl_e_rev_sub_thr_l;// #READ_ONLY #NO_SAVE #HIDDEN g_bar_l * (e_rev_l - thr) -- used for compute_ithresh
+  float		thr_sub_e_rev_i;// #READ_ONLY #NO_SAVE #HIDDEN thr - e_rev_i used for compute_ithresh
+
+  void 	UpdateAfterEdit_impl();
+};
+
+
 class TA_API V1SimpleSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells
 INHERITED(taOBase)
@@ -810,10 +887,9 @@ INHERITED(taOBase)
 public:
   int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = 1 near and 1 far)
   int		disp_off;	// #DEF_2 offset from corresponding location for each disparity step
-  int		tuning_width; 	// #DEF_2 for non-focal disparities: additional width of encoding around target offset disparity -- allows for some fuzziness in encoding -- last disparity on near/far has extra end_width too
+  int		tuning_width; 	// #DEF_1 for non-focal disparities: additional width of encoding around target offset disparity -- allows for some fuzziness in encoding -- last disparity on near/far has extra end_width too
   int		end_width;	// #DEF_4 extra tuning width on the ends, to extend out and capture all reasonable disparities
-  float		gauss_sig; 	// #DEF_0.5 gaussian sigma for weighting the contribution of tuning width -- normalized by tuning_width -- last disparity on near/far ends does not come back down
-  int		focal_tuning_width; // #DEF_2 for focal tuning: additional width of encoding around the focal disparity -- allows for some fuzziness in encoding
+  float		gauss_sig; 	// #DEF_0.7 gaussian sigma for weighting the contribution of tuning width -- normalized by tuning_width -- last disparity on near/far ends does not come back down
   float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
 
  int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
@@ -843,6 +919,7 @@ public:
 protected:
   void 	UpdateAfterEdit_impl();
 };
+
 
 class TA_API V1RegionSpec : public DoGRegionSpec {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- takes retinal DoG filter inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
@@ -883,10 +960,11 @@ public:
 
 
   V1SimpleSpec	v1s_specs;	// specs for V1 simple filters -- first step after DoG -- encode simple oriented edges in same polarities/colors as in DoG layer, plus motion if applicable
+  V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
   V1SGaborSpec	v1s_gabors;	// specs for V1 simple gabor filters, can be used instead of simple line elements from v1s specs
   V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||1 specs for V1 motion filters within the simple processing layer
   RenormMode	v1s_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s static filters
-  RenormMode	v1m_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s motion filters
+  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
   XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
   XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by dog_img_geom, rf_size and half_ovlp setting
@@ -894,12 +972,14 @@ public:
   int		v1s_feat_mot_y;	// #READ_ONLY y axis index for start of motion features in v1s -- x axis is angles
 
   V1BinocularSpec v1b_specs;	// #CONDSHOW_ON_ocularity:BINOCULAR specs for V1 binocular filters -- comes after V1 simple processing in binocular case
-  RenormMode	v1b_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1b filters
+  V1KwtaSpec	v1b_kwta;	// #CONDSHOW_ON_ocularity:BINOCULAR k-winner-take-all inhibitory dynamics for the v1 binocular stage -- can help to resolve the dominant disparity coding
+  RenormMode	v1b_renorm;	// #CONDSHOW_ON_ocularity:BINOCULAR #DEF_LIN_RENORM how to renormalize the output of v1b filters
   DataSave	v1b_save;	// #CONDSHOW_ON_ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
-  XYNGeom	v1b_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- (1 + 2*n_disps) * v1s_feat_geom -- order: near, focus, far
+  XYNGeom	v1b_feat_geom; 	// #CONDSHOW_ON_ocularity:BINOCULAR# READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- (1 + 2*n_disps) * v1s_feat_geom -- order: near, focus, far
 
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
+  V1KwtaSpec	v1c_kwta;	// k-winner-take-all inhibitory dynamics for the v1 complex stage -- in general only use this when NOT otherwise using leabra, because these inputs will go into leabra anyway
   RenormMode	v1c_renorm;	// #DEF_LOG_RENORM how to renormalize the output of v1c filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
@@ -924,11 +1004,18 @@ public:
   float_Matrix	v1c_weights;	// #READ_ONLY #NO_SAVE v1 complex spatial weighting factors (2d)
   int_Matrix	v1c_stencils; 	// #READ_ONLY #NO_SAVE stencils for complex cells [x,y][3 (line_len)][angles]
 
+  float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
+  float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
+  float_Matrix	v1s_gci;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory conductances, for computing kwta
   float_Matrix	v1s_out_l;	 // #READ_ONLY #NO_SAVE v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   CircMatrix	v1s_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
   CircMatrix	v1s_circ_l;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
+  float_Matrix	v1b_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 binocular output [feat.x][feat.y][img.x][img.y] -- only present for BINOCULAR ocularity
+  float_Matrix	v1b_gci;	 // #READ_ONLY #NO_SAVE v1 binocular cell inhibitory conductances, for computing kwta
   float_Matrix	v1b_out;	 // #READ_ONLY #NO_SAVE v1 binocular output [feat.x][feat.y][img.x][img.y] -- only present for BINOCULAR ocularity
+  float_Matrix	v1c_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 complex output [feat.x][feat.y][img.x][img.y]
+  float_Matrix	v1c_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
   float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [feat.x][feat.y][img.x][img.y]
 
   virtual void	GridGaborFilters(DataTable* disp_data);
@@ -962,7 +1049,8 @@ protected:
   override void IncrTime();
 
   virtual bool	V1SimpleFilter_Static(float_Matrix* dog, CircMatrix* dog_circ,
-				      float_Matrix* out, CircMatrix* circ);
+				      float_Matrix* out_raw, float_Matrix* out, 
+				      CircMatrix* circ);
   // do simple filters, static only on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Static_thread(int v1s_idx, int thread_no);
   // do simple filters, static only on current inputs -- do it
