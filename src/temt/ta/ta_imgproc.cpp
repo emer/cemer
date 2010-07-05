@@ -2659,7 +2659,7 @@ DoGRegionSpec* DoGRegionSpecList::FindRetinalRegionRes(DoGRegionSpec::Region reg
 
 void V1KwtaSpec::Initialize() {
   on = false;
-  max_raw = true;
+  raw_pct = 0.5f;
   gp_k = 1;
   gp_g = 0.1f;
   min_i = 0.0f;
@@ -2682,6 +2682,7 @@ void V1KwtaSpec::Initialize() {
   nxx1_fun.res = .001f;
   nxx1_fun.UpdateAfterEdit_NoGui();
 
+  raw_pct_c = 1.0f - raw_pct;
   gber_l = g_bar_l * e_rev_l;
   e_rev_sub_thr_e = e_rev_e - thr;
   gbl_e_rev_sub_thr_l = g_bar_l * (e_rev_l - thr);
@@ -2692,6 +2693,7 @@ void V1KwtaSpec::Initialize() {
 
 void V1KwtaSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  raw_pct_c = 1.0f - raw_pct;
   gber_l = g_bar_l * e_rev_l;
   e_rev_sub_thr_e = e_rev_e - thr;
   gbl_e_rev_sub_thr_l = g_bar_l * (e_rev_l - thr);
@@ -2791,8 +2793,8 @@ bool V1KwtaSpec::Compute_Kwta(float_Matrix& inputs, float_Matrix& outputs,
 	  float raw = inputs.FastEl(gx, gy, ix, iy);
 	  float ge = g_bar_e * raw;
 	  float act = Compute_ActFmIn(ge, gi);
-	  if(max_raw)
-	    act = MIN(act, raw);// inhibition can't make it stronger!
+	  if(act > raw)
+	    act = raw_pct * raw + raw_pct_c * act; // blendy
 	  outputs.FastEl(gx, gy, ix, iy) = act; 
 	}
       }

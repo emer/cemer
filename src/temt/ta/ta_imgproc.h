@@ -760,7 +760,7 @@ class TA_API V1KwtaSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;	// is kwta active for this stage of processing?
-  bool		max_raw; // #CONDSHOW_ON_on #DEF_true the resulting activation value cannot exceed the original 'raw' input activation resulting from the filtering process -- retains the original graded saliency strengths, countering the tendency of kwta to renormalize everything to the same activation values
+  float		raw_pct; // #CONDSHOW_ON_on #DEF_0.5 what proportion of the raw filter activation value to use in computing the final activation, in combination with the result of the kwta computation -- if kwta is lower than the raw, then that value is used (i.e., the unit was inhibited), but if it is higher, then a blended value is used -- this retains some of the original signal strength in the face of kwta tending to eliminate it
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
   float		gp_g;	// #CONDSHOW_ON_on #DEF_0.1 gain on sharing of group-level inhibition with other unit groups -- spreads inhibition throughout the layer
   float		min_i;	// #CONDSHOW_ON_on #DEF_0 minimum amount of inhibition to apply, regardless of raw input strength and computed kwta inhib values -- establishes a low cutoff
@@ -826,6 +826,7 @@ protected:
   float		e_rev_sub_thr_e;// #READ_ONLY #NO_SAVE #HIDDEN e_rev_e - thr -- used for compute_ithresh
   float		gbl_e_rev_sub_thr_l;// #READ_ONLY #NO_SAVE #HIDDEN g_bar_l * (e_rev_l - thr) -- used for compute_ithresh
   float		thr_sub_e_rev_i;// #READ_ONLY #NO_SAVE #HIDDEN thr - e_rev_i used for compute_ithresh
+  float		raw_pct_c;	// #READ_ONLY #NO_SAVE #HIDDEN 1 - raw_pct
 
   void 	UpdateAfterEdit_impl();
 };
