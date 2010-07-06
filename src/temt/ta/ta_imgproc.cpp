@@ -2901,7 +2901,7 @@ void V1RegionSpec::Initialize() {
 
   v1s_kwta.on = true;
   v1b_kwta.on = true;
-  v1c_kwta.on = false;
+  v1c_kwta.on = true;
 
   cur_dog = NULL;
   cur_dog_circ = NULL;

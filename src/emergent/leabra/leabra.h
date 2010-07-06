@@ -1037,10 +1037,8 @@ public:
   ActFunSpec	act;		// #CAT_Activation activation function specs
   SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   SpikeMiscSpec	spike_misc;	// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
-  ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
-  DepressSpec	depress;	// #CAT_Activation depressing synapses specs -- multiplies activation value by a spike amplitude/probability value that depresses with use and recovers exponentially
-  SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
+  MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   MinMaxRange	vm_range;	// #CAT_Activation membrane potential range (min, max, 0-1 for normalized, -90-50 for bio-based)
   RandomSpec	v_m_init;	// #CAT_Activation what to initialize the membrane potential to (mean = .15, var = 0 std)
@@ -1050,8 +1048,10 @@ public:
   LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .15, .15, 1, 0] reversal potentials for each channel
   VChanSpec	hyst;		// #CAT_Activation [Defaults: .05, .8, .7, .1] hysteresis (excitatory) v-gated chan (Ca2+, NMDA)
   VChanSpec	acc;		// #CAT_Activation [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
+  ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
+  DepressSpec	depress;	// #CAT_Activation depressing synapses specs -- multiplies activation value by a spike amplitude/probability value that depresses with use and recovers exponentially
+  SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
-  MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
   NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec	noise;		// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
   NoiseAdaptSpec noise_adapt;	// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation how to adapt the noise variance (var) value
