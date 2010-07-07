@@ -893,8 +893,8 @@ public:
   float		gauss_sig; 	// #DEF_0.7 gaussian sigma for weighting the contribution of tuning width -- normalized by tuning_width -- last disparity on near/far ends does not come back down
   float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
 
- int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
- int		max_width;	// #READ_ONLY maximum total width (1 + 2 * tuning_width for symmetric, + end_width for ends)
+  int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
+  int		max_width;	// #READ_ONLY maximum total width (1 + 2 * tuning_width for symmetric, + end_width for ends)
 
   void 	Initialize();
   void	Destroy() { };
@@ -904,15 +904,21 @@ protected:
 };
 
 class TA_API V1ComplexSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 binocular cells
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
 INHERITED(taOBase)
 public:
+  int		end_stop_len;	// #DEF_3 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to look for opposite polarity end stops -- often the relevant transition does not occur very quickly, so an extended rf is needed -- this is a half-width, such that overall length is 1 + 2 * end_stop_len
+  int		len_sum_len;	// #DEF_1 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
+  float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
+  float		nonfocal_wt;	// #DEF_0.5 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
   TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field
   TwoDCoord	spat_rf_half;	// #READ_ONLY half rf
   TwoDCoord	spacing;	// how to space out the centers of the complex rfields -- typically 1/2 overlap with spat_rf
   TwoDCoord	border;		// #READ_ONLY #SHOW border onto v1s filters -- automatically computed based on wrap mode and spacing setting
-  float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
-  float		nonfocal_wt;	// #DEF_0.5 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
+
+  int		end_stop_width;	// #READ_ONLY 1 + 2 * end_stop_len -- computed
+  int		len_sum_width;	// #READ_ONLY 1 + 2 * len_sum_len -- computed
+  float		len_sum_norm;	// #READ_ONLY 1.0 / len_sum_width -- normalize sum
 
   void 	Initialize();
   void	Destroy() { };
@@ -981,7 +987,7 @@ public:
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
   V1KwtaSpec	v1c_kwta;	// k-winner-take-all inhibitory dynamics for the v1 complex stage -- in general only use this when NOT otherwise using leabra, because these inputs will go into leabra anyway
-  RenormMode	v1c_renorm;	// #DEF_LOG_RENORM how to renormalize the output of v1c filters
+  RenormMode	v1c_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1c filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
   XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by ..
@@ -1003,7 +1009,8 @@ public:
   int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: 2d: [max_width][tot_disps]
   float_Matrix	v1bc_weights;	// #READ_ONLY #NO_SAVE weighting factors for integration from binocular disparities to complex responses
   float_Matrix	v1c_weights;	// #READ_ONLY #NO_SAVE v1 complex spatial weighting factors (2d)
-  int_Matrix	v1c_stencils; 	// #READ_ONLY #NO_SAVE stencils for complex cells [x,y][3 (line_len)][angles]
+  int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][end_stop_width][angles]
+  int_Matrix	v1c_ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
 
   float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
