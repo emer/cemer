@@ -7711,12 +7711,6 @@ int iTreeView::colFormat(int col) {
   else return v.toInt();
 }
 
-void iTreeView::scrollTo(QTreeWidgetItem* item, ScrollHint hint) {
-  if (!item) return;
-  ext_select_on = false;
-  inherited::scrollTo(indexFromItem(item), hint);
-}
-
 void iTreeView::setColFormat(int col, int value) { 
   if ((col < 0) || (col >= columnCount())) return;
   headerItem()->setData(col, ColFormatRole, value);

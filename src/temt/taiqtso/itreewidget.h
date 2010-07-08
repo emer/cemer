@@ -51,6 +51,11 @@ public:
   void 			resizeColumnsToContents(); // convenience: resizes all but last col
   virtual void		clearExtSelection();	   // clear extended selection mode and also clear any existing selection
 
+#ifndef __MAKETA__
+  USING(inherited::scrollTo)
+  void			scrollTo(QTreeWidgetItem* item, ScrollHint hint = EnsureVisible);
+#endif
+
   override void 	keyboardSearch(const QString &search);
   
   iTreeWidget(QWidget* parent = 0);

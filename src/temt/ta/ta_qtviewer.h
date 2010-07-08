@@ -2044,11 +2044,6 @@ public:
   virtual void		Refresh() {Refresh_impl();} // manually refresh
   virtual bool		ShowNode(iTreeViewItem* item) const;
     // whether the node is visible in this show context
-  USING(inherited::scrollTo)
-#ifndef __MAKETA__
-  void			scrollTo(QTreeWidgetItem* item, ScrollHint hint = EnsureVisible);
-    // convenience static override, to work directly with items
-#endif  
   
   iTreeView(QWidget* parent = 0, int tv_flags = 0);
   ~iTreeView();

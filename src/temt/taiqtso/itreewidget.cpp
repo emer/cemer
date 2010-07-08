@@ -444,6 +444,12 @@ void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::Selection
   }
 }
 
+void iTreeWidget::scrollTo(QTreeWidgetItem* item, ScrollHint hint) {
+  if (!item) return;
+  ext_select_on = false;
+  inherited::scrollTo(indexFromItem(item), hint);
+}
+
 //////////////////////////
 //  iTreeWidgetItem	//
 //////////////////////////
@@ -528,8 +534,13 @@ bool iTreeWidgetItem::isExpandedLeaf() const {
 
 void iTreeWidgetItem::itemExpanded(bool expanded) {
   if (!expanded) return; //  || !lazy_children) return;
-  if(!children_created)
+  if(!children_created) {
     CreateChildren();
+    if(childCount() > 0) {
+      QTreeWidgetItem* lst_chld = child(childCount()-1);
+      ((iTreeWidget*)treeWidget())->scrollTo(lst_chld); // make sure all items are now visible
+    }
+  }
 }
 
 void iTreeWidgetItem::setBackgroundColor(const QColor& color, int col) 
