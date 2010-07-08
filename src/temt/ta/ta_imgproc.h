@@ -895,8 +895,8 @@ class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
 INHERITED(taOBase)
 public:
-  int		end_stop_len;	// #DEF_3 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to look for opposite polarity end stops -- often the relevant transition does not occur very quickly, so an extended rf is needed -- this is a half-width, such that overall length is 1 + 2 * end_stop_len
-  int		len_sum_len;	// #DEF_1 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
+  int		end_stop_len;	// #DEF_2 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to look for opposite polarity end stops -- often the relevant transition does not occur very quickly, so an extended rf is needed -- this is a half-width, such that overall length is 1 + 2 * end_stop_len
+  int		len_sum_len;	// #DEF_2 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   float		nonfocal_wt;	// #DEF_0.5 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
   TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field

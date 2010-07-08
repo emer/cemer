@@ -2862,8 +2862,8 @@ void V1BinocularSpec::UpdateAfterEdit_impl() {
 }
 
 void V1ComplexSpec::Initialize() {
-  end_stop_len = 3;
-  len_sum_len = 1;
+  end_stop_len = 2;
+  len_sum_len = 2;
   gauss_sig = 0.8f;
   nonfocal_wt = 0.5f;
   spat_rf = 6;
@@ -3977,6 +3977,11 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
 		// compute max over other angles -- any opposite polarity angle will do
 		for(int opang=0; opang<v1s_specs.n_angles; opang++) {
 		  float ev = MatMotEl(&v1s_out_r, opang, sfc_end.y, sce.x, sce.y, v1s_mot_idx);
+		  float opev = MatMotEl(&v1s_out_r, opang, sfc_ctr.y, sce.x, sce.y, v1s_mot_idx); // opposite polarity guy
+		  ev -= opev;	// count only relative strength compared to same angle of opposite contrast -- sometimes wide lines get double-counted..
+		  // ev *= v1bc_weights.FastEl(didx);
+		  // note: not doing weighting on end-stopping guys!! better for learning..
+		  // todo: should have separate params for es and ls
 		  end_val = MAX(end_val, ev);
 		}
 		es_max = MAX(es_max, end_val);
@@ -4100,6 +4105,9 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Binocular_thread(int v1c_idx, int thread
 		    int didx = disp + v1b_specs.n_disps;
 		    float ev = v1b_out.FastEl(opang, sfc_end.y + didx * v1s_feat_geom.y,
 					      sce.x, sce.y);
+		    float opev = v1b_out.FastEl(opang, sfc_ctr.y + didx * v1s_feat_geom.y,
+					      sce.x, sce.y);
+		    ev -= opev;	// count only relative strength compared to same angle of opposite contrast -- sometimes wide lines get double-counted..
 		    // ev *= v1bc_weights.FastEl(didx);
 		    // note: not doing weighting on end-stopping guys!! better for learning..
 		    // todo: should have separate params for es and ls
