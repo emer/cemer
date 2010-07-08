@@ -546,22 +546,6 @@ private:
 ////////////////////////////////////////////////////////////////////
 //		Retinal Processing (DoG model)
 
-class TA_API MaxRelFilterSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image filter out values relative to the maximum over a local area
-INHERITED(taOBase)
-public:
-  bool		on;		// do max rel filtering
-  float		filt_thr;	// #DEF_0.2 #CONDSHOW_ON_on threshold relative to the maximum value over the max_rf receptive field group, below which values are filtered (set to 0)
-  TwoDCoord	max_rf;		// #CONDSHOW_ON_on receptive field window over which maximum is computed
-  TwoDCoord	spacing;	// #CONDSHOW_ON_on spacing between neighboring max rf's -- typically 1/2 of rf
-  TwoDCoord	border;		// #READ_ONLY border onto dog filters -- automatically computed based on wrap mode and spacing setting
-
-  void 	Initialize();
-  void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(MaxRelFilterSpec);
-};
-
-
 class TA_API DoGRegionSpec : public ImgProcThreadBase {
   // #STEM_BASE ##CAT_Image specifies a region of Difference-of-Gaussian retinal filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(ImgProcThreadBase)
@@ -634,7 +618,6 @@ public:
   TwoDCoord	dog_spacing;	// spacing between centers of DoG filters in input -- should generally be same as on sigma width in dog_specs
   RenormMode	dog_renorm;	// #DEF_LOG_RENORM how to renormalize the output of filters
   float		renorm_thr;	// #DEF_1e-05 threshold for the max filter output value to max-renormalize filter outputs such that the max is 1 -- below this value, consider the input to be blank and do not renorm
-  MaxRelFilterSpec dog_max_rel_flt; // filter out activations that are a certain percentage below the maximum over a given area -- provides a simple form of kwta-like filtering
   DataSave	dog_save;	// how to save the DoG outputs for the current time step in the data table
   XYNGeom	dog_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for DoG filtering -- x axis = 2 = on/off, y axis = color channel: 0 = monochrome, 1 = red/cyan, 2 = green/magenta, 3 = blue/yellow (2 units total for monochrome, 8 total for color)
   TwoDCoord	dog_img_geom; 	// #READ_ONLY #SHOW size of dog-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and dog_spacing parameters
@@ -704,9 +687,6 @@ protected:
   virtual bool RenormOutput_NoFrames(RenormMode mode, float_Matrix* out);
   // renormalize output of filters after filtering -- for output without motion frames
 
-  virtual bool MaxRelFiltOutput_Frames(MaxRelFilterSpec& mrf, float_Matrix* out, CircMatrix* circ);
-  // maximum relative filtering
-
   virtual bool ImageToTable(DataTable* dtab, float_Matrix* right_eye_image,
 				     float_Matrix* left_eye_image = NULL);
   // send current input image(s)e step of dog output to data table for viewing
@@ -762,8 +742,9 @@ public:
   bool		on;	// is kwta active for this stage of processing?
   float		raw_pct; // #CONDSHOW_ON_on #DEF_0.5 what proportion of the raw filter activation value to use in computing the final activation, in combination with the result of the kwta computation -- if kwta is lower than the raw, then that value is used (i.e., the unit was inhibited), but if it is higher, then a blended value is used -- this retains some of the original signal strength in the face of kwta tending to eliminate it
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
-  float		gp_g;	// #CONDSHOW_ON_on #DEF_0.1 gain on sharing of group-level inhibition with other unit groups -- spreads inhibition throughout the layer
-  float		min_i;	// #CONDSHOW_ON_on #DEF_0 minimum amount of inhibition to apply, regardless of raw input strength and computed kwta inhib values -- establishes a low cutoff
+  float		gp_g;	// #CONDSHOW_ON_on #DEF_0.1 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
+  float		loc_g;	// #CONDSHOW_ON_on #DEF_0;0.5;0.8 gain on sharing of group-level inhibition with local neighboring unit groups (neighborhood determined by loc_sz) -- edges typically have several "ghosts" of opposite polarity nearby, so this works to reduce them
+  int		loc_sz;	// #CONDSHOW_ON_on #DEF_4 #MIN_2 size of the local neighborhood for spreading inhibition among neighbors using the loc_g gain factor -- this is applied in a half-overlapping fashion, value must always be an even number
   float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.6 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units
   float		gain;	 // #CONDSHOW_ON_on #DEF_600 gain on the NOISY_XX1 activation function
   float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
@@ -774,11 +755,16 @@ public:
   float		e_rev_l; // #CONDSHOW_ON_on #DEF_0.15 #EXPERT leak and inhibition reversal potential -- generally not changed from default value of 0.15 in normalized units
   float		thr;	 // #CONDSHOW_ON_on #DEF_0.25 #EXPERT firing threshold -- generally not changed from default value of .25 in normalized units
 
-  virtual bool	Compute_Kwta(float_Matrix& inputs, float_Matrix& outputs, float_Matrix& gc_i_mat);
-  // main interface: given the input matrix (raw output of filtering step), compute output activations via kwta function, using gc_i_mat to store inhib values per feature group
+  virtual bool	Compute_Kwta(float_Matrix& inputs, float_Matrix& outputs,
+			     float_Matrix& gc_i_mat, float_Matrix& gc_i_tmp_mat,
+			     bool wrap);
+  // main interface: given the input matrix (raw output of filtering step), compute output activations via kwta function, using gc_i_mat to store inhib values per feature group, and g_i_tmp_mat as a temporary computation matrix for local spreading inhibition -- wrap determines how the local neighborhoods function -- do they wrap around the edges, or remain bounded?
 
   virtual void	Compute_Inhib(float_Matrix& inputs, float_Matrix& gc_i_mat);
   // inhib impl: given the input matrix (raw output of filtering step), compute inhibitory currrents for each feature group, stored in gc_i matrix
+
+  virtual void	Compute_Inhib_Loc(float_Matrix& gc_i_mat, float_Matrix& gc_i_tmp_mat, bool wrap);
+  // local inhib impl
 
   inline float 	Compute_IThresh(float gc_e) {
     return ((gc_e * e_rev_sub_thr_e + gbl_e_rev_sub_thr_l) / (thr_sub_e_rev_i));
@@ -827,6 +813,8 @@ protected:
   float		gbl_e_rev_sub_thr_l;// #READ_ONLY #NO_SAVE #HIDDEN g_bar_l * (e_rev_l - thr) -- used for compute_ithresh
   float		thr_sub_e_rev_i;// #READ_ONLY #NO_SAVE #HIDDEN thr - e_rev_i used for compute_ithresh
   float		raw_pct_c;	// #READ_ONLY #NO_SAVE #HIDDEN 1 - raw_pct
+  int		loc_half_sz;	 // #READ_ONLY #NO_SAVE #HIDDEN loc_sz / 2
+
 
   void 	UpdateAfterEdit_impl();
 };
@@ -987,7 +975,7 @@ public:
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
   V1KwtaSpec	v1c_kwta;	// k-winner-take-all inhibitory dynamics for the v1 complex stage -- in general only use this when NOT otherwise using leabra, because these inputs will go into leabra anyway
-  RenormMode	v1c_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1c filters
+  RenormMode	v1c_renorm;	// #DEF_LOG_RENORM how to renormalize the output of v1c filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
   XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by ..
@@ -1015,15 +1003,18 @@ public:
   float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_gci;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory conductances, for computing kwta
+  float_Matrix	v1s_gci_tmp;	 // #READ_ONLY #NO_SAVE v1 simple cell temp computation for gci
   float_Matrix	v1s_out_l;	 // #READ_ONLY #NO_SAVE v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   CircMatrix	v1s_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
   CircMatrix	v1s_circ_l;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
   float_Matrix	v1b_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 binocular output [feat.x][feat.y][img.x][img.y] -- only present for BINOCULAR ocularity
   float_Matrix	v1b_gci;	 // #READ_ONLY #NO_SAVE v1 binocular cell inhibitory conductances, for computing kwta
+  float_Matrix	v1b_gci_tmp;	 // #READ_ONLY #NO_SAVE v1 binocular cell temp computation for gci
   float_Matrix	v1b_out;	 // #READ_ONLY #NO_SAVE v1 binocular output [feat.x][feat.y][img.x][img.y] -- only present for BINOCULAR ocularity
   float_Matrix	v1c_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 complex output [feat.x][feat.y][img.x][img.y]
   float_Matrix	v1c_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
+  float_Matrix	v1c_gci_tmp;	 // #READ_ONLY #NO_SAVE v1 complex cell temp computation for gci
   float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [feat.x][feat.y][img.x][img.y]
 
   virtual void	GridGaborFilters(DataTable* disp_data);
