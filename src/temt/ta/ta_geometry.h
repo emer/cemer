@@ -165,6 +165,13 @@ public:
     bool wcx = WrapClipOne(wrap, x, max.x); bool wcy = WrapClipOne(wrap, y, max.y);
     return wcx || wcy;		// have to explicitly call else cond eval will avoid clip!
   } // wrap-around or clip coordinates within 0,0 - max range, true if out of range (clipped or more than half way around other side for wrap)
+
+  inline void	SetFmIndex(int idx, int x_size) {
+    x = idx % x_size;
+    y = idx / x_size;
+  }
+  // set x, y values from a "cell" index in a 2d matrix-like space organized with x as the inner loop and y as the outer loop, with a given x dimension size
+
 private:
   inline void 	Copy_(const TwoDCoord& cp) { x = cp.x; y = cp.y; }
   inline void 	Initialize() 		{ x = y = 0; }

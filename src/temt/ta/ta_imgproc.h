@@ -740,7 +740,7 @@ class TA_API V1KwtaSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;	// is kwta active for this stage of processing?
-  float		raw_pct; // #CONDSHOW_ON_on #DEF_0.5 what proportion of the raw filter activation value to use in computing the final activation, in combination with the result of the kwta computation -- if kwta is lower than the raw, then that value is used (i.e., the unit was inhibited), but if it is higher, then a blended value is used -- this retains some of the original signal strength in the face of kwta tending to eliminate it
+  float		raw_pct; // #CONDSHOW_ON_on #DEF_0.5;0;1 what proportion of the raw filter activation value to use in computing the final activation, in combination with the result of the kwta computation -- if kwta is lower than the raw, then that value is used (i.e., the unit was inhibited), but if it is higher, then a blended value is used -- this retains some of the original signal strength in the face of kwta tending to eliminate it
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
   float		gp_g;	// #CONDSHOW_ON_on #DEF_0.1 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
   float		loc_g;	// #CONDSHOW_ON_on #DEF_0;0.5;0.8 gain on sharing of group-level inhibition with local neighboring unit groups (neighborhood determined by loc_sz) -- edges typically have several "ghosts" of opposite polarity nearby, so this works to reduce them
@@ -891,12 +891,33 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
+class TA_API V1DispGroupSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for disparity grouping in the v1 binocular cells
+INHERITED(taOBase)
+public:
+  int		dgp_iters;	// #DEF_5;0 number of iterations of grouping operation to spread consistency among local disparity codings
+  float		dgp_gain;	// #DEF_0.5 gain of influence of top-down grouping values over disparity weighting
+  int		dgp_rf_sz;	// #DEF_8 #MIN_2 receptive field size for disparity grouping function -- integrates disparity codings across given region, and projects back down to bias for a consistent interpretaion of disparities -- helps resolve local ambiguities, especially with horizontal disparity tuning -- has half-overlap spacing automatically, must be an even number
+  float		gauss_sig; 	// #DEF_1 gaussian sigma for weighting the integration into and output from the disparity grouping layer
+
+  int		dgp_rf_half_sz;	// #READ_ONLY #NO_SAVE #HIDDEN dgp_rf_sz / 2
+  int		dgp_border;	// #READ_ONLY #NO_SAVE #HIDDEN border for dgp layer
+  float		dgp_rf_norm;	// #READ_ONLY #NO_SAVE #HIDDEN 1 / sum of v1b_dgp_weights
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1DispGroupSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
+
+
 class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
 INHERITED(taOBase)
 public:
   int		end_stop_len;	// #DEF_2 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to look for opposite polarity end stops -- often the relevant transition does not occur very quickly, so an extended rf is needed -- this is a half-width, such that overall length is 1 + 2 * end_stop_len
-  int		len_sum_len;	// #DEF_2 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
+  int		len_sum_len;	// #DEF_1 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   float		nonfocal_wt;	// #DEF_0.5 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
   TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field
@@ -967,10 +988,14 @@ public:
   int		v1s_feat_mot_y;	// #READ_ONLY y axis index for start of motion features in v1s -- x axis is angles
 
   V1BinocularSpec v1b_specs;	// #CONDSHOW_ON_ocularity:BINOCULAR specs for V1 binocular filters -- comes after V1 simple processing in binocular case
-  V1KwtaSpec	v1b_kwta;	// #CONDSHOW_ON_ocularity:BINOCULAR k-winner-take-all inhibitory dynamics for the v1 binocular stage -- can help to resolve the dominant disparity coding
+  V1DispGroupSpec v1b_dgp_specs; // #CONDSHOW_ON_ocularity:BINOCULAR specs for disparity grouping in the V1 binocular filters
+  V1KwtaSpec	v1b_dgp_kwta;	// #CONDSHOW_ON_ocularity:BINOCULAR k-winner-take-all inhibitory dynamics for the v1 binocular disparity grouping processing -- helps to resolve the dominant disparity coding at the disparity group level
+  V1KwtaSpec	v1b_disp_kwta;	// #CONDSHOW_ON_ocularity:BINOCULAR k-winner-take-all inhibitory dynamics for the v1 binocular disparity abstraction processing -- integrates grouped plus bottom-up raw filter input
   RenormMode	v1b_renorm;	// #CONDSHOW_ON_ocularity:BINOCULAR #DEF_LIN_RENORM how to renormalize the output of v1b filters
   DataSave	v1b_save;	// #CONDSHOW_ON_ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
-  XYNGeom	v1b_feat_geom; 	// #CONDSHOW_ON_ocularity:BINOCULAR# READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- (1 + 2*n_disps) * v1s_feat_geom -- order: near, focus, far
+  XYNGeom	v1b_feat_geom; 	// #CONDSHOW_ON_ocularity:BINOCULAR #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- (1 + 2*n_disps) * v1s_feat_geom -- order: near, focus, far
+  XYNGeom	v1b_img_geom; 	// #CONDSHOW_ON_ocularity:BINOCULAR #READ_ONLY #HIDDEN size of v1 binocular filtered image output -- number of hypercolumns in each axis to cover entire output -- this is copied directly from v1s_img_geom
+  XYNGeom	v1b_dgp_geom; 	// #CONDSHOW_ON_ocularity:BINOCULAR #READ_ONLY #SHOW size of disparity group layer -- each hypercolumn/subgroup has one unit per disparity, and this is geometry of these groups over the v1b layer (applied to v1s_img_geom which determines v1b_img_geom)
 
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
@@ -978,28 +1003,34 @@ public:
   RenormMode	v1c_renorm;	// #DEF_LOG_RENORM how to renormalize the output of v1c filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
-  XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by ..
+  XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by v1c rf sz on top of v1s img geom
 
-  // v1c feat x axis is always angle, except for final edge guys and blobs
-  int		v1c_feat_es_y;	// #READ_ONLY y axis index for start of end stop features in v1c
-  int		v1c_feat_ls_y;	// #READ_ONLY y axis index for start of length sum features in v1c
-  int		v1c_feat_smax_y; // #READ_ONLY y axis index for start of v1s_max features in v1c
-  int		v1c_feat_blob_y; // #READ_ONLY y axis index for start of blob features in v1c
-  int		v1c_feat_edge_y; // #READ_ONLY y axis index for start of edge features in v1c (disp, motion)
-
+  ///////////////////  V1S Geom/Stencils ////////////////////////
   int_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each fo the angles
   int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells as dog-lines [x,y][1 line: rf_size][n lines: rf_size][angles]
   taBase_List 	gabor_filters; 	// #READ_ONLY #NO_SAVE full set of gabor filters for v1s (type GaborFilter)
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
+
+  ///////////////////  V1B Geom/Stencils ////////////////////////
   int_Matrix	v1b_widths; 	// #READ_ONLY #NO_SAVE width of stencils for binocularity detectors 1d: [tot_disps]
   float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular weighting factors -- for each tuning disparity [max_width][tot_disps] -- only v1b_widths[disp] are used per disparity
   int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: 2d: [max_width][tot_disps]
+  float_Matrix	v1b_dgp_weights; // #READ_ONLY #NO_SAVE weighting factors for connections to/from disparity grouping layer
   float_Matrix	v1bc_weights;	// #READ_ONLY #NO_SAVE weighting factors for integration from binocular disparities to complex responses
+  // v1c feat x axis is always angle, except for final edge guys and blobs
+
+  ///////////////////  V1C Geom/Stencils ////////////////////////
+  int		v1c_feat_es_y;	// #READ_ONLY y axis index for start of end stop features in v1c
+  int		v1c_feat_ls_y;	// #READ_ONLY y axis index for start of length sum features in v1c
+  int		v1c_feat_smax_y; // #READ_ONLY y axis index for start of v1s_max features in v1c
+  int		v1c_feat_blob_y; // #READ_ONLY y axis index for start of blob features in v1c
+  int		v1c_feat_edge_y; // #READ_ONLY y axis index for start of edge features in v1c (disp, motion)
   float_Matrix	v1c_weights;	// #READ_ONLY #NO_SAVE v1 complex spatial weighting factors (2d)
   int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][end_stop_width][angles]
   int_Matrix	v1c_ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
 
+  ///////////////////  V1S Output ////////////////////////
   float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_gci;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory conductances, for computing kwta
@@ -1008,10 +1039,21 @@ public:
   float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   CircMatrix	v1s_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
   CircMatrix	v1s_circ_l;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
-  float_Matrix	v1b_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 binocular output [feat.x][feat.y][img.x][img.y] -- only present for BINOCULAR ocularity
-  float_Matrix	v1b_gci;	 // #READ_ONLY #NO_SAVE v1 binocular cell inhibitory conductances, for computing kwta
-  float_Matrix	v1b_gci_tmp;	 // #READ_ONLY #NO_SAVE v1 binocular cell temp computation for gci
-  float_Matrix	v1b_out;	 // #READ_ONLY #NO_SAVE v1 binocular output [feat.x][feat.y][img.x][img.y] -- only present for BINOCULAR ocularity
+
+  ///////////////////  V1B Output ////////////////////////
+  float_Matrix	v1b_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre grouping) v1 binocular output [feat.x][feat.y][img.x][img.y] -- only present for BINOCULAR ocularity
+  float_Matrix	v1b_out;	 // #READ_ONLY #NO_SAVE v1 binocular output [feat.x][feat.y][img.x][img.y] -- final output after all grouping and other processing -- only present for BINOCULAR ocularity
+  float_Matrix	v1b_disp_raw;	 // #READ_ONLY #NO_SAVE raw (original bottom-up) v1 binocular weightings, abstracted from specific feature tunings [tot_disps][1][img.x][img.y] -- only present for BINOCULAR ocularity
+  float_Matrix	v1b_disp_dgraw;	 // #READ_ONLY #NO_SAVE raw + disparity grouping (pre kwta) v1 binocular weightings, abstracted from specific feature tunings [tot_disps][1][img.x][img.y] -- only present for BINOCULAR ocularity
+  float_Matrix	v1b_disp_out;	 // #READ_ONLY #NO_SAVE output (post kwta and grouping influence) v1 binocular weightings, abstracted from specific feature tunings [tot_disps][1][img.x][img.y] -- only present for BINOCULAR ocularity
+  float_Matrix	v1b_dgp_raw;	 // #READ_ONLY #NO_SAVE v1 binocular cell disparity grouping activations [tot_disps][1][dgp.x][dgp.y] -- integrates disparity across region of v1b_disp_out -- raw input
+  float_Matrix	v1b_dgp_out;	 // #READ_ONLY #NO_SAVE v1 binocular cell disparity grouping activations [tot_disps][1][dgp.x][dgp.y] -- integrates disparity across region of v1b_disp_out -- output after kwta
+  float_Matrix	v1b_dgp_gci;	 // #READ_ONLY #NO_SAVE v1 binocular cell disparity grouping inhibitory conductances, for computing kwta
+  float_Matrix	v1b_dgp_gci_tmp; // #READ_ONLY #NO_SAVE v1 binocular cell disparity grouping temp computation for gci
+  float_Matrix	v1b_disp_gci;	 // #READ_ONLY #NO_SAVE v1 binocular cell disparity grouping inhibitory conductances, for computing kwta
+  float_Matrix	v1b_disp_gci_tmp; // #READ_ONLY #NO_SAVE v1 binocular cell disparity grouping temp computation for gci
+
+  ///////////////////  V1C Output ////////////////////////
   float_Matrix	v1c_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 complex output [feat.x][feat.y][img.x][img.y]
   float_Matrix	v1c_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
   float_Matrix	v1c_gci_tmp;	 // #READ_ONLY #NO_SAVE v1 complex cell temp computation for gci
@@ -1068,6 +1110,8 @@ protected:
   // do binocular filters -- dispatch threads
   virtual void 	V1BinocularFilter_thread(int v1b_idx, int thread_no);
   // do binocular filters -- do it
+  virtual void 	V1BinocularFilter_DispGp();
+  // do binocular filters disparity grouping -- does the whole thing (single thread)
 
   virtual bool	V1ComplexFilter();
   // do complex filters -- dispatch threads
