@@ -2860,9 +2860,10 @@ void V1BinocularSpec::UpdateAfterEdit_impl() {
 }
 
 void V1DispGroupSpec::Initialize() {
-  dgp_gain = 0.5f;
-  dgp_rf_sz = 8;
-  dgp_iters = 5;
+  dgp_iters = 10;
+  disp_gain = 0.2f;
+  v1b_mix = 0.5f;
+  dgp_rf_sz.SetXY(10,4);
   gauss_sig = 1.0f;
 
   dgp_rf_half_sz = dgp_rf_sz / 2;
@@ -2920,14 +2921,11 @@ void V1RegionSpec::Initialize() {
   v1s_kwta.on = true;
   v1s_kwta.gp_k = 1;
   v1s_kwta.loc_g = 0.8f;
-  v1b_disp_kwta.on = true;
-  v1b_disp_kwta.gp_k = 1;
-  v1b_disp_kwta.loc_g = 0.0f;
-  v1b_disp_kwta.raw_pct = 0.0f;
   v1b_dgp_kwta.on = true;
   v1b_dgp_kwta.gp_k = 1;
   v1b_dgp_kwta.loc_g = 0.0f;
   v1b_dgp_kwta.raw_pct = 0.0f;
+  v1b_dgp_kwta.nvar = 0.02f;
   v1c_kwta.on = true;
   v1c_kwta.gp_k = 2;
   v1c_kwta.loc_g = 0.0f;
@@ -2944,7 +2942,6 @@ void V1RegionSpec::UpdateAfterEdit_impl() {
   v1s_motion.UpdateAfterEdit_NoGui();
   v1b_specs.UpdateAfterEdit_NoGui();
   v1b_dgp_specs.UpdateAfterEdit_NoGui();
-  v1b_disp_kwta.UpdateAfterEdit_NoGui();
   v1b_dgp_kwta.UpdateAfterEdit_NoGui();
   v1c_specs.UpdateAfterEdit_NoGui();
   v1c_kwta.UpdateAfterEdit_NoGui();
@@ -3354,13 +3351,15 @@ bool V1RegionSpec::InitFilters_V1Binocular() {
   taMath_float::vec_norm_max(&v1b_weights); // max norm to 1
 
 
-  v1b_dgp_weights.SetGeom(2, v1b_dgp_specs.dgp_rf_sz, v1b_dgp_specs.dgp_rf_sz);
-  float ctr = (float)(v1b_dgp_specs.dgp_rf_sz-1) * .5f;
-  float eff_sig = v1b_dgp_specs.gauss_sig * ctr;
-  for(int yi=0; yi < v1b_dgp_specs.dgp_rf_sz; yi++) {
-    float y = ((float)yi - ctr) / eff_sig;
-    for(int xi=0; xi < v1b_dgp_specs.dgp_rf_sz; xi++) {
-      float x = ((float)xi - ctr) / eff_sig;
+  v1b_dgp_weights.SetGeom(2, v1b_dgp_specs.dgp_rf_sz.x, v1b_dgp_specs.dgp_rf_sz.y);
+  float ctr_x = (float)(v1b_dgp_specs.dgp_rf_sz.x-1) * .5f;
+  float ctr_y = (float)(v1b_dgp_specs.dgp_rf_sz.y-1) * .5f;
+  float eff_sig_x = v1b_dgp_specs.gauss_sig * ctr_x;
+  float eff_sig_y = v1b_dgp_specs.gauss_sig * ctr_y;
+  for(int yi=0; yi < v1b_dgp_specs.dgp_rf_sz.y; yi++) {
+    float y = ((float)yi - ctr_y) / eff_sig_y;
+    for(int xi=0; xi < v1b_dgp_specs.dgp_rf_sz.x; xi++) {
+      float x = ((float)xi - ctr_x) / eff_sig_x;
       float gv = expf(-(x*x + y*y)/2.0f);
       v1b_dgp_weights.FastEl(xi, yi) = gv;
     }
@@ -3953,8 +3952,8 @@ void V1RegionSpec::V1BinocularFilter_DispGp() {
 	bcs = bc - v1b_dgp_specs.dgp_rf_half_sz;	// starting point
 	for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
 	  float sum_disp = 0.0f;
-	  for(gc.y=0; gc.y < v1b_dgp_specs.dgp_rf_sz; gc.y++) {
-	    for(gc.x=0; gc.x < v1b_dgp_specs.dgp_rf_sz; gc.x++) {
+	  for(gc.y=0; gc.y < v1b_dgp_specs.dgp_rf_sz.y; gc.y++) {
+	    for(gc.x=0; gc.x < v1b_dgp_specs.dgp_rf_sz.x; gc.x++) {
 	      bcc = bcs + gc;
 	      if(bcc.WrapClip(wrap, v1b_img_geom)) {
 		if(!wrap) continue; // bail on clipping only -- shouldn't happen!
@@ -3972,18 +3971,17 @@ void V1RegionSpec::V1BinocularFilter_DispGp() {
     v1b_dgp_kwta.Compute_Kwta(v1b_dgp_raw, v1b_dgp_out, v1b_dgp_gci, v1b_dgp_gci_tmp, wrap);
     // kwta on output
 
+    // then integrate weightings from overlapping groups into an overall weighting score
     v1b_disp_dgraw.InitVals(0.0f);
-
-    // then propagate back down to influence current status
     for(dgpc.y=0; dgpc.y < v1b_dgp_geom.y; dgpc.y++) {
       for(dgpc.x=0; dgpc.x < v1b_dgp_geom.x; dgpc.x++) {
 	bc = dgpc * v1b_dgp_specs.dgp_rf_half_sz + v1b_dgp_specs.dgp_border;
 	bcs = bc - v1b_dgp_specs.dgp_rf_half_sz;	// starting point
 	for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
 	  float dgp_val = v1b_dgp_out.FastEl(didx, 0, dgpc.x, dgpc.y);
-	  dgp_val *= v1b_dgp_specs.dgp_gain;
-	  for(gc.y=0; gc.y < v1b_dgp_specs.dgp_rf_sz; gc.y++) {
-	    for(gc.x=0; gc.x < v1b_dgp_specs.dgp_rf_sz; gc.x++) {
+	  dgp_val *= v1b_dgp_specs.disp_gain;
+	  for(gc.y=0; gc.y < v1b_dgp_specs.dgp_rf_sz.y; gc.y++) {
+	    for(gc.x=0; gc.x < v1b_dgp_specs.dgp_rf_sz.x; gc.x++) {
 	      bcc = bcs + gc;
 	      if(bcc.WrapClip(wrap, v1b_img_geom)) {
 		if(!wrap) continue; // bail on clipping only -- shouldn't happen!
@@ -3995,7 +3993,7 @@ void V1RegionSpec::V1BinocularFilter_DispGp() {
 	}
       }
     }
-    // then propagate out to influence specific feature reps
+    // then propagate out to influence disparity values
     for(bc.y=0; bc.y < v1b_img_geom.y; bc.y++) {
       for(bc.x=0; bc.x < v1b_img_geom.x; bc.x++) {
 	float dgp_wt_sum = 0.0f;
@@ -4021,9 +4019,11 @@ void V1RegionSpec::V1BinocularFilter_DispGp() {
       }
     }
 
-    v1b_disp_kwta.Compute_Kwta(v1b_disp_dgraw, v1b_disp_out, v1b_disp_gci, v1b_disp_gci_tmp, wrap);
+    v1b_dgp_kwta.Compute_Kwta(v1b_disp_dgraw, v1b_disp_out, v1b_disp_gci, v1b_disp_gci_tmp, wrap);
     // kwta on final output
   }
+
+  float v1b_mix_c = 1.0f - v1b_dgp_specs.v1b_mix;
 
   // then propagate out to influence specific feature reps
   for(bc.y=0; bc.y < v1b_img_geom.y; bc.y++) {
@@ -4035,7 +4035,8 @@ void V1RegionSpec::V1BinocularFilter_DispGp() {
 	  fc.x = sfc.x;
 	  fc.y = sfc.y + didx * v1s_feat_geom.y;
 	  float rawv = v1b_out_raw.FastEl(fc.x, fc.y, bc.x, bc.y);
-	  v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = rawv * dwt; // just reweight
+	  v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = v1b_mix_c * rawv + 
+	    v1b_dgp_specs.v1b_mix * rawv * dwt; // just reweight
 	}
       }
     }
@@ -5064,7 +5065,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
     bin_rf_max = v1b_specs.n_disps * v1b_specs.disp_off + v1b_specs.tuning_width;
     TwoDCoord bin_max(v1b_specs.tot_disps * bin_rf_max + 2*v1b_specs.end_width, 2);
     max_sz.Max(bin_max);
-    TwoDCoord rf_max(v1b_dgp_specs.dgp_rf_sz, v1b_dgp_specs.dgp_rf_sz);
+    TwoDCoord rf_max(v1b_dgp_specs.dgp_rf_sz.x, v1b_dgp_specs.dgp_rf_sz.y);
     max_sz.Max(rf_max);
   }
   
@@ -5136,9 +5137,9 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
       nmda->SetValAsString("V1 Binoc dGp Wts", -1);
       float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
       TwoDCoord sc;
-      for(int ys = 0; ys < v1b_dgp_specs.dgp_rf_sz; ys++) { // ysimple
+      for(int ys = 0; ys < v1b_dgp_specs.dgp_rf_sz.y; ys++) { // ysimple
 	sc.y = brd.y + ys;
-	for(int xs = 0; xs < v1b_dgp_specs.dgp_rf_sz; xs++) { // xsimple
+	for(int xs = 0; xs < v1b_dgp_specs.dgp_rf_sz.x; xs++) { // xsimple
 	  sc.x = brd.x + xs;
 	  if(sc.WrapClip(true, max_sz)) continue;
 	  mat->FastEl(sc.x,sc.y) = v1b_dgp_weights.FastEl(xs, ys);

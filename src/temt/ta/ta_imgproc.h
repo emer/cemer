@@ -747,7 +747,7 @@ public:
   int		loc_sz;	// #CONDSHOW_ON_on #DEF_4 #MIN_2 size of the local neighborhood for spreading inhibition among neighbors using the loc_g gain factor -- this is applied in a half-overlapping fashion, value must always be an even number
   float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.6 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units
   float		gain;	 // #CONDSHOW_ON_on #DEF_600 gain on the NOISY_XX1 activation function
-  float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
+  float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01;0.02 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
   float		g_bar_e; // #CONDSHOW_ON_on #DEF_0.5 excitatory conductance multiplier -- multiplies filter input value prior to computing membrane potential -- general target is to have max excitatory input = .5, so with 0-1 normalized inputs, this value should be .5
   float		g_bar_l; // #CONDSHOW_ON_on #DEF_0.1 leak current conductance value
 
@@ -895,13 +895,14 @@ class TA_API V1DispGroupSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for disparity grouping in the v1 binocular cells
 INHERITED(taOBase)
 public:
-  int		dgp_iters;	// #DEF_5;0 number of iterations of grouping operation to spread consistency among local disparity codings
-  float		dgp_gain;	// #DEF_0.5 gain of influence of top-down grouping values over disparity weighting
-  int		dgp_rf_sz;	// #DEF_8 #MIN_2 receptive field size for disparity grouping function -- integrates disparity codings across given region, and projects back down to bias for a consistent interpretaion of disparities -- helps resolve local ambiguities, especially with horizontal disparity tuning -- has half-overlap spacing automatically, must be an even number
+  int		dgp_iters;	// #DEF_10;0 number of iterations of grouping operation to spread consistency among local disparity codings
+  float		disp_gain;	// #DEF_0.2 gain of influence of top-down grouping values over disparity values during iterative disparity grouping operation
+  float		v1b_mix;	// #DEF_0.5 how much overall disp grouping result influences the v1b disparity weightings in the end -- values less than one preserve some of the original ambiguity of the bottom-up signal, as a hedge against potentially imperfect grouping results
+  TwoDCoord	dgp_rf_sz;	// receptive field size for disparity grouping function -- integrates disparity codings across given region, and projects back down to bias for a consistent interpretaion of disparities -- helps resolve local ambiguities, especially with horizontal disparity tuning -- has half-overlap spacing automatically, must be even -- wide and short makes most sense for facilitating horizontal integration
   float		gauss_sig; 	// #DEF_1 gaussian sigma for weighting the integration into and output from the disparity grouping layer
 
-  int		dgp_rf_half_sz;	// #READ_ONLY #NO_SAVE #HIDDEN dgp_rf_sz / 2
-  int		dgp_border;	// #READ_ONLY #NO_SAVE #HIDDEN border for dgp layer
+  TwoDCoord	dgp_rf_half_sz;	// #READ_ONLY #NO_SAVE #HIDDEN dgp_rf_sz / 2
+  TwoDCoord	dgp_border;	// #READ_ONLY #NO_SAVE #HIDDEN border for dgp layer
   float		dgp_rf_norm;	// #READ_ONLY #NO_SAVE #HIDDEN 1 / sum of v1b_dgp_weights
 
   void 	Initialize();
@@ -989,8 +990,7 @@ public:
 
   V1BinocularSpec v1b_specs;	// #CONDSHOW_ON_ocularity:BINOCULAR specs for V1 binocular filters -- comes after V1 simple processing in binocular case
   V1DispGroupSpec v1b_dgp_specs; // #CONDSHOW_ON_ocularity:BINOCULAR specs for disparity grouping in the V1 binocular filters
-  V1KwtaSpec	v1b_dgp_kwta;	// #CONDSHOW_ON_ocularity:BINOCULAR k-winner-take-all inhibitory dynamics for the v1 binocular disparity grouping processing -- helps to resolve the dominant disparity coding at the disparity group level
-  V1KwtaSpec	v1b_disp_kwta;	// #CONDSHOW_ON_ocularity:BINOCULAR k-winner-take-all inhibitory dynamics for the v1 binocular disparity abstraction processing -- integrates grouped plus bottom-up raw filter input
+  V1KwtaSpec	v1b_dgp_kwta;	// #CONDSHOW_ON_ocularity:BINOCULAR k-winner-take-all inhibitory dynamics for the v1 binocular disparity grouping processing -- helps to resolve the dominant disparity coding at the disparity group level -- nvar should be .02
   RenormMode	v1b_renorm;	// #CONDSHOW_ON_ocularity:BINOCULAR #DEF_LIN_RENORM how to renormalize the output of v1b filters
   DataSave	v1b_save;	// #CONDSHOW_ON_ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
   XYNGeom	v1b_feat_geom; 	// #CONDSHOW_ON_ocularity:BINOCULAR #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- (1 + 2*n_disps) * v1s_feat_geom -- order: near, focus, far
