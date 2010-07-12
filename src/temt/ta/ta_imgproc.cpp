@@ -2691,12 +2691,14 @@ void V1KwtaSpec::Compute_Inhib(float_Matrix& inputs, float_Matrix& gc_i_mat) {
       max_gi = MAX(max_gi, nw_gi);
     }
   }
-  float gpg_eff = gp_g * max_gi;
-  for(int iy=0; iy < iys; iy++) {
-    for(int ix=0; ix < ixs; ix++) {
-      float gi = gc_i_mat.FastEl(ix, iy);
-      gi = MAX(gi, gpg_eff);
-      gc_i_mat.FastEl(ix, iy) = gi;
+  if(gp_g > 0.0f) {
+    float gpg_eff = gp_g * max_gi;
+    for(int iy=0; iy < iys; iy++) {
+      for(int ix=0; ix < ixs; ix++) {
+	float gi = gc_i_mat.FastEl(ix, iy);
+	gi = MAX(gi, gpg_eff);
+	gc_i_mat.FastEl(ix, iy) = gi;
+      }
     }
   }
 }
@@ -3870,7 +3872,7 @@ void V1RegionSpec::V1BinocularFilter_thread(int v1b_idx, int thread_no) {
       for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
 	int didx = disp + v1b_specs.n_disps;
 	fc.y = sfc.y + didx * v1s_feat_geom.y;
-	v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = 0.0f;
+	v1b_out_raw.FastEl(fc.x, fc.y, bc.x, bc.y) = 0.0f;
       }
       continue;
     }
