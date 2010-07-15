@@ -764,6 +764,33 @@ float DoGFilter::FilterPoint_rgb(int x, int y, ColorChannel color,
   return 0.0f;
 }
 
+void DoGFilter::InvertFilterPoint_rgb(int x, int y, float act, ColorChannel color,
+				       float& r_val, float& g_val, float& b_val) {
+  float flt = net_filter.FastEl(x+filter_width, y+filter_width);
+  switch(color) {
+  case LUMINANCE: {
+    float grey = (0.5f * act * flt) + 0.5f;
+    r_val = grey; g_val = grey; b_val = grey;
+    break;
+  }
+  }
+//   case RED_CYAN: {
+//     float r_v_c = act * filt;
+//     r_v_c = r_val - 0.5f * (g_val + b_val);
+//     return r_v_c * flt;
+//   }
+//   case GREEN_MAGENTA: {
+//     float g_v_m = g_val - 0.5f * (r_val + b_val);
+//     return g_v_m * flt;
+//   }
+//   case BLUE_YELLOW: {
+//     float b_v_y = b_val - 0.5f * (r_val + g_val);
+//     return b_v_y * flt;
+//   }
+//   }
+//   return 0.0f;
+}
+
 void DoGFilter::RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt,
 				 float_Matrix& net_flt) {
   on_flt.SetGeom(2, filter_size, filter_size);
@@ -2239,8 +2266,9 @@ bool DoGRegionSpec::FilterImage_impl() {
     data_table->WriteItem(0);
     data_table->ReadItem(0);
   }
-  else
+  else {
     data_table->AddBlankRow();
+  }
 
   if(image_save & SAVE_DATA && !(!taMisc::gui_active && image_save & ONLY_GUI)) {
     ImageToTable(data_table, cur_img_r, cur_img_l);
@@ -2368,12 +2396,121 @@ bool DoGRegionSpec::RenormOutput_NoFrames(RenormMode mode, float_Matrix* mat) {
 }
 
 bool DoGRegionSpec::InvertFilters(float_Matrix* right_eye_image, float_Matrix* left_eye_image) {
-  // todo: write this!
-  return true;
+  // this is not typically overwritten -- just all the checks -- see _impl
+  if(TestWarning((dog_out_r.dims() < 4) ||
+		 (dog_out_r.dim(0) * dog_out_r.dim(1) != dog_feat_geom.n) ||
+		 (dog_out_r.dim(2) != dog_img_geom.x) ||
+		 (dog_out_r.dim(3) != dog_img_geom.y),
+		 "InvertFilters", "not properly initialized to current geom -- running Init now")) {
+    Init();
+  }  
+
+  if(TestError(!right_eye_image, "FilterIMage", "right_eye_image is NULL -- must pass image"))
+    return false;
+
+  if(TestError((right_eye_image->dim(0) != retina_size.x) ||
+	       (right_eye_image->dim(1) != retina_size.y),
+	       "InvertFilters", "right_eye_image is not appropriate size -- must be same as retina_size!"))
+    return false;
+
+  if(ocularity == BINOCULAR) {
+    if(TestWarning((dog_out_l.dims() < 4) ||
+		   (dog_out_l.dim(0) * dog_out_l.dim(1) != dog_feat_geom.n) ||
+		   (dog_out_l.dim(2) != dog_img_geom.x) ||
+		   (dog_out_l.dim(3) != dog_img_geom.y),
+		   "InvertFilters", "not properly initialized to current geom -- running Init now")) {
+      Init();
+    }  
+
+    if(TestError(!left_eye_image, "FilterIMage", "left_eye_image is NULL -- must pass image"))
+      return false;
+
+    if(TestError((left_eye_image->dim(0) != retina_size.x) ||
+		 (left_eye_image->dim(1) != retina_size.y),
+		 "InvertFilters", "left_eye_image is not appropriate size -- must be same as retina_size!"))
+      return false;
+
+    cur_img_l = left_eye_image;
+  }
+  
+  cur_img_r = right_eye_image;
+
+  bool rval = InvertFilters_impl();
+
+  cur_img_r = NULL;
+  cur_img_l = NULL;
+
+  return rval;
 }
 
-bool DoGRegionSpec::DoGInvertFilter(float_Matrix* image, float_Matrix* out) {
-  // todo: do this!
+bool DoGRegionSpec::InvertFilters_impl() {
+  bool rval = DoGInvertFilter(cur_img_r, &dog_out_r, &dog_circ_r);
+  if(rval && ocularity == BINOCULAR) {
+    rval &= DoGInvertFilter(cur_img_l, &dog_out_l, &dog_circ_l);
+  }
+
+  if(!data_table || save_mode == NONE_SAVE) // bail now
+    return rval;
+
+  if(save_mode == FIRST_ROW) {
+    data_table->EnforceRows(1);
+    data_table->WriteItem(0);
+    data_table->ReadItem(0);
+  }
+  else {
+    data_table->AddBlankRow();
+  }
+
+  if(image_save & SAVE_DATA && !(!taMisc::gui_active && image_save & ONLY_GUI)) {
+    ImageToTable(data_table, cur_img_r, cur_img_l);
+  }
+
+  return rval;
+}
+
+bool DoGRegionSpec::DoGInvertFilter(float_Matrix* image, float_Matrix* out, CircMatrix* circ) {
+  image->InitVals(0.0f);
+
+  int mot_idx = circ->CircIdx_Last(); // always write to last position
+  TwoDCoord dc;			// dog coords
+  for(dc.y=0; dc.y < dog_img_geom.y; dc.y++) {
+    for(dc.x=0; dc.x < dog_img_geom.x; dc.x++) {
+      TwoDCoord icc = border + dog_spacing * dc; // image coords center
+      // x = on/off, y = color channel
+      TwoDCoord ic;		// image coord
+      for(int chan = 0; chan < dog_feat_geom.y; chan++) { 
+	DoGFilter::ColorChannel cchan = (DoGFilter::ColorChannel)chan;
+
+	float on_act = MatMotEl(cur_out, 0, chan, dc.x, dc.y, mot_idx); // feat x = 0 = on
+	float off_act = MatMotEl(cur_out, 1, chan, dc.x, dc.y, mot_idx);
+	float net_act = on_act - off_act;
+
+	if(chan == 0 || rgb_img) {		// only rgb images if chan > 0
+	  for(int yf = -dog_specs.filter_width; yf <= dog_specs.filter_width; yf++) {
+	    for(int xf = -dog_specs.filter_width; xf <= dog_specs.filter_width; xf++) {
+	      ic.y = icc.y + yf;
+	      ic.x = icc.x + xf;
+	      if(ic.WrapClip(wrap, retina_size)) {
+		if(edge_mode == CLIP) continue; // bail on clipping only
+	      }
+	      if(rgb_img) {
+		float r,g,b;
+		dog_specs.InvertFilterPoint_rgb(xf, yf, net_act, cchan, r,g,b);
+		cur_img->FastEl(ic.x, ic.y, 0) += r;
+		cur_img->FastEl(ic.x, ic.y, 1) += g;
+		cur_img->FastEl(ic.x, ic.y, 2) += b;
+	      }
+	      else {
+		float grey = dog_specs.InvertFilterPoint_grey(xf, yf, net_act);
+		cur_img->FastEl(ic.x, ic.y) += grey;
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+  // todo: write this!
   return true;
 }
 
@@ -2922,7 +3059,8 @@ void V1RegionSpec::Initialize() {
 
   v1s_kwta.on = true;
   v1s_kwta.gp_k = 1;
-  v1s_kwta.loc_g = 0.8f;
+  v1s_kwta.gp_g = 0.02f;
+  v1s_kwta.loc_g = 0.0f;     // 0.8f; -- this is not good for learning in highvis
   v1b_dgp_kwta.on = true;
   v1b_dgp_kwta.gp_k = 1;
   v1b_dgp_kwta.loc_g = 0.0f;
@@ -2930,6 +3068,7 @@ void V1RegionSpec::Initialize() {
   v1b_dgp_kwta.nvar = 0.02f;
   v1c_kwta.on = true;
   v1c_kwta.gp_k = 2;
+  v1c_kwta.gp_g = 0.1f;
   v1c_kwta.loc_g = 0.0f;
 
   cur_dog = NULL;

@@ -321,6 +321,14 @@ public:
   }
   // #CAT_DoGFilter apply filter at given x,y point given greyscale value, only for LUMINANCE channel by definition
 
+  void		InvertFilterPoint_rgb(int x, int y, float act, ColorChannel color, 
+				      float& r_val, float& g_val, float& b_val);
+  // #CAT_DoGFilter invert filter at given x,y point with net activation, returning color values
+  float		InvertFilterPoint_grey(int x, int y, float act) {
+    return 0.5f * act * net_filter.FastEl(x+filter_width, y+filter_width + 0.5f);
+  }
+  // #CAT_DoGFilter invert filter at given x,y point with net activation, returning grey val
+
   virtual void	RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt, float_Matrix& net_flt);
   // #CAT_DoGFilter render filter into matrix
   virtual void	UpdateFilter();
@@ -698,8 +706,10 @@ protected:
 				       const String& col_sufx);
     // send current time step of dog output to data table for viewing
 
-  virtual bool	DoGInvertFilter(float_Matrix* image, float_Matrix* out);
-  // implementation of DoG filtering that actually does the heavy lifting
+  virtual bool InvertFilters_impl();
+  // implementation of inverse filtering
+  virtual bool	DoGInvertFilter(float_Matrix* image, float_Matrix* out, CircMatrix* circ);
+  // implementation of DoG inverse filtering that actually does the heavy lifting
 
   // cache of args for current function call
   float_Matrix* cur_img_r;	// cur right eye image arg -- only valid during filter call
@@ -742,7 +752,7 @@ public:
   bool		on;	// is kwta active for this stage of processing?
   float		raw_pct; // #CONDSHOW_ON_on #DEF_0.5;0;1 what proportion of the raw filter activation value to use in computing the final activation, in combination with the result of the kwta computation -- if kwta is lower than the raw, then that value is used (i.e., the unit was inhibited), but if it is higher, then a blended value is used -- this retains some of the original signal strength in the face of kwta tending to eliminate it
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
-  float		gp_g;	// #CONDSHOW_ON_on #DEF_0.1 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
+  float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
   float		loc_g;	// #CONDSHOW_ON_on #DEF_0;0.5;0.8 gain on sharing of group-level inhibition with local neighboring unit groups (neighborhood determined by loc_sz) -- edges typically have several "ghosts" of opposite polarity nearby, so this works to reduce them
   int		loc_sz;	// #CONDSHOW_ON_on #DEF_4 #MIN_2 size of the local neighborhood for spreading inhibition among neighbors using the loc_g gain factor -- this is applied in a half-overlapping fashion, value must always be an even number
   float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.6 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units
