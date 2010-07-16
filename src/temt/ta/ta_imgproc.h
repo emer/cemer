@@ -640,13 +640,13 @@ public:
   // get name for each filter channel (0-5) = on;off;rvc;gvm;bvy;yvb
 
   virtual bool 	Init();
-  // #BUTON initialize everything to be ready to start filtering -- calls InitFilters, InitOutMatrix, InitDataTable
+  // #BUTTON initialize everything to be ready to start filtering -- calls InitFilters, InitOutMatrix, InitDataTable
 
   virtual bool	FilterImage(float_Matrix* right_eye_image, float_Matrix* left_eye_image = NULL);
   // main interface: filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering
 
-  virtual bool	InvertFilters(float_Matrix* right_eye_image, float_Matrix* left_eye_image = NULL);
-  // filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering
+  virtual bool	InvertFilters();
+  // #BUTTON invert filters, using data that currently exists in the local filter storage -- copy from other source to last stage of filtering _out matrix to invert something -- results are saved in output data table image output -- can copy from there as needed
 
   virtual void	GraphDoGFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #LABEL_GraphDoGFilter plot the filter difference-of-gaussians into data table and generate a graph
@@ -708,7 +708,7 @@ protected:
 
   virtual bool InvertFilters_impl();
   // implementation of inverse filtering
-  virtual bool	DoGInvertFilter(float_Matrix* image, float_Matrix* out, CircMatrix* circ);
+  virtual bool	DoGInvertFilter(float_Matrix* out, CircMatrix* circ, const String& col_sufx);
   // implementation of DoG inverse filtering that actually does the heavy lifting
 
   // cache of args for current function call
@@ -1156,6 +1156,19 @@ protected:
   // binocular to output table
   virtual bool V1COutputToTable(DataTable* dtab);
   // complex to output table
+
+  override bool	InvertFilters_impl();
+  virtual bool	V1ComplexInvertFilter();
+  // invert complex filters
+  virtual bool	V1ComplexInvertFilter_EsLs_Monocular();
+  // invert complex filters - EndStop & Length Sum
+  virtual bool	V1ComplexInvertFilter_V1SMax_Monocular();
+  // invert complex filters - V1Simple Max
+  virtual bool	V1SimpleInvertFilter_Static(float_Matrix* dog, CircMatrix* dog_circ,
+					    float_Matrix* out_raw, float_Matrix* out, 
+					    CircMatrix* circ);
+  // invert simple filters, static only on current inputs
+
 };
 
 
@@ -1167,11 +1180,11 @@ public:
   int 			fade_width;	// #CONDSHOW_ON_edge_mode:BORDER for border mode -- how wide of a frame to fade in around the border at the end of all the operations 
   DoGRegionSpecList	regions;	// defines regions of the visual input where the processing actually takes place -- most of the specification is at this level -- first region is used for retina size and other basic params
 
-  float_Matrix		raw_image_r; 	// current raw input image presented to system, for right eye or only eye if monocular
-  float_Matrix		raw_image_l; 	// current raw input image presented to system, for left eye -- only if binocular
+  float_Matrix		raw_image_r; 	// #READ_ONLY #NO_SAVE current raw input image presented to system, for right eye or only eye if monocular
+  float_Matrix		raw_image_l; 	// #READ_ONLY #NO_SAVE current raw input image presented to system, for left eye -- only if binocular
 
-  float_Matrix		xform_image_r; 	// current transformed version of raw image presented to system, for right eye or only eye if monocular
-  float_Matrix		xform_image_l; 	// current transformed version of raw image presented to system, for left eye -- only if binocular
+  float_Matrix		xform_image_r; 	// #READ_ONLY #NO_SAVE current transformed version of raw image presented to system, for right eye or only eye if monocular
+  float_Matrix		xform_image_l; 	// #READ_ONLY #NO_SAVE current transformed version of raw image presented to system, for left eye -- only if binocular
 
   virtual DoGRegionSpec* AddRegion()	{ return (DoGRegionSpec*)regions.New(1); }
   // #BUTTON #CAT_Filter add a new region 
@@ -1239,6 +1252,9 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   // Misc other processing operations
+
+  virtual bool	InvertFilter();
+  // #CAT_Filter #BUTTON invert the filter -- uses current contents of the v1c_out complex filter values within each region to re-generate an image via all the intermediate transforms along the way -- due to extensive information loss at each step of the transformation, the resulting image will be significantly different from a corresponding input, but hopefully at least somewhat recognizable -- results written to image columns of data table
 
   virtual bool	AttendRegion(DataTable* dt, DoGRegionSpec::Region region = DoGRegionSpec::FOVEA);
   // #CAT_Filter apply attentional weighting filter to filtered values, with radius = given region
