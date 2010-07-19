@@ -540,6 +540,9 @@ public:
   static bool	AttentionFilter(float_Matrix& mat, float radius_pct);
   // #CAT_Filter #MENU_BUTTON #MENU_ON_Filter apply an "attentional" filter to the matrix data: outside of radius, values are attenuated in proportion of squared distance outside of radius (r_sq / dist_sq) -- radius_pct is normalized proportion of maximum half-size of image (e.g., 1 = attention bubble extends to furthest edge of image; only corners are attenuated)
 
+  static bool	BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_occlude);
+  // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise occlude the image (in place -- affects the img matrix itself) by blurring gaussian blobs into the image with given gaussian sigma width and percent occlusion -- gauss_sig is in image width normalized units (e.g., .2 = 20% of the width of the image), pct_occlude is proportion of total image to occlude computed as a proportion of (1/gauss_sig)^2 as the total number of different blobs possible -- actual blob locations are drawn at random, so complete occlusion is not ensured even at 1
+
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_BASEFUNS_NOCOPY(taImageProc);
 private:

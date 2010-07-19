@@ -2059,6 +2059,71 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
   return true;
 }
 
+
+bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_occlude) {
+  TwoDCoord img_size(img.dim(0), img.dim(1));
+
+  float gauss_eff = gauss_sig * (float)img_size.x;
+  int gauss_half = (int)gauss_eff * 2;
+  int gauss_wd = gauss_half * 2;
+  TwoDCoord ntot = (img_size / gauss_half) + 1;
+  int totblob = ntot.Product();
+  int nblob = (int)(pct_occlude * (float)totblob + 0.5f);
+
+  float_Matrix gauss_wt;
+  gauss_wt.SetGeom(2, gauss_wd, gauss_wd);
+  float ctr = (float)(gauss_wd-1) * .5f;
+  float ctr_y = (float)(gauss_wd-1) * .5f;
+  for(int yi=0; yi< gauss_wd; yi++) {
+    float y = ((float)yi - ctr_y) / gauss_eff;
+    for(int xi=0; xi< gauss_wd; xi++) {
+      float x = ((float)xi - ctr_y) / gauss_eff;
+      float gv = expf(-(x*x + y*y)/2.0f);
+      gauss_wt.FastEl(xi, yi) = gv;
+    }
+  }
+  taMath_float::vec_norm_max(&gauss_wt, 1.0f);
+  float_Matrix gauss_cnv;
+  gauss_cnv.CopyFrom(&gauss_wt);
+  taMath_float::vec_norm_sum(&gauss_cnv, 1.0f);
+
+  bool rgb_img = false;
+  if(img.dims() == 3) { // rgb
+    rgb_img = true;
+  }
+
+  TwoDCoord ic_min(gauss_half, gauss_half);
+  TwoDCoord ic_max(img_size.x - gauss_half, img_size.y - gauss_half);
+
+  TwoDCoord ic;
+  for(int blob=0; blob < nblob; blob++) {
+    ic.x = Random::IntMinMax(ic_min.x, ic_max.x);
+    ic.y = Random::IntMinMax(ic_min.y, ic_max.y);
+
+    if(rgb_img) {
+    }
+    else {
+      float avg = 0.0f;
+      for(int yi=0; yi< gauss_wd; yi++) {
+	for(int xi=0; xi< gauss_wd; xi++) {
+	  float iv = img.FastEl(ic.x + xi - gauss_half, ic.y + yi - gauss_half);
+	  avg += gauss_cnv.FastEl(xi, yi) * iv;
+	}
+      }
+
+      for(int yi=0; yi< gauss_wd; yi++) {
+	for(int xi=0; xi< gauss_wd; xi++) {
+	  float& iv = img.FastEl(ic.x + xi - gauss_half, ic.y + yi - gauss_half);
+	  float wt = gauss_wt.FastEl(xi, yi);
+	  float nw_iv = (1.0f - wt) * iv + wt * avg;
+	  iv = nw_iv;
+	}
+      }
+    }
+  }
+  return true;
+}
+
 ///////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////
@@ -2720,7 +2785,7 @@ DoGRegionSpec* DoGRegionSpecList::FindRetinalRegionRes(DoGRegionSpec::Region reg
 
 void V1KwtaSpec::Initialize() {
   on = false;
-  raw_pct = 0.5f;
+  raw_pct = 1.0f;
   gp_k = 1;
   gp_g = 0.1f;
   loc_g = 0.5f;
