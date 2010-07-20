@@ -2067,7 +2067,7 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_
   int gauss_half = (int)gauss_eff * 2;
   int gauss_wd = gauss_half * 2;
   TwoDCoord ntot = (img_size / gauss_half) + 1;
-  int totblob = ntot.Product();
+  int totblob = 2 * ntot.Product();
   int nblob = (int)(pct_occlude * (float)totblob + 0.5f);
 
   float_Matrix gauss_wt;
