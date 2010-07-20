@@ -568,10 +568,14 @@ public:
   // #CAT_Statistics value and index of the (first) element that has the maximum value
   static double	vec_abs_max(const double_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum absolute value
+  static double	vec_next_max(const double_Matrix* vec, int max_idx, int& idx);
+  // #CAT_Statistics value and index of the element that has the next-largest value, excluding the max item which is at max_idx
   static double	vec_min(const double_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the minimum value
   static double	vec_abs_min(const double_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the minimum value
+  static double	vec_next_min(const double_Matrix* vec, int min_idx, int& idx);
+  // #CAT_Statistics value and index of the element that has the next-smallest value, excluding the min item which is at min_idx
 
   static double	vec_sum(const double_Matrix* vec);
   // #CAT_Statistics compute the sum of the values in the vector
@@ -1167,10 +1171,14 @@ public:
   // #CAT_Statistics value and index of the (first) element that has the maximum value
   static float	vec_abs_max(const float_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum absolute value
+  static float	vec_next_max(const float_Matrix* vec, int max_idx, int& idx);
+  // #CAT_Statistics value and index of the element that has the next-largest value, excluding the max item which is at max_idx
   static float	vec_min(const float_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the minimum value
   static float	vec_abs_min(const float_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the minimum value
+  static float	vec_next_min(const float_Matrix* vec, int min_idx, int& idx);
+  // #CAT_Statistics value and index of the element that has the next-smallest value, excluding the min item which is at min_idx
 
   static float	vec_sum(const float_Matrix* vec);
   // #CAT_Statistics compute the sum of the values in the vector

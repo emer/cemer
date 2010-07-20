@@ -1096,6 +1096,25 @@ double taMath_double::vec_abs_max(const double_Matrix* vec, int& idx) {
   return rval;
 }
 
+double taMath_double::vec_next_max(const double_Matrix* vec, int max_idx, int& idx) {
+  if(!vec_check_type(vec)) return false;
+  idx = 0;
+  if(vec->size < 2) return 0.0;
+  double rval;
+  if(max_idx == 0)
+    rval = vec->FastEl_Flat(1);
+  else
+    rval = vec->FastEl_Flat(0);
+  for(int i=1;i<vec->size;i++) {
+    if(i == max_idx) continue;
+    if(vec->FastEl_Flat(i) > rval) {
+      idx = i;
+      rval = vec->FastEl_Flat(i);
+    }
+  }
+  return rval;
+}
+
 double taMath_double::vec_min(const double_Matrix* vec, int& idx) {
   if(!vec_check_type(vec)) return false;
   idx = 0;
@@ -1119,6 +1138,25 @@ double taMath_double::vec_abs_min(const double_Matrix* vec, int& idx) {
     if(fabs(vec->FastEl_Flat(i)) < rval) {
       idx = i;
       rval = fabs(vec->FastEl_Flat(i));
+    }
+  }
+  return rval;
+}
+
+double taMath_double::vec_next_min(const double_Matrix* vec, int min_idx, int& idx) {
+  if(!vec_check_type(vec)) return false;
+  idx = 0;
+  if(vec->size < 2) return 0.0;
+  double rval;
+  if(min_idx == 0)
+    rval = vec->FastEl_Flat(1);
+  else
+    rval = vec->FastEl_Flat(0);
+  for(int i=1;i<vec->size;i++) {
+    if(i == min_idx) continue;
+    if(vec->FastEl_Flat(i) < rval) {
+      idx = i;
+      rval = vec->FastEl_Flat(i);
     }
   }
   return rval;
@@ -3953,6 +3991,25 @@ float taMath_float::vec_abs_max(const float_Matrix* vec, int& idx) {
   return rval;
 }
 
+float taMath_float::vec_next_max(const float_Matrix* vec, int max_idx, int& idx) {
+  if(!vec_check_type(vec)) return false;
+  idx = 0;
+  if(vec->size < 2) return 0.0;
+  float rval;
+  if(max_idx == 0)
+    rval = vec->FastEl_Flat(1);
+  else
+    rval = vec->FastEl_Flat(0);
+  for(int i=1;i<vec->size;i++) {
+    if(i == max_idx) continue;
+    if(vec->FastEl_Flat(i) > rval) {
+      idx = i;
+      rval = vec->FastEl_Flat(i);
+    }
+  }
+  return rval;
+}
+
 float taMath_float::vec_min(const float_Matrix* vec, int& idx) {
   if(!vec_check_type(vec)) return false;
   idx = 0;
@@ -3976,6 +4033,25 @@ float taMath_float::vec_abs_min(const float_Matrix* vec, int& idx) {
     if(fabs(vec->FastEl_Flat(i)) < rval) {
       idx = i;
       rval = fabs(vec->FastEl_Flat(i));
+    }
+  }
+  return rval;
+}
+
+float taMath_float::vec_next_min(const float_Matrix* vec, int min_idx, int& idx) {
+  if(!vec_check_type(vec)) return false;
+  idx = 0;
+  if(vec->size < 2) return 0.0;
+  float rval;
+  if(min_idx == 0)
+    rval = vec->FastEl_Flat(1);
+  else
+    rval = vec->FastEl_Flat(0);
+  for(int i=1;i<vec->size;i++) {
+    if(i == min_idx) continue;
+    if(vec->FastEl_Flat(i) < rval) {
+      idx = i;
+      rval = vec->FastEl_Flat(i);
     }
   }
   return rval;
