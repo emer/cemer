@@ -409,6 +409,15 @@ void VEBodyView::Render_impl() {
     SoMaterial* mat = obv->material();
     mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
     mat->transparency.setValue(1.0f - ob->color.a);
+
+    if(ob->full_colors) {
+      mat->ambientColor.setValue(ob->ambient_color.r, ob->ambient_color.g, ob->ambient_color.b);
+      if(ob->specular_color.a > 0.0f) {
+	mat->specularColor.setValue(ob->specular_color.r, ob->specular_color.g, ob->specular_color.b);
+	mat->shininess.setValue(ob->specular_color.a);
+      }
+      mat->emissiveColor.setValue(ob->emissive_color.r, ob->emissive_color.g, ob->emissive_color.b);
+    }
   }
   else {
     SoMaterial* mat = obv->material();
@@ -1294,6 +1303,15 @@ void VEStaticView::Render_impl() {
     SoMaterial* mat = obv->material();
     mat->diffuseColor.setValue(ob->color.r, ob->color.g, ob->color.b);
     mat->transparency.setValue(1.0f - ob->color.a);
+
+    if(ob->full_colors) {
+      mat->ambientColor.setValue(ob->ambient_color.r, ob->ambient_color.g, ob->ambient_color.b);
+      if(ob->specular_color.a > 0.0f) {
+	mat->specularColor.setValue(ob->specular_color.r, ob->specular_color.g, ob->specular_color.b);
+	mat->shininess.setValue(ob->specular_color.a);
+      }
+      mat->emissiveColor.setValue(ob->emissive_color.r, ob->emissive_color.g, ob->emissive_color.b);
+    }
   }
 
   SoSeparator* ssep = obv->shapeSeparator();
