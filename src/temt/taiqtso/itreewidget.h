@@ -52,7 +52,7 @@ public:
   virtual void		clearExtSelection();	   // clear extended selection mode and also clear any existing selection
 
 #ifndef __MAKETA__
-  USING(inherited::scrollTo)
+  void 			scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible);
   void			scrollTo(QTreeWidgetItem* item, ScrollHint hint = EnsureVisible);
 #endif
 

@@ -7467,6 +7467,11 @@ void iTreeView::ExpandDefault() {
   if (useCustomExpand()) exp_flags |= EF_CUSTOM_FILTER;
   if (tv_flags & TV_EXPAND_DISABLED) exp_flags |= EF_EXPAND_DISABLED;
   ExpandAll_impl(m_def_exp_levels, exp_flags);
+  if(topLevelItemCount() > 0) {
+    iTreeViewItem* node = dynamic_cast<iTreeViewItem*>(topLevelItem(0));
+    if(node)
+      scrollTo(node);
+  }
 }
 
 void iTreeView::focusInEvent(QFocusEvent* ev) {
@@ -7782,7 +7787,7 @@ void iTreeView::Show_impl() {
 void iTreeView::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
   if ((tv_flags & TV_AUTO_EXPAND) && (!(tv_flags & TV_AUTO_EXPANDED))) {
-    QTimer::singleShot(150, this, SLOT(ExpandDefault()) );
+    QTimer::singleShot(250, this, SLOT(ExpandDefault()) );
     tv_flags = (TreeViewFlags)(tv_flags | TV_AUTO_EXPANDED);
   }
   
@@ -8553,7 +8558,12 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     break;
   case DCR_LIST_ITEM_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
     taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
-    if (gone_node) delete gone_node; // goodbye!
+    if (gone_node) {
+      iTreeView* tv = treeView();
+      tv->setAutoScroll(false);	// auto scroll is very bad for this in 4.7.0 -- scrolls to top..
+      delete gone_node; // goodbye!
+      tv->setAutoScroll(true);
+    }
   }
     break;
   case DCR_LIST_ITEM_MOVED: {	// op1=item, op2=item_after, null=at beginning

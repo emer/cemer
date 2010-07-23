@@ -444,10 +444,14 @@ void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::Selection
   }
 }
 
+void iTreeWidget::scrollTo(const QModelIndex &index, ScrollHint hint) {
+  inherited::scrollTo(index, hint);
+}
+
 void iTreeWidget::scrollTo(QTreeWidgetItem* item, ScrollHint hint) {
   if (!item) return;
   ext_select_on = false;
-  inherited::scrollTo(indexFromItem(item), hint);
+  scrollTo(indexFromItem(item), hint);
 }
 
 //////////////////////////
