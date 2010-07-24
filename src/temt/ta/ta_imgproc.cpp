@@ -2064,11 +2064,11 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_
   TwoDCoord img_size(img.dim(0), img.dim(1));
 
   float gauss_eff = gauss_sig * (float)img_size.x;
-  int gauss_half = (int)gauss_eff * 2;
+  int gauss_half = (int)gauss_eff * 4;
   int gauss_wd = gauss_half * 2;
   TwoDCoord ntot = (img_size / gauss_half) + 1;
-  int totblob = 2 * ntot.Product();
-  int nblob = (int)(pct_occlude * (float)totblob + 0.5f);
+  int totblob = ntot.Product();
+  int nblob = 2 * (int)(pct_occlude * (float)totblob + 0.5f);
 
   float_Matrix gauss_wt;
   gauss_wt.SetGeom(2, gauss_wd, gauss_wd);
@@ -2082,9 +2082,11 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_
       gauss_wt.FastEl(xi, yi) = gv;
     }
   }
-  taMath_float::vec_norm_max(&gauss_wt, 1.0f);
   float_Matrix gauss_cnv;
   gauss_cnv.CopyFrom(&gauss_wt);
+  taMath_float::vec_norm_max(&gauss_wt, 2.71828f); // max to e
+  taMath_float::vec_threshold_high(&gauss_wt, 1.0f, 1.0f); // flatten out top
+
   taMath_float::vec_norm_sum(&gauss_cnv, 1.0f);
 
   bool rgb_img = false;
