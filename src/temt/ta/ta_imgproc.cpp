@@ -2060,15 +2060,17 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
 }
 
 
-bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_occlude) {
+bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_occlude,
+				  EdgeMode edge) {
   TwoDCoord img_size(img.dim(0), img.dim(1));
 
   float gauss_eff = gauss_sig * (float)img_size.x;
-  int gauss_half = (int)gauss_eff * 4;
+  int gauss_half = (int)gauss_eff * 3;
   int gauss_wd = gauss_half * 2;
   TwoDCoord ntot = (img_size / gauss_half) + 1;
   int totblob = ntot.Product();
-  int nblob = 2 * (int)(pct_occlude * (float)totblob + 0.5f);
+  int nblob = (int) (2.5f * pct_occlude * (float)totblob + 0.5f);
+  if(pct_occlude == 1.0f) nblob *= 2; // really nuke it for sure!
 
   float_Matrix gauss_wt;
   gauss_wt.SetGeom(2, gauss_wd, gauss_wd);
@@ -2097,10 +2099,13 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_
   TwoDCoord ic_min(gauss_half, gauss_half);
   TwoDCoord ic_max(img_size.x - gauss_half, img_size.y - gauss_half);
 
+  bool wrap = (edge == WRAP);
+
   TwoDCoord ic;
+  TwoDCoord icw;
   for(int blob=0; blob < nblob; blob++) {
-    ic.x = Random::IntMinMax(ic_min.x, ic_max.x);
-    ic.y = Random::IntMinMax(ic_min.y, ic_max.y);
+    ic.x = Random::IntMinMax(0, img_size.x);
+    ic.y = Random::IntMinMax(0, img_size.y);
 
     if(rgb_img) {
     }
@@ -2108,14 +2113,22 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_
       float avg = 0.0f;
       for(int yi=0; yi< gauss_wd; yi++) {
 	for(int xi=0; xi< gauss_wd; xi++) {
-	  float iv = img.FastEl(ic.x + xi - gauss_half, ic.y + yi - gauss_half);
+	  icw.x = ic.x + xi - gauss_half;
+	  icw.y = ic.y + yi - gauss_half;
+	  icw.WrapClip(wrap, img_size); // use edges if clipping
+	  float iv = img.FastEl(icw.x, icw.y);
 	  avg += gauss_cnv.FastEl(xi, yi) * iv;
 	}
       }
 
       for(int yi=0; yi< gauss_wd; yi++) {
 	for(int xi=0; xi< gauss_wd; xi++) {
-	  float& iv = img.FastEl(ic.x + xi - gauss_half, ic.y + yi - gauss_half);
+	  icw.x = ic.x + xi - gauss_half;
+	  icw.y = ic.y + yi - gauss_half;
+	  if(icw.WrapClip(wrap, img_size)) {
+	    if(!wrap) continue;
+	  }
+	  float& iv = img.FastEl(icw.x, icw.y);
 	  float wt = gauss_wt.FastEl(xi, yi);
 	  float nw_iv = (1.0f - wt) * iv + wt * avg;
 	  iv = nw_iv;
@@ -2787,7 +2800,7 @@ DoGRegionSpec* DoGRegionSpecList::FindRetinalRegionRes(DoGRegionSpec::Region reg
 
 void V1KwtaSpec::Initialize() {
   on = false;
-  raw_pct = 1.0f;
+  raw_pct = 0.8f;
   gp_k = 1;
   gp_g = 0.1f;
   loc_g = 0.5f;

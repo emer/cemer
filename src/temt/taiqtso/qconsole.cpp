@@ -29,6 +29,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QMenu>
+#include <QScrollBar>
 
 //#include <QDebug>
 
@@ -173,10 +174,18 @@ void QConsole::gotoEnd(QTextCursor& cursor, bool select) {
     cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor); // not selects
 }
 
+bool QConsole::scrolledToEnd() {
+  // check if scrollbar is scrolled to end
+  QScrollBar* vscr = verticalScrollBar();
+  if(!vscr) return true;
+  return (vscr->value() >= vscr->maximum() - 4); // give a few lines at the end leeway
+}
+
 // displays redirected stdout/stderr
 bool QConsole::stdDisplay(QTextStream* s) {
   if((curOutputLn >= maxLines) && !contPager && !noPager)
     return true;
+  bool scrolled_to_end = scrolledToEnd();
   while((curOutputLn < maxLines) || contPager || noPager || quitPager) {
     QString line = s->readLine(maxCols);
     if(line.isNull()) break;
@@ -198,7 +207,13 @@ bool QConsole::stdDisplay(QTextStream* s) {
       }
     }
   }
-  viewport()->update();		// repaint the window, in case it is weird, as it has been..
+
+  if(scrolled_to_end) {		// keep on keeping on..
+    QTextCursor cursor(textCursor());
+    gotoEnd(cursor, false);
+    setTextCursor(cursor);
+  }
+//   viewport()->update();		// repaint the window, in case it is weird, as it has been..
   return false;
 }
 

@@ -106,6 +106,7 @@ protected:
   virtual void displayPrompt(bool force = false); // displays the prompt, force = definitely do so
   virtual void	gotoPrompt(QTextCursor& cursor);		// set position to just after prompt (moves anchor)
   virtual void	gotoEnd(QTextCursor& cursor, bool select=true); // set position to end (and select text or not)
+  virtual bool	scrolledToEnd(); // check if display is scrolled to the end
   virtual QString getCurrentCommand();			     // get text after prompt
   virtual void replaceCurrentCommand(QString newCommand);    // Replace current command with a new one
   virtual bool cursorInCurrentCommand();	// cursor is in the current command editing zone    
