@@ -3177,10 +3177,11 @@ void taRootBase::Cleanup_Main() {
     SIM::Coin3D::Quarter::Quarter::clean();
   }
 #endif
-#ifdef DMEM_COMPILE
-  if (milestone & SM_MPI_INIT)
-    MPI_Finalize();
-#endif
+  // this may be redundante -- getting errors at end of jobs..
+// #ifdef DMEM_COMPILE
+//   if (milestone & SM_MPI_INIT)
+//     MPI_Finalize();
+// #endif
   taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
 
 #ifndef TA_OS_WIN

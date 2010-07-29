@@ -2225,6 +2225,27 @@ bool taMath_double::vec_convolve(double_Matrix* out_vec, const double_Matrix* in
   return true;
 }
 
+bool taMath_double::vec_kern2d_gauss(double_Matrix* kernel, int sz_x, int sz_y,
+				     double sigma_x, double sigma_y) {
+  if(!vec_check_type(kernel)) return false;
+  kernel->SetGeom(2, sz_x, sz_y);
+  double ctr_x = (double)(sz_x-1) * 0.5;
+  double ctr_y = (double)(sz_y-1) * 0.5;
+  double eff_sig_x = sigma_x * ctr_x;
+  double eff_sig_y = sigma_y * ctr_y;
+  for(int yi=0; yi < sz_y; yi++) {
+    double y = ((double)yi - ctr_y) / eff_sig_y;
+    for(int xi=0; xi < sz_x; xi++) {
+      double x = ((double)xi - ctr_y) / eff_sig_x;
+      double gv = exp(-(x*x + y*y)/2.0f);
+      kernel->FastEl(xi, yi) = gv;
+    }
+  }
+  vec_norm_sum(kernel);
+  return true;
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix operations
 
@@ -4980,6 +5001,26 @@ bool taMath_float::vec_convolve(float_Matrix* out_vec, const float_Matrix* in_ve
       out_vec->FastEl(i) = sum;
     }
   }
+  return true;
+}
+
+bool taMath_float::vec_kern2d_gauss(float_Matrix* kernel, int sz_x, int sz_y,
+				     float sigma_x, float sigma_y) {
+  if(!vec_check_type(kernel)) return false;
+  kernel->SetGeom(2, sz_x, sz_y);
+  float ctr_x = (float)(sz_x-1) * 0.5;
+  float ctr_y = (float)(sz_y-1) * 0.5;
+  float eff_sig_x = sigma_x * ctr_x;
+  float eff_sig_y = sigma_y * ctr_y;
+  for(int yi=0; yi < sz_y; yi++) {
+    float y = ((float)yi - ctr_y) / eff_sig_y;
+    for(int xi=0; xi < sz_x; xi++) {
+      float x = ((float)xi - ctr_y) / eff_sig_x;
+      float gv = exp(-(x*x + y*y)/2.0f);
+      kernel->FastEl(xi, yi) = gv;
+    }
+  }
+  vec_norm_sum(kernel);
   return true;
 }
 

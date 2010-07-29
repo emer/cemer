@@ -2325,6 +2325,17 @@ void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, 
   cg->Cn(cg_idx)->wt = wt_val;
 }
 
+///////////////////////////////////////////////
+//	0	1	2	3    recv
+//      0	.33     .66	1    rgp_x
+//	  			
+//	0	1	2	3    send
+//      0	.33	.66	1    sgp_x
+//      4	5	6	7    wrp_x > .5  int
+//	1.33	1.66	2	2.33 wrp_x > .5  flt
+//      -4	-3	-2	-1   wrp_x < .5  int
+//      -1.33   -1	-.66	-.33 wrp_x < .5	 flt
+
 void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Unit* ru) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
