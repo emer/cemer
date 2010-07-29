@@ -305,33 +305,20 @@ public:
   // #CAT_Arithmetic minimum of x and y
   static double  max(double x, double y) { return (x > y) ? x : y; }
   // #CAT_Arithmetic maximum of x and y
-//   static double fmax(double x, double y) { return std::fmax(x,y); }
-//   // #CAT_Arithmetic maximum of x and y
-//   static double fmin(double x, double y) { return std::fmin(x,y); }
-//   // #CAT_Arithmetic minimum of x and y
 
   static double ceil(double x) { return std::ceil(x); }
   // #CAT_Arithmetic ceiling of x: next largest integer value from x
   static double floor(double x) { return std::floor(x); }
   // #CAT_Arithmetic floor of x: next smallest integer value from x
-//   static double rint(double x) { return std::rint(x); }
-//   // #CAT_Arithmetic round value to an integer using current rounding direction
-#ifdef TA_OS_WIN
-  static double round(double x) { return std::floor(x+0.5); }
-#else
-  static double round(double x) { return /*std*/::round(x); }
-#endif
-//   // #CAT_Arithmetic round value to an integer irrespective of current rounding direction
-//   static double trunc(double x) { return std::trunc(x); }
-//   // #CAT_Arithmetic round to truncated integer value (nearest lower magnitude integer) -- like floor but irrespective of sign
+  static double round(double x) { return floor(x+0.5); }
+  // #CAT_Arithmetic round value to an integer irrespective of current rounding direction
+  static int 	rint(double x) { return (int)round(x); }
+  // #CAT_Arithmetic round value to an integer using current rounding direction
 
   static double fmod(double x, double y) { return std::fmod(x, y); }
   // #CAT_Arithmetic floating-point modulus function: remainder of x / y
   static double quantize(double x, double grid) { return floor(x / grid) * grid; }
   // #CAT_Arithmetic quantize the value of x to be an integer multiple of grid size value
-
-//   static double remainder(double x, double y) { return std::remainder(x, y); }
-//   // #CAT_Arithmetic remainder r = x - ny where n is integer value nearest to x/y
 
   /////////////////////////////////////////////////////////////////////////////////
   // ExpLog: exponential and logarithmic functions
@@ -339,22 +326,22 @@ public:
   static double e;
   // #CAT_Trigonometry #READ_ONLY e: the natural exponential number
 
+  static double pow(double x, double p) { return std::pow(x, p); }
+  // #CAT_ExpLog x to the power p (x^p)
+  static double sqrt(double x) { return std::sqrt(x); }
+  // #CAT_ExpLog square root of x (i.e., x^1/2)
   static double exp(double x) { return std::exp(x); }
   // #CAT_ExpLog The natural exponential (e to the power x: e^x)
-//   static double exp2(double x) { return std::exp2(x); }
-//   // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
+  static double exp2(double x) { return pow(2.0, x); }
+  // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
   static double exp_fast(double x);
   // #CAT_ExpLog a fast approximation to the exponential function from Nicol Schraudolph Neural Computation, 1999
   static double log(double x) { return std::log(x); }
   // #CAT_ExpLog The natural logarithm of x: ln(x)
   static double log10(double x) { return std::log10(x); }
   // #CAT_ExpLog The logarithm of x, base 10
-//   static double log2(double x) { return std::log2(x); }
-//   // #CAT_ExpLog The logarithm of x, base 2
-  static double pow(double x, double p) { return std::pow(x, p); }
-  // #CAT_ExpLog x to the power p (x^p)
-  static double sqrt(double x) { return std::sqrt(x); }
-  // #CAT_ExpLog square root of x (i.e., x^1/2)
+  static double log2(double x) { return log(x) / 0.69314718; }
+  // #CAT_ExpLog The logarithm of x, base 2
   static double logistic(double x, double gain=1.0, double off=0.0)
   { return 1.0 / (1.0 + exp(-gain*(x-off))); }
   // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off)))
@@ -908,35 +895,21 @@ public:
   // #CAT_Arithmetic minimum of x and y
   static float  max(float x, float y) { return (x > y) ? x : y; }
   // #CAT_Arithmetic maximum of x and y
-//   static float fmax(float x, float y) { return fmaxf(x,y); }
-//   // #CAT_Arithmetic maximum of x and y
-//   static float fmin(float x, float y) { return fminf(x,y); }
-//   // #CAT_Arithmetic minimum of x and y
 
   static float ceil(float x) { return /*std*/::ceilf(x); }
   // #CAT_Arithmetic ceiling of x: next largest integer value from x
   static float floor(float x) { return /*std*/::floorf(x); }
   // #CAT_Arithmetic floor of x: next smallest integer value from x
-//   static float rint(float x) { return rintf(x); }
-//   // #CAT_Arithmetic round value to an integer using current rounding direction
 
-#ifdef TA_OS_WIN
-  static float round(float x) { return std::floorf(x+0.5f); }
-#else
-  static float round(float x) { return /*std*/::roundf(x); }
-#endif
-//   static float round(float x) { return roundf(x); }
-//   // #CAT_Arithmetic round value to an integer irrespective of current rounding direction
-//   static float trunc(float x) { return truncf(x); }
-//   // #CAT_Arithmetic round to truncated integer value (nearest lower magnitude integer) -- like floor but irrespective of sign
+  static float round(float x) { return floor(x+0.5f); }
+  // #CAT_Arithmetic round value to an integer irrespective of current rounding direction
+  static int 	rint(float x) { return (int)round(x); }
+  // #CAT_Arithmetic round value to an integer using current rounding direction
 
   static float fmod(float x, float y) { return std::fmod(x, y); }
   // #CAT_Arithmetic floating-point modulus function: remainder of x / y
   static float quantize(float x, float grid) { return floor(x / grid) * grid; }
   // #CAT_Arithmetic quantize the value of x to be an integer multiple of grid size value
-
-//   static float remainder(float x, float y) { return remainderf(x, y); }
-//   // #CAT_Arithmetic remainder r = x - ny where n is integer value nearest to x/y
 
   /////////////////////////////////////////////////////////////////////////////////
   // ExpLog: exponential and logarithmic functions
@@ -944,22 +917,22 @@ public:
   static float e;
   // #CAT_Trigonometry #READ_ONLY e: the natural exponential number
 
+  static float pow(float x, float p) { return std::pow(x, p); }
+  // #CAT_ExpLog x to the power p (x^p)
+  static float sqrt(float x) { return std::sqrt(x); }
+  // #CAT_ExpLog square root of x (i.e., x^1/2)
   static float exp(float x) { return std::exp(x); }
   // #CAT_ExpLog The natural exponential (e to the power x: e^x)
-//   static float exp2(float x) { return exp2f(x); }
-//   // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
+  static float exp2(float x) { return pow(2.0f, x); }
+  // #CAT_ExpLog The base-2 expoenetial (2 to the power x: 2^x)
   static float exp_fast(float x) { return (float)taMath_double::exp_fast(x); }
   // #CAT_ExpLog a fast approximation to the exponential function from Nicol Schraudolph Neural Computation, 1999
   static float log(float x) { return std::log(x); }
   // #CAT_ExpLog The natural logarithm of x: ln(x)
   static float log10(float x) { return std::log10(x); }
   // #CAT_ExpLog The logarithm of x, base 10
-//   static float log2(float x) { return log2f(x); }
-//   // #CAT_ExpLog The logarithm of x, base 2
-  static float pow(float x, float p) { return std::pow(x, p); }
-  // #CAT_ExpLog x to the power p (x^p)
-  static float sqrt(float x) { return std::sqrt(x); }
-  // #CAT_ExpLog square root of x (i.e., x^1/2)
+  static float log2(float x) { return log(x) / 0.69314718f; }
+  // #CAT_ExpLog The logarithm of x, base 2
   static float logistic(float x, float gain=1.0, float off=0.0)
   { return 1.0 / (1.0 + exp(-gain*(x-off))); }
   // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off)))

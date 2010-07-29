@@ -303,6 +303,10 @@ public:
     BLUE_YELLOW,		// blue vs. R + G = yellow
   };
 
+#ifdef __MAKETA__
+  String	name;		// #HIDDEN_INLINE name of object
+#endif
+
   int		filter_width;	// half-width of the filter (typically 2 * off_sigma)
   int		filter_size;	// #READ_ONLY size of the filter: 2 * width + 1
   float		on_sigma;	// width of the narrower central 'on' gaussian
@@ -558,17 +562,13 @@ private:
 ////////////////////////////////////////////////////////////////////
 //		Retinal Processing (DoG model)
 
-class TA_API DoGRegionSpec : public ImgProcThreadBase {
-  // #STEM_BASE ##CAT_Image specifies a region of Difference-of-Gaussian retinal filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
-INHERITED(ImgProcThreadBase)
+class TA_API RegionParams : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic params for a visual region
+INHERITED(taOBase)
 public:
   enum Ocularity {		// ocularity configuration
     MONOCULAR,			// monocular -- only one eye
     BINOCULAR,			// binocular -- both eyes
-  };
-  enum Eye {
-    LEFT,			
-    RIGHT,
   };
   enum Region {			// retinal region
     FOVEA,
@@ -588,6 +588,26 @@ public:
   enum EdgeMode {		// how to deal with edges in the filter inputs
     CLIP,			// hard clip edges -- attempts to ensure that no clipping is necessary by making filters fit within inputs, but image input is clipped
     WRAP,			// wrap the image and any subsequent stages of filtering around the edges -- no edges!
+  };
+
+  Ocularity	ocularity;	// whether two eyes or only one is present
+  Region	region;		// retinal region represented by this filter 
+  Resolution	res;		// level of resolution represented by this filter (can use enum or any other arbitrary rating scale -- just for informational/matcing purposes)
+  Color		color;		// what level of color information to process
+  EdgeMode	edge_mode;	// how to deal with edges throughout the processing cascade -- the edge_mode for the raw image transformations are in the overall RetinaProc, and are not automatically sync'd with this (they can be different)
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(RegionParams);
+};
+
+class TA_API DoGRegionSpec : public ImgProcThreadBase {
+  // #STEM_BASE ##CAT_Image specifies a region of Difference-of-Gaussian retinal filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
+INHERITED(ImgProcThreadBase)
+public:
+  enum Eye {
+    LEFT,			
+    RIGHT,
   };
   enum RenormMode {		// how to renormalize output of filters
     NO_RENORM,			// do not renormalize
@@ -617,15 +637,11 @@ public:
   DataTableRef	data_table;	// data table for saving filter results for viewing and applying to networks etc
   SaveMode	save_mode;	// how to add new data to the data table
   DataSave	image_save;	// how to save the input image(s) for each filtering step
-  Ocularity	ocularity;	// whether two eyes or only one is present
-  Region	region;		// retinal region represented by this filter 
-  Resolution	res;		// level of resolution represented by this filter (can use enum or any other arbitrary rating scale -- just for informational/matcing purposes)
-  Color		color;		// what level of color information to process
+  RegionParams	region;		// basic parameters for the region
   int		motion_frames;	// #MIN_0 how many frames of image information are to be retained for extracting motion signals -- 0 = no motion, 3 = typical for motion
   TwoDCoord	retina_size;	// overall size of the retina -- defines size of images that are processed by these filters -- scaling etc typically used to fit image to retina size
   TwoDCoord	border;		// border around retina that we don't process -- typically a 1 pixel background color border is retained in the input image processing, so this is subtracted -- if not using WRAP mode, then also ensure that this is >= than 1/2 of the width of the wide DoG
   TwoDCoord	input_size;	// #READ_ONLY #SHOW size of input region in pixels that is actually filtered -- retina_size - 2 * border
-  EdgeMode	edge_mode;	// how to deal with image edges, and edges in general throughout the processing cascade
   DoGFilter	dog_specs;	// Difference of Gaussian retinal filter specification
   TwoDCoord	dog_spacing;	// spacing between centers of DoG filters in input -- should generally be same as on sigma width in dog_specs
   RenormMode	dog_renorm;	// #DEF_LOG_RENORM how to renormalize the output of filters
@@ -731,12 +747,12 @@ class TA_API DoGRegionSpecList : public taList<DoGRegionSpec> {
 INHERITED(taList<DoGRegionSpec>)
 public:
 
-  virtual DoGRegionSpec* FindRetinalRegion(DoGRegionSpec::Region reg);
+  virtual DoGRegionSpec* FindRetinalRegion(RegionParams::Region reg);
   // find first spec with given retinal region
-  virtual DoGRegionSpec* FindRetinalRes(DoGRegionSpec::Resolution res);
+  virtual DoGRegionSpec* FindRetinalRes(RegionParams::Resolution res);
   // find first spec with given resolution
-  virtual DoGRegionSpec* FindRetinalRegionRes(DoGRegionSpec::Region reg,
-					      DoGRegionSpec::Resolution res);
+  virtual DoGRegionSpec* FindRetinalRegionRes(RegionParams::Region reg,
+					      RegionParams::Resolution res);
   // find first spec with given retinal region and resolution (falls back to res then reg if no perfect match)
 
   TA_BASEFUNS_NOCOPY(DoGRegionSpecList);
@@ -828,7 +844,6 @@ public:
  protected:
   void 	UpdateAfterEdit_impl();
 };
-
 
 class TA_API V1SimpleSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells
@@ -1046,6 +1061,8 @@ public:
   float_Matrix	v1c_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
   float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [feat.x][feat.y][img.x][img.y]
 
+  int		AngleDeg(int ang_no);
+  // get angle value in degress based on angle number
   virtual void	GridV1Stencils(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 stencils into data table and generate a grid view -- these are the effective receptive fields at each level of processing
   override void	PlotSpacing(DataTable* disp_data, bool reset = true);
@@ -1151,7 +1168,7 @@ class TA_API RetinaProc : public taNBase {
   // #STEM_BASE ##CAT_Image ##DEF_CHILD_regions ##DEF_CHILDNAME_Regions full specification of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(taNBase)
 public:
-  taImageProc::EdgeMode	edge_mode;	// how to deal with edges in processing the raw images in preparation for presentation to the filters -- each region has its own filter-specific edge mode
+  taImageProc::EdgeMode	edge_mode;	// how to deal with edges in processing the raw images in preparation for presentation to the filters -- each region has its own filter-specific edge mode which is not automatically sync'd with this one (and they can be different)
   int 			fade_width;	// #CONDSHOW_ON_edge_mode:BORDER for border mode -- how wide of a frame to fade in around the border at the end of all the operations 
   DoGRegionSpecList	regions;	// defines regions of the visual input where the processing actually takes place -- most of the specification is at this level -- first region is used for retina size and other basic params
 
@@ -1178,7 +1195,7 @@ public:
 
   virtual bool	LookAtImageData(float_Matrix* right_eye_image,
 				float_Matrix* left_eye_image = NULL, 
-				DoGRegionSpec::Region region = DoGRegionSpec::FOVEA,
+				RegionParams::Region region = RegionParams::FOVEA,
 				float box_ll_x=0.0f, float box_ll_y=0.0f,
 				float box_ur_x=1.0f, float box_ur_y=1.0f,
 				float move_x=0.0f, float move_y=0.0f,
@@ -1193,7 +1210,7 @@ public:
   // Transform Routines taking different sources for image input data
 
   virtual bool  ConvertImageToMatrix(float_Matrix& img_data, taImage* img, 
-				     DoGRegionSpec::Color color);
+				     RegionParams::Color color);
   // #CAT_Image convert image file to img_data float matrix, converting to color or monochrome as specified
 
   virtual bool	TransformImage(taImage* right_eye_image, taImage* left_eye_image = NULL,
@@ -1209,7 +1226,7 @@ public:
 
   virtual bool	LookAtImage(taImage* right_eye_image,
 			    taImage* left_eye_image = NULL, 
-			    DoGRegionSpec::Region region = DoGRegionSpec::FOVEA,
+			    RegionParams::Region region = RegionParams::FOVEA,
 			    float box_ll_x=0.0f, float box_ll_y=0.0f,
 			    float box_ur_x=1.0f, float box_ur_y=1.0f,
 			    float move_x=0.0f, float move_y=0.0f,
@@ -1218,7 +1235,7 @@ public:
 
   virtual bool	LookAtImageName(const String& right_eye_img_fname,
 				const String& left_eye_img_fname = "",
-				DoGRegionSpec::Region region = DoGRegionSpec::FOVEA,
+				RegionParams::Region region = RegionParams::FOVEA,
 				float box_ll_x=0.0f, float box_ll_y=0.0f,
 				float box_ur_x=1.0f, float box_ur_y=1.0f,
 				float move_x=0, float move_y=0,
@@ -1231,7 +1248,7 @@ public:
   virtual bool	InvertFilter();
   // #CAT_Filter #BUTTON invert the filter -- uses current contents of the v1c_out complex filter values within each region to re-generate an image via all the intermediate transforms along the way -- due to extensive information loss at each step of the transformation, the resulting image will be significantly different from a corresponding input, but hopefully at least somewhat recognizable -- results written to image columns of data table
 
-  virtual bool	AttendRegion(DataTable* dt, DoGRegionSpec::Region region = DoGRegionSpec::FOVEA);
+  virtual bool	AttendRegion(DataTable* dt, RegionParams::Region region = RegionParams::FOVEA);
   // #CAT_Filter apply attentional weighting filter to filtered values, with radius = given region
 
   // todo: need a checkconfig here..
@@ -1255,7 +1272,7 @@ protected:
 
   virtual bool	LookAtImageData_impl(float_Matrix& eye_image,
 				     float_Matrix& xform_image,
-				     DoGRegionSpec::Region region = DoGRegionSpec::FOVEA,
+				     RegionParams::Region region = RegionParams::FOVEA,
 				     float box_ll_x=0.0f, float box_ll_y=0.0f,
 				     float box_ur_x=1.0f, float box_ur_y=1.0f,
 				     float move_x=0.0f, float move_y=0.0f,

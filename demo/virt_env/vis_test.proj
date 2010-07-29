@@ -8543,15 +8543,11 @@ LeabraProject .projects[0] {
        data_table=.projects[0].programs[0].objs[1]$$;
        save_mode=FIRST_ROW;
        image_save=SAVE_DATA;
-       ocularity=MONOCULAR;
-       region=FOVEA;
-       res=HI_RES;
-       color=MONOCHROME;
+       region {ocularity=MONOCULAR: region=FOVEA: res=HI_RES: color=MONOCHROME: edge_mode=WRAP: };
        motion_frames=0;
        retina_size {x=72: y=72: };
        border {x=0: y=0: };
        input_size {x=72: y=72: };
-       edge_mode=WRAP;
        dog_specs {
 	name="V1_high";
 	filter_width=4;
@@ -12376,15 +12372,11 @@ LeabraProject .projects[0] {
        data_table=.projects[0].programs[2].objs[1]$$;
        save_mode=FIRST_ROW;
        image_save=SAVE_DATA;
-       ocularity=BINOCULAR;
-       region=FOVEA;
-       res=HI_RES;
-       color=MONOCHROME;
+       region {ocularity=BINOCULAR: region=FOVEA: res=HI_RES: color=MONOCHROME: edge_mode=WRAP: };
        motion_frames=0;
        retina_size {x=72: y=72: };
        border {x=0: y=0: };
        input_size {x=72: y=72: };
-       edge_mode=WRAP;
        dog_specs {
 	name="V1_high";
 	filter_width=4;

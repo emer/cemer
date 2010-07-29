@@ -2165,18 +2165,21 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_
 // for thread function calling:
 typedef void (DoGRegionSpec::*DoGRegionMethod)(int, int);
 
-void DoGRegionSpec::Initialize() {
-  save_mode = FIRST_ROW;
-  image_save = (DataSave)(SAVE_DATA | ONLY_GUI);
+void RegionParams::Initialize() {
   ocularity = MONOCULAR;
   region = FOVEA;
   res = HI_RES;
-  color = COLOR;
+  color = MONOCHROME;
+  edge_mode= WRAP;
+}
+
+void DoGRegionSpec::Initialize() {
+  save_mode = FIRST_ROW;
+  image_save = (DataSave)(SAVE_DATA | ONLY_GUI);
   motion_frames = 0;
   retina_size = 144;
   border = 0;
   input_size = 144;
-  edge_mode= WRAP;
   dog_specs.filter_width = 4;
   dog_specs.on_sigma = 1;
   dog_specs.off_sigma = 2;
@@ -2218,13 +2221,13 @@ void DoGRegionSpec::UpdateGeom() {
   // .   .   .   .    border = 0, spacing = 2; input_size = 8, output_size = 4
 
   input_size = (retina_size - 2 * border);
-  if(edge_mode == WRAP) {
+  if(region.edge_mode == RegionParams::WRAP) {
     dog_img_geom = input_size / dog_spacing;
   }
   else {
     dog_img_geom = ((input_size - 1) / dog_spacing) + 1;
   }
-  if(color == COLOR) {
+  if(region.color == RegionParams::COLOR) {
     dog_feat_geom.SetXYN(2,4,8);
   }
   else {
@@ -2266,7 +2269,7 @@ bool DoGRegionSpec::InitOutMatrix() {
 
   if(motion_frames <= 1) {
     dog_out_r.SetGeom(4, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
-    if(ocularity == BINOCULAR)
+    if(region.ocularity == RegionParams::BINOCULAR)
       dog_out_l.SetGeom(4, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
     else
       dog_out_l.SetGeom(1,1);	// free memory
@@ -2274,7 +2277,7 @@ bool DoGRegionSpec::InitOutMatrix() {
   else {
     dog_out_r.SetGeom(5, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y,
 		      motion_frames);
-    if(ocularity == BINOCULAR)
+    if(region.ocularity == RegionParams::BINOCULAR)
       dog_out_l.SetGeom(5, dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y,
 			motion_frames);
     else
@@ -2307,7 +2310,7 @@ bool DoGRegionSpec::FilterImage(float_Matrix* right_eye_image, float_Matrix* lef
 	       "FilterImage", "right_eye_image is not appropriate size -- must be same as retina_size!"))
     return false;
 
-  if(ocularity == BINOCULAR) {
+  if(region.ocularity == RegionParams::BINOCULAR) {
     if(TestWarning((dog_out_l.dims() < 4) ||
 		   (dog_out_l.dim(0) * dog_out_l.dim(1) != dog_feat_geom.n) ||
 		   (dog_out_l.dim(2) != dog_img_geom.x) ||
@@ -2343,7 +2346,7 @@ void DoGRegionSpec::IncrTime() {
   }
   else {
     dog_circ_r.CircAddLimit(motion_frames);
-    if(ocularity == BINOCULAR) {
+    if(region.ocularity == RegionParams::BINOCULAR) {
       dog_circ_l.CircAddLimit(motion_frames);
     }
   }
@@ -2352,7 +2355,7 @@ void DoGRegionSpec::IncrTime() {
 bool DoGRegionSpec::FilterImage_impl() {
   IncrTime();
   bool rval = DoGFilterImage(cur_img_r, &dog_out_r, &dog_circ_r);
-  if(rval && ocularity == BINOCULAR) {
+  if(rval && region.ocularity == RegionParams::BINOCULAR) {
     rval &= DoGFilterImage(cur_img_l, &dog_out_l, &dog_circ_l);
   }
 
@@ -2383,7 +2386,7 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out, CircM
   cur_out = out;
   cur_circ = circ;
   rgb_img = (cur_img->dims() == 3);
-  wrap = (edge_mode == WRAP);
+  wrap = (region.edge_mode == RegionParams::WRAP);
 
   int n_run = dog_img_geom.Product();
 
@@ -2421,7 +2424,7 @@ void DoGRegionSpec::DoGFilterImage_thread(int dog_idx, int thread_no) {
 	  ic.y = icc.y + yf;
 	  ic.x = icc.x + xf;
 	  if(ic.WrapClip(wrap, retina_size)) {
-	    if(edge_mode == CLIP) continue; // bail on clipping only
+	    if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	  }
 	  if(rgb_img) {
 	    cnv_sum += dog_specs.FilterPoint_rgb(xf, yf, cchan, cur_img->FastEl(ic.x, ic.y, 0),
@@ -2514,7 +2517,7 @@ bool DoGRegionSpec::InvertFilters() {
     Init();
   }  
 
-  if(ocularity == BINOCULAR) {
+  if(region.ocularity == RegionParams::BINOCULAR) {
     if(TestWarning((dog_out_l.dims() < 4) ||
 		   (dog_out_l.dim(0) * dog_out_l.dim(1) != dog_feat_geom.n) ||
 		   (dog_out_l.dim(2) != dog_img_geom.x) ||
@@ -2539,7 +2542,7 @@ bool DoGRegionSpec::InvertFilters_impl() {
   }
 
   bool rval = DoGInvertFilter(&dog_out_r, &dog_circ_r, "_r");
-  if(rval && ocularity == BINOCULAR) {
+  if(rval && region.ocularity == RegionParams::BINOCULAR) {
     rval &= DoGInvertFilter(&dog_out_l, &dog_circ_l, "_l");
   }
 
@@ -2553,7 +2556,7 @@ bool DoGRegionSpec::InvertFilters_impl() {
 bool DoGRegionSpec::DoGInvertFilter(float_Matrix* out, CircMatrix* circ, const String& col_sufx) {
   DataCol* col;
   int idx;
-  if(color == COLOR)
+  if(region.color == RegionParams::COLOR)
     col = data_table->FindMakeColName(name + "_image" + col_sufx, idx, DataTable::VT_FLOAT, 3,
 				      retina_size.x, retina_size.y, 3);
   else
@@ -2584,7 +2587,7 @@ bool DoGRegionSpec::DoGInvertFilter(float_Matrix* out, CircMatrix* circ, const S
 	      ic.y = icc.y + yf;
 	      ic.x = icc.x + xf;
 	      if(ic.WrapClip(wrap, retina_size)) {
-		if(edge_mode == CLIP) continue; // bail on clipping only
+		if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	      }
 	      if(rgb_img) {
 		float r,g,b;
@@ -2623,7 +2626,7 @@ bool DoGRegionSpec::InitDataTable() {
     DataCol* col;
     String sufx = "_r";
 
-    if(color == COLOR)
+    if(region.color == RegionParams::COLOR)
       col = data_table->FindMakeColName(name + "_image" + sufx, idx, DataTable::VT_FLOAT, 3,
 					retina_size.x, retina_size.y, 3);
     else
@@ -2631,9 +2634,9 @@ bool DoGRegionSpec::InitDataTable() {
 					retina_size.x, retina_size.y);
     col->SetUserData("IMAGE", true);
 
-    if(ocularity == BINOCULAR) {
+    if(region.ocularity == RegionParams::BINOCULAR) {
       sufx = "_l";
-      if(color == COLOR)
+      if(region.color == RegionParams::COLOR)
 	col = data_table->FindMakeColName(name + "_image" + sufx, idx, DataTable::VT_FLOAT, 3,
 					  retina_size.x, retina_size.y, 3);
       else
@@ -2649,7 +2652,7 @@ bool DoGRegionSpec::InitDataTable() {
 	String nm = name + "_" + GetDoGFiltName(i) + "_dog";
 	data_table->FindMakeColName(nm+ "_r", idx, DataTable::VT_FLOAT, 2,
 				    dog_img_geom.x, dog_img_geom.y);
-	if(ocularity == BINOCULAR) {
+	if(region.ocularity == RegionParams::BINOCULAR) {
 	  data_table->FindMakeColName(nm+ "_l", idx, DataTable::VT_FLOAT, 2,
 				      dog_img_geom.x, dog_img_geom.y);
 	}
@@ -2658,7 +2661,7 @@ bool DoGRegionSpec::InitDataTable() {
     else {
       data_table->FindMakeColName(name + "_dog_r", idx, DataTable::VT_FLOAT, 4,
 				  dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
-      if(ocularity == BINOCULAR) {
+      if(region.ocularity == RegionParams::BINOCULAR) {
 	data_table->FindMakeColName(name + "_dog_l", idx, DataTable::VT_FLOAT, 4,
 				    dog_feat_geom.x, dog_feat_geom.y, dog_img_geom.x, dog_img_geom.y);
       }
@@ -2670,7 +2673,7 @@ bool DoGRegionSpec::InitDataTable() {
 bool DoGRegionSpec::ImageToTable(DataTable* dtab, float_Matrix* right_eye_image,
 				 float_Matrix* left_eye_image) {
   ImageToTable_impl(dtab, right_eye_image, "_r");
-  if(ocularity == BINOCULAR) 
+  if(region.ocularity == RegionParams::BINOCULAR) 
     ImageToTable_impl(dtab, left_eye_image, "_l");
   return true;
 }
@@ -2679,7 +2682,7 @@ bool DoGRegionSpec::ImageToTable_impl(DataTable* dtab, float_Matrix* img,
 				      const String& col_sufx) {
   DataCol* col;
   int idx;
-  if(color == COLOR)
+  if(region.color == RegionParams::COLOR)
     col = data_table->FindMakeColName(name + "_image" + col_sufx, idx, DataTable::VT_FLOAT, 3,
 				      retina_size.x, retina_size.y, 3);
   else
@@ -2693,7 +2696,7 @@ bool DoGRegionSpec::ImageToTable_impl(DataTable* dtab, float_Matrix* img,
 
 bool DoGRegionSpec::DoGOutputToTable(DataTable* dtab) {
   DoGOutputToTable_impl(dtab, &dog_out_r, &dog_circ_r, "_r");
-  if(ocularity == BINOCULAR) 
+  if(region.ocularity == RegionParams::BINOCULAR) 
     DoGOutputToTable_impl(dtab, &dog_out_l, &dog_circ_l, "_l");
   return true;
 }
@@ -2778,29 +2781,29 @@ void DoGRegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
   graph_data->FindMakeGridView();
 }
 
-DoGRegionSpec* DoGRegionSpecList::FindRetinalRegion(DoGRegionSpec::Region reg) {
+DoGRegionSpec* DoGRegionSpecList::FindRetinalRegion(RegionParams::Region reg) {
   for(int i=0;i<size;i++) {
     DoGRegionSpec* fs = (DoGRegionSpec*)FastEl(i);
-    if(fs->region == reg)
+    if(fs->region.region == reg)
       return fs;
   }
   return NULL;
 }
 
-DoGRegionSpec* DoGRegionSpecList::FindRetinalRes(DoGRegionSpec::Resolution res) {
+DoGRegionSpec* DoGRegionSpecList::FindRetinalRes(RegionParams::Resolution res) {
   for(int i=0;i<size;i++) {
     DoGRegionSpec* fs = (DoGRegionSpec*)FastEl(i);
-    if(fs->res == res)
+    if(fs->region.res == res)
       return fs;
   }
   return NULL;
 }
 
-DoGRegionSpec* DoGRegionSpecList::FindRetinalRegionRes(DoGRegionSpec::Region reg,
-						       DoGRegionSpec::Resolution res) {
+DoGRegionSpec* DoGRegionSpecList::FindRetinalRegionRes(RegionParams::Region reg,
+						       RegionParams::Resolution res) {
   for(int i=0;i<size;i++) {
     DoGRegionSpec* fs = (DoGRegionSpec*)FastEl(i);
-    if((fs->region == reg) && (fs->res == res))
+    if((fs->region.region == reg) && (fs->region.res == res))
       return fs;
   }
   DoGRegionSpec* rval = FindRetinalRes(res);
@@ -3101,6 +3104,21 @@ void V1RegionSpec::UpdateAfterEdit_impl() {
   // UpdateGeom is called in parent..
 }
 
+
+static void geom_get_angles(float angf, float& cosx, float& siny) {
+  cosx = taMath_float::cos(angf);
+  siny = taMath_float::sin(angf);
+  // always normalize by the largest value so that it is equal to 1
+  if(fabsf(cosx) > fabsf(siny)) {
+    siny = siny / fabsf(cosx);			// must come first!
+    cosx = cosx / fabsf(cosx);
+  }
+  else {
+    cosx = cosx / fabsf(siny);
+    siny = siny / fabsf(siny);
+  }
+}
+
 void V1RegionSpec::UpdateGeom() {
   static bool redo = false;
   inherited::UpdateGeom();
@@ -3111,31 +3129,13 @@ void V1RegionSpec::UpdateGeom() {
   v1s_ang_slopes.SetGeom(3,2,2,v1s_specs.n_angles);
   float ang_inc = taMath_float::pi / (float)v1s_specs.n_angles;
   for(int ang=0; ang<v1s_specs.n_angles; ang++) {
+    float cosx, siny;
     float angf = (float)ang * ang_inc;
-    float cosx = taMath_float::cos(angf);
-    float siny = taMath_float::sin(angf);
-    if(fabsf(cosx) < 0.99f && fabsf(cosx) > 0.01f) {	// min guy is size 1..
-      cosx = cosx / fabsf(cosx);
-      siny = siny / fabsf(cosx);
-    }
-    else if(fabsf(siny) < 0.99f && fabsf(siny) > 0.01f) {	// min guy is size 1..
-      cosx = cosx / fabsf(siny);
-      siny = siny / fabsf(siny);
-    }
+    geom_get_angles(angf, cosx, siny);
     v1s_ang_slopes.FastEl(X, LINE, ang) = cosx;
     v1s_ang_slopes.FastEl(Y, LINE, ang) = siny;
     
-    float orthang = angf + taMath_float::pi * .5f;
-    cosx = taMath_float::cos(orthang);
-    siny = taMath_float::sin(orthang);
-    if(fabsf(cosx) < 0.99f && fabsf(cosx) > 0.01f) {	// min guy is size 1..
-      cosx = cosx / fabsf(cosx);
-      siny = siny / fabsf(cosx);
-    }
-    else if(fabsf(siny) < 0.99f && fabsf(siny) > 0.01f) {	// min guy is size 1..
-      cosx = cosx / fabsf(siny);
-      siny = siny / fabsf(siny);
-    }
+    geom_get_angles(angf + taMath_float::pi * .5f, cosx, siny);
     v1s_ang_slopes.FastEl(X, ORTHO, ang) = cosx;
     v1s_ang_slopes.FastEl(Y, ORTHO, ang) = siny;
   }
@@ -3214,7 +3214,7 @@ void V1RegionSpec::UpdateGeom() {
   v1c_feat_geom.y = cmplx_y;
   v1c_feat_geom.UpdateFlag();
 
-  if(edge_mode == WRAP) {
+  if(region.edge_mode == RegionParams::WRAP) {
     v1c_specs.border = 0;
     v1c_img_geom = v1s_img_geom / v1c_specs.spacing;
   }
@@ -3232,7 +3232,7 @@ void V1RegionSpec::UpdateGeom() {
   }
 
   TwoDCoord v1s_fm_v1c;
-  if(edge_mode == WRAP) {
+  if(region.edge_mode == RegionParams::WRAP) {
     v1s_fm_v1c = v1c_specs.spacing * v1c_img_geom;
   }
   else {
@@ -3255,7 +3255,7 @@ void V1RegionSpec::UpdateGeom() {
   }
 
   TwoDCoord inp_fm_dog;
-  if(edge_mode == WRAP) {
+  if(region.edge_mode == RegionParams::WRAP) {
     inp_fm_dog = dog_img_geom * dog_spacing;
   }
   else {
@@ -3281,7 +3281,7 @@ bool V1RegionSpec::InitFilters() {
   InitFilters_V1Simple();
   if(motion_frames > 1)
     InitFilters_V1Motion();
-  if(ocularity == BINOCULAR)
+  if(region.ocularity == RegionParams::BINOCULAR)
     InitFilters_V1Binocular();
   InitFilters_V1Complex();
   return true;
@@ -3426,7 +3426,6 @@ bool V1RegionSpec::InitFilters_V1Binocular() {
 
   v1b_dsp_stencils.SetGeom(3, 2, v1b_dsp_specs.tot_width, v1s_specs.n_angles);
 
-  // angle ordering = 0 = horiz, 1 = 45, 2 = vert, 3 = 135
   for(int ang=0; ang < v1s_specs.n_angles; ang++) {
     for(int lpt=-v1b_dsp_specs.neigh_width; lpt <= v1b_dsp_specs.neigh_width; lpt++) {
       int lpdx = lpt + v1b_dsp_specs.neigh_width;
@@ -3454,7 +3453,6 @@ bool V1RegionSpec::InitFilters_V1Complex() {
   v1c_es_stencils.SetGeom(3, 2, v1c_specs.end_stop_width, v1s_specs.n_angles);
   v1c_ls_stencils.SetGeom(3, 2, v1c_specs.len_sum_width, v1s_specs.n_angles);
 
-  // angle ordering = 0 = horiz, 1 = 45, 2 = vert, 3 = 135
   for(int ang=0; ang < v1s_specs.n_angles; ang++) {
     for(int lpt=-v1c_specs.end_stop_len; lpt <= v1c_specs.end_stop_len; lpt++) {
       int lpdx = lpt + v1c_specs.end_stop_len;
@@ -3483,7 +3481,7 @@ bool V1RegionSpec::InitOutMatrix() {
 
   if(motion_frames <= 1) {
     v1s_out_r.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
-    if(ocularity == BINOCULAR)
+    if(region.ocularity == RegionParams::BINOCULAR)
       v1s_out_l.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
     else
       v1s_out_l.SetGeom(1,1);	// free memory
@@ -3491,7 +3489,7 @@ bool V1RegionSpec::InitOutMatrix() {
   else {
     v1s_out_r.SetGeom(5, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y,
 		      motion_frames);
-    if(ocularity == BINOCULAR)
+    if(region.ocularity == RegionParams::BINOCULAR)
       v1s_out_l.SetGeom(5, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y,
 			motion_frames);
     else
@@ -3501,7 +3499,7 @@ bool V1RegionSpec::InitOutMatrix() {
   v1s_circ_l.Reset();
 
   ///////////////////  V1B Output ////////////////////////
-  if(ocularity == BINOCULAR) {
+  if(region.ocularity == RegionParams::BINOCULAR) {
     v1b_out.SetGeom(4, v1b_feat_geom.x, v1b_feat_geom.y, v1b_img_geom.x, v1b_img_geom.y);
 //     v1b_disp_out.SetGeom(4, v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
 //     v1b_dgp_out.SetGeom(4, v1b_specs.tot_disps, 1, v1b_dgp_geom.x, v1b_dgp_geom.y);
@@ -3534,7 +3532,7 @@ void V1RegionSpec::IncrTime() {
   }
   else {
     v1s_circ_r.CircAddLimit(motion_frames);
-    if(ocularity == BINOCULAR) {
+    if(region.ocularity == RegionParams::BINOCULAR) {
       v1s_circ_l.CircAddLimit(motion_frames);
     }
   }
@@ -3548,23 +3546,23 @@ bool V1RegionSpec::FilterImage_impl() {
 
   // todo: maybe check rval for fail and bail -- not currently used..
 
-  wrap = (edge_mode == WRAP);
+  wrap = (region.edge_mode == RegionParams::WRAP);
 
   bool rval = V1SimpleFilter_Static(&dog_out_r, &dog_circ_r, &v1s_out_r_raw, &v1s_out_r, 
 				    &v1s_circ_r);
-  if(rval && ocularity == BINOCULAR) {
+  if(rval && region.ocularity == RegionParams::BINOCULAR) {
     rval &= V1SimpleFilter_Static(&dog_out_l, &dog_circ_l, &v1s_out_l_raw, &v1s_out_l,
 				  &v1s_circ_l);
   }
 
   if(motion_frames > 1) {
     rval &= V1SimpleFilter_Motion(&v1s_out_r, &v1s_circ_r);
-    if(rval && ocularity == BINOCULAR) {
+    if(rval && region.ocularity == RegionParams::BINOCULAR) {
       rval &= V1SimpleFilter_Motion(&v1s_out_l, &v1s_circ_l);
     }
   }
 
-  if(rval && ocularity == BINOCULAR) {
+  if(rval && region.ocularity == RegionParams::BINOCULAR) {
     rval &= V1BinocularFilter();
   }
 
@@ -3578,7 +3576,7 @@ bool V1RegionSpec::FilterImage_impl() {
   if(v1s_save & SAVE_DATA && !(!taMisc::gui_active && v1s_save & ONLY_GUI)) {
     V1SOutputToTable(data_table);
   }
-  if(ocularity == BINOCULAR && v1b_save & SAVE_DATA && !(taMisc::gui_active && v1b_save & ONLY_GUI)) {
+  if(region.ocularity == RegionParams::BINOCULAR && v1b_save & SAVE_DATA && !(taMisc::gui_active && v1b_save & ONLY_GUI)) {
     V1BOutputToTable(data_table);
   }
   if(v1c_save & SAVE_DATA && !(!taMisc::gui_active && v1c_save & ONLY_GUI)) {
@@ -3650,7 +3648,7 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
 	dc.y = dcs.y + yp;
 
 	if(dc.WrapClip(wrap, dog_img_geom)) {
-	  if(edge_mode == CLIP) continue; // bail on clipping only
+	  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	}
 
 	float dogval = MatMotEl(cur_dog, dfc.x, dfc.y, dc.x, dc.y, dog_mot_idx);
@@ -3680,7 +3678,7 @@ void V1RegionSpec::V1SimpleFilter_Static_neighinhib(float_Matrix* out_raw, float
 	    oc.x = sc.x + xp;
 	    oc.y = sc.y + yp;
 	    if(oc.WrapClip(wrap, v1s_img_geom)) {
-	      if(edge_mode == CLIP) continue; // bail on clipping only
+	      if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	    }
 	    float oth_act = out_raw->FastEl(fc.x, fc.y, oc.x, oc.y); // other act
 	    float oth_ithr = v1s_kwta.Compute_IThresh(v1s_kwta.g_bar_e * oth_act);
@@ -3813,7 +3811,7 @@ void V1RegionSpec::V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no) {
 	      mo.x = sc.x + xp;
 	      mo.y = sc.y + yp;
 	      if(mo.WrapClip(wrap, v1s_img_geom)) {
-		if(edge_mode == CLIP) continue; // bail on clipping only
+		if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	      }
 
 	      float val = cur_out->FastEl(sfc.x, sfc.y, mo.x, mo.y,
@@ -3954,7 +3952,7 @@ void V1RegionSpec::V1BinocularFilter_thread(int v1b_idx, int thread_no) {
 	// left eye is opposite
 	bo.x = bc.x - off;
 	if(bo.WrapClip(wrap, v1s_img_geom)) {
-	  if(edge_mode == CLIP) continue; // bail on clipping only
+	  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	}
 	float lv = MatMotEl(&v1s_out_l, sfc.x, sfc.y, bo.x, bo.y, cur_mot_idx);
 	lv *= v1b_weights.FastEl(twidx, didx);
@@ -4122,7 +4120,7 @@ bool V1RegionSpec::V1ComplexFilter() {
   threads.min_units = 1;
   threads.nibble_chunk = 1;	// small chunks
 
-  if(ocularity == BINOCULAR) {
+  if(region.ocularity == RegionParams::BINOCULAR) {
     if(v1c_filters & CF_ESLS) {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_EsLs_Binocular_thread);
       threads.Run(&ip_call, n_run);
@@ -4223,7 +4221,7 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
 	    sc.x = scs.x + xs;
 	    scc = sc;	// center
 	    if(scc.WrapClip(wrap, v1s_img_geom)) {
-	      if(edge_mode == CLIP) continue; // bail on clipping only
+	      if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	    }
 
 	    // first get central value -- always the same
@@ -4239,7 +4237,7 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
 		sce.y = sc.y + yp;
 
 		if(sce.WrapClip(wrap, v1s_img_geom)) {
-		  if(edge_mode == CLIP) continue; // bail on clipping only
+		  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 		}
 
 		float end_val = 0.0f;
@@ -4272,7 +4270,7 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread
 		sce.y = sc.y + yp;
 
 		if(sce.WrapClip(wrap, v1s_img_geom)) {
-		  if(edge_mode == CLIP) continue; // bail on clipping only
+		  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 		}
 
 		float end_val = MatMotEl(&v1s_out_r, sfc_end.x, sfc_end.y, sce.x, sce.y, v1s_mot_idx);
@@ -4338,7 +4336,7 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Binocular_thread(int v1c_idx, int thread
 	    sc.x = scs.x + xs;
 	    scc = sc;	// center
 	    if(scc.WrapClip(wrap, v1b_img_geom)) {
-	      if(edge_mode == CLIP) continue; // bail on clipping only
+	      if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	    }
 
 	    // first get central value -- always the same
@@ -4361,7 +4359,7 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Binocular_thread(int v1c_idx, int thread
 		sce.y = sc.y + yp;
 
 		if(sce.WrapClip(wrap, v1b_img_geom)) {
-		  if(edge_mode == CLIP) continue; // bail on clipping only
+		  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 		}
 
 		float end_val = 0.0f;
@@ -4399,7 +4397,7 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Binocular_thread(int v1c_idx, int thread
 		sce.y = sc.y + yp;
 
 		if(sce.WrapClip(wrap, v1b_img_geom)) {
-		  if(edge_mode == CLIP) continue; // bail on clipping only
+		  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 		}
 
 		float end_val = 0.0f;
@@ -4451,7 +4449,7 @@ void V1RegionSpec::V1ComplexFilter_V1SMax_Monocular_thread(int v1c_idx, int thre
 	  sc.x = scs.x + xs;
 	  scc = sc;	// center
 	  if(scc.WrapClip(wrap, v1s_img_geom)) {
-	    if(edge_mode == CLIP) continue; // bail on clipping only
+	    if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	  }
 	  float ctr_val = MatMotEl(&v1s_out_r, sfc.x, sfc.y, scc.x, scc.y, v1s_mot_idx);
 	  ctr_val *= v1c_weights.FastEl(xs, ys); // spatial rf weighting
@@ -4489,7 +4487,7 @@ void V1RegionSpec::V1ComplexFilter_V1SMax_Binocular_thread(int v1c_idx, int thre
 	  sc.x = scs.x + xs;
 	  scc = sc;	// center
 	  if(scc.WrapClip(wrap, v1b_img_geom)) {
-	    if(edge_mode == CLIP) continue; // bail on clipping only
+	    if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	  }
 	  float ctr_val = 0.0f;
 	  for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
@@ -4531,7 +4529,7 @@ void V1RegionSpec::V1ComplexFilter_Blob_Monocular_thread(int v1c_idx, int thread
 	sc.x = scs.x + xs;
 	scc = sc;	// center
 	if(scc.WrapClip(wrap, v1s_img_geom)) {
-	  if(edge_mode == CLIP) continue; // bail on clipping only
+	  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	}
 	for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // just max over angles -- blobify!
 	  sfc.x = ang;
@@ -4569,7 +4567,7 @@ void V1RegionSpec::V1ComplexFilter_Blob_Binocular_thread(int v1c_idx, int thread
 	sc.x = scs.x + xs;
 	scc = sc;	// center
 	if(scc.WrapClip(wrap, v1b_img_geom)) {
-	  if(edge_mode == CLIP) continue; // bail on clipping only
+	  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	}
 	for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // just max over angles -- blobify!
 	  sfc.x = ang;
@@ -4647,7 +4645,7 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
 	  float val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
 	  blob_m_max_val = MAX(val, blob_m_max_val);
 	}
-	if(color == COLOR) {
+	if(region.color == RegionParams::COLOR) {
 	  for(int pol = 2; pol < 8; pol++) { // polarities
 	    fc.x = pol % v1c_feat_geom.x;
 	    float val = out->FastEl(fc.x, fc.y + pol / v1c_feat_geom.x, cc.x, cc.y);
@@ -4707,7 +4705,7 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
 	      float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
 	      val *= blob_m_rescale;
 	    }
-	    if(color == COLOR) {
+	    if(region.color == RegionParams::COLOR) {
 	      for(int pol = 2; pol < 8; pol++) { // polarities
 		fc.x = pol % v1c_feat_geom.x;
 		float& val = out->FastEl(fc.x, fc.y + pol / v1c_feat_geom.x, cc.x, cc.y);
@@ -4759,7 +4757,7 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
 	      float& val = out->FastEl(fc.x, fc.y, cc.x, cc.y);
 	      val = logf(1.0f + val) * blob_m_rescale;
 	    }
-	    if(color == COLOR) {
+	    if(region.color == RegionParams::COLOR) {
 	      for(int pol = 2; pol < 8; pol++) { // polarities
 		fc.x = pol % v1c_feat_geom.x;
 		float& val = out->FastEl(fc.x, fc.y + pol / v1c_feat_geom.x, cc.x, cc.y);
@@ -4793,20 +4791,20 @@ bool V1RegionSpec::InitDataTable() {
       // break out into sub-structure: bw, color, motion
       data_table->FindMakeColName(name + "_v1s_bw_r", idx, DataTable::VT_FLOAT, 4,
 			    v1s_feat_geom.x, 2, v1s_img_geom.x, v1s_img_geom.y);
-      if(ocularity == BINOCULAR)
+      if(region.ocularity == RegionParams::BINOCULAR)
 	data_table->FindMakeColName(name + "_v1s_bw_l", idx, DataTable::VT_FLOAT, 4,
 			    v1s_feat_geom.x, 2, v1s_img_geom.x, v1s_img_geom.y);
-      if(color == COLOR) {
+      if(region.color == RegionParams::COLOR) {
 	data_table->FindMakeColName(name + "_v1s_clr_r", idx, DataTable::VT_FLOAT, 4,
 				    v1s_feat_geom.x, 4, v1s_img_geom.x, v1s_img_geom.y);
-	if(ocularity == BINOCULAR)
+	if(region.ocularity == RegionParams::BINOCULAR)
 	  data_table->FindMakeColName(name + "_v1s_clr_l", idx, DataTable::VT_FLOAT, 4,
 				      v1s_feat_geom.x, 4, v1s_img_geom.x, v1s_img_geom.y);
       }
       if(motion_frames > 1) {
 	data_table->FindMakeColName(name + "_v1s_mot_r", idx, DataTable::VT_FLOAT, 4,
 		    v1s_feat_geom.x, 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
-	if(ocularity == BINOCULAR)
+	if(region.ocularity == RegionParams::BINOCULAR)
 	  data_table->FindMakeColName(name + "_v1s_mot_l", idx, DataTable::VT_FLOAT, 4,
 		      v1s_feat_geom.x, 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
       }
@@ -4814,19 +4812,19 @@ bool V1RegionSpec::InitDataTable() {
     else {
       col = data_table->FindMakeColName(name + "_v1s_r", idx, DataTable::VT_FLOAT, 4,
 		v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
-      if(ocularity == BINOCULAR)
+      if(region.ocularity == RegionParams::BINOCULAR)
 	col = data_table->FindMakeColName(name + "_v1s_l", idx, DataTable::VT_FLOAT, 4,
 		v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
     }
   }
 
-  // BINOCULAR
-  if(ocularity == BINOCULAR && v1b_save & SAVE_DATA) {
+  // RegionParams::BINOCULAR
+  if(region.ocularity == RegionParams::BINOCULAR && v1b_save & SAVE_DATA) {
     if(v1b_save & SEP_MATRIX) {
       // break out into sub-structure: bw, color, motion
       data_table->FindMakeColName(name + "_v1b_bw", idx, DataTable::VT_FLOAT, 4,
 			    v1b_feat_geom.x, v1b_specs.tot_disps * 2, v1b_img_geom.x, v1b_img_geom.y);
-      if(color == COLOR) {
+      if(region.color == RegionParams::COLOR) {
 	data_table->FindMakeColName(name + "_v1b_clr", idx, DataTable::VT_FLOAT, 4,
 				    v1b_feat_geom.x, v1b_specs.tot_disps * 4, v1b_img_geom.x, v1b_img_geom.y);
       }
@@ -4878,7 +4876,7 @@ bool V1RegionSpec::InitDataTable() {
 
 bool V1RegionSpec::V1SOutputToTable(DataTable* dtab) {
   V1SOutputToTable_impl(dtab, &v1s_out_r, &v1s_circ_r, "_r");
-  if(ocularity == BINOCULAR) 
+  if(region.ocularity == RegionParams::BINOCULAR) 
     V1SOutputToTable_impl(dtab, &v1s_out_l, &v1s_circ_l, "_l");
   return true;
 }
@@ -4908,7 +4906,7 @@ bool V1RegionSpec::V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out, Cir
 	}
       }
     }
-    if(color == COLOR) {
+    if(region.color == RegionParams::COLOR) {
       col = data_table->FindMakeColName(name + "_v1s_clr" + col_sufx, idx, DataTable::VT_FLOAT, 4,
 			  v1s_feat_geom.x, 4, v1s_img_geom.x, v1s_img_geom.y);
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
@@ -4983,7 +4981,7 @@ bool V1RegionSpec::V1BOutputToTable(DataTable* dtab) {
 	}
       }
     }
-    if(color == COLOR) {
+    if(region.color == RegionParams::COLOR) {
       col = data_table->FindMakeColName(name + "_v1b_clr" , idx, DataTable::VT_FLOAT, 4,
 			  v1b_feat_geom.x, v1b_specs.tot_disps * 4, v1b_img_geom.x, v1b_img_geom.y);
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
@@ -5098,21 +5096,21 @@ bool V1RegionSpec::InvertFilters_impl() {
     data_table->AddBlankRow();
   }
 
-//   if(TestWarning(ocularity == BINOCULAR, "InvertFilters",
+//   if(TestWarning(region.ocularity == RegionParams::BINOCULAR, "InvertFilters",
 // 	 "binocular inversion not currently supported -- only monocular will be rendered"));
 
   V1ComplexInvertFilter();
 
   V1SimpleInvertFilter_Static(&dog_out_r, &dog_circ_r, &v1s_out_r_raw, &v1s_out_r, 
 			      &v1s_circ_r);
-//   if(rval && ocularity == BINOCULAR) {
+//   if(rval && region.ocularity == RegionParams::BINOCULAR) {
 //     rval &= V1SimpleFilter_Static(&dog_out_l, &dog_circ_l, &v1s_out_l_raw, &v1s_out_l,
 // 				  &v1s_circ_l);
 //   }
 
 
   DoGInvertFilter(&dog_out_r, &dog_circ_r, "_r");
-//   if(rval && ocularity == BINOCULAR) {
+//   if(rval && region.ocularity == RegionParams::BINOCULAR) {
 //     rval &= DoGInvertFilter(&dog_out_l, &dog_circ_l, "_l");
 //   }
 
@@ -5122,7 +5120,7 @@ bool V1RegionSpec::InvertFilters_impl() {
   if(v1s_save & SAVE_DATA && !(!taMisc::gui_active && v1s_save & ONLY_GUI)) {
     V1SOutputToTable(data_table);
   }
-  if(ocularity == BINOCULAR && v1b_save & SAVE_DATA && !(taMisc::gui_active && v1b_save & ONLY_GUI)) {
+  if(region.ocularity == RegionParams::BINOCULAR && v1b_save & SAVE_DATA && !(taMisc::gui_active && v1b_save & ONLY_GUI)) {
     V1BOutputToTable(data_table);
   }
   if(v1c_save & SAVE_DATA && !(!taMisc::gui_active && v1c_save & ONLY_GUI)) {
@@ -5135,7 +5133,7 @@ bool V1RegionSpec::InvertFilters_impl() {
 bool V1RegionSpec::V1ComplexInvertFilter() {
   v1s_out_r.InitVals(0.0f);
 
-  if(ocularity == BINOCULAR) {
+  if(region.ocularity == RegionParams::BINOCULAR) {
 //     if(v1c_filters & CF_ESLS) {
 //       V1ComplexFilter_EsLs_Binocular();
 //     }
@@ -5216,7 +5214,7 @@ bool V1RegionSpec::V1ComplexInvertFilter_EsLs_Monocular() {
 	sc.x = scs.x + xs;
 	scc = sc;	// center
 	if(scc.WrapClip(wrap, v1s_img_geom)) {
-	  if(edge_mode == CLIP) continue; // bail on clipping only
+	  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	}
 
 	MatMotEl(&v1s_out_r, sfc_ctr.x, sfc_ctr.y, scc.x, scc.y, v1s_mot_idx) = v1c_act;
@@ -5230,7 +5228,7 @@ bool V1RegionSpec::V1ComplexInvertFilter_EsLs_Monocular() {
 	  sce.y = sc.y + yp;
 
 	  if(sce.WrapClip(wrap, v1s_img_geom)) {
-	    if(edge_mode == CLIP) continue; // bail on clipping only
+	    if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	  }
 
 	  MatMotEl(&v1s_out_r, sfc_end.x, sfc_end.y, sce.x, sce.y, v1s_mot_idx) = v1c_act;
@@ -5271,7 +5269,7 @@ bool V1RegionSpec::V1ComplexInvertFilter_V1SMax_Monocular() {
 	  sc.x = scs.x + xs;
 	  scc = sc;	// center
 	  if(scc.WrapClip(wrap, v1s_img_geom)) {
-	    if(edge_mode == CLIP) continue; // bail on clipping only
+	    if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	  }
 
 	  MatMotEl(&v1s_out_r, sfc.x, sfc.y, scc.x, scc.y, v1s_mot_idx) = v1c_act;
@@ -5315,7 +5313,7 @@ bool V1RegionSpec::V1SimpleInvertFilter_Static(float_Matrix* dog, CircMatrix* do
 // 	    dc.y = dcs.y + yp;
 
 // 	    if(dc.WrapClip(wrap, dog_img_geom)) {
-// 	      if(edge_mode == CLIP) continue; // bail on clipping only
+// 	      if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 // 	    }
 
 // 	    MatMotEl(dog, dfc.x, dfc.y, dc.x, dc.y, dog_mot_idx) = v1s_act;
@@ -5329,6 +5327,11 @@ bool V1RegionSpec::V1SimpleInvertFilter_Static(float_Matrix* dog, CircMatrix* do
 
 /////////////////////////////////////////////////////
 //			Graphing
+
+int  V1RegionSpec::AngleDeg(int ang_no) {
+  int ang_inc = 180 / v1s_specs.n_angles;
+  return ang_no * ang_inc;
+}
 
 void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
   Init();			// need to init stencils for sure!
@@ -5349,7 +5352,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
   max_sz.Max(v1c_specs.spat_rf);
 
   int bin_rf_max = 5;;
-  if(ocularity == BINOCULAR) {
+  if(region.ocularity == RegionParams::BINOCULAR) {
     bin_rf_max = v1b_specs.n_disps * v1b_specs.disp_off + v1b_specs.tuning_width;
     TwoDCoord bin_max(v1b_specs.tot_disps * bin_rf_max + 2*v1b_specs.end_width, 2);
     max_sz.Max(bin_max);
@@ -5378,7 +5381,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
   { // v1simple, static
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
       graph_data->AddBlankRow();
-      nmda->SetValAsString("V1S " + String(ang * 45), -1);
+      nmda->SetValAsString("V1S " + String(AngleDeg(ang)), -1);
       float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
       TwoDCoord ic;
       for(int lpdx = 0; lpdx < v1s_specs.tot_len; lpdx++) { // line pixels
@@ -5393,7 +5396,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
     }
   }
 
-  if(ocularity == BINOCULAR) { // v1b
+  if(region.ocularity == RegionParams::BINOCULAR) { // v1b
     { // basic stencils
       graph_data->AddBlankRow();
       nmda->SetValAsString("V1b Binoc", -1);
@@ -5440,7 +5443,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
 	for(int dir = 0; dir < 2; dir++) { // directions
 	  float dirsign = (dir == 0) ? 1.0f : -1.0f; // direction sign for multiplying times slope values
 	  graph_data->AddBlankRow();
-	  nmda->SetValAsString("V1m sp:" + String(speed) + " ang:" + String(ang * 45) +
+	  nmda->SetValAsString("V1m sp:" + String(speed) + " ang:" + String(AngleDeg(ang)) +
 			       " dir:" + String(dir == 0 ? "-" : "+"), -1);
 	  float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
 	  TwoDCoord ic;
@@ -5490,7 +5493,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
   { // v1complex, es, ls
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
       graph_data->AddBlankRow();
-      nmda->SetValAsString("V1C End Stop Ang: " + String(ang * 45), -1);
+      nmda->SetValAsString("V1C End Stop Ang: " + String(AngleDeg(ang)), -1);
       float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
       TwoDCoord ic;
       for(int lpt=-v1c_specs.end_stop_len; lpt <= v1c_specs.end_stop_len; lpt++) {
@@ -5507,7 +5510,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
     }
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
       graph_data->AddBlankRow();
-      nmda->SetValAsString("V1C Len Sum Ang: " + String(ang * 45), -1);
+      nmda->SetValAsString("V1C Len Sum Ang: " + String(AngleDeg(ang)), -1);
       float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
       TwoDCoord ic;
       for(int lpt=-v1c_specs.len_sum_len; lpt <= v1c_specs.len_sum_len; lpt++) {
@@ -5695,7 +5698,7 @@ bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
 
 bool RetinaProc::LookAtImageData_impl(float_Matrix& eye_image,
 				      float_Matrix& xform_image,
-				      DoGRegionSpec::Region region,
+				      RegionParams::Region region,
 				      float box_ll_x, float box_ll_y,
 				      float box_ur_x, float box_ur_y,
 				      float move_x, float move_y,
@@ -5777,7 +5780,7 @@ bool RetinaProc::TransformImageData(float_Matrix* right_eye_image,
 
 bool RetinaProc::LookAtImageData(float_Matrix* right_eye_image,
 				 float_Matrix* left_eye_image,
-				 DoGRegionSpec::Region region,
+				 RegionParams::Region region,
 				 float box_ll_x, float box_ll_y,
 				 float box_ur_x, float box_ur_y,
 				 float move_x, float move_y,
@@ -5798,8 +5801,8 @@ bool RetinaProc::LookAtImageData(float_Matrix* right_eye_image,
 }
 
 bool RetinaProc::ConvertImageToMatrix(float_Matrix& img_data, taImage* img, 
-				      DoGRegionSpec::Color color) {
-  if(color == DoGRegionSpec::COLOR) {
+				      RegionParams::Color color) {
+  if(color == RegionParams::COLOR) {
     img->ImageToMatrix_rgb(img_data);
   }
   else {
@@ -5814,11 +5817,11 @@ bool RetinaProc::TransformImage(taImage* right_eye_image, taImage* left_eye_imag
   if(regions.size == 0) return false;
   DoGRegionSpec* reg = regions[0]; // take params from first
   if(right_eye_image) {
-    ConvertImageToMatrix(raw_image_r, right_eye_image, reg->color);
+    ConvertImageToMatrix(raw_image_r, right_eye_image, reg->region.color);
     TransformImageData_impl(raw_image_r, xform_image_r, move_x, move_y, scale, rotate);
   }
   if(left_eye_image) {
-    ConvertImageToMatrix(raw_image_l, left_eye_image, reg->color);
+    ConvertImageToMatrix(raw_image_l, left_eye_image, reg->region.color);
     TransformImageData_impl(raw_image_l, xform_image_l, move_x, move_y, scale, rotate);
   }
   return true;
@@ -5848,7 +5851,7 @@ bool RetinaProc::TransformImageName(const String& right_eye_img_fname,
 
 bool RetinaProc::LookAtImage(taImage* right_eye_image,
 			     taImage* left_eye_image,
-			     DoGRegionSpec::Region region,
+			     RegionParams::Region region,
 			     float box_ll_x, float box_ll_y,
 			     float box_ur_x, float box_ur_y,
 			     float move_x, float move_y,
@@ -5857,12 +5860,12 @@ bool RetinaProc::LookAtImage(taImage* right_eye_image,
   if(regions.size == 0) return false;
   DoGRegionSpec* reg = regions[0]; // take params from first
   if(right_eye_image) {
-    ConvertImageToMatrix(raw_image_r, right_eye_image, reg->color);
+    ConvertImageToMatrix(raw_image_r, right_eye_image, reg->region.color);
     LookAtImageData_impl(raw_image_r, xform_image_r, region, box_ll_x, box_ll_y,
 			 box_ur_x, box_ur_y, move_x, move_y, scale, rotate);
   }
   if(left_eye_image) {
-    ConvertImageToMatrix(raw_image_l, left_eye_image, reg->color);
+    ConvertImageToMatrix(raw_image_l, left_eye_image, reg->region.color);
     LookAtImageData_impl(raw_image_l, xform_image_l, region, box_ll_x, box_ll_y,
 			 box_ur_x, box_ur_y, move_x, move_y, scale, rotate);
   }
@@ -5871,7 +5874,7 @@ bool RetinaProc::LookAtImage(taImage* right_eye_image,
 
 bool RetinaProc::LookAtImageName(const String& right_eye_img_fname,
 				 const String& left_eye_img_fname,
-				 DoGRegionSpec::Region region,
+				 RegionParams::Region region,
 				 float box_ll_x, float box_ll_y,
 				 float box_ur_x, float box_ur_y,
 				 float move_x, float move_y,
@@ -5897,7 +5900,7 @@ bool RetinaProc::LookAtImageName(const String& right_eye_img_fname,
 ///////////////////////////////////////////////////////////////////////
 // Misc other processing operations
 
-bool RetinaProc::AttendRegion(DataTable* dt, DoGRegionSpec::Region region) {
+bool RetinaProc::AttendRegion(DataTable* dt, RegionParams::Region region) {
 //   DoGRegionSpec* fov_spec = regions.FindRetinalRegion(region);
 //   if(!fov_spec) return false;
 
