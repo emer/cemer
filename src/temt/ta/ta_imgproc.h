@@ -936,6 +936,7 @@ INHERITED(taOBase)
 public:
   int		end_stop_len;	// #DEF_1 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to look for opposite polarity end stops -- often the relevant transition does not occur very quickly, so an extended rf is needed -- this is a half-width, such that overall length is 1 + 2 * end_stop_len
   int		len_sum_len;	// #DEF_2 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
+  bool		es_sub_op;	// #DEF_true subtract opposite polarity of same angle when computing end stop activations -- todo: explore impact..
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   float		nonfocal_wt;	// #DEF_0.5 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
   TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field
@@ -1061,6 +1062,7 @@ public:
   float_Matrix	v1b_out;	 // #READ_ONLY #NO_SAVE v1 binocular output, which is just v1s feature activation times v1b_dsp_out weighting per feature -- [feat.x][feat.y][img.x][img.y]
 
   ///////////////////  V1C Output ////////////////////////
+  float_Matrix	v1c_esls_raw;	 // #READ_ONLY #NO_SAVE raw (pre spatial integration) v1 complex end-stop and length-sum output [feat.x][2][v1s_img.x][v1s_img.y]
   float_Matrix	v1c_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 complex output [feat.x][feat.y][img.x][img.y]
   float_Matrix	v1c_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
   float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [feat.x][feat.y][img.x][img.y]
@@ -1123,10 +1125,12 @@ protected:
 
   virtual bool	V1ComplexFilter();
   // do complex filters -- dispatch threads
-  virtual void 	V1ComplexFilter_EsLs_Monocular_thread(int v1c_idx, int thread_no);
+  virtual void 	V1ComplexFilter_EsLsRaw_Monocular_thread(int v1c_idx, int thread_no);
   // do complex filters from monocular inputs -- EndStop & Length Sum
-  virtual void 	V1ComplexFilter_EsLs_Binocular_thread(int v1c_idx, int thread_no);
+  virtual void 	V1ComplexFilter_EsLsRaw_Binocular_thread(int v1c_idx, int thread_no);
   // do complex filters from binocular inputs -- EndStop & Length Sum
+  virtual void 	V1ComplexFilter_EsLs_Integ_thread(int v1c_idx, int thread_no);
+  // do complex filters from monocular inputs -- EndStop & Length Sum
   virtual void 	V1ComplexFilter_V1SMax_Monocular_thread(int v1c_idx, int thread_no);
   // do complex filters from monocular inputs -- V1Simple Max
   virtual void 	V1ComplexFilter_V1SMax_Binocular_thread(int v1c_idx, int thread_no);
