@@ -934,15 +934,26 @@ class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
 INHERITED(taOBase)
 public:
-  int		end_stop_len;	// #DEF_1 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to look for opposite polarity end stops -- often the relevant transition does not occur very quickly, so an extended rf is needed -- this is a half-width, such that overall length is 1 + 2 * end_stop_len
-  int		len_sum_len;	// #DEF_2 length (in v1s rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
-  bool		es_sub_op;	// #DEF_true subtract opposite polarity of same angle when computing end stop activations -- todo: explore impact..
+  int		end_stop_len;	// #DEF_1:2 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to look for opposite polarity end stops -- often the relevant transition does not occur very quickly, so an extended rf is needed -- this is a half-width, such that overall length is 1 + 2 * end_stop_len
+  int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   float		nonfocal_wt;	// #DEF_0.5 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
-  TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field
-  TwoDCoord	spat_rf_half;	// #READ_ONLY half rf
-  TwoDCoord	spacing;	// how to space out the centers of the complex rfields -- typically 1/2 overlap with spat_rf
-  TwoDCoord	border;		// #READ_ONLY #SHOW border onto v1s filters -- automatically computed based on wrap mode and spacing setting
+  int		pre_rf;		// #DEF_2;4 #MIN_2 size of groups for pre-grouping of v1s or v1b features prior to computing subsequent steps (end stop, length sum, etc) -- pre grouping reduces the computational cost of subsequent computation, and also usefully makes it more robust to minor variations -- always uses half-overlap for spacing
+  TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- operates on top of the pre-grouping guys and always uses 1/2 overlap spacing
+  bool		es_sub_op;	// #DEF_true #EXPERT subtract opposite polarity of same angle when computing end stop activations -- todo: explore impact..
+
+  int		pre_half;	// #READ_ONLY pre_gp_rf / 2
+  int		pre_spacing;	// #READ_ONLY pre_gp_half always
+  int		pre_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
+
+  TwoDCoord	spat_half;	// #READ_ONLY half rf
+  TwoDCoord	spat_spacing;	// #READ_ONLY 1/2 overlap spacing with spat_rf
+  TwoDCoord	spat_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
+
+  TwoDCoord	net_rf;		// #READ_ONLY net = pre * spat
+  TwoDCoord	net_half;	// #READ_ONLY net = pre * spat
+  TwoDCoord	net_spacing;	// #READ_ONLY net = pre * spat
+  TwoDCoord	net_border;	// #READ_ONLY net = pre * spat
 
   int		end_stop_width;	// #READ_ONLY 1 + 2 * end_stop_len -- computed
   int		len_sum_width;	// #READ_ONLY 1 + 2 * len_sum_len -- computed
@@ -1017,6 +1028,7 @@ public:
   RenormMode	v1c_renorm;	// #DEF_LOG_RENORM how to renormalize the output of v1c filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
+  XYNGeom	v1c_pre_geom; 	// #READ_ONLY size of v1 complex pre-grouping of v1s or v1b values -- number of hypercolumns in each axis to cover entire output -- this is determined by v1c pre_rf on top of v1s img geom -- feature size is equivalent to v1s_feat_geom
   XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by v1c rf sz on top of v1s img geom
 
   ///////////////////  V1S Geom/Stencils ////////////////////////
@@ -1062,7 +1074,9 @@ public:
   float_Matrix	v1b_out;	 // #READ_ONLY #NO_SAVE v1 binocular output, which is just v1s feature activation times v1b_dsp_out weighting per feature -- [feat.x][feat.y][img.x][img.y]
 
   ///////////////////  V1C Output ////////////////////////
-  float_Matrix	v1c_esls_raw;	 // #READ_ONLY #NO_SAVE raw (pre spatial integration) v1 complex end-stop and length-sum output [feat.x][2][v1s_img.x][v1s_img.y]
+  float_Matrix	v1c_v1b_pre;	 // #READ_ONLY #NO_SAVE reduce v1b features back down to v1s size by collapsing across disparity, but with focal region differentially weighted [v1s_feat.x][v1s_feat.y][v1s_img.x][v1s_img.y]
+  float_Matrix	v1c_pre;	 // #READ_ONLY #NO_SAVE pre-grouping as basis for subsequent v1c filtering -- reduces dimensionality and introduces robustness [v1s_feat.x][v1s_feat.y][v1c_pre.x][v1c_pre.y]
+  float_Matrix	v1c_esls_raw;	 // #READ_ONLY #NO_SAVE raw (pre spatial integration, but post v1c_pre) v1 complex end-stop and length-sum output [feat.x][2][v1s_pre.x][v1s_pre.y]
   float_Matrix	v1c_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 complex output [feat.x][feat.y][img.x][img.y]
   float_Matrix	v1c_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
   float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [feat.x][feat.y][img.x][img.y]
@@ -1125,26 +1139,24 @@ protected:
 
   virtual bool	V1ComplexFilter();
   // do complex filters -- dispatch threads
-  virtual void 	V1ComplexFilter_EsLsRaw_Monocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from monocular inputs -- EndStop & Length Sum
-  virtual void 	V1ComplexFilter_EsLsRaw_Binocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from binocular inputs -- EndStop & Length Sum
+  virtual void 	V1ComplexFilter_Pre_Monocular_thread(int v1c_pre_idx, int thread_no);
+  // do complex filters from monocular inputs -- pre-grouping for subsequent processing
+  virtual void 	V1ComplexFilter_BinocularInteg_thread(int v1b_idx, int thread_no);
+  // do complex filters from binocular inputs -- integration (collapsing) across binocular inputs
+  virtual void 	V1ComplexFilter_Pre_Binocular_thread(int v1c_pre_idx, int thread_no);
+  // do complex filters from binocular inputs -- pre-grouping for subsequent processing
+  virtual void 	V1ComplexFilter_EsLs_Raw_thread(int v1c_pre_idx, int thread_no);
+  // do complex filters from pre-grouped inputs -- EndStop & Length Sum
   virtual void 	V1ComplexFilter_EsLs_Integ_thread(int v1c_idx, int thread_no);
-  // do complex filters from monocular inputs -- EndStop & Length Sum
-  virtual void 	V1ComplexFilter_V1SMax_Monocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from monocular inputs -- V1Simple Max
-  virtual void 	V1ComplexFilter_V1SMax_Binocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from binocular inputs -- V1Simple Max
-  virtual void 	V1ComplexFilter_Blob_Monocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from monocular inputs -- Blob
-  virtual void 	V1ComplexFilter_Blob_Binocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from binocular inputs -- Blob
+  // do complex filters from pre-grouped inputs -- EndStop & Length Sum
+  virtual void 	V1ComplexFilter_V1SMax_thread(int v1c_idx, int thread_no);
+  // do complex filters from pre-grouped inputs -- V1Simple Max
+  virtual void 	V1ComplexFilter_Blob_thread(int v1c_idx, int thread_no);
+  // do complex filters from pre-grouped inputs -- Blob
   virtual void 	V1ComplexFilter_DispEdge_thread(int v1c_idx, int thread_no);
   // do complex filters from binocular inputs -- disparity edge
-  virtual void 	V1ComplexFilter_MotionEdge_Monocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from monocular inputs -- motion edge
-  virtual void 	V1ComplexFilter_MotionEdge_Binocular_thread(int v1c_idx, int thread_no);
-  // do complex filters from binocular inputs -- motion edge
+  virtual void 	V1ComplexFilter_MotionEdge_thread(int v1c_idx, int thread_no);
+  // do complex filters from pre-grouped inputs -- motion edge
 
   virtual bool	V1CRenormOutput_EsLsBlob(float_Matrix* out);
   // end stop, length sum, blob separate renorm
