@@ -856,11 +856,11 @@ class TA_API V1SimpleSpec : public taOBase {
 INHERITED(taOBase)
 public:
   int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
-  int		half_len;	// #DEF_2 half-length of the DoG line edge detectors -- total length is 2*half_len + 1 (center)
+  int		line_len;	// #DEF_4:5 full length of the DoG line edge detectors -- 4 or 5 are typically the best, with 4 being preferred because it allows 4x4 pre-grouping in the v1 complex layer to speed processing there
   int		neigh_inhib_d; 	// #DEF_3 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning -- inhibition strength is given by the v1s_kwta.kwta_pt value -- 0 means do not compute
 
-  int		tot_len;	// #READ_ONLY total length of dog lines = 2 * half_len + 1
-  float		line_norm;	// #READ_ONLY 1 / tot_len
+  int		half_len;	// #READ_ONLY half length of dog lines (round down for odd)
+  float		line_norm;	// #READ_ONLY 1 / line_len
   int		tot_ni_len;	// #READ_ONLY total length of neighborhood inhibition stencils = 2 * neigh_inhib_d + 1
 
   void 	Initialize();
@@ -938,12 +938,13 @@ public:
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   float		nonfocal_wt;	// #DEF_0.5 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
-  int		pre_rf;		// #DEF_2;4 #MIN_2 size of groups for pre-grouping of v1s or v1b features prior to computing subsequent steps (end stop, length sum, etc) -- pre grouping reduces the computational cost of subsequent computation, and also usefully makes it more robust to minor variations -- always uses half-overlap for spacing
+  bool		pre_gp4;	// #DEF_true use a 4x4 pre-grouping of v1s or v1b features prior to computing subsequent steps (end stop, length sum, etc) -- pre grouping reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense -- if this is selected, then v1s_specs.line_len should be 4 as well, though 5 is possible (just extends lines over the edge a bit)
   TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- operates on top of the pre-grouping guys and always uses 1/2 overlap spacing
   bool		es_sub_op;	// #DEF_true #EXPERT subtract opposite polarity of same angle when computing end stop activations -- todo: explore impact..
 
-  int		pre_half;	// #READ_ONLY pre_gp_rf / 2
-  int		pre_spacing;	// #READ_ONLY pre_gp_half always
+  int		pre_rf;		// #READ_ONLY size of pre-grouping -- always 4 for now, as it is the only thing that makes sense
+  int		pre_half;	// #READ_ONLY pre_rf / 2
+  int		pre_spacing;	// #READ_ONLY pre_half always
   int		pre_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
 
   TwoDCoord	spat_half;	// #READ_ONLY half rf
@@ -1033,8 +1034,8 @@ public:
 
   ///////////////////  V1S Geom/Stencils ////////////////////////
   float_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each fo the angles
-  int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells as dog-lines [x,y][1 line: tot_len][angles]
-  int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][1 line: tot_len][angles]
+  int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells as dog-lines [x,y][line_len][angles]
+  int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
 
@@ -1054,6 +1055,7 @@ public:
   int		v1c_feat_blob_y; // #READ_ONLY y axis index for start of blob features in v1c
   int		v1c_feat_edge_y; // #READ_ONLY y axis index for start of edge features in v1c (disp, motion)
   float_Matrix	v1c_weights;	// #READ_ONLY #NO_SAVE v1 complex spatial weighting factors (2d)
+  int_Matrix	v1c_gp4_stencils; // #READ_ONLY #NO_SAVE stencils for v1c pre_gp4 pre-grouping -- represents center points of the lines for each angle [x,y,len][5][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
   int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][end_stop_width][angles]
   int_Matrix	v1c_ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
 
