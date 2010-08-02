@@ -3028,19 +3028,18 @@ void V1KwtaSpec::Compute_All_IThr(float_Matrix& inputs, float_Matrix& ithrs) {
 
 void V1SimpleSpec::Initialize() {
   n_angles = 4;
-  line_len = 4;
-  neigh_inhib_d = 3;
+  half_len = 2;
+  gauss_sig = 1.5f;
+  neigh_inhib_d = 1;
 
-  half_len = line_len / 2;
+  line_len = 2 * half_len + 1;
   tot_ni_len = 2 * neigh_inhib_d + 1;
-  line_norm = 1.0f / (float)line_len;
 }
 
 void V1SimpleSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  half_len = line_len / 2;
+  line_len = 2 * half_len + 1;
   tot_ni_len = 2 * neigh_inhib_d + 1;
-  line_norm = 1.0f / (float)line_len;
 }
 
 void V1MotionSpec::Initialize() {
@@ -3410,6 +3409,10 @@ bool V1RegionSpec::InitFilters_V1Simple() {
 	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, LINE, ang));
     }
   }
+
+  v1s_weights.SetGeom(1, v1s_specs.line_len);
+  taMath_float::vec_kern_gauss(&v1s_weights, v1s_specs.half_len, v1s_specs.gauss_sig);
+  taMath_float::vec_norm_sum(&v1s_weights); // sum to 1 -- max activation
 
   // config: x,y coords by tot_ni_len, by angles
   v1s_ni_stencils.SetGeom(3, 2, v1s_specs.tot_ni_len, v1s_specs.n_angles);
@@ -3784,9 +3787,8 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
 	}
 
 	float dogval = MatMotEl(cur_dog, dfc.x, dfc.y, dc.x, dc.y, dog_mot_idx);
-	line_sum += dogval;
+	line_sum += v1s_weights.FastEl(lpdx) * dogval;
       }
-      line_sum *= v1s_specs.line_norm;
       MatMotEl(cur_out, fc.x, fc.y, sc.x, sc.y, mot_idx) = line_sum;
     }
   }
@@ -5421,6 +5423,9 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
 					      max_sz.x, max_sz.y);
 
   { // v1simple, static
+    float_Matrix disp_wts;
+    disp_wts.CopyFrom(&v1s_weights);
+    taMath_float::vec_norm_max(&disp_wts);
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
       graph_data->AddBlankRow();
       nmda->SetValAsString("V1S " + String(AngleDeg(ang)), -1);
@@ -5433,7 +5438,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
 	ic.y = brd.y + yp;
 
 	if(ic.WrapClip(true, max_sz)) continue;
-	mat->FastEl(ic.x,ic.y) = (xp == 0 && yp == 0) ? -1.0f : 1.0f;
+	mat->FastEl(ic.x,ic.y) = disp_wts.FastEl(lpdx);
       }
     }
   }

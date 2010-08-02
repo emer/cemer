@@ -852,15 +852,15 @@ public:
 };
 
 class TA_API V1SimpleSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as integrators of DoG activations along oriented lines (edges)
 INHERITED(taOBase)
 public:
   int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
-  int		line_len;	// #DEF_4:5 full length of the DoG line edge detectors -- 4 or 5 are typically the best, with 4 being preferred because it allows 4x4 pre-grouping in the v1 complex layer to speed processing there
-  int		neigh_inhib_d; 	// #DEF_3 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning -- inhibition strength is given by the v1s_kwta.kwta_pt value -- 0 means do not compute
+  int		half_len;	// #DEF_2 half length of the DoG line edge detectors -- total length is 2 * half_len + 1 -- must be odd total so that is symmetric when centered on a point
+  float		gauss_sig;	// #DEF_1.5 gaussian sigma for weighting values along the DoG lines
+  int		neigh_inhib_d; 	// #DEF_1 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning -- inhibition strength is given by the v1s_kwta.kwta_pt value -- 0 means do not compute
 
-  int		half_len;	// #READ_ONLY half length of dog lines (round down for odd)
-  float		line_norm;	// #READ_ONLY 1 / line_len
+  int 		line_len;	// #READ_ONLY total length of dog lines
   int		tot_ni_len;	// #READ_ONLY total length of neighborhood inhibition stencils = 2 * neigh_inhib_d + 1
 
   void 	Initialize();
@@ -1035,6 +1035,7 @@ public:
   ///////////////////  V1S Geom/Stencils ////////////////////////
   float_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each fo the angles
   int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells as dog-lines [x,y][line_len][angles]
+  float_Matrix	v1s_weights;  	// #READ_ONLY #NO_SAVE v1 simple DoG line weights (gaussian sigmoidal)
   int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
