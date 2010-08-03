@@ -3038,6 +3038,8 @@ void V1SimpleSpec::Initialize() {
 
 void V1SimpleSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  n_angles = 4;			// todo: enforced
+  half_len = 2;			// todo: enforced
   line_len = 2 * half_len + 1;
   tot_ni_len = 2 * neigh_inhib_d + 1;
 }
@@ -3396,23 +3398,91 @@ bool V1RegionSpec::InitFilters() {
   return true;
 }
 
-bool V1RegionSpec::InitFilters_V1Simple() {
-  // config: x,y coords by line_len = 1 line, by angles
-  v1s_stencils.SetGeom(3, 2, v1s_specs.line_len, v1s_specs.n_angles);
+static bool vec_kern_gauss_even_sqr2(float_Matrix* kernel, int full_sz, float sigma,
+				bool neg_tail=true, bool pos_tail=true) {
+  int half_sz = full_sz / 2;
+  kernel->SetGeom(1, full_sz);
+  float off = (float)(full_sz-1) / 2.0f;
+  float ssq = -1.0 / (2.0 * sigma * sigma);
+  for(int i=0;i<kernel->size;i++) {
+    float x = ((float)i - off) * sqrtf(2.0f);
+    float y = expf(ssq * x * x);
+    if(x < 0.0) {
+      if(!neg_tail)
+	y = 0.0;
+    }
+    else if(x > 0.0) {
+      if(!pos_tail)
+	y = 0.0;
+    }
+    kernel->FastEl(i) = y;
+  }
+  taMath_float::vec_norm_sum(kernel);
+  return true;
+}
 
-  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-    for(int lpdx=0; lpdx < v1s_specs.line_len; lpdx++) { // points in line
-      int lpt = lpdx - v1s_specs.half_len;
-      v1s_stencils.FastEl(X, lpdx, ang) = 
-	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(X, LINE, ang));
-      v1s_stencils.FastEl(Y, lpdx, ang) = 
-	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, LINE, ang));
+
+
+bool V1RegionSpec::InitFilters_V1Simple() {
+  // config: x,y coords by line_len = 1 line, by on/off (2), by angles, by polarities
+  v1s_stencils.SetGeom(5, 2, v1s_specs.line_len, 2, v1s_specs.n_angles, 2);
+
+  v1s_stencils.InitVals(0);
+
+  v1s_line_len.SetGeom(1,v1s_specs.n_angles);
+  
+  v1s_weights.SetGeom(2, v1s_specs.line_len, v1s_specs.n_angles);
+  float_Matrix full_len_wts;
+  taMath_float::vec_kern_gauss(&full_len_wts, v1s_specs.half_len, v1s_specs.gauss_sig);
+
+  float_Matrix short_len_wts;
+  vec_kern_gauss_even_sqr2(&short_len_wts, v1s_specs.line_len-1, v1s_specs.gauss_sig);
+
+  // note: n_angles is constrained to be 4
+  // horiz, vert angles
+  for(int ang = 0; ang < v1s_specs.n_angles; ang+=2) {
+    v1s_line_len.FastEl(ang) = v1s_specs.line_len;
+    for(int pol = 0; pol < 2; pol++) { // polarity
+      for(int onoff = 0; onoff < 2; onoff++) { // on vs. off encoding
+	for(int lpdx=0; lpdx < v1s_specs.line_len; lpdx++) { // points in line
+	  v1s_weights.FastEl(lpdx, ang) = full_len_wts.FastEl(lpdx);
+	  int dir = ((pol == 0) ? -1 : 1) * ((onoff == 0) ? -1 : 1);
+	  int xs = taMath_float::rint((float)dir * v1s_ang_slopes.FastEl(X, ORTHO, ang));
+	  int ys = taMath_float::rint((float)dir * v1s_ang_slopes.FastEl(Y, ORTHO, ang));
+	  int lpt = lpdx - v1s_specs.half_len;
+	  v1s_stencils.FastEl(X, lpdx, onoff, ang, pol) = xs + 
+	    taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(X, LINE, ang));
+	  v1s_stencils.FastEl(Y, lpdx, onoff, ang, pol) = ys + 
+	    taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, LINE, ang));
+	}
+      }
     }
   }
-
-  v1s_weights.SetGeom(1, v1s_specs.line_len);
-  taMath_float::vec_kern_gauss(&v1s_weights, v1s_specs.half_len, v1s_specs.gauss_sig);
-  taMath_float::vec_norm_sum(&v1s_weights); // sum to 1 -- max activation
+  for(int ang = 1; ang < v1s_specs.n_angles; ang+=2) {
+    int len = v1s_specs.line_len-1;
+    v1s_line_len.FastEl(ang) = len;
+    for(int pol = 0; pol < 2; pol++) { // polarity
+      for(int onoff = 0; onoff < 2; onoff++) { // on vs. off encoding
+	for(int lpdx=0; lpdx < len; lpdx++) { // points in line
+	  v1s_weights.FastEl(lpdx, ang) = short_len_wts.FastEl(lpdx);
+	  int dir = ((pol == 0) ? -1 : 1) * ((onoff == 0) ? -1 : 1);
+	  // start = move to bottom point
+	  int xs = taMath_float::rint((float)-2 * v1s_ang_slopes.FastEl(X, LINE, ang));
+	  int ys = taMath_float::rint((float)-2 * v1s_ang_slopes.FastEl(Y, LINE, ang));
+	  // scootch one way or the other depending on dir
+	  if(dir < 0)
+	    xs += taMath_float::rint((float)1 * v1s_ang_slopes.FastEl(X, LINE, ang));
+	  else
+	    ys += taMath_float::rint((float)1 * v1s_ang_slopes.FastEl(Y, LINE, ang));
+	  int lpt = lpdx - v1s_specs.half_len;
+	  v1s_stencils.FastEl(X, lpdx, onoff, ang, pol) = xs + 
+	    taMath_float::rint((float)lpdx * v1s_ang_slopes.FastEl(X, LINE, ang));
+	  v1s_stencils.FastEl(Y, lpdx, onoff, ang, pol) = ys + 
+	    taMath_float::rint((float)lpdx * v1s_ang_slopes.FastEl(Y, LINE, ang));
+	}
+      }
+    }
+  }
 
   // config: x,y coords by tot_ni_len, by angles
   v1s_ni_stencils.SetGeom(3, 2, v1s_specs.tot_ni_len, v1s_specs.n_angles);
@@ -3770,26 +3840,31 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
   TwoDCoord dc;			// dog coord
   TwoDCoord fc;			// v1s feature coords
   TwoDCoord dfc;		// dog feature coords
-  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+  for(int dog = 0; dog < dog_feat_geom.n; dog += 2) { // dog features -- only the even #'s!
     dfc.SetFmIndex(dog, dog_feat_geom.x);
-    fc.y = dog;
-    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-      fc.x = ang;
-      float line_sum = 0.0f;
-      for(int lpdx=0; lpdx < v1s_specs.line_len; lpdx++) { // points in line
-	int xp = v1s_stencils.FastEl(X,lpdx,ang);
-	int yp = v1s_stencils.FastEl(Y,lpdx,ang);
-	dc.x = dcs.x + xp;
-	dc.y = dcs.y + yp;
+    for(int pol = 0; pol < 2; pol++) { // polarities
+      fc.y = dog + pol;
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	fc.x = ang;
+	for(int onoff = 0; onoff < 2; onoff++) { // on vs. off rf
+	  int len = v1s_line_len.FastEl(ang);
+	  float line_sum = 0.0f;
+	  for(int lpdx=0; lpdx < len; lpdx++) { // points in line
+	    int xp = v1s_stencils.FastEl(X,lpdx,onoff, ang, pol);
+	    int yp = v1s_stencils.FastEl(Y,lpdx,onoff, ang, pol);
+	    dc.x = dcs.x + xp;
+	    dc.y = dcs.y + yp;
 
-	if(dc.WrapClip(wrap, dog_img_geom)) {
-	  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
+	    if(dc.WrapClip(wrap, dog_img_geom)) {
+	      if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
+	    }
+
+	    float dogval = MatMotEl(cur_dog, dfc.x, dfc.y + onoff, dc.x, dc.y, dog_mot_idx);
+	    line_sum += v1s_weights.FastEl(lpdx, ang) * dogval;
+	  }
+	  MatMotEl(cur_out, fc.x, fc.y, sc.x, sc.y, mot_idx) = line_sum;
 	}
-
-	float dogval = MatMotEl(cur_dog, dfc.x, dfc.y, dc.x, dc.y, dog_mot_idx);
-	line_sum += v1s_weights.FastEl(lpdx) * dogval;
       }
-      MatMotEl(cur_out, fc.x, fc.y, sc.x, sc.y, mot_idx) = line_sum;
     }
   }
 }
@@ -5427,18 +5502,23 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
     disp_wts.CopyFrom(&v1s_weights);
     taMath_float::vec_norm_max(&disp_wts);
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-      graph_data->AddBlankRow();
-      nmda->SetValAsString("V1S " + String(AngleDeg(ang)), -1);
-      float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-      TwoDCoord ic;
-      for(int lpdx = 0; lpdx < v1s_specs.line_len; lpdx++) { // line pixels
-	int xp = v1s_stencils.FastEl(X,lpdx,ang);
-	int yp = v1s_stencils.FastEl(Y,lpdx,ang);
-	ic.x = brd.x + xp;
-	ic.y = brd.y + yp;
+      for(int pol = 0; pol < 2; pol++) { // polarities
+	int len = v1s_line_len.FastEl(ang);
+	graph_data->AddBlankRow();
+	nmda->SetValAsString("V1S " + String(AngleDeg(ang)) + (String)((pol ==0) ? " +" : " -"), -1);
+	float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+	TwoDCoord ic;
+	for(int onoff = 0; onoff < 2; onoff++) { // on vs. off rf
+	  for(int lpdx = 0; lpdx < len; lpdx++) { // line pixels
+	    int xp = v1s_stencils.FastEl(X,lpdx,onoff,ang,pol);
+	    int yp = v1s_stencils.FastEl(Y,lpdx,onoff,ang,pol);
+	    ic.x = brd.x + xp;
+	    ic.y = brd.y + yp;
 
-	if(ic.WrapClip(true, max_sz)) continue;
-	mat->FastEl(ic.x,ic.y) = disp_wts.FastEl(lpdx);
+	    if(ic.WrapClip(true, max_sz)) continue;
+	    mat->FastEl(ic.x,ic.y) = disp_wts.FastEl(lpdx, ang) * (onoff==0 ? 1.0f : -1.0f);
+	  }
+	}
       }
     }
   }

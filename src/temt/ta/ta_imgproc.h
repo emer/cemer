@@ -856,7 +856,7 @@ class TA_API V1SimpleSpec : public taOBase {
 INHERITED(taOBase)
 public:
   int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
-  int		half_len;	// #DEF_2 half length of the DoG line edge detectors -- total length is 2 * half_len + 1 -- must be odd total so that is symmetric when centered on a point
+  int		half_len;	// #DEF_2 half length of the DoG line edge detectors -- total length is 2 * half_len + 1 -- must be odd total so that is symmetric when centered on a point -- currently only 2 is supported
   float		gauss_sig;	// #DEF_1.5 gaussian sigma for weighting values along the DoG lines
   int		neigh_inhib_d; 	// #DEF_1 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning -- inhibition strength is given by the v1s_kwta.kwta_pt value -- 0 means do not compute
 
@@ -1034,7 +1034,8 @@ public:
 
   ///////////////////  V1S Geom/Stencils ////////////////////////
   float_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each fo the angles
-  int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells as dog-lines [x,y][line_len][angles]
+  int_Matrix	v1s_line_len; 	// #READ_ONLY #NO_SAVE length of lines as a function of angle
+  int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells as parallel DoG-line edge detectors in the on and off-center DoG input space [x,y][line_len][on_off][angles][polarity] (2 polarities)
   float_Matrix	v1s_weights;  	// #READ_ONLY #NO_SAVE v1 simple DoG line weights (gaussian sigmoidal)
   int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
