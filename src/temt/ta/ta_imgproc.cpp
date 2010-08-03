@@ -2197,6 +2197,7 @@ void DoGRegionSpec::Initialize() {
   cur_img_l = NULL;
   cur_img = NULL;
   cur_out = NULL;
+  cur_out_acts = NULL;
   cur_circ = NULL;
   rgb_img = false;
   wrap = false;
@@ -3030,10 +3031,9 @@ void V1SimpleSpec::Initialize() {
   n_angles = 4;
   half_len = 2;
   gauss_sig = 1.5f;
-  neigh_inhib_d = 1;
+  prod_integ = true;
 
   line_len = 2 * half_len + 1;
-  tot_ni_len = 2 * neigh_inhib_d + 1;
 }
 
 void V1SimpleSpec::UpdateAfterEdit_impl() {
@@ -3041,7 +3041,20 @@ void V1SimpleSpec::UpdateAfterEdit_impl() {
   n_angles = 4;			// todo: enforced
   half_len = 2;			// todo: enforced
   line_len = 2 * half_len + 1;
-  tot_ni_len = 2 * neigh_inhib_d + 1;
+}
+
+void V1sNeighInhib::Initialize() {
+  inhib_d = 3;
+  gauss_sig = 1.5f;
+  feat_g = 0.8f;
+  gp_g = 0.4f;
+
+  tot_ni_len = 2 * inhib_d + 1;
+}
+
+void V1sNeighInhib::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  tot_ni_len = 2 * inhib_d + 1;
 }
 
 void V1MotionSpec::Initialize() {
@@ -3180,6 +3193,7 @@ void V1RegionSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   v1s_specs.UpdateAfterEdit_NoGui();
   v1s_kwta.UpdateAfterEdit_NoGui();
+  v1s_neigh_inhib.UpdateAfterEdit_NoGui();
   v1s_motion.UpdateAfterEdit_NoGui();
   v1b_specs.UpdateAfterEdit_NoGui();
   v1b_dsp_specs.UpdateAfterEdit_NoGui();
@@ -3434,9 +3448,11 @@ bool V1RegionSpec::InitFilters_V1Simple() {
   v1s_weights.SetGeom(2, v1s_specs.line_len, v1s_specs.n_angles);
   float_Matrix full_len_wts;
   taMath_float::vec_kern_gauss(&full_len_wts, v1s_specs.half_len, v1s_specs.gauss_sig);
+//   taMath_float::vec_mult_scalar(&full_len_wts, .5f); // half strength
 
   float_Matrix short_len_wts;
   vec_kern_gauss_even_sqr2(&short_len_wts, v1s_specs.line_len-1, v1s_specs.gauss_sig);
+//   taMath_float::vec_mult_scalar(&short_len_wts, .5f);
 
   // note: n_angles is constrained to be 4
   // horiz, vert angles
@@ -3446,7 +3462,8 @@ bool V1RegionSpec::InitFilters_V1Simple() {
       for(int onoff = 0; onoff < 2; onoff++) { // on vs. off encoding
 	for(int lpdx=0; lpdx < v1s_specs.line_len; lpdx++) { // points in line
 	  v1s_weights.FastEl(lpdx, ang) = full_len_wts.FastEl(lpdx);
-	  int dir = ((pol == 0) ? -1 : 1) * ((onoff == 0) ? -1 : 1);
+	  int dir = ((pol == 0) ? -1 : 1) * ((onoff == 0) ? 1 : -1);
+	  if(dir > 0) dir = 2;	// double-spaced to fit dog which are double-spaced
 	  int xs = taMath_float::rint((float)dir * v1s_ang_slopes.FastEl(X, ORTHO, ang));
 	  int ys = taMath_float::rint((float)dir * v1s_ang_slopes.FastEl(Y, ORTHO, ang));
 	  int lpt = lpdx - v1s_specs.half_len;
@@ -3465,15 +3482,18 @@ bool V1RegionSpec::InitFilters_V1Simple() {
       for(int onoff = 0; onoff < 2; onoff++) { // on vs. off encoding
 	for(int lpdx=0; lpdx < len; lpdx++) { // points in line
 	  v1s_weights.FastEl(lpdx, ang) = short_len_wts.FastEl(lpdx);
-	  int dir = ((pol == 0) ? -1 : 1) * ((onoff == 0) ? -1 : 1);
+	  int dir = ((pol == 0) ? -1 : 1) * ((onoff == 0) ? 1 : -1);
 	  // start = move to bottom point
 	  int xs = taMath_float::rint((float)-2 * v1s_ang_slopes.FastEl(X, LINE, ang));
 	  int ys = taMath_float::rint((float)-2 * v1s_ang_slopes.FastEl(Y, LINE, ang));
 	  // scootch one way or the other depending on dir
-	  if(dir < 0)
+	  if(dir < 0) {
 	    xs += taMath_float::rint((float)1 * v1s_ang_slopes.FastEl(X, LINE, ang));
-	  else
-	    ys += taMath_float::rint((float)1 * v1s_ang_slopes.FastEl(Y, LINE, ang));
+	  }
+	  else {
+	    ys += taMath_float::rint((float)2 * v1s_ang_slopes.FastEl(Y, LINE, ang));
+	    xs -= taMath_float::rint((float)1 * v1s_ang_slopes.FastEl(X, LINE, ang));
+	  }
 	  int lpt = lpdx - v1s_specs.half_len;
 	  v1s_stencils.FastEl(X, lpdx, onoff, ang, pol) = xs + 
 	    taMath_float::rint((float)lpdx * v1s_ang_slopes.FastEl(X, LINE, ang));
@@ -3485,17 +3505,28 @@ bool V1RegionSpec::InitFilters_V1Simple() {
   }
 
   // config: x,y coords by tot_ni_len, by angles
-  v1s_ni_stencils.SetGeom(3, 2, v1s_specs.tot_ni_len, v1s_specs.n_angles);
+  v1s_ni_stencils.SetGeom(3, 2, v1s_neigh_inhib.tot_ni_len, v1s_specs.n_angles);
 
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-    for(int lpt=-v1s_specs.neigh_inhib_d; lpt <= v1s_specs.neigh_inhib_d; lpt++) {
-      int lpdx = lpt + v1s_specs.neigh_inhib_d;
+    for(int lpt=-v1s_neigh_inhib.inhib_d; lpt <= v1s_neigh_inhib.inhib_d; lpt++) {
+      int lpdx = lpt + v1s_neigh_inhib.inhib_d;
       v1s_ni_stencils.FastEl(X, lpdx, ang) = 
 	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(X, ORTHO, ang)); // ortho
       v1s_ni_stencils.FastEl(Y, lpdx, ang) = 
 	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, ORTHO, ang));
     }
   }
+
+  // weights for neighborhood inhib -- take into account global scaling factor
+  taMath_float::vec_kern_gauss(&v1s_nif_weights, v1s_neigh_inhib.inhib_d,
+			       v1s_neigh_inhib.gauss_sig);
+  taMath_float::vec_norm_max(&v1s_nif_weights);
+  taMath_float::vec_mult_scalar(&v1s_nif_weights, v1s_neigh_inhib.feat_g);
+
+  taMath_float::vec_kern_gauss(&v1s_nig_weights, v1s_neigh_inhib.inhib_d,
+			       v1s_neigh_inhib.gauss_sig);
+  taMath_float::vec_norm_max(&v1s_nig_weights);
+  taMath_float::vec_mult_scalar(&v1s_nig_weights, v1s_neigh_inhib.gp_g);
 
   if(motion_frames > 1) {
     v1m_stencils.SetGeom(6, 2, v1s_motion.tot_width, motion_frames, 2, 
@@ -3704,6 +3735,7 @@ bool V1RegionSpec::InitOutMatrix() {
   v1s_circ_l.Reset();
   v1s_out_r_raw.SetGeomN(v1s_out_r.geom);
   v1s_out_l_raw.SetGeomN(v1s_out_l.geom);
+  v1s_feat_gi.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
 
   ///////////////////  V1B Output ////////////////////////
   if(region.ocularity == RegionParams::BINOCULAR) {
@@ -3796,10 +3828,13 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* dog, CircMatrix* dog_circ
 					 CircMatrix* circ) {
   cur_dog = dog;
   cur_dog_circ = dog_circ;
-  if(v1s_kwta.on)
+  if(v1s_kwta.on) {
     cur_out = out_raw;
-  else
+    cur_out_acts = out;
+  }
+  else {
     cur_out = out;
+  }
   cur_circ = circ;
 
   int n_run = v1s_img_geom.Product();
@@ -3818,8 +3853,9 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* dog, CircMatrix* dog_circ
   if(v1s_kwta.on) {
 //     v1s_kwta.Compute_Kwta(*out_raw, *out, v1s_gci);
     v1s_kwta.Compute_Inhib_IThr(*out_raw, v1s_gci, v1s_ithr);
-    if(v1s_specs.neigh_inhib_d > 0) {
-      V1SimpleFilter_Static_neighinhib(out_raw, out);
+    if(v1s_neigh_inhib.inhib_d > 0) {
+      ThreadImgProcCall ip_call_ni((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread);
+      threads.Run(&ip_call_ni, n_run);
     }
     else {
       v1s_kwta.Compute_Act(*out_raw, *out, v1s_gci);
@@ -3846,13 +3882,12 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
       fc.y = dog + pol;
       for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
         fc.x = ang;
-        float line_sum = 0.0f;
+        float line_sums[2] = {0.0f, 0.0f};
         for(int onoff = 0; onoff < 2; onoff++) { // on vs. off rf
           int len = v1s_line_len.FastEl(ang);
-          
           for(int lpdx=0; lpdx < len; lpdx++) { // points in line
-            int xp = v1s_stencils.FastEl(X,lpdx,onoff, ang, pol);
-            int yp = v1s_stencils.FastEl(Y,lpdx,onoff, ang, pol);
+            int xp = v1s_stencils.FastEl(X, lpdx, onoff, ang, pol);
+            int yp = v1s_stencils.FastEl(Y, lpdx, onoff, ang, pol);
             dc.x = dcs.x + xp;
             dc.y = dcs.y + yp;
             
@@ -3860,51 +3895,70 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
               if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
             }
             
-            float dogval = MatMotEl(cur_dog, dfc.x + onoff, dfc.y, dc.x, dc.y, dog_mot_idx);  //KENNETH: x or y with + onoff, was x changed to y
-            line_sum += v1s_weights.FastEl(lpdx, ang) * dogval;
+            float dogval = MatMotEl(cur_dog, dfc.x + onoff, dfc.y, dc.x, dc.y, dog_mot_idx);
+            line_sums[onoff] += v1s_weights.FastEl(lpdx, ang) * dogval;
           }
-         
         }
-        MatMotEl(cur_out, fc.x, fc.y, sc.x, sc.y, mot_idx) = line_sum;
+	if(v1s_specs.prod_integ) {
+	  float line_prod = line_sums[0] * line_sums[1]; // product!
+	  MatMotEl(cur_out, fc.x, fc.y, sc.x, sc.y, mot_idx) = line_prod;
+	}
+	else {
+	  float line_avg = 0.5 * (line_sums[0] + line_sums[1]); // avg/sum
+	  MatMotEl(cur_out, fc.x, fc.y, sc.x, sc.y, mot_idx) = line_avg;
+	}
       }
     }
   }
 }
 
-void V1RegionSpec::V1SimpleFilter_Static_neighinhib(float_Matrix* out_raw, float_Matrix* out) {
-  TwoDCoord sc;		// simple coords
+void V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thread_no) {
+  TwoDCoord sc;			// simple coords
+  sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
+
   TwoDCoord fc;		// v1s feature coords
   TwoDCoord oc;		// other coord
-  for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
-    for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
-      float gi = v1s_gci.FastEl(sc.x, sc.y);
-      for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
-	fc.y = dog;
-	for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-	  fc.x = ang;
-	  float inhib_max = 0.0f;
-	  for(int lpdx=0; lpdx < v1s_specs.tot_ni_len; lpdx++) { // go out to neighs
-	    int xp = v1s_ni_stencils.FastEl(X,lpdx,ang);
-	    int yp = v1s_ni_stencils.FastEl(Y,lpdx,ang);
-	    oc.x = sc.x + xp;
-	    oc.y = sc.y + yp;
-	    if(oc.WrapClip(wrap, v1s_img_geom)) {
-	      if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
-	    }
-	    float oth_ithr = v1s_ithr.FastEl(fc.x, fc.y, oc.x, oc.y); // other guy
-	    float oig = v1s_kwta.kwta_pt * oth_ithr; // note: directly on ithr!
-	    inhib_max = MAX(inhib_max, oig);
-	  }
-
-	  float raw = out_raw->FastEl(fc.x, fc.y, sc.x, sc.y);
-	  float ge = v1s_kwta.g_bar_e * raw;
-	  float gi_eff = MAX(gi, inhib_max);
-	  float act = v1s_kwta.Compute_ActFmIn(ge, gi_eff);
-	  if(act > raw)
-	    act = v1s_kwta.raw_pct * raw + v1s_kwta.raw_pct_c * act; // blendy
-	  out->FastEl(fc.x, fc.y, sc.x,  sc.y) = act; 
+  float gp_inhib_max = 0.0f;
+  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+    fc.y = dog;
+    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+      fc.x = ang;
+      float raw = cur_out->FastEl(fc.x, fc.y, sc.x, sc.y);
+      float feat_inhib_max = 0.0f;
+      for(int lpdx=0; lpdx < v1s_neigh_inhib.tot_ni_len; lpdx++) { // go out to neighs
+	int xp = v1s_ni_stencils.FastEl(X,lpdx,ang);
+	int yp = v1s_ni_stencils.FastEl(Y,lpdx,ang);
+	oc.x = sc.x + xp;
+	oc.y = sc.y + yp;
+	if(oc.WrapClip(wrap, v1s_img_geom)) {
+	  if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
 	}
+	float oth_ithr = v1s_ithr.FastEl(fc.x, fc.y, oc.x, oc.y); // other guy
+	// weights already have gain factor built in
+	float ogi = v1s_nif_weights.FastEl(lpdx) * oth_ithr; // note: directly on ithr!
+	feat_inhib_max = MAX(feat_inhib_max, ogi);
+	float gpgi = raw * v1s_nig_weights.FastEl(lpdx) * oth_ithr;
+	// we only get as much of this as we have activity ourselves -- prevents global inhibition dynamic -- targeted to specific feature spread
+	gp_inhib_max = MAX(gp_inhib_max, gpgi);
       }
+      v1s_feat_gi.FastEl(fc.x, fc.y, sc.x, sc.y) = feat_inhib_max; // store for later
+    }
+  }
+  float gi = v1s_gci.FastEl(sc.x, sc.y);
+  gi = MAX(gi, gp_inhib_max);	// incorporate group feature spread
+
+  for(int dog = 0; dog < dog_feat_geom.n; dog++) { // dog features
+    fc.y = dog;
+    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+      fc.x = ang;
+      float raw = cur_out->FastEl(fc.x, fc.y, sc.x, sc.y);
+      float ge = v1s_kwta.g_bar_e * raw;
+      float feat_inhib_max = v1s_feat_gi.FastEl(fc.x, fc.y, sc.x, sc.y);
+      float gi_eff = MAX(gi, feat_inhib_max);
+      float act = v1s_kwta.Compute_ActFmIn(ge, gi_eff);
+      if(act > raw)
+	act = v1s_kwta.raw_pct * raw + v1s_kwta.raw_pct_c * act; // blendy
+      cur_out_acts->FastEl(fc.x, fc.y, sc.x,  sc.y) = act; 
     }
   }
 }
@@ -5509,6 +5563,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
 	graph_data->AddBlankRow();
 	nmda->SetValAsString("V1S " + String(AngleDeg(ang)) + (String)((pol ==0) ? " +" : " -"), -1);
 	float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+	mat->FastEl(brd.x, brd.y) = -0.5f; // mark the center
 	TwoDCoord ic;
 	for(int onoff = 0; onoff < 2; onoff++) { // on vs. off rf
 	  for(int lpdx = 0; lpdx < len; lpdx++) { // line pixels

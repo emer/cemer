@@ -737,6 +737,7 @@ protected:
   float_Matrix* cur_img_l;	// cur left eye image arg -- only valid during filter call
   float_Matrix* cur_img;	// cur image -- only valid during filter call
   float_Matrix* cur_out;	// cur output buffer -- only valid during filter call
+  float_Matrix* cur_out_acts;	// cur output activations buffer -- for kwta in v1s neigh inhib
   CircMatrix*	cur_circ;	// current circular buffer index
   bool		rgb_img;	// is current image rgb?
   bool		wrap;		// whether edge_mode == WRAP
@@ -857,15 +858,32 @@ INHERITED(taOBase)
 public:
   int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
   int		half_len;	// #DEF_2 half length of the DoG line edge detectors -- total length is 2 * half_len + 1 -- must be odd total so that is symmetric when centered on a point -- currently only 2 is supported
-  float		gauss_sig;	// #DEF_1.5 gaussian sigma for weighting values along the DoG lines
-  int		neigh_inhib_d; 	// #DEF_1 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning -- inhibition strength is given by the v1s_kwta.kwta_pt value -- 0 means do not compute
+  float		gauss_sig;	// #DEF_1:1.5 gaussian sigma for weighting values along the DoG lines
+  bool		prod_integ;	// integrate the On and Off input fields as a product of the two subfields -- this ensures that both features are present to drive activity
 
   int 		line_len;	// #READ_ONLY total length of dog lines
-  int		tot_ni_len;	// #READ_ONLY total length of neighborhood inhibition stencils = 2 * neigh_inhib_d + 1
 
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1SimpleSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
+
+class TA_API V1sNeighInhib : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as integrators of DoG activations along oriented lines (edges)
+INHERITED(taOBase)
+public:
+  int		inhib_d; 	// #DEF_3 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning -- 0 = do not compute
+  float		gauss_sig;	// gaussian sigma for neighborhood inhibition effects -- they trail off with greater distance
+  float		feat_g;		// #DEF_0.8 maximum gain factor for feature-specific inhibition from neighbors -- this proportion of the neighboring feature's threshold-inhibition value (used in computing kwta) is spread among neighbors according to inhib_d distance -- also weighted by gaussian as function of gauss_sig
+  float		gp_g;		// #DEF_0.4 maximum gain factor for inhibition applied to entire group of features at a given location as a result of feature-specific inhibition -- note that group inhibition is a function of strength of that feature within the group itself -- if weak, then not much actual inhibition -- hence this parameter may need to be strong to overcome that multiplication effect in general
+
+  int		tot_ni_len;	// #READ_ONLY total length of neighborhood inhibition stencils = 2 * neigh_inhib_d + 1
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1sNeighInhib);
 protected:
   void 	UpdateAfterEdit_impl();
 };
@@ -1008,6 +1026,7 @@ public:
 
   V1SimpleSpec	v1s_specs;	// specs for V1 simple filters -- first step after DoG -- encode simple oriented edges in same polarities/colors as in DoG layer, plus motion if applicable
   V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
+  V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
   V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||1 specs for V1 motion filters within the simple processing layer
   RenormMode	v1s_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s static filters
   RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
@@ -1038,6 +1057,8 @@ public:
   int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells as parallel DoG-line edge detectors in the on and off-center DoG input space [x,y][line_len][on_off][angles][polarity] (2 polarities)
   float_Matrix	v1s_weights;  	// #READ_ONLY #NO_SAVE v1 simple DoG line weights (gaussian sigmoidal)
   int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
+  float_Matrix	v1s_nif_weights; // #READ_ONLY #NO_SAVE gaussian weights for neighborhood inhibition [tot_ni_len] -- feature-to-feature weights (includes feat_g factor already)
+  float_Matrix	v1s_nig_weights; // #READ_ONLY #NO_SAVE gaussian weights for neighborhood inhibition [tot_ni_len] -- feature-to-group weights (includes gp_g factor already)
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
 
@@ -1066,6 +1087,7 @@ public:
   float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_gci;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory conductances, for computing kwta
   float_Matrix	v1s_ithr;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory threshold values -- intermediate vals used in computing kwta
+  float_Matrix	v1s_feat_gi;	 // #READ_ONLY #NO_SAVE feature-based inhibition values for each v1s unit -- needed to do both feature and group level inhibition [feat.x][feat.y][img.x][img.y]
   float_Matrix	v1s_out_l;	 // #READ_ONLY #NO_SAVE v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   CircMatrix	v1s_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
@@ -1121,7 +1143,7 @@ protected:
   // do simple filters, static only on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Static_thread(int v1s_idx, int thread_no);
   // do simple filters, static only on current inputs -- do it
-  virtual void 	V1SimpleFilter_Static_neighinhib(float_Matrix* out_raw, float_Matrix* out);
+  virtual void 	V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thread_no);
   // do neighborhood inhibition on simple filters
 
   virtual bool	V1SimpleFilter_Motion(float_Matrix* out, CircMatrix* circ);
