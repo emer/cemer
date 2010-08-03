@@ -8749,8 +8749,8 @@ LeabraProject .projects[0] {
        dog_feat_geom {x=2: y=1: n_not_xy=0: n=2: };
        dog_img_geom {x=72: y=72: };
        v1s_specs {n_angles=4: half_len=2: gauss_sig=1.5: prod_integ=1: line_len=5: };
-       v1s_kwta {on=1: raw_pct=0.8: gp_k=1: gp_g=0.1: kwta_pt=0.8: gain=600: nvar=0.01: g_bar_e=0.5: g_bar_l=0.1: e_rev_e=1: e_rev_l=0.15: thr=0.25: };
-       v1s_neigh_inhib {inhib_d=1: gauss_sig=2.261173e+20: feat_g=0.8: gp_g=0.4: tot_ni_len=3: };
+       v1s_kwta {on=1: raw_pct=0.8: gp_k=1: gp_g=0.02: kwta_pt=0.8: gain=600: nvar=0.01: g_bar_e=0.5: g_bar_l=0.1: e_rev_e=1: e_rev_l=0.15: thr=0.25: };
+       v1s_neigh_inhib {inhib_d=1: gauss_sig=10: feat_g=0.8: gp_g=12: tot_ni_len=3: };
        v1s_motion {n_speeds=1: tuning_width=1: gauss_sig=0.8: tot_width=3: };
        v1s_renorm=NO_RENORM;
        v1m_renorm=NO_RENORM;
@@ -12543,10 +12543,10 @@ LeabraProject .projects[0] {
        dog_feat_geom {x=2: y=1: n_not_xy=0: n=2: };
        dog_img_geom {x=72: y=72: };
        v1s_specs {n_angles=4: half_len=2: gauss_sig=1.5: prod_integ=1: line_len=5: };
-       v1s_kwta {on=1: raw_pct=0.8: gp_k=1: gp_g=0.02: kwta_pt=0.8: gain=600: nvar=0.01: g_bar_e=0.5: g_bar_l=0.1: e_rev_e=1: e_rev_l=0.15: thr=0.25: };
-       v1s_neigh_inhib {inhib_d=0: gauss_sig=5: feat_g=0.8: gp_g=1: tot_ni_len=1: };
+       v1s_kwta {on=1: raw_pct=0.8: gp_k=1: gp_g=0.02: kwta_pt=0.6: gain=600: nvar=0.01: g_bar_e=0.5: g_bar_l=0.1: e_rev_e=1: e_rev_l=0.15: thr=0.25: };
+       v1s_neigh_inhib {inhib_d=1: gauss_sig=5: feat_g=0.8: gp_g=0.4: tot_ni_len=3: };
        v1s_motion {n_speeds=1: tuning_width=1: gauss_sig=0.8: tot_width=3: };
-       v1s_renorm=NO_RENORM;
+       v1s_renorm=LIN_RENORM;
        v1m_renorm=NO_RENORM;
        v1s_save=SAVE_DATA;
        v1s_feat_geom {x=4: y=2: n_not_xy=0: n=8: };
@@ -14834,7 +14834,7 @@ LeabraProject .projects[0] {
       light_0=.projects[0].programs.gp[0][0].objs[0].objects[2].bodies[0]$$;
       light_1=NULL;
      };
-     TimeUsed @[1] {name="RobotTime": start={usr=593: sys=107: tot=128083116237: }: end={usr=594: sys=107: tot=128083116238: }: used={usr=5015: sys=294: tot=5130: }: s_used=51.3: n_used=380: };
+     TimeUsed @[1] {name="RobotTime": start={usr=1458: sys=299: tot=128083386452: }: end={usr=1459: sys=299: tot=128083386452: }: used={usr=5021: sys=295: tot=5138: }: s_used=51.38: n_used=384: };
     };
     types {
      name=;
@@ -16896,7 +16896,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=5;
@@ -17107,7 +17107,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=0: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
@@ -17122,9 +17122,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  colorscale {
 	   name="ColorScale_0";
 	   chunks=133;
-	   min=-0;
-	   max=0;
-	   range=0;
+	   min=-0.3412592;
+	   max=0.3412592;
+	   range=0.3412592;
 	   zero=0;
 	   spec=$.colorspecs[0]$;
 	   auto_scale=1;
@@ -17884,11 +17884,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1.007931: y=-0.004296356: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=2;
-	  col_range {min=29: max=30: };
+	  col_range {min=26: max=27: };
 	  width=1.5;
 	  grid_on=1;
 	  header_on=1;
@@ -18239,7 +18239,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=0: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=1;
@@ -18692,7 +18692,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;

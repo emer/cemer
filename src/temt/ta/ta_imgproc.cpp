@@ -3926,6 +3926,7 @@ void V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thre
       float raw = cur_out->FastEl(fc.x, fc.y, sc.x, sc.y);
       float feat_inhib_max = 0.0f;
       for(int lpdx=0; lpdx < v1s_neigh_inhib.tot_ni_len; lpdx++) { // go out to neighs
+	if(lpdx == v1s_neigh_inhib.inhib_d) continue;		   // skip self
 	int xp = v1s_ni_stencils.FastEl(X,lpdx,ang);
 	int yp = v1s_ni_stencils.FastEl(Y,lpdx,ang);
 	oc.x = sc.x + xp;
