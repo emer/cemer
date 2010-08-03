@@ -3845,25 +3845,27 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
     for(int pol = 0; pol < 2; pol++) { // polarities
       fc.y = dog + pol;
       for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-	fc.x = ang;
-	for(int onoff = 0; onoff < 2; onoff++) { // on vs. off rf
-	  int len = v1s_line_len.FastEl(ang);
-	  float line_sum = 0.0f;
-	  for(int lpdx=0; lpdx < len; lpdx++) { // points in line
-	    int xp = v1s_stencils.FastEl(X,lpdx,onoff, ang, pol);
-	    int yp = v1s_stencils.FastEl(Y,lpdx,onoff, ang, pol);
-	    dc.x = dcs.x + xp;
-	    dc.y = dcs.y + yp;
-
-	    if(dc.WrapClip(wrap, dog_img_geom)) {
-	      if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
-	    }
-
-	    float dogval = MatMotEl(cur_dog, dfc.x, dfc.y + onoff, dc.x, dc.y, dog_mot_idx);
-	    line_sum += v1s_weights.FastEl(lpdx, ang) * dogval;
-	  }
-	  MatMotEl(cur_out, fc.x, fc.y, sc.x, sc.y, mot_idx) = line_sum;
-	}
+        fc.x = ang;
+        float line_sum = 0.0f;
+        for(int onoff = 0; onoff < 2; onoff++) { // on vs. off rf
+          int len = v1s_line_len.FastEl(ang);
+          
+          for(int lpdx=0; lpdx < len; lpdx++) { // points in line
+            int xp = v1s_stencils.FastEl(X,lpdx,onoff, ang, pol);
+            int yp = v1s_stencils.FastEl(Y,lpdx,onoff, ang, pol);
+            dc.x = dcs.x + xp;
+            dc.y = dcs.y + yp;
+            
+            if(dc.WrapClip(wrap, dog_img_geom)) {
+              if(region.edge_mode == RegionParams::CLIP) continue; // bail on clipping only
+            }
+            
+            float dogval = MatMotEl(cur_dog, dfc.x + onoff, dfc.y, dc.x, dc.y, dog_mot_idx);  //KENNETH: x or y with + onoff, was x changed to y
+            line_sum += v1s_weights.FastEl(lpdx, ang) * dogval;
+          }
+         
+        }
+        MatMotEl(cur_out, fc.x, fc.y, sc.x, sc.y, mot_idx) = line_sum;
       }
     }
   }
