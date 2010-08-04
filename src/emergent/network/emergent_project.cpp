@@ -302,7 +302,7 @@ bool Wizard::RetinaProcNetwork(RetinaProc* retina_spec, Network* net) {
   // todo: fixme
   net->StructUpdate(true);
   for(int i=0;i<retina_spec->regions.size; i++) {
-    DoGRegionSpec* sp = retina_spec->regions[i];
+    VisRegionSpecBase* sp = retina_spec->regions[i];
 //     Layer* on_lay = net->FindMakeLayer(sp->name + "_on");
 //     on_lay->un_geom.x = sp->spacing.output_size.x;
 //     on_lay->un_geom.y = sp->spacing.output_size.y;

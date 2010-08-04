@@ -26,7 +26,7 @@
 //	region of the retina (DoGRegionSpec, V1RegionSpec)
 // -- an overall image processing object containing multiple regions, providing full
 //	final coverage of the image processing from program user perspective:
-//	RetinaProc, V1Proc
+//	RetinaProc, DoGRetinaProc, V1RetinaProc
 
 #include "ta_math.h"
 #include "ta_program.h"
@@ -296,13 +296,6 @@ class TA_API DoGFilter : public taNBase {
   // #STEM_BASE #INLINE ##CAT_Image defines a difference-of-gaussians (center minus surround or "mexican hat") filter that highlights contrast in an image
   INHERITED(taNBase)
 public:
-  enum ColorChannel {		// indicator of which color channel to filter on
-    LUMINANCE,			// just raw luminance (monochrome / black white)
-    RED_CYAN,			// red vs. G + B = cyan
-    GREEN_MAGENTA,		// green vs. R + B = magenta
-    BLUE_YELLOW,		// blue vs. R + G = yellow
-  };
-
 #ifdef __MAKETA__
   String	name;		// #HIDDEN_INLINE name of object
 #endif
@@ -311,27 +304,20 @@ public:
   int		filter_size;	// #READ_ONLY size of the filter: 2 * width + 1
   float		on_sigma;	// width of the narrower central 'on' gaussian
   float		off_sigma;	// width of the wider surround 'off' gaussian (typically 2 * on_sigma)
+  int		spacing;	// spacing between filters -- should be same as on_sigma
   bool		circle_edge;	// #DEF_true cut off the filter (to zero) outside a circle of radius filter_width -- makes the filter more radially symmetric
   float_Matrix	on_filter;	// #READ_ONLY #NO_SAVE #NO_COPY on-gaussian 
   float_Matrix	off_filter;	// #READ_ONLY #NO_SAVE #NO_COPY off-gaussian (values are positive)
-  float_Matrix	net_filter;	// #READ_ONLY #NO_SAVE #NO_COPY net overall filter (for display purposes)
+  float_Matrix	net_filter;	// #READ_ONLY #NO_SAVE #NO_COPY net overall filter -- on minus off
 
-  float		FilterPoint_rgb(int x, int y, ColorChannel color, 
-				float r_val, float g_val, float b_val);
-  // #CAT_DoGFilter apply filter at given x,y point given color values and color channel
-
-  float		FilterPoint_grey(int x, int y, float grey) {
-    return grey * net_filter.FastEl(x+filter_width, y+filter_width);
+  inline float	FilterPoint(int x, int y, float img_val) {
+    return img_val * net_filter.FastEl(x+filter_width, y+filter_width);
   }
-  // #CAT_DoGFilter apply filter at given x,y point given greyscale value, only for LUMINANCE channel by definition
-
-  void		InvertFilterPoint_rgb(int x, int y, float act, ColorChannel color, 
-				      float& r_val, float& g_val, float& b_val);
-  // #CAT_DoGFilter invert filter at given x,y point with net activation, returning color values
-  float		InvertFilterPoint_grey(int x, int y, float act) {
+  // #CAT_DoGFilter apply filter at given x,y point (-filter_width..filter_width) given image value (which can be either luminance or color contrast
+  float		InvertFilterPoint(int x, int y, float act) {
     return 0.5f * act * net_filter.FastEl(x+filter_width, y+filter_width + 0.5f);
   }
-  // #CAT_DoGFilter invert filter at given x,y point with net activation, returning grey val
+  // #CAT_DoGFilter invert filter at given x,y point with net activation, returning image value -- this is probably not very accurate
 
   virtual void	RenderFilter(float_Matrix& on_flt, float_Matrix& off_flt, float_Matrix& net_flt);
   // #CAT_DoGFilter render filter into matrix
@@ -365,6 +351,9 @@ public:
     AMP,
   };
 
+#ifdef __MAKETA__
+  String	name;		// #HIDDEN_INLINE name of object
+#endif
   int		x_size;		// overall size of the filtered region
   int		y_size;		// overall size of the filtered region
   float		ctr_x;		// center in x coord
@@ -560,9 +549,9 @@ private:
 //	Collections of filters and parameters for applying to images
 
 ////////////////////////////////////////////////////////////////////
-//		Retinal Processing (DoG model)
+//		Base Class 
 
-class TA_API RegionParams : public taOBase {
+class TA_API VisRegionParams : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic params for a visual region
 INHERITED(taOBase)
 public:
@@ -595,16 +584,38 @@ public:
   Resolution	res;		// level of resolution represented by this filter (can use enum or any other arbitrary rating scale -- just for informational/matcing purposes)
   Color		color;		// what level of color information to process
   EdgeMode	edge_mode;	// how to deal with edges throughout the processing cascade -- the edge_mode for the raw image transformations are in the overall RetinaProc, and are not automatically sync'd with this (they can be different)
+  float		renorm_thr;	// #DEF_1e-05 threshold for the max filter output value to max-renormalize filter outputs such that the max is 1 -- below this value, consider the input to be blank and do not renorm
 
   void 	Initialize();
   void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(RegionParams);
+  TA_SIMPLE_BASEFUNS(VisRegionParams);
 };
 
-class TA_API DoGRegionSpec : public ImgProcThreadBase {
-  // #STEM_BASE ##CAT_Image specifies a region of Difference-of-Gaussian retinal filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
+class TA_API VisRegionSizes : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image basic size values for a visual region -- defines the size of visual image that is presented to the filters
+INHERITED(taOBase)
+public:
+  TwoDCoord	retina_size;	// overall size of the retina -- defines size of images that are processed by these filters -- scaling etc typically used to fit image to retina size
+  TwoDCoord	border;		// border around retina that we don't process -- for non-WRAP mode, typically a 1 pixel background color border is retained in the input image processing, so this should be subtracted -- also for non-WRAP mode, good to ensure that this is >= than 1/2 of the width of the filters being applied
+  TwoDCoord	input_size;	// #READ_ONLY #SHOW size of input region in pixels that is actually filtered -- retina_size - 2 * border
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(VisRegionSizes);
+protected:
+  void	UpdateAfterEdit_impl();
+};
+
+class TA_API VisRegionSpecBase : public ImgProcThreadBase {
+  // #STEM_BASE ##CAT_Image base class for specifying a visual image region to be filtered according to a set of filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs
 INHERITED(ImgProcThreadBase)
 public:
+  enum ColorChannel {		// indicator of which color channel to filter on
+    LUMINANCE,			// just raw luminance (monochrome / black white)
+    RED_CYAN,			// red vs. cyan (G + B)
+    GREEN_MAGENTA,		// green vs. magenta (R + B)
+    BLUE_YELLOW,		// blue vs. yellow (R + G)
+  };
   enum Eye {
     LEFT,			
     RIGHT,
@@ -638,15 +649,113 @@ public:
   DataTableRef	data_table;	// data table for saving filter results for viewing and applying to networks etc
   SaveMode	save_mode;	// how to add new data to the data table
   DataSave	image_save;	// how to save the input image(s) for each filtering step
-  RegionParams	region;		// basic parameters for the region
+  VisRegionParams region;	// basic parameters for the region
+  VisRegionSizes  input_size;	// size of the visual input image, including any borders etc
   int		motion_frames;	// #MIN_0 how many frames of image information are to be retained for extracting motion signals -- 0 = no motion, 3 = typical for motion
-  TwoDCoord	retina_size;	// overall size of the retina -- defines size of images that are processed by these filters -- scaling etc typically used to fit image to retina size
-  TwoDCoord	border;		// border around retina that we don't process -- typically a 1 pixel background color border is retained in the input image processing, so this is subtracted -- if not using WRAP mode, then also ensure that this is >= than 1/2 of the width of the wide DoG
-  TwoDCoord	input_size;	// #READ_ONLY #SHOW size of input region in pixels that is actually filtered -- retina_size - 2 * border
+
+  virtual bool 	Init();
+  // #BUTTON initialize everything to be ready to start filtering -- calls InitFilters, InitOutMatrix, InitDataTable
+
+  virtual bool	FilterImage(float_Matrix* right_eye_image, float_Matrix* left_eye_image = NULL);
+  // main interface: filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering
+
+  virtual bool	InvertFilters();
+  // #BUTTON invert filters, using data that currently exists in the local filter storage -- copy from other source to last stage of filtering _out matrix to invert something -- results are saved in output data table image output -- can copy from there as needed
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(VisRegionSpecBase);
+protected:
+  override void	UpdateAfterEdit_impl();
+
+  // cache of args for current function call
+  float_Matrix* cur_img_r;	// cur right eye image arg -- only valid during filter call
+  float_Matrix* cur_img_l;	// cur left eye image arg -- only valid during filter call
+  float_Matrix* cur_img;	// cur image -- only valid during filter call
+  float_Matrix* cur_out;	// cur output buffer -- only valid during filter call
+  CircMatrix*	cur_circ;	// current circular buffer index
+  bool		rgb_img;	// is current image rgb?
+  bool		wrap;		// whether edge_mode == WRAP
+
+  float_Matrix cur_img_grey;	// greyscale version of color image, if input is rgb
+  float_Matrix cur_img_rc;	// RED vs. CYAN version of color image, if input is rgb
+  float_Matrix cur_img_gm;	// GREEN vs. MAGENTA version of color image, if input is rgb
+  float_Matrix cur_img_by;	// BLUE vs. YELLOW version of color image, if input is rgb
+
+  virtual void UpdateGeom();
+  // update all geometry info -- called by UAE
+
+  inline float&	MatMotEl(float_Matrix* fmat, int fx, int fy, int imx, int imy, int motdx) {
+    if(motion_frames <= 1)
+      return fmat->FastEl(fx, fy, imx, imy);
+    else
+      return fmat->FastEl(fx, fy, imx, imy, motdx);
+  }
+  // convenience for accessing matrix element with either motion or not depending on setting
+
+  virtual bool NeedsInit();
+  // test to see if the system needs to be initialized -- just check if things fit with the current computed geometries -- be sure to test for both eyes if binocular..
+  virtual bool InitFilters();
+  // initialize the filters -- overload for derived types and call parent
+  virtual bool InitOutMatrix();
+  // initialize data output matrcies to fit output of filters
+  virtual bool InitDataTable();
+  // initialize data table to fit data saving as configured
+
+  virtual bool FilterImage_impl();
+  // implementation of filtering -- assumes cur_img_x args are set and everything is checked
+  virtual void IncrTime();
+  // increment time one step -- move the CircMatrix indexes
+
+  virtual bool ColorRGBtoCMYK(float_Matrix& img);
+  // convert RGB color image to Cyan vs. Red, Magenta vs Green, Yellow vs. Blue, and Grey separate images, which are what should be then used for filtering (stored in cur_img_xx float matrix's)
+  virtual float_Matrix* GetImageForChan(ColorChannel cchan);
+  // get the appropriate cur_img_* guy for given color channel
+
+  virtual bool RenormOutput_Frames(RenormMode mode, float_Matrix* out, CircMatrix* circ);
+  // renormalize output of filters after filtering -- for output having motion frames
+  virtual bool RenormOutput_NoFrames(RenormMode mode, float_Matrix* out);
+  // renormalize output of filters after filtering -- for output without motion frames
+
+  virtual bool ImageToTable(DataTable* dtab, float_Matrix* right_eye_image,
+				     float_Matrix* left_eye_image = NULL);
+  // send current input image(s)e step of dog output to data table for viewing
+    virtual bool ImageToTable_impl(DataTable* dtab, float_Matrix* img, const String& col_sufx);
+    // send current input image(s)e step of dog output to data table for viewing
+
+  virtual bool InvertFilters_impl();
+  // implementation of inverse filtering
+};
+
+class TA_API VisRegionSpecBaseList : public taList<VisRegionSpecBase> {
+  // ##CAT_Image a list of visual region image processing filters
+INHERITED(taList<VisRegionSpecBase>)
+public:
+
+  virtual VisRegionSpecBase* FindRetinalRegion(VisRegionParams::Region reg);
+  // find first spec with given retinal region
+  virtual VisRegionSpecBase* FindRetinalRes(VisRegionParams::Resolution res);
+  // find first spec with given resolution
+  virtual VisRegionSpecBase* FindRetinalRegionRes(VisRegionParams::Region reg,
+					      VisRegionParams::Resolution res);
+  // find first spec with given retinal region and resolution (falls back to res then reg if no perfect match)
+
+  TA_BASEFUNS_NOCOPY(VisRegionSpecBaseList);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_VisRegionSpecBase); }
+  void 	Destroy()		{ };
+};
+
+
+////////////////////////////////////////////////////////////////////
+//		Basic Retinal Processing: DoG's 
+
+class TA_API DoGRegionSpec : public VisRegionSpecBase {
+  // #STEM_BASE ##CAT_Image specifies a region of Difference-of-Gaussian retinal filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs
+INHERITED(VisRegionSpecBase)
+public:
   DoGFilter	dog_specs;	// Difference of Gaussian retinal filter specification
-  TwoDCoord	dog_spacing;	// spacing between centers of DoG filters in input -- should generally be same as on sigma width in dog_specs
   RenormMode	dog_renorm;	// #DEF_LOG_RENORM how to renormalize the output of filters
-  float		renorm_thr;	// #DEF_1e-05 threshold for the max filter output value to max-renormalize filter outputs such that the max is 1 -- below this value, consider the input to be blank and do not renorm
   DataSave	dog_save;	// how to save the DoG outputs for the current time step in the data table
   XYNGeom	dog_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for DoG filtering -- x axis = 2 = on/off, y axis = color channel: 0 = monochrome, 1 = red/cyan, 2 = green/magenta, 3 = blue/yellow (2 units total for monochrome, 8 total for color)
   TwoDCoord	dog_img_geom; 	// #READ_ONLY #SHOW size of dog-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and dog_spacing parameters
@@ -659,15 +768,6 @@ public:
 
   virtual String GetDoGFiltName(int filt_no);
   // get name for each filter channel (0-5) = on;off;rvc;gvm;bvy;yvb
-
-  virtual bool 	Init();
-  // #BUTTON initialize everything to be ready to start filtering -- calls InitFilters, InitOutMatrix, InitDataTable
-
-  virtual bool	FilterImage(float_Matrix* right_eye_image, float_Matrix* left_eye_image = NULL);
-  // main interface: filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering
-
-  virtual bool	InvertFilters();
-  // #BUTTON invert filters, using data that currently exists in the local filter storage -- copy from other source to last stage of filtering _out matrix to invert something -- results are saved in output data table image output -- can copy from there as needed
 
   virtual void	GraphDoGFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #LABEL_GraphDoGFilter plot the filter difference-of-gaussians into data table and generate a graph
@@ -685,28 +785,16 @@ public:
 protected:
   void	UpdateAfterEdit_impl();
 
-  virtual void UpdateGeom();
-  // update all geometry info -- called by UAE
+  override void	UpdateGeom();
 
-  inline float&	MatMotEl(float_Matrix* fmat, int fx, int fy, int imx, int imy, int motdx) {
-    if(motion_frames <= 1)
-      return fmat->FastEl(fx, fy, imx, imy);
-    else
-      return fmat->FastEl(fx, fy, imx, imy, motdx);
-  }
-  // convenience for accessing matrix element with either motion or not depending on setting
+  override bool NeedsInit();
+  override bool InitFilters();
+  override bool InitOutMatrix();
+  override bool InitDataTable();
 
-  virtual bool InitFilters();
-  // initialize the filters -- overload for derived types and call parent
-  virtual bool InitOutMatrix();
-  // initialize data output matrcies to fit output of filters
-  virtual bool InitDataTable();
-  // initialize data table to fit data saving as configured
+  override bool	FilterImage_impl();
+  override void IncrTime();
 
-  virtual bool FilterImage_impl();
-  // implementation of filtering -- assumes cur_img_x args are set and everything is checked
-  virtual void IncrTime();
-  // increment time one step -- move the CircMatrix indexes
   virtual bool DoGFilterImage(float_Matrix* image, float_Matrix* out, CircMatrix* circ);
   // implementation of DoG filtering for a given image and output, circ index -- manages threaded calls to _thread version
   virtual void DoGFilterImage_thread(int dog_idx, int thread_no);
@@ -716,51 +804,15 @@ protected:
   virtual bool RenormOutput_NoFrames(RenormMode mode, float_Matrix* out);
   // renormalize output of filters after filtering -- for output without motion frames
 
-  virtual bool ImageToTable(DataTable* dtab, float_Matrix* right_eye_image,
-				     float_Matrix* left_eye_image = NULL);
-  // send current input image(s)e step of dog output to data table for viewing
-    virtual bool ImageToTable_impl(DataTable* dtab, float_Matrix* img, const String& col_sufx);
-    // send current input image(s)e step of dog output to data table for viewing
   virtual bool DoGOutputToTable(DataTable* dtab);
   // send current time step of dog output to data table for viewing
     virtual bool DoGOutputToTable_impl(DataTable* dtab, float_Matrix* out, CircMatrix* circ,
 				       const String& col_sufx);
     // send current time step of dog output to data table for viewing
 
-  virtual bool InvertFilters_impl();
-  // implementation of inverse filtering
+  override bool InvertFilters_impl();
   virtual bool	DoGInvertFilter(float_Matrix* out, CircMatrix* circ, const String& col_sufx);
   // implementation of DoG inverse filtering that actually does the heavy lifting
-
-  // cache of args for current function call
-  float_Matrix* cur_img_r;	// cur right eye image arg -- only valid during filter call
-  float_Matrix* cur_img_l;	// cur left eye image arg -- only valid during filter call
-  float_Matrix* cur_img;	// cur image -- only valid during filter call
-  float_Matrix* cur_out;	// cur output buffer -- only valid during filter call
-  float_Matrix* cur_out_acts;	// cur output activations buffer -- for kwta in v1s neigh inhib
-  CircMatrix*	cur_circ;	// current circular buffer index
-  bool		rgb_img;	// is current image rgb?
-  bool		wrap;		// whether edge_mode == WRAP
-};
-
-
-class TA_API DoGRegionSpecList : public taList<DoGRegionSpec> {
-  // ##CAT_Image a list of DoG retinal filters
-INHERITED(taList<DoGRegionSpec>)
-public:
-
-  virtual DoGRegionSpec* FindRetinalRegion(RegionParams::Region reg);
-  // find first spec with given retinal region
-  virtual DoGRegionSpec* FindRetinalRes(RegionParams::Resolution res);
-  // find first spec with given resolution
-  virtual DoGRegionSpec* FindRetinalRegionRes(RegionParams::Region reg,
-					      RegionParams::Resolution res);
-  // find first spec with given retinal region and resolution (falls back to res then reg if no perfect match)
-
-  TA_BASEFUNS_NOCOPY(DoGRegionSpecList);
-private:
-  void	Initialize() 		{ SetBaseType(&TA_DoGRegionSpec); }
-  void 	Destroy()		{ };
 };
 
 
@@ -852,20 +904,28 @@ public:
   void 	UpdateAfterEdit_impl();
 };
 
-class TA_API V1SimpleSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as integrators of DoG activations along oriented lines (edges)
+class TA_API V1GaborSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters
 INHERITED(taOBase)
 public:
   int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
-  int		half_len;	// #DEF_2 half length of the DoG line edge detectors -- total length is 2 * half_len + 1 -- must be odd total so that is symmetric when centered on a point -- currently only 2 is supported
-  float		gauss_sig;	// #DEF_1:1.5 gaussian sigma for weighting values along the DoG lines
-  bool		prod_integ;	// integrate the On and Off input fields as a product of the two subfields -- this ensures that both features are present to drive activity
+  int		filter_size;	// #DEF_6;12;18;24 size of the overall filter -- number of pixels wide and tall for a square matrix used to encode the filter -- filter is centered within this square
+  int		spacing;	// how far apart to space the centers of the gabor filters -- 1 = every pixel, 2 = every other pixel, etc -- high-res should be 1, lower res can be increments therefrom
+  float		wvlen;		// #DEF_6;12;18;24 (values = filter_size work well) wavelength of the sine waves -- number of pixels over which a full period of the wave takes place (computation adds a 2 PI factor to translate into pixels instead of radians)
+  float		gauss_sig_len;	// #DEF_0.25:0.3 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter_size
+  float		gauss_sig_wd;	// #DEF_0.2 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter_size
+  float		phase_off;	// #DEF_0;1.5708 offset for the sine phase -- can make it into a symmetric gabor by using PI/2 = 1.5708
+  bool		circle_edge;	// #DEF_true cut off the filter (to zero) outside a circle of diameter filter_size -- makes the filter more radially symmetric
 
-  int 		line_len;	// #READ_ONLY total length of dog lines
+  virtual void	RenderFilters(float_Matrix& fltrs);
+  // generate filters into the given matrix, which is formatted as: [filter_size][filter_size][n_angles]
+
+  virtual void	GridFilters(float_Matrix& fltrs, DataTable* disp_data, bool reset = true);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filters into data table and generate a grid view (reset any existing data first)
 
   void 	Initialize();
   void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(V1SimpleSpec);
+  TA_SIMPLE_BASEFUNS(V1GaborSpec);
 protected:
   void 	UpdateAfterEdit_impl();
 };
@@ -986,9 +1046,9 @@ protected:
 };
 
 
-class TA_API V1RegionSpec : public DoGRegionSpec {
+class TA_API V1RegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- takes retinal DoG filter inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
-INHERITED(DoGRegionSpec)
+INHERITED(VisRegionSpecBase)
 public:
   enum ComplexFilters { // #BITS flags for specifying which complex filters to include
     CF_NONE	= 0, // #NO_BIT
@@ -1024,11 +1084,11 @@ public:
   };
 
 
-  V1SimpleSpec	v1s_specs;	// specs for V1 simple filters -- first step after DoG -- encode simple oriented edges in same polarities/colors as in DoG layer, plus motion if applicable
+  V1GaborSpec	v1s_specs;	// specs for V1 simple filters, computed using gabor filters directly onto the incoming image
   V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
   V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
   V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||1 specs for V1 motion filters within the simple processing layer
-  RenormMode	v1s_renorm;	// #DEF_NO_RENORM how to renormalize the output of v1s static filters
+  RenormMode	v1s_renorm;	// #DEF_LOG_RENORM how to renormalize the output of v1s static filters
   RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
   XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
@@ -1052,10 +1112,11 @@ public:
   XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by v1c rf sz on top of v1s img geom
 
   ///////////////////  V1S Geom/Stencils ////////////////////////
+  int		n_colors;	// #READ_ONLY number of color channels to be processed (1 = monochrome, 4 = full color)
+  int		n_polarities;	// #READ_ONLY #DEF_2 number of polarities per color -- always 2
+  int		n_polclr;	// #READ_ONLY number of polarities * number of colors -- y dimension of simple features for example
+  float_Matrix	v1s_gabor_filters; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [filter_size][filter_size][n_angles]
   float_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each fo the angles
-  int_Matrix	v1s_line_len; 	// #READ_ONLY #NO_SAVE length of lines as a function of angle
-  int_Matrix	v1s_stencils; 	// #READ_ONLY #NO_SAVE stencils for simple cells as parallel DoG-line edge detectors in the on and off-center DoG input space [x,y][line_len][on_off][angles][polarity] (2 polarities)
-  float_Matrix	v1s_weights;  	// #READ_ONLY #NO_SAVE v1 simple DoG line weights (gaussian sigmoidal)
   int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
   float_Matrix	v1s_nif_weights; // #READ_ONLY #NO_SAVE gaussian weights for neighborhood inhibition [tot_ni_len] -- feature-to-feature weights (includes feat_g factor already)
   float_Matrix	v1s_nig_weights; // #READ_ONLY #NO_SAVE gaussian weights for neighborhood inhibition [tot_ni_len] -- feature-to-group weights (includes gp_g factor already)
@@ -1109,22 +1170,24 @@ public:
 
   int		AngleDeg(int ang_no);
   // get angle value in degress based on angle number
+  virtual void	GridGaborFilters(DataTable* disp_data);
+  // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 Gabor Filters into the data table
   virtual void	GridV1Stencils(DataTable* disp_data);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 stencils into data table and generate a grid view -- these are the effective receptive fields at each level of processing
-  override void	PlotSpacing(DataTable* disp_data, bool reset = true);
+  virtual void	PlotSpacing(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_1 plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view -- one row for each type of filter (scroll to see each in turn) -- light squares show bounding box of rf, skipping every other
 
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1RegionSpec);
 protected:
-  float_Matrix*	cur_dog;
-  CircMatrix*	cur_dog_circ;
+  float_Matrix* cur_out_acts;	// cur output activations -- for kwta thing
 
   override void	UpdateAfterEdit_impl();
 
   override void	UpdateGeom();
 
+  override bool NeedsInit();
   override bool InitFilters();
   override bool InitOutMatrix();
   override bool InitDataTable();
@@ -1137,9 +1200,8 @@ protected:
   override bool	FilterImage_impl();
   override void IncrTime();
 
-  virtual bool	V1SimpleFilter_Static(float_Matrix* dog, CircMatrix* dog_circ,
-				      float_Matrix* out_raw, float_Matrix* out, 
-				      CircMatrix* circ);
+  virtual bool	V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_raw,
+				      float_Matrix* out, CircMatrix* circ);
   // do simple filters, static only on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Static_thread(int v1s_idx, int thread_no);
   // do simple filters, static only on current inputs -- do it
@@ -1218,7 +1280,7 @@ INHERITED(taNBase)
 public:
   taImageProc::EdgeMode	edge_mode;	// how to deal with edges in processing the raw images in preparation for presentation to the filters -- each region has its own filter-specific edge mode which is not automatically sync'd with this one (and they can be different)
   int 			fade_width;	// #CONDSHOW_ON_edge_mode:BORDER for border mode -- how wide of a frame to fade in around the border at the end of all the operations 
-  DoGRegionSpecList	regions;	// defines regions of the visual input where the processing actually takes place -- most of the specification is at this level -- first region is used for retina size and other basic params
+  VisRegionSpecBaseList	regions;	// defines regions of the visual input where the processing actually takes place -- most of the specification is at this level -- first region is used for retina size and other basic params
 
   float_Matrix		raw_image_r; 	// #READ_ONLY #NO_SAVE current raw input image presented to system, for right eye or only eye if monocular
   float_Matrix		raw_image_l; 	// #READ_ONLY #NO_SAVE current raw input image presented to system, for left eye -- only if binocular
@@ -1226,8 +1288,8 @@ public:
   float_Matrix		xform_image_r; 	// #READ_ONLY #NO_SAVE current transformed version of raw image presented to system, for right eye or only eye if monocular
   float_Matrix		xform_image_l; 	// #READ_ONLY #NO_SAVE current transformed version of raw image presented to system, for left eye -- only if binocular
 
-  virtual DoGRegionSpec* AddRegion()	{ return (DoGRegionSpec*)regions.New(1); }
-  // #BUTTON #CAT_Filter add a new region 
+  virtual VisRegionSpecBase* AddRegion()	{ return (VisRegionSpecBase*)regions.New(1); }
+  // #BUTTON #CAT_Filter add a new region -- type is whatever the default is for this type of retina processor
 
   ///////////////////////////////////////////////////////////////////////
   // Basic functions operating on float image data: transform image, apply dog filters
@@ -1243,7 +1305,7 @@ public:
 
   virtual bool	LookAtImageData(float_Matrix* right_eye_image,
 				float_Matrix* left_eye_image = NULL, 
-				RegionParams::Region region = RegionParams::FOVEA,
+				VisRegionParams::Region region = VisRegionParams::FOVEA,
 				float box_ll_x=0.0f, float box_ll_y=0.0f,
 				float box_ur_x=1.0f, float box_ur_y=1.0f,
 				float move_x=0.0f, float move_y=0.0f,
@@ -1258,7 +1320,7 @@ public:
   // Transform Routines taking different sources for image input data
 
   virtual bool  ConvertImageToMatrix(float_Matrix& img_data, taImage* img, 
-				     RegionParams::Color color);
+				     VisRegionParams::Color color);
   // #CAT_Image convert image file to img_data float matrix, converting to color or monochrome as specified
 
   virtual bool	TransformImage(taImage* right_eye_image, taImage* left_eye_image = NULL,
@@ -1274,7 +1336,7 @@ public:
 
   virtual bool	LookAtImage(taImage* right_eye_image,
 			    taImage* left_eye_image = NULL, 
-			    RegionParams::Region region = RegionParams::FOVEA,
+			    VisRegionParams::Region region = VisRegionParams::FOVEA,
 			    float box_ll_x=0.0f, float box_ll_y=0.0f,
 			    float box_ur_x=1.0f, float box_ur_y=1.0f,
 			    float move_x=0.0f, float move_y=0.0f,
@@ -1283,7 +1345,7 @@ public:
 
   virtual bool	LookAtImageName(const String& right_eye_img_fname,
 				const String& left_eye_img_fname = "",
-				RegionParams::Region region = RegionParams::FOVEA,
+				VisRegionParams::Region region = VisRegionParams::FOVEA,
 				float box_ll_x=0.0f, float box_ll_y=0.0f,
 				float box_ur_x=1.0f, float box_ur_y=1.0f,
 				float move_x=0, float move_y=0,
@@ -1296,7 +1358,7 @@ public:
   virtual bool	InvertFilter();
   // #CAT_Filter #BUTTON invert the filter -- uses current contents of the v1c_out complex filter values within each region to re-generate an image via all the intermediate transforms along the way -- due to extensive information loss at each step of the transformation, the resulting image will be significantly different from a corresponding input, but hopefully at least somewhat recognizable -- results written to image columns of data table
 
-  virtual bool	AttendRegion(DataTable* dt, RegionParams::Region region = RegionParams::FOVEA);
+  virtual bool	AttendRegion(DataTable* dt, VisRegionParams::Region region = VisRegionParams::FOVEA);
   // #CAT_Filter apply attentional weighting filter to filtered values, with radius = given region
 
   // todo: need a checkconfig here..
@@ -1320,7 +1382,7 @@ protected:
 
   virtual bool	LookAtImageData_impl(float_Matrix& eye_image,
 				     float_Matrix& xform_image,
-				     RegionParams::Region region = RegionParams::FOVEA,
+				     VisRegionParams::Region region = VisRegionParams::FOVEA,
 				     float box_ll_x=0.0f, float box_ll_y=0.0f,
 				     float box_ur_x=1.0f, float box_ur_y=1.0f,
 				     float move_x=0.0f, float move_y=0.0f,
@@ -1331,11 +1393,24 @@ protected:
 
 SmartRef_Of(RetinaProc,TA_RetinaProc); // RetinaProcRef
 
+class TA_API DoGRetinaProc : public RetinaProc {
+  // Difference-of-Gaussians version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
+INHERITED(RetinaProc)
+public:
+  virtual VisRegionSpecBase* AddRegion()
+  { return (VisRegionSpecBase*)regions.New(1, &TA_DoGRegionSpec); }
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_BASEFUNS_NOCOPY(DoGRetinaProc);
+};
+
 class TA_API V1RetinaProc : public RetinaProc {
   // V1 version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(RetinaProc)
 public:
-  virtual DoGRegionSpec* AddRegion()	{ return (DoGRegionSpec*)regions.New(1, &TA_V1RegionSpec); }
+  virtual VisRegionSpecBase* AddRegion()
+  { return (VisRegionSpecBase*)regions.New(1, &TA_V1RegionSpec); }
 
   void 	Initialize();
   void	Destroy() { };
