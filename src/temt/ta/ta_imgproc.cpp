@@ -3304,8 +3304,10 @@ void V1DispSpreadSpec::UpdateAfterEdit_impl() {
 
 void V1ComplexSpec::Initialize() {
   len_sum_len = 1;
+  end_stop_dist = 2;
+  es_adjang_wt = 0.2f;
   gauss_sig = 0.8f;
-  nonfocal_wt = 0.5f;
+  nonfocal_wt = 0.8f;
 
   pre_gp4 = true;
   pre_rf = 4;
@@ -3797,13 +3799,15 @@ bool V1RegionSpec::InitFilters_V1Complex() {
     for(int sidx=0; sidx < 2; sidx++) {
       int side = (sidx == 0) ? -1 : 1;
 
-      int sx = taMath_float::rint((float)side * v1s_ang_slopes.FastEl(X, LINE, ang));
-      int sy = taMath_float::rint((float)side * v1s_ang_slopes.FastEl(Y, LINE, ang));
+      int sx = v1c_specs.end_stop_dist * 
+	taMath_float::rint((float)side * v1s_ang_slopes.FastEl(X, LINE, ang));
+      int sy = v1c_specs.end_stop_dist * 
+	taMath_float::rint((float)side * v1s_ang_slopes.FastEl(Y, LINE, ang));
       for(int lpdx=0; lpdx < 2; lpdx++) {
 	int lpt = (lpdx == 0) ? -1 : 1;
-	v1c_es_stencils.FastEl(X, lpdx, sidx, ang) = sx +
+	v1c_es_stencils.FastEl(X, lpdx, sidx, ang) = sx + v1c_specs.end_stop_dist *
 	  taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(X, ORTHO, ang));
-	v1c_es_stencils.FastEl(Y, lpdx, sidx, ang) = sy +
+	v1c_es_stencils.FastEl(Y, lpdx, sidx, ang) = sy + v1c_specs.end_stop_dist * 
 	  taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, ORTHO, ang));
       }
     }
@@ -3813,6 +3817,29 @@ bool V1RegionSpec::InitFilters_V1Complex() {
  	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(X, LINE, ang));
      v1c_ls_stencils.FastEl(Y, lpdx, ang) = 
 	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, LINE, ang));
+    }
+  }
+
+  v1c_es_angwts.SetGeom(2, v1s_specs.n_angles, v1s_specs.n_angles);
+  for(int ang1=0; ang1 < v1s_specs.n_angles; ang1++) {
+    for(int ang2=0; ang2 < v1s_specs.n_angles; ang2++) {
+      int ang_dst = ABS(ang1-ang2);
+      {
+	int wrap_dst = ABS(ang1 - (ang2 + v1s_specs.n_angles));
+	if(wrap_dst < ang_dst) ang_dst = wrap_dst;
+      }
+      {
+	int wrap_dst = ABS(ang1 - (ang2 - v1s_specs.n_angles));
+	if(wrap_dst < ang_dst) ang_dst = wrap_dst;
+      }
+      float wt;
+      if(ang_dst == 0)
+	wt = 0.0f;
+      else if(ang_dst == 1)
+	wt = v1c_specs.es_adjang_wt;
+      else
+	wt = 1.0f;
+      v1c_es_angwts.FastEl(ang1, ang2) = wt;
     }
   }
 
@@ -4686,8 +4713,9 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Raw_thread(int v1c_pre_idx, int thread_n
 	  float end_val = 0.0f;
 	  // compute max over other angles -- just not us..
 	  for(int opang=0; opang<v1s_specs.n_angles; opang++) {
-	    if(opang == ang) continue;
-	    float ev = v1c_pre_polinv.FastEl(opang, sfc_end.y, pce.x, pce.y);
+	    float angwt = v1c_es_angwts.FastEl(ang, opang);
+	    if(angwt == 0.0f) continue;
+	    float ev = angwt * v1c_pre_polinv.FastEl(opang, sfc_end.y, pce.x, pce.y);
 	    end_val = MAX(end_val, ev);
 	  }
 	  sidesum += end_val;

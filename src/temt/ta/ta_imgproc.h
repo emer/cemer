@@ -1012,8 +1012,10 @@ class TA_API V1ComplexSpec : public taOBase {
 INHERITED(taOBase)
 public:
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
+  int		end_stop_dist;	// #DEF_2 end-stop distance factor -- how far away from the central point should we look for opposing orientations
+  float		es_adjang_wt;	// #DEF_0.2 weight for adjacent angles in the end stop computation -- adjacent angles are often activated for edges that are not exactly aligned with the gabor angles, so they can result in false positives
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
-  float		nonfocal_wt;	// #DEF_0.5 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
+  float		nonfocal_wt;	// #DEF_0.8 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
   bool		pre_gp4;	// #DEF_true use a 4x4 pre-grouping of v1s or v1b features prior to computing subsequent steps (end stop, length sum, etc) -- pre grouping reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense -- if this is selected, then v1s_specs.line_len should be 4 as well, though 5 is possible (just extends lines over the edge a bit)
   TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- operates on top of the pre-grouping guys and always uses 1/2 overlap spacing
 
@@ -1136,6 +1138,7 @@ public:
   int_Matrix	v1c_gp4_stencils; // #READ_ONLY #NO_SAVE stencils for v1c pre_gp4 pre-grouping -- represents center points of the lines for each angle [x,y,len][5][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
   int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][sum_line=2][max_line=2][angles]
   int_Matrix	v1c_ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
+  float_Matrix	v1c_es_angwts;  // #READ_ONLY #NO_SAVE weights for different angles relative to a given angle [n_angles][n_angles]
 
   ///////////////////  V1S Output ////////////////////////
   float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
