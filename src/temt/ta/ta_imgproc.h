@@ -931,13 +931,12 @@ protected:
 };
 
 class TA_API V1sNeighInhib : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as integrators of DoG activations along oriented lines (edges)
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image neighborhood inhibition for V1 simple layer -- inhibition spreads along orthogonal orientations to line tuning, to eliminate redundant reps of the same underlying edge
 INHERITED(taOBase)
 public:
-  int		inhib_d; 	// #DEF_3 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning -- 0 = do not compute
-  float		gauss_sig;	// gaussian sigma for neighborhood inhibition effects -- they trail off with greater distance
-  float		feat_g;		// #DEF_0.8 maximum gain factor for feature-specific inhibition from neighbors -- this proportion of the neighboring feature's threshold-inhibition value (used in computing kwta) is spread among neighbors according to inhib_d distance -- also weighted by gaussian as function of gauss_sig
-  float		gp_g;		// #DEF_0.4 maximum gain factor for inhibition applied to entire group of features at a given location as a result of feature-specific inhibition -- note that group inhibition is a function of strength of that feature within the group itself -- if weak, then not much actual inhibition -- hence this parameter may need to be strong to overcome that multiplication effect in general
+  bool		on;		// #DEF_true whether to use neighborhood orientation-sl
+  int		inhib_d; 	// #CONDSHOW_ON_on #DEF_1 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning -- 0 = do not compute
+  float		inhib_g;	// #CONDSHOW_ON_on #DEF_0.8 gain factor for feature-specific inhibition from neighbors -- this proportion of the neighboring feature's threshold-inhibition value (used in computing kwta) is spread among neighbors according to inhib_d distance
 
   int		tot_ni_len;	// #READ_ONLY total length of neighborhood inhibition stencils = 2 * neigh_inhib_d + 1
 
@@ -1012,13 +1011,11 @@ class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
 INHERITED(taOBase)
 public:
-  int		end_stop_len;	// #DEF_1:2 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to look for opposite polarity end stops -- often the relevant transition does not occur very quickly, so an extended rf is needed -- this is a half-width, such that overall length is 1 + 2 * end_stop_len
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   float		nonfocal_wt;	// #DEF_0.5 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
   bool		pre_gp4;	// #DEF_true use a 4x4 pre-grouping of v1s or v1b features prior to computing subsequent steps (end stop, length sum, etc) -- pre grouping reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense -- if this is selected, then v1s_specs.line_len should be 4 as well, though 5 is possible (just extends lines over the edge a bit)
   TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- operates on top of the pre-grouping guys and always uses 1/2 overlap spacing
-  bool		es_sub_op;	// #DEF_true #EXPERT subtract opposite polarity of same angle when computing end stop activations -- todo: explore impact..
 
   int		pre_rf;		// #READ_ONLY size of pre-grouping -- always 4 for now, as it is the only thing that makes sense
   int		pre_half;	// #READ_ONLY pre_rf / 2
@@ -1034,7 +1031,6 @@ public:
   TwoDCoord	net_spacing;	// #READ_ONLY net = pre * spat
   TwoDCoord	net_border;	// #READ_ONLY net = pre * spat
 
-  int		end_stop_width;	// #READ_ONLY 1 + 2 * end_stop_len -- computed
   int		len_sum_width;	// #READ_ONLY 1 + 2 * len_sum_len -- computed
   float		len_sum_norm;	// #READ_ONLY 1.0 / len_sum_width -- normalize sum
 
@@ -1118,8 +1114,6 @@ public:
   float_Matrix	v1s_gabor_filters; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [filter_size][filter_size][n_angles]
   float_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each fo the angles
   int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
-  float_Matrix	v1s_nif_weights; // #READ_ONLY #NO_SAVE gaussian weights for neighborhood inhibition [tot_ni_len] -- feature-to-feature weights (includes feat_g factor already)
-  float_Matrix	v1s_nig_weights; // #READ_ONLY #NO_SAVE gaussian weights for neighborhood inhibition [tot_ni_len] -- feature-to-group weights (includes gp_g factor already)
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
 
@@ -1140,7 +1134,7 @@ public:
   int		v1c_feat_edge_y; // #READ_ONLY y axis index for start of edge features in v1c (disp, motion)
   float_Matrix	v1c_weights;	// #READ_ONLY #NO_SAVE v1 complex spatial weighting factors (2d)
   int_Matrix	v1c_gp4_stencils; // #READ_ONLY #NO_SAVE stencils for v1c pre_gp4 pre-grouping -- represents center points of the lines for each angle [x,y,len][5][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
-  int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][end_stop_width][angles]
+  int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][sum_line=2][max_line=2][angles]
   int_Matrix	v1c_ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
 
   ///////////////////  V1S Output ////////////////////////
@@ -1148,7 +1142,6 @@ public:
   float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_gci;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory conductances, for computing kwta
   float_Matrix	v1s_ithr;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory threshold values -- intermediate vals used in computing kwta
-  float_Matrix	v1s_feat_gi;	 // #READ_ONLY #NO_SAVE feature-based inhibition values for each v1s unit -- needed to do both feature and group level inhibition [feat.x][feat.y][img.x][img.y]
   float_Matrix	v1s_out_l;	 // #READ_ONLY #NO_SAVE v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   CircMatrix	v1s_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
@@ -1163,6 +1156,7 @@ public:
   ///////////////////  V1C Output ////////////////////////
   float_Matrix	v1c_v1b_pre;	 // #READ_ONLY #NO_SAVE reduce v1b features back down to v1s size by collapsing across disparity, but with focal region differentially weighted [v1s_feat.x][v1s_feat.y][v1s_img.x][v1s_img.y]
   float_Matrix	v1c_pre;	 // #READ_ONLY #NO_SAVE pre-grouping as basis for subsequent v1c filtering -- reduces dimensionality and introduces robustness [v1s_feat.x][v1s_feat.y][v1c_pre.x][v1c_pre.y]
+  float_Matrix	v1c_pre_polinv;	 // #READ_ONLY #NO_SAVE polarity invariant version of v1c_pre -- used for end stop filters.. [v1s_feat.x][1a][v1c_pre.x][v1c_pre.y]
   float_Matrix	v1c_esls_raw;	 // #READ_ONLY #NO_SAVE raw (pre spatial integration, but post v1c_pre) v1 complex end-stop and length-sum output [feat.x][2][v1s_pre.x][v1s_pre.y]
   float_Matrix	v1c_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 complex output [feat.x][feat.y][img.x][img.y]
   float_Matrix	v1c_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
@@ -1233,6 +1227,8 @@ protected:
   // do complex filters from binocular inputs -- integration (collapsing) across binocular inputs
   virtual void 	V1ComplexFilter_Pre_Binocular_thread(int v1c_pre_idx, int thread_no);
   // do complex filters from binocular inputs -- pre-grouping for subsequent processing
+  virtual void 	V1ComplexFilter_Pre_Polinv_thread(int v1c_pre_idx, int thread_no);
+  // polarity invariance for pre pass
   virtual void 	V1ComplexFilter_EsLs_Raw_thread(int v1c_pre_idx, int thread_no);
   // do complex filters from pre-grouped inputs -- EndStop & Length Sum
   virtual void 	V1ComplexFilter_EsLs_Integ_thread(int v1c_idx, int thread_no);
