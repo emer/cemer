@@ -1054,8 +1054,9 @@ public:
     LEN_SUM	= 0x0002, // length summing cells -- integrate simple cells along a line, same polarity, max over all polarities (weighted by gaussian) 
     V1S_MAX    	= 0x0004, // basic max over v1 simple cells (weighted by gaussian) -- preserves polarity -- only for on/off (monochrome) tuning in v1s -- provides useful lower-level, higher-res signals to higher levels and should be on by default
     BLOB	= 0x0008, // 'blobs' made by integrating over all angles for a given luminance or color contrast -- adds 2 units for white/black per hypercolumn (always avail), and if color = COLOR, adds 6 extra units for red/cyan on/off, green/magenta on/off, blue/yellow on/off
-    DISP_EDGE	= 0x0010, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
-    MOTION_EDGE	= 0x0020, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
+    V1B_MAX	= 0x0010, // basic max over v1b cells (weighted by gaussian) -- preserves depth coding and polarity -- allows disparity info to be at same resolution as other v1c data -- this always saved to a separate output and can be normed separately
+    DISP_EDGE	= 0x0020, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
+    MOTION_EDGE	= 0x0040, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
 #ifndef __MAKETA__
     CF_ESLS	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT most basic set
     CF_ESLSMAX	= END_STOP | LEN_SUM | V1S_MAX, // #IGNORE #NO_BIT this is the default setup
@@ -1104,6 +1105,7 @@ public:
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
   V1KwtaSpec	v1c_kwta;	// k-winner-take-all inhibitory dynamics for the v1 complex stage -- in general only use this when NOT otherwise using leabra, because these inputs will go into leabra anyway
   RenormMode	v1c_renorm;	// #DEF_LOG_RENORM how to renormalize the output of v1c filters
+  RenormMode	v1bmax_renorm;	// #CONDSHOW_ON_v1c_filters:V1B_MAX #DEF_LIN_RENORM how to renormalize the output of v1b_max filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
   XYNGeom	v1c_pre_geom; 	// #READ_ONLY size of v1 complex pre-grouping of v1s or v1b values -- number of hypercolumns in each axis to cover entire output -- this is determined by v1c pre_rf on top of v1s img geom -- feature size is equivalent to v1s_feat_geom
@@ -1163,7 +1165,9 @@ public:
   float_Matrix	v1c_esls_raw;	 // #READ_ONLY #NO_SAVE raw (pre spatial integration, but post v1c_pre) v1 complex end-stop and length-sum output [feat.x][2][v1s_pre.x][v1s_pre.y]
   float_Matrix	v1c_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 complex output [feat.x][feat.y][img.x][img.y]
   float_Matrix	v1c_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
-  float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [feat.x][feat.y][img.x][img.y]
+  float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y]
+  float_Matrix	v1bmax_pre;	 // #READ_ONLY #NO_SAVE pre-grouping as basis for subsequent v1c filtering on the v1b reps -- reduces dimensionality and introduces robustness [v1b_feat.x][v1b_feat.y][v1c_pre.x][v1c_pre.y]
+  float_Matrix	v1bmax_out;	 // #READ_ONLY #NO_SAVE v1b max output [v1b_feat.x][v1b_feat.y][v1c_img.x][v1c_img.y]
 
   int		AngleDeg(int ang_no);
   // get angle value in degress based on angle number
@@ -1225,25 +1229,29 @@ protected:
   virtual bool	V1ComplexFilter();
   // do complex filters -- dispatch threads
   virtual void 	V1ComplexFilter_Pre_Monocular_thread(int v1c_pre_idx, int thread_no);
-  // do complex filters from monocular inputs -- pre-grouping for subsequent processing
+  // monocular inputs -- pre-grouping for subsequent processing
   virtual void 	V1ComplexFilter_BinocularInteg_thread(int v1b_idx, int thread_no);
-  // do complex filters from binocular inputs -- integration (collapsing) across binocular inputs
+  // binocular inputs -- integration (collapsing) across binocular inputs
   virtual void 	V1ComplexFilter_Pre_Binocular_thread(int v1c_pre_idx, int thread_no);
-  // do complex filters from binocular inputs -- pre-grouping for subsequent processing
+  // binocular inputs -- pre-grouping for subsequent processing
   virtual void 	V1ComplexFilter_Pre_Polinv_thread(int v1c_pre_idx, int thread_no);
   // polarity invariance for pre pass
   virtual void 	V1ComplexFilter_EsLs_Raw_thread(int v1c_pre_idx, int thread_no);
-  // do complex filters from pre-grouped inputs -- EndStop & Length Sum
+  // pre-grouped inputs -- EndStop & Length Sum
   virtual void 	V1ComplexFilter_EsLs_Integ_thread(int v1c_idx, int thread_no);
-  // do complex filters from pre-grouped inputs -- EndStop & Length Sum
+  // pre-grouped inputs -- EndStop & Length Sum
   virtual void 	V1ComplexFilter_V1SMax_thread(int v1c_idx, int thread_no);
-  // do complex filters from pre-grouped inputs -- V1Simple Max
+  // pre-grouped inputs -- V1Simple Max
+  virtual void 	V1ComplexFilter_Pre_V1BMax_thread(int v1c_pre_idx, int thread_no);
+  // v1b -> v1b_pre -- do the 4x4 pregroup for v1bmax
+  virtual void 	V1ComplexFilter_V1BMax_thread(int v1c_idx, int thread_no);
+  // pre-grouped inputs -- V1Binocular Max
   virtual void 	V1ComplexFilter_Blob_thread(int v1c_idx, int thread_no);
-  // do complex filters from pre-grouped inputs -- Blob
+  // pre-grouped inputs -- Blob
   virtual void 	V1ComplexFilter_DispEdge_thread(int v1c_idx, int thread_no);
-  // do complex filters from binocular inputs -- disparity edge
+  // binocular inputs -- disparity edge
   virtual void 	V1ComplexFilter_MotionEdge_thread(int v1c_idx, int thread_no);
-  // do complex filters from pre-grouped inputs -- motion edge
+  // pre-grouped inputs -- motion edge
 
   virtual bool	V1CRenormOutput_EsLsBlob(float_Matrix* out);
   // end stop, length sum, blob separate renorm
