@@ -4827,7 +4827,7 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Integ_thread(int v1c_idx, int thread_no)
 	  if(pcc.WrapClip(wrap, v1c_pre_geom)) {
 	    if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
 	  }
-	  float max_sf = v1c_esls_raw.FastEl(fc.x, fc.y, pcc.x, pcc.y);
+	  float max_sf = v1c_esls_raw.FastEl(fc.x, cfeat, pcc.x, pcc.y); // use cfeat -- raw stored that way
 	  max_sf *= v1c_weights.FastEl(xs, ys); // spatial rf weighting
 	  max_rf = MAX(max_rf, max_sf);
 	}
