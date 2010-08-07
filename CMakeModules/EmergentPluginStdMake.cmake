@@ -50,11 +50,16 @@ message( STATUS)
 message( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
 message( STATUS "----------------------------------------------------------------------------" )
 
+set(MY_FULL_INSTALL_PATH "${CMAKE_INSTALL_PREFIX}/${EMERGENT_PLUGIN_DEST}/${PROJECT_NAME}")
+
+if (NOT "${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${MY_FULL_INSTALL_PATH}")
+  file(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/orig_src_path.txt" "${CMAKE_CURRENT_SOURCE_DIR}")
+endif (NOT "${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${MY_FULL_INSTALL_PATH}")
 
 ################################################################
 # Step 5: install/uninstall stuff -- only for non-default
 
-install(FILES ${plugin_FILES} "PluginWizard.wiz"
+install(FILES ${plugin_FILES} "PluginWizard.wiz" "orig_src_path.txt"
   DESTINATION ${EMERGENT_PLUGIN_DEST}/${PROJECT_NAME}
   )
 

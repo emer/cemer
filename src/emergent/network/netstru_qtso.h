@@ -372,6 +372,7 @@ public:
   float	 net_name;	// #DEF_0.05 network name
   float	 net_vals;	// #DEF_0.05 network values (counters, stats)
   float	 layer;		// #DEF_0.04 layer names
+  float	 layer_min;	// #DEF_0.01 minimum font size for layer -- can't go less
   float	 layer_vals;	// #DEF_0.03 layer values (stats)
   float  prjn;		// #DEF_0.01 projection names and values
   float	 unit;		// #DEF_0.02 unit names and values
@@ -634,6 +635,8 @@ public:
   taiField*		    fldUnitFont;
   QLabel*		    lblLayFont;
   taiField*		    fldLayFont;
+  QLabel*		    lblMinLayFont;
+  taiField*		    fldMinLayFont;
   QCheckBox*		    chkXYSquare;
   QCheckBox*		    chkLayGp;
 

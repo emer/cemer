@@ -695,13 +695,29 @@ bool taPlugin::LoadWiz() {
     taMisc::Error("LoadWiz Plugin -- plugin directory named:", plug_path, "does not exist for plugin file named:", plugin_nm_full, "cannot load wizard");
     return false;
   }
-  
-  String wiz_file = plug_path + PATH_SEP + "PluginWizard.wiz";
-  QFileInfo qfiwiz(wiz_file);
-  if(!qfiwiz.isFile()) {
-    taMisc::Error("LoadWiz Plugin -- PluginWizard.wiz file not found in:", plug_path,
-		  "(this may have been created before wizard saving was enabled in 5.0.2)");
-    return false;
+
+  String wiz_file;
+
+  String orig_src_file = plug_path + PATH_SEP + "orig_src_path.txt";
+  String orig_src_path;
+  QFileInfo qfiosf(orig_src_file);
+  if(!qfiosf.isFile()) {
+    taMisc::Error("LoadWiz Plugin -- orig_src_path.txt file not found in:", plug_path,
+		  "(plugin predates version 5.1) -- may not find the correct wizard");
+    wiz_file = plug_path + PATH_SEP + "PluginWizard.wiz";
+    QFileInfo qfiwiz(wiz_file);
+    if(!qfiwiz.isFile()) {
+      taMisc::Error("LoadWiz Plugin -- PluginWizard.wiz file not found in:", plug_path,
+		    "(plugin predates version 5.0.2) -- auto wizard loading not possible -- try to find the original source directory manually to see if the file might be there");
+      return false;
+    }
+  }
+  else {
+    fstream spstr;
+    spstr.open(orig_src_file, ios::in);
+    orig_src_path.Load_str(spstr);
+    spstr.close();
+    wiz_file = orig_src_path + PATH_SEP + "PluginWizard.wiz";
   }
 
   PluginWizard* wiz = (PluginWizard*)tabMisc::root->wizards.FindName("PluginWizard");
@@ -710,7 +726,11 @@ bool taPlugin::LoadWiz() {
     return false;
   }
     
+  taMisc::Info("Loading wizard info from:", wiz_file);
+
   wiz->LoadWiz(wiz_file);
+  if(orig_src_path.nonempty())
+    wiz->plugin_location = orig_src_path; // update it!
   wiz->ShowWiz();
   return true;
 }
@@ -1177,14 +1197,19 @@ bool PluginWizard::Create() {
     String dst_file = plugin_location + PATH_SEP + files[i];
     // note: files like CMakeLists.txt keep their name
     dst_file.gsub("template", plugin_name);
-    // try linking first
-    if (!QFile::link(src_file, dst_file))
-      ok = QFile::copy(src_file, dst_file);
+    // try linking first -- not!
+//     if (!QFile::link(src_file, dst_file))
+    ok = QFile::copy(src_file, dst_file);
+    if(ok) {
+      // copy permissions!
+      QFile::Permissions sp = QFile::permissions(src_file);
+      QFile::setPermissions(dst_file, sp);
+    }
   }
 
-  created = true;
-
   SaveAs(plugin_location + PATH_SEP + "PluginWizard.wiz"); // save our settings!!
+
+  created = true;
 
   if (ok) {
     taMisc::Info("The plugin was created successfully! See the CMakeLists.txt file in your plugin folder for build instructions");

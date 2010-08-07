@@ -29,6 +29,7 @@
 #include "iflowlayout.h"
 #include "icolor.h"
 #include "ilineedit.h"
+#include "iscrollarea.h"
 
 #include "imisc_so.h"
 /*
@@ -1418,6 +1419,7 @@ void LayerView::Render_impl() {
   if(lnm_wd > fx) {
     eff_lay_font_size = (fx / (float)lay->name.length()) * t3Misc::char_ht_to_wd_pts;
   }
+  eff_lay_font_size = MAX(eff_lay_font_size, nv->font_sizes.layer_min);
   node_so->resizeCaption(eff_lay_font_size);
 
 
@@ -2123,6 +2125,7 @@ void NetViewFontSizes::Initialize() {
   net_name = .05f;
   net_vals = .05f;
   layer = .04f;
+  layer_min = 0.01f;
   layer_vals = .03f;
   prjn = .01f;
   unit = .02f;
@@ -3573,11 +3576,12 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   
   QWidget* widg = new QWidget();
   layTopCtrls = new QVBoxLayout(widg); //layWidg->addLayout(layTopCtrls);
-  layTopCtrls->setSpacing(taiM->vsep_c);
-  layTopCtrls->setMargin(0);
+  layTopCtrls->setSpacing(2);
+  layTopCtrls->setMargin(2);
 
   layViewParams = new QVBoxLayout(); layTopCtrls->addLayout(layViewParams);
-  layViewParams->setSpacing(taiM->vsep_c);
+  layViewParams->setSpacing(2);
+  layViewParams->setMargin(0);
 
   ////////////////////////////////////////////////////////////////////////////
   layDispCheck = new QHBoxLayout();  layViewParams->addLayout(layDispCheck);
@@ -3668,6 +3672,14 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ((iLineEdit*)fldLayFont->GetRep())->setCharWidth(6);
   layFontsEtc->addSpacing(taiM->hsep_c);
 
+  lblMinLayFont = taiM->NewLabel("Min Sz", widg, font_spec);
+  lblMinLayFont->setToolTip("Minimum layer name font size (as a proportion of entire network display) -- prevents font from shrinking too small for small layers. .01 is default.");
+  layFontsEtc->addWidget(lblMinLayFont);
+  fldMinLayFont = dl.Add(new taiField(&TA_float, this, NULL, widg));
+  layFontsEtc->addWidget(fldMinLayFont->GetRep());
+  ((iLineEdit*)fldMinLayFont->GetRep())->setCharWidth(6);
+  layFontsEtc->addSpacing(taiM->hsep_c);
+
   chkXYSquare = new QCheckBox("XY\nSquare", widg);
   chkXYSquare->setToolTip("Make the X and Y size of network the same, so that unit cubes are always square (but can waste a certain amount of display space).");
   connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
@@ -3682,6 +3694,8 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   ////////////////////////////////////////////////////////////////////////////
   layDisplayValues = new QVBoxLayout();  layTopCtrls->addLayout(layDisplayValues); //gbDisplayValues);
+  layDisplayValues->setSpacing(2);
+  layDisplayValues->setMargin(0);
 
   layColorScaleCtrls = new QHBoxLayout();  layDisplayValues->addLayout(layColorScaleCtrls);
   
@@ -3855,6 +3869,11 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layHistory->addStretch();
 //   histTB->addStretch();
 
+//   iSplitter* splt = new iSplitter(Qt::Vertical);
+//   setCentralWidget(splt);
+
+//   splt-> addWidget(widg);
+
   setCentralWidget(widg);
   
   tw = new QTabWidget(this);
@@ -3907,12 +3926,16 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(tvSpecs, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
     this, SLOT(tvSpecs_CustomExpandFilter(iTreeViewItem*, int, bool&)) ); 
   
-  layOuter->setStretchFactor(scr, 0); // so it only uses exact spacing
+//   layOuter->setStretchFactor(scr, 0); // so it only uses exact spacing
   // so doesn't have tiny scrollable annoying area:
   // (the tradeoff is that if you squish the whole thing, eventually you can't 
   // get at all the properties)
-  scr->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  layOuter->addWidget(tw, 2);
+//   scr->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+  layTopCtrls->addWidget(tw);
+  
+//   layOuter->addWidget(tw, 2);
+//   splt->addWidget(tw);
   
   ////////////////////////////////////////////////////////////////////////////
   // Command Buttons
@@ -3973,6 +3996,7 @@ void NetViewPanel::UpdatePanel_impl() {
   fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
   fldUnitFont->GetImage((String)nv->font_sizes.unit);
   fldLayFont->GetImage((String)nv->font_sizes.layer);
+  fldMinLayFont->GetImage((String)nv->font_sizes.layer_min);
   chkXYSquare->setChecked(nv->view_params.xy_square);
   chkLayGp->setChecked(nv->view_params.show_laygp);
 
@@ -4033,6 +4057,7 @@ void NetViewPanel::GetValue_impl() {
   nv->view_params.unit_trans = (float)fldUnitTrans->GetValue();
   nv->font_sizes.unit = (float)fldUnitFont->GetValue();
   nv->font_sizes.layer = (float)fldLayFont->GetValue();
+  nv->font_sizes.layer_min = (float)fldMinLayFont->GetValue();
 
   nv->snap_bord_disp = chkSnapBord->isChecked();
   nv->snap_bord_width = (float)fldSnapBordWdth->GetValue();
