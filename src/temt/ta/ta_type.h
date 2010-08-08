@@ -1038,11 +1038,14 @@ public:
   // #CAT_Utility returns string up to maximum length given (enforces string to be len or less in length)
   static String	StringEnforceLen(const String& str, int len);
   // #CAT_Utility returns string enforced to given length (spaces added to make length)
+  static String	ShortName(const String& full_name, int max_len=6, int seg_len=3);
+  // #CAT_Utility return a shortened version of a full name -- looks for lower-upper case transitions, _'s as ways to segment names, then abbreviates segments to given segment len (only enforced if multiple segments)
+  static String	RemoveVowels(const String& str);
+  // #CAT_Utility remove vowels from given string -- useful for shortening while still producing legible text
 
   static String	StringCVar(const String& str);
   // #CAT_Utility make return string in a form that would be valid as a variable name in C (i.e., alpha + numeric (not at start) + _
 
-  
   /////////////////////////////////////////////////
   //	File Paths etc
 

@@ -1585,6 +1585,60 @@ String taMisc::StringEnforceLen(const String& str, int len) {
   return rval;
 }
 
+String taMisc::RemoveVowels(const String& str) {
+  String rval;
+  int len = str.length();
+  for(int i; i<len; i++) {
+    char c = str[i];
+    c = tolower(c);
+    if(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') continue;
+    rval.cat(c);
+  }
+  return rval;
+}
+
+String taMisc::ShortName(const String& name, int max_len, int seg_len) {
+  int ln = name.length();
+  if(ln <= max_len) return name;
+  int_PArray brks;		// locations of break points
+  for(int i = 1; i < ln; i++) {
+    char c = name[i];
+    if(c == ' ' || c == '_') {
+      brks.Add(i);
+      continue;
+    }
+    if(isupper(c) && islower(name[i-1])) {
+      brks.Add(i);
+      continue;
+    }
+  }
+  if(brks.size == 0)
+    return StringMaxLen(name, max_len);
+  String rval;
+  if(brks.size == 1) {
+    String seg1 = name.at(0, brks[0]-1);
+    rval.cat(StringMaxLen(seg1, seg_len));
+    int mln = max_len - rval.length();
+    if(mln > 0) {
+      String seg2 = name.after(brks[0]);
+      rval.cat(StringMaxLen(seg2, mln));
+    }
+  }
+  if(brks.size > 1) {
+    String seg1 = name.at(0, brks[0]-1);
+    rval.cat(StringMaxLen(seg1, seg_len));
+    String seg2 = name.at(brks[0]+1, brks[1]-brks[0]-1);
+    rval.cat(StringMaxLen(seg2, seg_len));
+    int mln = max_len - rval.length();
+    if(mln > 0) {
+      String seg2 = name.at(brks[1]+1, ln-brks[1]-1);
+      rval.cat(StringMaxLen(seg2, mln));
+    }
+  }
+  return rval;
+}
+
+
 String taMisc::StringCVar(const String& str) {
   String rval;
   for(int i=0;i<str.length();i++) {

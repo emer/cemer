@@ -1172,6 +1172,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ptbp_add_widget(tb, sec, &TA_ProgVarFmArg);
   ptbp_add_widget(tb, sec, &TA_MemberFmArg);
   ptbp_add_widget(tb, sec, &TA_DataColsFmArgs);
+  ptbp_add_widget(tb, sec, &TA_SelectEditsFmArgs);
   ptbp_add_widget(tb, sec, &TA_RegisterArgs);
 
   ////////////////////////////////////////////////////////////////////////////

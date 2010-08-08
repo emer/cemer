@@ -17,6 +17,7 @@
 #include "ta_datatable.h"
 
 #include "css_machine.h"
+#include "ta_seledit.h"
 // #include "css_basic_types.h"
 // #include "css_c_ptr_types.h"
 // #include "css_ta.h"
@@ -1270,6 +1271,16 @@ const String MemberFmArg::GenCssBody_impl(int indent_level) {
   return rval;
 }
 
+const String MemberFmArg::GenRegArgs(int indent_level) {
+  String gen_code;
+  String il = cssMisc::Indent(indent_level);
+  gen_code += il + "taMisc::AddEqualsArgName(\"" + arg_name + "\");\n";
+  gen_code += il + "taMisc::AddArgNameDesc(\"" + arg_name
+    + "\", \"MemberFmArg: obj = " + (((bool)obj) ? obj->name : "NOT SET")
+    + " path = " + path + "\");\n";
+  return gen_code;
+}
+
 String MemberFmArg::GetDisplayName() const {
   if (!obj || path.empty())
     return "(object or path not selected)";
@@ -1710,6 +1721,17 @@ const String ProgVarFmArg::GenCssBody_impl(int indent_level) {
   return rval;
 }
 
+const String ProgVarFmArg::GenRegArgs(int indent_level) {
+  String gen_code;
+  String il = cssMisc::Indent(indent_level);
+  gen_code += il + "taMisc::AddEqualsArgName(\"" + arg_name + "\");\n";
+  gen_code += il + "taMisc::AddArgNameDesc(\"" + arg_name
+    + "\", \"ProgVarFmArg: prog = " + (((bool)prog) ? prog->name : "NOT SET")
+    + " var_name = " + var_name + "\");\n";
+  return gen_code;
+}
+
+
 ///////////////////////////////////////////////////////
 //		DataColsFmArgs
 ///////////////////////////////////////////////////////
@@ -1788,6 +1810,95 @@ const String DataColsFmArgs::GenCssBody_impl(int indent_level) {
   return rval;
 }
 
+const String DataColsFmArgs::GenRegArgs(int indent_level) {
+  String gen_code;
+  String il = cssMisc::Indent(indent_level);
+  DataTable* dt = GetData();
+  if(dt) {
+    for(int j=0;j<dt->cols();j++) {
+      DataCol* dc = dt->data[j];
+      gen_code += il + "taMisc::AddEqualsArgName(\"" + dc->name + "\");\n";
+      gen_code += il + "taMisc::AddArgNameDesc(\"" + dc->name
+	+ "\", \"DataColsFmArgs: data_table = " + dt->name + "\");\n";
+    }
+  }
+  return gen_code;
+}
+
+///////////////////////////////////////////////////////
+//		SelectEditsFmArgs
+///////////////////////////////////////////////////////
+
+void SelectEditsFmArgs::Initialize() {
+}
+
+void SelectEditsFmArgs::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+void SelectEditsFmArgs::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  if(CheckError(!sel_edit_var, quiet, rval, "sel_edit_var is NULL")) return; // fatal
+  CheckError(sel_edit_var->object_type != &TA_SelectEdit, quiet, rval,
+	     "sel_edit_var variable does not point to a SelectEdit object");
+}
+
+String SelectEditsFmArgs::GetDisplayName() const {
+  String rval = "Select Edits Fm Args";
+  SelectEdit* se = GetSelectEdit();
+  if(se) {
+    rval += " To: " + se->name;
+  }
+  return rval;
+}
+
+SelectEdit* SelectEditsFmArgs::GetSelectEdit() const {
+  if(!sel_edit_var) return NULL;
+  if(sel_edit_var->object_type != &TA_SelectEdit) return NULL;
+  return (SelectEdit*)sel_edit_var->object_val.ptr();
+}
+
+const String SelectEditsFmArgs::GenCssBody_impl(int indent_level) {
+  String il = cssMisc::Indent(indent_level);
+  String il1 = cssMisc::Indent(indent_level+1);
+  String il2 = cssMisc::Indent(indent_level+2);
+  SelectEdit* se = GetSelectEdit();
+  if(!se) return il + "// SelectEditsFmArgs: sel_edit_var not set!\n";
+
+  String rval = il + "{ // SelectEditsFmArgs fm: " + se->name + "\n";
+  rval += il1 + "String sefma_lbl, sefma_argval;\n";
+  rval += il1 + "for(int j=0;j<" + se->name + ".mbrs.leaves;j++) {\n";
+  rval += il2 + "EditMbrItem* sei = " + se->name + ".mbrs.Leaf(j);\n";
+  rval += il2 + "if(!sei->is_numeric) continue;\n";
+  rval += il2 + "sefma_lbl = sei->label;\n";
+  rval += il2 + "sefma_argval = taMisc::FindArgByName(sefma_lbl);\n";
+  rval += il2 + "if(sefma_argval.empty()) continue;\n";
+  rval += il2 + "sei->PSearchCurVal_Set(sefma_argval);\n";
+  if(taMisc::dmem_proc == 0) {
+    rval += il2 + "cerr << \"Set select edit item: \" << sefma_lbl << \" in select edit: \" << \"" +
+      se->name + "\" << \" to val: \" << sefma_argval << endl;\n";
+  }
+  rval += il1 + "}\n";
+  rval += il + "}\n";
+  return rval;
+}
+
+const String SelectEditsFmArgs::GenRegArgs(int indent_level) {
+  String gen_code;
+  String il = cssMisc::Indent(indent_level);
+  SelectEdit* se = GetSelectEdit();
+  if(se) {
+    for(int j=0;j<se->mbrs.leaves;j++) {
+      EditMbrItem* sei = se->mbrs.Leaf(j);
+      if(!sei->is_numeric) continue;
+      gen_code += il + "taMisc::AddEqualsArgName(\"" + sei->label + "\");\n";
+      gen_code += il + "taMisc::AddArgNameDesc(\"" + sei->label
+	+ "\", \"SelectEditsFmArgs: sel_edit = " + se->name + "\");\n";
+    }
+  }
+  return gen_code;
+}
+
 
 ///////////////////////////////////////////////////////
 //		RegisterArgs
@@ -1819,29 +1930,19 @@ void RegisterArgs::AddArgsFmCode(String& gen_code, ProgEl_List& progs, int inden
     ProgEl* pel = progs[i];
     if(pel->InheritsFrom(&TA_ProgVarFmArg)) {
       ProgVarFmArg* pva = (ProgVarFmArg*)pel;
-      gen_code += il + "taMisc::AddEqualsArgName(\"" + pva->arg_name + "\");\n";
-      gen_code += il + "taMisc::AddArgNameDesc(\"" + pva->arg_name
-	+ "\", \"ProgVarFmArg: prog = " + (((bool)pva->prog) ? pva->prog->name : "NOT SET")
-	+ " var_name = " + pva->var_name + "\");\n";
+      gen_code += pva->GenRegArgs(indent_level);
     }
     else if(pel->InheritsFrom(&TA_MemberFmArg)) {
       MemberFmArg* mfa = (MemberFmArg*)pel;
-      gen_code += il + "taMisc::AddEqualsArgName(\"" + mfa->arg_name + "\");\n";
-      gen_code += il + "taMisc::AddArgNameDesc(\"" + mfa->arg_name
-	+ "\", \"MemberFmArg: obj = " + (((bool)mfa->obj) ? mfa->obj->name : "NOT SET")
-	+ " path = " + mfa->path + "\");\n";
+      gen_code += mfa->GenRegArgs(indent_level);
     }
     else if(pel->InheritsFrom(&TA_DataColsFmArgs)) {
-      DataColsFmArgs* mfa = (DataColsFmArgs*)pel;
-      DataTable* dt = mfa->GetData();
-      if(dt) {
-	for(int j=0;j<dt->cols();j++) {
-	  DataCol* dc = dt->data[j];
-	  gen_code += il + "taMisc::AddEqualsArgName(\"" + dc->name + "\");\n";
-	  gen_code += il + "taMisc::AddArgNameDesc(\"" + dc->name
-	    + "\", \"DataColsFmArgs: data_table = " + dt->name + "\");\n";
-	}
-      }
+      DataColsFmArgs* dca = (DataColsFmArgs*)pel;
+      gen_code += dca->GenRegArgs(indent_level);
+    }
+    else if(pel->InheritsFrom(&TA_SelectEditsFmArgs)) {
+      SelectEditsFmArgs* sea = (SelectEditsFmArgs*)pel;
+      gen_code += sea->GenRegArgs(indent_level);
     }
     else {			// look for sub-lists
       TypeDef* td = pel->GetTypeDef();

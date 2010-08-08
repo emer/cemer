@@ -532,6 +532,9 @@ public:
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "memb=arg"; }
 
+  const String	GenRegArgs(int indent_level);
+  // #IGNORE generate RegisterArgs code
+
   //  PROGEL_SIMPLE_BASEFUNS(MemberFmArg);
   void Copy_(const MemberFmArg& cp);
   SIMPLE_LINKS(MemberFmArg);
@@ -767,6 +770,9 @@ public:
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "var=arg"; }
 
+  const String	GenRegArgs(int indent_level);
+  // #IGNORE generate RegisterArgs code
+
   PROGEL_SIMPLE_BASEFUNS(ProgVarFmArg);
 protected:
   override void UpdateAfterEdit_impl();
@@ -799,7 +805,37 @@ public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   override String	GetToolbarName() const { return "data=args"; }
 
+  const String	GenRegArgs(int indent_level);
+  // #IGNORE generate RegisterArgs code
+
   PROGEL_SIMPLE_BASEFUNS(DataColsFmArgs);
+protected:
+  override void UpdateAfterEdit_impl();
+  override void CheckThisConfig_impl(bool quiet, bool& rval);
+  override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
+class TA_API SelectEditsFmArgs: public ProgEl { 
+  // sets SelectEdit value(s) based on startup arguments of the name of the select edit item -- items must be single value numeric items
+INHERITED(ProgEl)
+public:
+  ProgVarRef		sel_edit_var;	// #ITEM_FILTER_ObjProgVarFilter program variable pointing to select edit that contains the items to access with startup arguments
+
+  virtual SelectEdit* 	GetSelectEdit() const;
+  // get actual select edit from variable
+
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  override String	GetToolbarName() const { return "sele=args"; }
+
+  const String	GenRegArgs(int indent_level);
+  // #IGNORE generate RegisterArgs code
+
+  PROGEL_SIMPLE_BASEFUNS(SelectEditsFmArgs);
 protected:
   override void UpdateAfterEdit_impl();
   override void CheckThisConfig_impl(bool quiet, bool& rval);

@@ -3709,14 +3709,15 @@ void Program::UpdateAfterEdit_impl() {
   }
 
   if(short_nm.empty()) {
-    int ln = name.length();
-    int i;
-    for(i = ln-1; i>= 0; i--) {
-      if(ln - i > 10 || isupper(name[i]))
-	break;
-    }
-    int stpos = MAX(i, 0);
-    short_nm = name.from(stpos);
+    String use_nm = name;
+    // todo: this is hacky and emergent-dependent...
+    if(use_nm.startsWith("Leabra")) use_nm = use_nm.after("Leabra");
+    if(use_nm.startsWith("Bp")) use_nm = use_nm.after("Bp");
+    if(use_nm.startsWith("Cs")) use_nm = use_nm.after("Cs");
+    if(use_nm.startsWith("So")) use_nm = use_nm.after("So");
+    if(use_nm.length() > 8)
+      use_nm = taMisc::RemoveVowels(use_nm);
+    short_nm = taMisc::ShortName(use_nm);
   }
 }
 

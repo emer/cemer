@@ -175,10 +175,12 @@ public:
   virtual bool		PSearchNextToCur_All();
   // #CAT_ParamSearch set current value to stored next value for all items in active parameter search 
 
-  virtual void		PSearchConfigTable(DataTable* dat);
-  // #CAT_ParamSearch configure data table to hold results of the parameter search -- see PSearchRecord function -- makes a column for each active search variable, plus an "eval" column to hold the overal evaluation value for this set of parameters
-  virtual void		PSearchRecord(DataTable* dat, double eval_val);
-  // #CAT_ParamSearch record current search parameters in data table (configured with PSearchConfigTable), along with the evaluation value for this set of parameters as provided
+  virtual void		PSearchConfigTable(DataTable* dat, bool all_nums=false,
+					   bool add_eval=true);
+  // #CAT_ParamSearch configure data table to hold results of the parameter search -- see PSearchRecord function -- makes a column for each active search variable (or all numeric values if specified), plus an optional "eval" column to hold the overal evaluation value for this set of parameters
+  virtual void		PSearchRecordData(DataTable* dat, bool all_nums=false,
+					  bool add_eval=true, double eval_val=0.0);
+  // #CAT_ParamSearch record current search parameters (or all numeric values if specified) in data table (configured with PSearchConfigTable), along with the evaluation value for this set of parameters as provided -- does not add a new row to table -- can be used in conjunction with other net monitor data etc
 
   virtual bool&		PSearchOn(const String& mbr_nm, const String& label = "");
   // #CAT_PSearch_Access gets a reference to the param_search flag for given member name and, optionally if non-empty, the associated label -- indicates whether to include item in overall search process
@@ -353,12 +355,14 @@ public: // public API
   { return mbrs.PSearchNextToCur_All(); }
   // #CAT_ParamSearch set current value to stored next value for all items in active parameter search 
 
-  virtual void		PSearchConfigTable(DataTable* dat)
-  { return mbrs.PSearchConfigTable(dat); }
-  // #CAT_ParamSearch configure data table to hold results of the parameter search -- see PSearchRecord function -- makes a column for each active search variable, plus an "eval" column to hold the overal evaluation value for this set of parameters
-  virtual void		PSearchRecord(DataTable* dat, double eval_val)
-  { return mbrs.PSearchRecord(dat, eval_val); }
-  // #CAT_ParamSearch record current search parameters in data table (configured with PSearchConfigTable), along with the evaluation value for this set of parameters as provided
+  virtual void		PSearchConfigTable(DataTable* dat, bool all_nums=false, 
+					   bool add_eval=true)
+  { return mbrs.PSearchConfigTable(dat, all_nums, add_eval); }
+  // #CAT_ParamSearch configure data table to hold results of the parameter search -- see PSearchRecord function -- makes a column for each active search variable (or all numeric values if specified), plus an optional "eval" column to hold the overal evaluation value for this set of parameters
+  virtual void		PSearchRecordData(DataTable* dat, bool all_nums=false,
+					  bool add_eval=true, double eval_val=0.0)
+  { return mbrs.PSearchRecordData(dat, all_nums, add_eval, eval_val); }
+  // #CAT_ParamSearch record current search parameters (or all numeric values if specified) in data table (configured with PSearchConfigTable), along with the evaluation value for this set of parameters as provided -- does not add a new row to table -- can be used in conjunction with other net monitor data etc
 
   virtual bool&		PSearchOn(const String& mbr_nm, const String& label = "")
   { return mbrs.PSearchOn(mbr_nm, label); }
@@ -440,5 +444,7 @@ public: // legacy routines/members
   String_Array	meth_strs;	// #NO_SHOW #NO_SAVE #READ_ONLY string names of meths on bases -- used for saving
   void		ConvertLegacy();
 };
+
+TA_SMART_PTRS(SelectEdit); //
 
 #endif
