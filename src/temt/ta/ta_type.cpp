@@ -1462,6 +1462,51 @@ bool taMisc::FullArgStringToFile(const String& fname) {
 }
 
 
+String taMisc::FullArgStringName(bool exclude_flags, const String& exclude_names,
+				 bool shorten_names, int max_len, int seg_len,
+				 int rm_vowels_thr,
+				 const String& nm_val_sep, const String& arg_sep,
+				 const String& space_repl, const String& period_repl,
+				 const String& slash_repl) {
+
+  String_PArray excludes;
+  excludes.SetFromString(exclude_names, ", ");
+
+  String act_arg_sep = arg_sep;
+  if(act_arg_sep.empty())
+    act_arg_sep = "#";		// makea barfs if this is in the default args!
+
+  String rval;
+  for(int i=1; i<args.size; i++) {
+    NameVar nv = args[i];
+    if(exclude_flags && nv.value.isNull()) continue;
+    bool excl = false;
+    for(int j=0; j<excludes.size; j++) {
+      if(nv.name.contains(excludes[j])) {
+	excl = true;
+	break;
+      }
+    }
+    if(excl) continue;
+    String nm = nv.name;
+    if(shorten_names) {
+      nm = ShortName(nm, max_len, seg_len, rm_vowels_thr);
+    }
+    String vl = nv.value.toString();
+    String nvs = nm + nm_val_sep + vl;
+    nvs.gsub(" ", space_repl);
+    nvs.gsub(".", period_repl);
+    nvs.gsub("/", slash_repl);
+    nvs.gsub("\\", slash_repl);
+    if(rval.empty())
+      rval = nvs;
+    else
+      rval.cat(act_arg_sep).cat(nvs);
+  }
+  return rval;
+}
+
+
 bool taMisc::CheckArgByName(const String& nm) {
   if(args.FindName(nm) < 0) return false;
   return true;
@@ -1588,50 +1633,55 @@ String taMisc::StringEnforceLen(const String& str, int len) {
 String taMisc::RemoveVowels(const String& str) {
   String rval;
   int len = str.length();
-  for(int i; i<len; i++) {
+  for(int i=0; i<len; i++) {
     char c = str[i];
-    c = tolower(c);
-    if(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') continue;
+    char lc = tolower(c);
+    if(lc == 'a' || lc == 'e' || lc == 'i' || lc == 'o' || lc == 'u') continue;
     rval.cat(c);
   }
   return rval;
 }
 
-String taMisc::ShortName(const String& name, int max_len, int seg_len) {
+String taMisc::ShortName(const String& name, int max_len, int seg_len, int rm_vowels_thr) {
   int ln = name.length();
   if(ln <= max_len) return name;
+  String nm = name;
+  if(ln >= rm_vowels_thr) {
+    nm = RemoveVowels(name);
+    ln = nm.length();
+  }
   int_PArray brks;		// locations of break points
   for(int i = 1; i < ln; i++) {
-    char c = name[i];
+    char c = nm[i];
     if(c == ' ' || c == '_') {
       brks.Add(i);
       continue;
     }
-    if(isupper(c) && islower(name[i-1])) {
-      brks.Add(i);
+    if(isupper(c) && islower(nm[i-1])) {
+      brks.Add(i-1);
       continue;
     }
   }
   if(brks.size == 0)
-    return StringMaxLen(name, max_len);
+    return StringMaxLen(nm, max_len);
   String rval;
   if(brks.size == 1) {
-    String seg1 = name.at(0, brks[0]-1);
+    String seg1 = nm.at(0, brks[0]);
     rval.cat(StringMaxLen(seg1, seg_len));
     int mln = max_len - rval.length();
     if(mln > 0) {
-      String seg2 = name.after(brks[0]);
+      String seg2 = nm.after(brks[0]);
       rval.cat(StringMaxLen(seg2, mln));
     }
   }
   if(brks.size > 1) {
-    String seg1 = name.at(0, brks[0]-1);
+    String seg1 = nm.at(0, brks[0]);
     rval.cat(StringMaxLen(seg1, seg_len));
-    String seg2 = name.at(brks[0]+1, brks[1]-brks[0]-1);
+    String seg2 = nm.at(brks[0]+1, brks[1]-brks[0]-1);
     rval.cat(StringMaxLen(seg2, seg_len));
     int mln = max_len - rval.length();
     if(mln > 0) {
-      String seg2 = name.at(brks[1]+1, ln-brks[1]-1);
+      String seg2 = nm.at(brks[1]+1, ln-brks[1]-1);
       rval.cat(StringMaxLen(seg2, mln));
     }
   }

@@ -1087,7 +1087,7 @@ public:
   V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
   V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
   V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||1 specs for V1 motion filters within the simple processing layer
-  RenormMode	v1s_renorm;	// #DEF_LOG_RENORM how to renormalize the output of v1s static filters
+  RenormMode	v1s_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1s static filters
   RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
   XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
@@ -1104,7 +1104,7 @@ public:
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
   V1KwtaSpec	v1c_kwta;	// k-winner-take-all inhibitory dynamics for the v1 complex stage -- in general only use this when NOT otherwise using leabra, because these inputs will go into leabra anyway
-  RenormMode	v1c_renorm;	// #DEF_LOG_RENORM how to renormalize the output of v1c filters
+  RenormMode	v1c_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1c filters
   RenormMode	v1bmax_renorm;	// #CONDSHOW_ON_v1c_filters:V1B_MAX #DEF_LIN_RENORM how to renormalize the output of v1b_max filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles

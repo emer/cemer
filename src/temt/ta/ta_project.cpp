@@ -886,6 +886,7 @@ void taProject::Initialize() {
   m_dirty = false;
   m_no_save = false;
   viewers.SetBaseType(&TA_TopLevelViewer);
+  viewers_tmp.SetBaseType(&TA_TopLevelViewer);
 }
 
 void taProject::Destroy() { 
@@ -910,6 +911,7 @@ void taProject::InitLinks_impl() {
   taBase::Own(data_proc, this);
   taBase::Own(programs, this);
   taBase::Own(viewers, this);
+  taBase::Own(viewers_tmp, this);
   taBase::Own(undo_mgr, this);
 
   // note: any derived programs should install additional guys..
@@ -936,6 +938,7 @@ void taProject::CutLinks() {
 }
 
 void taProject::CutLinks_impl() {
+  viewers_tmp.CutLinks(); 
   viewers.CutLinks(); 
   programs.CutLinks();
   data_proc.CutLinks();
@@ -949,6 +952,7 @@ void taProject::CutLinks_impl() {
 void taProject::Copy_(const taProject& cp) {
   // delete things first, to avoid dangling references
   programs.Reset();
+  viewers_tmp.Reset();
   viewers.Reset();
   data.Reset();
 
@@ -961,7 +965,7 @@ void taProject::Copy_(const taProject& cp) {
   edits = cp.edits;
   data = cp.data;
   data_proc = cp.data_proc;
-  viewers = cp.viewers;
+  viewers = cp.viewers;		// todo: open windows here etc
   programs = cp.programs;
   // NOTE: once a derived project has all the relevant stuff copied, it needs to call this:
   // UpdatePointers_NewPar(&cp, this); // update pointers within entire project..
@@ -1518,6 +1522,11 @@ void taRootBaseAdapter::Startup_RunStartupScript() {
   taRootBase::Startup_RunStartupScript();
 }
 
+void taRootBaseAdapter::ConsoleNewStdin(int n_lines) {
+  taRootBase::instance()->ConsoleNewStdin(n_lines);
+}
+
+
 #ifdef DMEM_COMPILE
 void taRootBaseAdapter::DMem_SubEventLoop() {
   taRootBase::DMem_SubEventLoop();
@@ -1584,6 +1593,7 @@ void taRootBase::InitLinks() {
   taBase::Own(wizards, this);
   taBase::Own(projects, this);
   taBase::Own(viewers, this);
+  taBase::Own(viewers_tmp, this);
   taBase::Own(plugins, this);
   taBase::Own(plugin_state, this);
   taBase::Own(plugin_deps, this);
@@ -1611,6 +1621,7 @@ void taRootBase::CutLinks() {
 //TODO: we should save the plugin state!
   plugin_state.CutLinks();
   plugins.CutLinks();
+  viewers_tmp.CutLinks();
   viewers.CutLinks();
   projects.CutLinks();
   wizards.CutLinks();
@@ -2888,12 +2899,18 @@ bool taRootBase::Startup_MakeMainWin() {
 #ifdef TA_GUI
   // TODO: need to better orchestrate the "OpenWindows" call below with
   // create the default application window
-  MainWindowViewer* vwr = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
+  MainWindowViewer* vwr;
+  if(tabMisc::root->viewers.size >= 1) {
+    vwr = (MainWindowViewer*)tabMisc::root->viewers[0];
+  }
+  else {
+    vwr = MainWindowViewer::NewBrowser(tabMisc::root, NULL, true);
+  }
   // try to size fairly large to avoid scrollbars
   vwr->SetUserData("view_win_wd", 0.7f);
   float ht = 0.5f; // no console
 //  iSize s(1024, 480); // no console  (note: values obtained empirically)
-  if ((console_type == taMisc::CT_GUI) && (!(console_options & taMisc::CO_GUI_TRACKING))) {
+  if((console_type == taMisc::CT_GUI) && (console_options & taMisc::CO_GUI_DOCK)) {
     ht = 0.8f; // console
     ConsoleDockViewer* cdv = new ConsoleDockViewer;
     vwr->docks.Add(cdv);
@@ -2943,10 +2960,14 @@ bool taRootBase::Startup_Console() {
   if(taMisc::gui_active && (console_type == taMisc::CT_GUI)) {  
     //note: nothing else to do here for gui_dockable
     QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
+
+    QObject::connect(con, SIGNAL(receivedNewStdin(int)), root_adapter, SLOT(ConsoleNewStdin(int)));
+    // get notified
+
     if(taMisc::log_console_out) {
       con->setStdLogfile("css_console_output.log");
     }
-    if (console_options & taMisc::CO_GUI_TRACKING) {
+    if(!(console_options & taMisc::CO_GUI_DOCK)) {
       QMainWindow* cwin = new QMainWindow();
       cwin->setWindowTitle("css Console");
       cwin->setCentralWidget((QWidget*)con);
@@ -2955,8 +2976,11 @@ bool taRootBase::Startup_Console() {
       cwin->show();
       taMisc::console_win = cwin; // note: uses a guarded QPointer
 
-      MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
-      db->ViewWindow();		// make sure root guy is on top
+      if(tabMisc::root->viewers.size >= 1) {
+// 	taMisc::ProcessEvents();
+// 	MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
+// 	db->ViewWindow();		// make sure root guy is on top
+      }
     }
   }
 #endif
@@ -2964,6 +2988,23 @@ bool taRootBase::Startup_Console() {
 
   return true;
 }
+
+void taRootBase::ConsoleNewStdin(int n_lines) {
+#ifdef HAVE_QT_CONSOLE
+  if(!taMisc::gui_active || (console_type != taMisc::CT_GUI)) return;
+  if(taMisc::console_win) {
+    QApplication::alert(taMisc::console_win);
+  }
+  else {
+    // assume dock..
+    if(tabMisc::root->viewers.size >= 1) {
+      MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
+      QApplication::alert(db->widget());
+    }
+  }
+#endif
+}
+
 
 bool taRootBase::Startup_RegisterSigHandler() {
 // #if (!defined(DMEM_COMPILE)) 

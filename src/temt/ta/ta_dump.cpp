@@ -565,7 +565,7 @@ int MemberDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     if((tap != NULL) &&	(tap->GetOwner() == base)) { // wholly owned subsidiary
       return tap->Dump_Save_impl(strm, (taBase*)base, indent);
     }
-    if((tap != NULL) && (tap->GetOwner() == NULL)) { // no owner, fake path name
+    if((tap != NULL) && (tap->GetOwner() == NULL) && (tap != taRootBase::instance())) { // no owner, fake path name
       strm << tap->GetTypeDef()->name << " @*(." << name << ")";
       tap->Dump_Save_Value(strm, (taBase*)base, indent);
 //NOTE: HACK ALERT...      

@@ -3674,6 +3674,7 @@ bool iMainWindowViewer::AlignCssConsole() {
   taProject* prj = curProject();
   if(!prj) return false;
   if(!taMisc::console_win) return false;
+  if(!(taMisc::console_options & taMisc::CO_GUI_TRACKING)) return false;
   QRect r = frameGeometry();
   int nw_top = r.bottom() + 1;
   int nw_ht = taiM->scrn_s.h - nw_top - 64; // leave a fixed amount of space at bottom.
@@ -8913,6 +8914,9 @@ public:
 iSearchDialog* iSearchDialog::New(int ft, iMainWindowViewer* par_window_) 
 {
   iSearchDialog* rval = new iSearchDialog(par_window_);
+  Qt::WindowFlags wflg = rval->windowFlags();
+  wflg &= ~Qt::WindowStaysOnTopHint;
+  rval->setWindowFlags(wflg);
   rval->setFont(taiM->dialogFont(ft));
   rval->Constr();
   return rval;

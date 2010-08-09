@@ -619,7 +619,7 @@ void TopLevelViewer::ViewWindow() {
   } else {
     // if not owned yet, put us in the global guy
     if (!GetOwner() && tabMisc::root)
-      tabMisc::root->viewers.Add(this); // does InitLinks
+      tabMisc::root->viewers_tmp.Add(this); // does InitLinks
     Constr(); // NO parent 
 //     Constr(QApplication::activeWindow()); // parent to current active
     Render();
@@ -864,8 +864,18 @@ MainWindowViewer* MainWindowViewer::NewBrowser(taBase* root,
   PanelViewer* pv = new PanelViewer;
   rval->frames.Add(pv);
   // browsers are added to the global viewers, and not persistent
-  if (tabMisc::root)
-    tabMisc::root->viewers.Add(rval); // does InitLinks
+  taProject* proj = GET_OWNER(root, taProject);
+  if(proj) {
+    proj->viewers_tmp.Add(rval);
+  }
+  else {
+    if(tabMisc::root) {
+      if(is_root)
+	tabMisc::root->viewers.Add(rval); // this is our guy!
+      else
+	tabMisc::root->viewers_tmp.Add(rval); // does InitLinks
+    }
+  }
   return rval;
 }
 
@@ -879,7 +889,7 @@ MainWindowViewer* MainWindowViewer::NewClassBrowser(void* root, TypeDef* root_ty
   rval->frames.Add(pv);
   // browsers are added to the global viewers, and not persistent
   if (tabMisc::root)
-    tabMisc::root->viewers.Add(rval); // does InitLinks
+    tabMisc::root->viewers_tmp.Add(rval); // does InitLinks
   return rval;
 }
 
@@ -895,15 +905,30 @@ MainWindowViewer* MainWindowViewer::NewEditDialog(taBase* root) {
   rval->frames.Add(pv);
   // nuke or modify some stuff usually added:
   // browsers are added to the global viewers, and not persistent
-  if (tabMisc::root)
-    tabMisc::root->viewers.Add(rval); // does InitLinks
+  taProject* proj = GET_OWNER(root, taProject);
+  if(proj) {
+    proj->viewers_tmp.Add(rval);
+  }
+  else {
+    if (tabMisc::root)
+      tabMisc::root->viewers.Add(rval); // does InitLinks
+  }
   return rval;
 } 
 
 MainWindowViewer* MainWindowViewer::FindEditDialog(taBase* root) {
-  if (!tabMisc::root) return NULL;
-  for(int i=0; i<tabMisc::root->viewers.size; i++) {
-    taDataView* dv = tabMisc::root->viewers[i];
+  DataViewer_List* vwrs = NULL;
+  taProject* proj = GET_OWNER(root, taProject);
+  if(proj) {
+    vwrs = &(proj->viewers_tmp);
+  }
+  else {
+    if(tabMisc::root) 
+      vwrs = &(tabMisc::root->viewers_tmp);
+  }
+  if(!vwrs) return NULL;
+  for(int i=0; i< vwrs->size; i++) {
+    taDataView* dv = vwrs->FastEl(i);
     taBase* dt = dv->data();
     if((dt == root) && dv->InheritsFrom(&TA_MainWindowViewer))
       return (MainWindowViewer*)dv;

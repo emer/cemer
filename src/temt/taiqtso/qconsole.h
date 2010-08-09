@@ -142,6 +142,8 @@ private slots:
 signals:
   // Signal emitted after that a command is executed
   void commandExecuted(QString command);
+  // signal emitted after new standard input received -- can be used to update status indicator etc
+  void receivedNewStdin(int n_lines);
 };
 
 #endif //HAVE_QT_CONSOLE

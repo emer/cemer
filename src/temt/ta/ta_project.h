@@ -458,6 +458,7 @@ public:
   taBase_Group		data_proc; // objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_Group		programs; // Gui-based programs to run simulations and other processing
   DataViewer_List	viewers; // a list of the viewers that have been made and saved in the project; choose one, right click, and OpenViewer to view if not open
+  DataViewer_List	viewers_tmp; // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
   taUndoMgr		undo_mgr; // #READ_ONLY #HIDDEN #NO_SAVE undo manager
 
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
@@ -610,6 +611,7 @@ public:
 protected slots:
   void 	Startup_ProcessArgs();
   void 	Startup_RunStartupScript();
+  void 	ConsoleNewStdin(int n_lines); // console got new standard input
 #ifdef DMEM_COMPILE
   void 	DMem_SubEventLoop();
 #endif
@@ -627,7 +629,8 @@ public:
   Doc_Group		docs; 		// #NO_SAVE documents, typically linked to other objects
   Wizard_Group		wizards; 	// #NO_SAVE global wizards -- see each project for project-specific wizards
   Project_Group		projects; 	// #NO_SAVE The projects
-  DataViewer_List	viewers;	// #NO_SAVE global viewers (not saved)
+  DataViewer_List	viewers;	// #NO_SAVE viewer display settings for the root object only
+  DataViewer_List	viewers_tmp; 	// #READ_ONLY #HIDDEN #NO_SAVE temporary viewers
   taPlugin_List		plugins; 	// available plugins
   taBase_List		plugin_state; 	// #NO_SAVE #HIDDEN #HIDDEN_TREE state objs of plugins -- created/managed by plugin system; state saved as {name}.state in user data
   taPluginBase_List	plugin_deps; 	// #SHOW_TREE #EXPERT_TREE #NO_SAVE  dynamic list, populated in presave
@@ -721,6 +724,9 @@ public:
 
   static void	Cleanup_Main();
   // #IGNORE after init, or running, do final cleanups (called by StartupInit on fail, or Startup_Run)
+
+  virtual void	ConsoleNewStdin(int n_lines);
+  // notification that the console has received new input lines
 
 #ifdef DMEM_COMPILE
   static bool 	Run_GuiDMem();

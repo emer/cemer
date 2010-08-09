@@ -537,9 +537,11 @@ public:
 #endif
     CO_USE_PAGING_NOGUI = 0x0002, // #LABEL_Use_Paging_NoGui use paging in the nogui console/shell, like the 'more' command
 #ifdef HAVE_QT_CONSOLE
-    CO_GUI_TRACKING	= 0x0004, // #LABEL_Gui_Tracking in GUI mode, the console floats below the active project
+    CO_GUI_TRACKING	= 0x0004, // #LABEL_Gui_Tracking in GUI mode, the console floats below the active project -- this only operates if DockRoot is not checked
+    CO_GUI_DOCK		= 0x0008, // #LABEL_Gui_DockRoot in GUI mode, dock the console in the root window -- if this checked, then tracking is not done
 #else
-    CO_GUI_TRACKING	= 0x0004, // #NO_SHOW in GUI mode, the console floats below the active project
+    CO_GUI_TRACKING	= 0x0004, // #NO_SHOW in GUI mode, the console floats below the active project -- this only operates if DockRoot is not checked
+    CO_GUI_DOCK		= 0x0008, // #NO_SHOW in GUI mode, dock the console in the root window -- if this checked, then tracking is not done
 #endif
   };
   
@@ -997,6 +999,13 @@ public:
   // #CAT_Args return the full string of arguments passed to the program by the user
   static bool	FullArgStringToFile(const String& fname);
   // #CAT_Args write the full string of arguments passed to the program by the user to given file name
+  static String	FullArgStringName(bool exclude_flags=true, const String& exclude_names="",
+				  bool shorten_names=true, int max_len=6, int seg_len=3,
+				  int rm_vowels_thr=8,
+				  const String& nm_val_sep="_", const String& arg_sep="",
+				  const String& space_repl="", const String& period_repl="",
+				  const String& slash_repl="%");
+  // #CAT_Args return user-provided args as a concatenation of name_value pairs, in a form suitable for use as a file name -- exclude_flags = do not include args that didn't have a value passed (tend to be system control flags) -- exclude_names is a comma-separated list of name strings that will be exlcuded (uses contains, so can be part of a name) -- lots of options to control output, including shortening arg names (see ShortName for meaning of max_len and seg_len, and rm_vowels_thr), separators between name and value, and between args (note: for obscure reasons, the separator for an empty string is actually the pound sign), and what to replace spaces, periods and slashes (either direction) with (these are important file-system separators)
 
   static bool	CheckArgByName(const String& nm);
   // #CAT_Args was the given arg name set?
@@ -1038,8 +1047,8 @@ public:
   // #CAT_Utility returns string up to maximum length given (enforces string to be len or less in length)
   static String	StringEnforceLen(const String& str, int len);
   // #CAT_Utility returns string enforced to given length (spaces added to make length)
-  static String	ShortName(const String& full_name, int max_len=6, int seg_len=3);
-  // #CAT_Utility return a shortened version of a full name -- looks for lower-upper case transitions, _'s as ways to segment names, then abbreviates segments to given segment len (only enforced if multiple segments)
+  static String	ShortName(const String& full_name, int max_len=6, int seg_len=3, int rm_vowels_thr=8);
+  // #CAT_Utility return a shortened version of a full name -- looks for lower-upper case transitions, _'s as ways to segment names, then abbreviates segments to given segment len (only enforced if multiple segments) -- rm_vowels_thr is length above which RemoveVowels is called first
   static String	RemoveVowels(const String& str);
   // #CAT_Utility remove vowels from given string -- useful for shortening while still producing legible text
 

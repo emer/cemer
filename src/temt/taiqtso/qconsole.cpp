@@ -186,9 +186,11 @@ bool QConsole::stdDisplay(QTextStream* s) {
   if((curOutputLn >= maxLines) && !contPager && !noPager)
     return true;
   bool scrolled_to_end = scrolledToEnd();
+  int n_lines_recvd = 0;
   while((curOutputLn < maxLines) || contPager || noPager || quitPager) {
     QString line = s->readLine(maxCols);
     if(line.isNull()) break;
+    n_lines_recvd++;
     if(!quitPager) {
       promptDisp = false;
       append(line);
@@ -213,6 +215,9 @@ bool QConsole::stdDisplay(QTextStream* s) {
     gotoEnd(cursor, false);
     setTextCursor(cursor);
   }
+
+  emit receivedNewStdin(n_lines_recvd);
+
 //   viewport()->update();		// repaint the window, in case it is weird, as it has been..
   return false;
 }
