@@ -194,7 +194,7 @@ public:
   virtual void 		ClearData();
   // Clear the display and the data
   virtual void 		ViewRow_At(int start);
-  // start viewing at indicated viewrange value
+  // #BUTTON start viewing at indicated viewrange value
 
   override void		DataDestroying();
   override void		BuildAll();
@@ -477,7 +477,6 @@ public:
   QLabel*		    lblFontScale;
   taiField*		    fldFontScale;
   QPushButton*		    butRefresh;
-  QPushButton*		    butClear; // not used
 
   QHBoxLayout*		  layVals;
   QLabel*		    lblRows;
@@ -513,6 +512,15 @@ public:
   QLabel*		    lblMMBVal;
   taiField*		    fldMMBVal;
 
+  QHBoxLayout*		  layNav;
+  QLabel*		    lblGoto;
+  taiIncrField*		    fldGoto;
+  QPushButton*		    butGoto;
+  QPushButton*		    butPgUp;
+  QPushButton*		    butPgDn;
+  QPushButton*		    butStart;
+  QPushButton*		    butEnd;
+
   override String	panel_type() const; // this string is on the subpanel button for this panel
   GridTableView*	glv() {return (GridTableView*)m_dv;}
 
@@ -531,7 +539,11 @@ public: // IDataLinkClient interface
 
 protected slots:
   void 		butRefresh_pressed();
-  void 		butClear_pressed();
+  void 		butGoto_pressed();
+  void 		butPgUp_pressed();
+  void 		butPgDn_pressed();
+  void 		butStart_pressed();
+  void 		butEnd_pressed();
   void 		butSetColor_pressed();
 
   void		cbar_scaleValueChanged();

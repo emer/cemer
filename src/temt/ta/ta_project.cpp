@@ -610,8 +610,8 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   urec->save_top_path = save_top->GetPath(NULL, owner);
 
 #ifdef DEBUG
-  cout << "SaveUndo of action: " << urec->action << " on: " << urec->mod_obj_name
-       << " at path: " << urec->mod_obj_path << endl;
+  taMisc::Info("SaveUndo of action:",urec->action,"on:",urec->mod_obj_name,
+	       "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
 #endif
 
   tabMisc::cur_undo_save_top = save_top; // let others know who we're saving for..
@@ -700,7 +700,17 @@ bool taUndoMgr::Undo() {
     else {
       // this is the first undo -- we need to save this current state so we can then redo it!
       first_undo = true;
-      SaveUndo(owner, "Undo", owner);
+      if(urec->save_top == owner) {
+	SaveUndo(owner, "Undo", owner);
+      }
+      else {
+	MemberDef* md;
+	taBase* modobj = owner->FindFromPath(urec->mod_obj_path, md);
+	if(modobj)
+	  SaveUndo(modobj, "Undo", urec->save_top);
+	else
+	  SaveUndo(owner, "Undo", owner); // bail to full save
+      }
     }
   }
   if(!urec->save_top) {		// it was nuked -- try to reconstruct from path..

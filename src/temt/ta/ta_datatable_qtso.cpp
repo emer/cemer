@@ -341,7 +341,43 @@ GraphTableView* DataTable::FindMakeGraphView(T3DataViewFrame* fr) {
   return GraphTableView::New(this, fr);
 }
 
+GridTableView* DataTable::FindGridView() {
+  taDataLink* dl = data_link();
+  if(dl) {
+    taDataLinkItr itr;
+    GridTableView* el;
+    FOR_DLC_EL_OF_TYPE(GridTableView, el, dl, itr) {
+      return el;
+    }
+  }
+  return NULL;
+}
 
+GraphTableView* DataTable::FindGraphView() {
+  taDataLink* dl = data_link();
+  if(dl) {
+    taDataLinkItr itr;
+    GraphTableView* el;
+    FOR_DLC_EL_OF_TYPE(GraphTableView, el, dl, itr) {
+      return el;
+    }
+  }
+  return NULL;
+}
+
+bool DataTable::GridViewGotoRow(int row_no) {
+  GridTableView* gv = FindGridView();
+  if(!gv) return false;
+  gv->ViewRow_At(row_no);
+  return true;
+}
+
+bool DataTable::GraphViewGotoRow(int row_no) {
+  GraphTableView* gv = FindGraphView();
+  if(!gv) return false;
+  gv->ViewRow_At(row_no);
+  return true;
+}
 
 //////////////////////////
 //   DataColView	//
@@ -2220,6 +2256,46 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   layClickVals->addStretch();
 
+  ////////////////////////////////////////////////////////////////////////////
+  layNav = new QHBoxLayout; layWidg->addLayout(layNav);
+  layNav->setSpacing(2);	// plenty of room
+
+  lblGoto = taiM->NewLabel("GoTo", widg, font_spec);
+  lblGoto->setToolTip("Row number to go to when the Go button is pressed");
+  layNav->addWidget(lblGoto);
+  fldGoto = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
+  layNav->addWidget(fldGoto->GetRep());
+
+  layNav->addSpacing(taiM->hsep_c);
+
+  butGoto = new QPushButton("Go", widg);
+  butGoto->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layNav->addWidget(butGoto);
+  connect(butGoto, SIGNAL(pressed()), this, SLOT(butGoto_pressed()) );
+  layNav->addSpacing(taiM->hsep_c);
+
+  butPgUp = new QPushButton("PgUp", widg);
+  butPgUp->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layNav->addWidget(butPgUp);
+  connect(butPgUp, SIGNAL(pressed()), this, SLOT(butPgUp_pressed()) );
+
+  butPgDn = new QPushButton("PgDn", widg);
+  butPgDn->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layNav->addWidget(butPgDn);
+  connect(butPgDn, SIGNAL(pressed()), this, SLOT(butPgDn_pressed()) );
+
+  butStart = new QPushButton("Start", widg);
+  butStart->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layNav->addWidget(butStart);
+  connect(butStart, SIGNAL(pressed()), this, SLOT(butStart_pressed()) );
+
+  butEnd = new QPushButton("End", widg);
+  butEnd->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  layNav->addWidget(butEnd);
+  connect(butEnd, SIGNAL(pressed()), this, SLOT(butEnd_pressed()) );
+
+  layNav->addStretch();
+
   layWidg->addStretch();
 
   MakeButtons(layOuter);
@@ -2307,11 +2383,47 @@ void iGridTableView_Panel::butRefresh_pressed() {
   glv->UpdateDisplay();
 }
 
-void iGridTableView_Panel::butClear_pressed() {
+void iGridTableView_Panel::butGoto_pressed() {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
 
-  glv->ClearData();
+  glv->ViewRow_At(fldGoto->GetValue());
+}
+
+void iGridTableView_Panel::butPgUp_pressed() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  int cur_row = glv->view_range.min;
+  int goto_row = cur_row - glv->view_rows;
+  goto_row = MAX(0, goto_row);
+
+  glv->ViewRow_At(goto_row);
+}
+
+void iGridTableView_Panel::butPgDn_pressed() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  int cur_row = glv->view_range.min;
+  int goto_row = cur_row + glv->view_rows;
+  goto_row = MIN(glv->rows()-glv->view_rows, goto_row);
+
+  glv->ViewRow_At(goto_row);
+}
+
+void iGridTableView_Panel::butStart_pressed() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->ViewRow_At(0);
+}
+
+void iGridTableView_Panel::butEnd_pressed() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+
+  glv->ViewRow_At(glv->rows()-glv->view_rows);
 }
 
 void iGridTableView_Panel::butSetColor_pressed() {
@@ -5935,6 +6047,11 @@ void taiTabularDataMimeFactory::Mat_EditActionD(taMatrix* mat,
   ea = ea & (allowed & ~forbidden);
   
   if (ea & taiClipData::EA_PASTE) {
+    taProject* proj = dynamic_cast<taProject*>(mat->GetThisOrOwner(&TA_taProject));
+    if(proj) {
+      proj->undo_mgr.SaveUndo(mat, "Paste/Copy", mat);
+    }
+    
     CellRange sel2(sel);
     // if sel is a single cell, adjust to max
     if (sel2.single()) {
@@ -5978,6 +6095,10 @@ void taiTabularDataMimeFactory::Mat_EditActionS(taMatrix* mat,
     QApplication::clipboard()->setMimeData(cd); //cb takes ownership
   } else
   if (ea & taiClipData::EA_CLEAR) {
+    taProject* proj = dynamic_cast<taProject*>(mat->GetThisOrOwner(&TA_taProject));
+    if(proj) {
+      proj->undo_mgr.SaveUndo(mat, "Clear", mat);
+    }
     Mat_Clear(mat, sel);
   }
 }
@@ -6089,6 +6210,11 @@ void taiTabularDataMimeFactory::Table_EditActionD(DataTable* tab,
   ea = ea & (allowed & ~forbidden);
   
   if (ea & taiClipData::EA_PASTE) {
+    taProject* proj = dynamic_cast<taProject*>(tab->GetThisOrOwner(&TA_taProject));
+    if(proj) {
+      proj->undo_mgr.SaveUndo(tab, "Paste/Copy", tab);
+    }
+
     CellRange sel2(sel);
     //NOTE: unlike matrix pastes, we do NOT adjust selection
     // (the Table item may adjust the selection to fit)
@@ -6132,6 +6258,10 @@ void taiTabularDataMimeFactory::Table_EditActionS(DataTable* tab,
     return;
   } else
   if (ea & taiClipData::EA_CLEAR) {
+    taProject* proj = dynamic_cast<taProject*>(tab->GetThisOrOwner(&TA_taProject));
+    if(proj) {
+      proj->undo_mgr.SaveUndo(tab, "Clear", tab);
+    }
     Table_Clear(tab, sel);
     return;
   }

@@ -1330,6 +1330,16 @@ public:
   virtual GraphTableView* FindMakeGraphView(T3DataViewFrame* fr = NULL);
   // #CAT_Display find existing or make a new graph view of this table (NULL=use existing empty frame if any, else make new frame)
 
+  virtual GridTableView* FindGridView();
+  // #CAT_Display find first existing grid view (graphical rows and columns) of this table -- NULL if none
+  virtual GraphTableView* FindGraphView();
+  // #CAT_Display find first existing graph view of this table -- NULL if none
+
+  virtual bool GridViewGotoRow(int row_no);
+  // #MENU_BUTTON #MENU #MENU_SEP_BEFORE #MENU_ON_View #CAT_Display move grid view to display starting at given row number -- operates on first grid view found -- use GridTableView::ViewRow_At on specific view if needed
+  virtual bool GraphViewGotoRow(int row_no);
+  // #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display move graph view to display starting at given row number -- operates on first graph view found -- use GraphTableView::ViewRow_At on specific view if needed
+
   virtual int  		MinLength();		// #IGNORE
   virtual int  		MaxLength();		// #IGNORE
 
