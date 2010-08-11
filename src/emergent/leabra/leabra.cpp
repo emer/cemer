@@ -558,7 +558,9 @@ void SpikeFunSpec::UpdateAfterEdit_impl() {
 }
 
 void SpikeMiscSpec::Initialize() {
-  vm_r = 0.0f;
+  exp_slope = 0.02f;
+  spk_thr = 1.2f;
+  vm_r = 0.30f;
   vm_dend = 0.3f;
   vm_dend_dt = 0.16f;
   vm_dend_time = 1.0f / vm_dend_dt;
@@ -577,16 +579,17 @@ void ActAdaptSpec::Initialize() {
 }
 
 void ActAdaptSpec::Defaults_init() {
-  dt_rate = 0.02f;
-  dt_time = 1.0f / dt_rate;
-  vm_gain = 0.1f;
-  spike_gain = 0.01f;
+  dt = 0.007f;
+  vm_gain = 0.04f;
+  spike_gain = 0.00805f;
   interval = 10;
+
+  dt_time = 1.0f / dt;
 }
 
 void ActAdaptSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  dt_time = 1.0f / dt_rate;
+  dt_time = 1.0f / dt;
 }
 
 void DepressSpec::Initialize() {
@@ -628,17 +631,20 @@ void LeabraDtSpec::Initialize() {
 }
 
 void LeabraDtSpec::Defaults_init() {
+  integ = 1.0f;
   vm = 0.25f;			// .3 is too fast!
-  vm_time = 1.0f / vm;
   net = 0.7f;
-  net_time = 1.0f / net;
   d_vm_max = 0.025f;
   midpoint = false;
   vm_eq_dt = 1.0f;
+  integ_time = 1.0f / integ;
+  vm_time = 1.0f / vm;
+  net_time = 1.0f / net;
 }
 
 void LeabraDtSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  integ_time = 1.0f / integ;
   vm_time = 1.0f / vm;
   net_time = 1.0f / net;
 }
@@ -1370,7 +1376,7 @@ void LeabraUnitSpec::Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float
     return;			// do nothing further
   }
   if(fire_now) {
-    u->v_m = act.thr + 0.1f;	// make it fire
+    u->v_m = spike_misc.spk_thr + 0.1f;	// make it fire
   }
   else {
     u->v_m = e_rev.l;		// make it not fire
@@ -1439,10 +1445,17 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
       (u->net * (e_rev.e - v_m_eff)) + (u->gc.l * (e_rev.l - v_m_eff)) + 
       (u->gc.i * (e_rev.i - v_m_eff)) + (u->gc.h * (e_rev.h - v_m_eff)) +
       (u->gc.a * (e_rev.a - v_m_eff));
+
+    // add spike current if relevant
+    if(act_fun == SPIKE && spike_misc.exp_slope > 0.0f) {
+      u->I_net += g_bar.l * spike_misc.exp_slope * 
+	expf((v_m_eff - act.thr) / spike_misc.exp_slope);
+    }
+
     float dvm = dt.vm * (u->I_net - u->adapt);
     if(dvm > dt.d_vm_max) dvm = dt.d_vm_max;
     else if(dvm < -dt.d_vm_max) dvm = -dt.d_vm_max;
-    u->v_m += dvm;
+    u->v_m += dt.integ * dvm;
   }
 
   if((noise_type == VM_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
@@ -1543,7 +1556,7 @@ void LeabraUnitSpec::Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net) {
   if(!adapt.on)
     u->adapt = 0.0f;
   else {
-    float dad = adapt.Compute_dAdapt(u->v_m - v_m_init.mean, u->adapt); // rest relative
+    float dad = dt.integ * adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt); // rest relative
     if(net->ct_cycle % adapt.interval == 0) {
       dad += u->act * adapt.spike_gain;	// rate code version of spiking
     }
@@ -1552,7 +1565,7 @@ void LeabraUnitSpec::Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
-  if(u->v_m > act.thr) {
+  if(u->v_m > spike_misc.spk_thr) {
     u->act = 1.0f;
     u->v_m = spike_misc.vm_r;
     u->vm_dend += spike_misc.vm_dend;
@@ -1590,7 +1603,7 @@ void LeabraUnitSpec::Compute_ActAdapt_spike(LeabraUnit* u, LeabraNetwork* net) {
   if(!adapt.on)
     u->adapt = 0.0f;
   else {
-    float dad = adapt.Compute_dAdapt(u->v_m - v_m_init.mean, u->adapt); // rest relative
+    float dad = dt.integ * adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt);
     if(u->act > 0.0f) {						      // spiked
       dad += adapt.spike_gain;
     }
@@ -1981,6 +1994,43 @@ float LeabraUnitSpec::Compute_NormErr(LeabraUnit* u, LeabraNetwork* net) {
 //////////////////////////////////////////
 //	 Misc Functions 		//
 //////////////////////////////////////////
+
+void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, float norm_amp,
+	  float C_pF, float gbar_l_nS, float gbar_e_nS, float gbar_i_nS,
+	  float erev_l_mV, float erev_e_mV, float erev_i_mV,
+	  float act_thr_mV, float spk_thr_mV, float exp_slope_mV,
+       float adapt_dt_time_ms, float adapt_vm_gain_nS, float adapt_spk_gain_nA)
+{
+  // derived units
+  float norm_siemens = norm_amp / norm_volt;
+  float norm_farad = (norm_sec * norm_amp) / norm_volt;
+
+  dt.vm = 1.0f / ((C_pF * 1.0e-12f) / norm_farad);
+
+  g_bar.l = (gbar_l_nS * 1.0e-9f) / norm_siemens;
+  g_bar.e = (gbar_e_nS * 1.0e-9f) / norm_siemens;
+  g_bar.i = (gbar_i_nS * 1.0e-9f) / norm_siemens;
+  
+  e_rev.l = ((erev_l_mV * 1.0e-3f) - volt_off) / norm_volt;
+  e_rev.e = ((erev_e_mV * 1.0e-3f) - volt_off) / norm_volt;
+  e_rev.i = ((erev_i_mV * 1.0e-3f) - volt_off) / norm_volt;
+
+  act.thr = ((act_thr_mV* 1.0e-3f) - volt_off) / norm_volt;
+  spike_misc.spk_thr = ((spk_thr_mV * 1.0e-3f) - volt_off) / norm_volt;
+  spike_misc.exp_slope = ((exp_slope_mV * 1.0e-3f)) / norm_volt; // no off!
+  spike_misc.vm_r = e_rev.l;					 // go back to leak
+
+  adapt.dt = 1.0f / ((adapt_dt_time_ms * 1.0e-3f) / norm_sec);
+  adapt.vm_gain = (adapt_vm_gain_nS * 1.0e-9f) / norm_siemens;
+  adapt.spike_gain = (adapt_spk_gain_nA * 1.0e-9f) / norm_amp;
+
+  v_m_init.mean = e_rev.l;
+  vm_range.min = 0.0f;
+  vm_range.max = 2.0f;
+  dt.d_vm_max = 100.0f;		// no max
+
+  UpdateAfterEdit();
+}
 
 void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, float max, float incr) {
   taProject* proj = GET_MY_OWNER(taProject);

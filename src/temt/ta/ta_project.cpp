@@ -2987,9 +2987,9 @@ bool taRootBase::Startup_Console() {
       taMisc::console_win = cwin; // note: uses a guarded QPointer
 
       if(tabMisc::root->viewers.size >= 1) {
-// 	taMisc::ProcessEvents();
-// 	MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
-// 	db->ViewWindow();		// make sure root guy is on top
+ 	taMisc::ProcessEvents();
+ 	MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
+ 	db->ViewWindow();		// make sure root guy is on top
       }
     }
   }

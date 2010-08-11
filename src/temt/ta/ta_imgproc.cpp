@@ -2010,36 +2010,46 @@ bool taImageProc::AttentionFilter(float_Matrix& mat, float radius_pct) {
 }
 
 
-bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_occlude,
+bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
+				  float circ_radius, float gauss_sig, 
 				  EdgeMode edge) {
   TwoDCoord img_size(img.dim(0), img.dim(1));
 
   float gauss_eff = gauss_sig * (float)img_size.x;
-  int gauss_half = (int)gauss_eff * 3;
-  int gauss_wd = gauss_half * 2;
-  TwoDCoord ntot = (img_size / gauss_half) + 1;
+  float radius_eff = circ_radius * (float)img_size.x;
+  int filt_half = (int)radius_eff + (int)(gauss_eff * 2);
+  int filt_wd = filt_half * 2;
+  TwoDCoord ntot = (img_size / filt_half) + 1;
   int totblob = ntot.Product();
   int nblob = (int) (2.5f * pct_occlude * (float)totblob + 0.5f);
   if(pct_occlude == 1.0f) nblob *= 2; // really nuke it for sure!
 
-  float_Matrix gauss_wt;
-  float ctr = (float)(gauss_wd-1) * .5f;
-  taMath_float::vec_kern2d_gauss(&gauss_wt, gauss_wd, gauss_wd, gauss_eff / ctr,
-				 gauss_eff / ctr);
-  float_Matrix gauss_cnv;
-  gauss_cnv.CopyFrom(&gauss_wt);
-  taMath_float::vec_norm_max(&gauss_wt, 2.71828f); // max to e
-  taMath_float::vec_threshold_high(&gauss_wt, 1.0f, 1.0f); // flatten out top
+  float_Matrix filt_wt;
+  filt_wt.SetGeom(2, filt_wd, filt_wd);
+  float ctr = (float)(filt_wd-1) * .5f;
+  for(int yi=0; yi < filt_wd; yi++) {
+    float y = (float)yi - ctr;
+    for(int xi=0; xi < filt_wd; xi++) {
+      float x = (float)xi - ctr;
+      float d = taMath_float::hypot(x,y);
+      float fv = 1.0f;
+      if(d > radius_eff) {
+	float gd = (d-radius_eff) / gauss_eff;
+	fv = expf(-(gd * gd)/2.0f);
+      }
+      filt_wt.FastEl(xi, yi) = fv;
+    }
+  }
 
-  taMath_float::vec_norm_sum(&gauss_cnv, 1.0f);
+  float_Matrix filt_cnv;
+  filt_cnv.CopyFrom(&filt_wt);
+  taMath_float::vec_norm_sum(&filt_cnv, 1.0f); // conv = sum norm
+  taMath_float::vec_norm_max(&filt_wt, 1.0f);  // weights = max norm
 
   bool rgb_img = false;
   if(img.dims() == 3) { // rgb
     rgb_img = true;
   }
-
-  TwoDCoord ic_min(gauss_half, gauss_half);
-  TwoDCoord ic_max(img_size.x - gauss_half, img_size.y - gauss_half);
 
   bool wrap = (edge == WRAP);
 
@@ -2052,25 +2062,25 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_
     if(rgb_img) {
       for(int rgb=0; rgb<3; rgb++) {
 	float avg = 0.0f;
-	for(int yi=0; yi< gauss_wd; yi++) {
-	  for(int xi=0; xi< gauss_wd; xi++) {
-	    icw.x = ic.x + xi - gauss_half;
-	    icw.y = ic.y + yi - gauss_half;
+	for(int yi=0; yi< filt_wd; yi++) {
+	  for(int xi=0; xi< filt_wd; xi++) {
+	    icw.x = ic.x + xi - filt_half;
+	    icw.y = ic.y + yi - filt_half;
 	    icw.WrapClip(wrap, img_size); // use edges if clipping
 	    float iv = img.FastEl(icw.x, icw.y, rgb);
-	    avg += gauss_cnv.FastEl(xi, yi) * iv;
+	    avg += filt_cnv.FastEl(xi, yi) * iv;
 	  }
 	}
 
-	for(int yi=0; yi< gauss_wd; yi++) {
-	  for(int xi=0; xi< gauss_wd; xi++) {
-	    icw.x = ic.x + xi - gauss_half;
-	    icw.y = ic.y + yi - gauss_half;
+	for(int yi=0; yi< filt_wd; yi++) {
+	  for(int xi=0; xi< filt_wd; xi++) {
+	    icw.x = ic.x + xi - filt_half;
+	    icw.y = ic.y + yi - filt_half;
 	    if(icw.WrapClip(wrap, img_size)) {
 	      if(!wrap) continue;
 	    }
 	    float& iv = img.FastEl(icw.x, icw.y, rgb);
-	    float wt = gauss_wt.FastEl(xi, yi);
+	    float wt = filt_wt.FastEl(xi, yi);
 	    float nw_iv = (1.0f - wt) * iv + wt * avg;
 	    iv = nw_iv;
 	  }
@@ -2079,25 +2089,25 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float gauss_sig, float pct_
     }
     else {
       float avg = 0.0f;
-      for(int yi=0; yi< gauss_wd; yi++) {
-	for(int xi=0; xi< gauss_wd; xi++) {
-	  icw.x = ic.x + xi - gauss_half;
-	  icw.y = ic.y + yi - gauss_half;
+      for(int yi=0; yi< filt_wd; yi++) {
+	for(int xi=0; xi< filt_wd; xi++) {
+	  icw.x = ic.x + xi - filt_half;
+	  icw.y = ic.y + yi - filt_half;
 	  icw.WrapClip(wrap, img_size); // use edges if clipping
 	  float iv = img.FastEl(icw.x, icw.y);
-	  avg += gauss_cnv.FastEl(xi, yi) * iv;
+	  avg += filt_cnv.FastEl(xi, yi) * iv;
 	}
       }
 
-      for(int yi=0; yi< gauss_wd; yi++) {
-	for(int xi=0; xi< gauss_wd; xi++) {
-	  icw.x = ic.x + xi - gauss_half;
-	  icw.y = ic.y + yi - gauss_half;
+      for(int yi=0; yi< filt_wd; yi++) {
+	for(int xi=0; xi< filt_wd; xi++) {
+	  icw.x = ic.x + xi - filt_half;
+	  icw.y = ic.y + yi - filt_half;
 	  if(icw.WrapClip(wrap, img_size)) {
 	    if(!wrap) continue;
 	  }
 	  float& iv = img.FastEl(icw.x, icw.y);
-	  float wt = gauss_wt.FastEl(xi, yi);
+	  float wt = filt_wt.FastEl(xi, yi);
 	  float nw_iv = (1.0f - wt) * iv + wt * avg;
 	  iv = nw_iv;
 	}

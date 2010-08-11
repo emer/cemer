@@ -675,7 +675,7 @@ public:
     ALL,			// include all currents INCLUDING bias weights
   };
 
-  float		thr;		// #DEF_0.25 threshold value Theta (Q) for firing output activation 
+  float		thr;		// #DEF_0.25;0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters)
   float		gain;		// #DEF_600 #MIN_0 gain (gamma) of the sigmoidal rate-coded activation function 
   float		nvar;		// #DEF_0.005 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1
   float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (computed across trials)
@@ -737,9 +737,11 @@ public:
     CLAMPED,			// just use the straight clamped activation value -- do not do any further modifications
   };
 
+  float		exp_slope;	// #DEF_0.02;0 slope in v_m (2 mV = .02 in normalized units) for extra exponential excitatory current that drives v_m rapidly upward for spiking as it gets past its nominal firing threshold (act.thr) -- nicely captures the Hodgkin Huxley dynamics of Na and K channels -- uses Brette & Gurstner 2005 AdEx formulation -- a value of 0 disables this mechanism
+  float		spk_thr;	// #DEF_0.5;1.2 membrane potential threshold for actually triggering a spike -- the nominal threshold in act.thr enters into the exponential mechanism, but this value is actually used for spike thresholding (if not using exp_slope > 0, then must set this to act.thr -- 0.5 std)
   float		clamp_max_p;	// #DEF_0.11 #MIN_0 #MAX_1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
   ClampType	clamp_type;	// how to generate spikes when layer is hard clamped -- in many cases soft clamping may work better
-  float		vm_r;		// #DEF_0;0.15 #AKA_v_m_r post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init
+  float		vm_r;		// #DEF_0;0.15;0.3 #AKA_v_m_r post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init -- 0.30 is apropriate biologically-based value for AdEx (Brette & Gurstner, 2005) parameters
   float		vm_dend;	// #DEF_0.3 how much to add to vm_dend value after every spike
   float		vm_dend_dt;	// #DEF_0.16 rate constant for updating the vm_dend value (used for spike-based learning)
   float		vm_dend_time;	// #READ_ONLY #SHOW time constant (in cycles, 1/vm_dend_dt) for updating the vm_dend value (used for spike-based learning)
@@ -759,16 +761,16 @@ class LEABRA_API ActAdaptSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// apply adaptation?
-  float		dt_rate;	// #CONDSHOW_ON_on #MIN_0 rate constant of the adaptation dynamics -- if the vm time step is considered to be 1 msec, then rate values of .02 to .1 (10 to 50 msec) are typical, with .02 being a regular spiking neuron, and .1 is fast spiking
-  float		dt_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW time constant (in cycles = 1/dt_rate) of the adaptation dynamics
-  float		vm_gain;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 gain on the membrane potential v_m driving the adapt adaptation variable -- values around .1 are typical (resting v_m is subtracted from v_m for this, so that 0 adaptation occurs at rest)
-  float		spike_gain;	// #CONDSHOW_ON_on value to add to the adapt adaptation variable after spiking -- range is around .01 for regular spiking neurons (strong adaptation) and lower -- for rate code activations, uses act value weighting and only computes every interval
+  float		dt;		// #CONDSHOW_ON_on #MIN_0 #DEF_0.007 rate constant of the adaptation dynamics -- for 1 ms normalized units, default is 1/144 msec = .007
+  float		vm_gain;	// #CONDSHOW_ON_on #MIN_0 #DEF_0.04 gain on the membrane potential v_m driving the adapt adaptation variable -- default of 0.04 reflects 4nS biological value converted into normalized units
+  float		spike_gain;	// #CONDSHOW_ON_on #DEF_0.00805 value to add to the adapt adaptation variable after spiking -- default of 0.00805 is normalized version of .0805 nA in biological values -- for rate code activations, uses act value weighting and only computes every interval
   int		interval;	// #CONDSHOW_ON_on how many time steps between applying spike_gain for rate-coded activation function -- simulates the intrinsic delay obtained with spiking dynamics
+  float		dt_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW time constant (in cycles = 1/dt_rate) of the adaptation dynamics
 
-  float	Compute_dAdapt(float vm, float adapt) {
-    return dt_rate * (vm_gain * vm - adapt);
+  float	Compute_dAdapt(float vm, float e_rev_l, float adapt) {
+    return dt * (vm_gain * (vm - e_rev_l) - adapt);
   }
-  // compute the change in adapt given vm (with rest value already subtracted off) and adapt inputs
+  // compute the change in adapt given vm, resting reversal potential (leak reversal), and adapt inputs
 
   TA_SIMPLE_BASEFUNS(ActAdaptSpec);
 protected:
@@ -839,14 +841,16 @@ class LEABRA_API LeabraDtSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra rate constants for temporal derivatives in Leabra (Vm, net input)
 INHERITED(SpecMemberBase)
 public:
-  float		vm;		// #DEF_0.1:0.3 #MIN_0 membrane potential rate constant -- if units oscillate too much, then this is too high (but see d_vm_max for another solution)
-  float		vm_time;	// #READ_ONLY #SHOW 1/vm rate constant = time in cycles for vm to reach 1/e of asymptotic value
-  float		net;		// #DEF_0.7 #MIN_0 net input time constant -- how fast to update net input (damps oscillations)
-  float		net_time;	// #READ_ONLY #SHOW 1/net rate constant = time in cycles for net to reach 1/e of asymptotic value
+  float		integ;		// #DEF_1;0.5;0.001;0.0005 #MIN_0 overall rate constant for numerical integration -- affected by the timescale of the parameters and numerical stability issues -- typically 1 cycle = 1 ms, and if using ms normed units, this should be 1, otherwise 0.001 (1 ms in seconds) or possibly .5 or .0005 if there are stability issues
+  float		vm;		// #DEF_0.1:0.357 #MIN_0 membrane potential rate constant -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized = .356 rate constant
+  float		net;		// #DEF_0.7 #MIN_0 net input time constant -- how fast to update net input (damps oscillations) -- generally reflects time constants associated with synaptic channels which are not modeled in the most abstract rate code models (set to 1 for detailed spiking models with more realistic synaptic currents)
   bool		midpoint;	// #DEF_false use the midpoint method in computing the vm value -- better avoids oscillations and allows a larger dt.vm parameter to be used
-  float		d_vm_max;	// #DEF_0.02:0.025 #MIN_0 maximum change in vm at any timestep (limits blowup)
+  float		d_vm_max;	// #DEF_0.02:0.025;100 #MIN_0 maximum change in vm at any timestep (limits blowup) -- this is a crude but effective safety valve for numerical integration problems
   int		vm_eq_cyc;	// #AKA_cyc0_vm_eq #DEF_0 number of cycles to compute the vm as equilibirium potential given current inputs: set to 1 to quickly activate input layers; set to 100 to always use this computation
   float		vm_eq_dt;	// #DEF_1 #MIN_0 time constant for integrating the vm_eq values: how quickly to move toward the current eq value from previous vm value
+  float		integ_time;	// #READ_ONLY #SHOW 1/integ rate constant = time constant for each cycle of updating for numerical integration
+  float		vm_time;	// #READ_ONLY #SHOW 1/vm rate constant = time in cycles for vm to reach 1/e of asymptotic value
+  float		net_time;	// #READ_ONLY #SHOW 1/net rate constant = time in cycles for net to reach 1/e of asymptotic value
 
   TA_SIMPLE_BASEFUNS(LeabraDtSpec);
 protected:
@@ -1040,7 +1044,7 @@ public:
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
-  MinMaxRange	vm_range;	// #CAT_Activation membrane potential range (min, max, 0-1 for normalized, -90-50 for bio-based)
+  MinMaxRange	vm_range;	// #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
   RandomSpec	v_m_init;	// #CAT_Activation what to initialize the membrane potential to (mean = .15, var = 0 std)
   LeabraDtSpec	dt;		// #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
   LeabraActAvgSpec act_avg;	// #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
@@ -1243,6 +1247,13 @@ public:
   //	Misc Housekeeping, non Compute functions
 
   virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 
+
+  virtual void 	BioParams(float norm_sec=0.001f, float norm_volt=0.1f, float volt_off=-0.1f, float norm_amp=1.0e-8f,
+	  float C_pF=281.0f, float gbar_l_nS=30.0f, float gbar_e_nS=20.0f, float gbar_i_nS=20.0f,
+	  float erev_l_mV=-70.0f, float erev_e_mV=0.0f, float erev_i_mV=-75.0f,
+	  float act_thr_mV=-50.0f, float spk_thr_mV=20.0f, float exp_slope_mV=2.0f,
+	  float adapt_dt_time_ms=144.0f, float adapt_vm_gain_nS=4.0f, float adapt_spk_gain_nA=0.0805);
+  // #BUTTON set parameters based on biologically-based values, using normalization scaling to convert into typical Leabra standard parameters.  norm_x are normalization values to convert from SI units to normalized values (defaults are 1ms = .001 s, 100mV with -100 mV offset to bring into 0-1 range between -100..0 mV, 1e-8 amps (makes g_bar, C, etc params nice).  other defaults are based on the AdEx model of Brette & Gurstner (2005), which the SPIKE mode implements exactly with these default parameters -- last bit of name indicates the units in which this value must be provided (mV = millivolts, ms = milliseconds, pF = picofarads, nS = nanosiemens, nA = nanoamps)
 
   virtual void	GraphVmFun(DataTable* graph_data, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .01);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph membrane potential (v_m) as a function of excitatory net input (net) for given inhib conductance (g_i) (NULL = new graph data)
