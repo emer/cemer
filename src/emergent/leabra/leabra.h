@@ -1023,6 +1023,7 @@ class LEABRA_API LeabraUnitSpec : public UnitSpec {
 INHERITED(UnitSpec)
 public:
   enum ActFun {
+    GELIN,     			// linear in the excitatory conductance (g_e), compared to excitatory current required to get to firing threshold (based on current currents..)
     NOISY_XX1,			// x over x plus 1 convolved with Gaussian noise (noise is nvar)
     XX1,			// x over x plus 1, hard threshold, no noise convolution
     NOISY_LINEAR,		// simple linear output function (still thesholded) convolved with Gaussian noise (noise is nvar)
@@ -1144,6 +1145,9 @@ public:
       inline float Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* net);
       // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using all currents INCLUDING bias.wt
 
+  inline float Compute_EThresh(LeabraUnit* u);
+  // #CAT_Activation compute excitatory value that would place unit directly at threshold
+
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
@@ -1174,7 +1178,7 @@ public:
     // #CAT_Activation Act Step 2: compute the activation from membrane potential
       virtual void Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation from membrane potential -- rate code functions
-        virtual float Compute_ActValFmVmVal_rate(float vm_val);
+        virtual float Compute_ActValFmVmVal_rate(LeabraUnit* u, float vm_val);
         // #CAT_Activation raw activation function: computes an activation value given membrane potential value based on current activation function -- does not update state variables or anything
       virtual void Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation-based adaptation value based on activation (spiking rate) and membrane potential -- rate code functions
@@ -1249,7 +1253,7 @@ public:
   virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 
 
   virtual void 	BioParams(float norm_sec=0.001f, float norm_volt=0.1f, float volt_off=-0.1f, float norm_amp=1.0e-8f,
-	  float C_pF=281.0f, float gbar_l_nS=30.0f, float gbar_e_nS=20.0f, float gbar_i_nS=20.0f,
+	  float C_pF=281.0f, float gbar_l_nS=30.0f, float gbar_e_nS=100.0f, float gbar_i_nS=100.0f,
 	  float erev_l_mV=-70.0f, float erev_e_mV=0.0f, float erev_i_mV=-75.0f,
 	  float act_thr_mV=-50.0f, float spk_thr_mV=20.0f, float exp_slope_mV=2.0f,
 	  float adapt_dt_time_ms=144.0f, float adapt_vm_gain_nS=4.0f, float adapt_spk_gain_nA=0.0805);
@@ -1279,7 +1283,8 @@ protected:
   void 	CheckThisConfig_impl(bool quiet, bool& rval);
 
   LeabraChannels e_rev_sub_thr;	// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
-  float		thr_sub_e_rev_i;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN act.thr - e_rev.i used for compute_ithresh
+  float		thr_sub_e_rev_i;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.i * (act.thr - e_rev.i) used for compute_ithresh
+  float		thr_sub_e_rev_e;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act.thr - e_rev.e) used for compute_ethresh
 
 private:
   void 	Initialize();
@@ -1456,6 +1461,9 @@ public:
   float Compute_IThresh(LeabraNetwork* net)
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_IThresh(this, net); }
   // #CAT_Activation called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
+  float Compute_EThresh()
+  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_EThresh(this); }
+  // #CAT_Activation compute excitatory value that would place unit directly at threshold
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
@@ -1474,7 +1482,7 @@ public:
   // main function is basic Compute_Act which calls a bunch of sub-functions on the unitspec
 
   float Compute_ActValFmVmVal_rate(float vm_val)
-  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_ActValFmVmVal_rate(vm_val); }
+  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_ActValFmVmVal_rate(this, vm_val); }
   // #CAT_Activation raw activation function: computes rate-coded activation value given membrane potential value based on current activation function -- does not update state variables or anything
 
   ///////////////////////////////////////////////////////////////////////
@@ -1652,7 +1660,10 @@ public:
 
   InhibType	type;		// how to compute inhibition (g_i)
   float		kwta_pt;	// #DEF_0.25;0.6;0.2 [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
-  float		min_i;		// minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
+  float		min_i;		// #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
+  float		fb_act_thr;	// #DEF_0;0.5 threshold for max activation in layer or group for full kwta inhibition value to be delivered -- below this threshold, the feedback portion of inhibition is proportional to the max act compared to this threshold -- ff_pct of inhibition is always delivered regardless -- allows for an initial wave of activation to get things flowing in the network, followed by inhibitory control
+  float		ff_pct;		// #CONDSHOW_OFF_fb_act_thr:0 #DEF_0.5 proportion of inhibition that is considered feed forward, and thus not subject to modulation from the fb_act_thr feedback threshold -- this portion of the kwta inhibition is always delivered regardless
+  float		fb_max_dt;	// #CONDSHOW_OFF_fb_act_thr:0 #DEF_0.1 time constant of decay for max activation in the layer or group -- instantly goes to a new max value, but then decays back down with this time constant -- provides needed memory to the fb_act_thr dynamics
   float		comp_thr;	// #CONDSHOW_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
   float		comp_gain;	// #CONDSHOW_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
   float		gp_pt;		// #CONDSHOW_ON_type:AVG_MAX_PT_INHIB #DEF_0.2 for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
@@ -1907,7 +1918,7 @@ public:
 
   virtual void	SetCurLrate(LeabraLayer* lay, LeabraNetwork* net, int epoch);
   // #CAT_Learning set current learning rate based on epoch -- goes through projections
-  virtual void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) { };
+  virtual void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning layer level trial init -- overload where needed
 
     virtual void	Trial_DecayState(LeabraLayer* lay, LeabraNetwork* net);
@@ -2255,6 +2266,7 @@ public:
   AvgMaxVals	un_g_i;		// #READ_ONLY #EXPERT #CAT_Activation unit inhib values (optionally computed)
   AdaptIVals	adapt_i;	// #READ_ONLY #AKA_adapt_pt #EXPERT #CAT_Activation adapting inhibition values
   float		maxda;		// #GUI_READ_ONLY #SHOW #CAT_Statistic maximum change in activation (delta-activation) over network; used in stopping settling
+  float		act_max_avg;	// #GUI_READ_ONLY #EXPERT #CAT_Activation time-integrated version of acts.max over trials with fb_max_dt decay constant -- goes to max instantly and then decays back down slowly with this constant
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
   void	Inhib_ResetSortBuf() 		{ active_buf.size = 0; inact_buf.size = 0; }
@@ -3540,7 +3552,7 @@ inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* ne
   // including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h) /
-	  (thr_sub_e_rev_i));
+	  thr_sub_e_rev_i);
 } 
 
 inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* net) {
@@ -3550,7 +3562,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* ne
   // NOT including the ga term
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.h * e_rev_sub_thr.h) /
-	  (thr_sub_e_rev_i));
+	  thr_sub_e_rev_i);
 } 
 
 inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* net) {
@@ -3560,7 +3572,7 @@ inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* ne
   // NOT including the gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a) /
-	  (thr_sub_e_rev_i));
+	  thr_sub_e_rev_i);
 } 
 
 inline float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* net) {
@@ -3569,14 +3581,21 @@ inline float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* n
     non_bias_net -= u->bias_scale * u->bias.OwnCn(0)->wt;
   // NOT including the ga and gh terms
   return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l) /
-	  (thr_sub_e_rev_i));
+	  thr_sub_e_rev_i);
 } 
 
 inline float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* net) {
   // including the ga and gh terms and bias weights
   return ((u->net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h) /
-	  (thr_sub_e_rev_i));
+	  thr_sub_e_rev_i);
+} 
+
+inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
+  // including the ga and gh terms 
+  return ((u->gc.i * e_rev_sub_thr.i + u->gc.l * e_rev_sub_thr.l
+	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h) /
+	  thr_sub_e_rev_e);
 } 
 
 inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {

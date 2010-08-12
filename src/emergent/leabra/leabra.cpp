@@ -801,7 +801,8 @@ void LeabraUnitSpec::Defaults_init() {
   e_rev_sub_thr.i = e_rev.i - act.thr;
   e_rev_sub_thr.h = e_rev.h - act.thr;
   e_rev_sub_thr.a = e_rev.a - act.thr;
-  thr_sub_e_rev_i = act.thr - e_rev.i;
+  thr_sub_e_rev_i = g_bar.i * (act.thr - e_rev.i);
+  thr_sub_e_rev_e = g_bar.e * (act.thr - e_rev.e);
 
   hyst.b_inc_dt = .05f;
   hyst.b_dec_dt = .05f;
@@ -835,7 +836,8 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   e_rev_sub_thr.i = e_rev.i - act.thr;
   e_rev_sub_thr.h = e_rev.h - act.thr;
   e_rev_sub_thr.a = e_rev.a - act.thr;
-  thr_sub_e_rev_i = act.thr - e_rev.i;
+  thr_sub_e_rev_i = g_bar.i * (act.thr - e_rev.i);
+  thr_sub_e_rev_e = g_bar.e * (act.thr - e_rev.e);
 }
 
 void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1481,10 +1483,18 @@ void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
-float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float vm_val) {
+float LeabraUnitSpec::Compute_ActValFmVmVal_rate(LeabraUnit* u, float vm_val) {
   float thr_vm = vm_val - act.thr; // thresholded vm
   float new_act = 0.0f;
   switch(act_fun) {
+  case GELIN: {
+    float g_e_thr = Compute_EThresh(u);
+    if(u->net < g_e_thr)
+      new_act = 0.0f;
+    else
+      new_act = act.gain * (u->net - g_e_thr);
+  }
+  break;
   case NOISY_XX1: {
     if(thr_vm <= nxx1_fun.x_range.min)
       new_act = 0.0f;
@@ -1531,7 +1541,7 @@ float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float vm_val) {
 }
 
 void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
-  float new_act = Compute_ActValFmVmVal_rate(u->v_m);
+  float new_act = Compute_ActValFmVmVal_rate(u, u->v_m);
   if(depress.on) {		     // synaptic depression
     u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
     new_act *= MIN(u->spk_amp, 1.0f);
@@ -2460,6 +2470,9 @@ void LeabraPrjn::DMem_ComputeAggs(MPI_Comm comm) {
 void LeabraInhibSpec::Initialize() {
   type = KWTA_AVG_INHIB;
   min_i = 0.0f;
+  fb_act_thr = 0.0f;
+  ff_pct = 0.0f;
+  fb_max_dt = 0.1f;
   Defaults_init();
 }
 
@@ -2838,6 +2851,19 @@ void LeabraLayerSpec::SetCurLrate(LeabraLayer* lay, LeabraNetwork* net, int epoc
   taLeafItr pi;
   FOR_ITR_EL(LeabraPrjn, p, lay->projections., pi) {
     p->SetCurLrate(net, epoch);
+  }
+}
+
+void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  if(decay.event > 0.0f) {
+    lay->act_max_avg -= decay.event * lay->act_max_avg;
+    if(lay->units.gp.size > 0) {
+      int g;
+      for(g=0; g<lay->units.gp.size; g++) {
+	LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
+	rugp->act_max_avg -= decay.event * rugp->act_max_avg;
+      }
+    }
   }
 }
 
@@ -3682,6 +3708,12 @@ void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay, Unit_Group* ug,
   LeabraUnit* u;
   taLeafItr i;
   float inhib_val = thr->i_val.g_i;
+  if(inhib.fb_act_thr > 0.0f) {
+    float amax = thr->act_max_avg;
+    float imod = amax / inhib.fb_act_thr; // graded modulation as function of activation
+    if(imod > 1.0f) imod = 1.0f;
+    inhib_val *= (inhib.ff_pct + (1.0f - inhib.ff_pct) * imod);
+  }
   if(i_netin_mod.on) {
     thr->i_val.i_netin_mod = i_netin_mod.ModFactor(thr->netin_top_k.avg);
     inhib_val *= thr->i_val.i_netin_mod;
@@ -3754,12 +3786,22 @@ void LeabraLayerSpec::Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
       LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
       Compute_AvgMaxVals_ugp(lay, rugp, rugp->acts, mb_off);
       vals.UpdtFmAvgMax(rugp->acts, rugp->leaves, g);
+      // todo: conditionalize this perhaps:
+      if(rugp->acts.max > rugp->act_max_avg)
+	rugp->act_max_avg = rugp->acts.max;
+      else
+	rugp->act_max_avg += inhib.fb_max_dt * (rugp->acts.max - rugp->act_max_avg);
     }
     vals.CalcAvg(lay->units.leaves);
   }
   else {
     Compute_AvgMaxVals_ugp(lay, &(lay->units), vals, mb_off);
   }
+  // todo: conditionalize this perhaps:
+  if(lay->acts.max > lay->act_max_avg)
+    lay->act_max_avg = lay->acts.max;
+  else
+    lay->act_max_avg += inhib.fb_max_dt * (lay->acts.max - lay->act_max_avg);
 }
 
 void LeabraLayerSpec::Compute_MaxDa_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
@@ -4582,6 +4624,7 @@ void LeabraInhib::Inhib_Initialize() {
   i_val.Init();
   phase_dif_ratio = 1.0f;
   maxda = 0.0f;
+  act_max_avg = 0.0f;
   un_g_i.cmpt = false;		// don't compute by default
 }
 
@@ -4592,6 +4635,7 @@ void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
   acts.InitVals();
   un_g_i.InitVals();
   maxda = 0.0f;
+  act_max_avg = 0.0f;
 }
 
 void LeabraLayer::Initialize() {
