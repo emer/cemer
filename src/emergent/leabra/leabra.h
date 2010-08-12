@@ -676,7 +676,7 @@ public:
   };
 
   float		thr;		// #DEF_0.25;0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters)
-  float		gain;		// #DEF_600 #MIN_0 gain (gamma) of the sigmoidal rate-coded activation function 
+  float		gain;		// #DEF_600;20 #MIN_0 gain (gamma) of the sigmoidal rate-coded activation function 
   float		nvar;		// #DEF_0.005 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1
   float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (computed across trials)
   float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value

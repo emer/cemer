@@ -829,14 +829,15 @@ public:
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
   float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
   float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.6:0.8 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units
-  float		gain;	 // #CONDSHOW_ON_on #DEF_600 gain on the NOISY_XX1 activation function
+  bool		gelin;	 // #CONDSHOW_ON_on #DEF_true use the g_e linear activation function based on adaptive exponential spiking dynamics -- gain should be around 20, leak .3, g_bar_e = .5
+  float		gain;	 // #CONDSHOW_ON_on #DEF_600;20 gain on the activation function
   float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01;0.02 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
   float		g_bar_e; // #CONDSHOW_ON_on #DEF_0.5 excitatory conductance multiplier -- multiplies filter input value prior to computing membrane potential -- general target is to have max excitatory input = .5, so with 0-1 normalized inputs, this value should be .5
-  float		g_bar_l; // #CONDSHOW_ON_on #DEF_0.1 leak current conductance value
+  float		g_bar_l; // #CONDSHOW_ON_on #DEF_0.1;0.3 leak current conductance value
 
   float		e_rev_e; // #CONDSHOW_ON_on #DEF_1 #EXPERT excitatory reversal potential -- generally not changed from default value of 1 in normalized units
-  float		e_rev_l; // #CONDSHOW_ON_on #DEF_0.15 #EXPERT leak and inhibition reversal potential -- generally not changed from default value of 0.15 in normalized units
-  float		thr;	 // #CONDSHOW_ON_on #DEF_0.25 #EXPERT firing threshold -- generally not changed from default value of .25 in normalized units
+  float		e_rev_l; // #CONDSHOW_ON_on #DEF_0.15;0.3 leak and inhibition reversal potential -- generally not changed from default value of 0.15 or .30 in normalized units
+  float		thr;	 // #CONDSHOW_ON_on #DEF_0.25:0.5 firing threshold -- generally not changed from default value of .25 or .5 in normalized units
 
   virtual bool	Compute_Kwta(float_Matrix& inputs, float_Matrix& outputs,
 			     float_Matrix& gc_i_mat);
@@ -858,13 +859,18 @@ public:
   } 
   // compute inhibitory threshold value -- amount of inhibition to put unit right at firing threshold membrane potential
 
+  inline float 	Compute_EThresh(float gc_i) {
+    return ((gc_i * e_rev_sub_thr_i + gbl_e_rev_sub_thr_l) / (thr_sub_e_rev_e));
+  } 
+  // compute excitatory threshold value -- amount of excitation to put unit right at firing threshold membrane potential
+
   inline float 	Compute_EqVm(float gc_e, float gc_i) {
     float new_v_m = ((gc_e * e_rev_e + gber_l + (gc_i * e_rev_l)) / (gc_e + g_bar_l + gc_i));
     return new_v_m;
   }
   // compute equilibrium membrane potential from excitatory (gc_e) and inhibitory (gc_i) input currents (gc_e = raw filter value, gc_i = inhibition computed from kwta) -- in normalized units (e_rev_e = 1), and inhib e_rev_i = e_rev_l
   
-  inline float 	Compute_ActFmVm(float vm) {
+  inline float 	Compute_ActFmVm_nxx1(float vm) {
     float thr_vm = vm - thr; // thresholded vm
     float new_act;
     if(thr_vm <= nxx1_fun.x_range.min) {
@@ -880,8 +886,21 @@ public:
     return new_act;
   }
 
+  inline float 	Compute_ActFmVm_gelin(float gc_e, float gc_i) {
+    float new_act;
+    float g_e_thr = Compute_EThresh(gc_i);
+    if(gc_e < g_e_thr)
+      new_act = 0.0f;
+    else
+      new_act = gain * (gc_e - g_e_thr);
+    return new_act;
+  }
+
   inline float Compute_ActFmIn(float gc_e, float gc_i) {
-    return Compute_ActFmVm(Compute_EqVm(gc_e, gc_i));
+    if(gelin)
+      return Compute_ActFmVm_gelin(gc_e, gc_i);
+    else
+      return Compute_ActFmVm_nxx1(Compute_EqVm(gc_e, gc_i));
   }
 
   virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 
@@ -897,8 +916,10 @@ public:
 #endif
   float		gber_l;	 // #READ_ONLY #NO_SAVE g_bar_l * e_rev_l -- just a compute time saver
   float		e_rev_sub_thr_e;// #READ_ONLY #NO_SAVE #HIDDEN e_rev_e - thr -- used for compute_ithresh
+  float		e_rev_sub_thr_i;// #READ_ONLY #NO_SAVE #HIDDEN e_rev_i - thr -- used for compute_ithresh
   float		gbl_e_rev_sub_thr_l;// #READ_ONLY #NO_SAVE #HIDDEN g_bar_l * (e_rev_l - thr) -- used for compute_ithresh
   float		thr_sub_e_rev_i;// #READ_ONLY #NO_SAVE #HIDDEN thr - e_rev_i used for compute_ithresh
+  float		thr_sub_e_rev_e;// #READ_ONLY #NO_SAVE #HIDDEN thr - e_rev_e used for compute_ethresh
   float		raw_pct_c;	// #READ_ONLY #NO_SAVE #HIDDEN 1 - raw_pct
 
  protected:

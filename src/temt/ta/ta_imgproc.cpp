@@ -2943,6 +2943,7 @@ void V1KwtaSpec::Initialize() {
   gp_k = 1;
   gp_g = 0.1f;
   kwta_pt = 0.6f;
+  gelin = false;
   gain = 600.0f;
   nvar = 0.01f;
   g_bar_e = 0.5f;
@@ -2964,8 +2965,10 @@ void V1KwtaSpec::Initialize() {
   raw_pct_c = 1.0f - raw_pct;
   gber_l = g_bar_l * e_rev_l;
   e_rev_sub_thr_e = e_rev_e - thr;
+  e_rev_sub_thr_i = e_rev_l - thr;
   gbl_e_rev_sub_thr_l = g_bar_l * (e_rev_l - thr);
   thr_sub_e_rev_i = thr - e_rev_l;
+  thr_sub_e_rev_e = thr - e_rev_e;
 
   CreateNXX1Fun();
 }
@@ -2975,8 +2978,10 @@ void V1KwtaSpec::UpdateAfterEdit_impl() {
   raw_pct_c = 1.0f - raw_pct;
   gber_l = g_bar_l * e_rev_l;
   e_rev_sub_thr_e = e_rev_e - thr;
+  e_rev_sub_thr_i = e_rev_l - thr;
   gbl_e_rev_sub_thr_l = g_bar_l * (e_rev_l - thr);
   thr_sub_e_rev_i = thr - e_rev_l;
+  thr_sub_e_rev_e = thr - e_rev_e;
 
   CreateNXX1Fun();
 }
