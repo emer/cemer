@@ -8561,9 +8561,14 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
     if (gone_node) {
       iTreeView* tv = treeView();
-      tv->setAutoScroll(false);	// auto scroll is very bad for this in 4.7.0 -- scrolls to top..
+      if(tv) {
+	tv->setAutoScroll(false);	// auto scroll is very bad for this in 4.7.0 -- scrolls to top..
+      }
       delete gone_node; // goodbye!
-      tv->setAutoScroll(true);
+      iTreeView* tv2 = treeView(); // make sure it still exists!
+      if(tv2) {
+	tv2->setAutoScroll(true);
+      }
     }
   }
     break;

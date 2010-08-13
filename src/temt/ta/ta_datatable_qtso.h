@@ -196,6 +196,13 @@ public:
   virtual void 		ViewRow_At(int start);
   // #BUTTON start viewing at indicated viewrange value
 
+  virtual void 		RowBackAll();
+  virtual void 		RowBackPg();
+  virtual void 		RowBack1();
+  virtual void 		RowFwd1();
+  virtual void 		RowFwdPg();
+  virtual void 		RowFwdAll();
+
   override void		DataDestroying();
   override void		BuildAll();
   
@@ -378,6 +385,13 @@ public:
   void		VScroll(bool left); // scroll left or right
   virtual void 	ViewCol_At(int start);	// start viewing at indicated column value
   
+  virtual void 		ColBackAll();
+  virtual void 		ColBackPg();
+  virtual void 		ColBack1();
+  virtual void 		ColFwd1();
+  virtual void 		ColFwdPg();
+  virtual void 		ColFwdAll();
+
   iGridTableView_Panel*	lvp(){return (iGridTableView_Panel*)(iDataTableView_Panel*)m_lvp;}
   inline T3GridViewNode* node_so() const {return (T3GridViewNode*)inherited::node_so();}
 
@@ -512,14 +526,31 @@ public:
   QLabel*		    lblMMBVal;
   taiField*		    fldMMBVal;
 
-  QHBoxLayout*		  layNav;
-  QLabel*		    lblGoto;
-  taiIncrField*		    fldGoto;
-  QPushButton*		    butGoto;
-  QPushButton*		    butPgUp;
-  QPushButton*		    butPgDn;
-  QPushButton*		    butStart;
-  QPushButton*		    butEnd;
+  QHBoxLayout*		  layRowNav;
+//   QLabel*		   lblRowNav;
+  QToolBar*		   rowNavTB;
+  QLabel*		    lblRowGoto;
+  taiField*		    fldRowGoto;
+  QAction* 		    actRowGoto;
+  QAction* 		    actRowBackAll;
+  QAction* 		    actRowBackPg;
+  QAction* 		    actRowBack1;
+  QAction* 		    actRowFwd1;
+  QAction* 		    actRowFwdPg;
+  QAction* 		    actRowFwdAll;
+
+  QHBoxLayout*		  layColNav;
+//   QLabel*		   lblColNav;
+  QToolBar*		   colNavTB;
+  QLabel*		    lblColGoto;
+  taiField*		    fldColGoto;
+  QAction* 		    actColGoto;
+  QAction* 		    actColBackAll;
+  QAction* 		    actColBackPg;
+  QAction* 		    actColBack1;
+  QAction* 		    actColFwd1;
+  QAction* 		    actColFwdPg;
+  QAction* 		    actColFwdAll;
 
   override String	panel_type() const; // this string is on the subpanel button for this panel
   GridTableView*	glv() {return (GridTableView*)m_dv;}
@@ -539,11 +570,23 @@ public: // IDataLinkClient interface
 
 protected slots:
   void 		butRefresh_pressed();
-  void 		butGoto_pressed();
-  void 		butPgUp_pressed();
-  void 		butPgDn_pressed();
-  void 		butStart_pressed();
-  void 		butEnd_pressed();
+  void 		butRowGoto_pressed();
+  void 		butColGoto_pressed();
+
+  virtual void 		RowBackAll();
+  virtual void 		RowBackPg();
+  virtual void 		RowBack1();
+  virtual void 		RowFwd1();
+  virtual void 		RowFwdPg();
+  virtual void 		RowFwdAll();
+
+  virtual void 		ColBackAll();
+  virtual void 		ColBackPg();
+  virtual void 		ColBack1();
+  virtual void 		ColFwd1();
+  virtual void 		ColFwdPg();
+  virtual void 		ColFwdAll();
+
   void 		butSetColor_pressed();
 
   void		cbar_scaleValueChanged();

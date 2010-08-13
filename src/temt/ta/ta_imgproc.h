@@ -830,7 +830,7 @@ public:
   float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
   float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.6:0.8 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units
   bool		gelin;	 // #CONDSHOW_ON_on #DEF_true use the g_e linear activation function based on adaptive exponential spiking dynamics -- gain should be around 20, leak .3, g_bar_e = .5
-  float		gain;	 // #CONDSHOW_ON_on #DEF_600;20 gain on the activation function
+  float		gain;	 // #CONDSHOW_ON_on #DEF_600;8 gain on the activation function
   float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01;0.02 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
   float		g_bar_e; // #CONDSHOW_ON_on #DEF_0.5 excitatory conductance multiplier -- multiplies filter input value prior to computing membrane potential -- general target is to have max excitatory input = .5, so with 0-1 normalized inputs, this value should be .5
   float		g_bar_l; // #CONDSHOW_ON_on #DEF_0.1;0.3 leak current conductance value
@@ -1127,6 +1127,7 @@ public:
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
   V1KwtaSpec	v1c_kwta;	// k-winner-take-all inhibitory dynamics for the v1 complex stage -- in general only use this when NOT otherwise using leabra, because these inputs will go into leabra anyway
   RenormMode	v1c_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1c filters
+  ComplexFilters v1c_sep_renorm; // any filters here will be renormalized separately prior to computing the kwta -- this puts them on more of an equal footing if there are underlying imbalances -- only relevant ones at this point are END_STOP, LEN_SUM, and V1S_MAX
   RenormMode	v1bmax_renorm;	// #CONDSHOW_ON_v1c_filters:V1B_MAX #DEF_LIN_RENORM how to renormalize the output of v1b_max filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles

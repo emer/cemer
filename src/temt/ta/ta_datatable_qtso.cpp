@@ -772,6 +772,39 @@ void DataTableView::ViewRow_At(int start) {
   UpdateDisplay();
 }
 
+void DataTableView::RowBackAll() {
+  ViewRow_At(0);
+}
+void DataTableView::RowBackPg() {
+  int cur_row = view_range.min;
+  int goto_row = cur_row - view_rows;
+  goto_row = MAX(0, goto_row);
+  ViewRow_At(goto_row);
+}
+void DataTableView::RowBack1() {
+  int cur_row = view_range.min;
+  int goto_row = cur_row - 1;
+  goto_row = MAX(0, goto_row);
+  ViewRow_At(goto_row);
+}
+void DataTableView::RowFwd1() {
+  int cur_row = view_range.min;
+  int goto_row = cur_row + 1;
+  goto_row = MIN(rows()-view_rows, goto_row);
+
+  ViewRow_At(goto_row);
+}
+void DataTableView::RowFwdPg() {
+  int cur_row = view_range.min;
+  int goto_row = cur_row + view_rows;
+  goto_row = MIN(rows()-view_rows, goto_row);
+
+  ViewRow_At(goto_row);
+}
+void DataTableView::RowFwdAll() {
+  ViewRow_At(rows() - view_rows);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //  	Grid View
 
@@ -1877,6 +1910,39 @@ void GridTableView::ViewCol_At(int start) {
   UpdateDisplay();		// takes care of keeping col in range 
 }
 
+void GridTableView::ColBackAll() {
+  ViewCol_At(0);
+}
+void GridTableView::ColBackPg() {
+  int cur_col = col_range.min;
+  int goto_col = cur_col - col_n;
+  goto_col = MAX(0, goto_col);
+  ViewCol_At(goto_col);
+}
+void GridTableView::ColBack1() {
+  int cur_col = col_range.min;
+  int goto_col = cur_col - 1;
+  goto_col = MAX(0, goto_col);
+  ViewCol_At(goto_col);
+}
+void GridTableView::ColFwd1() {
+  int cur_col = col_range.min;
+  int goto_col = cur_col + 1;
+  goto_col = MIN(vis_cols.size-col_n, goto_col);
+
+  ViewCol_At(goto_col);
+}
+void GridTableView::ColFwdPg() {
+  int cur_col = col_range.min;
+  int goto_col = cur_col + col_n;
+  goto_col = MIN(vis_cols.size-col_n, goto_col);
+
+  ViewCol_At(goto_col);
+}
+void GridTableView::ColFwdAll() {
+  ViewCol_At(vis_cols.size - col_n);
+}
+
 // callback for view transformer dragger
 void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
@@ -2257,44 +2323,99 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layClickVals->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
-  layNav = new QHBoxLayout; layWidg->addLayout(layNav);
-  layNav->setSpacing(2);	// plenty of room
+  layRowNav = new QHBoxLayout; layWidg->addLayout(layRowNav);
+  //  layRowNav->setSpacing(2);	// plenty of room
 
-  lblGoto = taiM->NewLabel("GoTo", widg, font_spec);
-  lblGoto->setToolTip("Row number to go to when the Go button is pressed");
-  layNav->addWidget(lblGoto);
-  fldGoto = dl.Add(new taiIncrField(&TA_int, this, NULL, widg));
-  layNav->addWidget(fldGoto->GetRep());
+  rowNavTB = new QToolBar(widg);
+  layRowNav->addWidget(rowNavTB);
 
-  layNav->addSpacing(taiM->hsep_c);
+  lblRowGoto = taiM->NewLabel("Row: Goto", widg, font_spec);
+  lblRowGoto->setToolTip("Row number to go to when the Go button is pressed -- rest of buttons provide one-click movment of the visible row in grid view");
+  rowNavTB->addWidget(lblRowGoto);
+  fldRowGoto = dl.Add(new taiField(&TA_int, this, NULL, widg));
+  rowNavTB->addWidget(fldRowGoto->GetRep());
+  connect(fldRowGoto->rep(), SIGNAL(returnPressed()), this, SLOT(butRowGoto_pressed()) );
 
-  butGoto = new QPushButton("Go", widg);
-  butGoto->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-  layNav->addWidget(butGoto);
-  connect(butGoto, SIGNAL(pressed()), this, SLOT(butGoto_pressed()) );
-  layNav->addSpacing(taiM->hsep_c);
+  actRowGoto = rowNavTB->addAction("Go");
+  actRowGoto->setToolTip("Go to row number indicated in prior field");
+  connect(actRowGoto, SIGNAL(triggered()), this, SLOT(butRowGoto_pressed()) );
 
-  butPgUp = new QPushButton("PgUp", widg);
-  butPgUp->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-  layNav->addWidget(butPgUp);
-  connect(butPgUp, SIGNAL(pressed()), this, SLOT(butPgUp_pressed()) );
+  rowNavTB->addSeparator();
 
-  butPgDn = new QPushButton("PgDn", widg);
-  butPgDn->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-  layNav->addWidget(butPgDn);
-  connect(butPgDn, SIGNAL(pressed()), this, SLOT(butPgDn_pressed()) );
+  actRowBackAll = rowNavTB->addAction("|<");
+  actRowBackAll->setToolTip("Back all the way to first row");
+  connect(actRowBackAll, SIGNAL(triggered()), this, SLOT(RowBackAll()) );
 
-  butStart = new QPushButton("Start", widg);
-  butStart->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-  layNav->addWidget(butStart);
-  connect(butStart, SIGNAL(pressed()), this, SLOT(butStart_pressed()) );
+  actRowBackPg = rowNavTB->addAction("<<");
+  actRowBackPg->setToolTip("Back one page of rows");
+  connect(actRowBackPg, SIGNAL(triggered()), this, SLOT(RowBackPg()) );
 
-  butEnd = new QPushButton("End", widg);
-  butEnd->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
-  layNav->addWidget(butEnd);
-  connect(butEnd, SIGNAL(pressed()), this, SLOT(butEnd_pressed()) );
+  actRowBack1 = rowNavTB->addAction("<");
+  actRowBack1->setToolTip("Back one row");
+  connect(actRowBack1, SIGNAL(triggered()), this, SLOT(RowBack1()) );
 
-  layNav->addStretch();
+  actRowFwd1 = rowNavTB->addAction(">" );
+  actRowFwd1->setToolTip("Forward one row");
+  connect(actRowFwd1, SIGNAL(triggered()), this, SLOT(RowFwd1()) );
+
+  actRowFwdPg = rowNavTB->addAction(">>" );
+  actRowFwdPg->setToolTip("Forward one page of rows");
+  connect(actRowFwdPg, SIGNAL(triggered()), this, SLOT(RowFwdPg()) );
+
+  actRowFwdAll = rowNavTB->addAction(">|" );
+  actRowFwdAll->setToolTip("Forward all the way to the end");
+  connect(actRowFwdAll, SIGNAL(triggered()), this, SLOT(RowFwdAll()) );
+
+  layRowNav->addStretch();
+
+  ////////////////////////////////////////////////////////////////////////////
+  layColNav = new QHBoxLayout; layWidg->addLayout(layColNav);
+  //  layColNav->setSpacing(2);	// plenty of room
+
+  colNavTB = new QToolBar(widg);
+  layColNav->addWidget(colNavTB);
+
+  lblColGoto = taiM->NewLabel("Col: Goto", widg, font_spec);
+  lblColGoto->setToolTip("Col number to go to when the Go button is pressed -- rest of buttons provide one-click movment of the visible col in grid view");
+  colNavTB->addWidget(lblColGoto);
+  fldColGoto = dl.Add(new taiField(&TA_int, this, NULL, widg));
+  colNavTB->addWidget(fldColGoto->GetRep());
+  connect(fldColGoto->rep(), SIGNAL(returnPressed()), this, SLOT(butColGoto_pressed()) );
+
+  actColGoto = colNavTB->addAction("Go");
+  actColGoto->setToolTip("Go to col number indicated in prior field");
+  connect(actColGoto, SIGNAL(triggered()), this, SLOT(butColGoto_pressed()) );
+
+  colNavTB->addSeparator();
+
+  actColBackAll = colNavTB->addAction("|<");
+  actColBackAll->setToolTip("Back all the way to first col");
+  connect(actColBackAll, SIGNAL(triggered()), this, SLOT(ColBackAll()) );
+
+  actColBackPg = colNavTB->addAction("<<");
+  actColBackPg->setToolTip("Back one page of cols");
+  connect(actColBackPg, SIGNAL(triggered()), this, SLOT(ColBackPg()) );
+
+  actColBack1 = colNavTB->addAction("<");
+  actColBack1->setToolTip("Back one col");
+  connect(actColBack1, SIGNAL(triggered()), this, SLOT(ColBack1()) );
+
+  actColFwd1 = colNavTB->addAction(">" );
+  actColFwd1->setToolTip("Forward one col");
+  connect(actColFwd1, SIGNAL(triggered()), this, SLOT(ColFwd1()) );
+
+  actColFwdPg = colNavTB->addAction(">>" );
+  actColFwdPg->setToolTip("Forward one page of cols");
+  connect(actColFwdPg, SIGNAL(triggered()), this, SLOT(ColFwdPg()) );
+
+  actColFwdAll = colNavTB->addAction(">|" );
+  actColFwdAll->setToolTip("Forward all the way to the end");
+  connect(actColFwdAll, SIGNAL(triggered()), this, SLOT(ColFwdAll()) );
+
+  layColNav->addStretch();
+
+  ////////////////////
+  // all done..
 
   layWidg->addStretch();
 
@@ -2383,47 +2504,80 @@ void iGridTableView_Panel::butRefresh_pressed() {
   glv->UpdateDisplay();
 }
 
-void iGridTableView_Panel::butGoto_pressed() {
+void iGridTableView_Panel::butRowGoto_pressed() {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
 
-  glv->ViewRow_At(fldGoto->GetValue());
+  glv->ViewRow_At(fldRowGoto->GetValue());
 }
 
-void iGridTableView_Panel::butPgUp_pressed() {
+void iGridTableView_Panel::RowBackAll() {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
-
-  int cur_row = glv->view_range.min;
-  int goto_row = cur_row - glv->view_rows;
-  goto_row = MAX(0, goto_row);
-
-  glv->ViewRow_At(goto_row);
+  glv->RowBackAll();
+}
+void iGridTableView_Panel::RowBackPg() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->RowBackPg();
+}
+void iGridTableView_Panel::RowBack1() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->RowBack1();
+}
+void iGridTableView_Panel::RowFwd1() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->RowFwd1();
+}
+void iGridTableView_Panel::RowFwdPg() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->RowFwdPg();
+}
+void iGridTableView_Panel::RowFwdAll() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->RowFwdAll();
 }
 
-void iGridTableView_Panel::butPgDn_pressed() {
+void iGridTableView_Panel::butColGoto_pressed() {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
 
-  int cur_row = glv->view_range.min;
-  int goto_row = cur_row + glv->view_rows;
-  goto_row = MIN(glv->rows()-glv->view_rows, goto_row);
-
-  glv->ViewRow_At(goto_row);
+  glv->ViewCol_At(fldColGoto->GetValue());
 }
 
-void iGridTableView_Panel::butStart_pressed() {
+void iGridTableView_Panel::ColBackAll() {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
-
-  glv->ViewRow_At(0);
+  glv->ColBackAll();
 }
-
-void iGridTableView_Panel::butEnd_pressed() {
+void iGridTableView_Panel::ColBackPg() {
   GridTableView* glv = this->glv(); //cache
   if (updating || !glv) return;
-
-  glv->ViewRow_At(glv->rows()-glv->view_rows);
+  glv->ColBackPg();
+}
+void iGridTableView_Panel::ColBack1() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->ColBack1();
+}
+void iGridTableView_Panel::ColFwd1() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->ColFwd1();
+}
+void iGridTableView_Panel::ColFwdPg() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->ColFwdPg();
+}
+void iGridTableView_Panel::ColFwdAll() {
+  GridTableView* glv = this->glv(); //cache
+  if (updating || !glv) return;
+  glv->ColFwdAll();
 }
 
 void iGridTableView_Panel::butSetColor_pressed() {

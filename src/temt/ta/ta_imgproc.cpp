@@ -3383,6 +3383,7 @@ void V1RegionSpec::Initialize() {
   v1b_save = SAVE_DATA;
   v1c_filters = CF_DEFAULT;
   v1c_renorm = LIN_RENORM;
+  v1c_sep_renorm = CF_NONE;
   v1bmax_renorm = LIN_RENORM;
   v1c_save = SAVE_DATA;
   v1c_feat_geom.SetXYN(4, 2, 8);
@@ -5052,11 +5053,20 @@ bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
     }
   }
 
-  // all the line guys are pooled
-  es_max_val = MAX(es_max_val, ls_max_val);
-  es_max_val = MAX(es_max_val, smax_max_val);
-  ls_max_val = es_max_val;
-  smax_max_val = es_max_val;
+  float group_max = 0.0f;
+  if(!(v1c_sep_renorm & END_STOP))
+    group_max = MAX(group_max, es_max_val);
+  if(!(v1c_sep_renorm & LEN_SUM))
+    group_max = MAX(group_max, ls_max_val);
+  if(!(v1c_sep_renorm & V1S_MAX))
+    group_max = MAX(group_max, smax_max_val);
+
+  if(!(v1c_sep_renorm & END_STOP))
+    es_max_val = group_max;
+  if(!(v1c_sep_renorm & LEN_SUM))
+    ls_max_val = group_max;
+  if(!(v1c_sep_renorm & V1S_MAX))
+    smax_max_val = group_max;
 
   if(es_max_val > region.renorm_thr) {	// nonblank
     rval = true;
