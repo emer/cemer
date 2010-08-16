@@ -675,9 +675,10 @@ public:
     ALL,			// include all currents INCLUDING bias weights
   };
 
+  bool		gelin;		// compute rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing off of the v_m - thr value -- important: when gelin is clicked, the membrane potential (v_m, and all other parameters relevant to it such as dt.vm) is completely irrelevant to the activation output of the unit -- all the other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr)
   float		thr;		// #DEF_0.25;0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters)
-  float		gain;		// #DEF_600;20 #MIN_0 gain (gamma) of the sigmoidal rate-coded activation function 
-  float		nvar;		// #DEF_0.005 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1
+  float		gain;		// #DEF_600;80 #MIN_0 gain (gamma) of the sigmoidal rate-coded activation function -- 600 is default for gelin = false, 80 is default for gelin = true
+  float		nvar;		// #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 -- 0.005 is default for geiln = false, 0.01 is default for gelin = true
   float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (computed across trials)
   float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value
   IThrFun	i_thr;		// [STD or NO_AH for da mod units) how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
@@ -845,7 +846,7 @@ public:
   float		vm;		// #DEF_0.1:0.357 #MIN_0 membrane potential rate constant -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized = .356 rate constant
   float		net;		// #DEF_0.7 #MIN_0 net input time constant -- how fast to update net input (damps oscillations) -- generally reflects time constants associated with synaptic channels which are not modeled in the most abstract rate code models (set to 1 for detailed spiking models with more realistic synaptic currents)
   bool		midpoint;	// #DEF_false use the midpoint method in computing the vm value -- better avoids oscillations and allows a larger dt.vm parameter to be used
-  float		d_vm_max;	// #DEF_0.02:0.025;100 #MIN_0 maximum change in vm at any timestep (limits blowup) -- this is a crude but effective safety valve for numerical integration problems
+  float		d_vm_max;	// #DEF_0.02;0.025;100 #MIN_0 maximum change in vm at any timestep (limits blowup) -- this is a crude but effective safety valve for numerical integration problems
   int		vm_eq_cyc;	// #AKA_cyc0_vm_eq #DEF_0 number of cycles to compute the vm as equilibirium potential given current inputs: set to 1 to quickly activate input layers; set to 100 to always use this computation
   float		vm_eq_dt;	// #DEF_1 #MIN_0 time constant for integrating the vm_eq values: how quickly to move toward the current eq value from previous vm value
   float		integ_time;	// #READ_ONLY #SHOW 1/integ rate constant = time constant for each cycle of updating for numerical integration
@@ -1023,7 +1024,6 @@ class LEABRA_API LeabraUnitSpec : public UnitSpec {
 INHERITED(UnitSpec)
 public:
   enum ActFun {
-    GELIN,     			// linear in the excitatory conductance (g_e), compared to excitatory current required to get to firing threshold (based on current currents..)
     NOISY_XX1,			// x over x plus 1 convolved with Gaussian noise (noise is nvar)
     XX1,			// x over x plus 1, hard threshold, no noise convolution
     NOISY_LINEAR,		// simple linear output function (still thesholded) convolved with Gaussian noise (noise is nvar)
@@ -1178,8 +1178,8 @@ public:
     // #CAT_Activation Act Step 2: compute the activation from membrane potential
       virtual void Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation from membrane potential -- rate code functions
-        virtual float Compute_ActValFmVmVal_rate(LeabraUnit* u, float vm_val);
-        // #CAT_Activation raw activation function: computes an activation value given membrane potential value based on current activation function -- does not update state variables or anything
+        virtual float Compute_ActValFmVmVal_rate(float vm_val, float g_e_val, float g_e_thr);
+        // #CAT_Activation raw activation function: computes an activation value from given membrane potential value (if act.gelin = false) or g_e (netin) and g_e_thr threshold values (if act.gelin = true) (based on current activation function -- does not update state variables or anything
       virtual void Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation-based adaptation value based on activation (spiking rate) and membrane potential -- rate code functions
 
@@ -1262,9 +1262,11 @@ public:
   virtual void	GraphVmFun(DataTable* graph_data, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .01);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph membrane potential (v_m) as a function of excitatory net input (net) for given inhib conductance (g_i) (NULL = new graph data)
   virtual void	GraphActFmVmFun(DataTable* graph_data, float min = .15, float max = .50, float incr = .001);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of membrane potential (v_m) (NULL = new graph data)
-  virtual void	GraphActFmNetFun(DataTable* graph_data, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .001);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of net input (projected through membrane potential) (NULL = new graph data)
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of membrane potential (v_m) (NULL = new graph data) -- note: only valid if act.gelin = false -- if act.gelin is true, then use GraphActFmNetFun instead
+  virtual void	GraphActFmNetFun(DataTable* graph_data, float g_i = .5, float min = 0.0,
+				 float max = 1.0, float incr = .001, float g_e_thr = 0.5,
+				 float lin_gain = 10);
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of net input -- if act.gelin = true then this is the direct activation function, computed relative to the g_e_thr threshold value provided -- otherwise, the net input value is projected through membrane potential vm to get the net overall activation function -- a linear comparison with lin_gain slope is also provided for reference -- always computed as lin_gain * (net - g_e_thr) (NULL = new graph data)
   virtual void	GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha=false);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the spike alpha function for conductance integration over time window given in spike parameters -- last data point is the sum over the whole window (total conductance of a single spike) -- force_alpha means use explicit alpha function even when rise=0 (otherewise it simulates actual recursive exp decay used in optimized code)
 //   virtual void	GraphSLNoiseAdaptFun(DataTable* graph_data, float incr = 0.05f);
@@ -1481,9 +1483,9 @@ public:
 
   // main function is basic Compute_Act which calls a bunch of sub-functions on the unitspec
 
-  float Compute_ActValFmVmVal_rate(float vm_val)
-  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_ActValFmVmVal_rate(this, vm_val); }
-  // #CAT_Activation raw activation function: computes rate-coded activation value given membrane potential value based on current activation function -- does not update state variables or anything
+  float Compute_ActValFmVmVal_rate(float vm_val, float g_e, float g_e_thr)
+  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_ActValFmVmVal_rate(vm_val, g_e, g_e_thr); }
+  // #CAT_Activation raw activation function: computes an activation value from given membrane potential value (if act.gelin = false) or g_e (netin) and g_e_thr threshold values (if act.gelin = true) (based on current activation function -- does not update state variables or anything
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
@@ -3592,7 +3594,7 @@ inline float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* ne
 } 
 
 inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
-  // including the ga and gh terms 
+  // including the ga and gh terms -- only way to affect anything
   return ((u->gc.i * e_rev_sub_thr.i + u->gc.l * e_rev_sub_thr.l
 	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h) /
 	  thr_sub_e_rev_e);

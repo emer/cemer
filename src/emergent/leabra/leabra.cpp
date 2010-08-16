@@ -503,6 +503,7 @@ bool LeabraBiasSpec::CheckObjectType_impl(taBase* obj) {
 //////////////////////////
 
 void ActFunSpec::Initialize() {
+  gelin = false;		// todo: move to defaults and make true :)
   i_thr = STD;
   Defaults_init();
 }
@@ -761,10 +762,18 @@ void LeabraUnitSpec::Initialize() {
   noise_conv.res = .001f;
   noise_conv.UpdateAfterEdit_NoGui();
 
-  nxx1_fun.x_range.min = -.03f;
-  nxx1_fun.x_range.max = .20f;
-  nxx1_fun.res = .001f;
-  nxx1_fun.UpdateAfterEdit_NoGui();
+  if(act.gelin) {
+    nxx1_fun.x_range.min = -.1f;
+    nxx1_fun.x_range.max = 1.0f;
+    nxx1_fun.res = .001f;
+    nxx1_fun.UpdateAfterEdit_NoGui();
+  }
+  else {
+    nxx1_fun.x_range.min = -.03f;
+    nxx1_fun.x_range.max = .20f;
+    nxx1_fun.res = .001f;
+    nxx1_fun.UpdateAfterEdit_NoGui();
+  }
 
   Defaults_init();
 
@@ -860,6 +869,17 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
 void LeabraUnitSpec::CreateNXX1Fun() {
   // first create the gaussian noise convolver
+  if(act.gelin) {
+    nxx1_fun.x_range.max = 1.0f;
+    nxx1_fun.res = .002f;	// should be sufficient..
+    nxx1_fun.UpdateAfterEdit_NoGui();
+  }
+  else {
+    nxx1_fun.x_range.max = .20f;
+    nxx1_fun.res = .001f;
+    nxx1_fun.UpdateAfterEdit_NoGui();
+  }
+  nxx1_fun.x_range.min = -3.0f * act.nvar; // key to make it based on nvar -- go out 3 stdev is fine
   noise_conv.AllocForRange();
   int i;
   float var = act.nvar * act.nvar;
@@ -1483,55 +1503,53 @@ void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
-float LeabraUnitSpec::Compute_ActValFmVmVal_rate(LeabraUnit* u, float vm_val) {
-  float thr_vm = vm_val - act.thr; // thresholded vm
+float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float vm_val, float g_e_val, float g_e_thr) {
+  float val_sub_thr;
+  if(act.gelin) {
+    val_sub_thr = g_e_val - g_e_thr;
+  }
+  else {
+    val_sub_thr = vm_val - act.thr; // thresholded vm
+  }
   float new_act = 0.0f;
   switch(act_fun) {
-  case GELIN: {
-    float g_e_thr = Compute_EThresh(u);
-    if(u->net < g_e_thr)
-      new_act = 0.0f;
-    else
-      new_act = act.gain * (u->net - g_e_thr);
-  }
-  break;
   case NOISY_XX1: {
-    if(thr_vm <= nxx1_fun.x_range.min)
+    if(val_sub_thr <= nxx1_fun.x_range.min)
       new_act = 0.0f;
-    else if(thr_vm >= nxx1_fun.x_range.max) {
-      thr_vm *= act.gain;
-      new_act = thr_vm / (thr_vm + 1.0f);
+    else if(val_sub_thr >= nxx1_fun.x_range.max) {
+      val_sub_thr *= act.gain;
+      new_act = val_sub_thr / (val_sub_thr + 1.0f);
     }
     else {
-      new_act = nxx1_fun.Eval(thr_vm);
+      new_act = nxx1_fun.Eval(val_sub_thr);
     }
   }
   break;
   case XX1: {
-    if(thr_vm < 0.0f)
+    if(val_sub_thr < 0.0f)
       new_act = 0.0f;
     else {
-      thr_vm *= act.gain;
-      new_act = thr_vm / (thr_vm + 1.0f);
+      val_sub_thr *= act.gain;
+      new_act = val_sub_thr / (val_sub_thr + 1.0f);
     }
   }
   break;
   case NOISY_LINEAR: {
-    if(thr_vm <= nxx1_fun.x_range.min)
+    if(val_sub_thr <= nxx1_fun.x_range.min)
       new_act = 0.0f;
-    else if(thr_vm >= nxx1_fun.x_range.max) {
-      new_act = thr_vm * act.gain;
+    else if(val_sub_thr >= nxx1_fun.x_range.max) {
+      new_act = val_sub_thr * act.gain;
     }
     else {
-      new_act = nxx1_fun.Eval(thr_vm);
+      new_act = nxx1_fun.Eval(val_sub_thr);
     }
   }
   break;
   case LINEAR: {
-    if(thr_vm < 0.0f)
+    if(val_sub_thr < 0.0f)
       new_act = 0.0f;
     else
-      new_act = thr_vm * act.gain;
+      new_act = val_sub_thr * act.gain;
   }
   break;
   case SPIKE:
@@ -1541,7 +1559,10 @@ float LeabraUnitSpec::Compute_ActValFmVmVal_rate(LeabraUnit* u, float vm_val) {
 }
 
 void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
-  float new_act = Compute_ActValFmVmVal_rate(u, u->v_m);
+  float g_e_thr = 0.0f;
+  if(act.gelin)
+    g_e_thr = Compute_EThresh(u);
+  float new_act = Compute_ActValFmVmVal_rate(u->v_m, u->net, g_e_thr);
   if(depress.on) {		     // synaptic depression
     u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
     new_act *= MIN(u->spk_amp, 1.0f);
@@ -2066,6 +2087,9 @@ void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, flo
 }
 
 void LeabraUnitSpec::GraphActFmVmFun(DataTable* graph_data, float min, float max, float incr) {
+  if(TestError(act.gelin, "GraphActFmVmFun", "cannot graph act from vm when act.gelin = true, because act does not depend on vm in this case!  Use GraphActFmNetFun instead."))
+    return;
+
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_ActFmVmFun", true);
@@ -2091,7 +2115,8 @@ void LeabraUnitSpec::GraphActFmVmFun(DataTable* graph_data, float min, float max
   graph_data->FindMakeGraphView();
 }
 
-void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float min, float max, float incr) {
+void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float min, float max,
+				      float incr, float g_e_thr, float lin_gain) {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_ActFmNetFun", true);
@@ -2100,19 +2125,36 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   graph_data->StructUpdate(true);
   graph_data->ResetData();
   DataCol* nt = graph_data->FindMakeColName("Net", idx, VT_FLOAT);
-  DataCol* vm = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
+  DataCol* av = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
+  DataCol* lin = graph_data->FindMakeColName("Linear", idx, VT_FLOAT);
 
-  LeabraUnit un;
+  av->SetUserData("PLOT_1", true);
+  av->SetUserData("MIN", 0.0f);
+  av->SetUserData("MAX", 1.0f);
+
+  lin->SetUserData("PLOT_2", true);
+
   LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
 
   float x;
   for(x = min; x <= max; x += incr) {
-    un.v_m = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
-      ((g_bar.e * x) + (g_bar.i * g_i) + g_bar.l);
-    Compute_ActFmVm(&un, net);
+    float aval;
+    if(act.gelin) {
+      aval = Compute_ActValFmVmVal_rate(0.0f, x, g_e_thr);
+    }
+    else {
+      float v_m = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
+	((g_bar.e * x) + (g_bar.i * g_i) + g_bar.l);
+      aval = Compute_ActValFmVmVal_rate(v_m, 0.0f, 0.0f);
+    }
+    float ln = x - g_e_thr;
+    if(ln < 0.0f) ln = 0.0f;
+    ln *= lin_gain;
+    if(ln > 1.0f) ln = 1.0f;
     graph_data->AddBlankRow();
     nt->SetValAsFloat(x, -1);
-    vm->SetValAsFloat(un.act, -1);
+    av->SetValAsFloat(aval, -1);
+    lin->SetValAsFloat(ln, -1);
   }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();

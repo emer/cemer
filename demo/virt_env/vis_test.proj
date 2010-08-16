@@ -8649,6 +8649,7 @@ LeabraProject .projects[0] {
        v1c_specs {len_sum_len=1: end_stop_dist=2: es_adjang_wt=0.2: gauss_sig=0.8: nonfocal_wt=0.8: pre_gp4=1: spat_rf={x=4: y=4: }: pre_rf=4: pre_half=2: pre_spacing=2: pre_border=0: spat_half={x=2: y=2: }: spat_spacing={x=2: y=2: }: spat_border={x=0: y=0: }: net_rf={x=16: y=16: }: net_half={x=4: y=4: }: net_spacing={x=4: y=4: }: net_border={x=0: y=0: }: len_sum_width=3: len_sum_norm=0.3333333: };
        v1c_kwta {on=1: raw_pct=0: gp_k=2: gp_g=0.1: kwta_pt=0.2: gelin=1: gain=20: nvar=0.01: g_bar_e=0.5: g_bar_l=0.3: e_rev_e=1: e_rev_l=0.3: thr=0.5: };
        v1c_renorm=LIN_RENORM;
+       v1c_sep_renorm=;
        v1bmax_renorm=LIN_RENORM;
        v1c_save=SAVE_DATA|SEP_MATRIX|SAVE_DEBUG;
        v1c_feat_geom {x=4: y=4: n_not_xy=0: n=16: };
@@ -12419,6 +12420,7 @@ LeabraProject .projects[0] {
        v1c_specs {len_sum_len=1: end_stop_dist=2: es_adjang_wt=0.2: gauss_sig=0.8: nonfocal_wt=0.8: pre_gp4=1: spat_rf={x=4: y=4: }: pre_rf=4: pre_half=2: pre_spacing=2: pre_border=0: spat_half={x=2: y=2: }: spat_spacing={x=2: y=2: }: spat_border={x=0: y=0: }: net_rf={x=16: y=16: }: net_half={x=4: y=4: }: net_spacing={x=4: y=4: }: net_border={x=0: y=0: }: len_sum_width=3: len_sum_norm=0.3333333: };
        v1c_kwta {on=1: raw_pct=0: gp_k=2: gp_g=0.1: kwta_pt=0.6: gelin=1: gain=8: nvar=0.01: g_bar_e=0.5: g_bar_l=0.1: e_rev_e=1: e_rev_l=0.3: thr=0.5: };
        v1c_renorm=LOG_RENORM;
+       v1c_sep_renorm=;
        v1bmax_renorm=LIN_RENORM;
        v1c_save=SAVE_DATA|SEP_MATRIX|SAVE_DEBUG;
        v1c_feat_geom {x=4: y=4: n_not_xy=0: n=16: };
@@ -13724,10 +13726,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=4.537828e-16: y=0.1: z=4.203527e-17: };
+	  cur_pos {x=-1.000655e-16: y=0.1: z=1.530118e-16: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=2.551936e-14: y=1.549846e-16: z=8.169778e-15: };
-	  cur_ang_vel {x=9.806333e-16: y=1.820759e-14: z=-1.023457e-15: };
+	  cur_lin_vel {x=2.122102e-15: y=-1.487798e-15: z=1.295595e-14: };
+	  cur_ang_vel {x=2.822108e-15: y=3.477138e-16: z=-2.436884e-16: };
 	  shape=BOX;
 	  mass=1;
 	  radius=0.5;
@@ -13773,10 +13775,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=1: z=0: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=9.079204e-16: y=0.35: z=-1.78813e-08: };
+	  cur_pos {x=-1.993116e-16: y=0.35: z=-1.78813e-08: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=5.109165e-14: y=1.490117e-07: z=5.135924e-14: };
-	  cur_ang_vel {x=-2.384176e-06: y=3.600808e-14: z=-3.835005e-14: };
+	  cur_lin_vel {x=4.332235e-15: y=1.490117e-07: z=2.469388e-14: };
+	  cur_ang_vel {x=-2.384176e-06: y=-2.738491e-16: z=-3.909464e-14: };
 	  shape=CAPSULE;
 	  mass=1;
 	  radius=0.1;
@@ -13824,8 +13826,8 @@ LeabraProject .projects[0] {
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0.04: y=0.35: z=0.1: };
 	  cur_rot {x=-0.007585958: y=0.9872352: z=0.159088: rot=3.235674: };
-	  cur_lin_vel {x=5.459546e-14: y=3.874294e-07: z=-1.043071e-07: };
-	  cur_ang_vel {x=-5.960473e-07: y=-1.445343e-08: z=4.368903e-08: };
+	  cur_lin_vel {x=2.692525e-15: y=3.874294e-07: z=-1.043071e-07: };
+	  cur_ang_vel {x=-5.960471e-07: y=-1.44557e-08: z=4.368701e-08: };
 	  shape=CYLINDER;
 	  mass=0.001;
 	  radius=0.01;
@@ -13887,9 +13889,9 @@ LeabraProject .projects[0] {
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=-0.04: y=0.35: z=0.09999999: };
-	  cur_rot {x=-0.01677095: y=0.9871249: z=0.1590702: rot=3.348993: };
-	  cur_lin_vel {x=7.856619e-14: y=3.874293e-07: z=1.192103e-07: };
-	  cur_ang_vel {x=-5.960459e-07: y=-7.960115e-06: z=-2.506916e-06: };
+	  cur_rot {x=-0.01677095: y=0.9871249: z=0.1590702: rot=3.348994: };
+	  cur_lin_vel {x=1.446637e-15: y=3.874293e-07: z=1.192103e-07: };
+	  cur_ang_vel {x=-5.960372e-07: y=1.093888e-06: z=4.888957e-07: };
 	  shape=CYLINDER;
 	  mass=0.001;
 	  radius=0.01;
@@ -13940,7 +13942,7 @@ LeabraProject .projects[0] {
 	   intensity=0.2;
 	   color {r=1: g=1: b=1: a=1: };
 	  };
-	  dir_norm {x=0.2085441: y=-0.3072258: z=0.9285052: };
+	  dir_norm {x=0.2085443: y=-0.3072258: z=0.9285052: };
 	 };
 	 VEBody @[4] {
 	  name="EyeBeamL";
@@ -13952,8 +13954,8 @@ LeabraProject .projects[0] {
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0.08948018: y=0.1873923: z=0.5914372: };
 	  cur_rot {x=0.9578985: y=0.283457: z=0.04567769: rot=0.3333341: };
-	  cur_lin_vel {x=-7.450264e-08: y=2.354659e-07: z=-9.00742e-07: };
-	  cur_ang_vel {x=-5.960303e-07: y=-3.318019e-08: z=3.746391e-08: };
+	  cur_lin_vel {x=-7.450463e-08: y=2.35469e-07: z=-9.007408e-07: };
+	  cur_ang_vel {x=-5.960339e-07: y=-3.319838e-08: z=3.750756e-08: };
 	  shape=CAPSULE;
 	  mass=1e-05;
 	  radius=0.005;
@@ -13999,10 +14001,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.06844421: y=0.1902427: z=0.5828225: };
-	  cur_rot {x=0.8335701: y=0.5453803: z=0.08788529: rot=0.3819268: };
-	  cur_lin_vel {x=-4.243799e-06: y=-4.368604e-08: z=4.816125e-07: };
-	  cur_ang_vel {x=-5.979859e-07: y=-7.979542e-06: z=-2.518383e-06: };
+	  cur_pos {x=0.06844424: y=0.1902427: z=0.5828225: };
+	  cur_rot {x=0.8335701: y=0.5453805: z=0.08788532: rot=0.3819268: };
+	  cur_lin_vel {x=6.807643e-07: y=2.811926e-07: z=-5.002408e-07: };
+	  cur_ang_vel {x=-5.88269e-07: y=1.096864e-06: z=5.282545e-07: };
 	  shape=CAPSULE;
 	  mass=1e-05;
 	  radius=0.005;
@@ -14103,11 +14105,11 @@ LeabraProject .projects[0] {
 	  vel=-1.788129e-06;
 	  pos2=-0.09529877;
 	  pos2_norm=0.4602922;
-	  vel2=-2.337752e-12;
-	  cur_force1 {x=7.450054e-11: y=-1.490036e-10: z=1.192088e-09: };
-	  cur_torque1 {x=-1.057178e-10: y=-5.976825e-11: z=-2.795234e-13: };
-	  cur_force2 {x=-7.450054e-11: y=1.490036e-10: z=-1.192088e-09: };
-	  cur_torque2 {x=1.206182e-10: y=1.953479e-11: z=-5.680618e-12: };
+	  vel2=4.226665e-13;
+	  cur_force1 {x=7.450415e-11: y=-1.490062e-10: z=1.192089e-09: };
+	  cur_torque1 {x=-1.057156e-10: y=-5.976557e-11: z=-2.790446e-13: };
+	  cur_force2 {x=-7.450415e-11: y=1.490062e-10: z=-1.192089e-09: };
+	  cur_torque2 {x=1.206162e-10: y=1.953242e-11: z=-5.681204e-12: };
 	 };
 	 VEJoint @[1] {
 	  name="RightEyeJoint";
@@ -14164,14 +14166,14 @@ LeabraProject .projects[0] {
 	  };
 	  pos=-0.319543;
 	  pos_norm=0.3668571;
-	  vel=-1.78813e-06;
+	  vel=-1.788139e-06;
 	  pos2=-0.2100887;
 	  pos2_norm=0.412463;
-	  vel2=8.344671e-06;
-	  cur_force1 {x=2.425025e-09: y=1.64357e-10: z=-4.902966e-10: };
-	  cur_torque1 {x=-1.776672e-11: y=1.836941e-09: z=5.278833e-10: };
-	  cur_force2 {x=-2.425025e-09: y=-1.64357e-10: z=4.902966e-10: };
-	  cur_torque2 {x=1.331015e-12: y=-1.614051e-09: z=-5.344576e-10: };
+	  vel2=-1.192093e-06;
+	  cur_force1 {x=-9.521684e-15: y=7.152516e-16: z=1.694532e-15: };
+	  cur_torque1 {x=3.554417e-15: y=1.91287e-13: z=6.246373e-14: };
+	  cur_force2 {x=9.521684e-15: y=-7.152516e-16: z=-1.694532e-15: };
+	  cur_torque2 {x=-3.625942e-15: y=-1.921714e-13: z=-6.249234e-14: };
 	 };
 	 VEJoint @[2] {
 	  name="NeckJoint";
@@ -14231,11 +14233,11 @@ LeabraProject .projects[0] {
 	  vel=2.384176e-06;
 	  pos2=0;
 	  pos2_norm=0.5;
-	  vel2=-1.78005e-14;
-	  cur_force1 {x=2.496945e-09: y=1.541135e-11: z=6.966917e-10: };
-	  cur_torque1 {x=5.068752e-11: y=1.777164e-09: z=-9.663257e-11: };
-	  cur_force2 {x=-2.496945e-09: y=-1.541135e-11: z=-6.966917e-10: };
-	  cur_torque2 {x=1.234854e-10: y=-1.777164e-09: z=-5.276038e-10: };
+	  vel2=6.215584e-16;
+	  cur_force1 {x=7.129281e-11: y=-1.488634e-10: z=1.190433e-09: };
+	  cur_torque1 {x=1.918951e-10: y=-5.9585e-11: z=-1.803982e-11: };
+	  cur_force2 {x=-7.129281e-11: y=1.488634e-10: z=-1.190433e-09: };
+	  cur_torque2 {x=1.057131e-10: y=5.9585e-11: z=2.166177e-13: };
 	 };
 	 VEJoint @[3] {
 	  name="EyeBeamLJoint";
@@ -14660,7 +14662,7 @@ LeabraProject .projects[0] {
       light_0=.projects[0].programs.gp[0][0].objs[0].objects[2].bodies[0]$$;
       light_1=NULL;
      };
-     TimeUsed @[1] {name="RobotTime": start={usr=61842: sys=12565: tot=128168745927: }: end={usr=61846: sys=12565: tot=128168745932: }: used={usr=5344: sys=315: tot=5610: }: s_used=56.1: n_used=458: };
+     TimeUsed @[1] {name="RobotTime": start={usr=1061: sys=142: tot=128169330582: }: end={usr=1067: sys=143: tot=128169330590: }: used={usr=5357: sys=317: tot=5628: }: s_used=56.28: n_used=460: };
     };
     types {
      name=;
@@ -17670,7 +17672,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=2;
-	  col_range {min=24: max=25: };
+	  col_range {min=22: max=23: };
 	  width=1.5;
 	  grid_on=1;
 	  header_on=1;

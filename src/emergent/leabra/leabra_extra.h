@@ -1275,8 +1275,8 @@ public:
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
 
       // note: with switch to sender-based, this is very expensive -- fortunately it doesn't
-      // really work so we don't care.. :)
-      float ru_act_nonoise = ru->Compute_ActValFmVmVal_rate(ru->v_m - ru->noise);
+      // really work so we don't care.. :) -- also, not supporting act.gelin at all here
+      float ru_act_nonoise = ru->Compute_ActValFmVmVal_rate(ru->v_m - ru->noise, ru->net, 0.0f);
       float dav = ru->dav * da_noise.da_noise;
 
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
