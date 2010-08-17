@@ -2821,8 +2821,7 @@ The Input, Output, and PFC layers are configured to show the name of the most ac
 <title>PBWM V2 Params - Computational Cognitive Neuroscience Wiki</title>
 <meta name=\"generator\" content=\"MediaWiki 1.16wmf3\">
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
-<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit\">
-<link rel=\"edit\" title=\"Edit\" href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit\">
+<link rel=\"stylesheet\" href=\"/ccnlab/extensions/Drafts/Drafts.css?3\">
 <link rel=\"stylesheet\" media=\"screen, projection\" href=\"/ccnlab/extensions/HeaderTabs/skins/combined-min.css\">
 <link rel=\"shortcut icon\" href=\"/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/ccnlab/opensearch_desc.php\" title=\"Computational Cognitive Neuroscience Wiki (en)\">
@@ -2834,7 +2833,7 @@ The Input, Output, and PFC layers are configured to show the name of the most ac
 <link rel=\"stylesheet\" href=\"/ccnlab/index.php?title=MediaWiki:Common.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\">
 <link rel=\"stylesheet\" href=\"/ccnlab/index.php?title=MediaWiki:Print.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\" media=\"print\">
 <link rel=\"stylesheet\" href=\"/ccnlab/index.php?title=MediaWiki:lab.css&amp;usemsgcache=yes&amp;ctype=text%2Fcss&amp;smaxage=18000&amp;action=raw&amp;maxage=18000\">
-<link rel=\"stylesheet\" href=\"/ccnlab/index.php?title=-&amp;action=raw&amp;maxage=18000&amp;smaxage=0&amp;ts=20100423052145&amp;gen=css\">
+<link rel=\"stylesheet\" href=\"/ccnlab/index.php?title=-&amp;action=raw&amp;maxage=18000&amp;gen=css\">
 <script>
 var skin=\"lab\",
 stylepath=\"/ccnlab/skins\",
@@ -2854,12 +2853,12 @@ wgTitle=\"PBWM V2 Params\",
 wgAction=\"view\",
 wgArticleId=46047,
 wgIsArticle=true,
-wgUserName=\"Oreilly\",
-wgUserGroups=[\"darkmatter\", \"*\", \"user\", \"autoconfirmed\"],
+wgUserName=null,
+wgUserGroups=null,
 wgUserLanguage=\"en\",
 wgContentLanguage=\"en\",
 wgBreakFrames=false,
-wgCurRevisionId=1387499,
+wgCurRevisionId=1554645,
 wgVersion=\"1.16wmf3\",
 wgEnableAPI=true,
 wgEnableWriteAPI=true,
@@ -2873,17 +2872,16 @@ wgDBname=\"ccnlab\",
 wgSearchNamespaces=[0],
 wgMWSuggestMessages=[\"with suggestions\", \"no suggestions\"],
 wgRestrictionEdit=[],
-wgRestrictionMove=[],
-wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg\": \"Watching...\", \"unwatchingMsg\": \"Unwatching...\", \"tooltip-ca-watchMsg\": \"Add this page to your watchlist\", \"tooltip-ca-unwatchMsg\": \"Remove this page from your watchlist\"};
+wgRestrictionMove=[];
 </script>
 <script src=\"/ccnlab/skins/common/wikibits.js?urid=257_1267416510\"></script>
 <script src=\"/ccnlab/skins/common/ajax.js?urid=257_1247772050\"></script>
-<script src=\"/ccnlab/skins/common/ajaxwatch.js?urid=257_1263080834\"></script>
+<script type=\"text/javascript\" src=\"/ccnlab/extensions/Drafts/Drafts.js?3\"></script>
 <script src=\"/ccnlab/skins/common/mwsuggest.js?urid=257_1254854293\"></script>
 <script type=\"text/javascript\" src=\"/ccnlab/extensions/HeaderTabs/skins/combined-history-min.js\"></script>
 <!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/ccnlab/skins/lab/csshover.htc\")}</style><![endif]-->
 <!--[if lt IE 7]><script type=\"text/javascript\" src=\"/ccnlab/skins/common/IEFixes.js?257\"></script><meta http-equiv=\"imagetoolbar\" content=\"no\" /><![endif]-->
-<script src=\"/ccnlab/index.php?title=-&amp;action=raw&amp;smaxage=0&amp;gen=js&amp;useskin=lab&amp;urid=257\"></script>
+<script src=\"/ccnlab/index.php?title=-&amp;action=raw&amp;gen=js&amp;useskin=lab&amp;urid=257\"></script>
 
 				<link rel=\"alternate\" type=\"application/rdf+xml\" title=\"PBWM V2 Params\" href=\"/ccnlab/index.php?title=Special:ExportRDF/PBWM_V2_Params&amp;xmlmime=rdf\">
 
@@ -2936,47 +2934,63 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 <li class=\"toclevel-2 tocsection-7\"><a href=\"#PFC\"><span class=\"tocnumber\">1.6</span> <span class=\"toctext\">PFC</span></a></li>
 </ul>
 </li>
-<li class=\"toclevel-1 tocsection-8\"><a href=\"#Loop\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Loop</span></a>
+<li class=\"toclevel-1 tocsection-8\"><a href=\"#Configuring_Motor_Output_Gating_Only_.28No_MAINT_gating.29\"><span class=\"tocnumber\">2</span> <span class=\"toctext\">Configuring Motor Output Gating Only (No MAINT gating)</span></a></li>
+<li class=\"toclevel-1 tocsection-9\"><a href=\"#Loop\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">Loop</span></a>
 <ul>
-<li class=\"toclevel-2 tocsection-9\"><a href=\"#Version_2.3_4.2F17.2F10_Final_good_.28rndgo_.3D_20.29\"><span class=\"tocnumber\">2.1</span> <span class=\"toctext\">Version 2.3 4/17/10 Final good (rndgo = 20)</span></a>
+<li class=\"toclevel-2 tocsection-10\"><a href=\"#Version_2.3_4.2F17.2F10_Final_good_.28rndgo_.3D_20.29\"><span class=\"tocnumber\">3.1</span> <span class=\"toctext\">Version 2.3 4/17/10 Final good (rndgo = 20)</span></a>
 <ul>
-<li class=\"toclevel-3 tocsection-10\"><a href=\"#8_stripes\"><span class=\"tocnumber\">2.1.1</span> <span class=\"toctext\">8 stripes</span></a></li>
+<li class=\"toclevel-3 tocsection-11\"><a href=\"#8_stripes\"><span class=\"tocnumber\">3.1.1</span> <span class=\"toctext\">8 stripes</span></a></li>
 </ul>
 </li>
-<li class=\"toclevel-2 tocsection-11\"><a href=\"#Version_2.3_--_mutex_clean_.2B_bias_fix\"><span class=\"tocnumber\">2.2</span> <span class=\"toctext\">Version 2.3 -- mutex clean + bias fix</span></a></li>
-<li class=\"toclevel-2 tocsection-12\"><a href=\"#Version_2.3_--_maint_go_.3D_PFC_out_activation_--_mutex_between_Maint_and_Out\"><span class=\"tocnumber\">2.3</span> <span class=\"toctext\">Version 2.3 -- maint go = PFC_out activation -- mutex between Maint and Out</span></a></li>
+<li class=\"toclevel-2 tocsection-12\"><a href=\"#Version_2.3_--_mutex_clean_.2B_bias_fix\"><span class=\"tocnumber\">3.2</span> <span class=\"toctext\">Version 2.3 -- mutex clean + bias fix</span></a></li>
+<li class=\"toclevel-2 tocsection-13\"><a href=\"#Version_2.3_--_maint_go_.3D_PFC_out_activation_--_mutex_between_Maint_and_Out\"><span class=\"tocnumber\">3.3</span> <span class=\"toctext\">Version 2.3 -- maint go = PFC_out activation -- mutex between Maint and Out</span></a></li>
 </ul>
 </li>
-<li class=\"toclevel-1 tocsection-13\"><a href=\"#Sir52da\"><span class=\"tocnumber\">3</span> <span class=\"toctext\">Sir52da</span></a>
+<li class=\"toclevel-1 tocsection-14\"><a href=\"#Sir52da\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">Sir52da</span></a>
 <ul>
-<li class=\"toclevel-2 tocsection-14\"><a href=\"#Version_2.3_4.2F17.2F10_Final_.28rndgo_.3D_20.29\"><span class=\"tocnumber\">3.1</span> <span class=\"toctext\">Version 2.3 4/17/10 Final (rndgo = 20)</span></a>
+<li class=\"toclevel-2 tocsection-15\"><a href=\"#Version_2.3_4.2F17.2F10_Final_.28rndgo_.3D_20.29\"><span class=\"tocnumber\">4.1</span> <span class=\"toctext\">Version 2.3 4/17/10 Final (rndgo = 20)</span></a>
 <ul>
-<li class=\"toclevel-3 tocsection-15\"><a href=\"#4_stripes\"><span class=\"tocnumber\">3.1.1</span> <span class=\"toctext\">4 stripes</span></a></li>
+<li class=\"toclevel-3 tocsection-16\"><a href=\"#4_stripes\"><span class=\"tocnumber\">4.1.1</span> <span class=\"toctext\">4 stripes</span></a></li>
 </ul>
 </li>
-<li class=\"toclevel-2 tocsection-16\"><a href=\"#Version_2.3_Mutex_.2B_gate_bias_bugfix_.2B_no_hard_constraints_.28mutexcln.29\"><span class=\"tocnumber\">3.2</span> <span class=\"toctext\">Version 2.3 Mutex + gate bias bugfix + no hard constraints (mutexcln)</span></a></li>
-<li class=\"toclevel-2 tocsection-17\"><a href=\"#Version_2.3_--_Mnt_Go_drives_pfc_out_.2B_new_biases\"><span class=\"tocnumber\">3.3</span> <span class=\"toctext\">Version 2.3 -- Mnt Go drives pfc_out + new biases</span></a></li>
+<li class=\"toclevel-2 tocsection-17\"><a href=\"#Version_2.3_Mutex_.2B_gate_bias_bugfix_.2B_no_hard_constraints_.28mutexcln.29\"><span class=\"tocnumber\">4.2</span> <span class=\"toctext\">Version 2.3 Mutex + gate bias bugfix + no hard constraints (mutexcln)</span></a></li>
+<li class=\"toclevel-2 tocsection-18\"><a href=\"#Version_2.3_--_Mnt_Go_drives_pfc_out_.2B_new_biases\"><span class=\"tocnumber\">4.3</span> <span class=\"toctext\">Version 2.3 -- Mnt Go drives pfc_out + new biases</span></a></li>
 </ul>
 </li>
-<li class=\"toclevel-1 tocsection-18\"><a href=\"#Keep_Track\"><span class=\"tocnumber\">4</span> <span class=\"toctext\">Keep Track</span></a>
+<li class=\"toclevel-1 tocsection-19\"><a href=\"#Keep_Track\"><span class=\"tocnumber\">5</span> <span class=\"toctext\">Keep Track</span></a>
 <ul>
-<li class=\"toclevel-2 tocsection-19\"><a href=\"#Version_2.3_mutex_4.2F17.2F10_std\"><span class=\"tocnumber\">4.1</span> <span class=\"toctext\">Version 2.3 mutex 4/17/10 std</span></a>
+<li class=\"toclevel-2 tocsection-20\"><a href=\"#Full_Task_working_with_mnt_mnt_nogo_.3D_0\"><span class=\"tocnumber\">5.1</span> <span class=\"toctext\">Full Task working with mnt_mnt_nogo = 0</span></a>
 <ul>
-<li class=\"toclevel-3 tocsection-20\"><a href=\"#2_out_of_2_cats.2C_1_stimulus_per_cat\"><span class=\"tocnumber\">4.1.1</span> <span class=\"toctext\">2 out of 2 cats, 1 stimulus per cat</span></a></li>
-<li class=\"toclevel-3 tocsection-21\"><a href=\"#2_out_of_3_cats.2C_1_stimulus_per_cat\"><span class=\"tocnumber\">4.1.2</span> <span class=\"toctext\">2 out of 3 cats, 1 stimulus per cat</span></a></li>
-<li class=\"toclevel-3 tocsection-22\"><a href=\"#2_out_of_3_cats.2C_2_stimuli_per_cat\"><span class=\"tocnumber\">4.1.3</span> <span class=\"toctext\">2 out of 3 cats, 2 stimuli per cat</span></a></li>
-<li class=\"toclevel-3 tocsection-23\"><a href=\"#2_out_of_4_cats.2C_1_stimulus_per_cat\"><span class=\"tocnumber\">4.1.4</span> <span class=\"toctext\">2 out of 4 cats, 1 stimulus per cat</span></a></li>
+<li class=\"toclevel-3 tocsection-21\"><a href=\"#2_of_6_rotating_cats.2C_3_stimuli_per_cat\"><span class=\"tocnumber\">5.1.1</span> <span class=\"toctext\">2 of 6 rotating cats, 3 stimuli per cat</span></a>
+<ul>
+<li class=\"toclevel-4 tocsection-22\"><a href=\"#Effect_of_self_con\"><span class=\"tocnumber\">5.1.1.1</span> <span class=\"toctext\">Effect of self con</span></a></li>
 </ul>
 </li>
-<li class=\"toclevel-2 tocsection-24\"><a href=\"#PFCSelf_norm_con_n\"><span class=\"tocnumber\">4.2</span> <span class=\"toctext\">PFCSelf norm_con_n</span></a></li>
-<li class=\"toclevel-2 tocsection-25\"><a href=\"#original_runs_--_with_epoch_size_.3D_10\"><span class=\"tocnumber\">4.3</span> <span class=\"toctext\">original runs -- with epoch size = 10</span></a></li>
-<li class=\"toclevel-2 tocsection-26\"><a href=\"#12_stripes\"><span class=\"tocnumber\">4.4</span> <span class=\"toctext\">12 stripes</span></a></li>
+<li class=\"toclevel-3 tocsection-23\"><a href=\"#3_of_6_rotating_cats.2C_3_stim_per_cat\"><span class=\"tocnumber\">5.1.2</span> <span class=\"toctext\">3 of 6 rotating cats, 3 stim per cat</span></a></li>
 </ul>
 </li>
+<li class=\"toclevel-2 tocsection-24\"><a href=\"#Version_2.3_mutex_4.2F17.2F10_std\"><span class=\"tocnumber\">5.2</span> <span class=\"toctext\">Version 2.3 mutex 4/17/10 std</span></a>
+<ul>
+<li class=\"toclevel-3 tocsection-25\"><a href=\"#2_out_of_2_cats.2C_1_stimulus_per_cat\"><span class=\"tocnumber\">5.2.1</span> <span class=\"toctext\">2 out of 2 cats, 1 stimulus per cat</span></a></li>
+<li class=\"toclevel-3 tocsection-26\"><a href=\"#2_out_of_3_cats.2C_1_stimulus_per_cat\"><span class=\"tocnumber\">5.2.2</span> <span class=\"toctext\">2 out of 3 cats, 1 stimulus per cat</span></a></li>
+<li class=\"toclevel-3 tocsection-27\"><a href=\"#2_out_of_3_cats.2C_2_stimuli_per_cat\"><span class=\"tocnumber\">5.2.3</span> <span class=\"toctext\">2 out of 3 cats, 2 stimuli per cat</span></a></li>
+<li class=\"toclevel-3 tocsection-28\"><a href=\"#2_out_of_4_cats.2C_1_stimulus_per_cat\"><span class=\"tocnumber\">5.2.4</span> <span class=\"toctext\">2 out of 4 cats, 1 stimulus per cat</span></a></li>
+<li class=\"toclevel-3 tocsection-29\"><a href=\"#2_out_of_4_cats.2C_2_stimuli_per_cat\"><span class=\"tocnumber\">5.2.5</span> <span class=\"toctext\">2 out of 4 cats, 2 stimuli per cat</span></a></li>
+<li class=\"toclevel-3 tocsection-30\"><a href=\"#2_out_of_6_cats.2C_1_stimulus\"><span class=\"tocnumber\">5.2.6</span> <span class=\"toctext\">2 out of 6 cats, 1 stimulus</span></a></li>
+<li class=\"toclevel-3 tocsection-31\"><a href=\"#2_out_of_6_cats.2C_2_stimuli\"><span class=\"tocnumber\">5.2.7</span> <span class=\"toctext\">2 out of 6 cats, 2 stimuli</span></a></li>
+</ul>
+</li>
+<li class=\"toclevel-2 tocsection-32\"><a href=\"#PFCSelf_norm_con_n\"><span class=\"tocnumber\">5.3</span> <span class=\"toctext\">PFCSelf norm_con_n</span></a></li>
+<li class=\"toclevel-2 tocsection-33\"><a href=\"#original_runs_--_with_epoch_size_.3D_10\"><span class=\"tocnumber\">5.4</span> <span class=\"toctext\">original runs -- with epoch size = 10</span></a></li>
+<li class=\"toclevel-2 tocsection-34\"><a href=\"#12_stripes\"><span class=\"tocnumber\">5.5</span> <span class=\"toctext\">12 stripes</span></a></li>
+</ul>
+</li>
+<li class=\"toclevel-1 tocsection-35\"><a href=\"#12AX\"><span class=\"tocnumber\">6</span> <span class=\"toctext\">12AX</span></a></li>
+<li class=\"toclevel-1 tocsection-36\"><a href=\"#OutGateTest\"><span class=\"tocnumber\">7</span> <span class=\"toctext\">OutGateTest</span></a></li>
 </ul>
 </td></tr></tbody></table><script>if (window.showTocToggle) { var tocShowText = \"show\"; var tocHideText = \"hide\"; showTocToggle(); } </script>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=1\" title=\"Edit section: Current Best Params\">edit</a>]</span> <span class=\"mw-headline\" id=\"Current_Best_Params\"> Current Best Params </span></h1>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=2\" title=\"Edit section: Overall Procedure and Main Parameters To Explore\">edit</a>]</span> <span class=\"mw-headline\" id=\"Overall_Procedure_and_Main_Parameters_To_Explore\"> Overall Procedure and Main Parameters To Explore </span></h2>
+<h1> <span class=\"mw-headline\" id=\"Current_Best_Params\"> Current Best Params </span></h1>
+<h2> <span class=\"mw-headline\" id=\"Overall_Procedure_and_Main_Parameters_To_Explore\"> Overall Procedure and Main Parameters To Explore </span></h2>
 <p>To convert an existing PBWM project, do LeabraWizard/Network/PBWM_Defaults -- good idea to first save a backup copy of the project (or save new one to a new name), and then open both, run defaults on one of them, and then do <a href=\"/ccnlab/index.php?title=Diff_Compare&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Diff Compare (page does not exist)\">Diff Compare</a> of the network.specs between the two models, and see what changed.  You might want to change a couple of things back, depending..
 </p><p>The most important params are:
 </p>
@@ -2984,19 +2998,20 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 </li><li> snrthal kwta parameters -- these are often critical -- defaults are k = 2 for both MAINT and OUTPUT -- if you have more stripes, can increase these -- for SIR2, with 6 stripes, MAINT kwta.k is 4 while OUTPUT kwta.k is 2, for Loop with 8 stripes both k = 2, with 12 stripes, MAINT k = 4, OUTPUT k = 3 -- in general the idea is that the brain has a LOT of stripes, with a decent large roughly-fixed k value, but any given model typically uses the minimal number of stripes and thus needs to set the k value appropriately.
 </li><li> connections from PFC_mnt to matrix (both maint and out matrix): turns out these are not such a good thing after all, and systems work better without them...
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=3\" title=\"Edit section: Network\">edit</a>]</span> <span class=\"mw-headline\" id=\"Network\"> Network </span></h2>
+<h2> <span class=\"mw-headline\" id=\"Network\"> Network </span></h2>
 <ul><li> mid_minus_cycle = 25, min_cycles = 35 -- this will be set automatically if not already set
 </li><li> Also, phase_order must be MINUS_PLUS instead of old MINUS_PLUS_PLUS -- this will be set automatically and checked, but just FYI.
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=4\" title=\"Edit section: PVLV\">edit</a>]</span> <span class=\"mw-headline\" id=\"PVLV\"> PVLV </span></h2>
+<h2> <span class=\"mw-headline\" id=\"PVLV\"> PVLV </span></h2>
 <ul><li> PVLVDALayerSpec (VTA layer spec) -- da.da_gain = 1.0 -- <b>use matrix.da_gain instead of this one!</b>
 <ul><li> pv_gain = 0.1 -- makes PV da values smaller to better match those from LV
 </li></ul>
-</li><li> NVLayerSpec -- nv.da_gain = 0.1 -- smaller amount of novelty contribution works best -- even smaller may be better
+</li><li> NVLayerSpec -- nv.da_gain = 0.1 -- smaller amount of novelty contribution works best (but definitely &gt; 0)
 </li><li> LVLayerSpec -- lv.min_lvi = 0.4 -- set a higher bar for positive LV values
+</li><li> PViLayerSpec -- pv.min_pvi = 0.4 -- \"
 </li><li> LVe conspec (under LearnCons/PVi) -- send_act = ACT_M2 instead of ACT_P -- allows LV units to learn about pfc reps that actually led to reward, prior to updating
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=5\" title=\"Edit section: SNrThal\">edit</a>]</span> <span class=\"mw-headline\" id=\"SNrThal\"> SNrThal </span></h2>
+<h2> <span class=\"mw-headline\" id=\"SNrThal\"> SNrThal </span></h2>
 <ul><li> kwta = KWTA_AVG_INIHB, pt = .8 (entire layer) -- a stiffer competition but using the more flexible avg-based inhib seems best overall
 </li><li> tie_brk diff_thr = .2, thr_gain = .2, loser_gain = 1
 </li><li> mnt_kwta = 2 or more
@@ -3006,7 +3021,7 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 </li><li> snrthal.leak = 1 -- netin = (go - nogo) / (go + nogo + leak)
 </li><li> unit spec act.gain = 600 (std), gbar.l = .8 (vs. .1 default)
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=6\" title=\"Edit section: Matrix\">edit</a>]</span> <span class=\"mw-headline\" id=\"Matrix\"> Matrix </span></h2>
+<h2> <span class=\"mw-headline\" id=\"Matrix\"> Matrix </span></h2>
 <ul><li> matrix.da_gain = .3 to .02 -- as in prior algorithms, SIR does well with .3, and loop likes a much smaller value -- .02 -- <b>this is a key parameter to manipulate!</b>
 </li><li> gate_bias values at their defaults
 </li><li> tie_brk diff_thr = .2, thr_gain = .005, loser_gain = 1
@@ -3016,7 +3031,7 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 </li><li> OUTPUT: unitspec noise.var = 0.0005, patch_noise = false, noise_adapt.mode = PVLV_PVI
 </li></ul>
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=7\" title=\"Edit section: PFC\">edit</a>]</span> <span class=\"mw-headline\" id=\"PFC\"> PFC </span></h2>
+<h2> <span class=\"mw-headline\" id=\"PFC\"> PFC </span></h2>
 <ul><li> Definitely best to have Hidden and other cortical layers receive from BOTH PFC_mnt and PFC_out (Tom's idea) -- can learn different weights from each.  This makes a big diff in general.
 </li><li> NO projections from PFC to Matrix for same stripes -- yes for other PFC layers that might provide context etc.  The gate_bias biases are supposed to reflect the effects of PFC top-down biasing.
 <ul><li> fm_pfc_mnt.wt_scale.rel  -- reduce this from 1.0 as output gated PFC gets more sparse (as determined by SNrThal_out kwta prams) -- loop works best with .2 and has a small number of stripes output gated in general.
@@ -3030,10 +3045,25 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 </li><li> go_learn_base = .05 -- this controls the stripe-wise modulation of learning in PFC as a function of go gating -- it seems to be quite useful for learning PFC reps, and this base level is very low (.02 means that .98 of learning only occurs when corresp PFC stripe is doing go gating (either out or maint).
 </li></ul>
 </li><li> ToPFC lrate = .005 (note: prior default was .001, but with the go_learn_base being low, lrate can be higher..)
-</li><li> PFCSelfCon -- norm_con_n = true, wt_scale.rel = .03, pfc layer spec, clear_decay = .9 -- this all produces much more dependency on recurrent connections for maintenance!
+</li><li> PFCSelfCon -- norm_con_n = true, wt_scale.rel = .2 (new 5.1 parameter), pfc layer spec, clear_decay = .9 -- this all produces much more dependency on recurrent connections for maintenance!
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=8\" title=\"Edit section: Loop\">edit</a>]</span> <span class=\"mw-headline\" id=\"Loop\"> Loop </span></h1>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=9\" title=\"Edit section: Version 2.3 4/17/10 Final good (rndgo = 20)\">edit</a>]</span> <span class=\"mw-headline\" id=\"Version_2.3_4.2F17.2F10_Final_good_.28rndgo_.3D_20.29\"> Version 2.3 4/17/10 Final good (rndgo = 20) </span></h2>
+<h1> <span class=\"mw-headline\" id=\"Configuring_Motor_Output_Gating_Only_.28No_MAINT_gating.29\"> Configuring Motor Output Gating Only (No MAINT gating) </span></h1>
+<p>Interestingly, this uses only a MAINT Matrix layer, <i>not</i> an OUTPUT layer -- because the maint gate now causes an automatic output gated activation of the gated stripe, then this is the simpler way of achieving the dynamic where Matrix gating drives PFC_out only for the subset of gated stripes.  The PFC_mnt layer continues to represent the \"raw\" inputs, and we disable actual maintenance gating, so the net effect is only output gating.  This is appropriate for simulated Motor output layers.
+</p><p>Here's how to configure:
+</p>
+<ul><li> Delete the Matrix_out and associated SNrThal_out layers.  <i>Keep</i> PFC_out!
+</li><li> set PFCLayerSpec.gate.max_maint = 0 -- this prevents Matrix_mnt gating from actually driving maintenance in PFC_mnt!
+</li><li> set MatrixLayerSpec.matrix.mnt_only = true -- an additional flag needed to indicate that only the mnt matrix layer is present, -- this is important for enabling the nogo random go mechanism to work in this new configuration.
+</li><li> optional: set MatrixUnitSpec.noise_adapt.mode = PVLV_PVI, and turn off patch_noise -- patch_noise seems to work fine too so either way..
+</li><li> could maybe increase noise var in MatrixUnitSpec -- maint default is .0005 but .002 might work better -- try both and in between.  
+</li><li> optional: MatrixLayerSpec.gate_gias.mnt_empty_go = 1 -- might work better..
+</li></ul>
+<p>Please see: <tt>svn_sims/pfc/pbwm_test/outget_test/ogtst_mnto.proj</tt> for a working example.
+</p>
+<h1> <span class=\"mw-headline\" id=\"Loop\"> Loop </span></h1>
+<p>Has 300 \"task trials\" with 6 leabra trials per = 1800 leabra trials per epoch.  20 epochs = 6,000 task trials to solve
+</p>
+<h2> <span class=\"mw-headline\" id=\"Version_2.3_4.2F17.2F10_Final_good_.28rndgo_.3D_20.29\"> Version 2.3 4/17/10 Final good (rndgo = 20) </span></h2>
 <p>All results are just mean -- all nets learn 20/20 within 100 epochs unless otherwise noted..
 </p>
 <ul><li> lp3_gatebias12s_kposns_std41710 = 14
@@ -3042,15 +3072,23 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 </li><li> lp3_gatebias12s_kposns_std41710_minpct10 = 19/20 mean 23.35 -- noise adaptation still matters!
 </li><li> lp3_gatebias12s_kposns_std41710_stripelvpct0 = 13.05 -- patch does NOT matter
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=10\" title=\"Edit section: 8 stripes\">edit</a>]</span> <span class=\"mw-headline\" id=\"8_stripes\"> 8 stripes </span></h3>
-<ul><li> lp3_gatebias8s_kposns_std41710_snrmntk2out2 = 16.85 -- not bad!!
+<h3> <span class=\"mw-headline\" id=\"8_stripes\"> 8 stripes </span></h3>
+<ul><li> lp3_gatebias8s_kposns_std41710_multbias_mntmntnogo0_outnorewnogo1 = 19, 20/20 -- better
+</li><li> lp3_gatebias8s_kposns_std41710_multbias_mntmntnogo0 = 25, 19/20 tho -- but just random late cutoff
+</li><li> lp3_gatebias8s_kposns_std41710_multbias10pos0_bigbias5 = 22 -- new std
+</li><li> lp3_gatebias8s_kposns_std41710_multbias10pos0_bigbias5_plviscalemin5 = 19.55 but one fail (almost learned)
+</li><li> lp3_gatebias8s_kposns_std41710_snrmntk2out2 = 16.85 -- not bad!!
 </li><li> lp3_gatebias8s_kposns_std41710_snrmntk3out2 = 24.75
 </li><li> lp3_gatebias8s_kposns_std41710_snrmntk3out3 = 19/20 25.75
 </li><li> lp3_gatebias8s_kposns_std41710 = snrmntk4out3 = 17/20 42.65 -- bad k
 </li><li> tried mtx k = 2,3,5,6 -- 5,6 ok, 2,3 worse 4 def best
 </li><li> tried min_pvi, min_lvi - no diff
+</li><li> lp3_gatebias8s_kposns_std41710_outrewgo0 = 17/20 33.05 -- out_rew_go = 1 is important
+</li><li> lp3_gatebias8s_kposns_std41710_outnorewnogo10 = 19/20 20 -- out_norew_nogo = 2 is better..
+</li><li> lp3_gatebias8s_kposns_std41710_topfclr0 = 18/20 36 -- pfc learning definitely important..
+</li><li> lp3_gatebias8s_kposns_std41710_topfchebb0 = 19/20 28 -- hebb =.001 also key... hmm.
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=11\" title=\"Edit section: Version 2.3 -- mutex clean + bias fix\">edit</a>]</span> <span class=\"mw-headline\" id=\"Version_2.3_--_mutex_clean_.2B_bias_fix\"> Version 2.3 -- mutex clean + bias fix </span></h2>
+<h2> <span class=\"mw-headline\" id=\"Version_2.3_--_mutex_clean_.2B_bias_fix\"> Version 2.3 -- mutex clean + bias fix </span></h2>
 <ul><li> lp3_gatebias12s_kposns_mutexcln_mntvar0001 = 10.9 -- yow! -- this is artificially low -- running with mnt_nogo_rng = 49/51 give results more around 15-20 epochs -- this is the expected baseline level
 </li><li> lp3_gatebias12s_kposns_mutexcln.epc.dat = 16.2 -- has go_netin_gain = .01 and mnt_var = 0.00005
 </li><li> lp3_gatebias12s_kposns_mutexcln_mntvar0001_lvmntpvo0 = 15 -- can nuke this option
@@ -3058,25 +3096,28 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 </li><li> lp3_gatebias12s_kposns_mutexcln_mntvar0001_gradedoutgo0 = 20 -- not sig diff probably
 </li><li> lp3_gatebias12s_kposns_mutexcln_mntvar0001_golrnbs05 = 14
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=12\" title=\"Edit section: Version 2.3 -- maint go = PFC out activation -- mutex between Maint and Out\">edit</a>]</span> <span class=\"mw-headline\" id=\"Version_2.3_--_maint_go_.3D_PFC_out_activation_--_mutex_between_Maint_and_Out\"> Version 2.3 -- maint go = PFC_out activation -- mutex between Maint and Out </span></h2>
+<h2> <span class=\"mw-headline\" id=\"Version_2.3_--_maint_go_.3D_PFC_out_activation_--_mutex_between_Maint_and_Out\"> Version 2.3 -- maint go = PFC_out activation -- mutex between Maint and Out </span></h2>
 <ul><li> lp3_gatebias12s_kposns_mutex_mvar00005_mntrewnogo10 = 20/20 mean 22.1 --- wow!
 </li><li> lp3_gatebias12s_kposns_mutex_mvar0001_mntrewnogo10 = 20/20 mean 40.8
 </li><li> lp3_gatebias12s_kposns_mutex_mvar0002_mntrewnogo10 = 20/20 mean 30.65
 </li><li> lp3_gatebias12s_kposns_mutex_mvar0001_mntrewnogo4 = 14/20 mean 103 -- def need mnt_rew_nogo = 10 to prevent mnt firing on nogo
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=13\" title=\"Edit section: Sir52da\">edit</a>]</span> <span class=\"mw-headline\" id=\"Sir52da\"> Sir52da </span></h1>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=14\" title=\"Edit section: Version 2.3 4/17/10 Final (rndgo = 20)\">edit</a>]</span> <span class=\"mw-headline\" id=\"Version_2.3_4.2F17.2F10_Final_.28rndgo_.3D_20.29\"> Version 2.3 4/17/10 Final (rndgo = 20) </span></h2>
-<ul><li> sir52da6s_gatebias_kposn_std41710 = 103/153
+<h1> <span class=\"mw-headline\" id=\"Sir52da\"> Sir52da </span></h1>
+<h2> <span class=\"mw-headline\" id=\"Version_2.3_4.2F17.2F10_Final_.28rndgo_.3D_20.29\"> Version 2.3 4/17/10 Final (rndgo = 20) </span></h2>
+<ul><li> sir52da6s_gatebias_kposn_std41710_multbiastd_mntmntnogo0_outnorewnogo1 = 49/71 -- dropping...
+</li><li> sir52da6s_gatebias_kposn_std41710_multbiastd_mntmntnogo0 = 57/97 -- mnt_mnt_nogo is not good after all!
+</li><li> sir52da6s_gatebias_kposn_std41710_multbias10pos0_bigbias5 = 81/100 -- wow -- multbias is good!
+</li><li> sir52da6s_gatebias_kposn_std41710 = 103/153
 </li><li> sir52da6s_gatebias_kposn_std41710_golrnbs0 = 19/20 19/20 102/219 -- need some out-of-gated learning 
 </li><li> sir52da6s_gatebias_kposn_std41710_golrnbs1 = 19/20 20/20 120/202 -- but not all..
 </li><li> sir52da6s_gatebias_kposn_std41710_minpct10 = 19/20 20/20 143/245 -- noise adapt is good..
 </li><li> sir52da6s_gatebias_kposn_std41710_stripelvpct0 = 14/20 19/20 125/433 -- yow bad!!!  patch definitely needed!
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=15\" title=\"Edit section: 4 stripes\">edit</a>]</span> <span class=\"mw-headline\" id=\"4_stripes\"> 4 stripes </span></h3>
+<h3> <span class=\"mw-headline\" id=\"4_stripes\"> 4 stripes </span></h3>
 <ul><li> sir52da4s_gatebias_kposn_std41710 = 203/ 290 -- 2x slower but still..
 </li><li> sir52da4s_gatebias_kposn_std41710_snrmntk3 = 149/267 -- mnt k a little bit higher is better perhaps..
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=16\" title=\"Edit section: Version 2.3 Mutex + gate bias bugfix + no hard constraints (mutexcln)\">edit</a>]</span> <span class=\"mw-headline\" id=\"Version_2.3_Mutex_.2B_gate_bias_bugfix_.2B_no_hard_constraints_.28mutexcln.29\"> Version 2.3 Mutex + gate bias bugfix + no hard constraints (mutexcln) </span></h2>
+<h2> <span class=\"mw-headline\" id=\"Version_2.3_Mutex_.2B_gate_bias_bugfix_.2B_no_hard_constraints_.28mutexcln.29\"> Version 2.3 Mutex + gate bias bugfix + no hard constraints (mutexcln) </span></h2>
 <ul><li> sir52da6s_gatebias_kposn_mutexcln_mvar0002 = 20/20 means 105/150 -- yow!
 </li><li> sir52da6s_gatebias_kposn_mutexcln_mvar0002_golrnbs0 = 20/20 means 107/150 -- no diff!
 </li><li> sir52da6s_gatebias_kposn_mutexcln_mvar0002_golrnbs10 = 20/20 means 112/167
@@ -3091,7 +3132,7 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 </li><li> sir52da6s_gatebias_kposn_mutexcln_mvar0002_patlrnmntonly = 19/20 125/226 -- nuke option
 </li><li> sir52da6s_gatebias_kposn_mutexcln_mvar0002_nogroutgo = 20/20 139/220 -- worse --keep
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=17\" title=\"Edit section: Version 2.3 -- Mnt Go drives pfc out + new biases\">edit</a>]</span> <span class=\"mw-headline\" id=\"Version_2.3_--_Mnt_Go_drives_pfc_out_.2B_new_biases\"> Version 2.3 -- Mnt Go drives pfc_out + new biases </span></h2>
+<h2> <span class=\"mw-headline\" id=\"Version_2.3_--_Mnt_Go_drives_pfc_out_.2B_new_biases\"> Version 2.3 -- Mnt Go drives pfc_out + new biases </span></h2>
 <ul><li> sir52da6s_gatebias_kposn_nwbias_mntrew_ogtm2_outnr_noclr_mntk4out2 = 20/20 means 142/191
 </li><li> sir52da6s_gatebias_kposn_nwbias_mntrew_nogtm2_outnr_noclr_mntk4out2 = 20/20 means 156/262 -- seems sig worse
 </li><li> sir52da6s_gatebias_kposn_nwbias_outnr_noclr_mntk4out2 = 20/20 means 136/217 -- seems best in loop
@@ -3102,11 +3143,32 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 </li><li> sir52da6s_gatebias_kposn_nwbias_rgoda10inc1ns02_mvar0002o0005_fmpfcm050_outk2 = 20/20 means 297; 373 -- more out k a bit better -- using that now.
 </li><li> sir52da6s_gatebias_kposn_nwbias_rgoda10inc1ns02_mvar0002o0005 = 20/20 means 141; 200 -- out k = 1
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=18\" title=\"Edit section: Keep Track\">edit</a>]</span> <span class=\"mw-headline\" id=\"Keep_Track\"> Keep Track </span></h1>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=19\" title=\"Edit section: Version 2.3 mutex 4/17/10 std\">edit</a>]</span> <span class=\"mw-headline\" id=\"Version_2.3_mutex_4.2F17.2F10_std\"> Version 2.3 mutex 4/17/10 std </span></h2>
+<h1> <span class=\"mw-headline\" id=\"Keep_Track\"> Keep Track </span></h1>
+<p>Has 25 task trials per epoch.  300 epochs = 7,500 task trials to solve
+</p>
+<h2> <span class=\"mw-headline\" id=\"Full_Task_working_with_mnt_mnt_nogo_.3D_0\"> Full Task working with mnt_mnt_nogo = 0 </span></h2>
+<h3> <span class=\"mw-headline\" id=\"2_of_6_rotating_cats.2C_3_stimuli_per_cat\"> 2 of 6 rotating cats, 3 stimuli per cat </span></h3>
+<ul><li> kt_tomgood_42010_topo_cats2_6_stims3_std050410_outnorewnogo1 = 10/10; 10/10 290; 444
+</li><li> kt_tomgood_42010_topo_cats2_6_stims3_std050410 = 10/10; 10/10; 449; 566 -- out_norew_nogo = 1 better
+<ul><li> kt_tomgood_42010_cats2_6_stims3_std050410_outnorewnogo1 = 7/10; 1/10; 1103; 2875 -- full con much worse
+</li><li> kt_tomgood_42010_cats2_6_stims3_std050410 = 8/10; 0/10; 780; 3000
+</li></ul>
+</li></ul>
+<h4> <span class=\"mw-headline\" id=\"Effect_of_self_con\"> Effect of self con </span></h4>
+<p>Bottom line -- not much effect going up to .7!
+</p>
+<ul><li> kt_tomgood_42010_topo_cats2_6_stims3_std050410_outnorewnogo1_pfcself4 = 461; 509 -- worse than .2
+</li><li> kt_tomgood_42010_topo_cats2_6_stims3_std050410_outnorewnogo1_pfcself5 = 471; 509
+</li><li> kt_tomgood_42010_topo_cats2_6_stims3_std050410_outnorewnogo1_pfcself6 = 401; 430
+</li><li> kt_tomgood_42010_topo_cats2_6_stims3_std050410_outnorewnogo1_pfcself7 = 518; 558
+</li></ul>
+<h3> <span class=\"mw-headline\" id=\"3_of_6_rotating_cats.2C_3_stim_per_cat\"> 3 of 6 rotating cats, 3 stim per cat </span></h3>
+<ul><li> kt_tomgood_42010_topo_cats3_6_stims3_std050410_outnorewnogo1 = 196; 214 -- faster than 2!
+</li></ul>
+<h2> <span class=\"mw-headline\" id=\"Version_2.3_mutex_4.2F17.2F10_std\"> Version 2.3 mutex 4/17/10 std </span></h2>
 <p>results are to 1 0; 2 0's  n's then means
 </p>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=20\" title=\"Edit section: 2 out of 2 cats, 1 stimulus per cat\">edit</a>]</span> <span class=\"mw-headline\" id=\"2_out_of_2_cats.2C_1_stimulus_per_cat\"> 2 out of 2 cats, 1 stimulus per cat </span></h3>
+<h3> <span class=\"mw-headline\" id=\"2_out_of_2_cats.2C_1_stimulus_per_cat\"> 2 out of 2 cats, 1 stimulus per cat </span></h3>
 <ul><li> kt_tomgood_42010_cats2_2_dag02_snrmntk2out2_nogo20 = 9/10; 8/10 377; 542
 </li><li> kt_tomgood_42010_cats2_2_dag03_snrmntk2out2_nogo20 = 9/10; 7/10 268; 516 -- can speed it up..
 </li><li> kt_tomgood_42010_cats2_2_dag04_snrmntk2out2_nogo20 = 5/10; 2/10 -- not too much..
@@ -3114,28 +3176,54 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 </li><li> kt_tomgood_42010_cats2_2_dag02_snrmntk2out2_nogo50 = 4/10; 0/10 -- wow terrible.  lots of rnd go
 </li><li> kt_tomgood_42010_cats2_2_dag02_snrmntk2out2_nogo50_minlivpvi1 = 2/10; 1/10 -- superbad
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=21\" title=\"Edit section: 2 out of 3 cats, 1 stimulus per cat\">edit</a>]</span> <span class=\"mw-headline\" id=\"2_out_of_3_cats.2C_1_stimulus_per_cat\"> 2 out of 3 cats, 1 stimulus per cat </span></h3>
+<h3> <span class=\"mw-headline\" id=\"2_out_of_3_cats.2C_1_stimulus_per_cat\"> 2 out of 3 cats, 1 stimulus per cat </span></h3>
 <ul><li> kt_tomgood_42010_cats2_3_nogensir_nozmc_dag03_snrmntk2out2_nogo20 = 10/10; 10/10; 294; 484 -- no zero maint cur -- better overall...
 </li><li> kt_tomgood_42010_cats2_3_nogensir_dag03_snrmntk2out2_nogo20 = 10/10; 10/10 284; 587 -- No Generic SIR seems key here
 </li><li> kt_tomgood_42010_cats2_3_nogensir_dag03_mntmntnogo2 = 10/10; 9/10 398; 631 -- mnt_mnt_nogo = 2 not better
 </li><li> kt_tomgood_42010_cats2_3_dag02_snrmntk2out2_nogo20 = 8/10; 6/10 358; 762 -- can do ignore OK
 </li><li> kt_tomgood_42010_cats2_3_dag03_snrmntk2out2_nogo20 = 7/10; 6/10 231; 687
 </li><li> kt_tomgood_42010_cats2_3_dag03_snrmntk2out2_nogo20_outrewgo0 = 3/10; 1/10 -- that bias is key
+</li><li> kt_tomgood_12s_42010_pfcfmout_cats2_3_stims1_dag03_snrk2o2 = 10/10; 7/10 500; 823 -- recv fm hidden much btr
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=22\" title=\"Edit section: 2 out of 3 cats, 2 stimuli per cat\">edit</a>]</span> <span class=\"mw-headline\" id=\"2_out_of_3_cats.2C_2_stimuli_per_cat\"> 2 out of 3 cats, 2 stimuli per cat </span></h3>
-<ul><li> kt_tomgood_42010_cats2_3_stim2_nogensir_dag03 = 0/10 -- yow..   mean min = 6.8, max = 16, min = 1 -- seems like a capacity problem..
+<h3> <span class=\"mw-headline\" id=\"2_out_of_3_cats.2C_2_stimuli_per_cat\"> 2 out of 3 cats, 2 stimuli per cat </span></h3>
+<ul><li> kt_tomgood_42010_shapefx_cats2_3_stims2_mnt_mnt_nogo0 = 10/10; 10/10; 287; 563 -- mnt_mnt_nogo=0 is KEY for this case, and seems good overall
+</li><li> kt_tomgood_42010_topo_shapefx_cats2_3_stims2_mnt_mnt_nogo0 = 10/10; 10/10; 144; 199 -- topo version faster!
+<ul><li> kt_tomgood_42010_topo_shapefx_cats2_3_stims2_mnt_mnt_nogo0_outnorewnogo1 = 211; 237 -- out_norew_nogo = 1 is not better here
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=23\" title=\"Edit section: 2 out of 4 cats, 1 stimulus per cat\">edit</a>]</span> <span class=\"mw-headline\" id=\"2_out_of_4_cats.2C_1_stimulus_per_cat\"> 2 out of 4 cats, 1 stimulus per cat </span></h3>
-<ul><li> kt_tomgood_42010_cats2_4_nogensir_dag03 = 7/10; 3/10; 488; 919 -- much better..
+</li><li> kt_tomgood_42010_noshape_cats2_3_stims2_mnt_mnt_nogo0 = 7/10; 472; 1251 (not done yet) -- much worse without shaping!
+</li><li> kt_tomgood_24s_42010_cats2_3_stims2_dag03_snrk4o2 = 9/10; 7/10 590; 781 -- better than mnt_k = 2,3,5
+</li><li> kt_tomgood_42010_cats2_3_stim2_nogensir_dag03 = 0/10 -- yow..   mean min = 6.8, max = 16, min = 1 -- seems like a capacity problem..
+</li></ul>
+<h3> <span class=\"mw-headline\" id=\"2_out_of_4_cats.2C_1_stimulus_per_cat\"> 2 out of 4 cats, 1 stimulus per cat </span></h3>
+<ul><li> kt_tomgood_42010_cats2_4_stims1_newsc_plvi_scale_min5 = 10/10; 5/10; 531; 825 -- seems better..
+</li><li> kt_tomgood_42010_cats2_4_stims1_newsc_plvi_scale_min = 10/10; 3/10; 605; 941 -- min_[pl]vi = .4 worse than .5
+</li><li> kt_tomgood_42010_cats2_4_nogensir_dag03 = 7/10; 3/10; 488; 919 -- much better..
 </li><li> kt_tomgood_42010_cats2_4_dag03_snrmntk2out2_nogo20 = 2/10; 1/10 -- this is where it breaks..
+</li><li> kt_tomgood_18s_42010_cats2_4_dag03_snrk2o2 = 9/10; 6/10; 413; 682
+</li><li> kt_tomgood_18s_42010_cats2_4_dag03_snrk3o2 = 9/10; 8/10; 436; 741 -- k3 better
+</li><li> kt_tomgood_24s_42010_cats2_4_dag03_snrk2o2 = 10/10; 10/10; 360; 443
+</li><li> kt_tomgood_24s_42010_cats2_4_dag03_snrk3o2 = 10/10; 10/10; 350; 395  k3 better
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=24\" title=\"Edit section: PFCSelf norm con n\">edit</a>]</span> <span class=\"mw-headline\" id=\"PFCSelf_norm_con_n\"> PFCSelf norm_con_n </span></h2>
+<h3> <span class=\"mw-headline\" id=\"2_out_of_4_cats.2C_2_stimuli_per_cat\"> 2 out of 4 cats, 2 stimuli per cat </span></h3>
+<ul><li> kt_tomgood_24s_42010_cats2_4_stims2_dag03_snrk2o2 = 1/10.. in progress bad tho
+</li></ul>
+<h3> <span class=\"mw-headline\" id=\"2_out_of_6_cats.2C_1_stimulus\"> 2 out of 6 cats, 1 stimulus </span></h3>
+<ul><li> kt_tomgood_24s_42010_cats2_6_stims1_dag03_snrk4o2 = 6/10; 4/10; 367; 891 -- better than mnt_k = 2,3,5
+</li><li> kt_tomgood_24s_42010_cats2_6_stims1_dag03_snrk2o2 = 6/10 -- getting there.
+</li></ul>
+<h3> <span class=\"mw-headline\" id=\"2_out_of_6_cats.2C_2_stimuli\"> 2 out of 6 cats, 2 stimuli </span></h3>
+<ul><li> kt_tomgood_42010_topo_shapefx_cats2_6_stims2_mnt_mnt_nogo0 = 10/10; 9/10; 964; 1023 -- topo is slower to get to 1 zero but once it gets it, it gets it..
+</li><li> kt_tomgood_42010_confix_shapefx_cats2_6_stims2_mnt_mnt_nogo0 = 10/10; 7/10; 644; 1414 -- confix = remove 2nd connection from CatStore to Matrix left over from topo.
+</li><li> kt_tomgood_42010_shapefx_cats2_6_stims2_mnt_mnt_nogo0 = 9/10; 6/10; 830; 1563 -- confix makes a diff
+</li><li> kt_tomgood_42010_shapefx_cats2_6_stims2_mnt_mnt_nogo0_outnorewnogo1 = 9/10; 6/10; 707; 1593 -- this has the confix -- out_norew_nogo =1 worse relative to confix
+</li></ul>
+<h2> <span class=\"mw-headline\" id=\"PFCSelf_norm_con_n\"> PFCSelf norm_con_n </span></h2>
 <p>Note: epoch size is 25
 </p>
 <ul><li> kt16s_ReStore_v22c_ror_catstorehid_epc25_std_nrmcon_self03_clrdk90 = 8/10 to 1 0, 7/10 to 2 0,  mean 872; 1754, min mean 0.5
 </li><li> kt16s_ReStore_v22c_ror_catstorehid_epc25_dag003_gbias03 = 7/10 to 1 0, 0/10 to 2 0, mean 305, min mean 1.8 -- baseline comparison -- note that recurrent cons case is now actually better!!!
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=25\" title=\"Edit section: original runs -- with epoch size = 10\">edit</a>]</span> <span class=\"mw-headline\" id=\"original_runs_--_with_epoch_size_.3D_10\"> original runs -- with epoch size = 10 </span></h2>
+<h2> <span class=\"mw-headline\" id=\"original_runs_--_with_epoch_size_.3D_10\"> original runs -- with epoch size = 10 </span></h2>
 <p>(if 2 sets of numbers given, then 1st is to 1 0, and 2nd is to 2 0 -- first runs were terminated somehow so only 1st 0 #'s are there and seems likely inaccurate overall)
 </p>
 <ul><li> kt16s_ReStore_v22c_ror_dag003_snrmk6o3_pfco15_fmpfc1 = 9/10 mean 837 -- basically doing quite well
@@ -3147,19 +3235,25 @@ wgAjaxWatch={\"watchMsg\": \"Watch\", \"unwatchMsg\": \"Unwatch\", \"watchingMsg
 </li><li> kt16s_ReStore_v22c_ror_dag003_snrmk12o3_pfco15_fmpfc1 = 5/10 -- def worse
 </li></ul>
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit&amp;section=26\" title=\"Edit section: 12 stripes\">edit</a>]</span> <span class=\"mw-headline\" id=\"12_stripes\"> 12 stripes </span></h2>
+<h2> <span class=\"mw-headline\" id=\"12_stripes\"> 12 stripes </span></h2>
 <ul><li> kt12s_ReStore_v22c_ror_dag003_snrmk4o3_pfco15_fmpfc1 = 7/10 -- little slower too -- not huge but 16s seems justified
+</li></ul>
+<h1> <span class=\"mw-headline\" id=\"12AX\"> 12AX </span></h1>
+<ul><li> 12ax6s_kposn_std41710 = 20/20; 19/20; mean 234; 706
+</li></ul>
+<h1> <span class=\"mw-headline\" id=\"OutGateTest\"> OutGateTest </span></h1>
+<ul><li> ogtst_mnto_lr05_mego1_noise0005 = 43.96/ 86.44 epochs
 </li></ul>
 
 <!-- 
 NewPP limit report
-Preprocessor node count: 103/1000000
+Preprocessor node count: 143/1000000
 Post-expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key ccnlab:pcache:idhash:46047-0!1!0!!en!2 and timestamp 20100423052140 -->
+<!-- Saved in parser cache with key ccnlab:pcache:idhash:46047-0!1!0!!en!2!edit=0 and timestamp 20100816212033 -->
 <div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php/PBWM_V2_Params\">http://grey.colorado.edu/ccnlab/index.php/PBWM_V2_Params</a>\"</div>
 				<!-- /bodytext -->
@@ -3184,12 +3278,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php/PBWM_V2_Par
 <div id=\"p-personal\" class=\"\">
 	<h5>Personal tools</h5>
 	<ul lang=\"en\" xml:lang=\"en\">
-					<li id=\"pt-userpage\"><a href=\"/ccnlab/index.php/User:Oreilly\" title=\"Your user page [ctrl-alt-.]\" accesskey=\".\" class=\"new\">Oreilly</a></li>
-					<li id=\"pt-mytalk\"><a href=\"/ccnlab/index.php/User_talk:Oreilly\" title=\"Your talk page [ctrl-alt-n]\" accesskey=\"n\" class=\"new\">My talk</a></li>
-					<li id=\"pt-preferences\"><a href=\"/ccnlab/index.php/Special:Preferences\" title=\"Your preferences\">My preferences</a></li>
-					<li id=\"pt-watchlist\"><a href=\"/ccnlab/index.php/Special:Watchlist\" title=\"The list of pages you are monitoring for changes [ctrl-alt-l]\" accesskey=\"l\">My watchlist</a></li>
-					<li id=\"pt-mycontris\"><a href=\"/ccnlab/index.php/Special:Contributions/Oreilly\" title=\"List of your contributions [ctrl-alt-y]\" accesskey=\"y\">My contributions</a></li>
-					<li id=\"pt-logout\"><a href=\"/ccnlab/index.php?title=Special:UserLogout&amp;returnto=PBWM_V2_Params\" title=\"Log out\">Log out</a></li>
+					<li id=\"pt-login\"><a href=\"/ccnlab/index.php?title=Special:UserLogin&amp;returnto=PBWM_V2_Params\" title=\"You are encouraged to log in; however, it is not mandatory [ctrl-alt-o]\" accesskey=\"o\">Log in / create account</a></li>
 			</ul>
 </div>
 
@@ -3226,8 +3315,8 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php/PBWM_V2_Par
 	<h5>Views</h5>
 	<ul lang=\"en\" xml:lang=\"en\">
 					<li id=\"ca-view\" class=\"selected\"><a href=\"/ccnlab/index.php/PBWM_V2_Params\"><span>Read</span></a></li>
-					<li id=\"ca-edit\"><a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit\" title=\"You can edit this page.
-Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span>Edit</span></a></li>
+					<li id=\"ca-viewsource\"><a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=edit\" title=\"This page is protected.
+You can view its source [ctrl-alt-e]\" accesskey=\"e\"><span>View source</span></a></li>
 					<li id=\"ca-history\"><a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\"><span>View history</span></a></li>
 			</ul>
 </div>
@@ -3240,9 +3329,6 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
 	<div class=\"menu\">
 	     <ul>
 
-							<li id=\"ca-delete\"><a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=delete\" title=\"Delete this page [ctrl-alt-d]\" accesskey=\"d\">Delete</a></li>
-							<li id=\"ca-move\"><a href=\"/ccnlab/index.php/Special:MovePage/PBWM_V2_Params\" title=\"Move this page [ctrl-alt-m]\" accesskey=\"m\">Move</a></li>
-							<li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;action=unwatch\" title=\"Remove this page from your watchlist [ctrl-alt-w]\" accesskey=\"w\">Unwatch</a></li>
 						
 <!-- navigation -->
 					<li id=\"n-mainpage-description\"><a href=\"/ccnlab/index.php/Main_Page\" title=\"Visit the main page [ctrl-alt-z]\" accesskey=\"z\">Main Page</a></li>
@@ -3261,9 +3347,8 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
 <!-- TOOLBOX -->
 					<li id=\"t-whatlinkshere\"><a href=\"/ccnlab/index.php/Special:WhatLinksHere/PBWM_V2_Params\" title=\"List of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
 						<li id=\"t-recentchangeslinked\"><a href=\"/ccnlab/index.php/Special:RecentChangesLinked/PBWM_V2_Params\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
-																																					<li id=\"t-upload\"><a href=\"/ccnlab/index.php/Special:Upload\" title=\"Upload files [ctrl-alt-u]\" accesskey=\"u\">Upload file</a></li>
-											<li id=\"t-specialpages\"><a href=\"/ccnlab/index.php/Special:SpecialPages\" title=\"List of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
-											<li id=\"t-permalink\"><a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;oldid=1387499\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
+																																										<li id=\"t-specialpages\"><a href=\"/ccnlab/index.php/Special:SpecialPages\" title=\"List of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
+											<li id=\"t-permalink\"><a href=\"/ccnlab/index.php?title=PBWM_V2_Params&amp;oldid=1554645\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
 		
 <!-- /TOOLBOX -->
 
@@ -3294,8 +3379,8 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
 		<!-- footer -->
 		<div id=\"footer\">
 											<ul id=\"footer-info\">
-																	<li id=\"footer-info-lastmod\"> This page was last modified on 23 April 2010, at 05:21.</li>
-																							<li id=\"footer-info-viewcount\">This page has been accessed 909 times.</li>
+																	<li id=\"footer-info-lastmod\"> This page was last modified on 25 May 2010, at 21:23.</li>
+																							<li id=\"footer-info-viewcount\">This page has been accessed 1,131 times.</li>
 															</ul>
 															<ul id=\"footer-places\">
 																	<li id=\"footer-places-privacy\"><a href=\"/ccnlab/index.php/Computational_Cognitive_Neuroscience_Wiki:Privacy_policy\" title=\"Computational Cognitive Neuroscience Wiki:Privacy policy\">Privacy policy</a></li>
@@ -3313,7 +3398,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
 		<!-- /fixalpha -->
 		
 <script>if (window.runOnloadHook) runOnloadHook();</script>
-		<!-- Served in 0.207 secs. -->			
+		<!-- Served in 0.219 secs. -->			
 
 </body></html>";
   };
@@ -3574,7 +3659,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
      };
      EditMbrItem @[1] {
       label="pfc_m gate";
-      desc=" parameters controlling the gating of pfc units<br>  graded out go: [Default: true]  use actual activation level of output Go signal to drive output activation level<br>  clear decay: [Default: 0.9]  how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse<br>  go learn base: [Default: 0.05]  how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)<br>  mid minus min:  minimum number of cycles before computing any gating -- acts like an STN-like function -- must be < network mid_minus_cycle<br>  max maint:  a hard upper-limit on how long the PFC can maintain -- anything over this limit will be cleared. set to 0 for motor areas that do not maintain but use maintenance gating to scope the set of possible responses";
+      desc=" parameters controlling the gating of pfc units<br>  graded out go: [Default: true]  use actual activation level of output Go signal to drive output activation level<br>  clear decay: [Default: 0.9]  how much to decay the activation state for units in the stripe when the maintenance is cleared -- simulates a phasic inhibitory burst (GABA-B?) from the gating pulse<br>  go learn base: [Default: 0.05]  how much PFC learning occurs in the absence of go gating modulation -- 1 minus this is how much happens with go gating -- determines how far plus phase activations used in learning can deviate from minus-phase activation state: plus phase act_nd = act_m + (go_learn_base + (1-go_learn_base) * gate_act) * (act - act_m)<br>  mid minus min:  minimum number of cycles before computing any gating -- acts like an STN-like function -- must be < network mid_minus_cycle<br>  max maint:  a hard upper-limit on how long the PFC can maintain -- anything over this limit will be cleared. set to 0 for motor areas that do not maintain but use maintenance gating to scope the set of possible responses<br>  out go clear: [Default: true]  an output Go clears the maintenance currents at the end of the trial -- only for reward trials (signalled by PVr) -- you use it, you lose it..";
       cust_desc=0;
       base=.projects[0].networks[0].specs.gp[2][7]$$;
       mbr=PFCLayerSpec::gate;
@@ -3669,7 +3754,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
      el_def=0;
      EditMbrItem @[0] {
       label="matrix matrix";
-      desc=" misc parameters for the matrix layer<br>  da gain: [Default: 0:2]  overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other 'upstream' gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate<br>  bias gain: [Default: 0.1]  overall gain factor for the gating biases as they are translated into multipliers on the net input values of Go vs. NoGo units -- allows the bias values to be expressed in standardized relative units and then overall impact can be dialed with this setting<br>  bias pos gain: [Default: 0]  extra multiplicative gain for positive bias terms -- it is in general not great to increase netinput levels on units beyond their natural values, so setting this to zero (default) puts all the bias work on decreasing the relative netinputs for the non-favored population (biologically can be going into a down state)";
+      desc=" misc parameters for the matrix layer<br>  da gain: [Default: 0:2]  overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other 'upstream' gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate<br>  bias gain: [Default: 0.1]  overall gain factor for the gating biases as they are translated into multipliers on the net input values of Go vs. NoGo units -- allows the bias values to be expressed in standardized relative units and then overall impact can be dialed with this setting<br>  bias pos gain: [Default: 0]  extra multiplicative gain for positive bias terms -- it is in general not great to increase netinput levels on units beyond their natural values, so setting this to zero (default) puts all the bias work on decreasing the relative netinputs for the non-favored population (biologically can be going into a down state)<br>  mnt only:  set to true if there is only a MAINT matrix layer -- affects the way that rnd go is computed -- should also have PFCLayerSpec.gate.max_maint = 0";
       cust_desc=0;
       base=.projects[0].networks[0].specs.gp[2][8]$$;
       mbr=MatrixLayerSpec::matrix;
@@ -8628,7 +8713,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
      ProgVar @[8] {
       name="group_index";
       var_type=T_Int;
-      int_val=11;
+      int_val=5;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8764,7 +8849,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
       index_var=.projects[0].programs.gp[0][2].vars[4]$$;
       order_var=.projects[0].programs.gp[0][2].vars[0]$$;
       order=SEQUENTIAL;
-      item_idx_list{ 101;102;103;104;105;106;107;      };
+      item_idx_list{ 128;129;130;131;132;133;134;      };
       update_after=0;
       dmem_nprocs=1;
       dmem_this_proc=0;
@@ -8773,7 +8858,7 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
       group_index_var=.projects[0].programs.gp[0][2].vars[8]$$;
       group_order_var=.projects[0].programs.gp[0][2].vars[7]$$;
       group_order=PERMUTED;
-      group_idx_list{ 17;22;35;0;12;115;25;57;118;67;42;101;79;94;60;54;47;84;108;72;7;128;28;89;121;      };
+      group_idx_list{ 115;28;7;89;94;128;60;25;35;42;47;12;72;84;57;121;54;108;22;0;79;101;17;118;67;      };
      };
      IfElse @[5] {
       desc="if full batch mode, update only at end of epoch";
@@ -11016,7 +11101,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[9] {
       name="max_mnt";
       var_type=T_Real;
-      real_val=3;
+      real_val=1;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11036,7 +11121,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[11] {
       name="n_emty_mnt";
       var_type=T_Real;
-      real_val=1;
+      real_val=2;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11086,7 +11171,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[16] {
       name="n_mnt_nogo";
       var_type=T_Real;
-      real_val=1;
+      real_val=0;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11106,7 +11191,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[18] {
       name="gate_state";
       var_type=T_HardEnum;
-      int_val=3;
+      int_val=0;
       hard_enum_type=PFCGateSpec::GateState;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
@@ -11117,7 +11202,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[19] {
       name="gate_str";
       var_type=T_String;
-      string_val="EMPTY_NOGO";
+      string_val="EMPTY_MNT_GO";
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -13582,7 +13667,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] "0_I_TWO";"10_I_ONE";"11_I_TWO";"12_I_TWO";"13_I_ONE";"14_I_ONE";"15_I_TWO";"16_I_TWO";"17_I_ONE";"18_I_ONE";
+"19_I_TWO";"1_I_ONE";"20_I_TWO";"21_I_TWO";"22_I_TWO";"23_I_TWO";"24_I_TWO";"2_I_TWO";"3_I_ONE";"4_I_ONE";
+"5_I_TWO";"6_I_TWO";"7_I_TWO";"8_I_ONE";"9_I_TWO";	};
        };
        float_Data @[1] {
 	name="DA";
@@ -13597,7 +13684,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.12868007;0.11813378;0.13342153;0.12485079;0.11923243;0.14741358;0.14067134;0.13529608;0.12543216;0.12251151;
+0.10524032;0.15017833;0.12719946;0.10684118;0.11611202;0.14646851;0.13764259;0.1307421;0.14098063;0.12125795;
+0.12004277;0.13860986;0.14951447;0.14041094;0.10004691;	};
        };
        float_Data @[2] {
 	name="LVe";
@@ -13612,7 +13701,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.77067661;0.8203826;0.83559269;0.69914943;0.80687064;0.7775405;0.89390343;0.87840641;0.76777732;0.78103691;
+0.54121411;0.85364425;0.82658899;0.8761093;0.88529634;0.89101845;0.88911265;0.85838759;0.83460033;0.78928941;
+0.902116;0.86851662;0.79364777;0.84931743;0.58826679;	};
        };
        float_Data @[3] {
 	name="LVi";
@@ -13627,7 +13718,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.5918231;0.58974433;0.57142466;0.58732182;0.59448916;0.60039634;0.59860736;0.5911206;0.58805084;0.61072189;
+0.58748233;0.59776783;0.59785587;0.58672208;0.59400183;0.60718441;0.60843813;0.59572822;0.59345567;0.60405421;
+0.58530432;0.59284496;0.61105663;0.59141886;0.59548301;	};
        };
        float_Data @[4] {
 	name="PVe";
@@ -13642,7 +13735,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.71428573;0.66666669;0.33333334;0.71428573;0.5;0.5714286;0.69999999;0.69999999;0.69999999;0.71428573;
+0.5714286;0.5;0.71428573;0.66666669;0.66666669;0.5714286;0.71428573;0.5;0.69999999;0.33333334;
+0.66666669;0.71428573;0.5714286;0.30000001;0.42857143;	};
        };
        float_Data @[5] {
 	name="PVi";
@@ -13657,7 +13752,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.59454167;0.57022768;0.53450423;0.53460532;0.59563076;0.59480578;0.60133678;0.59374249;0.56008732;0.63286144;
+0.51626009;0.5741781;0.59057087;0.64351171;0.61552215;0.64655221;0.63217038;0.55352163;0.57784158;0.58001345;
+0.57002395;0.63888961;0.6029191;0.57226902;0.54971409;	};
        };
        float_Data @[6] {
 	name="PVr";
@@ -13672,7 +13769,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.67379653;0.66899872;0.66898608;0.69236225;0.68304372;0.69531113;0.67614955;0.68400842;0.68799359;0.66483396;
+0.69034541;0.68188441;0.6646871;0.62048119;0.65068573;0.66961998;0.66630989;0.65768653;0.68947184;0.65453237;
+0.6546641;0.67248827;0.68440044;0.69079733;0.68445534;	};
        };
        float_Data @[7] {
 	name="n_mgo";
@@ -13687,7 +13786,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.5714286;0.66666669;0.66666669;0.5714286;0.60000002;0.5714286;0.60000002;0.60000002;0.60000002;0.5714286;
+0.5714286;0.60000002;0.5714286;0.66666669;0.66666669;0.5714286;0.5714286;0.60000002;0.60000002;0.66666669;
+0.66666669;0.5714286;0.5714286;0.60000002;0.5714286;	};
        };
        float_Data @[8] {
 	name="n_ogo";
@@ -13702,7 +13803,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.42857143;0.33333334;0.33333334;0.42857143;0.40000001;0.42857143;0.40000001;0.40000001;0.40000001;0.42857143;
+0.42857143;0.40000001;0.42857143;0.33333334;0.33333334;0.42857143;0.42857143;0.40000001;0.40000001;0.33333334;
+0.33333334;0.42857143;0.42857143;0.40000001;0.42857143;	};
        };
        float_Data @[9] {
 	name="n_emty_mnt";
@@ -13717,7 +13820,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.5714286;1;0.33333334;0.85714287;0.40000001;0.42857143;0.60000002;0.80000001;0.80000001;0.71428573;
+0.42857143;0.60000002;0.71428573;0.66666669;0.33333334;0.71428573;0.5714286;0.80000001;0.80000001;0.33333334;
+1;0.5714286;0.5714286;0.40000001;0.71428573;	};
        };
        float_Data @[10] {
 	name="n_mnt_mnt";
@@ -13732,7 +13837,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.42857143;0;0.33333334;0;0.2;0.2857143;0.2;0.2;0;0;
+0.14285715;0.2;0.14285715;0;0.33333334;0.14285715;0.14285715;0.2;0.2;0.33333334;
+0.33333334;0;0.14285715;0.2;0;	};
        };
        float_Data @[11] {
 	name="n_emty_out";
@@ -13747,7 +13854,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;	};
        };
        float_Data @[12] {
 	name="n_mnt_out";
@@ -13762,7 +13871,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 0.85714287;0.66666669;0.33333334;0.71428573;0.40000001;0.5714286;0.60000002;0.60000002;0.60000002;0.71428573;
+0.42857143;0.80000001;0.71428573;0.66666669;0.33333334;0.5714286;0.71428573;0.60000002;0.60000002;0.66666669;
+0.66666669;0.5714286;0.71428573;0.60000002;0.71428573;	};
        };
        float_Data @[13] {
 	name="n_emty_nogo";
@@ -13777,7 +13888,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 1;1.6666666;3;1.8571428;3;2.2857144;2.4000001;2;2.2;2.1428571;
+3;0.60000002;2.2857144;2.3333333;3;2.2857144;1.5714285;0.60000002;1.8;2;
+0.33333334;2.7142856;1.8571428;2.4000001;2.1428571;	};
        };
        float_Data @[14] {
 	name="n_mnt_nogo";
@@ -13792,7 +13905,9 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[0] 	};
+		[25] 1.1428572;0.66666669;0;0.5714286;0;0.42857143;0.2;0.40000001;0.40000001;0.42857143;
+0;1.8;0.14285715;0.33333334;0;0.2857143;1;1.8;0.60000002;0.66666669;
+1.6666666;0.14285715;0.71428573;0.40000001;0.42857143;	};
        };
       };
       data_flags=SAVE_ROWS|AUTO_CALC;
@@ -13820,7 +13935,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[1] 0;	};
+		[1] 0.1300696;	};
        };
        float_Data @[1] {
 	name="absDA_max";
@@ -13835,7 +13950,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 		[0] 	};
 	ar {
 	 name=;
-		[1] 0;	};
+		[1] 0.3431398;	};
        };
       };
       data_flags=SAVE_ROWS|AUTO_CALC;
@@ -15709,6 +15824,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   net_name=0.05;
 	   net_vals=0.05;
 	   layer=0.04;
+	   layer_min=0.01;
 	   layer_vals=0.03;
 	   prjn=0.01;
 	   unit=0.02;
@@ -17089,9 +17205,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+     act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
      spike {rise=1: decay=0.05: g_gain=4: window=20: eq_gain=10: eq_dt=0.02: };
      spike_misc {
+      exp_slope=0.02;
+      spk_thr=1.2;
       clamp_max_p=0.11;
       clamp_type=REGULAR;
       vm_r=0;
@@ -17099,31 +17217,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       vm_dend_dt=0.16;
       vm_dend_time=6.25;
      };
-     adapt {
-      on=0;
-      dt_rate=0.02;
-      dt_time=50;
-      vm_gain=0.1;
-      spike_gain=0.01;
-      interval=10;
-     };
-     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=2: clamp_norm_max_amp=2: };
-     syn_delay {
-      on=0;
-      delay=4;
-     };
      opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
-     dt {vm=0.3: vm_time=3.333333: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+     dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
      act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.1: a=0.5: };
      e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=1: trl=0: };
      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
+     adapt {
+      on=0;
+      dt=0.007;
+      vm_gain=0.1;
+      spike_gain=0.01;
+      interval=10;
+      dt_time=142.8571;
+     };
+     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=2: };
+     syn_delay {
+      on=0;
+      delay=4;
+     };
      da_mod {on=0: mod=PLUS_CONT: gain=1: };
-     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
      noise {name="": type=GAUSSIAN: mean=0: var=0.001: par=1: };
      noise_adapt {trial_fixed=0: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -17159,6 +17277,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	type=KWTA_INHIB;
 	kwta_pt=0.25;
 	min_i=0;
+	fb_act_thr=0;
+	ff_pct=0;
+	fb_max_dt=0.1;
 	comp_thr=0.5;
 	comp_gain=2;
 	gp_pt=0.2;
@@ -17166,8 +17287,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+       i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
        adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
-       clamp {hard=1: gain=0.5: };
+       clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: };
        decay {event=1: phase=1: phase2=0: clamp_phase2=1: };
        ct_inhib_mod {
 	use_sin=0;
@@ -17197,6 +17319,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	type=KWTA_INHIB;
 	kwta_pt=0.25;
 	min_i=0;
+	fb_act_thr=0;
+	ff_pct=0;
+	fb_max_dt=0.1;
 	comp_thr=0.5;
 	comp_gain=2;
 	gp_pt=0.2;
@@ -17204,8 +17329,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+       i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
        adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
-       clamp {hard=1: gain=0.5: };
+       clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: };
        decay {event=1: phase=1: phase2=0: clamp_phase2=1: };
        ct_inhib_mod {
 	use_sin=0;
@@ -17227,6 +17353,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       type=KWTA_AVG_INHIB;
       kwta_pt=0.6;
       min_i=0;
+      fb_act_thr=0;
+      ff_pct=0;
+      fb_max_dt=0.1;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
@@ -17234,8 +17363,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k_from=USE_PCT: k=12: pct=0.15: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
      adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.5: };
+     clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=1: };
      ct_inhib_mod {
       use_sin=0;
@@ -17294,7 +17424,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	name=;
 	el_typ=SchedItem;
 	el_def=0;
-	last_ctr=-1;
+	last_ctr=76;
 	default_val=1;
 	interpolate=0;
 	cur_val=1;
@@ -17341,7 +17471,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
       el_typ=SchedItem;
       el_def=0;
-      last_ctr=-1;
+      last_ctr=76;
       default_val=1;
       interpolate=0;
       cur_val=1;
@@ -17442,9 +17572,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs.gp[1][0].children[1]$$: };
 	sse_tol=0.5;
 	act_fun=NOISY_LINEAR;
-	act {thr=0.17: gain=220: nvar=0.01: avg_dt=0: avg_init=0.15: i_thr=STD: };
+	act {gelin=0: thr=0.17: gain=220: nvar=0.01: avg_dt=0: avg_init=0.15: i_thr=STD: };
 	spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
 	spike_misc {
+	 exp_slope=0.02;
+	 spk_thr=1.2;
 	 clamp_max_p=0.11;
 	 clamp_type=REGULAR;
 	 vm_r=0;
@@ -17452,31 +17584,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 vm_dend_dt=0.16;
 	 vm_dend_time=6.25;
 	};
-	adapt {
-	 on=0;
-	 dt_rate=0.02;
-	 dt_time=50;
-	 vm_gain=0.1;
-	 spike_gain=0.01;
-	 interval=10;
-	};
-	depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-	syn_delay {
-	 on=0;
-	 delay=4;
-	};
 	opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+	maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
 	clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
 	vm_range {min=0: max=1: range=1: scale=1: };
 	v_m_init {name="RandomSpec_12": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-	dt {vm=0.05: vm_time=20: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=100: vm_eq_dt=1: };
+	dt {integ=1: vm=0.05: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=100: vm_eq_dt=1: integ_time=1: vm_time=20: net_time=1.428571: };
 	act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
 	g_bar {e=1: l=0.1: i=1: h=0.03: a=0.09: };
 	e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
 	hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
 	acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+	adapt {
+	 on=0;
+	 dt=0.007;
+	 vm_gain=0.1;
+	 spike_gain=0.01;
+	 interval=10;
+	 dt_time=142.8571;
+	};
+	depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+	syn_delay {
+	 on=0;
+	 delay=4;
+	};
 	da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-	maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
 	noise_type=NO_NOISE;
 	noise {name="RandomSpec_13": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
 	noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -17496,9 +17628,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       bias_spec {type=LeabraBiasSpec: spec=$.projects[0].networks[0].specs.gp[1][0].children[1]$: };
       sse_tol=0.5;
       act_fun=NOISY_LINEAR;
-      act {thr=0.17: gain=220: nvar=0.01: avg_dt=0: avg_init=0.15: i_thr=STD: };
+      act {gelin=0: thr=0.17: gain=220: nvar=0.01: avg_dt=0: avg_init=0.15: i_thr=STD: };
       spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
       spike_misc {
+       exp_slope=0.02;
+       spk_thr=1.2;
        clamp_max_p=0.11;
        clamp_type=REGULAR;
        vm_r=0;
@@ -17506,31 +17640,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        vm_dend_dt=0.16;
        vm_dend_time=6.25;
       };
-      adapt {
-       on=0;
-       dt_rate=0.02;
-       dt_time=50;
-       vm_gain=0.1;
-       spike_gain=0.01;
-       interval=10;
-      };
-      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-      syn_delay {
-       on=0;
-       delay=4;
-      };
       opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
       vm_range {min=0: max=1: range=1: scale=1: };
       v_m_init {name="RandomSpec_10": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-      dt {vm=0.05: vm_time=20: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=100: vm_eq_dt=1: };
+      dt {integ=1: vm=0.05: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=100: vm_eq_dt=1: integ_time=1: vm_time=20: net_time=1.428571: };
       act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
       g_bar {e=1: l=0.1: i=1: h=0.03: a=0.09: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
       hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
       acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+      adapt {
+       on=0;
+       dt=0.007;
+       vm_gain=0.1;
+       spike_gain=0.01;
+       interval=10;
+       dt_time=142.8571;
+      };
+      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+      syn_delay {
+       on=0;
+       delay=4;
+      };
       da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
       noise {name="RandomSpec_11": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
       noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -17558,9 +17692,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs.gp[1][0].children[1].children[0]$$: };
       sse_tol=0.5;
       act_fun=NOISY_XX1;
-      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0: avg_init=0.15: i_thr=STD: };
+      act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0: avg_init=0.15: i_thr=STD: };
       spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
       spike_misc {
+       exp_slope=0.02;
+       spk_thr=1.2;
        clamp_max_p=0.11;
        clamp_type=REGULAR;
        vm_r=0;
@@ -17568,31 +17704,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        vm_dend_dt=0.16;
        vm_dend_time=6.25;
       };
-      adapt {
-       on=0;
-       dt_rate=0.02;
-       dt_time=50;
-       vm_gain=0.1;
-       spike_gain=0.01;
-       interval=10;
-      };
-      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-      syn_delay {
-       on=0;
-       delay=4;
-      };
       opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       clamp_range {min=-2: max=2: range=4: scale=0.25: };
       vm_range {min=0: max=1: range=1: scale=1: };
       v_m_init {name="RandomSpec_14": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-      dt {vm=0.25: vm_time=4: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+      dt {integ=1: vm=0.25: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=4: net_time=1.428571: };
       act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
       g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
       hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
       acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+      adapt {
+       on=0;
+       dt=0.007;
+       vm_gain=0.1;
+       spike_gain=0.01;
+       interval=10;
+       dt_time=142.8571;
+      };
+      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+      syn_delay {
+       on=0;
+       delay=4;
+      };
       da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
       noise {name="RandomSpec_15": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
       noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -17620,9 +17756,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs.gp[1][0].children[2].children[1]$$: };
       sse_tol=0.5;
       act_fun=NOISY_XX1;
-      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+      act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
       spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
       spike_misc {
+       exp_slope=0.02;
+       spk_thr=1.2;
        clamp_max_p=0.11;
        clamp_type=REGULAR;
        vm_r=0;
@@ -17630,31 +17768,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        vm_dend_dt=0.16;
        vm_dend_time=6.25;
       };
-      adapt {
-       on=0;
-       dt_rate=0.02;
-       dt_time=50;
-       vm_gain=0.1;
-       spike_gain=0.01;
-       interval=10;
-      };
-      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-      syn_delay {
-       on=0;
-       delay=4;
-      };
       opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
       clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
       vm_range {min=0: max=1: range=1: scale=1: };
       v_m_init {name="RandomSpec_25": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-      dt {vm=0.1: vm_time=10: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+      dt {integ=1: vm=0.1: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=10: net_time=1.428571: };
       act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
       g_bar {e=1: l=0.1: i=1: h=0.5: a=2: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
       hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
       acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+      adapt {
+       on=0;
+       dt=0.007;
+       vm_gain=0.1;
+       spike_gain=0.01;
+       interval=10;
+       dt_time=142.8571;
+      };
+      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+      syn_delay {
+       on=0;
+       delay=4;
+      };
       da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
       noise {name="RandomSpec_26": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
       noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -17690,9 +17828,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	bias_spec {type=MatrixBiasSpec: spec=.projects[0].networks[0].specs.gp[1][0].children[5].children[2]$$: };
 	sse_tol=0.5;
 	act_fun=NOISY_XX1;
-	act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=NO_AH: };
+	act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=NO_AH: };
 	spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
 	spike_misc {
+	 exp_slope=0.02;
+	 spk_thr=1.2;
 	 clamp_max_p=0.11;
 	 clamp_type=REGULAR;
 	 vm_r=0;
@@ -17700,31 +17840,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 vm_dend_dt=0.16;
 	 vm_dend_time=6.25;
 	};
-	adapt {
-	 on=0;
-	 dt_rate=0.02;
-	 dt_time=50;
-	 vm_gain=0.1;
-	 spike_gain=0.01;
-	 interval=10;
-	};
-	depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-	syn_delay {
-	 on=0;
-	 delay=4;
-	};
 	opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+	maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
 	clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
 	vm_range {min=0: max=1: range=1: scale=1: };
 	v_m_init {name="RandomSpec_31": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-	dt {vm=0.25: vm_time=4: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+	dt {integ=1: vm=0.25: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=4: net_time=1.428571: };
 	act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
 	g_bar {e=1: l=0.1: i=1: h=0.02: a=0.06: };
 	e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
 	hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
 	acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+	adapt {
+	 on=0;
+	 dt=0.007;
+	 vm_gain=0.1;
+	 spike_gain=0.01;
+	 interval=10;
+	 dt_time=142.8571;
+	};
+	depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+	syn_delay {
+	 on=0;
+	 delay=4;
+	};
 	da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-	maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
 	noise_type=NETIN_NOISE;
 	noise {name="RandomSpec_32": type=GAUSSIAN: mean=0: var=0.0005000000237487257: par=1: };
 	noise_adapt {trial_fixed=1: k_pos_noise=1: mode=PVLV_PVI: min_pct=0.5: min_pct_c=0.5: };
@@ -17747,9 +17887,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       bias_spec {type=MatrixBiasSpec: spec=$.projects[0].networks[0].specs.gp[1][0].children[5].children[2]$: };
       sse_tol=0.5;
       act_fun=NOISY_XX1;
-      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=NO_AH: };
+      act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=NO_AH: };
       spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
       spike_misc {
+       exp_slope=0.02;
+       spk_thr=1.2;
        clamp_max_p=0.11;
        clamp_type=REGULAR;
        vm_r=0;
@@ -17757,31 +17899,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        vm_dend_dt=0.16;
        vm_dend_time=6.25;
       };
-      adapt {
-       on=0;
-       dt_rate=0.02;
-       dt_time=50;
-       vm_gain=0.1;
-       spike_gain=0.01;
-       interval=10;
-      };
-      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-      syn_delay {
-       on=0;
-       delay=4;
-      };
       opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
       vm_range {min=0: max=1: range=1: scale=1: };
       v_m_init {name="RandomSpec_27": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-      dt {vm=0.25: vm_time=4: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+      dt {integ=1: vm=0.25: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=4: net_time=1.428571: };
       act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
       g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
       hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
       acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+      adapt {
+       on=0;
+       dt=0.007;
+       vm_gain=0.1;
+       spike_gain=0.01;
+       interval=10;
+       dt_time=142.8571;
+      };
+      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+      syn_delay {
+       on=0;
+       delay=4;
+      };
       da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NETIN_NOISE;
       noise {name="RandomSpec_28": type=GAUSSIAN: mean=0: var=9.999999747378752e-05: par=1: };
       noise_adapt {trial_fixed=1: k_pos_noise=1: mode=PVLV_LVE: min_pct=0.5: min_pct_c=0.5: };
@@ -17812,9 +17954,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       bias_spec {type=MatrixBiasSpec: spec=.projects[0].networks[0].specs[4]$$: };
       sse_tol=0.5;
       act_fun=NOISY_XX1;
-      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+      act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
       spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
       spike_misc {
+       exp_slope=0.02;
+       spk_thr=1.2;
        clamp_max_p=0.11;
        clamp_type=REGULAR;
        vm_r=0;
@@ -17822,31 +17966,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        vm_dend_dt=0.16;
        vm_dend_time=6.25;
       };
-      adapt {
-       on=0;
-       dt_rate=0.02;
-       dt_time=50;
-       vm_gain=0.1;
-       spike_gain=0.01;
-       interval=10;
-      };
-      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-      syn_delay {
-       on=0;
-       delay=4;
-      };
       opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
       vm_range {min=0: max=1: range=1: scale=1: };
       v_m_init {name="RandomSpec_29": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-      dt {vm=0.1: vm_time=10: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+      dt {integ=1: vm=0.1: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=10: net_time=1.428571: };
       act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
       g_bar {e=1: l=0.8: i=1: h=0.01: a=0.03: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
       hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
       acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+      adapt {
+       on=0;
+       dt=0.007;
+       vm_gain=0.1;
+       spike_gain=0.01;
+       interval=10;
+       dt_time=142.8571;
+      };
+      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+      syn_delay {
+       on=0;
+       delay=4;
+      };
       da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
       noise {name="RandomSpec_30": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
       noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -18120,7 +18264,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=-1;
+	   last_ctr=76;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -18167,7 +18311,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=-1;
+	 last_ctr=76;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -18284,7 +18428,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=-1;
+	   last_ctr=76;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -18331,7 +18475,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=-1;
+	 last_ctr=76;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -18385,7 +18529,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=-1;
+	 last_ctr=76;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -18439,7 +18583,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=-1;
+	 last_ctr=76;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -18609,7 +18753,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=-1;
+	   last_ctr=76;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -18663,7 +18807,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   name=;
 	   el_typ=SchedItem;
 	   el_def=0;
-	   last_ctr=-1;
+	   last_ctr=76;
 	   default_val=1;
 	   interpolate=0;
 	   cur_val=1;
@@ -18710,7 +18854,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 name=;
 	 el_typ=SchedItem;
 	 el_def=0;
-	 last_ctr=-1;
+	 last_ctr=76;
 	 default_val=1;
 	 interpolate=0;
 	 cur_val=1;
@@ -18891,6 +19035,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.6;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -18898,8 +19045,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=0;
@@ -18929,6 +19077,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.9;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -18936,8 +19087,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=1: };
       ct_inhib_mod {
        use_sin=1;
@@ -18975,6 +19127,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.9;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -18982,8 +19137,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -19018,6 +19174,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.9;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -19025,8 +19184,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -19069,6 +19229,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 type=KWTA_AVG_INHIB;
 	 kwta_pt=0.9;
 	 min_i=0;
+	 fb_act_thr=0;
+	 ff_pct=0;
+	 fb_max_dt=0.1;
 	 comp_thr=0.5;
 	 comp_gain=2;
 	 gp_pt=0.2;
@@ -19076,8 +19239,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+	i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
 	adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-	clamp {hard=1: gain=0.2: };
+	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
 	decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
 	ct_inhib_mod {
 	 use_sin=1;
@@ -19112,6 +19276,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 type=KWTA_AVG_INHIB;
 	 kwta_pt=0.9;
 	 min_i=0;
+	 fb_act_thr=0;
+	 ff_pct=0;
+	 fb_max_dt=0.1;
 	 comp_thr=0.5;
 	 comp_gain=2;
 	 gp_pt=0.2;
@@ -19119,8 +19286,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+	i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
 	adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-	clamp {hard=1: gain=0.2: };
+	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
 	decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
 	ct_inhib_mod {
 	 use_sin=1;
@@ -19147,6 +19315,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.9;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -19154,8 +19325,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -19190,6 +19362,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.9;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -19197,8 +19372,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -19246,6 +19422,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 type=KWTA_INHIB;
 	 kwta_pt=0.25;
 	 min_i=0;
+	 fb_act_thr=0;
+	 ff_pct=0;
+	 fb_max_dt=0.1;
 	 comp_thr=0.5;
 	 comp_gain=2;
 	 gp_pt=0.2;
@@ -19253,8 +19432,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+	i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
 	adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-	clamp {hard=1: gain=0.2: };
+	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
 	decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
 	ct_inhib_mod {
 	 use_sin=1;
@@ -19281,6 +19461,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_INHIB;
        kwta_pt=0.25;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -19288,8 +19471,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -19328,6 +19512,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 type=KWTA_AVG_INHIB;
 	 kwta_pt=0.6;
 	 min_i=0;
+	 fb_act_thr=0;
+	 ff_pct=0;
+	 fb_max_dt=0.1;
 	 comp_thr=0.5;
 	 comp_gain=2;
 	 gp_pt=0.2;
@@ -19335,8 +19522,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_PCT: k=12: pct=0.15: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+	i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
 	adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-	clamp {hard=1: gain=0.2: };
+	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
 	decay {event=0: phase=0: phase2=0.1: clamp_phase2=0: };
 	ct_inhib_mod {
 	 use_sin=1;
@@ -19358,6 +19546,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.6;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -19365,8 +19556,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.15: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=0: phase=0: phase2=0.1: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=0;
@@ -19405,6 +19597,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 type=KWTA_INHIB;
 	 kwta_pt=0.25;
 	 min_i=0;
+	 fb_act_thr=0;
+	 ff_pct=0;
+	 fb_max_dt=0.1;
 	 comp_thr=0.5;
 	 comp_gain=2;
 	 gp_pt=0.2;
@@ -19412,8 +19607,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_K: k=4: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	tie_brk {on=1: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+	i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
 	adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-	clamp {hard=1: gain=0.2: };
+	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
 	decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
 	ct_inhib_mod {
 	 use_sin=1;
@@ -19429,7 +19625,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 abs_lrate=0.2;
 	};
 	bg_type=OUTPUT;
-	matrix {da_gain=0.2: bias_gain=0.1: bias_pos_gain=0: };
+	matrix {da_gain=0.2: bias_gain=0.1: bias_pos_gain=0: mnt_only=0: };
 	gate_bias {
 	 out_rew_go=1;
 	 out_norew_nogo=1;
@@ -19453,6 +19649,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_INHIB;
        kwta_pt=0.25;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -19460,8 +19659,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=4: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=1: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -19477,7 +19677,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        abs_lrate=0.2;
       };
       bg_type=MAINT;
-      matrix {da_gain=0.2: bias_gain=0.1: bias_pos_gain=0: };
+      matrix {da_gain=0.2: bias_gain=0.1: bias_pos_gain=0: mnt_only=0: };
       gate_bias {
        out_rew_go=1;
        out_norew_nogo=1;
@@ -19517,6 +19717,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 type=KWTA_AVG_INHIB;
 	 kwta_pt=0.8;
 	 min_i=0;
+	 fb_act_thr=0;
+	 ff_pct=0;
+	 fb_max_dt=0.1;
 	 comp_thr=0.5;
 	 comp_gain=2;
 	 gp_pt=0.2;
@@ -19524,8 +19727,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	kwta {k_from=USE_K: k=2: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	tie_brk {on=1: k_thr=1: diff_thr=0.2: thr_gain=0.2: loser_gain=1: };
+	i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
 	adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-	clamp {hard=1: gain=0.2: };
+	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
 	decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
 	ct_inhib_mod {
 	 use_sin=1;
@@ -19549,6 +19753,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.8;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -19556,8 +19763,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=2: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=1: k_thr=1: diff_thr=0.2: thr_gain=0.2: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -19895,18 +20103,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 ;;;;;;;;;;
 ;;;;;;;;;     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.1504211: max=0.8672354: max_i=11: };
-     acts_m {cmpt=1: avg=0.14845: max=0.8663824: max_i=11: };
-     phase_dif_ratio=0.986896;
+     acts_p {cmpt=1: avg=0.1699306: max=0.8043954: max_i=17: };
+     acts_m {cmpt=1: avg=0.1249832: max=0.8739365: max_i=4: };
+     phase_dif_ratio=1.000756;
      acts_p2 {cmpt=1: avg=0.1396646: max=0.9073002: max_i=34: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=1.729714: k1_ithr=1.445772: ithr_r=0.1793127: ithr_diff=0.1641555: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.721201: k1_ithr=2.947636: ithr_r=0.2330429: ithr_diff=0.2078804: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.1428571: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$$: };
      hard_clamped=0;
      avg_l_avg=0;
@@ -19975,18 +20185,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
 	  [3 3] "A";"B";"C";"X";"Y";"Z";"ONE";"TWO";"THREE";     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.1055556: max=0.95: max_i=7: };
-     acts_m {cmpt=1: avg=0.1055556: max=0.95: max_i=7: };
+     acts_m {cmpt=1: avg=0.1055556: max=0.95: max_i=0: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0.1055556: max=0.95: max_i=1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=1: pct=0.1111111: pct_c=0.8888889: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.1111111: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[0]$$: };
      hard_clamped=0;
      avg_l_avg=0;
@@ -20095,18 +20307,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
 	  [2 1] "L";"R";     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.475: max=0.95: max_i=0: };
-     acts_m {cmpt=1: avg=0.4610948: max=0.890953: max_i=0: };
-     phase_dif_ratio=0.970726;
+     acts_m {cmpt=1: avg=0.4693435: max=0.9364442: max_i=0: };
+     phase_dif_ratio=0.9927605;
      acts_p2 {cmpt=1: avg=0.475: max=0.95: max_i=0: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=0.9103853: k1_ithr=0.7644435: ithr_r=0.1747198: ithr_diff=0.1603077: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=4.920884: k1_ithr=3.403688: ithr_r=0.3686287: ithr_diff=0.3083178: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.5: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1].children[1]$$: };
      hard_clamped=0;
      avg_l_avg=0;
@@ -20168,6 +20382,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts_p {cmpt=1: avg=0: max=0: max_i=0: };
@@ -20176,10 +20391,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=1: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs.gp[2][0]$$: };
       hard_clamped=0;
       avg_l_avg=nan;
@@ -20284,6 +20500,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts_p {cmpt=1: avg=0.2375: max=0.95: max_i=2: };
@@ -20292,10 +20509,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=ExtRewLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][1]$: };
       hard_clamped=0;
       avg_l_avg=6.371704e-42;
@@ -20423,22 +20641,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        fm_input=-1;
        fm_output=-1;
       };
-      output_name="1";
+      output_name="0.5";
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.2686211: max=0.7663268: max_i=2: };
-      acts_m {cmpt=1: avg=0.2691394: max=0.7658922: max_i=2: };
-      phase_dif_ratio=1.001929;
+      acts_p {cmpt=1: avg=0.2293053: max=0.8114303: max_i=2: };
+      acts_m {cmpt=1: avg=0.2264011: max=0.8152214: max_i=2: };
+      phase_dif_ratio=0.9997748;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=6.636679: k1_ithr=2.505213: ithr_r=0.9742378: ithr_diff=0.62252: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=25.61986: k1_ithr=5.904068: ithr_r=1.467726: ithr_diff=0.7695512: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=PVrLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][2]$: };
       hard_clamped=0;
       avg_l_avg=0;
@@ -20563,22 +20783,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        fm_input=-1;
        fm_output=-1;
       };
-      output_name="1";
+      output_name="0.5";
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.2321718: max=0.7839308: max_i=2: };
-      acts_m {cmpt=1: avg=0.2330726: max=0.7829945: max_i=2: };
-      phase_dif_ratio=1.00388;
+      acts_p {cmpt=1: avg=0.2145352: max=0.8279428: max_i=2: };
+      acts_m {cmpt=1: avg=0.2145297: max=0.8370876: max_i=2: };
+      phase_dif_ratio=0.999993;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.130226: k1_ithr=0.9311414: ithr_r=1.21245: ithr_diff=0.7025322: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=8.229915: k1_ithr=1.228177: ithr_r=1.902244: ithr_diff=0.8507667: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=PViLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][3]$: };
       hard_clamped=0;
       avg_l_avg=0;
@@ -20705,18 +20927,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name="1";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.27463: max=0.7554627: max_i=3: };
-	acts_m {cmpt=1: avg=0.2771122: max=0.7542679: max_i=3: };
-	phase_dif_ratio=1.009038;
+	acts_p {cmpt=1: avg=0.2404466: max=0.77641: max_i=3: };
+	acts_m {cmpt=1: avg=0.2255187: max=0.7934414: max_i=3: };
+	phase_dif_ratio=1.000911;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.257848: k1_ithr=1.425431: ithr_r=0.8265926: ithr_diff=0.5624623: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=7.259006: k1_ithr=2.163293: ithr_r=1.210611: ithr_diff=0.7019851: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -20733,22 +20957,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        fm_input=-1;
        fm_output=-1;
       };
-      output_name=;
+      output_name="1";
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.27463: max=0.7554627: max_i=0: };
-      acts_m {cmpt=1: avg=0.2771122: max=0.7542679: max_i=0: };
-      phase_dif_ratio=1.009038;
+      acts_p {cmpt=1: avg=0.2404466: max=0.77641: max_i=0: };
+      acts_m {cmpt=1: avg=0.2255187: max=0.7934414: max_i=0: };
+      phase_dif_ratio=1.000911;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=LVeLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][4]$: };
       hard_clamped=0;
       avg_l_avg=1.050974e-43;
@@ -20875,18 +21101,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name="1";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.4833709: max=0.7021517: max_i=3: };
-	acts_m {cmpt=1: avg=0.4840997: max=0.7020426: max_i=3: };
-	phase_dif_ratio=1.001508;
+	acts_p {cmpt=1: avg=0.4643931: max=0.7059066: max_i=3: };
+	acts_m {cmpt=1: avg=0.4481937: max=0.7087638: max_i=3: };
+	phase_dif_ratio=1.001422;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.974468: k1_ithr=1.908891: ithr_r=0.4435426: ithr_diff=0.3582411: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.697115: k1_ithr=2.878224: ithr_r=0.489775: ithr_diff=0.3872358: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -20903,22 +21131,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        fm_input=-1;
        fm_output=-1;
       };
-      output_name=;
+      output_name="1";
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.4833709: max=0.7021517: max_i=0: };
-      acts_m {cmpt=1: avg=0.4840997: max=0.7020426: max_i=0: };
-      phase_dif_ratio=1.001508;
+      acts_p {cmpt=1: avg=0.4643931: max=0.7059066: max_i=0: };
+      acts_m {cmpt=1: avg=0.4481937: max=0.7087638: max_i=0: };
+      phase_dif_ratio=1.001422;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=LViLayerSpec: spec=.projects[0].networks[0].specs.gp[2][4].children[0]$$: };
       hard_clamped=0;
       avg_l_avg=2.087935e-43;
@@ -21023,18 +21253,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.3930221: max=0.7186954: max_i=1: };
-      acts_m {cmpt=1: avg=0.3947195: max=0.7183751: max_i=1: };
-      phase_dif_ratio=1.004319;
+      acts_p {cmpt=1: avg=0.2781711: max=0.7538545: max_i=1: };
+      acts_m {cmpt=1: avg=0.2688528: max=0.7583235: max_i=1: };
+      phase_dif_ratio=1.000947;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=3.162712: k1_ithr=1.797615: ithr_r=0.5649694: ithr_diff=0.4316224: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=5.65842: k1_ithr=2.381138: ithr_r=0.8655664: ithr_diff=0.5791869: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=NVLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][5]$: };
       hard_clamped=0;
       avg_l_avg=1.401298e-45;
@@ -21210,22 +21442,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.2658945: max=0.2658945: max_i=0: };
-      acts_m {cmpt=1: avg=0.2594349: max=0.2594349: max_i=0: };
-      phase_dif_ratio=0.9757064;
+      acts_p {cmpt=1: avg=0.3075304: max=0.3075304: max_i=0: };
+      acts_m {cmpt=1: avg=0.04347819: max=0.04347819: max_i=0: };
+      phase_dif_ratio=1.01483;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=1: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=PVLVDaLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][6]$: };
       hard_clamped=0;
       avg_l_avg=1.401298e-45;
-      dav=0;
+      dav=0.04119718;
       avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
       avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
       avg_netin_n=0;
@@ -21355,18 +21589,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name="1";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.434308: max=0.7113205: max_i=3: };
-	acts_m {cmpt=1: avg=0.4387284: max=0.7104183: max_i=3: };
-	phase_dif_ratio=1.010178;
+	acts_p {cmpt=1: avg=0.229585: max=0.7892865: max_i=3: };
+	acts_m {cmpt=1: avg=0.227204: max=0.7930202: max_i=3: };
+	phase_dif_ratio=1.000494;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.493562: k1_ithr=1.504418: ithr_r=0.505306: ithr_diff=0.396679: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=6.204794: k1_ithr=1.851775: ithr_r=1.209178: ithr_diff=0.7015573: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -21385,18 +21621,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name="1";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.3078788: max=0.7437274: max_i=3: };
-	acts_m {cmpt=1: avg=0.3133846: max=0.7420291: max_i=3: };
-	phase_dif_ratio=1.017883;
+	acts_p {cmpt=1: avg=0.2670382: max=0.7587543: max_i=3: };
+	acts_m {cmpt=1: avg=0.2536929: max=0.7671102: max_i=3: };
+	phase_dif_ratio=1.001984;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.268719: k1_ithr=1.081822: ithr_r=0.7405684: ithr_diff=0.5231572: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=5.581676: k1_ithr=2.175811: ithr_r=0.9420878: ithr_diff=0.6101869: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -21415,18 +21653,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name="1";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.2342308: max=0.7815144: max_i=3: };
-	acts_m {cmpt=1: avg=0.2342651: max=0.7814819: max_i=3: };
-	phase_dif_ratio=1.000147;
+	acts_p {cmpt=1: avg=0.326343: max=0.7414911: max_i=3: };
+	acts_m {cmpt=1: avg=0.2471864: max=0.7730037: max_i=3: };
+	phase_dif_ratio=1.001307;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.838013: k1_ithr=0.9839031: ithr_r=1.059332: ithr_diff=0.6533126: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=5.256979: k1_ithr=1.924438: ithr_r=1.004923: ithr_diff=0.633927: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -21445,24 +21685,26 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name="1";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.3075547: max=0.7407768: max_i=3: };
-	acts_m {cmpt=1: avg=0.3120407: max=0.7392125: max_i=3: };
-	phase_dif_ratio=1.014586;
+	acts_p {cmpt=1: avg=0.2791361: max=0.7525123: max_i=3: };
+	acts_m {cmpt=1: avg=0.2390749: max=0.7800058: max_i=3: };
+	phase_dif_ratio=1.002714;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.650059: k1_ithr=1.29436: ithr_r=0.7165655: ithr_diff=0.5115731: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=5.631412: k1_ithr=1.926878: ithr_r=1.072459: ithr_diff=0.657834: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
 	misc_state3=0;
-	misc_float=0.05;
-	misc_float1=0;
+	misc_float=0.9800372;
+	misc_float1=0.9789865;
 	misc_float2=0;
        };
       };
@@ -21473,22 +21715,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        fm_input=-1;
        fm_output=-1;
       };
-      output_name=;
+      output_name="1_1_1_1";
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.3209931: max=0.7815144: max_i=2: };
-      acts_m {cmpt=1: avg=0.3246047: max=0.7814819: max_i=2: };
-      phase_dif_ratio=1.011251;
+      acts_p {cmpt=1: avg=0.2755256: max=0.7892865: max_i=0: };
+      acts_m {cmpt=1: avg=0.2417895: max=0.7930202: max_i=0: };
+      phase_dif_ratio=1.001658;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=4: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=PatchLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][4].children[1]$: };
       hard_clamped=0;
       avg_l_avg=1.401298e-45;
@@ -21686,18 +21930,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.1355387: max=0.1355387: max_i=0: };
-	acts_m {cmpt=1: avg=0.1313697: max=0.1313697: max_i=0: };
-	phase_dif_ratio=0.9692413;
+	acts_p {cmpt=1: avg=0.3239664: max=0.3239664: max_i=0: };
+	acts_m {cmpt=1: avg=0.02034757: max=0.02034757: max_i=0: };
+	phase_dif_ratio=1.006915;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -21716,18 +21962,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.2054657: max=0.2054657: max_i=0: };
-	acts_m {cmpt=1: avg=0.1969167: max=0.1969167: max_i=0: };
-	phase_dif_ratio=0.9583918;
+	acts_p {cmpt=1: avg=0.2654974: max=0.2654974: max_i=0: };
+	acts_m {cmpt=1: avg=0.03529236: max=0.03529236: max_i=0: };
+	phase_dif_ratio=1.006894;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -21746,18 +21994,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.3162175: max=0.3162175: max_i=0: };
-	acts_m {cmpt=1: avg=0.3130992: max=0.3130992: max_i=0: };
-	phase_dif_ratio=0.9901388;
+	acts_p {cmpt=1: avg=0.2410765: max=0.2410765: max_i=0: };
+	acts_m {cmpt=1: avg=0.07290736: max=0.07290736: max_i=0: };
+	phase_dif_ratio=1.008952;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -21776,18 +22026,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.2264915: max=0.2264915: max_i=0: };
-	acts_m {cmpt=1: avg=0.2195213: max=0.2195213: max_i=0: };
-	phase_dif_ratio=0.9692253;
+	acts_p {cmpt=1: avg=0.2521877: max=0.2521877: max_i=0: };
+	acts_m {cmpt=1: avg=0.07375938: max=0.07375938: max_i=0: };
+	phase_dif_ratio=1.006696;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -21808,22 +22060,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.2209284: max=0.3162175: max_i=2: };
-      acts_m {cmpt=1: avg=0.2152267: max=0.3130992: max_i=2: };
-      phase_dif_ratio=0.9741923;
+      acts_p {cmpt=1: avg=0.270682: max=0.3239664: max_i=0: };
+      acts_m {cmpt=1: avg=0.05057666: max=0.07375938: max_i=3: };
+      phase_dif_ratio=1.007312;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.25: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=SNcLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][6].children[0]$: };
       hard_clamped=0;
       avg_l_avg=0;
-      dav=0;
+      dav=0.04958884;
       avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
       avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
       avg_netin_n=0;
@@ -21967,20 +22221,22 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	unique_geom=0;
 	geom {x=4: y=7: n_not_xy=0: n=28: };
 	units_lesioned=0;
-	output_name="Go";
+	output_name="No";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.04246242: max=0.3013854: max_i=20: };
-	acts_m {cmpt=1: avg=0.04246242: max=0.3013854: max_i=20: };
-	phase_dif_ratio=1;
+	acts_p {cmpt=1: avg=0.07569068: max=0.7081212: max_i=23: };
+	acts_m {cmpt=1: avg=0.04554028: max=0.3623166: max_i=25: };
+	phase_dif_ratio=0.9999979;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=2.473541: k1_ithr=2.45316: ithr_r=0.008273968: ithr_diff=0.003339732: tie_brk_gain=0.9833013: eff_loser_gain=1.983301: tie_brk=1: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.516554: k1_ithr=3.49833: ithr_r=0.005195568: ithr_diff=0.000187803: tie_brk_gain=0.999061: eff_loser_gain=1.999061: tie_brk=1: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1428571: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -21997,20 +22253,22 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	unique_geom=0;
 	geom {x=4: y=7: n_not_xy=0: n=28: };
 	units_lesioned=0;
-	output_name="Go";
+	output_name="No";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.04894397: max=0.3583023: max_i=12: };
-	acts_m {cmpt=1: avg=0.04894397: max=0.3583023: max_i=12: };
-	phase_dif_ratio=1;
+	acts_p {cmpt=1: avg=0.09380583: max=0.8403518: max_i=6: };
+	acts_m {cmpt=1: avg=0.0538489: max=0.4595054: max_i=16: };
+	phase_dif_ratio=0.9999998;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=2.469477: k1_ithr=2.456036: ithr_r=0.005457858: ithr_diff=0.00045676: tie_brk_gain=0.9977162: eff_loser_gain=1.997716: tie_brk=1: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.547109: k1_ithr=3.527523: ithr_r=0.005536935: ithr_diff=0.0005377192: tie_brk_gain=0.9973114: eff_loser_gain=1.997311: tie_brk=1: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1428571: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22027,20 +22285,22 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	unique_geom=0;
 	geom {x=4: y=7: n_not_xy=0: n=28: };
 	units_lesioned=0;
-	output_name="Go";
+	output_name="No";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.04823875: max=0.3676394: max_i=3: };
-	acts_m {cmpt=1: avg=0.04823875: max=0.3676394: max_i=3: };
+	acts_p {cmpt=1: avg=0.07419423: max=0.5571003: max_i=16: };
+	acts_m {cmpt=1: avg=0.04637027: max=0.3877562: max_i=26: };
 	phase_dif_ratio=1;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=2.453958: k1_ithr=2.438845: ithr_r=0.006177616: ithr_diff=0.001194348: tie_brk_gain=0.9940283: eff_loser_gain=1.994028: tie_brk=1: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.559475: k1_ithr=3.541568: ithr_r=0.005043641: ithr_diff=3.181616e-05: tie_brk_gain=0.9998409: eff_loser_gain=1.999841: tie_brk=1: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1428571: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22057,20 +22317,22 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	unique_geom=0;
 	geom {x=4: y=7: n_not_xy=0: n=28: };
 	units_lesioned=0;
-	output_name="No";
+	output_name="Go";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.04848328: max=0.358565: max_i=2: };
-	acts_m {cmpt=1: avg=0.04848267: max=0.35856: max_i=2: };
-	phase_dif_ratio=0.9999873;
+	acts_p {cmpt=1: avg=0.07771879: max=0.6860406: max_i=1: };
+	acts_m {cmpt=1: avg=0.08557851: max=0.7540527: max_i=2: };
+	phase_dif_ratio=1;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=2.470757: k1_ithr=2.456683: ithr_r=0.005712375: ithr_diff=0.0007176421: tie_brk_gain=0.9964118: eff_loser_gain=1.996412: tie_brk=1: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.629707: k1_ithr=3.524262: ithr_r=0.02948088: ithr_diff=0.02477862: tie_brk_gain=0.8761069: eff_loser_gain=1.876107: tie_brk=1: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1428571: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22087,22 +22349,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        fm_input=-1;
        fm_output=-1;
       };
-      output_name=;
+      output_name="No_No_No_Go";
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.04703211: max=0.3676394: max_i=2: };
-      acts_m {cmpt=1: avg=0.04703195: max=0.3676394: max_i=2: };
-      phase_dif_ratio=0.9999967;
+      acts_p {cmpt=1: avg=0.08035238: max=0.8403518: max_i=1: };
+      acts_m {cmpt=1: avg=0.05783449: max=0.7540527: max_i=3: };
+      phase_dif_ratio=0.9999995;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=16: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.1428571: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=MatrixLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][8]$: };
       hard_clamped=0;
       avg_l_avg=0;
@@ -22226,20 +22490,22 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	unique_geom=0;
 	geom {x=4: y=7: n_not_xy=0: n=28: };
 	units_lesioned=0;
-	output_name="Go";
+	output_name="No";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
-	acts_m {cmpt=1: avg=0: max=0: max_i=0: };
+	acts_p {cmpt=1: avg=0.02275962: max=0.329341: max_i=17: };
+	acts_m {cmpt=1: avg=0.02471683: max=0.3859048: max_i=22: };
 	phase_dif_ratio=1;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=2.471588: k1_ithr=2.454484: ithr_r=0.006944212: ithr_diff=0.001979436: tie_brk_gain=0.9901028: eff_loser_gain=1.990103: tie_brk=1: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.53229: k1_ithr=3.504019: ithr_r=0.00803583: ithr_diff=0.003096217: tie_brk_gain=0.9845189: eff_loser_gain=1.984519: tie_brk=1: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1428571: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22256,20 +22522,22 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	unique_geom=0;
 	geom {x=4: y=7: n_not_xy=0: n=28: };
 	units_lesioned=0;
-	output_name="Go";
+	output_name="No";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
-	acts_m {cmpt=1: avg=0: max=0: max_i=0: };
-	phase_dif_ratio=1;
+	acts_p {cmpt=1: avg=0.03783497: max=0.3713061: max_i=25: };
+	acts_m {cmpt=1: avg=0.03479284: max=0.3471275: max_i=17: };
+	phase_dif_ratio=0.9999953;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=2.474748: k1_ithr=2.441098: ithr_r=0.01369062: ithr_diff=0.008861211: tie_brk_gain=0.955694: eff_loser_gain=1.955694: tie_brk=1: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.579631: k1_ithr=3.551269: ithr_r=0.007954822: ithr_diff=0.003013442: tie_brk_gain=0.9849328: eff_loser_gain=1.984933: tie_brk=1: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1428571: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22286,20 +22554,22 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	unique_geom=0;
 	geom {x=4: y=7: n_not_xy=0: n=28: };
 	units_lesioned=0;
-	output_name="Go";
+	output_name="No";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.01277524: max=0.3436695: max_i=25: };
-	acts_m {cmpt=1: avg=0.01277524: max=0.3436695: max_i=25: };
-	phase_dif_ratio=1;
+	acts_p {cmpt=1: avg=0.02165785: max=0.3054674: max_i=16: };
+	acts_m {cmpt=1: avg=0.02361054: max=0.3313183: max_i=18: };
+	phase_dif_ratio=1.000004;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=2.478821: k1_ithr=2.465829: ithr_r=0.005254981: ithr_diff=0.0002486311: tie_brk_gain=0.9987569: eff_loser_gain=1.998757: tie_brk=1: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.575008: k1_ithr=3.555834: ithr_r=0.005377708: ithr_diff=0.0003744664: tie_brk_gain=0.9981277: eff_loser_gain=1.998128: tie_brk=1: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1428571: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22318,18 +22588,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name="No";
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.02221087: max=0.3290242: max_i=23: };
-	acts_m {cmpt=1: avg=0.02221079: max=0.3290218: max_i=23: };
-	phase_dif_ratio=0.9999962;
+	acts_p {cmpt=1: avg=0.02386933: max=0.3407045: max_i=16: };
+	acts_m {cmpt=1: avg=0.0217187: max=0.3074662: max_i=26: };
+	phase_dif_ratio=1;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=2.463644: k1_ithr=2.437119: ithr_r=0.01082489: ithr_diff=0.005943906: tie_brk_gain=0.9702805: eff_loser_gain=1.97028: tie_brk=1: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.584761: k1_ithr=3.563949: ithr_r=0.005822483: ithr_diff=0.0008304304: tie_brk_gain=0.9958479: eff_loser_gain=1.995848: tie_brk=1: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1428571: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22346,22 +22618,24 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        fm_input=-1;
        fm_output=-1;
       };
-      output_name=;
+      output_name="No_No_No_No";
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.008746529: max=0.3436695: max_i=2: };
-      acts_m {cmpt=1: avg=0.008746508: max=0.3436695: max_i=2: };
-      phase_dif_ratio=0.9999976;
+      acts_p {cmpt=1: avg=0.02653044: max=0.3713061: max_i=1: };
+      acts_m {cmpt=1: avg=0.02620973: max=0.3859048: max_i=0: };
+      phase_dif_ratio=0.9999992;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=16: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.1428571: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=MatrixLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][8].children[0]$: };
       hard_clamped=0;
       avg_l_avg=0;
@@ -22440,6 +22714,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
@@ -22448,10 +22723,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.8: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22470,18 +22746,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.9715322: max=0.9715322: max_i=0: };
-	acts_m {cmpt=1: avg=0.9715315: max=0.9715315: max_i=0: };
-	phase_dif_ratio=0.9999993;
+	acts_p {cmpt=1: avg=0.9617094: max=0.9617094: max_i=0: };
+	acts_m {cmpt=1: avg=0: max=0: max_i=0: };
+	phase_dif_ratio=1;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.8: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22500,6 +22778,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
@@ -22508,10 +22787,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.8: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22530,24 +22810,26 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.3711095: max=0.3711095: max_i=0: };
-	acts_m {cmpt=1: avg=0.3709319: max=0.3709319: max_i=0: };
-	phase_dif_ratio=0.9995213;
+	acts_p {cmpt=1: avg=0.9559286: max=0.9559286: max_i=0: };
+	acts_m {cmpt=1: avg=0.9870113: max=0.9870113: max_i=0: };
+	phase_dif_ratio=0.9999999;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.8: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
 	misc_state3=0;
-	misc_float=0.05;
-	misc_float1=0;
+	misc_float=0.9800372;
+	misc_float1=0.9789865;
 	misc_float2=0;
        };
       };
@@ -22562,18 +22844,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.3356604: max=0.9715322: max_i=1: };
-      acts_m {cmpt=1: avg=0.3356158: max=0.9715315: max_i=1: };
-      phase_dif_ratio=0.9998672;
+      acts_p {cmpt=1: avg=0.4794095: max=0.9617094: max_i=1: };
+      acts_m {cmpt=1: avg=0.2467528: max=0.9870113: max_i=3: };
+      phase_dif_ratio=0.9999999;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-      kwta {k=2: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=-0.04999996: k1_ithr=-0.04999996: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      kwta {k=2: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=2.39243: k1_ithr=-2.502337: ithr_r=0: ithr_diff=2.045939: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.5: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.8: };
       maxda=0;
+      act_max_avg=0;
       spec {type=SNrThalLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][9]$: };
       hard_clamped=0;
       avg_l_avg=0;
@@ -22652,6 +22936,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
@@ -22660,10 +22945,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.8: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22682,6 +22968,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
@@ -22690,10 +22977,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.8: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22712,6 +23000,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
@@ -22720,10 +23009,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.8: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22742,6 +23032,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
@@ -22750,16 +23041,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.25: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.8: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
 	misc_state3=0;
-	misc_float=0.05;
-	misc_float1=0;
+	misc_float=0.9800372;
+	misc_float1=0.9789865;
 	misc_float2=0;
        };
       };
@@ -22774,6 +23066,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts_p {cmpt=1: avg=0: max=0: max_i=0: };
@@ -22781,11 +23074,12 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       phase_dif_ratio=1;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-      kwta {k=2: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=-0.04999996: k1_ithr=-0.8: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      kwta {k=2: pct=0.5: pct_c=0.5: adth_k=1: k_ithr=-2.932821: k1_ithr=-3.420953: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.5: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.8: };
       maxda=0;
+      act_max_avg=0;
       spec {type=SNrThalLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][9].children[0]$: };
       hard_clamped=0;
       avg_l_avg=0;
@@ -22950,18 +23244,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.1889229: max=0.8927007: max_i=28: };
-	acts_m {cmpt=1: avg=0.1878381: max=0.8921511: max_i=28: };
-	phase_dif_ratio=0.994258;
+	acts_p {cmpt=1: avg=0.2076862: max=0.8530205: max_i=21: };
+	acts_m {cmpt=1: avg=0.1616247: max=0.8952001: max_i=5: };
+	phase_dif_ratio=0.999844;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=2.803419: k1_ithr=1.987899: ithr_r=0.3437615: ithr_diff=0.290902: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=4.646508: k1_ithr=3.23599: ithr_r=0.3617812: ithr_diff=0.3035652: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1333333: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -22980,18 +23276,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.1732323: max=0.9104224: max_i=12: };
-	acts_m {cmpt=1: avg=0.1733822: max=0.9090685: max_i=12: };
-	phase_dif_ratio=1.000865;
+	acts_p {cmpt=1: avg=0.2254173: max=0.8274947: max_i=24: };
+	acts_m {cmpt=1: avg=0.1900394: max=0.9393029: max_i=3: };
+	phase_dif_ratio=1.001376;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=5.870717: k1_ithr=2.283977: ithr_r=0.9440585: ithr_diff=0.6109543: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=6.968572: k1_ithr=3.826811: ithr_r=0.5993786: ithr_diff=0.4508472: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1333333: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -23010,18 +23308,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.1775988: max=0.9407682: max_i=20: };
-	acts_m {cmpt=1: avg=0.1774384: max=0.9413325: max_i=20: };
-	phase_dif_ratio=0.999097;
+	acts_p {cmpt=1: avg=0.1078779: max=0.9203175: max_i=22: };
+	acts_m {cmpt=1: avg=0.1626852: max=0.9139324: max_i=22: };
+	phase_dif_ratio=0.9990617;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=5.813094: k1_ithr=2.489737: ithr_r=0.8479359: ithr_diff=0.5717019: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=4.514982: k1_ithr=3.257187: ithr_r=0.3265374: ithr_diff=0.2785826: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1333333: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -23040,24 +23340,26 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.1749229: max=0.8786014: max_i=21: };
-	acts_m {cmpt=1: avg=0.1812648: max=0.8811751: max_i=21: };
-	phase_dif_ratio=1.036255;
+	acts_p {cmpt=1: avg=0.1425927: max=0.9363265: max_i=17: };
+	acts_m {cmpt=1: avg=0.1624426: max=0.8596795: max_i=7: };
+	phase_dif_ratio=1.000282;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=2.760026: k1_ithr=2.05367: ithr_r=0.2956118: ithr_diff=0.2559238: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=4.353628: k1_ithr=3.325062: ithr_r=0.2695212: ithr_diff=0.2362549: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1333333: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
 	misc_state3=0;
-	misc_float=0.05;
-	misc_float1=0;
+	misc_float=0.9800372;
+	misc_float1=0.9789865;
 	misc_float2=0;
        };
       };
@@ -23072,18 +23374,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.1786692: max=0.9407682: max_i=2: };
-      acts_m {cmpt=1: avg=0.1799808: max=0.9413325: max_i=2: };
-      phase_dif_ratio=1.007341;
+      acts_p {cmpt=1: avg=0.1708935: max=0.9363265: max_i=3: };
+      acts_m {cmpt=1: avg=0.169198: max=0.9393029: max_i=1: };
+      phase_dif_ratio=1.000317;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=16: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.1333333: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=PFCLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][7]$: };
       hard_clamped=0;
       avg_l_avg=0;
@@ -23185,6 +23489,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
@@ -23193,10 +23498,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1333333: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -23215,18 +23521,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0.1669114: max=0.8772033: max_i=12: };
-	acts_m {cmpt=1: avg=0.1670559: max=0.8758988: max_i=12: };
-	phase_dif_ratio=1.000866;
+	acts_p {cmpt=1: avg=0.2157474: max=0.7919968: max_i=24: };
+	acts_m {cmpt=1: avg=0: max=0: max_i=0: };
+	phase_dif_ratio=1.001376;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1333333: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -23245,6 +23553,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
@@ -23253,10 +23562,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1333333: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
@@ -23275,24 +23585,26 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	units_lesioned=0;
 	output_name=;
 	netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+	netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
 	i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
 	acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-	acts_p {cmpt=1: avg=0: max=0: max_i=0: };
-	acts_m {cmpt=1: avg=0: max=0: max_i=0: };
-	phase_dif_ratio=1;
+	acts_p {cmpt=1: avg=0.1355595: max=0.8901435: max_i=17: };
+	acts_m {cmpt=1: avg=0.1590291: max=0.8416146: max_i=7: };
+	phase_dif_ratio=1.000282;
 	acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
 	kwta {k=4: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+	i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
 	un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
 	adapt_i {avg_avg=0.1333333: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
 	maxda=0;
+	act_max_avg=0;
 	misc_state=0;
 	misc_state1=0;
 	misc_state2=0;
 	misc_state3=0;
-	misc_float=0.05;
-	misc_float1=0;
+	misc_float=0.9800372;
+	misc_float1=0.9789865;
 	misc_float2=0;
        };
       };
@@ -23307,18 +23619,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       sse=0;
       icon_value=0;
       netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+      netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
       i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
       acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-      acts_p {cmpt=1: avg=0.04172785: max=0.8772033: max_i=1: };
-      acts_m {cmpt=1: avg=0.04176398: max=0.8758988: max_i=1: };
-      phase_dif_ratio=1.000866;
+      acts_p {cmpt=1: avg=0.08782671: max=0.8901435: max_i=3: };
+      acts_m {cmpt=1: avg=0.03975729: max=0.8416146: max_i=3: };
+      phase_dif_ratio=1.000954;
       acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
       acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
       kwta {k=16: pct=0.1333333: pct_c=0.8666667: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
       un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
       adapt_i {avg_avg=0.1333333: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
       maxda=0;
+      act_max_avg=0;
       spec {type=PFCOutLayerSpec: spec=$.projects[0].networks[0].specs.gp[2][7].children[0]$: };
       hard_clamped=0;
       avg_l_avg=0;
@@ -23363,8 +23677,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=3780: sys=886: tot=127473989891: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=2337: sys=616: tot=127474119959: }: end={usr=4336: sys=997: tot=127473996383: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   train_time {name="train_time": start={usr=5256: sys=979: tot=128202872011: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=7582: sys=1075: tot=128202874463: }: end={usr=7575: sys=1074: tot=128202874454: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
@@ -23397,7 +23711,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    nothing_phase=0;
    phase_no=0;
    phase_max=2;
-   ct_cycle=1;
+   ct_cycle=48;
    time_inc=1;
    cycle_max=60;
    mid_minus_cycle=20;
@@ -23436,6 +23750,60 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     m_sum=0;
     m_nrm=0;
     do_s=0;
+   };
+   ct_lrn_trig {
+    plus_lrn_cyc=-1;
+    davg_dt=0.1;
+    davg_s_dt=0.05;
+    davg_m_dt=0.03;
+    davg_l_dt=0.0005;
+    thr_min=0;
+    thr_max=0.5;
+    loc_max_cyc=8;
+    loc_max_dec=0.01;
+    lrn_delay=40;
+    lrn_refract=100;
+    davg_l_init=0;
+    davg_max_init=0.001;
+    davg_time=10;
+    davg_s_time=20;
+    davg_m_time=33.33334;
+    davg_l_time=2000;
+    lrn_delay_inc=0.025;
+    lrn_refract_inc=0.01;
+   };
+   lrn_trig {
+    davg=0;
+    davg_s=0;
+    davg_m=0;
+    davg_smd=0;
+    davg_l=0;
+    davg_max=0.001;
+    cyc_fm_inc=0;
+    cyc_fm_dec=0;
+    loc_max=0;
+    lrn_max=0;
+    lrn_trig=0;
+    lrn=0;
+    lrn_min=0;
+    lrn_min_cyc=0;
+    lrn_min_thr=0;
+    lrn_min_sum=0;
+    lrn_min_cyc_sum=0;
+    lrn_min_thr_sum=0;
+    lrn_plus=0;
+    lrn_plus_cyc=0;
+    lrn_plus_thr=0;
+    lrn_plus_sum=0;
+    lrn_plus_cyc_sum=0;
+    lrn_plus_thr_sum=0;
+    lrn_noth=0;
+    lrn_noth_cyc=0;
+    lrn_noth_thr=0;
+    lrn_noth_sum=0;
+    lrn_noth_cyc_sum=0;
+    lrn_noth_thr_sum=0;
+    lrn_stats_n=0;
    };
    minus_cycles=0;
    avg_cycles=0;

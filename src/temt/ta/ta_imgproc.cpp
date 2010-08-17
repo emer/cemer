@@ -2975,6 +2975,18 @@ void V1KwtaSpec::Initialize() {
 
 void V1KwtaSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  g_bar_e = 0.5f;
+  e_rev_e = 1.0f;
+  if(gelin) {
+    e_rev_l = 0.3f;
+    thr = 0.5f;
+  }
+  else {
+    e_rev_l = 0.15f;
+    thr = 0.25f;
+  }
+
   raw_pct_c = 1.0f - raw_pct;
   gber_l = g_bar_l * e_rev_l;
   e_rev_sub_thr_e = e_rev_e - thr;
@@ -2988,12 +3000,32 @@ void V1KwtaSpec::UpdateAfterEdit_impl() {
 
 void V1KwtaSpec::CreateNXX1Fun() {
   // first create the gaussian noise convolver
+  if(gelin) {
+    nxx1_fun.x_range.max = 1.0f;
+    nxx1_fun.res = .001f;	// needs same fine res to get the noise transitions
+    nxx1_fun.UpdateAfterEdit_NoGui();
+  }
+  else {
+    nxx1_fun.x_range.max = .20f;
+    nxx1_fun.res = .001f;
+    nxx1_fun.UpdateAfterEdit_NoGui();
+  }
+  float ns_rng = 3.0f * nvar;	// range factor based on noise level -- 3 sd 
+  ns_rng = MAX(ns_rng, nxx1_fun.res);
+  nxx1_fun.x_range.min = -ns_rng; 
+
+  noise_conv.x_range.min = -ns_rng;
+  noise_conv.x_range.max = ns_rng;
+  noise_conv.res = nxx1_fun.res;
+  noise_conv.UpdateAfterEdit_NoGui();
+
   noise_conv.AllocForRange();
   int i;
-  float var = nvar * nvar;
+  float eff_nvar = MAX(nvar, 1.0e-6f); // just too lazy to do proper conditional for 0..
+  float var = eff_nvar * eff_nvar;
   for(i=0; i < noise_conv.size; i++) {
     float x = noise_conv.Xval(i);
-    noise_conv[i] = expf(-((x * x) / var));
+    noise_conv[i] = expf(-((x * x) / var)); // shouldn't there be a factor of 1/2 here..?
   }
 
   // normalize it
@@ -3019,7 +3051,7 @@ void V1KwtaSpec::CreateNXX1Fun() {
     fun[i] = val;
   }
 
-  nxx1_fun.Convolve(fun, noise_conv);
+  nxx1_fun.Convolve(fun, noise_conv); // does alloc
 }
 
 void V1KwtaSpec::Compute_Inhib(float_Matrix& inputs, float_Matrix& gc_i_mat) {

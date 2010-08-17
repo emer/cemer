@@ -871,7 +871,7 @@ void LeabraUnitSpec::CreateNXX1Fun() {
   // first create the gaussian noise convolver
   if(act.gelin) {
     nxx1_fun.x_range.max = 1.0f;
-    nxx1_fun.res = .002f;	// should be sufficient..
+    nxx1_fun.res = .001f;	// needs same fine res to get the noise transitions
     nxx1_fun.UpdateAfterEdit_NoGui();
   }
   else {
@@ -879,10 +879,19 @@ void LeabraUnitSpec::CreateNXX1Fun() {
     nxx1_fun.res = .001f;
     nxx1_fun.UpdateAfterEdit_NoGui();
   }
-  nxx1_fun.x_range.min = -3.0f * act.nvar; // key to make it based on nvar -- go out 3 stdev is fine
+  float ns_rng = 3.0f * act.nvar;	// range factor based on noise level -- 3 sd 
+  ns_rng = MAX(ns_rng, nxx1_fun.res);
+  nxx1_fun.x_range.min = -ns_rng; 
+
+  noise_conv.x_range.min = -ns_rng;
+  noise_conv.x_range.max = ns_rng;
+  noise_conv.res = nxx1_fun.res;
+  noise_conv.UpdateAfterEdit_NoGui();
+
   noise_conv.AllocForRange();
   int i;
-  float var = act.nvar * act.nvar;
+  float eff_nvar = MAX(act.nvar, 1.0e-6f); // just too lazy to do proper conditional for 0..
+  float var = eff_nvar * eff_nvar;
   for(i=0; i < noise_conv.size; i++) {
     float x = noise_conv.Xval(i);
     noise_conv[i] = expf(-((x * x) / var));
@@ -922,7 +931,7 @@ void LeabraUnitSpec::CreateNXX1Fun() {
     }
   }
 
-  nxx1_fun.Convolve(fun, noise_conv);
+  nxx1_fun.Convolve(fun, noise_conv); // does alloc
 }
 
 void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {

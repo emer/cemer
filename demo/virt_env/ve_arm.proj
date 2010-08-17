@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v3.0 -- code v5.1.0.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -3905,7 +3905,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
      };
      EditMbrItem @[6] {
       label="ForceScalarVal inhib";
-      desc=" how to compute inhibition -- for kwta modes, a single global inhibition value is computed for the entire layer<br>  type:  how to compute inhibition (g_i)<br>    KWTA INHIB:  between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)<br>    KWTA AVG INHIB:  average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)<br>    KWTA KV2K:  average of top k vs avg of next k (2k) -- avoids long 'tail' of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std. In general, this is now preferred to KWTA_AVG_INHIB<br>    KWTA COMP COST:  competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility<br>    AVG MAX PT INHIB:  put inhib value at i_kwta_pt between avg and max values for layer<br>    MAX INHIB:  put inhib value at i_kwta_pt below max guy in layer<br>    UNIT INHIB:  unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)<br>  kwta pt: [Default: 0.25;0.6;0.2]  [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)<br>  min i:  minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation<br>  comp thr:  [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors <br>  comp gain:  Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level<br>  gp pt: [Default: 0.2]  for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB";
+      desc=" how to compute inhibition -- for kwta modes, a single global inhibition value is computed for the entire layer<br>  type:  how to compute inhibition (g_i)<br>    KWTA INHIB:  between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)<br>    KWTA AVG INHIB:  average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)<br>    KWTA KV2K:  average of top k vs avg of next k (2k) -- avoids long 'tail' of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std. In general, this is now preferred to KWTA_AVG_INHIB<br>    KWTA COMP COST:  competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility<br>    AVG MAX PT INHIB:  put inhib value at i_kwta_pt between avg and max values for layer<br>    MAX INHIB:  put inhib value at i_kwta_pt below max guy in layer<br>    UNIT INHIB:  unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)<br>  kwta pt: [Default: 0.25;0.6;0.2]  [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)<br>  min i: [Default: 0]  minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation<br>  fb act thr: [Default: 0;0.5]  threshold for max activation in layer or group for full kwta inhibition value to be delivered -- below this threshold, the feedback portion of inhibition is proportional to the max act compared to this threshold -- ff_pct of inhibition is always delivered regardless -- allows for an initial wave of activation to get things flowing in the network, followed by inhibitory control<br>  ff pct: [Default: 0.5]  proportion of inhibition that is considered feed forward, and thus not subject to modulation from the fb_act_thr feedback threshold -- this portion of the kwta inhibition is always delivered regardless<br>  fb max dt: [Default: 0.1]  time constant of decay for max activation in the layer or group -- instantly goes to a new max value, but then decays back down with this time constant -- provides needed memory to the fb_act_thr dynamics<br>  comp thr:  [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors <br>  comp gain:  Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level<br>  gp pt: [Default: 0.2]  for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB";
       cust_desc=0;
       base=.projects[0].networks[1].specs[5]$$;
       mbr=LeabraLayerSpec::inhib;
@@ -4395,7 +4395,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     };
     EditMbrItem @[6] {
      label="pvi pv";
-     desc=" misc parameters for the PV computation<br>  min pvi: [Default: 0.4]  minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the PV delta value: pvd = PVe - MAX(PVi,min_pvi)";
+     desc=" misc parameters for the PV computation<br>  min pvi: [Default: 0.4]  minimum pvi value -- PVi is not allowed to go below this value for the purposes of computing the PV delta value: pvd = PVe - MAX(PVi,min_pvi)<br>  pvi scale min:  if both the PVe and PVi values are below min_pvi, then scale the result by (PVi/min_pvi) -- as PVi gets lower, meaning that it expects to be doing poorly, then punish the system less (but still punish it)";
      cust_desc=0;
      base=.projects[0].networks[1].specs.gp[2][2]$$;
      mbr=PViLayerSpec::pv;
@@ -4410,7 +4410,7 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
     };
     EditMbrItem @[7] {
      label="lve lv";
-     desc=" misc parameters controlling the LV computation (note: only the LVe instance of these parameters are used)<br>  min lvi: [Default: 0.1;0.4]  minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)<br>  lrn pv only: [Default: true]  only compute weight changes on trials where primary rewards are expected or actually received -- the target PV value is only presented on such trials, but if this flag is off, it actually learns on other trials, but with whatever plus phase activation state happens to arise";
+     desc=" misc parameters controlling the LV computation (note: only the LVe instance of these parameters are used)<br>  min lvi: [Default: 0.1;0.4]  minimum lvi value -- LVi is not allowed to go below this value for the purposes of computing the LV delta value: lvd = LVe - MAX(LVi,min_lvi)<br>  lvi scale min:  if both the LVe and LVi values are below min_lvi, then scale the result by (LVi/min_lvi) -- as LVi gets lower, meaning that it expects to be doing poorly, then punish the system less (but still punish it)<br>  lrn pv only: [Default: true]  only compute weight changes on trials where primary rewards are expected or actually received -- the target PV value is only presented on such trials, but if this flag is off, it actually learns on other trials, but with whatever plus phase activation state happens to arise";
      cust_desc=0;
      base=.projects[0].networks[1].specs.gp[2][3]$$;
      mbr=LVeLayerSpec::lv;
@@ -4823,18 +4823,18 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
 	    [2] ;;      };
       ar {
        name=;
-	    [2 1 100] 0.78291655;0.52314895;0.26698485;0.58771402;0.53311116;0.7048409;0.67144209;0.90172303;0.25343728;0.77759403;
-0.41200456;0.47875258;0.36268064;0.37600109;0.046678059;0.57764792;0.84458596;0.59558135;0.56024134;0.47992578;
-0.70047957;0.90869403;0.51541263;0.7818163;0.76908064;0.62168163;0.71556455;0.36583501;0.3187111;0.73407286;
-0.32429066;0.58565253;0.65037489;0.82524621;0.73683333;0.55629456;0.66972148;0.6785031;0.53589416;0.80360711;
-0.6597684;0.43058196;0.94460547;0.43173656;0.96418399;0.41039598;0.9881621;0.33556414;0.29329875;0.74876493;
-0.12845618;0.55061245;0.64474368;0.79807919;0.1070187;0.53205544;0.68105024;0.61593002;0.2377062;0.42132309;
-0.62555391;0.53855276;0.45721605;0.59473974;0.41140085;0.76571375;0.77928931;0.84629291;0.29540259;0.62458658;
-0.56650263;0.86247796;0.43918985;0.632312;0.95424634;0.56625414;0.70374715;0.46909302;0.71898526;0.33605999;
-0.50952196;0.66155541;0.83110434;0.54316455;0.70033014;0.39511669;0.75455064;0.68538183;0.10475238;0.40890858;
-0.23633604;0.5781641;0.89710057;0.63809443;0.58183342;0.65386742;0.29134536;0.84421766;0.7757507;0.41800207;
-0.23006669;0.87764227;0.53624314;0.55578202;0.68137604;0.41341868;0.45640033;0.62821323;0.28425351;0.75229657;
-0.63058972;0.63997012;0.24821877;0.89366436;0.58439928;0.66867185;0.41433123;0.50598234;0.18815637;0.65639877;
+	    [2 1 100] 0.60114753;0.63871706;0.084720366;0.41908783;0.97135091;0.51927876;0.39588663;0.48513734;0.88593745;0.38686705;
+0.60371864;0.57612485;0.20461655;0.85776961;0.76792938;0.3737449;0.39039716;0.43647781;0.47498092;0.9508788;
+0.28985944;0.57175165;0.86307883;0.64252031;0.63492912;0.48237109;0.28243813;0.44654012;0.33227473;0.40579113;
+0.60152406;0.46928921;0.67806685;0.55100554;0.51856732;0.95832026;0.62813652;0.92328703;0.34806523;0.91161156;
+0.3826057;0.49642634;0.4106282;0.61442322;0.52140075;0.82386315;0.73537928;0.34694681;0.31553245;0.69175071;
+0.49369991;0.69646859;0.21055667;0.80148405;0.5297367;0.58886778;0.84212619;0.43170881;0.45128664;0.96552491;
+0.23998584;0.82737446;0.27607802;0.55199081;0.42850831;0.78076243;0.16209699;0.4068034;0.3388426;0.34782007;
+0.43998399;0.97525066;0.26411703;0.62820131;0.79949445;0.64857692;0.71005583;0.52325249;0.75317079;0.32017604;
+0.63698161;0.33998972;0.47417298;0.49753445;0.36134812;0.80239707;0.67702311;0.65236568;0.63400966;0.33960307;
+0.31858951;0.46087778;0.15058668;0.58810371;0.40592602;0.80614555;0.67461383;0.35510808;0.57873565;0.46430704;
+0.72597569;0.51551104;0.49603808;0.60303223;0.44012842;0.64557636;0.64176363;0.75123858;0.33630782;0.67286938;
+0.26168939;0.76051521;0.26834983;0.53521639;0.4509514;0.82518971;0.51798874;0.71244943;0.13794455;0.78104508;
 0.36176074;0.77521461;0.62730914;0.47361675;0.41154182;0.53458995;0.5343526;0.80036944;0.72799939;0.37084442;
 0.54615879;0.61848348;0.50812936;0.91432166;0.50103134;0.57871515;0.25881758;0.85103428;0.50557232;0.75227737;
 0.35272118;0.58939809;0.68415117;0.81598544;0.34403995;0.80049032;0.67628211;0.57133269;0.76528543;0.45565635;
@@ -4858,18 +4858,18 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
 	    [2] ;;      };
       ar {
        name=;
-	    [2 1 100] 0.98657721;0.34101382;0.2869814;0.15710506;0.55494511;0.99707669;0.73699337;0.50738096;0.88037574;0.4788079;
-0.9683941;0.23232912;0.3998445;0.70049703;0.30675387;0.44397834;0.73464042;0.6966247;0.92894936;0.42746103;
-0.96636987;0.14807002;0.41716969;0.67986417;0.89138132;0.45662647;0.95947194;0.11888837;0.41371363;0.68268293;
-0.93219632;0.41273353;0.97309917;0.18284933;0.83195329;0.77686781;0.26390409;0.19511631;0.26390764;0.19512095;
-0.940458;0.60094833;0.26626563;0.15194172;0.62299591;0.97861844;0.151967;0.43501988;0.11978602;0.67633343;
-0.98109359;0.44199657;0.64651066;0.911834;0.17020749;0.83903307;0.69982487;0.59027016;0.86732453;0.5276888;
-0.97256815;0.17952861;0.25712171;0.21080016;0.94220048;0.52585834;0.75452679;0.9014706;0.85852367;0.74788964;
-0.21861474;0.18821837;0.61886239;0.97953659;0.68535471;0.59560716;0.91441125;0.47972721;0.97375059;0.18572089;
-0.25235397;0.2353773;0.080230176;0.19178294;0.83958846;0.80836821;0.83754557;0.79063433;0.18839577;0.43722758;
-0.8894161;0.45325589;0.96621728;0.19847089;0.26294178;0.21906827;0.64766562;0.96691787;0.78590405;0.66581631;
-0.9749639;0.29546243;0.64277804;0.91598386;0.18381275;0.36359894;0.51393479;0.92155498;0.49519688;0.85934645;
-0.8820706;0.48276475;0.96226329;0.13043924;0.60448122;0.79218298;0.94136935;0.37907785;0.97002977;0.21941002;
+	    [2 1 100] 0.98657721;0.34101382;0.20831293;0.65765369;0.20831725;0.65765274;0.47304955;0.60638493;0.5822925;0.86901969;
+0.58229387;0.86901438;0.58229387;0.86901438;0.48273054;0.61827785;0.57736647;0.87009704;0.17628679;0.58781356;
+0.17629161;0.58781195;0.17629193;0.58781207;0.60127616;0.86999422;0.73922926;0.49066004;0.50712055;0.62625551;
+0.50712055;0.62624872;0.56456381;0.87370795;0.48752701;0.62005121;0.57388449;0.87082094;0.57388639;0.87081444;
+0.57388645;0.87081444;0.57388639;0.87081444;0.57388645;0.87081444;0.89900023;0.72466326;0.48373294;0.61451453;
+0.19458716;0.57457644;0.62319046;0.86288029;0.47482279;0.6142177;0.19583146;0.57721072;0.48154274;0.61093909;
+0.19480002;0.57628977;0.48171565;0.61069155;0.48171553;0.61068511;0.57644749;0.87057346;0.57644928;0.87056696;
+0.57644928;0.87056696;0.48425943;0.61892629;0.48426414;0.61892366;0.5762645;0.87030864;0.48424041;0.61899382;
+0.19492567;0.57328969;0.48207814;0.61128545;0.48207805;0.61127883;0.19468974;0.5759781;0.62342989;0.86277837;
+0.62342149;0.86277473;0.18488686;0.61369222;0.61071414;0.86598891;0.18216756;0.60587335;0.75348681;0.46821177;
+0.51039737;0.62571281;0.56348062;0.87415874;0.48777536;0.62009603;0.19425389;0.57127726;0.19425839;0.5712747;
+0.75222284;0.46805927;0.55810601;0.87128955;0.17284992;0.57613462;0.75363642;0.46660522;0.5579226;0.87148541;
 0.60322052;0.78270328;0.94378304;0.36028165;0.63641483;0.93464631;0.25151253;0.5565021;0.62812066;0.65950811;
 0.90938592;0.52116972;0.91056001;0.51599491;0.91056025;0.51599455;0.98091704;0.23528983;0.29661921;0.18679646;
 0.57999998;0.63016164;0.87575334;0.63836896;0.56111175;0.60897356;0.73211581;0.6990667;0.93045133;0.41811374;
@@ -4893,12 +4893,12 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
 	    [2] ;;      };
       ar {
        name=;
-	    [1 1 100] 0.2178771;0.92402023;0.54452592;0.033810955;0.084726341;0.085039787;0.44883186;0.62587726;0.20196359;0.099853396;
-0.10017007;0.42153639;0.079263724;0.08732862;0.42670289;0.095185436;0.11399092;0.30831847;0.89027756;0.89027756;
-0.25602475;0.93080515;0.50392908;0.79332048;0.7933197;0.22065102;0.40826461;0.80845767;0.10961303;0.10961253;
-0.11315649;0.87731129;0.18531342;0.42566064;0.29929838;0.91107255;0.50510746;0.11673231;0.11673167;0.11673138;
-0.85608196;1.0000002;0.36384481;0.33166671;0.75575995;0.075317264;0.077803783;0.86760616;0.48577023;0.18220766;
-0.11515186;0.41333279;0.80119228;0.46969947;0.43418735;0.088831581;0.091767572;0.31579936;0.088750131;0.088969603;
+	    [1 1 100] 0.2178771;0.67570716;0.67570752;0.31868929;0.38805562;0.38805577;0.38805577;0.30998579;0.39131039;0.7196033;
+0.71960294;0.71960264;0.38057369;0.018839149;0.28103685;0.28103697;0.40075055;0.30408326;0.39362156;0.39362156;
+0.39362156;0.39362156;0.39362156;0.38828179;0.30666566;0.70066863;0.3663044;0.31953612;0.69871187;0.30809656;
+0.70008326;0.30772096;0.30772081;0.39215285;0.39215285;0.39215285;0.30812827;0.30812827;0.39202416;0.30818966;
+0.70053875;0.3074792;0.30747908;0.70027173;0.36613512;0.36613965;0.70611787;0.37343311;0.71020019;0.0030857392;
+0.27645215;0.40168732;0.30375734;0.7017262;0.7017262;0.0024660507;0.40225381;0.72557658;0.001709055;0.40251258;
 0.30902854;0.082668044;0.43580315;0.63901359;0.19613199;0.14055082;0.138007;0.13800694;0.13800712;0.89327067;
 0.20405683;0.20405644;0.2040565;0.2040565;0.096151307;0.088061601;0.016175503;0.49733087;0.42437732;0.097977422;
 0.098172791;0.41477251;0.19529559;0.19529584;0.45391378;0.27851442;0.078389898;0.07839004;0.0807584;0.88984269;
@@ -4918,12 +4918,12 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
 	    [2] ;;      };
       ar {
        name=;
-	    [1 1 100] 0.034482758;0.7996459;0.21989334;0.76586759;0.51705712;0.23932396;0.74899822;0.87062132;0.61503714;0.40916759;
-0.12110829;0.78245348;0.50012344;0.1213735;0.77742267;0.40355819;0.12374536;0.32173836;0.78806138;0.78806174;
-0.21103057;0.76717001;0.22060086;0.61563843;0.36941978;0.12770656;0.39345515;0.15996099;0.76031882;0.52136445;
-0.12237963;0.78514379;0.30577746;0.20893973;0.29562658;0.71350414;0.22353983;0.77361041;0.43027011;0.12019884;
-0.78761101;0.42865264;0.20602626;0.27137893;0.68343234;0.50608295;0.2225087;0.79765636;0.22770853;0.56922936;
-0.2321696;0.38825879;0.68865371;0.4492844;0.56093109;0.51136005;0.12282128;0.62687451;0.38120192;0.21764991;
+	    [1 1 100] 0.034482758;0.57881641;0.57881689;0.88526618;0.52350509;0.52350491;0.52350491;0.87337315;0.52415049;0.58277893;
+0.58277941;0.58277977;0.51100719;0.77127719;0.86468804;0.86468863;0.52376127;0.87179697;0.52457994;0.52457994;
+0.52457994;0.52457994;0.52457994;0.032407116;0.87770659;0.62515968;0.5076713;0.87684244;0.62542707;0.88148022;
+0.62430716;0.88177651;0.88177657;0.52379298;0.52379286;0.52379286;0.87279725;0.87279725;0.52432311;0.87271929;
+0.62665421;0.88115388;0.88115388;0.6243394;0.50765848;0.50765884;0.57789332;0.51153553;0.57941312;0.75932175;
+0.86500472;0.52343601;0.87176341;0.62690628;0.62690628;0.76139879;0.53031695;0.58500129;0.75975323;0.53005439;
 0.64050597;0.37522057;0.35054311;0.72832012;0.77016848;0.42060429;0.42060363;0.42060316;0.11947043;0.83094394;
 0.83562344;0.4100157;0.86853421;0.61581159;0.40743634;0.8217476;0.51965737;0.14892597;0.77983314;0.38329509;
 0.12295743;0.78006136;0.8768307;0.52384627;0.12595904;0.6068505;0.38538116;0.38538164;0.22070791;0.76133615;
@@ -4968,12 +4968,12 @@ To see the model in action, go to the <a href=\"ta:.PanelTab.ControlPanel\">Cont
 	    [2] ;;      };
       ar {
        name=;
-	    [1 1 100] 0;0;1;0;0;1;1;0;1;0;
-1;0;0;0;0;0;1;0;0;0;
-0;0;0;0;0;0;0;0;1;0;
-0;0;1;1;0;1;1;1;1;0;
-0;1;0;0;0;0;0;1;0;1;
-0;0;0;1;0;0;1;0;0;0;
+	    [1 1 100] 1;1;0;0;0;1;1;0;1;0;
+1;1;1;1;1;1;1;1;1;1;
+0;1;1;1;1;1;1;1;1;0;
+1;1;1;0;0;1;1;1;1;0;
+1;1;1;1;0;1;0;1;1;1;
+1;1;1;0;0;1;1;0;1;0;
 0;0;1;1;1;1;0;0;0;1;
 0;1;0;1;1;0;1;1;0;1;
 0;1;1;0;0;1;0;0;1;0;
@@ -6649,6 +6649,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=0: g=1: b=0: a=1: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -6694,6 +6698,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=0.2: g=0.2: b=0.4901961: a=1: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -6739,6 +6747,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=0: g=0: b=1: a=1: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -6784,6 +6796,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=1: g=0: b=1: a=1: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -6829,6 +6845,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=1: g=0.8: b=0.4: a=1: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -6874,6 +6894,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=0.2: g=0.2: b=0.5: a=0.5: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -6934,6 +6958,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=0.2: g=0.2: b=0.5: a=0.5: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -6994,6 +7022,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=1: g=0.1176471: b=0.2039216: a=1: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -7039,6 +7071,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=1: g=0.1176471: b=0.2039216: a=1: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -7097,7 +7133,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  motor {
 	   motor_on=1;
 	   vel=0;
-	   f_max=0.6263486;
+	   f_max=0.7240501;
 	   servo_on=0;
 	   trg_pos=0;
 	   gain=0.1;
@@ -7298,7 +7334,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  motor {
 	   motor_on=1;
 	   vel=0;
-	   f_max=0.2555579;
+	   f_max=0.2967538;
 	   servo_on=0;
 	   trg_pos=0;
 	   gain=0.1;
@@ -7676,11 +7712,11 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  name="TargetBody";
 	  desc=;
 	  flags=FIXED;
-	  init_pos {x=-0.001826931: y=0.12: z=0.1129594: };
+	  init_pos {x=-0.2844626: y=0.12: z=0.5074339: };
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=-0.001826931: y=0.12: z=0.1129594: };
+	  cur_pos {x=-0.2844626: y=0.12: z=0.5074339: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
 	  cur_lin_vel {x=0: y=0: z=0: };
 	  cur_ang_vel {x=0: y=0: z=0: };
@@ -7694,6 +7730,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname="Banana.iv";
 	  set_color=1;
 	  color {r=1: g=1: b=0: a=1: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -7756,6 +7796,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=0.4: g=0.4: b=0.4: a=1: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -7785,6 +7829,10 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	  obj_fname=;
 	  set_color=1;
 	  color {r=0.7019608: g=0.7019608: b=0.7019608: a=1: };
+	  full_colors=0;
+	  ambient_color {r=0.2: g=0.2: b=0.2: a=1: };
+	  specular_color {r=1: g=1: b=1: a=0: };
+	  emissive_color {r=0: g=0: b=0: a=1: };
 	  texture=NULL;
 	  surface {
 	   friction=1e+22;
@@ -10197,7 +10245,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[1] {
       name="shoulder_trg_angle_norm";
       var_type=T_Real;
-      real_val=0.1344481557607651;
+      real_val=0.300000011920929;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10207,7 +10255,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="elbow_trg_angle_norm";
       var_type=T_Real;
-      real_val=0.1001326888799667;
+      real_val=0.9000000357627869;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10340,7 +10388,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[11] {
       name="ve_step";
       var_type=T_Int;
-      int_val=86;
+      int_val=83;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10400,7 +10448,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[17] {
       name="shoulder_pos_dir";
       var_type=T_Bool;
-      bool_val=1;
+      bool_val=0;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10410,7 +10458,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[18] {
       name="shoulder_angle_err";
       var_type=T_Real;
-      real_val=0.02885410934686661;
+      real_val=0.002512574195861816;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10430,7 +10478,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[20] {
       name="elbow_pos_dir";
       var_type=T_Bool;
-      bool_val=0;
+      bool_val=1;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10440,7 +10488,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[21] {
       name="elbow_angle_err";
       var_type=T_Real;
-      real_val=0.00308525562286377;
+      real_val=0.03005439043045044;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10450,7 +10498,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[22] {
       name="angle_err";
       var_type=T_Real;
-      real_val=0.01596968248486519;
+      real_val=0.01628348231315613;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10460,7 +10508,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[23] {
       name="hand_vel";
       var_type=T_Real;
-      real_val=0.1896085143089294;
+      real_val=0.1902034878730774;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10594,7 +10642,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[36] {
       name="hand_pos_x_norm";
       var_type=T_Real;
-      real_val=0.895039260797556;
+      real_val=0.5579225739126458;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10604,7 +10652,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[37] {
       name="hand_pos_z_norm";
       var_type=T_Real;
-      real_val=0.4415749496994296;
+      real_val=0.8714854078735538;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10614,7 +10662,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[38] {
       name="targ_pos_x_norm";
       var_type=T_Real;
-      real_val=0.8485277967963735;
+      real_val=0.5179887624178091;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10624,7 +10672,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[39] {
       name="targ_pos_z_norm";
       var_type=T_Real;
-      real_val=0.3832353385704683;
+      real_val=0.7124494224817683;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10634,7 +10682,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[40] {
       name="trg_dist";
       var_type=T_Real;
-      real_val=0.07461118698120117;
+      real_val=0.1639730334281921;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11836,7 +11884,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[1] {
       name="targ_angle";
       var_type=T_Real;
-      real_val=2.727230857431825;
+      real_val=2.386778925577933;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11846,7 +11894,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="targ_dist";
       var_type=T_Real;
-      real_val=0.280570650615531;
+      real_val=0.7406139863417993;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11882,7 +11930,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[2] {
       name="targ_x";
       var_type=T_Real;
-      real_val=-0.001826930796842374;
+      real_val=-0.2844626267750959;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11892,7 +11940,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[3] {
       name="targ_z";
       var_type=T_Real;
-      real_val=0.1129593761752952;
+      real_val=0.5074338947182184;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -12260,7 +12308,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[11] {
       name="hand_pos_x_norm";
       var_type=T_Real;
-      real_val=0.895039260797556;
+      real_val=0.5579225739126458;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -12270,7 +12318,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[12] {
       name="hand_pos_z_norm";
       var_type=T_Real;
-      real_val=0.4415749496994296;
+      real_val=0.8714854078735538;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -12280,7 +12328,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[13] {
       name="targ_pos_x_norm";
       var_type=T_Real;
-      real_val=0.3276329380962946;
+      real_val=0.1379445507790019;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -12290,7 +12338,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[14] {
       name="targ_pos_z_norm";
       var_type=T_Real;
-      real_val=0.4174740796399805;
+      real_val=0.7810450564073724;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -12300,7 +12348,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[15] {
       name="shoulder_ang_norm";
       var_type=T_Real;
-      real_val=0.07289063930511475;
+      real_val=0.4025125801563263;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -12310,7 +12358,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[16] {
       name="elbow_ang_norm";
       var_type=T_Real;
-      real_val=0.4965192377567291;
+      real_val=0.5300543904304504;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -13252,7 +13300,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      ProgVar @[0] {
       name="trg_dist";
       var_type=T_Real;
-      real_val=0.07461118698120117;
+      real_val=0.1639730334281921;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -14279,7 +14327,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$.projects[0].data.gp[0][1]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
       reference=0;
       desc="datatable with training patterns";
       init_from=NULL;
@@ -15011,6 +15059,12 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       update_after=0;
       dmem_nprocs=1;
       dmem_this_proc=0;
+      grouped=0;
+      group_col 9 0="Group";
+      group_index_var=NULL;
+      group_order_var=NULL;
+      group_order=PERMUTED;
+      group_idx_list{       };
      };
      IfElse @[7] {
       desc="if full batch mode, update only at end of epoch";
@@ -18120,7 +18174,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @[5] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=21;
+      int_val=59;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -18335,6 +18389,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
       update_after=0;
       dmem_nprocs=1;
       dmem_this_proc=0;
+      grouped=0;
+      group_col 9 0="Group";
+      group_index_var=NULL;
+      group_order_var=NULL;
+      group_order=PERMUTED;
+      group_idx_list{       };
      };
      IfElse @[7] {
       desc="if full batch mode, update only at end of epoch";
@@ -23611,6 +23671,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   net_name=0.05;
 	   net_vals=0.05;
 	   layer=0.04;
+	   layer_min=0.01;
 	   layer_vals=0.03;
 	   prjn=0.01;
 	   unit=0.02;
@@ -24318,6 +24379,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	   net_name=0.05;
 	   net_vals=0.05;
 	   layer=0.04;
+	   layer_min=0.01;
 	   layer_vals=0.03;
 	   prjn=0.01;
 	   unit=0.02;
@@ -25116,9 +25178,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[0].specs[3].children[0]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+     act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
      spike_misc {
+      exp_slope=0.02;
+      spk_thr=1.2;
       clamp_max_p=0.11;
       clamp_type=REGULAR;
       vm_r=0;
@@ -25126,31 +25190,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       vm_dend_dt=0.16;
       vm_dend_time=6.25;
      };
-     adapt {
-      on=0;
-      dt_rate=0.02;
-      dt_time=50;
-      vm_gain=0.1;
-      spike_gain=0.01;
-      interval=10;
-     };
-     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-     syn_delay {
-      on=0;
-      delay=4;
-     };
      opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
-     dt {vm=0.2: vm_time=5: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+     dt {integ=1: vm=0.2: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=5: net_time=1.428571: };
      act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
      e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+     adapt {
+      on=0;
+      dt=0.007;
+      vm_gain=0.1;
+      spike_gain=0.01;
+      interval=10;
+      dt_time=142.8571;
+     };
+     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+     syn_delay {
+      on=0;
+      delay=4;
+     };
      da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
      noise {name="": type=GAUSSIAN: mean=0: var=0.001: par=1: };
      noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -25186,6 +25250,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	type=KWTA_INHIB;
 	kwta_pt=0.25;
 	min_i=0;
+	fb_act_thr=0;
+	ff_pct=0;
+	fb_max_dt=0.1;
 	comp_thr=0.5;
 	comp_gain=2;
 	gp_pt=0.2;
@@ -25193,8 +25260,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+       i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
        adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-       clamp {hard=1: gain=0.2: };
+       clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
        decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
        ct_inhib_mod {
 	use_sin=0;
@@ -25216,6 +25284,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       type=KWTA_AVG_INHIB;
       kwta_pt=0.6;
       min_i=0;
+      fb_act_thr=0;
+      ff_pct=0;
+      fb_max_dt=0.1;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
@@ -25223,8 +25294,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k_from=USE_PCT: k=12: pct=0.15: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.2: };
+     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
      ct_inhib_mod {
       use_sin=0;
@@ -25251,6 +25323,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      self_con=0;
      init_wts=0;
+     add_rnd_wts=0;
     };
     LeabraConSpec @[3] {
      name="LeabraConSpec_4";
@@ -25273,7 +25346,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
        learn_rule=LEABRA_CHL;
        inhib=0;
-       wt_scale {abs=1: rel=1: };
+       wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
        wt_scale_init {init=0: abs=1: rel=1: };
        lrate=0.01;
        cur_lrate=0.01;
@@ -25308,7 +25381,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      learn_rule=LEABRA_CHL;
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
      wt_scale_init {init=0: abs=1: rel=1: };
      lrate=0.01;
      cur_lrate=0.01;
@@ -25351,6 +25424,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       type=KWTA_AVG_INHIB;
       kwta_pt=0.6;
       min_i=0;
+      fb_act_thr=0;
+      ff_pct=0;
+      fb_max_dt=0.1;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
@@ -25358,8 +25434,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k_from=USE_K: k=3: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.2: };
+     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
      ct_inhib_mod {
       use_sin=0;
@@ -25393,6 +25470,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       type=KWTA_AVG_INHIB;
       kwta_pt=0.6;
       min_i=0;
+      fb_act_thr=0;
+      ff_pct=0;
+      fb_max_dt=0.1;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
@@ -25400,8 +25480,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k_from=USE_K: k=3: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.2: };
+     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
      ct_inhib_mod {
       use_sin=0;
@@ -25435,6 +25516,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       type=KWTA_AVG_INHIB;
       kwta_pt=0.6;
       min_i=0;
+      fb_act_thr=0;
+      ff_pct=0;
+      fb_max_dt=0.1;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
@@ -25442,8 +25526,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k_from=USE_K: k=9: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_K: k=9: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.2: };
+     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
      ct_inhib_mod {
       use_sin=0;
@@ -25516,6 +25601,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.0462189: max=0.8746769: max_i=83: };
@@ -25524,10 +25610,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=TwoDValLayerSpec: spec=.projects[0].networks[0].specs[6]$$: };
      hard_clamped=0;
      avg_l_avg=6.310887e-30;
@@ -25587,6 +25674,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.04577775: max=0.9096908: max_i=83: };
@@ -25595,10 +25683,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=TwoDValLayerSpec: spec=$.projects[0].networks[0].specs[6]$: };
      hard_clamped=0;
      avg_l_avg=1.401298e-45;
@@ -25663,6 +25752,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  [12 1] "val";"-0.5";"-0.3";"-0.1";"0.1";"0.3";"0.5";"0.7";"0.9";"1.1";
 "1.3";"1.5";     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.2162403: max=0.95: max_i=6: };
@@ -25671,10 +25761,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=ScalarValLayerSpec: spec=.projects[0].networks[0].specs[4]$$: };
      hard_clamped=0;
      avg_l_avg=1.401298e-45;
@@ -25734,6 +25825,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  [12 1] "val";"-0.5";"-0.3";"-0.1";"0.1";"0.3";"0.5";"0.7";"0.9";"1.1";
 "1.3";"1.5";     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.214652: max=0.95: max_i=5: };
@@ -25742,10 +25834,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=ScalarValLayerSpec: spec=$.projects[0].networks[0].specs[4]$: };
      hard_clamped=0;
      avg_l_avg=-0.01540885;
@@ -25806,6 +25899,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  [12 1] "val";"-1.5";"-1.3";"-1.1";"-0.9";"-0.7";"-0.5";"-0.3";"-0.1";"0.1";
 "0.3";"0.5";     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.2161191: max=0.95: max_i=4: };
@@ -25814,10 +25908,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=ScalarValLayerSpec: spec=$.projects[0].networks[0].specs[4]$: };
      hard_clamped=0;
      avg_l_avg=nan;
@@ -25878,6 +25973,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  [12 1] "val";"-1.5";"-1.3";"-1.1";"-0.9";"-0.7";"-0.5";"-0.3";"-0.1";"0.1";
 "0.3";"0.5";     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.2086742: max=0.9357619: max_i=6: };
@@ -25886,10 +25982,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=ScalarValLayerSpec: spec=$.projects[0].networks[0].specs[4]$: };
      hard_clamped=0;
      avg_l_avg=nan;
@@ -26000,6 +26097,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 ;;;;;;;;;;
 ;;;;;;;;;     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.09679781: max=0.9208624: max_i=24: };
@@ -26008,10 +26106,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.114074: k1_ithr=2.250072: ithr_r=0.3249695: ithr_diff=0.2774506: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.1428571: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[1]$$: };
      hard_clamped=0;
      avg_l_avg=nan;
@@ -26219,6 +26318,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 ;;;;;;;;;;
 ;;;;;;;;;     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.1281596: max=0.7573113: max_i=29: };
@@ -26227,10 +26327,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.153238: k1_ithr=2.795386: ithr_r=0.1204594: ithr_diff=0.1134869: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.1428571: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=$.projects[0].networks[0].specs[1]$: };
      hard_clamped=0;
      avg_l_avg=nan;
@@ -26309,6 +26410,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.04687428: max=0.8913006: max_i=62: };
@@ -26317,10 +26419,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0.5058727: k1_ithr=0.3506964: ithr_r=0.366364: ithr_diff=0.3067496: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=TwoDValLayerSpec: spec=$.projects[0].networks[0].specs[6]$: };
      hard_clamped=0;
      avg_l_avg=0;
@@ -26409,6 +26512,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  [12 1] "val";"-0.5";"-0.3";"-0.1";"0.1";"0.3";"0.5";"0.7";"0.9";"1.1";
 "1.3";"1.5";     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.2160379: max=0.95: max_i=4: };
@@ -26417,10 +26521,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.378915: k1_ithr=1.74764: ithr_r=0.3083784: ithr_diff=0.2653627: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=ScalarValLayerSpec: spec=$.projects[0].networks[0].specs[4]$: };
      hard_clamped=0;
      avg_l_avg=-4.56394e+17;
@@ -26504,6 +26609,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  [12 1] "val";"-0.5";"-0.3";"-0.1";"0.1";"0.3";"0.5";"0.7";"0.9";"1.1";
 "1.3";"1.5";     };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts_p {cmpt=1: avg=0.2107818: max=0.9047918: max_i=6: };
@@ -26512,10 +26618,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.100982: k1_ithr=1.564851: ithr_r=0.2946139: ithr_diff=0.2551809: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=ScalarValLayerSpec: spec=$.projects[0].networks[0].specs[4]$: };
      hard_clamped=0;
      avg_l_avg=-4.280106e+14;
@@ -26632,6 +26739,60 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     m_sum=0;
     m_nrm=0;
     do_s=0;
+   };
+   ct_lrn_trig {
+    plus_lrn_cyc=-1;
+    davg_dt=0.1;
+    davg_s_dt=0.05;
+    davg_m_dt=0.03;
+    davg_l_dt=0.0005;
+    thr_min=0;
+    thr_max=0.5;
+    loc_max_cyc=8;
+    loc_max_dec=0.01;
+    lrn_delay=40;
+    lrn_refract=100;
+    davg_l_init=0;
+    davg_max_init=0.001;
+    davg_time=10;
+    davg_s_time=20;
+    davg_m_time=33.33334;
+    davg_l_time=2000;
+    lrn_delay_inc=0.025;
+    lrn_refract_inc=0.01;
+   };
+   lrn_trig {
+    davg=0;
+    davg_s=0;
+    davg_m=0;
+    davg_smd=0;
+    davg_l=0;
+    davg_max=0.001;
+    cyc_fm_inc=0;
+    cyc_fm_dec=0;
+    loc_max=0.001;
+    lrn_max=0;
+    lrn_trig=0;
+    lrn=0;
+    lrn_min=0;
+    lrn_min_cyc=0;
+    lrn_min_thr=0;
+    lrn_min_sum=0;
+    lrn_min_cyc_sum=0;
+    lrn_min_thr_sum=0;
+    lrn_plus=0;
+    lrn_plus_cyc=0;
+    lrn_plus_thr=0;
+    lrn_plus_sum=0;
+    lrn_plus_cyc_sum=0;
+    lrn_plus_thr_sum=0;
+    lrn_noth=0;
+    lrn_noth_cyc=0;
+    lrn_noth_thr=0;
+    lrn_noth_sum=0;
+    lrn_noth_cyc_sum=0;
+    lrn_noth_thr_sum=0;
+    lrn_stats_n=0;
    };
    minus_cycles=0;
    avg_cycles=0;
@@ -26799,9 +26960,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[1].specs[3].children[0]$$: };
        sse_tol=0.5;
        act_fun=NOISY_XX1;
-       act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=NO_AH: };
+       act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=NO_AH: };
        spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
        spike_misc {
+	exp_slope=0.02;
+	spk_thr=1.2;
 	clamp_max_p=0.11;
 	clamp_type=REGULAR;
 	vm_r=0;
@@ -26809,31 +26972,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	vm_dend_dt=0.16;
 	vm_dend_time=6.25;
        };
-       adapt {
-	on=0;
-	dt_rate=0.02;
-	dt_time=50;
-	vm_gain=0.1;
-	spike_gain=0.01;
-	interval=10;
-       };
-       depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-       syn_delay {
-	on=0;
-	delay=4;
-       };
        opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+       maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
        clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
        vm_range {min=0: max=1: range=1: scale=1: };
        v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
-       dt {vm=0.2: vm_time=5: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+       dt {integ=1: vm=0.2: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=5: net_time=1.428571: };
        act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
        g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
        e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
        hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
        acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+       adapt {
+	on=0;
+	dt=0.007;
+	vm_gain=0.1;
+	spike_gain=0.01;
+	interval=10;
+	dt_time=142.8571;
+       };
+       depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+       syn_delay {
+	on=0;
+	delay=4;
+       };
        da_mod {on=1: mod=PLUS_CONT: gain=1: };
-       maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
        noise_type=NETIN_NOISE;
        noise {name="": type=GAUSSIAN: mean=0: var=0.01: par=1: };
        noise_adapt {trial_fixed=1: k_pos_noise=0: mode=PVLV_PVI: min_pct=0.5: min_pct_c=0.5: };
@@ -26853,9 +27016,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      bias_spec {type=LeabraBiasSpec: spec=$.projects[0].networks[1].specs[3].children[0]$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=NO_AH: };
+     act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=NO_AH: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
      spike_misc {
+      exp_slope=0.02;
+      spk_thr=1.2;
       clamp_max_p=0.11;
       clamp_type=REGULAR;
       vm_r=0;
@@ -26863,31 +27028,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       vm_dend_dt=0.16;
       vm_dend_time=6.25;
      };
-     adapt {
-      on=0;
-      dt_rate=0.02;
-      dt_time=50;
-      vm_gain=0.1;
-      spike_gain=0.01;
-      interval=10;
-     };
-     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-     syn_delay {
-      on=0;
-      delay=4;
-     };
      opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
-     dt {vm=0.2: vm_time=5: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+     dt {integ=1: vm=0.2: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=5: net_time=1.428571: };
      act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
      e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+     adapt {
+      on=0;
+      dt=0.007;
+      vm_gain=0.1;
+      spike_gain=0.01;
+      interval=10;
+      dt_time=142.8571;
+     };
+     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+     syn_delay {
+      on=0;
+      delay=4;
+     };
      da_mod {on=1: mod=PLUS_CONT: gain=1: };
-     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NETIN_NOISE;
      noise {name="": type=GAUSSIAN: mean=0: var=0.01: par=1: };
      noise_adapt {trial_fixed=1: k_pos_noise=0: mode=PVLV_PVI: min_pct=0.5: min_pct_c=0.5: };
@@ -26923,6 +27088,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	type=KWTA_INHIB;
 	kwta_pt=0.25;
 	min_i=0;
+	fb_act_thr=0;
+	ff_pct=0;
+	fb_max_dt=0.1;
 	comp_thr=0.5;
 	comp_gain=2;
 	gp_pt=0.2;
@@ -26930,8 +27098,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+       i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
        adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-       clamp {hard=1: gain=0.2: };
+       clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
        decay {event=1: phase=0: phase2=0: clamp_phase2=1: };
        ct_inhib_mod {
 	use_sin=0;
@@ -26953,6 +27122,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       type=KWTA_AVG_INHIB;
       kwta_pt=0.6;
       min_i=0;
+      fb_act_thr=0;
+      ff_pct=0;
+      fb_max_dt=0.1;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
@@ -26960,8 +27132,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k_from=USE_PCT: k=12: pct=0.15: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.2: };
+     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=0: phase2=0: clamp_phase2=1: };
      ct_inhib_mod {
       use_sin=0;
@@ -26988,6 +27161,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      self_con=0;
      init_wts=0;
+     add_rnd_wts=0;
     };
     LeabraConSpec @[3] {
      name="LeabraConSpec_4";
@@ -27010,7 +27184,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
        learn_rule=CTLEABRA_XCAL;
        inhib=0;
-       wt_scale {abs=1: rel=1: };
+       wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
        wt_scale_init {init=0: abs=1: rel=1: };
        lrate=0.02;
        cur_lrate=0.02;
@@ -27019,7 +27193,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	name=;
 	el_typ=SchedItem;
 	el_def=0;
-	last_ctr=-1;
+	last_ctr=0;
 	default_val=1;
 	interpolate=0;
 	cur_val=1;
@@ -27057,7 +27231,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      learn_rule=CTLEABRA_XCAL;
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
      wt_scale_init {init=0: abs=1: rel=1: };
      lrate=0.02;
      cur_lrate=0.02;
@@ -27066,7 +27240,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       name=;
       el_typ=SchedItem;
       el_def=0;
-      last_ctr=-1;
+      last_ctr=0;
       default_val=1;
       interpolate=0;
       cur_val=1;
@@ -27112,6 +27286,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       type=KWTA_AVG_INHIB;
       kwta_pt=0.6;
       min_i=0;
+      fb_act_thr=0;
+      ff_pct=0;
+      fb_max_dt=0.1;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
@@ -27119,8 +27296,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k_from=USE_K: k=3: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.2: };
+     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=0: phase2=0: clamp_phase2=1: };
      ct_inhib_mod {
       use_sin=0;
@@ -27154,6 +27332,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       type=KWTA_AVG_INHIB;
       kwta_pt=0.8;
       min_i=0;
+      fb_act_thr=0;
+      ff_pct=0;
+      fb_max_dt=0.1;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
@@ -27161,8 +27342,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.2: };
+     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=0: phase2=0: clamp_phase2=1: };
      ct_inhib_mod {
       use_sin=0;
@@ -27196,6 +27378,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       type=KWTA_AVG_INHIB;
       kwta_pt=0.6;
       min_i=0;
+      fb_act_thr=0;
+      ff_pct=0;
+      fb_max_dt=0.1;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
@@ -27203,8 +27388,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k_from=USE_K: k=9: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_K: k=9: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
      adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.2: };
+     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=0: phase2=0: clamp_phase2=1: };
      ct_inhib_mod {
       use_sin=0;
@@ -27252,9 +27438,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[1].specs.gp[1][0].children[1]$$: };
 	sse_tol=0.5;
 	act_fun=NOISY_LINEAR;
-	act {thr=0.17: gain=220: nvar=0.01: avg_dt=0: avg_init=0.15: i_thr=STD: };
+	act {gelin=0: thr=0.17: gain=220: nvar=0.01: avg_dt=0: avg_init=0.15: i_thr=STD: };
 	spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
 	spike_misc {
+	 exp_slope=0.02;
+	 spk_thr=1.2;
 	 clamp_max_p=0.11;
 	 clamp_type=REGULAR;
 	 vm_r=0;
@@ -27262,31 +27450,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 vm_dend_dt=0.16;
 	 vm_dend_time=6.25;
 	};
-	adapt {
-	 on=0;
-	 dt_rate=0.02;
-	 dt_time=50;
-	 vm_gain=0.1;
-	 spike_gain=0.01;
-	 interval=10;
-	};
-	depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-	syn_delay {
-	 on=0;
-	 delay=4;
-	};
 	opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+	maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
 	clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
 	vm_range {min=0: max=1: range=1: scale=1: };
 	v_m_init {name="": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-	dt {vm=0.05: vm_time=20: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=100: vm_eq_dt=1: };
+	dt {integ=1: vm=0.05: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=100: vm_eq_dt=1: integ_time=1: vm_time=20: net_time=1.428571: };
 	act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
 	g_bar {e=1: l=0.1: i=1: h=0.03: a=0.09: };
 	e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
 	hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
 	acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+	adapt {
+	 on=0;
+	 dt=0.007;
+	 vm_gain=0.1;
+	 spike_gain=0.01;
+	 interval=10;
+	 dt_time=142.8571;
+	};
+	depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+	syn_delay {
+	 on=0;
+	 delay=4;
+	};
 	da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-	maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
 	noise_type=NO_NOISE;
 	noise {name="": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
 	noise_adapt {trial_fixed=0: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -27306,9 +27494,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       bias_spec {type=LeabraBiasSpec: spec=$.projects[0].networks[1].specs.gp[1][0].children[1]$: };
       sse_tol=0.5;
       act_fun=NOISY_LINEAR;
-      act {thr=0.17: gain=220: nvar=0.01: avg_dt=0: avg_init=0.15: i_thr=STD: };
+      act {gelin=0: thr=0.17: gain=220: nvar=0.01: avg_dt=0: avg_init=0.15: i_thr=STD: };
       spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
       spike_misc {
+       exp_slope=0.02;
+       spk_thr=1.2;
        clamp_max_p=0.11;
        clamp_type=REGULAR;
        vm_r=0;
@@ -27316,31 +27506,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        vm_dend_dt=0.16;
        vm_dend_time=6.25;
       };
-      adapt {
-       on=0;
-       dt_rate=0.02;
-       dt_time=50;
-       vm_gain=0.1;
-       spike_gain=0.01;
-       interval=10;
-      };
-      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-      syn_delay {
-       on=0;
-       delay=4;
-      };
       opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
       vm_range {min=0: max=1: range=1: scale=1: };
       v_m_init {name="": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-      dt {vm=0.05: vm_time=20: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=100: vm_eq_dt=1: };
+      dt {integ=1: vm=0.05: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=100: vm_eq_dt=1: integ_time=1: vm_time=20: net_time=1.428571: };
       act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
       g_bar {e=1: l=0.1: i=1: h=0.03: a=0.09: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
       hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
       acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+      adapt {
+       on=0;
+       dt=0.007;
+       vm_gain=0.1;
+       spike_gain=0.01;
+       interval=10;
+       dt_time=142.8571;
+      };
+      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+      syn_delay {
+       on=0;
+       delay=4;
+      };
       da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
       noise {name="": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
       noise_adapt {trial_fixed=0: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -27368,9 +27558,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       bias_spec {type=LeabraBiasSpec: spec=.projects[0].networks[1].specs.gp[1][0].children[1].children[0]$$: };
       sse_tol=0.5;
       act_fun=NOISY_XX1;
-      act {thr=0.25: gain=600: nvar=0.005: avg_dt=0: avg_init=0.15: i_thr=STD: };
+      act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0: avg_init=0.15: i_thr=STD: };
       spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
       spike_misc {
+       exp_slope=0.02;
+       spk_thr=1.2;
        clamp_max_p=0.11;
        clamp_type=REGULAR;
        vm_r=0;
@@ -27378,31 +27570,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        vm_dend_dt=0.16;
        vm_dend_time=6.25;
       };
-      adapt {
-       on=0;
-       dt_rate=0.02;
-       dt_time=50;
-       vm_gain=0.1;
-       spike_gain=0.01;
-       interval=10;
-      };
-      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: clamp_norm_max_amp=2: };
-      syn_delay {
-       on=0;
-       delay=4;
-      };
       opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       clamp_range {min=-2: max=2: range=4: scale=0.25: };
       vm_range {min=0: max=1: range=1: scale=1: };
       v_m_init {name="": type=UNIFORM: mean=0.1500000059604645: var=0: par=1: };
-      dt {vm=0.25: vm_time=4: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+      dt {integ=1: vm=0.25: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=4: net_time=1.428571: };
       act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
       g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
       e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
       hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
       acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+      adapt {
+       on=0;
+       dt=0.007;
+       vm_gain=0.1;
+       spike_gain=0.01;
+       interval=10;
+       dt_time=142.8571;
+      };
+      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+      syn_delay {
+       on=0;
+       delay=4;
+      };
       da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-      maxda {val=NO_MAX_DA: inet_scale=1: lay_avg_thr=0.01: };
       noise_type=NO_NOISE;
       noise {name="": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
       noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -27450,7 +27642,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
 	  learn_rule=CTLEABRA_XCAL;
 	  inhib=0;
-	  wt_scale {abs=1: rel=1: };
+	  wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
 	  wt_scale_init {init=0: abs=1: rel=1: };
 	  lrate=0.02;
 	  cur_lrate=0.02;
@@ -27502,7 +27694,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
 	    learn_rule=CTLEABRA_XCAL;
 	    inhib=0;
-	    wt_scale {abs=1: rel=1: };
+	    wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
 	    wt_scale_init {init=0: abs=1: rel=1: };
 	    lrate=0.001;
 	    cur_lrate=0.001;
@@ -27537,7 +27729,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
 	  learn_rule=CTLEABRA_XCAL;
 	  inhib=0;
-	  wt_scale {abs=1: rel=1: };
+	  wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
 	  wt_scale_init {init=0: abs=1: rel=1: };
 	  lrate=0.05;
 	  cur_lrate=0.05;
@@ -27580,7 +27772,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
 	  learn_rule=CTLEABRA_XCAL;
 	  inhib=0;
-	  wt_scale {abs=1: rel=1: };
+	  wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
 	  wt_scale_init {init=0: abs=1: rel=1: };
 	  lrate=0.0005;
 	  cur_lrate=0.0005;
@@ -27615,7 +27807,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
 	learn_rule=CTLEABRA_XCAL;
 	inhib=0;
-	wt_scale {abs=1: rel=1: };
+	wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
 	wt_scale_init {init=0: abs=1: rel=1: };
 	lrate=0.02;
 	cur_lrate=0.02;
@@ -27666,7 +27858,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  wt_limits {type=NONE: min=-1: max=5: sym=0: };
 	  learn_rule=CTLEABRA_XCAL;
 	  inhib=0;
-	  wt_scale {abs=1: rel=1: };
+	  wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
 	  wt_scale_init {init=0: abs=1: rel=1: };
 	  lrate=0;
 	  cur_lrate=0;
@@ -27701,7 +27893,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	wt_limits {type=NONE: min=-1: max=5: sym=0: };
 	learn_rule=CTLEABRA_XCAL;
 	inhib=0;
-	wt_scale {abs=1: rel=1: };
+	wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
 	wt_scale_init {init=0: abs=1: rel=1: };
 	lrate=0;
 	cur_lrate=0;
@@ -27736,7 +27928,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
       learn_rule=CTLEABRA_XCAL;
       inhib=0;
-      wt_scale {abs=1: rel=1: };
+      wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
       wt_scale_init {init=0: abs=1: rel=1: };
       lrate=0.02;
       cur_lrate=0.01;
@@ -27778,7 +27970,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       wt_limits {type=MIN_MAX: min=0: max=1: sym=0: };
       learn_rule=CTLEABRA_XCAL;
       inhib=0;
-      wt_scale {abs=1: rel=0: };
+      wt_scale {abs=1: rel=0: sem_extra=2: old=0: };
       wt_scale_init {init=0: abs=1: rel=1: };
       lrate=0;
       cur_lrate=0;
@@ -27826,6 +28018,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.9;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -27833,8 +28028,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=1: };
       ct_inhib_mod {
        use_sin=1;
@@ -27872,6 +28068,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.9;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -27879,8 +28078,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -27915,6 +28115,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.9;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -27922,8 +28125,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -27942,7 +28146,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       unit_range {min=0: max=1: range=1: scale=1: };
       bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
       val_range {min=0: max=1: range=1: scale=1: };
-      pv {min_pvi=0.4: prior_gain=1: er_reset_prior=1: };
+      pv {min_pvi=0.4: pvi_scale_min=0: prior_gain=1: er_reset_prior=1: };
      };
      LVeLayerSpec @[3] {
       name="LVeLayer";
@@ -27966,6 +28170,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 type=KWTA_AVG_INHIB;
 	 kwta_pt=0.9;
 	 min_i=0;
+	 fb_act_thr=0;
+	 ff_pct=0;
+	 fb_max_dt=0.1;
 	 comp_thr=0.5;
 	 comp_gain=2;
 	 gp_pt=0.2;
@@ -27973,8 +28180,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
 	tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+	i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
 	adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-	clamp {hard=1: gain=0.2: };
+	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
 	decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
 	ct_inhib_mod {
 	 use_sin=1;
@@ -27993,7 +28201,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	unit_range {min=0: max=1: range=1: scale=1: };
 	bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
 	val_range {min=0: max=1: range=1: scale=1: };
-	lv {min_lvi=0.1: lrn_pv_only=1: prior_gain=1: er_reset_prior=1: };
+	lv {min_lvi=0.1: lvi_scale_min=0: lrn_pv_only=1: prior_gain=1: er_reset_prior=1: };
        };
       };
       inhib_group=ENTIRE_LAYER;
@@ -28001,6 +28209,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.9;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -28008,8 +28219,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -28028,7 +28240,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       unit_range {min=0: max=1: range=1: scale=1: };
       bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0.5: };
       val_range {min=0: max=1: range=1: scale=1: };
-      lv {min_lvi=0.1: lrn_pv_only=1: prior_gain=1: er_reset_prior=1: };
+      lv {min_lvi=0.1: lvi_scale_min=0: lrn_pv_only=1: prior_gain=1: er_reset_prior=1: };
      };
      NVLayerSpec @[4] {
       name="NVLayer";
@@ -28044,6 +28256,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_AVG_INHIB;
        kwta_pt=0.9;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -28051,8 +28266,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -28092,6 +28308,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        type=KWTA_INHIB;
        kwta_pt=0.25;
        min_i=0;
+       fb_act_thr=0;
+       ff_pct=0;
+       fb_max_dt=0.1;
        comp_thr=0.5;
        comp_gain=2;
        gp_pt=0.2;
@@ -28099,8 +28318,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       kwta {k_from=USE_K: k=1: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+      i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-      clamp {hard=1: gain=0.2: };
+      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
       decay {event=1: phase=0: phase2=0: clamp_phase2=0: };
       ct_inhib_mod {
        use_sin=1;
@@ -28133,6 +28353,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       };
       self_con=0;
       init_wts=0;
+      add_rnd_wts=0;
      };
      OneToOnePrjnSpec @[1] {
       name="OneToOne";
@@ -28145,6 +28366,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       };
       self_con=1;
       init_wts=0;
+      add_rnd_wts=0;
       n_conns=-1;
       recv_start=0;
       send_start=0;
@@ -28201,19 +28423,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.9786747: max=0.9786747: max_i=0: };
-     acts_m {cmpt=1: avg=0.9859675: max=0.9859675: max_i=0: };
-     phase_dif_ratio=0.9908496;
+     netin {cmpt=1: avg=0.06385152: max=0.06385152: max_i=0: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
+     i_thrs {cmpt=1: avg=-0.08786485: max=-0.08786485: max_i=0: };
+     acts {cmpt=1: avg=0.9901572: max=0.9901572: max_i=0: };
+     acts_p {cmpt=1: avg=0.9917156: max=0.9917156: max_i=0: };
+     acts_m {cmpt=1: avg=0.9901572: max=0.9901572: max_i=0: };
+     phase_dif_ratio=0.9984822;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=1: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
-     maxda=0;
+     maxda=0.0001269579;
+     act_max_avg=0.9901572;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[1].specs[1]$$: };
      hard_clamped=0;
      avg_l_avg=0;
@@ -28221,7 +28445,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[1] {
@@ -28390,26 +28614,28 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0.25;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0.2375: max=0.95: max_i=2: };
      acts_p {cmpt=1: avg=0.2375: max=0.95: max_i=3: };
      acts_m {cmpt=1: avg=0.2375: max=0.95: max_i=2: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0.9: gp_g_i=0: g_i_orig=0.9: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0.95;
      spec {type=ExtRewLayerSpec: spec=$.projects[0].networks[1].specs.gp[2][0]$: };
-     hard_clamped=0;
+     hard_clamped=1;
      avg_l_avg=nan;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=0.5;
      da_updt=0;
     };
     LeabraLayer @[2] {
@@ -28530,19 +28756,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="1";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.2302391: max=0.7904983: max_i=3: };
-     acts_m {cmpt=1: avg=0.2272719: max=0.7942569: max_i=3: };
+     netin {cmpt=1: avg=0.4413792: max=0.8516109: max_i=3: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
+     i_thrs {cmpt=1: avg=18.24224: max=35.24186: max_i=3: };
+     acts {cmpt=1: avg=0.3899191: max=0.7789317: max_i=3: };
+     acts_p {cmpt=1: avg=0.3897344: max=0.7784415: max_i=3: };
+     acts_m {cmpt=1: avg=0.3899191: max=0.7789317: max_i=3: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=9.166007: k1_ithr=2.730262: ithr_r=1.211104: ithr_diff=0.7021318: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=35.24186: k1_ithr=12.5757: ithr_r=1.030468: ithr_diff=0.6431601: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=32.97525: g_i=32.97525: gp_g_i=0: g_i_orig=32.97525: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0.7789317;
      spec {type=PVrLayerSpec: spec=$.projects[0].networks[1].specs.gp[2][1]$: };
      hard_clamped=0;
      avg_l_avg=nan;
@@ -28550,7 +28778,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[3] {
@@ -28669,19 +28897,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.3754474: max=0.7318625: max_i=1: };
-     acts_m {cmpt=1: avg=0.3769745: max=0.7330383: max_i=1: };
+     netin {cmpt=1: avg=0.004510368: max=0.01352901: max_i=1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
+     i_thrs {cmpt=1: avg=0.1121803: max=0.4614542: max_i=1: };
+     acts {cmpt=1: avg=0.2144839: max=0.8337253: max_i=1: };
+     acts_p {cmpt=1: avg=0.2183775: max=0.8240847: max_i=1: };
+     acts_m {cmpt=1: avg=0.2144839: max=0.8337253: max_i=1: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=6.606862: k1_ithr=3.409718: ithr_r=0.6614791: ithr_diff=0.4839126: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0.4614542: k1_ithr=-0.004244325: ithr_r=0: ithr_diff=1.009198: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=0.4148843: g_i=0.4148843: gp_g_i=0: g_i_orig=0.4148843: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0.8337256;
      spec {type=PViLayerSpec: spec=$.projects[0].networks[1].specs.gp[2][2]$: };
      hard_clamped=0;
      avg_l_avg=nan;
@@ -28689,7 +28919,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[4] {
@@ -28808,19 +29038,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.3470471: max=0.7504481: max_i=1: };
-     acts_m {cmpt=1: avg=0.3608859: max=0.748947: max_i=1: };
+     netin {cmpt=1: avg=0.009459981: max=0.0260738: max_i=1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
+     i_thrs {cmpt=1: avg=0.3175893: max=0.982063: max_i=1: };
+     acts {cmpt=1: avg=0.2214218: max=0.8305565: max_i=1: };
+     acts_p {cmpt=1: avg=0.231329: max=0.8221738: max_i=1: };
+     acts_m {cmpt=1: avg=0.2214218: max=0.8305565: max_i=1: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=8.737672: k1_ithr=4.009229: ithr_r=0.7790448: ithr_diff=0.5411559: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0.982063: k1_ithr=0.09609804: ithr_r=2.324286: ithr_diff=0.9021468: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=0.8934665: g_i=0.8934665: gp_g_i=0: g_i_orig=0.8934665: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0.8305568;
      spec {type=LVeLayerSpec: spec=$.projects[0].networks[1].specs.gp[2][3]$: };
      hard_clamped=0;
      avg_l_avg=6.462349e-27;
@@ -28828,7 +29060,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[5] {
@@ -28947,19 +29179,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="0.5";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.3762069: max=0.7223751: max_i=2: };
-     acts_m {cmpt=1: avg=0.3857846: max=0.7203907: max_i=2: };
+     netin {cmpt=1: avg=0.003105388: max=0.01102977: max_i=1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
+     i_thrs {cmpt=1: avg=0.05387366: max=0.3577358: max_i=1: };
+     acts {cmpt=1: avg=0.2138112: max=0.8503662: max_i=1: };
+     acts_p {cmpt=1: avg=0.2163314: max=0.834407: max_i=1: };
+     acts_m {cmpt=1: avg=0.2138112: max=0.8503662: max_i=1: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.607451: k1_ithr=2.603113: ithr_r=0.5709667: ithr_diff=0.435021: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0.3577358: k1_ithr=-0.04741371: ithr_r=0: ithr_diff=1.132538: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=0.3172208: g_i=0.3172208: gp_g_i=0: g_i_orig=0.3172208: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0.8503662;
      spec {type=LViLayerSpec: spec=.projects[0].networks[1].specs.gp[2][3].children[0]$$: };
      hard_clamped=0;
      avg_l_avg=nan;
@@ -28967,7 +29201,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[6] {
@@ -29062,19 +29296,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name="1";
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.3448911: max=0.7304876: max_i=3: };
-     acts_m {cmpt=1: avg=0.3499025: max=0.7293102: max_i=3: };
+     netin {cmpt=1: avg=0.2067914: max=0.8214531: max_i=1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
+     i_thrs {cmpt=1: avg=8.506845: max=33.99031: max_i=1: };
+     acts {cmpt=1: avg=0.2220898: max=0.8861868: max_i=1: };
+     acts_p {cmpt=1: avg=0.2211088: max=0.8816923: max_i=1: };
+     acts_m {cmpt=1: avg=0.2220898: max=0.8861868: max_i=1: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=4.665142: k1_ithr=2.464847: ithr_r=0.6379883: ithr_diff=0.4716458: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=33.99031: k1_ithr=0.01235774: ithr_r=7.919549: ithr_diff=0.9996364: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=30.59251: g_i=30.59251: gp_g_i=0: g_i_orig=30.59251: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.9: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0.8861868;
      spec {type=NVLayerSpec: spec=$.projects[0].networks[1].specs.gp[2][4]$: };
      hard_clamped=0;
      avg_l_avg=-3.631184e+09;
@@ -29082,7 +29318,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[7] {
@@ -29252,26 +29488,28 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.5291976: max=0.5291976: max_i=0: };
-     acts_m {cmpt=1: avg=0: max=0: max_i=0: };
-     phase_dif_ratio=0;
+     acts {cmpt=1: avg=-0.03833845: max=-0.03833845: max_i=0: };
+     acts_p {cmpt=1: avg=0.6: max=0.6: max_i=0: };
+     acts_m {cmpt=1: avg=-0.03833845: max=-0.03833845: max_i=0: };
+     phase_dif_ratio=0.01817867;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=1: pct=1: pct_c=0: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=1: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=-0.03805641;
      spec {type=PVLVDaLayerSpec: spec=$.projects[0].networks[1].specs.gp[2][5]$: };
      hard_clamped=0;
      avg_l_avg=0;
-     dav=0;
+     dav=-0.03833845;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[8] {
@@ -29364,26 +29602,28 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="0.1";
+     output_name="0.9";
      sse=0;
      icon_value=0;
      unit_names {
       name=;
 	  [12 1] "val";"0";"0.1";"0.2";"0.3";"0.4";"0.5";"0.6";"0.7";"0.8";
 "0.9";"1";     };
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.0600903: max=0.7203047: max_i=6: };
-     acts_m {cmpt=1: avg=0.05979365: max=0.7172889: max_i=2: };
-     phase_dif_ratio=0.9654011;
+     netin {cmpt=1: avg=0.09840212: max=0.2107042: max_i=10: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
+     i_thrs {cmpt=1: avg=0.6627039: max=1.491683: max_i=10: };
+     acts {cmpt=1: avg=0.07040417: max=0.8448501: max_i=10: };
+     acts_p {cmpt=1: avg=0.07051174: max=0.8461409: max_i=6: };
+     acts_m {cmpt=1: avg=0.07040417: max=0.8448501: max_i=10: };
+     phase_dif_ratio=0.9674973;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=4.868967: k1_ithr=3.230219: ithr_r=0.410332: ithr_diff=0.33657: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=1.491683: k1_ithr=0.5873422: ithr_r=0.9320526: ithr_diff=0.6062553: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=1.310815: g_i=1.310815: gp_g_i=0: g_i_orig=1.310815: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.08333334: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.1: };
-     maxda=0;
+     maxda=1.823902e-05;
+     act_max_avg=0.8448501;
      spec {type=ScalarValLayerSpec: spec=$.projects[0].networks[1].specs[5]$: };
      hard_clamped=0;
      avg_l_avg=0;
@@ -29484,26 +29724,28 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="0.1";
+     output_name="0.3";
      sse=0;
      icon_value=0;
      unit_names {
       name=;
 	  [12 1] "val";"0";"0.1";"0.2";"0.3";"0.4";"0.5";"0.6";"0.7";"0.8";
 "0.9";"1";     };
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.06019334: max=0.7191808: max_i=2: };
-     acts_m {cmpt=1: avg=0.06035726: max=0.6746115: max_i=2: };
-     phase_dif_ratio=0.9640982;
+     netin {cmpt=1: avg=0.101607: max=0.2350792: max_i=4: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
+     i_thrs {cmpt=1: avg=0.6863645: max=1.661585: max_i=4: };
+     acts {cmpt=1: avg=0.07227661: max=0.8673194: max_i=4: };
+     acts_p {cmpt=1: avg=0.06974853: max=0.8369824: max_i=5: };
+     acts_m {cmpt=1: avg=0.07227661: max=0.8673194: max_i=4: };
+     phase_dif_ratio=0.9579344;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=4.547894: k1_ithr=3.20407: ithr_r=0.3502426: ithr_diff=0.2954828: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=1: pct=0.08333334: pct_c=0.9166667: adth_k=1: k_ithr=1.661585: k1_ithr=0.5977081: ithr_r=1.022425: ithr_diff=0.6402783: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=1.44881: g_i=1.44881: gp_g_i=0: g_i_orig=1.44881: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.08333334: i_kwta_pt=0.8: g_bar_i=1: g_bar_l=0.1: };
-     maxda=0;
+     maxda=6.437302e-06;
+     act_max_avg=0.8673194;
      spec {type=ScalarValLayerSpec: spec=$.projects[0].networks[1].specs[5]$: };
      hard_clamped=0;
      avg_l_avg=0;
@@ -29511,7 +29753,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[10] {
@@ -29679,19 +29921,21 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      output_name=;
      sse=0;
      icon_value=0;
-     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.154979: max=0.8567419: max_i=31: };
-     acts_m {cmpt=1: avg=0.1514564: max=0.8710338: max_i=37: };
-     phase_dif_ratio=0.9447176;
+     netin {cmpt=1: avg=0.1607831: max=0.3229164: max_i=45: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
+     i_thrs {cmpt=1: avg=1.138718: max=2.340996: max_i=45: };
+     acts {cmpt=1: avg=0.05859176: max=0.9662543: max_i=45: };
+     acts_p {cmpt=1: avg=0.09963585: max=0.9387072: max_i=36: };
+     acts_m {cmpt=1: avg=0.05859176: max=0.9662543: max_i=45: };
+     phase_dif_ratio=0.9401606;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=3.275156: k1_ithr=2.694127: ithr_r=0.1952913: ithr_diff=0.177405: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=7: pct=0.1428571: pct_c=0.8571429: adth_k=1: k_ithr=1.688514: k1_ithr=1.047086: ithr_r=0.4778377: ithr_diff=0.3798772: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=1.431943: g_i=1.431943: gp_g_i=0: g_i_orig=1.431943: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.1428571: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
-     maxda=0;
+     maxda=2.949685e-05;
+     act_max_avg=0.9662543;
      spec {type=LeabraLayerSpec: spec=$.projects[0].networks[1].specs[1]$: };
      hard_clamped=0;
      avg_l_avg=nan;
@@ -29699,7 +29943,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[11] {
@@ -29752,26 +29996,28 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.2102437: max=0.9180942: max_i=7: };
-     acts_m {cmpt=1: avg=0.21624: max=0.95: max_i=6: };
+     acts {cmpt=1: avg=0.2148701: max=0.95: max_i=6: };
+     acts_p {cmpt=1: avg=0.2077023: max=0.9423904: max_i=7: };
+     acts_m {cmpt=1: avg=0.2148701: max=0.95: max_i=6: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0.95;
      spec {type=ScalarValLayerSpec: spec=.projects[0].networks[1].specs[4]$$: };
-     hard_clamped=0;
+     hard_clamped=1;
      avg_l_avg=0;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[12] {
@@ -29819,6 +30065,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0.2353046: max=0.3001999: max_i=4: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=1.699318: max=2.178182: max_i=4: };
      acts {cmpt=1: avg=0.2105052: max=0.9129162: max_i=4: };
      acts_p {cmpt=1: avg=0.2105052: max=0.9129162: max_i=4: };
@@ -29827,10 +30074,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.088846: k1_ithr=1.569475: ithr_r=0.285871: ithr_diff=0.2486405: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=1.881098: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
+     i_val {kwta=1.881098: g_i=0.6: gp_g_i=0: g_i_orig=0.6: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=ScalarValLayerSpec: spec=$.projects[0].networks[1].specs[4]$: };
      hard_clamped=1;
      avg_l_avg=nan;
@@ -29891,26 +30139,28 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.2162597: max=0.95: max_i=5: };
-     acts_m {cmpt=1: avg=0.2150331: max=0.95: max_i=4: };
+     acts {cmpt=1: avg=0.2109354: max=0.894835: max_i=6: };
+     acts_p {cmpt=1: avg=0.2109421: max=0.8935742: max_i=4: };
+     acts_m {cmpt=1: avg=0.2109354: max=0.894835: max_i=6: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.25: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0.894835;
      spec {type=ScalarValLayerSpec: spec=$.projects[0].networks[1].specs[4]$: };
-     hard_clamped=0;
+     hard_clamped=1;
      avg_l_avg=nan;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
     };
     LeabraLayer @[14] {
@@ -29958,6 +30208,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0.2362774: max=0.304078: max_i=5: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=1.705543: max=2.20583: max_i=5: };
      acts {cmpt=1: avg=0.2150649: max=0.948966: max_i=4: };
      acts_p {cmpt=1: avg=0.2150649: max=0.948966: max_i=4: };
@@ -29966,10 +30217,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=3: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=2.113612: k1_ithr=1.569521: ithr_r=0.2976281: ithr_diff=0.2574225: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=1.895975: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
+     i_val {kwta=1.895975: g_i=0.6: gp_g_i=0: g_i_orig=0.6: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=ScalarValLayerSpec: spec=$.projects[0].networks[1].specs[4]$: };
      hard_clamped=1;
      avg_l_avg=nan;
@@ -30024,30 +30276,32 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.05341445: max=0.9159008: max_i=60: };
-     acts_m {cmpt=1: avg=0.05295891: max=0.95: max_i=51: };
+     acts {cmpt=1: avg=0.05146322: max=0.9479522: max_i=71: };
+     acts_p {cmpt=1: avg=0.05152215: max=0.9056754: max_i=50: };
+     acts_m {cmpt=1: avg=0.05146322: max=0.9479522: max_i=71: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.08181818: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0.9479522;
      spec {type=TwoDValLayerSpec: spec=.projects[0].networks[1].specs[6]$$: };
-     hard_clamped=0;
+     hard_clamped=1;
      avg_l_avg=6.462349e-27;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      twod_vals {
       name=;
-	  [2 11 1 1 1] 0.89503926;0.44157496;0;0;0.89602214;0.45556495;0.89602214;0.45556495;0.52300417;0.70157808;
+	  [2 11 1 1 1] 0.5579226;0.87148541;0;0;0.57005697;0.87668914;0.57005697;0.87668914;0.75663549;0.47403136;
 0;0;0;0;0;0;0;0;0;0;
 0;0;     };
     };
@@ -30095,6 +30349,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0.1106858: max=0.1428737: max_i=51: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0.7798139: max=1.02634: max_i=51: };
      acts {cmpt=1: avg=0.04698165: max=0.9139487: max_i=51: };
      acts_p {cmpt=1: avg=0.04698165: max=0.9139487: max_i=51: };
@@ -30103,10 +30358,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0.9875029: k1_ithr=0.761307: ithr_r=0.2601427: ithr_diff=0.2290585: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0.8970246: g_i=0.6: gp_g_i=0: g_i_orig=0.6: };
+     i_val {kwta=0.8970246: g_i=0.6: gp_g_i=0: g_i_orig=0.6: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=TwoDValLayerSpec: spec=$.projects[0].networks[1].specs[6]$: };
      hard_clamped=1;
      avg_l_avg=1.401298e-45;
@@ -30166,30 +30422,32 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.0518648: max=0.95: max_i=51: };
-     acts_m {cmpt=1: avg=0.05170891: max=0.95: max_i=48: };
+     acts {cmpt=1: avg=0.05217426: max=0.95: max_i=69: };
+     acts_p {cmpt=1: avg=0.0535597: max=0.8889623: max_i=60: };
+     acts_m {cmpt=1: avg=0.05217426: max=0.95: max_i=69: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=9: pct=0.08181818: pct_c=0.9181818: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0.6: gp_g_i=0: g_i_orig=0.6: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.08181818: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0.95;
      spec {type=TwoDValLayerSpec: spec=$.projects[0].networks[1].specs[6]$: };
-     hard_clamped=0;
+     hard_clamped=1;
      avg_l_avg=nan;
      dav=0;
      avg_netin {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_sum {cmpt=1: avg=0: max=0: max_i=-1: };
      avg_netin_n=0;
-     norm_err=0;
+     norm_err=-1;
      da_updt=0;
      twod_vals {
       name=;
-	  [2 11 1 1 1] 0.32763293;0.41747409;0;0;0.33873811;0.42420781;0.33873811;0.42420781;0.84638745;0.38479704;
+	  [2 11 1 1 1] 0.13794455;0.78104508;0;0;0.14712162;0.78076112;0.14712162;0.78076112;0.51446974;0.71471679;
 0;0;0;0;0;0;0;0;0;0;
 0;0;     };
     };
@@ -30201,33 +30459,33 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    };
    flags=;
    auto_build=AUTO_BUILD;
-   train_mode=TRAIN;
+   train_mode=TEST;
    wt_update=ON_LINE;
    small_batch_n=10;
    batch=0;
-   epoch=0;
+   epoch=500;
    group=0;
    trial=0;
    tick=0;
    cycle=0;
-   time=0;
+   time=4180;
    group_name=;
    trial_name=;
-   output_name=;
+   output_name="0.9_0.3";
    sse_unit_avg=0;
    sse_sqrt=0;
-   sse=0;
+   sse=0.25;
    sum_sse=0;
    avg_sse=0;
    cnt_err_tol=0;
    cnt_err=0;
    pct_err=0;
    pct_cor=0;
-   cur_sum_sse=0;
-   avg_sse_n=0;
-   cur_cnt_err=0;
+   cur_sum_sse=17.13395;
+   avg_sse_n=60;
+   cur_cnt_err=60;
    train_time {name="": start={usr=7644: sys=1657: tot=127175685456: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
-   epoch_time {name="": start={usr=7644: sys=1657: tot=127175685456: }: end={usr=9595: sys=2317: tot=659472140: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="": start={usr=3404: sys=735: tot=128202865629: }: end={usr=9595: sys=2317: tot=659472140: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    trial_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    settle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    cycle_time {name="": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
@@ -30256,7 +30514,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    phase_order=MINUS_PLUS;
    no_plus_test=0;
    sequence_init=DO_NOTHING;
-   phase=MINUS_PHASE;
+   phase=PLUS_PHASE;
    nothing_phase=0;
    phase_no=0;
    phase_max=2;
@@ -30296,46 +30554,100 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    sravg_vals {
     s_sum=0;
     s_nrm=0;
-    m_sum=0;
+    m_sum=20;
     m_nrm=0;
     do_s=0;
    };
-   minus_cycles=0;
+   ct_lrn_trig {
+    plus_lrn_cyc=-1;
+    davg_dt=0.1;
+    davg_s_dt=0.05;
+    davg_m_dt=0.03;
+    davg_l_dt=0.0005;
+    thr_min=0;
+    thr_max=0.5;
+    loc_max_cyc=8;
+    loc_max_dec=0.01;
+    lrn_delay=40;
+    lrn_refract=100;
+    davg_l_init=0;
+    davg_max_init=0.001;
+    davg_time=10;
+    davg_s_time=20;
+    davg_m_time=33.33334;
+    davg_l_time=2000;
+    lrn_delay_inc=0.025;
+    lrn_refract_inc=0.01;
+   };
+   lrn_trig {
+    davg=0;
+    davg_s=0;
+    davg_m=0;
+    davg_smd=0;
+    davg_l=0;
+    davg_max=0.001;
+    cyc_fm_inc=0;
+    cyc_fm_dec=0;
+    loc_max=0.001;
+    lrn_max=0;
+    lrn_trig=0;
+    lrn=0;
+    lrn_min=0;
+    lrn_min_cyc=0;
+    lrn_min_thr=0;
+    lrn_min_sum=0;
+    lrn_min_cyc_sum=0;
+    lrn_min_thr_sum=0;
+    lrn_plus=0;
+    lrn_plus_cyc=0;
+    lrn_plus_thr=0;
+    lrn_plus_sum=0;
+    lrn_plus_cyc_sum=0;
+    lrn_plus_thr_sum=0;
+    lrn_noth=0;
+    lrn_noth_cyc=0;
+    lrn_noth_thr=0;
+    lrn_noth_sum=0;
+    lrn_noth_cyc_sum=0;
+    lrn_noth_thr_sum=0;
+    lrn_stats_n=0;
+   };
+   minus_cycles=50;
    avg_cycles=0;
-   avg_cycles_sum=0;
-   avg_cycles_n=0;
-   minus_output_name=;
+   avg_cycles_sum=3000;
+   avg_cycles_n=60;
+   minus_output_name="0.9_0.3";
    net_misc {
     cyc_syn_dep=0;
     syn_dep_int=20;
    };
    send_pct=0;
    send_pct_n=0;
-   send_pct_tot=0;
+   send_pct_tot=329;
    avg_send_pct=0;
-   avg_send_pct_sum=0;
-   avg_send_pct_n=0;
+   avg_send_pct_sum=56.32561;
+   avg_send_pct_n=4180;
    maxda_stopcrit=-1;
-   maxda=0;
+   maxda=0.0001269579;
    trg_max_act_stopcrit=1;
    trg_max_act=0;
-   ext_rew=0;
+   ext_rew=-1.1;
    ext_rew_avail=0;
    norew_val=0.5;
    avg_ext_rew=0;
-   pvlv_pvi=0;
-   pvlv_pvr=0;
-   pvlv_lve=0;
-   pvlv_lvi=0;
+   pvlv_pvi=0.02761536;
+   pvlv_pvr=0.5001412;
+   pvlv_lve=0.005098688;
+   pvlv_lvi=0.005098688;
    pv_detected=0;
-   avg_ext_rew_sum=0;
-   avg_ext_rew_n=0;
+   avg_ext_rew_sum=44;
+   avg_ext_rew_n=59;
    off_errs=1;
    on_errs=1;
-   norm_err=0;
+   norm_err=0.25;
    avg_norm_err=1;
-   avg_norm_err_sum=0;
-   avg_norm_err_n=0;
+   avg_norm_err_sum=16.61378;
+   avg_norm_err_n=60;
   };
  };
 };

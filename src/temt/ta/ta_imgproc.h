@@ -825,19 +825,18 @@ class TA_API V1KwtaSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;	// is kwta active for this stage of processing?
-  float		raw_pct; // #CONDSHOW_ON_on #DEF_0;0.8 (0.8 works best when using) what proportion of the raw filter activation value to use in computing the final activation, in combination with the result of the kwta computation -- if kwta is lower than the raw, then that value is used (i.e., the unit was inhibited), but if it is higher, then a blended value is used -- this retains some of the original signal strength in the face of kwta tending to eliminate it
+  float		raw_pct; // #CONDSHOW_ON_on #DEF_0;0.8 set to 0 for gelin -- 0.8 works best when using -- what proportion of the raw filter activation value to use in computing the final activation, in combination with the result of the kwta computation -- if kwta is lower than the raw, then that value is used (i.e., the unit was inhibited), but if it is higher, then a blended value is used -- this retains some of the original signal strength in the face of kwta tending to eliminate it
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
   float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
-  float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.6:0.8 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units
-  bool		gelin;	 // #CONDSHOW_ON_on #DEF_true use the g_e linear activation function based on adaptive exponential spiking dynamics -- gain should be around 20, leak .3, g_bar_e = .5
-  float		gain;	 // #CONDSHOW_ON_on #DEF_600;8 gain on the activation function
+  float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.4:0.8 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units -- gelin should be 0.4, oherwise 0.6
+  bool		gelin;	 // #CONDSHOW_ON_on use the g_e linear activation function based on adaptive exponential spiking dynamics -- noisy XX1 operates on difference between g_e - g_e_thr where g_e_thr is amount of excitation required to get over threshold -- otherwise NXX1 operates on equilibrium membrane potential (v_m) computed from excitation, leak and inhibition
+  float		gain;	 // #CONDSHOW_ON_on #DEF_600;40 gain on the activation function
   float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01;0.02 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
-  float		g_bar_e; // #CONDSHOW_ON_on #DEF_0.5 excitatory conductance multiplier -- multiplies filter input value prior to computing membrane potential -- general target is to have max excitatory input = .5, so with 0-1 normalized inputs, this value should be .5
-  float		g_bar_l; // #CONDSHOW_ON_on #DEF_0.1;0.3 leak current conductance value
-
-  float		e_rev_e; // #CONDSHOW_ON_on #DEF_1 #EXPERT excitatory reversal potential -- generally not changed from default value of 1 in normalized units
-  float		e_rev_l; // #CONDSHOW_ON_on #DEF_0.15;0.3 leak and inhibition reversal potential -- generally not changed from default value of 0.15 or .30 in normalized units
-  float		thr;	 // #CONDSHOW_ON_on #DEF_0.25:0.5 firing threshold -- generally not changed from default value of .25 or .5 in normalized units
+  float		g_bar_l; // #CONDSHOW_ON_on #DEF_0.1;0.3 leak current conductance value -- determines neural response to weak inputs -- a higher value can damp the neural response
+  float		g_bar_e; // #READ_ONLY #NO_SAVE excitatory conductance multiplier -- multiplies filter input value prior to computing membrane potential -- general target is to have max excitatory input = .5, so with 0-1 normalized inputs, this value is automatically set to .5
+  float		e_rev_e; // #READ_ONLY #NO_SAVE excitatory reversal potential -- automatically set to default value of 1 in normalized units
+  float		e_rev_l; // #READ_ONLY #NO_SAVE leak and inhibition reversal potential -- automatically set to 0.3 for gelin and 0.15 for non-gelin 
+  float		thr;	 // #READ_ONLY #NO_SAVE firing threshold -- automatically set to default value of .5 for gelin and .25 for non-gelin
 
   virtual bool	Compute_Kwta(float_Matrix& inputs, float_Matrix& outputs,
 			     float_Matrix& gc_i_mat);
@@ -870,37 +869,36 @@ public:
   }
   // compute equilibrium membrane potential from excitatory (gc_e) and inhibitory (gc_i) input currents (gc_e = raw filter value, gc_i = inhibition computed from kwta) -- in normalized units (e_rev_e = 1), and inhib e_rev_i = e_rev_l
   
-  inline float 	Compute_ActFmVm_nxx1(float vm) {
-    float thr_vm = vm - thr; // thresholded vm
+  inline float 	Compute_ActFmVm_nxx1(float val_sub_thr) {
     float new_act;
-    if(thr_vm <= nxx1_fun.x_range.min) {
+    if(val_sub_thr <= nxx1_fun.x_range.min) {
       new_act = 0.0f;
     }
-    else if(thr_vm >= nxx1_fun.x_range.max) {
-      thr_vm *= gain;
-      new_act = thr_vm / (thr_vm + 1.0f);
+    else if(val_sub_thr >= nxx1_fun.x_range.max) {
+      val_sub_thr *= gain;
+      new_act = val_sub_thr / (val_sub_thr + 1.0f);
     }
     else {
-      new_act = nxx1_fun.Eval(thr_vm);
+      new_act = nxx1_fun.Eval(val_sub_thr);
     }
     return new_act;
   }
 
   inline float 	Compute_ActFmVm_gelin(float gc_e, float gc_i) {
-    float new_act;
     float g_e_thr = Compute_EThresh(gc_i);
-    if(gc_e < g_e_thr)
-      new_act = 0.0f;
-    else
-      new_act = gain * (gc_e - g_e_thr);
-    return new_act;
+    return Compute_ActFmVm_nxx1(gc_e - g_e_thr);
+  }
+
+  inline float 	Compute_ActFmVm_orig(float gc_e, float gc_i) {
+    float vm = Compute_EqVm(gc_e, gc_i);
+    return Compute_ActFmVm_nxx1(vm - thr);
   }
 
   inline float Compute_ActFmIn(float gc_e, float gc_i) {
     if(gelin)
       return Compute_ActFmVm_gelin(gc_e, gc_i);
     else
-      return Compute_ActFmVm_nxx1(Compute_EqVm(gc_e, gc_i));
+      return Compute_ActFmVm_orig(gc_e, gc_i);
   }
 
   virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 

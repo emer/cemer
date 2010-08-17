@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v3.0 -- code v5.1.0.0
 LeabraProject .projects[0] { 
   taBase_Group @.templates = [0] {
   };
@@ -3557,7 +3557,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      el_def=0;
      EditMbrItem @[0] {
       label="hidden kwta";
-      desc=" desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)<br>  k from:  how is the active_k determined: directly by k, by pct, or by no. of units where ext > pat_q<br>    USE K:  use the k specified directly<br>    USE PCT:  use the percentage pct to compute the k as a function of layer size<br>    USE PAT K:  use the activity level of the current event pattern (k = of units > pat_q)<br>  k:  desired number of active units in the layer<br>  pct:  desired proportion of activity (used to compute a k value based on layer size, .25 std)<br>  diff act pct: [Default: false]  if true, use different actual percent activity for overall layer activation<br>  act pct:  actual percent activity to put in kwta.pct field of layer<br>  gp i:  compute inhibition including all of the layers in the same group, or unit groups within the layer: each items computed inhib vals are multipled by gp_g scaling, then MAX'd, and each item's inhib is the MAX of this pooled MAX value and its original own value<br>  gp g:  how much this item (layer or unit group) contributes to the pooled layer group values";
+      desc=" desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)<br>  k from:  how is the active_k determined: directly by k, by pct, or by no. of units where ext > pat_q<br>    USE K:  use the k specified directly<br>    USE PCT:  use the percentage pct to compute the k as a function of layer size<br>    USE PAT K:  use the activity level of the current event pattern (k = of units > pat_q)<br>  k:  desired number of active units in the layer<br>  pct:  desired proportion of activity (used to compute a k value based on layer size, .25 std)<br>  pat q: [Default: 0.2;0.5]  threshold for pat_k based activity level: add to k if ext > pat_q<br>  diff act pct: [Default: false]  if true, use different actual percent activity for overall layer activation<br>  act pct:  actual percent activity to put in kwta.pct field of layer<br>  gp i:  compute inhibition including all of the layers in the same group, or unit groups within the layer: each items computed inhib vals are multipled by gp_g scaling, then MAX'd, and each item's inhib is the MAX of this pooled MAX value and its original own value<br>  gp g:  how much this item (layer or unit group) contributes to the pooled layer group values";
       cust_desc=0;
       base=.projects[0].networks[0].specs[2].children[0]$$;
       mbr=LeabraLayerSpec::kwta;
@@ -7040,7 +7040,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      el_def=0;
      RndSeed @[0] {
       name="rnd_seed";
-      seed{ 1251475606;2120878740;-980227637;1451901931;-1236597418;-1497428439;-1893557763;-955696990;-296189811;-778521073;1962950342;-165526642;-964289619;1098582451;161027400;-1430196873;2003061817;2095319593;1988061658;954726010;-876509130;179444222;1713319756;-1044849032;1448909215;2081433967;579745408;986054811;-1901187005;1079169730;-1161002483;112350986;-1372147438;-1748669583;-74911871;-373223315;1710774666;968079100;1102581138;-807008730;-435340863;1131322291;634629988;823965343;-798481433;528952609;-278759629;-1510885857;161308321;-2061402442;-638496458;-1256364260;-1432699638;-1452417955;-1109407567;-1399391786;672072924;-913660155;-801105000;-1655842974;462969116;-1433459639;-2030930731;-468703214;-465049611;-1422185905;-602544733;1407596643;816754926;-266523605;1832637454;1031778610;-1986876670;1902147401;-35874894;118264352;17352428;459196265;1157291451;-4717391;-1761928054;453970425;185872527;-723734594;-1622639899;1907301496;1671560467;-2099938703;-1176118601;-1330829630;1833765402;76181506;-929217754;-1057142026;431927303;-123719134;485388389;-1292147398;-1964906630;-1538815301;-259670943;-180239089;1757030946;-587965642;-878028463;-1925177405;1435619471;1728398961;-1529431396;-1259852093;1407630227;1298604809;279452312;1656084073;-28098694;-1407267792;281760302;376703643;-1548606819;-265830350;-220197683;-85898305;-292651610;1794629524;-746261691;-930189029;-1839171850;-1872526653;931323813;-1445688934;-1583046278;-358290213;1874397628;442629398;213098548;1963329803;-578950278;1107339334;-230595699;854934929;1878395841;714892109;-1275960593;1712119056;1557680453;1303475301;-49778682;-2073436276;-347459174;1879012082;-1930336907;-993347702;-252593499;-1899267561;1831823331;-1585844539;1901376543;-1616830861;-1259176909;964180212;-2120938268;1174351199;310785208;842089787;-199629845;1149637421;-547611390;-1578894580;-1515287762;613119237;1539823779;1832200853;600768784;-1347617795;1511252809;-982371305;-528924524;-343389372;-536890699;-511776639;353193470;-1225870357;567520419;475748358;38727958;130278503;-1739244451;1904781622;-1040567697;1571139929;-1750134666;-351563133;-294171328;1312773936;-755130345;-918102873;-1920675464;467070951;92292585;107234996;240269772;1274214981;-2035867234;1278263127;-1459977286;-178556827;-687608052;-857384774;201720525;-2055614286;-829585854;1383448952;-481421679;-1377760657;1297642199;1161024837;-1888450388;-179500161;-1561402170;302589487;-497797017;404997201;878890451;803610654;-1781744970;-1264845339;566021125;147729372;-774632784;289866884;-1576309510;-1499810113;1107312249;-2133926335;-563835815;1530759789;1196386696;1351480570;1459157749;1530107699;-777885270;-818011746;717965539;1852456322;1567252643;-987966753;-985993790;1170413340;-886987671;1546164427;2068734636;1198949436;-130952691;997416579;195913133;713929536;-2053834432;368617995;141032025;1517184800;-2136581623;-501323172;2038812545;978738823;-967144629;-449151887;1003101188;869741215;341250247;130358928;605036510;1652318629;1187990212;103738826;1179315140;1646162636;-1592917771;1137414536;1995554083;-813379199;-2045559966;1341967865;448723954;-1110709867;412481711;-1777744600;-2004597584;-1647288999;-1230534393;-1819296486;1871672218;1437831242;2115834299;1141541255;-966067964;1252655082;-1837909025;373122138;1466090156;-1562352532;2135457426;2103155756;-1124879377;-555035984;-464786225;1027709357;1977235315;-488512723;66338906;4427447;1560821353;-1300346817;-1239013815;-141017136;-335668615;1220656477;1615458952;-38337974;-445908725;2065074535;1765133438;2015536732;-1187092237;106914136;1478590716;-165000682;-1561888625;-323942936;1802443263;-1246744449;132188059;571929714;-2097318842;789791777;-1426683053;1594511684;1500708489;709702905;-2137118577;-101419532;-564872505;-625175383;10199656;-668418977;191073700;-728783091;913663968;-1475814213;514660185;-348661638;-1490015717;1865875004;-26479503;-309955493;-122224614;-1678808000;1949501806;1043865904;-1103640234;-670276725;-153154032;722319848;1245676018;1497256266;1814312707;1690814263;-421036100;250322634;-1971994334;1823429393;-1173399870;-54920397;1528613732;-2030547634;1315449970;1778914774;1975627339;397762219;618978801;-962033008;1621907579;1118712735;-1716785964;1684862957;1193221532;-1049971342;206180375;-1602901610;1496849640;1358633586;-1856111643;-46923094;428900149;1082691186;-213860375;-1767509283;-158651769;-1740346463;1712174045;1403827035;1318317586;-1320543728;-391254868;756091294;-785360150;823758978;-654731552;275579942;-146474346;778279778;857850180;899327343;1117039975;-1690435365;-2525125;1001023415;-977478701;-673903951;-1935377444;-1908363719;1683968491;-1848144649;455916367;470560466;1973083266;-1850729384;2015189804;-1818554516;191952402;1237235911;-1098195508;1981727221;1301945076;787267930;2018997300;-786155620;2120682095;-1271005925;-1063895661;-785884281;1317126348;721012634;227748732;-1648786009;-969275179;-914750421;-965407354;1796047928;564571453;-232587310;1835845687;-1534466799;-41710269;1212021765;1080988506;66639790;173750126;-760693201;764187942;1347563465;1517740980;-424233674;495049911;1616577794;548181759;-169931924;-2111378531;-1295249778;874425104;1729433381;-1973076214;-505075713;699573316;993997997;-1613013221;-1658853448;-558958530;59479790;-1571165244;655424765;671233713;586895030;960460208;64266323;-1292587613;920300394;300375224;166596223;1244049667;-1525945933;-1919291969;2048914044;-1530228163;-1545272;-286315515;-15362483;890637494;-545625153;-250077410;485870948;-979333528;-310610644;1427727489;-380819337;1631783868;1323747466;-1037270063;-1596365355;1244020431;1481967427;1698443528;1245457292;702981537;1779008390;2044011845;-689628713;-2013157720;-780288745;-1940435222;537152399;1393186931;-813176573;-78647542;1119101336;775627881;783323258;1414548528;-37008796;1758886835;-1632693941;-1873746721;-1200647612;20327858;-793621681;-541629678;1221931212;-1529546759;-1399313632;218904708;-340987345;-1207363208;-1534109377;-805643217;-486511749;1492492408;-82308386;-1297958829;-988998888;-1491140917;1225988210;1002648197;-2018566752;1717593362;-1046213208;-1263081055;1453812346;-1788487757;57857026;1943058680;2133146988;-1047817423;741660395;-1136029719;-1166570262;1173012924;1064801990;-1320651692;775024165;287818705;-1825432402;1020354070;-460462359;620058254;637478467;-654772819;-176878107;-454519810;-1897936366;1742555794;1966872898;1594873011;-487575937;-1492732622;-1326698953;-782525903;-301557245;-1492859830;803470003;1157674475;1275593119;-78105692;989970994;-1610849782;1027667833;-1084201457;1577073268;714256253;-734780506;891838319;67702818;975409602;-849914397;-1719024710;1193259507;-78006058;404941670;-1383434340;2130100661;1626325604;2053292346;1325126057;-2010865237;144063249;-1839699686;214388958;-1828997123;1321210115;703515187;1624249225;1967357715;1948239494;863540400;653581278;324439813;      };
+      seed{ -287729804;103313652;420684870;-1461664351;367473747;-780333116;-163989367;1280157817;-451694752;2035625240;996944871;-58920658;244792269;-817476370;2086809231;-880255979;313399998;1848785671;-2137948304;716786189;-2045367243;770302152;-871844098;-431450392;-137081393;-1795629675;-1209648211;965686054;-974617574;-1407418630;1073270774;-600919507;587786822;-2016549953;-1186595149;817968376;-1269129732;541016923;-813808115;1118904749;-1768205052;1727185287;1510019080;1346315448;-2137031127;-1331770844;937301804;389656715;-2130048505;-1435131606;2076114170;-694607302;-1723203151;-1526696236;-526292828;1363192090;-1396757793;-580440470;577405095;-1955651298;861146184;-256679771;-1576536132;518745141;-2126705111;819501624;126144602;-1252237883;-2146337081;1998680318;-1868362783;1759849430;-306095333;-458176319;712836820;1271342575;-362785486;99603874;-530515144;793948566;264459902;1187810823;-790675792;461801458;-1435360050;1716367569;-2047471002;984139211;-2097370001;-1729012646;671909650;-893916043;-1487572758;-1267092507;-1264871039;-48255986;15521409;1707256390;-287429275;1774026657;510655108;2027584121;-1828419138;-2103184493;486453661;-724297638;-1356579705;1095896548;-1408104251;-1153370640;1977453288;673021788;-397444164;651037132;-417592850;1893384180;851106077;766717414;881537588;-2009816325;1758105013;-1918157699;-1016605291;-933328215;673689486;-914538109;1358452734;-720687334;-548604323;-1379434089;-1155408565;-859349168;468780867;2043656436;-1549658577;-468986552;-958576097;-1195689579;1523615773;-169824361;2091350512;-806611550;-484527597;-1495871265;-1164858175;-1908243328;817224156;1314500703;1666638762;248206860;295264082;952335857;555592109;-1875081510;468896722;547081333;823478213;-751780266;2020185383;511913629;-1073845871;-857451872;214095345;-755801672;158311019;199448540;-1850055054;1282169559;-415867626;-1210714382;153148762;904036141;-291093907;1512510483;-1616474680;924650337;-2060228875;337825572;1821507046;1540017110;83458951;-835060744;748076477;791544136;-1530000864;-408669661;561702746;1187148093;1643366760;-371808214;114117099;-1258689162;-1797667964;607574687;-1292085123;-1469849122;-531965808;2071141828;1002187903;277251554;-2082028302;738206585;1935196295;-860509271;1714468062;1746645960;-1667006437;1488841644;331911441;1195005318;-1669726699;-1413706010;-1038588728;119367660;-223654670;811160812;-1004220940;-360746420;748511493;-1775897388;-2032525494;700702789;-1959827177;75739944;149821352;1982873129;90435242;-640932875;-259860750;1966917370;475256045;-662644888;1711948063;783728575;217046597;-1468489948;1724653802;-694959964;1928683985;416802815;1146027915;1857137763;-804817508;1547468718;368838655;1487904656;-2103079381;1401161764;1886782609;1727061449;-198211358;1898474176;-1655019487;324719052;162460282;-1960905439;-329551153;1679259517;-1600683794;-2043139553;1702699893;-360443447;-400154696;-1071474482;-83427607;2022952283;1084960652;-388548436;1795687703;-260257605;-978474586;751844392;-1552866088;38941971;1616583825;1311462883;-1187195586;-943637055;-1046990688;-343446426;-130887183;-200976493;1189584106;1523035346;1778981723;1823536543;-191596940;1664707858;-527682401;-541311315;563206600;-1601243893;1489469105;-2142163819;-50042951;2085975945;1869083088;1562526110;-218432539;421361897;1219782169;611786917;-1543819449;-2058840984;871713026;-1696210693;1424360559;505454233;971863185;1242011498;-1930165907;252836098;929517826;892012803;-2065552791;-1025834894;-1027954991;-559401961;-1194901214;-799616289;1025306124;706893821;613293331;1227203778;-967090893;-214272715;994321812;1359677611;-710711718;330040166;-260510072;-1054113502;-232022959;-1072001113;517304578;1388161305;-470183992;301358952;1796885850;-700237510;515118545;1097889226;-587915923;-1888060483;-131003725;-1260295991;2140142705;-1997108853;-2019715735;269432724;1875583682;135533390;1566727462;2075762884;-1465328613;2031564864;688585737;-1032502798;-232522117;1621728959;1745965150;-1720676892;-1365109976;-531035395;-1628093022;1617369485;-131268182;1464080924;-761080863;1624214427;214794036;1888617719;2029886594;6675492;-537190486;-341577692;-1203527717;-836226282;449144259;1068204650;811282254;325871939;-756063251;2020527205;-1781257996;-1923493745;82165283;-665206702;-779404679;1066360231;-801156247;210084953;-2145617499;-1880662164;-1671658000;-171090939;-328301078;1654884218;107104277;-236146984;1206989047;-1810499425;922885251;-525575102;-752472007;-2022305161;2124998335;-749684595;-2055286882;90596901;1427315507;-1602912683;1465411823;210421123;-519567027;1044933477;-540119687;995982531;553358737;-381444904;-459598069;834363341;-3374457;-1625021509;644815525;-174403134;-392426545;-1435183833;908846661;1164953574;577076945;-2036341980;-340920914;-942242830;-338360121;-99001593;1792151112;-1098664574;-1667752650;-334472389;30209744;-442322487;-1092927380;-855815391;-753805274;1471747414;-237896687;1144788697;-740909832;-1668594744;1556011636;258461420;-635113248;800163412;-298257174;1978159796;2011070513;514999481;1881874375;-1150385943;-1073503869;492583245;-47721937;2137225515;-2042869406;-1163045711;1033582449;-1895867800;1124558758;-1309325896;-668266952;-1690881506;-178535708;-1328380420;1052101904;1676114219;1380993390;1191338408;1104345739;-233393071;800262202;1386171075;-1154985364;336029001;1830684849;-1672503467;1460694585;-939559425;668035668;533850381;-1092359925;1927267192;1983046057;-395448011;-370142660;-650908726;-1188456131;354758348;-1790270354;-412832625;-220004048;-610744812;-2081851383;-391691954;-1861617063;-865633568;634124425;-1455857400;1473750254;1709243208;1128019659;2006563249;-942312336;-978485664;248175121;-2026757192;-1644387226;929194361;910768067;1678728438;1905319547;-494071253;1064801234;-1425623579;2119132463;2126154547;-1166758200;18420161;-1045738443;-237504161;-1607753890;-1258152609;-1793631035;-800121960;-1439114947;426340082;-1818867310;1788418025;-2088134494;878106939;-182367901;134632701;-1662652689;2014255776;429698213;1203203130;1306937449;-747488469;198295788;-1066177727;2025694512;1351640956;-1597654151;1135922352;-1128891137;1137555196;-1811834627;41604552;-279551466;841281912;-938180984;26956296;1600497498;19381274;-720559498;1657943902;338342321;1439094284;-1772459431;18066208;557229530;-632874179;307490738;-868100745;-1755296510;1563648831;605312950;1290863375;1394259144;-775428464;273130819;-1937108812;-1838940140;-1910910731;-876305733;-1297044255;-1972456743;593544626;1054360454;-400597973;-1043806698;751461784;-480219320;-5763608;1378697993;-638403461;-1427597908;1704930811;20836344;-761043153;-287161676;1543062412;56172027;-1190057630;-729172676;353123128;403462006;1139190253;1885624444;844943538;1462475420;809305940;1414257288;-1616934030;1805710742;84915706;-647260150;1343147766;1599789277;-85373641;-456635408;189793356;1995595882;1780895654;      };
       mti=624;
      };
     };
@@ -7123,7 +7123,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></li>
      ProgVar @[1] {
       name="epoch";
       var_type=T_Int;
-      int_val=100;
+      int_val=31;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -7671,7 +7671,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @[4] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=35;
+      int_val=5;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -7817,10 +7817,16 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       index_var=.projects[0].programs.gp[0][2].vars[4]$$;
       order_var=.projects[0].programs.gp[0][2].vars[0]$$;
       order=PERMUTED;
-      item_idx_list{ 7;8;33;18;27;3;26;0;24;31;17;20;15;9;23;29;2;22;32;11;30;25;13;4;34;12;16;28;5;6;10;21;1;19;14;      };
+      item_idx_list{ 17;14;34;31;22;33;16;28;4;19;2;7;32;30;25;5;0;20;6;26;3;23;18;9;11;29;13;8;21;15;27;1;12;24;10;      };
       update_after=0;
       dmem_nprocs=1;
       dmem_this_proc=0;
+      grouped=0;
+      group_col 9 0="Group";
+      group_index_var=NULL;
+      group_order_var=NULL;
+      group_order=PERMUTED;
+      group_idx_list{       };
      };
      IfElse @[5] {
       desc="if full batch mode, update only at end of epoch";
@@ -11632,6 +11638,12 @@ epoch_mon_data.SetDataByName(epoch_timer.used.GetUsrSecs(), \"epoch_time_usr\");
       update_after=0;
       dmem_nprocs=1;
       dmem_this_proc=0;
+      grouped=0;
+      group_col 9 0="Group";
+      group_index_var=NULL;
+      group_order_var=NULL;
+      group_order=PERMUTED;
+      group_idx_list{       };
      };
      IfElse @[6] {
       desc="if full batch mode, update only at end of epoch";
@@ -14001,6 +14013,12 @@ presented in the minus phase -- if this is not the case (values are computed on 
       update_after=0;
       dmem_nprocs=1;
       dmem_this_proc=0;
+      grouped=0;
+      group_col 9 0="Group";
+      group_index_var=NULL;
+      group_order_var=NULL;
+      group_order=PERMUTED;
+      group_idx_list{       };
      };
      IfElse @[7] {
       desc="if full batch mode, update only at end of epoch";
@@ -16613,6 +16631,7 @@ FloatTransform @*(.m_transform) {scale={x=0.7920086: y=0.7920086: z=0.7920086: }
 	   net_name=0.05;
 	   net_vals=0.05;
 	   layer=0.04;
+	   layer_min=0.01;
 	   layer_vals=0.03;
 	   prjn=0.01;
 	   unit=0.04;
@@ -17017,10 +17036,10 @@ FloatTransform @*(.m_transform) {scale={x=0.5239177: y=0.5239177: z=0.5239176: }
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=99: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=30: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=99: };
-	   range {min=0: max=99: };
+	   data_range {min=0: max=30: };
+	   range {min=0: max=30: };
 	   n_ticks=10;
 	   axis_length=1.5;
 	   row_num=0;
@@ -17081,10 +17100,10 @@ FloatTransform @*(.m_transform) {scale={x=0.5239177: y=0.5239177: z=0.5239176: }
 	   on=1;
 	   axis=Y;
 	   col_name="gen_cnt";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=7: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=6: };
 	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
-	   data_range {min=0: max=7: };
-	   range {min=0: max=7: };
+	   data_range {min=0: max=6: };
+	   range {min=0: max=6: };
 	   n_ticks=10;
 	   axis_length=1;
 	   line_style=SOLID;
@@ -17556,10 +17575,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=99: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=30: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
-	   data_range {min=0: max=99: };
-	   range {min=0: max=99: };
+	   data_range {min=0: max=30: };
+	   range {min=0: max=30: };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
@@ -18675,9 +18694,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      bias_spec {type=LeabraBiasSpec: spec=$.projects[0].networks[0].specs[4]$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+     act {gelin=0: thr=0.25: gain=600: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
      spike {rise=0: decay=0.05: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
      spike_misc {
+      exp_slope=0.02;
+      spk_thr=1.2;
       clamp_max_p=0.11;
       clamp_type=REGULAR;
       vm_r=0;
@@ -18685,31 +18706,31 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       vm_dend_dt=0.16;
       vm_dend_time=6.25;
      };
-     adapt {
-      on=0;
-      dt_rate=0.02;
-      dt_time=50;
-      vm_gain=0.1;
-      spike_gain=0.01;
-      interval=10;
-     };
-     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=2: clamp_norm_max_amp=2: };
-     syn_delay {
-      on=0;
-      delay=4;
-     };
      opt_thresh {send=0.1: delta=0.005: phase_dif=0: };
+     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=1: range=1: scale=1: };
      v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
-     dt {vm=0.25: vm_time=4: net=0.7: net_time=1.428571: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: };
+     dt {integ=1: vm=0.25: net=0.7: midpoint=0: d_vm_max=0.025: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=4: net_time=1.428571: };
      act_avg {l_gain=3: l_dt=0.005: ml_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=200: ml_time=2.5: m_time=10: s_time=5: ss_time=1: };
      g_bar {e=1: l=0.1: i=1: h=0.1: a=0.5: };
      e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.01: b_dec_dt=0.05: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
+     adapt {
+      on=0;
+      dt=0.007;
+      vm_gain=0.1;
+      spike_gain=0.01;
+      interval=10;
+      dt_time=142.8571;
+     };
+     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=2: };
+     syn_delay {
+      on=0;
+      delay=4;
+     };
      da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
-     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      noise_type=NO_NOISE;
      noise {name="": type=GAUSSIAN: mean=0: var=0.001: par=1: };
      noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
@@ -18736,7 +18757,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      learn_rule=LEABRA_CHL;
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
      wt_scale_init {init=0: abs=1: rel=1: };
      lrate=0.01;
      cur_lrate=0.01;
@@ -18787,6 +18808,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	type=KWTA_AVG_INHIB;
 	kwta_pt=0.6;
 	min_i=0;
+	fb_act_thr=0;
+	ff_pct=0;
+	fb_max_dt=0.1;
 	comp_thr=0.5;
 	comp_gain=2;
 	gp_pt=0.2;
@@ -18794,8 +18818,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        kwta {k_from=USE_K: k=6: pct=0.23: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.23: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+       i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
        adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
-       clamp {hard=1: gain=0.5: };
+       clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: };
        decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
        ct_inhib_mod {
 	use_sin=0;
@@ -18825,6 +18850,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	type=KWTA_AVG_INHIB;
 	kwta_pt=0.6;
 	min_i=0;
+	fb_act_thr=0;
+	ff_pct=0;
+	fb_max_dt=0.1;
 	comp_thr=0.5;
 	comp_gain=2;
 	gp_pt=0.2;
@@ -18832,8 +18860,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        kwta {k_from=USE_K: k=1: pct=0.23: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.23: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+       i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
        adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
-       clamp {hard=1: gain=0.5: };
+       clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: };
        decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
        ct_inhib_mod {
 	use_sin=0;
@@ -18863,6 +18892,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	type=KWTA_INHIB;
 	kwta_pt=0.25;
 	min_i=0;
+	fb_act_thr=0;
+	ff_pct=0;
+	fb_max_dt=0.1;
 	comp_thr=0.5;
 	comp_gain=2;
 	gp_pt=0.2;
@@ -18870,8 +18902,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        kwta {k_from=USE_K: k=2: pct=0.23: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        gp_kwta {k_from=USE_PCT: k=12: pct=0.23: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
        tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+       i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
        adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
-       clamp {hard=1: gain=0.5: };
+       clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: };
        decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
        ct_inhib_mod {
 	use_sin=0;
@@ -18893,6 +18926,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       type=KWTA_AVG_INHIB;
       kwta_pt=0.6;
       min_i=0;
+      fb_act_thr=0;
+      ff_pct=0;
+      fb_max_dt=0.1;
       comp_thr=0.5;
       comp_gain=2;
       gp_pt=0.2;
@@ -18900,8 +18936,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      kwta {k_from=USE_PAT_K: k=5: pct=0.23: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      gp_kwta {k_from=USE_PCT: k=12: pct=0.23: pat_q=0.5: diff_act_pct=0: act_pct=0.1: gp_i=0: gp_g=0.5: };
      tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
+     i_netin_mod {on=0: max_mod=0.02: mod_gain=10: max_top_k=0.4: };
      adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
-     clamp {hard=1: gain=0.5: };
+     clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: };
      decay {event=1: phase=1: phase2=0: clamp_phase2=0: };
      ct_inhib_mod {
       use_sin=0;
@@ -18928,6 +18965,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      self_con=0;
      init_wts=0;
+     add_rnd_wts=0;
     };
     LeabraBiasSpec @[4] {
      name="LeabraBiasSpec_0";
@@ -18942,7 +18980,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      wt_limits {type=NONE: min=-1: max=5: sym=0: };
      learn_rule=LEABRA_CHL;
      inhib=0;
-     wt_scale {abs=1: rel=1: };
+     wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
      wt_scale_init {init=0: abs=1: rel=1: };
      lrate=0;
      cur_lrate=0;
@@ -19024,18 +19062,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.342: max=0.95: max_i=2: };
-     acts_m {cmpt=1: avg=0.342: max=0.95: max_i=2: };
+     acts_p {cmpt=1: avg=0.342: max=0.95: max_i=4: };
+     acts_m {cmpt=1: avg=0.38: max=0.95: max_i=10: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
      kwta {k=5: pct=0.2: pct_c=0.8: adth_k=5: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
-     adapt_i {avg_avg=0.36: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
+     adapt_i {avg_avg=0.4: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[2]$$: };
      hard_clamped=0;
      avg_l_avg=0;
@@ -19139,18 +19179,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      sse=0;
      icon_value=0;
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.1949404: max=0.9747112: max_i=6: };
-     acts_m {cmpt=1: avg=0.194952: max=0.9747714: max_i=3: };
-     phase_dif_ratio=1.000059;
+     acts_p {cmpt=1: avg=0.1570359: max=0.981478: max_i=20: };
+     acts_m {cmpt=1: avg=0.1567878: max=0.9799901: max_i=3: };
+     phase_dif_ratio=1.000009;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=6: pct=0.24: pct_c=0.76: adth_k=3: k_ithr=3.114174: k1_ithr=0.3075146: ithr_r=2.315197: ithr_diff=0.9012532: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=6: pct=0.24: pct_c=0.76: adth_k=3: k_ithr=2.53866: k1_ithr=0.3219454: ithr_r=2.06501: ithr_diff=0.873183: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.24: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=$.projects[0].networks[0].specs[2].children[0]$: };
      hard_clamped=0;
      avg_l_avg=1.401298e-45;
@@ -19226,7 +19268,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       fm_input=-1;
       fm_output=-1;
      };
-     output_name="V2";
+     output_name="H2";
      sse=0;
      icon_value=0;
      unit_names {
@@ -19234,18 +19276,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  [5 2] "V0";"V1";"V2";"V3";"V4";"H0";"H1";"H2";"H3";"H4";
      };
      netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
      i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
      acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
-     acts_p {cmpt=1: avg=0.19: max=0.95: max_i=2: };
-     acts_m {cmpt=1: avg=0.1979038: max=0.9902688: max_i=2: };
-     phase_dif_ratio=1.041599;
+     acts_p {cmpt=1: avg=0.19: max=0.95: max_i=4: };
+     acts_m {cmpt=1: avg=0.1977503: max=0.9887546: max_i=9: };
+     phase_dif_ratio=1.040809;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=2: pct=0.2: pct_c=0.8: adth_k=1: k_ithr=2.332192: k1_ithr=-0.09665953: ithr_r=0: ithr_diff=1.041446: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
-     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
+     kwta {k=2: pct=0.2: pct_c=0.8: adth_k=1: k_ithr=2.3474: k1_ithr=-0.09182975: ithr_r=0: ithr_diff=1.03912: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: i_netin_mod=0: };
      un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
      adapt_i {avg_avg=0.2: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
+     act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[2].children[2]$$: };
      hard_clamped=0;
      avg_l_avg=0;
@@ -19289,8 +19333,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    cur_sum_sse=0;
    avg_sse_n=0;
    cur_cnt_err=0;
-   train_time {name="train_time": start={usr=26674: sys=3954: tot=127175819539: }: end={usr=28605: sys=4187: tot=127175821710: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
-   epoch_time {name="epoch_time": start={usr=28587: sys=4185: tot=127175821690: }: end={usr=28604: sys=4187: tot=127175821708: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   train_time {name="train_time": start={usr=8062: sys=1159: tot=128202878514: }: end={usr=28605: sys=4187: tot=127175821710: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="epoch_time": start={usr=8705: sys=1224: tot=128202879233: }: end={usr=8701: sys=1224: tot=128202879229: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    trial_time {name="trial_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    settle_time {name="settle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    cycle_time {name="cycle_time": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
@@ -19323,7 +19367,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    nothing_phase=0;
    phase_no=0;
    phase_max=2;
-   ct_cycle=30;
+   ct_cycle=21;
    time_inc=1;
    cycle_max=40;
    mid_minus_cycle=-1;
@@ -19362,6 +19406,60 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     m_sum=0;
     m_nrm=0;
     do_s=0;
+   };
+   ct_lrn_trig {
+    plus_lrn_cyc=-1;
+    davg_dt=0.1;
+    davg_s_dt=0.05;
+    davg_m_dt=0.03;
+    davg_l_dt=0.0005;
+    thr_min=0;
+    thr_max=0.5;
+    loc_max_cyc=8;
+    loc_max_dec=0.01;
+    lrn_delay=40;
+    lrn_refract=100;
+    davg_l_init=0;
+    davg_max_init=0.001;
+    davg_time=10;
+    davg_s_time=20;
+    davg_m_time=33.33334;
+    davg_l_time=2000;
+    lrn_delay_inc=0.025;
+    lrn_refract_inc=0.01;
+   };
+   lrn_trig {
+    davg=0;
+    davg_s=0;
+    davg_m=0;
+    davg_smd=0;
+    davg_l=0;
+    davg_max=0.001;
+    cyc_fm_inc=0;
+    cyc_fm_dec=0;
+    loc_max=0;
+    lrn_max=0;
+    lrn_trig=0;
+    lrn=0;
+    lrn_min=0;
+    lrn_min_cyc=0;
+    lrn_min_thr=0;
+    lrn_min_sum=0;
+    lrn_min_cyc_sum=0;
+    lrn_min_thr_sum=0;
+    lrn_plus=0;
+    lrn_plus_cyc=0;
+    lrn_plus_thr=0;
+    lrn_plus_sum=0;
+    lrn_plus_cyc_sum=0;
+    lrn_plus_thr_sum=0;
+    lrn_noth=0;
+    lrn_noth_cyc=0;
+    lrn_noth_thr=0;
+    lrn_noth_sum=0;
+    lrn_noth_cyc_sum=0;
+    lrn_noth_thr_sum=0;
+    lrn_stats_n=0;
    };
    minus_cycles=0;
    avg_cycles=0;
