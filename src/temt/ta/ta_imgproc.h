@@ -537,6 +537,9 @@ public:
 				float circ_radius=0.05, float gauss_sig=0.05,
 				EdgeMode edge=BORDER);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise occlude the image (in place -- affects the img matrix itself) by blurring gaussian blobs into the image -- blobs are uniform circles with gaussian blur around the edges -- radius and gaussian sigma are in image width normalized units (e.g., .05 = 5% of the width of the image), pct_occlude is proportion of total image to occlude computed as a proportion of (1/gauss_sig)^2 as the total number of different blobs possible -- actual blob locations are drawn at random, so complete occlusion is not ensured even at 1, though there is an extra 2x factor at 1 to really try to occlude as completely as possible
+  
+  static bool	AdjustContrast(float_Matrix& img, float new_contrast);
+  // #CAT_Noise #MENU_BUTTON #MENU_ON_Adjust the contrast of the image (in place -- affects the img matrix itself). new_contrast is in the range [0 1]
 
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_BASEFUNS_NOCOPY(taImageProc);

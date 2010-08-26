@@ -2117,6 +2117,22 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
   return true;
 }
 
+bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast) {
+  TwoDCoord img_size(img.dim(0), img.dim(1));
+  
+  // vec norm max to get us into the right range
+  taMath_float::vec_norm_max(&img, 1.0f);
+  
+  for(int yi=0; yi< img_size.y; yi++) {
+    for(int xi=0; xi< img_size.x; xi++) {    
+	  	  float& iv = img.FastEl(xi, yi);
+	  	  float nw_iv = ((iv - .5f)*new_contrast)+.5f;
+	  	  iv = nw_iv;
+	}
+  }
+  return true;
+}
+
 ///////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////
