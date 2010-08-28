@@ -505,6 +505,7 @@ bool LeabraBiasSpec::CheckObjectType_impl(taBase* obj) {
 void ActFunSpec::Initialize() {
   gelin = false;		// todo: move to defaults and make true :)
   vm_mod = true;
+  vm_mod_max = 0.95f;
   i_thr = STD;
   Defaults_init();
 }
@@ -1573,7 +1574,7 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   if(act.gelin) {
     float g_e_val = u->net;
     if(act.vm_mod) {
-      float vm_eq = Compute_EqVm(u) - v_m_init.mean; // relative to starting!
+      float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
       if(vm_eq > 0.0f) {
 	float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
 	if(vmrat > 1.0f) vmrat = 1.0f;
