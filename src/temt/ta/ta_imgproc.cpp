@@ -3198,6 +3198,7 @@ void V1KwtaSpec::Compute_All_IThr(float_Matrix& inputs, float_Matrix& ithrs) {
 // 		Basic Specs
 
 void V1GaborSpec::Initialize() {
+  gain = 1.0f;
   n_angles = 4;
   filter_size = 6;
   spacing = 1;
@@ -3369,6 +3370,7 @@ void V1ComplexSpec::Initialize() {
   len_sum_len = 1;
   end_stop_dist = 2;
   es_adjang_wt = 0.2f;
+  es_gain = 1.0f;
   gauss_sig = 0.8f;
   nonfocal_wt = 0.8f;
 
@@ -4140,6 +4142,7 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
 	  }
 	}
       }
+      cnv_sum *= v1s_specs.gain;
       if(cnv_sum >= 0.0f) {
 	MatMotEl(cur_out, ang, fcy, sc.x, sc.y, mot_idx) = cnv_sum; // on-polarity
 	MatMotEl(cur_out, ang, fcy+1, sc.x, sc.y, mot_idx) = 0.0f; 
@@ -4813,7 +4816,7 @@ void V1RegionSpec::V1ComplexFilter_EsLs_Raw_thread(int v1c_pre_idx, int thread_n
       }
       es_max = MIN(es_max, ctr_val); // cannot exceed central value -- this is the primary
       // 	  es_max *= ctr_val; 	// product rule to take into account central value -- too punative once the kwta dynamics kick in...
-      v1c_esls_raw.FastEl(fc.x, fc.y, pc.x, pc.y) = es_max;
+      v1c_esls_raw.FastEl(fc.x, fc.y, pc.x, pc.y) = v1c_specs.es_gain * es_max;
     }  // for ang
   }
 

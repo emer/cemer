@@ -504,6 +504,7 @@ bool LeabraBiasSpec::CheckObjectType_impl(taBase* obj) {
 
 void ActFunSpec::Initialize() {
   gelin = false;		// todo: move to defaults and make true :)
+  vm_mod = true;
   i_thr = STD;
   Defaults_init();
 }
@@ -1568,10 +1569,24 @@ float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float vm_val, float g_e_val, fl
 }
 
 void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
-  float g_e_thr = 0.0f;
-  if(act.gelin)
-    g_e_thr = Compute_EThresh(u);
-  float new_act = Compute_ActValFmVmVal_rate(u->v_m, u->net, g_e_thr);
+  float new_act;
+  if(act.gelin) {
+    float g_e_val = u->net;
+    if(act.vm_mod) {
+      float vm_eq = Compute_EqVm(u) - v_m_init.mean; // relative to starting!
+      if(vm_eq > 0.0f) {
+	float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
+	if(vmrat > 1.0f) vmrat = 1.0f;
+	else if(vmrat < 0.0f) vmrat = 0.0f;
+	g_e_val *= vmrat;
+      }
+    }
+    float g_e_thr = Compute_EThresh(u);
+    new_act = Compute_ActValFmVmVal_rate(u->v_m, g_e_val, g_e_thr);
+  }
+  else {
+    new_act = Compute_ActValFmVmVal_rate(u->v_m, 0.0f, 0.0f);
+  }
   if(depress.on) {		     // synaptic depression
     u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
     new_act *= MIN(u->spk_amp, 1.0f);
