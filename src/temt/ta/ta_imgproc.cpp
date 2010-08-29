@@ -3198,7 +3198,7 @@ void V1KwtaSpec::Compute_All_IThr(float_Matrix& inputs, float_Matrix& ithrs) {
 // 		Basic Specs
 
 void V1GaborSpec::Initialize() {
-  gain = 1.0f;
+  gain = 2.0f;
   n_angles = 4;
   filter_size = 6;
   spacing = 1;
@@ -3370,7 +3370,7 @@ void V1ComplexSpec::Initialize() {
   len_sum_len = 1;
   end_stop_dist = 2;
   es_adjang_wt = 0.2f;
-  es_gain = 1.0f;
+  es_gain = 1.2f;
   gauss_sig = 0.8f;
   nonfocal_wt = 0.8f;
 

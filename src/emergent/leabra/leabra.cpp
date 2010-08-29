@@ -504,13 +504,13 @@ bool LeabraBiasSpec::CheckObjectType_impl(taBase* obj) {
 
 void ActFunSpec::Initialize() {
   gelin = false;		// todo: move to defaults and make true :)
-  vm_mod = true;
-  vm_mod_max = 0.95f;
   i_thr = STD;
   Defaults_init();
 }
 
 void ActFunSpec::Defaults_init() {
+  vm_mod = true;
+  vm_mod_max = 0.95f;
   thr = .25f;
   gain = 600.0f;
   nvar = .005f;
