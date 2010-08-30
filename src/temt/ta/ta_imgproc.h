@@ -489,6 +489,13 @@ public:
     WRAP,			// wrap the image around to the other side: no edges!
   };
 
+  static bool	GetBorderColor_float(float_Matrix& img_data, float& r, float& g, float& b);
+  // #CAT_Render get the average color around a 1 pixel border region of the image -- if grey-scale image, r,g,b are all set to the single grey value
+    static bool	GetBorderColor_float_rgb(float_Matrix& img_data, float& r, float& g, float& b);
+    // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for rgb image
+    static bool	GetBorderColor_float_grey(float_Matrix& img_data, float& grey);
+    // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for grey scale image
+
   static bool	RenderBorder_float(float_Matrix& img_data);
   // #CAT_Render make a uniform border 1 pixel wide around image, containing average value for that border region in original image: this value is what gets filled in when image is translated "off screen"
 
@@ -535,8 +542,8 @@ public:
 
   static bool	BlobBlurOcclude(float_Matrix& img, float pct_occlude,
 				float circ_radius=0.05, float gauss_sig=0.05,
-				EdgeMode edge=BORDER);
-  // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise occlude the image (in place -- affects the img matrix itself) by blurring gaussian blobs into the image -- blobs are uniform circles with gaussian blur around the edges -- radius and gaussian sigma are in image width normalized units (e.g., .05 = 5% of the width of the image), pct_occlude is proportion of total image to occlude computed as a proportion of (1/gauss_sig)^2 as the total number of different blobs possible -- actual blob locations are drawn at random, so complete occlusion is not ensured even at 1, though there is an extra 2x factor at 1 to really try to occlude as completely as possible
+				EdgeMode edge=BORDER, bool use_border_clr=true);
+  // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise occlude the image (in place -- affects the img matrix itself) by blurring gaussian blobs into the image -- blobs are uniform circles with gaussian blur around the edges -- radius and gaussian sigma are in image width normalized units (e.g., .05 = 5% of the width of the image), pct_occlude is proportion of total image to occlude computed as a proportion of (1/gauss_sig)^2 as the total number of different blobs possible -- actual blob locations are drawn at random, so complete occlusion is not ensured even at 1, though there is an extra 2x factor at 1 to really try to occlude as completely as possible -- if use_border_clr, then the 1 pixel border around image provides the color for all the blobs -- otherwise color is weighted local average using same gaussian blobo kernel
   
   static bool	AdjustContrast(float_Matrix& img, float new_contrast);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Adjust the contrast of the image (in place -- affects the img matrix itself). new_contrast is in the range [0 1]
