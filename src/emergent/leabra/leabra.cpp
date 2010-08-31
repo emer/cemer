@@ -503,12 +503,18 @@ bool LeabraBiasSpec::CheckObjectType_impl(taBase* obj) {
 //////////////////////////
 
 void ActFunSpec::Initialize() {
-  gelin = false;		// todo: move to defaults and make true :)
   i_thr = STD;
   Defaults_init();
 }
 
 void ActFunSpec::Defaults_init() {
+  gelin = true;
+  if(taMisc::is_loading) {
+    taVersion v511(5, 1, 1);
+    if(taMisc::loading_version < v511) { // default prior to 511 is non-gelin
+      gelin = false;
+    }
+  }
   vm_mod = true;
   vm_mod_max = 0.95f;
   if(gelin) {
@@ -2554,10 +2560,10 @@ void LeabraInhibSpec::Defaults_init() {
   switch(type) {
   case KWTA_INHIB:
   case KWTA_KV2K:
-    kwta_pt = .25f;
+    kwta_pt = .2f;
     break;
   case KWTA_AVG_INHIB:
-    kwta_pt = .6f;
+    kwta_pt = .5f;
     break;
   case AVG_MAX_PT_INHIB:
     kwta_pt = .2f;
@@ -2611,12 +2617,18 @@ void AdaptISpec::Defaults_init() {
 void ClampSpec::Initialize() {
   hard = true;
   gain = 0.2f;
-  max_plus = false;
-  plus = 0.01f;
-  min_clamp = 0.5f;
 }
 
 void ClampSpec::Defaults_init() {
+  max_plus = true;
+  plus = 0.01f;
+  min_clamp = 0.5f;
+  if(taMisc::is_loading) {
+    taVersion v511(5, 1, 1);
+    if(taMisc::loading_version < v511) { // default prior to 511 is max-plus off
+      max_plus = false;
+    }
+  }
   gain = .2f;
 }
 

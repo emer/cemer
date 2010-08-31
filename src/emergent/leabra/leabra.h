@@ -1653,9 +1653,9 @@ class LEABRA_API LeabraInhibSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   enum InhibType {		// how to compute the inhibition
-    KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
-    KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)
-    KWTA_KV2K,			// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std.  In general, this is now preferred to KWTA_AVG_INHIB
+    KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .2 std for gelin, .25 otherwise)
+    KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .5 std for gelin, .6 otherwise)
+    KWTA_KV2K,			// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std for non-gelin -- doesn't seem to work as well for gelin and is thus somewhat deprecated
     KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
     AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
     MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
@@ -1663,7 +1663,7 @@ public:
   };
 
   InhibType	type;		// how to compute inhibition (g_i)
-  float		kwta_pt;	// #DEF_0.25;0.6;0.2 [Default: .25 for KWTA_INHIB and KWTA_KV2K, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
+  float		kwta_pt;	// #DEF_0.2;0.5;0.25;0.6 [Defaults: for gelin: .2 for KWTA_INHIB, .5 for KWTA_AVG, for non-gelin: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
   float		min_i;		// #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
   float		fb_act_thr;	// #DEF_0;0.5 threshold for max activation in layer or group for full kwta inhibition value to be delivered -- below this threshold, the feedback portion of inhibition is proportional to the max act compared to this threshold -- ff_pct of inhibition is always delivered regardless -- allows for an initial wave of activation to get things flowing in the network, followed by inhibitory control
   float		ff_pct;		// #CONDSHOW_OFF_fb_act_thr:0 #DEF_0.5 proportion of inhibition that is considered feed forward, and thus not subject to modulation from the fb_act_thr feedback threshold -- this portion of the kwta inhibition is always delivered regardless
@@ -1763,7 +1763,7 @@ public:
   bool		hard;		// #DEF_true whether to hard clamp inputs where activation is directly set to external input value (act = ext, computed once at start of settle) or do soft clamping where ext is added into net input (net += gain * ext)
   float		gain;		// #CONDSHOW_OFF_hard #DEF_0.02:0.5 soft clamp gain factor (net += gain * ext)
   bool		max_plus;	// #CONDSHOW_ON_hard when hard clamping target activation values, the clamped activations are set to the maximum activation in the minus phase plus some fixed offset
-  float		plus;		// #CONDSHOW_ON_hard&&max_plus #DEF_0:0.05 the amount to add to max minus phase activation in clamping the plus phase
+  float		plus;		// #CONDSHOW_ON_hard&&max_plus #DEF_0.01 the amount to add to max minus phase activation in clamping the plus phase
   float		min_clamp;	// #CONDSHOW_ON_hard&&max_plus #DEF_0.5 the minimum clamp value allowed in the max_plus clamping system
 
   TA_SIMPLE_BASEFUNS(ClampSpec);
@@ -1854,9 +1854,9 @@ public:
 
   // old parameters that have been moved into LeabraInhibSpec: only for converting old projects!
   enum Compute_I {		// legacy conversion inhib compute enum -- keep sync'd with LeabraInhibSpec!!
-    KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .25 std)
-    KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .6 std)
-    KWTA_KV2K,			// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std.  In general, this is now preferred to KWTA_AVG_INHIB
+    KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .2 std for gelin, .25 otherwise)
+    KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .5 std for gelin, .6 otherwise)
+    KWTA_KV2K,			// average of top k vs avg of next k (2k) -- avoids long "tail" of distribution of weakly active units, while providing similar flexibility as KWTA_AVG_INHIB, and also is equivalent to KWTA_INHIB for k=1 -- i_kwta_pt = .25 is std for non-gelin -- doesn't seem to work as well for gelin and is thus somewhat deprecated
     KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
     AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
     MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
