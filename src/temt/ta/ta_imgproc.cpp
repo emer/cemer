@@ -3008,18 +3008,18 @@ void DoGRegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
 
 void V1KwtaSpec::Initialize() {
   on = false;
-  raw_pct = 0.8f;
   gp_k = 1;
   gp_g = 0.1f;
-  kwta_pt = 0.6f;
-  gelin = false;
-  gain = 600.0f;
+  kwta_pt = 0.5f;
+  gain = 40.0f;
   nvar = 0.01f;
-  g_bar_e = 0.5f;
   g_bar_l = 0.1f;
+
+  // gelin defaults:
+  g_bar_e = 0.5f;
   e_rev_e = 1.0f;
-  e_rev_l = 0.15f;
-  thr = 0.25f;
+  e_rev_l = 0.3f;
+  thr = 0.5f;
 
   noise_conv.x_range.min = -.05f;
   noise_conv.x_range.max = .05f;
@@ -3027,11 +3027,10 @@ void V1KwtaSpec::Initialize() {
   noise_conv.UpdateAfterEdit_NoGui();
 
   nxx1_fun.x_range.min = -.03f;
-  nxx1_fun.x_range.max = .20f;
+  nxx1_fun.x_range.max = 1.0f;
   nxx1_fun.res = .001f;
   nxx1_fun.UpdateAfterEdit_NoGui();
 
-  raw_pct_c = 1.0f - raw_pct;
   gber_l = g_bar_l * e_rev_l;
   e_rev_sub_thr_e = e_rev_e - thr;
   e_rev_sub_thr_i = e_rev_l - thr;
@@ -3045,18 +3044,12 @@ void V1KwtaSpec::Initialize() {
 void V1KwtaSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
+  // these are all gelin defaults
   g_bar_e = 0.5f;
   e_rev_e = 1.0f;
-  if(gelin) {
-    e_rev_l = 0.3f;
-    thr = 0.5f;
-  }
-  else {
-    e_rev_l = 0.15f;
-    thr = 0.25f;
-  }
+  e_rev_l = 0.3f;
+  thr = 0.5f;
 
-  raw_pct_c = 1.0f - raw_pct;
   gber_l = g_bar_l * e_rev_l;
   e_rev_sub_thr_e = e_rev_e - thr;
   e_rev_sub_thr_i = e_rev_l - thr;
@@ -3069,16 +3062,9 @@ void V1KwtaSpec::UpdateAfterEdit_impl() {
 
 void V1KwtaSpec::CreateNXX1Fun() {
   // first create the gaussian noise convolver
-  if(gelin) {
-    nxx1_fun.x_range.max = 1.0f;
-    nxx1_fun.res = .001f;	// needs same fine res to get the noise transitions
-    nxx1_fun.UpdateAfterEdit_NoGui();
-  }
-  else {
-    nxx1_fun.x_range.max = .20f;
-    nxx1_fun.res = .001f;
-    nxx1_fun.UpdateAfterEdit_NoGui();
-  }
+  nxx1_fun.x_range.max = 1.0f;
+  nxx1_fun.res = .001f;	// needs same fine res to get the noise transitions
+  nxx1_fun.UpdateAfterEdit_NoGui();
   float ns_rng = 3.0f * nvar;	// range factor based on noise level -- 3 sd 
   ns_rng = MAX(ns_rng, nxx1_fun.res);
   nxx1_fun.x_range.min = -ns_rng; 
@@ -3184,8 +3170,6 @@ void V1KwtaSpec::Compute_Act(float_Matrix& inputs, float_Matrix& outputs,
 	  float raw = inputs.FastEl(gx, gy, ix, iy);
 	  float ge = g_bar_e * raw;
 	  float act = Compute_ActFmIn(ge, gi);
-	  if(act > raw)
-	    act = raw_pct * raw + raw_pct_c * act; // blendy
 	  outputs.FastEl(gx, gy, ix, iy) = act; 
 	}
       }
@@ -4240,8 +4224,6 @@ void V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thre
       float ge = v1s_kwta.g_bar_e * raw;
       float gi_eff = MAX(gi, feat_inhib_max);
       float act = v1s_kwta.Compute_ActFmIn(ge, gi_eff);
-      if(act > raw)
-	act = v1s_kwta.raw_pct * raw + v1s_kwta.raw_pct_c * act; // blendy
       cur_out_acts->FastEl(fc.x, fc.y, sc.x,  sc.y) = act; 
     }
   }

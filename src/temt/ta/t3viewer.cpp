@@ -532,9 +532,17 @@ void T3ExaminerViewer::vrotwheelChanged(int value) {
 }
 
 void T3ExaminerViewer::zoomwheelChanged(int value) {
-  if(zoom_start_val < 100 && value > 900) zoom_start_val += 1000;
-  if(value < 100 && zoom_start_val > 900) zoom_start_val -= 1000;
+//   taMisc::Info("val:", String(value), "start:", String(zoom_start_val));
+  if(zoom_start_val < 100 && value > 900) {
+    zoom_start_val += 1000;
+//     taMisc::Info("start inc 1000:", String(zoom_start_val));
+  }
+  if(value < 100 && zoom_start_val > 900) {
+    zoom_start_val -= 1000;
+//     taMisc::Info("start dec 1000:", String(zoom_start_val));
+  }
   float delta = (float)(value - zoom_start_val);
+//   taMisc::Info("delta:", String(delta));
   zoom_start_val = value;
   zoomView(-ZOOM_DELTA_MULT * delta); // direction is opposite
 }

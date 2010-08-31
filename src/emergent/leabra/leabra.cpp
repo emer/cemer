@@ -511,9 +511,16 @@ void ActFunSpec::Initialize() {
 void ActFunSpec::Defaults_init() {
   vm_mod = true;
   vm_mod_max = 0.95f;
-  thr = .25f;
-  gain = 600.0f;
-  nvar = .005f;
+  if(gelin) {
+    thr = .5f;
+    gain = 80.0f;
+    nvar = .005f;
+  }
+  else {
+    thr = .25f;
+    gain = 600.0f;
+    nvar = .005f;
+  }
   avg_dt = .005f;
   avg_init = 0.15f;
 }
@@ -2588,17 +2595,6 @@ void KwtaTieBreak::Defaults_init() {
   loser_gain = 1.0f;
 }
 
-void InhibNetinMod::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void InhibNetinMod::Defaults_init() {
-  max_mod = 0.02f;
-  mod_gain = 10.0f;
-  max_top_k = 0.4f;
-}
-
 void AdaptISpec::Initialize() {
   type = NONE;
   Defaults_init();
@@ -3181,7 +3177,7 @@ void LeabraLayerSpec::Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr) {
   }
   thr->netin.CalcAvg(ug->leaves);  thr->i_thrs.CalcAvg(ug->leaves);
 
-  if(i_netin_mod.on) {
+  if(true) {
     // also do netin_top_k
     thr->netin_top_k.InitVals();
     int k_eff = thr->kwta.k;	// keep cutoff at k
@@ -3780,10 +3776,6 @@ void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay, Unit_Group* ug,
     float imod = amax / inhib.fb_act_thr; // graded modulation as function of activation
     if(imod > 1.0f) imod = 1.0f;
     inhib_val *= (inhib.ff_pct + (1.0f - inhib.ff_pct) * imod);
-  }
-  if(i_netin_mod.on) {
-    thr->i_val.i_netin_mod = i_netin_mod.ModFactor(thr->netin_top_k.avg);
-    inhib_val *= thr->i_val.i_netin_mod;
   }
   if(thr->kwta.tie_brk == 1) {
     float inhib_thr = thr->kwta.k_ithr;
@@ -4576,27 +4568,6 @@ void LeabraLayer::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-void LeabraLayerSpec::GraphINetinModFun(DataTable* graph_data, float incr) {
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_INetinModFun", true);
-  }
-  int idx;
-  graph_data->StructUpdate(true);
-  graph_data->ResetData();
-  DataCol* nt = graph_data->FindMakeColName("top_k_netin", idx, VT_FLOAT);
-  DataCol* ei = graph_data->FindMakeColName("extra_inhib", idx, VT_FLOAT);
-
-  for(float x = 0.0f; x <= i_netin_mod.max_top_k; x += incr) {
-    float imod = i_netin_mod.ModFactor(x);
-    graph_data->AddBlankRow();
-    nt->SetValAsFloat(x, -1);
-    ei->SetValAsFloat(imod - 1.0f, -1);
-  }
-  graph_data->StructUpdate(false);
-  graph_data->FindMakeGraphView();
-}
-
 //////////////////////////
 // 	LeabraLayer	//
 //////////////////////////
@@ -4673,7 +4644,6 @@ void InhibVals::Initialize() {
   g_i = 0.0f;
   gp_g_i = 0.0f;
   g_i_orig = 0.0f;
-  i_netin_mod = 0.0f;
 }
 
 void InhibVals::Copy_(const InhibVals& cp) {
@@ -4681,7 +4651,6 @@ void InhibVals::Copy_(const InhibVals& cp) {
   g_i = cp.g_i;
   gp_g_i = cp.gp_g_i;
   g_i_orig = cp.g_i_orig;
-  i_netin_mod = cp.i_netin_mod;
 }
 
 void LeabraInhib::Inhib_Initialize() {

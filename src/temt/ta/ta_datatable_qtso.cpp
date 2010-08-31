@@ -2334,6 +2334,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   rowNavTB->addWidget(lblRowGoto);
   fldRowGoto = dl.Add(new taiField(&TA_int, this, NULL, widg));
   rowNavTB->addWidget(fldRowGoto->GetRep());
+  ((iLineEdit*)fldRowGoto->GetRep())->setCharWidth(6);
   connect(fldRowGoto->rep(), SIGNAL(returnPressed()), this, SLOT(butRowGoto_pressed()) );
 
   actRowGoto = rowNavTB->addAction("Go");
@@ -2380,6 +2381,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   colNavTB->addWidget(lblColGoto);
   fldColGoto = dl.Add(new taiField(&TA_int, this, NULL, widg));
   colNavTB->addWidget(fldColGoto->GetRep());
+  ((iLineEdit*)fldColGoto->GetRep())->setCharWidth(6);
   connect(fldColGoto->rep(), SIGNAL(returnPressed()), this, SLOT(butColGoto_pressed()) );
 
   actColGoto = colNavTB->addAction("Go");

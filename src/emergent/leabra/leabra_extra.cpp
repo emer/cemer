@@ -4119,13 +4119,6 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
   float dst_norm_val = 1.0f / (feat_inhib.dist_sigma * (float)MAX(lay->gp_geom.x, lay->gp_geom.y));
   dst_norm_val *= dst_norm_val;	// using sq distances
 
-  if(i_netin_mod.on) {		// precompute for efficiency
-    for(int g=0; g<lay->units.gp.size; g++) {
-      LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
-      rugp->i_val.i_netin_mod = i_netin_mod.ModFactor(rugp->netin_top_k.avg);
-    }
-  }
-
   for(int fg=0; fg<vlay->feat_gps.gp.size; fg++) {
     LeabraUnit_Group* fugp = (LeabraUnit_Group*)vlay->feat_gps.gp[fg];
     // get active lists for each feature group
@@ -4138,9 +4131,6 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 
       float gp_i = u_own->i_val.g_i;
       if(gp_i <= 0) gp_i = .1f;	// note: should have min_i set!!
-      if(i_netin_mod.on) {
-	gp_i *= u_own->i_val.i_netin_mod;
-      }
 
       // now compare each unit with all the active units and increase inhib in proportion!
       float sum_cost = 0.0f;

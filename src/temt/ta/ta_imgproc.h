@@ -831,22 +831,20 @@ protected:
 //		V1 Processing -- basic RF's
 
 class TA_API V1KwtaSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image k-winners-take-all dynamics for v1 image processing stages -- based on Leabra dynamics with asymptotic activation settling -- see Leabra docs for more info on various parameters (LeabraUnitSpec, LeabraLayerSpec) -- inhibition can only ever *decrease* activation levels from their raw filter values, so gain and nvar are less critical parameters here, as long as they are sufficiently high
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image k-winners-take-all dynamics for v1 image processing stages -- based on Leabra dynamics with asymptotic activation settling, using the gelin version of the NXX1 activation function  -- see Leabra docs for more info on various parameters (LeabraUnitSpec, LeabraLayerSpec)
 INHERITED(taOBase)
 public:
   bool		on;	// is kwta active for this stage of processing?
-  float		raw_pct; // #CONDSHOW_ON_on #DEF_0;0.8 set to 0 for gelin -- 0.8 works best when using -- what proportion of the raw filter activation value to use in computing the final activation, in combination with the result of the kwta computation -- if kwta is lower than the raw, then that value is used (i.e., the unit was inhibited), but if it is higher, then a blended value is used -- this retains some of the original signal strength in the face of kwta tending to eliminate it
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
   float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
-  float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.4:0.8 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units -- gelin should be 0.4, oherwise 0.6
-  bool		gelin;	 // #CONDSHOW_ON_on use the g_e linear activation function based on adaptive exponential spiking dynamics -- noisy XX1 operates on difference between g_e - g_e_thr where g_e_thr is amount of excitation required to get over threshold -- otherwise NXX1 operates on equilibrium membrane potential (v_m) computed from excitation, leak and inhibition
-  float		gain;	 // #CONDSHOW_ON_on #DEF_600;40 gain on the activation function
-  float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01;0.02 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
+  float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.5 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units (uses KWTA_AVG_BASED -- 0.5 is gelin default)
+  float		gain;	 // #CONDSHOW_ON_on #DEF_40 gain on the NXX1 activation function (based on g_e - g_e_thr value -- i.e. the gelin version of the function)
+  float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
   float		g_bar_l; // #CONDSHOW_ON_on #DEF_0.1;0.3 leak current conductance value -- determines neural response to weak inputs -- a higher value can damp the neural response
   float		g_bar_e; // #READ_ONLY #NO_SAVE excitatory conductance multiplier -- multiplies filter input value prior to computing membrane potential -- general target is to have max excitatory input = .5, so with 0-1 normalized inputs, this value is automatically set to .5
   float		e_rev_e; // #READ_ONLY #NO_SAVE excitatory reversal potential -- automatically set to default value of 1 in normalized units
-  float		e_rev_l; // #READ_ONLY #NO_SAVE leak and inhibition reversal potential -- automatically set to 0.3 for gelin and 0.15 for non-gelin 
-  float		thr;	 // #READ_ONLY #NO_SAVE firing threshold -- automatically set to default value of .5 for gelin and .25 for non-gelin
+  float		e_rev_l; // #READ_ONLY #NO_SAVE leak and inhibition reversal potential -- automatically set to 0.3 (gelin default)
+  float		thr;	 // #READ_ONLY #NO_SAVE firing threshold -- automatically set to default value of .5 (gelin default) 
 
   virtual bool	Compute_Kwta(float_Matrix& inputs, float_Matrix& outputs,
 			     float_Matrix& gc_i_mat);
@@ -894,21 +892,10 @@ public:
     return new_act;
   }
 
-  inline float 	Compute_ActFmVm_gelin(float gc_e, float gc_i) {
+  inline float Compute_ActFmIn(float gc_e, float gc_i) {
+    // gelin version:
     float g_e_thr = Compute_EThresh(gc_i);
     return Compute_ActFmVm_nxx1(gc_e - g_e_thr);
-  }
-
-  inline float 	Compute_ActFmVm_orig(float gc_e, float gc_i) {
-    float vm = Compute_EqVm(gc_e, gc_i);
-    return Compute_ActFmVm_nxx1(vm - thr);
-  }
-
-  inline float Compute_ActFmIn(float gc_e, float gc_i) {
-    if(gelin)
-      return Compute_ActFmVm_gelin(gc_e, gc_i);
-    else
-      return Compute_ActFmVm_orig(gc_e, gc_i);
   }
 
   virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 
@@ -928,7 +915,6 @@ public:
   float		gbl_e_rev_sub_thr_l;// #READ_ONLY #NO_SAVE #HIDDEN g_bar_l * (e_rev_l - thr) -- used for compute_ithresh
   float		thr_sub_e_rev_i;// #READ_ONLY #NO_SAVE #HIDDEN thr - e_rev_i used for compute_ithresh
   float		thr_sub_e_rev_e;// #READ_ONLY #NO_SAVE #HIDDEN thr - e_rev_e used for compute_ethresh
-  float		raw_pct_c;	// #READ_ONLY #NO_SAVE #HIDDEN 1 - raw_pct
 
  protected:
   void 	UpdateAfterEdit_impl();

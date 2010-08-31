@@ -1729,31 +1729,6 @@ private:
 };
 
 
-class LEABRA_API InhibNetinMod : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra modulate inhibition as a function of the netinput of the top k units relative to a maximum top k netin parameter, to restore some gradedness in unit activations under kwta which otherwise tends to be normalized away.  extra inhibition = max_mod * (x / (x+1)) where x = mod_gain * (max_top_k - cur_top_k) 
-INHERITED(SpecMemberBase)
-public:
-  bool		on;		// whether to perform netin modulation at all
-  float		max_mod;	// #CONDSHOW_ON_on #DEF_0.01:0.04 #MIN_0 maximum amount of extra inhibition modulation to apply -- asymptotically approaches this value as netin goes to zero
-  float		mod_gain;	// #CONDSHOW_ON_on #DEF_10:20 multiplier for how much modulation to apply -- multiplies ratio of max_top_k / cur_top_k 
-  float		max_top_k; 	// #CONDSHOW_ON_on #DEF_0.4 maximum top-k average netinput value to compare against
-
-  float		ModFactor(float cur_top_k) {
-    float xdif = max_top_k - cur_top_k; if(xdif < 0.0f) xdif = 0.0f;
-    xdif *= mod_gain;
-    return 1.0f + max_mod * (xdif / (xdif + 1.0f));
-  }
-
-  TA_SIMPLE_BASEFUNS(InhibNetinMod);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
-
-
 class LEABRA_API AdaptISpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies adaptive kwta specs (esp for avg-based)
 INHERITED(SpecMemberBase)
@@ -1871,7 +1846,6 @@ public:
   KWTASpec	kwta;		// #CONDEDIT_OFF_inhib_group:UNIT_GROUPS #CAT_Activation desired activity level over entire layer (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   KWTASpec	gp_kwta;	// #CONDEDIT_OFF_inhib_group:ENTIRE_LAYER #CAT_Activation desired activity level for units within unit groups (not for ENTIRE_LAYER) (NOTE: used to set target activity for UNIT_INHIB, AVG_MAX_PT_INHIB, but not used for actually computing inhib for these cases)
   KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
-  InhibNetinMod	i_netin_mod;	// #CAT_Activation modulate inhibition as a function of the netinput of the top k units relative to a maximum top k netin parameter, to restore some gradedness in unit activations under kwta which otherwise tends to be normalized away.  extra inhibition = max_mod * (x / (x+1)) where x = mod_gain * (max_top_k - cur_top_k) 
   AdaptISpec	adapt_i;	// #CAT_Activation adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
@@ -2165,9 +2139,6 @@ public:
   static  LeabraLayer* FindLayerFmSpecNet(Network* net, TypeDef* layer_spec);
   // #CAT_Structure find a layer in network based on the type of layer spec
 
-  virtual void	GraphINetinModFun(DataTable* graph_data, float incr = .01f);
-  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the inhibitory netin modulation function (i_netin_mod field) (NULL = new graph data)
-
   virtual void	HelpConfig();	// #BUTTON #CAT_Structure get help message for configuring this spec
   override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
   // check for for misc configuration settings required by different algorithms, including settings on the processes NOTE: this routine augments the default layer checks, it doesn't replace them
@@ -2237,7 +2208,6 @@ public:
   float		g_i;		// overall value of the inhibition
   float		gp_g_i;		// g_i from the layer or unit group, if applicable
   float		g_i_orig; 	// original value of the inhibition (before any layer group effects set in)
-  float		i_netin_mod;	// additional multiplier on inhibition as a function of netinput -- more inhibition for lower netinputs
 
   void	Init() 	{ Initialize(); }
   void	Copy_(const InhibVals& cp);
