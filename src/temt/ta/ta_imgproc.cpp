@@ -2170,18 +2170,34 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
   return true;
 }
 
-bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast) {
+bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast) {  
   TwoDCoord img_size(img.dim(0), img.dim(1));
+
+  // get background color
+  float brd_clr[3];
+  GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
   
-  // vec norm max to get us into the right range
-  taMath_float::vec_norm_max(&img, 1.0f);
+  // check for rgb img
+  bool rgb_img = false;
+  if(img.dims() == 3) { // rgb
+    rgb_img = true;
+  }  
   
+  // no support for rgb yet
+  if(rgb_img) {  
+  }
+  
+  else {
+  // just use first dim for gray
+  float clr = 0.0f;
+  clr = brd_clr[0];
   for(int yi=0; yi< img_size.y; yi++) {
-    for(int xi=0; xi< img_size.x; xi++) {    
+      for(int xi=0; xi< img_size.x; xi++) {    
 	  	  float& iv = img.FastEl(xi, yi);
-	  	  float nw_iv = ((iv - .5f)*new_contrast)+.5f;
+	  	  float nw_iv = ((iv-clr)*new_contrast)+clr;
 	  	  iv = nw_iv;
-	}
+	  }
+    }
   }
   return true;
 }
