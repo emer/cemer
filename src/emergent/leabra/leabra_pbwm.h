@@ -524,6 +524,9 @@ public:
   int		mid_minus_min;	// minimum number of cycles before computing any gating -- acts like an STN-like function -- must be < network mid_minus_cycle
   int		max_maint;	// a hard upper-limit on how long the PFC can maintain -- anything over this limit will be cleared.  set to 0 for motor areas that do not maintain but use maintenance gating to scope the set of possible responses
   bool		out_go_clear;	// #DEF_true an output Go clears the maintenance currents at the end of the trial -- only for reward trials (signalled by PVr) -- you use it, you lose it..
+  bool		mnt_toggle;	// #DEF_true does maint Go do toggling or just re-updating?
+  bool		mnt_wins;	// #DEF_false maint gating always wins out over output gating -- even if output gating has already taken place, maintenance gating will always 
+  bool		updt_gch;	// #DEF_false always update gc.h for maintaining PFC units at the end of each trial, regardless of whether any gating signals ocurred -- reflects biology where maintenance currents are activity driven with a time constant, and thus always reflect current activity (with some delay -- trial-level updating achieves that)
   float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
 
   TA_SIMPLE_BASEFUNS(PFCGateSpec);
@@ -543,6 +546,7 @@ public:
   enum MaintUpdtAct {
     STORE,			// store current activity state in maintenance currents
     CLEAR,			// clear current activity state from maintenance currents
+    UPDT,			// update existing gc.h values based on current activations
   };
 
   PFCGateSpec	gate;		// parameters controlling the gating of pfc units

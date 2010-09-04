@@ -4002,7 +4002,7 @@ void NetViewPanel::UpdatePanel_impl() {
 
   chkHist->setChecked(nv->hist_save);
   fldHistMax->GetImage((String)nv->hist_max);
-  lblHist->setText(String(nv->ctr_hist_idx.length) + ", " + String(nv->hist_idx) + "  ");
+  lblHist->setText(String(nv->ctr_hist_idx.length) + ", " + String(nv->ctr_hist_idx.length-nv->hist_idx) + "  ");
   fldHistFF->GetImage((String)nv->hist_ff);
 
   // update var selection

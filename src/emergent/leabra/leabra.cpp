@@ -2064,7 +2064,7 @@ float LeabraUnitSpec::Compute_NormErr(LeabraUnit* u, LeabraNetwork* net) {
 //	 Misc Functions 		//
 //////////////////////////////////////////
 
-void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, float norm_amp,
+void LeabraUnitSpec::BioParams(bool gelin, float norm_sec, float norm_volt, float volt_off, float norm_amp,
 	  float C_pF, float gbar_l_nS, float gbar_e_nS, float gbar_i_nS,
 	  float erev_l_mV, float erev_e_mV, float erev_i_mV,
 	  float act_thr_mV, float spk_thr_mV, float exp_slope_mV,
@@ -2097,6 +2097,12 @@ void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, 
   vm_range.min = 0.0f;
   vm_range.max = 2.0f;
   dt.d_vm_max = 100.0f;		// no max
+
+  if(gelin) {
+    dt.vm = 0.3f;
+    act.gain = 80;
+    act.gelin = true;
+  }
 
   UpdateAfterEdit();
 }

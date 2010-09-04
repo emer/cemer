@@ -963,6 +963,21 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       float act_val = u->act_m2;
       float lrn_dav = snrthal_act * u->dav; // dav is current plus phase
 
+      if(go_nogo_gain.on) {
+	if(lrn_dav > 0.0f) {
+	  if(go_no == PFCGateSpec::GATE_GO)
+	    lrn_dav *= go_nogo_gain.go_p;
+	  else
+	    lrn_dav *= go_nogo_gain.nogo_p;
+	}
+	else if(lrn_dav < 0.0f) {
+	  if(go_no == PFCGateSpec::GATE_GO)
+	    lrn_dav *= go_nogo_gain.go_n;
+	  else
+	    lrn_dav *= go_nogo_gain.nogo_n;
+	}
+      }
+
       if(nogo_rnd_go) {
 	lrn_dav += rnd_go.nogo_da; // output gating also gets this too
       }
@@ -1052,6 +1067,9 @@ void PFCGateSpec::Initialize() {
   max_maint = 100;
   off_accom = 0.0f;
   out_go_clear = true;
+  mnt_toggle = true;
+  mnt_wins = false;
+  updt_gch = false;
 }
 
 void PFCGateSpec::UpdateAfterEdit_impl() {
@@ -1276,6 +1294,14 @@ void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraUnit_Group* ugp, MaintUpdtAct upd
 	u->net -= decay * u->net;
       }
     }
+    else if(updt_act == UPDT) {
+      if(u->maint_h >= us->opt_thresh.send) { // still above threshold -- update
+	u->vcb.g_h = u->maint_h = u->act_eq;
+      }
+      else {
+	u->vcb.g_h = u->maint_h = 0.0f; // clear!
+      }
+    }
     us->Compute_Conduct(u, net); // update displayed conductances!
   }
 }
@@ -1312,7 +1338,11 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
     bool gate_fired = mnt_gate_fired || out_gate_fired;
 
     // maintenance gating signal -- can only happen if hasn't happened yet and mutex with out
-    if(!gate_fired && (snr_mnt_u->act_eq > go_thr_mnt)) {
+    bool allow_mnt_gate = !gate_fired;
+    if(gate.mnt_wins)
+      allow_mnt_gate = !mnt_gate_fired; // only depends on maint, not out!
+
+    if(allow_mnt_gate && (snr_mnt_u->act_eq > go_thr_mnt)) {
       // compute out_gate multiplier in misc_float1 -- maint gating causes output gating too!
       ugp->misc_float1 = 1.0f; // out gate multiplier
       if(gate.graded_out_go)
@@ -1322,7 +1352,7 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, snrgp_mnt, mg, net);
       // snrthal and associated matrix layer grab act_m2 vals based on current state!
 
-      if(pfc_mnt_cnt > 0) // full stripe
+      if(pfc_mnt_cnt > 0 && gate.mnt_toggle) // full stripe
 	Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);	 // clear maint currents if full -- toggle off
 
       // update state info
@@ -1428,6 +1458,9 @@ void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
 	if(ugp->misc_state > gate.max_maint) {
 	  Compute_MaintUpdt_ugp(ugp, CLEAR, lay, net);     // clear it!
 	  ugp->misc_state = 0;			     // empty
+	}
+	else if(gate.updt_gch) {
+	  Compute_MaintUpdt_ugp(ugp, UPDT, lay, net);     // update it!
 	}
       }
       else {
