@@ -3472,6 +3472,15 @@ bool NetView::UsesSpec(taBase* obj, BaseSpec* spec) {
       if (sptr->GetSpec() == spec) return true;
     }
   }
+  if(spec->InheritsFrom(&TA_ConSpec) && obj->InheritsFrom(&TA_Layer)) {
+    // could be a bias spec..
+    Layer* lay = (Layer*)obj;
+    UnitSpec* us = (UnitSpec*)lay->unit_spec.GetSpec();
+    if(us) {
+      ConSpec* bs = (ConSpec*)us->bias_spec.GetSpec();
+      if(bs == spec) return true;
+    }
+  }
   return false;
 }
 
