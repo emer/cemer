@@ -2769,6 +2769,8 @@ void ProjectionSpec::PreConnect(Projection* prjn) {
 void ProjectionSpec::Connect(Projection* prjn) {
   prjn->RemoveCons();
   prjn->SetFrom();
+  if(TestWarning(!(bool)prjn->from, "Connect", "from pointer is NULL -- cannot make this projection"))
+    return;
   PreConnect(prjn);
   Connect_impl(prjn);
   Init_Weights(prjn);
