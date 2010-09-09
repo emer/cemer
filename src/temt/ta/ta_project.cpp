@@ -1220,7 +1220,7 @@ bool taProject::SetFileName(const String& val) {
   // note: too dangerous to save root, since we are still saving project...
   // BUT changes should get saved when we close the filer anyway
   if(taMisc::gui_active)
-    tabMisc::root->AddRecentFile(val, true);
+    tabMisc::root->AddRecentFile(file_name, true); // use file_name instead of val b/c it is cannonicalized!
   return true;
 }
 

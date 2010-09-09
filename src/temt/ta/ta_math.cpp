@@ -1201,7 +1201,7 @@ double taMath_double::vec_mean(const double_Matrix* vec) {
 
 double taMath_double::vec_var(const double_Matrix* vec, double mean, bool use_mean, bool use_est) {
   if(!vec_check_type(vec)) return false;
-  if(vec->size == 0)	return 0.0;
+  if(vec->size <= 1)	return 0.0;
   if(!use_mean)    mean = vec_mean(vec);
   double rval = 0.0;
   for(int i=0;i<vec->size;i++)
@@ -1210,12 +1210,13 @@ double taMath_double::vec_var(const double_Matrix* vec, double mean, bool use_me
 }
 
 double taMath_double::vec_std_dev(const double_Matrix* vec, double mean, bool use_mean, bool use_est) {
+  if(vec->size <= 1)	return 0.0;
   return sqrt(vec_var(vec, mean, use_mean, use_est));
 }
 
 double taMath_double::vec_sem(const double_Matrix* vec, double mean, bool use_mean) {
   if(!vec_check_type(vec)) return false;
-  if(vec->size == 0)	return 0.0;
+  if(vec->size <= 1)	return 0.0;
   return vec_std_dev(vec, mean, use_mean, true) / sqrt((double)vec->size);
 }
 
@@ -1229,6 +1230,7 @@ double taMath_double::vec_ss_len(const double_Matrix* vec) {
 
 double taMath_double::vec_ss_mean(const double_Matrix* vec) {
   if(!vec_check_type(vec)) return false;
+  if(vec->size <= 1)	return 0.0;
   double rval = 0.0;
   double mean = vec_mean(vec);
   for(int i=0;i<vec->size;i++)
@@ -4111,13 +4113,14 @@ float taMath_float::vec_prod(const float_Matrix* vec) {
 }
 
 float taMath_float::vec_mean(const float_Matrix* vec) {
+  if(!vec_check_type(vec)) return false;
   if(vec->size == 0)	return 0.0;
   return vec_sum(vec) / (float)vec->size;
 }
 
 float taMath_float::vec_var(const float_Matrix* vec, float mean, bool use_mean, bool use_est) {
   if(!vec_check_type(vec)) return false;
-  if(vec->size == 0)	return 0.0;
+  if(vec->size <= 1)	return 0.0;
   if(!use_mean)    mean = vec_mean(vec);
   float rval = 0.0;
   for(int i=0;i<vec->size;i++)
@@ -4126,11 +4129,13 @@ float taMath_float::vec_var(const float_Matrix* vec, float mean, bool use_mean, 
 }
 
 float taMath_float::vec_std_dev(const float_Matrix* vec, float mean, bool use_mean, bool use_est) {
+  if(vec->size <= 1)	return 0.0;
   return sqrt(vec_var(vec, mean, use_mean, use_est));
 }
 
 float taMath_float::vec_sem(const float_Matrix* vec, float mean, bool use_mean) {
-  if(vec->size == 0)	return 0.0;
+  if(!vec_check_type(vec)) return false;
+  if(vec->size <= 1)	return 0.0;
   return vec_std_dev(vec, mean, use_mean, true) / sqrt((float)vec->size);
 }
 
@@ -4144,6 +4149,7 @@ float taMath_float::vec_ss_len(const float_Matrix* vec){
 
 float taMath_float::vec_ss_mean(const float_Matrix* vec) {
   if(!vec_check_type(vec)) return false;
+  if(vec->size <= 1)	return 0.0;
   float rval = 0.0;
   float mean = vec_mean(vec);
   for(int i=0;i<vec->size;i++)

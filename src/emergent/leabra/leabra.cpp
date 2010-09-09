@@ -2622,7 +2622,7 @@ void AdaptISpec::Defaults_init() {
 
 void ClampSpec::Initialize() {
   hard = true;
-  gain = 0.2f;
+  Defaults_init();
 }
 
 void ClampSpec::Defaults_init() {
