@@ -4056,12 +4056,16 @@ void Layer::Lesion() {
   StructUpdate(true);
   SetLayerFlag(LESIONED);
   StructUpdate(false);
+  if(own_net)
+    own_net->UpdtAfterNetMod();
 }
 
 void Layer::UnLesion()	{
   StructUpdate(true);
   ClearLayerFlag(LESIONED);
   StructUpdate(false);
+  if(own_net)
+    own_net->UpdtAfterNetMod();
 }
 
 void Layer::Iconify() {
