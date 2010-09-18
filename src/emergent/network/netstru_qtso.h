@@ -562,6 +562,23 @@ public:
   virtual String	HistMemUsed();
   // #BUTTON #USE_RVAL returns amount of memory used to store history in user-readable format
 
+  virtual bool		HistBackAll();
+  // move through history of saved values -- back all the way
+  virtual bool		HistBackF();
+  // move through history of saved values -- back fast 
+  virtual bool		HistBack1();
+  // move through history of saved values -- back 1
+  virtual bool		HistFwd1();
+  // move through history of saved values -- forward 1
+  virtual bool		HistFwdF();
+  // move through history of saved values -- forward fast
+  virtual bool		HistFwdAll();
+  // move through history of saved values -- forward all the way
+
+  virtual void		HistMovie(int x_size=640, int y_size=480, 
+				  const String& fname_stub = "movie_img_");
+  // #BUTTON record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats
+
   override void		Dump_Load_post();
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
   override const iColor	bgColor(bool& ok) const;
@@ -678,6 +695,7 @@ public:
   QAction* 		   actFwd_F;
   QAction* 		   actFwd_All;
   QLabel*		   lblHist;
+  QAction* 		   actMovie;
   
   QTabWidget* 		tw; 
   QTreeWidget*		  lvDisplayValues;
@@ -725,6 +743,7 @@ protected slots:
   void 			hist_fwd();
   void 			hist_fwd_f();
   void 			hist_fwd_all();
+  void 			hist_movie();
   void			lvDisplayValues_selectionChanged();
   void			tvSpecs_CustomExpandFilter(iTreeViewItem* item,
 						   int level, bool& expand);

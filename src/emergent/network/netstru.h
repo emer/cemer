@@ -2246,6 +2246,9 @@ public:
   // #MENU_BUTTON #MENU_ON_NetView #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
   virtual void	NetTextUserData();
   // #IGNORE auto-called in InitLinks -- enable the filtering of what information is shown in the network text data display (typically shown at bottom of network, though see PlaceNetText for options on where to locate) -- this function creates entries for each of the viewable items in the UserData for this network -- just click on the UserData button to edit which items to display.
+  virtual void		HistMovie(int x_size=640, int y_size=480, 
+				  const String& fname_stub = "movie_img_");
+  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats
 
   ////////////////////////////////////////////////////////////////////////////////
   //	Below are the primary computational interface to the Network Objects

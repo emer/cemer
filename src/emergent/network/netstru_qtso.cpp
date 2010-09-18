@@ -2294,6 +2294,12 @@ void Network::PlaceNetText(NetTextLoc net_text_loc, float scale) {
   nv->Render();
 }
 
+void Network::HistMovie(int x_size, int y_size, const String& fname_stub) {
+  NetView* nv = FindView();
+  if(!nv) return;
+  nv->HistMovie(x_size, y_size, fname_stub);
+}
+
 void NetView::Initialize() {
   data_base = &TA_Network;
   nvp = NULL;
@@ -2382,6 +2388,77 @@ String NetView::HistMemUsed() {
     rval = String((float)mem / 1.0e6f) + "MB";
   }
   return rval;
+}
+
+bool NetView::HistBackAll() {
+  if(!hist_save) return false;
+  if(hist_idx >= ctr_hist_idx.length) return false;
+  hist_idx = ctr_hist_idx.length;
+  UpdateDisplay(true);
+  return true;
+}
+
+bool NetView::HistBackF() {
+  if(!hist_save) return false;
+  if(hist_idx >= ctr_hist_idx.length) return false;
+  hist_idx += hist_ff;
+  hist_idx = MIN(ctr_hist_idx.length, hist_idx);
+  UpdateDisplay(true);
+  return true;
+}
+
+bool NetView::HistBack1() {
+  if(!hist_save) return false;
+  if(hist_idx >= ctr_hist_idx.length) return false;
+  hist_idx++;
+  UpdateDisplay(true);
+  return true;
+}
+
+bool NetView::HistFwd1() {
+  if(!hist_save) return false;
+  if(hist_idx < 1) return false;
+  hist_idx--;
+  UpdateDisplay(true);
+  return true;
+}
+
+bool NetView::HistFwdF() {
+  if(!hist_save) return false;
+  if(hist_idx < 1) return false;
+  hist_idx -= hist_ff;
+  hist_idx = MAX(0, hist_idx);
+  UpdateDisplay(true);
+  return true;
+}
+
+bool NetView::HistFwdAll() {
+  if(!hist_save) return false;
+  if(hist_idx < 1) return false;
+  hist_idx = 0;
+  UpdateDisplay(true);
+  return true;
+}
+
+void NetView::HistMovie(int x_size, int y_size, const String& fname_stub) {
+  T3DataViewFrame* fr = GetFrame();
+  if(!fr) return;
+  fr->SetImageSize(x_size, y_size);
+  taMisc::ProcessEvents();
+  int ctr = 0;
+  while(hist_idx > 0) {
+    String fnm = fname_stub + taMisc::LeadingZeros(ctr, 5) + ".png";
+    fr->SaveImageAs(fnm, DataViewer::PNG);
+    hist_idx--;
+    UpdateDisplay(false);
+    taMisc::ProcessEvents();
+    ctr++;
+    fr->SetImageSize(x_size, y_size);
+    taMisc::ProcessEvents();
+    taMisc::ProcessEvents();
+    taMisc::ProcessEvents();
+  }
+  UpdateDisplay(true);
 }
 
 void NetView::ChildUpdateAfterEdit(taBase* child, bool& handled) {
@@ -3875,6 +3952,12 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   fldHistFF->rep()->setCharWidth(4);
   histTB->addWidget(fldHistFF->GetRep());
 
+  histTB->addSeparator();
+
+  actMovie = histTB->addAction("Movie");
+  actMovie->setToolTip("record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- uses default 640x480 size with images saved as movie_img_xxx.png -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats");
+  connect(actMovie, SIGNAL(triggered()), this, SLOT(hist_movie()) );
+
   layHistory->addStretch();
 //   histTB->addStretch();
 
@@ -4111,72 +4194,53 @@ void NetViewPanel::butSetColor_pressed() {
   nv_->CallFun("SetColorSpec");
 }
 
-void NetViewPanel::hist_back() {
-  if (updating) return;
-  NetView* nv_;
-  if (!(nv_ = nv())) return;
-  if(!nv_->hist_save) return;
-
-  if(nv_->hist_idx >= nv_->ctr_hist_idx.length) return;
-  nv_->hist_idx++;
-  nv_->UpdateDisplay(true);
-}
-
 void NetViewPanel::hist_back_all() {
   if (updating) return;
   NetView* nv_;
   if (!(nv_ = nv())) return;
-  if(!nv_->hist_save) return;
-
-  if(nv_->hist_idx >= nv_->ctr_hist_idx.length) return;
-  nv_->hist_idx = nv_->ctr_hist_idx.length;
-  nv_->UpdateDisplay(true);
+  nv_->HistBackAll();
 }
 
 void NetViewPanel::hist_back_f() {
   if (updating) return;
   NetView* nv_;
   if (!(nv_ = nv())) return;
-  if(!nv_->hist_save) return;
+  nv_->HistBackF();
+}
 
-  if(nv_->hist_idx >= nv_->ctr_hist_idx.length) return;
-  nv_->hist_idx += nv_->hist_ff;
-  nv_->hist_idx = MIN(nv_->ctr_hist_idx.length, nv_->hist_idx);
-  nv_->UpdateDisplay(true);
+void NetViewPanel::hist_back() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  nv_->HistBack1();
 }
 
 void NetViewPanel::hist_fwd() {
   if (updating) return;
   NetView* nv_;
   if (!(nv_ = nv())) return;
-  if(!nv_->hist_save) return;
-
-  if(nv_->hist_idx < 1) return;
-  nv_->hist_idx--;
-  nv_->UpdateDisplay(true);
+  nv_->HistFwd1();
 }
 
 void NetViewPanel::hist_fwd_f() {
   if (updating) return;
   NetView* nv_;
   if (!(nv_ = nv())) return;
-  if(!nv_->hist_save) return;
-
-  if(nv_->hist_idx < 1) return;
-  nv_->hist_idx -= nv_->hist_ff;
-  nv_->hist_idx = MAX(0, nv_->hist_idx);
-  nv_->UpdateDisplay(true);
+  nv_->HistFwdF();
 }
 
 void NetViewPanel::hist_fwd_all() {
   if (updating) return;
   NetView* nv_;
   if (!(nv_ = nv())) return;
-  if(!nv_->hist_save) return;
+  nv_->HistFwdAll();
+}
 
-  if(nv_->hist_idx < 1) return;
-  nv_->hist_idx = 0;
-  nv_->UpdateDisplay(true);
+void NetViewPanel::hist_movie() {
+  if (updating) return;
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  nv_->HistMovie();
 }
 
 void NetViewPanel::ColorScaleFromData() {
