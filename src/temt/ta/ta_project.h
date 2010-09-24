@@ -487,6 +487,10 @@ public:
   // #CAT_Display manual refresh of all view information in the project -- equivalent to the View/Refresh (F5 key) menu -- should not be necessary but sometimes comes in handy..
   virtual void		UpdateUi();
   // #CAT_Display manual call to update user interface enabled/disabled settings -- usually done through signals and slots, but this can be useful for non-gui driven changes that might affect enabling
+  virtual void		SelectT3ViewTabNo(int tab_idx);
+  // activate given 3D view tab, specified by number (0..n-1, left to right) -- see also SelectT3ViewTabName
+  virtual void		SelectT3ViewTabName(const String& tab_nm);
+  // activate given 3D view tab, specified by the name of the tab -- see also SelectT3ViewTabNo
 
   ///////////////////////////////////////////////////////////////////
   //	Get new proj objects

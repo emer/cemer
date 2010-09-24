@@ -422,9 +422,49 @@ void VEBody::FixExtRotation(SbRotation& sbrot) {
   }
 }
 
-void VEBody::RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+void VEBody::Translate(float dx, float dy, float dz, bool init) {
+  if(init) {
+    init_pos.x += dx; 
+    init_pos.y += dy;
+    init_pos.z += dz;
+  }
+  else {
+    cur_pos.x += dx; 
+    cur_pos.y += dy;
+    cur_pos.z += dz;
+  }
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+}
+
+void VEBody::Scale(float sx, float sy, float sz) {
+  switch(shape) {
+  case SPHERE:
+    radius *= sx;
+    break;
+  case CAPSULE:
+  case CYLINDER:
+    if(long_axis == LONG_X) {
+      length *= sx; if(sy > 0.0f) radius *= sy; else radius *= sx;
+    }
+    if(long_axis == LONG_Y) {
+      if(sy > 0.0f) length *= sy; else length *= sx; radius *= sx;
+    }
+    if(long_axis == LONG_Z) {
+      if(sz > 0.0f) length *= sz; else length *= sx; radius *= sx;
+     }
+    break;
+  case BOX:
+    box.x *= sx;
+    if(sy > 0.0f) box.y *= sy; else box.y *= sx;
+    if(sz > 0.0f) box.z *= sz; else box.z *= sx;
+    break;
+  }
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+}
+
+void VEBody::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
   if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f), 
-    "RotateBody", "must specify a non-zero axis!"))
+    "Rotate", "must specify a non-zero axis!"))
     return;
 
   SbRotation sbrot;
@@ -447,6 +487,18 @@ void VEBody::RotateBody(float x_ax, float y_ax, float z_ax, float rot, bool init
     cur_rot.x = rot_ax[0]; cur_rot.y = rot_ax[1]; cur_rot.z = rot_ax[2];
   }
   DataChanged(DCR_ITEM_UPDATED); // update displays..
+}
+
+void VEBody::CopyColorFrom(VEBody* cpy_fm) {
+  if(!cpy_fm) return;
+  set_color = cpy_fm->set_color;
+  color = cpy_fm->color;
+  full_colors = cpy_fm->full_colors; 
+  ambient_color = cpy_fm->ambient_color;
+  specular_color = cpy_fm->specular_color;
+  emissive_color = cpy_fm->emissive_color;
+  texture = cpy_fm->texture;
+  UpdateAfterEdit();
 }
 
 void VEBody::AddForce(float fx, float fy, float fz, bool torque, bool rel) {
@@ -620,6 +672,39 @@ void VEBody_Group::SnapPosToGrid(float grid_size, bool init_pos) {
     ob->SnapPosToGrid(grid_size, init_pos);
   }
 }
+
+void VEBody_Group::Translate(float dx, float dy, float dz, bool init) {
+  VEBody* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEBody, ob, this->, i) {
+    ob->Translate(dx, dy, dz, init);
+  }
+}
+
+void VEBody_Group::Scale(float sx, float sy, float sz) {
+  VEBody* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEBody, ob, this->, i) {
+    ob->Scale(sx, sy, sz);
+  }
+}
+
+void VEBody_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+  VEBody* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEBody, ob, this->, i) {
+    ob->Rotate(x_ax, y_ax, z_ax, rot, init);
+  }
+}
+
+void VEBody_Group::CopyColorFrom(VEBody* cpy_fm) {
+  VEBody* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEBody, ob, this->, i) {
+    ob->CopyColorFrom(cpy_fm);
+  }
+}
+
 
 /////////////////////////////////////////////
 //		Camera and Lights
@@ -1723,6 +1808,24 @@ void VEObject::SnapPosToGrid(float grid_size, bool init_pos) {
   bodies.SnapPosToGrid(grid_size, init_pos);
 }
 
+void VEObject::Translate(float dx, float dy, float dz, bool init) {
+  bodies.Translate(dx, dy, dz, init);
+}
+
+void VEObject::Scale(float sx, float sy, float sz) {
+  bodies.Scale(sx, sy, sz);
+}
+
+void VEObject::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+  bodies.Rotate(x_ax, y_ax, z_ax, rot, init);
+}
+
+void VEObject::CopyColorFrom(VEBody* cpy_fm) {
+  bodies.CopyColorFrom(cpy_fm);
+}
+
+
+
 /////////////////////////////////////////////
 //		Group
 
@@ -1765,6 +1868,41 @@ void VEObject_Group::SnapPosToGrid(float grid_size, bool init_pos) {
     ob->SnapPosToGrid(grid_size, init_pos);
   }
 }
+
+void VEObject_Group::Translate(float dx, float dy, float dz, bool init) {
+  VEObject* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEObject, ob, this->, i) {
+    ob->Translate(dx, dy, dz, init);
+  }
+}
+
+void VEObject_Group::Scale(float sx, float sy, float sz) {
+  VEObject* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEObject, ob, this->, i) {
+    ob->Scale(sx, sy, sz);
+  }
+}
+
+void VEObject_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
+  VEObject* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEObject, ob, this->, i) {
+    ob->Rotate(x_ax, y_ax, z_ax, rot, init);
+  }
+}
+
+void VEObject_Group::CopyColorFrom(VEBody* cpy_fm) {
+  VEObject* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEObject, ob, this->, i) {
+    ob->CopyColorFrom(cpy_fm);
+  }
+}
+
+
+
 
 ////////////////////////////////////////////////
 //	Static bodies
@@ -1926,7 +2064,71 @@ void VEStatic::SnapPosToGrid(float grid_size) {
   pos.x = ve_snap_val(pos.x, grid_size);
   pos.y = ve_snap_val(pos.y, grid_size);
   pos.z = ve_snap_val(pos.z, grid_size);
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
 }
+
+void VEStatic::Translate(float dx, float dy, float dz) {
+  pos.x += dx; 
+  pos.y += dy;
+  pos.z += dz;
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+}
+
+void VEStatic::Scale(float sx, float sy, float sz) {
+  switch(shape) {
+  case SPHERE:
+    radius *= sx;
+    break;
+  case CAPSULE:
+  case CYLINDER:
+    if(long_axis == LONG_X) {
+      length *= sx; if(sy > 0.0f) radius *= sy; else radius *= sx;
+    }
+    if(long_axis == LONG_Y) {
+      if(sy > 0.0f) length *= sy; else length *= sx; radius *= sx;
+    }
+    if(long_axis == LONG_Z) {
+      if(sz > 0.0f) length *= sz; else length *= sx; radius *= sx;
+     }
+    break;
+  case BOX:
+    box.x *= sx;
+    if(sy > 0.0f) box.y *= sy; else box.y *= sx;
+    if(sz > 0.0f) box.z *= sz; else box.z *= sx;
+    break;
+  }
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+}
+
+void VEStatic::Rotate(float x_ax, float y_ax, float z_ax, float rt) {
+  if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f), 
+    "RotateBody", "must specify a non-zero axis!"))
+    return;
+
+  SbRotation sbrot;
+  sbrot.setValue(SbVec3f(x_ax, y_ax, z_ax), rt);
+
+  SbRotation irot;
+  irot.setValue(SbVec3f(rot.x, rot.y, rot.z), rot.rot);
+  irot *= sbrot;
+  SbVec3f rot_ax;
+  irot.getValue(rot_ax, rot.rot);
+  rot.x = rot_ax[0]; rot.y = rot_ax[1]; rot.z = rot_ax[2];
+  DataChanged(DCR_ITEM_UPDATED); // update displays..
+}
+
+void VEStatic::CopyColorFrom(VEStatic* cpy_fm) {
+  if(!cpy_fm) return;
+  set_color = cpy_fm->set_color;
+  color = cpy_fm->color;
+  full_colors = cpy_fm->full_colors; 
+  ambient_color = cpy_fm->ambient_color;
+  specular_color = cpy_fm->specular_color;
+  emissive_color = cpy_fm->emissive_color;
+  texture = cpy_fm->texture;
+  UpdateAfterEdit();
+}
+
 
 /////////////////////////////////////////////
 //		HeightField
@@ -1963,6 +2165,38 @@ void VEStatic_Group::SnapPosToGrid(float grid_size) {
   taLeafItr i;
   FOR_ITR_EL(VEStatic, ob, this->, i) {
     ob->SnapPosToGrid(grid_size);
+  }
+}
+
+void VEStatic_Group::Translate(float dx, float dy, float dz) {
+  VEStatic* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEStatic, ob, this->, i) {
+    ob->Translate(dx, dy, dz);
+  }
+}
+
+void VEStatic_Group::Scale(float sx, float sy, float sz) {
+  VEStatic* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEStatic, ob, this->, i) {
+    ob->Scale(sx, sy, sz);
+  }
+}
+
+void VEStatic_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot) {
+  VEStatic* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEStatic, ob, this->, i) {
+    ob->Rotate(x_ax, y_ax, z_ax, rot);
+  }
+}
+
+void VEStatic_Group::CopyColorFrom(VEStatic* cpy_fm) {
+  VEStatic* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VEStatic, ob, this->, i) {
+    ob->CopyColorFrom(cpy_fm);
   }
 }
 
@@ -2043,6 +2277,23 @@ void VESpace::SnapPosToGrid(float grid_size) {
   static_els.SnapPosToGrid(grid_size);
 }
 
+void VESpace::Translate(float dx, float dy, float dz) {
+  static_els.Translate(dx, dy, dz);
+}
+
+void VESpace::Scale(float sx, float sy, float sz) {
+  static_els.Scale(sx, sy, sz);
+}
+
+void VESpace::Rotate(float x_ax, float y_ax, float z_ax, float rot) {
+  static_els.Rotate(x_ax, y_ax, z_ax, rot);
+}
+
+void VESpace::CopyColorFrom(VEStatic* cpy_fm) {
+  static_els.CopyColorFrom(cpy_fm);
+}
+
+
 /////////////////////////////////////////////
 //		Group
 
@@ -2067,6 +2318,38 @@ void VESpace_Group::SnapPosToGrid(float grid_size) {
   taLeafItr i;
   FOR_ITR_EL(VESpace, ob, this->, i) {
     ob->SnapPosToGrid(grid_size);
+  }
+}
+
+void VESpace_Group::Translate(float dx, float dy, float dz) {
+  VESpace* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VESpace, ob, this->, i) {
+    ob->Translate(dx, dy, dz);
+  }
+}
+
+void VESpace_Group::Scale(float sx, float sy, float sz) {
+  VESpace* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VESpace, ob, this->, i) {
+    ob->Scale(sx, sy, sz);
+  }
+}
+
+void VESpace_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot) {
+  VESpace* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VESpace, ob, this->, i) {
+    ob->Rotate(x_ax, y_ax, z_ax, rot);
+  }
+}
+
+void VESpace_Group::CopyColorFrom(VEStatic* cpy_fm) {
+  VESpace* ob;
+  taLeafItr i;
+  FOR_ITR_EL(VESpace, ob, this->, i) {
+    ob->CopyColorFrom(cpy_fm);
   }
 }
 

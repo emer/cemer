@@ -1159,6 +1159,20 @@ void taProject::UpdateUi() {
   }
 }
 
+void taProject::SelectT3ViewTabNo(int tab_idx) {
+  MainWindowViewer* proj_view = GetDefaultProjectViewer();
+  if(!proj_view || !proj_view->SelectT3ViewTabNo(tab_idx)) {
+    taMisc::Warning("could not activate 3D View Tab number:", String(tab_idx));
+  }      
+}
+
+void taProject::SelectT3ViewTabName(const String& tab_nm) {
+  MainWindowViewer* proj_view = GetDefaultProjectViewer();
+  if(!proj_view || !proj_view->SelectT3ViewTabName(tab_nm)) {
+    taMisc::Warning("could not activate 3D View Tab named:", tab_nm);
+  }      
+}
+
 DataTable* taProject::GetNewInputDataTable(const String& nw_nm, bool msg) {
   DataTable_Group* dgp = (DataTable_Group*)data.FindMakeGpName("InputData");
   DataTable* rval = NULL;
