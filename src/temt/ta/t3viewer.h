@@ -567,7 +567,10 @@ public:
 
   virtual void		CopyFromViewFrame(T3DataViewPar* cp);
   // copy key view frame parameters from other view object
-  
+
+  virtual void		setInteractionModeOn(bool on_off, bool re_render = true);
+  // set the interaction mode for the underlying examiner viewer -- does update and re-render unless specified as false
+ 
   override void		InitLinks();
   T3_DATAVIEWFUNS(T3DataViewMain, T3DataViewPar) // 
 private:

@@ -1407,6 +1407,14 @@ void T3DataViewMain::CopyFromViewFrame(T3DataViewPar* cp) {
 }
 
 
+void T3DataViewMain::setInteractionModeOn(bool on_off, bool re_render) {
+  T3ExaminerViewer* vw = GetViewer();
+  if(vw) {
+    vw->setInteractionModeOn(on_off, re_render);
+  }
+}
+
+
 //////////////////////////
 //   iSoSelectionEvent	//
 //////////////////////////
