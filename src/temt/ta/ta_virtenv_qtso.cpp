@@ -242,7 +242,7 @@ void VEBodyView::SetBody(VEBody* ob) {
 }
 
 void VEBodyView::Render_pre() {
-  bool show_drag = true;;
+  bool show_drag = false;	// default is off!
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
     show_drag = vw->interactionModeOn();
@@ -642,7 +642,7 @@ void VEObjCarouselView::Render_pre() {
     return;
   }
 
-  bool show_drag = true;;
+  bool show_drag = false;
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
     show_drag = vw->interactionModeOn();
@@ -724,7 +724,7 @@ void VEJointView::SetJoint(VEJoint* ob) {
 }
 
 void VEJointView::Render_pre() {
-  bool show_drag = true;;
+  bool show_drag = false;
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
     show_drag = vw->interactionModeOn();
@@ -1100,7 +1100,7 @@ void VEStaticView::SetStatic(VEStatic* ob) {
 }
 
 void VEStaticView::Render_pre() {
-  bool show_drag = true;;
+  bool show_drag = false;
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
     show_drag = vw->interactionModeOn();
@@ -1901,6 +1901,42 @@ QImage VEWorld::GetCameraImage(int cam_no) {
   return img;
 }
 
+class MultiSampleRenderAction : public SoGLRenderAction {
+  typedef SoGLRenderAction inherited;
+public:
+  static void initClass(void);
+
+  MultiSampleRenderAction(void);
+  MultiSampleRenderAction(const SbViewportRegion & viewportregion);
+  virtual ~MultiSampleRenderAction(void);
+
+protected:
+  void beginTraversal(SoNode *node);
+
+};
+
+void MultiSampleRenderAction::initClass(void) {
+//   SO_ACTION_INTERNAL_INIT_CLASS(MultiSampleRenderAction, SoGLRenderAction);
+}
+
+MultiSampleRenderAction::MultiSampleRenderAction(void)
+  : inherited(SbViewportRegion())
+{
+}
+
+MultiSampleRenderAction::MultiSampleRenderAction(const SbViewportRegion & viewportregion)
+  : inherited(viewportregion)
+{
+}
+
+MultiSampleRenderAction::~MultiSampleRenderAction() {
+}
+
+void MultiSampleRenderAction::beginTraversal(SoNode* node) {
+  inherited::beginTraversal(node);
+  glEnable(GL_MULTISAMPLE);
+}
+
 QImage VEWorldView::GetCameraImage(int cam_no) {
   QImage img;
   VEWorld* wl = World();
@@ -1952,6 +1988,11 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
     cam_renderer->setComponents(SoOffscreenRenderer::RGB);
     cam_renderer->setViewportRegion(vpreg);
     last_img_size = cur_img_sc;
+
+    MultiSampleRenderAction* msra = new MultiSampleRenderAction;
+    cam_renderer->setGLRenderAction(msra);
+    msra->setSmoothing(true); 
+    msra->setTransparencyType(SoGLRenderAction::BLEND);
   }
 
   if(cur_img_sc != last_img_size) {

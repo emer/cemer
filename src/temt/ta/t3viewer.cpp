@@ -319,6 +319,9 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   Constr_RHS_Buttons();
   Constr_LHS_Buttons();
   Constr_Bot_Buttons();
+
+  quarter->setInteractionModeOn(false);
+  setInteractionModeOn(false);	// default start it off!
 }
 
 T3ExaminerViewer::~T3ExaminerViewer() {
@@ -1633,7 +1636,9 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
     SoRenderManager* rman = m_t3viewer->quarter->getSoRenderManager();
     rman->setGLRenderAction(rend_act);
-    rman->setAntialiasing(true, 1); // low-cost line smoothing
+    // following may be important for smoothing in offscreen rendering!
+    //    rman->setAntialiasing(true, MAX(taMisc::antialiasing_level, 1)); 
+    rman->setAntialiasing(true, 1); 
     m_t3viewer->quarter->setTransparencyType(QuarterWidget::BLEND);
     // make sure it has the transparency set for new guy
   }
