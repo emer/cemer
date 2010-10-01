@@ -68,6 +68,7 @@
 #include <Inventor/nodes/SoOrthographicCamera.h>
 #include <Inventor/SoEventManager.h>
 #include <Inventor/SoRenderManager.h>
+# include <QGLPixelBuffer>
 
 #include "qtthumbwheel.h"
 
@@ -83,6 +84,64 @@ using namespace Qt;
 #ifndef GL_MULTISAMPLE
 # define GL_MULTISAMPLE  0x809D
 #endif
+
+//////////////////////////////////////////////////////////////////////////////
+//   T3OffscreenRenderer -- uses QGLPixelBuffer and SoRenderManager to do everything
+
+T3OffscreenRenderer::T3OffscreenRenderer() {
+  renderm = new SoRenderManager;
+  renderm->setAntialiasing(true, 1); // good defaults regardless
+  SoGLRenderAction* ract = renderm->getGLRenderAction();
+  ract->setTransparencyType(SoGLRenderAction::BLEND);
+  pbuff = NULL;
+}
+
+T3OffscreenRenderer::~T3OffscreenRenderer() {
+  delete renderm;
+  if(pbuff)
+    delete pbuff;
+  renderm = NULL;
+  pbuff = NULL;
+}
+
+void T3OffscreenRenderer::makeBuffer(int width, int height, const QGLFormat& fmt) {
+  if(pbuff) delete pbuff;
+  pbuff = new QGLPixelBuffer(width, height, fmt);
+  SbViewportRegion vpreg;
+  vpreg.setWindowSize(width, height);
+  renderm->setViewportRegion(vpreg);
+}
+
+void T3OffscreenRenderer::makeMultisampleBuffer(int width, int height, int samples) {
+  if(samples < 0) samples = taMisc::antialiasing_level;
+  QGLFormat fmt;
+  if(samples > 0) {
+    fmt.setSampleBuffers(true);
+    fmt.setSamples(samples);
+  }
+  else {
+    fmt.setSampleBuffers(false);
+  }
+  makeBuffer(width, height, fmt);
+}
+
+bool T3OffscreenRenderer::render(SoNode* scene) {
+  if(!pbuff) makeMultisampleBuffer(640, 480, -1);
+  if(scene) {
+    renderm->setSceneGraph(scene);
+  }
+  pbuff->makeCurrent();
+  renderm->render(true, true); // clear
+  pbuff->doneCurrent();
+  return true;
+}
+
+QImage T3OffscreenRenderer::toImage() {
+  if(!pbuff) return QImage();
+  return pbuff->toImage();
+}
+
+//////////////////////////////
 
 #include "pick.xpm"
 #include "view.xpm"

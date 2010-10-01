@@ -24,8 +24,6 @@
 #include "t3viewer.h"
 #include "ta_qtgroup.h"
 
-class SoOffscreenRenderer; // #IGNORE
-
 class VEBodyView;
 class VEStaticView;
 class VEWorldView;
@@ -259,7 +257,7 @@ protected:
 #ifndef __MAKETA__
   QPointer<VEWorldViewPanel> m_wvp;
 #endif
-  SoOffscreenRenderer*	cam_renderer;
+  T3OffscreenRenderer*	cam_renderer;
 
   override void		DataUpdateView_impl();
   override void 	UpdateAfterEdit_impl();

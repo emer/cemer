@@ -3388,7 +3388,7 @@ void V1BinocularSpec::Initialize() {
   n_disps = 1;
   disp_off = 4;
   tuning_width = 2;
-  end_width = 20;
+  end_width = 8;
   gauss_sig = 0.7f;
   opt_thr = 0.01f;
 
@@ -3712,7 +3712,14 @@ void V1RegionSpec::UpdateGeom() {
 //     cg - 1 = ((sg - 2b - 1) / sp);
 //     sp (cg - 1) = (sg - 2b - 1);
 //     sp (cg - 1) + 2b + 1 = sg;
-    v1s_fm_v1c = v1c_specs.net_spacing * (v1c_img_geom - 1) + 2 * v1c_specs.net_border + 1;
+    if(v1c_specs.pre_gp4) {
+      TwoDCoord v1cpre_fm_v1c;
+      v1cpre_fm_v1c = v1c_specs.spat_spacing * (v1c_img_geom - 1) + 2 * v1c_specs.spat_border + 1;
+      v1s_fm_v1c = v1c_specs.pre_spacing * (v1cpre_fm_v1c - 1) + 2 * v1c_specs.pre_border + 1;
+    }
+    else {
+      v1s_fm_v1c = v1c_specs.net_spacing * (v1c_img_geom - 1) + 2 * v1c_specs.net_border + 1;
+    }
   }
 
   if(v1s_fm_v1c != v1s_img_geom) { // mismatch!
@@ -4042,6 +4049,7 @@ bool V1RegionSpec::InitOutMatrix() {
     v1bmax_pre.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1c_pre_geom.x, v1c_pre_geom.y);
     v1bmax_out.SetGeom(1, 1);
   }
+  v1b_avgsum_out = 0.0f;
 
   v1c_out_raw.SetGeomN(v1c_out.geom);
 
@@ -4679,7 +4687,7 @@ bool V1RegionSpec::V1ComplexFilter() {
     ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_V1SMax_thread);
     threads.Run(&ip_call, n_run);
   }
-  if(v1c_filters & V1B_MAX) {
+  if(region.ocularity == VisRegionParams::BINOCULAR && v1c_filters & V1B_MAX) {
     if(v1c_specs.pre_gp4) {
       ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Pre_V1BMax_thread);
       threads.Run(&ip_call, n_run_pre);
@@ -4705,6 +4713,10 @@ bool V1RegionSpec::V1ComplexFilter() {
   if(motion_frames > 1 && v1c_filters & MOTION_EDGE) {
     ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_MotionEdge_thread);
     threads.Run(&ip_call, n_run);
+  }
+
+  if(region.ocularity == VisRegionParams::BINOCULAR && v1c_filters & V1B_AVGSUM) {
+    V1ComplexFilter_V1BAvgSum();
   }
 
   // always renorm *prior* to any kwta
@@ -5095,6 +5107,37 @@ void V1RegionSpec::V1ComplexFilter_DispEdge_thread(int v1c_idx, int thread_no) {
 void V1RegionSpec::V1ComplexFilter_MotionEdge_thread(int v1c_idx, int thread_no) {
 }
 
+void V1RegionSpec::V1ComplexFilter_V1BAvgSum() {
+  float sum_val = 0.0f;
+  float	norm_val = 0.0f;
+  TwoDCoord bc;		// binocular coords
+  TwoDCoord bfc;	// v1b feature coords
+  TwoDCoord sfc;	// v1s feature coords
+  for(bc.y = 0; bc.y < v1b_img_geom.y; bc.y++) {
+    for(bc.x = 0; bc.x < v1b_img_geom.x; bc.x++) {
+      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+	// disparity value = -1.0..1.0 normalized
+	float dval = (float)(didx - v1b_specs.n_disps) / (float)v1b_specs.n_disps;
+
+	float tot_act = 0.0f;
+	for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
+	  sfc.SetFmIndex(sfi, v1s_feat_geom.x);
+	  bfc.x = sfc.x;
+	  bfc.y = sfc.y + didx * v1s_feat_geom.y;
+	  float bact = v1b_out.FastEl(bfc.x, bfc.y, bc.x, bc.y);
+	  tot_act += bact;
+	}
+	sum_val += tot_act * dval;
+	norm_val += tot_act;
+      }
+    }
+  }
+  if(norm_val > 0.0f)
+    v1b_avgsum_out = sum_val / norm_val;
+  else
+    v1b_avgsum_out = 0.0f;
+}
+
 bool V1RegionSpec::V1CRenormOutput_EsLsBlob(float_Matrix* out) {
   // logic here is to compute max's separately and renorm separately for each 
   // type of filter, and then combine the max's in the middle to achieve desired
@@ -5383,9 +5426,13 @@ bool V1RegionSpec::InitDataTable() {
       col = data_table->FindMakeColName(name + "_v1c", idx, DataTable::VT_FLOAT, 4,
 		v1c_feat_geom.x, v1c_feat_geom.y, v1c_img_geom.x, v1c_img_geom.y);
     }
-    if(v1c_filters & V1B_MAX) {	// always separate
+    if(region.ocularity == VisRegionParams::BINOCULAR && v1c_filters & V1B_MAX) {// always separate
       col = data_table->FindMakeColName(name + "_v1b_max", idx, DataTable::VT_FLOAT, 4,
 			v1b_feat_geom.x, v1b_feat_geom.y, v1c_img_geom.x, v1c_img_geom.y);
+    }
+    if(region.ocularity == VisRegionParams::BINOCULAR && v1c_filters & V1B_AVGSUM) {
+      col = data_table->FindMakeColName(name + "_v1b_avgsum", idx, DataTable::VT_FLOAT, 2,
+					1, 1);
     }
     if(v1c_save & SAVE_DEBUG) {
       col = data_table->FindMakeColName(name + "_v1c_pre", idx, DataTable::VT_FLOAT, 4,
@@ -5665,11 +5712,16 @@ bool V1RegionSpec::V1COutputToTable(DataTable* dtab) {
     dout->CopyFrom(&v1c_out);
   }
 
-  if(v1c_filters & V1B_MAX) {	// always separate
+  if(region.ocularity == VisRegionParams::BINOCULAR && v1c_filters & V1B_MAX) {
     col = data_table->FindMakeColName(name + "_v1b_max", idx, DataTable::VT_FLOAT, 4,
 		      v1b_feat_geom.x, v1b_feat_geom.y, v1c_img_geom.x, v1c_img_geom.y);
     float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
     dout->CopyFrom(&v1bmax_out);
+  }
+  if(region.ocularity == VisRegionParams::BINOCULAR && v1c_filters & V1B_AVGSUM) {
+    col = data_table->FindMakeColName(name + "_v1b_avgsum", idx, DataTable::VT_FLOAT, 2,
+				      1, 1);
+    col->SetMatrixVal(v1b_avgsum_out, -1, 0, 0);
   }
 
   if(v1c_save & SAVE_DEBUG) {

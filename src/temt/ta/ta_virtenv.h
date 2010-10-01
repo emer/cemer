@@ -432,7 +432,6 @@ public:
   bool		color_cam;	// if true, get full color images (else greyscale)
   VECameraDists	view_dist;	// distances that are in view of the camera
   float		field_of_view;	// field of view of camera (angle in degrees) -- how much of scene is it taking in
-  int		antialias_scale; // #DEF_2 to achieve antialiasing, renders at a larger scale (determined by this parameter), and is then downscaled to target size
   VELightParams	light;		// directional "headlight" associated with the camera -- ensures that whatever is being viewed can be seen (but makes lighting artificially consistent and good)
   FloatTDCoord	dir_norm;	// #READ_ONLY #SHOW normal vector for where the camera is facing
 

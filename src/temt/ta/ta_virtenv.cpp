@@ -727,7 +727,6 @@ void VECamera::Initialize() {
   img_size.y = 240;
   color_cam = true;
   field_of_view = 90.0f;
-  antialias_scale = 2;
   light.intensity = .2f;		// keep it not so bright relative to the sun..
   mass = .01f;
   radius = .01f;

@@ -55,6 +55,9 @@ class SoPath; // #IGNORE
 class SoCamera; // #IGNORE
 class SbViewportRegion; // #IGNORE
 class T3Node;
+class QGLPixelBuffer; // #IGNORE
+class QGLFormat; // #IGNORE
+class SoRenderManager; // #IGNORE
 
 // forwards
 class T3DataView;
@@ -83,6 +86,41 @@ public:
   static const float	char_ht_to_wd_pts; // ratio of ht to wd in metrics: 12/8
   static const float	char_base_fract; // fraction of total ht below baseline
 };
+
+
+//////////////////////////////////////////////////////////////////////////////
+//   T3OffscreenRenderer -- uses QGLPixelBuffer and SoRenderManager to do everything
+
+class TA_API T3OffscreenRenderer {
+  // ##NO_TOKENS ##NO_INSTANCE ##CAT_View offscreen renderer using QGLPixelBuffer and SoRenderManager to manage everything -- uses multisampling antialiasing automatically
+public:
+  QGLPixelBuffer*	pbuffer() { return pbuff; }
+  // return the QGLPixelBuffer that is used for rendering into -- does not exist until created
+  SoRenderManager*	renderman() { return renderm; }
+  // return the SoRenderManager that controls the rendering parameters
+
+#ifndef __MAKETA__
+  virtual void		makeBuffer(int width, int height, const QGLFormat& fmt);
+  // create the pixel buffer of given size and format -- this should be called prior to render, otherwise a default will be constructed
+#endif
+  virtual void		makeMultisampleBuffer(int width, int height, int samples = -1);
+  // create the pixel buffer of given size, setting the gl format information to use multisample antialiasing -- a -1 means use taMisc::antialiasing_level default value, otherwise use what is specified
+  virtual bool		render(SoNode* scene = NULL);
+  // main function -- render to the pbuffer -- if scene is null then it must have already been set by the render manager
+  virtual QImage	toImage();
+  // return an image of the rendered scene
+
+  T3OffscreenRenderer();
+  virtual ~T3OffscreenRenderer();
+protected:
+#ifndef __MAKETA__
+  QGLPixelBuffer*	pbuff; // the offscreen rendering supported by qt
+  SoRenderManager*	renderm; // render manager to control the rendering
+#endif
+};
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 //   T3ExaminerViewer -- customized 

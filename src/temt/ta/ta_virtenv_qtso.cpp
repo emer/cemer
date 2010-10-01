@@ -48,6 +48,7 @@
 #include <Inventor/SoOffscreenRenderer.h>
 #include <Inventor/SbViewportRegion.h>
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
+#include <Inventor/elements/SoGLCacheContextElement.h>
 
 #include "SoCapsule.h"
 
@@ -1901,42 +1902,6 @@ QImage VEWorld::GetCameraImage(int cam_no) {
   return img;
 }
 
-class MultiSampleRenderAction : public SoGLRenderAction {
-  typedef SoGLRenderAction inherited;
-public:
-  static void initClass(void);
-
-  MultiSampleRenderAction(void);
-  MultiSampleRenderAction(const SbViewportRegion & viewportregion);
-  virtual ~MultiSampleRenderAction(void);
-
-protected:
-  void beginTraversal(SoNode *node);
-
-};
-
-void MultiSampleRenderAction::initClass(void) {
-//   SO_ACTION_INTERNAL_INIT_CLASS(MultiSampleRenderAction, SoGLRenderAction);
-}
-
-MultiSampleRenderAction::MultiSampleRenderAction(void)
-  : inherited(SbViewportRegion())
-{
-}
-
-MultiSampleRenderAction::MultiSampleRenderAction(const SbViewportRegion & viewportregion)
-  : inherited(viewportregion)
-{
-}
-
-MultiSampleRenderAction::~MultiSampleRenderAction() {
-}
-
-void MultiSampleRenderAction::beginTraversal(SoNode* node) {
-  inherited::beginTraversal(node);
-  glEnable(GL_MULTISAMPLE);
-}
-
 QImage VEWorldView::GetCameraImage(int cam_no) {
   QImage img;
   VEWorld* wl = World();
@@ -1976,31 +1941,26 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
   }
 
   TwoDCoord cur_img_size = vecam->img_size;
-  TwoDCoord cur_img_sc = cur_img_size * vecam->antialias_scale;
 
   SbViewportRegion vpreg;
-  vpreg.setWindowSize(cur_img_sc.x, cur_img_sc.y);
+  vpreg.setWindowSize(cur_img_size.x, cur_img_size.y);
 
   static TwoDCoord last_img_size;
   
   if(!cam_renderer) {
-    cam_renderer = new SoOffscreenRenderer(vpreg);
-    cam_renderer->setComponents(SoOffscreenRenderer::RGB);
-    cam_renderer->setViewportRegion(vpreg);
-    last_img_size = cur_img_sc;
-
-    MultiSampleRenderAction* msra = new MultiSampleRenderAction;
-    cam_renderer->setGLRenderAction(msra);
-    msra->setSmoothing(true); 
-    msra->setTransparencyType(SoGLRenderAction::BLEND);
+    //   cam_renderer = new SoOffscreenRenderer(vpreg);
+    cam_renderer = new T3OffscreenRenderer();
+    cam_renderer->makeMultisampleBuffer(cur_img_size.x, cur_img_size.y); // use samples by default
+    last_img_size = cur_img_size;
   }
 
-  if(cur_img_sc != last_img_size) {
-    cam_renderer->setViewportRegion(vpreg);
-    last_img_size = cur_img_sc;
+  SoRenderManager* rman = cam_renderer->renderman();
+  if(cur_img_size != last_img_size) {
+    rman->setViewportRegion(vpreg);
+    last_img_size = cur_img_size;
   }
 
-  cam_renderer->setBackgroundColor(SbColor(wl->bg_color.r, wl->bg_color.g, wl->bg_color.b));
+  rman->setBackgroundColor(SbColor4f(wl->bg_color.r, wl->bg_color.g, wl->bg_color.b));
 
   cam_switch->whichChild = cam_no;
 
@@ -2014,38 +1974,13 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 
   bool ok = cam_renderer->render(obv);
 
-//   cam_renderer->writeToRGB("test_image.rgb");
-
   cam_switch->whichChild = -1;	// switch off for regular viewing!
 
   if(TestError(!ok, "GetCameraImage", "offscreen render failed!")) return img;
   
-  img = QImage(cur_img_sc.x, cur_img_sc.y, QImage::Format_RGB32);
+  img = cam_renderer->toImage();
 
-  uchar* gbuf = (uchar*)cam_renderer->getBuffer();
-
-  int idx = 0;
-  if(vecam->color_cam) {
-    for(int y=cur_img_sc.y-1; y>= 0; y--) {
-      for(int x=0;x<cur_img_sc.x;x++) {
-	int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
-	img.setPixel(x,y, qRgb(r,g,b));
-      }
-    }
-  }
-  else {
-    for(int y=cur_img_sc.y-1; y>= 0; y--) {
-      for(int x=0;x<cur_img_sc.x;x++) {
-	int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
-	img.setPixel(x,y, qGray(r,g,b));
-      }
-    }
-  }
-  
-  if(cur_img_sc == cur_img_size)
-    return img;
-  return img.scaled(cur_img_size.x, cur_img_size.y, Qt::IgnoreAspectRatio,
-		    Qt::SmoothTransformation);
+  return img;
 }
 
 
