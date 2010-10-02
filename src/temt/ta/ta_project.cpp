@@ -2044,6 +2044,12 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("NoWin", "\
  -- does not open any windows, but does start the basic GUI infrastructure, as a way of doing offscreen rendering");
 
+  taMisc::AddArgName("-attachwait", "AttachWait");
+  taMisc::AddArgName("--attachwait", "AttachWait");
+  taMisc::AddArgName("attachwait=", "AttachWait");
+  taMisc::AddArgNameDesc("AttachWait", "\
+ -- after startup, before event loop, enter a wait loop so that you can attach to process with gdb, and then debug it -- very useful for dmem (MPI) debugging -- when passed with a value, value is process number to wait (otherwise all wait) -- after attaching to process, do set var i = 1 to get out of loop");
+
   taMisc::AddArgName("-a", "AppDir");
   taMisc::AddArgName("--app_dir", "AppDir");
   taMisc::AddArgName("app_dir=", "AppDir");
@@ -3166,6 +3172,24 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   --in_init;
   if(taMisc::gui_active && (taMisc::dmem_proc == 0))	// only guy and don't have all the other nodes save
     instance()->Save();
+
+  if(taMisc::CheckArgByName("AttachWait")) {
+#ifdef DMEM_COMPILE    
+    String awval = taMisc::FindArgByName("AttachWait");
+    if(awval.nonempty()) {
+      int procno = (int)awval;
+      if(taMisc::dmem_proc != procno) return true; // bail
+    }
+#endif
+    volatile int i = 0;
+    char hostname[256];
+    gethostname(hostname, sizeof(hostname));
+    printf("PID %d on %s ready for attach\n", getpid(), hostname);
+    fflush(stdout);
+    while (0 == i)
+      sleep(5);
+  }
+
   return true;
   
 startup_failed:
