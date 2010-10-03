@@ -6847,6 +6847,7 @@ void Network::Compute_EpochStats() {
 #ifdef DMEM_COMPILE
 
 void Network::DMem_SyncNRecvCons() {
+  if(dmem_nprocs_actual <= 1) return;
   if(n_cons <= 0) return;
   if(dmem_sync_level == DMEM_SYNC_LAYER) {
     Layer* l;
@@ -6874,6 +6875,7 @@ void Network::DMem_SyncNRecvCons() {
 }
 
 void Network::DMem_SyncNet() {
+  if(dmem_nprocs_actual <= 1) return;
   if(TestError(dmem_sync_level != DMEM_SYNC_NETWORK, "DMem_SyncNet",
 	       "attempt to DMem sync at network level, should only be at layer level!")) {
     return;
@@ -6882,6 +6884,7 @@ void Network::DMem_SyncNet() {
 }
 
 void Network::DMem_SyncAct() {
+  if(dmem_nprocs_actual <= 1) return;
   if(TestError(dmem_sync_level != DMEM_SYNC_NETWORK, "DMem_SyncAct",
 	       "attempt to DMem sync at network level, should only be at layer level!")) {
     return;
