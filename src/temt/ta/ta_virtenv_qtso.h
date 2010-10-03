@@ -256,8 +256,9 @@ public:
 protected:
 #ifndef __MAKETA__
   QPointer<VEWorldViewPanel> m_wvp;
+//   T3OffscreenRenderer*	cam_renderer;
+  SoOffscreenRenderer*	cam_renderer;
 #endif
-  T3OffscreenRenderer*	cam_renderer;
 
   override void		DataUpdateView_impl();
   override void 	UpdateAfterEdit_impl();

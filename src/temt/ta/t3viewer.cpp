@@ -125,14 +125,61 @@ void T3OffscreenRenderer::makeMultisampleBuffer(int width, int height, int sampl
   makeBuffer(width, height, fmt);
 }
 
+static void
+pre_render_cb(void * userdata, SoGLRenderAction * action)
+{
+  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
+  action->setRenderingIsRemote(FALSE);
+}
+
 bool T3OffscreenRenderer::render(SoNode* scene) {
   if(!pbuff) makeMultisampleBuffer(640, 480, -1);
-  if(scene) {
-    renderm->setSceneGraph(scene);
-  }
+//   if(scene) {
+//     if(scene->getRefCount() == 0) {
+//       taMisc::Warning("T3OffscreenRenderer: scene has 0 refcount -- will be deleted after rendering!");
+//     }
+//     renderm->setSceneGraph(scene);
+//   }
   pbuff->makeCurrent();
-  renderm->render(true, true); // clear
+  glEnable(GL_DEPTH_TEST);
+
+  SoGLRenderAction* action = renderm->getGLRenderAction();
+
+  SoState * state = action->getState();
+  state->push();
+
+  //  renderm->render(true, true); // clear
+
+  // bypass the actual render manager which installs some mods on the scene,
+  // and just do it ourselves
+  // SoRenderManager.cpp -- actuallyRender and renderScene
+  // initmatricies -- probably a good idea -- who knows?
+//   glMatrixMode(GL_PROJECTION);
+//   glLoadIdentity();
+//   glMatrixMode(GL_MODELVIEW);
+//   glLoadIdentity();
+
+  // clearwindow and clearzbuffer
+  GLbitfield clearmask = 0;
+  clearmask |= GL_COLOR_BUFFER_BIT;
+  clearmask |= GL_DEPTH_BUFFER_BIT;
+
+  SbColor4f bgcol = renderm->getBackgroundColor();
+  glClearColor(bgcol[0], bgcol[1], bgcol[2], bgcol[3]);
+
+  action->addPreRenderCallback(pre_render_cb, NULL);
+
+  action->apply(scene);
+
+  action->removePreRenderCallback(pre_render_cb, NULL);
+
+  state->pop();
+
   pbuff->doneCurrent();
+
+//   if(scene) {
+//     renderm->setSceneGraph(NULL); // unset it at the end!
+//   }
   return true;
 }
 

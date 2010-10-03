@@ -13898,10 +13898,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0: y=0.1: z=0: };
+	  cur_pos {x=5.980556e-15: y=0.1: z=-8.95285e-15: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=0: y=0: z=0: };
-	  cur_ang_vel {x=0: y=0: z=0: };
+	  cur_lin_vel {x=-4.452683e-14: y=-8.06979e-15: z=1.097013e-13: };
+	  cur_ang_vel {x=-8.060474e-14: y=-3.874127e-14: z=1.433485e-14: };
 	  shape=BOX;
 	  mass=1;
 	  radius=0.5;
@@ -13947,10 +13947,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=1: z=0: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0: y=0.35: z=0: };
-	  cur_rot {x=0: y=1: z=0: rot=0: };
-	  cur_lin_vel {x=0: y=0: z=0: };
-	  cur_ang_vel {x=0: y=0: z=0: };
+	  cur_pos {x=1.239561e-14: y=0.35: z=-1.787967e-08: };
+	  cur_rot {x=0: y=0: z=1: rot=0: };
+	  cur_lin_vel {x=-9.40227e-14: y=1.490116e-07: z=-2.038369e-11: };
+	  cur_ang_vel {x=-2.384176e-06: y=-2.139812e-14: z=-2.207856e-14: };
 	  shape=CAPSULE;
 	  mass=1;
 	  radius=0.1;
@@ -13997,9 +13997,9 @@ LeabraProject .projects[0] {
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0.04: y=0.35: z=0.1: };
-	  cur_rot {x=0: y=1: z=0: rot=3.14159: };
-	  cur_lin_vel {x=0: y=0: z=0: };
-	  cur_ang_vel {x=0: y=0: z=0: };
+	  cur_rot {x=-0.007585919: y=0.9872352: z=0.159088: rot=3.235674: };
+	  cur_lin_vel {x=4.765654e-14: y=3.874293e-07: z=-1.043072e-07: };
+	  cur_ang_vel {x=-5.960393e-07: y=-3.128669e-07: z=9.455452e-07: };
 	  shape=CYLINDER;
 	  mass=0.001;
 	  radius=0.01;
@@ -14044,13 +14044,12 @@ LeabraProject .projects[0] {
 	   far=10;
 	  };
 	  field_of_view=30;
-	  antialias_scale=1;
 	  light {
 	   on=0;
 	   intensity=0.2;
 	   color {r=1: g=1: b=1: a=1: };
 	  };
-	  dir_norm {x=-2.535182e-06: y=0: z=1: };
+	  dir_norm {x=0.0951517: y=-0.3127074: z=0.9450719: };
 	 };
 	 VECamera @[3] {
 	  name="RightEye";
@@ -14060,10 +14059,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=1: z=0: rot=3.14159: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=-0.04: y=0.35: z=0.1: };
-	  cur_rot {x=0: y=1: z=0: rot=3.14159: };
-	  cur_lin_vel {x=0: y=0: z=0: };
-	  cur_ang_vel {x=0: y=0: z=0: };
+	  cur_pos {x=-0.04: y=0.35: z=0.09999999: };
+	  cur_rot {x=-0.01677087: y=0.9871249: z=0.1590702: rot=3.348993: };
+	  cur_lin_vel {x=7.559452e-14: y=3.874293e-07: z=1.192102e-07: };
+	  cur_ang_vel {x=-5.959712e-07: y=-8.603699e-06: z=-5.617026e-07: };
 	  shape=CYLINDER;
 	  mass=0.001;
 	  radius=0.01;
@@ -14108,13 +14107,12 @@ LeabraProject .projects[0] {
 	   far=10;
 	  };
 	  field_of_view=30;
-	  antialias_scale=1;
 	  light {
 	   on=0;
 	   intensity=0.2;
 	   color {r=1: g=1: b=1: a=1: };
 	  };
-	  dir_norm {x=-2.535182e-06: y=0: z=1: };
+	  dir_norm {x=0.2085441: y=-0.3072258: z=0.9285052: };
 	 };
 	 VEBody @[4] {
 	  name="EyeBeamL";
@@ -14124,10 +14122,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.04: y=0.35: z=0.62: };
-	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=0: y=0: z=0: };
-	  cur_ang_vel {x=0: y=0: z=0: };
+	  cur_pos {x=0.08948018: y=0.1873923: z=0.5914373: };
+	  cur_rot {x=0.9578985: y=0.283457: z=0.04567745: rot=0.3333341: };
+	  cur_lin_vel {x=-1.490132e-07: y=5.78116e-07: z=-3.270161e-06: };
+	  cur_ang_vel {x=-5.951417e-07: y=-4.008525e-07: z=9.262694e-07: };
 	  shape=CAPSULE;
 	  mass=1e-05;
 	  radius=0.005;
@@ -14173,10 +14171,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=-0.04: y=0.35: z=0.62: };
-	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=0: y=0: z=0: };
-	  cur_ang_vel {x=0: y=0: z=0: };
+	  cur_pos {x=0.06844422: y=0.1902427: z=0.5828226: };
+	  cur_rot {x=0.8335701: y=0.5453804: z=0.08788487: rot=0.3819268: };
+	  cur_lin_vel {x=-4.243792e-06: y=6.142794e-07: z=-1.534757e-06: };
+	  cur_ang_vel {x=-5.966467e-07: y=-8.601692e-06: z=-5.600741e-07: };
 	  shape=CAPSULE;
 	  mass=1e-05;
 	  radius=0.005;
@@ -14248,7 +14246,7 @@ LeabraProject .projects[0] {
 	  };
 	  motor {
 	   motor_on=1;
-	   vel=-6.390862;
+	   vel=-1.788139e-06;
 	   f_max=10;
 	   servo_on=1;
 	   trg_pos=-0.3195431;
@@ -14256,7 +14254,7 @@ LeabraProject .projects[0] {
 	  };
 	  motor2 {
 	   motor_on=1;
-	   vel=-1.905975;
+	   vel=0;
 	   f_max=10;
 	   servo_on=1;
 	   trg_pos=-0.09529877;
@@ -14272,16 +14270,16 @@ LeabraProject .projects[0] {
 	   erp=0.2;
 	   cfm=1e-05;
 	  };
-	  pos=0;
-	  pos_norm=0.5;
-	  vel=0;
-	  pos2=0;
-	  pos2_norm=0.5;
-	  vel2=0;
-	  cur_force1 {x=0: y=0: z=0: };
-	  cur_torque1 {x=0: y=0: z=0: };
-	  cur_force2 {x=0: y=0: z=0: };
-	  cur_torque2 {x=0: y=0: z=0: };
+	  pos=-0.319543;
+	  pos_norm=0.3668571;
+	  vel=-1.788137e-06;
+	  pos2=-0.09529877;
+	  pos2_norm=0.4602922;
+	  vel2=2.565343e-12;
+	  cur_force1 {x=7.450434e-11: y=-6.903424e-11: z=1.193895e-09: };
+	  cur_torque1 {x=-1.542008e-10: y=-6.160116e-11: z=7.027615e-12: };
+	  cur_force2 {x=-7.450434e-11: y=6.903424e-11: z=-1.193895e-09: };
+	  cur_torque2 {x=1.611042e-10: y=2.129581e-11: z=-9.788982e-12: };
 	 };
 	 VEJoint @[1] {
 	  name="RightEyeJoint";
@@ -14312,7 +14310,7 @@ LeabraProject .projects[0] {
 	  };
 	  motor {
 	   motor_on=1;
-	   vel=-6.390862;
+	   vel=-1.788139e-06;
 	   f_max=10;
 	   servo_on=1;
 	   trg_pos=-0.3195431;
@@ -14320,7 +14318,7 @@ LeabraProject .projects[0] {
 	  };
 	  motor2 {
 	   motor_on=1;
-	   vel=-4.201776;
+	   vel=-1.192093e-06;
 	   f_max=10;
 	   servo_on=1;
 	   trg_pos=-0.2100888;
@@ -14336,16 +14334,16 @@ LeabraProject .projects[0] {
 	   erp=0.2;
 	   cfm=1e-05;
 	  };
-	  pos=0;
-	  pos_norm=0.5;
-	  vel=0;
-	  pos2=0;
-	  pos2_norm=0.5;
-	  vel2=0;
-	  cur_force1 {x=0: y=0: z=0: };
-	  cur_torque1 {x=0: y=0: z=0: };
-	  cur_force2 {x=0: y=0: z=0: };
-	  cur_torque2 {x=0: y=0: z=0: };
+	  pos=-0.319543;
+	  pos_norm=0.3668571;
+	  vel=-1.788205e-06;
+	  pos2=-0.2100887;
+	  pos2_norm=0.412463;
+	  vel2=8.344621e-06;
+	  cur_force1 {x=2.350515e-09: y=-7.415272e-10: z=-1.11271e-09: };
+	  cur_torque1 {x=7.776298e-10: y=1.844379e-09: z=4.22705e-10: };
+	  cur_force2 {x=-2.350515e-09: y=7.415272e-10: z=1.11271e-09: };
+	  cur_torque2 {x=-7.034771e-10: y=-1.653836e-09: z=-3.930438e-10: };
 	 };
 	 VEJoint @[2] {
 	  name="NeckJoint";
@@ -14376,7 +14374,7 @@ LeabraProject .projects[0] {
 	  };
 	  motor {
 	   motor_on=1;
-	   vel=0;
+	   vel=2.384176e-06;
 	   f_max=10;
 	   servo_on=1;
 	   trg_pos=0;
@@ -14400,16 +14398,16 @@ LeabraProject .projects[0] {
 	   erp=0.2;
 	   cfm=1e-05;
 	  };
-	  pos=0;
+	  pos=-1.192088e-07;
 	  pos_norm=0.5;
-	  vel=0;
+	  vel=2.384176e-06;
 	  pos2=0;
 	  pos2_norm=0.5;
-	  vel2=0;
-	  cur_force1 {x=0: y=0: z=0: };
-	  cur_torque1 {x=0: y=0: z=0: };
-	  cur_force2 {x=0: y=0: z=0: };
-	  cur_torque2 {x=0: y=0: z=0: };
+	  vel2=-1.734315e-14;
+	  cur_force1 {x=2.42069e-09: y=-8.081729e-10: z=-1.765037e-10: };
+	  cur_torque1 {x=5.792499e-10: y=1.782764e-09: z=-1.754353e-10: };
+	  cur_force2 {x=-2.42069e-09: y=8.081729e-10: z=1.765037e-10: };
+	  cur_torque2 {x=-6.233759e-10: y=-1.782764e-09: z=-4.297372e-10: };
 	 };
 	 VEJoint @[3] {
 	  name="EyeBeamLJoint";
@@ -14559,7 +14557,7 @@ LeabraProject .projects[0] {
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0.105: y=0.125: z=0.78: };
-	  cur_rot {x=0: y=0: z=1: rot=0.4: };
+	  cur_rot {x=0: y=0: z=1: rot=0.3999998: };
 	  cur_lin_vel {x=0: y=0: z=0: };
 	  cur_ang_vel {x=0: y=0: z=0: };
 	  shape=BOX;
@@ -14677,7 +14675,7 @@ LeabraProject .projects[0] {
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0: y=2: z=-2: };
-	  cur_rot {x=0: y=1: z=0: rot=0: };
+	  cur_rot {x=0: y=0: z=1: rot=0: };
 	  cur_lin_vel {x=0: y=0: z=0: };
 	  cur_ang_vel {x=0: y=0: z=0: };
 	  shape=CYLINDER;
@@ -14834,7 +14832,7 @@ LeabraProject .projects[0] {
       light_0=.projects[0].programs.gp[0][0].objs[0].objects[2].bodies[0]$$;
       light_1=NULL;
      };
-     TimeUsed @[1] {name="RobotTime": start={usr=914: sys=214: tot=128583923140: }: end={usr=915: sys=214: tot=128583923141: }: used={usr=5363: sys=318: tot=5638: }: s_used=56.38: n_used=464: };
+     TimeUsed @[1] {name="RobotTime": start={usr=282: sys=58: tot=128609318938: }: end={usr=282: sys=58: tot=128609318939: }: used={usr=5363: sys=318: tot=5639: }: s_used=56.39: n_used=465: };
     };
     types {
      name=;
@@ -16147,7 +16145,7 @@ LeabraProject .projects[0] {
      ProgVar @[1] {
       name="targ_x";
       var_type=T_Real;
-      real_val=0.06;
+      real_val=0.85;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -16157,7 +16155,7 @@ LeabraProject .projects[0] {
      ProgVar @[2] {
       name="targ_y";
       var_type=T_Real;
-      real_val=0.35;
+      real_val=0.25;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -18742,7 +18740,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
-	  col_range {min=4: max=4: };
+	  col_range {min=0: max=0: };
 	  width=1;
 	  grid_on=1;
 	  header_on=1;

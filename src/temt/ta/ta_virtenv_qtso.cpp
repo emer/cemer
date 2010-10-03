@@ -1948,19 +1948,28 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
   static TwoDCoord last_img_size;
   
   if(!cam_renderer) {
-    //   cam_renderer = new SoOffscreenRenderer(vpreg);
-    cam_renderer = new T3OffscreenRenderer();
-    cam_renderer->makeMultisampleBuffer(cur_img_size.x, cur_img_size.y); // use samples by default
+    cam_renderer = new SoOffscreenRenderer(vpreg);
+    cam_renderer->setComponents(SoOffscreenRenderer::RGB);
+    cam_renderer->setViewportRegion(vpreg);
+    SoGLRenderAction* action = cam_renderer->getGLRenderAction();
+    action->setSmoothing(true); 
+    action->setTransparencyType(SoGLRenderAction::BLEND);
+
+//     cam_renderer = new T3OffscreenRenderer();
+//     cam_renderer->makeMultisampleBuffer(cur_img_size.x, cur_img_size.y); // use samples by default
     last_img_size = cur_img_size;
   }
 
-  SoRenderManager* rman = cam_renderer->renderman();
+
+//   SoRenderManager* rman = cam_renderer->renderman();
   if(cur_img_size != last_img_size) {
-    rman->setViewportRegion(vpreg);
+    cam_renderer->setViewportRegion(vpreg);
+//     rman->setViewportRegion(vpreg);
     last_img_size = cur_img_size;
   }
 
-  rman->setBackgroundColor(SbColor4f(wl->bg_color.r, wl->bg_color.g, wl->bg_color.b));
+  cam_renderer->setBackgroundColor(SbColor(wl->bg_color.r, wl->bg_color.g, wl->bg_color.b));
+//   rman->setBackgroundColor(SbColor4f(wl->bg_color.r, wl->bg_color.g, wl->bg_color.b));
 
   cam_switch->whichChild = cam_no;
 
@@ -1978,7 +1987,28 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 
   if(TestError(!ok, "GetCameraImage", "offscreen render failed!")) return img;
   
-  img = cam_renderer->toImage();
+//   img = cam_renderer->toImage();
+  img = QImage(cur_img_size.x, cur_img_size.y, QImage::Format_RGB32);
+
+  uchar* gbuf = (uchar*)cam_renderer->getBuffer();
+
+  int idx = 0;
+  if(vecam->color_cam) {
+    for(int y=cur_img_size.y-1; y>= 0; y--) {
+      for(int x=0;x<cur_img_size.x;x++) {
+	int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
+	img.setPixel(x,y, qRgb(r,g,b));
+      }
+    }
+  }
+  else {
+    for(int y=cur_img_size.y-1; y>= 0; y--) {
+      for(int x=0;x<cur_img_size.x;x++) {
+	int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
+	img.setPixel(x,y, qGray(r,g,b));
+      }
+    }
+  }
 
   return img;
 }
