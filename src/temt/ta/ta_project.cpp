@@ -3182,11 +3182,12 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
     }
 #endif
     volatile int i = 0;
-	printf("PID %d on %s ready for attach\n", taPlatform::processId(), taPlatform::hostName());
+    printf("PID %d on %s ready for attach\n", taPlatform::processId(),
+	   taPlatform::hostName().chars());
     fflush(stdout);
-	while (0 == i) {
-	  taPlatform::sleep(5);
-	}
+    while (0 == i) {
+      taPlatform::sleep(5);
+    }
   }
 
   return true;
