@@ -1072,17 +1072,17 @@ public:
     LEN_SUM	= 0x0002, // length summing cells -- integrate simple cells along a line, same polarity, max over all polarities (weighted by gaussian) 
     V1S_MAX    	= 0x0004, // basic max over v1 simple cells (weighted by gaussian) -- preserves polarity -- only for on/off (monochrome) tuning in v1s -- provides useful lower-level, higher-res signals to higher levels and should be on by default
     BLOB	= 0x0008, // 'blobs' made by integrating over all angles for a given luminance or color contrast -- adds 2 units for white/black per hypercolumn (always avail), and if color = COLOR, adds 6 extra units for red/cyan on/off, green/magenta on/off, blue/yellow on/off
-    V1B_MAX	= 0x0010, // basic max over v1b cells (weighted by gaussian) -- preserves depth coding and polarity -- allows disparity info to be at same resolution as other v1c data -- this always saved to a separate output and can be normed separately
-    DISP_EDGE	= 0x0020, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
-    MOTION_EDGE	= 0x0040, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
-    V1B_AVGSUM	= 0x0080, // compute weighted average summary of the disparity signals over entire field -- result is a single scalar value that can be fed into a ScalarValLayerSpec layer to provide an input representation to a network, for example -- this value is always just computed separately as a single 1x1 matrix cell
+    ENERGY	= 0x0010, // overall energy of V1 feature detectors -- a single unit activation per spatial location -- output map is just 2D, not 4D -- and is always saved to a separate output column -- suitable for basic spatial mapping etc
+    V1B_MAX	= 0x0020, // basic max over v1b cells (weighted by gaussian) -- preserves depth coding and polarity -- allows disparity info to be at same resolution as other v1c data -- this always saved to a separate output and can be normed separately
+    DISP_EDGE	= 0x0040, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
+    MOTION_EDGE	= 0x0080, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
+    V1B_AVGSUM	= 0x0100, // compute weighted average summary of the disparity signals over entire field -- result is a single scalar value that can be fed into a ScalarValLayerSpec layer to provide an input representation to a network, for example -- this value is always just computed separately as a single 1x1 matrix cell
 #ifndef __MAKETA__
     CF_ESLS	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT most basic set
     CF_ESLSMAX	= END_STOP | LEN_SUM | V1S_MAX, // #IGNORE #NO_BIT this is the default setup
     CF_DEFAULT  = CF_ESLSMAX,  // #IGNORE #NO_BIT this is the default setup
     CF_COLOR	= CF_DEFAULT | BLOB, // #IGNORE #NO_BIT default + blob = color setup
     CF_EDGES	= DISP_EDGE | MOTION_EDGE, // #IGNORE #NO_BIT special complex edges
-    CF_ALL	= CF_COLOR | CF_EDGES, // #IGNORE #NO_BIT all complex filters
 #endif
   };
 
@@ -1188,6 +1188,7 @@ public:
   float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y]
   float_Matrix	v1bmax_pre;	 // #READ_ONLY #NO_SAVE pre-grouping as basis for subsequent v1c filtering on the v1b reps -- reduces dimensionality and introduces robustness [v1b_feat.x][v1b_feat.y][v1c_pre.x][v1c_pre.y]
   float_Matrix	v1bmax_out;	 // #READ_ONLY #NO_SAVE v1b max output [v1b_feat.x][v1b_feat.y][v1c_img.x][v1c_img.y]
+  float_Matrix	energy_out;	 // #READ_ONLY #NO_SAVE v1 complex energy output [v1c_img.x][v1c_img.y]
   float		v1b_avgsum_out;	 // #READ_ONLY #NO_SAVE v1b avgsum output (single scalar value)
 
   int		AngleDeg(int ang_no);
@@ -1269,6 +1270,8 @@ protected:
   // pre-grouped inputs -- V1Binocular Max
   virtual void 	V1ComplexFilter_Blob_thread(int v1c_idx, int thread_no);
   // pre-grouped inputs -- Blob
+  virtual void 	V1ComplexFilter_Energy_thread(int v1c_idx, int thread_no);
+  // pre-grouped inputs -- Energy
   virtual void 	V1ComplexFilter_DispEdge_thread(int v1c_idx, int thread_no);
   // binocular inputs -- disparity edge
   virtual void 	V1ComplexFilter_MotionEdge_thread(int v1c_idx, int thread_no);

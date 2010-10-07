@@ -4049,6 +4049,7 @@ bool V1RegionSpec::InitOutMatrix() {
     v1bmax_pre.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1c_pre_geom.x, v1c_pre_geom.y);
     v1bmax_out.SetGeom(1, 1);
   }
+  energy_out.SetGeom(2, v1c_img_geom.x, v1c_img_geom.y);
   v1b_avgsum_out = 0.0f;
 
   v1c_out_raw.SetGeomN(v1c_out.geom);
@@ -4706,6 +4707,10 @@ bool V1RegionSpec::V1ComplexFilter() {
     ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Blob_thread);
     threads.Run(&ip_call, n_run);
   }
+  if(v1c_filters & ENERGY) {
+    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_Energy_thread);
+    threads.Run(&ip_call, n_run);
+  }
   if(v1c_filters & DISP_EDGE) {
     ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_DispEdge_thread);
     threads.Run(&ip_call, n_run);
@@ -5101,6 +5106,44 @@ void V1RegionSpec::V1ComplexFilter_Blob_thread(int v1c_idx, int thread_no) {
   }
 }
 
+void V1RegionSpec::V1ComplexFilter_Energy_thread(int v1c_idx, int thread_no) {
+  TwoDCoord cc;			// complex coords
+  cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
+  TwoDCoord pcs = v1c_specs.spat_spacing * cc; // v1c_pre coords start
+  pcs += v1c_specs.spat_border;
+  pcs -= v1c_specs.spat_half; // convert to lower-left starting position, not center
+
+  // todo: could pre-compute this as a energy_raw guy in pre coords..
+  TwoDCoord pc;			// pre coord
+  TwoDCoord pcc;		// pre coord, center
+  TwoDCoord sfc;		// v1s feature coords
+  float sum_rf = 0.0f;   // sum over spatial rfield
+  for(int ys = 0; ys < v1c_specs.spat_rf.y; ys++) { // yspat
+    pc.y = pcs.y + ys;
+    for(int xs = 0; xs < v1c_specs.spat_rf.x; xs++) { // xspat
+      pc.x = pcs.x + xs;
+      pcc = pc;	// center
+      if(pcc.WrapClip(wrap, v1c_pre_geom)) {
+	if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+      }
+
+      float max_feat = 0.0f;
+      for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features -- includes b/w on/off
+	sfc.y = polclr;
+	for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // just max over angles -- blobify!
+	  sfc.x = ang;
+	  float ctr_val = v1c_pre.FastEl(sfc.x, sfc.y, pcc.x, pcc.y);
+	  ctr_val *= v1c_weights.FastEl(xs, ys); // spatial rf weighting
+	  max_feat = MAX(max_feat, ctr_val);
+	}
+      }
+      sum_rf += max_feat;
+    }
+  }
+  float avg_rf = sum_rf / v1c_specs.spat_rf.Product();
+  energy_out.FastEl(cc.x, cc.y) = avg_rf;
+}
+
 void V1RegionSpec::V1ComplexFilter_DispEdge_thread(int v1c_idx, int thread_no) {
 }
 
@@ -5426,6 +5469,10 @@ bool V1RegionSpec::InitDataTable() {
       col = data_table->FindMakeColName(name + "_v1c", idx, DataTable::VT_FLOAT, 4,
 		v1c_feat_geom.x, v1c_feat_geom.y, v1c_img_geom.x, v1c_img_geom.y);
     }
+    if(v1c_filters & ENERGY) {
+      col = data_table->FindMakeColName(name + "_energy", idx, DataTable::VT_FLOAT, 2,
+					v1c_img_geom.x, v1c_img_geom.y);
+    }
     if(region.ocularity == VisRegionParams::BINOCULAR && v1c_filters & V1B_MAX) {// always separate
       col = data_table->FindMakeColName(name + "_v1b_max", idx, DataTable::VT_FLOAT, 4,
 			v1b_feat_geom.x, v1b_feat_geom.y, v1c_img_geom.x, v1c_img_geom.y);
@@ -5712,6 +5759,12 @@ bool V1RegionSpec::V1COutputToTable(DataTable* dtab) {
     dout->CopyFrom(&v1c_out);
   }
 
+  if(v1c_filters & ENERGY) {
+    col = data_table->FindMakeColName(name + "_energy", idx, DataTable::VT_FLOAT, 2,
+		      v1c_img_geom.x, v1c_img_geom.y);
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    dout->CopyFrom(&energy_out);
+  }
   if(region.ocularity == VisRegionParams::BINOCULAR && v1c_filters & V1B_MAX) {
     col = data_table->FindMakeColName(name + "_v1b_max", idx, DataTable::VT_FLOAT, 4,
 		      v1b_feat_geom.x, v1b_feat_geom.y, v1c_img_geom.x, v1c_img_geom.y);
