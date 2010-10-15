@@ -113,11 +113,10 @@ void XCalLearnSpec::Initialize() {
   s_mix = 0.9f;
   thr_l_mix = 0.01f;
   d_rev = 0.10f;
-  d_gain = 1.0f;
   d_thr = 0.0001f;
   m_mix = 1.0f - s_mix;
   thr_m_mix = 1.0f - thr_l_mix;
-  d_rev_ratio = (1.0f - d_rev) / d_rev;
+  d_rev_ratio = -(1.0f - d_rev) / d_rev;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
@@ -126,9 +125,9 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
   thr_m_mix = 1.0f - thr_l_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   if(d_rev > 0.0f)
-    d_rev_ratio = (1.0f - d_rev) / d_rev;
+    d_rev_ratio = -(1.0f - d_rev) / d_rev;
   else
-    d_rev_ratio = 1.0f;
+    d_rev_ratio = -1.0f;
 }
 
 void SAvgCorSpec::Initialize() {

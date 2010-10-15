@@ -6145,6 +6145,7 @@ void Network::UpdtAfterNetMod() {
   CountRecvCons();
   BuildUnits_Threads();
   small_batch_n_eff = small_batch_n;
+  if(small_batch_n_eff < 1) small_batch_n_eff = 1;
 #ifdef DMEM_COMPILE
   DMem_SyncNRecvCons();
   DMem_UpdtWtUpdt();

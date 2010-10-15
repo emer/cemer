@@ -237,12 +237,22 @@ public:
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.01 to 0.008 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
-  float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.15 is a compromise
-  float		d_gain;		// #DEF_1 #MIN_0 multiplier on LTD values relative to LTP values -- generally do not change from 1
+  float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
   float		d_thr;		// #DEF_0.0001 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
-  float		d_rev_ratio;	// #HIDDEN #READ_ONLY (1-d_rev)/d_rev -- multiplication factor in learning rule
+  float		d_rev_ratio;	// #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
 
   inline float  dWtFun(float srval, float thr_p) {
+    float rval;
+    if(srval < d_thr)
+      rval = 0.0f;
+    else if(srval > thr_p * d_rev)
+      rval = (srval - thr_p);
+    else
+      rval = srval * d_rev_ratio;
+    return rval;
+  }
+
+  inline float  dWtFun_dgain(float srval, float thr_p, float d_gain) {
     float rval;
     if(srval < d_thr)
       rval = 0.0f;
@@ -251,9 +261,10 @@ public:
     else if(srval > thr_p * d_rev)
       rval = d_gain * (srval - thr_p);
     else
-      rval = -d_gain * srval * d_rev_ratio;
+      rval = d_gain * srval * d_rev_ratio;
     return rval;
   }
+  // version that supports a differential d_gain term -- no longer included in base case
 
   inline float  SymSbFun(float wt_val) {
     return 2.0f * wt_val * (1.0f - wt_val);
