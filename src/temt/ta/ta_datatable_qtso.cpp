@@ -2329,7 +2329,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   rowNavTB = new QToolBar(widg);
   layRowNav->addWidget(rowNavTB);
 
-  lblRowGoto = taiM->NewLabel("Row: Goto", widg, font_spec);
+  lblRowGoto = taiM->NewLabel("Row: 00000 Goto", widg, font_spec);
   lblRowGoto->setToolTip("Row number to go to when the Go button is pressed -- rest of buttons provide one-click movment of the visible row in grid view");
   rowNavTB->addWidget(lblRowGoto);
   fldRowGoto = dl.Add(new taiField(&TA_int, this, NULL, widg));
@@ -2376,7 +2376,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   colNavTB = new QToolBar(widg);
   layColNav->addWidget(colNavTB);
 
-  lblColGoto = taiM->NewLabel("Col: Goto", widg, font_spec);
+  lblColGoto = taiM->NewLabel("Col: 000 Goto", widg, font_spec);
   lblColGoto->setToolTip("Col number to go to when the Go button is pressed -- rest of buttons provide one-click movment of the visible col in grid view");
   colNavTB->addWidget(lblColGoto);
   fldColGoto = dl.Add(new taiField(&TA_int, this, NULL, widg));
@@ -2496,6 +2496,11 @@ void iGridTableView_Panel::UpdatePanel_impl() {
   chkClickVals->setChecked(glv->click_vals);
   fldLMBVal->GetImage((String)glv->lmb_val);
   fldMMBVal->GetImage((String)glv->mmb_val);
+
+  String rwtxt = "Row: " + taMisc::LeadingZeros(glv->view_range.min, 5) + " Goto";
+  lblRowGoto->setText(rwtxt);
+  String cltxt = "Col: " + taMisc::LeadingZeros(glv->col_range.min, 3) + " Goto";
+  lblColGoto->setText(cltxt);
 }
 
 void iGridTableView_Panel::butRefresh_pressed() {

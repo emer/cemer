@@ -2034,17 +2034,42 @@ void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
 //	Stats
 
 float LeabraUnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
+  // just replaces act_m for act in original
+  float sse = 0.0f;
   has_targ = false;
   LeabraUnit* lu = (LeabraUnit*)u;
   if(lu->HasExtFlag(Unit::TARG | Unit::COMP)) {
     has_targ = true;
     float uerr = lu->targ - lu->act_m;
-    if(fabsf(uerr) < sse_tol)
-      return 0.0f;
-    return uerr * uerr;
+    if(fabsf(uerr) >= sse_tol)
+      sse = uerr * uerr;
   }
-  else
-    return 0.0f;
+  return sse;
+}
+
+bool LeabraUnitSpec::Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg) {
+  // just replaces act_m for act in original
+  true_pos = 0.0f; false_pos = 0.0f; false_neg = 0.0f;
+  bool has_targ = false;
+  LeabraUnit* lu = (LeabraUnit*)u;
+  if(u->HasExtFlag(Unit::TARG | Unit::COMP)) {
+    has_targ = true;
+    float uerr = lu->targ - lu->act_m;
+    if(fabsf(uerr) < sse_tol) {
+      true_pos = lu->targ;
+    }
+    else {
+      if(lu->targ > lu->act_m) {
+	true_pos = lu->act_m;
+	false_neg = lu->targ - lu->act_m;
+      }
+      else {
+	true_pos = lu->targ;
+	false_pos = lu->act_m - lu->targ;
+      }
+    }
+  }
+  return has_targ;
 }
 
 float LeabraUnitSpec::Compute_NormErr(LeabraUnit* u, LeabraNetwork* net) {
@@ -2058,6 +2083,7 @@ float LeabraUnitSpec::Compute_NormErr(LeabraUnit* u, LeabraNetwork* net) {
   }
   return 0.0f;
 }
+
 
 //////////////////////////////////////////
 //	 Misc Functions 		//

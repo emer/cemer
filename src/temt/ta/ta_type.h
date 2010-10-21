@@ -711,6 +711,9 @@ public:
   static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
   static bool		save_compress;	// #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
   static TypeDef*	default_proj_type; // #SAVE #CAT_File #TYPE_taProject default type of project to create
+  static String		license_owner;	   // #SAVE #CAT_File default legal owner of new projects that are created by this user (e.g., Regents of University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects
+  static String		license_org;	   // #SAVE #CAT_File default organization that actually created the project for new projects that are created by this user (e.g., MyLab at University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects -- defaults to license_owner if left blank
+
   static LoadVerbosity	verbose_load;	// #SAVE #CAT_File #EXPERT report the names of things during loading
 
   static String		app_dir; 

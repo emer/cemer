@@ -600,7 +600,7 @@ void SelectEdit::StatDataChanged_Group(taGroup_impl* grp, int dcr,
 
 
 void SelectEdit::Initialize() {
-  auto_edit = false;
+  auto_edit = true;
   m_changing = 0;
   base_refs.setOwner(this);
 }

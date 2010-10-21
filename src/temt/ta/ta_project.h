@@ -441,14 +441,60 @@ private:
 };
 
 
+class TA_API taLicense : public taOBase {
+  // #EDIT_INLINE license information -- attach a license to an object
+INHERITED(taOBase)
+public:
+  enum	StdLicense {	      // standard licenses in wide use
+    NONE,		        // no license specified -- please choose one
+    GPLv2,			// GNU General Public License (GPL), version 2
+    GPLv3,			// GNU General Public License (GPL), version 3 -- note that this has patent grant issues -- version 2 is probably safer
+    BSD,			// Berkeley Software Distribution License
+    OSL3,			// Open Software License, version 3
+    AFL3,			// Academic Free License, version 3
+    MIT,			// MIT License
+    APACHE,			// Apache License, version 2.0
+    RESEARCH,			// Research License based on CU Boulder template
+    CUSTOM,			// enter custom license text
+  };
+
+  StdLicense	license;	// select a standard license to use, or CUSTOM to enter custom license text
+  String	owner;		// legal name of copyright owner (e.g., Regents of University of xyz) -- will be filled in by license_owner in global preferences/options setting by default for new items
+  String	org;		// name of organization that actually created the content (e.g., MyLab at University of xyz) -- defaults to owner if left blank  -- will be filled in by license_org in global preferences/options setting by default for new items
+  String	year;		// copyright year (can be a range)
+  String	custom;		// #CONDSHOW_ON_license:CUSTOM custom license text
+  String	lic_text;	// #HIDDEN #NO_SAVE full license text -- for view license
+
+  void		ViewLicense();	// #BUTTON view the license text based on current selection
+  static String	GetLicenseText(StdLicense lic, const String& owner, const String& year, const String& org=""); // get text for given license, given parameters
+  
+  TA_SIMPLE_BASEFUNS(taLicense);
+private:
+  void	Initialize();
+  void 	Destroy()    { };
+};
+
+
 class TA_API taProject : public taFBase {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DUMP_LOAD_POST ##DEF_NAME_ROOT_Project ##CAT_Project ##UNDO_BARRIER ##EXPAND_DEF_2 Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
 INHERITED(taFBase)
 public:
+  enum	StdLicense {
+    GPL2,			// GNU General Public License (GPL), version 2
+    GPL3,			// GNU General Public License (GPL), version 3
+    BSD,			// Berkeley Software Distribution License
+    OSL3,			// Open Software License, version 3
+    AFL3,			// Academic Free License, version 3
+    MIT,			// MIT License
+    APACHE,			// Apache License, version 2.0
+    MOZILLA,			// Mozilla Public License 1.1 (MPL)
+    RESEARCH,			// Research License based on CU Boulder template
+  };
+  
   String 		tags;	   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
   taProjVersion 	version; 
   // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
-
+  taLicense		license; // license for this project -- to be determined by the original creator of the project -- if this is not you, then you must abide by the constraints of the original license, if specified -- do ViewLicense button to see the applicable license information for this project
   taWikiURL		wiki_url; // url to synchronize project to/from wiki -- see taMisc::wiki_url for base url in case of relative location
   taBase_Group		templates; // #HIDDEN templates for new objects -- copy new objects from here
   Doc_Group		docs; // documents, typically linked to other objects
@@ -532,6 +578,9 @@ public:
 
   virtual bool		CleanFiles();
   // #BUTTON #CAT_File remove autosave and recover files based on current file_name -- this is done by default after saving a non-recover or autosave version of the project
+
+  virtual void		ViewLicense();
+  // #BUTTON view the applicable license information for this project
 
   virtual int		SaveNoteChanges(); 
   // #CAT_File saves the project to a file using current file name, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving

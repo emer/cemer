@@ -4546,18 +4546,13 @@ void Program::ViewScript_Editor() {
 }
 
 void Program::ViewScript_impl() {
-  taiStringDataHost* host_ = NULL;
-//   iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
-  //  host_ = taiMisc::FindEdit(base, cur_win);
   view_script = scriptString();
-  if(!host_) {
-    TypeDef* td = GetTypeDef();
-    MemberDef* md = td->members.FindName("view_script");
-    host_ = new taiStringDataHost(md, this, td, true, false, NULL, true);
-    // args are: read_only, modal, parent, line_nos
-    host_->Constr("Css Script for program: " + name);
-    host_->Edit(false);
-  }
+  TypeDef* td = GetTypeDef();
+  MemberDef* md = td->members.FindName("view_script");
+  taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, true);
+  // args are: read_only, modal, parent, line_nos
+  host_->Constr("Css Script for program: " + name);
+  host_->Edit(false);
 //   iTextEditDialog* dlg = new iTextEditDialog(true); // readonly
 //   dlg->setText(scriptString());
 //   dlg->exec();

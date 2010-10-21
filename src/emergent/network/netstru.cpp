@@ -1983,6 +1983,29 @@ float UnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
   return sse;
 }
 
+bool UnitSpec::Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg) {
+  true_pos = 0.0f; false_pos = 0.0f; false_neg = 0.0f;
+  bool has_targ = false;
+  if(u->HasExtFlag(Unit::TARG | Unit::COMP)) {
+    has_targ = true;
+    float uerr = u->targ - u->act;
+    if(fabsf(uerr) < sse_tol) {
+      true_pos = u->targ;
+    }
+    else {
+      if(u->targ > u->act) {
+	true_pos = u->act;
+	false_neg = u->targ - u->act;
+      }
+      else {
+	true_pos = u->targ;
+	false_pos = u->act - u->targ;
+      }
+    }
+  }
+  return has_targ;
+}
+
 
 /////// Unit ///////
 
@@ -3939,6 +3962,7 @@ void Layer::InitLinks() {
   taBase::Own(flat_geom, this);
   taBase::Own(act_geom, this);
   taBase::Own(scaled_act_geom, this);
+  taBase::Own(prerr, this);
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_share_units, this);
 #endif
@@ -3995,6 +4019,7 @@ void Layer::Copy_(const Layer& cp) {
 
   output_name = cp.output_name;
   sse = cp.sse;
+  prerr = cp.prerr;
   icon_value = cp.icon_value;
 
   n_units = cp.n_units;		// note: v3compat obs
@@ -4748,6 +4773,29 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
     n_vals = 0;
   }
   return rval;
+}
+
+int Layer::Compute_PRerr(Network* net) {
+  int n_vals = 0;
+  prerr.InitVals();
+  if(!HasExtFlag(Unit::TARG | Unit::COMP)) return 0;
+  Unit* u;
+  taLeafItr i;
+  float true_pos, false_pos, false_neg;
+  FOR_ITR_EL(Unit, u, units., i) {
+    bool has_targ = u->Compute_PRerr(net, true_pos, false_pos, false_neg);
+    if(has_targ) {
+      n_vals++;
+      prerr.true_pos += true_pos;
+      prerr.false_pos += false_pos;
+      prerr.false_neg += false_neg;
+    }
+  }
+  prerr.ComputePR();
+  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(Unit::COMP) && HasLayerFlag(NO_ADD_COMP_SSE))) {
+    n_vals = 0;
+  }
+  return n_vals;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -5980,6 +6028,8 @@ void Network::Initialize() {
   avg_sse_n = 0;
   cur_cnt_err = 0.0f;
 
+  compute_prerr = false;
+
   dmem_sync_level = DMEM_SYNC_NETWORK;
   dmem_nprocs = 1;
   dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
@@ -6013,6 +6063,10 @@ void Network::InitLinks() {
   taBase::Own(layers, this);
   taBase::Own(view_objs, this);
   taBase::Own(max_size, this);
+
+  taBase::Own(prerr, this);
+  taBase::Own(sum_prerr, this);
+  taBase::Own(epc_prerr, this);
 
   taBase::Own(train_time, this);  //train_time.name = "train_time";
   taBase::Own(epoch_time, this);  //epoch_time.name = "epoch_time";
@@ -6102,6 +6156,11 @@ void Network::Copy_(const Network& cp) {
   cur_sum_sse = cp.cur_sum_sse;
   avg_sse_n = cp.avg_sse_n;
   cur_cnt_err = cp.cur_cnt_err;
+
+  compute_prerr = cp.compute_prerr;
+  prerr = cp.prerr;
+  sum_prerr = cp.sum_prerr;
+  epc_prerr = cp.epc_prerr;
 
   dmem_sync_level = cp.dmem_sync_level;
   dmem_nprocs = cp.dmem_nprocs;
@@ -6813,8 +6872,30 @@ void Network::Compute_SSE(bool unit_avg, bool sqrt) {
     cur_cnt_err += 1.0;
 }
 
+void Network::Compute_PRerr() {
+  prerr.InitVals();
+  int n_vals = 0;
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesioned()) continue;
+    int lay_vals = l->Compute_PRerr(this);
+    if(lay_vals > 0) {
+      prerr.IncrVals(l->prerr);
+    }
+    n_vals += lay_vals;
+  }
+  if(n_vals > 0) {
+    sum_prerr.IncrVals(prerr);
+    prerr.ComputePR();
+    sum_prerr.ComputePR();
+  }
+}
+
 void Network::Compute_TrialStats() {
   Compute_SSE(sse_unit_avg, sse_sqrt);
+  if(compute_prerr)
+    Compute_PRerr();
 }
 
 void Network::DMem_ShareTrialData(DataTable* dt, int n_rows) {
@@ -6837,11 +6918,19 @@ void Network::Compute_EpochSSE() {
   cur_cnt_err = 0.0f;
 }
 
+void Network::Compute_EpochPRerr() {
+  epc_prerr = sum_prerr;
+  epc_prerr.ComputePR();	// make sure, in case of dmem summing
+  sum_prerr.InitVals();		// reset!
+}
+
 void Network::Compute_EpochStats() {
 #ifdef DMEM_COMPILE
   DMem_ComputeAggs(dmem_trl_comm.comm);
 #endif
   Compute_EpochSSE();
+  if(compute_prerr)
+    Compute_EpochPRerr();
 }
 
 

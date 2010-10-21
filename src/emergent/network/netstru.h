@@ -724,7 +724,7 @@ public:
   ConSpec_SPtr 	bias_spec;
   // #CAT_Structure con spec that controls the bias connection on the unit
   float		sse_tol;
-  // #CAT_Statistic tolerance for computing sum-squared error on a per-unit basis
+  // #CAT_Statistic tolerance for computing sum-squared error and other error metrics on a per-unit basis
 
   ////////////////////////////////////////////////////////////////////////////////
   //	Below are the primary computational interface to the Network Objects
@@ -759,7 +759,9 @@ public:
   // #CAT_Learning update weights from deltas
 
   virtual float	Compute_SSE(Unit* u, Network* net, bool& has_targ);
-  // #CAT_Statistic compute sum squared error for this unit
+  // #CAT_Statistic compute sum squared error for this unit -- uses sse_tol so error is 0 if within tolerance -- has_targ indicates if there is actually a target value (else the return value is 0)
+  virtual bool	Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg);
+  // #CAT_Statistic compute precision and recall error statistics for this unit -- true positive, false positive, and false negative -- returns true if unit actually has a target value specified (otherwise everything is 0) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance 
 
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -933,8 +935,11 @@ public: //
   float	Compute_SSE(Network* net, bool& has_targ)
   { return GetUnitSpec()->Compute_SSE(this, net, has_targ); }
   // #CAT_Statistic compute sum-squared-error of activations versus target values (standard measure of performance) -- not threadable due to integration requirements at higher levels
+  bool	Compute_PRerr(Network* net, float& true_pos, float& false_pos, float& false_neg)
+  { return GetUnitSpec()->Compute_PRerr(this, net, true_pos, false_pos, false_neg); }
+  // #CAT_Statistic compute precision and recall error statistics for this unit -- true positive, false positive, and false negative -- returns true if unit actually has a target value specified (otherwise everything is 0) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance 
 
-  
+
   ////////////////////////////////////////////////////////////////////////////////
   //	The following are misc functionality not required for primary computing
 
@@ -1422,6 +1427,42 @@ private:
   void	Destroy()		{ };
 };
 
+class EMERGENT_API PRerrVals : public taOBase {
+  // ##NO_TOKENS #INLINE #NO_UPDATE_AFTER ##CAT_Network contains precision and recall error values 
+INHERITED(taOBase)
+public:
+  float		true_pos;	// true positive values -- e.g., how many active targets were correctly activated by the network (actually a sum over graded activations -- if(targ > act) act else targ)
+  float		false_pos;	// false positive values -- e.g., how many inactive targets were incorrectly activated by the network (actually a sum over graded activations -- if(act > targ) act - targ)
+  float		false_neg;	// false negative values -- e.g., how many active targets were incorrectly not activated by the network (actually a sum over graded activations -- if(targ > act) targ - act)
+  float		precision;	// precision = true_pos / (true_pos + false_pos) -- how many of the positive responses were true positives -- i.e., of the responses the network made, how many were correct -- does not include any of the false negatives, so the network could be under-responding (see recall)
+  float		recall;		// recall = true_pos / (true_pos + false_neg) -- how many true positive responses were there relative to the total number of positive targets -- if it did not respond to a number of cases where it should have, then recall will be low
+  float		fmeasure;	// fmeasure = 2 * precision * recall / (precision + recall) -- harmonic mean of precision and recall -- is 1 when network is performing optimally -- this is the best overall value to look at for summary performance
+
+  void		InitVals() { true_pos = false_pos = false_neg = precision = recall = fmeasure = 0.0f; }
+  // initialize all values to 0
+
+  void		IncrVals(const PRerrVals& vls)
+  { true_pos += vls.true_pos; false_pos += vls.false_pos; false_neg += vls.false_neg; }
+  // increment values from another set of values
+
+  void		ComputePR() {
+    if(true_pos > 0.0f) {
+      precision = true_pos / (true_pos + false_pos); recall = true_pos / (true_pos + false_neg);
+      fmeasure = 2 * precision * recall / (precision + recall);
+    }
+    else {
+      precision = recall = fmeasure = 0.0f;
+    }
+  }
+  // compute the precision, recall, and fmeasure values based on current raw stats values
+
+  SIMPLE_COPY(PRerrVals);
+  TA_BASEFUNS(PRerrVals);
+private:
+  void 	Initialize()		{ InitVals(); }
+  void	Destroy()		{ };
+};
+
 class EMERGENT_API Layer : public taNBase {
   // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network layer containing units
 INHERITED(taNBase)
@@ -1475,6 +1516,7 @@ public:
 
   String		output_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   float			sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
+  PRerrVals		prerr;		// #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for this layer, for the current pattern
   float			icon_value;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW value to display if layer is iconified (algorithmically determined)
   int			units_flat_idx;	// #READ_ONLY #NO_SAVE starting index for this layer into the network units_flat list, used in threading
   String_Matrix		unit_names; // #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
@@ -1608,7 +1650,9 @@ public:
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
   virtual float	Compute_SSE(Network* net, int& n_vals, bool unit_avg = false, bool sqrt = false);
-  // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
+  // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value -- uses sse_tol so error is 0 if within tolerance on a per unit basis
+  virtual int	Compute_PRerr(Network* net);
+  // #CAT_Statistic compute precision and recall error statistics over entire layer -- true positive, false positive, and false negative -- returns number of values entering into computation (depends on number of targets) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance on a per unit basis -- results are stored in prerr values on layer
 
   ////////////////////////////////////////////////////////////////////////////////
   //	The following are misc functionality not required for primary computing
@@ -1988,7 +2032,6 @@ private:
   void 	Destroy()		{ };
 };
 
-
 /////////////////////////////////////////////////////////////
 //		Network
 
@@ -2089,6 +2132,11 @@ public:
   float	       	cur_sum_sse;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current sum_sse -- used during computation of sum_sse
   int	       	avg_sse_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic number of times cur_sum_sse updated: for computing avg_sse
   float	       	cur_cnt_err;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
+
+  bool		compute_prerr;	// #CAT_Statistic compute precision and recall error values over units, at same time as computing sum squared error (SSE)
+  PRerrVals	prerr;		// #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for the entire network, for the current external input pattern
+  PRerrVals	sum_prerr;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics
+  PRerrVals	epc_prerr;	// #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns
 
   TimeUsed	train_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing entire training (across epochs) (managed entirely by programs -- not always used)
   TimeUsed	epoch_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing an epoch (managed entirely by programs -- not always used)
@@ -2301,6 +2349,8 @@ public:
 
   virtual void	Compute_SSE(bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
+  virtual void	Compute_PRerr();
+  // #CAT_Statistic compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance on a per unit basis
 
   ////////////////////////////////////////////////////////////////////////////////
   //	The following are misc functionality not required for primary computing
@@ -2312,6 +2362,8 @@ public:
 
   virtual void	Compute_EpochSSE();
   // #CAT_Statistic compute epoch-level sum squared error and related statistics
+  virtual void	Compute_EpochPRerr();
+  // #CAT_Statistic compute epoch-level precision and recall statistics
   virtual void	Compute_EpochStats();
   // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
 
