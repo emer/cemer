@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-// irenderarea.h -- Qt and SoRenderArea compatability classes
+// irenderarea.h -- SoOffscreenRendererQt
 
 #ifndef IRENDERAREA_H
 #define IRENDERAREA_H
@@ -22,24 +22,58 @@
 
 #ifdef TA_USE_INVENTOR
 
-#include <QWidget>
+#include <QGLPixelBuffer>
 
-// externals
-class SoQtRenderArea; //#IGNORE
+#include <Inventor/SbColor.h>
+#include <Inventor/actions/SoGLRenderAction.h>
 
-class TAIQTSO_API iRenderAreaWrapper: public QWidget { // ##NO_CSS ##NO_INSTANCE ##NO_TOKENS
-  Q_OBJECT
+class SbViewportRegion; // #IGNORE
+class SoCamera; // #IGNORE
+
+class TAIQTSO_API SoOffscreenRendererQt {
+  // ##NO_CSS ##NO_INSTANCE ##NO_TOKENS offscreen renderer that uses a QGLPixelBuffer as the underlying offscreen render buffer -- this then provides direct support for multisampling antialiasing, which is enabled by default
 public:
-  SoQtRenderArea* 	renderArea(); // autocreated if not assigned
-  void			setRenderArea(SoQtRenderArea* value); // must have been created with us as parent!!
+  SoOffscreenRendererQt(const SbViewportRegion & viewportregion);
+  SoOffscreenRendererQt(SoGLRenderAction * action);
+  virtual ~SoOffscreenRendererQt();
 
-  iRenderAreaWrapper(SoQtRenderArea* ra, QWidget* parent = NULL);
-  iRenderAreaWrapper(QWidget* parent = NULL);
-  ~iRenderAreaWrapper();
+  virtual void setViewportRegion(const SbViewportRegion & region);
+  virtual const SbViewportRegion & getViewportRegion(void) const;
+
+  virtual void setBackgroundColor(const SbColor & color);
+  virtual const SbColor & getBackgroundColor(void) const;
+
+  virtual void setGLRenderAction(SoGLRenderAction * action);
+  virtual SoGLRenderAction * getGLRenderAction(void) const;
+
+  virtual SbBool render(SoNode * scene);
+  virtual SbBool render(SoPath * scene);
+
+  virtual void		makeBuffer(int width, int height, const QGLFormat& fmt);
+  // create the pixel buffer of given size and format -- this should be called prior to render, otherwise a default will be constructed
+  virtual void		makeMultisampleBuffer(int width, int height, int samples = -1);
+  // create the pixel buffer of given size, setting the gl format information to use multisample antialiasing -- a -1 means use default value (4), otherwise use what is specified
+
+  QGLPixelBuffer*	getBuffer() { return pbuff; }
+  // returns the pixel buffer that has the image in it
+  QImage		getImage()  { return pbuff->toImage(); }
+  // use the QImage for all file IO stuff etc
+
 protected:
-  SoQtRenderArea* 	m_renderArea;
-  void resizeEvent(QResizeEvent* ev); // override
-  
+  // NOTE: just putting all the pimpl stuff right here for simplicity, since its not much
+
+  virtual void	Constr(const SbViewportRegion & vpr, SoGLRenderAction * glrenderaction = NULL);
+  virtual SbBool renderFromBase(SoBase * base);
+
+  QGLPixelBuffer*	pbuff; // the offscreen rendering supported by qt
+
+  SbViewportRegion viewport;
+  SbColor backgroundcolor;
+  SoGLRenderAction * renderaction;
+  SbBool didallocation;
+
+  SbBool lastnodewasacamera;
+  SoCamera * visitedcamera;
 };
 
 #endif // TA_USE_INVENTOR

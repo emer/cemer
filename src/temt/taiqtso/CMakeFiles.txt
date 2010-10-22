@@ -33,6 +33,7 @@ set(taiqtso_HEADS
     icookiejar.h
     inetworkaccessmanager.h
     qtthumbwheel.h
+    irenderarea.h
 )
 
 # headers that need Qt moc run
@@ -89,6 +90,7 @@ set(taiqtso_SRCS
     icookiejar.cpp
     inetworkaccessmanager.cpp
     qtthumbwheel.cpp
+    irenderarea.cpp
 )
 
 # headers that need Qt ui compiler run

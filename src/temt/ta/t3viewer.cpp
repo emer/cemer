@@ -85,109 +85,6 @@ using namespace Qt;
 # define GL_MULTISAMPLE  0x809D
 #endif
 
-//////////////////////////////////////////////////////////////////////////////
-//   T3OffscreenRenderer -- uses QGLPixelBuffer and SoRenderManager to do everything
-
-T3OffscreenRenderer::T3OffscreenRenderer() {
-  renderm = new SoRenderManager;
-  renderm->setAntialiasing(true, 1); // good defaults regardless
-  SoGLRenderAction* ract = renderm->getGLRenderAction();
-  ract->setTransparencyType(SoGLRenderAction::BLEND);
-  pbuff = NULL;
-}
-
-T3OffscreenRenderer::~T3OffscreenRenderer() {
-  delete renderm;
-  if(pbuff)
-    delete pbuff;
-  renderm = NULL;
-  pbuff = NULL;
-}
-
-void T3OffscreenRenderer::makeBuffer(int width, int height, const QGLFormat& fmt) {
-  if(pbuff) delete pbuff;
-  pbuff = new QGLPixelBuffer(width, height, fmt);
-  SbViewportRegion vpreg;
-  vpreg.setWindowSize(width, height);
-  renderm->setViewportRegion(vpreg);
-}
-
-void T3OffscreenRenderer::makeMultisampleBuffer(int width, int height, int samples) {
-  if(samples < 0) samples = taMisc::antialiasing_level;
-  QGLFormat fmt;
-  if(samples > 0) {
-    fmt.setSampleBuffers(true);
-    fmt.setSamples(samples);
-  }
-  else {
-    fmt.setSampleBuffers(false);
-  }
-  makeBuffer(width, height, fmt);
-}
-
-static void
-pre_render_cb(void * userdata, SoGLRenderAction * action)
-{
-  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
-  action->setRenderingIsRemote(FALSE);
-}
-
-bool T3OffscreenRenderer::render(SoNode* scene) {
-  if(!pbuff) makeMultisampleBuffer(640, 480, -1);
-//   if(scene) {
-//     if(scene->getRefCount() == 0) {
-//       taMisc::Warning("T3OffscreenRenderer: scene has 0 refcount -- will be deleted after rendering!");
-//     }
-//     renderm->setSceneGraph(scene);
-//   }
-  pbuff->makeCurrent();
-  glEnable(GL_DEPTH_TEST);
-
-  SoGLRenderAction* action = renderm->getGLRenderAction();
-
-  SoState * state = action->getState();
-  state->push();
-
-  //  renderm->render(true, true); // clear
-
-  // bypass the actual render manager which installs some mods on the scene,
-  // and just do it ourselves
-  // SoRenderManager.cpp -- actuallyRender and renderScene
-  // initmatricies -- probably a good idea -- who knows?
-//   glMatrixMode(GL_PROJECTION);
-//   glLoadIdentity();
-//   glMatrixMode(GL_MODELVIEW);
-//   glLoadIdentity();
-
-  // clearwindow and clearzbuffer
-  GLbitfield clearmask = 0;
-  clearmask |= GL_COLOR_BUFFER_BIT;
-  clearmask |= GL_DEPTH_BUFFER_BIT;
-
-  SbColor4f bgcol = renderm->getBackgroundColor();
-  glClearColor(bgcol[0], bgcol[1], bgcol[2], bgcol[3]);
-
-  action->addPreRenderCallback(pre_render_cb, NULL);
-
-  action->apply(scene);
-
-  action->removePreRenderCallback(pre_render_cb, NULL);
-
-  state->pop();
-
-  pbuff->doneCurrent();
-
-//   if(scene) {
-//     renderm->setSceneGraph(NULL); // unset it at the end!
-//   }
-  return true;
-}
-
-QImage T3OffscreenRenderer::toImage() {
-  if(!pbuff) return QImage();
-  return pbuff->toImage();
-}
-
 //////////////////////////////
 
 #include "pick.xpm"
@@ -203,6 +100,13 @@ QImage T3OffscreenRenderer::toImage() {
 #define WHEEL_WIDTH 20		// short axis
 #define BUTTON_WIDTH 20
 #define BUTTON_HEIGHT 20
+
+// for thumb wheel -- max value and wraparound delta threshold detection
+#define THUMB_MAX_VAL 1000
+#define THUMB_INIT_VAL 500
+#define THUMB_PAGE_STEP 10
+#define THUMB_WRAP_THR 800
+
 
 void T3SavedView::Initialize() {
   view_saved = false;
@@ -332,33 +236,33 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
   /////	make wheels all together
 
-  hrot_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Horizontal, this);
+  hrot_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Horizontal, this);
   t3ev_config_wheel(hrot_wheel);
-  hrot_start_val = 500;
+  hrot_start_val = THUMB_INIT_VAL;
   hrot_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
   connect(hrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(hrotwheelChanged(int)));
 
-  vrot_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Vertical, this);
+  vrot_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(vrot_wheel);
-  vrot_start_val = 500;
+  vrot_start_val = THUMB_INIT_VAL;
   vrot_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
   connect(vrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(vrotwheelChanged(int)));
 
-  zoom_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Vertical, this);
+  zoom_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(zoom_wheel);
-  zoom_start_val = 500;
+  zoom_start_val = THUMB_INIT_VAL;
   zoom_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
   connect(zoom_wheel, SIGNAL(valueChanged(int)), this, SLOT(zoomwheelChanged(int)));
 
-  hpan_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Horizontal, this);
+  hpan_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Horizontal, this);
   t3ev_config_wheel(hpan_wheel);
-  hpan_start_val = 500;
+  hpan_start_val = THUMB_INIT_VAL;
   hpan_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
   connect(hpan_wheel, SIGNAL(valueChanged(int)), this, SLOT(hpanwheelChanged(int)));
 
-  vpan_wheel = new QtThumbWheel(0, 1000, 10, 500, Qt::Vertical, this);
+  vpan_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(vpan_wheel);
-  vpan_start_val = 500;
+  vpan_start_val = THUMB_INIT_VAL;
   vpan_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
   connect(vpan_wheel, SIGNAL(valueChanged(int)), this, SLOT(vpanwheelChanged(int)));
 
@@ -624,51 +528,61 @@ bool T3ExaminerViewer::removeDynButtonName(const String& label) {
 #define ZOOM_DELTA_MULT 0.002f
 
 void T3ExaminerViewer::hrotwheelChanged(int value) {
-  // first detect wraparound
-  if(hrot_start_val < 100 && value > 900) hrot_start_val += 1000;
-  if(value < 100 && hrot_start_val > 900) hrot_start_val -= 1000;
   float delta = (float)(value - hrot_start_val);
+  if(fabsf(delta) > THUMB_WRAP_THR) {  // first detect wraparound
+    int new_value = value;
+    if(hrot_start_val < THUMB_INIT_VAL) new_value -= THUMB_MAX_VAL;
+    else		     new_value += THUMB_MAX_VAL;
+    delta = (float)(new_value - hrot_start_val);
+  }
   hrot_start_val = value;
   horizRotateView(ROT_DELTA_MULT * delta);
 }
 
 void T3ExaminerViewer::vrotwheelChanged(int value) {
-  if(vrot_start_val < 100 && value > 900) vrot_start_val += 1000;
-  if(value < 100 && vrot_start_val > 900) vrot_start_val -= 1000;
   float delta = (float)(value - vrot_start_val);
+  if(fabsf(delta) > THUMB_WRAP_THR) {  // first detect wraparound
+    int new_value = value;
+    if(vrot_start_val < THUMB_INIT_VAL) new_value -= THUMB_MAX_VAL;
+    else		     new_value += THUMB_MAX_VAL;
+    delta = (float)(new_value - vrot_start_val);
+  }
   vrot_start_val = value;
   vertRotateView(ROT_DELTA_MULT * delta);
 }
 
 void T3ExaminerViewer::zoomwheelChanged(int value) {
-//   taMisc::Info("val:", String(value), "start:", String(zoom_start_val));
-  if(zoom_start_val < 100 && value > 900) {
-    zoom_start_val += 1000;
-//     taMisc::Info("start inc 1000:", String(zoom_start_val));
-  }
-  if(value < 100 && zoom_start_val > 900) {
-    zoom_start_val -= 1000;
-//     taMisc::Info("start dec 1000:", String(zoom_start_val));
-  }
   float delta = (float)(value - zoom_start_val);
-//   taMisc::Info("delta:", String(delta));
+  if(fabsf(delta) > THUMB_WRAP_THR) {  // first detect wraparound
+    int new_value = value;
+    if(zoom_start_val < THUMB_INIT_VAL) new_value -= THUMB_MAX_VAL;
+    else		     new_value += THUMB_MAX_VAL;
+    delta = (float)(new_value - zoom_start_val);
+  }
   zoom_start_val = value;
   zoomView(-ZOOM_DELTA_MULT * delta); // direction is opposite
 }
 
 void T3ExaminerViewer::hpanwheelChanged(int value) {
-  // first detect wraparound
-  if(hpan_start_val < 100 && value > 900) hpan_start_val += 1000;
-  if(value < 100 && hpan_start_val > 900) hpan_start_val -= 1000;
   float delta = (float)(value - hpan_start_val);
+  if(fabsf(delta) > THUMB_WRAP_THR) {  // first detect wraparound
+    int new_value = value;
+    if(hpan_start_val < THUMB_INIT_VAL) new_value -= THUMB_MAX_VAL;
+    else		     new_value += THUMB_MAX_VAL;
+    delta = (float)(new_value - hpan_start_val);
+  }
   hpan_start_val = value;
   horizPanView(PAN_DELTA_MULT * delta);
 }
 
 void T3ExaminerViewer::vpanwheelChanged(int value) {
-  if(vpan_start_val < 100 && value > 900) vpan_start_val += 1000;
-  if(value < 100 && vpan_start_val > 900) vpan_start_val -= 1000;
   float delta = (float)(value - vpan_start_val);
+  if(fabsf(delta) > THUMB_WRAP_THR) {  // first detect wraparound
+    int new_value = value;
+    if(vpan_start_val < THUMB_INIT_VAL) new_value -= THUMB_MAX_VAL;
+    else		     new_value += THUMB_MAX_VAL;
+    delta = (float)(new_value - vpan_start_val);
+  }
   vpan_start_val = value;
   vertPanView(PAN_DELTA_MULT * delta);
 }

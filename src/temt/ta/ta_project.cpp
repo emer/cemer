@@ -1495,6 +1495,7 @@ void taProject::InitLinks() {
 
 void taProject::InitLinks_impl() {
   taBase::Own(version, this);
+  taBase::Own(license, this);
   taBase::Own(wiki_url, this);
   taBase::Own(templates, this);
   taBase::Own(docs, this);
@@ -3772,6 +3773,8 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
     printf("PID %d on %s ready for attach\n", taPlatform::processId(),
 	   taPlatform::hostName().chars());
     fflush(stdout);
+    // NOTE to programmer: in gdb debugger, do: set var i = 1  then continue -- this will break out of
+    // following infinite loop and allow code to continue execution
     while (0 == i) {
       taPlatform::sleep(5);
     }
