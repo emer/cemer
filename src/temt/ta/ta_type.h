@@ -612,6 +612,19 @@ public:
     HD_DEFAULT,    	// standard level of help detail
     HD_DETAILS, 	// full programming details -- offsets, comments, etc
   };
+
+  enum	StdLicense {	      // standard licenses in wide use
+    NO_LIC,		        // no license granted -- All Rights Reserved
+    GPLv2,			// GNU General Public License (GPL), version 2
+    GPLv3,			// GNU General Public License (GPL), version 3 -- note that this has patent grant issues -- version 2 is probably safer
+    BSD,			// Berkeley Software Distribution License
+    OSL3,			// Open Software License, version 3
+    AFL3,			// Academic Free License, version 3
+    MIT,			// MIT License
+    APACHE,			// Apache License, version 2.0
+    RESEARCH,			// Research-Only License based on CU Boulder template
+    CUSTOM_LIC,			// enter custom license text
+  };
   
   static String		app_name;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App the root name of the app, ex. "emergent" or "css"
@@ -711,6 +724,7 @@ public:
   static int		strm_ver;	// #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
   static bool		save_compress;	// #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
   static TypeDef*	default_proj_type; // #SAVE #CAT_File #TYPE_taProject default type of project to create
+  static StdLicense	license_def;	   // #SAVE #CAT_File default license to use for new projects that are created -- can change for specific projects -- see license field on projects
   static String		license_owner;	   // #SAVE #CAT_File default legal owner of new projects that are created by this user (e.g., Regents of University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects
   static String		license_org;	   // #SAVE #CAT_File default organization that actually created the project for new projects that are created by this user (e.g., MyLab at University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects -- defaults to license_owner if left blank
 

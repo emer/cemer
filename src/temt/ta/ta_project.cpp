@@ -892,7 +892,7 @@ bool taProjVersion::GtEq(int mj, int mn, int st) {
 }
 
 void taLicense::Initialize() {
-  license = GPLv2;
+  license = taMisc::license_def;
   owner = taMisc::license_owner;
   org = taMisc::license_org;
   year = String(QDate::currentDate().year());
@@ -900,7 +900,7 @@ void taLicense::Initialize() {
 
 void taLicense::ViewLicense() {
   lic_text = GetLicenseText(license, owner, year, org);
-  if(license == CUSTOM) lic_text += custom;
+  if(license == taMisc::CUSTOM_LIC) lic_text += custom;
   TypeDef* td = GetTypeDef();
   MemberDef* md = td->members.FindName("lic_text");
   taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, false);
@@ -909,16 +909,16 @@ void taLicense::ViewLicense() {
   host_->Edit(false);
 }
 
-String taLicense::GetLicenseText(StdLicense lic, const String& ownr, const String& yr, const String& og) {
+String taLicense::GetLicenseText(taMisc::StdLicense lic, const String& ownr, const String& yr, const String& og) {
   String txt;
   String cpyright = "Copyright (c) " + yr + ", " + ownr + "\n\n";
   String eff_org = og;
   if(eff_org.empty()) eff_org = ownr;
   switch(lic) {
-  case NONE:
-    txt = "No license specified\n";
+  case taMisc::NO_LIC:
+    txt = "All Rights Reserved\n";
     break;
-  case GPLv2:
+  case taMisc::GPLv2:
     txt = "The GNU General Public License (GPL)\n\
 Version 2, June 1991\n\
 Copyright (C) 1989, 1991 Free Software Foundation, Inc.\n\
@@ -1012,7 +1012,7 @@ NO WARRANTY\n\
 END OF TERMS AND CONDITIONS\n\
 ";
     break;
-  case GPLv3:
+  case taMisc::GPLv3:
     txt = "GNU General Public License, version 3 (GPLv3)\n\
 \n\
 GNU GENERAL PUBLIC LICENSE\n\
@@ -1202,7 +1202,7 @@ If the disclaimer of warranty and limitation of liability provided above cannot 
 END OF TERMS AND CONDITIONS\n\
 ";
     break;
-  case BSD:
+  case taMisc::BSD:
     txt = "All rights reserved.\n\
 \n\
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:\n\
@@ -1213,7 +1213,7 @@ Neither the name of the " + eff_org + " nor the names of its contributors may be
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\
 ";
     break;
-  case OSL3:
+  case taMisc::OSL3:
     txt = "Licensed under the Open Software License version 3.0\n\
 \n\
 1) Grant of Copyright License. Licensor grants You a worldwide, royalty-free, non-exclusive, sublicensable license, for the duration of the copyright, to do the following:\n\
@@ -1259,7 +1259,7 @@ e) to display the Original Work publicly.\n\
 16) Modification of This License. This License is Copyright © 2005 Lawrence Rosen. Permission is granted to copy, distribute, or communicate this License without modification. Nothing in this License permits You to modify this License as applied to the Original Work or to Derivative Works. However, You may modify the text of this License and copy, distribute or communicate your modified version (the 'Modified License') and apply it to other original works of authorship subject to the following conditions: (i) You may not indicate in any way that your Modified License is the 'Open Software License' or 'OSL' and you may not use those names in the name of your Modified License; (ii) You must replace the notice specified in the first paragraph above with the notice 'Licensed under <insert your license name here>' or with a notice of your own that is not confusingly similar to the notice in this License; and (iii) You may not claim that your original works are open source software unless your Modified License has been approved by Open Source Initiative (OSI) and You comply with its license review and certification process.\n\
 ";
     break;
-  case AFL3:
+  case taMisc::AFL3:
     txt = "Licensed under the Academic Free License version 3.0\n\\n\
 \n\
 1) Grant of Copyright License. Licensor grants You a worldwide, royalty-free, non-exclusive, sublicensable license, for the duration of the copyright, to do the following:\n\
@@ -1305,7 +1305,7 @@ e) to display the Original Work publicly.\n\
 16) Modification of This License. This License is Copyright © 2005 Lawrence Rosen. Permission is granted to copy, distribute, or communicate this License without modification. Nothing in this License permits You to modify this License as applied to the Original Work or to Derivative Works. However, You may modify the text of this License and copy, distribute or communicate your modified version (the 'Modified License') and apply it to other original works of authorship subject to the following conditions: (i) You may not indicate in any way that your Modified License is the 'Academic Free License' or 'AFL' and you may not use those names in the name of your Modified License; (ii) You must replace the notice specified in the first paragraph above with the notice 'Licensed under <insert your license name here>' or with a notice of your own that is not confusingly similar to the notice in this License; and (iii) You may not claim that your original works are open source software unless your Modified License has been approved by Open Source Initiative (OSI) and You comply with its license review and certification process.\n\
 ";
     break;
-  case MIT:
+  case taMisc::MIT:
     txt = "Permission is hereby granted, free of charge, to any person obtaining a copy\n\
 of this software and associated documentation files (the 'Software'), to deal\n\
 in the Software without restriction, including without limitation the rights\n\
@@ -1325,7 +1325,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n\
 THE SOFTWARE.\n\
 ";
     break;
-  case APACHE:
+  case taMisc::APACHE:
     txt = "Apache License\n\
 Version 2.0, January 2004\n\
 http://www.apache.org/licenses/\n\
@@ -1395,7 +1395,7 @@ While redistributing the Work or Derivative Works thereof, You may choose to off
 END OF TERMS AND CONDITIONS\n\
 ";
     break;
-  case RESEARCH:
+  case taMisc::RESEARCH:
     txt = "NON-PROFIT RESEARCH LICENSE AGREEMENT\n\
 This license agreement allows you to use the source code for non-profit, internal research and development. This means you are studying the code and using it to create additional code for study, and that you are not:\n\
 * deploying the software for use by a corporation, business or organization (commercial or non-commercial)\n\
@@ -1463,7 +1463,7 @@ a) Except for fulfilling requirements of the paragraph entitled 'Attribution,' Y
 b) This Agreement shall be governed by the laws of the OWNER's locale. Venue for any action or proceeding shall be the OWNER's locale. This Agreement constitutes the entire agreement between the parties and may only be modified by a written instrument signed by each parties authorized officers.\n\
 ";
     break;
-  case CUSTOM:
+  case taMisc::CUSTOM_LIC:
     break;
   }
   return cpyright + txt;

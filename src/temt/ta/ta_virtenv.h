@@ -428,7 +428,7 @@ public:
   FloatTDCoord	box;		// #READ_ONLY #HIDDEN not relevant
 #endif
 
-  TwoDCoord	img_size;	// size of image to record from camera
+  TwoDCoord	img_size;	// size of image to record from camera -- IMPORTANT -- if you will be using multiple cameras, it is very important that they all are the same size, otherwise the rendering will consume a lot of memory because a new buffer has to be created and destroyed each time (a shared buffer is used for all cameras)
   bool		color_cam;	// if true, get full color images (else greyscale)
   VECameraDists	view_dist;	// distances that are in view of the camera
   float		field_of_view;	// field of view of camera (angle in degrees) -- how much of scene is it taking in

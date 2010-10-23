@@ -624,6 +624,7 @@ short			taMisc::num_browse_history = 20;
 int	taMisc::strm_ver = 2;
 bool 		taMisc::save_compress = false; // compression not the default in v4
 TypeDef*	taMisc::default_proj_type = NULL;
+taMisc::StdLicense taMisc::license_def = taMisc::NO_LIC;
 String		taMisc::license_owner;
 String		taMisc::license_org;
 #ifdef DEBUG
