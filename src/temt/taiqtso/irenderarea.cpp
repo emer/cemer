@@ -21,7 +21,6 @@
 #include <Inventor/nodes/SoNode.h>
 #include <Inventor/nodes/SoCamera.h>
 #include <Inventor/nodes/SoCallback.h>
-#include <Inventor/misc/SoGLBigImage.h>
 
 
 ////////////////////////////////////////////////////////
@@ -150,23 +149,23 @@ pre_render_cb(void * userdata, SoGLRenderAction * action)
   action->setRenderingIsRemote(FALSE);
 }
 
-void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFramebufferObjectFormat& fmt) {
+void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFormat& fmt) {
   if(pbuff) delete pbuff;
   viewport.setWindowSize(width, height);
-  pbuff = new QGLFramebufferObject(width, height, fmt);
+  pbuff = new QGLPixelBuffer(width, height, fmt);
+  cache_context = SoGLCacheContextElement::getUniqueCacheContext(); // unique per pixel buffer object, just to be sure
 }
 
 void SoOffscreenRendererQt::makeMultisampleBuffer(int width, int height, int samples) {
   if(samples < 0) samples = 4;
-  QGLFramebufferObjectFormat fmt;
+  QGLFormat fmt;
   if(samples > 0) {
-//     fmt.setSampleBuffers(true);
+    fmt.setSampleBuffers(true);
     fmt.setSamples(samples);
   }
-//   else {
-//     fmt.setSampleBuffers(false);
-//   }
-  fmt.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
+  else {
+    fmt.setSampleBuffers(false);
+  }
   makeBuffer(width, height, fmt);
 }
 
@@ -185,16 +184,12 @@ SoOffscreenRendererQt::renderFromBase(SoBase * base)
     makeMultisampleBuffer(fullsize[0], fullsize[1]); // use default
   }
 
-//   pbuff->makeCurrent();		// activate us!
-  pbuff->bind();
-
-  uint32_t newcontext = SoGLCacheContextElement::getUniqueCacheContext();
-  //  const uint32_t newcontext = this->glcanvas.activateGLContext();
+  pbuff->makeCurrent();		// activate us!
 
   // oldcontext is used to restore the previous context id, in case
   // the render action is not allocated by us.
   const uint32_t oldcontext = this->renderaction->getCacheContext();
-  this->renderaction->setCacheContext(newcontext);
+  this->renderaction->setCacheContext(cache_context);
 
   glEnable(GL_DEPTH_TEST);
   glClearColor(this->backgroundcolor[0],
@@ -218,8 +213,7 @@ SoOffscreenRendererQt::renderFromBase(SoBase * base)
   this->renderaction->removePreRenderCallback(pre_render_cb, NULL);
 
 //   this->glcanvas.deactivateGLContext();
-//   pbuff->doneCurrent();
-  pbuff->release();
+  pbuff->doneCurrent();
 
   this->renderaction->setCacheContext(oldcontext); // restore old
 
