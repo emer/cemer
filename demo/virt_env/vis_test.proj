@@ -141,21 +141,33 @@ LeabraProject .projects[0] {
       ProgEl_List @.init_code = [0] {
       };
 
-      ProgEl_List @.prog_code = [5] {
+      ProgEl_List @.prog_code = [8] {
 	IfReturn @[0] { };
 	ProgramCall @[1] { 
 	  ProgArg_List @.prog_args = [0] {
 	  };
 	};
-	MiscCall @[2] { 
+	ProgramCall @[2] { 
+	  ProgArg_List @.prog_args = [0] {
+	  };
+	};
+	ProgramCall @[3] { 
+	  ProgArg_List @.prog_args = [0] {
+	  };
+	};
+	ProgramCall @[4] { 
+	  ProgArg_List @.prog_args = [0] {
+	  };
+	};
+	MiscCall @[5] { 
 	  ProgArg_List @.meth_args = [0] {
 	  };
 	};
-	MiscCall @[3] { 
+	MiscCall @[6] { 
 	  ProgArg_List @.meth_args = [0] {
 	  };
 	};
-	MiscCall @[4] { 
+	MiscCall @[7] { 
 	  ProgArg_List @.meth_args = [0] {
 	  };
 	};
@@ -1608,6 +1620,13 @@ LeabraProject .projects[0] {
   major=0;
   minor=0;
   step=0;
+ };
+ license {
+  owner="Regents of the University of Colorado";
+  license=GPLv2;
+  org="CCNLab at University of Colorado Boulder";
+  year="2010";
+  custom=;
  };
  wiki_url {
   sync=0;
@@ -8705,7 +8724,40 @@ LeabraProject .projects[0] {
      target=.projects[0].programs[3]$$;
      targ_ld_init="*VisTest_3D*";
     };
-    MiscCall @[2] {
+    ProgramCall @[2] {
+     desc=;
+     flags=;
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     target=$.projects[0].programs[3]$;
+     targ_ld_init="*VisTest_3D*";
+    };
+    ProgramCall @[3] {
+     desc=;
+     flags=;
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     target=$.projects[0].programs[3]$;
+     targ_ld_init="*VisTest_3D*";
+    };
+    ProgramCall @[4] {
+     desc=;
+     flags=;
+     prog_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+     target=$.projects[0].programs[3]$;
+     targ_ld_init="*VisTest_3D*";
+    };
+    MiscCall @[5] {
      desc=;
      flags=;
      result_var=NULL;
@@ -8717,7 +8769,7 @@ LeabraProject .projects[0] {
       el_def=0;
      };
     };
-    MiscCall @[3] {
+    MiscCall @[6] {
      desc=;
      flags=;
      result_var=NULL;
@@ -8729,7 +8781,7 @@ LeabraProject .projects[0] {
       el_def=0;
      };
     };
-    MiscCall @[4] {
+    MiscCall @[7] {
      desc=;
      flags=;
      result_var=NULL;
@@ -17838,7 +17890,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1.007931: y=-0.004296356: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=2;
@@ -18736,7 +18788,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;

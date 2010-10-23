@@ -22,7 +22,8 @@
 
 #ifdef TA_USE_INVENTOR
 
-#include <QGLPixelBuffer>
+//#include <QGLPixelBuffer>
+#include <QGLFramebufferObject>
 
 #include <Inventor/SbColor.h>
 #include <Inventor/actions/SoGLRenderAction.h>
@@ -49,12 +50,12 @@ public:
   virtual SbBool render(SoNode * scene);
   virtual SbBool render(SoPath * scene);
 
-  virtual void		makeBuffer(int width, int height, const QGLFormat& fmt);
+  virtual void		makeBuffer(int width, int height, const QGLFramebufferObjectFormat& fmt);
   // create the pixel buffer of given size and format -- this should be called prior to render, otherwise a default will be constructed
   virtual void		makeMultisampleBuffer(int width, int height, int samples = -1);
   // create the pixel buffer of given size, setting the gl format information to use multisample antialiasing -- a -1 means use default value (4), otherwise use what is specified
 
-  QGLPixelBuffer*	getBuffer() { return pbuff; }
+  QGLFramebufferObject*	getBuffer() { return pbuff; }
   // returns the pixel buffer that has the image in it
   QImage		getImage()  { return pbuff->toImage(); }
   // use the QImage for all file IO stuff etc
@@ -65,15 +66,12 @@ protected:
   virtual void	Constr(const SbViewportRegion & vpr, SoGLRenderAction * glrenderaction = NULL);
   virtual SbBool renderFromBase(SoBase * base);
 
-  QGLPixelBuffer*	pbuff; // the offscreen rendering supported by qt
+  QGLFramebufferObject*	pbuff; // the offscreen rendering supported by qt
 
   SbViewportRegion viewport;
   SbColor backgroundcolor;
   SoGLRenderAction * renderaction;
   SbBool didallocation;
-
-  SbBool lastnodewasacamera;
-  SoCamera * visitedcamera;
 };
 
 #endif // TA_USE_INVENTOR

@@ -34,7 +34,6 @@
 void SoOffscreenRendererQt::Constr(const SbViewportRegion & vpr,
 				   SoGLRenderAction * glrenderaction) {
   this->backgroundcolor.setValue(0,0,0);
-  this->lastnodewasacamera = FALSE;
 	
   if (glrenderaction) {
     this->renderaction = glrenderaction;
@@ -151,22 +150,23 @@ pre_render_cb(void * userdata, SoGLRenderAction * action)
   action->setRenderingIsRemote(FALSE);
 }
 
-void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFormat& fmt) {
+void SoOffscreenRendererQt::makeBuffer(int width, int height, const QGLFramebufferObjectFormat& fmt) {
   if(pbuff) delete pbuff;
-  pbuff = new QGLPixelBuffer(width, height, fmt);
   viewport.setWindowSize(width, height);
+  pbuff = new QGLFramebufferObject(width, height, fmt);
 }
 
 void SoOffscreenRendererQt::makeMultisampleBuffer(int width, int height, int samples) {
   if(samples < 0) samples = 4;
-  QGLFormat fmt;
+  QGLFramebufferObjectFormat fmt;
   if(samples > 0) {
-    fmt.setSampleBuffers(true);
+//     fmt.setSampleBuffers(true);
     fmt.setSamples(samples);
   }
-  else {
-    fmt.setSampleBuffers(false);
-  }
+//   else {
+//     fmt.setSampleBuffers(false);
+//   }
+  fmt.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
   makeBuffer(width, height, fmt);
 }
 
@@ -185,7 +185,8 @@ SoOffscreenRendererQt::renderFromBase(SoBase * base)
     makeMultisampleBuffer(fullsize[0], fullsize[1]); // use default
   }
 
-  pbuff->makeCurrent();		// activate us!
+//   pbuff->makeCurrent();		// activate us!
+  pbuff->bind();
 
   uint32_t newcontext = SoGLCacheContextElement::getUniqueCacheContext();
   //  const uint32_t newcontext = this->glcanvas.activateGLContext();
@@ -217,7 +218,8 @@ SoOffscreenRendererQt::renderFromBase(SoBase * base)
   this->renderaction->removePreRenderCallback(pre_render_cb, NULL);
 
 //   this->glcanvas.deactivateGLContext();
-  pbuff->doneCurrent();
+//   pbuff->doneCurrent();
+  pbuff->release();
 
   this->renderaction->setCacheContext(oldcontext); // restore old
 
