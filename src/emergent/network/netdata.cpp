@@ -1697,12 +1697,13 @@ String ActBasedRF::GetDisplayName() const {
 
 void ActBasedRF::ConfigDataTable(DataTable* dt, Network* net) {
   dt->StructUpdate(true);
+  dt->Reset();			// nuke cols -- ensure matching
   int rows = trg_layer->units.leaves;
   int idx;
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, net->layers., li) {
-    if(lay->lesioned() || lay->Iconified()) continue;
+    if(lay->lesioned()) continue;
     DataCol* da;
     if(lay->unit_groups)
       da = dt->FindMakeColName(lay->name, idx, VT_FLOAT, 4, lay->un_geom.x,

@@ -3384,25 +3384,39 @@ void V1MotionSpec::UpdateAfterEdit_impl() {
 }
 
 void V1BinocularSpec::Initialize() {
-  use_sum = false;
   n_disps = 1;
-  disp_off = 4;
-  tuning_width = 2;
-  end_width = 8;
+  disp_off = 10;
+  tuning_width = 5;
+  end_width = 10;
   gauss_sig = 0.7f;
+  n_matches = 5;
+  win_half_sz = 3;
   opt_thr = 0.01f;
+  good_thr = 0.5f;
+  cnt_thr = 2;
+  pct_thr = 0.1f;
+  neigh_wt = 0.5f;
 
   tot_disps = 1 + 2 * n_disps;
   max_width = 1 + 2 * tuning_width + end_width;
+  max_off = n_disps * disp_off + tuning_width + end_width;
+  tot_offs = 1 + 2 * max_off;
+  win_sz = 1 + 2 * win_half_sz;
+  win_area = win_sz * win_sz;
 }
 
 void V1BinocularSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   tot_disps = 1 + 2 * n_disps;
   max_width = 1 + 2 * tuning_width + end_width;
+  max_off = n_disps * disp_off + tuning_width + end_width;
+  tot_offs = 1 + 2 * max_off;
+  win_sz = 1 + 2 * win_half_sz;
+  win_area = win_sz * win_sz;
 }
 
 void V1DispSpreadSpec::Initialize() {
+  on = false;
   dsp_iters = 10;
   dsp_gain = 0.2f;
   v1b_mix = 0.5f;
@@ -4024,16 +4038,19 @@ bool V1RegionSpec::InitOutMatrix() {
 
   ///////////////////  V1B Output ////////////////////////
   if(region.ocularity == VisRegionParams::BINOCULAR) {
-    v1b_dsp_init.SetGeom(5, v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y,
-			 v1s_feat_geom.n);
+    v1b_dsp_nmatch.SetGeom(2, v1b_img_geom.x, v1b_img_geom.y);
+    v1b_dsp_flags.SetGeom(2, v1b_img_geom.x, v1b_img_geom.y);
+    v1b_dsp_match.SetGeom(4, 2, v1b_specs.n_matches, v1b_img_geom.x, v1b_img_geom.y);
+    v1b_dsp_win.SetGeom(3, DSP_N, v1b_img_geom.x, v1b_img_geom.y);
     v1b_out.SetGeom(4, v1b_feat_geom.x, v1b_feat_geom.y, v1b_img_geom.x, v1b_img_geom.y);
   }
   else {
-    v1b_out.SetGeom(1,1);	// free memory
-    v1b_dsp_init.SetGeom(1,1);
+    v1b_dsp_nmatch.SetGeom(1,1);
+    v1b_dsp_flags.SetGeom(1,1);
+    v1b_dsp_match.SetGeom(1,1);
+    v1b_dsp_win.SetGeom(1,1);
+    v1b_out.SetGeom(1,1);
   }
-  v1b_dsp_neigh.SetGeomN(v1b_dsp_init.geom);
-  v1b_dsp_out.SetGeomN(v1b_dsp_init.geom);
 
   ///////////////////  V1C Output ////////////////////////
   v1c_v1b_pre.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
@@ -4451,27 +4468,25 @@ bool V1RegionSpec::V1BinocularFilter() {
   threads.min_units = 1;
   threads.nibble_chunk = 1;	// small chunks
 
-  v1b_dsp_init.InitVals(0.0f);
+  v1b_dsp_nmatch.InitVals(0);
+  v1b_dsp_flags.InitVals(0);
 
-  ThreadImgProcCall ip_call_init((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_Init_thread);
+  ThreadImgProcCall ip_call_init((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_Match_thread);
   threads.Run(&ip_call_init, n_run);
 
-  v1b_dsp_out.CopyFrom(&v1b_dsp_init);
+  v1b_dsp_win.InitVals(0.0f);
 
-  ThreadImgProcCall ip_call_iter((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_Iter_thread);
-  // then iterate
-  for(int iter = 0; iter < v1b_dsp_specs.dsp_iters; iter++) {
-    threads.Run(&ip_call_iter, n_run);
-  }
+  ThreadImgProcCall ip_call_win((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_WinAgg_thread);
+  threads.Run(&ip_call_win, n_run);
 
-  // then generate final output
+  // then generate net and final output
   ThreadImgProcCall ip_call_out((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_Out_thread);
   threads.Run(&ip_call_out, n_run);
 
   return true;
 }
 
-void V1RegionSpec::V1BinocularFilter_Init_thread(int v1b_idx, int thread_no) {
+void V1RegionSpec::V1BinocularFilter_Match_thread(int v1b_idx, int thread_no) {
   TwoDCoord bc;			// complex coords
   bc.SetFmIndex(v1b_idx, v1b_img_geom.x);
 
@@ -4481,112 +4496,197 @@ void V1RegionSpec::V1BinocularFilter_Init_thread(int v1b_idx, int thread_no) {
   TwoDCoord bo;			// binoc offset
   bo.y = bc.y;			// this will never be wrapped or clipped so can be set once..
 
-  for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
-    sfc.SetFmIndex(sfi, v1s_feat_geom.x);
+  int n_match = 0;		// total number of top-level matches recorded
+  int n_good = 0;		// total number that exceed the basic goodness threshold
+  bool has_rv = false;		// is there actually an above-threshold feature in the right visual input
+  int max_idx = -1;		// index of max guy on top-matches list
+  float max_dist = 100.0f;	// max guy on the current top-matches list
+  for(int off = -v1b_specs.max_off; off <= v1b_specs.max_off; off++) {
+    // collect average feature dist at this offset
+    float sum_dist = 0.0f;
+    int n_sum = 0;
+    for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
+      sfc.SetFmIndex(sfi, v1s_feat_geom.x);
 
-    // response is anchored at corresponding location on the right (dominant) eye --
-    // this determines the max response at this point in the visual field
-    float rv = MatMotEl(&v1s_out_r, sfc.x, sfc.y, bc.x, bc.y, cur_mot_idx); // note: bc
-    if(rv < v1b_specs.opt_thr) {
-      continue;
+      // response is anchored at corresponding location on the right (dominant) eye
+      float rv = MatMotEl(&v1s_out_r, sfc.x, sfc.y, bc.x, bc.y, cur_mot_idx); // note: bc
+      if(rv < v1b_specs.opt_thr) {
+	continue;
+      }
+
+      bo.x = bc.x - off;
+      if(bo.WrapClip(wrap, v1s_img_geom)) {
+	if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+      }
+      float lv = MatMotEl(&v1s_out_l, sfc.x, sfc.y, bo.x, bo.y, cur_mot_idx);
+      float dist = fabsf(lv - rv) / rv; // normalized absolute difference of values
+      sum_dist += dist;
+      n_sum++;
     }
+    if(n_sum == 0) continue;	// all empty
+    has_rv = true;
 
-    // find max left eye response across each disparity
-    float dsp_sum = 0.0f;
-    for(int disp=-v1b_specs.n_disps; disp <= v1b_specs.n_disps; disp++) {
-      int didx = disp + v1b_specs.n_disps;
-      int dwd = v1b_widths.FastEl(didx);
-      float max_lv = 0.0f;
-      for(int twidx = 0; twidx < dwd; twidx++) {
-	int off = v1b_stencils.FastEl(twidx, didx);
-	
-	// left eye is opposite
-	bo.x = bc.x - off;
-	if(bo.WrapClip(wrap, v1s_img_geom)) {
-	  if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+    float avg_dist = sum_dist / (float)n_sum;
+    if(avg_dist >= v1b_specs.good_thr) continue; // not good enough to consider
+    n_good++;  // if too many good fits, then we're in trouble..
+
+    // use the replace-the worst case strategy to maintain a list of top matches
+    if(n_match == v1b_specs.n_matches) { // already saturated the list
+      if(avg_dist > max_dist) continue; // worse than current worst case, bail
+      // replace the guy that was the current max value on the list
+      v1b_dsp_match.FastEl(DSP_DIST, max_idx, bc.x, bc.y) = avg_dist;
+      v1b_dsp_match.FastEl(DSP_OFF, max_idx, bc.x, bc.y) = off;
+      // now find the new min and max guy
+      max_dist = 0.0f;
+      for(int m=0; m<n_match; m++) {
+	float mdst = v1b_dsp_match.FastEl(DSP_DIST, m, bc.x, bc.y);
+	if(mdst > max_dist) {
+	  max_dist = mdst;
+	  max_idx = m;
 	}
-	float lv = MatMotEl(&v1s_out_l, sfc.x, sfc.y, bo.x, bo.y, cur_mot_idx);
-	lv *= v1b_weights.FastEl(twidx, didx);
-	if(v1b_specs.use_sum)
-	  max_lv += lv;		// sum it up..
-	else
-	  max_lv = MAX(max_lv, lv);
       }
-      v1b_dsp_init.FastEl(didx, 1, bc.x, bc.y, sfi) = max_lv;
-      dsp_sum += max_lv;
     }
+    else {			// otherwise add given that it is good
+      if(n_match == 0 || avg_dist > max_dist) {
+	max_dist = avg_dist;	// new threshold
+	max_idx = n_match;
+      }
+      v1b_dsp_match.FastEl(DSP_DIST, n_match, bc.x, bc.y) = avg_dist;
+      v1b_dsp_match.FastEl(DSP_OFF, n_match, bc.x, bc.y) = off;
+      n_match++;
+      v1b_dsp_nmatch.FastEl(bc.x, bc.y) = n_match;
+    }
+  }
+  
+  if(n_good > v1b_specs.n_matches) {	// we matched more than we recorded -- mark as ambig
+    v1b_dsp_flags.FastEl(bc.x, bc.y) = DSP_AMBIG_N;
+  }
 
-    if(dsp_sum < v1b_specs.opt_thr) { // no real match found
-      for(int didx=0; didx < v1b_specs.tot_disps-1; didx++) {
-	float& dsp = v1b_dsp_init.FastEl(didx, 1, bc.x, bc.y, sfi);
-	dsp = 0.0f;		// zero
-      }
-      // assign everything to the farthest back plane..
-      v1b_dsp_init.FastEl(v1b_specs.tot_disps-1, 1, bc.x, bc.y, sfi) = 1.0f;
-    }
-    else {
-      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-	float& dsp = v1b_dsp_init.FastEl(didx, 1, bc.x, bc.y, sfi);
-	dsp /= dsp_sum;
-      }
-    }
-    // init now has sum-normalized weights -- then do iterations on neigh integration..
+  if(has_rv && n_match == 0) {	// couldn't find any good matches, but has an rv
+    v1b_dsp_flags.FastEl(bc.x, bc.y) = DSP_AMBIG_THR;
   }
 }
 
-void V1RegionSpec::V1BinocularFilter_Iter_thread(int v1b_idx, int thread_no) {
+void V1RegionSpec::V1BinocularFilter_WinAgg_thread(int v1b_idx, int thread_no) {
   TwoDCoord bc;			// complex coords
   bc.SetFmIndex(v1b_idx, v1b_img_geom.x);
 
   int cur_mot_idx = v1s_circ_r.CircIdx_Last();
 
-  TwoDCoord fc;			// v1b feature coords -- destination
-  TwoDCoord sfc;		// v1s feature coords -- source
   TwoDCoord bn;			// binoc neighbor
 
-  for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
-    sfc.SetFmIndex(sfi, v1s_feat_geom.x);
-    fc.x = sfc.x;
-    float rv = MatMotEl(&v1s_out_r, sfc.x, sfc.y, bc.x, bc.y, cur_mot_idx); // note: bc
-    if(rv < v1b_specs.opt_thr) {
-      continue;
-    }
+  float win_dist[v1b_specs.tot_offs]; // sum of win distances at each offset
+  int win_cnt[v1b_specs.tot_offs]; // count of items with a match at each offset
+  for(int i=0; i<v1b_specs.tot_offs; i++) {
+    win_dist[i] = 0.0f;
+    win_cnt[i] = 0;
+  }
 
-    for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-      v1b_dsp_neigh.FastEl(didx, 1, bc.x, bc.y, sfi) = 0.0f; // init
-    }
+  int& flag = v1b_dsp_flags.FastEl(bc.x, bc.y);
 
-    // compute neigh weighting..
-    for(int nidx = 0; nidx < v1b_dsp_specs.tot_width; nidx++) {
-      int nx = v1b_dsp_stencils.FastEl(X, nidx, fc.x); // fc.x = angle
-      int ny = v1b_dsp_stencils.FastEl(Y, nidx, fc.x);
-      bn.x = bc.x + nx;
-      bn.y = bc.y + ny;
+  // accumulate distances by offsets across window
+  int tot_cnt = 0;
+  for(int wy = -v1b_specs.win_half_sz; wy <= v1b_specs.win_half_sz; wy++) {
+    for(int wx = -v1b_specs.win_half_sz; wx <= v1b_specs.win_half_sz; wx++) {
+      bn.y = bc.y + wy;
+      bn.x = bc.x + wx;
+
       if(bn.WrapClip(wrap, v1b_img_geom)) {
 	if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
       }
-      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-	float ndsp = v1b_dsp_out.FastEl(didx, 1, bn.x, bn.y, sfi);
-	float& dsp = v1b_dsp_neigh.FastEl(didx, 1, bc.x, bc.y, sfi);
-	dsp += v1b_dsp_weights.FastEl(didx) * ndsp;	// add it up
-      }
-    }
 
-    float dsp_sum = 0.0f;
-    for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-      float dspn = v1b_dsp_neigh.FastEl(didx, 1, bc.x, bc.y, sfi);
-      float& dspo = v1b_dsp_out.FastEl(didx, 1, bc.x, bc.y, sfi);
-      dspo += v1b_dsp_specs.dsp_gain * dspn;
-      dsp_sum += dspo;
-    }
-    // keep it normed
-    if(dsp_sum > 0.0f) {
-      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-	float& dsp = v1b_dsp_out.FastEl(didx, 1, bc.x, bc.y, sfi);
-	dsp = dsp / dsp_sum;
+      int n_match = v1b_dsp_nmatch.FastEl(bn.x, bn.y);
+      if(n_match == 0) continue;
+
+      int nflag = v1b_dsp_flags.FastEl(bn.x, bn.y);
+      if(nflag != DSP_NONE) continue; // avoid anything with a flag (can only be DSP_AMBIG_N)
+      for(int m=0; m<n_match; m++) {
+	float mdst = v1b_dsp_match.FastEl(DSP_DIST, m, bn.x, bn.y);
+	int off = (int)v1b_dsp_match.FastEl(DSP_OFF, m, bn.x, bn.y);
+	int oidx = v1b_specs.max_off + off;
+	win_dist[oidx] += mdst;
+	win_cnt[oidx]++;
+	tot_cnt++;
       }
     }
   }
+
+  // process accumulated info to find offset with maximum count and minimum dist
+  float min_dist = 100.0f;
+  float min_dist_oidx = -1;
+  float min_dist_cnt = 0.0f;
+  float max_cnt = 0;
+  int max_cnt_oidx = -1;
+  float max_cnt_dist = 100.0f;
+  for(int i=0; i<v1b_specs.tot_offs; i++) {
+    int cnt = win_cnt[i];
+    if(cnt == 0) continue;
+    float eff_cnt = (float)cnt;
+    float eff_dist = win_dist[i] /= (float)cnt;
+    float extra_dist = 0.0f;
+    float extra_dwt = 0.0f;
+    // include 1/2 weight of neighbors in effective count -- more robust to small diffs
+    if(i > 0) {
+      eff_cnt += v1b_specs.neigh_wt * (float)win_cnt[i-1];
+      if(win_cnt[i-1] > 0) {
+	extra_dist += v1b_specs.neigh_wt * (win_dist[i-1] / (float)win_cnt[i-1]);
+	extra_dwt += v1b_specs.neigh_wt;
+      }
+    }
+    if(i < v1b_specs.tot_offs-1) {
+      eff_cnt += v1b_specs.neigh_wt * (float)win_cnt[i+1];
+      if(win_cnt[i+1] > 0) {
+	extra_dist += v1b_specs.neigh_wt * (win_dist[i+1] / (float)win_cnt[i+1]);
+	extra_dwt += v1b_specs.neigh_wt;
+      }
+    }
+    if(extra_dwt > 0.0f) {
+      eff_dist = (eff_dist + extra_dist) / (1.0f + extra_dwt); // weighted average -- weight of 1 for current point
+    }
+
+    if(eff_cnt <= v1b_specs.cnt_thr) continue; // bail
+
+    if(eff_dist < min_dist) {
+      min_dist = eff_dist;
+      min_dist_oidx = i;
+      min_dist_cnt = eff_cnt;
+    }
+    if(eff_cnt > max_cnt) {
+      max_cnt = eff_cnt;
+      max_cnt_oidx = i;
+      max_cnt_dist = eff_dist;
+    }
+
+  }
+  if(max_cnt_oidx < 0) {		// flag should already be set, but just in case..
+    if(flag == DSP_NONE)
+      flag = DSP_AMBIG_THR;
+  }
+  else {
+    float max_cnt_pct = max_cnt / (float)tot_cnt;
+    
+    float& win_min_dist = v1b_dsp_win.FastEl(DSP_DIST, bc.x, bc.y);
+    float& win_min_off = v1b_dsp_win.FastEl(DSP_OFF, bc.x, bc.y);
+    float& win_min_cnt = v1b_dsp_win.FastEl(DSP_CNT, bc.x, bc.y);
+
+    if(max_cnt_pct > v1b_specs.pct_thr) {	// dominant based on count -- go with it
+      int off = max_cnt_oidx - v1b_specs.max_off;
+      win_min_dist = max_cnt_dist;
+      win_min_off = off;
+      win_min_cnt = max_cnt;
+    }
+    else {			// go with min dist
+      int off = min_dist_oidx - v1b_specs.max_off;
+      win_min_dist = min_dist;
+      win_min_off = off;
+      win_min_cnt = min_dist_cnt;
+    }
+    flag = DSP_NONE;		// clear any existing flags -- we were won-over by the crowd
+  }
+
+  // todo: ideally here you'd propagate along horiz only to resolve n problem..
+//   if(flag == DSP_AMBIG_N) {
+//   }
 }
 
 void V1RegionSpec::V1BinocularFilter_Out_thread(int v1b_idx, int thread_no) {
@@ -4598,45 +4698,96 @@ void V1RegionSpec::V1BinocularFilter_Out_thread(int v1b_idx, int thread_no) {
   TwoDCoord fc;			// v1b feature coords -- destination
   TwoDCoord sfc;		// v1s feature coords -- source
 
-  for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
-    sfc.SetFmIndex(sfi, v1s_feat_geom.x);
-    fc.x = sfc.x;
+  int min_off = (int)v1b_dsp_win.FastEl(DSP_OFF, bc.x, bc.y); // this is our final offset
 
-    // response is anchored at corresponding location on the right (dominant) eye --
-    // this determines the max response at this point in the visual field
-    float rv = MatMotEl(&v1s_out_r, sfc.x, sfc.y, bc.x, bc.y, cur_mot_idx); // note: bc
+  int flag = v1b_dsp_flags.FastEl(bc.x, bc.y);
 
-    if(rv < v1b_specs.opt_thr) {
-      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-	fc.y = sfc.y + didx * v1s_feat_geom.y;
-	v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = 0.0f;
-      }
-      continue;
+  float ambig_wt = 1.0f / (float)v1b_specs.tot_disps; // ambiguous case weighting
+
+  for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+    int dwd = v1b_widths.FastEl(didx);
+    float dval = 0.0f;
+    if(flag != DSP_NONE) {	// some kind of ambiguous
+      dval = ambig_wt;
     }
-    
-    float dsp_max = 0.0f;
-    for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-      float dsp = v1b_dsp_out.FastEl(didx, 1, bc.x, bc.y, sfi);
-      dsp_max = MAX(dsp_max, dsp);
-    }
-    if(dsp_max > 0.0f) {
-      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-	float& dsp = v1b_dsp_out.FastEl(didx, 1, bc.x, bc.y, sfi);
-	dsp /= dsp_max;		// max norm to 1 for this step
-	float dspi = v1b_dsp_init.FastEl(didx, 1, bc.x, bc.y, sfi);
-	dsp = v1b_dsp_specs.v1b_mix * dsp + v1b_dsp_specs.v1b_mix_c * dspi; // remix
-	fc.y = sfc.y + didx * v1s_feat_geom.y;
-	v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = rv * dsp;
+    else {
+      for(int twidx = 0; twidx < dwd; twidx++) {
+	int off = v1b_stencils.FastEl(twidx, didx);
+	if(off == min_off)
+	  dval = v1b_weights.FastEl(twidx, didx);
       }
     }
-    else {			// shouldn't happen, but just in case..
-      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-	fc.y = sfc.y + didx * v1s_feat_geom.y;
-	v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = 0.0f;
-      }
+
+    // now apply the dval to all the features
+    for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
+      sfc.SetFmIndex(sfi, v1s_feat_geom.x);
+      fc.x = sfc.x;
+
+      // response is anchored at corresponding location on the right (dominant) eye --
+      // this determines the max response at this point in the visual field
+      float rv = MatMotEl(&v1s_out_r, sfc.x, sfc.y, bc.x, bc.y, cur_mot_idx); // note: bc
+      fc.y = sfc.y + didx * v1s_feat_geom.y;
+      v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = rv * dval;
     }
   }
 }
+
+// todo: not currently using this code, but keeping around just in case..
+
+// void V1RegionSpec::V1BinocularFilter_Iter_thread(int v1b_idx, int thread_no) {
+//   TwoDCoord bc;			// complex coords
+//   bc.SetFmIndex(v1b_idx, v1b_img_geom.x);
+
+//   int cur_mot_idx = v1s_circ_r.CircIdx_Last();
+
+//   TwoDCoord fc;			// v1b feature coords -- destination
+//   TwoDCoord sfc;		// v1s feature coords -- source
+//   TwoDCoord bn;			// binoc neighbor
+
+//   for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
+//     sfc.SetFmIndex(sfi, v1s_feat_geom.x);
+//     fc.x = sfc.x;
+//     float rv = MatMotEl(&v1s_out_r, sfc.x, sfc.y, bc.x, bc.y, cur_mot_idx); // note: bc
+//     if(rv < v1b_specs.opt_thr) {
+//       continue;
+//     }
+
+//     for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+//       v1b_dsp_neigh.FastEl(didx, 0, bc.x, bc.y, sfi) = 0.0f; // init
+//     }
+
+//     // compute neigh weighting..
+//     for(int nidx = 0; nidx < v1b_dsp_specs.tot_width; nidx++) {
+//       int nx = v1b_dsp_stencils.FastEl(X, nidx, fc.x); // fc.x = angle
+//       int ny = v1b_dsp_stencils.FastEl(Y, nidx, fc.x);
+//       bn.x = bc.x + nx;
+//       bn.y = bc.y + ny;
+//       if(bn.WrapClip(wrap, v1b_img_geom)) {
+// 	if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+//       }
+//       for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+// 	float ndsp = v1b_dsp_out.FastEl(didx, 0, bn.x, bn.y, sfi);
+// 	float& dsp = v1b_dsp_neigh.FastEl(didx, 0, bc.x, bc.y, sfi);
+// 	dsp += v1b_dsp_weights.FastEl(didx) * ndsp;	// add it up
+//       }
+//     }
+
+//     float dsp_sum = 0.0f;
+//     for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+//       float dspn = v1b_dsp_neigh.FastEl(didx, 0, bc.x, bc.y, sfi);
+//       float& dspo = v1b_dsp_out.FastEl(didx, 0, bc.x, bc.y, sfi);
+//       dspo += v1b_dsp_specs.dsp_gain * dspn;
+//       dsp_sum += dspo;
+//     }
+//     // keep it normed
+//     if(dsp_sum > 0.0f) {
+//       for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+// 	float& dsp = v1b_dsp_out.FastEl(didx, 0, bc.x, bc.y, sfi);
+// 	dsp = dsp / dsp_sum;
+//       }
+//     }
+//   }
+// }
 
 bool V1RegionSpec::V1ComplexFilter() {
   if(v1c_kwta.on)
@@ -5158,21 +5309,12 @@ void V1RegionSpec::V1ComplexFilter_V1BAvgSum() {
   TwoDCoord sfc;	// v1s feature coords
   for(bc.y = 0; bc.y < v1b_img_geom.y; bc.y++) {
     for(bc.x = 0; bc.x < v1b_img_geom.x; bc.x++) {
-      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-	// disparity value = -1.0..1.0 normalized
-	float dval = (float)(didx - v1b_specs.n_disps) / (float)v1b_specs.n_disps;
-
-	float tot_act = 0.0f;
-	for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
-	  sfc.SetFmIndex(sfi, v1s_feat_geom.x);
-	  bfc.x = sfc.x;
-	  bfc.y = sfc.y + didx * v1s_feat_geom.y;
-	  float bact = v1b_out.FastEl(bfc.x, bfc.y, bc.x, bc.y);
-	  tot_act += bact;
-	}
-	sum_val += tot_act * dval;
-	norm_val += tot_act;
-      }
+      int flag = v1b_dsp_flags.FastEl(bc.x, bc.y);
+      if(flag != DSP_NONE) continue;
+      float min_off = v1b_dsp_win.FastEl(DSP_OFF, bc.x, bc.y); // this is our final offset
+      float norm_dsp = min_off / (float)v1b_specs.max_off;
+      sum_val += norm_dsp;
+      norm_val += 1.0f;		// just give equal weighting..
     }
   }
   if(norm_val > 0.0f)
@@ -5431,12 +5573,12 @@ bool V1RegionSpec::InitDataTable() {
 		v1b_feat_geom.x, v1b_feat_geom.y, v1b_img_geom.x, v1b_img_geom.y);
     }
     if(v1b_save & SAVE_DEBUG) {
-      for(int i=0; i<v1s_feat_geom.n; i++) {
-	col = data_table->FindMakeColName(name + "_v1b_dsp_init_f" + String(i),
-	  idx, DataTable::VT_FLOAT, 4, v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
-	col = data_table->FindMakeColName(name + "_v1b_dsp_out_f" + String(i),
-	  idx, DataTable::VT_FLOAT, 4, v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
-      }
+      col = data_table->FindMakeColName(name + "_v1b_dsp_off",
+	idx, DataTable::VT_FLOAT, 2, v1b_img_geom.x, v1b_img_geom.y);
+      col = data_table->FindMakeColName(name + "_v1b_dsp_mindist",
+	idx, DataTable::VT_FLOAT, 2, v1b_img_geom.x, v1b_img_geom.y);
+      col = data_table->FindMakeColName(name + "_v1b_dsp_cnt",
+	idx, DataTable::VT_FLOAT, 2, v1b_img_geom.x, v1b_img_geom.y);
     }
   }
 
@@ -5646,20 +5788,68 @@ bool V1RegionSpec::V1BOutputToTable(DataTable* dtab) {
     dout->CopyFrom(&v1b_out);
   }
   if(v1b_save & SAVE_DEBUG) {
-    for(int i=0; i<v1s_feat_geom.n; i++) {
-      {
-	col = data_table->FindMakeColName(name + "_v1b_dsp_init_f" + String(i),
-           idx, DataTable::VT_FLOAT, 4, v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
-	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-	float_MatrixPtr slc; slc = v1b_dsp_init.GetFrameSlice(i);
-	dout->CopyFrom(slc);
+    {
+      col = data_table->FindMakeColName(name + "_v1b_dsp_off",
+	idx, DataTable::VT_FLOAT, 2, v1b_img_geom.x, v1b_img_geom.y);
+      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+      for(sc.y = 0; sc.y < v1b_img_geom.y; sc.y++) {
+	for(sc.x = 0; sc.x < v1b_img_geom.x; sc.x++) {
+	  float val;
+	  int flag = v1b_dsp_flags.FastEl(sc.x, sc.y);
+	  if(flag == DSP_NONE) {
+	    val = v1b_dsp_win.FastEl(DSP_OFF, sc.x, sc.y) / (float)v1b_specs.max_off;
+	    // normalized disparity
+	  }
+	  else if(flag == DSP_AMBIG_N) {
+	    val = -1.1f;
+	  }
+	  else if(flag == DSP_AMBIG_THR) {
+	    val = -1.2f;
+	  }
+	  dout->FastEl(sc.x, sc.y) = val;
+	}
       }
-      {
-	col = data_table->FindMakeColName(name + "_v1b_dsp_out_f" + String(i),
-           idx, DataTable::VT_FLOAT, 4, v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
-	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-	float_MatrixPtr slc; slc = v1b_dsp_out.GetFrameSlice(i);
-	dout->CopyFrom(slc);
+    }
+    {
+      col = data_table->FindMakeColName(name + "_v1b_dsp_mindist",
+	idx, DataTable::VT_FLOAT, 2, v1b_img_geom.x, v1b_img_geom.y);
+      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+      for(sc.y = 0; sc.y < v1b_img_geom.y; sc.y++) {
+	for(sc.x = 0; sc.x < v1b_img_geom.x; sc.x++) {
+	  float val;
+	  int flag = v1b_dsp_flags.FastEl(sc.x, sc.y);
+	  if(flag == DSP_NONE) {
+	    val = v1b_dsp_win.FastEl(DSP_DIST, sc.x, sc.y); // this is our min dist
+	  }
+	  else if(flag == DSP_AMBIG_N) {
+	    val = -v1b_specs.good_thr;
+	  }
+	  else if(flag == DSP_AMBIG_THR) {
+	    val = -v1b_specs.good_thr + .1;
+	  }
+	  dout->FastEl(sc.x, sc.y) = val;
+	}
+      }
+    }
+    {
+      col = data_table->FindMakeColName(name + "_v1b_dsp_cnt",
+	idx, DataTable::VT_FLOAT, 2, v1b_img_geom.x, v1b_img_geom.y);
+      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+      for(sc.y = 0; sc.y < v1b_img_geom.y; sc.y++) {
+	for(sc.x = 0; sc.x < v1b_img_geom.x; sc.x++) {
+	  float val;
+	  int flag = v1b_dsp_flags.FastEl(sc.x, sc.y);
+	  if(flag == DSP_NONE) {
+	    val = v1b_dsp_win.FastEl(DSP_CNT, sc.x, sc.y); // this is our min dist
+	  }
+	  else if(flag == DSP_AMBIG_N) {
+	    val = -1.0f;
+	  }
+	  else if(flag == DSP_AMBIG_THR) {
+	    val = -2.0f;
+	  }
+	  dout->FastEl(sc.x, sc.y) = val;
+	}
       }
     }
   }

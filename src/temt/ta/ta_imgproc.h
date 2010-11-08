@@ -985,16 +985,25 @@ class TA_API V1BinocularSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 binocular cells
 INHERITED(taOBase)
 public:
-  bool		use_sum;	// #DEF_false use the sum of the disparity weighted activations instead of the max -- the max is the default and seems overall to work best, but this is not fully resolved yet..
   int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = 1 near and 1 far)
-  int		disp_off;	// #DEF_4 offset from corresponding location for each disparity step
-  int		tuning_width; 	// #DEF_2 for non-focal disparities: additional width of encoding around target offset disparity -- allows for some fuzziness in encoding -- last disparity on near/far has extra end_width too
-  int		end_width;	// #DEF_8 extra tuning width on the ends, to extend out and capture all reasonable disparities
+  int		disp_off;	// #DEF_10 offset from corresponding location for each disparity step
+  int		tuning_width; 	// #DEF_5 for non-focal disparities: additional width of encoding around target offset disparity -- allows for some fuzziness in encoding -- last disparity on near/far has extra end_width too
+  int		end_width;	// #DEF_10 extra tuning width on the ends (adds beyond the tuning width), to extend out and capture all reasonable disparities
   float		gauss_sig; 	// #DEF_0.7 gaussian sigma for weighting the contribution of tuning width -- normalized by tuning_width -- last disparity on near/far ends does not come back down
+  int		n_matches;	// #DEF_5 number of best-fitting disparity matches to keep per point in initial processing step
+  int		win_half_sz;	// #DEF_3 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
   float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
+  float		good_thr;	// #DEF_0.5 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
+  float		cnt_thr;	// #DEF_2 in selecting the best disparity offset, threshold for number of matches to even consider as a candidate for best offset
+  float		pct_thr;	// #DEF_0.1 in selecting the best disparity offset, threshold for selecting based on percent of total matches at a given disparity for the disparity with the greatest number of matches -- below this value, the one with the minimum distance is selected regardless of number of matches
+  float		neigh_wt;	// #DEF_0.5 contribution of neighboring disparity offsets to current one in window aggregation procedure
 
   int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
   int		max_width;	// #READ_ONLY maximum total width (1 + 2 * tuning_width for symmetric, + end_width for ends)
+  int		max_off;	// #READ_ONLY maximum possible offset -- furthest point out in any of the stencils
+  int		tot_offs;	// #READ_ONLY 1 + 2 * max_off
+  int		win_sz;		// #READ_ONLY window full size = 1 + 2*win_half_sz
+  int		win_area;	// #READ_ONLY total number of elements in the full square window = win_sz * win_sz
 
   void 	Initialize();
   void	Destroy() { };
@@ -1007,11 +1016,12 @@ class TA_API V1DispSpreadSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for disparity spreading in the v1 binocular cells -- spreads along orientations
 INHERITED(taOBase)
 public:
-  int		dsp_iters;	// #DEF_10;0 number of iterations of spreading operation to spread consistency among local disparity codings
-  float		dsp_gain;	// #DEF_0.2 gain of influence of neighboring values in spreading disparities
-  float		v1b_mix;	// #DEF_0.5 how much overall disp spreading result influences the v1b disparity weightings in the end -- values < 1 preserve some of the original ambiguity of the bottom-up signal, as a hedge against potentially imperfect grouping results
-  int 		neigh_width;	// #DEF_4 neighborhood width -- how many locations on either side of each point to integrate neighborhood values over
-  float		gauss_sig; 	// #DEF_1 gaussian sigma for weighting the neighbors -- more distant ones are more weakly weighted
+  bool		on;		// #DEF_false whether to do disparity spreading
+  int		dsp_iters;	// #CONDSHOW_ON_on #DEF_10;0 number of iterations of spreading operation to spread consistency among local disparity codings
+  float		dsp_gain;	// #CONDSHOW_ON_on #DEF_0.2 gain of influence of neighboring values in spreading disparities
+  float		v1b_mix;	// #CONDSHOW_ON_on #DEF_0.5 how much overall disp spreading result influences the v1b disparity weightings in the end -- values < 1 preserve some of the original ambiguity of the bottom-up signal, as a hedge against potentially imperfect grouping results
+  int 		neigh_width;	// #CONDSHOW_ON_on #DEF_4 neighborhood width -- how many locations on either side of each point to integrate neighborhood values over
+  float		gauss_sig; 	// #CONDSHOW_ON_on #DEF_1 gaussian sigma for weighting the neighbors -- more distant ones are more weakly weighted
 
   int		tot_width;	// #READ_ONLY #NO_SAVE #HIDDEN neigh_width * 2 + 1
   float		v1b_mix_c;	// #READ_ONLY 1 - v1b_mix
@@ -1100,6 +1110,18 @@ public:
     LINE,	   // along the direction of the line
     ORTHO,	   // orthogonal to the line
   };
+  enum DspMatch {	// for storing disparity match information
+    DSP_OFF,		// disparity offset
+    DSP_DIST,		// feature activation absolute distance at given offset
+    DSP_CNT,		// count of number of matching feature locations supporting this disparity estimate
+    DSP_N,		// number of disparity match values to record
+  };
+
+  enum DspFlags {	// flags for disparity computation -- mutex so not bitflags
+    DSP_NONE,		// no flag
+    DSP_AMBIG_N,	// indicates that the disparity info at this location is ambiguous due to an excessive number of matches -- likely due to the apeture problem for horizontal features -- can try to fill in based on other constraints
+    DSP_AMBIG_THR,	// indicates that the disparity info at this location is ambiguous due to the threshold being exceeded -- no good bottom-up matches were available -- can try to fill in based on other constraints
+  };
 
 
   V1GaborSpec	v1s_specs;	// specs for V1 simple filters, computed using gabor filters directly onto the incoming image
@@ -1173,10 +1195,11 @@ public:
   CircMatrix	v1s_circ_l;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
 
   ///////////////////  V1B Output ////////////////////////
-  float_Matrix	v1b_dsp_init;	 // #READ_ONLY #NO_SAVE initial v1 binocular disparity weightings per each feature -- values are always normalized -- one frame for each v1s feature [tot_disps][1][img.x][img.y][v1s_geom.n]
-  float_Matrix	v1b_dsp_neigh;	 // #READ_ONLY #NO_SAVE accumulation of neighborhood disparity weightings from the spreading process -- values are not yet normalized [tot_disps][1][img.x][img.y][v1s_geom.n]
-  float_Matrix	v1b_dsp_out;	 // #READ_ONLY #NO_SAVE final output v1 binocular disparity weightings per each feature, reflecting a blend of the initial ones and the neighborhood inputs -- values are always normalized -- one frame for each v1s feature [tot_disps][1][img.x][img.y][v1s_geom.n]
-  float_Matrix	v1b_out;	 // #READ_ONLY #NO_SAVE v1 binocular output, which is just v1s feature activation times v1b_dsp_out weighting per feature -- [feat.x][feat.y][img.x][img.y]
+  int_Matrix	v1b_dsp_nmatch;	 // #READ_ONLY #NO_SAVE number of top matches -- tells how many actual matches are in v1b_dsp_match [img.x][img.y]
+  int_Matrix	v1b_dsp_flags;	 // #READ_ONLY #NO_SAVE flags to indicate status of match for this location [img.x][img.y]
+  float_Matrix	v1b_dsp_match;	 // #READ_ONLY #NO_SAVE list of top matches -- aggregates across features (average abs distance across features) -- values are offset and min dist at that index for each match, or DSP_AMBIG_HORIZ (see DspMatch enum) [2][n_matches][img.x][img.y]
+  float_Matrix	v1b_dsp_win;	 // #READ_ONLY #NO_SAVE results of the window aggregation process for each point -- integrates over spatial window and features -- result is the best match offset, min dist at that offset, and count of feature matches at that offset, or ambiguous [DSP_N][img.x][img.y]
+  float_Matrix	v1b_out;	 // #READ_ONLY #NO_SAVE v1 binocular output, which is v1s feature activation times v1b_dsp_win weighting per feature -- [feat.x][feat.y][img.x][img.y]
 
   ///////////////////  V1C Output ////////////////////////
   float_Matrix	v1c_v1b_pre;	 // #READ_ONLY #NO_SAVE reduce v1b features back down to v1s size by collapsing across disparity, but with focal region differentially weighted [v1s_feat.x][v1s_feat.y][v1s_img.x][v1s_img.y]
@@ -1241,10 +1264,10 @@ protected:
 
   virtual bool	V1BinocularFilter();
   // do binocular filters -- dispatch threads
-  virtual void 	V1BinocularFilter_Init_thread(int v1b_idx, int thread_no);
-  // do binocular filters -- compute initial disparity weightings
-  virtual void 	V1BinocularFilter_Iter_thread(int v1b_idx, int thread_no);
-  // do binocular filters -- one iteration of spreading disparity
+  virtual void 	V1BinocularFilter_Match_thread(int v1b_idx, int thread_no);
+  // do binocular filters -- compute initial matches between eyes
+  virtual void 	V1BinocularFilter_WinAgg_thread(int v1b_idx, int thread_no);
+  // do binocular filters -- aggregate over window and identify best match based on larger context
   virtual void 	V1BinocularFilter_Out_thread(int v1b_idx, int thread_no);
   // do binocular filters -- compute final output from disparity weightings
 
