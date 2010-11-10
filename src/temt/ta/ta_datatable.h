@@ -671,10 +671,10 @@ public:
   static char		GetDelim(Delimiters delim);
   // #IGNORE get delimiter from enum
   static int		ReadTillDelim(istream& strm, String& str, const char delim,
-				      bool quote_str);
+				      bool quote_str, bool& got_quote);
   // #IGNORE util function to read from stream into str until delim or newline or EOF
   static int		ReadTillDelim_Str(const String& istr, int& idx, String& str,
-					  const char delim, bool quote_str);
+					  const char delim, bool quote_str, bool& got_quote);
   // #IGNORE util function to read from String into str until delim or newline or EOF -- idx is current index and is also updated to new index
 
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj

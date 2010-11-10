@@ -2874,10 +2874,13 @@ char DataTable::GetDelim(Delimiters delim) {
   return ','; // must return something
 }
 
-int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool quote_str) {
+int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool quote_str,
+			     bool& got_quote) {
+  got_quote = false;
   int c;
   int depth = 0;
   if(quote_str && (strm.peek() == '\"')) {
+    got_quote = true;
     strm.get();
     depth++;
   }
@@ -2894,12 +2897,14 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
 }
 
 int DataTable::ReadTillDelim_Str(const String& istr, int& idx, String& str,
-				 const char delim, bool quote_str) {
+				 const char delim, bool quote_str, bool& got_quote) {
+  got_quote = false;
   int c;
   int depth = 0;
   int len = istr.length();
   if(idx >= len) return EOF;
   if(quote_str && (istr[idx] == '\"')) {
+    got_quote = true;
     idx++;
     depth++;
   }
@@ -2932,9 +2937,10 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,	bool native, boo
   load_mat_idx.Reset();
   int c;
   bool cont = true;
+  bool got_quote = false;
   while(cont) {
     String str;
-    c = ReadTillDelim(strm, str, cdlm, quote_str);
+    c = ReadTillDelim(strm, str, cdlm, quote_str, got_quote);
     cont = !((c == '\n') || (c == '\r') || (c == EOF));
     if (str.empty()) {
       if (!cont) break;
@@ -2999,10 +3005,11 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
   int last_mat_col = -1;
   int load_col = 0;		// loading column (always incr)
   int data_col = 0;		// data column (datacol index in data table)
+  bool got_quote = false;
   int c;
   while(true) {
     STRING_BUF(str, 32); // provide a buff so numbers and short strings are efficient
-    c = ReadTillDelim(strm, str, cdlm, quote_str);
+    c = ReadTillDelim(strm, str, cdlm, quote_str, got_quote);
     if (str.empty() && (c == EOF)) break;
     if(str == "_H:") {
       c = LoadHeader_impl(strm, delim, true);
@@ -3232,7 +3239,7 @@ void DataTable::DetermineLoadDataParams(istream& strm,
     spacefreq = ln1.freq(' ');
     useln1 = true;
   }
-  if(tabfreq == 0 && commafreq == 0 && spacefreq == 0) { // only if we didn't get anything
+  else {
     useln1 = false;					 // actually not good
     tabfreq = ln0.freq('\t');
     commafreq = ln0.freq(',');
@@ -3301,12 +3308,14 @@ void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
   DataCol* last_mat_da = NULL;
   int last_mat_cell = -1;
   bool cont = true;
+  bool hdr_got_quote = false;
+  bool dat_got_quote = false;
   while(cont) {
     String hstr;
     if(hdr_ln.nonempty())
-      hc = ReadTillDelim_Str(hdr_ln, hdr_idx, hstr, cdlm, quote_str);
+      hc = ReadTillDelim_Str(hdr_ln, hdr_idx, hstr, cdlm, quote_str, hdr_got_quote);
     String dstr;
-    dc = ReadTillDelim_Str(dat_ln, dat_idx, dstr, cdlm, quote_str);
+    dc = ReadTillDelim_Str(dat_ln, dat_idx, dstr, cdlm, quote_str, dat_got_quote);
 
     cont = !((dc == '\n') || (dc == '\r') || (dc == EOF));
     if(dstr.empty() && hstr.empty()) {
@@ -3315,6 +3324,8 @@ void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
     }
 
     ValType val_typ = DecodeImportDataType(dstr);
+    if(dat_got_quote) 
+      val_typ = VT_STRING;
     DataCol* da = NULL;
     int col_idx;
     int cell_idx = -1; // mat cell index, or -1 if not a mat
@@ -3388,6 +3399,9 @@ void DataTable::DecodeImportHeaderName(String nm, String& base_nm, int& cell_idx
 taBase::ValType DataTable::DecodeImportDataType(const String& dat_str) {
   if(dat_str.empty())
     return VT_VARIANT;
+
+  if(dat_str[0] == '\"')
+    return VT_STRING;
 
   int idx = 0;
   int c;
