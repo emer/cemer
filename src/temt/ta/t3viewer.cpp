@@ -330,7 +330,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   Constr_LHS_Buttons();
   Constr_Bot_Buttons();
 
-  quarter->setInteractionModeOn(false);
+//   quarter->setInteractionModeOn(false);
   setInteractionModeOn(false);	// default start it off!
 }
 
@@ -350,6 +350,7 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   interact_button = new QToolButton(this);
   interact_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   interact_button->setCheckable(true);
+  interact_button->setChecked(false);
   interact_button->setIcon(QPixmap((const char **)pick_xpm));
   interact_button->setToolTip("Interact (I key, or ESC to toggle): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
   connect(interact_button, SIGNAL(clicked()), this, SLOT(interactbuttonClicked()));

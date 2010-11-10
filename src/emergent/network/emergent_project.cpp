@@ -208,6 +208,7 @@ bool Wizard::StdNetwork(TypeDef* net_type, Network* net) {
 	}
       }
       else if(el->io_type == LayerWizEl::HIDDEN) {
+        lay->layer_type = Layer::HIDDEN;
 	if(i > 0) {
 	  Layer* prv = (Layer*)net->layers[i-1];
 	  lay->pos.z = prv->pos.z + 1;
