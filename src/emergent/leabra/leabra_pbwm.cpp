@@ -1124,28 +1124,32 @@ void PFCLayerSpec::GetSNrThalLayers(LeabraLayer* lay, LeabraLayer*& snrthal_mnt,
   Projection* p;
   taLeafItr pi;
   FOR_ITR_EL(Projection, p, lay->projections., pi) {
-    LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)fmlay->spec.SPtr();
-    if(ls->InheritsFrom(&TA_SNrThalLayerSpec)) {
-      if(((SNrThalLayerSpec*)ls)->bg_type == SNrThalLayerSpec::OUTPUT)
-	snrthal_out = fmlay;
-      else
-	snrthal_mnt = fmlay;
+    if(p->con_spec.type->InheritsFrom(TA_MarkerConSpec)) {
+      LeabraLayer* fmlay = (LeabraLayer*)p->from.ptr();
+      LeabraLayerSpec* ls = (LeabraLayerSpec*)fmlay->spec.SPtr();
+      if(ls->InheritsFrom(&TA_SNrThalLayerSpec)) {
+	if(((SNrThalLayerSpec*)ls)->bg_type == SNrThalLayerSpec::OUTPUT)
+	  snrthal_out = fmlay;
+	else
+	  snrthal_mnt = fmlay;
+      }
     }
   }
   if(snrthal_out) return;
   // look for snrthal_out in pfc_out layer
   FOR_ITR_EL(Projection, p, lay->send_prjns., pi) {
-    LeabraLayer* tolay = (LeabraLayer*)p->layer;
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)tolay->spec.SPtr();
-    if(ls->InheritsFrom(&TA_PFCOutLayerSpec)) {
-      Projection* p2;
-      taLeafItr pi2;
-      FOR_ITR_EL(Projection, p2, tolay->projections., pi2) {
-	LeabraLayer* fmlay = (LeabraLayer*)p2->from.ptr();
-	LeabraLayerSpec* ls = (LeabraLayerSpec*)fmlay->spec.SPtr();
-	if(ls->InheritsFrom(&TA_SNrThalLayerSpec)) {
-	  snrthal_out = fmlay;	// must be
+    if(p->con_spec.type->InheritsFrom(TA_MarkerConSpec)) {
+      LeabraLayer* tolay = (LeabraLayer*)p->layer;
+      LeabraLayerSpec* ls = (LeabraLayerSpec*)tolay->spec.SPtr();
+      if(ls->InheritsFrom(&TA_PFCOutLayerSpec)) {
+	Projection* p2;
+	taLeafItr pi2;
+	FOR_ITR_EL(Projection, p2, tolay->projections., pi2) {
+	  LeabraLayer* fmlay = (LeabraLayer*)p2->from.ptr();
+	  LeabraLayerSpec* ls = (LeabraLayerSpec*)fmlay->spec.SPtr();
+	  if(ls->InheritsFrom(&TA_SNrThalLayerSpec)) {
+	    snrthal_out = fmlay;	// must be
+	  }
 	}
       }
     }
