@@ -1060,6 +1060,82 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   return true;
 }
 
+bool taDataProc::TransposeColsToRows(DataTable* dest, DataTable* src,
+				     Variant data_col_st, int n_cols, Variant col_names_col) {
+  bool in_place_req = false;
+  GetDest(dest, src, "TransposeColsToRows", in_place_req);
+  if(in_place_req) {
+    taMisc::Error("taDataProc::TransposeColsToRows -- src cannot be same as dest for this operation!");
+    delete dest;
+    return false;
+  }
+  DataCol* st_data = src->GetColData(data_col_st, false); // quiet
+  if(!st_data) return false;
+  dest->StructUpdate(true);
+  dest->RemoveAllCols();
+  DataCol* names = src->GetColData(col_names_col, true); // quiet
+  // make cols in the image of the st data col
+  for(int i=0; i<src->rows; i++) {
+    String nm;
+    if(names) {
+      nm = names->GetValAsString(i);
+    }
+    else {
+      nm = "Row_" + String(i);
+    }
+    DataCol* nda = (DataCol*)st_data->MakeToken();
+    dest->data.Add(nda);
+    nda->Copy_NoData(*st_data);
+    nda->SetName(nm);
+  }
+  int st_idx = st_data->GetIndex();
+  if(n_cols < 1 || st_idx + n_cols > dest->cols())
+    n_cols = dest->cols() - st_idx;
+  for(int ci = 0; ci < n_cols; ci++) {
+    DataCol* scol = src->GetColData(ci + st_idx);
+    if(!scol) continue;		// shouldn't happen
+    dest->AddBlankRow();
+    for(int i=0; i<src->rows; i++) {
+      DataCol* dcol = dest->GetColData(i);
+      dcol->CopyFromRow_Robust(-1, *scol, i);
+    }
+  }
+  dest->StructUpdate(false);
+  return true;
+}
+
+
+bool taDataProc::TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row, int n_rows,
+				     DataCol::ValType val_type) {
+  bool in_place_req = false;
+  GetDest(dest, src, "TransposeRowsToCols", in_place_req);
+  if(in_place_req) {
+    taMisc::Error("taDataProc::TransposeRowsToCols -- src cannot be same as dest for this operation!");
+    delete dest;
+    return false;
+  }
+  dest->StructUpdate(true);
+  dest->RemoveAllCols();
+  if(n_rows < 0) 
+    n_rows = src->rows - st_row;
+  for(int i=0; i<n_rows; i++) {
+    String nm = "Row_" + String(i);
+    dest->NewCol(val_type, nm);
+  }
+  dest->EnforceRows(src->cols());
+  for(int i = 0; i < n_rows; i++) {
+    DataCol* dcol = dest->GetColData(i);
+    dest->AddBlankRow();
+    for(int ci=0; ci<src->cols(); ci++) {
+      DataCol* scol = src->GetColData(ci);
+      dcol->CopyFromRow_Robust(ci, *scol, i);
+    }
+  }
+  dest->StructUpdate(false);
+  return true;
+}
+
+
 ///////////////////////////////////////////////////////////////////
 // row-wise functions: selecting/splitting
 
