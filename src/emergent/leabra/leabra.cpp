@@ -3220,8 +3220,7 @@ void LeabraLayerSpec::Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr) {
   }
   thr->netin.CalcAvg(ug->leaves);  thr->i_thrs.CalcAvg(ug->leaves);
 
-  if(true) {
-    // also do netin_top_k
+  if(thr->netin_top_k.cmpt) {
     thr->netin_top_k.InitVals();
     int k_eff = thr->kwta.k;	// keep cutoff at k
     if(k_eff <= 0 || thr->active_buf.size != k_eff) return; // no can do
@@ -3243,7 +3242,11 @@ void LeabraLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
       Compute_NetinStats_ugp(rugp, (LeabraInhib*)rugp);
       lay->netin.UpdtFmAvgMax(rugp->netin, rugp->leaves, g);
       lay->i_thrs.UpdtFmAvgMax(rugp->i_thrs, rugp->leaves, g);
+      lay->netin_top_k.UpdtFmAvgMax(rugp->netin_top_k, 1, g); // only compute gp-wise avg for avg top k (n=1 per group)
     }
+    lay->netin.CalcAvg(lay->units.leaves);
+    lay->i_thrs.CalcAvg(lay->units.leaves);
+    lay->netin_top_k.CalcAvg(lay->units.gp.size);
   }
   else {
     Compute_NetinStats_ugp(&(lay->units), (LeabraInhib*)lay);
@@ -3875,19 +3878,43 @@ void LeabraLayerSpec::Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug, A
   vals.CalcAvg(ug->leaves);
 }
 
+void LeabraLayerSpec::Compute_AvgMaxActs_ugp(LeabraInhib* thr, Unit_Group* ug) {
+  thr->acts.InitVals();
+  LeabraUnit* u;
+  taLeafItr i;
+  int lf = 0;
+  FOR_ITR_EL(LeabraUnit, u, ug->, i) {
+    thr->acts.UpdtVals(u->act_eq, lf);
+    lf++;
+  }
+  thr->acts.CalcAvg(ug->leaves);
+
+  if(thr->acts_top_k.cmpt) {
+    thr->acts_top_k.InitVals();
+    int k_eff = thr->kwta.k;	// keep cutoff at k
+    if(k_eff <= 0 || thr->active_buf.size != k_eff) return; // no can do
+
+    for(int j=0; j < k_eff; j++) {
+      thr->acts_top_k.UpdtVals(thr->active_buf[j]->act_eq, j);
+    }
+    thr->acts_top_k.CalcAvg(k_eff);
+  }
+}
+
 void LeabraLayerSpec::Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net) {
   AvgMaxVals& vals = lay->acts;
-  static ta_memb_ptr mb_off = 0;
-  if(mb_off == 0) {
-    TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
-    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_eq");
-  }
+//   static ta_memb_ptr mb_off = 0;
+//   if(mb_off == 0) {
+//     TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
+//     TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_eq");
+//   }
   if(lay->units.gp.size > 0) {
     vals.InitVals();
     for(int g=0; g<lay->units.gp.size; g++) {
       LeabraUnit_Group* rugp = (LeabraUnit_Group*)lay->units.gp[g];
-      Compute_AvgMaxVals_ugp(lay, rugp, rugp->acts, mb_off);
+      Compute_AvgMaxActs_ugp((LeabraInhib*)rugp, rugp);
       vals.UpdtFmAvgMax(rugp->acts, rugp->leaves, g);
+      lay->acts_top_k.UpdtFmAvgMax(rugp->acts_top_k, 1, g); // only compute gp-wise avg for avg top k (n=1 per group)
       // todo: conditionalize this perhaps:
       if(rugp->acts.max > rugp->act_max_avg)
 	rugp->act_max_avg = rugp->acts.max;
@@ -3895,9 +3922,10 @@ void LeabraLayerSpec::Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
 	rugp->act_max_avg += inhib.fb_max_dt * (rugp->acts.max - rugp->act_max_avg);
     }
     vals.CalcAvg(lay->units.leaves);
+    lay->acts_top_k.CalcAvg(lay->units.gp.size);
   }
   else {
-    Compute_AvgMaxVals_ugp(lay, &(lay->units), vals, mb_off);
+    Compute_AvgMaxActs_ugp((LeabraInhib*)lay, &(lay->units));
   }
   // todo: conditionalize this perhaps:
   if(lay->acts.max > lay->act_max_avg)
@@ -4277,7 +4305,7 @@ void LeabraLayerSpec::Compute_ActM_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
   static ta_memb_ptr mb_off = 0;
   if(mb_off == 0) {
     TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
-    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_eq");
+    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_m");
   }
   if(lay->units.gp.size > 0) {
     vals.InitVals();
@@ -4298,7 +4326,7 @@ void LeabraLayerSpec::Compute_ActP_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
   static ta_memb_ptr mb_off = 0;
   if(mb_off == 0) {
     TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
-    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_eq");
+    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_p");
   }
   if(lay->units.gp.size > 0) {
     vals.InitVals();
@@ -4740,8 +4768,10 @@ void LeabraLayer::Initialize() {
 void LeabraLayer::InitLinks() {
   inherited::InitLinks();
   taBase::Own(netin, this);
+  taBase::Own(netin_top_k, this);
   taBase::Own(i_thrs, this);
   taBase::Own(acts, this);
+  taBase::Own(acts_top_k, this);
 
   taBase::Own(acts_p, this);
   taBase::Own(acts_m, this);
@@ -4852,8 +4882,10 @@ void LeabraUnit_Group::Initialize() {
 void LeabraUnit_Group::InitLinks() {
   inherited::InitLinks();
   taBase::Own(netin, this);
+  taBase::Own(netin_top_k, this);
   taBase::Own(i_thrs, this);
   taBase::Own(acts, this);
+  taBase::Own(acts_top_k, this);
 
   taBase::Own(acts_p, this);
   taBase::Own(acts_m, this);

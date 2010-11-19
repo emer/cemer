@@ -2025,6 +2025,8 @@ public:
 
     virtual void Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug, AvgMaxVals& vals, ta_memb_ptr mb_off);
     // #IGNORE utility to compute avg max vals for units in group, with member offset mb_off from unit
+    virtual void Compute_AvgMaxActs_ugp(LeabraInhib* thr, Unit_Group* ug);
+    // #IGNORE unit group compute AvgMaxVals for acts -- also does acts_top_k
     virtual void Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Statistic compute activation AvgMaxVals (acts)
 
@@ -2241,6 +2243,7 @@ public:
   AvgMaxVals	netin_top_k;	// #READ_ONLY #EXPERT #CAT_Activation net input values for the top k units in the layer
   AvgMaxVals	i_thrs;		// #READ_ONLY #EXPERT #CAT_Activation inhibitory threshold values for the layer
   AvgMaxVals	acts;		// #READ_ONLY #EXPERT #CAT_Activation activation values for the layer
+  AvgMaxVals	acts_top_k;	// #READ_ONLY #EXPERT #CAT_Activation activation values for the top k units in the layer
   AvgMaxVals	acts_p;		// #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
   AvgMaxVals	acts_m;		// #READ_ONLY #EXPERT #CAT_Activation minus-phase activation stats for the layer
   float		phase_dif_ratio; // #READ_ONLY #SHOW #CAT_Activation phase-difference ratio (acts_m.avg / acts_p.avg)

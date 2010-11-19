@@ -2400,7 +2400,7 @@ QWidget* taiProgStepButton::GetButtonRep() {
   QToolBar* newbar = new QToolBar();
   newbar->setFont(taiM->menuFont(defSize()));
   QLabel* lbl = new QLabel("Step:");
-  lbl->setToolTip("Step at given level of program as indicated by buttons after this label");
+  lbl->setToolTip("Run N Step(s) of a program -- select N (1,5,10) in adjacent buttons, and then click on the name of the program shown after N's to Step that given program (this Step label is not a button and does not do anything)");
   lbl->setFont(taiM->menuFont(defSize()));
   newbar->addWidget(lbl);
 
