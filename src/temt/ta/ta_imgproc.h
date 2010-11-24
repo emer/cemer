@@ -982,28 +982,32 @@ protected:
 };
 
 class TA_API V1BinocularSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 binocular cells
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 binocular cells -- specifies basic disparity coding system -- number and spacing of disparity tuned cells
 INHERITED(taOBase)
 public:
-  int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = 1 near and 1 far)
-  int		disp_off;	// #DEF_10 offset from corresponding location for each disparity step
-  int		tuning_width; 	// #DEF_5 for non-focal disparities: additional width of encoding around target offset disparity -- allows for some fuzziness in encoding -- last disparity on near/far has extra end_width too
-  int		end_width;	// #DEF_10 extra tuning width on the ends (adds beyond the tuning width), to extend out and capture all reasonable disparities
-  float		gauss_sig; 	// #DEF_0.7 gaussian sigma for weighting the contribution of tuning width -- normalized by tuning_width -- last disparity on near/far ends does not come back down
-  int		n_matches;	// #DEF_5 number of best-fitting disparity matches to keep per point in initial processing step
-  int		win_half_sz;	// #DEF_3 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
-  float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
-  float		good_thr;	// #DEF_0.5 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
-  float		cnt_thr;	// #DEF_2 in selecting the best disparity offset, threshold for number of matches to even consider as a candidate for best offset
-  float		pct_thr;	// #DEF_0.1 in selecting the best disparity offset, threshold for selecting based on percent of total matches at a given disparity for the disparity with the greatest number of matches -- below this value, the one with the minimum distance is selected regardless of number of matches
-  float		neigh_wt;	// #DEF_0.5 contribution of neighboring disparity offsets to current one in window aggregation procedure
+  int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
+  float		disp_range_pct;  // #DEF_0.05 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total V1S image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
+  int		disp_range; 	// #READ_ONLY #SHOW range (half width) of disparity tuning around central offset value for each disparity cell -- integer value computed from disp_range_pct -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
+  float		gauss_sig; 	// #DEF_0.7 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
+  int		disp_spacing;	// #DEF_2 spacing between different disparity detector cells in terms of disparity offset tunings -- expressed as a multiplier on disp_range -- this should generally remain the default value of 2, so that the space is properly covered by the different disparity detectors
+  int		end_extra;	// #DEF_2 extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities -- expressed as a multiplier on disp_range 
+
+  int		disp_spc;	// #READ_ONLY integer value of spacing between different disparity detector cells -- computed from disp_spacing and disp_range
+  int		end_ext;	// #READ_ONLY integer value of extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities
 
   int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
-  int		max_width;	// #READ_ONLY maximum total width (1 + 2 * tuning_width for symmetric, + end_width for ends)
+  int		max_width;	// #READ_ONLY maximum total width (1 + 2 * disp_range + end_ext)
   int		max_off;	// #READ_ONLY maximum possible offset -- furthest point out in any of the stencils
   int		tot_offs;	// #READ_ONLY 1 + 2 * max_off
-  int		win_sz;		// #READ_ONLY window full size = 1 + 2*win_half_sz
-  int		win_area;	// #READ_ONLY total number of elements in the full square window = win_sz * win_sz
+
+  virtual void	UpdateFmV1sSize(int v1s_img_x) {
+    disp_range = (int)((disp_range_pct * (float)v1s_img_x) + 0.5f);
+    disp_spc = disp_spacing * disp_range;
+    end_ext = end_extra * disp_range;
+    max_width = 1 + 2*disp_range + end_ext;
+    max_off = n_disps * disp_spc + disp_range + end_ext;
+    tot_offs = 1 + 2 * max_off;
+  }
 
   void 	Initialize();
   void	Destroy() { };
@@ -1012,40 +1016,41 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
-class TA_API V1DispSpreadSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for disparity spreading in the v1 binocular cells -- spreads along orientations
+class TA_API V1DisparitySpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 disparity computation in binocular mode
 INHERITED(taOBase)
 public:
-  bool		on;		// #DEF_false whether to do disparity spreading
-  int		dsp_iters;	// #CONDSHOW_ON_on #DEF_10;0 number of iterations of spreading operation to spread consistency among local disparity codings
-  float		dsp_gain;	// #CONDSHOW_ON_on #DEF_0.2 gain of influence of neighboring values in spreading disparities
-  float		v1b_mix;	// #CONDSHOW_ON_on #DEF_0.5 how much overall disp spreading result influences the v1b disparity weightings in the end -- values < 1 preserve some of the original ambiguity of the bottom-up signal, as a hedge against potentially imperfect grouping results
-  int 		neigh_width;	// #CONDSHOW_ON_on #DEF_4 neighborhood width -- how many locations on either side of each point to integrate neighborhood values over
-  float		gauss_sig; 	// #CONDSHOW_ON_on #DEF_1 gaussian sigma for weighting the neighbors -- more distant ones are more weakly weighted
+  int		n_matches;	// #DEF_3 number of best-fitting disparity matches to keep per point in initial processing step
+  int		win_half_sz;	// #DEF_3 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
+  float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
+  float		out_thr;	// #DEF_0.1 output threshold -- if source value is below this value, v1b_dsp_out is 0 -- if this threshold is set to 0 or below, then v1b_dsp_out values are multiplied by the max feature activation (i.e., are graded in strength)
+  float		good_thr;	// #DEF_0.5 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
+  float		cnt_thr;	// #DEF_2 in selecting the best disparity offset, threshold for number of matches to even consider as a candidate for best offset
+  float		pct_thr;	// #DEF_0.1 in selecting the best disparity offset, threshold for selecting based on percent of total matches at a given disparity for the disparity with the greatest number of matches -- below this value, the one with the minimum distance is selected regardless of number of matches
+  float		neigh_wt;	// #DEF_0.5 contribution of neighboring disparity offsets to current one in window aggregation procedure
 
-  int		tot_width;	// #READ_ONLY #NO_SAVE #HIDDEN neigh_width * 2 + 1
-  float		v1b_mix_c;	// #READ_ONLY 1 - v1b_mix
+  int		win_sz;		// #READ_ONLY window full size = 1 + 2*win_half_sz
+  int		win_area;	// #READ_ONLY total number of elements in the full square window = win_sz * win_sz
 
   void 	Initialize();
   void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(V1DispSpreadSpec);
+  TA_SIMPLE_BASEFUNS(V1DisparitySpec);
 protected:
   void 	UpdateAfterEdit_impl();
 };
-
 
 class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
 INHERITED(taOBase)
 public:
+  bool		pre_gp4;	// #DEF_true use a 4x4 pre-grouping of v1s or v1b features prior to computing subsequent steps (end stop, length sum, etc) -- pre grouping reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense -- if this is selected, then v1s_specs.line_len should be 4 as well, though 5 is possible (just extends lines over the edge a bit)
+  TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- operates on top of the pre-grouping guys and always uses 1/2 overlap spacing
+  float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   int		end_stop_dist;	// #DEF_2 end-stop distance factor -- how far away from the central point should we look for opposing orientations
   float		es_adjang_wt;	// #DEF_0.2 weight for adjacent angles in the end stop computation -- adjacent angles are often activated for edges that are not exactly aligned with the gabor angles, so they can result in false positives
   float		es_gain;	// #DEF_1.2 gain factor applied only to end stop outputs -- these have a more stringent criterion and thus can benefit from an additional mulitplier to put on same level compared to the others (len sum, v1s_max)
-  float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   float		nonfocal_wt;	// #DEF_0.8 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
-  bool		pre_gp4;	// #DEF_true use a 4x4 pre-grouping of v1s or v1b features prior to computing subsequent steps (end stop, length sum, etc) -- pre grouping reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense -- if this is selected, then v1s_specs.line_len should be 4 as well, though 5 is possible (just extends lines over the edge a bit)
-  TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- operates on top of the pre-grouping guys and always uses 1/2 overlap spacing
 
   int		pre_rf;		// #READ_ONLY size of pre-grouping -- always 4 for now, as it is the only thing that makes sense
   int		pre_half;	// #READ_ONLY pre_rf / 2
@@ -1080,10 +1085,11 @@ public:
     CF_NONE	= 0, // #NO_BIT
     END_STOP	= 0x0001, // end stop cells -- opposite polarity, any orientation around a central oriented edge, max over all polarities (weighted by gaussian) 
     LEN_SUM	= 0x0002, // length summing cells -- integrate simple cells along a line, same polarity, max over all polarities (weighted by gaussian) 
-    V1S_MAX    	= 0x0004, // basic max over v1 simple cells (weighted by gaussian) -- preserves polarity -- only for on/off (monochrome) tuning in v1s -- provides useful lower-level, higher-res signals to higher levels and should be on by default
-    BLOB	= 0x0008, // 'blobs' made by integrating over all angles for a given luminance or color contrast -- adds 2 units for white/black per hypercolumn (always avail), and if color = COLOR, adds 6 extra units for red/cyan on/off, green/magenta on/off, blue/yellow on/off
-    DISP_EDGE	= 0x0010, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
-    MOTION_EDGE	= 0x0020, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
+    V1S_MAX    	= 0x0004, // max over v1 simple cells (weighted by gaussian) -- preserves polarity -- only for on/off (monochrome) tuning in v1s -- provides useful lower-level, higher-res signals to higher levels and should be on by default
+    V1S_MEAN   	= 0x0008, // mean over v1 simple cells (weighted by gaussian) -- preserves polarity -- for all v1s features (color and otherwise) -- this is useful for texture and scene recognition instead of object recognition -- gives aggregate energy for basic features and that defines overall textures
+    BLOB	= 0x0010, // 'blobs' made by integrating over all angles for a given luminance or color contrast -- adds 2 units for white/black per hypercolumn (always avail), and if color = COLOR, adds 6 extra units for red/cyan on/off, green/magenta on/off, blue/yellow on/off
+    DISP_EDGE	= 0x0020, // respond to an edge in disparity, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if BINOCULAR ocularity
+    MOTION_EDGE	= 0x0040, // respond to an edge in motion, integrating over all other simple cell tunings (orientation, polarity etc) -- only applicable if motion_frames > 1
 #ifndef __MAKETA__
     CF_ESLS	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT most basic set
     CF_ESLSMAX	= END_STOP | LEN_SUM | V1S_MAX, // #IGNORE #NO_BIT this is the default setup
@@ -1095,9 +1101,9 @@ public:
 
   enum OptionalFilters { // #BITS flags for specifying additional output filters -- misc grab bag of outputs
     OF_NONE	= 0, // #NO_BIT
-    ENERGY	= 0x0001, // overall energy of V1 feature detectors -- a single unit activation per spatial location -- output map is just 2D, not 4D -- and is always saved to a separate output column -- suitable for basic spatial mapping etc
-    V1B_MAX	= 0x0002, // basic max over v1b cells (weighted by gaussian) -- preserves depth coding and polarity -- allows disparity info to be at same resolution as other v1c data -- this always saved to a separate output and can be normed separately
-    V1B_DSP	= 0x0004, // disparity information only extracted from underlying disparity map -- has no orientation signals -- has same geometry as V1S output
+    ENERGY	= 0x0001, // overall energy of V1S feature detectors -- a single unit activation per spatial location in same resolution map as V1S -- output map is just 2D, not 4D -- and is always saved to a separate output column -- suitable for basic spatial mapping etc
+    V1B_MAX	= 0x0002, // basic max over v1b cells (weighted by gaussian) -- preserves depth coding and polarity -- allows disparity info to be at same resolution as other v1c data -- this always saved to a separate output and normed separately
+    V1B_DSP	= 0x0004, // disparity information only (no orientation or other feature coding -- one unit per disparity) -- extracted from underlying disparity map -- has same geometry as V1S output
     V1B_AVGSUM	= 0x0008, // compute weighted average summary of the disparity signals over entire field -- result is a single scalar value that can be fed into a ScalarValLayerSpec layer to provide an input representation to a network, for example -- this value is always just computed separately as a single 1x1 matrix cell
   };
 
@@ -1143,7 +1149,7 @@ public:
   int		v1s_feat_mot_y;	// #READ_ONLY y axis index for start of motion features in v1s -- x axis is angles
 
   V1BinocularSpec v1b_specs;	// #CONDSHOW_ON_region.ocularity:BINOCULAR specs for V1 binocular filters -- comes after V1 simple processing in binocular case
-  V1DispSpreadSpec v1b_dsp_specs; // #CONDSHOW_ON_region.ocularity:BINOCULAR specs for disparity spreading in the V1 binocular filters
+  V1DisparitySpec v1b_dsp_specs; // #CONDSHOW_ON_region.ocularity:BINOCULAR specs for V1 binocular filters -- specifically the disparity matching and windowing parameters for the underlying computation 
   DataSave	v1b_save;	// #CONDSHOW_ON_region.ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
   XYNGeom	v1b_feat_geom; 	// #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- (1 + 2*n_disps) * v1s_feat_geom -- order: near, focus, far
   XYNGeom	v1b_img_geom; 	// #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #HIDDEN size of v1 binocular filtered image output -- number of hypercolumns in each axis to cover entire output -- this is copied directly from v1s_img_geom
@@ -1176,8 +1182,6 @@ public:
   int_Matrix	v1b_widths; 	// #READ_ONLY #NO_SAVE width of stencils for binocularity detectors 1d: [tot_disps]
   float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular weighting factors -- for each tuning disparity [max_width][tot_disps] -- only v1b_widths[disp] are used per disparity
   int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: 2d: [XY][max_width][tot_disps]
-  int_Matrix	v1b_dsp_stencils; // #READ_ONLY #NO_SAVE stencils for binocularity spreading dynamics -- neighborhood to integrate over: [XY][tot_width][n_angles]
-  float_Matrix	v1b_dsp_weights; // #READ_ONLY #NO_SAVE weighting factors for neighborhood spreading of binocularity [tot_width]
   float_Matrix	v1bc_weights;	// #READ_ONLY #NO_SAVE weighting factors for integration from binocular disparities to complex responses
   // v1c feat x axis is always angle, except for final edge guys and blobs
 
