@@ -3419,6 +3419,12 @@ void V1DisparitySpec::UpdateAfterEdit_impl() {
   win_area = win_sz * win_sz;
 }
 
+void V1DisparityStats::Initialize() {
+  InitStats();
+  pct_ambig = 0.0f;
+  sel_mean = 0.0f;
+}
+
 void V1ComplexSpec::Initialize() {
   len_sum_len = 1;
   end_stop_dist = 2;
@@ -4458,6 +4464,8 @@ bool V1RegionSpec::V1BinocularFilter() {
   v1b_dsp_nmatch.InitVals(0);
   v1b_dsp_flags.InitVals(0);
 
+  dsp_stats.InitStats();
+
   ThreadImgProcCall ip_call_init((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_Match_thread);
   threads.Run(&ip_call_init, n_run);
 
@@ -4469,6 +4477,8 @@ bool V1RegionSpec::V1BinocularFilter() {
   // then generate net and final output
   ThreadImgProcCall ip_call_out((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_Out_thread);
   threads.Run(&ip_call_out, n_run);
+
+  dsp_stats.ComputeStats();
 
   return true;
 }
@@ -4690,6 +4700,10 @@ void V1RegionSpec::V1BinocularFilter_Out_thread(int v1b_idx, int thread_no) {
   int flag = v1b_dsp_flags.FastEl(bc.x, bc.y);
 
   float ambig_wt = 1.0f / (float)v1b_specs.tot_disps; // ambiguous case weighting
+  float maxfv_rec = 0.0f;			      // record maxfv
+
+  float max_dval = 0.0f;
+  float sum_dval = 0.0f;
 
   for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
     int dwd = v1b_widths.FastEl(didx);
@@ -4705,6 +4719,9 @@ void V1RegionSpec::V1BinocularFilter_Out_thread(int v1b_idx, int thread_no) {
       }
     }
 
+    sum_dval += dval;
+    if(dval > max_dval) max_dval = dval;
+
     float maxfv = 0.0f;
     // now apply the dval to all the features
     for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
@@ -4718,6 +4735,7 @@ void V1RegionSpec::V1BinocularFilter_Out_thread(int v1b_idx, int thread_no) {
       maxfv = MAX(maxfv, rv);
       v1b_out.FastEl(fc.x, fc.y, bc.x, bc.y) = rv * dval;
     }
+    maxfv_rec = maxfv;		// record for later
 
     if(v1b_dsp_specs.out_thr > 0.0f) {
       if(maxfv >= v1b_dsp_specs.out_thr)
@@ -4727,6 +4745,16 @@ void V1RegionSpec::V1BinocularFilter_Out_thread(int v1b_idx, int thread_no) {
     }
     else {
       v1b_dsp_out.FastEl(didx, 0, bc.x, bc.y) = maxfv * dval;
+    }
+  }
+
+  // do stats -- happens in the outer part
+  if(maxfv_rec > v1b_dsp_specs.opt_thr && sum_dval > 0.0f) {
+    float sel = max_dval / sum_dval;
+    dsp_stats.tot_all += maxfv_rec;
+    dsp_stats.tot_sel += maxfv_rec * sel;
+    if(flag != DSP_NONE) {	// some kind of ambiguous
+      dsp_stats.tot_ambig += maxfv_rec;
     }
   }
 }

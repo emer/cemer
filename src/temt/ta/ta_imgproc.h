@@ -1039,6 +1039,39 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
+class TA_API V1DisparityStats : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image statistics for disparity computation -- useful for monitoring the quality of the output
+INHERITED(taOBase)
+public:
+  float		pct_ambig;	// #READ_ONLY #SHOW percent of total input activity that has ambiguous disparity
+  float		sel_mean;	// #READ_ONLY #SHOW activity-weighted average selectivity of the disparity coding (max / sum)
+
+  float		tot_all;	// #READ_ONLY #NO_SAVE used in computation: total activation
+  float		tot_sel;	// #READ_ONLY #NO_SAVE used in computation: total selectivity
+  float		tot_ambig;  	// #READ_ONLY #NO_SAVE used in computation: total ambig activation
+
+  void		InitStats() {
+    tot_all = tot_sel = tot_ambig = 0.0f;
+  }
+  // initialize statistics
+  void		ComputeStats() {
+    if(tot_all > 0.0f) {
+      pct_ambig = tot_ambig / tot_all;
+      sel_mean = tot_sel / tot_all;
+    }
+    else {
+      pct_ambig = sel_mean = 0.0f;
+    }
+  }
+  // compute statistics
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1DisparityStats);
+// protected:
+//   void 	UpdateAfterEdit_impl();
+};
+
 class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
 INHERITED(taOBase)
@@ -1153,6 +1186,7 @@ public:
   DataSave	v1b_save;	// #CONDSHOW_ON_region.ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
   XYNGeom	v1b_feat_geom; 	// #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular -- (1 + 2*n_disps) * v1s_feat_geom -- order: near, focus, far
   XYNGeom	v1b_img_geom; 	// #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #HIDDEN size of v1 binocular filtered image output -- number of hypercolumns in each axis to cover entire output -- this is copied directly from v1s_img_geom
+  V1DisparityStats dsp_stats; // #CONDSHOW_ON_region.ocularity:BINOCULAR stats for quality of disparity computation for binocular v1b layer
 
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
