@@ -602,7 +602,7 @@ class LEABRA_API PFCOutLayerSpec : public PFCBaseLayerSpec {
 INHERITED(PFCBaseLayerSpec)
 public:
   virtual void	Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net);
-  // compute PFC output layer activations -- replaces std act fun
+  // compute PFC output layer activations -- replaces std act fun -- called in Compute_CycleStats -- just overwrites whatever the regular funs compute
 
   override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) { };
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);

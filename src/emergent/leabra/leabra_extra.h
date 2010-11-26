@@ -134,6 +134,34 @@ private:
   void	Defaults_init();
 };
 
+
+class LEABRA_API LeabraMultCopyLayerSpec : public LeabraLayerSpec {
+  // layer that copies activations from one layer and multiplies them by values from another -- i.e., multiplicative gating -- must recv from 2 prjns (any more ignored) -- first is copy activation, second is multiplication activation
+INHERITED(LeabraLayerSpec)
+public:
+  virtual void	Compute_MultCopyAct(LeabraLayer* lay, LeabraNetwork* net);
+  // compute mult copy activations -- replaces std act fun -- called in Compute_CycleStats -- just overwrites whatever the regular funs compute
+
+  override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) { };
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+
+  // don't do any learning:
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+
+  TA_SIMPLE_BASEFUNS(LeabraMultCopyLayerSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init()		{ };
+};
+
 //////////////////////////////////////////
 // 	Misc Special Objects		//
 //////////////////////////////////////////

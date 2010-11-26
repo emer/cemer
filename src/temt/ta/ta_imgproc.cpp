@@ -3400,11 +3400,11 @@ void V1BinocularSpec::UpdateAfterEdit_impl() {
 }
 
 void V1DisparitySpec::Initialize() {
-  n_matches = 3;
+  n_matches = 5;
   win_half_sz = 3;
   opt_thr = 0.01f;
-  out_thr = 0.1f;
-  good_thr = 0.5f;
+  out_thr = 0.0f;
+  good_thr = 0.8f;
   cnt_thr = 2;
   pct_thr = 0.1f;
   neigh_wt = 0.5f;

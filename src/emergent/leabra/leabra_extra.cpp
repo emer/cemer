@@ -151,6 +151,71 @@ void LeabraLayer::TriggerContextUpdate() {
   }
 }
 
+//////////////////////////////////
+//	MultCopyLayerSpec
+
+void LeabraMultCopyLayerSpec::Initialize() {
+}
+
+bool LeabraMultCopyLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
+  bool rval = inherited::CheckConfig_Layer(lay, quiet);
+
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
+  if(lay->CheckError(u == NULL, quiet, rval,
+		"leabra mult copy layer doesn't have any units:", lay->name)) {
+    return false;		// fatal
+  }
+
+  if(lay->CheckError(u->recv.size != 2, quiet, rval,
+		"leabra mult copy layer must have exactly 2 recv prjns, first = act to copy, second = act to multiply:", lay->name)) {
+    return false;		// fatal
+  }
+
+  LeabraRecvCons* copy_gp = (LeabraRecvCons*)u->recv.FastEl(0);
+  if(lay->CheckError(copy_gp->size != 1, quiet, rval,
+		"leabra mult copy layer first prjn (copy act source) must have exactly 1 connection to copy from:", lay->name)) {
+    return false;		// fatal
+  }
+  LeabraRecvCons* mult_gp = (LeabraRecvCons*)u->recv.FastEl(1);
+  if(lay->CheckError(mult_gp->size != 1, quiet, rval,
+		"leabra mult copy layer second prjn (mult act source) must have exactly 1 connection to get mult act from:", lay->name)) {
+    return false;		// fatal
+  }
+  return rval;
+}
+
+void LeabraMultCopyLayerSpec::Compute_MultCopyAct(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    if(u->recv.size < 2) continue;
+
+    LeabraRecvCons* copy_gp = (LeabraRecvCons*)u->recv.FastEl(0);
+    LeabraRecvCons* mult_gp = (LeabraRecvCons*)u->recv.FastEl(1);
+
+    if(copy_gp->size != 1) continue;
+    if(mult_gp->size != 1) continue;
+
+    LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
+
+    LeabraUnit* copy_un = (LeabraUnit*)copy_gp->Un(0);
+    LeabraUnit* mult_un = (LeabraUnit*)mult_gp->Un(0);
+
+    float new_act = copy_un->act_eq * mult_un->act_eq;
+    u->act = new_act;
+    u->act_eq = u->act_nd = u->act;
+    u->da = 0.0f;		// I'm fully settled!
+    u->AddToActBuf(rus->syn_delay);
+  }
+}
+
+void LeabraMultCopyLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_MultCopyAct(lay, net);
+  inherited::Compute_CycleStats(lay, net);
+}
+
+
 //////////////////////////////////////////
 // 	Misc Special Objects		//
 //////////////////////////////////////////

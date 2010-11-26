@@ -1020,11 +1020,11 @@ class TA_API V1DisparitySpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 disparity computation in binocular mode
 INHERITED(taOBase)
 public:
-  int		n_matches;	// #DEF_3 number of best-fitting disparity matches to keep per point in initial processing step
-  int		win_half_sz;	// #DEF_3 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
+  int		n_matches;	// #DEF_5 number of best-fitting disparity matches to keep per point in initial processing step
+  int		win_half_sz;	// #DEF_2:3 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
   float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
-  float		out_thr;	// #DEF_0.1 output threshold -- if source value is below this value, v1b_dsp_out is 0 -- if this threshold is set to 0 or below, then v1b_dsp_out values are multiplied by the max feature activation (i.e., are graded in strength)
-  float		good_thr;	// #DEF_0.5 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
+  float		out_thr;	// #DEF_0 output threshold -- if source value is below this value, v1b_dsp_out is 0 -- if this threshold is set to 0 or below, then v1b_dsp_out values are multiplied by the max feature activation (i.e., are graded in strength)
+  float		good_thr;	// #DEF_0.8 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
   float		cnt_thr;	// #DEF_2 in selecting the best disparity offset, threshold for number of matches to even consider as a candidate for best offset
   float		pct_thr;	// #DEF_0.1 in selecting the best disparity offset, threshold for selecting based on percent of total matches at a given disparity for the disparity with the greatest number of matches -- below this value, the one with the minimum distance is selected regardless of number of matches
   float		neigh_wt;	// #DEF_0.5 contribution of neighboring disparity offsets to current one in window aggregation procedure
