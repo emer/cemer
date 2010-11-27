@@ -3460,12 +3460,14 @@ void V1ComplexSpec::UpdateAfterEdit_impl() {
   pre_half = pre_rf / 2;
   pre_spacing = pre_half;
 
+  spat_rf.SetGtEq(1);
   spat_half = spat_rf / 2;
   spat_spacing = spat_half;
+  spat_spacing.SetGtEq(1);
 
   if(pre_gp4) {
     net_rf = spat_rf * pre_rf;
-    net_half = spat_half * pre_half;
+    net_half = spat_spacing * pre_half; // use spacing to avoid 0 for 1,1 case
     net_spacing = spat_spacing * pre_spacing;
     net_border = spat_border * pre_border;
   }
@@ -3908,10 +3910,16 @@ bool V1RegionSpec::InitFilters_V1Binocular() {
 }
 
 bool V1RegionSpec::InitFilters_V1Complex() {
-  taMath_float::vec_kern2d_gauss(&v1c_weights, v1c_specs.spat_rf.x,
-				 v1c_specs.spat_rf.y, v1c_specs.gauss_sig,
-				 v1c_specs.gauss_sig);
-  taMath_float::vec_norm_max(&v1c_weights, 1.0f); // max, not sum
+  if(v1c_specs.spat_rf.MaxVal() > 1) {
+    taMath_float::vec_kern2d_gauss(&v1c_weights, v1c_specs.spat_rf.x,
+				   v1c_specs.spat_rf.y, v1c_specs.gauss_sig,
+				   v1c_specs.gauss_sig);
+    taMath_float::vec_norm_max(&v1c_weights, 1.0f); // max, not sum
+  }
+  else {
+    v1c_weights.SetGeom(2, 1,1);
+    v1c_weights.FastEl(0,0) = 1.0f;
+  }
 
   // config: x,y coords by points, by angles
   v1c_es_stencils.SetGeom(4, 2, 2, 2, v1s_specs.n_angles);
@@ -6372,17 +6380,19 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
     }
   }
   { // v1complex, spatial
-    graph_data->AddBlankRow();
-    nmda->SetValAsString("V1 Complex Spat RF", -1);
-    float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-    TwoDCoord sc;
-    for(int ys = 0; ys < v1c_specs.spat_rf.y; ys++) { // ysimple
-      sc.y = brd.y + ys;
-      for(int xs = 0; xs < v1c_specs.spat_rf.x; xs++) { // xsimple
-	sc.x = brd.x + xs;
+    if(v1c_specs.spat_rf.MaxVal() > 1) {
+      graph_data->AddBlankRow();
+      nmda->SetValAsString("V1 Complex Spat RF", -1);
+      float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+      TwoDCoord sc;
+      for(int ys = 0; ys < v1c_specs.spat_rf.y; ys++) { // ysimple
+	sc.y = brd.y + ys;
+	for(int xs = 0; xs < v1c_specs.spat_rf.x; xs++) { // xsimple
+	  sc.x = brd.x + xs;
 
-	if(sc.WrapClip(true, max_sz)) continue;
-	mat->FastEl(sc.x,sc.y) = v1c_weights.FastEl(xs, ys);
+	  if(sc.WrapClip(true, max_sz)) continue;
+	  mat->FastEl(sc.x,sc.y) = v1c_weights.FastEl(xs, ys);
+	}
       }
     }
   }
