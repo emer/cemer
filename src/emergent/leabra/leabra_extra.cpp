@@ -155,6 +155,7 @@ void LeabraLayer::TriggerContextUpdate() {
 //	MultCopyLayerSpec
 
 void LeabraMultCopyLayerSpec::Initialize() {
+  one_minus = false;
 }
 
 bool LeabraMultCopyLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -202,7 +203,11 @@ void LeabraMultCopyLayerSpec::Compute_MultCopyAct(LeabraLayer* lay, LeabraNetwor
     LeabraUnit* copy_un = (LeabraUnit*)copy_gp->Un(0);
     LeabraUnit* mult_un = (LeabraUnit*)mult_gp->Un(0);
 
-    float new_act = copy_un->act_eq * mult_un->act_eq;
+    float new_act;
+    if(one_minus)
+      new_act = copy_un->act_eq * (1.0f - mult_un->act_eq);
+    else
+      new_act = copy_un->act_eq * mult_un->act_eq;
     u->act = new_act;
     u->act_eq = u->act_nd = u->act;
     u->da = 0.0f;		// I'm fully settled!

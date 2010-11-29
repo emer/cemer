@@ -989,7 +989,7 @@ public:
   float		disp_range_pct;  // #DEF_0.05 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total V1S image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
   int		disp_range; 	// #READ_ONLY #SHOW range (half width) of disparity tuning around central offset value for each disparity cell -- integer value computed from disp_range_pct -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
   float		gauss_sig; 	// #DEF_0.7 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
-  int		disp_spacing;	// #DEF_2 spacing between different disparity detector cells in terms of disparity offset tunings -- expressed as a multiplier on disp_range -- this should generally remain the default value of 2, so that the space is properly covered by the different disparity detectors
+  float		disp_spacing;	// #DEF_2:2.5 spacing between different disparity detector cells in terms of disparity offset tunings -- expressed as a multiplier on disp_range -- this should generally remain the default value of 2, so that the space is properly covered by the different disparity detectors, but 2.5 can also be useful to not have any overlap between disparities to prevent ambiguous activations (e.g., for figure-ground segregation)
   int		end_extra;	// #DEF_2 extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities -- expressed as a multiplier on disp_range 
 
   int		disp_spc;	// #READ_ONLY integer value of spacing between different disparity detector cells -- computed from disp_spacing and disp_range
@@ -1002,7 +1002,7 @@ public:
 
   virtual void	UpdateFmV1sSize(int v1s_img_x) {
     disp_range = (int)((disp_range_pct * (float)v1s_img_x) + 0.5f);
-    disp_spc = disp_spacing * disp_range;
+    disp_spc = (int)(disp_spacing * (float)disp_range);
     end_ext = end_extra * disp_range;
     max_width = 1 + 2*disp_range + end_ext;
     max_off = n_disps * disp_spc + disp_range + end_ext;

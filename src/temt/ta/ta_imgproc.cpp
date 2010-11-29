@@ -3387,7 +3387,7 @@ void V1BinocularSpec::Initialize() {
   n_disps = 1;
   disp_range_pct = 0.05f;
   gauss_sig = 0.7f;
-  disp_spacing = 2;
+  disp_spacing = 2.0f;
   end_extra = 2;
 
   tot_disps = 1 + 2 * n_disps;
