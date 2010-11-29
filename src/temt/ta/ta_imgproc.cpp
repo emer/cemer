@@ -3408,6 +3408,7 @@ void V1DisparitySpec::Initialize() {
   cnt_thr = 2;
   pct_thr = 0.1f;
   neigh_wt = 0.5f;
+  out_nodsp = false;
 
   win_sz = 1 + 2 * win_half_sz;
   win_area = win_sz * win_sz;
@@ -4031,7 +4032,10 @@ bool V1RegionSpec::InitOutMatrix() {
     v1b_dsp_flags.SetGeom(2, v1b_img_geom.x, v1b_img_geom.y);
     v1b_dsp_match.SetGeom(4, 2, v1b_dsp_specs.n_matches, v1b_img_geom.x, v1b_img_geom.y);
     v1b_dsp_win.SetGeom(3, DSP_N, v1b_img_geom.x, v1b_img_geom.y);
-    v1b_dsp_out.SetGeom(4, v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
+    if(v1b_dsp_specs.out_nodsp)
+      v1b_dsp_out.SetGeom(4, v1b_specs.tot_disps+1, 1, v1b_img_geom.x, v1b_img_geom.y);
+    else
+      v1b_dsp_out.SetGeom(4, v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
     v1b_out.SetGeom(4, v1b_feat_geom.x, v1b_feat_geom.y, v1b_img_geom.x, v1b_img_geom.y);
   }
   else {
@@ -4763,6 +4767,11 @@ void V1RegionSpec::V1BinocularFilter_Out_thread(int v1b_idx, int thread_no) {
     dsp_stats.tot_sel += maxfv_rec * sel;
     if(flag != DSP_NONE) {	// some kind of ambiguous
       dsp_stats.tot_ambig += maxfv_rec;
+    }
+  }
+  if(v1b_dsp_specs.out_nodsp) {
+    if(maxfv_rec < v1b_dsp_specs.opt_thr || flag != DSP_NONE || sum_dval == 0.0f) {
+      v1b_dsp_out.FastEl(v1b_specs.tot_disps, 0, bc.x, bc.y) = 1.0f;
     }
   }
 }
@@ -5604,8 +5613,14 @@ bool V1RegionSpec::InitDataTable() {
 					1, 1);
     }
     if(region.ocularity == VisRegionParams::BINOCULAR && opt_filters & V1B_DSP) {
-      col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
-					v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
+      if(v1b_dsp_specs.out_nodsp) {
+	col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
+					  v1b_specs.tot_disps+1, 1, v1b_img_geom.x, v1b_img_geom.y);
+      }
+      else {
+	col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
+					  v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
+      }
     }
   }
   return true;
@@ -5969,8 +5984,14 @@ bool V1RegionSpec::OptOutputToTable(DataTable* dtab) {
     col->SetMatrixVal(v1b_avgsum_out, -1, 0, 0);
   }
   if(region.ocularity == VisRegionParams::BINOCULAR && opt_filters & V1B_DSP) {
-    col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
-		      v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
+    if(v1b_dsp_specs.out_nodsp) {
+      col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
+		v1b_specs.tot_disps+1, 1, v1b_img_geom.x, v1b_img_geom.y);
+    }
+    else {
+      col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
+		v1b_specs.tot_disps, 1, v1b_img_geom.x, v1b_img_geom.y);
+    }
     float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
     dout->CopyFrom(&v1b_dsp_out);
   }

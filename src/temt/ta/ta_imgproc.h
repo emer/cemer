@@ -1028,6 +1028,7 @@ public:
   float		cnt_thr;	// #DEF_2 in selecting the best disparity offset, threshold for number of matches to even consider as a candidate for best offset
   float		pct_thr;	// #DEF_0.1 in selecting the best disparity offset, threshold for selecting based on percent of total matches at a given disparity for the disparity with the greatest number of matches -- below this value, the one with the minimum distance is selected regardless of number of matches
   float		neigh_wt;	// #DEF_0.5 contribution of neighboring disparity offsets to current one in window aggregation procedure
+  bool		out_nodsp;	// #DEF_false for V1B_DSP output, include an extra unit that is active when there is no disparity activation
 
   int		win_sz;		// #READ_ONLY window full size = 1 + 2*win_half_sz
   int		win_area;	// #READ_ONLY total number of elements in the full square window = win_sz * win_sz
