@@ -4773,6 +4773,9 @@ void V1RegionSpec::V1BinocularFilter_Out_thread(int v1b_idx, int thread_no) {
     if(maxfv_rec < v1b_dsp_specs.opt_thr || flag != DSP_NONE || sum_dval == 0.0f) {
       v1b_dsp_out.FastEl(v1b_specs.tot_disps, 0, bc.x, bc.y) = 1.0f;
     }
+    else {
+      v1b_dsp_out.FastEl(v1b_specs.tot_disps, 0, bc.x, bc.y) = 0.0f;
+    }
   }
 }
 
