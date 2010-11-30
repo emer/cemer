@@ -1470,6 +1470,7 @@ taiColor::taiColor(TypeDef* typ_, IDataHost* host_, taiData* par,
 : inherited(typ_, host_, par, gui_parent_, flags) 
 {
   iColorButton* rep = new iColorButton(gui_parent_);
+  rep->setFixedHeight(taiM->button_height(defSize()));
   SetRep(rep);
   //note: using alpha is the default, must add NO_ALPHA to suppress
   rep->setUseAlpha(!(flags & flgNoAlpha));
