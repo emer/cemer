@@ -296,7 +296,7 @@ void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projecti
   if(!send_alloc)
     ru_u->RecvConsPreAlloc(send_offs.size, prjn);
 
-  PosTwoDCoord su_geo;  prjn->from->GetActGeomNoSpc(su_geo);
+  PosTwoDCoord su_geo = prjn->from->flat_geom;
   // positions of center of recv in sending layer
   TwoDCoord sctr;
   GetCtrFmRecv(sctr, ruc);
@@ -307,7 +307,7 @@ void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const TwoDCoord& ruc, Projecti
     TwoDCoord suc = te->send_off + sctr;
     if(suc.WrapClip(wrap, su_geo) && !wrap)
       continue;
-    Unit* su_u = prjn->from->FindUnitFmCoord(suc);
+    Unit* su_u = prjn->from->UnitAtCoord(suc);
     if((su_u == NULL) || (!self_con && (su_u == ru_u)))
       continue;
     if(send_alloc)
@@ -325,7 +325,7 @@ void TesselPrjnSpec::Connect_impl(Projection* prjn) {
 
 //   TestWarning(!wrap && init_wts, "Connect_impl",
 // 	      "non-wrapped tessel prjn spec with init_wts does not usually work!");
-  PosTwoDCoord ru_geo;  prjn->layer->GetActGeomNoSpc(ru_geo);
+  PosTwoDCoord ru_geo = prjn->layer->flat_geom;
 
   TwoDCoord use_recv_n = recv_n;
 
@@ -342,7 +342,7 @@ void TesselPrjnSpec::Connect_impl(Projection* prjn) {
 	for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
 	    ruc.x += recv_skip.x, nuc.x++)
 	  {
-	    Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
+	    Unit* ru_u = prjn->layer->UnitAtCoord(ruc);
 	    if(ru_u == NULL)
 	      continue;
 	    Connect_RecvUnit(ru_u, ruc, prjn, alloc_loop);
@@ -496,8 +496,8 @@ float PolarRndPrjnSpec::UnitDist(UnitDistType typ, Projection* prjn,
 			       const TwoDCoord& ru, const TwoDCoord& su)
 {
   FloatTwoDCoord half(.5f);
-  PosTwoDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
-  PosTwoDCoord su_geom; prjn->from->GetActGeomNoSpc(su_geom);
+  PosTwoDCoord ru_geom = prjn->layer->flat_geom;
+  PosTwoDCoord su_geom = prjn->from->flat_geom;
   switch(typ) {
   case XY_DIST:
     return ru.Dist(su);
@@ -528,8 +528,8 @@ Unit* PolarRndPrjnSpec::GetUnitFmOff(UnitDistType typ, bool wrap, Projection* pr
 				   const TwoDCoord& ru, const FloatTwoDCoord& su_off)
 {
   FloatTwoDCoord half(.5f);
-  PosTwoDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
-  PosTwoDCoord su_geom; prjn->from->GetActGeomNoSpc(su_geom);
+  PosTwoDCoord ru_geom = prjn->layer->flat_geom;
+  PosTwoDCoord su_geom = prjn->from->flat_geom;
   TwoDCoord suc;		// actual su coordinates
   switch(typ) {
   case XY_DIST: {
@@ -566,7 +566,7 @@ Unit* PolarRndPrjnSpec::GetUnitFmOff(UnitDistType typ, bool wrap, Projection* pr
   if(suc.WrapClip(wrap, su_geom) && !wrap)
     return NULL;
 
-  Unit* su_u = (Unit*)prjn->from->FindUnitFmCoord(suc);
+  Unit* su_u = (Unit*)prjn->from->UnitAtCoord(suc);
   return su_u;
 }
 
@@ -576,7 +576,7 @@ float PolarRndPrjnSpec::GetDistProb(Projection* prjn, Unit* ru, Unit* su) {
     return p_con;
   float prob = p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, su->pos));
   if(wrap) {
-    PosTwoDCoord su_geom; prjn->from->GetActGeomNoSpc(su_geom);
+    PosTwoDCoord su_geom = prjn->from->flat_geom;
     TwoDCoord suc = su->pos;
     suc.x += su_geom.x; // wrap around in x
     prob += p_con * rnd_dist.Density(UnitDist(dist_type, prjn, ru->pos, suc));
@@ -622,7 +622,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
 
   Unit* ru, *su;
   taLeafItr ru_itr;
-  PosTwoDCoord ru_geom; prjn->layer->GetActGeomNoSpc(ru_geom);
+  PosTwoDCoord ru_geom = prjn->layer->flat_geom;
   TwoDCoord ru_pos;		// do this according to act_geom..
   int cnt = 0;
   for(ru = (Unit*)prjn->layer->units.FirstEl(ru_itr); ru;
@@ -1454,7 +1454,7 @@ void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc
     TwoDCoord suc = te->send_gp_off + sctr;
     if(suc.WrapClip(wrap, su_geo) && !wrap)
       continue;
-    Unit_Group* su_gp = prjn->from->FindUnitGpFmCoord(suc);
+    Unit_Group* su_gp = prjn->from->UnitGpAtCoord(suc);
     if(su_gp == NULL) continue;
     Connect_Gps(ru_gp, su_gp, te->p_con, prjn, send_alloc);
   }
@@ -1494,7 +1494,7 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
 	for(ruc.x = recv_gp_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_gp_n.x);
 	    ruc.x += recv_gp_skip.x, nuc.x++, rugp_idx++)
 	  {
-	    Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	    Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
 	    if(ru_gp == NULL) continue;
 	    Connect_RecvGp(ru_gp, ruc, prjn, alloc_loop);
 	  }
@@ -1533,7 +1533,7 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
   recv_gp_ed = ru_geo - recv_gp_border;
   recv_gp_ex_ed = recv_gp_ex_st + recv_gp_ex_n;
 
-  prjn->from->GetActGeomNoSpc(su_act_geom);
+  su_act_geom = prjn->from->flat_geom;
 
 // 0 1 2 3 4 5 6 7 8 9 a b c d e = 14+1 = 15
 // 0 0 0 0 0 0
@@ -1582,7 +1582,7 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
 	if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
 	   (ruc.x >= recv_gp_ex_st.x) && (ruc.x < recv_gp_ex_ed.x)) continue;
 
-	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
 	if(ru_gp == NULL) continue;
 
 	TwoDCoord su_st;
@@ -1599,7 +1599,7 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
 	  TwoDCoord suc;
 	  for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
 	    for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
-	      Unit* su_u = prjn->from->FindUnitFmCoord(suc);
+	      Unit* su_u = prjn->from->UnitAtCoord(suc);
 	      if(su_u == NULL) continue;
 	      if(!self_con && (su_u == ru_u)) continue;
 	      ru_u->ConnectFrom(su_u, prjn, alloc_loop);
@@ -1630,7 +1630,7 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float i
     for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
       if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
 	 (ruc.x >= recv_gp_ex_st.x) && (ruc.x < recv_gp_ex_ed.x)) continue;
-      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+      Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
       if(ru_gp == NULL) continue;
 
       TwoDCoord su_st;
@@ -1648,7 +1648,7 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float i
 	  suc.y = su_idx / rf_width.x;
 	  suc.x = su_idx % rf_width.x;
 	  suc += su_st;
-	  Unit* su_u = prjn->from->FindUnitFmCoord(suc);
+	  Unit* su_u = prjn->from->UnitAtCoord(suc);
 	  if(su_u == NULL) continue;
 	  if(!self_con && (su_u == ru_u)) continue;
 	  Connection* cn = ru_u->ConnectFromCk(su_u, prjn); // gotta check!
@@ -1680,7 +1680,7 @@ void TiledRFPrjnSpec::SelectRF(Projection* prjn) {
     for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
       if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
 	 (ruc.x >= recv_gp_ex_st.x) && (ruc.x < recv_gp_ex_ed.x)) continue;
-      Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+      Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
       if(ru_gp == NULL) continue;
 
       selgp->LinkUnique(ru_gp);
@@ -1692,7 +1692,7 @@ void TiledRFPrjnSpec::SelectRF(Projection* prjn) {
       TwoDCoord suc;
       for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
 	for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
-	  Unit* su_u = prjn->from->FindUnitFmCoord(suc);
+	  Unit* su_u = prjn->from->UnitAtCoord(suc);
 	  if(su_u == NULL) continue;
 
 	  selgp->LinkUnique(su_u);
@@ -1745,7 +1745,7 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-	Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+	Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
 	if(ru_gp == NULL) continue;
 
 	TwoDCoord su_st;
@@ -1764,7 +1764,7 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
 	      suc_wrp = suc;
 	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 		continue;
-	      Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
+	      Unit_Group* su_gp = send_lay->UnitGpAtCoord(suc_wrp);
 	      if(!su_gp) continue;
 
 	      for(int sui=0;sui<su_gp->size;sui++) {
@@ -1796,7 +1796,7 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   TwoDCoord ruc;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+      Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
       if(ru_gp == NULL) continue;
 
       TwoDCoord su_st;
@@ -1810,7 +1810,7 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 	  suc_wrp = suc;
 	  if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 	    continue;
-	  Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
+	  Unit_Group* su_gp = send_lay->UnitGpAtCoord(suc_wrp);
 	  if(su_gp == NULL) continue;
 
 	  int sugp_idx = suc_wrp.y * su_geo.x + suc_wrp.x;
@@ -1833,7 +1833,7 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-	Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+	Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
 	if(ru_gp == NULL) continue;
 
 	TwoDCoord su_st;
@@ -1847,7 +1847,7 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 	    suc_wrp = suc;
 	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 	      continue;
-	    Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
+	    Unit_Group* su_gp = send_lay->UnitGpAtCoord(suc_wrp);
 	    if(su_gp == NULL) continue;
 
 	    for(int sui=0;sui<su_gp->size;sui++) {
@@ -1896,7 +1896,7 @@ int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float
   TwoDCoord ruc;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+      Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
       if(ru_gp == NULL) continue;
 
       TwoDCoord su_st;
@@ -1910,7 +1910,7 @@ int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float
 	  suc_wrp = suc;
 	  if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 	    continue;
-	  Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc_wrp);
+	  Unit_Group* su_gp = send_lay->UnitGpAtCoord(suc_wrp);
 	  if(su_gp == NULL) continue;
 
 	  for(int rui=0;rui<ru_gp->size;rui++) {
@@ -2005,7 +2005,7 @@ bool TiledNovlpPrjnSpec::InitRFSizes(Projection* prjn) {
 
   ru_geo = recv_lay->gp_geom;
 
-  send_lay->GetActGeomNoSpc(su_act_geom);
+  su_act_geom = send_lay->flat_geom;
 
   rf_width.x = (float)su_act_geom.x / (float)ru_geo.x;
   rf_width.y = (float)su_act_geom.y / (float)ru_geo.y;
@@ -2027,7 +2027,7 @@ void TiledNovlpPrjnSpec::Connect_impl(Projection* prjn) {
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-	Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+	Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
 	if(ru_gp == NULL) continue;
 
 	TwoDCoord su_st;
@@ -2043,7 +2043,7 @@ void TiledNovlpPrjnSpec::Connect_impl(Projection* prjn) {
 	  TwoDCoord suc;
 	  for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
 	    for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
-	      Unit* su_u = send_lay->FindUnitFmCoord(suc);
+	      Unit* su_u = send_lay->UnitAtCoord(suc);
 	      if(su_u == NULL) continue;
 
 	      if(!self_con && (su_u == ru_u)) continue;
@@ -2071,7 +2071,7 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   TwoDCoord ruc;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+      Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
       if(ru_gp == NULL) continue;
 
       TwoDCoord su_st;
@@ -2081,7 +2081,7 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
       TwoDCoord suc;
       for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
 	for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
-	  Unit* su_u = send_lay->FindUnitFmCoord(suc);
+	  Unit* su_u = send_lay->UnitAtCoord(suc);
 	  if(su_u == NULL) continue;
 	  int sugp_idx = suc.y * send_lay->flat_geom.x + suc.x;
 	  alloc_sz[sugp_idx] += ru_gp->size;
@@ -2094,7 +2094,7 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   TwoDCoord suc;
   for(suc.y = 0; suc.y < send_lay->flat_geom.y; suc.y++) {
     for(suc.x = 0; suc.x < send_lay->flat_geom.x; suc.x++) {
-      Unit* su_u = send_lay->FindUnitFmCoord(suc);
+      Unit* su_u = send_lay->UnitAtCoord(suc);
       if(su_u == NULL) continue;
       int sugp_idx = suc.y * send_lay->flat_geom.x + suc.x;
       su_u->RecvConsPreAlloc(alloc_sz[sugp_idx], prjn);
@@ -2105,7 +2105,7 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-	Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(ruc);
+	Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
 	if(ru_gp == NULL) continue;
 
 	TwoDCoord su_st;
@@ -2115,7 +2115,7 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 	TwoDCoord suc;
 	for(suc.y = su_st.y; suc.y < su_st.y + rf_width.y; suc.y++) {
 	  for(suc.x = su_st.x; suc.x < su_st.x + rf_width.x; suc.x++) {
-	    Unit* su_u = send_lay->FindUnitFmCoord(suc);
+	    Unit* su_u = send_lay->UnitAtCoord(suc);
 	    if(su_u == NULL) continue;
 
 	    for(int rui=0;rui<ru_gp->size;rui++) {
@@ -2158,7 +2158,7 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(ruc.y = 0; ruc.y < rug_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < rug_geo.x; ruc.x++) {
-	Unit* ru_u = prjn->layer->FindUnitFmCoord(ruc);
+	Unit* ru_u = prjn->layer->UnitAtCoord(ruc);
 	if(!ru_u) continue;
 
 	if(!alloc_loop)
@@ -2196,7 +2196,7 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
 	    suc_wrp = su_st + suc;
 	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 	      continue;
-	    Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+	    Unit* su_u = prjn->from->UnitAtCoord(suc_wrp);
 	    if(su_u == NULL) continue;
 	    if(!self_con && (su_u == ru_u)) continue;
 
@@ -2341,7 +2341,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
   Layer* send_lay = (Layer*)prjn->from.ptr();
   Unit* lru = (Unit*)ru;
   Unit_Group* rugp = (Unit_Group*)lru->owner;
-  TwoDCoord rgp_pos = rugp->GetGpGeomPos(); // position relative to overall gp geom
+  TwoDCoord rgp_pos = rugp->GpLogPos(); // position relative to overall gp geom
   float rgp_x = (float)rgp_pos.x / (float)MAX(recv_lay->gp_geom.x-1, 1);
   float rgp_y = (float)rgp_pos.y / (float)MAX(recv_lay->gp_geom.y-1, 1);
 
@@ -2349,8 +2349,8 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
   if(grad_x && grad_y)
     max_dist = sqrtf(2.0f);
 
-  float mxs_x = (float)MAX(send_lay->act_geom.x-1, 1);
-  float mxs_y = (float)MAX(send_lay->act_geom.y-1, 1);
+  float mxs_x = (float)MAX(send_lay->flat_geom.x-1, 1);
+  float mxs_y = (float)MAX(send_lay->flat_geom.y-1, 1);
 
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
@@ -2361,10 +2361,10 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
 
     float wrp_x, wrp_y;
     if(wrap) {
-      if(rgp_x > .5f)   wrp_x = (float)(su_pos.x + send_lay->act_geom.x) / mxs_x;
-      else	      	wrp_x = (float)(su_pos.x - send_lay->act_geom.x) / mxs_x;
-      if(rgp_y > .5f)   wrp_y = (float)(su_pos.y + send_lay->act_geom.y) / mxs_y;
-      else	      	wrp_y = (float)(su_pos.y - send_lay->act_geom.y) / mxs_y;
+      if(rgp_x > .5f)   wrp_x = (float)(su_pos.x + send_lay->flat_geom.x) / mxs_x;
+      else	      	wrp_x = (float)(su_pos.x - send_lay->flat_geom.x) / mxs_x;
+      if(rgp_y > .5f)   wrp_y = (float)(su_pos.y + send_lay->flat_geom.y) / mxs_y;
+      else	      	wrp_y = (float)(su_pos.y - send_lay->flat_geom.y) / mxs_y;
     }
 
     float dist;
@@ -2411,15 +2411,15 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
   Layer* send_lay = (Layer*)prjn->from.ptr();
   TwoDCoord ru_pos;
   ru->GetLayerAbsPos(ru_pos);
-  float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->act_geom.x-1, 1);
-  float ru_y = (float)ru_pos.y / (float)MAX(recv_lay->act_geom.y-1, 1);
+  float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1);
+  float ru_y = (float)ru_pos.y / (float)MAX(recv_lay->flat_geom.y-1, 1);
 
   float max_dist = 1.0f;
   if(grad_x && grad_y)
     max_dist = sqrtf(2.0f);
 
-  float mxs_x = (float)MAX(send_lay->act_geom.x-1, 1);
-  float mxs_y = (float)MAX(send_lay->act_geom.y-1, 1);
+  float mxs_x = (float)MAX(send_lay->flat_geom.x-1, 1);
+  float mxs_y = (float)MAX(send_lay->flat_geom.y-1, 1);
 
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
@@ -2430,10 +2430,10 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
 
     float wrp_x, wrp_y;
     if(wrap) {
-      if(ru_x > .5f)   	wrp_x = (float)(su_pos.x + send_lay->act_geom.x) / mxs_x;
-      else	      	wrp_x = (float)(su_pos.x - send_lay->act_geom.x) / mxs_x;
-      if(ru_y > .5f)   	wrp_y = (float)(su_pos.y + send_lay->act_geom.y) / mxs_y;
-      else	      	wrp_y = (float)(su_pos.y - send_lay->act_geom.y) / mxs_y;
+      if(ru_x > .5f)   	wrp_x = (float)(su_pos.x + send_lay->flat_geom.x) / mxs_x;
+      else	      	wrp_x = (float)(su_pos.x - send_lay->flat_geom.x) / mxs_x;
+      if(ru_y > .5f)   	wrp_y = (float)(su_pos.y + send_lay->flat_geom.y) / mxs_y;
+      else	      	wrp_y = (float)(su_pos.y - send_lay->flat_geom.y) / mxs_y;
     }
 
     float dist;

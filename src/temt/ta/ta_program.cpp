@@ -629,6 +629,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
   flags = cp.flags;
   reference = cp.reference;
   desc = cp.desc;
+  init_from = cp.init_from;
 
   if(var_type == T_Object) {
     if((bool)object_val) {

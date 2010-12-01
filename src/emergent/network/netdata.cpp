@@ -925,7 +925,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
     TwoDCoord c;
     for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
       for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
-        Unit* u = lay->FindUnitFmCoord(c); // NULL if odd size or not built
+        Unit* u = lay->UnitAtCoord(c); // NULL if odd size or not built
         if(u) 
 	  ScanObject_InObject(u, var, NULL); // don't make a col
       }
@@ -937,7 +937,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
 	TwoDCoord c;
 	for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
 	  for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
-	    Unit* u = lay->FindUnitFmGpCoord(gc, c);
+	    Unit* u = lay->UnitAtGpCoord(gc, c);
 	    if(u) 
 	      ScanObject_InObject(u, var, NULL); // don't make a col
 	  }
@@ -1190,10 +1190,10 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
 
   // we now know it must be a regular unit variable (or invalid); do that
   MatrixGeom geom;
-  if(ug->geom.n_not_xy)
+  if(ug->own_lay->un_geom.n_not_xy)
     geom.SetGeom(1, ug->size);	// irregular: flatten!
   else
-    geom.SetGeom(2, ug->geom.x, ug->geom.y);
+    geom.SetGeom(2, ug->own_lay->un_geom.x, ug->own_lay->un_geom.y);
   
   String valname = GetChanName(ug, val_specs.size);
   AddMatrixChan(valname, VT_FLOAT, &geom);
@@ -1204,9 +1204,9 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
   }
   else {
     TwoDCoord c;
-    for (c.y = 0; c.y < ug->geom.y; ++c.y) {
-      for (c.x = 0; c.x < ug->geom.x; ++c.x) {
-        Unit* u = ug->FindUnitFmCoord(c); // NULL if odd size or not built
+    for (c.y = 0; c.y < ug->own_lay->un_geom.y; ++c.y) {
+      for (c.x = 0; c.x < ug->own_lay->un_geom.x; ++c.x) {
+        Unit* u = ug->UnitAtCoord(c); // NULL if odd size or not built
         if(u) 
 	  ScanObject_InObject(u, var, NULL); // don't make a col
       }

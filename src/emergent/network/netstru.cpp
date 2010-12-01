@@ -2034,10 +2034,6 @@ void Unit::InitLinks() {
   taBase::Own(bias, this);
   taBase::Own(pos, this);
   BuildUnits();
-  // note: no longer supporting incremental construction by hand..
-//   Layer* lay = GET_MY_OWNER(Layer);
-//   if(lay && !taMisc::is_loading)
-//     lay->LayoutUnits(this);
 }
 
 void Unit::CutLinks() {
@@ -2084,14 +2080,8 @@ int Unit::GetMyLeafIndex() {
   if(ug->owner->InheritsFrom(&TA_Layer))
     return idx; // simple: we're the only unit group
   // note: this assumes only one layer of subgroups, which is all that is supported anyway
-  Layer* lay = (Layer*)ug->owner->GetOwner()->GetOwner();
-  int cum_idx = 0;
-  for(int i=0;i<lay->units.gp.size;i++) {
-    Unit_Group* sg = (Unit_Group*)lay->units.gp.FastEl(i);
-    if(sg == ug) return cum_idx + idx;
-    cum_idx += sg->size;
-  }
-  return -1;			// not found
+  Layer* lay = (Layer*)ug->own_lay;
+  return ug->idx * ug->size + idx; // our unit group index within its owning list, times number of items per group (presumably same throughout), plus our own index..
 }
 
 void Unit::GetLayerAbsPos(TwoDCoord& lay_abs_pos) {
@@ -3034,7 +3024,7 @@ void Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
   if(col_nm.empty()) col_nm = from->name;
 
   int idx;
-  DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2, from->act_geom.x, from->act_geom.y);
+  DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2, from->flat_geom.x, from->flat_geom.y);
 
   taLeafItr ri;
   Unit* ru;
@@ -3382,104 +3372,61 @@ int Projection::LesionCons(float p_lesion, bool permute) {
 
 void Unit_Group::Initialize() {
   own_lay = NULL;
-  unique_geom = false;
-  units_lesioned = false;
-  n_units = 0;	// note: v3compat obs
+  idx = -1;
 }
 
 void Unit_Group::InitLinks() {
   taGroup<Unit>::InitLinks();
   taBase::Own(pos,this);
-  taBase::Own(geom,this);
   own_lay = GET_MY_OWNER(Layer);
 }
 
 void Unit_Group::CutLinks() {
   own_lay = NULL;
+  idx = -1;
   taGroup<Unit>::CutLinks();
 }
 
 void Unit_Group::Copy_(const Unit_Group& cp) {
   pos = cp.pos;
-  unique_geom = false;
-  geom = cp.geom;
   output_name = cp.output_name;
-  n_units = cp.n_units;	// note: v3compat obs
 }
 
 void Unit_Group::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if((own_lay == NULL) || (own_lay->own_net == NULL)) return;
-  if(n_units != 0) {		// v3compat obs: conversion; remove at some point
-    unique_geom = true;
-    if(n_units != geom.x * geom.y) {
-      geom.n_not_xy = true;
-      geom.n = n_units;
+}
+
+Unit* Unit_Group::UnitAtCoord(int x, int y) {
+  if(!own_lay) return NULL;
+  if(x >= own_lay->un_geom.x) return NULL; // y will be caught by safe..
+  int idx = y * own_lay->un_geom.x + x;
+  return SafeEl(idx);
+}
+
+TwoDCoord Unit_Group::GpLogPos() {
+  if(!own_lay) return pos;
+  TwoDCoord rval;
+  rval.y = idx / own_lay->gp_geom.x;
+  rval.x = idx % own_lay->gp_geom.x;
+  return rval;
+}
+
+void Unit_Group::AddRelPos(TDCoord& rel_pos) {
+  // note: vastly most likely case is a flat root group of units...
+  Layer* lay = dynamic_cast<Layer*>(owner);
+  if (lay) {
+    rel_pos += lay->pos;
+    lay->AddRelPos(rel_pos);
+  } else { // better be in a group then!
+    Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
+    if (ugp) {
+      rel_pos += ugp->pos;
+      ugp->AddRelPos(rel_pos);
     }
-    n_units = 0;
-  }
-  RecomputeGeometry();
-}
-
-void Unit_Group::RemoveAll() {
-  units_lesioned = false;
-  inherited::RemoveAll();
-}
-
-void Unit_Group::RecomputeGeometry() {
-  if((own_lay == NULL) || (own_lay->own_net == NULL)) return;
-  if(!unique_geom)
-    geom = own_lay->un_geom;
-  else 
-    geom.UpdateAfterEdit_NoGui();
-}
-
-void Unit_Group::LayoutUnits(Unit* u) {
-  if(owner == own_lay)
-    return;			// i'm the layer subgroup, layer takes care
-  RecomputeGeometry();
-  int i = 0;
-  TDCoord mygeo;
-  Unit* un = NULL;
-  for(mygeo.y=0; mygeo.y < geom.y; mygeo.y++) {
-    for(mygeo.x=0; mygeo.x <geom.x; mygeo.x++) {
-      if(i >= size)
-        break;
-      un = (Unit*)FastEl(i++);
-      if((un) && (!u || un==u)) un->pos = mygeo;
-      if(un==u) break;
-    }
-    if(un==u) break;
   }
 }
-
-bool Unit_Group::BuildUnits() {
-  if((own_lay == NULL) || (owner == own_lay))	return false;
-  StructUpdate(true);
-  RecomputeGeometry();
-  bool units_changed = false;
-  if(size != geom.n)
-    units_changed = true;
-  SetSize(geom.n);
-  EnforceType();
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i)
-    u->BuildUnits();
-  units_lesioned = false;
-  StructUpdate(false);
-  return units_changed;
-}
-
-bool Unit_Group::CheckBuild(bool quiet) {
-  bool rval;
-  if(CheckError((!units_lesioned && (size != geom.n)), quiet, rval,
-		"number of units != target in group")) {
-    return false;
-  }
-  return true;
-}
-
+ 
 void Unit_Group::MonitorVar(NetMonitor* net_mon, const String& variable) {
   if(!net_mon) return;
   net_mon->AddObject(this, variable);
@@ -3622,7 +3569,6 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
     for(j=ary.size-1; j>=0; j--) {
       Unit* un = Leaf(ary.FastEl(j));
       un->DisConnectAll();
-//       un->pos.z = -1;		// don't update yet!
       RemoveLeafEl(un);
     }
   }
@@ -3632,20 +3578,14 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
       if(Random::ZeroOne() <= p_lesion) {
 	Unit* un = (Unit*)Leaf(j);
 	un->DisConnectAll();
-// 	un->pos.z = -1;		// don't update yet!
 	RemoveLeafIdx(j);
 	rval++;
       }
     }
   }
-  units_lesioned = true;	// record that units were lesioned
-  int k;
-  for(k=0; k<gp.size; k++) {
-    Unit_Group* ug = (Unit_Group*)gp.FastEl(k);
-    ug->units_lesioned = true;
-  }
+  own_lay->units_lesioned = true;	// record that units were lesioned
   StructUpdate(false);
-  if (!Network_InStructUpdate(own_lay->own_net)) {
+  if(!Network_InStructUpdate(own_lay->own_net)) {
     own_lay->own_net->UpdtAfterNetMod();
   }
   return rval;
@@ -3801,32 +3741,6 @@ bool Unit_Group::VarToVal(const String& dest_var, float val) {
   return true;
 }
 
-bool Unit_Group::SetUnitNames(taMatrix* mat) {
-  if (!mat) return false;
-  int x, y;
-  for (y = 0; ((y < mat->dim(1)) && (y < geom.y)); ++y) {
-    for (x = 0; ((x < mat->dim(0)) && (x < geom.x)); ++x) {
-      Unit* un = FindUnitFmCoord(x, y);
-      if (!un) continue;
-      un->SetName(mat->SafeElAsVar(x, y).toString());
-    }
-  }
-  return true;
-}
-
-bool Unit_Group::GetUnitNames(taMatrix* mat) {
-  if (!mat) return false;
-  int x, y;
-  for (y = 0; ((y < mat->dim(1)) && (y < geom.y)); ++y) {
-    for (x = 0; ((x < mat->dim(0)) && (x < geom.x)); ++x) {
-      Unit* un = FindUnitFmCoord(x, y);
-      if (!un) continue;
-      mat->SetFmVar((Variant)un->GetName(), x, y);
-    }
-  }
-  return true;
-}
-
 Unit* Unit_Group::MostActiveUnit(int& idx) {
   idx = -1;
   if(leaves == 0) return NULL;
@@ -3843,39 +3757,6 @@ Unit* Unit_Group::MostActiveUnit(int& idx) {
   return max_un;
 }
 
-Unit* Unit_Group::FindUnitFmCoord(int x, int y) {
-  if (( x < 0) || (x >= geom.x) || (y < 0) || (y >= geom.y)) return NULL;
-  int idx = y * geom.x + x;
-  if (idx < size)
-    return FastEl(idx);
-  return NULL;
-}
-
-TwoDCoord Unit_Group::GetGpGeomPos() {
-  if(!own_lay) return pos;
-  TwoDCoord rval;
-  if(own_lay->un_geom.x + own_lay->gp_spc.x > 0)
-    rval.x = pos.x / (own_lay->un_geom.x + own_lay->gp_spc.x);
-  if(own_lay->un_geom.y + own_lay->gp_spc.y > 0)
-    rval.y = pos.y / (own_lay->un_geom.y + own_lay->gp_spc.y);
-  return rval;
-}
-
-void Unit_Group::AddRelPos(TDCoord& rel_pos) {
-  // note: vastly most likely case is a flat root group of units...
-  Layer* lay = dynamic_cast<Layer*>(owner);
-  if (lay) {
-    rel_pos += lay->pos;
-    lay->AddRelPos(rel_pos);
-  } else { // better be in a group then!
-    Unit_Group* ugp = GET_MY_OWNER(Unit_Group);
-    if (ugp) {
-      rel_pos += ugp->pos;
-      ugp->AddRelPos(rel_pos);
-    }
-  }
-}
- 
 bool Unit_Group::Dump_QuerySaveChildren() {
   if (!own_lay) return false; // huh? should always be valid...
   // always save if forced
@@ -3932,19 +3813,22 @@ void Layer::Initialize() {
   layer_type = HIDDEN;
   disp_scale = 1.0f;
   unit_groups = false;
+  virt_groups = false;		// todo: make true default for later version
   gp_spc.x = 1;  gp_spc.y = 1;
   projections.SetBaseType(&TA_Projection);
   send_prjns.send_prjns = true;
   units.SetBaseType(&TA_Unit);
   ext_flag = Unit::NO_EXTERNAL;
-  act_geom = un_geom;
-  scaled_act_geom = act_geom;
+  disp_geom = un_geom;
+  scaled_disp_geom = disp_geom;
   dmem_dist = DMEM_DIST_DEFAULT;
   m_prv_unit_spec = NULL;
 
   sse = 0.0f;
   icon_value = 0.0f;
   units_flat_idx = 0;
+  units_lesioned = false;
+  gp_unit_names_4d = false;
 
   n_units = 0;			// note: v3compat obs
 }
@@ -3960,12 +3844,13 @@ void Layer::InitLinks() {
   taBase::Own(gp_geom, this);
   taBase::Own(gp_spc, this);
   taBase::Own(flat_geom, this);
-  taBase::Own(act_geom, this);
-  taBase::Own(scaled_act_geom, this);
+  taBase::Own(disp_geom, this);
+  taBase::Own(scaled_disp_geom, this);
   taBase::Own(prerr, this);
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_share_units, this);
 #endif
+  taBase::Own(gp_output_names, this);
   taBase::Own(unit_names, this);
   own_net = GET_MY_OWNER(Network);
   if(pos == 0)
@@ -3977,9 +3862,10 @@ void Layer::InitLinks() {
 void Layer::CutLinks() {
   if(!owner) return; // already replacing or already dead
   DisConnect();
+  gp_output_names.CutLinks();
   unit_names.CutLinks();
-  act_geom.CutLinks();
-  scaled_act_geom.CutLinks();
+  disp_geom.CutLinks();
+  scaled_disp_geom.CutLinks();
   flat_geom.CutLinks();
   gp_spc.CutLinks();
   gp_geom.CutLinks();
@@ -4009,8 +3895,8 @@ void Layer::Copy_(const Layer& cp) {
   gp_geom = cp.gp_geom;
   gp_spc = cp.gp_spc;
   flat_geom = cp.flat_geom;
-  act_geom = cp.act_geom;
-  scaled_act_geom = cp.scaled_act_geom;
+  disp_geom = cp.disp_geom;
+  scaled_disp_geom = cp.scaled_disp_geom;
   projections = cp.projections;
   units = cp.units;
   unit_spec = cp.unit_spec;
@@ -4018,9 +3904,12 @@ void Layer::Copy_(const Layer& cp) {
   m_prv_unit_spec = cp.m_prv_unit_spec;
 
   output_name = cp.output_name;
+  gp_output_names = cp.gp_output_names;
   sse = cp.sse;
   prerr = cp.prerr;
   icon_value = cp.icon_value;
+  gp_unit_names_4d = cp.gp_unit_names_4d;
+  unit_names = cp.unit_names;
 
   n_units = cp.n_units;		// note: v3compat obs
 
@@ -4054,23 +3943,33 @@ void Layer::UpdateAfterEdit_impl() {
   UpdateUnitSpecs((bool)taMisc::is_loading); // force if loading
   //  SyncSendPrjns(); // this is not a good place to do this -- too frequent and unnec
   // also causes problems during copy..
-  if(n_units > 0) {		// obs: v3compat conversion obs remove later
-    if(n_units != un_geom.x * un_geom.y) {
-      un_geom.n_not_xy = true;
-      un_geom.n = n_units;
+
+  if(taMisc::is_loading) {
+    if(n_units > 0) {		// obs: v3compat conversion
+      if(n_units != un_geom.x * un_geom.y) {
+	un_geom.n_not_xy = true;
+	un_geom.n = n_units;
+      }
+      n_units = 0;
     }
-    n_units = 0;
-  }
-  if(un_geom.z > 1) {		// obs: v3compat conversion obs remove later
-    gp_geom.UpdateAfterEdit_NoGui();	// get n from xy
-    unit_groups = true;
-    if(gp_geom.n != un_geom.z) {
-      gp_geom.n_not_xy = true;
-      gp_geom.n = un_geom.z;
+    if(un_geom.z > 1) {		// obs: v3compat conversion
+      gp_geom.UpdateAfterEdit_NoGui();	// get n from xy
+      unit_groups = true;
+      if(gp_geom.n != un_geom.z) {
+	gp_geom.n_not_xy = true;
+	gp_geom.n = un_geom.z;
+      }
+      un_geom.z = 0;
     }
-    un_geom.z = 0;
+    taVersion v511(5, 1, 1);
+    if(taMisc::loading_version < v511) { // update the gp_unit_names_4d flag
+      if(unit_groups && unit_names.dims() == 4)
+	gp_unit_names_4d = true;
+      else
+	gp_unit_names_4d = false;
+    }
   }
-  if(!taMisc::is_loading) {
+  else {			// not loading
     RecomputeGeometry();
     if(own_net)
       own_net->LayerPos_Cleanup();
@@ -4206,13 +4105,16 @@ void Layer::RecomputeGeometry() {
     flat_geom.n = un_geom.n * gp_geom.n;
     if(flat_geom.n != flat_geom.x * flat_geom.y)
       flat_geom.n_not_xy = true;
-    // NOTE: act_geom must get computed later....
-  } else {
-    flat_geom = un_geom;
-    act_geom = un_geom;
+    TwoDCoord eff_un_sz = un_geom + gp_spc;
+    disp_geom = gp_geom * eff_un_sz;
+    disp_geom -= gp_spc;	// no space at the end!
   }
-  scaled_act_geom.x = (int)ceil((float)act_geom.x * disp_scale);
-  scaled_act_geom.y = (int)ceil((float)act_geom.y * disp_scale);
+  else {
+    flat_geom = un_geom;
+    disp_geom = un_geom;
+  }
+  scaled_disp_geom.x = (int)ceil((float)disp_geom.x * disp_scale);
+  scaled_disp_geom.y = (int)ceil((float)disp_geom.y * disp_scale);
 }
 
 ProjectBase* Layer::project() {
@@ -4258,55 +4160,52 @@ void Layer::SetDefaultPos() {
   }
 }
 
-void Layer::LayoutUnits(Unit* u) {
+void Layer::LayoutUnits() {
   StructUpdate(true);
   RecomputeGeometry();
   units.pos.z = 0;
   if(unit_groups) {
-    TDCoord mygeo;
-    PosTDCoord ungeo;
-    act_geom.x = 0; act_geom.y = 0;
-    int i = 0;
-    int max_y = 0;
-    for(mygeo.y=0, ungeo.y=0; mygeo.y < gp_geom.y; mygeo.y++) {
-      max_y = 0;
-      for(mygeo.x=0, ungeo.x=0; mygeo.x <gp_geom.x; mygeo.x++) {
-	if(i >= units.gp.size)
-	  break;
-	Unit_Group* ug = (Unit_Group*)units.gp.FastEl(i++);
-// 	if((ug->pos.x < ungeo.x) || (ug->pos.y < ungeo.y))
-	// always update to new position!
-	ug->pos = ungeo;
-        ug->LayoutUnits();
-	ungeo.x = ug->pos.x + MAX(ug->geom.x, un_geom.x) + gp_spc.x;
-	max_y = MAX(ug->pos.y + ug->geom.y, max_y);
-	act_geom.x = MAX(act_geom.x, ungeo.x);
+    TwoDCoord eff_un_sz = un_geom + gp_spc;
+    TwoDCoord gpgeo;
+    int gi = 0;
+    int ui = 0;
+    Unit_Group* eff_ug = &units;
+    for(gpgeo.y=0; gpgeo.y < gp_geom.y; gpgeo.y++) {
+      for(gpgeo.x=0; gpgeo.x < gp_geom.x; gpgeo.x++) {
+	TwoDCoord gp_pos = gpgeo * eff_un_sz;
+	if(!virt_groups) {
+	  Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi++);
+	  ug->pos.x = gp_pos.x; ug->pos.y = gp_pos.y;
+	  eff_ug = ug;
+	  ui = 0;
+	}
+	TwoDCoord ugeo;
+	for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
+	  for(ugeo.x=0; ugeo.x < un_geom.x; ugeo.x++) {
+	    if(ui >= eff_ug->size)
+	      break;
+	    Unit* un = (Unit*)eff_ug->FastEl(ui++);
+	    TwoDCoord upos = ugeo;
+	    if(virt_groups)
+	      upos += gp_pos;
+	    un->pos.x = upos.x; un->pos.y = upos.y;
+	  }
+	}
       }
-      ungeo.y = max_y + gp_spc.y;
-      act_geom.y = MAX(act_geom.y, ungeo.y);
     }
-    act_geom.y -= gp_spc.y;	// no space at the end!
-    act_geom.x -= gp_spc.x;
   }
   else {
-    TDCoord mygeo;
-    act_geom = un_geom;
-    units.geom = un_geom;		// default is to have layer's geom
+    TwoDCoord ugeo;
     int i = 0;
-    Unit* un = NULL;
-    for(mygeo.y=0; mygeo.y < un_geom.y; mygeo.y++) {
-      for(mygeo.x=0; mygeo.x <un_geom.x; mygeo.x++) {
-	if(i >= units.leaves)
+    for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
+      for(ugeo.x=0; ugeo.x <un_geom.x; ugeo.x++) {
+	if(i >= units.size)
 	  break;
-	un = (Unit*)units.Leaf(i++);
-	if((un) && (!u || un==u)) un->pos = mygeo;
-	if(un==u) break;
+	Unit* un = (Unit*)units.FastEl(i++);
+	un->pos.x = ugeo.x; un->pos.y = ugeo.y;
       }
-      if(un==u) break;
     }
   }
-  scaled_act_geom.x = (int)ceil((float)act_geom.x * disp_scale);
-  scaled_act_geom.y = (int)ceil((float)act_geom.y * disp_scale);
   StructUpdate(false);
 }
 
@@ -4340,31 +4239,57 @@ void Layer::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);
   RecomputeGeometry();
+  units_lesioned = false;
   bool units_changed = false;
   if(unit_groups) {
-    while(units.size > 0) {
-//       ((Unit*)units.FastEl(units.size-1))->pos.z = -1; // do not update
-      units.RemoveIdx(units.size-1); // get rid of any in top-level
-    }
-    units.gp.SetSize(gp_geom.n);
-    for(int k=0; k< units.gp.size; k++) {
-      Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
-      ug->UpdateAfterEdit_NoGui();
-      if(ug->BuildUnits())
+    gp_output_names.SetGeom(2,gp_geom.x,gp_geom.y);
+    if(virt_groups) {
+      if(units.gp.size > 0)
 	units_changed = true;
+      units.gp.RemoveAll();	// in case there were any subgroups..
+      if(units.size != flat_geom.n)
+	units_changed = true;
+      units.SetSize(flat_geom.n);
+      units.EnforceType();
+      Unit* u;
+      taLeafItr i;
+      FOR_ITR_EL(Unit, u, units., i)
+	u->BuildUnits();
+    }
+    else {
+      while(units.size > 0) {
+	units_changed = true;
+	units.RemoveIdx(units.size-1); // get rid of any in top-level
+      }
+      units.gp.SetSize(gp_geom.n);
+      for(int k=0; k< units.gp.size; k++) {
+	Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
+	ug->UpdateAfterEdit_NoGui();
+	ug->StructUpdate(true);
+	if(ug->size != un_geom.n)
+	  units_changed = true;
+	ug->SetSize(un_geom.n);
+	ug->EnforceType();
+	Unit* u;
+	taLeafItr ui;
+	FOR_ITR_EL(Unit, u, ug->, ui)
+	  u->BuildUnits();
+	ug->StructUpdate(false);
+      }
     }
   }
   else {
-    units.gp.RemoveAll();	// in case there were any subgroups..
-    if(!units_changed && (units.leaves != un_geom.n))
+    if(units.gp.size > 0)
       units_changed = true;
-    units.EnforceLeaves(un_geom.n);
+    units.gp.RemoveAll();	// in case there were any subgroups..
+    if(units.size != un_geom.n)
+      units_changed = true;
+    units.SetSize(un_geom.n);
     units.EnforceType();
     Unit* u;
     taLeafItr i;
     FOR_ITR_EL(Unit, u, units., i)
       u->BuildUnits();
-    units.units_lesioned = false;
   }
 
   LayoutUnits();
@@ -4400,49 +4325,30 @@ void Layer::BuildUnits_Threads(Network* net) {
   }
 }
 
-void Layer::LayoutUnitGroups() {
-  if(units.gp.size == 0) return;
-  StructUpdate(true);
-  TDCoord mygeo;
-  PosTDCoord ungeo;
-  act_geom.x = 0; act_geom.y = 0;
-  int i = 0;
-  int max_y = 0;
-  for(mygeo.y=0, ungeo.y=0; mygeo.y < gp_geom.y; mygeo.y++) {
-    max_y = 0;
-    for(mygeo.x=0, ungeo.x=0; mygeo.x <gp_geom.x; mygeo.x++) {
-      if(i >= units.gp.size)
-	break;
-      Unit_Group* ug = (Unit_Group*)units.gp.FastEl(i++);
-      ug->pos = ungeo;
-      ug->LayoutUnits();
-      ungeo.x = ug->pos.x + MAX(ug->geom.x, un_geom.x) + gp_spc.x;
-      max_y = MAX(ug->pos.y + ug->geom.y, max_y);
-      act_geom.x = MAX(act_geom.x, ungeo.x);
-    }
-    ungeo.y = max_y + gp_spc.y;
-    act_geom.y = MAX(act_geom.y, ungeo.y);
-  }
-  act_geom.y -= gp_spc.y;	// no space at the end!
-  act_geom.x -= gp_spc.x;
-  scaled_act_geom.x = (int)ceil((float)act_geom.x * disp_scale);
-  scaled_act_geom.y = (int)ceil((float)act_geom.y * disp_scale);
-  StructUpdate(false);
-}
-
 bool Layer::CheckBuild(bool quiet) {
-  bool rval;
-  if(units.gp.size > 0) {
-    for(int g=0; g<units.gp.size; g++) {
-      Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
-      if(!ug->CheckBuild(quiet))
+  bool rval = true;
+  if(!units_lesioned) {
+    if(unit_groups && !virt_groups) {
+      if(CheckError((units.gp.size != gp_geom.n), quiet, rval,
+		    "number of unit groups != target -- is:", String(units.gp.size),
+		    "should be:", String(gp_geom.n))) {
 	return false;
+      }
+      for(int g=0; g<units.gp.size; g++) {
+	Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
+	if(CheckError((ug->size != un_geom.n), quiet, rval,
+		      "number of units in group:",String(g),"!= target -- is:", String(ug->size),
+		      "should be:", String(un_geom.n))) {
+	  return false;
+	}
+      }
     }
-  }
-  else {
-    if(CheckError((!units.units_lesioned && (units.size != un_geom.n)), quiet, rval,
-		  "number of units != target")) {
-      return false;
+    else {
+      if(CheckError((units.size != flat_geom.n), quiet, rval,
+		    "number of units != target -- is:", String(units.size),
+		    "should be:", String(flat_geom.n))) {
+	return false;
+      }
     }
   }
 
@@ -4653,7 +4559,7 @@ void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
     int u_y = offs.y + d_y;
     for(int d_x = 0; d_x < data->dim(0); d_x++) {
       int u_x = offs.x + d_x;
-      Unit* un = FindUnitFmCoord(u_x, u_y);
+      Unit* un = UnitAtCoord(u_x, u_y);
       if(un) {
 	float val = data->SafeElAsVar(d_x, d_y).toFloat();
 	un->ApplyInputData(val, ext_flags, ran, na_by_range);
@@ -4672,7 +4578,7 @@ void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
 	int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
 	for(int d_x = 0; d_x < data->dim(0); d_x++) {
 	  int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
-	  Unit* un = FindUnitFmCoord(u_x, u_y);
+	  Unit* un = UnitAtCoord(u_x, u_y);
 	  if(un) {
 	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
 	    un->ApplyInputData(val, ext_flags, ran, na_by_range);
@@ -4691,7 +4597,7 @@ void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random*
 
       for(int d_y = 0; d_y < data->dim(1); d_y++) {
 	for(int d_x = 0; d_x < data->dim(0); d_x++) {
-	  Unit* un = FindUnitFmGpCoord(dg_x, dg_y, d_x, d_y);
+	  Unit* un = UnitAtGpCoord(dg_x, dg_y, d_x, d_y);
 	  if(un) {
 	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
 	    un->ApplyInputData(val, ext_flags, ran, na_by_range);
@@ -4913,35 +4819,31 @@ bool Layer::SetUnitNames(bool force_use_unit_names) {
   if(!force_use_unit_names && unit_names.dims() == 0) return false;
   // first enforce geom, then do it.
   if(unit_groups) {
-    if(unit_names.dims() == 2) {
-      // if already populated and geom is larger than unit geom, go with flat geom
-      if(unit_names.dim(0) * unit_names.dim(1) > un_geom.x * un_geom.y) {
-	unit_names.SetGeom(2, flat_geom.x, flat_geom.y);
-	int x, y;
-	for (y = 0; y < flat_geom.y; ++y) {
-	  for (x = 0; x < flat_geom.x; ++x) {
-	    Unit* un = FindUnitFmCoord(x, y);
-	    if (!un) continue;
-	    un->SetName(unit_names.SafeElAsVar(x, y).toString());
-	  }
-	}
-      }
-      else {
-	unit_names.SetGeom(2, un_geom.x, un_geom.y);
-	if(units.gp.size > 0)
-	  ((Unit_Group*)units.gp[0])->SetUnitNames(&unit_names);
-      }
-    }
-    else { 
+    if(gp_unit_names_4d) {
       unit_names.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
       int gx, gy, ux, uy;
       for (gy = 0; gy < gp_geom.y; ++gy) {
 	for (gx = 0; gx < gp_geom.x; ++gx) {
 	  for (uy = 0; uy < un_geom.y; ++uy) {
 	    for (ux = 0; ux < un_geom.x; ++ux) {
-	      Unit* un = FindUnitFmGpCoord(gx, gy, ux, uy);
+	      Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
 	      if (!un) continue;
-	      un->SetName(unit_names.SafeElAsVar(ux, uy, gx, gy).toString());
+	      un->SetName(unit_names.SafeEl(ux, uy, gx, gy));
+	    }
+	  }
+	}
+      }
+    }
+    else { 
+      unit_names.SetGeom(2, un_geom.x, un_geom.y);
+      int gx, gy, ux, uy;
+      for (gy = 0; gy < gp_geom.y; ++gy) {
+	for (gx = 0; gx < gp_geom.x; ++gx) {
+	  for (uy = 0; uy < un_geom.y; ++uy) {
+	    for (ux = 0; ux < un_geom.x; ++ux) {
+	      Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
+	      if (!un) continue;
+	      un->SetName(unit_names.SafeEl(ux, uy));
 	    }
 	  }
 	}
@@ -4950,7 +4852,14 @@ bool Layer::SetUnitNames(bool force_use_unit_names) {
   }
   else {
     unit_names.SetGeom(2, un_geom.x, un_geom.y);
-    units.SetUnitNames(&unit_names);
+    int x, y;
+    for (y = 0; y < un_geom.y; ++y) {
+      for (x = 0; x < un_geom.x; ++x) {
+	Unit* un = UnitAtCoord(x, y);
+	if (!un) continue;
+	un->SetName(unit_names.SafeEl(x, y));
+      }
+    }
   }
   return true;
 }
@@ -4959,21 +4868,31 @@ bool Layer::GetUnitNames(bool force_use_unit_names) {
   if(!force_use_unit_names && unit_names.dims() == 0) return false;
   // first enforce geom, then do it.
   if(unit_groups) {
-    if(unit_names.dims() == 2) {
-      unit_names.SetGeom(2, un_geom.x, un_geom.y);
-      if(units.gp.size > 0)
-	((Unit_Group*)units.gp[0])->GetUnitNames(&unit_names);
-    }
-    else { 
+    if(gp_unit_names_4d) {
       unit_names.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
       int gx, gy, ux, uy;
       for (gy = 0; gy < gp_geom.y; ++gy) {
 	for (gx = 0; gx < gp_geom.x; ++gx) {
 	  for (uy = 0; uy < un_geom.y; ++uy) {
 	    for (ux = 0; ux < un_geom.x; ++ux) {
-	      Unit* un = FindUnitFmGpCoord(gx, gy, ux, uy);
+	      Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
 	      if (!un) continue;
-	      unit_names.SetFmVar((Variant)un->GetName(), ux, uy, gx, gy);
+	      unit_names.Set(un->GetName(), ux, uy, gx, gy);
+	    }
+	  }
+	}
+      }
+    }
+    else { 
+      unit_names.SetGeom(2, un_geom.x, un_geom.y);
+      int gx, gy, ux, uy;
+      for (gy = 0; gy < gp_geom.y; ++gy) {
+	for (gx = 0; gx < gp_geom.x; ++gx) {
+	  for (uy = 0; uy < un_geom.y; ++uy) {
+	    for (ux = 0; ux < un_geom.x; ++ux) {
+	      Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
+	      if (!un) continue;
+	      unit_names.Set(un->GetName(), ux, uy);
 	    }
 	  }
 	}
@@ -4982,7 +4901,14 @@ bool Layer::GetUnitNames(bool force_use_unit_names) {
   }
   else {
     unit_names.SetGeom(2, un_geom.x, un_geom.y);
-    units.GetUnitNames(&unit_names);
+    int x, y;
+    for (y = 0; y < un_geom.y; ++y) {
+      for (x = 0; x < un_geom.x; ++x) {
+	Unit* un = UnitAtCoord(x, y);
+	if (!un) continue;
+	unit_names.Set(un->GetName(), x, y);
+      }
+    }
   }
   return true;
 }
@@ -5236,38 +5162,101 @@ bool Layer::VarToVal(const String& dest_var, float val) {
   return units.VarToVal(dest_var, val);
 }
 
-Unit* Layer::FindUnitFmCoord(int x, int y) {
-  if(units.gp.size == 0)	// no group structure, just do it
-    return units.FindUnitFmCoord(x,y);
-  int un_x = x % un_geom.x;
-  int un_y = y % un_geom.y;
-  int gpidx = (y / un_geom.y) * gp_geom.x + (x / un_geom.x);
-  if ((gpidx >= 0) && (gpidx < units.gp.size))
-    return ((Unit_Group*)units.gp.FastEl(gpidx))->FindUnitFmCoord(un_x, un_y);
+Unit* Layer::UnitAtCoord(int x, int y) {
+  if(unit_groups) {
+    int gp_x = x / un_geom.x;
+    int gp_y = y / un_geom.y;
+    int un_x = x % un_geom.x;
+    int un_y = y % un_geom.y;
+    return UnitAtGpCoord(gp_x, gp_y, un_x, un_y);
+  }
+  else {
+    if(x >= un_geom.x) return NULL; // y will be caught by safe..
+    int idx = y * un_geom.x + x;
+    return units.SafeEl(idx);
+  }
   return NULL;
 }
 
-Unit* Layer::FindUnitFmGpCoord(int gp_x, int gp_y, int un_x, int un_y) {
-  Unit* rval = NULL;
-  Unit_Group* ug = FindUnitGpFmCoord(gp_x, gp_y);
-  if (ug) {
-    rval = ug->FindUnitFmCoord(un_x, un_y);
+Unit* Layer::UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y) {
+  if(TestError(!unit_groups, "UnitAtGpCoord", "Layer is not configured for unit_groups"))
+    return NULL;
+  if(gp_x >= gp_geom.x || gp_y >= gp_geom.y ||
+     un_x >= un_geom.x || un_y >= un_geom.y) return NULL;
+  int gpidx = gp_y * gp_geom.x + gp_x;
+  int unidx = un_y * un_geom.x + un_x;
+  if(virt_groups) {
+    int idx = gpidx * un_geom.n + unidx;
+    return units.SafeEl(idx);
   }
-  return rval;
-};
-
-Unit_Group* Layer::FindUnitGpFmCoord(int gp_x, int gp_y) {
-  if ((gp_x < 0) || (gp_x >= gp_geom.x) || (gp_y < 0) || (gp_y >= gp_geom.y) ) return NULL;
-  int gidx = gp_y * gp_geom.x + gp_x;
-  if (gidx >= units.gp.size) return NULL;
-  return (Unit_Group*)units.gp.FastEl(gidx);
+  else {
+    Unit_Group* ug = (Unit_Group*)units.gp.SafeEl(gpidx);
+    if(!ug) return NULL;
+    return ug->SafeEl(unidx);
+  }
+  return NULL;
 }
 
-void Layer::GetActGeomNoSpc(TwoDCoord& nospc_geom) {
-  nospc_geom = act_geom;
-  if(!unit_groups) return;
-  nospc_geom.x -= (gp_geom.x - 1) * gp_spc.x;
-  nospc_geom.y -= (gp_geom.y - 1) * gp_spc.y;
+Unit_Group* Layer::UnitGpAtCoord(int gp_x, int gp_y) {
+  if(TestError(!unit_groups, "UnitGpAtCoord", "Layer is not configured for unit_groups"))
+    return NULL;
+  if(gp_x >= gp_geom.x) return NULL; // y will be caught by safe..
+  int gidx = gp_y * gp_geom.x + gp_x;
+  return (Unit_Group*)units.gp.SafeEl(gidx);
+}
+
+void Layer::UnitLogPos(Unit* un, int& x, int& y) {
+  Unit_Group* own_sgp = un->own_subgp();
+  if(own_sgp) {
+    TwoDCoord gpos = own_sgp->GpLogPos();
+    x = gpos.x + un->pos.x;
+    y = gpos.y + un->pos.y;
+  }
+  else {
+    y = un->idx / flat_geom.x;	// unit index relative to flat geom
+    x = un->idx % flat_geom.x;
+  }
+}
+
+Unit* Layer::UnitAtDispCoord(int x, int y) {
+  if(unit_groups && !virt_groups) {
+    // unit group can have its own position -- need to search through each one
+    for(int gi = 0; gi< units.gp.size; gi++) {
+      Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi);
+      if(x >= ug->pos.x && x < ug->pos.x + un_geom.x &&
+	 y >= ug->pos.y && y < ug->pos.y + un_geom.y) {
+	return ug->UnitAtCoord(x - ug->pos.x, y - ug->pos.y);
+      }
+    }
+    return NULL;		// not found
+  }
+  else if(unit_groups && virt_groups) {
+    int gpsz_x = un_geom.x + gp_spc.x;
+    int gpsz_y = un_geom.y + gp_spc.y;
+    int gp_x = x / gpsz_x;
+    int gp_y = y / gpsz_y;
+    int gpst_x = gp_x * gpsz_x;
+    int gpst_y = gp_y * gpsz_y;
+    int un_x = x - gpst_x;
+    int un_y = y - gpst_y;
+    return UnitAtGpCoord(gp_x, gp_y, un_x, un_y);
+  }
+  else {
+    int idx = y * un_geom.x + x;
+    return units.SafeEl(idx);
+  }
+}
+
+void Layer::UnitDispPos(Unit* un, int& x, int& y) {
+  Unit_Group* own_sgp = un->own_subgp();
+  if(own_sgp) {
+    x = own_sgp->pos.x + un->pos.x;
+    y = own_sgp->pos.y + un->pos.y;
+  }
+  else {			// otherwise unit has it directly..
+    x = un->pos.x;
+    y = un->pos.y;
+  }
 }
 
 void Layer::AddRelPos(TDCoord& rel_pos) {
@@ -5387,8 +5376,8 @@ void Layer_Group::DataChanged(int dcr, void* op1, void* op2) {
   }
 }
 
-void Layer_Group::UpdateMaxSize() {
-  max_size.x = 1;  max_size.y = 1;  max_size.z = 1;
+void Layer_Group::UpdateMaxDispSize() {
+  max_disp_size.x = 1;  max_disp_size.y = 1;  max_disp_size.z = 1;
 
   TDCoord min_size;
   bool first_min = true;
@@ -5399,14 +5388,14 @@ void Layer_Group::UpdateMaxSize() {
   FOR_ITR_EL(Layer, l, this->, i) {
     l->GetAbsPos(l_pos);
     TDCoord lrelpos = l_pos - pos; // subtract us
-    max_size.z = MAX(max_size.z, 1 + lrelpos.z);
+    max_disp_size.z = MAX(max_disp_size.z, 1 + lrelpos.z);
     if(l->Iconified()) {
-      max_size.x = MAX(max_size.x, lrelpos.x + 1);
-      max_size.y = MAX(max_size.y, lrelpos.y + 1);
+      max_disp_size.x = MAX(max_disp_size.x, lrelpos.x + 1);
+      max_disp_size.y = MAX(max_disp_size.y, lrelpos.y + 1);
     }
     else {
-      max_size.x = MAX(max_size.x, l->scaled_act_geom.x + lrelpos.x);
-      max_size.y = MAX(max_size.y, l->scaled_act_geom.y + lrelpos.y);
+      max_disp_size.x = MAX(max_disp_size.x, l->scaled_disp_geom.x + lrelpos.x);
+      max_disp_size.y = MAX(max_disp_size.y, l->scaled_disp_geom.y + lrelpos.y);
     }
     if(first_min) {
       first_min = false;
@@ -5423,7 +5412,7 @@ void Layer_Group::UpdateMaxSize() {
       FOR_ITR_EL(Layer, l, this->, i) {
 	l->pos -= pos_chg;	// fix up all the layer rels to be less.
       }
-      max_size -= pos_chg;	// reduce by amount moving
+      max_disp_size -= pos_chg;	// reduce by amount moving
       pos = min_size;		// new position
     }
   }
@@ -5431,7 +5420,7 @@ void Layer_Group::UpdateMaxSize() {
   // iterate on subgroups
   for(int gi=0; gi<gp.size; gi++) {
     Layer_Group* lgp = (Layer_Group*)gp[gi];
-    lgp->UpdateMaxSize();
+    lgp->UpdateMaxDispSize();
   }
 }
 
@@ -5478,13 +5467,13 @@ void Layer_Group::LayerPos_Cleanup() {
       TDCoord l1abs;
       l1->GetAbsPos(l1abs);
       TwoDCoord l1s = (TwoDCoord)l1abs;
-      TwoDCoord l1e = l1s + (TwoDCoord)l1->scaled_act_geom;
+      TwoDCoord l1e = l1s + (TwoDCoord)l1->scaled_disp_geom;
       for(int i2 = i1+1; i2<leaves;i2++) {
 	Layer* l2 = Leaf(i2);
 	TDCoord l2abs;
 	l2->GetAbsPos(l2abs);
 	TwoDCoord l2s = (TwoDCoord)l2abs;
-	TwoDCoord l2e = l2s + (TwoDCoord)l2->scaled_act_geom;
+	TwoDCoord l2e = l2s + (TwoDCoord)l2->scaled_disp_geom;
 	if(l2abs.z != l1abs.z) continue;
 	if(l2s.x >= l1s.x && l2s.x < l1e.x &&
 	    l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
@@ -5544,7 +5533,7 @@ void Layer_Group::IconifyLayers() {
   FOR_ITR_EL(Layer, lay, this->, itr) {
     lay->Iconify();
   }
-  UpdateMaxSize();
+  UpdateMaxDispSize();
   UpdateAfterEdit();
 }
 
@@ -5554,7 +5543,7 @@ void Layer_Group::DeIconifyLayers() {
   FOR_ITR_EL(Layer, lay, this->, itr) {
     lay->DeIconify();
   }
-  UpdateMaxSize();
+  UpdateMaxDispSize();
   UpdateAfterEdit();
 }
 
@@ -5564,7 +5553,7 @@ void Layer_Group::DispScaleLayers(float disp_scale) {
   FOR_ITR_EL(Layer, lay, this->, itr) {
     lay->SetDispScale(disp_scale);
   }
-  UpdateMaxSize();
+  UpdateMaxDispSize();
   UpdateAfterEdit();
 }
 
@@ -6039,9 +6028,9 @@ void Network::Initialize() {
 
   n_units = 0;
   n_cons = 0;
-  max_size.x = 1;
-  max_size.y = 1;
-  max_size.z = 1;
+  max_disp_size.x = 1;
+  max_disp_size.y = 1;
+  max_disp_size.z = 1;
 
   proj = NULL;
   old_load_cons = false;
@@ -6062,7 +6051,7 @@ void Network::InitLinks() {
   taBase::Own(specs, this);
   taBase::Own(layers, this);
   taBase::Own(view_objs, this);
-  taBase::Own(max_size, this);
+  taBase::Own(max_disp_size, this);
 
   taBase::Own(prerr, this);
   taBase::Own(sum_prerr, this);
@@ -6112,7 +6101,7 @@ void Network::CutLinks() {
   group_time.CutLinks();
   epoch_time.CutLinks();
   train_time.CutLinks();
-  max_size.CutLinks();
+  max_disp_size.CutLinks();
   view_objs.CutLinks();
   layers.CutLinks();		// then std kills
   specs.CutLinks();
@@ -6170,7 +6159,7 @@ void Network::Copy_(const Network& cp) {
   wt_save_fmt = cp.wt_save_fmt;
   lay_layout = cp.lay_layout;
 
-  max_size = cp.max_size;
+  max_disp_size = cp.max_disp_size;
 
   UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers
   SyncSendPrjns();
@@ -6624,17 +6613,6 @@ void Network::RemoveUnitGroups() {
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i)
     l->RemoveUnitGroups();
-  StructUpdate(false);
-  taMisc::DoneBusy();
-}
-
-void Network::LayoutUnitGroups() {
-  taMisc::Busy();
-  StructUpdate(true);
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i)
-    l->LayoutUnitGroups();
   StructUpdate(false);
   taMisc::DoneBusy();
 }
@@ -7421,13 +7399,13 @@ void Network::LayerZPos_Unitize() {
     int nw_z = zvals.FindEl(l->pos.z); // replace with its index on sorted list..
     l->pos.z += nw_z - l->pos.z;
   }
-  UpdateMaxSize();
+  UpdateMaxDispSize();
 }
 
 void Network::LayerPos_Cleanup() {
   if (flags & MANUAL_POS) return;
   layers.LayerPos_Cleanup();
-  UpdateMaxSize();		// must do that in case something moves
+  UpdateMaxDispSize();		// must do that in case something moves
 }
 
 void Network::Compute_LayerDistances() {
@@ -7694,9 +7672,9 @@ int Network::LesionUnits(float p_lesion, bool permute) {
   return rval;
 }
 
-void Network::UpdateMaxSize() {
-  layers.UpdateMaxSize();
-  max_size = layers.max_size;
+void Network::UpdateMaxDispSize() {
+  layers.UpdateMaxDispSize();
+  max_disp_size = layers.max_disp_size;
 }
 
 void Network::TwoD_Or_ThreeD(LayerLayout lo){

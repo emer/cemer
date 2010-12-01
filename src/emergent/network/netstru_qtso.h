@@ -101,19 +101,16 @@ private:
 ////////////////////////////////////////////////////
 //   UnitView	
 
-// Note that UnitGroupView takes care of rendering all the Units;
-// UnitView objects are only created and associated with a T3Unit object
-// when the need arises (ex. user selects a T3Unit in the gui)
-
 class EMERGENT_API UnitView: public T3DataView {
+  // control the display of a single unit -- this is only for non-optimized unit display types (UDM_BLOCK is optimized and renders directly, without these sub-objects)
 INHERITED(T3DataView)
-  friend class UnitGroupView;
+  friend class LayerView;
 public:
 #ifndef __MAKETA__
   int		picked : 1;	// #IGNORE set when unit is picked for display (note: not same as selected)
 #endif
   Unit*			unit() const {return (Unit*)data();}
-  UnitGroupView*	ugrv() {return GET_MY_OWNER(UnitGroupView);}
+  LayerView*		lay() {return GET_MY_OWNER(LayerView);}
   T3UnitNode*		node_so() const {return (T3UnitNode*)inherited::node_so();}
   NetView*		nv();
 
@@ -122,7 +119,7 @@ public:
 protected:
   NetView*		m_nv; // cache
   override void 	Render_pre(); //
-  //note: _impl is done by the UnitGroupView
+  // note: _impl is done by the LayerView
 private:
   void Copy_(const UnitView& cp) {m_nv = NULL;}
   void			Initialize();
@@ -148,7 +145,7 @@ public:
   float_Matrix		uvd_hist; // #IGNORE [x][y][nv->membs.size][hist_max] buffer of history of previous value data -- last (frame) dimension uses circ buffer system for efficient storing and retrieval
   CircMatrix		uvd_hist_idx; // #IGNORE circular buffer indexing of uvd_hist -- last (frame) dimension uses circ buffer system for efficient storing and retrieval
 
-  Unit_Group*		ugrp() const {return (Unit_Group*)data();}
+  Layer*		layer() const {return (Layer*)data();}
   T3UnitGroupNode*	node_so() const {return (T3UnitGroupNode*)inherited::node_so();}
 
   LayerView*		lv() const { return m_lv; }
@@ -239,12 +236,13 @@ public:
 
   DispMode		disp_mode; // how to display layer information
 
-  Layer*		layer() const {return (Layer*)data();}
-  T3LayerNode*		node_so() const {return (T3LayerNode*)inherited::node_so();}
 
   override void		BuildAll(); // creates fully populated subviews
-  virtual void		UpdateUnitValues(); // *only* updates unit values 
   virtual void		InitDisplay();
+  virtual void		UpdateUnitValues(); // *only* updates unit values 
+
+  Layer*		layer() const {return (Layer*)data();}
+  T3LayerNode*		node_so() const {return (T3LayerNode*)inherited::node_so();}
 
   virtual void	UpdateNetLayDispMode();
   // update network's storing of the layer display mode value

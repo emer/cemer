@@ -113,9 +113,9 @@ void UnitView::CutLinks() {
 
 NetView* UnitView::nv() {
   if (!m_nv) {
-   UnitGroupView* ugrv = this->ugrv();
-   if (ugrv)
-     m_nv = ugrv->nv();
+    LayerView* layv = this->lay();
+    if (layv)
+     m_nv = layv->nv();
   }
   return m_nv;
 }
@@ -160,7 +160,7 @@ void UnitView::Render_pre() {
 //////////////////////////
 
 void UnitGroupView::Initialize() {
-  data_base = &TA_Unit_Group;
+  data_base = &TA_Layer;
   m_lv = NULL;
 }
 
@@ -184,13 +184,14 @@ void UnitGroupView::Destroy() {
 void UnitGroupView::AllocUnitViewData() {
   //note: allocate based on geom, not current size, in case not built yet
   NetView* nv = this->nv();
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   int mbs_sz = MAX(nv->membs.size, 1);
-  MatrixGeom nwgm1(3, ugrp->geom.x, ugrp->geom.y, mbs_sz);
+  MatrixGeom nwgm1(3, lay->flat_geom.x, lay->flat_geom.y, mbs_sz);
   if(uvd_bases.geom != nwgm1) {
     uvd_bases.SetGeomN(nwgm1);
   }
-  MatrixGeom nwgm2(4, ugrp->geom.x, ugrp->geom.y, mbs_sz, nv->hist_max);
+  MatrixGeom nwgm2(4, lay->flat_geom.x, lay->flat_geom.y, mbs_sz, nv->hist_max);
   bool reset_idx = nv->hist_reset_req; // if requested somewhere, reset us!
   if(uvd_hist.geom != nwgm2) {
     uvd_hist.SetGeomN(nwgm2);
@@ -208,11 +209,12 @@ void UnitGroupView::BuildAll() {
   UpdateUnitViewBases(nv->unit_src);
   if(nv->unit_disp_mode == NetView::UDM_BLOCK) return; // optimized
 
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   TwoDCoord coord;
-  for (coord.y = 0; coord.y < ugrp->geom.y; ++(coord.y)) {
-    for (coord.x = 0; coord.x < ugrp->geom.x; ++(coord.x)) {
-      Unit* unit = ugrp->FindUnitFmCoord(coord);
+  for (coord.y = 0; coord.y < lay->flat_geom.y; ++(coord.y)) {
+    for (coord.x = 0; coord.x < lay->flat_geom.x; ++(coord.x)) {
+      Unit* unit = lay->UnitAtCoord(coord);
       if (!unit) break; // there won't be any more units
 
       UnitView* uv = new UnitView();
@@ -279,7 +281,8 @@ float UnitGroupView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*&
 }
 
 void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   NetView* nv = this->nv();
   AllocUnitViewData();
   for(int midx=0;midx<nv->membs.size;midx++) {
@@ -298,11 +301,12 @@ void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
 }
 
 void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u) {
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   TwoDCoord coord;
-  for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
-      Unit* unit = ugrp->FindUnitFmCoord(coord);
+  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
+      Unit* unit = lay->UnitAtCoord(coord);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
 
@@ -333,11 +337,12 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
 }
 
 void UnitGroupView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   TwoDCoord coord;
-  for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
-      Unit* unit = ugrp->FindUnitFmCoord(coord);
+  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
+      Unit* unit = lay->UnitAtCoord(coord);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
       if(unit->bias.size == 0) continue;
@@ -348,11 +353,12 @@ void UnitGroupView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
 }
 
 void UnitGroupView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   TwoDCoord coord;
-  for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
-      Unit* unit = ugrp->FindUnitFmCoord(coord);
+  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
+      Unit* unit = lay->UnitAtCoord(coord);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
       uvd_bases.Set(disp_md->GetOff(unit), coord.x, coord.y, midx);
@@ -361,17 +367,17 @@ void UnitGroupView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
 }
 
 void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
-  Unit_Group* ugrp = this->ugrp(); //cache
-
-  TypeDef* own_td = ugrp->el_typ; // should be unit type
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
+  TypeDef* own_td = lay->units.el_typ; // should be unit type
   ta_memb_ptr net_mbr_off = 0;
   int net_base_off = 0;
   MemberDef* smd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
 						 disp_md->name, false); // no warn
   TwoDCoord coord;
-  for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
-      Unit* unit = ugrp->FindUnitFmCoord(coord);
+  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
+      Unit* unit = lay->UnitAtCoord(coord);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if(!unit || !smd) continue;  // rest will be null too, but we loop to null disp_base
       void* sbaddr = MemberDef::GetOff_static(unit, net_base_off, net_mbr_off);
@@ -384,9 +390,10 @@ void UnitGroupView::UpdateAutoScale(bool& updated) {
   NetView* nv = this->nv();
   TwoDCoord co;
   void* base;
-  Unit_Group* ugrp = this->ugrp(); //cache
-  for (co.y = 0; co.y < ugrp->geom.y; ++co.y) {
-    for (co.x = 0; co.x < ugrp->geom.x; ++co.x) {
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
+  for (co.y = 0; co.y < lay->flat_geom.y; ++co.y) {
+    for (co.x = 0; co.x < lay->flat_geom.x; ++co.x) {
       float val = GetUnitDisplayVal(co, base);
       if(base) {
 	if(!updated) {
@@ -438,18 +445,18 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
 	}
       }
       UnitGroupView* act_ugv = (UnitGroupView*)((T3UnitGroupNode*)pobj)->dataView();
-      Unit_Group* ugrp = act_ugv->ugrp();
-      float disp_scale = ugrp->own_lay->disp_scale;
+      Layer* lay = act_ugv->layer(); //cache
+      float disp_scale = lay->disp_scale;
 
       SbVec3f pt = pp->getObjectPoint(pobj); 
       //   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
       int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
       int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
       //   cerr << xp << ", " << yp << endl;
-      xp -= ugrp->pos.x; yp -= ugrp->pos.y;
-      
-      if((xp >= 0) && (xp < ugrp->geom.x) && (yp >= 0) && (yp < ugrp->geom.y)) {
-	Unit* unit = ugrp->FindUnitFmCoord(xp, yp);
+//       xp -= ugrp->pos.x; yp -= ugrp->pos.y;
+   
+      if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
+	Unit* unit = lay->UnitAtDispCoord(xp, yp);
 	if(unit && tnv->unit_src != unit) {
 	  tnv->setUnitSrc(NULL, unit);
  	  tnv->InitDisplay();	// this is apparently needed here!!
@@ -465,9 +472,9 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
 
 void UnitGroupView::Render_pre() {
   NetView* nv = this->nv();
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
 
-  if(ugrp->own_lay && ugrp->own_lay->Iconified()) {
+  if(!lay || lay->Iconified()) {
     return;			// don't render anything!
   }
 
@@ -479,23 +486,24 @@ void UnitGroupView::Render_pre() {
   //NOTE: we create/adjust the units in the Render_impl routine
   T3UnitGroupNode* ugrp_so = node_so(); // cache
 
-  ugrp_so->setGeom(ugrp->geom.x, ugrp->geom.y, nv->max_size.x, nv->max_size.y, nv->max_size.z, 
-		   ugrp->own_lay->disp_scale);
+  ugrp_so->setGeom(lay->flat_geom.x, lay->flat_geom.y, nv->max_size.x,
+		   nv->max_size.y, nv->max_size.z, lay->disp_scale);
 
   inherited::Render_pre();
 }
 
 void UnitGroupView::Render_impl() {
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   NetView* nv = this->nv();
 
   //set origin: 0,0,0
-  TDCoord& pos = ugrp->pos;
-  float disp_scale = ugrp->own_lay->disp_scale;
-  FloatTransform* ft = transform(true);
-  ft->translate.SetXYZ(disp_scale * ((float)pos.x / nv->max_size.x),
-		       disp_scale * ((float)pos.z / nv->max_size.z),
-		       disp_scale * ((float)-pos.y / nv->max_size.y));
+//   TDCoord& pos = ugrp->pos;
+//   float disp_scale = lay->disp_scale;
+//   FloatTransform* ft = transform(true);
+//   ft->translate.SetXYZ(disp_scale * ((float)pos.x / nv->max_size.x),
+// 		       disp_scale * ((float)pos.z / nv->max_size.z),
+// 		       disp_scale * ((float)-pos.y / nv->max_size.y));
 
   inherited::Render_impl();
 }
@@ -527,10 +535,8 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
 
 void UnitGroupView::Render_impl_children() {
   NetView* nv = this->nv(); //cache
-  Unit_Group* ugrp = this->ugrp(); //cache
-  if(!ugrp) return;
-  Layer* lay = ugrp->own_lay;
-  if(!lay) return;
+  Layer* lay = this->layer(); //cache
+  if(!lay || !nv) return;
 
   if(lay->Iconified() || !lv() || (lv()->disp_mode == LayerView::DISP_FRAME)) {
     return;			// don't render anything!
@@ -538,6 +544,8 @@ void UnitGroupView::Render_impl_children() {
 
   T3UnitGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
+
+  UpdateUnitViewBases(nv->unit_src); // always make sure we're allocated properly
 
   if(lv()->disp_mode == LayerView::DISP_OUTPUT_NAME) {
     Render_impl_outnm();
@@ -622,7 +630,8 @@ void UnitGroupView::Render_impl_blocks() {
   // which sets all the values!
 
   NetView* nv = this->nv(); //cache
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
   SoIndexedTriangleStripSet* sits = node_so->shape();
   SoVertexProperty* vtx_prop = node_so->vtxProp();
@@ -645,9 +654,9 @@ void UnitGroupView::Render_impl_blocks() {
   normal_dat[idx++].setValue(0.0f, 1.0f, 0.0f); // top = 4
   normal.finishEditing();
 
-  float disp_scale = ugrp->own_lay->disp_scale;
+  float disp_scale = lay->disp_scale;
 
-  int n_geom = ugrp->geom.Product();
+  int n_geom = lay->flat_geom.Product();
   int n_per_vtx = 8;
   int tot_vtx =  n_geom * n_per_vtx;
   vertex.setNum(tot_vtx);
@@ -701,16 +710,19 @@ void UnitGroupView::Render_impl_blocks() {
   String unit_name;
   T3Color col;
   TwoDCoord pos;
+  TwoDCoord upos;
   int v_idx = 0;
   int t_idx = 3;		// base color + complexity + font
   // these go in normal order; indexes are backwards
-  for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
-    for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
-      Unit* unit = ugrp->FindUnitFmCoord(pos);
-      float xp = disp_scale * (((float)pos.x + spacing) / nv->max_size.x);
-      float yp = -disp_scale * (((float)pos.y + spacing) / nv->max_size.y);
-      float xp1 = disp_scale * (((float)pos.x+1 - spacing) / nv->max_size.x);
-      float yp1 = -disp_scale * (((float)pos.y+1 - spacing) / nv->max_size.y);
+  for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
+    for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
+      Unit* unit = lay->UnitAtCoord(pos);
+      if(unit)
+	lay->UnitDispPos(unit, upos);
+      float xp = disp_scale * (((float)upos.x + spacing) / nv->max_size.x);
+      float yp = -disp_scale * (((float)upos.y + spacing) / nv->max_size.y);
+      float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->max_size.x);
+      float yp1 = -disp_scale * (((float)upos.y+1 - spacing) / nv->max_size.y);
       float zp = .5f / max_z;
       vertex_dat[v_idx++].setValue(xp, 0.0f, yp); // 00_0 = 0
       vertex_dat[v_idx++].setValue(xp1, 0.0f, yp); // 10_0 = 0
@@ -782,7 +794,7 @@ void UnitGroupView::Render_impl_blocks() {
   norms.setNum(n_geom * nn_per_idx);
   mats.setNum(n_geom * nm_per_idx);
 
-  int nx = ugrp->geom.x;
+  int nx = lay->flat_geom.x;
 
   // values of the cubes xy_[0,v]
   //     01_v   11_v   
@@ -798,8 +810,8 @@ void UnitGroupView::Render_impl_blocks() {
   int cidx = 0;
   int nidx = 0;
   int midx = 0;
-  for(pos.y=ugrp->geom.y-1; pos.y>=0; pos.y--) { // go back to front
-    for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
+  for(pos.y=lay->flat_geom.y-1; pos.y>=0; pos.y--) { // go back to front
+    for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       int c00_0 = (pos.y * nx + pos.x) * n_per_vtx;
       int c10_0 = c00_0 + 1;
       int c01_0 = c00_0 + 2;
@@ -810,22 +822,6 @@ void UnitGroupView::Render_impl_blocks() {
       int c11_v = c00_0 + 7;
 
       int mat_idx = (pos.y * nx + pos.x);
-
-      // note: this optimization is incompatible with the current split of
-      // basic structure render vs. values
-//       float zval = vertex[c00_v][1]; // "y" coord = 1
-//       if(zval < 0.0f) {			 // do "top" first which is actually bottom!
-// 	coords_dat[cidx++] = (c01_v); // 0
-// 	coords_dat[cidx++] = (c11_v); // 1
-// 	coords_dat[cidx++] = (c00_v); // 2
-// 	coords_dat[cidx++] = (c10_v); // 3
-// 	coords_dat[cidx++] = (-1); // -1 -- 5 total
-
-// 	norms_dat[nidx++] = (4); // top
-// 	norms_dat[nidx++] = (4); // top -- 2 total
-
-// 	mats_dat[midx++] = (mat_idx);
-//       }
 
       // back - right
       //     1    3
@@ -876,18 +872,16 @@ void UnitGroupView::Render_impl_blocks() {
       //     2    3
       //   x    x  
 
-//       if(zval >= 0.0f) {		 // only if higher..
-	coords_dat[cidx++] = (c01_v); // 0
-	coords_dat[cidx++] = (c11_v); // 1
-	coords_dat[cidx++] = (c00_v); // 2
-	coords_dat[cidx++] = (c10_v); // 3
-	coords_dat[cidx++] = (-1); // -1 -- 5 total
+      coords_dat[cidx++] = (c01_v); // 0
+      coords_dat[cidx++] = (c11_v); // 1
+      coords_dat[cidx++] = (c00_v); // 2
+      coords_dat[cidx++] = (c10_v); // 3
+      coords_dat[cidx++] = (-1); // -1 -- 5 total
 
-	norms_dat[nidx++] = (4); // top
-	norms_dat[nidx++] = (4); // top -- 2 total
+      norms_dat[nidx++] = (4); // top
+      norms_dat[nidx++] = (4); // top -- 2 total
 
-	mats_dat[midx++] = (mat_idx);
-//       }
+      mats_dat[midx++] = (mat_idx);
 
       // total coords = 7 + 7 + 5 = 19
       // total norms = 4 + 4 + 2 = 10
@@ -903,7 +897,8 @@ void UnitGroupView::Render_impl_blocks() {
 
 void UnitGroupView::UpdateUnitValues_blocks() {
   NetView* nv = this->nv(); //cache
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
   SoIndexedTriangleStripSet* sits = node_so->shape();
@@ -932,10 +927,10 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   int c_idx = 0;
   int t_idx = 3;		// base color + font
   // these go in normal order; indexes are backwards
-  for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
-    for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
+  for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
+    for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
-      Unit* unit = ugrp->FindUnitFmCoord(pos);
+      Unit* unit = lay->UnitAtCoord(pos);
       if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
 	col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
       }
@@ -976,9 +971,7 @@ void UnitGroupView::UpdateUnitValues_blocks() {
 
 void UnitGroupView::UpdateUnitValues() {
   NetView* nv = this->nv(); //cache
-  Unit_Group* ugrp = this->ugrp(); //cache
-  if(!ugrp) return;
-  Layer* lay = ugrp->own_lay;
+  Layer* lay = this->layer(); //cache
   if(!lay) return;
   if(lay->Iconified() || !lv() || lv()->disp_mode == LayerView::DISP_FRAME) {
     return;			// don't render anything!
@@ -1000,16 +993,17 @@ void UnitGroupView::UpdateUnitValues() {
 
 void UnitGroupView::SaveHist() {
   NetView* nv = this->nv(); //cache
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
 
   // bump up the frame circ idx..
   int circ_idx = uvd_hist_idx.CircAddLimit(nv->hist_max);
   int eff_hist_idx = uvd_hist_idx.CircIdx(circ_idx);
 
   TwoDCoord coord;
-  for(coord.y = 0; coord.y < ugrp->geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < ugrp->geom.x; coord.x++) {
-      Unit* unit = ugrp->FindUnitFmCoord(coord);
+  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
+      Unit* unit = lay->UnitAtCoord(coord);
       for(int midx=0; midx < nv->membs.size; midx++) {
 	void* base;
 	float val = GetUnitDisplayVal_Idx(coord, midx, base);
@@ -1032,10 +1026,9 @@ void UnitGroupView::Render_impl_outnm() {
   // which sets all the values!
 
   NetView* nv = this->nv(); //cache
-  Unit_Group* ugrp = this->ugrp(); //cache
-  T3UnitGroupNode* node_so = this->node_so(); // cache
-  Layer* lay = ugrp->own_lay;
+  Layer* lay = this->layer(); //cache
   if(!lay) return;
+  T3UnitGroupNode* node_so = this->node_so(); // cache
 
   SoSeparator* un_txt = node_so->unitText();
   if(!un_txt) {
@@ -1062,8 +1055,8 @@ void UnitGroupView::Render_impl_outnm() {
     mfs->setValue(lay->output_name.chars());
   }
 
-  float szx = (float)ugrp->geom.x / nv->max_size.x;
-  float szy = (float)ugrp->geom.y / nv->max_size.y;
+  float szx = (float)lay->flat_geom.x / nv->max_size.x;
+  float szy = (float)lay->flat_geom.y / nv->max_size.y;
 
   float cx = .5f * szx;
   float cy = .5f * szy;
@@ -1083,20 +1076,19 @@ void UnitGroupView::Render_impl_outnm() {
 
 void UnitGroupView::UpdateUnitValues_outnm() {
   //  NetView* nv = this->nv(); //cache
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
-
-  Layer* lay = ugrp->own_lay;
-  if(!lay) return;
 
   SoSeparator* un_txt = node_so->unitText();
 
   SoAsciiText* txt = (SoAsciiText*)un_txt->getChild(4);
   SoMFString* mfs = &(txt->string);
-  if(lay->unit_groups)
-    mfs->setValue(ugrp->output_name.chars());
-  else
+  // todo: need a string array in layer!
+//   if(lay->unit_groups)
+//     mfs->setValue(ugrp->output_name.chars());
+//   else
     mfs->setValue(lay->output_name.chars());
 }
 
@@ -1105,7 +1097,8 @@ void UnitGroupView::Render_impl_snap_bord() {
   T3UnitGroupNode* node_so = this->node_so(); //cache
   if(!node_so) return;
 
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
 
   bool do_lines = nv->snap_bord_disp;
   SoIndexedLineSet* ils = node_so->snapBordSet();
@@ -1130,9 +1123,9 @@ void UnitGroupView::Render_impl_snap_bord() {
   // FACE = polyline, PART = line segment!!
   vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_FACE_INDEXED);
 
-  float disp_scale = ugrp->own_lay->disp_scale;
+  float disp_scale = lay->disp_scale;
 
-  int n_geom = ugrp->geom.Product();
+  int n_geom = lay->flat_geom.Product();
 
   vertex.setNum(n_geom * 4);	// 4 virtex per
   coords.setNum(n_geom * 6);	// 6 coords per
@@ -1153,12 +1146,16 @@ void UnitGroupView::Render_impl_snap_bord() {
   float zp = (spacing * 2.0f) / max_z;
 
   TwoDCoord pos;
-  for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
-    for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
-      float xp = disp_scale * (((float)pos.x + spacing) / nv->max_size.x);
-      float yp = -disp_scale * (((float)pos.y + spacing) / nv->max_size.y);
-      float xp1 = disp_scale * (((float)pos.x+1 - spacing) / nv->max_size.x);
-      float yp1 = -disp_scale * (((float)pos.y+1 - spacing) / nv->max_size.y);
+  TwoDCoord upos;
+  for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
+    for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
+      Unit* unit = lay->UnitAtCoord(pos);
+      if(unit)
+	lay->UnitDispPos(unit, upos);
+      float xp = disp_scale * (((float)upos.x + spacing) / nv->max_size.x);
+      float yp = -disp_scale * (((float)upos.y + spacing) / nv->max_size.y);
+      float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->max_size.x);
+      float yp1 = -disp_scale * (((float)upos.y+1 - spacing) / nv->max_size.y);
       coords_dat[cidx++] = v_idx; coords_dat[cidx++] = v_idx+1;
       coords_dat[cidx++] = v_idx+2; coords_dat[cidx++] = v_idx+3;
       coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
@@ -1181,10 +1178,10 @@ void UnitGroupView::Render_impl_snap_bord() {
 
 void UnitGroupView::UpdateUnitValues_snap_bord() {
   NetView* nv = this->nv(); //cache
-
   if(!nv->snap_bord_disp) return;
 
-  Unit_Group* ugrp = this->ugrp(); //cache
+  Layer* lay = this->layer(); //cache
+  if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
   SoVertexProperty* vtx_prop = node_so->snapBordVtxProp();
@@ -1206,10 +1203,10 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   T3Color col;
   TwoDCoord pos;
   int c_idx = 0;
-  for(pos.y=0; pos.y<ugrp->geom.y; pos.y++) {
-    for(pos.x=0; pos.x<ugrp->geom.x; pos.x++) { // right to left
+  for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
+    for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       val = 0.0f;
-      Unit* unit = ugrp->FindUnitFmCoord(pos);
+      Unit* unit = lay->UnitAtCoord(pos);
       if(unit) {
 	void* base;
 	val = GetUnitDisplayVal(pos, base);
@@ -1273,66 +1270,30 @@ void LayerView::BuildAll() {
   if(dspmd >= 0) disp_mode = (LayerView::DispMode)dspmd;
 
   Reset(); //for when we are invoked after initial construction
-  Unit_Group* ugrp;
-  UnitGroupView* ugv;
-  if (!lay->unit_groups) { // single ugrp
-    ugrp = &(lay->units);
-    ugv = new UnitGroupView;
-    ugv->SetData(ugrp);//obs ugrp->AddDataView(ugv);
-    ugv->SetLayerView(this);
-    children.Add(ugv);
-    ugv->BuildAll();
 
-//    int flags = 0;// BrListViewItem::DNF_UPDATE_NAME | BrListViewItem::DNF_CAN_BROWSE| BrListViewItem::DNF_CAN_DRAG;
-  } else { // multi-ugrps
-    for (int j = 0; j < lay->gp_geom.n; ++j) {
-      ugrp = (Unit_Group*)lay->units.SafeGp(j);
-      if (!ugrp) break; // maybe not built yet???
-
-      ugv = new UnitGroupView;
-      ugv->SetData(ugrp);//obs ugrp->AddDataView(ugv);
-      ugv->SetLayerView(this);
-      children.Add(ugv);
-      ugv->BuildAll();
-
-//      int flags = 0;// BrListViewItem::DNF_UPDATE_NAME | BrListViewItem::DNF_CAN_BROWSE| BrListViewItem::DNF_CAN_DRAG;
-//      last_child_node = dl->CreateT3Node(par_node, last_child_node, node_nm, flags);
-    }
-  }
+  UnitGroupView* ugv = new UnitGroupView;	// always just one guy to run everything there
+  ugv->SetData(lay);		// unitgroupview data is layer!
+  ugv->SetLayerView(this);
+  children.Add(ugv);
+  ugv->BuildAll();
 }
 
 void LayerView::InitDisplay() {
-  UnitGroupView* ugrv;
-  taListItr j;
-  FOR_ITR_EL(UnitGroupView, ugrv, children., j) {
+  UnitGroupView* ugrv = (UnitGroupView*)children.SafeEl(0);
+  if(ugrv)
     ugrv->InitDisplay();
-  }
 }
 
 void LayerView::UpdateUnitValues() { // *actually* only does unit value updating
-  int ch_idx = 0;
-  Layer* lay = layer(); //cache
-  if(!lay) return;
-  if(!lay->unit_groups) { // single ugrp
-    UnitGroupView* ugv = (UnitGroupView*)children.SafeEl(ch_idx++);
-    if(ugv) ugv->UpdateUnitValues(); // if null, maybe not built yet
-  }
-  else { // multi-ugrps
-    for (int j = 0; j < lay->gp_geom.n; ++j) {
-      Unit_Group* ugrp = (Unit_Group*)lay->units.SafeGp(j);
-      if (!ugrp) break; // maybe not built yet???
-      UnitGroupView* ugv = (UnitGroupView*)children.SafeEl(ch_idx++);
-      if(ugv) ugv->UpdateUnitValues();
-    }
-  }
+  UnitGroupView* ugrv = (UnitGroupView*)children.SafeEl(0);
+  if(ugrv)
+    ugrv->UpdateUnitValues();
 }
 
 void LayerView::UpdateAutoScale(bool& updated) {
-  UnitGroupView* ugrv;
-  taListItr j;
-  FOR_ITR_EL(UnitGroupView, ugrv, children., j) {
+  UnitGroupView* ugrv = (UnitGroupView*)children.SafeEl(0);
+  if(ugrv)
     ugrv->UpdateAutoScale(updated);
-  }
 }
 
 void LayerView::DataUpdateAfterEdit_impl() {
@@ -1388,6 +1349,7 @@ void LayerView::Render_pre() {
 
 void LayerView::Render_impl() {
   Layer* lay = this->layer(); //cache
+  if(!lay) return;
   NetView* nv = this->nv();
 
   TDCoord& pos = lay->pos;	// with layer groups as real things now, use this!
@@ -1403,7 +1365,7 @@ void LayerView::Render_impl() {
     node_so->setGeom(1, 1, nv->max_size.x, nv->max_size.y, nv->max_size.z, 1.0f);
   }
   else {
-    node_so->setGeom(lay->act_geom.x, lay->act_geom.y,
+    node_so->setGeom(lay->disp_geom.x, lay->disp_geom.y,
 		     nv->max_size.x, nv->max_size.y, nv->max_size.z, lay->disp_scale);
   }
   node_so->setCaption(data()->GetName().chars());
@@ -1411,7 +1373,7 @@ void LayerView::Render_impl() {
   float max_xy = MAX(nv->max_size.x, nv->max_size.y);
   float lay_wd = T3LayerNode::width / max_xy;
   lay_wd = MIN(lay_wd, T3LayerNode::max_width);
-  float fx = (float)lay->scaled_act_geom.x / nv->max_size.x;
+  float fx = (float)lay->scaled_disp_geom.x / nv->max_size.x;
 
   // ensure that the layer label does not go beyond width of layer itself!
   float eff_lay_font_size = nv->font_sizes.layer;
@@ -1437,8 +1399,8 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   Layer* lay = lv->layer();
   NetView* nv = lv->nv();
 
-  float fx = (float)lay->act_geom.x / nv->max_size.x;
-  float fy = (float)lay->act_geom.y / nv->max_size.y;
+  float fx = (float)lay->disp_geom.x / nv->max_size.x;
+  float fy = (float)lay->disp_geom.y / nv->max_size.y;
   float xfrac = .5f * fx;
   float yfrac = .5f * fy;
 
@@ -1525,8 +1487,8 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
   cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
 			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
-  float szx = ((float)lay->scaled_act_geom.x / nv->max_size.x);
-  float szy = ((float)lay->scaled_act_geom.y / nv->max_size.y);
+  float szx = ((float)lay->scaled_disp_geom.x / nv->max_size.x);
+  float szy = ((float)lay->scaled_disp_geom.y / nv->max_size.y);
 
   // translate to layer offset + indent into layer
   SbVec3f trans;
@@ -1571,7 +1533,6 @@ void LayerView::SetHighlightSpec(BaseSpec* spec) {
     setDefaultColor();
   }
 }
-
 
 //////////////////////////
 //   PrjnView		//
@@ -1652,11 +1613,11 @@ void PrjnView::Render_impl() {
 
   if(nv->view_params.prjn_disp == NetViewParams::B_F) {
     // origin is *back* center
-    src.x = ((float)lay_fr_pos.x + .5f * (float)lay_fr->scaled_act_geom.x) / nv->max_size.x;
-    src.z = -((float)(lay_fr_pos.y + lay_fr->scaled_act_geom.y) / nv->max_size.y) - lay_wd;
+    src.x = ((float)lay_fr_pos.x + .5f * (float)lay_fr->scaled_disp_geom.x) / nv->max_size.x;
+    src.z = -((float)(lay_fr_pos.y + lay_fr->scaled_disp_geom.y) / nv->max_size.y) - lay_wd;
 
     // dest is *front* *center*
-    dst.x = ((float)lay_to_pos.x + .5f * (float)lay_to->scaled_act_geom.x) / nv->max_size.x;
+    dst.x = ((float)lay_to_pos.x + .5f * (float)lay_to->scaled_disp_geom.x) / nv->max_size.x;
     dst.z = -((float)lay_to_pos.y / nv->max_size.y) + lay_wd;
   }
   else if(nv->view_params.prjn_disp == NetViewParams::L_R_F) { // easier to see
@@ -1665,17 +1626,17 @@ void PrjnView::Render_impl() {
     src.z = -((float)(lay_fr_pos.y) / nv->max_size.y) + lay_wd;
 
     // dest is *front* right
-    dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_act_geom.x) / nv->max_size.x - lay_wd;
+    dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_disp_geom.x) / nv->max_size.x - lay_wd;
     dst.z = -((float)lay_to_pos.y / nv->max_size.y) + lay_wd;
   }
   else if(nv->view_params.prjn_disp == NetViewParams::L_R_B) { // out of the way
     // origin is *back* left
     src.x = ((float)lay_fr_pos.x) / nv->max_size.x + lay_wd;
-    src.z = -((float)(lay_fr_pos.y + lay_fr->scaled_act_geom.y) / nv->max_size.y) - lay_wd;
+    src.z = -((float)(lay_fr_pos.y + lay_fr->scaled_disp_geom.y) / nv->max_size.y) - lay_wd;
 
     // dest is *back* right
-    dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_act_geom.x) / nv->max_size.x - lay_wd;
-    dst.z = -((float)(lay_to_pos.y  + lay_to->scaled_act_geom.y) / nv->max_size.y) - lay_wd;
+    dst.x = ((float)lay_to_pos.x + (float)lay_to->scaled_disp_geom.x) / nv->max_size.x - lay_wd;
+    dst.z = -((float)(lay_to_pos.y  + lay_to->scaled_disp_geom.y) / nv->max_size.y) - lay_wd;
   }
 
   if(dst.y == src.y && dst.x == src.x && dst.z == src.z) {
@@ -1869,7 +1830,7 @@ void LayerGroupView::Render_impl() {
   T3LayerGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
   node_so->setGeom(lgp->pos.x, lgp->pos.y, lgp->pos.z,
-		   lgp->max_size.x, lgp->max_size.y, lgp->max_size.z,
+		   lgp->max_disp_size.x, lgp->max_disp_size.y, lgp->max_disp_size.z,
 		   nv->max_size.x, nv->max_size.y, nv->max_size.z);
 
   if(!node_so->hideLines()) {
@@ -1878,7 +1839,7 @@ void LayerGroupView::Render_impl() {
     node_so->setCaption(data()->GetName().chars());
     float lay_wd_y = T3LayerNode::width / nv->max_size.y;
     float lay_ht_z = T3LayerNode::height / nv->max_size.z;
-    float fx = (float)lgp->max_size.x / nv->max_size.x;
+    float fx = (float)lgp->max_disp_size.x / nv->max_size.x;
     lay_wd_y = MIN(lay_wd_y, T3LayerNode::max_width);
 
     // ensure that the layer label does not go beyond width of layer itself!
@@ -1904,9 +1865,9 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   Layer_Group* lgp = lv->layer_group();
   NetView* nv = lv->nv();
 
-  float fx = ((float)lgp->max_size.x + 2.0f * T3LayerNode::width) / nv->max_size.x;
-  float fy = ((float)lgp->max_size.y + 2.0f * T3LayerNode::width) / nv->max_size.y;
-  float fz = ((float)(lgp->max_size.z-1) + 4.0f * T3LayerNode::height) / nv->max_size.z;
+  float fx = ((float)lgp->max_disp_size.x + 2.0f * T3LayerNode::width) / nv->max_size.x;
+  float fy = ((float)lgp->max_disp_size.y + 2.0f * T3LayerNode::width) / nv->max_size.y;
+  float fz = ((float)(lgp->max_disp_size.z-1) + 4.0f * T3LayerNode::height) / nv->max_size.z;
   float xfrac = (.5f * fx) - (T3LayerNode::width / nv->max_size.x);
   float yfrac = (.5f * fy) - (T3LayerNode::width / nv->max_size.y);
   float zfrac = (.5f * fz) - 2.0f * (T3LayerNode::height / nv->max_size.z);
@@ -1944,7 +1905,7 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   Layer_Group* lgp = lv->layer_group();
   NetView* nv = lv->nv();
 
-  float fz = (float)lgp->max_size.z / nv->max_size.z;
+  float fz = (float)lgp->max_disp_size.z / nv->max_size.z;
   float zfrac = .5f * fz;
 
   const SbVec3f& trans = dragger->translation.getValue();
@@ -2877,8 +2838,8 @@ void NetView::NewLayer(int x, int y) {
 }
 
 void NetView::GetMaxSize() {
-  net()->UpdateMaxSize();
-  max_size = net()->max_size;
+  net()->UpdateMaxDispSize();
+  max_size = net()->max_disp_size;
   max_size.z -= (max_size.z - 1.0f) / max_size.z; // leave 1 extra layer's worth of room..
   if(view_params.xy_square) {
     max_size.x = MAX(max_size.x, max_size.y);

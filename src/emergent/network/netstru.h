@@ -191,8 +191,8 @@ public:
     MIN_MAX 			// constrain weights to be within min and max values
   };
   LimitType	type;		// type of weight limitation to impose
-  float		min;		// #CONDEDIT_OFF_type:NONE,LT_MAX minimum weight value (if applicable)
-  float		max;		// #CONDEDIT_OFF_type:NONE,GT_MIN maximum weight value (if applicable)
+  float		min;		// #CONDSHOW_OFF_type:NONE,LT_MAX minimum weight value (if applicable)
+  float		max;		// #CONDSHOW_OFF_type:NONE,GT_MIN maximum weight value (if applicable)
   bool		sym;		// if true, also symmetrize with reciprocal connections
 
   void 	ApplyMinLimit(float& wt)	{ if(wt < min) wt = min; }
@@ -836,7 +836,7 @@ public: //
   int		n_recv_cons;
   // #DMEM_SHARE_SET_0 #READ_ONLY #EXPERT #CAT_Structure total number of receiving connections
   TDCoord       pos;
-  // #CAT_Structure position in space relative to owning group, layer
+  // #CAT_Structure display position in space relative to owning group or layer
   int		idx;
   // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure index of this unit within containing unit group
   int		flat_idx;
@@ -855,6 +855,9 @@ public: //
   inline bool	lesioned() const;
   // #IGNORE refers to the layer-level LESIONED flag -- important for thread code
   inline Layer*	own_lay() const;
+  // #CAT_Structure get the owning layer of this unit
+  inline Unit_Group* own_subgp() const;
+  // #CAT_Structure get the owning subgroup of this unit -- NULL if unit lives directly within the layer and not in a subgroup
   
   inline UnitSpec* GetUnitSpec() const { return m_unit_spec; }
   // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
@@ -1060,7 +1063,7 @@ INHERITED(BaseSpec)
 public:
   bool		self_con;	// #CAT_Structure whether to create self-connections or not (if applicable)
   bool		init_wts;	// #CAT_Structure whether this projection spec does weight init (else conspec)
-  bool		add_rnd_wts;	// #CONDEDIT_ON_init_wts if init_wts is set, use the random weight settings on the conspect to add random values to the weights set by the projection spec -- NOTE: this typically will work best by setting the rnd.mean value to 0
+  bool		add_rnd_wts;	// #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspect to add random values to the weights set by the projection spec -- NOTE: this typically will work best by setting the rnd.mean value to 0
 
   virtual void 	Connect(Projection* prjn);
   // #CAT_Structure connects the network, doing PreConnect, Connect_impl, then Init_Weights -- generally do not override this function
@@ -1277,14 +1280,26 @@ class EMERGENT_API Unit_Group: public taGroup<Unit> {
 INHERITED(taGroup<Unit>)
 public:
   Layer*	own_lay;	// #READ_ONLY #NO_SAVE #NO_SHOW #NO_SET_POINTER layer owner
-  PosTDCoord	pos;		// #CAT_Structure position of group relative to the layer
-  bool		unique_geom;	// #DEF_false #CAT_Structure if true, this unit group has a unique geometry different from the layer geometry (otherwise, geom is always copied from lay->un_geom)
-  XYNGeom	geom;		// #CONDEDIT_ON_unique_geom:true #CAT_Structure geometry of the group: layout and number of units
-  bool		units_lesioned;	// #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
-
+  PosTDCoord	pos;		// #CAT_Structure position of group relative to the layer -- for display purposes
   String	output_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
+  int		idx;
+  // #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure index of this unit_group within containing subgroup list
 
-  int		n_units;	// #READ_ONLY #HIDDEN #NO_SAVE obsolete v3 compatibility: number of units to create in the group; updates v4 values and is reset to 0 if !=0
+  //////////////////////////////////////////////////////////////////////////
+  //	Unit access API -- for internal use only -- use layer-level access of units instead!!
+
+  Unit* 	UnitAtCoord(const TwoDCoord& coord)
+  { return UnitAtCoord(coord.x,coord.y); }
+  // #CAT_XpertStructure returns unit at given coordinates within unit group
+  Unit*		UnitAtCoord(int x, int y);
+  // #CAT_XpertStructure get unit from given set of x and y coordinates within this group
+  TwoDCoord	GpLogPos();
+  // #CAT_XpertStructure returns unit group *logical* position in terms of layer unit group geometry gp_geom -- computed from idx -- only for subgroups
+
+  void		GetAbsPos(TDCoord& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
+  // #CAT_XpertStructure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
+  void		AddRelPos(TDCoord& rel_pos);
+  // #IGNORE add relative pos, which factors in offsets from above
 
   virtual void	Copy_Weights(const Unit_Group* src);
   // #MENU #MENU_ON_Object #CAT_ObjectMgmt copies weights from other unit group (incl wts assoc with unit bias member)
@@ -1302,15 +1317,6 @@ public:
   virtual int	LoadWeights(const String& fname="",
 			    RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
   // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-
-  virtual bool	BuildUnits();
-  // #MENU #MENU_ON_Actions #CAT_Structure for subgroups: build units to specs (true if changed)
-  virtual bool	CheckBuild(bool quiet=false);
-  // #CAT_Structure check if network is built 
-  virtual void	LayoutUnits(Unit* u = NULL);
-  // #CAT_Structure for subgroups: redistribute units within the given geometry of the group
-  virtual void	RecomputeGeometry();
-  // #CAT_Structure re compute geometry based on parent layer
 
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this unit group
@@ -1354,30 +1360,16 @@ public:
   virtual Unit* MostActiveUnit(int& idx);
   // #CAT_Activation Return the unit with the highest activation (act) value -- index of unit is returned in idx
 
-  Unit* 	FindUnitFmCoord(const TwoDCoord& coord)
-  { return FindUnitFmCoord(coord.x,coord.y); }
-  // #CAT_Structure returns unit at given coordinates within layer
-  Unit*		FindUnitFmCoord(int x, int y);
-  // #CAT_Structure find unit from given set of x and y coordinates
-  TwoDCoord	GetGpGeomPos();
-  // #CAT_Structure returns unit group position in terms of layer unit group geometry gp_geom (pos is in unit coordinates and not unit group geometry)
-  void		GetAbsPos(TDCoord& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
-  // #CAT_Structure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
-  void		AddRelPos(TDCoord& rel_pos);
-  //  #IGNORE add relative pos, which factors in offsets from above
-  virtual bool	SetUnitNames(taMatrix* mat);
-  // #CAT_XpertStructure sets the unit names from the matrix mat -- should generally be 2d but we are permissive about dims, size, etc.
-  virtual bool	GetUnitNames(taMatrix* mat);
-  // #CAT_XpertStructure gets current unit names into matrix mat -- should generally be 2d but we are permissive about dims, size, etc.
-
   // implement save_rmv_units:
   override bool	Dump_QuerySaveChildren();
   override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
 				       MemberDef* memb_def=NULL, const void* par=NULL,
 				       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
 
-  void		RemoveAll();
-  
+  // we maintain our index in any owning list
+  override int	GetIndex() const { return idx; }
+  override void	SetIndex(int i) { idx = i; }
+
   override String 	GetTypeDecoKey() const { return "Unit"; }
 
   void	InitLinks();
@@ -1498,12 +1490,13 @@ public:
   PosTDCoord		pos;		// #CAT_Structure position of layer relative to the overall network position (0,0,0 is lower left hand corner)
   float			disp_scale;	// #DEF_1 #CAT_Structure display scale factor for layer -- multiplies overall layer size -- 1 is normal, < 1 is smaller and > 1 is larger -- can be especially useful for shrinking very large layers to better fit with other smaller layers
   XYNGeom		un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer 
-  bool			unit_groups;	// #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom
-  XYNGeom		gp_geom;	// #CONDEDIT_ON_unit_groups:true #CAT_Structure geometry of sub-groups (if unit_groups)
-  PosTwoDCoord		gp_spc;		// #CONDEDIT_ON_unit_groups:true #CAT_Structure spacing between sub-groups (if unit_groups)
-  XYNGeom		flat_geom;	// #EXPERT #READ_ONLY #NO_SAVE #CAT_Structure geometry of the units flattening out over unit groups (same as un_geom if !unit_groups; un_geom * gp_geom otherwise)
-  XYNGeom		act_geom;	// #HIDDEN #READ_ONLY #CAT_Structure actual view geometry, includes spaces and groups and everything: the full extent of units within the layer
-  XYNGeom		scaled_act_geom; // #HIDDEN #READ_ONLY #CAT_Structure scaled actual view geometry: disp_scale * act_geom -- use for view computations
+  bool			unit_groups;	// #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom -- see virt_groups for whether there are actual unit groups allocated, or just virtual organization a flat list of groups 
+  bool			virt_groups;	// #CONDSHOW_ON_unit_groups #CAT_Structure if true, do not allocate actual unit groups -- just organize a flat list of units into groups for display and computation purposes
+  XYNGeom		gp_geom;	// #CONDSHOW_ON_unit_groups #CAT_Structure geometry of unit sub-groups (if unit_groups) -- this is the layout of the groups, with gp_geom defining the layout of units within the groups
+  PosTwoDCoord		gp_spc;		// #CONDSHOW_ON_unit_groups #CAT_Structure spacing between unit sub-groups (if unit_groups) -- this is *strictly* for display purposes, and does not affect anything else in terms of projection connectivity calculations etc.
+  XYNGeom		flat_geom;	// #EXPERT #READ_ONLY #CAT_Structure geometry of the units flattening out over unit groups -- same as un_geom if !unit_groups; otherwise un_geom * gp_geom -- this is in logical (not display) sizes
+  XYNGeom		disp_geom;	// #HIDDEN #READ_ONLY #CAT_Structure actual view geometry, includes spaces and groups and everything: the full extent of units within the layer
+  XYNGeom		scaled_disp_geom; // #HIDDEN #READ_ONLY #CAT_Structure scaled actual view geometry: disp_scale * disp_geom -- use for view computations
 
   Projection_Group  	projections;	// #CAT_Structure group of receiving projections
   Projection_Group  	send_prjns;	// #CAT_Structure #HIDDEN #LINK_GROUP group of sending projections
@@ -1514,12 +1507,15 @@ public:
 
   LayerDistances	dist;		// #CAT_Structure distances from closest input/output layers to this layer
 
-  String		output_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
+  String		output_name;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
+  String_Matrix		gp_output_names; // #HIDDEN #SHOW_TREE #CAT_Statistic #CONDSHOW_ON_unit_groups output_name's for unit subgroups -- name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   float			sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   PRerrVals		prerr;		// #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for this layer, for the current pattern
-  float			icon_value;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW value to display if layer is iconified (algorithmically determined)
+  float			icon_value;	// #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
   int			units_flat_idx;	// #READ_ONLY #NO_SAVE starting index for this layer into the network units_flat list, used in threading
-  String_Matrix		unit_names; // #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
+  bool			units_lesioned;	// #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
+  bool			gp_unit_names_4d; // #CONDSHOW_ON_unit_groups if there are unit subgroups, create a 4 dimensional set of unit names which allows for distinct names for each unit in the layer -- otherwise a 2d set of names is created of size un_geom, all unit groups have the same repeated set of names
+  String_Matrix		unit_names; 	// #HIDDEN #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
   int			n_units;
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
@@ -1541,6 +1537,75 @@ public:
   inline bool		lesioned() const { return HasLayerFlag(LESIONED); }
   // check if this layer is lesioned -- use in function calls
   
+  ////////////////////////////////////////////////////////////////////////////////
+  // Unit access API -- all access of units should occur strictly through this API
+  // and NOT via unit groups (layers can handle unit groups virtually or with real
+  // allocated unit groups -- see virt_groups flag)
+
+  Unit*		UnitAtCoord(const TwoDCoord& coord) { return UnitAtCoord(coord.x, coord.y); }
+  // #CAT_Structure get unit at given coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
+  Unit*		UnitAtCoord(int x, int y);
+  // #CAT_Structure get unit at given coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
+
+  Unit*		UnitAtGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord)
+  { return UnitAtGpCoord(gp_coord.x,gp_coord.y, coord.x, coord.y); }
+  // #CAT_Structure get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
+  Unit*		UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y);
+  // #CAT_Structure get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
+
+  Unit_Group* 	UnitGpAtCoord(const TwoDCoord& coord)
+  { return UnitGpAtCoord(coord.x,coord.y); }
+  // #CAT_XpertStructure get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
+  Unit_Group* 	UnitGpAtCoord(int gp_x, int gp_y);
+  // #CAT_XpertStructure get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
+
+  void		UnitLogPos(Unit* un, TwoDCoord& upos)
+  { UnitLogPos(un, upos.x, upos.y); }
+  // #CAT_Structure get *logical* position for unit, relative to flat_geom (no display spacing) -- based on index within group/layer
+  void		UnitLogPos(Unit* un, int& x, int& y);
+  // #CAT_Structure get *logical* position for unit, relative to flat_geom (no display spacing) -- based on index within group/layer
+
+  ////////////	display coordinate versions
+
+  Unit*		UnitAtDispCoord(int x, int y);
+  // #CAT_Structure get unit at given *display* coordinates relative to layer -- this takes into account spaces between groups etc
+  void		UnitDispPos(Unit* un, TwoDCoord& upos)
+  { UnitDispPos(un, upos.x, upos.y); }
+  // #CAT_Structure get display position for unit, taking into account spacing, unit group positioning etc
+  void		UnitDispPos(Unit* un, int& x, int& y);
+  // #CAT_Structure get display position for unit, taking into account spacing, unit group positioning etc
+
+
+  ////////////////////////////////////////////////////////////////////////////////
+  // obsolete versions -- do not use in new code
+
+  Unit*		FindUnitFmCoord(const TwoDCoord& coord)
+  { return UnitAtCoord(coord.x, coord.y); }
+  // #CAT_zzzObsolete get unit at given coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
+  Unit*		FindUnitFmCoord(int x, int y)
+  { return UnitAtCoord(x, y); }
+  // #CAT_zzzObsolete get unit at given coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
+  Unit*		FindUnitFmGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord)
+  { return UnitAtGpCoord(gp_coord.x, gp_coord.y, coord.x, coord.y); }
+  // #CAT_zzzObsolete get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
+  Unit*		FindUnitFmGpCoord(int gp_x, int gp_y, int un_x, int un_y)
+  { return UnitAtGpCoord(gp_x, gp_y, un_x, un_y); }
+  // #CAT_zzzObsolete get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
+  Unit_Group* 	FindUnitGpFmCoord(const TwoDCoord& coord)
+  { return UnitGpAtCoord(coord.x,coord.y); }
+  // #CAT_zzzObsolete get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
+  Unit_Group* 	FindUnitGpFmCoord(int gp_x, int gp_y)
+  { return UnitGpAtCoord(gp_x, gp_y); }
+  // #CAT_zzzObsolete get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
+
+  ////////////	layer display position computation
+
+  void		GetAbsPos(TDCoord& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
+  // #CAT_Structure get absolute pos, which factors in offsets from layer groups
+  void		AddRelPos(TDCoord& rel_pos);
+  // #IGNORE add relative pos, which factors in offsets from above
+  void		SetDefaultPos();
+  // #IGNORE initialize position of layer
 
   virtual void	Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
@@ -1572,10 +1637,8 @@ public:
   // #IGNORE build unit-level thread information: flat list of units, etc -- this is called by network BuildUnits_Threads so that layers (and layerspecs) can potentially modify which units get added to the compute lists, and thus which are subject to standard computations -- default is all units in the layer
   virtual void	RecomputeGeometry();
   // #CAT_Structure recompute the layer's geometry specifcations
-  virtual void  LayoutUnits(Unit* u=NULL);
-  // #ARGC_0 #CAT_Structure layout the units according to layer geometry
-  virtual void  LayoutUnitGroups();
-  // #MENU #CONFIRM #CAT_Structure layout the unit groups according to layer group geometry and spacing
+  virtual void  LayoutUnits();
+  // #CAT_Structure layout the units according to layer geometry
   virtual void  ConnectFrom(Layer* lay);
   // #DYN12N #CAT_Structure connect from one or more other layers to this layer (receive from other layer(s)) -- in network view, receiver is FIRST layer selected -- makes a new projection between layers
   virtual void  ConnectBidir(Layer* lay);
@@ -1754,28 +1817,6 @@ public:
   virtual bool	VarToVal(const String& dest_var, float val);
   // #CAT_Structure set variable to given value for all units within this layer (must be a float type variable)
 
-  Unit*		FindUnitFmCoord(const TwoDCoord& coord) {return FindUnitFmCoord(coord.x, coord.y);}
-  // #CAT_Structure get unit from coordinates, taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
-  Unit*		FindUnitFmCoord(int x, int y);
-  // #CAT_Structure find unit within layer from given coordinates (layer relative coords), taking into account group geometry if present (subtracts any gp_spc -- as if it is not present).
-  Unit*		FindUnitFmGpCoord(int gp_x, int gp_y, int un_x, int un_y);
-  // #CAT_Structure find unit given both unit and unit group coordinates
-  Unit*		FindUnitFmGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord)
-    {return FindUnitFmGpCoord(gp_coord.x,gp_coord.y, coord.x, coord.y);}
-  // #CAT_Structure get unit from both unit and group coordinates
-  Unit_Group* 	FindUnitGpFmCoord(int gp_x, int gp_y);
-  // #CAT_Structure find the unit group at given group coordiantes (i.e., within gp_geom, not unit coordinates)
-  Unit_Group* 	FindUnitGpFmCoord(const TwoDCoord& coord) {return FindUnitGpFmCoord(coord.x,coord.y);}
-  // #CAT_Structure get unit group from group coordinates (i.e., within gp_geom, not unit coordinates)
-  virtual void	GetActGeomNoSpc(TwoDCoord& nospc_geom);
-  // #CAT_Structure get the actual geometry of the layer, subtracting any gp_spc that might be present (as if there were no spaces between unit groups)
-  void		GetAbsPos(TDCoord& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
-  // #CAT_Structure get absolute pos, which factors in offsets from layer groups
-  void		AddRelPos(TDCoord& rel_pos);
-  //  #IGNORE add relative pos, which factors in offsets from above
-  void		SetDefaultPos();
-  // #IGNORE initialize position of layer
-
 #ifdef DMEM_COMPILE
   DMemShare 	dmem_share_units;    	// #IGNORE the shared units
   virtual void	DMem_SyncNRecvCons();   // #IGNORE syncronize number of receiving connections (share set 0)
@@ -1813,7 +1854,7 @@ protected:
   // #IGNORE 1d data -- just go in order -- offsets ignored
   virtual void		ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
 			       Random* ran, const TwoDCoord& offs, bool na_by_range=false);
-  // #IGNORE 2d data is always treated the same: FindUnitFmCoord deals with unit grouping
+  // #IGNORE 2d data is always treated the same: UnitAtCoord deals with unit grouping
   virtual void		ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
 			       Random* ran, const TwoDCoord& offs, bool na_by_range=false);
   // #IGNORE flat layer, 4d data
@@ -1829,8 +1870,22 @@ private:
   void 	Destroy()	{ CutLinks(); }
 };
 
-inline Layer* Unit::own_lay() const {return ((Unit_Group*)owner)->own_lay;}
-inline bool Unit::lesioned() const {return own_lay()->lesioned(); }
+////////////////////  
+// Unit Inlines
+
+inline Layer* Unit::own_lay() const {
+  return ((Unit_Group*)owner)->own_lay;
+}
+
+inline bool Unit::lesioned() const {
+  return own_lay()->lesioned();
+}
+
+inline Unit_Group* Unit::own_subgp() const {
+  if(!owner || !owner->GetOwner()) return NULL;
+  if(owner->GetOwner()->InheritsFrom(&TA_Layer)) return NULL; // we're owned by the layer really
+  return (Unit_Group*)owner;
+}
 
 class EMERGENT_API Layer_Group : public taGroup<Layer> {
   // ##CAT_Network ##SCOPE_Network group of layers -- this should be used in larger networks to organize subnetworks (e.g., in brain models, different brain areas)
@@ -1839,7 +1894,7 @@ public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
   PosTDCoord	pos;		// Position of Group of layers relative to network
-  PosTDCoord	max_size;	// #READ_ONLY #SHOW #CAT_Structure maximum size of the layer group -- computed automatically from the layers within the group
+  PosTDCoord	max_disp_size;	// #READ_ONLY #SHOW #CAT_Structure maximum display size of the layer group -- computed automatically from the layers within the group
 
   void		GetAbsPos(TDCoord& abs_pos)
   { abs_pos = pos; AddRelPos(abs_pos); }
@@ -1851,8 +1906,8 @@ public:
   // #CAT_Structure create any algorithmically specified layers
   virtual void	BuildPrjns();
   // #CAT_Structure create any algorithmically specified prjns
-  virtual void	UpdateMaxSize();
-  // #IGNORE update max_size of layer group based on current layer layout
+  virtual void	UpdateMaxDispSize();
+  // #IGNORE update max_disp_size of layer group based on current layer layout
 
   virtual void	LesionLayers();
   // #BUTTON #DYN1 #CAT_Structure set the lesion flag on all the layers within this group -- removes them from all processing operations
@@ -1895,7 +1950,7 @@ protected:
 private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
-  void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; max_size = cp.max_size; }
+  void  Copy_(const Layer_Group& cp)	{ pos = cp.pos; max_disp_size = cp.max_disp_size; }
 };
 
 TA_SMART_PTRS(Layer_Group)
@@ -2004,11 +2059,11 @@ public:
   FloatRotation	rot;  		// 3d rotation of body, specifying an axis and a rot along that axis in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   FloatTDCoord	scale; 		// 3d scaling of object along each dimension (applied prior to rotation)
   ObjType	obj_type;	// type of object to display
-  String	obj_fname;	// #CONDEDIT_ON_obj_type:OBJECT #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Open Inventor file that contains the 3d geometry of the object
-  String	text;		// #CONDEDIT_ON_obj_type:TEXT text to display for text type of object
-  float		font_size;	// #CONDEDIT_ON_obj_type:TEXT font size to display text in, in normalized units (the entire network is 1x1x1, so this should typically be a smaller fraction like .05)
+  String	obj_fname;	// #CONDSHOW_ON_obj_type:OBJECT #FILE_DIALOG_LOAD #EXT_iv,wrl #FILETYPE_OpenInventor file name of Open Inventor file that contains the 3d geometry of the object
+  String	text;		// #CONDSHOW_ON_obj_type:TEXT text to display for text type of object
+  float		font_size;	// #CONDSHOW_ON_obj_type:TEXT font size to display text in, in normalized units (the entire network is 1x1x1, so this should typically be a smaller fraction like .05)
   bool		set_color;	// if true, we directly set our own color (otherwise it is whatever the object defaults to)
-  taColor	color; 		// #CONDEDIT_ON_set_color default color if not otherwise defined (a=alpha used for transparency)
+  taColor	color; 		// #CONDSHOW_ON_set_color default color if not otherwise defined (a=alpha used for transparency)
 
   override String	GetDesc() const { return desc; }
 
@@ -2104,8 +2159,8 @@ public:
   AutoBuildMode	auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if the SAVE_UNITS flag is not on, then auto building makes sense)
 
   TrainMode	train_mode;	// #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
-  WtUpdate	wt_update;	// #CAT_Learning #CONDEDIT_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
-  int		small_batch_n;	// #CONDEDIT_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
+  WtUpdate	wt_update;	// #CAT_Learning #CONDSHOW_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
+  int		small_batch_n;	// #CONDSHOW_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
   int		small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
 
   int		batch;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
@@ -2162,7 +2217,7 @@ public:
 
   int		n_units;	// #READ_ONLY #EXPERT #CAT_Structure total number of units in the network
   int		n_cons;		// #READ_ONLY #EXPERT #CAT_Structure total number of connections in the network
-  PosTDCoord	max_size;	// #READ_ONLY #EXPERT #CAT_Structure maximum size in each dimension of the net
+  PosTDCoord	max_disp_size;	// #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
 
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
   bool		old_load_cons;	// #IGNORE #NO_SAVE special flag (can't use flags b/c it is saved, loaded!) for case when loading a project with old cons file format (no pre-alloc of cons)
@@ -2224,8 +2279,6 @@ public:
   // #MENU #CONFIRM #CAT_Structure Remove all units in network (preserving unit groups)
   virtual void	RemoveUnitGroups();
   // #MENU #CONFIRM #CAT_Structure Remove all unit groups in network
-  virtual void	LayoutUnitGroups();
-  // #MENU #CONFIRM #CAT_Structure layout all the layer's unit groups according to layer group geometry and spacing
 
   virtual void	LinkPtrCons();
   // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
@@ -2475,8 +2528,8 @@ public:
   virtual bool   RemoveLayer(const String& nm) { return layers.RemoveName(nm); }
   // #CAT_Structure remove layer with given name, if it exists
 
-  virtual void	UpdateMaxSize();
-  // #IGNORE update max_size of network based on current layer layout
+  virtual void	UpdateMaxDispSize();
+  // #IGNORE update max_disp_size of network based on current layer layout
 
   virtual void	SetProjectionDefaultTypes(Projection* prjn);
   // #IGNORE this is called by the projection InitLinks to set its default types: overload in derived algorithm-specific networks to provide appropriate default types

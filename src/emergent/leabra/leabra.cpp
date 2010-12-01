@@ -6599,7 +6599,7 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
       ilay = (LeabraLayer*)net->layers.NewEl(1);
       ilay->name = inm;
       ilay->pos.z = lay->pos.z;
-      ilay->pos.x = lay->pos.x + lay->act_geom.x + 1;
+      ilay->pos.x = lay->pos.x + lay->disp_geom.x + 1;
       ilay->un_geom.n = n_inhib_units;
       if(n_inhib_units <= 20) {
 	ilay->un_geom.x = 2; ilay->un_geom.y = n_inhib_units / 2;

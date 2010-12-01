@@ -1970,7 +1970,6 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int n_stripes, int n_uni
   set_n_stripes(net, "LVi", 1, -1, false, gp_geom_x, gp_geom_y);
   set_n_stripes(net, "Patch", n_stripes, -1, false, gp_geom_x, gp_geom_y);
   set_n_stripes(net, "SNc", n_stripes, -1, false, gp_geom_x, gp_geom_y);
-  net->LayoutUnitGroups();
   net->Build();
   return true;
 }
@@ -2094,7 +2093,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
       other_lays.Link(lay);
       lay->GetAbsPos(lpos);
       if(lpos.z == 0) lay->pos.z+=2; // nobody allowed in 0!
-      int xm = lpos.x + lay->scaled_act_geom.x + 1;
+      int xm = lpos.x + lay->scaled_disp_geom.x + 1;
       if(lpos.z == 1) mx_z1 = MAX(mx_z1, xm);
       if(lpos.z == 2) mx_z2 = MAX(mx_z2, xm);
       if(lay->layer_type == Layer::HIDDEN)
@@ -2376,13 +2375,13 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   }
   lay_set_geom(snrthal_m, n_stripes, 1);
 
-  // this is here, to allow it to get act_geom for laying out the pfc and matrix guys!
+  // this is here, to allow it to get disp_geom for laying out the pfc and matrix guys!
   PBWM_SetNStripes(net, n_stripes);
 
   if(out_gate) {
     if(pfc_o_new) {
       pfc_o->pos.z = pfc_m->pos.z; pfc_o->pos.y = pfc_m->pos.y;
-      pfc_o->pos.x = pfc_m->pos.x + pfc_m->act_geom.x + 2;
+      pfc_o->pos.x = pfc_m->pos.x + pfc_m->disp_geom.x + 2;
       if(!pfc_learns && (input_lays.size > 0)) {
 	Layer* il = (Layer*)input_lays[0];
 	pfc_o->un_geom = il->un_geom;
@@ -2395,7 +2394,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 
     if(matrix_o_new) { 
       matrix_o->pos.z = matrix_m->pos.z; matrix_o->pos.y = matrix_m->pos.y;
-      matrix_o->pos.x = matrix_m->pos.x + matrix_m->act_geom.x + 2; 
+      matrix_o->pos.x = matrix_m->pos.x + matrix_m->disp_geom.x + 2; 
       matrix_o->un_geom.n = 28; matrix_o->un_geom.x = 4; matrix_o->un_geom.y = 7;
     }
     lay_set_geom(matrix_o, n_stripes);

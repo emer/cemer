@@ -1482,7 +1482,7 @@ float MotorForceLayerSpec::ReadForce(LeabraLayer* lay, LeabraNetwork* net, float
   for(int y=0; y<lay->gp_geom.y; y++) {
     for(int x=0; x<lay->gp_geom.x; x++) {
       float wt = motor_force.GetWt(x,y);
-      Unit_Group* ug = lay->FindUnitGpFmCoord(x, y);
+      Unit_Group* ug = lay->UnitGpAtCoord(x, y);
       if(!ug || ug->size == 0) continue;
       LeabraUnit* un0 = (LeabraUnit*)ug->FastEl(0);
       force += wt * un0->act_eq;
@@ -1507,7 +1507,7 @@ void MotorForceLayerSpec::ClampForce(LeabraLayer* lay, LeabraNetwork* net, float
   for(int y=0; y<lay->gp_geom.y; y++) {
     for(int x=0; x<lay->gp_geom.x; x++) {
       float wt = motor_force.GetWt(x,y);
-      Unit_Group* ugp = lay->FindUnitGpFmCoord(x, y);
+      Unit_Group* ugp = lay->UnitGpAtCoord(x, y);
       if(!ugp || ugp->size == 0) continue;
       LeabraUnit* un0 = (LeabraUnit*)ugp->FastEl(0);
       un0->ext = force;
@@ -1531,7 +1531,7 @@ void MotorForceLayerSpec::Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net) 
     float vel_dist = -((float)y - vel_mid) / vel_mid;
     for(int x=0; x<lay->gp_geom.x; x++) {
       float pos_dist = -((float)x - pos_mid) / pos_mid;
-      Unit_Group* ugp = lay->FindUnitGpFmCoord(x, y);
+      Unit_Group* ugp = lay->UnitGpAtCoord(x, y);
       if(!ugp || ugp->size == 0) continue;
       float sum_val = .5f * vel_dist + .5f * pos_dist;
 
@@ -1602,7 +1602,7 @@ void TwoDValLeabraLayer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext
 	int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
 	for(int d_x = 0; d_x < data->dim(0); d_x++) {
 	  int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
-	  Unit* un = FindUnitFmCoord(u_x, u_y);
+	  Unit* un = UnitAtCoord(u_x, u_y);
 	  if(un) {
 	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
 	    un->ApplyInputData(val, ext_flags, ran, na_by_range);
@@ -1984,7 +1984,7 @@ void TwoDValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
 void TwoDValLayerSpec::ClampValue_ugp(Unit_Group* ugp, LeabraNetwork*, float rescale) {
   if(ugp->size < 3) return;	// must be at least a few units..
   TwoDValLeabraLayer* lay = (TwoDValLeabraLayer*)ugp->own_lay;
-  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+  TwoDCoord gp_geom_pos = ugp->GpLogPos();
   // first initialize to zero
   LeabraUnitSpec* us = (LeabraUnitSpec*)ugp->FastEl(0)->GetUnitSpec();
   for(int i=0;i<ugp->size;i++) {
@@ -2019,7 +2019,7 @@ void TwoDValLayerSpec::ReadValue(TwoDValLeabraLayer* lay, LeabraNetwork* net) {
 void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net) {
   if(ugp->size < 3) return;	// must be at least a few units..
   twod.InitVal(0.0f, 0.0f, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
-  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+  TwoDCoord gp_geom_pos = ugp->GpLogPos();
   if(twod.n_vals == 1) {	// special case
     float x_avg = 0.0f; float y_avg = 0.0f;
     float sum_act = 0.0f;
@@ -2133,7 +2133,7 @@ void TwoDValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwo
 	for(gi=0; gi<tdlay->units.gp.size; gi++) {
 	  Unit_Group* ugp = (Unit_Group*)tdlay->units.gp[gi];
 	  for(int k=0;k<twod.n_vals;k++) {
-	    TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+	    TwoDCoord gp_geom_pos = ugp->GpLogPos();
 	    float x_val, y_val;
 	    tdlay->GetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_TARG,
 			       k, gp_geom_pos.x, gp_geom_pos.y);
@@ -2145,7 +2145,7 @@ void TwoDValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwo
       else {
 	Unit_Group* ugp = (Unit_Group*)&(tdlay->units);
 	for(int k=0;k<twod.n_vals;k++) {
-	  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+	  TwoDCoord gp_geom_pos = ugp->GpLogPos();
 	  float x_val, y_val;
 	  tdlay->GetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_TARG,
 			     k, gp_geom_pos.x, gp_geom_pos.y);
@@ -2155,7 +2155,7 @@ void TwoDValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwo
       } 
 //       UNIT_GP_ITR(tdlay,
 // 		  for(int k=0;k<twod.n_vals;k++) {
-// 		    TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+// 		    TwoDCoord gp_geom_pos = ugp->GpLogPos();
 // 		    float x_val, y_val;
 // 		    tdlay->GetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_TARG,
 // 				       k, gp_geom_pos.x, gp_geom_pos.y);
@@ -2215,7 +2215,7 @@ void TwoDValLayerSpec::PostSettle(LeabraLayer* ly, LeabraNetwork* net) {
 }
 
 void TwoDValLayerSpec::PostSettle_ugp(TwoDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net) {
-  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+  TwoDCoord gp_geom_pos = ugp->GpLogPos();
 
   bool no_plus_testing = false;
   if(net->no_plus_test && (net->train_mode == LeabraNetwork::TEST)) {
@@ -2371,7 +2371,7 @@ void TwoDValLayerSpec::PostSettle_ugp(TwoDValLeabraLayer* lay, Unit_Group* ugp, 
 
 float TwoDValLayerSpec::Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* ly, int& n_vals) {
   TwoDValLeabraLayer* lay = (TwoDValLeabraLayer*)ly;
-  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+  TwoDCoord gp_geom_pos = ugp->GpLogPos();
   LeabraUnitSpec* us = (LeabraUnitSpec*)ugp->FastEl(0)->GetUnitSpec();
   float rval = 0.0f;
   for(int k=0;k<twod.n_vals;k++) { // first loop over and find potential target values
@@ -2430,7 +2430,7 @@ float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*,
 float TwoDValLayerSpec::Compute_NormErr_ugp(LeabraLayer* ly, Unit_Group* ugp,
 					   LeabraInhib* thr, LeabraNetwork* net) {
   TwoDValLeabraLayer* lay = (TwoDValLeabraLayer*)ly;
-  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+  TwoDCoord gp_geom_pos = ugp->GpLogPos();
   LeabraUnitSpec* us = (LeabraUnitSpec*)ugp->FastEl(0)->GetUnitSpec();
   float rval = 0.0f;
   for(int k=0;k<twod.n_vals;k++) { // first loop over and find potential target values
@@ -2573,7 +2573,7 @@ void FourDValLeabraLayer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ex
 	int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
 	for(int d_x = 0; d_x < data->dim(0); d_x++) {
 	  int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
-	  Unit* un = FindUnitFmCoord(u_x, u_y);
+	  Unit* un = UnitAtCoord(u_x, u_y);
 	  if(un) {
 	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
 	    un->ApplyInputData(val, ext_flags, ran, na_by_range);
@@ -2955,7 +2955,7 @@ void FourDValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
 void FourDValLayerSpec::ClampValue_ugp(Unit_Group* ugp, LeabraNetwork*, float rescale) {
   if(ugp->size < 3) return;	// must be at least a few units..
   FourDValLeabraLayer* lay = (FourDValLeabraLayer*)ugp->own_lay;
-  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+  TwoDCoord gp_geom_pos = ugp->GpLogPos();
   // first initialize to zero
   LeabraUnitSpec* us = (LeabraUnitSpec*)ugp->FastEl(0)->GetUnitSpec();
   for(int i=0;i<ugp->size;i++) {
@@ -2990,7 +2990,7 @@ void FourDValLayerSpec::ReadValue(FourDValLeabraLayer* lay, LeabraNetwork* net) 
 void FourDValLayerSpec::ReadValue_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net) {
   if(ugp->size < 3) return;	// must be at least a few units..
   fourd.InitVal(0.0f, 0.0f, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
-  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+  TwoDCoord gp_geom_pos = ugp->GpLogPos();
   if(fourd.n_vals == 1) {	// special case
     float x_avg = 0.0f; float y_avg = 0.0f;
     float sum_act = 0.0f;
@@ -3101,7 +3101,7 @@ void FourDValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetw
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
       UNIT_GP_ITR(tdlay, 
 		  for(int k=0;k<fourd.n_vals;k++) {
-		    TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+		    TwoDCoord gp_geom_pos = ugp->GpLogPos();
 		    float x_val = tdlay->GetFourDVal(FourDValLeabraLayer::FOURD_X,
 						    FourDValLeabraLayer::FOURD_TARG,
 						    k, gp_geom_pos.x, gp_geom_pos.y);
@@ -3169,7 +3169,7 @@ void FourDValLayerSpec::PostSettle(LeabraLayer* ly, LeabraNetwork* net) {
 }
 
 void FourDValLayerSpec::PostSettle_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net) {
-  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+  TwoDCoord gp_geom_pos = ugp->GpLogPos();
 
   bool no_plus_testing = false;
   if(net->no_plus_test && (net->train_mode == LeabraNetwork::TEST)) {
@@ -3325,7 +3325,7 @@ void FourDValLayerSpec::PostSettle_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp
 
 float FourDValLayerSpec::Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* ly, int& n_vals) {
   FourDValLeabraLayer* lay = (FourDValLeabraLayer*)ly;
-  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+  TwoDCoord gp_geom_pos = ugp->GpLogPos();
   LeabraUnitSpec* us = (LeabraUnitSpec*)ugp->FastEl(0)->GetUnitSpec();
   float rval = 0.0f;
   for(int k=0;k<fourd.n_vals;k++) { // first loop over and find potential target values
@@ -3390,7 +3390,7 @@ float FourDValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*,
 float FourDValLayerSpec::Compute_NormErr_ugp(LeabraLayer* ly, Unit_Group* ugp,
 					   LeabraInhib* thr, LeabraNetwork* net) {
   FourDValLeabraLayer* lay = (FourDValLeabraLayer*)ly;
-  TwoDCoord gp_geom_pos = ugp->GetGpGeomPos();
+  TwoDCoord gp_geom_pos = ugp->GpLogPos();
   LeabraUnitSpec* us = (LeabraUnitSpec*)ugp->FastEl(0)->GetUnitSpec();
   float rval = 0.0f;
   for(int k=0;k<fourd.n_vals;k++) { // first loop over and find potential target values
@@ -3499,7 +3499,7 @@ float FourDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 //     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
 //       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
 
-// 	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+// 	Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
 // 	if(ru_gp == NULL) continue;
 
 // 	TwoDCoord su_st;
@@ -3538,7 +3538,7 @@ float FourDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 // 	      suc_wrp = su_st + suc;
 // 	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 // 		continue;
-// 	      Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+// 	      Unit* su_u = prjn->from->UnitAtCoord(suc_wrp);
 // 	      if(su_u == NULL) continue;
 // 	      if(!self_con && (su_u == ru_u)) continue;
 // 	      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
@@ -3725,7 +3725,7 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
       for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
-	Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(rug);
+	Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(rug);
 	if(!ru_gp) continue;
 
 	int rui = 0;
@@ -3744,7 +3744,7 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
 	    for(suc.y = 0; suc.y < fltsz; suc.y++) {
 	      for(suc.x = 0; suc.x < fltsz; suc.x++) {
 		TwoDCoord sugc = su_st + suc;
-		Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(sugc);
+		Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
 		if(!su_gp) continue;
 
 		Unit* su_u = (Unit*)su_gp->SafeEl(feat_no);
@@ -3791,7 +3791,7 @@ void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn) {
   TwoDCoord rug;
   for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
     for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
-      Unit_Group* ru_gp = recv_lay->FindUnitGpFmCoord(rug);
+      Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(rug);
       if(!ru_gp) continue;
 
       int rui = 0;
@@ -3809,7 +3809,7 @@ void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn) {
 	  for(suc.y = 0; suc.y < fltsz; suc.y++) {
 	    for(suc.x = 0; suc.x < fltsz; suc.x++) {
 	      TwoDCoord sugc = su_st + suc;
-	      Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(sugc);
+	      Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
 	      if(!su_gp) continue;
 
 	      for(int sui=0;sui<su_gp->size;sui++) {
@@ -3842,7 +3842,7 @@ void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
   Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
 
   TwoDCoord rug_geo = recv_lay->gp_geom;
-  TwoDCoord rgp_pos = rugp->GetGpGeomPos();
+  TwoDCoord rgp_pos = rugp->GpLogPos();
   
   int feat_no = rgp_pos.y * rug_geo.x + rgp_pos.x; // unit group index
   int my_feat_gp = feat_no / units_per_feat_gp;
@@ -3861,7 +3861,7 @@ void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) 
   for(suc.y = 0; suc.y < fltsz; suc.y++) {
     for(suc.x = 0; suc.x < fltsz; suc.x++) {
       TwoDCoord sugc = su_st + suc;
-      Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(sugc);
+      Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
       if(!su_gp) continue;
 
       float wt = wt_mult * dog_wts.net_filter.FastEl(suc.x/convergence, 
@@ -3930,7 +3930,7 @@ void GpAggregatePrjnSpec::Connect_impl(Projection* prjn) {
     TwoDCoord suc;
     for(suc.y = 0; suc.y <= su_geo.y; suc.y++) {
       for(suc.x = 0; suc.x <= su_geo.x; suc.x++) {
-	Unit_Group* su_gp = send_lay->FindUnitGpFmCoord(suc);
+	Unit_Group* su_gp = send_lay->UnitGpAtCoord(suc);
 	if(!su_gp) continue;
 	Unit* su_u = (Unit*)su_gp->SafeEl(ri);
 	if(su_u) {
@@ -4003,7 +4003,7 @@ void VisDisparityPrjnSpec::Connect_Gps(Projection* prjn) {
     for(ruc.x = 0; ruc.x < ru_gp_geo.x; ruc.x++) { // loop over receiving layer x
       for(ruc.y = 0; ruc.y < ru_gp_geo.y; ruc.y++) { // loop over receiving layer y
 	// get each unit group in receiving layer
-	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
 	if(!ru_gp) continue;	// shouldn't happen
 
 	int rui_ctr = 0;
@@ -4022,7 +4022,7 @@ void VisDisparityPrjnSpec::Connect_Gps(Projection* prjn) {
 	      suc.x = ruc.x + lr_dir * (st_off + soff);
 	      if(suc.WrapClip(wrap, su_gp_geo) && !wrap)
 		continue;
-	      Unit_Group* su_gp = prjn->from->FindUnitGpFmCoord(suc);
+	      Unit_Group* su_gp = prjn->from->UnitGpAtCoord(suc);
 	      if(!su_gp) continue;	// shouldn't happen
 	      Unit* su_u = su_gp->SafeEl(rui);
 	      if(!su_u) continue;
@@ -4072,7 +4072,7 @@ void VisDisparityPrjnSpec::Connect_NoGps(Projection* prjn) {
     for(ruc.x = 0; ruc.x < ru_gp_geo.x; ruc.x++) { // loop over receiving layer x
       for(ruc.y = 0; ruc.y < ru_gp_geo.y; ruc.y++) { // loop over receiving layer y
 	// get each unit group in receiving layer
-	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
 	if(!ru_gp) continue;	// shouldn't happen
 
 	int rui_ctr = 0;
@@ -4090,7 +4090,7 @@ void VisDisparityPrjnSpec::Connect_NoGps(Projection* prjn) {
 	    suc.x = ruc.x + lr_dir * (st_off + soff);
 	    if(suc.WrapClip(wrap, su_geo) && !wrap)
 	      continue;
-	    Unit* su_u = prjn->from->FindUnitFmCoord(suc);
+	    Unit* su_u = prjn->from->UnitAtCoord(suc);
 	    if(!su_u) continue;
 	    if(!self_con && (su_u == ru_u)) continue;
 	    ru_u->ConnectFrom(su_u, prjn, alloc_loop);
@@ -4200,7 +4200,7 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
     for(int ui=0; ui<fugp->size; ui++) {
       LeabraUnit* u = (LeabraUnit*)fugp->FastEl(ui);
       LeabraUnit_Group* u_own = (LeabraUnit_Group*)u->owner; // NOT fugp!
-      TwoDCoord up = u_own->GetGpGeomPos();
+      TwoDCoord up = u_own->GpLogPos();
 
       float gp_i = u_own->i_val.g_i;
       if(gp_i <= 0) gp_i = .1f;	// note: should have min_i set!!
@@ -4211,7 +4211,7 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 	for(int ai=0; ai<fugp->active_buf.size; ai++) {
 	  LeabraUnit* au = (LeabraUnit*)fugp->active_buf.FastEl(ai);
 	  LeabraUnit_Group* au_own = (LeabraUnit_Group*)au->owner;
-	  TwoDCoord aup = au_own->GetGpGeomPos();
+	  TwoDCoord aup = au_own->GpLogPos();
 
 	  float dst_sq = up.SqDist(aup);
 	  float cost = taMath_float::exp_fast(-dst_sq * dst_norm_val);
@@ -4261,7 +4261,7 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(ruc.y = 0; ruc.y < rug_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < rug_geo.x; ruc.x++) {
-	Unit_Group* ru_gp = prjn->layer->FindUnitGpFmCoord(ruc);
+	Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
 	if(!ru_gp) continue;
 
 	TwoDCoord su_st;
@@ -4300,7 +4300,7 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
 	      suc_wrp = su_st + suc;
 	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 		continue;
-	      Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+	      Unit* su_u = prjn->from->UnitAtCoord(suc_wrp);
 	      if(!su_u) continue;
 	      if(!self_con && (su_u == ru_u)) continue;
 
@@ -4375,7 +4375,7 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
 	      suc_wrp = su_st + suc;
 	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 		continue;
-	      Unit* su_u = prjn->from->FindUnitFmCoord(suc_wrp);
+	      Unit* su_u = prjn->from->UnitAtCoord(suc_wrp);
 	      if(su_u == NULL) continue;
 	      if(!self_con && (su_u == ru_u)) continue;
 	      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
