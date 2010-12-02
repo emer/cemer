@@ -2090,7 +2090,7 @@ void Unit::GetLayerAbsPos(TwoDCoord& lay_abs_pos) {
   // a bunch of GetOwners
   lay_abs_pos = pos;
   Unit_Group* ug = dynamic_cast<Unit_Group*>(owner);
-  if (ug) { // should always succeed...
+  if(ug) { // should always succeed...
     lay_abs_pos.x += ug->pos.x;
     lay_abs_pos.y += ug->pos.y;
   }
@@ -4163,7 +4163,7 @@ void Layer::SetDefaultPos() {
 void Layer::LayoutUnits() {
   StructUpdate(true);
   RecomputeGeometry();
-  units.pos.z = 0;
+  units.pos = 0;		// our base guy must always be 0..
   if(unit_groups) {
     TwoDCoord eff_un_sz = un_geom + gp_spc;
     TwoDCoord gpgeo;

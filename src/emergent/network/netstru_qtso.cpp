@@ -112,10 +112,10 @@ void UnitView::CutLinks() {
 }
 
 NetView* UnitView::nv() {
-  if (!m_nv) {
+  if(!m_nv) {
     LayerView* layv = this->lay();
-    if (layv)
-     m_nv = layv->nv();
+    if(layv)
+      m_nv = layv->nv();
   }
   return m_nv;
 }
@@ -146,11 +146,10 @@ void UnitView::Render_pre() {
     break;
   }
 
-  // note: pos s/b invariant
+  TwoDCoord upos;  unit->GetLayerAbsPos(upos);
   node_so()->transform()->translation.setValue
-    (disp_scale * ((float)(unit->pos.x + 0.5f) / max_x),
-     0.0f,
-     -disp_scale * (((float)(unit->pos.y + 0.5f) / max_y)));
+    (disp_scale * ((float)(upos.x + 0.5f) / max_x), 0.0f,
+     -disp_scale * (((float)(upos.y + 0.5f) / max_y)));
   inherited::Render_pre();
 }
 
@@ -212,13 +211,13 @@ void UnitGroupView::BuildAll() {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   TwoDCoord coord;
-  for (coord.y = 0; coord.y < lay->flat_geom.y; ++(coord.y)) {
-    for (coord.x = 0; coord.x < lay->flat_geom.x; ++(coord.x)) {
+  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
-      if (!unit) break; // there won't be any more units
+      if (!unit) continue;
 
       UnitView* uv = new UnitView();
-      uv->SetData(unit);//obsunit->AddDataView(uv);
+      uv->SetData(unit);
       children.Add(uv);
     }
   }
@@ -486,7 +485,7 @@ void UnitGroupView::Render_pre() {
   //NOTE: we create/adjust the units in the Render_impl routine
   T3UnitGroupNode* ugrp_so = node_so(); // cache
 
-  ugrp_so->setGeom(lay->flat_geom.x, lay->flat_geom.y, nv->max_size.x,
+  ugrp_so->setGeom(lay->disp_geom.x, lay->disp_geom.y, nv->max_size.x,
 		   nv->max_size.y, nv->max_size.z, lay->disp_scale);
 
   inherited::Render_pre();
@@ -579,46 +578,51 @@ void UnitGroupView::Render_impl_children() {
   float font_y = .45f / nv->max_size.y;
   SbVec3f font_xform(0.0f, font_z, font_y);
 
-  for (int i = 0; i < children.size; ++i) {
-    UnitView* uv = (UnitView*)children.FastEl(i);
-    Unit* unit = uv->unit();
-    unit_so = uv->node_so();
-    if (!unit_so || !unit) continue; // shouldn't happen
-    nv->GetUnitDisplayVals(this, unit->pos, val, col, sc_val);
-    // Value
-    unit_so->setAppearance(sc_val, col, max_z, trans);
-    //TODO: we maybe shouldn't alter picked here, because that is expensive -- do only when select changes
-    // except that might be complicated, ex. when Render() called,
-    unit_so->setPicked(uv->picked);
+  int ui = 0;
+  TwoDCoord coord;
+  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
+      Unit* unit = lay->UnitAtCoord(coord);
+      if(!unit) continue;
+      UnitView* uv = (UnitView*)children.FastEl(ui++);
+      unit_so = uv->node_so();
+      if(!unit_so) continue; // shouldn't happen
+      nv->GetUnitDisplayVals(this, coord, val, col, sc_val);
+      // Value
+      unit_so->setAppearance(sc_val, col, max_z, trans);
+      //TODO: we maybe shouldn't alter picked here, because that is expensive -- do only when select changes
+      // except that might be complicated, ex. when Render() called,
+      unit_so->setPicked(uv->picked);
 
-    // Text (if any)
-    SoAsciiText* at = unit_so->captionNode(false);
-    if (nv->unit_text_disp == NetView::UTD_NONE) {
-      if (at)
-        at->string.setValue( "");
-    } else { // text of some kind
-      unit_so->transformCaption(font_xform);
-      if (nv->unit_text_disp & NetView::UTD_VALUES) {
-        ValToDispText(val, val_str);
-      }
-      if (!at) // force captionNode creation
-	at = unit_so->captionNode(true);
-      SoMFString* mfs = &(at->string);
-      // fastest is to do each case in one operation
-      switch (nv->unit_text_disp) {
-      case NetView::UTD_VALUES:
-        mfs->setValue(val_str.chars());
-        break;
-      case NetView::UTD_NAMES:
-        mfs->setValue(unit->name.chars());
-        break;
-      case NetView::UTD_BOTH:
-        const char* strs[2];
-        strs[0] = val_str.chars();
-        strs[1] = unit->name.chars();
-        mfs->setValues(0, 2, strs);
-        break;
-      default: break; // compiler food, won't happen
+      // Text (if any)
+      SoAsciiText* at = unit_so->captionNode(false);
+      if (nv->unit_text_disp == NetView::UTD_NONE) {
+	if (at)
+	  at->string.setValue( "");
+      } else { // text of some kind
+	unit_so->transformCaption(font_xform);
+	if (nv->unit_text_disp & NetView::UTD_VALUES) {
+	  ValToDispText(val, val_str);
+	}
+	if (!at) // force captionNode creation
+	  at = unit_so->captionNode(true);
+	SoMFString* mfs = &(at->string);
+	// fastest is to do each case in one operation
+	switch (nv->unit_text_disp) {
+	case NetView::UTD_VALUES:
+	  mfs->setValue(val_str.chars());
+	  break;
+	case NetView::UTD_NAMES:
+	  mfs->setValue(unit->name.chars());
+	  break;
+	case NetView::UTD_BOTH:
+	  const char* strs[2];
+	  strs[0] = val_str.chars();
+	  strs[1] = unit->name.chars();
+	  mfs->setValues(0, 2, strs);
+	  break;
+	default: break; // compiler food, won't happen
+	}
       }
     }
   }

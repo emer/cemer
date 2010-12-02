@@ -129,13 +129,8 @@ private:
 ////////////////////////////////////////////////////
 //   UnitGroupView
 
-// Note that UnitGroupView takes care of rendering all the Units;
-// UnitView objects are only created and associated with a T3Unit object
-// when the need arises (ex. user selects a T3Unit in the gui)
-//
-// The Units font is here, so we don't replicate it in every Unit
-
 class EMERGENT_API UnitGroupView: public nvDataView {
+  // does all the rendering of unit values, either direct optimized 3D_BLOCK rendering or managing -- there is ONLY ONE of these objects per layer, and it manages all the units regardless of whether there are sub unit groups
 INHERITED(nvDataView)
   friend class LayerView;
 public:
@@ -156,9 +151,9 @@ public:
   virtual void		InitDisplay();
 
   float 		GetUnitDisplayVal(const TwoDCoord& co, void*& base);
-  // get raw floating point value to display according to current nv settings, at given coordinate -- fills in base for this value as well (NULL if not set) -- uses history values if nv hist_idx > 0
+  // get raw floating point value to display according to current nv settings, at given *logical* coordinate within the layer -- fills in base for this value as well (NULL if not set) -- uses history values if nv hist_idx > 0
   float 		GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base);
-  // get raw floating point value to display at given member index (< membs.size), at given coordinate -- fills in base for this value as well (NULL if not set) -- does NOT use history vals ever
+  // get raw floating point value to display at given member index (< membs.size), at given *logical* coordinate -- fills in base for this value as well (NULL if not set) -- does NOT use history vals ever
   void 			UpdateUnitViewBases(Unit* src_u);
   // update base void* for all current nv->membs, src_u only used for s./r. values
   virtual void		UpdateUnitValues();
