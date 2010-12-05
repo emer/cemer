@@ -163,7 +163,8 @@ public:
     virtual void Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_ExtRew clamp external rewards as da values (put in da val, clamp)
 
-    virtual void Compute_UnitDa(float er, LeabraUnit* u, Unit_Group* ugp, LeabraLayer* lay, LeabraNetwork* net);
+    virtual void Compute_UnitDa(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				float er, LeabraUnit* u, LeabraNetwork* net);
     // #CAT_ExtRew used in above routines: actually compute the unit da value based on external reward value er
     virtual void Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_ExtRew used in above routines: clamp norew_val values for when no reward information is present
@@ -254,13 +255,16 @@ class LEABRA_API TDRewPredLayerSpec : public ScalarValLayerSpec {
   // predicts rewards: minus phase = clamped prior expected reward V^(t), plus = settles on expectation of future reward V^(t+1)
 INHERITED(ScalarValLayerSpec)
 public:
-  virtual void 	Compute_SavePred(Unit_Group* ugp, LeabraNetwork* net); // save current prediction to misc_1 for later clamping
-  virtual void 	Compute_ClampPred(Unit_Group* ugp, LeabraNetwork* net); // clamp misc_1 to ext 
+  virtual void 	Compute_SavePred(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				 LeabraNetwork* net); // save current prediction to misc_1 for later clamping
+  virtual void 	Compute_ClampPred(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				  LeabraNetwork* net); // clamp misc_1 to ext 
   virtual void 	Compute_ClampPrev(LeabraLayer* lay, LeabraNetwork* net);
   // clamp minus phase to previous act value
   virtual void 	Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations for learning including the td values
-    virtual void Compute_TdPlusPhase_ugp(Unit_Group* ugp, LeabraNetwork* net);
+    virtual void Compute_TdPlusPhase_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+					 LeabraNetwork* net);
     // #IGNORE 
 
   override void	Init_Acts(LeabraLayer* lay, LeabraNetwork* net);

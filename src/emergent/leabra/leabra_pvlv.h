@@ -150,11 +150,13 @@ public:
 
   virtual float	Compute_PVDa(LeabraLayer* lay, LeabraNetwork* net);
   // compute da contribution from PV
-    virtual float Compute_PVDa_ugp(Unit_Group* ugp, float pve_val, LeabraNetwork* net);
+    virtual float Compute_PVDa_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				   float pve_val, LeabraNetwork* net);
     // #IGNORE
   virtual void	Update_PVPrior(LeabraLayer* lay, LeabraNetwork* net);
   // update the prior PV value, stored in pv unit misc_1 values -- at very end of trial
-    virtual void Update_PVPrior_ugp(Unit_Group* ugp, bool er_avail);
+    virtual void Update_PVPrior_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				    bool er_avail);
     // #IGNORE
 
   // overrides:
@@ -316,12 +318,16 @@ public:
 
   virtual float	Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay, LeabraNetwork* net);
   // compute da contribution from Lv, based on lve_layer and lvi_layer activations (multiple subgroups allowed)
-    virtual float Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, LeabraNetwork* net);
+  virtual float Compute_LVDa_ugp(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
+				 Layer::AccessMode lve_acc_md, int lve_gpidx,
+				 Layer::AccessMode lvi_acc_md, int lvi_gpidx,
+				 LeabraNetwork* net);
     // #IGNORE
 
   virtual void	Update_LVPrior(LeabraLayer* lay, LeabraNetwork* net);
   // update the prior Lv value, stored in lv unit misc_1 values
-    virtual void Update_LVPrior_ugp(Unit_Group* lve_ugp, bool er_avail);
+    virtual void Update_LVPrior_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				    bool er_avail);
     // #IGNORE
 
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);

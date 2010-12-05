@@ -286,8 +286,8 @@ void ExtRewLayerSpec::Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
 
   UNIT_GP_ITR
     (lay,
-     LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
-     Compute_UnitDa(er, u, ugp, lay, net);
+     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
+     Compute_UnitDa(lay, acc_md, gpidx, er, u, net);
      );
 
   net->ext_rew = er;
@@ -306,16 +306,16 @@ void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
 
   UNIT_GP_ITR
     (lay, 
-     LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
+     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
      float er = u->ext;
      if(er == rew.norew_val) {
        u->ext = rew.norew_val;	// this is appropriate to set here..
-       ClampValue_ugp(ugp, net);
+       ClampValue_ugp(lay, acc_md, gpidx, net);
      }
      else {
        er_avg += er;
        n_rew++;
-       Compute_UnitDa(er, u, ugp, lay, net);
+       Compute_UnitDa(lay, acc_md, gpidx, er, u, net);
      }
      );
 
@@ -336,16 +336,16 @@ void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
 
   UNIT_GP_ITR
     (lay, 
-     LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
+     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
      float er = u->dav;
      if(er == rew.norew_val) {
        u->ext = rew.norew_val;	// this is appropriate to set here..
-       ClampValue_ugp(ugp, net);
+       ClampValue_ugp(lay, acc_md, gpidx, net);
      }
      else {
        er_avg += er;
        n_rew++;
-       Compute_UnitDa(er, u, ugp, lay, net);
+       Compute_UnitDa(lay, acc_md, gpidx, er, u, net);
      }
      );
 
@@ -360,13 +360,13 @@ void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
   net->norew_val = rew.norew_val;
 }
 
-void ExtRewLayerSpec::Compute_UnitDa(float er, LeabraUnit* u, Unit_Group* ugp, LeabraLayer*,
-				     LeabraNetwork* net) {
+void ExtRewLayerSpec::Compute_UnitDa(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				     float er, LeabraUnit* u, LeabraNetwork* net) {
   u->dav = er;
   if(avg_rew.sub_avg) u->dav -= u->act_avg;
   u->ext = u->dav;
   u->act_avg += avg_rew.avg_dt * (er - u->act_avg);
-  ClampValue_ugp(ugp, net);
+  ClampValue_ugp(lay, acc_md, gpidx, net);
 }
 
 void ExtRewLayerSpec::Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net) {
@@ -376,9 +376,9 @@ void ExtRewLayerSpec::Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net) {
   
   UNIT_GP_ITR
     (lay,
-     LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
+     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
      u->ext = rew.norew_val;
-     ClampValue_ugp(ugp, net);
+     ClampValue_ugp(lay, acc_md, gpidx, net);
      );
 }
 
@@ -507,45 +507,48 @@ void TDRewPredLayerSpec::Init_Acts(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Init_Acts(lay, net);
   // initialize the misc_1 variable to 0.0 -- no prior predictions!
   UNIT_GP_ITR(lay, 
-      LeabraUnit* u = (LeabraUnit*)ugp->Leaf(0);
-      u->misc_1 = 0.0f;
+	      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
+	      u->misc_1 = 0.0f;
 	      );
 }  
 
-void TDRewPredLayerSpec::Compute_SavePred(Unit_Group* ugp, LeabraNetwork*) {
-  if(ugp->size < 3) return;
-  int i;
-  for(i=0;i<ugp->size;i++) {
-    LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
+void TDRewPredLayerSpec::Compute_SavePred(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+					  LeabraNetwork*) {
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  if(nunits < 3) return;
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     u->misc_1 = u->act_eq;
   }
 }
 
-void TDRewPredLayerSpec::Compute_ClampPred(Unit_Group* ugp, LeabraNetwork*) {
-  if(ugp->size < 3) return;
-  int i;
-  for(i=0;i<ugp->size;i++) {
-    LeabraUnit* u = (LeabraUnit*)ugp->FastEl(i);
+void TDRewPredLayerSpec::Compute_ClampPred(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+					   LeabraNetwork*) {
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  if(nunits < 3) return;
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     u->ext = u->misc_1;
     u->SetExtFlag(Unit::EXT);
   }
 }
 
 void TDRewPredLayerSpec::Compute_ClampPrev(LeabraLayer* lay, LeabraNetwork* net) {
-  UNIT_GP_ITR(lay, Compute_ClampPred(ugp, net); );
+  UNIT_GP_ITR(lay, Compute_ClampPred(lay, acc_md, gpidx, net); );
 }
 
-void TDRewPredLayerSpec::Compute_TdPlusPhase_ugp(Unit_Group* ugp, LeabraNetwork* net) {
-  Compute_SavePred(ugp, net);	// first, always save current predictions!
+void TDRewPredLayerSpec::Compute_TdPlusPhase_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
+						 int gpidx, LeabraNetwork* net) {
+  Compute_SavePred(lay, acc_md, gpidx, net);	// first, always save current predictions!
 
-  LeabraTdUnit* u = (LeabraTdUnit*)ugp->FastEl(0);
+  LeabraTdUnit* u = (LeabraTdUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   u->ext = u->act_m + u->dav;
-  ClampValue_ugp(ugp, net);		// apply new value
-  Compute_ExtToPlus_ugp(ugp, net);	// copy ext values to act_p
+  ClampValue_ugp(lay, acc_md, gpidx, net);		// apply new value
+  Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);	// copy ext values to act_p
 }
 
 void TDRewPredLayerSpec::Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* net) {
-  UNIT_GP_ITR(lay, Compute_TdPlusPhase_ugp(ugp, net); );
+  UNIT_GP_ITR(lay, Compute_TdPlusPhase_ugp(lay, acc_md, gpidx, net); );
 }
 
 void TDRewPredLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
@@ -742,9 +745,9 @@ void TDRewIntegLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* ne
   }
     
   UNIT_GP_ITR(lay, 
-      LeabraTdUnit* u = (LeabraTdUnit*)ugp->FastEl(0);
-      u->ext = new_val;
-      ClampValue_ugp(ugp, net);
+	      LeabraTdUnit* u = (LeabraTdUnit*)lay->UnitAccess(acc_md, 0, gpidx);
+	      u->ext = new_val;
+	      ClampValue_ugp(lay, acc_md, gpidx, net);
 	      );
   HardClampExt(lay, net);
 }

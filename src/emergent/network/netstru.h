@@ -1468,7 +1468,7 @@ public:
     HIDDEN, 		// layer does not receive external input of any form
     INPUT,		// layer receives external input (EXT) that drives activation states directly
     TARGET,		// layer receives a target input (TARG) that determines correct activation states, used for training
-    OUTPUT		// layer produces a visible output response but is not a target.  any external input serves as a comparison (COMP) against current activations.
+    OUTPUT,		// layer produces a visible output response but is not a target.  any external input serves as a comparison (COMP) against current activations.
   };
   
   enum LayerFlags { 			// #BITS flags for layer
@@ -1482,6 +1482,12 @@ public:
     SAVE_UNITS		= 0x0040,	// save this layer's units in the project file (even if Network::SAVE_UNITS off)
     NO_SAVE_UNITS	= 0x0080,	// don't save this layer's units in the project file (even if Network::SAVE_UNITS on)
   };
+
+  enum AccessMode { 	// how to access the units in the layer -- only relevant for layers with unit groups (otherwise modes are the same)
+    ACC_LAY,		// access as a single layer-wide set of units
+    ACC_GP,		// access via their subgroup structure, with group and unit index values
+  };
+
 
   String		desc;		// #EDIT_DIALOG Description of this layer -- what functional role it plays, how it maps onto the brain, etc
   Network*		own_net;        // #READ_ONLY #NO_SAVE #NO_SHOW #CAT_Structure #NO_SET_POINTER Network this layer is in
@@ -1537,15 +1543,47 @@ public:
   inline bool		lesioned() const { return HasLayerFlag(LESIONED); }
   // check if this layer is lesioned -- use in function calls
   
+  inline UnitSpec* GetUnitSpec() const { return unit_spec.SPtr(); }
+  // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
+
   ////////////////////////////////////////////////////////////////////////////////
   // Unit access API -- all access of units should occur strictly through this API
   // and NOT via unit groups (layers can handle unit groups virtually or with real
   // allocated unit groups -- see virt_groups flag)
 
   Unit*		UnitAtCoord(const TwoDCoord& coord) { return UnitAtCoord(coord.x, coord.y); }
-  // #CAT_Structure get unit at given coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
+  // #CAT_Structure get unit at given logical coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
   Unit*		UnitAtCoord(int x, int y);
-  // #CAT_Structure get unit at given coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
+  // #CAT_Structure get unit at given logical coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
+
+  inline Unit*	UnitAtUnGpIdx(int unidx, int gpidx) {
+    if(unit_groups && !virt_groups) {
+      Unit_Group* ug = (Unit_Group*)units.gp.SafeEl(gpidx); if(!ug) return NULL;
+      return ug->SafeEl(unidx);
+    }
+    return units.SafeEl(gpidx * un_geom.n + unidx);
+  }
+  // #CAT_Structure get unit from group and unit indexes -- only valid group index is 0 if no unit groups -- useful for efficient access to units in computational routines 
+
+  inline Unit*	UnitAccess(AccessMode mode, int unidx, int gpidx) {
+    if(mode == ACC_GP && unit_groups) {
+      if(virt_groups) return units.SafeEl(gpidx * un_geom.n + unidx);
+      Unit_Group* ug = (Unit_Group*)units.gp.SafeEl(gpidx); if(!ug) return NULL;
+      return ug->SafeEl(unidx);
+    }
+    return units.SafeEl(unidx);
+  }
+  // #CAT_Structure abstracted access of units in layer depending on mode -- if layer-wide mode, unidx is index into full set of units (flat_geom.n items), else if in group mode, get from unit from group and unit indexes
+  inline int	UnitAccess_NUnits(AccessMode mode) {
+    if(mode == ACC_GP && unit_groups) return un_geom.n;
+    return flat_geom.n;
+  }
+  // #CAT_Structure abstracted access of units in layer depending on mode -- number of units associated with this access mode
+  inline int	UnitAccess_NGps(AccessMode mode) {
+    if(mode == ACC_GP && unit_groups) return gp_geom.n;
+    return 1;
+  }
+  // #CAT_Structure abstracted access of units in layer depending on mode -- number of groups associated with this access mode
 
   Unit*		UnitAtGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord)
   { return UnitAtGpCoord(gp_coord.x,gp_coord.y, coord.x, coord.y); }
@@ -1564,6 +1602,10 @@ public:
   // #CAT_Structure get *logical* position for unit, relative to flat_geom (no display spacing) -- based on index within group/layer
   void		UnitLogPos(Unit* un, int& x, int& y);
   // #CAT_Structure get *logical* position for unit, relative to flat_geom (no display spacing) -- based on index within group/layer
+
+  TwoDCoord		UnitGpPosFmIdx(int gpidx)
+  { TwoDCoord rval; rval.x = gpidx % gp_geom.x; rval.y = gpidx / gp_geom.x; return rval; }
+  // #CAT_Structure get unit group position from index
 
   ////////////	display coordinate versions
 

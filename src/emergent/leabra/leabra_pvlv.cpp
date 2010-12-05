@@ -174,10 +174,10 @@ void PViLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
 
   UNIT_GP_ITR
     (lay, 
-     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
      u->ext = pvi_targ_val;	// clamp to target value
-     ClampValue_ugp(ugp, net); 	// apply new value
-     Compute_ExtToPlus_ugp(ugp, net); // copy ext values to act_p
+     ClampValue_ugp(lay, acc_md, gpidx, net); 	// apply new value
+     Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net); // copy ext values to act_p
      );
 }
 
@@ -186,8 +186,9 @@ void PViLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
 // so even though this supports multiple PVi's, it does not support multiple PVe's in a 
 // pairwise manner, even though it is possible to have multiple PVe's
 
-float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val, LeabraNetwork* net) {
-  LeabraUnit* u = (LeabraUnit*)pvi_ugp->FastEl(0);
+float PViLayerSpec::Compute_PVDa_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				     float pve_val, LeabraNetwork* net) {
+  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
 
   float pvd = 0.0f;
   float pv_da = 0.0f;
@@ -199,8 +200,9 @@ float PViLayerSpec::Compute_PVDa_ugp(Unit_Group* pvi_ugp, float pve_val, LeabraN
     pv_da = pvd - u->misc_1; // delta relative to prior
   }
 
-  for(int i=0;i<pvi_ugp->size;i++) {
-    LeabraUnit* du = (LeabraUnit*)pvi_ugp->FastEl(i);
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* du = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     du->dav = pvd;		// store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
   }
   return pv_da;
@@ -216,7 +218,7 @@ float PViLayerSpec::Compute_PVDa(LeabraLayer* lay, LeabraNetwork* net) {
   int n_da = 0;
   UNIT_GP_ITR
     (lay,
-     pv_da += Compute_PVDa_ugp(ugp, pve_val, net);
+     pv_da += Compute_PVDa_ugp(lay, acc_md, gpidx, pve_val, net);
      n_da++;
      );
   if(n_da > 0) {
@@ -225,8 +227,9 @@ float PViLayerSpec::Compute_PVDa(LeabraLayer* lay, LeabraNetwork* net) {
   return pv_da;
 }
 
-void PViLayerSpec::Update_PVPrior_ugp(Unit_Group* pvi_ugp, bool er_avail) {
-  LeabraUnit* u = (LeabraUnit*)pvi_ugp->FastEl(0);
+void PViLayerSpec::Update_PVPrior_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				      bool er_avail) {
+  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   if(er_avail && pv.er_reset_prior) {
     u->misc_1 = 0.0f;
   }
@@ -237,7 +240,7 @@ void PViLayerSpec::Update_PVPrior_ugp(Unit_Group* pvi_ugp, bool er_avail) {
 
 void PViLayerSpec::Update_PVPrior(LeabraLayer* lay, LeabraNetwork* net) {
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-  UNIT_GP_ITR(lay, Update_PVPrior_ugp(ugp, er_avail); );
+  UNIT_GP_ITR(lay, Update_PVPrior_ugp(lay, acc_md, gpidx, er_avail); );
 }
 
 void PViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -404,10 +407,10 @@ void PVrLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
 
   UNIT_GP_ITR
     (lay, 
-     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
      u->ext = pvr_targ_val;	// clamp to target value
-     ClampValue_ugp(ugp, net); 	// apply new value
-     Compute_ExtToPlus_ugp(ugp, net); // copy ext values to act_p
+     ClampValue_ugp(lay, acc_md, gpidx, net); 	// apply new value
+     Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net); // copy ext values to act_p
      );
 }
 
@@ -544,17 +547,20 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
   if(er_avail) {
     UNIT_GP_ITR
       (lay, 
-       LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
        u->ext = pve_val;
-       ClampValue_ugp(ugp, net); 		// apply new value
-       Compute_ExtToPlus_ugp(ugp, net); 	// copy ext values to act_p
+       ClampValue_ugp(lay, acc_md, gpidx, net); 		// apply new value
+       Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net); 	// copy ext values to act_p
      );
   }
 }
 
-float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, LeabraNetwork* net) {
-  LeabraUnit* lveu = (LeabraUnit*)lve_ugp->FastEl(0);
-  LeabraUnit* lviu = (LeabraUnit*)lvi_ugp->FastEl(0);
+float LVeLayerSpec::Compute_LVDa_ugp(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
+				     Layer::AccessMode lve_acc_md, int lve_gpidx,
+				     Layer::AccessMode lvi_acc_md, int lvi_gpidx,
+				     LeabraNetwork* net) {
+  LeabraUnit* lveu = (LeabraUnit*)lve_lay->UnitAccess(lve_acc_md, 0, lve_gpidx);
+  LeabraUnit* lviu = (LeabraUnit*)lvi_lay->UnitAccess(lvi_acc_md, 0, lvi_gpidx);
 
   float lvd = lveu->act_eq - MAX(lviu->act_eq, lv.min_lvi);
   if(lv.lvi_scale_min && (lvd < 0.0f) && (lviu->act_eq < lv.min_lvi)) {
@@ -562,8 +568,9 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, L
   }
   float lv_da = lvd - lveu->misc_1;
 
-  for(int i=0;i<lve_ugp->size;i++) {
-    LeabraUnit* du = (LeabraUnit*)lve_ugp->FastEl(i);
+  int nunits = lve_lay->UnitAccess_NUnits(lve_acc_md);
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* du = (LeabraUnit*)lve_lay->UnitAccess(lve_acc_md, i, lve_gpidx);
     du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
   }
   return lv_da;
@@ -572,51 +579,35 @@ float LVeLayerSpec::Compute_LVDa_ugp(Unit_Group* lve_ugp, Unit_Group* lvi_ugp, L
 float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
 				 LeabraNetwork* net) {
   float lv_da = 0.0f;
-  int gi = 0;
-  if((lve_lay->units.gp.size > 1) && (lve_lay->units.gp.size == lvi_lay->units.gp.size)) {
-    for(gi=0; gi<lve_lay->units.gp.size; gi++) {
-      Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
-      Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
-      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp, net);
+  if(lve_lay->unit_groups && (lve_lay->gp_geom.n == lvi_lay->gp_geom.n)) {
+    for(int g=0; g<lve_lay->gp_geom.n; g++) {
+      lv_da += Compute_LVDa_ugp(lve_lay, lvi_lay, Layer::ACC_GP, g, Layer::ACC_GP, g, net);
     }
-    lv_da /= (float)lve_lay->units.gp.size; // average!
+    lv_da /= (float)lve_lay->gp_geom.n; // average!
   }
-  else if(lve_lay->units.gp.size > 1) {
+  else if(lve_lay->gp_geom.n > 1) {
     // one lvi and multiple lve's
-    Unit_Group* lvi_ugp;
-    if(lvi_lay->units.gp.size > 0)    lvi_ugp = (Unit_Group*)lvi_lay->units.gp[0];
-    else			      lvi_ugp = (Unit_Group*)&(lvi_lay->units);
-    for(gi=0; gi<lve_lay->units.gp.size; gi++) {
-      Unit_Group* lve_ugp = (Unit_Group*)lve_lay->units.gp[gi];
-      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp, net);
+    for(int g=0; g<lve_lay->gp_geom.n; g++) {
+      lv_da += Compute_LVDa_ugp(lve_lay, lvi_lay, Layer::ACC_GP, g, Layer::ACC_LAY, 0, net);
     }
-    lv_da /= (float)lve_lay->units.gp.size; // average!
+    lv_da /= (float)lve_lay->gp_geom.n; // average!
   }
-  else if(lvi_lay->units.gp.size > 1) {
+  else if(lvi_lay->gp_geom.n > 1) {
     // one lve and multiple lvi's
-    Unit_Group* lve_ugp;
-    if(lve_lay->units.gp.size > 0)    lve_ugp = (Unit_Group*)lve_lay->units.gp[0];
-    else			      lve_ugp = (Unit_Group*)&(lve_lay->units);
-    for(gi=0; gi<lvi_lay->units.gp.size; gi++) {
-      Unit_Group* lvi_ugp = (Unit_Group*)lvi_lay->units.gp[gi];
-      lv_da += Compute_LVDa_ugp(lve_ugp, lvi_ugp, net);
+    for(int g=0; g<lvi_lay->gp_geom.n; g++) {
+      lv_da += Compute_LVDa_ugp(lve_lay, lvi_lay, Layer::ACC_LAY, 0, Layer::ACC_GP, g, net);
     }
-    lv_da /= (float)lvi_lay->units.gp.size; // average!
+    lv_da /= (float)lvi_lay->gp_geom.n; // average!
   }
   else {
-    Unit_Group* lve_ugp;
-    if(lve_lay->units.gp.size > 0)    lve_ugp = (Unit_Group*)lve_lay->units.gp[0];
-    else			      lve_ugp = (Unit_Group*)&(lve_lay->units);
-    Unit_Group* lvi_ugp;
-    if(lvi_lay->units.gp.size > 0)    lvi_ugp = (Unit_Group*)lvi_lay->units.gp[0];
-    else			      lvi_ugp = (Unit_Group*)&(lvi_lay->units);
-    lv_da = Compute_LVDa_ugp(lve_ugp, lvi_ugp, net);
+    lv_da = Compute_LVDa_ugp(lve_lay, lvi_lay, Layer::ACC_LAY, 0, Layer::ACC_LAY, 0, net);
   } 
   return lv_da;
 }
 
-void LVeLayerSpec::Update_LVPrior_ugp(Unit_Group* lve_ugp, bool er_avail) {
-  LeabraUnit* lveu = (LeabraUnit*)lve_ugp->FastEl(0);
+void LVeLayerSpec::Update_LVPrior_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				      bool er_avail) {
+  LeabraUnit* lveu = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   if(er_avail && lv.er_reset_prior) {
     lveu->misc_1 = 0.0f;
   }
@@ -627,7 +618,7 @@ void LVeLayerSpec::Update_LVPrior_ugp(Unit_Group* lve_ugp, bool er_avail) {
 
 void LVeLayerSpec::Update_LVPrior(LeabraLayer* lay, LeabraNetwork* net) {
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-  UNIT_GP_ITR(lay, Update_LVPrior_ugp(ugp, er_avail); );
+  UNIT_GP_ITR(lay, Update_LVPrior_ugp(lay, acc_md, gpidx, er_avail); );
 }
 
 void LVeLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -801,10 +792,10 @@ float NVLayerSpec::Compute_NVDa(LeabraLayer* lay, LeabraNetwork* net) {
 void NVLayerSpec::Compute_NVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR
     (lay, 
-     LeabraUnit* u = (LeabraUnit*)ugp->FastEl(0);
+     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
      u->ext = 0.0f;		// clamp to pve value
-     ClampValue_ugp(ugp, net); 	// apply new value
-     Compute_ExtToPlus_ugp(ugp, net); // copy ext values to act_p
+     ClampValue_ugp(lay, acc_md, gpidx, net); 	// apply new value
+     Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net); // copy ext values to act_p
      );
 }
 

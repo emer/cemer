@@ -49,8 +49,12 @@ class LeabraInhib;
 class LeabraLayerSpec;
 class LeabraLayer;
 
+class KwtaSortBuff;
+class KwtaSortBuff_List;
+
 class LeabraNetwork;
 class LeabraProject; 
+
 //
 
 // The Leabra algorithm:
@@ -91,18 +95,22 @@ class LeabraProject;
 // than the prior business of converting the actual value
 // back and forth and using + and - values to indicate this
 
-// use this macro for iterating over either unit groups one-by-one, or the one
-// unit group that is the layer->units, and applying 'code' to either
+// use this macro for iterating over either unit groups one-by-one, or the 
+// global layer, and applying 'code' to either
+// code uses acc_md and gpidx plus the lay->UnitAccess(acc_md, idx, gpidx) function
+// to access units -- e.g., calling a _ugp function as such:
+//
+// UNIT_GP_ITR(lay, MySpecialFun_ugp(lay, acc_md, gpidx););
+
 #define UNIT_GP_ITR(lay, code) \
-  int gi = 0; \
-  if(lay->units.gp.size > 0) { \
-    for(gi=0; gi<lay->units.gp.size; gi++) { \
-      Unit_Group* ugp = (Unit_Group*)lay->units.gp[gi]; \
+  if(lay->unit_groups) { \
+    for(int gpidx=0; gpidx < lay->gp_geom.n; gpidx++) { \
+      Layer::AccessMode acc_md = Layer::ACC_GP; \
       code \
     } \
   } \
   else { \
-    Unit_Group* ugp = (Unit_Group*)&(lay->units); \
+    Layer::AccessMode acc_md = Layer::ACC_LAY;  int gpidx = 0; \
     code \
   } 
   
@@ -1630,8 +1638,6 @@ protected:
     else if(((LeabraUnit*)a)->net == ((LeabraUnit*)b)->net) rval=0; return rval; }
   // compare two items for purposes of sorting: descending order by net
 public:
-  int	FindNewNetPos(float nw_net);	  // find position in list for a new net value
-  void	FastInsertLink(void* it, int where); // faster version of insert link fun
 };
 
 class LEABRA_API AvgMaxVals : public taOBase {
@@ -1915,7 +1921,8 @@ public:
     // #CAT_Activation NOT CALLED DURING STD PROCESSING decay activations and other state between events
     virtual void	Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
-    virtual void	Trial_NoiseInit_KPos_ugp(LeabraLayer* lay, Unit_Group*, 
+    virtual void	Trial_NoiseInit_KPos_ugp(LeabraLayer* lay, 
+						 Layer::AccessMode acc_md, int gpidx,
 						 LeabraInhib* thr, LeabraNetwork* net);
     // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
     virtual void	Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net);
@@ -1926,10 +1933,11 @@ public:
 
   virtual void	Compute_Active_K(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation prior to settling: compute actual activity levels based on spec, inputs, etc
-    virtual void Compute_Active_K_ugp(LeabraLayer* lay, Unit_Group* ug,
+    virtual void Compute_Active_K_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 				      LeabraInhib* thr, KWTASpec& kwtspec);
     // #IGNORE unit gp version
-    virtual int	Compute_Pat_K(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr);
+    virtual int	Compute_Pat_K(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+			      LeabraInhib* thr);
     // #IGNORE PAT_K compute
 
   virtual void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
@@ -1958,7 +1966,9 @@ public:
 
   virtual void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions
-    virtual void Compute_NetinStats_ugp(Unit_Group* ug, LeabraInhib* thr);
+    virtual void Compute_NetinStats_ugp(LeabraLayer* lay,
+					Layer::AccessMode acc_md, int gpidx,
+					LeabraInhib* thr,  LeabraNetwork* net);
     // #IGNORE compute AvgMax stats on netin and i_thr values computed during netin computation -- per unit group
 
   ///////////////////////////////////////////////////////////////////////
@@ -1966,37 +1976,43 @@ public:
 
   virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute the inhibition for layer -- this is the main call point into this stage of processing
-    virtual void Compute_Inhib_impl(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-				   LeabraNetwork* net, LeabraInhibSpec& ispec);
+    virtual void Compute_Inhib_impl(LeabraLayer* lay,
+			 Layer::AccessMode acc_md, int gpidx, 
+			 LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of inhibition computation for either layer or unit group
 
-    virtual void Compute_Inhib_kWTA_Sort(Unit_Group* ug, LeabraInhib* thr, LeabraSort& act_buf,
-					LeabraSort& inact_buf, int k_eff, float& k_net, int& k_idx);
+    virtual void Compute_Inhib_kWTA_Sort(LeabraLayer* lay, Layer::AccessMode acc_md,
+					 int gpidx, int nunits,  LeabraInhib* thr,
+					 KwtaSortBuff& act_buff, KwtaSortBuff& inact_buff,
+					 int k_eff, float& k_net, int& k_idx);
     // #CAT_Activation implementation of sort into active and inactive unit buffers -- basic to various kwta functions: eff_k = effective k to use, k_net = net of kth unit (lowest unit in act_buf), k_idx = index of kth unit
     virtual void Compute_Inhib_BreakTie(LeabraInhib* thr);
     // #IGNORE break any ties in the kwta function -- called by specific kwta functions, and depends on tie_brk.on
 
-    virtual void Compute_Inhib_kWTA(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-				   LeabraNetwork* net, LeabraInhibSpec& ispec);
+    virtual void Compute_Inhib_kWTA(LeabraLayer* lay,
+			 Layer::AccessMode acc_md, int gpidx,
+			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of basic kwta inhibition computation
-    virtual void Compute_Inhib_kWTA_Avg(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-				       LeabraNetwork* net, LeabraInhibSpec& ispec);
+    virtual void Compute_Inhib_kWTA_Avg(LeabraLayer* lay,
+			 Layer::AccessMode acc_md, int gpidx,
+			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of kwta avg-based inhibition computation
-    virtual void Compute_Inhib_kWTA_kv2k(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-						LeabraNetwork* net, LeabraInhibSpec& ispec);
+    virtual void Compute_Inhib_kWTA_kv2k(LeabraLayer* lay,
+			 Layer::AccessMode acc_md, int gpidx,
+			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of k vs. 2k wta avg-based inhibition computation
-    virtual void Compute_Inhib_kWTA_CompCost(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-						    LeabraNetwork* net, LeabraInhibSpec& ispec);
+    virtual void Compute_Inhib_kWTA_CompCost(LeabraLayer* lay,
+			 Layer::AccessMode acc_md, int gpidx,
+			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of kwta competitor cost inhibition computation
-    virtual void Compute_Inhib_AvgMaxPt(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-					       LeabraNetwork* net, LeabraInhibSpec& ispec);
+    virtual void Compute_Inhib_AvgMaxPt(LeabraLayer* lay,
+			 Layer::AccessMode acc_md, int gpidx,
+			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of avg-max-pt inhibition computation
-    virtual void Compute_Inhib_Max(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-					  LeabraNetwork* net, LeabraInhibSpec& ispec);
+    virtual void Compute_Inhib_Max(LeabraLayer* lay,
+			 Layer::AccessMode acc_md, int gpidx,
+			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of max inhibition computation
-    virtual void Compute_Inhib_kWTA_Gps(LeabraLayer* lay, LeabraNetwork* net,
-					       LeabraInhibSpec& ispec);
-    // #IGNORE implementation of GPS_THEN_UNITS kwta on groups
 
     virtual void Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net);
     // #IGNORE compute extra dynamic inhibition for CtLeabra_X/CAL algorithm
@@ -2006,8 +2022,8 @@ public:
 
   virtual void	Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation Stage 2.3: apply computed inhib value to individual unit inhibitory conductances
-    virtual void Compute_ApplyInhib_ugp(LeabraLayer* lay, Unit_Group* ug,
-					       LeabraInhib* thr, LeabraNetwork* net);
+    virtual void Compute_ApplyInhib_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+					LeabraInhib* thr, LeabraNetwork* net);
     // #IGNORE unit-group apply inhibition computation
 
   ///////////////////////////////////////////////////////////////////////
@@ -2023,22 +2039,27 @@ public:
   // #CAT_Statistic compute cycle-level stats -- acts AvgMax, MaxDa, OutputName, etc
   // this does all the indented functions below
 
-    virtual void Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug, AvgMaxVals& vals, ta_memb_ptr mb_off);
+    virtual void Compute_AvgMaxVals_ugp(LeabraLayer* lay, 
+					Layer::AccessMode acc_md, int gpidx,
+					AvgMaxVals& vals, ta_memb_ptr mb_off);
     // #IGNORE utility to compute avg max vals for units in group, with member offset mb_off from unit
-    virtual void Compute_AvgMaxActs_ugp(LeabraInhib* thr, Unit_Group* ug);
+    virtual void Compute_AvgMaxActs_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+					LeabraInhib* thr);
     // #IGNORE unit group compute AvgMaxVals for acts -- also does acts_top_k
     virtual void Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Statistic compute activation AvgMaxVals (acts)
 
     virtual void Compute_MaxDa(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation compute maximum delta-activation in layer (used for stopping criterion)
-      virtual void Compute_MaxDa_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-				     LeabraNetwork* net);
+      virtual void Compute_MaxDa_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				     LeabraInhib* thr, LeabraNetwork* net);
       // #IGNORE unit group compute maximum delta-activation
 
     virtual void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Statistic compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
-      virtual void Compute_OutputName_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr, LeabraNetwork* net);
+      virtual void Compute_OutputName_ugp(LeabraLayer* lay, 
+					  Layer::AccessMode acc_md, int gpidx,
+					  LeabraInhib* thr, LeabraNetwork* net);
       // #IGNORE compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
 
     virtual void Compute_UnitInhib_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
@@ -2049,14 +2070,16 @@ public:
 
   virtual float	Compute_TopKAvgAct(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the average activation of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
-    virtual float Compute_TopKAvgAct_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-					 LeabraNetwork* net);
+    virtual float Compute_TopKAvgAct_ugp(LeabraLayer* lay,
+					 Layer::AccessMode acc_md, int gpidx,
+					 LeabraInhib* thr, LeabraNetwork* net);
     // #IGNORE ugp version
 
   virtual float	Compute_TopKAvgNetin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the average net input of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current net values
-    virtual float Compute_TopKAvgNetin_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-					   LeabraNetwork* net);
+    virtual float Compute_TopKAvgNetin_ugp(LeabraLayer* lay,
+					   Layer::AccessMode acc_md, int gpidx,
+					   LeabraInhib* thr, LeabraNetwork* net);
     // #IGNORE ugp version
 
   ///////////////////////////////////////////////////////////////////////
@@ -2101,6 +2124,9 @@ public:
 
   virtual void	AdaptKWTAPt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation adapt the kwta point based on average activity
+    virtual void AdaptKWTAPt_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				 LeabraInhib* thr, LeabraNetwork* net);
+    // #CAT_Activation unit group -- adapt the kwta point based on average activity
 
   virtual bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning test whether to compute sravg values -- default is true, but some layers might opt out for various reasons
@@ -2122,8 +2148,9 @@ public:
 			    int& n_vals, bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value
 
-  virtual float	Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-				    LeabraNetwork* net);
+  virtual float	Compute_NormErr_ugp(LeabraLayer* lay, 
+				    Layer::AccessMode acc_md, int gpidx,
+				    LeabraInhib* thr, LeabraNetwork* net);
   // #CAT_Statistic compute normalized binary error for given unit group -- just gets the raw sum over unit group
   virtual float	Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute normalized binary error -- layer-level value is already normalized, and network just averages across the layers (each layer contributes equally to overal normalized value, instead of contributing in proportion to number of units) -- returns -1 if not an err target defined in same way as sse
@@ -2231,6 +2258,81 @@ private:
   void 	Destroy()	{ };
 };
 
+class LEABRA_API KwtaSortBuff : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra kwta sort buffer -- structured by group and index
+INHERITED(taOBase)
+public:
+  voidptr_Matrix kbuff;		// #NO_SAVE kwta computation buffer: always 2d [unidx][gpidx]
+  int_Matrix 	 sizes;		// #NO_SAVE kwta computation buffer sizes: number of current items in corresponding buf -- always 1d [gpidx]
+
+  LeabraUnit*	Un(int unidx, int gpidx)
+  { return (LeabraUnit*)kbuff.FastEl(unidx, gpidx); }
+  // get unit pointer from given unit and group index
+
+  int& 		Size(int gpidx)
+  { return sizes.FastEl(gpidx); }
+  // get current used size of specified group -- returns reference that can be modified
+
+  void		Set(LeabraUnit* un, int unidx, int gpidx)
+  { kbuff.FastEl(unidx, gpidx) = (void*)un; }
+  // set unit pointer at given unit and group index
+
+  void		Add(LeabraUnit* un, int gpidx)
+  { kbuff.FastEl(sizes.FastEl(gpidx)++, gpidx) = (void*)un; }
+  // set unit pointer at given unit and group index, and increment size counter
+
+  void		ResetGp(int gpidx)
+  { sizes.FastEl(gpidx) = 0; }
+  // reset list for subsequent adds (just resets size)
+
+  void		ResetAll()
+  { sizes.InitVals(0); }
+  // reset all sizes for all groups
+
+  void		Alloc(int nunits, int ngps)
+  { ngps = MAX(ngps, 1);  kbuff.SetGeom(2, nunits, ngps);  sizes.SetGeom(1, ngps); ResetAll(); }
+  // allocate storage to given number of units and groups, and initialize all sizes to 0
+
+  void	InitLinks();
+  void	CutLinks();
+  void	Copy_(const KwtaSortBuff& cp);
+  TA_BASEFUNS(KwtaSortBuff);
+private:
+  void	Initialize();
+  void 	Destroy()	{  CutLinks(); }
+};
+
+
+class LEABRA_API KwtaSortBuff_List: public taList<KwtaSortBuff> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of kwta sort buffs -- a specific number are defined as standard per the enum
+INHERITED(taList<KwtaSortBuff>)
+public:
+  enum StdSortBuffs {
+    ACTIVE,			// standard kwta active list
+    INACT,			// standard kwta inactive list
+    ACTIVE_2K,			// kv2k active list
+    INACT_2K,			// kv2k inactive list
+    N_BUFFS,			// total number of standard buffers
+  };
+
+  void		ResetAllBuffs();
+  // reset all the sort buffers on the list
+  void		AllocAllBuffs(int nunits, int ngps);
+  // allocate storage to given number of units and groups, and initialize all sizes to 0
+
+  void		CreateStdBuffs();
+  // allocate N_BUFFS items on this list
+
+  override String 	GetTypeDecoKey() const { return "Layer"; }
+
+  NOCOPY(KwtaSortBuff_List)
+  TA_BASEFUNS(KwtaSortBuff_List);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_KwtaSortBuff); }
+  void 	Destroy()		{ };
+};
+
+
 class LEABRA_API LeabraInhib {
   // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
 public:
@@ -2264,6 +2366,44 @@ public:
   void	Inhib_Copy_(const LeabraInhib& cp);
 };
 
+
+class LEABRA_API LeabraUnGpData : public taOBase, public LeabraInhib {
+  // #STEM_BASE ##CAT_Leabra data to maintain for independent unit groups of competing units within a single layer -- storing separately allows unit groups to be virtual (virt_groups flag on layer)
+INHERITED(taOBase)
+public:
+  int		misc_state;	// #CAT_Activation miscellaneous state variable
+  int		misc_state1;	// #CAT_Activation second miscellaneous state variable 
+  int		misc_state2;	// #CAT_Activation third miscellaneous state variable 
+  int		misc_state3;	// #CAT_Activation fourth miscellaneous state variable 
+  float		misc_float;	// #CAT_Activation miscellaneous floating point variable 
+  float		misc_float1;	// #CAT_Activation second miscellaneous floating point variable 
+  float		misc_float2;	// #CAT_Activation third miscellaneous floating point variable 
+
+  override String 	GetTypeDecoKey() const { return "Unit"; }
+
+  void	InitLinks();
+  void	Copy_(const LeabraUnGpData& cp);
+  TA_BASEFUNS(LeabraUnGpData);
+private:
+  void	Initialize();
+  void	Destroy()		{ };
+};
+
+class LEABRA_API LeabraUnGpData_List: public taList<LeabraUnGpData> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network ##NO_EXPAND_ALL list of unit group data for leabra unit subgroups
+INHERITED(taList<LeabraUnGpData>)
+public:
+
+  override String 	GetTypeDecoKey() const { return "Unit"; }
+
+  NOCOPY(LeabraUnGpData_List)
+  TA_BASEFUNS(LeabraUnGpData_List);
+private:
+  void	Initialize() 		{ SetBaseType(&TA_LeabraUnGpData); }
+  void 	Destroy()		{ };
+};
+
+
 class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
   // #STEM_BASE ##CAT_Leabra layer that implements the Leabra algorithms
 INHERITED(Layer)
@@ -2277,7 +2417,11 @@ public:
   int		avg_netin_n;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
   float		norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
   int		da_updt;	// #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
+  LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for kwta computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
   int_Array	unit_idxs;	// #NO_SAVE #HIDDEN #CAT_Activation -- set of unit indexes typically used for permuted selection of units (e.g., k_pos_noise) -- can be used by other functions too
+
+  KwtaSortBuff_List lay_kbuffs;	// #HIDDEN #NO_SAVE #NO_COPY #CAT_Activation layer-wide kwta computation buffers
+  KwtaSortBuff_List gp_kbuffs;	// #HIDDEN #NO_SAVE #NO_COPY #CAT_Activation subgroup-specific computation buffers
 
 #ifdef DMEM_COMPILE
   DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
@@ -2291,6 +2435,19 @@ public:
   override void	BuildUnits();
   override void BuildUnits_Threads(Network* net)
   { if(spec) spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
+
+
+  KwtaSortBuff* 	SortBuff(AccessMode acc_md, KwtaSortBuff_List::StdSortBuffs buff) {
+    if(acc_md == ACC_GP) return gp_kbuffs.FastEl(buff);
+    return lay_kbuffs.FastEl(buff);
+  }
+  // #CAT_Activation get kwta sort buffer for given access mode (gp or layer) and buffer type
+  KwtaSortBuff_List* 	SortBuffList(AccessMode acc_md) {
+    if(acc_md == ACC_GP) return &gp_kbuffs;
+    return &lay_kbuffs;
+  }
+  // #CAT_Activation get kwta sort buffer list for given access mode (gp or layer)
+
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -3636,11 +3793,6 @@ public:
 
   virtual bool 	PBWM_Defaults(LeabraNetwork* net, bool pfc_learns=true);
   // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured and in a standard current format (i.e., everything in groups)  pfc_learns = whether pfc learns or not -- if not, it just copies input acts directly (useful for demonstration but not as realistic or powerful)
-
-  virtual bool 	PBWM_CvtV1_impl(String& proj_str);
-  // #IGNORE do the actual gsub conversions to V1
-  virtual bool 	PBWM_CvtV1File(const String& proj_file_nm, bool load_after = true);
-  // #MENU_BUTTON #CAT_File #EXT_proj #FILE_DIALOG_LOAD convert an older "version 1" (anything prior to version 5.0.1 of emergent) PBWM project file to use the V1 specs, which replicates the exact prior funcionality -- these projects can typically also be run using the new basic specs, using the PARSIMONIUS PBWM_Mode -- once converted, if load_after, then THIS FILE IS THEN LOADED OVER EXISTING PROJECT (and can then be saved to a new file name -- must be reloaded to get views to update) -- otherwise THE ORIGINAL PROJECT IS OVERWRITTEN
 
   virtual bool PBWM_SetNStripes(LeabraNetwork* net, int n_stripes=6, int n_units=-1,
 				int gp_geom_x=-1, int gp_geom_y=-1);

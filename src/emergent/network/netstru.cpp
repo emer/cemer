@@ -4279,6 +4279,7 @@ void Layer::BuildUnits() {
     }
   }
   else {
+    gp_geom.SetXYN(1,1,1);	// reset gp geom to reflect a single group -- used in some computations to generically operate over different geoms
     if(units.gp.size > 0)
       units_changed = true;
     units.gp.RemoveAll();	// in case there were any subgroups..
@@ -5185,16 +5186,7 @@ Unit* Layer::UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y) {
      un_x >= un_geom.x || un_y >= un_geom.y) return NULL;
   int gpidx = gp_y * gp_geom.x + gp_x;
   int unidx = un_y * un_geom.x + un_x;
-  if(virt_groups) {
-    int idx = gpidx * un_geom.n + unidx;
-    return units.SafeEl(idx);
-  }
-  else {
-    Unit_Group* ug = (Unit_Group*)units.gp.SafeEl(gpidx);
-    if(!ug) return NULL;
-    return ug->SafeEl(unidx);
-  }
-  return NULL;
+  return UnitAtUnGpIdx(unidx, gpidx);
 }
 
 Unit_Group* Layer::UnitGpAtCoord(int gp_x, int gp_y) {

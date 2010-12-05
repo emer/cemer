@@ -1461,58 +1461,74 @@ public:
 
   virtual void	Settle_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_ScalarVal call Settle_Init_Unit on first unit in each group (the value unit) -- this is necessary b/c it is excluded from units_flat list and thus Compute_NetinScale, which is used for the global netin scale for the entire projection in Send_NetinDelta, and Init_TargFlags
+    virtual void Settle_Init_Unit0_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				       LeabraNetwork* net);
+    // #IGNORE
 
-  virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
+  virtual void	ClampValue_ugp(LeabraLayer*, Layer::AccessMode acc_md, int gpidx,
+			       LeabraNetwork* net, float rescale=1.0f);
   // #CAT_ScalarVal clamp value in the first unit's ext field to the units in the group
   virtual float	ClampAvgAct(int ugp_size);
   // #CAT_ScalarVal computes the average activation for a clamped unit pattern (for computing rescaling)
   virtual void	ReadValue(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_ScalarVal read out current value represented by activations in layer
-    virtual float ReadValue_ugp(LeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    virtual float ReadValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				LeabraNetwork* net);
     // #CAT_ScalarVal unit group version: read out current value represented by activations in layer
-  virtual void 	Compute_ExtToPlus_ugp(Unit_Group* ugp, LeabraNetwork* net);
+  virtual void 	Compute_ExtToPlus_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				      LeabraNetwork* net);
   // #CAT_ScalarVal copy ext values to act_p -- used for internally-generated training signals for learning in several subclasses
   virtual void HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_ScalarVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
     virtual void ResetAfterClamp(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_ScalarVal reset activation of first unit(s) after hard clamping
+    virtual void ResetAfterClamp_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				LeabraNetwork* net);
+    // #IGNORE
 
   virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_ScalarVal label units in given layer with their underlying values
-    virtual void	LabelUnits_ugp(Unit_Group* ugp);
+    virtual void LabelUnits_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				LeabraNetwork* net);
     // #CAT_ScalarVal label units with their underlying values
   virtual void	LabelUnitsNet(LeabraNetwork* net);
   // #BUTTON #CAT_ScalarVal label all layers in given network using this spec
 
   virtual void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_ScalarVal initialize the bias value 
-    virtual void Compute_WtBias_Val(Unit_Group* ugp, float val);
+    virtual void Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				    float val);
     // #IGNORE
-    virtual void Compute_UnBias_Val(Unit_Group* ugp, float val);
+    virtual void Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				    float val);
     // #IGNORE
-    virtual void Compute_UnBias_NegSlp(Unit_Group* ugp);
+    virtual void Compute_UnBias_NegSlp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx);
     // #IGNORE
-    virtual void Compute_UnBias_PosSlp(Unit_Group* ugp);
+    virtual void Compute_UnBias_PosSlp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx);
     // #IGNORE
 
   override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
-    virtual void BuildUnits_Threads_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraNetwork* net);
+    virtual void BuildUnits_Threads_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+					LeabraNetwork* net);
   override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
   override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't include first unit in averages..
-  override void Compute_AvgMaxVals_ugp(LeabraLayer* lay, Unit_Group* ug,
+  override void Compute_AvgMaxVals_ugp(LeabraLayer* lay,
+				       Layer::AccessMode acc_md, int gpidx,
 				       AvgMaxVals& vals, ta_memb_ptr mb_off);
 
   override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
-    virtual float Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
+    virtual float Compute_SSE_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				  int& n_vals);
     // #IGNORE
   override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
-    override float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-				       LeabraNetwork* net);
+    override float Compute_NormErr_ugp(LeabraLayer* lay,
+				       Layer::AccessMode acc_md, int gpidx,
+				       LeabraInhib* thr, LeabraNetwork* net);
     // #IGNORE
 
   virtual void	ReConfig(Network* net, int n_units = -1);
@@ -1539,7 +1555,8 @@ public:
   float	wt_width;		// width of the sigmoid for providing initial weight values
   float	wt_max;			// maximum weight value (of 1st neighbor -- not of self unit!)
 
-  virtual void	Connect_UnitGroup(Unit_Group* gp, Projection* prjn);
+  virtual void	Connect_UnitGroup(Layer* lay, Layer::AccessMode acc_md, int gpidx,
+				  Projection* prjn);
   void		Connect_impl(Projection* prjn);
   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
   // uses weight values as specified in the tesselel's
@@ -1783,45 +1800,56 @@ public:
   MinMaxRange	 x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
   MinMaxRange	 y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
-  virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
+  virtual void	ClampValue_ugp(TwoDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+			       LeabraNetwork* net, float rescale=1.0f);
   // #CAT_TwoDVal clamp value in the first unit's ext field to the units in the group
   virtual void	ReadValue(TwoDValLeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TwoDVal read out current value represented by activations in layer
-    virtual void ReadValue_ugp(TwoDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    virtual void ReadValue_ugp(TwoDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+			       LeabraNetwork* net);
     // #CAT_TwoDVal unit group version: read out current value represented by activations in layer
   virtual void	HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TwoDVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
 
   virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TwoDVal label units in given layer with their underlying values
-    virtual void LabelUnits_ugp(Unit_Group* ugp);
+    virtual void LabelUnits_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx);
     // #CAT_TwoDVal label units with their underlying values
   virtual void	LabelUnitsNet(LeabraNetwork* net);
   // #BUTTON #CAT_TwoDVal label all layers in given network using this spec
 
   virtual void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TwoDVal initialize the bias value 
-    virtual void Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_val);
+    virtual void Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				    float x_val, float y_val);
     // #IGNORE
-    virtual void Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_val);
+    virtual void Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				    float x_val, float y_val);
     // #IGNORE
 
   override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
   override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
     override void Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void Settle_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
+						 Layer::AccessMode acc_md, int gpidx,
+						 LeabraNetwork* net);
+    // #IGNORE
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
-    virtual void PostSettle_ugp(TwoDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    virtual void PostSettle_ugp(TwoDValLeabraLayer* lay,
+				Layer::AccessMode acc_md, int gpidx, LeabraNetwork* net);
     // #CAT_TwoDVal unit group version: update variables based on phase
 
   override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
-    virtual float Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
+    virtual float Compute_SSE_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				  int& n_vals);
     // #IGNORE
   override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
-    virtual float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-				       LeabraNetwork* net);
+    virtual float Compute_NormErr_ugp(LeabraLayer* lay,
+				      Layer::AccessMode acc_md, int gpidx,
+				      LeabraInhib* thr, LeabraNetwork* net);
     // #IGNORE
 
   virtual void	ReConfig(Network* net, int n_units = -1);
@@ -1844,7 +1872,8 @@ class LEABRA_API DecodeTwoDValLayerSpec : public TwoDValLayerSpec {
   // a two-d-value layer spec that copies its activations from one-to-one input prjns, to act as a decoder of another layer
 INHERITED(TwoDValLayerSpec)
 public:
-  override void ReadValue_ugp(TwoDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+  override void ReadValue_ugp(TwoDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+			      LeabraNetwork* net);
   override void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
 
   // don't do any learning:
@@ -2032,27 +2061,31 @@ public:
   MinMaxRange	 x_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
   MinMaxRange	 y_val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
-  virtual void	ClampValue_ugp(Unit_Group* ugp, LeabraNetwork* net, float rescale=1.0f);
+  virtual void	ClampValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+                               LeabraNetwork* net, float rescale=1.0f);
   // #CAT_FourDVal clamp value in the first unit's ext field to the units in the group
   virtual void	ReadValue(FourDValLeabraLayer* lay, LeabraNetwork* net);
   // #CAT_FourDVal read out current value represented by activations in layer
-    virtual void ReadValue_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    virtual void ReadValue_ugp(FourDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+                               LeabraNetwork* net);
     // #CAT_FourDVal unit group version: read out current value represented by activations in layer
   virtual void	HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_FourDVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
 
   virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_FourDVal label units in given layer with their underlying values
-    virtual void LabelUnits_ugp(Unit_Group* ugp);
+    virtual void LabelUnits_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx);
     // #CAT_FourDVal label units with their underlying values
   virtual void	LabelUnitsNet(LeabraNetwork* net);
   // #BUTTON #CAT_FourDVal label all layers in given network using this spec
 
   virtual void	Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_FourDVal initialize the bias value 
-    virtual void Compute_WtBias_Val(Unit_Group* ugp, float x_val, float y_val);
+    virtual void Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+                                    float x_val, float y_val);
     // #IGNORE
-    virtual void Compute_UnBias_Val(Unit_Group* ugp, float x_val, float y_val);
+    virtual void Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+                                    float x_val, float y_val);
     // #IGNORE
 
   override void Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
@@ -2061,16 +2094,18 @@ public:
   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   override void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
-    virtual void PostSettle_ugp(FourDValLeabraLayer* lay, Unit_Group* ugp, LeabraNetwork* net);
+    virtual void PostSettle_ugp(FourDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+                                LeabraNetwork* net);
     // #CAT_FourDVal unit group version: update variables based on phase
 
   override float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false);
-    virtual float Compute_SSE_ugp(Unit_Group* ugp, LeabraLayer* lay, int& n_vals);
+    virtual float Compute_SSE_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+                                  int& n_vals);
     // #IGNORE
   override float Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
-    virtual float Compute_NormErr_ugp(LeabraLayer* lay, Unit_Group* ug, LeabraInhib* thr,
-				       LeabraNetwork* net);
+    virtual float Compute_NormErr_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+                                      LeabraInhib* thr, LeabraNetwork* net);
     // #IGNORE
 
   virtual void	ReConfig(Network* net, int n_units = -1);
