@@ -291,7 +291,7 @@ private:
 };
 
 class EMERGENT_API GpOneToManyPrjnSpec : public OneToOnePrjnSpec {
-  // unit_group based one-to-many connectivity (one sending gp to all recv units)
+  // unit_group based one-to-many connectivity (one sending gp to all recv units) -- only works with explicit unit groups, not virtual unit groups
 INHERITED(OneToOnePrjnSpec)
 public:
   enum NConGroups {		// number of connection groups for this projection
@@ -338,7 +338,7 @@ private:
 };
 
 class EMERGENT_API GpRndTesselPrjnSpec : public ProjectionSpec {
-  // specifies patterns of groups to connect with, with random connectivity within each group -- only 'permute' style randomness is suported, producing same number of recv connections per unit
+  // specifies patterns of groups to connect with, with random connectivity within each group -- only 'permute' style randomness is suported, producing same number of recv connections per unit -- virtual groups not supported
 INHERITED(ProjectionSpec)
 public:
   TwoDCoord	recv_gp_off; 	// offset for start of recv group to begin connecting
@@ -512,7 +512,7 @@ private:
 
 
 class EMERGENT_API GradientWtsPrjnSpec : public FullPrjnSpec {
-  // full connectivity with a gradient of weight strengths (requires init_wts = true, otherwise is just like Full Prjn), where weights are strongest from sending units in same relative location as the receiving unit, and fall off from there (either linearly or as a Guassian) -- if recv layer has unit groups, then it is the unit group position that counts, and all units within the recv group have the same connectivity (can override with use_gps flag)
+  // full connectivity with a gradient of weight strengths (requires init_wts = true, otherwise is just like Full Prjn), where weights are strongest from sending units in same relative location as the receiving unit, and fall off from there (either linearly or as a Guassian) -- if recv layer has unit groups, then it is the unit group position that counts (virtual groups not supported), and all units within the recv group have the same connectivity (can override with use_gps flag)
 INHERITED(FullPrjnSpec)
 public:
   enum GradType {		// type of gradient to establish

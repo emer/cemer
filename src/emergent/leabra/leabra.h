@@ -1407,8 +1407,8 @@ public:
   // add current activation to act buf if synaptic delay is on
 
   inline LeabraLayer*	own_lay() const {return (LeabraLayer*)inherited::own_lay();}
-  inline LeabraUnit_Group* own_ugp() const {return (LeabraUnit_Group*)owner;}
   LeabraInhib*		own_thr() const;
+  // #CAT_Structure get my own inhibitory threshold data structure (layer or unitgp data)
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -2645,24 +2645,16 @@ private:
 };
 TA_SMART_PTRS(LeabraLayer)
 
-class LEABRA_API LeabraUnit_Group : public Unit_Group, public LeabraInhib {
-  // #STEM_BASE ##CAT_Leabra for independent subgroups of competing units within a single layer
+
+class LEABRA_API LeabraUnit_Group : public Unit_Group {
+  // #STEM_BASE ##CAT_Leabra for independent subgroups of competing units within a single layer -- optional data structure given use of virt_groups
 INHERITED(Unit_Group)
 public:
-  int		misc_state;	// #CAT_Activation miscellaneous state variable
-  int		misc_state1;	// #CAT_Activation second miscellaneous state variable 
-  int		misc_state2;	// #CAT_Activation third miscellaneous state variable 
-  int		misc_state3;	// #CAT_Activation fourth miscellaneous state variable 
-  float		misc_float;	// #CAT_Activation miscellaneous floating point variable 
-  float		misc_float1;	// #CAT_Activation second miscellaneous floating point variable 
-  float		misc_float2;	// #CAT_Activation third miscellaneous floating point variable 
 
-  void	InitLinks();
-  void	Copy_(const LeabraUnit_Group& cp);
-  TA_BASEFUNS(LeabraUnit_Group);
+  TA_BASEFUNS_NOCOPY(LeabraUnit_Group);
 private:
-  void	Initialize();
-  void	Destroy()		{ };
+  void	Initialize()	{ };
+  void	Destroy()	{ };
 };
 
 

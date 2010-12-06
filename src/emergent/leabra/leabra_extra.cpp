@@ -1041,6 +1041,7 @@ void ScalarValLayerSpec::BuildUnits_Threads_ugp(LeabraLayer* lay,
 
 void ScalarValLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
   lay->units_flat_idx = net->units_flat.size;
+  if(lay->units.leaves == 0) return; // not built yet
   UNIT_GP_ITR(lay, BuildUnits_Threads_ugp(lay, acc_md, gpidx, net););
 }
 
@@ -4132,35 +4133,6 @@ void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 //			V1 Layer
 ///////////////////////////////////////////////////////////////
 
-// todo: v1 layer needs to be updated to new unit group structures
-
-void LeabraV1Layer::Initialize() {
-}
-
-void LeabraV1Layer::BuildUnits() {
-  inherited::BuildUnits();
-  // build feature unit groups
-  feat_gps.gp.SetSize(un_geom.n); // one group per unit in unit groups
-  for(int fg=0; fg<feat_gps.gp.size; fg++) {
-    LeabraUnit_Group* fugp = (LeabraUnit_Group*)feat_gps.gp[fg];
-    fugp->Reset();		// start over
-    for(int gg=0; gg<units.gp.size; gg++) {
-      LeabraUnit_Group* rugp = (LeabraUnit_Group*)units.gp[gg];
-      if(rugp->size <= fg) continue;
-      LeabraUnit* ru = (LeabraUnit*)rugp->FastEl(fg);
-      fugp->Link(ru);
-    }
-  }
-}
-
-void LeabraV1Layer::ResetSortBuf() {
-  inherited::ResetSortBuf();
-  for(int fg=0; fg<feat_gps.gp.size; fg++) {
-    LeabraUnit_Group* fugp = (LeabraUnit_Group*)feat_gps.gp[fg];
-    fugp->Inhib_ResetSortBuf();
-  }
-}
-
 void V1FeatInhibSpec::Initialize() {
   feat_gain = .01f;
   dist_sigma = .25f;
@@ -4168,73 +4140,74 @@ void V1FeatInhibSpec::Initialize() {
 }
 
 void LeabraV1LayerSpec::Initialize() {
-  min_obj_type = &TA_LeabraV1Layer;
 }
 
 bool LeabraV1LayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
-  LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
 
   bool rval = true;
-  lay->CheckError(lay->units.gp.size == 0, quiet, rval,
+  lay->CheckError(!lay->unit_groups, quiet, rval,
 		  "does not have unit groups -- MUST have unit groups!");
-  vlay->CheckError(vlay->feat_gps.gp.size != vlay->un_geom.n, quiet, rval,
-		   "not proper number of feature unit groups for layer size!");
   return rval;
 }
 
 void LeabraV1LayerSpec::Compute_FeatGpActive(LeabraLayer* lay, LeabraUnit_Group* fugp, 
 					     LeabraNetwork* net) {
-  fugp->active_buf.size = 0;
-  for(int ui=0; ui<fugp->size; ui++) {
-    LeabraUnit* u = (LeabraUnit*)fugp->FastEl(ui);
-    LeabraUnit_Group* u_own = (LeabraUnit_Group*)u->owner; // NOT fugp!
-    if(u->i_thr >= u_own->i_val.g_i) // compare to their own group's inhib val!
-      fugp->active_buf.Add(u);
-  }
+//   fugp->active_buf.size = 0;
+//   for(int ui=0; ui<fugp->size; ui++) {
+//     LeabraUnit* u = (LeabraUnit*)fugp->FastEl(ui);
+//     LeabraUnit_Group* u_own = (LeabraUnit_Group*)u->owner; // NOT fugp!
+//     if(u->i_thr >= u_own->i_val.g_i) // compare to their own group's inhib val!
+//       fugp->active_buf.Add(u);
+//   }
 }
 
 
 void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
-  if((net->cycle >= 0) && lay->hard_clamped)
-    return;			// don't do this during normal processing
+  inherited::Compute_ApplyInhib(lay, net);
 
-  LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
+  // todo: redo this when ready using new virtual groups logic
 
-  float dst_norm_val = 1.0f / (feat_inhib.dist_sigma * (float)MAX(lay->gp_geom.x, lay->gp_geom.y));
-  dst_norm_val *= dst_norm_val;	// using sq distances
 
-  for(int fg=0; fg<vlay->feat_gps.gp.size; fg++) {
-    LeabraUnit_Group* fugp = (LeabraUnit_Group*)vlay->feat_gps.gp[fg];
-    // get active lists for each feature group
-    Compute_FeatGpActive(vlay, fugp, net);
+//   if((net->cycle >= 0) && lay->hard_clamped)
+//     return;			// don't do this during normal processing
 
-    for(int ui=0; ui<fugp->size; ui++) {
-      LeabraUnit* u = (LeabraUnit*)fugp->FastEl(ui);
-      LeabraUnit_Group* u_own = (LeabraUnit_Group*)u->owner; // NOT fugp!
-      TwoDCoord up = u_own->GpLogPos();
+//   LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
 
-      float gp_i = u_own->i_val.g_i;
-      if(gp_i <= 0) gp_i = .1f;	// note: should have min_i set!!
+//   float dst_norm_val = 1.0f / (feat_inhib.dist_sigma * (float)MAX(lay->gp_geom.x, lay->gp_geom.y));
+//   dst_norm_val *= dst_norm_val;	// using sq distances
 
-      // now compare each unit with all the active units and increase inhib in proportion!
-      float sum_cost = 0.0f;
-      if((u->i_thr / gp_i) > feat_inhib.i_rat_thr) { // only if this guy is even close to firing
-	for(int ai=0; ai<fugp->active_buf.size; ai++) {
-	  LeabraUnit* au = (LeabraUnit*)fugp->active_buf.FastEl(ai);
-	  LeabraUnit_Group* au_own = (LeabraUnit_Group*)au->owner;
-	  TwoDCoord aup = au_own->GpLogPos();
+//   for(int fg=0; fg<vlay->feat_gps.gp.size; fg++) {
+//     LeabraUnit_Group* fugp = (LeabraUnit_Group*)vlay->feat_gps.gp[fg];
+//     // get active lists for each feature group
+//     Compute_FeatGpActive(vlay, fugp, net);
 
-	  float dst_sq = up.SqDist(aup);
-	  float cost = taMath_float::exp_fast(-dst_sq * dst_norm_val);
-	  sum_cost += cost;
-	}
-      }
-      float ival = gp_i * (1.0f + feat_inhib.feat_gain * sum_cost);
-      u->Compute_ApplyInhib(net, ival);
-    }    
-  }
+//     for(int ui=0; ui<fugp->size; ui++) {
+//       LeabraUnit* u = (LeabraUnit*)fugp->FastEl(ui);
+//       LeabraUnit_Group* u_own = (LeabraUnit_Group*)u->owner; // NOT fugp!
+//       TwoDCoord up = u_own->GpLogPos();
+
+//       float gp_i = u_own->i_val.g_i;
+//       if(gp_i <= 0) gp_i = .1f;	// note: should have min_i set!!
+
+//       // now compare each unit with all the active units and increase inhib in proportion!
+//       float sum_cost = 0.0f;
+//       if((u->i_thr / gp_i) > feat_inhib.i_rat_thr) { // only if this guy is even close to firing
+// 	for(int ai=0; ai<fugp->active_buf.size; ai++) {
+// 	  LeabraUnit* au = (LeabraUnit*)fugp->active_buf.FastEl(ai);
+// 	  LeabraUnit_Group* au_own = (LeabraUnit_Group*)au->owner;
+// 	  TwoDCoord aup = au_own->GpLogPos();
+
+// 	  float dst_sq = up.SqDist(aup);
+// 	  float cost = taMath_float::exp_fast(-dst_sq * dst_norm_val);
+// 	  sum_cost += cost;
+// 	}
+//       }
+//       float ival = gp_i * (1.0f + feat_inhib.feat_gain * sum_cost);
+//       u->Compute_ApplyInhib(net, ival);
+//     }    
+//   }
 }
 
 

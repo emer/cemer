@@ -831,39 +831,43 @@ void CustomPrjnSpec::Connect(Projection* prjn) {
 void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from)	return;
 
-  Unit_Group* ru_gp = &(prjn->layer->units);
-  Unit_Group* su_gp = &(prjn->from->units);
-  int i;
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord ru_geo = recv_lay->gp_geom;
+  TwoDCoord su_geo = send_lay->gp_geom;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
   int max_n = n_conns;
   if(n_conns < 0)
-    max_n = ru_gp->gp.size - recv_start;
-  max_n = MIN(ru_gp->gp.size - recv_start, max_n);
-  max_n = MIN(su_gp->gp.size - send_start, max_n);
+    max_n = recv_lay->gp_geom.n - recv_start;
+  max_n = MIN(recv_lay->gp_geom.n - recv_start, max_n);
+  max_n = MIN(send_lay->gp_geom.n - send_start, max_n);
   max_n = MAX(1, max_n);	// lower limit of 1
-  for(i=0; i<max_n; i++) {
-    Unit_Group* rgp, *sgp;
+  for(int i=0; i<max_n; i++) {
     // revert to main group if no sub groups
-    if(ru_gp->gp.size > 0)
-      rgp = (Unit_Group*)ru_gp->gp.FastEl(recv_start + i);
-    else
-      rgp = ru_gp;
-    if(su_gp->gp.size > 0)
-      sgp = (Unit_Group*)su_gp->gp.FastEl(send_start + i);
-    else
-      sgp = su_gp;
+    Layer::AccessMode racc_md = Layer::ACC_GP;
+    if(!recv_lay->unit_groups) racc_md = Layer::ACC_LAY;
+    Layer::AccessMode sacc_md = Layer::ACC_GP;
+    if(!send_lay->unit_groups) sacc_md = Layer::ACC_LAY;
 
-    // then its full connectivity..
-    Unit* ru, *su;
-    taLeafItr ru_itr, su_itr;
-    FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
-      ru->RecvConsPreAlloc(sgp->leaves, prjn);
+    int rgpidx = i + recv_start;
+    int sgpidx = i + send_start;
+
+    // pre-allocate connections
+    for(int rui=0; rui < ru_nunits; rui++) {
+      Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+      ru->RecvConsPreAlloc(su_nunits, prjn);
     }
-    FOR_ITR_EL(Unit, su, sgp->, su_itr) {
-      su->SendConsPreAlloc(rgp->leaves, prjn);
+    for(int sui=0; sui < su_nunits; sui++) {
+      Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
+      su->SendConsPreAlloc(ru_nunits, prjn);
     }
       
-    FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
-      FOR_ITR_EL(Unit, su, sgp->, su_itr) {
+    for(int rui=0; rui < ru_nunits; rui++) {
+      Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+      for(int sui=0; sui < su_nunits; sui++) {
+	Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
 	if(self_con || (ru != su))
 	  ru->ConnectFrom(su, prjn);
       }
@@ -893,61 +897,63 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   if(same_seed)
     rndm_seed.OldSeed();
 
-  Unit_Group* ru_gp = &(prjn->layer->units);
-  Unit_Group* su_gp = &(prjn->from->units);
-  int i;
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord ru_geo = recv_lay->gp_geom;
+  TwoDCoord su_geo = send_lay->gp_geom;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
   int max_n = n_conns;
   if(n_conns < 0)
-    max_n = ru_gp->gp.size - recv_start;
-  if(ru_gp->gp.size > 0)
-    max_n = MIN(ru_gp->gp.size - recv_start, max_n);
-  if(su_gp->gp.size > 0)
-    max_n = MIN(su_gp->gp.size - send_start, max_n);
+    max_n = recv_lay->gp_geom.n - recv_start;
+  max_n = MIN(recv_lay->gp_geom.n - recv_start, max_n);
+  max_n = MIN(send_lay->gp_geom.n - send_start, max_n);
   max_n = MAX(1, max_n);	// lower limit of 1
-  for(i=0; i<max_n; i++) {
-    Unit_Group* rgp, *sgp;
+  for(int i=0; i<max_n; i++) {
     // revert to main group if no sub groups
-    if(ru_gp->gp.size > 0)
-      rgp = (Unit_Group*)ru_gp->gp.FastEl(recv_start + i);
-    else
-      rgp = ru_gp;
-    if(su_gp->gp.size > 0)
-      sgp = (Unit_Group*)su_gp->gp.FastEl(send_start + i);
-    else
-      sgp = su_gp;
+    Layer::AccessMode racc_md = Layer::ACC_GP;
+    if(!recv_lay->unit_groups) racc_md = Layer::ACC_LAY;
+    Layer::AccessMode sacc_md = Layer::ACC_GP;
+    if(!send_lay->unit_groups) sacc_md = Layer::ACC_LAY;
 
-    int recv_no = (int) ((p_con * (float)sgp->leaves) + .5f);
-    if(!self_con && (rgp == sgp))
+    int rgpidx = i + recv_start;
+    int sgpidx = i + send_start;
+
+    int recv_no = (int) ((p_con * (float)su_nunits) + .5f);
+    if(!self_con && (send_lay == recv_lay && rgpidx == sgpidx))
       recv_no--;
     if(recv_no <= 0)
       recv_no = 1;
 
     // sending number is even distribution across senders plus some imbalance factor
-    float send_no_flt = (float)(rgp->leaves * recv_no) / (float)sgp->leaves;
+    float send_no_flt = (float)(ru_nunits * recv_no) / (float)su_nunits;
     // add SEM as corrective factor
     float send_sem = send_no_flt / sqrtf(send_no_flt);
     int send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f);
-    if(send_no > rgp->leaves) send_no = rgp->leaves;
+    if(send_no > ru_nunits) send_no = ru_nunits;
 
-    // pre-allocate connections!
-    Unit* ru, *su;
-    taLeafItr ru_itr, su_itr;
-    FOR_ITR_EL(Unit, ru, rgp->, ru_itr)
+    // pre-allocate connections
+    for(int rui=0; rui < ru_nunits; rui++) {
+      Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
       ru->RecvConsPreAlloc(recv_no, prjn);
-    FOR_ITR_EL(Unit, su, sgp->, su_itr)
+    }
+    for(int sui=0; sui < su_nunits; sui++) {
+      Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
       su->SendConsPreAlloc(send_no, prjn);
+    }
 
     UnitPtrList perm_list;	// permution list
-    FOR_ITR_EL(Unit, ru, rgp->, ru_itr) {
+    for(int rui=0; rui < ru_nunits; rui++) {
       perm_list.Reset();
-      FOR_ITR_EL(Unit, su, sgp->, su_itr) {
-	if(!self_con && (ru == su)) continue;
+      Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+      for(int sui=0; sui < su_nunits; sui++) {
+	Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
 	perm_list.Link(su);
       }
       perm_list.Permute();
-      int i;
-      for(i=0; i<recv_no; i++)
-	ru->ConnectFrom((Unit*)perm_list[i], prjn);
+      for(int j=0; j<recv_no; j++)
+	ru->ConnectFrom((Unit*)perm_list[j], prjn);
     }
   }
 }
@@ -1446,7 +1452,6 @@ void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc
 					 Projection* prjn, bool send_alloc) {
 
   TwoDCoord& su_geo = prjn->from->gp_geom;
-  Unit_Group* su_gp0 = (Unit_Group*)prjn->from->units.gp[0]; // take first gp as representative
   TwoDCoord sctr;
   GetCtrFmRecv(sctr, ruc);  // positions of center of recv in sending layer
   for(int i = 0; i< send_gp_offs.size; i++) {
@@ -1468,11 +1473,11 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
 
-  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+  if(TestWarning(!prjn->layer->unit_groups, "Connect_impl",
 		 "requires recv layer to have unit groups!")) {
     return;
   }
-  if(TestWarning(prjn->from->units.gp.size == 0,  "Connect_impl",
+  if(TestWarning(!prjn->from->unit_groups,  "Connect_impl",
 		 "requires send layer to have unit groups!")) {
     return;
   }
@@ -1524,7 +1529,7 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
   if(!(bool)prjn->from)	return false;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return false;
-  if(TestWarning(prjn->layer->units.gp.size == 0, "InitRFSizes",
+  if(TestWarning(!prjn->layer->unit_groups, "InitRFSizes",
 		 "requires recv layer to have unit groups!")) {
     return false;
   }
@@ -1575,6 +1580,11 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
   int n_cons = rf_width.Product();
   TwoDCoord ruc;
 
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
       for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
@@ -1582,8 +1592,8 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
 	if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
 	   (ruc.x >= recv_gp_ex_st.x) && (ruc.x < recv_gp_ex_ed.x)) continue;
 
-	Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
-	if(ru_gp == NULL) continue;
+	int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
+	if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
 
 	TwoDCoord su_st;
 	su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
@@ -1591,8 +1601,8 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
 
 	TwoDCoord su_ed = su_st + rf_width;
 
-	for(int rui=0;rui<ru_gp->size;rui++) {
-	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	for(int rui=0;rui < ru_nunits; rui++) {
+	  Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
 	  if(!alloc_loop)
 	    ru_u->RecvConsPreAlloc(n_cons, prjn);
 
@@ -1618,6 +1628,11 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float i
   if(!InitRFSizes(prjn)) return 0;
   int rval = 0;
 
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
   int n_cons = rf_width.x * rf_width.y;
   int n_new_cons = (int)(p_add_con * (float)n_cons);
   if(n_new_cons <= 0) return 0;
@@ -1630,15 +1645,16 @@ int TiledRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float i
     for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
       if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
 	 (ruc.x >= recv_gp_ex_st.x) && (ruc.x < recv_gp_ex_ed.x)) continue;
-      Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
-      if(ru_gp == NULL) continue;
+
+      int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
+      if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
 
       TwoDCoord su_st;
       su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
       su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
 
-      for(int rui=0;rui<ru_gp->size;rui++) {
-	Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+      for(int rui=0; rui < ru_nunits; rui++) {
+        Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
 
 	new_idxs.Permute();
 
@@ -1718,11 +1734,11 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from)	return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
-  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+  if(TestWarning(!prjn->layer->unit_groups, "Connect_impl",
 		 "requires recv layer to have unit groups!")) {
     return;
   }
-  if(TestWarning(prjn->from->units.gp.size == 0, "Connect_impl",
+  if(TestWarning(!prjn->from->unit_groups, "Connect_impl",
 		 "requires send layer to have unit groups!")) {
     return;
   }
@@ -1736,24 +1752,23 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
   Layer* send_lay = prjn->from;
   TwoDCoord ru_geo = recv_lay->gp_geom;
   TwoDCoord su_geo = send_lay->gp_geom;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
 
   int sg_sz_tot = send_gp_size.Product();
-  Unit_Group* su_gp0 = (Unit_Group*)send_lay->units.gp[0];
-  int alloc_no = sg_sz_tot * su_gp0->size;
+  int alloc_no = sg_sz_tot * su_nunits;
 
   TwoDCoord ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    int rgpidx = 0;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-	Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
-	if(ru_gp == NULL) continue;
-
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
 	TwoDCoord su_st;
 	if(wrap)	su_st = (ruc-1) * send_gp_skip;
-	else	su_st = ruc * send_gp_skip;
+	else		su_st = ruc * send_gp_skip;
 
-	for(int rui=0;rui<ru_gp->size;rui++) {
-	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	for(int rui=0; rui < ru_nunits; rui++) {
+	  Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
 	  if(!alloc_loop)
 	    ru_u->RecvConsPreAlloc(alloc_no, prjn);
 
@@ -1764,11 +1779,11 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
 	      suc_wrp = suc;
 	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 		continue;
-	      Unit_Group* su_gp = send_lay->UnitGpAtCoord(suc_wrp);
-	      if(!su_gp) continue;
+	      int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
+	      if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-	      for(int sui=0;sui<su_gp->size;sui++) {
-		Unit* su_u = (Unit*)su_gp->FastEl(sui);
+	      for(int sui=0; sui < su_nunits; sui++) {
+                Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
 		if(!self_con && (su_u == ru_u)) continue;
 		ru_u->ConnectFrom(su_u, prjn, alloc_loop);
 	      }
@@ -1788,17 +1803,17 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   Layer* send_lay = prjn->layer;
   TwoDCoord ru_geo = recv_lay->gp_geom;
   TwoDCoord su_geo = send_lay->gp_geom;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
 
   int_Array alloc_sz;
   alloc_sz.SetSize(su_geo.Product()); // alloc sizes per each su unit group
   alloc_sz.InitVals(0);
     
   TwoDCoord ruc;
+  int rgpidx = 0;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
-      if(ru_gp == NULL) continue;
-
+    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
       TwoDCoord su_st;
       if(wrap)	su_st = (ruc-1) * send_gp_skip;
       else	su_st = ruc * send_gp_skip;
@@ -1810,35 +1825,30 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 	  suc_wrp = suc;
 	  if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 	    continue;
-	  Unit_Group* su_gp = send_lay->UnitGpAtCoord(suc_wrp);
-	  if(su_gp == NULL) continue;
-
-	  int sugp_idx = suc_wrp.y * su_geo.x + suc_wrp.x;
-	  alloc_sz[sugp_idx] += ru_gp->size;
+	  int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
+	  if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
+	  alloc_sz[sgpidx] += ru_nunits;
 	}
       }
     }
   }
 
   // now actually allocate
-  for(int i=0; i<send_lay->units.gp.size; i++) {
-    Unit_Group* su_gp = (Unit_Group*)send_lay->units.gp[i];
-    for(int sui=0;sui<su_gp->size;sui++) {
-      Unit* su_u = (Unit*)su_gp->FastEl(sui);
-      su_u->RecvConsPreAlloc(alloc_sz[i], prjn);
+  for(int sug=0; sug < send_lay->gp_geom.n; sug++) {
+    for(int sui=0; sui < su_nunits; sui++) {
+      Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sug);
+      su_u->RecvConsPreAlloc(alloc_sz[sug], prjn);
     }
   }
 
   // then connect
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    int rgpidx = 0;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-	Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
-	if(ru_gp == NULL) continue;
-
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
 	TwoDCoord su_st;
 	if(wrap)	su_st = (ruc-1) * send_gp_skip;
-	else	su_st = ruc * send_gp_skip;
+	else		su_st = ruc * send_gp_skip;
 
 	TwoDCoord suc;
 	TwoDCoord suc_wrp;
@@ -1847,13 +1857,13 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 	    suc_wrp = suc;
 	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 	      continue;
-	    Unit_Group* su_gp = send_lay->UnitGpAtCoord(suc_wrp);
-	    if(su_gp == NULL) continue;
+	    int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
+	    if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-	    for(int sui=0;sui<su_gp->size;sui++) {
-	      Unit* su_u = (Unit*)su_gp->FastEl(sui);
-	      for(int rui=0;rui<ru_gp->size;rui++) {
-		Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	    for(int sui=0; sui < su_nunits; sui++) {
+              Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+	      for(int rui=0; rui < ru_nunits; rui++) {
+	        Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
 		if(!self_con && (su_u == ru_u)) continue;
 		su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
 	      }
@@ -1872,11 +1882,11 @@ int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float
   if(!(bool)prjn->from)	return 0;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return 0;
-  if(TestWarning(prjn->layer->units.gp.size == 0, "ProbAddCons_impl",
+  if(TestWarning(!prjn->layer->unit_groups, "ProbAddCons_impl",
 		 "requires recv layer to have unit groups!")) {
     return 0;
   }
-  if(TestWarning(prjn->from->units.gp.size == 0, "ProbAddCons_impl",
+  if(TestWarning(!prjn->from->unit_groups, "ProbAddCons_impl",
 		 "requires send layer to have unit groups!")) {
     return 0;
   }
@@ -1892,13 +1902,13 @@ int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float
 
   TwoDCoord ru_geo = recv_lay->gp_geom;
   TwoDCoord su_geo = send_lay->gp_geom;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
 
   TwoDCoord ruc;
+  int rgpidx = 0;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
-      if(ru_gp == NULL) continue;
-
+    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
       TwoDCoord su_st;
       if(wrap)	su_st = (ruc-1) * send_gp_skip;
       else	su_st = ruc * send_gp_skip;
@@ -1910,13 +1920,13 @@ int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float
 	  suc_wrp = suc;
 	  if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 	    continue;
-	  Unit_Group* su_gp = send_lay->UnitGpAtCoord(suc_wrp);
-	  if(su_gp == NULL) continue;
+	  int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
+	  if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-	  for(int rui=0;rui<ru_gp->size;rui++) {
-	    for(int sui=0;sui<su_gp->size;sui++) {
-	      Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
-	      Unit* su_u = (Unit*)su_gp->FastEl(sui);
+	  for(int rui=0; rui < ru_nunits; rui++) {
+	    for(int sui=0; sui < su_nunits; sui++) {
+	      Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+              Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
 	      if(!self_con && (su_u == ru_u)) continue;
 
 	      // just do a basic probabilistic version: too hard to permute..
@@ -1978,6 +1988,7 @@ bool TiledGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
+
 ///////////////////////////////////////////////////////
 //		TiledNovlpPrjnSpec
 ///////////////////////////////////////////////////////
@@ -1998,7 +2009,7 @@ bool TiledNovlpPrjnSpec::InitRFSizes(Projection* prjn) {
     send_lay = prjn->layer;
   }
 
-  if(TestWarning(recv_lay->units.gp.size == 0, "InitRFSizes",
+  if(TestWarning(!recv_lay->unit_groups, "InitRFSizes",
 		 "requires recv layer to have unit groups!")) {
     return false;
   }
@@ -2023,19 +2034,20 @@ void TiledNovlpPrjnSpec::Connect_impl(Projection* prjn) {
 
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
   TwoDCoord ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    int rgpidx = 0;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-	Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
-	if(ru_gp == NULL) continue;
-
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
 	TwoDCoord su_st;
 	su_st.x = (int)((float)ruc.x * rf_width.x);
 	su_st.y = (int)((float)ruc.y * rf_width.y);
 
-	for(int rui=0;rui<ru_gp->size;rui++) {
-	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	for(int rui=0; rui < ru_nunits; rui++) {
+	  Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
 	  int alloc_sz = ((int)(rf_width.x) + 1) * ((int)(rf_width.y) + 1);
 	  if(!alloc_loop)
 	    ru_u->RecvConsPreAlloc(alloc_sz, prjn);	
@@ -2062,6 +2074,8 @@ void TiledNovlpPrjnSpec::Connect_impl(Projection* prjn) {
 void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   Layer* recv_lay = prjn->from;
   Layer* send_lay = prjn->layer;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
 
   int_Array alloc_sz;
   alloc_sz.SetSize(send_lay->flat_geom.Product());
@@ -2069,11 +2083,9 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 
   // find alloc sizes
   TwoDCoord ruc;
+  int rgpidx = 0;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-      Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
-      if(ru_gp == NULL) continue;
-
+    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
       TwoDCoord su_st;
       su_st.x = (int)((float)ruc.x * rf_width.x);
       su_st.y = (int)((float)ruc.y * rf_width.y);
@@ -2084,7 +2096,7 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 	  Unit* su_u = send_lay->UnitAtCoord(suc);
 	  if(su_u == NULL) continue;
 	  int sugp_idx = suc.y * send_lay->flat_geom.x + suc.x;
-	  alloc_sz[sugp_idx] += ru_gp->size;
+	  alloc_sz[sugp_idx] += ru_nunits;
 	}
       }
     }
@@ -2103,11 +2115,9 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 
   // then make the connections!
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    int rgpidx = 0;
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-	Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(ruc);
-	if(ru_gp == NULL) continue;
-
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
 	TwoDCoord su_st;
 	su_st.x = (int)((float)ruc.x * rf_width.x);
 	su_st.y = (int)((float)ruc.y * rf_width.y);
@@ -2118,8 +2128,8 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 	    Unit* su_u = send_lay->UnitAtCoord(suc);
 	    if(su_u == NULL) continue;
 
-	    for(int rui=0;rui<ru_gp->size;rui++) {
-	      Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	    for(int rui=0; rui < ru_nunits; rui++) {
+	      Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
 	      if(!self_con && (su_u == ru_u)) continue;
 	      su_u->ConnectFrom(ru_u, prjn, alloc_loop);
 	    }
@@ -2299,7 +2309,7 @@ void GradientWtsPrjnSpec::Defaults_init() {
 
 
 void GradientWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  if(use_gps && prjn->layer->units.gp.size > 0 && ru->owner->InheritsFrom(&TA_Unit_Group))
+  if(use_gps && prjn->layer->unit_groups > 0)
     InitWeights_RecvGps(prjn, cg, ru);
   else
     InitWeights_RecvFlat(prjn, cg, ru);

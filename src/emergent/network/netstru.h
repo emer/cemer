@@ -1571,7 +1571,7 @@ public:
       Unit_Group* ug = (Unit_Group*)units.gp.SafeEl(gpidx); if(!ug) return NULL;
       return ug->SafeEl(unidx);
     }
-    return units.SafeEl(unidx);
+    return units.Leaf(unidx);
   }
   // #CAT_Structure abstracted access of units in layer depending on mode -- if layer-wide mode, unidx is index into full set of units (flat_geom.n items), else if in group mode, get from unit from group and unit indexes
   inline int	UnitAccess_NUnits(AccessMode mode) {
@@ -1606,6 +1606,12 @@ public:
   TwoDCoord		UnitGpPosFmIdx(int gpidx)
   { TwoDCoord rval; rval.x = gpidx % gp_geom.x; rval.y = gpidx / gp_geom.x; return rval; }
   // #CAT_Structure get unit group position from index
+  int			UnitGpIdxFmPos(TwoDCoord& pos)
+  { return pos.y * gp_geom.x + pos.x; }
+  // #CAT_Structure get unit group index from position
+  bool			UnitGpIdxIsValid(int gpidx)
+  { return gpidx >= 0 && gpidx < gp_geom.n; }
+  // #CAT_Structure is the group index valid (within range)
 
   ////////////	display coordinate versions
 

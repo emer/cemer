@@ -604,7 +604,7 @@ String NetMonItem::GetObjName(taBase* obj) {
     if(lay) {
       String nm = GetObjName(lay);
       if(ug->owner == lay) return nm; // synoymous with layer
-      int idx = lay->units.gp.FindEl(ug);
+      int idx = ug->idx;
       if(idx >= 0)
 	return nm + "_gp_" + String(idx) + "_";
     }

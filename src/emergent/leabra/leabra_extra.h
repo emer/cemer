@@ -2241,22 +2241,6 @@ private:
   void	Defaults_init() 	{ };
 };
 
-class LEABRA_API LeabraV1Layer : public LeabraLayer {
-  // Specialized layer that implements competition both within unit groups and among features across the entire layer, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups)
-INHERITED(LeabraLayer)
-public:
-  LeabraUnit_Group		feat_gps;    // #LINK_GROUP #NO_SAVE #READ_ONLY #HIDDEN feature-level unit groups: the .gp subgroups are populated with sub unit groups, one per feature group, each containing links to the units
-  LeabraInhib			feat_lay_thr; // #NO_SAVE #READ_ONLY #HIDDEN feature layer-level inhbition threshold stuff (use instead of layer's own thr values)
-
-  override void	BuildUnits();
-  override void	ResetSortBuf();
-
-  TA_SIMPLE_BASEFUNS(LeabraV1Layer);
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-};
-
 class LEABRA_API V1FeatInhibSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for V1 layer units based on feature-level inhibition
 INHERITED(SpecMemberBase)
@@ -2275,7 +2259,7 @@ private:
 };
 
 class LEABRA_API LeabraV1LayerSpec : public LeabraLayerSpec {
-  // LayerSpec that implements competition both within unit groups and among features across the entire layer, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups, and must be of LeabraV1Layer type!) -- feature inhibition is based on distance -- adds to layer-level gp_g based inhib for each unit in proportion to distance from active units
+  // IMPORTANT: NOT YET FUNCTIONAL -- NEEDS TO BE REWRITTEN TO SUPPORT VIRTUAL UNIT GROUPS -- LayerSpec that implements competition both within unit groups and among features across the entire layer, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups) -- feature inhibition is based on distance -- adds to layer-level gp_g based inhib for each unit in proportion to distance from active units
 INHERITED(LeabraLayerSpec)
 public:
   V1FeatInhibSpec	feat_inhib; // feature-level inhibition parameters

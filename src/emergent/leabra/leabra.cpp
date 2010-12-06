@@ -2483,16 +2483,15 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
 }
 
 LeabraInhib* LeabraUnit::own_thr() const {
-  // todo: this is wrong!
-  LeabraLayer* ol = own_lay();
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)ol->GetLayerSpec();
-  if((ls->inhib_group != LeabraLayerSpec::ENTIRE_LAYER) && (ol->units.gp.size > 0)) {
-    LeabraUnit_Group* og = own_ugp();
-    return (LeabraInhib*)og;
+  LeabraLayer* lay = own_lay();
+  if(!lay) return NULL;
+  Unit_Group* own_sgp = own_subgp();
+  if(own_sgp) {
+    int gpidx = own_sgp->GetIndex();
+    LeabraInhib* thr = (LeabraInhib*)lay->ungp_data.SafeEl(gpidx);
+    if(thr) return thr;
   }
-  else {
-    return (LeabraInhib*)ol;
-  }
+  return (LeabraInhib*)lay;
 }
 
 
@@ -4902,48 +4901,6 @@ void LeabraLayer::DMem_ComputeAggs(MPI_Comm comm) {
   dmem_agg_sum.AggVar(comm, MPI_SUM);
 }
 #endif
-
-// todo: remove all this data once new structure is finalized
-
-void LeabraUnit_Group::Initialize() {
-  Inhib_Initialize();
-  misc_state = 0;
-  misc_state1 = 0;
-  misc_state2 = 0;
-  misc_state3 = 0;
-  misc_float = 0.0f;
-  misc_float1 = 0.0f;
-  misc_float2 = 0.0f;
-}
-
-void LeabraUnit_Group::InitLinks() {
-  inherited::InitLinks();
-  taBase::Own(netin, this);
-  taBase::Own(netin_top_k, this);
-  taBase::Own(i_thrs, this);
-  taBase::Own(acts, this);
-  taBase::Own(acts_top_k, this);
-
-  taBase::Own(acts_p, this);
-  taBase::Own(acts_m, this);
-  taBase::Own(acts_p2, this);
-  taBase::Own(acts_m2, this);
-
-  taBase::Own(kwta, this);
-  taBase::Own(i_val, this);
-  taBase::Own(adapt_i, this);
-}
-
-void LeabraUnit_Group::Copy_(const LeabraUnit_Group& cp) {
-  Inhib_Copy_(cp);
-  misc_state = cp.misc_state;
-  misc_state1 = cp.misc_state1;
-  misc_state2 = cp.misc_state2;
-  misc_state3 = cp.misc_state3;
-  misc_float = cp.misc_float;
-  misc_float1 = cp.misc_float1;
-  misc_float2 = cp.misc_float2;
-}
 
 
 //////////////////////////
