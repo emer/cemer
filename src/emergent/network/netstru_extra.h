@@ -338,7 +338,7 @@ private:
 };
 
 class EMERGENT_API GpRndTesselPrjnSpec : public ProjectionSpec {
-  // specifies patterns of groups to connect with, with random connectivity within each group -- only 'permute' style randomness is suported, producing same number of recv connections per unit -- virtual groups not supported
+  // specifies tesselated patterns of groups to connect with (both recv and send layers must have unit groups), optionally with random connectivity within each group (also very useful for full connectivity -- has optimized support for that) -- only 'permute' style randomness is supported, producing same number of recv connections per unit
 INHERITED(ProjectionSpec)
 public:
   TwoDCoord	recv_gp_off; 	// offset for start of recv group to begin connecting
@@ -358,24 +358,24 @@ public:
 
   virtual void	GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc);
   // get center of sender coords from receiving coords
-  virtual void  Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+  virtual void  Connect_Gps(int rgpidx, int sgpidx, float p_con,
 			    Projection* prjn, bool send_alloc);
   // #IGNORE impl connect send/recv gps
-  virtual void  Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+  virtual void  Connect_Gps_Sym(int rgpidx, int sgpidx, float p_con,
 				Projection* prjn);
   // #IGNORE symmetric (p_con < 0)
-  virtual void  Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+  virtual void  Connect_Gps_SymSameGp(int rgpidx, int sgpidx, float p_con,
 				      Projection* prjn);
   // #IGNORE symmetric, same unit group
-  virtual void  Connect_Gps_SymSameLay(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+  virtual void  Connect_Gps_SymSameLay(int rgpidx, int sgpidx, float p_con,
 				      Projection* prjn);
   // #IGNORE symmetric, same layer
-  virtual void  Connect_Gps_Std(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+  virtual void  Connect_Gps_Std(int rgpidx, int sgpidx, float p_con,
 				Projection* prjn);
   // #IGNORE standard, not symmetric/same
-  virtual void  Connect_Gps_Full(Unit_Group* ru_gp, Unit_Group* su_gp, Projection* prjn);
+  virtual void  Connect_Gps_Full(int rgpidx, int sgpidx, Projection* prjn);
   // #IGNORE full connectivity, 
-  virtual void	Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc, Projection* prjn,
+  virtual void	Connect_RecvGp(int rgpidx, const TwoDCoord& ruc, Projection* prjn,
 			       bool send_alloc);
   // connects one recv unit to all senders
 
@@ -512,7 +512,7 @@ private:
 
 
 class EMERGENT_API GradientWtsPrjnSpec : public FullPrjnSpec {
-  // full connectivity with a gradient of weight strengths (requires init_wts = true, otherwise is just like Full Prjn), where weights are strongest from sending units in same relative location as the receiving unit, and fall off from there (either linearly or as a Guassian) -- if recv layer has unit groups, then it is the unit group position that counts (virtual groups not supported), and all units within the recv group have the same connectivity (can override with use_gps flag)
+  // full connectivity with a gradient of weight strengths (requires init_wts = true, otherwise is just like Full Prjn), where weights are strongest from sending units in same relative location as the receiving unit, and fall off from there (either linearly or as a Guassian) -- if recv layer has unit groups, then it is the unit group position that counts, and all units within the recv group have the same connectivity (can override with use_gps flag)
 INHERITED(FullPrjnSpec)
 public:
   enum GradType {		// type of gradient to establish

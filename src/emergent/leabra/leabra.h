@@ -2447,7 +2447,10 @@ public:
     return &lay_kbuffs;
   }
   // #CAT_Activation get kwta sort buffer list for given access mode (gp or layer)
-
+  LeabraUnGpData* 	UnGpData(int gpidx) {
+    return ungp_data.SafeEl(gpidx);
+  }
+  // #CAT_Structure get unit group data structure for given unit group index
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions

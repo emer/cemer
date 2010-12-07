@@ -354,10 +354,10 @@ DataTable* TemtClient::GetAssertTable(const String& nm) {
     // global table
     tab = proj->data.FindLeafName(nm);
   } else { // local table
-    String tnm = nm.after(".");
     Program* prog = GetAssertProgram(pnm);
     if (!prog) return NULL; //note: will already have sent error
-    tab = dynamic_cast<DataTable*>(prog->objs.FindName(nm));
+    String tnm = nm.after(".");
+    tab = dynamic_cast<DataTable*>(prog->objs.FindName(tnm));
   }
   if (!tab) {
     SendError("Table '" + nm + "' not found");

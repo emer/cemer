@@ -858,6 +858,8 @@ public: //
   // #CAT_Structure get the owning layer of this unit
   inline Unit_Group* own_subgp() const;
   // #CAT_Structure get the owning subgroup of this unit -- NULL if unit lives directly within the layer and not in a subgroup
+  inline int	UnitGpIdx() const;
+  // #CAT_Structure get unit's subgroup index -- returns -1 if layer does not have unit groups -- directly from info avail on unit itself
   
   inline UnitSpec* GetUnitSpec() const { return m_unit_spec; }
   // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
@@ -1497,7 +1499,7 @@ public:
   float			disp_scale;	// #DEF_1 #CAT_Structure display scale factor for layer -- multiplies overall layer size -- 1 is normal, < 1 is smaller and > 1 is larger -- can be especially useful for shrinking very large layers to better fit with other smaller layers
   XYNGeom		un_geom;        // #AKA_geom #CAT_Structure two-dimensional layout and number of units within the layer or each unit group within the layer 
   bool			unit_groups;	// #CAT_Structure organize units into subgroups within the layer, with each unit group having the geometry specified by un_geom -- see virt_groups for whether there are actual unit groups allocated, or just virtual organization a flat list of groups 
-  bool			virt_groups;	// #CONDSHOW_ON_unit_groups #CAT_Structure if true, do not allocate actual unit groups -- just organize a flat list of units into groups for display and computation purposes
+  bool			virt_groups;	// #CONDSHOW_ON_unit_groups #CAT_Structure #DEF_true if true, do not allocate actual unit groups -- just organize a flat list of units into groups for display and computation purposes -- this is much more efficient and is the default behavior, but some rare cases require explicit unit groups still (e.g. unique positions for unit groups)
   XYNGeom		gp_geom;	// #CONDSHOW_ON_unit_groups #CAT_Structure geometry of unit sub-groups (if unit_groups) -- this is the layout of the groups, with gp_geom defining the layout of units within the groups
   PosTwoDCoord		gp_spc;		// #CONDSHOW_ON_unit_groups #CAT_Structure spacing between unit sub-groups (if unit_groups) -- this is *strictly* for display purposes, and does not affect anything else in terms of projection connectivity calculations etc.
   XYNGeom		flat_geom;	// #EXPERT #READ_ONLY #CAT_Structure geometry of the units flattening out over unit groups -- same as un_geom if !unit_groups; otherwise un_geom * gp_geom -- this is in logical (not display) sizes
@@ -1551,12 +1553,13 @@ public:
   // and NOT via unit groups (layers can handle unit groups virtually or with real
   // allocated unit groups -- see virt_groups flag)
 
-  Unit*		UnitAtCoord(const TwoDCoord& coord) { return UnitAtCoord(coord.x, coord.y); }
+  Unit*		UnitAtCoord(const TwoDCoord& coord) const 
+  { return UnitAtCoord(coord.x, coord.y); }
   // #CAT_Structure get unit at given logical coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
-  Unit*		UnitAtCoord(int x, int y);
+  Unit*		UnitAtCoord(int x, int y) const;
   // #CAT_Structure get unit at given logical coordinates, taking into account group geometry if present -- this uses *logical* flat 2d coordinates, which exclude any consideration of gp_spc between units (i.e., as if there were no space -- space is only for display)
 
-  inline Unit*	UnitAtUnGpIdx(int unidx, int gpidx) {
+  inline Unit*	UnitAtUnGpIdx(int unidx, int gpidx) const {
     if(unit_groups && !virt_groups) {
       Unit_Group* ug = (Unit_Group*)units.gp.SafeEl(gpidx); if(!ug) return NULL;
       return ug->SafeEl(unidx);
@@ -1564,8 +1567,11 @@ public:
     return units.SafeEl(gpidx * un_geom.n + unidx);
   }
   // #CAT_Structure get unit from group and unit indexes -- only valid group index is 0 if no unit groups -- useful for efficient access to units in computational routines 
+  void		UnGpIdxFmUnitIdx(int uflat_idx, int& unidx, int& gpidx) const
+  { gpidx = uflat_idx / un_geom.n;  unidx = uflat_idx % un_geom.n; }
+  // #CAT_Structure get unit and group index values from a flat unit index
 
-  inline Unit*	UnitAccess(AccessMode mode, int unidx, int gpidx) {
+  inline Unit*	UnitAccess(AccessMode mode, int unidx, int gpidx) const {
     if(mode == ACC_GP && unit_groups) {
       if(virt_groups) return units.SafeEl(gpidx * un_geom.n + unidx);
       Unit_Group* ug = (Unit_Group*)units.gp.SafeEl(gpidx); if(!ug) return NULL;
@@ -1574,53 +1580,57 @@ public:
     return units.Leaf(unidx);
   }
   // #CAT_Structure abstracted access of units in layer depending on mode -- if layer-wide mode, unidx is index into full set of units (flat_geom.n items), else if in group mode, get from unit from group and unit indexes
-  inline int	UnitAccess_NUnits(AccessMode mode) {
+  inline int	UnitAccess_NUnits(AccessMode mode) const {
     if(mode == ACC_GP && unit_groups) return un_geom.n;
     return flat_geom.n;
   }
   // #CAT_Structure abstracted access of units in layer depending on mode -- number of units associated with this access mode
-  inline int	UnitAccess_NGps(AccessMode mode) {
+  inline int	UnitAccess_NGps(AccessMode mode) const {
     if(mode == ACC_GP && unit_groups) return gp_geom.n;
     return 1;
   }
   // #CAT_Structure abstracted access of units in layer depending on mode -- number of groups associated with this access mode
 
-  Unit*		UnitAtGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord)
+  Unit*		UnitAtGpCoord(const TwoDCoord& gp_coord, const TwoDCoord& coord) const
   { return UnitAtGpCoord(gp_coord.x,gp_coord.y, coord.x, coord.y); }
   // #CAT_Structure get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
-  Unit*		UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y);
+  Unit*		UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y) const;
   // #CAT_Structure get unit given both unit and group coordinates -- only functional if unit_groups is on -- this uses logical 4d coordinates, relative to gp_geom and un_geom
 
-  Unit_Group* 	UnitGpAtCoord(const TwoDCoord& coord)
+
+  Unit_Group* 	UnitGpAtCoord(const TwoDCoord& coord) const
   { return UnitGpAtCoord(coord.x,coord.y); }
   // #CAT_XpertStructure get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
-  Unit_Group* 	UnitGpAtCoord(int gp_x, int gp_y);
+  Unit_Group* 	UnitGpAtCoord(int gp_x, int gp_y) const;
   // #CAT_XpertStructure get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
 
-  void		UnitLogPos(Unit* un, TwoDCoord& upos)
+  void		UnitLogPos(Unit* un, TwoDCoord& upos) const
   { UnitLogPos(un, upos.x, upos.y); }
   // #CAT_Structure get *logical* position for unit, relative to flat_geom (no display spacing) -- based on index within group/layer
-  void		UnitLogPos(Unit* un, int& x, int& y);
+  void		UnitLogPos(Unit* un, int& x, int& y) const;
   // #CAT_Structure get *logical* position for unit, relative to flat_geom (no display spacing) -- based on index within group/layer
 
-  TwoDCoord		UnitGpPosFmIdx(int gpidx)
+  TwoDCoord	UnitGpPosFmIdx(int gpidx) const
   { TwoDCoord rval; rval.x = gpidx % gp_geom.x; rval.y = gpidx / gp_geom.x; return rval; }
-  // #CAT_Structure get unit group position from index
-  int			UnitGpIdxFmPos(TwoDCoord& pos)
+  // #CAT_Structure get unit group *logical* position from index
+  int		UnitGpIdxFmPos(TwoDCoord& pos) const
   { return pos.y * gp_geom.x + pos.x; }
   // #CAT_Structure get unit group index from position
-  bool			UnitGpIdxIsValid(int gpidx)
+  bool		UnitGpIdxIsValid(int gpidx) const
   { return gpidx >= 0 && gpidx < gp_geom.n; }
   // #CAT_Structure is the group index valid (within range)
 
+  int		UnitGpIdx(Unit* u) const;
+  // #CAT_Structure get unit's subgroup index (unit must live in this layer, returns -1 if layer does not have unit groups), directly from info avail on unit itself
+
   ////////////	display coordinate versions
 
-  Unit*		UnitAtDispCoord(int x, int y);
+  Unit*		UnitAtDispCoord(int x, int y) const;
   // #CAT_Structure get unit at given *display* coordinates relative to layer -- this takes into account spaces between groups etc
-  void		UnitDispPos(Unit* un, TwoDCoord& upos)
+  void		UnitDispPos(Unit* un, TwoDCoord& upos) const
   { UnitDispPos(un, upos.x, upos.y); }
   // #CAT_Structure get display position for unit, taking into account spacing, unit group positioning etc
-  void		UnitDispPos(Unit* un, int& x, int& y);
+  void		UnitDispPos(Unit* un, int& x, int& y) const;
   // #CAT_Structure get display position for unit, taking into account spacing, unit group positioning etc
 
 
@@ -1934,6 +1944,13 @@ inline Unit_Group* Unit::own_subgp() const {
   if(owner->GetOwner()->InheritsFrom(&TA_Layer)) return NULL; // we're owned by the layer really
   return (Unit_Group*)owner;
 }
+
+inline int Unit::UnitGpIdx() const {
+  return own_lay()->UnitGpIdx((Unit*)this);
+}
+
+
+////////////////////  
 
 class EMERGENT_API Layer_Group : public taGroup<Layer> {
   // ##CAT_Network ##SCOPE_Network group of layers -- this should be used in larger networks to organize subnetworks (e.g., in brain models, different brain areas)

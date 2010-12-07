@@ -644,7 +644,8 @@ class LEABRA_API PFCLVPrjnSpec : public FullPrjnSpec {
 INHERITED(FullPrjnSpec)
 public:
 
-  virtual void Connect_Gp(Projection* prjn, Unit_Group* rugp, Unit_Group* sugp);
+  virtual void Connect_Gp(Projection* prjn, Layer::AccessMode racc_md, int rgpidx,
+			  Layer::AccessMode sacc_md, int sgpidx);
   // make a projection from all senders in sugp into all receivers in rugp
 
   void	Connect_impl(Projection* prjn);

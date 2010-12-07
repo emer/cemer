@@ -1669,20 +1669,28 @@ void PFCOutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 // 		PFCLVPrjnSpec		//
 //////////////////////////////////////////
 
-void PFCLVPrjnSpec::Connect_Gp(Projection* prjn, Unit_Group* rugp, Unit_Group* sugp) {
+void PFCLVPrjnSpec::Connect_Gp(Projection* prjn, Layer::AccessMode racc_md, int rgpidx,
+				Layer::AccessMode sacc_md, int sgpidx) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
+  int ru_nunits = recv_lay->UnitAccess_NUnits(racc_md);
+  int su_nunits = send_lay->UnitAccess_NUnits(sacc_md);
+
   // pre-allocate connections!
-  Unit* ru, *su;
-  taLeafItr ru_itr, su_itr;
-  FOR_ITR_EL(Unit, ru, rugp->, ru_itr) {
-    ru->RecvConsPreAlloc(sugp->leaves, prjn);
+  for(int rui=0; rui < ru_nunits; rui++) {
+    Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+    ru->RecvConsPreAlloc(su_nunits, prjn);
   }
-  // todo: this may not be right for fuller connectivity..
-  FOR_ITR_EL(Unit, su, sugp->, su_itr) {
-    su->SendConsPreAlloc(rugp->leaves, prjn);
+  for(int sui=0; sui < su_nunits; sui++) {
+    Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
+    su->SendConsPreAlloc(ru_nunits, prjn);
   }
 
-  FOR_ITR_EL(Unit, ru, rugp->, ru_itr) {
-    FOR_ITR_EL(Unit, su, sugp->, su_itr) {
+  for(int rui=0; rui < ru_nunits; rui++) {
+    Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+    for(int sui=0; sui < su_nunits; sui++) {
+      Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
       if(self_con || (ru != su))
 	ru->ConnectFrom(su, prjn);
     }
@@ -1693,6 +1701,8 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from)	return;
 
   LeabraLayer* lv_lay = (LeabraLayer*)prjn->layer;
+  LeabraLayer* pfc_lay = (LeabraLayer*)prjn->from.ptr();
+
   int tot_pfc_prjns = 0;
   int tot_pfc_stripes = 0;
   int my_start_stripe = 0;
@@ -1709,54 +1719,38 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
     }
   }
 
-  Unit_Group* lv_gp = &(prjn->layer->units); // lv = recv
-  Unit_Group* pfc_gp = &(prjn->from->units); // pfc = send
-
-  int n_lv_stripes = lv_gp->gp.size;
-  int n_pfc_stripes = pfc_gp->gp.size;
+  int n_lv_stripes = lv_lay->gp_geom.n;
+  int n_pfc_stripes = pfc_lay->gp_geom.n;
 
   if(n_lv_stripes <= 1) {	// just full connectivity
-    Connect_Gp(prjn, lv_gp, pfc_gp);
+    Connect_Gp(prjn, Layer::ACC_LAY, 0, Layer::ACC_LAY, 0);
   }
   else if(n_lv_stripes == n_pfc_stripes) { // just one-to-one
     for(int i=0; i<n_pfc_stripes; i++) {
-      Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(i);
-      Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
-      Connect_Gp(prjn, rgp, sgp);
+      Connect_Gp(prjn, Layer::ACC_GP, i, Layer::ACC_GP, i);
     }
   }
   else if(n_lv_stripes == n_pfc_stripes + 1) { // full plus one-to-one
-    Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(0);
-    Connect_Gp(prjn, rgp, pfc_gp); // full for first prjn
+    Connect_Gp(prjn, Layer::ACC_GP, 0, Layer::ACC_LAY, 0); // full for first prjn
     for(int i=0; i<n_pfc_stripes; i++) { // then gp one-to-one
-      Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(i+1);
-      Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
-      Connect_Gp(prjn, rgp, sgp);
+      Connect_Gp(prjn, Layer::ACC_GP, i+1, Layer::ACC_GP, i);
     }
   }
   else if(n_lv_stripes == tot_pfc_stripes) { // multi-pfc just one-to-one
     for(int i=0; i<n_pfc_stripes; i++) {
-      Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(my_start_stripe + i);
-      Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
-      Connect_Gp(prjn, rgp, sgp);
+      Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + i, Layer::ACC_GP, i);
     }
   }
   else if(n_lv_stripes == tot_pfc_stripes + 1) { // multi-pfc full plus one-to-one
-    Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(0);
-    Connect_Gp(prjn, rgp, pfc_gp); // full for first prjn
+    Connect_Gp(prjn, Layer::ACC_GP, 0, Layer::ACC_LAY, 0); // full for first prjn
     for(int i=0; i<n_pfc_stripes; i++) { // then gp one-to-one
-      Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(my_start_stripe + i+1);
-      Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
-      Connect_Gp(prjn, rgp, sgp);
+      Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + i, Layer::ACC_GP, i);
     }
   }
   else if(n_lv_stripes == tot_pfc_stripes + tot_pfc_prjns) { // multi-pfc separate full plus one-to-one
-    Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(my_start_stripe + my_prjn_idx);
-    Connect_Gp(prjn, rgp, pfc_gp); // full for first prjn
+    Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + my_prjn_idx, Layer::ACC_LAY, 0); // full for first prjn
     for(int i=0; i<n_pfc_stripes; i++) { // then gp one-to-one
-      Unit_Group* rgp = (Unit_Group*)lv_gp->gp.FastEl(my_start_stripe + my_prjn_idx + i+1);
-      Unit_Group* sgp = (Unit_Group*)pfc_gp->gp.FastEl(i);
-      Connect_Gp(prjn, rgp, sgp);
+      Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + my_prjn_idx + i+1, Layer::ACC_GP, i);
     }
   }
   else {
@@ -1787,13 +1781,18 @@ void MatrixRndPrjnSpec::Connect_impl(Projection* prjn) {
   if(same_seed)
     rndm_seed.OldSeed();
 
-  int n_rgps = prjn->layer->gp_geom.n;
-  if(TestWarning(n_rgps == 0, "Connect_impl",
+  Layer* recv_lay = (Layer*)prjn->layer;
+  Layer* send_lay = (Layer*)prjn->from.ptr();
+
+  if(TestWarning(!recv_lay->unit_groups, "Connect_impl",
 		 "requires recv layer to have unit groups!")) {
     return;
   }
 
-  int n_sends = prjn->from->units.leaves;
+  int n_rgps = recv_lay->gp_geom.n;
+  int ru_nunits = recv_lay->un_geom.n;
+
+  int n_sends = send_lay->units.leaves;
   bool init_idxs = false;
   if(send_idx_ars.size != n_rgps) {
     init_idxs = true;
@@ -1815,23 +1814,22 @@ void MatrixRndPrjnSpec::Connect_impl(Projection* prjn) {
   if(recv_no <= 0) recv_no = 1;
 
   // sending number is even distribution across senders plus some imbalance factor
-  float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) / (float)n_sends;
+  float send_no_flt = (float)(recv_lay->units.leaves * recv_no) / (float)n_sends;
   // add SEM as corrective factor
   float send_sem = send_no_flt / sqrtf(n_rgps); // n is n_rgps -- much noisier
   int send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f);
-  if(send_no > prjn->layer->units.leaves) send_no = prjn->layer->units.leaves;
+  if(send_no > recv_lay->units.leaves) send_no = recv_lay->units.leaves;
 
   // pre-allocate connections!
-  prjn->layer->RecvConsPreAlloc(recv_no, prjn);
-  prjn->from->SendConsPreAlloc(send_no, prjn);
+  recv_lay->RecvConsPreAlloc(recv_no, prjn);
+  send_lay->SendConsPreAlloc(send_no, prjn);
 
   for(int gpi=0; gpi<n_rgps; gpi++) {
-    Unit_Group* ru_gp = (Unit_Group*)prjn->layer->units.FastGp(gpi);
     int_Array* ari = (int_Array*)send_idx_ars[gpi];
-    for(int rui=0; rui<ru_gp->leaves; rui++) {
-      Unit* ru = ru_gp->Leaf(rui);
+    for(int rui=0; rui < ru_nunits; rui++) {
+      Unit* ru = recv_lay->UnitAtUnGpIdx(rui, gpi);
       for(int sui=0; sui<recv_no; sui++) {
-	Unit* su = prjn->from->units.Leaf(ari->FastEl(sui));
+	Unit* su = send_lay->units.Leaf(ari->FastEl(sui));
 	ru->ConnectFrom(su, prjn, false, false);
 	// final false change to true = ignore errs -- to be expected
       }
@@ -1855,10 +1853,10 @@ void MatrixGradRFPrjnSpec::Defaults_init() {
 void MatrixGradRFPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
 				       int cg_idx) {
   int ru_idx = ru->GetIndex();
-  Unit_Group* ru_ug = (Unit_Group*)ru->owner;
+  Layer* recv_lay = (Layer*)prjn->layer;
   bool save_invert = invert;
 
-  int gp_sz = ru_ug->leaves / 2;
+  int gp_sz = recv_lay->un_geom.n / 2;
   PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(ru_idx / gp_sz);
   if(go_no == PFCGateSpec::GATE_NOGO) {
     invert = true;

@@ -3813,7 +3813,7 @@ void Layer::Initialize() {
   layer_type = HIDDEN;
   disp_scale = 1.0f;
   unit_groups = false;
-  virt_groups = false;		// todo: make true default for later version
+  virt_groups = true;
   gp_spc.x = 1;  gp_spc.y = 1;
   projections.SetBaseType(&TA_Projection);
   send_prjns.send_prjns = true;
@@ -5163,7 +5163,7 @@ bool Layer::VarToVal(const String& dest_var, float val) {
   return units.VarToVal(dest_var, val);
 }
 
-Unit* Layer::UnitAtCoord(int x, int y) {
+Unit* Layer::UnitAtCoord(int x, int y) const {
   if(unit_groups) {
     int gp_x = x / un_geom.x;
     int gp_y = y / un_geom.y;
@@ -5179,7 +5179,7 @@ Unit* Layer::UnitAtCoord(int x, int y) {
   return NULL;
 }
 
-Unit* Layer::UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y) {
+Unit* Layer::UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y) const {
   if(TestError(!unit_groups, "UnitAtGpCoord", "Layer is not configured for unit_groups"))
     return NULL;
   if(gp_x >= gp_geom.x || gp_y >= gp_geom.y ||
@@ -5189,7 +5189,7 @@ Unit* Layer::UnitAtGpCoord(int gp_x, int gp_y, int un_x, int un_y) {
   return UnitAtUnGpIdx(unidx, gpidx);
 }
 
-Unit_Group* Layer::UnitGpAtCoord(int gp_x, int gp_y) {
+Unit_Group* Layer::UnitGpAtCoord(int gp_x, int gp_y) const {
   if(TestError(!unit_groups, "UnitGpAtCoord", "Layer is not configured for unit_groups"))
     return NULL;
   if(gp_x >= gp_geom.x) return NULL; // y will be caught by safe..
@@ -5197,7 +5197,7 @@ Unit_Group* Layer::UnitGpAtCoord(int gp_x, int gp_y) {
   return (Unit_Group*)units.gp.SafeEl(gidx);
 }
 
-void Layer::UnitLogPos(Unit* un, int& x, int& y) {
+void Layer::UnitLogPos(Unit* un, int& x, int& y) const {
   Unit_Group* own_sgp = un->own_subgp();
   if(own_sgp) {
     TwoDCoord gpos = own_sgp->GpLogPos();
@@ -5210,7 +5210,7 @@ void Layer::UnitLogPos(Unit* un, int& x, int& y) {
   }
 }
 
-Unit* Layer::UnitAtDispCoord(int x, int y) {
+Unit* Layer::UnitAtDispCoord(int x, int y) const {
   if(unit_groups && !virt_groups) {
     // unit group can have its own position -- need to search through each one
     for(int gi = 0; gi< units.gp.size; gi++) {
@@ -5239,7 +5239,7 @@ Unit* Layer::UnitAtDispCoord(int x, int y) {
   }
 }
 
-void Layer::UnitDispPos(Unit* un, int& x, int& y) {
+void Layer::UnitDispPos(Unit* un, int& x, int& y) const {
   Unit_Group* own_sgp = un->own_subgp();
   if(own_sgp) {
     x = own_sgp->pos.x + un->pos.x;
@@ -5248,6 +5248,19 @@ void Layer::UnitDispPos(Unit* un, int& x, int& y) {
   else {			// otherwise unit has it directly..
     x = un->pos.x;
     y = un->pos.y;
+  }
+}
+
+int Layer::UnitGpIdx(Unit* u) const {
+  if(!u || !unit_groups) return -1;
+  Unit_Group* osg = u->own_subgp();
+  if(osg) {
+    return osg->idx;
+  }
+  else {
+    int osg_uidx;  int osg_gpidx;
+    UnGpIdxFmUnitIdx(u->idx, osg_uidx, osg_gpidx);
+    return osg_gpidx;
   }
 }
 

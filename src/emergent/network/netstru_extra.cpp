@@ -835,8 +835,15 @@ void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   Layer* send_lay = prjn->from;
   TwoDCoord ru_geo = recv_lay->gp_geom;
   TwoDCoord su_geo = send_lay->gp_geom;
-  int ru_nunits = recv_lay->un_geom.n;
-  int su_nunits = send_lay->un_geom.n;
+
+  // revert to main group if no sub groups
+  Layer::AccessMode racc_md = Layer::ACC_GP;
+  if(!recv_lay->unit_groups) racc_md = Layer::ACC_LAY;
+  Layer::AccessMode sacc_md = Layer::ACC_GP;
+  if(!send_lay->unit_groups) sacc_md = Layer::ACC_LAY;
+
+  int ru_nunits = recv_lay->UnitAccess_NUnits(racc_md);
+  int su_nunits = send_lay->UnitAccess_NUnits(sacc_md);
 
   int max_n = n_conns;
   if(n_conns < 0)
@@ -845,11 +852,6 @@ void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   max_n = MIN(send_lay->gp_geom.n - send_start, max_n);
   max_n = MAX(1, max_n);	// lower limit of 1
   for(int i=0; i<max_n; i++) {
-    // revert to main group if no sub groups
-    Layer::AccessMode racc_md = Layer::ACC_GP;
-    if(!recv_lay->unit_groups) racc_md = Layer::ACC_LAY;
-    Layer::AccessMode sacc_md = Layer::ACC_GP;
-    if(!send_lay->unit_groups) sacc_md = Layer::ACC_LAY;
 
     int rgpidx = i + recv_start;
     int sgpidx = i + send_start;
@@ -901,8 +903,15 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   Layer* send_lay = prjn->from;
   TwoDCoord ru_geo = recv_lay->gp_geom;
   TwoDCoord su_geo = send_lay->gp_geom;
-  int ru_nunits = recv_lay->un_geom.n;
-  int su_nunits = send_lay->un_geom.n;
+
+  // revert to main group if no sub groups
+  Layer::AccessMode racc_md = Layer::ACC_GP;
+  if(!recv_lay->unit_groups) racc_md = Layer::ACC_LAY;
+  Layer::AccessMode sacc_md = Layer::ACC_GP;
+  if(!send_lay->unit_groups) sacc_md = Layer::ACC_LAY;
+
+  int ru_nunits = recv_lay->UnitAccess_NUnits(racc_md);
+  int su_nunits = send_lay->UnitAccess_NUnits(sacc_md);
 
   int max_n = n_conns;
   if(n_conns < 0)
@@ -911,12 +920,6 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
   max_n = MIN(send_lay->gp_geom.n - send_start, max_n);
   max_n = MAX(1, max_n);	// lower limit of 1
   for(int i=0; i<max_n; i++) {
-    // revert to main group if no sub groups
-    Layer::AccessMode racc_md = Layer::ACC_GP;
-    if(!recv_lay->unit_groups) racc_md = Layer::ACC_LAY;
-    Layer::AccessMode sacc_md = Layer::ACC_GP;
-    if(!send_lay->unit_groups) sacc_md = Layer::ACC_LAY;
-
     int rgpidx = i + recv_start;
     int sgpidx = i + send_start;
 
@@ -1125,7 +1128,7 @@ void GpOneToManyPrjnSpec::Connect_impl(Projection* prjn) {
 /////////////////////////////
 
 void GpTessEl::Initialize() {
-  p_con = .25f;
+  p_con = 1.0f;
 }
 
 void GpRndTesselPrjnSpec::Initialize() {
@@ -1242,83 +1245,94 @@ void GpRndTesselPrjnSpec::GetCtrFmRecv(TwoDCoord& sctr, TwoDCoord ruc) {
   sctr += send_gp_border;
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps(Unit_Group* ru_gp, Unit_Group* su_gp, float p_con,
+void GpRndTesselPrjnSpec::Connect_Gps(int rgpidx, int sgpidx, float p_con,
 				      Projection* prjn, bool send_alloc) {
-  if((ru_gp->size == 0) || (su_gp->size == 0)) return;
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
+  bool same_gp = (recv_lay == send_lay && rgpidx == sgpidx);
 
   if(send_alloc) {
     int send_no = 1;
     int recv_no = 1;
     if(p_con < 1.0f) {
       if(p_con < 0) p_con = 1.0f;
-      if(!self_con && (ru_gp == su_gp))
-	recv_no = (int) ((p_con * (float)(su_gp->leaves-1)) + .5f);
+      if(!self_con && same_gp)
+	recv_no = (int) ((p_con * (float)(su_nunits-1)) + .5f);
       else
-	recv_no = (int) ((p_con * (float)su_gp->leaves) + .5f);
+	recv_no = (int) ((p_con * (float)su_nunits) + .5f);
       if(recv_no <= 0)  recv_no = 1;
-      recv_no = MAX(su_gp->size, recv_no);
+      recv_no = MAX(su_nunits, recv_no);
 
       // sending number is even distribution across senders plus some imbalance factor
-      float send_no_flt = (float)(ru_gp->size * recv_no) / (float)su_gp->size;
+      float send_no_flt = (float)(ru_nunits * recv_no) / (float)su_nunits;
       // add SEM as corrective factor
       float send_sem = send_no_flt / sqrtf(send_no_flt);
       send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f);
-      send_no = MIN(ru_gp->size, send_no);
+      send_no = MIN(ru_nunits, send_no);
 
-      if(ru_gp == su_gp)
+      if(same_gp)
 	recv_no += 2;		// bit of extra room here too
     }
     else {
-      send_no = ru_gp->size;
-      recv_no = su_gp->size;
+      send_no = ru_nunits;
+      recv_no = su_nunits;
     }
-    for(int i=0;i<su_gp->size;i++) {
-      Unit* su = su_gp->FastEl(i);
+    for(int sui=0;sui<su_nunits;sui++) {
+      Unit* su = send_lay->UnitAtUnGpIdx(sui, sgpidx);
       su->SendConsAllocInc(send_no, prjn);
     }
 
     // also do incremental alloc of the recv guy too!
-    Unit* ru;
-    taLeafItr ru_itr;
-    FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr)
+    for(int rui=0;rui<ru_nunits;rui++) {
+      Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
       ru->RecvConsAllocInc(recv_no, prjn);
+    }
     return;
   }
 
   if(p_con < 0) {		// this means: make symmetric connections!
-    Connect_Gps_Sym(ru_gp, su_gp, p_con, prjn);
+    Connect_Gps_Sym(rgpidx, sgpidx, p_con, prjn);
   }
   else if(p_con == 1.0f) {
-    Connect_Gps_Full(ru_gp, su_gp, prjn);
+    Connect_Gps_Full(rgpidx, sgpidx, prjn);
   }
-  else if((ru_gp == su_gp) && sym_self) {
-    Connect_Gps_SymSameGp(ru_gp, su_gp, p_con, prjn);
+  else if(same_gp && sym_self) {
+    Connect_Gps_SymSameGp(rgpidx, sgpidx, p_con, prjn);
   }
   else {
-    if((prjn->from.ptr() == prjn->layer) && sym_self) {
-      Connect_Gps_SymSameLay(ru_gp, su_gp, p_con, prjn);
+    if(recv_lay == send_lay && sym_self) {
+      Connect_Gps_SymSameLay(rgpidx, sgpidx, p_con, prjn);
     }
     else {
-      Connect_Gps_Std(ru_gp, su_gp, p_con, prjn);
+      Connect_Gps_Std(rgpidx, sgpidx, p_con, prjn);
     }
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp,
+void GpRndTesselPrjnSpec::Connect_Gps_Sym(int rgpidx, int sgpidx,
 					  float p_con, Projection* prjn) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
   if((prjn->from.ptr() != prjn->layer) || !sym_self)
     return;			// not applicable otherwise!
 
-  Unit* ru;
-  taLeafItr ru_itr;
-  FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
+  for(int rui=0; rui < ru_nunits; rui++) {
+    Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
     for(int g=0;g<ru->send.size;g++) {
       SendCons* scg = ru->send.FastEl(g);
-      if((scg->prjn->layer != scg->prjn->from.ptr()) || (scg->prjn->layer != prjn->layer))
+      if((scg->prjn->layer != send_lay) || (scg->prjn->layer != recv_lay))
 	continue;		// only deal with self projections to this same layer
       for(int i=0;i<scg->size;i++) {
 	Unit* su = scg->Un(i);
-	if(GET_OWNER(su, Unit_Group) == su_gp) { // this sender is in actual group I'm trying to connect
+	// only connect if this sender is in actual group I'm trying to connect
+	int osgpidx = su->UnitGpIdx();
+	if(osgpidx == sgpidx) {
 	  ru->ConnectFromCk(su, prjn);
 	}
       }
@@ -1326,36 +1340,40 @@ void GpRndTesselPrjnSpec::Connect_Gps_Sym(Unit_Group* ru_gp, Unit_Group* su_gp,
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* su_gp,
+void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
 				float p_con, Projection* prjn) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
   // trick is to divide cons in half, choose recv, send at random
   // for 1/2 cons, then go through all units and make the symmetric cons..
   // pre-allocate connections!
   TestWarning(p_con > .95f, "Connect_Gps_SymSameGp",
-	      "usually less than complete connectivity for high values of p_con in symmetric, self-connected layers using permute!");
+	      "usually produces less than complete connectivity for high values of p_con in symmetric, self-connected layers using permute!");
   int n_cons;
   if(!self_con)
-    n_cons = (int) (p_con * (float)(su_gp->leaves-1) + .5f);
+    n_cons = (int) (p_con * (float)(su_nunits-1) + .5f);
   else
-    n_cons = (int) (p_con * (float)su_gp->leaves + .5f);
+    n_cons = (int) (p_con * (float)su_nunits + .5f);
   int first = (int)(.5f * (float)n_cons);
   if(first <= 0) first = 1;
 
-  Unit* ru, *su;
-  taLeafItr ru_itr, su_itr;
 
   UnitPtrList ru_list;		// receiver permution list
-  for(int i=0;i<ru_gp->size; i++) {
-    ru = ru_gp->FastEl(i);
+  for(int rui=0; rui<ru_nunits; rui++) {
+    Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
     ru_list.Link(ru);			// on making a symmetric connection in first pass
   }
   ru_list.Permute();
 
   UnitPtrList perm_list;
   for(int i=0;i<ru_list.size; i++) {
-    ru = ru_list.FastEl(i);
+    Unit* ru = ru_list.FastEl(i);
     perm_list.Reset();
-    FOR_ITR_EL(Unit, su, su_gp->, su_itr) {
+    for(int sui=0; sui < su_nunits; sui++) {
+      Unit* su = send_lay->UnitAtUnGpIdx(sui, sgpidx);
       if(!self_con && (ru == su)) continue;
       // don't connect to anyone who already recvs from me cuz that will make
       // a symmetric connection which isn't good: symmetry will be enforced later
@@ -1370,7 +1388,8 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* s
     }
   }
   // now go thru and make the symmetric connections
-  FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
+  for(int rui=0; rui < ru_nunits; rui++) {
+    Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
     SendCons* scg = ru->send.FindPrjn(prjn);
     if(scg == NULL) continue;
     for(int i=0;i<scg->size;i++) {
@@ -1380,26 +1399,31 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(Unit_Group* ru_gp, Unit_Group* s
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(Unit_Group* ru_gp, Unit_Group* su_gp,
+void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(int rgpidx, int sgpidx,
 						 float p_con, Projection* prjn) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
   // within the same layer, i want to make connections symmetric: either i'm the
   // first to connect to other group, or other group has already connected to me
   // so I should just make symmetric versions of its connections
   // take first send unit and find if it recvs from anyone in this prjn yet
-  Unit* su = (Unit*)su_gp->Leaf(0);
+  Unit* su = send_lay->UnitAtUnGpIdx(0, sgpidx);
   RecvCons* scg = su->recv.FindPrjn(prjn);
   if((scg != NULL) && (scg->size > 0)) {	// sender has been connected already: try to connect me!
     int n_con = 0;		// number of actual connections made
 
-    Unit* ru;
-    taLeafItr ru_itr;
-    FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
+    for(int rui=0; rui < ru_nunits; rui++) {
+      Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
       SendCons* scg = ru->send.FindPrjn(prjn);
       if(scg == NULL) continue;
-      int i;
-      for(i=0;i<scg->size;i++) {
+      for(int i=0;i<scg->size;i++) {
 	Unit* su = scg->Un(i);
-	if(GET_OWNER(su, Unit_Group) == su_gp) { // this sender is in actual group I'm trying to connect
+	// only connect if this sender is in actual group I'm trying to connect
+	int osgpidx = su->UnitGpIdx();
+	if(osgpidx == sgpidx) {
 	  if(ru->ConnectFromCk(su, prjn))
 	    n_con++;
 	}
@@ -1409,49 +1433,65 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(Unit_Group* ru_gp, Unit_Group* 
       return;
     // otherwise, go ahead and make new connections!
   }
-  Connect_Gps_Std(ru_gp, su_gp, p_con, prjn);
+  Connect_Gps_Std(rgpidx, sgpidx, p_con, prjn);
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_Std(Unit_Group* ru_gp, Unit_Group* su_gp,
+void GpRndTesselPrjnSpec::Connect_Gps_Std(int rgpidx, int sgpidx,
 					  float p_con, Projection* prjn) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
+  bool same_gp = (recv_lay == send_lay && rgpidx == sgpidx);
+
   int recv_no;
-  if(!self_con && (ru_gp == su_gp))
-    recv_no = (int) ((p_con * (float)(su_gp->leaves-1)) + .5f);
+  if(!self_con && same_gp)
+    recv_no = (int) ((p_con * (float)(su_nunits-1)) + .5f);
   else
-    recv_no = (int) ((p_con * (float)su_gp->leaves) + .5f);
+    recv_no = (int) ((p_con * (float)su_nunits) + .5f);
   if(recv_no <= 0)  recv_no = 1;
 
-  Unit* ru, *su;
-  taLeafItr ru_itr, su_itr;
   UnitPtrList perm_list;	// permution list
-  FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
+  for(int rui=0; rui < ru_nunits; rui++) {
+    Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
     perm_list.Reset();
-    FOR_ITR_EL(Unit, su, su_gp->, su_itr) {
+    for(int sui=0; sui < su_nunits; sui++) {
+      Unit* su = send_lay->UnitAtUnGpIdx(sui, sgpidx);
       if(!self_con && (ru == su)) continue;
       perm_list.Link(su);
     }
-    perm_list.Permute();
     for(int i=0; i<recv_no; i++)
       ru->ConnectFrom((Unit*)perm_list[i], prjn);
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_Gps_Full(Unit_Group* ru_gp, Unit_Group* su_gp,
+void GpRndTesselPrjnSpec::Connect_Gps_Full(int rgpidx, int sgpidx,
 					   Projection* prjn) {
-  Unit* ru, *su;
-  taLeafItr ru_itr, su_itr;
-  FOR_ITR_EL(Unit, ru, ru_gp->, ru_itr) {
-    FOR_ITR_EL(Unit, su, su_gp->, su_itr) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
+  for(int rui=0; rui < ru_nunits; rui++) {
+    Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+    for(int sui=0; sui < su_nunits; sui++) {
+      Unit* su = send_lay->UnitAtUnGpIdx(sui, sgpidx);
       if(self_con || (ru != su))
 	ru->ConnectFrom(su, prjn);
     }
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc,
+void GpRndTesselPrjnSpec::Connect_RecvGp(int rgpidx, const TwoDCoord& ruc,
 					 Projection* prjn, bool send_alloc) {
 
-  TwoDCoord& su_geo = prjn->from->gp_geom;
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
+  TwoDCoord& su_geo = send_lay->gp_geom;
   TwoDCoord sctr;
   GetCtrFmRecv(sctr, ruc);  // positions of center of recv in sending layer
   for(int i = 0; i< send_gp_offs.size; i++) {
@@ -1459,9 +1499,9 @@ void GpRndTesselPrjnSpec::Connect_RecvGp(Unit_Group* ru_gp, const TwoDCoord& ruc
     TwoDCoord suc = te->send_gp_off + sctr;
     if(suc.WrapClip(wrap, su_geo) && !wrap)
       continue;
-    Unit_Group* su_gp = prjn->from->UnitGpAtCoord(suc);
-    if(su_gp == NULL) continue;
-    Connect_Gps(ru_gp, su_gp, te->p_con, prjn, send_alloc);
+    int sgpidx = send_lay->UnitGpIdxFmPos(suc);
+    if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
+    Connect_Gps(rgpidx, sgpidx, te->p_con, prjn, send_alloc);
   }
 }
 
@@ -1482,6 +1522,11 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
     return;
   }
 
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
   TwoDCoord& ru_geo = prjn->layer->gp_geom;
   TwoDCoord use_recv_gp_n = recv_gp_n;
 
@@ -1492,21 +1537,20 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
 
   TwoDCoord ruc, nuc;
   for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
-    int rugp_idx = 0;
     for(ruc.y = recv_gp_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_gp_n.y);
 	ruc.y += recv_gp_skip.y, nuc.y++)
       {
 	for(ruc.x = recv_gp_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_gp_n.x);
-	    ruc.x += recv_gp_skip.x, nuc.x++, rugp_idx++)
+	    ruc.x += recv_gp_skip.x, nuc.x++)
 	  {
-	    Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
-	    if(ru_gp == NULL) continue;
-	    Connect_RecvGp(ru_gp, ruc, prjn, alloc_loop);
+	    int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
+	    if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
+	    Connect_RecvGp(rgpidx, ruc, prjn, alloc_loop);
 	  }
       }
     if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->layer->RecvConsPostAlloc(prjn);
-      prjn->from->SendConsPostAlloc(prjn);
+      recv_lay->RecvConsPostAlloc(prjn);
+      send_lay->SendConsPostAlloc(prjn);
     }
   }
 }
@@ -2224,9 +2268,6 @@ void GaussRFPrjnSpec::Connect_impl(Projection* prjn) {
 void GaussRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
 
-//  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
-//  int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
-  
   TwoDCoord rf_half_wd = rf_width / 2;
   FloatTwoDCoord rf_ctr = rf_half_wd;
   if(rf_half_wd * 2 == rf_width) // even
@@ -2309,7 +2350,7 @@ void GradientWtsPrjnSpec::Defaults_init() {
 
 
 void GradientWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  if(use_gps && prjn->layer->unit_groups > 0)
+  if(use_gps && prjn->layer->unit_groups)
     InitWeights_RecvGps(prjn, cg, ru);
   else
     InitWeights_RecvFlat(prjn, cg, ru);
@@ -2350,8 +2391,8 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
   Unit* lru = (Unit*)ru;
-  Unit_Group* rugp = (Unit_Group*)lru->owner;
-  TwoDCoord rgp_pos = rugp->GpLogPos(); // position relative to overall gp geom
+  int rgpidx = lru->UnitGpIdx();
+  TwoDCoord rgp_pos = recv_lay->UnitGpPosFmIdx(rgpidx); // position relative to overall gp geom
   float rgp_x = (float)rgp_pos.x / (float)MAX(recv_lay->gp_geom.x-1, 1);
   float rgp_y = (float)rgp_pos.y / (float)MAX(recv_lay->gp_geom.y-1, 1);
 
