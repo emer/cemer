@@ -39,6 +39,8 @@ public:
 
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
 
+  override TypeDef* 	UnGpDataType()  { return &TA_PBWMUnGpData; }
+
   TA_SIMPLE_BASEFUNS(PatchLayerSpec);
 protected:
   SPEC_DEFAULTS;
@@ -76,6 +78,8 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+
+  override TypeDef* 	UnGpDataType()  { return &TA_PBWMUnGpData; }
 
   TA_SIMPLE_BASEFUNS(SNcLayerSpec);
 protected:
@@ -149,6 +153,8 @@ public:
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 
+  override TypeDef* 	UnGpDataType()  { return &TA_PBWMUnGpData; }
+
   TA_SIMPLE_BASEFUNS(SNrThalLayerSpec);
 protected:
   SPEC_DEFAULTS;
@@ -165,6 +171,8 @@ class LEABRA_API MatrixBaseLayerSpec : public LeabraLayerSpec {
   // #VIRT_BASE base matrix layer spec -- derive version-specific guys from this -- other code may check for this one to remain generic wrt versions
 INHERITED(LeabraLayerSpec)
 public:
+  override TypeDef* 	UnGpDataType()  { return &TA_PBWMUnGpData; }
+
   TA_BASEFUNS_NOCOPY(MatrixBaseLayerSpec);
 protected:
   SPEC_DEFAULTS;
@@ -178,6 +186,8 @@ class LEABRA_API PFCBaseLayerSpec : public LeabraLayerSpec {
   // #VIRT_BASE base pfc layer spec -- derive version-specific guys from this -- other code may check for this one to remain generic wrt versions
 INHERITED(LeabraLayerSpec)
 public:
+  override TypeDef* 	UnGpDataType()  { return &TA_PBWMUnGpData; }
+
   TA_BASEFUNS_NOCOPY(PFCBaseLayerSpec);
 protected:
   SPEC_DEFAULTS;
@@ -490,14 +500,7 @@ private:
 //////////////////////////////////////////
 
 // misc_state docs:
-// * pfc ugp->misc_state = counter of number of trials in maint or empty state
-// ** 0 = just cleared (empty)
-// ** 1+ = maint for a trial or a more
-// ** -1- = empty for a trial or more
-// * pfc ugp->misc_state1 = GateState -- what happened on last gating action in terms of PFC state and gating signal action
-// * pfc ugp->misc_state2 = GateSignal -- what gating signal(s) happened on most recent trial
-// * pfc ugp->misc_float = current Go activation value (mnt or out) -- used by units to boost netin -- already multiplied by gate.mnt/out_go_netin
-// * pfc ugp->misc_float1 = current output gating Go activation value for graded Go -- just multiply directly by this number
+// * pfc ugp->misc_state = 
 
 class LEABRA_API PFCGateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating specifications for basal ganglia gating of PFC maintenance layer
@@ -511,7 +514,7 @@ public:
     GATE_OUT_MNT_GO = 4,	// gate maint and output Go units fired (not currently possible with mutex logic)
   };
 
-  enum	GateState {		// what happened on last gating action, stored in misc_state1 on unit group -- for debugging etc
+  enum	GateState {		// what happened on last gating action, stored in gate_state on unit group -- for debugging etc
     EMPTY_MNT_GO = 0,		// stripe was empty, got MAINT Go
     EMPTY_OUT_GO = 1,		// stripe was empty, got OUTPUT Go
     EMPTY_OUT_MNT_GO = 2,	// stripe was empty, got OUTPUT then MAINT Go (not currently possible with mutex logic)
@@ -546,6 +549,27 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
+
+class LEABRA_API PBWMUnGpData : public LeabraUnGpData {
+  // PBWM version of data to maintain for independent unit groups of competing units within a single layer -- contains extra information for PBWM state
+INHERITED(LeabraUnGpData)
+public:
+  int		mnt_count;	// #CAT_Activation counter of number of trials in maint or empty state -- 0 = just cleared (empty) -- 1+ = maint for a trial or a more -- -1- = empty for a trial or more (was misc_state)
+  PFCGateSpec::GateState	gate_state;	// #CAT_Activation what happened on last gating action in terms of PFC state and gating signal action (was misc_state1)
+  PFCGateSpec::GateSignal	gate_sig;	// #CAT_Activation what gating signal(s) happened on most recent trial (was misc_state2)
+  float		cur_go_act;	// #CAT_Activation current Go activation value (mnt or out) -- used by units to boost netin -- already multiplied by gate.mnt/out_go_netin (was misc_float)
+  float		out_go_act;	// #CAT_Activation current output gating Go activation value for graded Go -- just multiply directly by this number (was misc_float1)
+  int		rnd_go_thr;	// #CAT_Activation current random go threshold for this stripe -- thresholds have a random interval element within bounds
+
+  override void	Init_State();
+
+  void	Copy_(const PBWMUnGpData& cp);
+  TA_BASEFUNS(PBWMUnGpData);
+private:
+  void	Initialize();
+  void	Destroy()		{ };
+};
+
 class LEABRA_API PFCLayerSpec : public PFCBaseLayerSpec {
   // Prefrontal cortex layer: gets maintenance and output gating signals from SNrThal -- gate toggles off in minus phase, on at end of plus phase, output gating drives unit act relative to internal act_eq value
 INHERITED(PFCBaseLayerSpec)
@@ -572,7 +596,7 @@ public:
 					LeabraNetwork* net);
   // computes mid minus (gating activation) state prior to gating
   virtual void	SendGateStates(LeabraLayer* lay, LeabraNetwork* net);
-  // send misc_state gating state variables to the snrthal and matrix layers
+  // send gating state variables to the snrthal and matrix layers
   virtual void 	Compute_Gating(LeabraLayer* lay, LeabraNetwork* net);
   // compute the gating signal based on SNrThal layer activations -- each cycle during first minus phase
   virtual void 	Compute_Gating_MidMinus(LeabraLayer* lay, LeabraNetwork* net);

@@ -2867,7 +2867,7 @@ void LeabraLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      gpd->misc_state = gpd->misc_state1 = gpd->misc_state2 = gpd->misc_state3 = 0;
+      gpd->Init_State();
     }
   }
   Init_Inhib(lay, net);		// initialize inhibition at start..
@@ -4584,13 +4584,6 @@ void LeabraLayer::CheckThisConfig_impl(bool quiet, bool& rval) {
   
 void LeabraUnGpData::Initialize() {
   Inhib_Initialize();
-  misc_state = 0;
-  misc_state1 = 0;
-  misc_state2 = 0;
-  misc_state3 = 0;
-  misc_float = 0.0f;
-  misc_float1 = 0.0f;
-  misc_float2 = 0.0f;
 }
 
 void LeabraUnGpData::InitLinks() {
@@ -4613,15 +4606,11 @@ void LeabraUnGpData::InitLinks() {
 
 void LeabraUnGpData::Copy_(const LeabraUnGpData& cp) {
   Inhib_Copy_(cp);
-  misc_state = cp.misc_state;
-  misc_state1 = cp.misc_state1;
-  misc_state2 = cp.misc_state2;
-  misc_state3 = cp.misc_state3;
-  misc_float = cp.misc_float;
-  misc_float1 = cp.misc_float1;
-  misc_float2 = cp.misc_float2;
 }
 
+void LeabraUnGpData::Init_State() {
+  // nop
+}
 
 ////////////////////////////////////////////////////
 // 	LeabraLayer  Misc Objs
@@ -4887,6 +4876,7 @@ void LeabraLayer::BuildUnits() {
   lay_kbuffs.AllocAllBuffs(flat_geom.n, 1);
   gp_kbuffs.AllocAllBuffs(un_geom.n, gp_geom.n);
 
+  ungp_data.SetBaseType(((LeabraLayerSpec*)GetLayerSpec())->UnGpDataType());
   ungp_data.SetSize(gp_geom.n);
 }
 

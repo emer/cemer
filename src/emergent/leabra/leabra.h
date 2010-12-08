@@ -2184,6 +2184,9 @@ public:
   override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
   // check for for misc configuration settings required by different algorithms, including settings on the processes NOTE: this routine augments the default layer checks, it doesn't replace them
 
+  virtual TypeDef* 	UnGpDataType()  { return &TA_LeabraUnGpData; }
+  // #CAT_Structure type of unit group data object to create for the layers associated with this layer spec
+
   void	InitLinks();
   SIMPLE_COPY(LeabraLayerSpec);
   TA_BASEFUNS(LeabraLayerSpec);
@@ -2371,15 +2374,11 @@ class LEABRA_API LeabraUnGpData : public taOBase, public LeabraInhib {
   // #STEM_BASE ##CAT_Leabra data to maintain for independent unit groups of competing units within a single layer -- storing separately allows unit groups to be virtual (virt_groups flag on layer)
 INHERITED(taOBase)
 public:
-  int		misc_state;	// #CAT_Activation miscellaneous state variable
-  int		misc_state1;	// #CAT_Activation second miscellaneous state variable 
-  int		misc_state2;	// #CAT_Activation third miscellaneous state variable 
-  int		misc_state3;	// #CAT_Activation fourth miscellaneous state variable 
-  float		misc_float;	// #CAT_Activation miscellaneous floating point variable 
-  float		misc_float1;	// #CAT_Activation second miscellaneous floating point variable 
-  float		misc_float2;	// #CAT_Activation third miscellaneous floating point variable 
 
   override String 	GetTypeDecoKey() const { return "Unit"; }
+
+  virtual void		Init_State();
+  // initialize state -- called during InitWeights -- mainly for derived classes
 
   void	InitLinks();
   void	Copy_(const LeabraUnGpData& cp);

@@ -21,6 +21,34 @@
 #include <limits.h>
 #include <float.h>
 
+void PBWMUnGpData::Initialize() {
+  mnt_count = 0;
+  gate_state = PFCGateSpec::INIT_STATE;
+  gate_sig = PFCGateSpec::GATE_NOGO;
+  rnd_go_thr = 0;
+  cur_go_act = 0.0f;
+  out_go_act = 0.0f;
+}
+
+void PBWMUnGpData::Copy_(const PBWMUnGpData& cp) {
+  mnt_count = cp.mnt_count;
+  gate_state = cp.gate_state;
+  gate_sig = cp.gate_sig;
+  rnd_go_thr = cp.rnd_go_thr;
+  cur_go_act = cp.cur_go_act;
+  out_go_act = cp.out_go_act;
+}
+
+void PBWMUnGpData::Init_State() {
+  inherited::Init_State();
+  mnt_count = 0;
+  gate_state = PFCGateSpec::INIT_STATE;
+  gate_sig = PFCGateSpec::GATE_NOGO;
+  rnd_go_thr = 0;
+  cur_go_act = 0.0f;
+  out_go_act = 0.0f;
+}
+
 ////////////////////////////////////////////////////////////////////
 //	Patch/Striosomes and SNc
 
@@ -309,7 +337,7 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
   int gp_sz = munits / 2;
   LeabraUnitSpec* us = (LeabraUnitSpec*)matrix_lay->GetUnitSpec();
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    LeabraUnGpData* mgpd = matrix_lay->ungp_data.FastEl(mg);
+    PBWMUnGpData* mgpd = (PBWMUnGpData*)matrix_lay->ungp_data.FastEl(mg);
     float gonogo = 0.0f;
     if(mgpd->acts.max >= us->opt_thresh.send) {
       float sum_go = 0.0f;
@@ -326,7 +354,7 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
       if(norm_factor > 0.0f) {
 	gonogo = (sum_go - sum_nogo) / norm_factor;
       }
-      if(mgpd->misc_state1 >= PFCGateSpec::NOGO_RND_GO) {
+      if(mgpd->gate_state >= PFCGateSpec::NOGO_RND_GO) {
 	gonogo += snrthal.rnd_go_inc;
 	if(gonogo > 1.0f) gonogo = 1.0f;
       }
@@ -350,13 +378,13 @@ void SNrThalLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) 
 
 void SNrThalLayerSpec::Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net) {
   for(int g=0; g < lay->gp_geom.n; g++) {
-    LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(g);
     
     bool zap_act_eq = false;
-    if((bg_type == MAINT) && (gpd->misc_state2 == PFCGateSpec::GATE_OUT_GO)) {
+    if((bg_type == MAINT) && (gpd->gate_sig == PFCGateSpec::GATE_OUT_GO)) {
       zap_act_eq = true;
     }
-    if((bg_type == OUTPUT) && (gpd->misc_state2 == PFCGateSpec::GATE_MNT_GO)) {
+    if((bg_type == OUTPUT) && (gpd->gate_sig == PFCGateSpec::GATE_MNT_GO)) {
       zap_act_eq = true;
     }
     if(zap_act_eq) {
@@ -403,29 +431,29 @@ void SNrThalLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork* net,
   LeabraLayer* matrix = FindLayerFmSpec(lay, dum_prjn_idx, &TA_MatrixLayerSpec);
   LeabraLayer* patch = FindLayerFmSpec(matrix, dum_prjn_idx, &TA_PatchLayerSpec);
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    LeabraUnGpData* pfcgpd = pfc_lay->ungp_data.FastEl(mg);
-    LeabraUnGpData* snrgpd = lay->ungp_data.FastEl(mg);
-    LeabraUnGpData* mgpd = matrix->ungp_data.FastEl(mg);
+    PBWMUnGpData* pfcgpd = (PBWMUnGpData*)pfc_lay->ungp_data.FastEl(mg);
+    PBWMUnGpData* snrgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    PBWMUnGpData* mgpd = (PBWMUnGpData*)matrix->ungp_data.FastEl(mg);
 
     // everybody gets gate state info from PFC!
-    snrgpd->misc_state = mgpd->misc_state = pfcgpd->misc_state;
-    snrgpd->misc_state1 = pfcgpd->misc_state1; 
-    if(mgpd->misc_state1 < PFCGateSpec::NOGO_RND_GO) { // don't override random go signals
-      mgpd->misc_state1 = pfcgpd->misc_state1;
+    snrgpd->mnt_count = mgpd->mnt_count = pfcgpd->mnt_count;
+    snrgpd->gate_state = pfcgpd->gate_state; 
+    if(mgpd->gate_state < PFCGateSpec::NOGO_RND_GO) { // don't override random go signals
+      mgpd->gate_state = pfcgpd->gate_state;
     }
-    snrgpd->misc_state2 = mgpd->misc_state2 = pfcgpd->misc_state2;
-    // matrix does not get misc_float -- uses it otherwise
-    snrgpd->misc_float = pfcgpd->misc_float;
-    snrgpd->misc_float1 = pfcgpd->misc_float1;
+    snrgpd->gate_sig = mgpd->gate_sig = pfcgpd->gate_sig;
+    // matrix does not get cur_go_act -- uses it otherwise
+    snrgpd->cur_go_act = pfcgpd->cur_go_act;
+    snrgpd->out_go_act = pfcgpd->out_go_act;
 
     if(patch) {
-      LeabraUnGpData* patchgpd = patch->ungp_data.FastEl(mg);
+      PBWMUnGpData* patchgpd = (PBWMUnGpData*)patch->ungp_data.FastEl(mg);
       // everybody gets gate state info from PFC!
-      patchgpd->misc_state = snrgpd->misc_state;
-      patchgpd->misc_state1 = snrgpd->misc_state1;
-      patchgpd->misc_state2 = snrgpd->misc_state2;
-      patchgpd->misc_float = snrgpd->misc_float;
-      patchgpd->misc_float1 = snrgpd->misc_float1;
+      patchgpd->mnt_count = snrgpd->mnt_count;
+      patchgpd->gate_state = snrgpd->gate_state;
+      patchgpd->gate_sig = snrgpd->gate_sig;
+      patchgpd->cur_go_act = snrgpd->cur_go_act;
+      patchgpd->out_go_act = snrgpd->out_go_act;
     }
   }
 }
@@ -818,14 +846,14 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
   int da_prjn_idx;
   LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
-  LeabraUnGpData* mgpd = lay->ungp_data.FastEl(gpidx);
+  PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
   float tonic_da = dals->da.tonic_da;
-  int pfc_mnt_cnt = mgpd->misc_state; // is pfc maintaining or not?
+  int pfc_mnt_cnt = mgpd->mnt_count; // is pfc maintaining or not?
   bool pfc_is_mnt = pfc_mnt_cnt > 0;
-  int rnd_go_thr = mgpd->misc_state3; // random go threshold for this time
+  int rnd_go_thr = mgpd->rnd_go_thr; // random go threshold for this time
   int nunits = lay->UnitAccess_NUnits(acc_md);
   int gp_sz = nunits / 2;
-  bool nogo_rnd_go = (mgpd->misc_state1 == PFCGateSpec::NOGO_RND_GO);
+  bool nogo_rnd_go = (mgpd->gate_state == PFCGateSpec::NOGO_RND_GO);
 
   float bias_dav = 0.0f;
 
@@ -835,7 +863,7 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
       if(pfc_is_mnt) {
 	bias_dav = gate_bias.out_rew_go;
 	if(!nogo_rnd_go && pfc_mnt_cnt > rnd_go_thr) { // no rnd go yet, but over thresh
-	  mgpd->misc_state1 = PFCGateSpec::NOGO_RND_GO;
+	  mgpd->gate_state = PFCGateSpec::NOGO_RND_GO;
 	  Compute_RndGoNoise_ugp(lay, acc_md, gpidx, net);
 	}
       }
@@ -863,7 +891,7 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
       else {			// otherwise, bias to maintain/update
 	bias_dav = gate_bias.mnt_empty_go;
 	if(!nogo_rnd_go && pfc_mnt_cnt < -rnd_go_thr) { // no rnd go yet, but over thresh
-	  mgpd->misc_state1 = PFCGateSpec::NOGO_RND_GO;
+	  mgpd->gate_state = PFCGateSpec::NOGO_RND_GO;
 	  Compute_RndGoNoise_ugp(lay, acc_md, gpidx, net);
 	}
       }
@@ -905,7 +933,7 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 // this is called at end of plus phase, to establish a da value for driving learning
-// NOTE: misc_state reflects count at time of gating -- not updated at Compute_Gate_Final
+// NOTE: mnt_count reflects count at time of gating -- not updated at Compute_Gate_Final
 
 void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   int n_rnd_go = 0;		// find out if anyone has a rnd go
@@ -915,9 +943,9 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   // subtract the average -- this turns out to be important for preventing global
   // drift in weights upward when lots of rnd go is going on (e.g., loop model)
   for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    LeabraUnGpData* mgpd = lay->ungp_data.FastEl(gi);
-    if(mgpd->misc_state1 == PFCGateSpec::NOGO_RND_GO) n_rnd_go++;
-    else if(mgpd->misc_state2 == PFCGateSpec::GATE_MNT_GO) n_go++;
+    PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+    if(mgpd->gate_state == PFCGateSpec::NOGO_RND_GO) n_rnd_go++;
+    else if(mgpd->gate_sig == PFCGateSpec::GATE_MNT_GO) n_go++;
   }
   if(n_rnd_go > 0) {
     nogo_da_sub = rnd_go.nogo_da / (float)(lay->gp_geom.n - n_rnd_go);
@@ -928,16 +956,16 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   int gp_sz = nunits / 2;
     
   for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    LeabraUnGpData* mgpd = lay->ungp_data.FastEl(gi);
+    PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
     int snr_prjn_idx = 0;
     LeabraLayer* snr_lay = FindLayerFmSpec(lay, snr_prjn_idx, &TA_SNrThalLayerSpec);
 
-    LeabraUnGpData* snrgpd = snr_lay->ungp_data.FastEl(gi);
+    PBWMUnGpData* snrgpd = (PBWMUnGpData*)snr_lay->ungp_data.FastEl(gi);
     LeabraUnit* snr_u = (LeabraUnit*)snr_lay->UnitAccess(Layer::ACC_GP, 0, gi);
 
-    PFCGateSpec::GateSignal gate_sig = (PFCGateSpec::GateSignal)mgpd->misc_state2;
-    int pfc_mnt_cnt = mgpd->misc_state; // is pfc maintaining or not?
-    bool nogo_rnd_go = (mgpd->misc_state1 == PFCGateSpec::NOGO_RND_GO);
+    PFCGateSpec::GateSignal gate_sig = (PFCGateSpec::GateSignal)mgpd->gate_sig;
+    int pfc_mnt_cnt = mgpd->mnt_count; // is pfc maintaining or not?
+    bool nogo_rnd_go = (mgpd->gate_state == PFCGateSpec::NOGO_RND_GO);
 
     float snrthal_act = snr_u->act_m2;
     if(bg_type == OUTPUT) {
@@ -991,11 +1019,11 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 
 void MatrixLayerSpec::Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork*) {
   for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    LeabraUnGpData* mgpd = lay->ungp_data.FastEl(gi);
-    if((mgpd->misc_state1 == PFCGateSpec::NOGO_RND_GO) || mgpd->misc_state3 == 0) {
-      mgpd->misc_state1 = PFCGateSpec::INIT_STATE;
+    PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+    if((mgpd->gate_state == PFCGateSpec::NOGO_RND_GO) || mgpd->rnd_go_thr == 0) {
+      mgpd->gate_state = PFCGateSpec::INIT_STATE;
       // new treshold for when to fire rnd go next!
-      mgpd->misc_state3 = rnd_go.nogo_thr + Random::IntZeroN(rnd_go.nogo_rng);
+      mgpd->rnd_go_thr = rnd_go.nogo_thr + Random::IntZeroN(rnd_go.nogo_rng);
     }
   }
 }
@@ -1005,7 +1033,7 @@ void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay,
 					     LeabraNetwork* net) {
   if(rnd_go.nogo_noise == 0.0f) return;
   int nunits = lay->UnitAccess_NUnits(acc_md);
-  LeabraUnGpData* mgpd = lay->ungp_data.FastEl(gpidx);
+  PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
 
   int n_go_units = nunits / 2;
   lay->unit_idxs.SetSize(n_go_units); // just do go guys
@@ -1241,14 +1269,13 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
 
 void PFCLayerSpec::Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net) {
   for(int g=0; g < lay->gp_geom.n; g++) {
-    LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-    gpd->misc_state1 = PFCGateSpec::INIT_STATE;
-    gpd->misc_state2 = PFCGateSpec::GATE_NOGO;
-    gpd->misc_float = gate.go_learn_base;
-    gpd->misc_float1 = 0.0f;
-    gpd->misc_float2 = 0.0f;
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(g);
+    gpd->gate_state = PFCGateSpec::INIT_STATE;
+    gpd->gate_sig = PFCGateSpec::GATE_NOGO;
+    gpd->cur_go_act = gate.go_learn_base;
+    gpd->out_go_act = 0.0f;
   }
-  // this makes sure that misc_state is sent to all layers at the start of trial
+  // this makes sure that mnt_count is sent to all layers at the start of trial
   // so that biases are based on maintenance status at end of last trial!
   SendGateStates(lay, net);
 }
@@ -1326,17 +1353,17 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
   // this is the continuous mid minus version -- when gating actually happens
 
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    LeabraUnGpData* gpd = lay->ungp_data.FastEl(mg);
-    LeabraUnGpData* mgpd = snrthal_mnt->ungp_data.FastEl(mg);
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    PBWMUnGpData* mgpd = (PBWMUnGpData*)snrthal_mnt->ungp_data.FastEl(mg);
     LeabraUnit* snr_mnt_u = (LeabraUnit*)snrthal_mnt->UnitAccess(acc_md, 0, mg);
     LeabraUnit* snr_out_u = NULL;
     if(snrthal_out) {
       snr_out_u = (LeabraUnit*)snrthal_out->UnitAccess(acc_md, 0, mg);
     }
 
-    int pfc_mnt_cnt = gpd->misc_state; // is pfc maintaining or not?
-    bool out_gate_fired = (gpd->misc_state2 == PFCGateSpec::GATE_OUT_GO);
-    bool mnt_gate_fired = (gpd->misc_state2 == PFCGateSpec::GATE_MNT_GO);
+    int pfc_mnt_cnt = gpd->mnt_count; // is pfc maintaining or not?
+    bool out_gate_fired = (gpd->gate_sig == PFCGateSpec::GATE_OUT_GO);
+    bool mnt_gate_fired = (gpd->gate_sig == PFCGateSpec::GATE_MNT_GO);
     bool gate_fired = mnt_gate_fired || out_gate_fired;
 
     // maintenance gating signal -- can only happen if hasn't happened yet and mutex with out
@@ -1345,10 +1372,10 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
       allow_mnt_gate = !mnt_gate_fired; // only depends on maint, not out!
 
     if(allow_mnt_gate && (snr_mnt_u->act_eq > go_thr_mnt)) {
-      // compute out_gate multiplier in misc_float1 -- maint gating causes output gating too!
-      gpd->misc_float1 = 1.0f; // out gate multiplier
+      // compute out_gate multiplier in out_go_act -- maint gating causes output gating too!
+      gpd->out_go_act = 1.0f; // out gate multiplier
       if(gate.graded_out_go)
-	gpd->misc_float1 = snr_mnt_u->act_eq; // out gate multiplier
+	gpd->out_go_act = snr_mnt_u->act_eq; // out gate multiplier
 
       Compute_MidMinusAct_ugp(lay, acc_md, mg, net);
       snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, acc_md, mg, net);
@@ -1358,39 +1385,39 @@ void PFCLayerSpec::Compute_Gating(LeabraLayer* lay, LeabraNetwork* net) {
 	Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);	 // clear maint currents if full -- toggle off
 
       // update state info
-      gpd->misc_state2 = PFCGateSpec::GATE_MNT_GO;
+      gpd->gate_sig = PFCGateSpec::GATE_MNT_GO;
       if(pfc_mnt_cnt > 0) // full stripe
-	gpd->misc_state1 = PFCGateSpec::MAINT_MNT_GO;
+	gpd->gate_state = PFCGateSpec::MAINT_MNT_GO;
       else
-	gpd->misc_state1 = PFCGateSpec::EMPTY_MNT_GO;
+	gpd->gate_state = PFCGateSpec::EMPTY_MNT_GO;
 
-      // misc_float has the go_learn_base factor incorporated
+      // cur_go_act has the go_learn_base factor incorporated
       float lrn_go_act = snr_mnt_u->act_eq;
-      gpd->misc_float = gate.go_learn_base + (gate.go_learn_mod * lrn_go_act);
+      gpd->cur_go_act = gate.go_learn_base + (gate.go_learn_mod * lrn_go_act);
       SendGateStates(lay, net);	// update snrthal for turning act_eq guys off
     }
 
     // output gating signal -- can only happen if hasn't happened yet, and mutex with mnt gating
     if(!gate_fired && snr_out_u && (snr_out_u->act_eq > go_thr_out)) {
-      // compute out_gate multiplier in misc_float1
-      gpd->misc_float1 = 1.0f; // out gate multiplier
+      // compute out_gate multiplier in out_go_act
+      gpd->out_go_act = 1.0f; // out gate multiplier
       if(gate.graded_out_go)
-	gpd->misc_float1 = snr_out_u->act_eq; // out gate multiplier
+	gpd->out_go_act = snr_out_u->act_eq; // out gate multiplier
 
       Compute_MidMinusAct_ugp(lay, acc_md, mg, net);
       snrthalsp_out->Compute_MidMinusAct_ugp(snrthal_out, acc_md, mg, net);
       // snrthal and associated matrix layer grab act_m2 vals based on current state!
 
       // update state info
-      gpd->misc_state2 = PFCGateSpec::GATE_OUT_GO;
+      gpd->gate_sig = PFCGateSpec::GATE_OUT_GO;
       if(pfc_mnt_cnt > 0) // full stripe
-	gpd->misc_state1 = PFCGateSpec::MAINT_OUT_GO;
+	gpd->gate_state = PFCGateSpec::MAINT_OUT_GO;
       else
-	gpd->misc_state1 = PFCGateSpec::EMPTY_OUT_GO;
+	gpd->gate_state = PFCGateSpec::EMPTY_OUT_GO;
 
-      // misc_float has the go_learn_base factor incorporated
+      // cur_go_act has the go_learn_base factor incorporated
       float lrn_go_act = snr_out_u->act_eq;
-      gpd->misc_float = gate.go_learn_base + (gate.go_learn_mod * lrn_go_act);
+      gpd->cur_go_act = gate.go_learn_base + (gate.go_learn_mod * lrn_go_act);
       SendGateStates(lay, net);	// update snrthal for turning act_eq guys off
     }
   }
@@ -1411,28 +1438,28 @@ void PFCLayerSpec::Compute_Gating_MidMinus(LeabraLayer* lay, LeabraNetwork* net)
   // cleanup gating signals at end of mid minus -- just nogo!
 
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    LeabraUnGpData* gpd = lay->ungp_data.FastEl(mg);
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
     LeabraUnit* snr_mnt_u = (LeabraUnit*)snrthal_mnt->UnitAccess(acc_md, 0, mg);
     LeabraUnit* snr_out_u = NULL;
     if(snrthal_out) {
       snr_out_u = (LeabraUnit*)snrthal_out->UnitAccess(acc_md, 0, mg);
     }
 
-    int pfc_mnt_cnt = gpd->misc_state; // is pfc maintaining or not?
+    int pfc_mnt_cnt = gpd->mnt_count; // is pfc maintaining or not?
 
-    if(gpd->misc_state2 == PFCGateSpec::GATE_NOGO) {
+    if(gpd->gate_sig == PFCGateSpec::GATE_NOGO) {
       // default NOGO results
       if(pfc_mnt_cnt > 0) // full stripe
-	gpd->misc_state1 = PFCGateSpec::MAINT_NOGO;
+	gpd->gate_state = PFCGateSpec::MAINT_NOGO;
       else
-	gpd->misc_state1 = PFCGateSpec::EMPTY_NOGO;
+	gpd->gate_state = PFCGateSpec::EMPTY_NOGO;
       Compute_MidMinusAct_ugp(lay, acc_md, mg, net);
       if(snrthal_out)
 	snrthalsp_out->Compute_MidMinusAct_ugp(snrthal_out, acc_md, mg, net);
       snrthalsp_mnt->Compute_MidMinusAct_ugp(snrthal_mnt, acc_md, mg, net);
 
-      // misc_float has the go_learn_base factor incorporated
-      gpd->misc_float = gate.go_learn_base;
+      // cur_go_act has the go_learn_base factor incorporated
+      gpd->cur_go_act = gate.go_learn_base;
     }
   }
   
@@ -1443,54 +1470,54 @@ void PFCLayerSpec::Compute_Gating_MidMinus(LeabraLayer* lay, LeabraNetwork* net)
 void PFCLayerSpec::Compute_Gating_Final(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    LeabraUnGpData* gpd = lay->ungp_data.FastEl(mg);
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
 
-    // misc_state == maintenance/empty counter (maintenance = + numbers, empty = - numbers)
-    // basically just update the misc_state counter and implement any
+    // mnt_count == maintenance/empty counter (maintenance = + numbers, empty = - numbers)
+    // basically just update the mnt_count counter and implement any
     // delayed STORE or CLEAR actions
 
-    // for NOGO, just update the misc_state counter
-    if(gpd->misc_state1 == PFCGateSpec::EMPTY_NOGO) {
-      gpd->misc_state--;	// stay empty
+    // for NOGO, just update the mnt_count counter
+    if(gpd->gate_state == PFCGateSpec::EMPTY_NOGO) {
+      gpd->mnt_count--;	// stay empty
     }
-    else if(gpd->misc_state1 == PFCGateSpec::MAINT_NOGO) {
+    else if(gpd->gate_state == PFCGateSpec::MAINT_NOGO) {
       if(gate.max_maint > 0) {			     // if max_maint = 0 then never store
-	gpd->misc_state++;	// continue maintaining
-	if(gpd->misc_state > gate.max_maint) {
+	gpd->mnt_count++;	// continue maintaining
+	if(gpd->mnt_count > gate.max_maint) {
 	  Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);     // clear it!
-	  gpd->misc_state = 0;			     // empty
+	  gpd->mnt_count = 0;			     // empty
 	}
 	else if(gate.updt_gch) {
 	  Compute_MaintUpdt_ugp(lay, acc_md, mg, UPDT, net);     // update it!
 	}
       }
       else {
-	gpd->misc_state--;			     // nogo longer
+	gpd->mnt_count--;			     // nogo longer
       }
     }
     // look for store condition
-    else if(gpd->misc_state1 == PFCGateSpec::MAINT_MNT_GO ||
-	    gpd->misc_state1 == PFCGateSpec::EMPTY_MNT_GO) {
+    else if(gpd->gate_state == PFCGateSpec::MAINT_MNT_GO ||
+	    gpd->gate_state == PFCGateSpec::EMPTY_MNT_GO) {
       if(gate.max_maint > 0) {			     // if max_maint = 0 then never store
 	Compute_MaintUpdt_ugp(lay, acc_md, mg, STORE, net);     // store it (never stored before)
-	gpd->misc_state = 1;	// always reset on new store
+	gpd->mnt_count = 1;	// always reset on new store
       }
       else {
-	gpd->misc_state = 0;	// this go resets counter
+	gpd->mnt_count = 0;	// this go resets counter
       }
     }
     // or basic output gate with no veto from maint
-    else if(gpd->misc_state1 == PFCGateSpec::MAINT_OUT_GO) {
+    else if(gpd->gate_state == PFCGateSpec::MAINT_OUT_GO) {
       if(gate.out_go_clear) { // only clear on true output trials
 	Compute_MaintUpdt_ugp(lay, acc_md, mg, CLEAR, net);     // clear it!
-	gpd->misc_state = 0;			     // empty
+	gpd->mnt_count = 0;			     // empty
       }
       else {
-	gpd->misc_state++;	// continue maintaining
+	gpd->mnt_count++;	// continue maintaining
       }
     }
-    else if(gpd->misc_state1 == PFCGateSpec::EMPTY_OUT_GO) {
-      gpd->misc_state--;	// no real issue here..
+    else if(gpd->gate_state == PFCGateSpec::EMPTY_OUT_GO) {
+      gpd->mnt_count--;	// no real issue here..
     }
   }
   // NOTE: Do NOT send final gate states -- this would corrupt the LearnDaVal
@@ -1529,9 +1556,9 @@ void PFCLayerSpec::Compute_PfcMntAct(LeabraLayer* lay, LeabraNetwork* net) {
   Layer::AccessMode acc_md = Layer::ACC_GP;
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int mg=0; mg < lay->gp_geom.n; mg++) {
-    LeabraUnGpData* gpd = lay->ungp_data.FastEl(mg);
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
 
-    float lrn_mod_val = gpd->misc_float; // learning modulation value as function of gating
+    float lrn_mod_val = gpd->cur_go_act; // learning modulation value as function of gating
     
     for(int i=0;i<nunits;i++) {
       LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
@@ -1632,16 +1659,16 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
 
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
-    LeabraUnGpData* gpd = lay->ungp_data.FastEl(mg);
-    LeabraUnGpData* pfcgpd = pfc_lay->ungp_data.FastEl(mg);
+    PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
+    PBWMUnGpData* pfcgpd = (PBWMUnGpData*)pfc_lay->ungp_data.FastEl(mg);
 
-    gpd->misc_state = pfcgpd->misc_state;
-    gpd->misc_state1 = pfcgpd->misc_state1;
-    gpd->misc_state2 = pfcgpd->misc_state2;
-    gpd->misc_float = pfcgpd->misc_float;
-    gpd->misc_float1 = pfcgpd->misc_float1;
+    gpd->mnt_count = pfcgpd->mnt_count;
+    gpd->gate_state = pfcgpd->gate_state;
+    gpd->gate_sig =   pfcgpd->gate_sig;
+    gpd->cur_go_act = pfcgpd->cur_go_act;
+    gpd->out_go_act = pfcgpd->out_go_act;
 
-    float gate_val = gpd->misc_float1; // goes live whenver it goes live..
+    float gate_val = gpd->out_go_act; // goes live whenver it goes live..
     
     for(int i=0;i<nunits;i++) {
       LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
