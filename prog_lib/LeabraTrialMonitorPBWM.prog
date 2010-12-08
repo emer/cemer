@@ -50,7 +50,7 @@ Program .projects[0].programs.gp[0][7] {
     ProgVar @[0] { };
   };
 
-  ProgVar_List @.vars = [31] {
+  ProgVar_List @.vars = [30] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -81,7 +81,6 @@ Program .projects[0].programs.gp[0][7] {
     ProgVar @[27] { };
     ProgVar @[28] { };
     ProgVar @[29] { };
-    ProgVar @[30] { };
   };
 
   Function_List @.functions = [0] {
@@ -187,13 +186,18 @@ Program .projects[0].programs.gp[0][7] {
     AssignExpr @[26] { };
     AssignExpr @[27] { };
     ForLoop @[28] { 
-      ProgEl_List @.loop_code = [13] {
-	MethodCall @[0] { 
+      ProgEl_List @.loop_code = [14] {
+	ProgVars @[0] { 
+	  ProgVar_List @.local_vars = [1] {
+	    ProgVar @[0] { };
+	  };
+	};
+	MethodCall @[1] { 
 	  ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	If @[1] { 
+	If @[2] { 
 	  ProgEl_List @.true_code = [7] {
 	    MethodCall @[0] { 
 	      ProgArg_List @.meth_args = [4] {
@@ -239,17 +243,17 @@ Program .projects[0].programs.gp[0][7] {
 	    };
 	  };
 	};
-	VarIncr @[2] { };
 	VarIncr @[3] { };
-	AssignExpr @[4] { };
+	VarIncr @[4] { };
 	AssignExpr @[5] { };
-	VarIncr @[6] { };
+	AssignExpr @[6] { };
 	VarIncr @[7] { };
 	VarIncr @[8] { };
 	VarIncr @[9] { };
 	VarIncr @[10] { };
 	VarIncr @[11] { };
 	VarIncr @[12] { };
+	VarIncr @[13] { };
       };
     };
     If @[29] { 
@@ -1554,28 +1558,7 @@ Program .projects[0].programs.gp[0][7] {
    init_from=NULL;
   };
   ProgVar @[9] {
-   name="pfc_ugpd";
-   var_type=T_Object;
-   object_type=LeabraUnGpData;
-   object_val=.projects[0].networks[0].layers.gp[2][0].ungp_data[5]$$<LeabraUnGpData,>;
-   objs_ptr=0;
-   flags=USED|EDIT_VAL;
-   reference=0;
-   desc="unit group data";
-   init_from=NULL;
-  };
-  ProgVar @[10] {
    name="n_mgo";
-   var_type=T_Real;
-   real_val=2;
-   objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
-   reference=0;
-   desc=;
-   init_from=NULL;
-  };
-  ProgVar @[11] {
-   name="n_ogo";
    var_type=T_Real;
    real_val=0;
    objs_ptr=0;
@@ -1584,17 +1567,27 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[12] {
-   name="max_mnt";
+  ProgVar @[10] {
+   name="n_ogo";
    var_type=T_Real;
-   real_val=3;
+   real_val=1;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
   };
-  ProgVar @[13] {
+  ProgVar @[11] {
+   name="max_mnt";
+   var_type=T_Real;
+   real_val=8;
+   objs_ptr=0;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[12] {
    name="min_mnt";
    var_type=T_Real;
    real_val=-1;
@@ -1604,7 +1597,7 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[14] {
+  ProgVar @[13] {
    name="n_emty_mnt";
    var_type=T_Real;
    real_val=0;
@@ -1614,17 +1607,17 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[15] {
+  ProgVar @[14] {
    name="n_mnt_mnt";
    var_type=T_Real;
-   real_val=2;
+   real_val=0;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
   };
-  ProgVar @[16] {
+  ProgVar @[15] {
    name="n_emty_out";
    var_type=T_Real;
    real_val=0;
@@ -1634,10 +1627,20 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[17] {
+  ProgVar @[16] {
    name="n_mnt_out";
    var_type=T_Real;
-   real_val=0;
+   real_val=1;
+   objs_ptr=0;
+   flags=NULL_CHECK|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[17] {
+   name="n_emty_nogo";
+   var_type=T_Real;
+   real_val=2;
    objs_ptr=0;
    flags=NULL_CHECK|USED|EDIT_VAL;
    reference=0;
@@ -1645,7 +1648,7 @@ Program .projects[0].programs.gp[0][7] {
    init_from=NULL;
   };
   ProgVar @[18] {
-   name="n_emty_nogo";
+   name="n_mnt_nogo";
    var_type=T_Real;
    real_val=3;
    objs_ptr=0;
@@ -1655,16 +1658,6 @@ Program .projects[0].programs.gp[0][7] {
    init_from=NULL;
   };
   ProgVar @[19] {
-   name="n_mnt_nogo";
-   var_type=T_Real;
-   real_val=1;
-   objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
-   reference=0;
-   desc=;
-   init_from=NULL;
-  };
-  ProgVar @[20] {
    name="n_rnd_go";
    var_type=T_Real;
    real_val=0;
@@ -1674,7 +1667,7 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[21] {
+  ProgVar @[20] {
    name="mnt_all_nogo";
    var_type=T_Real;
    real_val=0;
@@ -1684,7 +1677,7 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[22] {
+  ProgVar @[21] {
    name="mnt_all_nogo_noi";
    var_type=T_Real;
    real_val=0;
@@ -1694,7 +1687,7 @@ Program .projects[0].programs.gp[0][7] {
    desc="non-ignore trials!";
    init_from=NULL;
   };
-  ProgVar @[23] {
+  ProgVar @[22] {
    name="out_all_nogo";
    var_type=T_Real;
    real_val=0;
@@ -1704,7 +1697,7 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[24] {
+  ProgVar @[23] {
    name="gate_state";
    var_type=T_HardEnum;
    int_val=7;
@@ -1715,7 +1708,7 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[25] {
+  ProgVar @[24] {
    name="gate_str";
    var_type=T_String;
    string_val="MAINT_NOGO";
@@ -1725,7 +1718,7 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[26] {
+  ProgVar @[25] {
    name="nop_simple_math";
    var_type=T_Object;
    object_type=SimpleMathSpec;
@@ -1736,7 +1729,7 @@ Program .projects[0].programs.gp[0][7] {
    desc=;
    init_from=NULL;
   };
-  ProgVar @[27] {
+  ProgVar @[26] {
    name="store_trial_contains";
    var_type=T_String;
    string_val="S";
@@ -1746,7 +1739,7 @@ Program .projects[0].programs.gp[0][7] {
    desc="string that the \"store\" trials (encoding into WM) group_name field contain, to uniquely identify them";
    init_from=NULL;
   };
-  ProgVar @[28] {
+  ProgVar @[27] {
    name="ignore_trial_contains";
    var_type=T_String;
    string_val="I";
@@ -1756,7 +1749,7 @@ Program .projects[0].programs.gp[0][7] {
    desc="string that the ignore trials (neither store nore recall) group_name field contain, to uniquely identify them";
    init_from=NULL;
   };
-  ProgVar @[29] {
+  ProgVar @[28] {
    name="recall_trial_contains";
    var_type=T_String;
    string_val="R";
@@ -1766,7 +1759,7 @@ Program .projects[0].programs.gp[0][7] {
    desc="string that the recall trials group_name field contain, to uniquely identify them";
    init_from=NULL;
   };
-  ProgVar @[30] {
+  ProgVar @[29] {
    name="naming_err";
    var_type=T_Int;
    int_val=0;
@@ -2225,7 +2218,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[14] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[10]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[9]$$;
    expr {
     expr="0";
    };
@@ -2233,7 +2226,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[15] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[11]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[10]$$;
    expr {
     expr="0";
    };
@@ -2241,7 +2234,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[16] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[14]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[13]$$;
    expr {
     expr="0";
    };
@@ -2249,7 +2242,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[17] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[18]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[17]$$;
    expr {
     expr="0";
    };
@@ -2257,7 +2250,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[18] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[16]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[15]$$;
    expr {
     expr="0";
    };
@@ -2265,7 +2258,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[19] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[15]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[14]$$;
    expr {
     expr="0";
    };
@@ -2273,7 +2266,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[20] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[19]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[18]$$;
    expr {
     expr="0";
    };
@@ -2281,7 +2274,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[21] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[17]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[16]$$;
    expr {
     expr="0";
    };
@@ -2289,7 +2282,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[22] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[20]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[19]$$;
    expr {
     expr="0";
    };
@@ -2297,7 +2290,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[23] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[21]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[20]$$;
    expr {
     expr="0";
    };
@@ -2305,7 +2298,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[24] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[22]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[21]$$;
    expr {
     expr="0";
    };
@@ -2313,7 +2306,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[25] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[23]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[22]$$;
    expr {
     expr="0";
    };
@@ -2321,7 +2314,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[26] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[12]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[11]$$;
    expr {
     expr="0";
    };
@@ -2329,7 +2322,7 @@ Program .projects[0].programs.gp[0][7] {
   AssignExpr @[27] {
    desc=;
    flags=;
-   result_var=.projects[0].programs.gp[0][7].vars[13]$$;
+   result_var=.projects[0].programs.gp[0][7].vars[12]$$;
    expr {
     expr="0";
    };
@@ -2341,10 +2334,30 @@ Program .projects[0].programs.gp[0][7] {
     name=;
     el_typ=ProgEl;
     el_def=0;
-    MethodCall @[0] {
+    ProgVars @[0] {
      desc=;
      flags=;
-     result_var=.projects[0].programs.gp[0][7].vars[9]$$;
+     local_vars {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="pfc_ugpd";
+       var_type=T_Object;
+       object_type=PBWMUnGpData;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=LOCAL_VAR|USED;
+       reference=0;
+       desc="unit group data";
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=;
+     result_var=.projects[0].programs.gp[0][7].prog_code[28].loop_code[0].local_vars[0]$$;
      obj=$.projects[0].programs.gp[0][7].vars[7]$;
      method=LeabraLayer::UnGpData;
      meth_args {
@@ -2363,7 +2376,7 @@ Program .projects[0].programs.gp[0][7] {
       };
      };
     };
-    If @[1] {
+    If @[2] {
      desc=;
      flags=;
      cond {
@@ -2546,7 +2559,7 @@ Program .projects[0].programs.gp[0][7] {
 	 required=1;
 	 def_val=;
 	 expr {
-	  expr="pfc_ugpd.misc_state";
+	  expr="pfc_ugpd.mnt_count";
 	 };
 	};
 	ProgArg @[1] {
@@ -2584,15 +2597,15 @@ Program .projects[0].programs.gp[0][7] {
       AssignExpr @[4] {
        desc=;
        flags=;
-       result_var=.projects[0].programs.gp[0][7].vars[24]$$;
+       result_var=.projects[0].programs.gp[0][7].vars[23]$$;
        expr {
-	expr="pfc_ugpd.misc_state1";
+	expr="pfc_ugpd.gate_state";
        };
       };
       AssignExpr @[5] {
        desc=;
        flags=;
-       result_var=.projects[0].programs.gp[0][7].vars[25]$$;
+       result_var=.projects[0].programs.gp[0][7].vars[24]$$;
        expr {
 	expr="gate_state";
        };
@@ -2651,92 +2664,92 @@ Program .projects[0].programs.gp[0][7] {
       };
      };
     };
-    VarIncr @[2] {
+    VarIncr @[3] {
+     desc=;
+     flags=;
+     var=$.projects[0].programs.gp[0][7].vars[9]$;
+     expr {
+      expr="(pfc_ugpd.gate_sig == PFCGateSpec::GATE_MNT_GO)";
+     };
+    };
+    VarIncr @[4] {
      desc=;
      flags=;
      var=$.projects[0].programs.gp[0][7].vars[10]$;
      expr {
-      expr="(pfc_ugpd.misc_state2 == PFCGateSpec::GATE_MNT_GO)";
-     };
-    };
-    VarIncr @[3] {
-     desc=;
-     flags=;
-     var=$.projects[0].programs.gp[0][7].vars[11]$;
-     expr {
-      expr="(pfc_ugpd.misc_state2 == PFCGateSpec::GATE_OUT_GO)";
-     };
-    };
-    AssignExpr @[4] {
-     desc=;
-     flags=;
-     result_var=$.projects[0].programs.gp[0][7].vars[12]$;
-     expr {
-      expr="MAX(max_mnt, (pfc_ugpd.misc_state))";
+      expr="(pfc_ugpd.gate_sig == PFCGateSpec::GATE_OUT_GO)";
      };
     };
     AssignExpr @[5] {
      desc=;
      flags=;
-     result_var=$.projects[0].programs.gp[0][7].vars[13]$;
+     result_var=$.projects[0].programs.gp[0][7].vars[11]$;
      expr {
-      expr="MIN(min_mnt, (pfc_ugpd.misc_state))";
+      expr="MAX(max_mnt, (pfc_ugpd.mnt_count))";
      };
     };
-    VarIncr @[6] {
+    AssignExpr @[6] {
      desc=;
      flags=;
-     var=$.projects[0].programs.gp[0][7].vars[14]$;
+     result_var=$.projects[0].programs.gp[0][7].vars[12]$;
      expr {
-      expr="(pfc_ugpd.misc_state1 == PFCGateSpec::EMPTY_MNT_GO)";
+      expr="MIN(min_mnt, (pfc_ugpd.mnt_count))";
      };
     };
     VarIncr @[7] {
      desc=;
      flags=;
-     var=$.projects[0].programs.gp[0][7].vars[15]$;
+     var=$.projects[0].programs.gp[0][7].vars[13]$;
      expr {
-      expr="(pfc_ugpd.misc_state1 == PFCGateSpec::MAINT_MNT_GO)";
+      expr="(pfc_ugpd.gate_state == PFCGateSpec::EMPTY_MNT_GO)";
      };
     };
     VarIncr @[8] {
      desc=;
      flags=;
-     var=$.projects[0].programs.gp[0][7].vars[16]$;
+     var=$.projects[0].programs.gp[0][7].vars[14]$;
      expr {
-      expr="(pfc_ugpd.misc_state1 == PFCGateSpec::EMPTY_OUT_GO)";
+      expr="(pfc_ugpd.gate_state == PFCGateSpec::MAINT_MNT_GO)";
      };
     };
     VarIncr @[9] {
      desc=;
      flags=;
-     var=$.projects[0].programs.gp[0][7].vars[17]$;
+     var=$.projects[0].programs.gp[0][7].vars[15]$;
      expr {
-      expr="(pfc_ugpd.misc_state1 == PFCGateSpec::MAINT_OUT_GO)";
+      expr="(pfc_ugpd.gate_state == PFCGateSpec::EMPTY_OUT_GO)";
      };
     };
     VarIncr @[10] {
      desc=;
      flags=;
-     var=$.projects[0].programs.gp[0][7].vars[18]$;
+     var=$.projects[0].programs.gp[0][7].vars[16]$;
      expr {
-      expr="(pfc_ugpd.misc_state1 == PFCGateSpec::EMPTY_NOGO)";
+      expr="(pfc_ugpd.gate_state == PFCGateSpec::MAINT_OUT_GO)";
      };
     };
     VarIncr @[11] {
      desc=;
      flags=;
-     var=$.projects[0].programs.gp[0][7].vars[19]$;
+     var=$.projects[0].programs.gp[0][7].vars[17]$;
      expr {
-      expr="(pfc_ugpd.misc_state1 == PFCGateSpec::MAINT_NOGO)";
+      expr="(pfc_ugpd.gate_state == PFCGateSpec::EMPTY_NOGO)";
      };
     };
     VarIncr @[12] {
      desc=;
      flags=;
-     var=$.projects[0].programs.gp[0][7].vars[20]$;
+     var=$.projects[0].programs.gp[0][7].vars[18]$;
      expr {
-      expr="(network.layers.Matrix_mnt.UnGpData(i).misc_state1 == PFCGateSpec::NOGO_RND_GO)";
+      expr="(pfc_ugpd.gate_state == PFCGateSpec::MAINT_NOGO)";
+     };
+    };
+    VarIncr @[13] {
+     desc=;
+     flags=;
+     var=$.projects[0].programs.gp[0][7].vars[19]$;
+     expr {
+      expr="(network.layers.Matrix_mnt.UnGpData(i).gate_state == PFCGateSpec::NOGO_RND_GO)";
      };
     };
    };
@@ -2763,7 +2776,7 @@ Program .projects[0].programs.gp[0][7] {
     AssignExpr @[0] {
      desc=;
      flags=;
-     result_var=$.projects[0].programs.gp[0][7].vars[21]$;
+     result_var=$.projects[0].programs.gp[0][7].vars[20]$;
      expr {
       expr="1";
      };
@@ -2781,7 +2794,7 @@ Program .projects[0].programs.gp[0][7] {
       AssignExpr @[0] {
        desc=;
        flags=;
-       result_var=$.projects[0].programs.gp[0][7].vars[22]$;
+       result_var=$.projects[0].programs.gp[0][7].vars[21]$;
        expr {
 	expr="1";
        };
@@ -2803,7 +2816,7 @@ Program .projects[0].programs.gp[0][7] {
     AssignExpr @[0] {
      desc=;
      flags=;
-     result_var=$.projects[0].programs.gp[0][7].vars[23]$;
+     result_var=$.projects[0].programs.gp[0][7].vars[22]$;
      expr {
       expr="1";
      };
@@ -2818,9 +2831,9 @@ Program .projects[0].programs.gp[0][7] {
    row_spec=CUR_ROW;
    row_var=NULL;
    quiet=1;
-   var_1=$.projects[0].programs.gp[0][7].vars[10]$;
-   var_2=$.projects[0].programs.gp[0][7].vars[11]$;
-   var_3=$.projects[0].programs.gp[0][7].vars[20]$;
+   var_1=$.projects[0].programs.gp[0][7].vars[9]$;
+   var_2=$.projects[0].programs.gp[0][7].vars[10]$;
+   var_3=$.projects[0].programs.gp[0][7].vars[19]$;
    var_4=NULL;
   };
   DataVarProg @[32] {
@@ -2831,8 +2844,8 @@ Program .projects[0].programs.gp[0][7] {
    row_spec=CUR_ROW;
    row_var=NULL;
    quiet=1;
-   var_1=$.projects[0].programs.gp[0][7].vars[12]$;
-   var_2=$.projects[0].programs.gp[0][7].vars[13]$;
+   var_1=$.projects[0].programs.gp[0][7].vars[11]$;
+   var_2=$.projects[0].programs.gp[0][7].vars[12]$;
    var_3=NULL;
    var_4=NULL;
   };
@@ -2844,10 +2857,10 @@ Program .projects[0].programs.gp[0][7] {
    row_spec=CUR_ROW;
    row_var=NULL;
    quiet=0;
-   var_1=$.projects[0].programs.gp[0][7].vars[14]$;
-   var_2=$.projects[0].programs.gp[0][7].vars[15]$;
-   var_3=$.projects[0].programs.gp[0][7].vars[16]$;
-   var_4=$.projects[0].programs.gp[0][7].vars[17]$;
+   var_1=$.projects[0].programs.gp[0][7].vars[13]$;
+   var_2=$.projects[0].programs.gp[0][7].vars[14]$;
+   var_3=$.projects[0].programs.gp[0][7].vars[15]$;
+   var_4=$.projects[0].programs.gp[0][7].vars[16]$;
   };
   DataVarProg @[34] {
    desc=;
@@ -2857,8 +2870,8 @@ Program .projects[0].programs.gp[0][7] {
    row_spec=CUR_ROW;
    row_var=NULL;
    quiet=1;
-   var_1=$.projects[0].programs.gp[0][7].vars[18]$;
-   var_2=$.projects[0].programs.gp[0][7].vars[19]$;
+   var_1=$.projects[0].programs.gp[0][7].vars[17]$;
+   var_2=$.projects[0].programs.gp[0][7].vars[18]$;
    var_3=NULL;
    var_4=NULL;
   };
@@ -2870,9 +2883,9 @@ Program .projects[0].programs.gp[0][7] {
    row_spec=CUR_ROW;
    row_var=NULL;
    quiet=0;
-   var_1=$.projects[0].programs.gp[0][7].vars[21]$;
-   var_2=$.projects[0].programs.gp[0][7].vars[22]$;
-   var_3=$.projects[0].programs.gp[0][7].vars[23]$;
+   var_1=$.projects[0].programs.gp[0][7].vars[20]$;
+   var_2=$.projects[0].programs.gp[0][7].vars[21]$;
+   var_3=$.projects[0].programs.gp[0][7].vars[22]$;
    var_4=NULL;
   };
   MethodCall @[36] {
