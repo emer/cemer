@@ -486,7 +486,8 @@ public:
 
   enum LoadVerbosity {
     QUIET,			// don't say anything except errors
-    MESSAGES,			// display informative messages during load
+    VERSION_SKEW,		// display mismatches in names of objects in loading file that are likely due to changes in newer versions of the software
+    MESSAGES,			// display informative messages on css console during load
     TRACE,			// and show a trace of objects loaded
     SOURCE 			// and show the source of the load as its loaded
   };
@@ -728,7 +729,7 @@ public:
   static String		license_owner;	   // #SAVE #CAT_File default legal owner of new projects that are created by this user (e.g., Regents of University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects
   static String		license_org;	   // #SAVE #CAT_File default organization that actually created the project for new projects that are created by this user (e.g., MyLab at University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects -- defaults to license_owner if left blank
 
-  static LoadVerbosity	verbose_load;	// #SAVE #CAT_File #EXPERT report the names of things during loading
+  static LoadVerbosity	verbose_load;	// #SAVE #CAT_File report the names of things during loading
 
   static String		app_dir; 
   // #SHOW #READ_ONLY #CAT_File base of installed app directory -- override with "-a <path>" command line switch

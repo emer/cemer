@@ -1016,10 +1016,12 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 	  taMisc::skip_past_err(strm);
       }
       else {
-	taMisc::Warning("Member:",mb_name,"not found in type:",
-			owner->name, "(this is likely just harmless version skew)");
+	if(taMisc::verbose_load >= taMisc::VERSION_SKEW)
+	  taMisc::Warning("Member:",mb_name,"not found in type:",
+			  owner->name, "(this is likely just harmless version skew)");
 	int sv_vld = taMisc::verbose_load;
-	taMisc::verbose_load = taMisc::SOURCE;
+	if(taMisc::verbose_load >= taMisc::VERSION_SKEW)
+	  taMisc::verbose_load = taMisc::SOURCE;
 	taMisc::skip_past_err(strm);
 	taMisc::verbose_load = (taMisc::LoadVerbosity)sv_vld;
 	cerr << "\n\n"; // endl << endl << flush;
@@ -1687,7 +1689,7 @@ endload:
       taMisc::Warning("Loaded a file saved in an earlier version of the software:",
 		      taMisc::loading_version.toString(),"  Current version is:",
 		      taMisc::version_bin.toString(),
-		      "the above version skew warnings (if any) may have useful information -- see the current ChangeLog info on the emergent wiki for things you should be looking for");
+		      "set verbose_load to VERSION_SKEW to see version skew warnings, which may have useful information -- see the current ChangeLog info on the emergent wiki for things you should be looking for");
     }
   }
   else if(taMisc::loading_version > taMisc::version_bin) {
