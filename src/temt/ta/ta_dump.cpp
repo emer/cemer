@@ -1024,8 +1024,10 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 	  taMisc::verbose_load = taMisc::SOURCE;
 	taMisc::skip_past_err(strm);
 	taMisc::verbose_load = (taMisc::LoadVerbosity)sv_vld;
-	cerr << "\n\n"; // endl << endl << flush;
-// 	taMisc::FlushConsole();
+	if(taMisc::verbose_load >= taMisc::VERSION_SKEW) {
+	  cerr << "\n\n"; // endl << endl << flush;
+	  taMisc::FlushConsole();
+	}
       }
       rval = true;		// member was loaded, do update after edit
     }

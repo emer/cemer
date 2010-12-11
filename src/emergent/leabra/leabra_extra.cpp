@@ -4226,7 +4226,7 @@ void CerebConj2PrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from)	return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
-  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+  if(TestWarning(!prjn->layer->unit_groups, "Connect_impl",
 		 "requires recv layer to have unit groups!")) {
     return;
   }
@@ -4238,17 +4238,20 @@ void CerebConj2PrjnSpec::Connect_impl(Projection* prjn) {
 
 void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
   int n_cons = rf_width.Product();
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
   TwoDCoord rf_half_wd = rf_width / 2;
-  TwoDCoord rug_geo = prjn->layer->gp_geom;
-  TwoDCoord run_geo = prjn->layer->un_geom;
-  TwoDCoord su_geo = prjn->from->flat_geom;
+  TwoDCoord rug_geo = recv_lay->gp_geom;
+  TwoDCoord run_geo = recv_lay->un_geom;
+  TwoDCoord su_geo = send_lay->flat_geom;
 
   TwoDCoord ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     for(ruc.y = 0; ruc.y < rug_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < rug_geo.x; ruc.x++) {
-	Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
-	if(!ru_gp) continue;
+	int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
+	if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
 
 	TwoDCoord su_st;
 	if(wrap) {
@@ -4274,8 +4277,8 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
 	  }
 	}
 
-	for(int rui=0;rui<ru_gp->size;rui++) {
-	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui);
+	for(int rui=0; rui<recv_lay->un_geom.n; rui++) {
+	  Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
 	  if(!alloc_loop)
 	    ru_u->RecvConsPreAlloc(n_cons, prjn);
 
@@ -4286,7 +4289,7 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
 	      suc_wrp = su_st + suc;
 	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 		continue;
-	      Unit* su_u = prjn->from->UnitAtCoord(suc_wrp);
+	      Unit* su_u = send_lay->UnitAtCoord(suc_wrp);
 	      if(!su_u) continue;
 	      if(!self_con && (su_u == ru_u)) continue;
 
@@ -4297,35 +4300,36 @@ void CerebConj2PrjnSpec::Connect_Outer(Projection* prjn) {
       }
     }
     if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
+      send_lay->SendConsPostAlloc(prjn);
     }
   }
 }
 
 void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
-  if(!(bool)prjn->from)	return;
-  if(prjn->layer->units.leaves == 0) // an empty layer!
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
+  if(!(bool)send_lay)	return;
+  if(recv_lay->units.leaves == 0) // an empty layer!
     return;
-  if(TestWarning(prjn->layer->units.gp.size == 0, "Connect_impl",
+  if(TestWarning(!recv_lay->unit_groups, "Connect_impl",
 		 "requires recv layer to have unit groups!")) {
     return;
   }
 
   int n_cons = rf_width.Product();
   TwoDCoord rf_half_wd = rf_width / 2;
-  TwoDCoord rug_geo = prjn->layer->gp_geom;
-  TwoDCoord run_geo = prjn->layer->un_geom;
-  TwoDCoord su_geo = prjn->from->flat_geom;
+  TwoDCoord rug_geo = recv_lay->gp_geom;
+  TwoDCoord run_geo = recv_lay->un_geom;
+  TwoDCoord su_geo = send_lay->flat_geom;
 
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
-    for(int rug=0;rug<prjn->layer->units.gp.size;rug++) {
-      Unit_Group* ru_gp = (Unit_Group*)prjn->layer->units.gp[rug];
-      if(!ru_gp) continue;
-
+    for(int rug=0;rug<recv_lay->gp_geom.n;rug++) {
       TwoDCoord ruc;
       for(ruc.y = 0; ruc.y < run_geo.y; ruc.y++) {
 	for(ruc.x = 0; ruc.x < run_geo.x; ruc.x++) {
-	  Unit* ru_u = (Unit*)ru_gp->SafeEl(ruc.y * run_geo.x + ruc.x);
+	  int rui = ruc.y * run_geo.x + ruc.x;
+	  Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rug);
 	  if(!ru_u) continue;
 	  if(!alloc_loop)
 	    ru_u->RecvConsPreAlloc(n_cons, prjn);
@@ -4361,7 +4365,7 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
 	      suc_wrp = su_st + suc;
 	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
 		continue;
-	      Unit* su_u = prjn->from->UnitAtCoord(suc_wrp);
+	      Unit* su_u = send_lay->UnitAtCoord(suc_wrp);
 	      if(su_u == NULL) continue;
 	      if(!self_con && (su_u == ru_u)) continue;
 	      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // don't check: saves lots of time!
@@ -4371,15 +4375,12 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn) {
       }
     }
     if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
+      send_lay->SendConsPostAlloc(prjn);
     }
   }
 }
 
 void CerebConj2PrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-//  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
-//  int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
-  
   TwoDCoord rf_half_wd = rf_width / 2;
   FloatTwoDCoord rf_ctr = rf_half_wd;
   if(rf_half_wd * 2 == rf_width) // even

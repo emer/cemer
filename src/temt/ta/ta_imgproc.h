@@ -1208,10 +1208,10 @@ public:
   XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by v1c rf sz on top of v1s img geom
 
   BinocularFilters v1b_filters; // which binocular (V1B) filtering to perform to compute disparity information across the two eyes -- V1B_C_FM_IN can be checked if processing is otherwise monocular, to support configuration of necessary state vars
-  V1BinocularSpec v1b_specs;	// #CONDSHOW_ON_region.ocularity:BINOCULAR||v1b_filters:V1C_FM_IN specs for V1 binocular filters -- comes after V1 simple processing in binocular case
+  V1BinocularSpec v1b_specs;	// #CONDSHOW_ON_region.ocularity:BINOCULAR||v1b_filters:V1B_C_FM_IN specs for V1 binocular filters -- comes after V1 simple processing in binocular case
   V1DisparitySpec v1b_dsp_specs; // #CONDSHOW_ON_region.ocularity:BINOCULAR specs for V1 binocular filters -- specifically the disparity matching and windowing parameters for the underlying computation 
   RenormMode	v1b_renorm;	 // #CONDSHOW_ON_region.ocularity:BINOCULAR #DEF_NO_RENORM how to renormalize the output of v1b filters -- applies to all selected filters -- in general renorm is not required because it does not significantly alter the computations from prior stages (v1s or v1c)
-  DataSave	v1b_save;	// #CONDSHOW_ON_region.ocularity:BINOCULAR||v1b_filters:V1C_FM_IN how to save the V1 binocular outputs for the current time step in the data table
+  DataSave	v1b_save;	// #CONDSHOW_ON_region.ocularity:BINOCULAR||v1b_filters:V1B_C_FM_IN how to save the V1 binocular outputs for the current time step in the data table
   XYNGeom	v1b_dsp_feat_geom; // #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #SHOW #EXPERT size of one 'hypercolumn' of features for V1 binocular disparity output only -- tot_disps x 1 order: near, focus, far
   XYNGeom	v1b_s_feat_geom; // #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #SHOW #EXPERT size of one 'hypercolumn' of features for V1 binocular simple cell (V1B_S) -- tot_disps * v1s_feat_geom -- order: near, focus, far
   V1DisparityStats dsp_stats; // #CONDSHOW_ON_region.ocularity:BINOCULAR stats for quality of disparity computation for binocular v1b layer

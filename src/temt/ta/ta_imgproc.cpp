@@ -3663,6 +3663,10 @@ void V1RegionSpec::UpdateGeom() {
   else {
     v1c_feat_blob_y = -1;
   }
+  if(cmplx_y == 0) {
+    cmplx_y = 1;
+    n_cmplx = v1s_specs.n_angles;
+  }
 
   v1c_feat_geom.x = v1s_specs.n_angles;
   v1c_feat_geom.n = n_cmplx;
@@ -4125,7 +4129,7 @@ bool V1RegionSpec::FilterImage_impl() {
 
   bool rval = V1SimpleFilter();
 
-  if(rval) {
+  if(rval && v1c_filters != CF_NONE) {
     rval &= V1ComplexFilter();
   }
 
@@ -5628,7 +5632,7 @@ bool V1RegionSpec::V1bDspInFmDataTable(DataTable* data_table, Variant col, int r
       for(pc.x = 0; pc.x < v1c_pre_geom.x; pc.x++) {
 	TwoDCoord ic = pc / prjrat;
 	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
-	  v1b_dsp_in.FastEl(didx, 0, pc.x, pc.y) = dacell->FastEl(didx, 0 , ic.x, ic.y);
+	  v1b_dsp_in.FastEl(didx, 0, pc.x, pc.y) = dacell->SafeEl(didx, 0 , ic.x, ic.y);
 	}
       }
     }
@@ -5795,16 +5799,13 @@ bool V1RegionSpec::InitDataTable() {
 					    v1s_feat_geom.x, v1s_feat_geom.y, v1c_pre_geom.x, v1c_pre_geom.y);
 	}
       }
-    }
 
-    if(v1b_filters & REQ_V1B_C) {
-      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
-	col = data_table->FindMakeColName(name + "_v1b_v1c_pre_d" + String(didx),
-					  idx, DataTable::VT_FLOAT, 4,
-					  v1s_feat_geom.x, v1s_feat_geom.y, v1c_pre_geom.x, v1c_pre_geom.y);
-	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-	float_MatrixPtr vcout; vcout = (float_Matrix*)v1b_v1c_pre.GetFrameSlice(didx);
-	dout->CopyFrom(vcout);
+      if(v1b_filters & REQ_V1B_C) {
+	for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+	  col = data_table->FindMakeColName(name + "_v1b_v1c_pre_d" + String(didx),
+					    idx, DataTable::VT_FLOAT, 4,
+					    v1s_feat_geom.x, v1s_feat_geom.y, v1c_pre_geom.x, v1c_pre_geom.y);
+	}
       }
     }
   }
