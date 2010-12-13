@@ -1275,6 +1275,7 @@ public:
   float_Matrix	v1b_dsp_out;	 // #READ_ONLY #NO_SAVE pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][img.x][img.y]
   float_Matrix	v1b_dsp_out_pre; // #READ_ONLY #NO_SAVE v1c pre gp4 version of v1b_dsp_out -- v1b_c requires things to be at the pre level -- has pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][pre_img.x][pre_img.y]
   float_Matrix	v1b_dsp_in;	 // #READ_ONLY #NO_SAVE pure disparity *input* (see v1b_dsp_out for more info) -- this should be copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity (see V1bDspInFmDataTable and UpdateV1cFmV1bDspIn methods) -- should be same size as v1c_pre if pre_gp4 is being used: [tot_disps][1][pre_img.x][pre_img.y], else same size as v1s
+  float_Matrix	v1b_dsp_in_prv;	 // #READ_ONLY #NO_SAVE previous version of v1b_dsp_in -- for comparison purposes
   float_Matrix	v1b_s_out;	 // #READ_ONLY #NO_SAVE v1 binocular simple cell output, which is v1s feature activation times v1b_dsp_out weighting per feature -- [v1b_s_feat.x][v1b_s_feat.y][v1s_img.x][v1s_img.y]
 
   float_Matrix	v1b_v1c_pre;	 // #READ_ONLY #NO_SAVE v1b version of v1c_pre: pre-grouping as basis for subsequent v1c filtering -- reduces dimensionality and introduces robustness [v1s_feat.x][v1s_feat.y][v1c_pre.x][v1c_pre.y][tot_disps]
@@ -1297,8 +1298,9 @@ public:
   virtual void	PlotSpacing(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_1 plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view -- one row for each type of filter (scroll to see each in turn) -- light squares show bounding box of rf, skipping every other
 
-  virtual bool	V1bDspInFmDataTable(DataTable* data_table, Variant col, int row=-1);
-  // #CAT_V1B set the v1b_dsp_in matrix from given data table column and row -- this will typically be a copy of the activations of a network layer that is computing these values from other visual features
+  virtual bool	V1bDspInFmDataTable(DataTable* data_table, Variant col, int row=-1, 
+				    float diff_thr=0.01f);
+  // #CAT_V1B set the v1b_dsp_in matrix from given data table column and row -- this will typically be a copy of the activations of a network layer that is computing these values from other visual features -- diff_thr is threshold on difference from previous pattern processed (normalized euclidian distance) -- if below this threshold, returns false and UpdateV1cFromV1bDspIn can be skipped (and prv pattern is not updated) -- diff_thr = 0 means ignore diff and always return true (but still update the previous vector)
   virtual void	UpdateV1cFromV1bDspIn();
   // #CAT_V1B update V1C values based on v1b_dsp_in inputs -- see V1bDspInFmDataTable -- in values are typically copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity
 

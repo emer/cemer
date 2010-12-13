@@ -5572,7 +5572,8 @@ void V1RegionSpec::V1BinocularFilter_AvgSum() {
 }
 
 
-bool V1RegionSpec::V1bDspInFmDataTable(DataTable* data_table, Variant col, int row) {
+bool V1RegionSpec::V1bDspInFmDataTable(DataTable* data_table, Variant col, int row,
+				       float diff_thr) {
   if(TestError(!data_table, "V1bDspInFmDataTable", "data table is null"))
     return false;
 
@@ -5637,6 +5638,15 @@ bool V1RegionSpec::V1bDspInFmDataTable(DataTable* data_table, Variant col, int r
       }
     }
   }
+
+  if(diff_thr > 0.0f) {
+    if(v1b_dsp_in_prv.geom.Equal(v1b_dsp_in.geom)) {
+      float dst = taMath_float::vec_euclid_dist(&v1b_dsp_in, &v1b_dsp_in_prv, true, 0.0f);
+      if(dst < diff_thr) return false;
+    }
+  }
+  v1b_dsp_in_prv.CopyFrom(&v1b_dsp_in);
+
   return true;
 }
 
