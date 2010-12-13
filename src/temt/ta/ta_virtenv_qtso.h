@@ -51,7 +51,8 @@ public:
   virtual void		FixOrientation(bool force=false);
   // fix the orientation of the body for different shape axes (capsule and cylinder) -- if force, do it regardless of whether IsCurShape is true (i.e. for render_pre)
 
-  override bool		ignoreDataChanged() const;
+  bool			isVisible() const { return (taMisc::gui_active ); }
+  override bool		ignoreDataChanged() const { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEBodyView& cp);
@@ -104,6 +105,9 @@ public:
   virtual void		FixOrientation(bool force=false);
   // fix the orientation of the body for different shape axes (capsule and cylinder) -- if force, do it regardless of whether IsCurShape is true (i.e. for render_pre)
 
+  bool			isVisible() const { return (taMisc::gui_active ); }
+  override bool		ignoreDataChanged() const { return !isVisible(); }
+
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEJointView& cp);
   TA_BASEFUNS(VEJointView);
@@ -132,6 +136,9 @@ public:
 
   override void		BuildAll();
   
+  bool			isVisible() const { return (taMisc::gui_active ); }
+  override bool		ignoreDataChanged() const { return !isVisible(); }
+
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEObjectView& cp);
   TA_BASEFUNS(VEObjectView);
@@ -163,6 +170,9 @@ public:
   virtual void		FixOrientation(bool force=false);
   // fix the orientation of the body for different shape axes (capsule and cylinder)  -- if force, do it regardless of whether IsCurShape is true (i.e. for render_pre)
 
+  bool			isVisible() const { return (taMisc::gui_active ); }
+  override bool		ignoreDataChanged() const { return !isVisible(); }
+
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VEStaticView& cp);
   TA_BASEFUNS(VEStaticView);
@@ -191,6 +201,9 @@ public:
 
   override void		BuildAll();
   
+  bool			isVisible() const { return (taMisc::gui_active ); }
+  override bool		ignoreDataChanged() const { return !isVisible(); }
+
   void 	SetDefaultName() {} // leave it blank
   void	Copy_(const VESpaceView& cp);
   TA_BASEFUNS(VESpaceView);
@@ -241,7 +254,8 @@ public:
   virtual QImage	GetCameraImage(int cam_no);
   // get the output of the given camera number (currently 0 or 1)
 
-  bool			isVisible() const; // gui_active, mapped and display_on
+  bool			isVisible() const { return (taMisc::gui_active ); }
+  override bool		ignoreDataChanged() const { return !isVisible(); }
 
   override void		BuildAll();
   

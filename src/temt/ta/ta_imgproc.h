@@ -1007,6 +1007,7 @@ public:
   int		max_width;	// #READ_ONLY maximum total width (1 + 2 * disp_range + end_ext)
   int		max_off;	// #READ_ONLY maximum possible offset -- furthest point out in any of the stencils
   int		tot_offs;	// #READ_ONLY 1 + 2 * max_off
+  int		edge_off;	// #READ_ONLY offset from the edges to count automatically as far
   float		ambig_wt;	// #READ_ONLY disparity activation weight for ambiguous locations
 
   virtual void	UpdateFmV1sSize(int v1s_img_x) {
@@ -1015,6 +1016,7 @@ public:
     end_ext = end_extra * disp_range;
     max_width = 1 + 2*disp_range + end_ext;
     max_off = n_disps * disp_spc + disp_range + end_ext;
+    edge_off = n_disps * disp_spc;
     tot_offs = 1 + 2 * max_off;
   }
 
@@ -1029,6 +1031,8 @@ class TA_API V1DisparitySpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 disparity computation in binocular mode
 INHERITED(taOBase)
 public:
+  bool		edge_far;	// #DEF_true automatically set all around the edges for the distance of the center of the most extreme disparity to far disparity -- edges are difficult to match -- if wrapping is working perfectly then it can potentially work but with many backgrounds it doesn't work
+  bool		ambig_off;	// #DEF_true in the v1b_dsp_out output (feature strength times disparity output coding), consider ambiguous (flagged) areas to be off (zero activity) instead of even distribution across all alternatives
   int		n_matches;	// #DEF_5 number of best-fitting disparity matches to keep per point in initial processing step
   int		win_half_sz;	// #DEF_2:3 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
   float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
@@ -1117,7 +1121,7 @@ protected:
 
 
 class TA_API V1RegionSpec : public VisRegionSpecBase {
-  // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- takes retinal DoG filter inputs and produces filter activation outputs -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
+  // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- produces Gabor and more complex filter activation outputs directly from image bitmap input -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(VisRegionSpecBase)
 public:
   enum ComplexFilters { // #BITS flags for specifying which complex filters to include
@@ -1192,7 +1196,7 @@ public:
   RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
   XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
-  XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output -- this is equivalent to dog_img_geom
+  XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output
 
   int		v1s_feat_mot_y;	// #READ_ONLY y axis index for start of motion features in v1s -- x axis is angles
 
@@ -1444,7 +1448,7 @@ public:
   // #BUTTON #CAT_Filter add a new region -- type is whatever the default is for this type of retina processor
 
   ///////////////////////////////////////////////////////////////////////
-  // Basic functions operating on float image data: transform image, apply dog filters
+  // Basic functions operating on float image data: transform image, apply filters
 
   virtual bool	Init();
   // #BUTTON initialize the filters, data table, etc -- call this in the init_code of any Program that is using this object

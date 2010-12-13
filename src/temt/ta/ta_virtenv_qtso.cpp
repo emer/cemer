@@ -221,13 +221,6 @@ void VEBodyView::Destroy() {
   CutLinks();
 }
 
-bool VEBodyView::ignoreDataChanged() const {
-// #ifdef DEBUG
-//   if(m_vis_cnt <= 0) taMisc::Info("invis updt");
-// #endif
-  return false;			// always update..
-}
-
 bool VEBodyView::SetName(const String& value) { 
   name = value;  
   return true; 
@@ -1680,10 +1673,6 @@ void VEWorldView::InitPanel() {
 void VEWorldView::UpdatePanel() {
   if (m_wvp)
     m_wvp->UpdatePanel();
-}
-
-bool VEWorldView::isVisible() const {
-  return (taMisc::gui_active && isMapped());
 }
 
 void VEWorldView::BuildAll() {
