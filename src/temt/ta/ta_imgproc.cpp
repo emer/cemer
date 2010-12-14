@@ -3389,7 +3389,7 @@ void V1BinocularSpec::Initialize() {
   gauss_sig = 0.7f;
   disp_spacing = 2.0f;
   end_extra = 2;
-  dsp_gain = 1.0f;
+  dsp_thr = 0.1f;
 
   tot_disps = 1 + 2 * n_disps;
   ambig_wt = 1.0f / (float)tot_disps; // ambiguous case weighting
@@ -5233,8 +5233,7 @@ void V1RegionSpec::V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no) {
   float& win_min_cnt = v1b_dsp_win.FastEl(DSP_CNT, sc.x, sc.y);
 
 
-  if((sc.x < v1b_specs.edge_off || sc.x >= v1s_img_geom.x - v1b_specs.edge_off) ||
-     (sc.y < v1b_specs.edge_off || sc.y >= v1s_img_geom.y - v1b_specs.edge_off)) {
+  if(sc.x < v1b_specs.edge_off) {
     win_min_dist = 0.0f;
     win_min_off = v1b_specs.max_off-1;
     win_min_cnt = 1.0f;
@@ -5518,12 +5517,28 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_thread(int v1c_pre_idx, int thread_
 
   TwoDCoord fc;			// v1b feature coords -- destination
 
+  int max_di = -1;
+  float max_di_val = 0.0f;
   for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
     float dval = cur_v1b_dsp->FastEl(didx, 0, pc.x, pc.y);
+    if(dval > max_di_val) {
+      max_di_val = dval;
+      max_di = didx;
+    }
+  }
+
+  if(max_di_val < v1b_specs.dsp_thr) {
+    max_di = -1;
+  }
+
+  for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+    float wt;
+    if(didx == max_di) wt = 1.0f;
+    else 		wt = 0.0f;
     for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
       fc.SetFmIndex(sfi, v1s_feat_geom.x);
       float rv = v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y);
-      v1b_v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * dval;
+      v1b_v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * wt;
     }
   }
 }
@@ -5534,12 +5549,28 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_Polinv_thread(int v1c_pre_idx, int 
 
   TwoDCoord fc;			// v1b feature coords -- destination
 
+  int max_di = -1;
+  float max_di_val = 0.0f;
   for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
     float dval = cur_v1b_dsp->FastEl(didx, 0, pc.x, pc.y);
+    if(dval > max_di_val) {
+      max_di_val = dval;
+      max_di = didx;
+    }
+  }
+
+  if(max_di_val < v1b_specs.dsp_thr) {
+    max_di = -1;
+  }
+
+  for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+    float wt;
+    if(didx == max_di) wt = 1.0f;
+    else 		wt = 0.0f;
     for(int sfi = 0; sfi < v1c_polinv_geom.n; sfi++) { // simple feature index
       fc.SetFmIndex(sfi, v1c_polinv_geom.x);
       float rv = v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y);
-      v1b_v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * dval;
+      v1b_v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * wt;
     }
   }
 }

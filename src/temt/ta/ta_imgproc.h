@@ -998,7 +998,7 @@ public:
   float		gauss_sig; 	// #DEF_0.7 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
   float		disp_spacing;	// #DEF_2:2.5 spacing between different disparity detector cells in terms of disparity offset tunings -- expressed as a multiplier on disp_range -- this should generally remain the default value of 2, so that the space is properly covered by the different disparity detectors, but 2.5 can also be useful to not have any overlap between disparities to prevent ambiguous activations (e.g., for figure-ground segregation)
   int		end_extra;	// #DEF_2 extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities -- expressed as a multiplier on disp_range 
-  float		dsp_gain;	// #DEF_1 disparity gain multiplier for applying disparity weightings to feature outputs (V1S, V1C) -- how strongly the dispartity modulates feature activations
+  float		dsp_thr;	// #DEF_0.1 threshold on maximum disparity value to allow pass-through of feature values
 
   int		disp_spc;	// #READ_ONLY integer value of spacing between different disparity detector cells -- computed from disp_spacing and disp_range
   int		end_ext;	// #READ_ONLY integer value of extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities
