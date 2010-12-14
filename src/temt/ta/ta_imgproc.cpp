@@ -5624,11 +5624,35 @@ bool V1RegionSpec::V1bDspInFmDataTable(DataTable* data_table, Variant col, int r
   }
   else {
     TwoDCoord pc;
+    TwoDCoord subc;
+    TwoDCoord ic;
+    TwoDCoord sic;
     for(pc.y = 0; pc.y < v1c_pre_geom.y; pc.y++) {
       for(pc.x = 0; pc.x < v1c_pre_geom.x; pc.x++) {
-	TwoDCoord ic = pc / prjrat;
+	ic = pc / prjrat;
+	int max_dx = -1;
+	float max_dx_val = 0.0f;
+	// integrate over subregion from input and take max as local value to apply
+	for(subc.y = -1; subc.y <= 1; subc.y++) {
+	  for(subc.x = -1; subc.x <= 1; subc.x++) {
+	    sic = ic + subc;
+	    if(sic.WrapClip(wrap, ingm)) {
+	      if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+	    }
+	    for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
+	      float dav = dacell->SafeEl(didx, 0 , sic.x, sic.y);
+	      if(dav > max_dx_val) {
+		max_dx = didx;
+		max_dx_val = dav;
+	      }
+	    }
+	  }
+	}
 	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
-	  v1b_dsp_in.FastEl(didx, 0, pc.x, pc.y) = dacell->SafeEl(didx, 0 , ic.x, ic.y);
+	  if(didx == max_dx)
+	    v1b_dsp_in.FastEl(didx, 0, pc.x, pc.y) = max_dx_val;
+	  else
+	    v1b_dsp_in.FastEl(didx, 0, pc.x, pc.y) = 0.0f;
 	}
       }
     }
