@@ -5520,23 +5520,10 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_thread(int v1c_pre_idx, int thread_
 
   for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
     float dval = cur_v1b_dsp->FastEl(didx, 0, pc.x, pc.y);
-    // get max of other disparities
-    float odmax = 0.0f;
-    for(int od=0; od < v1b_specs.tot_disps; od++) {
-      if(od == didx) continue;
-      float odval = cur_v1b_dsp->FastEl(od, 0, pc.x, pc.y);
-      odmax = MAX(odmax, odval);
-    }
-    float allmax = MAX(odmax, dval);
-    float mult_eff = v1b_specs.dsp_gain * (odmax - dval);
-    if(mult_eff > 1.0f) mult_eff = 1.0f;
-    if(mult_eff<0.0f) mult_eff = 0.0f;
-    float omult = allmax * (1.0f - mult_eff);
-
     for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
       fc.SetFmIndex(sfi, v1s_feat_geom.x);
       float rv = v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y);
-      v1b_v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * omult;
+      v1b_v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * dval;
     }
   }
 }
@@ -5549,23 +5536,10 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_Polinv_thread(int v1c_pre_idx, int 
 
   for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
     float dval = cur_v1b_dsp->FastEl(didx, 0, pc.x, pc.y);
-    // get max of other disparities
-    float odmax = 0.0f;
-    for(int od=0; od < v1b_specs.tot_disps; od++) {
-      if(od == didx) continue;
-      float odval = cur_v1b_dsp->FastEl(od, 0, pc.x, pc.y);
-      odmax = MAX(odmax, odval);
-    }
-    float allmax = MAX(odmax, dval);
-    float mult_eff = v1b_specs.dsp_gain * (odmax - dval);
-    if(mult_eff > 1.0f) mult_eff = 1.0f;
-    if(mult_eff < 0.0f) mult_eff = 0.0f;
-    float omult = allmax * (1.0f - mult_eff);
-
     for(int sfi = 0; sfi < v1c_polinv_geom.n; sfi++) { // simple feature index
       fc.SetFmIndex(sfi, v1c_polinv_geom.x);
       float rv = v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y);
-      v1b_v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * omult;
+      v1b_v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * dval;
     }
   }
 }
