@@ -5233,12 +5233,12 @@ void V1RegionSpec::V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no) {
   float& win_min_cnt = v1b_dsp_win.FastEl(DSP_CNT, sc.x, sc.y);
 
 
-  if(sc.x < v1b_specs.edge_off) {
-    win_min_dist = 0.0f;
-    win_min_off = v1b_specs.max_off-1;
-    win_min_cnt = 1.0f;
-    return;
-  }
+//   if(sc.x < v1b_specs.edge_off) {
+//     win_min_dist = 0.0f;
+//     win_min_off = v1b_specs.max_off-1;
+//     win_min_cnt = 1.0f;
+//     return;
+//   }
 
   TwoDCoord bn;			// binoc neighbor
 
@@ -5643,10 +5643,7 @@ bool V1RegionSpec::V1bDspInFmDataTable(DataTable* data_table, Variant col, int r
 	       ingm.GetStr()))
     return false;
 
-  if(prjrat == 1) {
-    v1b_dsp_in.CopyFrom(dacell);
-  }
-  else if(in_larger) {
+  if(in_larger) {
     if(TestError(in_larger, "V1bDspInFmDataTable",
 		 "dsp_in data column outer dimensions are larger than v1c_pre_geom -- not currently supported:", 
 		 v1c_pre_geom.GetStr(), "instead,", dacell->name, "has dimension:",
