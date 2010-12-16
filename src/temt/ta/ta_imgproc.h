@@ -993,21 +993,22 @@ class TA_API V1BinocularSpec : public taOBase {
 INHERITED(taOBase)
 public:
   int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
-  float		disp_range_pct;  // #DEF_0.05 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total V1S image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
-  int		disp_range; 	// #READ_ONLY #SHOW range (half width) of disparity tuning around central offset value for each disparity cell -- integer value computed from disp_range_pct -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
-  float		gauss_sig; 	// #DEF_0.7 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
+  float		disp_range_pct;  // #DEF_0.05:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total V1S image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
+  float		gauss_sig; 	// #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
   float		disp_spacing;	// #DEF_2:2.5 spacing between different disparity detector cells in terms of disparity offset tunings -- expressed as a multiplier on disp_range -- this should generally remain the default value of 2, so that the space is properly covered by the different disparity detectors, but 2.5 can also be useful to not have any overlap between disparities to prevent ambiguous activations (e.g., for figure-ground segregation)
   int		end_extra;	// #DEF_2 extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities -- expressed as a multiplier on disp_range 
   float		dsp_thr;	// #DEF_0.1 threshold on maximum disparity value to allow pass-through of feature values
+  float		edge_pct;	// #DEF_0;0.1 how much of the edge (as a proportion of total V1S image width) to treat with extra caution in matching, because it cannot match far offsets, which go off the edge (if wrapping and it works well, then this is not an issue, but for images that are not wrapping around, it is a problem) -- see v1b_dsp_specs.edge_thr for extra caution weighting
 
-  int		disp_spc;	// #READ_ONLY integer value of spacing between different disparity detector cells -- computed from disp_spacing and disp_range
-  int		end_ext;	// #READ_ONLY integer value of extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities
+  int		disp_range; 	// #READ_ONLY #SHOW range (half width) of disparity tuning around central offset value for each disparity cell -- integer value computed from disp_range_pct -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
+  int		disp_spc;	// #READ_ONLY #SHOW integer value of spacing between different disparity detector cells -- computed from disp_spacing and disp_range
+  int		end_ext;	// #READ_ONLY #SHOW integer value of extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities
+  int		edge_off;	// #READ_ONLY #SHOW offset from the edges to count automatically as far
 
   int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
   int		max_width;	// #READ_ONLY maximum total width (1 + 2 * disp_range + end_ext)
   int		max_off;	// #READ_ONLY maximum possible offset -- furthest point out in any of the stencils
   int		tot_offs;	// #READ_ONLY 1 + 2 * max_off
-  int		edge_off;	// #READ_ONLY offset from the edges to count automatically as far
   float		ambig_wt;	// #READ_ONLY disparity activation weight for ambiguous locations
 
   virtual void	UpdateFmV1sSize(int v1s_img_x) {
@@ -1016,7 +1017,7 @@ public:
     end_ext = end_extra * disp_range;
     max_width = 1 + 2*disp_range + end_ext;
     max_off = n_disps * disp_spc + disp_range + end_ext;
-    edge_off = n_disps * disp_spc;
+    edge_off = (int)((edge_pct * (float)v1s_img_x) + 0.5f);
     tot_offs = 1 + 2 * max_off;
   }
 
@@ -1031,18 +1032,21 @@ class TA_API V1DisparitySpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 disparity computation in binocular mode
 INHERITED(taOBase)
 public:
-  bool		edge_far;	// #DEF_true automatically set all around the edges for the distance of the center of the most extreme disparity to far disparity -- edges are difficult to match -- if wrapping is working perfectly then it can potentially work but with many backgrounds it doesn't work
   bool		ambig_off;	// #DEF_true in the v1b_dsp_out output (feature strength times disparity output coding), consider ambiguous (flagged) areas to be off (zero activity) instead of even distribution across all alternatives
-  int		n_matches;	// #DEF_5 number of best-fitting disparity matches to keep per point in initial processing step
+  int		n_matches;	// #DEF_7 number of best-fitting disparity matches to keep per point in initial processing step
   int		win_half_sz;	// #DEF_2:3 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
   float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
-  float		good_thr;	// #DEF_0.8 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
-  float		cnt_thr;	// #DEF_2 in selecting the best disparity offset, threshold for number of matches to even consider as a candidate for best offset
-  float		pct_thr;	// #DEF_0.1 in selecting the best disparity offset, threshold for selecting based on percent of total matches at a given disparity for the disparity with the greatest number of matches -- below this value, the one with the minimum distance is selected regardless of number of matches
-  float		neigh_wt;	// #DEF_0.5 contribution of neighboring disparity offsets to current one in window aggregation procedure
+  float		good_thr;	// #DEF_0.3:0.5 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
+  float		integ_thr;	// #DEF_1 threshold on integrated values -- if below this threshold, then integrated confidence is too low, and area is marked as ambiguous
+  float		edge_thr;	// #DEF_1.5 multiplier on integ_thr for areas falling along the edge -- these have a higher threshold to pass muster, because they are missing the ability to match in particular directions that go off the edge
+  float		off_integ_sz; 	// #DEF_1 half-width in units of disp_range for gaussian integration of disparity weightings across different disparity offsets -- integrates votes for nearby offsets to find the best overall zone of offset for a given location
+  float		off_integ_sig;	// #DEF_0.7:1.5 sigma for gaussian for offset integration
 
+  float		thr_gain;   	// #READ_ONLY 1.0 / good_thr -- multiplier on distance weights such that something right at threshold counts for zero..
+  float		net_edge_thr;	// #READ_ONLY integ_thr * edge_thr -- net threshold
   int		win_sz;		// #READ_ONLY window full size = 1 + 2*win_half_sz
   int		win_area;	// #READ_ONLY total number of elements in the full square window = win_sz * win_sz
+  int		off_int_sz;	// #READ_ONLY actual computed size of off_integ_sz based on disp_range
 
   void 	Initialize();
   void	Destroy() { };
@@ -1176,7 +1180,6 @@ public:
   enum DspMatch {	// for storing disparity match information
     DSP_OFF,		// disparity offset
     DSP_DIST,		// feature activation absolute distance at given offset
-    DSP_CNT,		// count of number of matching feature locations supporting this disparity estimate
     DSP_N,		// number of disparity match values to record
   };
 
@@ -1246,10 +1249,10 @@ public:
 
   ///////////////////  V1B Geom/Stencils ////////////////////////
   int_Matrix	v1b_widths; 	// #READ_ONLY #NO_SAVE width of stencils for binocularity detectors 1d: [tot_disps]
-  float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular weighting factors -- for each tuning disparity [max_width][tot_disps] -- only v1b_widths[disp] are used per disparity
+  float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular gaussian weighting factors for integrating disparity values into v1b unit activations -- for each tuning disparity [max_width][tot_disps] -- only v1b_widths[disp] are used per disparity
   int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: 2d: [XY][max_width][tot_disps]
   float_Matrix	v1bc_weights;	// #READ_ONLY #NO_SAVE weighting factors for integration from binocular disparities to complex responses
-  // v1c feat x axis is always angle, except for blobs
+  float_Matrix	v1b_off_integ_wts; // #READ_ONLY #NO_SAVE for integrating disparity offset weights across a window to select the best offset for a given point -- v1b_dsp_specs.off_integ_sz, off_integ_sig control this
 
   ///////////////////  V1S Output ////////////////////////
   float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
@@ -1274,7 +1277,7 @@ public:
   int_Matrix	v1b_dsp_nmatch;	 // #READ_ONLY #NO_SAVE number of top matches -- tells how many actual matches are in v1b_dsp_match [img.x][img.y]
   int_Matrix	v1b_dsp_flags;	 // #READ_ONLY #NO_SAVE flags to indicate status of match for this location [img.x][img.y]
   float_Matrix	v1b_dsp_match;	 // #READ_ONLY #NO_SAVE list of top matches -- aggregates across features (average abs distance across features) -- values are offset and min dist at that index for each match, or DSP_AMBIG_HORIZ (see DspMatch enum) [2][n_matches][img.x][img.y]
-  float_Matrix	v1b_dsp_win;	 // #READ_ONLY #NO_SAVE results of the window aggregation process for each point -- integrates over spatial window and features -- result is the best match offset, min dist at that offset, and count of feature matches at that offset, or ambiguous [DSP_N][img.x][img.y]
+  float_Matrix	v1b_dsp_win;	 // #READ_ONLY #NO_SAVE results of the window aggregation process for each point -- integrates over spatial window and features -- result is the best match offset, and total distance weight at that offset, or ambiguous [DSP_N][img.x][img.y]
   float_Matrix	v1b_dsp_wts;	 // #READ_ONLY #NO_SAVE final normalized disparity weights -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][img.x][img.y] -- saved to output if SAVE_DEBUG is on
   float_Matrix	v1b_dsp_out;	 // #READ_ONLY #NO_SAVE pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][img.x][img.y]
   float_Matrix	v1b_dsp_out_pre; // #READ_ONLY #NO_SAVE v1c pre gp4 version of v1b_dsp_out -- v1b_c requires things to be at the pre level -- has pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][pre_img.x][pre_img.y]

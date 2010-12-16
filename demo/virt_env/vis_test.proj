@@ -1024,7 +1024,7 @@ LeabraProject .projects[0] {
 	  ProgVar @[2] { };
 	};
 
-	ProgVar_List @.vars = [15] {
+	ProgVar_List @.vars = [16] {
 	  ProgVar @[0] { };
 	  ProgVar @[1] { };
 	  ProgVar @[2] { };
@@ -1040,6 +1040,7 @@ LeabraProject .projects[0] {
 	  ProgVar @[12] { };
 	  ProgVar @[13] { };
 	  ProgVar @[14] { };
+	  ProgVar @[15] { };
 	};
 
 	Function_List @.functions = [0] {
@@ -1220,8 +1221,10 @@ LeabraProject .projects[0] {
 	  ProgVar @[3] { };
 	};
 
-	ProgVar_List @.vars = [1] {
+	ProgVar_List @.vars = [3] {
 	  ProgVar @[0] { };
+	  ProgVar @[1] { };
+	  ProgVar @[2] { };
 	};
 
 	Function_List @.functions = [0] {
@@ -8823,8 +8826,8 @@ LeabraProject .projects[0] {
        v1c_pre_geom {x=36: y=36: n_not_xy=0: n=1296: };
        v1c_img_geom {x=18: y=18: n_not_xy=0: n=324: };
        v1b_filters=V1B_DSP;
-       v1b_specs {n_disps=1: disp_range_pct=0.05: disp_range=4: gauss_sig=0.5: disp_spacing=2: end_extra=2: dsp_gain=1: disp_spc=8: end_ext=8: tot_disps=3: max_width=17: max_off=20: tot_offs=41: ambig_wt=0.3333333: };
-       v1b_dsp_specs {n_matches=5: win_half_sz=3: opt_thr=0.01: good_thr=0.8: cnt_thr=2: pct_thr=0.1: neigh_wt=0.5: win_sz=7: win_area=49: };
+       v1b_specs {n_disps=1: disp_range_pct=0.05: gauss_sig=0.5: disp_spacing=2: end_extra=2: dsp_thr=0.1: edge_pct=0.05: disp_range=4: disp_spc=8: end_ext=8: edge_off=4: tot_disps=3: max_width=17: max_off=20: tot_offs=41: ambig_wt=0.3333333: };
+       v1b_dsp_specs {ambig_off=1: n_matches=5: win_half_sz=3: opt_thr=0.01: good_thr=0.8: off_integ_sz=1: off_integ_sig=0.7: win_sz=7: win_area=49: off_int_sz=1816487497: };
        v1b_renorm=NO_RENORM;
        v1b_save=SAVE_DATA;
        v1b_dsp_feat_geom {x=3: y=1: n_not_xy=0: n=1: };
@@ -12598,13 +12601,13 @@ LeabraProject .projects[0] {
        v1c_pre_geom {x=18: y=18: n_not_xy=0: n=324: };
        v1c_img_geom {x=18: y=18: n_not_xy=0: n=324: };
        v1b_filters=V1B_DSP|V1B_S|V1B_C;
-       v1b_specs {n_disps=1: disp_range_pct=0.05: disp_range=2: gauss_sig=0.7: disp_spacing=2: end_extra=2: dsp_gain=1: disp_spc=4: end_ext=4: tot_disps=3: max_width=9: max_off=10: tot_offs=21: ambig_wt=0.3333333: };
-       v1b_dsp_specs {n_matches=5: win_half_sz=2: opt_thr=0.01: good_thr=0.8: cnt_thr=2: pct_thr=0.1: neigh_wt=0.5: win_sz=5: win_area=25: };
+       v1b_specs {n_disps=1: disp_range_pct=0.05: gauss_sig=0.7: disp_spacing=2: end_extra=3: dsp_thr=0.1: edge_pct=0.05: disp_range=2: disp_spc=4: end_ext=6: edge_off=2: tot_disps=3: max_width=11: max_off=12: tot_offs=25: ambig_wt=0.3333333: };
+       v1b_dsp_specs {ambig_off=1: n_matches=5: win_half_sz=2: opt_thr=0.01: good_thr=0.8: off_integ_sz=1: off_integ_sig=0.7: win_sz=5: win_area=25: off_int_sz=2: };
        v1b_renorm=NO_RENORM;
        v1b_save=SAVE_DATA|SAVE_DEBUG;
        v1b_dsp_feat_geom {x=3: y=1: n_not_xy=0: n=1: };
        v1b_s_feat_geom {x=12: y=2: n_not_xy=0: n=1: };
-       dsp_stats {pct_ambig=0.04895781: sel_mean=0.9936738: };
+       dsp_stats {pct_ambig=0.002315864: sel_mean=0.9594299: };
        opt_filters=;
        opt_save=SAVE_DATA;
        n_colors=1;
@@ -12801,7 +12804,7 @@ LeabraProject .projects[0] {
 	      [2] ;;       };
       };
       float_Data @[13] {
-       name="V1_high_v1b_dsp_mindist";
+       name="V1_high_v1b_dsp_offwt";
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=1;
        cell_geom{ 36;36;       };
@@ -12813,16 +12816,16 @@ LeabraProject .projects[0] {
 	      [2] ;;       };
       };
       float_Data @[14] {
-       name="V1_high_v1b_dsp_cnt";
+       name="V1_high_v1b_dsp_wts";
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=1;
-       cell_geom{ 36;36;       };
+       cell_geom{ 3;1;36;36;       };
        calc_expr {
 	expr=;
        };
        dim_names {
 	name=;
-	      [2] ;;       };
+	      [4] ;;;;       };
       };
       float_Data @[15] {
        name="V1_high_v1b_v1c_pre_d0";
@@ -13808,10 +13811,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=5.980556e-15: y=0.1: z=-8.95285e-15: };
+	  cur_pos {x=9.072942e-15: y=0.1: z=-1.158764e-14: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-4.452683e-14: y=-8.06979e-15: z=1.097013e-13: };
-	  cur_ang_vel {x=-8.060474e-14: y=-3.874127e-14: z=1.433485e-14: };
+	  cur_lin_vel {x=-1.130588e-13: y=1.710298e-14: z=1.409392e-13: };
+	  cur_ang_vel {x=-7.187514e-14: y=-1.060241e-13: z=2.870864e-14: };
 	  shape=BOX;
 	  mass=1;
 	  radius=0.5;
@@ -13857,10 +13860,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=1: z=0: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=1.239561e-14: y=0.35: z=-1.787967e-08: };
+	  cur_pos {x=1.879542e-14: y=0.35: z=-1.787968e-08: };
 	  cur_rot {x=0: y=0: z=1: rot=0: };
-	  cur_lin_vel {x=-9.40227e-14: y=1.490116e-07: z=-2.038369e-11: };
-	  cur_ang_vel {x=-2.384176e-06: y=-2.139812e-14: z=-2.207856e-14: };
+	  cur_lin_vel {x=-2.358232e-13: y=1.490117e-07: z=-2.024648e-11: };
+	  cur_ang_vel {x=-2.384176e-06: y=-1.060224e-13: z=4.631443e-14: };
 	  shape=CAPSULE;
 	  mass=1;
 	  radius=0.1;
@@ -13907,9 +13910,9 @@ LeabraProject .projects[0] {
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=0.04: y=0.35: z=0.1: };
-	  cur_rot {x=-0.007585919: y=0.9872352: z=0.159088: rot=3.235674: };
-	  cur_lin_vel {x=4.765654e-14: y=3.874293e-07: z=-1.043072e-07: };
-	  cur_ang_vel {x=-5.960393e-07: y=-3.128669e-07: z=9.455452e-07: };
+	  cur_rot {x=-0.01343386: y=0.987313: z=0.1582169: rot=3.308864: };
+	  cur_lin_vel {x=-1.172652e-14: y=3.874293e-07: z=-2.980132e-08: };
+	  cur_ang_vel {x=1.192104e-06: y=-5.500796e-07: z=1.672246e-06: };
 	  shape=CYLINDER;
 	  mass=0.001;
 	  radius=0.01;
@@ -13959,7 +13962,7 @@ LeabraProject .projects[0] {
 	   intensity=0.2;
 	   color {r=1: g=1: b=1: a=1: };
 	  };
-	  dir_norm {x=0.0951517: y=-0.3127074: z=0.9450719: };
+	  dir_norm {x=0.1686013: y=-0.3080023: z=0.9363272: };
 	 };
 	 VECamera @[3] {
 	  name="RightEye";
@@ -13970,9 +13973,9 @@ LeabraProject .projects[0] {
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
 	  cur_pos {x=-0.04: y=0.35: z=0.09999999: };
-	  cur_rot {x=-0.01677087: y=0.9871249: z=0.1590702: rot=3.348993: };
-	  cur_lin_vel {x=7.559452e-14: y=3.874293e-07: z=1.192102e-07: };
-	  cur_ang_vel {x=-5.959712e-07: y=-8.603699e-06: z=-5.617026e-07: };
+	  cur_rot {x=-0.02915058: y=0.9869826: z=0.1581639: rot=3.501473: };
+	  cur_lin_vel {x=-1.015843e-14: y=3.874293e-07: z=4.470448e-08: };
+	  cur_ang_vel {x=1.192094e-06: y=3.380021e-06: z=4.984699e-06: };
 	  shape=CYLINDER;
 	  mass=0.001;
 	  radius=0.01;
@@ -14022,7 +14025,7 @@ LeabraProject .projects[0] {
 	   intensity=0.2;
 	   color {r=1: g=1: b=1: a=1: };
 	  };
-	  dir_norm {x=0.2085441: y=-0.3072258: z=0.9285052: };
+	  dir_norm {x=0.3565041: y=-0.291944: z=0.8875096: };
 	 };
 	 VEBody @[4] {
 	  name="EyeBeamL";
@@ -14032,10 +14035,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.08948018: y=0.1873923: z=0.5914373: };
-	  cur_rot {x=0.9578985: y=0.283457: z=0.04567745: rot=0.3333341: };
-	  cur_lin_vel {x=-1.490132e-07: y=5.78116e-07: z=-3.270161e-06: };
-	  cur_ang_vel {x=-5.951417e-07: y=-4.008525e-07: z=9.262694e-07: };
+	  cur_pos {x=0.1276739: y=0.1898389: z=0.5868901: };
+	  cur_rot {x=0.881148: y=0.4668826: z=0.07481751: rot=0.3597976: };
+	  cur_lin_vel {x=-2.980248e-07: y=-1.953839e-07: z=-2.854708e-06: };
+	  cur_ang_vel {x=1.485838e-06: y=-3.474124e-07: z=1.68616e-06: };
 	  shape=CAPSULE;
 	  mass=1e-05;
 	  radius=0.005;
@@ -14081,10 +14084,10 @@ LeabraProject .projects[0] {
 	  init_rot {x=0: y=0: z=1: rot=0: };
 	  init_lin_vel {x=0: y=0: z=0: };
 	  init_ang_vel {x=0: y=0: z=0: };
-	  cur_pos {x=0.06844422: y=0.1902427: z=0.5828226: };
-	  cur_rot {x=0.8335701: y=0.5453804: z=0.08788487: rot=0.3819268: };
-	  cur_lin_vel {x=-4.243792e-06: y=6.142794e-07: z=-1.534757e-06: };
-	  cur_ang_vel {x=-5.966467e-07: y=-8.601692e-06: z=-5.600741e-07: };
+	  cur_pos {x=0.1453834: y=0.1981892: z=0.561505: };
+	  cur_rot {x=0.6513905: y=0.7491843: z=0.1200561: rot=0.4824437: };
+	  cur_lin_vel {x=1.869593e-06: y=1.20839e-06: z=-4.041125e-06: };
+	  cur_ang_vel {x=1.192035e-06: y=3.372494e-06: z=4.981179e-06: };
 	  shape=CAPSULE;
 	  mass=1e-05;
 	  radius=0.005;
@@ -14156,10 +14159,10 @@ LeabraProject .projects[0] {
 	  };
 	  motor {
 	   motor_on=1;
-	   vel=-1.788139e-06;
+	   vel=-1.192093e-06;
 	   f_max=10;
 	   servo_on=1;
-	   trg_pos=-0.3195431;
+	   trg_pos=-0.317798;
 	   gain=20;
 	  };
 	  motor2 {
@@ -14167,7 +14170,7 @@ LeabraProject .projects[0] {
 	   vel=0;
 	   f_max=10;
 	   servo_on=1;
-	   trg_pos=-0.09529877;
+	   trg_pos=-0.1694131;
 	   gain=20;
 	  };
 	  ode_params {
@@ -14180,16 +14183,16 @@ LeabraProject .projects[0] {
 	   erp=0.2;
 	   cfm=1e-05;
 	  };
-	  pos=-0.319543;
-	  pos_norm=0.3668571;
-	  vel=-1.788137e-06;
-	  pos2=-0.09529877;
-	  pos2_norm=0.4602922;
-	  vel2=2.565343e-12;
-	  cur_force1 {x=7.450434e-11: y=-6.903424e-11: z=1.193895e-09: };
-	  cur_torque1 {x=-1.542008e-10: y=-6.160116e-11: z=7.027615e-12: };
-	  cur_force2 {x=-7.450434e-11: y=6.903424e-11: z=-1.193895e-09: };
-	  cur_torque2 {x=1.611042e-10: y=2.129581e-11: z=-9.788982e-12: };
+	  pos=-0.317798;
+	  pos_norm=0.3675842;
+	  vel=-3.57628e-06;
+	  pos2=-0.1694131;
+	  pos2_norm=0.4294112;
+	  vel2=-1.735587e-12;
+	  cur_force1 {x=-3.72547e-11: y=5.98248e-10: z=-1.012337e-10: };
+	  cur_torque1 {x=-4.376878e-10: y=-2.379483e-11: z=8.409237e-11: };
+	  cur_force2 {x=3.72547e-11: y=-5.98248e-10: z=1.012337e-10: };
+	  cur_torque2 {x=3.77863e-10: y=2.411871e-11: z=-6.016244e-11: };
 	 };
 	 VEJoint @[1] {
 	  name="RightEyeJoint";
@@ -14220,18 +14223,18 @@ LeabraProject .projects[0] {
 	  };
 	  motor {
 	   motor_on=1;
-	   vel=-1.788139e-06;
+	   vel=-3.576279e-06;
 	   f_max=10;
 	   servo_on=1;
-	   trg_pos=-0.3195431;
+	   trg_pos=-0.317798;
 	   gain=20;
 	  };
 	  motor2 {
 	   motor_on=1;
-	   vel=-1.192093e-06;
+	   vel=4.768372e-06;
 	   f_max=10;
 	   servo_on=1;
-	   trg_pos=-0.2100888;
+	   trg_pos=-0.364526;
 	   gain=20;
 	  };
 	  ode_params {
@@ -14244,16 +14247,16 @@ LeabraProject .projects[0] {
 	   erp=0.2;
 	   cfm=1e-05;
 	  };
-	  pos=-0.319543;
-	  pos_norm=0.3668571;
-	  vel=-1.788205e-06;
-	  pos2=-0.2100887;
-	  pos2_norm=0.412463;
-	  vel2=8.344621e-06;
-	  cur_force1 {x=2.350515e-09: y=-7.415272e-10: z=-1.11271e-09: };
-	  cur_torque1 {x=7.776298e-10: y=1.844379e-09: z=4.22705e-10: };
-	  cur_force2 {x=-2.350515e-09: y=7.415272e-10: z=1.11271e-09: };
-	  cur_torque2 {x=-7.034771e-10: y=-1.653836e-09: z=-3.930438e-10: };
+	  pos=-0.3177978;
+	  pos_norm=0.3675843;
+	  vel=-3.576271e-06;
+	  pos2=-0.3645263;
+	  pos2_norm=0.3481141;
+	  vel2=-4.768367e-06;
+	  cur_force1 {x=7.446242e-11: y=1.115996e-09: z=4.457551e-11: };
+	  cur_torque1 {x=-8.03618e-10: y=2.035772e-11: z=2.351586e-10: };
+	  cur_force2 {x=-7.446242e-11: y=-1.115996e-09: z=-4.457551e-11: };
+	  cur_torque2 {x=6.920184e-10: y=-1.112846e-11: z=-2.797984e-10: };
 	 };
 	 VEJoint @[2] {
 	  name="NeckJoint";
@@ -14313,11 +14316,11 @@ LeabraProject .projects[0] {
 	  vel=2.384176e-06;
 	  pos2=0;
 	  pos2_norm=0.5;
-	  vel2=-1.734315e-14;
-	  cur_force1 {x=2.42069e-09: y=-8.081729e-10: z=-1.765037e-10: };
-	  cur_torque1 {x=5.792499e-10: y=1.782764e-09: z=-1.754353e-10: };
-	  cur_force2 {x=-2.42069e-09: y=8.081729e-10: z=1.765037e-10: };
-	  cur_torque2 {x=-6.233759e-10: y=-1.782764e-09: z=-4.297372e-10: };
+	  vel2=-1.612751e-18;
+	  cur_force1 {x=3.123816e-11: y=1.711389e-09: z=-3.138701e-10: };
+	  cur_torque1 {x=-1.319767e-09: y=-3.453702e-12: z=3.114407e-10: };
+	  cur_force2 {x=-3.123816e-11: y=-1.711389e-09: z=3.138701e-10: };
+	  cur_torque2 {x=1.2413e-09: y=3.453702e-12: z=-3.192502e-10: };
 	 };
 	 VEJoint @[3] {
 	  name="EyeBeamLJoint";
@@ -14742,7 +14745,7 @@ LeabraProject .projects[0] {
       light_0=.projects[0].programs.gp[0][0].objs[0].objects[2].bodies[0]$$;
       light_1=NULL;
      };
-     TimeUsed @[1] {name="RobotTime": start={usr=303: sys=69: tot=129197081789: }: end={usr=306: sys=70: tot=129197081793: }: used={usr=5449: sys=324: tot=5754: }: s_used=57.54: n_used=490: };
+     TimeUsed @[1] {name="RobotTime": start={usr=12153: sys=4049: tot=129249355732: }: end={usr=12158: sys=4050: tot=129249355756: }: used={usr=5646: sys=378: tot=6974: }: s_used=69.73999999999999: n_used=524: };
     };
     types {
      name=;
@@ -14801,7 +14804,7 @@ LeabraProject .projects[0] {
      ProgVar @[4] {
       name="leye_horiz";
       var_type=T_Real;
-      real_val=0.4602921903133392;
+      real_val=0.4294112324714661;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -14811,7 +14814,7 @@ LeabraProject .projects[0] {
      ProgVar @[5] {
       name="leye_vert";
       var_type=T_Real;
-      real_val=0.3668570518493652;
+      real_val=0.3675841689109802;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -14821,7 +14824,7 @@ LeabraProject .projects[0] {
      ProgVar @[6] {
       name="reye_horiz";
       var_type=T_Real;
-      real_val=0.4124630093574524;
+      real_val=0.3481141626834869;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -14831,7 +14834,7 @@ LeabraProject .projects[0] {
      ProgVar @[7] {
       name="reye_vert";
       var_type=T_Real;
-      real_val=0.3668570518493652;
+      real_val=0.3675841689109802;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -15448,7 +15451,7 @@ LeabraProject .projects[0] {
      ProgVar @[1] {
       name="targ_y";
       var_type=T_Real;
-      real_val=0.125;
+      real_val=0.225;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -15458,7 +15461,7 @@ LeabraProject .projects[0] {
      ProgVar @[2] {
       name="targ_z";
       var_type=T_Real;
-      real_val=0.7799999713897705;
+      real_val=0.4799999713897705;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -15473,7 +15476,7 @@ LeabraProject .projects[0] {
      ProgVar @[0] {
       name="leye_horiz";
       var_type=T_Real;
-      real_val=0.4602921903133392;
+      real_val=0.4294112324714661;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -15483,7 +15486,7 @@ LeabraProject .projects[0] {
      ProgVar @[1] {
       name="leye_horiz_ang";
       var_type=T_Real;
-      real_val=1.475497603416443;
+      real_val=1.401383280754089;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -15493,7 +15496,7 @@ LeabraProject .projects[0] {
      ProgVar @[2] {
       name="leye_vert";
       var_type=T_Real;
-      real_val=0.3668570518493652;
+      real_val=0.3675841689109802;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -15503,7 +15506,7 @@ LeabraProject .projects[0] {
      ProgVar @[3] {
       name="reye_horiz";
       var_type=T_Real;
-      real_val=0.4124630093574524;
+      real_val=0.3481141626834869;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -15513,7 +15516,7 @@ LeabraProject .projects[0] {
      ProgVar @[4] {
       name="reye_horiz_ang";
       var_type=T_Real;
-      real_val=1.360707521438599;
+      real_val=1.206270337104797;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -15523,7 +15526,7 @@ LeabraProject .projects[0] {
      ProgVar @[5] {
       name="reye_vert";
       var_type=T_Real;
-      real_val=0.3668570518493652;
+      real_val=0.3675841689109802;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -15533,7 +15536,7 @@ LeabraProject .projects[0] {
      ProgVar @[6] {
       name="reye_vert_ang";
       var_type=T_Real;
-      real_val=1.251253247261047;
+      real_val=1.252998352050781;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -15571,6 +15574,16 @@ LeabraProject .projects[0] {
       init_from=NULL;
      };
      ProgVar @[10] {
+      name="vert_z_gain";
+      var_type=T_Real;
+      real_val=1;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @[11] {
       name="eye_off";
       var_type=T_Real;
       real_val=-0.03999999910593033;
@@ -15580,7 +15593,7 @@ LeabraProject .projects[0] {
       desc=;
       init_from=NULL;
      };
-     ProgVar @[11] {
+     ProgVar @[12] {
       name="Head";
       var_type=T_Object;
       object_type=VEBody;
@@ -15591,7 +15604,7 @@ LeabraProject .projects[0] {
       desc=;
       init_from=NULL;
      };
-     ProgVar @[12] {
+     ProgVar @[13] {
       name="LeftEye";
       var_type=T_Object;
       object_type=VECamera;
@@ -15602,7 +15615,7 @@ LeabraProject .projects[0] {
       desc=;
       init_from=NULL;
      };
-     ProgVar @[13] {
+     ProgVar @[14] {
       name="RightEye";
       var_type=T_Object;
       object_type=VECamera;
@@ -15613,7 +15626,7 @@ LeabraProject .projects[0] {
       desc=;
       init_from=NULL;
      };
-     ProgVar @[14] {
+     ProgVar @[15] {
       name="RightEyeJoint";
       var_type=T_Object;
       object_type=VEJoint;
@@ -15666,7 +15679,7 @@ LeabraProject .projects[0] {
      AssignExpr @[3] {
       desc=;
       flags=;
-      result_var=.projects[0].programs.gp[0][1].vars[10]$$;
+      result_var=.projects[0].programs.gp[0][1].vars[11]$$;
       expr {
        expr="RightEye.init_pos.x - nose_x";
       };
@@ -15793,7 +15806,7 @@ LeabraProject .projects[0] {
       flags=;
       result_var=.projects[0].programs.gp[0][1].vars[5]$$;
       expr {
-       expr="RightEyeJoint.stops2.Normalize(reye_vert_ang - PI/2.0)";
+       expr="RightEyeJoint.stops2.Normalize(vert_z_gain * (reye_vert_ang - PI/2.0))";
       };
      };
      AssignExpr @[6] {
@@ -16439,6 +16452,26 @@ LeabraProject .projects[0] {
       desc=;
       init_from=NULL;
      };
+     ProgVar @[1] {
+      name="targ_z_off";
+      var_type=T_Real;
+      real_val=-0.3;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @[2] {
+      name="targ_y_off";
+      var_type=T_Real;
+      real_val=0.1;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
     };
     functions {
      name=;
@@ -16642,7 +16675,7 @@ LeabraProject .projects[0] {
 	required=1;
 	def_val=;
 	expr {
-	 expr="Target1.init_pos.y";
+	 expr="Target1.init_pos.y + targ_y_off";
 	};
        };
        ProgArg @[2] {
@@ -16652,7 +16685,7 @@ LeabraProject .projects[0] {
 	required=1;
 	def_val=;
 	expr {
-	 expr="Target1.init_pos.z";
+	 expr="Target1.init_pos.z + targ_z_off";
 	};
        };
       };
@@ -17383,9 +17416,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	T3SavedView @[1] {
 	 name="Ohead";
 	 view_saved=1;
-	 pos {x=-0.02199999: y=2.506394: z=2.30662: };
-	 orient {x=-0.9999999: y=0: z=0: rot=1.074001: };
-	 focal_dist=5.867721;
+	 pos {x=-0.1547036: y=2.68879: z=1.087746: };
+	 orient {x=-0.5524591: y=-0.6155432: z=-0.562046: rot=2.053352: };
+	 focal_dist=2.735913;
 	};
 	T3SavedView @[2] {
 	 name="OverShldr";
@@ -17395,11 +17428,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 focal_dist=1.723731e-12;
 	};
 	T3SavedView @[3] {
-	 name="View 3";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 name="Side";
+	 view_saved=1;
+	 pos {x=-2.642178: y=-0.03585341: z=1.044947: };
+	 orient {x=0: y=-1: z=0: rot=1.588: };
+	 focal_dist=2.735913;
 	};
 	T3SavedView @[4] {
 	 name="View 4";
@@ -17581,7 +17614,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[13] {
-	    name="V1_high_v1b_dsp_mindist";
+	    name="V1_high_v1b_dsp_offwt";
 	    m_data=.projects[0].programs[3].objs[1].data[13]$$;
 	    m_transform=NULL;
 	    visible=1;
@@ -17592,11 +17625,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[14] {
-	    name="V1_high_v1b_dsp_cnt";
+	    name="V1_high_v1b_dsp_wts";
 	    m_data=.projects[0].programs[3].objs[1].data[14]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=36;
+	    text_width=3;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
@@ -17642,14 +17675,14 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=1;
-	  col_range {min=17: max=17: };
+	  col_range {min=12: max=12: };
 	  width=1.2;
 	  grid_on=1;
 	  header_on=1;
 	  row_num_on=0;
 	  two_d_font=0;
 	  two_d_font_scale=350;
-	  mat_val_text=0;
+	  mat_val_text=1;
 	  colorscale {
 	   name="ColorScale_0";
 	   chunks=133;
@@ -17666,7 +17699,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  mat_block_spc=0.1;
 	  mat_block_height=0;
 	  mat_rot=0;
-	  mat_trans=0.8;
+	  mat_trans=0.5;
 	  mat_size_range {min=4: max=16: };
 	  text_size_range {min=0.02: max=0.05: };
 	  click_vals=0;
@@ -18369,7 +18402,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[13] {
-	    name="V1_high_v1b_dsp_mindist";
+	    name="V1_high_v1b_dsp_offwt";
 	    m_data=$.projects[0].programs[3].objs[1].data[13]$;
 	    m_transform=NULL;
 	    visible=1;
@@ -18380,11 +18413,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_odd_vert=1;
 	   };
 	   GridColView @[14] {
-	    name="V1_high_v1b_dsp_cnt";
+	    name="V1_high_v1b_dsp_wts";
 	    m_data=$.projects[0].programs[3].objs[1].data[14]$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=36;
+	    text_width=3;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
@@ -18430,7 +18463,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
-	  col_range {min=7: max=7: };
+	  col_range {min=1: max=1: };
 	  width=1;
 	  grid_on=1;
 	  header_on=1;
