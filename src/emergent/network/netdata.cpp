@@ -1602,7 +1602,8 @@ void NetMonitor::SetNetwork(Network* net) {
 //   if(network.ptr() == net) return;
   network = net;
   UpdateNetworkPtrs();
-  UpdateDataTable(false);	// re-cache pointers after network setting
+  ResetDataTableCols();		// this calls updatedatatable(false) too -- always make a clean update
+//   UpdateDataTable(false);	// re-cache pointers after network setting
 }
 
 void NetMonitor::UpdateNetworkPtrs() {

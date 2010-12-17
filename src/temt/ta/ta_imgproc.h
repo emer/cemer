@@ -1090,8 +1090,9 @@ class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
 INHERITED(taOBase)
 public:
-  bool		pre_gp4;	// #DEF_true use a 4x4 pre-grouping of v1s or v1b features prior to computing subsequent steps (end stop, length sum, etc) -- pre grouping reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense -- if this is selected, then v1s_specs.line_len should be 4 as well, though 5 is possible (just extends lines over the edge a bit)
+  bool		pre_gp4;	// #DEF_true use a 4x4 pre-grouping of v1s or v1b features prior to computing subsequent steps (end stop, length sum, etc) -- pre grouping reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
   TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- operates on top of the pre-grouping guys and always uses 1/2 overlap spacing
+  TwoDCoord	border;		// border around the V1S layer where v1c values are not computed -- this is particularly useful for binocular depth perception cases where the edges are susceptible to false matches and generally do not provide good disparity data
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   int		end_stop_dist;	// #DEF_2 end-stop distance factor -- how far away from the central point should we look for opposing orientations
@@ -1281,7 +1282,7 @@ public:
   float_Matrix	v1b_dsp_wts;	 // #READ_ONLY #NO_SAVE final normalized disparity weights -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][img.x][img.y] -- saved to output if SAVE_DEBUG is on
   float_Matrix	v1b_dsp_out;	 // #READ_ONLY #NO_SAVE pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][img.x][img.y]
   float_Matrix	v1b_dsp_out_pre; // #READ_ONLY #NO_SAVE v1c pre gp4 version of v1b_dsp_out -- v1b_c requires things to be at the pre level -- has pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][pre_img.x][pre_img.y]
-  float_Matrix	v1b_dsp_in;	 // #READ_ONLY #NO_SAVE pure disparity *input* (see v1b_dsp_out for more info) -- this should be copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity (see V1bDspInFmDataTable and UpdateV1cFmV1bDspIn methods) -- should be same size as v1c_pre if pre_gp4 is being used: [tot_disps][1][pre_img.x][pre_img.y], else same size as v1s
+  float_Matrix	v1b_dsp_in;	 // #READ_ONLY #NO_SAVE pure disparity *input* (see v1b_dsp_out for more info) -- this should be copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity (see V1bDspInFmDataTable and UpdateV1cFmV1bDspIn methods) -- should be same size as v1c_pre_img_geom [tot_disps][1][pre_img.x][pre_img.y]
   float_Matrix	v1b_dsp_in_prv;	 // #READ_ONLY #NO_SAVE previous version of v1b_dsp_in -- for comparison purposes
   float_Matrix	v1b_s_out;	 // #READ_ONLY #NO_SAVE v1 binocular simple cell output, which is v1s feature activation times v1b_dsp_out weighting per feature -- [v1b_s_feat.x][v1b_s_feat.y][v1s_img.x][v1s_img.y]
 
@@ -1306,8 +1307,8 @@ public:
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_1 plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view -- one row for each type of filter (scroll to see each in turn) -- light squares show bounding box of rf, skipping every other
 
   virtual bool	V1bDspInFmDataTable(DataTable* data_table, Variant col, int row=-1, 
-				    float diff_thr=0.01f);
-  // #CAT_V1B set the v1b_dsp_in matrix from given data table column and row -- this will typically be a copy of the activations of a network layer that is computing these values from other visual features -- diff_thr is threshold on difference from previous pattern processed (normalized euclidian distance) -- if below this threshold, returns false and UpdateV1cFromV1bDspIn can be skipped (and prv pattern is not updated) -- diff_thr = 0 means ignore diff and always return true (but still update the previous vector)
+				    float diff_thr=0.01f, int integ_sz=1);
+  // #CAT_V1B set the v1b_dsp_in matrix from given data table column and row -- this will typically be a copy of the activations of a network layer that is computing these values from other visual features -- input geom must be an even divisor of v1c_pre_geom -- diff_thr is threshold on difference from previous pattern processed (normalized euclidian distance) -- if below this threshold, returns false and UpdateV1cFromV1bDspIn can be skipped (and prv pattern is not updated) -- diff_thr = 0 means ignore diff and always return true (but still update the previous vector) -- integ_sz = half-size of region to integrate over for getting the disparity values -- helps smooth over missing parts and misalignment across levels for example
   virtual void	UpdateV1cFromV1bDspIn();
   // #CAT_V1B update V1C values based on v1b_dsp_in inputs -- see V1bDspInFmDataTable -- in values are typically copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity
 
@@ -1392,6 +1393,8 @@ protected:
 
   virtual void 	V1BinocularFilter_DspOutPre_thread(int v1s_idx, int thread_no);
   // do binocular filters -- integrate dsp out to v1b_dsp_out_pre
+  virtual void 	V1BinocularFilter_DspOutPreBord_thread(int v1s_idx, int thread_no);
+  // do binocular filters -- integrate dsp out to v1b_dsp_out_pre -- for case where only border is non-zero
 
   virtual bool	V1BinocularFilter_Complex();
   // do complex processing for v1b
