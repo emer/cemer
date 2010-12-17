@@ -734,7 +734,7 @@ public:
     bool quote_str = true, bool reset_load_schema = true); // #IGNORE used by Server
   virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
 	bool quote_str = true, int max_recs = -1, bool reset_first=false);
-  // #CAT_File #EXT_dat,tsv,csv,txt,log load Emergent native format data (ONLY) - has a special header to define columns, up to max num of recs (-1 for all), with delimiter between columns and optionally quoting strings, reset_first = remove any existing data prior to loading
+  // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #FILE_DIALOG_LOAD #LABEL_Load_Data_Native #EXT_dat,tsv,csv,txt,log load Emergent native format data (ONLY) - has a special header to define columns, up to max num of recs (-1 for all), with delimiter between columns and optionally quoting strings, reset_first = remove any existing data prior to loading -- this is much faster than LoadAnyData, especially noticible for very large data files
   virtual void 		LoadAnyData(const String& fname, bool headers = true,
 		    LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO,
 		    int max_rows = -1,  bool reset_first=false);
