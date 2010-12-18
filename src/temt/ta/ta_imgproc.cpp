@@ -4576,7 +4576,14 @@ bool V1RegionSpec::V1ComplexFilter() {
     threads.Run(&ip_call, n_run_pre);
   }
   else {
-    v1c_pre.CopyFrom(&v1s_out_r); // just a copy
+    if(v1c_specs.border != 0) {
+      // need to aggregate v1b_dsp_out into v1b_dsp_out_pre to remove border
+      ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_PreBord_thread);
+      threads.Run(&ip_call, n_run_pre);
+    }
+    else {
+      v1c_pre.CopyFrom(&v1s_out_r); // just a copy
+    }
   }
 
   if(v1c_filters & CF_ESLS) {
@@ -4664,6 +4671,23 @@ void V1RegionSpec::V1ComplexFilter_Pre_thread(int v1c_pre_idx, int thread_no) {
       max_rf = MAX(max_rf, ctr_val);
     }
     v1c_pre.FastEl(sfc.x, sfc.y, pc.x, pc.y) = max_rf;
+  }
+}
+
+void V1RegionSpec::V1ComplexFilter_PreBord_thread(int v1c_pre_idx, int thread_no) {
+  TwoDCoord pc;			// pre coords
+  pc.SetFmIndex(v1c_pre_idx, v1c_pre_geom.x);
+  TwoDCoord scs = pc; // v1s coords start
+  scs += v1c_specs.border;
+
+  int v1s_mot_idx = v1s_circ_r.CircIdx_Last();
+
+  TwoDCoord sc;			// simple coord
+  TwoDCoord sfc;		// v1s feature coords
+  for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // full scale integration
+    sfc.SetFmIndex(sfi, v1s_feat_geom.x);
+    float v1s_val = MatMotEl(&v1s_out_r, sfc.x, sfc.y, scs.x, scs.y, v1s_mot_idx);
+    v1c_pre.FastEl(sfc.x, sfc.y, pc.x, pc.y) = v1s_val;
   }
 }
 

@@ -1366,6 +1366,8 @@ protected:
   // implementation of complex filters operating on all the cur_pre* values and going to cur_out
   virtual void 	V1ComplexFilter_Pre_thread(int v1c_pre_idx, int thread_no);
   // pre-grouping for subsequent processing
+  virtual void 	V1ComplexFilter_PreBord_thread(int v1c_pre_idx, int thread_no);
+  // pre-grouping for subsequent processing -- just get rid of v1s border
   virtual void 	V1ComplexFilter_Pre_Polinv_thread(int v1c_pre_idx, int thread_no);
   // polarity invariance for pre pass
   virtual void 	V1ComplexFilter_EsLs_Raw_thread(int v1c_pre_idx, int thread_no);
