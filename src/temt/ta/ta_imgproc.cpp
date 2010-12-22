@@ -5562,6 +5562,7 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_thread(int v1c_pre_idx, int thread_
     float dval = cur_v1b_dsp->FastEl(didx, 0, pc.x, pc.y);
     // penalize non-maximal values by extent to which non-maximal -- anything at max is a pass-through
     float wt = 1.0f - v1b_specs.dsp_gain * (dmax - dval);
+    if(wt < 0.0f) wt = 0.0f;
     for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
       fc.SetFmIndex(sfi, v1s_feat_geom.x);
       float rv = v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y);
@@ -5586,6 +5587,7 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_Polinv_thread(int v1c_pre_idx, int 
     float dval = cur_v1b_dsp->FastEl(didx, 0, pc.x, pc.y);
     // penalize non-maximal values by extent to which non-maximal -- anything at max is a pass-through
     float wt = 1.0f - v1b_specs.dsp_gain * (dmax - dval);
+    if(wt < 0.0f) wt = 0.0f;
     for(int sfi = 0; sfi < v1c_polinv_geom.n; sfi++) { // simple feature index
       fc.SetFmIndex(sfi, v1c_polinv_geom.x);
       float rv = v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y);
