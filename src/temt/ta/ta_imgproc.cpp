@@ -3389,7 +3389,7 @@ void V1BinocularSpec::Initialize() {
   gauss_sig = 0.7f;
   disp_spacing = 2.0f;
   end_extra = 2;
-  dsp_thr = 0.1f;
+  dsp_gain = 0.2f;
   edge_pct = 0.05f;
 
   tot_disps = 1 + 2 * n_disps;
@@ -5549,10 +5549,19 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_thread(int v1c_pre_idx, int thread_
 
   TwoDCoord fc;			// v1b feature coords -- destination
 
+  // IMPORTANT: any code changed here must also be changed in subsequent Polinv function
+
+  // todo: if this is useful, then precompute dmax as otherwise is computed 2x
+  float dmax = 0.0f;
   for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
     float dval = cur_v1b_dsp->FastEl(didx, 0, pc.x, pc.y);
-    // just a simple threshold -- if any substantial weight in this category, then apply it!
-    float wt = (dval >= v1b_specs.dsp_thr) ? 1.0f : 0.0f;
+    if(dval > dmax) dmax = dval;
+  }
+
+  for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+    float dval = cur_v1b_dsp->FastEl(didx, 0, pc.x, pc.y);
+    // penalize non-maximal values by extent to which non-maximal -- anything at max is a pass-through
+    float wt = 1.0f - v1b_specs.dsp_gain * (dmax - dval);
     for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
       fc.SetFmIndex(sfi, v1s_feat_geom.x);
       float rv = v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y);
@@ -5567,10 +5576,16 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_Polinv_thread(int v1c_pre_idx, int 
 
   TwoDCoord fc;			// v1b feature coords -- destination
 
+  float dmax = 0.0f;
   for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
     float dval = cur_v1b_dsp->FastEl(didx, 0, pc.x, pc.y);
-    // just a simple threshold -- if any substantial weight in this category, then apply it!
-    float wt = (dval >= v1b_specs.dsp_thr) ? 1.0f : 0.0f;
+    if(dval > dmax) dmax = dval;
+  }
+
+  for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+    float dval = cur_v1b_dsp->FastEl(didx, 0, pc.x, pc.y);
+    // penalize non-maximal values by extent to which non-maximal -- anything at max is a pass-through
+    float wt = 1.0f - v1b_specs.dsp_gain * (dmax - dval);
     for(int sfi = 0; sfi < v1c_polinv_geom.n; sfi++) { // simple feature index
       fc.SetFmIndex(sfi, v1c_polinv_geom.x);
       float rv = v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y);
