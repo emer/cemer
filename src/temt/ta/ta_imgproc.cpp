@@ -5730,6 +5730,158 @@ void V1RegionSpec::UpdateV1cFromV1bDspIn() {
   V1BOutputToTable(data_table);
 }
 
+void V1bDspInOutStats::Initialize() {
+  InitStats();
+}
+
+bool V1RegionSpec::V1bDspInVsOutStats(float_Matrix* v1b_in, float_Matrix* v1b_out,
+				      V1bDspInOutStats* stats, int disp) {
+  if(TestError(!v1b_in, "V1bDspInVsOutStats", "v1b_in is NULL"))
+    return false;
+  if(TestError(!v1b_out, "V1bDspInVsOutStats", "v1b_out is NULL"))
+    return false;
+  if(TestError(!stats, "V1bDspInVsOutStats", "stats is NULL"))
+    return false;
+  if(TestError(!v1b_in->geom.Equal(v1b_out->geom), "V1bDspInVsOutStats",
+	       "v1b_in geom is not same as v1b_out geom -- must be"))
+    return false;
+  stats->InitStats();
+  
+  TwoDCoord imgm;
+  imgm.x = v1b_in->dim(2);
+  imgm.y = v1b_in->dim(3);
+  TwoDCoord dspgm;
+  dspgm.x = v1b_in->dim(0);
+  dspgm.y = v1b_in->dim(1);	// should always be 1
+
+  TwoDCoord pc;
+  TwoDCoord subc;
+  TwoDCoord ic;
+  TwoDCoord sic;
+  for(pc.y = 0; pc.y < imgm.y; pc.y++) {
+    for(pc.x = 0; pc.x < imgm.x; pc.x++) {
+      int mxd_in = -1;
+      int mxd_out = -1;
+      float mxd_in_val = 0.0f;
+      float mxd_out_val = 0.0f;
+      for(int didx = 0; didx < dspgm.x; didx++) {
+	float ival = v1b_in->FastEl(didx, 0, pc.x, pc.y);
+	float oval = v1b_out->FastEl(didx, 0, pc.x, pc.y);
+	if(ival > mxd_in_val) {
+	  mxd_in_val = ival;
+	  mxd_in = didx;
+	}
+	if(oval > mxd_out_val) {
+	  mxd_out_val = oval;
+	  mxd_out = didx;
+	}
+      }
+
+      if(mxd_in_val < v1b_dsp_specs.opt_thr && mxd_out_val < v1b_dsp_specs.opt_thr)
+	continue;
+
+      if(disp < 0 || mxd_out == disp) {
+	float ival = v1b_in->FastEl(mxd_out, 0, pc.x, pc.y);
+	stats->p_in_g_out += ival; // increment
+	stats->p_in_g_out_denom += MAX(ival, mxd_out_val);
+
+	stats->p_in_g_out_max += (mxd_in == mxd_out) ? mxd_out_val : 0.0f;
+	stats->p_in_g_out_max_denom += mxd_out_val;
+      }
+
+      if(disp < 0 || mxd_in == disp) {
+	float oval = v1b_out->FastEl(mxd_in, 0, pc.x, pc.y);
+	stats->p_out_g_in += oval; // increment
+	stats->p_out_g_in_denom += MAX(oval, mxd_in_val);
+
+	stats->p_out_g_in_max += (mxd_in == mxd_out) ? mxd_in_val : 0.0f;
+	stats->p_out_g_in_max_denom += mxd_in_val;
+      }
+
+      if(disp >= 0 && mxd_in != disp) continue;
+      
+      int mxd2_in = -1;
+      float mxd2_in_val = 0.0f;
+      for(int didx = 0; didx < dspgm.x; didx++) {
+	if(didx == mxd_in) continue; // skip max
+	float ival = v1b_in->FastEl(didx, 0, pc.x, pc.y);
+	if(ival > mxd2_in_val) {
+	  mxd2_in_val = ival;
+	  mxd2_in = didx;
+	}
+      }
+      
+      stats->snr += mxd_in_val - mxd2_in_val;
+      stats->snr_denom += mxd_in_val;
+    }
+  }
+  stats->ComputeStats();
+  return true;
+}
+
+
+bool V1RegionSpec::V1bDspInVsOutDiffs(float_Matrix* v1b_in, float_Matrix* v1b_out,
+				      DataTable* data_out) {
+  if(TestError(!v1b_in, "V1bDspInVsOutDiffs", "v1b_in is NULL"))
+    return false;
+  if(TestError(!v1b_out, "V1bDspInVsOutDiffs", "v1b_out is NULL"))
+    return false;
+  if(TestError(!data_out, "V1bDspInVsOutDiffs", "data_out is NULL"))
+    return false;
+  if(TestError(!v1b_in->geom.Equal(v1b_out->geom), "V1bDspInVsOutDiffs",
+	       "v1b_in geom is not same as v1b_out geom -- must be"))
+    return false;
+
+  TwoDCoord imgm;
+  imgm.x = v1b_in->dim(2);
+  imgm.y = v1b_in->dim(3);
+  TwoDCoord dspgm;
+  dspgm.x = v1b_in->dim(0);
+  dspgm.y = v1b_in->dim(1);	// should always be 1
+
+  data_out->StructUpdate(true);
+
+  int idx;
+  for(int didx=0; didx < dspgm.x; didx++) {
+    data_out->FindMakeColName(name + "_v1b_in_out_in_d" + String(didx),
+				      idx, DataTable::VT_FLOAT, 2, imgm.x, imgm.y);
+    data_out->FindMakeColName(name + "_v1b_in_out_out_d" + String(didx),
+				      idx, DataTable::VT_FLOAT, 2, imgm.x, imgm.y);
+    data_out->FindMakeColName(name + "_v1b_in_out_diff_d" + String(didx),
+				      idx, DataTable::VT_FLOAT, 2, imgm.x, imgm.y);
+  }
+
+  if(data_out->rows == 0)
+    data_out->AddBlankRow();
+
+  TwoDCoord pc;
+  TwoDCoord subc;
+  TwoDCoord ic;
+  TwoDCoord sic;
+  for(int didx = 0; didx < dspgm.x; didx++) {
+    DataCol* col_in = data_out->FindMakeColName(name + "_v1b_in_out_in_d" + String(didx),
+					     idx, DataTable::VT_FLOAT, 2, imgm.x, imgm.y);
+    float_MatrixPtr dout_in; dout_in = (float_Matrix*)col_in->GetValAsMatrix(-1);
+    DataCol* col_out = data_out->FindMakeColName(name + "_v1b_in_out_out_d" + String(didx),
+					     idx, DataTable::VT_FLOAT, 2, imgm.x, imgm.y);
+    float_MatrixPtr dout_out; dout_out = (float_Matrix*)col_out->GetValAsMatrix(-1);
+    DataCol* col_dif = data_out->FindMakeColName(name + "_v1b_in_out_diff_d" + String(didx),
+					     idx, DataTable::VT_FLOAT, 2, imgm.x, imgm.y);
+    float_MatrixPtr dout_dif; dout_dif = (float_Matrix*)col_dif->GetValAsMatrix(-1);
+    for(pc.y = 0; pc.y < imgm.y; pc.y++) {
+      for(pc.x = 0; pc.x < imgm.x; pc.x++) {
+	float ival = v1b_in->FastEl(didx, 0, pc.x, pc.y);
+	float oval = v1b_out->FastEl(didx, 0, pc.x, pc.y);
+	dout_in->FastEl(pc.x, pc.y) = ival;
+	dout_out->FastEl(pc.x, pc.y) = oval;
+	dout_dif->FastEl(pc.x, pc.y) = ival - oval; // straight diff -- sign is consistent with nature of the error..
+      }
+    }
+  }
+  data_out->StructUpdate(false);
+  data_out->WriteClose();
+  return true;
+}
 
 
 /////////////////////////////////////////////////////////////////

@@ -1086,6 +1086,50 @@ public:
 //   void 	UpdateAfterEdit_impl();
 };
 
+class TA_API V1bDspInOutStats : public taNBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image statistics for v1b_dsp_in vs. v1b_dsp_out -- how well is the learned disparity comparing to the original -- focused on a particular target disparity channel
+INHERITED(taNBase)
+public:
+  float		p_in_g_out;	// #READ_ONLY #SHOW probability (proportion activity) of input given that output is most active disparity in given location -- how well is input activating all the places that were activated in the output -- reflects how strongly the graded activities approach output activations -- a recall-like measure
+  float		p_out_g_in;	// #READ_ONLY #SHOW probability (proportion activity) of output given that input is most active disparity in given location -- if input is active for areas that should not be activated according to the output, then this value should be reduced -- a precision-like measure
+  float		p_in_g_out_max;	// #READ_ONLY #SHOW max-based version of p_in_g_out -- discritizes the input based on whether it is the most active disparity in given location -- weights contributions by total output activation
+  float		p_out_g_in_max;	// #READ_ONLY #SHOW max-based version of p_out_g_in -- discritizes the input based on whether it is the most active disparity in given location -- weights contributions by total input activation
+  float		snr;		// #READ_ONLY #SHOW signal-to-noise ratio like measure -- for each location where target disparity is max, what is diff between that value and next highest value, 
+
+  float		p_in_g_out_denom; // #READ_ONLY #NO_SAVE normalizing denominator
+  float		p_out_g_in_denom; // #READ_ONLY #NO_SAVE normalizing denominator
+  float		p_in_g_out_max_denom;  	// #READ_ONLY #NO_SAVE normalizing denominator
+  float		p_out_g_in_max_denom;	// #READ_ONLY #NO_SAVE normalizing denominator
+  float		snr_denom;	// #READ_ONLY #NO_SAVE normalizing denominator
+
+  void		InitStats() {
+    p_in_g_out = p_out_g_in = p_in_g_out_max = p_out_g_in_max = snr = 0.0f;
+    p_in_g_out_denom = p_out_g_in_denom = p_in_g_out_max_denom = p_out_g_in_max_denom = snr_denom = 0.0f;
+  }
+  // initialize statistics
+  void		ComputeStats() {
+    if(p_in_g_out_denom > 0.0f) p_in_g_out /= p_in_g_out_denom;
+    else 			p_in_g_out = 0.0f;
+    if(p_out_g_in_denom > 0.0f) p_out_g_in /= p_out_g_in_denom;
+    else 			p_out_g_in = 0.0f;
+    if(p_in_g_out_max_denom > 0.0f) p_in_g_out_max /= p_in_g_out_max_denom;
+    else 			p_in_g_out_max = 0.0f;
+    if(p_out_g_in_max_denom > 0.0f) p_out_g_in_max /= p_out_g_in_max_denom;
+    else 			p_out_g_in_max = 0.0f;
+
+    if(snr_denom > 0.0f) snr /= snr_denom;
+    else 			snr = 0.0f;
+
+  }
+  // compute statistics
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V1bDspInOutStats);
+// protected:
+//   void 	UpdateAfterEdit_impl();
+};
+
 class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
 INHERITED(taOBase)
@@ -1311,7 +1355,12 @@ public:
   // #CAT_V1B set the v1b_dsp_in matrix from given data table column and row -- this will typically be a copy of the activations of a network layer that is computing these values from other visual features -- input geom must be an even divisor of v1c_pre_geom -- diff_thr is threshold on difference from previous pattern processed (normalized euclidian distance) -- if below this threshold, returns false and UpdateV1cFromV1bDspIn can be skipped (and prv pattern is not updated) -- diff_thr = 0 means ignore diff and always return true (but still update the previous vector) -- integ_sz = half-size of region to integrate over for getting the disparity values -- helps smooth over missing parts and misalignment across levels for example
   virtual void	UpdateV1cFromV1bDspIn();
   // #CAT_V1B update V1C values based on v1b_dsp_in inputs -- see V1bDspInFmDataTable -- in values are typically copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity
-
+  virtual bool	V1bDspInVsOutStats(float_Matrix* v1b_in, float_Matrix* v1b_out,
+				   V1bDspInOutStats* stats, int disp=-1);
+  // #CAT_V1B compute stats on differences between v1b_in and out matricies -- both must be same geometry -- disp is disparity index to focus results on -- a val of -1 means don't focus on any in particular
+  virtual bool	V1bDspInVsOutDiffs(float_Matrix* v1b_in, float_Matrix* v1b_out,
+				   DataTable* data_out);
+  // #CAT_V1B compute differences between v1b_in and out matricies -- each element of output is in - out -- sign shows nature of error (+ = ival was too active, - = ival was not active enough) -- both must be same geometry -- data is output to given data table in last row (new row added if none present), with columns named v1b_in_out_diff_dX where X is the disparity index (0..N-1)
 
   void 	Initialize();
   void	Destroy() { };
