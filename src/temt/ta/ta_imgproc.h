@@ -1035,12 +1035,16 @@ public:
   bool		ambig_off;	// #DEF_true in the v1b_dsp_out output (feature strength times disparity output coding), consider ambiguous (flagged) areas to be off (zero activity) instead of even distribution across all alternatives
   int		n_matches;	// #DEF_7 number of best-fitting disparity matches to keep per point in initial processing step
   int		win_half_sz;	// #DEF_2:3 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
+  float		win_gain;	// #DEF_0.1:1 gain on contribution of neighboring locations in the aggregation window relative to the matches for the location under consideration itself (which has a weight of 1 always)
   float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
-  float		good_thr;	// #DEF_0.3:0.5 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
-  float		integ_thr;	// #DEF_1 threshold on integrated values -- if below this threshold, then integrated confidence is too low, and area is marked as ambiguous
+  float		good_thr;	// #DEF_0.9 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
+  float		integ_thr;	// #DEF_0.3 threshold on integrated values -- if below this threshold, then integrated confidence is too low, and area is marked as ambiguous
   float		edge_thr;	// #DEF_1.5 multiplier on integ_thr for areas falling along the edge -- these have a higher threshold to pass muster, because they are missing the ability to match in particular directions that go off the edge
+  bool		norm_wt;	// #DEF_true use normalized weights for aggregating over window
   float		off_integ_sz; 	// #DEF_1 half-width in units of disp_range for gaussian integration of disparity weightings across different disparity offsets -- integrates votes for nearby offsets to find the best overall zone of offset for a given location
   float		off_integ_sig;	// #DEF_0.7:1.5 sigma for gaussian for offset integration
+  int		min_hz_len;	// #DEF_3 minimum horizontal length for applying uniform depth across entire horizontal segment
+  int		hz_win_sz;	// #DEF_4 window on either side of the horizontal line used to determine disparity for whole line -- central points do not have reliable values
 
   float		thr_gain;   	// #READ_ONLY 1.0 / good_thr -- multiplier on distance weights such that something right at threshold counts for zero..
   float		net_edge_thr;	// #READ_ONLY integ_thr * edge_thr -- net threshold
@@ -1227,6 +1231,11 @@ public:
     DSP_DIST,		// feature activation absolute distance at given offset
     DSP_N,		// number of disparity match values to record
   };
+  enum DspHoriz {	// for storing disparity match information
+    DHZ_LEN,		// length of current horizontal line structure -- how many horiz orients in a row is this one part of
+    DHZ_START,		// starting x-axis index where the horiz line starts
+    DHZ_N,		// number of disparity match values to record
+  };
 
   enum DspFlags {	// flags for disparity computation -- mutex so not bitflags
     DSP_NONE,		// no flag
@@ -1323,6 +1332,7 @@ public:
   int_Matrix	v1b_dsp_flags;	 // #READ_ONLY #NO_SAVE flags to indicate status of match for this location [img.x][img.y]
   float_Matrix	v1b_dsp_match;	 // #READ_ONLY #NO_SAVE list of top matches -- aggregates across features (average abs distance across features) -- values are offset and min dist at that index for each match, or DSP_AMBIG_HORIZ (see DspMatch enum) [2][n_matches][img.x][img.y]
   float_Matrix	v1b_dsp_win;	 // #READ_ONLY #NO_SAVE results of the window aggregation process for each point -- integrates over spatial window and features -- result is the best match offset, and total distance weight at that offset, or ambiguous [DSP_N][img.x][img.y]
+  int_Matrix	v1b_dsp_horiz;	 // #READ_ONLY #NO_SAVE horizontal line ambiguity resolution data -- length and start of horizontal line structures [DHZ_N][img.x][img.y]
   float_Matrix	v1b_dsp_wts;	 // #READ_ONLY #NO_SAVE final normalized disparity weights -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][img.x][img.y] -- saved to output if SAVE_DEBUG is on
   float_Matrix	v1b_dsp_out;	 // #READ_ONLY #NO_SAVE pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][img.x][img.y]
   float_Matrix	v1b_dsp_out_pre; // #READ_ONLY #NO_SAVE v1c pre gp4 version of v1b_dsp_out -- v1b_c requires things to be at the pre level -- has pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][pre_img.x][pre_img.y]
@@ -1437,6 +1447,10 @@ protected:
   // do binocular filters -- compute initial matches between eyes
   virtual void 	V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no);
   // do binocular filters -- aggregate over window and identify best match based on larger context
+  virtual void 	V1BinocularFilter_HorizTag_thread(int v1s_idx, int thread_no);
+  // do binocular filters -- initial tag of horizontal line structures
+  virtual void 	V1BinocularFilter_HorizAgg();
+  // do binocular filters -- aggregation of initial tags and ambiguity resolution
   virtual void 	V1BinocularFilter_DspOut_thread(int v1s_idx, int thread_no);
   // do binocular filters -- compute final disp output from disparity weightings
   virtual void 	V1BinocularFilter_S_Out_thread(int v1s_idx, int thread_no);
