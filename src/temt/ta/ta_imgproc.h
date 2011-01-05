@@ -1034,10 +1034,10 @@ INHERITED(taOBase)
 public:
   bool		ambig_off;	// #DEF_true in the v1b_dsp_out output (feature strength times disparity output coding), consider ambiguous (flagged) areas to be off (zero activity) instead of even distribution across all alternatives
   int		n_matches;	// #DEF_7 number of best-fitting disparity matches to keep per point in initial processing step
-  int		win_half_sz;	// #DEF_2:3 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
-  float		win_gain;	// #DEF_0.1:1 gain on contribution of neighboring locations in the aggregation window relative to the matches for the location under consideration itself (which has a weight of 1 always)
   float		opt_thr;	// #DEF_0.1 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
-  float		good_thr;	// #DEF_0.8 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
+  float		good_thr;	// #DEF_0.8 threshold on normalized average absolute distance over features to be considered a good match (lower number = closer match = tighter tolerance) -- can then be added to the matches list
+  int		win_half_sz;	// #DEF_1 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
+  float		win_thr;	// #DEF_0.3 threshold on aggregated activity 
   float		off_integ_sz; 	// #DEF_1 half-width in units of disp_range for gaussian integration of disparity weightings across different disparity offsets -- integrates votes for nearby offsets to find the best overall zone of offset for a given location
   float		off_integ_sig;	// #DEF_0.7:1.5 sigma for gaussian for offset integration
   int		min_hz_len;	// #DEF_3 minimum horizontal length for applying uniform depth across entire horizontal segment
@@ -1442,14 +1442,14 @@ protected:
   // do binocular filters -- dispatch threads
   virtual void 	V1BinocularFilter_Match_thread(int v1s_idx, int thread_no);
   // do binocular filters -- compute initial matches between eyes
-  virtual void 	V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no);
-  // do binocular filters -- aggregate over window and identify best match based on larger context
   virtual void 	V1BinocularFilter_HorizTag_thread(int v1s_idx, int thread_no);
   // do binocular filters -- initial tag of horizontal line structures
   virtual void 	V1BinocularFilter_HorizAgg();
   // do binocular filters -- aggregation of initial tags and ambiguity resolution
   virtual void 	V1BinocularFilter_DspOut_thread(int v1s_idx, int thread_no);
   // do binocular filters -- compute final disp output from disparity weightings
+  virtual void 	V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no);
+  // do binocular filters -- aggregate over window to correct ambiguous outputs -- based on dspout outputs -- lower dimensional space easier to manage
   virtual void 	V1BinocularFilter_S_Out_thread(int v1s_idx, int thread_no);
   // do binocular filters -- compute v1s-level disparity weighted output (V1B_S)
 
