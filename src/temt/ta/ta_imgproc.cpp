@@ -3406,20 +3406,16 @@ void V1BinocularSpec::UpdateAfterEdit_impl() {
 void V1DisparitySpec::Initialize() {
   ambig_off = true;
   n_matches = 7;
-  win_half_sz = 3;
-  win_gain = 1.0f;
-  opt_thr = 0.01f;
-  good_thr = 0.5f;
-  integ_thr = 1.0f;
-  edge_thr = 1.5f;
-  norm_wt = true;
+  opt_thr = 0.1f;
+  good_thr = 0.8f;
+  win_half_sz = 1;
+  win_thr = 0.3f;
   off_integ_sz = 1.0f;
   off_integ_sig = 1.5f;
   min_hz_len = 3;
   hz_win_sz = 6;
 
   thr_gain = 1.0f / good_thr;
-  net_edge_thr = integ_thr * edge_thr;
   win_sz = 1 + 2 * win_half_sz;
   win_area = win_sz * win_sz;
 }
@@ -3427,7 +3423,6 @@ void V1DisparitySpec::Initialize() {
 void V1DisparitySpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   thr_gain = 1.0f / good_thr;
-  net_edge_thr = integ_thr * edge_thr;
   win_sz = 1 + 2 * win_half_sz;
   win_area = win_sz * win_sz;
 }
@@ -5134,10 +5129,6 @@ bool V1RegionSpec::V1BinocularFilter() {
   ThreadImgProcCall ip_call_match((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_Match_thread);
   threads.Run(&ip_call_match, n_run_s);
 
-  v1b_dsp_win.InitVals(0.0f);
-  ThreadImgProcCall ip_call_win((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_WinAgg_thread);
-  threads.Run(&ip_call_win, n_run_s);
-
   // first tag horiz line elements in parallel
   v1b_dsp_horiz.InitVals(-1);
   ThreadImgProcCall ip_call_horiz((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_HorizTag_thread);
@@ -5150,6 +5141,10 @@ bool V1RegionSpec::V1BinocularFilter() {
   threads.Run(&ip_call_dspout, n_run_s);
 
   dsp_stats.ComputeStats();
+
+  // finally aggregate based on output!
+  ThreadImgProcCall ip_call_winagg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_WinAgg_thread);
+  threads.Run(&ip_call_winagg, n_run_s);
 
   // now comes the optional outputs
   if(v1b_filters & REQ_V1B_S) {	// compute if required..
@@ -5276,131 +5271,28 @@ void V1RegionSpec::V1BinocularFilter_Match_thread(int v1s_idx, int thread_no) {
 
   if(has_rv && n_match == 0) {	// couldn't find any good matches, but has an rv
     flag = DSP_AMBIG_THR;
+    return;			// nothing more to do..
   }
-}
 
-void V1RegionSpec::V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;			// complex coords
-  sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
-
-  int& flag = v1b_dsp_flags.FastEl(sc.x, sc.y);
-  if(flag == DSP_NO_ACT) return; // nothing to do here
-
-  int cur_mot_idx = v1s_circ_r.CircIdx_Last();
-
-  float& win_dsp_off = v1b_dsp_win.FastEl(DSP_OFF, sc.x, sc.y);
-  float& win_dsp_offwt = v1b_dsp_win.FastEl(DSP_DIST, sc.x, sc.y);
-
-  TwoDCoord bn;			// binoc neighbor
-
-  float my_wt[v1b_specs.tot_offs];
-  float win_wt[v1b_specs.tot_offs]; // sum of weights integrated over window
-  float win_wt_denom[v1b_specs.tot_offs];
-  
-  for(int i=0; i<v1b_specs.tot_offs; i++) {
-    my_wt[i] = 0.0f;
-    win_wt[i] = 0.0f;
-    win_wt_denom[i] = 0.0f;
-  }
-  
-  int my_n_match = v1b_dsp_nmatch.FastEl(sc.x, sc.y);
-  if(my_n_match == 0) return;	// shouldn't happen
-
-  for(int m=0; m<my_n_match; m++) {
+  // now pick the top match and call it good, and compute relative selectivity
+  float max_wt = 0.0f;
+  float sum_wt = 0.0f;
+  int max_oidx = -1;
+  for(int m=0; m<n_match; m++) {
     float mdst = v1b_dsp_match.FastEl(DSP_DIST, m, sc.x, sc.y);
     float wt = (1.0f - v1b_dsp_specs.thr_gain * mdst); // weight for this location
-    int off = (int)v1b_dsp_match.FastEl(DSP_OFF, m, sc.x, sc.y);
-    int oidx = v1b_specs.max_off + off;
-    my_wt[oidx] += wt;
-  }
-
-  // accumulate weights by offsets across window 
-  // weight = max feature activation of rv minus times 1-norm dist -- more weight
-  // for strong features that match closely -- lower weight for more dist, and lower act
-  for(int wy = -v1b_dsp_specs.win_half_sz; wy <= v1b_dsp_specs.win_half_sz; wy++) {
-    for(int wx = -v1b_dsp_specs.win_half_sz; wx <= v1b_dsp_specs.win_half_sz; wx++) {
-      if(wy == 0 && wy == 0) continue; // skip self
-
-      bn.y = sc.y + wy;
-      bn.x = sc.x + wx;
-      if(bn.WrapClip(wrap, v1s_img_geom)) {
-	if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
-      }
-
-      int n_match = v1b_dsp_nmatch.FastEl(bn.x, bn.y);
-      if(n_match == 0) continue;
-
-      int nflag = v1b_dsp_flags.FastEl(bn.x, bn.y);
-      if(nflag != DSP_NONE) continue; // avoid anything with a flag (can only be DSP_AMBIG_N)
-
-      for(int m=0; m<n_match; m++) {
-	float mdst = v1b_dsp_match.FastEl(DSP_DIST, m, bn.x, bn.y);
-	float wt = (1.0f - v1b_dsp_specs.thr_gain * mdst); // weight for this location
-	int off = (int)v1b_dsp_match.FastEl(DSP_OFF, m, bn.x, bn.y);
-	int oidx = v1b_specs.max_off + off;
-	win_wt[oidx] += wt;
-	win_wt_denom[oidx] += 1.0f;
-      }
+    sum_wt += wt;
+    if(wt > max_wt) {
+      max_wt = wt;
+      int off = (int)v1b_dsp_match.FastEl(DSP_OFF, m, sc.x, sc.y);
+      max_oidx = v1b_specs.max_off + off;
     }
   }
 
-  // note: this part only aggs where my_wt > 0!
-  // integrate gaussian weighting of neigboring *offsets* into one integrated weight value
-  float max_wt = 0.0f;
-  float max_oidx = -1;
-  for(int i=0; i<v1b_specs.tot_offs; i++) {
-    if(my_wt[i] == 0.0f) continue; // only where I have weights already!
+  float sel = max_wt / sum_wt;	// selectivity
 
-    float wt_sum = v1b_off_integ_wts.FastEl_Flat(v1b_dsp_specs.off_int_sz) * my_wt[i];
-    float wt_denom = v1b_off_integ_wts.FastEl_Flat(v1b_dsp_specs.off_int_sz);
-    for(int j = -v1b_dsp_specs.off_int_sz; j <= v1b_dsp_specs.off_int_sz; j++) {
-      int ndx = i+j;
-      if(ndx < 0 || ndx >= v1b_specs.tot_offs) continue;
-      if(win_wt_denom[ndx] > 0.0f) {
-	float offsc = v1b_dsp_specs.win_gain * v1b_off_integ_wts.FastEl_Flat(v1b_dsp_specs.off_int_sz+j);
-	if(v1b_dsp_specs.norm_wt) {
-	  wt_sum += offsc * (win_wt[ndx] / win_wt_denom[ndx]);
-	}
-	else {
-	  wt_sum += offsc * win_wt[ndx];
-	}
-	wt_denom += offsc;
-      }
-    }
-
-    if(v1b_dsp_specs.norm_wt && wt_denom > 0.0f)
-      wt_sum /= wt_denom;
-
-    if(wt_sum > max_wt) {
-      max_wt = wt_sum;
-      max_oidx = i;
-    }
-  }
-
-
-  float eff_thr;
-  if(sc.x < v1b_specs.edge_off || sc.x >= (v1s_img_geom.x - v1b_specs.edge_off)) {
-    eff_thr = v1b_dsp_specs.net_edge_thr;
-  }
-  else {
-    eff_thr = v1b_dsp_specs.integ_thr;
-  }
-
-  if(max_oidx < 0) {		// flag should already be set, but just in case..
-    if(flag == DSP_NONE)
-      flag = DSP_AMBIG_THR;
-  }
-  else if(max_wt < eff_thr) {
-    win_dsp_offwt = max_wt;
-    win_dsp_off = max_oidx - v1b_specs.max_off;
-    if(flag == DSP_NONE)	// mark as ambiguous
-      flag = DSP_AMBIG_THR;
-  }
-  else {
-    win_dsp_offwt = max_wt;
-    win_dsp_off = max_oidx - v1b_specs.max_off;
-    flag = DSP_NONE;		// clear any existing flags -- we were won-over by the crowd
-  }
+  v1b_dsp_win.FastEl(DSP_DIST, sc.x, sc.y) = sel;
+  v1b_dsp_win.FastEl(DSP_OFF, sc.x, sc.y) = max_oidx - v1b_specs.max_off;
 }
 
 void V1RegionSpec::V1BinocularFilter_HorizTag_thread(int v1s_idx, int thread_no) {
@@ -5444,8 +5336,7 @@ void V1RegionSpec::V1BinocularFilter_HorizAgg() {
   for(sc.y=0; sc.y<v1s_img_geom.y; sc.y++) {
     int cur_st = -1;
     int cur_len = 0;
-    int cur_skip_len = 0;
-    int cur_mode = 0;		// 0 = nothing, 1 = completing line, 2 = skipping empty
+    int cur_mode = 0;		// 0 = nothing, 1 = completing line
     bool backprop = false;
     for(sc.x=0; sc.x<v1s_img_geom.x; sc.x++) {
       int ptlen = v1b_dsp_horiz.FastEl(DHZ_LEN, sc.x, sc.y);
@@ -5463,37 +5354,7 @@ void V1RegionSpec::V1BinocularFilter_HorizAgg() {
 	  cur_len++;
 	}
 	else {			// ended
-	  int flag = v1b_dsp_flags.FastEl(sc.x, sc.y);
-	  if(flag == DSP_NO_ACT) { // no dead yet -- skip over empty
-	    cur_skip_len = 1;
-	    cur_len++;
-	    cur_mode = 2;
-	  }
-	  else {
-	    backprop = true;	// done!
-	  }
-	}
-	break;
-      }
-      case 2: {			// skipping empty
-	if(ptlen > 0) {		// keep going
-	  cur_mode = 1;		// transition back to line following
-	  cur_len++;
-	}
-	else {			// not horiz
-	  if(cur_skip_len > v1b_dsp_specs.min_hz_len) { // only allow so long of a gap..
-	    backprop = true;	// done!
-	  }
-	  else {
-	    int flag = v1b_dsp_flags.FastEl(sc.x, sc.y);
-	    if(flag == DSP_NO_ACT) { // keep skipping empty
-	      cur_skip_len++;
-	      cur_len++;		// count empties
-	    }
-	    else {
-	      backprop = true;	// done!
-	    }
-	  }
+	  backprop = true;	// done!
 	}
 	break;
       }
@@ -5504,27 +5365,29 @@ void V1RegionSpec::V1BinocularFilter_HorizAgg() {
 
 	// first get aggregated votes along the line
 	float win_wt[v1b_specs.tot_offs]; // sum of weights integrated over window
-	float win_wt_denom[v1b_specs.tot_offs];
   
 	for(int i=0; i<v1b_specs.tot_offs; i++) {
 	  win_wt[i] = 0.0f;
-	  win_wt_denom[i] = 0.0f;
 	}
+
+	int left_limit = v1b_dsp_specs.hz_win_sz;
+	int rt_limit = cur_len - v1b_dsp_specs.hz_win_sz;
+
 	for(int bxi=0; bxi < cur_len; bxi++) {
-	  if(bxi >= v1b_dsp_specs.hz_win_sz &&
-	     bxi < (cur_len-v1b_dsp_specs.hz_win_sz)) continue; // only the ends have any good data
+	  if(bxi >= left_limit && bxi < rt_limit) continue; // only the ends have any good data
+
 	  int bx = cur_st + bxi;
-	  int nflag = v1b_dsp_flags.FastEl(bx, sc.y);
-	  if(nflag != DSP_NONE) continue; // avoid anything with a flag
-	  int n_match = v1b_dsp_nmatch.FastEl(bx, sc.y);
-	  for(int m=0; m<n_match; m++) {
-	    float mdst = v1b_dsp_match.FastEl(DSP_DIST, m, bx, sc.y);
-	    float wt = (1.0f - v1b_dsp_specs.thr_gain * mdst); // weight for this location
-	    int off = (int)v1b_dsp_match.FastEl(DSP_OFF, m, bx, sc.y);
-	    int oidx = v1b_specs.max_off + off;
-	    win_wt[oidx] += wt;
-	    win_wt_denom[oidx] += 1.0f;
-	  }
+	  if(bx < v1b_specs.edge_off || bx >= (v1s_img_geom.x - v1b_specs.edge_off))
+	    continue;		// don't trust the edges!
+
+ 	  int nflag = v1b_dsp_flags.FastEl(bx, sc.y);
+	  if(nflag == DSP_AMBIG_THR) continue; // has no relevant data
+
+	  // use the final already-voted values here
+	  float woff = v1b_dsp_win.FastEl(DSP_OFF, bx, sc.y);
+	  float woffwt = v1b_dsp_win.FastEl(DSP_DIST, bx, sc.y);
+	  int oidx = v1b_specs.max_off + woff;
+	  win_wt[oidx] += woffwt;
 	}
 
 	// then find the max case
@@ -5532,25 +5395,11 @@ void V1RegionSpec::V1BinocularFilter_HorizAgg() {
 	float max_oidx = -1;
 	for(int i=0; i<v1b_specs.tot_offs; i++) {
 	  float wt_sum = 0.0f;
-	  float wt_denom = 0.0f;
 	  for(int j = -v1b_dsp_specs.off_int_sz; j <= v1b_dsp_specs.off_int_sz; j++) {
 	    int ndx = i+j;
 	    if(ndx < 0 || ndx >= v1b_specs.tot_offs) continue;
-	    if(win_wt_denom[ndx] > 0.0f) {
-	      float offsc = v1b_off_integ_wts.FastEl_Flat(v1b_dsp_specs.off_int_sz+j);
-	      if(v1b_dsp_specs.norm_wt) {
-		wt_sum += offsc * (win_wt[ndx] / win_wt_denom[ndx]);
-	      }
-	      else {
-		wt_sum += offsc * win_wt[ndx];
-	      }
-	      wt_denom += offsc;
-	    }
+	    wt_sum += v1b_off_integ_wts.FastEl_Flat(v1b_dsp_specs.off_int_sz+j) * win_wt[ndx];
 	  }
-
-	  if(v1b_dsp_specs.norm_wt && wt_denom > 0.0f)
-	    wt_sum /= wt_denom;
-
 	  if(wt_sum > max_wt) {
 	    max_wt = wt_sum;
 	    max_oidx = i;
@@ -5568,9 +5417,12 @@ void V1RegionSpec::V1BinocularFilter_HorizAgg() {
 	  bptlen = cur_len;
 	  bptst = cur_st;
 
-	  if(bflag != DSP_NO_ACT && bxi > 0 && cur_len >= v1b_dsp_specs.min_hz_len) {
-	    v1b_dsp_win.FastEl(DSP_OFF, bx, sc.y) = max_off;
-	    v1b_dsp_win.FastEl(DSP_DIST, bx, sc.y) = max_wt;
+	  if(bflag != DSP_NO_ACT && cur_len >= v1b_dsp_specs.min_hz_len) {
+	    float& woff = v1b_dsp_win.FastEl(DSP_OFF, bx, sc.y);
+	    v1b_dsp_horiz.FastEl(DHZ_ORIG_OFF, bx, sc.y) = woff;
+	    woff = max_off;
+	    //	    v1b_dsp_win.FastEl(DSP_DIST, bx, sc.y) = max_wt;
+	    // no need to update weight -- more useful as original vals
 	    bflag = DSP_NONE;	// clear any other flags
 	  }
 	}
@@ -5582,11 +5434,10 @@ void V1RegionSpec::V1BinocularFilter_HorizAgg() {
       }
     }
   }
-
 }
 
 void V1RegionSpec::V1BinocularFilter_DspOut_thread(int v1s_idx, int thread_no) {
-  TwoDCoord sc;			// complex coords
+  TwoDCoord sc;			// simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
   int cur_mot_idx = v1s_circ_r.CircIdx_Last();
@@ -5651,8 +5502,87 @@ void V1RegionSpec::V1BinocularFilter_DspOut_thread(int v1s_idx, int thread_no) {
   }
 }
 
+void V1RegionSpec::V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no) {
+  TwoDCoord sc;			// simple coords
+  sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
+
+  int& flag = v1b_dsp_flags.FastEl(sc.x, sc.y);
+  if(flag == DSP_NO_ACT) return; // nothing to do here
+
+  // important: this operates on v1b_dsp_wts output!!
+
+  TwoDCoord bn;			// binoc neighbor
+
+  float win_wt[v1b_specs.tot_disps]; // sum of weights integrated over window
+  for(int i=0; i<v1b_specs.tot_disps; i++) {
+    win_wt[i] = 0.0f;
+  }
+  
+  int my_n_match = v1b_dsp_nmatch.FastEl(sc.x, sc.y);
+  if(my_n_match == 0) return;	// shouldn't happen
+
+  // accumulate weights by offsets across window 
+  // weight = max feature activation of rv minus times 1-norm dist -- more weight
+  // for strong features that match closely -- lower weight for more dist, and lower act
+  for(int wy = -v1b_dsp_specs.win_half_sz; wy <= v1b_dsp_specs.win_half_sz; wy++) {
+    for(int wx = -v1b_dsp_specs.win_half_sz; wx <= v1b_dsp_specs.win_half_sz; wx++) {
+      if(wy == 0 && wy == 0) continue; // skip self
+
+      bn.y = sc.y + wy;
+      bn.x = sc.x + wx;
+      if(bn.WrapClip(wrap, v1s_img_geom)) {
+	if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+      }
+
+      int n_match = v1b_dsp_nmatch.FastEl(bn.x, bn.y);
+      if(n_match == 0) continue;
+      int nflag = v1b_dsp_flags.FastEl(bn.x, bn.y);
+      if(nflag != DSP_NONE) continue; // avoid anything with a flag (can only be DSP_AMBIG_N)
+
+      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+	win_wt[didx] += v1b_dsp_wts.FastEl(didx, 0, bn.x, bn.y);
+      }
+    }
+  }
+
+  // integrate gaussian weighting of neigboring *offsets* into one integrated weight value
+  float max_wt = 0.0f;
+  int max_didx = -1;
+  float my_max_wt = 0.0f;
+  int	my_max_didx = -1;
+  for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+    if(win_wt[didx] > max_wt) {
+      max_wt = win_wt[didx];
+      max_didx = didx;
+    }
+    float mywt = v1b_dsp_wts.FastEl(didx, 0, sc.x, sc.y);
+    if(mywt > my_max_wt) {
+      my_max_wt = mywt;
+      my_max_didx = didx;
+    }
+  }
+
+  // logic is: if window around my max weight is below threshold, or I'm ambiguous, then
+  // fill me in with surrounding window
+  if((win_wt[my_max_didx] < v1b_dsp_specs.win_thr) || (flag != DSP_NONE)) {
+    int cur_mot_idx = v1s_circ_r.CircIdx_Last();
+    float maxfv = MatMotEl2D(&v1s_out_r_max, sc.x, sc.y, cur_mot_idx);
+    for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+      float wt = 0.0f;
+      if(didx == max_didx) wt = 1.0f;
+      v1b_dsp_wts.FastEl(didx, 0, sc.x, sc.y) = wt;
+      v1b_dsp_out.FastEl(didx, 0, sc.x, sc.y) = maxfv * wt;
+    }
+    int dwd = v1b_widths.FastEl(max_didx);
+    int off = v1b_stencils.FastEl(dwd / 2, max_didx);
+
+    v1b_dsp_win.FastEl(DSP_OFF, sc.x, sc.y) = off; // update offset to new val
+    flag = DSP_NONE;				   // update flag
+  }
+}
+
 void V1RegionSpec::V1BinocularFilter_S_Out_thread(int v1b_idx, int thread_no) {
-  TwoDCoord sc;			// complex coords
+  TwoDCoord sc;			// simple coords
   sc.SetFmIndex(v1b_idx, v1s_img_geom.x);
 
   int cur_mot_idx = v1s_circ_r.CircIdx_Last();
@@ -5907,18 +5837,27 @@ bool V1RegionSpec::V1bDspInFmDataTable(DataTable* data_table, Variant col, int r
 	ic = pc / prjrat;
 	int max_dx = -1;
 	float max_dx_val = 0.0f;
-	// integrate over subregion from input and take max as local value to apply
-	for(subc.y = -integ_sz; subc.y <= integ_sz; subc.y++) {
-	  for(subc.x = -integ_sz; subc.x <= integ_sz; subc.x++) {
-	    sic = ic + subc;
-	    if(sic.WrapClip(wrap, ingm)) {
-	      if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
-	    }
-	    for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
-	      float dav = dacell->SafeEl(didx, 0 , sic.x, sic.y);
-	      if(dav > max_dx_val) {
-		max_dx = didx;
-		max_dx_val = dav;
+	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
+	  float dav = dacell->SafeEl(didx, 0 , ic.x, ic.y);
+	  if(dav > max_dx_val) {
+	    max_dx = didx;
+	    max_dx_val = dav;
+	  }
+	}
+	if(max_dx_val < 0.2f) {	// not very confident max
+	  // integrate over subregion from input and take max as local value to apply
+	  for(subc.y = -integ_sz; subc.y <= integ_sz; subc.y++) {
+	    for(subc.x = -integ_sz; subc.x <= integ_sz; subc.x++) {
+	      sic = ic + subc;
+	      if(sic.WrapClip(wrap, ingm)) {
+		if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+	      }
+	      for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
+		float dav = dacell->SafeEl(didx, 0 , sic.x, sic.y);
+		if(dav > max_dx_val) {
+		  max_dx = didx;
+		  max_dx_val = dav;
+		}
 	      }
 	    }
 	  }
@@ -6240,8 +6179,8 @@ bool V1RegionSpec::InitDataTable() {
 			  idx, DataTable::VT_FLOAT, 2, v1s_img_geom.x, v1s_img_geom.y);
 	col = data_table->FindMakeColName(name + "_v1b_dsp_offwt",
 			  idx, DataTable::VT_FLOAT, 2, v1s_img_geom.x, v1s_img_geom.y);
-// 	col = data_table->FindMakeColName(name + "_v1b_dsp_horiz_len",
-// 			  idx, DataTable::VT_FLOAT, 2, v1s_img_geom.x, v1s_img_geom.y);
+	col = data_table->FindMakeColName(name + "_v1b_dsp_horiz_orig",
+			  idx, DataTable::VT_FLOAT, 2, v1s_img_geom.x, v1s_img_geom.y);
 // 	col = data_table->FindMakeColName(name + "_v1b_dsp_horiz_st",
 // 			  idx, DataTable::VT_FLOAT, 2, v1s_img_geom.x, v1s_img_geom.y);
 	col = data_table->FindMakeColName(name + "_v1b_dsp_wts", idx, DataTable::VT_FLOAT, 4,
@@ -6549,6 +6488,19 @@ bool V1RegionSpec::V1BOutputToTable(DataTable* dtab) {
 	  else if(flag == DSP_AMBIG_THR) {
 	    val = -0.9f;
 	  }
+	  dout->FastEl(sc.x, sc.y) = val;
+	}
+      }
+    }
+
+    {
+      col = data_table->FindMakeColName(name + "_v1b_dsp_horiz_orig",
+	idx, DataTable::VT_FLOAT, 2, v1s_img_geom.x, v1s_img_geom.y);
+      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+      for(sc.y = 0; sc.y < v1s_img_geom.y; sc.y++) {
+	for(sc.x = 0; sc.x < v1s_img_geom.x; sc.x++) {
+	  float val = (float)v1b_dsp_horiz.FastEl(DHZ_ORIG_OFF, sc.x, sc.y)
+	    / (float)v1b_specs.max_off;
 	  dout->FastEl(sc.x, sc.y) = val;
 	}
       }

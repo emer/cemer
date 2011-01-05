@@ -1034,20 +1034,16 @@ INHERITED(taOBase)
 public:
   bool		ambig_off;	// #DEF_true in the v1b_dsp_out output (feature strength times disparity output coding), consider ambiguous (flagged) areas to be off (zero activity) instead of even distribution across all alternatives
   int		n_matches;	// #DEF_7 number of best-fitting disparity matches to keep per point in initial processing step
-  int		win_half_sz;	// #DEF_2:3 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
-  float		win_gain;	// #DEF_0.1:1 gain on contribution of neighboring locations in the aggregation window relative to the matches for the location under consideration itself (which has a weight of 1 always)
-  float		opt_thr;	// #DEF_0.01 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
-  float		good_thr;	// #DEF_0.9 threshold on normalized average absolute distance over features to be considered a good match -- can then be added to the matches list
-  float		integ_thr;	// #DEF_0.3 threshold on integrated values -- if below this threshold, then integrated confidence is too low, and area is marked as ambiguous
-  float		edge_thr;	// #DEF_1.5 multiplier on integ_thr for areas falling along the edge -- these have a higher threshold to pass muster, because they are missing the ability to match in particular directions that go off the edge
-  bool		norm_wt;	// #DEF_true use normalized weights for aggregating over window
+  float		opt_thr;	// #DEF_0.1 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
+  float		good_thr;	// #DEF_0.8 threshold on normalized average absolute distance over features to be considered a good match (lower number = closer match = tighter tolerance) -- can then be added to the matches list
+  int		win_half_sz;	// #DEF_1 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
+  float		win_thr;	// #DEF_0.3 threshold on aggregated activity 
   float		off_integ_sz; 	// #DEF_1 half-width in units of disp_range for gaussian integration of disparity weightings across different disparity offsets -- integrates votes for nearby offsets to find the best overall zone of offset for a given location
   float		off_integ_sig;	// #DEF_0.7:1.5 sigma for gaussian for offset integration
   int		min_hz_len;	// #DEF_3 minimum horizontal length for applying uniform depth across entire horizontal segment
-  int		hz_win_sz;	// #DEF_4 window on either side of the horizontal line used to determine disparity for whole line -- central points do not have reliable values
+  int		hz_win_sz;	// #DEF_6 window on either side of the horizontal line used to determine disparity for whole line -- central points do not have reliable values
 
   float		thr_gain;   	// #READ_ONLY 1.0 / good_thr -- multiplier on distance weights such that something right at threshold counts for zero..
-  float		net_edge_thr;	// #READ_ONLY integ_thr * edge_thr -- net threshold
   int		win_sz;		// #READ_ONLY window full size = 1 + 2*win_half_sz
   int		win_area;	// #READ_ONLY total number of elements in the full square window = win_sz * win_sz
   int		off_int_sz;	// #READ_ONLY actual computed size of off_integ_sz based on disp_range
@@ -1234,6 +1230,7 @@ public:
   enum DspHoriz {	// for storing disparity match information
     DHZ_LEN,		// length of current horizontal line structure -- how many horiz orients in a row is this one part of
     DHZ_START,		// starting x-axis index where the horiz line starts
+    DHZ_ORIG_OFF,	// original offset value for this line, which was replaced by computed value
     DHZ_N,		// number of disparity match values to record
   };
 
@@ -1445,14 +1442,14 @@ protected:
   // do binocular filters -- dispatch threads
   virtual void 	V1BinocularFilter_Match_thread(int v1s_idx, int thread_no);
   // do binocular filters -- compute initial matches between eyes
-  virtual void 	V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no);
-  // do binocular filters -- aggregate over window and identify best match based on larger context
   virtual void 	V1BinocularFilter_HorizTag_thread(int v1s_idx, int thread_no);
   // do binocular filters -- initial tag of horizontal line structures
   virtual void 	V1BinocularFilter_HorizAgg();
   // do binocular filters -- aggregation of initial tags and ambiguity resolution
   virtual void 	V1BinocularFilter_DspOut_thread(int v1s_idx, int thread_no);
   // do binocular filters -- compute final disp output from disparity weightings
+  virtual void 	V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no);
+  // do binocular filters -- aggregate over window to correct ambiguous outputs -- based on dspout outputs -- lower dimensional space easier to manage
   virtual void 	V1BinocularFilter_S_Out_thread(int v1s_idx, int thread_no);
   // do binocular filters -- compute v1s-level disparity weighted output (V1B_S)
 
