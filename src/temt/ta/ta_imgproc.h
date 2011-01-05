@@ -1037,9 +1037,7 @@ public:
   float		opt_thr;	// #DEF_0.1 optimization threshold -- if source value is below this value, disparity is not computed and result is zero
   float		good_thr;	// #DEF_0.8 threshold on normalized average absolute distance over features to be considered a good match (lower number = closer match = tighter tolerance) -- can then be added to the matches list
   int		win_half_sz;	// #DEF_1 aggregation window half size -- window of feature samples this wide on all sides of current location is used to aggregate the best match over that local region
-  float		win_thr;	// #DEF_0.3 threshold on aggregated activity 
-  float		off_integ_sz; 	// #DEF_1 half-width in units of disp_range for gaussian integration of disparity weightings across different disparity offsets -- integrates votes for nearby offsets to find the best overall zone of offset for a given location
-  float		off_integ_sig;	// #DEF_0.7:1.5 sigma for gaussian for offset integration
+  float		win_thr;	// #DEF_0.1 threshold on aggregated activity 
   int		min_hz_len;	// #DEF_3 minimum horizontal length for applying uniform depth across entire horizontal segment
   int		hz_win_sz;	// #DEF_6 window on either side of the horizontal line used to determine disparity for whole line -- central points do not have reliable values
 
@@ -1303,7 +1301,6 @@ public:
   float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular gaussian weighting factors for integrating disparity values into v1b unit activations -- for each tuning disparity [max_width][tot_disps] -- only v1b_widths[disp] are used per disparity
   int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: 2d: [XY][max_width][tot_disps]
   float_Matrix	v1bc_weights;	// #READ_ONLY #NO_SAVE weighting factors for integration from binocular disparities to complex responses
-  float_Matrix	v1b_off_integ_wts; // #READ_ONLY #NO_SAVE for integrating disparity offset weights across a window to select the best offset for a given point -- v1b_dsp_specs.off_integ_sz, off_integ_sig control this
 
   ///////////////////  V1S Output ////////////////////////
   float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.

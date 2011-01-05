@@ -3409,9 +3409,7 @@ void V1DisparitySpec::Initialize() {
   opt_thr = 0.1f;
   good_thr = 0.8f;
   win_half_sz = 1;
-  win_thr = 0.3f;
-  off_integ_sz = 1.0f;
-  off_integ_sig = 1.5f;
+  win_thr = 0.1f;
   min_hz_len = 3;
   hz_win_sz = 6;
 
@@ -3925,10 +3923,6 @@ bool V1RegionSpec::InitFilters_V1Binocular() {
       
   taMath_float::vec_norm_max(&v1b_weights); // max norm to 1
 
-  v1b_dsp_specs.off_int_sz = (int)(v1b_dsp_specs.off_integ_sz * (float)v1b_specs.disp_range + 0.5f);
-  taMath_float::vec_kern_gauss(&v1b_off_integ_wts, v1b_dsp_specs.off_int_sz, 
-			       v1b_dsp_specs.off_integ_sig);
-  
   return true;
 }
 
@@ -5265,9 +5259,9 @@ void V1RegionSpec::V1BinocularFilter_Match_thread(int v1s_idx, int thread_no) {
     }
   }
   
-  if(n_good > v1b_dsp_specs.n_matches) {	// we matched more than we recorded -- mark as ambig
-    flag = DSP_AMBIG_N;
-  }
+//   if(n_good > v1b_dsp_specs.n_matches) {	// we matched more than we recorded -- mark as ambig
+//     flag = DSP_AMBIG_N;
+//   }
 
   if(has_rv && n_match == 0) {	// couldn't find any good matches, but has an rv
     flag = DSP_AMBIG_THR;
@@ -5394,12 +5388,7 @@ void V1RegionSpec::V1BinocularFilter_HorizAgg() {
 	float max_wt = 0.0f;
 	float max_oidx = -1;
 	for(int i=0; i<v1b_specs.tot_offs; i++) {
-	  float wt_sum = 0.0f;
-	  for(int j = -v1b_dsp_specs.off_int_sz; j <= v1b_dsp_specs.off_int_sz; j++) {
-	    int ndx = i+j;
-	    if(ndx < 0 || ndx >= v1b_specs.tot_offs) continue;
-	    wt_sum += v1b_off_integ_wts.FastEl_Flat(v1b_dsp_specs.off_int_sz+j) * win_wt[ndx];
-	  }
+	  float wt_sum = win_wt[i];
 	  if(wt_sum > max_wt) {
 	    max_wt = wt_sum;
 	    max_oidx = i;
@@ -5522,8 +5511,6 @@ void V1RegionSpec::V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no) {
   if(my_n_match == 0) return;	// shouldn't happen
 
   // accumulate weights by offsets across window 
-  // weight = max feature activation of rv minus times 1-norm dist -- more weight
-  // for strong features that match closely -- lower weight for more dist, and lower act
   for(int wy = -v1b_dsp_specs.win_half_sz; wy <= v1b_dsp_specs.win_half_sz; wy++) {
     for(int wx = -v1b_dsp_specs.win_half_sz; wx <= v1b_dsp_specs.win_half_sz; wx++) {
       if(wy == 0 && wy == 0) continue; // skip self
@@ -5545,7 +5532,7 @@ void V1RegionSpec::V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no) {
     }
   }
 
-  // integrate gaussian weighting of neigboring *offsets* into one integrated weight value
+  // find max's
   float max_wt = 0.0f;
   int max_didx = -1;
   float my_max_wt = 0.0f;
