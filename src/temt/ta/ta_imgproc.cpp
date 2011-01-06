@@ -2572,7 +2572,7 @@ void DoGRegionSpec::Initialize() {
   dog_specs.filter_width = 4;
   dog_specs.on_sigma = 1;
   dog_specs.off_sigma = 2;
-  dog_specs.circle_edge = 2;
+  dog_specs.circle_edge = true;
   dog_renorm = LOG_RENORM;
   dog_save = SAVE_DATA;
   dog_feat_geom.x = 2;
@@ -5372,7 +5372,7 @@ void V1RegionSpec::V1BinocularFilter_HorizAgg() {
 	// propagate back to all the points along the horizontal line -- this is the key routine
 
 	// first get aggregated votes along the line
-	float win_wt[v1b_specs.tot_offs]; // sum of weights integrated over window
+	float* win_wt = new float[v1b_specs.tot_offs]; // sum of weights integrated over window
   
 	for(int i=0; i<v1b_specs.tot_offs; i++) {
 	  win_wt[i] = 0.0f;
@@ -5408,6 +5408,8 @@ void V1RegionSpec::V1BinocularFilter_HorizAgg() {
 	    max_oidx = i;
 	  }
 	}
+
+	delete win_wt;
 
 	int max_off = max_oidx - v1b_specs.max_off;
 
@@ -5516,14 +5518,14 @@ void V1RegionSpec::V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no) {
 
   TwoDCoord bn;			// binoc neighbor
 
-  float win_wt[v1b_specs.tot_disps]; // sum of weights integrated over window
+  int my_n_match = v1b_dsp_nmatch.FastEl(sc.x, sc.y);
+  if(my_n_match == 0) return;	// shouldn't happen
+
+  float* win_wt = new float[v1b_specs.tot_disps]; // sum of weights integrated over window
   for(int i=0; i<v1b_specs.tot_disps; i++) {
     win_wt[i] = 0.0f;
   }
   
-  int my_n_match = v1b_dsp_nmatch.FastEl(sc.x, sc.y);
-  if(my_n_match == 0) return;	// shouldn't happen
-
   // accumulate weights by offsets across window 
   for(int wy = -v1b_dsp_specs.win_half_sz; wy <= v1b_dsp_specs.win_half_sz; wy++) {
     for(int wx = -v1b_dsp_specs.win_half_sz; wx <= v1b_dsp_specs.win_half_sz; wx++) {
@@ -5580,6 +5582,8 @@ void V1RegionSpec::V1BinocularFilter_WinAgg_thread(int v1s_idx, int thread_no) {
     v1b_dsp_win.FastEl(DSP_OFF, sc.x, sc.y) = off; // update offset to new val
     flag = DSP_NONE;				   // update flag
   }
+
+  delete win_wt;
 }
 
 void V1RegionSpec::V1BinocularFilter_S_Out_thread(int v1b_idx, int thread_no) {
