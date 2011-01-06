@@ -1365,6 +1365,9 @@ public:
   virtual bool	V1bDspInVsOutDiffs(float_Matrix* v1b_in, float_Matrix* v1b_out,
 				   DataTable* data_out);
   // #CAT_V1B compute differences between v1b_in and out matricies -- each element of output is in - out -- sign shows nature of error (+ = ival was too active, - = ival was not active enough) -- both must be same geometry -- data is output to given data table in last row (new row added if none present), with columns named v1b_in_out_diff_dX where X is the disparity index (0..N-1)
+  virtual bool	V1bDspUpdtFmHint(float_Matrix* v1b_hint_in, int hint_dsp = 0, float hint_thr=0.1,
+				 bool mutex=true, int mutex_dsp=1);
+  // #CAT_V1B take a 2x2 matrix of the size of v1s_image as a strong hint for what should be active in the given disparity plane (0 = focal, -1 = near, +1 = far, etc) -- recomputes the v1b_dsp_wts and dsp_out etc, such that anything with activity above hint_thr in the hint input is set to be in the given disparity plane, and if mutex is true, anywhere the hint input is < than hint_thr, shoud NOT be active in that plane -- if it is, then it is reassigned to mutex_dsp disparity
 
   void 	Initialize();
   void	Destroy() { };
@@ -1437,6 +1440,8 @@ protected:
 
   virtual bool	V1BinocularFilter();
   // do binocular filters -- dispatch threads
+  virtual bool	V1BinocularFilter_Optionals();
+  // do binocular filters -- dispatch threads -- for optional stuff after core v1b_dsp_wts and _out are computed
   virtual void 	V1BinocularFilter_Match_thread(int v1s_idx, int thread_no);
   // do binocular filters -- compute initial matches between eyes
   virtual void 	V1BinocularFilter_HorizTag_thread(int v1s_idx, int thread_no);

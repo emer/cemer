@@ -5141,6 +5141,20 @@ bool V1RegionSpec::V1BinocularFilter() {
   threads.Run(&ip_call_winagg, n_run_s);
 
   // now comes the optional outputs
+  bool rval = V1BinocularFilter_Optionals();
+  return rval;
+}
+
+bool V1RegionSpec::V1BinocularFilter_Optionals() {
+  int n_run_s = v1s_img_geom.Product();
+  int n_run_pre = v1c_pre_geom.Product();
+  int n_run_c = v1c_img_geom.Product();
+
+  threads.n_threads = MIN(n_run_s, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.min_units = 1;
+  threads.nibble_chunk = 1;	// small chunks
+
+  // now comes the optional outputs
   if(v1b_filters & REQ_V1B_S) {	// compute if required..
     cur_v1b_dsp = &v1b_dsp_out;	// use output values just computed
     ThreadImgProcCall ip_call_sout((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_S_Out_thread);
@@ -6035,6 +6049,63 @@ bool V1RegionSpec::V1bDspInVsOutDiffs(float_Matrix* v1b_in, float_Matrix* v1b_ou
   return true;
 }
 
+bool V1RegionSpec::V1bDspUpdtFmHint(float_Matrix* v1b_hint_in, int hint_dsp, float hint_thr,
+				    bool mutex, int mutex_dsp) {
+  if(TestError(!v1b_hint_in, "V1bDspUpdtFmHint", "v1b_hint_in is NULL"))
+    return false;
+  if(TestError(v1b_hint_in->geom.dim(0) != v1b_dsp_out.dim(2) ||
+	       v1b_hint_in->geom.dim(1) != v1b_dsp_out.dim(3),
+	       "V1bDspUpdtFmHint",
+	       "v1b_in geom is not same as v1b_dsp_out geom -- must be"))
+    return false;
+
+  int cur_mot_idx = v1s_circ_r.CircIdx_Last();
+
+  int hint_didx = v1b_specs.n_disps + hint_dsp;
+  int mutex_didx = v1b_specs.n_disps + mutex_dsp;
+
+  TwoDCoord sc;			// simple coords
+  for(sc.y=0; sc.y < v1s_img_geom.y; sc.y++) {
+    for(sc.x=0; sc.x < v1s_img_geom.x; sc.x++) {
+      int flag = v1b_dsp_flags.FastEl(sc.x, sc.y);
+      if(flag == DSP_NO_ACT) continue;
+      float maxfv = MatMotEl2D(&v1s_out_r_max, sc.x, sc.y, cur_mot_idx);
+
+      float hint = v1b_hint_in->FastEl(sc.x, sc.y);
+      if(hint > hint_thr) {
+	for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+	  float wt = 0.0f;
+	  if(didx == hint_didx)
+	    wt = 1.0f;
+	  v1b_dsp_out.FastEl(didx, 0, sc.x, sc.y) = maxfv * wt;
+	  v1b_dsp_wts.FastEl(didx, 0, sc.x, sc.y) = wt;
+	}
+      }
+      else if(mutex) {
+	float& htwt = v1b_dsp_wts.FastEl(hint_didx, 0, sc.x, sc.y);
+	if(htwt > 0.0f) {
+	  for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+	    float wt = 0.0f;
+	    if(didx == mutex_didx)
+	      wt = 1.0f;
+	    v1b_dsp_out.FastEl(didx, 0, sc.x, sc.y) = maxfv * wt;
+	    v1b_dsp_wts.FastEl(didx, 0, sc.x, sc.y) = wt;
+	  }
+	}
+      }
+    }
+  }
+
+  bool rval = V1BinocularFilter_Optionals(); // finish up from here
+
+  // re-write v1b stuff out to datatable
+  if(v1b_save & SAVE_DATA && !(taMisc::gui_active && v1b_save & ONLY_GUI)
+     && (region.ocularity == VisRegionParams::BINOCULAR || v1b_filters & REQ_V1B_C)) {
+    V1BOutputToTable(data_table);
+  }
+
+  return rval;
+}
 
 /////////////////////////////////////////////////////////////////
 //		Optional Filters
