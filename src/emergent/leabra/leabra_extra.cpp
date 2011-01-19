@@ -3953,93 +3953,397 @@ void GpAggregatePrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
+//////////////////////////////////////////////////////////
+//	  	V1LateralContourPrjnSpec
+
+void V1LateralContourPrjnSpec::Initialize() {
+  radius = 4;
+  wrap = true;
+  ang_pow = 4.0f;
+  dist_sigma = 1.0f;
+  con_thr = 0.2f;
+  oth_feat_wt = 0.5f;
+  init_wts = true;
+}
+
+void V1LateralContourPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+}
+
+void V1LateralContourPrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+
+  if(TestWarning(!prjn->layer->unit_groups, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
+    return;
+  }
+  if(TestWarning(!prjn->from->unit_groups, "Connect_impl",
+		 "requires send layer to have unit groups!")) {
+    return;
+  }
+  if(TestWarning(prjn->from != prjn->layer, "Connect_impl",
+		 "requires send and recv to be the same layer -- lateral projection!")) {
+    return;
+  }
+  if(TestWarning(prjn->con_spec->wt_limits.sym, "Connect_impl",
+		 "cannot have wt_limits.sym on in conspec -- turning off in spec:",
+		 prjn->con_spec->name,
+		 "This might affect children of this spec.")) {
+    prjn->con_spec->wt_limits.sym = false;
+    prjn->con_spec->UpdateAfterEdit();
+  }
+
+  Layer* lay = prjn->from;
+  TwoDCoord gp_geo = lay->gp_geom;
+  TwoDCoord un_geo = lay->un_geom;
+  float n_angles = (float)un_geo.x;
+  
+  TwoDCoord ruc;
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    int rgpidx = 0;
+    for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
+
+	TwoDCoord suc;
+	TwoDCoord suc_wrp;
+	for(suc.y = ruc.y-radius; suc.y <= ruc.y+radius; suc.y++) {
+	  for(suc.x = ruc.x-radius; suc.x <= ruc.x+radius; suc.x++) {
+	    suc_wrp = suc;
+	    if(suc_wrp.WrapClip(wrap, gp_geo) && !wrap)
+	      continue;
+	    int sgpidx = lay->UnitGpIdxFmPos(suc_wrp);
+	    if(!lay->UnitGpIdxIsValid(sgpidx)) continue;
+
+	    TwoDCoord del = suc - ruc; // don't use wrap!
+	    float dst = del.Mag();
+	    if(dst > (float)radius) continue; // out of bounds
+	    if(dst == 0.0f) continue;	      // no selfs
+
+	    float nrmdst = dst / (float)radius;
+	    float gang = atan2f(del.y, del.x); // group angle
+	    if(gang >= taMath_float::pi) gang -= taMath_float::pi;
+	    if(gang < 0.0f) gang += taMath_float::pi;
+
+ 	    float gauswt = taMath_float::gauss_den_nonorm(nrmdst, dist_sigma);
+	    
+	    TwoDCoord run;
+	    for(run.x = 0; run.x < un_geo.x; run.x++) {
+	      float rang = taMath_float::pi * ((float)run.x / n_angles);
+ 	      float gangwt = powf(fabsf(cosf(gang-rang)), ang_pow);
+
+	      TwoDCoord sun;
+	      for(sun.x = 0; sun.x < un_geo.x; sun.x++) {
+		float sang = taMath_float::pi * ((float)sun.x / n_angles);
+		float sangwt = powf(fabsf(cosf(sang-rang)), ang_pow);
+		float wt = sangwt * gangwt * gauswt;
+		if(wt < con_thr) continue;
+
+		for(run.y = 0; run.y < un_geo.y; run.y++) {
+		  for(sun.y = 0; sun.y < un_geo.y; sun.y++) {
+		    int rui = run.y * un_geo.x + run.x;
+		    int sui = sun.y * un_geo.x + sun.x;
+
+		    float feat_wt = 1.0f;
+		    if(run.y != sun.y)
+		      feat_wt = oth_feat_wt;
+		    float eff_wt = wt * feat_wt;
+		    if(eff_wt < con_thr) continue;
+
+		    Unit* ru_u = lay->UnitAtUnGpIdx(rui, rgpidx);
+		    if(!ru_u) continue;
+		    Unit* su_u = lay->UnitAtUnGpIdx(sui, sgpidx);
+		    if(!su_u) continue;
+		    if(alloc_loop) {
+		      ru_u->RecvConsAllocInc(1, prjn);
+		      su_u->SendConsAllocInc(1, prjn);
+		    }
+		    else {
+		      Connection* cn = ru_u->ConnectFrom(su_u, prjn, alloc_loop);
+		      cn->wt = eff_wt;
+		    }
+		  }
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do allocations
+      prjn->layer->RecvConsPostAlloc(prjn);
+      prjn->from->SendConsPostAlloc(prjn);
+    }
+  }
+}
+
+void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
+  Layer* lay = prjn->from;
+  TwoDCoord gp_geo = lay->gp_geom;
+  TwoDCoord un_geo = lay->un_geom;
+  float n_angles = (float)un_geo.x;
+
+  TwoDCoord gp_geo_half = gp_geo / 2;
+
+  int rgpidx;
+  int rui;
+  lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
+  TwoDCoord ruc = lay->UnitGpPosFmIdx(rgpidx);
+  TwoDCoord run;
+  run.SetFmIndex(rui, un_geo.x);
+  for(int i=0; i<cg->size; i++) {
+    Unit* su = cg->Un(i);
+    int sgpidx;
+    int sui;
+    lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
+    TwoDCoord suc = lay->UnitGpPosFmIdx(sgpidx);
+    TwoDCoord sun;
+    sun.SetFmIndex(sui, un_geo.x);
+
+    TwoDCoord del = suc - ruc; // don't use wrap!
+    if(wrap) {		       // dist may be closer in wrapped case..
+      if(ruc.x < gp_geo_half.x) {
+	if(fabsf((suc.x - gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x -= gp_geo.x; del.x = suc.x - ruc.x; }
+      }
+      else {
+	if(fabsf((suc.x + gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x += gp_geo.x; del.x = suc.x - ruc.x; }
+      }      
+      if(ruc.y < gp_geo_half.y) {
+	if(fabsf((suc.y - gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y -= gp_geo.y; del.y = suc.y - ruc.y; }
+      }
+      else {
+	if(fabsf((suc.y + gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y += gp_geo.y; del.y = suc.y - ruc.y; }
+      }
+    }
+
+    float dst = del.Mag();
+    float nrmdst = dst / (float)radius;
+    float gang = atan2(del.y, del.x); // group angle
+    if(gang >= taMath_float::pi) gang -= taMath_float::pi;
+    if(gang < 0.0f) gang += taMath_float::pi;
+    float rang = taMath_float::pi * ((float)run.x / n_angles);
+    float sang = taMath_float::pi * ((float)sun.x / n_angles);
+    float sangwt = powf(fabsf(cosf(sang-rang)), ang_pow);
+    float gangwt = powf(fabsf(cosf(gang-rang)), ang_pow);
+    float gauswt = taMath_float::gauss_den_nonorm(nrmdst, dist_sigma);
+    float feat_wt = 1.0f;
+    if(run.y != sun.y)
+      feat_wt = oth_feat_wt;
+    float wt = feat_wt * sangwt * gangwt * gauswt;
+    cg->Cn(i)->wt = wt;
+  }
+}
+
+
 ///////////////////////////////////////////////////////////////
 //			VisDisparityPrjnSpec 
 
 void VisDisparityPrjnSpec::Initialize() {
-  n_disparities = 2;
-  disp_dist = 5;
-  gauss_sigma = 1.0f;
+  n_disps = 1;
+  disp_range_pct = 0.05f;
+  gauss_sig = 0.7f;
+  disp_spacing = 2.0f;
+  end_extra = 2;
+  wrap = true;
+  
+  init_wts = true;
+
+  tot_disps = 1 + 2 * n_disps;
+  UpdateFmV1sSize(24);
 }
+
+void VisDisparityPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  tot_disps = 1 + 2 * n_disps;
+}
+
 
 void VisDisparityPrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from)	return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
   if(TestWarning(!prjn->layer->unit_groups, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
+    return;
+  }
+  if(TestWarning(!prjn->from->unit_groups, "Connect_impl",
 		 "requires sending layer to have unit groups!")) {
     return;
   }
 
-  if(prjn->from->unit_groups)
-    Connect_Gps(prjn);
-  else
-    Connect_NoGps(prjn);
-}
-
-void VisDisparityPrjnSpec::Connect_Gps(Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord ru_gp_geo = recv_lay->gp_geom;
-  TwoDCoord su_gp_geo = send_lay->gp_geom;
+  TwoDCoord rgp_geo = recv_lay->gp_geom;
+  TwoDCoord sgp_geo = send_lay->gp_geom;
 
-  if(TestWarning(ru_gp_geo != su_gp_geo, "Connect_Gps",
+  if(TestWarning(rgp_geo != sgp_geo, "Connect_Gps",
 		 "Recv layer does not have same gp geometry as sending layer -- cannot connect!")) {
     return;
   }
-  TwoDCoord ru_un_geo = recv_lay->un_geom;
-  TwoDCoord su_un_geo = send_lay->un_geom;
+  TwoDCoord run_geo = recv_lay->un_geom;
+  TwoDCoord sun_geo = send_lay->un_geom;
 
-  int su_n = su_un_geo.Product();
-  int ru_n = ru_un_geo.Product();
+  int su_n = sun_geo.Product();
+  int ru_n = run_geo.Product();
 
-  int tot_disp = n_disparities * 2 + 1;
-  if(TestWarning(ru_n != su_n * tot_disp, "Connect_Gps",
-		 "Recv layer unit groups must have n_disparities * 2 + 1=",
-		 String(tot_disp),"times number of units in send layer unit group=",
-		 String(su_n),"  should be:", String(su_n * tot_disp), "is:",
+  if(TestWarning(ru_n != su_n * tot_disps, "Connect_Gps",
+		 "Recv layer unit groups must have n_disps * 2 + 1=",
+		 String(tot_disps),"times number of units in send layer unit group=",
+		 String(su_n),"  should be:", String(su_n * tot_disps), "is:",
 		 String(ru_n))) {
     return;
   }
 
-  int lr_dir;			// direction multiplier on offset for left vs right
-  if(prjn->recv_idx == 0)	// left eye is first guy
-    lr_dir = -1;
+  if(prjn->recv_idx == 0)	// right eye
+    Connect_RightEye(prjn);
   else
-    lr_dir = 1;
+    Connect_LeftEye(prjn);
+}
 
-  int rf_width = 2 * disp_dist; // total receptive field width
+void VisDisparityPrjnSpec::Connect_RightEye(Projection* prjn) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord gp_geo = recv_lay->gp_geom;
+
+  TwoDCoord run_geo = recv_lay->un_geom;
+  TwoDCoord sun_geo = send_lay->un_geom;
+  int su_n = sun_geo.Product();
+  int ru_n = run_geo.Product();
+  
+  // note: could optimize this code b/c sender alloc = tot_disps so could be pre-alloc entirely
+  TwoDCoord ruc;
+  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
+    int rgpidx = 0;
+    for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
+	for(int rui=0; rui<ru_n; rui++) {
+	  Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+	  if(!ru_u) continue;
+	  if(!alloc_loop)
+	    ru_u->RecvConsPreAlloc(1, prjn); // just one prjn!
+
+	  int sui = rui % su_n;	// just modulus -- recv from same features tot_disps times
+	  Unit* su_u = send_lay->UnitAtUnGpIdx(sui, rgpidx); // rgp = sgp
+	  if(!su_u) continue;
+	  ru_u->ConnectFrom(su_u, prjn, alloc_loop);
+	}
+      }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
+    }
+  }
+}
+
+void VisDisparityPrjnSpec::InitStencils(Projection* prjn) {
+  Layer* send_lay = prjn->from;
+  TwoDCoord gp_geo = send_lay->gp_geom;
+
+  UpdateFmV1sSize(gp_geo.x);
+
+  v1b_widths.SetGeom(1, tot_disps);
+  v1b_weights.SetGeom(2, max_width, tot_disps);
+  v1b_stencils.SetGeom(2, max_width, tot_disps);
+
+  v1b_weights.InitVals(0.0f);	// could have some lurkers in there from other settings, which can affect normalization
+
+  int twe = disp_range + end_ext;
+
+  // everything is conditional on the disparity
+  for(int disp=-n_disps; disp <= n_disps; disp++) {
+    int didx = disp + n_disps;
+    int doff = disp * disp_spc;
+    if(disp == 0) {		// focal
+      v1b_widths.FastEl(didx) = 1 + 2 * disp_range;
+      for(int tw=-disp_range; tw<=disp_range; tw++) {
+	int twidx = tw + disp_range;
+	float fx = (float)tw / (float)disp_range;
+	v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
+	v1b_stencils.FastEl(twidx, didx) = doff + tw;
+      }
+    }
+    else if(disp == -n_disps) {
+      v1b_widths.FastEl(didx) = 1 + 2 * disp_range + end_ext;
+      for(int tw=-twe; tw<=disp_range; tw++) {
+	int twidx = tw + twe;
+	if(tw < 0)
+	  v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(0.0f, gauss_sig);
+	else {
+	  float fx = (float)tw / (float)disp_range;
+	  v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
+	}
+	v1b_stencils.FastEl(twidx, didx) = doff + tw;
+      }
+    }
+    else if(disp == n_disps) {
+      v1b_widths.FastEl(didx) = 1 + 2 * disp_range + end_ext;
+      for(int tw=-disp_range; tw<=twe; tw++) {
+	int twidx = tw + disp_range;
+	if(tw > 0)
+	  v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(0.0f, gauss_sig);
+	else {
+	  float fx = (float)tw / (float)disp_range;
+	  v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
+	}
+	v1b_stencils.FastEl(twidx, didx) = doff + tw;
+      }
+    }
+    else {
+      v1b_widths.FastEl(didx) = 1 + 2 * disp_range;
+      for(int tw=-disp_range; tw<=disp_range; tw++) {
+	int twidx = tw + disp_range;
+	float fx = (float)tw / (float)disp_range;
+	v1b_weights.FastEl(twidx, didx) = taMath_float::gauss_den_sig(fx, gauss_sig);
+	v1b_stencils.FastEl(twidx, didx) = doff + tw;
+      }
+    }
+  }
+      
+  taMath_float::vec_norm_max(&v1b_weights); // max norm to 1
+}
+
+void VisDisparityPrjnSpec::Connect_LeftEye(Projection* prjn) {
+  InitStencils(prjn);
+
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord gp_geo = recv_lay->gp_geom; // same as sgp
+
+  TwoDCoord run_geo = recv_lay->un_geom;
+  TwoDCoord sun_geo = send_lay->un_geom;
+  int su_n = sun_geo.Product();
+  int ru_n = run_geo.Product();
 
   TwoDCoord ruc;
   for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
-    for(ruc.x = 0; ruc.x < ru_gp_geo.x; ruc.x++) { // loop over receiving layer x
-      for(ruc.y = 0; ruc.y < ru_gp_geo.y; ruc.y++) { // loop over receiving layer y
-	// get each unit group in receiving layer
-	Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
-	if(!ru_gp) continue;	// shouldn't happen
+    int rgpidx = 0;
+    for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
+	for(int didx=0; didx < tot_disps; didx++) {
+	  int dwd = v1b_widths.FastEl(didx);
 
-	int rui_ctr = 0;
-	for(int disp=-n_disparities; disp <= n_disparities; disp++) {
-	  int disp_off = disp_dist * disp;
-	  int st_off = disp_off - disp_dist;
-	
-	  for(int rui=0; rui<su_n; rui++) {
-	    Unit* ru_u = (Unit*)ru_gp->FastEl(rui_ctr++);
+	  int strui = didx * su_n; // starting index
+	  for(int sui=0; sui<su_n; sui++) {
+	    int rui = strui + sui;
+	    Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+	    if(!ru_u) continue;
 	    if(!alloc_loop)
-	      ru_u->RecvConsPreAlloc(rf_width, prjn);
+	      ru_u->RecvConsPreAlloc(dwd, prjn);
 
-	    TwoDCoord suc;
-	    for(int soff=0; soff < rf_width; soff++) {
-	      suc.y = ruc.y;
-	      suc.x = ruc.x + lr_dir * (st_off + soff);
-	      if(suc.WrapClip(wrap, su_gp_geo) && !wrap)
+	    for(int twidx = 0; twidx < dwd; twidx++) {
+	      int off = v1b_stencils.FastEl(twidx, didx);
+	      // float wt = v1b_weights.FastEl(twidx, didx);
+
+	      TwoDCoord suc = ruc;
+	      suc.x += off;	// offset
+	      TwoDCoord suc_wrp = suc;
+	      if(suc_wrp.WrapClip(wrap, gp_geo) && !wrap)
 		continue;
-	      Unit_Group* su_gp = prjn->from->UnitGpAtCoord(suc);
-	      if(!su_gp) continue;	// shouldn't happen
-	      Unit* su_u = su_gp->SafeEl(rui);
-	      if(!su_u) continue;
-	      if(!self_con && (su_u == ru_u)) continue;
+	      int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
+	      if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
+	      Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+	      if(!su_u) continue;
 	      ru_u->ConnectFrom(su_u, prjn, alloc_loop);
 	    }
 	  }
@@ -4052,80 +4356,50 @@ void VisDisparityPrjnSpec::Connect_Gps(Projection* prjn) {
   }
 }
 
-void VisDisparityPrjnSpec::Connect_NoGps(Projection* prjn) {
+void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+
+  if(cg->size == 1) {		// right eye
+    cg->Cn(0)->wt = 1.0f;
+    return;
+  }
+
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  TwoDCoord ru_gp_geo = recv_lay->gp_geom;
-  TwoDCoord su_geo = send_lay->un_geom;
+  TwoDCoord gp_geo = recv_lay->gp_geom; // same as sgp
 
-  if(TestWarning(ru_gp_geo != su_geo, "Connect_Gps",
-		 "Recv layer does not have same gp geometry as sending layer -- cannot connect!")) {
-    return;
+  TwoDCoord run_geo = recv_lay->un_geom;
+  TwoDCoord sun_geo = send_lay->un_geom;
+  int su_n = sun_geo.Product();
+  int ru_n = run_geo.Product();
+
+  int rgpidx;
+  int rui;
+  recv_lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
+  int didx = rui / su_n;	// disparity index
+
+  int dwd = v1b_widths.SafeEl(didx);
+  if(cg->size == dwd) {
+    for(int i=0; i<cg->size; i++) {
+      float wt = v1b_weights.SafeEl(i, didx);
+      cg->Cn(i)->wt = wt;
+    }
   }
-  TwoDCoord ru_un_geo = recv_lay->un_geom;
-  int ru_n = ru_un_geo.Product();
-  int tot_disp = n_disparities * 2 + 1;
-  if(TestWarning(ru_n != tot_disp, "Connect_Gps",
-		 "Recv layer unit groups must have n_disparities * 2 + 1=",String(tot_disp),
-		 "units in it -- instead has:", String(ru_n))) {
-    return;
-  }
-
-  int lr_dir;			// multiplier on offset for left vs right
-  if(prjn->recv_idx == 0)	// left eye is first guy
-    lr_dir = -1;
-  else
-    lr_dir = 1;
-
-  int rf_width = 2 * disp_dist; // total receptive field width
-
-  TwoDCoord ruc;
-  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
-    for(ruc.x = 0; ruc.x < ru_gp_geo.x; ruc.x++) { // loop over receiving layer x
-      for(ruc.y = 0; ruc.y < ru_gp_geo.y; ruc.y++) { // loop over receiving layer y
-	// get each unit group in receiving layer
-	Unit_Group* ru_gp = prjn->layer->UnitGpAtCoord(ruc);
-	if(!ru_gp) continue;	// shouldn't happen
-
-	int rui_ctr = 0;
-	for(int disp=-n_disparities; disp <= n_disparities; disp++) {
-	  int disp_off = disp_dist * disp;
-	  int st_off = disp_off - disp_dist;
-	
-	  Unit* ru_u = (Unit*)ru_gp->FastEl(rui_ctr++);
-	  if(!alloc_loop)
-	    ru_u->RecvConsPreAlloc(rf_width, prjn);
-
-	  TwoDCoord suc;
-	  for(int soff=0; soff < rf_width; soff++) {
-	    suc.y = ruc.y;
-	    suc.x = ruc.x + lr_dir * (st_off + soff);
-	    if(suc.WrapClip(wrap, su_geo) && !wrap)
-	      continue;
-	    Unit* su_u = prjn->from->UnitAtCoord(suc);
-	    if(!su_u) continue;
-	    if(!self_con && (su_u == ru_u)) continue;
-	    ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-	  }
-	}
+  else {
+    TwoDCoord ruc = recv_lay->UnitGpPosFmIdx(rgpidx);
+    if(ruc.x < gp_geo.x / 2) {
+      int st = dwd - cg->size;
+      for(int i=0; i<cg->size; i++) {
+	float wt = v1b_weights.SafeEl(st + i, didx);
+	cg->Cn(i)->wt = wt;
       }
     }
-    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
+    else {
+      // actually just straight up
+      for(int i=0; i<cg->size; i++) {
+	float wt = v1b_weights.SafeEl(i, didx);
+	cg->Cn(i)->wt = wt;
+      }
     }
-  }
-}
-
-void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-//  Unit_Group* rugp = (Unit_Group*)ru->GetOwner();
-//   int recv_idx = ru->pos.y * rugp->geom.x + ru->pos.x;
-
-  float gaus_nrm = 1.0f / ((float)disp_dist * gauss_sigma);
-  float ctr = (float)disp_dist - .5f;	// even so put half way
-  for(int i=0; i<cg->size; i++) {
-    float dst = gaus_nrm * (i - ctr);
-    float wt = expf(-0.5 * dst * dst);
-    cg->Cn(i)->wt = wt;
   }
 }
 

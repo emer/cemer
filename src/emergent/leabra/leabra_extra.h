@@ -2215,30 +2215,77 @@ private:
   void	Defaults_init() 	{ };
 };
 
-class LEABRA_API VisDisparityPrjnSpec : public ProjectionSpec {
-  // visual disparity projection spec: receiving layer units within groups encode different offset disparities (near..far) from two sending layers (first prjn MUST be left eye, second is right eye) -- should have same gp_geom as sending layer geom -- if sending layers have subgroups, then each is replicated by number of disparities
+class LEABRA_API V1LateralContourPrjnSpec : public ProjectionSpec {
+  // lateral projections within V1 layer to support continuation of contours -- helps make edges more robust to differences in bottom-up strength, based on principle of good continuation -- requires unit groups within layer where x dim represents angle
 INHERITED(ProjectionSpec)
 public:
-  int		n_disparities;	// number of disparities on each side of zero -- total number of disparities encoded = 2 * n_disparities + 1 (near + far + zero) -- first units in unit groups are near then zero then far
-  int		disp_dist;	// distance of center of projection strength from sending layers as a function of disparity increment -- units recv from this range of sending units as well, resulting in half-overlap of neighboring disparities
-  float		gauss_sigma;	// gaussian width parameter for initial weight values to give a tuning curve as a function of disparity -- this is normalized as a function of disp_dist -- i.e., 1 = disp_dist
+  int		radius;		// #DEF_2:10 how far to connect in any one direction (in unit group units)
+  bool		wrap;		// #DEF_true wrap around layer coordinates (else clip at ends)
+  float		ang_pow;	// #DEF_4 wt = (angle - feature_angle)^ang_pow -- values > 1 result in a more focal distribution for close angles, and less weight at off-angles.
+  float		dist_sigma;	// #DEF_1 sigma for gaussian function of distance -- how much the weight drops off as a function of distance (multiplies angle weights) -- in normalized units relative to the radius
+  float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not even connected
+  float		oth_feat_wt;	// #DEF_0.5 weight multiplier for units that have a different featural encoding (e.g., on-center vs. off-center or another color contrast) -- encoded by y axis of unit group
+
+  override void	Connect_impl(Projection* prjn);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  TA_SIMPLE_BASEFUNS(V1LateralContourPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class LEABRA_API VisDisparityPrjnSpec : public ProjectionSpec {
+  // visual disparity projection spec: receiving layer units within groups encode different offset disparities (near..far) from two sending layers (first prjn MUST be right eye, second MUST be left eye -- right is just one-to-one dominant driver) -- should have same gp_geom as sending layer gp_geom -- features within sending gps are replicated for each disparity -- MUST only have one of these per configuration of sending / recv layers, as local data is stored and cached from connection for use in initweights
+INHERITED(ProjectionSpec)
+public:
+  int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
+  float		disp_range_pct;  // #DEF_0.05:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total input image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
+  float		gauss_sig; 	// #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
+  float		disp_spacing;	// #DEF_2:2.5 spacing between different disparity detector cells in terms of disparity offset tunings -- expressed as a multiplier on disp_range -- this should generally remain the default value of 2, so that the space is properly covered by the different disparity detectors, but 2.5 can also be useful to not have any overlap between disparities to prevent ambiguous activations (e.g., for figure-ground segregation)
+  int		end_extra;	// #DEF_2 extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities -- expressed as a multiplier on disp_range 
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
 
-  virtual  void Connect_NoGps(Projection* prjn);
-  // connect -- case with no sending unit groups
-  virtual  void Connect_Gps(Projection* prjn);
-  // connect -- case with sending unit groups
+  int		disp_range; 	// #READ_ONLY #SHOW range (half width) of disparity tuning around central offset value for each disparity cell -- integer value computed from disp_range_pct -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
+  int		disp_spc;	// #READ_ONLY #SHOW integer value of spacing between different disparity detector cells -- computed from disp_spacing and disp_range
+  int		end_ext;	// #READ_ONLY #SHOW integer value of extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities
+
+  int		tot_disps;	// #READ_ONLY total number of disparities coded: 1 + 2 * n_disps
+  int		max_width;	// #READ_ONLY maximum total width (1 + 2 * disp_range + end_ext)
+  int		max_off;	// #READ_ONLY maximum possible offset -- furthest point out in any of the stencils
+  int		tot_offs;	// #READ_ONLY 1 + 2 * max_off
+
+  int_Matrix	v1b_widths; 	// #READ_ONLY #NO_SAVE width of stencils for binocularity detectors 1d: [tot_disps]
+  float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular gaussian weighting factors for integrating disparity values into v1b unit activations -- for each tuning disparity [max_width][tot_disps] -- only v1b_widths[disp] are used per disparity
+  int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: 2d: [XY][max_width][tot_disps]
 
   override void Connect_impl(Projection* prjn);
   override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
 
+  virtual void InitStencils(Projection* prjn);
+  // initialize the stencils for given geometry of layers for this projection -- called at Connect_LeftEye
+  virtual void Connect_RightEye(Projection* prjn);
+  // right eye is simple replicated one-to-one connectivity
+  virtual void Connect_LeftEye(Projection* prjn);
+  // left eye has all the disparity integration connections
+
+  virtual void	UpdateFmV1sSize(int v1s_img_x) {
+    disp_range = (int)((disp_range_pct * (float)v1s_img_x) + 0.5f);
+    disp_spc = (int)(disp_spacing * (float)disp_range);
+    end_ext = end_extra * disp_range;
+    max_width = 1 + 2*disp_range + end_ext;
+    max_off = n_disps * disp_spc + disp_range + end_ext;
+    tot_offs = 1 + 2 * max_off;
+  }
+
   TA_SIMPLE_BASEFUNS(VisDisparityPrjnSpec);
 protected:
-  SPEC_DEFAULTS;
+  override void UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
 };
 
 class LEABRA_API V1FeatInhibSpec : public SpecMemberBase {

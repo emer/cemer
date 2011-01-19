@@ -658,8 +658,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
 
 void PolarRndPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
-  int i;
-  for(i=0; i<cg->size; i++) {
+  for(int i=0; i<cg->size; i++) {
     cg->Cn(i)->wt = GetDistProb(prjn, ru, cg->Un(i));
   }
 }
