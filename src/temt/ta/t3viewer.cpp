@@ -2334,6 +2334,23 @@ void T3DataViewFrame::SetImageSize(int width, int height) {
   viewer->quarter->resize(width, height);
 }
 
+void T3DataViewFrame::SetTextBgColor(const String &textColor, const String &bgColor) {
+  text_color.setColorName(textColor);
+  bg_color.setColorName(bgColor);
+}
+
+void T3DataViewFrame::SetColorScheme(ColorScheme color_scheme) {
+  switch (color_scheme) {
+    case BLACK_ON_GREY:  SetTextBgColor("black", "grey");  break;
+    case BLACK_ON_WHITE: SetTextBgColor("black", "white"); break;
+    case WHITE_ON_BLACK: SetTextBgColor("white", "black"); break;
+    case RED_ON_BLACK:   SetTextBgColor("red",   "black"); break;
+    case GREEN_ON_BLACK: SetTextBgColor("green", "black"); break;
+    case BLUE_ON_BLACK:  SetTextBgColor("blue",  "black"); break;
+  }
+  UpdateAfterEdit();
+}
+
 //////////////////////////
 //   iTabBarEx		//
 //////////////////////////

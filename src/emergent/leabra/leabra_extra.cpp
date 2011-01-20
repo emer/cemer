@@ -4118,7 +4118,7 @@ void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Un
 
     float dst = del.Mag();
     float nrmdst = dst / (float)radius;
-    float gang = atan2(del.y, del.x); // group angle
+    float gang = atan2((float)del.y, (float)del.x); // group angle
     if(gang >= taMath_float::pi) gang -= taMath_float::pi;
     if(gang < 0.0f) gang += taMath_float::pi;
     float rang = taMath_float::pi * ((float)run.x / n_angles);

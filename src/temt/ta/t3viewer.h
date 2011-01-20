@@ -778,6 +778,15 @@ public:
     STEREO_INTERLEAVED_COLUMNS,  // Same basic technique as SoQtViewer::STEREO_INTERLEAVED_ROWS, only it is vertical lines that are interleaved / interlaced, instead of horizontal lines.
   };
 
+  enum ColorScheme {
+    BLACK_ON_GREY,  // Black text on grey background (default)
+    BLACK_ON_WHITE, // Black text on white background
+    WHITE_ON_BLACK, // White text on black background
+    RED_ON_BLACK,   // Red text on black background
+    GREEN_ON_BLACK, // Green text on black background
+    BLUE_ON_BLACK,  // Blue text on black background
+  };
+
   T3DataViewRoot	root_view; // #SHOW_TREE placeholder item -- contains the actual root(s) DataView items as children
   taColor		bg_color; // #NO_ALPHA background color of the frame (note: alpha transparency value not used)
   taColor		text_color; // color to use for text in the frame -- may need to change this from default of black depending on the bg_color
@@ -837,6 +846,8 @@ public:
   override bool		SaveImageAs(const String& fname = "", ImageFormat img_fmt = PNG);
   virtual  void		SetImageSize(int width, int height);
   // #CAT_Display #BUTTON set size of 3d viewer (and thus SaveImageAs image) to given size parameters
+  virtual  void		SetColorScheme(ColorScheme color_scheme);
+  // #CAT_Display #BUTTON Choose a preset color scheme
 
   virtual bool		SaveImageEPS(const String& fname = "");
   // #CAT_Display save image in EPS format
@@ -866,6 +877,7 @@ protected:
   override void		Render_post(); // #IGNORE
   override void		Reset_impl(); //  #IGNORE
 private:
+  void  SetTextBgColor(const String &textColor, const String &bgColor);
   void	Copy_(const T3DataViewFrame& cp);
   void			Initialize();
   void			Destroy();
