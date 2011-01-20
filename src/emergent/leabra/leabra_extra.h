@@ -2237,6 +2237,42 @@ private:
   void	Destroy()	{ };
 };
 
+class LEABRA_API V1EndStopPrjnSpec : public ProjectionSpec {
+  // end-stop detectors within V1 layer -- connectivity and weights that enable units to detect when one orientation terminates into another -- recv layer must have unit groups with one row of n_angles units, while sender has multiple rows of n_angles units (recv integrates over rows)
+INHERITED(ProjectionSpec)
+public:
+  enum LnOrtho {   // line, orthogonal to the line -- for v1s_ang_slopes
+    LINE,	   // along the direction of the line
+    ORTHO,	   // orthogonal to the line
+  };
+  enum XY {	   // x, y component of stencils etc -- for clarity in code
+    X,
+    Y,
+  };
+
+  int		n_angles;	// #DEF_4 number of angles in both the input and recv layer
+  int		end_stop_dist;	// #DEF_2 end-stop distance factor -- how far away from the central point should we look for opposing orientations
+  float		adjang_wt;	// #DEF_0.2 weight for adjacent angles in the end stop computation -- adjacent angles are often activated for edges that are not exactly aligned with the gabor angles, so they can result in false positives
+  bool		wrap;		// #DEF_true wrap around layer coordinates (else clip at ends) -- only wrap is currently supported and will be enforced automatically
+
+  float_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each fo the angles
+  int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][sum_line=2][max_line=2][angles]
+  float_Matrix	v1c_es_angwts;  // #READ_ONLY #NO_SAVE weights for different angles relative to a given angle [n_angles][n_angles]
+
+  override void	Connect_impl(Projection* prjn);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  virtual void	InitStencils(Projection* prjn);
+  // initialize stencils -- does not depend on prjn, only params (spec can be reused for any prjn)
+
+  TA_SIMPLE_BASEFUNS(V1EndStopPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 class LEABRA_API VisDisparityPrjnSpec : public ProjectionSpec {
   // visual disparity projection spec: receiving layer units within groups encode different offset disparities (near..far) from two sending layers (first prjn MUST be right eye, second MUST be left eye -- right is just one-to-one dominant driver) -- should have same gp_geom as sending layer gp_geom -- features within sending gps are replicated for each disparity -- MUST only have one of these per configuration of sending / recv layers, as local data is stored and cached from connection for use in initweights
 INHERITED(ProjectionSpec)
