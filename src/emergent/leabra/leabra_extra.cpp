@@ -3989,6 +3989,7 @@ void V1LateralContourPrjnSpec::Connect_impl(Projection* prjn) {
 		 "cannot have wt_limits.sym on in conspec -- turning off in spec:",
 		 prjn->con_spec->name,
 		 "This might affect children of this spec.")) {
+    prjn->con_spec->SetUnique("wt_limits", true);
     prjn->con_spec->wt_limits.sym = false;
     prjn->con_spec->UpdateAfterEdit();
   }
@@ -4118,7 +4119,7 @@ void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Un
 
     float dst = del.Mag();
     float nrmdst = dst / (float)radius;
-    float gang = atan2((float)del.y, (float)del.x); // group angle
+    float gang = atan2f((float)del.y, (float)del.x); // group angle
     if(gang >= taMath_float::pi) gang -= taMath_float::pi;
     if(gang < 0.0f) gang += taMath_float::pi;
     float rang = taMath_float::pi * ((float)run.x / n_angles);

@@ -676,8 +676,12 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
   for (i = colViewCount() - 1; i >= 0; --i) {
     dcs = colView(i);
     // first, see if it is bound to our table, if so, just update it (name may have changed, etc.
-    if (cols->FindEl(dcs->dataCol()) >= 0) {
-      dcs->UpdateFromDataCol();
+    int old_colno = cols->FindEl(dcs->dataCol());
+    if (old_colno >= 0) {
+      if(old_colno != i)
+	dcs->UpdateFromDataCol(true); // first = get options
+      else
+	dcs->UpdateFromDataCol(false); // no options
       continue;
     }
     // if not bound, try to find it by name
