@@ -125,7 +125,7 @@ private:
 };
 
 class EMERGENT_API Schedule : public taList<SchedItem> {
-  // ##CAT_Network A schedule for parameters that vary over time
+  // ##CAT_Network #NO_EXPAND_ALL A schedule for parameters that vary over time
 INHERITED(taList<SchedItem>)
 public:
   int 		last_ctr;	// the last counter index called

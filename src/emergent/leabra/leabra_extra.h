@@ -2277,8 +2277,8 @@ class LEABRA_API VisDisparityPrjnSpec : public ProjectionSpec {
   // visual disparity projection spec: receiving layer units within groups encode different offset disparities (near..far) from two sending layers (first prjn MUST be right eye, second MUST be left eye -- right is just one-to-one dominant driver) -- should have same gp_geom as sending layer gp_geom -- features within sending gps are replicated for each disparity -- MUST only have one of these per configuration of sending / recv layers, as local data is stored and cached from connection for use in initweights
 INHERITED(ProjectionSpec)
 public:
-  int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
-  float		disp_range_pct;  // #DEF_0.05:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total input image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
+  int		n_disps;	// #DEF_0:3 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
+  float		disp_range_pct;  // #DEF_0.02:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total input image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
   float		gauss_sig; 	// #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
   float		disp_spacing;	// #DEF_2:2.5 spacing between different disparity detector cells in terms of disparity offset tunings -- expressed as a multiplier on disp_range -- this should generally remain the default value of 2, so that the space is properly covered by the different disparity detectors, but 2.5 can also be useful to not have any overlap between disparities to prevent ambiguous activations (e.g., for figure-ground segregation)
   int		end_extra;	// #DEF_2 extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities -- expressed as a multiplier on disp_range 
@@ -2323,6 +2323,22 @@ private:
   void	Initialize();
   void 	Destroy()		{ };
 };
+
+class LEABRA_API TiledGpRFOneToOneWtsPrjnSpec : public TiledGpRFPrjnSpec {
+  // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that have differential weights for units with the same index within a unit group vs. differential weights -- useful for establishing connections among layers with the same unit-group structure
+INHERITED(TiledGpRFPrjnSpec)
+public:
+  float		one_to_one_wt;	// weight between units with the same index in the unit group
+  float		other_wt;	// weight between other non-one-to-one units
+
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  TA_SIMPLE_BASEFUNS(TiledGpRFOneToOneWtsPrjnSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 
 class LEABRA_API V1FeatInhibSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for V1 layer units based on feature-level inhibition

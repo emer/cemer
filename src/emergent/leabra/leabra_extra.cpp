@@ -4358,7 +4358,7 @@ void V1EndStopPrjnSpec::Connect_impl(Projection* prjn) {
 }
 
 void V1EndStopPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-
+  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
   TwoDCoord gp_geo = recv_lay->gp_geom; // same as sgp
@@ -4615,7 +4615,7 @@ void VisDisparityPrjnSpec::Connect_LeftEye(Projection* prjn) {
 }
 
 void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-
+  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
   if(cg->size == 1) {		// right eye
     cg->Cn(0)->wt = 1.0f;
     return;
@@ -4660,6 +4660,40 @@ void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
     }
   }
 }
+
+///////////////////////////////////////////////////////////////
+//		TiledGpRFOneToOneWtsPrjnSpec
+
+void TiledGpRFOneToOneWtsPrjnSpec::Initialize() {
+  one_to_one_wt = 0.8f;
+  other_wt = 0.2f;
+  init_wts = true;
+}
+
+void TiledGpRFOneToOneWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
+  int rgpidx;
+  int rui;
+  recv_lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
+  for(int i=0; i < cg->size; i++) {
+    Unit* su = cg->Un(i);
+    int sgpidx;
+    int sui;
+    send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
+    if(sui == rui)
+      cg->Cn(i)->wt = one_to_one_wt;
+    else
+      cg->Cn(i)->wt = other_wt;
+  }
+}
+
+
+
+
+
 
 ///////////////////////////////////////////////////////////////
 //			V1 Layer
