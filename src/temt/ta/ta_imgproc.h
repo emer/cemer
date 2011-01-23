@@ -1171,6 +1171,12 @@ class TA_API V1RegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- produces Gabor and more complex filter activation outputs directly from image bitmap input -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(VisRegionSpecBase)
 public:
+  enum SimpleFilters { // #BITS flags for specifying which simple filters to include
+    SF_NONE	= 0, // #NO_BIT
+    ALL_POLS	= 0x0001, // all polarities x angles -- each polarity is an additional row
+    MAX_POLS	= 0x0002, // max over polarities x angles -- one row (of angles) only, with activation = max across all the polarities
+  };
+
   enum ComplexFilters { // #BITS flags for specifying which complex filters to include
     CF_NONE	= 0, // #NO_BIT
     END_STOP	= 0x0001, // end stop cells -- opposite polarity, any orientation around a central oriented edge, max over all polarities (weighted by gaussian) 
@@ -1239,7 +1245,7 @@ public:
     DSP_AMBIG_THR,	// indicates that the disparity info at this location is ambiguous due to the threshold being exceeded -- no good bottom-up matches were available -- can try to fill in based on other constraints
   };
 
-
+  SimpleFilters v1s_filters; 	// which simple cell filtering to perform
   V1GaborSpec	v1s_specs;	// specs for V1 simple filters, computed using gabor filters directly onto the incoming image
   V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
   V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
@@ -1303,12 +1309,14 @@ public:
   float_Matrix	v1bc_weights;	// #READ_ONLY #NO_SAVE weighting factors for integration from binocular disparities to complex responses
 
   ///////////////////  V1S Output ////////////////////////
-  float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
+  float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_gci;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory conductances, for computing kwta
   float_Matrix	v1s_ithr;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory threshold values -- intermediate vals used in computing kwta
-  float_Matrix	v1s_out_l;	 // #READ_ONLY #NO_SAVE v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
   float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
+  float_Matrix	v1s_out_l;	 // #READ_ONLY #NO_SAVE v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
+  float_Matrix	v1s_maxpols_out_r;  // #READ_ONLY #NO_SAVE v1 simple cell max over polarities output, right eye [feat.x][1][img.x][img.y]
+  float_Matrix	v1s_maxpols_out_l;  // #READ_ONLY #NO_SAVE v1 simple cell max over polarities output, left eye [feat.x][1][img.x][img.y]
   float_Matrix	v1s_out_r_max;	 // #READ_ONLY #NO_SAVE max activation over features for each image location -- useful for optimizing subsequent processing [img.x][img.y][time]
   CircMatrix	v1s_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
   CircMatrix	v1s_circ_l;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
@@ -1410,7 +1418,12 @@ protected:
   // do simple filters, static only on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no);
   // do simple filters, static only on current inputs -- do it
-  virtual void 	V1SimpleFilter_OutMax_thread(int v1c_idx, int thread_no);
+  virtual bool 	V1SimpleFilter_MaxPols(float_Matrix* v1s_out_in,
+				       float_Matrix* maxpols_out, CircMatrix* circ);
+  // max polarities of v1s_out 
+  virtual void 	V1SimpleFilter_MaxPols_thread(int v1s_idx, int thread_no);
+  // max polarities of v1s_out 
+  virtual void 	V1SimpleFilter_OutMax_thread(int v1s_idx, int thread_no);
   // max activation output of v1s_out_r -- useful for multiple subsequent steps
 
   virtual bool	V1SRenormOutput_Static(float_Matrix* out, CircMatrix* circ);

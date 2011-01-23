@@ -3494,6 +3494,7 @@ void V1ComplexSpec::UpdateAfterEdit_impl() {
 typedef void (V1RegionSpec::*V1RegionMethod)(int, int);
 
 void V1RegionSpec::Initialize() {
+  v1s_filters = ALL_POLS;
   v1s_renorm = LIN_RENORM;
   v1m_renorm = NO_RENORM;
   v1s_save = SAVE_DATA;
@@ -4044,6 +4045,18 @@ bool V1RegionSpec::InitOutMatrix() {
   v1s_out_r_raw.SetGeomN(v1s_out_r.geom);
   v1s_out_l_raw.SetGeomN(v1s_out_l.geom);
 
+  if(v1s_filters & MAX_POLS) {
+    v1s_maxpols_out_r.SetGeom(4, v1s_feat_geom.x, 1, v1s_img_geom.x, v1s_img_geom.y);
+    if(region.ocularity == VisRegionParams::BINOCULAR)
+      v1s_maxpols_out_l.SetGeom(4, v1s_feat_geom.x, 1, v1s_img_geom.x, v1s_img_geom.y);
+    else
+      v1s_maxpols_out_l.SetGeom(1,1);
+  }
+  else {
+    v1s_maxpols_out_r.SetGeom(1,1);
+    v1s_maxpols_out_l.SetGeom(1,1);
+  }
+
   ///////////////////  V1C Output ////////////////////////
   v1c_pre.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1c_pre_geom.x, v1c_pre_geom.y);
   v1c_pre_polinv.SetGeom(4, v1c_polinv_geom.x, v1c_polinv_geom.y, v1c_pre_geom.x, v1c_pre_geom.y);
@@ -4195,6 +4208,13 @@ bool V1RegionSpec::V1SimpleFilter() {
 
   ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_OutMax_thread);
   threads.Run(&ip_call, n_run);
+
+  if(v1s_filters & MAX_POLS) {
+    rval &= V1SimpleFilter_MaxPols(&v1s_out_r, &v1s_maxpols_out_r, &v1s_circ_r);
+    if(rval && region.ocularity == VisRegionParams::BINOCULAR) {
+      rval &= V1SimpleFilter_MaxPols(&v1s_out_l, &v1s_maxpols_out_l, &v1s_circ_l);
+    }
+  }
 
   return rval;
 }
@@ -4547,6 +4567,42 @@ void V1RegionSpec::V1SimpleFilter_OutMax_thread(int v1s_idx, int thread_no) {
   v1s_out_r_max.FastEl(sc.x, sc.y) = max_feat;
 }
 
+bool V1RegionSpec::V1SimpleFilter_MaxPols(float_Matrix* v1s_out_in,
+					 float_Matrix* maxpols_out, CircMatrix* circ) {
+  cur_img = v1s_out_in;		// using img for this..
+  cur_circ = circ;
+  cur_out = maxpols_out;
+
+  int n_run = v1s_img_geom.Product();
+
+  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.min_units = 1;
+  threads.nibble_chunk = 1;	// small chunks
+
+  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_MaxPols_thread);
+  threads.Run(&ip_call, n_run);
+
+  return true;
+}
+
+void V1RegionSpec::V1SimpleFilter_MaxPols_thread(int v1s_idx, int thread_no) {
+  TwoDCoord sc;			// simple coords
+  sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
+
+  int cur_mot_idx = cur_circ->CircIdx_Last();
+
+  TwoDCoord fc;
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+    fc.x = ang;
+    float max_pi = 0.0f;
+    for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+      fc.y = polclr;
+      float val = MatMotEl(cur_img, fc.x, fc.y, sc.x, sc.y, cur_mot_idx);
+      max_pi = MAX(max_pi, val);      
+    }
+    cur_out->FastEl(fc.x, 0, sc.x, sc.y) = max_pi;
+  }
+}
 
 bool V1RegionSpec::V1ComplexFilter() {
   if(v1c_kwta.on) {
@@ -6142,34 +6198,44 @@ bool V1RegionSpec::InitDataTable() {
   DataCol* col;
   // SIMPLE
   if(v1s_save & SAVE_DATA) {
-    if(v1s_save & SEP_MATRIX) {
-      // break out into sub-structure: bw, color, motion
-      data_table->FindMakeColName(name + "_v1s_bw_r", idx, DataTable::VT_FLOAT, 4,
-			    v1s_feat_geom.x, 2, v1s_img_geom.x, v1s_img_geom.y);
-      if(region.ocularity == VisRegionParams::BINOCULAR)
-	data_table->FindMakeColName(name + "_v1s_bw_l", idx, DataTable::VT_FLOAT, 4,
-			    v1s_feat_geom.x, 2, v1s_img_geom.x, v1s_img_geom.y);
-      if(region.color == VisRegionParams::COLOR) {
-	data_table->FindMakeColName(name + "_v1s_clr_r", idx, DataTable::VT_FLOAT, 4,
-				    v1s_feat_geom.x, 4, v1s_img_geom.x, v1s_img_geom.y);
+    if(v1s_filters & ALL_POLS) {
+      if(v1s_save & SEP_MATRIX) {
+	// break out into sub-structure: bw, color, motion
+	data_table->FindMakeColName(name + "_v1s_bw_r", idx, DataTable::VT_FLOAT, 4,
+				    v1s_feat_geom.x, 2, v1s_img_geom.x, v1s_img_geom.y);
 	if(region.ocularity == VisRegionParams::BINOCULAR)
-	  data_table->FindMakeColName(name + "_v1s_clr_l", idx, DataTable::VT_FLOAT, 4,
+	  data_table->FindMakeColName(name + "_v1s_bw_l", idx, DataTable::VT_FLOAT, 4,
+				      v1s_feat_geom.x, 2, v1s_img_geom.x, v1s_img_geom.y);
+	if(region.color == VisRegionParams::COLOR) {
+	  data_table->FindMakeColName(name + "_v1s_clr_r", idx, DataTable::VT_FLOAT, 4,
 				      v1s_feat_geom.x, 4, v1s_img_geom.x, v1s_img_geom.y);
+	  if(region.ocularity == VisRegionParams::BINOCULAR)
+	    data_table->FindMakeColName(name + "_v1s_clr_l", idx, DataTable::VT_FLOAT, 4,
+					v1s_feat_geom.x, 4, v1s_img_geom.x, v1s_img_geom.y);
+	}
+	if(motion_frames > 1) {
+	  data_table->FindMakeColName(name + "_v1s_mot_r", idx, DataTable::VT_FLOAT, 4,
+	      v1s_feat_geom.x, 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
+	  if(region.ocularity == VisRegionParams::BINOCULAR)
+	    data_table->FindMakeColName(name + "_v1s_mot_l", idx, DataTable::VT_FLOAT, 4,
+		v1s_feat_geom.x, 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
+	}
       }
-      if(motion_frames > 1) {
-	data_table->FindMakeColName(name + "_v1s_mot_r", idx, DataTable::VT_FLOAT, 4,
-		    v1s_feat_geom.x, 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
+      else {
+	col = data_table->FindMakeColName(name + "_v1s_r", idx, DataTable::VT_FLOAT, 4,
+		  v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
 	if(region.ocularity == VisRegionParams::BINOCULAR)
-	  data_table->FindMakeColName(name + "_v1s_mot_l", idx, DataTable::VT_FLOAT, 4,
-		      v1s_feat_geom.x, 4 * v1s_motion.n_speeds, v1s_img_geom.x, v1s_img_geom.y);
+	  col = data_table->FindMakeColName(name + "_v1s_l", idx, DataTable::VT_FLOAT, 4,
+		    v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
       }
     }
-    else {
-      col = data_table->FindMakeColName(name + "_v1s_r", idx, DataTable::VT_FLOAT, 4,
-		v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+
+    if(v1s_filters & MAX_POLS) {
+      col = data_table->FindMakeColName(name + "_v1s_maxpols_r", idx, DataTable::VT_FLOAT, 4,
+		v1s_feat_geom.x, 1, v1s_img_geom.x, v1s_img_geom.y);
       if(region.ocularity == VisRegionParams::BINOCULAR)
-	col = data_table->FindMakeColName(name + "_v1s_l", idx, DataTable::VT_FLOAT, 4,
-		v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+	col = data_table->FindMakeColName(name + "_v1s_maxpols_l", idx, DataTable::VT_FLOAT, 4,
+		v1s_feat_geom.x, 1, v1s_img_geom.x, v1s_img_geom.y);
     }
   }
 
@@ -6279,9 +6345,27 @@ bool V1RegionSpec::InitDataTable() {
 }
 
 bool V1RegionSpec::V1SOutputToTable(DataTable* dtab) {
-  V1SOutputToTable_impl(dtab, &v1s_out_r, &v1s_circ_r, "_r");
-  if(region.ocularity == VisRegionParams::BINOCULAR) 
-    V1SOutputToTable_impl(dtab, &v1s_out_l, &v1s_circ_l, "_l");
+  DataCol* col;
+  int idx;
+  if(v1s_filters & ALL_POLS) {
+    V1SOutputToTable_impl(dtab, &v1s_out_r, &v1s_circ_r, "_r");
+    if(region.ocularity == VisRegionParams::BINOCULAR) 
+      V1SOutputToTable_impl(dtab, &v1s_out_l, &v1s_circ_l, "_l");
+  }
+
+  if(v1s_filters & MAX_POLS) {
+    col = data_table->FindMakeColName(name + "_v1s_maxpols_r", idx, DataTable::VT_FLOAT, 4,
+				      v1s_feat_geom.x, 1, v1s_img_geom.x, v1s_img_geom.y);
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    dout->CopyFrom(&v1s_maxpols_out_r);
+    if(region.ocularity == VisRegionParams::BINOCULAR) {
+      col = data_table->FindMakeColName(name + "_v1s_maxpols_l", idx, DataTable::VT_FLOAT, 4,
+					v1s_feat_geom.x, 1, v1s_img_geom.x, v1s_img_geom.y);
+      float_MatrixPtr doutl; doutl = (float_Matrix*)col->GetValAsMatrix(-1);
+      doutl->CopyFrom(&v1s_maxpols_out_l);
+    }
+  }
+
   return true;
 }
 
