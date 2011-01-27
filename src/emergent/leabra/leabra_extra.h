@@ -2341,16 +2341,21 @@ private:
 
 
 class LEABRA_API V1FeatInhibSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for V1 layer units based on feature-level inhibition
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for feature inhibition
 INHERITED(SpecMemberBase)
 public:
-  float		feat_gain;	// #MIN_0 #DEF_0.01:0.1 multiplier for feature-level inhibition
-  float		dist_sigma;	// #MIN_0 #DEF_0.25:0.5 Gaussian std deviation (sigma) for weighting competitors based on distance, in normalized units relative to max x,y size dimension of the layer group geometry
-  float		i_rat_thr;	// #DEF_0.5 optimization threshold of unit i_thr relative to group's inhib threshold -- if less than this threshold, no distance costs are assessed
+  bool		on;		// #DEF_true whether to use neighborhood inhibition
+  int		n_angles;	// #CONDSHOW_ON_on #DEF_4 number of different angles represented in the layer unit groups -- should be equivalent to x-axis dimension of number of units in the unit group
+  int		inhib_d; 	// #CONDSHOW_ON_on #DEF_1 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning
+  float		inhib_g;	// #CONDSHOW_ON_on #DEF_0.8 gain factor for feature-specific inhibition from neighbors -- this proportion of the neighboring feature's threshold-inhibition value (used in computing kwta) is spread among neighbors according to inhib_d distance
+  bool		wrap;		// #CONDSHOW_ON_on #DEF_true wrap around effective connectivity on sides and top/bottom 
+
+  int		tot_ni_len;	// #READ_ONLY total length of neighborhood inhibition stencils = 2 * neigh_inhib_d + 1
 
   TA_SIMPLE_BASEFUNS(V1FeatInhibSpec);
 protected:
   SPEC_DEFAULTS;
+  void 	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -2358,10 +2363,24 @@ private:
 };
 
 class LEABRA_API LeabraV1LayerSpec : public LeabraLayerSpec {
-  // IMPORTANT: NOT YET FUNCTIONAL -- NEEDS TO BE REWRITTEN TO SUPPORT VIRTUAL UNIT GROUPS -- LayerSpec that implements competition both within unit groups and among features across the entire layer, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups) -- feature inhibition is based on distance -- adds to layer-level gp_g based inhib for each unit in proportion to distance from active units
+  // LayerSpec that implements competition both within unit groups and among features in nearby unit groups, where a feature is defined as a specific unit position within the unit groups (layer must have unit groups) -- inhibition is oriented according to x axis of feature position, assuming that this encodes orientation angle (0 = horiz), and acts just like the gp_i, gp_g form of inhibition
 INHERITED(LeabraLayerSpec)
 public:
+  enum XY {	   // x, y component of stencils etc -- for clarity in code
+    X,
+    Y,
+  };
+  enum LnOrtho {   // line, orthogonal to the line -- for v1s_ang_slopes
+    LINE,	   // along the direction of the line
+    ORTHO,	   // orthogonal to the line
+  };
+
   V1FeatInhibSpec	feat_inhib; // feature-level inhibition parameters
+  float_Matrix		v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each of the angles
+  int_Matrix		v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
+
+  virtual void	UpdateStencils();
+  // update the stencils that determine the topology of neighborhood connections based on orientation
 
   virtual void	Compute_FeatGpActive(LeabraLayer* lay, LeabraUnit_Group* fug, LeabraNetwork* net);
   // compute active units in active_buf for given feature unit group
@@ -2373,6 +2392,7 @@ public:
   TA_SIMPLE_BASEFUNS(LeabraV1LayerSpec);
 protected:
   SPEC_DEFAULTS;
+  void 	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ };

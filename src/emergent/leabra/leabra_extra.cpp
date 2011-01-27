@@ -4151,7 +4151,7 @@ void V1EndStopPrjnSpec::UpdateAfterEdit_impl() {
   wrap = true;
 }
 
-static void geom_get_angles(float angf, float& cosx, float& siny) {
+static void es_get_angles(float angf, float& cosx, float& siny) {
   cosx = taMath_float::cos(angf);
   siny = taMath_float::sin(angf);
   // always normalize by the largest value so that it is equal to 1
@@ -4172,11 +4172,11 @@ void V1EndStopPrjnSpec::InitStencils(Projection* prjn) {
   for(int ang=0; ang<n_angles; ang++) {
     float cosx, siny;
     float angf = (float)ang * ang_inc;
-    geom_get_angles(angf, cosx, siny);
+    es_get_angles(angf, cosx, siny);
     v1s_ang_slopes.FastEl(X, LINE, ang) = cosx;
     v1s_ang_slopes.FastEl(Y, LINE, ang) = siny;
     
-    geom_get_angles(angf + taMath_float::pi * .5f, cosx, siny);
+    es_get_angles(angf + taMath_float::pi * .5f, cosx, siny);
     v1s_ang_slopes.FastEl(X, ORTHO, ang) = cosx;
     v1s_ang_slopes.FastEl(Y, ORTHO, ang) = siny;
   }
@@ -4700,23 +4700,90 @@ void TiledGpRFOneToOneWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg
 ///////////////////////////////////////////////////////////////
 
 void V1FeatInhibSpec::Initialize() {
-  feat_gain = .01f;
-  dist_sigma = .25f;
-  i_rat_thr = .5f;
+  on = true;
+  n_angles = 4;
+  inhib_d = 1;
+  inhib_g = 0.8f;
+  wrap = true;
+
+  tot_ni_len = 2 * inhib_d + 1;
+}
+
+void V1FeatInhibSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  tot_ni_len = 2 * inhib_d + 1;
 }
 
 void LeabraV1LayerSpec::Initialize() {
+}
+
+
+void LeabraV1LayerSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateStencils();
+  if(feat_inhib.on) {
+    if(inhib_group != UNIT_GROUPS)
+      inhib_group = UNIT_GROUPS; // must be!
+  }
 }
 
 bool LeabraV1LayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
+  if(!feat_inhib.on) return true;
+
   bool rval = true;
   lay->CheckError(!lay->unit_groups, quiet, rval,
 		  "does not have unit groups -- MUST have unit groups!");
+  
+  lay->CheckError(lay->un_geom.x != feat_inhib.n_angles, quiet, rval,
+		  "un_geom.x must be = to feat_inhib.n_angles -- is not!");
   return rval;
 }
+
+static void v1_get_angles(float angf, float& cosx, float& siny) {
+  cosx = taMath_float::cos(angf);
+  siny = taMath_float::sin(angf);
+  // always normalize by the largest value so that it is equal to 1
+  if(fabsf(cosx) > fabsf(siny)) {
+    siny = siny / fabsf(cosx);			// must come first!
+    cosx = cosx / fabsf(cosx);
+  }
+  else {
+    cosx = cosx / fabsf(siny);
+    siny = siny / fabsf(siny);
+  }
+}
+
+void LeabraV1LayerSpec::UpdateStencils() {
+  v1s_ang_slopes.SetGeom(3,2,2,feat_inhib.n_angles);
+  float ang_inc = taMath_float::pi / (float)feat_inhib.n_angles;
+  for(int ang=0; ang<feat_inhib.n_angles; ang++) {
+    float cosx, siny;
+    float angf = (float)ang * ang_inc;
+    v1_get_angles(angf, cosx, siny);
+    v1s_ang_slopes.FastEl(X, LINE, ang) = cosx;
+    v1s_ang_slopes.FastEl(Y, LINE, ang) = siny;
+    
+    v1_get_angles(angf + taMath_float::pi * .5f, cosx, siny);
+    v1s_ang_slopes.FastEl(X, ORTHO, ang) = cosx;
+    v1s_ang_slopes.FastEl(Y, ORTHO, ang) = siny;
+  }
+  // config: x,y coords by tot_ni_len, by angles
+  v1s_ni_stencils.SetGeom(3, 2, feat_inhib.tot_ni_len, feat_inhib.n_angles);
+
+  for(int ang = 0; ang < feat_inhib.n_angles; ang++) { // angles
+    for(int lpt=-feat_inhib.inhib_d; lpt <= feat_inhib.inhib_d; lpt++) {
+      int lpdx = lpt + feat_inhib.inhib_d;
+      v1s_ni_stencils.FastEl(X, lpdx, ang) = 
+	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(X, ORTHO, ang)); // ortho
+      v1s_ni_stencils.FastEl(Y, lpdx, ang) = 
+	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, ORTHO, ang));
+    }
+  }
+}
+
 
 void LeabraV1LayerSpec::Compute_FeatGpActive(LeabraLayer* lay, LeabraUnit_Group* fugp, 
 					     LeabraNetwork* net) {
@@ -4731,49 +4798,59 @@ void LeabraV1LayerSpec::Compute_FeatGpActive(LeabraLayer* lay, LeabraUnit_Group*
 
 
 void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_ApplyInhib(lay, net);
+  if(!feat_inhib.on) {		// do the normal
+    inherited::Compute_ApplyInhib(lay, net);
+    return;
+  }
+  if((net->cycle >= 0) && lay->hard_clamped)
+    return;			// don't do this during normal processing
+  if(inhib.type == LeabraInhibSpec::UNIT_INHIB) return; // otherwise overwrites!
 
-  // todo: redo this when ready using new virtual groups logic
+  for(int gpidx=0; gpidx < lay->gp_geom.n; gpidx++) {
+    LeabraUnGpData* gpd = lay->ungp_data.FastEl(gpidx);
+    LeabraInhib* thr = (LeabraInhib*)gpd;
+    TwoDCoord sc;			// simple coords
+    sc.SetFmIndex(gpidx, lay->gp_geom.x);
 
+    int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
+    float inhib_val = thr->i_val.g_i;
+    if(inhib.fb_act_thr > 0.0f) {
+      float amax = thr->act_max_avg;
+      float imod = amax / inhib.fb_act_thr; // graded modulation as function of activation
+      if(imod > 1.0f) imod = 1.0f;
+      inhib_val *= (inhib.ff_pct + (1.0f - inhib.ff_pct) * imod);
+    }
+    // note: not doing tie break!
 
-//   if((net->cycle >= 0) && lay->hard_clamped)
-//     return;			// don't do this during normal processing
+    TwoDCoord fc;		// v1s feature coords
+    TwoDCoord oc;		// other coord
+    float uidx = 0;
+    for(int polclr = 0; polclr < lay->un_geom.y; polclr++) { // polclr features
+      fc.y = polclr;
+      for(int ang = 0; ang < feat_inhib.n_angles; ang++, uidx++) { // angles
+	fc.x = ang;
+	float feat_inhib_max = 0.0f;
+	for(int lpdx=0; lpdx < feat_inhib.tot_ni_len; lpdx++) { // go out to neighs
+	  if(lpdx == feat_inhib.inhib_d) continue;		   // skip self
+	  int xp = v1s_ni_stencils.FastEl(X,lpdx,ang);
+	  int yp = v1s_ni_stencils.FastEl(Y,lpdx,ang);
+	  oc.x = sc.x + xp;
+	  oc.y = sc.y + yp;
+	  if(oc.WrapClip(feat_inhib.wrap, lay->gp_geom)) {
+	    if(!feat_inhib.wrap) continue; // bail on clipping only
+	  }
+	  LeabraUnit* oth_unit = (LeabraUnit*)lay->UnitAtGpCoord(oc, fc);
+	  float oth_ithr = oth_unit->i_thr;
+	  float ogi = feat_inhib.inhib_g * oth_ithr; // note: directly on ithr!
+	  feat_inhib_max = MAX(feat_inhib_max, ogi);
+	}
 
-//   LeabraV1Layer* vlay = (LeabraV1Layer*)lay;
-
-//   float dst_norm_val = 1.0f / (feat_inhib.dist_sigma * (float)MAX(lay->gp_geom.x, lay->gp_geom.y));
-//   dst_norm_val *= dst_norm_val;	// using sq distances
-
-//   for(int fg=0; fg<vlay->feat_gps.gp.size; fg++) {
-//     LeabraUnit_Group* fugp = (LeabraUnit_Group*)vlay->feat_gps.gp[fg];
-//     // get active lists for each feature group
-//     Compute_FeatGpActive(vlay, fugp, net);
-
-//     for(int ui=0; ui<fugp->size; ui++) {
-//       LeabraUnit* u = (LeabraUnit*)fugp->FastEl(ui);
-//       LeabraUnit_Group* u_own = (LeabraUnit_Group*)u->owner; // NOT fugp!
-//       TwoDCoord up = u_own->GpLogPos();
-
-//       float gp_i = u_own->i_val.g_i;
-//       if(gp_i <= 0) gp_i = .1f;	// note: should have min_i set!!
-
-//       // now compare each unit with all the active units and increase inhib in proportion!
-//       float sum_cost = 0.0f;
-//       if((u->i_thr / gp_i) > feat_inhib.i_rat_thr) { // only if this guy is even close to firing
-// 	for(int ai=0; ai<fugp->active_buf.size; ai++) {
-// 	  LeabraUnit* au = (LeabraUnit*)fugp->active_buf.FastEl(ai);
-// 	  LeabraUnit_Group* au_own = (LeabraUnit_Group*)au->owner;
-// 	  TwoDCoord aup = au_own->GpLogPos();
-
-// 	  float dst_sq = up.SqDist(aup);
-// 	  float cost = taMath_float::exp_fast(-dst_sq * dst_norm_val);
-// 	  sum_cost += cost;
-// 	}
-//       }
-//       float ival = gp_i * (1.0f + feat_inhib.feat_gain * sum_cost);
-//       u->Compute_ApplyInhib(net, ival);
-//     }    
-//   }
+	inhib_val = MAX(inhib_val, feat_inhib_max);
+	LeabraUnit* u = (LeabraUnit*)lay->UnitAtUnGpIdx(uidx, gpidx);
+	u->Compute_ApplyInhib(net, inhib_val);
+      }
+    }
+  }
 }
 
 
