@@ -4845,9 +4845,9 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 	  feat_inhib_max = MAX(feat_inhib_max, ogi);
 	}
 
-	inhib_val = MAX(inhib_val, feat_inhib_max);
+	float gi_eff = MAX(inhib_val, feat_inhib_max);
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAtUnGpIdx(uidx, gpidx);
-	u->Compute_ApplyInhib(net, inhib_val);
+	u->Compute_ApplyInhib(net, gi_eff);
       }
     }
   }
