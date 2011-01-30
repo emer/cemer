@@ -2784,6 +2784,7 @@ void ProjectionSpec::Connect(Projection* prjn) {
   prjn->SetFrom();
   if(TestWarning(!(bool)prjn->from, "Connect", "from pointer is NULL -- cannot make this projection"))
     return;
+  if(prjn->off) return;
   PreConnect(prjn);
   Connect_impl(prjn);
   Init_Weights(prjn);
@@ -2800,6 +2801,7 @@ int ProjectionSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt
 }
 
 void ProjectionSpec::Init_Weights(Projection* prjn) {
+  if(prjn->off) return;
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
@@ -2812,6 +2814,7 @@ void ProjectionSpec::Init_Weights(Projection* prjn) {
 }
 
 void ProjectionSpec::Init_Weights_post(Projection* prjn) {
+  if(prjn->off) return;
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
@@ -2842,6 +2845,7 @@ void ProjectionSpec::Init_dWt(Projection* prjn) {
 }
 
 bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
+  if(prjn->off) return true;
   bool rval;
   if(CheckError(!prjn->projected, quiet, rval, "not connected!")) {
     return false;
@@ -2861,6 +2865,7 @@ bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
 ////////////////////////
 
 void Projection::Initialize() {
+  off = false;
   layer = NULL;
   from_type = INIT; //was: PREV;
   con_type = &TA_Connection;

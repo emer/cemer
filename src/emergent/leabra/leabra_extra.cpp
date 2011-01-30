@@ -4661,6 +4661,104 @@ void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
   }
 }
 
+
+///////////////////////////////////////////////////////////////
+//			VisDisparityLayerSpec 
+
+void VisDispLaySpec::Initialize() {
+  sqrt = true;
+  max_l = true;
+}
+
+void VisDisparityLayerSpec::Initialize() {
+//   clamp.hard = false;
+}
+
+bool VisDisparityLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
+  bool rval = inherited::CheckConfig_Layer(lay, quiet);
+  if(!rval) return rval;
+  
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);
+  if(lay->CheckError(u == NULL, quiet, rval,
+		"leabra vis disparity layer doesn't have any units:", lay->name)) {
+    return false;		// fatal
+  }
+  if(lay->CheckError(u->recv.size < 2, quiet, rval,
+		     "leabra vis disparity units must have >= 2 projections -- less than that:",
+		     lay->name)) {
+    return false;		// fatal
+  }
+
+  LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+  if(lay->CheckError(!cg->prjn->spec.SPtr()->InheritsFrom(&TA_VisDisparityPrjnSpec), quiet, rval,
+		     "leabra vis disparity units must have 1st prjn = VisDisparityPrjnSpec -- not",
+		     lay->name)) {
+    return false;		// fatal
+  }
+  cg = (LeabraRecvCons*)u->recv.SafeEl(1);
+  if(lay->CheckError(!cg->prjn->spec.SPtr()->InheritsFrom(&TA_VisDisparityPrjnSpec), quiet, rval,
+		     "leabra vis disparity units must have 2nd prjn = VisDisparityPrjnSpec -- not",
+		     lay->name)) {
+    return false;		// fatal
+  }
+
+  return rval;
+}
+
+void VisDisparityLayerSpec::ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    float right = 0.0f;
+    float left = 0.0f;
+
+    LeabraRecvCons* cg_r = (LeabraRecvCons*)u->recv.SafeEl(0);
+    if(!cg_r || cg_r->size <= 0) return;
+    LeabraUnit* su_r = (LeabraUnit*)cg_r->Un(0);
+    right = su_r->act_eq;
+
+    LeabraRecvCons* cg_l = (LeabraRecvCons*)u->recv.SafeEl(1);
+    if(!cg_l || cg_l->size <= 0) return;
+    for(int i=0; i < cg_l->size; i++) {
+      LeabraUnit* su_l = (LeabraUnit*)cg_l->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg_l->PtrCn(i); // recv mode
+      float itm = cn->wt * su_l->act_eq;
+      if(disp.max_l)
+	left = MAX(left, itm);
+      else
+	left += itm;
+    }
+
+    float prod = left * right;
+    if(disp.sqrt)
+      prod = sqrtf(prod);
+
+    u->SetExtFlag(Unit::EXT);
+    u->ext = prod;
+  }
+
+  // todo: deal with horiz apeture prob
+}
+
+void VisDisparityLayerSpec::Compute_ExtraNetin(LeabraLayer* lay, LeabraNetwork* net) {
+  ComputeDispToExt(lay, net);	// always do it here -- avail for softclamp
+}
+
+void VisDisparityLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  if(!clamp.hard) {
+    inherited::Compute_CycleStats(lay, net);
+    return;
+  }
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    u->act = u->ext;
+    u->act_eq = u->act_nd = u->act;
+    u->da = 0.0f;		// I'm fully settled!
+  }
+}
+
 ///////////////////////////////////////////////////////////////
 //		TiledGpRFOneToOneWtsPrjnSpec
 

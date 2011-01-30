@@ -1917,15 +1917,15 @@ public:
   virtual void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning layer level trial init -- overload where needed
 
-    virtual void	Trial_DecayState(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void Trial_DecayState(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation NOT CALLED DURING STD PROCESSING decay activations and other state between events
-    virtual void	Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
-    virtual void	Trial_NoiseInit_KPos_ugp(LeabraLayer* lay, 
+    virtual void Trial_NoiseInit_KPos_ugp(LeabraLayer* lay, 
 						 Layer::AccessMode acc_md, int gpidx,
 						 LeabraInhib* thr, LeabraNetwork* net);
     // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
-    virtual void	Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Learning NOT CALLED DURING STD PROCESSING reset the sender-receiver coproduct average (CtLeabra_X/CAL)
 
   ///////////////////////////////////////////////////////////////////////
@@ -1962,7 +1962,12 @@ public:
   //	Cycle Step 1: Netinput 
 
   // main computation is direct Send_NetinDelta call on units through threading mechanism
+  // then Compute_ExtraNetin
   // followed by Compute_NetinInteg on units
+  // then Compute_NetinStats
+
+  virtual void	Compute_ExtraNetin(LeabraLayer* lay, LeabraNetwork* net) { };
+  // #CAT_Activation compute extra netinput based on any kind of algorithmic computation -- goes to the layerspec and stops there -- not much overhead if not used
 
   virtual void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions
@@ -2516,6 +2521,8 @@ public:
 
   // main computation is direct Send_NetinDelta call on units through threading mechanism
 
+  void	Compute_ExtraNetin(LeabraNetwork* net) { spec->Compute_ExtraNetin(this, net); }
+  // #CAT_Activation compute extra netinput based on any kind of algorithmic computation -- goes to the layerspec and stops there -- not much overhead if not used
   void	Compute_NetinStats(LeabraNetwork* net)  { spec->Compute_NetinStats(this, net); }
   // #CAT_Activation compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions
 
@@ -3108,6 +3115,8 @@ public:
 
   override void	Send_Netin();
   // #CAT_Cycle compute netinputs (sender-delta based -- only send when sender activations change) -- new values go in net_delta or g_i_delta (summed up from tmp array for threaded case)
+  virtual void Compute_ExtraNetin();
+  // #CAT_Cycle Stage 1.2 compute extra netinput based on any kind of algorithmic computation -- goes to the layerspec and stops there -- not much overhead if not used
   virtual void Compute_NetinInteg();
   // #CAT_Cycle Stage 1.2 integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
 

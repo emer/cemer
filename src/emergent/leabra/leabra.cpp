@@ -5611,6 +5611,7 @@ void LeabraNetwork::Cycle_Run() {
     ct_cycle = 0;
 
   Send_Netin();
+  Compute_ExtraNetin();		// layer level extra netinput for special algorithms
   Compute_NetinInteg();
   Compute_NetinStats();
 
@@ -5680,6 +5681,15 @@ void LeabraNetwork::Send_Netin() {
     send_pct = (float)send_pct_n / (float)send_pct_tot;
     avg_send_pct_sum += send_pct;
     avg_send_pct_n++;
+  }
+}
+
+void LeabraNetwork::Compute_ExtraNetin() {
+  LeabraLayer* lay;
+  taLeafItr l;
+  FOR_ITR_EL(LeabraLayer, lay, layers., l) {
+    if(lay->lesioned())	continue;
+    lay->Compute_ExtraNetin(this);
   }
 }
 

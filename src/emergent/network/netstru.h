@@ -1132,6 +1132,7 @@ public:
   String		name;		// #READ_ONLY #SHOW name of the projection -- this is generated automatically based on the from name
 #endif
 
+  bool			off;		// #DEF_false turn this projection off -- useful for experimenting with projections while being able to keep the specifications in place
   Layer* 		layer;    	// #READ_ONLY #NO_SAVE #HIDDEN #NO_SET_POINTER layer this prjn is in
   PrjnSource 		from_type;	// #CAT_Structure Source of the projections
   LayerRef		from;		// #CAT_Structure #CONDEDIT_ON_from_type:CUSTOM layer receiving from (set this for custom)
@@ -1243,6 +1244,8 @@ public:
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var"
 
   override String 	GetTypeDecoKey() const { return "Projection"; }
+  override int	  GetEnabled() const 	{ return !off; }
+  override void	  SetEnabled(bool value) { off = !value; }
 
   override bool	ChangeMyType(TypeDef* new_type);
 

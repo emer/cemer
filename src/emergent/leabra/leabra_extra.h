@@ -2324,6 +2324,45 @@ private:
   void 	Destroy()		{ };
 };
 
+
+class LEABRA_API VisDispLaySpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra visual disparity layer specs
+INHERITED(taOBase)
+public:
+  bool		sqrt;		// #DEF_true compute sqrt(left*right) insted of just product
+  bool		max_l;		// #DEF_true compute left = max(weighted left inputs)
+
+  // todo: add stuff about horiz thign
+
+  TA_SIMPLE_BASEFUNS(VisDispLaySpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class LEABRA_API VisDisparityLayerSpec : public LeabraLayerSpec {
+  // visual disparity layer spec: receiving layer units within groups encode different offset disparities (near..far) from two sending layers (first prjn MUST be VisDisparityPrjnSpec from right eye, second MUST be same spec type from left eye -- right is just one-to-one dominant driver) -- this layerspec computes sqrt(left*right) activation into ext of units, which can be added into netinput if !clamp.hard, or activation forced to this value otherwise -- also manages horizontal apeture problem -- use MarkerConSpec for these prjs to prevent computation otherwise
+INHERITED(LeabraLayerSpec)
+public:
+  VisDispLaySpec	disp;	// disparity computation specs
+
+  virtual void	ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* net);
+  // main function: compute disparity values into ext in units
+
+  // these are two entry points for applying ext inputs depending on clamp.hard status
+  override void	Compute_ExtraNetin(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+
+  override bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+
+  TA_SIMPLE_BASEFUNS(VisDisparityLayerSpec);
+// protected:
+//   override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
 class LEABRA_API TiledGpRFOneToOneWtsPrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that have differential weights for units with the same index within a unit group vs. differential weights -- useful for establishing connections among layers with the same unit-group structure
 INHERITED(TiledGpRFPrjnSpec)
