@@ -4668,6 +4668,7 @@ void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 void VisDispLaySpec::Initialize() {
   sqrt = true;
   max_l = true;
+  incl_other_res = true;
 }
 
 void VisDisparityLayerSpec::Initialize() {
@@ -4729,15 +4730,47 @@ void VisDisparityLayerSpec::ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* ne
       else
 	left += itm;
     }
+    if(!disp.max_l) {
+      left /= (float)cg_l->size;
+    }
 
     float prod = left * right;
     if(disp.sqrt)
       prod = sqrtf(prod);
+    u->misc_1 = prod;
+
+    if(disp.incl_other_res && net->cycle > 1) {
+      int n_others = 0;
+      for(int j=2; j<u->recv.size; j++) {
+        LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.FastEl(j);
+	LeabraLayer* fm = (LeabraLayer*)cg->prjn->from.ptr();
+	LeabraLayerSpec* ls = (LeabraLayerSpec*)fm->spec.SPtr();
+	if(!ls->InheritsFrom(&TA_VisDisparityLayerSpec)) continue;
+	float netin = 0.0f;
+	for(int i=0; i < cg->size; i++) {
+	  LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+	  LeabraCon* cn = (LeabraCon*)cg->PtrCn(i); // recv mode
+	  float itm = cn->wt * su->misc_1;	    // note: using misc_1 prod val!
+	  if(disp.max_l)
+	    netin = MAX(netin, itm);
+	  else
+	    netin += itm;
+	}
+	if(!disp.max_l) {
+	  if(cg->size > 0)
+	    netin /= (float)cg->size;
+	}
+	n_others++;
+	prod *= netin;
+      }
+      if(disp.sqrt) {
+	prod = powf(prod, 1.0f / (float)(n_others + 1));
+      }
+    }
 
     u->SetExtFlag(Unit::EXT);
     u->ext = prod;
   }
-
   // todo: deal with horiz apeture prob
 }
 
@@ -4758,6 +4791,37 @@ void VisDisparityLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* 
     u->da = 0.0f;		// I'm fully settled!
   }
 }
+
+///////////////////////////////////////////////////////////////
+//		TiledGpRFOneToOnePrjnSpec
+
+void TiledGpRFOneToOnePrjnSpec::Initialize() {
+}
+
+void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
+				Layer* send_lay, int rgpidx, int sgpidx, int alloc_loop) {
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+  int maxn = MIN(ru_nunits, su_nunits);
+
+  if(reciprocal) {		// reciprocal is backwards!
+    for(int ui=0; ui < maxn; ui++) {
+      Unit* su_u = send_lay->UnitAtUnGpIdx(ui, sgpidx);
+      Unit* ru_u = recv_lay->UnitAtUnGpIdx(ui, rgpidx);
+      if(!self_con && (su_u == ru_u)) continue;
+      su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
+    }
+  }
+  else {
+    for(int ui=0; ui < maxn; ui++) {
+      Unit* ru_u = recv_lay->UnitAtUnGpIdx(ui, rgpidx);
+      Unit* su_u = send_lay->UnitAtUnGpIdx(ui, sgpidx);
+      if(!self_con && (su_u == ru_u)) continue;
+      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // recip!
+    }
+  }
+}
+
 
 ///////////////////////////////////////////////////////////////
 //		TiledGpRFOneToOneWtsPrjnSpec

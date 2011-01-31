@@ -4076,6 +4076,7 @@ bool V1RegionSpec::InitOutMatrix() {
     
     if(v1b_filters & V1B_C_FM_IN) {
       v1b_dsp_in.SetGeom(4, v1b_specs.tot_disps, 1, v1c_pre_geom.x, v1c_pre_geom.y);
+      v1b_dsp_ang_in.SetGeom(4, v1s_specs.n_angles, v1b_specs.tot_disps, v1c_pre_geom.x, v1c_pre_geom.y);
     }
   }
   else {
@@ -5239,7 +5240,8 @@ bool V1RegionSpec::V1BinocularFilter_Optionals() {
       }
     }
 
-    V1BinocularFilter_Complex(); // do all the complex processing
+    V1BinocularFilter_Complex_Pre(); // pre-process by disparity
+    V1BinocularFilter_Complex(); // then do all the complex processing
   }
 
   if(v1b_filters & V1B_AVGSUM) {
@@ -5664,12 +5666,10 @@ void V1RegionSpec::V1BinocularFilter_S_Out_thread(int v1b_idx, int thread_no) {
   }
 }
 
-bool V1RegionSpec::V1BinocularFilter_Complex() {
-  int n_run = v1c_img_geom.Product();
+bool V1RegionSpec::V1BinocularFilter_Complex_Pre() {
   int n_run_pre = v1c_pre_geom.Product();
-  int n_run_v1s = v1s_img_geom.Product();
 
-  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.n_threads = MIN(n_run_pre, taMisc::thread_defaults.n_threads); // keep in range..
   threads.min_units = 1;
   threads.nibble_chunk = 1;	// small chunks
 
@@ -5683,8 +5683,31 @@ bool V1RegionSpec::V1BinocularFilter_Complex() {
       threads.Run(&ip_call_polinv, n_run_pre);
     }
   }
+  return true;
+}
 
-  // then iterate piecewise over each disparity level and recompute complex from that
+bool V1RegionSpec::V1BinocularFilter_Complex_Pre_DspAng() {
+  int n_run_pre = v1c_pre_geom.Product();
+
+  threads.n_threads = MIN(n_run_pre, taMisc::thread_defaults.n_threads); // keep in range..
+  threads.min_units = 1;
+  threads.nibble_chunk = 1;	// small chunks
+
+  // weight the v1b_pre outputs by disparity values -- uses cur_v1b_dsp -- must be same fmt as pre
+  ThreadImgProcCall ip_call_pre((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_V1C_Pre_DspAng_thread);
+  threads.Run(&ip_call_pre, n_run_pre);
+
+  if(v1c_filters & CF_ESLS) {
+    if(v1c_filters & END_STOP) {
+      ThreadImgProcCall ip_call_polinv((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1BinocularFilter_V1C_Pre_DspAng_Polinv_thread);
+      threads.Run(&ip_call_polinv, n_run_pre);
+    }
+  }
+  return true;
+}
+
+bool V1RegionSpec::V1BinocularFilter_Complex() {
+  // iterate piecewise over each disparity level and recompute complex from that
   for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
     if(v1c_kwta.on) {
       cur_out = (float_Matrix*)v1b_v1c_out_raw.GetFrameSlice(didx);
@@ -5813,6 +5836,43 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_Polinv_thread(int v1c_pre_idx, int 
   }
 }
 
+
+void V1RegionSpec::V1BinocularFilter_V1C_Pre_DspAng_thread(int v1c_pre_idx, int thread_no) {
+  TwoDCoord pc;			// pre coords
+  pc.SetFmIndex(v1c_pre_idx, v1c_pre_geom.x);
+
+  TwoDCoord fc;			// v1b feature coords -- destination
+
+  // IMPORTANT: any code changed here must also be changed in subsequent Polinv function
+
+  for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+    for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
+      fc.SetFmIndex(sfi, v1s_feat_geom.x);
+      float dval = cur_v1b_dsp->FastEl(fc.x, didx, pc.x, pc.y);
+      // just access by angle and disparity -- straight-up multiplies result (for now)
+      float rv = v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y);
+      v1b_v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * dval;
+    }
+  }
+}
+
+void V1RegionSpec::V1BinocularFilter_V1C_Pre_DspAng_Polinv_thread(int v1c_pre_idx, int thread_no) {
+  TwoDCoord pc;			// pre coords
+  pc.SetFmIndex(v1c_pre_idx, v1c_pre_geom.x);
+
+  TwoDCoord fc;			// v1b feature coords -- destination
+
+  for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+    for(int sfi = 0; sfi < v1c_polinv_geom.n; sfi++) { // simple feature index
+      fc.SetFmIndex(sfi, v1c_polinv_geom.x);
+      float dval = cur_v1b_dsp->FastEl(fc.x, didx, pc.x, pc.y);
+      // just access by angle and disparity -- straight-up multiplies result (for now)
+      float rv = v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y);
+      v1b_v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * dval;
+    }
+  }
+}
+
 void V1RegionSpec::V1BinocularFilter_AvgSum() {
   float sum_val = 0.0f;
   float	norm_val = 0.0f;
@@ -5843,17 +5903,21 @@ bool V1RegionSpec::V1bDspInFmDataTable(DataTable* data_table, Variant col, int r
 
   float_MatrixPtr dacell; dacell = (float_Matrix*)data_table->GetValAsMatrix(col, row);
   if(!dacell) return false;	// err msg should have already happened?
+  bool rval = V1bDspInFmMatrix(dacell, diff_thr, integ_sz); 
+  return rval;
+}
 
-  if(TestError(dacell->dims() != 4, "V1bDspInFmDataTable",
+bool V1RegionSpec::V1bDspInFmMatrix(float_Matrix* dacell, float diff_thr, int integ_sz) {
+  if(TestError(dacell->dims() != 4, "V1bDspInFmMatrix",
 	       "dsp_in data column must be 4 dimensional --", dacell->name, "has:",
 	       String(dacell->dims())))
     return false;
-  if(TestError(dacell->dim(0) != v1b_specs.tot_disps, "V1bDspInFmDataTable",
+  if(TestError(dacell->dim(0) != v1b_specs.tot_disps, "V1bDspInFmMatrix",
 	       "dsp_in data column first dimension must be = v1b_specs.tot_disps:", 
 	       String(v1b_specs.tot_disps), dacell->name, "has:",
 	       String(dacell->dim(0))))
     return false;
-  if(TestError(dacell->dim(1) != 1, "V1bDspInFmDataTable",
+  if(TestError(dacell->dim(1) != 1, "V1bDspInFmMatrix",
 	       "dsp_in data column second dimension must be = 1:", 
 	       dacell->name, "has:", String(dacell->dim(1))))
     return false;
@@ -5875,14 +5939,14 @@ bool V1RegionSpec::V1bDspInFmDataTable(DataTable* data_table, Variant col, int r
     recon = ingm * prjrat;	// reconstruct
   }
 
-  if(TestError(recon != v1c_pre_geom, "V1bDspInFmDataTable",
+  if(TestError(recon != v1c_pre_geom, "V1bDspInFmMatrix",
 	       "dsp_in data column outer dimensions must be even multiple of v1c_pre_geom:", 
 	       v1c_pre_geom.GetStr(), "instead,", dacell->name, "has dimension:",
 	       ingm.GetStr()))
     return false;
 
   if(in_larger) {
-    if(TestError(in_larger, "V1bDspInFmDataTable",
+    if(TestError(in_larger, "V1bDspInFmMatrix",
 		 "dsp_in data column outer dimensions are larger than v1c_pre_geom -- not currently supported:", 
 		 v1c_pre_geom.GetStr(), "instead,", dacell->name, "has dimension:",
 		 ingm.GetStr()))
@@ -5950,7 +6014,108 @@ void V1RegionSpec::UpdateV1cFromV1bDspIn() {
 	       "must have the v1b_filters set to include V1B_C_FM_IN -- this is required for prior formatting of data structures"))
     return;
   cur_v1b_dsp = &v1b_dsp_in;
-  V1RegionSpec::V1BinocularFilter_Complex();
+  V1BinocularFilter_Complex_Pre();
+  V1BinocularFilter_Complex();
+  if(!data_table || save_mode == NONE_SAVE) // bail now
+    return;
+  V1BOutputToTable(data_table);
+}
+
+
+bool V1RegionSpec::V1bDspAngInFmDataTable(DataTable* data_table, Variant col, int row,
+						 float diff_thr, int integ_sz) {
+  if(TestError(!data_table, "V1bDspAngInFmDataTable", "data table is null"))
+    return false;
+
+  float_MatrixPtr dacell; dacell = (float_Matrix*)data_table->GetValAsMatrix(col, row);
+  if(!dacell) return false;	// err msg should have already happened?
+  bool rval = V1bDspAngInFmMatrix(dacell, diff_thr, integ_sz);
+  return rval;
+}
+
+bool V1RegionSpec::V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr, int integ_sz) {
+  if(TestError(dacell->dims() != 4, "V1bDspAngInFmMatrix",
+	       "dsp_in data column must be 4 dimensional --", dacell->name, "has:",
+	       String(dacell->dims())))
+    return false;
+  if(TestError(dacell->dim(0) != v1s_specs.n_angles, "V1bDspAngInFmMatrix",
+	       "dsp_in data column first dimension must be = v1s_specs.n_angles:", 
+	       String(v1s_specs.n_angles), dacell->name, "has:",
+	       String(dacell->dim(0))))
+    return false;
+  if(TestError(dacell->dim(1) != 1, "V1bDspAngInFmMatrix",
+	       "dsp_in data column second dimension must be = 1:", 
+	       dacell->name, "has:", String(dacell->dim(1))))
+    return false;
+
+  TwoDCoord ingm;
+  ingm.x = dacell->dim(2);
+  ingm.y = dacell->dim(3);
+  
+  TwoDCoord prjrat;
+  TwoDCoord recon;
+  bool in_larger = false;
+  prjrat = v1c_pre_geom / ingm;
+  if(prjrat.x == 0 || prjrat.y == 0) {
+    prjrat = ingm / v1c_pre_geom;
+    in_larger = true;
+    recon = ingm / prjrat;	// reconstruct
+  }
+  else {
+    recon = ingm * prjrat;	// reconstruct
+  }
+
+  if(TestError(recon != v1c_pre_geom, "V1bDspAngInFmMatrix",
+	       "dsp_in data column outer dimensions must be even multiple of v1c_pre_geom:", 
+	       v1c_pre_geom.GetStr(), "instead,", dacell->name, "has dimension:",
+	       ingm.GetStr()))
+    return false;
+
+  if(in_larger) {
+    if(TestError(in_larger, "V1bDspAngInFmMatrix",
+		 "dsp_in data column outer dimensions are larger than v1c_pre_geom -- not currently supported:", 
+		 v1c_pre_geom.GetStr(), "instead,", dacell->name, "has dimension:",
+		 ingm.GetStr()))
+      return false;
+  }
+  else {
+    TwoDCoord pc;
+    TwoDCoord subc;
+    TwoDCoord ic;
+    TwoDCoord sic;
+    for(pc.y = 0; pc.y < v1c_pre_geom.y; pc.y++) {
+      for(pc.x = 0; pc.x < v1c_pre_geom.x; pc.x++) {
+	ic = pc / prjrat;
+	int max_dx = -1;
+	float max_dx_val = 0.0f;
+	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
+	  for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+	    float dav = dacell->SafeEl(ang, didx , ic.x, ic.y);
+	    v1b_dsp_ang_in.FastEl(ang, didx, pc.x, pc.y) = dav;
+	  }
+	}
+      }
+    }
+  }
+
+  if(diff_thr > 0.0f) {
+    if(v1b_dsp_ang_in_prv.geom.Equal(v1b_dsp_ang_in.geom)) {
+      float dst = taMath_float::vec_euclid_dist(&v1b_dsp_ang_in, &v1b_dsp_ang_in_prv, true, 0.0f);
+      if(dst < diff_thr) return false;
+    }
+  }
+  v1b_dsp_ang_in_prv.CopyFrom(&v1b_dsp_ang_in);
+
+  return true;
+}
+
+void V1RegionSpec::UpdateV1cFromV1bDspAngIn() {
+  if(TestError(!(v1b_filters & V1B_C_FM_IN), "UpdateV1cFromV1bDspAngIn",
+	       "must have the v1b_filters set to include V1B_C_FM_IN -- this is required for prior formatting of data structures"))
+    return;
+  cur_v1b_dsp = &v1b_dsp_ang_in;
+  V1BinocularFilter_Complex_Pre_DspAng(); // dsp ang version!
+  V1BinocularFilter_Complex();
   if(!data_table || save_mode == NONE_SAVE) // bail now
     return;
   V1BOutputToTable(data_table);

@@ -1340,6 +1340,8 @@ public:
   float_Matrix	v1b_dsp_out_pre; // #READ_ONLY #NO_SAVE v1c pre gp4 version of v1b_dsp_out -- v1b_c requires things to be at the pre level -- has pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][pre_img.x][pre_img.y]
   float_Matrix	v1b_dsp_in;	 // #READ_ONLY #NO_SAVE pure disparity *input* (see v1b_dsp_out for more info) -- this should be copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity (see V1bDspInFmDataTable and UpdateV1cFmV1bDspIn methods) -- should be same size as v1c_pre_img_geom [tot_disps][1][pre_img.x][pre_img.y]
   float_Matrix	v1b_dsp_in_prv;	 // #READ_ONLY #NO_SAVE previous version of v1b_dsp_in -- for comparison purposes
+  float_Matrix	v1b_dsp_ang_in;	 // #READ_ONLY #NO_SAVE disparity by angle *input* -- this should be copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity (see V1bDspAngInFm* and UpdateV1cFmV1bDspAngIn methods) -- should be same size as v1c_pre_img_geom [n_angles][tot_disps][pre_img.x][pre_img.y]
+  float_Matrix	v1b_dsp_ang_in_prv; // #READ_ONLY #NO_SAVE previous version of v1b_dsp_ang_in -- for comparison purposes
   float_Matrix	v1b_s_out;	 // #READ_ONLY #NO_SAVE v1 binocular simple cell output, which is v1s feature activation times v1b_dsp_out weighting per feature -- [v1b_s_feat.x][v1b_s_feat.y][v1s_img.x][v1s_img.y]
 
   float_Matrix	v1b_v1c_pre;	 // #READ_ONLY #NO_SAVE v1b version of v1c_pre: pre-grouping as basis for subsequent v1c filtering -- reduces dimensionality and introduces robustness [v1s_feat.x][v1s_feat.y][v1c_pre.x][v1c_pre.y][tot_disps]
@@ -1365,8 +1367,20 @@ public:
   virtual bool	V1bDspInFmDataTable(DataTable* data_table, Variant col, int row=-1, 
 				    float diff_thr=0.01f, int integ_sz=1);
   // #CAT_V1B set the v1b_dsp_in matrix from given data table column and row -- this will typically be a copy of the activations of a network layer that is computing these values from other visual features -- input geom must be an even divisor of v1c_pre_geom -- diff_thr is threshold on difference from previous pattern processed (normalized euclidian distance) -- if below this threshold, returns false and UpdateV1cFromV1bDspIn can be skipped (and prv pattern is not updated) -- diff_thr = 0 means ignore diff and always return true (but still update the previous vector) -- integ_sz = half-size of region to integrate over for getting the disparity values -- helps smooth over missing parts and misalignment across levels for example
+  virtual bool	V1bDspInFmMatrix(float_Matrix* dacell, float diff_thr=0.01f, int integ_sz=1);
+  // #CAT_V1B set the v1b_dsp_in matrix from given matrix -- input geom must be an even divisor of v1c_pre_geom -- diff_thr is threshold on difference from previous pattern processed (normalized euclidian distance) -- if below this threshold, returns false and UpdateV1cFromV1bDspIn can be skipped (and prv pattern is not updated) -- diff_thr = 0 means ignore diff and always return true (but still update the previous vector) -- integ_sz = half-size of region to integrate over for getting the disparity values -- helps smooth over missing parts and misalignment across levels for example
   virtual void	UpdateV1cFromV1bDspIn();
-  // #CAT_V1B update V1C values based on v1b_dsp_in inputs -- see V1bDspInFmDataTable -- in values are typically copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity
+  // #CAT_V1B update V1C values based on v1b_dsp_in inputs -- see V1bDspInFm* -- in values are typically copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity
+
+  virtual bool	V1bDspAngInFmDataTable(DataTable* data_table, Variant col, int row=-1, 
+				       float diff_thr=0.01f, int integ_sz=1);
+  // #CAT_V1B set the v1b_dsp_ang_in matrix from given data table column and row -- this will typically be a copy of the activations of a network layer that is computing these values from other visual features -- input geom must be an even divisor of v1c_pre_geom -- diff_thr is threshold on difference from previous pattern processed (normalized euclidian distance) -- if below this threshold, returns false and UpdateV1cFromV1bDspIn can be skipped (and prv pattern is not updated) -- diff_thr = 0 means ignore diff and always return true (but still update the previous vector) -- integ_sz = half-size of region to integrate over for getting the disparity values -- helps smooth over missing parts and misalignment across levels for example
+  virtual bool	V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr=0.01f, int integ_sz=1);
+  // #CAT_V1B set the v1b_dsp_ang_in matrix from given matrix -- input geom must be an even divisor of v1c_pre_geom -- diff_thr is threshold on difference from previous pattern processed (normalized euclidian distance) -- if below this threshold, returns false and UpdateV1cFromV1bDspAngIn can be skipped (and prv pattern is not updated) -- diff_thr = 0 means ignore diff and always return true (but still update the previous vector) -- integ_sz = half-size of region to integrate over for getting the disparity values -- helps smooth over missing parts and misalignment across levels for example
+  virtual void	UpdateV1cFromV1bDspAngIn();
+  // #CAT_V1B update V1C values based on v1b_dsp_ang_in inputs -- see V1bDspAnInFm* -- in values are typically copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity
+
+
   virtual bool	V1bDspInVsOutStats(float_Matrix* v1b_in, float_Matrix* v1b_out,
 				   V1bDspInOutStats* stats, int disp=-1);
   // #CAT_V1B compute stats on differences between v1b_in and out matricies -- both must be same geometry -- disp is disparity index to focus results on -- a val of -1 means don't focus on any in particular
@@ -1473,12 +1487,21 @@ protected:
   virtual void 	V1BinocularFilter_DspOutPreBord_thread(int v1s_idx, int thread_no);
   // do binocular filters -- integrate dsp out to v1b_dsp_out_pre -- for case where only border is non-zero
 
+  virtual bool	V1BinocularFilter_Complex_Pre();
+  // do complex processing for v1b -- pre-processing from dsp to v1c_pre guys
+  virtual bool	V1BinocularFilter_Complex_Pre_DspAng();
+  // do complex processing for v1b -- pre-processing from dsp to v1c_pre guys -- dsp_ang case with disparity by angle inputs
   virtual bool	V1BinocularFilter_Complex();
-  // do complex processing for v1b
+  // do complex processing for v1b -- takes Pre results and redoes all the complex filtering from there..
   virtual void 	V1BinocularFilter_V1C_Pre_thread(int v1c_pre_idx, int thread_no);
   // cur_v1b_dsp modulates v1c_pre to produce v1b_v1c_pre
   virtual void 	V1BinocularFilter_V1C_Pre_Polinv_thread(int v1c_pre_idx, int thread_no);
   // cur_v1b_dsp modulates v1c_pre_polinv to produce v1b_v1c_pre
+
+  virtual void 	V1BinocularFilter_V1C_Pre_DspAng_thread(int v1c_pre_idx, int thread_no);
+  // cur_v1b_dsp_ang modulates v1c_pre to produce v1b_v1c_pre
+  virtual void 	V1BinocularFilter_V1C_Pre_DspAng_Polinv_thread(int v1c_pre_idx, int thread_no);
+  // cur_v1b_dsp_ang modulates v1c_pre_polinv to produce v1b_v1c_pre
 
   virtual void 	V1BinocularFilter_AvgSum();
   // v1 binocular weighted-average summary

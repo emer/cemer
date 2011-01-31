@@ -1814,23 +1814,19 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn) {
 	  Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
 	  if(!alloc_loop)
 	    ru_u->RecvConsPreAlloc(alloc_no, prjn);
+	}
 
-	  TwoDCoord suc;
-	  TwoDCoord suc_wrp;
-	  for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
-	    for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
-	      suc_wrp = suc;
-	      if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-		continue;
-	      int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
-	      if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
+	TwoDCoord suc;
+	TwoDCoord suc_wrp;
+	for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
+	  for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
+	    suc_wrp = suc;
+	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	      continue;
+	    int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
+	    if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-	      for(int sui=0; sui < su_nunits; sui++) {
-                Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
-		if(!self_con && (su_u == ru_u)) continue;
-		ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-	      }
-	    }
+	    Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, sgpidx, alloc_loop);
 	  }
 	}
       }
@@ -1902,21 +1898,41 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn) {
 	      continue;
 	    int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
 	    if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
-
-	    for(int sui=0; sui < su_nunits; sui++) {
-              Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
-	      for(int rui=0; rui < ru_nunits; rui++) {
-	        Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-		if(!self_con && (su_u == ru_u)) continue;
-		su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
-	      }
-	    }
+	    
+	    Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, sgpidx, alloc_loop);
 	  }
 	}
       }
     }
     if(alloc_loop) { // on first pass through alloc loop, do sending allocations
       prjn->from->SendConsPostAlloc(prjn);
+    }
+  }
+}
+
+void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
+					  int rgpidx, int sgpidx, int alloc_loop) {
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+
+  if(reciprocal) {		// reciprocal is backwards!
+    for(int sui=0; sui < su_nunits; sui++) {
+      Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+      for(int rui=0; rui < ru_nunits; rui++) {
+	Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+	if(!self_con && (su_u == ru_u)) continue;
+	su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
+      }
+    }
+  }
+  else {
+    for(int rui=0; rui < ru_nunits; rui++) {
+      Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+      for(int sui=0; sui < su_nunits; sui++) {
+	Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+	if(!self_con && (su_u == ru_u)) continue;
+	ru_u->ConnectFrom(su_u, prjn, alloc_loop); // recip!
+      }
     }
   }
 }

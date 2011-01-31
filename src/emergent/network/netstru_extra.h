@@ -447,6 +447,9 @@ public:
   override void Connect_impl(Projection* prjn);
   virtual void 	Connect_Reciprocal(Projection* prjn);
   int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
+  virtual void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
+				  int rgpidx, int sgpidx, int alloc_loop);
+  // #IGNORE connect one unit group to another -- rgpidx = recv unit group idx, sgpidx = send unit group idx
 
   virtual bool	TrgRecvFmSend(int send_x, int send_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end

@@ -2331,6 +2331,7 @@ INHERITED(taOBase)
 public:
   bool		sqrt;		// #DEF_true compute sqrt(left*right) insted of just product
   bool		max_l;		// #DEF_true compute left = max(weighted left inputs)
+  bool		incl_other_res;	// #DEF_true include other resolution layers that are connected to this one -- looks for VisDisparityLayerSpec layers and multiplies by their misc_1 values
 
   // todo: add stuff about horiz thign
 
@@ -2363,8 +2364,23 @@ private:
   void 	Destroy()		{ };
 };
 
+class LEABRA_API TiledGpRFOneToOnePrjnSpec : public TiledGpRFPrjnSpec {
+  // TiledGpRFPrjnSpec connectvity with one-to-one connections for units with the same index within a unit group -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOneToOneWtsPrjnSpec for a softer version where only weights are set)
+INHERITED(TiledGpRFPrjnSpec)
+public:
+
+  override void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
+				  int rgpidx, int sgpidx, int alloc_loop);
+
+  TA_SIMPLE_BASEFUNS(TiledGpRFOneToOnePrjnSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+
 class LEABRA_API TiledGpRFOneToOneWtsPrjnSpec : public TiledGpRFPrjnSpec {
-  // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that have differential weights for units with the same index within a unit group vs. differential weights -- useful for establishing connections among layers with the same unit-group structure
+  // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that have differential weights for units with the same index within a unit group vs. differential weights -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOnetToOnePrjnSpec for harder version where connections are only made among units with same index within group)
 INHERITED(TiledGpRFPrjnSpec)
 public:
   float		one_to_one_wt;	// weight between units with the same index in the unit group
