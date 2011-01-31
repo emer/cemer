@@ -2332,6 +2332,7 @@ public:
   bool		sqrt;		// #DEF_true compute sqrt(left*right) insted of just product
   bool		max_l;		// #DEF_true compute left = max(weighted left inputs)
   bool		incl_other_res;	// #DEF_true include other resolution layers that are connected to this one -- looks for VisDisparityLayerSpec layers and multiplies by their misc_1 values
+  int		updt_cycles;	// #DEF_-1:5 (-1=always) how many cycles to compute updates for -- computation is expensive so if inputs are static, don't keep computing beyond what is necessary
 
   // todo: add stuff about horiz thign
 

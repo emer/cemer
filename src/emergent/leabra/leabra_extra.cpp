@@ -4669,6 +4669,7 @@ void VisDispLaySpec::Initialize() {
   sqrt = true;
   max_l = true;
   incl_other_res = true;
+  updt_cycles = 5;
 }
 
 void VisDisparityLayerSpec::Initialize() {
@@ -4775,7 +4776,8 @@ void VisDisparityLayerSpec::ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* ne
 }
 
 void VisDisparityLayerSpec::Compute_ExtraNetin(LeabraLayer* lay, LeabraNetwork* net) {
-  ComputeDispToExt(lay, net);	// always do it here -- avail for softclamp
+  if(disp.updt_cycles < 0 || net->cycle <= disp.updt_cycles)
+    ComputeDispToExt(lay, net);	// always do it here -- avail for softclamp
 }
 
 void VisDisparityLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -4790,6 +4792,7 @@ void VisDisparityLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* 
     u->act_eq = u->act_nd = u->act;
     u->da = 0.0f;		// I'm fully settled!
   }
+  inherited::Compute_CycleStats(lay, net);
 }
 
 ///////////////////////////////////////////////////////////////
