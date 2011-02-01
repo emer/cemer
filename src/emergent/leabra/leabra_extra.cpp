@@ -4666,7 +4666,6 @@ void VisDisparityPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 //			VisDisparityLayerSpec 
 
 void VisDispLaySpec::Initialize() {
-  sqrt = true;
   max_l = true;
   incl_other_res = true;
   updt_cycles = 5;
@@ -4735,13 +4734,10 @@ void VisDisparityLayerSpec::ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* ne
       left /= (float)cg_l->size;
     }
 
-    float prod = left * right;
-    if(disp.sqrt)
-      prod = sqrtf(prod);
+    float prod = MIN(left, right); // min = product!
     u->misc_1 = prod;
 
     if(disp.incl_other_res && net->cycle > 1) {
-      int n_others = 0;
       for(int j=2; j<u->recv.size; j++) {
         LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.FastEl(j);
 	LeabraLayer* fm = (LeabraLayer*)cg->prjn->from.ptr();
@@ -4761,11 +4757,7 @@ void VisDisparityLayerSpec::ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* ne
 	  if(cg->size > 0)
 	    netin /= (float)cg->size;
 	}
-	n_others++;
-	prod *= netin;
-      }
-      if(disp.sqrt) {
-	prod = powf(prod, 1.0f / (float)(n_others + 1));
+	prod = MIN(netin, prod);
       }
     }
 
