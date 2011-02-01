@@ -254,7 +254,9 @@ class TA_API If: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgExpr	    cond; 	// condition expression to test for true or false
+  bool		    show_false_code; // display the false_code for when the condition is true
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
+  ProgEl_List	    false_code; // #SHOW_TREE #CONDTREE_ON_show_false_code items to execute if condition false
 
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
@@ -280,7 +282,6 @@ class TA_API IfElse: public If {
   // a conditional test element: if(condition) then true_code; else false_code
 INHERITED(If)
 public:
-  ProgEl_List	    	false_code; // #SHOW_TREE items to execute if condition false
 
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetToolbarName() const { return "if.else"; }

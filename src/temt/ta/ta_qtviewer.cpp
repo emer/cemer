@@ -8318,7 +8318,8 @@ taiTreeDataNode::~taiTreeDataNode() {
 
 void taiTreeDataNode::CreateChildren_impl() {
 //NOTE: keep willHaveChildren_impl in sync with this code
-  MemberSpace* ms = &(link()->GetDataTypeDef()->members);
+  TypeDef* base_typ = link()->GetDataTypeDef();
+  MemberSpace* ms = &(base_typ->members);
   iTreeView* tree = treeView(); //cache
   if(!tree) return;
   for (int i = 0; i < ms->size; ++ i) {
@@ -8328,6 +8329,7 @@ void taiTreeDataNode::CreateChildren_impl() {
     if (tree->HasFilter(md)) continue; */
     // we make everything that isn't NO_SHOW, then hide if not visible now
     if (!md->ShowMember(taMisc::ALL_MEMBS, TypeItem::SC_TREE)) continue;
+    if(!md->GetCondOptTest("CONDTREE", base_typ, linkData())) continue;
     TypeDef* typ = md->type;
     void* el = md->GetOff(linkData()); //note: GetDataLink automatically derefs typ and el if pointers
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);

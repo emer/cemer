@@ -549,6 +549,7 @@ String IfReturn::GetDisplayName() const {
 //////////////////////////
 
 void If::Initialize() {
+  show_false_code = false;
   //  cond.expr = "true";
 }
 
@@ -605,6 +606,7 @@ ProgVar* If::FindVarName(const String& var_nm) const {
 //////////////////////////
 
 void IfElse::Initialize() {
+  show_false_code = true;
   //  cond.expr = "true";
 }
 

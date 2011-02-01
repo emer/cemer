@@ -1198,6 +1198,8 @@ bool taDataAnal::Cluster(DataTable* clust_data, bool view, DataTable* src_data,
   
   GetDest(clust_data, src_data, "col_" + data_col_nm + "_Cluster");
 
+  clust_data->StructUpdate(true);
+
   ClustNode root;
   taBase::Ref(root);		// just in case
   for(int i=0;i<src_data->rows;i++) {
@@ -1210,6 +1212,9 @@ bool taDataAnal::Cluster(DataTable* clust_data, bool view, DataTable* src_data,
 
   root.Cluster(metric, norm, tol);
   root.GraphData(clust_data);
+
+  clust_data->StructUpdate(false);
+
   if(view) clust_data->FindMakeGraphView();
   return true;
 }
