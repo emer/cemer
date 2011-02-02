@@ -6089,7 +6089,6 @@ bool V1RegionSpec::V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr, int
 	int max_dx = -1;
 	int max_ang = -1;
 	float max_dx_val = 0.0f;
-	bool set_max = false;
 	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
 	  for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
 	    float dav = dacell->SafeEl(ang, didx, ic.x, ic.y);
@@ -6101,7 +6100,6 @@ bool V1RegionSpec::V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr, int
 	  }
 	}
 	if(max_dx_val < 0.2f) {	// not very confident max
-	  set_max = true;
 	  // integrate over subregion from input and take max as local value to apply
 	  for(subc.y = -integ_sz; subc.y <= integ_sz; subc.y++) {
 	    for(subc.x = -integ_sz; subc.x <= integ_sz; subc.x++) {
@@ -6124,12 +6122,13 @@ bool V1RegionSpec::V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr, int
 	}
 	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
 	  for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
-	    float dav = dacell->SafeEl(ang, didx , ic.x, ic.y);
-	    v1b_dsp_ang_in.FastEl(ang, didx, pc.x, pc.y) = dav;
+// 	    float dav = dacell->SafeEl(ang, didx , ic.x, ic.y);
+	    // just apply max across all angles.. seems that angle info is too precise.
+	    if(didx == max_dx)
+	      v1b_dsp_ang_in.FastEl(ang, didx, pc.x, pc.y) = max_dx_val;
+	    else
+	      v1b_dsp_ang_in.FastEl(ang, didx, pc.x, pc.y) = 0.0f;
 	  }
-	}
-	if(set_max) {
-	  v1b_dsp_ang_in.FastEl(max_ang, max_dx, pc.x, pc.y) = max_dx_val; // set max
 	}
       }
     }
@@ -6533,6 +6532,8 @@ bool V1RegionSpec::InitDataTable() {
       if(v1b_filters & V1B_C_FM_IN) {
 	col = data_table->FindMakeColName(name + "_v1b_dsp_in", idx, DataTable::VT_FLOAT, 4,
 				  v1b_specs.tot_disps, 1, v1c_pre_geom.x, v1c_pre_geom.y);
+	col = data_table->FindMakeColName(name + "_v1b_dsp_ang_in", idx, DataTable::VT_FLOAT, 4,
+		  v1s_specs.n_angles, v1b_specs.tot_disps, v1c_pre_geom.x, v1c_pre_geom.y);
       }
     }
   }
@@ -6924,10 +6925,18 @@ bool V1RegionSpec::V1BOutputToTable(DataTable* dtab) {
     }
 
     if(v1b_filters & V1B_C_FM_IN) {
-      col = data_table->FindMakeColName(name + "_v1b_dsp_in", idx, DataTable::VT_FLOAT, 4,
-					v1b_specs.tot_disps, 1, v1c_pre_geom.x, v1c_pre_geom.y);
-      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      dout->CopyFrom(&v1b_dsp_in);
+      {
+	col = data_table->FindMakeColName(name + "_v1b_dsp_in", idx, DataTable::VT_FLOAT, 4,
+			  v1b_specs.tot_disps, 1, v1c_pre_geom.x, v1c_pre_geom.y);
+	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+	dout->CopyFrom(&v1b_dsp_in);
+      }
+      {
+	col = data_table->FindMakeColName(name + "_v1b_dsp_ang_in", idx, DataTable::VT_FLOAT, 4,
+		  v1s_specs.n_angles, v1b_specs.tot_disps, v1c_pre_geom.x, v1c_pre_geom.y);
+	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+	dout->CopyFrom(&v1b_dsp_ang_in);
+      }
     }
   }
   return true;
