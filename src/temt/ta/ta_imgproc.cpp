@@ -6087,12 +6087,49 @@ bool V1RegionSpec::V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr, int
       for(pc.x = 0; pc.x < v1c_pre_geom.x; pc.x++) {
 	ic = pc / prjrat;
 	int max_dx = -1;
+	int max_ang = -1;
 	float max_dx_val = 0.0f;
+	bool set_max = false;
+	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
+	  for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+	    float dav = dacell->SafeEl(ang, didx, ic.x, ic.y);
+	    if(dav > max_dx_val) {
+	      max_dx = didx;
+	      max_ang = ang;
+	      max_dx_val = dav;
+	    }
+	  }
+	}
+	if(max_dx_val < 0.2f) {	// not very confident max
+	  set_max = true;
+	  // integrate over subregion from input and take max as local value to apply
+	  for(subc.y = -integ_sz; subc.y <= integ_sz; subc.y++) {
+	    for(subc.x = -integ_sz; subc.x <= integ_sz; subc.x++) {
+	      sic = ic + subc;
+	      if(sic.WrapClip(wrap, ingm)) {
+		if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+	      }
+	      for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
+		for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+		  float dav = dacell->SafeEl(ang, didx, sic.x, sic.y);
+		  if(dav > max_dx_val) {
+		    max_dx = didx;
+		    max_ang = ang;
+		    max_dx_val = dav;
+		  }
+		}
+	      }
+	    }
+	  }
+	}
 	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
 	  for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
 	    float dav = dacell->SafeEl(ang, didx , ic.x, ic.y);
 	    v1b_dsp_ang_in.FastEl(ang, didx, pc.x, pc.y) = dav;
 	  }
+	}
+	if(set_max) {
+	  v1b_dsp_ang_in.FastEl(max_ang, max_dx, pc.x, pc.y) = max_dx_val; // set max
 	}
       }
     }
