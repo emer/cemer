@@ -1636,13 +1636,13 @@ void NetMonitor::UpdateDataTable(bool reset_first) {
     if (!nmi->off)
       nmi->ScanObject();
   }
+  if (rmv_orphan_cols)
+    data->RemoveOrphanCols(); // note: will remove 'off' items
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
     if (!nmi->off)
       nmi->val_specs.UpdateDataBlockSchema(data);
   }
-  if (rmv_orphan_cols)
-    data->RemoveOrphanCols(); // note: will remove 'off' items
   data->StructUpdate(false);
 }
 
