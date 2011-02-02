@@ -1416,6 +1416,8 @@ void ProgExprBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying()) return;
+  ProgEl* pel = GET_MY_OWNER(ProgEl);
+  if(pel && (pel->GetEnabled() == 0)) return;
   ParseExpr();
   if(!HasExprFlag(NO_VAR_ERRS)) {
     ProgEl* pel = GET_MY_OWNER(ProgEl);
