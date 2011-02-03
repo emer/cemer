@@ -30,10 +30,11 @@ if (WIN32)
   # 4258;4661;4996 (unsafe crt routines)
   add_definitions(/wd4250 /wd4258 /wd4661 /wd4996)
   # enable multi-threaded compiling (always safe, will ignore and print warning when incompatible)
-  add_definitions(/MP)
+  # don't use add_definitions here, because RC.exe doesn't allow /MP flag.
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 #also needed for 32  if (CMAKE_CL_64)
     # need to set this so larger .cpp files don't error (what a stupid non-default!!!)
-    add_definitions(/bigobj)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 #  endif (CMAKE_CL_64)
 else (WIN32) # assume gcc!!!
   # a function with a non-void return-type that doesn't return a value s/b an error!!!
