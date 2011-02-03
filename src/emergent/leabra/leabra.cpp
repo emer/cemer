@@ -1155,6 +1155,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
   // this is all receiver-based and done only at beginning of a trial
   u->net_scale = 0.0f;	// total of scale values for this unit's inputs
 
+  float inhib_net_scale = 0.0f;
+  int n_active_cons = 0;	// track this for bias weight scaling!
   // possible dependence on recv_gp->size is why this cannot be computed in Projection
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -1175,22 +1177,38 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
     else {			// new way!
       recv_gp->scale_eff = wt_scale.FullScale(savg, lay_sz, n_cons); 
     }
-    u->net_scale += wt_scale.rel;
+    if(cs->inhib) {
+      inhib_net_scale += wt_scale.rel;
+    }
+    else {
+      n_active_cons++;
+      u->net_scale += wt_scale.rel;
+    }
   }
   // add the bias weight into the netinput, scaled by 1/n
   if(u->bias.size) {
     LeabraConSpec* bspec = (LeabraConSpec*)bias_spec.SPtr();
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
-    if(u->n_recv_cons > 0)
-      u->bias_scale /= (float)u->n_recv_cons; // one over n scaling for bias!
+    if(n_active_cons > 0)
+      u->bias_scale /= (float)n_active_cons; // one over n scaling for bias!
   }
   // now renormalize
-  if(u->net_scale == 0.0f) return;
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
-    if(lay->lesioned() || !recv_gp->size)	continue;
-    recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale
+  if(u->net_scale > 0.0f) {
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
+      if(lay->lesioned() || !recv_gp->size)	continue;
+      recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale
+    }
+  }
+  // separately normalize inhibitory connections
+  if(inhib_net_scale > 0.0f) {
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
+      if(lay->lesioned() || !recv_gp->size)	continue;
+      recv_gp->scale_eff /= inhib_net_scale; // normalize by total connection scale
+    }
   }
 }
 
