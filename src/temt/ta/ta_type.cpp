@@ -701,6 +701,7 @@ bool	taMisc::dmem_debug = false;
 
 // give the main typespace a big hash table..
 TypeSpace taMisc::types("taMisc::types", 10000);
+TypeSpace taMisc::aka_types("taMisc::aka_types", 100);
 TypeDef*	taMisc::default_scope = NULL;
 
 taPtrList_impl*	taMisc::init_hook_list = NULL;
@@ -1326,6 +1327,14 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
   // add any Schema that couldn't be added earlier
   AddDeferredUserDataSchema();
   // other stuff could happen here..
+
+  // go through all types and create list of AKA typedefs
+  for (int i = 0; i < types.size; ++i) {
+    TypeDef* typ = types.FastEl(i);
+    if(typ->OptionAfter("AKA_").nonempty()) {
+      aka_types.Link(typ);
+    }
+  }
 }
 
 void taMisc::AddUserDataSchema(const String& type_name, UserDataItemBase* item) {

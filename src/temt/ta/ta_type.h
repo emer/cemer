@@ -822,6 +822,7 @@ public:
   // 	Global State, Flags Etc
 
   static TypeSpace 	types;		// #READ_ONLY #NO_SAVE list of all the active types
+  static TypeSpace 	aka_types;	// #READ_ONLY #NO_SAVE list of types that have AKA for other types that are no longer supported
   static TypeDef*	default_scope;  // #READ_ONLY #NO_SAVE type of object to use to determine if two objects are in the same scope
 
   static taPtrList_impl* init_hook_list; // #IGNORE list of init hook's to call during initialization

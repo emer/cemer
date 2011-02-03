@@ -8348,13 +8348,15 @@ void taiTreeDataNode::CreateChildren_impl() {
 void taiTreeDataNode::willHaveChildren_impl(bool& will) const {
 //NOTE: keep CreateChildren_impl in sync with this code
 //NOTE: this typically doesn't execute for listish nodes with children
-  MemberSpace* ms = &(link()->GetDataTypeDef()->members);
+  TypeDef* base_typ = link()->GetDataTypeDef();
+  MemberSpace* ms = &(base_typ->members);
   for (int i = 0; i < ms->size; ++ i) {
     MemberDef* md = ms->FastEl(i);
     //NOTE: this code is only valid for the **current** view state
     // lazy children would need to be rerun for all nodes if view state changed
     // we make everything that isn't NO_SHOW, then hide if not visible now
     if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, TypeItem::SC_TREE)) continue;
+    if(!md->GetCondOptTest("CONDTREE", base_typ, linkData())) continue;
     will = true;
     break;
   }
@@ -8415,7 +8417,16 @@ tabTreeDataNode::~tabTreeDataNode()
 
 void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
   inherited::DataChanged_impl(dcr, op1_, op2_);
-  if(dcr == DCR_STRUCT_UPDATE_ALL) { // special case for post-loading update
+  bool do_updt = false;
+  taBase* tab = tadata();
+  if(tab) {
+    TypeDef* base_typ = tab->GetTypeDef();
+    if(base_typ->HasOption("HAS_CONDTREE")) {
+      if(dcr == DCR_ITEM_UPDATED)
+	do_updt = true;
+    }
+  }
+  if(do_updt || dcr == DCR_STRUCT_UPDATE_ALL) { // special case for post-loading update
     takeChildren();
     CreateChildren();
     iTreeView* itv = treeView();

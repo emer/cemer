@@ -1224,6 +1224,8 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
   else {
     td = taMisc::types.FindName(tpnm);
     if(td == NULL) {
+      // todo: lookup tpnm in aka_types, and use that typedef instead!
+      // and lookup other cases where this happens.. and make a function for this so it is efficient..
       taMisc::Warning("Unknown type:",tpnm,"in Dump_Load_Path");
       return false;
     }

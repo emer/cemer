@@ -250,11 +250,11 @@ private:
 };
 
 class TA_API If: public ProgEl { 
-  // a conditional test element: if(condition) then true_code
+  // ##HAS_CONDTREE a conditional test element: if(condition) then true_code
 INHERITED(ProgEl)
 public:
   ProgExpr	    cond; 	// condition expression to test for true or false
-  bool		    show_false_code; // display the false_code for when the condition is true
+  bool		    show_false_code; // display the false_code, which is run when the cond condition is false
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
   ProgEl_List	    false_code; // #SHOW_TREE #CONDTREE_ON_show_false_code items to execute if condition false
 
