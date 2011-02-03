@@ -1542,7 +1542,7 @@ const String ReturnExpr::GenCssBody_impl(int indent_level) {
   String rval;
   if(IsVerbose())
     rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"returning value: "
-      + expr.GetFullExpr().quote_esc() + ");\n";
+      + expr.GetFullExpr().quote_esc() + "\");\n";
 
   rval += cssMisc::Indent(indent_level);
   rval += "return " + expr.GetFullExpr() + ";\n";
