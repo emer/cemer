@@ -1189,8 +1189,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
   if(u->bias.size) {
     LeabraConSpec* bspec = (LeabraConSpec*)bias_spec.SPtr();
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
-    if(n_active_cons > 0)
-      u->bias_scale /= (float)n_active_cons; // one over n scaling for bias!
+    if(u->n_recv_cons > 0)
+      u->bias_scale /= (float)u->n_recv_cons; // one over n scaling for bias!
   }
   // now renormalize
   if(u->net_scale > 0.0f) {
