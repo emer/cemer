@@ -6023,17 +6023,18 @@ void V1RegionSpec::UpdateV1cFromV1bDspIn() {
 
 
 bool V1RegionSpec::V1bDspAngInFmDataTable(DataTable* data_table, Variant col, int row,
-						 float diff_thr, int integ_sz) {
+					  float diff_thr, int integ_sz, bool use_ang) {
   if(TestError(!data_table, "V1bDspAngInFmDataTable", "data table is null"))
     return false;
 
   float_MatrixPtr dacell; dacell = (float_Matrix*)data_table->GetValAsMatrix(col, row);
   if(!dacell) return false;	// err msg should have already happened?
-  bool rval = V1bDspAngInFmMatrix(dacell, diff_thr, integ_sz);
+  bool rval = V1bDspAngInFmMatrix(dacell, diff_thr, integ_sz, use_ang);
   return rval;
 }
 
-bool V1RegionSpec::V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr, int integ_sz) {
+bool V1RegionSpec::V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr, int integ_sz,
+				       bool use_ang) {
   if(TestError(dacell->dims() != 4, "V1bDspAngInFmMatrix",
 	       "dsp_in data column must be 4 dimensional --", dacell->name, "has:",
 	       String(dacell->dims())))
@@ -6089,6 +6090,7 @@ bool V1RegionSpec::V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr, int
 	int max_dx = -1;
 	int max_ang = -1;
 	float max_dx_val = 0.0f;
+	bool set_max = false;
 	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
 	  for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
 	    float dav = dacell->SafeEl(ang, didx, ic.x, ic.y);
@@ -6100,6 +6102,7 @@ bool V1RegionSpec::V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr, int
 	  }
 	}
 	if(max_dx_val < 0.2f) {	// not very confident max
+	  set_max = true;
 	  // integrate over subregion from input and take max as local value to apply
 	  for(subc.y = -integ_sz; subc.y <= integ_sz; subc.y++) {
 	    for(subc.x = -integ_sz; subc.x <= integ_sz; subc.x++) {
@@ -6122,13 +6125,20 @@ bool V1RegionSpec::V1bDspAngInFmMatrix(float_Matrix* dacell, float diff_thr, int
 	}
 	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
 	  for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
-// 	    float dav = dacell->SafeEl(ang, didx , ic.x, ic.y);
-	    // just apply max across all angles.. seems that angle info is too precise.
-	    if(didx == max_dx)
-	      v1b_dsp_ang_in.FastEl(ang, didx, pc.x, pc.y) = max_dx_val;
-	    else
-	      v1b_dsp_ang_in.FastEl(ang, didx, pc.x, pc.y) = 0.0f;
+	    if(use_ang) {
+	      float dav = dacell->SafeEl(ang, didx , ic.x, ic.y);
+	      v1b_dsp_ang_in.FastEl(ang, didx, pc.x, pc.y) = dav;
+	    }
+	    else {
+	      if(didx == max_dx)
+		v1b_dsp_ang_in.FastEl(ang, didx, pc.x, pc.y) = max_dx_val;
+	      else
+		v1b_dsp_ang_in.FastEl(ang, didx, pc.x, pc.y) = 0.0f;
+	    }
 	  }
+	}
+	if(set_max && use_ang) {
+	  v1b_dsp_ang_in.FastEl(max_ang, max_dx, pc.x, pc.y) = max_dx_val; // set max
 	}
       }
     }
