@@ -8432,7 +8432,7 @@ void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     iTreeView* itv = treeView();
     if(!itv) return;
     if(itv->itemCount() > 0) {
-      if(itv->item(0) == this)
+      if(itv->item(0) == this || do_updt)
 	itv->ExpandDefault();
     }
   }

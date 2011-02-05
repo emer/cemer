@@ -3,7 +3,8 @@ LeabraProject .projects[0] {
   taBase_Group @.templates = [0] {
   };
 
-  Doc_Group @.docs = [0] {
+  Doc_Group @.docs = [1] {
+    taDoc @[0] { };
   };
 
   Wizard_Group @.wizards = [1] {
@@ -79,7 +80,7 @@ LeabraProject .projects[0] {
 	};
       };
       DataTable @[1] { 
-	DataTableCols @.data = [117] {
+	DataTableCols @.data = [16] {
 	  int_Data @[0] { 
       UserDataItem_List @*(.user_data_) {
 	      UserDataItem @[0] { };
@@ -104,107 +105,6 @@ LeabraProject .projects[0] {
 	  float_Data @[13] { };
 	  float_Data @[14] { };
 	  float_Data @[15] { };
-	  float_Data @[16] { };
-	  float_Data @[17] { };
-	  float_Data @[18] { };
-	  float_Data @[19] { };
-	  float_Data @[20] { };
-	  float_Data @[21] { };
-	  float_Data @[22] { };
-	  float_Data @[23] { };
-	  float_Data @[24] { };
-	  float_Data @[25] { };
-	  float_Data @[26] { };
-	  float_Data @[27] { };
-	  float_Data @[28] { };
-	  float_Data @[29] { };
-	  float_Data @[30] { };
-	  float_Data @[31] { };
-	  float_Data @[32] { };
-	  float_Data @[33] { };
-	  float_Data @[34] { };
-	  float_Data @[35] { };
-	  float_Data @[36] { };
-	  float_Data @[37] { };
-	  float_Data @[38] { };
-	  float_Data @[39] { };
-	  float_Data @[40] { };
-	  float_Data @[41] { };
-	  float_Data @[42] { };
-	  float_Data @[43] { };
-	  float_Data @[44] { };
-	  float_Data @[45] { };
-	  float_Data @[46] { };
-	  float_Data @[47] { };
-	  float_Data @[48] { };
-	  float_Data @[49] { };
-	  float_Data @[50] { };
-	  float_Data @[51] { };
-	  float_Data @[52] { };
-	  float_Data @[53] { };
-	  float_Data @[54] { };
-	  float_Data @[55] { };
-	  float_Data @[56] { };
-	  float_Data @[57] { };
-	  float_Data @[58] { };
-	  float_Data @[59] { };
-	  float_Data @[60] { };
-	  float_Data @[61] { };
-	  float_Data @[62] { };
-	  float_Data @[63] { };
-	  float_Data @[64] { };
-	  float_Data @[65] { };
-	  float_Data @[66] { };
-	  float_Data @[67] { };
-	  float_Data @[68] { };
-	  float_Data @[69] { };
-	  float_Data @[70] { };
-	  float_Data @[71] { };
-	  float_Data @[72] { };
-	  float_Data @[73] { };
-	  float_Data @[74] { };
-	  float_Data @[75] { };
-	  float_Data @[76] { };
-	  float_Data @[77] { };
-	  float_Data @[78] { };
-	  float_Data @[79] { };
-	  float_Data @[80] { };
-	  float_Data @[81] { };
-	  float_Data @[82] { };
-	  float_Data @[83] { };
-	  float_Data @[84] { };
-	  float_Data @[85] { };
-	  float_Data @[86] { };
-	  float_Data @[87] { };
-	  float_Data @[88] { };
-	  float_Data @[89] { };
-	  float_Data @[90] { };
-	  float_Data @[91] { };
-	  float_Data @[92] { };
-	  float_Data @[93] { };
-	  float_Data @[94] { };
-	  float_Data @[95] { };
-	  float_Data @[96] { };
-	  float_Data @[97] { };
-	  float_Data @[98] { };
-	  float_Data @[99] { };
-	  float_Data @[100] { };
-	  float_Data @[101] { };
-	  float_Data @[102] { };
-	  float_Data @[103] { };
-	  float_Data @[104] { };
-	  float_Data @[105] { };
-	  float_Data @[106] { };
-	  float_Data @[107] { };
-	  float_Data @[108] { };
-	  float_Data @[109] { };
-	  float_Data @[110] { };
-	  float_Data @[111] { };
-	  float_Data @[112] { };
-	  float_Data @[113] { };
-	  float_Data @[114] { };
-	  float_Data @[115] { };
-	  float_Data @[116] { };
 	};
       };
     };
@@ -329,7 +229,7 @@ LeabraProject .projects[0] {
       ProgEl_List @.init_code = [0] {
       };
 
-      ProgEl_List @.prog_code = [53] {
+      ProgEl_List @.prog_code = [40] {
 	IfReturn @[0] { };
 	RegisterArgs @[1] { };
 	PrintExpr @[2] { };
@@ -354,22 +254,9 @@ LeabraProject .projects[0] {
 	MemberFmArg @[18] { };
 	MemberFmArg @[19] { };
 	MemberFmArg @[20] { };
-	MemberFmArg @[21] { };
-	MemberFmArg @[22] { };
-	MemberFmArg @[23] { };
-	MemberFmArg @[24] { };
-	MemberFmArg @[25] { };
-	MemberFmArg @[26] { };
-	MemberFmArg @[27] { };
-	MemberFmArg @[28] { };
-	MemberFmArg @[29] { };
-	MemberFmArg @[30] { };
-	MemberFmArg @[31] { };
-	MemberFmArg @[32] { };
-	MemberFmArg @[33] { };
-	Comment @[34] { };
-	Comment @[35] { };
-	If @[36] { 
+	Comment @[21] { };
+	Comment @[22] { };
+	If @[23] { 
 	  ProgEl_List @.true_code = [1] {
 	    MiscCall @[0] { 
 	      ProgArg_List @.meth_args = [9] {
@@ -389,11 +276,11 @@ LeabraProject .projects[0] {
 	  ProgEl_List @.false_code = [0] {
 	  };
 	};
-	AssignExpr @[37] { };
-	Comment @[38] { };
-	DataColsFmArgs @[39] { };
-	Comment @[40] { };
-	IfElse @[41] { 
+	AssignExpr @[24] { };
+	Comment @[25] { };
+	DataColsFmArgs @[26] { };
+	Comment @[27] { };
+	IfElse @[28] { 
 	  ProgEl_List @.true_code = [4] {
 	    MethodCall @[0] { 
 	      ProgArg_List @.meth_args = [2] {
@@ -414,7 +301,7 @@ LeabraProject .projects[0] {
 	  ProgEl_List @.false_code = [0] {
 	  };
 	};
-	MethodCall @[42] { 
+	MethodCall @[29] { 
 	  ProgArg_List @.meth_args = [4] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
@@ -422,12 +309,12 @@ LeabraProject .projects[0] {
 	    ProgArg @[3] { };
 	  };
 	};
-	MiscCall @[43] { 
+	MiscCall @[30] { 
 	  ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	MethodCall @[44] { 
+	MethodCall @[31] { 
 	  ProgArg_List @.meth_args = [4] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
@@ -435,14 +322,14 @@ LeabraProject .projects[0] {
 	    ProgArg @[3] { };
 	  };
 	};
-	MethodCall @[45] { 
+	MethodCall @[32] { 
 	  ProgArg_List @.meth_args = [3] {
 	    ProgArg @[0] { };
 	    ProgArg @[1] { };
 	    ProgArg @[2] { };
 	  };
 	};
-	If @[46] { 
+	If @[33] { 
 	  ProgEl_List @.true_code = [2] {
 	    MethodCall @[0] { 
 	      ProgArg_List @.meth_args = [4] {
@@ -464,16 +351,16 @@ LeabraProject .projects[0] {
 	  ProgEl_List @.false_code = [0] {
 	  };
 	};
-	OtherProgramVar @[47] { };
-	Comment @[48] { };
-	DataVarProg @[49] { };
-	ProgramCallVar @[50] { 
+	OtherProgramVar @[34] { };
+	Comment @[35] { };
+	DataVarProg @[36] { };
+	ProgramCallVar @[37] { 
 	  ProgArg_List @.prog_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	PrintExpr @[51] { };
-	ProgramCall @[52] { 
+	PrintExpr @[38] { };
+	ProgramCall @[39] { 
 	  ProgArg_List @.prog_args = [1] {
 	    ProgArg @[0] { };
 	  };
@@ -875,7 +762,7 @@ LeabraProject .projects[0] {
 	  };
 	};
 
-	ProgEl_List @.prog_code = [20] {
+	ProgEl_List @.prog_code = [21] {
 	  MethodCall @[0] { 
 	    ProgArg_List @.meth_args = [1] {
 	      ProgArg @[0] { };
@@ -888,72 +775,114 @@ LeabraProject .projects[0] {
 	    };
 	  };
 	  ProgramCall @[3] { 
+	    ProgArg_List @.prog_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  ProgramCall @[4] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	    };
 	  };
-	  Comment @[4] { };
-	  MethodCall @[5] { 
+	  Comment @[5] { };
+	  MethodCall @[6] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
-	  ProgramCall @[6] { 
+	  ProgramCall @[7] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
-	    };
-	  };
-	  MethodCall @[7] { 
-	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
 	  MethodCall @[8] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
-	  NetUpdateView @[9] { };
-	  StopStepPoint @[10] { };
-	  Comment @[11] { };
-	  ProgramCall @[12] { 
+	  MethodCall @[9] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  NetUpdateView @[10] { };
+	  StopStepPoint @[11] { };
+	  Comment @[12] { };
+	  ProgramCall @[13] { 
 	    ProgArg_List @.prog_args = [1] {
 	      ProgArg @[0] { };
 	    };
 	  };
-	  ProgramCall @[13] { 
+	  ProgramCall @[14] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MethodCall @[14] { 
+	  MethodCall @[15] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
-	  ProgramCall @[15] { 
+	  ProgramCall @[16] { 
 	    ProgArg_List @.prog_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
-	    };
-	  };
-	  MethodCall @[16] { 
-	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
 	  MethodCall @[17] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
-	  NetUpdateView @[18] { };
-	  MethodCall @[19] { 
+	  MethodCall @[18] { 
+	    ProgArg_List @.meth_args = [0] {
+	    };
+	  };
+	  NetUpdateView @[19] { };
+	  MethodCall @[20] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
 	};
       };
     };
-    Program_Group @.gp[3] = [1] { 
+    Program_Group @.gp[3] = [2] { 
       Program @[0] { 
+	ProgObjList @.objs = [0] {
+	};
+
+	ProgType_List @.types = [0] {
+	};
+
+	ProgVar_List @.args = [1] {
+	  ProgVar @[0] { };
+	};
+
+	ProgVar_List @.vars = [1] {
+	  ProgVar @[0] { };
+	};
+
+	Function_List @.functions = [0] {
+	};
+
+	ProgEl_List @.load_code = [0] {
+	};
+
+	ProgEl_List @.init_code = [0] {
+	};
+
+	ProgEl_List @.prog_code = [2] {
+	  RandomCall @[0] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	  MethodCall @[1] { 
+	    ProgArg_List @.meth_args = [1] {
+	      ProgArg @[0] { };
+	    };
+	  };
+	};
+      };
+      Program @[1] { 
 	ProgObjList @.objs = [1] {
 	  LayerWriter @[0] { 
 	    LayerDataEl_List @.layer_data = [3] {
@@ -1807,9 +1736,8 @@ LeabraProject .projects[0] {
 	  ProgVar @[0] { };
 	};
 
-	ProgVar_List @.vars = [2] {
+	ProgVar_List @.vars = [1] {
 	  ProgVar @[0] { };
-	  ProgVar @[1] { };
 	};
 
 	Function_List @.functions = [0] {
@@ -1821,24 +1749,13 @@ LeabraProject .projects[0] {
 	ProgEl_List @.init_code = [0] {
 	};
 
-	ProgEl_List @.prog_code = [4] {
+	ProgEl_List @.prog_code = [3] {
 	  MethodCall @[0] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
 	  NetUpdateView @[1] { };
-	  If @[2] { 
-	    ProgEl_List @.true_code = [1] {
-	      ProgramCall @[0] { 
-		ProgArg_List @.prog_args = [0] {
-		};
-	      };
-	    };
-
-	    ProgEl_List @.false_code = [0] {
-	    };
-	  };
-	  MemberAssign @[3] { };
+	  MemberAssign @[2] { };
 	};
       };
       Program @[14] { 
@@ -2117,12 +2034,45 @@ LeabraProject .projects[0] {
 	    UserDataItem @[0] { };
      };
 
-	  T3DataViewFrame_List @.frames = [1] {
+	  T3DataViewFrame_List @.frames = [2] {
 	    T3DataViewFrame @[0] { 
 	      T3DataView_List @.children = [1] {
 		NetView @[0] { 
 		  ScaleRange_List @.scale_ranges = [1] {
 		    ScaleRange @[0] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @[0] { };
+		T3SavedView @[1] { };
+		T3SavedView @[2] { };
+		T3SavedView @[3] { };
+		T3SavedView @[4] { };
+		T3SavedView @[5] { };
+	      };
+	    };
+	    T3DataViewFrame @[1] { 
+	      T3DataView_List @.children = [1] {
+		GraphTableView @[0] { 
+		  T3DataView_List @.children = [16] {
+		    GraphColView @[0] { };
+		    GraphColView @[1] { };
+		    GraphColView @[2] { };
+		    GraphColView @[3] { };
+		    GraphColView @[4] { };
+		    GraphColView @[5] { };
+		    GraphColView @[6] { };
+		    GraphColView @[7] { };
+		    GraphColView @[8] { };
+		    GraphColView @[9] { };
+		    GraphColView @[10] { };
+		    GraphColView @[11] { };
+		    GraphColView @[12] { };
+		    GraphColView @[13] { };
+		    GraphColView @[14] { };
+		    GraphColView @[15] { };
 		  };
 		};
 	      };
@@ -2201,12 +2151,26 @@ LeabraProject .projects[0] {
 	      BaseSpec_Group @.children = [0] {
 	      };
 
-	      Schedule @.lrate_sched = [0] {
+	      Schedule @.lrate_sched = [7] {
+		SchedItem @[0] { };
+		SchedItem @[1] { };
+		SchedItem @[2] { };
+		SchedItem @[3] { };
+		SchedItem @[4] { };
+		SchedItem @[5] { };
+		SchedItem @[6] { };
 	      };
 	    };
 	  };
 
-	  Schedule @.lrate_sched = [0] {
+	  Schedule @.lrate_sched = [7] {
+	    SchedItem @[0] { };
+	    SchedItem @[1] { };
+	    SchedItem @[2] { };
+	    SchedItem @[3] { };
+	    SchedItem @[4] { };
+	    SchedItem @[5] { };
+	    SchedItem @[6] { };
 	  };
 	};
 	LeabraLayerSpec @[4] { 
@@ -2281,6 +2245,275 @@ LeabraProject .projects[0] {
   name=;
   el_typ=taDoc;
   el_def=0;
+  taDoc @[0] {
+   name="taDoc_1";
+   desc=;
+   auto_open=0;
+   web_doc=1;
+   wiki="emergent";
+   url="LeabraFlexProgs";
+   full_url="http://grey.colorado.edu/emergent/index.php/LeabraFlexProgs";
+   text_size=1;
+   text="<html>
+<head></head>
+<body>
+== Enter Title Here ==
+</body>
+</html>
+";
+   html_text="<!DOCTYPE html><html lang=\"en\" class=\"client-safari client-safari-2 client-webkit client-mac\"><head>
+<meta charset=\"UTF-8\">
+<title>LeabraFlexProgs - Emergent</title>
+<meta name=\"generator\" content=\"MediaWiki 1.18alpha\">
+<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">
+<link rel=\"edit\" title=\"Edit\" href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\">
+<link rel=\"stylesheet\" href=\"/emergent/extensions/Drafts/Drafts.css?3\">
+<link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
+<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"Emergent (en)\">
+<link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"http://grey.colorado.edu/emergent/api.php?action=rsd\">
+<link rel=\"alternate\" type=\"application/atom+xml\" title=\"Emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
+<link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=mediawiki.legacy.commonPrint%7Cmediawiki.legacy.shared%7Cskins.vector&amp;only=styles&amp;skin=vector\">
+<style>a{text-decoration:none}a.new,#quickbar a.new{color:#ba0000}</style><style type=\"text/css\" media=\"all\">.mw-collapsible-toggle{float:right}.mw-collapsible-toggle-expanded,.mw-collapsible-toggle-expanded a{cursor:n-resize}.mw-collapsible-toggle-collapsed,.mw-collapsible-toggle-collapsed a{cursor:s-resize} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}</style><style type=\"text/css\" media=\"all\">.suggestions{overflow:hidden;position:absolute;top:0px;left:0px;width:0px;border:none;z-index:99;padding:0;margin:-1px -1px 0 0} html > body .suggestions{margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:Window;font-size:0.8em;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;background-color:Window;font-size:0.8em;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;color:WindowText;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left}.suggestions-result-current{background-color:#4C59A6;background-color:Highlight;color:white;color:HighlightText}.suggestions-special .special-label{font-size:0.8em;color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white;color:HighlightText}.autoellipsis-matched,.highlight{font-weight:bold}</style><style type=\"text/css\" media=\"all\">#mw-panel.collapsible-nav div.portal{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIwAAAABCAMAAAA7MLYKAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAEtQTFRF29vb2tra4ODg6urq5OTk4uLi6+vr7e3t7Ozs8PDw5+fn4+Pj4eHh3d3d39/f6Ojo5eXl6enp8fHx8/Pz8vLy7+/v3Nzc2dnZ2NjYnErj7QAAAD1JREFUeNq0wQUBACAMALDj7hf6JyUFGxzEnYhC9GaNPG1xVffGDErk/iCigLl1XV2xM49lfAxEaSM+AQYA9HMKuv4liFQAAAAASUVORK5CYII=);background-image:url(/emergent/extensions/Vector/modules//images/portal-break.png?2010-12-16T00:56:40Z)!ie;background-position:left top;background-repeat:no-repeat;padding:0.25em 0 !important;margin:-11px 9px 10px 11px}#mw-panel.collapsible-nav div.portal h5{color:#4D4D4D;font-weight:normal;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA9QTFRFeXl53d3dmpqasbGx////GU0iEgAAAAV0Uk5T/////wD7tg5TAAAAK0lEQVQI12NwgQIG0hhCDAwMTCJAhqMCA4MiWEoIJABiOCooQhULi5BqMgB2bh4svs8t+QAAAABJRU5ErkJggg==) left center no-repeat;background:url(/emergent/extensions/Vector/modules//images/open.png?2011-01-10T01:51:40Z) left center no-repeat!ie;padding:4px 0 3px 1.5em;margin-bottom:0px}#mw-panel.collapsible-nav div.collapsed h5{color:#0645AD;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAxQTFRF3d3deXl5////nZ2dQA6SoAAAAAN0Uk5T//8A18oNQQAAADNJREFUeNpiYEIDDMQKMKALMDOgCTDCRWACcBG4AEwEIcDITEAFuhnotmC4g4EEzwEEGAADqgHmQSPJKgAAAABJRU5ErkJggg==) left center no-repeat;background:url(/emergent/extensions/Vector/modules//images/closed-ltr.png?2011-01-10T01:51:40Z) left center no-repeat!ie;margin-bottom:0px}#mw-panel.collapsible-nav div h5:hover{cursor:pointer;text-decoration:none}#mw-panel.collapsible-nav div.collapsed h5:hover{text-decoration:underline}#mw-panel.collapsible-nav div.portal div.body{background:none !important;padding-top:0px;display:none}#mw-panel.collapsible-nav div.persistent div.body{display:block}#mw-panel.collapsible-nav div.first h5{display:none}#mw-panel.collapsible-nav div.persistent h5{background:none !important;padding-left:0.7em;cursor:default}#mw-panel.collapsible-nav div.portal div.body ul li{padding:0.25em 0}#mw-panel.collapsible-nav div.first{background-image:none;margin-top:0px}#mw-panel.collapsible-nav div.persistent div.body{margin-left:0.5em}</style><style type=\"text/css\" media=\"all\">.ui-helper-hidden{display:none}.ui-helper-hidden-accessible{position:absolute;left:-99999999px}.ui-helper-reset{margin:0;padding:0;border:0;outline:0;line-height:1.3;text-decoration:none;font-size:100%;list-style:none}.ui-helper-clearfix:after{content:\".\";display:block;height:0;clear:both;visibility:hidden}.ui-helper-clearfix{display:inline-block} * html .ui-helper-clearfix{height:1%}.ui-helper-clearfix{display:block} .ui-helper-zfix{width:100%;height:100%;top:0;left:0;position:absolute;opacity:0;filter:Alpha(Opacity=0)} .ui-state-disabled{cursor:default !important}  .ui-icon{display:block;text-indent:-99999px;overflow:hidden;background-repeat:no-repeat}  .ui-widget-overlay{position:absolute;top:0;left:0;width:100%;height:100%}  .ui-widget{font-family:sans-serif;font-size:0.8em}.ui-widget .ui-widget{font-size:1em}.ui-widget input,.ui-widget select,.ui-widget textarea,.ui-widget button{font-family:sans-serif;font-size:1em}.ui-widget-content{border:none;background:#f2f5f7 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAALklEQVQYld3KsQ0AIAzEwFP2Xxgongoo2CCNZUs25kpBQwQlOYbKy1CRa//cExv8DRSkjiA77AAAAABJRU5ErkJggg==) 50% top repeat-x;background:#f2f5f7 url(/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-hard_100_f2f5f7_1x100.png?2010-12-16T00:48:20Z) 50% top repeat-x!ie;color:#362b36}.ui-widget-content a{color:#362b36}.ui-widget-header{border:1px solid #aed0ea;line-height:1em;background:#ffffff url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAHUlEQVQYlWP49+/ffyYGBgaGIU4wMjIOBmcMBQIAf6oEw6+MsKoAAAAASUVORK5CYII=) 50% 50% repeat-x;background:#ffffff url(/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_100_ffffff_1x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x!ie;color:#222222;font-weight:bold}.ui-widget-header a{color:#222222} .ui-state-default,.ui-widget-content .ui-state-default,.ui-widget-header .ui-state-default{border:1px solid #aed0ea;background:#d7ebf9 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAANklEQVQYld3PsQkAIBQD0SP7T2ptKf+sRBcQweY1SYrQ+jAAfyEShQik3KyggFR5Vvbi/YVrTPt2HIFGqL5zAAAAAElFTkSuQmCC) 50% 50% repeat-x;background:#d7ebf9 url(/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-hard_80_d7ebf9_1x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x!ie;font-weight:normal;color:#2779aa}.ui-state-default a,.ui-state-default a:link,.ui-state-default a:visited{color:#2779aa;text-decoration:none}.ui-state-hover,.ui-widget-content .ui-state-hover,.ui-widget-header .ui-state-hover,.ui-state-focus,.ui-widget-content .ui-state-focus,.ui-widget-header .ui-state-focus{border:1px solid #74b2e2;background:#e4f1fb url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAN0lEQVQYlWP48vPvfyYGBgaGIUT8/w9nwQmG//+RuUhK/jNgSEB1MDAw/Wf4j6kDSXagvUoLAgBheh6WDv5kIgAAAABJRU5ErkJggg==) 50% 50% repeat-x;background:#e4f1fb url(/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_100_e4f1fb_1x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x!ie;font-weight:normal;color:#0070a3}.ui-state-hover a,.ui-state-hover a:hover{color:#0070a3;text-decoration:none}.ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active{border:1px solid #cccccc;background:#f0f0f0 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAIklEQVQYlWP48OHDfyYGBgaG4UowMjIis7Bx0cTQWMOOAABBiwSuT/SJQAAAAABJRU5ErkJggg==) 50% 50% repeat-x;url(/emergent/resources/jquery.ui/themes/vector/images/ui-bg_inset-hard_100_f0f0f0_1x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x!ie;font-weight:normal;color:#000000}.ui-state-active a,.ui-state-active a:link,.ui-state-active a:visited{color:#000000;text-decoration:none}.ui-widget :active{outline:none} .ui-state-highlight,.ui-widget-content .ui-state-highlight,.ui-widget-header .ui-state-highlight{border:1px solid #f9dd34;background:#ffef8f url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAAEwK2r2AAAAYElEQVQYla2QMRLCQAzE5P3/I/giXQKcleYmDYEJQxqNC3stG+83A/COQeyFwIPUYQtwFCBN8ElwJcU4P/sFTXQQeBH2qvBkwD/Lf8A8X1Il0Z720FNXexdvIn5+8dXYAKv0NbGis6yGAAAAAElFTkSuQmCC) 50% top repeat-x;url(/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_25_ffef8f_1x100.png?2010-12-16T00:48:20Z) 50% top repeat-x!ie;color:#363636}.ui-state-highlight a,.ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a{color:#363636}.ui-state-error,.ui-widget-content .ui-state-error,.ui-widget-header .ui-state-error{border:1px solid #cd0a0a;background:#cd0a0a url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkCAYAAAD0ZHJ6AAAAfElEQVRoge3OMQHAIADAMMaJf1vTNCRw9BhHoiDPu9Y3Ljb/DpwIVoKVYCVYCVaClWAlWAlWgpVgJVgJVoKVYCVYCVaClWAlWAlWgpVgJVgJVoKVYCVYCVaClWAlWAlWgpVgJVgJVoKVYCVYCVaClWAlWAlWgpVgJVgJVhu+ywKoaFZcDAAAAABJRU5ErkJggg==) 50% 50% repeat-x;url(/emergent/resources/jquery.ui/themes/vector/images/ui-bg_flat_15_cd0a0a_40x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x!ie;color:#ffffff}.ui-state-error a,.ui-widget-content .ui-state-error a,.ui-widget-header .ui-state-error a{color:#ffffff}.ui-state-error-text,.ui-widget-content .ui-state-error-text,.ui-widget-header .ui-state-error-text{color:#ffffff}.ui-priority-primary,.ui-widget-content .ui-priority-primary,.ui-widget-header .ui-priority-primary{font-weight:bold}.ui-priority-secondary,.ui-widget-content .ui-priority-secondary,.ui-widget-header .ui-priority-secondary{opacity:.7;filter:Alpha(Opacity=70);font-weight:normal}.ui-state-disabled,.ui-widget-content .ui-state-disabled,.ui-widget-header .ui-state-disabled{opacity:.35;filter:Alpha(Opacity=35);background-image:none}  .ui-icon{width:16px;height:16px}.ui-icon,.ui-widget-content .ui-icon,.ui-widget-header .ui-icon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADwCAMAAADYSUr5AAAA7VBMVEV0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psyPQTyXAAAATnRSTlMAGBAyBAhQv4OZLiJUcEBmYBoSzQwgPBZCSEoeWiYwUiyFNIeBw2rJz8c4RBy9uXyrtaWNqa2zKP2fJO8KBgKPo2KVoa9s351GPm5+kWho0kj9AAAPhUlEQVR4nO1djWLbthEGyUiq5YSSLXtp7FpLOmfzkmxr126tmi2p03RJ1/Xe/3EGgARxPyAgRbIk2/hkSz4CJO4+HsE7AJSVysjI2AMUUOxahZ2iANhzBtZWr4BoIRSYAVN5u4QwDwQDRbcwfUi5KS3wFuDmFnQLa4Dtb//cqktwD5QEFFwfUs7PoCCA7y4bEJVFizcIob8KmhAplwwqVjt+9FBl3uINQniwEiryEyw9JHqGpQdEFNi+B4QQ7QOiHhysIPoAxUqxvdvvA9K42bsAv4S2fxfYOe57IJSRkZGRkZGxx7jxSHDHcRBXQMTyIjInBgHwBJ/bEx8PEANC+uhbpSSggCBAVODVabpI1S/k4WLZpTn6NpMhoX9Y40hxYERFpMcqUs4AloCtDQdID1YhnyXZ2hLjAYWiO9Dy1PDB7tPhIqLx+uMB8grZaR+Qxl2/C2RkZGRkZGRk7A7rBf7J0DR5/LUTjzUPIPSPGvQJiVJiB7kcQCiUOJrcFNtDZIf2xarQ3aGvLNxAVIFAabz90BFiBIlycTBhgWwOWCH0FLYHlPqwHaCvcIn2ZbosCevfPTRiFFcgvHukCjWwrc3GrGh1fsAof8EaUReKXkCB4/MzFNo97qLpFiKFYv/kNR5YQxQbQEofkZ2OuEOHqqT6gFTpru8CN7x/+jaZkZGRkZGRcV+x/rLUNcMM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);background-image:url(/emergent/resources/jquery.ui/themes/vector/images/ui-icons_72a7cf_256x240.png?2010-12-16T00:48:20Z)!ie}.ui-state-default .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(/emergent/resources/jquery.ui/themes/vector/images/ui-icons_3d80b3_256x240.png?2010-12-16T00:48:20Z)!ie}.ui-state-hover .ui-icon,.ui-state-focus .ui-icon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADwCAMAAAGvTnpvAAAA7VBMVEUkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwOSETqAAAATnRSTlMAGBAyBAhQv4OZLiJUcEBmYBoSzQwgPBZCSEoeWiYwUiyFNIeBw2rJz8c4RBy9uXyrtaWNqa2zKP2fJO8KBgKPo2KVoa9s351GPm5+kWho0kj9AAATX0lEQVR4nO1dC2PbthEGyUpaqJii/JgbZ3bTLNmyJns/Oi1bM7vp0q7r/f+fM+JxwOEAkNTTSoxPlqHD83AE7gAQBIUYBHSfQv0XnbsJgH02A3g5ibVzDFNtlkPI1VjIuOUa8eMclOLS1uRSPBETURnOrkbmID9T9fuPyu+cSGYYKya5efeddN9TRS1H8eD4kDjrPutBpptt2apkiqX57A4gfloj7ua9AXMQ3dWvNs8n7NCwZk6bqYSg1CgNsaCBHDAluMQjcihEWBNYSxamUYNMs15KmwMUKhm0S5UBwMQFjcqxelSYskHBtLC26X7/eWQtVB1MaWXzF1OrUyhLgOrFiBwalDwg6+tigfzbnNbM40UlTrrO3clTftcuX7jyY9gkv81RVWI9K0OxNa8Hruw+EFctu6xaqDhCGkjQ2hyMitiXKyR+7xSqx6u6AitlpI3wrBj5OSo5xv8ZShoq5VZE+p/hb/OVzuPHyHGXQLoug9b4af/OzArAqtlvq8PidqZSflOYigVIpTZ33192wQ1jHVXLgjWWeZdAfhn3UteqH43NI9EGSjns7CJ//g8h6o6++UrLBTrOZJUkhy4NxDNAblZld53kJZl34z4jE5cB0HbA5RHnzg9Txud28wwG4aS1pwzKH7t/IyxlEvW2XVQLcf0vyeCWfL9j39vk95iA1alinhtmcHDr34ti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);background-image:url(/emergent/resources/jquery.ui/themes/vector/images/ui-icons_2694e8_256x240.png?2010-12-16T00:48:20Z)!ie}.ui-state-active .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(/emergent/resources/jquery.ui/themes/vector/images/ui-icons_666666_256x240.png?2010-12-16T00:48:20Z)!ie}.ui-state-highlight .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(/emergent/resources/jquery.ui/themes/vector/images/ui-icons_2e83ff_256x240.png?2010-12-16T00:48:20Z)!ie}.ui-state-error .ui-icon,.ui-state-error-text .ui-icon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADwCAMAAADYSUr5AAAA7VBMVEX8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vz8/vywC3+8AAAATnRSTlMAGBAyBAhQv4OZLiJUcEBmYBoSzQwgPBZCSEoeWiYwUiyFNIeBw2rJz8c4RBy9uXyrtaWNqa2zKP2fJO8KBgKPo2KVoa9s351GPm5+kWho0kj9AAAPhUlEQVR4nO1djWLbthEGyUiq5YSSLXtp7FpLOmfzkmxr126tmi2p03RJ1/Xe/3EGgARxPyAgRbIk2/hkSz4CJO4+HsE7AJSVysjI2AMUUOxahZ2iANhzBtZWr4BoIRSYAVN5u4QwDwQDRbcwfUi5KS3wFuDmFnQLa4Dtb//cqktwD5QEFFwfUs7PoCCA7y4bEJVFizcIob8KmhAplwwqVjt+9FBl3uINQniwEiryEyw9JHqGpQdEFNi+B4QQ7QOiHhysIPoAxUqxvdvvA9K42bsAv4S2fxfYOe57IJSRkZGRkZGxx7jxSHDHcRBXQMTyIjInBgHwBJ/bEx8PEANC+uhbpSSggCBAVODVabpI1S/k4WLZpTn6NpMhoX9Y40hxYERFpMcqUs4AloCtDQdID1YhnyXZ2hLjAYWiO9Dy1PDB7tPhIqLx+uMB8grZaR+Qxl2/C2RkZGRkZGRk7A7rBf7J0DR5/LUTjzUPIPSPGvQJiVJiB7kcQCiUOJrcFNtDZIf2xarQ3aGvLNxAVIFAabz90BFiBIlycTBhgWwOWCH0FLYHlPqwHaCvcIn2ZbosCevfPTRiFFcgvHukCjWwrc3GrGh1fsAof8EaUReKXkCB4/MzFNo97qLpFiKFYv/kNR5YQxQbQEofkZ2OuEOHqqT6gFTpru8CN7x/+jaZkZGRkZGRcV+x/rLUNcMMqUAscgnFocmpqkTzqymwVAPxfJ5PnIUUQOUKT04tEdWZyv3JCQSn96WS4pD97QfyW25A7NhSAbyhmVj0FEltA4vdiygBibXhoUYgykCUP7HwPTDeEqAIcHVMkZg7Zx4k0uFANs63hPQXCoRLAwdgGsr9Az7Qv7sgQGgg1aPl/BJLExBWgG4RFRLFImGmIquPC/klEGyCG0AuAXaJJC+B8FVe9NYQDEcXB8g6AQcjYJ1goJIggHWCrFR0S6kRHN5+4BzFi8NaoN35NRxUvL+JJdZr7PV4wK6fj8nIyMjIyNhr3OxdXAYq7FHZwB6bDSzSh4sF0utChqo0NAvaT1hLzXwFinmCzmeDucEQK18TTaQoFgP7bNC+RZ4OT4T6gQogDFYk+1QxQlj19QGSAWKiLYp8P0Ag1Gbz1ULfWHLg9iUnQNK5QQJcukm04blKLH2GgEJCY+HzXAZWCvHKco3Bp6MIaCjSXXRJyOxeqhnzEaF93MfFGW/O16ZvDL5TM4MJIjujz/cHypkQuuzRwWJ93BKdIt+wCRAPl9kpe2Ikkb2mFgGlxh/i40d3EHfdvoyMjIyMu43ylt/IAmGHnN5iIt7wKfbv01RAcJqFRl9lcjYQSnbQqKgC4fYOwSJt6N6trE0twZ9kN/PqNpTQeICvr4TLsDYC06U7BMjshS+v1/aT7IwQYD5LcgRQXMT2FrBfBLjZ6151jDElk9tPFfpUgk2yregusX25BJbwAFEfM+YI6vGAti4bTtizB+TjfQCrERyhKb2X8D6A9wX75P4t4neBYJeP6pdhg/gQl8MWvytzeSTjgOQBynQdh/iXKdxOrGJ/RkZGRsb9QmXihGr5+g8GGg9uTh+KoVZuNIzV+CwRucFBEyr1mVjx4irOxwM1BhirB6Q+2eNQi4eqR+aF6mELtoMzCR7V9RAFe/ZvQogNiyY8FPSUTFsLp8TeTmMui5mtw7bcaT0Yw2AA4wFRQIlkgq+1DQrNhkmoxS5Jq+u6bMAIGRECEANgXHTgWzwgBOhDH2l0oTQ4D8D5NMktBgNywAEMjo8rwATMZrPY7JGxBoJCkIBDQiAY09EGTUiBCWkUpISfGPR5AAwBfZiG2z7Ayc1yeKTxid39xBNwfHr4O0LA48ePFTvhYrF1r4tyAoz9n2MCqEuBtp/6GDR0oAYfG/R6wJExHYZHfhygsv7fEWCOj4bYmsP5A+pL4MkTfAnMlD4F+r3bobKvTyTA2P/w7PN+Agq2QW8piqMCpTBwenoKvX0AHGkGtP2YAPvTEWA7QUTAudn7/NxtOG46wWNmDtpBEkBzN7rBEvAFHp+YTB/q97qPAN4gHFqgBi8uLsC7qPCA6mg41G/+ErByPwEXDdoNxRhOx+M5jPEzQugS0ht+b1/Y3gEnYMAIAOIBE29/hIDucE8tmMsNOgK4B1RHFu4UCRlMHzv0xzcajcfdXWDs2h8TArBCkoDUJYDLmz6w7ip3BFS0ve5wTRwAn6keMA9I3QYbfSZ0DKbyt+7OXjGI1idPcfNyAyfAMlCrzaGqphYrxHocLHRJVycnfGUcbtT+jIyMjIw9x7Nn8fJSzG0TmFtO8rZT+XT3S3ub+tKJbbLd5diTVp50+zahyeHSslJ/YPrU0fuazrZO2CZ92/ZCCVXlGRiZKPJyPPRxyIFWeXLQBXJBKiq/3divEAN6ZwM200Qjm7EJBZeWm/PRWVCbYK7s7u2l4XaCz+lzgOfMfhMonXr7TWzeZb98dbgIzBT8Ub8eYYUqfZ4rVJ/MDbIDgPqTulJ/xvntWAtjIisqnwxOkGz0n077FARoY79GdA6HPE4rOy196NiMWHTZlSSApcOgXpy/fHV2joaNKu3ffsAnRcBf4K/6NcIG6tIxk3HyoXPjASqfUgXbYN5PzpL2njkR9QMjeDTVHDTCgRuxOegjoO0FvKzP/t/gmVdI24+G7NIe8JX6Wv3dDyldMA+4YB5wwTygtd+dwRqaTqrLb1l73zTSN52CNpnHuQOYPsDblybgxfkXh/oVtr+N1DEBJdhRJyd/Bd/q1z+cbNrD17iVKyajcnv9arhOkRPgsruuD6DmNPwpDNrLw2CoTgHni4yALr0L29+tiKAEIPn868ejx//8rpWP3OEOl5On9OwpcQm0MhafP/ey8f1uvDNIgGLQG8z4YO99ENgg95etwv4uYJYY8fUGHYH6j6fscHFZMftlAl9i+9XL73X3N/n+ZStOzfVfRvYXhrbdKOpEgVQTg/wsDuDD3kwOfQNMTJ5y+/ltUDWLunyxnRF46IqlBzGMY4X7inggREFioIyMjIyMHWCIB6ZNKAcXseo3vLTQTkVE7348dlwJJSz0+wLfmi8BhZqfw3D4ww/wHVLnEd5/fgYvXsDZ3MlsvYUbbnDjDZ3MN3TJG4+bxjAaDl8TBri9qxEw1ccao2wTNAMLHo2f+sjrXwb/9qHoYqgPMBXJTVfOpmrZH23y6uvo0LHSyY6fHGwKfHJlAuMFvObjDYrIqxBgQi20h7Hd/nYVLmno+eaNUm/eeH2GCuopntnhBJAlI2AHo9CCh1I1QxUdAbqqGY9BBLwyc3W4wYVhvY8A4BoIc1l5M7vnPWphZW9/Ses3n37y9a0uGqFwFQZsQQbd386DogpgEk+dzynsAZMJXq8+ns9NeukJ0PYrNATGGefJQlhkLo7DTXr+y3bNiOsDvrXTz/C2q1DXZH84iRNwrP88Nj+u2DjYEE6RBxD9Knj16ujVHC67A7422o02RwD3gB+t7EblWvu9geOFxSnd3ROmT+nJyQkhoPlsxVONc/3TEdBos+jtA+ZzcwHgTvD1cDjaYCcItA8w9i88A8b+mqSjc6Pvqd998QguEQPmQMeo23ODN86+p0/bn1buBkT6+oBhNZ/PYY4ZAHYb3PRd4LkZmPX68NRtMZn4ASvdA+qf0jMA5MP9eeg28Nug9QiLnj5A33U1MAES6xHAUNpz/9zFAYE1gqQDMT3G6xI9pwdw/aIgKoHCS1YGlRnSq9yCjdXjgN3j+N27YyROHxmuNAeNKPpYuXIyIyMjYy0M8eros59MF/PT2c602T7eA7zvhJ9dr/vzDjXaLp4Yc5+0wllzxzHv3gdmMMM7/CcQzKgVBqYTmFn+Z+mKm8J7k0A5F/jgCfjQ1WBhQyiOqD0lYuqBb+AyzMw9Ha2G3m6c8qQx+AlqnIceQp+Sb6i9UyQWbhr54+AjnZ0VzW2TAN0DmBT6PWmc6jDBE2PK2u+nF43dyP7Q0t1pOcX2fdRvH0mF2Q4JqN35rnHjVIeaXfIAVyUuw/aHCCiJy9iF5l1621zweI8KZrPZ9iJdb7DXJ3US0OSrtZ10imt7wHY7QesAzUMz1oZ3noB3qFJ/H18j97FYuw8QDN4oeKf30osvcSW2ExLo+VcbuAuo/sUIm8fMG9xocO3Ea19J9gFYivnHJ2KnyfovZlgW3v6ySx32abQiIyMjIyPjhlFDTLxpwIgFMnTp6A3g4IDKNY+stkwAMAoIAbasxBXqUWneSAWTMjt50lTqT29rFjvXohjsDNm2YPXDFlICmrJOZ3t6tHm8AiEAl0sCeLIIorIRt+cFbew/QRsoAXb4o1XSfoywzm0FTMAoYBNvLyFu8v8HpLBtD1iKgC17wHb7AI6d9wFbvguAIGTHd4E9wG7jgIyMjIyM+434c2R3HeV/Ffx6jtZu6ijl8h59T655jhR+rdHzDOP6beABCheb8O8/WFXeOyzgf5oAhVYnKxP7CwaAf1afJu8bSrhS6tdaXeGnrRenOqOlz9d6QwYnA/3TLd+GE7qe3chA5YF5DfY0vK3adfOX/gyNp2BW25MHdxAB9qvRiiP3/XpQQFGYDU4+Mi///XumXG8pjvaUAOsBGlf4jJt+YYEzeEzAdw06F19R3juM7D1wita86GR0CKfDHgLuXCc4Bri6vMLdfjMc4VNSUNsdodo2xu/1+Xl/K5+az8jIyMhYG/z5gJTMF1GtKq/a3rpyCvz5gJTMl9GtKq/a3rpyCmfQ4WwZmS+kXFVetb115ST48wEf/AGcfG1iw+tWbpbS2vJ3nQxcVr3lH3z5h972FUTLzYpOVk7l5hD+eYcYwDcAnewOotrZ4OtrPDucqi/LRX0/RR4qx7Nn4U8g+qjffvuN6Gf+nC85vwauHjaYyubqvWYKY4VEfSUMitdnBCT1Ue63R5439m+OgCn6DroAAaHPVQxKth/wkJgHmG8bmQMsT0D6EjDfvhVRKO3ywOQUgRA7nmL1uawZmHf1k+DPBwQ6NdcJ+k6Md1LA5f5ONdhJ8vZ5J0vLHT99srkGOjmJbd/G1r2Nriqnse1AZt1AalU5jW2HsuuG0qvKGRkZGRkZGRG0gcONyXsP9v8D0/IdJADiBNiXl3327WRGgOL/9HC/0XwlIURkRhC4tz6Z/fu7fUf2gHvfB9z3u0BGRkZGRkbGplHcnkgguQoSqtUXuhbs/wPtMwqV0HUJAvj5vk32b8IDuL23yn7qAXZ5u32hbRX7d3o82Df1FZXvbh9QOfhyxldr/+3xgXU9oKmvsHyr7F/XA269/eveBXrsv7N9QALe/tvjA0kPWAXGbvebkbHn+D/J5nMcHzx1UAAAAABJRU5ErkJggg==);background-image:url(/emergent/resources/jquery.ui/themes/vector/images/ui-icons_ffffff_256x240.png?2010-12-16T00:48:20Z)!ie} .ui-icon-carat-1-n{background-position:0 0}.ui-icon-carat-1-ne{background-position:-16px 0}.ui-icon-carat-1-e{background-position:-32px 0}.ui-icon-carat-1-se{background-position:-48px 0}.ui-icon-carat-1-s{background-position:-64px 0}.ui-icon-carat-1-sw{background-position:-80px 0}.ui-icon-carat-1-w{background-position:-96px 0}.ui-icon-carat-1-nw{background-position:-112px 0}.ui-icon-carat-2-n-s{background-position:-128px 0}.ui-icon-carat-2-e-w{background-position:-144px 0}.ui-icon-triangle-1-n{background-position:0 -16px}.ui-icon-triangle-1-ne{background-position:-16px -16px}.ui-icon-triangle-1-e{background-position:-32px -16px}.ui-icon-triangle-1-se{background-position:-48px -16px}.ui-icon-triangle-1-s{background-position:-64px -16px}.ui-icon-triangle-1-sw{background-position:-80px -16px}.ui-icon-triangle-1-w{background-position:-96px -16px}.ui-icon-triangle-1-nw{background-position:-112px -16px}.ui-icon-triangle-2-n-s{background-position:-128px -16px}.ui-icon-triangle-2-e-w{background-position:-144px -16px}.ui-icon-arrow-1-n{background-position:0 -32px}.ui-icon-arrow-1-ne{background-position:-16px -32px}.ui-icon-arrow-1-e{background-position:-32px -32px}.ui-icon-arrow-1-se{background-position:-48px -32px}.ui-icon-arrow-1-s{background-position:-64px -32px}.ui-icon-arrow-1-sw{background-position:-80px -32px}.ui-icon-arrow-1-w{background-position:-96px -32px}.ui-icon-arrow-1-nw{background-position:-112px -32px}.ui-icon-arrow-2-n-s{background-position:-128px -32px}.ui-icon-arrow-2-ne-sw{background-position:-144px -32px}.ui-icon-arrow-2-e-w{background-position:-160px -32px}.ui-icon-arrow-2-se-nw{background-position:-176px -32px}.ui-icon-arrowstop-1-n{background-position:-192px -32px}.ui-icon-arrowstop-1-e{background-position:-208px -32px}.ui-icon-arrowstop-1-s{background-position:-224px -32px}.ui-icon-arrowstop-1-w{background-position:-240px -32px}.ui-icon-arrowthick-1-n{background-position:0 -48px}.ui-icon-arrowthick-1-ne{background-position:-16px -48px}.ui-icon-arrowthick-1-e{background-position:-32px -48px}.ui-icon-arrowthick-1-se{background-position:-48px -48px}.ui-icon-arrowthick-1-s{background-position:-64px -48px}.ui-icon-arrowthick-1-sw{background-position:-80px -48px}.ui-icon-arrowthick-1-w{background-position:-96px -48px}.ui-icon-arrowthick-1-nw{background-position:-112px -48px}.ui-icon-arrowthick-2-n-s{background-position:-128px -48px}.ui-icon-arrowthick-2-ne-sw{background-position:-144px -48px}.ui-icon-arrowthick-2-e-w{background-position:-160px -48px}.ui-icon-arrowthick-2-se-nw{background-position:-176px -48px}.ui-icon-arrowthickstop-1-n{background-position:-192px -48px}.ui-icon-arrowthickstop-1-e{background-position:-208px -48px}.ui-icon-arrowthickstop-1-s{background-position:-224px -48px}.ui-icon-arrowthickstop-1-w{background-position:-240px -48px}.ui-icon-arrowreturnthick-1-w{background-position:0 -64px}.ui-icon-arrowreturnthick-1-n{background-position:-16px -64px}.ui-icon-arrowreturnthick-1-e{background-position:-32px -64px}.ui-icon-arrowreturnthick-1-s{background-position:-48px -64px}.ui-icon-arrowreturn-1-w{background-position:-64px -64px}.ui-icon-arrowreturn-1-n{background-position:-80px -64px}.ui-icon-arrowreturn-1-e{background-position:-96px -64px}.ui-icon-arrowreturn-1-s{background-position:-112px -64px}.ui-icon-arrowrefresh-1-w{background-position:-128px -64px}.ui-icon-arrowrefresh-1-n{background-position:-144px -64px}.ui-icon-arrowrefresh-1-e{background-position:-160px -64px}.ui-icon-arrowrefresh-1-s{background-position:-176px -64px}.ui-icon-arrow-4{background-position:0 -80px}.ui-icon-arrow-4-diag{background-position:-16px -80px}.ui-icon-extlink{background-position:-32px -80px}.ui-icon-newwin{background-position:-48px -80px}.ui-icon-refresh{background-position:-64px -80px}.ui-icon-shuffle{background-position:-80px -80px}.ui-icon-transfer-e-w{background-position:-96px -80px}.ui-icon-transferthick-e-w{background-position:-112px -80px}.ui-icon-folder-collapsed{background-position:0 -96px}.ui-icon-folder-open{background-position:-16px -96px}.ui-icon-document{background-position:-32px -96px}.ui-icon-document-b{background-position:-48px -96px}.ui-icon-note{background-position:-64px -96px}.ui-icon-mail-closed{background-position:-80px -96px}.ui-icon-mail-open{background-position:-96px -96px}.ui-icon-suitcase{background-position:-112px -96px}.ui-icon-comment{background-position:-128px -96px}.ui-icon-person{background-position:-144px -96px}.ui-icon-print{background-position:-160px -96px}.ui-icon-trash{background-position:-176px -96px}.ui-icon-locked{background-position:-192px -96px}.ui-icon-unlocked{background-position:-208px -96px}.ui-icon-bookmark{background-position:-224px -96px}.ui-icon-tag{background-position:-240px -96px}.ui-icon-home{background-position:0 -112px}.ui-icon-flag{background-position:-16px -112px}.ui-icon-calendar{background-position:-32px -112px}.ui-icon-cart{background-position:-48px -112px}.ui-icon-pencil{background-position:-64px -112px}.ui-icon-clock{background-position:-80px -112px}.ui-icon-disk{background-position:-96px -112px}.ui-icon-calculator{background-position:-112px -112px}.ui-icon-zoomin{background-position:-128px -112px}.ui-icon-zoomout{background-position:-144px -112px}.ui-icon-search{background-position:-160px -112px}.ui-icon-wrench{background-position:-176px -112px}.ui-icon-gear{background-position:-192px -112px}.ui-icon-heart{background-position:-208px -112px}.ui-icon-star{background-position:-224px -112px}.ui-icon-link{background-position:-240px -112px}.ui-icon-cancel{background-position:0 -128px}.ui-icon-plus{background-position:-16px -128px}.ui-icon-plusthick{background-position:-32px -128px}.ui-icon-minus{background-position:-48px -128px}.ui-icon-minusthick{background-position:-64px -128px}.ui-icon-close{background-position:-80px -128px}.ui-icon-closethick{background-position:-96px -128px}.ui-icon-key{background-position:-112px -128px}.ui-icon-lightbulb{background-position:-128px -128px}.ui-icon-scissors{background-position:-144px -128px}.ui-icon-clipboard{background-position:-160px -128px}.ui-icon-copy{background-position:-176px -128px}.ui-icon-contact{background-position:-192px -128px}.ui-icon-image{background-position:-208px -128px}.ui-icon-video{background-position:-224px -128px}.ui-icon-script{background-position:-240px -128px}.ui-icon-alert{background-position:0 -144px}.ui-icon-info{background-position:-16px -144px}.ui-icon-notice{background-position:-32px -144px}.ui-icon-help{background-position:-48px -144px}.ui-icon-check{background-position:-64px -144px}.ui-icon-bullet{background-position:-80px -144px}.ui-icon-radio-off{background-position:-96px -144px}.ui-icon-radio-on{background-position:-112px -144px}.ui-icon-pin-w{background-position:-128px -144px}.ui-icon-pin-s{background-position:-144px -144px}.ui-icon-play{background-position:0 -160px}.ui-icon-pause{background-position:-16px -160px}.ui-icon-seek-next{background-position:-32px -160px}.ui-icon-seek-prev{background-position:-48px -160px}.ui-icon-seek-end{background-position:-64px -160px}.ui-icon-seek-start{background-position:-80px -160px} .ui-icon-seek-first{background-position:-80px -160px}.ui-icon-stop{background-position:-96px -160px}.ui-icon-eject{background-position:-112px -160px}.ui-icon-volume-off{background-position:-128px -160px}.ui-icon-volume-on{background-position:-144px -160px}.ui-icon-power{background-position:0 -176px}.ui-icon-signal-diag{background-position:-16px -176px}.ui-icon-signal{background-position:-32px -176px}.ui-icon-battery-0{background-position:-48px -176px}.ui-icon-battery-1{background-position:-64px -176px}.ui-icon-battery-2{background-position:-80px -176px}.ui-icon-battery-3{background-position:-96px -176px}.ui-icon-circle-plus{background-position:0 -192px}.ui-icon-circle-minus{background-position:-16px -192px}.ui-icon-circle-close{background-position:-32px -192px}.ui-icon-circle-triangle-e{background-position:-48px -192px}.ui-icon-circle-triangle-s{background-position:-64px -192px}.ui-icon-circle-triangle-w{background-position:-80px -192px}.ui-icon-circle-triangle-n{background-position:-96px -192px}.ui-icon-circle-arrow-e{background-position:-112px -192px}.ui-icon-circle-arrow-s{background-position:-128px -192px}.ui-icon-circle-arrow-w{background-position:-144px -192px}.ui-icon-circle-arrow-n{background-position:-160px -192px}.ui-icon-circle-zoomin{background-position:-176px -192px}.ui-icon-circle-zoomout{background-position:-192px -192px}.ui-icon-circle-check{background-position:-208px -192px}.ui-icon-circlesmall-plus{background-position:0 -208px}.ui-icon-circlesmall-minus{background-position:-16px -208px}.ui-icon-circlesmall-close{background-position:-32px -208px}.ui-icon-squaresmall-plus{background-position:-48px -208px}.ui-icon-squaresmall-minus{background-position:-64px -208px}.ui-icon-squaresmall-close{background-position:-80px -208px}.ui-icon-grip-dotted-vertical{background-position:0 -224px}.ui-icon-grip-dotted-horizontal{background-position:-16px -224px}.ui-icon-grip-solid-vertical{background-position:-32px -224px}.ui-icon-grip-solid-horizontal{background-position:-48px -224px}.ui-icon-gripsmall-diagonal-se{background-position:-64px -224px}.ui-icon-grip-diagonal-se{background-position:-80px -224px}  .ui-corner-tl{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0}.ui-corner-tr{-moz-border-radius-topright:0;-webkit-border-top-right-radius:0}.ui-corner-bl{-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0}.ui-corner-br{-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-top{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0;-moz-border-radius-topright:0;-webkit-border-top-right-radius:0}.ui-corner-bottom{-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0;-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-right{-moz-border-radius-topright:0;-webkit-border-top-right-radius:0;-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-left{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0;-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0}.ui-corner-all{-moz-border-radius:0;-webkit-border-radius:0} .ui-widget-overlay{background:#000000;opacity:.75;filter:Alpha(Opacity=75)}.ui-widget-shadow{margin:-7px 0 0 -7px;padding:7px;background:#000000 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkCAYAAAD0ZHJ6AAAAeUlEQVRoge3OMQHAIBAAsQf/nlsJDDfAkCjImplvHrZvB04EK8FKsBKsBCvBSrASrAQrwUqwEqwEK8FKsBKsBCvBSrASrAQrwUqwEqwEK8FKsBKsBCvBSrASrAQrwUqwEqwEK8FKsBKsBCvBSrASrAQrwUqwEqwEqx92LQHHRpDUNwAAAABJRU5ErkJggg==) 50% 50% repeat-x;background:#000000 url(/emergent/resources/jquery.ui/themes/vector/images/ui-bg_flat_70_000000_40x100.png?2010-12-16T00:48:20Z) 50% 50% repeat-x!ie;opacity:.20;filter:Alpha(Opacity=20);-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}</style><style type=\"text/css\" media=\"all\">.ui-tabs{position:relative;padding:.2em;zoom:1} .ui-tabs .ui-tabs-nav{margin:0;padding:.2em .2em 0}.ui-tabs .ui-tabs-nav li{list-style:none;float:left;position:relative;top:1px;margin:0 .2em 1px 0;border-bottom:0 !important;padding:0;white-space:nowrap}.ui-tabs .ui-tabs-nav li a{float:left;padding:.5em 1em;text-decoration:none}.ui-tabs .ui-tabs-nav li.ui-tabs-selected{margin-bottom:0;padding-bottom:1px}.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,.ui-tabs .ui-tabs-nav li.ui-state-disabled a,.ui-tabs .ui-tabs-nav li.ui-state-processing a{cursor:text}.ui-tabs .ui-tabs-nav li a,.ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a{cursor:pointer} .ui-tabs .ui-tabs-panel{display:block;border-width:0;padding:1em 1.4em;background:none}.ui-tabs .ui-tabs-hide{display:none !important}</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\"><link rel=\"stylesheet\" href=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;version=20110112T204000Z\">
+
+		<link rel=\"alternate\" type=\"application/rdf+xml\" title=\"LeabraFlexProgs\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlexProgs&amp;xmlmime=rdf\">
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--></head><body class=\"mediawiki ltr ns-0 ns-subject page-LeabraFlexProgs skin-vector\">
+		<div id=\"mw-page-base\" class=\"noprint\"></div>
+		<div id=\"mw-head-base\" class=\"noprint\"></div>
+		<!-- content -->
+		<div id=\"content\">
+			<a id=\"top\"></a>
+			<div id=\"mw-js-message\" style=\"display:none;\"></div>
+						<!-- firstHeading -->
+			<h1 id=\"firstHeading\" class=\"firstHeading\">LeabraFlexProgs</h1>
+			<!-- /firstHeading -->
+			<!-- bodyContent -->
+			<div id=\"bodyContent\">
+				<!-- tagline -->
+				<div id=\"siteSub\">From Emergent</div>
+				<!-- /tagline -->
+				<!-- subtitle -->
+				<div id=\"contentSub\"></div>
+				<!-- /subtitle -->
+																<!-- jumpto -->
+				<div id=\"jump-to-nav\">
+					Jump to: <a href=\"#mw-head\">navigation</a>,
+					<a href=\"#p-search\">search</a>
+				</div>
+				<!-- /jumpto -->
+								<!-- bodytext -->
+				<p>Documentation for the <code>demo/leabra/leabra_flex_progs.proj</code> project, which provides a different way of configuring the <a href=\"/emergent/index.php/Leabra\">Leabra</a> programs that is more flexible and modular -- very useful for more complex projects that require extensive novel functionality, including interactive behaviors between the network and the programs that generate inputs to the network, things that happen at different points in the settling process, and supporting multiple different ways of running the model in a more efficient, modular fashion.
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 1/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!*!!*!*!* and timestamp 20110205074338 -->
+<div class=\"printfooter\">
+Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php/LeabraFlexProgs\">http://grey.colorado.edu/emergent/index.php/LeabraFlexProgs</a>\"</div>
+				<!-- /bodytext -->
+								<!-- catlinks -->
+				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- /catlinks -->
+												<div class=\"visualClear\"></div>
+			</div>
+			<!-- /bodyContent -->
+		</div>
+		<!-- /content -->
+		<!-- header -->
+		<div id=\"mw-head\" class=\"noprint\">
+			
+<!-- 0 -->
+<div id=\"p-personal\" class=\"\">
+	<h5>Personal tools</h5>
+	<ul>
+		<li id=\"pt-userpage\"><a href=\"/emergent/index.php/User:Oreilly\" title=\"Your user page [ctrl-alt-.]\" accesskey=\".\">Oreilly</a></li>
+		<li id=\"pt-mytalk\"><a href=\"/emergent/index.php/User_talk:Oreilly\" class=\"new\" title=\"Your talk page [ctrl-alt-n]\" accesskey=\"n\">My talk</a></li>
+		<li id=\"pt-preferences\"><a href=\"/emergent/index.php/Special:Preferences\" title=\"Your preferences\">My preferences</a></li>
+		<li id=\"pt-watchlist\"><a href=\"/emergent/index.php/Special:Watchlist\" title=\"The list of pages you are monitoring for changes [ctrl-alt-l]\" accesskey=\"l\">My watchlist</a></li>
+		<li id=\"pt-mycontris\"><a href=\"/emergent/index.php/Special:Contributions/Oreilly\" title=\"List of your contributions [ctrl-alt-y]\" accesskey=\"y\">My contributions</a></li>
+		<li id=\"pt-logout\"><a href=\"/emergent/index.php?title=Special:UserLogout&amp;returnto=LeabraFlexProgs\" title=\"Log out\">Log out</a></li>
+	</ul>
+</div>
+
+<!-- /0 -->
+			<div id=\"left-navigation\">
+				
+<!-- 0 -->
+<div id=\"p-namespaces\" class=\"vectorTabs\">
+	<h5>Namespaces</h5>
+	<ul>
+					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></span></li>
+					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></span></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id=\"p-variants\" class=\"vectorMenu emptyPortlet\">
+		<h5><span>Variants</span><a href=\"#\"></a></h5>
+	<div class=\"menu\">
+		<ul>
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+			</div>
+			<div id=\"right-navigation\">
+				
+<!-- 0 -->
+<div id=\"p-views\" class=\"vectorTabs\">
+	<h5>Views</h5>
+	<ul>
+					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\">Read</a></span></li>
+					<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\" title=\"You can edit this page. Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\">Edit</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">View history</a></span></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id=\"p-cactions\" class=\"vectorMenu\">
+	<h5><span>Actions</span><a href=\"#\"></a></h5>
+	<div class=\"menu\">
+		<ul>
+							<li id=\"ca-delete\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=delete\" title=\"Delete this page [ctrl-alt-d]\" accesskey=\"d\">Delete</a></li>
+							<li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/LeabraFlexProgs\" title=\"Move this page [ctrl-alt-m]\" accesskey=\"m\">Move</a></li>
+							<li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=unwatch\" title=\"Remove this page from your watchlist [ctrl-alt-w]\" accesskey=\"w\">Unwatch</a></li>
+							<li id=\"ca-purge\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=purge\">Refresh</a></li>
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+
+<!-- 2 -->
+<div id=\"p-search\">
+	<h5><label for=\"searchInput\">Search</label></h5>
+	<form action=\"/emergent/index.php\" id=\"searchform\">
+		<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+				<div id=\"simpleSearch\">
+						<input name=\"search\" title=\"Search Emergent [ctrl-alt-f]\" accesskey=\"f\" id=\"searchInput\" tabindex=\"1\" placeholder=\"Search\" autocomplete=\"off\">						<button name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?301\" alt=\"Search\"></button>					</div>
+			</form>
+</div>
+
+<!-- /2 -->
+			</div>
+		</div>
+		<!-- /header -->
+		<!-- panel -->
+			<div id=\"mw-panel\" class=\"noprint collapsible-nav\">
+				<!-- logo -->
+					<div id=\"p-logo\"><a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
+				<!-- /logo -->
+				
+<!-- navigation -->
+<div class=\"portal first persistent\" id=\"p-navigation\">
+	<h5>Navigation</h5>
+	<div class=\"body\">
+		<ul>
+			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"The list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
+			<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
+			<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
+			<li id=\"n-Bug-tracker\"><a href=\"http://grey.colorado.edu/cgi-bin/bugzilla/index.cgi\">Bug tracker</a></li>
+			<li id=\"n-Mailing-list\"><a href=\"http://grey.colorado.edu/cgi-bin/mailman/listinfo/emergent-users\">Mailing list</a></li>
+		</ul>
+	</div>
+</div>
+
+<!-- /navigation -->
+
+<!-- SEARCH -->
+
+<!-- /SEARCH -->
+
+<!-- TOOLBOX -->
+<div class=\"portal expanded\" id=\"p-tb\">
+	<h5 tabindex=\"2\">Toolbox</h5>
+	<div class=\"body\" style=\"display: block; \">
+		<ul>
+			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\" title=\"List of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
+			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
+			<li id=\"t-upload\"><a href=\"/emergent/index.php/Special:Upload\" title=\"Upload files [ctrl-alt-u]\" accesskey=\"u\">Upload file</a></li>
+			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"List of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
+			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=8328\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
+<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlexProgs\" title=\"Special:Browse/LeabraFlexProgs\">Browse properties</a></li>		</ul>
+	</div>
+</div>
+
+<!-- /TOOLBOX -->
+
+<!-- LANGUAGES -->
+
+<!-- /LANGUAGES -->
+			</div>
+		<!-- /panel -->
+		<!-- footer -->
+		<div id=\"footer\">
+							<ul id=\"footer-info\">
+											<li id=\"footer-info-lastmod\"> This page was last modified on 5 February 2011, at 00:43.</li>
+									</ul>
+							<ul id=\"footer-places\">
+											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/Emergent:About\" title=\"Emergent:About\">About Emergent</a></li>
+									</ul>
+										<ul id=\"footer-icons\" class=\"noprint\">
+					<li id=\"footer-poweredbyico\">
+						<a href=\"http://www.mediawiki.org/\"><img src=\"/emergent/skins/common/images/poweredby_mediawiki_88x31.png\" alt=\"Powered by MediaWiki\" width=\"88\" height=\"31\"></a>
+						<a href=\"http://www.semantic-mediawiki.org/wiki/Semantic_MediaWiki\"><img src=\"/emergent/extensions/SemanticMediaWiki/skins/images/smw_button.png\" alt=\"Powered by Semantic MediaWiki\" width=\"88\" height=\"31\"></a>
+					</li>
+				</ul>
+						<div style=\"clear:both\"></div>
+		</div>
+		<!-- /footer -->
+		<!-- fixalpha -->
+		<script type=\"text/javascript\"> if ( window.isMSIE55 ) fixalpha(); </script>
+		<!-- /fixalpha -->
+		
+<script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%7Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20110112T210500Z\"></script>
+<script>if ( window.mediaWiki ) {
+	mediaWiki.config.set({\"wgCanonicalNamespace\": \"\", \"wgCanonicalSpecialPageName\": false, \"wgNamespaceNumber\": 0, \"wgPageName\": \"LeabraFlexProgs\", \"wgTitle\": \"LeabraFlexProgs\", \"wgAction\": \"view\", \"wgArticleId\": 2315, \"wgIsArticle\": true, \"wgUserName\": \"Oreilly\", \"wgUserGroups\": [\"*\", \"user\", \"autoconfirmed\"], \"wgCurRevisionId\": 8328, \"wgCategories\": [], \"wgBreakFrames\": false, \"wgRestrictionEdit\": [], \"wgRestrictionMove\": [], \"wgSearchNamespaces\": [0], \"sfgRemoveText\": \"Remove\", \"sfgAdderButtons\": [], \"sfgAutocompleteOnAllChars\": false, \"sfgAutocompleteValues\": {}, \"sfgShowOnSelect\": {}, \"sfgFormErrorsHeader\": \"There were errors with your form input; see below\", \"sfgBlankErrorStr\": \"cannot be blank\", \"sfgBadURLErrorStr\": \"must have the correct URL format, starting with \\\"http\\\"\", \"sfgBadEmailErrorStr\": \"must have a valid email address format\", \"sfgBadNumberErrorStr\": \"must be a valid number\", \"sfgBadIntegerErrorStr\": \"must be a valid integer\", \"sfgBadDateErrorStr\": \"must be a valid date\", \"wgFCKEditorDir\": \"extensions/FCKeditor/fckeditor/\", \"wgFCKEditorExtDir\": \"extensions/FCKeditor\", \"wgFCKEditorToolbarSet\": \"Wiki\", \"wgFCKEditorHeight\": \"0\", \"wgCollapsibleNavBucketTest\": false, \"wgCollapsibleNavForceNewVersion\": false});
+}
+</script>
+<script>if ( window.mediaWiki ) {
+	mediaWiki.loader.load([\"mediawiki.legacy.wikibits\", \"mediawiki.util\", \"mediawiki.legacy.ajax\", \"mediawiki.action.watch.ajax\", \"mediawiki.legacy.mwsuggest\", \"ext.vector.collapsibleNav\", \"ext.vector.collapsibleTabs\", \"ext.vector.editWarning\", \"ext.vector.simpleSearch\", \"jquery.ui.tabs\"]);
+	mediaWiki.loader.go();
+}
+</script><script type=\"text/javascript\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.vector.collapsibleNav%7Cext.vector.collapsibleTabs%7Cext.vector.editWarning%7Cext.vector.simpleSearch&amp;skin=vector&amp;version=NaNNaNNaNTNaNNaNNaNZ\"></script><script type=\"text/javascript\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.autoEllipsis%7Cjquery.checkboxShiftClick%7Cjquery.client%7Cjquery.collapsibleTabs%7Cjquery.cookie%7Cjquery.delayedBind%7Cjquery.highlightText%7Cjquery.makeCollapsible%7Cjquery.placeholder%7Cjquery.suggestions%7Cjquery.tabIndex%7Cjquery.ui.core%7Cjquery.ui.tabs%7Cjquery.ui.widget%7Cmediawiki.action.watch.ajax%7Cmediawiki.language%7Cmediawiki.legacy.ajax%7Cmediawiki.legacy.mwsuggest%7Cmediawiki.legacy.wikibits%7Cmediawiki.util&amp;skin=vector&amp;version=NaNNaNNaNTNaNNaNNaNZ\"></script>
+
+<script type=\"text/javascript\" src=\"/emergent/extensions/Drafts/Drafts.js?3\"></script>
+<script type=\"text/javascript\">
+$(function() {
+	$(\"#headertabs\").tabs();
+	var curHash = window.location.hash;
+	if ( curHash.indexOf( \"#tab=\" ) == 0 ) {
+		var tabName = curHash.replace( \"#tab=\", \"\" );
+		$(\"#headertabs\").tabs('select', tabName);
+	}
+});
+$(\".tabLink\").click( function() {
+	var href = $(this).attr('href');
+	var tabName = href.replace( \"#tab=\", \"\" );
+	$(\"#headertabs\").tabs('select', tabName);
+	return false; //1;
+} );
+</script>
+
+<script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;version=20110112T204000Z\"></script>
+<script>if ( window.mediaWiki ) {
+	mediaWiki.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"contextchars\":50,\"contextlines\":5,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":\"0\",\"justify\":0,\"math\":1,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":1,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"45\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":\"3\",\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"riched_use_toggle\":1,\"riched_start_disabled\":1,\"riched_use_popup\":1,\"riched_toggle_remember_state\":1,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs104\":false,\"searchNs105\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-420|America/Denver\",\"watchlisttoken\":\"\"});
+	
+	mediaWiki.loader.state({\"user.options\":\"ready\"});
+}
+</script><!-- Served in 0.240 secs. -->
+	
+
+<div style=\"top: 60px; width: 157px; display: none; left: auto; right: 33px; \" class=\"suggestions\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div></body></html>";
+  };
  };
  wizards {
   name=;
@@ -2837,7 +3070,7 @@ LeabraProject .projects[0] {
 	    [0]       };
      };
      float_Data @[10] {
-      name="Output_Fm_ParietalM_netrel";
+      name="Hidden_Fm_Input_netrel";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2849,7 +3082,7 @@ LeabraProject .projects[0] {
 	    [0]       };
      };
      float_Data @[11] {
-      name="Output_Fm_IT_netrel";
+      name="Hidden_Fm_Output_netrel";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2861,7 +3094,7 @@ LeabraProject .projects[0] {
 	    [0]       };
      };
      float_Data @[12] {
-      name="Output_Fm_ECout_netrel";
+      name="Output_Fm_Hidden_netrel";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2873,7 +3106,7 @@ LeabraProject .projects[0] {
 	    [0]       };
      };
      float_Data @[13] {
-      name="ParietalH_Fm_InputSect_netrel";
+      name="Input_netmax";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2885,7 +3118,7 @@ LeabraProject .projects[0] {
 	    [0]       };
      };
      float_Data @[14] {
-      name="ParietalH_Fm_ParietalM_netrel";
+      name="Hidden_netmax";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -2897,1219 +3130,7 @@ LeabraProject .projects[0] {
 	    [0]       };
      };
      float_Data @[15] {
-      name="ParietalH_Fm_Output_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[16] {
-      name="ParietalM_Fm_InputSect_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[17] {
-      name="ParietalM_Fm_ParietalH_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[18] {
-      name="ParietalM_Fm_ParietalL_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[19] {
-      name="ParietalM_Fm_Output_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[20] {
-      name="ParietalL_Fm_ParietalM_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[21] {
-      name="ParietalL_Fm_Output_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[22] {
-      name="V4_Fm_InputSect_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[23] {
-      name="V4_Fm_ParietalM_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[24] {
-      name="V4_Fm_Output_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[25] {
-      name="IT_Fm_V4_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[26] {
-      name="IT_Fm_Output_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[27] {
-      name="IT_Fm_PFC_out_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[28] {
-      name="IT_Fm_PFC_mnt_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[29] {
-      name="ECin_Fm_ParietalM_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[30] {
-      name="ECin_Fm_Output_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[31] {
-      name="ECin_Fm_ECout_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[32] {
-      name="DG_Fm_ECin_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[33] {
-      name="CA3_Fm_ECin_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[34] {
-      name="CA3_Fm_CA3_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[35] {
-      name="CA3_Fm_DG_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[36] {
-      name="CA1_Fm_ECin_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[37] {
-      name="CA1_Fm_CA3_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[38] {
-      name="ECout_Fm_CA1_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[39] {
-      name="ECout_Fm_ECin_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[40] {
-      name="PVe_Fm_RewTarg_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[41] {
-      name="PVe_Fm_Output_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[42] {
-      name="PVr_Fm_PVe_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[43] {
-      name="PVr_Fm_IT_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[44] {
-      name="PVr_Fm_PFC_mnt_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[45] {
-      name="PVi_Fm_PVe_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[46] {
-      name="PVi_Fm_IT_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[47] {
-      name="PVi_Fm_PFC_mnt_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[48] {
-      name="LVe_Fm_PVr_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[49] {
-      name="LVe_Fm_IT_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[50] {
-      name="LVe_Fm_PFC_mnt_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[51] {
-      name="LVi_Fm_PVr_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[52] {
-      name="LVi_Fm_IT_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[53] {
-      name="LVi_Fm_PFC_mnt_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[54] {
-      name="NV_Fm_IT_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[55] {
-      name="NV_Fm_PFC_mnt_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[56] {
-      name="VTA_Fm_PVi_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[57] {
-      name="VTA_Fm_LVe_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[58] {
-      name="VTA_Fm_LVi_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[59] {
-      name="VTA_Fm_PVr_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[60] {
-      name="VTA_Fm_NV_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[61] {
-      name="Patch_Fm_PVr_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[62] {
-      name="Patch_Fm_IT_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[63] {
-      name="Patch_Fm_PFC_mnt_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[64] {
-      name="SNc_Fm_PVi_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[65] {
-      name="SNc_Fm_LVe_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[66] {
-      name="SNc_Fm_LVi_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[67] {
-      name="SNc_Fm_PVr_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[68] {
-      name="SNc_Fm_NV_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[69] {
-      name="SNc_Fm_Patch_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[70] {
-      name="Matrix_mn_Fm_SNc_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[71] {
-      name="Matrix_mn_Fm_SNrThal_m_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[72] {
-      name="Matrix_mn_Fm_Patch_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[73] {
-      name="Matrix_mn_Fm_IT_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[74] {
-      name="Matrix_ou_Fm_VTA_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[75] {
-      name="Matrix_ou_Fm_SNrThal_o_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[76] {
-      name="Matrix_ou_Fm_IT_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[77] {
-      name="SNrThal_m_Fm_Matrix_mn_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[78] {
-      name="SNrThal_o_Fm_Matrix_ou_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[79] {
-      name="PFC_mnt_Fm_SNrThal_m_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[80] {
-      name="PFC_mnt_Fm_PFC_mnt_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[81] {
-      name="PFC_mnt_Fm_IT_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[82] {
-      name="PFC_mnt_Fm_Output_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[83] {
-      name="PFC_out_Fm_SNrThal_o_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[84] {
-      name="PFC_out_Fm_PFC_mnt_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[85] {
-      name="InputSect_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[86] {
-      name="InputIMIN_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[87] {
-      name="InputMASI_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[88] {
-      name="InputSIGI_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[89] {
-      name="InputSIGA_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[90] {
       name="Output_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[91] {
-      name="ParietalH_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[92] {
-      name="ParietalM_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[93] {
-      name="ParietalL_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[94] {
-      name="V4_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[95] {
-      name="IT_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[96] {
-      name="ECin_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[97] {
-      name="DG_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[98] {
-      name="CA3_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[99] {
-      name="CA1_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[100] {
-      name="ECout_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[101] {
-      name="RewTarg_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[102] {
-      name="PVe_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[103] {
-      name="PVr_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[104] {
-      name="PVi_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[105] {
-      name="LVe_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[106] {
-      name="LVi_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[107] {
-      name="NV_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[108] {
-      name="VTA_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[109] {
-      name="Patch_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[110] {
-      name="SNc_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[111] {
-      name="Matrix_mn_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[112] {
-      name="Matrix_ou_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[113] {
-      name="SNrThal_m_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[114] {
-      name="SNrThal_o_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[115] {
-      name="PFC_mnt_netmax";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-	    [0]       };
-     };
-     float_Data @[116] {
-      name="PFC_out_netmax";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -4253,7 +3274,7 @@ LeabraProject .projects[0] {
 	    [0]       };
       ar {
        name=;
-	    [1] 100;      };
+	    [1] 50;      };
      };
      int_Data @[7] {
       name="save_final_wts";
@@ -4560,7 +3581,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     ProgVar @[3] {
      name="log_dir";
      var_type=T_String;
-     string_val="log/";
+     string_val=;
      objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
@@ -4610,7 +3631,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      init_from=NULL;
     };
     ProgVar @[8] {
-     name="IcarusConfig";
+     name="Config";
      var_type=T_Object;
      object_type=DataTable;
      object_val=.projects[0].data.gp[3][0]$$;
@@ -4643,11 +3664,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     ProgVar @[11] {
      name="startup_prog";
      var_type=T_String;
-     string_val="FixationInit";
+     string_val="BasicStartup";
      objs_ptr=0;
      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
      reference=0;
-     desc="name of EnviroElements column we use in this program";
+     desc=;
      init_from=NULL;
     };
    };
@@ -4831,7 +3852,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      flags=;
     };
     ProgVarFmArg @[10] {
-     desc="NOTE: set in IcarusTrain and copy from there, so it can use that default!";
+     desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=;
      prog=$.projects[0].programs.gp[1][1]$;
      var_name="config_id";
@@ -4882,21 +3903,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=;
      obj=$.projects[0].programs[0].args[0]$;
-     path="learn_rule";
-     arg_name="learn_rule";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[18] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
      path="ct_time.minus";
      arg_name="minus";
      update_after=1;
      quiet=0;
     };
-    MemberFmArg @[19] {
+    MemberFmArg @[18] {
      desc=;
      flags=;
      obj=$.projects[0].programs[0].args[0]$;
@@ -4905,88 +3917,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      update_after=1;
      quiet=0;
     };
-    MemberFmArg @[20] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_time.inhib";
-     arg_name="inhib";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[21] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_time.syndep_int";
-     arg_name="syndep_int";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[22] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_fin_i.start";
-     arg_name="fin_start";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[23] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_fin_i.end";
-     arg_name="fin_end";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[24] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_fin_i.inhib_i";
-     arg_name="inhib_i";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[25] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_sin_i.start";
-     arg_name="sin_start";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[26] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_sin_i.duration";
-     arg_name="sin_dur";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[27] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_sin_i.burst_i";
-     arg_name="sin_burst_i";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[28] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_sin_i.trough_i";
-     arg_name="sin_trough_i";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[29] {
+    MemberFmArg @[19] {
      desc=;
      flags=;
      obj=$.projects[0].programs[0].args[0]$;
@@ -4995,7 +3926,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      update_after=1;
      quiet=0;
     };
-    MemberFmArg @[30] {
+    MemberFmArg @[20] {
      desc=;
      flags=;
      obj=$.projects[0].programs[0].args[0]$;
@@ -5004,42 +3935,15 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      update_after=1;
      quiet=0;
     };
-    MemberFmArg @[31] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_sravg.interval";
-     arg_name="sravg_int";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[32] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="ct_sravg.plus_s_st";
-     arg_name="plus_s_st";
-     update_after=1;
-     quiet=0;
-    };
-    MemberFmArg @[33] {
-     desc=;
-     flags=;
-     obj=$.projects[0].programs[0].args[0]$;
-     path="phase_order";
-     arg_name="phase_order";
-     update_after=1;
-     quiet=0;
-    };
-    Comment @[34] {
+    Comment @[21] {
      desc="= Program specific vars =";
      flags=;
     };
-    Comment @[35] {
+    Comment @[22] {
      desc="= Add args to tag name =";
      flags=;
     };
-    If @[36] {
+    If @[23] {
      desc=;
      flags=;
      cond {
@@ -5159,7 +4063,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       el_def=0;
      };
     };
-    AssignExpr @[37] {
+    AssignExpr @[24] {
      desc=;
      flags=;
      result_var=.projects[0].programs[0].vars[1]$$;
@@ -5167,22 +4071,22 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       expr="\"_\" +  config_id + tag";
      };
     };
-    Comment @[38] {
-     desc="set any params from Lesson, Transform";
+    Comment @[25] {
+     desc="set any params from Config";
      flags=;
     };
-    DataColsFmArgs @[39] {
+    DataColsFmArgs @[26] {
      desc=;
      flags=;
      data_var=.projects[0].programs[0].vars[8]$$;
      row_spec=ROW_VAL;
      row_var=$.projects[0].programs[0].vars[2]$;
     };
-    Comment @[40] {
+    Comment @[27] {
      desc="Set log files";
      flags=;
     };
-    IfElse @[41] {
+    IfElse @[28] {
      desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
      flags=;
      cond {
@@ -5279,7 +4183,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       el_def=0;
      };
     };
-    MethodCall @[42] {
+    MethodCall @[29] {
      desc="save args to file: last arg is to include dmem proc number";
      flags=;
      result_var=.projects[0].programs[0].vars[4]$$;
@@ -5331,7 +4235,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    MiscCall @[43] {
+    MiscCall @[30] {
      desc=;
      flags=;
      result_var=NULL;
@@ -5353,7 +4257,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    MethodCall @[44] {
+    MethodCall @[31] {
      desc="last arg is to include dmem proc number";
      flags=;
      result_var=$.projects[0].programs[0].vars[4]$;
@@ -5405,7 +4309,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    MethodCall @[45] {
+    MethodCall @[32] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=;
      result_var=NULL;
@@ -5447,7 +4351,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    If @[46] {
+    If @[33] {
      desc=;
      flags=;
      cond {
@@ -5559,7 +4463,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       el_def=0;
      };
     };
-    OtherProgramVar @[47] {
+    OtherProgramVar @[34] {
      desc=;
      flags=;
      other_prog=.projects[0].programs.gp[4][14]$$;
@@ -5569,11 +4473,11 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    Comment @[48] {
+    Comment @[35] {
      desc="= Call sub-startup programs =";
      flags=;
     };
-    DataVarProg @[49] {
+    DataVarProg @[36] {
      desc=;
      flags=;
      data_var=$.projects[0].programs[0].vars[8]$;
@@ -5586,7 +4490,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    ProgramCallVar @[50] {
+    ProgramCallVar @[37] {
      desc=;
      flags=;
      prog_args {
@@ -5607,14 +4511,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      prog_group=.projects[0].programs.gp[0]$$;
      prog_name_var=$.projects[0].programs[0].vars[11]$;
     };
-    PrintExpr @[51] {
+    PrintExpr @[38] {
      desc=;
      flags=;
      expr {
       expr="\"Running: \" << batch.name";
      };
     };
-    ProgramCall @[52] {
+    ProgramCall @[39] {
      desc=;
      flags=;
      prog_args {
@@ -6219,7 +5123,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[2] {
       name="config_id";
       var_type=T_String;
-      string_val="pconly_train";
+      string_val="basic_train";
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -6239,7 +5143,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[4] {
       name="init_prog";
       var_type=T_String;
-      string_val="BasicInit_PCOnly";
+      string_val="BasicInit";
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -6588,7 +5492,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVar @[1] {
        name="config_id";
        var_type=T_String;
-       string_val="pconly_train";
+       string_val="basic_train";
        objs_ptr=0;
        flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
        reference=0;
@@ -6766,7 +5670,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="BasicRun";
      short_nm="BaseRun";
      tags=;
-     desc="run basic training";
+     desc="run basic training -- does ";
      flags=NO_STOP_STEP;
      objs {
       name=;
@@ -6796,9 +5700,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVar @[1] {
        name="config_id";
        var_type=T_String;
-       string_val="pconly_train";
+       string_val="basic_train";
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+       flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
        reference=0;
        desc="configuration to use -- lookup in Config table";
        init_from=NULL;
@@ -6811,7 +5715,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       ProgVar @[0] {
        name="trials_per_epoch";
        var_type=T_Int;
-       int_val=100;
+       int_val=50;
        objs_ptr=0;
        flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED;
        reference=0;
@@ -6958,7 +5862,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	el_def=0;
 	ProgArg @[0] {
 	 arg_type=Network;
-	 type="Network*";
+	 type="LeabraNetwork*";
 	 name="network";
 	 required=1;
 	 def_val=;
@@ -7112,13 +6016,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     name="BasicTrain";
     short_nm="BscTrn";
     tags=;
-    desc="basic training";
+    desc="basic training -- this is a standard Leabra minus-plus trial";
     flags=;
     objs {
      name=;
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @[0] {name="BasicTrainTime": start={usr=20690: sys=660: tot=129624450700: }: end={usr=20682: sys=660: tot=129624450696: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @[0] {name="BasicTrainTime": start={usr=7352: sys=1502: tot=129689218170: }: end={usr=7352: sys=1502: tot=129689218170: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name=;
@@ -7146,7 +6050,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=DataTable;
       object_val=$.projects[0].data.gp[0][0]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -7257,6 +6161,27 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       targ_ld_init="*TrialStart*";
      };
      ProgramCall @[3] {
+      desc="pick next event at random..";
+      flags=;
+      prog_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=DataTable;
+	type="DataTable*";
+	name="input_data";
+	required=1;
+	def_val=;
+	expr {
+	 expr="input_data";
+	};
+       };
+      };
+      target=.projects[0].programs.gp[3][0]$$;
+      targ_ld_init="*ChooseRandomEvent*";
+     };
+     ProgramCall @[4] {
       desc="apply std external input activations from the input_data table to the network";
       flags=;
       prog_args {
@@ -7284,14 +6209,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=.projects[0].programs.gp[3][0]$$;
+      target=.projects[0].programs.gp[3][1]$$;
       targ_ld_init="*ApplyInputs*";
      };
-     Comment @[4] {
+     Comment @[5] {
       desc="=== Run Minus Phase ===";
       flags=;
      };
-     MethodCall @[5] {
+     MethodCall @[6] {
       desc="initializes various counters at start of settling";
       flags=;
       result_var=NULL;
@@ -7303,7 +6228,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
       };
      };
-     ProgramCall @[6] {
+     ProgramCall @[7] {
       desc="settle for minus phase, using ct_time.minus as fixed number of cycles to run";
       flags=;
       prog_args {
@@ -7334,7 +6259,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects[0].programs.gp[4][10]$$;
       targ_ld_init="*SettleMinusPhase*";
      };
-     MethodCall @[7] {
+     MethodCall @[8] {
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=;
       result_var=NULL;
@@ -7346,7 +6271,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
       };
      };
-     MethodCall @[8] {
+     MethodCall @[9] {
       desc="compute trial-level statistics -- only in minus phase!";
       flags=;
       result_var=NULL;
@@ -7358,21 +6283,21 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
       };
      };
-     NetUpdateView @[9] {
+     NetUpdateView @[10] {
       desc="update network views, if update_net_view == true";
       flags=;
       network_var=$.projects[0].programs.gp[2][0].args[0]$;
       update_var=.projects[0].programs.gp[2][0].args[2]$$;
      };
-     StopStepPoint @[10] {
+     StopStepPoint @[11] {
       desc=;
       flags=;
      };
-     Comment @[11] {
+     Comment @[12] {
       desc="=== Run Plus Phase ===";
       flags=;
      };
-     ProgramCall @[12] {
+     ProgramCall @[13] {
       desc="start the plus phase";
       flags=;
       prog_args {
@@ -7393,7 +6318,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects[0].programs.gp[4][11]$$;
       targ_ld_init="*PlusPhaseStart*";
      };
-     ProgramCall @[13] {
+     ProgramCall @[14] {
       desc="apply std external input activations from the input_data table to the network";
       flags=;
       prog_args {
@@ -7421,10 +6346,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	};
        };
       };
-      target=$.projects[0].programs.gp[3][0]$;
+      target=$.projects[0].programs.gp[3][1]$;
       targ_ld_init="*ApplyInputs*";
      };
-     MethodCall @[14] {
+     MethodCall @[15] {
       desc="initializes various counters at start of settling";
       flags=;
       result_var=NULL;
@@ -7436,7 +6361,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
       };
      };
-     ProgramCall @[15] {
+     ProgramCall @[16] {
       desc="settle for designated plus phase number of cycles";
       flags=;
       prog_args {
@@ -7467,7 +6392,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects[0].programs.gp[4][12]$$;
       targ_ld_init="*Settle*";
      };
-     MethodCall @[16] {
+     MethodCall @[17] {
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=;
       result_var=NULL;
@@ -7479,7 +6404,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
       };
      };
-     MethodCall @[17] {
+     MethodCall @[18] {
       desc="get external reward information";
       flags=;
       result_var=NULL;
@@ -7491,13 +6416,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
       };
      };
-     NetUpdateView @[18] {
+     NetUpdateView @[19] {
       desc="update network views, if update_net_view == true";
       flags=;
       network_var=$.projects[0].programs.gp[2][0].args[0]$;
       update_var=$.projects[0].programs.gp[2][0].args[2]$;
      };
-     MethodCall @[19] {
+     MethodCall @[20] {
       desc=;
       flags=;
       result_var=NULL;
@@ -7521,6 +6446,120 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    tags=;
    desc=;
    Program @[0] {
+    name="ChooseRandomEvent";
+    short_nm="ChRndm";
+    tags=;
+    desc="choose an event at random to present on current trial";
+    flags=NO_STOP_STEP;
+    objs {
+     name=;
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name=;
+     el_typ=ProgType;
+     el_def=0;
+    };
+    args {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="input_data";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=$.projects[0].data.gp[0][0]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+      reference=0;
+      desc="input datatable containing input/output patterns";
+      init_from=NULL;
+     };
+    };
+    vars {
+     name=;
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @[0] {
+      name="event_idx";
+      var_type=T_Int;
+      int_val=2;
+      objs_ptr=0;
+      flags=NULL_CHECK|USED|EDIT_VAL;
+      reference=0;
+      desc="event to present";
+      init_from=NULL;
+     };
+    };
+    functions {
+     name=;
+     el_typ=Function;
+     el_def=0;
+    };
+    load_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    init_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+    };
+    prog_code {
+     name=;
+     el_typ=ProgEl;
+     el_def=0;
+     RandomCall @[0] {
+      desc=;
+      flags=;
+      result_var=.projects[0].programs.gp[3][0].vars[0]$$;
+      object_type=Random;
+      method=Random::IntZeroN;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=int;
+	type="int";
+	name="n";
+	required=1;
+	def_val=;
+	expr {
+	 expr="input_data.rows";
+	};
+       };
+      };
+     };
+     MethodCall @[1] {
+      desc=;
+      flags=;
+      result_var=NULL;
+      obj=.projects[0].programs.gp[3][0].args[0]$$;
+      method=DataBlock_Idx::ReadItem;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=int;
+	type="int";
+	name="idx";
+	required=1;
+	def_val=;
+	expr {
+	 expr="event_idx";
+	};
+       };
+      };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @[1] {
     name="ApplyInputs";
     short_nm="Inputs";
     tags="Network, InputData, Apply";
@@ -7586,7 +6625,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=Network;
       object_val=$.projects[0].networks[0]$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="network to apply inputs to -- typically set by calling program";
       init_from=NULL;
@@ -7597,7 +6636,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=DataTable;
       object_val=$.projects[0].data.gp[0][0]$;
       objs_ptr=0;
-      flags=NULL_CHECK|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
       desc="input datatable containing input/output patterns";
       init_from=NULL;
@@ -7611,7 +6650,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="LayerWriter_0";
       var_type=T_Object;
       object_type=LayerWriter;
-      object_val=.projects[0].programs.gp[3][0].objs[0]$$;
+      object_val=.projects[0].programs.gp[3][1].objs[0]$$;
       objs_ptr=1;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -7637,7 +6676,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=;
       result_var=NULL;
-      obj=.projects[0].programs.gp[3][0].vars[0]$$;
+      obj=.projects[0].programs.gp[3][1].vars[0]$$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name=;
@@ -7669,7 +6708,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
       flags=;
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][0].vars[0]$;
+      obj=$.projects[0].programs.gp[3][1].vars[0]$;
       method=LayerWriter::AutoConfig;
       meth_args {
        name=;
@@ -7691,7 +6730,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
       flags=;
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][0].vars[0]$;
+      obj=$.projects[0].programs.gp[3][1].vars[0]$;
       method=taList_impl::CheckConfig;
       meth_args {
        name=;
@@ -7718,7 +6757,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="sets the datatable and network for the layer writer, so it knows what to write to";
       flags=;
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][0].vars[0]$;
+      obj=$.projects[0].programs.gp[3][1].vars[0]$;
       method=LayerWriter::SetDataNetwork;
       meth_args {
        name=;
@@ -7750,7 +6789,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="apply inputs to the network!  layer writer has all the key specs";
       flags=;
       result_var=NULL;
-      obj=$.projects[0].programs.gp[3][0].vars[0]$;
+      obj=$.projects[0].programs.gp[3][1].vars[0]$;
       method=LayerWriter::ApplyInputData;
       meth_args {
        name=;
@@ -7803,7 +6842,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[1] {
       name="config_id";
       var_type=T_String;
-      string_val="pconly_train";
+      string_val="basic_train";
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -7829,7 +6868,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[1] {
       name="trials_per_epoch";
       var_type=T_Int;
-      int_val=100;
+      int_val=50;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -7839,7 +6878,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[2] {
       name="trials_per_epoch_orig";
       var_type=T_Int;
-      int_val=100;
+      int_val=50;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -8301,7 +7340,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_def=0;
      String_Matrix @[0] {
       name="les_lay_mat";
-	  [4] "PBWM_PFC";"PBWM_BG";"PVLV";"Hippo";     };
+	  [0]      };
     };
     types {
      name=;
@@ -8352,7 +7391,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[1] {
       name="i";
       var_type=T_Int;
-      int_val=4;
+      int_val=0;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -9757,7 +8796,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       name="network";
       var_type=T_Object;
       object_type=LeabraNetwork;
-      object_val=NULL;
+      object_val=$.projects[0].networks[0]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -9925,7 +8964,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
        ProgArg @[0] {
 	arg_type=Network;
-	type="Network*";
+	type="LeabraNetwork*";
 	name="network";
 	required=1;
 	def_val=;
@@ -9941,7 +8980,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       flags=;
       cond {
-       expr="network->epoch % save_wts_interval == 0";
+       expr="network->epoch % save_wts_interval == 0 && network->epoch > 0";
       };
       show_false_code=0;
       true_code {
@@ -10266,7 +9305,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[1] {
       name="cycle_max";
       var_type=T_Int;
-      int_val=60;
+      int_val=50;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10281,7 +9320,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[0] {
       name="minus_cycles";
       var_type=T_Int;
-      int_val=41;
+      int_val=29;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10301,7 +9340,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[2] {
       name="i";
       var_type=T_Int;
-      int_val=60;
+      int_val=48;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10576,7 +9615,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @[0] {
       name="i";
       var_type=T_Int;
-      int_val=9;
+      int_val=20;
       objs_ptr=0;
       flags=NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10692,16 +9731,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
       init_from=NULL;
      };
-     ProgVar @[1] {
-      name="save_movie";
-      var_type=T_Bool;
-      bool_val=0;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
     };
     functions {
      name=;
@@ -10740,36 +9769,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       network_var=$.projects[0].programs.gp[4][13].args[0]$;
       update_var=$.projects[0].programs.gp[4][13].vars[0]$;
      };
-     If @[2] {
-      desc=;
-      flags=;
-      cond {
-       expr="save_movie";
-      };
-      show_false_code=0;
-      true_code {
-       name=;
-       el_typ=ProgEl;
-       el_def=0;
-       ProgramCall @[0] {
-	desc=;
-	flags=;
-	prog_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-	target=NULL;
-	targ_ld_init="*NetworkMovieImageFrameSave*";
-       };
-      };
-      false_code {
-       name=;
-       el_typ=ProgEl;
-       el_def=0;
-      };
-     };
-     MemberAssign @[3] {
+     MemberAssign @[2] {
       desc=;
       flags=;
       obj=$.projects[0].programs.gp[4][13].args[0]$;
@@ -10823,7 +9823,7 @@ also save specs.";
      ProgVar @[0] {
       name="tag";
       var_type=T_String;
-      string_val="_ndor";
+      string_val="_gui";
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -10853,7 +9853,7 @@ also save specs.";
      ProgVar @[3] {
       name="fname";
       var_type=T_String;
-      string_val=;
+      string_val="/Users/oreilly/emergent/demo/leabra/leabra_flex_progs_ndor.00_0000.wts.gz";
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
       reference=0;
@@ -11162,7 +10162,7 @@ also save specs.";
 	 name="batch";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="batch";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11194,7 +10194,7 @@ also save specs.";
 	 name="epoch";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="epoch";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11226,7 +10226,7 @@ also save specs.";
 	 name="train_mode";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="train_mode";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11258,7 +10258,7 @@ also save specs.";
 	 name="trial";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="trial";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11290,7 +10290,7 @@ also save specs.";
 	 name="tick";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="tick";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11322,7 +10322,7 @@ also save specs.";
 	 name="trial_name";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="trial_name";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11354,7 +10354,7 @@ also save specs.";
 	 name="group_name";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="group_name";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11386,7 +10386,7 @@ also save specs.";
 	 name="minus_cycles";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="minus_cycles";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11418,7 +10418,7 @@ also save specs.";
 	 name="sse";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="sse";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11450,7 +10450,7 @@ also save specs.";
 	 name="norm_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="norm_err";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11482,7 +10482,7 @@ also save specs.";
 	 name="ext_rew";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="ext_rew";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11511,7 +10511,7 @@ also save specs.";
 	 pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	};
        };
-       network=NULL;
+       network=$.projects[0].networks[0]$;
        data=$.projects[0].data.gp[1][0]$;
        rmv_orphan_cols=1;
       };
@@ -11751,7 +10751,7 @@ also save specs.";
 	 name="batch";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="batch";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11783,7 +10783,7 @@ also save specs.";
 	 name="epoch";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="epoch";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11815,7 +10815,7 @@ also save specs.";
 	 name="train_mode";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="train_mode";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11847,7 +10847,7 @@ also save specs.";
 	 name="avg_sse";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="avg_sse";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11879,7 +10879,7 @@ also save specs.";
 	 name="cnt_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="cnt_err";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11911,7 +10911,7 @@ also save specs.";
 	 name="avg_norm_err";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="avg_norm_err";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11943,7 +10943,7 @@ also save specs.";
 	 name="avg_ext_rew";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="avg_ext_rew";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -11975,7 +10975,7 @@ also save specs.";
 	 name="avg_cycles";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="avg_cycles";
 	 var_label=;
 	 name_style=AUTO_NAME;
@@ -12071,7 +11071,7 @@ also save specs.";
 	 name="netrel";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="prjns.avg_netin_rel";
 	 var_label="netrel";
 	 name_style=AUTO_NAME;
@@ -12103,7 +11103,7 @@ also save specs.";
 	 name="netmax";
 	 computed=0;
 	 object_type=LeabraNetwork;
-	 object=NULL;
+	 object=$.projects[0].networks[0]$;
 	 variable="avg_netin.max";
 	 var_label="netmax";
 	 name_style=AUTO_NAME;
@@ -12132,7 +11132,7 @@ also save specs.";
 	 pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
 	};
        };
-       network=NULL;
+       network=$.projects[0].networks[0]$;
        data=$.projects[0].data.gp[1][1]$;
        rmv_orphan_cols=1;
       };
@@ -12188,7 +11188,7 @@ also save specs.";
        name="epoch_timer";
        var_type=T_Object;
        object_type=TimeUsed;
-       object_val=NULL;
+       object_val=.projects[0].networks[0].epoch_time$$;
        objs_ptr=0;
        flags=NULL_CHECK|USED|EDIT_VAL;
        reference=0;
@@ -12485,17 +11485,17 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @[1] {
      name="view_win_top";
-     value 6 0=0.05000000074505806;
+     value 6 0=0.0492359921336174;
      val_type_fixed=0;
     };
     UserDataItem @[2] {
      name="view_win_wd";
-     value 6 0=0.9976562261581421;
+     value 6 0=0.9973333477973938;
      val_type_fixed=0;
     };
     UserDataItem @[3] {
      name="view_win_ht";
-     value 6 0=0.7986486554145813;
+     value 6 0=0.7979626655578613;
      val_type_fixed=0;
     };
     UserDataItem @[4] {
@@ -12505,7 +11505,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @[5] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAAAAAADAAAAZAAAAHoAAAO8AQAAAAcBAAAAAQ==";
+     value 9 0="AAAA/wAAAAAAAAADAAABDwAAAmwAAAN4AQAAAAcBAAAAAQ==";
      val_type_fixed=0;
     };
    };
@@ -12535,7 +11535,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      m_data=NULL;
      visible=0;
      lft=0;
-     top=0.02702703;
+     top=0;
      o=Horizontal;
     };
    };
@@ -12713,6 +11713,585 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	};
        };
       };
+      T3DataViewFrame @[1] {
+       name="EpochOutputData";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name=;
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GraphTableView @[0] {
+	  name="GraphTableView_0";
+	  m_data=$.projects[0].data.gp[1][1]$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name=;
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @[0] {
+	    name="batch";
+	    m_data=.projects[0].data.gp[1][1].data[0]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[1] {
+	    name="epoch";
+	    m_data=.projects[0].data.gp[1][1].data[1]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[2] {
+	    name="train_mode";
+	    m_data=.projects[0].data.gp[1][1].data[2]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[3] {
+	    name="avg_sse";
+	    m_data=.projects[0].data.gp[1][1].data[3]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[4] {
+	    name="cnt_err";
+	    m_data=.projects[0].data.gp[1][1].data[4]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[5] {
+	    name="avg_norm_err";
+	    m_data=.projects[0].data.gp[1][1].data[5]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[6] {
+	    name="avg_ext_rew";
+	    m_data=.projects[0].data.gp[1][1].data[6]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[7] {
+	    name="avg_cycles";
+	    m_data=.projects[0].data.gp[1][1].data[7]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[8] {
+	    name="epoch_time_tot";
+	    m_data=.projects[0].data.gp[1][1].data[8]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[9] {
+	    name="epoch_time_usr";
+	    m_data=.projects[0].data.gp[1][1].data[9]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[10] {
+	    name="Hidden_Fm_Input_netrel";
+	    m_data=.projects[0].data.gp[1][1].data[10]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[11] {
+	    name="Hidden_Fm_Output_netrel";
+	    m_data=.projects[0].data.gp[1][1].data[11]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[12] {
+	    name="Output_Fm_Hidden_netrel";
+	    m_data=.projects[0].data.gp[1][1].data[12]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[13] {
+	    name="Input_netmax";
+	    m_data=.projects[0].data.gp[1][1].data[13]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[14] {
+	    name="Hidden_netmax";
+	    m_data=.projects[0].data.gp[1][1].data[14]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @[15] {
+	    name="Output_netmax";
+	    m_data=.projects[0].data.gp[1][1].data[15]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10000;
+	  view_range {min=0: max=-1: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=MEDIUM;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   name="GraphAxisView_0";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="epoch";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=9: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=9: };
+	   range {min=0: max=9: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   name="GraphAxisView_1";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name="batch";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  plot_1 {
+	   name="GraphPlotView_0";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="avg_sse";
+	   fixed_range {fix_min=1: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  plot_2 {
+	   name="GraphPlotView_1";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="avg_norm_err";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=SQUARE;
+	   alt_y=0;
+	  };
+	  plot_3 {
+	   name="GraphPlotView_2";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=Y;
+	   col_name="cnt_err";
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=-6e-19: max=6e-19: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=DIAMOND;
+	   alt_y=1;
+	  };
+	  plot_4 {
+	   name="GraphPlotView_3";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=TRIANGLE;
+	   alt_y=0;
+	  };
+	  plot_5 {
+	   name="GraphPlotView_4";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=PLUS;
+	   alt_y=0;
+	  };
+	  plot_6 {
+	   name="GraphPlotView_5";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CROSS;
+	   alt_y=0;
+	  };
+	  plot_7 {
+	   name="GraphPlotView_6";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=STAR;
+	   alt_y=0;
+	  };
+	  plot_8 {
+	   name="GraphPlotView_7";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=MINUS;
+	   alt_y=0;
+	  };
+	  alt_y_1=0;
+	  alt_y_2=0;
+	  alt_y_3=0;
+	  alt_y_4=0;
+	  alt_y_5=0;
+	  err_1 {
+	   name="GraphPlotView_8";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_2 {
+	   name="GraphPlotView_9";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_3 {
+	   name="GraphPlotView_10";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_4 {
+	   name="GraphPlotView_11";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_5 {
+	   name="GraphPlotView_12";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_6 {
+	   name="GraphPlotView_13";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_7 {
+	   name="GraphPlotView_14";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_8 {
+	   name="GraphPlotView_15";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   line_style=SOLID;
+	   point_style=CIRCLE;
+	   alt_y=0;
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=FIXED_COLOR;
+	  color_axis {
+	   name="GraphAxisView_2";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$.colorspecs[0]$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   name="GraphAxisView_3";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   data_range {min=0: max=0: };
+	   range {min=0: max=0: };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name=;
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @[0] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=1.475278: y=0.4989999: z=1.70049: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.71299;
+	};
+	T3SavedView @[1] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[2] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[3] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[4] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @[5] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
      };
     };
    };
@@ -12732,17 +12311,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       };
       UserDataItem @[1] {
        name="view_win_top";
-       value 6 0=0.06621621549129486;
+       value 6 0=0.007640067953616381;
        val_type_fixed=0;
       };
       UserDataItem @[2] {
        name="view_win_wd";
-       value 6 0=0.05546874925494194;
+       value 6 0=0.04053333401679993;
        val_type_fixed=0;
       };
       UserDataItem @[3] {
        name="view_win_ht";
-       value 6 0=0.6702702641487122;
+       value 6 0=0.7359932065010071;
        val_type_fixed=0;
       };
       UserDataItem @[4] {
@@ -13036,6 +12615,48 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	default_val=1;
 	interpolate=0;
 	cur_val=0;
+	SchedItem @[0] {
+	 start_ctr=0;
+	 start_val=1;
+	 duration=50;
+	 step=-0.01;
+	};
+	SchedItem @[1] {
+	 start_ctr=50;
+	 start_val=0.5;
+	 duration=50;
+	 step=-0.006;
+	};
+	SchedItem @[2] {
+	 start_ctr=100;
+	 start_val=0.2;
+	 duration=50;
+	 step=-0.002;
+	};
+	SchedItem @[3] {
+	 start_ctr=150;
+	 start_val=0.1;
+	 duration=50;
+	 step=-0.001;
+	};
+	SchedItem @[4] {
+	 start_ctr=200;
+	 start_val=0.05;
+	 duration=50;
+	 step=-0.0006;
+	};
+	SchedItem @[5] {
+	 start_ctr=250;
+	 start_val=0.02;
+	 duration=50;
+	 step=-0.0002;
+	};
+	SchedItem @[6] {
+	 start_ctr=300;
+	 start_val=0.01;
+	 duration=1;
+	 step=1;
+	};
        };
        wt_sig {gain=6: off=1.25: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -13071,6 +12692,48 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       default_val=1;
       interpolate=0;
       cur_val=0;
+      SchedItem @[0] {
+       start_ctr=0;
+       start_val=1;
+       duration=50;
+       step=-0.01;
+      };
+      SchedItem @[1] {
+       start_ctr=50;
+       start_val=0.5;
+       duration=50;
+       step=-0.006;
+      };
+      SchedItem @[2] {
+       start_ctr=100;
+       start_val=0.2;
+       duration=50;
+       step=-0.002;
+      };
+      SchedItem @[3] {
+       start_ctr=150;
+       start_val=0.1;
+       duration=50;
+       step=-0.001;
+      };
+      SchedItem @[4] {
+       start_ctr=200;
+       start_val=0.05;
+       duration=50;
+       step=-0.0006;
+      };
+      SchedItem @[5] {
+       start_ctr=250;
+       start_val=0.02;
+       duration=50;
+       step=-0.0002;
+      };
+      SchedItem @[6] {
+       start_ctr=300;
+       start_val=0.01;
+       duration=1;
+       step=1;
+      };
      };
      wt_sig {gain=6: off=1.25: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
@@ -13210,7 +12873,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=.projects[0].networks[0].specs[0]$$: };
-     ext_flag=EXT;
+     ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -13232,20 +12895,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      icon_value=0;
      units_lesioned=0;
      gp_unit_names_4d=0;
-     netin {cmpt=1: avg=0: max=0: max_i=-1: };
-     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts_p {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts_m {cmpt=1: avg=0: max=0: max_i=-1: };
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_top_k {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.19: max=0.95: max_i=0: };
+     acts_m {cmpt=1: avg=0.19: max=0.95: max_i=0: };
      phase_dif_ratio=1;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=-0.1: k1_ithr=-0.1: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
+     adapt_i {avg_avg=0.48: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[4].children[0]$$: };
@@ -13364,20 +13027,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      icon_value=0;
      units_lesioned=0;
      gp_unit_names_4d=0;
-     netin {cmpt=1: avg=0: max=0: max_i=-1: };
-     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts_p {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts_m {cmpt=1: avg=0: max=0: max_i=-1: };
-     phase_dif_ratio=1;
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0.5143636: max=0.5658767: max_i=1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_top_k {cmpt=1: avg=0.6736594: max=0.8847761: max_i=1: };
+     acts_p {cmpt=1: avg=0.1993326: max=0.8978428: max_i=9: };
+     acts_m {cmpt=1: avg=0.1983431: max=0.8959598: max_i=9: };
+     phase_dif_ratio=0.9950356;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     kwta {k=6: pct=0.24: pct_c=0.76: adth_k=1: k_ithr=0.6343488: k1_ithr=0.4762486: ithr_r=0.286659: ithr_diff=0.2492323: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
+     adapt_i {avg_avg=0.24: i_kwta_pt=0.6: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=.projects[0].networks[0].specs[4]$$: };
@@ -13449,7 +13112,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects[0].networks[0].specs[0]$: };
-     ext_flag=TARG;
+     ext_flag=;
      dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
@@ -13471,20 +13134,20 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
      icon_value=0;
      units_lesioned=0;
      gp_unit_names_4d=0;
-     netin {cmpt=1: avg=0: max=0: max_i=-1: };
-     netin_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
-     i_thrs {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts_top_k {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts_p {cmpt=1: avg=0: max=0: max_i=-1: };
-     acts_m {cmpt=1: avg=0: max=0: max_i=-1: };
-     phase_dif_ratio=1;
+     netin {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     netin_top_k {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     i_thrs {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_top_k {cmpt=1: avg=0: max=-3.402823e+38: max_i=-1: };
+     acts_p {cmpt=1: avg=0.1521932: max=0.7609662: max_i=0: };
+     acts_m {cmpt=1: avg=0.1466435: max=0.7509662: max_i=12: };
+     phase_dif_ratio=0.9635352;
      acts_p2 {cmpt=1: avg=0: max=0: max_i=-1: };
      acts_m2 {cmpt=1: avg=0: max=0: max_i=-1: };
-     kwta {k=1: pct=0.25: pct_c=0.75: adth_k=1: k_ithr=0: k1_ithr=0: ithr_r=0: ithr_diff=0: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
+     kwta {k=12: pct=0.48: pct_c=0.52: adth_k=1: k_ithr=0.5565866: k1_ithr=0.5116763: ithr_r=0.08413059: ithr_diff=0.08068881: tie_brk_gain=0: eff_loser_gain=1: tie_brk=0: };
      i_val {kwta=0: g_i=0: gp_g_i=0: g_i_orig=0: };
-     un_g_i {cmpt=0: avg=0: max=0: max_i=-1: };
-     adapt_i {avg_avg=0: i_kwta_pt=0: g_bar_i=1: g_bar_l=0.1: };
+     un_g_i {cmpt=0: avg=0: max=-3.402823e+38: max_i=-1: };
+     adapt_i {avg_avg=0.48: i_kwta_pt=0.25: g_bar_i=1: g_bar_l=0.1: };
      maxda=0;
      act_max_avg=0;
      spec {type=LeabraLayerSpec: spec=$.projects[0].networks[0].specs[4].children[0]$: };
@@ -13516,7 +13179,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    cycle=0;
    time=0;
    group_name=;
-   trial_name="random";
+   trial_name=;
    output_name=;
    sse_unit_avg=0;
    sse_sqrt=0;
@@ -13556,7 +13219,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     fmeasure=0;
    };
    train_time {name="TimeUsed_10": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
-   epoch_time {name="TimeUsed_11": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+   epoch_time {name="TimeUsed_11": start={usr=7349: sys=1501: tot=129689218167: }: end={usr=7348: sys=1501: tot=129689218166: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    trial_time {name="TimeUsed_13": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    settle_time {name="TimeUsed_14": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
    cycle_time {name="TimeUsed_15": start={usr=0: sys=0: tot=0: }: end={usr=0: sys=0: tot=0: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
@@ -13589,7 +13252,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    nothing_phase=0;
    phase_no=0;
    phase_max=2;
-   ct_cycle=0;
+   ct_cycle=49;
    time_inc=1;
    cycle_max=60;
    mid_minus_cycle=-1;
@@ -13624,9 +13287,9 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    };
    sravg_vals {
     s_sum=0;
-    s_nrm=1;
+    s_nrm=0;
     m_sum=0;
-    m_nrm=1;
+    m_nrm=0;
     do_s=0;
    };
    ct_lrn_trig {
@@ -13659,7 +13322,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
     davg_max=0.001;
     cyc_fm_inc=0;
     cyc_fm_dec=0;
-    loc_max=0.001;
+    loc_max=0;
     lrn_max=0;
     lrn_trig=0;
     lrn=0;

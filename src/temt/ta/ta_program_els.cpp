@@ -1788,8 +1788,8 @@ const String DataColsFmArgs::GenCssBody_impl(int indent_level) {
   if(!dt) return il + "// DataColsFmArgs: data_var not set!\n";
   String rval = il + "{ // DataColsFmArgs fm: " + dt->name + "\n";
   rval += il1 + "String dcfma_colnm, dcfma_argval;\n";
-  rval += il1 + "for(int j=0;j<" + dt->name + ".cols();j++) {\n";
-  rval += il2 + "dcfma_colnm = " + dt->name + ".data[j].name;\n";
+  rval += il1 + "for(int j=0;j<" + data_var->name + ".cols();j++) {\n";
+  rval += il2 + "dcfma_colnm = " + data_var->name + ".data[j].name;\n";
   rval += il2 + "dcfma_argval = taMisc::FindArgByName(dcfma_colnm);\n";
   rval += il2 + "if(dcfma_argval.empty()) continue;\n";
   if(row_spec == CUR_ROW) {
