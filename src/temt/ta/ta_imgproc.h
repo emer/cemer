@@ -992,6 +992,7 @@ class TA_API V1BinocularSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 binocular cells -- specifies basic disparity coding system -- number and spacing of disparity tuned cells
 INHERITED(taOBase)
 public:
+  bool		dsp_ang;	// output of disparity system preserves angle (orientation) information, but no polarity or other info -- automatically sets MAX_POLS for v1s_filters and uses that for input.  also uses a simple MIN(left,right) matching algorithm, instead of the full disparity offset computation, which is compatible with actual network-based computation
   int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
   float		disp_range_pct;  // #DEF_0.05:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total V1S image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
   float		gauss_sig; 	// #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
@@ -1337,7 +1338,9 @@ public:
   int_Matrix	v1b_dsp_horiz;	 // #READ_ONLY #NO_SAVE horizontal line ambiguity resolution data -- length and start of horizontal line structures [DHZ_N][img.x][img.y]
   float_Matrix	v1b_dsp_wts;	 // #READ_ONLY #NO_SAVE final normalized disparity weights -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][img.x][img.y] -- saved to output if SAVE_DEBUG is on
   float_Matrix	v1b_dsp_out;	 // #READ_ONLY #NO_SAVE pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][img.x][img.y]
+  float_Matrix	v1b_dsp_ang_out;  // #READ_ONLY #NO_SAVE disparity angle output (dsp_ang option) -- [n_angles][tot_disps][img.x][img.y]
   float_Matrix	v1b_dsp_out_pre; // #READ_ONLY #NO_SAVE v1c pre gp4 version of v1b_dsp_out -- v1b_c requires things to be at the pre level -- has pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][pre_img.x][pre_img.y]
+  float_Matrix	v1b_dsp_ang_out_pre;  // #READ_ONLY #NO_SAVE v1c pre gp4 version of v1b_dsp_ang_out -- [n_angles][tot_disps][pre_img.x][pre_img.y]
   float_Matrix	v1b_dsp_in;	 // #READ_ONLY #NO_SAVE pure disparity *input* (see v1b_dsp_out for more info) -- this should be copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity (see V1bDspInFmDataTable and UpdateV1cFmV1bDspIn methods) -- should be same size as v1c_pre_img_geom [tot_disps][1][pre_img.x][pre_img.y]
   float_Matrix	v1b_dsp_in_prv;	 // #READ_ONLY #NO_SAVE previous version of v1b_dsp_in -- for comparison purposes
   float_Matrix	v1b_dsp_ang_in;	 // #READ_ONLY #NO_SAVE disparity by angle *input* -- this should be copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity (see V1bDspAngInFm* and UpdateV1cFmV1bDspAngIn methods) -- should be same size as v1c_pre_img_geom [n_angles][tot_disps][pre_img.x][pre_img.y]
@@ -1470,6 +1473,8 @@ protected:
   // do binocular filters -- dispatch threads
   virtual bool	V1BinocularFilter_Optionals();
   // do binocular filters -- dispatch threads -- for optional stuff after core v1b_dsp_wts and _out are computed
+  virtual void 	V1BinocularFilter_DspAng_thread(int v1s_idx, int thread_no);
+  // do binocular filters -- compute dsp_ang version of matches between eyes
   virtual void 	V1BinocularFilter_Match_thread(int v1s_idx, int thread_no);
   // do binocular filters -- compute initial matches between eyes
   virtual void 	V1BinocularFilter_HorizTag_thread(int v1s_idx, int thread_no);
@@ -1485,7 +1490,11 @@ protected:
 
   virtual void 	V1BinocularFilter_DspOutPre_thread(int v1s_idx, int thread_no);
   // do binocular filters -- integrate dsp out to v1b_dsp_out_pre
+  virtual void 	V1BinocularFilter_DspAngOutPre_thread(int v1s_idx, int thread_no);
+  // do binocular filters -- integrate dsp_ang_out to v1b_dsp_ang_out_pre
   virtual void 	V1BinocularFilter_DspOutPreBord_thread(int v1s_idx, int thread_no);
+  // do binocular filters -- integrate dsp out to v1b_dsp_out_pre -- for case where only border is non-zero
+  virtual void 	V1BinocularFilter_DspAngOutPreBord_thread(int v1s_idx, int thread_no);
   // do binocular filters -- integrate dsp out to v1b_dsp_out_pre -- for case where only border is non-zero
 
   virtual bool	V1BinocularFilter_Complex_Pre();
