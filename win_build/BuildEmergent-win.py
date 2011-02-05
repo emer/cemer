@@ -93,16 +93,19 @@ def getUrl(url):
 	return file
 
 def getOptions(default):
-	if default == "y" or default == "Y":   return " [Y/n/q/a]: "
+	if default == "":                      return " [y/n/q/a]: "
+	elif default == "y" or default == "Y": return " [Y/n/q/a]: "
 	elif default == "n" or default == "N": return " [y/N/q/a]: "
 	else:                                  return " [y/n/Q/a]: "
 
 yes_to_all = False
 def askUser(question, default="Y"):
 	global yes_to_all
-	if yes_to_all: return True
-	response = raw_input(question + getOptions(default))
-	if response == "" : response = default
+	if yes_to_all and default == "Y": return True
+	while True:
+		response = raw_input(question + getOptions(default))
+		if response == "": response = default
+		if response != "": break
 	if response[0] == "a" or response[0] == "A":
 		yes_to_all = True
 		return True
@@ -182,15 +185,17 @@ jom_dir = os.path.join(devtool_dir, "jom")
 def inst_jom():
 	global use_jom, jom_exe
 	jom_exe = os.path.join(jom_dir, "jom.exe")
-	if not fileExists(jom_exe):
+	if fileExists(jom_exe):
+		use_jom = True
+	else:
 		print "\nYou should install Jom.  This can be downloaded and installed for you."
 		if askUser("\nReady to download and install Jom?"):
 			print "\nDownloading Jom..."
 			file = getUrl("ftp://ftp.qt.nokia.com/jom/jom.zip")
 			zip = ZipFile(file)
 			zip.extractall(jom_dir)
-	if fileExists(jom_exe):
-		use_jom = True
+		if fileExists(jom_exe):
+			use_jom = True
 
 emer_src = 'C:/src/emergent'
 def inst_emer_src():
@@ -217,7 +222,7 @@ def inst_emer_src():
 	else:
 		# Found .svn folder, make sure it's up to date
 		print "\nYou probably want to make sure the Emergent source is up to date."
-		if askUser("\nReady to update the Emergent source?"):
+		if askUser("\nOK to get the latest Emergent source from Subversion?", default=""):
 			svnclient = findInProgFiles('SlikSvn/bin/svn.exe')
 			if not svnclient:
 				print "Can't continue because SVN client needs to be installed!  Quitting."
@@ -265,22 +270,25 @@ def setEnvironmentVariable(name, value):
 	print "Set " + name + "=" + value
 
 def checkEnvironmentVariable(name, value):
-	try:
-		oldval = os.environ[name]
-		if oldval == value:
-			print "Environment variable OK: " + name + "=" + oldval
-		else:
-			print "Environment variable " + name + ":"
-			print "  Old value: " + oldval
-			print "  New value: " + value
-			response = raw_input("OK to change variable? [Y/n]: ")
-			if isYes(response):
-				setEnvironmentVariable(name, value)
-	except KeyError:
-		print "Environment variable " + name + " is not currently set."
-		print "  New value: " + value
-		response = raw_input("OK to set variable? [Y/n]: ")
-		if isYes(response):
+	oldval = ""
+	try: oldval = os.environ[name]
+	except KeyError: pass
+	regval = getUserEnvVar(name)
+	if regval == value:
+		if oldval != value:
+			print "Updating " + name + " in local environment to match registry settings"
+			os.environ[name] = value
+		print "Environment variable OK: " + name + "=" + value
+	elif regval == "" and oldval == "":
+		print "Need to set environment variable: " + name + "=" + value
+		if askUser("OK to set variable?"):
+			setEnvironmentVariable(name, value)
+	else:
+		print "Need to update environment variable: " + name
+		print "  Current registry value:    " + regval
+		print "  Current environment value: " + oldval
+		print "  New value to be set:       " + value
+		if askUser("OK to change variable?"):
 			setEnvironmentVariable(name, value)
 
 # Quarter build outputs get copied to COINDIR as part of the build process,
@@ -295,6 +303,7 @@ def compile_quarter():
 			# Build Release and Debug libraries
 			subprocess.call([msbuild, '/p:Configuration=DLL (Release)', quarter_sln])
 			subprocess.call([msbuild, '/p:Configuration=DLL (Debug)', quarter_sln])
+			print "\nWarnings are OK when building Quarter.  It should say 'Build succeeded'.\n"
 
 def fix_environment():
 	checkEnvironmentVariable('COINDIR', fixPath(coin_dir))
@@ -343,16 +352,15 @@ def build_emergent():
 	f = open(cmake_bat, 'w')
 	vcvarsall_bat = findInProgFiles('Microsoft Visual Studio 9.0/VC/vcvarsall.bat')
 	f.write('echo on\n')
-	f.write('call "' + vcvarsall_bat + '"\n')
+	f.write('call "' + fixPath(vcvarsall_bat) + '"\n')
 	f.write("cd /d " + fixPath(emer_build) + "\n")
 	if use_jom:
-		f.write('"' + cmake_exe + '" .. -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release\n')
-		f.write('"' + jom_exe + '" package')
+		f.write('"' + fixPath(cmake_exe) + '" .. -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release\n')
+		f.write('"' + fixPath(jom_exe) + '" package')
 	else:
-		f.write('"' + cmake_exe + '" .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release\n')
+		f.write('"' + fixPath(cmake_exe) + '" .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release\n')
 		f.write('nmake package')	
 	f.close()
-	#subprocess.Popen([cmake_exe, '..', '-G', 'NMake Makefiles', '-DCMAKE_BUILD_TYPE=Release'], cwd=emer_build).wait()
 	os.system(cmake_bat)
 
 inst_msvs()
