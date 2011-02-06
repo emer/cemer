@@ -4746,8 +4746,9 @@ void VisDisparityLayerSpec::ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* ne
 	float netin = 0.0f;
 	for(int i=0; i < cg->size; i++) {
 	  LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-	  LeabraCon* cn = (LeabraCon*)cg->PtrCn(i); // recv mode
-	  float itm = cn->wt * su->misc_1;	    // note: using misc_1 prod val!
+// 	  LeabraCon* cn = (LeabraCon*)cg->PtrCn(i); // recv mode
+// 	  float itm = cn->wt * su->misc_1;	    // note: using misc_1 prod val!
+	  float itm = su->misc_1; // no need for weight!
 	  if(disp.max_l)
 	    netin = MAX(netin, itm);
 	  else

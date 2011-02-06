@@ -3385,6 +3385,7 @@ void V1MotionSpec::UpdateAfterEdit_impl() {
 
 void V1BinocularSpec::Initialize() {
   dsp_ang = false;
+  dsp_v1c_thr = 0.1f;
   n_disps = 1;
   disp_range_pct = 0.05f;
   gauss_sig = 0.7f;
@@ -4098,6 +4099,9 @@ bool V1RegionSpec::InitOutMatrix() {
     if(v1b_specs.dsp_ang) {
       v1b_dsp_ang_out.SetGeom(4, v1s_specs.n_angles, v1b_specs.tot_disps,
 			      v1s_img_geom.x, v1s_img_geom.y);
+      v1b_dsp_ang_out_tmp.SetGeom(4, v1s_specs.n_angles, v1b_specs.tot_disps,
+				  v1s_img_geom.x, v1s_img_geom.y);
+
 
       v1b_dsp_nmatch.SetGeom(1,1);
       v1b_dsp_flags.SetGeom(1,1);
@@ -4127,6 +4131,7 @@ bool V1RegionSpec::InitOutMatrix() {
       v1b_dsp_wts.SetGeom(4, v1b_specs.tot_disps, 1, v1s_img_geom.x, v1s_img_geom.y);
 
       v1b_dsp_ang_out.SetGeom(1,1);
+      v1b_dsp_ang_out_tmp.SetGeom(1,1);
       v1b_dsp_ang_out_pre.SetGeom(1,1);
 
       if(v1b_filters & V1B_C) {
@@ -5995,6 +6000,10 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_DspAng_thread(int v1c_pre_idx, int 
     for(int sfi = 0; sfi < v1s_feat_geom.n; sfi++) { // simple feature index
       fc.SetFmIndex(sfi, v1s_feat_geom.x);
       float dval = cur_v1b_dsp->FastEl(fc.x, didx, pc.x, pc.y);
+      if(v1b_specs.dsp_v1c_thr > 0.0f) {
+	if(dval > v1b_specs.dsp_v1c_thr) dval = 1.0f; // binarize
+	else dval = 0.0f;
+      }
       // just access by angle and disparity -- straight-up multiplies result (for now)
       float rv = v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y);
       v1b_v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * dval;
@@ -6012,6 +6021,10 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_DspAng_Polinv_thread(int v1c_pre_id
     for(int sfi = 0; sfi < v1c_polinv_geom.n; sfi++) { // simple feature index
       fc.SetFmIndex(sfi, v1c_polinv_geom.x);
       float dval = cur_v1b_dsp->FastEl(fc.x, didx, pc.x, pc.y);
+      if(v1b_specs.dsp_v1c_thr > 0.0f) {
+	if(dval > v1b_specs.dsp_v1c_thr) dval = 1.0f; // binarize
+	else dval = 0.0f;
+      }
       // just access by angle and disparity -- straight-up multiplies result (for now)
       float rv = v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y);
       v1b_v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * dval;
@@ -6040,6 +6053,88 @@ void V1RegionSpec::V1BinocularFilter_AvgSum() {
   else
     v1b_avgsum_out = 0.0f;
 }
+
+
+void V1RegionSpec::V1bDspAngCrossResMin(float extra_width, int max_extra) {
+  // todo: make core routine threaded..
+  RetinaProc* own = (RetinaProc*)GetOwner(&TA_RetinaProc);
+  if(!own) return;
+  for(int i=0; i<own->regions.size; i++) {
+    V1RegionSpec* rsa = (V1RegionSpec*)own->regions.FastEl(i);
+    for(int j=i+1; j<own->regions.size; j++) {
+      V1RegionSpec* rsb = (V1RegionSpec*)own->regions.FastEl(j);
+      V1RegionSpec* rs_sm;	// smaller
+      V1RegionSpec* rs_lg;	// larger
+      if(rsa->v1s_img_geom.x >= rsb->v1s_img_geom.x) {
+	rs_sm = rsb; rs_lg = rsa;
+      }
+      else {
+	rs_sm = rsa; rs_lg = rsb;
+      }
+
+      // testing
+//       TwoDCoord sm_half = rs_sm->v1s_img_geom / 2;
+//       TwoDCoord sm_0 = 0;
+
+      TwoDCoord sm_to_lg;
+      sm_to_lg = rs_lg->v1s_img_geom / rs_sm->v1s_img_geom;
+      TwoDCoord extra;
+      extra.x = (int)((float)sm_to_lg.x * extra_width + 0.5f);
+      extra.y = (int)((float)sm_to_lg.y * extra_width + 0.5f);
+      extra.x = MIN(max_extra, extra.x);
+      extra.y = MIN(max_extra, extra.y);
+      
+      TwoDCoord tot_wd = sm_to_lg + extra;
+
+      TwoDCoord lc;		// large coords
+      TwoDCoord sc;		// small coords
+      TwoDCoord xc;		// extra coords
+      TwoDCoord alc;		// actual large coord
+      for(sc.y = 0; sc.y < rs_sm->v1s_img_geom.y; sc.y++) {
+	for(sc.x = 0; sc.x < rs_sm->v1s_img_geom.x; sc.x++) {
+	  lc = sc * sm_to_lg;
+	  for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+	      float smval = rs_sm->v1b_dsp_ang_out.FastEl(ang, didx, sc.x, sc.y);
+	      float lmax = 0.0f;
+	      for(xc.y=-extra.y; xc.y<tot_wd.y; xc.y++) {
+		for(xc.x=-extra.x; xc.x<tot_wd.x; xc.x++) {
+		  alc = lc + xc;
+		  if(alc.WrapClip(wrap, rs_lg->v1s_img_geom)) {
+		    if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+		  }
+		  float lval = rs_lg->v1b_dsp_ang_out.FastEl(ang, didx, alc.x, alc.y);
+		  lmax = MAX(lmax, lval);
+		}
+	      }
+	      float mn = MIN(smval, lmax); // quick product..
+// 	      if(sc == sm_half || sc == sm_0)
+// 		mn = 2.0f;	// test
+	      rs_sm->v1b_dsp_ang_out_tmp.FastEl(ang, didx, sc.x, sc.y) = mn;
+	      // apply this result ONLY to the "core" large guys, not the extras..
+	      for(xc.y=0; xc.y<sm_to_lg.y; xc.y++) {
+		for(xc.x=0; xc.x<sm_to_lg.x; xc.x++) {
+		  alc = lc + xc;
+		  rs_lg->v1b_dsp_ang_out_tmp.FastEl(ang, didx, alc.x, alc.y) = mn;
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+
+  for(int i=0; i<own->regions.size; i++) {
+    V1RegionSpec* rsa = (V1RegionSpec*)own->regions.FastEl(i);
+    rsa->v1b_dsp_ang_out.CopyFrom(&rsa->v1b_dsp_ang_out_tmp); // get tmp vals after all over
+    // re-output v1b_dsp_ang_out
+    if(!rsa->data_table || rsa->save_mode == NONE_SAVE) // bail now
+      continue;
+    rsa->V1BOutputToTable(rsa->data_table);
+  }
+}
+
 
 
 bool V1RegionSpec::V1bDspInFmDataTable(DataTable* data_table, Variant col, int row,
@@ -6926,26 +7021,28 @@ bool V1RegionSpec::V1BOutputToTable(DataTable* dtab) {
   TwoDCoord sc;		// simple coords
   TwoDCoord fc;		// v1s feature coords
 
-  if(v1b_filters & V1B_DSP) {
-    if(v1b_specs.dsp_ang) {
-      col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
-		v1s_specs.n_angles, v1b_specs.tot_disps, v1s_img_geom.x, v1s_img_geom.y);
-      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      dout->CopyFrom(&v1b_dsp_ang_out);
+  if(region.ocularity == VisRegionParams::BINOCULAR) {
+    if(v1b_filters & V1B_DSP) {
+      if(v1b_specs.dsp_ang) {
+	col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
+					  v1s_specs.n_angles, v1b_specs.tot_disps, v1s_img_geom.x, v1s_img_geom.y);
+	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+	dout->CopyFrom(&v1b_dsp_ang_out);
+      }
+      else {
+	col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
+					  v1b_specs.tot_disps, 1, v1s_img_geom.x, v1s_img_geom.y);
+	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+	dout->CopyFrom(&v1b_dsp_out);
+      }
     }
-    else {
-      col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
-					v1b_specs.tot_disps, 1, v1s_img_geom.x, v1s_img_geom.y);
-      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      dout->CopyFrom(&v1b_dsp_out);
-    }
-  }
 
-  if(v1b_filters & V1B_S) {
-    col = data_table->FindMakeColName(name + "_v1b_s", idx, DataTable::VT_FLOAT, 4,
-		      v1b_s_feat_geom.x, v1b_s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
-    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-    dout->CopyFrom(&v1b_s_out);
+    if(v1b_filters & V1B_S) {
+      col = data_table->FindMakeColName(name + "_v1b_s", idx, DataTable::VT_FLOAT, 4,
+					v1b_s_feat_geom.x, v1b_s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+      dout->CopyFrom(&v1b_s_out);
+    }
   }
 
   if(v1b_filters & REQ_V1B_C) {

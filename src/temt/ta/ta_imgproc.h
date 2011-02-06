@@ -993,6 +993,7 @@ class TA_API V1BinocularSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		dsp_ang;	// output of disparity system preserves angle (orientation) information, but no polarity or other info -- automatically sets MAX_POLS for v1s_filters and uses that for input.  also uses a simple MIN(left,right) matching algorithm, instead of the full disparity offset computation, which is compatible with actual network-based computation
+  float		dsp_v1c_thr;	// threshold on disparity value for passing features through to v1c -- if this value is > 0, filtering by dsp_ang is binary, using this threshold.  Otherwise, it is a multiply.  only applies to dsp_ang mode
   int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
   float		disp_range_pct;  // #DEF_0.05:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total V1S image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
   float		gauss_sig; 	// #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
@@ -1341,6 +1342,7 @@ public:
   float_Matrix	v1b_dsp_ang_out;  // #READ_ONLY #NO_SAVE disparity angle output (dsp_ang option) -- [n_angles][tot_disps][img.x][img.y]
   float_Matrix	v1b_dsp_out_pre; // #READ_ONLY #NO_SAVE v1c pre gp4 version of v1b_dsp_out -- v1b_c requires things to be at the pre level -- has pure disparity output -- no orientation or other feature coding -- quantizes the disparity offsets into disparity activation values for the n_disps disparity levels [tot_disps][1][pre_img.x][pre_img.y]
   float_Matrix	v1b_dsp_ang_out_pre;  // #READ_ONLY #NO_SAVE v1c pre gp4 version of v1b_dsp_ang_out -- [n_angles][tot_disps][pre_img.x][pre_img.y]
+  float_Matrix	v1b_dsp_ang_out_tmp;  // #READ_ONLY #NO_SAVE temp buffer for disparity angle output (dsp_ang option) -- [n_angles][tot_disps][img.x][img.y]
   float_Matrix	v1b_dsp_in;	 // #READ_ONLY #NO_SAVE pure disparity *input* (see v1b_dsp_out for more info) -- this should be copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity (see V1bDspInFmDataTable and UpdateV1cFmV1bDspIn methods) -- should be same size as v1c_pre_img_geom [tot_disps][1][pre_img.x][pre_img.y]
   float_Matrix	v1b_dsp_in_prv;	 // #READ_ONLY #NO_SAVE previous version of v1b_dsp_in -- for comparison purposes
   float_Matrix	v1b_dsp_ang_in;	 // #READ_ONLY #NO_SAVE disparity by angle *input* -- this should be copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity (see V1bDspAngInFm* and UpdateV1cFmV1bDspAngIn methods) -- should be same size as v1c_pre_img_geom [n_angles][tot_disps][pre_img.x][pre_img.y]
@@ -1366,6 +1368,9 @@ public:
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot all of the V1 stencils into data table and generate a grid view -- these are the effective receptive fields at each level of processing
   virtual void	PlotSpacing(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_1 plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view -- one row for each type of filter (scroll to see each in turn) -- light squares show bounding box of rf, skipping every other
+
+  virtual void 	V1bDspAngCrossResMin(float extra_width=1.0f, int max_extra=4);
+  // #CAT_V1B integrate v1b_dsp_ang_out values across different resolutions within the same parent V1RetinaProc object -- call this after first pass processing, before applying results -- extra_width is multiplier on rf size needed to map between layer sizes that is added to the lower resolution side, to deal with extra blurring at lower res relative to higher res -- max_extra is maximum such extra to use, in actual pixel values
 
   virtual bool	V1bDspInFmDataTable(DataTable* data_table, Variant col, int row=-1, 
 				    float diff_thr=0.01f, int integ_sz=1);
