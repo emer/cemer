@@ -7272,7 +7272,7 @@ iTreeViewItem* iTreeView::AssertItem(taiDataLink* link, bool super) {
   taiDataLink* own_link = link->ownLink();
   if (!own_link) return NULL;
   iTreeViewItem* own_el = AssertItem(own_link);
-  // note: don't bale if no own_el, because could be a defchild parent
+  // note: don't bial if no own_el, because could be a defchild parent
   // then try making sure owner's children asserted
   if (own_el) { // && own_el->lazyChildren()) {
     own_el->CreateChildren();
@@ -8432,8 +8432,11 @@ void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     iTreeView* itv = treeView();
     if(!itv) return;
     if(itv->itemCount() > 0) {
-      if(itv->item(0) == this || do_updt)
+      if(itv->item(0) == this)
 	itv->ExpandDefault();
+      else if(do_updt) {
+	itv->ExpandAllUnder(this);
+      }
     }
   }
 }
