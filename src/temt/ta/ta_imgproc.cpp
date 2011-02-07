@@ -6115,7 +6115,9 @@ void V1RegionSpec::V1bDspAngCrossResMin(float extra_width, int max_extra) {
 	      for(xc.y=0; xc.y<sm_to_lg.y; xc.y++) {
 		for(xc.x=0; xc.x<sm_to_lg.x; xc.x++) {
 		  alc = lc + xc;
-		  rs_lg->v1b_dsp_ang_out_tmp.FastEl(ang, didx, alc.x, alc.y) = mn;
+		  float lval = rs_lg->v1b_dsp_ang_out.FastEl(ang, didx, alc.x, alc.y);
+		  rs_lg->v1b_dsp_ang_out_tmp.FastEl(ang, didx, alc.x, alc.y) = MIN(mn, lval);
+		  // *never* create new feature activation beyond what is present in large guys
 		}
 	      }
 	    }
