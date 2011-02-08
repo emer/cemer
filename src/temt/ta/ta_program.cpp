@@ -519,7 +519,7 @@ void ProgVar::Initialize() {
   object_type = &TA_taOBase;
   hard_enum_type = NULL;
   objs_ptr = false;
-  flags = (VarFlags)(CTRL_PANEL | NULL_CHECK | EDIT_VAL);
+  flags = (VarFlags)(CTRL_PANEL | NULL_CHECK | EDIT_VAL | SAVE_VAL);
   reference = false;
   parse_css_el = NULL;
 }
@@ -576,7 +576,7 @@ void ProgVar::SetFlagsByOwnership() {
 	SetVarFlag(FUN_ARG);
     }
   }
-  if(HasVarFlag(LOCAL_VAR) || init_from) {
+  if(init_from) {		// NOTE: LOCAL_VAR is now editable and provides initializer value for local variables
     ClearVarFlag(EDIT_VAL);
   }
   else {
@@ -612,7 +612,9 @@ int ProgVar::GetEnabled() const {
 
 int ProgVar::GetSpecialState() const {
   if(HasVarFlag(LOCAL_VAR)) return 0;
-  return (bool)init_from;	// indicate if being initialized from somewhere else
+  if(init_from) return 1;
+  if(!HasVarFlag(SAVE_VAL)) return 4;
+  return 0;
 }
 
 void ProgVar::Copy_(const ProgVar& cp) {
@@ -993,6 +995,8 @@ taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
     rval = (var_type == T_DynEnum) ? DQR_SAVE : DQR_NO_SAVE;
   else 
     return inherited::Dump_QuerySaveMember(md);
+
+  if(!HasVarFlag(LOCAL_VAR) && !HasVarFlag(SAVE_VAL)) rval = DQR_NO_SAVE; // always save LOCAL_VAR's because they are initializers
   return rval;
 }
 
@@ -1082,6 +1086,9 @@ const String ProgVar::GenCssVar_impl() {
   rval += GenCssType() + " ";
   rval += name;
   rval += ";\n";
+  if(HasVarFlag(LOCAL_VAR)) {
+    rval += name + " = " + GenCssInitVal() + ";\n";
+  }
   return rval;
 }
 
@@ -3699,6 +3706,9 @@ void Program::UpdateAfterEdit_impl() {
   // such as ret_val -- therefore, DO NOT do things here that are incompatible
   // with the runtime, in particular, do NOT invalidate the following state flags:
   //   m_stale, script_compiled
+
+  if(HasProgFlag(LOCKED)) SetBaseFlag(BF_GUI_READ_ONLY);
+  else			  ClearBaseFlag(BF_GUI_READ_ONLY);
   
   //TODO: the following *do* affect generated script, so we should probably call
   // setDirty(true) if not running, and these changed:
@@ -4466,6 +4476,13 @@ Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
   //  return _nilVariant;			     // return nil anyway!
   ProgLibEl* pel = prog_lib->FindName(name); // find our name
   return Variant(pel);
+}
+
+int Program::GetSpecialState() const {
+  if(HasProgFlag(LOCKED)) return 4; // red
+  if(HasProgFlag(STARTUP_RUN)) return 3; // green
+  if(HasProgFlag(NO_STOP_STEP)) return 1; // may not want this one -- might be too much color..
+  return 0;
 }
 
 void Program::LoadFromProgLib(ProgLibEl* prog_type) {

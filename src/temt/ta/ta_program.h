@@ -287,10 +287,11 @@ public:
     CTRL_PANEL		= 0x0001, // #CONDSHOW_OFF_flags:LOCAL_VAR show this variable in the control panel
     CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
     NULL_CHECK		= 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
-    LOCAL_VAR		= 0x0008, // #NO_SHOW this is a local variable which does not set or update values!
-    FUN_ARG		= 0x0010, // #NO_SHOW this is a function argument variable
-    USED		= 0x0020, // #NO_SHOW whether this variable is currently being used in the program (set automatically)
-    EDIT_VAL		= 0x0040, // #NO_SHOW allow value to be edited -- only if !LOCAL_VAR && !init_from
+    SAVE_VAL		= 0x0008, // #CONDSHOW_OFF_flags:LOCAL_VAR save the value of the variable in the project -- good idea to turn off saving for variables that don't require persistence across saving and loading (and that change for each run and thus might affect merging of project files)
+    LOCAL_VAR		= 0x0010, // #NO_SHOW this is a local variable which does not set or update values!
+    FUN_ARG		= 0x0020, // #NO_SHOW this is a function argument variable
+    USED		= 0x0040, // #NO_SHOW whether this variable is currently being used in the program (set automatically)
+    EDIT_VAL		= 0x0080, // #NO_SHOW allow value to be edited -- only if !LOCAL_VAR && !init_from
   };
 
   String	name;		// name of the variable
@@ -1067,6 +1068,7 @@ public:
     SELF_STEP		= 0x0002, // #NO_BIT this program has a StopStepPoint program element within it, and thus it shows up within its own list of Step programs -- this flag is set automatically during Init
     STARTUP_RUN		= 0x0004, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
     OBJS_UPDT_GUI	= 0x0008, // when this flag is set, changes to the objs objects update the gui as they happen -- otherwise they are only updated after the program finishes (much faster)
+    LOCKED		= 0x0010, // this program should not be edited -- you must uncheck this flag prior to editing
   };
   
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -1326,6 +1328,7 @@ public: // XxxGui versions provide feedback to the user
   virtual bool		ViewProperties();
   // #CAT_Display select the edit/middle panel view of this object to be for the program properties
 
+  override int		GetSpecialState() const;
   override String 	GetTypeDecoKey() const { return "Program"; }
   override Variant 	GetGuiArgVal(const String& fun_name, int arg_idx);
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);

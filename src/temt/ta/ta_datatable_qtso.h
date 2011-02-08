@@ -360,6 +360,8 @@ public:
   String	last_sel_col_nm; // #READ_ONLY #SHOW #NO_SAVE column name of the last selected point in graph to view values (if empty, then none)
   bool		last_sel_got;	 // #READ_ONLY #SHOW #NO_SAVE got a last sel value
   float		last_sel_val; 	// #READ_ONLY #SHOW #NO_SAVE value of last selected point
+  int		last_sel_dims;	// #READ_ONLY #SHOW #NO_SAVE dims of last sel coords
+  int		last_sel_coords[7];// #READ_ONLY #SHOW #NO_SAVE dim coords
 
   bool		scrolling_;	// #IGNORE currently scrolling (in scroll callback)
 
