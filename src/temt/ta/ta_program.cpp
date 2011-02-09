@@ -663,6 +663,10 @@ void ProgVar::UpdateAfterEdit_impl() {
   String tfs = GetSchemaSig();
   // loading is a special case: initialize
   if (taMisc::is_loading) {
+    taVersion v512(5, 1, 2);
+    if(taMisc::loading_version < v512) { // everything prior to 512 had save val on by default
+      SetVarFlag(SAVE_VAL);
+    }
     m_prev_sig = tfs;
     m_this_sig = tfs;
   } else {
@@ -1050,7 +1054,7 @@ const String ProgVar::GenCssInitVal() const {
   case T_Real:
     return real_val;
   case T_String:
-    return string_val;
+    return "\"" + string_val + "\"";
   case T_Bool:
     return bool_val;
   case T_Object:
@@ -3786,7 +3790,8 @@ int Program::CallInit(Program* caller) {
 } 
 
 void Program::Init() {
-  cur_step_prog = NULL;
+//   cur_step_prog = NULL;  // if a program calls Init() directly, this will prevent stepping
+  // it is not clear if we really need to clear this setting here
   ClearStopReq();		// NOTE: newly added 4/18/09 -- check for breakage..
   taProject* proj = GET_MY_OWNER(taProject);
   if(proj && proj->file_name.nonempty()) {
@@ -4481,7 +4486,7 @@ Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
 int Program::GetSpecialState() const {
   if(HasProgFlag(LOCKED)) return 4; // red
   if(HasProgFlag(STARTUP_RUN)) return 3; // green
-  if(HasProgFlag(NO_STOP_STEP)) return 1; // may not want this one -- might be too much color..
+  if(HasProgFlag(NO_STOP_STEP)) return 2; // may not want this one -- might be too much color..
   return 0;
 }
 

@@ -1240,8 +1240,9 @@ double taMath_double::vec_ss_mean(const double_Matrix* vec) {
 
 void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, double bin_size) {
   if(!vec_check_type(vec) || !vec_check_type(oth)) return;
-  vec->Reset();
   if(oth->size == 0) return;
+  vec->SetGeom(1,0);
+  vec->Reset();
   double_Array tmp;
   tmp.SetSize(oth->size);
   for(int i=0;i<oth->size;i++)
@@ -4159,8 +4160,9 @@ float taMath_float::vec_ss_mean(const float_Matrix* vec) {
 
 void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, float bin_size) {
   if(!vec_check_type(vec) || !vec_check_type(oth)) return;
-  vec->Reset();
   if(oth->size == 0) return;
+  vec->Reset();
+  vec->SetGeom(1,0);
   float_Array tmp(false);
   tmp.SetSize(oth->size);
   for(int i=0;i<oth->size;i++)
