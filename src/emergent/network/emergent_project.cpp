@@ -17,7 +17,6 @@
 
 #include "emergent_project.h"
 
-
 #include "ta_base.h"
 #include "ta_dump.h"
 #include "css_ta.h"
@@ -922,11 +921,12 @@ void EmergentRoot::About() {
   info += "Emergent Info\n";
   info += "This is the Emergent software package, version: ";
   info += version;
+  info += " (" + taMisc::svn_rev + ")";
   info += "\n\n";
   info += "WWW Page: http://grey.colorado.edu/emergent\n";
   info += "\n\n";
 
-  info += "Copyright (c) 1995-2010, Regents of the University of Colorado,\n\
+  info += "Copyright (c) 1995-2011, Regents of the University of Colorado,\n\
 Carnegie Mellon University, Princeton University.\n\
  \n\
 Emergent is free software; you can redistribute it and/or modify\n\
@@ -948,5 +948,3 @@ is covered by the GNU General Public License, see ta_string.h\n";
   else
     taMisc::Info(info);
 }
-
-

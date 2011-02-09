@@ -21,6 +21,7 @@
 #include "ta_variant.h"
 
 #ifndef NO_TA_BASE
+# include "svnrev.h"
 # include "ta_group.h"
 # include "ta_dump.h"
 # include "ta_project.h" // for taRootBase
@@ -475,10 +476,11 @@ String	taMisc::default_app_install_folder_name = "Emergent";
 
 String	taMisc::org_name = "ccnlab"; 
 
-#ifdef SVN_REV
-String	taMisc::svn_rev = String(SVN_REV);
+#ifndef SVN_REV // won't be defined if svnrev.h wasn't included
+#define SVN_REV -1
 #endif
 
+String	taMisc::svn_rev = String(SVN_REV);
 String	taMisc::version = String(VERSION);
 taVersion taMisc::version_bin(String(VERSION)); 
 

@@ -639,10 +639,8 @@ public:
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App version number of ta/css
   static taVersion 	version_bin; 
    //  #READ_ONLY #NO_SAVE #EXPERT #CAT_App version number of ta/css
-#ifdef SVN_REV
-  static String		svn_rev; 
-   // #READ_ONLY #NO_SAVE #SHOW #CAT_App svn revision number (only valid when configure has been rerun)
-#endif
+  static String		svn_rev;
+   // #READ_ONLY #NO_SAVE #SHOW #CAT_App svn revision number
   static const BuildType build_type;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App build type, mostly for determining plugin subfolders to search
   static const String	 build_str;

@@ -38,8 +38,36 @@ set(temtlib_SRCS
 	${temt_ta_SRCS} ${temt_ta_SRCS_MOC}
 	${temt_css_SRCS} ${temt_css_SRCS_MOC})
 
-add_library(temt SHARED ${temtlib_SRCS})
-  
+add_library(temt SHARED ${temtlib_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h)
+
+########### get svn revision ###############
+# http://stackoverflow.com/questions/3780667/use-cmake-to-get-build-time-svn-revision
+#
+# include the output directory, where the svnrev.h file is generated
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+# providing a filename that will never exist ensures this target
+# is built every time
+add_custom_target(svn_revision_header ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/doesnotexist.h)
+
+# this purposefully does not create the doesnotexist.h file!
+# creates svnrev.h using cmake script
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/doesnotexist.h
+    COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+                         -P ${CMAKE_CURRENT_SOURCE_DIR}/GetSvn.cmake)
+
+# svnrev.h is a generated file
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/svnrev.h
+    PROPERTIES GENERATED TRUE
+    HEADER_FILE_ONLY TRUE)
+
+# make the library depend on the svn_revision_header
+add_dependencies(temt svn_revision_header)
+#
+########### end get svn revision ###############
+
+
 # 2nd arg is extra libs to link to
 EMERGENT_LINK_LIBRARIES(temt "")
 
