@@ -1887,23 +1887,23 @@ bool taMisc::RecordScript(const char* cmd) {
 // normal non quoted members
 void taMisc::ScriptRecordAssignment(taBase* tab,MemberDef* md){
   if(taMisc::record_script != NULL)  {
-    *taMisc::record_script << tab->GetPath() << "." << md->name << " = " <<
+    *taMisc::record_script << tab->GetPathNames() << "." << md->name << " = " <<
       md->type->GetValStr(md->GetOff(tab)) << ";" << endl;
   }
 }
 // Script Record Inline Assignment
 void taMisc::SRIAssignment(taBase* tab,MemberDef* md){
   if(taMisc::record_script != NULL)  {
-    *taMisc::record_script << tab->GetPath() << "." << md->name << " = \"" <<
+    *taMisc::record_script << tab->GetPathNames() << "." << md->name << " = \"" <<
       md->type->GetValStr(md->GetOff(tab)) << "\";\n";
-    *taMisc::record_script << tab->GetPath() << "." << "UpdateAfterEdit();" << endl;
+    *taMisc::record_script << tab->GetPathNames() << "." << "UpdateAfterEdit();" << endl;
   }
 }
 
 // Script Record Enum Assignment
 void taMisc::SREAssignment(taBase* tab,MemberDef* md){
   if(taMisc::record_script != NULL)  {
-    *taMisc::record_script << tab->GetPath() << "." << md->name << " = " <<
+    *taMisc::record_script << tab->GetPathNames() << "." << md->name << " = " <<
       tab->GetTypeDef()->name << "::" <<
       md->type->GetValStr(md->GetOff(tab)) << ";" << endl;
   }
@@ -5812,7 +5812,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
           case SC_DISPLAY:
             return rbase->GetName();
           default:
-            return rbase->GetPath();
+            return rbase->GetPathNames();
           }
         } else
           return String((intptr_t)rbase);
@@ -7011,7 +7011,7 @@ ostream& TypeDef::Output(ostream& strm, void* base, int indent) const {
       rbase = NULL;
 
     if(rbase)
-      strm << rbase->GetPath();
+      strm << rbase->GetPathNames();
     else
       strm << Get_C_Name();
   }
@@ -7051,7 +7051,7 @@ ostream& TypeDef::OutputR(ostream& strm, void* base, int indent) const {
       rbase = NULL;
 
     if(rbase)
-      strm << rbase->GetPath();
+      strm << rbase->GetPathNames();
     else
       strm << Get_C_Name();
   }
@@ -7649,12 +7649,12 @@ void taObjDiffRec::GetValue(taObjDiff_List& odl) {
     else if(type->InheritsFrom(TA_taSmartPtr)) rbase = ((taSmartPtr*)addr)->ptr();
     if(rbase && (rbase->GetOwner() || (rbase == tabMisc::root))) {
       if(rbase->IsChildOf(odl.tab_obj_a)) {
-	value = rbase->GetPath(NULL, odl.tab_obj_a); // scope by tab obj
+	value = rbase->GetPathNames(NULL, odl.tab_obj_a); // scope by tab obj
 	SetDiffFlag(VAL_PATH_REL);
       }
       else {
 	// otherwise, always do it relative to project
-	value = rbase->GetPath(NULL, rbase->GetOwner(&TA_taProject));
+	value = rbase->GetPathNames(NULL, rbase->GetOwner(&TA_taProject));
       }
     }
   }

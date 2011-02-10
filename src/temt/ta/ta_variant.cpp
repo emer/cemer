@@ -1794,7 +1794,7 @@ const String Variant::toCssLiteral() const {
     if (isNull()) {
       rval += "NULL";
     } else {
-      rval += d.tab->GetPath();
+      rval += d.tab->GetPathNames();
     }
 #endif
   case T_TypeItem: 

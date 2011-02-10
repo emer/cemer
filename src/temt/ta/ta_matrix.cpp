@@ -1387,7 +1387,7 @@ void taMatrix::UpdateGeom() {
   int i;
   for (i = 0; i < (dims_ - 1) ; ++i) {
     if (geom[i] <= 0) {
-      taMisc::Error(this->GetPath(), "geoms[0..N-2] must be > 0; object is now invalid");
+      taMisc::Error(this->GetPathNames(), "geoms[0..N-2] must be > 0; object is now invalid");
       return;
     }
   }

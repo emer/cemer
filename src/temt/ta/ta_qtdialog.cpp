@@ -2196,7 +2196,7 @@ void taiEditDataHost::Constr_Strings() {
     if (rbase) {
       desc = rbase->GetDesc(); // often empty -- use td if so
       if(rbase->GetOwner() != NULL)
-        win_str += String(" ") + rbase->GetPath();
+        win_str += String(" ") + rbase->GetPathNames();
       if(rbase->GetName() != "") {
         win_str += String(" (") + rbase->GetName() + ")";
         prompt_str = rbase->GetName() + " (" + typ->name + ")";
@@ -2766,7 +2766,7 @@ void taiStringDataHost::Constr_Strings() {
 //NO  inherited::Constr_Strings(prompt_str_, win_str_); // for if non-empty
   taBase* rbase = Base_(); // cache
   if (rbase && mbr) {
-    win_str = "Editing " + rbase->GetPath() + ":" + mbr->GetLabel();
+    win_str = "Editing " + rbase->GetPathNames() + ":" + mbr->GetLabel();
   }
   if (mbr) {
     prompt_str = mbr->GetLabel() + ": " + mbr->desc;

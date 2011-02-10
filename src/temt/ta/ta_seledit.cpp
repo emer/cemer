@@ -962,7 +962,7 @@ void SelectEdit::ConvertLegacy() {
       item->mbr = bs->GetTypeDef()->members.FindName((const char*)nm);
     }
     if (item->mbr == NULL) {
-      taMisc::Warning("*** SelectEdit: couldn't find member:", item->item_nm, "in object to edit:",bs->GetPath());
+      taMisc::Warning("*** SelectEdit: couldn't find member:", item->item_nm, "in object to edit:",bs->GetPathNames());
       item->Close();
       continue;
     }
@@ -983,7 +983,7 @@ void SelectEdit::ConvertLegacy() {
       item->mth = bs->GetTypeDef()->methods.FindName((const char*)nm);
     }
     if (item->mth == NULL) {
-      taMisc::Warning("*** SelectEdit: couldn't find method:", item->item_nm, "in object to edit:",bs->GetPath());
+      taMisc::Warning("*** SelectEdit: couldn't find method:", item->item_nm, "in object to edit:",bs->GetPathNames());
       item->Close();
       continue;
     }

@@ -3060,7 +3060,7 @@ Program* ProgramCallVar::GetTarget() {
   Program* rval = prog_group->FindLeafName(pnm);
   if(!rval) {
     taMisc::CheckError("Program named:", pnm, "not found in Program_Group:",
-		       prog_group->name, "path:", prog_group->GetPath(),
+		       prog_group->name, "path:", prog_group->GetPathNames(),
 		       "in ProgramCallVar in program:", program()->name);
     return NULL;
   }

@@ -811,6 +811,30 @@ String taBase::GetPath(taBase* ta, taBase* par_stop) const {
   return rval;
 }
 
+String taBase::GetPathNames(taBase* ta, taBase* par_stop) const {
+  if ((this == par_stop) && (ta == NULL))
+    return ".";
+
+  String rval;
+  taBase* par = GetOwner();
+  if (par == NULL) {
+    if (ta == NULL) rval = "root";
+  } else if (this != par_stop)
+    rval = par->GetPathNames((taBase*)this, par_stop);
+
+  if (ta != NULL) {
+    MemberDef* md;
+    if ((md = FindMember(ta)) != NULL) {
+      rval += "." + md->name;
+    } else if ((md = FindMemberPtr(ta)) != NULL) {
+      rval = String("*(") + rval + "." + md->name + ")";
+    } else {
+      rval += ".?.";
+    }
+  }
+  return rval;
+}
+
 taBase* taBase::FindFromPath(const String& path, MemberDef*& ret_md, int start) const {
   if(((int)path.length() <= start) || (path == ".")) {
     ret_md = NULL;
@@ -1396,7 +1420,7 @@ String taBase::GetValStr_ptr(const TypeDef* td, const void* base, void* par, Mem
       return dumpMisc::path_tokens.GetPath(rbase);	// use path tokens when saving..
     }
     else {
-      return rbase->GetPath();
+      return rbase->GetPathNames();
     }
   }
   else {
@@ -3721,14 +3745,14 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
       else {
 	TestError(true, "Changetype", "Cannot change to new type:",new_type->name,
 		  "which does not inherit from:", itd->name,
-		  "(or vice-versa)",itm->GetPath(NULL,this));
+		  "(or vice-versa)",itm->GetPathNames(NULL,this));
 	return false;
       }
     }
     else {
       TestError(true, "ChangeType", "Cannot change to new type:",new_type->name,
 		"which does not inherit from:", itd->name,
-		"(or vice-versa)",itm->GetPath(NULL,this));
+		"(or vice-versa)",itm->GetPathNames(NULL,this));
       return false;
     }
   }
@@ -3937,7 +3961,7 @@ void taList_impl::Dump_Load_pre() {
 taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ) {
   if(el_path.firstchar() != '[' || el_path.lastchar() != ']') {
     taMisc::Warning("*** Dump_Load_Path_parent: path is incorrectly formatted:",el_path,
-		    "for parent obj:",GetPath());
+		    "for parent obj:",GetPathNames());
     return NULL;
   }
   int idx = (int)el_path.between('[',']');
@@ -3953,7 +3977,7 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
        !((nw_el->GetTypeDef() == &TA_taBase_List) && (ld_el_typ == &TA_taBase_Group))) {
       // object not the right type, try to create new one..
       if(taMisc::verbose_load >= taMisc::MESSAGES) {
-	taMisc::Warning("*** Object at path:",GetPath(),
+	taMisc::Warning("*** Object at path:",GetPathNames(),
 			"of type:",nw_el->GetTypeDef()->name,"is not the right type:",
 			ld_el_typ->name,", attempting to create new one");
       }
@@ -3961,14 +3985,14 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
       if(!nw_el) {
 	taMisc::Warning("*** Dump_Load_Path_parent: Could not make new token of type:",
 			ld_el_typ->name,"for child item at path:",
-			el_path,"in parent list:",GetPath());
+			el_path,"in parent list:",GetPathNames());
 	return NULL;
       }
       ReplaceIdx(idx, nw_el);
       // this should no longer be necc as any changes will be in the parent!
       // todo: nuke me..
 //       if(nw_el->GetOwner() != NULL) {
-// 	String new_path = nw_el->GetPath(NULL, find_base);
+// 	String new_path = nw_el->GetPathNames(NULL, find_base);
 // 	if(new_path != orig_path) {
 // 	  dumpMisc::path_subs.Add(ld_el_typ, find_base, orig_path, new_path);
 // 	}
@@ -3981,13 +4005,13 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
     // no clear action to take if this is not the case b/c we don't know how to
     // create intervening types..
     if(!nw_el) {
-      taMisc::Warning("*** New: Could not make a token of:",ld_el_typ->name,"in:",GetPath());
+      taMisc::Warning("*** New: Could not make a token of:",ld_el_typ->name,"in:",GetPathNames());
       return NULL;
     }
     // this should no longer be necc as any changes will be in the parent!
     // todo: nuke me..
 //     if(nw_el->GetOwner()) {
-//       String new_path = nw_el->GetPath(NULL, find_base);
+//       String new_path = nw_el->GetPathNames(NULL, find_base);
 //       if(new_path != orig_path) {
 // 	dumpMisc::path_subs.Add(ld_el_typ, find_base, orig_path, new_path);
 //       }
@@ -4269,6 +4293,43 @@ String taList_impl::GetPath(taBase* ta, taBase* par_stop) const {
 	rval += "[" + String(gidx) + "]";
       else
 	rval += "[?]";
+    }
+  }
+  return rval;
+}
+
+String taList_impl::GetPathNames(taBase* ta, taBase* par_stop) const {
+  if((((taBase*) this) == par_stop) && (ta == NULL))
+    return ".";
+  String rval;
+
+  taBase* par = GetOwner();
+  if(par == NULL) {
+    if(ta == NULL) rval = "root";
+  }
+  else if(((taBase*) this) != par_stop)
+    rval = par->GetPathNames((taBase*)this, par_stop);
+
+  if (ta != NULL) {
+    MemberDef* md;
+    if((md = FindMember(ta)) != NULL) {
+      rval += "." + md->name;
+    }
+    else if((md = FindMemberPtr(ta)) != NULL) {
+      rval = String("*(") + rval + "." + md->name + ")";
+    }
+    else {
+      String obj_nm = ta->GetName();
+      if(obj_nm.empty()) {
+	int gidx = FindEl_(ta);
+	if(gidx >= 0)
+	  rval += "[" + String(gidx) + "]";
+	else
+	  rval += "[?]";
+      }
+      else {
+	rval += "[\"" + obj_nm + "\"]";
+      }
     }
   }
   return rval;

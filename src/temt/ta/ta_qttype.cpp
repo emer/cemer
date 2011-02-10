@@ -1263,7 +1263,7 @@ void taiMember::StartScript(const void* base) {
     return;	// no record for unowned objs (except root)!
   taBase* tab = (taBase*)base;
   *taMisc::record_script << "{ " << typ->name << "* ths = "
-			   << tab->GetPath() << ";" << endl;
+			   << tab->GetPathNames() << ";" << endl;
 }
 
 void taiMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff) {

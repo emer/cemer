@@ -116,7 +116,7 @@ void VPUList::Resolve() {
       VPUnref* vp = (VPUnref*)FastEl(i);
       String par_path;
       if(vp->parent != NULL)
-	par_path = vp->parent->GetPath();
+	par_path = vp->parent->GetPathNames();
       taMisc::Warning("Could not resolve following path:",vp->path,
 		    "in object:",par_path);
       i++;
@@ -166,13 +166,13 @@ void DumpPathSubList::AddPath(TypeDef* td, taBase* par, String& o, String& n) {
     nt = n.before(n_last_sep);
   }
   if(taMisc::verbose_load >= taMisc::MESSAGES) {
-    String ppath = par->GetPath();
+    String ppath = par->GetPathNames();
     taMisc::Warning("---> New Path Fix, old:",*op,"new:",*np,"in:",ppath);
   }
   DumpPathSub* nwsb = new DumpPathSub(td, par, *op, *np);
   Add(nwsb);
   if(par != tabMisc::root) {	// if local path, then add a global path fix too
-    String ppath = par->GetPath();
+    String ppath = par->GetPathNames();
     unFixPath(td, tabMisc::root, ppath); // un fix the parent if necessary
     String long_o = ppath + *op;
     String long_n = ppath + *np;
@@ -261,7 +261,7 @@ String DumpPathTokenList::GetPath(taBase* obj) {
   if(idx >= 0)
     return FastEl(idx)->token_id;
 
-  String path = obj->GetPath();
+  String path = obj->GetPathNames();
   DumpPathToken* tok = AddObjPath(obj, path);
   if(taMisc::save_old_fmt) {
     path += tok->token_id;
@@ -703,7 +703,7 @@ int TypeDef::Dump_Save_Path(ostream& strm, void* base, void* par, int) {
       // its a relative path if you have a parent (period)
       if(par != NULL)
 	strm << "@";
-      strm << rbase->GetPath(NULL, (taBase*)par);
+      strm << rbase->GetPathNames(NULL, (taBase*)par);
     }
   }
   return true;
@@ -854,7 +854,7 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     taBase* rbase = (taBase*)base;
 
     dumpMisc::dump_root = rbase;
-    dumpMisc::dump_root_path = rbase->GetPath();
+    dumpMisc::dump_root_path = rbase->GetPathNames();
 
     rbase->Dump_Save_pre();
     rbase->Dump_Save_GetPluginDeps();
@@ -1626,14 +1626,14 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     taBase* par = (taBase*)base;		// given base must be a parent
     el = par->New(1,td);		// create one of the saved type
     if(el == NULL) {
-      taMisc::Warning("Could not make a:",td->name,"in:",par->GetPath());
+      taMisc::Warning("Could not make a:",td->name,"in:",par->GetPathNames());
       rval = false;
       goto endload;
     }
   }
 
 
-  new_path = el->GetPath();
+  new_path = el->GetPathNames();
   if(new_path != path)
     dumpMisc::path_subs.AddPath(td, tabMisc::root, path, new_path);
 

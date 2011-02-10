@@ -738,9 +738,9 @@ void taiMisc::ScriptIconify(void*, int) {
 // do nothing, use script win pos to record final iconify status
 //  DataViewer* wb = (DataViewer *) obj;
 //   if(onoff)
-//     taiMisc::RecordScript(wb->GetPath() + ".Iconify();\n");
+//     taiMisc::RecordScript(wb->GetPathNames() + ".Iconify();\n");
 //   else
-//     taiMisc::RecordScript(wb->GetPath() + ".DeIconify();\n");
+//     taiMisc::RecordScript(wb->GetPathNames() + ".DeIconify();\n");
 }
 
 

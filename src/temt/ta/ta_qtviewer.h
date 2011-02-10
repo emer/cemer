@@ -167,6 +167,7 @@ public:
   override bool		HasChildItems();
   override TypeDef*	GetDataTypeDef() const;
   override String	GetPath() const {return data()->GetPath();} 
+  override String	GetPathNames() const {return data()->GetPathNames();} 
   override String	GetPath_Long() const {return data()->GetPath_Long();} 
   override String	GetTypeDecoKey() const;
   override String	GetStateDecoKey() const;

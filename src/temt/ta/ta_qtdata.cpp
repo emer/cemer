@@ -2629,9 +2629,9 @@ bool taiObjChooser::Choose() {
 
 void taiObjChooser::GetPathStr() {
   if(lst_par_obj != NULL)
-    path_str = lst_par_obj->GetPath();
+    path_str = lst_par_obj->GetPathNames();
   else if(reg_par_obj != NULL)
-    path_str = reg_par_obj->GetPath();
+    path_str = reg_par_obj->GetPathNames();
   else if(typ_par_obj != NULL)
     path_str = typ_par_obj->name;
 }
@@ -2833,7 +2833,7 @@ void taiObjChooser::browser_currentItemChanged(QListWidgetItem* itm, QListWidget
   if (msel_obj == NULL)
     nw_txt = path_str;
   else
-    nw_txt = msel_obj->GetPath();
+    nw_txt = msel_obj->GetPathNames();
 
   editor->setText(nw_txt);
 }
@@ -2857,7 +2857,7 @@ void taiObjChooser::DescendBrowser() {
   UpdateFmSelStr();		// get the new selection based on that!
   if (msel_obj == NULL) return;
 
-  String nw_txt = msel_obj->GetPath();
+  String nw_txt = msel_obj->GetPathNames();
   editor->setText((const char*)nw_txt);
 
   if(msel_obj->InheritsFrom(&TA_taList_impl)) {
@@ -4521,7 +4521,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
       item->setData(2, Qt::DisplayRole, own->GetDisplayName()); // use disp name directly -- overriden to name for groups..
       item->setData(3, Qt::DisplayRole, own->GetColText(taBase::key_type));
     }
-    item->setData(4, Qt::DisplayRole, btmp->GetPath());
+    item->setData(4, Qt::DisplayRole, btmp->GetPathNames());
     ++rval;
   }
 
@@ -5668,7 +5668,7 @@ void taiMethodData::GenerateScript() {
   taBase* tab = (taBase*)base;
 
   if ((use_argc == 0) || (arg_dlg == NULL)) {
-    String rscr = tab->GetPath() + "." + meth->name + "();";
+    String rscr = tab->GetPathNames() + "." + meth->name + "();";
 #ifdef DMEM_COMPILE
     if(taMisc::dmem_debug)
       cerr << "proc: " << taMisc::dmem_proc << " recording fun call: " << rscr << endl;
@@ -5724,7 +5724,7 @@ void taiMethodData::GenerateScript() {
     }
   }
 
-  String rscr = tab->GetPath() + "." + meth->name + "(" + arg_str + ");\n";
+  String rscr = tab->GetPathNames() + "." + meth->name + "(" + arg_str + ");\n";
   *taMisc::record_script << rscr;
 #ifdef DMEM_COMPILE
     if(taMisc::dmem_debug)

@@ -975,7 +975,7 @@ void gpiListDataHost::Constr_Strings() {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
   win_str = String(def_title())
-     + " " + cur_lst->GetPath();
+     + " " + cur_lst->GetPathNames();
 }
 
 void gpiListDataHost::Constr_Final() {
@@ -1151,7 +1151,7 @@ void gpiCompactListDataHost::Constr_Strings() {
     prompt_str += cur_lst->GetTypeDef()->desc;
   }
   win_str = String(def_title())
-     + " " + cur_lst->GetPath();
+     + " " + cur_lst->GetPathNames();
 }
 
 // don't check for null im ptr here

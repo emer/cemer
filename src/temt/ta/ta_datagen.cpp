@@ -51,7 +51,7 @@ void SubMatrixOpSpec::UpdateAfterEdit_impl() {
 bool taDataGen::CheckDims(float_Matrix* mat, int dims) {
   if(!mat) return false;
   if(mat->dims() != dims) {
-    taMisc::Warning("taDataGen: matrix:", mat->name, "path:", mat->GetPath(),
+    taMisc::Warning("taDataGen: matrix:", mat->name, "path:", mat->GetPathNames(),
 		    "is not of dimension:", String(dims), "it is:", String(mat->dims()));
     return false;
   }

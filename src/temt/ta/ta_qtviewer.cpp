@@ -1112,7 +1112,7 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   if (n > 0) {
     String headline = tab->GetColText(taBase::key_disp_name) +
         " (" + tab->GetTypeDef()->name + ")";
-    String href = "ta:" + tab->GetPath();
+    String href = "ta:" + tab->GetPathNames();
     String path_long = tab->GetPath_Long();
     String desc = tab->GetColText(taBase::key_desc);
     sd->AddItem(headline, href, desc, hits, path_long, level, n);
