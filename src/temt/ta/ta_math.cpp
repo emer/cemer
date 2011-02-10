@@ -1238,7 +1238,8 @@ double taMath_double::vec_ss_mean(const double_Matrix* vec) {
   return rval;
 }
 
-void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, double bin_size) {
+void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, double bin_size,
+				  double min_val, double max_val) {
   if(!vec_check_type(vec) || !vec_check_type(oth)) return;
   if(oth->size == 0) return;
   vec->SetGeom(1,0);
@@ -1250,8 +1251,15 @@ void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, 
   tmp.Sort();
   double min_v = tmp.FastEl(0);
   double max_v = tmp.Peek();
+  if(min_val != max_val) {
+    min_v = min_val;
+    max_v = max_val;
+  }
   int src_idx = 0;
   int trg_idx = 0;
+  while((src_idx < tmp.size) && (tmp.FastEl(src_idx) < min_v)) { // skip up to the min
+    src_idx++;
+  }
   for(double cur_val = min_v; cur_val <= max_v; cur_val += bin_size, trg_idx++) {
     double cur_max = cur_val + bin_size;
     vec->Add(0);
@@ -4158,20 +4166,28 @@ float taMath_float::vec_ss_mean(const float_Matrix* vec) {
   return rval;
 }
 
-void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, float bin_size) {
+void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, float bin_size,
+				  float min_val, float max_val) {
   if(!vec_check_type(vec) || !vec_check_type(oth)) return;
   if(oth->size == 0) return;
-  vec->Reset();
   vec->SetGeom(1,0);
-  float_Array tmp(false);
+  vec->Reset();
+  float_Array tmp;
   tmp.SetSize(oth->size);
   for(int i=0;i<oth->size;i++)
     tmp[i] = oth->FastEl_Flat(i);
   tmp.Sort();
   float min_v = tmp.FastEl(0);
   float max_v = tmp.Peek();
+  if(min_val != max_val) {
+    min_v = min_val;
+    max_v = max_val;
+  }
   int src_idx = 0;
   int trg_idx = 0;
+  while((src_idx < tmp.size) && (tmp.FastEl(src_idx) < min_v)) { // skip up to the min
+    src_idx++;
+  }
   for(float cur_val = min_v; cur_val <= max_v; cur_val += bin_size, trg_idx++) {
     float cur_max = cur_val + bin_size;
     vec->Add(0);

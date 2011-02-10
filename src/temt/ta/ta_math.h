@@ -583,8 +583,8 @@ public:
   static double	vec_ss_mean(const double_Matrix* vec);
   // #CAT_Statistics sum-of-squares around the mean of the vector
   static void	vec_histogram(double_Matrix* hist_vec, const double_Matrix* src_vec,
-			      double bin_size);
-  // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
+			      double bin_size, double min_val = 0.0, double max_val = 0.0);
+  // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector -- min and maximum ranges to compute within are also optional args -- only used if min != max
   static double	vec_count(const double_Matrix* vec, Relation& rel);
   // #CAT_Statistics count number of times relationship is true
   static double	vec_median(const double_Matrix* vec);
@@ -1175,8 +1175,8 @@ public:
   static float	vec_ss_mean(const float_Matrix* vec);
   // #CAT_Statistics sum-of-squares around the mean of the vector
   static void	vec_histogram(float_Matrix* hist_vec, const float_Matrix* src_vec,
-			      float bin_size);
-  // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector
+			      float bin_size, float min_val = 0.0, float max_val = 0.0);
+  // #CAT_Statistics gets a histogram (counts) of number of values within each bin size in source vector -- min and maximum ranges to compute within are also optional args -- only used min != max 
   static float	vec_count(const float_Matrix* vec, Relation& rel);
   // #CAT_Statistics count number of times relationship is true
   static float	vec_count_float(const float_Matrix* vec, RelationFloat& rel);

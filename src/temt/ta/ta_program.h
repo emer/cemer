@@ -296,14 +296,14 @@ public:
 
   String	name;		// name of the variable
   VarType	var_type;	// type of variable -- determines which xxx_val(s) is/are used
-  int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum #CONDEDIT_ON_flags:EDIT_VAL integer value (also for enum types)
-  double	real_val;	// #CONDSHOW_ON_var_type:T_Real #CONDEDIT_ON_flags:EDIT_VAL real value
-  String	string_val;	// #CONDSHOW_ON_var_type:T_String #CONDEDIT_ON_flags:EDIT_VAL #EDIT_DIALOG string value
-  bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool #CONDEDIT_ON_flags:EDIT_VAL boolean value
+  int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum #CONDEDIT_ON_flags:EDIT_VAL integer value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
+  double	real_val;	// #CONDSHOW_ON_var_type:T_Real #CONDEDIT_ON_flags:EDIT_VAL real value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
+  String	string_val;	// #CONDSHOW_ON_var_type:T_String #CONDEDIT_ON_flags:EDIT_VAL #EDIT_DIALOG string value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
+  bool		bool_val;	// #CONDSHOW_ON_var_type:T_Bool #CONDEDIT_ON_flags:EDIT_VAL boolean value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
   TypeDef*	object_type; 	// #CONDSHOW_ON_var_type:T_Object #NO_NULL #TYPE_taBase #LABEL_min_type the minimum acceptable type of the object
-  taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #CONDEDIT_ON_flags:EDIT_VAL #TYPE_ON_object_type #SCOPE_taProject object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set
+  taBaseRef	object_val;	// #CONDSHOW_ON_var_type:T_Object #CONDEDIT_ON_flags:EDIT_VAL #TYPE_ON_object_type #SCOPE_taProject object pointer value -- this is not the object itself, just a pointer to it -- object must exist somewhere.  if it is in this program's .objs, then the name will be automatically set -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
   TypeDef*	hard_enum_type;	// #CONDSHOW_ON_var_type:T_HardEnum #ENUM_TYPE #TYPE_taBase #LABEL_enum_type type information for hard enum (value goes in int_val)
-  DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #LABEL_enum_val dynamic enum value
+  DynEnum 	dyn_enum_val; 	// #CONDSHOW_ON_var_type:T_DynEnum #LABEL_enum_val dynamic enum value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
   bool		objs_ptr;	// #HIDDEN this is a pointer to a variable in the objs list of a program
   VarFlags	flags;		// flags controlling various things about how the variable appears and is used
   bool		reference;	// #CONDSHOW_ON_flags:FUN_ARG make this a reference variable (only for function arguments) which allows the function to modify the argument value, making it in effect a return value from the function when you need multiple return values
