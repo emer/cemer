@@ -259,8 +259,6 @@ public:
 
   override void		BuildAll();
   
-  override String	GetLabel() const;
-  override String	GetName() const;
   virtual void		UpdateName();
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);
 

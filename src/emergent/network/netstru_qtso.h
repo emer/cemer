@@ -546,8 +546,6 @@ public:
   virtual void		Layer_DataUAE(LayerView* lv);
   // send a DataUAE for all prjns for this layer
 
-  override String	GetLabel() const;
-  override String	GetName() const;
   virtual void		UpdateName();
   // update name from network
 

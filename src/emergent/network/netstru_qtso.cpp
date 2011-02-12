@@ -2436,16 +2436,6 @@ void NetView::ChildUpdateAfterEdit(taBase* child, bool& handled) {
     inherited::ChildUpdateAfterEdit(child, handled);
 }
 
-String NetView::GetLabel() const {
-  Network* nt = net();
-  if(nt) return nt->GetDisplayName();
-  return "(no net)";
-}
-
-String NetView::GetName() const {
-  return inherited::GetName();
-}
-
 void NetView::BuildAll() { // populates all T3 guys
   if(!net()) {
     Reset();
@@ -2544,7 +2534,11 @@ void NetView::ChildRemoving(taDataView* child_) {
 void NetView::UpdateName() {
   if(net()) {
     if(!name.contains(net()->name))
-      name = net()->name;
+      SetName(net()->name + "_View");
+  }
+  else {
+    if(name.empty())
+      name = "no_network";
   }
 }
 

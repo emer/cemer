@@ -1603,24 +1603,18 @@ void VEWorldView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-String VEWorldView::GetLabel() const {
-  VEWorld* wl = World(); 
-  if(wl) return wl->GetName();
-  return "(no world)";
-}
-
-String VEWorldView::GetName() const {
-  return inherited::GetName();
-}
-
 void VEWorldView::UpdateName() {
   VEWorld* wl = World(); 
   if(wl) {
     if(!name.contains(wl->name))
-      SetName(wl->name);
+      SetName(wl->name + "_View");
+  }
+  else {
+    if(name.empty())
+      name = "no_world";
   }
 }
-  
+
 void VEWorldView::DataUpdateAfterEdit_impl() {
   UpdateName();
   inherited::DataUpdateAfterEdit_impl();

@@ -520,16 +520,6 @@ void DataTableView::IgnoredDataChanged(taDataLink* dl, int dcr,
   }
 }
 
-String DataTableView::GetLabel() const {
-  DataTable* dt = dataTable(); 
-  if(dt) return dt->GetName();
-  return "(no table)";
-}
-
-String DataTableView::GetName() const {
-  return inherited::GetName();
-}
-
 const String DataTableView::caption() const {
   DataTable* dt = dataTable(); 
   String rval;
@@ -650,6 +640,10 @@ void DataTableView::UpdateName() {
   if(dt) {
     if(!name.contains(dt->name))
       SetName(dt->name);
+  }
+  else {
+    if(name.empty())
+      name = "no_table";
   }
 }
   
@@ -1076,14 +1070,18 @@ void GridTableView::UpdateAfterEdit_impl(){
   if (grid_line_size <  0.0f) grid_line_size =  0.0f;
 }
 
-String GridTableView::GetLabel() const {
-  return inherited::GetLabel() + " Grid";
+void GridTableView::UpdateName() {
+  DataTable* dt = dataTable();
+  if(dt) {
+    if(!name.contains(dt->name))
+      SetName(dt->name + "_Grid");
+  }
+  else {
+    if(name.empty())
+      name = "grid_no_table";
+  }
 }
-
-String GridTableView::GetName() const {
-  return inherited::GetName();  //   + " Grid";  // this is very bad
-}
-
+  
 const String GridTableView::caption() const {
   String rval = inherited::caption();
   if(last_sel_got) {
@@ -3711,14 +3709,18 @@ const iColor GraphTableView::bgColor(bool& ok) const {
   return colorscale.background;
 }
 
-String GraphTableView::GetLabel() const {
-  return inherited::GetLabel() + " Graph";
+void GraphTableView::UpdateName() {
+  DataTable* dt = dataTable();
+  if(dt) {
+    if(!name.contains(dt->name))
+      SetName(dt->name + "_Graph");
+  }
+  else {
+    if(name.empty())
+      name = "graph_no_table";
+  }
 }
-
-String GraphTableView::GetName() const {
-  return inherited::GetName(); //  + " Graph"; // this is very bad
-}
-
+  
 const String GraphTableView::caption() const {
   String rval = inherited::caption();
   if(last_sel_col_nm.nonempty()) {

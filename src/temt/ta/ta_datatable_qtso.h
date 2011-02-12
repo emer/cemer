@@ -206,8 +206,6 @@ public:
   override void		DataDestroying();
   override void		BuildAll();
   
-  override String	GetLabel() const;
-  override String	GetName() const;
   virtual void		UpdateName();  // update name from data table
 
   void 	Initialize();
@@ -401,8 +399,7 @@ public:
 
   virtual void		InitFromUserData();
 
-  override String	GetLabel() const;
-  override String	GetName() const;
+  override void		UpdateName();
   override const String	caption() const;
   override bool		hasViewProperties() const { return true; }
   
@@ -945,8 +942,7 @@ public:
   inline T3GraphViewNode* node_so() const {return (T3GraphViewNode*)inherited::node_so();}
 
   override const iColor	bgColor(bool& ok) const;
-  override String	GetLabel() const;
-  override String	GetName() const;
+  override void		UpdateName();
   override const String	caption() const;
 
   override bool		hasViewProperties() const { return true; }
