@@ -530,11 +530,19 @@ void* taGroup_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   idx_str = idx_str.before(']');
   if(idx_str.nonempty()) {
     idx_str = idx_str.after('[');
-    int idx = atoi(idx_str);
-    if((idx >= size) || (idx < 0)) {
-      return NULL;
+    if(idx_str.contains('\"')) {
+      String elnm = idx_str.between('\"','\"');
+      if(TestWarning(elnm.empty(), "FindMembeR","empty string index name:", idx_str))
+	return NULL;
+      return FindName_(elnm);
     }
-    return el[idx];
+    else {
+      int idx = atoi(idx_str);
+      if((idx >= size) || (idx < 0)) {
+	return NULL;
+      }
+      return el[idx];
+    }
   }
 
   // then look for items in the list itself, by name or type

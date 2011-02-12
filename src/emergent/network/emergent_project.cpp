@@ -801,11 +801,13 @@ void ProjectBase::InitLinks_impl() {
 }
 
 void ProjectBase::InitLinks_post() {
-  taWizard* wiz = wizards.SafeEl(0);
-  if (!wiz) {
-    wiz = (Wizard*)wizards.New(1, wizards.el_typ);
-    wiz->auto_open = !taMisc::is_loading; // only auto open first time
-    ((Wizard*)wiz)->ThreeLayerNet();
+  if(!taMisc::is_loading) {	// only if not loading!
+    taWizard* wiz = wizards.SafeEl(0);
+    if (!wiz) {
+      wiz = (Wizard*)wizards.New(1, wizards.el_typ);
+      wiz->auto_open = 
+	((Wizard*)wiz)->ThreeLayerNet();
+    }
   }
   inherited::InitLinks_post();
 }

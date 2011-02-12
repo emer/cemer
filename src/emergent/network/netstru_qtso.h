@@ -548,6 +548,8 @@ public:
 
   override String	GetLabel() const;
   override String	GetName() const;
+  virtual void		UpdateName();
+  // update name from network
 
   virtual void		CopyFromView(NetView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner

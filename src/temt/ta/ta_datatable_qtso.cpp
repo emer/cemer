@@ -527,9 +527,7 @@ String DataTableView::GetLabel() const {
 }
 
 String DataTableView::GetName() const {
-  DataTable* dt = dataTable(); 
-  if(dt) return dt->GetName();
-  return "(no table)";
+  return inherited::GetName();
 }
 
 const String DataTableView::caption() const {
@@ -647,12 +645,22 @@ void DataTableView::UpdateFromDataTable(bool first) {
   UpdateFromDataTable_this(first);
 }
 
+void DataTableView::UpdateName() {
+  DataTable* dt = dataTable();
+  if(dt) {
+    if(!name.contains(dt->name))
+      SetName(dt->name);
+  }
+}
+  
+void DataTableView::DataUpdateAfterEdit_impl() {
+  UpdateName();
+  inherited::DataUpdateAfterEdit_impl();
+}
+
+
 void DataTableView::UpdateFromDataTable_this(bool first) {
-//   DataTable* dt = dataTable();
-//   if (first) {
-// //     if (name != dt->name)
-// //       name = dt->name;
-//   }
+  UpdateName();
 }
 
 void DataTableView::UpdateFromDataTable_child(bool first) {
@@ -1073,7 +1081,7 @@ String GridTableView::GetLabel() const {
 }
 
 String GridTableView::GetName() const {
-  return inherited::GetName() + " Grid";
+  return inherited::GetName();  //   + " Grid";  // this is very bad
 }
 
 const String GridTableView::caption() const {
@@ -3708,7 +3716,7 @@ String GraphTableView::GetLabel() const {
 }
 
 String GraphTableView::GetName() const {
-  return inherited::GetName() + " Graph";
+  return inherited::GetName(); //  + " Graph"; // this is very bad
 }
 
 const String GraphTableView::caption() const {

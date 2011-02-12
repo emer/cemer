@@ -435,7 +435,7 @@ void taBase::Own(taBase& it, taBase* onr) {
   it.InitLinks();
 //   if(prv_own) {
 //     if(it.InheritsFrom(TA_taNBase))
-//       taMisc::Warning("*** Warning: Object:",it.GetPath(),
+//       taMisc::Warning("*** Warning: Object:",it.GetPathNames(),
 // 		    "was transfered to a new owner, some parameters might have been reset");
 //   }
 }
@@ -668,6 +668,10 @@ String taBase::GetUniqueName() const {
   return GetPath_Long();
 }
 
+void taBase::UpdateOwnerNames() {
+  // nop for base -- only defined for taNBase
+}
+
 taBase* taBase::GetOwner(TypeDef* td) const {
   taBase* own = GetOwner();
   if(own == NULL)
@@ -812,6 +816,8 @@ String taBase::GetPath(taBase* ta, taBase* par_stop) const {
 }
 
 String taBase::GetPathNames(taBase* ta, taBase* par_stop) const {
+  if(taMisc::is_undo_saving) return GetPath(ta, par_stop); // use indexes for undo
+
   if ((this == par_stop) && (ta == NULL))
     return ".";
 
@@ -929,9 +935,35 @@ Variant taBase::GetValFromPath(const String& path, MemberDef*& ret_md, bool warn
   return eff_typ->GetValVar(eff_base, md);
 }
 
+static int find_in_path_not_quotes(const String& path, char c, int start) {
+  int len = path.length();
+  bool in_str = false;
+  if(start < 0) {
+    for(int i=len+start; i>=0; i--) {
+      char cv = path[i];
+      if(cv == '\"') {
+	in_str = !in_str;
+	continue;
+      }
+      if(!in_str && cv == c) return i;
+    }
+  }
+  else {
+    for(int i=start; i<len; i++) {
+      char cv = path[i];
+      if(cv == '\"') {
+	in_str = !in_str;
+	continue;
+      }
+      if(!in_str && cv == c) return i;
+    }
+  }
+  return -1;
+}
+
 int taBase::GetNextPathDelimPos(const String& path, int start) {
-  int point_idx = path.index('.', start+1); // skip any possible starting delim
-  int brack_idx = path.index('[', start+1);
+  int point_idx = find_in_path_not_quotes(path, '.', start+1); // skip any possible starting delim
+  int brack_idx = find_in_path_not_quotes(path, '[', start+1);
 
   // if there is a period but not a bracket, or the period is before the bracket
   if(((brack_idx < start) && (point_idx >= start)) ||
@@ -946,8 +978,8 @@ int taBase::GetNextPathDelimPos(const String& path, int start) {
 }
 
 int taBase::GetLastPathDelimPos(const String& path) {
-  int point_idx = path.index('.',-1);
-  int brack_idx = path.index('[',-1);
+  int point_idx = find_in_path_not_quotes(path, '.',-1);
+  int brack_idx = find_in_path_not_quotes(path, '[',-1);
 
   if(point_idx > brack_idx) {		// point comes after bracket
     return point_idx;
@@ -1222,6 +1254,7 @@ int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
 }
 
 int taBase::Save_strm(ostream& strm, taBase* par, int indent) { 
+  taMisc::save_use_name_paths = false; // default is to NOT use name paths
   int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); 
   setDirty(false);
   return rval;
@@ -1329,12 +1362,12 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
   taBase** nw_el_ptr = (taBase**)FindMembeR(el_path, el_md);
   if(!nw_el_ptr) {
     taMisc::Warning("*** Dump_Load_Path_ptr: Could not find pointer member at path:",
-		    el_path,"in parent object:",GetPath());
+		    el_path,"in parent object:",GetPathNames());
     return NULL;
   }
   if(!el_md) {
     taMisc::Warning("*** Dump_Load_Path_ptr: no el_md for item at path:",
-		    el_path,"in parent object:",GetPath(),
+		    el_path,"in parent object:",GetPathNames(),
 		    "may not set pointers correctly!");
   }
   taBase* nw_el = *nw_el_ptr;
@@ -1344,7 +1377,7 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
   {
     // object not the right type, try to create new one..
     if(taMisc::verbose_load >= taMisc::MESSAGES) {
-      taMisc::Warning("*** Object in parent:",GetPath(),"at path", el_path,
+      taMisc::Warning("*** Object in parent:",GetPathNames(),"at path", el_path,
 		    "of type:",nw_el->GetTypeDef()->name,"is not the right type:",
 		      ld_el_typ->name,", attempting to create new one");
     }
@@ -1363,7 +1396,7 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
     if(!nw_el) {
       taMisc::Warning("*** Dump_Load_Path_ptr: Could not make new token of type:",
 		      ld_el_typ->name,"for pointer member at path:",
-		      el_path,"in parent object:",GetPath());
+		      el_path,"in parent object:",GetPathNames());
       return NULL;
     }
     if(el_md && el_md->HasOption("OWN_POINTER")) { // note: this was not in original!
@@ -1372,12 +1405,20 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
     else {
       taMisc::Warning("*** Dump_Load_Path_ptr: NOT owning new element of type:",
 		      ld_el_typ->name,"for pointer member at path:",
-		      el_path,"in parent object:",GetPath());
+		      el_path,"in parent object:",GetPathNames());
     }
   }
+  if(nw_el && el_path.contains('\"')) {
+    String elnm = el_path.before('\"',-1);
+    elnm = elnm.after('\"',-1);
+    if(elnm.nonempty()) {
+      nw_el->SetName(elnm);
+    }
+  }
+
   if(taMisc::verbose_load >= taMisc::TRACE) {
     cerr << "Success: Leaving TypeDef::Dump_Load_Path_ptr, type: " << ld_el_typ->name
-	 << ", parent path = " << GetPath()
+	 << ", parent path = " << GetPathNames()
 	 << ", el_path = " << el_path
 	 << "\n"; // endl;
     taMisc::FlushConsole();
@@ -1389,7 +1430,7 @@ taBase* taBase::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ)
   MemberDef* el_md = NULL;
   taBase* nw_el = (taBase*)FindMembeR(el_path, el_md);
   if(nw_el) return nw_el;
-  taMisc::Warning("*** Object at path:",GetPath(),
+  taMisc::Warning("*** Dump_Load_Path_parent: Object at path:",GetPathNames(),
 		  "is not capable of creating a new element with the path:",el_path,
 		  "of type:",ld_el_typ->name,
 		  "something is askew in the loading paths");
@@ -1407,7 +1448,7 @@ String taBase::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
   }
   else {
     if(GetOwner() || (this == tabMisc::root))
-      return GetPath();
+      return GetPathNames();
     return td->name;
   }
 }
@@ -2238,7 +2279,7 @@ void taBase::SetDocLink(taDoc* doc) {
 }
 
 void taBase::PrintMyPath() {
-  taMisc::Info(GetPath());
+  taMisc::Info(GetPathNames());
 }
 
 UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
@@ -2712,8 +2753,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
       if(rec->diff_odr->nest_level < rec->nest_level) {
 	// for last obj in list, dest is now another member in parent obj..
 // 	taMisc::Info("diff nest -- rec:", String(rec->nest_level), "diff:",
-// 		     String(rec->diff_odr->nest_level),"rec path:", tab_a->GetPath(),
-// 		     "diff path:", tab_b->GetPath());
+// 		     String(rec->diff_odr->nest_level),"rec path:", tab_a->GetPathNames(),
+// 		     "diff path:", tab_b->GetPathNames());
 	if(tab_par_b) {
 	  if(rec->par_odr->mdef) {
 	    // find member in dest par (parents always ta base..)
@@ -3505,7 +3546,24 @@ void taNBase::SetDefaultName() {
 
 void taNBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  name = taMisc::StringCVar(name); // make names C legal names -- just much safer
+  String cnm = taMisc::StringCVar(name); // make names C legal names -- just much safer
+  if(name != cnm) {
+    SetName(cnm);		// triggers update
+  }
+}
+
+void taNBase::UpdateOwnerNames() {
+  if(owner && owner->InheritsFrom(&TA_taList_impl)) {
+    ((taList_impl*)owner)->MakeElNamesUnique();
+  }
+}
+
+bool taNBase::SetName(const String& nm) {
+  if(name == nm) return true;
+  name = nm;
+  UpdateOwnerNames();
+//   UpdateAfterEdit();		// this turns out to be a bad idea -- just do it where needed
+  return true;
 }
 
 //////////////////////////
@@ -3657,9 +3715,54 @@ void* taList_impl::El_CopyN_(void* to_, void* fm) {
 void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
   if(!el_typ->InheritsFrom(el_base)) el_typ = el_base;
+  MakeElNamesUnique();
+}
+
+bool taList_impl::MakeElNamesUnique() {
+  if(!el_base->InheritsFrom(&TA_taNBase)) return true; // only if el's actually have names
+  if(HasOption("NO_UNIQUE_NAMES")) return true;	       // not this guy
+  bool unique = true;
+  String mynm = name;
+  if(mynm.empty()) {
+    if(GetOwner() != NULL) {
+      mynm = GetOwner()->GetName();
+      if(mynm.empty()) {
+	mynm = GetPathNames();
+      }
+    }
+  }
+  for(int i=0; i<size; i++) {
+    taBase* el1 = (taBase*)FastEl_(i);
+    if (!el1 || (el1->GetOwner() != this)) continue;
+    String nm1 = el1->GetName();
+    if(nm1.empty()) {
+      nm1 = mynm + "_" + (String)i; // give it a unique name
+      el1->SetName(nm1);
+    }
+    for(int j=i+1; j<size; j++) {
+      taBase* el2 = (taBase*)FastEl_(j);
+      if (!el2 || (el2->GetOwner() != this)) continue;
+      String nm2 = el2->GetName();
+      if(nm2.empty()) {
+	nm2 = mynm + "_" + (String)j; // give it a unique name
+	el2->SetName(nm2);
+      }
+      if(nm2 == nm1) {
+	String orig = nm2;
+	nm2 = nm2 + "_" + (String)j;
+	taMisc::Warning("taList_impl::MakeElNamesUnique",
+		"names of items on the list must be unique -- renaming:",orig,"to:",nm2);
+	el2->SetName(nm2);
+	el2->UpdateAfterEdit();	// trigger update so visible
+	unique = false;
+      }
+    }
+  }
+  return unique;
 }
 
 void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
+  MakeElNamesUnique();
   //note: we have to process everyone, because this is the routine
   // that asserts or clears the state, even if an invalid found early
   for (int i = 0; i < size; ++i) {
@@ -3964,11 +4067,25 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
 		    "for parent obj:",GetPathNames());
     return NULL;
   }
-  int idx = (int)el_path.between('[',']');
+  String elnm = el_path.between('[',']');
+  bool has_nm = false;
   taBase* nw_el = NULL;
-  if(InRange(idx)) {
-    nw_el = (taBase*)FastEl_(idx);
-    if(!nw_el)	RemoveIdx(idx);	// somehow has a null guy on list.. nuke it
+  int idx = -1;
+  if(elnm.firstchar() == '\"') {
+    has_nm = true;
+    elnm = elnm.between('\"','\"');
+    nw_el = (taBase*)FindName_(elnm);
+    if(nw_el)
+      idx = FindEl_(nw_el);
+    else
+      idx = size;		// put it at the end!
+  }
+  else {
+    idx = (int)elnm;
+    if(InRange(idx)) {
+      nw_el = (taBase*)FastEl_(idx);
+      if(!nw_el)	RemoveIdx(idx);	// somehow has a null guy on list.. nuke it
+    }
   }
   if(nw_el) {
     // check for correct type, but allow a list to be created in a group
@@ -3977,7 +4094,7 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
        !((nw_el->GetTypeDef() == &TA_taBase_List) && (ld_el_typ == &TA_taBase_Group))) {
       // object not the right type, try to create new one..
       if(taMisc::verbose_load >= taMisc::MESSAGES) {
-	taMisc::Warning("*** Object at path:",GetPathNames(),
+	taMisc::Warning("*** Dump_Load_Path_parent: Object at path:",GetPathNames(),
 			"of type:",nw_el->GetTypeDef()->name,"is not the right type:",
 			ld_el_typ->name,", attempting to create new one");
       }
@@ -3989,14 +4106,9 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
 	return NULL;
       }
       ReplaceIdx(idx, nw_el);
-      // this should no longer be necc as any changes will be in the parent!
-      // todo: nuke me..
-//       if(nw_el->GetOwner() != NULL) {
-// 	String new_path = nw_el->GetPathNames(NULL, find_base);
-// 	if(new_path != orig_path) {
-// 	  dumpMisc::path_subs.Add(ld_el_typ, find_base, orig_path, new_path);
-// 	}
-//       }
+      if(has_nm) {
+	nw_el->SetName(elnm);
+      }
     }
   }
   else {
@@ -4008,14 +4120,9 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
       taMisc::Warning("*** New: Could not make a token of:",ld_el_typ->name,"in:",GetPathNames());
       return NULL;
     }
-    // this should no longer be necc as any changes will be in the parent!
-    // todo: nuke me..
-//     if(nw_el->GetOwner()) {
-//       String new_path = nw_el->GetPathNames(NULL, find_base);
-//       if(new_path != orig_path) {
-// 	dumpMisc::path_subs.Add(ld_el_typ, find_base, orig_path, new_path);
-//       }
-//     }
+    if(has_nm) {
+      nw_el->SetName(elnm);
+    }
   }
   if(m_trg_load_size >= 0 && idx+1 == m_trg_load_size) {
     // we are the last guy who is supposed to be loaded -- set the list size to be the 
@@ -4026,7 +4133,7 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
 
   if(taMisc::verbose_load >= taMisc::TRACE) {
     cerr << "Success: Leaving TypeDef::Dump_Load_Path_parent, type: " << ld_el_typ->name
-	 << ", parent path = " << GetPath()
+	 << ", parent path = " << GetPathNames()
 	 << ", el_path = " << el_path
 	 << "\n"; // endl;
     taMisc::FlushConsole();
@@ -4188,11 +4295,19 @@ void* taList_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   idx_str = idx_str.before(']');
   if(idx_str.nonempty()) {
     idx_str = idx_str.after('[');
-    int idx = atoi(idx_str);
-    if((idx >= size) || (idx < 0)) {
-      return NULL;
+    if(idx_str.contains('\"')) {
+      String elnm = idx_str.between('\"','\"');
+      if(TestWarning(elnm.empty(), "FindMembeR","empty string index name:", idx_str))
+	return NULL;
+      return FindName_(elnm);
     }
-    return el[idx];		// don't have an md for this guy
+    else {
+      int idx = atoi(idx_str);
+      if((idx >= size) || (idx < 0)) {
+	return NULL;
+      }
+      return el[idx];		// don't have an md for this guy
+    }
   }
 
   // then look for items in the list itself, by name or type
@@ -4299,6 +4414,8 @@ String taList_impl::GetPath(taBase* ta, taBase* par_stop) const {
 }
 
 String taList_impl::GetPathNames(taBase* ta, taBase* par_stop) const {
+  if(taMisc::is_undo_saving) return GetPath(ta, par_stop); // use indexes for undo
+
   if((((taBase*) this) == par_stop) && (ta == NULL))
     return ".";
   String rval;
@@ -4320,7 +4437,7 @@ String taList_impl::GetPathNames(taBase* ta, taBase* par_stop) const {
     }
     else {
       String obj_nm = ta->GetName();
-      if(obj_nm.empty()) {
+      if(obj_nm.empty() || !ta->InheritsFrom(&TA_taNBase)) { // only use real nbase names
 	int gidx = FindEl_(ta);
 	if(gidx >= 0)
 	  rval += "[" + String(gidx) + "]";

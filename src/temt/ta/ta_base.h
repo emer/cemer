@@ -623,6 +623,8 @@ public:
   // #CAT_ObjectMgmt #GET_name Get the name of the object
   virtual String	GetDisplayName() const;
   // #IGNORE can be overridden to provide a more elaborate or cleaned-up user-visible name for display purposes (default is just GetName())
+  virtual void		UpdateOwnerNames();
+  // #CAT_ObjectMgmt update names of objects associated with my owner (e.g., if it is a list object), typically because my name has changed, and owner needs to ensure that all names are unique
   virtual String	GetUniqueName() const; // #IGNORE the name, possibly with dotted parent, to help globally identify an item, mostly for token lists
   virtual String	GetDesc() const {return _nilString;}
   // #IGNORE a type-specific description of the specific functionality/properties of the object
@@ -1670,9 +1672,10 @@ INHERITED(taOBase)
 public:
   String		name; // #CONDEDIT_OFF_base_flags:NAME_READONLY #CAT_taBase name of the object
 
-  bool 		SetName(const String& nm)    	{ name = nm; return true; }
+  bool 		SetName(const String& nm);
   String	GetName() const			{ return name; }
   override void	SetDefaultName();
+  override void	UpdateOwnerNames();
 
   TA_BASEFUNS(taNBase);
 protected:
@@ -1890,6 +1893,9 @@ public:
   // #IGNORE
 
   void	SetBaseType(TypeDef* it); // #CAT_Modify set base (and default) type to given td
+
+  virtual bool	MakeElNamesUnique();
+  // #CAT_taList make all of the element names in the list unique -- returns true if all unique already
 
 #if defined(TA_GUI) && !defined(__MAKETA__) 
   override const QPixmap* GetDataNodeBitmap(int bmf, int& flags_supported) const;

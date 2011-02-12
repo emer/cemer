@@ -1610,9 +1610,20 @@ String VEWorldView::GetLabel() const {
 }
 
 String VEWorldView::GetName() const {
+  return inherited::GetName();
+}
+
+void VEWorldView::UpdateName() {
   VEWorld* wl = World(); 
-  if(wl) return wl->GetName();
-  return "(no world)";
+  if(wl) {
+    if(!name.contains(wl->name))
+      SetName(wl->name);
+  }
+}
+  
+void VEWorldView::DataUpdateAfterEdit_impl() {
+  UpdateName();
+  inherited::DataUpdateAfterEdit_impl();
 }
 
 const String VEWorldView::caption() const {

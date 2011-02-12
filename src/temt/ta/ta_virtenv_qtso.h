@@ -261,6 +261,7 @@ public:
   
   override String	GetLabel() const;
   override String	GetName() const;
+  virtual void		UpdateName();
   override void		OnWindowBind_impl(iT3DataViewFrame* vw);
 
   void 	Initialize();
@@ -275,6 +276,7 @@ protected:
   SoOffscreenRendererQt*	cam_renderer;
 #endif
 
+  override void		DataUpdateAfterEdit_impl();
   override void		DataUpdateView_impl();
   override void 	UpdateAfterEdit_impl();
 

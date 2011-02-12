@@ -552,7 +552,7 @@ public:
 
   virtual void		SaveRecoverFile();
   // #CAT_File Save a recover file of this project, usually called when a signal is received indicating a crash condition
-  virtual void		SaveRecoverFile_strm(ostream& strm) { Save_strm(strm); }
+  virtual void		SaveRecoverFile_strm(ostream& strm);
   // #IGNORE underlying save function to use when saving a recover file -- might want to do something special here
   virtual String	GetAutoFileName(const String& suffix, const String& ftype_ext = ".proj");
   // #CAT_File get a file name to save project to, with suffix but file extension *removed*, based on any existing file name, project name, and type
@@ -560,8 +560,10 @@ public:
   // #CAT_File called automatically by the wait process -- if enough time has passed or force is true, save current project to an auto save backup file (file name + _autosave)
 
   override bool		SetFileName(const String& val);
+  override int 		Save_strm(ostream& strm, taBase* par=NULL, int indent=0);
   override int		Save(); 
   override int		SaveAs(const String& fname = ""); 
+  override int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
 
   virtual bool		CleanFiles();
   // #BUTTON #CAT_File remove autosave and recover files based on current file_name -- this is done by default after saving a non-recover or autosave version of the project

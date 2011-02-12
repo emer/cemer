@@ -1822,6 +1822,13 @@ bool taProject::SetFileName(const String& val) {
   return true;
 }
 
+int taProject::Save_strm(ostream& strm, taBase* par, int indent) { 
+  taMisc::save_use_name_paths = true; // project is one guy that DOES use name paths!
+  int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); 
+  setDirty(false);
+  return rval;
+}
+
 int taProject::Save() { 
   String fname = GetFileName(); // empty if 1st or not supported
   if(fname.contains("_recover")) {
@@ -1861,6 +1868,10 @@ int taProject::SaveAs(const String& fname) {
   return rval;
 } 
 
+int taProject::Load(const String& fname, taBase** loaded_obj_ptr) {
+  TestError(true, "Load", "Cannot load a new project file on top of an existing project -- must load an entirely new project");
+  return 0;
+}
 
 bool taProject::CleanFiles() {
   bool got_one = false;
@@ -1983,6 +1994,12 @@ String taProject::GetAutoFileName(const String& suffix, const String& ftype_ext)
   return rval;
 }
 
+void taProject::SaveRecoverFile_strm(ostream& strm) {
+  taMisc::save_use_name_paths = false; // no name paths for recover files
+  int rval = GetTypeDef()->Dump_Save(strm, (void*)this); 
+  //  setDirty(false);  // definitely not
+}
+
 void taProject::SaveRecoverFile() {
   String ftype_ext = ".proj";
   String newfm = GetAutoFileName("_recover", ftype_ext); 
@@ -2065,6 +2082,7 @@ bool taProject::AutoSave(bool force) {
   taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
   bool saved = false;
   if(flr->ostrm) {
+    taMisc::save_use_name_paths = false; // don't use name paths for autosave!
     int rval = GetTypeDef()->Dump_Save(*flr->ostrm, (void*)this); 
     // note: not using Save_strm to preserve the dirty bit!
     saved = true;

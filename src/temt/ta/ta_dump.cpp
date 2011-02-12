@@ -172,15 +172,15 @@ void DumpPathSubList::AddPath(TypeDef* td, taBase* par, String& o, String& n) {
   DumpPathSub* nwsb = new DumpPathSub(td, par, *op, *np);
   Add(nwsb);
   if(par != tabMisc::root) {	// if local path, then add a global path fix too
-    String ppath = par->GetPathNames();
+    String ppath = par->GetPath();
     unFixPath(td, tabMisc::root, ppath); // un fix the parent if necessary
     String long_o = ppath + *op;
     String long_n = ppath + *np;
     nwsb = new DumpPathSub(td, tabMisc::root, long_o, long_n);
     Add(nwsb);
-    if(taMisc::verbose_load >= taMisc::MESSAGES) {
+//     if(taMisc::verbose_load >= taMisc::MESSAGES) {
       taMisc::Warning("---> New Global Path Fix, old:",long_o,"new:",long_n);
-    }
+//     }
   }
 }
 
@@ -261,7 +261,11 @@ String DumpPathTokenList::GetPath(taBase* obj) {
   if(idx >= 0)
     return FastEl(idx)->token_id;
 
-  String path = obj->GetPathNames();
+  String path;
+  if(taMisc::save_use_name_paths)
+    path = obj->GetPathNames();
+  else
+    path = obj->GetPath();
   DumpPathToken* tok = AddObjPath(obj, path);
   if(taMisc::save_old_fmt) {
     path += tok->token_id;
@@ -703,7 +707,10 @@ int TypeDef::Dump_Save_Path(ostream& strm, void* base, void* par, int) {
       // its a relative path if you have a parent (period)
       if(par != NULL)
 	strm << "@";
-      strm << rbase->GetPathNames(NULL, (taBase*)par);
+      if(taMisc::save_use_name_paths)
+	strm << rbase->GetPathNames(NULL, (taBase*)par);
+      else
+	strm << rbase->GetPath(NULL, (taBase*)par);
     }
   }
   return true;
@@ -854,7 +861,10 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     taBase* rbase = (taBase*)base;
 
     dumpMisc::dump_root = rbase;
-    dumpMisc::dump_root_path = rbase->GetPathNames();
+    if(taMisc::save_use_name_paths)
+      dumpMisc::dump_root_path = rbase->GetPathNames();
+    else
+      dumpMisc::dump_root_path = rbase->GetPath();
 
     rbase->Dump_Save_pre();
     rbase->Dump_Save_GetPluginDeps();
@@ -1279,7 +1289,7 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
 
   if(path.firstchar() == '@') {		// relative to current parent..
     if(par == NULL) {
-      taMisc::Warning("Relative path with NULL parent:", path);
+      taMisc::Warning("Dump_Load_path_impl: Relative path with NULL parent:", path);
       return false;
     }
     path = path.after('@');
@@ -1327,12 +1337,12 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
   taBase* ppar = find_base->FindFromPath(ppar_path, ppar_md); // path-parent
 
   if(!ppar) {
-    taMisc::Warning("Could not find a parent for:",el_path,"in",ppar_path);
+    taMisc::Warning("Dump_Load_path_impl: Could not find a parent for:",el_path,"in",ppar_path);
     return false;
   }
 
   if(ppar_md && !ppar_md->type->InheritsFrom(TA_taBase)) {
-    taMisc::Warning("Parent must be a taBase type for:",el_path,"in",ppar_path,
+    taMisc::Warning("Dump_Load_path_impl: Parent must be a taBase type for:",el_path,"in",ppar_path,
 	"type:",ppar_md->type->name);
     return false;
   }
@@ -1632,8 +1642,18 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     }
   }
 
+  if(path.contains('\"')) {
+    String elnm = path.before('\"',-1);
+    elnm = elnm.after('\"',-1);
+    if(elnm.nonempty()) {
+      el->SetName(elnm);
+    }
+    new_path = el->GetPathNames();
+  }
+  else {
+    new_path = el->GetPath();
+  }
 
-  new_path = el->GetPathNames();
   if(new_path != path)
     dumpMisc::path_subs.AddPath(td, tabMisc::root, path, new_path);
 

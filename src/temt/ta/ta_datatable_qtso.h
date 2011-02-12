@@ -208,6 +208,7 @@ public:
   
   override String	GetLabel() const;
   override String	GetName() const;
+  virtual void		UpdateName();  // update name from data table
 
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }
@@ -243,6 +244,7 @@ protected:
   override void		Unbind_impl(); // unbinds table
 
   override void		DataUpdateView_impl();
+  override void		DataUpdateAfterEdit_impl();
   override void		DoActionChildren_impl(DataViewAction acts);
 
   void			UpdateFromDataTable(bool first_time = false);

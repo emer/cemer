@@ -1257,11 +1257,16 @@ void MainWindowViewer::MakeWinName_impl() {
   String prog_nm = taiM->classname(); // note: this is not working
   String name;
   String fname;
+  String pathnm;
   if (data()) {
     name = data()->GetName();
     fname = taMisc::GetFileFmPath(data()->GetFileName());
+    pathnm = data()->GetPathNames();
   }
-  String nw_name = GetPath() + "(" + name + ") - " + fname; // prog_nm ;
+  else {
+    pathnm = GetPathNames();
+  }
+  String nw_name = pathnm + " - " + fname; // prog_nm ;
   win_name = nw_name;
 }
 

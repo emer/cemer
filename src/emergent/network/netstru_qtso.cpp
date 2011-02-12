@@ -2443,9 +2443,7 @@ String NetView::GetLabel() const {
 }
 
 String NetView::GetName() const {
-  Network* nt = net();
-  if(nt) return nt->GetDisplayName();
-  return "(no net)";
+  return inherited::GetName();
 }
 
 void NetView::BuildAll() { // populates all T3 guys
@@ -2543,7 +2541,15 @@ void NetView::ChildRemoving(taDataView* child_) {
   inherited::ChildRemoving(child_);
 }
 
+void NetView::UpdateName() {
+  if(net()) {
+    if(!name.contains(net()->name))
+      name = net()->name;
+  }
+}
+
 void NetView::DataUpdateAfterEdit_impl() {
+  UpdateName();
   InitDisplay(true);
   UpdateDisplay();
 }
@@ -2842,6 +2848,7 @@ void NetView::NewLayer(int x, int y) {
 }
 
 void NetView::GetMaxSize() {
+  if(!net()) return;
   net()->UpdateMaxDispSize();
   max_size = net()->max_disp_size;
   max_size.z -= (max_size.z - 1.0f) / max_size.z; // leave 1 extra layer's worth of room..
@@ -3964,13 +3971,15 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   tvSpecs->setAcceptDrops(true);
   tvSpecs->setDropIndicatorShown(true);
   tvSpecs->setHighlightRows(true);
-  
-  taBase* specs_ = &(dv_->net()->specs);
-  MemberDef* md = dv_->net()->GetTypeDef()->members.FindName("specs");
-  if (specs_) {
-    taiDataLink* dl = (taiDataLink*)specs_->GetDataLink();
-    if (dl) {
-      dl->CreateTreeDataNode(md, tvSpecs, NULL, "specs");
+
+  if(dv_->net()) {
+    taBase* specs_ = &(dv_->net()->specs);
+    MemberDef* md = dv_->net()->GetTypeDef()->members.FindName("specs");
+    if (specs_) {
+      taiDataLink* dl = (taiDataLink*)specs_->GetDataLink();
+      if (dl) {
+	dl->CreateTreeDataNode(md, tvSpecs, NULL, "specs");
+      }
     }
   }
 
