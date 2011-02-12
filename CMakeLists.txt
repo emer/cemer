@@ -249,10 +249,13 @@ install(FILES AUTHORS ChangeLog COPYING COPYING.LIB
 )
 
 # also install our cmake module files for use by plugins, etc
-file(GLOB OUR_CMAKE_MOD_FILES "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/*.cmake")
-install(FILES ${OUR_CMAKE_MOD_FILES}
-  DESTINATION ${EMERGENT_SHARE_DEST}/CMakeModules
-)
+# Need to create directories before putting stuff in them.
+# Next two lines don't actually accomplish anything.
+# install(DIRECTORY DESTINATION ${EMERGENT_SHARE_DEST})
+# install(DIRECTORY DESTINATION ${EMERGENT_SHARE_DEST}/CMakeModulesFK)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules
+  DESTINATION ${EMERGENT_SHARE_DEST}
+  FILES_MATCHING PATTERN "*.cmake")
 
 
 #plugin template files NOTE: prolly a more elegant way to make this list...

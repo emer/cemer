@@ -21,3 +21,18 @@ endif (WIN32)
 install(TARGETS emergent
   RUNTIME DESTINATION bin
 )
+
+# Add a desktop icon for Linux
+if (UNIX AND NOT APPLE)
+  set (DESKTOP_ENTRY emergent.desktop)
+  add_custom_command(OUTPUT ${DESKTOP_ENTRY}
+    COMMAND touch ${DESKTOP_ENTRY}
+    COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/emergent-desktop.sh ${CMAKE_INSTALL_PREFIX} > ${DESKTOP_ENTRY}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/emergent-desktop.sh
+    COMMENT "Generating desktop entry file"
+  )
+  add_custom_target(desktop_entry_file ALL DEPENDS ${DESKTOP_ENTRY})
+  add_dependencies(emergent desktop_entry_file)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${DESKTOP_ENTRY} DESTINATION /usr/share/applications/)
+endif (UNIX AND NOT APPLE)
+
