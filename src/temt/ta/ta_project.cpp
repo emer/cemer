@@ -1826,6 +1826,7 @@ int taProject::Save_strm(ostream& strm, taBase* par, int indent) {
   taMisc::save_use_name_paths = true; // project is one guy that DOES use name paths!
   int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); 
   setDirty(false);
+  taMisc::save_use_name_paths = false; // default is off, so restore to default for everything else
   return rval;
 }
 
