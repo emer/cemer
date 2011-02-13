@@ -993,7 +993,8 @@ class TA_API V1BinocularSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		dsp_ang;	// output of disparity system preserves angle (orientation) information, but no polarity or other info -- automatically sets MAX_POLS for v1s_filters and uses that for input.  also uses a simple MIN(left,right) matching algorithm, instead of the full disparity offset computation, which is compatible with actual network-based computation
-  float		dsp_v1c_thr;	// threshold on disparity value for passing features through to v1c -- if this value is > 0, filtering by dsp_ang is binary, using this threshold.  Otherwise, it is a multiply.  only applies to dsp_ang mode
+  float		dsp_v1c_thr;	// #DEF_0.3 threshold on disparity value for passing features through to v1c -- if this value is > 0, filtering by dsp_ang is binary, using this threshold.  Otherwise, it is a multiply.  only applies to dsp_ang mode
+  bool		dsp_v1c_grad;	// activate things in a graded fashion below dsp_v1c_thr
   int		n_disps;	// #DEF_1 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
   float		disp_range_pct;  // #DEF_0.05:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total V1S image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
   float		gauss_sig; 	// #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
@@ -1369,8 +1370,8 @@ public:
   virtual void	PlotSpacing(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_1 plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view -- one row for each type of filter (scroll to see each in turn) -- light squares show bounding box of rf, skipping every other
 
-  virtual void 	V1bDspAngCrossResMin(float extra_width=1.0f, int max_extra=4);
-  // #CAT_V1B integrate v1b_dsp_ang_out values across different resolutions within the same parent V1RetinaProc object -- call this after first pass processing, before applying results -- extra_width is multiplier on rf size needed to map between layer sizes that is added to the lower resolution side, to deal with extra blurring at lower res relative to higher res -- max_extra is maximum such extra to use, in actual pixel values
+  virtual void 	V1bDspAngCrossResMin(float extra_width=0.0f, int max_extra=4, float pct_to_min=0.5f);
+  // #CAT_V1B integrate v1b_dsp_ang_out values across different resolutions within the same parent V1RetinaProc object -- call this after first pass processing, before applying results -- extra_width is multiplier on rf size needed to map between layer sizes that is added to the lower resolution side, to deal with extra blurring at lower res relative to higher res -- max_extra is maximum such extra to use, in actual pixel values -- pct_to_min is how far proportionally to move toward the minimum value -- 1 = full MIN, 0 = ignore cross res constraints entirely
 
   virtual bool	V1bDspInFmDataTable(DataTable* data_table, Variant col, int row=-1, 
 				    float diff_thr=0.01f, int integ_sz=1);

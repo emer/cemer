@@ -3719,8 +3719,11 @@ void taList_impl::UpdateAfterEdit(){
 }
 
 bool taList_impl::MakeElNamesUnique() {
+  static bool in_process = false;
   if(!el_base->InheritsFrom(&TA_taNBase)) return true; // only if el's actually have names
   if(HasOption("NO_UNIQUE_NAMES")) return true;	       // not this guy
+  if(in_process) return true; // already in this function -- SetName calls this recursively so don't allow that to happen.. I know, it's ugly, but not worth adding whole new SetName interface..
+  in_process = true;
   bool unique = true;
   String mynm = name;
   if(mynm.empty()) {
@@ -3758,6 +3761,7 @@ bool taList_impl::MakeElNamesUnique() {
       }
     }
   }
+  in_process = false;
   return unique;
 }
 

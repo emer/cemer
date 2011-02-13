@@ -3385,7 +3385,8 @@ void V1MotionSpec::UpdateAfterEdit_impl() {
 
 void V1BinocularSpec::Initialize() {
   dsp_ang = false;
-  dsp_v1c_thr = 0.1f;
+  dsp_v1c_thr = 0.3f;
+  dsp_v1c_grad = false;
   n_disps = 1;
   disp_range_pct = 0.05f;
   gauss_sig = 0.7f;
@@ -6002,7 +6003,12 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_DspAng_thread(int v1c_pre_idx, int 
       float dval = cur_v1b_dsp->FastEl(fc.x, didx, pc.x, pc.y);
       if(v1b_specs.dsp_v1c_thr > 0.0f) {
 	if(dval > v1b_specs.dsp_v1c_thr) dval = 1.0f; // binarize
-	else dval = 0.0f;
+	else {
+	  if(v1b_specs.dsp_v1c_grad)
+	    dval /= v1b_specs.dsp_v1c_thr;	      // divide by threshold = graded response below threshold
+	  else
+	    dval = 0.0f;
+	}
       }
       // just access by angle and disparity -- straight-up multiplies result (for now)
       float rv = v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y);
@@ -6023,7 +6029,12 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_DspAng_Polinv_thread(int v1c_pre_id
       float dval = cur_v1b_dsp->FastEl(fc.x, didx, pc.x, pc.y);
       if(v1b_specs.dsp_v1c_thr > 0.0f) {
 	if(dval > v1b_specs.dsp_v1c_thr) dval = 1.0f; // binarize
-	else dval = 0.0f;
+	else {
+	  if(v1b_specs.dsp_v1c_grad)
+	    dval /= v1b_specs.dsp_v1c_thr;	      // divide by threshold = graded response below threshold
+	  else
+	    dval = 0.0f;
+	}
       }
       // just access by angle and disparity -- straight-up multiplies result (for now)
       float rv = v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y);
@@ -6055,7 +6066,8 @@ void V1RegionSpec::V1BinocularFilter_AvgSum() {
 }
 
 
-void V1RegionSpec::V1bDspAngCrossResMin(float extra_width, int max_extra) {
+void V1RegionSpec::V1bDspAngCrossResMin(float extra_width, int max_extra,
+					float pct_to_min) {
   // todo: make core routine threaded..
   RetinaProc* own = (RetinaProc*)GetOwner(&TA_RetinaProc);
   if(!own) return;
@@ -6107,16 +6119,32 @@ void V1RegionSpec::V1bDspAngCrossResMin(float extra_width, int max_extra) {
 		  lmax = MAX(lmax, lval);
 		}
 	      }
-	      float mn = MIN(smval, lmax); // quick product..
+	      // soft-min function:
+	      float nw_val;
+	      if(lmax < smval) {
+		nw_val = smval + pct_to_min * (lmax - smval);
+	      }
+	      else {
+		nw_val = smval;
+	      }
+
 // 	      if(sc == sm_half || sc == sm_0)
 // 		mn = 2.0f;	// test
-	      rs_sm->v1b_dsp_ang_out_tmp.FastEl(ang, didx, sc.x, sc.y) = mn;
+	      rs_sm->v1b_dsp_ang_out_tmp.FastEl(ang, didx, sc.x, sc.y) = nw_val;
 	      // apply this result ONLY to the "core" large guys, not the extras..
 	      for(xc.y=0; xc.y<sm_to_lg.y; xc.y++) {
 		for(xc.x=0; xc.x<sm_to_lg.x; xc.x++) {
 		  alc = lc + xc;
 		  float lval = rs_lg->v1b_dsp_ang_out.FastEl(ang, didx, alc.x, alc.y);
-		  rs_lg->v1b_dsp_ang_out_tmp.FastEl(ang, didx, alc.x, alc.y) = MIN(mn, lval);
+		  // soft-min function:
+		  float nw_val;
+		  if(smval < lval) {
+		    nw_val = lval + pct_to_min * (smval - lval);
+		  }
+		  else {
+		    nw_val = lval;
+		  }
+		  rs_lg->v1b_dsp_ang_out_tmp.FastEl(ang, didx, alc.x, alc.y) = nw_val;
 		  // *never* create new feature activation beyond what is present in large guys
 		}
 	      }

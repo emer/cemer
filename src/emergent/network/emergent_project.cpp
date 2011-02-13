@@ -112,7 +112,8 @@ void Wizard::Initialize() {
 void Wizard::InitLinks() {
   inherited::InitLinks();
   taBase::Own(layer_cfg, this);
-  layer_cfg.SetSize(n_layers);
+  if(!taMisc::is_loading)
+    layer_cfg.SetSize(n_layers);
 }
 
 void Wizard::CutLinks() {
