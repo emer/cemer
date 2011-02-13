@@ -57,6 +57,21 @@ else (WIN32)
   else (APPLE)
     SET(CPACK_GENERATOR "DEB")
     SET(CPACK_DEBIAN_PACKAGE_DEPENDS "subversion, cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, zlib1g-dev, libode-sp-dev, libpng-dev, libjpeg8-dev, libquarter")
+
+    # CPACK_DEBIAN_PACKAGE_ARCHITECTURE should get set automatically by dpkg --print-architecture
+    # ... except that doesn't happen until CPack runs, and we need it here to set the package filename
+    # This is copied from CPackDeb.cmake.
+    FIND_PROGRAM(DPKG_CMD dpkg)
+    IF(NOT DPKG_CMD)
+      MESSAGE(STATUS "Can not find dpkg in your path, default to i386.")
+      SET(CPACK_DEBIAN_PACKAGE_ARCHITECTURE i386)
+    ENDIF(NOT DPKG_CMD)
+    EXECUTE_PROCESS(COMMAND "${DPKG_CMD}" --print-architecture
+      OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    SET(CPACK_PACKAGE_FILE_NAME "emergent-${EMERGENT_VERSION}-Linux-${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+    SET(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/debian/postinst;${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/debian/postrm;")
   endif (APPLE)
 endif (WIN32)
 
