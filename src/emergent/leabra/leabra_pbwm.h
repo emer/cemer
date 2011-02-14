@@ -353,17 +353,61 @@ class LEABRA_API MatrixGateBiasSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gating biases depending on different conditions in the network -- helps to get the network performing appropriately for basic maintenance functions, to then be reinforced or overridden by learning
 INHERITED(SpecMemberBase)
 public:
-  float		out_rew_go;	// #DEF_1 (Weak) #AKA_out_pvr for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias (favors Go over NoGo) to encourage the output gating units to respond -- see out_empty_nogo for empty (non-maintaining) stripes
+  float		out_rew_go;	// #DEF_1 (Weak) #AKA_out_pvr (NOTE: can be superceded by out_rew_go_fun) for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias (favors Go over NoGo) to encourage the output gating units to respond -- see out_empty_nogo for empty (non-maintaining) stripes
   float		out_norew_nogo;	// #DEF_1:2 (Strong) for all OUTPUT stripes (empty or maintaining) on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) to discourage output gating -- is not generally useful to output gate on store trials
   float		out_empty_nogo;	// #DEF_5 (Very Strong) for OUTPUT stripes that are not maintaining anything, on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) to discourage output gating if there is nothing being maintained to output gate
   float		mnt_rew_nogo;	// #DEF_5 (Very Strong) for all MAINT stripes (empty or maintaining) on reward trials (e.g., recall/output trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) -- adds to any mnt_mnt_nogo -- in general it is not useful to fire maint gating on recall/output trials (see pfc.gate spec -- can prevent entirely with flag there)
-  float		mnt_mnt_nogo;	// #DEF_0 #AKA_mnt_nogo for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) -- although this is useful for maintenance, it can get in the way of replacing outdated information, and so overall a null bias of 0 seems best
-  float		mnt_empty_go;	// #DEF_0 for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias (favors Go over NoGo) -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
+  float		mnt_mnt_nogo;	// #DEF_0 #AKA_mnt_nogo (NOTE: can be superceded by mnt_mnt_nogo_fun) for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) -- although this is useful for maintenance, it can get in the way of replacing outdated information, and so overall a null bias of 0 seems best
+  float		mnt_empty_go;	// #DEF_0 (NOTE: can be superceded by mnt_empty_go_fun) for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias (favors Go over NoGo) -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
 
   TA_SIMPLE_BASEFUNS(MatrixGateBiasSpec);
 protected:
   SPEC_DEFAULTS;
 //   void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
+};
+
+class LEABRA_API MatrixGateBiasFunSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra for matrix gating biases that change over time as a function of time-based gating variable (e.g., duration of maintenance or emptiness -- value depends on bias in question)
+INHERITED(SpecMemberBase)
+public:
+  enum FunType {
+    LIN,			// linear function of time variable -- add incr for each unit of time
+    EXP,			// exponential function of time variable -- multiply by incr for each unit of time
+  };
+
+  bool		on;		// use this function-based bias value, instead of the original static bias value shown in gate_bias
+  FunType	fun;		// #CONDSHOW_ON_on what function of time to use -- linear vs. exponential
+  int		off;		// #CONDSHOW_ON_on time offset (in trials) before function is computed -- value remains at its starting (min or max depending) during this initial offset, and then starts moving after that
+  int		interval;	// #CONDSHOW_ON_on #MIN_1 time interval between start and end over which the bias value changes -- how long does it take to go from start to end?  must be at least 1 trial
+  float		start;		// #CONDSHOW_ON_on starting value of the bias (for initial values of time)
+  float		end;		// #CONDSHOW_ON_on ending value of the bias (puts a limit on how far incr can go)
+  float		incr;		// #CONDSHOW_ON_on #READ_ONLY #SHOW computed from interval and start/end values -- how much bias increments per unit time in relevant variable (see fun for how this is computed)
+
+  float		GetBiasLin(int time) {
+    if(time <= off) return start;
+    if(time-off > interval) return end;
+    return (start + ((float)(time-off) * incr));
+  }
+
+  float		GetBiasExp(int time) {
+    if(time <= off) return start;
+    if(time-off > interval) return end;
+    return (start + expf((float)(time-off) * incr));
+  }
+
+  float		GetBias(int time) {
+    if(fun == LIN) return GetBiasLin(time);
+    return GetBiasExp(time);
+  }
+
+  TA_SIMPLE_BASEFUNS(MatrixGateBiasFunSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -442,6 +486,9 @@ public:
   BGType		bg_type;	// type of basal ganglia/frontal component system: both output and maintenance operate in most areas, but output gating is most relevant for motor output control, and maintenance is most relevant for working-memory updating
   MatrixMiscSpec 	matrix;		// misc parameters for the matrix layer
   MatrixGateBiasSpec 	gate_bias;	// gating biases depending on different conditions in the network -- helps to get the network performing appropriately for basic maintenance functions, to then be reinforced or overridden by learning
+  MatrixGateBiasFunSpec	out_rew_go_fun; // gating bias function for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias (favors Go over NoGo) to encourage the output gating units to respond -- is (typically increasing) function of duration information has been maintained
+  MatrixGateBiasFunSpec	mnt_mnt_nogo_fun; // gating bias function for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) -- is (typically decreasing) function of maintenance duration -- if starts high ends low, this causes stripe to try to maintain (NoGo) strongly initially, and then be more labile for updating after that
+  MatrixGateBiasFunSpec	mnt_empty_go_fun; // gating bias function for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias (favors Go over NoGo) -- provides a bias for encoding and maintaining new information -- is (typically increasing) function of time being empty, causing stripe to be more likely to maintain the longer it sits empty -- thus serves as a more graded, subtle version of rnd_go.
   MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 

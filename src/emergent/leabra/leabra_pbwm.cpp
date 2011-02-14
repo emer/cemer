@@ -626,6 +626,37 @@ void MatrixGateBiasSpec::Initialize() {
   mnt_empty_go = 0.0f;
 }
 
+void MatrixGateBiasFunSpec::Initialize() {
+  on = false;
+  fun = LIN;
+  off = 0;
+  interval = 2;
+  start = 0.0f;
+  end = 1.0f;
+  incr = 0.5f;
+}
+
+void MatrixGateBiasFunSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(!on) return;
+  if(TestWarning((interval < 1), "UAE",
+		 "interval cannot be < 1 -- if constant, please turn off this function and use normal constant biases -- turning off for now")) {
+    on = false;
+    return;
+  }
+  if(TestWarning((start == end), "UAE",
+		 "start cannot be equal to end -- if constant, please turn off this function and use normal constant biases -- turning off for now")) {
+    on = false;
+    return;
+  }
+  if(fun == LIN) {
+    incr = (end - start) / (float)interval;
+  }
+  else {
+    // todo: do exp
+  }
+}
+
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
   bias_gain = .1f;
@@ -687,6 +718,24 @@ void MatrixLayerSpec::Defaults_init() {
   tie_brk.diff_thr = 0.2f;
   tie_brk.thr_gain = 0.005f;
   tie_brk.loser_gain = 1.0f;
+
+  out_rew_go_fun.start = 0.0f;
+  out_rew_go_fun.end = 2.0f;
+  out_rew_go_fun.off = 1;
+  out_rew_go_fun.interval = 2;
+  out_rew_go_fun.UpdateAfterEdit_NoGui();
+
+  mnt_mnt_nogo_fun.start = 2.0f;
+  mnt_mnt_nogo_fun.end = 0.0f;
+  mnt_mnt_nogo_fun.off = 1;	// strong no immediate-update bias
+  mnt_mnt_nogo_fun.interval = 2; // then decay quickly
+  mnt_mnt_nogo_fun.UpdateAfterEdit_NoGui();
+
+  mnt_empty_go_fun.start = 0.0f;
+  mnt_empty_go_fun.end = 1.0f;
+  mnt_empty_go_fun.off = 5;
+  mnt_empty_go_fun.interval = 10;
+  mnt_empty_go_fun.UpdateAfterEdit_NoGui();
 }
 
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
@@ -861,7 +910,10 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
     if(net->pv_detected) {	// PV reward trial -- bias output gating
       // only if pfc is maintaining..
       if(pfc_is_mnt) {
-	bias_dav = gate_bias.out_rew_go;
+	if(out_rew_go_fun.on)
+	  bias_dav = out_rew_go_fun.GetBias(pfc_mnt_cnt);
+	else
+	  bias_dav = gate_bias.out_rew_go;
 	if(!nogo_rnd_go && pfc_mnt_cnt > rnd_go_thr) { // no rnd go yet, but over thresh
 	  mgpd->gate_state = PFCGateSpec::NOGO_RND_GO;
 	  Compute_RndGoNoise_ugp(lay, acc_md, gpidx, net);
@@ -886,10 +938,16 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
     }
     else {
       if(pfc_mnt_cnt > 0) {   	// currently maintaining: bias NoGo for everything
-	bias_dav = -gate_bias.mnt_mnt_nogo;
+	if(mnt_mnt_nogo_fun.on)
+	  bias_dav = mnt_mnt_nogo_fun.GetBias(pfc_mnt_cnt);
+	else
+	  bias_dav = -gate_bias.mnt_mnt_nogo;
       }
       else {			// otherwise, bias to maintain/update
-	bias_dav = gate_bias.mnt_empty_go;
+	if(mnt_empty_go_fun.on)
+	  bias_dav = mnt_empty_go_fun.GetBias(-pfc_mnt_cnt); // negative count for amount of time empty
+	else
+	  bias_dav = gate_bias.mnt_empty_go;
 	if(!nogo_rnd_go && pfc_mnt_cnt < -rnd_go_thr) { // no rnd go yet, but over thresh
 	  mgpd->gate_state = PFCGateSpec::NOGO_RND_GO;
 	  Compute_RndGoNoise_ugp(lay, acc_md, gpidx, net);
