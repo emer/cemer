@@ -1854,7 +1854,8 @@ taBase* taBase::ChildDuplicate(const taBase* chld) {
   if (lst) {
     taBase* rval = lst->DuplicateEl(chld);
     if(rval && taMisc::gui_active) {
-      if(!lst->HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
+      if(!taMisc::in_gui_multi_action && 
+	 !lst->HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
 	tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
 	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
       }

@@ -1744,8 +1744,27 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
       if(imwv) {
 	imwv->GetCurTreeView()->clearExtSelection();
       }
-    } else { // other ops, like Duplicate, Clear or Unlink
+    }
+    else { // other ops, like Duplicate, Clear or Unlink
+      taBase* tab = taData();
+      taProject* proj = NULL;
+      if(tab) {
+	proj = (taProject*)tab->GetThisOrOwner(&TA_taProject);
+	if (proj) {
+	  proj->undo_mgr.Nest(true); 
+	}
+      }
+      bool multi = false;
+      bool multi_off = false;
+      if(sel_items.size > 1) {
+	++taMisc::in_gui_multi_action;
+	multi = true;
+      }
       for (int i = 0; i < sel_items.size; ++i) {
+	if(multi && i == sel_items.size-1) {
+	  --taMisc::in_gui_multi_action;
+	  multi_off = true;
+	}
         ISelectable* is = sel_items.SafeEl(i);
         if (!is) continue;
         int trval = is->EditActionS_impl_(ea, GC_DEFAULT);
@@ -1753,8 +1772,14 @@ int ISelectable::EditAction_(ISelectable_PtrList& sel_items, int ea,
         rval = trval;
         if (rval < 0) break; // forbidden or error
       }
+      if(multi && !multi_off) // didn't reach end
+	--taMisc::in_gui_multi_action;
+      if (proj) {
+	proj->undo_mgr.Nest(false); 
+      }
     }
-  } else { // paste-like op, get item data
+  }	
+  else { // paste-like op, get item data
     // confirm only 1 item selected for dst op -- Error is diagnostic, not operational
     if (sel_items.size > 1) {
       taMisc::Error("Paste-like clip operations only allowed for a single dest item");
@@ -7464,7 +7489,7 @@ void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   int exp_flags = EF_DEFAULT;
   if (useCustomExpand()) exp_flags |= EF_CUSTOM_FILTER;
   taMisc::Busy(true);
-  ExpandItem_impl(item, -1, m_def_exp_levels, exp_flags);
+  ExpandItem_impl(item, 0, m_def_exp_levels, exp_flags);
   if (header()->isVisible() && (header()->count() > 1)) {
     resizeColumnsToContents();
   }
@@ -8581,7 +8606,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     iTreeView* tv = treeView();
 //EVIL    tv->expandItem(new_node);
     // only scroll to it if parent is visible
-    if (isExpandedLeaf())
+    if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
       tv->scrollTo(new_node);
   }
     break;
@@ -8610,7 +8635,7 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     ++to_idx; // after
     moveChild(fm_idx, to_idx);
     // only scroll to it if parent is visible
-    if (isExpandedLeaf())
+    if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
       treeView()->scrollTo(moved_node);
   }
     break;
@@ -8848,7 +8873,7 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     if (after_node == NULL) after_node = last_list_items_node; // insert, after lists
     taiTreeDataNode* new_node = CreateSubGroup(after_node, op1_);
     // only scroll to it if parent is visible
-    if (isExpandedLeaf())
+    if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
       treeView()->scrollTo(new_node);
   }
     break;
@@ -8867,7 +8892,7 @@ void tabGroupTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     ++to_idx; // after
     moveChild(fm_idx, to_idx);
     // only scroll to it if parent is visible
-    if (isExpandedLeaf())
+    if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
       treeView()->scrollTo(moved_node);
   }
     break;

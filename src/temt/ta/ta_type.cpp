@@ -727,6 +727,7 @@ ContextFlag	taMisc::is_undo_saving;
 ContextFlag	taMisc::is_duplicating;
 ContextFlag	taMisc::is_checking;
 ContextFlag	taMisc::in_gui_call;
+ContextFlag	taMisc::in_gui_multi_action;
 ContextFlag	taMisc::in_plugin_init;
 ContextFlag	taMisc::no_auto_expand;
 TypeDef*	taMisc::plugin_loading;

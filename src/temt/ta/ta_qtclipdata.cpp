@@ -694,7 +694,17 @@ int taBase::EditAction(taiMimeSource* ms, int ea)
   if (!eax) {
     return taiClipData::ER_ERROR; // prob an error!
   } 
+  bool multi = false;
+  bool multi_off = false;
+  if(ms->count() > 1) {
+    ++taMisc::in_gui_multi_action;
+    multi = true;
+  }
   for (int i = 0; i < ms->count(); ++i) {
+    if(multi && i == ms->count()-1) {
+      --taMisc::in_gui_multi_action;
+      multi_off = true;
+    }
     ms->setIndex(i);
     // do it for every item 
     rval = EditActionD_impl(ms, eax);
@@ -702,6 +712,8 @@ int taBase::EditAction(taiMimeSource* ms, int ea)
     if (rval != taiClipData::ER_OK)
       return rval;
   }
+  if(multi && !multi_off) // didn't reach end
+    --taMisc::in_gui_multi_action;
   return rval;
 }
 
@@ -800,17 +812,25 @@ int taBase::ChildEditAction(const MemberDef* md, taBase* child,
   if (proj) {
     proj->undo_mgr.Nest(true); 
   }
-  // these totaly mess with the gui updating for copy/paste/etc -- and with new
-  // fixes, they are also unnecessary!
-//   StructUpdate(true);
+  bool multi = false;
+  bool multi_off = false;
+  if(ms->count() > 1) {
+    ++taMisc::in_gui_multi_action;
+    multi = true;
+  }
   for (int i = 0; i < ms->count(); ++i) {
+    if(multi && i == ms->count()-1) {
+      --taMisc::in_gui_multi_action;
+      multi_off = true;
+    }
     ms->setIndex(i);
     rval = ChildEditAction_impl(md, child, ms, ea);
     // keep looping as long as stuff ok
     if (rval != taiClipData::ER_OK)
       break;
   }
-//   StructUpdate(false);
+  if(multi && !multi_off) // didn't reach end
+    --taMisc::in_gui_multi_action;
   if (proj) {
     proj->undo_mgr.Nest(false); 
     iMainWindowViewer* imwv = iMainWindowViewer::GetViewerForObj(proj);
@@ -827,6 +847,11 @@ int taBase::ChildEditAction_impl(const MemberDef* md, taBase* child,
 {
     // op implementation (non-list/grp)
   if (ea & taiClipData::EA_DUPE) {
+    taProject* proj = (taProject*)GetOwner(&TA_taProject);
+    if(proj) {
+      proj->undo_mgr.SaveUndo(child, "Duplicate", NULL, false, this);
+      // list is save_undo_owner
+    }
     if (ChildDuplicate(child) != NULL)
       return taiClipData::ER_OK;
     else return taiClipData::ER_ERROR;
@@ -1055,7 +1080,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     new_obj->UpdateAfterEdit();
 
     // special new delayed code to expand and select the new guy!
-    if(!list->HasOption("NO_EXPAND_ALL") && !new_obj->HasOption("NO_EXPAND_ALL")) {
+    if(!taMisc::in_gui_multi_action && 
+       !list->HasOption("NO_EXPAND_ALL") && !new_obj->HasOption("NO_EXPAND_ALL")) {
       tabMisc::DelayedFunCall_gui(new_obj, "BrowserExpandAll");
       tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");
     }
@@ -1086,7 +1112,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
           list->MoveIdx(list->size - 1, itm_idx);
         }
 	// special new delayed code to expand and select the new guy!
-	if(!list->HasOption("NO_EXPAND_ALL") && !obj->HasOption("NO_EXPAND_ALL")) {
+	if(!taMisc::in_gui_multi_action && 
+	   !list->HasOption("NO_EXPAND_ALL") && !obj->HasOption("NO_EXPAND_ALL")) {
 	  tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe"); // select new guy in case new owner was not expaned yet and needs expansion!
 	}
       } else return taiClipData::ER_ERROR;
