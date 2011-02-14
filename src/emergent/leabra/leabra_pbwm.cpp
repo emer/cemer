@@ -720,12 +720,12 @@ void MatrixLayerSpec::Defaults_init() {
   tie_brk.loser_gain = 1.0f;
 
   out_rew_go_fun.start = 0.0f;
-  out_rew_go_fun.end = 2.0f;
+  out_rew_go_fun.end = 1.0f;
   out_rew_go_fun.off = 1;
   out_rew_go_fun.interval = 2;
   out_rew_go_fun.UpdateAfterEdit_NoGui();
 
-  mnt_mnt_nogo_fun.start = 2.0f;
+  mnt_mnt_nogo_fun.start = 1.0f;
   mnt_mnt_nogo_fun.end = 0.0f;
   mnt_mnt_nogo_fun.off = 1;	// strong no immediate-update bias
   mnt_mnt_nogo_fun.interval = 2; // then decay quickly
