@@ -103,6 +103,13 @@ void iSplitter::collapseToggle(int index) {
     cur_sz = saved_sizes;
   }
   else {
+    // add missing size to adjacent panel, instead of dividing evenly among everyone
+    if(count() > 1) {
+      if(index > 0)
+	cur_sz[index-1] += cur_sz[index];
+      else
+	cur_sz[index+1] += cur_sz[index];
+    }
     cur_sz[index] = 0;
   }
   setSizes(cur_sz);

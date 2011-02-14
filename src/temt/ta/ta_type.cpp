@@ -895,7 +895,7 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
 
   if(obj) {
     String objinfo = "Error in: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name 
-      + "() (path: " + obj->GetPath_Long() + ")\n";
+      + "() (path: " + obj->GetPathNames() + ")\n";
 
     if((obj == prv_obj) && (prv_fun == fun_name) && (prv_a == a)) {
       // nogui version for repeat!
@@ -929,7 +929,7 @@ bool taMisc::TestWarning(const taBase* obj, bool test, const char* fun_name,
   if(!test) return false;
   if(obj) {
     String objinfo = obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name 
-      + "() (path: " + obj->GetPath_Long() + ")\n";
+      + "() (path: " + obj->GetPathNames() + ")\n";
     taMisc::Warning(objinfo, a, b, c, d, e, f, g, h);
   }
   else {

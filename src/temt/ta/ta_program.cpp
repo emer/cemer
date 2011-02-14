@@ -1641,7 +1641,7 @@ bool ProgExprBase::ParseExpr() {
   Program_Group* pgp = GET_MY_OWNER(Program_Group);
   if(TestError(!pgp, "ParseExpr", "no parent Program_Group found -- report to developers as bug"))
     return false;
-  String pnm = GetPath_Long(NULL, pgp);
+  String pnm = GetPathNames(NULL, pgp);
 
   // todo: temporary fix for saved wrong flags, remove after a while (4.0.10)
   ProgEl* pel = GET_MY_OWNER(ProgEl);

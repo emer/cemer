@@ -102,6 +102,7 @@ public:
   virtual taiDataLink*	GetListChild(void* el) {return NULL;} // get link when item is known (esp for change notifies)
   virtual String	GetPath() const {return _nilString;} // esp taBase path 
   virtual String	GetPath_Long() const {return _nilString;} // esp taBase path 
+  virtual String	GetPathNames() const {return _nilString;} // esp taBase path 
   virtual String	GetTypeDecoKey() const {return _nilString;}
   virtual String	GetStateDecoKey() const {return _nilString;}
   virtual const QVariant GetColData(const KeyString& key, int role) const 
@@ -2072,6 +2073,8 @@ public slots:
   virtual void		CollapseAll(); // collapse all nodes
   virtual void		ExpandAllUnder(iTreeViewItem* item, int max_levels = 6); 
   // expand all nodes under item, ml=-1 for "infinite" levels (there better not be any loops!!!)
+  virtual void		ExpandDefaultUnder(iTreeViewItem* item); 
+  // expand to default level under given item
   virtual void		CollapseAllUnder(iTreeViewItem* item); // collapse all nodes under item
 
   void			InsertEl(bool after=false); // insert new element at or after currently selected item

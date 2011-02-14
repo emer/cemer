@@ -1174,8 +1174,8 @@ void taiObjDiffBrowser::Constr() {
   layOuter->setMargin(taiM->vsep_c);
   layOuter->setSpacing(taiM->vspc_c); 
 
-  String a_path = odl->tab_obj_a->GetPath_Long();
-  String b_path = odl->tab_obj_b->GetPath_Long();
+  String a_path = odl->tab_obj_a->GetPathNames();
+  String b_path = odl->tab_obj_b->GetPathNames();
   String lb_txt = "Differences between object A and object B, shown as changes needed to make A into B\nA is: " + a_path + "\nB is: " + b_path +
     "\nClick actions to actually perform edits on objects";
 

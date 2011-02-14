@@ -1112,8 +1112,8 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   if (n > 0) {
     String headline = tab->GetColText(taBase::key_disp_name) +
         " (" + tab->GetTypeDef()->name + ")";
-    String href = "ta:" + tab->GetPathNames();
-    String path_long = tab->GetPath_Long();
+    String href = "ta:" + tab->GetPath();
+    String path_long = tab->GetPathNames();
     String desc = tab->GetColText(taBase::key_desc);
     sd->AddItem(headline, href, desc, hits, path_long, level, n);
   }
@@ -7459,6 +7459,18 @@ void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) {
   taMisc::Busy(false);
 } 
 
+void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
+  if (!item) return;
+  int exp_flags = EF_DEFAULT;
+  if (useCustomExpand()) exp_flags |= EF_CUSTOM_FILTER;
+  taMisc::Busy(true);
+  ExpandItem_impl(item, -1, m_def_exp_levels, exp_flags);
+  if (header()->isVisible() && (header()->count() > 1)) {
+    resizeColumnsToContents();
+  }
+  taMisc::Busy(false);
+} 
+
 void iTreeView::ExpandAllUnderInt(void* item) {
   ExpandAllUnder((iTreeViewItem*)item);
 }
@@ -8435,7 +8447,7 @@ void tabTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
       if(itv->item(0) == this)
 	itv->ExpandDefault();
       else if(do_updt) {
-	itv->ExpandAllUnder(this);
+	itv->ExpandDefaultUnder(this);
       }
     }
   }
@@ -9067,7 +9079,7 @@ void iSearchDialog::results_setSourceRequest(iTextBrowser* src,
 void iSearchDialog::RootSet(taiDataLink* root) {
   String cap = "Find in: ";
   if (root) {
-    root_path = root->GetPath_Long();
+    root_path = root->GetPathNames();
     cap += root_path;
   }
   setWindowTitle(cap);

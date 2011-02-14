@@ -665,7 +665,7 @@ String taBase::GetDisplayName() const {
 }
 
 String taBase::GetUniqueName() const { 
-  return GetPath_Long();
+  return GetPathNames();
 }
 
 void taBase::UpdateOwnerNames() {
@@ -1701,7 +1701,7 @@ void taBase::CheckError_msg(const char* a, const char* b, const char* c,
 			    const char* d, const char* e, const char* f,
 			    const char* g, const char* h) const {
   String objinfo = "Config Error in: " + GetTypeDef()->name + " "
-    + GetDisplayName() + " (path: " + GetPath_Long() + ")\n";
+    + GetDisplayName() + " (path: " + GetPathNames() + ")\n";
   taMisc::CheckError(objinfo, a, b, c, d, e, f, g, h);
 }
 
@@ -2171,7 +2171,7 @@ String taBase::GetStringRep(taBase* it) {
 }
 
 String taBase::GetStringRep_impl() const {
-  String rval = GetTypeDef()->name + ":" + GetPath_Long();
+  String rval = GetTypeDef()->name + ":" + GetPathNames();
   return rval;
 }
 
