@@ -249,48 +249,29 @@ private:
   void	Destroy()	{ CutLinks(); }
 };
 
-class TA_API If: public ProgEl { 
-  // ##HAS_CONDTREE a conditional test element: if(condition) then true_code
+class TA_API IfElse: public ProgEl { 
+  // #AKA_If ##HAS_CONDTREE a conditional test element: if(condition) then true_code; else false_code
 INHERITED(ProgEl)
 public:
   ProgExpr	    cond; 	// condition expression to test for true or false
-  bool		    show_false_code; // display the false_code, which is run when the cond condition is false
+  bool		    show_false_code; // display the false_code, which is run when the cond condition is false -- forced to be true if there is any existing content in false_code
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
   ProgEl_List	    false_code; // #SHOW_TREE #CONDTREE_ON_show_false_code items to execute if condition false
 
-  override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
-  override String	GetToolbarName() const { return "if"; }
-
-  PROGEL_SIMPLE_BASEFUNS(If);
-protected:
-  override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
-  override const String	GenListing_children(int indent_level);
-
-private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();} //
-};
-
-class TA_API IfElse: public If { 
-  // #AKA_If a conditional test element: if(condition) then true_code; else false_code
-INHERITED(If)
-public:
-
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetToolbarName() const { return "if.else"; }
   
   PROGEL_SIMPLE_BASEFUNS(IfElse);
 protected:
+  override void		UpdateAfterEdit_impl();
+  override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
+  override const String	GenCssPre_impl(int indent_level); 
   override const String	GenCssBody_impl(int indent_level); //replaces If
+  override const String	GenCssPost_impl(int indent_level); 
   override const String	GenListing_children(int indent_level);
 
 private:

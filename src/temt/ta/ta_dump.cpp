@@ -1645,7 +1645,7 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     if(elnm.nonempty()) {
       el->SetName(elnm);
     }
-    new_path = el->GetPathNames();
+    new_path = el->GetPath();	// for head item, must be regular path in case loading 2 of same name!
   }
   else {
     new_path = el->GetPath();
