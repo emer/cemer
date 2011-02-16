@@ -664,11 +664,7 @@ String taBase::GetDisplayName() const {
   return rval;
 }
 
-String taBase::GetUniqueName() const { 
-  return GetPathNames();
-}
-
-void taBase::UpdateOwnerNames() {
+void taBase::MakeNameUnique() {
   // nop for base -- only defined for taNBase
 }
 
@@ -3553,16 +3549,17 @@ void taNBase::UpdateAfterEdit_impl() {
   }
 }
 
-void taNBase::UpdateOwnerNames() {
+void taNBase::MakeNameUnique() {
   if(owner && owner->InheritsFrom(&TA_taList_impl)) {
-    ((taList_impl*)owner)->MakeElNamesUnique();
+    ((taList_impl*)owner)->MakeElNameUnique(this); // just this guy
   }
 }
 
 bool taNBase::SetName(const String& nm) {
   if(name == nm) return true;
   name = nm;
-  UpdateOwnerNames();
+  if(!taMisc::is_changing_type)
+    MakeNameUnique();
 //   UpdateAfterEdit();		// this turns out to be a bad idea -- just do it where needed
   return true;
 }
@@ -3735,6 +3732,8 @@ bool taList_impl::MakeElNamesUnique() {
       }
     }
   }
+  mynm = taMisc::StringCVar(mynm); // make it legal
+
   for(int i=0; i<size; i++) {
     taBase* el1 = (taBase*)FastEl_(i);
     if (!el1 || (el1->GetOwner() != this)) continue;
@@ -3742,6 +3741,7 @@ bool taList_impl::MakeElNamesUnique() {
     if(nm1.empty()) {
       nm1 = mynm + "_" + (String)i; // give it a unique name
       el1->SetName(nm1);
+      el1->UpdateAfterEdit();	// trigger update so visible
     }
     for(int j=i+1; j<size; j++) {
       taBase* el2 = (taBase*)FastEl_(j);
@@ -3750,6 +3750,7 @@ bool taList_impl::MakeElNamesUnique() {
       if(nm2.empty()) {
 	nm2 = mynm + "_" + (String)j; // give it a unique name
 	el2->SetName(nm2);
+	el2->UpdateAfterEdit();	// trigger update so visible
       }
       if(nm2 == nm1) {
 	String orig = nm2;
@@ -3760,6 +3761,50 @@ bool taList_impl::MakeElNamesUnique() {
 	el2->UpdateAfterEdit();	// trigger update so visible
 	unique = false;
       }
+    }
+  }
+  in_process = false;
+  return unique;
+}
+
+bool taList_impl::MakeElNameUnique(taBase* itm) {
+  static bool in_process = false;
+  if(!itm || !el_base->InheritsFrom(&TA_taNBase)) return true; // only if el's actually have names
+  if(HasOption("NO_UNIQUE_NAMES")) return true;	       // not this guy
+  if(in_process) return true; // already in this function -- SetName calls this recursively so don't allow that to happen.. I know, it's ugly, but not worth adding whole new SetName interface..
+  in_process = true;
+  bool unique = true;
+  String mynm = name;
+  if(mynm.empty()) {
+    if(GetOwner() != NULL) {
+      mynm = GetOwner()->GetName();
+      if(mynm.empty()) {
+	mynm = GetPathNames();
+      }
+    }
+  }
+  mynm = taMisc::StringCVar(mynm); // make it legal
+
+  String itmnm = itm->GetName();
+  if(itmnm.empty()) {
+    itmnm = mynm + "_" + (String)FindEl_(itm); // give it a unique name
+    itm->SetName(itmnm);
+    itm->UpdateAfterEdit();	// trigger update so visible
+  }
+
+  for(int i=0; i<size; i++) {
+    taBase* el1 = (taBase*)FastEl_(i);
+    if (!el1 || (el1->GetOwner() != this)) continue;
+    if(el1 == itm) continue;
+    String nm1 = el1->GetName();
+    if(itmnm == nm1) {
+      String orig = itmnm;
+      itmnm = itmnm + "_" + (String)FindEl_(itm);
+      taMisc::Warning("taList_impl::MakeElNameUnique",
+		      "names of items on the list must be unique -- renaming:",orig,"to:",itmnm);
+      itm->SetName(itmnm);
+      itm->UpdateAfterEdit();	// trigger update so visible
+      unique = false;
     }
   }
   in_process = false;
@@ -3864,16 +3909,19 @@ bool taList_impl::ChangeType(int idx, TypeDef* new_type) {
       return false;
     }
   }
+  ++taMisc::is_changing_type;
   taBase* rval = taBase::MakeToken(new_type);
-  if(TestError(!rval, "ChangeType", "maketoken is null")) return false;
-  Add(rval);		// add to end of list
-  String orgnm = itm->GetName();
-  rval->UnSafeCopy(itm);	// do the copy!
-  rval->SetName(orgnm);		// also copy name -- otherwise not copied
-  SwapIdx(idx, size-1);		// switch positions, so old guy is now at end!
-  itm->UpdatePointersToMe(rval); // allow us to update all things that might point to us
-  // then do a delayed remove of this object (in case called by itself!)
-  itm->CloseLater();
+  if(!TestError(!rval, "ChangeType", "maketoken is null")) {
+    Add(rval);		// add to end of list
+    String orgnm = itm->GetName();
+    rval->UnSafeCopy(itm);	// do the copy!
+    SwapIdx(idx, size-1);		// switch positions, so old guy is now at end!
+    rval->SetName(orgnm);		// also copy name -- otherwise not copied
+    itm->UpdatePointersToMe(rval); // allow us to update all things that might point to us
+    // then do a delayed remove of this object (in case called by itself!)
+    itm->CloseLater();
+  }
+  --taMisc::is_changing_type;
   return true;
 }
 

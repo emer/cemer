@@ -844,6 +844,7 @@ public:
   static ContextFlag	is_undo_saving;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently saving an object for undo data -- objects with extensive "leaf" level data (i.e., having no signficant undoable data under them, e.g., data table rows) should NOT save that data in this context
   static ContextFlag	is_undo_loading;// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object from undo data
   static ContextFlag	is_duplicating;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently duplicating an object
+  static ContextFlag	is_changing_type;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently doing a ChangeType on object
   static ContextFlag	is_checking;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently doing batch CheckConfig on objects
   static ContextFlag	in_gui_call;	// #READ_ONLY #NO_SAVE #NO_SHOW true if we are running a function call from the gui (used to modalize warning dialogs)
   static ContextFlag	in_gui_multi_action; // #READ_ONLY #NO_SAVE #NO_SHOW we are currently in a gui multiple item action (e.g., drag/drop or cut/paste multiple items) -- good to suspend various update actions that might otherwise occur at this time.  The last item in the sequence does NOT have this flag set, so it can trigger relevant updates etc

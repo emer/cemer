@@ -623,9 +623,8 @@ public:
   // #CAT_ObjectMgmt #GET_name Get the name of the object
   virtual String	GetDisplayName() const;
   // #IGNORE can be overridden to provide a more elaborate or cleaned-up user-visible name for display purposes (default is just GetName())
-  virtual void		UpdateOwnerNames();
-  // #CAT_ObjectMgmt update names of objects associated with my owner (e.g., if it is a list object), typically because my name has changed, and owner needs to ensure that all names are unique
-  virtual String	GetUniqueName() const; // #IGNORE the name, possibly with dotted parent, to help globally identify an item, mostly for token lists
+  virtual void		MakeNameUnique();
+  // #CAT_ObjectMgmt make sure my name is unique relative to names of objects associated with my owner (e.g., if it is a list object), typically because my name has changed, and owner needs to ensure that all names are unique
   virtual String	GetDesc() const {return _nilString;}
   // #IGNORE a type-specific description of the specific functionality/properties of the object
   virtual void 		SetDefaultName() {} // #IGNORE note: called non-virtually in every constructor
@@ -1675,7 +1674,7 @@ public:
   bool 		SetName(const String& nm);
   String	GetName() const			{ return name; }
   override void	SetDefaultName();
-  override void	UpdateOwnerNames();
+  override void	MakeNameUnique();
 
   TA_BASEFUNS(taNBase);
 protected:
@@ -1896,6 +1895,8 @@ public:
 
   virtual bool	MakeElNamesUnique();
   // #CAT_taList make all of the element names in the list unique -- returns true if all unique already
+  virtual bool	MakeElNameUnique(taBase* itm);
+  // #CAT_taList make sure name of given item on this list is unique -- will change only the name of this item to ensure uniqueness (does not check other items against other items)
 
 #if defined(TA_GUI) && !defined(__MAKETA__) 
   override const QPixmap* GetDataNodeBitmap(int bmf, int& flags_supported) const;

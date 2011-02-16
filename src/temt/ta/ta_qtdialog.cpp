@@ -2528,7 +2528,7 @@ void taiEditDataHost::GetValue_Membs() {
   if (rbase) {
     rbase->UpdateAfterEdit();	// hook to update the contents after an edit..
     // for gui updates, always make sure that the names are unique within the list
-    rbase->UpdateOwnerNames();
+    rbase->MakeNameUnique();
     taiMisc::Update(rbase);
   }
 }

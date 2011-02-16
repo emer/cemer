@@ -4968,7 +4968,6 @@ void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* 
           continue;
         //TODO: need to get some kind of less ambiguous name
         nm = btmp->GetDisplayName();
-        //nm = btmp->GetUniqueName();
         taiAction* mel = menu->AddItem(nm, taiMenu::radio, actn, Variant(btmp)); //connect caller's callback
         mel->connect(&ma); // connect our own callback
       }
