@@ -323,7 +323,7 @@ bool taGroup_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
       tmp = tmp.before(')');
     }
     tmp.gsub(" ", "");
-    TypeDef* td = taMisc::types.FindName(tmp);
+    TypeDef* td = taMisc::FindTypeName(tmp);
     if(td != NULL) {
       el_typ = td;
       return true;

@@ -57,7 +57,6 @@ void dumpMisc::PostUpdateAfter() {
   taMisc::is_post_loading--;
 }  
 
-
 //////////////////////////
 //	VPUnref		//
 //////////////////////////
@@ -352,7 +351,7 @@ taBase* DumpPathTokenList::FindFromPath(String& pat, TypeDef* td, void* base,
       String typnm = pat.between('<', '>');
       trg_nm = typnm.after(',');
       typnm = typnm.before(',');
-      trg_td = taMisc::types.FindName(typnm);
+      trg_td = taMisc::FindTypeName(typnm);
     }
     pat = pat.before('$');
     if(token_id.empty())	// version 3 = its just the path
@@ -1232,11 +1231,9 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
   if(!has_type)
     td = this;			// assume this is the right type..
   else {
-    td = taMisc::types.FindName(tpnm);
+    td = taMisc::FindTypeName(tpnm);
     if(td == NULL) {
-      // todo: lookup tpnm in aka_types, and use that typedef instead!
-      // and lookup other cases where this happens.. and make a function for this so it is efficient..
-      taMisc::Warning("Unknown type:",tpnm,"in Dump_Load_Path");
+      // message already handled
       return false;
     }
 

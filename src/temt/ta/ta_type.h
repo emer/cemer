@@ -1077,6 +1077,8 @@ public:
   /////////////////////////////////////////////////
   //	File Paths etc
 
+  static TypeDef* FindTypeName(const String& typ_nm);
+  // #CAT_File looks up typedef by name on global list of types, using AKA to find replacement types if original name not found
   static String GetFileFmPath(const String& path);
   // #CAT_File get file name component from full path
   static String GetDirFmPath(const String& path, int n_up = 0);

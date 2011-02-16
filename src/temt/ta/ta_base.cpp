@@ -994,7 +994,7 @@ TypeDef* taBase::GetScopeType() {
   TypeDef* scp_tp = NULL;
   String scp_nm  = GetTypeDef()->OptionAfter("SCOPE_");
   if (scp_nm.nonempty())
-    scp_tp = taMisc::types.FindName(scp_nm);
+    scp_tp = taMisc::FindTypeName(scp_nm);
   if (scp_tp) return scp_tp;
   else return taMisc::default_scope;
 }
@@ -3418,7 +3418,7 @@ TypeDef* taSmartPtr::GetBaseType(TypeDef* this_typ) {
   while (targ) {
     act_name = targ->name.after("taSmartPtrT_");
     if (act_name.nonempty()) {
-      TypeDef* rval = taMisc::types.FindName(act_name); 
+      TypeDef* rval = taMisc::FindTypeName(act_name); 
       if (rval && rval->InheritsFrom(&TA_taBase))
         return rval;
     }
@@ -3936,7 +3936,7 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
       tmp = tmp.before(')');
     }
     tmp.gsub(" ", "");
-    TypeDef* td = taMisc::types.FindName(tmp);
+    TypeDef* td = taMisc::FindTypeName(tmp);
     if(td != NULL) {
       el_typ = td;
       return true;
@@ -4171,7 +4171,7 @@ int taList_impl::Dump_Load_Value(istream& strm, taBase* par) {
 	  strm.get();
 	  c = taMisc::read_word(strm); // get type
 	  String typ_nm = taMisc::LexBuf;
-	  TypeDef* eltd = taMisc::types.FindName(typ_nm);
+	  TypeDef* eltd = taMisc::FindTypeName(typ_nm);
 	  if(TestWarning((!eltd || !eltd->InheritsFrom(el_base)),
 			 "Dump_Load_Value",
 			 "Null or invalid type:",typ_nm,"to link into list of types:",
@@ -4212,7 +4212,7 @@ int taList_impl::Dump_Load_Value(istream& strm, taBase* par) {
 	else {			// type information -- create objects too!
 	  taMisc::read_word(strm, true); // get type
 	  String typ_nm = taMisc::LexBuf;
-	  TypeDef* eltd = taMisc::types.FindName(typ_nm);
+	  TypeDef* eltd = taMisc::FindTypeName(typ_nm);
 	  if(TestWarning((!eltd || !eltd->InheritsFrom(el_base)),
 			 "Dump_Load_Value",
 			 "Null or invalid type:",typ_nm,"to link into list of types:",

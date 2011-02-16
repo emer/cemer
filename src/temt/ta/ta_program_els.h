@@ -279,7 +279,7 @@ private:
 };
 
 class TA_API IfElse: public If { 
-  // a conditional test element: if(condition) then true_code; else false_code
+  // #AKA_If a conditional test element: if(condition) then true_code; else false_code
 INHERITED(If)
 public:
 

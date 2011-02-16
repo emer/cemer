@@ -1725,6 +1725,20 @@ String taMisc::StringCVar(const String& str) {
 /////////////////////////////////////////////////
 //	File Paths etc
 
+TypeDef* taMisc::FindTypeName(const String& typ_nm) {
+  TypeDef* td = taMisc::types.FindName(typ_nm);
+  if(td != NULL) return td;
+  for(int i=0; i<taMisc::aka_types.size; i++) {
+    TypeDef* aka = taMisc::aka_types.FastEl(i);
+    String aka_nm = aka->OptionAfter("AKA_");
+    if(aka_nm == typ_nm) {
+      return aka;
+    }
+  }
+  taMisc::Warning("Unknown type:",typ_nm);
+  return NULL;
+}
+
 String taMisc::GetFileFmPath(const String& path) {
   if(path.contains('/')) return path.after('/',-1);
   return path;
@@ -5879,7 +5893,7 @@ void TypeDef::SetValStr_enum(const String& val, void* base, void* par, MemberDef
   if(strval.contains("::")) {
     String tp_nm = strval.before("::");
     String en_nm = strval.after("::");
-    TypeDef* td = taMisc::types.FindName(tp_nm);
+    TypeDef* td = taMisc::FindTypeName(tp_nm);
     if(!td) {
       taMisc::Warning("Enum type name:", tp_nm, "not found in list of registered types -- cannot set value for string:", strval);
       return;
