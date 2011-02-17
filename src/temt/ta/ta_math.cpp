@@ -22,6 +22,7 @@
 
 #include "ta_math.h"
 #include "ta_platform.h"
+#include "ta_datatable.h"
 
 #ifdef HAVE_LIBGSL
 # include <gsl/gsl_blas.h>
@@ -875,7 +876,93 @@ double taMath_double::Ftest_q(double F, double v1, double v2) {
   return beta_i(0.5*v2, 0.5*v1, v2 / (v2 + (v1 * F)));
 }
 
+double taMath_double::d_sub_a(double_Matrix* vec_signal, double_Matrix* vec_noise) {
+  double s_mean = vec_mean(vec_signal);
+  double n_mean = vec_mean(vec_noise);
+  double s_stdev = vec_std_dev(vec_signal, s_mean, true);
+  double n_stdev = vec_std_dev(vec_noise, n_mean, true);
+  return (s_mean - n_mean) / sqrt((s_stdev + n_stdev)/2.0);
+}
 
+void taMath_double::roc(double_Matrix* vec_signal, double_Matrix* vec_noise, DataTable* roc) {
+
+  // Find the min and max data points, used for the threshold
+  int x;
+  double s_min = vec_min(vec_signal, x);
+  double n_min = vec_min(vec_noise, x);
+  double min;
+
+  if (s_min > n_min)
+    min = n_min;
+  else
+    min = s_min;
+
+  double s_max = vec_max(vec_signal, x);
+  double n_max = vec_max(vec_noise, x);
+  double max;
+
+  if (s_max > n_max)
+    max = n_max;
+  else
+    max = s_max;
+
+  // Could parameterize this.. if needed.
+  int n_criterion = (vec_signal->size + vec_noise->size) / 2.0;
+  double criterion_interval = (max - min) / n_criterion;
+
+  roc->Reset();
+  roc->NewColDouble("TPR");
+  roc->NewColDouble("FPR");
+  roc->NewColDouble("TP");  
+  roc->NewColDouble("FP");
+  roc->NewColDouble("TN");
+  roc->NewColDouble("FN");
+  roc->NewColDouble("Precision");
+  roc->NewColDouble("Recall");
+  roc->NewColDouble("Fmeasure");
+  roc->AddRows(n_criterion);
+
+  double criterion = min;
+
+  for (int i = 0; i < n_criterion; i++) {
+    double tp = 0;
+    double fp = 0;
+    double fn = 0;
+    double tn = 0;
+
+    for (int j = 0; j < vec_signal->size; j++) {
+      if (vec_signal->FastEl(j) > criterion)
+	tp += 1;
+      else
+	fn += 1;
+    }
+
+    for (int j = 0; j < vec_noise->size; j++) {
+      if (vec_noise->FastEl(j) > criterion)
+	fp += 1;
+      else
+	tn += 1;
+    }
+    
+    double recall = tp / (tp + fn);
+    double precision = tp / (tp + fp);
+    double fmeasure = 2*precision*recall/(precision+recall);
+    double tpr = recall;
+    double fpr = fp / (fp + tn);
+    
+    roc->SetVal(tpr, "TPR", i);
+    roc->SetVal(fpr, "FPR", i);
+    roc->SetVal(tp, "TP", i);
+    roc->SetVal(fp, "FP", i);
+    roc->SetVal(tn, "TN", i);
+    roc->SetVal(fn, "FN", i);
+    roc->SetVal(precision, "Precision", i);
+    roc->SetVal(recall, "Recall", i);
+    roc->SetVal(recall, "Fmeasure", i);
+
+    criterion += criterion_interval;
+  }
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 // Vector operations (operate on Matrix objects, treating as a single linear guy)
@@ -3801,6 +3888,10 @@ float taMath_float::students_den(float t, float df) {
 
 float taMath_float::Ftest_q(float F, float v1, float v2) {
   return beta_i(0.5*v2, 0.5*v1, v2 / (v2 + (v1 * F)));
+}
+
+float taMath_float::d_sub_a(float_Matrix* vec_signal, float_Matrix* vec_noise) {
+  return ( vec_mean(vec_signal) - vec_mean(vec_noise) ) / ( sqrt( ( vec_std_dev(vec_signal) + vec_std_dev(vec_noise) ) / 2 ) );
 }
 
 

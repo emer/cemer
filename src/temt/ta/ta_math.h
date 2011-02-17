@@ -487,6 +487,10 @@ public:
   // #CAT_Probability density fctn of student's distribution df deg of free t test
   static double Ftest_q(double F, double v1, double v2);
   // #CAT_Probability F distribution probability F | (v1 < v2) 
+  static double d_sub_a(double_Matrix* vec_signal, double_Matrix* vec_noise);
+  // #CAT_Probability Computes d_sub_a, which reduces to d' in the equal variance case. See: http://psych.colorado.edu/~lharvey/P4165/P4165_2004_Fall/2004_Fall_pdf/P4165_SDT.pdf
+  static void roc(double_Matrix* vec_signal, double_Matrix* vec_noise, DataTable* roc);
+  // #CAT_Probability Creates a DataTable that you can pass to a GraphView in order to plot an ROC curve.
 
   /////////////////////////////////////////////////////////////////////////////////
   // Vector operations (operate on Matrix objects, treating as a single linear guy)
@@ -1079,6 +1083,8 @@ public:
   // #CAT_Probability density fctn of student's distribution df deg of free t test
   static float Ftest_q(float F, float v1, float v2);
   // #CAT_Probability F distribution probability F | (v1 < v2) 
+  static float d_sub_a(float_Matrix* vec_signal, float_Matrix* vec_noise);
+  // #CAT_Probability Computes d_sub_a, which reduces to d' in the equal variance case. See: http://psych.colorado.edu/~lharvey/P4165/P4165_2004_Fall/2004_Fall_pdf/P4165_SDT.pdf
 
   /////////////////////////////////////////////////////////////////////////////////
   // Vector operations (operate on Matrix objects, treating as a single linear guy)
