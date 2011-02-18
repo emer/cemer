@@ -1,4 +1,4 @@
-// Copyright, 1995-2007, Regents of the University of Colorado,
+/// Copyright, 1995-2007, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -33,7 +33,8 @@
 # include <gsl/gsl_fft_real.h>
 # include <gsl/gsl_fft_halfcomplex.h>
 # include <gsl/gsl_multifit.h>
-#include  <gsl/gsl_sf.h>
+# include  <gsl/gsl_sf.h>
+# include <gsl/gsl_cdf.h>
 #endif
 
 #include <math.h>
@@ -884,12 +885,12 @@ double taMath_double::d_sub_a(double_Matrix* vec_signal, double_Matrix* vec_nois
   return (s_mean - n_mean) / sqrt((s_stdev + n_stdev)/2.0);
 }
 
-void taMath_double::roc(double_Matrix* vec_signal, double_Matrix* vec_noise, DataTable* roc) {
+void taMath_double::roc(double_Matrix* vec_signal, double_Matrix* vec_noise, DataTable* roc, DataTable* roc_fit) {
 
   // Find the min and max data points, used for the threshold
-  int x;
-  double s_min = vec_min(vec_signal, x);
-  double n_min = vec_min(vec_noise, x);
+  int z;
+  double s_min = vec_min(vec_signal, z);
+  double n_min = vec_min(vec_noise, z);
   double min;
 
   if (s_min > n_min)
@@ -897,8 +898,8 @@ void taMath_double::roc(double_Matrix* vec_signal, double_Matrix* vec_noise, Dat
   else
     min = s_min;
 
-  double s_max = vec_max(vec_signal, x);
-  double n_max = vec_max(vec_noise, x);
+  double s_max = vec_max(vec_signal, z);
+  double n_max = vec_max(vec_noise, z);
   double max;
 
   if (s_max > n_max)
@@ -907,10 +908,11 @@ void taMath_double::roc(double_Matrix* vec_signal, double_Matrix* vec_noise, Dat
     max = s_max;
 
   // Could parameterize this.. if needed.
-  int n_criterion = (vec_signal->size + vec_noise->size) / 2.0;
+  int n_criterion = vec_signal->size + vec_noise->size;
   double criterion_interval = (max - min) / n_criterion;
 
   roc->Reset();
+  roc->NewColDouble("Criterion");
   roc->NewColDouble("TPR");
   roc->NewColDouble("FPR");
   roc->NewColDouble("TP");  
@@ -920,6 +922,9 @@ void taMath_double::roc(double_Matrix* vec_signal, double_Matrix* vec_noise, Dat
   roc->NewColDouble("Precision");
   roc->NewColDouble("Recall");
   roc->NewColDouble("Fmeasure");
+  roc->NewColDouble("d_sub_a");
+  roc->NewColDouble("d_prime");
+
   roc->AddRows(n_criterion);
 
   double criterion = min;
@@ -949,7 +954,10 @@ void taMath_double::roc(double_Matrix* vec_signal, double_Matrix* vec_noise, Dat
     double fmeasure = 2*precision*recall/(precision+recall);
     double tpr = recall;
     double fpr = fp / (fp + tn);
-    
+    double da = d_sub_a(vec_signal, vec_noise);
+    double d_prime = cdf_inv(tpr) - cdf_inv(fpr);
+
+    roc->SetVal(criterion, "Criterion", i);
     roc->SetVal(tpr, "TPR", i);
     roc->SetVal(fpr, "FPR", i);
     roc->SetVal(tp, "TP", i);
@@ -959,10 +967,49 @@ void taMath_double::roc(double_Matrix* vec_signal, double_Matrix* vec_noise, Dat
     roc->SetVal(precision, "Precision", i);
     roc->SetVal(recall, "Recall", i);
     roc->SetVal(recall, "Fmeasure", i);
-
+    roc->SetVal(da, "d_sub_a", i);
+    roc->SetVal(d_prime, "d_prime", i);
+    
     criterion += criterion_interval;
   }
+
+  // Fit a polynomail to the ROC data
+  int obs = vec_signal->size;
+  int degree = 3;
+  double_Matrix* coef = new double_Matrix;
+  double_Matrix* cov = new double_Matrix;
+  double chisq;
+
+  vec_regress_multi_lin_polynomial((double_Matrix*)roc->GetColMatrix(0), (double_Matrix*)roc->GetColMatrix(1), 
+				   coef, cov, degree, chisq);
+
+  roc->NewColFmMatrix(coef, "Coefficients");
+  roc->NewColFmMatrix(cov, "Covariances");
+  roc->NewColDouble("CHISQ");
+  roc->SetVal(chisq, "CHISQ", 0);
+
+  roc_fit->Reset();
+  roc_fit->NewColDouble("TPR");
+  roc_fit->NewColDouble("FPR");
+  roc_fit->AddRows(1000);
+
+  double x = 0;
+  double interval = 1.0 / 1000.0;
+  for (int i = 0; i < 1000; i++) {
+    double y = coef->FastEl(0);
+    for (int j = 1; j < degree; j++) {
+      cout << coef->FastEl(i) << "," << x << "," << j << "," << pow(x, (double)j) << coef->FastEl(i) * pow(x, (double)j) << "\n";
+      taMisc::FlushConsole();
+      y += coef->FastEl(i) * pow(x, (double)j);
+    }
+    roc_fit->SetVal(y, "TPR", i);
+    roc_fit->SetVal(x, "FPR", i);
+    x += interval;
+  }
+
 }
+
+double taMath_double::cdf_inv(double x) {return gsl_cdf_ugaussian_Pinv(x);}
 
 /////////////////////////////////////////////////////////////////////////////////
 // Vector operations (operate on Matrix objects, treating as a single linear guy)
@@ -1741,6 +1788,48 @@ bool taMath_double::vec_regress_multi_lin(double_Matrix* X, double_Matrix* Y,
 #endif
 
 }
+
+bool taMath_double::vec_regress_multi_lin_polynomial(double_Matrix* dx, double_Matrix* dy,
+						     double_Matrix* coef, double_Matrix* cov,
+						     int degree, double& chisq) {
+#ifdef HAVE_LIBGSL
+  if (!(dx->size == dy->size))
+    taMisc::Error("dx and dy must have the same dimensionality");
+
+  int obs = dx->size;
+
+  coef->SetGeom(1, degree);
+  cov->SetGeom(2, degree, degree);
+
+  gsl_matrix *X;
+  gsl_matrix gsl_dx, gsl_cov;
+  gsl_vector gsl_dy, gsl_coef;
+
+  X = gsl_matrix_alloc(obs, degree);
+
+  mat_get_gsl_fm_ta(&gsl_cov, cov);
+  vec_get_gsl_fm_ta(&gsl_dy, dy);
+  vec_get_gsl_fm_ta(&gsl_coef, coef);
+
+    for (int i = 0; i < obs; i++) {
+      gsl_matrix_set(X, i, 0, 1.0);
+      for (int j = 0; j < degree; j++) {
+ 	gsl_matrix_set(X, i, j, pow(dx->FastEl(i), j));
+      }
+    }
+
+  gsl_multifit_linear_workspace* work = gsl_multifit_linear_alloc(obs, degree);
+
+  gsl_multifit_linear(X, &gsl_dy, &gsl_coef, &gsl_cov, &chisq, work);
+  gsl_multifit_linear_free(work);
+
+  return true;
+#else 
+  return false;
+#endif
+
+}
+
 
 bool taMath_double::vec_jitter_gauss(double_Matrix* vec, double stdev) {
   if(!vec_check_type(vec)) return false;

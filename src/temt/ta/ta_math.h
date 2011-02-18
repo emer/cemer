@@ -489,8 +489,10 @@ public:
   // #CAT_Probability F distribution probability F | (v1 < v2) 
   static double d_sub_a(double_Matrix* vec_signal, double_Matrix* vec_noise);
   // #CAT_Probability Computes d_sub_a, which reduces to d' in the equal variance case. See: http://psych.colorado.edu/~lharvey/P4165/P4165_2004_Fall/2004_Fall_pdf/P4165_SDT.pdf
-  static void roc(double_Matrix* vec_signal, double_Matrix* vec_noise, DataTable* roc);
+  static void roc(double_Matrix* vec_signal, double_Matrix* vec_noise, DataTable* roc, DataTable* roc_fit);
   // #CAT_Probability Creates a DataTable that you can pass to a GraphView in order to plot an ROC curve.
+  static double cdf_inv(double x);
+  // #CAT_Probability Computes the inverse cumulative distribution function for the unit Gaussian distribution. 
 
   /////////////////////////////////////////////////////////////////////////////////
   // Vector operations (operate on Matrix objects, treating as a single linear guy)
@@ -625,6 +627,11 @@ public:
   static bool vec_regress_multi_lin(double_Matrix* X, double_Matrix* Y, double_Matrix* C, 
 				    double_Matrix* cov, double& chisq);
   // #CAT_Statistics This function computes the best-fit parameters c of the model y = X c for the observations y and the matrix of predictor variables X. The variance-covariance matrix of the model parameters cov is estimated from the scatter of the observations about the best-fit. The sum of squares of the residuals from the best-fit, chi^2, is returned in chisq. The best-fit is found by singular value decomposition of the matrix X using the preallocated workspace provided in work. The modified Golub-Reinsch SVD algorithm is used, with column scaling to improve the accuracy of the singular values. Any components which have zero singular value (to machine precision) are discarded from the fit.
+
+  static bool vec_regress_multi_lin_polynomial(double_Matrix* dx, double_Matrix* dy,
+					       double_Matrix* coef,  double_Matrix* cov, 
+					       int degree, double& chisq);
+    // #CAT_Statistics This function computes the best-fit parameters c of the model y = X c for the observations y and the matrix of predictor variables X. The variance-covariance matrix of the model parameters cov is estimated from the scatter of the observations about the best-fit. The sum of squares of the residuals from the best-fit, chi^2, is returned in chisq. The best-fit is found by singular value decomposition of the matrix X using the preallocated workspace provided in work. The modified Golub-Reinsch SVD algorithm is used, with column scaling to improve the accuracy of the singular values. Any components which have zero singular value (to machine precision) are discarded from the fit.
 
   static bool vec_jitter_gauss(double_Matrix* vec, double stdev);
   // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev rounded to the nearest int. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter
