@@ -5687,6 +5687,65 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
   return rval;
 }
 
+namespace { // anonymous
+  // Functions to format float/double values consistently across platforms.
+
+  void normalizeRealString(String &str) {
+    // Make NaN and infinity representations consistent.
+    // Windows may use "1.#QNAN" or "-1.#IND" for nan.
+    if (str.contains_ci("nan") || str.contains_ci("ind")) {
+      str = "nan";
+      return;
+    }
+    
+    // Windows uses "1.#INF" or "-1.#INF" for infinities.
+    if (str.contains_ci("inf")) {
+      str = (str.elem(0) == '-') ? "-inf" : "inf";
+      return;
+    }
+    
+    // Get rid of leading zeros in the exponent, since mac/win aren't
+    // consistent in how many they output for padding.
+    int exponent = str.index_ci("e+");
+    if (exponent == -1) exponent = str.index_ci("e-");
+    if (exponent > 0) {
+      exponent += 2;
+      int firstNonZero = exponent;
+      while (str.elem(firstNonZero) == '0') ++firstNonZero;
+      if (firstNonZero > exponent) {
+	str.del(exponent, firstNonZero - exponent);
+      }
+    }
+    
+    // Convert , to . for intl contexts so files are always uniform
+    str.repl(",", ".");
+  }
+  
+  String formatFloat(float f, TypeDef::StrContext sc) {
+    switch (sc) {
+      case TypeDef::SC_STREAMING: {
+	String ret(f, "%.7g");
+	normalizeRealString(ret);
+	return ret;
+      }
+      default:
+	return String(f);
+    }
+  }
+  
+  String formatDouble(double d, TypeDef::StrContext sc) {
+    switch (sc) {
+      case TypeDef::SC_STREAMING: {
+	String ret(d, "%.16lg");
+	normalizeRealString(ret);
+	return ret;
+      }
+      default:
+	return String(d);
+    }
+  }
+}
+
 String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
 			  StrContext sc, bool force_inline) const 
 {
@@ -5760,20 +5819,11 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     else if(DerivesFrom(TA_uint64_t)) {
       return String(*((uint64_t*)base));
     }
-    // note: we convert , to . for intl contexts so files are always uniform
     else if(DerivesFrom(TA_float)) {
-      switch (sc) {
-      case SC_STREAMING: return String(*((float*)base), "%.7g").repl(",", ".");
-      default:
-        return String(*((float*)base));
-      }
+      return formatFloat(*static_cast<const float *>(base), sc);
     }
     else if(DerivesFrom(TA_double)) {
-      switch (sc) {
-      case SC_STREAMING: return String(*((double*)base), "%.16lg").repl(",", ".");
-      default:
-        return String(*((double*)base));
-      }
+      return formatDouble(*static_cast<const double *>(base), sc);
     }
     else if(DerivesFormal(TA_enum)) {
       return GetValStr_enum(base, par, memb_def, sc, force_inline);
