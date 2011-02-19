@@ -5347,35 +5347,37 @@ void V1RegionSpec::V1BinocularFilter_HorizAgg() {
       if(backprop || (cur_mode > 0 && sc.x == v1s_img_geom.x-1)) {
 	// propagate back to all the points along the horizontal line -- this is the key routine
 	// just look at start and end cases -- this is only place where there is good data
-	for(int didx = 0; didx <v1b_specs.tot_disps; didx++) {
-	  float avg_dsp = 0.0f;
-	  for(int bxi=0; bxi < cur_len; bxi += cur_len-1) {
-	    int bx = cur_st + bxi;
-	    if(v1b_specs.max_pols) {
-	      float dval = v1b_dsp_out.FastEl(0, didx, bx, sc.y); // 0 = horiz
-	      avg_dsp += dval;
-	    }
-	    else {
-	      float max_dv = 0.0f;
-	      for(int fy = 0; fy < v1s_feat_geom.y; fy++) {
-		float dval = v1b_dsp_out.FastEl(fy, didx, bx, sc.y); // 0 = horiz
-		max_dv = MAX(dval, max_dv);
+	if(cur_len > 3) {
+	  for(int didx = 0; didx <v1b_specs.tot_disps; didx++) {
+	    float avg_dsp = 0.0f;
+	    for(int bxi=0; bxi < cur_len; bxi += cur_len-1) {
+	      int bx = cur_st + bxi;
+	      if(v1b_specs.max_pols) {
+		float dval = v1b_dsp_out.FastEl(0, didx, bx, sc.y); // 0 = horiz
+		avg_dsp += dval;
 	      }
-	      avg_dsp += max_dv;
+	      else {
+		float max_dv = 0.0f;
+		for(int fy = 0; fy < v1s_feat_geom.y; fy++) {
+		  float dval = v1b_dsp_out.FastEl(fy, didx, bx, sc.y); // 0 = horiz
+		  max_dv = MAX(dval, max_dv);
+		}
+		avg_dsp += max_dv;
+	      }
 	    }
-	  }
-	  avg_dsp *= 0.5f;	// 2 points, divide by 2
+	    avg_dsp *= 0.5f;	// 2 points, divide by 2
 
-	  // then copy out to the whole line
-	  for(int bxi=0; bxi < cur_len; bxi++) {
-	    int bx = cur_st + bxi;
-	    int& bptlen = v1b_dsp_horiz.FastEl(DHZ_LEN, bx, sc.y);
-	    int& bptst = v1b_dsp_horiz.FastEl(DHZ_START, bx, sc.y);
-	    bptlen = cur_len;
-	    bptst = cur_st;
+	    // then copy out to the whole line
+	    for(int bxi=0; bxi < cur_len; bxi++) {
+	      int bx = cur_st + bxi;
+	      int& bptlen = v1b_dsp_horiz.FastEl(DHZ_LEN, bx, sc.y);
+	      int& bptst = v1b_dsp_horiz.FastEl(DHZ_START, bx, sc.y);
+	      bptlen = cur_len;
+	      bptst = cur_st;
 
-	    float& dval = v1b_dsp_out.FastEl(0, didx, bx, sc.y); // 0 = horiz
-	    dval = MIN(dval, avg_dsp);
+	      float& dval = v1b_dsp_out.FastEl(0, didx, bx, sc.y); // 0 = horiz
+	      dval = MIN(dval, avg_dsp);
+	    }
 	  }
 	}
 	// start over
