@@ -17,7 +17,7 @@
 #include "ta_dataproc.h"
 #include "css_machine.h"
 #include "ta_project.h"		// for debugging
-
+#include "ta_datatable_qtso.h"
 
 //////////////////////////
 // 	ClustNode	//
@@ -857,6 +857,165 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
   return true;
 
 };
+
+bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
+						 bool view,
+						 DataTable* dest_data,
+						 const String& signal_data_col_nm,
+						 const String& noise_data_col_nm,
+						 int degree) {
+
+  String fun_name = "ReceiverOperatingCharacteristic";
+  
+  if (!src_data) {
+    taMisc::Error(fun_name + " - src_data cannot be NULL");return false;}
+
+  GetDest(dest_data, src_data, fun_name);
+
+  if (!(degree > 0)) {
+    taMisc::Error("degree must be greater than zero");
+    return false;
+  }
+
+  double_Matrix* vec_signal = (double_Matrix*)src_data->GetColMatrix(src_data->FindColNameIdx(signal_data_col_nm));
+  double_Matrix* vec_noise = (double_Matrix*)src_data->GetColMatrix(src_data->FindColNameIdx(noise_data_col_nm));
+
+  if (!(degree < vec_signal->size + vec_noise->size)) {
+    taMisc::Error("degree must be less than the sum of the lengths of the signal and noise vectors (the number of parameters must be less than the number of data)");
+    return false;
+  }
+
+  if (!(vec_signal->size == vec_noise->size)) {
+    taMisc::Error("signal and noise vectors must have the same length");
+    return false;
+  }
+  
+  if (!(vec_signal->size > 0 && vec_noise > 0)) {
+    taMisc::Error("signal and noise vectors must each have at least one element");
+    return false;
+  }
+
+  double_Matrix* criterion_data = new double_Matrix;
+  criterion_data->SetGeom(1, vec_signal->size + vec_noise->size);
+
+  for (int i = 0; i < vec_signal->size; i++) {
+    criterion_data->Set(vec_signal->FastEl(i), i);
+    criterion_data->Set(vec_noise->FastEl(i), vec_noise->size + i);
+  }
+
+  taMath_double::vec_sort(criterion_data);
+
+  dest_data->Reset();
+  dest_data->NewColDouble("TPR");
+  dest_data->NewColDouble("FPR");
+  dest_data->NewColDouble("TPR_fit");
+  dest_data->NewColDouble("Criterion");
+  dest_data->NewColDouble("TP");  
+  dest_data->NewColDouble("FP");
+  dest_data->NewColDouble("TN");
+  dest_data->NewColDouble("FN");
+  dest_data->NewColDouble("Precision");
+  dest_data->NewColDouble("Recall");
+  dest_data->NewColDouble("Fmeasure");
+
+  dest_data->AddRows(criterion_data->size);
+
+  for (int i = 0; i < criterion_data->size; i++) {
+    double criterion = criterion_data->FastEl(i) - .000000001;
+    double tp = 0;
+    double fp = 0;
+    double fn = 0;
+    double tn = 0;
+
+    for (int j = 0; j < vec_signal->size; j++) {
+      if (vec_signal->FastEl(j) > criterion)
+	tp += 1;
+      else
+	fn += 1;
+    }
+
+    for (int j = 0; j < vec_noise->size; j++) {
+      if (vec_noise->FastEl(j) > criterion)
+	fp += 1;
+      else
+	tn += 1;
+    }
+    
+    double recall = tp / (tp + fn);
+    double precision = tp / (tp + fp);
+    double fmeasure = 2*precision*recall/(precision+recall);
+    double tpr = recall;
+    double fpr = fp / (fp + tn);
+ 
+    dest_data->SetVal(tpr, "TPR", i);
+    dest_data->SetVal(fpr, "FPR", i);
+    dest_data->SetVal(criterion, "Criterion", i);
+    dest_data->SetVal(tp, "TP", i);
+    dest_data->SetVal(fp, "FP", i);
+    dest_data->SetVal(tn, "TN", i);
+    dest_data->SetVal(fn, "FN", i);
+    dest_data->SetVal(precision, "Precision", i);
+    dest_data->SetVal(recall, "Recall", i);
+    dest_data->SetVal(recall, "Fmeasure", i);
+  }
+
+  // Fit a polynomail to the ROC data
+  int obs = vec_signal->size;
+  double_Matrix* coef = new double_Matrix;
+  double_Matrix* cov = new double_Matrix;
+  double chisq;
+ 
+  double_Matrix* vec_tpr = (double_Matrix*)dest_data->GetColMatrix(0);
+  double_Matrix* vec_fpr = (double_Matrix*)dest_data->GetColMatrix(1);
+
+  taMath_double::vec_regress_multi_lin_polynomial(vec_fpr, vec_tpr, coef, cov, degree, chisq);
+
+  dest_data->NewColFmMatrix(coef, "Coefficients");
+  dest_data->NewColFmMatrix(cov, "Covariances");
+  dest_data->NewColDouble("CHISQ");
+  dest_data->SetVal(chisq, "CHISQ", 0);
+
+  String fun_string = "Y = " + (String)coef->FastEl(0) + " + ";
+  for (int i = 1; i < coef->size; i++)
+    fun_string += (String)coef->FastEl(i) + "*x^" + (String)i + " + ";
+  fun_string += "e";
+
+  dest_data->NewColString("fun_string");
+  dest_data->SetVal(fun_string, "fun_string", 0);
+
+  for (int i = 0; i < vec_fpr->size; i++) {
+    double x = vec_fpr->FastEl(i);
+    double y = coef->FastEl(0);
+
+    for (int j = 1; j < degree; j++)
+      y += coef->FastEl(j) * pow(x, j);
+
+    dest_data->SetVal(y, "TPR_fit", i);
+  }
+
+  double area = taMath_double::integrate_polynomial(coef, vec_fpr->FastEl(0), vec_fpr->FastEl(criterion_data->size));
+  dest_data->NewColDouble("AUC");
+  dest_data->SetVal(area, "AUC", 0);
+
+  // TODO: Not working =(
+  if(view) {
+    GraphTableView* dest_view = dest_data->FindMakeGraphView();
+    dest_view->x_axis.on = false;
+    dest_view->plot_1.on = true;
+    dest_view->x_axis.col_name = "FPR";
+    dest_view->plot_1.col_name = "TPR";
+    dest_view->plot_1.col_name = "TPR_fit";
+    dest_view->negative_draw = true;
+    dest_view->color_mode = GraphTableView::FIXED_COLOR;
+    dest_view->x_axis.data_range.Set(0,1);
+    dest_view->plot_1.data_range.Set(0,1);
+    dest_view->plot_2.data_range.Set(0,1);
+    dest_view->UpdateAfterEdit();
+  }
+  
+  
+   return true;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 //	distance matricies

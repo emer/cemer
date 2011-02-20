@@ -1,4 +1,4 @@
-/// Copyright, 1995-2007, Regents of the University of Colorado,
+// Copyright, 1995-2007, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -22,7 +22,6 @@
 
 #include "ta_math.h"
 #include "ta_platform.h"
-#include "ta_datatable.h"
 
 #ifdef HAVE_LIBGSL
 # include <gsl/gsl_blas.h>
@@ -878,134 +877,16 @@ double taMath_double::Ftest_q(double F, double v1, double v2) {
 }
 
 double taMath_double::d_sub_a(double_Matrix* vec_signal, double_Matrix* vec_noise) {
-  double s_mean = vec_mean(vec_signal);
-  double n_mean = vec_mean(vec_noise);
-  double s_stdev = vec_std_dev(vec_signal, s_mean, true);
-  double n_stdev = vec_std_dev(vec_noise, n_mean, true);
-  return (s_mean - n_mean) / sqrt((s_stdev + n_stdev)/2.0);
-}
+  return ( vec_mean(vec_signal) - vec_mean(vec_noise) ) / ( sqrt( ( vec_std_dev(vec_signal) + vec_std_dev(vec_noise) ) / 2 ) );
+}  
 
-void taMath_double::roc(double_Matrix* vec_signal, double_Matrix* vec_noise, DataTable* roc, DataTable* roc_fit) {
+double taMath_double::integrate_polynomial(double_Matrix* coef, double min, double max) {
+  double area = 0;
 
-  // Find the min and max data points, used for the threshold
-  int z;
-  double s_min = vec_min(vec_signal, z);
-  double n_min = vec_min(vec_noise, z);
-  double min;
+  for (int n = 0; n < coef->size; n++)
+    area += coef->FastEl(n) * ( ( pow(min, n + 1) / (n + 1) )  -  ( pow(max, n + 1 ) / ( n + 1 ) )  );
 
-  if (s_min > n_min)
-    min = n_min;
-  else
-    min = s_min;
-
-  double s_max = vec_max(vec_signal, z);
-  double n_max = vec_max(vec_noise, z);
-  double max;
-
-  if (s_max > n_max)
-    max = n_max;
-  else
-    max = s_max;
-
-  // Could parameterize this.. if needed.
-  int n_criterion = vec_signal->size + vec_noise->size;
-  double criterion_interval = (max - min) / n_criterion;
-
-  roc->Reset();
-  roc->NewColDouble("Criterion");
-  roc->NewColDouble("TPR");
-  roc->NewColDouble("FPR");
-  roc->NewColDouble("TP");  
-  roc->NewColDouble("FP");
-  roc->NewColDouble("TN");
-  roc->NewColDouble("FN");
-  roc->NewColDouble("Precision");
-  roc->NewColDouble("Recall");
-  roc->NewColDouble("Fmeasure");
-  roc->NewColDouble("d_sub_a");
-  roc->NewColDouble("d_prime");
-
-  roc->AddRows(n_criterion);
-
-  double criterion = min;
-
-  for (int i = 0; i < n_criterion; i++) {
-    double tp = 0;
-    double fp = 0;
-    double fn = 0;
-    double tn = 0;
-
-    for (int j = 0; j < vec_signal->size; j++) {
-      if (vec_signal->FastEl(j) > criterion)
-	tp += 1;
-      else
-	fn += 1;
-    }
-
-    for (int j = 0; j < vec_noise->size; j++) {
-      if (vec_noise->FastEl(j) > criterion)
-	fp += 1;
-      else
-	tn += 1;
-    }
-    
-    double recall = tp / (tp + fn);
-    double precision = tp / (tp + fp);
-    double fmeasure = 2*precision*recall/(precision+recall);
-    double tpr = recall;
-    double fpr = fp / (fp + tn);
-    double da = d_sub_a(vec_signal, vec_noise);
-    double d_prime = cdf_inv(tpr) - cdf_inv(fpr);
-
-    roc->SetVal(criterion, "Criterion", i);
-    roc->SetVal(tpr, "TPR", i);
-    roc->SetVal(fpr, "FPR", i);
-    roc->SetVal(tp, "TP", i);
-    roc->SetVal(fp, "FP", i);
-    roc->SetVal(tn, "TN", i);
-    roc->SetVal(fn, "FN", i);
-    roc->SetVal(precision, "Precision", i);
-    roc->SetVal(recall, "Recall", i);
-    roc->SetVal(recall, "Fmeasure", i);
-    roc->SetVal(da, "d_sub_a", i);
-    roc->SetVal(d_prime, "d_prime", i);
-    
-    criterion += criterion_interval;
-  }
-
-  // Fit a polynomail to the ROC data
-  int obs = vec_signal->size;
-  int degree = 3;
-  double_Matrix* coef = new double_Matrix;
-  double_Matrix* cov = new double_Matrix;
-  double chisq;
-
-  vec_regress_multi_lin_polynomial((double_Matrix*)roc->GetColMatrix(0), (double_Matrix*)roc->GetColMatrix(1), 
-				   coef, cov, degree, chisq);
-
-  roc->NewColFmMatrix(coef, "Coefficients");
-  roc->NewColFmMatrix(cov, "Covariances");
-  roc->NewColDouble("CHISQ");
-  roc->SetVal(chisq, "CHISQ", 0);
-
-  roc_fit->Reset();
-  roc_fit->NewColDouble("TPR");
-  roc_fit->NewColDouble("FPR");
-  roc_fit->AddRows(1000);
-
-  double x = 0;
-  double interval = 1.0 / 1000.0;
-  for (int i = 0; i < 1000; i++) {
-    double y = coef->FastEl(0);
-    for (int j = 1; j < degree; j++) {
-      cout << coef->FastEl(i) << "," << x << "," << j << "," << pow(x, (double)j) << coef->FastEl(i) * pow(x, (double)j) << "\n";
-      taMisc::FlushConsole();
-      y += coef->FastEl(i) * pow(x, (double)j);
-    }
-    roc_fit->SetVal(y, "TPR", i);
-    roc_fit->SetVal(x, "FPR", i);
-    x += interval;
-  }
+  return area;
 
 }
 

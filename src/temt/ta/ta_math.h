@@ -489,10 +489,10 @@ public:
   // #CAT_Probability F distribution probability F | (v1 < v2) 
   static double d_sub_a(double_Matrix* vec_signal, double_Matrix* vec_noise);
   // #CAT_Probability Computes d_sub_a, which reduces to d' in the equal variance case. See: http://psych.colorado.edu/~lharvey/P4165/P4165_2004_Fall/2004_Fall_pdf/P4165_SDT.pdf
-  static void roc(double_Matrix* vec_signal, double_Matrix* vec_noise, DataTable* roc, DataTable* roc_fit);
-  // #CAT_Probability Creates a DataTable that you can pass to a GraphView in order to plot an ROC curve.
   static double cdf_inv(double x);
   // #CAT_Probability Computes the inverse cumulative distribution function for the unit Gaussian distribution. 
+  static double integrate_polynomial(double_Matrix* coef, double min, double max);
+  // #CAT_Probability Computes the inverse cumulative distribution function for the unit Gaussian distribution.   
 
   /////////////////////////////////////////////////////////////////////////////////
   // Vector operations (operate on Matrix objects, treating as a single linear guy)

@@ -125,6 +125,15 @@ public:
 							    const String& mode_col_nm = "Mode");
   // #Cat_Stats #MENU_BUTTON #MENU_ON_Stats #SHORTCUT_Ctrl+1 #NULL_OK_1 #NULL_TEXT_1_NewDataTable #TYPE_1_DataTable #NULL_TEXT_0_SelectSourceTable
 
+  static bool ReceiverOperatingCharacteristic(DataTable* src_data,
+					      bool view,
+					      DataTable* dest_data = NULL,
+					      const String& signal_data_col_nm = "signal",
+					      const String& noise_data_col_nm = "noise",
+					      int degree = 5);
+
+  // #Cat_Stats #MENU_BUTTON #MENU_ON_Stats #NULL_OK_1 #NULL_TEXT_1_NewDataTable #TYPE_1_DataTable #NULL_TEXT_0_SelectSourceTable
+  
   ///////////////////////////////////////////////////////////////////
   // distance matricies
 
