@@ -850,11 +850,17 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
   tabMisc::root->plugin_deps.Reset();
 
   // saving both dump file version and now the actual code version string
-  if(taMisc::save_old_fmt)
-    strm << "// ta_Dump File v2.0";
-  else
-    strm << "// ta_Dump File v3.0";
-  strm << " -- code v" + taMisc::version_bin.toString() + "\n";
+  if(taMisc::save_old_fmt) {
+    strm << "// ta_Dump File v2.0"
+         << " -- code v" << taMisc::version_bin.toString() << "\n";
+  }
+  else {
+    // For v3.0, also save Emergent's SVN revision number.
+    // It will be ignored on load.
+    strm << "// ta_Dump File v3.0"
+         << " -- code v" << taMisc::version_bin.toString()
+         << " rev" << taMisc::svn_rev << "\n";
+  }
   taMisc::strm_ver = 3;
   if (InheritsFrom(TA_taBase)) {
     taBase* rbase = (taBase*)base;
