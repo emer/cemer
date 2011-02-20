@@ -562,10 +562,6 @@ void ProgVar::SetFlagsByOwnership() {
   else {
     objs_ptr = false;		// this is incompatible with being local
     SetVarFlag(LOCAL_VAR);
-    int_val = 0;
-    real_val = 0.0;
-    bool_val = false;
-    object_val = NULL;
     ClearVarFlag(CTRL_PANEL);
     ClearVarFlag(CTRL_READ_ONLY);
     // now check for fun args
@@ -952,8 +948,12 @@ String ProgVar::GetDisplayName() const {
     break;
   case T_HardEnum:
     if(!hard_enum_type) rval = name + " = NULL hard enum type";
-    else rval = name + " = " + 
-	   hard_enum_type->Get_C_EnumString(int_val) + " (" + hard_enum_type->name + ")";
+    else {
+      bool show_scope = false;
+      rval = name + " = "
+        + hard_enum_type->Get_C_EnumString(int_val, show_scope)
+        + " (" + hard_enum_type->name + ")";
+    }
     break;
   case T_DynEnum:
     if((bool)dyn_enum_val.enum_type)
@@ -1034,10 +1034,18 @@ const String ProgVar::GenCssType() const {
     else
       return object_type->name + "*";
   case T_HardEnum:
-    if(hard_enum_type)
-      return hard_enum_type->name;
-    else
+    if(hard_enum_type) {
+      // Show scope of the enumerated value, if possible.
+      if (TypeDef* par_td = hard_enum_type->GetOwnerType()) {
+        return par_td->GetPathName() + "::" + hard_enum_type->name;
+      }
+      else {
+        return hard_enum_type->name;
+      }
+    }
+    else {
       return "int";
+    }
   case T_DynEnum:
     if(dyn_enum_val.enum_type) {
       return dyn_enum_val.enum_type->name;
@@ -1064,7 +1072,7 @@ const String ProgVar::GenCssInitVal() const {
       return "NULL";
   case T_HardEnum:
     if(hard_enum_type)
-      return hard_enum_type->GetValStr(&int_val);
+      return hard_enum_type->Get_C_EnumString(int_val);
     else
       return int_val;
   case T_DynEnum:
@@ -1089,7 +1097,7 @@ const String ProgVar::GenCssVar_impl() {
   String rval;
   rval += GenCssType() + " ";
   rval += name;
-  rval += ";\n";
+  rval += ";  ";
   if(HasVarFlag(LOCAL_VAR)) {
     rval += name + " = " + GenCssInitVal() + ";\n";
   }

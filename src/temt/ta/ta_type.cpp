@@ -5379,30 +5379,50 @@ String TypeDef::GetEnumString(const String& enum_tp_nm, int enum_val) const {
   return "";
 }
 
-const String TypeDef::Get_C_EnumString(int enum_val) const {
-  // note: the containing type for an enumtypedef is the owner
-  TypeDef* par_td = GetOwnerType();
-  if (!par_td) return _nilString;
-  String par_typnm = par_td->GetPathName();
+const String TypeDef::Get_C_EnumString(int enum_val, bool show_scope) const {
   STRING_BUF(rval, 80); // extends if needed
   
-  bool made = false; // indicates we succeeded
-  if (HasOption(opt_bits)) {
-    // compose the result from bits
-//TODO:
-  } else { // no bits
-    EnumDef* ed = enum_vals.FindNo(enum_val);
-    if (ed) {
-      rval.cat(par_typnm).cat("::").cat(ed->name);
-      made = true;
+  // If rendering string for CSS, need to scope the enum value properly.
+  String scope_prefix;
+  if (show_scope) {
+    // Enum values are scoped using the enclosing class.
+    if (TypeDef* par_td = GetOwnerType()) {
+      scope_prefix = par_td->GetPathName() + "::";
     }
   }
   
-  if (!made) {
-    // ok, no joy, so winge out and just cast
-    rval.cat("((").cat(par_typnm).cat(")").cat(String(enum_val)).cat(")");
+  // If this enum type is marked #BITS, then render the set of enabled bits.
+  if (HasOption(opt_bits)) {
+    for (int i = 0; i < enum_vals.size; ++i) {
+      EnumDef* ed = enum_vals[i];
+      if (ed->HasOption("NO_BIT") || ed->HasOption("NO_SAVE")) continue;
+      if (enum_val & ed->enum_no) {
+        if (!rval.empty()) rval.cat("|");
+        rval.cat(scope_prefix).cat(ed->name);
+      }
+    }
+    
+    // Probably better to reutrn "0" than an empty string if no bits were set.
+    if (!rval.empty()) {
+      return rval;
+    }
   }
-  return rval;
+  // Not a #BITS enum, so just look for the single value that matches.
+  else if (EnumDef* ed = enum_vals.FindNo(enum_val)) {
+    rval.cat(scope_prefix).cat(ed->name);
+    return rval;
+  }
+  
+  // Unable to render as BITS or as value, so just spit out the raw value.
+  // If outputting for CSS, need to provide a cast.
+  if (show_scope) {
+    rval.cat("((").cat(scope_prefix).cat(name).cat(")")
+        .cat(String(enum_val)).cat(")");
+    return rval;
+  }
+
+  // Otherwise just stringify the value.
+  return String(enum_val);
 }
 
 String TypeDef::GetEnumPrefix() const {
@@ -5609,24 +5629,9 @@ void TypeDef::unRegisterFinal(void* it) {
 String TypeDef::GetValStr_enum(const void* base, void* par, MemberDef* memb_def,
 			       StrContext sc, bool force_inline) const 
 {
-  int enval = *((int*)base);
-
-  if(HasOption("BITS")) {
-    String bits;
-    for(int i=0; i<enum_vals.size; i++) {
-      EnumDef* ed = enum_vals[i];
-      if(ed->HasOption("NO_BIT") || ed->HasOption("NO_SAVE")) continue;
-      if(enval & ed->enum_no) {
-	if(bits.empty()) bits = ed->name;
-	else bits += "|" + ed->name;
-      }
-    }
-    return bits;
-  }
-
-  EnumDef* ed = enum_vals.FindNo(enval);
-  if(ed != NULL) return ed->name;
-  else return String(*((int*)base));
+  int enval = *static_cast<const int *>(base);
+  bool show_scope = false;
+  return Get_C_EnumString(enval, show_scope);
 }
 
 String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* memb_def,

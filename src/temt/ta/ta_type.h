@@ -2244,7 +2244,7 @@ public:
   String 		GetPtrString() const;
   // gets a string of pointer symbols (*) corresponding to the number ptrs
   String		Get_C_Name() const;
-  // returns the actual c-code name for this type
+  // get the C-code name for this type
   override const String	GetPathName() const;
   
   bool			HasEnumDefs() const; // true if any subtypes are enums
@@ -2351,8 +2351,8 @@ public:
   // find an enum and return its enum_no value, and set enum_tp_nm at the type name of the enum.  if not found, returns -1 and enum_tp_nm is empty
   String	GetEnumString(const String& enum_tp_nm, int enum_val) const;
   // get the name of enum with given value in enum list of given type (e.g., enum defined within class)
-  const String	Get_C_EnumString(int enum_val) const;
-  // we must be the enumtypedef; get the C string for given value in enum list of given type (e.g., enum defined within class); for BIT types, will compose the bits and cast; worst case will cast int to type
+  const String	Get_C_EnumString(int enum_val, bool show_scope=true) const;
+  // get a C-code string representing the given value in enum list of given type (e.g., enum defined within class); for BIT types, will compose the bits and cast; worst case will cast int to type
   String	GetEnumPrefix() const;
   // if all enum names start with the same prefix before an _ (underbar), then this returns that prefix, else an empty string -- useful for removing that prefix etc
   
