@@ -5239,7 +5239,7 @@ void V1RegionSpec::V1BinocularFilter_MinLr_thread(int v1s_idx, int thread_no) {
   if(v1b_specs.max_pols) {
     for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
       int dwd = v1b_widths.FastEl(didx);
-      for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+      for(int ang = 0; ang < v1b_dsp_feat_geom.x; ang++) {
 	float rv = v1s_maxpols_out_r.FastEl(ang, 0, sc.x, sc.y);
 	float lval = 0.0f;
 	for(int twidx = 0; twidx < dwd; twidx++) {
@@ -5263,7 +5263,7 @@ void V1RegionSpec::V1BinocularFilter_MinLr_thread(int v1s_idx, int thread_no) {
 
     for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
       int dwd = v1b_widths.FastEl(didx);
-      for(int ang = 0; ang < v1s_feat_geom.n; ang++) {
+      for(int ang = 0; ang < v1b_dsp_feat_geom.x; ang++) {
 	fc.SetFmIndex(ang, v1s_feat_geom.x);
 	float rv = MatMotEl(&v1s_out_r, fc.x, fc.y, sc.x, sc.y, cur_mot_idx);
 	float lval = 0.0f;
@@ -5598,26 +5598,38 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_Polinv_thread(int v1c_pre_idx, int 
 }
 
 void V1RegionSpec::V1BinocularFilter_AvgSum() {
-  float sum_val = 0.0f;
   float	norm_val = 0.0f;
+  float* sums = new float[v1b_specs.tot_disps];
+  for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+    sums[didx] = 0.0f;
+  }
+
   TwoDCoord bc;		// binocular coords
   TwoDCoord bfc;	// v1b feature coords
   TwoDCoord sfc;	// v1s feature coords
   for(bc.y = 0; bc.y < v1s_img_geom.y; bc.y++) {
     for(bc.x = 0; bc.x < v1s_img_geom.x; bc.x++) {
-//       int flag = v1b_dsp_flags.FastEl(bc.x, bc.y);
-//       if(flag != DSP_NONE) continue;
-      // this must all be redone..
-//       float min_off = v1b_dsp_win.FastEl(DSP_OFF, bc.x, bc.y); // this is our final offset
-//       float norm_dsp = min_off / (float)v1b_specs.max_off;
-//       sum_val += norm_dsp;
-      norm_val += 1.0f;		// just give equal weighting..
+      for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+	float dmax = 0.0f;
+	for(int ang=0; ang < v1b_dsp_feat_geom.x; ang++) {
+	  float dval = v1b_dsp_out.FastEl(ang, didx, bc.x, bc.y);
+	  dmax = MAX(dval, dmax);
+	}
+	sums[didx] += dmax;
+	norm_val += dmax;
+      }
     }
   }
-  if(norm_val > 0.0f)
-    v1b_avgsum_out = sum_val / norm_val;
-  else
-    v1b_avgsum_out = 0.0f;
+  // todo: could read out per didx for more info
+  float dwt = 0.0f;
+  if(norm_val > 0.0f) {
+    for(int didx=0; didx < v1b_specs.tot_disps; didx++) {
+      int disp = didx - v1b_specs.n_disps;
+      sums[didx] /= norm_val;
+      dwt += (float)disp * sums[didx];
+    }
+  }
+  v1b_avgsum_out = dwt;
 }
 
 
@@ -5661,7 +5673,7 @@ void V1RegionSpec::V1bDspCrossResMin(float extra_width, int max_extra,
 	for(sc.x = 0; sc.x < rs_sm->v1s_img_geom.x; sc.x++) {
 	  lc = sc * sm_to_lg;
 	  for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
-	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+	    for(int ang = 0; ang < v1b_dsp_feat_geom.x; ang++) {
 	      float smval = rs_sm->v1b_dsp_out.FastEl(ang, didx, sc.x, sc.y);
 	      float lmax = 0.0f;
 	      for(xc.y=-extra.y; xc.y<tot_wd.y; xc.y++) {
@@ -5739,9 +5751,9 @@ bool V1RegionSpec::V1bDspInFmMatrix(float_Matrix* dacell, float diff_thr, int in
 	       "dsp_in data column must be 4 dimensional --", dacell->name, "has:",
 	       String(dacell->dims())))
     return false;
-  if(TestError(dacell->dim(0) != v1s_specs.n_angles, "V1bDspInFmMatrix",
-	       "dsp_in data column first dimension must be = v1s_specs.n_angles:", 
-	       String(v1s_specs.n_angles), dacell->name, "has:",
+  if(TestError(dacell->dim(0) != v1b_dsp_feat_geom.x, "V1bDspInFmMatrix",
+	       "dsp_in data column first dimension must be = v1b_dsp_feat_geom.x:", 
+	       String(v1b_dsp_feat_geom.x), dacell->name, "has:",
 	       String(dacell->dim(0))))
     return false;
   if(TestError(dacell->dim(1) != 1, "V1bDspInFmMatrix",
@@ -5792,7 +5804,7 @@ bool V1RegionSpec::V1bDspInFmMatrix(float_Matrix* dacell, float diff_thr, int in
 	float max_dx_val = 0.0f;
 	bool set_max = false;
 	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
-	  for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+	  for(int ang = 0; ang < v1b_dsp_feat_geom.x; ang++) {
 	    float dav = dacell->SafeEl(ang, didx, ic.x, ic.y);
 	    if(dav > max_dx_val) {
 	      max_dx = didx;
@@ -5811,7 +5823,7 @@ bool V1RegionSpec::V1bDspInFmMatrix(float_Matrix* dacell, float diff_thr, int in
 		if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
 	      }
 	      for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
-		for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+		for(int ang = 0; ang < v1b_dsp_feat_geom.x; ang++) {
 		  float dav = dacell->SafeEl(ang, didx, sic.x, sic.y);
 		  if(dav > max_dx_val) {
 		    max_dx = didx;
@@ -5824,7 +5836,7 @@ bool V1RegionSpec::V1bDspInFmMatrix(float_Matrix* dacell, float diff_thr, int in
 	  }
 	}
 	for(int didx = 0; didx < v1b_specs.tot_disps; didx++) {
-	  for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+	  for(int ang = 0; ang < v1b_dsp_feat_geom.x; ang++) {
 	    if(use_ang) {
 	      float dav = dacell->SafeEl(ang, didx , ic.x, ic.y);
 	      v1b_dsp_in.FastEl(ang, didx, pc.x, pc.y) = dav;
@@ -5978,7 +5990,7 @@ bool V1RegionSpec::InitDataTable() {
     if(region.ocularity == VisRegionParams::BINOCULAR) {
       if(v1b_filters & V1B_DSP) {
 	col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
-					  v1s_specs.n_angles, v1b_specs.tot_disps, v1s_img_geom.x, v1s_img_geom.y);
+					  v1b_dsp_feat_geom.x, v1b_specs.tot_disps, v1s_img_geom.x, v1s_img_geom.y);
       }
 
       if(v1b_filters & V1B_S) {
@@ -6023,7 +6035,7 @@ bool V1RegionSpec::InitDataTable() {
 
       if(v1b_filters & V1B_C_FM_IN) {
 	col = data_table->FindMakeColName(name + "_v1b_dsp_in", idx, DataTable::VT_FLOAT, 4,
-		  v1s_specs.n_angles, v1b_specs.tot_disps, v1c_pre_geom.x, v1c_pre_geom.y);
+		  v1b_dsp_feat_geom.x, v1b_specs.tot_disps, v1c_pre_geom.x, v1c_pre_geom.y);
       }
     }
   }
@@ -6253,7 +6265,7 @@ bool V1RegionSpec::V1BOutputToTable(DataTable* dtab) {
   if(region.ocularity == VisRegionParams::BINOCULAR) {
     if(v1b_filters & V1B_DSP) {
       col = data_table->FindMakeColName(name + "_v1b_dsp", idx, DataTable::VT_FLOAT, 4,
-					v1s_specs.n_angles, v1b_specs.tot_disps, v1s_img_geom.x, v1s_img_geom.y);
+					v1b_dsp_feat_geom.x, v1b_specs.tot_disps, v1s_img_geom.x, v1s_img_geom.y);
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
       dout->CopyFrom(&v1b_dsp_out);
     }
@@ -6299,7 +6311,7 @@ bool V1RegionSpec::V1BOutputToTable(DataTable* dtab) {
 
     if(v1b_filters & V1B_C) {
       col = data_table->FindMakeColName(name + "_v1b_dsp_pre", idx, DataTable::VT_FLOAT, 4,
-		v1s_specs.n_angles, v1b_specs.tot_disps, v1c_pre_geom.x, v1c_pre_geom.y);
+		v1b_dsp_feat_geom.x, v1b_specs.tot_disps, v1c_pre_geom.x, v1c_pre_geom.y);
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
       dout->CopyFrom(&v1b_dsp_out_pre);
     }
@@ -6317,7 +6329,7 @@ bool V1RegionSpec::V1BOutputToTable(DataTable* dtab) {
 
     if(v1b_filters & V1B_C_FM_IN) {
       col = data_table->FindMakeColName(name + "_v1b_dsp_in", idx, DataTable::VT_FLOAT, 4,
-	v1s_specs.n_angles, v1b_specs.tot_disps, v1c_pre_geom.x, v1c_pre_geom.y);
+	v1b_dsp_feat_geom.x, v1b_specs.tot_disps, v1c_pre_geom.x, v1c_pre_geom.y);
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
       dout->CopyFrom(&v1b_dsp_in);
     }
