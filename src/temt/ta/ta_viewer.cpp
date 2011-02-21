@@ -1266,7 +1266,10 @@ void MainWindowViewer::MakeWinName_impl() {
   else {
     pathnm = GetPathNames();
   }
-  String nw_name = pathnm + " - " + fname; // prog_nm ;
+  // The [*] indicates where Qt should put the asterisk indicating the
+  // file has not been saved.  On the Mac, Qt puts a dot in the close
+  // button instead.
+  String nw_name = pathnm + " - " + fname + "[*]"; // prog_nm ;
   win_name = nw_name;
 }
 

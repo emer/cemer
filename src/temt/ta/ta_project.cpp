@@ -1909,6 +1909,16 @@ int taProject::SaveAsNoteChanges(const String& fname) {
 }
 
 void taProject::setDirty(bool value) {
+  // Set the window state to modified/unmodified.  Only attempt if the dirty
+  // flag has actually changed, since this may be expensive and called often.
+  if (value != m_dirty) {
+    if (MainWindowViewer *browser = GetDefaultProjectBrowser()) {
+      if (QWidget *widget = browser->widget()) {
+        widget->setWindowModified(value);
+      }
+    }
+  }
+
   // note: inherited only forwards 'dirty' up the chain, not '!dirty'
   inherited::setDirty(value);
   m_dirty = value;
