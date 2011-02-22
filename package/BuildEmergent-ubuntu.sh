@@ -18,6 +18,8 @@ if ! grep -q "$ISSUE" /etc/issue; then
   fi
 fi
 
+ARCH=`dpkg-architecture -qDEB_BUILD_ARCH`
+
 echo "You may need to provide your password for sudo a few times for this script."
 
 # Make sure the backports repo is enabled so we can get cmake 2.8.3 on
@@ -57,7 +59,7 @@ sudo apt-get -qq update
 sudo apt-get -y install checkinstall subversion cmake g++ libqt4-dev libcoin60-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev $LIBJPEG
 
 # Remove any existing libquarter and emergent installations
-sudo apt-get -y remove emergent libquarter
+sudo apt-get -y remove emergent libquarter || echo "(OK)"
 
 NUM_PROCS=`grep "^processor\s*:\s*[0-9]*$" /proc/cpuinfo |wc -l`
 
@@ -76,7 +78,7 @@ sed -i '/^SUBDIRS *=/s/ *plugins */ /' src/Makefile
 sed -i 's/if mkdir .*-p --.*; then/if false; then ## &/' cfg/mkinstalldirs
 make -j $NUM_PROCS
 # If --install=no, it's possible to make a .deb without sudo, but we need quarter to be installed to compile Emergent so may as well.
-sudo checkinstall -D -y --install=yes --pkgname=libquarter --pkgversion=1.0.0 --arch=i386 --pkglicense=GPL --maintainer=emergent-users@grey.colorado.edu --reset-uids=yes
+sudo checkinstall -D -y --install=yes --pkgname=libquarter --pkgversion=1.0.0 --arch=$ARCH --pkglicense=GPL --maintainer=emergent-users@grey.colorado.edu --reset-uids=yes
 
 cd $TMPDIR
 svn checkout --username anonymous --password emergent -r $REV http://grey.colorado.edu/svn/emergent/emergent/trunk emergent/
