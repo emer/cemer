@@ -4490,7 +4490,12 @@ String taList_impl::GetPathNames(taBase* ta, taBase* par_stop) const {
     }
     else {
       String obj_nm = ta->GetName();
-      if(obj_nm.empty() || !ta->InheritsFrom(&TA_taNBase)) { // only use real nbase names
+      // TODO: make ProgVar and taList_impl inherit from taNBase instead
+      // of taOBase so we don't need three InheritsFrom checks here.
+      if(obj_nm.empty() ||
+         (!ta->InheritsFrom(&TA_taNBase) &&
+          !ta->InheritsFrom(&TA_ProgVar) &&
+          !ta->InheritsFrom(&TA_taList_impl))) { // only use real nbase names.
 	int gidx = FindEl_(ta);
 	if(gidx >= 0)
 	  rval += "[" + String(gidx) + "]";
