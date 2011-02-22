@@ -1,48 +1,61 @@
 #!/bin/bash
 # This script builds debian packages for Emergent.
 # It has been tested on Ubuntu 10.10.
+set -e
+
+read -p "Enter the svn revision number to retrieve: " REV
 
 ISSUE="Ubuntu 10.10"
+REPONAME="maverick"
+LIBJPEG="libjpeg8-dev"
 if ! grep -q "$ISSUE" /etc/issue; then
-  echo "ERROR: This script should be run on ${ISSUE}"
-  exit
+  ISSUE="Ubuntu 10.04"
+  REPONAME="lucid"
+  LIBJPEG="libjpeg-dev"
+  if ! grep -q "$ISSUE" /etc/issue; then
+    echo "ERROR: This script should be run on ${ISSUE} or higher"
+    exit
+  fi
 fi
 
 echo "You may need to provide your password for sudo a few times for this script."
 
-# Make sure the maverick-backports repo is enabled so we can get cmake 2.8.3
-# (cmake 2.8.2 has a bug that prevents creating .deb packages)
+# Make sure the backports repo is enabled so we can get cmake 2.8.3 on
+# maverick (cmake 2.8.2 has a bug that prevents creating .deb packages)
+# and cmake 2.8.1 on lucid (cmake 2.8.0 has some other bug)
 REPOS=/etc/apt/sources.list
-FIND_BACKPORTS="^\s*deb\s\s*http://us.archive.ubuntu.com/ubuntu/\s\s*maverick-backports"
+FIND_BACKPORTS="^\s*deb\s\s*http://us.archive.ubuntu.com/ubuntu/\s\s*${REPONAME}-backports"
 if ! grep -q $FIND_BACKPORTS $REPOS; then
-  echo "Need to add the maverick-backports repository to get cmake 2.8.3"
+  echo "Need to add the ${REPONAME}-backports repository to get good cmake version"
   REPOS_BACKUP="${REPOS}-backup"
   echo "Backing up $REPOS to $REPOS_BACKUP..."
   sudo cp $REPOS $REPOS_BACKUP || exit
-  echo "Trying to uncomment maverick-backports repo line..."
-  sudo sed -i '/^\s*##*\s*deb\(-src\)\{0,1\}\s\s*http:\/\/us.archive.ubuntu.com\/ubuntu\/\s\s*maverick-backports/s/^\s*##*\s*//' $REPOS
+  echo "Trying to uncomment ${REPONAME}-backports repo line..."
+  sudo sed -i "/^\s*##*\s*deb\(-src\)\{0,1\}\s\s*http:\/\/us.archive.ubuntu.com\/ubuntu\/\s\s*${REPONAME}-backports/s/^\s*##*\s*//" $REPOS
   if ! grep -q $FIND_BACKPORTS $REPOS; then
-    echo "Didn't find a commented out maverick-backports line; creating new"
-    sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ maverick-backports main restricted universe multiverse' >> $REPOS"
+    echo "Didn't find a commented out ${REPONAME}-backports line; creating new"
+    sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ ${REPONAME}-backports main restricted universe multiverse' >> $REPOS"
   fi
 fi
 
-# Double check that maverick-backports is enabled.
+# Double check that backports is enabled.
 if grep -q $FIND_BACKPORTS $REPOS; then
-  echo "Found maverick-backport repository"
+  echo "Found ${REPONAME}-backport repository"
 else
-  echo "Could not add maverick-backport repository needed for cmake 2.8.3.  Quitting."
+  echo "Could not add ${REPONAME}-backport repository needed for cmake 2.8.3.  Quitting."
   exit
 fi
 
 # Install prereq packages
 # Need to update to make sure we see the backport repo and get the latest cmake.
 sudo apt-get -qq update
+
 # This list should match the CPACK_DEBIAN_PACKAGE_DEPENDS line of emergent/CMakeModules/EmergentCPack.cmake
 # Except:
 #  * only need checkinstall here to make the Quarter package.
 #  * don't need libquarter here since we will be building it ourselves.
-sudo apt-get -y install checkinstall subversion cmake g++ libqt4-dev libcoin60-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev libjpeg8-dev
+sudo apt-get -y install checkinstall subversion cmake g++ libqt4-dev libcoin60-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev $LIBJPEG
+
 # Remove any existing libquarter and emergent installations
 sudo apt-get -y remove emergent libquarter
 
@@ -66,7 +79,7 @@ make -j $NUM_PROCS
 sudo checkinstall -D -y --install=yes --pkgname=libquarter --pkgversion=1.0.0 --arch=i386 --pkglicense=GPL --maintainer=emergent-users@grey.colorado.edu --reset-uids=yes
 
 cd $TMPDIR
-svn checkout --username anonymous --password emergent http://grey.colorado.edu/svn/emergent/emergent/trunk emergent/
+svn checkout --username anonymous --password emergent -r $REV http://grey.colorado.edu/svn/emergent/emergent/trunk emergent/
 cd emergent
 mkdir -p build
 ./configure
