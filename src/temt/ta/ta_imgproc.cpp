@@ -3404,15 +3404,6 @@ void V1BinocularSpec::UpdateAfterEdit_impl() {
   ambig_wt = 1.0f / (float)tot_disps; // ambiguous case weighting
 }
 
-void V1bFilterSpec::Initialize() {
-  v1s_min = false;
-  v1s_thr = 0.4f;
-  v1s_grad = true;
-  v1c_min = false;
-  v1c_thr = 0.4f;
-  v1c_grad = true;
-}
-
 void V1ComplexSpec::Initialize() {
   pre_gp4 = true;
   spat_rf = 12;
@@ -5406,21 +5397,7 @@ void V1RegionSpec::V1BinocularFilter_S_Out_thread(int v1b_idx, int thread_no) {
       float rv = MatMotEl(&v1s_out_r, sfc.x, sfc.y, sc.x, sc.y, cur_mot_idx);
       // note: only called if max_pols so this is sfc.x, didx:
       float dval = v1b_dsp_out.FastEl(sfc.x, didx, sc.x, sc.y);
-      if(v1b_filt.v1s_min) {
-	v1b_s_out.FastEl(sfi, didx, sc.x, sc.y) = MIN(rv, dval);
-      }
-      else {
-	if(v1b_filt.v1s_thr > 0.0f) {
-	  if(dval > v1b_filt.v1s_thr) dval = 1.0f; // binarize
-	  else {
-	    if(v1b_filt.v1s_grad)
-	      dval /= v1b_filt.v1s_thr;	      // divide by threshold = graded response below threshold
-	    else
-	      dval = 0.0f;
-	  }
-	}
-	v1b_s_out.FastEl(sfi, didx, sc.x, sc.y) = rv * dval;
-      }
+      v1b_s_out.FastEl(sfi, didx, sc.x, sc.y) = MIN(rv, dval);
     }
   }
 }
@@ -5542,22 +5519,7 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_thread(int v1c_pre_idx, int thread_
       else
 	dval = cur_v1b_dsp->FastEl(sfi, didx, pc.x, pc.y);
       float rv = v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y);
-      if(v1b_filt.v1c_min) {
-	v1b_v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = MIN(rv, dval);
-      }
-      else {
-	if(v1b_filt.v1c_thr > 0.0f) {
-	  if(dval > v1b_filt.v1c_thr) dval = 1.0f; // binarize
-	  else {
-	    if(v1b_filt.v1c_grad)
-	      dval /= v1b_filt.v1c_thr;	      // divide by threshold = graded response below threshold
-	    else
-	      dval = 0.0f;
-	  }
-	}
-	// just access by angle and disparity -- straight-up multiplies result (for now)
-	v1b_v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * dval;
-      }
+      v1b_v1c_pre.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = MIN(rv, dval);
     }
   }
 }
@@ -5577,22 +5539,7 @@ void V1RegionSpec::V1BinocularFilter_V1C_Pre_Polinv_thread(int v1c_pre_idx, int 
 	dval = cur_v1b_dsp->FastEl(fc.x, didx, pc.x, pc.y);
       else
 	dval = cur_v1b_dsp->FastEl(sfi, didx, pc.x, pc.y);
-      if(v1b_filt.v1c_min) {
-	v1b_v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = MIN(rv, dval);
-      }
-      else {
-	if(v1b_filt.v1c_thr > 0.0f) {
-	  if(dval > v1b_filt.v1c_thr) dval = 1.0f; // binarize
-	  else {
-	    if(v1b_filt.v1c_grad)
-	      dval /= v1b_filt.v1c_thr;	      // divide by threshold = graded response below threshold
-	    else
-	      dval = 0.0f;
-	  }
-	}
-	// just access by angle and disparity -- straight-up multiplies result (for now)
-	v1b_v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = rv * dval;
-      }
+      v1b_v1c_pre_polinv.FastEl(fc.x, fc.y, pc.x, pc.y, didx) = MIN(rv, dval);
     }
   }
 }

@@ -1157,6 +1157,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
 
   float inhib_net_scale = 0.0f;
   int n_active_cons = 0;	// track this for bias weight scaling!
+  bool old_scaling = false;
   // possible dependence on recv_gp->size is why this cannot be computed in Projection
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -1169,6 +1170,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
     float lay_sz = (float)lay->units.leaves;
     float n_cons = (float)recv_gp->size;
     if(wt_scale.old) {
+      old_scaling = true; // any old = old..
       if(cs->savg_cor.norm_con_n)	// this is default
 	recv_gp->scale_eff = wt_scale.NetScale() / (n_cons * savg);
       else
@@ -1177,7 +1179,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
     else {			// new way!
       recv_gp->scale_eff = wt_scale.FullScale(savg, lay_sz, n_cons); 
     }
-    if(cs->inhib) {
+    if(cs->inhib && !old_scaling) {
       inhib_net_scale += wt_scale.rel;
     }
     else {
@@ -1198,6 +1200,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
       if(lay->lesioned() || !recv_gp->size)	continue;
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+      if(cs->inhib && !old_scaling) continue; // norm separately
       recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale
     }
   }
@@ -1207,6 +1211,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
       if(lay->lesioned() || !recv_gp->size)	continue;
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+      if(!cs->inhib) continue; // norm separately
       recv_gp->scale_eff /= inhib_net_scale; // normalize by total connection scale
     }
   }

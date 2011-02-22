@@ -1027,24 +1027,6 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
-class TA_API V1bFilterSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for how v1b activities filter v1c values
-INHERITED(taOBase)
-public:
-  bool		v1s_min;	// use MIN(dsp, v1s) to compute v1s filtered output -- same computation as is used in the initial disparity computation pass
-  float		v1s_thr;	// #DEF_0.4 threshold on disparity value for passing features through to v1s -- if this value is > 0, filtering is thresholded (see also v1c_grad), otherwise it is a direct multiplication
-  bool		v1s_grad;	// #DEF_true activate things in a graded fashion below v1s_thr
-  bool		v1c_min;	// use MIN(dsp, v1c) to compute v1s filtered output -- same computation as is used in the initial disparity computation pass
-  float		v1c_thr;	// #DEF_0.4 threshold on disparity value for passing features through to v1c -- if this value is > 0, filtering is thresholded (see also v1c_grad), otherwise it is a direct multiplication
-  bool		v1c_grad;	// #DEF_true activate things in a graded fashion below v1c_thr
-  
-  void 	Initialize();
-  void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(V1bFilterSpec);
-// protected:
-//   void 	UpdateAfterEdit_impl();
-};
-
 class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
 INHERITED(taOBase)
@@ -1177,7 +1159,6 @@ public:
 
   BinocularFilters v1b_filters; // which binocular (V1B) filtering to perform to compute disparity information across the two eyes -- V1B_C_FM_IN can be checked if processing is otherwise monocular, to support configuration of necessary state vars
   V1BinocularSpec  v1b_specs;	// #CONDSHOW_ON_region.ocularity:BINOCULAR||v1b_filters:V1B_C_FM_IN specs for V1 binocular filters -- comes after V1 simple processing in binocular case
-  V1bFilterSpec v1b_filt; 	 // #CONDSHOW_ON_region.ocularity:BINOCULAR||v1b_filters:V1B_C_FM_IN specs for how V1 binocular disparity activations affect v1s and v1c activations
   RenormMode	v1b_renorm;	 // #CONDSHOW_ON_region.ocularity:BINOCULAR #DEF_LIN_RENORM how to renormalize the output of v1b filters -- applies ONLY to basic v1b_dsp_out -- is generally a good idea because disparity computation results in reduced activations overall due to MIN operation
   DataSave	v1b_save;	// #CONDSHOW_ON_region.ocularity:BINOCULAR||v1b_filters:V1B_C_FM_IN how to save the V1 binocular outputs for the current time step in the data table
   XYNGeom	v1b_dsp_feat_geom; // #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular disparity output -- disp order: near, focus, far -- [v1s_feats.n or x][tot_disps]
