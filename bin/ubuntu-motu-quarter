@@ -1,20 +1,24 @@
 #!/bin/bash
+set -e
+
+#sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts
+
 QUARTER_VERSION=1.0
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 
 cd /tmp
-rm -fr /tmp/libquarter-${QUARTER_VERSION}
-hg clone http://hg.sim.no/Quarter/default libquarter-${QUARTER_VERSION}
-tar -czf libquarter_${QUARTER_VERSION}.orig.tar.gz libquarter-${QUARTER_VERSION}
-cd libquarter-${QUARTER_VERSION}
-mkdir debian
+rm -fr /tmp/libquarter0-${QUARTER_VERSION}
+hg clone http://hg.sim.no/Quarter/default libquarter0-${QUARTER_VERSION}
+tar -czf libquarter0_${QUARTER_VERSION}.orig.tar.gz libquarter0-${QUARTER_VERSION}
+cd libquarter0-${QUARTER_VERSION}
+mkdir -p debian
 
 #################################################
 # Create debian/changelog
 #################################################
 cat > debian/changelog <<Quarter
-libquarter (1.0-0ubuntu1) lucid; urgency=low
+libquarter0 (1.0-0ubuntu1) maverick; urgency=low
 
   * Initial release (LP: #364748)
 
@@ -25,16 +29,16 @@ Quarter
 # Create debian/control
 #################################################
 cat > debian/control <<Quarter
-Source: libquarter
+Source: libquarter0
 Section: graphics
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
 Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libqt4-opengl-dev, libqt4-designer, libcoin60-dev, pkg-config
-Standards-Version: 3.8.3
+Standards-Version: 3.9.1
 
 Homepage: http://www.coin3d.org/lib/quarter
-Package: libquarter
+Package: libquarter0
 Architecture: any
 Depends: \${shlibs:Depends}, \${misc:Depends}
 Description: Glue between Coin3D and Qt
@@ -129,4 +133,6 @@ cat > debian/compat <<Quarter
 7
 Quarter
 
-debuild -S
+#debuild -S -us -uc
+debuild -i -b -us -uc
+

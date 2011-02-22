@@ -1,6 +1,9 @@
 #!/bin/bash
+set -e
 
-EMERGENT_VERSION=5.0.2
+#sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts
+
+EMERGENT_VERSION=5.1.2
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 
@@ -11,13 +14,13 @@ svn checkout --username anonymous --password emergent http://grey.colorado.edu/s
 # mv emergent emergent-${EMERGENT_VERSION}
 tar -czf emergent_${EMERGENT_VERSION}.orig.tar.gz emergent-${EMERGENT_VERSION}
 cd emergent-${EMERGENT_VERSION}
-mkdir debian
+mkdir -p debian
 
 #################################################
 # Create debian/changelog
 #################################################
 cat > debian/changelog <<Emergent
-emergent (${EMERGENT_VERSION}-0ubuntu1) lucid; urgency=low
+emergent (${EMERGENT_VERSION}-0ubuntu1) maverick; urgency=low
 
   * Initial release (LP: #364748)
 
@@ -33,15 +36,15 @@ Section: science
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libqt4-opengl-dev, libcoin60-dev, libreadline5-dev, libgsl0-dev, libode0-dev, libsndfile1-dev, cmake, zlib1g-dev
-Standards-Version: 3.8.3
+Build-Depends: debhelper (>= 7.0.17), cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg8-dev, zlib1g-dev, libquarter0
+Standards-Version: 3.9.1
 Homepage: http://grey.colorado.edu/emergent
 
 Package: emergent
 Architecture: any
 Depends: \${shlibs:Depends}, \${misc:Depends}
 Description: Emergent Neural Network Simulation System
- emergent (a major rewrite of PDP++) is a comprehensive
+ Emergent (a major rewrite of PDP++) is a comprehensive
  simulation environment for creating complex, sophisticated models
  of the brain and cognitive processes using neural network
  models. These same networks can also be used for all kinds of
@@ -116,7 +119,7 @@ cat > debian/rules <<Emergent
 
 build: build-stamp
 build-stamp:
-	dh build
+	dh_testdir && \$(MAKE) -C build
 	touch build-stamp
 
 clean:
@@ -148,7 +151,7 @@ Emergent
 # START Create debian/emergent.1
 #################################################
 # cat > debian/emergent.1 <<Emergent
-
+#
 # .\" Process this file with
 # .\" groff -man -Tascii foo.1
 # .\"
@@ -169,6 +172,9 @@ Emergent
 # processing and analysis capabilities.
 # .SH AUTHOR
 # Randy OReilly <oreilly at grey dot colorado dot edu>
-
+#
 # Emergent
-debuild -S
+
+#debuild -S -us -uc
+debuild -i -b -us -uc
+
