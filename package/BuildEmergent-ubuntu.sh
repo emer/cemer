@@ -15,7 +15,7 @@ if ! grep -q "$ISSUE" /etc/issue; then
 fi
 REPONAME=`lsb_release -cs`
 
-echo "Note: you may need to provide your password for sudo a few times for this script."
+echo "Note: you must provide your password for sudo a few times for this script."
 
 # Get Emergent svn revision to build
 REV="$1"
@@ -23,8 +23,6 @@ if [ -z $REV ]; then
   read -p "Enter the Emergent svn revision number to retrieve: [HEAD] " REV
   if [ -z $REV ]; then REV="HEAD"; fi
 fi
-
-ARCH=`dpkg-architecture -qDEB_BUILD_ARCH`
 
 # Make sure the backports repo is enabled so we can get cmake 2.8.3 on
 # maverick (cmake 2.8.2 has a bug that prevents creating .deb packages
@@ -68,8 +66,14 @@ DEBUILD_PKGS="build-essential gnupg lintian fakeroot debhelper dh-make subversio
 #  * don't need libquarter here since we will be building it ourselves.
 EMERGENT_PKGS="checkinstall subversion cmake g++ libqt4-dev libcoin60-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev libjpeg-dev"
 
-echo -e "\nInstalling packages needed to build..."
-sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS | sed 's/^/  /'
+# Use a separate xterm window to track progress
+XTERM=`which xterm`
+
+echo -e "\nInstalling packages needed to build (log will open in separate xterm)..."
+echo "  (ctrl-c in *this* window will kill the package install process)"
+OUTPUT="apt-get-install-output.txt"
+test -x $XTERM && $XTERM -T "apt-get install progress (safe to close this window)" -e tail -F $OUTPUT &
+sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS 2>&1 > $OUTPUT
 
 # This may fail (expectedly) if the packages aren't already installed,
 # so allow it with the echo alternative (otherwise set -e would bail).
@@ -87,12 +91,9 @@ if [ ! -x ./ubuntu-motu-quarter ]; then
   cd package
 fi
 
-# Use a separate xterm window to track progress
-XTERM=`which xterm`
-
 echo -e "\nBuilding and packaging Quarter (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the build/package process)"
-OUTPUT=libQuarter-build-output.txt
+OUTPUT="libQuarter-build-output.txt"
 test -x $XTERM && $XTERM -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
 ./ubuntu-motu-quarter 2>&1 > $OUTPUT
 
@@ -101,7 +102,7 @@ sudo dpkg -i /tmp/libquarter0_*.deb
 
 echo -e "\nBuilding and packaging Emergent (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the build/package process)"
-OUTPUT=emergent-build-output.txt
+OUTPUT="emergent-build-output.txt"
 test -x $XTERM && $XTERM -T "Emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
 ./ubuntu-motu-emergent $REV 2>&1 > $OUTPUT
 
