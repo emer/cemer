@@ -7,7 +7,7 @@ EMERGENT_VERSION=5.1.2
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 
-cd /tmp
+cd /tmp && rm emergent_${EMERGENT_VERSION}*
 svn checkout --username anonymous --password emergent http://grey.colorado.edu/svn/emergent/emergent/trunk /tmp/emergent-${EMERGENT_VERSION}
 # wget ftp://grey.colorado.edu/pub/emergent/emergent-5.tar.gz
 # tar -xzf emergent-5.tar.gz
@@ -119,8 +119,13 @@ cat > debian/rules <<Emergent
 
 build: build-stamp
 build-stamp:
-	dh_testdir && \$(MAKE) -C build
+	dh build
 	touch build-stamp
+
+# The Makefile produced by CMake has a distclean target that doesn't work
+# (some problem with clean_ta_ta), so just make the clean target instead.
+override_dh_auto_clean:
+	\$(MAKE) clean
 
 clean:
 	rm -f CMakeFiles/CMakeDetermineCompilerABI_C.bin CMakeDetermineCompilerABI_CXX.bin CompilerIdC/a.out CompilerIdCXX/a.out CMakeCache.txt
