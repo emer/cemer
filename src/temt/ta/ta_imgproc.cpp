@@ -6911,10 +6911,18 @@ bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
 					 float scale, float rotate)
 {
   if(regions.size == 0) return false;
+  if(TestError(scale == 0.0f, "TransformImageData_impl",
+	       "scale is 0 -- indicates bad parameters probably"))
+    return false;
+
   VisRegionSpecBase* reg = regions[0]; // take params from first
 
   float ctr_x = .5f + .5 * move_x;
   float ctr_y = .5f + .5 * move_y;
+
+  if(TestError(eye_image.dims() < 2, "TransformImageData_impl",
+	       "eye input image input must be at least 2 dimensional"))
+    return false;
 
   taImageProc::SampleImageWindow_float(xform_image, eye_image, reg->input_size.retina_size.x,
 				       reg->input_size.retina_size.y, 
@@ -6938,6 +6946,10 @@ bool RetinaProc::LookAtImageData_impl(float_Matrix& eye_image,
   if(regions.size == 0) return false;
   VisRegionSpecBase* trg_reg = regions.FindRetinalRegion(region);
   if(!trg_reg) return false;
+
+  if(TestError(scale == 0.0f, "LookAtImageData_impl",
+	       "scale is 0 -- indicates bad parameters probably"))
+    return false;
 
   // translation: find the middle of the box
   FloatTwoDCoord obj_ctr((float) (0.5 * (float) (box_ll_x + box_ur_x)),
