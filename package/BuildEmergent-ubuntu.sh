@@ -55,7 +55,7 @@ fi
 # Install prereq packages
 # Need to update to make sure we see the backport repo and get the latest cmake.
 echo "Updating repositories..."
-sudo apt-get -qq update
+sudo apt-get -qq update | sed 's/^/  /'
 
 # Packages needed for debuild
 DEBUILD_PKGS="build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts mercurial"
@@ -68,11 +68,17 @@ DEBUILD_PKGS="build-essential gnupg lintian fakeroot debhelper dh-make subversio
 #  * don't need libquarter here since we will be building it ourselves.
 EMERGENT_PKGS="checkinstall subversion cmake g++ libqt4-dev libcoin60-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev libjpeg-dev"
 
-echo "Installing packages needed to build..."
+echo -e "\nInstalling packages needed to build..."
 sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS | sed 's/^/  /'
 
+# This may fail (expectedly) if the packages aren't already installed,
+# so allow it with the echo alternative (otherwise set -e would bail).
 echo "Removing any existing libquarter and emergent installations..."
 sudo apt-get -q -y remove emergent libquarter libquarter0 | sed 's/^/  /' || echo "(OK)"
+
+# Make sure we don't keep an old copy of libquarter0 in the cache,
+# since later we need to install the one we built.
+sudo apt-get -qq autoremove | sed 's/^/  /'
 
 # If we're not already in the build scripts directory,
 # then get it and change into it
@@ -84,16 +90,16 @@ fi
 # Use a separate xterm window to track progress
 XTERM=`which xterm`
 
-echo "Building and packaging Quarter (log will open in separate xterm)..."
+echo -e "\nBuilding and packaging Quarter (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the build/package process)"
 OUTPUT=libQuarter-build-output.txt
 test -x $XTERM && $XTERM -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
 ./ubuntu-motu-quarter 2>&1 > $OUTPUT
 
-echo "Installing the Quarter libraries before building Emergent..."
+echo -e "\nInstalling the Quarter libraries before building Emergent..."
 sudo dpkg -i /tmp/libquarter0_*.deb
 
-echo "Building and packaging Emergent (log will open in separate xterm)..."
+echo -e "\nBuilding and packaging Emergent (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the build/package process)"
 OUTPUT=emergent-build-output.txt
 test -x $XTERM && $XTERM -T "Emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
