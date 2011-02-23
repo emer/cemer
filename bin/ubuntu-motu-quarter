@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-#sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts
+#sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts mercurial
 
 QUARTER_VERSION=1.0
 DEBEMAIL='brian.mingus@colorado.edu'
