@@ -4,6 +4,9 @@
 # Default target executed when no arguments are given to make.
 default_target: all
 
+distclean:
+	rm -rf build
+
 # Forward all make requests to build/Makefile
 %:
 	$(MAKE) -C build $@

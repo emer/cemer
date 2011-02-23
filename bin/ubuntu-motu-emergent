@@ -3,12 +3,20 @@ set -e
 
 #sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts mercurial
 
+REV="$1"
+if [ -z $REV ]; then
+  read -p "Enter the svn revision number to retrieve: [HEAD] " REV
+  if [ -z $REV]; then REV="HEAD"; fi
+fi
+echo "Building Emergent rev $REV on "
+cat /etc/issue || echo "Unknown platform"
+
 EMERGENT_VERSION=5.1.2
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 
 cd /tmp && rm -f emergent_${EMERGENT_VERSION}*
-svn checkout --username anonymous --password emergent http://grey.colorado.edu/svn/emergent/emergent/trunk /tmp/emergent-${EMERGENT_VERSION}
+svn checkout --username anonymous --password emergent -r $REV http://grey.colorado.edu/svn/emergent/emergent/trunk /tmp/emergent-${EMERGENT_VERSION}
 # wget ftp://grey.colorado.edu/pub/emergent/emergent-5.tar.gz
 # tar -xzf emergent-5.tar.gz
 # mv emergent emergent-${EMERGENT_VERSION}
@@ -36,7 +44,7 @@ Section: science
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: debhelper (>= 7.0.17), cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg8-dev, zlib1g-dev, libquarter0
+Build-Depends: debhelper (>= 7.0.17), cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0
 Standards-Version: 3.9.1
 Homepage: http://grey.colorado.edu/emergent
 
@@ -121,11 +129,6 @@ build: build-stamp
 build-stamp:
 	dh build
 	touch build-stamp
-
-# The Makefile produced by CMake has a distclean target that doesn't work
-# (some problem with clean_ta_ta), so just make the clean target instead.
-override_dh_auto_clean:
-	#\$(MAKE) clean
 
 # There is no test target, so override to do nothing.
 override_dh_auto_test:
