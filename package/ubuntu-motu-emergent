@@ -1,22 +1,24 @@
 #!/bin/bash
 set -e
 
-#sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts mercurial
-
 REV="$1"
 if [ -z $REV ]; then
   read -p "Enter the svn revision number to retrieve: [HEAD] " REV
-  if [ -z $REV]; then REV="HEAD"; fi
+  if [ -z $REV ]; then REV="HEAD"; fi
 fi
 echo "Building Emergent rev $REV on "
 cat /etc/issue || echo "Unknown platform"
 
+#NUM_PROCS=`grep "^processor\s*:\s*[0-9]*$" /proc/cpuinfo |wc -l`
+#MAKEFLAGS="${MAKEFLAGS} -j${NUM_PROCS}"
+
 EMERGENT_VERSION=5.1.2
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
+REPONAME=`lsb_release -cs` # e.g., "maverick"
 
 cd /tmp && rm -f emergent_${EMERGENT_VERSION}*
-svn checkout --username anonymous --password emergent -r $REV http://grey.colorado.edu/svn/emergent/emergent/trunk /tmp/emergent-${EMERGENT_VERSION}
+svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk /tmp/emergent-${EMERGENT_VERSION}
 # wget ftp://grey.colorado.edu/pub/emergent/emergent-5.tar.gz
 # tar -xzf emergent-5.tar.gz
 # mv emergent emergent-${EMERGENT_VERSION}
@@ -28,7 +30,7 @@ mkdir -p debian
 # Create debian/changelog
 #################################################
 cat > debian/changelog <<Emergent
-emergent (${EMERGENT_VERSION}-0ubuntu1) maverick; urgency=low
+emergent (${EMERGENT_VERSION}-0ubuntu1) ${REPONAME}; urgency=low
 
   * Initial release (LP: #364748)
 
