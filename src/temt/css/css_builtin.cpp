@@ -435,10 +435,14 @@ static cssEl* cssElCFun_lshift_stub(int, cssEl* arg[]) {
       ostream* strm = (ostream*)ta->GetVoidPtrOfType(&TA_ostream);
       if(strm != NULL) {
 	if(arg[2]->name == "flush") {
-	  *strm << flush;	  return arg[1];
+	  *strm << flush;
+	  taMisc::FlushConsole();
+	  return arg[1];
 	}
 	if(arg[2]->name == "endl") {
-	  *strm << endl;	  return arg[1];
+	  *strm << endl;
+	  taMisc::FlushConsole();
+	  return arg[1];
 	}
 	if(arg[2]->name == "ends") {
 	  *strm << ends;	  return arg[1];

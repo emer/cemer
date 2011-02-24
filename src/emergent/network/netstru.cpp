@@ -2919,8 +2919,11 @@ void Projection::InitLinks() {
     int myindex = mynet->layers.FindLeafEl(layer);
     if(!(myindex == 0) && (from_type == PREV)) { // is it not the first?
       SetFrom();
-      if((bool)from)
-	name = "Fm_" + from->name;
+      if((bool)from) {
+	String nwnm = "Fm_" + from->name;
+	if(!name.contains(nwnm))	// only change if necc -- keep if multiple
+	  SetName(nwnm);		// setname ensures uniqueness
+      }
     }
   }
   spec.SetDefaultSpec(this);
@@ -2980,7 +2983,9 @@ void Projection::UpdateAfterEdit_impl() {
 	SetFrom();
       }
     }
-    name = "Fm_" + from->name;
+    String nwnm = "Fm_" + from->name;
+    if(!name.contains(nwnm))	// only change if necc -- keep if multiple
+      SetName(nwnm);		// setname ensures uniqueness
   }
 
   UpdateConSpecs((bool)taMisc::is_loading);
