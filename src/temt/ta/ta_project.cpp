@@ -2797,10 +2797,12 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   // 	Server variables
   
   taMisc::AddArgName("--server", "Server");
+  taMisc::AddArgName("-server", "Server");
   taMisc::AddArgNameDesc("Server", "\
  -- Run the app as a tcp server");
 
   taMisc::AddArgName("--port", "Port");
+  taMisc::AddArgName("-port", "Port");
   taMisc::AddArgName("port=", "Port");
   taMisc::AddArgNameDesc("Port", "\
  -- Specifies the tcp port for server mode (def=5360");
