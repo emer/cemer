@@ -3713,6 +3713,10 @@ void* taList_impl::El_CopyN_(void* to_, void* fm) {
 void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
   if(!el_typ->InheritsFrom(el_base)) el_typ = el_base;
+  String cnm = taMisc::StringCVar(name); // make names C legal names -- just much safer
+  if(name != cnm) {
+    SetName(cnm);		// triggers update
+  }
   MakeElNamesUnique();
 }
 
@@ -4565,11 +4569,12 @@ taBase* taList_impl::New_impl(int no, TypeDef* typ, const String& name_) {
     if(TestError(!rval, "New", "Could not make a token of type",typ->name,"(probably has #NO_INSTANCE in object header comment directive)"))
       goto exit;
     if (name_.nonempty() && (name_ != "(default name)")) {
+      String cnm = taMisc::StringCVar(name_);
       // if only 1 inst, then name is literal, else it is a base
       if (no == 1) {
-        rval->SetName(name_);
+        rval->SetName(cnm);
       } else {
-        rval->SetName(name_ + "_" + String(i));
+        rval->SetName(cnm + "_" + String(i));
       }
     }
     Add_(rval);
