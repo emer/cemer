@@ -64,7 +64,7 @@ for(el = (T*) grp FirstGp(itr); el; el = (T*) grp NextGp(itr))
 
 
 class TA_API taGroup_impl : public taList_impl {
-  // #INSTANCE #NO_UPDATE_AFTER #STEM_BASE implementation of a group
+  // #INSTANCE #STEM_BASE implementation of a group
 INHERITED(taList_impl)
 public:
   static bool	def_nw_item; // #IGNORE default

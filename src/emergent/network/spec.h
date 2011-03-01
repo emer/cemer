@@ -25,9 +25,9 @@
 
 class BaseSpec;
 
-class EMERGENT_API BaseSpec_Group: public taBase_Group {
+class EMERGENT_API BaseSpec_Group: public taGroup<BaseSpec> {
   // ##EXT_spec ##CAT_Spec ##SCOPE_Network ##EXPAND_DEF_1 group of specs
-INHERITED(taBase_Group)
+INHERITED(taGroup<BaseSpec>)
 public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 

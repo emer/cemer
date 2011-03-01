@@ -3717,7 +3717,15 @@ void taList_impl::UpdateAfterEdit(){
   if(name != cnm) {
     SetName(cnm);		// triggers update
   }
-  MakeElNamesUnique();
+  if(taMisc::is_loading) {
+    taVersion v512(5, 1, 2);
+    if(taMisc::loading_version < v512) { // enforce unique names prior to 512
+      MakeElNamesUnique();
+    }
+  }
+  else {
+    MakeElNamesUnique();
+  }
 }
 
 bool taList_impl::MakeElNamesUnique() {

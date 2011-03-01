@@ -1266,7 +1266,7 @@ private:
 };
 
 class EMERGENT_API Projection_Group: public taGroup<Projection> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Network group of projections
+  // ##CAT_Network group of projections
 INHERITED(taGroup<Projection>)
 public:
   bool	send_prjns;	// #NO_SAVE #HIDDEN if true, this is a sending projection group which is just links

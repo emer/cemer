@@ -1769,7 +1769,7 @@ typedef taList_impl* TABLPtr; // this comment needed for maketa parser
 //		taList_impl -- base ta list impl
 
 class TA_API taList_impl : public taOBase, public taPtrList_ta_base {
-  // #INSTANCE #NO_TOKENS #STEM_BASE #NO_UPDATE_AFTER ##MEMB_HIDDEN_EDIT ##HIDDEN_INLINE implementation for a taBase list class
+  // #INSTANCE #NO_TOKENS #STEM_BASE ##MEMB_HIDDEN_EDIT ##HIDDEN_INLINE implementation for a taBase list class
 #ifndef __MAKETA__
 private:
 typedef taOBase inherited; // for the boilerplate code
@@ -2029,7 +2029,7 @@ private:
 
 // define default base list to not keep tokens
 class TA_API taBase_List : public taList<taBase> {
-  // #NO_TOKENS ##NO_UPDATE_AFTER list of objects
+  // #NO_TOKENS #NO_UPDATE_AFTER list of base objects
 INHERITED(taList<taBase>)
 public:
   TA_BASEFUNS(taBase_List);
