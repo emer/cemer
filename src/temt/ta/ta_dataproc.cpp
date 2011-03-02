@@ -204,6 +204,7 @@ void DataSelectEl::Initialize() {
   on = true;
   rel = EQUAL;
   use_var = false;
+  cmp = 0;
   act_enabled = true;
 }
 

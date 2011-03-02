@@ -128,10 +128,10 @@ class EMERGENT_API Schedule : public taList<SchedItem> {
   // ##CAT_Network #NO_EXPAND_ALL A schedule for parameters that vary over time
 INHERITED(taList<SchedItem>)
 public:
-  int 		last_ctr;	// the last counter index called
+  int 		last_ctr;	// #NO_SAVE the last counter index called
   float		default_val;	// the default if group is empty
   bool		interpolate;	// use linear interpolation between points
-  float		cur_val;	// #READ_ONLY the current val
+  float		cur_val;	// #NO_SAVE #READ_ONLY the current val
 
   float		GetVal(int ctr);
   // #MENU #MENU_ON_Edit #USE_RVAL get current schedule val, based on counter
@@ -1513,17 +1513,17 @@ public:
   Projection_Group  	send_prjns;	// #CAT_Structure #HIDDEN #LINK_GROUP group of sending projections
   Unit_Group		units;		// #CAT_Structure #NO_SEARCH units or groups of units
   UnitSpec_SPtr 	unit_spec;	// #CAT_Structure default unit specification for units in this layer
-  Unit::ExtType		ext_flag;	// #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received
+  Unit::ExtType		ext_flag;	// #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received
   DMemDist		dmem_dist; 	// #CAT_DMem how to distribute units across multiple distributed memory processors
 
   LayerDistances	dist;		// #CAT_Structure distances from closest input/output layers to this layer
 
-  String		output_name;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
-  String_Matrix		gp_output_names; // #HIDDEN #SHOW_TREE #CAT_Statistic #CONDSHOW_ON_unit_groups output_name's for unit subgroups -- name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
-  float			sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
-  PRerrVals		prerr;		// #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for this layer, for the current pattern
-  float			icon_value;	// #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
-  int			units_flat_idx;	// #READ_ONLY #NO_SAVE starting index for this layer into the network units_flat list, used in threading
+  String		output_name;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
+  String_Matrix		gp_output_names; // #NO_SAVE #HIDDEN #SHOW_TREE #CAT_Statistic #CONDSHOW_ON_unit_groups output_name's for unit subgroups -- name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
+  float			sse;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
+  PRerrVals		prerr;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for this layer, for the current pattern
+  float			icon_value;	// #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
+  int			units_flat_idx;	// #NO_SAVE #READ_ONLY starting index for this layer into the network units_flat list, used in threading
   bool			units_lesioned;	// #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
   bool			gp_unit_names_4d; // #CONDSHOW_ON_unit_groups if there are unit subgroups, create a 4 dimensional set of unit names which allows for distinct names for each unit in the layer -- otherwise a 2d set of names is created of size un_geom, all unit groups have the same repeated set of names
   String_Matrix		unit_names; 	// #HIDDEN #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
@@ -2231,49 +2231,48 @@ public:
   int		small_batch_n;	// #CONDSHOW_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
   int		small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
 
-  int		batch;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
-  int		epoch;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
-  int		group;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW group counter: optional extra counter to record sequence-level information (sequence = group of trials)
-  int		trial;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
-  int		tick;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW tick counter: optional extra counter to record a level of organization below the trial level (for cases where trials have multiple component elements)
-  int		cycle;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)	
-  float		time;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
-  String	group_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current group of trials, if such a grouping is applicable (typically set by a LayerWriter)
-  String	trial_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current trial (e.g., name of input pattern, typically set by a LayerWriter)
-  String	output_name;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (must be computed by a program)
+  int		batch;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
+  int		epoch;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
+  int		group;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW group counter: optional extra counter to record sequence-level information (sequence = group of trials)
+  int		trial;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW trial counter: number of external input patterns that have been presented in the current epoch (updated by program)
+  int		tick;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW tick counter: optional extra counter to record a level of organization below the trial level (for cases where trials have multiple component elements)
+  int		cycle;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)	
+  float		time;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
+  String	group_name;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current group of trials, if such a grouping is applicable (typically set by a LayerWriter)
+  String	trial_name;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current trial (e.g., name of input pattern, typically set by a LayerWriter)
+  String	output_name;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (must be computed by a program)
   
-  bool		sse_unit_avg;	// #CAT_Statistic compute sse as average sse over units (i.e., divide by total number of target units in layer)
-  bool		sse_sqrt;	// #CAT_Statistic take the square root of the SSE, producing a Euclidian distance instead of raw sse (note this cannot technically be added across trials in a linear fashion, as raw sse can)
-  float		sse;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
-  float		sum_sse;	// #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
-  float		avg_sse;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
-  float		cnt_err_tol;	// #CAT_Statistic tolerance for computing the count of number of errors over current epoch
-  float		cnt_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
-  float		pct_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns (= cnt_err / n)
-  float		pct_cor;	// #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was below cnt_err_tol over an epoch or similar larger set of external input patterns (= 1 - pct_err -- just for convenience for whichever you want to plot)
+  bool		sse_unit_avg;	// #NO_SAVE #CAT_Statistic compute sse as average sse over units (i.e., divide by total number of target units in layer)
+  bool		sse_sqrt;	// #NO_SAVE #CAT_Statistic take the square root of the SSE, producing a Euclidian distance instead of raw sse (note this cannot technically be added across trials in a linear fashion, as raw sse can)
+  float		sse;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
+  float		sum_sse;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
+  float		avg_sse;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
+  float		cnt_err_tol;	// #NO_SAVE #CAT_Statistic tolerance for computing the count of number of errors over current epoch
+  float		cnt_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
+  float		pct_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns (= cnt_err / n)
+  float		pct_cor;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was below cnt_err_tol over an epoch or similar larger set of external input patterns (= 1 - pct_err -- just for convenience for whichever you want to plot)
 
-  float	       	cur_sum_sse;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current sum_sse -- used during computation of sum_sse
-  int	       	avg_sse_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic number of times cur_sum_sse updated: for computing avg_sse
-  float	       	cur_cnt_err;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
+  float	       	cur_sum_sse;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current sum_sse -- used during computation of sum_sse
+  int	       	avg_sse_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic number of times cur_sum_sse updated: for computing avg_sse
+  float	       	cur_cnt_err;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
 
   bool		compute_prerr;	// #CAT_Statistic compute precision and recall error values over units, at same time as computing sum squared error (SSE)
-  PRerrVals	prerr;		// #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for the entire network, for the current external input pattern
-  PRerrVals	sum_prerr;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics
-  PRerrVals	epc_prerr;	// #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns
+  PRerrVals	prerr;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for the entire network, for the current external input pattern
+  PRerrVals	sum_prerr;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics
+  PRerrVals	epc_prerr;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns
 
-  TimeUsed	train_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing entire training (across epochs) (managed entirely by programs -- not always used)
-  TimeUsed	epoch_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing an epoch (managed entirely by programs -- not always used)
-  TimeUsed	group_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic #NO_SAVE time used for computing a group, when groups used (managed entirely by programs -- not always used)
-  //TODO: remove the NO_SAVE for v.0.15
-  TimeUsed	trial_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing a trial (managed entirely by programs -- not always used)
-  TimeUsed	settle_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing a settling (managed entirely by programs -- not always used)
-  TimeUsed	cycle_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing a cycle (managed entirely by programs -- not always used)
-  TimeUsed	wt_sync_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem, computed by network) 
-  TimeUsed	misc_time;	// #GUI_READ_ONLY #EXPERT #CAT_Statistic misc timer for ad-hoc use by programs
+  TimeUsed	train_time;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing entire training (across epochs) (managed entirely by programs -- not always used)
+  TimeUsed	epoch_time;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing an epoch (managed entirely by programs -- not always used)
+  TimeUsed	group_time;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing a group, when groups used (managed entirely by programs -- not always used)
+  TimeUsed	trial_time;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing a trial (managed entirely by programs -- not always used)
+  TimeUsed	settle_time;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing a settling (managed entirely by programs -- not always used)
+  TimeUsed	cycle_time;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing a cycle (managed entirely by programs -- not always used)
+  TimeUsed	wt_sync_time;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem, computed by network) 
+  TimeUsed	misc_time;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic misc timer for ad-hoc use by programs
 
   UnitCallThreadMgr threads;	// #CAT_Threads parallel threading of network computation
-  UnitPtrList	units_flat;	// #READ_ONLY #NO_SAVE #CAT_Threads flat list of units for deploying in threads
-  float_Matrix	send_netin_tmp; // #READ_ONLY #NO_SAVE #CAT_Threads temporary storage for threaded sender-based netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
+  UnitPtrList	units_flat;	// #NO_SAVE #READ_ONLY #CAT_Threads flat list of units for deploying in threads
+  float_Matrix	send_netin_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
 
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int		dmem_nprocs;	// #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)

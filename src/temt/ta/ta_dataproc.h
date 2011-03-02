@@ -451,7 +451,7 @@ public:
   ProgVarRef	index_var;	// #ITEM_FILTER_StdProgVarFilter program variable for the index used in the loop -- goes from 0 to number of rows in data table-1
   ProgVarRef	order_var;	// #ITEM_FILTER_StdProgVarFilter variable that contains the order to process data items (rows) in -- is automatically created if not set
   Order		order;		// #READ_ONLY #SHOW order to process data items (rows) in -- set from order_var
-  int_Array	item_idx_list;	// #READ_ONLY list of item indicies (permuted if permuted, otherwise in sequential order)
+  int_Array	item_idx_list;	// #READ_ONLY #NO_SAVE list of item indicies (permuted if permuted, otherwise in sequential order)
 
   virtual DataBlock* GetData();
   // get actual data table pointer from variable

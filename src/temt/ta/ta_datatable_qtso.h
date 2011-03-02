@@ -158,7 +158,7 @@ class TA_API DataTableView : public T3DataViewMain {
 INHERITED(T3DataViewMain)
 public:
   int		view_rows; 	// maximum number of rows visible
-  MinMaxInt	view_range; 	// range of visible rows (max is the last row visible, not the last+1; range = view_rows-1)
+  MinMaxInt	view_range; 	// #NO_SAVE range of visible rows (max is the last row visible, not the last+1; range = view_rows-1)
 
   bool		display_on;  	// #DEF_true 'true' if display should be updated
   bool		manip_ctrl_on;	// #DEF_true display the manipulation controls on objects for positioning etc
@@ -652,12 +652,12 @@ public:
   AxisType		axis;		// #READ_ONLY #SHOW type of axis this is, for rendering purposes
   GraphColView*		col_lookup; 	// #NULL_OK #FROM_GROUP_col_list #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #NO_COPY lookup a column of data for this axis -- only for lookup purposes -- fills in the name and is reset to NULL -- name is what is actually used
   String		col_name;	// name of column of data for this axis
-  FixedMinMax		fixed_range;	// fixed min/max range values for display (if not fixed, automatically set to min/max of data)
+  FixedMinMax		fixed_range;	// #NO_SAVE fixed min/max range values for display (if not fixed, automatically set to min/max of data)
 
   RGBA			color;		// color of the line and points
 
-  MinMax		data_range;     // #READ_ONLY actual min and max of data (including fixed range) 
-  MinMax		range;		// #READ_ONLY actual display range of the axis data
+  MinMax		data_range;     // #READ_ONLY #NO_SAVE actual min and max of data (including fixed range) 
+  MinMax		range;		// #READ_ONLY #NO_SAVE actual display range of the axis data
 
   int          		n_ticks;	// #DEF_10 number of ticks desired
   float			axis_length; 	// #READ_ONLY #NO_COPY in view units (width or depth)

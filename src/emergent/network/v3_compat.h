@@ -242,7 +242,7 @@ public:
   TypeDef* 	min_con; 	// #HIDDEN #NO_SAVE #TYPE_Connection Min acceptable Con type
 
   RndSeed	rndm_seed;	// #HIDDEN random seed, for NewRun(), ReRun()
-  TimeUsed	time_used;	// #HIDDEN accumulated time used during the Run() of this process
+  TimeUsed	time_used;	// #HIDDEN #NO_SAVE accumulated time used during the Run() of this process
 
   Type    	type;			// process can be builtin c-code or a script
   Modulo	mod;			// flag=run this process or not, m=modulus, run process every m times, off=start runing at this offset

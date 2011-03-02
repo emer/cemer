@@ -1592,14 +1592,14 @@ class LEABRA_API LeabraPrjn: public Projection {
   // #STEM_BASE ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
 INHERITED(Projection)
 public:
-  float		netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer
-  float		netin_rel;	// #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer
+  float		netin_avg;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer
+  float		netin_rel;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer
 
-  float		avg_netin_avg;	// #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer, averaged over an epoch
-  float		avg_netin_avg_sum;// #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic average netinput values for the recv projections into this layer, sum over an epoch
-  float		avg_netin_rel;	// #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer, averaged over an epoch
-  float		avg_netin_rel_sum; // #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
-  int		avg_netin_n; // #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic count for computing epoch-level averages
+  float		avg_netin_avg;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer, averaged over an epoch
+  float		avg_netin_avg_sum;	// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic average netinput values for the recv projections into this layer, sum over an epoch
+  float		avg_netin_rel;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer, averaged over an epoch
+  float		avg_netin_rel_sum;	// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic relative netinput values for the recv projections into this layer, sum over an epoch (for computing average)
+  int		avg_netin_n;		// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic count for computing epoch-level averages
 
   float		trg_netin_rel;	// #CAT_Learning target value for avg_netin_rel -- used for adapting scaling and actual layer activations to achieve desired relative netinput levels -- important for large multilayered networks, where bottom-up projections should be stronger than top-down ones.  this value can be set automatically based on the projection direction and other projections, as determined by the con spec
 
@@ -2345,28 +2345,28 @@ private:
 class LEABRA_API LeabraInhib {
   // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
 public:
-  LeabraSort 	active_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of active units
-  LeabraSort 	inact_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of inactive units
-  LeabraSort 	active_2k_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of 2k active units
-  LeabraSort 	inact_2k_buf;	// #HIDDEN #NO_SAVE #CAT_Activation list of 2k inactive units
+  LeabraSort 	active_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of active units
+  LeabraSort 	inact_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of inactive units
+  LeabraSort 	active_2k_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of 2k active units
+  LeabraSort 	inact_2k_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of 2k inactive units
 
-  AvgMaxVals	netin;		// #READ_ONLY #EXPERT #CAT_Activation net input values for the layer
-  AvgMaxVals	netin_top_k;	// #READ_ONLY #EXPERT #CAT_Activation net input values for the top k units in the layer
-  AvgMaxVals	i_thrs;		// #READ_ONLY #EXPERT #CAT_Activation inhibitory threshold values for the layer
-  AvgMaxVals	acts;		// #READ_ONLY #EXPERT #CAT_Activation activation values for the layer
-  AvgMaxVals	acts_top_k;	// #READ_ONLY #EXPERT #CAT_Activation activation values for the top k units in the layer
-  AvgMaxVals	acts_p;		// #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
-  AvgMaxVals	acts_m;		// #READ_ONLY #EXPERT #CAT_Activation minus-phase activation stats for the layer
-  float		phase_dif_ratio; // #READ_ONLY #SHOW #CAT_Activation phase-difference ratio (acts_m.avg / acts_p.avg)
-  AvgMaxVals	acts_p2;	// #READ_ONLY #EXPERT #CAT_Activation second plus-phase activation stats for the layer
-  AvgMaxVals	acts_m2;	// #READ_ONLY #EXPERT #CAT_Activation second minus-phase activation stats for the layer
+  AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the layer
+  AvgMaxVals	netin_top_k;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the top k units in the layer
+  AvgMaxVals	i_thrs;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation inhibitory threshold values for the layer
+  AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation activation values for the layer
+  AvgMaxVals	acts_top_k;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation activation values for the top k units in the layer
+  AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
+  AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation minus-phase activation stats for the layer
+  float		phase_dif_ratio; // #NO_SAVE #READ_ONLY #SHOW #CAT_Activation phase-difference ratio (acts_m.avg / acts_p.avg)
+  AvgMaxVals	acts_p2;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation second plus-phase activation stats for the layer
+  AvgMaxVals	acts_m2;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation second minus-phase activation stats for the layer
  
-  KWTAVals	kwta;		// #READ_ONLY #EXPERT #CAT_Activation values for kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
-  InhibVals	i_val;		// #READ_ONLY #SHOW #CAT_Activation inhibitory values computed by kwta
-  AvgMaxVals	un_g_i;		// #READ_ONLY #EXPERT #CAT_Activation unit inhib values (optionally computed)
-  AdaptIVals	adapt_i;	// #READ_ONLY #AKA_adapt_pt #EXPERT #CAT_Activation adapting inhibition values
-  float		maxda;		// #GUI_READ_ONLY #SHOW #CAT_Statistic maximum change in activation (delta-activation) over network; used in stopping settling
-  float		act_max_avg;	// #GUI_READ_ONLY #EXPERT #CAT_Activation time-integrated version of acts.max over trials with fb_max_dt decay constant -- goes to max instantly and then decays back down slowly with this constant
+  KWTAVals	kwta;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation values for kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
+  InhibVals	i_val;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation inhibitory values computed by kwta
+  AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation unit inhib values (optionally computed)
+  AdaptIVals	adapt_i;	// #NO_SAVE #READ_ONLY #AKA_adapt_pt #EXPERT #CAT_Activation adapting inhibition values
+  float		maxda;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic maximum change in activation (delta-activation) over network; used in stopping settling
+  float		act_max_avg;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Activation time-integrated version of acts.max over trials with fb_max_dt decay constant -- goes to max instantly and then decays back down slowly with this constant
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
   void	Inhib_ResetSortBuf() 		{ active_buf.size = 0; inact_buf.size = 0; }
@@ -2414,19 +2414,19 @@ class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
 INHERITED(Layer)
 public:
   LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
-  bool		hard_clamped;	// #READ_ONLY #SHOW #CAT_Activation this layer is actually hard clamped
-  float		avg_l_avg;	// #READ_ONLY #EXPERT #CAT_Activation layer-wise average of avg_l values in the layers
-  float		dav;		// #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
-  AvgMaxVals	avg_netin;	// #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale
-  AvgMaxVals	avg_netin_sum;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
-  int		avg_netin_n;	// #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
-  float		norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
-  int		da_updt;	// #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
+  bool		hard_clamped;	// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation this layer is actually hard clamped
+  float		avg_l_avg;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation layer-wise average of avg_l values in the layers
+  float		dav;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
+  AvgMaxVals	avg_netin;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale
+  AvgMaxVals	avg_netin_sum;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
+  int		avg_netin_n;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
+  float		norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
+  int		da_updt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
   LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for kwta computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
   int_Array	unit_idxs;	// #NO_SAVE #HIDDEN #CAT_Activation -- set of unit indexes typically used for permuted selection of units (e.g., k_pos_noise) -- can be used by other functions too
 
-  KwtaSortBuff_List lay_kbuffs;	// #HIDDEN #NO_SAVE #NO_COPY #CAT_Activation layer-wide kwta computation buffers
-  KwtaSortBuff_List gp_kbuffs;	// #HIDDEN #NO_SAVE #NO_COPY #CAT_Activation subgroup-specific computation buffers
+  KwtaSortBuff_List lay_kbuffs;	// #NO_SAVE #HIDDEN #NO_COPY #CAT_Activation layer-wide kwta computation buffers
+  KwtaSortBuff_List gp_kbuffs;	// #NO_SAVE #HIDDEN #NO_COPY #CAT_Activation subgroup-specific computation buffers
 
 #ifdef DMEM_COMPILE
   DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
@@ -2860,28 +2860,28 @@ public:
   float		lrn_trig;	// learning trigger variable -- determines when to learn -- starts counting up from 0 to 1 when threshold is met -- learning happens at 1
   int		lrn;		// did layer learn on this cycle -- 1 if true, 0 if false
 
-  float		lrn_min;	// #CAT_Statistic what proportion of times did it learn in first minus phase -- computed every epoch
-  float		lrn_min_cyc;	// #CAT_Statistic how many cycles into first minus phase did it learn on average -- computed every epoch
-  float		lrn_min_thr;	// #CAT_Statistic average value of threshold-determining variable (davg_smd) for first minus phase learning -- computed every epoch
-  float		lrn_min_sum;	// #CAT_Statistic #READ_ONLY sum
-  float		lrn_min_cyc_sum; // #CAT_Statistic #READ_ONLY sum
-  float		lrn_min_thr_sum; // #CAT_Statistic #READ_ONLY sum
+  float		lrn_min;	// #NO_SAVE #CAT_Statistic what proportion of times did it learn in first minus phase -- computed every epoch
+  float		lrn_min_cyc;	// #NO_SAVE #CAT_Statistic how many cycles into first minus phase did it learn on average -- computed every epoch
+  float		lrn_min_thr;	// #NO_SAVE #CAT_Statistic average value of threshold-determining variable (davg_smd) for first minus phase learning -- computed every epoch
+  float		lrn_min_sum;	// #NO_SAVE #CAT_Statistic #READ_ONLY sum
+  float		lrn_min_cyc_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
+  float		lrn_min_thr_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
 
-  float		lrn_plus;	// #CAT_Statistic what proportion of times did it learn in plus phase -- computed every epoch
-  float		lrn_plus_cyc;	// #CAT_Statistic how many cycles into plus phase did it learn on average -- computed every epoch
-  float		lrn_plus_thr;	// #CAT_Statistic average value of threshold-determining variable (davg_smd) for plus phase learning -- computed every epoch
-  float		lrn_plus_sum;	// #CAT_Statistic #READ_ONLY sum
-  float		lrn_plus_cyc_sum; // #CAT_Statistic #READ_ONLY sum
-  float		lrn_plus_thr_sum; // #CAT_Statistic #READ_ONLY sum
+  float		lrn_plus;	// #NO_SAVE #CAT_Statistic what proportion of times did it learn in plus phase -- computed every epoch
+  float		lrn_plus_cyc;	// #NO_SAVE #CAT_Statistic how many cycles into plus phase did it learn on average -- computed every epoch
+  float		lrn_plus_thr;	// #NO_SAVE #CAT_Statistic average value of threshold-determining variable (davg_smd) for plus phase learning -- computed every epoch
+  float		lrn_plus_sum;	// #NO_SAVE #CAT_Statistic #READ_ONLY sum
+  float		lrn_plus_cyc_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
+  float		lrn_plus_thr_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
 
-  float		lrn_noth;	// #CAT_Statistic what proportion of times did it learn in nothing phase -- computed every epoch
-  float		lrn_noth_cyc;	// #CAT_Statistic how many cycles into nothing phase did it learn on average -- computed every epoch
-  float		lrn_noth_thr;	// #CAT_Statistic average value of threshold-determining variable (davg_smd) for nothing phase learning -- computed every epoch
-  float		lrn_noth_sum;	// #CAT_Statistic #READ_ONLY sum
-  float		lrn_noth_cyc_sum; // #CAT_Statistic #READ_ONLY sum
-  float		lrn_noth_thr_sum; // #CAT_Statistic #READ_ONLY sum
+  float		lrn_noth;	// #NO_SAVE #CAT_Statistic what proportion of times did it learn in nothing phase -- computed every epoch
+  float		lrn_noth_cyc;	// #NO_SAVE #CAT_Statistic how many cycles into nothing phase did it learn on average -- computed every epoch
+  float		lrn_noth_thr;	// #NO_SAVE #CAT_Statistic average value of threshold-determining variable (davg_smd) for nothing phase learning -- computed every epoch
+  float		lrn_noth_sum;	// #NO_SAVE #CAT_Statistic #READ_ONLY sum
+  float		lrn_noth_cyc_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
+  float		lrn_noth_thr_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
 
-  int		lrn_stats_n;	// #CAT_Statistic #READ_ONLY count of number of times stats have been incremented
+  int		lrn_stats_n;	// #NO_SAVE #CAT_Statistic #READ_ONLY count of number of times stats have been incremented
 
   void		Init_Stats();	// initialize stats vars (all to 0)
   void		Init_Stats_Sums(); // initialize stats sums (all to 0)
@@ -2948,15 +2948,15 @@ public:
   bool		no_plus_test;	// #DEF_true #CAT_Counter don't run the plus phase when testing
   StateInit	sequence_init;	// #DEF_DO_NOTHING #CAT_Activation how to initialize network state at start of a sequence of trials
 
-  Phase		phase;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase
-  bool		nothing_phase;	// #GUI_READ_ONLY #SHOW #CAT_Counter the current phase is a NOTHING phase (phase will indicate MINUS for learning purposes)
-  int		phase_no;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW phase as an ordinal number (regular phase is Phase enum)
+  Phase		phase;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase
+  bool		nothing_phase;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter the current phase is a NOTHING phase (phase will indicate MINUS for learning purposes)
+  int		phase_no;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW phase as an ordinal number (regular phase is Phase enum)
   int		phase_max;	// #CAT_Counter maximum number of phases to run (note: this is set by Trial_Init depending on phase_order)
 
-  int		ct_cycle;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
+  int		ct_cycle;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
   float		time_inc;	// how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset
 
-  int		cycle_max;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process
+  int		cycle_max;	// #NO_SAVE #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process
   int		mid_minus_cycle; // #CAT_Counter #DEF_-1:30 cycle number for computations that take place roughly mid-way through the minus phase -- used for PBWM algorithm -- effective min_cycles for minus phase will be this value + min_cycles -- set to -1 to disable
   int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_15:35 minimum number of cycles to settle for
   int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_35 minimum number of cycles to settle for in second phase
@@ -2965,54 +2965,54 @@ public:
   CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
   CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
   CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
-  CtSRAvgVals	sravg_vals;	// #CAT_Learning #READ_ONLY #EXPERT sender-receiver average computation values, e.g., for normalizing sravg values
+  CtSRAvgVals	sravg_vals;	// #NO_SAVE #CAT_Learning #READ_ONLY #EXPERT sender-receiver average computation values, e.g., for normalizing sravg values
   CtLrnTrigSpec	ct_lrn_trig;	// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C learning trigger parameters based on changes in short-term average activation value -- determines when CTLEABRA_XCAL_C learns
   CtLrnTrigVals	lrn_trig; 	// #CAT_Learning #EXPERT #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C learning trigger values -- based on changes in short-term average activation value -- determines when CTLEABRA_XCAL_C learns
-  ThreadFlags	thread_flags;	// #CAT_Structure #EXPERT #NO_SAVE flags for controlling the parallel threading process (which functions are threaded) -- this is just for testing and debugging purposes, and not for general use -- they are not saved
+  ThreadFlags	thread_flags;	// #NO_SAVE #CAT_Structure #EXPERT flags for controlling the parallel threading process (which functions are threaded) -- this is just for testing and debugging purposes, and not for general use -- they are not saved
 
-  float		minus_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
-  float		avg_cycles;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
-  float		avg_cycles_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cycles in this epoch
-  int		avg_cycles_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
+  float		minus_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
+  float		avg_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
+  float		avg_cycles_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cycles in this epoch
+  int		avg_cycles_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
 
-  String	minus_output_name; // #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW output_name in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
+  String	minus_output_name; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW output_name in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
 
   LeabraNetMisc	net_misc;	// misc network level parameters for leabra
 
-  float		send_pct;	// #GUI_READ_ONLY #SHOW #CAT_Statistic proportion of sending units that actually sent activations on this cycle
-  int		send_pct_n;	// #READ_ONLY #CAT_Statistic number of units sending activation this cycle
-  int		send_pct_tot;	// #READ_ONLY #CAT_Statistic total number of units that could send activation this cycle
-  float		avg_send_pct;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average proportion of units sending activation over an epoch
-  float		avg_send_pct_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
-  int		avg_send_pct_n; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
+  float		send_pct;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic proportion of sending units that actually sent activations on this cycle
+  int		send_pct_n;	// #NO_SAVE #READ_ONLY #CAT_Statistic number of units sending activation this cycle
+  int		send_pct_tot;	// #NO_SAVE #READ_ONLY #CAT_Statistic total number of units that could send activation this cycle
+  float		avg_send_pct;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average proportion of units sending activation over an epoch
+  float		avg_send_pct_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
+  int		avg_send_pct_n; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average send_pct per epoch (integrates over cycles and trials etc)
 
-  float		maxda_stopcrit;	// #DEF_0.005 #CAT_Statistic stopping criterion for max da
-  float		maxda;		// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW maximum change in activation (delta-activation) over network; used in stopping settling
+  float		maxda_stopcrit;	// #NO_SAVE #DEF_0.005 #CAT_Statistic stopping criterion for max da
+  float		maxda;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW maximum change in activation (delta-activation) over network; used in stopping settling
 
-  float		trg_max_act_stopcrit;	// #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)
-  float		trg_max_act;	// #GUI_READ_ONLY #SHOW #CAT_Statistic target-layer maximum activation (can be used for stopping settling)
+  float		trg_max_act_stopcrit;	// #NO_SAVE #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)
+  float		trg_max_act;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic target-layer maximum activation (can be used for stopping settling)
 
-  float		ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial) -- only computed if ExtRewLayerSpec or similar exists in network -- equals PVe value in PVLV framework
-  bool		ext_rew_avail; 	// #GUI_READ_ONLY #SHOW #CAT_Statistic actual external reward value is available (on this trial) -- only computed if ExtRewLayerSpec or similar exists in network -- if false then no feedback was provided on this trial
-  float		norew_val; 	// #GUI_READ_ONLY #CAT_Statistic no-reward value (serves as a baseline against which ext_rew can be compared against -- if greater, then positive reward, if less, then negative reward -- typically 0.5 but can vary
-  float		avg_ext_rew;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
-  float		pvlv_pvi;	// #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV primary reward prediction value PVi for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
-  float		pvlv_pvr;	// #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV primary reward availability prediction value PVr for the current trial -- updated on a cycle-by-cycle basis
-  float		pvlv_lve;	// #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV learned reward prediction value LVe (excitatory, rapidly adapting) for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
-  float		pvlv_lvi;	// #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV learned reward prediction value LVi (inhibitory, slowly adapting) for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
-  bool		pv_detected;	// #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV detected a situation where primary reward value is expected to be available, based on learned encoding of similar such situations in the past -- computed by the PVrLayerSpec continuously in the minus phase
-  float		avg_ext_rew_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
-  int		avg_ext_rew_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch
+  float		ext_rew;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW external reward value (on this trial) -- only computed if ExtRewLayerSpec or similar exists in network -- equals PVe value in PVLV framework
+  bool		ext_rew_avail; 	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic actual external reward value is available (on this trial) -- only computed if ExtRewLayerSpec or similar exists in network -- if false then no feedback was provided on this trial
+  float		norew_val; 	// #NO_SAVE #GUI_READ_ONLY #CAT_Statistic no-reward value (serves as a baseline against which ext_rew can be compared against -- if greater, then positive reward, if less, then negative reward -- typically 0.5 but can vary
+  float		avg_ext_rew;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average external reward value (computed over previous epoch)
+  float		pvlv_pvi;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV primary reward prediction value PVi for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
+  float		pvlv_pvr;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV primary reward availability prediction value PVr for the current trial -- updated on a cycle-by-cycle basis
+  float		pvlv_lve;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV learned reward prediction value LVe (excitatory, rapidly adapting) for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
+  float		pvlv_lvi;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV learned reward prediction value LVi (inhibitory, slowly adapting) for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
+  bool		pv_detected;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV detected a situation where primary reward value is expected to be available, based on learned encoding of similar such situations in the past -- computed by the PVrLayerSpec continuously in the minus phase
+  float		avg_ext_rew_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
+  int		avg_ext_rew_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch
 
-  bool		off_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
-  bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
-  float		norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW normalized binary (Hamming) error on this trial: number of units that were incorrectly activated or incorrectly inactivated (see off_errs to exclude latter)
-  float		avg_norm_err;	// #GUI_READ_ONLY #SHOW #CAT_Statistic average normalized binary error value (computed over previous epoch)
-  float		avg_norm_err_sum; // #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average norm err in this epoch
-  int		avg_norm_err_n;	// #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average norm err value computation for this epoch
+  bool		off_errs;	// #NO_SAVE #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
+  bool		on_errs;	// #NO_SAVE #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
+  float		norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW normalized binary (Hamming) error on this trial: number of units that were incorrectly activated or incorrectly inactivated (see off_errs to exclude latter)
+  float		avg_norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average normalized binary error value (computed over previous epoch)
+  float		avg_norm_err_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average norm err in this epoch
+  int		avg_norm_err_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average norm err value computation for this epoch
 
-  bool		inhib_cons_used; // #READ_ONLY #NO_SAVE #CAT_Threads inhibitory connections are being used in this network -- detected during buildunits_threads to determine if space should be allocated, etc for send_inhib vals
-  float_Matrix	send_inhib_tmp; // #READ_ONLY #NO_SAVE #CAT_Threads temporary storage for threaded sender-based inhib netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
+  bool		inhib_cons_used; // #NO_SAVE #READ_ONLY #CAT_Threads inhibitory connections are being used in this network -- detected during buildunits_threads to determine if space should be allocated, etc for send_inhib vals
+  float_Matrix	send_inhib_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based inhib netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
 
   ///////////////////////////////////////////////////////////////////////
   //	Thread Flags
