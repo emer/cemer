@@ -649,10 +649,9 @@ void ProgVar::Copy_(const ProgVar& cp) {
 }
 
 void ProgVar::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
+  inherited::UpdateAfterEdit_impl(); // this will make it a legal C name
   if(object_val.ptr() == this)	// this would be bad..
     object_val.set(NULL);
-  name = taMisc::StringCVar(name); // make names C legal names -- just much safer
   if(Program::IsForbiddenName(name))
     name = "My" + name;
   // only send stale if the schema changed, not just the value
@@ -660,7 +659,7 @@ void ProgVar::UpdateAfterEdit_impl() {
   // loading is a special case: initialize
   if (taMisc::is_loading) {
     taVersion v512(5, 1, 2);
-    if(taMisc::loading_version < v512) { // everything prior to 512 had save val on by default
+    if(taMisc::loading_version < v512) { // everything prior to 5.1.2 had save val on by default
       SetVarFlag(SAVE_VAL);
     }
     m_prev_sig = tfs;
@@ -676,7 +675,6 @@ void ProgVar::UpdateAfterEdit_impl() {
   UpdateUsedFlag();
   GetInitFromVar(true);		// warn 
 }
-
 
 ProgVar* ProgVar::GetInitFromVar(bool warn) {
   if(!(bool)init_from) return NULL;

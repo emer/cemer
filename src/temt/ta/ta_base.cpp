@@ -318,7 +318,6 @@ void tabMisc::DeleteRoot() {
 
     Deletion -- a link receives a notification when an object is about to
     be destroyed.
-ContextFlag	taMisc::is_loading;
 
     The following situations are handled automatically, you don't need to
     do anything in your code: List/Group member changes; object deletion.
@@ -334,8 +333,7 @@ ContextFlag	taMisc::is_loading;
     the change is structural):
     \code
 	this->DataUpdate(true);
-        \\ data changes go hereContextFlag	taMisc::is_loading;
-
+        \\ data changes go here
 	this->DataUpdate(false);
     \endcode
 
@@ -344,8 +342,7 @@ ContextFlag	taMisc::is_loading;
     taBase object lifetimes can be either Statically, or Dynamically 
     managed, and the visibility can either be Internal or External. 
     Static objects are created and destroyed by the compiler; Dynamic 
-    objects are created/destroyed by the programmer ContextFlag	taMisc::is_loading;
-(new/delete).
+    objects are created/destroyed by the programmer (new/delete).
     Internal objects are used solely by the managing owner, whereas 
     External objects can be accessed by an external client.
     In practice, this gives rise to three lifetime/visibility scenarios:
@@ -363,8 +360,7 @@ ContextFlag	taMisc::is_loading;
     
     Ref Counting Mechanism -- Ref() causes refn++, UnRef() causes refn--;
     if refn goes from 1 to 0, the object deletes. The transition from
-    1 to 0 also causes refn to be set to a -ve sentiContextFlag	taMisc::is_loading;
-nel value. The debug 
+    1 to 0 also causes refn to be set to a -ve sentinel value. The debug 
     version of the program can detect double destruction, or ref count
     operations after destruction, based on this sentinel.
     
@@ -3719,7 +3715,7 @@ void taList_impl::UpdateAfterEdit(){
   }
   if(taMisc::is_loading) {
     taVersion v512(5, 1, 2);
-    if(taMisc::loading_version < v512) { // enforce unique names prior to 512
+    if(taMisc::loading_version < v512) { // enforce unique names prior to 5.1.2
       MakeElNamesUnique();
     }
   }
@@ -3730,9 +3726,7 @@ void taList_impl::UpdateAfterEdit(){
 
 bool taList_impl::MakeElNamesUnique() {
   static bool in_process = false;
-  if (!el_base->InheritsFrom(&TA_taNBase) &&
-      !el_base->InheritsFrom(&TA_ProgVar) &&
-      !el_base->InheritsFrom(&TA_taList_impl)) return true; // only if el's actually have names
+  if (!el_base->InheritsFrom(&TA_taNBase)) return true; // only if el's actually have names
   if(HasOption("NO_UNIQUE_NAMES")) return true;	       // not this guy
   if(in_process) return true; // already in this function -- SetName calls this recursively so don't allow that to happen.. I know, it's ugly, but not worth adding whole new SetName interface..
   in_process = true;
@@ -3783,10 +3777,7 @@ bool taList_impl::MakeElNamesUnique() {
 
 bool taList_impl::MakeElNameUnique(taBase* itm) {
   static bool in_process = false;
-  if (!itm ||
-      (!el_base->InheritsFrom(&TA_taNBase) &&
-       !el_base->InheritsFrom(&TA_ProgVar) &&
-       !el_base->InheritsFrom(&TA_taList_impl))) return true; // only if el's actually have names
+  if (!itm || !el_base->InheritsFrom(&TA_taNBase)) return true; // only if el's actually have names
   if(HasOption("NO_UNIQUE_NAMES")) return true;	       // not this guy
   if(in_process) return true; // already in this function -- SetName calls this recursively so don't allow that to happen.. I know, it's ugly, but not worth adding whole new SetName interface..
   in_process = true;
@@ -4507,13 +4498,7 @@ String taList_impl::GetPathNames(taBase* ta, taBase* par_stop) const {
     }
     else {
       String obj_nm = ta->GetName();
-      // TODO: make ProgVar and taList_impl inherit from taNBase instead
-      // of taOBase so we don't need three InheritsFrom checks here.
-      // (see also the MakeElNamesUnique and MakeElNameUnique functions)
-      if(obj_nm.empty() ||
-         (!ta->InheritsFrom(&TA_taNBase) &&
-          !ta->InheritsFrom(&TA_ProgVar) &&
-          !ta->InheritsFrom(&TA_taList_impl))) { // only use real nbase names.
+      if (obj_nm.empty() || !ta->InheritsFrom(&TA_taNBase)) { // only use real nbase names.
 	int gidx = FindEl_(ta);
 	if(gidx >= 0)
 	  rval += "[" + String(gidx) + "]";
@@ -4681,10 +4666,6 @@ int taList_impl::SetDefaultElType(TypeDef* it) {
   int idx = FindTypeIdx(it);
   if(idx >= 0)    el_def = idx;
   return idx;
-}
-
-void taList_impl::SetDefaultName() {
-  // nop; still 
 }
 
 int taList_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor) {

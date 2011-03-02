@@ -1768,24 +1768,18 @@ typedef taList_impl* TABLPtr; // this comment needed for maketa parser
 ////////////////////////////////////////////////////////////////////////
 //		taList_impl -- base ta list impl
 
-class TA_API taList_impl : public taOBase, public taPtrList_ta_base {
+class TA_API taList_impl : public taNBase, public taPtrList_ta_base {
   // #INSTANCE #NO_TOKENS #STEM_BASE ##MEMB_HIDDEN_EDIT ##HIDDEN_INLINE implementation for a taBase list class
 #ifndef __MAKETA__
 private:
-typedef taOBase inherited; // for the boilerplate code
-typedef taOBase inherited_taBase;
+typedef taNBase inherited; // for the boilerplate code
+typedef taNBase inherited_taBase;
 typedef taPtrList_ta_base inherited_taPtrList;
 #endif
 public:
-  String        name;           // #CONDEDIT_OFF_base_flags:NAME_READONLY #CAT_taBase name of the object 
   TypeDef*	el_base;	// #EXPERT #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE #CAT_taList Base type for objects in group
   TypeDef* 	el_typ;		// #TYPE_ON_el_base #NO_SHOW_TREE #CAT_taList Default type for objects in group
   int		el_def;		// #EXPERT #CAT_taList Index of default element in group
-
-  // stuff for the taBase 
-  bool          SetName(const String& nm)       { name = nm; return true; }
-  String        GetName() const         	{ return name; } 
-  void          SetDefaultName();
 
   override TypeDef* 	GetElType() const {return el_typ;}
   // #IGNORE Default type for objects in group
@@ -1913,7 +1907,7 @@ public:
   override int		SelectForEditSearch(const String& memb_contains, SelectEdit*& editor);
 
   void 	CutLinks();
-  void	UpdateAfterEdit(); // we skip the taOBase version, and inherit only taBase
+  void	UpdateAfterEdit(); // we skip the taOBase version, and inherit only taBase (DPF: what does that mean?)
   TA_BASEFUNS(taList_impl);
 
 protected:

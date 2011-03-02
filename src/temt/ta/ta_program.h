@@ -268,9 +268,9 @@ private:
 //		Program Variables
 ///////////////////////////////////////////////////////////
 
-class TA_API ProgVar: public taOBase {
+class TA_API ProgVar: public taNBase {
   // ##INSTANCE ##INLINE #STEM_BASE ##SCOPE_Program ##CAT_Program a program variable, accessible from the outer system, and inside the script in .vars and args
-INHERITED(taOBase)
+INHERITED(taNBase)
 public:
   enum VarType {
     T_Int,			// #LABEL_Int integer
@@ -294,7 +294,6 @@ public:
     EDIT_VAL		= 0x0080, // #NO_SHOW allow value to be edited -- only if !LOCAL_VAR && !init_from
   };
 
-  String	name;		// name of the variable
   VarType	var_type;	// type of variable -- determines which xxx_val(s) is/are used
   int		int_val;	// #CONDSHOW_ON_var_type:T_Int,T_HardEnum #CONDEDIT_ON_flags:EDIT_VAL integer value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
   double	real_val;	// #CONDSHOW_ON_var_type:T_Real #CONDEDIT_ON_flags:EDIT_VAL real value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)
@@ -353,8 +352,6 @@ public:
  
   override void GetSelectText(MemberDef* mbr, String xtra_lbl,
     String& full_lbl, String& desc) const;
-  bool 		SetName(const String& nm)    	{ name = nm; return true; }
-  String	GetName() const			{ return name; }
   override String GetDesc() const { return desc; }
   override String GetDisplayName() const;
   override String GetTypeDecoKey() const { return "ProgVar"; }
@@ -398,7 +395,6 @@ public:
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); // don't save the unused vals
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-  override void 	SetDefaultName() {} // make it local to list, set by list
   void	InitLinks();
   void	CutLinks();
   TA_BASEFUNS(ProgVar);
