@@ -3709,10 +3709,6 @@ void* taList_impl::El_CopyN_(void* to_, void* fm) {
 void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
   if(!el_typ->InheritsFrom(el_base)) el_typ = el_base;
-  String cnm = taMisc::StringCVar(name); // make names C legal names -- just much safer
-  if(name != cnm) {
-    SetName(cnm);		// triggers update
-  }
   if(taMisc::is_loading) {
     taVersion v512(5, 1, 2);
     if(taMisc::loading_version < v512) { // enforce unique names prior to 5.1.2
