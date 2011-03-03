@@ -4669,8 +4669,12 @@ void iMainWindowViewer::windowMenu_aboutToShow() {
     if (i < 9) {
       title = "&" + String(i + 1) + " ";
     }
-    if (wid->isWindow())
+    if (wid->isWindow()) {
       title.cat((String)wid->windowTitle());
+      // Indicate whether the file has unsaved changes
+      // (see MainWindowViewer::MakeWinName_impl())
+      title.gsub("[*]", wid->isWindowModified() ? "*" : "");
+    }
 /*??    else 
       title.cat((String)wid->text());*/
     //taiAction* item =
