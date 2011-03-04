@@ -121,7 +121,6 @@ class TA_API DataColView: public T3DataView {
 INHERITED(T3DataView)
 friend class DataTableView;
 public:
-  String	name;		// name of column this guy is associated with
   bool		visible;	// is this column visible in display?
   //  bool	sticky; 	// #DEF_false set this to retain this colspec even if its column deletes -- not supported by the views and nonsensical, right?
 
@@ -131,9 +130,6 @@ public:
   DATAVIEW_PARENT(DataTableView)
 
   bool			isVisible() const; // bakes in check for datacol
-
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
 
   virtual void		Hide();
   // #BUTTON #VIEWMENU set this column to be invisible

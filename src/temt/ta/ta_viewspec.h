@@ -25,13 +25,9 @@ class TA_API ViewSpec: public taDataView {
   // ##CAT_Display generic specification for a view of some item
 INHERITED(taDataView)
 public:
-  String                name; 
   String		display_name; // name used in display IF DIFFERENT THAN name
   bool	        	visible; 	// visibility flag
   
-  String GetName() const {return name;} 
-  bool  SetName(const String& value);
-  void	SetDefaultName() {SetDefaultName_();}
   String GetDisplayName() const;
   TA_BASEFUNS(ViewSpec) //
 private:

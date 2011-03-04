@@ -36,15 +36,10 @@ class TA_API VEBodyView: public T3DataView {
 INHERITED(T3DataView)
 friend class VEWorldView;
 public:
-  String	name;		// name of body this one is associated with
-
   VEBody*		Body() const { return (VEBody*)data();}
   virtual void		SetBody(VEBody* ob);
   
   DATAVIEW_PARENT(VEWorldView)
-
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
 
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
@@ -55,8 +50,8 @@ public:
   override bool		ignoreDataChanged() const { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const VEBodyView& cp);
-  TA_BASEFUNS(VEBodyView);
+  TA_BASEFUNS_NOCOPY(VEBodyView);
+
 protected:
   void	Initialize();
   void	Destroy();
@@ -70,13 +65,11 @@ class TA_API VEObjCarouselView: public VEBodyView {
 INHERITED(VEBodyView)
 friend class VEWorldView;
 public:
-  String	name;		// name of body this one is associated with
-
   VEObjCarousel*	ObjCarousel() const { return (VEObjCarousel*)data();}
   virtual void		SetObjCarousel(VEObjCarousel* ob);
 
-  void	Copy_(const VEObjCarouselView& cp);
-  TA_BASEFUNS(VEObjCarouselView);
+  TA_BASEFUNS_NOCOPY(VEObjCarouselView);
+
 protected:
   void	Initialize();
   void	Destroy();
@@ -90,15 +83,10 @@ class TA_API VEJointView: public T3DataView {
 INHERITED(T3DataView)
 friend class VEWorldView;
 public:
-  String	name;		// name of joint this one is associated with
-
   VEJoint*		Joint() const { return (VEJoint*)data();}
   virtual void		SetJoint(VEJoint* ob);
   
   DATAVIEW_PARENT(VEWorldView)
-
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
 
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
@@ -109,8 +97,7 @@ public:
   override bool		ignoreDataChanged() const { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const VEJointView& cp);
-  TA_BASEFUNS(VEJointView);
+  TA_BASEFUNS_NOCOPY(VEJointView);
 protected:
   void	Initialize();
   void	Destroy();
@@ -124,15 +111,10 @@ class TA_API VEObjectView: public T3DataViewPar {
 INHERITED(T3DataViewPar)
 friend class VEWorldView;
 public:
-  String	name;		// name of body this one is associated with
-
   VEObject*		Object() const { return (VEObject*)data();}
   virtual void		SetObject(VEObject* ob);
   
   DATAVIEW_PARENT(VEWorldView)
-
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
 
   override void		BuildAll();
   
@@ -140,8 +122,7 @@ public:
   override bool		ignoreDataChanged() const { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const VEObjectView& cp);
-  TA_BASEFUNS(VEObjectView);
+  TA_BASEFUNS_NOCOPY(VEObjectView);
 protected:
   void	Initialize();
   void	Destroy();
@@ -155,15 +136,10 @@ class TA_API VEStaticView: public T3DataView {
 INHERITED(T3DataView)
 friend class VEWorldView;
 public:
-  String	name;		// name of static item this one is associated with
-
   VEStatic*		Static() const { return (VEStatic*)data();}
   virtual void		SetStatic(VEStatic* ob);
   
   DATAVIEW_PARENT(VEWorldView)
-
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
 
   virtual void		SetDraggerPos();
   // set dragger position, based on shape
@@ -174,8 +150,7 @@ public:
   override bool		ignoreDataChanged() const { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const VEStaticView& cp);
-  TA_BASEFUNS(VEStaticView);
+  TA_BASEFUNS_NOCOPY(VEStaticView);
 protected:
   void	Initialize();
   void	Destroy();
@@ -189,15 +164,10 @@ class TA_API VESpaceView: public T3DataViewPar {
 INHERITED(T3DataViewPar)
 friend class VEWorldView;
 public:
-  String	name;		// name of body this one is associated with
-
   VESpace*		Space() const { return (VESpace*)data();}
   virtual void		SetSpace(VESpace* ob);
   
   DATAVIEW_PARENT(VEWorldView)
-
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
 
   override void		BuildAll();
   
@@ -205,8 +175,7 @@ public:
   override bool		ignoreDataChanged() const { return !isVisible(); }
 
   void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const VESpaceView& cp);
-  TA_BASEFUNS(VESpaceView);
+  TA_BASEFUNS_NOCOPY(VESpaceView);
 protected:
   void	Initialize();
   void	Destroy();

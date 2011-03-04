@@ -401,7 +401,6 @@ void DataColView::Initialize(){
 }
 
 void DataColView::Copy_(const DataColView& cp) {
-  name = cp.name;
   visible = cp.visible;
 //   sticky = cp.sticky;
 }
@@ -409,11 +408,6 @@ void DataColView::Copy_(const DataColView& cp) {
 void DataColView::Destroy() {
   CutLinks();
 }
-
-bool DataColView::SetName(const String& value) { 
-  name = value;  
-  return true; 
-} 
 
 void DataColView::Unbind_impl() {
   if (m_data) setDataCol(NULL);
@@ -442,8 +436,8 @@ void DataColView::UpdateFromDataCol(bool first) {
 
 void DataColView::UpdateFromDataCol_impl(bool first) {
   DataCol* col = dataCol();
-  if (name != col->name) {
-    name = col->name;
+  if (!name.contains(col->name)) {
+    SetName(col->name);
   }
   // only copy display options first time, since user may override in view
   if (first) {
@@ -637,13 +631,13 @@ void DataTableView::UpdateFromDataTable(bool first) {
 
 void DataTableView::UpdateName() {
   DataTable* dt = dataTable();
-  if(dt) {
-    if(!name.contains(dt->name))
+  if (dt) {
+    if (!name.contains(dt->name))
       SetName(dt->name);
   }
   else {
-    if(name.empty())
-      name = "no_table";
+    if (name.empty())
+      SetName("no_table");
   }
 }
   
@@ -1072,13 +1066,13 @@ void GridTableView::UpdateAfterEdit_impl(){
 
 void GridTableView::UpdateName() {
   DataTable* dt = dataTable();
-  if(dt) {
-    if(!name.contains(dt->name))
+  if (dt) {
+    if (!name.contains(dt->name))
       SetName(dt->name + "_Grid");
   }
   else {
-    if(name.empty())
-      name = "grid_no_table";
+    if (name.empty())
+      SetName("grid_no_table");
   }
 }
   
@@ -3711,13 +3705,13 @@ const iColor GraphTableView::bgColor(bool& ok) const {
 
 void GraphTableView::UpdateName() {
   DataTable* dt = dataTable();
-  if(dt) {
-    if(!name.contains(dt->name))
+  if (dt) {
+    if (!name.contains(dt->name))
       SetName(dt->name + "_Graph");
   }
   else {
-    if(name.empty())
-      name = "graph_no_table";
+    if (name.empty())
+      SetName("graph_no_table");
   }
 }
   

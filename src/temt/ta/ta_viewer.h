@@ -153,7 +153,6 @@ public:
   static String_Array	image_exts;
   // #HIDDEN list of image extensions in one-to-one correspondence with ImageFormat enum
 
-  String                name;           // name of the object 
   bool			visible; // #HIDDEN whether toolbar window is being shown to user
 
   virtual bool		deleteOnWinClose() const {return false;}
@@ -197,9 +196,6 @@ public:
   // #BUTTON print the image of this view to printer
   static bool		InitImageExts(); // initialize the image extensions, if not already done
   
-  bool   SetName(const String& nm) 	{ name = nm; return true; } 
-  String GetName() const 		{ return name; } 
-  void	SetDefaultName() {SetDefaultName_();} // use the name (for inherited classes)
   void	InitLinks();
   void	CutLinks();
   void	Copy_(const DataViewer& cp);

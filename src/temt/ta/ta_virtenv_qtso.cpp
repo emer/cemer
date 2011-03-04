@@ -213,25 +213,16 @@ void VEBodyView::Initialize(){
   data_base = &TA_VEBody;
 }
 
-void VEBodyView::Copy_(const VEBodyView& cp) {
-  name = cp.name;
-}
-
 void VEBodyView::Destroy() {
   CutLinks();
 }
 
-bool VEBodyView::SetName(const String& value) { 
-  name = value;  
-  return true; 
-} 
-
 void VEBodyView::SetBody(VEBody* ob) {
   if (Body() == ob) return;
   SetData(ob);
-  if(ob) {
-    if (name != ob->name) {
-      name = ob->name;
+  if (ob) {
+    if (!name.contains(ob->name)) {
+      SetName(ob->name);
     }
   }
 }
@@ -612,10 +603,6 @@ void VEObjCarouselView::Initialize(){
   data_base = &TA_VEObjCarousel;
 }
 
-void VEObjCarouselView::Copy_(const VEObjCarouselView& cp) {
-  name = cp.name;
-}
-
 void VEObjCarouselView::Destroy() {
   CutLinks();
 }
@@ -623,9 +610,9 @@ void VEObjCarouselView::Destroy() {
 void VEObjCarouselView::SetObjCarousel(VEObjCarousel* ob) {
   if (ObjCarousel() == ob) return;
   SetData(ob);
-  if(ob) {
-    if (name != ob->name) {
-      name = ob->name;
+  if (ob) {
+    if (!name.contains(ob->name)) {
+      SetName(ob->name);
     }
   }
 }
@@ -695,25 +682,16 @@ void VEJointView::Initialize(){
   data_base = &TA_VEJoint;
 }
 
-void VEJointView::Copy_(const VEJointView& cp) {
-  name = cp.name;
-}
-
 void VEJointView::Destroy() {
   CutLinks();
 }
 
-bool VEJointView::SetName(const String& value) { 
-  name = value;  
-  return true; 
-} 
-
 void VEJointView::SetJoint(VEJoint* ob) {
   if (Joint() == ob) return;
   SetData(ob);
-  if(ob) {
-    if (name != ob->name) {
-      name = ob->name;
+  if (ob) {
+    if (!name.contains(ob->name)) {
+      SetName(ob->name);
     }
   }
 }
@@ -992,25 +970,16 @@ void VEObjectView::Initialize(){
   data_base = &TA_VEObject;
 }
 
-void VEObjectView::Copy_(const VEObjectView& cp) {
-  name = cp.name;
-}
-
 void VEObjectView::Destroy() {
   CutLinks();
 }
 
-bool VEObjectView::SetName(const String& value) { 
-  name = value;  
-  return true; 
-} 
-
 void VEObjectView::SetObject(VEObject* ob) {
   if (Object() == ob) return;
   SetData(ob);
-  if(ob) {
-    if (name != ob->name) {
-      name = ob->name;
+  if (ob) {
+    if (!name.contains(ob->name)) {
+      SetName(ob->name);
     }
   }
 }
@@ -1071,25 +1040,16 @@ void VEStaticView::Initialize(){
   data_base = &TA_VEStatic;
 }
 
-void VEStaticView::Copy_(const VEStaticView& cp) {
-  name = cp.name;
-}
-
 void VEStaticView::Destroy() {
   CutLinks();
 }
 
-bool VEStaticView::SetName(const String& value) { 
-  name = value;  
-  return true; 
-} 
-
 void VEStaticView::SetStatic(VEStatic* ob) {
   if (Static() == ob) return;
   SetData(ob);
-  if(ob) {
-    if (name != ob->name) {
-      name = ob->name;
+  if (ob) {
+    if (!name.contains(ob->name)) {
+      SetName(ob->name);
     }
   }
 }
@@ -1456,25 +1416,16 @@ void VESpaceView::Initialize(){
   data_base = &TA_VESpace;
 }
 
-void VESpaceView::Copy_(const VESpaceView& cp) {
-  name = cp.name;
-}
-
 void VESpaceView::Destroy() {
   CutLinks();
 }
 
-bool VESpaceView::SetName(const String& value) { 
-  name = value;  
-  return true; 
-} 
-
 void VESpaceView::SetSpace(VESpace* ob) {
   if (Space() == ob) return;
   SetData(ob);
-  if(ob) {
-    if (name != ob->name) {
-      name = ob->name;
+  if (ob) {
+    if (!name.contains(ob->name)) {
+      SetName(ob->name);
     }
   }
 }
@@ -1605,13 +1556,13 @@ void VEWorldView::UpdateAfterEdit_impl() {
 
 void VEWorldView::UpdateName() {
   VEWorld* wl = World(); 
-  if(wl) {
-    if(!name.contains(wl->name))
+  if (wl) {
+    if (!name.contains(wl->name))
       SetName(wl->name + "_View");
   }
   else {
-    if(name.empty())
-      name = "no_world";
+    if (name.empty())
+      SetName("no_world");
   }
 }
 

@@ -333,19 +333,13 @@ class EMERGENT_API NetViewObjView: public T3DataView {
   // view of net view object
 INHERITED(T3DataView)
 public:
-  String	name;		// name of body this one is associated with
-
   NetViewObj*		Obj() const { return (NetViewObj*)data();}
   virtual void		SetObj(NetViewObj* ob);
   
   DATAVIEW_PARENT(NetView)
 
-  override bool		SetName(const String& nm);
-  override String	GetName() const 	{ return name; } 
-
   void 	SetDefaultName() {} // leave it blank
-  void	Copy_(const NetViewObjView& cp);
-  TA_BASEFUNS(NetViewObjView);
+  TA_BASEFUNS_NOCOPY(NetViewObjView);
 protected:
   void	Initialize();
   void	Destroy();

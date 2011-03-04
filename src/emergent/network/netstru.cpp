@@ -2639,7 +2639,7 @@ void Unit::GetLocalistName() {
     if(cg->size != 1) continue; // only 1-to-1
     Unit* un = cg->Un(0);
     if(!un->name.empty()) {
-      name = un->name;
+      SetName(un->name);
       break;			// done!
     }
   }

@@ -793,9 +793,9 @@ private:
 
 SpecPtr_of(UnitSpec);
 
-class EMERGENT_API Unit: public taOBase {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit -- basic computational unit of a neural network (e.g., a neuron-like processing unit)
-INHERITED(taOBase)
+class EMERGENT_API Unit: public taNBase {
+  // ##NO_TOKENS ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit -- basic computational unit of a neural network (e.g., a neuron-like processing unit)
+INHERITED(taNBase)
 public: //
   enum ExtType {// #BITS indicates type of external input; some flags used in Layer to control usage
     NO_EXTERNAL 	= 0x00,	// #NO_BIT no input
@@ -808,7 +808,6 @@ public: //
     COMP_TARG_EXT	= 0x07	// #NO_BIT as a comparison, target, and external input layer
   };
 
-  String	name;		// name of unit (empty by default)
   ExtType	ext_flag;
   // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received
   float 	targ;
@@ -1023,8 +1022,7 @@ public: //
   
   override String 	GetTypeDecoKey() const { return "Unit"; }
 
-  override bool 	SetName(const String& nm)    	{ name = nm; return true; }
-  override String	GetName() const			{ return name; }
+  override void 	SetDefaultName() {} // leave it blank
 
   override bool	ChangeMyType(TypeDef* new_type);
 

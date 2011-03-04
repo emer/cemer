@@ -1940,25 +1940,16 @@ void NetViewObjView::Initialize(){
   data_base = &TA_NetViewObj;
 }
 
-void NetViewObjView::Copy_(const NetViewObjView& cp) {
-  name = cp.name;
-}
-
 void NetViewObjView::Destroy() {
   CutLinks();
 }
 
-bool NetViewObjView::SetName(const String& value) { 
-  name = value;  
-  return true; 
-} 
-
 void NetViewObjView::SetObj(NetViewObj* ob) {
   if (Obj() == ob) return;
   SetData(ob);
-  if(ob) {
-    if (name != ob->name) {
-      name = ob->name;
+  if (ob) {
+    if (!name.contains(ob->name)) {
+      SetName(ob->name);
     }
   }
 }
@@ -1968,7 +1959,6 @@ void NetViewObjView::Render_pre() {
   bool show_drag = false;
   if(vw)
     show_drag = vw->interactionModeOn();
-
 
   NetView* nv = GET_MY_OWNER(NetView);
   if(nv && !nv->lay_mv) show_drag = false;
@@ -2532,13 +2522,13 @@ void NetView::ChildRemoving(taDataView* child_) {
 }
 
 void NetView::UpdateName() {
-  if(net()) {
-    if(!name.contains(net()->name))
+  if (net()) {
+    if (!name.contains(net()->name))
       SetName(net()->name + "_View");
   }
   else {
-    if(name.empty())
-      name = "no_network";
+    if (name.empty())
+      SetName("no_network");
   }
 }
 

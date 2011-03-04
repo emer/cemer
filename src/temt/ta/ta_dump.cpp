@@ -1044,7 +1044,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 	  taMisc::FlushConsole();
 	}
       }
-      rval = true;		// member was loaded, do update after edit
+      rval = 1;		// member was loaded, do update after edit
     }
   } while (1);
   if(taMisc::verbose_load >= taMisc::TRACE) {
