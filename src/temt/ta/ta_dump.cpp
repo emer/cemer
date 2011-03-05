@@ -1140,24 +1140,6 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
       return false;
     }
     
-/*obs    //note: in v3, we based expectation of " on string type, but
-    // we should rather let input stream tell us
-    c = taMisc::skip_white(strm, true); // don't read next char, just skip ws
-    
-    if (eff_type->InheritsFrom(TA_taString)) {
-      c = taMisc::read_till_quote(strm); // get 1st quote
-      if (c == '\"')			  // "
-        c = taMisc::read_till_quote_semi(strm);// then till second followed by semi
-    } else {
-      c = taMisc::read_till_rb_or_semi(strm);
-    }
-  
-    if(c != ';') {
-      taMisc::Warning("Missing ';' in dump file for member:", name,
-                    "in eff_type:",GetOwnerType()->name);
-      return true;		// don't scan any more after this err..
-    }*/
-  
     c = taMisc::skip_white(strm, true); // don't read next char, just skip ws
     // in 4.x, we let the stream tell us if a quoted string is coming...
     if (c == '\"') {
@@ -1213,8 +1195,11 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
     taMisc::LexBuf = taMisc::LexBuf.before(' ',-1); // we hope this doesn't happen
 
   int spc_idx = -1;
-  if(has_type && ((spc_idx = taMisc::LexBuf.index(' ')) < 0)) // we still think we have a type but don't
-    has_type = false;
+  if(has_type) {
+    spc_idx = taMisc::find_not_in_quotes(taMisc::LexBuf, ' ');
+    if(spc_idx < 0) // we still think we have a type but don't
+      has_type = false;
+  }
 
   String tpnm;
   if(typnm != NULL) {

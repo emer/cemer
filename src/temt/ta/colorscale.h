@@ -38,8 +38,6 @@ class TAColor;
 class TAColor_List;
 class ColorScaleSpec;
 class ColorScaleSpec_Group;
-class ScaleRange;
-class ScaleRange_List;
 class ColorScale;
 typedef iColor* ptr_iColor; // hacks needed to force creation of TA_const_iColor
 typedef ptr_iColor const_iColor;
@@ -203,41 +201,6 @@ private:
   void 	Destroy()	{ };
 };
 
-//////////////////////////
-//   ScaleRange		//
-//////////////////////////
-
-class TA_API ScaleRange : public taNBase {
-  // ##NO_TOKENS ##CAT_Display saves scale ranges for different variables viewed in netview
-INHERITED(taNBase)
-public:
-  bool		auto_scale;
-  float 	min;
-  float		max;
-
-  void		SetFromScale(ColorScale& cs);
-
-  TA_BASEFUNS(ScaleRange);
-protected:
-  override void		UpdateAfterEdit_impl();
-
-private:
-  void 		Copy_(const ScaleRange &cp)
-    {auto_scale = cp.auto_scale; min = cp.min; max = cp.max; }
-  void 		Initialize()	{ auto_scale = false; min = 0.0f; max = 0.0f;}
-  void 		Destroy()	{ }
-};
-
-
-class TA_API ScaleRange_List : public taList<ScaleRange> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ScaleRange objects
-INHERITED(taList<ScaleRange>)
-public:
-  void			Initialize() {SetBaseType(&TA_ScaleRange);}
-  void 			Destroy() {};
-  TA_BASEFUNS_NOCOPY(ScaleRange_List);
-};
-
 class TA_API ColorScale : public taNBase {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Display defines a range of colors to code data values with
 INHERITED(taNBase)
@@ -275,7 +238,6 @@ public:
 
   virtual void		MapColors(); 	// generates the colors from spec
   virtual void 		NewDefaults(); //
-  void			SetFromScaleRange(ScaleRange* sr);
 
   // funcs used to be in bar:
   virtual void		ModRange(float val);

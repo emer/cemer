@@ -66,11 +66,54 @@
 
 // forwards
 
+class ScaleRange;
+class ScaleRange_List;
 class UnitGroupView; //
 class LayerView; //
 class PrjnView; //
 class NetView; //
 class NetViewPanel; //
+
+
+//////////////////////////
+//   ScaleRange		//
+//////////////////////////
+
+class EMERGENT_API ScaleRange : public taOBase {
+  // ##NO_TOKENS ##CAT_Display saves scale ranges for different variables viewed in netview
+INHERITED(taOBase)
+public:
+  String	var_name;		// #AKA_name name of variable -- not name of object
+  bool		auto_scale;
+  float 	min;
+  float		max;
+
+  override bool	FindCheck(const String& nm) const
+  { return (var_name == nm); }
+
+  void		SetFromScale(ColorScale& cs);
+  void		SetFromScaleRange(ColorScale& cs);
+
+  TA_BASEFUNS(ScaleRange);
+protected:
+  override void		UpdateAfterEdit_impl();
+
+private:
+  void 		Copy_(const ScaleRange &cp)
+    {auto_scale = cp.auto_scale; min = cp.min; max = cp.max; }
+  void 		Initialize()	{ auto_scale = false; min = 0.0f; max = 0.0f;}
+  void 		Destroy()	{ }
+};
+
+
+class EMERGENT_API ScaleRange_List : public taList<ScaleRange> {
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Display list of ScaleRange objects
+INHERITED(taList<ScaleRange>)
+public:
+  void			Initialize() {SetBaseType(&TA_ScaleRange);}
+  void 			Destroy() {};
+  TA_BASEFUNS_NOCOPY(ScaleRange_List);
+};
 
 
 ////////////////////////////////////////////////////

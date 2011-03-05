@@ -82,6 +82,27 @@
 #include <float.h>
 //nn #include <unistd.h>
 
+//////////////////////////
+//   ScaleRange		//
+//////////////////////////
+
+void ScaleRange::SetFromScale(ColorScale& cs) {
+  auto_scale = cs.auto_scale;
+  min = cs.min;
+  max = cs.max;
+}
+
+void ScaleRange::SetFromScaleRange(ColorScale& cs) {
+  cs.auto_scale = auto_scale;
+  cs.SetMinMax(min, max);
+}
+
+void ScaleRange::UpdateAfterEdit_impl() {
+  taOBase::UpdateAfterEdit_impl(); // skip over taNbase to avoid c_name thing!
+}
+
+
+
 NetView* nvDataView::nv() {
   if (!m_nv)
     m_nv = GET_MY_OWNER(NetView);
@@ -3404,7 +3425,7 @@ void NetView::SetScaleData(bool auto_scale_, float min_, float max_, bool update
 void NetView::SetScaleDefault() {
   if (unit_sr)  {
     InitScaleRange(*unit_sr);
-    scale.SetFromScaleRange(unit_sr);
+    unit_sr->SetFromScaleRange(scale);
   } else {
     scale.auto_scale = false;
     scale.SetMinMax(-1.0f, 1.0f);
@@ -3462,10 +3483,10 @@ void NetView::setUnitDispMd(MemberDef* md) {
   unit_sr = scale_ranges.FindName(nm);
   if (unit_sr == NULL) {
     unit_sr = (ScaleRange*)(scale_ranges.New(1,&TA_ScaleRange));
-    unit_sr->name = nm;
+    unit_sr->var_name = nm;
     InitScaleRange(*unit_sr);
   }
-  scale.SetFromScaleRange(unit_sr);
+  unit_sr->SetFromScaleRange(scale);
 }
 
 void NetView::UpdateViewerModeForMd(MemberDef* md) {

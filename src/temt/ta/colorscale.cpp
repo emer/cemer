@@ -485,20 +485,6 @@ void ColorScaleSpec_Group::SetDefaultColor() {
 }
 
 //////////////////////////
-//   ScaleRange		//
-//////////////////////////
-
-void ScaleRange::SetFromScale(ColorScale& cs) {
-  auto_scale = cs.auto_scale;
-  min = cs.min;
-  max = cs.max;
-}
-
-void ScaleRange::UpdateAfterEdit_impl() {
-  taOBase::UpdateAfterEdit_impl(); // skip over taNbase to avoid c_name thing!
-}
-
-//////////////////////////
 //	ColorScale	//
 //////////////////////////
 
@@ -698,12 +684,6 @@ void ColorScale::FixRangeZero() {
   range = (max - min) /2.0;
   zero = max - range;
 };
-
-void ColorScale::SetFromScaleRange(ScaleRange* sr) {
-  if (!sr) return;
-  auto_scale = sr->auto_scale;
-  SetMinMax(sr->min, sr->max);
-}
 
 void ColorScale::SetMinMax(float mn,float mx){
   if((min == mn) && (max == mx)) return;

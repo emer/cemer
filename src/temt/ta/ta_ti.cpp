@@ -101,7 +101,6 @@ template class TA_API DataColTp<byte_Matrix>;
 template class TA_API taList<RGBA>;
 template class TA_API taList<TAColor>;
 template class TA_API taGroup<ColorScaleSpec>;
-template class TA_API taList<ScaleRange>;
 
 
 #ifdef TA_OS_MAC // for some reason, these need to be here for MacOS

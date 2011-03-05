@@ -2308,6 +2308,33 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
   return c;
 }
 
+
+int taMisc::find_not_in_quotes(const String& str, char c, int start) {
+  int len = str.length();
+  bool in_str = false;
+  if(start < 0) {
+    for(int i=len+start; i>=0; i--) {
+      char cv = str[i];
+      if(cv == '\"') {
+	in_str = !in_str;
+	continue;
+      }
+      if(!in_str && cv == c) return i;
+    }
+  }
+  else {
+    for(int i=start; i<len; i++) {
+      char cv = str[i];
+      if(cv == '\"') {
+	in_str = !in_str;
+	continue;
+      }
+      if(!in_str && cv == c) return i;
+    }
+  }
+  return -1;
+}
+
 int taMisc::replace_strings(istream& istrm, ostream& ostrm, NameVar_PArray& repl_list) {
   int n_repl = 0;
   int c;

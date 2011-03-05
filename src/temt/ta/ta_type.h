@@ -1173,12 +1173,16 @@ public:
   static int	skip_past_err(istream& strm, bool peek = false);
   // #CAT_Parse skips to next rb or semi (robust)
   static int	skip_past_err_rb(istream& strm, bool peek = false);
-  // #CAT_Parse skips to next rbracket (robust)
+  // #CAT_Parse skips to next rbracket (  
+
+  static int 	find_not_in_quotes(const String& str, char c, int start = 0);
+  // #CAT_Parse find character c in the string, starting at given index (- = from end), making sure that the character is not contained within a quoted string within the overall string
 
   static int	replace_strings(istream& istrm, ostream& ostrm, NameVar_PArray& repl_list);
   // #CAT_File replace a list of strings (no regexp) in input file istrm to output file ostrm (name -> value) -- reads one line at a time; returns number replaced
   static int  	find_strings(istream& istrm, String_PArray& strs);
   // #CAT_File find first occurrence of any of the given strings in file (reading one line at a time); returns index of string or -1 if none found
+
 
   ////////////////////////////////////////////////////////////////////////
   //	HTML-style tags

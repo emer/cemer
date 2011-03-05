@@ -94,7 +94,7 @@ public:
 // note: this now requires Quarter instead of SoQt
 
 class TA_API T3SavedView : public taNBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_View Saves camera parameters for the Quarter Examiner Viewer -- name of view is name of object -- can store other arbitrary info in UserData for this guy
+  // ##CAT_View Saves camera parameters for the Quarter Examiner Viewer -- name of view is name of object -- can store other arbitrary info in UserData for this guy
 INHERITED(taNBase)
 public:
   bool		view_saved;	// #READ_ONLY #SHOW whether a view is currently saved or not

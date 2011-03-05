@@ -45,6 +45,7 @@
 #include "emergent_base.h"
 #include "emergent_project.h"
 #include "netstru_extra.h"
+#include "netstru_qtso.h"
 #include "v3_compat.h"
 
 #ifdef TA_GUI
@@ -76,6 +77,7 @@ template class EMERGENT_API SpecPtr<ConSpec>;
 template class EMERGENT_API SpecPtr<UnitSpec>;
 template class EMERGENT_API SpecPtr<ProjectionSpec>;
 template class EMERGENT_API SpecPtr<EventSpec>;
+template class EMERGENT_API taList<ScaleRange>;
 
 // v3_compat.h
 template class EMERGENT_API taGroup<Event>;

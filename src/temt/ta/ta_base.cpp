@@ -927,35 +927,9 @@ Variant taBase::GetValFromPath(const String& path, MemberDef*& ret_md, bool warn
   return eff_typ->GetValVar(eff_base, md);
 }
 
-static int find_in_path_not_quotes(const String& path, char c, int start) {
-  int len = path.length();
-  bool in_str = false;
-  if(start < 0) {
-    for(int i=len+start; i>=0; i--) {
-      char cv = path[i];
-      if(cv == '\"') {
-	in_str = !in_str;
-	continue;
-      }
-      if(!in_str && cv == c) return i;
-    }
-  }
-  else {
-    for(int i=start; i<len; i++) {
-      char cv = path[i];
-      if(cv == '\"') {
-	in_str = !in_str;
-	continue;
-      }
-      if(!in_str && cv == c) return i;
-    }
-  }
-  return -1;
-}
-
 int taBase::GetNextPathDelimPos(const String& path, int start) {
-  int point_idx = find_in_path_not_quotes(path, '.', start+1); // skip any possible starting delim
-  int brack_idx = find_in_path_not_quotes(path, '[', start+1);
+  int point_idx = taMisc::find_not_in_quotes(path, '.', start+1); // skip any possible starting delim
+  int brack_idx = taMisc::find_not_in_quotes(path, '[', start+1);
 
   // if there is a period but not a bracket, or the period is before the bracket
   if(((brack_idx < start) && (point_idx >= start)) ||
@@ -970,8 +944,8 @@ int taBase::GetNextPathDelimPos(const String& path, int start) {
 }
 
 int taBase::GetLastPathDelimPos(const String& path) {
-  int point_idx = find_in_path_not_quotes(path, '.',-1);
-  int brack_idx = find_in_path_not_quotes(path, '[',-1);
+  int point_idx = taMisc::find_not_in_quotes(path, '.',-1);
+  int brack_idx = taMisc::find_not_in_quotes(path, '[',-1);
 
   if(point_idx > brack_idx) {		// point comes after bracket
     return point_idx;
