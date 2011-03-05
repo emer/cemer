@@ -7,6 +7,10 @@
 import os, re, subprocess, sys, urllib, webbrowser, _winreg
 from zipfile import ZipFile
 
+def quit(exit_val):
+	os.system('color 07')
+	sys.exit(exit_val)
+
 def setEnvVar(name, value, reg, env):
 	try:
 		key = _winreg.OpenKey(reg, env, 0, _winreg.KEY_ALL_ACCESS)
@@ -89,7 +93,7 @@ def getUrl(url):
 		os.remove(file)
 		print "\nERROR: could not download file from: " + url
 		print "\nAborting."
-		sys.exit(1)
+		quit(1)
 	return file
 
 def getOptions(default):
@@ -111,7 +115,7 @@ def askUser(question, default="Y"):
 		return True
 	if response[0] == "q" or response[0] == "Q":
 		print "\nQuitting at user request."
-		sys.exit(0)
+		quit(0)
 	return response[0] == "y" or response[0] == "Y"
 
 def inst_msvs():
@@ -197,7 +201,30 @@ def inst_jom():
 		if fileExists(jom_exe):
 			use_jom = True
 
+# Ask user if they want to build Debug or Release.  Set the default based
+# on what folder this script is run from.
+def is_debug_path(path):
+	if path.find("dbg") > 0 or path.find("debug") > 0:
+		print "\n  Detected DEBUG path: " + path
+		return True
+	return False
+
+build_debug = is_debug_path(os.getcwd()) or is_debug_path(sys.argv[0])
 emer_src = 'C:/src/emergent'
+def ask_debug_or_release():
+	global build_debug, emer_src
+	done = False
+	while not done:
+		if build_debug:
+			if askUser("\nMake DEBUG build? (say no for release)"): done = True
+			else: build_debug = False
+		else:
+			if askUser("\nMake RELEASE build? (say no for debug)"): done = True
+			else: build_debug = True
+	if build_debug:
+		emer_src += "-dbg"
+		os.system('color 0e')
+
 def inst_emer_src():
 	if not dirExists(emer_src + '/.svn'):
 		print "\nYou need to checkout the Emergent source code from subversion."
@@ -207,7 +234,7 @@ def inst_emer_src():
 			svnclient = findInProgFiles('SlikSvn/bin/svn.exe')
 			if not svnclient:
 				print "Can't continue because SVN client needs to be installed!  Quitting."
-				sys.exit(1)
+				quit(1)
 
 			response = raw_input("\nEnter your username (blank for anonymous) [anonymous]: ")
 			cmd = '"' + svnclient + '" checkout'
@@ -226,7 +253,7 @@ def inst_emer_src():
 			svnclient = findInProgFiles('SlikSvn/bin/svn.exe')
 			if not svnclient:
 				print "Can't continue because SVN client needs to be installed!  Quitting."
-				sys.exit(1)
+				quit(1)
 			cmd = '"' + svnclient + '" update ' + emer_src
 			print "\nUpdating Emergent source code..."
 			print cmd
@@ -243,7 +270,7 @@ def inst_coin():
 			zip = ZipFile(file)
 			zip.extractall(coin_dir)
 
-third_party_dir = 'C:/src/emergent/3rdparty'
+third_party_dir = emer_src + '/3rdparty'
 def inst_3rd_party():
 	while not fileExists(third_party_dir + '/lib/gsl.lib'):
 		print "\nYou need to get the 'third party' package.  This can be done for you."
@@ -346,6 +373,7 @@ def build_emergent():
 
 	print "\nBuilding Emergent..."
 	emer_build = emer_src + '/build'
+	if build_debug: emer_build += "-dbg"
 	makeDir(emer_build)
 
 	cmake_bat = emer_src + '/do_cmake.bat'
@@ -354,7 +382,10 @@ def build_emergent():
 	f.write('echo on\n')
 	f.write('call "' + fixPath(vcvarsall_bat) + '"\n')
 	f.write("cd /d " + fixPath(emer_build) + "\n")
-	if use_jom:
+	if build_debug:
+		f.write('"' + fixPath(cmake_exe) + '" .. -G "Visual Studio 9 2008" -DCMAKE_BUILD_TYPE=Debug\n')
+		f.write('start Emergent.sln')
+	elif use_jom:
 		f.write('"' + fixPath(cmake_exe) + '" .. -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release\n')
 		f.write('"' + fixPath(jom_exe) + '" package')
 	else:
@@ -363,12 +394,14 @@ def build_emergent():
 	f.close()
 	os.system(cmake_bat)
 
+os.system('color 07')
 inst_msvs()
 inst_nsis()
 inst_qt()
 inst_svn()
 inst_cmake()
 inst_jom()
+ask_debug_or_release()
 inst_emer_src()
 inst_coin()
 inst_3rd_party()
@@ -378,3 +411,4 @@ compile_quarter()
 build_emergent()
 
 response = raw_input("\n\n\nPress enter to close the window.\n")
+quit(0)
