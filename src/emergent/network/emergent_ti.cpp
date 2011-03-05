@@ -45,7 +45,6 @@
 #include "emergent_base.h"
 #include "emergent_project.h"
 #include "netstru_extra.h"
-#include "netstru_qtso.h"
 #include "v3_compat.h"
 
 #ifdef TA_GUI

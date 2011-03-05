@@ -54,7 +54,7 @@ add_custom_target(svn_revision_header ALL
 # this purposefully does not create the doesnotexist.h file!
 # creates svnrev.h using cmake script
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/doesnotexist.h
-    COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+    COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR="${PROJECT_SOURCE_DIR}"
                          -P ${CMAKE_CURRENT_SOURCE_DIR}/GetSvn.cmake)
 
 # svnrev.h is a generated file
