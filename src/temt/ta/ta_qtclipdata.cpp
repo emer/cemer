@@ -195,7 +195,7 @@ void taiObjectMimeFactory::AddObjectData(QMimeData* md, taBase* obj, int idx) {
 void taiObjectMimeFactory::AddHeaderDesc(taBase* obj, QString& str) {
   //note: can't use Path_Long because path parsing routines don't handle names in paths
   str = str + obj->GetTypeDef()->name.toQString() + ";" +
-        obj->GetPathNames().toQString() + ";\n"; // we put ; at end to facilitate parsing, and for }
+        obj->GetPath().toQString() + ";\n"; // we put ; at end to facilitate parsing, and for }
 }
 
 void taiObjectMimeFactory::InitHeader(int cnt, QString& str) {
