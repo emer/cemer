@@ -23,6 +23,26 @@
 #include "ta_dataproc.h"
 #include "netstru.h"
 
+// This is a workaround for a problem that can occur depending on the order of
+// includes.  The problem is that the windows header file "Nb30.h" contains
+// "#define GROUP_NAME 0x80".  If that header gets #included before this one,
+// you get all sorts of cryptic compiler errors, since a literal 0x80 appears
+// in the NetTarget enum definition.  This #undef is relatively safe, since
+// the "Nb30.h" header is related to NetBIOS stuff which Emergent doesn't use.
+//
+// First make sure the GROUP_NAME macro has been defined, then undefine it.
+// It's necessary to ensure it has been defined first, otherwise if some .cpp
+// file #includes this file, then "t3viewer.h", it would end up with the macro
+// defined, and would fail to compile if it used LayerDataEl::GROUP_NAME.
+// The include chain, starting at t3viewer.h, is:
+//   t3viewer.h -> QuarterWidget.h -> QGLWidget -> qgl.h -> qt_windows.h
+//     -> windows.h -> nb30.h
+#include "t3viewer.h"
+#ifdef GROUP_NAME
+  #pragma message("Warning: undefining GROUP_NAME macro")
+  #undef GROUP_NAME
+#endif
+
 //////////////////////////////////////////
 //	Layer Reader / Writer		//
 //////////////////////////////////////////

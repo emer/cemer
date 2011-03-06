@@ -384,13 +384,16 @@ def build_emergent():
 	f.write("cd /d " + fixPath(emer_build) + "\n")
 	if build_debug:
 		f.write('"' + fixPath(cmake_exe) + '" .. -G "Visual Studio 9 2008" -DCMAKE_BUILD_TYPE=Debug\n')
-		f.write('start Emergent.sln')
+		f.write('if ERRORLEVEL 1 exit\n')
+		f.write('start Emergent.sln\n')
 	elif use_jom:
 		f.write('"' + fixPath(cmake_exe) + '" .. -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release\n')
-		f.write('"' + fixPath(jom_exe) + '" package')
+		f.write('if ERRORLEVEL 1 exit\n')
+		f.write('"' + fixPath(jom_exe) + '" package\n')
 	else:
 		f.write('"' + fixPath(cmake_exe) + '" .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release\n')
-		f.write('nmake package')	
+		f.write('if ERRORLEVEL 1 exit\n')
+		f.write('nmake package\n')
 	f.close()
 	os.system(cmake_bat)
 
