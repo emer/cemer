@@ -24,6 +24,15 @@ if [ -z $REV ]; then
   if [ -z $REV ]; then REV="HEAD"; fi
 fi
 
+# Check if the Quarter library should be rebuilt.  Defaults to yes, unless
+# it is already installed.
+BUILD_QUARTER="y"
+if dpkg-query -s libquarter0 2>&1 | grep -q "Status.*installed"; then
+  BUILD_QUARTER="n"
+  read -p "Rebuild the Quarter library from source? [y/N]: " BUILD_QUARTER
+  if [ "$BUILD_QUARTER" == "Y" ]; then BUILD_QUARTER="y"; fi
+fi
+
 # Make sure the backports repo is enabled so we can get cmake 2.8.3 on
 # maverick (cmake 2.8.2 has a bug that prevents creating .deb packages
 # that work) and cmake 2.8.1 on lucid (cmake 2.8.0 has some other bug).
@@ -77,8 +86,13 @@ sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS 2>&1 > $OUTPUT
 
 # This may fail (expectedly) if the packages aren't already installed,
 # so allow it with the echo alternative (otherwise set -e would bail).
-echo "Removing any existing libquarter and emergent installations..."
-sudo apt-get -q -y remove emergent libquarter libquarter0 | sed 's/^/  /' || echo "(OK)"
+if [ "$BUILD_QUARTER" == "y" ]; then
+  echo "Removing any existing libquarter and emergent installations..."
+  sudo apt-get -q -y remove emergent libquarter libquarter0 | sed 's/^/  /' || echo "(OK)"
+else
+  echo "Removing any existing emergent installations..."
+  sudo apt-get -q -y remove emergent libquarter | sed 's/^/  /' || echo "(OK)"
+fi
 
 # Make sure we don't keep an old copy of libquarter0 in the cache,
 # since later we need to install the one we built.
@@ -86,25 +100,32 @@ sudo apt-get -qq autoremove | sed 's/^/  /'
 
 # If we're not already in the build scripts directory,
 # then get it and change into it
-if [ ! -x ./ubuntu-motu-quarter ]; then
+if [ ! -x ./ubuntu-motu-emergent ]; then
   svn checkout http://grey.colorado.edu/svn/emergent/emergent/trunk/package
   cd package
 fi
 
-echo -e "\nBuilding and packaging Quarter (log will open in separate xterm)..."
-echo "  (ctrl-c in *this* window will kill the build/package process)"
-OUTPUT="libQuarter-build-output.txt"
-test -x $XTERM && $XTERM -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
-./ubuntu-motu-quarter 2>&1 > $OUTPUT
+if [ "$BUILD_QUARTER" == "y" ]; then
+  echo -e "\nBuilding and packaging Quarter (log will open in separate xterm)..."
+  echo "  (ctrl-c in *this* window will kill the build/package process)"
+  OUTPUT="libQuarter-build-output.txt"
+  test -x $XTERM && $XTERM -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
+  ./ubuntu-motu-quarter 2>&1 > $OUTPUT
 
-echo -e "\nInstalling the Quarter libraries before building Emergent..."
-sudo dpkg -i /tmp/libquarter0_*.deb
+  echo -e "\nInstalling the Quarter libraries before building Emergent..."
+  sudo dpkg -i /tmp/libquarter0_*.deb
+fi
 
 echo -e "\nBuilding and packaging Emergent (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the build/package process)"
 OUTPUT="emergent-build-output.txt"
 test -x $XTERM && $XTERM -T "Emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
 ./ubuntu-motu-emergent $REV 2>&1 > $OUTPUT
+
+DEBS="/tmp/emergent\*.deb"
+if [ "$BUILD_QUARTER" == "y" ]; then
+  DEBS="/tmp/libquarter\*.deb ${DEBS}"
+fi
 
 cat <<INSTRUCTIONS
 
@@ -114,7 +135,7 @@ Done!
 ** If all went well, copy the libquarter*.deb and emergent*.deb files
 ** to your home directory on grey and run update-ubuntu-repo.sh
 **
-** scp /tmp/libquarter*.deb /tmp/emergent*.deb dpfurlani@grey.colorado.edu:/home/dpfurlani/$REPONAME/
+** scp ${DEBS} dpfurlani@grey.colorado.edu:/home/dpfurlani/$REPONAME/
 ** ssh dpfurlani@grey.colorado.edu
 ** sudo update-ubuntu-repo.sh
 

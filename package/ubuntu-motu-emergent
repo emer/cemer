@@ -6,24 +6,33 @@ if [ -z $REV ]; then
   read -p "Enter the svn revision number to retrieve: [HEAD] " REV
   if [ -z $REV ]; then REV="HEAD"; fi
 fi
-echo "Building Emergent rev $REV on "
+echo "Building Emergent from Subversion rev $REV on "
 cat /etc/issue || echo "Unknown platform"
 
 #NUM_PROCS=`grep "^processor\s*:\s*[0-9]*$" /proc/cpuinfo |wc -l`
 #MAKEFLAGS="${MAKEFLAGS} -j${NUM_PROCS}"
 
-EMERGENT_VERSION=5.1.2
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 REPONAME=`lsb_release -cs` # e.g., "maverick"
 
-cd /tmp && rm -f emergent_${EMERGENT_VERSION}*
-svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk /tmp/emergent-${EMERGENT_VERSION}
+EMERGENT_TMP_DIR=emergent_TMP
+cd /tmp && rm -rf emergent_*
+svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk ${EMERGENT_TMP_DIR}
+# config.h is a generated file, so can't do this:
+#EMERGENT_VERSION=`sed -n '/VERSION/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/config.h`
+EMERGENT_VERSION_MAJOR=`sed -n '/set(EMERGENT_VERSION_MAJOR/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/CMakeLists.txt`
+EMERGENT_VERSION_MINOR=`sed -n '/set(EMERGENT_VERSION_MINOR/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/CMakeLists.txt`
+EMERGENT_VERSION_PATCH=`sed -n '/set(EMERGENT_VERSION_PATCH/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/CMakeLists.txt`
+EMERGENT_VERSION="${EMERGENT_VERSION_MAJOR}.${EMERGENT_VERSION_MINOR}.${EMERGENT_VERSION_PATCH}"
+EMERGENT_BLD_DIR=emergent-${EMERGENT_VERSION}
+mv ${EMERGENT_TMP_DIR} ${EMERGENT_BLD_DIR}
+echo "Building Emergent version ${EMERGENT_VERSION}"
 # wget ftp://grey.colorado.edu/pub/emergent/emergent-5.tar.gz
 # tar -xzf emergent-5.tar.gz
-# mv emergent emergent-${EMERGENT_VERSION}
-tar -czf emergent_${EMERGENT_VERSION}.orig.tar.gz emergent-${EMERGENT_VERSION}
-cd emergent-${EMERGENT_VERSION}
+# mv emergent ${EMERGENT_BLD_DIR}
+tar -czf emergent_${EMERGENT_VERSION}.orig.tar.gz ${EMERGENT_BLD_DIR}
+cd ${EMERGENT_BLD_DIR}
 mkdir -p debian
 
 #################################################

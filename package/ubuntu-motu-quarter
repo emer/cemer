@@ -3,6 +3,8 @@ set -e
 
 #sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts mercurial
 
+echo "Building Quarter from Mercurial source"
+
 QUARTER_VERSION=1.0
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
