@@ -122,9 +122,9 @@ OUTPUT="emergent-build-output.txt"
 test -x $XTERM && $XTERM -T "Emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
 ./ubuntu-motu-emergent $REV 2>&1 > $OUTPUT
 
-DEBS="/tmp/emergent\*.deb"
+DEBS="/tmp/emergent*.deb"
 if [ "$BUILD_QUARTER" == "y" ]; then
-  DEBS="/tmp/libquarter\*.deb ${DEBS}"
+  DEBS="/tmp/libquarter*.deb ${DEBS}"
 fi
 
 cat <<INSTRUCTIONS
