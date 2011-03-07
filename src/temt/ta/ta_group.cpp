@@ -532,6 +532,7 @@ void* taGroup_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
     idx_str = idx_str.after('[');
     if(idx_str.contains('\"')) {
       String elnm = idx_str.between('\"','\"');
+      elnm = taMisc::StringCVar(elnm);
       if(TestWarning(elnm.empty(), "FindMembeR","empty string index name:", idx_str))
 	return NULL;
       return FindName_(elnm);

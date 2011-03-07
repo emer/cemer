@@ -3736,7 +3736,7 @@ bool taList_impl::MakeElNamesUnique() {
 	String orig = nm2;
 	nm2 = nm2 + "_" + (String)j;
 	taMisc::Warning("taList_impl::MakeElNamesUnique",
-		"names of items on the list must be unique -- renaming:",orig,"to:",nm2);
+		"names of items on the list must be unique -- renaming:",el2->GetPathNames(),"to:",nm2);
 	el2->SetName(nm2);
 	el2->UpdateAfterEdit();	// trigger update so visible
 	unique = false;
@@ -3781,7 +3781,7 @@ bool taList_impl::MakeElNameUnique(taBase* itm) {
       String orig = itmnm;
       itmnm = itmnm + "_" + (String)FindEl_(itm);
       taMisc::Warning("taList_impl::MakeElNameUnique",
-		      "names of items on the list must be unique -- renaming:",orig,"to:",itmnm);
+		      "names of items on the list must be unique -- renaming:",itm->GetPathNames(),"to:",itmnm);
       itm->SetName(itmnm);
       itm->UpdateAfterEdit();	// trigger update so visible
       unique = false;
@@ -4107,6 +4107,7 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
   if(elnm.firstchar() == '\"') {
     has_nm = true;
     elnm = elnm.between('\"','\"');
+    elnm = taMisc::StringCVar(elnm);
     nw_el = (taBase*)FindName_(elnm);
     if(nw_el)
       idx = FindEl_(nw_el);
@@ -4330,6 +4331,7 @@ void* taList_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
     idx_str = idx_str.after('[');
     if(idx_str.contains('\"')) {
       String elnm = idx_str.between('\"','\"');
+      elnm = taMisc::StringCVar(elnm);
       if(TestWarning(elnm.empty(), "FindMembeR","empty string index name:", idx_str))
 	return NULL;
       return FindName_(elnm);
