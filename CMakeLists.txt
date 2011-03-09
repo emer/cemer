@@ -47,7 +47,7 @@ endif (WIN32)
 # version setting
 set(EMERGENT_VERSION_MAJOR "5")
 set(EMERGENT_VERSION_MINOR "1")
-set(EMERGENT_VERSION_PATCH "3")
+set(EMERGENT_VERSION_PATCH "4")
 set(EMERGENT_VERSION "${EMERGENT_VERSION_MAJOR}.${EMERGENT_VERSION_MINOR}.${EMERGENT_VERSION_PATCH}")
 
 # this is used for versioning the libs themselves
@@ -249,10 +249,6 @@ install(FILES AUTHORS ChangeLog COPYING COPYING.LIB
 )
 
 # also install our cmake module files for use by plugins, etc
-# Need to create directories before putting stuff in them.
-# Next two lines don't actually accomplish anything.
-# install(DIRECTORY DESTINATION ${EMERGENT_SHARE_DEST})
-# install(DIRECTORY DESTINATION ${EMERGENT_SHARE_DEST}/CMakeModulesFK)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules
   DESTINATION ${EMERGENT_SHARE_DEST}
   FILES_MATCHING PATTERN "*.cmake")
