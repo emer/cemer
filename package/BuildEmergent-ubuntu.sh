@@ -81,7 +81,7 @@ XTERM=`which xterm`
 echo -e "\nInstalling packages needed to build (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the package install process)"
 OUTPUT="apt-get-install-output.txt"
-test -x $XTERM && $XTERM -T "apt-get install progress (safe to close this window)" -e tail -F $OUTPUT &
+test -x "$XTERM" && $XTERM -geometry 160x50 -T "apt-get install progress (safe to close this window)" -e tail -F $OUTPUT &
 sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS 2>&1 > $OUTPUT
 
 # This may fail (expectedly) if the packages aren't already installed,
@@ -109,7 +109,7 @@ if [ "$BUILD_QUARTER" == "y" ]; then
   echo -e "\nBuilding and packaging Quarter (log will open in separate xterm)..."
   echo "  (ctrl-c in *this* window will kill the build/package process)"
   OUTPUT="libQuarter-build-output.txt"
-  test -x $XTERM && $XTERM -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
+  test -x "$XTERM" && $XTERM -geometry 160x50 -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
   ./ubuntu-motu-quarter 2>&1 > $OUTPUT
 
   echo -e "\nInstalling the Quarter libraries before building Emergent..."
@@ -119,7 +119,7 @@ fi
 echo -e "\nBuilding and packaging Emergent (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the build/package process)"
 OUTPUT="emergent-build-output.txt"
-test -x $XTERM && $XTERM -T "Emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
+test -x "$XTERM" && $XTERM -geometry 160x50 -T "Emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
 ./ubuntu-motu-emergent $REV 2>&1 > $OUTPUT
 
 DEBS="/tmp/emergent*.deb"

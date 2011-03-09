@@ -26,6 +26,7 @@ EMERGENT_VERSION_MINOR=`sed -n '/set(EMERGENT_VERSION_MINOR/s/.*"\(.*\)".*/\1/p'
 EMERGENT_VERSION_PATCH=`sed -n '/set(EMERGENT_VERSION_PATCH/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/CMakeLists.txt`
 EMERGENT_VERSION="${EMERGENT_VERSION_MAJOR}.${EMERGENT_VERSION_MINOR}.${EMERGENT_VERSION_PATCH}"
 EMERGENT_BLD_DIR=emergent-${EMERGENT_VERSION}
+rm -rf ${EMERGENT_BLD_DIR}
 mv ${EMERGENT_TMP_DIR} ${EMERGENT_BLD_DIR}
 echo "Building Emergent version ${EMERGENT_VERSION}"
 # wget ftp://grey.colorado.edu/pub/emergent/emergent-5.tar.gz
