@@ -7982,8 +7982,7 @@ void iTreeViewItem::init(const String& tree_name, taiDataLink* link_,
     setData(0, Qt::FontRole, fnt);
   }
 */
-  given_name = tree_name;
-  setText(0, GetColText(0, tree_name));
+  setName(GetColText(0, tree_name));
   setDragEnabled(dn_flags & DNF_CAN_DRAG);
   setDropEnabled(!(dn_flags & DNF_NO_CAN_DROP));
   // note: lazy children moved to Decorate because uses virtuals

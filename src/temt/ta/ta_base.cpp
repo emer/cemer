@@ -3851,7 +3851,11 @@ const KeyString taList_impl::GetListColKey(int col) const {
 }
 
 String taList_impl::GetColText(const KeyString& key, int itm_idx) const {
-  if (key == key_disp_name) return GetName(); // get name here instead of display name
+  if (key == key_disp_name) {
+    // Bug 1289: Allow iTreeViewItem::GetColText() to set the display name
+    // to a prettier default value (given_name / tree_nm).
+    return "";
+  }
   return inherited_taBase::GetColText(key, itm_idx);
 }
 

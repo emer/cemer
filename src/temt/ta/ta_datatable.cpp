@@ -2048,8 +2048,7 @@ DataCol* DataTable::NewCol_impl(DataCol::ValType val_type,
   default: return NULL; // compiler food
   }
   col_idx = data.size; // next idx
-  DataCol* rval = (DataCol*) data.New(1, td);
-  rval->name = col_nm;
+  DataCol* rval = (DataCol*) data.New(1, td, col_nm);
   // additional specialized initialization
   switch (val_type) {
   case VT_STRING: 
@@ -2064,6 +2063,9 @@ DataCol* DataTable::NewCol_impl(DataCol::ValType val_type,
     break;
   default: break; // compiler food
   }
+  // DPF: Shouldn't need this line now that col_nm gets passed into New?
+  // Name isn't made unique in New call since owner isn't set, and doesn't
+  // happen here either.
   rval->DataChanged(DCR_ITEM_UPDATED); // because we set name after creation
   return rval;
 }
