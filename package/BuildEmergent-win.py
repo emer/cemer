@@ -9,6 +9,7 @@ from zipfile import ZipFile
 
 def quit(exit_val):
 	os.system('color 07')
+	response = raw_input("\n\n\nPress enter to close the window.\n")
 	sys.exit(exit_val)
 
 def setEnvVar(name, value, reg, env):
@@ -103,13 +104,8 @@ def getOptions(default):
 	else:                                  return " [y/n/Q/a]: "
 
 yes_to_all = False
-def askUser(question, default="Y"):
+def process_response(response):
 	global yes_to_all
-	if yes_to_all and default == "Y": return True
-	while True:
-		response = raw_input(question + getOptions(default))
-		if response == "": response = default
-		if response != "": break
 	if response[0] == "a" or response[0] == "A":
 		yes_to_all = True
 		return True
@@ -117,6 +113,24 @@ def askUser(question, default="Y"):
 		print "\nQuitting at user request."
 		quit(0)
 	return response[0] == "y" or response[0] == "Y"
+	
+def askUser(question, default="Y"):
+	if yes_to_all and default == "Y": return True
+	while True:
+		response = raw_input(question + getOptions(default))
+		if response == "": response = default
+		if response != "": break
+	return process_response(response)
+
+def get_svn_rev(question):
+	while True:
+		response = raw_input(question + getOptions(""))
+		if response != "": break
+	if process_response(response):
+		return "HEAD"
+	if response[0] == "n" or response[0] == "N":
+		return -1
+	return response
 
 def inst_msvs():
 	while not findInProgFiles('Microsoft Visual Studio 9.0/VC/bin/cl.exe'):
@@ -216,20 +230,22 @@ def ask_debug_or_release():
 	done = False
 	while not done:
 		if build_debug:
+			os.system('color 0e')
 			if askUser("\nMake DEBUG build? (say no for release)"): done = True
 			else: build_debug = False
 		else:
+			os.system('color 07')
 			if askUser("\nMake RELEASE build? (say no for debug)"): done = True
 			else: build_debug = True
 	if build_debug:
 		emer_src += "-dbg"
-		os.system('color 0e')
 
 def inst_emer_src():
 	if not dirExists(emer_src + '/.svn'):
 		print "\nYou need to checkout the Emergent source code from subversion."
 		print "This can be done for you."
-		if askUser("\nReady to checkout the Emergent souce?"):
+		svn_rev = get_svn_rev("\nOK to get the latest Emergent source from Subversion? (or enter svn rev)")
+		if (svn_rev > 0):
 			makeDir(emer_src)
 			svnclient = findInProgFiles('SlikSvn/bin/svn.exe')
 			if not svnclient:
@@ -237,7 +253,7 @@ def inst_emer_src():
 				quit(1)
 
 			response = raw_input("\nEnter your username (blank for anonymous) [anonymous]: ")
-			cmd = '"' + svnclient + '" checkout'
+			cmd = '"' + svnclient + '" checkout -r ' + svn_rev
 			if response == "" or response == "anonymous":
 				cmd += " --username anonymous --password emergent"
 			else:
@@ -246,15 +262,19 @@ def inst_emer_src():
 			print "\nChecking out Emergent source code..."
 			print cmd
 			os.system(cmd)
+		else:
+			print "Can't continue because no source available!  Quitting."
+			quit(1)
 	else:
 		# Found .svn folder, make sure it's up to date
 		print "\nYou probably want to make sure the Emergent source is up to date."
-		if askUser("\nOK to get the latest Emergent source from Subversion?", default=""):
+		svn_rev = get_svn_rev("\nOK to get the latest Emergent source from Subversion? (or enter svn rev)")
+		if (svn_rev > 0):
 			svnclient = findInProgFiles('SlikSvn/bin/svn.exe')
 			if not svnclient:
 				print "Can't continue because SVN client needs to be installed!  Quitting."
 				quit(1)
-			cmd = '"' + svnclient + '" update ' + emer_src
+			cmd = '"' + svnclient + '" update -r ' + svn_rev + ' ' + emer_src
 			print "\nUpdating Emergent source code..."
 			print cmd
 			os.system(cmd)
@@ -270,8 +290,10 @@ def inst_coin():
 			zip = ZipFile(file)
 			zip.extractall(coin_dir)
 
-third_party_dir = emer_src + '/3rdparty'
+third_party_dir = ""
 def inst_3rd_party():
+	global third_party_dir
+	third_party_dir = emer_src + '/3rdparty'
 	while not fileExists(third_party_dir + '/lib/gsl.lib'):
 		print "\nYou need to get the 'third party' package.  This can be done for you."
 		if askUser("\nReady to download and unzip 3rd party tools?"):
@@ -369,7 +391,7 @@ def fix_environment():
 
 def build_emergent():
 	print "\nYour build environment is configured."
-	if not askUser("\nReady to build?"): return
+	if not askUser("\nReady to build?"): quit(0)
 
 	print "\nBuilding Emergent..."
 	emer_build = emer_src + '/build'
@@ -397,6 +419,40 @@ def build_emergent():
 	f.close()
 	os.system(cmake_bat)
 
+def rename_package():
+	version = ""
+	revision = ""
+	for line in open(emer_src + '/config.h'):
+		if "VERSION" in line:
+			version = line.split('"')[-2]
+	for line in open(emer_src + '/build/src/temt/lib/svnrev.h'):
+		if "SVN_REV" in line:
+			revision = line.split(' ')[-1].rstrip()
+			revision
+	print "\nDetected version: " + version
+	print "         svn rev: " + revision
+	if len(version) > 0 and len(revision) > 0:
+		old_name = emer_src + '/build/emergent-' + version + '-win32.exe'
+		new_name = emer_src + '/build/emergent-' + version + '-' + revision + '-win32.exe'
+		if not os.path.isfile(old_name):
+			print "\nCould not find installer: " + old_name
+			quit(1)
+		ok_to_overwrite = False
+		if os.path.isfile(new_name):
+			print "\nInstaller already exists with name: " + new_name
+			if askUser("\nOK to overwrite?"):
+				ok_to_overwrite = True
+				os.remove(new_name)
+			else:
+				print "\nWill not overwrite existing installer, quitting."
+				quit(0)
+		print "\nWill rename installer:"
+		print "  from: " + old_name
+		print "  to:   " + new_name
+		if ok_to_overwrite or askUser("\nOK to rename?"):
+			os.rename(old_name, new_name)
+			print "Installer renamed."
+
 os.system('color 07')
 inst_msvs()
 inst_nsis()
@@ -412,6 +468,7 @@ inst_quarter()
 fix_environment()
 compile_quarter()
 build_emergent()
+if not build_debug:
+	rename_package()
 
-response = raw_input("\n\n\nPress enter to close the window.\n")
 quit(0)
