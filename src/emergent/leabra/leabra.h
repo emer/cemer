@@ -2278,8 +2278,8 @@ public:
   { return (LeabraUnit*)kbuff.FastEl(unidx, gpidx); }
   // get unit pointer from given unit and group index
 
-  int& 		Size(int gpidx)
-  { return sizes.FastEl(gpidx); }
+  int 		Size(int gpidx) {
+    return sizes.size > 0 ? sizes.FastEl(gpidx) : 0; }
   // get current used size of specified group -- returns reference that can be modified
 
   void		Set(LeabraUnit* un, int unidx, int gpidx)

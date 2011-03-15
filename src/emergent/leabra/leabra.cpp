@@ -3266,7 +3266,7 @@ void LeabraLayerSpec::Compute_NetinStats_ugp(LeabraLayer* lay,
     thr->netin_top_k.InitVals();
     int k_eff = thr->kwta.k;	// keep cutoff at k
     KwtaSortBuff* act_buff = lay->SortBuff(acc_md, KwtaSortBuff_List::ACTIVE);
-    if(k_eff <= 0 || act_buff->sizes.size == 0 || act_buff->Size(gpidx) != k_eff)
+    if(k_eff <= 0 || act_buff->Size(gpidx) != k_eff)
       return; // no can do
 
     for(int j=0; j < k_eff; j++) {
@@ -3861,7 +3861,7 @@ void LeabraLayerSpec::Compute_AvgMaxActs_ugp(LeabraLayer* lay,
     thr->acts_top_k.InitVals();
     int k_eff = thr->kwta.k;	// keep cutoff at k
     KwtaSortBuff* act_buff = lay->SortBuff(acc_md, KwtaSortBuff_List::ACTIVE);
-    if(k_eff <= 0 || act_buff->sizes.size == 0 || act_buff->Size(gpidx) != k_eff)
+    if(k_eff <= 0 || act_buff->Size(gpidx) != k_eff)
       return; // no can do
 
     for(int j=0; j < k_eff; j++) {
