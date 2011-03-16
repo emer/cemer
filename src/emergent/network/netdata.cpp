@@ -877,8 +877,10 @@ void NetMonItem::ScanObject_Network(Network* net, String var) {
 
   taLeafItr itr;
   Layer* lay;
-  FOR_ITR_EL(Layer, lay, net->layers., itr)
+  FOR_ITR_EL(Layer, lay, net->layers., itr) {
+    if(lay->lesioned()) continue;
     ScanObject_Layer(lay, var);
+  }
 }
 
 void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
@@ -1153,6 +1155,7 @@ void NetMonItem::ScanObject_ProjectionGroup(Projection_Group* pg, String var) {
   
   for(int i=0;i<pg->size;i++) {
     Projection* prjn = pg->FastEl(i);
+    if(prjn->off || prjn->from->lesioned()) continue; // skip off or lesioned
     ScanObject_Projection(prjn, var);
   }
 }
