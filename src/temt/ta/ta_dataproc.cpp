@@ -499,7 +499,7 @@ bool taDataProc::ReplicateRows(DataTable* dest, DataTable* src, int n_repl) {
   }
   dest->StructUpdate(false);
   if(in_place_req) {
-    *src = *dest;
+    src->data = dest->data;
     delete dest;
   }
   return true;
@@ -755,7 +755,8 @@ bool taDataProc::Permute(DataTable* dest, DataTable* src) {
   }
   dest->StructUpdate(false);
   if(in_place_req) {
-    *src = *dest;
+    // only copy the data, preserving all other attributes of the table
+    src->data = dest->data;
     delete dest;
   }
   return true;
@@ -817,7 +818,7 @@ bool taDataProc::Group(DataTable* dest, DataTable* src, DataGroupSpec* spec) {
   dest->StructUpdate(false);
   spec->ClearColumns();
   if(in_place_req) {
-    *src = *dest;
+    src->data = dest->data;
     delete dest;
   }
   return true;
@@ -1204,7 +1205,7 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
   dest->StructUpdate(false);
   spec->ClearColumns();
   if(in_place_req) {
-    *src = *dest;
+    src->data = dest->data;
     delete dest;
   }
   return true;
@@ -1476,7 +1477,7 @@ bool taDataProc::SelectCols(DataTable* dest, DataTable* src, DataOpList* spec) {
   dest->StructUpdate(false);
   spec->ClearColumns();
   if(in_place_req) {
-    *src = *dest;
+    src->data = dest->data;
     delete dest;
   }
   return true;
