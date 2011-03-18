@@ -1504,8 +1504,8 @@ public:
   XYNGeom		gp_geom;	// #CONDSHOW_ON_unit_groups #CAT_Structure geometry of unit sub-groups (if unit_groups) -- this is the layout of the groups, with gp_geom defining the layout of units within the groups
   PosTwoDCoord		gp_spc;		// #CONDSHOW_ON_unit_groups #CAT_Structure spacing between unit sub-groups (if unit_groups) -- this is *strictly* for display purposes, and does not affect anything else in terms of projection connectivity calculations etc.
   XYNGeom		flat_geom;	// #EXPERT #READ_ONLY #CAT_Structure geometry of the units flattening out over unit groups -- same as un_geom if !unit_groups; otherwise un_geom * gp_geom -- this is in logical (not display) sizes
-  XYNGeom		disp_geom;	// #HIDDEN #READ_ONLY #CAT_Structure actual view geometry, includes spaces and groups and everything: the full extent of units within the layer
-  XYNGeom		scaled_disp_geom; // #HIDDEN #READ_ONLY #CAT_Structure scaled actual view geometry: disp_scale * disp_geom -- use for view computations
+  XYNGeom		disp_geom;	// #AKA_act_geom #HIDDEN #READ_ONLY #CAT_Structure actual view geometry, includes spaces and groups and everything: the full extent of units within the layer
+  XYNGeom		scaled_disp_geom; // #AKA_scaled_act_geom #HIDDEN #READ_ONLY #CAT_Structure scaled actual view geometry: disp_scale * disp_geom -- use for view computations
 
   Projection_Group  	projections;	// #CAT_Structure group of receiving projections
   Projection_Group  	send_prjns;	// #CAT_Structure #HIDDEN #LINK_GROUP group of sending projections
@@ -1960,7 +1960,7 @@ public:
   static bool nw_itm_def_arg;	// #IGNORE default arg val for FindMake..
 
   PosTDCoord	pos;		// Position of Group of layers relative to network
-  PosTDCoord	max_disp_size;	// #READ_ONLY #SHOW #CAT_Structure maximum display size of the layer group -- computed automatically from the layers within the group
+  PosTDCoord	max_disp_size;	// #AKA_max_size #READ_ONLY #SHOW #CAT_Structure maximum display size of the layer group -- computed automatically from the layers within the group
 
   void		GetAbsPos(TDCoord& abs_pos)
   { abs_pos = pos; AddRelPos(abs_pos); }
@@ -2282,7 +2282,7 @@ public:
 
   int		n_units;	// #READ_ONLY #EXPERT #CAT_Structure total number of units in the network
   int		n_cons;		// #READ_ONLY #EXPERT #CAT_Structure total number of connections in the network
-  PosTDCoord	max_disp_size;	// #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
+  PosTDCoord	max_disp_size;	// #AKA_max_size #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
 
   ProjectBase*	proj;		// #IGNORE ProjectBase this network is in
   bool		old_load_cons;	// #IGNORE #NO_SAVE special flag (can't use flags b/c it is saved, loaded!) for case when loading a project with old cons file format (no pre-alloc of cons)
