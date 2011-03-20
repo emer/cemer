@@ -245,14 +245,18 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   if(learn_rule != LEABRA_CHL) {
     if(wt_sig.off == 1.25f)
       wt_sig.off = 1.1f;	// this is key
-    if(lrate == 0.01f)
-      lrate = 0.02f;		// also important
+    if(GetTypeDef() == &TA_LeabraConSpec) { // only for generic conspecs -- not derived ones!
+      if(lrate == 0.01f)
+	lrate = 0.02f;		// also important
+    }
   }
   else {
     if(wt_sig.off == 1.1f)
       wt_sig.off = 1.25f;
-    if(lrate == 0.02f)
-      lrate = 0.01f;		// also important
+    if(GetTypeDef() == &TA_LeabraConSpec) { // only for generic conspecs -- not derived ones!
+      if(lrate == 0.02f)
+	lrate = 0.01f;		// also important
+    }
   }
   UpdateAfterEdit();		// pick up flags
 }

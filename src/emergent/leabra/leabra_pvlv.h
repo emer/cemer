@@ -72,11 +72,6 @@ public:
     cn->dwt += cur_lrate * dwt;
   }
 
-  inline void C_Compute_dWt_Delta_NoSB(LeabraCon* cn, LeabraUnit* ru, float su_act) {
-    float dwt = (ru->act_p - ru->act_m) * su_act; // basic delta rule
-    cn->dwt += cur_lrate * dwt;
-  }
-
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     float su_act;
     if(send_act == ACT_P)
@@ -92,22 +87,22 @@ public:
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    float su_act;
-    if(send_act == ACT_P)
-      su_act = su->act_p;
-    else			// ACT_M2
-      su_act = su->act_m2;
-
-    // softbound is separate, do noSB guy here
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta_NoSB(cn, ru, su_act);  
-    }
+    Compute_dWt_LeabraCHL(cg, su);
   }
 
   inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+    Compute_dWt_LeabraCHL(cg, su);
+  }
+
+  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    // just run chl version through-and-through
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i)));
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+  }
+  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    // just run chl version through-and-through
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i)));
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
   TA_SIMPLE_BASEFUNS(PVConSpec);
@@ -200,12 +195,6 @@ public:
     cn->dwt += cur_lrate * dwt;
   }
 
-  inline void C_Compute_dWt_Delta_NoSB(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float dwt = (ru->act_p - ru->act_m) * su->act_p; // basic delta rule
-    if(dwt < 0.0f)	dwt *= wt_dec_mult;
-    cn->dwt += cur_lrate * dwt;
-  }
-
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
@@ -215,17 +204,24 @@ public:
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    // softbound is separate, do noSB guy here
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta_NoSB(cn, ru, su);  
-    }
+    Compute_dWt_LeabraCHL(cg, su);
   }
 
   inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+    Compute_dWt_LeabraCHL(cg, su);
   }
+
+  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    // just run chl version through-and-through
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i)));
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+  }
+  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    // just run chl version through-and-through
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i)));
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+  }
+
 
   TA_SIMPLE_BASEFUNS(PVrConSpec);
 protected:
@@ -386,19 +382,19 @@ public:
     cn->dwt = 0.0f;
   }
 
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline override void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     float dkfact = cur_lrate * decay;
     CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i), dkfact));
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
-  inline void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
     float dkfact = cur_lrate * decay;
     CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i), dkfact));
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
-  inline void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
     float dkfact = cur_lrate * decay;
     CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i), dkfact));
     //  ApplyLimits(cg, ru); limits are automatically enforced anyway

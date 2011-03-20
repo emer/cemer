@@ -238,13 +238,6 @@ public:
     cn->dwt += cur_lrate * dwt;
   }
 
-  inline void C_Compute_dWt_Matrix_NoSB(LeabraCon* cn, float mtx_act_m2, float mtx_da,
-					float su_act_lrn, float ru_thr) {
-    float sr_prod = mtx_act_m2 * su_act_lrn;
-    float dwt = mtx_da * sr_prod;
-    cn->dwt += cur_lrate * dwt;
-  }
-
   inline override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
@@ -256,16 +249,22 @@ public:
   }
 
   inline override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
-      C_Compute_dWt_Matrix_NoSB(cn, ru->act_m2, ru->dav, cn->sact_lrn, ru->l_thr);
-      // note: using cn->sact_lrn as having saved sending activation in Compute_MidMinusAct
-    }
+    Compute_dWt_LeabraCHL(cg, su);
   }
 
   inline override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    Compute_dWt_CtLeabraXCAL(cg, su);
+    Compute_dWt_LeabraCHL(cg, su);
+  }
+
+  inline override void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    // just run chl version through-and-through
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i)));
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
+  }
+  inline override void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    // just run chl version through-and-through
+    CON_GROUP_LOOP(cg, C_Compute_Weights_LeabraCHL((LeabraCon*)cg->OwnCn(i)));
+    //  ApplyLimits(cg, ru); limits are automatically enforced anyway
   }
 
   TA_SIMPLE_BASEFUNS(MatrixConSpec);
