@@ -895,6 +895,15 @@ void DataTable::Copy_NoData(const DataTable& cp) {
   data.Copy_NoData(cp.data);
 }
 
+void DataTable::Copy_DataOnly(const DataTable& cp) {
+  StructUpdate(true); // ala Copy_impl
+  SetBaseFlag(COPYING); // ala Copy__
+  data = cp.data;
+  rows = cp.rows;
+  ClearBaseFlag(COPYING);
+  StructUpdate(false);
+}
+
 void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
   data.CopyFromRow(dest_row, src.data, src_row);
 }

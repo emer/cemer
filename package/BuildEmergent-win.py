@@ -417,7 +417,12 @@ def build_emergent():
 		f.write('if ERRORLEVEL 1 exit\n')
 		f.write('nmake package\n')
 	f.close()
-	os.system(cmake_bat)
+	
+	while 0 != os.system(cmake_bat):
+		global yes_to_all
+		yes_to_all = False
+		if not askUser("\nCompilation failed.  OK to rebuild?"): quit(0)
+	print "\nCompilation succeeded.\n"
 
 def rename_package():
 	version = ""

@@ -1345,6 +1345,8 @@ public:
 
   virtual void	Copy_NoData(const DataTable& cp);
   // #CAT_Copy copy only the column structure, but no data, from other data table
+  virtual void	Copy_DataOnly(const DataTable& cp);
+  // #CAT_Copy copy only the data from other data table
   virtual void	CopyFromRow(int dest_row, const DataTable& cp, int src_row);
   // #CAT_Copy copy one row from source to given row in this object: source must have exact same column structure as this!!
   virtual bool	CopyCell(Variant dest_col, int dest_row, const DataTable& src, Variant src_col, int src_row);
