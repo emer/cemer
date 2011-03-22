@@ -123,6 +123,26 @@ private:
   void 	Destroy()		{ };
 };
 
+class EMERGENT_API RandomPrjnSpec : public ProjectionSpec {
+  // Connects all units with probability p_con.
+INHERITED(ProjectionSpec)
+public:
+  float		p_con;		// overall probability of connection
+  bool		sym_self;	// if a self projection, make it symmetric (senders = receivers) otherwise it is not
+  bool		same_seed;	// use the same random seed each time (same connect pattern)
+  RndSeed	rndm_seed;	// #HIDDEN random seed
+
+  override void Connect_impl(Projection* prjn);
+
+  TA_SIMPLE_BASEFUNS(RandomPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
+
 class EMERGENT_API UniformRndPrjnSpec : public ProjectionSpec {
   // Uniform random connectivity between layers -- only 'permute' stye randomness is supported, creates same number of connections per unit
 INHERITED(ProjectionSpec)
