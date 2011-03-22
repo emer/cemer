@@ -362,6 +362,9 @@ void TesselPrjnSpec::Connect_impl(Projection* prjn) {
 
 void RandomPrjnSpec::Initialize() {
   p_con = .25;
+  sym_self = false;
+  same_seed = false;
+  rndm_seed.GetCurrent();
 }
 
 void RandomPrjnSpec::UpdateAfterEdit_impl() {
@@ -416,6 +419,9 @@ void RandomPrjnSpec::Connect_impl(Projection* prjn) {
 
 void UniformRndPrjnSpec::Initialize() {
   p_con = .25;
+  sym_self = true;
+  same_seed = false;
+  rndm_seed.GetCurrent();
 }
 
 void UniformRndPrjnSpec::UpdateAfterEdit_impl() {
