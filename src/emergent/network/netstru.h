@@ -866,7 +866,7 @@ public: //
   // #CAT_Structure set the unit spec to given value -- no ref counting or other checking is done
 
   virtual void	Copy_Weights(const Unit* src, Projection* prjn = NULL);
-  // #CAT_ObjectMgmt copies weights from other unit (incl wts assoc with unit bias member)
+  // #CAT_ObjectMgmt copies weights from other unit (incl wts assoc with unit bias member) -- if prjn is specified, then it only copies weights for that particular projection on this unit, from the same projection index number on the src unit (assumes that there is a correspondence in the projections across this and source unit!)
   virtual void	SaveWeights_strm(ostream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
   virtual int	LoadWeights_strm(istream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);

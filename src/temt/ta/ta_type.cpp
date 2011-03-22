@@ -2397,7 +2397,11 @@ taMisc::ReadTagStatus taMisc::read_tag(istream& strm, String& tag, String& val) 
     val = "";
   }
   c = strm.peek();
-  if(c == '\n') strm.get();	// absorb an immediate cr after tag, which is common
+  if(c == '\r' || c == '\n') strm.get(); // absorb an immediate cr after tag, which is common
+  if(c == '\r') {
+    c = strm.peek();
+    if(c == '\n') strm.get();	// absorb an immediate cr after tag, which is common
+  }
   return rval;
 }
   
