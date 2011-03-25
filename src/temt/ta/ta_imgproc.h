@@ -667,8 +667,9 @@ public:
   virtual bool 	Init();
   // #BUTTON initialize everything to be ready to start filtering -- calls InitFilters, InitOutMatrix, InitDataTable
 
-  virtual bool	FilterImage(float_Matrix* right_eye_image, float_Matrix* left_eye_image = NULL);
-  // main interface: filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering
+  virtual bool	FilterImage(float_Matrix* right_eye_image, float_Matrix* left_eye_image = NULL,
+			    bool motion_only = false);
+  // main interface: filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence
 
   virtual bool	InvertFilters();
   // #BUTTON WARNING: NOT REALLY WORKING AT THIS TIME: invert filters, using data that currently exists in the local filter storage -- copy from other source to last stage of filtering _out matrix to invert something -- results are saved in output data table image output -- can copy from there as needed
@@ -696,18 +697,18 @@ protected:
   virtual void UpdateGeom();
   // update all geometry info -- called by UAE
 
-  inline float&	MatMotEl(float_Matrix* fmat, int fx, int fy, int imx, int imy, int motdx) {
-    if(motion_frames <= 1)
-      return fmat->FastEl(fx, fy, imx, imy);
-    else
+  inline static float&	MatMotEl(float_Matrix* fmat, int fx, int fy, int imx, int imy, int motdx) {
+    if(fmat->dims() == 5)
       return fmat->FastEl(fx, fy, imx, imy, motdx);
+    else
+      return fmat->FastEl(fx, fy, imx, imy);
   }
   // convenience for accessing matrix element with either motion or not depending on setting
-  inline float&	MatMotEl2D(float_Matrix* fmat, int imx, int imy, int motdx) {
-    if(motion_frames <= 1)
-      return fmat->FastEl(imx, imy);
-    else
+  inline static float&	MatMotEl2D(float_Matrix* fmat, int imx, int imy, int motdx) {
+    if(fmat->dims() == 3)
       return fmat->FastEl(imx, imy, motdx);
+    else
+      return fmat->FastEl(imx, imy);
   }
   // convenience for accessing matrix element with either motion or not depending on setting
 
@@ -720,8 +721,8 @@ protected:
   virtual bool InitDataTable();
   // initialize data table to fit data saving as configured
 
-  virtual bool FilterImage_impl();
-  // implementation of filtering -- assumes cur_img_x args are set and everything is checked
+  virtual bool FilterImage_impl(bool motion_only = false);
+  // implementation of filtering -- assumes cur_img_x args are set and everything is checked -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence
   virtual void IncrTime();
   // increment time one step -- move the CircMatrix indexes
 
@@ -810,7 +811,7 @@ protected:
   override bool InitOutMatrix();
   override bool InitDataTable();
 
-  override bool	FilterImage_impl();
+  override bool	FilterImage_impl(bool motion_only = false);
   override void IncrTime();
 
   virtual bool DoGFilterImage(float_Matrix* image, float_Matrix* out, CircMatrix* circ);
@@ -978,6 +979,7 @@ public:
   int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- speeds are 1, 2, 4, 8, etc and tuning_width is proportional to speed -- only applicable if motion_frames > 1
   int		tuning_width;	// #DEF_1 additional width of encoding around the trajectory for the target speed -- allows for some fuzziness in encoding -- effective value is multiplied by speed, so it gets fuzzier as speed gets higher
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for weighting the contribution of extra width guys -- normalized by effective tuning_width
+  float		opt_thr;	// #DEF_0.001 optimization threshold -- skip if current value is below this value
 
   int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
 
@@ -1281,7 +1283,7 @@ protected:
   virtual bool	InitFilters_V1Binocular();
   virtual bool	InitFilters_V1Complex();
 
-  override bool	FilterImage_impl();
+  override bool	FilterImage_impl(bool motion_only = false);
   override void IncrTime();
 
   virtual bool	V1SimpleFilter();
@@ -1429,8 +1431,8 @@ public:
 				float scale = 1.0f, float rotate = 0.0f);
   // #CAT_Transform transform image data in matrix format, with region of retina centered and scaled to fit the box coordinates given in 0-1 normalized units (ll=lower-left, ur=upper-right); additional scale, rotate, and move params applied after foveation scaling and offsets
 
-  virtual bool	FilterImageData();
-  // #CAT_Filter filter retinal image data -- operates on images that were generated from prior Transform or LookAt calls -- must call one of those first.
+  virtual bool	FilterImageData(bool motion_only = false);
+  // #CAT_Filter filter retinal image data -- operates on images that were generated from prior Transform or LookAt calls -- must call one of those first -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence
 
 
   ///////////////////////////////////////////////////////////////////////
