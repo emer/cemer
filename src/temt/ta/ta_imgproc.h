@@ -697,21 +697,6 @@ protected:
   virtual void UpdateGeom();
   // update all geometry info -- called by UAE
 
-  inline static float&	MatMotEl(float_Matrix* fmat, int fx, int fy, int imx, int imy, int motdx) {
-    if(fmat->dims() == 5)
-      return fmat->FastEl(fx, fy, imx, imy, motdx);
-    else
-      return fmat->FastEl(fx, fy, imx, imy);
-  }
-  // convenience for accessing matrix element with either motion or not depending on setting
-  inline static float&	MatMotEl2D(float_Matrix* fmat, int imx, int imy, int motdx) {
-    if(fmat->dims() == 3)
-      return fmat->FastEl(imx, imy, motdx);
-    else
-      return fmat->FastEl(imx, imy);
-  }
-  // convenience for accessing matrix element with either motion or not depending on setting
-
   virtual bool NeedsInit();
   // test to see if the system needs to be initialized -- just check if things fit with the current computed geometries -- be sure to test for both eyes if binocular..
   virtual bool InitFilters();
@@ -731,10 +716,8 @@ protected:
   virtual float_Matrix* GetImageForChan(ColorChannel cchan);
   // get the appropriate cur_img_* guy for given color channel
 
-  virtual bool RenormOutput_Frames(RenormMode mode, float_Matrix* out, CircMatrix* circ);
-  // renormalize output of filters after filtering -- for output having motion frames
-  virtual bool RenormOutput_NoFrames(RenormMode mode, float_Matrix* out);
-  // renormalize output of filters after filtering -- for output without motion frames
+  virtual bool RenormOutput(RenormMode mode, float_Matrix* out);
+  // renormalize output of filters after filtering
 
   virtual bool ImageToTable(DataTable* dtab, float_Matrix* right_eye_image,
 				     float_Matrix* left_eye_image = NULL);
@@ -779,11 +762,8 @@ public:
   XYNGeom	dog_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for DoG filtering -- x axis = 2 = on/off, y axis = color channel: 0 = monochrome, 1 = red/cyan, 2 = green/magenta, 3 = blue/yellow (2 units total for monochrome, 8 total for color)
   TwoDCoord	dog_img_geom; 	// #READ_ONLY #SHOW size of dog-filtered image output -- number of hypercolumns in each axis to cover entire output -- this is completely determined by retina_size, border and dog_spacing parameters
 
-  CircMatrix	dog_circ_r; 	// #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
-  CircMatrix	dog_circ_l; 	// #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
-
-  float_Matrix	dog_out_r;	// #READ_ONLY #NO_SAVE output of the dog filter processing for the right eye -- [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames
-  float_Matrix	dog_out_l;	// #READ_ONLY #NO_SAVE output of the dog filter processing for the left eye -- [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames
+  float_Matrix	dog_out_r;	// #READ_ONLY #NO_SAVE output of the dog filter processing for the right eye -- [feat.x][feat.y][img.x][img.y]
+  float_Matrix	dog_out_l;	// #READ_ONLY #NO_SAVE output of the dog filter processing for the left eye -- [feat.x][feat.y][img.x][img.y]
 
   virtual String GetDoGFiltName(int filt_no);
   // get name for each filter channel (0-5) = on;off;rvc;gvm;bvy;yvb
@@ -812,25 +792,19 @@ protected:
   override bool InitDataTable();
 
   override bool	FilterImage_impl(bool motion_only = false);
-  override void IncrTime();
 
-  virtual bool DoGFilterImage(float_Matrix* image, float_Matrix* out, CircMatrix* circ);
-  // implementation of DoG filtering for a given image and output, circ index -- manages threaded calls to _thread version
+  virtual bool DoGFilterImage(float_Matrix* image, float_Matrix* out);
+  // implementation of DoG filtering for a given image and output -- manages threaded calls to _thread version
   virtual void DoGFilterImage_thread(int dog_idx, int thread_no);
   // threaded routine for actually filtering given index of dog
-  virtual bool RenormOutput_Frames(RenormMode mode, float_Matrix* out, CircMatrix* circ);
-  // renormalize output of filters after filtering -- for output having motion frames
-  virtual bool RenormOutput_NoFrames(RenormMode mode, float_Matrix* out);
-  // renormalize output of filters after filtering -- for output without motion frames
 
   virtual bool DoGOutputToTable(DataTable* dtab);
   // send current time step of dog output to data table for viewing
-    virtual bool DoGOutputToTable_impl(DataTable* dtab, float_Matrix* out, CircMatrix* circ,
-				       const String& col_sufx);
+    virtual bool DoGOutputToTable_impl(DataTable* dtab, float_Matrix* out, const String& col_sufx);
     // send current time step of dog output to data table for viewing
 
   override bool InvertFilters_impl();
-  virtual bool	DoGInvertFilter(float_Matrix* out, CircMatrix* circ, const String& col_sufx);
+  virtual bool	DoGInvertFilter(float_Matrix* out, const String& col_sufx);
   // implementation of DoG inverse filtering that actually does the heavy lifting
 };
 
@@ -1143,10 +1117,9 @@ public:
   RenormMode	v1s_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1s static filters
   RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
-  XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
+  XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) -- configured automatically
+  XYNGeom	v1m_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 motion filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
   XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output
-
-  int		v1s_feat_mot_y;	// #READ_ONLY y axis index for start of motion features in v1s -- x axis is angles
 
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
@@ -1197,17 +1170,23 @@ public:
   float_Matrix	v1bc_weights;	// #READ_ONLY #NO_SAVE weighting factors for integration from binocular disparities to complex responses
 
   ///////////////////  V1S Output ////////////////////////
-  float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
-  float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
+  float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1s_out_l_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
   float_Matrix	v1s_gci;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory conductances, for computing kwta
   float_Matrix	v1s_ithr;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory threshold values -- intermediate vals used in computing kwta
-  float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
-  float_Matrix	v1s_out_l;	 // #READ_ONLY #NO_SAVE v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y][time] -- time is optional depending on motion_frames -- feat.y = [0=on,1=off,2-6=colors if used,motion:n=on,+dir,speed1,n+1=off,+dir,speed1,n+2=on,-dir,speed1,n+3=off,-dir,speed1, etc.
+  float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1s_out_l;	 // #READ_ONLY #NO_SAVE v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
   float_Matrix	v1s_maxpols_out_r;  // #READ_ONLY #NO_SAVE v1 simple cell max over polarities output, right eye [feat.x][1][img.x][img.y]
   float_Matrix	v1s_maxpols_out_l;  // #READ_ONLY #NO_SAVE v1 simple cell max over polarities output, left eye [feat.x][1][img.x][img.y]
-  float_Matrix	v1s_out_r_max;	 // #READ_ONLY #NO_SAVE max activation over features for each image location -- useful for optimizing subsequent processing [img.x][img.y][time]
-  CircMatrix	v1s_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
-  CircMatrix	v1s_circ_l;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time
+  float_Matrix	v1s_out_r_max;	 // #READ_ONLY #NO_SAVE max activation over features for each image location -- useful for optimizing subsequent processing [img.x][img.y]
+  float_Matrix	v1m_out_r;	 // #READ_ONLY #NO_SAVE v1 motion cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = dir * [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1m_out_l;	 // #READ_ONLY #NO_SAVE v1 motion cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = dir * [0=on,1=off,2-6=colors if used] 
+ float_Matrix	v1m_hist_r;	 // #READ_ONLY #NO_SAVE history of v1 simple cell output for motion computation, right eye [feat.x][feat.y][img.x][img.y][time] -- feat.y = [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1m_hist_l;	 // #READ_ONLY #NO_SAVE history of v1 simple cell output for motion computation, left eye [feat.x][feat.y][img.x][img.y][time] -- feat.y = [0=on,1=off,2-6=colors if used]
+  CircMatrix	v1m_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time -- attached to v1m_hist_r
+  CircMatrix	v1m_circ_l;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time -- attached to v1m_hist_l
+  float_Matrix	v1m_still_r; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y]
+  float_Matrix	v1m_still_l; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y]
 
   ///////////////////  V1C Output ////////////////////////
   float_Matrix	v1c_pre;	 // #READ_ONLY #NO_SAVE pre-grouping as basis for subsequent v1c filtering -- reduces dimensionality and introduces robustness [v1s_feat.x][v1s_feat.y][v1c_pre.x][v1c_pre.y]
@@ -1289,7 +1268,7 @@ protected:
   virtual bool	V1SimpleFilter();
   // do simple filters -- main wrapper
   virtual bool	V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_raw,
-				      float_Matrix* out, CircMatrix* circ);
+				      float_Matrix* out);
   // do simple filters, static only on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Static_thread(int v1s_idx, int thread_no);
   // do simple filters, static only on current inputs -- do it
@@ -1300,16 +1279,12 @@ protected:
   // do simple filters, static only on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no);
   // do simple filters, static only on current inputs -- do it
-  virtual bool 	V1SimpleFilter_MaxPols(float_Matrix* v1s_out_in,
-				       float_Matrix* maxpols_out, CircMatrix* circ);
+  virtual bool 	V1SimpleFilter_MaxPols(float_Matrix* v1s_out_in, float_Matrix* maxpols_out);
   // max polarities of v1s_out 
   virtual void 	V1SimpleFilter_MaxPols_thread(int v1s_idx, int thread_no);
   // max polarities of v1s_out 
   virtual void 	V1SimpleFilter_OutMax_thread(int v1s_idx, int thread_no);
   // max activation output of v1s_out_r -- useful for multiple subsequent steps
-
-  virtual bool	V1SRenormOutput_Static(float_Matrix* out, CircMatrix* circ);
-  virtual bool	V1SRenormOutput_Motion(float_Matrix* out, CircMatrix* circ);
 
   virtual bool	V1ComplexFilter();
   // do complex filters -- dispatch threads
@@ -1368,9 +1343,11 @@ protected:
 
   virtual bool V1SOutputToTable(DataTable* dtab);
   // simple to output table
-  virtual bool V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out, CircMatrix* circ,
-				     const String& col_sufx);
+  virtual bool V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out, const String& col_sufx);
   // simple to output table impl
+  virtual bool V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, 
+		     float_Matrix* hist, CircMatrix* circ, const String& col_sufx);
+  // motion to output table impl
   virtual bool V1BOutputToTable(DataTable* dtab);
   // binocular to output table
   virtual bool V1COutputToTable(DataTable* dtab);
@@ -1385,11 +1362,8 @@ protected:
   // invert complex filters - EndStop & Length Sum
   virtual bool	V1ComplexInvertFilter_V1SMax_Monocular();
   // invert complex filters - V1Simple Max
-  virtual bool	V1SimpleInvertFilter_Static(float_Matrix* dog, CircMatrix* dog_circ,
-					    float_Matrix* out_raw, float_Matrix* out, 
-					    CircMatrix* circ);
+  virtual bool	V1SimpleInvertFilter_Static(float_Matrix* out_raw, float_Matrix* out);
   // invert simple filters, static only on current inputs
-
 };
 
 

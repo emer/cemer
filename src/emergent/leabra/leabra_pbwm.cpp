@@ -964,7 +964,7 @@ void MatrixLayerSpec::Compute_MultBias(LeabraLayer* lay,
 				       Layer::AccessMode acc_md, int gpidx,
 				       LeabraNetwork* net, float bias_dav) {	
   int nunits = lay->UnitAccess_NUnits(acc_md);
-  int gp_sz = nunits;
+  int gp_sz = nunits / 2;
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz);
