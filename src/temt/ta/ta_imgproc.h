@@ -684,6 +684,7 @@ protected:
   float_Matrix* cur_img_r;	// cur right eye image arg -- only valid during filter call
   float_Matrix* cur_img_l;	// cur left eye image arg -- only valid during filter call
   float_Matrix* cur_img;	// cur image -- only valid during filter call
+  float_Matrix* cur_in;		// cur input buffer -- only valid during filter call
   float_Matrix* cur_out;	// cur output buffer -- only valid during filter call
   CircMatrix*	cur_circ;	// current circular buffer index
   bool		rgb_img;	// is current image rgb?
@@ -950,10 +951,11 @@ class TA_API V1MotionSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells
 INHERITED(taOBase)
 public:
-  int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- speeds are 1, 2, 4, 8, etc and tuning_width is proportional to speed -- only applicable if motion_frames > 1
+  int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- only applicable if motion_frames > 1
+  int		speed_inc;	// #DEF_1 how much to increase speed for each speed value -- how fast is the slowest speed basically
   int		tuning_width;	// #DEF_1 additional width of encoding around the trajectory for the target speed -- allows for some fuzziness in encoding -- effective value is multiplied by speed, so it gets fuzzier as speed gets higher
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for weighting the contribution of extra width guys -- normalized by effective tuning_width
-  float		opt_thr;	// #DEF_0.001 optimization threshold -- skip if current value is below this value
+  float		opt_thr;	// #DEF_0.01 optimization threshold -- skip if current value is below this value
 
   int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
 
@@ -1013,6 +1015,7 @@ public:
   float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   int		end_stop_dist;	// #DEF_2 end-stop distance factor -- how far away from the central point should we look for opposing orientations
+  bool		old_es;		// #DEF_false use old way of computing end stop stencils -- only for backward compatibility -- do not use on new training
   float		es_adjang_wt;	// #DEF_0.2 weight for adjacent angles in the end stop computation -- adjacent angles are often activated for edges that are not exactly aligned with the gabor angles, so they can result in false positives
   float		es_gain;	// #DEF_1.2 gain factor applied only to end stop outputs -- these have a more stringent criterion and thus can benefit from an additional mulitplier to put on same level compared to the others (len sum, v1s_max)
   float		nonfocal_wt;	// #DEF_0.8 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
@@ -1115,7 +1118,7 @@ public:
   V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
   V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||1 specs for V1 motion filters within the simple processing layer
   RenormMode	v1s_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1s static filters
-  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||1 #DEF_NO_RENORM how to renormalize the output of v1s motion filters
+  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||1 #DEF_LIN_RENORM how to renormalize the output of v1s motion filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
   XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) -- configured automatically
   XYNGeom	v1m_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 motion filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
@@ -1148,9 +1151,11 @@ public:
   int		n_polclr;	// #READ_ONLY number of polarities * number of colors -- y dimension of simple features for example
   float_Matrix	v1s_gabor_filters; // #READ_ONLY #NO_SAVE gabor filters for v1s processing [filter_size][filter_size][n_angles]
   float_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each of the angles
+  float_Matrix	v1s_ang_slopes_raw; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each of the angles -- non-normalized
   int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
+  int_Matrix	v1m_still_stencils; // #READ_ONLY #NO_SAVE stencils for motion detectors -- detecting stillness, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][angles] (4d)
 
   ///////////////////  V1C Geom/Stencils ////////////////////////
   int		v1c_feat_es_y;	// #READ_ONLY y axis index for start of end stop features in v1c
@@ -1179,14 +1184,14 @@ public:
   float_Matrix	v1s_maxpols_out_r;  // #READ_ONLY #NO_SAVE v1 simple cell max over polarities output, right eye [feat.x][1][img.x][img.y]
   float_Matrix	v1s_maxpols_out_l;  // #READ_ONLY #NO_SAVE v1 simple cell max over polarities output, left eye [feat.x][1][img.x][img.y]
   float_Matrix	v1s_out_r_max;	 // #READ_ONLY #NO_SAVE max activation over features for each image location -- useful for optimizing subsequent processing [img.x][img.y]
-  float_Matrix	v1m_out_r;	 // #READ_ONLY #NO_SAVE v1 motion cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = dir * [0=on,1=off,2-6=colors if used]
-  float_Matrix	v1m_out_l;	 // #READ_ONLY #NO_SAVE v1 motion cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = dir * [0=on,1=off,2-6=colors if used] 
- float_Matrix	v1m_hist_r;	 // #READ_ONLY #NO_SAVE history of v1 simple cell output for motion computation, right eye [feat.x][feat.y][img.x][img.y][time] -- feat.y = [0=on,1=off,2-6=colors if used]
-  float_Matrix	v1m_hist_l;	 // #READ_ONLY #NO_SAVE history of v1 simple cell output for motion computation, left eye [feat.x][feat.y][img.x][img.y][time] -- feat.y = [0=on,1=off,2-6=colors if used]
+  float_Matrix	v1m_out_r;	 // #READ_ONLY #NO_SAVE v1 motion cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = dir * [0=on,1=off -- luminance only]
+  float_Matrix	v1m_out_l;	 // #READ_ONLY #NO_SAVE v1 motion cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = dir * [0=on,1=off -- luminance only] 
+ float_Matrix	v1m_hist_r;	 // #READ_ONLY #NO_SAVE history of v1 simple cell output for motion computation, right eye [feat.x][feat.y][img.x][img.y][time] -- feat.y = [0=on,1=off -- luminance only]
+  float_Matrix	v1m_hist_l;	 // #READ_ONLY #NO_SAVE history of v1 simple cell output for motion computation, left eye [feat.x][feat.y][img.x][img.y][time] -- feat.y = [0=on,1=off -- luminance only]
   CircMatrix	v1m_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time -- attached to v1m_hist_r
   CircMatrix	v1m_circ_l;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time -- attached to v1m_hist_l
-  float_Matrix	v1m_still_r; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y]
-  float_Matrix	v1m_still_l; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y]
+  float_Matrix	v1m_still_r; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off -- luminance only]
+  float_Matrix	v1m_still_l; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off -- luminance only]
 
   ///////////////////  V1C Output ////////////////////////
   float_Matrix	v1c_pre;	 // #READ_ONLY #NO_SAVE pre-grouping as basis for subsequent v1c filtering -- reduces dimensionality and introduces robustness [v1s_feat.x][v1s_feat.y][v1c_pre.x][v1c_pre.y]
@@ -1246,6 +1251,8 @@ protected:
   float_Matrix* cur_v1c_pre_polinv; // current v1c_pre_polinv values to use
   float_Matrix* cur_v1c_kwta_out;  // final post-kwta output for v1c
   float_Matrix* cur_out_acts;	// cur output activations -- for kwta thing
+  float_Matrix* cur_still;	// cur still for motion
+  float_Matrix* cur_hist;	// cur hist for motion
   float_Matrix* cur_v1b_dsp;	// current v1b_dsp values to use -- either v1b_dsp_out or _in
 
   override void	UpdateAfterEdit_impl();
@@ -1275,10 +1282,15 @@ protected:
   virtual void 	V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thread_no);
   // do neighborhood inhibition on simple filters
 
-  virtual bool	V1SimpleFilter_Motion(float_Matrix* out, CircMatrix* circ);
-  // do simple filters, static only on current inputs -- dispatch threads
+  virtual bool	V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, 
+		      float_Matrix* still, float_Matrix* hist, CircMatrix* circ);
+  // do simple filters, motion on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no);
-  // do simple filters, static only on current inputs -- do it
+  // do simple filters, motion on current inputs -- do it
+  virtual void 	V1SimpleFilter_Motion_CpHist_thread(int v1s_idx, int thread_no);
+  // do simple motion filters, copy v1s to history
+  virtual void 	V1SimpleFilter_Motion_Still_thread(int v1s_idx, int thread_no);
+  // do simple motion filters, compute non-moving (still) background
   virtual bool 	V1SimpleFilter_MaxPols(float_Matrix* v1s_out_in, float_Matrix* maxpols_out);
   // max polarities of v1s_out 
   virtual void 	V1SimpleFilter_MaxPols_thread(int v1s_idx, int thread_no);
@@ -1345,7 +1357,7 @@ protected:
   // simple to output table
   virtual bool V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out, const String& col_sufx);
   // simple to output table impl
-  virtual bool V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, 
+  virtual bool V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, float_Matrix* still, 
 		     float_Matrix* hist, CircMatrix* circ, const String& col_sufx);
   // motion to output table impl
   virtual bool V1BOutputToTable(DataTable* dtab);

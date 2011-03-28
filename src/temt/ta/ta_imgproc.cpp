@@ -3256,9 +3256,10 @@ void V1sNeighInhib::UpdateAfterEdit_impl() {
 
 void V1MotionSpec::Initialize() {
   n_speeds = 1;
+  speed_inc = 1;
   tuning_width = 1;
   gauss_sig = 0.8f;
-  opt_thr = 0.001f;
+  opt_thr = 0.01f;
   
   tot_width = 1 + 2 * tuning_width;
 }
@@ -3296,6 +3297,7 @@ void V1ComplexSpec::Initialize() {
   gauss_sig = 0.8f;
   len_sum_len = 1;
   end_stop_dist = 2;
+  old_es = false;		// OBS
   es_adjang_wt = 0.2f;
   es_gain = 1.2f;
   nonfocal_wt = 0.8f;
@@ -3354,7 +3356,7 @@ typedef void (V1RegionSpec::*V1RegionMethod)(int, int);
 void V1RegionSpec::Initialize() {
   v1s_filters = ALL_POLS;
   v1s_renorm = LIN_RENORM;
-  v1m_renorm = NO_RENORM;
+  v1m_renorm = LIN_RENORM;
   v1s_save = SAVE_DATA;
   v1s_feat_geom.SetXYN(4, 6, 24);
 
@@ -3416,17 +3418,18 @@ bool V1RegionSpec::NeedsInit() {
 }
 
 
-static void geom_get_angles(float angf, float& cosx, float& siny) {
-  cosx = taMath_float::cos(angf);
-  siny = taMath_float::sin(angf);
+static void geom_get_angles(float angf, float& cosx, float& siny,
+			    float& cosx_raw, float& siny_raw) {
+  cosx_raw = taMath_float::cos(angf);
+  siny_raw = taMath_float::sin(angf);
   // always normalize by the largest value so that it is equal to 1
-  if(fabsf(cosx) > fabsf(siny)) {
-    siny = siny / fabsf(cosx);			// must come first!
-    cosx = cosx / fabsf(cosx);
+  if(fabsf(cosx_raw) > fabsf(siny_raw)) {
+    siny = siny_raw / fabsf(cosx_raw);		// must come first!
+    cosx = cosx_raw / fabsf(cosx_raw);
   }
   else {
-    cosx = cosx / fabsf(siny);
-    siny = siny / fabsf(siny);
+    cosx = cosx_raw / fabsf(siny_raw);
+    siny = siny_raw / fabsf(siny_raw);
   }
 }
 
@@ -3452,17 +3455,23 @@ void V1RegionSpec::UpdateGeom() {
   n_polclr = n_colors * n_polarities;
 
   v1s_ang_slopes.SetGeom(3,2,2,v1s_specs.n_angles);
+  v1s_ang_slopes_raw.SetGeom(3,2,2,v1s_specs.n_angles);
   float ang_inc = taMath_float::pi / (float)v1s_specs.n_angles;
   for(int ang=0; ang<v1s_specs.n_angles; ang++) {
     float cosx, siny;
+    float cosx_raw, siny_raw;
     float angf = (float)ang * ang_inc;
-    geom_get_angles(angf, cosx, siny);
+    geom_get_angles(angf, cosx, siny, cosx_raw, siny_raw);
     v1s_ang_slopes.FastEl(X, LINE, ang) = cosx;
     v1s_ang_slopes.FastEl(Y, LINE, ang) = siny;
+    v1s_ang_slopes_raw.FastEl(X, LINE, ang) = cosx_raw;
+    v1s_ang_slopes_raw.FastEl(Y, LINE, ang) = siny_raw;
     
-    geom_get_angles(angf + taMath_float::pi * .5f, cosx, siny);
+    geom_get_angles(angf + taMath_float::pi * .5f, cosx, siny, cosx_raw, siny_raw);
     v1s_ang_slopes.FastEl(X, ORTHO, ang) = cosx;
     v1s_ang_slopes.FastEl(Y, ORTHO, ang) = siny;
+    v1s_ang_slopes_raw.FastEl(X, ORTHO, ang) = cosx_raw;
+    v1s_ang_slopes_raw.FastEl(Y, ORTHO, ang) = siny_raw;
   }
 
   // all angles for each dog
@@ -3686,6 +3695,7 @@ bool V1RegionSpec::InitFilters_V1Simple() {
 
   if(motion_frames <= 1) {
     v1m_stencils.SetGeom(1,1);
+    v1m_still_stencils.SetGeom(1,1);
   }
 
   return true;
@@ -3701,7 +3711,7 @@ bool V1RegionSpec::InitFilters_V1Motion() {
       float dx = dirsign * v1s_ang_slopes.FastEl(X, ORTHO, ang);
       float dy = dirsign * v1s_ang_slopes.FastEl(Y, ORTHO, ang);
       for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
-	int spd_off = 1 << speed;
+	int spd_off = (speed+1) * v1s_motion.speed_inc;
 	for(int mot = 0; mot < motion_frames; mot++) { // time steps back in time
 	  for(int ew = -v1s_motion.tuning_width; ew <= v1s_motion.tuning_width; ew++) {
 	    int ox = taMath_float::rint((float)(spd_off*mot + ew) * dx);
@@ -3714,6 +3724,20 @@ bool V1RegionSpec::InitFilters_V1Motion() {
     }
   }
 
+  v1m_still_stencils.SetGeom(4, 2, v1s_motion.tot_width, motion_frames, v1s_specs.n_angles);
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+    float dx = v1s_ang_slopes.FastEl(X, ORTHO, ang);
+    float dy = v1s_ang_slopes.FastEl(Y, ORTHO, ang);
+    for(int mot = 0; mot < motion_frames; mot++) { // time steps back in time
+      for(int ew = -v1s_motion.tuning_width; ew <= v1s_motion.tuning_width; ew++) {
+	int ox = taMath_float::rint((float)ew * dx);
+	int oy = taMath_float::rint((float)ew * dy);
+	v1m_still_stencils.FastEl(X, v1s_motion.tuning_width+ew, mot, ang) = ox;
+	v1m_still_stencils.FastEl(Y, v1s_motion.tuning_width+ew, mot, ang) = oy;
+      }
+    }
+  }
+
   v1m_weights.SetGeom(1, v1s_motion.tot_width);
   if(v1s_motion.tuning_width > 0) {
     int idx = 0;
@@ -3722,7 +3746,7 @@ bool V1RegionSpec::InitFilters_V1Motion() {
       v1m_weights.FastEl(idx) = taMath_float::gauss_den_sig(fx, v1s_motion.gauss_sig);
     }
   }
-  taMath_float::vec_norm_sum(&v1m_weights); // make sure sums to 1.0
+  taMath_float::vec_norm_max(&v1m_weights); // max norm to 1
   return true;
 }
 
@@ -3812,27 +3836,29 @@ bool V1RegionSpec::InitFilters_V1Complex() {
   v1c_es_stencils.SetGeom(4, 2, 2, 2, v1s_specs.n_angles);
   v1c_ls_stencils.SetGeom(3, 2, v1c_specs.len_sum_width, v1s_specs.n_angles);
 
+  float_Matrix* es_slopes = &v1s_ang_slopes_raw; // use raw for correct angles!
+  if(v1c_specs.old_es)
+    es_slopes = &v1s_ang_slopes; // not correct!
+
   for(int ang=0; ang < v1s_specs.n_angles; ang++) {
     for(int sidx=0; sidx < 2; sidx++) {
       int side = (sidx == 0) ? -1 : 1;
 
-      int sx = v1c_specs.end_stop_dist * 
-	taMath_float::rint((float)side * v1s_ang_slopes.FastEl(X, LINE, ang));
-      int sy = v1c_specs.end_stop_dist * 
-	taMath_float::rint((float)side * v1s_ang_slopes.FastEl(Y, LINE, ang));
+      float sx_ang = (float)side * es_slopes->FastEl(X, LINE, ang);
+      float sy_ang = (float)side * es_slopes->FastEl(Y, LINE, ang);
       for(int lpdx=0; lpdx < 2; lpdx++) {
 	int lpt = (lpdx == 0) ? -1 : 1;
-	v1c_es_stencils.FastEl(X, lpdx, sidx, ang) = sx + v1c_specs.end_stop_dist *
-	  taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(X, ORTHO, ang));
-	v1c_es_stencils.FastEl(Y, lpdx, sidx, ang) = sy + v1c_specs.end_stop_dist * 
-	  taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, ORTHO, ang));
+	v1c_es_stencils.FastEl(X, lpdx, sidx, ang) = v1c_specs.end_stop_dist *
+	  taMath_float::rint(sx_ang + (float)lpt * es_slopes->FastEl(X, ORTHO, ang));
+	v1c_es_stencils.FastEl(Y, lpdx, sidx, ang) = v1c_specs.end_stop_dist * 
+	  taMath_float::rint(sy_ang + (float)lpt * es_slopes->FastEl(Y, ORTHO, ang));
       }
     }
     for(int lpt=-v1c_specs.len_sum_len; lpt <= v1c_specs.len_sum_len; lpt++) {
       int lpdx = lpt + v1c_specs.len_sum_len;
       v1c_ls_stencils.FastEl(X, lpdx, ang) = 
  	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(X, LINE, ang));
-     v1c_ls_stencils.FastEl(Y, lpdx, ang) = 
+      v1c_ls_stencils.FastEl(Y, lpdx, ang) = 
 	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, LINE, ang));
     }
   }
@@ -3917,18 +3943,30 @@ bool V1RegionSpec::InitOutMatrix() {
       v1m_out_l.SetGeom(4, v1m_feat_geom.x, v1m_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
     else
       v1m_out_l.SetGeom(1,1);	// free memory
-    // hist
-    v1m_hist_r.SetGeom(5, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y,
+
+    // hist -- only saves on/off luminance
+    v1m_hist_r.SetGeom(5, v1s_feat_geom.x, n_polarities, v1s_img_geom.x, v1s_img_geom.y,
 		       motion_frames);
     if(region.ocularity == VisRegionParams::BINOCULAR)
-      v1m_hist_l.SetGeom(5, v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y,
+      v1m_hist_l.SetGeom(5, v1s_feat_geom.x, n_polarities, v1s_img_geom.x, v1s_img_geom.y,
 			 motion_frames);
     else
       v1m_hist_l.SetGeom(1,1);	// free memory
+
+    // still filters on top of history
+    v1m_still_r.SetGeom(4, v1m_feat_geom.x, n_polarities, v1s_img_geom.x, v1s_img_geom.y);
+    if(region.ocularity == VisRegionParams::BINOCULAR)
+      v1m_still_l.SetGeom(4, v1m_feat_geom.x, n_polarities, v1s_img_geom.x, v1s_img_geom.y);
+    else
+      v1m_still_l.SetGeom(1,1);	// free memory
   }
   else {
     v1m_out_r.SetGeom(1,1);
     v1m_out_l.SetGeom(1,1);
+    v1m_hist_r.SetGeom(1,1);
+    v1m_hist_l.SetGeom(1,1);
+    v1m_still_r.SetGeom(1,1);
+    v1m_still_l.SetGeom(1,1);
   }
   v1m_circ_r.matrix = &v1m_hist_r;
   v1m_circ_l.matrix = &v1m_hist_l;
@@ -4066,7 +4104,6 @@ bool V1RegionSpec::FilterImage_impl(bool motion_only) {
   return rval;
 }
 
-
 bool V1RegionSpec::V1SimpleFilter() {
   bool rval = V1SimpleFilter_Static(cur_img_r, &v1s_out_r_raw, &v1s_out_r);
   if(rval && region.ocularity == VisRegionParams::BINOCULAR) {
@@ -4074,9 +4111,9 @@ bool V1RegionSpec::V1SimpleFilter() {
   }
 
   if(motion_frames > 1) {
-    rval &= V1SimpleFilter_Motion(&v1m_out_r, &v1m_circ_r);
+    rval &= V1SimpleFilter_Motion(&v1s_out_r, &v1m_out_r, &v1m_still_r, &v1m_hist_r, &v1m_circ_r);
     if(rval && region.ocularity == VisRegionParams::BINOCULAR) {
-      rval &= V1SimpleFilter_Motion(&v1m_out_l, &v1m_circ_l);
+      rval &= V1SimpleFilter_Motion(&v1s_out_l, &v1m_out_l, &v1m_still_l, &v1m_hist_l, &v1m_circ_l);
     }
   }
 
@@ -4231,8 +4268,12 @@ void V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thre
   }
 }
 
-bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* out, CircMatrix* circ) {
+bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out,
+		 float_Matrix* still, float_Matrix* hist, CircMatrix* circ) {
+  cur_in = in;	
   cur_out = out;	
+  cur_still = still;
+  cur_hist = hist;
   cur_circ = circ;
 
   int n_run = v1s_img_geom.Product();
@@ -4241,66 +4282,136 @@ bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* out, CircMatrix* circ) {
   threads.min_units = 1;
   threads.nibble_chunk = 1;	// small chunks
 
-  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_thread);
-  threads.Run(&ip_call, n_run);
-  return true;
+  ThreadImgProcCall ip_cp_hist((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread);
+  threads.Run(&ip_cp_hist, n_run);
+
+  ThreadImgProcCall ip_call_still((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_Still_thread);
+  threads.Run(&ip_call_still, n_run);
+
+  ThreadImgProcCall ip_call_mot((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_thread);
+  threads.Run(&ip_call_mot, n_run);
 
   if(v1m_renorm != NO_RENORM) {
     RenormOutput(v1m_renorm, out); 
   }
+  return true;
+}
+
+void V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread(int v1s_idx, int thread_no) {
+  TwoDCoord sc;			// simple coords
+  sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
+
+  int cur_mot_idx = cur_circ->CircIdx_Last();
+  int mot_len = cur_circ->length;
+
+  TwoDCoord fc;			// v1s feature coords -- destination
+  TwoDCoord mo;			// motion offset
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+    for(int pol = 0; pol < n_polarities; pol++) { // polarities that we care about
+      fc.x = ang;
+      fc.y = pol;
+      float in_val = cur_in->FastEl(fc.x, fc.y, sc.x, sc.y);
+      cur_hist->FastEl(fc.x, fc.y, sc.x, sc.y, cur_mot_idx) = in_val;
+    }
+  }
+}
+
+void V1RegionSpec::V1SimpleFilter_Motion_Still_thread(int v1s_idx, int thread_no) {
+  TwoDCoord sc;			// simple coords
+  sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
+
+  int cur_mot_idx = cur_circ->CircIdx_Last(); // e.g. 2
+  int mot_len = cur_circ->length;	      // e.g. 3
+
+  TwoDCoord sfc;		// v1s feature coords -- destination & source
+  TwoDCoord mo;			// motion offset
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+    for(int pol = 0; pol < 2; pol++) { // polarities that we care about
+      sfc.x = ang;
+      sfc.y = pol;		// polarity
+
+      float cur_val = cur_hist->FastEl(sfc.x, sfc.y, sc.x, sc.y, cur_mot_idx);
+      float min_mot = cur_val;
+      if(cur_val >= v1s_motion.opt_thr) { // save time
+	int mx_mot = mot_len-1; // don't go up to last value -- e.g., 2
+	for(int mot = 0; mot < mx_mot; mot++) { // time steps back in time -- e.g., 0, 1
+	  float t_val = 0.0f;
+	  for(int tw = -v1s_motion.tuning_width; tw <= v1s_motion.tuning_width; tw++) {
+	    int twidx = v1s_motion.tuning_width+tw;
+	    int xp = v1m_still_stencils.FastEl(X, twidx, mot, ang);
+	    int yp = v1m_still_stencils.FastEl(Y, twidx, mot, ang);
+	    mo.x = sc.x + xp;
+	    mo.y = sc.y + yp;
+	    if(mo.WrapClip(wrap, v1s_img_geom)) {
+	      if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+	    }
+	    int midx = cur_circ->CircIdx(mx_mot-1 - mot); // e.g., 1-0 = 1; 1-1 = 0,
+	    float val = cur_hist->FastEl(sfc.x, sfc.y, mo.x, mo.y, midx);
+	    val *= v1m_weights.FastEl(twidx);
+	    t_val = MAX(t_val, val);
+	  }
+	  min_mot = MIN(min_mot, t_val); // MIN = fast product
+	}
+      }
+      cur_still->FastEl(sfc.x, sfc.y, sc.x, sc.y) = min_mot;
+    }
+  }
 }
 
 void V1RegionSpec::V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no) {
-  // reads off of the v1s static filters through time history..
-//   TwoDCoord sc;			// complex coords
-//   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
+  TwoDCoord sc;			// simple coords
+  sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
-//   int cur_mot_idx = cur_circ->CircIdx_Last();
-//   int mot_len = cur_circ->length;
+  int cur_mot_idx = cur_circ->CircIdx_Last(); // e.g., 2
+  int mot_len = cur_circ->length;	      // e.g., 3
 
-//   // todo: subtract consistent information!  how..?
+  TwoDCoord fc;			// v1m feature coords -- destination
+  TwoDCoord sfc;		// v1s feature coords -- source
+  TwoDCoord mo;			// motion offset
+  for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
+    for(int dir = 0; dir < 2; dir++) { // directions
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	for(int pol = 0; pol < 2; pol++) { // polarities that we care about
+	  fc.x = ang;
+	  fc.y = speed * 4 + dir * 2 + pol;
+	  sfc.x = ang;
+	  sfc.y = pol;		// polarity
 
-//   TwoDCoord fc;			// v1s feature coords -- destination
-//   TwoDCoord sfc;		// v1s feature coords -- source
-//   TwoDCoord mo;			// motion offset
-//   for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
-//     for(int dir = 0; dir < 2; dir++) { // directions
-//       for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-// 	for(int pol = 0; pol < 2; pol++) { // polarities that we care about
-// 	  fc.x = ang;
-// 	  fc.y = speed * 4 + dir * 2 + pol;
-// 	  sfc.x = ang;
-// 	  sfc.y = pol;		// polarity
+	  float cur_val = cur_hist->FastEl(sfc.x, sfc.y, sc.x, sc.y, cur_mot_idx);
+	  float still_val = cur_still->FastEl(sfc.x, sfc.y, sc.x, sc.y);
+	  cur_val -= still_val;	// subtract out still bg
+	  cur_val = MAX(cur_val, 0.0f);
+	  float min_mot = cur_val;
+	  if(cur_val >= v1s_motion.opt_thr) { // save time
+	    int mx_mot = mot_len-1; // don't go up to last value -- e.g., 2
+	    for(int mot = 0; mot < mx_mot; mot++) { // time steps back in time -- e.g., 0, 1
+	      float t_val = 0.0f;
+	      for(int tw = -v1s_motion.tuning_width; tw <= v1s_motion.tuning_width; tw++) {
+		int twidx = v1s_motion.tuning_width+tw;
+		int xp = v1m_stencils.FastEl(X, twidx, mot, dir, ang, speed);
+		int yp = v1m_stencils.FastEl(Y, twidx, mot, dir, ang, speed);
 
-// 	  float cur_val = cur_out->FastEl(sfc.x, sfc.y, sc.x, sc.y, cur_mot_idx);
-// 	  float min_mot = cur_val;
-// 	  if(cur_val >= v1s_motion.opt_thr) { // save time
-// 	    int mx_mot = mot_len-1; // don't go up to last value
-// 	    for(int mot = 0; mot < mx_mot; mot++) { // time steps back in time
-// 	      float t_val = 0.0f;
-// 	      for(int tw = -v1s_motion.tuning_width; tw <= v1s_motion.tuning_width; tw++) {
-// 		int twidx = v1s_motion.tuning_width+tw;
-// 		int xp = v1m_stencils.FastEl(X, twidx, mot, dir, ang, speed);
-// 		int yp = v1m_stencils.FastEl(Y, twidx, mot, dir, ang, speed);
-
-// 		mo.x = sc.x + xp;
-// 		mo.y = sc.y + yp;
-// 		if(mo.WrapClip(wrap, v1s_img_geom)) {
-// 		  if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
-// 		}
-
-// 		float val = cur_out->FastEl(sfc.x, sfc.y, mo.x, mo.y,
-// 					    cur_circ->CircIdx(mx_mot-1 - mot));
-// 		t_val += val * v1m_weights.FastEl(twidx);
-// 	      }
-// 	      min_mot = MIN(min_mot, t_val); // MIN = fast product
-// 	    }
-// 	  }
-// 	  cur_out->FastEl(fc.x, fc.y, sc.x, sc.y, cur_mot_idx) = min_mot;
-// 	}
-//       }
-//     }
-//   }
+		mo.x = sc.x + xp;
+		mo.y = sc.y + yp;
+		if(mo.WrapClip(wrap, v1s_img_geom)) {
+		  if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+		}
+		int midx = cur_circ->CircIdx(mx_mot-1 - mot); // e.g., 1-0 = 1; 1-1 = 0,
+		float val = cur_hist->FastEl(sfc.x, sfc.y, mo.x, mo.y, midx);
+		float still_val = cur_still->FastEl(sfc.x, sfc.y, mo.x, mo.y);
+		val -= still_val;	// subtract out still bg
+		val = MAX(val, 0.0f);
+		val *= v1m_weights.FastEl(twidx);
+		t_val = MAX(t_val, val);
+	      }
+	      min_mot = MIN(min_mot, t_val); // MIN = fast product
+	    }
+	  }
+	  cur_out->FastEl(fc.x, fc.y, sc.x, sc.y) = min_mot;
+	}
+      }
+    }
+  }
 }
 
 
@@ -5661,14 +5772,20 @@ bool V1RegionSpec::InitDataTable() {
 	    v1m_feat_geom.x, v1m_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
 
       if(v1s_save & SAVE_DEBUG) {
+	data_table->FindMakeColName(name + "_v1m_still_r", idx, DataTable::VT_FLOAT, 4,
+		    v1m_feat_geom.x, n_polarities, v1s_img_geom.x, v1s_img_geom.y);
+	if(region.ocularity == VisRegionParams::BINOCULAR)
+	  data_table->FindMakeColName(name + "_v1m_still_l", idx, DataTable::VT_FLOAT, 4,
+    	      v1m_feat_geom.x, n_polarities, v1s_img_geom.x, v1s_img_geom.y);
+
 	for(int midx=0; midx < motion_frames; midx++) {
 	  data_table->FindMakeColName(name + "_v1m_hist_r_m" + String(midx), idx,
 		    DataTable::VT_FLOAT, 4,
-		    v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+		    v1s_feat_geom.x, n_polarities, v1s_img_geom.x, v1s_img_geom.y);
 	  if(region.ocularity == VisRegionParams::BINOCULAR)
 	    data_table->FindMakeColName(name + "_v1m_hist_l_m" + String(midx), idx,
 		    DataTable::VT_FLOAT, 4,
-		    v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+		    v1s_feat_geom.x, n_polarities, v1s_img_geom.x, v1s_img_geom.y);
 	}
       }
     }
@@ -5794,9 +5911,9 @@ bool V1RegionSpec::V1SOutputToTable(DataTable* dtab) {
   }
 
   if(motion_frames > 1) {
-    V1MOutputToTable_impl(dtab, &v1m_out_r, &v1m_hist_r, &v1m_circ_r, "_r");
+    V1MOutputToTable_impl(dtab, &v1m_out_r, &v1m_still_r, &v1m_hist_r, &v1m_circ_r, "_r");
     if(region.ocularity == VisRegionParams::BINOCULAR) 
-      V1MOutputToTable_impl(dtab, &v1m_out_l, &v1m_hist_l, &v1m_circ_l, "_l");
+      V1MOutputToTable_impl(dtab, &v1m_out_l, &v1m_still_l, &v1m_hist_l, &v1m_circ_l, "_l");
   }
 
   return true;
@@ -5854,8 +5971,8 @@ bool V1RegionSpec::V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out, con
 }
 
 
-bool V1RegionSpec::V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, float_Matrix* hist,
-					 CircMatrix* circ, const String& col_sufx) {
+bool V1RegionSpec::V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, float_Matrix* still, 
+			 float_Matrix* hist, CircMatrix* circ, const String& col_sufx) {
   TwoDCoord sc;		// simple coords
   TwoDCoord fc;		// v1s feature coords
   DataCol* col;
@@ -5869,11 +5986,16 @@ bool V1RegionSpec::V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, flo
   }
 
   if(v1s_save & SAVE_DEBUG) {
+    col = data_table->FindMakeColName(name + "_v1m_still" + col_sufx, idx, DataTable::VT_FLOAT,
+      4, v1m_feat_geom.x, n_polarities, v1s_img_geom.x, v1s_img_geom.y);
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    dout->CopyFrom(still);
+
     int mmax = MIN(motion_frames, circ->length);
     for(int midx=0; midx < mmax; midx++) {
       col = data_table->FindMakeColName(name + "_v1m_hist" + col_sufx + "_m" + String(midx),
 			idx, DataTable::VT_FLOAT, 4,
-			v1s_feat_geom.x, v1s_feat_geom.y, v1s_img_geom.x, v1s_img_geom.y);
+			v1s_feat_geom.x, n_polarities, v1s_img_geom.x, v1s_img_geom.y);
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
       float_MatrixPtr lstfrm; lstfrm = (float_Matrix*)hist->GetFrameSlice(circ->CircIdx(midx));
       dout->CopyFrom(lstfrm);
