@@ -951,6 +951,8 @@ class TA_API V1MotionSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells
 INHERITED(taOBase)
 public:
+  bool		max_pols;	// #DEF_true perform motion computation on max over polarities (MAX_POLS) v1s values, instead of full polarity by angle matrix -- preserves angle (orientation) information, but no polarity or other info -- automatically sets MAX_POLS for v1s_filters
+  bool		r_only;		// #DEF_true perform motion computation only on right eye signals -- this is the dominant eye and often all that is needed
   int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- only applicable if motion_frames > 1
   int		speed_inc;	// #DEF_1 how much to increase speed for each speed value -- how fast is the slowest speed basically
   int		tuning_width;	// #DEF_1 additional width of encoding around the trajectory for the target speed -- allows for some fuzziness in encoding -- effective value is multiplied by speed, so it gets fuzzier as speed gets higher
@@ -971,6 +973,7 @@ class TA_API V1BinocularSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		max_pols;	// #DEF_true perform disparity computation on max over polarities (MAX_POLS) v1s values, instead of full polarity by angle matrix -- preserves angle (orientation) information, but no polarity or other info -- automatically sets MAX_POLS for v1s_filters
+  bool		mot_in;		// use motion v1m_maxout signals as the input to disparity computation -- only moving objects will have depth mapping -- a quick and dirty way to drive saccade control, for example -- only valid if motion_frames > 1, and must not set r_only in v1s_motion specs, and max_pols must be equivalent in this and v1s_motion specs (all these conditions are enforced!)
   int		n_disps;	// #DEF_0:2 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
   float		disp_range_pct;  // #DEF_0.05:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total V1S image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
   float		gauss_sig; 	// #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
@@ -1072,8 +1075,8 @@ public:
 
   enum BinocularFilters { // #BITS flags for V1 binocular (V1B) filters to run, for computing disparity information across two visual inputs
     BF_NONE	= 0, // #NO_BIT
-    V1B_DSP	= 0x0001, // disparity information only (no orientation or other feature coding -- one unit per disparity) -- extracted from underlying disparity map -- has same image geometry as V1S output, with tot_disps x 1 feature unit-groups within that -- this is the first stage of disparity computation and is always performed, even if not explicitly output
-    V1B_S	= 0x0002, // V1S features modulated by disparity coding -- output has one full set of V1S features for each disparity level (tot_disps * V1S feature geometry), with the v1s overall image geometry -- if SEP_MATRIX flag is on, then each disparity is saved to a different output column in data table
+    V1B_DSP	= 0x0001, // basic disparity computation -- MIN(L,R) matching on v1s_[maxpols_]out features -- this is the first stage of disparity computation and is always performed, even if not explicitly output
+    V1B_S	= 0x0002, // V1S features modulated by disparity coding -- output has one full set of V1S features across x axis for each disparity level on y axis (tot_disps * V1S feature geometry) -- this is identical to basic v1b_out (V1B_DSP) if max_pols flag is on, so it is not necessary to select this in that case
     V1B_C	= 0x0004, // V1C features modulated by disparity coding -- output has one full set of V1C features for each disparity level (tot_disps * V1C feature geometry) -- image geometry is same as V1C, and disparity filtering is done PRIOR to spatial integration (i.e., operates on V1B_S output) -- each disparity is always saved to a different output column in data table
     V1B_C_FM_IN	= 0x0008, // V1C features modulated by disparity coding coming from external input e.g., from network input layer -- see V1bDspInFmDataTable and UpdateV1cFmV1bDspIn methods -- output has one full set of V1C features for each disparity level (as outer frames) -- image geometry is same as V1C, and disparity filtering is done PRIOR to spatial integration (i.e., operates on V1B_S output) -- each disparity is always saved to a different output column in data table -- can be checked if processing is otherwise monocular, to support configuration of necessary state vars
     V1B_AVGSUM	= 0x0010, // compute weighted average summary of the disparity signals over entire field -- result is a single scalar value that can be fed into a ScalarValLayerSpec layer to provide an input representation to a network, for example -- output is a single 1x1 data table cell
@@ -1121,7 +1124,8 @@ public:
   RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||1 #DEF_LIN_RENORM how to renormalize the output of v1s motion filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
   XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) -- configured automatically
-  XYNGeom	v1m_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 motion filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
+  int		v1m_in_polarities; // #READ_ONLY number of polarities used in v1 motion input processing (for history, etc) -- if max_pols, then 1, else 2
+  XYNGeom	v1m_feat_geom; 	// #READ_ONLY size of one 'hypercolumn' of features for V1 motion filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
   XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output
 
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
@@ -1184,9 +1188,11 @@ public:
   float_Matrix	v1s_maxpols_out_r;  // #READ_ONLY #NO_SAVE v1 simple cell max over polarities output, right eye [feat.x][1][img.x][img.y]
   float_Matrix	v1s_maxpols_out_l;  // #READ_ONLY #NO_SAVE v1 simple cell max over polarities output, left eye [feat.x][1][img.x][img.y]
   float_Matrix	v1s_out_r_max;	 // #READ_ONLY #NO_SAVE max activation over features for each image location -- useful for optimizing subsequent processing [img.x][img.y]
-  float_Matrix	v1m_out_r;	 // #READ_ONLY #NO_SAVE v1 motion cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = dir * [0=on,1=off -- luminance only]
-  float_Matrix	v1m_out_l;	 // #READ_ONLY #NO_SAVE v1 motion cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = dir * [0=on,1=off -- luminance only] 
- float_Matrix	v1m_hist_r;	 // #READ_ONLY #NO_SAVE history of v1 simple cell output for motion computation, right eye [feat.x][feat.y][img.x][img.y][time] -- feat.y = [0=on,1=off -- luminance only]
+  float_Matrix	v1m_out_r;	 // #READ_ONLY #NO_SAVE v1 motion cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = speed * dir * [0=on,1=off -- luminance only]
+  float_Matrix	v1m_out_l;	 // #READ_ONLY #NO_SAVE v1 motion cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = speed * dir * [0=on,1=off -- luminance only] 
+  float_Matrix	v1m_maxout_r;	 // #READ_ONLY #NO_SAVE v1 motion cell output -- max over directions, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = v1m_in_polarities
+  float_Matrix	v1m_maxout_l;	 // #READ_ONLY #NO_SAVE v1 motion cell output -- max over directions, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = v1m_in_polarities
+  float_Matrix	v1m_hist_r;	 // #READ_ONLY #NO_SAVE history of v1 simple cell output for motion computation, right eye [feat.x][feat.y][img.x][img.y][time] -- feat.y = [0=on,1=off -- luminance only]
   float_Matrix	v1m_hist_l;	 // #READ_ONLY #NO_SAVE history of v1 simple cell output for motion computation, left eye [feat.x][feat.y][img.x][img.y][time] -- feat.y = [0=on,1=off -- luminance only]
   CircMatrix	v1m_circ_r;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time -- attached to v1m_hist_r
   CircMatrix	v1m_circ_l;  	 // #NO_SAVE #NO_COPY #READ_ONLY circular buffer indexing for time -- attached to v1m_hist_l
@@ -1252,8 +1258,11 @@ protected:
   float_Matrix* cur_v1c_kwta_out;  // final post-kwta output for v1c
   float_Matrix* cur_out_acts;	// cur output activations -- for kwta thing
   float_Matrix* cur_still;	// cur still for motion
+  float_Matrix* cur_maxout;	// cur maxout for motion
   float_Matrix* cur_hist;	// cur hist for motion
   float_Matrix* cur_v1b_dsp;	// current v1b_dsp values to use -- either v1b_dsp_out or _in
+  float_Matrix* cur_v1b_in_r;	// current v1b input, r
+  float_Matrix* cur_v1b_in_l;	// current v1b input, l
 
   override void	UpdateAfterEdit_impl();
 
@@ -1282,7 +1291,7 @@ protected:
   virtual void 	V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thread_no);
   // do neighborhood inhibition on simple filters
 
-  virtual bool	V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, 
+  virtual bool	V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, float_Matrix* maxout, 
 		      float_Matrix* still, float_Matrix* hist, CircMatrix* circ);
   // do simple filters, motion on current inputs -- dispatch threads
   virtual void 	V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no);
@@ -1324,8 +1333,10 @@ protected:
   // do binocular filters -- dispatch threads
   virtual bool	V1BinocularFilter_Optionals();
   // do binocular filters -- dispatch threads -- for optional stuff after core v1b_dsp_wts and _out are computed
-  virtual void 	V1BinocularFilter_MinLr_thread(int v1s_idx, int thread_no);
-  // do binocular filters -- compute MIN(left,right) version of matches between eyes
+  virtual void 	V1BinocularFilter_MinLr_MaxPols_thread(int v1s_idx, int thread_no);
+  // do binocular filters -- compute MIN(left,right) version of matches between eyes -- max_pols = true
+  virtual void 	V1BinocularFilter_MinLr_V1s_thread(int v1s_idx, int thread_no);
+  // do binocular filters -- compute MIN(left,right) version of matches between eyes -- max_pols = false
   virtual void 	V1BinocularFilter_HorizTag_thread(int v1s_idx, int thread_no);
   // do binocular filters -- initial tag of horizontal line structures
   virtual void 	V1BinocularFilter_HorizAgg();
@@ -1357,8 +1368,8 @@ protected:
   // simple to output table
   virtual bool V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out, const String& col_sufx);
   // simple to output table impl
-  virtual bool V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, float_Matrix* still, 
-		     float_Matrix* hist, CircMatrix* circ, const String& col_sufx);
+  virtual bool V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, float_Matrix* maxout,
+     float_Matrix* still, float_Matrix* hist, CircMatrix* circ, const String& col_sufx);
   // motion to output table impl
   virtual bool V1BOutputToTable(DataTable* dtab);
   // binocular to output table
