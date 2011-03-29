@@ -1,142 +1,149 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
-LeabraProject .projects[0] { 
-  taBase_Group @.templates = [0] {
-  };
-
-  Doc_Group @.docs = [9] {
-    taDoc @[0] { };
-    taDoc @[1] { };
-    taDoc @[2] { };
-    taDoc @[3] { };
-    taDoc @[4] { };
-    taDoc @[5] { };
-    taDoc @[6] { };
-    taDoc @[7] { };
-    taDoc @[8] { };
-  };
-
-  Wizard_Group @.wizards = [1] {
-    LeabraWizard @[0] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @[0] { };
-   };
-
-      LayerWizElList @.layer_cfg = [3] {
-	LayerWizEl @[0] { };
-	LayerWizEl @[1] { };
-	LayerWizEl @[2] { };
-      };
-    };
-  };
-
-  SelectEdit_Group @.edits = [0] {
-  };
-
-  DataTable_Group @.data = [0] {
-    DataTable_Group @.gp[0] { 
-    };
-    DataTable_Group @.gp[1] { 
-    };
-    DataTable_Group @.gp[2] { 
-    };
-  };
-
-  taBase_Group @.data_proc = [4] {
-    taDataProc @[0] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @[0] { };
-   };
+// ta_Dump File v3.0 -- code v5.1.5.0 rev4800
+LeabraProject .projects["Project_0"] { 
+taBase_Group @.templates = [0] {
 };
-    taDataAnal @[1] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @[0] { };
-   };
+
+Doc_Group @.docs = [9] {
+taDoc @["ProjectDocs"] { };
+taDoc @["BuildNet"] { };
+taDoc @["InputData"] { };
+taDoc @["Programs"] { };
+taDoc @["OutputData"] { };
+taDoc @["TaskProgram"] { };
+taDoc @["CPTAX_Program"] { };
+taDoc @["PfcBg"] { };
+taDoc @["WikiDoc"] { };
 };
-    taDataGen @[2] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @[0] { };
-   };
+
+Wizard_Group @.wizards = [1] {
+LeabraWizard @["LeabraWizard_0"] { 
+UserDataItem_List @*(.user_data_) {
+UserDataItem @["NO_CLIP"] { };
 };
-    taImageProc @[3] { 
-   UserDataItem_List @*(.user_data_) {
-	UserDataItem @[0] { };
-   };
+
+LayerWizElList @.layer_cfg = [3] {
+LayerWizEl @["Input"] { };
+LayerWizEl @["Hidden"] { };
+LayerWizEl @["Output"] { };
 };
-  };
-
-  Program_Group @.programs = [0] {
-  };
-
-  DataViewer_List @.viewers = [1] {
-    MainWindowViewer @[0] { 
-      ToolBar_List @.toolbars = [1] {
-	ToolBar @[0] { };
-      };
-
-      FrameViewer_List @.frames = [3] {
-	tabBrowseViewer @[0] { };
-	PanelViewer @[1] { };
-	T3DataViewer @[2] { 
-	  T3DataViewFrame_List @.frames = [1] {
-	    T3DataViewFrame @[0] { 
-	      T3DataView_List @.children = [0] {
-	      };
-
-	      T3SavedView_List @.saved_views = [6] {
-		T3SavedView @[0] { };
-		T3SavedView @[1] { };
-		T3SavedView @[2] { };
-		T3SavedView @[3] { };
-		T3SavedView @[4] { };
-		T3SavedView @[5] { };
-	      };
-	    };
-	  };
-	};
-      };
-
-      DockViewer_List @.docks = [1] {
-	ToolBoxDockViewer @[0] { };
-      };
-    };
-  };
-
-  Network_Group @.networks = [0] {
-  };
 };
-LeabraProject .projects[0] {
- name="Project_0";
- desc=;
- tags=;
- version {
-  major=0;
-  minor=0;
-  step=0;
- };
- wiki_url {
-  sync=0;
-  wiki=;
-  url=;
- };
- templates {
-  name=;
-  el_typ=taBase;
-  el_def=0;
- };
- docs {
-  name=;
-  el_typ=taDoc;
-  el_def=0;
-  taDoc @[0] {
-   name="ProjectDocs";
-   desc=;
-   auto_open=1;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
-   text_size=1;
-   text="<html>
+};
+
+SelectEdit_Group @.edits = [0] {
+};
+
+DataTable_Group @.data = [0] {
+DataTable_Group @.gp["InputData"] { 
+};
+DataTable_Group @.gp["OutputData"] { 
+};
+DataTable_Group @.gp["AnalysisData"] { 
+};
+};
+
+taBase_Group @.data_proc = [4] {
+taDataProc @["data_base"] { 
+UserDataItem_List @*(.user_data_) {
+UserDataItem @["NO_CLIP"] { };
+};
+};
+taDataAnal @["data_anal"] { 
+UserDataItem_List @*(.user_data_) {
+UserDataItem @["NO_CLIP"] { };
+};
+};
+taDataGen @["data_gen"] { 
+UserDataItem_List @*(.user_data_) {
+UserDataItem @["NO_CLIP"] { };
+};
+};
+taImageProc @["image_proc"] { 
+UserDataItem_List @*(.user_data_) {
+UserDataItem @["NO_CLIP"] { };
+};
+};
+};
+
+Program_Group @.programs = [0] {
+};
+
+DataViewer_List @.viewers = [1] {
+MainWindowViewer @["Browser"] { 
+ToolBar_List @.toolbars = [1] {
+ToolBar @["Application"] { };
+};
+
+FrameViewer_List @.frames = [3] {
+tabBrowseViewer @["Tree"] { };
+PanelViewer @["Panels"] { };
+T3DataViewer @["T3Frames"] { 
+T3DataViewFrame_List @.frames = [1] {
+T3DataViewFrame @["Frame1"] { 
+T3DataView_List @.children = [0] {
+};
+
+T3SavedView_List @.saved_views = [6] {
+T3SavedView @["View_0"] { };
+T3SavedView @["View_1"] { };
+T3SavedView @["View_2"] { };
+T3SavedView @["View_3"] { };
+T3SavedView @["View_4"] { };
+T3SavedView @["View_5"] { };
+};
+};
+};
+};
+};
+
+DockViewer_List @.docks = [1] {
+ToolBoxDockViewer @["Tools"] { };
+};
+};
+};
+
+Network_Group @.networks = [0] {
+};
+};
+LeabraProject .projects["Project_0"] {
+name="Project_0";
+desc=;
+tags=;
+version {
+major=0;
+minor=0;
+step=0;
+};
+license {
+owner=;
+license=NO_LIC;
+org=;
+year="2011";
+custom=;
+};
+wiki_url {
+sync=0;
+wiki=;
+url=;
+};
+templates {
+name=;
+el_typ=taBase;
+el_def=0;
+};
+docs {
+name=;
+el_typ=taDoc;
+el_def=0;
+taDoc @["ProjectDocs"] {
+name="ProjectDocs";
+desc=;
+auto_open=1;
+web_doc=0;
+wiki=;
+url="local";
+full_url="local";
+text_size=1;
+text="<html>
 <head></head>
 <body>
 
@@ -147,29 +154,29 @@ This project provides step-by-step directions for constructing a working neural 
  '''To return to this document''' at any time, just hit the <code>ProjectDocs</code> tab at the top of this middle panel where you are now reading.
 
 Some basic terminology:
-* '''Left browser panel''' is the left portion of the window with a \"tree\" of objects in the simulation (inlcuding the netowrk, and the input/output data, etc).
-* '''Middle edit panel''' is where you are currently reading -- it can display different things depending on the selected tabs at the top, and what is currently selected in the left browser panel.  The left-most tab usually shows what is selected in the browser, and the other tabs with \"pins\" down are locked in place and contain this document and the Wizard, which we will be making heavy use of.  The right-most tab represents the configuration information for the 3D display shown in the right-most view panel (which is now called \"Frame1\" and is empty).
-* '''Right view panel''' shows 3d displays of various simulation objects, incuding the network, input/output patterns, and graphs of results, etc.
+* '''Left browser panel''' is the left portion of the window with a \"tree\" of objects in the simulation (inlcuding the network, and the input/output data, etc).
+* '''Middle edit panel''' is where you are currently reading -- it can display different things depending on the selected tabs at the top, and what is currently selected in the left browser panel.  The left-most tab in the middle edit panel usually shows what is selected in the left browser panel, and the other tabs with \"pins\" down are locked in place and contain this document and the Wizard, which we will be making heavy use of.  The right-most tab in the middle edit panel represents the configuration information for the current 3D display shown in the right-most view panel. The current view displayed is called \"Frame1\" and is empty.
+* '''Right view panel''' shows 3D displays of various simulation objects, incuding the network, input/output patterns, and graphs of results, etc.
 
 == Basic Task: Target Detection ==
 
 The basic task we'll simulate involves presenting letters one at at a time to the network, and having it identify \"targets\" from \"non-targets\".  The targets are the letters 'A' and 'X', and the non-targets are 'B', 'C', 'Y', and 'Z'.
 
-The network will have 6 input units representing each of these letters, and two output units, one for \"target\" and the other for \"non-target\".  It will have a hidden layer to learn the mapping (though this task is initially so trivial that it doesn't even require a hidden layer -- we'll make it harder later).
+The network will have six input units representing each of these letters, and two output units, one for \"target\" and the other for \"non-target\".  It will have a hidden layer to learn the mapping (though this task is initially so trivial that it doesn't even require a hidden layer -- we'll make it harder later).
 
 == Chapters ==
 
 Here are the steps we'll go through, organized as separate document chapters (which live under the <code>docs</code> section of the browser, as does this document):
-# [[.docs.BuildNet]] -- building the network
-# [[.docs.InputData]] -- make basic input patterns (data) to present to the network
-# [[.docs.Programs]] -- creating and controlling the programs that perform the simulation
-# [[.docs.OutputData]] -- monitoring and analyzing the performance of the model
-# [[.docs.TaskProgram]] -- writing a program to construct the task input patterns, including more complex tasks.
+# [[.docs.BuildNet]] -- build the network
+# [[.docs.InputData]] -- make basic patterns (data) to present to the network
+# [[.docs.Programs]] -- create and control the programs that perform the simulation
+# [[.docs.OutputData]] -- monitor and analyze the performance of the model
+# [[.docs.TaskProgram]] -- write a program to construct the task input patterns, including more complex tasks
 # Extras: elaborations that go all the way to the full CPT-AX task
 ## [[.docs.CPTAX_Program]] -- extend our basic program to the full CPT-AX task
-## [[.docs.PfcBg]] -- adding a prefrontal cortex/basal ganglia to the model to handle the full CPT-AX task.
+## [[.docs.PfcBg]] -- add a prefrontal cortex/basal ganglia to the model to handle the full CPT-AX task
 
-== If You Get Off Track.. ==
+== If You Get Off Track... ==
 
 In the same directory where you loaded this project is a <code>ax_tutorial_final.proj</code> project file, which has the full project that will result from following these directions (not the extras).  You can load this project and refer to it to see what things are supposed to look like.
 
@@ -177,7 +184,7 @@ In the same directory where you loaded this project is a <code>ax_tutorial_final
 </body>
 </html>
 ";
-   html_text="<html><head></head><body>
+html_text="<html><head></head><body>
 <p>
 </p><h1> Building a Complete Model </h1>
 <p>
@@ -186,29 +193,29 @@ This project provides step-by-step directions for constructing a working neural 
   <b>To return to this document</b>  at any time, just hit the <code>ProjectDocs</code> tab at the top of this middle panel where you are now reading.
 </p><p>
 Some basic terminology:
-</p><ul><li>  <b>Left browser panel</b>  is the left portion of the window with a \"tree\" of objects in the simulation (inlcuding the netowrk, and the input/output data, etc).
-</li><li>  <b>Middle edit panel</b>  is where you are currently reading -- it can display different things depending on the selected tabs at the top, and what is currently selected in the left browser panel.  The left-most tab usually shows what is selected in the browser, and the other tabs with \"pins\" down are locked in place and contain this document and the Wizard, which we will be making heavy use of.  The right-most tab represents the configuration information for the 3D display shown in the right-most view panel (which is now called \"Frame1\" and is empty).
-</li><li>  <b>Right view panel</b>  shows 3d displays of various simulation objects, incuding the network, input/output patterns, and graphs of results, etc.
+</p><ul><li>  <b>Left browser panel</b>  is the left portion of the window with a \"tree\" of objects in the simulation (inlcuding the network, and the input/output data, etc).
+</li><li>  <b>Middle edit panel</b>  is where you are currently reading -- it can display different things depending on the selected tabs at the top, and what is currently selected in the left browser panel.  The left-most tab in the middle edit panel usually shows what is selected in the left browser panel, and the other tabs with \"pins\" down are locked in place and contain this document and the Wizard, which we will be making heavy use of.  The right-most tab in the middle edit panel represents the configuration information for the current 3D display shown in the right-most view panel. The current view displayed is called \"Frame1\" and is empty.
+</li><li>  <b>Right view panel</b>  shows 3D displays of various simulation objects, incuding the network, input/output patterns, and graphs of results, etc.
 </li></ul>
 <h2> Basic Task: Target Detection </h2>
 <p>
 The basic task we'll simulate involves presenting letters one at at a time to the network, and having it identify \"targets\" from \"non-targets\".  The targets are the letters 'A' and 'X', and the non-targets are 'B', 'C', 'Y', and 'Z'.
 </p><p>
-The network will have 6 input units representing each of these letters, and two output units, one for \"target\" and the other for \"non-target\".  It will have a hidden layer to learn the mapping (though this task is initially so trivial that it doesn't even require a hidden layer -- we'll make it harder later).
+The network will have six input units representing each of these letters, and two output units, one for \"target\" and the other for \"non-target\".  It will have a hidden layer to learn the mapping (though this task is initially so trivial that it doesn't even require a hidden layer -- we'll make it harder later).
 </p><p>
 </p><h2> Chapters </h2>
 <p>
 Here are the steps we'll go through, organized as separate document chapters (which live under the <code>docs</code> section of the browser, as does this document):
-</p><ol><li> <a href=\"ta:.docs.BuildNet\">BuildNet</a> -- building the network
-</li><li> <a href=\"ta:.docs.InputData\">InputData</a> -- make basic input patterns (data) to present to the network
-</li><li> <a href=\"ta:.docs.Programs\">Programs</a> -- creating and controlling the programs that perform the simulation
-</li><li> <a href=\"ta:.docs.OutputData\">OutputData</a> -- monitoring and analyzing the performance of the model
-</li><li> <a href=\"ta:.docs.TaskProgram\">TaskProgram</a> -- writing a program to construct the task input patterns, including more complex tasks.
+</p><ol><li> <a href=\"ta:.docs.BuildNet\">BuildNet</a> -- build the network
+</li><li> <a href=\"ta:.docs.InputData\">InputData</a> -- make basic patterns (data) to present to the network
+</li><li> <a href=\"ta:.docs.Programs\">Programs</a> -- create and control the programs that perform the simulation
+</li><li> <a href=\"ta:.docs.OutputData\">OutputData</a> -- monitor and analyze the performance of the model
+</li><li> <a href=\"ta:.docs.TaskProgram\">TaskProgram</a> -- write a program to construct the task input patterns, including more complex tasks
 </li><li> Extras: elaborations that go all the way to the full CPT-AX task
 <ol><li> <a href=\"ta:.docs.CPTAX_Program\">CPTAX_Program</a> -- extend our basic program to the full CPT-AX task
-</li><li> <a href=\"ta:.docs.PfcBg\">PfcBg</a> -- adding a prefrontal cortex/basal ganglia to the model to handle the full CPT-AX task.
+</li><li> <a href=\"ta:.docs.PfcBg\">PfcBg</a> -- add a prefrontal cortex/basal ganglia to the model to handle the full CPT-AX task
 </li></ol></li></ol>
-<h2> If You Get Off Track.. </h2>
+<h2> If You Get Off Track... </h2>
 <p>
 In the same directory where you loaded this project is a <code>ax_tutorial_final.proj</code> project file, which has the full project that will result from following these directions (not the extras).  You can load this project and refer to it to see what things are supposed to look like.
 </p><p>
@@ -216,25 +223,25 @@ In the same directory where you loaded this project is a <code>ax_tutorial_final
 
 
 </p></body></html>";
-  };
-  taDoc @[1] {
-   name="BuildNet";
-   desc=;
-   auto_open=0;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
-   text_size=1;
-   text="<html>
+};
+taDoc @["BuildNet"] {
+name="BuildNet";
+desc=;
+auto_open=0;
+web_doc=0;
+wiki=;
+url="local";
+full_url="local";
+text_size=1;
+text="<html>
 <head></head>
 <body>
 
 = Building a Network =
 
-The Wizard makes it easy to get started making a network.  It is located in the <code>wizards</code> section of the browser, and can always be found in the <code>LeabraWizard_0</code> tab at the top of this middle panel.  This link: [[.PanelTab.LeabraWizard_0]] will take you there (return to these docs by pressing the BuildNet tab).
+The wizard makes it easy to create a network.  It is located in the <code>wizards</code> section of the browser, and can always be found in the <code>LeabraWizard_0</code> tab at the top of this middle panel.  This link: [[.PanelTab.LeabraWizard_0]] will take you there. You can return to this document by pressing <code>BuildNet</code> in the <code>docs</code> section of the browser.
 
-You will see that it is currently configured for 3 layers, which is fine for our purposes.  But how do we tell it how big to make these layers?  The wizard has some layer configuration information tucked inside of it -- to access it, you need to open up the wizard object in the browser (as is true of most things in this simulator).  This link: [[.wizards.LeabraWizard_0.layer_cfg.Input]] will take you directly to the configuration information for the Input layer.  You can see the browser expanding to reveal the other layer configuration information as well.  Here are the layer sizes (<code>n_units</code>) you should enter:
+You will see that the wizard is currently configured by default to create the three layer network, which is fine for our purposes.  The three layer network contains an input layer, hidden layer, and output layer. But how do we tell it how big to make each layer?  The wizard has some layer configuration information tucked inside of it -- to access it, you need to open up the wizard object in the browser (as is true of most things in this simulator).  This link: [[.wizards.LeabraWizard_0.layer_cfg.Input]] will take you directly to the configuration information for the Input layer.  You can see the browser expanding to reveal the other layer configuration information as well.  Here are the layer sizes (<code>n_units</code>) you should enter:
 
 * [[.wizards.LeabraWizard_0.layer_cfg.Input]] = 6
 * [[.wizards.LeabraWizard_0.layer_cfg.Hidden]] = 16
@@ -242,227 +249,229 @@ You will see that it is currently configured for 3 layers, which is fine for our
 
 Note that the system automatically applies changes when you move from one selection to the next.
 
-Next, return to the [[.PanelTab.LeabraWizard_0]] tab, and at the bottom, click the <code>Network</code> menu button, and choose the [[.wizards.LeabraWizard_0.StdNetwork()|Network/StdNetwork]] option.  This pops up a confirmation dialog explaining that it will create a new network according to your current specifications.  Hit OK.
+Now you can create your network. Return to the [[.PanelTab.LeabraWizard_0]] tab, and at the bottom, click the <code>Network</code> menu button, and choose the [[.wizards.LeabraWizard_0.StdNetwork()|Network/StdNetwork]] option.  This pops up a confirmation dialog explaining that it will create a new network according to your current specifications.  Hit OK.
 
-You will see a network appear in the right view panel, and the left browser will expand to reveal all of the objects created (e.g., layers and specifications).  Feel free to click around on these objects now to see what they have in them -- we will just use the defaults so there is no need to change anything.
+You will see a network appear in the right view panel (replacing Frame1), and the left browser will expand to reveal all of the objects created (e.g., [[.networks.Network_0]] containing the  layers and specifications for the new network).  Feel free to click around on these objects now to see what they have in them -- we will just use the defaults so there is no need to change anything.
 
 Now we'll move on to making the [[.docs.InputData]] for the simple target detection task.  Below are a few optional topics that you can explore if you wish (or come back to later at any time):
 
-== Manipulating the 3d View ==
+== Manipulating the 3D View ==
 
-There are different modes and controls for the 3d view located on the extreme right-hand side of the window next to the network display.  Drag the mouse over them to see what they do (a \"tool tip\" should pop up when the mouse hovers over the button).
+The controls for the 3D view panel are located on the extreme right-hand side of the view panel.  Drag the mouse over them to see what they do (a \"tool tip\" should pop up when the mouse hovers over the button).
 
-To begin, you can experiment with the \"hand\" tool -- if you click the mouse and move it around, you'll see that you can manipulate the \"camera view\" into the 3d view of the network.
+To begin, you can experiment with the \"hand\" tool -- if you click the mouse and move it around, you'll see that you can manipulate the \"camera view\" into the 3D view of the network.
 
 Two key tips:
-* <b>Hold down Shift to move instead of rotate</b> (while moving the mouse).
-* <b>Pressing the \"home\" icon restores the initial view</b> (this is the first home one, not the blueprint guy -- the blueprint guy is for saving the current view state as the default view that the home button returns to.
+* <b>Hold down Shift to pan the view instead of rotating the view</b> (while moving the mouse).
+* <b>Pressing the \"eye\" icon restores the initial view</b> (you can also save alternate views by assigning new views to the <code>View</code> buttons at the bottom of the view panel.)
 
 At some point you'll discover that if you don't completely stop before lifting the mouse button, the view continues to rotate -- kind of mezmerizing -- apologies if you spend too much time doing this (we certainly have.. :)
 
-If you have a scroll wheel, you'll see that it acts like a zoom.  The same effect can be had with the <b>Dolly</b> wheel (the term is an analogy to a camera dolly that moves a camera through a scene in filming a movie).
+If you have a scroll wheel on your mouse, you'll see that it acts like a zoom.  The same effect can be had by manually scrolling the <b>Zoom</b> wheel.
 
-The <b>Rotx</b> and <b>Roty</b> wheels rotate precisely around the x and y axes -- these are often more useful than the mouse-based rotation because they don't introduce off-angles.
+The <b>V.Rot</b> and <b>H.Rot</b> wheels rotate precisely around the x and y axes -- these are often more useful than the mouse-based rotation using the \"hand\" tool because they don't introduce off-angles.
 
-The <b>Flashlight</b> button is very useful for zooming in on something of interest (especially for large complicated displays) -- after clicking on it, then click on an object in the view (NOTE: text doesn't work for this purpose).  Thus button stays on until unclicked or another button is clicked, so you can do repeated exploration.
+The <b>Flashlight</b> button is very useful for zooming in on something of interest (especially for large complicated displays) -- after clicking on it, then click on an object in the view (NOTE: text doesn't work for this purpose).  This button stays on until unclicked or another button is clicked, so you can do repeated exploration.
 
 Finally, for extra thrills, you can click the right mouse button (or ctrl+mouse on a Mac) and configure many interesting display options -- check out the different still draw styles, and the stereo options -- dig out those old red/green stereo glasses!
 
 == Configuring the Network View ==
 
-The middle panel tab labeled [[.PanelTab.Network_0]] provides various parameters for controlling the network display.  There are 3 main segments
+Once the network has been created, the right-most tab in the middle edit panel, labeled [[.viewers.Browser.frames.T3Frames.frames.Network_0]] provides various parameters for controlling the network display.  
+
+There are 3 main segments
  (see the wiki [[.Wiki.Network_View]] page for more info):
 * Display parameters at the top (font sizes, display style etc) (mouse over to get more info, and explore!)
-* Network variable selector -- what value to display in the units in the network view (activations vs. weights vs. netinputs etc).  If you select one of the weight variables (e.g., r.wt for receiving weights into a selected unit; s.wt is for sending weights out), you then need to use the red arrow tool in the viewer to select a unit to view -- it will turn green, and you should be able to see its weights.
-* Spec selector and viewer -- this is very handy for seeing where your specs are used in the network -- try clicking on the <code>HiddenLayer</code> and then <code>Input_Output</code> -- note that the green layer border changes color indicating which layers are using these layer specs.  You can also use the context menu to edit the specs right there.
+* Unit Display Values Selector (tab) -- which network variable value to display in the units in the network view (activations vs. weights vs. netinputs etc).  If you select one of the weight variables (e.g., r.wt for receiving weights into a selected unit; s.wt is for sending weights out), you then need to use the red arrow tool in the viewer to select a unit to view -- it will turn green, and you should be able to see its weights. By default, short-cut buttons to select the most common network variables are available in the view panel on the left-hand side of the view.
+* Spec Explorer (tab) -- this is very handy for seeing where your specs are used in the network -- try clicking on the <code>HiddenLayer</code> and then <code>Input_Output</code> -- note that the layer border changes color indicating which layers are using these layer specs.  You can also use the context menu to edit the network specs right there.
 
 == Changing the Network Configuration ==
 
 You can also configure the network layout interactively in the viewer, including repositioning the layers, and orienting the network display relative to other objects in the view (which we postpone for later, when this arises).
 
-To do this, select the <b>red arrow</b> tool, and you'll see that transparent purple arrow objects now appear on the layers, and a fancy box thing appears on the network text box.  These are the manipulation controls.  Try clicking on one of the horizontal arrows for the Output layer, and moving it around.  This moves within the \"horizontal\" plane (the X-Y plane for the network).  The vertical arrows not surprisingly move in the vertical dimension (the Z axis for the network).
+To do this, select the <b>red arrow</b> tool, and you'll see that transparent purple arrow objects now appear on each layer, and a box appears on the network text box.  These are the manipulation controls.  Try clicking on one of the horizontal arrows for the Output layer, and moving it around.  This moves within the \"horizontal\" plane (the X-Y plane for the network).  The vertical arrows not surprisingly move in the vertical dimension (the Z axis for the network).
 
 </body>
 </html>
 ";
-   html_text="<html>
-<head></head>
-<body>
-<P>
-<h1> Building a Network </h1>
-<P>
-The Wizard makes it easy to get started making a network.  It is located in the <code>wizards</code> section of the browser, and can always be found in the <code>LeabraWizard_0</code> tab at the top of this middle panel.  This link: <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> will take you there (return to these docs by pressing the BuildNet tab).
-<P>
-You will see that it is currently configured for 3 layers, which is fine for our purposes.  But how do we tell it how big to make these layers?  The wizard has some layer configuration information tucked inside of it -- to access it, you need to open up the wizard object in the browser (as is true of most things in this simulator).  This link: <a href=\"ta:.wizards.LeabraWizard_0.layer_cfg.Input\">Input</a> will take you directly to the configuration information for the Input layer.  You can see the browser expanding to reveal the other layer configuration information as well.  Here are the layer sizes (<code>n_units</code>) you should enter:
-<P>
-<ul><li> <a href=\"ta:.wizards.LeabraWizard_0.layer_cfg.Input\">Input</a> = 6
-<li> <a href=\"ta:.wizards.LeabraWizard_0.layer_cfg.Hidden\">Hidden</a> = 16
-<li> <a href=\"ta:.wizards.LeabraWizard_0.layer_cfg.Output\">Output</a> = 2
-</ul>
+html_text="<html><head></head><body>
+<p>
+</p><h1> Building a Network </h1>
+<p>
+The wizard makes it easy to create a network.  It is located in the <code>wizards</code> section of the browser, and can always be found in the <code>LeabraWizard_0</code> tab at the top of this middle panel.  This link: <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> will take you there. You can return to this document by pressing <code>BuildNet</code> in the <code>docs</code> section of the browser.
+</p><p>
+You will see that the wizard is currently configured by default to create the three layer network, which is fine for our purposes.  The three layer network contains an input layer, hidden layer, and output layer. But how do we tell it how big to make each layer?  The wizard has some layer configuration information tucked inside of it -- to access it, you need to open up the wizard object in the browser (as is true of most things in this simulator).  This link: <a href=\"ta:.wizards.LeabraWizard_0.layer_cfg.Input\">Input</a> will take you directly to the configuration information for the Input layer.  You can see the browser expanding to reveal the other layer configuration information as well.  Here are the layer sizes (<code>n_units</code>) you should enter:
+</p><p>
+</p><ul><li> <a href=\"ta:.wizards.LeabraWizard_0.layer_cfg.Input\">Input</a> = 6
+</li><li> <a href=\"ta:.wizards.LeabraWizard_0.layer_cfg.Hidden\">Hidden</a> = 16
+</li><li> <a href=\"ta:.wizards.LeabraWizard_0.layer_cfg.Output\">Output</a> = 2
+</li></ul>
 Note that the system automatically applies changes when you move from one selection to the next.
-<P>
-Next, return to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> tab, and at the bottom, click the <code>Network</code> menu button, and choose the <a href=\"ta:.wizards.LeabraWizard_0.StdNetwork()\">Network/StdNetwork</a> option.  This pops up a confirmation dialog explaining that it will create a new network according to your current specifications.  Hit OK.
-<P>
-You will see a network appear in the right view panel, and the left browser will expand to reveal all of the objects created (e.g., layers and specifications).  Feel free to click around on these objects now to see what they have in them -- we will just use the defaults so there is no need to change anything.
-<P>
+<p>
+Now you can create your network. Return to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> tab, and at the bottom, click the <code>Network</code> menu button, and choose the <a href=\"ta:.wizards.LeabraWizard_0.StdNetwork()\">Network/StdNetwork</a> option.  This pops up a confirmation dialog explaining that it will create a new network according to your current specifications.  Hit OK.
+</p><p>
+You will see a network appear in the right view panel (replacing Frame1), and the left browser will expand to reveal all of the objects created (e.g., <a href=\"ta:.networks.Network_0\">Network_0</a> containing the  layers and specifications for the new network).  Feel free to click around on these objects now to see what they have in them -- we will just use the defaults so there is no need to change anything.
+</p><p>
 Now we'll move on to making the <a href=\"ta:.docs.InputData\">InputData</a> for the simple target detection task.  Below are a few optional topics that you can explore if you wish (or come back to later at any time):
-<P>
-<h2> Manipulating the 3d View </h2>
-<P>
-There are different modes and controls for the 3d view located on the extreme right-hand side of the window next to the network display.  Drag the mouse over them to see what they do (a \"tool tip\" should pop up when the mouse hovers over the button).
-<P>
-To begin, you can experiment with the \"hand\" tool -- if you click the mouse and move it around, you'll see that you can manipulate the \"camera view\" into the 3d view of the network.
-<P>
+</p><p>
+</p><h2> Manipulating the 3D View </h2>
+<p>
+The controls for the 3D view panel are located on the extreme right-hand side of the view panel.  Drag the mouse over them to see what they do (a \"tool tip\" should pop up when the mouse hovers over the button).
+</p><p>
+To begin, you can experiment with the \"hand\" tool -- if you click the mouse and move it around, you'll see that you can manipulate the \"camera view\" into the 3D view of the network.
+</p><p>
 Two key tips:
-<ul><li> <b>Hold down Shift to move instead of rotate</b> (while moving the mouse).
-<li> <b>Pressing the \"home\" icon restores the initial view</b> (this is the first home one, not the blueprint guy -- the blueprint guy is for saving the current view state as the default view that the home button returns to.
-</ul>
+</p><ul><li> <b>Hold down Shift to pan the view instead of rotating the view</b> (while moving the mouse).
+</li><li> <b>Pressing the \"eye\" icon restores the initial view</b> (you can also save alternate views by assigning new views to the <code>View</code> buttons at the bottom of the view panel.)
+</li></ul>
 At some point you'll discover that if you don't completely stop before lifting the mouse button, the view continues to rotate -- kind of mezmerizing -- apologies if you spend too much time doing this (we certainly have.. :)
-<P>
-If you have a scroll wheel, you'll see that it acts like a zoom.  The same effect can be had with the <b>Dolly</b> wheel (the term is an analogy to a camera dolly that moves a camera through a scene in filming a movie).
-<P>
-The <b>Rotx</b> and <b>Roty</b> wheels rotate precisely around the x and y axes -- these are often more useful than the mouse-based rotation because they don't introduce off-angles.
-<P>
-The <b>Flashlight</b> button is very useful for zooming in on something of interest (especially for large complicated displays) -- after clicking on it, then click on an object in the view (NOTE: text doesn't work for this purpose).  Thus button stays on until unclicked or another button is clicked, so you can do repeated exploration.
-<P>
+<p>
+If you have a scroll wheel on your mouse, you'll see that it acts like a zoom.  The same effect can be had by manually scrolling the <b>Zoom</b> wheel.
+</p><p>
+The <b>V.Rot</b> and <b>H.Rot</b> wheels rotate precisely around the x and y axes -- these are often more useful than the mouse-based rotation using the \"hand\" tool because they don't introduce off-angles.
+</p><p>
+The <b>Flashlight</b> button is very useful for zooming in on something of interest (especially for large complicated displays) -- after clicking on it, then click on an object in the view (NOTE: text doesn't work for this purpose).  This button stays on until unclicked or another button is clicked, so you can do repeated exploration.
+</p><p>
 Finally, for extra thrills, you can click the right mouse button (or ctrl+mouse on a Mac) and configure many interesting display options -- check out the different still draw styles, and the stereo options -- dig out those old red/green stereo glasses!
-<P>
-<h2> Configuring the Network View </h2>
-<P>
-The middle panel tab labeled <a href=\"ta:.PanelTab.Network_0\">Network_0</a> provides various parameters for controlling the network display.  There are 3 main segments
+</p><p>
+</p><h2> Configuring the Network View </h2>
+<p>
+Once the network has been created, the right-most tab in the middle edit panel, labeled <a href=\"ta:.viewers.Browser.frames.T3Frames.frames.Network_0\">Network_0</a> provides various parameters for controlling the network display.  
+</p><p>
+There are 3 main segments
  (see the wiki <a href=\"ta:.Wiki.Network_View\">Network_View</a> page for more info):
-<ul><li> Display parameters at the top (font sizes, display style etc) (mouse over to get more info, and explore!)
-<li> Network variable selector -- what value to display in the units in the network view (activations vs. weights vs. netinputs etc).  If you select one of the weight variables (e.g., r.wt for receiving weights into a selected unit; s.wt is for sending weights out), you then need to use the red arrow tool in the viewer to select a unit to view -- it will turn green, and you should be able to see its weights.
-<li> Spec selector and viewer -- this is very handy for seeing where your specs are used in the network -- try clicking on the <code>HiddenLayer</code> and then <code>Input_Output</code> -- note that the green layer border changes color indicating which layers are using these layer specs.  You can also use the context menu to edit the specs right there.
-</ul>
+</p><ul><li> Display parameters at the top (font sizes, display style etc) (mouse over to get more info, and explore!)
+</li><li> Unit Display Values Selector (tab) -- which network variable value to display in the units in the network view (activations vs. weights vs. netinputs etc).  If you select one of the weight variables (e.g., r.wt for receiving weights into a selected unit; s.wt is for sending weights out), you then need to use the red arrow tool in the viewer to select a unit to view -- it will turn green, and you should be able to see its weights. By default, short-cut buttons to select the most common network variables are available in the view panel on the left-hand side of the view.
+</li><li> Spec Explorer (tab) -- this is very handy for seeing where your specs are used in the network -- try clicking on the <code>HiddenLayer</code> and then <code>Input_Output</code> -- note that the layer border changes color indicating which layers are using these layer specs.  You can also use the context menu to edit the network specs right there.
+</li></ul>
 <h2> Changing the Network Configuration </h2>
-<P>
+<p>
 You can also configure the network layout interactively in the viewer, including repositioning the layers, and orienting the network display relative to other objects in the view (which we postpone for later, when this arises).
-<P>
-To do this, select the <b>red arrow</b> tool, and you'll see that transparent purple arrow objects now appear on the layers, and a fancy box thing appears on the network text box.  These are the manipulation controls.  Try clicking on one of the horizontal arrows for the Output layer, and moving it around.  This moves within the \"horizontal\" plane (the X-Y plane for the network).  The vertical arrows not surprisingly move in the vertical dimension (the Z axis for the network).
-<P>
-</body>
-</html>
-";
-  };
-  taDoc @[2] {
-   name="InputData";
-   desc=;
-   auto_open=0;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
-   text_size=1;
-   text="<html>
+</p><p>
+To do this, select the <b>red arrow</b> tool, and you'll see that transparent purple arrow objects now appear on each layer, and a box appears on the network text box.  These are the manipulation controls.  Try clicking on one of the horizontal arrows for the Output layer, and moving it around.  This moves within the \"horizontal\" plane (the X-Y plane for the network).  The vertical arrows not surprisingly move in the vertical dimension (the Z axis for the network).
+</p><p>
+
+
+</p></body></html>";
+};
+taDoc @["InputData"] {
+name="InputData";
+desc=;
+auto_open=0;
+web_doc=0;
+wiki=;
+url="local";
+full_url="local";
+text_size=1;
+text="<html>
 <head></head>
 <body>
 
 = Input Data  (Patterns to Present to the Network) =
 
-(Note -- to return to this document, click on docs/InputData in the left browser window).
+NOTE: You can return to this document by pressing <code>InputData</code> in the <code>docs</code> section of the browser.
 
-We return to the [[.PanelTab.LeabraWizard_0]] wizard tab, and move across to the next menu button on the
-bottom labeled <code>Data</code>, and select the [[.wizards.LeabraWizard_0.StdData()|Data/StdData]] option.  This will bring up a dialog with mostly default information already filled in (and not modifyiable because there are no other options), but there is one parameter we need to specify: <code>n_patterns</code>.  Enter 6 -- one for each of the different input letters.
+We return to the [[.PanelTab.LeabraWizard_0]] wizard tab, and at the bottom of the wizard move across to the next menu button labeled <code>Data</code>, and select the [[.wizards.LeabraWizard_0.StdData()|Data/StdData]] option.  This will bring up a dialog with mostly default information already filled in (and not modifyiable because there are no other options), but there is one parameter we need to specify: <code>n_patterns</code>.  Enter 6 -- one for each of the different input letters. Press OK.
 
-This will construct a \"data table\" object (much like a spreadsheet or simple data base) that has columns automatically corresponding to the Input and Output layers of the network, with 6 rows where we can specify the different input patterns to the network, which define our simple target detection task.  The Name column is useful for labeling our patterns.  you'll see <code>(matrix)</code> in the Input and Output columns, and if you click on one of those, an extra editor shows up at the bottom of the window to allow you to enter values for the \"matrix\" of input and output units.  The Name column, in contrast, has just a single value for each row (i.e., a \"scalar\"), so it can be edited directly in the main table view.
+A \"data table\" object (much like a spreadsheet or simple data base) is constructed that has columns automatically corresponding to the Input and Output layers of the network, with 6 rows where we can specify the different input patterns to the network, which define our simple target detection task.  The Name column is useful for labeling our patterns.  you'll see <code>(matrix)</code> in the Input and Output columns, and if you click on one of those, an extra editor shows up at the bottom of the window to allow you to enter values for the \"matrix\" of input and output units.  The Name column, in contrast, has just a single value for each row (i.e., a \"scalar\"), so it can be edited directly in the main table view.
 
-This data table object is called [[.data.gp.InputData.StdInputData]] and it lives in the <code>data/InputData subgroup</code> in the left browser, in case you need to get back to it.
+This data table object is called [[.data.gp.InputData.StdInputData]] (<code>.data.gp.InputData.StdInputData</code>) and it lives in the <code>data/InputData</code> subgroup in the left browser, in case you need to get back to it.
 
-Here is what you should enter, where we're calling the 1st output unit the \"non-target\" and the 2nd one the target, and the Input units are ordered left-to-right, bottom-to-top:
+For the <code>Output</code> matrix we are calling the first output unit the \"non-target\" and the second output unit the \"target\". The active units (set to '1') within the <code>Input</code> matrix are ordered left-to-right, bottom-to-top. Here is what you should enter for the <code>StdInputData</code> datatable:
 <table>
-<tr><th>Name</th> <th>Input</th> <th>Output</th></tr>
-<tr><td>A</td><td>000<br>100</td><td>01</td></tr>
-<tr><td>B</td><td>000<br>010</td><td>10</td></tr>
-<tr><td>C</td><td>000<br>001</td><td>10</td></tr>
-<tr><td>X</td><td>100<br>000</td><td>01</td></tr>
-<tr><td>Y</td><td>010<br>000</td><td>10</td></tr>
-<tr><td>Z</td><td>001<br>000</td><td>10</td></tr>
+<tr><th></th> <th>Name</th> <th></th> <th>Input</th> <th></th> <th>Output</th></tr>
+<tr><td></td> <td>A</td> <td></td> <td>000<br>100</td> <td></td> <td>01</td></tr>
+<tr><td></td> <td>B</td> <td></td> <td>000<br>010</td> <td></td> <td>10</td></tr>
+<tr><td></td> <td>C</td> <td></td> <td>000<br>001</td> <td></td> <td>10</td></tr>
+<tr><td></td> <td>X</td> <td></td> <td>100<br>000</td> <td></td> <td>01</td></tr>
+<tr><td></td> <td>Y</td> <td></td> <td>010<br>000</td> <td></td> <td>10</td></tr>
+<tr><td></td> <td>Z</td> <td></td> <td>001<br>000</td> <td></td> <td>10</td></tr>
 </table>
 
-(If you're really lazy, you can just load in these data patterns from the file <code>sim_tutorial_input_data.dtbl</code> by doing [[.data.gp.InputData.StdInputData.Load()|Object/Load]]
-on the [[.data.gp.InputData.StdInputData]] object).
+NOTE: If you're really lazy, you can just load in these data patterns from the file <code>sim_tutorial_input_data.dtbl</code> by doing [[.data.gp.InputData.StdInputData.Load()|Object/Load]] on the [[.data.gp.InputData.StdInputData]] object. This reloads the entire <code>StdInputData</code> datatable. (For more on datatables, see the wiki [[.Wiki.Datatable]] page):
 
 == Visualizing the Data Patterns ==
 
-The best way to make sure you've entered the right patterns is to create a \"Grid View\" of your input data -- do this by selecting the [[.data.gp.InputData.StdInputData.NewGridView()|View/New Grid View]] option from the menu at the top of the data table editor that you've been using to enter input patterns with.  Go ahead and keep the \"New Frame\" default for the dialog that pops up (you can also add multiple view elements together in a single 'frame' in the 3d view -- we'll do that later).
+The best way to make sure you've entered the right patterns is to create a \"Grid View\" of your input data -- do this by selecting the [[.data.gp.InputData.StdInputData.NewGridView()|View/New Grid View]] option from the menu at the top of the data table editor that you've been using to enter input patterns with.  Go ahead and keep the \"New Frame\" default for the dialog that pops up (you can also add multiple view elements together in a single 'frame' in the 3D view -- we'll do that later).
 
-This will create a [[.T3Tab.StdInputData]] tab in the right view panel, and display your input patterns, which hopefully match those shown in the above table.  If not, you can correct them by clicking back on StdInputData in the left browser -- you cannot edit values in the grid view display.
+This will create a [[.T3Tab.StdInputData]] view tab in the right view panel, and display your input patterns, which hopefully match those shown in the above table.  If not, you can correct them by clicking back on StdInputData in the left browser. 
 
-There is also a new [[.PanelTab.StdInputData]] middle-panel tab, which contains various parameters for controlling the configuration of the grid view display.  You can mouse-over the fields to get more info.  Many of these require you to hit the Apply button at the bottom before they take effect on the view.
+There is also a new [[.PanelTab.StdInputData]] middle-panel tab, which corresponds to the new view and contains various parameters for controlling the configuration of the grid view display.  You can mouse-over the fields to get more information.  Many of these require you to hit the Apply button at the bottom before they take effect on the view. 
+
+NOTE: By default, in the Grid Table View options for StdInputData, the <code>Click Vals</code> option is turned off. If you select this option, you can now use the red arrow to edit unit values in the grid view display.
 
 The next step is to create [[.docs.Programs]] to control the presentation of these input patterns to the network.
 
 </body>
 </html>
 ";
-   html_text="<html>
-<head></head>
-<body>
-<P>
-<h1> Input Data  (Patterns to Present to the Network) </h1>
-<P>
-(Note -- to return to this document, click on docs/InputData in the left browser window).
-<P>
-We return to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> wizard tab, and move across to the next menu button on the
-bottom labeled <code>Data</code>, and select the <a href=\"ta:.wizards.LeabraWizard_0.StdData()\">Data/StdData</a> option.  This will bring up a dialog with mostly default information already filled in (and not modifyiable because there are no other options), but there is one parameter we need to specify: <code>n_patterns</code>.  Enter 6 -- one for each of the different input letters.
-<P>
-This will construct a \"data table\" object (much like a spreadsheet or simple data base) that has columns automatically corresponding to the Input and Output layers of the network, with 6 rows where we can specify the different input patterns to the network, which define our simple target detection task.  The Name column is useful for labeling our patterns.  you'll see <code>(matrix)</code> in the Input and Output columns, and if you click on one of those, an extra editor shows up at the bottom of the window to allow you to enter values for the \"matrix\" of input and output units.  The Name column, in contrast, has just a single value for each row (i.e., a \"scalar\"), so it can be edited directly in the main table view.
-<P>
-This data table object is called <a href=\"ta:.data.gp.InputData.StdInputData\">StdInputData</a> and it lives in the <code>data/InputData subgroup</code> in the left browser, in case you need to get back to it.
-<P>
-Here is what you should enter, where we're calling the 1st output unit the \"non-target\" and the 2nd one the target, and the Input units are ordered left-to-right, bottom-to-top:
+html_text="<html><head></head><body>
+<p>
+</p><h1> Input Data  (Patterns to Present to the Network) </h1>
+<p>
+NOTE: You can return to this document by pressing <code>InputData</code> in the <code>docs</code> section of the browser.
+</p><p>
+We return to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> wizard tab, and at the bottom of the wizard move across to the next menu button labeled <code>Data</code>, and select the <a href=\"ta:.wizards.LeabraWizard_0.StdData()\">Data/StdData</a> option.  This will bring up a dialog with mostly default information already filled in (and not modifyiable because there are no other options), but there is one parameter we need to specify: <code>n_patterns</code>.  Enter 6 -- one for each of the different input letters. Press OK.
+</p><p>
+A \"data table\" object (much like a spreadsheet or simple data base) is constructed that has columns automatically corresponding to the Input and Output layers of the network, with 6 rows where we can specify the different input patterns to the network, which define our simple target detection task.  The Name column is useful for labeling our patterns.  you'll see <code>(matrix)</code> in the Input and Output columns, and if you click on one of those, an extra editor shows up at the bottom of the window to allow you to enter values for the \"matrix\" of input and output units.  The Name column, in contrast, has just a single value for each row (i.e., a \"scalar\"), so it can be edited directly in the main table view.
+</p><p>
+This data table object is called <a href=\"ta:.data.gp.InputData.StdInputData\">StdInputData</a> (<code>.data.gp.InputData.StdInputData</code>) and it lives in the <code>data/InputData</code> subgroup in the left browser, in case you need to get back to it.
+</p><p>
+For the <code>Output</code> matrix we are calling the first output unit the \"non-target\" and the second output unit the \"target\". The active units (set to '1') within the <code>Input</code> matrix are ordered left-to-right, bottom-to-top. Here is what you should enter for the <code>StdInputData</code> datatable:
 <table>
-<tr><th>Name</th> <th>Input</th> <th>Output</th></tr>
-<tr><td>A</td><td>000<br>100</td><td>01</td></tr>
-<tr><td>B</td><td>000<br>010</td><td>10</td></tr>
-<tr><td>C</td><td>000<br>001</td><td>10</td></tr>
-<tr><td>X</td><td>100<br>000</td><td>01</td></tr>
-<tr><td>Y</td><td>010<br>000</td><td>10</td></tr>
-<tr><td>Z</td><td>001<br>000</td><td>10</td></tr>
-</table>
-<P>
-(If you're really lazy, you can just load in these data patterns from the file <code>sim_tutorial_input_data.dtbl</code> by doing <a href=\"ta:.data.gp.InputData.StdInputData.Load()\">Object/Load</a>
-on the <a href=\"ta:.data.gp.InputData.StdInputData\">StdInputData</a> object).
-<P>
-<h2> Visualizing the Data Patterns </h2>
-<P>
-The best way to make sure you've entered the right patterns is to create a \"Grid View\" of your input data -- do this by selecting the <a href=\"ta:.data.gp.InputData.StdInputData.NewGridView()\">View/New Grid View</a> option from the menu at the top of the data table editor that you've been using to enter input patterns with.  Go ahead and keep the \"New Frame\" default for the dialog that pops up (you can also add multiple view elements together in a single 'frame' in the 3d view -- we'll do that later).
-<P>
-This will create a <a href=\"ta:.T3Tab.StdInputData\">StdInputData</a> tab in the right view panel, and display your input patterns, which hopefully match those shown in the above table.  If not, you can correct them by clicking back on StdInputData in the left browser -- you cannot edit values in the grid view display.
-<P>
-There is also a new <a href=\"ta:.PanelTab.StdInputData\">StdInputData</a> middle-panel tab, which contains various parameters for controlling the configuration of the grid view display.  You can mouse-over the fields to get more info.  Many of these require you to hit the Apply button at the bottom before they take effect on the view.
-<P>
+<tbody><tr><th></th> <th>Name</th> <th></th> <th>Input</th> <th></th> <th>Output</th></tr>
+<tr><td></td> <td>A</td> <td></td> <td>000<br>100</td> <td></td> <td>01</td></tr>
+<tr><td></td> <td>B</td> <td></td> <td>000<br>010</td> <td></td> <td>10</td></tr>
+<tr><td></td> <td>C</td> <td></td> <td>000<br>001</td> <td></td> <td>10</td></tr>
+<tr><td></td> <td>X</td> <td></td> <td>100<br>000</td> <td></td> <td>01</td></tr>
+<tr><td></td> <td>Y</td> <td></td> <td>010<br>000</td> <td></td> <td>10</td></tr>
+<tr><td></td> <td>Z</td> <td></td> <td>001<br>000</td> <td></td> <td>10</td></tr>
+</tbody></table>
+</p><p>
+NOTE: If you're really lazy, you can just load in these data patterns from the file <code>sim_tutorial_input_data.dtbl</code> by doing <a href=\"ta:.data.gp.InputData.StdInputData.Load()\">Object/Load</a> on the <a href=\"ta:.data.gp.InputData.StdInputData\">StdInputData</a> object. This reloads the entire <code>StdInputData</code> datatable. (For more on datatables, see the wiki <a href=\"ta:.Wiki.Datatable\">Datatable</a> page):
+</p><p>
+</p><h2> Visualizing the Data Patterns </h2>
+<p>
+The best way to make sure you've entered the right patterns is to create a \"Grid View\" of your input data -- do this by selecting the <a href=\"ta:.data.gp.InputData.StdInputData.NewGridView()\">View/New Grid View</a> option from the menu at the top of the data table editor that you've been using to enter input patterns with.  Go ahead and keep the \"New Frame\" default for the dialog that pops up (you can also add multiple view elements together in a single 'frame' in the 3D view -- we'll do that later).
+</p><p>
+This will create a <a href=\"ta:.T3Tab.StdInputData\">StdInputData</a> view tab in the right view panel, and display your input patterns, which hopefully match those shown in the above table.  If not, you can correct them by clicking back on StdInputData in the left browser. 
+</p><p>
+There is also a new <a href=\"ta:.PanelTab.StdInputData\">StdInputData</a> middle-panel tab, which corresponds to the new view and contains various parameters for controlling the configuration of the grid view display.  You can mouse-over the fields to get more information.  Many of these require you to hit the Apply button at the bottom before they take effect on the view. 
+</p><p>
+NOTE: By default, in the Grid Table View options for StdInputData, the <code>Click Vals</code> option is turned off. If you select this option, you can now use the red arrow to edit unit values in the grid view display.
+</p><p>
 The next step is to create <a href=\"ta:.docs.Programs\">Programs</a> to control the presentation of these input patterns to the network.
-<P>
-</body>
-</html>
-";
-  };
-  taDoc @[3] {
-   name="Programs";
-   desc=;
-   auto_open=0;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
-   text_size=1;
-   text="<html>
+</p><p>
+
+
+</p></body></html>";
+};
+taDoc @["Programs"] {
+name="Programs";
+desc=;
+auto_open=0;
+web_doc=0;
+wiki=;
+url="local";
+full_url="local";
+text_size=1;
+text="<html>
 <head></head>
 <body>
 
 = Programs for Controlling the Simulation =
 
-Again return to the [[.PanelTab.LeabraWizard_0]] wizard panel, and now select [[.wizards.LeabraWizard_0.StdProgs()|Programs/Std Progs]] from the bottom menu.  (return to these docs by clicking back on <code>docs/Programs</code> in the browser).
+NOTE: You can return to this document by pressing <code>Programs</code> in the <code>docs</code> section of the browser.
 
-This created a set of standard programs that organize the presentation of input patterns to the network into a hierarchy of time scales:
+Return to the [[.PanelTab.LeabraWizard_0]] wizard panel, and at the bottom, click the <code>Programs</code> menu button, and choose the [[.wizards.LeabraWizard_0.StdProgs()|Programs/Std Progs]] option.  This pops up a confirmation dialog explaining that it will create a new set of standard programs based on the project type (this project is a LeabraProject).  Hit OK.
 
-* LeabraBatch -- iterates over multiple simulated \"subjects\" -- each having their own different random initial weights (we won't use this initially).
+This created a set of standard programs used to train the network, which organize the presentation of input patterns to the network into a hierarchy of time scales:
+
+* LeabraBatch -- iterates over multiple simulated network \"subjects\" -- each having their own different random initial weights (we won't use this initially).
 * LeabraTrain -- a complete training of the network from random initial weights to final correct performance, by iterating over multiple \"epochs\"
-* LeabraEpoch -- one full pass through all of the different task input patterns
+* LeabraEpoch -- one full pass through all of the different task input patterns, by iterating over multiple \"trials\"
 * LeabraTrial -- processes one input pattern, using two ''phases'' of settling -- the minus phase presents the input stimulus, and allows the network to come up with its own best guess as to the correct response, and the plus phase presents the correct answer to allow the network to learn to perform the task correctly.
-* LeabraSettle -- multiple updates of neural unit activations to process a given input/output pattern.
+* LeabraSettle -- multiple updates of neural unit activations to process a given input/output pattern, interated over multiple \"cycles\"
 * LeabraCycle -- a single cycle of updating of neural unit activation states (roughly 5-10msec of simulated real time)
 
 There are also some other supporting programs that we'll discuss later.
@@ -471,76 +480,70 @@ You might notice that the ApplyInputs program is opened up to show the LayerWrit
 
 == Running the Simulation ==
 
-First, make sure you're viewing the [[.T3Tab.Network_0]] network view tab, and then click on the 
- [[.programs.gp.LeabraAll_Std.LeabraTrain]] program.  Press the 
- [[.programs.gp.LeabraAll_Std.LeabraTrain.Init()|Init]] button at the bottom of the window, followed by 
+First, make sure you're viewing the [[.T3Tab.Network_0]] network in the right side view panel. Then click on the [[.programs.gp.LeabraAll_Std.LeabraTrain]] program, which can be selected from the browser under <code>programs/LeabraAll_Std/LeabraTrain</code>. Press the [[.programs.gp.LeabraAll_Std.LeabraTrain.Init()|Init]] button at the bottom of the window, followed by 
 the [[.programs.gp.LeabraAll_Std.LeabraTrain.Run()|Run]] button (these links will actually do this for you!).
 
-You should then see the network processing each of the input patterns for the task multiple times, as it iterates over epochs of trials of settles of cycles of processing.  Depending on your hardware, this may wiz by in quite a blur.
+You should then see the network processing each of the input patterns for the task multiple times, as the program iterates over epochs of trials of settles of cycles of processing.  Depending on your hardware, this may wiz by in quite a blur.
 
 Once it finishes, you can see more clearly what it is doing by hitting the [[.programs.gp.LeabraAll_Std.LeabraTrain.Step()|Step]] button, 
-which will perform one phase of settling at a time.  You should observe that the network gets the correct output unit active in the minus phase (look for <code>MINUS_PHASE</code> or <code>PLUS_PHASE</code> in the text region at the bottom of the network 3d view display.  It has successfully learned the task!
+which will perform one phase of settling at a time.  You should observe that the network gets the correct output unit active in the minus phase (look for <code>MINUS_PHASE</code> or <code>PLUS_PHASE</code> in the text displayed in the network 3D view.  It has successfully learned the task!
 
-We'll learn a lot more about how programs work when we write one from scratch to generate our input data for training the network.  If you're adventurous, you can click on them and hit the EditProgram button to see the underlying \"guts\" that make the programs do what they do.  Everything that happens in running the simulation is explicitly listed out, and can be modified in any way that you might want -- this is very powerful and probably a bit dangerous too.. :)  Don't do anything to modify the programs at this point.
+We'll learn a lot more about how programs work when we write one from scratch to generate our input data for training the network.  If you're adventurous, you can click on the programs and hit the EditProgram button to see the underlying \"guts\" that make the programs do what they do.  Everything that happens in running the simulation is explicitly listed out, and can be modified in any way that you might want -- this is very powerful and probably a bit dangerous too.. :)  Don't do anything to modify the programs at this point.
 
-The next step is more clearly monitor the performance of the network as it learns, by recording 
-[[.docs.OutputData]] from the network.
+The next step is more clearly monitor the performance of the network as it learns, by recording [[.docs.OutputData]] from the network.
 
 </body>
 </html>
 ";
-   html_text="<html>
-<head></head>
-<body>
-<P>
-<h1> Programs for Controlling the Simulation </h1>
-<P>
-Again return to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> wizard panel, and now select <a href=\"ta:.wizards.LeabraWizard_0.StdProgs()\">Programs/Std Progs</a> from the bottom menu.  (return to these docs by clicking back on <code>docs/Programs</code> in the browser).
-<P>
-This created a set of standard programs that organize the presentation of input patterns to the network into a hierarchy of time scales:
-<P>
-<ul><li> LeabraBatch -- iterates over multiple simulated \"subjects\" -- each having their own different random initial weights (we won't use this initially).
-<li> LeabraTrain -- a complete training of the network from random initial weights to final correct performance, by iterating over multiple \"epochs\"
-<li> LeabraEpoch -- one full pass through all of the different task input patterns
-<li> LeabraTrial -- processes one input pattern, using two  <i>phases</i>  of settling -- the minus phase presents the input stimulus, and allows the network to come up with its own best guess as to the correct response, and the plus phase presents the correct answer to allow the network to learn to perform the task correctly.
-<li> LeabraSettle -- multiple updates of neural unit activations to process a given input/output pattern.
-<li> LeabraCycle -- a single cycle of updating of neural unit activation states (roughly 5-10msec of simulated real time)
-</ul>
+html_text="<html><head></head><body>
+<p>
+</p><h1> Programs for Controlling the Simulation </h1>
+<p>
+NOTE: You can return to this document by pressing <code>Programs</code> in the <code>docs</code> section of the browser.
+</p><p>
+Return to the <a href=\"ta:.PanelTab.LeabraWizard_0\">LeabraWizard_0</a> wizard panel, and at the bottom, click the <code>Programs</code> menu button, and choose the <a href=\"ta:.wizards.LeabraWizard_0.StdProgs()\">Programs/Std Progs</a> option.  This pops up a confirmation dialog explaining that it will create a new set of standard programs based on the project type (this project is a LeabraProject).  Hit OK.
+</p><p>
+This created a set of standard programs used to train the network, which organize the presentation of input patterns to the network into a hierarchy of time scales:
+</p><p>
+</p><ul><li> LeabraBatch -- iterates over multiple simulated network \"subjects\" -- each having their own different random initial weights (we won't use this initially).
+</li><li> LeabraTrain -- a complete training of the network from random initial weights to final correct performance, by iterating over multiple \"epochs\"
+</li><li> LeabraEpoch -- one full pass through all of the different task input patterns, by iterating over multiple \"trials\"
+</li><li> LeabraTrial -- processes one input pattern, using two  <i>phases</i>  of settling -- the minus phase presents the input stimulus, and allows the network to come up with its own best guess as to the correct response, and the plus phase presents the correct answer to allow the network to learn to perform the task correctly.
+</li><li> LeabraSettle -- multiple updates of neural unit activations to process a given input/output pattern, interated over multiple \"cycles\"
+</li><li> LeabraCycle -- a single cycle of updating of neural unit activation states (roughly 5-10msec of simulated real time)
+</li></ul>
 There are also some other supporting programs that we'll discuss later.
-<P>
+<p>
 You might notice that the ApplyInputs program is opened up to show the LayerWriter_0 object -- this was auto-configured to apply the input data values to the appropriate (same name) layers in the network.  If you change the layer names or add additional layers, etc, you may need to go back to this object and hit the AutoConfig button to reconfigure it.  We'll do this later in the tutorial.
-<P>
-<h2> Running the Simulation </h2>
-<P>
-First, make sure you're viewing the <a href=\"ta:.T3Tab.Network_0\">Network_0</a> network view tab, and then click on the 
- <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain\">LeabraTrain</a> program.  Press the 
- <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a> button at the bottom of the window, followed by 
+</p><p>
+</p><h2> Running the Simulation </h2>
+<p>
+First, make sure you're viewing the <a href=\"ta:.T3Tab.Network_0\">Network_0</a> network in the right side view panel. Then click on the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain\">LeabraTrain</a> program, which can be selected from the browser under <code>programs/LeabraAll_Std/LeabraTrain</code>. Press the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a> button at the bottom of the window, followed by 
 the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a> button (these links will actually do this for you!).
-<P>
-You should then see the network processing each of the input patterns for the task multiple times, as it iterates over epochs of trials of settles of cycles of processing.  Depending on your hardware, this may wiz by in quite a blur.
-<P>
+</p><p>
+You should then see the network processing each of the input patterns for the task multiple times, as the program iterates over epochs of trials of settles of cycles of processing.  Depending on your hardware, this may wiz by in quite a blur.
+</p><p>
 Once it finishes, you can see more clearly what it is doing by hitting the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Step()\">Step</a> button, 
-which will perform one phase of settling at a time.  You should observe that the network gets the correct output unit active in the minus phase (look for <code>MINUS_PHASE</code> or <code>PLUS_PHASE</code> in the text region at the bottom of the network 3d view display.  It has successfully learned the task!
-<P>
-We'll learn a lot more about how programs work when we write one from scratch to generate our input data for training the network.  If you're adventurous, you can click on them and hit the EditProgram button to see the underlying \"guts\" that make the programs do what they do.  Everything that happens in running the simulation is explicitly listed out, and can be modified in any way that you might want -- this is very powerful and probably a bit dangerous too.. :)  Don't do anything to modify the programs at this point.
-<P>
-The next step is more clearly monitor the performance of the network as it learns, by recording 
-<a href=\"ta:.docs.OutputData\">OutputData</a> from the network.
-<P>
-</body>
-</html>
-";
-  };
-  taDoc @[4] {
-   name="OutputData";
-   desc=;
-   auto_open=0;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
-   text_size=1;
-   text="<html>
+which will perform one phase of settling at a time.  You should observe that the network gets the correct output unit active in the minus phase (look for <code>MINUS_PHASE</code> or <code>PLUS_PHASE</code> in the text displayed in the network 3D view.  It has successfully learned the task!
+</p><p>
+We'll learn a lot more about how programs work when we write one from scratch to generate our input data for training the network.  If you're adventurous, you can click on the programs and hit the EditProgram button to see the underlying \"guts\" that make the programs do what they do.  Everything that happens in running the simulation is explicitly listed out, and can be modified in any way that you might want -- this is very powerful and probably a bit dangerous too.. :)  Don't do anything to modify the programs at this point.
+</p><p>
+The next step is more clearly monitor the performance of the network as it learns, by recording <a href=\"ta:.docs.OutputData\">OutputData</a> from the network.
+</p><p>
+
+
+</p></body></html>";
+};
+taDoc @["OutputData"] {
+name="OutputData";
+desc=;
+auto_open=0;
+web_doc=0;
+wiki=;
+url="local";
+full_url="local";
+text_size=1;
+text="<html>
 <head></head>
 <body>
 = Monitoring, Analyzing, and Displaying Output Data =
@@ -608,85 +611,83 @@ There are many more things one could do, but hopefully this gives a flavor.  The
 </body>
 </html>
 ";
-   html_text="<html>
-<head></head>
-<body>
+html_text="<html><head></head><body>
 <h1> Monitoring, Analyzing, and Displaying Output Data </h1>
-<P>
+<p>
 In this section we explore various ways of understanding better how the network is performing.
-<P>
-<h2> Graphing Learning Performance over Epochs </h2>
-<P>
+</p><p>
+</p><h2> Graphing Learning Performance over Epochs </h2>
+<p>
 To see how your network is learning a given task, the first step is to generate a graph of the learning performance (sum squared error on the training patterns) over epochs.  Fortunately, the default programs are already collecting this data for us, so we just need to display the graph.
-<P>
+</p><p>
 The data is being recorded in the <a href=\"ta:.data.gp.OutputData.EpochOutputData\">EpochOutputData</a> data table object in the <code>data/OutputData subgroup</code>.  You should see a few rows of data from the previous run, and you should notice that the <code>avg_sse</code> column shows a general decrease in average sum-squared-error on the training patterns, ending in a 0, which is what stopped the training.
-<P>
+</p><p>
 To graph this data, you just generate a graph view of this data table.  As a general rule in the software, all view information is always generated by a given main object like a datatable or a network -- you don't create a graph and then associate data with it -- it goes the other way.  The menu selection to create the graph view is <a href=\"ta:.data.gp.OutputData.EpochOutputData.NewGraphView()\">View/New Graph View</a>.  This time, let's be adventurous and instead of putting this graph in a separate view frame, put it in the <code>Network_0</code> frame.
-<P>
+</p><p>
 If you happened to have put it in the wrong frame initially, don't worry -- just do the context menu over the frame view tab on the right (should be called EpochOutputData), and select Delete Frame.  Note that there can be multiple views of the same underlying data.
-<P>
+</p><p>
 You should see a graph appear in the upper right of your network display, showing a decreasing line from left to right.  By default the line is (redundantly) color coded for the plot value.  You can control this and many other features of the graph display in the graph control panel.
-<P>
+</p><p>
 But wait, where is that panel?  You should only see a <a href=\"ta:.PanelTab.Network_0\">Network_0</a> tab in the middle panel tabs.  If you click on that guy, and look at the bottom, you'll see selectors for the different view objects within this one view frame (Network_0 and EpochOutputData Graph).  Select the graph view tab at the bottom, and again mouse over the various controls and play around with them.  As you can see, there are many different ways of
 configuring the graphs -- feel free to explore.  Note that there are several other variables that you could plot, including average cycles to settle, and a count of the number of errors made across trials. Also see the wiki <a href=\"ta:.Wiki.GraphView\">GraphView</a> page for more details.
-<P>
+</p><p>
 To see your graph updating in real-time, you can re-init and run the <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain\">LeabraTrain</a> program:
  <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a> 
 <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a>.
-<P>
-<h3> Arranging the 3d View </h3>
-<P>
+</p><p>
+</p><h3> Arranging the 3d View </h3>
+<p>
 Although the <a href=\"ta:.T3Tab.Network_0\">Network_0</a> view is sufficient, it could be configured to look better.  We could shrink the graph view a bit, and orient it better.  To do this (optional), click on the <b>red arrow</b> button to the right of the view, and then grab the upper horizontal bar of the small purple box in the lower-left hand corner of the graph view display.  Drag this slowly down -- you'll see the green frame rotating as you do.  Do this to the point where graph is angled more \"head on\".  Similarly, you can grab the left vertical bar and rotate the graph to the left a bit to make it more face on.  Next, grab any corner of the box, and shrink the view a bit (maybe to half or so of its original size).  Finally, you can move the view down and to the right a bit, by clicking on the face of the cube (not on any of the purple elements), to fit in between the Hidden and Output layers.
-<P>
+</p><p>
 When you've got it the way you want, you can press the <b>eye</b> button to resize the display to fit, and maybe Dolly zoom in a bit.  You could perhaps pan to the right a bit with shift-mouse.  When it looks good, hit the <b>blueprint house</b> button (\"save home\"), which saves this view configuration.
-<P>
-<h2> Recording Network Activations for a Grid View </h2>
-<P>
+</p><p>
+</p><h2> Recording Network Activations for a Grid View </h2>
+<p>
 Another common analysis task is to look at the pattern of activations across trials.  To do this, we need to record activation values to our trial-level output data table (which was automatically created by the wizard).  The easiest way to do this is to select the network object in the network view by clicking on the thin green frame surrounding the text display at the bottom of the network, and then using the right mouse button to get the context menu, and select <a href=\"ta:.networks[0].MonitorVar()\">MonitorVar</a>.  For the <code>net_mon</code> field, click and select the <code>trial_netmon</code>, which is for monitoring information at the trial level (the other one is for the epoch level).  For the <code>variable</code> field, type in \"act_m\" (no quotes), to record minus-phase activations (the monitor runs at the end of the trial, after the plus phase).  This will record activations for all three layers in the network in one easy step (you could alternatively do MonitorVar on each of the layers individually, or on any other object in the network for that matter, and record any variable).
-<P>
+</p><p>
 Next, we need to make a Grid View of the resulting data, which will be recorded in the <a href=\"ta:.data.gp.OutputData.TrialOutputData\">TrialOutputData</a> object -- do a 
 <a href=\"ta:.data.gp.OutputData.TrialOutputData.NewGridView()\">View/New Grid View</a>, and again let's put this in the Network_0 frame.  Follow the same general steps as before (see Arranging the 3d View above) to position this new grid view into the bottom right hand region of the view.
-<P>
+</p><p>
 The grid view will not contain the new information until the  <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain\">LeabraTrain</a> program is <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Init()\">Init</a> and <a href=\"ta:.programs.gp.LeabraAll_Std.LeabraTrain.Run()\">Run</a> again.  After doing that, you need to scroll the grid view display all the way over to the right -- there are too many columns to fit within the 5 columns that the standard grid view is configured to display.  To do this, select the <b>red arrow</b> tool and drag the purple bar at the bottom of the <code>TrialOutputData</code> gridview all the way to the right.  You should see some colored squares with the Input, Hidden, and Output column headers.
-<P>
+</p><p>
 To really make things clean, you can select the column headers of the columns you don't want to display (e.g., ext_rew, minus cycles) and do context menu/View Properties and then hit the Hide button at the bottom of the dialog that comes up.  Ideally, you'd just want to see the trial name, sse, and the different layer activation columns.
-<P>
+</p><p>
 Also, because there are just 6 events, we can set the rows to display to 6 in the grid view panel, to make the display fit just right.
-<P>
+</p><p>
 Again, you can run your program and see it update the display.
-<P>
-<h2> Analyzing the Hidden Layer Representations </h2>
-<P>
+</p><p>
+</p><h2> Analyzing the Hidden Layer Representations </h2>
+<p>
 Now that we have some data from the network, we can perform some powerful analysis techniques on that data. 
-<P>
+</p><p>
 First, we can make a cluster plot of the Hidden Layer activations, to see if we can understand better what is being encoded.  To do this, find the <a href=\"ta:.data_proc.data_anal\">data_anal</a> object under <code>data_proc/data_anal</code> in the left browser.  This contains many useful analysis tools, organized by different topics in the buttons at the bottom.  Select
  <a href=\"ta:.data_proc.data_anal.Cluster()\">HighDim/Cluster</a>, and set the following parameters (leave the rest at their defaults):
-<ul><li> view = on (generate a graph of the cluster data)
-<li> src_data = TrialOutputData
-<li> data_col_nm = Hidden_act_m   (specifies the column of data that we want to cluster)
-<li> name_col_name = trial_name (specifies the column with labels for the cluster nodes)
-</ul>
+</p><ul><li> view = on (generate a graph of the cluster data)
+</li><li> src_data = TrialOutputData
+</li><li> data_col_nm = Hidden_act_m   (specifies the column of data that we want to cluster)
+</li><li> name_col_name = trial_name (specifies the column with labels for the cluster nodes)
+</li></ul>
 You should see a new graph show up, with the A,B,C,X,Y,Z labels grouped together into different clusters.  Most likely, you should observe in a trained network that the A and X are grouped together, separate from the other items.  Can you figure out why this would be the case?
-<P>
+<p>
 Another way to process this high-dimensional activation pattern data is to project it down into 2 dimensions.  Two techniques for this are principal components analysis (PCA) and multidimensiona scaling (MDS).  To try PCA, select
 <a href=\"ta:.data_proc.data_anal.PCA2dPrjn()\">HighDim/PCA2dPrjn</a> -- fill in the same info you did for the Cluster plot.  You should see that the labels are distributed as points in a two-dimensional space, with the X-axis being the dimension (principal component) of the hidden layer activation patterns that captures the greatest amount of variance across patterns, and the Y-axis being the second strongest component.  Accordingly, you should see A and X on the left or the right side of the graph, and the others on the other side.  It is not clear what the vertical axis represents..
-<P>
+</p><p>
 There are many more things one could do, but hopefully this gives a flavor.  The next step: <a href=\"ta:.docs.TaskProgram\">TaskProgram</a> is to write a program to automatically generate our input patterns for training the network -- initially we'll start out with the simple task we ran already, but then we'll progressively expand to more complex tasks.  
-<P>
-</body>
-</html>
-";
-  };
-  taDoc @[5] {
-   name="TaskProgram";
-   desc=;
-   auto_open=0;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
-   text_size=1;
-   text="<html>
+</p><p>
+
+
+</p></body></html>";
+};
+taDoc @["TaskProgram"] {
+name="TaskProgram";
+desc=;
+auto_open=0;
+web_doc=0;
+wiki=;
+url="local";
+full_url="local";
+text_size=1;
+text="<html>
 <head></head>
 <body>
 = Programming the Task Environment =
@@ -828,7 +829,7 @@ You have now done a little bit of each of the critical main elements of simulati
 </body>
 </html>
 ";
-   html_text="<html>
+html_text="<html>
 <head></head>
 <body>
 <h1> Programming the Task Environment </h1>
@@ -970,17 +971,17 @@ You have now done a little bit of each of the critical main elements of simulati
 </body>
 </html>
 ";
-  };
-  taDoc @[6] {
-   name="CPTAX_Program";
-   desc=;
-   auto_open=0;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
-   text_size=1;
-   text="<html>
+};
+taDoc @["CPTAX_Program"] {
+name="CPTAX_Program";
+desc=;
+auto_open=0;
+web_doc=0;
+wiki=;
+url="local";
+full_url="local";
+text_size=1;
+text="<html>
 <head></head>
 <body>
 = CPT-AX Program =
@@ -1087,7 +1088,7 @@ In the next and final segment, we give this network some working memory, and see
 </body>
 </html>
 ";
-   html_text="<html>
+html_text="<html>
 <head></head>
 <body>
 <h1> CPT-AX Program </h1>
@@ -1194,17 +1195,17 @@ In the next and final segment, we give this network some working memory, and see
 </body>
 </html>
 ";
-  };
-  taDoc @[7] {
-   name="PfcBg";
-   desc=;
-   auto_open=0;
-   web_doc=0;
-   wiki=;
-   url="local";
-   full_url="local";
-   text_size=1;
-   text="<html>
+};
+taDoc @["PfcBg"] {
+name="PfcBg";
+desc=;
+auto_open=0;
+web_doc=0;
+wiki=;
+url="local";
+full_url="local";
+text_size=1;
+text="<html>
 <head></head>
 <body>
 = Adding a Prefrontal Cortex, Basal Ganglia Working Memory System =
@@ -1274,7 +1275,7 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
 </body>
 </html>
 ";
-   html_text="<html>
+html_text="<html>
 <head></head>
 <body>
 <h1> Adding a Prefrontal Cortex, Basal Ganglia Working Memory System </h1>
@@ -1344,24 +1345,24 @@ That is all we have for now.  You might notice a project called <code>12ax4s.pro
 </body>
 </html>
 ";
-  };
-  taDoc @[8] {
-   name="WikiDoc";
-   desc=;
-   auto_open=0;
-   web_doc=1;
-   wiki="emergent";
-   url="AX_Tutorial";
-   full_url="http://grey.colorado.edu/emergent/index.php/AX_Tutorial";
-   text_size=1;
-   text="<html>
+};
+taDoc @["WikiDoc"] {
+name="WikiDoc";
+desc=;
+auto_open=0;
+web_doc=1;
+wiki="emergent";
+url="AX_Tutorial";
+full_url="http://grey.colorado.edu/emergent/index.php/AX_Tutorial";
+text_size=1;
+text="<html>
 <head></head>
 <body>
 == Enter Title Here ==
 </body>
 </html>
 ";
-   html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\"><head>
+html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\"><head>
 <title>AXTut OutputData - Emergent</title>
 <meta name=\"generator\" content=\"MediaWiki 1.16alpha-wmf\">
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">
@@ -1665,276 +1666,276 @@ Please use the preview button before saving [ctrl-alt-e]\" accesskey=\"e\"><span
 		<!-- Served in 0.194 secs. -->			
 
 </body></html>";
-  };
- };
- wizards {
-  name=;
-  el_typ=LeabraWizard;
-  el_def=0;
-  LeabraWizard @[0] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @[0] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="LeabraWizard_0";
-   auto_open=1;
-   n_layers=3;
-   layer_cfg {
-    name=;
-    el_typ=LayerWizEl;
-    el_def=0;
-    LayerWizEl @[0] {
-     name="Input";
-     n_units=25;
-     io_type=INPUT;
-    };
-    LayerWizEl @[1] {
-     name="Hidden";
-     n_units=25;
-     io_type=HIDDEN;
-    };
-    LayerWizEl @[2] {
-     name="Output";
-     n_units=25;
-     io_type=OUTPUT;
-    };
-   };
-   connectivity=BIDIRECTIONAL;
-   default_net_type=LeabraNetwork;
-  };
- };
- edits {
-  name=;
-  el_typ=SelectEdit;
-  el_def=0;
- };
- data {
-  name=;
-  el_typ=DataTable;
-  el_def=0;
-  DataTable_Group @.gp[0] {
-   name="InputData";
-   el_typ=DataTable;
-   el_def=0;
-  };
-  DataTable_Group @.gp[1] {
-   name="OutputData";
-   el_typ=DataTable;
-   el_def=0;
-  };
-  DataTable_Group @.gp[2] {
-   name="AnalysisData";
-   el_typ=DataTable;
-   el_def=0;
-  };
- };
- data_proc {
-  name=;
-  el_typ=taDataProc;
-  el_def=0;
-  taDataProc @[0] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @[0] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_base";
-  };
-  taDataAnal @[1] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @[0] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_anal";
-  };
-  taDataGen @[2] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @[0] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_gen";
-  };
-  taImageProc @[3] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItemBase;
-    el_def=0;
-    UserDataItem @[0] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="image_proc";
-  };
- };
- programs {
-  name=;
-  el_typ=Program;
-  el_def=0;
-  tags=;
-  desc=;
- };
- viewers {
-  name=;
-  el_typ=TopLevelViewer;
-  el_def=0;
-  MainWindowViewer @[0] {
-   name="Browser";
-   m_data=.projects[0]$$;
-   visible=1;
-   m_is_root=0;
-   m_is_viewer_xor_browser=0;
-   m_is_proj_viewer=1;
-   m_is_dialog=0;
-   toolbars {
-    name=;
-    el_typ=ToolBar;
-    el_def=0;
-    ToolBar @[0] {
-     name="Application";
-     m_data=NULL;
-     visible=0;
-     lft=0;
-     top=0;
-     o=Horizontal;
-    };
-   };
-   frames {
-    name=;
-    el_typ=FrameViewer;
-    el_def=0;
-    tabBrowseViewer @[0] {
-     name="Tree";
-     m_data=NULL;
-     visible=1;
-     root_typ=LeabraProject;
-     root_md=NULL;
-     m_root=$.projects[0]$;
-    };
-    PanelViewer @[1] {
-     name="Panels";
-     m_data=NULL;
-     visible=1;
-    };
-    T3DataViewer @[2] {
-     name="T3Frames";
-     m_data=NULL;
-     visible=1;
-     frames {
-      name=;
-      el_typ=T3DataViewFrame;
-      el_def=0;
-      T3DataViewFrame @[0] {
-       name="Frame1";
-       m_data=NULL;
-       visible=1;
-       root_view {
-	name=;
-	m_data=NULL;
-	m_transform=NULL;
-	children {
-	 name=;
-	 el_typ=T3DataView;
-	 el_def=0;
-	};
-       };
-       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
-       text_color {r=0: g=0: b=0: a=1: };
-       headlight_on=1;
-       stereo_view=STEREO_NONE;
-       saved_views {
-	name=;
-	el_typ=T3SavedView;
-	el_def=0;
-	T3SavedView @[0] {
-	 name="View 0";
-	 view_saved=1;
-	 pos {x=0: y=0: z=-0.4765596: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=3.52344;
-	};
-	T3SavedView @[1] {
-	 name="View 1";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
-	};
-	T3SavedView @[2] {
-	 name="View 2";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
-	};
-	T3SavedView @[3] {
-	 name="View 3";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
-	};
-	T3SavedView @[4] {
-	 name="View 4";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
-	};
-	T3SavedView @[5] {
-	 name="View 5";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
-	};
-       };
-      };
-     };
-    };
-   };
-   docks {
-    name=;
-    el_typ=DockViewer;
-    el_def=0;
-    ToolBoxDockViewer @[0] {
-     name="Tools";
-     m_data=NULL;
-     visible=1;
-     dock_flags=DV_MOVABLE|DV_FLOATABLE;
-     dock_area=1;
-    };
-   };
-  };
- };
- last_change_desc=;
- networks {
-  name=;
-  el_typ=LeabraNetwork;
-  el_def=0;
- };
+};
+};
+wizards {
+name=;
+el_typ=LeabraWizard;
+el_def=0;
+LeabraWizard @["LeabraWizard_0"] {
+UserDataItem_List @*(.user_data_) {
+name=;
+el_typ=UserDataItemBase;
+el_def=0;
+UserDataItem @["NO_CLIP"] {
+name="NO_CLIP";
+value 1 0=1;
+val_type_fixed=0;
+};
+};
+name="LeabraWizard_0";
+auto_open=1;
+n_layers=3;
+layer_cfg {
+name=;
+el_typ=LayerWizEl;
+el_def=0;
+LayerWizEl @["Input"] {
+name="Input";
+n_units=25;
+io_type=INPUT;
+};
+LayerWizEl @["Hidden"] {
+name="Hidden";
+n_units=25;
+io_type=HIDDEN;
+};
+LayerWizEl @["Output"] {
+name="Output";
+n_units=25;
+io_type=OUTPUT;
+};
+};
+connectivity=BIDIRECTIONAL;
+default_net_type=LeabraNetwork;
+};
+};
+edits {
+name=;
+el_typ=SelectEdit;
+el_def=0;
+};
+data {
+name=;
+el_typ=DataTable;
+el_def=0;
+DataTable_Group @.gp["InputData"] {
+name="InputData";
+el_typ=DataTable;
+el_def=0;
+};
+DataTable_Group @.gp["OutputData"] {
+name="OutputData";
+el_typ=DataTable;
+el_def=0;
+};
+DataTable_Group @.gp["AnalysisData"] {
+name="AnalysisData";
+el_typ=DataTable;
+el_def=0;
+};
+};
+data_proc {
+name=;
+el_typ=taDataProc;
+el_def=0;
+taDataProc @["data_base"] {
+UserDataItem_List @*(.user_data_) {
+name=;
+el_typ=UserDataItemBase;
+el_def=0;
+UserDataItem @["NO_CLIP"] {
+name="NO_CLIP";
+value 1 0=1;
+val_type_fixed=0;
+};
+};
+name="data_base";
+};
+taDataAnal @["data_anal"] {
+UserDataItem_List @*(.user_data_) {
+name=;
+el_typ=UserDataItemBase;
+el_def=0;
+UserDataItem @["NO_CLIP"] {
+name="NO_CLIP";
+value 1 0=1;
+val_type_fixed=0;
+};
+};
+name="data_anal";
+};
+taDataGen @["data_gen"] {
+UserDataItem_List @*(.user_data_) {
+name=;
+el_typ=UserDataItemBase;
+el_def=0;
+UserDataItem @["NO_CLIP"] {
+name="NO_CLIP";
+value 1 0=1;
+val_type_fixed=0;
+};
+};
+name="data_gen";
+};
+taImageProc @["image_proc"] {
+UserDataItem_List @*(.user_data_) {
+name=;
+el_typ=UserDataItemBase;
+el_def=0;
+UserDataItem @["NO_CLIP"] {
+name="NO_CLIP";
+value 1 0=1;
+val_type_fixed=0;
+};
+};
+name="image_proc";
+};
+};
+programs {
+name=;
+el_typ=Program;
+el_def=0;
+tags=;
+desc=;
+};
+viewers {
+name=;
+el_typ=TopLevelViewer;
+el_def=0;
+MainWindowViewer @["Browser"] {
+name="Browser";
+m_data=.projects["Project_0"]$$;
+visible=1;
+m_is_root=0;
+m_is_viewer_xor_browser=0;
+m_is_proj_viewer=1;
+m_is_dialog=0;
+toolbars {
+name=;
+el_typ=ToolBar;
+el_def=0;
+ToolBar @["Application"] {
+name="Application";
+m_data=NULL;
+visible=0;
+lft=0;
+top=0;
+o=Horizontal;
+};
+};
+frames {
+name=;
+el_typ=FrameViewer;
+el_def=0;
+tabBrowseViewer @["Tree"] {
+name="Tree";
+m_data=NULL;
+visible=1;
+root_typ=LeabraProject;
+root_md=NULL;
+m_root=$.projects["Project_0"]$;
+};
+PanelViewer @["Panels"] {
+name="Panels";
+m_data=NULL;
+visible=1;
+};
+T3DataViewer @["T3Frames"] {
+name="T3Frames";
+m_data=NULL;
+visible=1;
+frames {
+name=;
+el_typ=T3DataViewFrame;
+el_def=0;
+T3DataViewFrame @["Frame1"] {
+name="Frame1";
+m_data=NULL;
+visible=1;
+root_view {
+name=;
+m_data=NULL;
+m_transform=NULL;
+children {
+name=;
+el_typ=T3DataViewMain;
+el_def=0;
+};
+};
+bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+text_color {r=0: g=0: b=0: a=1: };
+headlight_on=1;
+stereo_view=STEREO_NONE;
+saved_views {
+name=;
+el_typ=T3SavedView;
+el_def=0;
+T3SavedView @["View_0"] {
+name="View_0";
+view_saved=1;
+pos {x=0: y=0: z=-0.4765596: };
+orient {x=0: y=0: z=1: rot=0: };
+focal_dist=3.52344;
+};
+T3SavedView @["View_1"] {
+name="View_1";
+view_saved=0;
+pos {x=0: y=0: z=0: };
+orient {x=0: y=0: z=1: rot=0: };
+focal_dist=0;
+};
+T3SavedView @["View_2"] {
+name="View_2";
+view_saved=0;
+pos {x=0: y=0: z=0: };
+orient {x=0: y=0: z=1: rot=0: };
+focal_dist=0;
+};
+T3SavedView @["View_3"] {
+name="View_3";
+view_saved=0;
+pos {x=0: y=0: z=0: };
+orient {x=0: y=0: z=1: rot=0: };
+focal_dist=0;
+};
+T3SavedView @["View_4"] {
+name="View_4";
+view_saved=0;
+pos {x=0: y=0: z=0: };
+orient {x=0: y=0: z=1: rot=0: };
+focal_dist=0;
+};
+T3SavedView @["View_5"] {
+name="View_5";
+view_saved=0;
+pos {x=0: y=0: z=0: };
+orient {x=0: y=0: z=1: rot=0: };
+focal_dist=0;
+};
+};
+};
+};
+};
+};
+docks {
+name=;
+el_typ=DockViewer;
+el_def=0;
+ToolBoxDockViewer @["Tools"] {
+name="Tools";
+m_data=NULL;
+visible=1;
+dock_flags=DV_MOVABLE|DV_FLOATABLE;
+dock_area=1;
+};
+};
+};
+};
+last_change_desc=;
+networks {
+name=;
+el_typ=LeabraNetwork;
+el_def=0;
+};
 };
