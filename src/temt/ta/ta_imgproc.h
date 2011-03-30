@@ -689,6 +689,7 @@ protected:
   CircMatrix*	cur_circ;	// current circular buffer index
   bool		rgb_img;	// is current image rgb?
   bool		wrap;		// whether edge_mode == WRAP
+  bool		cur_mot_only;	// current motion_only status
 
   float_Matrix cur_img_grey;	// greyscale version of color image, if input is rg b
   float_Matrix cur_img_rc;	// RED vs. CYAN version of color image, if input is rgb

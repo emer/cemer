@@ -2308,6 +2308,7 @@ bool VisRegionSpecBase::FilterImage(float_Matrix* right_eye_image, float_Matrix*
     cur_img_l = left_eye_image;
   }
 
+  cur_mot_only = motion_only;
   cur_img_r = right_eye_image;
 
   IncrTime();
@@ -4328,16 +4329,19 @@ bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, fl
 
   ThreadImgProcCall ip_cp_hist((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread);
   threads.Run(&ip_cp_hist, n_run);
+  
+  if(!cur_mot_only) {
+    // if motion only, then really just load the history for later processing!
+    ThreadImgProcCall ip_call_still((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_Still_thread);
+    threads.Run(&ip_call_still, n_run);
 
-  ThreadImgProcCall ip_call_still((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_Still_thread);
-  threads.Run(&ip_call_still, n_run);
+    ThreadImgProcCall ip_call_mot((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_thread);
+    threads.Run(&ip_call_mot, n_run);
 
-  ThreadImgProcCall ip_call_mot((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_thread);
-  threads.Run(&ip_call_mot, n_run);
-
-  if(v1m_renorm != NO_RENORM) {
-    RenormOutput(v1m_renorm, out); 
-    RenormOutput(v1m_renorm, maxout); 
+    if(v1m_renorm != NO_RENORM) {
+      RenormOutput(v1m_renorm, out); 
+      RenormOutput(v1m_renorm, maxout); 
+    }
   }
   return true;
 }
@@ -4482,7 +4486,7 @@ void V1RegionSpec::V1SimpleFilter_OutMax_thread(int v1s_idx, int thread_no) {
 }
 
 bool V1RegionSpec::V1SimpleFilter_MaxPols(float_Matrix* v1s_out_in, float_Matrix* maxpols_out) {
-  cur_img = v1s_out_in;		// using img for this..
+  cur_in = v1s_out_in;		// using img for this..
   cur_out = maxpols_out;
 
   int n_run = v1s_img_geom.Product();
@@ -4507,7 +4511,7 @@ void V1RegionSpec::V1SimpleFilter_MaxPols_thread(int v1s_idx, int thread_no) {
     float max_pi = 0.0f;
     for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
       fc.y = polclr;
-      float val = cur_img->FastEl(fc.x, fc.y, sc.x, sc.y);
+      float val = cur_in->FastEl(fc.x, fc.y, sc.x, sc.y);
       max_pi = MAX(max_pi, val);      
     }
     cur_out->FastEl(fc.x, 0, sc.x, sc.y) = max_pi;
