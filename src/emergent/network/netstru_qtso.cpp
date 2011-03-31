@@ -205,20 +205,25 @@ void UnitGroupView::AllocUnitViewData() {
   //note: allocate based on geom, not current size, in case not built yet
   NetView* nv = this->nv();
   Layer* lay = this->layer(); //cache
-  if(!lay) return;
+  if (!lay) return;
   int mbs_sz = MAX(nv->membs.size, 1);
   MatrixGeom nwgm1(3, lay->flat_geom.x, lay->flat_geom.y, mbs_sz);
-  if(uvd_bases.geom != nwgm1) {
+  if (uvd_bases.geom != nwgm1) {
     uvd_bases.SetGeomN(nwgm1);
   }
   MatrixGeom nwgm2(4, lay->flat_geom.x, lay->flat_geom.y, mbs_sz, nv->hist_max);
   bool reset_idx = nv->hist_reset_req; // if requested somewhere, reset us!
-  if(uvd_hist.geom != nwgm2) {
-    uvd_hist.SetGeomN(nwgm2);
+  if (uvd_hist.geom != nwgm2) {
+    if (!uvd_hist.SetGeomN(nwgm2)) {
+      taMisc::Warning("Forcing nv->hist_max to 1");
+      nv->hist_max = 1;
+      nwgm2.Set(3, nv->hist_max);
+      uvd_hist.SetGeomN(nwgm2); // still might fail, but it's the best we can do.
+	}
     reset_idx = true;
     nv->hist_reset_req = true;	// tell main netview history guy to reset and reset everyone
   }
-  if(reset_idx) {
+  if (reset_idx) {
     uvd_hist_idx.Reset();
   }
 }

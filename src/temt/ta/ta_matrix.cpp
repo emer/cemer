@@ -1287,24 +1287,24 @@ void taMatrix::SetFixedData_(void* el_, const MatrixGeom& geom_,
   
 }
 
-void taMatrix::SetGeom_(int dims_, const int geom_[]) {
+bool taMatrix::SetGeom_(int dims_, const int geom_[]) {
   // dims=0 is special case, which is just a reset
   if (dims_ == 0) {
     StructUpdate(true);
     Reset(); // deletes data, and collapses slices
     geom.Reset(); // ok, now you know what 0-d really means!!!
     StructUpdate(false);
-    return;
+    return true;
   } else {
     String err_msg;
     bool valid = GeomIsValid(dims_, geom_, &err_msg);
-    if(TestError(!valid, "SetGeom_", err_msg)) return;
+    if (TestError(!valid, "SetGeom_", err_msg)) return false;
   }
   
   // flex not allowed for fixed data
   if (isFixedData()) {
-    if(TestError((geom_[dims_-1] == 0), "SetGeom_", 
-      "fixed data cannot use flex sizing")) return;
+    if (TestError((geom_[dims_-1] == 0), "SetGeom_", 
+      "fixed data cannot use flex sizing")) return false;
   }
   
   // NOTE: following routine is conservative of existing geom
@@ -1328,12 +1328,16 @@ void taMatrix::SetGeom_(int dims_, const int geom_[]) {
     size = geom.Product();
   } else {
     // next step actually sets last geom
-    EnforceFrames(geom_[dims_-1]); 
+    if (!EnforceFrames(geom_[dims_-1])) {
+      StructUpdate(false); // TODO: RAII
+      return false; // failure
+    }
   }
   if (collapse_slices) {
     UpdateSlices_Collapse();
   }
   StructUpdate(false);
+  return true;
 }
 
 void taMatrix::Slice_Collapse() {

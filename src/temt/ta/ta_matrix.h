@@ -590,12 +590,12 @@ public:
   void			Clear(int fm = 0, int to = -1); 
   // #MENU #MENU_ON_Matrix #CAT_Modify optimized clear, defaults to clearing all items
   
-  void			SetGeom(int size, int d0, int d1=0, int d2=0,
+  bool			SetGeom(int size, int d0, int d1=0, int d2=0,
     int d3=0, int d4=0, int d5=0, int d6=0)  
   { int d[TA_MATRIX_DIMS_MAX]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3;
-    d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0; SetGeom_(size, d);} 
+    d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0; return SetGeom_(size, d);} 
   // #CAT_Modify set geom for matrix -- if matches current size, it is non-destructive 
-  void			SetGeomN(const MatrixGeom& geom_) { SetGeom_(geom_.dims(), geom_.el);}
+  bool			SetGeomN(const MatrixGeom& geom_) { return SetGeom_(geom_.dims(), geom_.el); }
   // #MENU #MENU_CONTEXT #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify #INIT_ARGVAL_ON_geom set geom for any sized matrix -- if matches current size, it is non-destructive 
   
   // Slicing -- NOTES: 
@@ -702,7 +702,7 @@ protected:
   
   virtual bool		fastAlloc() const {return true;}
   // #IGNORE enables using fast block-based allocations, copies, and skipping reclaims -- for ints,floats, etc.; not for Strings/Variants
-  virtual void		SetGeom_(int dims_, const int geom_[]); //
+  virtual bool		SetGeom_(int dims_, const int geom_[]); //
   
   virtual bool		Alloc_(int new_alloc);
   // set capacity to n -- should always be in multiples of frames 
@@ -864,19 +864,43 @@ public:
   override void*	FastEl_Flat_(int idx)	{ return &(el[idx]); } 
   override const void*	FastEl_Flat_(int idx) const { return &(el[idx]); } 
 protected:
-  override void*	MakeArray_(int n) const	
-  { if(fastAlloc()) return malloc(n * sizeof(T)); else return new T[n]; }
-  override void		SetArray_(void* nw) 
-  { if (el) {if (alloc_size > 0) { if(fastAlloc()) free(el); else delete [] el; }
-    else if (alloc_size < 0) {if (fixed_dealloc) fixed_dealloc(el);}}
-    el = (T*)nw; fixed_dealloc = NULL;}
-  override void*	FastRealloc_(int n)
-  { T* nwel = (T*)realloc((char*)el, n * sizeof(T));
-    if(TestError(!nwel, "FastRealloc_", "could not realloc memory -- matrix is too big! reverting to old size -- could be fatal!")) return NULL; el = nwel; return el; }
-  override bool		El_Equal_(const void* a, const void* b) const
-    { return (*((T*)a) == *((T*)b)); }
-  override void		El_Copy_(void* to, const void* fm) {*((T*)to) = *((T*)fm); }
-  override uint		El_SizeOf_() const	{ return sizeof(T); }
+  override void*	MakeArray_(int n) const	{
+    if (fastAlloc())
+      return malloc(n * sizeof(T));
+    else
+      return new T[n];
+  }
+  override void		SetArray_(void* nw) {
+    if (el) {
+      if (alloc_size > 0) {
+        if(fastAlloc())
+          free(el);
+        else delete [] el;
+      }
+      else if (alloc_size < 0) {
+        if (fixed_dealloc)
+          fixed_dealloc(el);
+      }
+    }
+    el = (T*)nw;
+    fixed_dealloc = NULL;
+  }
+  override void*	FastRealloc_(int n) {
+    T* nwel = (T*)realloc((char*)el, n * sizeof(T));
+    if (TestError(!nwel, "FastRealloc_", "could not realloc memory -- matrix is too big! reverting to old size -- could be fatal!"))
+      return NULL;
+    el = nwel;
+    return el;
+  }
+  override bool		El_Equal_(const void* a, const void* b) const {
+    return (*((T*)a) == *((T*)b));
+  }
+  override void		El_Copy_(void* to, const void* fm) {
+    *((T*)to) = *((T*)fm);
+  }
+  override uint		El_SizeOf_() const {
+    return sizeof(T);
+  }
 
 private: 
   TMPLT_NOCOPY(taMatrixT, T)
