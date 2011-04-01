@@ -103,6 +103,7 @@ public:
   float		go_thr;		// #DEF_0.5 #MIN_0 #MAX_1 threshold in snrthal activation required to trigger a Go gating event
   float		rnd_go_inc;	// #DEF_0.1:0.2 #MIN_0 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
   float		leak;		// #DEF_1 #MIN_0 a leak-like term for the netinput computation -- just a constant added to the denominator in computing net input: (go - nogo) / (go + nogo + leak)
+  bool		act_is_gate;	// #DEF_true activation state is always equal to the value that was active at the time of actual gating (act_m2) -- this makes things clearer and can be important for some models that use snrthal activations as inputs to other processes
 
   TA_SIMPLE_BASEFUNS(SNrThalMiscSpec);
 protected:

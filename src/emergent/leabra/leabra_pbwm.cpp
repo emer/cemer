@@ -229,6 +229,7 @@ void SNrThalMiscSpec::Initialize() {
   go_thr = 0.5f;
   rnd_go_inc = 0.1f;
   leak = 1.0f;
+  act_is_gate = true;
 }
 
 void SNrThalLayerSpec::Initialize() {
@@ -389,13 +390,17 @@ void SNrThalLayerSpec::Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net) {
       zap_act_eq = true;
     }
     if(zap_act_eq) {
+      // this is for display purposes, to show that no gating took place in this stripe
+      // due to competition with other type of gating
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, g);
 	u->act = u->act_eq = 0.0f; // now zapping act too!
       }
     }
-    else {
+    else if(snrthal.act_is_gate) {
       if(gpd->gate_sig != PFCGateSpec::GATE_NOGO) { // some kind of gating happened
+	// this is also for display purposes, to always show actual gating signal
+	// that was active at time of gating, not what current activity is..
 	for(int i=0;i<nunits;i++) {
 	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, g);
 	  u->act = u->act_eq = u->act_m2; // always reflect act_m2 gating signal if gated!
