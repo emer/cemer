@@ -377,6 +377,7 @@ void SNrThalLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) 
 }
 
 void SNrThalLayerSpec::Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net) {
+  int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
   for(int g=0; g < lay->gp_geom.n; g++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(g);
     
@@ -388,10 +389,17 @@ void SNrThalLayerSpec::Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net) {
       zap_act_eq = true;
     }
     if(zap_act_eq) {
-      int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
       for(int i=0;i<nunits;i++) {
 	LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, g);
-	u->act_eq = 0.0f;
+	u->act = u->act_eq = 0.0f; // now zapping act too!
+      }
+    }
+    else {
+      if(gpd->gate_sig != PFCGateSpec::GATE_NOGO) { // some kind of gating happened
+	for(int i=0;i<nunits;i++) {
+	  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, g);
+	  u->act = u->act_eq = u->act_m2; // always reflect act_m2 gating signal if gated!
+	}
       }
     }
   }
