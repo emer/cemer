@@ -1090,7 +1090,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       for(int j=0; j<cg->size; ++j) {
 	Unit* su = cg->Un(j);
 	if(!su) continue;
-	TwoDCoord upos;  su->GetLayerAbsPos(upos);
+	TwoDCoord upos;  su->LayerLogPos(upos);
 	con_geom_max.Max(upos);
 	con_geom_min.Min(upos);
       }
@@ -1101,7 +1101,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       for(int j=0; j<cg->size; ++j) {
 	Unit* su = cg->Un(j);
 	if(!su) continue;
-	TwoDCoord upos; su->GetLayerAbsPos(upos);
+	TwoDCoord upos; su->LayerLogPos(upos);
 	con_geom_max.Max(upos);
 	con_geom_min.Min(upos);
       }
@@ -1129,7 +1129,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       for(int j=0; j<cg->size; ++j) {
 	Unit* su = cg->Un(j);
 	if(!su) continue;
-	TwoDCoord upos;  su->GetLayerAbsPos(upos);
+	TwoDCoord upos;  su->LayerLogPos(upos);
 	upos -= con_geom_min;
 	int idx = upos.y * con_geom.x + upos.x;
 	ptrs[st_idx + idx] = cg->Cn(j);	// set the ptr
@@ -1141,7 +1141,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       for(int j=0; j<cg->size; ++j) {
 	Unit* su = cg->Un(j);
 	if(!su) continue;
-	TwoDCoord upos;  su->GetLayerAbsPos(upos);
+	TwoDCoord upos;  su->LayerLogPos(upos);
 	upos -= con_geom_min;
 	int idx = upos.y * con_geom.x + upos.x;
 	ptrs[st_idx + idx] = cg->Cn(j);	// set the ptr
@@ -1245,7 +1245,7 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
-    TwoDCoord upos;  su->GetLayerAbsPos(upos);
+    TwoDCoord upos;  su->LayerLogPos(upos);
     con_geom_max.Max(upos);
     con_geom_min.Min(upos);
   }
@@ -1265,7 +1265,7 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
-    TwoDCoord upos;  su->GetLayerAbsPos(upos);
+    TwoDCoord upos;  su->LayerLogPos(upos);
     upos -= con_geom_min;
     int idx = upos.y * con_geom.x + upos.x;
     ptrs[idx] = cg->Cn(j);	// set the ptr
@@ -1283,7 +1283,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
-    TwoDCoord upos;  su->GetLayerAbsPos(upos);
+    TwoDCoord upos;  su->LayerLogPos(upos);
     con_geom_max.Max(upos);
     con_geom_min.Min(upos);
   }
@@ -1303,7 +1303,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   for(int j=0; j<cg->size; ++j) {
     Unit* su = cg->Un(j);
     if(!su) continue;
-    TwoDCoord upos;  su->GetLayerAbsPos(upos);
+    TwoDCoord upos;  su->LayerLogPos(upos);
     upos -= con_geom_min;
     int idx = upos.y * con_geom.x + upos.x;
     ptrs[idx] = cg->Cn(j);	// set the ptr

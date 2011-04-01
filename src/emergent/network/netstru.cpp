@@ -2084,15 +2084,17 @@ int Unit::GetMyLeafIndex() {
   return ug->idx * ug->size + idx; // our unit group index within its owning list, times number of items per group (presumably same throughout), plus our own index..
 }
 
-void Unit::GetLayerAbsPos(TwoDCoord& lay_abs_pos) {
-  //note: simplest and fastest is to just add Unit_Group
-  // pos, even though it is 0 for flat guys, it saves
-  // a bunch of GetOwners
-  lay_abs_pos = pos;
-  Unit_Group* ug = dynamic_cast<Unit_Group*>(owner);
-  if(ug) { // should always succeed...
-    lay_abs_pos.x += ug->pos.x;
-    lay_abs_pos.y += ug->pos.y;
+void Unit::LayerLogPos(TwoDCoord& log_pos) {
+  Layer* mlay = own_lay();
+  if(mlay) {
+    mlay->UnitLogPos(this, log_pos);
+  }
+}
+
+void Unit::LayerDispPos(TwoDCoord& disp_pos) {
+  Layer* mlay = own_lay();
+  if(mlay) {
+    mlay->UnitDispPos(this, disp_pos);
   }
 }
 

@@ -856,7 +856,7 @@ public: //
   inline Layer*	own_lay() const;
   // #CAT_Structure get the owning layer of this unit
   inline Unit_Group* own_subgp() const;
-  // #CAT_Structure get the owning subgroup of this unit -- NULL if unit lives directly within the layer and not in a subgroup
+  // #CAT_Structure get the owning subgroup of this unit -- NULL if unit lives directly within the layer and not in a subgroup -- note that with virt_groups as default, most units do not have an owning subgroup even if there are logical subgroups
   inline int	UnitGpIdx() const;
   // #CAT_Structure get unit's subgroup index -- returns -1 if layer does not have unit groups -- directly from info avail on unit itself
   
@@ -1015,8 +1015,10 @@ public: //
   // #CAT_Structure compute leaf index from my individual index in an efficient manner
   void		GetAbsPos(TDCoord& abs_pos)  { abs_pos = pos; AddRelPos(abs_pos); }
   // #CAT_Structure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
-  void		GetLayerAbsPos(TwoDCoord& lay_abs_pos); 
-  // #CAT_Structure get coords of this Unit in the Layer (NOT for any kind of layout/3D use, only for Unit-in-Layer usage)
+  void		LayerLogPos(TwoDCoord& log_pos);
+  // #CAT_Structure get logical position of unit within layer, taking into account (virtual) unit groups etc relative to layer flat_geom (no display spacing) -- calls Layer::UnitLogPos on own_lay
+  void		LayerDispPos(TwoDCoord& disp_pos);
+  // #CAT_Structure get display position of this unit within the layer, taking into account (virtual) unit groups etc relative to layer disp_geom (includes display spacing) -- calls Layer::UnitDispPos on own_lay
   void		AddRelPos(TDCoord& rel_pos); 
   // #IGNORE add relative pos, which factors in offsets from above
   

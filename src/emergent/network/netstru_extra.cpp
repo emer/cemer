@@ -2478,7 +2478,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
     TwoDCoord su_pos;
-    su->GetLayerAbsPos(su_pos);
+    send_lay->UnitLogPos(su, su_pos);
     float su_x = (float)su_pos.x / mxs_x;
     float su_y = (float)su_pos.y / mxs_y;
 
@@ -2533,7 +2533,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
   TwoDCoord ru_pos;
-  ru->GetLayerAbsPos(ru_pos);
+  recv_lay->UnitLogPos(ru, ru_pos);
   float ru_x = (float)ru_pos.x / (float)MAX(recv_lay->flat_geom.x-1, 1);
   float ru_y = (float)ru_pos.y / (float)MAX(recv_lay->flat_geom.y-1, 1);
 
@@ -2547,7 +2547,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
   for(int i=0; i<cg->size; i++) {
     Unit* su = cg->Un(i);
     TwoDCoord su_pos;
-    su->GetLayerAbsPos(su_pos);
+    send_lay->UnitLogPos(su, su_pos);
     float su_x = (float)su_pos.x / mxs_x;
     float su_y = (float)su_pos.y / mxs_y;
 

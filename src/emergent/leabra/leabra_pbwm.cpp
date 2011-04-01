@@ -939,7 +939,7 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
     else {
       if(pfc_mnt_cnt > 0) {   	// currently maintaining: bias NoGo for everything
 	if(mnt_mnt_nogo_fun.on)
-	  bias_dav = mnt_mnt_nogo_fun.GetBias(pfc_mnt_cnt);
+	  bias_dav = -mnt_mnt_nogo_fun.GetBias(pfc_mnt_cnt);
 	else
 	  bias_dav = -gate_bias.mnt_mnt_nogo;
       }
@@ -1940,6 +1940,9 @@ void MatrixGradRFPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru,
   int ru_idx = ru->GetIndex();
   Layer* recv_lay = (Layer*)prjn->layer;
   bool save_invert = invert;
+
+  if(recv_lay->virt_groups)	// get index within unit group..
+    ru_idx %= recv_lay->un_geom.n;
 
   int gp_sz = recv_lay->un_geom.n / 2;
   PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(ru_idx / gp_sz);

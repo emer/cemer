@@ -167,7 +167,7 @@ void UnitView::Render_pre() {
     break;
   }
 
-  TwoDCoord upos;  unit->GetLayerAbsPos(upos);
+  TwoDCoord upos;  unit->LayerDispPos(upos);
   node_so()->transform()->translation.setValue
     (disp_scale * ((float)(upos.x + 0.5f) / max_x), 0.0f,
      -disp_scale * (((float)(upos.y + 0.5f) / max_y)));
@@ -3289,7 +3289,7 @@ void NetView::Render_wt_lines() {
   int midx = 0;
 
   // note: only want layer_rel for ru_pos
-  TwoDCoord ru_pos; unit_src->GetLayerAbsPos(ru_pos);
+  TwoDCoord ru_pos; unit_src->LayerDispPos(ru_pos);
   FloatTDCoord src;		// source and dest coords
   FloatTDCoord dst;
 
@@ -3332,7 +3332,7 @@ void NetView::Render_wt_lines() {
       if(fabsf(wt) < wt_line_thr) continue;
 
       // note: only want layer_rel for ru_pos
-      TwoDCoord su_pos; su->GetLayerAbsPos(su_pos);
+      TwoDCoord su_pos; su->LayerDispPos(su_pos);
       dst.x = ((float)lay_fr_pos.x + (float)su_pos.x + .5f) / max_size.x;
       dst.z = -((float)lay_fr_pos.y + (float)su_pos.y + .5f) / max_size.y;
 
