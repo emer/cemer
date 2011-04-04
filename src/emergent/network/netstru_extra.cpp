@@ -2490,7 +2490,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
       else	      	wrp_y = (float)(su_pos.y - send_lay->flat_geom.y) / mxs_y;
     }
 
-    float dist;
+    float dist = 0.0f;
     if(grad_x && grad_y) {
       dist = taMath_float::euc_dist(su_x, su_y, rgp_x, rgp_y);
       if(wrap) {
@@ -2559,7 +2559,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, U
       else	      	wrp_y = (float)(su_pos.y - send_lay->flat_geom.y) / mxs_y;
     }
 
-    float dist;
+    float dist = 0.0f;
     if(grad_x && grad_y) {
       dist = taMath_float::euc_dist(su_x, su_y, ru_x, ru_y);
       if(wrap) {

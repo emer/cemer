@@ -2787,6 +2787,7 @@ void ProjectionSpec::Connect(Projection* prjn) {
   if(TestWarning(!(bool)prjn->from, "Connect", "from pointer is NULL -- cannot make this projection"))
     return;
   if(prjn->off) return;
+  if(prjn->from->lesioned()) return;
   PreConnect(prjn);
   Connect_impl(prjn);
   Init_Weights(prjn);
@@ -2848,6 +2849,7 @@ void ProjectionSpec::Init_dWt(Projection* prjn) {
 
 bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
   if(prjn->off) return true;
+  if(prjn->from->lesioned()) return true;
   bool rval;
   if(CheckError(!prjn->projected, quiet, rval, "not connected!")) {
     return false;
@@ -4390,6 +4392,8 @@ bool Layer::CheckConnect(bool quiet) {
 void Layer::CheckThisConfig_impl(bool quiet, bool& rval) {
   // note: network also called our checks
   // slightly non-standard, since we bail on first error
+
+  if(lesioned()) return;
 
   CheckSpecs();
 
@@ -6356,8 +6360,10 @@ void Network::BuildUnits() {
   StructUpdate(true);
   Layer* l;
   taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i)
+  FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesioned()) continue;
     l->BuildUnits();
+  }
   StructUpdate(false);
   taMisc::DoneBusy();
 #ifdef DMEM_COMPILE
@@ -6373,14 +6379,14 @@ void Network::BuildUnits_Threads() {
   // real indexes start at 1, to allow 0 to be a dummy case for inactive units that may
   // nevertheless get a send netin call to them -- all those just go to this 0 bin
   units_flat.Add(NULL);		// add a dummy null 
-  Layer* lay;
+  Layer* l;
   taLeafItr li;
-  FOR_ITR_EL(Layer, lay, layers., li) {
-    if(lay->lesioned()) {
-      lay->units_flat_idx = 0;
+  FOR_ITR_EL(Layer, l, layers., li) {
+    if(l->lesioned()) {
+      l->units_flat_idx = 0;
       continue; // don't even add units from lesioned layers!!
     }
-    lay->BuildUnits_Threads(this);
+    l->BuildUnits_Threads(this);
   }
   // temporary storage for sender-based netinput computation
   if(units_flat.size > 0 && threads.n_threads > 0) {
@@ -6413,6 +6419,7 @@ void Network::Connect() {
   int i;
   for(i=layers.leaves-1;i>=0;i--) {
     l = (Layer*)layers.Leaf(i);
+    if(l->lesioned()) continue;
     l->Connect();
   }
   UpdtAfterNetMod();
@@ -6436,6 +6443,7 @@ bool Network::CheckBuild(bool quiet) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesioned()) continue;
     if(!l->CheckBuild(quiet)) {
       if(!quiet)
 	taMisc::CheckError("Network:",GetName(),"Needs the 'Build' command to be run");
@@ -6449,6 +6457,7 @@ bool Network::CheckConnect(bool quiet) {
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
+    if(l->lesioned()) continue;
     if(!l->CheckConnect(quiet)) {
       if(!quiet)
 	taMisc::CheckError("Network:",GetName(), "Needs the 'Connect' command to be run");

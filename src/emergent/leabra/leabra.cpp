@@ -4609,6 +4609,7 @@ void LeabraLayer::CheckSpecs() {
 }
 
 void LeabraLayer::CheckThisConfig_impl(bool quiet, bool& rval) {
+  if(lesioned()) return;
   inherited::CheckThisConfig_impl(quiet, rval);
 
   if(!spec->CheckConfig_Layer(this, quiet)) {
