@@ -671,6 +671,7 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 void LeabraActAvgSpec::Initialize() {
   l_gain = 3.0f;
   l_sq = false;
+  thr_max = 0.5f;
   l_dt = 0.005f;
   ml_dt = 0.4f;
   m_dt = 0.1f;
@@ -1100,12 +1101,17 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
 
   if(net->learn_rule != LeabraNetwork::CTLEABRA_XCAL_C) {
     float lval = u->avg_m;
-    if(act_avg.l_sq)
-      lval *= lval;
-    u->avg_l += act_avg.l_dt * (lval - u->avg_l);
-    u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml);
-
-    u->l_thr = act_avg.l_gain * MAX(u->avg_l, u->avg_ml);
+    if(act_avg.l_sq) {
+      u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml);
+      u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l);
+      u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
+      u->l_thr = MIN(act_avg.thr_max, u->l_thr);
+    }
+    else {
+      u->avg_l += act_avg.l_dt * (lval - u->avg_l);
+      u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml);
+      u->l_thr = act_avg.l_gain * MAX(u->avg_l, u->avg_ml);
+    }
   }
 
   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL || net->ct_sravg.force_con)  {
@@ -1962,13 +1968,17 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
     u->avg_m += act_avg.m_dt * (u->avg_s - u->avg_m);
 
     float lval = u->avg_m;
-    if(act_avg.l_sq)
-      lval *= lval;
-
-    u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml); // driven by avg_m
-    u->avg_l += act_avg.l_dt * (lval - u->avg_l);	 // driven by avg_m
-
-    u->l_thr = act_avg.l_gain * MAX(u->avg_l, u->avg_ml);
+    if(act_avg.l_sq) {
+      u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml); // driven by avg_m
+      u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l); // driven by avg_ml
+      u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
+      u->l_thr = MIN(act_avg.thr_max, u->l_thr);
+    }
+    else {
+      u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml); // driven by avg_m
+      u->avg_l += act_avg.l_dt * (lval - u->avg_l);	 // driven by avg_m
+      u->l_thr = act_avg.l_gain * MAX(u->avg_l, u->avg_ml);
+    }
     // note: updating unit-level ravg_l, ravg_ml, l_thr variables here..
   }
   else {

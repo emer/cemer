@@ -888,8 +888,9 @@ class LEABRA_API LeabraActAvgSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- used in XCAL learning rules
 INHERITED(SpecMemberBase)
 public:
-  float		l_gain;		// #DEF_3 #MIN_0 gain on the long-time scale receiving average activation (avg_l) value as it enters into the learning threshold l_thr
-  bool		l_sq;		// #DEF_false compute long-time scale average of squared activity, not raw activity
+  float		l_gain;		// #MIN_0 gain on the long-time scale receiving average activation (avg_l) value as it enters into the learning threshold l_thr
+  bool		l_sq;		// threshold is square of long-time scale average activity, and ml and l dt are computed in a cascaded fashion, instead of MAX of each separately as it is now
+  float		thr_max;	// #DEF_0.85 #CONDSHOW_ON_l_sq maximum possible threshold value -- only in effect for l_sq case -- prevents excessive ltd for higher threshold values
   float		l_dt;		// #DEF_0.0001:0.01 [0.005 std for XCAL, .0002 for XCAL_C] #MIN_0 #MAX_1 time constant (rate) for updating the long time-scale avg_l value, used for XCAL learning rules
   float		ml_dt;		// #DEF_0.4;0.004 #MIN_0 #MAX_1 time constant (rate) for updating the medium-to-long time-scale avg_ml value, which integrates over recent history of medium (trial level) averages, used for XCAL learning rules
   float		m_dt;		// #DEF_0.1;0.017 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
