@@ -3031,7 +3031,7 @@ void LeabraLayerSpec::Trial_NoiseInit_KPos_ugp(LeabraLayer* lay,
   }
   lay->unit_idxs.Permute();
   for(int i=0;i<nunits;i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
     if(i < thr->kwta.k)
       u->noise = us->noise.var;
     else

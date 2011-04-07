@@ -1112,14 +1112,14 @@ void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay,
   lay->unit_idxs.Permute();
   int i;
   for(i=0; i<n_go_units; i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
     if(i < mgpd->kwta.k)
       u->noise = rnd_go.nogo_noise;
     else
       u->noise = 0.0f;
   }
   for(; i<nunits; i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
     u->noise = 0.0f;
   }
 }
