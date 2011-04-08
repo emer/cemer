@@ -3110,10 +3110,12 @@ void ProgramCallVar::AddTargetsToListAll(Program_List& all_lst) {
 const String ProgramCallVar::GenCompileScript(Program* prg) {
   String rval;
   if(!prog_group) return rval;
-  rval += "    Program_Group* spgp = this" + GetPath(NULL, prg) + "->GetProgramGp();\n";
-  rval += "    for(int spi=0; spi<spgp->leaves; spi++) {\n";
-  rval += "      Program* prg = spgp->Leaf(spi);\n";
-  rval += "      prg->CompileScript(true); // true = force!\n";
+  rval += "    {\n";
+  rval += "      Program_Group* spgp = this" + GetPath(NULL, prg) + "->GetProgramGp();\n";
+  rval += "      for(int spi=0; spi<spgp->leaves; spi++) {\n";
+  rval += "        Program* prg = spgp->Leaf(spi);\n";
+  rval += "        prg->CompileScript(true); // true = force!\n";
+  rval += "      }\n";
   rval += "    }\n";
   return rval;
 }
@@ -3124,9 +3126,10 @@ const String ProgramCallVar::GenCallInit(Program* prg) {
   Program* trg = GetTarget_Compile();
   if(!trg) return rval;
 
-  rval += "    Program_Group* spgp = this" + GetPath(NULL, prg) + "->GetProgramGp();\n";
-  rval += "    for(int spi=0; spi<spgp->leaves; spi++) {\n";
-  rval += "      Program* prg = spgp->Leaf(spi);\n";
+  rval += "    {\n";
+  rval += "      Program_Group* spgp = this" + GetPath(NULL, prg) + "->GetProgramGp();\n";
+  rval += "      for(int spi=0; spi<spgp->leaves; spi++) {\n";
+  rval += "        Program* prg = spgp->Leaf(spi);\n";
 
   for (int j = 0; j < prog_args.size; ++j) {
     ProgArg* ths_arg = prog_args.FastEl(j);
@@ -3137,10 +3140,11 @@ const String ProgramCallVar::GenCallInit(Program* prg) {
     ProgVar* arg_chk = prg->args.FindName(argval);
     ProgVar* var_chk = prg->vars.FindName(argval);
     if(!arg_chk && !var_chk) continue; 
-    rval += "      prg->SetVar(\"" + prg_var->name + "\", "
+    rval += "        prg->SetVar(\"" + prg_var->name + "\", "
       + argval + ");\n";
   }
-  rval += "      ret_val = prg->CallInit(this);\n"; 
+  rval += "        ret_val = prg->CallInit(this);\n"; 
+  rval += "      }\n";
   rval += "    }\n";
   return rval;
 }
