@@ -671,7 +671,7 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 void LeabraActAvgSpec::Initialize() {
   l_gain = 3.0f;
   l_sq = false;
-  thr_max = 0.5f;
+  thr_max = 0.85f;
   l_dt = 0.005f;
   ml_dt = 0.4f;
   m_dt = 0.1f;

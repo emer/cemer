@@ -648,7 +648,7 @@ public:
   AxisType		axis;		// #READ_ONLY #SHOW type of axis this is, for rendering purposes
   GraphColView*		col_lookup; 	// #NULL_OK #FROM_GROUP_col_list #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #NO_COPY lookup a column of data for this axis -- only for lookup purposes -- fills in the name and is reset to NULL -- name is what is actually used
   String		col_name;	// name of column of data for this axis
-  FixedMinMax		fixed_range;	// #NO_SAVE fixed min/max range values for display (if not fixed, automatically set to min/max of data)
+  FixedMinMax		fixed_range;	// fixed min/max range values for display (if not fixed, automatically set to min/max of data)
 
   RGBA			color;		// color of the line and points
 

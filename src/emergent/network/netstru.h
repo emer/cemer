@@ -2242,12 +2242,12 @@ public:
   String	trial_name;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current trial (e.g., name of input pattern, typically set by a LayerWriter)
   String	output_name;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (must be computed by a program)
   
-  bool		sse_unit_avg;	// #NO_SAVE #CAT_Statistic compute sse as average sse over units (i.e., divide by total number of target units in layer)
-  bool		sse_sqrt;	// #NO_SAVE #CAT_Statistic take the square root of the SSE, producing a Euclidian distance instead of raw sse (note this cannot technically be added across trials in a linear fashion, as raw sse can)
+  bool		sse_unit_avg;	// #CAT_Statistic compute sse as average sse over units (i.e., divide by total number of target units in layer)
+  bool		sse_sqrt;	// #CAT_Statistic take the square root of the SSE, producing a Euclidian distance instead of raw sse (note this cannot technically be added across trials in a linear fashion, as raw sse can)
   float		sse;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   float		sum_sse;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
   float		avg_sse;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
-  float		cnt_err_tol;	// #NO_SAVE #CAT_Statistic tolerance for computing the count of number of errors over current epoch
+  float		cnt_err_tol;	// #CAT_Statistic tolerance for computing the count of number of errors over current epoch
   float		cnt_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
   float		pct_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns (= cnt_err / n)
   float		pct_cor;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was below cnt_err_tol over an epoch or similar larger set of external input patterns (= 1 - pct_err -- just for convenience for whichever you want to plot)
