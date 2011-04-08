@@ -154,7 +154,7 @@ class TA_API DataTableView : public T3DataViewMain {
 INHERITED(T3DataViewMain)
 public:
   int		view_rows; 	// maximum number of rows visible
-  MinMaxInt	view_range; 	// #NO_SAVE range of visible rows (max is the last row visible, not the last+1; range = view_rows-1)
+  MinMaxInt	view_range; 	// range of visible rows (max is the last row visible, not the last+1; range = view_rows-1)
 
   bool		display_on;  	// #DEF_true 'true' if display should be updated
   bool		manip_ctrl_on;	// #DEF_true display the manipulation controls on objects for positioning etc

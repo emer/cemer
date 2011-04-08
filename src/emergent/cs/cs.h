@@ -458,7 +458,7 @@ public:
   Phase		phase;		// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW current phase name
   int		phase_no;	// #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW current phase number
 
-  float		maxda_stopcrit;	// #NO_SAVE #DEF_0.01 #CAT_Statistic stopping criterion for max da
+  float		maxda_stopcrit;	// #DEF_0.01 #CAT_Statistic stopping criterion for max da
   float		maxda;		// #NO_SAVE #GUI_READ_ONLY #SHOW maximum #CAT_Statistic #VIEW change in activation (delta-activation) over network; used in stopping settling
 
   float		minus_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
