@@ -513,7 +513,7 @@ INHERITED(ProjectionSpec)
 public:
   TwoDCoord 	 rf_width;	// size of the receptive field -- should be an even number
   FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
-  float		gauss_sigma;	// gaussian width parameter for initial weight values to give a tuning curve
+  float		gauss_sigma;	// #CONDEDIT_ON_init_wts gaussian width parameter for initial weight values to give a tuning curve
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
 
   TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
@@ -543,13 +543,13 @@ public:
     GAUSSIAN,			// gaussian fall-off as a function of distance
   };
 
-  MinMaxRange	wt_range;	// range of weakest (min) to strongest (max) weight values generated
-  bool		invert;		// invert the gradient, such that the min is located "below" the recv units, and the max is furthest away
-  bool		grad_x;		// compute a gradient over the x dimension of the sending layer, based on x axis location of the matrix stripe unit group
-  bool		grad_y;		// compute a gradient over the y dimension of the sending layer, based on y axis location of the matrix stripe unit group
-  bool		wrap;		// wrap weight values around relevant dimension(s) -- the closest location wins -- this ensures that all units have the same overall weight strengths
-  bool		use_gps;	// if recv layer has unit groups, use them for determining relative position to compare with sending unit locations (unit group information is never used for the sending layer)
-  GradType	grad_type;	// type of gradient to make -- applies to both axes
+  MinMaxRange	wt_range;	// #CONDEDIT_ON_init_wts range of weakest (min) to strongest (max) weight values generated
+  bool		invert;		// #CONDEDIT_ON_init_wts invert the gradient, such that the min is located "below" the recv units, and the max is furthest away
+  bool		grad_x;		// #CONDEDIT_ON_init_wts compute a gradient over the x dimension of the sending layer, based on x axis location of the matrix stripe unit group
+  bool		grad_y;		// #CONDEDIT_ON_init_wts compute a gradient over the y dimension of the sending layer, based on y axis location of the matrix stripe unit group
+  bool		wrap;		// #CONDEDIT_ON_init_wts wrap weight values around relevant dimension(s) -- the closest location wins -- this ensures that all units have the same overall weight strengths
+  bool		use_gps;	// #CONDEDIT_ON_init_wts if recv layer has unit groups, use them for determining relative position to compare with sending unit locations (unit group information is never used for the sending layer)
+  GradType	grad_type;	// #CONDEDIT_ON_init_wts type of gradient to make -- applies to both axes
   float		gauss_sig;	// #CONDSHOW_ON_grad_type:GAUSSIAN gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0 
 
   override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);

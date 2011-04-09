@@ -183,7 +183,7 @@ class LEABRA_API WtSigSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
-  float		off;		// #DEF_1:1.25 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.2 for XCAL
+  float		off;		// #DEF_1:1.25 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.0 for XCAL
 
   static inline float	SigFun(float w, float gn, float of) {
     if(w <= 0.0f) return 0.0f;

@@ -1552,8 +1552,8 @@ class LEABRA_API ScalarValSelfPrjnSpec : public ProjectionSpec {
 INHERITED(ProjectionSpec)
 public:
   int	width;			// width of neighborhood, in units (i.e., connect width units to the left, and width units to the right)
-  float	wt_width;		// width of the sigmoid for providing initial weight values
-  float	wt_max;			// maximum weight value (of 1st neighbor -- not of self unit!)
+  float	wt_width;		// #CONDEDIT_ON_init_wts width of the sigmoid for providing initial weight values
+  float	wt_max;			// #CONDEDIT_ON_init_wts maximum weight value (of 1st neighbor -- not of self unit!)
 
   virtual void	Connect_UnitGroup(Layer* lay, Layer::AccessMode acc_md, int gpidx,
 				  Projection* prjn);
@@ -2279,7 +2279,7 @@ INHERITED(ProjectionSpec)
 public:
   int		n_disps;	// #DEF_0:3 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
   float		disp_range_pct;  // #DEF_0.02:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total input image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
-  float		gauss_sig; 	// #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
+  float		gauss_sig; 	// #CONDEDIT_ON_init_wts #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
   float		disp_spacing;	// #DEF_2:2.5 spacing between different disparity detector cells in terms of disparity offset tunings -- expressed as a multiplier on disp_range -- this should generally remain the default value of 2, so that the space is properly covered by the different disparity detectors, but 2.5 can also be useful to not have any overlap between disparities to prevent ambiguous activations (e.g., for figure-ground segregation)
   int		end_extra;	// #DEF_2 extra disparity detecting range on the ends of the disparity spectrum (nearest and farthest detector cells) -- adds beyond the disp_range -- to extend out and capture all reasonable disparities -- expressed as a multiplier on disp_range 
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
@@ -2368,9 +2368,11 @@ class LEABRA_API TiledGpRFOneToOnePrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec connectvity with one-to-one connections for units with the same index within a unit group -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOneToOneWtsPrjnSpec for a softer version where only weights are set)
 INHERITED(TiledGpRFPrjnSpec)
 public:
+  float		gauss_sigma;		// #CONDEDIT_ON_init_wts gaussian width parameter for initial weight values (only with init_wts on) to give a tuning curve in terms of distance from center of overall rf (normalized units)
 
   override void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
 				  int rgpidx, int sgpidx, int alloc_loop);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
 
   TA_SIMPLE_BASEFUNS(TiledGpRFOneToOnePrjnSpec);
 private:
@@ -2383,8 +2385,8 @@ class LEABRA_API TiledGpRFOneToOneWtsPrjnSpec : public TiledGpRFPrjnSpec {
   // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that have differential weights for units with the same index within a unit group vs. differential weights -- useful for establishing connections among layers with the same unit-group structure (see also TiledGpRFOnetToOnePrjnSpec for harder version where connections are only made among units with same index within group)
 INHERITED(TiledGpRFPrjnSpec)
 public:
-  float		one_to_one_wt;	// weight between units with the same index in the unit group
-  float		other_wt;	// weight between other non-one-to-one units
+  float		one_to_one_wt;	// #CONDEDIT_ON_init_wts weight between units with the same index in the unit group
+  float		other_wt;	// #CONDEDIT_ON_init_wts weight between other non-one-to-one units
 
   override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
 
@@ -2464,7 +2466,7 @@ INHERITED(ProjectionSpec)
 public:
   TwoDCoord 	 rf_width;	// size of the receptive field -- should be an even number
   FloatTwoDCoord rf_move;	// how much to move in input coordinates per each receiving increment (unit group or unit within group, depending on whether inner or outer) -- typically 1/2 rf_width
-  float		gauss_sigma;	// gaussian width parameter for initial weight values to give a tuning curve
+  float		gauss_sigma;	// #CONDEDIT_ON_init_wts gaussian width parameter for initial weight values to give a tuning curve
   bool		wrap;		// if true, then connectivity has a wrap-around structure so it starts at -rf_move (wrapped to right/top) and goes +rf_move past the right/top edge (wrapped to left/bottom)
 
   TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv

@@ -244,14 +244,14 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   // todo: could set come conflicting params..
   if(learn_rule != LEABRA_CHL) {
     if(wt_sig.off == 1.25f)
-      wt_sig.off = 1.1f;	// this is key
+      wt_sig.off = 1.0f;	// this is key
     if(GetTypeDef() == &TA_LeabraConSpec) { // only for generic conspecs -- not derived ones!
       if(lrate == 0.01f)
 	lrate = 0.02f;		// also important
     }
   }
   else {
-    if(wt_sig.off == 1.1f)
+    if(wt_sig.off == 1.0f)
       wt_sig.off = 1.25f;
     if(GetTypeDef() == &TA_LeabraConSpec) { // only for generic conspecs -- not derived ones!
       if(lrate == 0.02f)
@@ -678,7 +678,7 @@ void LeabraActAvgSpec::Initialize() {
   }
   if(l_sq) {
     l_gain = 60.0f;
-    l_dt = 0.1f;
+    l_dt = 0.05f;
     ml_dt = 1.0f;
   }
   else {
@@ -704,7 +704,7 @@ void LeabraActAvgSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(l_sq && l_gain < 10.0f) {
     l_gain = 60.0f;
-    l_dt = 0.10f;
+    l_dt = 0.05f;
     ml_dt = 1.0f;
   }
   l_time = 1.0f / l_dt;

@@ -2431,7 +2431,7 @@ public:
   virtual void  Init_dWt();
   // #CAT_Learning Initialize the weight change variables
   virtual void  Init_Weights();
-  // #MENU #CONFIRM #CAT_Learning Initialize the weights -- also inits acts, counters and stats
+  // #BUTTON #MENU #CONFIRM #CAT_Learning Initialize the weights -- also inits acts, counters and stats
   virtual void	Init_Weights_post();
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 

@@ -4792,6 +4792,7 @@ void VisDisparityLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* 
 //		TiledGpRFOneToOnePrjnSpec
 
 void TiledGpRFOneToOnePrjnSpec::Initialize() {
+  gauss_sigma = 1.0f;
 }
 
 void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
@@ -4818,6 +4819,26 @@ void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_
   }
 }
 
+void TiledGpRFOneToOnePrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
+
+  TwoDCoord rf_half_wd = send_gp_size / 2;
+  FloatTwoDCoord rf_ctr = rf_half_wd;
+  if(rf_half_wd * 2 == send_gp_size) // even
+    rf_ctr -= .5f;
+
+  float sig_sq = (float)(rf_half_wd.x * rf_half_wd.x) * gauss_sigma * gauss_sigma;
+
+  for(int i=0; i<cg->size; i++) {
+    int su_x = i % send_gp_size.x;
+    int su_y = i / send_gp_size.x;
+
+    float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
+    float wt = expf(-0.5 * dst / sig_sq);
+
+    cg->Cn(i)->wt = wt;
+  }
+}
 
 ///////////////////////////////////////////////////////////////
 //		TiledGpRFOneToOneWtsPrjnSpec
