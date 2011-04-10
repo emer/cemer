@@ -686,7 +686,7 @@ void LeabraActAvgSpec::Initialize() {
     l_dt = 0.005f;
     ml_dt = 0.4f;
   }
-  thr_min = 0.1f;
+  thr_min = 0.01f;
   thr_max = 0.9f;
   m_dt = 0.1f;
   s_dt = 0.2f;
@@ -976,6 +976,12 @@ void LeabraUnitSpec::CreateNXX1Fun() {
 void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
   if(bias_spec.SPtr())
     ((LeabraConSpec*)bias_spec.SPtr())->SetLearnRule(net);
+  if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
+    act_avg.l_sq = true;
+    act_avg.l_gain = 60.0f;
+    act_avg.l_dt = 0.05f;
+    act_avg.ml_dt = 1.0f;
+  }
 }
 
 void LeabraUnitSpec::Init_Weights(Unit* u, Network* net) {
