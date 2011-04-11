@@ -1022,6 +1022,7 @@ public:
   bool		old_es;		// #DEF_false use old way of computing end stop stencils -- only for backward compatibility -- do not use on new training
   float		es_adjang_wt;	// #DEF_0.2 weight for adjacent angles in the end stop computation -- adjacent angles are often activated for edges that are not exactly aligned with the gabor angles, so they can result in false positives
   float		es_gain;	// #DEF_1.2 gain factor applied only to end stop outputs -- these have a more stringent criterion and thus can benefit from an additional mulitplier to put on same level compared to the others (len sum, v1s_max)
+  bool		sum_rf;		// #DEF_false sum over the receptive field instead of computing the max (actually computes the average instead of sum)
   float		nonfocal_wt;	// #DEF_0.8 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
 
   int		pre_rf;		// #READ_ONLY size of pre-grouping -- always 4 for now, as it is the only thing that makes sense
@@ -1322,8 +1323,12 @@ protected:
   // pre-grouped inputs -- EndStop & Length Sum
   virtual void 	V1ComplexFilter_EsLs_Integ_thread(int v1c_idx, int thread_no);
   // pre-grouped inputs -- EndStop & Length Sum
+  virtual void 	V1ComplexFilter_EsLs_Integ_sum_thread(int v1c_idx, int thread_no);
+  // pre-grouped inputs -- EndStop & Length Sum
   virtual void 	V1ComplexFilter_V1SMax_thread(int v1c_idx, int thread_no);
   // pre-grouped inputs -- V1Simple Max
+  virtual void 	V1ComplexFilter_V1SMax_sum_thread(int v1c_idx, int thread_no);
+  // pre-grouped inputs -- V1Simple Max -- now actualy v1simple sum..
   virtual void 	V1ComplexFilter_Blob_thread(int v1c_idx, int thread_no);
   // pre-grouped inputs -- Blob
 
