@@ -671,9 +671,6 @@ public:
 			    bool motion_only = false);
   // main interface: filter input image(s) (if ocularity = BINOCULAR, must pass both images, else left eye is ignored) -- saves results in local output vectors, and data table if specified -- increments the time index if motion filtering -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence
 
-  virtual bool	InvertFilters();
-  // #BUTTON WARNING: NOT REALLY WORKING AT THIS TIME: invert filters, using data that currently exists in the local filter storage -- copy from other source to last stage of filtering _out matrix to invert something -- results are saved in output data table image output -- can copy from there as needed
-
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(VisRegionSpecBase);
@@ -727,8 +724,6 @@ protected:
     virtual bool ImageToTable_impl(DataTable* dtab, float_Matrix* img, const String& col_sufx);
     // send current input image(s)e step of dog output to data table for viewing
 
-  virtual bool InvertFilters_impl();
-  // implementation of inverse filtering
 };
 
 class TA_API VisRegionSpecBaseList : public taList<VisRegionSpecBase> {
@@ -805,9 +800,6 @@ protected:
     virtual bool DoGOutputToTable_impl(DataTable* dtab, float_Matrix* out, const String& col_sufx);
     // send current time step of dog output to data table for viewing
 
-  override bool InvertFilters_impl();
-  virtual bool	DoGInvertFilter(float_Matrix* out, const String& col_sufx);
-  // implementation of DoG inverse filtering that actually does the heavy lifting
 };
 
 
@@ -952,7 +944,6 @@ class TA_API V1MotionSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells
 INHERITED(taOBase)
 public:
-  bool		max_pols;	// #DEF_true perform motion computation on max over polarities (MAX_POLS) v1s values, instead of full polarity by angle matrix -- preserves angle (orientation) information, but no polarity or other info -- automatically sets MAX_POLS for v1s_filters
   bool		r_only;		// #DEF_true perform motion computation only on right eye signals -- this is the dominant eye and often all that is needed
   int		n_speeds;	// #DEF_1 for motion coding, number of speeds in each direction to encode separately -- only applicable if motion_frames > 1
   int		speed_inc;	// #DEF_1 how much to increase speed for each speed value -- how fast is the slowest speed basically
@@ -973,8 +964,7 @@ class TA_API V1BinocularSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 binocular cells -- specifies basic disparity coding system -- number and spacing of disparity tuned cells
 INHERITED(taOBase)
 public:
-  bool		max_pols;	// #DEF_true perform disparity computation on max over polarities (MAX_POLS) v1s values, instead of full polarity by angle matrix -- preserves angle (orientation) information, but no polarity or other info -- automatically sets MAX_POLS for v1s_filters
-  bool		mot_in;		// use motion v1m_maxout signals as the input to disparity computation -- only moving objects will have depth mapping -- a quick and dirty way to drive saccade control, for example -- only valid if motion_frames > 1, and must not set r_only in v1s_motion specs, and max_pols must be equivalent in this and v1s_motion specs (all these conditions are enforced!)
+  bool		mot_in;		// use motion v1m_maxout signals as the input to disparity computation -- only moving objects will have depth mapping -- a quick and dirty way to drive saccade control, for example -- only valid if motion_frames > 1, and must not set r_only in v1s_motion specs (all these conditions are enforced!)
   int		n_disps;	// #DEF_0:2 number of different disparities encoded in each direction away from the focal plane (e.g., 1 = -1 near, 0 = focal, +1 far) -- each disparity tuned cell responds to a range of actual disparities around a central value, defined by disp * disp_off
   float		disp_range_pct;  // #DEF_0.05:0.1 range (half width) of disparity tuning around central offset value for each disparity cell -- expressed as proportion of total V1S image width -- total disparity tuning width for each cell is 2*disp_range + 1, and activation is weighted by gaussian tuning over this range (see gauss_sig)
   float		gauss_sig; 	// #DEF_0.7:1.5 gaussian sigma for weighting the contribution of different disparities over the disp_range -- expressed as a proportion of disp_range -- last disparity on near/far ends does not come back down from peak gaussian value (ramp to plateau instead of gaussian)
@@ -1010,34 +1000,19 @@ protected:
 };
 
 class TA_API V1ComplexSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple or binocular
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple outputs
 INHERITED(taOBase)
 public:
-  bool		pre_gp4;	// #DEF_true use a 4x4 pre-grouping of v1s or v1b features prior to computing subsequent steps (end stop, length sum, etc) -- pre grouping reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
-  TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- operates on top of the pre-grouping guys and always uses 1/2 overlap spacing
-  TwoDCoord	border;		// border around the V1S layer where v1c values are not computed -- this is particularly useful for binocular depth perception cases where the edges are susceptible to false matches and generally do not provide good disparity data
-  float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
+  bool		sg4;		// #DEF_true #AKA_pre_gp4 use a 4x4 square grouping of v1s features prior to computing subsequent steps (length sum, end stop) -- this square grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
+  bool		spc4;		// #DEF_true #CONDSHOW_ON_sg4 use 4x4 spacing for square grouping, instead of half-overlap 2x2 spacing -- this results in greater savings in computation, at some small cost in uniformity of coverage of the space
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
-  int		end_stop_dist;	// #DEF_2 end-stop distance factor -- how far away from the central point should we look for opposing orientations
-  bool		old_es;		// #DEF_false use old way of computing end stop stencils -- only for backward compatibility -- do not use on new training
-  float		es_adjang_wt;	// #DEF_0.2 weight for adjacent angles in the end stop computation -- adjacent angles are often activated for edges that are not exactly aligned with the gabor angles, so they can result in false positives
-  float		es_gain;	// #DEF_1.2 gain factor applied only to end stop outputs -- these have a more stringent criterion and thus can benefit from an additional mulitplier to put on same level compared to the others (len sum, v1s_max)
-  bool		sum_rf;		// #DEF_false sum over the receptive field instead of computing the max (actually computes the average instead of sum)
-  float		nonfocal_wt;	// #DEF_0.8 how much weaker are the non-focal binocular disparities compared to the focal one (which has a weight of 1)
+  bool		es_len_sum;	// #DEF_true end stop uses length sum or just a single line segment?
+  int		es_gap;		// #DEF_0 gap between off and on components of the end stop field
 
-  int		pre_rf;		// #READ_ONLY size of pre-grouping -- always 4 for now, as it is the only thing that makes sense
-  int		pre_half;	// #READ_ONLY pre_rf / 2
-  int		pre_spacing;	// #READ_ONLY pre_half always
-  int		pre_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
-
-  TwoDCoord	spat_half;	// #READ_ONLY half rf
-  TwoDCoord	spat_spacing;	// #READ_ONLY 1/2 overlap spacing with spat_rf
-  TwoDCoord	spat_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
-
-  TwoDCoord	net_rf;		// #READ_ONLY net = pre * spat
-  TwoDCoord	net_half;	// #READ_ONLY net = pre * spat
-  TwoDCoord	net_spacing;	// #READ_ONLY net = pre * spat
-  TwoDCoord	net_border;	// #READ_ONLY net = pre * spat
+  int		sg_rf;		// #READ_ONLY size of sg-grouping -- always 4 for now, as it is the only thing that makes sense
+  int		sg_half;	// #READ_ONLY sg_rf / 2
+  int		sg_spacing;	// #READ_ONLY either 4 or 2 depending on spc4
+  int		sg_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
 
   int		len_sum_width;	// #READ_ONLY 1 + 2 * len_sum_len -- computed
   float		len_sum_norm;	// #READ_ONLY 1.0 / len_sum_width -- normalize sum
@@ -1049,42 +1024,56 @@ protected:
   void 	UpdateAfterEdit_impl();
 };
 
+class TA_API V2BordOwnSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership cells, which compute T and L junctions on top of V1 inputs
+INHERITED(taOBase)
+public:
+  
+
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V2BordOwnSpec);
+};
+
+class TA_API VisSpatIntegSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image spatial integration parameters for visual signals -- happens as last step after all other feature detection operations -- performs a MAX or AVG over rfields
+INHERITED(taOBase)
+public:
+  TwoDCoord	spat_rf;	// integrate over this many spatial locations (uses MAX operator over gaussian weighted filter matches at each location) in computing the response of the v1c cells -- produces a larger receptive field -- always uses 1/2 overlap spacing
+  float		gauss_sig;	// #DEF_0.8 gaussian sigma for spatial rf -- weights the contribution of more distant locations more weakly
+  bool		sum_rf;		// #DEF_false sum over the receptive field instead of computing the max (actually computes the average instead of sum)
+
+  TwoDCoord	spat_half;	// #READ_ONLY half rf
+  TwoDCoord	spat_spacing;	// #READ_ONLY 1/2 overlap spacing with spat_rf
+  TwoDCoord	spat_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(VisSpatIntegSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
+
 
 class TA_API V1RegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- produces Gabor and more complex filter activation outputs directly from image bitmap input -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(VisRegionSpecBase)
 public:
-  enum SimpleFilters { // #BITS flags for specifying which simple filters to include
-    SF_NONE	= 0, // #NO_BIT
-    ALL_POLS	= 0x0001, // all polarities x angles -- each polarity is an additional row
-    MAX_POLS	= 0x0002, // max over polarities x angles -- one row (of angles) only, with activation = max across all the polarities
-  };
-
   enum ComplexFilters { // #BITS flags for specifying which complex filters to include
     CF_NONE	= 0, // #NO_BIT
-    END_STOP	= 0x0001, // end stop cells -- opposite polarity, any orientation around a central oriented edge, max over all polarities (weighted by gaussian) 
-    LEN_SUM	= 0x0002, // length summing cells -- integrate simple cells along a line, same polarity, max over all polarities (weighted by gaussian) 
-    V1S_MAX    	= 0x0004, // max over v1 simple cells (weighted by gaussian) -- preserves polarity -- only for on/off (monochrome) tuning in v1s -- provides useful lower-level, higher-res signals to higher levels and should be on by default
-    V1S_MEAN   	= 0x0008, // mean over v1 simple cells (weighted by gaussian) -- preserves polarity -- for all v1s features (color and otherwise) -- this is useful for texture and scene recognition instead of object recognition -- gives aggregate energy for basic features and that defines overall textures
-    BLOB	= 0x0010, // 'blobs' made by integrating over all angles for a given luminance or color contrast -- adds 2 units for white/black per hypercolumn (always avail), and if color = COLOR, adds 6 extra units for red/cyan on/off, green/magenta on/off, blue/yellow on/off
+    LEN_SUM	= 0x0001, // length summing cells -- just average along oriented line
+    END_STOP	= 0x0002, // end stop cells -- len sum minus single same orientation point after a gap -- requires LEN_SUM
 #ifndef __MAKETA__
-    CF_ESLS	= END_STOP | LEN_SUM, // #IGNORE #NO_BIT most basic set
-    CF_ESLSMAX	= END_STOP | LEN_SUM | V1S_MAX, // #IGNORE #NO_BIT this is the default setup
-    CF_DEFAULT  = CF_ESLSMAX,  // #IGNORE #NO_BIT this is the default setup
-    CF_COLOR	= CF_DEFAULT | BLOB, // #IGNORE #NO_BIT default + blob = color setup
+    CF_DEFAULT  = LEN_SUM | END_STOP,  // #IGNORE #NO_BIT this is the default setup
 #endif
   };
 
   enum BinocularFilters { // #BITS flags for V1 binocular (V1B) filters to run, for computing disparity information across two visual inputs
     BF_NONE	= 0, // #NO_BIT
-    V1B_DSP	= 0x0001, // basic disparity computation -- MIN(L,R) matching on v1s_[maxpols_]out features -- this is the first stage of disparity computation and is always performed, even if not explicitly output
-    V1B_S	= 0x0002, // V1S features modulated by disparity coding -- output has one full set of V1S features across x axis for each disparity level on y axis (tot_disps * V1S feature geometry) -- this is identical to basic v1b_out (V1B_DSP) if max_pols flag is on, so it is not necessary to select this in that case
-    V1B_C	= 0x0004, // V1C features modulated by disparity coding -- output has one full set of V1C features for each disparity level (tot_disps * V1C feature geometry) -- image geometry is same as V1C, and disparity filtering is done PRIOR to spatial integration (i.e., operates on V1B_S output) -- each disparity is always saved to a different output column in data table
-    V1B_C_FM_IN	= 0x0008, // V1C features modulated by disparity coding coming from external input e.g., from network input layer -- see V1bDspInFmDataTable and UpdateV1cFmV1bDspIn methods -- output has one full set of V1C features for each disparity level (as outer frames) -- image geometry is same as V1C, and disparity filtering is done PRIOR to spatial integration (i.e., operates on V1B_S output) -- each disparity is always saved to a different output column in data table -- can be checked if processing is otherwise monocular, to support configuration of necessary state vars
-    V1B_AVGSUM	= 0x0010, // compute weighted average summary of the disparity signals over entire field -- result is a single scalar value that can be fed into a ScalarValLayerSpec layer to provide an input representation to a network, for example -- output is a single 1x1 data table cell
+    V1B_DSP	= 0x0001, // basic disparity computation -- MIN(L,R) matching on v1pi_out features
+    V1B_AVGSUM	= 0x0002, // compute weighted average summary of the disparity signals over entire field -- result is a single scalar value that can be fed into a ScalarValLayerSpec layer to provide an input representation to a network, for example -- output is a single 1x1 data table cell
 #ifndef __MAKETA__
-    REQ_V1B_S = V1B_S | V1B_AVGSUM,  // #IGNORE #NO_BIT filters that require V1B_S -- used to determine when to compute V1B_S
-    REQ_V1B_C = V1B_C | V1B_C_FM_IN, // #IGNORE requires complex coding of some sort
     BF_DEFAULT  = V1B_DSP,	     // #IGNORE #NO_BIT this is the default setup
 #endif
   };
@@ -1117,39 +1106,46 @@ public:
     ORTHO,	   // orthogonal to the line
   };
 
-  SimpleFilters v1s_filters; 	// which simple cell filtering to perform
+  /////////// Simple
   V1GaborSpec	v1s_specs;	// specs for V1 simple filters, computed using gabor filters directly onto the incoming image
   V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
   V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
-  V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||1 specs for V1 motion filters within the simple processing layer
   RenormMode	v1s_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1s static filters
-  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||1 #DEF_LIN_RENORM how to renormalize the output of v1s motion filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
-  XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) -- configured automatically
-  int		v1m_in_polarities; // #READ_ONLY number of polarities used in v1 motion input processing (for history, etc) -- if max_pols, then 1, else 2
-  XYNGeom	v1m_feat_geom; 	// #READ_ONLY size of one 'hypercolumn' of features for V1 motion filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) + motion: n_angles (x) * 2 polarities (y=0, y=1) * 2 directions (next level of y) * n_speeds (outer y dim) -- configured automatically
   XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output
+  XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) -- configured automatically
 
+  /////////// Motion
+  V1MotionSpec	v1s_motion;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 specs for V1 motion filters within the simple processing layer
+  RenormMode	v1m_renorm;	// #CONDSHOW_OFF_motion_frames:0||motion_frames:1 #DEF_LIN_RENORM how to renormalize the output of v1s motion filters
+  XYNGeom	v1m_feat_geom; 	// #READ_ONLY size of one 'hypercolumn' of features for V1 motion filtering -- always x = angles; y = 2 * speeds
+
+  /////////// Binocular
+  BinocularFilters v1b_filters; // #CONDSHOW_ON_region.ocularity:BINOCULAR which binocular (V1B) filtering to perform to compute disparity information across the two eyes
+  V1BinocularSpec  v1b_specs;	// #CONDSHOW_ON_region.ocularity:BINOCULAR specs for V1 binocular filters -- comes after V1 simple processing in binocular case
+  RenormMode	v1b_renorm;	 // #CONDSHOW_ON_region.ocularity:BINOCULAR #DEF_LIN_RENORM how to renormalize the output of v1b filters -- applies ONLY to basic v1b_dsp_out -- is generally a good idea because disparity computation results in reduced activations overall due to MIN operation
+  DataSave	v1b_save;	// #CONDSHOW_ON_region.ocularity:BINOCULAR how to save the V1 binocular outputs for the current time step in the data table
+  XYNGeom	v1b_feat_geom; // #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular disparity output -- disp order: near, focus, far -- [v1s_feats.n or x][tot_disps]
+
+  /////////// Complex
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
-  V1KwtaSpec	v1c_kwta;	// k-winner-take-all inhibitory dynamics for the v1 complex stage -- in general only use this when NOT otherwise using leabra, because these inputs will go into leabra anyway
+  V1KwtaSpec	v1ls_kwta;	// k-winner-take-all inhibitory dynamics for the v1 complex stage
   RenormMode	v1c_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1c filters
-  ComplexFilters v1c_sep_renorm; // any filters here will be renormalized separately prior to computing the kwta -- this puts them on more of an equal footing if there are underlying imbalances -- only relevant ones at this point are END_STOP, LEN_SUM, and V1S_MAX
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
-  XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- configured automatically with x = n_angles
-  XYNGeom	v1c_polinv_geom;  // #READ_ONLY size of one 'hypercolumn' of features for v1c_pre_polinv polarity invariant preprocessing -- configured automatically with x = n_angles
-  XYNGeom	v1c_pre_geom; 	// #READ_ONLY size of v1 complex pre-grouping of v1s or v1b values -- number of hypercolumns in each axis to cover entire output -- this is determined by v1c pre_rf on top of v1s img geom -- feature size is equivalent to v1s_feat_geom
-  XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is determined by v1c rf sz on top of v1s img geom
 
-  BinocularFilters v1b_filters; // which binocular (V1B) filtering to perform to compute disparity information across the two eyes -- V1B_C_FM_IN can be checked if processing is otherwise monocular, to support configuration of necessary state vars
-  V1BinocularSpec  v1b_specs;	// #CONDSHOW_ON_region.ocularity:BINOCULAR||v1b_filters:V1B_C_FM_IN specs for V1 binocular filters -- comes after V1 simple processing in binocular case
-  RenormMode	v1b_renorm;	 // #CONDSHOW_ON_region.ocularity:BINOCULAR #DEF_LIN_RENORM how to renormalize the output of v1b filters -- applies ONLY to basic v1b_dsp_out -- is generally a good idea because disparity computation results in reduced activations overall due to MIN operation
-  DataSave	v1b_save;	// #CONDSHOW_ON_region.ocularity:BINOCULAR||v1b_filters:V1B_C_FM_IN how to save the V1 binocular outputs for the current time step in the data table
-  XYNGeom	v1b_dsp_feat_geom; // #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular disparity output -- disp order: near, focus, far -- [v1s_feats.n or x][tot_disps]
-  XYNGeom	v1b_s_feat_geom; // #CONDSHOW_ON_region.ocularity:BINOCULAR #READ_ONLY #SHOW #EXPERT size of one 'hypercolumn' of features for V1 binocular simple cell (V1B_S) -- tot_disps * v1s_feat_geom -- order: near, focus, far
+  XYNGeom	v1sg_img_geom; 	// #READ_ONLY size of v1 square grouping output image geometry -- input is v1s_img_geom, with either 2x2 or 4x4 spacing of square grouping operations reducing size by that amount
+  XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is equal to v1sq_img_geom if sq_gp4 is on, or v1s_img_geom if not
+  XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- includes length sum and end stop in combined output -- configured automatically with x = n_angles
+
+  VisSpatIntegSpec spat_integ;	// spatial integration output specs
 
   OptionalFilters opt_filters; 	// optional filter outputs -- always rendered to separate tables in data table
   DataSave	opt_save;	// how to save the optional outputs for the current time step in the data table
+
+
+  //////////////////////////////////////////////////////////////
+  //	Geometry and Stencils
 
   ///////////////////  V1S Geom/Stencils ////////////////////////
   int		n_colors;	// #READ_ONLY number of color channels to be processed (1 = monochrome, 4 = full color)
@@ -1159,26 +1155,28 @@ public:
   float_Matrix	v1s_ang_slopes; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each of the angles
   float_Matrix	v1s_ang_slopes_raw; // #READ_ONLY #NO_SAVE angle slopes [dx,dy][line,ortho][angles] -- dx, dy slopes for lines and orthogonal lines for each of the angles -- non-normalized
   int_Matrix	v1s_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
+
+  ////////////////// V1M Motion Geom/Stencils
+  int		v1m_in_polarities; // #READ_ONLY number of polarities used in v1 motion input processing (for history, etc) -- always set to 1 -- using polarity invariant inputs
   float_Matrix	v1m_weights;  	// #READ_ONLY #NO_SAVE v1 simple motion weighting factors (1d)
   int_Matrix	v1m_stencils; 	// #READ_ONLY #NO_SAVE stencils for motion detectors, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][directions:2][angles][speeds] (6d)
   int_Matrix	v1m_still_stencils; // #READ_ONLY #NO_SAVE stencils for motion detectors -- detecting stillness, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][angles] (4d)
-
-  ///////////////////  V1C Geom/Stencils ////////////////////////
-  int		v1c_feat_es_y;	// #READ_ONLY y axis index for start of end stop features in v1c
-  int		v1c_feat_ls_y;	// #READ_ONLY y axis index for start of length sum features in v1c
-  int		v1c_feat_smax_y; // #READ_ONLY y axis index for start of v1s_max features in v1c
-  int		v1c_feat_blob_y; // #READ_ONLY y axis index for start of blob features in v1c
-  float_Matrix	v1c_weights;	// #READ_ONLY #NO_SAVE v1 complex spatial weighting factors (2d)
-  int_Matrix	v1c_gp4_stencils; // #READ_ONLY #NO_SAVE stencils for v1c pre_gp4 pre-grouping -- represents center points of the lines for each angle [x,y,len][5][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
-  int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][sum_line=2][max_line=2][angles]
-  int_Matrix	v1c_ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
-  float_Matrix	v1c_es_angwts;  // #READ_ONLY #NO_SAVE weights for different angles relative to a given angle [n_angles][n_angles]
 
   ///////////////////  V1B Geom/Stencils ////////////////////////
   int_Matrix	v1b_widths; 	// #READ_ONLY #NO_SAVE width of stencils for binocularity detectors 1d: [tot_disps]
   float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular gaussian weighting factors for integrating disparity values into v1b unit activations -- for each tuning disparity [max_width][tot_disps] -- only v1b_widths[disp] are used per disparity
   int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: 2d: [XY][max_width][tot_disps]
-  float_Matrix	v1bc_weights;	// #READ_ONLY #NO_SAVE weighting factors for integration from binocular disparities to complex responses
+
+  ///////////////////  V1C Geom/Stencils ////////////////////////
+  int_Matrix	v1sg_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square grouping -- represents center points of the lines for each angle [x,y,len][5][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
+  int_Matrix	v1c_ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
+  int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][len_sum,stop=2][dirs=2][angles] -- new version
+
+  // todo: spat integ outputs!
+
+
+  //////////////////////////////////////////////////////////////
+  //	Outputs
 
   ///////////////////  V1S Output ////////////////////////
   float_Matrix	v1s_out_r_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
@@ -1187,9 +1185,10 @@ public:
   float_Matrix	v1s_ithr;	 // #READ_ONLY #NO_SAVE v1 simple cell inhibitory threshold values -- intermediate vals used in computing kwta
   float_Matrix	v1s_out_r;	 // #READ_ONLY #NO_SAVE v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
   float_Matrix	v1s_out_l;	 // #READ_ONLY #NO_SAVE v1 simple cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off,2-6=colors if used]
-  float_Matrix	v1s_maxpols_out_r;  // #READ_ONLY #NO_SAVE v1 simple cell max over polarities output, right eye [feat.x][1][img.x][img.y]
-  float_Matrix	v1s_maxpols_out_l;  // #READ_ONLY #NO_SAVE v1 simple cell max over polarities output, left eye [feat.x][1][img.x][img.y]
-  float_Matrix	v1s_out_r_max;	 // #READ_ONLY #NO_SAVE max activation over features for each image location -- useful for optimizing subsequent processing [img.x][img.y]
+  float_Matrix	v1pi_out_r;  	 // #READ_ONLY #NO_SAVE polarity invariance over v1 simple cell output -- max over polarities, right eye [feat.x][1][img.x][img.y]
+  float_Matrix	v1pi_out_l;  	 // #READ_ONLY #NO_SAVE polarity invariance over v1 simple cell output -- max over polarities, left eye [feat.x][1][img.x][img.y]
+
+  ///////////////////  V1M Motion Output ////////////////////////
   float_Matrix	v1m_out_r;	 // #READ_ONLY #NO_SAVE v1 motion cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = speed * dir * [0=on,1=off -- luminance only]
   float_Matrix	v1m_out_l;	 // #READ_ONLY #NO_SAVE v1 motion cell output, left eye [feat.x][feat.y][img.x][img.y] -- feat.y = speed * dir * [0=on,1=off -- luminance only] 
   float_Matrix	v1m_maxout_r;	 // #READ_ONLY #NO_SAVE v1 motion cell output -- max over directions, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = v1m_in_polarities
@@ -1201,33 +1200,21 @@ public:
   float_Matrix	v1m_still_r; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off -- luminance only]
   float_Matrix	v1m_still_l; // #READ_ONLY #NO_SAVE places with stable features across motion window (no motion), for each v1 simple cell output, right eye [feat.x][feat.y][img.x][img.y] -- feat.y = [0=on,1=off -- luminance only]
 
-  ///////////////////  V1C Output ////////////////////////
-  float_Matrix	v1c_pre;	 // #READ_ONLY #NO_SAVE pre-grouping as basis for subsequent v1c filtering -- reduces dimensionality and introduces robustness [v1s_feat.x][v1s_feat.y][v1c_pre.x][v1c_pre.y]
-  float_Matrix	v1c_pre_polinv;	 // #READ_ONLY #NO_SAVE polarity invariant version of v1c_pre -- used for end stop filters.. [v1s_feat.x][1a][v1c_pre.x][v1c_pre.y]
-  float_Matrix	v1c_esls_raw;	 // #READ_ONLY #NO_SAVE raw (pre spatial integration, but post v1c_pre) v1 complex end-stop and length-sum output [feat.x][2][v1s_pre.x][v1s_pre.y]
-  float_Matrix	v1c_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) v1 complex output [feat.x][feat.y][img.x][img.y]
-  float_Matrix	v1c_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
-  float_Matrix	v1c_out;	 // #READ_ONLY #NO_SAVE v1 complex output [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y]
-
-  ///////////////////  V1B Output ////////////////////////
+  ///////////////////  V1B Binocular Output ////////////////////////
   int_Matrix	v1b_dsp_horiz;	 // #READ_ONLY #NO_SAVE horizontal line ambiguity resolution data -- length and start of horizontal line structures [DHZ_N][img.x][img.y]
-  float_Matrix	v1b_dsp_out;  	 // #READ_ONLY #NO_SAVE disparity output -- [v1b_feat.x][v1b_feat.y][img.x][img.y]  (v1b_feat.x = angles or total v1s features, v1b_feat.y = tot_disps disparities)
+  float_Matrix	v1b_dsp_out;  	 // #READ_ONLY #NO_SAVE disparity output -- [v1b_feat.x][v1b_feat.y][img.x][img.y]  (v1b_feat.x = angles, v1b_feat.y = tot_disps disparities)
   float_Matrix	v1b_dsp_out_tmp; // #READ_ONLY #NO_SAVE temp buffer for disparity output -- used for cross-res computation -- [v1b_feat.x][v1b_feat.y][img.x][img.y]  (v1b_feat.x = angles or total v1s features, v1b_feat.y = tot_disps disparities)
-  float_Matrix	v1b_dsp_out_pre; // #READ_ONLY #NO_SAVE v1c pre gp4 version of v1b_dsp_out -- v1b_c requires things to be at the pre level -- [v1b_feat.x][v1b_feat.y][pre_img.x][pre_img.y]   (v1b_feat.x = angles or total v1s features, v1b_feat.y = tot_disps disparities)
-  float_Matrix	v1b_dsp_in;	 // #READ_ONLY #NO_SAVE disparity *input* -- this should be copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity (see V1bDspInFm* and UpdateV1cFmV1bDspIn methods) -- should be same size as v1c_pre_img_geom [v1b_feat.x][v1b_feat.y][pre_img.x][pre_img.y]  (v1b_feat.x = angles or total v1s features, v1b_feat.y = tot_disps disparities)
-  float_Matrix	v1b_dsp_in_prv;  // #READ_ONLY #NO_SAVE previous version of v1b_dsp_in -- for comparison purposes
-  float_Matrix	v1b_s_out;	 // #READ_ONLY #NO_SAVE v1 binocular simple cell output, which is full v1s feature activations with disparity coding (identical to v1b_dsp_out if !max_pols) -- [v1b_s_feat.x][v1b_s_feat.y][v1s_img.x][v1s_img.y]
-
-  float_Matrix	v1b_v1c_pre;	 // #READ_ONLY #NO_SAVE v1b version of v1c_pre: pre-grouping as basis for subsequent v1c filtering -- reduces dimensionality and introduces robustness [v1s_feat.x][v1s_feat.y][v1c_pre.x][v1c_pre.y][tot_disps]
-  float_Matrix	v1b_v1c_pre_polinv; // #READ_ONLY #NO_SAVE v1b version of v1c_pre_polinv: polarity invariant version of v1c_pre -- used for end stop filters.. [v1s_feat.x][1][v1c_pre.x][v1c_pre.y][tot_disps]
-  float_Matrix	v1b_v1c_out_raw;    // #READ_ONLY #NO_SAVE v1b version of v1c_out_raw: raw (pre kwta) v1 complex output [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y][tot_disps]
-  float_Matrix	v1b_v1c_out;	 // #READ_ONLY #NO_SAVE v1 binocular complex cell output, which is v1c feature activation times v1b_dsp_out weighting per feature -- [v1c_feat.x][v1c_feat.y][v1c_img.x][v1c_img.y][tot_disps]
-
   float		v1b_avgsum_out;	 // #READ_ONLY #NO_SAVE v1b avgsum output (single scalar value which is average summary of disparity values)
 
-  ///////////////////  OPT optional Output ////////////////////////
+  ///////////////////  V1C Complex Output ////////////////////////
+  float_Matrix	v1sg_out;	 // #READ_ONLY #NO_SAVE square 4x4 grouping -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
+  float_Matrix	v1ls_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) length sum output -- operates on v1pi or v1sg inputs -- [feat.x][1][v1c_img.x][v1c_img.y]
+  float_Matrix	v1ls_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
+  float_Matrix	v1ls_out;	 // #READ_ONLY #NO_SAVE length sum output after kwta [feat.x][1][v1c_img.x][v1c_img.y]
+  float_Matrix	v1es_out;	 // #READ_ONLY #NO_SAVE end stopping output -- operates on length sum and raw v1s/v1pi input [feat.x][2][v1c_img.x][v1c_img.y]
 
-  // energy output is same as v1s_out_r_max
+  ///////////////////  OPT optional Output ////////////////////////
+  float_Matrix	energy_out;	 // #READ_ONLY #NO_SAVE energy at each location: max activation over features for each image location -- [img.x][img.y]
 
   int		AngleDeg(int ang_no);
   // get angle value in degress based on angle number
@@ -1241,28 +1228,14 @@ public:
   virtual void 	V1bDspCrossResMin(float extra_width=0.0f, int max_extra=4, float pct_to_min=0.5f);
   // #CAT_V1B integrate v1b_dsp_out values across different resolutions within the same parent V1RetinaProc object -- call this after first pass processing, before applying results -- extra_width is multiplier on rf size needed to map between layer sizes that is added to the lower resolution side, to deal with extra blurring at lower res relative to higher res -- max_extra is maximum such extra to use, in actual pixel values -- pct_to_min is how far proportionally to move toward the minimum value -- 1 = full MIN, 0 = ignore cross res constraints entirely
 
-  virtual bool	V1bDspInFmDataTable(DataTable* data_table, Variant col, int row=-1, 
-		       float diff_thr=0.01f, int integ_sz=1, bool use_ang=true);
-  // #CAT_V1B set the v1b_dsp_in matrix from given data table column and row -- this will typically be a copy of the activations of a network layer that is computing these values from other visual features -- input geom must be an even divisor of v1c_pre_geom -- diff_thr is threshold on difference from previous pattern processed (normalized euclidian distance) -- if below this threshold, returns false and UpdateV1cFromV1bDspIn can be skipped (and prv pattern is not updated) -- diff_thr = 0 means ignore diff and always return true (but still update the previous vector) -- integ_sz = half-size of region to integrate over for getting the disparity values -- helps smooth over missing parts and misalignment across levels for example -- use_ang = use angle information in input for filtering (if false, then it applies max across all angles)
-  virtual bool	V1bDspInFmMatrix(float_Matrix* dacell, float diff_thr=0.01f, int integ_sz=1,
-				    bool use_ang=true);
-  // #CAT_V1B set the v1b_dsp_in matrix from given matrix -- input geom must be an even divisor of v1c_pre_geom -- diff_thr is threshold on difference from previous pattern processed (normalized euclidian distance) -- if below this threshold, returns false and UpdateV1cFromV1bDspIn can be skipped (and prv pattern is not updated) -- diff_thr = 0 means ignore diff and always return true (but still update the previous vector) -- integ_sz = half-size of region to integrate over for getting the disparity values -- helps smooth over missing parts and misalignment across levels for example -- use_ang = use angle information in input for filtering (if false, then it applies max across all angles)
-  virtual void	UpdateV1cFromV1bDspIn();
-  // #CAT_V1B update V1C values based on v1b_dsp_in inputs -- see V1bDspInFm* -- in values are typically copied from activations of a network layer that is computing disparity information based on 2D features or other non-3D signals, for purposes of then modulating V1C feature computation as function of disparity
-
-
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1RegionSpec);
 protected:
-  float_Matrix* cur_v1c_pre;	// current v1c_pre values to use
-  float_Matrix* cur_v1c_pre_polinv; // current v1c_pre_polinv values to use
-  float_Matrix* cur_v1c_kwta_out;  // final post-kwta output for v1c
   float_Matrix* cur_out_acts;	// cur output activations -- for kwta thing
   float_Matrix* cur_still;	// cur still for motion
   float_Matrix* cur_maxout;	// cur maxout for motion
   float_Matrix* cur_hist;	// cur hist for motion
-  float_Matrix* cur_v1b_dsp;	// current v1b_dsp values to use -- either v1b_dsp_out or _in
   float_Matrix* cur_v1b_in_r;	// current v1b input, r
   float_Matrix* cur_v1b_in_l;	// current v1b input, l
 
@@ -1292,6 +1265,10 @@ protected:
   // do simple filters, static only on current inputs -- do it
   virtual void 	V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thread_no);
   // do neighborhood inhibition on simple filters
+  virtual bool 	V1SimpleFilter_PolInvar(float_Matrix* v1s_out_in, float_Matrix* v1pi_out);
+  // polarity invariance: max polarities of v1s_out 
+  virtual void 	V1SimpleFilter_PolInvar_thread(int v1s_idx, int thread_no);
+  // polarity invariance: max polarities of v1s_out 
 
   virtual bool	V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, float_Matrix* maxout, 
 		      float_Matrix* still, float_Matrix* hist, CircMatrix* circ);
@@ -1302,97 +1279,47 @@ protected:
   // do simple motion filters, copy v1s to history
   virtual void 	V1SimpleFilter_Motion_Still_thread(int v1s_idx, int thread_no);
   // do simple motion filters, compute non-moving (still) background
-  virtual bool 	V1SimpleFilter_MaxPols(float_Matrix* v1s_out_in, float_Matrix* maxpols_out);
-  // max polarities of v1s_out 
-  virtual void 	V1SimpleFilter_MaxPols_thread(int v1s_idx, int thread_no);
-  // max polarities of v1s_out 
-  virtual void 	V1SimpleFilter_OutMax_thread(int v1s_idx, int thread_no);
-  // max activation output of v1s_out_r -- useful for multiple subsequent steps
-
-  virtual bool	V1ComplexFilter();
-  // do complex filters -- dispatch threads
-  virtual bool	V1ComplexFilter_impl();
-  // implementation of complex filters operating on all the cur_pre* values and going to cur_out
-  virtual void 	V1ComplexFilter_Pre_thread(int v1c_pre_idx, int thread_no);
-  // pre-grouping for subsequent processing
-  virtual void 	V1ComplexFilter_PreBord_thread(int v1c_pre_idx, int thread_no);
-  // pre-grouping for subsequent processing -- just get rid of v1s border
-  virtual void 	V1ComplexFilter_Pre_Polinv_thread(int v1c_pre_idx, int thread_no);
-  // polarity invariance for pre pass
-  virtual void 	V1ComplexFilter_EsLs_Raw_thread(int v1c_pre_idx, int thread_no);
-  // pre-grouped inputs -- EndStop & Length Sum
-  virtual void 	V1ComplexFilter_EsLs_Integ_thread(int v1c_idx, int thread_no);
-  // pre-grouped inputs -- EndStop & Length Sum
-  virtual void 	V1ComplexFilter_EsLs_Integ_sum_thread(int v1c_idx, int thread_no);
-  // pre-grouped inputs -- EndStop & Length Sum
-  virtual void 	V1ComplexFilter_V1SMax_thread(int v1c_idx, int thread_no);
-  // pre-grouped inputs -- V1Simple Max
-  virtual void 	V1ComplexFilter_V1SMax_sum_thread(int v1c_idx, int thread_no);
-  // pre-grouped inputs -- V1Simple Max -- now actualy v1simple sum..
-  virtual void 	V1ComplexFilter_Blob_thread(int v1c_idx, int thread_no);
-  // pre-grouped inputs -- Blob
-
-  virtual bool	V1CRenormOutput_EsLsBlob(float_Matrix* out);
-  // end stop, length sum, blob separate renorm
 
   virtual bool	V1BinocularFilter();
   // do binocular filters -- dispatch threads
-  virtual bool	V1BinocularFilter_Optionals();
-  // do binocular filters -- dispatch threads -- for optional stuff after core v1b_dsp_wts and _out are computed
-  virtual void 	V1BinocularFilter_MinLr_MaxPols_thread(int v1s_idx, int thread_no);
-  // do binocular filters -- compute MIN(left,right) version of matches between eyes -- max_pols = true
-  virtual void 	V1BinocularFilter_MinLr_V1s_thread(int v1s_idx, int thread_no);
-  // do binocular filters -- compute MIN(left,right) version of matches between eyes -- max_pols = false
+  virtual void 	V1BinocularFilter_MinLr_thread(int v1s_idx, int thread_no);
+  // do binocular filters -- compute MIN(left,right) version of matches between eyes
   virtual void 	V1BinocularFilter_HorizTag_thread(int v1s_idx, int thread_no);
   // do binocular filters -- initial tag of horizontal line structures
   virtual void 	V1BinocularFilter_HorizAgg();
   // do binocular filters -- aggregation of initial tags and ambiguity resolution
-  virtual void 	V1BinocularFilter_S_Out_thread(int v1s_idx, int thread_no);
-  // do binocular filters -- compute v1s-level disparity weighted output (V1B_S)
-
-  virtual void 	V1BinocularFilter_DspOutPre_thread(int v1s_idx, int thread_no);
-  // do binocular filters -- integrate dsp_out to v1b_dsp_out_pre
-  virtual void 	V1BinocularFilter_DspOutPreBord_thread(int v1s_idx, int thread_no);
-  // do binocular filters -- integrate dsp out to v1b_dsp_out_pre -- for case where only border is non-zero
-
-  virtual bool	V1BinocularFilter_Complex_Pre();
-  // do complex processing for v1b -- pre-processing from dsp to v1c_pre guys
-  virtual bool	V1BinocularFilter_Complex();
-  // do complex processing for v1b -- takes Pre results and redoes all the complex filtering from there..
-  virtual void 	V1BinocularFilter_V1C_Pre_thread(int v1c_pre_idx, int thread_no);
-  // cur_v1b_dsp modulates v1c_pre to produce v1b_v1c_pre
-  virtual void 	V1BinocularFilter_V1C_Pre_Polinv_thread(int v1c_pre_idx, int thread_no);
-  // cur_v1b_dsp modulates v1c_pre_polinv to produce v1b_v1c_pre
-
   virtual void 	V1BinocularFilter_AvgSum();
   // v1 binocular weighted-average summary
 
+  virtual bool	V1ComplexFilter();
+  // do complex filters -- dispatch threads
+  virtual void 	V1ComplexFilter_SqGp4_thread(int v1sg_idx, int thread_no);
+  // square-group4 if selected
+  virtual void 	V1ComplexFilter_LenSum_thread(int v1c_idx, int thread_no);
+  // length-sum
+  virtual void 	V1ComplexFilter_EndStop_thread(int v1c_idx, int thread_no);
+  // end stop
+
   virtual bool	V1OptionalFilter();
   // do optional filters -- dispatch threads
+  virtual void 	V1OptionalFilter_Energy_thread(int v1s_idx, int thread_no);
+  // energy as max activation output of v1pi_out_r
 
-  virtual bool V1SOutputToTable(DataTable* dtab);
+  virtual bool V1SOutputToTable(DataTable* dtab, bool fmt_only = false);
   // simple to output table
-  virtual bool V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out, const String& col_sufx);
+  virtual bool V1SOutputToTable_impl(DataTable* dtab, float_Matrix* out, const String& col_sufx,
+				     bool fmt_only = false);
   // simple to output table impl
   virtual bool V1MOutputToTable_impl(DataTable* dtab, float_Matrix* out, float_Matrix* maxout,
-     float_Matrix* still, float_Matrix* hist, CircMatrix* circ, const String& col_sufx);
+     float_Matrix* still, float_Matrix* hist, CircMatrix* circ, const String& col_sufx,
+     bool fmt_only = false);
   // motion to output table impl
-  virtual bool V1BOutputToTable(DataTable* dtab);
+  virtual bool V1BOutputToTable(DataTable* dtab, bool fmt_only = false);
   // binocular to output table
-  virtual bool V1COutputToTable(DataTable* dtab);
+  virtual bool V1COutputToTable(DataTable* dtab, bool fmt_only = false);
   // complex to output table
-  virtual bool OptOutputToTable(DataTable* dtab);
+  virtual bool OptOutputToTable(DataTable* dtab, bool fmt_only = false);
   // optional to output table
-
-  override bool	InvertFilters_impl();
-  virtual bool	V1ComplexInvertFilter();
-  // invert complex filters
-  virtual bool	V1ComplexInvertFilter_EsLs_Monocular();
-  // invert complex filters - EndStop & Length Sum
-  virtual bool	V1ComplexInvertFilter_V1SMax_Monocular();
-  // invert complex filters - V1Simple Max
-  virtual bool	V1SimpleInvertFilter_Static(float_Matrix* out_raw, float_Matrix* out);
-  // invert simple filters, static only on current inputs
 };
 
 
@@ -1476,9 +1403,6 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   // Misc other processing operations
-
-  virtual bool	InvertFilter();
-  // #CAT_Filter #BUTTON invert the filter -- uses current contents of the v1c_out complex filter values within each region to re-generate an image via all the intermediate transforms along the way -- due to extensive information loss at each step of the transformation, the resulting image will be significantly different from a corresponding input, but hopefully at least somewhat recognizable -- results written to image columns of data table
 
   virtual bool	AttendRegion(DataTable* dt, VisRegionParams::Region region = VisRegionParams::FOVEA);
   // #CAT_Filter apply attentional weighting filter to filtered values, with radius = given region
