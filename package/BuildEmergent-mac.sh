@@ -31,8 +31,8 @@ echo -e "\nBuilt Emergent version ${EMERGENT_VERSION}-${REV}\n"
 
 # The package just build by 'make package' is an upgrader, not a full installer.
 # Move it to the home directory and put the svn rev and 'upgrade' in its name.
-INSTALL_DMG=~/emergent-${EMERGENT_VERSION}-${REV}-mac.dmg
-UPGRADE_DMG=~/emergent-${EMERGENT_VERSION}-${REV}-upgrade-mac.dmg
+INSTALL_DMG=~/emergent-${EMERGENT_VERSION}-${REV}-mac64.dmg
+UPGRADE_DMG=~/emergent-${EMERGENT_VERSION}-${REV}-upgrade-mac64.dmg
 echo "Moving upgrader package to home directory ..."
 mv -f emergent-${EMERGENT_VERSION}-mac.dmg ${UPGRADE_DMG}
 
