@@ -629,11 +629,7 @@ TypeDef*	taMisc::default_proj_type = NULL;
 taMisc::StdLicense taMisc::license_def = taMisc::NO_LIC;
 String		taMisc::license_owner;
 String		taMisc::license_org;
-#ifdef DEBUG
 taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
-#else
-taMisc::SaveFormat	taMisc::save_format = taMisc::PLAIN;
-#endif
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 
 String	taMisc::app_dir; // set early in startup, algorithmically to find app dir
