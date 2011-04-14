@@ -159,6 +159,10 @@ public:
   void		SetLtEq(int n)	{ x = MIN(n, x);  y = MIN(n, y); }
   // set each to be less than or equal to n
 
+  static int	WrapMax(int c, int max) {
+    int rval = c % max; if(rval < 0) rval += max;  return rval;
+  }
+
   static bool	WrapClipOne(bool wrap, int& c, int max);
   // wrap-around or clip one dimension, true if out of range (clipped or more than half way around other side for wrap)
   bool		WrapClip(bool wrap, const TwoDCoord& max) {

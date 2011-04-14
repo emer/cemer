@@ -812,7 +812,7 @@ INHERITED(taOBase)
 public:
   bool		on;	// is kwta active for this stage of processing?
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
-  float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
+  float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1;0.4 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
   float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.5 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units (uses KWTA_AVG_BASED -- 0.5 is gelin default)
   float		gain;	 // #CONDSHOW_ON_on #DEF_40 gain on the NXX1 activation function (based on g_e - g_e_thr value -- i.e. the gelin version of the function)
   float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
@@ -1006,8 +1006,6 @@ public:
   bool		sg4;		// #DEF_true #AKA_pre_gp4 use a 4x4 square grouping of v1s features prior to computing subsequent steps (length sum, end stop) -- this square grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
   bool		spc4;		// #DEF_true #CONDSHOW_ON_sg4 use 4x4 spacing for square grouping, instead of half-overlap 2x2 spacing -- this results in greater savings in computation, at some small cost in uniformity of coverage of the space
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
-  bool		es_len_sum;	// #DEF_true end stop uses length sum or just a single line segment?
-  int		es_gap;		// #DEF_0 gap between off and on components of the end stop field
 
   int		sg_rf;		// #READ_ONLY size of sg-grouping -- always 4 for now, as it is the only thing that makes sense
   int		sg_half;	// #READ_ONLY sg_rf / 2
@@ -1060,6 +1058,15 @@ class TA_API V1RegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- produces Gabor and more complex filter activation outputs directly from image bitmap input -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(VisRegionSpecBase)
 public:
+  enum BinocularFilters { // #BITS flags for V1 binocular (V1B) filters to run, for computing disparity information across two visual inputs
+    BF_NONE	= 0, // #NO_BIT
+    V1B_DSP	= 0x0001, // basic disparity computation -- MIN(L,R) matching on v1pi_out features
+    V1B_AVGSUM	= 0x0002, // compute weighted average summary of the disparity signals over entire field -- result is a single scalar value that can be fed into a ScalarValLayerSpec layer to provide an input representation to a network, for example -- output is a single 1x1 data table cell
+#ifndef __MAKETA__
+    BF_DEFAULT  = V1B_DSP,	     // #IGNORE #NO_BIT this is the default setup
+#endif
+  };
+
   enum ComplexFilters { // #BITS flags for specifying which complex filters to include
     CF_NONE	= 0, // #NO_BIT
     LEN_SUM	= 0x0001, // length summing cells -- just average along oriented line
@@ -1069,12 +1076,11 @@ public:
 #endif
   };
 
-  enum BinocularFilters { // #BITS flags for V1 binocular (V1B) filters to run, for computing disparity information across two visual inputs
-    BF_NONE	= 0, // #NO_BIT
-    V1B_DSP	= 0x0001, // basic disparity computation -- MIN(L,R) matching on v1pi_out features
-    V1B_AVGSUM	= 0x0002, // compute weighted average summary of the disparity signals over entire field -- result is a single scalar value that can be fed into a ScalarValLayerSpec layer to provide an input representation to a network, for example -- output is a single 1x1 data table cell
+  enum V2Filters { // #BITS flags for specifying which v2 filters to include
+    V2_NONE	= 0, // #NO_BIT
+    V2_TL	= 0x0001, // compute V2 T and L border-ownership filters
 #ifndef __MAKETA__
-    BF_DEFAULT  = V1B_DSP,	     // #IGNORE #NO_BIT this is the default setup
+    V2_DEFAULT  = V2_NONE,  // #IGNORE #NO_BIT this is the default setup
 #endif
   };
 
@@ -1098,12 +1104,30 @@ public:
   };
 
   enum XY {	   // x, y component of stencils etc -- for clarity in code
-    X,
-    Y,
+    X = 0,
+    Y = 1,
   };
   enum LnOrtho {   // line, orthogonal to the line -- for v1s_ang_slopes
-    LINE,	   // along the direction of the line
-    ORTHO,	   // orthogonal to the line
+    LINE = 0,	   // along the direction of the line
+    ORTHO = 1,	   // orthogonal to the line
+  };
+  enum OnOff {   // on (excitatory) vs. off (inhibitory)
+    ON = 0,
+    OFF = 1,
+  };
+  enum LeftRight {   // left vs. right -- directionality
+    LEFT = 0,
+    RIGHT = 1,
+  };
+  enum Angles {   // angles, 4 total
+    ANG_0 = 0,
+    ANG_45 = 1,
+    ANG_90 = 2,
+    ANG_135 = 3,
+  };
+  enum AngDir {   // ang = angle, dir = direction
+    ANG = 0,
+    DIR = 1,
   };
 
   /////////// Simple
@@ -1130,13 +1154,18 @@ public:
   /////////// Complex
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
-  V1KwtaSpec	v1ls_kwta;	// k-winner-take-all inhibitory dynamics for the v1 complex stage
+  V1KwtaSpec	v1ls_kwta;	// k-winner-take-all inhibitory dynamics for length sum level
   RenormMode	v1c_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1c filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
 
   XYNGeom	v1sg_img_geom; 	// #READ_ONLY size of v1 square grouping output image geometry -- input is v1s_img_geom, with either 2x2 or 4x4 spacing of square grouping operations reducing size by that amount
   XYNGeom	v1c_img_geom; 	// #READ_ONLY #SHOW size of v1 complex filtered image output -- number of hypercolumns in each axis to cover entire output -- this is equal to v1sq_img_geom if sq_gp4 is on, or v1s_img_geom if not
   XYNGeom	v1c_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 complex filtering -- includes length sum and end stop in combined output -- configured automatically with x = n_angles
+
+  ////////// V2
+  V2Filters	v2_filters;	// which V2 filtering to perform
+  V1KwtaSpec	v2_kwta;	// k-winner-take-all inhibitory dynamics for V2
+  DataSave	v2_save;	// how to save the V2 complex outputs for the current time step in the data table
 
   VisSpatIntegSpec spat_integ;	// spatial integration output specs
 
@@ -1169,8 +1198,11 @@ public:
 
   ///////////////////  V1C Geom/Stencils ////////////////////////
   int_Matrix	v1sg_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square grouping -- represents center points of the lines for each angle [x,y,len][5][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
-  int_Matrix	v1c_ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
-  int_Matrix	v1c_es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][len_sum,stop=2][dirs=2][angles] -- new version
+  int_Matrix	v1ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
+  int_Matrix	v1es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][pts=3(only stop)][len_sum,stop=2][dirs=2][angles] -- new version
+
+  ///////////////////  V2 Stencils
+  int_Matrix	v2tl_stencils; 	// #READ_ONLY #NO_SAVE stencils for V2 T & L-junction detectors
 
   // todo: spat integ outputs!
 
@@ -1209,9 +1241,15 @@ public:
   ///////////////////  V1C Complex Output ////////////////////////
   float_Matrix	v1sg_out;	 // #READ_ONLY #NO_SAVE square 4x4 grouping -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
   float_Matrix	v1ls_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) length sum output -- operates on v1pi or v1sg inputs -- [feat.x][1][v1c_img.x][v1c_img.y]
-  float_Matrix	v1ls_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
   float_Matrix	v1ls_out;	 // #READ_ONLY #NO_SAVE length sum output after kwta [feat.x][1][v1c_img.x][v1c_img.y]
+  float_Matrix	v1ls_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
   float_Matrix	v1es_out;	 // #READ_ONLY #NO_SAVE end stopping output -- operates on length sum and raw v1s/v1pi input [feat.x][2][v1c_img.x][v1c_img.y]
+  float_Matrix	v1es_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
+
+  ///////////////////  V2 Output ////////////////////////
+  float_Matrix	v2tl_out_raw;	 // #READ_ONLY #NO_SAVE v2 T and L junction detector output [feat.x][4][v1c_img.x][v1c_img.y]
+  float_Matrix	v2tl_out;	 // #READ_ONLY #NO_SAVE v2 T and L junction detector output [feat.x][4][v1c_img.x][v1c_img.y]
+  float_Matrix	v2tl_gci;	 // #READ_ONLY #NO_SAVE v2 T and L junction detector inhibitory conductances, for computing kwta
 
   ///////////////////  OPT optional Output ////////////////////////
   float_Matrix	energy_out;	 // #READ_ONLY #NO_SAVE energy at each location: max activation over features for each image location -- [img.x][img.y]
@@ -1252,6 +1290,7 @@ protected:
   virtual bool	InitFilters_V1Motion();
   virtual bool	InitFilters_V1Binocular();
   virtual bool	InitFilters_V1Complex();
+  virtual bool	InitFilters_V2();
 
   override bool	FilterImage_impl(bool motion_only = false);
   override void IncrTime();
@@ -1300,6 +1339,11 @@ protected:
   virtual void 	V1ComplexFilter_EndStop_thread(int v1c_idx, int thread_no);
   // end stop
 
+  virtual bool	V2Filter();
+  // do V2 filters -- dispatch threads
+  virtual void 	V2Filter_TL_thread(int v1sg_idx, int thread_no);
+  // t&l junctions
+
   virtual bool	V1OptionalFilter();
   // do optional filters -- dispatch threads
   virtual void 	V1OptionalFilter_Energy_thread(int v1s_idx, int thread_no);
@@ -1318,6 +1362,8 @@ protected:
   // binocular to output table
   virtual bool V1COutputToTable(DataTable* dtab, bool fmt_only = false);
   // complex to output table
+  virtual bool V2OutputToTable(DataTable* dtab, bool fmt_only = false);
+  // V2 to output table
   virtual bool OptOutputToTable(DataTable* dtab, bool fmt_only = false);
   // optional to output table
 };
