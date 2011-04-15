@@ -1026,8 +1026,9 @@ class TA_API V2BordOwnSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership cells, which compute T and L junctions on top of V1 inputs
 INHERITED(taOBase)
 public:
-  
-
+  float		l_t_inhib_thr;	// #DEF_0.2 threshold on max L-junction activity within a group to then inhibit T junctions within the same group -- don't want weak L's just weakening the T's
+  float		tl_bo_thr;	// #DEF_0.1 threshold for using T,L junction output to drive BO
+  float		ambig_gain;	// #DEF_0.5 gain multiplier for ambiguous length sum activation, where no T or L signals are available
 
   void 	Initialize();
   void	Destroy() { };
@@ -1078,7 +1079,8 @@ public:
 
   enum V2Filters { // #BITS flags for specifying which v2 filters to include
     V2_NONE	= 0, // #NO_BIT
-    V2_TL	= 0x0001, // compute V2 T and L border-ownership filters
+    V2_TL	= 0x0001, // compute V2 T and L junction detectors -- prereq for V2_BO too
+    V2_BO	= 0x0002, // compute V2 border ownership output, integrating length sum and TL junction signals
 #ifndef __MAKETA__
     V2_DEFAULT  = V2_NONE,  // #IGNORE #NO_BIT this is the default setup
 #endif
@@ -1096,11 +1098,13 @@ public:
     ENERGY	= 0x0001, // overall energy of V1S feature detectors -- a single unit activation per spatial location in same resolution map as V1S -- output map is just 2D, not 4D -- and is always saved to a separate output column -- suitable for basic spatial mapping etc
   };
 
-
-  enum V1Filters { // different stages of V1 filters
-    V1_SIMPLE,	   // V1 Simple oriented, polarity sensitive cells
-    V1_BINOCULAR,  // V1 Binocular integration 
-    V1_COMPLEX,	   // V1 Complex cells
+  enum SpatIntegFilters { // #BITS flags for specifying what is subject to additional spatial integration -- multiple can be selected
+    SI_NONE	= 0, // #NO_BIT
+    SI_V1S	= 0x0001, // V1 simple cell, with all selected polarities and color contrasts (but not motion or binocular depth)
+    SI_V1PI	= 0x0002, // V1 polarity invariance, which just has angles and does a max over polarities and color contrasts -- lower dimensionality
+    SI_V1SG	= 0x0004, // V1 square grouped polarity invariance -- lower resolution grouped version of polarity invariant reps
+    SI_V1C	= 0x0008, // V1 complex, which is length sum and end stop operating on top of V1SG square grouped (if sg4 option selected)
+    SI_V2BO	= 0x0010, // V2 border output cells, integrating length sum and T, L junction detectors that inform border ownership
   };
 
   enum XY {	   // x, y component of stencils etc -- for clarity in code
@@ -1164,14 +1168,15 @@ public:
 
   ////////// V2
   V2Filters	v2_filters;	// which V2 filtering to perform
-  V1KwtaSpec	v2_kwta;	// k-winner-take-all inhibitory dynamics for V2
+  V2BordOwnSpec	v2_specs;	// specs for V2 filtering
   DataSave	v2_save;	// how to save the V2 complex outputs for the current time step in the data table
 
-  VisSpatIntegSpec spat_integ;	// spatial integration output specs
+  SpatIntegFilters spat_integ;	// what to perform spatial integration over
+  VisSpatIntegSpec si_specs;	// spatial integration output specs
+  DataSave	si_save;	// how to save the spatial integration outputs for the current time step in the data table
 
   OptionalFilters opt_filters; 	// optional filter outputs -- always rendered to separate tables in data table
   DataSave	opt_save;	// how to save the optional outputs for the current time step in the data table
-
 
   //////////////////////////////////////////////////////////////
   //	Geometry and Stencils
@@ -1204,8 +1209,11 @@ public:
   ///////////////////  V2 Stencils
   int_Matrix	v2tl_stencils; 	// #READ_ONLY #NO_SAVE stencils for V2 T & L-junction detectors
 
-  // todo: spat integ outputs!
-
+  ///////////////////  Spat Integ Stencils / Geom
+  float_Matrix	si_weights;	// #READ_ONLY #NO_SAVE spatial integration weights for weighting across rf
+  XYNGeom	si_v1s_geom; 	// #READ_ONLY size of spat integ v1s image output
+  XYNGeom	si_v1sg_geom; 	// #READ_ONLY size of spat integ v1sg image output
+  XYNGeom	si_v1c_geom; 	// #READ_ONLY size of spat integ v1c image output
 
   //////////////////////////////////////////////////////////////
   //	Outputs
@@ -1247,9 +1255,16 @@ public:
   float_Matrix	v1es_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
 
   ///////////////////  V2 Output ////////////////////////
-  float_Matrix	v2tl_out_raw;	 // #READ_ONLY #NO_SAVE v2 T and L junction detector output [feat.x][4][v1c_img.x][v1c_img.y]
-  float_Matrix	v2tl_out;	 // #READ_ONLY #NO_SAVE v2 T and L junction detector output [feat.x][4][v1c_img.x][v1c_img.y]
-  float_Matrix	v2tl_gci;	 // #READ_ONLY #NO_SAVE v2 T and L junction detector inhibitory conductances, for computing kwta
+  float_Matrix	v2tl_out;	 // #READ_ONLY #NO_SAVE V2 T and L junction detector output [feat.x][4][v1c_img.x][v1c_img.y]
+  float_Matrix	v2tl_max;	 // #READ_ONLY #NO_SAVE max activation over v2tl_out -- [v1c_img.x][v1c_img.y]
+  float_Matrix	v2bo_out;	 // #READ_ONLY #NO_SAVE V2 border ownership output output -- integrates T and L with ambiguous edge signals, to provide input suitable for network settling dynamics [feat.x][2][v1c_img.x][v1c_img.y]
+
+  ///////////////////  SI Spatial Integration Output ////////////////////////
+  float_Matrix	si_v1s_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1pi_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1sg_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1c_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v2bo_out;	 // #READ_ONLY #NO_SAVE spatial integration
 
   ///////////////////  OPT optional Output ////////////////////////
   float_Matrix	energy_out;	 // #READ_ONLY #NO_SAVE energy at each location: max activation over features for each image location -- [img.x][img.y]
@@ -1291,6 +1306,7 @@ protected:
   virtual bool	InitFilters_V1Binocular();
   virtual bool	InitFilters_V1Complex();
   virtual bool	InitFilters_V2();
+  virtual bool	InitFilters_SpatInteg();
 
   override bool	FilterImage_impl(bool motion_only = false);
   override void IncrTime();
@@ -1341,8 +1357,18 @@ protected:
 
   virtual bool	V2Filter();
   // do V2 filters -- dispatch threads
-  virtual void 	V2Filter_TL_thread(int v1sg_idx, int thread_no);
+  virtual void 	V2Filter_TL_thread(int v1c_idx, int thread_no);
   // t&l junctions
+  virtual void 	V2Filter_BO_thread(int v1c_idx, int thread_no);
+  // border ownership output
+
+  virtual bool	SpatIntegFilter();
+  // do spatial integration filters -- dispatch threads
+  virtual void 	SpatIntegFilter_V1S_thread(int v1s_idx, int thread_no);
+  virtual void 	SpatIntegFilter_V1PI_thread(int v1s_idx, int thread_no);
+  virtual void 	SpatIntegFilter_V1SG_thread(int v1sg_idx, int thread_no);
+  virtual void 	SpatIntegFilter_V1C_thread(int v1c_idx, int thread_no);
+  virtual void 	SpatIntegFilter_V2BO_thread(int v1c_idx, int thread_no);
 
   virtual bool	V1OptionalFilter();
   // do optional filters -- dispatch threads
@@ -1364,6 +1390,8 @@ protected:
   // complex to output table
   virtual bool V2OutputToTable(DataTable* dtab, bool fmt_only = false);
   // V2 to output table
+  virtual bool SIOutputToTable(DataTable* dtab, bool fmt_only = false);
+  // Spat Invar to output table
   virtual bool OptOutputToTable(DataTable* dtab, bool fmt_only = false);
   // optional to output table
 };
