@@ -101,6 +101,10 @@ Done!
 ** scp ${DMGS} dpfurlani@grey.colorado.edu:/home/dpfurlani/
 ** ssh dpfurlani@grey.colorado.edu
 ** sudo update-win-mac.sh
+**
+** Also, make an SVN tag:
+**
+** svn copy -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk http://grey.colorado.edu/svn/emergent/emergent/tags/${EMERGENT_VERSION} -m "Emergent ${EMERGENT_VERSION} (beta) was built from svn revision ${REV}"
 
 INSTRUCTIONS
 
