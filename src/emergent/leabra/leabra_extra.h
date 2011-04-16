@@ -2237,6 +2237,31 @@ private:
   void	Destroy()	{ };
 };
 
+class LEABRA_API V2BoLateralPrjnSpec : public ProjectionSpec {
+  // lateral projections within V2 layer to support border ownership computation
+INHERITED(ProjectionSpec)
+public:
+  int		radius;		// #DEF_2:10 how far to connect in any one direction (in unit group units)
+  bool		wrap;		// #DEF_true wrap around layer coordinates (else clip at ends)
+  float		ang_pow;	// #DEF_4 wt = (angle - feature_angle)^ang_pow -- values > 1 result in a more focal distribution for close angles, and less weight at off-angles.
+  float		dist_sigma;	// #DEF_1 sigma for gaussian function of distance -- how much the weight drops off as a function of distance (multiplies angle weights) -- in normalized units relative to the radius
+  float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not even connected
+  float		oth_feat_wt;	// #DEF_0.5 weight multiplier for units that have a different featural encoding (e.g., on-center vs. off-center or another color contrast) -- encoded by y axis of unit group
+
+  virtual float	ConWt(float loc_ang_dist, float loc_dist, float rf_ang_dist, float rf_bo_dist);
+  // connection weight in terms of location (loc) distance between send and recv units, and receptive field angle distance and rf border ownership direction distance
+
+  override void	Connect_impl(Projection* prjn);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  TA_SIMPLE_BASEFUNS(V2BoLateralPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 class LEABRA_API V1EndStopPrjnSpec : public ProjectionSpec {
   // end-stop detectors within V1 layer -- connectivity and weights that enable units to detect when one orientation terminates into another -- recv layer must have unit groups with one row of n_angles units, while sender has multiple rows of n_angles units (recv integrates over rows)
 INHERITED(ProjectionSpec)

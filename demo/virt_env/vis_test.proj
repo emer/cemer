@@ -23251,7 +23251,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
@@ -23473,7 +23473,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.146328: y=0.001749218: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
@@ -23695,7 +23695,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=1.122204: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
@@ -23917,7 +23917,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.146327: y=1.123953: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;

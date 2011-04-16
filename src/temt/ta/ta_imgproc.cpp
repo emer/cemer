@@ -3282,6 +3282,11 @@ void V1RegionSpec::Initialize() {
   v1ls_kwta.gp_k = 1;
   v1ls_kwta.gp_g = 0.4f;
 
+  si_renorm = LIN_RENORM;
+  si_kwta.on = true;
+  si_kwta.gp_k = 2;
+  si_kwta.gp_g = 0.1f;
+
   n_colors = 1;
   n_polarities = 2;
   n_polclr = n_colors * n_polarities;
@@ -3959,45 +3964,57 @@ bool V1RegionSpec::InitOutMatrix() {
 
   if(spat_integ & SI_V1S) {
     si_v1s_out.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, si_v1s_geom.x, si_v1s_geom.y);
+    si_v1s_out_raw.SetGeomN(si_v1s_out.geom);
   }
   else {
     si_v1s_out.SetGeom(1,1);
+    si_v1s_out_raw.SetGeom(1,1);
   }
   if(spat_integ & SI_V1PI) {
     si_v1pi_out.SetGeom(4, v1s_feat_geom.x, 1, si_v1s_geom.x, si_v1s_geom.y);
+    si_v1pi_out_raw.SetGeomN(si_v1pi_out.geom);
   }
   else {
     si_v1pi_out.SetGeom(1,1);
+    si_v1pi_out_raw.SetGeom(1,1);
   }
 
   if(spat_integ & SI_V1PI_SG) {
     si_v1pi_sg_out.SetGeom(4, v1s_feat_geom.x, 1, si_v1sg_geom.x, si_v1sg_geom.y);
+    si_v1pi_sg_out_raw.SetGeomN(si_v1pi_sg_out.geom);
   }
   else {
     si_v1pi_sg_out.SetGeom(1,1);
+    si_v1pi_sg_out_raw.SetGeom(1,1);
   }
 
   if(spat_integ & SI_V1S_SG) {
     v1s_sg_out.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1sg_img_geom.x, v1sg_img_geom.y);
     si_v1s_sg_out.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, si_v1sg_geom.x, si_v1sg_geom.y);
+    si_v1s_sg_out_raw.SetGeomN(si_v1s_sg_out.geom);
   }
   else {
     v1s_sg_out.SetGeom(1,1);
     si_v1s_sg_out.SetGeom(1,1);
+    si_v1s_sg_out_raw.SetGeom(1,1);
   }
 
   if(spat_integ & SI_V1C) {
     si_v1c_out.SetGeom(4, v1c_feat_geom.x, v1c_feat_geom.y, si_v1c_geom.x, si_v1c_geom.y);
+    si_v1c_out_raw.SetGeomN(si_v1c_out.geom);
   }
   else {
     si_v1c_out.SetGeom(1,1);
+    si_v1c_out_raw.SetGeom(1,1);
   }
 
   if(spat_integ & SI_V2BO) {
     si_v2bo_out.SetGeom(4, v1c_feat_geom.x, 2, si_v1c_geom.x, si_v1c_geom.y);
+    si_v2bo_out_raw.SetGeomN(si_v2bo_out.geom);
   }
   else {
     si_v2bo_out.SetGeom(1,1);
+    si_v2bo_out_raw.SetGeom(1,1);
   }
 
   ///////////////////  OPT Output ////////////////////////
@@ -4965,18 +4982,30 @@ bool V1RegionSpec::SpatIntegFilter() {
   threads.nibble_chunk = 1;	// small chunks
 
   if(spat_integ & SI_V1S) {
+    if(si_kwta.on) cur_out = &si_v1s_out_raw;
+    else     	   cur_out = &si_v1s_out;
     ThreadImgProcCall ip_call_v1s((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_thread);
     threads.Run(&ip_call_v1s, n_run_s);
+    if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
+    if(si_kwta.on) si_kwta.Compute_Kwta(si_v1s_out_raw, si_v1s_out, si_gci);
   }
 
   if(spat_integ & SI_V1PI) {
+    if(si_kwta.on) cur_out = &si_v1pi_out_raw;
+    else     	   cur_out = &si_v1pi_out;
     ThreadImgProcCall ip_call_v1pi((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1PI_thread);
     threads.Run(&ip_call_v1pi, n_run_s);
+    if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
+    if(si_kwta.on) si_kwta.Compute_Kwta(si_v1pi_out_raw, si_v1pi_out, si_gci);
   }
 
   if(spat_integ & SI_V1PI_SG) {
+    if(si_kwta.on) cur_out = &si_v1pi_sg_out_raw;
+    else     	   cur_out = &si_v1pi_sg_out;
     ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1PI_SG_thread);
     threads.Run(&ip_call_v1sg, n_run_sg);
+    if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
+    if(si_kwta.on) si_kwta.Compute_Kwta(si_v1pi_sg_out_raw, si_v1pi_sg_out, si_gci);
   }
 
   if(spat_integ & SI_V1S_SG) {
@@ -4985,18 +5014,30 @@ bool V1RegionSpec::SpatIntegFilter() {
     ThreadImgProcCall ip_call_v1ssg_pre((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
     threads.Run(&ip_call_v1ssg_pre, n_run_sg_gp4);
 
+    if(si_kwta.on) cur_out = &si_v1s_sg_out_raw;
+    else     	   cur_out = &si_v1s_sg_out;
     ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_SG_thread);
     threads.Run(&ip_call_v1sg, n_run_sg);
+    if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
+    if(si_kwta.on) si_kwta.Compute_Kwta(si_v1s_sg_out_raw, si_v1s_sg_out, si_gci);
   }
 
   if(spat_integ & SI_V1C) {
+    if(si_kwta.on) cur_out = &si_v1c_out_raw;
+    else     	   cur_out = &si_v1c_out;
     ThreadImgProcCall ip_call_v1c((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1C_thread);
     threads.Run(&ip_call_v1c, n_run_c);
+    if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
+    if(si_kwta.on) si_kwta.Compute_Kwta(si_v1c_out_raw, si_v1c_out, si_gci);
   }
 
   if(spat_integ & SI_V2BO) {
+    if(si_kwta.on) cur_out = &si_v2bo_out_raw;
+    else     	   cur_out = &si_v2bo_out;
     ThreadImgProcCall ip_call_v2bo((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V2BO_thread);
     threads.Run(&ip_call_v2bo, n_run_c);
+    if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
+    if(si_kwta.on) si_kwta.Compute_Kwta(si_v2bo_out_raw, si_v2bo_out, si_gci);
   }
 
   return true;
@@ -5027,7 +5068,7 @@ void V1RegionSpec::SpatIntegFilter_V1S_thread(int v1s_idx, int thread_no) {
 	  max_rf = MAX(max_rf, val);
 	}
       }
-      si_v1s_out.FastEl(ang, polclr, sc.x, sc.y) = max_rf;
+      cur_out->FastEl(ang, polclr, sc.x, sc.y) = max_rf;
     } // for polclr
   }  // for ang
 }
@@ -5056,7 +5097,7 @@ void V1RegionSpec::SpatIntegFilter_V1PI_thread(int v1s_idx, int thread_no) {
 	max_rf = MAX(max_rf, val);
       }
     }
-    si_v1pi_out.FastEl(ang, 0, sc.x, sc.y) = max_rf;
+    cur_out->FastEl(ang, 0, sc.x, sc.y) = max_rf;
   } // for ang
 }
 
@@ -5084,7 +5125,7 @@ void V1RegionSpec::SpatIntegFilter_V1PI_SG_thread(int v1sg_idx, int thread_no) {
 	max_rf = MAX(max_rf, val);
       }
     }
-    si_v1pi_sg_out.FastEl(ang, 0, sc.x, sc.y) = max_rf;
+    cur_out->FastEl(ang, 0, sc.x, sc.y) = max_rf;
   } // for ang
 }
 
@@ -5143,7 +5184,7 @@ void V1RegionSpec::SpatIntegFilter_V1S_SG_thread(int v1sg_idx, int thread_no) {
 	  max_rf = MAX(max_rf, val);
 	}
       }
-      si_v1s_sg_out.FastEl(ang, polclr, sc.x, sc.y) = max_rf;
+      cur_out->FastEl(ang, polclr, sc.x, sc.y) = max_rf;
     } // for ang
   }
 }
@@ -5177,7 +5218,7 @@ void V1RegionSpec::SpatIntegFilter_V1C_thread(int v1c_idx, int thread_no) {
 	  max_rf = MAX(max_rf, val);
 	}
       }
-      si_v1c_out.FastEl(ang, cfdx, sc.x, sc.y) = max_rf;
+      cur_out->FastEl(ang, cfdx, sc.x, sc.y) = max_rf;
     } // for cfdx
   }  // for ang
 }
@@ -5208,7 +5249,7 @@ void V1RegionSpec::SpatIntegFilter_V2BO_thread(int v1c_idx, int thread_no) {
 	  max_rf = MAX(max_rf, val);
 	}
       }
-      si_v2bo_out.FastEl(ang, dir, sc.x, sc.y) = max_rf;
+      cur_out->FastEl(ang, dir, sc.x, sc.y) = max_rf;
     } // for dir
   }  // for ang
 }
@@ -5630,7 +5671,7 @@ bool V1RegionSpec::SIOutputToTable(DataTable* dtab, bool fmt_only) {
     }
   }
 
-  if(spat_integ & SI_V1S_SG && !(si_save & SEP_MATRIX) &&
+  if((spat_integ & SI_V1S_SG) && !(si_save & SEP_MATRIX) &&
      ((spat_integ & SI_V1C) || (spat_integ & SI_V2BO))) {
     if(spat_integ & SI_V1C) {
       col = data_table->FindMakeColName(name + "_v1c_si", idx, DataTable::VT_FLOAT, 4,
@@ -5753,7 +5794,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
   //  graph_data->SetUserData("WIDTH", .5f + (float)input_size.retina_size.x / (float)input_size.retina_size.y);
 
   TwoDCoord max_sz(v1s_specs.filter_size, v1s_specs.filter_size);
-//   max_sz.Max(v1c_specs.spat_rf);
+  max_sz.Max(si_specs.spat_rf);
 
   int bin_rf_max = 5;;
   if(region.ocularity == VisRegionParams::BINOCULAR) {
@@ -5878,23 +5919,22 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
       }
     }
   }
-//   { // v1complex, spatial
-//     if(v1c_specs.spat_rf.MaxVal() > 1) {
-//       graph_data->AddBlankRow();
-//       nmda->SetValAsString("V1 Complex Spat RF", -1);
-//       float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
-//       TwoDCoord sc;
-//       for(int ys = 0; ys < v1c_specs.spat_rf.y; ys++) { // ysimple
-// 	sc.y = brd.y + ys;
-// 	for(int xs = 0; xs < v1c_specs.spat_rf.x; xs++) { // xsimple
-// 	  sc.x = brd.x + xs;
-
-// 	  if(sc.WrapClip(true, max_sz)) continue;
-// 	  mat->FastEl(sc.x,sc.y) = v1c_weights.FastEl(xs, ys);
-// 	}
-//       }
-//     }
-//   }
+  { // spatial integ
+    if(si_specs.spat_rf.MaxVal() > 1) {
+      graph_data->AddBlankRow();
+      nmda->SetValAsString("Spat Integ RF", -1);
+      float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+      TwoDCoord sc;
+      for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // ysimple
+	sc.y = brd.y + ys;
+	for(int xs = 0; xs < si_specs.spat_rf.x; xs++) { // xsimple
+	  sc.x = brd.x + xs;
+	  if(sc.WrapClip(true, max_sz)) continue;
+	  mat->FastEl(sc.x,sc.y) = si_weights.FastEl(xs, ys);
+	}
+      }
+    }
+  }
 
   { // v1complex, ls, es
     for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles

@@ -1137,9 +1137,9 @@ public:
 
   /////////// Simple
   V1GaborSpec	v1s_specs;	// specs for V1 simple filters, computed using gabor filters directly onto the incoming image
+  RenormMode	v1s_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1s static filters -- applied prior to kwta
   V1KwtaSpec	v1s_kwta;	// k-winner-take-all inhibitory dynamics for the v1 simple stage -- important for cleaning up these representations for subsequent stages, especially binocluar disparity and motion processing, which require correspondence matching, and end stop detection
   V1sNeighInhib	v1s_neigh_inhib; // specs for V1 simple neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
-  RenormMode	v1s_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1s static filters
   DataSave	v1s_save;	// how to save the V1 simple outputs for the current time step in the data table
   XYNGeom	v1s_img_geom; 	// #READ_ONLY #SHOW size of v1 simple filtered image output -- number of hypercolumns in each axis to cover entire output
   XYNGeom	v1s_feat_geom; 	// #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 simple filtering -- n_angles (x) * 2 or 6 polarities (y; monochrome|color) -- configured automatically
@@ -1159,8 +1159,8 @@ public:
   /////////// Complex
   ComplexFilters v1c_filters; 	// which complex cell filtering to perform
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
+  RenormMode	v1c_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1c filters, prior to kwta -- currently only applies to length sum
   V1KwtaSpec	v1ls_kwta;	// k-winner-take-all inhibitory dynamics for length sum level
-  RenormMode	v1c_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1c filters
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
 
   XYNGeom	v1sg_img_geom; 	// #READ_ONLY size of v1 square grouping output image geometry -- input is v1s_img_geom, with either 2x2 or 4x4 spacing of square grouping operations reducing size by that amount
@@ -1174,7 +1174,10 @@ public:
 
   SpatIntegFilters spat_integ;	// what to perform spatial integration over
   VisSpatIntegSpec si_specs;	// spatial integration output specs
+  RenormMode	si_renorm;	// how to renormalize spat integ output prior to performing kwta
+  V1KwtaSpec	si_kwta;	// k-winner-take-all inhibitory dynamics for spatial integration output -- 
   DataSave	si_save;	// how to save the spatial integration outputs for the current time step in the data table
+  XYNGeom	si_v1c_geom; 	// #READ_ONLY #SHOW size of spat integ v1c image output
 
   OptionalFilters opt_filters; 	// optional filter outputs -- always rendered to separate tables in data table
   DataSave	opt_save;	// how to save the optional outputs for the current time step in the data table
@@ -1214,7 +1217,6 @@ public:
   float_Matrix	si_weights;	// #READ_ONLY #NO_SAVE spatial integration weights for weighting across rf
   XYNGeom	si_v1s_geom; 	// #READ_ONLY size of spat integ v1s image output
   XYNGeom	si_v1sg_geom; 	// #READ_ONLY size of spat integ v1sg image output
-  XYNGeom	si_v1c_geom; 	// #READ_ONLY size of spat integ v1c image output
 
   //////////////////////////////////////////////////////////////
   //	Outputs
@@ -1261,13 +1263,21 @@ public:
   float_Matrix	v2bo_out;	 // #READ_ONLY #NO_SAVE V2 border ownership output output -- integrates T and L with ambiguous edge signals, to provide input suitable for network settling dynamics [feat.x][2][v1c_img.x][v1c_img.y]
 
   ///////////////////  SI Spatial Integration Output ////////////////////////
+  float_Matrix	si_gci;	 	// #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
   float_Matrix	si_v1s_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1s_out_raw;	 // #READ_ONLY #NO_SAVE spatial integration
   float_Matrix	si_v1pi_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1pi_out_raw; // #READ_ONLY #NO_SAVE spatial integration
   float_Matrix	si_v1pi_sg_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1pi_sg_out_raw; // #READ_ONLY #NO_SAVE spatial integration
   float_Matrix	si_v1s_sg_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1s_sg_out_raw; // #READ_ONLY #NO_SAVE spatial integration
   float_Matrix	v1s_sg_out;	 // #READ_ONLY #NO_SAVE square grouping of v1s 
+  float_Matrix	v1s_sg_out_raw;	 // #READ_ONLY #NO_SAVE square grouping of v1s 
   float_Matrix	si_v1c_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1c_out_raw;	 // #READ_ONLY #NO_SAVE spatial integration
   float_Matrix	si_v2bo_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v2bo_out_raw; // #READ_ONLY #NO_SAVE spatial integration
 
   ///////////////////  OPT optional Output ////////////////////////
   float_Matrix	energy_out;	 // #READ_ONLY #NO_SAVE energy at each location: max activation over features for each image location -- [img.x][img.y]
