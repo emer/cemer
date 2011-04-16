@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.1.6.0 rev4821
+// ta_Dump File v3.0 -- code v5.1.6.0 rev4822
 LeabraProject .projects["Project_0"] { 
   taBase_Group @.templates = [0] {
   };
@@ -195,7 +195,7 @@ LeabraProject .projects["Project_0"] {
 	  };
 	};
 	DataTable @["V1DataSave2D"] { 
-	  DataTableCols @.data = [15] {
+	  DataTableCols @.data = [16] {
 	    float_Data @["V1_high_image_r"] { 
        UserDataItem_List @*(.user_data_) {
 		UserDataItem @["IMAGE"] { };
@@ -215,6 +215,7 @@ LeabraProject .projects["Project_0"] {
 	    float_Data @["V1_high_v1sg_si"] { };
 	    float_Data @["V1_high_v1c_si"] { };
 	    float_Data @["V1_high_v2bo_si"] { };
+	    float_Data @["V1_high_v1s_sg_si"] { };
 	  };
 	};
       };
@@ -1599,7 +1600,7 @@ LeabraProject .projects["Project_0"] {
 	    T3DataViewFrame @["V1DataSave2D"] { 
 	      T3DataView_List @.children = [4] {
 		GridTableView @["V1DataSave2D_Grid"] { 
-		  T3DataView_List @.children = [15] {
+		  T3DataView_List @.children = [16] {
 		    GridColView @["V1_high_image_r"] { };
 		    GridColView @["V1_high_v1s_r"] { };
 		    GridColView @["V1_high_v1pi_r"] { };
@@ -1615,10 +1616,11 @@ LeabraProject .projects["Project_0"] {
 		    GridColView @["V1_high_v1sg_si"] { };
 		    GridColView @["V1_high_v1c_si"] { };
 		    GridColView @["V1_high_v2bo_si"] { };
+		    GridColView @["V1_high_v1s_sg_si"] { };
 		  };
 		};
 		GridTableView @["V1DataSave2D_Grid_1"] { 
-		  T3DataView_List @.children = [15] {
+		  T3DataView_List @.children = [16] {
 		    GridColView @["V1_high_image_r"] { };
 		    GridColView @["V1_high_v1s_r"] { };
 		    GridColView @["V1_high_v1pi_r"] { };
@@ -1634,10 +1636,11 @@ LeabraProject .projects["Project_0"] {
 		    GridColView @["V1_high_v1sg_si"] { };
 		    GridColView @["V1_high_v1c_si"] { };
 		    GridColView @["V1_high_v2bo_si"] { };
+		    GridColView @["V1_high_v1s_sg_si"] { };
 		  };
 		};
 		GridTableView @["V1DataSave2D_Grid_2"] { 
-		  T3DataView_List @.children = [15] {
+		  T3DataView_List @.children = [16] {
 		    GridColView @["V1_high_image_r"] { };
 		    GridColView @["V1_high_v1s_r"] { };
 		    GridColView @["V1_high_v1pi_r"] { };
@@ -1653,10 +1656,11 @@ LeabraProject .projects["Project_0"] {
 		    GridColView @["V1_high_v1sg_si"] { };
 		    GridColView @["V1_high_v1c_si"] { };
 		    GridColView @["V1_high_v2bo_si"] { };
+		    GridColView @["V1_high_v1s_sg_si"] { };
 		  };
 		};
 		GridTableView @["V1DataSave2D_Grid_3"] { 
-		  T3DataView_List @.children = [15] {
+		  T3DataView_List @.children = [16] {
 		    GridColView @["V1_high_image_r"] { };
 		    GridColView @["V1_high_v1s_r"] { };
 		    GridColView @["V1_high_v1pi_r"] { };
@@ -1672,6 +1676,7 @@ LeabraProject .projects["Project_0"] {
 		    GridColView @["V1_high_v1sg_si"] { };
 		    GridColView @["V1_high_v1c_si"] { };
 		    GridColView @["V1_high_v2bo_si"] { };
+		    GridColView @["V1_high_v1s_sg_si"] { };
 		  };
 		};
 	      };
@@ -9364,7 +9369,7 @@ LeabraProject .projects["Project_0"] {
        v2_filters=V2_TL|V2_BO;
        v2_specs {l_t_inhib_thr=0.2: tl_bo_thr=0.1: ambig_gain=0.5: };
        v2_save=SAVE_DATA|SEP_MATRIX|SAVE_DEBUG;
-       spat_integ=SI_V1S|SI_V1PI|SI_V1SG|SI_V1C|SI_V2BO;
+       spat_integ=SI_V1S_SG|SI_V1C;
        si_specs {spat_rf={x=6: y=6: }: gauss_sig=0.8: sum_rf=0: spat_half={x=3: y=3: }: spat_spacing={x=3: y=3: }: spat_border={x=0: y=0: }: };
        si_save=SAVE_DATA;
        opt_filters=0;
@@ -9556,7 +9561,7 @@ LeabraProject .projects["Project_0"] {
        name="V1_high_v1c_si";
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=1;
-       cell_geom{ 4;3;12;12;       };
+       cell_geom{ 4;5;12;12;       };
        calc_expr {
 	expr=;
        };
@@ -9566,6 +9571,18 @@ LeabraProject .projects["Project_0"] {
       };
       float_Data @["V1_high_v2bo_si"] {
        name="V1_high_v2bo_si";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 4;2;12;12;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [4] ;;;;       };
+      };
+      float_Data @["V1_high_v1s_sg_si"] {
+       name="V1_high_v1s_sg_si";
        col_flags=SAVE_ROWS|SAVE_DATA;
        is_matrix=1;
        cell_geom{ 4;2;12;12;       };
@@ -22946,7 +22963,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=1;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=0: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=5;
@@ -23220,6 +23237,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
+	   GridColView @["V1_high_v1s_sg_si"] {
+	    name="V1_high_v1s_sg_si";
+	    m_data=.projects["Project_0"].programs["VisTest_2D"].objs["V1DataSave2D"].data["V1_high_v1s_sg_si"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=4;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=1;
@@ -23431,6 +23459,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	    mat_image=0;
 	    mat_odd_vert=1;
 	   };
+	   GridColView @["V1_high_v1s_sg_si"] {
+	    name="V1_high_v1s_sg_si";
+	    m_data=$.projects["Project_0"].programs["VisTest_2D"].objs["V1DataSave2D"].data["V1_high_v1s_sg_si"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=4;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=2.146328: y=0.001749218: z=0: }: };
 	  view_rows=1;
@@ -23438,7 +23477,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  display_on=1;
 	  manip_ctrl_on=0;
 	  col_n=1;
-	  col_range {min=14: max=14: };
+	  col_range {min=13: max=13: };
 	  width=1;
 	  grid_on=1;
 	  header_on=1;
@@ -23634,6 +23673,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   GridColView @["V1_high_v2bo_si"] {
 	    name="V1_high_v2bo_si";
 	    m_data=$.projects["Project_0"].programs["VisTest_2D"].objs["V1DataSave2D"].data["V1_high_v2bo_si"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=4;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1_high_v1s_sg_si"] {
+	    name="V1_high_v1s_sg_si";
+	    m_data=$.projects["Project_0"].programs["VisTest_2D"].objs["V1DataSave2D"].data["V1_high_v1s_sg_si"]$;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=4;
@@ -23845,6 +23895,17 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   GridColView @["V1_high_v2bo_si"] {
 	    name="V1_high_v2bo_si";
 	    m_data=$.projects["Project_0"].programs["VisTest_2D"].objs["V1DataSave2D"].data["V1_high_v2bo_si"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=4;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["V1_high_v1s_sg_si"] {
+	    name="V1_high_v1s_sg_si";
+	    m_data=$.projects["Project_0"].programs["VisTest_2D"].objs["V1DataSave2D"].data["V1_high_v1s_sg_si"]$;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=4;

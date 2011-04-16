@@ -3970,11 +3970,20 @@ bool V1RegionSpec::InitOutMatrix() {
     si_v1pi_out.SetGeom(1,1);
   }
 
-  if(spat_integ & SI_V1SG) {
-    si_v1sg_out.SetGeom(4, v1s_feat_geom.x, 1, si_v1sg_geom.x, si_v1sg_geom.y);
+  if(spat_integ & SI_V1PI_SG) {
+    si_v1pi_sg_out.SetGeom(4, v1s_feat_geom.x, 1, si_v1sg_geom.x, si_v1sg_geom.y);
   }
   else {
-    si_v1sg_out.SetGeom(1,1);
+    si_v1pi_sg_out.SetGeom(1,1);
+  }
+
+  if(spat_integ & SI_V1S_SG) {
+    v1s_sg_out.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, v1sg_img_geom.x, v1sg_img_geom.y);
+    si_v1s_sg_out.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y, si_v1sg_geom.x, si_v1sg_geom.y);
+  }
+  else {
+    v1s_sg_out.SetGeom(1,1);
+    si_v1s_sg_out.SetGeom(1,1);
   }
 
   if(spat_integ & SI_V1C) {
@@ -4965,8 +4974,18 @@ bool V1RegionSpec::SpatIntegFilter() {
     threads.Run(&ip_call_v1pi, n_run_s);
   }
 
-  if(spat_integ & SI_V1SG) {
-    ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1SG_thread);
+  if(spat_integ & SI_V1PI_SG) {
+    ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1PI_SG_thread);
+    threads.Run(&ip_call_v1sg, n_run_sg);
+  }
+
+  if(spat_integ & SI_V1S_SG) {
+    int n_run_sg_gp4 = v1sg_img_geom.Product();
+
+    ThreadImgProcCall ip_call_v1ssg_pre((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
+    threads.Run(&ip_call_v1ssg_pre, n_run_sg_gp4);
+
+    ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_SG_thread);
     threads.Run(&ip_call_v1sg, n_run_sg);
   }
 
@@ -5041,7 +5060,7 @@ void V1RegionSpec::SpatIntegFilter_V1PI_thread(int v1s_idx, int thread_no) {
   } // for ang
 }
 
-void V1RegionSpec::SpatIntegFilter_V1SG_thread(int v1sg_idx, int thread_no) {
+void V1RegionSpec::SpatIntegFilter_V1PI_SG_thread(int v1sg_idx, int thread_no) {
   TwoDCoord sc;
   sc.SetFmIndex(v1sg_idx, si_v1sg_geom.x);
   TwoDCoord ics = si_specs.spat_spacing * sc; // v1s coords start
@@ -5065,8 +5084,68 @@ void V1RegionSpec::SpatIntegFilter_V1SG_thread(int v1sg_idx, int thread_no) {
 	max_rf = MAX(max_rf, val);
       }
     }
-    si_v1sg_out.FastEl(ang, 0, sc.x, sc.y) = max_rf;
+    si_v1pi_sg_out.FastEl(ang, 0, sc.x, sc.y) = max_rf;
   } // for ang
+}
+
+void V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread(int v1sg_idx, int thread_no) {
+  TwoDCoord pc;			// pre coords
+  pc.SetFmIndex(v1sg_idx, v1sg_img_geom.x);
+  TwoDCoord scs = v1c_specs.sg_spacing * pc; // v1s coords start
+  scs += v1c_specs.sg_border;
+  scs -= v1c_specs.sg_half; // convert to lower-left starting position, not center
+
+  TwoDCoord sc;			// simple coord
+  TwoDCoord scc;		// simple coord, center
+  for(int ang=0; ang<v1s_specs.n_angles; ang++) {
+    for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+      float max_rf = 0.0f;   // max over spatial rfield
+      int nctrs = v1sg_stencils.FastEl(2, 0, ang);	 // length stored here
+      for(int ctrdx = 0; ctrdx < nctrs; ctrdx++) {
+	int xp = v1sg_stencils.FastEl(X, ctrdx, ang);
+	int yp = v1sg_stencils.FastEl(Y, ctrdx, ang);
+	sc.y = scs.y + yp;
+	sc.x = scs.x + xp;
+	scc = sc;	// center
+	if(scc.WrapClip(wrap, v1s_img_geom)) {
+	  if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+	}
+	float ctr_val = v1s_out_r.FastEl(ang, polclr, scc.x, scc.y);
+	max_rf = MAX(max_rf, ctr_val);
+      }
+      v1s_sg_out.FastEl(ang, polclr, pc.x, pc.y) = max_rf;
+    }
+  }
+}
+
+void V1RegionSpec::SpatIntegFilter_V1S_SG_thread(int v1sg_idx, int thread_no) {
+  TwoDCoord sc;
+  sc.SetFmIndex(v1sg_idx, si_v1sg_geom.x);
+  TwoDCoord ics = si_specs.spat_spacing * sc; // v1s coords start
+  ics += si_specs.spat_border;
+  ics -= si_specs.spat_half; // convert to lower-left starting position, not center
+
+  TwoDCoord ic;			// input coord
+  TwoDCoord icc;		// input coord, center
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+    for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+      float max_rf = 0.0f;   // max over spatial rfield
+      for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // yspat
+	ic.y = ics.y + ys;
+	for(int xs = 0; xs < si_specs.spat_rf.x; xs++) { // xspat
+	  ic.x = ics.x + xs;
+	  icc = ic;	// center
+	  if(icc.WrapClip(wrap, v1sg_img_geom)) {
+	    if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+	  }
+	  float val = v1s_sg_out.FastEl(ang, polclr, icc.x, icc.y);
+	  val *= si_weights.FastEl(xs, ys); // spatial rf weighting
+	  max_rf = MAX(max_rf, val);
+	}
+      }
+      si_v1s_sg_out.FastEl(ang, polclr, sc.x, sc.y) = max_rf;
+    } // for ang
+  }
 }
 
 void V1RegionSpec::SpatIntegFilter_V1C_thread(int v1c_idx, int thread_no) {
@@ -5523,6 +5602,7 @@ bool V1RegionSpec::V2OutputToTable(DataTable* dtab, bool fmt_only) {
 
 bool V1RegionSpec::SIOutputToTable(DataTable* dtab, bool fmt_only) {
   DataCol* col;
+  TwoDCoord cc;		// complex coords
   int idx;
 
   if(spat_integ & SI_V1S) {
@@ -5541,28 +5621,86 @@ bool V1RegionSpec::SIOutputToTable(DataTable* dtab, bool fmt_only) {
       dout->CopyFrom(&si_v1pi_out);
     }
   }
-  if(spat_integ & SI_V1SG) {
-    col = data_table->FindMakeColName(name + "_v1sg_si", idx, DataTable::VT_FLOAT, 4,
+  if(spat_integ & SI_V1PI_SG) {
+    col = data_table->FindMakeColName(name + "_v1pi_sg_si", idx, DataTable::VT_FLOAT, 4,
 		      v1s_feat_geom.x, 1, si_v1sg_geom.x, si_v1sg_geom.y);
     if(!fmt_only) {
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      dout->CopyFrom(&si_v1sg_out);
+      dout->CopyFrom(&si_v1pi_sg_out);
     }
   }
-  if(spat_integ & SI_V1C) {
-    col = data_table->FindMakeColName(name + "_v1c_si", idx, DataTable::VT_FLOAT, 4,
-		      v1c_feat_geom.x, v1c_feat_geom.y, si_v1c_geom.x, si_v1c_geom.y);
-    if(!fmt_only) {
-      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      dout->CopyFrom(&si_v1c_out);
+
+  if(spat_integ & SI_V1S_SG && !(si_save & SEP_MATRIX) &&
+     ((spat_integ & SI_V1C) || (spat_integ & SI_V2BO))) {
+    if(spat_integ & SI_V1C) {
+      col = data_table->FindMakeColName(name + "_v1c_si", idx, DataTable::VT_FLOAT, 4,
+					v1s_feat_geom.x, v1c_feat_geom.y + v1s_feat_geom.y,
+					si_v1c_geom.x, si_v1c_geom.y);
+      if(!fmt_only) {
+	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+	for(cc.y = 0; cc.y < si_v1c_geom.y; cc.y++) {
+	  for(cc.x = 0; cc.x < si_v1c_geom.x; cc.x++) {
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+		float lval = si_v1s_sg_out.FastEl(ang, polclr, cc.x, cc.y);
+		dout->FastEl(ang, polclr, cc.x, cc.y) = lval;
+	      }
+	      for(int cdx = 0; cdx < v1c_feat_geom.y; cdx++) { // c features
+		float lval = si_v1c_out.FastEl(ang, cdx, cc.x, cc.y);
+		dout->FastEl(ang, v1s_feat_geom.y + cdx, cc.x, cc.y) = lval;
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    if(spat_integ & SI_V2BO) {
+      col = data_table->FindMakeColName(name + "_v2bo_si", idx, DataTable::VT_FLOAT, 4,
+					v1s_feat_geom.x, v1s_feat_geom.y + 2,
+					si_v1c_geom.x, si_v1c_geom.y);
+      if(!fmt_only) {
+	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+	for(cc.y = 0; cc.y < si_v1c_geom.y; cc.y++) {
+	  for(cc.x = 0; cc.x < si_v1c_geom.x; cc.x++) {
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+		float lval = si_v1s_sg_out.FastEl(ang, polclr, cc.x, cc.y);
+		dout->FastEl(ang, polclr, cc.x, cc.y) = lval;
+	      }
+	      for(int cdx = 0; cdx < 2; cdx++) { // c features
+		float lval = si_v2bo_out.FastEl(ang, cdx, cc.x, cc.y);
+		dout->FastEl(ang, v1s_feat_geom.y + cdx, cc.x, cc.y) = lval;
+	      }
+	    }
+	  }
+	}
+      }
     }
   }
-  if(spat_integ & SI_V2BO) {
-    col = data_table->FindMakeColName(name + "_v2bo_si", idx, DataTable::VT_FLOAT, 4,
-		      v1c_feat_geom.x, 2, si_v1c_geom.x, si_v1c_geom.y);
-    if(!fmt_only) {
-      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      dout->CopyFrom(&si_v2bo_out);
+  else {
+    if(spat_integ & SI_V1S_SG) {
+      col = data_table->FindMakeColName(name + "_v1s_sg_si", idx, DataTable::VT_FLOAT, 4,
+			v1s_feat_geom.x, v1s_feat_geom.y, si_v1sg_geom.x, si_v1sg_geom.y);
+      if(!fmt_only) {
+	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+	dout->CopyFrom(&si_v1s_sg_out);
+      }
+    }
+    if(spat_integ & SI_V1C) {
+      col = data_table->FindMakeColName(name + "_v1c_si", idx, DataTable::VT_FLOAT, 4,
+			v1c_feat_geom.x, v1c_feat_geom.y, si_v1c_geom.x, si_v1c_geom.y);
+      if(!fmt_only) {
+	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+	dout->CopyFrom(&si_v1c_out);
+      }
+    }
+    if(spat_integ & SI_V2BO) {
+      col = data_table->FindMakeColName(name + "_v2bo_si", idx, DataTable::VT_FLOAT, 4,
+					v1c_feat_geom.x, 2, si_v1c_geom.x, si_v1c_geom.y);
+      if(!fmt_only) {
+	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+	dout->CopyFrom(&si_v2bo_out);
+      }
     }
   }
 

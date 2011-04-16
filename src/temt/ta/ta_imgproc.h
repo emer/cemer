@@ -1102,9 +1102,10 @@ public:
     SI_NONE	= 0, // #NO_BIT
     SI_V1S	= 0x0001, // V1 simple cell, with all selected polarities and color contrasts (but not motion or binocular depth)
     SI_V1PI	= 0x0002, // V1 polarity invariance, which just has angles and does a max over polarities and color contrasts -- lower dimensionality
-    SI_V1SG	= 0x0004, // V1 square grouped polarity invariance -- lower resolution grouped version of polarity invariant reps
-    SI_V1C	= 0x0008, // V1 complex, which is length sum and end stop operating on top of V1SG square grouped (if sg4 option selected)
-    SI_V2BO	= 0x0010, // V2 border output cells, integrating length sum and T, L junction detectors that inform border ownership
+    SI_V1PI_SG	= 0x0004, // V1 square grouped polarity invariance -- lower resolution grouped version of polarity invariant reps
+    SI_V1S_SG	= 0x0008, // V1 square grouped raw V1S full polarity/color values -- lower resolution grouped version of V1S reps -- note that the SG version of V1S is not otherwise needed so this is what triggers its computation -- also unless SEP_MATRIX is flagged, this is output in one table with SI_V1C or SI_V2BO if those are also selected
+    SI_V1C	= 0x0010, // V1 complex, which is length sum and end stop operating on top of V1SG square grouped (if sg4 option selected)
+    SI_V2BO	= 0x0020, // V2 border output cells, integrating length sum and T, L junction detectors that inform border ownership
   };
 
   enum XY {	   // x, y component of stencils etc -- for clarity in code
@@ -1247,7 +1248,7 @@ public:
   float		v1b_avgsum_out;	 // #READ_ONLY #NO_SAVE v1b avgsum output (single scalar value which is average summary of disparity values)
 
   ///////////////////  V1C Complex Output ////////////////////////
-  float_Matrix	v1sg_out;	 // #READ_ONLY #NO_SAVE square 4x4 grouping -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
+  float_Matrix	v1sg_out;	 // #READ_ONLY #NO_SAVE square 4x4 grouping of polarity invariant V1 reps -- reduces dimensionality and introduces robustness -- operates on v1pi inputs [v1pi_feat.x][1][v1sq_img.x][v1sq_img.y]
   float_Matrix	v1ls_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) length sum output -- operates on v1pi or v1sg inputs -- [feat.x][1][v1c_img.x][v1c_img.y]
   float_Matrix	v1ls_out;	 // #READ_ONLY #NO_SAVE length sum output after kwta [feat.x][1][v1c_img.x][v1c_img.y]
   float_Matrix	v1ls_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
@@ -1262,7 +1263,9 @@ public:
   ///////////////////  SI Spatial Integration Output ////////////////////////
   float_Matrix	si_v1s_out;	 // #READ_ONLY #NO_SAVE spatial integration
   float_Matrix	si_v1pi_out;	 // #READ_ONLY #NO_SAVE spatial integration
-  float_Matrix	si_v1sg_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1pi_sg_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	si_v1s_sg_out;	 // #READ_ONLY #NO_SAVE spatial integration
+  float_Matrix	v1s_sg_out;	 // #READ_ONLY #NO_SAVE square grouping of v1s 
   float_Matrix	si_v1c_out;	 // #READ_ONLY #NO_SAVE spatial integration
   float_Matrix	si_v2bo_out;	 // #READ_ONLY #NO_SAVE spatial integration
 
@@ -1366,7 +1369,9 @@ protected:
   // do spatial integration filters -- dispatch threads
   virtual void 	SpatIntegFilter_V1S_thread(int v1s_idx, int thread_no);
   virtual void 	SpatIntegFilter_V1PI_thread(int v1s_idx, int thread_no);
-  virtual void 	SpatIntegFilter_V1SG_thread(int v1sg_idx, int thread_no);
+  virtual void 	SpatIntegFilter_V1PI_SG_thread(int v1sg_idx, int thread_no);
+  virtual void 	SpatIntegFilter_V1S_SqGp4_thread(int v1sg_idx, int thread_no);
+  virtual void 	SpatIntegFilter_V1S_SG_thread(int v1sg_idx, int thread_no);
   virtual void 	SpatIntegFilter_V1C_thread(int v1c_idx, int thread_no);
   virtual void 	SpatIntegFilter_V2BO_thread(int v1c_idx, int thread_no);
 
