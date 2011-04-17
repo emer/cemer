@@ -2243,13 +2243,24 @@ INHERITED(ProjectionSpec)
 public:
   int		radius;		// #DEF_2:10 how far to connect in any one direction (in unit group units)
   bool		wrap;		// #DEF_true wrap around layer coordinates (else clip at ends)
-  float		ang_pow;	// #DEF_4 wt = (angle - feature_angle)^ang_pow -- values > 1 result in a more focal distribution for close angles, and less weight at off-angles.
-  float		dist_sigma;	// #DEF_1 sigma for gaussian function of distance -- how much the weight drops off as a function of distance (multiplies angle weights) -- in normalized units relative to the radius
+  float		ang_sig_0;	// #DEF_1 sigma for gaussian around angle -- same angle (0 delta-angle)
+  float		dist_sig_0;	// #DEF_1 sigma for gaussian distance -- same angle (0 delta-angle)
+  float		mag_0;		// #DEF_1 overall magnitude multiplier -- same angle (0 delta-angle)
+  float		ang_sig_45;	// #DEF_1 sigma for gaussian around angle -- delta angle 45 deg rotated
+  float		dist_sig_45;	// #DEF_1 sigma for gaussian distance -- delta angle 45 deg rotated
+  float		mag_45;		// #DEF_1 overall magnitude multiplier -- delta angle 45 deg rotated
+  float		ang_sig_90;	// #DEF_1 sigma for gaussian around angle -- delta angle 90 deg rotated 
+  float		dist_sig_90;	// #DEF_1 sigma for gaussian distance -- delta angle 90 deg rotated 
+  float		mag_90;		// #DEF_1 overall magnitude multiplier -- delta angle 45 deg rotated
+  float		ang_sig_135;	// #DEF_1 sigma for gaussian around angle -- delta angle 135 deg rotated 
+  float		dist_sig_135;	// #DEF_1 sigma for gaussian distance -- delta angle 135 deg rotated  
+  float		mag_135;	// #DEF_1 overall magnitude multiplier -- delta angle 135 deg rotated 
+  float		mag_weak;	// #DEF_0.5 how much weaker to make the weaker direction where used (90 and 135)
   float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not even connected
-  float		oth_feat_wt;	// #DEF_0.5 weight multiplier for units that have a different featural encoding (e.g., on-center vs. off-center or another color contrast) -- encoded by y axis of unit group
 
-  virtual float	ConWt(float loc_ang_dist, float loc_dist, float rf_ang_dist, float rf_bo_dist);
-  // connection weight in terms of location (loc) distance between send and recv units, and receptive field angle distance and rf border ownership direction distance
+  virtual float	ConWt(Projection* prjn, TwoDCoord& ruc, TwoDCoord& suc,
+		      int rang_dx, int sang_dx, int rdir, int sdir);
+  // connection weight in terms of recv unit group coord (ruc), send unit group coord (suc), recv angle index (0-3 in 45 deg incr), and send angle index (0-3), and r/s bo direction (0-1)
 
   override void	Connect_impl(Projection* prjn);
   override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);

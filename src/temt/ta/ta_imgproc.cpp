@@ -3814,11 +3814,11 @@ bool V1RegionSpec::InitFilters_V2() {
 
   // T: ANG_90
   v2tl_stencils.FastEl(0,ANG,ANG_90) = ANG_0;
-  v2tl_stencils.FastEl(0,DIR,ANG_90) = LEFT;
+  v2tl_stencils.FastEl(0,DIR,ANG_90) = RIGHT;
   v2tl_stencils.FastEl(1,ANG,ANG_90) = ANG_135;
-  v2tl_stencils.FastEl(1,DIR,ANG_90) = RIGHT;
+  v2tl_stencils.FastEl(1,DIR,ANG_90) = LEFT;
   v2tl_stencils.FastEl(2,ANG,ANG_90) = ANG_45;
-  v2tl_stencils.FastEl(2,DIR,ANG_90) = LEFT;
+  v2tl_stencils.FastEl(2,DIR,ANG_90) = RIGHT;
 
   // T: ANG_135
   v2tl_stencils.FastEl(0,ANG,ANG_135) = ANG_45;

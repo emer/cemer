@@ -3964,6 +3964,7 @@ void V1LateralContourPrjnSpec::Initialize() {
   con_thr = 0.2f;
   oth_feat_wt = 0.5f;
   init_wts = true;
+
 }
 
 void V1LateralContourPrjnSpec::UpdateAfterEdit_impl() {
@@ -4142,10 +4143,20 @@ void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Un
 void V2BoLateralPrjnSpec::Initialize() {
   radius = 4;
   wrap = true;
-  ang_pow = 4.0f;
-  dist_sigma = 1.0f;
+  ang_sig_0 = 1.0f;
+  dist_sig_0 = 1.0f;
+  mag_0 = 1.0f;
+  ang_sig_45 = 1.0f;
+  dist_sig_45 = 1.0f;
+  mag_45 = 1.0f;
+  ang_sig_90 = 1.0f;
+  dist_sig_90 = 1.0f;
+  mag_90 = 1.0f;
+  ang_sig_135 = 1.0f;
+  dist_sig_135 = 1.0f;
+  mag_135 = 1.0f;
+  mag_weak = 0.5f;
   con_thr = 0.2f;
-  oth_feat_wt = 0.5f;
   init_wts = true;
 }
 
@@ -4153,9 +4164,137 @@ void V2BoLateralPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-float V2BoLateralPrjnSpec::ConWt(float loc_ang_dist, float loc_dist, float rf_ang_dist,
-				 float rf_bo_dist) {
-  return 1.0f;
+float V2BoLateralPrjnSpec::ConWt(Projection* prjn, TwoDCoord& ruc, TwoDCoord& suc,
+		 int rang_dx, int sang_dx, int rdir, int sdir) {
+  float n_angles = 4.0f;
+  TwoDCoord gp_geo = prjn->from->gp_geom;
+  TwoDCoord gp_geo_half = gp_geo / 2;
+
+  bool bo_diff = rdir != sdir;
+  if(bo_diff) return 0.0f;	// never connects to other bo!
+
+  float dir_sense = (rdir == 0) ? -1.0f : 1.0f;
+
+  TwoDCoord del = suc - ruc; // don't use wrap!
+  if(wrap) {		       // dist may be closer in wrapped case..
+    if(ruc.x < gp_geo_half.x) {
+      if(fabsf((suc.x - gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x -= gp_geo.x; del.x = suc.x - ruc.x; }
+    }
+    else {
+      if(fabsf((suc.x + gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x += gp_geo.x; del.x = suc.x - ruc.x; }
+    }      
+    if(ruc.y < gp_geo_half.y) {
+      if(fabsf((suc.y - gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y -= gp_geo.y; del.y = suc.y - ruc.y; }
+    }
+    else {
+      if(fabsf((suc.y + gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y += gp_geo.y; del.y = suc.y - ruc.y; }
+    }
+  }
+
+  float dst = del.Mag();
+  if(dst > (float)radius) return 0.0f;
+  if(dst == 0.0f) return 0.0f;	// no self con
+  float nrmdst = dst / (float)radius;
+
+  float gang = atan2f(del.y, del.x); // group angle -- 0..pi or -pi
+
+  // -2 -1 0 1 2 3 4 5 6
+  //  2  3 0 1 2 3 0 1 2
+  //	-n	   +n
+
+  // wrap min dist in angle coding
+  int dang_dx = sang_dx - rang_dx;
+  if(fabsf((sang_dx + n_angles) - rang_dx) < fabsf(dang_dx))
+    dang_dx = (sang_dx + n_angles) - rang_dx;
+  if(fabsf((sang_dx - n_angles) - rang_dx) < fabsf(dang_dx))
+    dang_dx = (sang_dx - n_angles) - rang_dx;
+
+  float rang = taMath_float::pi * ((float)rang_dx / n_angles);
+  float sang = taMath_float::pi * ((float)sang_dx / n_angles);
+  float dang = taMath_float::pi * ((float)dang_dx / n_angles);
+
+  FloatTwoDCoord rvec(cosf(rang), sinf(rang));
+  FloatTwoDCoord delnorm = del;
+  delnorm.MagNorm();
+
+  FloatTwoDCoord rdprjn = delnorm * rvec;
+  float prjmag = rdprjn.Sum();
+  float sdir_sign = prjmag > 0.0f ? 1.0f : -1.0f;
+  if(fabsf(prjmag) < 0.001f) {	// orthogonal
+    switch(rang_dx) {
+    case 0:
+      sdir_sign = del.y > 0.0f ? dir_sense : -dir_sense; // y up is positive..
+      break;
+    case 1:
+      sdir_sign = del.x  > 0.0f ? -dir_sense : dir_sense; // x dn is positive..
+      break;
+    case 2:
+      sdir_sign = del.x > 0.0f ? -dir_sense : dir_sense; // x dn is positive..
+      break;
+    case 3:
+      sdir_sign = del.y > 0.0f ? -dir_sense : dir_sense; // y up is neg
+      break;
+    }
+  }
+
+  // rotate the comparison angle as a function of distance
+  switch(dang_dx) {
+  case 0:
+    break;
+  case 1:
+    rang += dir_sense * taMath_float::pi * 0.125f;
+    break;
+  case 2:
+  case -2:
+    rang += dir_sense * taMath_float::pi * 0.25f;
+    break;
+  case -1:
+    rang += dir_sense * taMath_float::pi * 0.375f;
+    break;
+  }
+
+  float grang = gang - rang;
+  if(grang > taMath_float::pi) grang -= 2.0f * taMath_float::pi;
+  if(grang < -taMath_float::pi) grang += 2.0f * taMath_float::pi;
+
+  // make symmetric around half sphere
+  if(grang > taMath_float::pi * 0.5f) grang -= taMath_float::pi;
+  if(grang < -taMath_float::pi * 0.5f) grang += taMath_float::pi;
+
+  float netwt = 0.0f;
+  switch(dang_dx) {
+  case 0:
+    netwt = mag_0 * taMath_float::gauss_den_nonorm(grang, ang_sig_0) *
+      taMath_float::gauss_den_nonorm(nrmdst, dist_sig_0);
+    break;
+  case 1:
+    netwt = mag_45 * taMath_float::gauss_den_nonorm(grang, ang_sig_45) *
+      taMath_float::gauss_den_nonorm(nrmdst, dist_sig_45);
+    break;
+  case 2:
+  case -2:
+    netwt = mag_90 * taMath_float::gauss_den_nonorm(grang, ang_sig_90) *
+      taMath_float::gauss_den_nonorm(nrmdst, dist_sig_90);
+    if((fabsf(prjmag) >= 0.999f || fabsf(prjmag) < 0.001f) && (dst <= 2.9f)) {
+      if(sdir_sign * dir_sense > 0.0f)
+	netwt = 1.0f;
+      else
+	netwt = 0.0f;
+    }
+    else {
+      if(sdir_sign * dir_sense > 0.0f)
+	netwt *= mag_weak;
+    }
+    break;
+  case -1:
+    netwt = mag_135 * taMath_float::gauss_den_nonorm(grang, ang_sig_135) *
+      taMath_float::gauss_den_nonorm(nrmdst, dist_sig_135);
+    if(sdir_sign * dir_sense > 0.0f)
+      netwt *= mag_weak;
+    break;
+  }
+
+  return netwt;
 }
 
 void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
@@ -4192,7 +4331,6 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
     int rgpidx = 0;
     for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
-
 	TwoDCoord suc;
 	TwoDCoord suc_wrp;
 	for(suc.y = ruc.y-radius; suc.y <= ruc.y+radius; suc.y++) {
@@ -4208,35 +4346,18 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
 	    if(dst > (float)radius) continue; // out of bounds
 	    if(dst == 0.0f) continue;	      // no selfs
 
-	    float nrmdst = dst / (float)radius;
-	    float gang = atan2f(del.y, del.x); // group angle
-	    if(gang >= taMath_float::pi) gang -= taMath_float::pi;
-	    if(gang < 0.0f) gang += taMath_float::pi;
-
- 	    float gauswt = taMath_float::gauss_den_nonorm(nrmdst, dist_sigma);
-	    
 	    TwoDCoord run;
+	    TwoDCoord sun;
+	    
 	    for(run.x = 0; run.x < un_geo.x; run.x++) {
-	      float rang = taMath_float::pi * ((float)run.x / n_angles);
- 	      float gangwt = powf(fabsf(cosf(gang-rang)), ang_pow);
-
-	      TwoDCoord sun;
 	      for(sun.x = 0; sun.x < un_geo.x; sun.x++) {
-		float sang = taMath_float::pi * ((float)sun.x / n_angles);
-		float sangwt = powf(fabsf(cosf(sang-rang)), ang_pow);
-		float wt = sangwt * gangwt * gauswt;
-		if(wt < con_thr) continue;
-
 		for(run.y = 0; run.y < un_geo.y; run.y++) {
 		  for(sun.y = 0; sun.y < un_geo.y; sun.y++) {
+		    float wt = ConWt(prjn, ruc, suc, run.x, sun.x, run.y, sun.y);
+		    if(wt < con_thr) continue;
+
 		    int rui = run.y * un_geo.x + run.x;
 		    int sui = sun.y * un_geo.x + sun.x;
-
-		    float feat_wt = 1.0f;
-		    if(run.y != sun.y)
-		      feat_wt = oth_feat_wt;
-		    float eff_wt = wt * feat_wt;
-		    if(eff_wt < con_thr) continue;
 
 		    Unit* ru_u = lay->UnitAtUnGpIdx(rui, rgpidx);
 		    if(!ru_u) continue;
@@ -4248,7 +4369,7 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
 		    }
 		    else {
 		      Connection* cn = ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-		      cn->wt = eff_wt;
+		      cn->wt = wt;
 		    }
 		  }
 		}
@@ -4272,8 +4393,6 @@ void V2BoLateralPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
   TwoDCoord un_geo = lay->un_geom;
   float n_angles = (float)un_geo.x;
 
-  TwoDCoord gp_geo_half = gp_geo / 2;
-
   int rgpidx;
   int rui;
   lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
@@ -4289,36 +4408,7 @@ void V2BoLateralPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
     TwoDCoord sun;
     sun.SetFmIndex(sui, un_geo.x);
 
-    TwoDCoord del = suc - ruc; // don't use wrap!
-    if(wrap) {		       // dist may be closer in wrapped case..
-      if(ruc.x < gp_geo_half.x) {
-	if(fabsf((suc.x - gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x -= gp_geo.x; del.x = suc.x - ruc.x; }
-      }
-      else {
-	if(fabsf((suc.x + gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x += gp_geo.x; del.x = suc.x - ruc.x; }
-      }      
-      if(ruc.y < gp_geo_half.y) {
-	if(fabsf((suc.y - gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y -= gp_geo.y; del.y = suc.y - ruc.y; }
-      }
-      else {
-	if(fabsf((suc.y + gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y += gp_geo.y; del.y = suc.y - ruc.y; }
-      }
-    }
-
-    float dst = del.Mag();
-    float nrmdst = dst / (float)radius;
-    float gang = atan2f((float)del.y, (float)del.x); // group angle
-    if(gang >= taMath_float::pi) gang -= taMath_float::pi;
-    if(gang < 0.0f) gang += taMath_float::pi;
-    float rang = taMath_float::pi * ((float)run.x / n_angles);
-    float sang = taMath_float::pi * ((float)sun.x / n_angles);
-    float sangwt = powf(fabsf(cosf(sang-rang)), ang_pow);
-    float gangwt = powf(fabsf(cosf(gang-rang)), ang_pow);
-    float gauswt = taMath_float::gauss_den_nonorm(nrmdst, dist_sigma);
-    float feat_wt = 1.0f;
-    if(run.y != sun.y)
-      feat_wt = oth_feat_wt;
-    float wt = feat_wt * sangwt * gangwt * gauswt;
+    float wt = ConWt(prjn, ruc, suc, run.x, sun.x, run.y, sun.y);
     cg->Cn(i)->wt = wt;
   }
 }
