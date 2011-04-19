@@ -4196,7 +4196,7 @@ void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Un
 void V2BoLateralPrjnSpec::Initialize() {
   init_wts = true;
 
-  radius = 4;
+  radius = 8;
   wrap = true;
   t_on = true;
   ang_sig = 0.5f;
