@@ -2261,22 +2261,14 @@ INHERITED(ProjectionSpec)
 public:
   int		radius;		// #DEF_2:10 how far to connect in any one direction (in unit group units)
   bool		wrap;		// #DEF_true wrap around layer coordinates (else clip at ends)
-  int		test_ang;	// #DEF_-1 if set to 0..3, computes only that delta-angle's worth of connectivity (0 = same angle between send and recv, 1 = 45 delta, 2 = 90 delta, 3 = 135 delta) -- useful for visually tuning the receptive field parameters separately
-  bool		t_on;		// #DEF_true turn on the special T junction detector weights
-  float		ang_sig_0;	// #DEF_0.5 sigma for gaussian around angle -- same angle (0 delta-angle)
-  float		dist_sig_0;	// #DEF_0.8 sigma for gaussian distance -- same angle (0 delta-angle)
-  float		mag_0;		// #DEF_1 overall magnitude multiplier -- same angle (0 delta-angle)
-  float		ang_sig_45;	// #DEF_0.5 sigma for gaussian around angle -- delta angle 45 deg rotated
-  float		dist_sig_45;	// #DEF_0.5 sigma for gaussian distance -- delta angle 45 deg rotated
-  float		mag_45;		// #DEF_0.8 overall magnitude multiplier -- delta angle 45 deg rotated
-  float		ang_sig_90;	// #DEF_0.5 sigma for gaussian around angle -- delta angle 90 deg rotated 
-  float		dist_sig_90;	// #DEF_0.5 sigma for gaussian distance -- delta angle 90 deg rotated 
-  float		mag_90;		// #DEF_0.8 overall magnitude multiplier -- delta angle 45 deg rotated
-  float		ang_sig_135;	// #DEF_0.8 sigma for gaussian around angle -- delta angle 135 deg rotated 
-  float		dist_sig_135;	// #DEF_0.5 sigma for gaussian distance -- delta angle 135 deg rotated  
-  float		mag_135;	// #DEF_0.6 overall magnitude multiplier -- delta angle 135 deg rotated 
-  float		mag_weak;	// #DEF_0.5 how much weaker to make the weaker direction where used (90 and 135)
+  bool		t_on;		// #DEF_true turn on the special T junction detector weights -- only for a 90 degree angle perpendicular, behind the border edge
+  float		ang_sig;	// #DEF_0.5 sigma for gaussian around target angle -- same for all
+  float		dist_sig_line;	// #DEF_0.8 sigma for gaussian distance -- for linear continuation case (delta-angle = 0) -- should in general go longer than for the off-angle cases
+  float		dist_sig_oth;	// #DEF_0.5 sigma for gaussian distance -- for other angles (delta-angle != 0) -- should in general go shorter than for the linear case
+  float		line_mag;	// #DEF_0.8 magnitude for the linear continuation case -- can actually make this a bit weaker b/c it is non-descriminative
+  float		weak_mag;	// #DEF_0.5 weaker magnitude -- applies to acute angle intersections
   float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not even connected
+  int		test_ang;	// #DEF_-1 #MIN_-1 #MAX_7 set to 0..7, computes only that delta-angle's worth of connectivity (0 = same angle between send and recv, 1 = 45 delta, 2 = 90 delta, 3 = 135 delta) -- useful for visually tuning the receptive field parameters separately
 
   virtual float	ConWt(Projection* prjn, TwoDCoord& ruc, TwoDCoord& suc,
 		      int rang_dx, int sang_dx, int rdir, int sdir);

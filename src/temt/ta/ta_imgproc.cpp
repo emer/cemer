@@ -3196,6 +3196,7 @@ void V1ComplexSpec::Initialize() {
   sg4 = true;
   spc4 = true;
   len_sum_len = 1;
+  es_thr = 0.2f;
 
   sg_rf = 4;
   sg_half = sg_rf / 2;
@@ -4862,7 +4863,7 @@ void V1RegionSpec::V1ComplexFilter_EndStop_thread(int v1c_idx, int thread_no) {
 	max_off = MAX(offval, max_off);
       }
       float esval = lsval - max_off;
-      if(esval < 0.0f) esval = 0.0f; // keep it real
+      if(esval < v1c_specs.es_thr) esval = 0.0f; // keep it real
       v1es_out.FastEl(ang, dir, cc.x, cc.y) = esval;
     }
   }
@@ -4903,11 +4904,30 @@ void V1RegionSpec::V2Filter_TL_thread(int v1c_idx, int thread_no) {
   TwoDCoord cc;			// complex coords
   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
 
+  TwoDCoord lc;		// line coord
   float max_lval = 0.0f;
   float max_tval = 0.0f;
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float lsedge = v1ls_out.FastEl(ang, 0, cc.x, cc.y);
+
+    // first decrement lsedge for any end stopping along it
+    float lsesmax = 0.0f;
     for(int dir=0; dir < 2; dir++) {		      // direction
+      for(int lpdx=0; lpdx < v1c_specs.len_sum_width; lpdx++) {
+	lc.x = cc.x + v1ls_stencils.FastEl(X,lpdx,ang);
+	lc.y = cc.y + v1ls_stencils.FastEl(Y,lpdx,ang);
+	if(lc.WrapClip(wrap, v1c_img_geom)) {
+	  if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+	}
+	float esv = v1es_out.FastEl(ang, dir, lc.x, lc.y);
+	lsesmax = MAX(lsesmax, esv);
+      }
+    }
+    lsedge -= lsesmax;
+    if(lsedge < 0.0f) lsedge = 0.0f;
+
+    for(int dir=0; dir < 2; dir++) {		      // direction
+
       float ang_es = v1es_out.FastEl(ang, dir, cc.x, cc.y);
       float op_ang_es = v1es_out.FastEl(ang, 1-dir, cc.x, cc.y);
       float max_ang_es = MAX(ang_es, op_ang_es);

@@ -4194,37 +4194,48 @@ void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Un
 //	  	V2BoLateralPrjnSpec
 
 void V2BoLateralPrjnSpec::Initialize() {
+  init_wts = true;
+
   radius = 4;
   wrap = true;
-  test_ang = -1;
-  ang_sig_0 = 0.5f;
-  dist_sig_0 = 0.8f;
-  mag_0 = 1.0f;
-  ang_sig_45 = 0.5f;
-  dist_sig_45 = 0.5f;
-  mag_45 = 0.8f;
-  ang_sig_90 = 0.5f;
-  dist_sig_90 = 0.5f;
-  mag_90 = 0.8f;
-  ang_sig_135 = 0.8f;
-  dist_sig_135 = 0.5f;
-  mag_135 = 0.6f;
-  mag_weak = 0.5f;
+  t_on = true;
+  ang_sig = 0.5f;
+  dist_sig_line = 0.8f;
+  dist_sig_oth = 0.5f;
+  line_mag = 0.8f;
+  weak_mag = 0.5f;
   con_thr = 0.2f;
-  init_wts = true;
+  test_ang = -1;
 }
 
 void V2BoLateralPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-static int dbg_hit_cnt = 0;
+// static int dbg_hit_cnt = 0;
 
 float V2BoLateralPrjnSpec::ConWt(Projection* prjn, TwoDCoord& ruc, TwoDCoord& suc,
 		 int rang_dx, int sang_dx, int rdir, int sdir) {
   float n_angles = 4.0f;
   TwoDCoord gp_geo = prjn->from->gp_geom;
   TwoDCoord gp_geo_half = gp_geo / 2;
+
+  // integer angles -- useful for precise conditionals..
+  int rang_n = rang_dx + rdir * 4;
+  int sang_n = sang_dx + sdir * 4;
+  int dang_n;
+  if(sang_n < rang_n)
+    dang_n = (8 + sang_n) - rang_n;
+  else
+    dang_n = sang_n - rang_n;
+  int dang_n_pi = dang_n;
+  if(dang_n >= 4) dang_n_pi = 8 - dang_n;
+  int abs_dang_n_pi = dang_n_pi < 0 ? -dang_n_pi : dang_n_pi;
+
+  if(dang_n == 4) return 0.0f;	// no opposite angle cons
+
+  if((test_ang >= 0) && (dang_n != test_ang))
+    return 0.0f; // don't continue
 
   TwoDCoord del = suc - ruc; // don't use wrap!
   if(wrap) {		       // dist may be closer in wrapped case..
@@ -4249,26 +4260,6 @@ float V2BoLateralPrjnSpec::ConWt(Projection* prjn, TwoDCoord& ruc, TwoDCoord& su
 
   float gang = atan2f(del.y, del.x); // group angle -- 0..pi or -pi
   if(gang < 0.0f) gang += 2.0f * taMath_float::pi; // keep it positive
-
-  // integer angles -- only used for testing
-  int rang_n = rang_dx + rdir * 4;
-  int sang_n = sang_dx + sdir * 4;
-  int dang_n;
-  if(sang_n < rang_n)
-    dang_n = (8 + sang_n) - rang_n;
-  else
-    dang_n = sang_n - rang_n;
-  int dang_n_pi = dang_n;
-  if(dang_n >= 4) dang_n_pi = 8 - dang_n;
-  int abs_dang_n_pi = dang_n_pi < 0 ? -dang_n_pi : dang_n_pi;
-
-//   if(dbg_hit_cnt++ <= 16) {
-//     taMisc::Info("rang_n:", String(rang_n), "  sang_n:", String(sang_n),
-// 		 "   dang_n:", String(dang_n), "  dang_n_pi: ", String(dang_n_pi));
-//   }
-  if(test_ang >= 0 && abs_dang_n_pi != test_ang) {
-    return 0.0f; // don't continue
-  }
 
   // dir 0 = 0..pi, dir 1 = pi..2pi
   float rang = taMath_float::pi * ((float)rang_dx / n_angles) + taMath_float::pi * (float)rdir;
@@ -4298,92 +4289,36 @@ float V2BoLateralPrjnSpec::ConWt(Projection* prjn, TwoDCoord& ruc, TwoDCoord& su
   if(gtang > taMath_float::pi * 0.5f) { gtang -= taMath_float::pi; op_side = true; }
   if(gtang < -taMath_float::pi * 0.5f){ gtang += taMath_float::pi; op_side = true; }
 
-  float eff_mag = mag_0;
-  if(abs_dang_pi > 0.501f * taMath_float::pi) eff_mag = mag_135;
+  float eff_mag = 1.0f;
+  if(abs_dang_pi > 0.501f * taMath_float::pi) eff_mag = weak_mag;
 
-  float netwt = eff_mag * taMath_float::gauss_den_nonorm(gtang, ang_sig_0) *
-    taMath_float::gauss_den_nonorm(nrmdst, dist_sig_0);
+  float netwt = eff_mag * taMath_float::gauss_den_nonorm(gtang, ang_sig);
+  if(abs_dang_n_pi == 0)
+    netwt *= line_mag * taMath_float::gauss_den_nonorm(nrmdst, dist_sig_line);
+  else
+    netwt *= taMath_float::gauss_den_nonorm(nrmdst, dist_sig_oth);
 
   if(op_side)
     netwt *= op_mag;
 
+  if(t_on && abs_dang_n_pi == 2 && dst <= 2.9f) {
+    float grang = gang - rang;
+//     if(dbg_hit_cnt++ <= 100) {
+//      taMisc::Info("rang_n: " + String(rang_n), "  sang_n: " + String(sang_n),
+// 		  "   dang_n: " + String(dang_n), "  dang_n_pi: " + String(dang_n_pi),
+// 		  "gang: " + String(gang), "  grang:" + String(grang));
+//     }
+    if(fabsf(grang - (1.5f * taMath_float::pi)) < .1f || 
+       fabsf(grang - (-0.5f * taMath_float::pi)) < .1f) {
+      netwt = 1.0f;
+    }
+  }
+
   return netwt;
-
-
-//   FloatTwoDCoord rvec(cosf(rang), sinf(rang));
-//   FloatTwoDCoord delnorm = del;
-//   delnorm.MagNorm();
-
-//   FloatTwoDCoord rdprjn = delnorm * rvec;
-//   float prjmag = rdprjn.Sum();
-
-//   float rang_sign = ((rang_dx < 2) ? 1.0f : -1.0f);
-
-//   // rotate the comparison angle as a function of distance
-//   switch(dang_dx) {
-//   case 0:
-//     break;
-//   case 1:
-//     rang += taMath_float::pi * 0.125f;
-//     break;
-//   case 2:
-//   case -2:
-//     rang += rang_sign * taMath_float::pi * 0.25f;
-//     break;
-//   case -1:
-//     rang += rang_sign * taMath_float::pi * 0.375f;
-//     break;
-//   }
-
-//   float netwt = 0.0f;
-//   switch(dang_dx) {
-//   case 0:
-//     if(test_ang < 0 || test_ang == 0) {
-//       netwt = mag_0 * taMath_float::gauss_den_nonorm(grang, ang_sig_0) *
-// 	taMath_float::gauss_den_nonorm(nrmdst, dist_sig_0);
-//     }
-//     break;
-//   case 1:
-//     if(test_ang < 0 || test_ang == 1) {
-//       netwt = mag_45 * taMath_float::gauss_den_nonorm(grang, ang_sig_45) *
-// 	taMath_float::gauss_den_nonorm(nrmdst, dist_sig_45);
-//       if(t_on && (fabsf(prjmag) >= 0.999f) && (dst <= 2.9f)) {
-// 	if(op_side * dir_sense > 0.0f)
-// 	  netwt = 1.0f;
-// 	else
-// 	  netwt = 0.0f;
-//       }
-//     }
-//     break;
-//   case 2:
-//   case -2:
-//     if(test_ang < 0 || test_ang == 2) {
-//       netwt = mag_90 * taMath_float::gauss_den_nonorm(grang, ang_sig_90) *
-// 	taMath_float::gauss_den_nonorm(nrmdst, dist_sig_90);
-//       if(t_on && (fabsf(prjmag) >= 0.999f || fabsf(prjmag) < 0.001f) && (dst <= 2.9f)) {
-// 	if(op_side * dir_sense > 0.0f)
-// 	  netwt = 1.0f;
-// 	else
-// 	  netwt = 0.0f;
-//       }
-//       else if(rang_sign * op_side * dir_sense > 0.0f) {
-// 	netwt *= mag_weak;
-//       }
-//     }
-//     break;
-//   case -1:
-//     if(test_ang < 0 || test_ang == 3) {
-//       netwt = mag_135 * taMath_float::gauss_den_nonorm(grang, ang_sig_135) *
-// 	taMath_float::gauss_den_nonorm(nrmdst, dist_sig_135);
-//       if(op_side * dir_sense > 0.0f)
-// 	netwt *= mag_weak;
-//     }
-//     break;
-//   }
 }
 
 void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
-  dbg_hit_cnt = 0;		// todo: debugging
+//   dbg_hit_cnt = 0;		// debugging
 
   if(!(bool)prjn->from)	return;
 
