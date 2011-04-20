@@ -4199,6 +4199,7 @@ void V2BoLateralPrjnSpec::Initialize() {
   radius = 8;
   wrap = true;
   t_on = true;
+  opp_on = true;
   ang_sig = 0.5f;
   dist_sig_line = 0.8f;
   dist_sig_oth = 0.5f;
@@ -4232,7 +4233,7 @@ float V2BoLateralPrjnSpec::ConWt(Projection* prjn, TwoDCoord& ruc, TwoDCoord& su
   if(dang_n >= 4) dang_n_pi = 8 - dang_n;
   int abs_dang_n_pi = dang_n_pi < 0 ? -dang_n_pi : dang_n_pi;
 
-  if(dang_n == 4) return 0.0f;	// no opposite angle cons
+  if(!opp_on && dang_n == 4) return 0.0f;	// no opposite angle cons
 
   if((test_ang >= 0) && (dang_n != test_ang))
     return 0.0f; // don't continue

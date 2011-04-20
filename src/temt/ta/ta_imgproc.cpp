@@ -3227,6 +3227,15 @@ void V2BordOwnSpec::Initialize() {
   l_t_inhib_thr = 0.2f;
   tl_bo_thr = 0.1f;
   ambig_gain = 0.5f;
+
+  ffbo_gain = 1.0f;
+  radius = 6;
+  t_on = true;
+  opp_on = true;
+  ang_sig = 0.5f;
+  dist_sig = 0.5f;
+  weak_mag = 0.5f;
+  con_thr = 0.2f;
 }
 
 void VisSpatIntegSpec::Initialize() {
@@ -3829,9 +3838,116 @@ bool V1RegionSpec::InitFilters_V2() {
   v2tl_stencils.FastEl(2,ANG,ANG_135) = ANG_90;
   v2tl_stencils.FastEl(2,DIR,ANG_135) = RIGHT;
 
+  int max_cnt = v2_specs.radius * v2_specs.radius * 2;
+  v2ffbo_stencils.SetGeom(5, 2, max_cnt, v1s_specs.n_angles, 2, v1s_specs.n_angles);
+  v2ffbo_weights.SetGeom(4, max_cnt, v1s_specs.n_angles, 2, v1s_specs.n_angles);
+  v2ffbo_stencil_n.SetGeom(3, v1s_specs.n_angles, 2, v1s_specs.n_angles);
+  v2ffbo_norms.SetGeom(3, v1s_specs.n_angles, 2, v1s_specs.n_angles);
+  TwoDCoord suc;			// send coords
+  for(int rang_dx = 0; rang_dx < v1s_specs.n_angles; rang_dx++) {
+    for(int rdir = 0; rdir < 2; rdir++) {
+      for(int sang_dx = 0; sang_dx < v1s_specs.n_angles; sang_dx++) {
+	int cnt = 0;
+	for(suc.y = -v2_specs.radius; suc.y <= v2_specs.radius; suc.y++) {
+	  for(suc.x = -v2_specs.radius; suc.x <= v2_specs.radius; suc.x++) {
+	    float netwt = 0.0f;
+	    for(int sdir = 0; sdir < 2; sdir++) { // integrate over sending directions
+	      netwt += V2FFBoWt(suc, rang_dx, sang_dx, rdir, sdir);
+	    }
+	    if(netwt < v2_specs.con_thr) continue;
+	    v2ffbo_stencils.FastEl(X, cnt, rang_dx, rdir, sang_dx) = suc.x;
+	    v2ffbo_stencils.FastEl(Y, cnt, rang_dx, rdir, sang_dx) = suc.y;
+	    v2ffbo_weights.FastEl(cnt, rang_dx, rdir, sang_dx) = netwt;
+	    cnt++;
+	    if(cnt >= max_cnt) {
+	      taMisc::Error("cnt >= max_cnt:", String(max_cnt),"in V2FFBo stencil alloc -- programmer error -- please submit bug report");
+	      return false;
+	    }
+	  }
+	}
+	v2ffbo_stencil_n.FastEl(rang_dx, rdir, sang_dx) = cnt;
+	v2ffbo_norms.FastEl(rang_dx, rdir, sang_dx) = v2_specs.ffbo_gain / (float)cnt;
+      }
+    }
+  }
+
   return true;
 }
 
+float V1RegionSpec::V2FFBoWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir, int sdir) {
+  float n_angles = v1s_specs.n_angles;
+
+  // integer angles -- useful for precise conditionals..
+  int rang_n = rang_dx + rdir * 4;
+  int sang_n = sang_dx + sdir * 4;
+  int dang_n;
+  if(sang_n < rang_n)
+    dang_n = (8 + sang_n) - rang_n;
+  else
+    dang_n = sang_n - rang_n;
+  int dang_n_pi = dang_n;
+  if(dang_n >= 4) dang_n_pi = 8 - dang_n;
+  int abs_dang_n_pi = dang_n_pi < 0 ? -dang_n_pi : dang_n_pi;
+
+  if(dang_n == 0) return 0.0f;	// no self-line guys
+  if(!v2_specs.opp_on && dang_n == 4) return 0.0f;	// no opposite angle cons
+
+  TwoDCoord del = suc;		// assume 0,0 ruc
+  float dst = del.Mag();
+  if(dst > (float)v2_specs.radius) return 0.0f;
+  if(dst == 0.0f) return 0.0f;	// no self con
+  float nrmdst = dst / (float)v2_specs.radius;
+
+  float gang = atan2f(del.y, del.x); // group angle -- 0..pi or -pi
+  if(gang < 0.0f) gang += 2.0f * taMath_float::pi; // keep it positive
+
+  // dir 0 = 0..pi, dir 1 = pi..2pi
+  float rang = taMath_float::pi * ((float)rang_dx / n_angles) + taMath_float::pi * (float)rdir;
+  float sang = taMath_float::pi * ((float)sang_dx / n_angles) + taMath_float::pi * (float)sdir;
+
+  float dang;			// delta-angle -- keep this positive too
+  if(sang < rang)
+    dang = (2.0f * taMath_float::pi + sang) - rang;
+  else
+    dang = sang - rang;
+  float dang_pi = dang; // this determines type of projection -- equal fabs(dang_pi) are same type
+  if(dang >= taMath_float::pi) dang_pi = (2.0f * taMath_float::pi) - dang;
+  float abs_dang_pi = fabs(dang_pi);
+
+  float op_mag = 0.0f;
+  if(abs_dang_pi < 0.499f * taMath_float::pi)
+    op_mag = ((0.5f * taMath_float::pi - abs_dang_pi) / (0.5f * taMath_float::pi)); // 1 for 0, .5 for 45
+
+  float tang = rang + 0.5f * dang; // target angle
+
+  float gtang = gang - tang;
+  if(gtang > taMath_float::pi) gtang -= 2.0f * taMath_float::pi;
+  if(gtang < -taMath_float::pi) gtang += 2.0f * taMath_float::pi;
+
+  // make symmetric around half sphere
+  bool op_side = false;
+  if(gtang > taMath_float::pi * 0.5f) { gtang -= taMath_float::pi; op_side = true; }
+  if(gtang < -taMath_float::pi * 0.5f){ gtang += taMath_float::pi; op_side = true; }
+
+  float eff_mag = 1.0f;
+  if(abs_dang_pi > 0.501f * taMath_float::pi) eff_mag = v2_specs.weak_mag;
+
+  float netwt = eff_mag * taMath_float::gauss_den_nonorm(gtang, v2_specs.ang_sig) *
+    taMath_float::gauss_den_nonorm(nrmdst, v2_specs.dist_sig);
+
+  if(op_side)
+    netwt *= op_mag;
+
+  if(v2_specs.t_on && abs_dang_n_pi == 2 && dst <= 2.9f) {
+    float grang = gang - rang;
+    if(fabsf(grang - (1.5f * taMath_float::pi)) < .1f || 
+       fabsf(grang - (-0.5f * taMath_float::pi)) < .1f) {
+      netwt = 1.0f;
+    }
+  }
+
+  return netwt;
+}
 
 bool V1RegionSpec::InitFilters_SpatInteg() {
   if(si_specs.spat_rf.MaxVal() > 1) {
@@ -4975,12 +5091,34 @@ void V1RegionSpec::V2Filter_BO_thread(int v1c_idx, int thread_no) {
 
   float max_tlval = v2tl_max.FastEl(cc.x, cc.y);
 
+  TwoDCoord lc;
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
     float lsedge = v1ls_out.FastEl(ang, 0, cc.x, cc.y);
     if(max_tlval < v2_specs.tl_bo_thr) {
       for(int dir=0; dir < 2; dir++) {		      // direction
-	v2bo_out.FastEl(ang, dir, cc.x, cc.y) = v2_specs.ambig_gain * lsedge;
-	// just set as ambig
+	if(lsedge < v2_specs.tl_bo_thr) {
+	  v2bo_out.FastEl(ang, dir, cc.x, cc.y) = v2_specs.ambig_gain * lsedge;	// just set as ambig
+	}
+	else {
+	  // compute netinput from ffbo stencils
+	  float netin = 0.0f;
+	  for(int sang = 0; sang < v1s_specs.n_angles; sang++) { // sending angles
+	    int cnt = v2ffbo_stencil_n.FastEl(ang, dir, sang);
+	    float snetin = 0.0f;
+	    for(int i=0; i<cnt; i++) {
+	      lc.x = cc.x + v2ffbo_stencils.FastEl(X, i, ang, dir, sang);
+	      lc.y = cc.y + v2ffbo_stencils.FastEl(Y, i, ang, dir, sang);
+	      if(lc.WrapClip(wrap, v1c_img_geom)) {
+		if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+	      }
+	      float lsv = v1ls_out.FastEl(sang, 0, lc.x, lc.y);
+	      snetin += lsv * v2ffbo_weights.FastEl(i, ang, dir, sang);
+	    }
+	    snetin *= v2ffbo_norms.FastEl(ang, dir, sang);
+	    netin += snetin;
+	  }
+	  v2bo_out.FastEl(ang, dir, cc.x, cc.y) = v2_specs.ambig_gain * lsedge + netin;
+	}
       }
     }
     else {

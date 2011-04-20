@@ -1031,6 +1031,15 @@ public:
   float		tl_bo_thr;	// #DEF_0.1 threshold for using T,L junction output to drive BO
   float		ambig_gain;	// #DEF_0.5 gain multiplier for ambiguous length sum activation, where no T or L signals are available
 
+  float		ffbo_gain;	// #DEF_1 gain on strength of ff bo inputs -- multiplies average netinput values from ffbo stencils
+  int		radius;		// #DEF_2:10 how far to connect in any one direction (in unit group units)
+  bool		t_on;		// #DEF_true turn on the special T junction detector weights -- only for a 90 degree angle perpendicular, behind the border edge
+  bool		opp_on;		// #DEF_true make connections from opponent border unit (same orientation, opposite BO coding) -- can help to resolve long rectalinear elements
+  float		ang_sig;	// #DEF_0.5 sigma for gaussian around target angle -- same for all
+  float		dist_sig;	// #DEF_0.5 sigma for gaussian distance -- for other angles (delta-angle != 0) -- should in general go shorter than for the linear case
+  float		weak_mag;	// #DEF_0.5 weaker magnitude -- applies to acute angle intersections
+  float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not even connected
+
   void 	Initialize();
   void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V2BordOwnSpec);
@@ -1213,6 +1222,10 @@ public:
 
   ///////////////////  V2 Stencils
   int_Matrix	v2tl_stencils; 	// #READ_ONLY #NO_SAVE stencils for V2 T & L-junction detectors
+  int_Matrix	v2ffbo_stencils;  // #READ_ONLY #NO_SAVE stencils for V2 feedforward border ownership inputs from length sum
+  int_Matrix	v2ffbo_stencil_n; // #READ_ONLY #NO_SAVE number of points per stencil
+  float_Matrix	v2ffbo_weights;  // #READ_ONLY #NO_SAVE weights for V2 feedforward border ownership inputs from length sum
+  float_Matrix	v2ffbo_norms;  // #READ_ONLY #NO_SAVE normalization constant for V2 feedforward border ownership inputs from length sum
 
   ///////////////////  Spat Integ Stencils / Geom
   float_Matrix	si_weights;	// #READ_ONLY #NO_SAVE spatial integration weights for weighting across rf
@@ -1322,6 +1335,9 @@ protected:
   virtual bool	InitFilters_V2();
   virtual bool	InitFilters_SpatInteg();
 
+  virtual float V2FFBoWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir, int sdir);
+  // compute V2 Feed-forward border-ownership weights for stencils
+
   override bool	FilterImage_impl(bool motion_only = false);
   override void IncrTime();
 
@@ -1368,6 +1384,8 @@ protected:
   // length-sum
   virtual void 	V1ComplexFilter_EndStop_thread(int v1c_idx, int thread_no);
   // end stop
+
+
 
   virtual bool	V2Filter();
   // do V2 filters -- dispatch threads

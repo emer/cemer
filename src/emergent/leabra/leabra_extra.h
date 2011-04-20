@@ -2262,6 +2262,7 @@ public:
   int		radius;		// #DEF_2:10 how far to connect in any one direction (in unit group units)
   bool		wrap;		// #DEF_true wrap around layer coordinates (else clip at ends)
   bool		t_on;		// #DEF_true turn on the special T junction detector weights -- only for a 90 degree angle perpendicular, behind the border edge
+  bool		opp_on;		// #DEF_true make connections from opponent border unit (same orientation, opposite BO coding) -- can help to resolve long rectalinear elements
   float		ang_sig;	// #DEF_0.5 sigma for gaussian around target angle -- same for all
   float		dist_sig_line;	// #DEF_0.8 sigma for gaussian distance -- for linear continuation case (delta-angle = 0) -- should in general go longer than for the off-angle cases
   float		dist_sig_oth;	// #DEF_0.5 sigma for gaussian distance -- for other angles (delta-angle != 0) -- should in general go shorter than for the linear case
