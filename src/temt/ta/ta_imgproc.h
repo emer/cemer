@@ -1031,7 +1031,8 @@ public:
   float		tl_bo_thr;	// #DEF_0.1 threshold for using T,L junction output to drive BO
   float		ambig_gain;	// #DEF_0.5 gain multiplier for ambiguous length sum activation, where no T or L signals are available
 
-  float		ffbo_gain;	// #DEF_1 gain on strength of ff bo inputs -- multiplies average netinput values from ffbo stencils
+  float		ffbo_gain;	// #DEF_1:5 gain on strength of ff bo inputs -- multiplies average netinput values from ffbo stencils
+  float		ffbo_max;	// #DEF_0.2 maximum net effect of ffbo on inputs -- clip above this level
   int		radius;		// #DEF_2:10 how far to connect in any one direction (in unit group units)
   bool		t_on;		// #DEF_true turn on the special T junction detector weights -- only for a 90 degree angle perpendicular, behind the border edge
   bool		opp_on;		// #DEF_true make connections from opponent border unit (same orientation, opposite BO coding) -- can help to resolve long rectalinear elements

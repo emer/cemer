@@ -3229,6 +3229,7 @@ void V2BordOwnSpec::Initialize() {
   ambig_gain = 0.5f;
 
   ffbo_gain = 1.0f;
+  ffbo_max = 0.2f;
   radius = 6;
   t_on = true;
   opp_on = true;
@@ -5117,6 +5118,7 @@ void V1RegionSpec::V2Filter_BO_thread(int v1c_idx, int thread_no) {
 	    snetin *= v2ffbo_norms.FastEl(ang, dir, sang);
 	    netin += snetin;
 	  }
+	  if(netin > v2_specs.ffbo_max) netin = v2_specs.ffbo_max;
 	  v2bo_out.FastEl(ang, dir, cc.x, cc.y) = v2_specs.ambig_gain * lsedge + netin;
 	}
       }
