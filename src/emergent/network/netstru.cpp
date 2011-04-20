@@ -3982,6 +3982,7 @@ void Layer::UpdateAfterEdit_impl() {
       else
 	gp_unit_names_4d = false;
     }
+    RecomputeGeometry();
   }
   else {			// not loading
     RecomputeGeometry();
