@@ -4215,12 +4215,32 @@ void V2BoLateralPrjnSpec::UpdateAfterEdit_impl() {
 
 // static int dbg_hit_cnt = 0;
 
-float V2BoLateralPrjnSpec::ConWt(Projection* prjn, TwoDCoord& ruc, TwoDCoord& suc,
-		 int rang_dx, int sang_dx, int rdir, int sdir) {
-  float n_angles = 4.0f;
-  TwoDCoord gp_geo = prjn->from->gp_geom;
-  TwoDCoord gp_geo_half = gp_geo / 2;
+void V2BoLateralPrjnSpec::CreateStencils() {
+  int n_angles = 4;
+  int max_cnt = (2 * radius + 1);
+  v2ffbo_weights.SetGeom(6, max_cnt, max_cnt, 2, n_angles, 2, n_angles);
+  TwoDCoord suc;			// send coords
+  for(int rang_dx = 0; rang_dx < n_angles; rang_dx++) {
+    for(int rdir = 0; rdir < 2; rdir++) {
+      for(int sang_dx = 0; sang_dx < n_angles; sang_dx++) {
+	int cnt = 0;
+	for(suc.y = -radius; suc.y <= radius; suc.y++) {
+	  int ysuc_dx = suc.y + radius;
+	  for(suc.x = -radius; suc.x <= radius; suc.x++) {
+	    int xsuc_dx = suc.x + radius;
+	    for(int sdir = 0; sdir < 2; sdir++) { // integrate over sending directions
+	      float wt = ConWt(suc, rang_dx, sang_dx, rdir, sdir);
+	      v2ffbo_weights.FastEl(xsuc_dx, ysuc_dx, sdir, sang_dx, rdir, rang_dx) = wt;
+	    }
+	  }
+	}
+      }
+    }
+  }
+}
 
+float V2BoLateralPrjnSpec::ConWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir, int sdir) {
+  float n_angles = 4.0f;
   // integer angles -- useful for precise conditionals..
   int rang_n = rang_dx + rdir * 4;
   int sang_n = sang_dx + sdir * 4;
@@ -4238,22 +4258,7 @@ float V2BoLateralPrjnSpec::ConWt(Projection* prjn, TwoDCoord& ruc, TwoDCoord& su
   if((test_ang >= 0) && (dang_n != test_ang))
     return 0.0f; // don't continue
 
-  TwoDCoord del = suc - ruc; // don't use wrap!
-  if(wrap) {		       // dist may be closer in wrapped case..
-    if(ruc.x < gp_geo_half.x) {
-      if(fabsf((suc.x - gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x -= gp_geo.x; del.x = suc.x - ruc.x; }
-    }
-    else {
-      if(fabsf((suc.x + gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x += gp_geo.x; del.x = suc.x - ruc.x; }
-    }      
-    if(ruc.y < gp_geo_half.y) {
-      if(fabsf((suc.y - gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y -= gp_geo.y; del.y = suc.y - ruc.y; }
-    }
-    else {
-      if(fabsf((suc.y + gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y += gp_geo.y; del.y = suc.y - ruc.y; }
-    }
-  }
-
+  TwoDCoord del = suc;
   float dst = del.Mag();
   if(dst > (float)radius) return 0.0f;
   if(dst == 0.0f) return 0.0f;	// no self con
@@ -4344,6 +4349,8 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
     prjn->con_spec->UpdateAfterEdit();
   }
 
+  CreateStencils();
+
   Layer* lay = prjn->from;
   TwoDCoord gp_geo = lay->gp_geom;
   TwoDCoord un_geo = lay->un_geom;
@@ -4376,7 +4383,7 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
 	      for(sun.x = 0; sun.x < un_geo.x; sun.x++) {
 		for(run.y = 0; run.y < un_geo.y; run.y++) {
 		  for(sun.y = 0; sun.y < un_geo.y; sun.y++) {
-		    float wt = ConWt(prjn, ruc, suc, run.x, sun.x, run.y, sun.y);
+		    float wt = v2ffbo_weights.FastEl(del.x +radius, del.y+radius, sun.y, sun.x, run.y, run.x);
 		    if(wt < con_thr) continue;
 
 		    int rui = run.y * un_geo.x + run.x;
@@ -4416,6 +4423,8 @@ void V2BoLateralPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
   TwoDCoord un_geo = lay->un_geom;
   float n_angles = (float)un_geo.x;
 
+  TwoDCoord gp_geo_half = gp_geo / 2;
+
   int rgpidx;
   int rui;
   lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
@@ -4431,7 +4440,23 @@ void V2BoLateralPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
     TwoDCoord sun;
     sun.SetFmIndex(sui, un_geo.x);
 
-    float wt = ConWt(prjn, ruc, suc, run.x, sun.x, run.y, sun.y);
+    TwoDCoord del = suc - ruc;
+    if(wrap) {		       // dist may be closer in wrapped case..
+      if(ruc.x < gp_geo_half.x) {
+	if(fabsf((suc.x - gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x -= gp_geo.x; del.x = suc.x - ruc.x; }
+      }
+      else {
+	if(fabsf((suc.x + gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x += gp_geo.x; del.x = suc.x - ruc.x; }
+      }      
+      if(ruc.y < gp_geo_half.y) {
+	if(fabsf((suc.y - gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y -= gp_geo.y; del.y = suc.y - ruc.y; }
+      }
+      else {
+	if(fabsf((suc.y + gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y += gp_geo.y; del.y = suc.y - ruc.y; }
+      }
+    }
+
+    float wt = v2ffbo_weights.FastEl(del.x + radius, del.y + radius, sun.y, sun.x, run.y, run.x);
     cg->Cn(i)->wt = wt;
   }
 }

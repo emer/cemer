@@ -2271,9 +2271,13 @@ public:
   float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not even connected
   int		test_ang;	// #DEF_-1 #MIN_-1 #MAX_7 set to 0..7, computes only that delta-angle's worth of connectivity (0 = same angle between send and recv, 1 = 45 delta, 2 = 90 delta, 3 = 135 delta) -- useful for visually tuning the receptive field parameters separately
 
-  virtual float	ConWt(Projection* prjn, TwoDCoord& ruc, TwoDCoord& suc,
-		      int rang_dx, int sang_dx, int rdir, int sdir);
-  // connection weight in terms of recv unit group coord (ruc), send unit group coord (suc), recv angle index (0-3 in 45 deg incr), and send angle index (0-3), and r/s bo direction (0-1)
+  ///////// use stencils to speed processing
+  float_Matrix	v2ffbo_weights;  // #READ_ONLY #NO_SAVE weights for V2 feedforward border ownership inputs from length sum
+
+  virtual float	ConWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir, int sdir);
+  // connection weight in terms of send unit group coord (suc), recv angle index (0-3 in 45 deg incr), and send angle index (0-3), and r/s bo direction (0-1) -- used for creating stencil
+  virtual void	CreateStencils();
+  // create stencil -- always done as first step in connection function
 
   override void	Connect_impl(Projection* prjn);
   override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
