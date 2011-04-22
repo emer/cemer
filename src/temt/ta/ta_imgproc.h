@@ -812,7 +812,7 @@ INHERITED(taOBase)
 public:
   bool		on;	// is kwta active for this stage of processing?
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
-  float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1;0.4 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
+  float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1;0.4;0.6 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
   float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.5 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units (uses KWTA_AVG_BASED -- 0.5 is gelin default)
   float		gain;	 // #CONDSHOW_ON_on #DEF_40 gain on the NXX1 activation function (based on g_e - g_e_thr value -- i.e. the gelin version of the function)
   float		nvar;	 // #CONDSHOW_ON_on #DEF_0.01 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
@@ -929,7 +929,7 @@ INHERITED(taOBase)
 public:
   bool		on;		// #DEF_true whether to use neighborhood inhibition
   int		inhib_d; 	// #CONDSHOW_ON_on #DEF_1 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning
-  float		inhib_g;	// #CONDSHOW_ON_on #DEF_0.8 gain factor for feature-specific inhibition from neighbors -- this proportion of the neighboring feature's threshold-inhibition value (used in computing kwta) is spread among neighbors according to inhib_d distance
+  float		inhib_g;	// #CONDSHOW_ON_on #DEF_0.8:1 gain factor for feature-specific inhibition from neighbors -- this proportion of the neighboring feature's threshold-inhibition value (used in computing kwta) is spread among neighbors according to inhib_d distance
 
   int		tot_ni_len;	// #READ_ONLY total length of neighborhood inhibition stencils = 2 * neigh_inhib_d + 1
 
@@ -1172,6 +1172,7 @@ public:
   V1ComplexSpec v1c_specs;	// specs for V1 complex filters -- comes after V1 binocular processing 
   RenormMode	v1c_renorm;	// #DEF_LIN_RENORM how to renormalize the output of v1c filters, prior to kwta -- currently only applies to length sum
   V1KwtaSpec	v1ls_kwta;	// k-winner-take-all inhibitory dynamics for length sum level
+  V1sNeighInhib	v1ls_neigh_inhib; // specs for V1 length-sum neighborhood-feature inhibition -- inhibition spreads in directions orthogonal to the orientation of the features, to prevent ghosting effects around edges
   DataSave	v1c_save;	// how to save the V1 complex outputs for the current time step in the data table
 
   XYNGeom	v1sg_img_geom; 	// #READ_ONLY size of v1 square grouping output image geometry -- input is v1s_img_geom, with either 2x2 or 4x4 spacing of square grouping operations reducing size by that amount
@@ -1219,6 +1220,7 @@ public:
   ///////////////////  V1C Geom/Stencils ////////////////////////
   int_Matrix	v1sg_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square grouping -- represents center points of the lines for each angle [x,y,len][5][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
   int_Matrix	v1ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
+  int_Matrix	v1ls_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
   int_Matrix	v1es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][pts=3(only stop)][len_sum,stop=2][dirs=2][angles] -- new version
 
   ///////////////////  V2 Stencils
@@ -1269,6 +1271,7 @@ public:
   float_Matrix	v1ls_out_raw;	 // #READ_ONLY #NO_SAVE raw (pre kwta) length sum output -- operates on v1pi or v1sg inputs -- [feat.x][1][v1c_img.x][v1c_img.y]
   float_Matrix	v1ls_out;	 // #READ_ONLY #NO_SAVE length sum output after kwta [feat.x][1][v1c_img.x][v1c_img.y]
   float_Matrix	v1ls_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
+  float_Matrix	v1ls_ithr;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory threshold values -- intermediate vals used in computing kwta
   float_Matrix	v1es_out;	 // #READ_ONLY #NO_SAVE end stopping output -- operates on length sum and raw v1s/v1pi input [feat.x][2][v1c_img.x][v1c_img.y]
   float_Matrix	v1es_gci;	 // #READ_ONLY #NO_SAVE v1 complex cell inhibitory conductances, for computing kwta
 
@@ -1383,10 +1386,10 @@ protected:
   // square-group4 if selected
   virtual void 	V1ComplexFilter_LenSum_thread(int v1c_idx, int thread_no);
   // length-sum
+  virtual void 	V1ComplexFilter_LenSum_neighinhib_thread(int v1c_idx, int thread_no);
+  // do neighborhood inhibition on ls filters
   virtual void 	V1ComplexFilter_EndStop_thread(int v1c_idx, int thread_no);
   // end stop
-
-
 
   virtual bool	V2Filter();
   // do V2 filters -- dispatch threads

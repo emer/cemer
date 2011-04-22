@@ -3291,7 +3291,9 @@ void V1RegionSpec::Initialize() {
 
   v1ls_kwta.on = true;
   v1ls_kwta.gp_k = 1;
-  v1ls_kwta.gp_g = 0.4f;
+  v1ls_kwta.gp_g = 0.6f;
+
+  v1ls_neigh_inhib.inhib_g = 1.0f;
 
   si_renorm = LIN_RENORM;
   si_kwta.on = true;
@@ -3319,6 +3321,7 @@ void V1RegionSpec::UpdateAfterEdit_impl() {
   v1b_specs.UpdateAfterEdit_NoGui();
   v1c_specs.UpdateAfterEdit_NoGui();
   v1ls_kwta.UpdateAfterEdit_NoGui();
+  v1ls_neigh_inhib.UpdateAfterEdit_NoGui();
   v2_specs.UpdateAfterEdit_NoGui();
   // UpdateGeom is called in parent..
 }
@@ -3794,6 +3797,20 @@ bool V1RegionSpec::InitFilters_V1Complex() {
 	  taMath_float::rint(-v1s_ang_slopes.FastEl(Y, LINE, ang)) +
 	  taMath_float::rint((float)ortho * v1s_ang_slopes.FastEl(Y, ORTHO, ang));
       }
+    }
+  }
+
+  // config: x,y coords by tot_ni_len, by angles
+  // todo: also include close-in down/up of diagonal!
+  v1ls_ni_stencils.SetGeom(3, 2, v1ls_neigh_inhib.tot_ni_len, v1s_specs.n_angles);
+
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+    for(int lpt=-v1ls_neigh_inhib.inhib_d; lpt <= v1ls_neigh_inhib.inhib_d; lpt++) {
+      int lpdx = lpt + v1ls_neigh_inhib.inhib_d;
+      v1ls_ni_stencils.FastEl(X, lpdx, ang) = 
+	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(X, ORTHO, ang)); // ortho
+      v1ls_ni_stencils.FastEl(Y, lpdx, ang) = 
+	taMath_float::rint((float)lpt * v1s_ang_slopes.FastEl(Y, ORTHO, ang));
     }
   }
 
@@ -4892,7 +4909,15 @@ bool V1RegionSpec::V1ComplexFilter() {
     }
 
     if(v1ls_kwta.on) {
-      v1ls_kwta.Compute_Kwta(v1ls_out_raw, v1ls_out, v1ls_gci);
+//       v1ls_kwta.Compute_Kwta(v1ls_out_raw, v1ls_out, v1ls_gci);
+      v1ls_kwta.Compute_Inhib_IThr(v1ls_out_raw, v1ls_gci, v1ls_ithr);
+      if(v1ls_neigh_inhib.on) {
+	ThreadImgProcCall ip_call_ni((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1ComplexFilter_LenSum_neighinhib_thread);
+	threads.Run(&ip_call_ni, n_run);
+      }
+      else {
+	v1ls_kwta.Compute_Act(v1ls_out_raw, v1ls_out, v1ls_gci);
+      }
     }
 
     if(v1c_filters & END_STOP) {
@@ -4949,6 +4974,38 @@ void V1RegionSpec::V1ComplexFilter_LenSum_thread(int v1c_idx, int thread_no) {
     }
     line_sum *= v1c_specs.len_sum_norm;
     cur_out->FastEl(ang, 0, cc.x, cc.y) = line_sum;
+  }
+}
+
+void V1RegionSpec::V1ComplexFilter_LenSum_neighinhib_thread(int v1c_idx, int thread_no) {
+  TwoDCoord cc;			// complex coords
+  cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
+
+  float gi = v1ls_gci.FastEl(cc.x, cc.y);
+
+  TwoDCoord oc;		// other coord
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+    float raw = cur_out->FastEl(ang, 0, cc.x, cc.y);
+    float feat_inhib_max = 0.0f;
+    for(int lpdx=0; lpdx < v1ls_neigh_inhib.tot_ni_len; lpdx++) { // go out to neighs
+      if(lpdx == v1ls_neigh_inhib.inhib_d) continue;		   // skip self
+      int xp = v1ls_ni_stencils.FastEl(X,lpdx,ang);
+      int yp = v1ls_ni_stencils.FastEl(Y,lpdx,ang);
+      oc.x = cc.x + xp;
+      oc.y = cc.y + yp;
+      if(oc.WrapClip(wrap, v1c_img_geom)) {
+	if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+      }
+      float oth_ithr = v1ls_ithr.FastEl(ang, 0, oc.x, oc.y); // other guy
+      // weights already have gain factor built in
+      float ogi = v1ls_neigh_inhib.inhib_g * oth_ithr; // note: directly on ithr!
+      feat_inhib_max = MAX(feat_inhib_max, ogi);
+    }
+
+    float ge = v1ls_kwta.g_bar_e * raw;
+    float gi_eff = MAX(gi, feat_inhib_max);
+    float act = v1ls_kwta.Compute_ActFmIn(ge, gi_eff);
+    v1ls_out.FastEl(ang, 0, cc.x,  cc.y) = act; 
   }
 }
 

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.1.6.0 rev4847
+// ta_Dump File v3.0 -- code v5.1.6.0 rev4851
 LeabraProject .projects["Project_0"] { 
   taBase_Group @.templates = [0] {
   };
@@ -2194,7 +2194,7 @@ LeabraProject .projects["Project_0"] {
     };
     EditMbrItem @[6] {
      label="V1_high v2 specs";
-     desc=" specs for V2 filtering<br>  l t inhib thr: [Default: 0.2]  threshold on max L-junction activity within a group to then inhibit T junctions within the same group -- don't want weak L's just weakening the T's<br>  tl bo thr: [Default: 0.1]  threshold for using T,L junction output to drive BO<br>  ambig gain: [Default: 0.5]  gain multiplier for ambiguous length sum activation, where no T or L signals are available<br>  ffbo gain: [Default: 1]  gain on strength of ff bo inputs -- multiplies average netinput values from ffbo stencils<br>  radius: [Default: 2:10]  how far to connect in any one direction (in unit group units)<br>  t on: [Default: true]  turn on the special T junction detector weights -- only for a 90 degree angle perpendicular, behind the border edge<br>  opp on: [Default: true]  make connections from opponent border unit (same orientation, opposite BO coding) -- can help to resolve long rectalinear elements<br>  ang sig: [Default: 0.5]  sigma for gaussian around target angle -- same for all<br>  dist sig: [Default: 0.5]  sigma for gaussian distance -- for other angles (delta-angle != 0) -- should in general go shorter than for the linear case<br>  weak mag: [Default: 0.5]  weaker magnitude -- applies to acute angle intersections<br>  con thr: [Default: 0.2]  threshold for making a connection -- weight values below this are not even connected";
+     desc=" specs for V2 filtering<br>  l t inhib thr: [Default: 0.2]  threshold on max L-junction activity within a group to then inhibit T junctions within the same group -- don't want weak L's just weakening the T's<br>  tl bo thr: [Default: 0.1]  threshold for using T,L junction output to drive BO<br>  ambig gain: [Default: 0.5]  gain multiplier for ambiguous length sum activation, where no T or L signals are available<br>  ffbo gain: [Default: 1:5]  gain on strength of ff bo inputs -- multiplies average netinput values from ffbo stencils<br>  ffbo max: [Default: 0.2]  maximum net effect of ffbo on inputs -- clip above this level<br>  radius: [Default: 2:10]  how far to connect in any one direction (in unit group units)<br>  t on: [Default: true]  turn on the special T junction detector weights -- only for a 90 degree angle perpendicular, behind the border edge<br>  opp on: [Default: true]  make connections from opponent border unit (same orientation, opposite BO coding) -- can help to resolve long rectalinear elements<br>  ang sig: [Default: 0.5]  sigma for gaussian around target angle -- same for all<br>  dist sig: [Default: 0.5]  sigma for gaussian distance -- for other angles (delta-angle != 0) -- should in general go shorter than for the linear case<br>  weak mag: [Default: 0.5]  weaker magnitude -- applies to acute angle intersections<br>  con thr: [Default: 0.2]  threshold for making a connection -- weight values below this are not even connected";
      cust_desc=0;
      base=.projects["Project_0"].programs["VisTest_2D"].objs["V1RetinaProc_0"].regions["V1_high"]$$;
      mbr=V1RegionSpec::v2_specs;
@@ -9489,12 +9489,13 @@ LeabraProject .projects["Project_0"] {
        v1c_specs {sg4=1: spc4=1: len_sum_len=1: es_thr=0.2: sg_rf=4: sg_half=2: sg_spacing=4: sg_border=0: len_sum_width=3: len_sum_norm=0.3333333: };
        v1c_renorm=LIN_RENORM;
        v1ls_kwta {on=1: gp_k=1: gp_g=0.6: kwta_pt=0.5: gain=40: nvar=0.01: g_bar_l=0.1: };
+       v1ls_neigh_inhib {on=1: inhib_d=1: inhib_g=0.8: tot_ni_len=3: };
        v1c_save=SAVE_DATA|SAVE_DEBUG;
        v1sg_img_geom {x=36: y=36: n_not_xy=0: n=1296: };
        v1c_img_geom {x=36: y=36: n_not_xy=0: n=1296: };
        v1c_feat_geom {x=4: y=3: n_not_xy=0: n=12: };
        v2_filters=V2_TL|V2_BO;
-       v2_specs {l_t_inhib_thr=0.2: tl_bo_thr=0.1: ambig_gain=0.5: ffbo_gain=2: radius=6: t_on=1: opp_on=1: ang_sig=0.5: dist_sig=0.5: weak_mag=0.5: con_thr=0.2: };
+       v2_specs {l_t_inhib_thr=0.2: tl_bo_thr=0.1: ambig_gain=0.5: ffbo_gain=2: ffbo_max=0.2: radius=6: t_on=1: opp_on=1: ang_sig=0.5: dist_sig=0.5: weak_mag=0.5: con_thr=0.2: };
        v2_save=SAVE_DATA|SEP_MATRIX|SAVE_DEBUG;
        spat_integ=SI_V1S_SG|SI_V1C;
        si_specs {spat_rf={x=6: y=6: }: gauss_sig=0.8: sum_rf=0: spat_half={x=3: y=3: }: spat_spacing={x=3: y=3: }: spat_border={x=0: y=0: }: };
@@ -18014,12 +18015,13 @@ LeabraProject .projects["Project_0"] {
        v1c_specs {sg4=1: spc4=1: len_sum_len=1: es_thr=0.2: sg_rf=4: sg_half=2: sg_spacing=4: sg_border=0: len_sum_width=3: len_sum_norm=0.3333333: };
        v1c_renorm=LIN_RENORM;
        v1ls_kwta {on=1: gp_k=2: gp_g=0.4: kwta_pt=0.5: gain=40: nvar=0.01: g_bar_l=0.1: };
+       v1ls_neigh_inhib {on=1: inhib_d=1: inhib_g=0.8: tot_ni_len=3: };
        v1c_save=SAVE_DATA|SEP_MATRIX|SAVE_DEBUG;
        v1sg_img_geom {x=36: y=36: n_not_xy=0: n=1296: };
        v1c_img_geom {x=36: y=36: n_not_xy=0: n=1296: };
        v1c_feat_geom {x=4: y=3: n_not_xy=0: n=12: };
        v2_filters=V2_TL;
-       v2_specs {l_t_inhib_thr=0.2: tl_bo_thr=1.144019e+24: ambig_gain=1.84838e+31: ffbo_gain=1: radius=6: t_on=1: opp_on=1: ang_sig=0.5: dist_sig=0.5: weak_mag=0.5: con_thr=0.2: };
+       v2_specs {l_t_inhib_thr=0.2: tl_bo_thr=1.144019e+24: ambig_gain=1.84838e+31: ffbo_gain=1: ffbo_max=0.2: radius=6: t_on=1: opp_on=1: ang_sig=0.5: dist_sig=0.5: weak_mag=0.5: con_thr=0.2: };
        v2_save=SAVE_DATA|SEP_MATRIX;
        spat_integ=0;
        si_specs {spat_rf={x=6: y=6: }: gauss_sig=0.8: sum_rf=0: spat_half={x=3: y=3: }: spat_spacing={x=3: y=3: }: spat_border={x=0: y=0: }: };
@@ -22584,7 +22586,7 @@ LeabraProject .projects["Project_0"] {
      ProgVar @["cycle"] {
       name="cycle";
       var_type=T_Int;
-      int_val=19;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
