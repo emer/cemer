@@ -4384,7 +4384,7 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
 		for(run.y = 0; run.y < un_geo.y; run.y++) {
 		  for(sun.y = 0; sun.y < un_geo.y; sun.y++) {
 		    float wt = v2ffbo_weights.FastEl(del.x +radius, del.y+radius, sun.y, sun.x, run.y, run.x);
-		    if(wt < con_thr) continue;
+		    if(wt <= con_thr) continue;
 
 		    int rui = run.y * un_geo.x + run.x;
 		    int sui = sun.y * un_geo.x + sun.x;
