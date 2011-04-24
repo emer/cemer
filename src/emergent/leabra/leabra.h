@@ -1818,6 +1818,7 @@ class LEABRA_API CtLayerInhibMod : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra layer-level sinusoidal and final inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
 INHERITED(SpecMemberBase)
 public:
+  int		sravg_delay;	// #DEF_0 [0 = use network value] -- delay in cycles to start computing medium time-scale average (not relevant for XCAL_C), specific to this layer.  adding a delay for layers that are higher up in the network, while setting the network start earlier, can result in better overall learning throughout the network
   bool		use_sin;	// if on, actually use layer-level sinusoidal values (burst_i, trough_i) -- else use network level
   float		burst_i;	// #CONDSHOW_ON_use_sin [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
   float		trough_i;	// #CONDSHOW_ON_use_sin [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number

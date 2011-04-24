@@ -3293,7 +3293,8 @@ void V1RegionSpec::Initialize() {
   v1ls_kwta.gp_k = 1;
   v1ls_kwta.gp_g = 0.6f;
 
-  v1ls_neigh_inhib.inhib_g = 1.0f;
+  v1ls_neigh_inhib.on = false;
+  v1ls_neigh_inhib.inhib_g = 0.8f;
 
   si_renorm = LIN_RENORM;
   si_kwta.on = true;

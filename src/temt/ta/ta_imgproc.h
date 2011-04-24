@@ -927,7 +927,7 @@ class TA_API V1sNeighInhib : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image neighborhood inhibition for V1 simple layer -- inhibition spreads along orthogonal orientations to line tuning, to eliminate redundant reps of the same underlying edge
 INHERITED(taOBase)
 public:
-  bool		on;		// #DEF_true whether to use neighborhood inhibition
+  bool		on;		// whether to use neighborhood inhibition
   int		inhib_d; 	// #CONDSHOW_ON_on #DEF_1 distance of neighborhood for inhibition to apply to same feature in neighboring locations spreading out on either side along the orthogonal direction relative to the orientation tuning
   float		inhib_g;	// #CONDSHOW_ON_on #DEF_0.8:1 gain factor for feature-specific inhibition from neighbors -- this proportion of the neighboring feature's threshold-inhibition value (used in computing kwta) is spread among neighbors according to inhib_d distance
 

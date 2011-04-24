@@ -2009,14 +2009,21 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
     // note: updating unit-level ravg_l, ravg_ml, l_thr variables here..
   }
   else {
-      // use continuous updating so these are always current -- no need for post-average step
-    if(net->sravg_vals.m_sum == 0.0f) {
+    // use continuous updating so these are always current -- no need for post-average step
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    float eff_m_sum = net->sravg_vals.m_sum;
+    if(ls->ct_inhib_mod.sravg_delay > 0) {
+      eff_m_sum = net->sravg_vals.m_sum - (float)ls->ct_inhib_mod.sravg_delay;
+      if(eff_m_sum < 0.0f)
+	return;			// not ready yet
+    }
+    if(eff_m_sum == 0.0f) {
       u->avg_m = ru_act;
     }
     else {
-      u->avg_m = (ru_act + u->avg_m * net->sravg_vals.m_sum) / (net->sravg_vals.m_sum + 1.0f);
+      u->avg_m = (ru_act + u->avg_m * eff_m_sum) / (eff_m_sum + 1.0f);
     }
-    if(do_s) {
+    if(do_s) {			// not subject to delay!
       if(net->sravg_vals.s_sum == 0.0f) {
 	u->avg_s = ru_act;
       }
@@ -2745,6 +2752,7 @@ void DecaySpec::Initialize() {
 }
 
 void CtLayerInhibMod::Initialize() {
+  sravg_delay = 0;
   use_sin = false;
   burst_i = 0.02f;
   trough_i = 0.02f;
