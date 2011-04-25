@@ -2290,6 +2290,70 @@ private:
   void	Destroy()	{ };
 };
 
+class EMERGENT_API FgBoGroupingPrjnEl : public taNBase {
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a figure-ground border-ownership grouping projection spec -- contains parameters for a specific sized item
+INHERITED(taNBase)
+public:
+  int		con_radius;	// maximum distance for how far to connect in any one direction (in unit group units) -- this then determines most other things
+  float		wt_radius;	// distance at which the weight value is maximum -- the target weidth of the grouping detector -- specified as a normalized proportion of the con_radius
+  float		dist_sig;	// #DEF_0.2 sigma for gaussian distance compared to wt_radius target -- in normalized units as a function of wt_radius
+  float		ang_sig;	// #DEF_2 sigma for gaussian around target angle -- how widely to connect units around the target angle given by the perpendicular to the radius line
+  float		max_wt;		// magnitude multiplier for all weights -- determines the maximum weight value
+  float		min_wt;		// #DEF_0.1 minimum weight value -- weights cannot go below this value -- this is applied after con_thr -- can be useful to retain some weight values to enable subsequent learning
+  float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not connected -- set to a low value to allow learning
+
+  ///////// use stencils to speed processing
+  float_Matrix	fgbo_weights;  // #READ_ONLY #NO_SAVE weights for FgBo projection -- serves as a stencil for the connection
+
+  virtual float	ConWt(TwoDCoord& suc, int sang_dx, int sdir);
+  // connection weight in terms of send unit group coord (suc), sending angle index (0-3 in 45 deg incr), and bo direction (0-1) -- used for creating stencil
+
+  virtual void	CreateStencil();
+  // create stencil -- always done as first step in connection function
+
+  TA_SIMPLE_BASEFUNS(FgBoGroupingPrjnEl);
+protected:
+  override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class EMERGENT_API FgBoGroupingPrjnEl_List : public taList<FgBoGroupingPrjnEl> {
+  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of FgBoGroupingPrjnEl objects
+INHERITED(taList<FgBoGroupingPrjnEl>)
+public:
+  TA_BASEFUNS_LITE_NOCOPY(FgBoGroupingPrjnEl_List);
+private:
+  void	Initialize() 		{ };
+  void 	Destroy()		{ };
+};
+
+class LEABRA_API FgBoGroupingPrjnSpec : public ProjectionSpec {
+  // figure-ground border-ownership grouping projection spec -- 
+INHERITED(ProjectionSpec)
+public:
+  bool		wrap;		// #DEF_true wrap around layer coordinates (else clip at ends)
+  bool		reciprocal; 	// set this for connections going the opposite direction, from grouping back to V2 Bo units
+  FgBoGroupingPrjnEl_List	group_specs; // specifications for each grouping size
+
+  virtual void	CreateStencils();
+  // create stencil -- always done as first step in connection function
+
+  override void	Connect_impl(Projection* prjn);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  virtual FgBoGroupingPrjnEl* NewGroupSpec();
+  // #BUTTON create a new group_specs item for specifying one grouping size
+
+  TA_SIMPLE_BASEFUNS(FgBoGroupingPrjnSpec);
+protected:
+  override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 class LEABRA_API V1EndStopPrjnSpec : public ProjectionSpec {
   // end-stop detectors within V1 layer -- connectivity and weights that enable units to detect when one orientation terminates into another -- recv layer must have unit groups with one row of n_angles units, while sender has multiple rows of n_angles units (recv integrates over rows)
 INHERITED(ProjectionSpec)
