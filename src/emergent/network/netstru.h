@@ -2365,59 +2365,6 @@ public:
 //NOTE: if any of the Build or Connect are to be extended, the code must be rewritten by
 //  calling an inner extensible virtual _impl
 
-  virtual Layer* NewLayer();
-  // #BUTTON create a new layer in the network, using default layer type
-
-  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
-  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this network
-  virtual void	RemoveMonitors();
-  // #CAT_ObjectMgmt Remove monitoring of all objects in all processes associated with parent project
-  virtual void	UpdateMonitors();
-  // #CAT_ObjectMgmt Update monitoring of all objects in all processes associated with parent project
-  virtual void	NetControlPanel(SelectEdit* editor, const String& extra_label = "",
-				const String& sub_gp_nm = "");
-  // #MENU #MENU_ON_SelectEdit #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_NewEditor #CAT_Display add the key network counters and statistics to a select edit dialog (control panel) (if editor is NULL, a new one is created in .edits).  The extra label is prepended to each member name, and if sub_group, then all items are placed in a subgroup with the network's name.  NOTE: be sure to click update_after on NetCounterInit and Incr at appropriate program level(s) to trigger updates of select edit display (typically in Train to update epoch -- auto update of all after Step so only needed for continuous update during runnign)
-
-  virtual bool	SnapVar();
-  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of currently selected variable in netview -- copies this value to the snap unit variable
-  virtual bool	SnapAnd();
-  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic do an AND-like MIN computation of the current snap unit variable and the current value of the variable shown in netview -- shows the intersection between current state and previously snap'd state
-  virtual bool	SnapOr();
-  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic do an OR-like MAX computation of the current snap unit variable and the current value of the variable shown in netview -- shows the union between current state and previously snap'd state
-  virtual bool	SnapThresh(float thresh_val = 0.5f);
-  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of currently selected variable in netview -- copies this value to the snap unit variable, but also applies a thresholding such that values above the thresh_val are set to 1 and values below the thresh_val are set to 0
-  virtual bool	Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
-  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of given variable (if empty, currently viewed variable in netview is used): assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.  
-
-#ifdef TA_GUI
-  virtual NetView* NewView(T3DataViewFrame* fr = NULL);
-  // #NULL_OK #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
-  virtual NetView* FindMakeView(T3DataViewFrame* fr = NULL);
-  // #CAT_Display find existing or make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
-  virtual NetView* FindView();
-  // #CAT_Display find (first) existing viewer of this network
-  virtual String GetViewVar();
-  // #CAT_Display get the currently viewed variable name from netview
-  virtual bool 	SetViewVar(const String& view_var);
-  // #CAT_Display set the variable name to view in the netview
-  virtual Unit* GetViewSrcU();
-  // #CAT_Display get the currently picked source unit (for viewing weights) from netview
-  virtual bool 	SetViewSrcU(Unit* src_u);
-  // #CAT_Display set the picked source unit (for viewing weights) in netview
-#endif
-
-  virtual void	PlaceNetText(NetTextLoc net_text_loc, float scale = 1.0f);
-  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display locate the network text data display (counters, statistics -- typically shown at bottom of network) in a new standard location (it can also be dragged anywhere in the net view, turn on lay_mv button and click on red arrow) -- can also change the scaling
-  virtual NetViewObj* NewViewText(const String& txt);
-  // #MENU_BUTTON #MENU_ON_NetView #MENU_SEP_BEFORE #CAT_Display add a new text label to the network view objects -- this is an arbitrary fixed text label that can be placed anywhere in the display for annotating the model or other view elements
-  virtual NetViewObj* NewGlassBrain();
-  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
-  virtual void	NetTextUserData();
-  // #IGNORE auto-called in InitLinks -- enable the filtering of what information is shown in the network text data display (typically shown at bottom of network, though see PlaceNetText for options on where to locate) -- this function creates entries for each of the viewable items in the UserData for this network -- just click on the UserData button to edit which items to display.
-  virtual void		HistMovie(int x_size=640, int y_size=480, 
-				  const String& fname_stub = "movie_img_");
-  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats
-
   ////////////////////////////////////////////////////////////////////////////////
   //	Below are the primary computational interface to the Network Objects
   //	for performing algorithm-specific activation and learning
@@ -2471,6 +2418,59 @@ public:
   // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
   virtual void	Compute_PRerr();
   // #CAT_Statistic compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance on a per unit basis
+
+  virtual Layer* NewLayer();
+  // #BUTTON create a new layer in the network, using default layer type
+
+  virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
+  // #BUTTON #CAT_Statistic monitor (record in a datatable) the given variable on this network
+  virtual void	RemoveMonitors();
+  // #CAT_ObjectMgmt Remove monitoring of all objects in all processes associated with parent project
+  virtual void	UpdateMonitors();
+  // #CAT_ObjectMgmt Update monitoring of all objects in all processes associated with parent project
+  virtual void	NetControlPanel(SelectEdit* editor, const String& extra_label = "",
+				const String& sub_gp_nm = "");
+  // #MENU #MENU_ON_SelectEdit #MENU_SEP_BEFORE #NULL_OK_0  #NULL_TEXT_0_NewEditor #CAT_Display add the key network counters and statistics to a select edit dialog (control panel) (if editor is NULL, a new one is created in .edits).  The extra label is prepended to each member name, and if sub_group, then all items are placed in a subgroup with the network's name.  NOTE: be sure to click update_after on NetCounterInit and Incr at appropriate program level(s) to trigger updates of select edit display (typically in Train to update epoch -- auto update of all after Step so only needed for continuous update during runnign)
+
+  virtual bool	SnapVar();
+  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of currently selected variable in netview -- copies this value to the snap unit variable
+  virtual bool	SnapAnd();
+  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic do an AND-like MIN computation of the current snap unit variable and the current value of the variable shown in netview -- shows the intersection between current state and previously snap'd state
+  virtual bool	SnapOr();
+  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic do an OR-like MAX computation of the current snap unit variable and the current value of the variable shown in netview -- shows the union between current state and previously snap'd state
+  virtual bool	SnapThresh(float thresh_val = 0.5f);
+  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of currently selected variable in netview -- copies this value to the snap unit variable, but also applies a thresholding such that values above the thresh_val are set to 1 and values below the thresh_val are set to 0
+  virtual bool	Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
+  // #MENU_BUTTON #MENU_ON_Snapshot #CAT_Statistic take a snapshot of given variable (if empty, currently viewed variable in netview is used): assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.  
+
+#ifdef TA_GUI
+  virtual NetView* NewView(T3DataViewFrame* fr = NULL);
+  // #NULL_OK #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
+  virtual NetView* FindMakeView(T3DataViewFrame* fr = NULL);
+  // #CAT_Display find existing or make a new viewer of this network (NULL=use existing empty frame if any, else make new frame)
+  virtual NetView* FindView();
+  // #CAT_Display find (first) existing viewer of this network
+  virtual String GetViewVar();
+  // #CAT_Display get the currently viewed variable name from netview
+  virtual bool 	SetViewVar(const String& view_var);
+  // #CAT_Display set the variable name to view in the netview
+  virtual Unit* GetViewSrcU();
+  // #CAT_Display get the currently picked source unit (for viewing weights) from netview
+  virtual bool 	SetViewSrcU(Unit* src_u);
+  // #CAT_Display set the picked source unit (for viewing weights) in netview
+#endif
+
+  virtual void	PlaceNetText(NetTextLoc net_text_loc, float scale = 1.0f);
+  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display locate the network text data display (counters, statistics -- typically shown at bottom of network) in a new standard location (it can also be dragged anywhere in the net view, turn on lay_mv button and click on red arrow) -- can also change the scaling
+  virtual NetViewObj* NewViewText(const String& txt);
+  // #MENU_BUTTON #MENU_ON_NetView #MENU_SEP_BEFORE #CAT_Display add a new text label to the network view objects -- this is an arbitrary fixed text label that can be placed anywhere in the display for annotating the model or other view elements
+  virtual NetViewObj* NewGlassBrain();
+  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
+  virtual void	NetTextUserData();
+  // #IGNORE auto-called in InitLinks -- enable the filtering of what information is shown in the network text data display (typically shown at bottom of network, though see PlaceNetText for options on where to locate) -- this function creates entries for each of the viewable items in the UserData for this network -- just click on the UserData button to edit which items to display.
+  virtual void		HistMovie(int x_size=640, int y_size=480, 
+				  const String& fname_stub = "movie_img_");
+  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats
 
   ////////////////////////////////////////////////////////////////////////////////
   //	The following are misc functionality not required for primary computing

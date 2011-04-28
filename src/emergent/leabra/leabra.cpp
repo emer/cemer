@@ -2661,6 +2661,7 @@ void LeabraPrjn::DMem_ComputeAggs(MPI_Comm comm) {
 
 void LeabraInhibSpec::Initialize() {
   type = KWTA_AVG_INHIB;
+  low0 = false;
   min_i = 0.0f;
   fb_act_thr = 0.0f;
   ff_pct = 0.0f;
@@ -3539,7 +3540,11 @@ void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer* lay,
   Compute_Inhib_BreakTie(thr);
 
   // place kwta inhibition between k and k+1
-  float nw_gi = thr->kwta.k1_ithr + ispec.kwta_pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
+  float nw_gi;
+  if(inhib.low0)
+    nw_gi = ispec.kwta_pt * thr->kwta.k_ithr;
+  else
+    nw_gi = thr->kwta.k1_ithr + ispec.kwta_pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
   nw_gi = MAX(nw_gi, ispec.min_i);
   thr->i_val.kwta = nw_gi;
   thr->kwta.Compute_IThrR();
@@ -3588,7 +3593,12 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer* lay,
 
   Compute_Inhib_BreakTie(thr);
 
-  float nw_gi = thr->kwta.k1_ithr + pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
+  float nw_gi;
+  if(inhib.low0)
+    nw_gi = pt * thr->kwta.k_ithr;
+  else
+    nw_gi = thr->kwta.k1_ithr + pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
+
   nw_gi = MAX(nw_gi, ispec.min_i);
   thr->i_val.kwta = nw_gi;
   thr->kwta.Compute_IThrR();
