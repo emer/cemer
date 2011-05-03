@@ -2166,7 +2166,7 @@ private:
 // };
 
 class LEABRA_API LeabraExtOnlyUnitSpec : public LeabraUnitSpec {
-  // only units with an above-threshold (opt_thresh.send) of ext input are allowed to get active -- soft clamping inputs provide a multiplicative mask on the input dynamics -- kind of a special form of sigma-pi unit -- useful e.g., for visual inputs computed by V2 layer, where network dynamics then operate to disambiguate, but cannot hallucinate
+  // only units with an above-threshold (opt_thresh.send) of ext input are allowed to get active -- soft clamping inputs provide a multiplicative mask on the input dynamics -- kind of a special form of sigma-pi unit -- useful e.g., for visual inputs computed by V2 layer, where network dynamics then operate to disambiguate, but cannot hallucinate -- if no ext input, uses first prjn, first con sending act
 INHERITED(LeabraUnitSpec)
 public:
   
@@ -2296,8 +2296,10 @@ INHERITED(taNBase)
 public:
   int		con_radius;	// maximum distance for how far to connect in any one direction (in unit group units) -- this then determines most other things
   float		wt_radius;	// distance at which the weight value is maximum -- the target weidth of the grouping detector -- specified as a normalized proportion of the con_radius
-  float		dist_sig;	// #DEF_0.2 sigma for gaussian distance compared to wt_radius target -- in normalized units as a function of wt_radius
-  float		ang_sig;	// #DEF_2 sigma for gaussian around target angle -- how widely to connect units around the target angle given by the perpendicular to the radius line
+  float		dist_sig;	// #DEF_0.2:0.4 sigma for gaussian distance compared to wt_radius target -- in normalized units as a function of wt_radius
+  float		ang_sig;	// #DEF_1:2 sigma for gaussian around target angle -- how widely to connect units around the target angle given by the perpendicular to the radius line
+  float		ellipse_ratio;	// #MAX_1 #MIN_0.01 ratio of short over long side for ellpisoid shapes -- values less than 1 produce an ellipse -- long side is always con_radius 
+  float		ellipse_angle;	// #CONDSHOW_OFF_ellipse_ratio:1 angle in degrees for the orientation of the long axis of the ellipse -- 0 = horizontal, 90 = vertical, etc.
   float		max_wt;		// magnitude multiplier for all weights -- determines the maximum weight value
   float		min_wt;		// #DEF_0.1 minimum weight value -- weights cannot go below this value -- this is applied after con_thr -- can be useful to retain some weight values to enable subsequent learning
   float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not connected -- set to a low value to allow learning

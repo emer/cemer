@@ -3703,6 +3703,20 @@ void LeabraExtOnlyUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net
     else
       tot_net += extin;
   }
+  else {
+    // get first projection, first connection
+    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+    if(TestError(!cg, "Compute_NetinInteg", "requires one recv projection!")) {
+      return;
+    }
+    LeabraUnit* su = (LeabraUnit*)cg->Un(0);
+    if(TestError(!su, "Compute_NetinInteg", "requires one unit in recv projection!")) {
+      return;
+    }
+    float extin = su->act_eq;
+    if(extin < opt_thresh.send)
+      tot_net = 0.0f;		// veto
+  }
 
   u->net_delta = 0.0f;	// clear for next use
   u->g_i_delta = 0.0f;	// clear for next use
@@ -4470,6 +4484,8 @@ void FgBoGroupingPrjnEl::Initialize() {
   wt_radius = 0.8f;
   dist_sig = 0.2f;
   ang_sig = 2.0f;
+  ellipse_ratio = 1.0f;
+  ellipse_angle = 0.0f;
   max_wt = 1.0f;
   min_wt = 0.1f;
   con_thr = 0.2f;
@@ -4523,6 +4539,16 @@ float FgBoGroupingPrjnEl::ConWt(TwoDCoord& suc, int sang_dx, int sdir) {
     dang = (2.0f * taMath_float::pi + sang) - pang;
   else
     dang = sang - pang;
+
+  if(ellipse_ratio < 1.0f) {
+    float a = (float)con_radius;
+    float b = ellipse_ratio * a;
+    float elang = ellipse_angle * taMath_float::rad_per_deg;
+    float R = (b*b - a*a) * cosf(2.0f * gang - 2.0f * elang) + a*a + b*b;
+    float Q = sqrtf(2) * a * b * sqrtf(R);
+    float r = Q / R;
+    nrmdst = dst / r;		// normalize relative to outer radius!
+  }
 
   float netwt = max_wt * taMath_float::gauss_den_nonorm(dang, ang_sig)
     * taMath_float::gauss_den_nonorm((nrmdst-wt_radius), dist_sig);
