@@ -2297,7 +2297,7 @@ public:
   int		con_radius;	// maximum distance for how far to connect in any one direction (in unit group units) -- this then determines most other things
   float		wt_radius;	// distance at which the weight value is maximum -- the target weidth of the grouping detector -- specified as a normalized proportion of the con_radius
   float		dist_sig;	// #DEF_0.2:0.4 sigma for gaussian distance compared to wt_radius target -- in normalized units as a function of wt_radius
-  float		ang_sig;	// #DEF_1:2 sigma for gaussian around target angle -- how widely to connect units around the target angle given by the perpendicular to the radius line
+  float		ang_sig;	// #DEF_1 sigma for gaussian around target angle -- how widely to connect units around the target angle given by the perpendicular to the radius line
   float		ellipse_ratio;	// #MAX_1 #MIN_0.01 ratio of short over long side for ellpisoid shapes -- values less than 1 produce an ellipse -- long side is always con_radius 
   float		ellipse_angle;	// #CONDSHOW_OFF_ellipse_ratio:1 angle in degrees for the orientation of the long axis of the ellipse -- 0 = horizontal, 90 = vertical, etc.
   float		max_wt;		// magnitude multiplier for all weights -- determines the maximum weight value

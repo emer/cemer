@@ -4480,10 +4480,10 @@ void V2BoLateralPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
 //	  	FgBoGroupingPrjnSpec
 
 void FgBoGroupingPrjnEl::Initialize() {
-  con_radius = 12;
-  wt_radius = 0.8f;
-  dist_sig = 0.2f;
-  ang_sig = 2.0f;
+  con_radius = 14;
+  wt_radius = 0.7f;
+  dist_sig = 0.3f;
+  ang_sig = 1.0f;
   ellipse_ratio = 1.0f;
   ellipse_angle = 0.0f;
   max_wt = 1.0f;
@@ -4539,6 +4539,7 @@ float FgBoGroupingPrjnEl::ConWt(TwoDCoord& suc, int sang_dx, int sdir) {
     dang = (2.0f * taMath_float::pi + sang) - pang;
   else
     dang = sang - pang;
+  if(dang >= taMath_float::pi) dang = (2.0f * taMath_float::pi) - dang;
 
   if(ellipse_ratio < 1.0f) {
     float a = (float)con_radius;
