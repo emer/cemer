@@ -867,7 +867,7 @@ public:
   float		vm;		// #DEF_0.1:0.357 #MIN_0 membrane potential rate constant -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized = .356 rate constant
   float		net;		// #DEF_0.7 #MIN_0 net input time constant -- how fast to update net input (damps oscillations) -- generally reflects time constants associated with synaptic channels which are not modeled in the most abstract rate code models (set to 1 for detailed spiking models with more realistic synaptic currents)
   bool		midpoint;	// #DEF_false use the midpoint method in computing the vm value -- better avoids oscillations and allows a larger dt.vm parameter to be used
-  float		d_vm_max;	// #DEF_0.02;0.025;100 #MIN_0 maximum change in vm at any timestep (limits blowup) -- this is a crude but effective safety valve for numerical integration problems
+  float		d_vm_max;	// #DEF_100 #MIN_0 maximum change in vm at any timestep (limits blowup) -- this is a crude but effective safety valve for numerical integration problems (no longer necessary in gelin-based compuation)
   int		vm_eq_cyc;	// #AKA_cyc0_vm_eq #DEF_0 number of cycles to compute the vm as equilibirium potential given current inputs: set to 1 to quickly activate input layers; set to 100 to always use this computation
   float		vm_eq_dt;	// #DEF_1 #MIN_0 time constant for integrating the vm_eq values: how quickly to move toward the current eq value from previous vm value
   float		integ_time;	// #READ_ONLY #SHOW 1/integ rate constant = time constant for each cycle of updating for numerical integration
@@ -1070,11 +1070,11 @@ public:
   MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   MinMaxRange	vm_range;	// #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
-  RandomSpec	v_m_init;	// #CAT_Activation what to initialize the membrane potential to (mean = .15, var = 0 std)
+  RandomSpec	v_m_init;	// #CAT_Activation what to initialize the membrane potential to (mean = .3, var = 0 std)
   LeabraDtSpec	dt;		// #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
   LeabraActAvgSpec act_avg;	// #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
   LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1, .1, .5] maximal conductances for channels
-  LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .15, .15, 1, 0] reversal potentials for each channel
+  LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .3, .25, 1, 0] reversal potentials for each channel
   VChanSpec	hyst;		// #CAT_Activation [Defaults: .05, .8, .7, .1] hysteresis (excitatory) v-gated chan (Ca2+, NMDA)
   VChanSpec	acc;		// #CAT_Activation [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials

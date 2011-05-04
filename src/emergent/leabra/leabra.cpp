@@ -651,9 +651,9 @@ void LeabraDtSpec::Initialize() {
 
 void LeabraDtSpec::Defaults_init() {
   integ = 1.0f;
-  vm = 0.25f;			// .3 is too fast!
+  vm = 0.3f;			// best for gelin
   net = 0.7f;
-  d_vm_max = 0.025f;
+  d_vm_max = 100.0f;
   midpoint = false;
   vm_eq_dt = 1.0f;
   integ_time = 1.0f / integ;
@@ -825,13 +825,9 @@ void LeabraUnitSpec::Defaults_init() {
   clamp_range.max = .95f;
   clamp_range.UpdateAfterEdit_NoGui();
 
-  vm_range.max = 1.0f;
+  vm_range.max = 2.0f;
   vm_range.min = 0.0f;
   vm_range.UpdateAfterEdit_NoGui();
-
-  v_m_init.type = Random::UNIFORM;
-  v_m_init.mean = .15f;
-  v_m_init.var = 0.0f;
 
   g_bar.e = 1.0f;
   g_bar.l = 0.1f;
@@ -839,10 +835,14 @@ void LeabraUnitSpec::Defaults_init() {
   g_bar.h = 0.01f;
   g_bar.a = 0.03f;
   e_rev.e = 1.0f;
-  e_rev.l = 0.15f;
-  e_rev.i = 0.15f;
+  e_rev.l = 0.3f;
+  e_rev.i = 0.25f;
   e_rev.h = 1.0f;
   e_rev.a = 0.0f;
+
+  v_m_init.type = Random::UNIFORM;
+  v_m_init.mean = e_rev.l;
+  v_m_init.var = 0.0f;
 
   e_rev_sub_thr.e = e_rev.e - act.thr;
   e_rev_sub_thr.l = e_rev.l - act.thr;
