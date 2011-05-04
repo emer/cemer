@@ -520,6 +520,7 @@ void ActFunSpec::Defaults_init() {
   }
   vm_mod = true;
   vm_mod_max = 0.95f;
+  veto = false;
   if(gelin) {
     thr = .5f;
     gain = 80.0f;
@@ -1591,6 +1592,12 @@ void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float vm_val, float g_e_val, float g_e_thr) {
+  if(act.veto) {
+    if(g_e_val < g_e_thr) return 0.0f;
+    float new_act = g_e_val / act.vm_mod_max; // vm_mod_max is max netin for now..
+    new_act = MIN(1.0f, new_act);	      // clip at 1
+    return new_act;
+  }
   float val_sub_thr;
   if(act.gelin) {
     val_sub_thr = g_e_val - g_e_thr;
@@ -1649,7 +1656,7 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   float new_act;
   if(act.gelin) {
     float g_e_val = u->net;
-    if(act.vm_mod) {
+    if(act.vm_mod && !act.veto) {
       float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
       if(vm_eq > 0.0f) {
 	float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
@@ -1660,6 +1667,10 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
     }
     float g_e_thr = Compute_EThresh(u);
     new_act = Compute_ActValFmVmVal_rate(u->v_m, g_e_val, g_e_thr);
+    if(act.veto) {
+      float da = dt.vm * (new_act - u->act);
+      new_act = u->act + da;
+    }
   }
   else {
     new_act = Compute_ActValFmVmVal_rate(u->v_m, 0.0f, 0.0f);
@@ -1679,7 +1690,7 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
     new_act += Compute_Noise(u, net);
   }
   u->act = act_range.Clip(new_act);
-  u->act_eq =u->act;
+  u->act_eq = u->act;
   if(!depress.on)
     u->act_nd = u->act_eq;
 }

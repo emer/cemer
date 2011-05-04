@@ -811,6 +811,7 @@ class TA_API V1KwtaSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;	// is kwta active for this stage of processing?
+  bool		veto;	// use veto-based activation dynamics, which is linear on g_e after inhibitory veto cuts off those below threshold
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
   float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1;0.4;0.6 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
   float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.5 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units (uses KWTA_AVG_BASED -- 0.5 is gelin default)
@@ -853,17 +854,26 @@ public:
   }
   // compute equilibrium membrane potential from excitatory (gc_e) and inhibitory (gc_i) input currents (gc_e = raw filter value, gc_i = inhibition computed from kwta) -- in normalized units (e_rev_e = 1), and inhib e_rev_i = e_rev_l
   
-  inline float 	Compute_ActFmVm_nxx1(float val_sub_thr) {
+  inline float 	Compute_ActFmVm_nxx1(float val, float thr) {
     float new_act;
-    if(val_sub_thr <= nxx1_fun.x_range.min) {
-      new_act = 0.0f;
-    }
-    else if(val_sub_thr >= nxx1_fun.x_range.max) {
-      val_sub_thr *= gain;
-      new_act = val_sub_thr / (val_sub_thr + 1.0f);
+    if(veto) {
+      if(val < thr)
+	new_act = 0.0f;
+      else
+	new_act = val;		// max = 1.0 assumed normalization so just val..
     }
     else {
-      new_act = nxx1_fun.Eval(val_sub_thr);
+      float val_sub_thr = val - thr;
+      if(val_sub_thr <= nxx1_fun.x_range.min) {
+	new_act = 0.0f;
+      }
+      else if(val_sub_thr >= nxx1_fun.x_range.max) {
+	val_sub_thr *= gain;
+	new_act = val_sub_thr / (val_sub_thr + 1.0f);
+      }
+      else {
+	new_act = nxx1_fun.Eval(val_sub_thr);
+      }
     }
     return new_act;
   }
@@ -871,7 +881,7 @@ public:
   inline float Compute_ActFmIn(float gc_e, float gc_i) {
     // gelin version:
     float g_e_thr = Compute_EThresh(gc_i);
-    return Compute_ActFmVm_nxx1(gc_e - g_e_thr);
+    return Compute_ActFmVm_nxx1(gc_e, g_e_thr);
   }
 
   virtual void	CreateNXX1Fun();  // #CAT_Activation create convolved gaussian and x/x+1 
