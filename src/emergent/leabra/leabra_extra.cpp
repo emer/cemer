@@ -369,6 +369,33 @@ void CaiSynDepConSpec::UpdateAfterEdit_impl() {
   ca_dep.UpdateAfterEdit_NoGui();
 }
 
+//// SRAvg version
+
+void SRAvgCaiSynDepConSpec::Initialize() {
+  min_obj_type = &TA_SRAvgCaiSynDepCon;
+}
+
+void SRAvgCaiSynDepConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  ca_dep.UpdateAfterEdit_NoGui();
+}
+
+
+
+bool SRAvgCaiSynDepConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
+  bool rval = true;
+  if((learn_rule == CTLEABRA_CAL) || (learn_rule == CTLEABRA_XCAL)) {
+    if(cg->prjn) {
+      if(cg->prjn->CheckError(!cg->prjn->con_type->InheritsFrom(&TA_SRAvgCaiSynDepCon), quiet, rval,
+			      "does not have con_type = SRAvgCaiSynDepCon -- required for CTLEABRA_CAL or _XCAL learning to hold the sravg connection-level values -- I just fixed this for you in this projection, but must do Build to get it to take effect")) {
+	cg->prjn->con_type = &TA_SRAvgCaiSynDepCon;
+      }
+    }
+  }
+  return rval;
+}
+
+
 
 //////////////////////////////////
 // 	FastWtConSpec		//

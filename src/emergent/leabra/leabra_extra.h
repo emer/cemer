@@ -783,6 +783,165 @@ private:
   void	Defaults_init() 	{ };
 };
 
+
+////////////////////////////////////////////////////////////////
+//      Synaptic Depression: Cycle Level, Ca-Based, with SRAvg
+
+// todo: could inherit from CaiSynDepCon/Spec and probably save a lot of code, but sravg guys might be more difficult -- try that later
+
+class LEABRA_API SRAvgCaiSynDepCon : public LeabraSRAvgCon {
+  // synaptic depression connection at the cycle level, based on synaptic integration of calcium
+INHERITED(LeabraCon)
+public:
+  float		effwt;		// #NO_SAVE effective weight value (subject to synaptic depression) -- used for sending activation
+  float		cai;		// #NO_SAVE intracellular postsynaptic calcium current integrated over cycles, used for synaptic depression
+
+  SRAvgCaiSynDepCon() { effwt = 0.0f; cai = 0.0f; }
+};
+
+class LEABRA_API SRAvgCaiSynDepConSpec : public LeabraConSpec {
+  // synaptic depression connection at the cycle level, based on synaptic integration of calcium
+INHERITED(LeabraConSpec)
+public:
+  CaiSynDepSpec		ca_dep;		// calcium-based depression of synaptic efficacy
+  
+  /////////////////////////////////////////////////////////////////////////////////////
+  // 		Ca updating and synaptic depression
+
+  inline void C_Compute_Cai(SRAvgCaiSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    ca_dep.CaUpdt(cn->cai, ru->act_eq, su->act_eq);
+  }
+  // connection-level Cai update
+  inline void Compute_Cai(LeabraSendCons* cg, LeabraUnit* su) {
+    CON_GROUP_LOOP(cg, C_Compute_Cai((SRAvgCaiSynDepCon*)cg->OwnCn(i), (LeabraUnit*)cg->Un(i), su));
+  }
+
+  // connection-level synaptic depression: syn dep direct
+  inline void C_Compute_CycSynDep(SRAvgCaiSynDepCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    cn->effwt = cn->wt * ca_dep.SynDep(cn->cai);
+  }
+  // connection-level synaptic depression: ca mediated
+  inline override void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_Cai(cg, su);
+    CON_GROUP_LOOP(cg, C_Compute_CycSynDep((SRAvgCaiSynDepCon*)cg->OwnCn(i),
+					   (LeabraUnit*)cg->Un(i), su));
+  }
+  // connection-group level synaptic depression
+
+  inline void C_Init_SdEffWt(SRAvgCaiSynDepCon* cn) {
+    cn->effwt = cn->wt; cn->cai = 0.0f; 
+  }
+  inline void Init_SdEffWt(LeabraRecvCons* cg) {
+    CON_GROUP_LOOP(cg, C_Init_SdEffWt((SRAvgCaiSynDepCon*)cg->PtrCn(i)));
+  }
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
+  inline void Init_SdEffWt(LeabraSendCons* cg) {
+    CON_GROUP_LOOP(cg, C_Init_SdEffWt((SRAvgCaiSynDepCon*)cg->OwnCn(i)));
+  }
+  // #CAT_Activation reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
+
+  override void C_Init_Weights_post(BaseCons* cg, Connection* cn, Unit* ru, Unit* su) {
+    inherited::C_Init_Weights_post(cg, cn, ru, su);
+    SRAvgCaiSynDepCon* lcn = (SRAvgCaiSynDepCon*)cn; lcn->effwt = lcn->wt;
+    lcn->cai = 0.0f; 
+  }
+
+  inline void C_Send_NetinDelta_Thrd(SRAvgCaiSynDepCon* cn, float* send_netin_vec,
+				    LeabraUnit* ru, float su_act_delta_eff) {
+    send_netin_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
+  }
+
+  inline void C_Send_NetinDelta_NoThrd(SRAvgCaiSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->net_delta += cn->effwt * su_act_delta_eff;
+  }
+
+  inline void C_Send_InhibDelta_Thrd(SRAvgCaiSynDepCon* cn, float* send_inhib_vec,
+				    LeabraUnit* ru, float su_act_delta_eff) {
+    send_inhib_vec[ru->flat_idx] += cn->effwt * su_act_delta_eff;
+  }
+
+  inline void C_Send_InhibDelta_NoThrd(SRAvgCaiSynDepCon* cn, LeabraUnit* ru, float su_act_delta_eff) {
+    ru->g_i_delta += cn->effwt * su_act_delta_eff;
+  }
+
+  override void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
+			      int thread_no, float su_act_delta) {
+    float su_act_delta_eff = cg->scale_eff * su_act_delta;
+    if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
+      if(thread_no < 0) {
+	CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd((SRAvgCaiSynDepCon*)cg->OwnCn(i),
+						   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
+      else {
+	float* send_inhib_vec = net->send_inhib_tmp.el
+	  + net->send_inhib_tmp.FastElIndex(0, thread_no);
+	CON_GROUP_LOOP(cg, C_Send_InhibDelta_Thrd((SRAvgCaiSynDepCon*)cg->OwnCn(i),
+						 send_inhib_vec, (LeabraUnit*)cg->Un(i),
+						 su_act_delta_eff));
+      }
+    }
+    else {
+      if(thread_no < 0) {
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThrd((SRAvgCaiSynDepCon*)cg->OwnCn(i),
+						   (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
+      else {
+	float* send_netin_vec = net->send_netin_tmp.el
+	  + net->send_netin_tmp.FastElIndex(0, thread_no);
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd((SRAvgCaiSynDepCon*)cg->OwnCn(i), send_netin_vec,
+						 (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
+    }
+  }
+
+  float C_Compute_Netin(SRAvgCaiSynDepCon* cn, LeabraUnit*, LeabraUnit* su) {
+    return cn->effwt * su->act_eq;
+  }
+  float Compute_Netin(RecvCons* cg, Unit* ru) {
+    float rval=0.0f;
+    CON_GROUP_LOOP(cg, rval += C_Compute_Netin((SRAvgCaiSynDepCon*)cg->PtrCn(i), 
+					       (LeabraUnit*)ru, (LeabraUnit*)cg->Un(i)));
+    return ((LeabraRecvCons*)cg)->scale_eff * rval;
+  }
+
+  inline void C_Compute_dWt_CtLeabraXCAL_trial(LeabraSRAvgCon* cn, LeabraUnit* ru,
+			       float sravg_s_nrm, float sravg_m_nrm, float su_act_mult) {
+    float srs = cn->sravg_s * sravg_s_nrm;
+    float srm = cn->sravg_m * sravg_m_nrm;
+    float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
+    cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+  }
+
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+    LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
+    float su_avg_m = su->avg_m;
+    float su_act_mult = xcal.thr_l_mix * su_avg_m;
+
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      C_Compute_dWt_CtLeabraXCAL_trial((LeabraSRAvgCon*)cg->OwnCn(i), ru, 
+				       net->sravg_vals.s_nrm, net->sravg_vals.m_nrm,
+				       su_act_mult);
+    }
+  }
+
+  override bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);
+
+  TA_SIMPLE_BASEFUNS(SRAvgCaiSynDepConSpec);
+protected:
+  SPEC_DEFAULTS;
+  void 	UpdateAfterEdit_impl();
+
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init() 	{ };
+};
+
+
+
 /////////////////////////////////////////////////
 //		Fast Weights
 

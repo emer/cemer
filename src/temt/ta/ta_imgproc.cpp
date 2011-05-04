@@ -5238,12 +5238,12 @@ bool V1RegionSpec::SpatIntegFilter() {
     ThreadImgProcCall ip_call_v1ssg_pre((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
     threads.Run(&ip_call_v1ssg_pre, n_run_sg_gp4);
 
-    if(si_kwta.on && !spat_integ & SI_V1C) cur_out = &si_v1s_sg_out_raw;
+    if(si_kwta.on && !(spat_integ & SI_V1C)) cur_out = &si_v1s_sg_out_raw;
     else     	   cur_out = &si_v1s_sg_out;
     ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::SpatIntegFilter_V1S_SG_thread);
     threads.Run(&ip_call_v1sg, n_run_sg);
 
-    if(!spat_integ & SI_V1C) {
+    if(!(spat_integ & SI_V1C)) {
       if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
       if(si_kwta.on) si_kwta.Compute_Kwta(si_v1s_sg_out_raw, si_v1s_sg_out, si_gci);
     }
