@@ -602,30 +602,30 @@ friend class DataTableModel;
 public:
   enum DataFlags { // #BITS flags for data table
     DF_NONE		= 0, // #NO_BIT
-    SAVE_ROWS 		= 0x0001, // save the row data associated with this table when saved with the project (column and other configuration information is always saved)
+    SAVE_ROWS 		= 0x0001, // Store this DataTable's row-data directly in the project file.  Uncheck for the option to store row-data externally.  Note: the DataTable's schema (column names, types, and other configuration information) is always saved directly in the project.
     HAS_CALCS 		= 0x0002, // #NO_SHOW at least one of the columns has CALC flag set
-    AUTO_CALC		= 0x0004, // automatically calculate columns
-    SAVE_FILE		= 0x0008, // if an AUTO_LOAD file is set, automatically saves to the file when project is saved
+    AUTO_CALC		= 0x0004, // Automatically calculate columns.
+    SAVE_FILE           = 0x0008, // If an AUTO_LOAD filename is set, this option causes row-data to be saved to that file whenever the project is saved.
   };
 
   enum AutoLoadMode {
-    NO_AUTO_LOAD,		// do not automatically load data file
-    AUTO_LOAD,			// automatically load a data file after loading
-    PROMPT_LOAD,		// prompt about loading a data file after loading (if run in -nogui mode, it is automatically loaded)
+    NO_AUTO_LOAD,		// Do not automatically load a data file.
+    AUTO_LOAD,			// Automatically load a data file after loading the project.
+    PROMPT_LOAD,		// Prompt to load a data file after loading the project.  In -nogui mode, this is the same as AUTO_LOAD.
   };
-  
+
   /////////////////////////////////////////////////////////
   // 	Main datatable interface:
   int 			rows;
-  // #READ_ONLY #NO_SAVE #SHOW the number of rows
+  // #READ_ONLY #NO_SAVE #SHOW The number of rows of data.
   DataTableCols		data;
   // all the columns and actual data
   DataFlags		data_flags;
-  // flags for various features and state of the data table
+  // Flags for various features and state of the DataTable:
   AutoLoadMode		auto_load;
-  // #CONDEDIT_OFF_data_flags:SAVE_ROWS whether to automatically load a data file from auto_load_file when data table object is loaded (only applicable when SAVE_ROWS is not active -- makes the project file smaller for large data tables, but the cost is that the project is no longer self contained)
+  // #CONDEDIT_OFF_data_flags:SAVE_ROWS Whether to automatically load a data file when the DataTable object is loaded.  This option is only available when SAVE_ROWS is unchecked.  Storing row-data externally reduces the project file size (especially for large data tables), but the project is no longer self contained.
   String		auto_load_file;
-  // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD file to load data table from if AUTO_LOAD option is set (if file name has .dtbl extention, it is loaded using internal Load format, otherwise LoadData is used)
+  // #CONDEDIT_OFF_auto_load:NO_AUTO_LOAD #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_DataTable #EXT_dat,dtbl Where to store and load row-data from if AUTO_LOAD option is set.  (*.dtbl files are loaded using internal Load format, otherwise LoadData is used.)
   Variant		keygen; // #HIDDEN #VARTYPE_READ_ONLY #GUI_READ_ONLY 64bit int used to generate keys; advance to get next key; only reset if all data reset
 
   cssProgSpace* 	calc_script;

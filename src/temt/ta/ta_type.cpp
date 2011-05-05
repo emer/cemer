@@ -3941,7 +3941,8 @@ void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
     for (int i = 0; i < md->type->enum_vals.size; ++i) {
       EnumDef* ed = md->type->enum_vals.FastEl(i);
       if (ed->desc.empty() || (ed->desc == " ") || (ed->desc == "  ")) continue;
-      desc = indent + "  " + ed->GetLabel() + String(": ") + ed->desc;
+      if (ed->HasOption("NO_BIT") || ed->HasOption("NO_SHOW") || ed->HasOption("HIDDEN")) continue;
+      desc = indent + " * " + ed->GetLabel() + String(": ") + ed->desc;
       if (!dsc_str.empty())
         dsc_str += "<br>";
       dsc_str += desc;

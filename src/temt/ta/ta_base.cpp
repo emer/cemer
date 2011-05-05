@@ -1049,9 +1049,6 @@ taFiler* taBase::StatGetFiler(TypeItem* td, String exts, int compress, String fi
     }
     if (exts.empty()) {
       exts = td->OptionAfter("EXT_");
-      if (exts.nonempty() && (exts[0] != '.')) {
-        exts = "." + exts;
-      }
     }
   }
   taFiler::FilerFlags ff = (cmprs) ? taFiler::DEF_FLAGS_COMPRESS : taFiler::DEF_FLAGS;

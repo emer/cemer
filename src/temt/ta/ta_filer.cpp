@@ -422,25 +422,27 @@ const String taFiler::FilterText(bool incl_allfiles, QStringList* list) const {
   // key on the exts, and just put a ? for type if we run out
   for (int i = 0; i < sa_ex.size; ++i) {
     String tft = sa_ft.SafeEl(i);
-    if(tft.empty()) tft = sa_ft.SafeEl(0);
+    if (tft.empty()) tft = sa_ft.SafeEl(0);
     if (tft.empty()) tft = "?";
     String tex = sa_ex.FastEl(i);
+    if (tex.nonempty() && tex[0] != '.')
+      tex = "." + tex;
     String itm = tft.cat(" files (");
-    //note: ok if ext empty
+    // note: ok if tex empty
     itm.cat("*").cat(tex);
     if (CompressEnabled()) {
       itm.cat(" *").cat(tex).cat(taMisc::compress_sfx);
     }
     itm.cat(")");
     if (rval.nonempty()) rval.cat(";;").cat(itm);
-    if(list)
+    if (list)
       *list << itm;
   }
   if (incl_allfiles) {
     String itm = "All files (*)";
     if (rval.nonempty()) rval.cat(";;");
     rval.cat(itm);
-    if(list)
+    if (list)
       *list << itm;
   }
   return rval;

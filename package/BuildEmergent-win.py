@@ -1,5 +1,5 @@
 # This script attempts to download and install all the tools needed
-# to build Emergent, checkout the source from Subversion, build it,
+# to build emergent, checkout the source from Subversion, build it,
 # and create an installer.
 # NOTE: if you commit a new version of this file to svn, make sure to
 # update the file on the ftp site as well
@@ -113,7 +113,7 @@ def process_response(response):
 		print "\nQuitting at user request."
 		quit(0)
 	return response[0] == "y" or response[0] == "Y"
-	
+
 def askUser(question, default="Y"):
 	if yes_to_all and default == "Y": return True
 	while True:
@@ -215,18 +215,30 @@ def inst_jom():
 		if fileExists(jom_exe):
 			use_jom = True
 
-# Ask user if they want to build Debug or Release.  Set the default based
-# on what folder this script is run from.
-def is_debug_path(path):
-	if path.find("dbg") > 0 or path.find("debug") > 0:
-		print "\n  Detected DEBUG path: " + path
-		return True
-	return False
+# Check if current directory is an emergent source directory.
+# If so, try to build there.
+emer_src = fixPath('C:/src/emergent')
+def is_emer_src_path(path):
+	global emer_src
+	loc = path.find("emergent")
+	if loc == -1: return False
+	slash = path.find("\\", loc)
+	if slash == -1: slash = path.find("/", loc)
+	if slash > 0: path = path[:slash]
+	if path != emer_src:
+		if askUser("\nBuild in this emergent source directory: " + path + " ?"):
+			emer_src = path
+	return True
 
-build_debug = is_debug_path(os.getcwd()) or is_debug_path(sys.argv[0])
-emer_src = 'C:/src/emergent'
+def get_emer_src_path():
+	if is_emer_src_path(os.getcwd()) or is_emer_src_path(sys.argv[0]):
+		pass
+	print "\nWill build in emergent source directory: " + emer_src
+
+# Ask user if they want to build Debug or Release.
+build_debug = False
 def ask_debug_or_release():
-	global build_debug, emer_src
+	global build_debug
 	done = False
 	while not done:
 		if build_debug:
@@ -237,14 +249,15 @@ def ask_debug_or_release():
 			os.system('color 07')
 			if askUser("\nMake RELEASE build? (say no for debug)"): done = True
 			else: build_debug = True
-	if build_debug:
-		emer_src += "-dbg"
+	# Debug and Release versions can share the same source files, so no need for this:
+	#if build_debug:
+	#	emer_src += "-dbg"
 
 def inst_emer_src():
 	if not dirExists(emer_src + '/.svn'):
-		print "\nYou need to checkout the Emergent source code from subversion."
+		print "\nYou need to checkout the emergent source code from subversion."
 		print "This can be done for you."
-		svn_rev = get_svn_rev("\nOK to get the latest Emergent source from Subversion? (or enter svn rev)")
+		svn_rev = get_svn_rev("\nOK to get the latest emergent source from Subversion? (or enter svn rev)")
 		if (svn_rev > 0):
 			makeDir(emer_src)
 			svnclient = findInProgFiles('SlikSvn/bin/svn.exe')
@@ -259,7 +272,7 @@ def inst_emer_src():
 			else:
 				cmd += " --username " + response
 			cmd += " http://grey.colorado.edu/svn/emergent/emergent/trunk " + emer_src
-			print "\nChecking out Emergent source code..."
+			print "\nChecking out emergent source code..."
 			print cmd
 			os.system(cmd)
 		else:
@@ -267,15 +280,15 @@ def inst_emer_src():
 			quit(1)
 	else:
 		# Found .svn folder, make sure it's up to date
-		print "\nYou probably want to make sure the Emergent source is up to date."
-		svn_rev = get_svn_rev("\nOK to get the latest Emergent source from Subversion? (or enter svn rev)")
+		print "\nYou probably want to make sure the emergent source is up to date."
+		svn_rev = get_svn_rev("\nOK to get the latest emergent source from Subversion? (or enter svn rev)")
 		if (svn_rev > 0):
 			svnclient = findInProgFiles('SlikSvn/bin/svn.exe')
 			if not svnclient:
 				print "Can't continue because SVN client needs to be installed!  Quitting."
 				quit(1)
 			cmd = '"' + svnclient + '" update -r ' + svn_rev + ' ' + emer_src
-			print "\nUpdating Emergent source code..."
+			print "\nUpdating emergent source code..."
 			print cmd
 			os.system(cmd)
 
@@ -393,7 +406,7 @@ def build_emergent():
 	print "\nYour build environment is configured."
 	if not askUser("\nReady to build?"): quit(0)
 
-	print "\nBuilding Emergent..."
+	print "\nBuilding emergent..."
 	emer_build = emer_src + '/build'
 	if build_debug: emer_build += "-dbg"
 	makeDir(emer_build)
@@ -465,6 +478,7 @@ inst_qt()
 inst_svn()
 inst_cmake()
 inst_jom()
+get_emer_src_path()
 ask_debug_or_release()
 inst_emer_src()
 inst_coin()
