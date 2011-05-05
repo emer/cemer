@@ -1691,7 +1691,7 @@ class TA_API taFBase: public taNBase {
   // #NO_TOKENS #NO_UPDATE_AFTER named/owned base class of taBase, with filename
 public:
   String		desc;	   // #EDIT_DIALOG #CAT_taBase description of this object: what does it do, how should it be used, etc
-  String                file_name; // #READ_ONLY #NO_SAVE #HIDDEN #CAT_taBase The most recent file saved or loaded in association with this object.
+  String                file_name; // #READ_ONLY #NO_SAVE #EXPERT #CAT_taBase The most recent file saved or loaded in association with this object.
 
   override String	GetDesc() const { return desc; }
 
