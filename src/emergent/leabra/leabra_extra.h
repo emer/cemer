@@ -267,6 +267,48 @@ private:
 //////////////////////////////////////////////////////////////////
 // 	Variations of XCAL
 
+class LEABRA_API XCalSRAvgConSpec : public LeabraConSpec {
+  // send-recv average at the connection level learning in XCal
+INHERITED(LeabraConSpec)
+public:
+
+  inline void C_Compute_dWt_CtLeabraXCAL_trial(LeabraSRAvgCon* cn, LeabraUnit* ru,
+			       float sravg_s_nrm, float sravg_m_nrm, float su_act_mult) {
+    float srs = cn->sravg_s * sravg_s_nrm;
+    float srm = cn->sravg_m * sravg_m_nrm;
+    float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
+    cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+  }
+
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+    LeabraNetwork* net = (LeabraNetwork*)rlay->own_net;
+    float su_avg_m = su->avg_m;
+    float su_act_mult = xcal.thr_l_mix * su_avg_m;
+
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      C_Compute_dWt_CtLeabraXCAL_trial((LeabraSRAvgCon*)cg->OwnCn(i), ru, 
+				       net->sravg_vals.s_nrm, net->sravg_vals.m_nrm,
+				       su_act_mult);
+    }
+  }
+
+  override bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false);
+
+  TA_SIMPLE_BASEFUNS(XCalSRAvgConSpec);
+protected:
+  SPEC_DEFAULTS;
+//   void 	UpdateAfterEdit_impl();
+
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init() 	{ };
+};
+
+
 class LEABRA_API XCalHebbConSpec : public LeabraConSpec {
   // xcal version of hebbian learning
 INHERITED(LeabraConSpec)
@@ -790,7 +832,7 @@ private:
 // todo: could inherit from CaiSynDepCon/Spec and probably save a lot of code, but sravg guys might be more difficult -- try that later
 
 class LEABRA_API SRAvgCaiSynDepCon : public LeabraSRAvgCon {
-  // synaptic depression connection at the cycle level, based on synaptic integration of calcium
+  // send-recv average at the connection level learning in XCal, combined with synaptic depression connection at the cycle level, based on synaptic integration of calcium
 INHERITED(LeabraCon)
 public:
   float		effwt;		// #NO_SAVE effective weight value (subject to synaptic depression) -- used for sending activation
@@ -800,7 +842,7 @@ public:
 };
 
 class LEABRA_API SRAvgCaiSynDepConSpec : public LeabraConSpec {
-  // synaptic depression connection at the cycle level, based on synaptic integration of calcium
+  // send-recv average at the connection level learning in XCal, synaptic depression connection at the cycle level, based on synaptic integration of calcium
 INHERITED(LeabraConSpec)
 public:
   CaiSynDepSpec		ca_dep;		// calcium-based depression of synaptic efficacy
@@ -939,8 +981,6 @@ private:
   void	Destroy()		{ };
   void	Defaults_init() 	{ };
 };
-
-
 
 /////////////////////////////////////////////////
 //		Fast Weights
