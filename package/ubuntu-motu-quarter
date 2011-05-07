@@ -12,6 +12,8 @@ DEBFULLNAME='Brian Mingus'
 cd /tmp
 rm -fr /tmp/libquarter0-${QUARTER_VERSION}
 hg clone http://hg.sim.no/Quarter/default libquarter0-${QUARTER_VERSION}
+# r460 is the last rev of Quarter to compile with libcoin60-dev (3.1.2-1)
+hg update -r 460
 tar -czf libquarter0_${QUARTER_VERSION}.orig.tar.gz libquarter0-${QUARTER_VERSION}
 cd libquarter0-${QUARTER_VERSION}
 mkdir -p debian
