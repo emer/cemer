@@ -3194,7 +3194,7 @@ void V1BinocularSpec::UpdateAfterEdit_impl() {
 }
 
 void V1ComplexSpec::Initialize() {
-  sg4 = true;
+  sg4 = false;
   spc4 = true;
   len_sum_len = 1;
   es_thr = 0.2f;
@@ -3228,6 +3228,8 @@ void V2BordOwnSpec::Initialize() {
   l_t_inhib_thr = 0.2f;
   tl_bo_thr = 0.1f;
   ambig_gain = 0.5f;
+  depths_out = 1;
+  depth_idx = -1;
 
   ffbo_gain = 1.0f;
   ffbo_max = 0.2f;
@@ -5827,10 +5829,31 @@ bool V1RegionSpec::V2OutputToTable(DataTable* dtab, bool fmt_only) {
 
   {
     col = data_table->FindMakeColName(name + "_v2bo", idx, DataTable::VT_FLOAT, 4,
-		      v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
+		      v1c_feat_geom.x, v2_specs.depths_out * 2, v1c_img_geom.x, v1c_img_geom.y);
     if(!fmt_only) {
       float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      dout->CopyFrom(&v2bo_out);
+      if(v2_specs.depths_out == 1) {
+	dout->CopyFrom(&v2bo_out);
+      }
+      else {
+	for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
+	  for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      for(int dir=0; dir < 2; dir++) {		      // direction
+		float tval = v2bo_out.FastEl(ang, dir, cc.x, cc.y);
+		if(v2_specs.depth_idx >= 0 && v2_specs.depth_idx < v2_specs.depths_out) {
+		  dout->FastEl(ang, v2_specs.depth_idx * 2 + dir, cc.x, cc.y) = tval;
+		}
+		else {		// all
+		  for(int depth=0; depth < v2_specs.depths_out; depth++) {
+		    dout->FastEl(ang, depth * 2 + dir, cc.x, cc.y) = tval;
+		  }
+		}
+	      }
+	    }
+	  }
+	}
+      }
     }
   }
 

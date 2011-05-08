@@ -4443,8 +4443,12 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
 	    for(run.x = 0; run.x < un_geo.x; run.x++) {
 	      for(sun.x = 0; sun.x < un_geo.x; sun.x++) {
 		for(run.y = 0; run.y < un_geo.y; run.y++) {
-		  for(sun.y = 0; sun.y < un_geo.y; sun.y++) {
-		    float wt = v2ffbo_weights.FastEl(del.x +radius, del.y+radius, sun.y, sun.x, run.y, run.x);
+		  int syst = (run.y / 2) * 2;
+		  int syed = syst+2;
+		  for(sun.y = syst; sun.y < syed; sun.y++) {
+		    // mod 2 on y allows for multiple depths to be replicated
+		    float wt = v2ffbo_weights.FastEl(del.x +radius, del.y+radius,
+						     sun.y % 2, sun.x, run.y % 2, run.x);
 		    if(wt <= con_thr) continue;
 
 		    int rui = run.y * un_geo.x + run.x;
@@ -4517,7 +4521,8 @@ void V2BoLateralPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
       }
     }
 
-    float wt = v2ffbo_weights.FastEl(del.x + radius, del.y + radius, sun.y, sun.x, run.y, run.x);
+    float wt = v2ffbo_weights.FastEl(del.x + radius, del.y + radius,
+				     sun.y % 2, sun.x, run.y % 2, run.x);
     cg->Cn(i)->wt = wt;
   }
 }
@@ -4668,6 +4673,8 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
   TwoDCoord run_geo = recv_lay->un_geom;
   TwoDCoord sgp_geo = send_lay->gp_geom;
   TwoDCoord sun_geo = send_lay->un_geom;
+  if(sun_geo.y > 2) sun_geo.y = 2; // for now, only deal with first figure units
+
   float n_angles = (float)sun_geo.x;
 
   if(TestWarning(recv_lay->un_geom.n != group_specs.size, "Connect_impl",
@@ -5517,26 +5524,31 @@ void VisDisparityLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* 
 
 void TiledGpRFOneToOnePrjnSpec::Initialize() {
   gauss_sigma = 1.0f;
+  su_idx_st = 0;
+  ru_idx_st = 0;
+  gp_n_cons = -1;
 }
 
 void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
 				Layer* send_lay, int rgpidx, int sgpidx, int alloc_loop) {
-  int ru_nunits = recv_lay->un_geom.n;
-  int su_nunits = send_lay->un_geom.n;
+  int ru_nunits = recv_lay->un_geom.n - ru_idx_st;
+  int su_nunits = send_lay->un_geom.n - su_idx_st;
   int maxn = MIN(ru_nunits, su_nunits);
+  if(gp_n_cons > 0)
+    maxn = MIN(gp_n_cons, maxn);
 
   if(reciprocal) {		// reciprocal is backwards!
     for(int ui=0; ui < maxn; ui++) {
-      Unit* su_u = send_lay->UnitAtUnGpIdx(ui, sgpidx);
-      Unit* ru_u = recv_lay->UnitAtUnGpIdx(ui, rgpidx);
+      Unit* su_u = send_lay->UnitAtUnGpIdx(su_idx_st + ui, sgpidx);
+      Unit* ru_u = recv_lay->UnitAtUnGpIdx(ru_idx_st + ui, rgpidx);
       if(!self_con && (su_u == ru_u)) continue;
       su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
     }
   }
   else {
     for(int ui=0; ui < maxn; ui++) {
-      Unit* ru_u = recv_lay->UnitAtUnGpIdx(ui, rgpidx);
-      Unit* su_u = send_lay->UnitAtUnGpIdx(ui, sgpidx);
+      Unit* ru_u = recv_lay->UnitAtUnGpIdx(ru_idx_st + ui, rgpidx);
+      Unit* su_u = send_lay->UnitAtUnGpIdx(su_idx_st + ui, sgpidx);
       if(!self_con && (su_u == ru_u)) continue;
       ru_u->ConnectFrom(su_u, prjn, alloc_loop); // recip!
     }

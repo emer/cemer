@@ -2687,6 +2687,9 @@ class LEABRA_API TiledGpRFOneToOnePrjnSpec : public TiledGpRFPrjnSpec {
 INHERITED(TiledGpRFPrjnSpec)
 public:
   float		gauss_sigma;		// #CONDEDIT_ON_init_wts gaussian width parameter for initial weight values (only with init_wts on) to give a tuning curve in terms of distance from center of overall rf (normalized units)
+  int		su_idx_st;		// starting sending unit index within each unit group to start connecting from -- allows for layers to have diff unit group structure
+  int		ru_idx_st;		// starting receiving unit index within each unit group to start connecting from -- allows for layers to have diff unit group structure
+  int		gp_n_cons;		// [-1 = all] number of units to connect within each group -- allows for layers to have diff unit group structure
 
   override void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
 				  int rgpidx, int sgpidx, int alloc_loop);
@@ -2713,7 +2716,6 @@ private:
   void	Initialize();
   void	Destroy()	{ };
 };
-
 
 class LEABRA_API V1FeatInhibSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for feature inhibition

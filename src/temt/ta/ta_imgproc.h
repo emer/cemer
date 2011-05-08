@@ -1013,7 +1013,7 @@ class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
 INHERITED(taOBase)
 public:
-  bool		sg4;		// #DEF_true #AKA_pre_gp4 use a 4x4 square grouping of v1s features prior to computing subsequent steps (length sum, end stop) -- this square grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
+  bool		sg4;		// #DEF_false #AKA_pre_gp4 use a 4x4 square grouping of v1s features prior to computing subsequent steps (length sum, end stop) -- this square grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
   bool		spc4;		// #DEF_true #CONDSHOW_ON_sg4 use 4x4 spacing for square grouping, instead of half-overlap 2x2 spacing -- this results in greater savings in computation, at some small cost in uniformity of coverage of the space
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   float		es_thr;		// #DEF_0.2 threshold for end stopping activation -- there are typically many "ghost" end stops, so this filters those out
@@ -1040,6 +1040,8 @@ public:
   float		l_t_inhib_thr;	// #DEF_0.2 threshold on max L-junction activity within a group to then inhibit T junctions within the same group -- don't want weak L's just weakening the T's
   float		tl_bo_thr;	// #DEF_0.1 threshold for using T,L junction output to drive BO
   float		ambig_gain;	// #DEF_0.5 gain multiplier for ambiguous length sum activation, where no T or L signals are available
+  int		depths_out;	// #MIN_1 number of depth replications of the V2 BO output -- just replicates the output this many times in the y dimension of the unit group output
+  int		depth_idx;	// output only this specific depth index -- -1 = all
 
   float		ffbo_gain;	// #DEF_1:5 gain on strength of ff bo inputs -- multiplies average netinput values from ffbo stencils
   float		ffbo_max;	// #DEF_0.2 maximum net effect of ffbo on inputs -- clip above this level
