@@ -5992,6 +5992,7 @@ void V1RegionSpec::V2BoDepthFmFg(V1RetinaProc* all_flat, float fg_thr) {
   TwoDCoord cc;		// complex coords
   int idx;
 
+  // todo: could thread this..
   RetinaProc* own = (RetinaProc*)GetOwner(&TA_RetinaProc);
   if(!own || !all_flat) return;
   int mxn = MIN(own->regions.size, all_flat->regions.size);
@@ -6002,16 +6003,22 @@ void V1RegionSpec::V2BoDepthFmFg(V1RetinaProc* all_flat, float fg_thr) {
             4, fgrs->v1c_feat_geom.x, fgrs->v2_specs.depths_out * 2,
             fgrs->v1c_img_geom.x, fgrs->v1c_img_geom.y);
     float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    dout->InitVals(0.0f);	// got to clear it b/c not setting everything
     for(cc.y = 0; cc.y < fgrs->v1c_img_geom.y; cc.y++) {
       for(cc.x = 0; cc.x < fgrs->v1c_img_geom.x; cc.x++) {
+	float fg_max = 0.0f;
 	for(int ang = 0; ang < fgrs->v1s_specs.n_angles; ang++) { // angles
 	  for(int dir=0; dir < 2; dir++) {		      // direction
 	    float fgval = fgrs->v2bo_out.FastEl(ang, dir, cc.x, cc.y);
+	    fg_max = MAX(fgval, fg_max);
+	  }
+	}
+	int off = 2;						  // bg
+	if(fg_max >= fg_thr) off = 0;				  // fg
+	for(int ang = 0; ang < fgrs->v1s_specs.n_angles; ang++) { // angles
+	  for(int dir=0; dir < 2; dir++) {		      // direction
 	    float flatval = flatrs->v2bo_out.FastEl(ang, dir, cc.x, cc.y);
-	    if(fgval >= fg_thr)
-	      dout->FastEl(ang, dir, cc.x, cc.y) = flatval; // fg
-	    else
-	      dout->FastEl(ang, 2 + dir, cc.x, cc.y) = flatval; // bg
+	    dout->FastEl(ang, off + dir, cc.x, cc.y) = flatval; // fg
 	  }
 	}
       }
