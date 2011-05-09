@@ -1330,6 +1330,8 @@ public:
 
   virtual void 	V2BoDepthFmFg(V1RetinaProc* all_flat, float fg_thr=0.1f);
   // #CAT_V2BO use figure-only image coding in v2bo_out from this retina proc as a mask to allocate a flat image with figure and background elements (all_flat) into a depth-coded output column called _v2bo_fgbg in data_table -- operates across all resolutions present in current V1RetinaProc -- just call on first one -- result is output directly to the v2bo_out with depth_out > 1 
+  virtual void 	V2BoDepthFmImgMask(DataTable* img_mask, V1RetinaProc* all_flat, float fg_thr=0.1f);
+  // #CAT_V2BO figure-only image coding in v2bo_out from this retina proc AND image mask in datatable from input image mask as a mask to allocate a flat image with figure and background elements (all_flat) into a depth-coded output column called _v2bo_fgbg in data_table -- operates across all resolutions present in current V1RetinaProc -- just call on first one -- result is output directly to the v2bo_out with depth_out > 1 -- img_mask must have sequential columns starting at 0 with correct sizes of image mask values
 
   void 	Initialize();
   void	Destroy() { };
