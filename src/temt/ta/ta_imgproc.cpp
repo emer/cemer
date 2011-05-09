@@ -5836,6 +5836,9 @@ bool V1RegionSpec::V2OutputToTable(DataTable* dtab, bool fmt_only) {
 	dout->CopyFrom(&v2bo_out);
       }
       else {
+	if(v2_specs.depth_idx >= 0 && v2_specs.depth_idx < v2_specs.depths_out) {
+	  dout->InitVals(0.0f);	// got to clear it b/c not setting everything
+	}
 	for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
 	  for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
 	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
@@ -5983,6 +5986,39 @@ bool V1RegionSpec::OptOutputToTable(DataTable* dtab, bool fmt_only) {
 
   return true;
 }
+
+void V1RegionSpec::V2BoDepthFmFg(V1RetinaProc* all_flat, float fg_thr) {
+  DataCol* col;
+  TwoDCoord cc;		// complex coords
+  int idx;
+
+  RetinaProc* own = (RetinaProc*)GetOwner(&TA_RetinaProc);
+  if(!own || !all_flat) return;
+  int mxn = MIN(own->regions.size, all_flat->regions.size);
+  for(int i=0; i<mxn; i++) {
+    V1RegionSpec* fgrs = (V1RegionSpec*)own->regions.FastEl(i);
+    V1RegionSpec* flatrs = (V1RegionSpec*)all_flat->regions.FastEl(i);
+    col = fgrs->data_table->FindMakeColName(fgrs->name + "_v2bo_fgbg", idx, DataTable::VT_FLOAT,
+            4, fgrs->v1c_feat_geom.x, fgrs->v2_specs.depths_out * 2,
+            fgrs->v1c_img_geom.x, fgrs->v1c_img_geom.y);
+    float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+    for(cc.y = 0; cc.y < fgrs->v1c_img_geom.y; cc.y++) {
+      for(cc.x = 0; cc.x < fgrs->v1c_img_geom.x; cc.x++) {
+	for(int ang = 0; ang < fgrs->v1s_specs.n_angles; ang++) { // angles
+	  for(int dir=0; dir < 2; dir++) {		      // direction
+	    float fgval = fgrs->v2bo_out.FastEl(ang, dir, cc.x, cc.y);
+	    float flatval = flatrs->v2bo_out.FastEl(ang, dir, cc.x, cc.y);
+	    if(fgval >= fg_thr)
+	      dout->FastEl(ang, dir, cc.x, cc.y) = flatval; // fg
+	    else
+	      dout->FastEl(ang, 2 + dir, cc.x, cc.y) = flatval; // bg
+	  }
+	}
+      }
+    }
+  }
+}
+
 
 /////////////////////////////////////////////////////
 //			Graphing

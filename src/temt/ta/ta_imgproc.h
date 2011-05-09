@@ -43,6 +43,10 @@
 class QPainterPath;	// #IGNORE
 class QBrush;		// #IGNORE
 
+// pre-declare
+class V1RetinaProc;
+//
+
 #ifdef TA_OS_WIN
 # ifdef LoadImage
 #   undef LoadImage
@@ -1323,6 +1327,9 @@ public:
 
   virtual void 	V1bDspCrossResMin(float extra_width=0.0f, int max_extra=4, float pct_to_min=0.5f);
   // #CAT_V1B integrate v1b_dsp_out values across different resolutions within the same parent V1RetinaProc object -- call this after first pass processing, before applying results -- extra_width is multiplier on rf size needed to map between layer sizes that is added to the lower resolution side, to deal with extra blurring at lower res relative to higher res -- max_extra is maximum such extra to use, in actual pixel values -- pct_to_min is how far proportionally to move toward the minimum value -- 1 = full MIN, 0 = ignore cross res constraints entirely
+
+  virtual void 	V2BoDepthFmFg(V1RetinaProc* all_flat, float fg_thr=0.1f);
+  // #CAT_V2BO use figure-only image coding in v2bo_out from this retina proc as a mask to allocate a flat image with figure and background elements (all_flat) into a depth-coded output column called _v2bo_fgbg in data_table -- operates across all resolutions present in current V1RetinaProc -- just call on first one -- result is output directly to the v2bo_out with depth_out > 1 
 
   void 	Initialize();
   void	Destroy() { };

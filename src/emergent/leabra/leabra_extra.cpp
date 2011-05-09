@@ -4673,12 +4673,18 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
   TwoDCoord run_geo = recv_lay->un_geom;
   TwoDCoord sgp_geo = send_lay->gp_geom;
   TwoDCoord sun_geo = send_lay->un_geom;
-  if(sun_geo.y > 2) sun_geo.y = 2; // for now, only deal with first figure units
+
+  int n_depth = sun_geo.y / 2;	// number of different depths represented
+  int ruy_per_depth = run_geo.y / n_depth;
+  if(TestWarning(ruy_per_depth * n_depth != run_geo.y, "Connect_impl",
+		 "recv layer un_geom.y must be even multiple of number of depths represented in the input:", String(n_depth))) {
+    return;
+  }
 
   float n_angles = (float)sun_geo.x;
 
-  if(TestWarning(recv_lay->un_geom.n != group_specs.size, "Connect_impl",
-		 "recv layer un_geom.n is not same as number of group specs -- should be -- redundant or incomplete connections will be created")) {
+  if(TestWarning(ruy_per_depth != group_specs.size, "Connect_impl",
+		 "recv layer units per depth is not same as number of group specs -- should be -- redundant or incomplete connections will be created")) {
   }
 
   TwoDCoord rgp_sc = sgp_geo / rgp_geo;
@@ -4693,6 +4699,8 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
     int rcnt = 0;
     TwoDCoord run;
     for(run.y = 0; run.y < run_geo.y; run.y++) {
+      int depth = run.y / ruy_per_depth;
+      int suy_st = depth * 2;
       for(run.x = 0; run.x < run_geo.x; run.x++, rcnt++) {
 	FgBoGroupingPrjnEl* el = group_specs.FastEl(rcnt % group_specs.size);
 	int rgpidx = 0;
@@ -4718,8 +4726,9 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
 		TwoDCoord sun;
 
 		for(sun.x = 0; sun.x < sun_geo.x; sun.x++) {
-		  for(sun.y = 0; sun.y < sun_geo.y; sun.y++) {
-		    float wt = el->fgbo_weights.FastEl(del.x +el->con_radius, del.y+el->con_radius, sun.y, sun.x);
+		  for(sun.y = suy_st; sun.y < suy_st+2; sun.y++) {
+		    float wt = el->fgbo_weights.FastEl(del.x +el->con_radius,
+					       del.y+el->con_radius, sun.y-suy_st, sun.x);
 		    if(wt <= el->con_thr) continue;
 		    if(wt < el->min_wt) wt = el->min_wt;
 
@@ -4778,6 +4787,8 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
   TwoDCoord sgp_geo = send_lay->gp_geom;
   TwoDCoord sun_geo = send_lay->un_geom;
   float n_angles = (float)sun_geo.x;
+  int n_depth = sun_geo.y / 2;	// number of different depths represented
+  int ruy_per_depth = run_geo.y / n_depth;
 
   TwoDCoord rgp_sc = sgp_geo / rgp_geo;
   TwoDCoord sgp_geo_half = sgp_geo / 2;
@@ -4789,6 +4800,8 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
     TwoDCoord suc = send_lay->UnitGpPosFmIdx(sgpidx);
     TwoDCoord sun;
     sun.SetFmIndex(sui, sun_geo.x);
+    int depth = sun.y / 2;
+    int suy_st = depth * 2;
 
     for(int i=0; i<cg->size; i++) {
       Unit* su = cg->Un(i);
@@ -4817,7 +4830,8 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 	}
       }
 
-      float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius, sun.y, sun.x);
+      float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius,
+					 sun.y-suy_st, sun.x);
       if(wt < el->min_wt) wt = el->min_wt;
       cg->Cn(i)->wt = wt;
     }
@@ -4830,6 +4844,8 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
     TwoDCoord ruc_s = ruc * rgp_sc; // project ruc into s coords
     TwoDCoord run;
     run.SetFmIndex(rui, run_geo.x);
+    int depth = run.y / ruy_per_depth;
+    int suy_st = depth * 2;
 
     FgBoGroupingPrjnEl* el = group_specs.FastEl(rui % group_specs.size);
     for(int i=0; i<cg->size; i++) {
@@ -4857,7 +4873,8 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 	}
       }
 
-      float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius, sun.y, sun.x);
+      float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius,
+					 sun.y-suy_st, sun.x);
       if(wt < el->min_wt) wt = el->min_wt;
       cg->Cn(i)->wt = wt;
     }
