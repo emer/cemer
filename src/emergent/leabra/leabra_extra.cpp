@@ -4676,6 +4676,7 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
 
   int n_depth = sun_geo.y / 2;	// number of different depths represented
   int ruy_per_depth = run_geo.y / n_depth;
+  int run_per_depth = recv_lay->un_geom.n / n_depth;
   if(TestWarning(ruy_per_depth * n_depth != run_geo.y, "Connect_impl",
 		 "recv layer un_geom.y must be even multiple of number of depths represented in the input:", String(n_depth))) {
     return;
@@ -4683,7 +4684,7 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
 
   float n_angles = (float)sun_geo.x;
 
-  if(TestWarning(ruy_per_depth != group_specs.size, "Connect_impl",
+  if(TestWarning(run_per_depth != group_specs.size, "Connect_impl",
 		 "recv layer units per depth is not same as number of group specs -- should be -- redundant or incomplete connections will be created")) {
   }
 
