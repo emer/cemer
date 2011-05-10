@@ -83,6 +83,11 @@ DEBUILD_PKGS="build-essential gnupg lintian fakeroot debhelper dh-make subversio
 #  * don't need libquarter here since we will be building it ourselves.
 EMERGENT_PKGS="checkinstall subversion cmake g++ libqt4-dev libcoin60-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev libjpeg-dev"
 
+# Packages needed to build Quarter.  It also requires some of the
+# ones already listed in EMERGENT_PKGS, but this one is specifically
+# needed for building Quarter (otherwise compile error).
+QUARTER_PKGS="pkg-config"
+
 # Use a separate xterm window to track progress
 XTERM=`which xterm`
 
@@ -90,7 +95,7 @@ echo -e "\nInstalling packages needed to build (log will open in separate xterm)
 echo "  (ctrl-c in *this* window will kill the package install process)"
 OUTPUT="apt-get-install-output.txt"
 test -x "$XTERM" && $XTERM -si -geometry 160x50 -T "apt-get install progress (safe to close this window)" -e tail -F $OUTPUT &
-sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS 2>&1 > $OUTPUT
+sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS $QUARTER_PKGS 2>&1 > $OUTPUT
 
 # This may fail (expectedly) if the packages aren't already installed,
 # so allow it with the echo alternative (otherwise set -e would bail).
