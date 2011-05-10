@@ -1,5 +1,5 @@
 #!/bin/bash
-# Moves Windows and Mac Emergent packages from your home directory
+# Moves Windows and Mac emergent packages from your home directory
 # into the FTP directory.  Run as root.
 
 RUN_ON=grey

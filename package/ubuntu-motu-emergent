@@ -6,7 +6,7 @@ if [ -z $REV ]; then
   read -p "Enter the svn revision number to retrieve: [HEAD] " REV
   if [ -z $REV ]; then REV="HEAD"; fi
 fi
-echo "Building Emergent from Subversion rev $REV on "
+echo "Building emergent from Subversion rev $REV on "
 cat /etc/issue || echo "Unknown platform"
 
 #NUM_PROCS=`grep "^processor\s*:\s*[0-9]*$" /proc/cpuinfo |wc -l`
@@ -28,7 +28,7 @@ EMERGENT_VERSION="${EMERGENT_VERSION_MAJOR}.${EMERGENT_VERSION_MINOR}.${EMERGENT
 EMERGENT_BLD_DIR=emergent-${EMERGENT_VERSION}
 rm -rf ${EMERGENT_BLD_DIR}
 mv ${EMERGENT_TMP_DIR} ${EMERGENT_BLD_DIR}
-echo "Building Emergent version ${EMERGENT_VERSION}"
+echo "Building emergent version ${EMERGENT_VERSION}"
 # wget ftp://grey.colorado.edu/pub/emergent/emergent-5.tar.gz
 # tar -xzf emergent-5.tar.gz
 # mv emergent ${EMERGENT_BLD_DIR}
@@ -50,21 +50,27 @@ Emergent
 #################################################
 # Create debian/control
 #################################################
+
+# These packages aren't strictly needed on the Depends line, but the desire
+# is to have a single package for emergent, vs. having an emergnet.deb and
+# a separate emergent-dev.deb for people who want to compile plugins.
+EMERGENT_BLD_DEPS="cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0"
+
 cat > debian/control <<Emergent
 Source: emergent
 Section: science
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: debhelper (>= 7.0.17), cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0
+Build-Depends: debhelper (>= 7.0.17), ${EMERGENT_BLD_DEPS}
 Standards-Version: 3.9.1
 Homepage: http://grey.colorado.edu/emergent
 
 Package: emergent
 Architecture: any
-Depends: \${shlibs:Depends}, \${misc:Depends}
-Description: Emergent Neural Network Simulation System
- Emergent (a major rewrite of PDP++) is a comprehensive
+Depends: \${shlibs:Depends}, \${misc:Depends}, ${EMERGENT_BLD_DEPS}
+Description: emergent Neural Network Simulation System
+ emergent (a major rewrite of PDP++) is a comprehensive
  simulation environment for creating complex, sophisticated models
  of the brain and cognitive processes using neural network
  models. These same networks can also be used for all kinds of
@@ -104,14 +110,14 @@ Copyright:
 
 License:
 
-    This file is part of The Emergent Toolkit
+    This file is part of The emergent Toolkit
 
-    Emergent is free software; you can redistribute it and/or modify
+    emergent is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
 
-    Emergent is distributed in the hope that it will be useful,
+    emergent is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.

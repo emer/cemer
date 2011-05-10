@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script builds a Mac package of Emergent.
+# This script builds a Mac package of emergent.
 # Currently only for 64-bit Macs.
 set -e
 
@@ -9,10 +9,10 @@ if ! uname -a | grep -q Darwin; then
   exit
 fi
 
-# Get Emergent svn revision to build.
+# Get emergent svn revision to build.
 REV="$1"
 if [ -z $REV ]; then
-  read -p "Enter the Emergent svn revision number to retrieve: [HEAD] " REV
+  read -p "Enter the emergent svn revision number to retrieve: [HEAD] " REV
   if [ -z $REV ]; then REV="HEAD"; fi
 fi
 
@@ -27,7 +27,7 @@ make -j2 package
 
 # Do this after building since config.h is a generated file.
 EMERGENT_VERSION=`sed -n '/VERSION/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_SRC_DIR}/config.h`
-echo -e "\nBuilt Emergent version ${EMERGENT_VERSION}-${REV}\n"
+echo -e "\nBuilt emergent version ${EMERGENT_VERSION}-${REV}\n"
 
 # The package just build by 'make package' is an upgrader, not a full installer.
 # Move it to the home directory and put the svn rev and 'upgrade' in its name.
@@ -68,7 +68,7 @@ hdiutil detach ${UPGRADE_DIR}
 
 # Get the size of the new emergent package.
 PKG_SIZE=`sed -n '/IFPkgFlagInstalledSize/{n;s/.*>\([0-9]*\)<.*/\1/p;}' < Packages/${UPGRADE_PKG}/Contents/Info.plist`
-echo "Size of new Emergent package is ${PKG_SIZE}."
+echo "Size of new emergent package is ${PKG_SIZE}."
 
 # Update the distribution file with the new version number and subpackage size.
 DIST_FILE="distribution.dist"
@@ -104,7 +104,7 @@ Done!
 **
 ** Also, make an SVN tag:
 **
-** svn copy -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk http://grey.colorado.edu/svn/emergent/emergent/tags/${EMERGENT_VERSION} -m "Emergent ${EMERGENT_VERSION} (beta) was built from svn revision ${REV}"
+** svn copy -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk http://grey.colorado.edu/svn/emergent/emergent/tags/${EMERGENT_VERSION} -m "emergent ${EMERGENT_VERSION} (beta) was built from svn revision ${REV}"
 
 INSTRUCTIONS
 

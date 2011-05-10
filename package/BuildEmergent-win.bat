@@ -8,7 +8,7 @@ color 07
 cls
 set python=
 
-REM Create Emergent temp directory if it doesn't already exist
+REM Create emergent temp directory if it doesn't already exist
 if exist %TEMP%\emergent goto tmpexists
 mkdir %TEMP%\emergent
 :tmpexists

@@ -1,26 +1,32 @@
 #!/bin/bash
-# This script builds debian packages for Emergent.
-# It has been tested on Ubuntu 10.04 and 10.10.
+# This script builds debian packages for emergent.
+# It has been tested on Ubuntu 10.04, 10.10, and 11.04.
 set -e
 
 # Make sure we're on the right kind of Linux.
 # (could use /usr/bin/lsb_release to get this info)
-ISSUE="Ubuntu 10.10"
+NEED_BACKPORT="n"
+ISSUE="Ubuntu 11.04"
 if ! grep -q "$ISSUE" /etc/issue; then
-  ISSUE="Ubuntu 10.04"
+  # Older releases need the backports repo for cmake.
+  NEED_BACKPORT="y"
+  ISSUE="Ubuntu 10.10"
   if ! grep -q "$ISSUE" /etc/issue; then
-    echo "ERROR: This script should be run on ${ISSUE} or higher"
-    exit
+    ISSUE="Ubuntu 10.04"
+    if ! grep -q "$ISSUE" /etc/issue; then
+      echo "ERROR: This script should be run on ${ISSUE} or higher"
+      exit
+    fi
   fi
 fi
 REPONAME=`lsb_release -cs`
 
 echo "Note: you must provide your password for sudo a few times for this script."
 
-# Get Emergent svn revision to build
+# Get emergent svn revision to build
 REV="$1"
 if [ -z $REV ]; then
-  read -p "Enter the Emergent svn revision number to retrieve: [HEAD] " REV
+  read -p "Enter the emergent svn revision number to retrieve: [HEAD] " REV
   if [ -z $REV ]; then REV="HEAD"; fi
 fi
 
@@ -36,27 +42,29 @@ fi
 # Make sure the backports repo is enabled so we can get cmake 2.8.3 on
 # maverick (cmake 2.8.2 has a bug that prevents creating .deb packages
 # that work) and cmake 2.8.1 on lucid (cmake 2.8.0 has some other bug).
-REPOS=/etc/apt/sources.list
-FIND_BACKPORTS="^\s*deb\s\s*http://us.archive.ubuntu.com/ubuntu/\s\s*${REPONAME}-backports"
-if ! grep -q $FIND_BACKPORTS $REPOS; then
-  echo "Need to add the ${REPONAME}-backports repository to get good cmake version"
-  REPOS_BACKUP="${REPOS}-backup"
-  echo "Backing up $REPOS to $REPOS_BACKUP..."
-  sudo cp $REPOS $REPOS_BACKUP
-  echo "Trying to uncomment ${REPONAME}-backports repo line..."
-  sudo sed -i "/^\s*##*\s*deb\(-src\)\{0,1\}\s\s*http:\/\/us.archive.ubuntu.com\/ubuntu\/\s\s*${REPONAME}-backports/s/^\s*##*\s*//" $REPOS
+if [ "$NEED_BACKPORT" == "y" ]; then
+  REPOS=/etc/apt/sources.list
+  FIND_BACKPORTS="^\s*deb\s\s*http://us.archive.ubuntu.com/ubuntu/\s\s*${REPONAME}-backports"
   if ! grep -q $FIND_BACKPORTS $REPOS; then
-    echo "Didn't find a commented out ${REPONAME}-backports line; creating new"
-    sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ ${REPONAME}-backports main restricted universe multiverse' >> $REPOS"
+    echo "Need to add the ${REPONAME}-backports repository to get good cmake version"
+    REPOS_BACKUP="${REPOS}-backup"
+    echo "Backing up $REPOS to $REPOS_BACKUP..."
+    sudo cp $REPOS $REPOS_BACKUP
+    echo "Trying to uncomment ${REPONAME}-backports repo line..."
+    sudo sed -i "/^\s*##*\s*deb\(-src\)\{0,1\}\s\s*http:\/\/us.archive.ubuntu.com\/ubuntu\/\s\s*${REPONAME}-backports/s/^\s*##*\s*//" $REPOS
+    if ! grep -q $FIND_BACKPORTS $REPOS; then
+      echo "Didn't find a commented out ${REPONAME}-backports line; creating new"
+      sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ ${REPONAME}-backports main restricted universe multiverse' >> $REPOS"
+    fi
   fi
-fi
-
-# Double check that backports is enabled.
-if grep -q $FIND_BACKPORTS $REPOS; then
-  echo "Found ${REPONAME}-backport repository"
-else
-  echo "Could not add ${REPONAME}-backport repository needed for cmake upgrade.  Quitting."
-  exit
+  
+  # Double check that backports is enabled.
+  if grep -q $FIND_BACKPORTS $REPOS; then
+    echo "Found ${REPONAME}-backport repository"
+  else
+    echo "Could not add ${REPONAME}-backport repository needed for cmake upgrade.  Quitting."
+    exit
+  fi
 fi
 
 # Install prereq packages
@@ -67,7 +75,7 @@ sudo apt-get -qq update | sed 's/^/  /'
 # Packages needed for debuild
 DEBUILD_PKGS="build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts mercurial"
 
-# Packages needed to build Emergent
+# Packages needed to build emergent
 # This list should match the CPACK_DEBIAN_PACKAGE_DEPENDS line of emergent/CMakeModules/EmergentCPack.cmake
 # Except:
 #  * only need checkinstall here to make the Quarter package.
@@ -81,7 +89,7 @@ XTERM=`which xterm`
 echo -e "\nInstalling packages needed to build (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the package install process)"
 OUTPUT="apt-get-install-output.txt"
-test -x "$XTERM" && $XTERM -geometry 160x50 -T "apt-get install progress (safe to close this window)" -e tail -F $OUTPUT &
+test -x "$XTERM" && $XTERM -si -geometry 160x50 -T "apt-get install progress (safe to close this window)" -e tail -F $OUTPUT &
 sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS 2>&1 > $OUTPUT
 
 # This may fail (expectedly) if the packages aren't already installed,
@@ -109,17 +117,17 @@ if [ "$BUILD_QUARTER" == "y" ]; then
   echo -e "\nBuilding and packaging Quarter (log will open in separate xterm)..."
   echo "  (ctrl-c in *this* window will kill the build/package process)"
   OUTPUT="libQuarter-build-output.txt"
-  test -x "$XTERM" && $XTERM -geometry 160x50 -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
+  test -x "$XTERM" && $XTERM -si -geometry 160x50 -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
   ./ubuntu-motu-quarter 2>&1 > $OUTPUT
 
-  echo -e "\nInstalling the Quarter libraries before building Emergent..."
+  echo -e "\nInstalling the Quarter libraries before building emergent..."
   sudo dpkg -i /tmp/libquarter0_*.deb
 fi
 
-echo -e "\nBuilding and packaging Emergent (log will open in separate xterm)..."
+echo -e "\nBuilding and packaging emergent (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the build/package process)"
 OUTPUT="emergent-build-output.txt"
-test -x "$XTERM" && $XTERM -geometry 160x50 -T "Emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
+test -x "$XTERM" && $XTERM -si -geometry 160x50 -T "emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
 ./ubuntu-motu-emergent $REV 2>&1 > $OUTPUT
 
 DEBS="/tmp/emergent*.deb"

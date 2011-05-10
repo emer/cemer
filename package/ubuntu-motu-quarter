@@ -8,21 +8,25 @@ echo "Building Quarter from Mercurial source"
 QUARTER_VERSION=1.0
 DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
+REPONAME=`lsb_release -cs` # e.g., "maverick"
 
-cd /tmp
-rm -fr /tmp/libquarter0-${QUARTER_VERSION}
-hg clone http://hg.sim.no/Quarter/default libquarter0-${QUARTER_VERSION}
-# r460 is the last rev of Quarter to compile with libcoin60-dev (3.1.2-1)
+QUARTER_BLD_DIR=libquarter0-${QUARTER_VERSION}
+QUARTER_BLD_PATH=/tmp/${QUARTER_BLD_DIR}
+rm -fr ${QUARTER_BLD_PATH}
+hg clone http://hg.sim.no/Quarter/default ${QUARTER_BLD_PATH}
+# r460 is the last rev of Quarter to compile with libcoin60-dev (3.1.x)
+cd ${QUARTER_BLD_PATH}
 hg update -r 460
-tar -czf libquarter0_${QUARTER_VERSION}.orig.tar.gz libquarter0-${QUARTER_VERSION}
-cd libquarter0-${QUARTER_VERSION}
+cd /tmp
+tar -czf libquarter0_${QUARTER_VERSION}.orig.tar.gz ${QUARTER_BLD_DIR}
+cd ${QUARTER_BLD_DIR}
 mkdir -p debian
 
 #################################################
 # Create debian/changelog
 #################################################
 cat > debian/changelog <<Quarter
-libquarter0 (1.0-0ubuntu1) maverick; urgency=low
+libquarter0 (1.0-0ubuntu1) ${REPONAME}; urgency=low
 
   * Initial release (LP: #364748)
 
@@ -38,7 +42,7 @@ Section: graphics
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libqt4-opengl-dev, libqt4-designer, libcoin60-dev, pkg-config
+Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libqt4-opengl-dev, libqt4-designer, libcoin60-dev
 Standards-Version: 3.9.1
 
 Homepage: http://www.coin3d.org/lib/quarter
