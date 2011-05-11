@@ -4057,9 +4057,8 @@ void GpAggregatePrjnSpec::Connect_impl(Projection* prjn) {
     TwoDCoord suc;
     for(suc.y = 0; suc.y <= su_geo.y; suc.y++) {
       for(suc.x = 0; suc.x <= su_geo.x; suc.x++) {
-	Unit_Group* su_gp = send_lay->UnitGpAtCoord(suc);
-	if(!su_gp) continue;
-	Unit* su_u = (Unit*)su_gp->SafeEl(ri);
+	int sgpidx = send_lay->UnitGpIdxFmPos(suc);
+	Unit* su_u = send_lay->UnitAtUnGpIdx(ri, sgpidx);
 	if(su_u) {
 	  ru_u->ConnectFrom(su_u, prjn);
 	}
