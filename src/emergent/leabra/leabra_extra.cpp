@@ -4039,7 +4039,7 @@ void GpAggregatePrjnSpec::Connect_impl(Projection* prjn) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
   TwoDCoord su_geo = send_lay->gp_geom;
-  int n_su_gps = su_geo.Product();
+  int n_su_gps = send_lay->gp_geom.n;
 
   int alloc_no = n_su_gps; 	// number of cons per recv unit
 
@@ -4055,8 +4055,8 @@ void GpAggregatePrjnSpec::Connect_impl(Projection* prjn) {
     ru_u->RecvConsPreAlloc(alloc_no, prjn);
     
     TwoDCoord suc;
-    for(suc.y = 0; suc.y <= su_geo.y; suc.y++) {
-      for(suc.x = 0; suc.x <= su_geo.x; suc.x++) {
+    for(suc.y = 0; suc.y < su_geo.y; suc.y++) {
+      for(suc.x = 0; suc.x < su_geo.x; suc.x++) {
 	int sgpidx = send_lay->UnitGpIdxFmPos(suc);
 	Unit* su_u = send_lay->UnitAtUnGpIdx(ri, sgpidx);
 	if(su_u) {
