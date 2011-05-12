@@ -8221,6 +8221,7 @@ void iTreeViewItem::moveChild(int fm_idx, int to_idx) {
   insertChild(to_idx, tak); 
   // need to re-assert the hidden, because everything goes visible after the take
   iTreeView* tv = treeView();
+  if (!tv) return;
   QTreeWidgetItemIterator it(this);
   QTreeWidgetItem* item_;
   while ( (item_ = *it) ) {
