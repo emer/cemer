@@ -699,9 +699,6 @@ void DMemAggVars::ScanMembers_impl(TypeDef* td, void* base) {
     void* addr = md->GetOff(base);
     types.Add(new_type);
     addrs.Add(addr);
-    if(taMisc::dmem_proc == 0) {
-      taMisc::Info("added agg var:", md->name);
-    }
   }
 }
 
@@ -765,8 +762,8 @@ void DMemAggVars::AggVar(MPI_Comm cm, MPI_Op op) {
   if(int_send.size > 0) {
     DMEM_MPICALL(MPI_Allreduce(int_send.el, int_recv.el, int_send.size, MPI_INT, op, cm),
 		 "DMemAggVars::AggVar", "Allreduce");
-
   }
+
   for(int i=0; i< types.size; i++)  {
     MPI_Datatype mpi_type = types[i];
     if (mpi_type == MPI_FLOAT) {
