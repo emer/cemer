@@ -4023,12 +4023,12 @@ void SaliencyPrjnSpec::GridFilter(DataTable* graph_data) {
 }
 
 ////////////////////////////////////////////////////////////
-//	GpAggregatePrjnSpec
+//	GpMapConvergePrjnSpec
 
-void GpAggregatePrjnSpec::Initialize() {
+void GpMapConvergePrjnSpec::Initialize() {
 }
 
-void GpAggregatePrjnSpec::Connect_impl(Projection* prjn) {
+void GpMapConvergePrjnSpec::Connect_impl(Projection* prjn) {
   if(!(bool)prjn->from)	return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;

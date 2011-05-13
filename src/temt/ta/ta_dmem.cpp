@@ -696,6 +696,9 @@ void DMemAggVars::ScanMembers(TypeDef* td, void* base) {
     void* addr = md->GetOff(base);
     types.Add(new_type);
     addrs.Add(addr);
+    if(taMisc::dmem_proc == 0) {
+      taMisc::Info("added agg var:", md->name);
+    }
   }
 }
 

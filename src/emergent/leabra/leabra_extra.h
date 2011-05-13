@@ -2416,14 +2416,14 @@ private:
   void	Defaults_init() 	{ };
 };
 
-class LEABRA_API GpAggregatePrjnSpec : public ProjectionSpec {
-  // aggregates across a layer with unit groups into a receiving layer that has the same geometry as each of the unit groups -- each unit receives from the corresponding unit in each of the sending unit groups
+class LEABRA_API GpMapConvergePrjnSpec : public ProjectionSpec {
+  // #AKA_GpAggregatePrjnSpec aggregates across a layer with unit groups into a receiving layer that has the same geometry as each of the unit groups -- each unit receives from the corresponding unit in each of the sending unit groups
 INHERITED(ProjectionSpec)
 public:
   
   void 		Connect_impl(Projection* prjn);
 
-  TA_SIMPLE_BASEFUNS(GpAggregatePrjnSpec);
+  TA_SIMPLE_BASEFUNS(GpMapConvergePrjnSpec);
 protected:
   SPEC_DEFAULTS;
 private:
