@@ -660,10 +660,13 @@ String DMemAggVars::OpToStr(MPI_Op op) {
 }
 
 void DMemAggVars::ScanMembers(TypeDef* td, void* base) {
-  String trg_op_str = OpToStr(agg_op);
-
   addrs.Reset();
   types.Reset();
+  ScanMembers_impl(td, base);
+}
+
+void DMemAggVars::ScanMembers_impl(TypeDef* td, void* base) {
+  String trg_op_str = OpToStr(agg_op);
   for(int m=0;m<td->members.size;m++) {
     MemberDef* md = td->members.FastEl(m);
     String opstr = md->OptionAfter("DMEM_AGG_");
@@ -672,7 +675,7 @@ void DMemAggVars::ScanMembers(TypeDef* td, void* base) {
 
     MPI_Datatype new_type = MPI_DATATYPE_NULL;
     if(md->type->InheritsFormal(TA_class)) {
-      ScanMembers(md->type, md->GetOff(base));
+      ScanMembers_impl(md->type, md->GetOff(base));
       continue;
     }
     else if(md->type->InheritsFrom(TA_double)) {

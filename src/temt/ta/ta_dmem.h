@@ -216,6 +216,8 @@ public:
 
   virtual void	ScanMembers(TypeDef* td, void* base);
   // #IGNORE scan members of type for DMEM_AGG_op comment directives & get their addrs; DMEM_AGG_DYN = dynamic op, for agg_op = -1
+    virtual void ScanMembers_impl(TypeDef* td, void* base);
+    // #IGNORE scan members of type for DMEM_AGG_op comment directives & get their addrs; DMEM_AGG_DYN = dynamic op, for agg_op = -1
   virtual void	CompileVars();
   // #IGNORE allocate recv/send data and data_idx values based on types info for vars
 
