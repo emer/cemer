@@ -3443,8 +3443,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   float su_avg_s = su->avg_s;
   float su_avg_m = su->avg_m;
   float su_act_mult = xcal.thr_l_mix;
-  if(xcal.su_m_thr)
-    su_act_mult *= su_avg_m;
+  if(xcal.su_m_thr) {
+    su_act_mult *= su_avg_m; 
+  }
+  else {
+    LeabraLayer* fm = (LeabraLayer*)cg->prjn->from.ptr();
+    su_act_mult *= fm->kwta.pct;
+  }
 
   for(int i=0; i<cg->size; i++) {
     LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
