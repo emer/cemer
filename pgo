@@ -1,0 +1,21 @@
+#!/bin/bash
+#Profile Guided Optimization
+STDCXXFLAGS=" -Wcoverage-mismatch" # -fprofile-correction
+EMER_PRE="bin/emergent -nogui -ni -p /home/$(whoami)/emergent/bench/actual/leabra_bench.proj"
+EMER_POST="n_threads=2 thread_alloc_pct=0 thread_nibble_chunk=8 thread_compute_thr=0.5 thread_min_units=1000 tag=pgo-optimized"
+
+function bench() {
+    echo "Running $cond condition"
+    cmake --quiet ../ -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=ON >> pgo.log
+    time make -j8 >> pgo.log
+    $EMER_PRE epochs=10 pats=100 units=25 $EMER_POST
+    $EMER_PRE epochs=3 pats=100 units=100 $EMER_POST
+    $EMER_PRE epochs=1 pats=10 units=625 $EMER_POST
+    $EMER_PRE epochs=1 pats=50 units=1024 $EMER_POST
+}
+
+dirs="profile-control profile-generate profile-use" && cd ~/emergent && rm -fr $dirs && mkdir $dirs
+cond=control && cd profile-$cond && unset CXXFLAGS LDFLAGS && bench
+cond=generate && cd ../profile-generate && export CXXFLAGS="-fprofile-generate $STDCXFLAGS" && bench &> pgo.log
+for file in $(find ./* -name *gc* -print); do cp -pr --parents $file ../profile-use/; done
+cond=use && cd ../profile-use && export CXXFLAGS="-fprofile-use $STDCXXFLAGS" && bench
