@@ -5627,47 +5627,42 @@ void TiledGpRFOneToOneWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg
 //		V2toV4DepthPrjnSpec
 
 void V2toV4DepthPrjnSpec::Initialize() {
-  fig_depth_idx = 0;
-  bg_scale = 0.1f;
+  depth_idx = 0;
 }
 
-void V2toV4DepthPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
-
-  int sgpidx;
-  int sui;
+void V2toV4DepthPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
+				Layer* send_lay, int rgpidx, int sgpidx, int alloc_loop) {
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
   TwoDCoord sug;
-  if(reciprocal) {
-    Layer* recv_lay = prjn->from; // reversed
-    Layer* send_lay = prjn->layer;
-    send_lay->UnGpIdxFmUnitIdx(ru->idx, sui, sgpidx); // note: ru = send
-    sug.SetFmIndex(sui, send_lay->un_geom.x);
-    int depth_idx = sug.y / 2; // v2bo has 2 per depth always
-    if(depth_idx != fig_depth_idx) { // scale the whole thing
-      for(int i=0; i < cg->size; i++) {
-	cg->Cn(i)->wt *= bg_scale;
+
+  if(reciprocal) {		// reciprocal is backwards!
+    for(int sui=0; sui < su_nunits; sui++) {
+      sug.SetFmIndex(sui, send_lay->un_geom.x);
+      int cur_depth = sug.y / 2; // v2bo has 2 per depth always
+      if(cur_depth != depth_idx) continue;
+      Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+      for(int rui=0; rui < ru_nunits; rui++) {
+	Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+	if(!self_con && (su_u == ru_u)) continue;
+	su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
       }
     }
   }
   else {
-    Layer* recv_lay = prjn->layer;
-    Layer* send_lay = prjn->from;
-
-    for(int i=0; i < cg->size; i++) {
-      Unit* su = cg->Un(i);
-      send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
-
-      sug.SetFmIndex(sui, send_lay->un_geom.x);
-      int depth_idx = sug.y / 2; // v2bo has 2 per depth always
-      if(depth_idx != fig_depth_idx)
-	cg->Cn(i)->wt *= bg_scale;
+    for(int rui=0; rui < ru_nunits; rui++) {
+      Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+      for(int sui=0; sui < su_nunits; sui++) {
+	sug.SetFmIndex(sui, send_lay->un_geom.x);
+	int cur_depth = sug.y / 2; // v2bo has 2 per depth always
+	if(cur_depth != depth_idx) continue;
+	Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+	if(!self_con && (su_u == ru_u)) continue;
+	ru_u->ConnectFrom(su_u, prjn, alloc_loop); // recip!
+      }
     }
   }
 }
-
-
-
-
 
 
 ///////////////////////////////////////////////////////////////

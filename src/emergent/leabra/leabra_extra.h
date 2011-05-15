@@ -2718,13 +2718,13 @@ private:
 };
 
 class LEABRA_API V2toV4DepthPrjnSpec : public TiledGpRFPrjnSpec {
-  // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that connect with differential weights from the figure vs. ground depth levels of a V2 input layer -- downscales the background weights
+  // TiledGpRFPrjnSpec that only connects to a specific depth in V2 border ownership input layer
 INHERITED(TiledGpRFPrjnSpec)
 public:
-  int		fig_depth_idx;	// #CONDEDIT_ON_init_wts which depth index (0..) has the figure (focal) depth
-  float		bg_scale;	// #CONDEDIT_ON_init_wts scaling factor to apply to the random initial weights for background depths (not fig_depth)
+  int		depth_idx;	// which depth index (0..) to connect to
 
-  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+  override void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
+				  int rgpidx, int sgpidx, int alloc_loop);
 
   TA_SIMPLE_BASEFUNS(V2toV4DepthPrjnSpec);
 private:
