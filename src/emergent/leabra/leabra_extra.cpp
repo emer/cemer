@@ -5623,6 +5623,49 @@ void TiledGpRFOneToOneWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg
 }
 
 
+///////////////////////////////////////////////////////////////
+//		V2toV4DepthPrjnSpec
+
+void V2toV4DepthPrjnSpec::Initialize() {
+  fig_depth_idx = 0;
+  bg_scale = 0.1f;
+}
+
+void V2toV4DepthPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
+
+  int sgpidx;
+  int sui;
+  TwoDCoord sug;
+  if(reciprocal) {
+    Layer* recv_lay = prjn->from; // reversed
+    Layer* send_lay = prjn->layer;
+    send_lay->UnGpIdxFmUnitIdx(ru->idx, sui, sgpidx); // note: ru = send
+    sug.SetFmIndex(sui, send_lay->un_geom.x);
+    int depth_idx = sug.y / 2; // v2bo has 2 per depth always
+    if(depth_idx != fig_depth_idx) { // scale the whole thing
+      for(int i=0; i < cg->size; i++) {
+	cg->Cn(i)->wt *= bg_scale;
+      }
+    }
+  }
+  else {
+    Layer* recv_lay = prjn->layer;
+    Layer* send_lay = prjn->from;
+
+    for(int i=0; i < cg->size; i++) {
+      Unit* su = cg->Un(i);
+      send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
+
+      sug.SetFmIndex(sui, send_lay->un_geom.x);
+      int depth_idx = sug.y / 2; // v2bo has 2 per depth always
+      if(depth_idx != fig_depth_idx)
+	cg->Cn(i)->wt *= bg_scale;
+    }
+  }
+}
+
+
 
 
 

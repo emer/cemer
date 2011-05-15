@@ -2717,6 +2717,21 @@ private:
   void	Destroy()	{ };
 };
 
+class LEABRA_API V2toV4DepthPrjnSpec : public TiledGpRFPrjnSpec {
+  // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) that connect with differential weights from the figure vs. ground depth levels of a V2 input layer -- downscales the background weights
+INHERITED(TiledGpRFPrjnSpec)
+public:
+  int		fig_depth_idx;	// #CONDEDIT_ON_init_wts which depth index (0..) has the figure (focal) depth
+  float		bg_scale;	// #CONDEDIT_ON_init_wts scaling factor to apply to the random initial weights for background depths (not fig_depth)
+
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  TA_SIMPLE_BASEFUNS(V2toV4DepthPrjnSpec);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 class LEABRA_API V1FeatInhibSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies inhibition parameters for feature inhibition
 INHERITED(SpecMemberBase)
