@@ -243,7 +243,7 @@ INHERITED(SpecMemberBase)
 public:
 
   bool 		lthr_su_avg_l;	 // multiply the recv threshold ru->l_thr by the long-term sending average su->avg_l -- this is more commensurate with the ru->avg_l that drives the threshold on the recv side -- more plausible than the previous default su->avg_m: synapse threshold impacted by long-term coproduct in same way as medium-term coproduct -- also serves to naturally limit the growth of high weights from units that are also highly active
-  float		lthr_max;	// #DEF_0:8:0.9 maximum possible long-term threshold value l_thr (operates on final computed value) -- prevents excessive ltd for higher threshold values
+  float		lthr_gain;	// #DEF_2 extra l_thr gain term for lthr_su_avg_l version -- keep the main unit level gain the default level as before, subject to the l_thr_max there, and then multiply again here to compensate for the relatively low values of su->avg_l 
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.01 to 0.008 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
@@ -892,6 +892,7 @@ class LEABRA_API LeabraActAvgSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		l_sq;		// #DEF_true threshold is square of long-time scale average activity, and ml and l dt are computed in a cascaded fashion, instead of MAX of each separately as it is now
+  float		l_thr_max;	// #DEF_0.9 #CONDSHOW_ON_l_sq maximum long-term threshold value l_thr -- prevents excessive ltd for higher threshold values
   float		l_gain;		// #DEF_3;60 #MIN_0 gain on the long-time scale receiving average activation (avg_l) value as it enters into the learning threshold l_thr
   float		l_dt;		// #DEF_0.0001:0.1 [0.1 std for XCAL l_sq, 0.005 std for XCAL non-l_sq, .0002 for XCAL_C] #MIN_0 #MAX_1 time constant (rate) for updating the long time-scale avg_l value, used for XCAL learning rules
   float		ml_dt;		// #DEF_1;0.4;0.004 #MIN_0 #MAX_1 [1.0 std for XCAL l_sq, 0.4 for XCAL non-l_sq, 0.004 for XCAL_C] time constant (rate) for updating the medium-to-long time-scale avg_ml value, which integrates over recent history of medium (trial level) averages, used for XCAL learning rules
@@ -3435,9 +3436,7 @@ C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
   float srs = ru->avg_s * su_avg_s;
   float srm = ru->avg_m * su_avg_m;
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  float lthr = su_act_mult * ru->l_thr;
-  if(lthr > xcal.lthr_max) lthr = xcal.lthr_max;
-  float effthr = xcal.thr_m_mix * srm + lthr;
+  float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
@@ -3446,7 +3445,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   float su_avg_m = su->avg_m;
   float su_act_mult = xcal.thr_l_mix;
   if(xcal.lthr_su_avg_l) 
-    su_act_mult *= su->avg_l;
+    su_act_mult *= xcal.lthr_gain * su->avg_l;
   else
     su_act_mult *= su_avg_m;
 

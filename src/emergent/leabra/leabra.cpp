@@ -111,7 +111,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   lthr_su_avg_l = false;
-  lthr_max = 0.9f;
+  lthr_gain = 2.0f;
   s_mix = 0.9f;
   thr_l_mix = 0.01f;
   d_rev = 0.10f;
@@ -672,6 +672,7 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 
 void LeabraActAvgSpec::Initialize() {
   l_sq = true;
+  l_thr_max = 0.9f;
   if(taMisc::is_loading) {
     taVersion v515(5, 1, 5);
     if(taMisc::loading_version < v515) { // default prior to 515 is l_sq off
@@ -1130,6 +1131,8 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
       u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml);
       u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l);
       u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
+      if(u->l_thr > act_avg.l_thr_max)
+	u->l_thr = act_avg.l_thr_max;
     }
     else {
       u->avg_l += act_avg.l_dt * (lval - u->avg_l);
@@ -1996,6 +1999,8 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
       u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml); // driven by avg_m
       u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l); // driven by avg_ml
       u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
+      if(u->l_thr > act_avg.l_thr_max)
+	u->l_thr = act_avg.l_thr_max;
     }
     else {
       u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml); // driven by avg_m
