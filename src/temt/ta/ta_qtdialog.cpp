@@ -1293,10 +1293,10 @@ void taiDataHost_impl::DoFillLabelContextMenu_SelEdit(QMenu* menu,
     sub->setEnabled(false); // show item for usability, but disable
 }
 
-void taiDataHost_impl::GetName(MemberDef* md, String& name, String& desc) {
+void taiDataHost_impl::GetName(MemberDef* md, String& name, String& help_text) {
   name = md->GetLabel();
-  desc = ""; // just in case
-  MemberDef::GetMembDesc(md, desc, "");
+  help_text = ""; // just in case
+  MemberDef::GetMembDesc(md, help_text, "");
 }
 
 taiDataHost_impl::taiDataHost_impl(TypeDef* typ_, bool read_only_, bool modal_, QObject* parent)

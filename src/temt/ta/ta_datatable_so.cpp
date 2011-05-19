@@ -66,8 +66,8 @@ void T3GridViewNode::initClass()
   SO_NODE_INIT_CLASS(T3GridViewNode, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3GridViewNode::T3GridViewNode(void* dataView_, float wdth, bool show_draggers)
-:inherited(dataView_)
+T3GridViewNode::T3GridViewNode(T3DataView* dataView_, float wdth, bool show_draggers)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3GridViewNode);
 
@@ -180,17 +180,15 @@ void T3GridColViewNode::initClass()
   SO_NODE_INIT_CLASS(T3GridColViewNode, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3GridColViewNode::T3GridColViewNode(void* colspec)
-:inherited(colspec)
+T3GridColViewNode::T3GridColViewNode(T3DataView* colspec)
+  : inherited(colspec)
 {
   SO_NODE_CONSTRUCTOR(T3GridColViewNode);
 }
 
 T3GridColViewNode::~T3GridColViewNode()
 {
-  
 }
-
 
 
 //////////////////////////////////
@@ -205,8 +203,8 @@ void T3Axis::initClass()
   SO_NODE_INIT_CLASS(T3Axis, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3Axis::T3Axis(Axis ax, void* dataView_, float fnt_sz, int n_axis)
-:inherited(dataView_)
+T3Axis::T3Axis(Axis ax, T3DataView* dataView_, float fnt_sz, int n_axis)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3Axis);
 //  axis_length = 1.0f; // dummy/default
@@ -359,8 +357,8 @@ void T3GraphLine::initClass()
   SO_NODE_INIT_CLASS(T3GraphLine, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3GraphLine::T3GraphLine(void* dataView_, float fnt_sz)
-:inherited(dataView_)
+T3GraphLine::T3GraphLine(T3DataView* dataView_, float fnt_sz)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3GraphLine);
 
@@ -793,8 +791,8 @@ void T3GraphViewNode::initClass()
   SO_NODE_INIT_CLASS(T3GraphViewNode, T3NodeParent, "T3NodeParent");
 }
 
-T3GraphViewNode::T3GraphViewNode(void* dataView_, float wdth, bool show_draggers)
-:inherited(dataView_)
+T3GraphViewNode::T3GraphViewNode(T3DataView* dataView_, float wdth, bool show_draggers)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3GraphViewNode);
 

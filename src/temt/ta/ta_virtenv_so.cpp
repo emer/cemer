@@ -29,8 +29,8 @@ void T3VEWorld::initClass()
   SO_NODE_INIT_CLASS(T3VEWorld, T3NodeParent, "T3NodeParent");
 }
 
-T3VEWorld::T3VEWorld(void* world)
-:inherited(world)
+T3VEWorld::T3VEWorld(T3DataView* world)
+  : inherited(world)
 {
   SO_NODE_CONSTRUCTOR(T3VEWorld);
 
@@ -89,8 +89,8 @@ void T3VEObject::initClass()
   SO_NODE_INIT_CLASS(T3VEObject, T3NodeParent, "T3NodeParent");
 }
 
-T3VEObject::T3VEObject(void* world)
-:inherited(world)
+T3VEObject::T3VEObject(T3DataView* world)
+  : inherited(world)
 {
   SO_NODE_CONSTRUCTOR(T3VEObject);
 }
@@ -113,8 +113,8 @@ void T3VEBody::initClass()
   SO_NODE_INIT_CLASS(T3VEBody, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3VEBody::T3VEBody(void* bod, bool show_drag)
-:inherited(bod)
+T3VEBody::T3VEBody(T3DataView* bod, bool show_drag)
+  : inherited(bod)
 {
   SO_NODE_CONSTRUCTOR(T3VEBody);
 
@@ -150,8 +150,8 @@ void T3VEJoint::initClass()
   SO_NODE_INIT_CLASS(T3VEJoint, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3VEJoint::T3VEJoint(void* bod, bool show_drag)
-:inherited(bod)
+T3VEJoint::T3VEJoint(T3DataView* bod, bool show_drag)
+  : inherited(bod)
 {
   SO_NODE_CONSTRUCTOR(T3VEJoint);
 
@@ -184,8 +184,8 @@ void T3VESpace::initClass()
   SO_NODE_INIT_CLASS(T3VESpace, T3NodeParent, "T3NodeParent");
 }
 
-T3VESpace::T3VESpace(void* world)
-:inherited(world)
+T3VESpace::T3VESpace(T3DataView* world)
+  : inherited(world)
 {
   SO_NODE_CONSTRUCTOR(T3VESpace);
 }
@@ -208,8 +208,8 @@ void T3VEStatic::initClass()
   SO_NODE_INIT_CLASS(T3VEStatic, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3VEStatic::T3VEStatic(void* bod, bool show_drag)
-:inherited(bod)
+T3VEStatic::T3VEStatic(T3DataView* bod, bool show_drag)
+  : inherited(bod)
 {
   SO_NODE_CONSTRUCTOR(T3VEStatic);
 
@@ -229,6 +229,4 @@ T3VEStatic::T3VEStatic(void* bod, bool show_drag)
 
 T3VEStatic::~T3VEStatic()
 {
-  
 }
-

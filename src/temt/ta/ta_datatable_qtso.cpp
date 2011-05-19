@@ -1951,7 +1951,7 @@ void GridTableView::ColFwdAll() {
 void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3GridViewNode* vnd = (T3GridViewNode*)userData;
-  GridTableView* nv = (GridTableView*)vnd->dataView();
+  GridTableView* nv = static_cast<GridTableView*>(vnd->dataView());
 
   SbRotation cur_rot;
   cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
@@ -3748,7 +3748,7 @@ void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
 	//     cerr << "not graph line!" << endl;
 	continue;
       }
-      GraphAxisBase* gab = (GraphAxisBase*)((T3GraphLine*)pobj)->dataView();
+      GraphAxisBase* gab = static_cast<GraphAxisBase*>(((T3GraphLine*)pobj)->dataView());
       if(!gab) continue;
       if(!gab->InheritsFrom(&TA_GraphPlotView)) continue;
       GraphPlotView* gpv = (GraphPlotView*)gab;
@@ -5077,7 +5077,7 @@ void GraphTableView::setScaleData(bool auto_scale_, float min_, float max_) {
 void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3GraphViewNode* vnd = (T3GraphViewNode*)userData;
-  GraphTableView* nv = (GraphTableView*)vnd->dataView();
+  GraphTableView* nv = static_cast<GraphTableView*>(vnd->dataView());
 
   SbRotation cur_rot;
   cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 

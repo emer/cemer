@@ -1042,7 +1042,7 @@ T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
     // T3Nodes
     if (node->getTypeId().isDerivedFrom(T3Node::getClassTypeId())) {
       T3Node* t3node = (T3Node*)node;
-      rval = (T3DataView*)t3node->dataView();
+      rval = t3node->dataView();
       break;
     } 
     path->truncate(path->getLength() - 1);

@@ -84,8 +84,9 @@ public:
 
   override void		addRemoveChildNode(SoNode* node, bool adding) {} // ignore 
   
-  T3GridViewNode(void* dataView_ = NULL, float wdth=1.0f, bool show_draggers = true);
+  T3GridViewNode(T3DataView* dataView_ = NULL, float wdth=1.0f, bool show_draggers = true);
   // dataview is a GridTableView object
+
 protected:
   float			width_;
   SoSeparator*		stage_;
@@ -116,7 +117,7 @@ typedef T3NodeLeaf inherited;
 public:
   static void	initClass();
 
-  T3GridColViewNode(void* colspec = NULL);
+  T3GridColViewNode(T3DataView* colspec = NULL);
 
 protected:
   ~T3GridColViewNode();
@@ -176,7 +177,8 @@ public:
   // add the label text, with explicit justification (used for axis title, and unit labels)
   void			addLine(const iVec3f& from, const iVec3f to);
 
-  T3Axis(Axis axis = X, void* dataView_ = NULL, float fnt_sz=.05f, int n_axis = 0);
+  T3Axis(Axis axis = X, T3DataView* dataView_ = NULL, float fnt_sz=.05f, int n_axis = 0);
+
 protected:
   Axis			axis_; // note: lifetime invariant
   int			n_ax_;	// number of axis (can be multiple Y axes..)
@@ -291,7 +293,7 @@ public:
   void			markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& color);
   // render a marker at indicated location in valueColor mode
 
-  T3GraphLine(void* dataView_ = NULL, float fnt_sz = .05f);
+  T3GraphLine(T3DataView* dataView_ = NULL, float fnt_sz = .05f);
 
 protected:
   uint32_t		defColor_; // def is black
@@ -336,7 +338,7 @@ public:
   static float 		frame_width; // = .02 width of frame itself
   static void		initClass();
 
-  T3GraphViewNode(void* dataView_ = NULL, float wdth=1.0f, bool show_draggers = true);
+  T3GraphViewNode(T3DataView* dataView_ = NULL, float wdth=1.0f, bool show_draggers = true);
    // dataview is a GraphTableView object
 
   virtual void		render();

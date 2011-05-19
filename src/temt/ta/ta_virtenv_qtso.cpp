@@ -488,7 +488,7 @@ void VEBodyView::Render_impl() {
 void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3VEBody* obso = (T3VEBody*)userData;
-  VEBodyView* obv = (VEBodyView*)obso->dataView();
+  VEBodyView* obv = static_cast<VEBodyView*>(obso->dataView());
   VEBody* ob = obv->Body();
   VEWorldView* wv = obv->parent();
 
@@ -910,7 +910,7 @@ void VEJointView::Render_impl() {
 void T3VEJoint_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3VEJoint* obso = (T3VEJoint*)userData;
-  VEJointView* obv = (VEJointView*)obso->dataView();
+  VEJointView* obv = static_cast<VEJointView*>(obso->dataView());
   VEJoint* ob = obv->Joint();
   VEWorldView* wv = obv->parent();
 
@@ -1361,7 +1361,7 @@ void VEStaticView::Render_impl() {
 void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3VEStatic* obso = (T3VEStatic*)userData;
-  VEStaticView* obv = (VEStaticView*)obso->dataView();
+  VEStaticView* obv = static_cast<VEStaticView*>(obso->dataView());
   VEStatic* ob = obv->Static();
   VEWorldView* wv = obv->parent();
 

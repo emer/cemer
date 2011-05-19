@@ -3544,7 +3544,7 @@ bool taFBase::SetFileName(const String& val) {
     // we get the canonical path, so we insure we can do exact filename compares later
     file_name = fi.canonicalFilePath(); 
   } else
-    file_name = val; 
+    file_name = val;
   return true;
 }
 

@@ -24,6 +24,7 @@
 #include "emergent_project.h"
 #include "ta_data.h"
 #include "ta_filer.h"
+#include "BrainView.h"
 
 #ifdef TA_GUI
 #include "ta_qt.h"
@@ -3961,8 +3962,8 @@ void Layer::UpdateAfterEdit_impl() {
   if(taMisc::is_loading) {
     if(n_units > 0) {		// obs: v3compat conversion
       if(n_units != un_geom.x * un_geom.y) {
-	un_geom.n_not_xy = true;
-	un_geom.n = n_units;
+        un_geom.n_not_xy = true;
+        un_geom.n = n_units;
       }
       n_units = 0;
     }
@@ -3970,17 +3971,17 @@ void Layer::UpdateAfterEdit_impl() {
       gp_geom.UpdateAfterEdit_NoGui();	// get n from xy
       unit_groups = true;
       if(gp_geom.n != un_geom.z) {
-	gp_geom.n_not_xy = true;
-	gp_geom.n = un_geom.z;
+        gp_geom.n_not_xy = true;
+        gp_geom.n = un_geom.z;
       }
       un_geom.z = 0;
     }
     taVersion v511(5, 1, 1);
     if(taMisc::loading_version < v511) { // update the gp_unit_names_4d flag
       if(unit_groups && unit_names.dims() == 4)
-	gp_unit_names_4d = true;
+        gp_unit_names_4d = true;
       else
-	gp_unit_names_4d = false;
+        gp_unit_names_4d = false;
     }
     RecomputeGeometry();
   }
@@ -6595,6 +6596,13 @@ NetViewObj* Network::NewGlassBrain() {
   rh->pos.x = -.25f; rh->pos.y = .5f; rh->pos.z = -1.0f;
   StructUpdate(false);
   return rh;
+}
+
+// Create an fMRI-style brain visualization to show activations
+// in defined brain areas.  If no frame is specified, a new one
+// will be created.
+BrainView* Network::NewBrainView(T3DataViewFrame* fr) {
+  return BrainView::New(this, fr);
 }
 
 // PlaceNetText is in netstru_qtso.cpp

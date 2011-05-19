@@ -1,25 +1,26 @@
-// #IGNORE Copyright, 1995-2007, Regents of the University of Colorado,
-// #IGNORE Carnegie Mellon University, Princeton University.
+// Copyright, 1995-2007, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
 //
-// #IGNORE This file is part of The Emergent Toolkit
+// This file is part of The Emergent Toolkit
 //
-// #IGNORE   This library is free software; you can redistribute it and/or
-// #IGNORE   modify it under the terms of the GNU Lesser General Public
-// #IGNORE   License as published by the Free Software Foundation; either
-// #IGNORE   version 2.1 of the License, or (at your option) any later version.
-// #IGNORE   
-// #IGNORE   This library is distributed in the hope that it will be useful,
-// #IGNORE   but WITHOUT ANY WARRANTY; without even the implied warranty of
-// #IGNORE   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// #IGNORE   Lesser General Public License for more details.
+//   This library is free software; you can redistribute it and/or
+//   modify it under the terms of the GNU Lesser General Public
+//   License as published by the Free Software Foundation; either
+//   version 2.1 of the License, or (at your option) any later version.
+//
+//   This library is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//   Lesser General Public License for more details.
 
-// #IGNORE qtdefs.h -- Qt definitions, for inclusion in any header file
+// qtdefs.h -- Qt definitions, for inclusion in any header file
+
 //TODO: some of the defs in TA_GUI list may belong in USE_QT section
 
 #ifndef QTDEFS_H
 #define QTDEFS_H
 
-// #IGNORE Qt Core defines -- always included
+// Qt Core defines -- always included
 #ifdef TA_USE_QT
 #ifdef __MAKETA__
   class	QList;	// #IGNORE #HIDDEN
@@ -40,7 +41,7 @@ class	QTimer;			// #IGNORE #HIDDEN
 class	QVariant;		// #IGNORE #HIDDEN 
 class	QWaitCondition;		// #IGNORE #HIDDEN
 
-// #IGNORE #HIDDEN Qt Gui defines -- only when TA_GUI
+// Qt Gui defines -- only when TA_GUI
 
 #ifdef TA_GUI
 class	QAbstractButton;	// #IGNORE #HIDDEN  note: abstract base class for buttons
@@ -129,7 +130,7 @@ class	QValidator;		// #IGNORE #HIDDEN
 class	QVBoxLayout;		// #IGNORE #HIDDEN 
 class	QWidget;		// #IGNORE #HIDDEN 
 
-// #IGNORE #HIDDEN Events
+// Events
 class	QCloseEvent;		// #IGNORE #HIDDEN 
 class	QChildEvent;		// #IGNORE #HIDDEN 
 class	QContextMenuEvent;	// #IGNORE #HIDDEN 
@@ -152,7 +153,7 @@ class	QShowEvent;		// #IGNORE #HIDDEN
 # endif
 
 #ifdef TA_USE_INVENTOR
-// #IGNORE #HIDDEN Common So Classes
+// Common So Classes
 class SoBaseColor;		// #IGNORE #HIDDEN 
 class SoCone; 			// #IGNORE #HIDDEN 
 class SoCube; 			// #IGNORE #HIDDEN 
@@ -163,12 +164,12 @@ class SoPath;			// #IGNORE #HIDDEN
 class SoSeparator; 		//
 class SoTransform; 		// #IGNORE #HIDDEN 
 
-// #IGNORE #HIDDEN T3 Gadgets
+// T3 Gadgets
 class	T3ViewspaceWidget;	// #IGNORE #HIDDEN 
-#endif // #IGNORE #HIDDEN TA_GUI
-#endif // #IGNORE #HIDDEN TA_USE_QT
+#endif // TA_USE_INVENTOR
+#endif // TA_GUI
 
-// #IGNORE #HIDDEN Custom Controls
+// Custom Controls
 
 class	iBrush;			// #IGNORE #HIDDEN  -- TODO
 class	iColor;			// #IGNORE #HIDDEN 
@@ -205,19 +206,18 @@ class	taiClipData;		// #IGNORE #HIDDEN
 
 #define COLOR_BLACK Qt::black
 
-// #IGNORE aliases
+// aliases
 
 //TODO: get rid of these...
 #define iWindow 	QWidget  //DO NOT CHANGE (needed for WindowList)
 
-// #IGNORE some external systems, such as Coin3d, require this:
+// some external systems, such as Coin3d, require this:
 #ifdef __MAKETA__
 # ifndef __cplusplus
 #   define __cplusplus
 # endif
 #endif
 
-#endif // #IGNORE TA_GUI
+#endif // TA_USE_QT
 
-#endif // #IGNORE QTDEFS_H
-
+#endif // QTDEFS_H

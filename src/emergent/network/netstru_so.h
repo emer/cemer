@@ -78,7 +78,7 @@ public:
   void		setAppearance(float act, const T3Color& color, float max_z, float trans);
   // act is -1:1; max_z is net->max_size.z; trans is transparency
   virtual void 	setPicked(bool value);
-  T3UnitNode(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+  T3UnitNode(T3DataView* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 	     float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
@@ -103,7 +103,7 @@ public:
   SoCylinder*	shape() {return shape_;}
 
 
-  T3UnitNode_Cylinder(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+  T3UnitNode_Cylinder(T3DataView* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 		      float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
@@ -125,7 +125,7 @@ public:
 
   SoCylinder*	shape() {return shape_;}
 
-  T3UnitNode_Circle(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+  T3UnitNode_Circle(T3DataView* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 		    float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
@@ -147,7 +147,7 @@ public:
 
   SoCube*	shape() {return shape_;}
 
-  T3UnitNode_Block(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+  T3UnitNode_Block(T3DataView* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 		   float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
@@ -169,7 +169,7 @@ public:
 
   SoCube*		shape() {return shape_;}
 
-  T3UnitNode_Rect(void* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
+  T3UnitNode_Rect(T3DataView* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 		  float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
 protected:
@@ -216,7 +216,7 @@ public:
   SoIndexedLineSet*	snapBordSet() {return snap_bord_set_;}
   SoVertexProperty* 	snapBordVtxProp() {return snap_bord_vtx_prop_;}
 
-  T3UnitGroupNode(void* dataView_ = NULL, bool no_unts = false);
+  T3UnitGroupNode(T3DataView* dataView_ = NULL, bool no_unts = false);
 
 protected:
   iVec2i		geom; //note, not a field
@@ -259,7 +259,7 @@ public:
 
   void 			setGeom(int px, int py, float max_x, float max_y, float max_z, float disp_scale);
 
-  T3LayerNode(void* dataView_ = NULL, bool show_draggers = true);
+  T3LayerNode(T3DataView* dataView_ = NULL, bool show_draggers = true);
 
 protected:
   
@@ -303,7 +303,7 @@ public:
   void		setArrowColor(const SbColor& clr, float transp);
   // set arrow color
 
-  T3PrjnNode(void* dataView_ = NULL, bool projected = true, float rad = .01f);
+  T3PrjnNode(T3DataView* dataView_ = NULL, bool projected = true, float rad = .01f);
 
 protected:
   bool			projected_;
@@ -342,7 +342,7 @@ public:
   bool			hideLines() { return hide_lines_; }
   SoDrawStyle* 		drawStyle() { return drw_styl_; }
 
-  T3LayerGroupNode(void* dataView_ = NULL, bool show_draggers = true, bool hide_lines = false);
+  T3LayerGroupNode(T3DataView* dataView_ = NULL, bool show_draggers = true, bool hide_lines = false);
 
 protected:
   
@@ -384,7 +384,7 @@ typedef T3NodeLeaf inherited;
 public:
   static void	initClass();
 
-  T3NetViewObj(void* obj = NULL, bool show_drag = false);
+  T3NetViewObj(T3DataView* dataView_ = NULL, bool show_drag = false);
 
 protected:
   bool			 show_drag_;
@@ -419,7 +419,7 @@ public:
   SoIndexedLineSet*	wtLinesSet() {return wt_lines_set_;}
   SoVertexProperty* 	wtLinesVtxProp() {return wt_lines_vtx_prop_;}
 
-  T3NetNode(void* dataView_ = NULL, bool show_draggers = true,
+  T3NetNode(T3DataView* dataView_ = NULL, bool show_draggers = true,
 	    bool show_net_text = true, bool show_nt_drag = true);
 
 protected:

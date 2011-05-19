@@ -469,7 +469,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
 	  continue;
 	}
       }
-      UnitGroupView* act_ugv = (UnitGroupView*)((T3UnitGroupNode*)pobj)->dataView();
+      UnitGroupView* act_ugv = static_cast<UnitGroupView*>(((T3UnitGroupNode*)pobj)->dataView());
       Layer* lay = act_ugv->layer(); //cache
       float disp_scale = lay->disp_scale;
 
@@ -1425,7 +1425,7 @@ void LayerView::Render_impl() {
 void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   SoTranslate2Dragger* dragger = (SoTranslate2Dragger*)dragr;
   T3LayerNode* laynd = (T3LayerNode*)userData;
-  LayerView* lv = (LayerView*)laynd->dataView();
+  LayerView* lv = static_cast<LayerView*>(laynd->dataView());
   Layer* lay = lv->layer();
   NetView* nv = lv->nv();
 
@@ -1463,7 +1463,7 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
 void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   SoTranslate1Dragger* dragger = (SoTranslate1Dragger*)dragr;
   T3LayerNode* laynd = (T3LayerNode*)userData;
-  LayerView* lv = (LayerView*)laynd->dataView();
+  LayerView* lv = static_cast<LayerView*>(laynd->dataView());
   Layer* lay = lv->layer();
   NetView* nv = lv->nv();
 
@@ -1891,7 +1891,7 @@ void LayerGroupView::Render_impl() {
 void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   SoTranslate2Dragger* dragger = (SoTranslate2Dragger*)dragr;
   T3LayerGroupNode* laynd = (T3LayerGroupNode*)userData;
-  LayerGroupView* lv = (LayerGroupView*)laynd->dataView();
+  LayerGroupView* lv = static_cast<LayerGroupView*>(laynd->dataView());
   Layer_Group* lgp = lv->layer_group();
   NetView* nv = lv->nv();
 
@@ -1931,7 +1931,7 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
 void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   SoTranslate1Dragger* dragger = (SoTranslate1Dragger*)dragr;
   T3LayerGroupNode* laynd = (T3LayerGroupNode*)userData;
-  LayerGroupView* lv = (LayerGroupView*)laynd->dataView();
+  LayerGroupView* lv = static_cast<LayerGroupView*>(laynd->dataView());
   Layer_Group* lgp = lv->layer_group();
   NetView* nv = lv->nv();
 
@@ -2055,7 +2055,7 @@ void NetViewObjView::Render_impl() {
 void T3NetViewObj_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3NetViewObj* nvoso = (T3NetViewObj*)userData;
-  NetViewObjView* nvov = (NetViewObjView*)nvoso->dataView();
+  NetViewObjView* nvov = static_cast<NetViewObjView*>(nvoso->dataView());
   NetViewObj* nvo = nvov->Obj();
   NetView* nv = GET_OWNER(nvov, NetView);
 
@@ -2923,7 +2923,7 @@ void NetView::Render_pre() {
 void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3NetNode* netnd = (T3NetNode*)userData;
-  NetView* nv = (NetView*)netnd->dataView();
+  NetView* nv = static_cast<NetView*>(netnd->dataView());
 
   SbRotation cur_rot;
   cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
@@ -2970,7 +2970,7 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
 void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
   T3NetNode* netnd = (T3NetNode*)userData;
-  NetView* nv = (NetView*)netnd->dataView();
+  NetView* nv = static_cast<NetView*>(netnd->dataView());
 
   SbRotation cur_rot;
   cur_rot.setValue(SbVec3f(nv->net_text_xform.rotate.x, nv->net_text_xform.rotate.y, 
@@ -3627,8 +3627,6 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
 //////////////////////////
 //   NetViewPanel 	//
 //////////////////////////
-
-#define CMD_GEOM_X   2
 
 NetViewPanel::NetViewPanel(NetView* dv_)
 :inherited(dv_)

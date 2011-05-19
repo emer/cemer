@@ -69,9 +69,9 @@ void T3UnitNode::initClass()
   SO_NODE_INIT_ABSTRACT_CLASS(T3UnitNode, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3UnitNode::T3UnitNode(void* dataView_, float max_x, float max_y, float max_z,
+T3UnitNode::T3UnitNode(T3DataView* dataView_, float max_x, float max_y, float max_z,
 		       float un_spc, float disp_sc)
-:inherited(dataView_)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3UnitNode);
   spacing = un_spc;
@@ -139,9 +139,9 @@ void T3UnitNode_Cylinder::initClass()
   SO_NODE_INIT_CLASS(T3UnitNode_Cylinder, T3UnitNode, "T3UnitNode");
 }
 
-T3UnitNode_Cylinder::T3UnitNode_Cylinder(void* dataView_, float max_x, float max_y,
+T3UnitNode_Cylinder::T3UnitNode_Cylinder(T3DataView* dataView_, float max_x, float max_y,
 					 float max_z, float un_spc, float disp_sc)
-  :inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
+  : inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
 {
   SO_NODE_CONSTRUCTOR(T3UnitNode_Cylinder);
 
@@ -179,9 +179,9 @@ void T3UnitNode_Circle::initClass()
   SO_NODE_INIT_CLASS(T3UnitNode_Circle, T3UnitNode, "T3UnitNode");
 }
 
-T3UnitNode_Circle::T3UnitNode_Circle(void* dataView_, float max_x, float max_y,
+T3UnitNode_Circle::T3UnitNode_Circle(T3DataView* dataView_, float max_x, float max_y,
 				     float max_z, float un_spc, float disp_sc)
-  :inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
+  : inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
 {
   SO_NODE_CONSTRUCTOR(T3UnitNode_Circle);
 
@@ -222,9 +222,9 @@ void T3UnitNode_Block::initClass()
   SO_NODE_INIT_CLASS(T3UnitNode_Block, T3UnitNode, "T3UnitNode");
 }
 
-T3UnitNode_Block::T3UnitNode_Block(void* dataView_, float max_x, float max_y,
+T3UnitNode_Block::T3UnitNode_Block(T3DataView* dataView_, float max_x, float max_y,
 				   float max_z, float un_spc, float disp_sc)
-  :inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
+  : inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
 {
   SO_NODE_CONSTRUCTOR(T3UnitNode_Block);
 
@@ -265,9 +265,9 @@ void T3UnitNode_Rect::initClass()
   SO_NODE_INIT_CLASS(T3UnitNode_Rect, T3UnitNode, "T3UnitNode");
 }
 
-T3UnitNode_Rect::T3UnitNode_Rect(void* dataView_, float max_x, float max_y, float max_z,
+T3UnitNode_Rect::T3UnitNode_Rect(T3DataView* dataView_, float max_x, float max_y, float max_z,
 				 float un_spc, float disp_sc)
-  :inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
+  : inherited(dataView_, max_x, max_y, max_z, un_spc, disp_sc)
 {
   SO_NODE_CONSTRUCTOR(T3UnitNode_Rect);
 
@@ -338,8 +338,8 @@ void T3UnitGroupNode::drawGrid(T3UnitGroupNode* node) {
   glPopMatrix();
 }
 
-T3UnitGroupNode::T3UnitGroupNode(void* dataView_, bool no_unts)
-:inherited(dataView_)
+T3UnitGroupNode::T3UnitGroupNode(T3DataView* dataView_, bool no_unts)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3UnitGroupNode);
   unitCaptionFont_ = NULL;
@@ -430,8 +430,8 @@ extern void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragger);
 extern void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
 
-T3LayerNode::T3LayerNode(void* dataView_, bool show_draggers)
-:inherited(dataView_)
+T3LayerNode::T3LayerNode(T3DataView* dataView_, bool show_draggers)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3LayerNode);
 
@@ -559,8 +559,8 @@ void T3PrjnNode::initClass()
   SO_NODE_INIT_CLASS(T3PrjnNode, T3NodeParent, "T3NodeParent");
 }
 
-T3PrjnNode::T3PrjnNode(void* dataView_, bool proj, float rad)
-:inherited(dataView_)
+T3PrjnNode::T3PrjnNode(T3DataView* dataView_, bool proj, float rad)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3PrjnNode);
   projected_ = proj;
@@ -646,8 +646,8 @@ extern void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragger);
 extern void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
 
-T3LayerGroupNode::T3LayerGroupNode(void* dataView_, bool show_draggers, bool hide_lines)
-:inherited(dataView_)
+T3LayerGroupNode::T3LayerGroupNode(T3DataView* dataView_, bool show_draggers, bool hide_lines)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3LayerGroupNode);
 
@@ -801,8 +801,8 @@ void T3NetViewObj::initClass()
 extern void T3NetViewObj_DragFinishCB(void* userData, SoDragger* dragger);
 // defined in qtso
 
-T3NetViewObj::T3NetViewObj(void* obj, bool show_drag)
-:inherited(obj)
+T3NetViewObj::T3NetViewObj(T3DataView* dataView_, bool show_drag)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3NetViewObj);
 
@@ -841,9 +841,9 @@ void T3NetNode::initClass()
   SO_NODE_INIT_CLASS(T3NetNode, T3NodeParent, "T3NodeParent");
 }
 
-T3NetNode::T3NetNode(void* dataView_, bool show_draggers,
+T3NetNode::T3NetNode(T3DataView* dataView_, bool show_draggers,
 		     bool show_net_text, bool show_nt_drag)
-:inherited(dataView_)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3NetNode);
 

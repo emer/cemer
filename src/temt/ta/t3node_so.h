@@ -48,6 +48,7 @@
 
 // forwards
 class T3Node;
+class T3DataView;
 
 // externals -- note: some are here for use by other files, not this one
 class SbColor; // #IGNORE
@@ -239,11 +240,11 @@ public:
    // insert before node; after=NULL for start
   static SoNode*	getNodeByName(SoGroup* group, const char* name); // find node by name, if any
 
-  inline void* 		dataView() {return dataView_;} // #IGNORE the T3DataView that owns/created this node
+  inline T3DataView*	dataView() {return dataView_;} // #IGNORE the T3DataView that owns/created this node
 
   virtual SoFont*	captionFont(bool auto_create = false) = 0;
   SoAsciiText*		captionNode(bool auto_create = false);
-  virtual SoSeparator*	topSeparator() {return this;}
+  SoSeparator*	        topSeparator() {return this;}
   SoTransform*		transform() const {return transform_;} // the master transform, for the whole entity
   virtual SoSeparator*	shapeSeparator() = 0;
   SoTransform*		txfm_shape() const {return txfm_shape_;} 
@@ -263,10 +264,9 @@ public:
 
   virtual void		addRemoveChildNode(SoNode* node, bool adding); // called by pdpDataView (default prints console error)
 
-  T3Node(void* dataView_ = NULL);
+  T3Node(T3DataView* dataView_ = NULL);
 
 protected:
-  void* 		dataView_;
   SoAsciiText*		captionNode_;
   const char*  		getFileFormatName() const {return "Separator"; }
   // makes output files fully general
@@ -279,6 +279,7 @@ protected:
   ~T3Node();
 
 private:
+  T3DataView*           dataView_; // #IGNORE private since it can be accessed through dataView().
   SoTransform*		transform_; // #IGNORE
   SoTransform*		txfm_shape_; // #IGNORE NOTE: must be created in subclass init
   SoMaterial*		material_; // #IGNORE NOTE: must be created in subclass init
@@ -297,8 +298,7 @@ public:
   SoFont*		captionFont(bool auto_create = false); // override
   SoSeparator*		shapeSeparator() {return this;}
 
-
-  T3NodeLeaf(void* dataView_ = NULL);
+  T3NodeLeaf(T3DataView* dataView_ = NULL);
 
 protected:
   SoSeparator*		captionSeparator(bool auto_create = false); // override
@@ -323,7 +323,7 @@ public:
 
   void			addRemoveChildNode(SoNode* node, bool adding); // override
 
-  T3NodeParent(void* dataView_ = NULL);
+  T3NodeParent(T3DataView* dataView_ = NULL);
 
 protected:
   SoSeparator*		captionSeparator(bool auto_create = false); // override

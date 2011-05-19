@@ -52,8 +52,8 @@ void T3CBar::initClass()
   SO_NODE_INIT_CLASS(T3CBar, T3NodeLeaf, "T3NodeLeaf");
 }
 
-T3CBar::T3CBar(ColorScale* c, void* dataView_)
-:inherited(dataView_)
+T3CBar::T3CBar(ColorScale* c, T3DataView* dataView_)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3CBar);
 

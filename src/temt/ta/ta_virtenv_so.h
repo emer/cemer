@@ -61,7 +61,7 @@ typedef T3NodeParent inherited;
 public:
   static void	initClass();
 
-  T3VEWorld(void* world = NULL);
+  T3VEWorld(T3DataView* world = NULL);
 
   void			setSunLightDir(float x_dir, float y_dir, float z_dir);
   void			setSunLightOn(bool on);
@@ -96,7 +96,7 @@ typedef T3NodeParent inherited;
 public:
   static void	initClass();
 
-  T3VEObject(void* obj = NULL);
+  T3VEObject(T3DataView* obj = NULL);
 
 protected:
   ~T3VEObject();
@@ -111,7 +111,7 @@ typedef T3NodeLeaf inherited;
 public:
   static void	initClass();
 
-  T3VEBody(void* bod = NULL, bool show_drag = false);
+  T3VEBody(T3DataView* bod = NULL, bool show_drag = false);
 
   T3TransformBoxDragger* getDragger() { return drag_; }	// my position dragger
 
@@ -131,7 +131,7 @@ typedef T3NodeLeaf inherited;
 public:
   static void	initClass();
 
-  T3VEJoint(void* bod = NULL, bool show_drag = false);
+  T3VEJoint(T3DataView* bod = NULL, bool show_drag = false);
 
   T3TransformBoxDragger* getDragger() { return drag_; }	// my position dragger
 
@@ -151,7 +151,7 @@ typedef T3NodeParent inherited;
 public:
   static void	initClass();
 
-  T3VESpace(void* obj = NULL);
+  T3VESpace(T3DataView* obj = NULL);
 
 protected:
   ~T3VESpace();
@@ -166,7 +166,7 @@ typedef T3NodeLeaf inherited;
 public:
   static void	initClass();
 
-  T3VEStatic(void* stat = NULL, bool show_drag = false);
+  T3VEStatic(T3DataView* stat = NULL, bool show_drag = false);
 
   T3TransformBoxDragger* getDragger() { return drag_; }	// my position dragger
 

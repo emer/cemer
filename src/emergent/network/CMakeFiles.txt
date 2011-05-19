@@ -4,13 +4,8 @@
 # in the temt/lib dir, which is where everything is actually built
 # other targets are in CMakeLists.txt in this directory
 
-# although some attempt is made to keep track of gui-related files, a huge amount
-# of additional work would be required to fully split this out, and we need Qt
-# anyway, so there really isn't any point to it anymore
-
-# all headers that need maketa run on them
-set(network_HEADS_MAKETA
-    ../../temt/ta/ta_TA_type.h
+# local headers that need maketa run on them
+set(network_HEADS_MAKETA_LOCAL
     network_def.h
     emergent_base.h
     spec.h
@@ -22,30 +17,25 @@ set(network_HEADS_MAKETA
     netstru_so.h
     netstru_qtso.h
     emergent_qtso.h
-    emergent_program_qtso.h 
+    emergent_program_qtso.h
     v3_compat.h
+    BrainView.h
+    BrainViewPanel.h
+    BrainVolumeView.h
+    T3BrainNode.h
 )
 
-# gui heads
-set(network_HEADS_GUI
-    netstru_so.h
-    netstru_qtso.h
-    emergent_qtso.h
-    emergent_program_qtso.h 
+# all headers that need maketa run on them
+# The order of files passed to maketa is important since it appears not to
+# process #include directives.
+set(network_HEADS_MAKETA
+    ../../temt/ta/ta_TA_type.h
+    ${network_HEADS_MAKETA_LOCAL}
 )
 
 # all heads -- include maketa generated ones here
 set(network_HEADS
-    network_def.h
-    emergent_base.h
-    spec.h
-    netstru.h
-    netstru_extra.h
-    netdata.h
-    emergent_program.h
-    emergent_project.h
-    v3_compat.h
-    ${network_HEADS_GUI}
+    ${network_HEADS_MAKETA_LOCAL}
     network_TA_type.h
     network_TA_inst.h
 )
@@ -53,10 +43,15 @@ set(network_HEADS
 # headers that need Qt moc run
 set(network_HEADS_MOC
     netstru_qtso.h
+    BrainViewPanel.h
 )
 
 # gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
 set(network_SRCS_GUI
+    BrainView.cpp
+    BrainViewPanel.cpp
+    BrainVolumeView.cpp
+    T3BrainNode.cpp
     netstru_so.cpp
     emergent_qtso.cpp
     netstru_qtso.cpp
@@ -66,6 +61,7 @@ set(network_SRCS_GUI
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
 # but DO include _TA.cpp files
 set(network_SRCS
+    ${network_SRCS_GUI}
     emergent_base.cpp
     spec.cpp
     netstru.cpp
@@ -73,7 +69,6 @@ set(network_SRCS
     netdata.cpp
     emergent_program.cpp
     emergent_project.cpp
-    ${network_SRCS_GUI}
     emergent_ti.cpp
     v3_compat.cpp
     network_TA.cpp

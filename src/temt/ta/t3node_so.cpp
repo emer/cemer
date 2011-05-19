@@ -13,20 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
-// Copyright (C) 1995-2007 Regents of the University of Colorado,
-// Carnegie Mellon University, Princeton University.
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-// 
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-
 #include "t3node_so.h"
 #include "t3viewer.h"
 #include "ta_geometry.h"
@@ -129,12 +115,10 @@ void T3Node::initClass()
   SO_NODE_INIT_ABSTRACT_CLASS(T3Node, SoSeparator, "Separator");
 }
 
-T3Node::T3Node(void* dataView__)
-:dataView_(dataView__)
+T3Node::T3Node(T3DataView* dataView__)
+  : dataView_(dataView__)
 {
   SO_NODE_CONSTRUCTOR(T3Node);
-
-  
 
 //  this->setName("topSeparator");
 
@@ -182,8 +166,7 @@ SoAsciiText* T3Node::captionNode(bool auto_create) {
   SoSeparator* cs = captionSeparator(auto_create); //note: ac is true
   SoBaseColor* bc = new SoBaseColor;
 
-  T3DataView* dview = (T3DataView*)dataView();
-  if(dview) {
+  if (T3DataView* dview = dataView()) {
     T3DataViewFrame* fr = dview->GetFrame();
     iColor txtcolr = fr->GetTextColor();
     bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
@@ -264,8 +247,8 @@ void T3NodeLeaf::initClass()
   SO_NODE_INIT_CLASS(T3NodeLeaf, T3Node, "");
 }
 
-T3NodeLeaf::T3NodeLeaf(void* dataView_)
-:inherited(dataView_)
+T3NodeLeaf::T3NodeLeaf(T3DataView* dataView_)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3NodeLeaf);
 
@@ -312,8 +295,8 @@ void T3NodeParent::initClass()
   SO_NODE_INIT_CLASS(T3NodeParent, T3Node, "");
 }
 
-T3NodeParent::T3NodeParent(void* dataView_)
-:inherited(dataView_)
+T3NodeParent::T3NodeParent(T3DataView* dataView_)
+  : inherited(dataView_)
 {
   SO_NODE_CONSTRUCTOR(T3NodeParent);
 

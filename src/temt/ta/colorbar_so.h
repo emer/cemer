@@ -50,7 +50,7 @@ public:
 
   virtual void		SetColorScale(ColorScale* c);
   void			SetDimensions(float wd, float ht);
-  T3CBar(ColorScale* c = NULL, void* dataView_ = NULL);
+  T3CBar(ColorScale* c = NULL, T3DataView* dataView_ = NULL);
 
 protected:
   SoTriangleStripSet*	bars_; // one rectangle per subbar
