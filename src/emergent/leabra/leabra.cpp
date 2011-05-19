@@ -110,10 +110,10 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
-  lthr_su_avg_l = false;
-  lthr_gain = 2.0f;
+  thr_l_mix = 0.005f;
+  lthr_su_avg_l = true;
+  lthr_gain = 2.5f;
   s_mix = 0.9f;
-  thr_l_mix = 0.01f;
   d_rev = 0.10f;
   d_thr = 0.0001f;
   m_mix = 1.0f - s_mix;
