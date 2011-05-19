@@ -1569,26 +1569,31 @@ SmartRef_Of(taBase,);		// basic ref if you don't know the type
 class TA_API taOBase : public taBase {
   // #NO_TOKENS #NO_UPDATE_AFTER owned base class of taBase
 INHERITED(taBase)
+
+// Data Members:
 public:
   taBase*		owner;	// #NO_SHOW #READ_ONLY #NO_SAVE #NO_SET_POINTER #CAT_taBase pointer to owner
-
   mutable UserDataItem_List* user_data_; // #OWN_POINTER #NO_SHOW_EDIT #HIDDEN_TREE #NO_SAVE_EMPTY #CAT_taBase storage for user data (created if needed)
 
+protected:
+  taDataLink*           m_data_link; //
+
+// Methods:
+public:
   taDataLink**		addr_data_link() {return &m_data_link;} // #IGNORE
   override taDataLink*	data_link() {return m_data_link;}	// #IGNORE
-//  override void		set_data_link(taDataLink* dl) {m_data_link = dl;}
-
   taBase* 		GetOwner() const	{ return owner; }
   USING(inherited::GetOwner)
   taBase* 		SetOwner(taBase* ta)	{ owner = ta; return ta; }
   UserDataItem_List* 	GetUserDataList(bool force = false) const;  
-  void	CutLinks();
+  void	                CutLinks();
   TA_BASEFUNS(taOBase); //
+
 protected:
-  taDataLink*		m_data_link; //
-  override void		CanCopy_impl(const taBase* cp_fm, bool quiet,
-    bool& ok, bool virt) const 
-    {if (virt) inherited::CanCopy_impl(cp_fm, quiet, ok, virt);}
+  override void		CanCopy_impl(const taBase* cp_fm, bool quiet, bool& ok, bool virt) const {
+    if (virt)
+      inherited::CanCopy_impl(cp_fm, quiet, ok, virt);
+  }
   
 #ifdef TA_GUI
 protected: // all related to taList or DEF_CHILD children_
@@ -1599,13 +1604,10 @@ protected: // all related to taList or DEF_CHILD children_
     const taiMimeSource* ms, int& allowed, int& forbidden);
     // returns the operations allowed for list items (ex Paste)
   
-  virtual int	ChildEditAction_impl(const MemberDef* md, taBase* child,
-        taiMimeSource* ms, int ea);
+  virtual int	ChildEditAction_impl(const MemberDef* md, taBase* child, taiMimeSource* ms, int ea);
   virtual int	ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea);
-  virtual int	ChildEditActionLD_impl_inproc(const MemberDef* md,
-    taBase* lst_itm, taiMimeSource* ms, int ea);
-  virtual int	ChildEditActionLD_impl_ext(const MemberDef* md,
-    taBase* lst_itm, taiMimeSource* ms, int ea);
+  virtual int	ChildEditActionLD_impl_inproc(const MemberDef* md, taBase* lst_itm, taiMimeSource* ms, int ea);
+  virtual int	ChildEditActionLD_impl_ext(const MemberDef* md, taBase* lst_itm, taiMimeSource* ms, int ea);
 #endif
 
 private:
@@ -2079,10 +2081,22 @@ public:
       // mask for doing child delegations in reverse order
 #endif
   };
-  
+
+// Data members:
+public:
   taBase*		m_data;		// #READ_ONLY #NO_SET_POINTER data -- referent of the item (not ref'ed)
   TypeDef*		data_base;	// #READ_ONLY #NO_SAVE Minimum type for data object
 
+protected:
+  int                   m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
+  int                   m_index; // for when in a list
+  // NOTE: all Dataxxx_impl are supressed if dbuCnt or parDbuCnt <> 0 -- see ta_type.h for detailed rules
+  mutable taDataView*   m_parent; // autoset on SetOwner, type checked as well
+  mutable short         m_vis_cnt; // visible count -- when >0, is visible, so refresh
+  mutable signed char   m_defer_refresh; // while hidden: +1, struct; -1, data  
+
+// Methods:
+public:
   taBase*		data() const {return m_data;} // subclasses usually redefine a strongly typed version
   void 			SetData(taBase* ta); // #MENU set the data to which this points -- must be subclass of data_base
   int			dbuCnt() {return m_dbu_cnt;} // batch update: -ve:data, 0:none, +ve:struct
@@ -2128,6 +2142,7 @@ public:
   virtual void		DV_ChildQueryEditActions(const MemberDef* md,
     const taBase* child, const taiMimeSource* ms,
     int& allowed, int& forbidden); // #IGNORE note: this includes children of owned lists--md=NULL
+
 protected: // the following just call inherited then insert the DV_ version 
   override void		QueryEditActionsS_impl(int& allowed, int& forbidden);
     // called once per src item, by controller
@@ -2147,24 +2162,15 @@ public:
 
 public: // IDataLinkCLient
   override void*	This() {return (void*)this;}
-//in taBase  virtual TypeDef*	GetTypeDef() const;
-  override TypeDef*	GetDataTypeDef() const 
-    {return (m_data) ? m_data->GetTypeDef() : &TA_taBase;} // TypeDef of the data
+  override TypeDef*	GetDataTypeDef() const {
+    return (m_data) ? m_data->GetTypeDef() : &TA_taBase; } // TypeDef of the data
   override bool		ignoreDataChanged() const {return (m_vis_cnt <= 0);}
   override bool		isDataView() const {return true;}
   override void		DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
-  override void		IgnoredDataChanged(taDataLink* dl, int dcr,
-    void* op1, void* op2);
+  override void		IgnoredDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
   override void		DataLinkDestroying(taDataLink* dl); // called by DataLink when destroying; it will remove 
 
 protected:
-  int			m_dbu_cnt; // data batch update count; +ve is Structural, -ve is Parameteric only
-  int			m_index; // for when in a list
-  // NOTE: all Dataxxx_impl are supressed if dbuCnt or parDbuCnt <> 0 -- see ta_type.h for detailed rules
-  mutable taDataView* 	m_parent; // autoset on SetOwner, type checked as well
-  mutable short		m_vis_cnt; // visible count -- when >0, is visible, so refresh
-  mutable signed char	m_defer_refresh; // while hidden: +1, struct; -1, data	
-  
   override void		UpdateAfterEdit_impl();
   virtual void		DataDataChanged_impl(int dcr, void* op1, void* op2) {}
    // called when the data item has changed, esp. ex lists and groups, *except* UAE -- we also forward the last end of a batch update
@@ -2194,11 +2200,13 @@ protected:
     // extend to implement reset
   virtual void		Unbind_impl() {DoActionChildren_impl(UNBIND_IMPL);}
     // extend to implement unbind
+
 private:
   void	Copy_(const taDataView& cp);
   void	Initialize();
   void	Destroy() {CutLinks();}
 };
+
 TA_SMART_PTRS(taDataView);
 
 // for explicit lifetime management

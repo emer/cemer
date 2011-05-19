@@ -15,9 +15,9 @@
 
 #include "ta_virtenv_qtso.h"
 
-//#include "ta_math.h"
 #include "ta_imgproc.h"
 #include "ta_platform.h"
+#include "NewNetViewHelper.h"
 
 #include <QImage>
 #include <QGroupBox>
@@ -45,7 +45,6 @@
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoSwitch.h>
-//#include <Inventor/SoOffscreenRenderer.h>
 #include "irenderarea.h"
 #include <Inventor/SbViewportRegion.h>
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
@@ -65,7 +64,6 @@
 
 ///////////////////////////////////////////////////////////////////////
 //		So configure classes defined in ta_virtenv.h
-
 
 void VETexture::SetTexture(SoTexture2* sotx) {
   if(fname.empty()) return;
@@ -1468,37 +1466,18 @@ VEWorldView* VEWorld::NewView(T3DataViewFrame* fr) {
   return VEWorldView::New(this, fr);
 }
 
+// Add a new VEWorldView object to the frame for the given VEWorld.
 VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
-  if (!wl) return NULL;
-  if (fr) {
-    //note: even if fr specified, need to insure it is right proj for object
-    if (!wl->SameScope(fr, &TA_taProject)) {
-      taMisc::Error("The viewer you specified is not in the same Project as the world.");
-      return NULL;
-    }
-    // check if already viewing this obj there, warn user
-    // no, because we want to be able to graph and grid in same view!
-//     T3DataView* dv = fr->FindRootViewOfData(wl);
-//     if (dv) {
-//       if (taMisc::Choice("This table is already shown in that frame -- would you like"
-//           " to show it in a new frame?", "&Ok", "&Cancel") != 0) return NULL;
-//       fr = NULL; // make a new one
-//     }
-  } 
-  if (!fr) {
-    fr = T3DataViewer::GetBlankOrNewT3DataViewFrame(wl);
-  }
-  if (!fr) return NULL; // unexpected...
-  
+  NewNetViewHelper newNetView(fr, wl, "world");
+  if (!newNetView.isValid()) return NULL;
+
   VEWorldView* vw = new VEWorldView;
   fr->AddView(vw);
   vw->SetWorld(wl);
   // make sure we get it all setup!
   vw->BuildAll();
-  fr->Render();
-  fr->ViewAll();
-  if(fr->singleChild())
-    fr->SaveCurView(0);
+
+  newNetView.showFrame();
   return vw;
 }
 

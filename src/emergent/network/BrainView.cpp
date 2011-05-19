@@ -14,7 +14,7 @@
 //   GNU General Public License for more details.
 
 #include "BrainView.h"
-//#include "NewNetViewHelper.h"
+#include "NewNetViewHelper.h"
 //#include "netstru.h" // Network
 #include "T3BrainNode.h"
 
@@ -55,26 +55,9 @@ BrainView::hasViewProperties() const {
 }
 
 BrainView* BrainView::New(Network* net, T3DataViewFrame*& fr) {
-  if (!net) return NULL;
-  if (fr) {
-    //note: even if fr specified, need to insure it is right proj for object
-    if (!net->SameScope(fr, &TA_taProject)) {
-      taMisc::Error("The viewer you specified is not in the same Project as the net.");
-      return NULL;
-    }
-    // check if already viewing this obj there, warn user
-    T3DataView* dv = fr->FindRootViewOfData(net);
-    if (dv) {
-      if (taMisc::Choice("This network is already shown in that frame -- would you like"
-          " to show it in a new frame?", "&Ok", "&Cancel") != 0) return NULL;
-      fr = NULL; // make a new one
-    }
-  } 
-  if (!fr) {
-    fr = T3DataViewer::GetBlankOrNewT3DataViewFrame(net);
-  }
-  if (!fr) return NULL; // unexpected...
-  
+  NewNetViewHelper newNetView(fr, net, "network");
+  if (!newNetView.isValid()) return NULL;
+
   // create BrainView
   BrainView* nv = new BrainView();
   nv->SetData(net);
@@ -84,10 +67,8 @@ BrainView* BrainView::New(Network* net, T3DataViewFrame*& fr) {
   // make sure we've got it all rendered:
   nv->main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
   nv->BuildAll();
-  fr->Render();
-  fr->ViewAll();
-  if(fr->singleChild())
-    fr->SaveCurView(0);
+
+  newNetView.showFrame();
   return nv;
 }
 

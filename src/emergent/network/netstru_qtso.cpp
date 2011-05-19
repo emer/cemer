@@ -17,7 +17,6 @@
 
 #include "netstru_qtso.h"
 
-//obs #include "netstru_so.h"
 #include "ta_geometry.h"
 #include "emergent_project.h"
 #include "css_qt.h"		// for the cssiSession
@@ -32,11 +31,7 @@
 #include "iscrollarea.h"
 
 #include "imisc_so.h"
-/*
-#include <ta_misc/picker.bm>
-#include <ta_misc/picker_mask.bm>
-
-*/
+#include "NewNetViewHelper.h"
 
 #include <qapplication.h>
 #include <qcheckbox.h>
@@ -75,12 +70,8 @@
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/SoEventManager.h>
 
-//#include <OS/file.h>
-
-//#include <OS/math.h>
 #include <limits.h>
 #include <float.h>
-//nn #include <unistd.h>
 
 //////////////////////////
 //   ScaleRange		//
@@ -654,11 +645,11 @@ void UnitGroupView::Render_impl_children() {
   }
 }
 
+// Set up vertices, normals, and coordinate indices for a collection of
+// triangle strips that represent 5 sides of each unit block.  The heights
+// of all units are set to defaults in this function and later updated by
+// UpdateUnitValues_blocks() based on the value of each unit.
 void UnitGroupView::Render_impl_blocks() {
-  // this function just does all the memory allocation and static configuration
-  // that doesn't depend on unit values, then it calls UpdateUnitValues
-  // which sets all the values!
-
   NetView* nv = this->nv(); //cache
   Layer* lay = this->layer(); //cache
   if(!lay) return;
@@ -853,11 +844,11 @@ void UnitGroupView::Render_impl_blocks() {
 
       int mat_idx = (pos.y * nx + pos.x);
 
-      // back - right
-      //     1    3
-      //   0    2     
-      //     x    5  
-      //   x    4   
+      // back - right     think this:     not this:
+      //     1    3          x----x         x----x
+      //   0    2          x | top|       x----x | 
+      //     x    5        | x----x       |frnt| x 
+      //   x    4          x----x         x----x   
 
       coords_dat[cidx++] = (c01_0); // 0
       coords_dat[cidx++] = (c01_v); // 1
@@ -922,9 +913,12 @@ void UnitGroupView::Render_impl_blocks() {
   norms.finishEditing();
   mats.finishEditing();
 
-  UpdateUnitValues_blocks();		// hand off to next guy..
+  UpdateUnitValues_blocks(); // hand off to next guy to adjust block heights
 }
 
+// Update the height of each unit block based on the unit's value as
+// returned by nv->GetUnitDisplayVals().  The blocks have already been
+// drawn and positioned by Render_impl_blocks(), so this should be fast.
 void UnitGroupView::UpdateUnitValues_blocks() {
   NetView* nv = this->nv(); //cache
   Layer* lay = this->layer(); //cache
@@ -2135,27 +2129,14 @@ void NetViewParams::Initialize() {
   (ex. "act", "r.wt", etc.), the scale system is keyed to this value.
 
 */
+
+// Add a new NetView object to the frame for the given Network.
 NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
-  if (!net) return NULL;
-  if (fr) {
-    //note: even if fr specified, need to insure it is right proj for object
-    if (!net->SameScope(fr, &TA_taProject)) {
-      taMisc::Error("The viewer you specified is not in the same Project as the net.");
-      return NULL;
-    }
-    // check if already viewing this obj there, warn user
-    T3DataView* dv = fr->FindRootViewOfData(net);
-    if (dv) {
-      if (taMisc::Choice("This network is already shown in that frame -- would you like"
-          " to show it in a new frame?", "&Ok", "&Cancel") != 0) return NULL;
-      fr = NULL; // make a new one
-    }
-  } 
-  if (!fr) {
-    fr = T3DataViewer::GetBlankOrNewT3DataViewFrame(net);
-  }
-  if (!fr) return NULL; // unexpected...
-  
+  NewNetViewHelper newNetView(fr, net, "network");
+  // true == Allow only one NetView instances in a frame
+  // for a given network.
+  if (!newNetView.isValid(true)) return NULL;
+
   // create NetView
   NetView* nv = new NetView();
   nv->SetData(net);
@@ -2165,10 +2146,8 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   // make sure we've got it all rendered:
   nv->main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
   nv->BuildAll();
-  fr->Render();
-  fr->ViewAll();
-  if(fr->singleChild())
-    fr->SaveCurView(0);
+
+  newNetView.showFrame();
   return nv;
 }
 

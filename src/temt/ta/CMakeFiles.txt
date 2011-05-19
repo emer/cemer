@@ -8,9 +8,10 @@
 # of additional work would be required to fully split this out, and we need Qt
 # anyway, so there really isn't any point to it anymore
 
-# all headers that need maketa run on them
-set(ta_HEADS_MAKETA
-  ../taiqtso/igeometry.h
+# local headers that need maketa run on them
+# maketa is VERY picky about the order of these files,
+# so they are broken into two sections.
+set(ta_HEADS_MAKETA_LOCAL_1
   maketa_streambuf.h
   maketa_iostream.h
   maketa_fstream.h
@@ -76,7 +77,9 @@ set(ta_HEADS_MAKETA
   fun_lookup.h
   ta_data_extras.h
   colorbar_qt.h
-  ../taiqtso/safeptr_so.h
+)
+
+set(ta_HEADS_MAKETA_LOCAL_2
   t3node_so.h
   SoCapsule.h
   t3viewer.h
@@ -87,87 +90,25 @@ set(ta_HEADS_MAKETA
   ta_virtenv_so.h
 )
 
+# all headers that need maketa run on them
+set(ta_HEADS_MAKETA
+  ../taiqtso/igeometry.h
+  ${ta_HEADS_MAKETA_LOCAL_1}
+  ../taiqtso/safeptr_so.h
+  ${ta_HEADS_MAKETA_LOCAL_2}
+)
+
 # all heads -- include maketa generated ones here
 set(ta_HEADS
+  ${ta_HEADS_MAKETA_LOCAL_1}
+  ${ta_HEADS_MAKETA_LOCAL_2}
+  NewNetViewHelper.h
   ta_global.h
-  ta_def.h
-  maketa_streambuf.h
-  maketa_iostream.h
-  maketa_fstream.h
-  maketa_sstream.h
-  ta_atomic.h
-  ta_string.h
-  ta_platform.h
-  ta_thread.h
-  ta_stdef.h
-  ta_variant.h
-  ifont.h
-  ta_mtrnd.h
-  ta_list.h
-  ta_filer.h
-  icolor.h
-  ta_type.h
-  ta_base.h
-  ta_dmem.h
-  ta_fontspec.h
-  minmax.h
-  ta_group.h
-  ta_audioproc.h
-  ta_qtclipdata.h
-  colorscale.h
-  ta_script.h
-  ta_viewspec.h
-  ta_viewer.h
-  ta_program.h
-  ta_program_els.h
-  ta_matrix.h
-  ta_math.h
-  ta_geometry.h
-  ta_data.h
-  ta_datatable.h
-  ta_dataproc.h
-  ta_dataanal.h
-  ta_datagen.h
-  ta_imgproc.h
-  ta_virtenv.h
-  ta_dump.h
-  ta_defaults.h
-  ta_plugin.h
-  ta_plugin_p.h
-  ta_seledit.h
-  ta_project.h
-  ta_server.h
   ta_gendoc.h
   ta_maketa_defs.h
   ta_type_constr.h
   qtdefs.h
-  ta_qt.h
-  ta_mediawiki.h
-  ta_qtdata_def.h
-  ta_qtdata.h
-  ta_qtdialog.h
-  ta_qttype_def.h
-  ta_qttype.h
-  ta_qtviewer.h
-  ta_matrix_qt.h
-  ta_qtclassbrowse.h
-  ta_qtgroup.h
   ta_qtcursors.h
-  ta_program_qt.h
-  ta_seledit_qt.h
-  ta_userdata_qt.h
-  ta_time.h
-  fun_lookup.h
-  ta_data_extras.h
-  colorbar_qt.h
-  t3node_so.h
-  SoCapsule.h
-  t3viewer.h
-  colorbar_so.h
-  ta_datatable_qtso.h
-  ta_datatable_so.h
-  ta_virtenv_qtso.h
-  ta_virtenv_so.h
   ta_TA_type.h
   ta_TA_inst.h
 )
@@ -229,6 +170,7 @@ set(ta_SRCS_GUI
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
 # but DO include _TA.cpp files
 set(ta_SRCS
+  NewNetViewHelper.cpp
   ta_TA.cpp
   ta_atomic.cpp
   ta_string.cpp

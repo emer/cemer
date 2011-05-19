@@ -37,9 +37,7 @@
 // SOFTWARE. 								      //
 ==============================================================================*/
 
-// netstru_qtso.h -- qt and inventor controls/objects for network structures
-
-// NOTE: functions inside "ifdef GUI" blocks are implemented in netstru_qtso.cc
+// netstru_qtso.h -- qt controls/objects for network structures
 
 #ifndef NETSTRU_QTSO_H
 #define NETSTRU_QTSO_H
@@ -131,13 +129,13 @@ public:
   override void		CutLinks();
 
   TA_BASEFUNS(nvDataView)
-protected:
-  NetView*		m_nv; // cache
 
 private:
   void Copy_(const nvDataView& cp) {m_nv = NULL;}
   void			Initialize();
   void			Destroy() {}
+
+  NetView*		m_nv; // cache
 };
 
 
@@ -160,13 +158,14 @@ public:
   override void		CutLinks();
   T3_DATAVIEWFUNS(UnitView, T3DataView)
 protected:
-  NetView*		m_nv; // cache
   override void 	Render_pre(); //
   // note: _impl is done by the LayerView
 private:
   void Copy_(const UnitView& cp) {m_nv = NULL;}
   void			Initialize();
   void			Destroy() {CutLinks();}
+
+  NetView*		m_nv; // cache
 };
 
 ////////////////////////////////////////////////////
@@ -783,4 +782,4 @@ protected slots:
 
 };
 
-#endif // net_qt_h
+#endif // NETSTRU_QTSO_H

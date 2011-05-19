@@ -15,7 +15,7 @@
 
 
 
-// netstru_qtso.h -- qt and inventor controls/objects for network structures
+// netstru_so.h -- inventor controls/objects for network structures
 
 // NOTE: functions inside "ifdef GUI" blocks are implemented in netstru_qtso.cc
 
@@ -100,9 +100,6 @@ friend class T3UnitGroupNode;
 public:
   static void	initClass();
 
-  SoCylinder*	shape() {return shape_;}
-
-
   T3UnitNode_Cylinder(T3DataView* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 		      float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
@@ -122,8 +119,6 @@ typedef T3UnitNode inherited;
 friend class T3UnitGroupNode;
 public:
   static void	initClass();
-
-  SoCylinder*	shape() {return shape_;}
 
   T3UnitNode_Circle(T3DataView* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 		    float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
@@ -145,8 +140,6 @@ friend class T3UnitGroupNode;
 public:
   static void	initClass();
 
-  SoCube*	shape() {return shape_;}
-
   T3UnitNode_Block(T3DataView* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 		   float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
 
@@ -166,8 +159,6 @@ typedef T3UnitNode inherited;
 friend class T3UnitGroupNode;
 public:
   static void		initClass();
-
-  SoCube*		shape() {return shape_;}
 
   T3UnitNode_Rect(T3DataView* dataView_ = NULL, float max_x = 1.0f, float max_y = 1.0f,
 		  float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
@@ -408,7 +399,6 @@ typedef T3NodeParent inherited;
 public:
   static void		initClass();
 
-  SoLineBox3d*		shape() {return shape_;}
   SoDrawStyle*		shapeDraw() {return shape_draw_;}
   SoSeparator*		netText() {return net_text_;} // extra text of network vars etc
   SoTransform* 		netTextXform() {return net_text_xform_;}

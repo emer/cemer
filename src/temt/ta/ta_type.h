@@ -49,6 +49,7 @@
 // "NO_MEMBERS"
 
 // forwards
+class TA_API taBase;
 class TA_API IDataLinkClient;
 class TA_API taDataLink;
 class TA_API taDataLinkItr;
@@ -209,9 +210,6 @@ public:
   NamedURL(const NamedURL& cp)	{ name = cp.name; url = cp.url; }
   ~NamedURL()	{ };
 };
-
-class taBase;
-// typedef taBase* TAPtr;		// pointer to a taBase type
 
 class TA_API NameVar_PArray : public taPlainArray<NameVar> {
   // #NO_TOKENS a plain-array of name value (variant) items

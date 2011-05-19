@@ -1575,15 +1575,13 @@ void taBase::DataChanged(int dcr, void* op1, void* op2) {
 void taBase::setDirty(bool value) {
   //note: base has no storage, and only forwards dirty (not !dirty)
   if (!value) return;
-  taBase* owner;
-  if ((owner = GetOwner())) {
+  if (taBase* owner = GetOwner()) {
     owner->setDirty(value);
   }
 }
 
 void taBase::setStale() {
-  taBase* owner;
-  if ((owner = GetOwner())) {
+  if (taBase* owner = GetOwner()) {
     owner->setStale();
   }
 }
@@ -1599,8 +1597,7 @@ taDataLink* taBase::GetDataLink() {
 #endif
       return NULL;
     }
-    taiViewType* iv;
-    if ((iv = GetTypeDef()->iv) != NULL) {
+    if (taiViewType* iv = GetTypeDef()->iv) {
       iv->GetDataLink(this, GetTypeDef()); // sets data_link
     }
   }

@@ -123,47 +123,113 @@ public:
   ////////////////////////////////////////////////
   // 	functions that return the type		//
   ////////////////////////////////////////////////
+
 #ifndef __MAKETA__
-  TAGPtr	Gp_(int i) const	{ return gp.SafeEl(i); } // #IGNORE
-  TAGPtr 	FastGp_(int i) const	{ return gp.FastEl(i); } // #IGNORE
-  virtual taBase* Leaf_(int idx) const;	// #IGNORE DFS through all subroups for leaf i
-  TAGPtr 	FastLeafGp_(int gp_idx) const // #IGNORE the flat leaf group, note: 0 is "this"
-    { if (gp_idx == 0) return const_cast<TAGPtr>(this); if (!leaf_gp) InitLeafGp();
-      return (TAGPtr)leaf_gp->el[gp_idx];}
-  TAGPtr 	SafeLeafGp_(int gp_idx) const; // #IGNORE the flat leaf group, note: 0 is "this"
+
+  TAGPtr Gp_(int i) const { // #IGNORE
+    return gp.SafeEl(i);
+  }
+
+  TAGPtr FastGp_(int i) const { // #IGNORE
+    return gp.FastEl(i);
+  }
+
+  virtual taBase* Leaf_(int idx) const; // #IGNORE DFS through all subroups for leaf i
+
+  TAGPtr FastLeafGp_(int gp_idx) const { // #IGNORE the flat leaf group, note: 0 is "this"
+    if (gp_idx == 0)
+      return const_cast<TAGPtr>(this);
+    if (!leaf_gp)
+      InitLeafGp();
+    return (TAGPtr)leaf_gp->el[gp_idx];
+  }
+
+  TAGPtr SafeLeafGp_(int gp_idx) const; // #IGNORE the flat leaf group, note: 0 is "this"
   
   // iterator-like functions
-  TAGPtr 	FirstGp_(int& g) const	// #IGNORE first sub-gp
-  { g = 0; if(leaf_gp == NULL) InitLeafGp(); return leaf_gp->SafeEl(0); }
-  TAGPtr 	LastGp_(int& g) const	// #IGNORE last sub-gp (for rev iter)
-  {if(leaf_gp == NULL) InitLeafGp(); g = leaf_gp->size - 1; return leaf_gp->Peek(); }
-  TAGPtr 	NextGp_(int& g)	const	// #IGNORE next sub-gp
-  { return leaf_gp->SafeEl(++g); }
-  int	 	LeafGpCount()	const	// #IGNORE count of leaf groups **including self**; optimized for no subgroups
-    { if (gp.size == 0) return 1; if (leaf_gp == NULL) InitLeafGp(); return leaf_gp->size; }
+  TAGPtr FirstGp_(int& g) const { // #IGNORE first sub-gp
+    g = 0;
+    if (leaf_gp == NULL)
+      InitLeafGp();
+    return leaf_gp->SafeEl(0);
+  }
 
-  taBase*	 	FirstEl_(taLeafItr& lf) const	// #IGNORE first leaf iter init
-  { taBase* rval=NULL; lf.i = 0; lf.cgp = FirstGp_(lf.g);
-    if(lf.cgp != NULL) rval=(taBase*)lf.cgp->el[0]; return rval; }
-  inline taBase*	FirstEl(taLeafItr& lf) const {return FirstEl_(lf);} // #IGNORE
-  taBase*	 	NextEl_(taLeafItr& lf)	const	// #IGNORE next leaf
-  { if (++lf.i >= lf.cgp->size) {
-    lf.i = 0; if (!(lf.cgp = leaf_gp->SafeEl(++lf.g))) return NULL; }
-    return (taBase*)lf.cgp->el[lf.i];}
-  inline taBase*	NextEl(taLeafItr& lf) const {return NextEl_(lf);} // #IGNORE
+  TAGPtr LastGp_(int& g) const { // #IGNORE last sub-gp (for rev iter)
+    if (leaf_gp == NULL)
+      InitLeafGp();
+    g = leaf_gp->size - 1;
+    return leaf_gp->Peek();
+  }
 
-  taBase*	 	LastEl_(taLeafItr& lf) const	// #IGNORE last leaf iter init
-  { if (!(lf.cgp = LastGp_(lf.g))) return NULL;
-    lf.i = lf.cgp->size - 1; return (taBase*)lf.cgp->el[lf.i];  }
-  inline taBase*	LastEl(taLeafItr& lf) const {return LastEl_(lf);} // #IGNORE
-  taBase*	 	PrevEl_(taLeafItr& lf)	const	// #IGNORE prev leaf -- delete item safe
-  { if (--lf.i < 0) {
-      if (leaf_gp == NULL) InitLeafGp(); // in case we did a delete of an item
-      if (!(lf.cgp = leaf_gp->SafeEl(--lf.g))) return NULL; 
-      lf.i = lf.cgp->size - 1;}
-    return (taBase*)lf.cgp->el[lf.i];}
-  inline taBase*	PrevEl(taLeafItr& lf) const {return PrevEl_(lf);} // #IGNORE
+  TAGPtr NextGp_(int& g) const { // #IGNORE next sub-gp
+    return leaf_gp->SafeEl(++g);
+  }
+
+  int LeafGpCount() const { // #IGNORE count of leaf groups **including self**; optimized for no subgroups
+    if (gp.size == 0)
+      return 1;
+    if (leaf_gp == NULL)
+      InitLeafGp();
+    return leaf_gp->size;
+  }
+
+  taBase* FirstEl_(taLeafItr& lf) const { // #IGNORE first leaf iter init
+    taBase* rval=NULL;
+    lf.i = 0;
+    lf.cgp = FirstGp_(lf.g);
+    if (lf.cgp != NULL)
+      rval = (taBase*)lf.cgp->el[0];
+    return rval;
+  }
+
+  inline taBase* FirstEl(taLeafItr& lf) const { // #IGNORE
+    return FirstEl_(lf);
+  }
+
+  taBase* NextEl_(taLeafItr& lf) const { // #IGNORE next leaf
+    if (!lf.cgp) {
+      // then do what?? return NULL?
+    }
+    if (++lf.i >= lf.cgp->size) {
+      lf.i = 0;
+      lf.cgp = leaf_gp ? leaf_gp->SafeEl(++lf.g) : 0;
+      if (!lf.cgp) return NULL;
+    }
+    return (taBase*)lf.cgp->el[lf.i];
+  }
+
+  inline taBase* NextEl(taLeafItr& lf) const { // #IGNORE
+    return NextEl_(lf);
+  }
+
+  taBase* LastEl_(taLeafItr& lf) const { // #IGNORE last leaf iter init
+    if (!(lf.cgp = LastGp_(lf.g)))
+      return NULL;
+    lf.i = lf.cgp->size - 1;
+    return (taBase*)lf.cgp->el[lf.i];
+  }
+
+  inline taBase* LastEl(taLeafItr& lf) const { // #IGNORE
+    return LastEl_(lf);
+  }
+
+  taBase* PrevEl_(taLeafItr& lf) const { // #IGNORE prev leaf -- delete item safe
+    if (--lf.i < 0) {
+      if (leaf_gp == NULL)
+        InitLeafGp(); // in case we did a delete of an item
+      if (!(lf.cgp = leaf_gp->SafeEl(--lf.g)))
+        return NULL; 
+      lf.i = lf.cgp->size - 1;
+    }
+    return (taBase*)lf.cgp->el[lf.i];
+  }
+
+  inline taBase* PrevEl(taLeafItr& lf) const { // #IGNORE
+    return PrevEl_(lf);
+  }
+
 #endif
+
   virtual TAGPtr  NewGp_(int no, TypeDef* typ=NULL, const String& name_ = "");
     // #IGNORE create sub groups
   virtual taBase* NewEl_(int no, TypeDef* typ=NULL);	// #IGNORE create items
