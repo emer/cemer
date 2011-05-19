@@ -30,27 +30,17 @@ public:
   static void		initClass();
 
   SoIndexedFaceSet*     shape();
-  SoSeparator*		netText();
-  SoTransform* 		netTextXform();
-  SoTransform* 		netTextDragXform();
-  bool			netTextDrag();
+  SoVertexProperty* 	vtxProp() {return vtx_prop_;}
 
-  T3BrainNode(T3DataView* dataView_ = NULL, bool show_draggers = true,
-	    bool show_net_text = true, bool show_nt_drag = true);
+  T3BrainNode(T3DataView* dataView_ = NULL);
 
 protected:
   ~T3BrainNode();
 
 protected:
   SoIndexedFaceSet*     shape_; //#IGNORE
-  SoSeparator* 		net_text_; // network text variables
+  SoVertexProperty*	vtx_prop_;
 
-  bool			show_drag_;
-  bool			show_net_text_drag_;
-  T3TransformBoxDragger* drag_;	// my position dragger
-  T3TransformBoxDragger* net_text_drag_;	// my net text dragger
-  SoTransform*		net_text_xform_;
-  SoTransform*		net_text_drag_xform_;
 };
 
 #endif // T3_BRAIN_NODE_H

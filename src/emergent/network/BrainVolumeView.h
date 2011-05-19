@@ -24,11 +24,10 @@ class EMERGENT_API BrainVolumeView: public T3DataViewPar {
   // does all the rendering of unit values, either direct optimized 3D_BLOCK rendering or managing -- there is ONLY ONE of these objects per layer, and it manages all the units regardless of whether there are sub unit groups
 INHERITED(T3DataViewPar)
 public:
-  static void		ValToDispText(float val, String& str); // renders the display text, typ 6 chars max
-
   voidptr_Matrix	uvd_bases; // #IGNORE [x][y][nv->membs.size] void* base pointers to unit values -- computed during Init -- note that bases for all members are encoded, so switching members does not require recompute
+  float_Matrix		cur_disp_vals;  // current display values to render --- extract from units and then use this to render to volume
 
-  Layer*		layer() const;
+  Network*		net() const;
   T3BrainNode*          node_so() const;
 
   BrainView*            bv();
@@ -47,10 +46,6 @@ public:
   // *only* updates unit values 
   virtual void		UpdateUnitValues_blocks();
   // *only* updates unit values: optimized blocks mode
-  virtual void		UpdateUnitValues_outnm();
-  // output name mode update
-  virtual void		UpdateUnitValues_snap_bord();
-  // snap border
   virtual void		UpdateAutoScale(bool& updated);
   // update autoscale values
 
@@ -69,8 +64,6 @@ protected:
   override void		DoActionChildren_impl(DataViewAction acts);
   virtual void 		Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   virtual void 		Render_impl_blocks(); // optimized blocks
-  virtual void 		Render_impl_outnm(); // output name
-  virtual void 		Render_impl_snap_bord(); // snap border
 
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE

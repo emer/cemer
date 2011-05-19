@@ -122,14 +122,6 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ////////////////////////////////////////////////////////////////////////////
   layFontsEtc = new QHBoxLayout();  layViewParams->addLayout(layFontsEtc);
 
-  lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
-  lblPrjnWdth->setToolTip("Width of projection lines -- .002 is default (very thin!) -- increase if editing projections so they are easier to select.");
-  layFontsEtc->addWidget(lblPrjnWdth);
-  fldPrjnWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
-  layFontsEtc->addWidget(fldPrjnWdth->GetRep());
-  ((iLineEdit*)fldPrjnWdth->GetRep())->setCharWidth(6);
-  layFontsEtc->addSpacing(taiM->hsep_c);
-
   lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
   lblUnitTrans->setToolTip("Unit maximum transparency level: 0 = all units opaque; 1 = inactive units are completely invisible.\n .6 = default; transparency is inversely related to value magnitude.");
   layFontsEtc->addWidget(lblUnitTrans);
@@ -180,20 +172,6 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 
   layColorScaleCtrls = new QHBoxLayout();  layDisplayValues->addLayout(layColorScaleCtrls);
   
-  chkSnapBord = new QCheckBox("Snap\nBord", widg);
-  chkSnapBord->setToolTip("Whether to display unit snapshot value snap as a border around units");
-  connect(chkSnapBord, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layColorScaleCtrls->addWidget(chkSnapBord);
-  layColorScaleCtrls->addSpacing(taiM->hsep_c);
-
-  lblSnapBordWdth = taiM->NewLabel("Bord\nWdth", widg, font_spec);
-  lblSnapBordWdth->setToolTip("Width of snap border lines"); 
-  layColorScaleCtrls->addWidget(lblSnapBordWdth);
-  fldSnapBordWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
-  layColorScaleCtrls->addWidget(fldSnapBordWdth->GetRep());
-  ((iLineEdit*)fldSnapBordWdth->GetRep())->setCharWidth(6);
-  layColorScaleCtrls->addSpacing(taiM->hsep_c);
-
   lblUnitSpacing = taiM->NewLabel("Unit\nSpace", widg, font_spec);
   lblUnitSpacing->setToolTip("Spacing between units, as a proportion of the total width of the unit box"); 
   layColorScaleCtrls->addWidget(lblUnitSpacing);
@@ -202,57 +180,6 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ((iLineEdit*)fldUnitSpacing->GetRep())->setCharWidth(6);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
-  chkWtLines = new QCheckBox("wt\nLines", widg);
-  chkWtLines->setToolTip("Whether to display connection weight values as colored lines, with color and transparency varying as a function of magnitude");
-  connect(chkWtLines, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layColorScaleCtrls->addWidget(chkWtLines);
-  layColorScaleCtrls->addSpacing(taiM->hsep_c);
-
-  chkWtLineSwt = new QCheckBox("s.wt", widg);
-  chkWtLineSwt->setToolTip("Display the sending weights out of the unit instead of the receiving weights into it");
-  connect(chkWtLineSwt, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layColorScaleCtrls->addWidget(chkWtLineSwt);
-  layColorScaleCtrls->addSpacing(taiM->hsep_c);
-
-  lblWtLineWdth = taiM->NewLabel("Wdth", widg, font_spec);
-  lblWtLineWdth->setToolTip("Width of weight lines -- 0 = thinnest lines (-1 = no lines, redundant with turning wt_lines off)"); 
-  layColorScaleCtrls->addWidget(lblWtLineWdth);
-  fldWtLineWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
-  layColorScaleCtrls->addWidget(fldWtLineWdth->GetRep());
-  ((iLineEdit*)fldWtLineWdth->GetRep())->setCharWidth(6);
-  layColorScaleCtrls->addSpacing(taiM->hsep_c);
-
-  lblWtLineThr = taiM->NewLabel("Thr", widg, font_spec);
-  lblWtLineThr->setToolTip("Threshold for displaying weight lines: weight magnitudes below this value are not shown -- if a layer to project onto is selected (Wt Prjn) then if this value is < 0, intermediate units in the weight projection that are below the K un threshold will be zeroed.");
-  layColorScaleCtrls->addWidget(lblWtLineThr);
-  fldWtLineThr = dl.Add(new taiField(&TA_float, this, NULL, widg));
-  layColorScaleCtrls->addWidget(fldWtLineThr->GetRep());
-  ((iLineEdit*)fldWtLineThr->GetRep())->setCharWidth(6);
-  layColorScaleCtrls->addSpacing(taiM->hsep_c);
-
-  int list_flags = taiData::flgNullOk | taiData::flgAutoApply;
-
-  lblWtPrjnLay = taiM->NewLabel("Wt\nPrjn", widg, font_spec);
-  lblWtPrjnLay->setToolTip("Layer to project weight values onto, from currently selected unit in view -- values are visible on all units in the wt_prjn unit variable if this setting is non-null -- setting this value causes expensive weight projection computation for every update");
-  layColorScaleCtrls->addWidget(lblWtPrjnLay);
-  gelWtPrjnLay = dl.Add(new taiGroupElsButton(&TA_Layer_Group, this, NULL, widg, list_flags));
-  layColorScaleCtrls->addWidget(gelWtPrjnLay->GetRep());
-
-  lblWtPrjnKUn = taiM->NewLabel("K un", widg, font_spec);
-  lblWtPrjnKUn->setToolTip("Number of top K strongest units to propagate weight projection values through to other layers -- smaller numbers produce more selective and often interpretable results, though they are somewhat less representative.");
-  layColorScaleCtrls->addWidget(lblWtPrjnKUn);
-  fldWtPrjnKUn = dl.Add(new taiField(&TA_float, this, NULL, widg));
-  layColorScaleCtrls->addWidget(fldWtPrjnKUn->GetRep());
-  ((iLineEdit*)fldWtPrjnKUn->GetRep())->setCharWidth(6);
-  layColorScaleCtrls->addSpacing(taiM->hsep_c);
-
-  lblWtPrjnKGp = taiM->NewLabel("K gp", widg, font_spec);
-  lblWtPrjnKGp->setToolTip("Number of top K strongest unit groups (where groups are present) to propagate weight projection values through to other layers (-1 or 0 to turn off this feature) -- smaller numbers produce more selective and often interpretable results, though they are somewhat less representative.");
-  layColorScaleCtrls->addWidget(lblWtPrjnKGp);
-  fldWtPrjnKGp = dl.Add(new taiField(&TA_float, this, NULL, widg));
-  layColorScaleCtrls->addWidget(fldWtPrjnKGp->GetRep());
-  ((iLineEdit*)fldWtPrjnKGp->GetRep())->setCharWidth(6);
-  layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   layColorScaleCtrls->addStretch();
 
@@ -295,42 +222,6 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lvDisplayValues->setSelectionMode(QAbstractItemView::SingleSelection);
   //layDisplayValues->addWidget(lvDisplayValues, 1);
   connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
-  
-  ////////////////////////////////////////////////////////////////////////////
-  // Spec tree
-  
-  tvSpecs = new iTreeView(NULL, iTreeView::TV_AUTO_EXPAND);
-  tw->addTab(tvSpecs, "Spec Explorer");
-  tvSpecs->setDefaultExpandLevels(6); // shouldn't generally be more than this
-  tvSpecs->setColumnCount(2);
-  tvSpecs->setSortingEnabled(false);// only 1 order possible
-  tvSpecs->setHeaderText(0, "Spec");
-  tvSpecs->setHeaderText(1, "Description");
-  tvSpecs->setColFormat(1, iTreeView::CF_ELIDE_TO_FIRST_LINE); // in case of multi-line specs
-  tvSpecs->setColKey(1, taBase::key_desc); //note: ProgVars and Els have nice disp_name desc's
-  //enable dnd support
-  tvSpecs->setDragEnabled(true);
-  tvSpecs->setAcceptDrops(true);
-  tvSpecs->setDropIndicatorShown(true);
-  tvSpecs->setHighlightRows(true);
-
-  if(dv_->net()) {
-    taBase* specs_ = &(dv_->net()->specs);
-    MemberDef* md = dv_->net()->GetTypeDef()->members.FindName("specs");
-    if (specs_) {
-      taiDataLink* dl = (taiDataLink*)specs_->GetDataLink();
-      if (dl) {
-        dl->CreateTreeDataNode(md, tvSpecs, NULL, "specs");
-      }
-    }
-  }
-
-  tvSpecs->resizeColumnToContents(0); // just make sure everythign fits
-
-  tvSpecs->Connect_SelectableHostNotifySignal(this,
-    SLOT(tvSpecs_Notify(ISelectableHost*, int)) );
-  connect(tvSpecs, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
-    this, SLOT(tvSpecs_CustomExpandFilter(iTreeViewItem*, int, bool&)) ); 
   
   layTopCtrls->addWidget(tw);
   
@@ -454,13 +345,6 @@ void BrainViewPanel::GetValue_impl() {
   bv->snap_bord_width = (float)fldSnapBordWdth->GetValue();
   bv->view_params.unit_spacing = (float)fldUnitSpacing->GetValue();
 
-  bv->wt_line_disp = chkWtLines->isChecked();
-  bv->wt_line_swt = chkWtLineSwt->isChecked();
-  bv->wt_line_width = (float)fldWtLineWdth->GetValue();
-  bv->wt_line_thr = (float)fldWtLineThr->GetValue();
-  bv->wt_prjn_k_un = (float)fldWtPrjnKUn->GetValue();
-  bv->wt_prjn_k_gp = (float)fldWtPrjnKGp->GetValue();
-  bv->wt_prjn_lay = (Layer*)gelWtPrjnLay->GetValue();
   bv->view_params.xy_square = chkXYSquare->isChecked();
   bv->view_params.show_laygp = chkLayGp->isChecked();
 
@@ -546,63 +430,6 @@ void BrainViewPanel::lvDisplayValues_selectionChanged() {
   ColorScaleFromData();
   bv_->UpdateDisplay(false);
 }
-
-void BrainViewPanel::setHighlightSpec(BaseSpec* spec, bool force) {
-  if ((spec == m_cur_spec) && !force) return;
-  m_cur_spec = spec;
-  BrainView* bv = this->bv(); // cache
-  bv->SetHighlightSpec(spec);
-}
-
-void BrainViewPanel::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
-  int level, bool& expand) 
-{
-  if (level < 1) return; // always expand root level
-  // by default, we only expand specs themselves, not the args, objs, etc.
-  // and then ONLY if that spec itself has child specs
-  taiDataLink* dl = item->link();
-  TypeDef* typ = dl->GetDataTypeDef();
-  // check for spec itself (DEF_CHILD) and children list
-  if (typ->InheritsFrom(&TA_BaseSpec)) {
-    BaseSpec* spec = (BaseSpec*)dl->data();
-    if (spec->children.size > 0) return;
-  }
-  else if (typ->DerivesFrom(&TA_BaseSpec_Group))
-    return;
-  expand = false;
-}
-
-void BrainViewPanel::tvSpecs_Notify(ISelectableHost* src, int op) {
-  BrainView* bv_;
-  if (!(bv_ = bv())) return;
-  switch (op) {
-  //case ISelectableHost::OP_GOT_FOCUS: return;
-  case ISelectableHost::OP_SELECTION_CHANGED: {
-    taBase* new_base = NULL;
-    ISelectable* si = src->curItem();
-    if (si && si->link()) {
-      new_base = si->link()->taData(); // NULL if not a taBase, shouldn't happen
-    }
-    setHighlightSpec((BaseSpec*)new_base);
-    //    bv_->UpdateDisplay(true);
-  } break;
-  //case ISelectableHost::OP_DESTROYING: return;
-  default: return;
-  }
-}
-
-void BrainViewPanel::tvSpecs_ItemSelected(iTreeViewItem* item) {
-  BrainView* bv_;
-  if (!(bv_ = bv())) return;
-  BaseSpec* spec = NULL;
-  if (item) {
-    taBase* ld_ = (taBase*)item->linkData();
-    if (ld_->InheritsFrom(TA_BaseSpec))
-      spec = (BaseSpec*)ld_;
-  }
-  setHighlightSpec(spec);
-}
-
 
 void BrainViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op) {
   BrainView* bv_;

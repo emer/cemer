@@ -39,25 +39,10 @@ public:
     MD_UNKNOWN 		= 0x000F
   };
 
-  // NOTE: do not reorder UTD enums == the VALUES and NAMES values are used as bits
-  enum UnitTextDisplay {	// how to display unit text
-    UTD_NONE		= 0,	// #LABEL_None no text (default)
-    UTD_VALUES		= 1,	// #LABEL_Values unit values only
-    UTD_NAMES		= 2,	// #LABEL_Names unit names only
-    UTD_BOTH		= 3 	// #LABEL_Both both unit values and names
-  };
-
-  enum UnitDisplayMode {
-    UDM_CIRCLE,	 	// #LABEL_2d_Circle just color, no 3d -- best for when displaying labels
-    UDM_RECT,	 	// #LABEL_2d_Rect just color, no 3d -- best for when displaying labels
-    UDM_BLOCK,		// #LABEL_3d_Block
-    UDM_CYLINDER	// #LABEL_3d_Cylinder
-  };
-
   static BrainView*	New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
 
   bool			display;       	// whether to update the display when values change (under control of programs)
-  bool			lay_mv;       	// whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
+  bool			lay_mv;		// keep this..
   bool			net_text;       // whether to display text box below network with counters etc
   FloatTransform	net_text_xform;  // transform of coordinate system for the net text display element
   float			net_text_rot;	 // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
@@ -72,27 +57,15 @@ public:
 
   ScaleRange*		unit_sr; 	// #NO_SAVE #NO_COPY #READ_ONLY scalerange of disp_md
   MDFlags		unit_md_flags;  // #NO_SAVE #READ_ONLY type to display in units
-  UnitDisplayMode	unit_disp_mode; // how to display unit values
-  UnitTextDisplay	unit_text_disp; // what labels to display with units
   FloatTDCoord		max_size;	// #NO_COPY #READ_ONLY maximum size in each dimension of the net
   NetViewFontSizes	font_sizes;	// font sizes for various items
   NetViewParams		view_params;	// misc view parameters 
-  bool			wt_line_disp;	// display weights from selected unit as lines?
-  float			wt_line_width;	// width of weight lines
-  float			wt_line_thr;	// threshold on fabs(wt) value -- don't display below this value
-  bool			wt_line_swt;	// plot sending weights instead of recv weights
-  float			wt_prjn_k_un;	// number of top-k units to project weights through
-  float			wt_prjn_k_gp;	// number of top-k unit groups to project weights through
-  LayerRef		wt_prjn_lay; 	// #NO_COPY layer to display projected weights for
-  bool			snap_bord_disp;	// display snapshot value snap as a border around units
-  float			snap_bord_width; // width of snapshot border lines
   ColorScale		scale;		// contains current min,max,range,zero,auto_scale
   ScaleRange_List 	scale_ranges;  	// #NO_COPY Auto ranges for member buttons
-  NameVar_Array		lay_disp_modes; // #READ_ONLY layer display modes (not properly saved otherwise, due to reset construction of LayerViews)
 
   Network*		net() const;
   T3NetNode*		node_so() const;
-  void 			setUnitSrc(UnitView* uv, Unit* unit); // updates picked unit
+  void 			setUnitSrc(Unit* unit); // updates picked unit
   void			setUnitDisp(int value); // sets a new md to display, index in membs
   void			setUnitDispMd(MemberDef* md); // sets a new md to display, lookup/set scale values
   void			UpdateViewerModeForMd(MemberDef* md);
@@ -125,7 +98,6 @@ public:
   void			InitScaleRange(ScaleRange& sr);
   // initialize sr to its defaults; used when creating, and if user clicks 'default' button for the scale
 
-  UnitView*		FindUnitView(Unit* unit); // find the uv for the unit
   virtual void		SelectVar(const char* var_name, bool add=false, bool update = true);
   // select given variable for viewing on units (add to currently disp vars if add)
   void			SetScaleData(bool auto_scale, float scale_min, float scale_max,
@@ -134,16 +106,6 @@ public:
 
   void			SetColorSpec(ColorScaleSpec* color_spec);
   // #BUTTON #INIT_ARGVAL_ON_scale.spec set the color scale spec to determine the palette of colors representing values
-
-  virtual void		SetLayDispMode(const String& lay_nm, int disp_md);
-  // set the layer display mode value for given layer name (called by LayerView UAE)
-  virtual int		GetLayDispMode(const String& lay_nm);
-  // get the layer display mode value for given layer name (called by LayerView BuildAll)
-  virtual void		SetHighlightSpec(BaseSpec* spec);
-  static bool		UsesSpec(taBase* obj, BaseSpec* spec);
-
-  virtual void		Layer_DataUAE(LayerView* lv);
-  // send a DataUAE for all prjns for this layer
 
   virtual void		UpdateName();
   // update name from network
@@ -166,8 +128,6 @@ public:
 protected:
   T3DataView_PtrList	prjns; 		// #IGNORE list of prjn objects under us
   BrainViewPanel*	bvp; // created during first Render
-  override void 	ChildAdding(taDataView* child); // #IGNORE also add to aux list
-  override void 	ChildRemoving(taDataView* child); // #IGNORE also remove from aux list
   override void		DataUpdateView_impl();
   override void		DataUpdateAfterEdit_impl(); //
   override void		DataUpdateAfterEdit_Child_impl(taDataView* chld); // called by lays and prjns
@@ -175,10 +135,8 @@ protected:
   override void		Render_pre(); // #IGNORE
   override void		Render_impl(); // #IGNORE
   void			Render_net_text();
-  void			Render_wt_lines();
   override void		Reset_impl(); // #IGNORE
   void 			UpdateAutoScale(); // #IGNORE prepass updates scale from values
-  void			viewWin_NotifySignal(ISelectableHost* src, int op);
 private:
   SIMPLE_COPY(BrainView)
   void			Initialize();

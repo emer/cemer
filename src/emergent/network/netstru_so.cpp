@@ -376,9 +376,9 @@ T3UnitGroupNode::~T3UnitGroupNode()
 {
   shape_ = NULL;
   unit_text_ = NULL;
-  SoMaterial* mat = material();
-  mat->diffuseColor.setValue(1.0f, 1.0f, 1.0f); // white (invisible)
-  mat->transparency.setValue(1.0f);
+//   SoMaterial* mat = material();
+//   mat->diffuseColor.setValue(1.0f, 1.0f, 1.0f); // white (invisible)
+//   mat->transparency.setValue(1.0f);
 }
 
 void T3UnitGroupNode::setGeom(int x, int y, float max_x, float max_y, float max_z,

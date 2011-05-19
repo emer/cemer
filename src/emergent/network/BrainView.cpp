@@ -76,8 +76,8 @@ void BrainView::Initialize() {
   data_base = &TA_Network;
   bvp = NULL;
   display = true;
-  lay_mv = true;
   net_text = true;
+  lay_mv = false;
   net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
   net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
   net_text_xform.scale = 0.7f;
@@ -90,8 +90,6 @@ void BrainView::Initialize() {
 
   unit_sr = NULL;
   unit_md_flags = MD_UNKNOWN;
-  unit_disp_mode = UDM_BLOCK;
-  unit_text_disp = UTD_NONE;
   wt_line_disp = false;
   wt_line_width = 4.0f;
   wt_line_thr = .8f;
@@ -158,89 +156,10 @@ void BrainView::BuildAll() { // populates all T3 guys
 
   Network* nt = net();
 
-  // cannot preserve LayerView objects, so recording disp_mode info separately
-  // layers grab from us when made, instead of pushing on them.
-  // first pass is to fix things up based on layer names only
-  for(int i = lay_disp_modes.size - 1; i >= 0; --i) {
-    NameVar dmv = lay_disp_modes.FastEl(i);
-    int li = nt->layers.FindLeafNameIdx(dmv.name);
-    if (li < 0) {
-      lay_disp_modes.RemoveIdx(i);
-    }
-  }
-  // add layers not in us, move in position
-  for(int li = 0; li < nt->layers.leaves; ++li) {
-    Layer* ly = nt->layers.Leaf(li);
-    if(!ly) continue;           // can happen, apparently!
-    int i = lay_disp_modes.FindName(ly->name);
-    if(i < 0) {
-      NameVar dmv;
-      dmv.name = ly->name;
-      dmv.value = -1;           // uninit val
-      lay_disp_modes.Insert(dmv, li);
-    } 
-    else if(i != li) {
-      lay_disp_modes.MoveIdx(i, li);
-    }
-  }
-
-  { // delegate everything to the layers group
-    LayerGroupView* lv = new LayerGroupView();
-    lv->SetData(&nt->layers);
-    lv->root_laygp = true;      // root guy 4 sure!
-    children.Add(lv);
-    lv->BuildAll();
-  }
-
-  Layer* lay;
-  taLeafItr li;
-  FOR_ITR_EL(Layer, lay, net()->layers., li) {
-    Projection* prjn;
-    taLeafItr j;
-    FOR_ITR_EL(Projection, prjn, lay->projections., j) {
-      PrjnView* pv = new PrjnView();
-      pv->SetData(prjn);
-      children.Add(pv);
-    }
-  }
-
-  NetViewObj* obj;
-  taLeafItr oi;
-  FOR_ITR_EL(NetViewObj, obj, net()->view_objs., oi) {
-    NetViewObjView* ov = new NetViewObjView();
-    ov->SetObj(obj);
-    children.Add(ov);
-  }
-}
-
-void BrainView::SetLayDispMode(const String& lay_nm, int disp_md) {       
-  int i = lay_disp_modes.FindName(lay_nm);
-  if(i < 0) return;
-  lay_disp_modes.FastEl(i).value = disp_md;
-}
-
-int BrainView::GetLayDispMode(const String& lay_nm) {
-  int i = lay_disp_modes.FindName(lay_nm);
-  if(i < 0) return -1;
-  return lay_disp_modes.FastEl(i).value.toInt();
-}
-
-void BrainView::ChildAdding(taDataView* child_) {
-  inherited::ChildAdding(child_);
-  T3DataView* child = dynamic_cast<T3DataView*>(child_);
-  if (!child) return;
-  TypeDef* typ = child->GetTypeDef();
-  if(typ->InheritsFrom(&TA_PrjnView)) {
-    prjns.AddUnique(child);
-  }
-}
-
-void BrainView::ChildRemoving(taDataView* child_) {
-  T3DataView* child = dynamic_cast<T3DataView*>(child_);
-  if(child) {
-    prjns.RemoveEl(child);      // just try it
-  }
-  inherited::ChildRemoving(child_);
+  BrainVolumeView* bv = new BrainVolumeView();
+  bv->SetData(nt);
+  children.Add(bv);
+  bv->BuildAll();
 }
 
 void BrainView::UpdateName() {
@@ -281,18 +200,6 @@ taBase::DumpQueryResult BrainView::Dump_QuerySaveMember(MemberDef* md) {
   } else
     return inherited::Dump_QuerySaveMember(md);
 } 
-
-UnitView* BrainView::FindUnitView(Unit* unit) {
-  UnitView* uv = NULL;
-  taDataLink* dl = unit->data_link();
-  if (!dl) return NULL;
-  taDataLinkItr i;
-  FOR_DLC_EL_OF_TYPE(UnitView, uv, dl, i) {
-    if (uv->GetOwner(&TA_BrainView) == this)
-      return uv;
-  }
-  return NULL;
-}
 
 // this fills a member group with the valid memberdefs from the units and connections
 void BrainView::GetMembs() { 
@@ -484,7 +391,7 @@ void BrainView::InitDisplay(bool init_panel) {
   }
 
   if(children.size > 0) {
-    LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
+    BrainVolumeView* lv = (BrainVolumeView*)children.FastEl(0);
     lv->InitDisplay();
   }
 }
@@ -498,13 +405,6 @@ void BrainView::InitScaleRange(ScaleRange& sr) {
   sr.auto_scale = false;
   sr.min = -1.0f;
   sr.max =  1.0f;
-}
-
-void BrainView::Layer_DataUAE(LayerView* lv) {
-  // simplest solution is just to call DataUAE on all prns...
-  for (int i = 0; i < prjns.size; ++i) {
-    PrjnView* pv = (PrjnView*)prjns.FastEl(i);
-  }
 }
 
 void BrainView::GetMaxSize() {
@@ -568,21 +468,21 @@ void BrainVolumeView_MouseCB(void* userData, SoEventCallback* ecb) {
         }
       }
       BrainVolumeView* act_ugv = static_cast<BrainVolumeView*>(((T3BrainNode*)pobj)->dataView());
-      Layer* lay = act_ugv->layer(); //cache
-      float disp_scale = lay->disp_scale;
+//       Layer* lay = act_ugv->layer(); //cache
+//       float disp_scale = lay->disp_scale;
 
-      SbVec3f pt = pp->getObjectPoint(pobj); 
-      int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
-      int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
+//       SbVec3f pt = pp->getObjectPoint(pobj); 
+//       int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
+//       int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
    
-      if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
-        Unit* unit = lay->UnitAtDispCoord(xp, yp);
-        if(unit && tnv->unit_src != unit) {
-          tnv->setUnitSrc(NULL, unit);
-          tnv->InitDisplay();   // this is apparently needed here!!
-          tnv->UpdateDisplay();
-        }
-      }
+//       if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
+//         Unit* unit = lay->UnitAtDispCoord(xp, yp);
+//         if(unit && tnv->unit_src != unit) {
+//           tnv->setUnitSrc(NULL, unit);
+//           tnv->InitDisplay();   // this is apparently needed here!!
+//           tnv->UpdateDisplay();
+//         }
+//       }
       got_one = true;
     }
   }
@@ -601,7 +501,7 @@ void BrainView::Render_pre() {
   }
   if(!lay_mv) show_drag = false;
 
-  setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv));
+  setNode(new T3NetNode(this, show_drag, net_text, show_drag));
   SoMaterial* mat = node_so()->material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);
@@ -670,15 +570,6 @@ void BrainView::Render_impl() {
 
     Render_net_text();
   }
-
-  if((bool)wt_prjn_lay) {
-    // this does all the heavy lifting: projecting into unit wt_prjn
-    // if wt_line_thr < 0 then zero intermediates
-    net()->ProjectUnitWeights(unit_src, wt_prjn_k_un, wt_prjn_k_gp, wt_line_swt, 
-                              (wt_prjn_k_un > 0 && wt_line_thr < 0.0f));
-  }
-
-  Render_wt_lines();
 
   inherited::Render_impl();
 }
@@ -800,201 +691,6 @@ void BrainView::Render_net_text() {
   }
 }
 
-void BrainView::Render_wt_lines() {
-  T3NetNode* node_so = this->node_so(); //cache
-
-  bool do_lines = (bool)unit_src && wt_line_disp;
-  Layer* src_lay = NULL;
-  if(unit_src)
-    src_lay =GET_OWNER(unit_src, Layer);
-  if(!src_lay || src_lay->Iconified()) do_lines = false;
-  SoIndexedLineSet* ils = node_so->wtLinesSet();
-  SoDrawStyle* drw = node_so->wtLinesDraw();
-  SoVertexProperty* vtx_prop = node_so->wtLinesVtxProp();
-
-  SoMFVec3f& vertex = vtx_prop->vertex;
-  SoMFUInt32& color = vtx_prop->orderedRGBA;
-  SoMFInt32& coords = ils->coordIndex;
-  SoMFInt32& mats = ils->materialIndex;
-
-  if(!do_lines) {
-    vertex.setNum(0);
-    color.setNum(0);
-    coords.setNum(0);
-    mats.setNum(0);
-    return;
-  }
-  TDCoord src_lay_pos; src_lay->GetAbsPos(src_lay_pos);
-  
-  drw->style = SoDrawStyleElement::LINES;
-  drw->lineWidth = MAX(wt_line_width, 0.0f);
-  vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED); // part = line segment = same as FACE but likely to be faster to compute line segs?
-
-  // count the number of lines etc
-  int n_prjns = 0;
-  int n_vtx = 0;
-  int n_coord = 0;
-  int n_mat = 0;
-
-  bool swt = wt_line_swt;
-
-  if(wt_line_width >= 0.0f) {
-    for(int g=0;g<(swt ? unit_src->send.size : unit_src->recv.size);g++) {
-      taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
-      Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
-      if(!prjn || !prjn->from || !prjn->layer) continue;
-      if(prjn->from->Iconified()) continue;
-
-      n_prjns++;
-      int n_con = 0;
-      for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
-        float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
-        if(wt >= wt_line_thr) n_con++;
-      }
-
-      n_vtx += 1 + n_con;   // one for recv + senders
-      n_coord += 3 * n_con; // start, end -1 for each coord
-      n_mat += n_con;       // one per line
-    }
-  }
-
-  if((bool)wt_prjn_lay && (wt_line_width >= 0.0f)) {
-    int n_con = 0;
-    Unit* u;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, u, wt_prjn_lay->units., ui) {
-      if(fabsf(u->wt_prjn) >= wt_line_thr) n_con++;
-    }
-
-    n_vtx += 1 + n_con;   // one for recv + senders
-    n_coord += 3 * n_con; // start, end -1 for each coord
-    n_mat += n_con;       // one per line
-  }
-
-  vertex.setNum(n_vtx);
-  coords.setNum(n_coord);
-  color.setNum(n_mat);
-  mats.setNum(n_mat);
-
-  if(wt_line_width < 0.0f) return;
-
-  SbVec3f* vertex_dat = vertex.startEditing();
-  int32_t* coords_dat = coords.startEditing();
-  uint32_t* color_dat = color.startEditing();
-  int32_t* mats_dat = mats.startEditing();
-  int v_idx = 0;
-  int c_idx = 0;
-  int cidx = 0;
-  int midx = 0;
-
-  // note: only want layer_rel for ru_pos
-  TwoDCoord ru_pos; unit_src->LayerDispPos(ru_pos);
-  FloatTDCoord src;             // source and dest coords
-  FloatTDCoord dst;
-
-  float max_xy = MAX(max_size.x, max_size.y);
-  float lay_ht = T3LayerNode::height / max_xy;
-
-  iColor tc;
-  T3Color col;
-  float sc_val;
-  float trans = view_params.unit_trans;
-
-  for(int g=0;g<(swt ? unit_src->send.size : unit_src->recv.size);g++) {
-    taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
-    Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
-    if(!prjn || !prjn->from || !prjn->layer) continue;
-    if(prjn->from->Iconified()) continue;
-    Layer* lay_fr = (swt ? prjn->layer : prjn->from);
-    Layer* lay_to = (swt ? prjn->from : prjn->layer);
-    TDCoord lay_fr_pos; lay_fr->GetAbsPos(lay_fr_pos);
-    TDCoord lay_to_pos; lay_to->GetAbsPos(lay_to_pos);
-    
-    // y = network z coords -- same for all cases
-    src.y = ((float)lay_to_pos.z) / max_size.z;
-    dst.y = ((float)lay_fr_pos.z) / max_size.z;
-
-    // move above/below layer plane
-    if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
-    else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
-    else { src.y += lay_ht; dst.y += lay_ht; }
-
-    src.x = ((float)lay_to_pos.x + (float)ru_pos.x + .5f) / max_size.x;
-    src.z = -((float)lay_to_pos.y + (float)ru_pos.y + .5f) / max_size.y;
-
-    int ru_idx = v_idx;
-    vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
-
-    for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
-      Unit* su = (swt ? ((SendCons*)cg)->Un(i) : ((RecvCons*)cg)->Un(i));
-      float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
-      if(fabsf(wt) < wt_line_thr) continue;
-
-      // note: only want layer_rel for ru_pos
-      TwoDCoord su_pos; su->LayerDispPos(su_pos);
-      dst.x = ((float)lay_fr_pos.x + (float)su_pos.x + .5f) / max_size.x;
-      dst.z = -((float)lay_fr_pos.y + (float)su_pos.y + .5f) / max_size.y;
-
-      coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
-      mats_dat[midx++] = c_idx; // one per
-
-      vertex_dat[v_idx++].setValue(dst.x, dst.y, dst.z);
-
-      // color
-      GetUnitColor(wt, tc, sc_val);
-      col.setValue(tc.redf(), tc.greenf(), tc.bluef());
-      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
-    }
-  }
-
-  if((bool)wt_prjn_lay) {
-    TDCoord wt_prjn_lay_pos; wt_prjn_lay->GetAbsPos(wt_prjn_lay_pos);
-    
-    // y = network z coords -- same for all cases
-    src.y = ((float)src_lay_pos.z) / max_size.z;
-    dst.y = ((float)wt_prjn_lay_pos.z) / max_size.z;
-
-    // move above/below layer plane
-    if(src.y < dst.y) { src.y += lay_ht; dst.y -= lay_ht; }
-    else if(src.y > dst.y) { src.y -= lay_ht; dst.y += lay_ht; }
-    else { src.y += lay_ht; dst.y += lay_ht; }
-
-    src.x = ((float)src_lay_pos.x + (float)ru_pos.x + .5f) / max_size.x;
-    src.z = -((float)src_lay_pos.y + (float)ru_pos.y + .5f) / max_size.y;
-
-    int ru_idx = v_idx;
-    vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
-
-    Unit* su;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, su, wt_prjn_lay->units., ui) {
-      float wt = su->wt_prjn;
-      if(fabsf(wt) < wt_line_thr) continue;
-
-      TDCoord su_pos; su->GetAbsPos(su_pos);
-      dst.x = ((float)wt_prjn_lay_pos.x + (float)su_pos.x + .5f) / max_size.x;
-      dst.z = -((float)wt_prjn_lay_pos.y + (float)su_pos.y + .5f) / max_size.y;
-
-      coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
-      mats_dat[midx++] = c_idx; // one per
-
-      vertex_dat[v_idx++].setValue(dst.x, dst.y, dst.z);
-
-      // color
-      GetUnitColor(wt, tc, sc_val);
-      col.setValue(tc.redf(), tc.greenf(), tc.bluef());
-      float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
-      color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
-    }
-  }
-
-  vertex.finishEditing();
-  color.finishEditing();
-  coords.finishEditing();
-  mats.finishEditing();
-}
-
 void BrainView::Reset_impl() {
   prjns.Reset();
   inherited::Reset_impl();
@@ -1038,21 +734,10 @@ void BrainView::SetColorSpec(ColorScaleSpec* color_spec) {
   UpdateDisplay(true);          // true causes button to remain pressed..
 }
 
-void BrainView::setUnitSrc(UnitView* uv, Unit* unit) {
+void BrainView::setUnitSrc(Unit* unit) {
   if (unit_src.ptr() == unit) return; // no change
   // if there was existing unit, unpick it
-  if ((bool)unit_src) {
-    UnitView* uv_src = FindUnitView(unit_src);
-    if (uv_src) {
-      uv_src->picked = false;
-    }
-  }
   unit_src = unit;
-  if ((bool)unit_src) {
-    if(uv)
-      uv->picked = true;
-    unit_src_path = unit_src->GetPath(NULL, net());
-  }
 }
 
 void BrainView::setUnitDisp(int value) {
@@ -1101,46 +786,10 @@ void BrainView::UpdateViewerModeForMd(MemberDef* md) {
   }
 }
 
-
-void BrainView::SetHighlightSpec(BaseSpec* spec) {
-  if(children.size > 0) {
-    LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
-    lv->SetHighlightSpec(spec);
-  }
-  // check projections
-  for(int i = 0; i < prjns.size; ++i) {
-    PrjnView* pv = (PrjnView*)prjns.FastEl(i);
-    pv->SetHighlightSpec(spec);
-  }
-}
-
-bool BrainView::UsesSpec(taBase* obj, BaseSpec* spec) {
-  if(!spec) return false;
-  TypeDef* otyp = obj->GetTypeDef();
-  for (int i = 0; i < otyp->members.size; ++i) {
-    MemberDef* md = otyp->members.FastEl(i);
-    //note: specs stored in specptr objs, which are inline objs
-    if (md->type->DerivesFrom(&TA_SpecPtr_impl)) {
-      SpecPtr_impl* sptr = (SpecPtr_impl*)md->GetOff(obj);
-      if (sptr->GetSpec() == spec) return true;
-    }
-  }
-  if(spec->InheritsFrom(&TA_ConSpec) && obj->InheritsFrom(&TA_Layer)) {
-    // could be a bias spec..
-    Layer* lay = (Layer*)obj;
-    UnitSpec* us = (UnitSpec*)lay->unit_spec.GetSpec();
-    if(us) {
-      ConSpec* bs = (ConSpec*)us->bias_spec.GetSpec();
-      if(bs == spec) return true;
-    }
-  }
-  return false;
-}
-
 void BrainView::UpdateAutoScale() {
   bool updated = false;
   if(children.size > 0) {
-    LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
+    BrainVolumeView* lv = (BrainVolumeView*)children.FastEl(0);
     lv->UpdateAutoScale(updated);
   }
   if (updated) { //note: could really only not be updated if there were no items
@@ -1162,7 +811,7 @@ void BrainView::UpdateDisplay(bool update_panel) { // redoes everything
 
 void BrainView::UpdateUnitValues() { // *actually* only does unit value updating
   if(children.size == 0) return;
-  LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
+  BrainVolumeView* lv = (BrainVolumeView*)children.FastEl(0);
   lv->UpdateUnitValues();
 }
 
@@ -1180,15 +829,3 @@ void BrainView::UpdatePanel() {
   bvp->UpdatePanel();
 }
 
-void BrainView::viewWin_NotifySignal(ISelectableHost* src, int op) {
-  if (op != ISelectableHost::OP_SELECTION_CHANGED) return;
-  ISelectable* ci = src->curItem(); // first selected item, if any
-  if (!ci) return;
-  TypeDef* typ = ci->GetTypeDef();
-  if (!typ->InheritsFrom(&TA_UnitView)) return;
-  UnitView* uv = (UnitView*)ci->This();
-  Unit* unit_new = uv->unit();
-  setUnitSrc(uv, unit_new);
-  InitDisplay();
-  UpdateDisplay();
-}
