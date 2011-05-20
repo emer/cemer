@@ -111,8 +111,6 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   thr_l_mix = 0.005f;
-  lthr_su_avg_l = true;
-  lthr_gain = 2.5f;
   s_mix = 0.9f;
   d_rev = 0.10f;
   d_thr = 0.0001f;
@@ -671,24 +669,10 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraActAvgSpec::Initialize() {
-  l_sq = true;
-  l_thr_max = 0.9f;
-  if(taMisc::is_loading) {
-    taVersion v515(5, 1, 5);
-    if(taMisc::loading_version < v515) { // default prior to 515 is l_sq off
-      l_sq = false;
-    }
-  }
-  if(l_sq) {
-    l_gain = 60.0f;
-    l_dt = 0.05f;
-    ml_dt = 1.0f;
-  }
-  else {
-    l_gain = 3.0f;
-    l_dt = 0.005f;
-    ml_dt = 0.4f;
-  }
+  l_thr_max = 3.0f;
+  l_gain = 200.0f;
+  l_dt = 0.05f;
+  ml_dt = 1.0f;
   m_dt = 0.1f;
   s_dt = 0.2f;
   ss_dt = 1.0f;
@@ -703,8 +687,10 @@ void LeabraActAvgSpec::Initialize() {
 
 void LeabraActAvgSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(l_sq && l_gain < 10.0f) {
-    l_gain = 60.0f;
+  if(l_gain == 3.0f || l_gain == 60.0f) { // set new defaults
+    taMisc::Warning("Note: updating LeabraUnitSpec act_avg parameters for new default XCal settings", GetPathNames());
+    l_gain = 200.0f;
+    l_thr_max = 3.0f;
     l_dt = 0.05f;
     ml_dt = 1.0f;
   }
@@ -978,8 +964,8 @@ void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
   if(bias_spec.SPtr())
     ((LeabraConSpec*)bias_spec.SPtr())->SetLearnRule(net);
   if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
-    act_avg.l_sq = true;
-    act_avg.l_gain = 60.0f;
+    act_avg.l_gain = 200.0f;
+    act_avg.l_thr_max = 3.0f;
     act_avg.l_dt = 0.05f;
     act_avg.ml_dt = 1.0f;
   }
@@ -1004,7 +990,7 @@ void LeabraUnitSpec::Init_ActAvg(LeabraUnit* u, LeabraNetwork* net) {
   u->act_avg = act.avg_init;
   u->avg_l = act.avg_init;
   u->avg_ml = act.avg_init;
-  u->l_thr = act_avg.l_gain * MAX(u->avg_l, u->avg_ml);
+  u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
 }  
 
 void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
@@ -1127,18 +1113,11 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
 
   if(net->learn_rule != LeabraNetwork::CTLEABRA_XCAL_C) {
     float lval = u->avg_m;
-    if(act_avg.l_sq) {
-      u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml);
-      u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l);
-      u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
-      if(u->l_thr > act_avg.l_thr_max)
-	u->l_thr = act_avg.l_thr_max;
-    }
-    else {
-      u->avg_l += act_avg.l_dt * (lval - u->avg_l);
-      u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml);
-      u->l_thr = act_avg.l_gain * MAX(u->avg_l, u->avg_ml);
-    }
+    u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml);
+    u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l);
+    u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
+    if(u->l_thr > act_avg.l_thr_max)
+      u->l_thr = act_avg.l_thr_max;
   }
 
   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL || net->ct_sravg.force_con)  {
@@ -1995,18 +1974,11 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
     u->avg_m += act_avg.m_dt * (u->avg_s - u->avg_m);
 
     float lval = u->avg_m;
-    if(act_avg.l_sq) {
-      u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml); // driven by avg_m
-      u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l); // driven by avg_ml
-      u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
-      if(u->l_thr > act_avg.l_thr_max)
-	u->l_thr = act_avg.l_thr_max;
-    }
-    else {
-      u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml); // driven by avg_m
-      u->avg_l += act_avg.l_dt * (lval - u->avg_l);	 // driven by avg_m
-      u->l_thr = act_avg.l_gain * MAX(u->avg_l, u->avg_ml);
-    }
+    u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml); // driven by avg_m
+    u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l); // driven by avg_ml
+    u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
+    if(u->l_thr > act_avg.l_thr_max)
+      u->l_thr = act_avg.l_thr_max;
     // note: updating unit-level ravg_l, ravg_ml, l_thr variables here..
   }
   else {
