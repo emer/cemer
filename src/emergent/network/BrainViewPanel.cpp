@@ -47,7 +47,6 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   : inherited(dv_)
 {
   int font_spec = taiMisc::fonMedium;
-  m_cur_spec = NULL;
   req_full_render = false;
   req_full_build = false;
 
@@ -77,27 +76,11 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   layDispCheck->addWidget(chkLayMove);
   layDispCheck->addSpacing(taiM->hsep_c);
 
-  chkNetText = new QCheckBox("Net\nTxt", widg);
-  chkNetText->setToolTip("Turn on the network text display at the base of the network, showing the current state of various counters and stats");
-  connect(chkNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
-  layDispCheck->addWidget(chkNetText);
-  layDispCheck->addSpacing(taiM->hsep_c);
-
-  lblTextRot = taiM->NewLabel("Txt\nRot", widg, font_spec);
-  lblTextRot->setToolTip("Rotation of the network text in the Z axis -- set to -90 if text overall is rotated upright in the display");
-  layDispCheck->addWidget(lblTextRot);
-  fldTextRot = dl.Add(new taiField(&TA_float, this, NULL, widg));
-  layDispCheck->addWidget(fldTextRot->GetRep());
-  ((iLineEdit*)fldTextRot->GetRep())->setCharWidth(6);
-  layDispCheck->addSpacing(taiM->hsep_c);
-
-  lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
-  lblUnitText->setToolTip("What text to display for each unit (values, names)");
-  layDispCheck->addWidget(lblUnitText);
-  cmbUnitText = dl.Add(new taiComboBox(true, TA_BrainView.sub_types.FindName("UnitTextDisplay"),
-                                this, NULL, widg, taiData::flgAutoApply));
-  layDispCheck->addWidget(cmbUnitText->GetRep());
-  layDispCheck->addSpacing(taiM->hsep_c);
+//   chkNetText = new QCheckBox("Net\nTxt", widg);
+//   chkNetText->setToolTip("Turn on the network text display at the base of the network, showing the current state of various counters and stats");
+//   connect(chkNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+//   layDispCheck->addWidget(chkNetText);
+//   layDispCheck->addSpacing(taiM->hsep_c);
 
   lblDispMode = taiM->NewLabel("Style", widg, font_spec);
   lblDispMode->setToolTip("How to display unit values.  3d Block (default) is optimized\n\
@@ -107,17 +90,6 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
     this, NULL, widg, taiData::flgAutoApply));
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addSpacing(taiM->hsep_c);
-  
-  lblPrjnDisp = taiM->NewLabel("Prjn\nDisp", widg, font_spec);
-  lblPrjnDisp->setToolTip("How to display projections between layers:\n\
-L_R_F: Left = sender, Right = receiver, all arrows at the Front of the layer\n\
-L_R_B: Left = sender, Right = receiver, all arrows at the Back of the layer\n\
-B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
-  layDispCheck->addWidget(lblPrjnDisp);
-  cmbPrjnDisp = dl.Add(new taiComboBox(true, TA_NetViewParams.sub_types.FindName("PrjnDisp"),
-                                this, NULL, widg, taiData::flgAutoApply));
-  layDispCheck->addWidget(cmbPrjnDisp->GetRep());
-  layDispCheck->addStretch();
   
   ////////////////////////////////////////////////////////////////////////////
   layFontsEtc = new QHBoxLayout();  layViewParams->addLayout(layFontsEtc);
@@ -261,24 +233,7 @@ void BrainViewPanel::UpdatePanel_impl() {
   
   chkDisplay->setChecked(bv->display);
   chkLayMove->setChecked(bv->lay_mv);
-  chkNetText->setChecked(bv->net_text);
-  fldTextRot->GetImage((String)bv->net_text_rot);
-  cmbUnitText->GetEnumImage(bv->unit_text_disp);
-  cmbDispMode->GetEnumImage(bv->unit_disp_mode);
-  cmbPrjnDisp->GetEnumImage(bv->view_params.prjn_disp);
-  fldPrjnWdth->GetImage((String)bv->view_params.prjn_width);
-
-  chkSnapBord->setChecked(bv->snap_bord_disp);
-  fldSnapBordWdth->GetImage((String)bv->snap_bord_width);
-  fldUnitSpacing->GetImage((String)bv->view_params.unit_spacing);
-
-  chkWtLines->setChecked(bv->wt_line_disp);
-  chkWtLineSwt->setChecked(bv->wt_line_swt);
-  fldWtLineWdth->GetImage((String)bv->wt_line_width);
-  fldWtLineThr->GetImage((String)bv->wt_line_thr);
-  fldWtPrjnKUn->GetImage((String)bv->wt_prjn_k_un);
-  fldWtPrjnKGp->GetImage((String)bv->wt_prjn_k_gp);
-  gelWtPrjnLay->GetImage(&(bv->net()->layers), bv->wt_prjn_lay.ptr());
+//   chkNetText->setChecked(bv->net_text);
 
   fldUnitTrans->GetImage((String)bv->view_params.unit_trans);
   fldUnitFont->GetImage((String)bv->font_sizes.unit);
@@ -299,12 +254,6 @@ void BrainViewPanel::UpdatePanel_impl() {
     ++it;
     ++i;
   }
-  // spec highlighting
-  BaseSpec* cspc = m_cur_spec; // to see if it changes, if not, we force redisplay
-  iTreeViewItem* tvi = dynamic_cast<iTreeViewItem*>(tvSpecs->currentItem());
-  tvSpecs_ItemSelected(tvi); // manually invoke slot
-  if (cspc == m_cur_spec)
-    setHighlightSpec(m_cur_spec, true);
 
   ColorScaleFromData();
   --updating;
@@ -319,31 +268,18 @@ void BrainViewPanel::GetValue_impl() {
 
   bv->display = chkDisplay->isChecked();
   bv->lay_mv = chkLayMove->isChecked();
-  bv->net_text = chkNetText->isChecked();
-  bv->net_text_rot = (float)fldTextRot->GetValue();
+//   bv->net_text = chkNetText->isChecked();
+//   bv->net_text_rot = (float)fldTextRot->GetValue();
 
   int i; 
-  cmbUnitText->GetEnumValue(i);
-  bv->unit_text_disp = (BrainView::UnitTextDisplay)i;
-
   // unit disp mode is only guy requiring full build!
   cmbDispMode->GetEnumValue(i);
-  req_full_build = req_full_build || (bv->unit_disp_mode != i);
-  bv->unit_disp_mode = (BrainView::UnitDisplayMode)i;
+//   req_full_build = req_full_build || (bv->unit_disp_mode != i);
   
-  cmbPrjnDisp->GetEnumValue(i);
-  bv->view_params.prjn_disp = (NetViewParams::PrjnDisp)i;
-  
-  bv->view_params.prjn_width = (float)fldPrjnWdth->GetValue();
-
   bv->view_params.unit_trans = (float)fldUnitTrans->GetValue();
   bv->font_sizes.unit = (float)fldUnitFont->GetValue();
   bv->font_sizes.layer = (float)fldLayFont->GetValue();
   bv->font_sizes.layer_min = (float)fldMinLayFont->GetValue();
-
-  bv->snap_bord_disp = chkSnapBord->isChecked();
-  bv->snap_bord_width = (float)fldSnapBordWdth->GetValue();
-  bv->view_params.unit_spacing = (float)fldUnitSpacing->GetValue();
 
   bv->view_params.xy_square = chkXYSquare->isChecked();
   bv->view_params.show_laygp = chkLayGp->isChecked();
@@ -431,12 +367,6 @@ void BrainViewPanel::lvDisplayValues_selectionChanged() {
   bv_->UpdateDisplay(false);
 }
 
-void BrainViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op) {
-  BrainView* bv_;
-  if (!(bv_ = bv())) return;
-  bv_->viewWin_NotifySignal(src, op);
-}
-
 void BrainViewPanel::dynbuttonActivated(int but_no) {
   BrainView* bv_;
   if (!(bv_ = bv())) return;
@@ -457,3 +387,10 @@ void BrainViewPanel::dynbuttonActivated(int but_no) {
   ColorScaleFromData();
   bv_->UpdateDisplay(true);     // update panel
 }
+
+void BrainViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op) {
+  BrainView* bv_;
+  if (!(bv_ = bv())) return;
+  bv_->viewWin_NotifySignal(src, op);
+}
+

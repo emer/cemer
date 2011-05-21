@@ -90,14 +90,6 @@ void BrainView::Initialize() {
 
   unit_sr = NULL;
   unit_md_flags = MD_UNKNOWN;
-  wt_line_disp = false;
-  wt_line_width = 4.0f;
-  wt_line_thr = .8f;
-  wt_line_swt = false;
-  wt_prjn_k_un = 4;
-  wt_prjn_k_gp = 1;
-  snap_bord_disp = false;
-  snap_bord_width = 4.0f;
 }
 
 void BrainView::Destroy() {
@@ -106,7 +98,6 @@ void BrainView::Destroy() {
 
 void BrainView::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(lay_disp_modes, this);
   taBase::Own(scale, this);
   taBase::Own(scale_ranges, this);
   taBase::Own(cur_unit_vals, this);
@@ -128,7 +119,6 @@ void BrainView::CutLinks() {
   cur_unit_vals.CutLinks();
   scale_ranges.CutLinks();
   scale.CutLinks();
-  lay_disp_modes.CutLinks();
   inherited::CutLinks();
 }
 
@@ -211,12 +201,12 @@ void BrainView::GetMembs() {
     if(unit_src_path.nonempty()) {
       MemberDef* umd;
       Unit* nu = (Unit*)net()->FindFromPath(unit_src_path, umd);
-      if(nu) setUnitSrc(NULL, nu);
+      if(nu) setUnitSrc(nu);
     }
     if(!unit_src && net()->layers.leaves > 0) {
       Layer* lay = net()->layers.Leaf(net()->layers.leaves-1);
       if(lay->units.leaves > 0)
-        setUnitSrc(NULL, lay->units.Leaf(0));
+        setUnitSrc(lay->units.Leaf(0));
     }
   }
 
@@ -478,7 +468,7 @@ void BrainVolumeView_MouseCB(void* userData, SoEventCallback* ecb) {
 //       if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
 //         Unit* unit = lay->UnitAtDispCoord(xp, yp);
 //         if(unit && tnv->unit_src != unit) {
-//           tnv->setUnitSrc(NULL, unit);
+//           tnv->setUnitSrc(unit);
 //           tnv->InitDisplay();   // this is apparently needed here!!
 //           tnv->UpdateDisplay();
 //         }
@@ -821,11 +811,24 @@ void BrainView::DataUpdateView_impl() {
   if(net_text) {
     Render_net_text();
   }
-  Render_wt_lines();
 }
 
 void BrainView::UpdatePanel() {
   if (!bvp) return;
   bvp->UpdatePanel();
+}
+
+void BrainView::viewWin_NotifySignal(ISelectableHost* src, int op) {
+  if (op != ISelectableHost::OP_SELECTION_CHANGED) return;
+  ISelectable* ci = src->curItem(); // first selected item, if any
+  if (!ci) return;
+  // not currently needed
+//   TypeDef* typ = ci->GetTypeDef();
+//   if (!typ->InheritsFrom(&TA_UnitView)) return;
+//   UnitView* uv = (UnitView*)ci->This();
+//   Unit* unit_new = uv->unit();
+//   setUnitSrc(uv, unit_new);
+//   InitDisplay();
+//   UpdateDisplay();
 }
 

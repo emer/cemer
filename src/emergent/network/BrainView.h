@@ -137,6 +137,7 @@ protected:
   void			Render_net_text();
   override void		Reset_impl(); // #IGNORE
   void 			UpdateAutoScale(); // #IGNORE prepass updates scale from values
+  void			viewWin_NotifySignal(ISelectableHost* src, int op);
 private:
   SIMPLE_COPY(BrainView)
   void			Initialize();

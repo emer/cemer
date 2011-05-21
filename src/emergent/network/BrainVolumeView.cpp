@@ -67,13 +67,11 @@ void BrainVolumeView::Destroy() {
 void BrainVolumeView::AllocUnitViewData() {
   //note: allocate based on geom, not current size, in case not built yet
   BrainView* bv = this->bv();
-  Layer* lay = this->layer(); //cache
-  if (!lay) return;
   int mbs_sz = MAX(bv->membs.size, 1);
-  MatrixGeom nwgm1(3, lay->flat_geom.x, lay->flat_geom.y, mbs_sz);
-  if (uvd_bases.geom != nwgm1) {
-    uvd_bases.SetGeomN(nwgm1);
-  }
+//   MatrixGeom nwgm1(3, lay->flat_geom.x, lay->flat_geom.y, mbs_sz);
+//   if (uvd_bases.geom != nwgm1) {
+//     uvd_bases.SetGeomN(nwgm1);
+//   }
 }
 
 void BrainVolumeView::BuildAll() {
@@ -128,8 +126,6 @@ float BrainVolumeView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void
 }
 
 void BrainVolumeView::UpdateUnitViewBases(Unit* src_u) {
-  Layer* lay = this->layer(); //cache
-  if(!lay) return;
   BrainView* bv = this->bv();
   AllocUnitViewData();
   for(int midx=0;midx<bv->membs.size;midx++) {
@@ -148,120 +144,106 @@ void BrainVolumeView::UpdateUnitViewBases(Unit* src_u) {
 }
 
 void BrainVolumeView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u) {
-  Layer* lay = this->layer(); //cache
-  if(!lay) return;
   TwoDCoord coord;
-  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
-      uvd_bases.Set(NULL, coord.x, coord.y, midx);
-      if (!unit) continue;  // rest will be null too, but we loop to null disp_base
+//   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+//     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
+//       Unit* unit = lay->UnitAtCoord(coord);
+//       uvd_bases.Set(NULL, coord.x, coord.y, midx);
+//       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
 
-      if (is_send) {
-        for(int g=0;g<unit->recv.size;g++) {
-          RecvCons* tcong = unit->recv.FastEl(g);
-          MemberDef* act_md = tcong->con_type->members.FindName(nm);
-          if (!act_md)  continue;
-          Connection* con = tcong->FindConFrom(src_u);
-          if (!con) continue;
-          uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
-          break;                // once you've got one, done!
-        }
-      }
-      else {
-        for(int g=0;g<unit->send.size;g++) {
-          SendCons* tcong = unit->send.FastEl(g);
-          MemberDef* act_md = tcong->con_type->members.FindName(nm);
-          if (!act_md)  continue;
-          Connection* con = tcong->FindConFrom(src_u);
-          if (!con) continue;
-          uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
-          break;                // once you've got one, done!
-        }
-      }
-    }
-  }
+//       if (is_send) {
+//         for(int g=0;g<unit->recv.size;g++) {
+//           RecvCons* tcong = unit->recv.FastEl(g);
+//           MemberDef* act_md = tcong->con_type->members.FindName(nm);
+//           if (!act_md)  continue;
+//           Connection* con = tcong->FindConFrom(src_u);
+//           if (!con) continue;
+//           uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
+//           break;                // once you've got one, done!
+//         }
+//       }
+//       else {
+//         for(int g=0;g<unit->send.size;g++) {
+//           SendCons* tcong = unit->send.FastEl(g);
+//           MemberDef* act_md = tcong->con_type->members.FindName(nm);
+//           if (!act_md)  continue;
+//           Connection* con = tcong->FindConFrom(src_u);
+//           if (!con) continue;
+//           uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
+//           break;                // once you've got one, done!
+//         }
+//       }
+//     }
+//   }
 }
 
 void BrainVolumeView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
-  Layer* lay = this->layer(); //cache
-  if(!lay) return;
-  TwoDCoord coord;
-  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
-      uvd_bases.Set(NULL, coord.x, coord.y, midx);
-      if (!unit) continue;  // rest will be null too, but we loop to null disp_base
-      if(unit->bias.size == 0) continue;
-      Connection* con = unit->bias.Cn(0);
-      uvd_bases.Set(disp_md->GetOff(con), coord.x, coord.y, midx);
-    }
-  }
+//   TwoDCoord coord;
+//   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+//     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
+//       Unit* unit = lay->UnitAtCoord(coord);
+//       uvd_bases.Set(NULL, coord.x, coord.y, midx);
+//       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
+//       if(unit->bias.size == 0) continue;
+//       Connection* con = unit->bias.Cn(0);
+//       uvd_bases.Set(disp_md->GetOff(con), coord.x, coord.y, midx);
+//     }
+//   }
 }
 
 void BrainVolumeView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
-  Layer* lay = this->layer(); //cache
-  if(!lay) return;
-  TwoDCoord coord;
-  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
-      uvd_bases.Set(NULL, coord.x, coord.y, midx);
-      if (!unit) continue;  // rest will be null too, but we loop to null disp_base
-      uvd_bases.Set(disp_md->GetOff(unit), coord.x, coord.y, midx);
-    }
-  }
+//   TwoDCoord coord;
+//   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+//     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
+//       Unit* unit = lay->UnitAtCoord(coord);
+//       uvd_bases.Set(NULL, coord.x, coord.y, midx);
+//       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
+//       uvd_bases.Set(disp_md->GetOff(unit), coord.x, coord.y, midx);
+//     }
+//   }
 }
 
 void BrainVolumeView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
-  Layer* lay = this->layer(); //cache
-  if(!lay) return;
-  TypeDef* own_td = lay->units.el_typ; // should be unit type
-  ta_memb_ptr net_mbr_off = 0;
-  int net_base_off = 0;
-  MemberDef* smd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-                                                 disp_md->name, false); // no warn
-  TwoDCoord coord;
-  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
-      uvd_bases.Set(NULL, coord.x, coord.y, midx);
-      if(!unit || !smd) continue;  // rest will be null too, but we loop to null disp_base
-      void* sbaddr = MemberDef::GetOff_static(unit, net_base_off, net_mbr_off);
-      uvd_bases.Set(sbaddr, coord.x, coord.y, midx);
-    }
-  }
+//   TypeDef* own_td = lay->units.el_typ; // should be unit type
+//   ta_memb_ptr net_mbr_off = 0;
+//   int net_base_off = 0;
+//   MemberDef* smd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+//                                                  disp_md->name, false); // no warn
+//   TwoDCoord coord;
+//   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
+//     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
+//       Unit* unit = lay->UnitAtCoord(coord);
+//       uvd_bases.Set(NULL, coord.x, coord.y, midx);
+//       if(!unit || !smd) continue;  // rest will be null too, but we loop to null disp_base
+//       void* sbaddr = MemberDef::GetOff_static(unit, net_base_off, net_mbr_off);
+//       uvd_bases.Set(sbaddr, coord.x, coord.y, midx);
+//     }
+//   }
 }
 
 void BrainVolumeView::UpdateAutoScale(bool& updated) {
-  BrainView* bv = this->bv();
-  TwoDCoord co;
-  void* base;
-  Layer* lay = this->layer(); //cache
-  if(!lay) return;
-  for (co.y = 0; co.y < lay->flat_geom.y; ++co.y) {
-    for (co.x = 0; co.x < lay->flat_geom.x; ++co.x) {
-      float val = GetUnitDisplayVal(co, base);
-      if(base) {
-        if(!updated) {
-          bv->scale.SetMinMax(val, val);
-          updated = true;
-        }
-        else
-          bv->scale.UpdateMinMax(val);
-      }
-    }
-  }
+//   BrainView* bv = this->bv();
+//   TwoDCoord co;
+//   void* base;
+//   for (co.y = 0; co.y < lay->flat_geom.y; ++co.y) {
+//     for (co.x = 0; co.x < lay->flat_geom.x; ++co.x) {
+//       float val = GetUnitDisplayVal(co, base);
+//       if(base) {
+//         if(!updated) {
+//           bv->scale.SetMinMax(val, val);
+//           updated = true;
+//         }
+//         else
+//           bv->scale.UpdateMinMax(val);
+//       }
+//     }
+//   }
 }
 
 void BrainVolumeView::Render_pre() {
   BrainView* bv = this->bv();
 
-  bool no_units = true;
-  if(bv->unit_disp_mode != BrainView::UDM_BLOCK)
-    no_units = false;
-
-  setNode(new T3BrainNode(this, no_units));
+  setNode(new T3BrainNode(this));
   //NOTE: we create/adjust the units in the Render_impl routine
   T3BrainNode* ugrp_so = node_so(); // cache
 
@@ -282,12 +264,7 @@ void BrainVolumeView::DoActionChildren_impl(DataViewAction acts) {
 
 void BrainVolumeView::Render_impl_children() {
   BrainView* bv = this->bv(); //cache
-  Layer* lay = this->layer(); //cache
-  if(!lay || !bv) return;
-
-  if(lay->Iconified()) {
-    return;                     // don't render anything!
-  }
+  if(!bv) return;
 
   T3BrainNode* node_so = this->node_so(); // cache
   if(!node_so) return;
@@ -326,6 +303,8 @@ void BrainVolumeView::Render_impl_blocks() {
   TDCoord brain_geom;
   brain_geom.SetXYZ(10,10,10);
 
+  float disp_scale = 0.1f;	// todo: this is fiction..
+  
   int n_geom = brain_geom.x * brain_geom.y * brain_geom.z;
   int n_per_vtx = 4;
   int tot_vtx =  n_geom * n_per_vtx;
