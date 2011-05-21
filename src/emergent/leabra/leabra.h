@@ -242,6 +242,7 @@ class LEABRA_API XCalLearnSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
 
+  bool		lthr_su_m;	// #DEF_true multiply the long-term average threshold (from the recv unit) by the medium-term sending unit activation -- it SHOULD be the long term value here, but this works much better in general, so we need to figure this out still..
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.005 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
@@ -889,8 +890,8 @@ class LEABRA_API LeabraActAvgSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- used in XCAL learning rules
 INHERITED(SpecMemberBase)
 public:
-  float		l_gain;		// #DEF_200 #MIN_0 gain on the long-time scale receiving average activation (avg_l) value as it enters into the learning threshold l_thr
-  float		l_thr_max;	// #DEF_3 maximum long-term threshold value l_thr -- prevents excessive ltd for higher threshold values
+  float		l_gain;		// #DEF_60:200 #MIN_0 gain on the long-time scale receiving average activation (avg_l) value as it enters into the learning threshold l_thr
+  float		l_thr_max;	// #DEF_0.9:3 maximum long-term threshold value l_thr -- prevents excessive ltd for higher threshold values
   float		l_dt;		// #DEF_0.0001:0.1 [0.1 std for XCAL l_sq, 0.005 std for XCAL non-l_sq, .0002 for XCAL_C] #MIN_0 #MAX_1 time constant (rate) for updating the long time-scale avg_l value, used for XCAL learning rules
   float		ml_dt;		// #DEF_1;0.4;0.004 #MIN_0 #MAX_1 [1.0 std for XCAL l_sq, 0.4 for XCAL non-l_sq, 0.004 for XCAL_C] time constant (rate) for updating the medium-to-long time-scale avg_ml value, which integrates over recent history of medium (trial level) averages, used for XCAL learning rules
   float		m_dt;		// #DEF_0.1;0.017 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value

@@ -110,6 +110,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
+  lthr_su_m = true;
   thr_l_mix = 0.005f;
   s_mix = 0.9f;
   d_rev = 0.10f;
@@ -669,8 +670,10 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraActAvgSpec::Initialize() {
-  l_thr_max = 3.0f;
-  l_gain = 200.0f;
+//   l_gain = 200.0f;
+//   l_thr_max = 3.0f;
+  l_gain = 60.0f;
+  l_thr_max = 0.9f;
   l_dt = 0.05f;
   ml_dt = 1.0f;
   m_dt = 0.1f;
@@ -687,10 +690,10 @@ void LeabraActAvgSpec::Initialize() {
 
 void LeabraActAvgSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(l_gain == 3.0f || l_gain == 60.0f) { // set new defaults
-    taMisc::Warning("Note: updating LeabraUnitSpec act_avg parameters for new default XCal settings", GetPathNames());
-    l_gain = 200.0f;
-    l_thr_max = 3.0f;
+  if(l_gain == 3.0f) { // set new defaults
+//     taMisc::Warning("Note: updating LeabraUnitSpec act_avg parameters for new default XCal settings", GetPathNames());
+    l_gain = 60.0f;
+    l_thr_max = 0.9f;
     l_dt = 0.05f;
     ml_dt = 1.0f;
   }
@@ -964,8 +967,10 @@ void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
   if(bias_spec.SPtr())
     ((LeabraConSpec*)bias_spec.SPtr())->SetLearnRule(net);
   if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
-    act_avg.l_gain = 200.0f;
-    act_avg.l_thr_max = 3.0f;
+//     act_avg.l_gain = 200.0f;
+//     act_avg.l_thr_max = 3.0f;
+    act_avg.l_gain = 60.0f;
+    act_avg.l_thr_max = 0.9f;
     act_avg.l_dt = 0.05f;
     act_avg.ml_dt = 1.0f;
   }
