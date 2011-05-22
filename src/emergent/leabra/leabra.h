@@ -3442,10 +3442,10 @@ C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
   float lthr;
   if(xcal.lthr_sig) {
     if(xcal.lthr_sig_fx_off) {
-      lthr = WtSigSpec::SigFun(ru->l_thr * su_avg_l, xcal.lthr_sig_gain, xcal.lthr_sig_off);
+      lthr = xcal.thr_l_mix * WtSigSpec::SigFun(ru->l_thr * su_avg_l, xcal.lthr_sig_gain, xcal.lthr_sig_off);
     }
     else {
-      lthr = WtSigSpec::SigFun(ru->l_thr * su_avg_l, xcal.lthr_sig_gain, su_act_mult);
+      lthr = xcal.thr_l_mix * WtSigSpec::SigFun(ru->l_thr * su_avg_l, xcal.lthr_sig_gain, su_act_mult);
     }
   }
   else {
