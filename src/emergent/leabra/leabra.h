@@ -243,8 +243,9 @@ INHERITED(SpecMemberBase)
 public:
 
   bool		lthr_sig;	// #DEF_false use new sigmoidal lthr function -- takes product of ru and su avg_l and runs through sigmoidal function centered on expected (slay->kwta.pct * rlay->kwta.pct) activity values, with given gain and additional offset multiplier values -- otherwise use old xcal default (multiply by su_avg_m)
+  bool		lthr_sig_fx_off; // #CONDSHOW_ON_lthr_sig is offset a fixed value, or is it set as a function of the layer kwta.pct values?
   float		lthr_sig_gain;	// #DEF_2:6 #CONDSHOW_ON_lthr_sig gain of lthr sigmoidal function
-  float		lthr_sig_off;	// #DEF_1 #CONDSHOW_ON_lthr_sig additional offset multiplier -- multiplies product of layer kwta.pct values for actual offset used -- setting greater than 1 makes it more lenient by moving the offset up and producing smaller threshold values for a given average activity level, and vice-versa for values less than 1
+  float		lthr_sig_off;	// #CONDSHOW_ON_lthr_sig for fx_off, this is the actual offset value, otherwise it is an additional offset multiplier -- multiplies product of layer kwta.pct values for actual offset used -- setting greater than 1 makes it more lenient by moving the offset up and producing smaller threshold values for a given average activity level, and vice-versa for values less than 1
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.005 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
@@ -3440,7 +3441,12 @@ C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
   float lthr;
   if(xcal.lthr_sig) {
-    lthr = WtSigSpec::SigFun(ru->l_thr * su_avg_l, xcal.lthr_sig_gain, su_act_mult);
+    if(xcal.lthr_sig_fx_off) {
+      lthr = WtSigSpec::SigFun(ru->l_thr * su_avg_l, xcal.lthr_sig_gain, xcal.lthr_sig_off);
+    }
+    else {
+      lthr = WtSigSpec::SigFun(ru->l_thr * su_avg_l, xcal.lthr_sig_gain, su_act_mult);
+    }
   }
   else {
     lthr = su_act_mult * ru->l_thr;
@@ -3454,7 +3460,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   float su_avg_m = su->avg_m;
   float su_act_mult;
   
-  if(xcal.lthr_sig) {
+  if(xcal.lthr_sig && !xcal.lthr_sig_fx_off) {
     LeabraLayer* ly = (LeabraLayer*)cg->prjn->layer;
     LeabraLayer* fm = (LeabraLayer*)cg->prjn->from.ptr();
     float off = xcal.lthr_sig_off * fm->kwta.pct * ly->kwta.pct;
