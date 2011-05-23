@@ -111,9 +111,8 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   lthr_sig = false;
-  lthr_sig_fx_off = true;
   lthr_sig_gain = 4.0f;
-  lthr_sig_off = 0.12f;
+  lthr_sig_off = 0.15f;
   thr_l_mix = 0.005f;
   s_mix = 0.9f;
   d_rev = 0.10f;

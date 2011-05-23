@@ -242,10 +242,9 @@ class LEABRA_API XCalLearnSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
 
-  bool		lthr_sig;	// #DEF_false use new sigmoidal lthr function -- takes product of ru and su avg_l and runs through sigmoidal function centered on expected (slay->kwta.pct * rlay->kwta.pct) activity values, with given gain and additional offset multiplier values -- otherwise use old xcal default (multiply by su_avg_m)
-  bool		lthr_sig_fx_off; // #CONDSHOW_ON_lthr_sig is offset a fixed value, or is it set as a function of the layer kwta.pct values?
+  bool		lthr_sig;	// #DEF_false use new sigmoidal lthr function -- takes product of ru and su avg_l and runs through sigmoidal function centered on specified offset, with given gain and additional offset multiplier values -- otherwise use old xcal default (multiply by su_avg_m)
   float		lthr_sig_gain;	// #DEF_2:6 #CONDSHOW_ON_lthr_sig gain of lthr sigmoidal function
-  float		lthr_sig_off;	// #CONDSHOW_ON_lthr_sig for fx_off, this is the actual offset value, otherwise it is an additional offset multiplier -- multiplies product of layer kwta.pct values for actual offset used -- setting greater than 1 makes it more lenient by moving the offset up and producing smaller threshold values for a given average activity level, and vice-versa for values less than 1
+  float		lthr_sig_off;	// #DEF_0.15:0.20 #CONDSHOW_ON_lthr_sig offset of sigmoid function -- determines the inflection point for joint su, ru avg_l activation -- this is a key param
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.005 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
@@ -445,8 +444,7 @@ public:
   // CtLeabraXCAL code
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
-				 float su_avg_s, float su_avg_m, float su_avg_l,
-						 float su_act_mult);
+				 float su_avg_s, float su_avg_m, float su_act_mult);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- SEP trial-wise version (requires normalization factors)
   virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning CtLeabraXCAL weight changes
@@ -3434,19 +3432,14 @@ inline void LeabraConSpec::Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraU
 
 inline void LeabraConSpec::
 C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
-				 float su_avg_s, float su_avg_m, float su_avg_l, 
-				 float su_act_mult) {
+				 float su_avg_s, float su_avg_m, float su_act_mult) {
   float srs = ru->avg_s * su_avg_s;
   float srm = ru->avg_m * su_avg_m;
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
   float lthr;
   if(xcal.lthr_sig) {
-    if(xcal.lthr_sig_fx_off) {
-      lthr = xcal.thr_l_mix * WtSigSpec::SigFun(ru->l_thr * su_avg_l, xcal.lthr_sig_gain, xcal.lthr_sig_off);
-    }
-    else {
-      lthr = xcal.thr_l_mix * WtSigSpec::SigFun(ru->l_thr * su_avg_l, xcal.lthr_sig_gain, su_act_mult);
-    }
+    lthr = xcal.thr_l_mix * WtSigSpec::SigFun(ru->l_thr * su_act_mult, xcal.lthr_sig_gain,
+					      xcal.lthr_sig_off);
   }
   else {
     lthr = su_act_mult * ru->l_thr;
@@ -3459,12 +3452,8 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   float su_avg_s = su->avg_s;
   float su_avg_m = su->avg_m;
   float su_act_mult;
-  
-  if(xcal.lthr_sig && !xcal.lthr_sig_fx_off) {
-    LeabraLayer* ly = (LeabraLayer*)cg->prjn->layer;
-    LeabraLayer* fm = (LeabraLayer*)cg->prjn->from.ptr();
-    float off = xcal.lthr_sig_off * fm->kwta.pct * ly->kwta.pct;
-    su_act_mult = off;		// this is off
+  if(xcal.lthr_sig) {
+    su_act_mult = su->avg_l;	// use this for su_avg_l
   }
   else {
     su_act_mult = xcal.thr_l_mix * su->avg_m;
@@ -3473,7 +3462,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   for(int i=0; i<cg->size; i++) {
     LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
     C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
-				     su->avg_l, su_act_mult);
+				     su_act_mult);
   }
 }
 
