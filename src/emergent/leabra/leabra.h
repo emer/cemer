@@ -377,11 +377,16 @@ public:
   FunLookup	wt_sig_fun_inv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes inverse of wt sigmoidal fun
   WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating
   float		wt_sig_fun_res;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of resolution parameters for which the wt_sig_fun's were computed
+  FunLookup	xcal_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes sigmoidal xcal.lthr_sig fun
+  float		xcal_sig_fun_res; // #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of resolution parameters for which the xcal_sig_fun was computed
+  XCalLearnSpec	xcal_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of xcal parameters for which the wt_sig_fun's were computed; prevents excessive updating
 
   float		SigFmLinWt(float lin_wt) { return wt_sig_fun.Eval(lin_wt);  }
   // #CAT_Learning get contrast-enhanced weight from linear weight value
   float		LinFmSigWt(float sig_wt) { return wt_sig_fun_inv.Eval(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
+  float		XCalSigFun(float su_ru_avg_l) { return xcal_sig_fun.Eval(su_ru_avg_l);  }
+  // #CAT_Learning compute xcal sigmoidal function for lthr_sig as function of send, recv long term average activation (fast lookup)
 
   inline void 	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
     ConSpec::C_Init_Weights(cg, cn, ru, su); LeabraCon* lcn = (LeabraCon*)cn;
@@ -529,7 +534,8 @@ public:
   virtual void	SetLearnRule(LeabraNetwork* net);
   // #CAT_Learning set current learning rule from the network
 
-  virtual void	CreateWtSigFun(); // #CAT_Learning create the wt_sig_fun and wt_sig_fun_inv
+  virtual void	CreateWtSigFun();
+  // #CAT_Learning create the wt_sig_fun and wt_sig_fun_inv and xcal_sig_fun
 
   virtual void	LogLrateSched(int epcs_per_step = 50, float n_steps=7);
   // #BUTTON #CAT_Learning establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks
@@ -3438,8 +3444,7 @@ C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
   float lthr;
   if(xcal.lthr_sig) {
-    lthr = xcal.thr_l_mix * WtSigSpec::SigFun(ru->l_thr * su_act_mult, xcal.lthr_sig_gain,
-					      xcal.lthr_sig_off);
+    lthr = xcal.thr_l_mix * XCalSigFun(ru->l_thr * su_act_mult); // use lookup table
   }
   else {
     lthr = su_act_mult * ru->l_thr;

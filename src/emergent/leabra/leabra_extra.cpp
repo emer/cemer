@@ -4755,7 +4755,8 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
   if(TestWarning(rgp_chk != sgp_geo, "Connect_impl",
 		 "recv layer gp_geom is not an even multiple of send layer gp_geom -- should be!  Some units will not be connected", rgp_sc.GetStr(), rgp_chk.GetStr())) {
   }
-  
+
+ 
   TwoDCoord ruc;
   for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
     int rcnt = 0;
@@ -4765,6 +4766,9 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
       int suy_st = depth * 2;
       for(run.x = 0; run.x < run_geo.x; run.x++, rcnt++) {
 	FgBoGroupingPrjnEl* el = group_specs.FastEl(rcnt % group_specs.size);
+
+	float wt_renorm = (1.0f - el->min_wt);
+
 	int rgpidx = 0;
 	for(ruc.y = 0; ruc.y < rgp_geo.y; ruc.y++) {
 	  for(ruc.x = 0; ruc.x < rgp_geo.x; ruc.x++, rgpidx++) {
@@ -4792,7 +4796,7 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
 		    float wt = el->fgbo_weights.FastEl(del.x +el->con_radius,
 					       del.y+el->con_radius, sun.y-suy_st, sun.x);
 		    if(wt <= el->con_thr) continue;
-		    if(wt < el->min_wt) wt = el->min_wt;
+		    wt = wt * wt_renorm + el->min_wt; // renorm to min wt range
 
 		    int rui = run.y * run_geo.x + run.x;
 		    int sui = sun.y * sun_geo.x + sun.x;
@@ -4875,6 +4879,7 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
       TwoDCoord run;
       run.SetFmIndex(rui, run_geo.x);
       FgBoGroupingPrjnEl* el = group_specs.FastEl(rui % group_specs.size);
+      float wt_renorm = (1.0f - el->min_wt);
 
       TwoDCoord del = suc - ruc_s;
       if(wrap) {		       // dist may be closer in wrapped case..
@@ -4894,7 +4899,7 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 
       float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius,
 					 sun.y-suy_st, sun.x);
-      if(wt < el->min_wt) wt = el->min_wt;
+      wt = wt * wt_renorm + el->min_wt; // renorm to min wt range
       cg->Cn(i)->wt = wt;
     }
   }
@@ -4910,6 +4915,8 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
     int suy_st = depth * 2;
 
     FgBoGroupingPrjnEl* el = group_specs.FastEl(rui % group_specs.size);
+    float wt_renorm = (1.0f - el->min_wt);
+
     for(int i=0; i<cg->size; i++) {
       Unit* su = cg->Un(i);
       int sgpidx;
@@ -4937,7 +4944,7 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 
       float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius,
 					 sun.y-suy_st, sun.x);
-      if(wt < el->min_wt) wt = el->min_wt;
+      wt = wt * wt_renorm + el->min_wt; // renorm to min wt range
       cg->Cn(i)->wt = wt;
     }
   }
