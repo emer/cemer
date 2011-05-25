@@ -548,6 +548,9 @@ public:
 				float circ_radius=0.05, float gauss_sig=0.05,
 				EdgeMode edge=BORDER, bool use_border_clr=true);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise occlude the image (in place -- affects the img matrix itself) by blurring gaussian blobs into the image -- blobs are uniform circles with gaussian blur around the edges -- radius and gaussian sigma are in image width normalized units (e.g., .05 = 5% of the width of the image), pct_occlude is proportion of total image to occlude computed as a proportion of (1/gauss_sig)^2 as the total number of different blobs possible -- actual blob locations are drawn at random, so complete occlusion is not ensured even at 1, though there is an extra 2x factor at 1 to really try to occlude as completely as possible -- if use_border_clr, then the 1 pixel border around image provides the color for all the blobs -- otherwise color is weighted local average using same gaussian blobo kernel
+
+  static bool	BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig);
+  // #CAT_Noise #MENU_BUTTON #MENU_ON_Simplified version of Gosselin & Schyn's bubble paradigm which creates a mask from Gaussians Bubbles that through which information is displayed. Conceptually just the inverse of BlobBlurOcclude, but parameterization allows titration on # bubbles. n_bubbles is the number of bubbles to create in the mask, bubble_sig controls the width of the bubble in image width normalized units (e.g., .05 = 5% of the width of the image)
   
   static bool	AdjustContrast(float_Matrix& img, float new_contrast);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Adjust the contrast of the image (in place -- affects the img matrix itself) using new_contrast as a scalar. Holds background color constant. Both new_contrast is in range [0 1]

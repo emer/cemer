@@ -2170,6 +2170,77 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
   return true;
 }
 
+bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig) {
+  float gauss_sig = bubble_sig;
+  
+  TwoDCoord img_size(img.dim(0), img.dim(1));
+  
+  // get background color
+  float brd_clr[3];
+  GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
+  
+  // parameterize the gaussian
+  float gauss_eff = gauss_sig * (float)img_size.x;
+  int gauss_half = (int)gauss_eff * 3;
+  int gauss_wd = gauss_half * 2;  
+
+  // create the gaussian wt matrix
+  float_Matrix gauss_wt;
+  gauss_wt.SetGeom(2, gauss_wd, gauss_wd);
+  float ctr = (float)(gauss_wd-1) * .5f;
+  for(int yi=0; yi< gauss_wd; yi++) {
+    float y = ((float)yi - ctr) / gauss_eff;
+    for(int xi=0; xi< gauss_wd; xi++) {
+      float x = ((float)xi - ctr) / gauss_eff;
+      float gv = expf(-(x*x + y*y)/2.0f);
+      gauss_wt.FastEl(xi, yi) = gv;
+    }
+  } 
+  taMath_float::vec_norm_max(&gauss_wt, 1.0f);
+  
+  // create the mask
+  float_Matrix bubble_mask;
+  bubble_mask.SetGeom(2, img_size.x, img_size.y);
+  for(int yi=0; yi< img_size.y; yi++) {
+    for(int xi=0; xi< img_size.x; xi++) {
+      bubble_mask.FastEl(xi, yi) = 0.0f;
+    }
+  }
+  
+  TwoDCoord ic_min(gauss_half, gauss_half);
+  TwoDCoord ic_max(img_size.x - gauss_half, img_size.y - gauss_half);
+  TwoDCoord ic;
+  
+  // bubble the mask
+  for(int bubble=1; bubble <= n_bubbles; bubble++) {
+    ic.x = Random::IntMinMax(ic_min.x, ic_max.x);
+    ic.y = Random::IntMinMax(ic_min.y, ic_max.y);
+    
+	for(int yi=0; yi< gauss_wd; yi++) {
+	  for(int xi=0; xi< gauss_wd; xi++) {
+	    float iv = gauss_wt.FastEl(xi, yi);
+	    bubble_mask.FastEl(ic.x + xi - gauss_half, ic.y + yi - gauss_half) += iv;
+	  }
+	}
+	
+  }
+  
+  // clip anything above 1
+  taMath_float::vec_threshold_high(&bubble_mask, 1.0f, 1.0f);
+  
+  // combine the image and background using the mask as a weighting matrix   
+  float clr = 0.0f;
+  clr = brd_clr[0];   // just use first dim for gray
+  for(int yi=0; yi< img_size.y; yi++) {
+	for(int xi=0; xi< img_size.x; xi++) {
+	  float &img_iv = img.FastEl(xi, yi);
+	  float mask_iv = bubble_mask.FastEl(xi, yi);
+	  img_iv = mask_iv*img_iv + (1.0f-mask_iv)*clr;
+	}
+  }
+  return true;
+}
+
 bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast) {  
   TwoDCoord img_size(img.dim(0), img.dim(1));
 
