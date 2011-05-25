@@ -863,7 +863,7 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
 						 DataTable* dest_data,
 						 const String& signal_data_col_nm,
 						 const String& noise_data_col_nm,
-						 int degree) {
+						 float PRE_thr) {
 
   String fun_name = "ReceiverOperatingCharacteristic";
   
@@ -872,18 +872,8 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
 
   GetDest(dest_data, src_data, fun_name);
 
-  if (!(degree > 0)) {
-    taMisc::Error("degree must be greater than zero");
-    return false;
-  }
-
   double_Matrix* vec_signal = (double_Matrix*)src_data->GetColMatrix(src_data->FindColNameIdx(signal_data_col_nm));
   double_Matrix* vec_noise = (double_Matrix*)src_data->GetColMatrix(src_data->FindColNameIdx(noise_data_col_nm));
-
-  if (!(degree < vec_signal->size + vec_noise->size)) {
-    taMisc::Error("degree must be less than the sum of the lengths of the signal and noise vectors (the number of parameters must be less than the number of data)");
-    return false;
-  }
 
   if (!(vec_signal->size == vec_noise->size)) {
     taMisc::Error("signal and noise vectors must have the same length");
@@ -917,8 +907,19 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
   dest_data->NewColDouble("Precision");
   dest_data->NewColDouble("Recall");
   dest_data->NewColDouble("Fmeasure");
+  dest_data->NewColDouble("CHISQ");
+  dest_data->NewColString("fun_string");
+  dest_data->NewColDouble("FPR_smooth");
+  dest_data->NewColDouble("TPR_smooth");
+  dest_data->NewColDouble("AUC");
+  dest_data->NewColDouble("MIN");
+  dest_data->NewColDouble("MAX");
+  dest_data->NewColDouble("PRE");
+  dest_data->NewColDouble("SSEC");
+  dest_data->NewColDouble("SSEA");
+  dest_data->NewColDouble("degree");
 
-  dest_data->AddRows(criterion_data->size);
+  dest_data->AddRows(criterion_data->size + 1000);
 
   for (int i = 0; i < criterion_data->size; i++) {
     double criterion = criterion_data->FastEl(i) - .000000001;
@@ -959,62 +960,95 @@ bool taDataAnal::ReceiverOperatingCharacteristic(DataTable* src_data,
     dest_data->SetVal(recall, "Fmeasure", i);
   }
 
-  // Fit a polynomail to the ROC data
   int obs = vec_signal->size;
-  double_Matrix* coef = new double_Matrix;
-  double_Matrix* cov = new double_Matrix;
-  double chisq;
  
-  double_Matrix* vec_tpr = (double_Matrix*)dest_data->GetColMatrix(0);
-  double_Matrix* vec_fpr = (double_Matrix*)dest_data->GetColMatrix(1);
+  // Add 1,0 0,1 to tpr/fpr to help constrain the fit
+  double_Matrix* vec_tpr = new double_Matrix; taBase::Ref(vec_tpr);
+  double_Matrix* vec_fpr = new double_Matrix; taBase::Ref(vec_fpr);
 
-  taMath_double::vec_regress_multi_lin_polynomial(vec_fpr, vec_tpr, coef, cov, degree, chisq);
+  vec_tpr->CopyFrom(dest_data->data[0]->AR());
+  vec_fpr->CopyFrom(dest_data->data[1]->AR());
+  vec_tpr->InsertFrames(vec_tpr->size-1, 1);
+  vec_fpr->InsertFrames(vec_tpr->size-1, 1);
+  vec_tpr->InsertFrames(0,1);
+  vec_fpr->InsertFrames(0,1);
+  vec_tpr->Set(1, vec_tpr->size);
+  vec_fpr->Set(1, vec_tpr->size);
 
-  dest_data->NewColFmMatrix(coef, "Coefficients");
-  dest_data->NewColFmMatrix(cov, "Covariances");
-  dest_data->NewColDouble("CHISQ");
-  dest_data->SetVal(chisq, "CHISQ", 0);
+  double SSEA = 0.0; // sum of squared errors of the augmented model
+  double SSEC = 0.0;// sum of squared errors of the compact model
+  double PRE = 0.0; // the computed pre to be compared to the user's provided threshold pre
+  double chisq;
+  double x;
+  double y;
+  String fun_string;
 
-  String fun_string = "Y = " + (String)coef->FastEl(0) + " + ";
-  for (int i = 1; i < coef->size; i++)
-    fun_string += (String)coef->FastEl(i) + "*x^" + (String)i + " + ";
-  fun_string += "e";
+  double_Matrix* cov = new double_Matrix; taBase::Ref(cov);
+  double_Matrix* coef = new double_Matrix; taBase::Ref(coef);
+  double_Matrix* coef_tmp = new double_Matrix; taBase::Ref(coef_tmp);
+  double_Matrix* coef_tmp_prv = new double_Matrix; taBase::Ref(coef_tmp_prv);
+  double_Matrix* y_fit = new double_Matrix; taBase::Ref(y_fit);
 
-  dest_data->NewColString("fun_string");
-  dest_data->SetVal(fun_string, "fun_string", 0);
+  y_fit->SetGeom(1, vec_fpr->size); 
 
-  for (int i = 0; i < vec_fpr->size; i++) {
-    double x = vec_fpr->FastEl(i);
-    double y = coef->FastEl(0);
+  for (int degree = 1; degree < vec_fpr->size * 2; degree++) {
 
-    for (int j = 1; j < degree; j++)
-      y += coef->FastEl(j) * pow(x, j);
+    coef_tmp_prv->CopyFrom(coef_tmp);
 
-    dest_data->SetVal(y, "TPR_fit", i);
+    taMath_double::vec_regress_multi_lin_polynomial(vec_fpr, vec_tpr, coef_tmp, cov, degree, chisq);
+
+    for (int i = 0; i < vec_fpr->size; i++) {
+      x = vec_fpr->FastEl(i);
+      y = coef_tmp->FastEl(0);
+
+      for (int j = 1; j < degree; j++)
+	y += coef_tmp->FastEl(j) * pow(x, j);
+	
+      y_fit->Set_Flat(y, i);
+    }
+
+    fun_string = "Y = ";
+    for (int i = 0; i < degree; i++) fun_string += (String)coef_tmp->FastEl(i) + "*x^" + (String)i + " + ";
+    fun_string += "e";
+
+    SSEA = taMath_double::vec_ss_dist(vec_tpr, y_fit);
+
+    PRE = (SSEC - SSEA)/SSEC;
+
+    dest_data->SetVal(PRE, "PRE", degree - 1);
+    dest_data->SetVal(SSEC, "SSEC", degree - 1);
+    dest_data->SetVal(SSEA, "SSEA", degree - 1);
+    dest_data->SetVal(degree, "degree", degree - 1);
+    dest_data->SetVal(chisq, "CHISQ", degree - 1);
+    dest_data->SetVal(fun_string, "fun_string", degree - 1);
+
+    if (PRE < PRE_thr && degree != 0) break;
+
+    SSEC = SSEA;
   }
 
-  double area = taMath_double::integrate_polynomial(coef, vec_fpr->FastEl(0), vec_fpr->FastEl(criterion_data->size));
-  dest_data->NewColDouble("AUC");
+  taBase::unRefDone(cov);
+  taBase::unRefDone(coef);
+  taBase::unRefDone(coef_tmp);
+  taBase::unRefDone(coef_tmp_prv);
+  taBase::unRefDone(vec_tpr);
+  taBase::unRefDone(vec_fpr);
+
+  double area = taMath_double::integrate_polynomial(coef, 0, 1);
+
   dest_data->SetVal(area, "AUC", 0);
 
-  // TODO: Not working =(
-  if(view) {
-    GraphTableView* dest_view = dest_data->FindMakeGraphView();
-    dest_view->x_axis.on = false;
-    dest_view->plot_1.on = true;
-    dest_view->x_axis.col_name = "FPR";
-    dest_view->plot_1.col_name = "TPR";
-    dest_view->plot_1.col_name = "TPR_fit";
-    dest_view->negative_draw = true;
-    dest_view->color_mode = GraphTableView::FIXED_COLOR;
-    dest_view->x_axis.data_range.Set(0,1);
-    dest_view->plot_1.data_range.Set(0,1);
-    dest_view->plot_2.data_range.Set(0,1);
-    dest_view->UpdateAfterEdit();
-  }
-  
-  
-   return true;
+  double_Matrix* tpr_smooth = new double_Matrix; taBase::Ref(tpr_smooth);
+  tpr_smooth = (double_Matrix*)dest_data->GetColMatrix(dest_data->FindColNameIdx("TPR_smooth"));
+  int roc_min_idx;
+  int roc_max_idx;
+  taMath_double::vec_min(tpr_smooth, roc_min_idx);
+  taMath_double::vec_max(tpr_smooth, roc_max_idx);
+  dest_data->SetVal(tpr_smooth->FastEl(roc_min_idx), "MIN", 0);
+  dest_data->SetVal(tpr_smooth->FastEl(roc_max_idx), "MAX", 0);
+  taBase::unRefDone(tpr_smooth);
+
+  return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

@@ -130,7 +130,8 @@ public:
 					      DataTable* dest_data = NULL,
 					      const String& signal_data_col_nm = "signal",
 					      const String& noise_data_col_nm = "noise",
-					      int degree = 5);
+					      float PRE_thr = 0.1
+					      );
 
   // #Cat_Stats #MENU_BUTTON #MENU_ON_Stats #NULL_OK_1 #NULL_TEXT_1_NewDataTable #TYPE_1_DataTable #NULL_TEXT_0_SelectSourceTable
   

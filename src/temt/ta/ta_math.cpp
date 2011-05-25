@@ -884,7 +884,7 @@ double taMath_double::integrate_polynomial(double_Matrix* coef, double min, doub
   double area = 0;
 
   for (int n = 0; n < coef->size; n++)
-    area += coef->FastEl(n) * ( ( pow(min, n + 1) / (n + 1) )  -  ( pow(max, n + 1 ) / ( n + 1 ) )  );
+    area += coef->FastEl(n) * ( ( pow(max, n + 1) / (n + 1) )  -  ( pow(min, n + 1 ) / ( n + 1 ) )  );
 
   return area;
 
