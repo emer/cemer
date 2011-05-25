@@ -233,7 +233,6 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit_NoGui();
   lmix.UpdateAfterEdit_NoGui();
-  xcal.UpdateAfterEdit_NoGui();
   CreateWtSigFun();
 }
 
