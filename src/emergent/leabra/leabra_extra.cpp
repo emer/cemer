@@ -4280,18 +4280,7 @@ void V1LateralContourPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Un
 
     TwoDCoord del = suc - ruc; // don't use wrap!
     if(wrap) {		       // dist may be closer in wrapped case..
-      if(ruc.x < gp_geo_half.x) {
-	if(fabsf((suc.x - gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x -= gp_geo.x; del.x = suc.x - ruc.x; }
-      }
-      else {
-	if(fabsf((suc.x + gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x += gp_geo.x; del.x = suc.x - ruc.x; }
-      }      
-      if(ruc.y < gp_geo_half.y) {
-	if(fabsf((suc.y - gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y -= gp_geo.y; del.y = suc.y - ruc.y; }
-      }
-      else {
-	if(fabsf((suc.y + gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y += gp_geo.y; del.y = suc.y - ruc.y; }
-      }
+      suc.WrapMinDist(del, gp_geo, ruc, gp_geo_half);
     }
 
     float dst = del.Mag();
@@ -4568,18 +4557,7 @@ void V2BoLateralPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
 
     TwoDCoord del = suc - ruc;
     if(wrap) {		       // dist may be closer in wrapped case..
-      if(ruc.x < gp_geo_half.x) {
-	if(fabsf((suc.x - gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x -= gp_geo.x; del.x = suc.x - ruc.x; }
-      }
-      else {
-	if(fabsf((suc.x + gp_geo.x) - ruc.x) < fabsf(del.x)) { suc.x += gp_geo.x; del.x = suc.x - ruc.x; }
-      }      
-      if(ruc.y < gp_geo_half.y) {
-	if(fabsf((suc.y - gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y -= gp_geo.y; del.y = suc.y - ruc.y; }
-      }
-      else {
-	if(fabsf((suc.y + gp_geo.y) - ruc.y) < fabsf(del.y)) { suc.y += gp_geo.y; del.y = suc.y - ruc.y; }
-      }
+      suc.WrapMinDist(del, gp_geo, ruc, gp_geo_half);
     }
 
     float wt = v2ffbo_weights.FastEl(del.x + radius, del.y + radius,
@@ -4591,9 +4569,9 @@ void V2BoLateralPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* r
 
 
 //////////////////////////////////////////////////////////
-//	  	FgBoGroupingPrjnSpec
+//	  	FgBoEllipseGpPrjnSpec
 
-void FgBoGroupingPrjnEl::Initialize() {
+void FgBoEllipseGpPrjnEl::Initialize() {
   con_radius = 14;
   wt_radius = 0.7f;
   dist_sig = 0.3f;
@@ -4605,12 +4583,12 @@ void FgBoGroupingPrjnEl::Initialize() {
   con_thr = 0.2f;
 }
 
-void FgBoGroupingPrjnEl::UpdateAfterEdit_impl() {
+void FgBoEllipseGpPrjnEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   CreateStencil();
 }
 
-void FgBoGroupingPrjnEl::CreateStencil() {
+void FgBoEllipseGpPrjnEl::CreateStencil() {
   int n_angles = 4;
   int max_cnt = (2 * con_radius + 1);
   fgbo_weights.SetGeom(4, max_cnt, max_cnt, 2, n_angles);
@@ -4630,7 +4608,7 @@ void FgBoGroupingPrjnEl::CreateStencil() {
   }
 }
 
-float FgBoGroupingPrjnEl::ConWt(TwoDCoord& suc, int sang_dx, int sdir) {
+float FgBoEllipseGpPrjnEl::ConWt(TwoDCoord& suc, int sang_dx, int sdir) {
   float n_angles = 4.0f;
 
   TwoDCoord del = suc;
@@ -4671,32 +4649,32 @@ float FgBoGroupingPrjnEl::ConWt(TwoDCoord& suc, int sang_dx, int sdir) {
   return netwt;
 }
 
-void FgBoGroupingPrjnSpec::Initialize() {
+void FgBoEllipseGpPrjnSpec::Initialize() {
   init_wts = true;
   wrap = true;
   reciprocal = false;
-  group_specs.SetBaseType(&TA_FgBoGroupingPrjnEl);
+  group_specs.SetBaseType(&TA_FgBoEllipseGpPrjnEl);
 }
 
-void FgBoGroupingPrjnSpec::UpdateAfterEdit_impl() {
+void FgBoEllipseGpPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   CreateStencils();
 }
 
 // static int dbg_hit_cnt = 0;
 
-FgBoGroupingPrjnEl* FgBoGroupingPrjnSpec::NewGroupSpec() {
-  return (FgBoGroupingPrjnEl*)group_specs.New(1);
+FgBoEllipseGpPrjnEl* FgBoEllipseGpPrjnSpec::NewGroupSpec() {
+  return (FgBoEllipseGpPrjnEl*)group_specs.New(1);
 }
 
-void FgBoGroupingPrjnSpec::CreateStencils() {
+void FgBoEllipseGpPrjnSpec::CreateStencils() {
   for(int i=0; i < group_specs.size; i++) {
-    FgBoGroupingPrjnEl* el = group_specs.FastEl(i);
+    FgBoEllipseGpPrjnEl* el = group_specs.FastEl(i);
     el->CreateStencil();
   }
 }
 
-void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
+void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn) {
 //   dbg_hit_cnt = 0;		// debugging
 
   if(!(bool)prjn->from)	return;
@@ -4765,7 +4743,7 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
       int depth = run.y / ruy_per_depth;
       int suy_st = depth * 2;
       for(run.x = 0; run.x < run_geo.x; run.x++, rcnt++) {
-	FgBoGroupingPrjnEl* el = group_specs.FastEl(rcnt % group_specs.size);
+	FgBoEllipseGpPrjnEl* el = group_specs.FastEl(rcnt % group_specs.size);
 
 	float wt_renorm = (1.0f - el->min_wt);
 
@@ -4840,7 +4818,7 @@ void FgBoGroupingPrjnSpec::Connect_impl(Projection* prjn) {
   }
 }
 
-void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+void FgBoEllipseGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
   inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -4878,23 +4856,12 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
       TwoDCoord ruc_s = ruc * rgp_sc; // project ruc into s coords
       TwoDCoord run;
       run.SetFmIndex(rui, run_geo.x);
-      FgBoGroupingPrjnEl* el = group_specs.FastEl(rui % group_specs.size);
+      FgBoEllipseGpPrjnEl* el = group_specs.FastEl(rui % group_specs.size);
       float wt_renorm = (1.0f - el->min_wt);
 
       TwoDCoord del = suc - ruc_s;
       if(wrap) {		       // dist may be closer in wrapped case..
-	if(ruc_s.x < sgp_geo_half.x) {
-	  if(fabsf((suc.x - sgp_geo.x) - ruc_s.x) < fabsf(del.x)) { suc.x -= sgp_geo.x; del.x = suc.x - ruc_s.x; }
-	}
-	else {
-	  if(fabsf((suc.x + sgp_geo.x) - ruc_s.x) < fabsf(del.x)) { suc.x += sgp_geo.x; del.x = suc.x - ruc_s.x; }
-	}      
-	if(ruc_s.y < sgp_geo_half.y) {
-	  if(fabsf((suc.y - sgp_geo.y) - ruc_s.y) < fabsf(del.y)) { suc.y -= sgp_geo.y; del.y = suc.y - ruc_s.y; }
-	}
-	else {
-	  if(fabsf((suc.y + sgp_geo.y) - ruc_s.y) < fabsf(del.y)) { suc.y += sgp_geo.y; del.y = suc.y - ruc_s.y; }
-	}
+	suc.WrapMinDist(del, sgp_geo, ruc_s, sgp_geo_half);
       }
 
       float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius,
@@ -4914,7 +4881,7 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
     int depth = run.y / ruy_per_depth;
     int suy_st = depth * 2;
 
-    FgBoGroupingPrjnEl* el = group_specs.FastEl(rui % group_specs.size);
+    FgBoEllipseGpPrjnEl* el = group_specs.FastEl(rui % group_specs.size);
     float wt_renorm = (1.0f - el->min_wt);
 
     for(int i=0; i<cg->size; i++) {
@@ -4928,18 +4895,7 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 
       TwoDCoord del = suc - ruc_s;
       if(wrap) {		       // dist may be closer in wrapped case..
-	if(ruc_s.x < sgp_geo_half.x) {
-	  if(fabsf((suc.x - sgp_geo.x) - ruc_s.x) < fabsf(del.x)) { suc.x -= sgp_geo.x; del.x = suc.x - ruc_s.x; }
-	}
-	else {
-	  if(fabsf((suc.x + sgp_geo.x) - ruc_s.x) < fabsf(del.x)) { suc.x += sgp_geo.x; del.x = suc.x - ruc_s.x; }
-	}      
-	if(ruc_s.y < sgp_geo_half.y) {
-	  if(fabsf((suc.y - sgp_geo.y) - ruc_s.y) < fabsf(del.y)) { suc.y -= sgp_geo.y; del.y = suc.y - ruc_s.y; }
-	}
-	else {
-	  if(fabsf((suc.y + sgp_geo.y) - ruc_s.y) < fabsf(del.y)) { suc.y += sgp_geo.y; del.y = suc.y - ruc_s.y; }
-	}
+	suc.WrapMinDist(del, sgp_geo, ruc_s, sgp_geo_half);
       }
 
       float wt = el->fgbo_weights.FastEl(del.x + el->con_radius, del.y + el->con_radius,
@@ -4951,6 +4907,252 @@ void FgBoGroupingPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* 
 }
 
 
+
+//////////////////////////////////////////////////////////
+//	  	FgBoWedgeGpPrjnSpec
+
+void FgBoWedgeGpPrjnSpec::Initialize() {
+  wrap = true;
+  init_wts = true;
+  dist_sigma = 0.8f;
+  ang_sigma = 1.0f;
+  wt_base = 0.25f;
+  wt_range = 0.5f;
+}
+
+void FgBoWedgeGpPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  CreateStencil();
+}
+
+void FgBoWedgeGpPrjnSpec::CreateStencil() {
+  int n_angles = 4;
+  int n_wedges = 8;
+  fgbo_weights.SetGeom(5, send_gp_size.x, send_gp_size.y, 2, n_angles, n_wedges);
+  TwoDCoord suc;			// send coords
+  for(int wedge=0; wedge < n_wedges; wedge++) {
+    for(suc.y = 0; suc.y < send_gp_size.y; suc.y++) {
+      for(suc.x = 0; suc.x < send_gp_size.x; suc.x++) {
+	for(int sang_dx = 0; sang_dx < n_angles; sang_dx++) {
+	  for(int sdir = 0; sdir < 2; sdir++) { // integrate over sending directions
+	    float wt;
+	    if(wedge < 4)
+	      wt = ConWt_Wedge(wedge, suc, send_gp_size, sang_dx, sdir);
+	    else
+	      wt = ConWt_Line(wedge-4, suc, send_gp_size, sang_dx, sdir);
+	    fgbo_weights.FastEl(suc.x, suc.y, sdir, sang_dx, wedge) = wt;
+	  }
+	}
+      }
+    }
+  }
+}
+
+float FgBoWedgeGpPrjnSpec::ConWt_Wedge(int wedge, TwoDCoord& suc, TwoDCoord& su_geo, int sang_dx, int sdir) {
+  float n_angles = 4.0f;
+
+  TwoDCoord ctr;
+  switch(wedge) {
+  case 0:
+    ctr.SetXY(0,0);
+    break;
+  case 1:
+    ctr.SetXY(su_geo.x-1,0);
+    break;
+  case 2:
+    ctr.SetXY(su_geo.x-1,su_geo.y-1);
+    break;
+  case 3:
+    ctr.SetXY(0,su_geo.y-1);
+    break;
+  }
+
+  TwoDCoord del = suc - ctr;
+  float dst = del.Mag();
+  float nrmdst = dst / (float)su_geo.x; // assume square
+
+  float gang = atan2f(del.y, del.x); // group angle -- 0..pi or -pi
+  if(gang < 0.0f) gang += 2.0f * taMath_float::pi; // keep it positive
+
+  float pang = gang + 0.5f * taMath_float::pi; // perpendicular angle
+  if(pang > 2.0f * taMath_float::pi) pang -= 2.0f * taMath_float::pi;
+
+  // dir 0 = 0..pi, dir 1 = pi..2pi
+  float sang = taMath_float::pi * ((float)sang_dx / n_angles) + taMath_float::pi * (float)sdir;
+
+  float dang;			// delta-angle -- keep this positive too
+  if(sang < pang)
+    dang = (2.0f * taMath_float::pi + sang) - pang;
+  else
+    dang = sang - pang;
+  if(dang >= taMath_float::pi) dang = (2.0f * taMath_float::pi) - dang;
+
+  float netwt = wt_base + wt_range * taMath_float::gauss_den_nonorm(dang, ang_sigma)
+    * taMath_float::gauss_den_nonorm((nrmdst-1.0f), dist_sigma);
+
+  return netwt;
+}
+
+float FgBoWedgeGpPrjnSpec::ConWt_Line(int line, TwoDCoord& suc, TwoDCoord& su_geo, int sang_dx, int sdir) {
+  float n_angles = 4.0f;
+
+  TwoDCoord su_geo_half = su_geo / 2;
+
+  float dst;
+  switch(line) {
+  case 0:
+  case 2:
+    dst = (float)(suc.y - su_geo_half.y);
+    break;
+  case 1:
+  case 3:
+    dst = (float)(suc.x - su_geo_half.x);
+    break;
+  }
+
+  float pang = (float)(line) * 0.5f * taMath_float::pi;
+  float nrmdst = dst / (float)su_geo.x; // assume square
+
+  // dir 0 = 0..pi, dir 1 = pi..2pi
+  float sang = taMath_float::pi * ((float)sang_dx / n_angles) + taMath_float::pi * (float)sdir;
+
+  float dang;			// delta-angle -- keep this positive too
+  if(sang < pang)
+    dang = (2.0f * taMath_float::pi + sang) - pang;
+  else
+    dang = sang - pang;
+  if(dang >= taMath_float::pi) dang = (2.0f * taMath_float::pi) - dang;
+
+  float netwt = wt_base + wt_range * taMath_float::gauss_den_nonorm(dang, ang_sigma)
+    * taMath_float::gauss_den_nonorm(nrmdst, dist_sigma);
+
+  return netwt;
+}
+
+void FgBoWedgeGpPrjnSpec::Connect_impl(Projection* prjn) {
+  CreateStencil();
+  inherited::Connect_impl(prjn);
+}
+
+void FgBoWedgeGpPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
+				Layer* send_lay, int rgpidx, int sgpidx, int alloc_loop) {
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+  int n_wedges = 8;
+
+  TwoDCoord sug;
+  if(reciprocal) {		// reciprocal is backwards!
+    for(int sui=0; sui < su_nunits; sui++) {
+      sug.SetFmIndex(sui, send_lay->un_geom.x);
+      int cur_depth = sug.y / 2; // v2bo has 2 per depth always
+      Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+      for(int rui=0; rui < ru_nunits; rui++) {
+	Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+	int ru_depth = rui / n_wedges;
+	if(cur_depth != ru_depth) continue;
+	if(!self_con && (su_u == ru_u)) continue;
+	su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
+      }
+    }
+  }
+  else {
+    for(int rui=0; rui < ru_nunits; rui++) {
+      Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+      int ru_depth = rui / n_wedges;
+      for(int sui=0; sui < su_nunits; sui++) {
+	sug.SetFmIndex(sui, send_lay->un_geom.x);
+	int cur_depth = sug.y / 2; // v2bo has 2 per depth always
+	if(cur_depth != ru_depth) continue;
+	Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+	if(!self_con && (su_u == ru_u)) continue;
+	ru_u->ConnectFrom(su_u, prjn, alloc_loop); // recip!
+      }
+    }
+  }
+}
+
+void FgBoWedgeGpPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
+  if(cg->size == 0) return;
+  int n_wedges = 8;
+
+  if(reciprocal) {
+    Layer* recv_lay = prjn->from;
+    Layer* send_lay = prjn->layer;
+    TwoDCoord sgp_geo = send_lay->gp_geom;
+    TwoDCoord sgp_geo_half = sgp_geo / 2;
+
+    int sgpidx;
+    int sui;
+    send_lay->UnGpIdxFmUnitIdx(ru->idx, sui, sgpidx);  // recv = send!
+    TwoDCoord suc;
+    suc.SetFmIndex(sui, send_lay->un_geom.x);
+    TwoDCoord sgpc;
+    sgpc.SetFmIndex(sgpidx, send_lay->gp_geom.x);
+    int sdir = suc.y % 2;
+    int sang_dx = suc.x;
+
+    for(int i=0; i < cg->size; i++) {
+      Unit* su = cg->Un(i);	// this is actually ru
+      int rgpidx;
+      int rui;
+      recv_lay->UnGpIdxFmUnitIdx(su->idx, rui, rgpidx); // recv = send!
+      int wedge = rui % n_wedges;
+      
+      RecvCons* rucg = su->recv.FindFrom(send_lay); // recip prjn
+      if(!rucg) continue;
+      Unit* ssu = rucg->Un(0);	// first sending unit in that guy's prjn
+      int ssgpidx;
+      int ssui;
+      send_lay->UnGpIdxFmUnitIdx(ssu->idx, ssui, ssgpidx);
+      TwoDCoord ssgpc;
+      ssgpc.SetFmIndex(ssgpidx, send_lay->gp_geom.x);
+
+      TwoDCoord del = sgpc - ssgpc;
+      sgpc.WrapMinDist(del, sgp_geo, ssgpc, sgp_geo_half);
+
+      float wt = fgbo_weights.FastEl(del.x, del.y, sdir, sang_dx, wedge);
+      cg->Cn(i)->wt = wt;
+    }
+  }
+  else {
+    Layer* recv_lay = prjn->layer;
+    Layer* send_lay = prjn->from;
+    TwoDCoord sgp_geo = send_lay->gp_geom;
+    TwoDCoord sgp_geo_half = sgp_geo / 2;
+
+    int rgpidx;
+    int rui;
+    recv_lay->UnGpIdxFmUnitIdx(ru->idx, rui, rgpidx);
+    int wedge = rui % n_wedges;
+
+    Unit* ssu = cg->Un(0);
+    int ssgpidx;
+    int ssui;
+    send_lay->UnGpIdxFmUnitIdx(ssu->idx, ssui, ssgpidx);
+    TwoDCoord ssgpc;
+    ssgpc.SetFmIndex(ssgpidx, send_lay->gp_geom.x);
+
+    for(int i=0; i < cg->size; i++) {
+      Unit* su = cg->Un(i);
+      int sgpidx;
+      int sui;
+      send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
+      TwoDCoord suc;
+      suc.SetFmIndex(sui, send_lay->un_geom.x);
+      TwoDCoord sgpc;
+      sgpc.SetFmIndex(sgpidx, send_lay->gp_geom.x);
+
+      TwoDCoord del = sgpc - ssgpc;
+      sgpc.WrapMinDist(del, sgp_geo, ssgpc, sgp_geo_half);
+
+      int sdir = suc.y % 2;
+      int sang_dx = suc.x;
+      float wt = fgbo_weights.FastEl(del.x, del.y, sdir, sang_dx, wedge);
+      cg->Cn(i)->wt = wt;
+    }
+  }
+}
 
 //////////////////////////////////////////////////////////
 //	  	V1EndStopPrjnSpec

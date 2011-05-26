@@ -162,13 +162,31 @@ public:
   static int	WrapMax(int c, int max) {
     int rval = c % max; if(rval < 0) rval += max;  return rval;
   }
+  static void	WrapMinDistOne(int& pos, int& dst, const int pos_max, const int cmp,
+			       const int cmp_half) {
+    if(cmp < cmp_half) {
+      if(Absv((pos-pos_max) - cmp) < Absv(dst)) { pos -= pos_max; dst = pos - cmp; }
+    }
+    else {
+      if(Absv((pos+pos_max) - cmp) < Absv(dst)) { pos += pos_max; dst = pos - cmp; }
+    }
+  }
+  // in computing the distance between two coord vals: dst = pos-cmp, consider whether the distance is shorter if pos is wrapped around as a function of pos_max size (condition on which side of the half-way point of the range for cmp value, cmp_half, for which way to wrap) -- if it is shorter, then update pos to new extended value (beyond normal range either - or +) and also update the distance value
 
+  void		WrapMinDist(TwoDCoord& dst, const TwoDCoord& max, const TwoDCoord& cmp, 
+			    const TwoDCoord& cmp_half) {
+    WrapMinDistOne(x, dst.x, max.x, cmp.x, cmp_half.x);
+    WrapMinDistOne(y, dst.y, max.y, cmp.y, cmp_half.y);
+  }
+  // in computing the distance between two coords: dst = this-cmp, consider whether the distance is shorter if this is wrapped around as a function of pos_max size (condition on which side of the half-way point of the range for cmp value, cmp_half, for which way to wrap) -- if it is shorter, then update this pos to new extended value (beyond normal range either - or +) and also update the distance value
+    
   static bool	WrapClipOne(bool wrap, int& c, int max);
   // wrap-around or clip one dimension, true if out of range (clipped or more than half way around other side for wrap)
   bool		WrapClip(bool wrap, const TwoDCoord& max) {
     bool wcx = WrapClipOne(wrap, x, max.x); bool wcy = WrapClipOne(wrap, y, max.y);
     return wcx || wcy;		// have to explicitly call else cond eval will avoid clip!
   } // wrap-around or clip coordinates within 0,0 - max range, true if out of range (clipped or more than half way around other side for wrap)
+  
 
   inline void	SetFmIndex(int idx, int x_size) {
     x = idx % x_size;

@@ -2505,8 +2505,9 @@ private:
   void	Destroy()	{ };
 };
 
-class EMERGENT_API FgBoGroupingPrjnEl : public taNBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a figure-ground border-ownership grouping projection spec -- contains parameters for a specific sized item
+
+class EMERGENT_API FgBoEllipseGpPrjnEl : public taNBase {
+  // #AKA_FgBoGroupingPrjnEl ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec one element of a figure-ground border-ownership grouping projection spec -- contains parameters for a specific sized item
 INHERITED(taNBase)
 public:
   int		con_radius;	// maximum distance for how far to connect in any one direction (in unit group units) -- this then determines most other things
@@ -2528,7 +2529,7 @@ public:
   virtual void	CreateStencil();
   // create stencil -- always done as first step in connection function
 
-  TA_SIMPLE_BASEFUNS(FgBoGroupingPrjnEl);
+  TA_SIMPLE_BASEFUNS(FgBoEllipseGpPrjnEl);
 protected:
   override void UpdateAfterEdit_impl();
 private:
@@ -2536,23 +2537,23 @@ private:
   void	Destroy()	{ };
 };
 
-class EMERGENT_API FgBoGroupingPrjnEl_List : public taList<FgBoGroupingPrjnEl> {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of FgBoGroupingPrjnEl objects
-INHERITED(taList<FgBoGroupingPrjnEl>)
+class EMERGENT_API FgBoEllipseGpPrjnEl_List : public taList<FgBoEllipseGpPrjnEl> {
+  // #AKA_FgBoGroupingPrjnEl_List ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Spec list of FgBoEllipseGpPrjnEl objects
+INHERITED(taList<FgBoEllipseGpPrjnEl>)
 public:
-  TA_BASEFUNS_LITE_NOCOPY(FgBoGroupingPrjnEl_List);
+  TA_BASEFUNS_LITE_NOCOPY(FgBoEllipseGpPrjnEl_List);
 private:
   void	Initialize() 		{ };
   void 	Destroy()		{ };
 };
 
-class LEABRA_API FgBoGroupingPrjnSpec : public ProjectionSpec {
-  // figure-ground border-ownership grouping projection spec -- 
+class LEABRA_API FgBoEllipseGpPrjnSpec : public ProjectionSpec {
+  // #AKA_FgBoGroupingPrjnSpec figure-ground border-ownership grouping projection spec -- 
 INHERITED(ProjectionSpec)
 public:
   bool		wrap;		// #DEF_true wrap around layer coordinates (else clip at ends)
   bool		reciprocal; 	// set this for connections going the opposite direction, from grouping back to V2 Bo units
-  FgBoGroupingPrjnEl_List	group_specs; // specifications for each grouping size
+  FgBoEllipseGpPrjnEl_List	group_specs; // specifications for each grouping size
 
   virtual void	CreateStencils();
   // create stencil -- always done as first step in connection function
@@ -2560,16 +2561,49 @@ public:
   override void	Connect_impl(Projection* prjn);
   override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
 
-  virtual FgBoGroupingPrjnEl* NewGroupSpec();
+  virtual FgBoEllipseGpPrjnEl* NewGroupSpec();
   // #BUTTON create a new group_specs item for specifying one grouping size
 
-  TA_SIMPLE_BASEFUNS(FgBoGroupingPrjnSpec);
+  TA_SIMPLE_BASEFUNS(FgBoEllipseGpPrjnSpec);
 protected:
   override void UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
 };
+
+class LEABRA_API FgBoWedgeGpPrjnSpec : public TiledGpRFPrjnSpec {
+  // TiledGpRFPrjnSpec connectvity with initial weights (when init_wts is set) configured in pattern of 4 1/4 circle wedges, and 4 90 degree straight segments with different border prefs, onto V2 border ownership connections -- recv group size must be 8 x depth where depth is number of depths represented in V2 layer -- 4 units are each quadrant of the wedge
+INHERITED(TiledGpRFPrjnSpec)
+public:
+  float		dist_sigma;	// #CONDEDIT_ON_init_wts #DEF_0.8 sigma for gaussian for distance from center of circle representing the wedge
+  float		ang_sigma;	// #CONDEDIT_ON_init_wts #DEF_1 sigma for gaussian around target angle -- how widely to connect units around the target angle given by the perpendicular to the radius line -- controls how tightly tuned the angles are
+  float		wt_base;	// #CONDEDIT_ON_init_wts #DEF_0.25 base weight value for all connections (except from other depth, which are not even connected)
+  float		wt_range;	// #CONDEDIT_ON_init_wts #DEF_0.5 range of weight values assigned by the gaussian functions of distance and angle, on top of wt_base
+  
+  float_Matrix	fgbo_weights;  // #READ_ONLY #NO_SAVE weights for FgBo projection -- serves as a stencil for the connection
+
+  virtual float	ConWt_Wedge(int wedge, TwoDCoord& suc, TwoDCoord& su_geo, int sang_dx, int sdir);
+  // connection weight in terms of send unit group coord (suc), sending angle index (0-3 in 45 deg incr), and bo direction (0-1) -- used for creating stencil
+  virtual float	ConWt_Line(int line, TwoDCoord& suc, TwoDCoord& su_geo, int sang_dx, int sdir);
+  // connection weight in terms of send unit group coord (suc), sending angle index (0-3 in 45 deg incr), and bo direction (0-1) -- used for creating stencil
+
+  virtual void	CreateStencil();
+  // create stencil -- always done as first step in connection function
+
+  override void Connect_impl(Projection* prjn);
+  override void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
+				  int rgpidx, int sgpidx, int alloc_loop);
+  override void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+
+  TA_SIMPLE_BASEFUNS(FgBoWedgeGpPrjnSpec);
+protected:
+  override void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 
 class LEABRA_API V1EndStopPrjnSpec : public ProjectionSpec {
   // end-stop detectors within V1 layer -- connectivity and weights that enable units to detect when one orientation terminates into another -- recv layer must have unit groups with one row of n_angles units, while sender has multiple rows of n_angles units (recv integrates over rows)
