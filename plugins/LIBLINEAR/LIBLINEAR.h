@@ -23,6 +23,12 @@ public:
 	       DataTable* model_table,
 	       DataTable* predicted_labels); // #BUTTON
 
+  bool CrossValidate(DataTable* all_data,
+		     DataTable* predicted_values, 
+		     String y_col, 
+		     int n_folds,
+		     String solver = "MCSVM_CS"); // #BUTTON
+
 protected:
   
   override void		UpdateAfterEdit_impl(); 

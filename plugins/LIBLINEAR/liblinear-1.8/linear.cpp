@@ -2367,9 +2367,10 @@ const char *check_parameter(const problem *prob, const parameter *param)
 
 int check_probability_model(const struct model *model_)
 {
-	return (model_->param.solver_type==L2R_LR ||
-			model_->param.solver_type==L2R_LR_DUAL ||
-			model_->param.solver_type==L1R_LR);
+// 	return (model_->param.solver_type==L2R_LR ||
+// 			model_->param.solver_type==L2R_LR_DUAL ||
+// 			model_->param.solver_type==L1R_LR);
+  return true;
 }
 
 void set_print_string_function(void (*print_func)(const char*))

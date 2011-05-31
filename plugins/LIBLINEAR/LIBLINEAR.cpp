@@ -255,6 +255,31 @@ bool LIBLINEAR::Train(DataTable* train_data, DataTable* model_table,
   return true;
 }
 
+bool LIBLINEAR::CrossValidate(DataTable* all_data, DataTable* predicted_values, String y_col, int n_folds, String solver) {
+
+  struct problem *prob = CreateProblem(all_data, y_col);
+  struct parameter *param = CreateParameter(solver);
+
+  if (check_parameter(prob, param) != NULL) {
+    taMisc::Error("Parameter struct not setup correctly. Programmer error - please report.");
+    Cleanup(0, prob, param);
+    return false;
+  }
+
+  int *target = (int *)malloc(all_data->rows*sizeof(int));
+
+  cross_validation(prob, param, n_folds, target);
+    
+  predicted_values->Reset();
+  predicted_values->NewColInt("target");
+  predicted_values->AddRows(all_data->rows);
+
+  for (int i = 0; i < all_data->rows; ++i)
+    predicted_values->SetVal(target[i], "target", i);
+
+  return true;
+}
+
 bool LIBLINEAR::Predict(DataTable* test_data,
 			String y_col,
 			DataTable* model_data,
@@ -265,14 +290,24 @@ bool LIBLINEAR::Predict(DataTable* test_data,
 
   predicted_labels->Reset();
   predicted_labels->NewColInt("labels");
+  predicted_labels->NewColMatrix(taBase::VT_DOUBLE, "probabilities", 1, m->nr_class);
   predicted_labels->AddRows(test_data->rows);
 
-  // Predict every vector and record the label
-  for (int i=0; i < p->l; ++i)
-    predicted_labels->SetVal(predict(m, p->x[i]), "labels", i);
+  double *prob_estimates = (double *)malloc(p->n*sizeof(double));
+  int label;
+
+  // Predict every vector and record the predicted label and the probability estimates
+  for (int i=0; i < p->l; ++i) {
+    label = predict_probability(m, p->x[i], prob_estimates);
+    predicted_labels->SetVal(label, "labels", i);
+    for (int j=0; j < m->nr_class; ++j)
+      predicted_labels->SetMatrixVal(prob_estimates[j], "probabilities", i, j);
+  }
 
   // Compute precision, recall, accuracy
-  
+
+
+  // TODO: free prob_estimates
   Cleanup(m, p, 0);
   return true;
 }
