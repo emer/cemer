@@ -108,45 +108,24 @@ struct parameter* CreateParameter(String solver) {
 
 }
 
-bool CheckParameter(const problem *prob, const parameter *param)
-{
-  if(param->eps <= 0) {
-    taMisc::Warning("eps <=0");
-    return false;
-  }
-
-  if(param->C <= 0) {
-    taMisc::Warning("C <=0");
-    return false;
-  }
-
-  if(              param->solver_type != L2R_LR
-                && param->solver_type != L2R_L2LOSS_SVC_DUAL
-                && param->solver_type != L2R_L2LOSS_SVC
-                && param->solver_type != L2R_L1LOSS_SVC_DUAL
-                && param->solver_type != MCSVM_CS
-                && param->solver_type != L1R_L2LOSS_SVC
-                && param->solver_type != L1R_LR
-                && param->solver_type != L2R_LR_DUAL) {
-    taMisc::Warning("solver type not set");
-    return false;
-  }
-
-  return true;
-}
-
 bool LIBLINEAR::Train(DataTable* data, String y_col, String solver) {
 
   struct problem *prob = CreateProblem(data, y_col);
   struct parameter *param = CreateParameter(solver);
 
-  if (!CheckParameter(prob, param)) {
-    taMisc::Error("something is amok");
+  if (check_parameter(prob, param) != NULL) {
+    taMisc::Error("paramter struct not setup correctly. programmer error - please report.");
     DestroyProblem(prob); // Use their impl?
+    //destroy_param(param);
     return false;
   }
 
+  struct model *m = train(prob, param);
+
   DestroyProblem(prob); // Use their impl?
+  //free_model_content(model);
+  //free_and_destroy_model(*model);
+  //destroy_param(param);
   return true;
 }
 
@@ -160,15 +139,3 @@ LIBLINEARPluginState* LIBLINEARPluginState::instance() {
 void LIBLINEARPluginState::Initialize() {SetBaseFlag(NAME_READONLY);}
 void LIBLINEARPluginState::Destroy() {CutLinks(); }
 void LIBLINEARPluginState::UpdateAfterEdit_impl() {inherited::UpdateAfterEdit_impl();}
-
-// test that the data is there
-//     int y_col_idx = data->FindColNameIdx(y_col);
-//     for (int i = 0; i < data->rows; i++) {
-//       for (int j = 0; j <= data->cols() ; j++) {
-// 	cout << p->x[i][j].index << "," << p->x[i][j].value << " ";
-// 	taMisc::FlushConsole();
-//       }
-//       cout << "\n";
-//       taMisc::FlushConsole();
-//     }
-

@@ -112,6 +112,8 @@ set(plugin_HEADS
 set(plugin_SRCS
   LIBLINEAR_pl.cpp
   LIBLINEAR.cpp
+  liblinear-1.8/linear.o
+  liblinear-1.8/tron.o
 # if you create Qt or Inventor-based classes, put them in LIBLINEAR_qtso.*
 # and uncomment the following line:
 # LIBLINEAR_qtso.cpp
@@ -153,7 +155,14 @@ set(plugin_FILES
 # assuming it is on known path, 
 # else see {root}/CMakeModules/FindGSL.cmake for example
 
+# FIND_PATH(LIBLINEAR_INCLUDE_DIR linear.h ${EMERGENTDIR}/plugins/LIBLINEAR/liblinear-1.8/)
+# FIND_LIBRARY(LIBLINEAR_LIBRARY NAMES linear.o PATHS ${EMERGENTDIR}/plugins/LIBLINEAR/liblinear-1.8/) 
+# SET(LIBLINEAR_LIBRARIES ${LIBLINEAR_LIBRARY})
+# INCLUDE(FindPackageHandleStandardArgs)
+# FIND_PACKAGE_HANDLE_STANDARD_ARGS(LIBLINEAR DEFAULT_MSG LIBLINEAR_LIBRARIES LIBLINEAR_INCLUDE_DIR)
+
 # the following lines, commented out, are examples from audioproc plugin
+#find_library(LIBLINEAR_LIBRARY linear)
 #find_library(SNDFILE_LIBRARY sndfile)
 #message(STATUS SNDFILE_LIBRARY: ${SNDFILE_LIBRARY})
 #set(EMERGENT_PLUGIN_EXTRA_LIBRARIES sndfile)
