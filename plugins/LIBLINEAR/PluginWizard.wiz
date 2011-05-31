@@ -1,0 +1,35 @@
+// ta_Dump File v3.0 -- code v5.1.7.0 rev4905
+PluginWizard .wizards[0] { 
+UserDataItem_List @*(.user_data_) {
+UserDataItem @[0] { };
+};
+};
+PluginWizard .wizards[0] {
+UserDataItem_List @*(.user_data_) {
+name="UserDataItem_List_0";
+el_typ=UserDataItem;
+el_def=0;
+UserDataItem @[0] {
+name="NO_CLIP";
+value 1 0=1;
+val_type_fixed=0;
+};
+};
+name="PluginWizard";
+auto_open=1;
+plugin_name="LIBLINEAR";
+class_name_prefix="LIBLINEAR";
+plugin_type=UserPlugin;
+validated=1;
+created=1;
+plugin_location="/home/mingus/svn_sims/plugins/LIBLINEAR";
+desc="enter description of your plugin";
+uniqueId="LIBLINEAR.foo.bar.org";
+url="(replace this with a url for help or information on the plugin)";
+version {
+major=0;
+minor=0;
+step=0;
+build=0;
+};
+};
