@@ -1,7 +1,7 @@
 #include "LIBLINEAR.h"
 
 #include "ta_project.h"
-#include "/home/mingus/liblinear-1.8/linear.cpp"
+#include "liblinear-1.8/linear.h"
 #include <vector>
 
 void LIBLINEAR::Initialize() {}
