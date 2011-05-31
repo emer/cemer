@@ -6,11 +6,6 @@
 #include "ta_datatable.h"
 #include "ta_matrix.h"
 
-void DestroyProblem(struct problem *&p);
-struct problem* CreateProblem(DataTable* data, String y_col);
-struct parameter* CreateParameter(String solver);
-bool CheckParameter(const problem *prob, const parameter *param);
-
 class LIBLINEAR_API LIBLINEAR : public taNBase {
   
   INHERITED(taNBase) 
@@ -18,7 +13,15 @@ public:
 
   TA_SIMPLE_BASEFUNS(LIBLINEAR);
 
-  bool Train(DataTable* data, String y_col, String solver = "MCSVM_CS"); // #BUTTON
+  bool Train(DataTable* train_data,
+	     DataTable* model_table,
+	     String y_col,
+	     String solver = "MCSVM_CS"); // #BUTTON
+
+  bool Predict(DataTable* test_data,
+	       String y_col,
+	       DataTable* model_table,
+	       DataTable* predicted_labels); // #BUTTON
 
 protected:
   

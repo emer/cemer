@@ -4,6 +4,8 @@
 #include "liblinear-1.8/linear.h"
 #include <vector>
 
+#define DEBUG false
+
 void LIBLINEAR::Initialize() {}
 void LIBLINEAR::Destroy() {CutLinks();}
 void LIBLINEAR::UpdateAfterEdit_impl() {inherited::UpdateAfterEdit_impl();}
@@ -23,14 +25,43 @@ void DestroyProblem(struct problem *&p) {
   }
 }
 
+void PrintProblem(struct problem *p) {
+
+  cout << "p->l: " << p->l << "\n";
+  cout << "p->n: " << p->n << "\n";
+  cout << "p->bias: " << p->bias << "\n";
+  taMisc::FlushConsole();
+
+  cout << "p->y:";
+  for (int i = 0; i < p->l; ++i)
+    cout << p->y[i] << ";";
+
+  taMisc::FlushConsole();
+
+  cout << "p->x:";
+  for (int i = 0; i < p->l; ++i)
+    for (int j = 0; p->x[i][j].index != -1; ++j)
+      cout << p->x[i][j].index << "," << p->x[i][j].value << ";";
+
+  taMisc::FlushConsole();
+}
+
+void PrintParam(struct parameter *param) {
+  cout << "param->solver_type: " << param->solver_type << "\n";
+  cout << "param->eps: " << param->eps << "\n";
+  cout << "param->C: " << param->C << "\n";
+  cout << "param->nr_weight: " << param->nr_weight << "\n";
+  taMisc::FlushConsole();
+}
+
 struct problem* CreateProblem(DataTable* data, String y_col) {
 
   struct problem *p = (struct problem *)malloc(sizeof(struct problem));
-  if (!p) return 0;
+  if (!p) return false;
   p->x = (struct feature_node **)malloc(data->rows * sizeof(struct feature_node *));
   if (!p->x) {
     DestroyProblem(p);
-    return 0;
+    return false;
 
   }
 
@@ -64,7 +95,7 @@ struct problem* CreateProblem(DataTable* data, String y_col) {
     p->x[i] = (struct feature_node *)malloc((fn_vec.size() + 1) * sizeof(struct feature_node));
     if (!p->x[i]) {
       DestroyProblem(p);
-      return 0;
+      return false;
     }
 
     // Copy the temp vector values into the malloc'd array.
@@ -108,26 +139,144 @@ struct parameter* CreateParameter(String solver) {
 
 }
 
-bool LIBLINEAR::Train(DataTable* data, String y_col, String solver) {
+bool ModelToDataTable(const struct model* m, DataTable* t) {
+  // TODO: Check for m / t
 
-  struct problem *prob = CreateProblem(data, y_col);
+  // model
+  t->FindMakeCol("nr_class", taBase::VT_INT);
+  t->FindMakeCol("nr_feature", taBase::VT_INT);
+  t->FindMakeCol("bias", taBase::VT_DOUBLE);
+  t->FindMakeColMatrix("label", taBase::VT_INT, 1, m->nr_class);
+  t->FindMakeColMatrix("w", taBase::VT_DOUBLE, 1, m->nr_class*m->nr_feature);
+
+  // param
+  t->FindMakeCol("solver_type", taBase::VT_INT);
+  t->FindMakeCol("eps", taBase::VT_DOUBLE);
+  t->FindMakeCol("C", taBase::VT_DOUBLE);
+  t->FindMakeCol("nr_weight", taBase::VT_INT);
+
+  t->RemoveAllRows();
+  t->AddRows();
+
+  // model
+  t->SetVal(m->nr_class, "nr_class", 0);
+  t->SetVal(m->nr_feature, "nr_feature", 0);
+  t->SetVal(m->bias, "bias", 0);
+  
+  for (int i=0; i < m->nr_class; ++i)
+    t->SetMatrixVal(m->label[i], "label", 0, i);
+
+  for (int i=0; i < m->nr_class*m->nr_feature; ++i)
+    t->SetMatrixVal(m->w[i], "w", 0, i);
+
+  // param
+  t->SetVal(m->param.solver_type, "solver_type", 0);
+  t->SetVal(m->param.eps, "eps", 0);
+  t->SetVal(m->param.C, "C", 0);
+  t->SetVal(m->param.nr_weight, "nr_weight", 0);
+  
+  return true;
+
+}
+
+struct model* DataTableToModel(DataTable* t) {
+  // 9 cols / 1 row is a heuristic for a proper model table
+  if (t->cols() != 9 || t->rows != 1) { 
+    taMisc::Error("Model table either does not have 9 columns or does not have 1 row - invalid model table");
+    return false;
+  }
+  // ALloc the model
+  struct model *m = (struct model *)malloc(sizeof(struct model));
+  if (!m) return false;
+  
+  // Alloc the kernel
+  int n = t->GetVal("nr_class", 0).toInt()*t->GetVal("nr_feature", 0).toInt();
+  m->w = (double *)malloc(n*sizeof(double));
+  if (!m->w) { free(m); return false; }
+
+  // Alloc the labels
+  m->label = (int *)malloc(t->GetVal("nr_class", 0).toInt()*sizeof(int));
+  if (!m->label) { free(m); return false; }  
+
+  // model
+  m->nr_class = t->GetValAsInt("nr_class", 0);
+  m->nr_feature = t->GetValAsInt("nr_feature", 0);
+  m->bias = t->GetValAsDouble("bias", 0);
+  
+  for (int i=0; i < m->nr_class; i++)
+    m->label[i] = t->GetMatrixVal("label", 0, i).toInt();
+
+  for (int i=0; i < m->nr_class*m->nr_feature; i++)
+    m->w[i] = t->GetMatrixVal("w", 0, i).toDouble();
+
+  // parameter
+  m->param.solver_type = t->GetValAsInt("solver_type", 0);
+  m->param.eps = t->GetValAsDouble("eps", 0);
+  m->param.C = t->GetValAsDouble("C", 0);
+  m->param.nr_weight = t->GetValAsInt("nr_weight", 0);
+
+  return m;
+}
+
+void Cleanup(struct model *m = 0, struct problem *prob = 0, struct parameter *param = 0) {
+  if (!prob == 0) DestroyProblem(prob);
+  if (!m == 0) free_and_destroy_model(&m);
+  if (!param == 0) destroy_param(param);
+}
+
+bool LIBLINEAR::Train(DataTable* train_data, DataTable* model_table, 
+		      String y_col,  String solver) {
+
+  struct problem *prob = CreateProblem(train_data, y_col);
   struct parameter *param = CreateParameter(solver);
 
+  //#ifdef DEBUG
+  //PrintProblem(prob);
+  //PrintParam(param);
+  //#endif
+
   if (check_parameter(prob, param) != NULL) {
-    taMisc::Error("paramter struct not setup correctly. programmer error - please report.");
-    DestroyProblem(prob); // Use their impl?
-    //destroy_param(param);
+    taMisc::Error("Parameter struct not setup correctly. Programmer error - please report.");
+    Cleanup(0, prob, param);
     return false;
   }
 
   struct model *m = train(prob, param);
 
-  DestroyProblem(prob); // Use their impl?
-  //free_model_content(model);
-  //free_and_destroy_model(*model);
-  //destroy_param(param);
+  if (!ModelToDataTable(m, model_table)) {
+    taMisc::Error("Unable to convert model to DataTable. Programmer error - please report.");
+    Cleanup(m, prob, 0);
+    return false;
+  } 
+  
+  
+  Cleanup(m, prob, 0);
+
   return true;
 }
+
+bool LIBLINEAR::Predict(DataTable* test_data,
+			String y_col,
+			DataTable* model_data,
+			DataTable* predicted_labels) {
+  
+  struct model *m = DataTableToModel(model_data);
+  struct problem *p = CreateProblem(test_data, y_col);
+
+  predicted_labels->Reset();
+  predicted_labels->NewColInt("labels");
+  predicted_labels->AddRows(test_data->rows);
+
+  // Predict every vector and record the label
+  for (int i=0; i < p->l; ++i)
+    predicted_labels->SetVal(predict(m, p->x[i]), "labels", i);
+
+  // Compute precision, recall, accuracy
+  
+  Cleanup(m, p, 0);
+  return true;
+}
+
 
 LIBLINEARPluginState* LIBLINEARPluginState::instance() {
   if (tabMisc::root == NULL) return NULL;

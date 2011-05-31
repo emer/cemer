@@ -625,7 +625,7 @@ void Solver_MCSVM_CS::Solve(double *w)
 		iter++;
 		if(iter % 10 == 0)
 		{
-		  //info(".");
+			info(".");
 		}
 
 		if(stopping < eps_shrink)
@@ -637,7 +637,7 @@ void Solver_MCSVM_CS::Solve(double *w)
 				active_size = l;
 				for(i=0;i<l;i++)
 					active_size_i[i] = nr_class;
-				//info("*");
+				info("*");
 				eps_shrink = max(eps_shrink/2, eps);
 				start_from_all = true;
 			}
@@ -646,8 +646,8 @@ void Solver_MCSVM_CS::Solve(double *w)
 			start_from_all = false;
 	}
 
-	//info("\noptimization finished, #iter = %d\n",iter);
-	//if (iter >= max_iter)
+	info("\noptimization finished, #iter = %d\n",iter);
+	if (iter >= max_iter)
 		info("\nWARNING: reaching max number of iterations\n");
 
 	// calculate objective value
@@ -664,8 +664,8 @@ void Solver_MCSVM_CS::Solve(double *w)
 	}
 	for(i=0;i<l;i++)
 		v -= alpha[i*nr_class+prob->y[i]];
-	//info("Objective value = %lf\n",v);
-	//info("nSV = %d\n",nSV);
+	info("Objective value = %lf\n",v);
+	info("nSV = %d\n",nSV);
 
 	delete [] alpha;
 	delete [] alpha_new;
