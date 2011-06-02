@@ -2880,7 +2880,7 @@ void DoGRegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
 
 void V1KwtaSpec::Initialize() {
   on = false;
-  veto = false;
+  gemult = false;
   gp_k = 1;
   gp_g = 0.1f;
   kwta_pt = 0.5f;
