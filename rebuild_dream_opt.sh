@@ -1,3 +1,3 @@
 #!/bin/sh -f
 
-ssh dream "cd emergent/build; svn up ../; make -j4; make -j4; make -j4; sudo make install"
+ssh -t dream "cd emergent/build; svn up ../; make -j4; make -j4; make -j4; sudo make install"
