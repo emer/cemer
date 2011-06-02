@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <iostream>
+#include <fstream>
 #include "linear.h"
 #include "tron.h"
 typedef signed char schar;
@@ -540,8 +542,10 @@ void Solver_MCSVM_CS::Solve(double *w)
 				while(xi->index!= -1)
 				{
 					double *w_i = &w[(xi->index-1)*nr_class];
+
 					for(m=0;m<active_size_i[i];m++)
-						G[m] += w_i[alpha_index_i[m]]*(xi->value);
+					  G[m] += w_i[alpha_index_i[m]]*(xi->value);
+
 					xi++;
 				}
 

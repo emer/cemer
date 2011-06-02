@@ -16,24 +16,27 @@ public:
   bool Train(DataTable* train_data,
 	     DataTable* model_table,
 	     String y_col,
+	     String fname_prefix,
+	     String model_fname,
 	     String solver = "MCSVM_CS"); // #BUTTON
 
   bool Predict(DataTable* test_data,
+	       DataTable* predicted_labels,
 	       String y_col,
-	       DataTable* model_table,
-	       DataTable* predicted_labels); // #BUTTON
+	       String fname_prefix,
+	       String model_fname); // #BUTTON
 
   bool CrossValidate(DataTable* all_data,
 		     DataTable* predicted_values, 
 		     String y_col, 
 		     int n_folds,
+		     String fname_prefix,
 		     String solver = "MCSVM_CS"); // #BUTTON
 
 protected:
   
   override void		UpdateAfterEdit_impl(); 
 private:
-
   
   void	Initialize();
   void	Destroy();
