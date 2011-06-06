@@ -7094,7 +7094,15 @@ void iDocDataPanel::UpdatePanel_impl() {
     seturl_but->setEnabled(true);
   }
   else {
-    webview->setHtml(doc_->html_text);
+    // Use the project filename as a base URL so it's possible to load
+    // external stylesheets, images, javascript, etc. with a relative path.
+    QUrl qurl;
+    if (const iMainWindowViewer *mainwin = viewerWindow()) {
+      if (const taProject *proj = mainwin->myProject()) {
+        qurl = QUrl::fromLocalFile(proj->GetFileName());
+      }
+    }
+    webview->setHtml(doc_->html_text, qurl);
     fwd_but->setEnabled(false);
     bak_but->setEnabled(false);
     seturl_but->setEnabled(false);
