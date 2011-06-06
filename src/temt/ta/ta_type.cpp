@@ -1824,9 +1824,11 @@ String taMisc::GetWikiURL(const String& wiki_name, bool add_index) {
 
 String taMisc::FixURL(const String& urltxt) {
   String nwurl = urltxt;
-  if(!urltxt.contains(':') && !urltxt.startsWith('.')) {
-    nwurl = String("http://") + urltxt; // assume http as default
-  }
+  // This is not a fix, it's breakage: it prevents using relative URLs to
+  // link to pages stored in the same directory as the project file.
+  // if(!urltxt.contains(':') && !urltxt.startsWith('.')) {
+  //   nwurl = String("http://") + urltxt; // assume http as default
+  // }
   if(nwurl.startsWith("http://")) { // now fixup http links..
     if(!nwurl.contains('.')) nwurl += ".com"; // assume .com
   }
