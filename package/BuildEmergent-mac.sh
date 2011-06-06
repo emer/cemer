@@ -16,11 +16,18 @@ if [ -z $REV ]; then
   if [ -z $REV ]; then REV="HEAD"; fi
 fi
 
+TAG="$2"
+if [ -z $TAG ]; then
+  read -p "Enter the emergent tag to use: [trunk] " TAG
+  if [ -z $TAG ]; then TAG="trunk"; fi
+fi
+if [ $TAG != "trunk" ]; then TAG="tags/$TAG"; fi
+
 # Update source code and make package.
 EMERGENT_SRC_DIR=~/emergent
 mkdir -p ${EMERGENT_SRC_DIR}
 cd ${EMERGENT_SRC_DIR}
-svn checkout -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk .
+svn checkout -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} .
 ./configure
 cd build
 make -j2 package

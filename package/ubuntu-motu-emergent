@@ -6,7 +6,11 @@ if [ -z $REV ]; then
   read -p "Enter the svn revision number to retrieve: [HEAD] " REV
   if [ -z $REV ]; then REV="HEAD"; fi
 fi
-echo "Building emergent from Subversion rev $REV on "
+
+TAG="$2"
+if [ -z $TAG ]; then TAG="trunk"; fi
+
+echo "Building emergent from Subversion rev $REV ($TAG) on "
 cat /etc/issue || echo "Unknown platform"
 
 #NUM_PROCS=`grep "^processor\s*:\s*[0-9]*$" /proc/cpuinfo |wc -l`
@@ -18,7 +22,7 @@ REPONAME=`lsb_release -cs` # e.g., "maverick"
 
 EMERGENT_TMP_DIR=emergent_TMP
 cd /tmp && rm -rf emergent_*
-svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/trunk ${EMERGENT_TMP_DIR}
+svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} ${EMERGENT_TMP_DIR}
 # config.h is a generated file, so can't do this:
 #EMERGENT_VERSION=`sed -n '/VERSION/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/config.h`
 EMERGENT_VERSION_MAJOR=`sed -n '/set(EMERGENT_VERSION_MAJOR/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/CMakeLists.txt`

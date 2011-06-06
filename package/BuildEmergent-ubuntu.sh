@@ -30,6 +30,13 @@ if [ -z $REV ]; then
   if [ -z $REV ]; then REV="HEAD"; fi
 fi
 
+TAG="$2"
+if [ -z $TAG ]; then
+  read -p "Enter the emergent tag to use: [trunk] " TAG
+  if [ -z $TAG ]; then TAG="trunk"; fi
+fi
+if [ $TAG != "trunk" ]; then TAG="tags/$TAG"; fi
+
 # Check if the Quarter library should be rebuilt.  Defaults to yes, unless
 # it is already installed.
 BUILD_QUARTER="y"
@@ -133,7 +140,7 @@ echo -e "\nBuilding and packaging emergent (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the build/package process)"
 OUTPUT="emergent-build-output.txt"
 test -x "$XTERM" && $XTERM -si -geometry 160x50 -T "emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
-./ubuntu-motu-emergent $REV 2>&1 > $OUTPUT
+./ubuntu-motu-emergent $REV $TAG 2>&1 > $OUTPUT
 
 DEBS="/tmp/emergent*.deb"
 if [ "$BUILD_QUARTER" == "y" ]; then
