@@ -1603,8 +1603,8 @@ class LEABRA_API LeabraPrjn: public Projection {
   // #STEM_BASE ##CAT_Leabra leabra specific projection -- has special variables at the projection-level
 INHERITED(Projection)
 public:
-  float		netin_avg;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer
-  float		netin_rel;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Statistic relative netinput values for the recv projections into this layer
+  float		netin_avg;		// #NO_SAVE #READ_ONLY #CAT_Statistic average netinput values for the recv projections into this layer
+  float		netin_rel;		// #NO_SAVE #READ_ONLY #CAT_Statistic relative netinput values for the recv projections into this layer
 
   float		avg_netin_avg;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Statistic average netinput values for the recv projections into this layer, averaged over an epoch
   float		avg_netin_avg_sum;	// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic average netinput values for the recv projections into this layer, sum over an epoch

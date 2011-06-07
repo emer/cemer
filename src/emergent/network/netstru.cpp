@@ -2850,8 +2850,11 @@ void ProjectionSpec::Init_dWt(Projection* prjn) {
 
 bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
   if(prjn->off) return true;
-  if(prjn->from->lesioned()) return true;
   bool rval;
+  if(CheckError(!prjn->from, quiet, rval, "from is null -- must set from!")) {
+    return false;
+  }
+  if(prjn->from->lesioned()) return true;
   if(CheckError(!prjn->projected, quiet, rval, "not connected!")) {
     return false;
   }
