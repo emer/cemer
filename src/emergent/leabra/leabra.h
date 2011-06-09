@@ -242,6 +242,7 @@ class LEABRA_API XCalLearnSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
 
+  bool		lthr_su_s;	// use short-term sending average activation for the lthr modulation term, not the su_m value that has been previously used by default
   bool		lthr_sig;	// #DEF_false use new sigmoidal lthr function -- takes product of ru and su avg_l and runs through sigmoidal function centered on specified offset, with given gain and additional offset multiplier values -- otherwise use old xcal default (multiply by su_avg_m)
   float		lthr_sig_gain;	// #DEF_2:6 #CONDSHOW_ON_lthr_sig gain of lthr sigmoidal function
   float		lthr_sig_off;	// #DEF_0.15:0.20 #CONDSHOW_ON_lthr_sig offset of sigmoid function -- determines the inflection point for joint su, ru avg_l activation -- this is a key param
@@ -899,8 +900,11 @@ class LEABRA_API LeabraActAvgSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- used in XCAL learning rules
 INHERITED(SpecMemberBase)
 public:
-  float		l_gain;		// #DEF_60:200 #MIN_0 gain on the long-time scale receiving average activation (avg_l) value as it enters into the learning threshold l_thr
-  float		l_thr_max;	// #DEF_0.9:3 maximum long-term threshold value l_thr -- prevents excessive ltd for higher threshold values
+  bool		l_thr_updn;	// use separate up vs down rate constants in computing the long-term average and threshold, which are the same under this mechanism (simpler and more elegant than previous one)
+  float		up_dt;		// #DEF_0.6 #CONDSHOW_ON_l_thr_updn rate constant for increases in avg_l and l_thr -- should be faster than dn_dt
+  float		dn_dt;		// #DEF_0.05 #CONDSHOW_ON_l_thr_updn rate constant for decreases in avg_l and l_thr -- should be slower than up_dt
+  float		l_gain;		// #DEF_60 #MIN_0 gain on the long-time scale receiving average activation (avg_l) value as it enters into the learning threshold l_thr
+  float		l_thr_max;	// #DEF_0.9 maximum long-term threshold value l_thr -- prevents excessive ltd for higher threshold values
   float		l_dt;		// #DEF_0.0001:0.1 [0.1 std for XCAL l_sq, 0.005 std for XCAL non-l_sq, .0002 for XCAL_C] #MIN_0 #MAX_1 time constant (rate) for updating the long time-scale avg_l value, used for XCAL learning rules
   float		ml_dt;		// #DEF_1;0.4;0.004 #MIN_0 #MAX_1 [1.0 std for XCAL l_sq, 0.4 for XCAL non-l_sq, 0.004 for XCAL_C] time constant (rate) for updating the medium-to-long time-scale avg_ml value, which integrates over recent history of medium (trial level) averages, used for XCAL learning rules
   float		m_dt;		// #DEF_0.1;0.017 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
@@ -3462,7 +3466,10 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
     su_act_mult = su->avg_l;	// use this for su_avg_l
   }
   else {
-    su_act_mult = xcal.thr_l_mix * su->avg_m;
+    if(xcal.lthr_su_s)
+      su_act_mult = xcal.thr_l_mix * su->avg_s;
+    else
+      su_act_mult = xcal.thr_l_mix * su->avg_m;
   }
 
   for(int i=0; i<cg->size; i++) {

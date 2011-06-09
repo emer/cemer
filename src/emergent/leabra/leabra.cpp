@@ -110,6 +110,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
+  lthr_su_s = false;
   lthr_sig = false;
   lthr_sig_gain = 4.0f;
   lthr_sig_off = 0.15f;
@@ -696,6 +697,9 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 void LeabraActAvgSpec::Initialize() {
 //   l_gain = 200.0f;
 //   l_thr_max = 3.0f;
+  l_thr_updn = false;
+  up_dt = 0.6f;
+  dn_dt = 0.05f;
   l_gain = 60.0f;
   l_thr_max = 0.9f;
   l_dt = 0.05f;
@@ -991,8 +995,6 @@ void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
   if(bias_spec.SPtr())
     ((LeabraConSpec*)bias_spec.SPtr())->SetLearnRule(net);
   if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
-//     act_avg.l_gain = 200.0f;
-//     act_avg.l_thr_max = 3.0f;
     act_avg.l_gain = 60.0f;
     act_avg.l_thr_max = 0.9f;
     act_avg.l_dt = 0.05f;
@@ -1019,7 +1021,10 @@ void LeabraUnitSpec::Init_ActAvg(LeabraUnit* u, LeabraNetwork* net) {
   u->act_avg = act.avg_init;
   u->avg_l = act.avg_init;
   u->avg_ml = act.avg_init;
-  u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
+  if(act_avg.l_thr_updn)
+    u->l_thr = u->avg_l;
+  else
+    u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
 }  
 
 void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
@@ -1142,11 +1147,20 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
 
   if(net->learn_rule != LeabraNetwork::CTLEABRA_XCAL_C) {
     float lval = u->avg_m;
-    u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml);
-    u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l);
-    u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
-    if(u->l_thr > act_avg.l_thr_max)
-      u->l_thr = act_avg.l_thr_max;
+    if(act_avg.l_thr_updn) {
+      if(lval > u->avg_l)
+	u->avg_l += act_avg.up_dt * (lval - u->avg_l);
+      else
+	u->avg_l += act_avg.dn_dt * (lval - u->avg_l);
+      u->l_thr = u->avg_l;
+    }
+    else {
+      u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml);
+      u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l);
+      u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
+      if(u->l_thr > act_avg.l_thr_max)
+	u->l_thr = act_avg.l_thr_max;
+    }
   }
 
   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL || net->ct_sravg.force_con)  {
@@ -2008,6 +2022,7 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
 
     u->avg_m += act_avg.m_dt * (u->avg_s - u->avg_m);
 
+    // todo: using avg_m here for an update happening within the trial seems very bad!!!
     float lval = u->avg_m;
     u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml); // driven by avg_m
     u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l); // driven by avg_ml
