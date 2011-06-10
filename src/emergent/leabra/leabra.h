@@ -243,9 +243,7 @@ INHERITED(SpecMemberBase)
 public:
 
   bool		lthr_su_s;	// use short-term sending average activation for the lthr modulation term, not the su_m value that has been previously used by default
-  bool		lthr_sig;	// #DEF_false use new sigmoidal lthr function -- takes product of ru and su avg_l and runs through sigmoidal function centered on specified offset, with given gain and additional offset multiplier values -- otherwise use old xcal default (multiply by su_avg_m)
-  float		lthr_sig_gain;	// #DEF_2:6 #CONDSHOW_ON_lthr_sig gain of lthr sigmoidal function
-  float		lthr_sig_off;	// #DEF_0.15:0.20 #CONDSHOW_ON_lthr_sig offset of sigmoid function -- determines the inflection point for joint su, ru avg_l activation -- this is a key param
+  bool		bcmult;		// compute multiplication of err driven and bcm threshold -- parameter-free way of integrating error-driven and bcm!
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.005 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
@@ -378,16 +376,11 @@ public:
   FunLookup	wt_sig_fun_inv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes inverse of wt sigmoidal fun
   WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating
   float		wt_sig_fun_res;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of resolution parameters for which the wt_sig_fun's were computed
-  FunLookup	xcal_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes sigmoidal xcal.lthr_sig fun
-  float		xcal_sig_fun_res; // #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of resolution parameters for which the xcal_sig_fun was computed
-  XCalLearnSpec	xcal_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of xcal parameters for which the wt_sig_fun's were computed; prevents excessive updating
 
   float		SigFmLinWt(float lin_wt) { return wt_sig_fun.Eval(lin_wt);  }
   // #CAT_Learning get contrast-enhanced weight from linear weight value
   float		LinFmSigWt(float sig_wt) { return wt_sig_fun_inv.Eval(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
-  float		XCalSigFun(float su_ru_avg_l) { return xcal_sig_fun.Eval(su_ru_avg_l);  }
-  // #CAT_Learning compute xcal sigmoidal function for lthr_sig as function of send, recv long term average activation (fast lookup)
 
   inline void 	C_Init_Weights(RecvCons* cg, Connection* cn, Unit* ru, Unit* su) {
     ConSpec::C_Init_Weights(cg, cn, ru, su); LeabraCon* lcn = (LeabraCon*)cn;
@@ -451,7 +444,10 @@ public:
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
 				 float su_avg_s, float su_avg_m, float su_act_mult);
-  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- SEP trial-wise version (requires normalization factors)
+  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
+  inline void 	C_Compute_dWt_CtLeabraXCAL_bcmult(LeabraCon* cn, LeabraUnit* ru,
+				 float su_avg_s, float su_avg_m);
+  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- bcm mult integration of err and bcm
   virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning CtLeabraXCAL weight changes
 
@@ -536,7 +532,7 @@ public:
   // #CAT_Learning set current learning rule from the network
 
   virtual void	CreateWtSigFun();
-  // #CAT_Learning create the wt_sig_fun and wt_sig_fun_inv and xcal_sig_fun
+  // #CAT_Learning create the wt_sig_fun and wt_sig_fun_inv
 
   virtual void	LogLrateSched(int epcs_per_step = 50, float n_steps=7);
   // #BUTTON #CAT_Learning establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks
@@ -3447,35 +3443,42 @@ C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
   float srs = ru->avg_s * su_avg_s;
   float srm = ru->avg_m * su_avg_m;
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-  float lthr;
-  if(xcal.lthr_sig) {
-    lthr = xcal.thr_l_mix * XCalSigFun(ru->l_thr * su_act_mult); // use lookup table
-  }
-  else {
-    lthr = su_act_mult * ru->l_thr;
-  }
+  float lthr = su_act_mult * ru->l_thr;
   float effthr = xcal.thr_m_mix * srm + lthr;
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+}
+
+inline void LeabraConSpec::
+C_Compute_dWt_CtLeabraXCAL_bcmult(LeabraCon* cn, LeabraUnit* ru,
+				 float su_avg_s, float su_avg_m) {
+  float srs = ru->avg_s * su_avg_s;
+  float srm = ru->avg_m * su_avg_m;
+  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+  cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, srm * (1.0f + xcal.thr_l_mix * (ru->l_thr - ru->avg_m)));
 }
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
   float su_avg_s = su->avg_s;
   float su_avg_m = su->avg_m;
-  float su_act_mult;
-  if(xcal.lthr_sig) {
-    su_act_mult = su->avg_l;	// use this for su_avg_l
+
+  if(xcal.bcmult) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      C_Compute_dWt_CtLeabraXCAL_bcmult((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m);
+    }
   }
   else {
+    float su_act_mult;
     if(xcal.lthr_su_s)
       su_act_mult = xcal.thr_l_mix * su->avg_s;
     else
       su_act_mult = xcal.thr_l_mix * su->avg_m;
-  }
 
-  for(int i=0; i<cg->size; i++) {
-    LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-    C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
-				     su_act_mult);
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
+				       su_act_mult);
+    }
   }
 }
 

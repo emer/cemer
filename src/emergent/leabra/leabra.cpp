@@ -111,9 +111,7 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 
 void XCalLearnSpec::Initialize() {
   lthr_su_s = false;
-  lthr_sig = false;
-  lthr_sig_gain = 4.0f;
-  lthr_sig_off = 0.15f;
+  bcmult = false;
   thr_l_mix = 0.005f;
   s_mix = 0.9f;
   d_rev = 0.10f;
@@ -190,14 +188,6 @@ void LeabraConSpec::Initialize() {
 
   wt_sig_fun_lst.off = -1.0f;   wt_sig_fun_lst.gain = -1.0f; // trigger an update
   wt_sig_fun_res = -1.0f;
-
-  xcal_sig_fun.x_range.min = 0.0f;
-  xcal_sig_fun.x_range.max = 1.0f;
-  xcal_sig_fun.res = 1.0e-5f;	// 1e-6 = 1.9Mb & 33% slower!, but 4x more accurate; 1e-5 = .19Mb
-  xcal_sig_fun.UpdateAfterEdit_NoGui();
-
-  xcal_lst.lthr_sig_off = -1.0f;   xcal_lst.lthr_sig_gain = -1.0f; // trigger an update
-  xcal_sig_fun_res = -1.0f;
 
   lrs_value = EPOCH;
   lrate_sched.interpolate = false;
@@ -333,19 +323,6 @@ void LeabraConSpec::LogLrateSched(int epcs_per_step, float n_steps) {
 }
 
 void LeabraConSpec::CreateWtSigFun() {
-  if((xcal_lst.lthr_sig_gain != xcal.lthr_sig_gain) ||
-     (xcal_lst.lthr_sig_off != xcal.lthr_sig_off) || (xcal_sig_fun_res != xcal_sig_fun.res)) {
-    xcal_sig_fun.AllocForRange();
-    int i;
-    for(i=0; i<xcal_sig_fun.size; i++) {
-      float w = xcal_sig_fun.Xval(i);
-      xcal_sig_fun[i] = WtSigSpec::SigFun(w, xcal.lthr_sig_gain, xcal.lthr_sig_off);
-    }
-    // prevent needless recomputation of this lookup table..
-    xcal_lst.lthr_sig_gain = xcal.lthr_sig_gain; xcal_lst.lthr_sig_off = xcal.lthr_sig_off;
-    xcal_sig_fun_res = xcal_sig_fun.res;
-  }
-
   if((wt_sig_fun_lst.gain == wt_sig.gain) && (wt_sig_fun_lst.off == wt_sig.off)
      && (wt_sig_fun_res == wt_sig_fun.res))
     return;
