@@ -394,11 +394,11 @@ public:
   // #DEF_true remove orphan columns when updating table schema
 
   void		SetNetwork(Network* net);
-  // #MENU #MENU_ON_Action #MENU_CONTEXT #CAT_Monitor #INIT_ARGVAL_ON_network set the overall network -- will update any sub-objects to corresponding ones on this network
+  // #MENU #MENU_ON_Action #MENU_CONTEXT #CAT_Monitor #INIT_ARGVAL_ON_network set the overall network -- also will update any sub-objects to corresponding ones on this network -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table
   void		SetDataTable(DataTable* dt);
   // #MENU #MENU_CONTEXT #CAT_Monitor #INIT_ARGVAL_ON_data set the data table used
   void		SetDataNetwork(DataTable* dt, Network* net);
-  // #CAT_Monitor set both the data table and network -- convenient for programs
+  // #CAT_Monitor set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table
 
   void		AddBlank();
   // #BUTTON #CAT_Monitor add a new blank monitor to be filled in
