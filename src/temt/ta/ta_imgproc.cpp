@@ -3943,7 +3943,7 @@ bool V1RegionSpec::InitFilters_V2() {
   v2tl_stencils.FastEl(2,ANG,ANG_135) = ANG_90;
   v2tl_stencils.FastEl(2,DIR,ANG_135) = RIGHT;
 
-  int max_cnt = 2.0f * v2_ffbo.radius * v2_ffbo.radius;
+  int max_cnt = 4 * v2_ffbo.radius * v2_ffbo.radius;
   v2ffbo_stencils.SetGeom(6, 2, max_cnt, 2, v1s_specs.n_angles, 2, v1s_specs.n_angles);
   v2ffbo_weights.SetGeom(5, max_cnt, 2, v1s_specs.n_angles, 2, v1s_specs.n_angles);
   v2ffbo_stencil_n.SetGeom(4, 2, v1s_specs.n_angles, 2, v1s_specs.n_angles);
@@ -4178,7 +4178,7 @@ bool V1RegionSpec::InitOutMatrix() {
   if(v2_filters & V2_BO) {
     v2bo_out.SetGeom(4, v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
     v2bo_lat.SetGeom(4, v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
-    if(v2_save & SAVE_DEBUG)
+    if(v2_save & SAVE_DEBUG && taMisc::gui_active)
       v2bos_out.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y*2, v1s_img_geom.x, v1s_img_geom.y);
     else
       v2bos_out.SetGeom(1,1);
