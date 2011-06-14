@@ -1798,7 +1798,7 @@ bool taMisc::RemovePath(const String& fn) {
   return d.rmpath(fn);
 }
 
-String taMisc::GetTempPath() {
+String taMisc::GetTemporaryPath() {
   return QDir::tempPath();
 }
 

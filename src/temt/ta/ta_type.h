@@ -1103,7 +1103,7 @@ public:
   // #CAT_File remove subdirectory in current working directory -- must be empty -- returns success
   static bool 	RemovePath(const String& path);
   // #CAT_File remove full path relative to current working directory (or absolute path) including all *empty* intermediate directories along the way -- only removes directories that are empty -- returns success
-  static String	GetTempPath();
+  static String GetTemporaryPath();
   // #CAT_File return path to system temporary file directory (e.g., /tmp)
 #endif
   static String	FindFileOnPath(String_PArray& paths, const char* fname);
