@@ -1057,7 +1057,7 @@ protected:
 };
 
 class TA_API V2BordOwnStencilSpec : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership cells, which compute T and L junctions on top of V1 inputs
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership stencils for neighborhood connectivity
 INHERITED(taOBase)
 public:
   float		gain;		// #DEF_4 gain on strength of ff bo inputs -- multiplies average netinput values from ffbo stencils
@@ -1210,7 +1210,7 @@ public:
   ////////// V2
   V2Filters	v2_filters;	// which V2 filtering to perform
   V2BordOwnSpec	v2_specs;	// specs for V2 filtering
-  V2BordOwnStencilSpec	v2_ffbo;// specs for V2 feed-forward border-ownership computation
+  V2BordOwnStencilSpec	v2_ffbo; // specs for V2 feed-forward border-ownership computation
   DataSave	v2_save;	// how to save the V2 complex outputs for the current time step in the data table
 
   SpatIntegFilters spat_integ;	// what to perform spatial integration over
