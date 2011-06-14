@@ -1084,13 +1084,27 @@ public:
   // #CAT_File get directory component from full path, n_up is number of directories to go up from the final directory
   static String GetHomePath();
   // #CAT_File get user's home directory path
-  static bool 	FileExists(const String& fname);
-  // #CAT_File returns true if the file exists (fname can have relative form)
+  static bool 	FileExists(const String& filename);
+  // #CAT_File returns true if the file exists in current working directory (or absolute path)
 #ifndef NO_TA_BASE
+  static bool 	RenameFile(const String& old_filename, const String& new_filename);
+  // #CAT_File rename file from old to new name in current working directory (or absolute path) -- returns success
+  static bool 	RemoveFile(const String& filename);
+  // #CAT_File remove file with given name in current working directory (or absolute path) -- returns success
   static String GetCurrentPath();
   // #CAT_File get current working directory path
   static bool 	SetCurrentPath(const String& path);
-  // #CAT_File set current working directory to given path; returns success
+  // #CAT_File set current working directory to given path -- returns success
+  static bool 	MakeDir(const String& dir);
+  // #CAT_File make new subdirectory in current working directory -- returns success
+  static bool 	MakePath(const String& path);
+  // #CAT_File make full path relative to current working directory (or absolute path) including all intermediate directories along the way as needed
+  static bool 	RemoveDir(const String& dir);
+  // #CAT_File remove subdirectory in current working directory -- must be empty -- returns success
+  static bool 	RemovePath(const String& path);
+  // #CAT_File remove full path relative to current working directory (or absolute path) including all *empty* intermediate directories along the way -- only removes directories that are empty -- returns success
+  static String	GetTempPath();
+  // #CAT_File return path to system temporary file directory (e.g., /tmp)
 #endif
   static String	FindFileOnPath(String_PArray& paths, const char* fname);
   // #CAT_File helper function: try to find file fnm in one of the load_include paths -- returns complete path to file (or empty str if not found)

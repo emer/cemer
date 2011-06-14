@@ -3296,19 +3296,30 @@ void V1ComplexSpec::UpdateAfterEdit_impl() {
 }
 
 void V2BordOwnSpec::Initialize() {
+  lat_itrs = 10;
+  lat_dt = 0.5f;
+  act_thr = 0.1f;
+  ambig_gain = 0.2f;
   l_t_inhib_thr = 0.2f;
-  tl_bo_thr = 0.1f;
-  ambig_gain = 0.5f;
   depths_out = 1;
   depth_idx = -1;
 
-  ffbo_gain = 1.0f;
-  ffbo_max = 0.2f;
-  radius = 6;
+  ffbo_gain = 1.0f - ambig_gain;
+}
+
+void V2BordOwnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  ffbo_gain = 1.0f - ambig_gain;
+}
+
+void V2BordOwnStencilSpec::Initialize() {
+  gain = 4.0f;
+  radius = 4;
   t_on = true;
-  opp_on = true;
+  opp_on = false;
   ang_sig = 0.5f;
-  dist_sig = 0.5f;
+  dist_sig = 0.8f;
   weak_mag = 0.5f;
   con_thr = 0.2f;
 }
@@ -3398,6 +3409,7 @@ void V1RegionSpec::UpdateAfterEdit_impl() {
   v1ls_kwta.UpdateAfterEdit_NoGui();
   v1ls_neigh_inhib.UpdateAfterEdit_NoGui();
   v2_specs.UpdateAfterEdit_NoGui();
+  v2_ffbo.UpdateAfterEdit_NoGui();
   // UpdateGeom is called in parent..
 }
 
@@ -3551,9 +3563,9 @@ void V1RegionSpec::UpdateGeom() {
 //      v1c_img_geom = (((v1sg_img_geom - 2 * v1c_specs.spat_border)-1) / v1c_specs.spat_spacing) + 1;
   }
 
-  if(v2_filters & V2_BO) {
-    v2_filters = (V2Filters) (v2_filters | V2_TL); // must be set
-  }
+//   if(v2_filters & V2_BO) {
+//     v2_filters = (V2Filters) (v2_filters | V2_TL); // must be set
+//   }
   if(v2_filters & V2_TL) {
     v1c_filters = (ComplexFilters) (v1c_filters | (LEN_SUM | END_STOP)); // must be set
   }
@@ -3931,35 +3943,35 @@ bool V1RegionSpec::InitFilters_V2() {
   v2tl_stencils.FastEl(2,ANG,ANG_135) = ANG_90;
   v2tl_stencils.FastEl(2,DIR,ANG_135) = RIGHT;
 
-  int max_cnt = v2_specs.radius * v2_specs.radius * 2;
-  v2ffbo_stencils.SetGeom(5, 2, max_cnt, v1s_specs.n_angles, 2, v1s_specs.n_angles);
-  v2ffbo_weights.SetGeom(4, max_cnt, v1s_specs.n_angles, 2, v1s_specs.n_angles);
-  v2ffbo_stencil_n.SetGeom(3, v1s_specs.n_angles, 2, v1s_specs.n_angles);
-  v2ffbo_norms.SetGeom(3, v1s_specs.n_angles, 2, v1s_specs.n_angles);
+  int max_cnt = 2.0f * v2_ffbo.radius * v2_ffbo.radius;
+  v2ffbo_stencils.SetGeom(6, 2, max_cnt, 2, v1s_specs.n_angles, 2, v1s_specs.n_angles);
+  v2ffbo_weights.SetGeom(5, max_cnt, 2, v1s_specs.n_angles, 2, v1s_specs.n_angles);
+  v2ffbo_stencil_n.SetGeom(4, 2, v1s_specs.n_angles, 2, v1s_specs.n_angles);
+  v2ffbo_norms.SetGeom(4, 2, v1s_specs.n_angles, 2, v1s_specs.n_angles);
   TwoDCoord suc;			// send coords
   for(int rang_dx = 0; rang_dx < v1s_specs.n_angles; rang_dx++) {
     for(int rdir = 0; rdir < 2; rdir++) {
       for(int sang_dx = 0; sang_dx < v1s_specs.n_angles; sang_dx++) {
-	int cnt = 0;
-	for(suc.y = -v2_specs.radius; suc.y <= v2_specs.radius; suc.y++) {
-	  for(suc.x = -v2_specs.radius; suc.x <= v2_specs.radius; suc.x++) {
-	    float netwt = 0.0f;
-	    for(int sdir = 0; sdir < 2; sdir++) { // integrate over sending directions
-	      netwt += V2FFBoWt(suc, rang_dx, sang_dx, rdir, sdir);
-	    }
-	    if(netwt < v2_specs.con_thr) continue;
-	    v2ffbo_stencils.FastEl(X, cnt, rang_dx, rdir, sang_dx) = suc.x;
-	    v2ffbo_stencils.FastEl(Y, cnt, rang_dx, rdir, sang_dx) = suc.y;
-	    v2ffbo_weights.FastEl(cnt, rang_dx, rdir, sang_dx) = netwt;
-	    cnt++;
-	    if(cnt >= max_cnt) {
-	      taMisc::Error("cnt >= max_cnt:", String(max_cnt),"in V2FFBo stencil alloc -- programmer error -- please submit bug report");
-	      return false;
+	for(int sdir = 0; sdir < 2; sdir++) { // integrate over sending directions
+	  int cnt = 0;
+	  for(suc.y = -v2_ffbo.radius; suc.y <= v2_ffbo.radius; suc.y++) {
+	    for(suc.x = -v2_ffbo.radius; suc.x <= v2_ffbo.radius; suc.x++) {
+	      float netwt = V2FFBoWt(suc, rang_dx, sang_dx, rdir, sdir);
+	      if(netwt < v2_ffbo.con_thr) continue;
+	      v2ffbo_stencils.FastEl(X, cnt, sdir, sang_dx, rdir, rang_dx) = suc.x;
+	      v2ffbo_stencils.FastEl(Y, cnt, sdir, sang_dx, rdir, rang_dx) = suc.y;
+	      v2ffbo_weights.FastEl(cnt, sdir, sang_dx, rdir, rang_dx) = netwt;
+	      cnt++;
+	      if(cnt >= max_cnt) {
+		taMisc::Error("cnt >= max_cnt:", String(max_cnt),"in V2FFBo stencil alloc -- programmer error -- please submit bug report");
+		return false;
+	      }
 	    }
 	  }
+	  v2ffbo_stencil_n.FastEl(sdir, sang_dx, rdir, rang_dx) = cnt;
+	  if(cnt > 0)
+	    v2ffbo_norms.FastEl(sdir, sang_dx, rdir, rang_dx) = 1.0f / (float)cnt;
 	}
-	v2ffbo_stencil_n.FastEl(rang_dx, rdir, sang_dx) = cnt;
-	v2ffbo_norms.FastEl(rang_dx, rdir, sang_dx) = v2_specs.ffbo_gain / (float)cnt;
       }
     }
   }
@@ -3982,14 +3994,14 @@ float V1RegionSpec::V2FFBoWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir,
   if(dang_n >= 4) dang_n_pi = 8 - dang_n;
   int abs_dang_n_pi = dang_n_pi < 0 ? -dang_n_pi : dang_n_pi;
 
-  if(dang_n == 0) return 0.0f;	// no self-line guys
-  if(!v2_specs.opp_on && dang_n == 4) return 0.0f;	// no opposite angle cons
+//   if(dang_n == 0) return 0.0f;	// no self-line guys
+  if(!v2_ffbo.opp_on && dang_n == 4) return 0.0f;	// no opposite angle cons
 
   TwoDCoord del = suc;		// assume 0,0 ruc
   float dst = del.Mag();
-  if(dst > (float)v2_specs.radius) return 0.0f;
+  if(dst > (float)v2_ffbo.radius) return 0.0f;
   if(dst == 0.0f) return 0.0f;	// no self con
-  float nrmdst = dst / (float)v2_specs.radius;
+  float nrmdst = dst / (float)v2_ffbo.radius;
 
   float gang = atan2f(del.y, del.x); // group angle -- 0..pi or -pi
   if(gang < 0.0f) gang += 2.0f * taMath_float::pi; // keep it positive
@@ -4023,15 +4035,15 @@ float V1RegionSpec::V2FFBoWt(TwoDCoord& suc, int rang_dx, int sang_dx, int rdir,
   if(gtang < -taMath_float::pi * 0.5f){ gtang += taMath_float::pi; op_side = true; }
 
   float eff_mag = 1.0f;
-  if(abs_dang_pi > 0.501f * taMath_float::pi) eff_mag = v2_specs.weak_mag;
+  if(abs_dang_pi > 0.501f * taMath_float::pi) eff_mag = v2_ffbo.weak_mag;
 
-  float netwt = eff_mag * taMath_float::gauss_den_nonorm(gtang, v2_specs.ang_sig) *
-    taMath_float::gauss_den_nonorm(nrmdst, v2_specs.dist_sig);
+  float netwt = eff_mag * taMath_float::gauss_den_nonorm(gtang, v2_ffbo.ang_sig) *
+    taMath_float::gauss_den_nonorm(nrmdst, v2_ffbo.dist_sig);
 
   if(op_side)
     netwt *= op_mag;
 
-  if(v2_specs.t_on && abs_dang_n_pi == 2 && dst <= 2.9f) {
+  if(v2_ffbo.t_on && abs_dang_n_pi == 2 && dst <= 2.9f) {
     float grang = gang - rang;
     if(fabsf(grang - (1.5f * taMath_float::pi)) < .1f || 
        fabsf(grang - (-0.5f * taMath_float::pi)) < .1f) {
@@ -4157,17 +4169,24 @@ bool V1RegionSpec::InitOutMatrix() {
   if(v2_filters & V2_TL) {
     v2tl_out.SetGeom(4, v1c_feat_geom.x, 4, v1c_img_geom.x, v1c_img_geom.y);
     v2tl_max.SetGeom(2, v1c_img_geom.x, v1c_img_geom.y);
-    if(v2_filters & V2_BO) {
-      v2bo_out.SetGeom(4, v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
-    }
-    else {
-      v2bo_out.SetGeom(1,1);
-    }
   }
   else {
     v2tl_out.SetGeom(1,1);
     v2tl_max.SetGeom(1,1);
+  }
+
+  if(v2_filters & V2_BO) {
+    v2bo_out.SetGeom(4, v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
+    v2bo_lat.SetGeom(4, v1c_feat_geom.x, 2, v1c_img_geom.x, v1c_img_geom.y);
+    if(v2_save & SAVE_DEBUG)
+      v2bos_out.SetGeom(4, v1s_feat_geom.x, v1s_feat_geom.y*2, v1s_img_geom.x, v1s_img_geom.y);
+    else
+      v2bos_out.SetGeom(1,1);
+  }
+  else {
     v2bo_out.SetGeom(1,1);
+    v2bo_lat.SetGeom(1,1);
+    v2bos_out.SetGeom(1,1);
   }
 
   ////////////	Spat Integ
@@ -5134,12 +5153,22 @@ bool V1RegionSpec::V2Filter() {
   threads.min_units = 1;
   threads.nibble_chunk = 1;	// small chunks
 
-  ThreadImgProcCall ip_call_v2tl((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_TL_thread);
-  threads.Run(&ip_call_v2tl, n_run);
+  if(v2_filters & V2_TL) {
+    ThreadImgProcCall ip_call_v2tl((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_TL_thread);
+    threads.Run(&ip_call_v2tl, n_run);
+  }
 
   if(v2_filters & V2_BO) {
-    ThreadImgProcCall ip_call_v2bo((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_BO_thread);
-    threads.Run(&ip_call_v2bo, n_run);
+    if(v2_save & SAVE_DEBUG && taMisc::gui_active)
+      v2bos_out.InitVals(0.0f);
+    ThreadImgProcCall ip_call_v2ffbo((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_FFBO_thread);
+    threads.Run(&ip_call_v2ffbo, n_run);
+    ThreadImgProcCall ip_call_v2latbo((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_LatBO_thread);
+    ThreadImgProcCall ip_call_v2latbointeg((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_LatBOinteg_thread);
+    for(int li=0; li < v2_specs.lat_itrs; li++) {
+      threads.Run(&ip_call_v2latbo, n_run);
+      threads.Run(&ip_call_v2latbointeg, n_run);
+    }
   }
 
 //   if(v2_kwta.on) {
@@ -5218,54 +5247,152 @@ void V1RegionSpec::V2Filter_TL_thread(int v1c_idx, int thread_no) {
   v2tl_max.FastEl(cc.x, cc.y) = MAX(max_lval, max_tval);
 }
 
-void V1RegionSpec::V2Filter_BO_thread(int v1c_idx, int thread_no) {
+// todo: seems like it could do more nonlinear MIN/MAX kind of stuff for integrating?
+// * diff radii for straight vs. non-straight cases!
+// * multiple integration for ffstep???
+void V1RegionSpec::V2Filter_FFBO_thread(int v1s_idx, int thread_no) {
   TwoDCoord cc;			// complex coords
-  cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
+  cc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
-  float max_tlval = v2tl_max.FastEl(cc.x, cc.y);
+  float dirvals[2];
 
   TwoDCoord lc;
   for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-    float lsedge = v1ls_out.FastEl(ang, 0, cc.x, cc.y);
-    if(max_tlval < v2_specs.tl_bo_thr) {
-      for(int dir=0; dir < 2; dir++) {		      // direction
-	if(lsedge < v2_specs.tl_bo_thr) {
-	  v2bo_out.FastEl(ang, dir, cc.x, cc.y) = v2_specs.ambig_gain * lsedge;	// just set as ambig
+    float lsedge = v1pi_out_r.FastEl(ang, 0, cc.x, cc.y);
+    float dirmax = 0.0f;
+    int maxdir = -1;
+    for(int dir=0; dir < 2; dir++) {		      // direction
+      if(lsedge < v2_specs.act_thr) {
+	v2bo_out.FastEl(ang, dir, cc.x, cc.y) = lsedge;
+	continue;
+      }
+      float dirval = 0.0f;
+      for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+	float sedge = v1s_out_r.FastEl(ang, polclr, cc.x, cc.y);
+	int pol = polclr % 2;	       // polarity
+	if(sedge < v2_specs.act_thr) {
+	  if(v2_save & SAVE_DEBUG && taMisc::gui_active)
+	    v2bos_out.FastEl(ang, polclr*2 + dir, cc.x, cc.y) = sedge;
+	  continue;
 	}
-	else {
-	  // compute netinput from ffbo stencils
-	  float netin = 0.0f;
-	  for(int sang = 0; sang < v1s_specs.n_angles; sang++) { // sending angles
-	    int cnt = v2ffbo_stencil_n.FastEl(ang, dir, sang);
+	// compute netinput from ffbo stencils
+	float netin = 0.0f;
+	for(int sang = 0; sang < v1s_specs.n_angles; sang++) { // sending angles
+	  for(int sdir = 0; sdir < 2; sdir++) { // sending dir
+	    int poloff = 0;
+	    if(sdir != dir)
+	      poloff = (pol == 1) ? -1 : 1;
+	    int spolclr = polclr + poloff;
+	    if(sang == ang && spolclr == polclr) continue;       // no info from same guy
+	    int cnt = v2ffbo_stencil_n.FastEl(sdir, sang, dir, ang);
 	    float snetin = 0.0f;
 	    for(int i=0; i<cnt; i++) {
-	      lc.x = cc.x + v2ffbo_stencils.FastEl(X, i, ang, dir, sang);
-	      lc.y = cc.y + v2ffbo_stencils.FastEl(Y, i, ang, dir, sang);
-	      if(lc.WrapClip(wrap, v1c_img_geom)) {
+	      lc.x = cc.x + v2ffbo_stencils.FastEl(X, i, sdir, sang, dir, ang);
+	      lc.y = cc.y + v2ffbo_stencils.FastEl(Y, i, sdir, sang, dir, ang);
+	      if(lc.WrapClip(wrap, v1s_img_geom)) {
 		if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
 	      }
-	      float lsv = v1ls_out.FastEl(sang, 0, lc.x, lc.y);
-	      snetin += lsv * v2ffbo_weights.FastEl(i, ang, dir, sang);
+	      float lsv = v1s_out_r.FastEl(sang, spolclr, lc.x, lc.y);
+	      snetin += lsv * v2ffbo_weights.FastEl(i, sdir, sang, dir, ang);
 	    }
-	    snetin *= v2ffbo_norms.FastEl(ang, dir, sang);
+	    snetin *= v2_ffbo.gain * v2ffbo_norms.FastEl(sdir, sang, dir, ang);
 	    netin += snetin;
 	  }
-	  if(netin > v2_specs.ffbo_max) netin = v2_specs.ffbo_max;
-	  v2bo_out.FastEl(ang, dir, cc.x, cc.y) = v2_specs.ambig_gain * lsedge + netin;
 	}
+	float net_gain = v2_specs.ambig_gain + v2_specs.ffbo_gain * netin;
+	float boval = net_gain * sedge;
+	if(boval > sedge) boval = sedge;
+	if(v2_save & SAVE_DEBUG && taMisc::gui_active)
+	  v2bos_out.FastEl(ang, polclr*2 + dir, cc.x, cc.y) = boval;
+	dirval = MAX(dirval, boval);
+      }
+      if(dirval > dirmax) {
+	maxdir = dir;
+	dirmax = dirval;
       }
     }
-    else {
-      for(int dir=0; dir < 2; dir++) {		      // direction
-	float tval = v2tl_out.FastEl(ang, dir, cc.x, cc.y);
-	float lval = v2tl_out.FastEl(ang, 2+dir, cc.x, cc.y);
-	float mxtl = MAX(tval, lval);
-	float ls_gain = (1.0f - max_tlval) * v2_specs.ambig_gain;
-	v2bo_out.FastEl(ang, dir, cc.x, cc.y) = ls_gain * lsedge + mxtl;
+    if(lsedge < v2_specs.act_thr)
+      continue;
+    for(int dir=0; dir < 2; dir++) {		      // direction
+      if(dir == maxdir) {
+	float bo = dirmax;
+ 	if(bo > lsedge) bo = lsedge;
+	v2bo_out.FastEl(ang, dir, cc.x, cc.y) = bo;
+      }
+      else {
+	v2bo_out.FastEl(ang, dir, cc.x, cc.y) = v2_specs.ambig_gain * lsedge;
       }
     }
   }
 }
+
+void V1RegionSpec::V2Filter_LatBO_thread(int v1c_idx, int thread_no) {
+  TwoDCoord cc;			// complex coords
+  cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
+
+  TwoDCoord lc;
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+    float lsedge = v1pi_out_r.FastEl(ang, 0, cc.x, cc.y);
+    if(lsedge < v2_specs.act_thr) {
+      continue;
+    }
+    for(int dir=0; dir < 2; dir++) {		      // direction
+      float netin = 0.0f;
+      int cnt = v2ffbo_stencil_n.FastEl(dir, ang, dir, ang);
+      float snetin = 0.0f;
+      for(int i=0; i<cnt; i++) {
+	lc.x = cc.x + v2ffbo_stencils.FastEl(X, i, dir, ang, dir, ang);
+	lc.y = cc.y + v2ffbo_stencils.FastEl(Y, i, dir, ang, dir, ang);
+	if(lc.WrapClip(wrap, v1c_img_geom)) {
+	  if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+	}
+	float obo = v2bo_out.FastEl(ang, dir, lc.x, lc.y);
+	if(obo > 2.0f * v2_specs.ambig_gain) // non-ambig!
+	  snetin += obo * v2ffbo_weights.FastEl(i, dir, ang, dir, ang);
+      }
+      snetin *= v2_ffbo.gain * v2ffbo_norms.FastEl(dir, ang, dir, ang);
+      v2bo_lat.FastEl(ang, dir, cc.x, cc.y) = snetin;
+    }
+  }
+}
+
+void V1RegionSpec::V2Filter_LatBOinteg_thread(int v1c_idx, int thread_no) {
+  TwoDCoord cc;			// complex coords
+  cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
+
+  TwoDCoord lc;
+  float dirvals[2];
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+    float lsedge = v1pi_out_r.FastEl(ang, 0, cc.x, cc.y);
+    if(lsedge < v2_specs.act_thr) {
+      continue;
+    }
+    float dirmax = 0.0f;
+    int maxdir = -1;
+    for(int dir=0; dir < 2; dir++) {		      // direction
+      float dirval = v2bo_lat.FastEl(ang, dir, cc.x, cc.y);
+      dirvals[dir] = dirval;
+      if(dirval > dirmax) {
+	maxdir = dir;
+	dirmax = dirval;
+      }
+    }
+    if(maxdir >= 0) {
+      int othdir = (maxdir == 0) ? 1 : 0;
+      if(dirmax - dirvals[othdir] < v2_specs.ambig_gain) {// close
+	float inc = v2_specs.lat_dt * dirvals[othdir];
+	float& bo = v2bo_out.FastEl(ang, othdir, cc.x, cc.y);
+	bo += inc;
+	if(bo > lsedge) bo = lsedge;
+      }
+      float inc = v2_specs.lat_dt * dirmax;
+      float& bo = v2bo_out.FastEl(ang, maxdir, cc.x, cc.y);
+      bo += inc;
+      if(bo > lsedge) bo = lsedge;
+    }
+  }
+}
+
 
 /////////////////////////////////////////////////////////////////////
 //		Spatial Integration
@@ -5898,40 +6025,7 @@ bool V1RegionSpec::V2OutputToTable(DataTable* dtab, bool fmt_only) {
   TwoDCoord cc;		// complex coords
   int idx;
 
-  {
-    col = data_table->FindMakeColName(name + "_v2bo", idx, DataTable::VT_FLOAT, 4,
-		      v1c_feat_geom.x, v2_specs.depths_out * 2, v1c_img_geom.x, v1c_img_geom.y);
-    if(!fmt_only) {
-      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
-      if(v2_specs.depths_out == 1) {
-	dout->CopyFrom(&v2bo_out);
-      }
-      else {
-	if(v2_specs.depth_idx >= 0 && v2_specs.depth_idx < v2_specs.depths_out) {
-	  dout->InitVals(0.0f);	// got to clear it b/c not setting everything
-	}
-	for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
-	  for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
-	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-	      for(int dir=0; dir < 2; dir++) {		      // direction
-		float tval = v2bo_out.FastEl(ang, dir, cc.x, cc.y);
-		if(v2_specs.depth_idx >= 0 && v2_specs.depth_idx < v2_specs.depths_out) {
-		  dout->FastEl(ang, v2_specs.depth_idx * 2 + dir, cc.x, cc.y) = tval;
-		}
-		else {		// all
-		  for(int depth=0; depth < v2_specs.depths_out; depth++) {
-		    dout->FastEl(ang, depth * 2 + dir, cc.x, cc.y) = tval;
-		  }
-		}
-	      }
-	    }
-	  }
-	}
-      }
-    }
-  }
-
-  if(!(v2_filters & V2_BO) || v2_save & SAVE_DEBUG) { // save TL only if only thing requested
+  if(v2_filters & V2_TL) {
     if(v2_save & SEP_MATRIX) {
       {
 	col = data_table->FindMakeColName(name + "_v2t", idx, DataTable::VT_FLOAT, 4,
@@ -5974,6 +6068,47 @@ bool V1RegionSpec::V2OutputToTable(DataTable* dtab, bool fmt_only) {
       if(!fmt_only) {
 	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
 	dout->CopyFrom(&v2tl_out);
+      }
+    }
+  }
+
+  if(v2_filters & V2_BO) { 
+    col = data_table->FindMakeColName(name + "_v2bo", idx, DataTable::VT_FLOAT, 4,
+		      v1c_feat_geom.x, v2_specs.depths_out * 2, v1c_img_geom.x, v1c_img_geom.y);
+    if(!fmt_only) {
+      float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+      if(v2_specs.depths_out == 1) {
+	dout->CopyFrom(&v2bo_out);
+      }
+      else {
+	if(v2_specs.depth_idx >= 0 && v2_specs.depth_idx < v2_specs.depths_out) {
+	  dout->InitVals(0.0f);	// got to clear it b/c not setting everything
+	}
+	for(cc.y = 0; cc.y < v1c_img_geom.y; cc.y++) {
+	  for(cc.x = 0; cc.x < v1c_img_geom.x; cc.x++) {
+	    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+	      for(int dir=0; dir < 2; dir++) {		      // direction
+		float tval = v2bo_out.FastEl(ang, dir, cc.x, cc.y);
+		if(v2_specs.depth_idx >= 0 && v2_specs.depth_idx < v2_specs.depths_out) {
+		  dout->FastEl(ang, v2_specs.depth_idx * 2 + dir, cc.x, cc.y) = tval;
+		}
+		else {		// all
+		  for(int depth=0; depth < v2_specs.depths_out; depth++) {
+		    dout->FastEl(ang, depth * 2 + dir, cc.x, cc.y) = tval;
+		  }
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    if(v2_save & SAVE_DEBUG && taMisc::gui_active) { // save v2bos
+      col = data_table->FindMakeColName(name + "_v2bos", idx, DataTable::VT_FLOAT, 4,
+		v1s_feat_geom.x, v1s_feat_geom.y*2, v1s_img_geom.x, v1s_img_geom.y);
+      if(!fmt_only) {
+	float_MatrixPtr dout; dout = (float_Matrix*)col->GetValAsMatrix(-1);
+	dout->CopyFrom(&v2bos_out);
       }
     }
   }
@@ -6344,6 +6479,32 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
 	  ic.y = brd.y + v1es_stencils.FastEl(Y,orthdx,OFF,dir,ang);
 	  if(ic.WrapClip(true, max_sz)) continue;
 	  mat->FastEl(ic.x,ic.y) = -1.0f;
+	}
+      }
+    }
+  }
+
+  if(v2_filters & V2_BO) {
+    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+      for(int dir=0; dir < 2; dir++) {		      // direction
+	for(int sang = 0; sang < v1s_specs.n_angles; sang++) { // angles
+	  for(int sdir=0; sdir < 2; sdir++) {		      // direction
+	    graph_data->AddBlankRow();
+	    nmda->SetValAsString("V2BO Ang: " + String(AngleDeg(ang))
+				 + " Dir: " + String(dir) 
+				 + " SAng: " + String(AngleDeg(sang))
+				 + " SDir: " + String(sdir), -1);
+	    float_MatrixPtr mat; mat = (float_Matrix*)matda->GetValAsMatrix(-1);
+	    mat->FastEl(brd.x,brd.y) = -0.5f;
+	    TwoDCoord ic;
+	    int cnt = v2ffbo_stencil_n.FastEl(sdir, sang, dir, ang);
+	    for(int i=0; i<cnt; i++) {
+	      ic.x = brd.x + v2ffbo_stencils.FastEl(X, i, sdir, sang, dir, ang);
+	      ic.y = brd.y + v2ffbo_stencils.FastEl(Y, i, sdir, sang, dir, ang);
+	      if(ic.WrapClip(true, max_sz)) continue;
+	      mat->FastEl(ic.x,ic.y) = v2ffbo_weights.FastEl(i, sdir, sang, dir, ang);
+	    }
+	  }
 	}
       }
     }

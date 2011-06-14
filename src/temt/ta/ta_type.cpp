@@ -1760,6 +1760,16 @@ bool taMisc::FileExists(const String& fname) {
 }
 
 #ifndef NO_TA_BASE
+bool taMisc::RenameFile(const String& old_fn, const String& new_fn) {
+  QDir d;
+  return d.rename(old_fn, new_fn);
+}
+
+bool taMisc::RemoveFile(const String& fn) {
+  QDir d;
+  return d.remove(fn);
+}
+
 String taMisc::GetCurrentPath() {
   return QDir::currentPath();
 }
@@ -1767,6 +1777,32 @@ String taMisc::GetCurrentPath() {
 bool taMisc::SetCurrentPath(const String& path) {
   return QDir::setCurrent(path);
 }
+
+bool taMisc::MakeDir(const String& fn) {
+  QDir d;
+  return d.mkdir(fn);
+}
+
+bool taMisc::MakePath(const String& fn) {
+  QDir d;
+  return d.mkpath(fn);
+}
+
+bool taMisc::RemoveDir(const String& fn) {
+  QDir d;
+  return d.rmdir(fn);
+}
+
+bool taMisc::RemovePath(const String& fn) {
+  QDir d;
+  return d.rmpath(fn);
+}
+
+String taMisc::GetTempPath() {
+  return QDir::tempPath();
+}
+
+
 #endif
 
 // try to find file fnm in one of the include paths -- returns complete path to file

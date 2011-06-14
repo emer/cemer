@@ -1039,25 +1039,39 @@ class TA_API V2BordOwnSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership cells, which compute T and L junctions on top of V1 inputs
 INHERITED(taOBase)
 public:
+  int		lat_itrs;	// #DEF_10 how many iterations of lateral propagation to perform?
+  float		lat_dt;		// #DEF_0.5 integration rate for lateral propagation
+  float		act_thr;	// #DEF_0.1 general activity threshold for doing V2 BO computations -- if below this value, just set ambiguously -- also threshold for using T,L junction output to drive BO
+  float		ambig_gain;	// #DEF_0.2 gain multiplier for ambiguous length sum activation -- also serves as a threshold for communicating ambiguity
   float		l_t_inhib_thr;	// #DEF_0.2 threshold on max L-junction activity within a group to then inhibit T junctions within the same group -- don't want weak L's just weakening the T's
-  float		tl_bo_thr;	// #DEF_0.1 threshold for using T,L junction output to drive BO
-  float		ambig_gain;	// #DEF_0.5 gain multiplier for ambiguous length sum activation, where no T or L signals are available
   int		depths_out;	// #MIN_1 number of depth replications of the V2 BO output -- just replicates the output this many times in the y dimension of the unit group output
   int		depth_idx;	// output only this specific depth index -- -1 = all
 
-  float		ffbo_gain;	// #DEF_1:5 gain on strength of ff bo inputs -- multiplies average netinput values from ffbo stencils
-  float		ffbo_max;	// #DEF_0.2 maximum net effect of ffbo on inputs -- clip above this level
-  int		radius;		// #DEF_2:10 how far to connect in any one direction (in unit group units)
+  float		ffbo_gain;	// #READ_ONLY 1-ambig_gain
+
+  void 	Initialize();
+  void	Destroy() { };
+  TA_SIMPLE_BASEFUNS(V2BordOwnSpec);
+protected:
+  void 	UpdateAfterEdit_impl();
+};
+
+class TA_API V2BordOwnStencilSpec : public taOBase {
+  // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v2 border ownership cells, which compute T and L junctions on top of V1 inputs
+INHERITED(taOBase)
+public:
+  float		gain;		// #DEF_4 gain on strength of ff bo inputs -- multiplies average netinput values from ffbo stencils
+  int		radius;		// #DEF_3:8 for all curved angles, how far to connect in any one direction (in unit group units)
   bool		t_on;		// #DEF_true turn on the special T junction detector weights -- only for a 90 degree angle perpendicular, behind the border edge
-  bool		opp_on;		// #DEF_true make connections from opponent border unit (same orientation, opposite BO coding) -- can help to resolve long rectalinear elements
+  bool		opp_on;		// #DEF_false make connections from opponent border unit (same orientation, opposite BO coding) -- can help to resolve long rectalinear elements
   float		ang_sig;	// #DEF_0.5 sigma for gaussian around target angle -- same for all
-  float		dist_sig;	// #DEF_0.5 sigma for gaussian distance -- for other angles (delta-angle != 0) -- should in general go shorter than for the linear case
+  float		dist_sig;	// #DEF_0.8 sigma for gaussian distance -- for other angles (delta-angle != 0) -- should in general go shorter than for the linear case
   float		weak_mag;	// #DEF_0.5 weaker magnitude -- applies to acute angle intersections
   float		con_thr;	// #DEF_0.2 threshold for making a connection -- weight values below this are not even connected
 
   void 	Initialize();
   void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(V2BordOwnSpec);
+  TA_SIMPLE_BASEFUNS(V2BordOwnStencilSpec);
 };
 
 class TA_API VisSpatIntegSpec : public taOBase {
@@ -1196,6 +1210,7 @@ public:
   ////////// V2
   V2Filters	v2_filters;	// which V2 filtering to perform
   V2BordOwnSpec	v2_specs;	// specs for V2 filtering
+  V2BordOwnStencilSpec	v2_ffbo;// specs for V2 feed-forward border-ownership computation
   DataSave	v2_save;	// how to save the V2 complex outputs for the current time step in the data table
 
   SpatIntegFilters spat_integ;	// what to perform spatial integration over
@@ -1292,7 +1307,9 @@ public:
   ///////////////////  V2 Output ////////////////////////
   float_Matrix	v2tl_out;	 // #READ_ONLY #NO_SAVE V2 T and L junction detector output [feat.x][4][v1c_img.x][v1c_img.y]
   float_Matrix	v2tl_max;	 // #READ_ONLY #NO_SAVE max activation over v2tl_out -- [v1c_img.x][v1c_img.y]
-  float_Matrix	v2bo_out;	 // #READ_ONLY #NO_SAVE V2 border ownership output output -- integrates T and L with ambiguous edge signals, to provide input suitable for network settling dynamics [feat.x][2][v1c_img.x][v1c_img.y]
+  float_Matrix	v2bos_out;	 // #READ_ONLY #NO_SAVE V2 border ownership on simple inputs output -- integrates T and L with ambiguous edge signals, to provide input suitable for network settling dynamics [feat.x][2][v1c_img.x][v1c_img.y]
+  float_Matrix	v2bo_out;	 // #READ_ONLY #NO_SAVE V2 border ownership output -- integrates T and L with ambiguous edge signals, to provide input suitable for network settling dynamics [feat.x][2][v1c_img.x][v1c_img.y]
+  float_Matrix	v2bo_lat;	 // #READ_ONLY #NO_SAVE V2 border ownership lateral integration
 
   ///////////////////  SI Spatial Integration Output ////////////////////////
   float_Matrix	si_gci;	 	// #READ_ONLY #NO_SAVE inhibitory conductances, for computing kwta
@@ -1414,8 +1431,12 @@ protected:
   // do V2 filters -- dispatch threads
   virtual void 	V2Filter_TL_thread(int v1c_idx, int thread_no);
   // t&l junctions
-  virtual void 	V2Filter_BO_thread(int v1c_idx, int thread_no);
-  // border ownership output
+  virtual void 	V2Filter_FFBO_thread(int v1c_idx, int thread_no);
+  // feedforward border ownership computation
+  virtual void 	V2Filter_LatBO_thread(int v1s_idx, int thread_no);
+  // lateral interactions for BO
+  virtual void 	V2Filter_LatBOinteg_thread(int v1s_idx, int thread_no);
+  // lateral integration of BO
 
   virtual bool	SpatIntegFilter();
   // do spatial integration filters -- dispatch threads
