@@ -2139,7 +2139,8 @@ static void Install_Types() {
       else if(!((tmp->members.size==0) && (tmp->methods.size==0)) &&
 	      (tmp->name != "fstream") && (tmp->name != "class") &&
 	      (tmp->name != "taString") && (tmp->name != "taLeafItr") &&
-	      (tmp->name != "sstream") && (tmp->name != "Variant"))
+	      (tmp->name != "sstream") && (tmp->name != "Variant") &&
+	      (tmp->name != "taBase"))
       {
 	if(tmp->InheritsFrom(TA_taBase)) {
 	  taBase* inst = (taBase*)tmp->GetInstance();
