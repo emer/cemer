@@ -1385,7 +1385,7 @@ protected:
 
   int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
     QTreeWidgetItem* top_item); // we use this recursively
-  virtual bool		ShowToken(void* tk) const;
+  virtual bool		ShowToken(taBase* obj) const;
 };
 
 
@@ -1425,7 +1425,7 @@ protected:
 
   int 			BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
     QTreeWidgetItem* top_item); // we use this recursively
-  virtual bool		ShowToken(void* tk) const;
+  virtual bool          ShowToken(taBase* obj) const;
 };
 
 

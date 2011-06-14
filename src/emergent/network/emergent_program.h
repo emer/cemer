@@ -35,6 +35,7 @@ class EMERGENT_API NetBaseProgEl: public ProgEl {
   // #VIRT_BASE #NO_INSTANCE base type for network-oriented prog els (filter function, etc)
 INHERITED(ProgEl)
 public:
+  // Signature must match that of the item_filter_fun typedef.
   static bool		NetProgVarFilter(void* base, void* var); // Network* progvar filter -- only shows Network* items -- use in ITEM_FILTER comment directive
   TA_BASEFUNS_NOCOPY(NetBaseProgEl);
 private:

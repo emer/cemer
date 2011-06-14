@@ -564,6 +564,7 @@ public:
   override String StringFieldLookupFun(const String& cur_txt, int cur_pos,
 				       const String& mbr_name, int& new_pos);
 
+  // Signature must match that of the item_filter_fun typedef.
   static bool	ExprLookupVarFilter(void* base, void* var); // #IGNORE special filter used in ExprLookupFun
 
   void 	InitLinks();
@@ -590,6 +591,7 @@ class TA_API ProgExpr : public ProgExprBase {
   // ##NO_TOKENS ##INSTANCE ##EDIT_INLINE ##CAT_Program an expression in a program -- manages variable references so they are always updated when program variables change -- includes variable lookup functions
 INHERITED(ProgExprBase)
 public:
+  // Signature must match that of the item_filter_fun typedef.
   static bool		StdProgVarFilter(void* base, void* var); // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
 
   ProgVar*	var_lookup;	// #NULL_OK #NO_SAVE #NO_EDIT #NO_UPDATE_POINTER #ITEM_FILTER_StdProgVarFilter lookup a program variable and add it to the current expression (this field then returns to empty/NULL)
@@ -707,6 +709,7 @@ class TA_API ProgEl: public taOBase {
 friend class ProgExprBase;
 INHERITED(taOBase)
 public:
+  // Signature of following functions must match that of the item_filter_fun typedef.
   static bool		StdProgVarFilter(void* base, void* var); // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
   static bool		ObjProgVarFilter(void* base, void* var); // Object* progvar filter -- only shows Object* items -- use in ITEM_FILTER comment directive
   static bool		DataProgVarFilter(void* base, void* var); // data table* progvar filter -- only shows DataTable* items -- use in ITEM_FILTER comment directive

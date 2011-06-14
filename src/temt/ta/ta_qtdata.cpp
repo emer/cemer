@@ -4572,9 +4572,8 @@ const String taiTokenPtrButton::labelNameNonNull() const {
   return token()->GetDisplayName();
 }
 
-bool taiTokenPtrButton::ShowToken(void* tk) const {
-  taBase* btmp = (taBase*)tk;
-  return ShowItemFilter(scope_ref, tk, btmp->GetName());
+bool taiTokenPtrButton::ShowToken(taBase* obj) const {
+  return ShowItemFilter(scope_ref, obj, obj->GetName());
 }
 
 const String taiTokenPtrButton::viewText(int index) const {
@@ -4713,9 +4712,8 @@ const String taiTokenPtrMultiTypeButton::labelNameNonNull() const {
   return token()->GetDisplayName();
 }
 
-bool taiTokenPtrMultiTypeButton::ShowToken(void* tk) const {
-  taBase* btmp = (taBase*)tk;
-  return ShowItemFilter(scope_ref, tk, btmp->GetName());
+bool taiTokenPtrMultiTypeButton::ShowToken(taBase* obj) const {
+  return ShowItemFilter(scope_ref, obj, obj->GetName());
 }
 
 int taiTokenPtrMultiTypeButton::viewCount() const {

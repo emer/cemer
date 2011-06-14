@@ -45,6 +45,7 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 
+#include <algorithm> // std::sort
 #include <sstream>
 
 int yyparse(void);
@@ -244,13 +245,11 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
 		    const char* d, const char* e, const char* f,
 		    const char* g, const char* h, const char* i)
 {
-  cssProgSpace* top;
-  if(prog)
-    top = prog->top;
-  else
-    top = cssMisc::cur_top;
-
-  cssMisc::last_err_msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i) + "\n" + GetSourceLoc(prog);
+  cssProgSpace* top = prog ? prog->top : cssMisc::cur_top;
+  cssMisc::last_err_msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
+  if (prog) {
+    cssMisc::last_err_msg += "\n" + GetSourceLoc(prog);
+  }
 
   if(taMisc::dmem_proc == 0) {
     ostream* fh = &cerr;
@@ -270,13 +269,11 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
 		      const char* d, const char* e, const char* f,
 		      const char* g, const char* h, const char* i)
 {
-  cssProgSpace* top;
-  if(prog)
-    top = prog->top;
-  else
-    top = cssMisc::cur_top;
-
-  cssMisc::last_warn_msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i) + "\n" + GetSourceLoc(prog);
+  cssProgSpace* top = prog ? prog->top : cssMisc::cur_top;
+  cssMisc::last_warn_msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
+  if (prog) {
+    cssMisc::last_warn_msg += "\n" + GetSourceLoc(prog);
+  }
 
   if(taMisc::dmem_proc == 0) {
     ostream* fh = &cerr;
@@ -2517,38 +2514,42 @@ String cssSpace::PrintFStr(int indent, int per_line) const {
   return rval;
 }
 
+namespace { // anonymous
+  // Functor to sort cssEl pointers
+  struct SortPtrCssEl
+    : public std::binary_function<const cssEl *, const cssEl *, bool>
+  {
+    bool operator()(const cssEl *el1, const cssEl *el2) const 
+    {
+      return el1->name < el2->name;
+    }
+  };
+}
+
 void cssSpace::Sort() {
-  // lets do a heap sort since it requires no secondary storage
-  // code borrowed from numerical recipies in C
-
-  int n = size;
-  int l,j,ir,i;
-  cssEl* tmp;
-
-  l = (n >> 1)+1;
-  ir = n;
-  for(;;) {
-    if(l>1)
-      tmp = els[--l -1]; 	// tmp = ra[--l]
-    else {
-      tmp = els[ir-1]; 		// tmp = ra[ir]
-      els[ir-1] = els[0]; 	// ra[ir] = ra[1]
-      if(--ir == 1) {
-	els[0] = tmp; 		// ra[1]=tmp
-	return;
-      }
+  const bool debug = false; // print out all list elements after sorting
+  const bool warn = true; // warn about duplicates after sorting
+  
+  // No need for std::stable_sort since els should be unique.
+  std::sort(els, els + size, SortPtrCssEl());
+  
+  if (warn || debug) {
+    if (debug) {
+      cssMisc::Warning(0, "\ncssSpace", name, "has been sorted:");
     }
-    i=l;
-    j=l << 1;
-    while(j<= ir) {
-      if(j<ir && (els[j-1]->name < els[j]->name)) j++;
-      if(tmp->name  < els[j-1]->name) { 	// tmp < ra[j]
-	els[i-1] = els[j-1]; 	// ra[i]=ra[j];
-	j += (i=j);
+
+    // Check for duplicates (shouldn't be any)
+    const String *prev = 0;
+    for (int idx = 0; idx < size; ++idx) {
+      String *curr = &els[idx]->name;
+      if (prev && *curr == *prev) {
+        cssMisc::Warning(0, *curr, "is in cssSpace", name, "more than once");
       }
-      else j = ir+1;
+      else if (debug) {
+        cssMisc::Warning(0, *curr);
+      }
+      prev = curr;
     }
-    els[i-1] = tmp;		 // ra[i] = tmp;
   }
 }
 

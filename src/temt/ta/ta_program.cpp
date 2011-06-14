@@ -2096,14 +2096,20 @@ bool ProgArg_List::BrowserCollapseAll() {
 //////////////////////////
 
 bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
-  if(!base_) return true;
+  if (!base_)
+    return true;
+  if (!var_)
+    return true;
   ProgEl* base = static_cast<ProgEl*>(base_);
   ProgVar* var = static_cast<ProgVar*>(var_);
-  if(!var->HasVarFlag(ProgVar::LOCAL_VAR)) return true; // definitely all globals
+  if (!var->HasVarFlag(ProgVar::LOCAL_VAR))
+    return true; // definitely all globals
   Function* varfun = GET_OWNER(var, Function);
-  if(!varfun) return true;	// not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
+  if (!varfun)
+    return true;	// not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
   Function* basefun = GET_OWNER(base, Function);
-  if(basefun != varfun) return false; // different function scope
+  if (basefun != varfun)
+    return false; // different function scope
   return true;
 }
 
