@@ -277,7 +277,7 @@ public:
     float srs = cn->sravg_s * sravg_s_nrm;
     float srm = cn->sravg_m * sravg_m_nrm;
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
+    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->avg_l;
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 
@@ -340,45 +340,47 @@ private:
   void	Defaults_init() 	{ };
 };
 
-class LEABRA_API XCalMlTraceConSpec : public LeabraConSpec {
-  // xcal with ml_mix > 0 -- provides a trace of recv activation in learning
-INHERITED(LeabraConSpec)
-public:
-  float		ml_mix;		// #DEF_0 #MIN_0 how much the medium-to-long time scale average activations contribute to synaptic activation -- useful for capturing sequential dependencies between events, when these are present in the simulation, but not appropriate for random event sequences
-  float		sm_mix;		// #READ_ONLY #DEF_1 #MIN_0 complement of ml_mix = 1-ml_mix -- how much the short & medium time scale average activations contribute to synaptic activation
+// todo: this should be supported with a special unit and unitspec where needed -- completely 
+// untested at this point..
+//
+// class LEABRA_API XCalMlTraceConSpec : public LeabraConSpec {
+//   // xcal with ml_mix > 0 -- provides a trace of recv activation in learning
+// INHERITED(LeabraConSpec)
+// public:
+//   float		ml_mix;		// #DEF_0 #MIN_0 how much the medium-to-long time scale average activations contribute to synaptic activation -- useful for capturing sequential dependencies between events, when these are present in the simulation, but not appropriate for random event sequences
+//   float		sm_mix;		// #READ_ONLY #DEF_1 #MIN_0 complement of ml_mix = 1-ml_mix -- how much the short & medium time scale average activations contribute to synaptic activation
 
-  inline void C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su,
-			       float su_avg_s, float su_avg_m, float su_act_mult) {
-    float srs = ru->avg_s * su_avg_s;
-    float srm = ru->avg_m * su_avg_m;
-    float srml = sm_mix * srm + ml_mix * (ru->avg_ml * su->avg_ml);
-    float sm_mix = xcal.s_mix * srs + xcal.m_mix * srml;
-    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
-    cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
-  }
+//   inline void C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su,
+// 			       float su_avg_s, float su_avg_m, float su_act_mult) {
+//     float srs = ru->avg_s * su_avg_s;
+//     float srm = ru->avg_m * su_avg_m;
+//     float srml = sm_mix * srm + ml_mix * (ru->avg_ml * su->avg_ml);
+//     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srml;
+//     float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->avg_l;
+//     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+//   }
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    float su_avg_s = su->avg_s;
-    float su_avg_m = su->avg_m;
-    float su_act_mult = xcal.thr_l_mix * su_avg_m;
+//   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+//     float su_avg_s = su->avg_s;
+//     float su_avg_m = su->avg_m;
+//     float su_act_mult = xcal.thr_l_mix * su_avg_m;
 
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su, su_avg_s, su_avg_m,
-				       su_act_mult);
-    }
-  }
+//     for(int i=0; i<cg->size; i++) {
+//       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+//       C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su, su_avg_s, su_avg_m,
+// 				       su_act_mult);
+//     }
+//   }
 
-  TA_SIMPLE_BASEFUNS(XCalMlTraceConSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
-private:
-  void 	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init() { };
-};
-
+//   TA_SIMPLE_BASEFUNS(XCalMlTraceConSpec);
+// protected:
+//   SPEC_DEFAULTS;
+//   void	UpdateAfterEdit_impl();
+// private:
+//   void 	Initialize();
+//   void	Destroy()	{ };
+//   void	Defaults_init() { };
+// };
 
 
 //////////////////////////////////////////
@@ -951,7 +953,7 @@ public:
     float srs = cn->sravg_s * sravg_s_nrm;
     float srm = cn->sravg_m * sravg_m_nrm;
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
+    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->avg_l;
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 
@@ -1368,7 +1370,7 @@ public:
     float srs = cn->sravg_s;
     float srm = cn->sravg_m;
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->l_thr;
+    float effthr = xcal.thr_m_mix * srm + su_act_mult * ru->avg_l;
     cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
   }
 

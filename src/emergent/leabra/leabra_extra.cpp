@@ -301,19 +301,19 @@ void XCalHebbConSpec::UpdateAfterEdit_impl() {
   hebb_mix_c = 1.0f - hebb_mix;
 }
 
-//////////////////////////////////
-// 	XCalMlTraceConSpec
-//////////////////////////////////
+// //////////////////////////////////
+// // 	XCalMlTraceConSpec
+// //////////////////////////////////
 
-void XCalMlTraceConSpec::Initialize() {
-  ml_mix = 0.0f;
-  sm_mix = 1.0f - ml_mix;
-}
+// void XCalMlTraceConSpec::Initialize() {
+//   ml_mix = 0.0f;
+//   sm_mix = 1.0f - ml_mix;
+// }
 
-void XCalMlTraceConSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  sm_mix = 1.0f - ml_mix;
-}
+// void XCalMlTraceConSpec::UpdateAfterEdit_impl() {
+//   inherited::UpdateAfterEdit_impl();
+//   sm_mix = 1.0f - ml_mix;
+// }
 
 //////////////////////////////////
 // 	TrialSynDepConSpec	//

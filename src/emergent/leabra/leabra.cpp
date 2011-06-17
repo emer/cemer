@@ -670,22 +670,14 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraActAvgSpec::Initialize() {
-//   l_gain = 200.0f;
-//   l_thr_max = 3.0f;
-  l_thr_updn = false;
-  up_dt = 0.6f;
-  dn_dt = 0.05f;
-  l_gain = 60.0f;
-  l_thr_max = 0.9f;
-  l_dt = 0.05f;
-  ml_dt = 1.0f;
+  l_up_dt = 0.6f;
+  l_dn_dt = 0.05f;
   m_dt = 0.1f;
   s_dt = 0.2f;
   ss_dt = 1.0f;
   use_nd = false;
 
-  l_time = 1.0f / l_dt;
-  ml_time = 1.0f / ml_dt;
+  l_time = 1.0f / l_dn_dt;
   m_time = 1.0f / m_dt;
   s_time = 1.0f / s_dt;
   ss_time = 1.0f / ss_dt;
@@ -693,15 +685,7 @@ void LeabraActAvgSpec::Initialize() {
 
 void LeabraActAvgSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(l_gain == 3.0f) { // set new defaults
-//     taMisc::Warning("Note: updating LeabraUnitSpec act_avg parameters for new default XCal settings", GetPathNames());
-    l_gain = 60.0f;
-    l_thr_max = 0.9f;
-    l_dt = 0.05f;
-    ml_dt = 1.0f;
-  }
-  l_time = 1.0f / l_dt;
-  ml_time = 1.0f / ml_dt;
+  l_time = 1.0f / l_dn_dt;
   m_time = 1.0f / m_dt;
   s_time = 1.0f / s_dt;
   ss_time = 1.0f / ss_dt;
@@ -969,12 +953,6 @@ void LeabraUnitSpec::CreateNXX1Fun() {
 void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
   if(bias_spec.SPtr())
     ((LeabraConSpec*)bias_spec.SPtr())->SetLearnRule(net);
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL) {
-    act_avg.l_gain = 60.0f;
-    act_avg.l_thr_max = 0.9f;
-    act_avg.l_dt = 0.05f;
-    act_avg.ml_dt = 1.0f;
-  }
 }
 
 void LeabraUnitSpec::Init_Weights(Unit* u, Network* net) {
@@ -995,11 +973,6 @@ void LeabraUnitSpec::Init_Weights(Unit* u, Network* net) {
 void LeabraUnitSpec::Init_ActAvg(LeabraUnit* u, LeabraNetwork* net) {
   u->act_avg = act.avg_init;
   u->avg_l = act.avg_init;
-  u->avg_ml = act.avg_init;
-  if(act_avg.l_thr_updn)
-    u->l_thr = u->avg_l;
-  else
-    u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
 }  
 
 void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
@@ -1122,20 +1095,10 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
 
   if(net->learn_rule != LeabraNetwork::CTLEABRA_XCAL_C) {
     float lval = u->avg_m;
-    if(act_avg.l_thr_updn) {
-      if(lval > u->avg_l)
-	u->avg_l += act_avg.up_dt * (lval - u->avg_l);
-      else
-	u->avg_l += act_avg.dn_dt * (lval - u->avg_l);
-      u->l_thr = u->avg_l;
-    }
-    else {
-      u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml);
-      u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l);
-      u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
-      if(u->l_thr > act_avg.l_thr_max)
-	u->l_thr = act_avg.l_thr_max;
-    }
+    if(lval > u->avg_l)
+      u->avg_l += act_avg.l_up_dt * (lval - u->avg_l);
+    else
+      u->avg_l += act_avg.l_dn_dt * (lval - u->avg_l);
   }
 
   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL || net->ct_sravg.force_con)  {
@@ -1997,14 +1960,11 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
 
     u->avg_m += act_avg.m_dt * (u->avg_s - u->avg_m);
 
-    // todo: using avg_m here for an update happening within the trial seems very bad!!!
-    float lval = u->avg_m;
-    u->avg_ml += act_avg.ml_dt * (lval - u->avg_ml); // driven by avg_m
-    u->avg_l += act_avg.l_dt * (u->avg_ml - u->avg_l); // driven by avg_ml
-    u->l_thr = act_avg.l_gain * u->avg_l * u->avg_l;
-    if(u->l_thr > act_avg.l_thr_max)
-      u->l_thr = act_avg.l_thr_max;
-    // note: updating unit-level ravg_l, ravg_ml, l_thr variables here..
+    float lval = u->avg_m; // note this is *avg_m* not act_m..
+    if(lval > u->avg_l)
+      u->avg_l += act_avg.l_up_dt * (lval - u->avg_l);
+    else
+      u->avg_l += act_avg.l_dn_dt * (lval - u->avg_l);
   }
   else {
     // use continuous updating so these are always current -- no need for post-average step
@@ -2471,8 +2431,6 @@ void LeabraUnit::Initialize() {
   avg_s = 0.15f;
   avg_m = 0.15f;
   avg_l = 0.15f;
-  avg_ml = 0.15f;
-  l_thr = 0.15f;
   davg = 0.0f;
   act_p = act_m = act_dif = 0.0f;
   act_m2 = act_p2 = act_dif2 = 0.0f;
@@ -2525,9 +2483,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   avg_s = cp.avg_s;
   avg_ss = cp.avg_ss;
   avg_m = cp.avg_m;
-  avg_ml = cp.avg_ml;
   avg_l = cp.avg_l;
-  l_thr = cp.l_thr;
   davg = cp.davg;
   act_m = cp.act_m;
   act_p = cp.act_p;

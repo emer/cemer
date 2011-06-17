@@ -244,7 +244,7 @@ public:
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       MatrixCon* cn = (MatrixCon*)cg->OwnCn(i);
       C_Compute_dWt_Matrix(cn, LinFmSigWt(cn->wt), ru->act_m2, ru->dav, cn->sact_lrn,
-			   ru->l_thr);
+			   ru->avg_l);
       // note: using cn->sact_lrn as having saved sending activation in Compute_MidMinusAct
     }
   }
