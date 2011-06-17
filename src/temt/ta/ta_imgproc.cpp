@@ -5169,6 +5169,8 @@ bool V1RegionSpec::V2Filter() {
       threads.Run(&ip_call_v2latbo, n_run);
       threads.Run(&ip_call_v2latbointeg, n_run);
     }
+    ThreadImgProcCall ip_call_v2bofinal((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V2Filter_BOfinal_thread);
+    threads.Run(&ip_call_v2bofinal, n_run);
   }
 
 //   if(v2_kwta.on) {
@@ -5389,6 +5391,33 @@ void V1RegionSpec::V2Filter_LatBOinteg_thread(int v1c_idx, int thread_no) {
       float& bo = v2bo_out.FastEl(ang, maxdir, cc.x, cc.y);
       bo += inc;
       if(bo > lsedge) bo = lsedge;
+    }
+  }
+}
+
+void V1RegionSpec::V2Filter_BOfinal_thread(int v1c_idx, int thread_no) {
+  TwoDCoord cc;			// complex coords
+  cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
+
+  TwoDCoord lc;
+  float dirvals[2];
+  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+    float lsedge = v1pi_out_r.FastEl(ang, 0, cc.x, cc.y);
+    if(lsedge < v2_specs.act_thr) {
+      continue;
+    }
+    float dirsum = 0.0f;
+    for(int dir=0; dir < 2; dir++) {		      // direction
+      float dirval = v2bo_out.FastEl(ang, dir, cc.x, cc.y);
+      dirsum += dirval;
+    }
+    if(dirsum > lsedge) {
+      // ensure that the sum never exceeds the raw val
+      float dirnorm = lsedge / dirsum;
+      for(int dir=0; dir < 2; dir++) {		      // direction
+	float& bo = v2bo_out.FastEl(ang, dir, cc.x, cc.y);
+	bo *= dirnorm;
+      }
     }
   }
 }

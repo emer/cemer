@@ -1437,6 +1437,8 @@ protected:
   // lateral interactions for BO
   virtual void 	V2Filter_LatBOinteg_thread(int v1s_idx, int thread_no);
   // lateral integration of BO
+  virtual void 	V2Filter_BOfinal_thread(int v1s_idx, int thread_no);
+  // final cleanup of BO -- renormalize ambiguous to sum to full activation value
 
   virtual bool	SpatIntegFilter();
   // do spatial integration filters -- dispatch threads
