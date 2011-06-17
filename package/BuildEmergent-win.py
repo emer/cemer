@@ -9,7 +9,7 @@ from zipfile import ZipFile
 
 def quit(exit_val):
 	os.system('color 07')
-	response = raw_input("\n\n\nPress enter to close the window.\n")
+	response = raw_input("\n\nPress enter to close the window.\n")
 	sys.exit(exit_val)
 
 def setEnvVar(name, value, reg, env):
@@ -79,7 +79,7 @@ def dirExists(dir):
 def findInProgFiles(path):
 	for prefix in progfiles:
 		file = os.path.join(prefix, path)
-		if fileExists(file):
+		if fileExists(file) or dirExists(file):
 			return file # True
 	return False
 
@@ -132,16 +132,110 @@ def get_svn_rev(question):
 		return -1
 	return response
 
-def inst_msvs():
+def inst_msvs_2008():
 	while not findInProgFiles('Microsoft Visual Studio 9.0/VC/bin/cl.exe'):
 		print "\nYou need to install Visual C++ 2008 Express Edition.  Make sure to get"
 		print "the 2008 edition, not 2010!  Download the installer from the website"
 		print "that will be opened, then run it.  Accept default installation options."
+		print "Don't forget to register it within 30 days!"
 		print "After installation is complete, return to this script."
 		if askUser("\nReady to download and install Visual C++?"):
 			webbrowser.open_new_tab('http://www.microsoft.com/express/Downloads/#Visual_Studio_2008_Express_Downloads')
 			print "\nOnce Visual C++ has been installed, press enter to continue"
 			response = raw_input("")
+
+def inst_msvs_2010():
+	while not findInProgFiles('Microsoft Visual Studio 10.0/VC/bin/cl.exe'):
+		print "\nYou need to install Visual C++ 2010 Express Edition.  Make sure to get"
+		print "the 2010 edition, not 2008!  Download the installer from the website"
+		print "that will be opened, then run it.  Accept default installation options."
+		print "Don't forget to register it within 30 days!"
+		print "After installation is complete, return to this script."
+		if askUser("\nReady to download and install Visual C++?"):
+			webbrowser.open_new_tab('http://www.microsoft.com/express/Downloads/#Visual_Studio_2010_Express_Downloads')
+			print "\nOnce Visual C++ has been installed, press enter to continue"
+			response = raw_input("")
+
+def inst_msvs_2010_sp1():
+	msvs2010sp1_installed_file = os.path.join(devtool_dir, "msvs2010sp1_has_been_installed.txt")
+	if not fileExists(msvs2010sp1_installed_file):
+		print "\nYou need to update VS2010 to Service Pack 1.  Download the installer from"
+		print "the website that will be opened, then run it.  It will download about 600MB"
+		print "of extra stuff and take a while to install."
+		print "After installation is complete, return to this script."
+		if askUser("\nReady to download and install VS2010 SP1?"):
+			webbrowser.open_new_tab('http://www.microsoft.com/download/en/details.aspx?id=23691')
+			print "\nWait for VS2010 SP1 to finish downloading and installing."
+			if askUser("\nDid VS2010 SP1 install successfully?", default=''):
+				f = open(msvs2010sp1_installed_file, 'w')
+				f.write('Microsoft Visual Studio 2010 Service Pack 1 has been installed,')
+				f.write('according to the user.  If that is not so, delete this file.')
+				f.close()
+				if askUser("Were you prompted to reboot?", default=''):
+					print "\nPlease reboot now and then re-run this script"
+					quit(0)
+				else:
+					print "\nContinuing to build..."
+				return
+		# User chose not to install, or installation failed.
+		print "\nWithout VS2010 SP1, 64-bit builds may not build correctly."
+		print "Continuing to build, but you will be prompted again next time.\n"
+
+setenv_cmd = ""
+def inst_win_sdk():
+	global setenv_cmd
+	while True:
+		setenv_cmd = findInProgFiles('Microsoft SDKs/Windows/v7.1/bin/setenv.cmd')
+		if setenv_cmd: break
+		print "\nIn addition to MSVC++ 2010, you also need to install the Windows SDK"
+		print "in order to build 64-bit versions of emergent.  Click the 'Install Now'"
+		print "link on the website that will be opened, then run it.  Accept defaults."
+		print "After installation is complete, return to this script."
+		if askUser("\nReady to download and install Windows SDK?"):
+			webbrowser.open_new_tab('http://msdn.microsoft.com/en-us/windowsserver/bb980924.aspx')
+			print "\nOnce Windows SDK has been installed, press enter to continue"
+			response = raw_input("")
+
+# After installing VC++ 2010 Express and Windows SDK, you *still* don't have
+# everything you need to compile a 64-bit app.  Need to create vcvars64.bat.
+amd64_dir = ""
+def create_vcvars64_bat():
+	global amd64_dir
+	amd64_dir = findInProgFiles('Microsoft Visual Studio 10.0/VC/bin/amd64')
+	if not amd64_dir:
+		print "\nCould not find amd64 directory.  Windows SDK not installed correctly?"
+		print "\nAborting."
+		quit(1)
+	vcvars64_bat = fixPath(os.path.join(amd64_dir, "vcvars64.bat"))
+	while not fileExists(vcvars64_bat):
+		print "\nNeed to create vcvars64.bat file, since it is missing (as expected)."
+		print "A Windows security dialog will appear -- click Yes on it."
+		if askUser('\nOK to create "' + vcvars64_bat + '"?'):
+			# Have to make a temp batch file to be run as admin to create the
+			# batch file we actually care about.  "runas" is kinda like sudo.
+			make_vcvars64_bat = os.path.join(devtool_dir, "make_vcvars64.bat")
+			f = open(make_vcvars64_bat, 'w')
+			f.write('echo call "' + fixPath(setenv_cmd) + '" /x64 > "' + vcvars64_bat + '"')
+			f.close()
+			os.startfile(make_vcvars64_bat, "runas")
+			# Without this prompt, python won't notice the file creation.
+			print "After clicking Yes on the Windows security dialog, hit enter in this window."
+			response = raw_input("")
+
+msvs = 0
+def inst_msvs(ver):
+	global msvs
+	if ver == 2008:
+		inst_msvs_2008()
+		msvs = 2008
+	elif ver == 2010:
+		inst_msvs_2010()
+		inst_win_sdk()
+		inst_msvs_2010_sp1()
+		create_vcvars64_bat()
+		msvs = 2010
+	else:
+		raise "Bad MSVS version"
 
 def inst_nsis():
 	while not findInProgFiles('NSIS/NSIS.exe'):
@@ -161,6 +255,7 @@ def inst_qt():
 			print "\nDownloading Qt.  When the download completes, installation will begin."
 			print "Accept default installation options.  Return to this script when complete."
 			print "\nTHIS FILE IS HUGE, be patient while it downloads....."
+			# TBD: is this ok for 64-bit msvs2010 compiles also?
 			file = getUrl("ftp://grey.colorado.edu/pub/emergent/qt-win-opensource-4.6.2-vs2008.exe")
 			os.system(file)
 			print "\nOnce Qt has been installed, press enter to continue"
@@ -242,7 +337,9 @@ def ask_debug_or_release():
 	done = False
 	while not done:
 		if build_debug:
-			os.system('color 0e')
+			# Debug used to be yellow-on-black, but "vcvarsall.bat x64"
+			# coincidentally uses that same scheme, so now this is blue.
+			os.system('color 0b')
 			if askUser("\nMake DEBUG build? (say no for release)"): done = True
 			else: build_debug = False
 		else:
@@ -252,6 +349,34 @@ def ask_debug_or_release():
 	# Debug and Release versions can share the same source files, so no need for this:
 	#if build_debug:
 	#	emer_src += "-dbg"
+
+# Ask user if they want 32-bit or 64-bit build.
+build_64bit = True
+def ask_32_or_64():
+	global build_64bit
+	done = False
+	if msvs == 2008:
+		build_64bit = False
+		print "\nMSVS 2008 only supports 32-bit builds."
+		if not askUser("Make 32-bit build?"): quit(0)
+		done = True
+	while not done:
+		if build_64bit:
+			if askUser("\nMake 64-bit build? (say no for 32)"): done = True
+			else: build_64bit = False
+		else:
+			if askUser("\nMake 32-bit build? (say no for 64)"): done = True
+			else: build_64bit = True
+
+# Get the extension to add to directories to differentiate msvs2008 vs 2010, 32 vs 64, and debug.
+def get_dir_extension_args(is_64, is_dbg):
+	ext = '-msvs' + str(msvs)
+	ext += "-64" if is_64 else "-32"
+	if is_dbg: ext += "-dbg"
+	return ext
+
+def get_dir_extension():
+	return get_dir_extension_args(build_64bit, build_debug)
 
 def inst_emer_src():
 	if not dirExists(emer_src + '/.svn'):
@@ -292,14 +417,24 @@ def inst_emer_src():
 			print cmd
 			os.system(cmd)
 
-coin_dir = 'C:/Coin/3.1.3'
+coin_dir = ""
+coin_dir_32 = 'C:/Coin/3.1.3'
+coin_dir_64 = 'C:/Coin/3.1.3-64'
 def inst_coin():
+	global coin_dir
+	if build_64bit:
+		coin_dir = coin_dir_64
+		coin_ftp = "ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvc9-amd64.zip"
+	else:
+		coin_dir = coin_dir_32
+		coin_ftp = "ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvc9.zip"
+
 	while not fileExists(coin_dir + '/bin/coin3.dll'):
 		print "\nYou need to get the Coin package.  This can be done for you."
 		if askUser("\nReady to download and unzip Coin?"):
 			makeDir(coin_dir)
 			print "\nDownloading Coin..."
-			file = getUrl("ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvc9.zip")
+			file = getUrl(coin_ftp)
 			zip = ZipFile(file)
 			zip.extractall(coin_dir)
 
@@ -316,13 +451,19 @@ def inst_3rd_party():
 			zip.extractall(third_party_dir)
 
 quarter_dir = 'C:/src'
-quarter_sln = quarter_dir + '/Quarter/build/msvc9/quarter1.sln'
+quarter_sln = ''
 def inst_quarter():
+	global quarter_sln
+	if msvs == 2008:
+		quarter_sln = quarter_dir + '/Quarter/build/msvc9/quarter1.sln'
+	elif msvs == 2010:
+		quarter_sln = quarter_dir + '/Quarter/build/msvc10/quarter1.sln'
 	while not fileExists(quarter_sln):
 		print "\nYou need to get the Quarter package.  This can be done for you."
 		if askUser("\nReady to download and unzip Quarter?"):
 			print "\nDownloading Quarter..."
-			file = getUrl("ftp://grey.colorado.edu/pub/emergent/Quarter-latest.zip")
+			#file = getUrl("ftp://grey.colorado.edu/pub/emergent/Quarter-latest.zip")
+			file = getUrl("ftp://grey.colorado.edu/pub/emergent/Quarter-r460-msvc10-9.zip")
 			zip = ZipFile(file)
 			zip.extractall(quarter_dir)
 
@@ -359,66 +500,119 @@ def compile_quarter():
 	while not fileExists(coin_dir + '/lib/quarter1d.lib'):
 		print "\nYou need to compile the Quarter package.  This can be done for you."
 		if askUser("\nReady to compile Quarter?"):
-			msbuild = "C:/WINDOWS/Microsoft.NET/Framework/v3.5/MSBuild.exe"
+			if msvs == 2008:
+				msbuild = "C:/WINDOWS/Microsoft.NET/Framework/v3.5/MSBuild.exe"
+				platform = "Win32"
+			elif build_64bit:
+				msbuild = "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/MSBuild.exe"
+				platform = "x64"
+			else:
+				msbuild = "C:/Windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe"
+				platform = "Win32"
+
+			if not fileExists(msbuild):
+				print "\nCould not find file: " + msbuild
+				print "Quitting"
+				quit(1)
+
 			print "\nCompiling Quarter..."
 			# os.system() won't work here -- because of the space after DLL??
 			# Build Release and Debug libraries
-			subprocess.call([msbuild, '/p:Configuration=DLL (Release)', quarter_sln])
-			subprocess.call([msbuild, '/p:Configuration=DLL (Debug)', quarter_sln])
+			subprocess.call([msbuild, '/p:Configuration=DLL (Release)', '/p:Platform=' + platform, quarter_sln])
+			subprocess.call([msbuild, '/p:Configuration=DLL (Debug)', '/p:Platform=' + platform, quarter_sln])
 			print "\nWarnings are OK when building Quarter.  It should say 'Build succeeded'.\n"
+
+def list_difference(orig, remove):
+	for item in remove:
+		try: orig.remove(item)
+		except ValueError: pass
 
 def fix_environment():
 	checkEnvironmentVariable('COINDIR', fixPath(coin_dir))
+	# TBD: is this ok for 64-bit msvs2010 compiles also?
 	checkEnvironmentVariable('QMAKESPEC', 'win32-msvc2008')
 	checkEnvironmentVariable('QTDIR', fixPath(qt_dir))
 	checkEnvironmentVariable('EMERGENTDIR', fixPath('C:/Emergent'))
 
-	syspath = getSysEnvVar('PATH')
-	userpath = getUserEnvVar('PATH')
-	wholepath = syspath + ';' + userpath
-	pathitems = set(wholepath.split(';'))
-	newitems = set([
+	needed_paths = [
+		# TBD: need this?
+		#fixPath(amd64_dir),
 		fixPath(qt_dir + "/bin"),
 		fixPath(coin_dir + "/bin"),
 		fixPath(third_party_dir + "/bin"),
 		fixPath(jom_dir),
-		fixPath(os.path.dirname(cmake_exe))
-		]).difference(pathitems)
-	if newitems:
-		newuserpath = ';'.join(newitems)
-		if userpath != "":
-			newuserpath = ';'.join([userpath, newuserpath])
+		fixPath(os.path.dirname(cmake_exe)),
+		]
+
+	syspath = getSysEnvVar('PATH').split(';')
+	orig_userpath = getUserEnvVar('PATH')
+	userpath = orig_userpath.split(';')
+
+ 	# Get rid of items in the existing path for the wrong architecture
+ 	if build_64bit:
+ 		remove_paths = [
+ 			fixPath(coin_dir_32 + "/bin"),
+ 			]
+	else:
+ 		remove_paths = [
+ 			fixPath(coin_dir_64 + "/bin"),
+ 			]
+
+	list_difference(userpath, remove_paths)
+	list_difference(syspath, remove_paths)
+
+	# Only need to add things that aren't already in the path (if any).
+	list_difference(needed_paths, syspath + userpath)
+	if needed_paths:
+		new_userpath_list = userpath + needed_paths
+		new_userpath_str = ';'.join(new_userpath_list)
 		print "\nNeed to update PATH environment variable."
-		print "Old user path: " + userpath
-		print "New user path: " + newuserpath
+		print "Old user path: " + orig_userpath
+		print "New user path: " + new_userpath_str
 		print "System path will not be changed."
 		if askUser("\nReady to update path?"):
-			setUserEnvVar('PATH', newuserpath)
-			os.environ['PATH'] = syspath + ';' + newuserpath
-	else:
-		print "\nPath seems OK."
-	if os.environ['PATH'] != wholepath:
-		cmd = os.environ['ComSpec']
-		expanded_path = subprocess.check_output([cmd, '/c', '@echo ' + wholepath])
-		os.environ['PATH'] = expanded_path
+			setUserEnvVar('PATH', new_userpath_str)
+			userpath = new_userpath_list
+
+	wholepath = ';'.join(syspath) + ';' + ';'.join(userpath)
+	cmd = os.environ['ComSpec']
+	expanded_path = subprocess.check_output([cmd, '/c', '@echo ' + wholepath])
+	os.environ['PATH'] = expanded_path
+	print "\nPATH = " + expanded_path
 
 def build_emergent():
 	print "\nYour build environment is configured."
 	if not askUser("\nReady to build?"): quit(0)
 
 	print "\nBuilding emergent..."
-	emer_build = emer_src + '/build'
-	if build_debug: emer_build += "-dbg"
+	emer_build = emer_src + '/build' + get_dir_extension()
 	makeDir(emer_build)
+
+	if msvs == 2008:
+		vcvarsall_bat = findInProgFiles('Microsoft Visual Studio 9.0/VC/vcvarsall.bat')
+	elif msvs == 2010:
+		vcvarsall_bat = findInProgFiles('Microsoft Visual Studio 10.0/VC/vcvarsall.bat')
+
+	if not vcvarsall_bat:
+		print "Can't continue because vcvarsall.bat file not found!  Quitting."
+		quit(1)
 
 	cmake_bat = emer_src + '/do_cmake.bat'
 	f = open(cmake_bat, 'w')
-	vcvarsall_bat = findInProgFiles('Microsoft Visual Studio 9.0/VC/vcvarsall.bat')
 	f.write('echo on\n')
-	f.write('call "' + fixPath(vcvarsall_bat) + '"\n')
+	if build_64bit:
+		f.write('call "' + fixPath(vcvarsall_bat) + '" x64\n')
+	else:
+		f.write('call "' + fixPath(vcvarsall_bat) + '" x86\n')
 	f.write("cd /d " + fixPath(emer_build) + "\n")
 	if build_debug:
-		f.write('"' + fixPath(cmake_exe) + '" .. -G "Visual Studio 9 2008" -DCMAKE_BUILD_TYPE=Debug\n')
+		if msvs == 2008:
+			f.write('"' + fixPath(cmake_exe) + '" .. -G "Visual Studio 9 2008" -DCMAKE_BUILD_TYPE=Debug\n')
+		elif msvs == 2010:
+			if build_64bit:
+				f.write('"' + fixPath(cmake_exe) + '" .. -G "Visual Studio 10 Win64" -DCMAKE_BUILD_TYPE=Debug\n')
+			else:
+				f.write('"' + fixPath(cmake_exe) + '" .. -G "Visual Studio 10" -DCMAKE_BUILD_TYPE=Debug\n')
 		f.write('if ERRORLEVEL 1 exit\n')
 		f.write('start Emergent.sln\n')
 	elif use_jom:
@@ -430,7 +624,7 @@ def build_emergent():
 		f.write('if ERRORLEVEL 1 exit\n')
 		f.write('nmake package\n')
 	f.close()
-	
+
 	while 0 != os.system(cmake_bat):
 		global yes_to_all
 		yes_to_all = False
@@ -443,15 +637,17 @@ def rename_package():
 	for line in open(emer_src + '/config.h'):
 		if "VERSION" in line:
 			version = line.split('"')[-2]
-	for line in open(emer_src + '/build/src/temt/lib/svnrev.h'):
+	for line in open(emer_build + '/src/temt/lib/svnrev.h'):
 		if "SVN_REV" in line:
 			revision = line.split(' ')[-1].rstrip()
 			revision
 	print "\nDetected version: " + version
 	print "         svn rev: " + revision
 	if len(version) > 0 and len(revision) > 0:
-		old_name = emer_src + '/build/emergent-' + version + '-win32.exe'
-		new_name = emer_src + '/build/emergent-' + version + '-' + revision + '-win32.exe'
+		win_arch_suffix = "-win32.exe"
+		if build_64bit: win_arch_suffix = "-win64.exe"
+		old_name = emer_build + '/emergent-' + version + '-win32.exe'
+		new_name = emer_build + '/emergent-' + version + '-' + revision + win_arch_suffix
 		if not os.path.isfile(old_name):
 			print "\nCould not find installer: " + old_name
 			quit(1)
@@ -471,23 +667,27 @@ def rename_package():
 			os.rename(old_name, new_name)
 			print "Installer renamed."
 
-os.system('color 07')
-inst_msvs()
-inst_nsis()
-inst_qt()
-inst_svn()
-inst_cmake()
-inst_jom()
-get_emer_src_path()
-ask_debug_or_release()
-inst_emer_src()
-inst_coin()
-inst_3rd_party()
-inst_quarter()
-fix_environment()
-compile_quarter()
-build_emergent()
-if not build_debug:
-	rename_package()
+try:
+	os.system('color 07')
+	inst_msvs(2008) # 2010 Doesn't completely work yet...
+	inst_nsis()
+	inst_qt()
+	inst_svn()
+	inst_cmake()
+	inst_jom()
+	get_emer_src_path()
+	ask_debug_or_release()
+	ask_32_or_64()
+	inst_emer_src()
+	inst_coin()
+	inst_3rd_party()
+	inst_quarter()
+	fix_environment()
+	compile_quarter()
+	build_emergent()
+	if not build_debug:
+		rename_package()
+	quit(0)
+except KeyboardInterrupt:
+	print "\n\nQuitting at user request (Ctrl-C)."
 
-quit(0)
