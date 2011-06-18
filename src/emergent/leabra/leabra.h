@@ -696,16 +696,14 @@ public:
     ALL,			// include all currents INCLUDING bias weights
   };
 
-  bool		gelin;		// compute rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing off of the v_m - thr value -- important: when gelin is clicked, the membrane potential (v_m, and all other parameters relevant to it such as dt.vm) is completely irrelevant to the activation output of the unit -- all the other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr)
-  bool		vm_mod;		// #CONDSHOW_ON_gelin #DEF_true if using gelin, modulate the g_e excitatory conductance (i.e., net input) term used in gelin computation as function of ratio of v_m / v_m_eq (max of 1) where v_m is current membrane potential, and v_m_eq is equilibrium membrane potential for current inputs (see vm_mod_max for correction factor for not reaching full max value) -- this avoids problem where all activations immediately reach their kwta-designated levels because kwta is computed based on g_e (netin) -- need v_m to integrate so that units reach this kwta level gradually, with strongest getting there more quickly, etc
-  float		vm_mod_max;	// #CONDSHOW_ON_gelin&&vm_mod #DEF_0.95 max proportion of v_m_eq to use in computing vm_mod -- less than 1 because units typically do not reach their full equilibrium value
-  bool		gemult;		// #CONDSHOW_ON_gelin multiply activity by normalized g_e (excitatory net input) -- ensures a greater level of graded responding in the units than raw gelin which requires the sigmoidal XX1 function that loses graded values at high end
-  float		thr;		// #DEF_0.25;0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button -- use this for gelin)
-  float		gain;		// #DEF_600;80 #MIN_0 gain (gamma) of the sigmoidal rate-coded activation function -- 600 is default for gelin = false, 80 is default for gelin = true
-  float		nvar;		// #DEF_0.005 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1
-  float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (computed across trials)
+  bool		gelin;		// #DEF_true IMPORTANT: Use BioParams button with all default settings if turning this on in an old project to set other important params to match.  Computes rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing from the v_m - thr value -- when gelin is used, the progression of the membrane potential (v_m) toward its equilibrium state is used to make the g_e value unfold over time, which is essential for graded dynamics, so dt.vm is still relevant -- also, other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr)
+  float		thr;		// #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button -- use this for gelin)
+  float		gain;		// #DEF_80;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 80 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network
+  float		nvar;		// #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
+  float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (act_avg -- computed across trials) -- used mostly for visualization purposes
   float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value
-  IThrFun	i_thr;		// [STD or NO_AH for da mod units) how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
+  IThrFun	i_thr;		// [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
+  float		vm_mod_max;	// #EXPERT #DEF_0.95 max proportion of v_m_eq to use in computing vm modulation of gelin -- less than 1 because units typically do not reach their full equilibrium value
 
   TA_SIMPLE_BASEFUNS(ActFunSpec);
 protected:
@@ -1047,10 +1045,10 @@ INHERITED(UnitSpec)
 public:
   enum ActFun {
     NOISY_XX1,			// x over x plus 1 convolved with Gaussian noise (noise is nvar)
-    XX1,			// x over x plus 1, hard threshold, no noise convolution
+    SPIKE,			// discrete spiking activations (spike when > thr) -- default params produce adaptive exponential (AdEx) model
     NOISY_LINEAR,		// simple linear output function (still thesholded) convolved with Gaussian noise (noise is nvar)
+    XX1,			// x over x plus 1, hard threshold, no noise convolution
     LINEAR,			// simple linear output function (still thesholded)
-    SPIKE			// discrete spiking activations (spike when > thr)
   };
 
   enum NoiseType {
@@ -1060,8 +1058,8 @@ public:
     ACT_NOISE,			// noise in the activations
   };
 
-  ActFun	act_fun;	// #CAT_Activation activation function to use
-  ActFunSpec	act;		// #CAT_Activation activation function specs
+  ActFun	act_fun;	// #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
+  ActFunSpec	act;		// #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
   SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   SpikeMiscSpec	spike_misc;	// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive

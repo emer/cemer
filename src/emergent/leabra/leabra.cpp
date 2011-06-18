@@ -518,9 +518,7 @@ void ActFunSpec::Defaults_init() {
       gelin = false;
     }
   }
-  vm_mod = true;
   vm_mod_max = 0.95f;
-  gemult = false;
   if(gelin) {
     thr = .5f;
     gain = 80.0f;
@@ -1571,17 +1569,10 @@ float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float vm_val, float g_e_val, fl
     else {
       new_act = nxx1_fun.Eval(val_sub_thr);
     }
+    break;
   }
-  break;
-  case XX1: {
-    if(val_sub_thr < 0.0f)
-      new_act = 0.0f;
-    else {
-      val_sub_thr *= act.gain;
-      new_act = val_sub_thr / (val_sub_thr + 1.0f);
-    }
-  }
-  break;
+  case SPIKE:
+    break;			// compiler food
   case NOISY_LINEAR: {
     if(val_sub_thr <= nxx1_fun.x_range.min)
       new_act = 0.0f;
@@ -1591,8 +1582,17 @@ float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float vm_val, float g_e_val, fl
     else {
       new_act = nxx1_fun.Eval(val_sub_thr);
     }
+    break;
   }
-  break;
+  case XX1: {
+    if(val_sub_thr < 0.0f)
+      new_act = 0.0f;
+    else {
+      val_sub_thr *= act.gain;
+      new_act = val_sub_thr / (val_sub_thr + 1.0f);
+    }
+    break;
+  }
   case LINEAR: {
     if(val_sub_thr < 0.0f)
       new_act = 0.0f;
@@ -1600,8 +1600,6 @@ float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float vm_val, float g_e_val, fl
       new_act = val_sub_thr * act.gain;
   }
   break;
-  case SPIKE:
-    break;			// compiler food
   }
   return new_act;
 }
@@ -1610,23 +1608,15 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   float new_act;
   if(act.gelin) {
     float g_e_val = u->net;
-    if(act.vm_mod) {
-      float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
-      if(vm_eq > 0.0f) {
-	float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
-	if(vmrat > 1.0f) vmrat = 1.0f;
-	else if(vmrat < 0.0f) vmrat = 0.0f;
-	g_e_val *= vmrat;
-      }
+    float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
+    if(vm_eq > 0.0f) {
+      float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
+      if(vmrat > 1.0f) vmrat = 1.0f;
+      else if(vmrat < 0.0f) vmrat = 0.0f;
+      g_e_val *= vmrat;
     }
     float g_e_thr = Compute_EThresh(u);
     new_act = Compute_ActValFmVmVal_rate(u->v_m, g_e_val, g_e_thr);
-    if(act.gemult) {
-      LeabraLayer* lay = u->own_lay();
-      float net_max = lay->netin.max;
-      if(net_max > 0.0f)
-	new_act *= u->net / net_max;
-    }
   }
   else {
     new_act = Compute_ActValFmVmVal_rate(u->v_m, 0.0f, 0.0f);

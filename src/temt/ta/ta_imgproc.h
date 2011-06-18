@@ -818,7 +818,6 @@ class TA_API V1KwtaSpec : public taOBase {
 INHERITED(taOBase)
 public:
   bool		on;	// is kwta active for this stage of processing?
-  bool		gemult;	// multiply activity by normalized g_e (excitatory net input) -- ensures a greater level of graded responding in the units than raw gelin which requires the sigmoidal XX1 function that loses graded values at high end
   int		gp_k;	// #CONDSHOW_ON_on number of active units within a group (hyperocolumn) of features
   float		gp_g;	// #CONDSHOW_ON_on #DEF_0.02;0.1;0.4;0.6 gain on sharing of group-level inhibition with other unit groups throughout the layer -- spreads inhibition throughout the layer based on strength of competition happening within each unit group -- sets an effective minimum activity level
   float		kwta_pt; // #CONDSHOW_ON_on #DEF_0.5 k-winner-take-all inhibitory point value between avg of top k and remaining bottom units (uses KWTA_AVG_BASED -- 0.5 is gelin default)
@@ -873,9 +872,6 @@ public:
     }
     else {
       new_act = nxx1_fun.Eval(val_sub_thr);
-    }
-    if(gemult) {
-      new_act *= val;
     }
     return new_act;
   }
