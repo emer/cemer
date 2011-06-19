@@ -557,6 +557,8 @@ String  taMisc::console_font_name = "LucidaTypewriter";
 int  	taMisc::console_font_size = 10;
 #endif
 
+float  	taMisc::doc_text_scale = 1.0f;
+
 bool	taMisc::log_console_out = false;
 String  taMisc::t3d_font_name = "Arial";
 String  taMisc::t3d_bg_color = "grey80";

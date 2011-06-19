@@ -7080,7 +7080,7 @@ void iDocDataPanel::UpdatePanel_impl() {
   wiki_edit->setText(doc_->wiki);
   url_edit->setText(doc_->url);
 
-  webview->setTextSizeMultiplier(doc_->text_size * ((float)taMisc::font_size / 12.0f));
+  webview->setTextSizeMultiplier(taMisc::doc_text_scale * doc_->text_size * ((float)taMisc::font_size / 12.0f));
 
   if(doc_->web_doc && taMisc::InternetConnected()) {
     String cur_url = webview->url().toString();
@@ -9731,6 +9731,7 @@ QWebView* iHelpBrowser::AddWebView(const String& label) {
   ++m_changing;
   QWebView* brow = new iWebView;
   QWebPage* wp = brow->page();
+  brow->setTextSizeMultiplier(taMisc::doc_text_scale * ((float)taMisc::font_size / 12.0f));
   wp->setLinkDelegationPolicy(QWebPage::DelegateExternalLinks);
   wp->setNetworkAccessManager(taiMisc::net_access_mgr);
   int tidx = tab->addTab(brow, label.toQString());
