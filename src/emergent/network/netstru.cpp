@@ -4343,6 +4343,8 @@ void Layer::BuildUnits_Threads(Network* net) {
     un->flat_idx = net->units_flat.size;
     net->units_flat.Add(un);
   }
+  // this is needed after loading for no_build nets -- _threads called then.. 
+  gp_output_names.SetGeom(2,gp_geom.x,gp_geom.y);
 }
 
 bool Layer::CheckBuild(bool quiet) {

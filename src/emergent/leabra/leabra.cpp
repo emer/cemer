@@ -2854,8 +2854,8 @@ LeabraLayer* LeabraLayerSpec::FindLayerFmSpecNet(Network* net, TypeDef* layer_sp
 
 
 void LeabraLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
-  // just call the default
-  lay->Layer::BuildUnits_Threads(net);
+  lay->Layer::BuildUnits_Threads(net); // call default
+  lay->BuildKwtaBuffs();	       // also make sure kwta buffs are rebuilt!
 }
 
 void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
@@ -2886,6 +2886,7 @@ void LeabraLayerSpec::SetLearnRule(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->BuildKwtaBuffs();	// make sure kwta buffs are rebuilt!
   Compute_Active_K(lay, net);	// need kwta.pct for init
   LeabraUnit* u;
   taLeafItr i;
@@ -4908,15 +4909,19 @@ bool LeabraLayer::SetLayerSpec(LayerSpec* sp) {
   return true;
 } 
 
-void LeabraLayer::BuildUnits() {
+void LeabraLayer::BuildKwtaBuffs() {
   ResetSortBuf();
-  inherited::BuildUnits();
-
   lay_kbuffs.AllocAllBuffs(flat_geom.n, 1);
   gp_kbuffs.AllocAllBuffs(un_geom.n, gp_geom.n);
 
   ungp_data.SetBaseType(((LeabraLayerSpec*)GetLayerSpec())->UnGpDataType());
   ungp_data.SetSize(gp_geom.n);
+}
+
+void LeabraLayer::BuildUnits() {
+  ResetSortBuf();
+  inherited::BuildUnits();
+  BuildKwtaBuffs();
 }
 
 // void LeabraLayer::TriggerContextUpdate() -- in leabra_extra.cpp

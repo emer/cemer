@@ -2438,7 +2438,8 @@ public:
   override void	BuildUnits();
   override void BuildUnits_Threads(Network* net)
   { if(spec) spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
-
+  virtual  void	BuildKwtaBuffs();
+  // #IGNORE build kwta buffers etc -- needs to be done at load and build time
 
   KwtaSortBuff* 	SortBuff(AccessMode acc_md, KwtaSortBuff_List::StdSortBuffs buff) {
     if(acc_md == ACC_GP) return gp_kbuffs.FastEl(buff);
