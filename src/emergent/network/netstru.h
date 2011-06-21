@@ -1462,7 +1462,7 @@ private:
 };
 
 class EMERGENT_API Layer : public taNBase {
-  // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network layer containing units
+  // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network ##HAS_CONDTREE layer containing units
 INHERITED(taNBase)
 public:
   enum DMemDist {
@@ -1520,14 +1520,14 @@ public:
   LayerDistances	dist;		// #CAT_Structure distances from closest input/output layers to this layer
 
   String		output_name;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
-  String_Matrix		gp_output_names; // #NO_SAVE #HIDDEN #SHOW_TREE #CAT_Statistic #CONDSHOW_ON_unit_groups output_name's for unit subgroups -- name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
+  String_Matrix		gp_output_names; // #NO_SAVE #SHOW_TREE #CAT_Statistic #CONDTREE_ON_unit_groups output_name's for unit subgroups -- name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   float			sse;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   PRerrVals		prerr;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for this layer, for the current pattern
   float			icon_value;	// #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
   int			units_flat_idx;	// #NO_SAVE #READ_ONLY starting index for this layer into the network units_flat list, used in threading
   bool			units_lesioned;	// #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
   bool			gp_unit_names_4d; // #CONDSHOW_ON_unit_groups if there are unit subgroups, create a 4 dimensional set of unit names which allows for distinct names for each unit in the layer -- otherwise a 2d set of names is created of size un_geom, all unit groups have the same repeated set of names
-  String_Matrix		unit_names; 	// #HIDDEN #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
+  String_Matrix		unit_names; 	// #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
   int			n_units;
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
