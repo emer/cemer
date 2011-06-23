@@ -12,7 +12,7 @@ FIND_PATH(GSL_INCLUDE_DIR gsl/gsl_matrix.h
         /usr/local/include
 	/opt/local/include
     $ENV{INCLUDE}
-    ${PROJECT_SOURCE_DIR}/3rdparty/include
+    ${EMER_3RDPARTY_DIR}/include
     ${EMERGENTDIR}/3rdparty/include
 )
 
@@ -22,20 +22,20 @@ FIND_PATH(GSL_INCLUDE_DIR gsl/gsl_matrix.h
 if (WIN32)
   if (CMAKE_BUILD_TYPE MATCHES "Debug")
     FIND_LIBRARY(GSL_GSL_LIBRARY NAMES gsl_d PATHS
-      ${PROJECT_SOURCE_DIR}/3rdparty/lib 
+      ${EMER_3RDPARTY_DIR}/lib 
       ${EMERGENTDIR}/3rdparty/lib
     )
     FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES cblas_d PATHS
-      ${PROJECT_SOURCE_DIR}/3rdparty/lib 
+      ${EMER_3RDPARTY_DIR}/lib 
       ${EMERGENTDIR}/3rdparty/lib
     )
   else (CMAKE_BUILD_TYPE MATCHES "Debug")
     FIND_LIBRARY(GSL_GSL_LIBRARY NAMES gsl PATHS
-      ${PROJECT_SOURCE_DIR}/3rdparty/lib 
+      ${EMER_3RDPARTY_DIR}/lib 
       ${EMERGENTDIR}/3rdparty/lib
     )  
     FIND_LIBRARY(GSL_CBLAS_LIBRARY NAMES cblas PATHS
-      ${PROJECT_SOURCE_DIR}/3rdparty/lib 
+      ${EMER_3RDPARTY_DIR}/lib 
       ${EMERGENTDIR}/3rdparty/lib
     )
   endif (CMAKE_BUILD_TYPE MATCHES "Debug")

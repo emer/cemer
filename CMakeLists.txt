@@ -269,14 +269,14 @@ if (WIN32)
   set(CMAKE_INSTALL_PREFIX "C:/Emergent" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
   # for Windows, we install the pre-req dll's in bin
   file(GLOB OUR_3RDPARTY_FILES 
-    "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/bin/*.dll"
+    "${EMER_3RDPARTY_DIR}/bin/*.dll"
     "${COINDIR}/bin/*.dll"
     "${QT_BINARY_DIR}/*.dll"
   )
   install(FILES ${OUR_3RDPARTY_FILES}
     DESTINATION bin
   )
-  install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty"
+  install(DIRECTORY "${EMER_3RDPARTY_DIR}"
     DESTINATION .
   )
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images/emergent.ico

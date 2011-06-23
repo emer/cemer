@@ -10,6 +10,7 @@
 # note: EMERGENTDIR is really only used on Windows or for development
 file(TO_CMAKE_PATH "$ENV{EMERGENTDIR}" EMERGENTDIR)
 file(TO_CMAKE_PATH "$ENV{COINDIR}" COINDIR)
+file(TO_CMAKE_PATH "$ENV{EMER_3RDPARTY_DIR}" EMER_3RDPARTY_DIR)
 # assume in 3rdparty
 #TODO: set COINDIR according to defaults
 #allowed overrides:
