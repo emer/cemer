@@ -2261,6 +2261,332 @@ void TiledNovlpPrjnSpec::Connect_Reciprocal(Projection* prjn) {
   }
 }
 
+////////////////////////////////////////////////////////////
+//	GpMapConvergePrjnSpec
+
+void GpMapConvergePrjnSpec::Initialize() {
+}
+
+void GpMapConvergePrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+  if(TestWarning(!prjn->from->unit_groups, "Connect_impl",
+		 "requires sending layer to have unit groups!")) {
+    return;
+  }
+  // below assumes the "==" operator has been overloaded for object un_geom in the intuitive way
+  if(TestWarning(!(prjn->from->un_geom==prjn->layer->un_geom), "GpMapConvergePrjnSpec::Connect_impl",
+		 "requires sending layer unit geometry to match receiving layer unit geometry, i.e., within each unit group!")) {
+    return;
+  }
+ 
+Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord su_geo = send_lay->gp_geom;
+  int n_su_gps = send_lay->gp_geom.n;
+
+  int alloc_no = n_su_gps; 	// number of cons per recv unit
+
+  // pre-alloc senders -- only 1
+  Unit* su;
+  taLeafItr su_itr;
+  FOR_ITR_EL(Unit, su, prjn->from->units., su_itr)
+    su->SendConsPreAlloc(1, prjn);
+
+  for(int ri = 0; ri<recv_lay->units.leaves; ri++) {
+    Unit* ru_u = (Unit*)recv_lay->units.Leaf(ri);
+    if(!ru_u) break;
+    ru_u->RecvConsPreAlloc(alloc_no, prjn);
+    
+    TwoDCoord suc;
+    for(suc.y = 0; suc.y < su_geo.y; suc.y++) {
+      for(suc.x = 0; suc.x < su_geo.x; suc.x++) {
+	int sgpidx = send_lay->UnitGpIdxFmPos(suc);
+	Unit* su_u = send_lay->UnitAtUnGpIdx(ri, sgpidx);
+	if(su_u) {
+	  ru_u->ConnectFrom(su_u, prjn);
+	}
+      }
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////
+//	GpMapDivergePrjnSpec
+
+void GpMapDivergePrjnSpec::Initialize() {
+}
+
+void GpMapDivergePrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+  if(TestWarning(!prjn->layer->unit_groups, "GpMapDivergePrjnSpec::Connect_impl",
+		 "requires receiving layer to have unit groups!")) {
+    return;
+  }
+  // below assumes the "==" operator has been overloaded for object un_geom in the intuitive way
+  if(TestWarning(!(prjn->from->un_geom==prjn->layer->un_geom), "GpMapDivergePrjnSpec::Connect_impl",
+		 "requires sending layer unit geometry to match receiving layer unit geometry, i.e., within each unit group!")) {
+    return;
+  }
+  
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord ru_geo = recv_lay->gp_geom;
+  int n_ru_gps = recv_lay->gp_geom.n;
+
+  int su_alloc_no = n_ru_gps; 	// number of cons from each send unit
+
+  // pre-alloc senders
+  Unit* su;
+  taLeafItr su_itr;
+  FOR_ITR_EL(Unit, su, prjn->from->units., su_itr)
+    su->SendConsPreAlloc(su_alloc_no, prjn);
+
+  // pre-alloc receivers -- only 1
+  for(int ri = 0; ri<recv_lay->units.leaves; ri++) {
+    Unit* ru_u = (Unit*)recv_lay->units.Leaf(ri);
+    if(!ru_u) break;
+    ru_u->RecvConsPreAlloc(1, prjn);
+  }
+
+  // now actually build connections 
+  for(int si = 0; si<send_lay->units.leaves; si++) {  
+    Unit* su_u = (Unit*)send_lay->units.Leaf(si);
+    TwoDCoord ruc;
+    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
+	int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
+	Unit* ru_u = recv_lay->UnitAtUnGpIdx(si, rgpidx); 
+	if(ru_u) {
+	  ru_u->ConnectFrom(su_u, prjn);
+	}
+      }
+    }
+  }
+}
+
+//////////////////////////////////////////////////////////
+//  	TiledGpMapConvergePrjnSpec
+
+void TiledGpMapConvergePrjnSpec::Initialize() {
+  send_tile_size = 4;
+  send_tile_skip = 2;
+  wrap = false;
+  reciprocal = false;
+}
+
+void TiledGpMapConvergePrjnSpec::Connect_impl(Projection* prjn) {
+  if(!(bool)prjn->from)	return;
+  if(prjn->layer->units.leaves == 0) // an empty layer!
+    return;
+  if(TestWarning(!prjn->layer->unit_groups, "Connect_impl",
+		 "requires recv layer to have unit groups!")) {
+    return;
+  }
+  if(TestWarning(!prjn->from->unit_groups, "Connect_impl",
+		 "requires send layer to have unit groups!")) {
+    return;
+  }
+
+  if(reciprocal) {
+    Connect_Reciprocal(prjn);
+    return;
+  }
+
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+  TwoDCoord ru_geo = recv_lay->gp_geom;
+  TwoDCoord su_geo = send_lay->un_geom; // note: unit group geometry!
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+  int su_ngps = send_lay->gp_geom.n;
+
+  int sg_sz_tot = send_tile_size.Product();
+  int alloc_no = sg_sz_tot * su_ngps;
+
+  TwoDCoord ruc;
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    int rgpidx = 0;
+    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
+	TwoDCoord su_st;
+	if(wrap)	su_st = (ruc-1) * send_tile_skip;
+	else		su_st = ruc * send_tile_skip;
+
+	for(int rui=0; rui < ru_nunits; rui++) {
+	  Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+	  if(!alloc_loop)
+	    ru_u->RecvConsPreAlloc(alloc_no, prjn);
+	}
+
+	TwoDCoord suc;
+	TwoDCoord suc_wrp;
+	for(suc.y = su_st.y; suc.y < su_st.y + send_tile_size.y; suc.y++) {
+	  for(suc.x = su_st.x; suc.x < su_st.x + send_tile_size.x; suc.x++) {
+	    suc_wrp = suc;
+	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	      continue;
+	    int suidx = send_lay->UnitIdxFmPos(suc_wrp);
+	    if(!send_lay->UnitIdxIsValid(suidx)) continue;
+
+	    Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, suidx, alloc_loop);
+	  }
+	}
+      }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
+    }
+  }
+}
+
+void TiledGpMapConvergePrjnSpec::Connect_Reciprocal(Projection* prjn) {
+  Layer* recv_lay = prjn->from;	// from perspective of non-recip!
+  Layer* send_lay = prjn->layer;
+  TwoDCoord ru_geo = recv_lay->gp_geom;
+  TwoDCoord su_geo = send_lay->un_geom; // note: un_geom
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_nunits = send_lay->un_geom.n;
+  int su_ngps = send_lay->gp_geom.n;
+
+  int_Array alloc_sz;
+  alloc_sz.SetSize(su_geo.Product()); // alloc sizes per each su unit group
+  alloc_sz.InitVals(0);
+    
+  TwoDCoord ruc;
+  int rgpidx = 0;
+  for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
+      TwoDCoord su_st;
+      if(wrap)	su_st = (ruc-1) * send_tile_skip;
+      else	su_st = ruc * send_tile_skip;
+
+      TwoDCoord suc;
+      TwoDCoord suc_wrp;
+      for(suc.y = su_st.y; suc.y < su_st.y + send_tile_size.y; suc.y++) {
+	for(suc.x = su_st.x; suc.x < su_st.x + send_tile_size.x; suc.x++) {
+	  suc_wrp = suc;
+	  if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	    continue;
+	  int suidx = send_lay->UnitIdxFmPos(suc_wrp);
+	  if(!send_lay->UnitIdxIsValid(suidx)) continue;
+	  alloc_sz[suidx] += ru_nunits;
+	}
+      }
+    }
+  }
+
+  // now actually allocate
+  for(int sug=0; sug < send_lay->gp_geom.n; sug++) {
+    for(int sui=0; sui < su_nunits; sui++) {
+      Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sug);
+      su_u->RecvConsPreAlloc(alloc_sz[sui], prjn);
+    }
+  }
+
+  // then connect
+  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
+    int rgpidx = 0;
+    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
+	TwoDCoord su_st;
+	if(wrap)	su_st = (ruc-1) * send_tile_skip;
+	else		su_st = ruc * send_tile_skip;
+
+	TwoDCoord suc;
+	TwoDCoord suc_wrp;
+	for(suc.y = su_st.y; suc.y < su_st.y + send_tile_size.y; suc.y++) {
+	  for(suc.x = su_st.x; suc.x < su_st.x + send_tile_size.x; suc.x++) {
+	    suc_wrp = suc;
+	    if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
+	      continue;
+	    int suidx = send_lay->UnitIdxFmPos(suc_wrp);
+	    if(!send_lay->UnitIdxIsValid(suidx)) continue;
+	    
+	    Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, suidx, alloc_loop);
+	  }
+	}
+      }
+    }
+    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
+      prjn->from->SendConsPostAlloc(prjn);
+    }
+  }
+}
+
+void TiledGpMapConvergePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
+					  int rgpidx, int suidx, int alloc_loop) {
+  int ru_nunits = recv_lay->un_geom.n;
+  int su_ngps = send_lay->gp_geom.n;
+
+  if(reciprocal) {		// reciprocal is backwards!
+    for(int sgpi=0; sgpi < su_ngps; sgpi++) {
+      Unit* su_u = send_lay->UnitAtUnGpIdx(suidx, sgpi);
+      for(int rui=0; rui < ru_nunits; rui++) {
+	Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+	if(!self_con && (su_u == ru_u)) continue;
+	su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
+      }
+    }
+  }
+  else {
+    for(int rui=0; rui < ru_nunits; rui++) {
+      Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+      for(int sgpi=0; sgpi < su_ngps; sgpi++) {
+	Unit* su_u = send_lay->UnitAtUnGpIdx(suidx, sgpi);
+	if(!self_con && (su_u == ru_u)) continue;
+	ru_u->ConnectFrom(su_u, prjn, alloc_loop); // recip!
+      }
+    }
+  }
+}
+
+int TiledGpMapConvergePrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt) {
+  // todo: needs impl
+  return -1;
+}
+
+bool TiledGpMapConvergePrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
+  trg_send_geom.x = send_x;
+  trg_send_geom.y = send_y;
+
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / send_tile_skip);
+  else
+    trg_recv_geom = (trg_send_geom / send_tile_skip) - 1;
+
+  // now fix it the other way
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * send_tile_skip);
+  else
+    trg_send_geom = ((trg_recv_geom +1) * send_tile_skip);
+
+  DataChanged(DCR_ITEM_UPDATED);
+  return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
+}
+
+bool TiledGpMapConvergePrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
+  trg_recv_geom.x = recv_x;
+  trg_recv_geom.y = recv_y;
+
+  if(wrap)
+    trg_send_geom = (trg_recv_geom * send_tile_skip);
+  else
+    trg_send_geom = ((trg_recv_geom+1) * send_tile_skip);
+
+  // now fix it the other way
+  if(wrap)
+    trg_recv_geom = (trg_send_geom / send_tile_skip);
+  else
+    trg_recv_geom = (trg_send_geom / send_tile_skip) - 1;
+
+  DataChanged(DCR_ITEM_UPDATED);
+  return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
+}
+
 ///////////////////////////////////////////////////////////////////
 // 	GaussRFPrjnSpec
 

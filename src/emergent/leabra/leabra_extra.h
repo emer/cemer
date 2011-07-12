@@ -2418,38 +2418,6 @@ private:
   void	Defaults_init() 	{ };
 };
 
-class LEABRA_API GpMapConvergePrjnSpec : public ProjectionSpec {
-  // #AKA_GpAggregatePrjnSpec aggregates across a layer with unit groups into a receiving layer that has the same geometry as each of the unit groups -- each unit receives from the corresponding unit in each of the sending unit groups
-INHERITED(ProjectionSpec)
-public:
-  
-  void 		Connect_impl(Projection* prjn);
-
-  TA_SIMPLE_BASEFUNS(GpMapConvergePrjnSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
-};
-
-class LEABRA_API GpMapDivergePrjnSpec : public ProjectionSpec {
-  // projects from a layer without unit groups into a receiving layer with unit groups and that has the same unit geometry in each of its unit groups as the sending layer -- each unit projects to the corresponding unit in each of the receiving unit groups
-INHERITED(ProjectionSpec)
-public:
-  
-  void 		Connect_impl(Projection* prjn);
-
-  TA_SIMPLE_BASEFUNS(GpMapDivergePrjnSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()		{ };
-  void	Defaults_init() 	{ };
-};
-
 class LEABRA_API V1LateralContourPrjnSpec : public ProjectionSpec {
   // lateral projections within V1 layer to support continuation of contours -- helps make edges more robust to differences in bottom-up strength, based on principle of good continuation -- requires unit groups within layer where x dim represents angle
 INHERITED(ProjectionSpec)

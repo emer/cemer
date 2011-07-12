@@ -1613,6 +1613,12 @@ public:
   // #CAT_Access get *logical* position for unit, relative to flat_geom (no display spacing) -- based on index within group/layer
   void		UnitLogPos(Unit* un, int& x, int& y) const;
   // #CAT_Access get *logical* position for unit, relative to flat_geom (no display spacing) -- based on index within group/layer
+  int		UnitIdxFmPos(TwoDCoord& pos) const
+  { return pos.y * un_geom.x + pos.x; }
+  // #CAT_Access get unit index from position for unit within a subgroup or unit in a layer without any subgroups
+  bool		UnitIdxIsValid(int unidx) const
+  { return unidx >= 0 && unidx < un_geom.n; }
+  // #CAT_Access is the unit index valid (within range) for unit in subgroup or unit in layer without subgroups
 
   TwoDCoord	UnitGpPosFmIdx(int gpidx) const
   { TwoDCoord rval; rval.x = gpidx % gp_geom.x; rval.y = gpidx / gp_geom.x; return rval; }

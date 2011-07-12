@@ -507,6 +507,68 @@ private:
   void 	Destroy()		{ };
 };
 
+class EMERGENT_API GpMapConvergePrjnSpec : public ProjectionSpec {
+  // #AKA_GpAggregatePrjnSpec generates a converging map of the units within a sending layer that has unit groups into a receiving layer that has the same geometry as one of the unit groups -- each recv unit receives from the corresponding unit in all of the sending unit groups
+INHERITED(ProjectionSpec)
+public:
+  
+  void 		Connect_impl(Projection* prjn);
+
+  TA_SIMPLE_BASEFUNS(GpMapConvergePrjnSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
+};
+
+class EMERGENT_API GpMapDivergePrjnSpec : public ProjectionSpec {
+  // projects from a layer without unit groups into a receiving layer with unit groups and that has the same unit geometry in each of its unit groups as the sending layer -- each unit projects to the corresponding unit in all of the receiving unit groups
+INHERITED(ProjectionSpec)
+public:
+  
+  void 		Connect_impl(Projection* prjn);
+
+  TA_SIMPLE_BASEFUNS(GpMapDivergePrjnSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+  void	Defaults_init() 	{ };
+};
+
+class EMERGENT_API TiledGpMapConvergePrjnSpec : public ProjectionSpec {
+  // generates a converging map of the units within a sending layer with unit groups, using tiled overlapping receptive fields within each unit group -- each recv unit receives from the corresponding unit in all of the sending unit groups, with the recv units organized into unit groups that each recv from one tiled subset of sending units within all the sending unit groups -- there must be the same number of recv unit groups as tiled subsets within the sending unit groups
+INHERITED(ProjectionSpec)
+public:
+  TwoDCoord	send_tile_size;		// number of units in one tile of the sending unit group units
+  TwoDCoord	send_tile_skip;		// number of units to skip when moving the tiling over to the next position (typically 1/2 of the size for nice overlap)
+  bool		wrap;			// if true, then connectivity has a wrap-around structure so it starts at -tile_skip (wrapped to right/top) and goes +tile_skip past the right/top edge (wrapped to left/bottom) -- this produces more uniform overlapping coverage of the space
+  bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
+
+  TwoDCoord 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
+  TwoDCoord 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer *unit group* geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
+
+  override void Connect_impl(Projection* prjn);
+  virtual void 	Connect_Reciprocal(Projection* prjn);
+  int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
+  virtual void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
+				  int rgpidx, int suidx, int alloc_loop);
+  // #IGNORE connect one recv unit group to all sending unit groups -- rgpidx = recv unit group idx, suidx = send unit idx within subgroups
+
+  virtual bool	TrgRecvFmSend(int send_x, int send_y);
+  // #BUTTON compute target recv layer geometry based on given sending unit group geometry (size of one unit group within sending layer) -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end
+  virtual bool	TrgSendFmRecv(int recv_x, int recv_y);
+  // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing recv to be an appropriate even multiple of rf_move --  -- returns true if send values provided result are same "good" ones that come out the end
+
+  TA_SIMPLE_BASEFUNS(TiledGpMapConvergePrjnSpec);
+private:
+  void	Initialize();
+  void 	Destroy()		{ };
+};
+
 class EMERGENT_API GaussRFPrjnSpec : public ProjectionSpec {
   // a simple receptive-field (RF) projection spec with gaussian weight values over a receptive-field window onto the sending layer that moves as a function of the receiving unit's position (like TesselPrjnSpec and other RF prjn specs, but does NOT use unit groups) -- useful for reducing larger layers to smaller ones for example
 INHERITED(ProjectionSpec)
