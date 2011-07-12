@@ -47,6 +47,8 @@ Standards-Version: 3.9.1
 
 Homepage: http://www.coin3d.org/lib/quarter
 Package: libquarter0
+Conflicts: libquarter
+Replaces: libquarter
 Architecture: any
 Depends: \${shlibs:Depends}, \${misc:Depends}
 Description: Glue between Coin3D and Qt
