@@ -2421,7 +2421,7 @@ class LEABRA_API LeabraLayer : public Layer, public LeabraInhib {
 INHERITED(Layer)
 public:
   LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
-  bool		hard_clamped;	// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation this layer is actually hard clamped
+  bool		hard_clamped;	// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation if true, indicates that this layer was actually hard clamped -- this is normally set by the Compute_HardClamp function called by Settle_Init() or NewInputData_Init() -- see LayerSpec clamp.hard parameter to determine whether layer is hard clamped or not -- this flag is not to be manipulated directly
   float		avg_l_avg;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation layer-wise average of avg_l values in the layers
   float		dav;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
   AvgMaxVals	avg_netin;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale

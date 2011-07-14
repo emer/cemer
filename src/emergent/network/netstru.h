@@ -810,7 +810,7 @@ public: //
   };
 
   ExtType	ext_flag;
-  // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received
+  // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
   float 	targ;
   // #VIEW_HOT #CAT_Activation target value: drives learning to produce this activation value
   float 	ext;
@@ -1514,7 +1514,7 @@ public:
   Projection_Group  	send_prjns;	// #CAT_Structure #HIDDEN #LINK_GROUP group of sending projections
   Unit_Group		units;		// #CAT_Structure #NO_SEARCH units or groups of units
   UnitSpec_SPtr 	unit_spec;	// #CAT_Structure default unit specification for units in this layer
-  Unit::ExtType		ext_flag;	// #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received
+  Unit::ExtType		ext_flag;	// #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
   DMemDist		dmem_dist; 	// #CAT_DMem how to distribute units across multiple distributed memory processors
 
   LayerDistances	dist;		// #CAT_Structure distances from closest input/output layers to this layer
