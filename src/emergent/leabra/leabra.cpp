@@ -4962,6 +4962,7 @@ void LeabraLayer::BuildKwtaBuffs() {
   lay_kbuffs.AllocAllBuffs(flat_geom.n, 1);
   gp_kbuffs.AllocAllBuffs(un_geom.n, gp_geom.n);
 
+  ungp_data.Reset();
   ungp_data.SetBaseType(((LeabraLayerSpec*)GetLayerSpec())->UnGpDataType());
   ungp_data.SetSize(gp_geom.n);
 }
