@@ -1674,6 +1674,7 @@ public:
     KWTA_COMP_COST,		// competitor cost kwta function: inhibition is i_kwta_pt below the k'th unit's threshold inhibition value if there are no strong competitors (>comp_thr proportion of kth inhib val), and each competitor increases inhibition linearly (normalized by total possible = n-k) with gain comp_gain -- produces cleaner competitive dynamics and considerable kwta flexibility
     AVG_MAX_PT_INHIB,		// put inhib value at i_kwta_pt between avg and max values for layer
     MAX_INHIB,			// put inhib value at i_kwta_pt below max guy in layer
+    AVG_NET_ACT,		// compute inhibition as proportion of average net input and activation in layer or unit group, with kink in activation inhibition at kwta point -- gets stronger after kwta level is reached -- net is effectively feedforward inhibition, and act is feedback -- kwta.pt is overall multiplier on top of net_gain, act_gain, and kink_gain
     UNIT_INHIB			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
   };
 
@@ -1681,9 +1682,11 @@ public:
   float		kwta_pt;	// #DEF_0.2;0.5;0.25;0.6 [Defaults: for gelin: .2 for KWTA_INHIB, .5 for KWTA_AVG, for non-gelin: .25 for KWTA_INHIB, .6 for KWTA_AVG, .2 for AVG_MAX_PT_INHIB] point to place inhibition between k and k+1 (or avg and max for AVG_MAX_PT_INHIB)
   bool		low0;		// CONDSHOW_ON_type:KWTA_INHIB||type:KWTA_AVG_INHIB use 0 for the low side of the kwta equation -- i.e., the kwta_pt sets the point between 0 and the either the top-k AVG or k'th unit inhib threshold -- ignore all the neurons below the top-k -- this may be more realistic and should give the most flexibility -- works a lot like the gp_g spreading inhib dynamic at the group level -- will generally need to set kwta_pt higher
   float		min_i;		// #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
-  float		fb_act_thr;	// #DEF_0;0.5 threshold for max activation in layer or group for full kwta inhibition value to be delivered -- below this threshold, the feedback portion of inhibition is proportional to the max act compared to this threshold -- ff_pct of inhibition is always delivered regardless -- allows for an initial wave of activation to get things flowing in the network, followed by inhibitory control
-  float		ff_pct;		// #CONDSHOW_OFF_fb_act_thr:0 #DEF_0.5 proportion of inhibition that is considered feed forward, and thus not subject to modulation from the fb_act_thr feedback threshold -- this portion of the kwta inhibition is always delivered regardless
-  float		fb_max_dt;	// #CONDSHOW_OFF_fb_act_thr:0 #DEF_0.1 time constant of decay for max activation in the layer or group -- instantly goes to a new max value, but then decays back down with this time constant -- provides needed memory to the fb_act_thr dynamics
+  float		net_gain;	// #DEF_1.4 #CONDSHOW_ON_type:AVG_NET_ACT for AVG_NET_ACT mode, gain on average netinput in layer or unit group -- should be relatively weaker than act_gain, but enough to anticipate inputs and make system more robust, like feedforward inhibition should
+  float		act_gain;	// #DEF_6 #CONDSHOW_ON_type:AVG_NET_ACT for AVG_NET_ACT mode, baseline gain on average activation in layer or unit group -- operates alone when act_avg is below kwta.pct -- see kink_gain
+  float		kink_gain;	// #DEF_1.5 #MIN_1 #CONDSHOW_ON_type:AVG_NET_ACT for AVG_NET_ACT mode, extra multiplier on act_gain when average activity exceeds kwta.pct level -- this nonlinearity works to strongly shut down excessive activation
+  float		avg_up_dt;	// #DEF_1 #MIN_0 #CONDSHOW_ON_type:AVG_NET_ACT for AVG_NET_ACT mode, rate for increases in average activation values for computing time-average activation average that drives act_gain term
+  float		avg_dn_dt;	// #DEF_0.2 #MIN_0 #CONDSHOW_ON_type:AVG_NET_ACT for AVG_NET_ACT mode, rate for decreases in average activation values for computing time-average activation average that drives act_gain term
   float		comp_thr;	// #CONDSHOW_ON_type:KWTA_COMP_COST [0-1] Threshold for competitors in KWTA_COMP_COST -- competitor threshold inhibition is normalized by k'th inhibition and those above this threshold are counted as competitors 
   float		comp_gain;	// #CONDSHOW_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
   float		gp_pt;		// #CONDSHOW_ON_type:AVG_MAX_PT_INHIB #DEF_0.2 for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
@@ -2017,6 +2020,10 @@ public:
 			 Layer::AccessMode acc_md, int gpidx,
 			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of max inhibition computation
+    virtual void Compute_Inhib_AvgNetAct(LeabraLayer* lay,
+			 Layer::AccessMode acc_md, int gpidx,
+			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
+    // #IGNORE implementation of avg-net-act inhibition computation
 
     virtual void Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net);
     // #IGNORE compute extra dynamic inhibition for CtLeabra_X/CAL algorithm
@@ -2051,6 +2058,8 @@ public:
 					LeabraInhib* thr);
     // #IGNORE unit group compute AvgMaxVals for acts -- also does acts_top_k
     virtual void Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
+    // #CAT_Statistic compute activation AvgMaxVals (acts)
+    virtual void Compute_ActsIAvg_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Statistic compute activation AvgMaxVals (acts)
 
     virtual void Compute_MaxDa(LeabraLayer* lay, LeabraNetwork* net);
@@ -2352,6 +2361,7 @@ public:
   AvgMaxVals	netin_top_k;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the top k units in the layer
   AvgMaxVals	i_thrs;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation inhibitory threshold values for the layer
   AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation activation values for the layer
+  AvgMaxVals	acts_iavg;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation time-averaged average activations (computed from unit.act var, not act_eq) for use in AVG_NET_ACT inhibition type (ONLY)
   AvgMaxVals	acts_top_k;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation activation values for the top k units in the layer
   AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
   AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation minus-phase activation stats for the layer
@@ -2364,7 +2374,6 @@ public:
   AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation unit inhib values (optionally computed)
   AdaptIVals	adapt_i;	// #NO_SAVE #READ_ONLY #AKA_adapt_pt #EXPERT #CAT_Activation adapting inhibition values
   float		maxda;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic maximum change in activation (delta-activation) over network; used in stopping settling
-  float		act_max_avg;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Activation time-integrated version of acts.max over trials with fb_max_dt decay constant -- goes to max instantly and then decays back down slowly with this constant
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
   void	Inhib_ResetSortBuf() 		{ active_buf.size = 0; inact_buf.size = 0; }

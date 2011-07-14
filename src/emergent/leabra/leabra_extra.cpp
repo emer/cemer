@@ -5949,12 +5949,6 @@ void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net)
 
     int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
     float inhib_val = thr->i_val.g_i;
-    if(inhib.fb_act_thr > 0.0f) {
-      float amax = thr->act_max_avg;
-      float imod = amax / inhib.fb_act_thr; // graded modulation as function of activation
-      if(imod > 1.0f) imod = 1.0f;
-      inhib_val *= (inhib.ff_pct + (1.0f - inhib.ff_pct) * imod);
-    }
     // note: not doing tie break!
 
     TwoDCoord fc;		// v1s feature coords
