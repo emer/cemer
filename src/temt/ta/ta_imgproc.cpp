@@ -2171,70 +2171,76 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
 }
 
 bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig) {
-  float gauss_sig = bubble_sig;
-  
+  // TODO: Allow vector input for bubble centers. Don't need for basic usage though, just gen randomly
+
+  // floor value for mask
+  float floor_thr=pow(10.0f, -8.0f);
+
+  // get the img size -- need for lots of stuff
   TwoDCoord img_size(img.dim(0), img.dim(1));
   
-  // get background color
-  float brd_clr[3];
-  GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
-  
-  // parameterize the gaussian
-  float gauss_eff = gauss_sig * (float)img_size.x;
-  int gauss_half = (int)gauss_eff * 3;
-  int gauss_wd = gauss_half * 2;  
-
-  // create the gaussian wt matrix
-  float_Matrix gauss_wt;
-  gauss_wt.SetGeom(2, gauss_wd, gauss_wd);
-  float ctr = (float)(gauss_wd-1) * .5f;
-  for(int yi=0; yi< gauss_wd; yi++) {
-    float y = ((float)yi - ctr) / gauss_eff;
-    for(int xi=0; xi< gauss_wd; xi++) {
-      float x = ((float)xi - ctr) / gauss_eff;
-      float gv = expf(-(x*x + y*y)/2.0f);
-      gauss_wt.FastEl(xi, yi) = gv;
-    }
-  } 
-  taMath_float::vec_norm_max(&gauss_wt, 1.0f);
-  
-  // create the mask
-  float_Matrix bubble_mask;
-  bubble_mask.SetGeom(2, img_size.x, img_size.y);
+  // create the mask and temporary mask
+  float_Matrix mask;
+  mask.SetGeom(2, img_size.x, img_size.y);
+  float_Matrix mask_tmp;
+  mask_tmp.SetGeom(2, img_size.x, img_size.y);
   for(int yi=0; yi< img_size.y; yi++) {
     for(int xi=0; xi< img_size.x; xi++) {
-      bubble_mask.FastEl(xi, yi) = 0.0f;
+      mask.FastEl(xi, yi) = 0.0f;
+      mask_tmp.FastEl(xi, yi) = 0.0f;
     }
   }
   
-  TwoDCoord ic_min(gauss_half, gauss_half);
-  TwoDCoord ic_max(img_size.x - gauss_half, img_size.y - gauss_half);
-  TwoDCoord ic;
+  // ndgrid from matlab
+  float_Matrix ndgridx;  
+  ndgridx.SetGeom(2, img_size.x, img_size.y);
+  float_Matrix ndgridy;
+  ndgridy.SetGeom(2, img_size.x, img_size.y);
+  for(int yi=0; yi< img_size.y; yi++) {
+    for(int xi=0; xi< img_size.x; xi++) {
+      ndgridx.FastEl(xi, yi) = (float)xi;
+      ndgridy.FastEl(xi, yi) = (float)yi;
+    }
+  }  
   
-  // bubble the mask
-  for(int bubble=1; bubble <= n_bubbles; bubble++) {
-    ic.x = Random::IntMinMax(ic_min.x, ic_max.x);
-    ic.y = Random::IntMinMax(ic_min.y, ic_max.y);
+  // apply bubbles to the mask
+  for(int bubble=0; bubble < n_bubbles; bubble++) {
+    // random center
+   int xc = Random::IntMinMax(0, img_size.x-1);
+   int yc = Random::IntMinMax(0, img_size.y-1);
     
-	for(int yi=0; yi< gauss_wd; yi++) {
-	  for(int xi=0; xi< gauss_wd; xi++) {
-	    float iv = gauss_wt.FastEl(xi, yi);
-	    bubble_mask.FastEl(ic.x + xi - gauss_half, ic.y + yi - gauss_half) += iv;
+    for(int yi=0; yi< img_size.y; yi++) {
+      for(int xi=0; xi< img_size.x; xi++) {
+	    float &mask_iv = mask_tmp.FastEl(xi, yi);
+	    float ndgridx_val = ndgridx.FastEl(xi, yi);
+	    float ndgridy_val = ndgridy.FastEl(xi, yi);	    
+	    // key formula -- note that bubble_sig is in normalized image coords here, assumes image is square (uses img_size.x)
+	    mask_iv = expf(-(pow(ndgridx_val-xc,2.0f) + pow(ndgridy_val-yc,2.0f))/2.0f/pow(bubble_sig*float(img_size.x),2.0f));
 	  }
 	}
 	
+	// normalize mask each time, and combine with all masks using max
+	taMath_float::vec_norm_max(&mask_tmp);
+	for(int yi=0; yi< img_size.y; yi++) {
+	  for(int xi=0; xi< img_size.x; xi++) {
+	  	float &mask_iv = mask.FastEl(xi, yi);
+	  	float mask_tmp_iv = mask_tmp.FastEl(xi, yi);
+	  	mask_iv = max(mask_iv, mask_tmp_iv);
+	  }
+	}
   }
   
-  // clip anything above 1
-  taMath_float::vec_threshold_high(&bubble_mask, 1.0f, 1.0f);
+  // floor anything in mask below floor thresh
+  taMath_float::vec_threshold_low(&mask, floor_thr, 0.0f);
   
   // combine the image and background using the mask as a weighting matrix   
-  float clr = 0.0f;
-  clr = brd_clr[0];   // just use first dim for gray
+  float brd_clr[3];
+  GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
+  float clr = brd_clr[0];   // just use first dim for gray
   for(int yi=0; yi< img_size.y; yi++) {
 	for(int xi=0; xi< img_size.x; xi++) {
 	  float &img_iv = img.FastEl(xi, yi);
-	  float mask_iv = bubble_mask.FastEl(xi, yi);
+	  float mask_iv = mask.FastEl(xi, yi);
 	  img_iv = mask_iv*img_iv + (1.0f-mask_iv)*clr;
 	}
   }
