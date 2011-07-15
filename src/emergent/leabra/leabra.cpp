@@ -5525,6 +5525,7 @@ void LeabraNetwork::Trial_Init_SRAvg() {
     if(lay->lesioned())	continue;
     lay->Trial_Init_SRAvg(this);
   }
+  sravg_vals.InitVals();	// reset sravg vals, after Trial_Init_SRAvg!
 }
   
 void LeabraNetwork::Trial_Init_Layer() {
