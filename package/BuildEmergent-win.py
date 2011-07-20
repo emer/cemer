@@ -41,12 +41,13 @@ def getSysEnvVar(name):
   return getEnvVar(name, _winreg.HKEY_LOCAL_MACHINE, env)
 
 def setUserEnvVar(name, value):
-  return setEnvVar(name, value, _winreg.HKEY_CURRENT_USER, 'Environment')
+  setEnvVar(name, value, _winreg.HKEY_CURRENT_USER, 'Environment')
+  #os.system('setx ' + name + ' "' + value + '"')
 
 def setSysEnvVar(name, value):
   env = 'SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment'
-  return setEnvVar(name, value, _winreg.HKEY_LOCAL_MACHINE, env)
-
+  setEnvVar(name, value, _winreg.HKEY_LOCAL_MACHINE, env)
+  #os.system('setx ' + name + ' "' + value + '" /M')
 
 try:
   progfiles = set([os.environ['ProgramFiles(x86)'], os.environ['ProgramFiles'], os.environ['ProgramW6432']])
@@ -273,7 +274,7 @@ def check_windows_update():
       with open(wu_done_file, 'w') as f:
         f.write('Checked Windows Update after installing VC++ 2010, WinSDK, SP1, WinSDK compiler update')
 
-# Default to 2008 for now, since that actually works.
+# Default to VC++2008 for now, since that actually works.
 msvs = 2008
 def inst_msvs():
   global msvs
@@ -349,7 +350,7 @@ def inst_cmake():
       if msvs == 2008:
         file = getUrl('ftp://grey.colorado.edu/pub/emergent/cmake-2.8.1-win32-x86.exe')
       else:
-        # Need 2.8.4 to fix bug for vs2010.
+        # Need CMake 2.8.4 to fix bug calling moc when using VC++2010.
         file = getUrl('http://www.cmake.org/files/v2.8/cmake-2.8.4-win32-x86.exe')
       os.system(file)
       response = raw_input('\nOnce CMake has been installed, press enter to continue...')
@@ -430,7 +431,8 @@ def ask_32_or_64():
         if askUser('\nMake 32-bit build? (say no for 64)'): break
         else: build_64bit = True
 
-# Get the extension to add to directories to differentiate msvs2008 vs 2010, 32 vs 64, and debug.
+# Get the extension to add to directories to differentiate
+# VC++2008 vs VC++2010, 32-bit vs 64-bit, and debug vs release.
 def get_dir_extension_args(is_64, is_dbg):
   ext = '-msvs' + str(msvs)
   ext += '-64' if is_64 else '-32'
@@ -486,8 +488,8 @@ tools_dir = ''
 third_party_dir = ''
 def inst_3rd_party():
   global tools_dir, third_party_dir
-  # Make a tools directory specific to the compiler version (2008, 2010)
-  # and architecture (32-bit or 64-bit).  Doesn't matter debug vs. release.
+  # Make a tools directory specific to the VC++ compiler version and
+  # architecture (32-bit or 64-bit).  Doesn't matter debug vs. release.
   tools_dir = os.path.join(devtool_dir, 'tools' + get_dir_extension_args(build_64bit, False))
   # Extract the bundle of third-party stuff into this tools directory.
   third_party_dir = os.path.join(tools_dir, '3rdparty')
@@ -496,7 +498,7 @@ def inst_3rd_party():
     print 'You need to get the "third party" package.  This can be done for you.'
     if askUser('\nReady to download and unzip 3rd party tools?'):
       print '\nDownloading 3rd party tools...'
-      # TODO: need to rebuild for 2010, both 32-bit and 64-bit.
+      # TODO: need to rebuild for VC++2010, both 32-bit and 64-bit.
       file = getUrl('ftp://grey.colorado.edu/pub/emergent/3rdparty-5.0.1-win32.zip')
       zip = ZipFile(file)
       zip.extractall(third_party_dir)
@@ -504,8 +506,8 @@ def inst_3rd_party():
 qt_dir = ''
 def inst_qt():
   global qt_dir
-  # Only 32-bit supported for 2008, so just use the pre-installed Qt.
-  # For 2010, need separate directories for 32-bit and 64-bit, and need to recompile it.
+  # Only 32-bit supported for VC++2008, so just use the pre-installed Qt.
+  # For VC++2010, need separate directories for 32-bit and 64-bit, and need to recompile it.
   if msvs == 2008: qt_dir = 'C:/Qt/4.6.2'
   else:            qt_dir = 'C:/Qt/4.7.3' + get_dir_extension_args(build_64bit, False)
   while not fileExists(os.path.join(qt_dir, 'bin/moc.exe')):
@@ -518,10 +520,23 @@ def inst_qt():
       if msvs == 2008:
         file = getUrl('ftp://grey.colorado.edu/pub/emergent/qt-win-opensource-4.6.2-vs2008.exe')
       else:
-        # TODO: need to recompile entirely for msvs2010, whether 64-bit or not, otherwise runtime error.
+        # TODO: need to recompile entirely for VC++2010, whether 64-bit or not, otherwise runtime error.
         file = getUrl('ftp://grey.colorado.edu/pub/emergent/qt-win-opensource-4.7.3-vs2008.exe')
       os.system(file)
       response = raw_input('\nOnce Qt has been installed, press enter to continue...')
+
+def compile_qt():
+  # Don't need to build Qt for VC++2008
+  if msvs == 2008: return
+  # Check for an arbitrary file, but one that happens to not exist until
+  # towards the end of the Qt build process -- goood indication that Qt
+  # has been built for this platform.
+  ## TODO: need to find a good way to tell if this has been done.  Or just remove this compile_qt() function and leave it up to the user.
+  while not fileExists(os.path.join(qt_dir, 'bin/moc.exe')):
+    print_horizontal()
+    print 'You need to compile Qt for this platform.  This will take hours.'
+    if askUser('\nReady to compile Qt in ' + qt_dir + ' ?'):
+      print '\nTODO: Compiling Qt.'
 
 coin_dir = ''
 def inst_coin():
@@ -530,7 +545,7 @@ def inst_coin():
   if msvs == 2008:
     coin_ftp = 'ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvc9.zip'
   else:
-    # TODO: need to recompile for vs2010, 32-bit and 64-bit.
+    # TODO: need to recompile for VC++2010, 32-bit and 64-bit.
     coin_ftp = 'ftp://grey.colorado.edu/pub/emergent/Coin-3.1.3-bin-msvc9-amd64.zip'
   while not fileExists(os.path.join(coin_dir, 'bin/coin3.dll')):
     print_horizontal()
@@ -591,31 +606,52 @@ def checkEnvironmentVariable(name, value):
 # Quarter build outputs get copied to COINDIR as part of the build process,
 # so test that output to see if this step has completed.
 def compile_quarter():
+  # Check for the quarter *debug* lib to be installed, since that is the
+  # last one to be built and installed by this script.
   while not fileExists(os.path.join(coin_dir, 'lib/quarter1d.lib')):
     print_horizontal()
     print 'You need to compile the Quarter package.  This can be done for you.'
     if askUser('\nReady to compile Quarter?'):
       if msvs == 2008:
         msbuild = 'C:/WINDOWS/Microsoft.NET/Framework/v3.5/MSBuild.exe'
-        platform = 'Win32'
-      elif build_64bit:
-        msbuild = 'C:/Windows/Microsoft.NET/Framework64/v4.0.30319/MSBuild.exe'
+        if not fileExists(msbuild):
+          print '\nCould not find file: ' + msbuild
+          print 'Quitting'
+          quit(1)
+
+        # os.system() won't work here -- because of the space after DLL??
+        # Build Release and Debug libraries
+        print '\nCompiling Quarter (RELEASE)...\n'
+        subprocess.call([msbuild, '/p:Configuration=DLL (Release)', '/p:Platform=Win32', quarter_sln])
+        print '\nCompiling Quarter (DEBUG)...\n'
+        subprocess.call([msbuild, '/p:Configuration=DLL (Debug)', '/p:Platform=Win32', quarter_sln])
+        print '\nWarnings are expected when building Quarter.  It should say "Build succeeded".\n'
+        return
+
+      # Otherwise 2010.
+      if build_64bit:
         platform = 'x64'
+        arch = '/x64'
       else:
-        msbuild = 'C:/Windows/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe'
         platform = 'Win32'
+        arch = '/x86'
 
-      if not fileExists(msbuild):
-        print '\nCould not find file: ' + msbuild
-        print 'Quitting'
-        quit(1)
+      configs = ['Release', 'Debug']
+      for config in configs:
+        print '\nCompiling Quarter (' + config + ')...\n'
+        quarter_build_bat = os.path.join(tools_dir, 'Quarter/build/make-quarter-' + config + '-' + platform + '.bat')
+        with open(quarter_build_bat, 'w') as f:
+          # setenv sets the path so the right msbuild is in the path.
+          f.write('call "' + fixPath(setenv_cmd) + '" ' + arch + ' /' + config + '\n')
+          f.write('msbuild "/p:Configuration=DLL (' + config + ')" /p:Platform=' + platform + ' ' + quarter_sln + '\n')
+        while 0 != os.system(quarter_build_bat):
+          global yes_to_all
+          yes_to_all = False
+          print_horizontal()
+          if not askUser('Compilation failed.  OK to rebuild?'): quit(0)
+        print_horizontal()
+        print 'Compilation succeeded.\n'
 
-      print '\nCompiling Quarter...'
-      # os.system() won't work here -- because of the space after DLL??
-      # Build Release and Debug libraries
-      subprocess.call([msbuild, '/p:Configuration=DLL (Release)', '/p:Platform=' + platform, quarter_sln])
-      subprocess.call([msbuild, '/p:Configuration=DLL (Debug)', '/p:Platform=' + platform, quarter_sln])
-      print '\nWarnings are OK when building Quarter.  It should say "Build succeeded".\n'
 
 def list_difference(orig, remove):
   for item in remove:
@@ -634,7 +670,7 @@ def fix_environment():
   if msvs == 2008:
     checkEnvironmentVariable('QMAKESPEC', 'win32-msvc2008')
   else:
-    # This seems to be ok for 64-bit msvs2010 compiles too.
+    # This seems to be ok for 64-bit VC++2010 compiles too.
     checkEnvironmentVariable('QMAKESPEC', 'win32-msvc2010')
   checkEnvironmentVariable('QTDIR', fixPath(qt_dir))
   checkEnvironmentVariable('EMERGENTDIR', fixPath('C:/Emergent'))
@@ -663,11 +699,13 @@ def fix_environment():
   for list in [userpath, syspath]:
     # Even with r'' raw strings, need to escape backslashes so
     # they aren't treated as escapes by the regexp compiler.
-    remove_like_except(list, r'C:\\Qt\\[-0-9.]{5,}\\bin', qt_bin_dir)
+    remove_like_except(list, r'C:\\Qt\\[-0-9.msv]{5,}\\bin', qt_bin_dir)
     remove_like_except(list, r'C:\\Coin\\[-0-9.]{5,}\\bin', coin_bin_dir)
     # TODO: ideally the 3rdparty directory would be in C:\src\, not in C:\src\emergent-foo\.
     remove_like_except(list, r'emergent.*\\3rdparty\\bin', third_party_bin_dir)
     remove_like_except(list, r'CMake [-0-9.]{3,}\\bin', cmake_bin_dir)
+    remove_like_except(list, r'C:\\src\\devtools\\.*\\Coin\\3.1.3\\bin', coin_bin_dir)
+    remove_like_except(list, r'C:\\src\\devtools\\.*\\3rdparty\\bin', third_party_bin_dir)
 
   # Only need to add things that aren't already in the path (if any).
   list_difference(needed_paths, syspath + userpath)
@@ -700,7 +738,7 @@ def build_emergent():
   emer_build = os.path.join(emer_src, 'build' + get_dir_extension())
   makeDir(emer_build)
 
-  # TODO: probably should update this to use setenv instead, at least for 2010.
+  # TODO: probably should update this to use setenv instead, at least for VC++2010.
   if msvs == 2008:
     vcvarsall_bat = findInProgFiles('Microsoft Visual Studio 9.0/VC/vcvarsall.bat')
   elif msvs == 2010:
@@ -786,7 +824,7 @@ def rename_package():
 def main():
   try:
     os.system('color 07')
-    inst_msvs() # asks 2008 or 2010
+    inst_msvs() # asks whether to use VC++2008 or 2010
     inst_nsis()
     inst_svn()
     inst_cmake()
@@ -797,6 +835,7 @@ def main():
     inst_emer_src()
     inst_3rd_party()
     inst_qt()
+    compile_qt()
     inst_coin()
     inst_quarter()
     fix_environment()
