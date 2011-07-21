@@ -37,9 +37,17 @@ endif(POLICY CMP0011)
 # ... might it not be ok for Unix/Mac too???
 if (WIN32)
   PROJECT(Emergent)
+
   if (NOT MSVC)
     message(FATAL_ERROR "Only Microsoft Visual C++ (nmake or IDE) is supported")
   endif (NOT MSVC)
+
+  if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+  else ()
+    set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
+  endif ()
+
 else (WIN32)
   PROJECT(emergent)
 endif (WIN32)
@@ -95,10 +103,6 @@ include_directories(
 
 # install destinations
 if (WIN32)
-  # Note: contrary to cmake docs, the default CMAKE_INSTALL_PREFIX includes the project
-  # so it is C:/Program Files/Emergent
-  # we have issues with path spaces, so install to C:/Emergent
-  # everything gets bundled
   set(EMERGENT_INCLUDE_DEST include)
   set(EMERGENT_SHARE_DEST .)
 else (WIN32)
@@ -126,7 +130,7 @@ message( STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}" )
 message( STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 message( STATUS "      (Options are: Debug | Release | RelWithDebInfo | MinSizeRel)" )
 if (NOT WIN32)
-message( STATUS "MPI_BUILD = ${MPI_BUILD}   (true or false)" )
+  message( STATUS "MPI_BUILD = ${MPI_BUILD}   (true or false)" )
 endif (NOT WIN32)
 message( STATUS )
 message( STATUS "Change a value with: cmake -D<Variable>=<Value>" )
@@ -139,7 +143,7 @@ message( STATUS "QUARTER_LIBRARY = ${QUARTER_LIBRARY}" )
 message( STATUS "GSL_LIBRARIES = ${GSL_LIBRARIES}" )
 message( STATUS "ODE_LIBRARY = ${ODE_LIBRARY}" )
 if (NOT WIN32)
-message( STATUS "READLINE_LIBRARY = ${READLINE_LIBRARY}" )
+  message( STATUS "READLINE_LIBRARY = ${READLINE_LIBRARY}" )
 endif (NOT WIN32)
 
 
@@ -212,16 +216,16 @@ add_subdirectory(demo/data_proc)
 
 
 if (false) #source to make stub includes -- must be run after making the TA files
-file(GLOB_RECURSE xxx_HEADS "${PROJECT_SOURCE_DIR}/src/*.h") 
-message(STATUS "include files to be processed: ${xxx_HEADS}")
+  file(GLOB_RECURSE xxx_HEADS "${PROJECT_SOURCE_DIR}/src/*.h") 
+  message(STATUS "include files to be processed: ${xxx_HEADS}")
   foreach(INC_FILE ${xxx_HEADS})
     get_filename_component(DEST_FILE ${INC_FILE} NAME)
     get_filename_component(DEST_FILE_WE ${INC_FILE} NAME_WE)
     file(RELATIVE_PATH TARG_FILE "${PROJECT_SOURCE_DIR}/include" ${INC_FILE})
-	CONFIGURE_FILE(
-	  "${CMAKE_CURRENT_SOURCE_DIR}/local_inc.h.in"
-	  "${PROJECT_SOURCE_DIR}/include/${DEST_FILE_WE}.h"
-	  IMMEDIATE @ONLY
+    CONFIGURE_FILE(
+      "${CMAKE_CURRENT_SOURCE_DIR}/local_inc.h.in"
+      "${PROJECT_SOURCE_DIR}/include/${DEST_FILE_WE}.h"
+      IMMEDIATE @ONLY
     )
     message(STATUS "created include file for: ${INC_FILE}")
   endforeach(INC_FILE)
@@ -265,9 +269,6 @@ install(FILES ${PLT}/CMakeLists.txt ${PLT}/NOBUILD ${PLT}/configure
 )
 
 if (WIN32)
-  # it is important to install into a non-space path, so just go straight to C:\Emergent
-  set(CMAKE_INSTALL_PREFIX "C:/Emergent" CACHE PATH "Install path prefix, prepended onto install directories." FORCE)
-  # for Windows, we install the pre-req dll's in bin
   file(GLOB OUR_3RDPARTY_FILES 
     "${EMER_3RDPARTY_DIR}/bin/*.dll"
     "${COINDIR}/bin/*.dll"
@@ -313,19 +314,19 @@ include(CMakeModules/EmergentCPack.cmake)
 # BUG: these targets are flakily forcing all the subtargets to become ALL
 # targets on Windows (at least in VS) thus we have to omit them
 if (NOT WIN32)
-# use this to remove all ta files from source tree
-ADD_CUSTOM_TARGET(clean_ta_all
-  DEPENDS clean_ta_ta clean_ta_network clean_ta_bp clean_ta_leabra clean_ta_cs clean_ta_so
-  )
+  # use this to remove all ta files from source tree
+  ADD_CUSTOM_TARGET(clean_ta_all
+    DEPENDS clean_ta_ta clean_ta_network clean_ta_bp clean_ta_leabra clean_ta_cs clean_ta_so
+    )
 
-# use this to build all ta files from source tree
-ADD_CUSTOM_TARGET(force_ta 
-  DEPENDS force_ta_ta force_ta_network force_ta_bp force_ta_leabra force_ta_cs force_ta_so
-  )
-# ta files are only things built in source tree so this is effectively distclean
-ADD_CUSTOM_TARGET(distclean
-  DEPENDS clean_ta_all
-  )
+  # use this to build all ta files from source tree
+  ADD_CUSTOM_TARGET(force_ta 
+    DEPENDS force_ta_ta force_ta_network force_ta_bp force_ta_leabra force_ta_cs force_ta_so
+    )
+  # ta files are only things built in source tree so this is effectively distclean
+  ADD_CUSTOM_TARGET(distclean
+    DEPENDS clean_ta_all
+    )
 endif (NOT WIN32)
 
 # svn commands b/c otherwise you're living in the build dir and this saves a cd..

@@ -798,9 +798,8 @@ def rename_package():
   print 'Detected version: ' + version
   print '         svn rev: ' + revision
   if len(version) > 0 and len(revision) > 0:
-    win_arch_suffix = '-win32.exe'
-    if build_64bit: win_arch_suffix = '-win64.exe'
-    old_name = os.path.join(emer_build, 'emergent-' + version + '-win32.exe')
+    win_arch_suffix = '-win64.exe' if build_64bit else '-win32.exe'
+    old_name = os.path.join(emer_build, 'emergent-' + version + win_arch_suffix)
     new_name = os.path.join(emer_build, 'emergent-' + version + '-' + revision + win_arch_suffix)
     if not os.path.isfile(old_name):
       print '\nCould not find installer: ' + old_name

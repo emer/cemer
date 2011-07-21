@@ -10,12 +10,18 @@ SET(CPACK_PACKAGE_VERSION_MAJOR "${EMERGENT_VERSION_MAJOR}")
 SET(CPACK_PACKAGE_VERSION_MINOR "${EMERGENT_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "${EMERGENT_VERSION_PATCH}")
 
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+  SET(EMER_ARCH_BITS "64")
+else ()
+  SET(EMER_ARCH_BITS "32")
+endif ()
+
 if (WIN32)
   # There is a bug in NSIS that does not handle full unix paths properly.
   # Make sure there is at least one set of four (4) backslashes.
   
   # Set the name of the installer executable to be created.
-  SET(CPACK_PACKAGE_FILE_NAME "emergent-${EMERGENT_VERSION}-win32")
+  SET(CPACK_PACKAGE_FILE_NAME "emergent-${EMERGENT_VERSION}-win${EMER_ARCH_BITS}")
   
   # Set the icon used for the installer (and uninstaller).
   SET(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images\\\\emergent.ico")
@@ -75,8 +81,21 @@ else (WIN32)
   endif (APPLE)
 endif (WIN32)
 
+if (WIN32)
+  # Normally these are all derived from the CPACK_PACKAGE_NAME, but
+  # it looks funny when the version number gets appended after the
+  # architecture, so instead set everything explicitly.
+  SET(EMER_FULL_NAME "Emergent ${EMERGENT_VERSION} (${EMER_ARCH_BITS}-bit)")
+  SET(CPACK_NSIS_DISPLAY_NAME "${EMER_FULL_NAME}")
+  SET(CPACK_NSIS_PACKAGE_NAME "${EMER_FULL_NAME}")
+  SET(CPACK_PACKAGE_EXECUTABLES "emergent;${EMER_FULL_NAME}")
+  SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${EMER_FULL_NAME}")
+  SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${EMER_FULL_NAME}")
+  SET(CPACK_PACKAGE_NAME "${EMER_FULL_NAME}")
+else (WIN32)
+  SET(CPACK_PACKAGE_EXECUTABLES "emergent" "Emergent")
+endif (WIN32)
 
-SET(CPACK_PACKAGE_EXECUTABLES "emergent" "Emergent")
 INCLUDE(CPack)
 
 # following are currently unused
