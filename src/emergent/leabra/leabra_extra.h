@@ -2849,6 +2849,35 @@ private:
   void	Defaults_init() 	{ };
 };
 
+///////////////////////////////////////
+// Special Hippocampal Layerspecs
+
+// class LEABRA_API ECoutLayerSpec : public LeabraLayerSpec {
+//   // layer spec for EC out layers that implements quad phase learning
+// INHERITED(LeabraLayerSpec)
+// public:
+//   int		auto_plus_cycles; 	// #DEF_5 number of cycles for plus phase for auto-encoder (EC<->CA1) learning -- should be short, takes place in minus phase prior to assoc_minus_cycles
+//   int		assoc_minus_cycles;	// #DEF_30:50 number of cycles for minus phase where CA1 is driven by CA3 for training overall hippocampal associations via CA3 -> CA1 -- this happens at very end of minus phase 
+  
+//   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+//   // clamp activity of the EC_out units based on EC_in 
+//   override bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+
+//   virtual void ClampFromECin(LeabraLayer* lay, LeabraNetwork* net);
+//   // clamp ECout values from ECin values
+
+//   TA_SIMPLE_BASEFUNS(ECoutLayerSpec);
+// protected:
+//   SPEC_DEFAULTS;
+
+// private:
+//   void 	Initialize();
+//   void	Destroy()		{ };
+//   void	Defaults_init();
+// };
+
+
+
 
 #endif // leabra_extra_h
 

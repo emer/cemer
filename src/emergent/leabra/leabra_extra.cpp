@@ -6208,6 +6208,31 @@ bool CerebConj2PrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 }
 
 
+///////////////////////////////////////
+// Special Hippocampal Layerspecs
+
+// act_m2 = auto encoder minus phase
+// act_p2 = auto encoder plus phase
+// act_m = assoc minus 
+// act_p = assoc plus
+
+// void ECoutLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
+//   // note: only works with xcal!!!
+//   int start_auto_plus = net->ct_time.minus - (auto_plus_cyles + assoc_minus_cycles);
+//   int end_auto_plus = net->ct_time.minus - assoc_minus_cycles;
+//   if(net->ct_cycle >= start_auto_plus && net->ct_cycle < end_auto_plus) {
+//     // at start, set act_m2 to activities 
+//     ClampFromECin(lay, u, net);
+//   }
+//   if(net->ct_cycle == end_auto_plus) {
+//     // set act_p2 to activities in this phase
+//     Compute_dWt();
+//   }
+// }
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////
