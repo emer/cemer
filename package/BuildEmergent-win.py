@@ -433,14 +433,14 @@ def ask_32_or_64():
 
 # Get the extension to add to directories to differentiate
 # VC++2008 vs VC++2010, 32-bit vs 64-bit, and debug vs release.
-def get_dir_extension_args(is_64, is_dbg):
+def get_compiler_extension_args(is_64, is_dbg):
   ext = '-msvs' + str(msvs)
   ext += '-64' if is_64 else '-32'
   if is_dbg: ext += '-dbg'
   return ext
 
-def get_dir_extension():
-  return get_dir_extension_args(build_64bit, build_debug)
+def get_compiler_extension():
+  return get_compiler_extension_args(build_64bit, build_debug)
 
 def inst_emer_src():
   if not dirExists(os.path.join(emer_src, '.svn')):
@@ -490,7 +490,7 @@ def inst_3rd_party():
   global tools_dir, third_party_dir
   # Make a tools directory specific to the VC++ compiler version and
   # architecture (32-bit or 64-bit).  Doesn't matter debug vs. release.
-  tools_dir = os.path.join(devtool_dir, 'tools' + get_dir_extension_args(build_64bit, False))
+  tools_dir = os.path.join(devtool_dir, 'tools' + get_compiler_extension_args(build_64bit, False))
   # Extract the bundle of third-party stuff into this tools directory.
   third_party_dir = os.path.join(tools_dir, '3rdparty')
   while not fileExists(os.path.join(third_party_dir, 'lib/gsl.lib')):
@@ -509,7 +509,7 @@ def inst_qt():
   # Only 32-bit supported for VC++2008, so just use the pre-installed Qt.
   # For VC++2010, need separate directories for 32-bit and 64-bit, and need to recompile it.
   if msvs == 2008: qt_dir = 'C:/Qt/4.6.2'
-  else:            qt_dir = 'C:/Qt/4.7.3' + get_dir_extension_args(build_64bit, False)
+  else:            qt_dir = 'C:/Qt/4.7.3' + get_compiler_extension_args(build_64bit, False)
   while not fileExists(os.path.join(qt_dir, 'bin/moc.exe')):
     print_horizontal()
     print 'You need to install Qt.  This can be downloaded for you to install.'
@@ -735,7 +735,7 @@ def build_emergent():
   if not askUser('\nReady to build?'): quit(0)
 
   print '\nBuilding emergent...'
-  emer_build = os.path.join(emer_src, 'build' + get_dir_extension())
+  emer_build = os.path.join(emer_src, 'build' + get_compiler_extension())
   makeDir(emer_build)
 
   # TODO: probably should update this to use setenv instead, at least for VC++2010.
@@ -748,7 +748,7 @@ def build_emergent():
     print "Can't continue because vcvarsall.bat file not found!  Quitting."
     quit(1)
 
-  cmake_bat = os.path.join(emer_src, 'do_cmake.bat')
+  cmake_bat = os.path.join(emer_src, 'do_cmake' + get_compiler_extension() + '.bat')
   f = open(cmake_bat, 'w')
   f.write('echo on\n')
   if build_64bit:
