@@ -632,6 +632,21 @@ void DepressSpec::UpdateAfterEdit_impl() {
   depl = MAX(depl, 0.0f);
 }
 
+void FFBalanceSpec::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void FFBalanceSpec::Defaults_init() {
+  ff = 0.5f;
+  ff_c = 1.0f - ff;
+}
+
+void FFBalanceSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  ff_c = 1.0f - ff;
+}
+
 void SynDelaySpec::Initialize() {
   on = false;
   delay = 4;
@@ -852,6 +867,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   spike_misc.UpdateAfterEdit_NoGui();
   adapt.UpdateAfterEdit_NoGui();
   dt.UpdateAfterEdit_NoGui();
+  ff_bal.UpdateAfterEdit_NoGui();
   act_avg.UpdateAfterEdit_NoGui();
   noise_adapt.UpdateAfterEdit_NoGui();
   CreateNXX1Fun();
@@ -871,6 +887,13 @@ void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
 		"da_mod is on but act.i_thr != NO_AH -- this is generally required for da modulation to work properly as it operates through the a & h currents, and including them in i_thr computation leads to less clean modulation effects -- I set this for you in spec:", name)) {
     SetUnique("act", true);
     act.i_thr = ActFunSpec::NO_AH; // key for dopamine effects
+  }
+  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
+  if(net) {
+    if(CheckError(ff_bal.on && net->mid_minus_cycle <= 0, quiet, rval,
+		  "if ff_bal.on is set, net->mid_minus_cycle must be > 0 -- is current not -- setting to ct_sravg.start:", name)) {
+      net->mid_minus_cycle = net->ct_sravg.start;
+    }
   }
 }
 
@@ -1148,7 +1171,7 @@ void LeabraUnitSpec::Settle_DecayState(LeabraUnit* u, LeabraNetwork* net) {
   DecayState(u, net, dkval);
 }
 
-void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
+void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   // this is all receiver-based and done only at beginning of a trial
   u->net_scale = 0.0f;	// total of scale values for this unit's inputs
 
@@ -1195,8 +1218,15 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork*) {
   if(u->net_scale > 0.0f) {
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      LeabraLayer* lay = (LeabraLayer*) recv_gp->prjn->from.ptr();
+      Projection* prjn = (Projection*) recv_gp->prjn;
+      LeabraLayer* lay = (LeabraLayer*) prjn->from.ptr();
       if(lay->lesioned() || !recv_gp->size)	continue;
+      if(ff_bal.on && net->ct_cycle < net->mid_minus_cycle) { // before mid minus
+	if(prjn->direction != Projection::FM_INPUT) {
+	  recv_gp->scale_eff = 0.0f; // turn off everything except feedforward!
+	  continue;
+	}
+      }
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(cs->inhib && !old_scaling) continue; // norm separately
       recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale
@@ -1638,6 +1668,9 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
     new_act += Compute_Noise(u, net);
   }
   u->act = act_range.Clip(new_act);
+  if(ff_bal.on && net->ct_cycle > net->mid_minus_cycle) {
+    u->act = ff_bal.ff * u->act_m2 + ff_bal.ff_c * u->act;
+  }
   u->act_eq = u->act;
   if(!depress.on)
     u->act_nd = u->act_eq;
@@ -1775,6 +1808,13 @@ float LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraNetwork* net) {
 
 ///////////////////////////////////////////////////////////////////////
 //	Cycle Optional Misc
+
+void LeabraUnitSpec::Compute_MidMinus(LeabraUnit* u, LeabraNetwork* net) {
+  u->act_m2 = u->act_eq;
+  if(ff_bal.on) {
+    Compute_NetinScale(u, net); // turn other connections back on!
+  }
+}
 
 void LeabraUnitSpec::Compute_CycSynDep(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   for(int g=0; g<u->send.size; g++) {
@@ -4131,8 +4171,9 @@ void LeabraLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
   // just snapshot the activation state
   LeabraUnit* u;
   taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., i)
-    u->act_m2 = u->act_eq;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    u->Compute_MidMinus(net);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -5911,6 +5952,8 @@ void LeabraNetwork::Compute_MidMinus() {
       if(lay->lesioned())	continue;
       lay->Compute_MidMinus(this);
     }
+    // todo: this is for ff_bal -- probably want to make this conditional somehow..
+    Compute_NetinScale_Senders();	// second phase after recv-based NetinScale
   }
 }
   

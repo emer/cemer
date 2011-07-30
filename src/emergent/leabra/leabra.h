@@ -827,6 +827,25 @@ private:
   void	Defaults_init();
 };
 
+class LEABRA_API FFBalanceSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adjust the balance of activations in terms of how much is feedforward vs. fully recurrent -- theoretically spiking nets have more of a feedforward dynamic compared to the strong attractor dynamics arising from continous activations -- this allows one to re-balance activations more toward feedforward
+INHERITED(SpecMemberBase)
+public:
+  bool		on;		// apply feedforward balancing?  IMPORTANT: requires the projection directions to be set properly -- turns off all but FM_INPUT during first minus phase
+  float		ff;		// #CONDSHOW_ON_on #MIN_0 how much to weight toward the feedforward activations, computed during first portion of minus phase, and stored in act_m2 at network->mid_minus_cycle 
+  float		ff_c;		// #READ_ONLY 1 - ff -- how much to include of recurrent activations
+
+
+  TA_SIMPLE_BASEFUNS(FFBalanceSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 class LEABRA_API SynDelaySpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra synaptic delay -- activation sent to other units is delayed by a given number of cycles
 INHERITED(SpecMemberBase)
@@ -1073,6 +1092,7 @@ public:
   LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .3, .25, 1, 0] reversal potentials for each channel
   VChanSpec	hyst;		// #CAT_Activation [Defaults: .05, .8, .7, .1] hysteresis (excitatory) v-gated chan (Ca2+, NMDA)
   VChanSpec	acc;		// #CAT_Activation [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
+  FFBalanceSpec ff_bal;		// #CAT_Activation re-balance feedforward vs. fully recurrent activations for rate coding networks
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   DepressSpec	depress;	// #CAT_Activation depressing synapses specs -- multiplies activation value by a spike amplitude/probability value that depresses with use and recovers exponentially
   SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
@@ -1126,7 +1146,7 @@ public:
     virtual void Settle_DecayState(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation decay activation states towards initial values: at phase-level boundary -- start of settling
     virtual void Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation compute net input scaling values -- call at start of settle just to be sure
+    // #CAT_Activation compute net input scaling values -- call at start of settle just to be sure -- mid_minus is a special flag for ff_bal FFBalance mechanism
 
   virtual void Compute_NetinScale_Senders(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_Activation compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the Settle_Init_Unit stage after all the recv ones are computed
@@ -1225,6 +1245,9 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Optional Misc
+
+  virtual void	Compute_MidMinus(LeabraUnit* u, LeabraNetwork* net);
+  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm and ff weighting -- stores act_m2
 
   virtual void 	Compute_CycSynDep(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate conspec subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on -- threaded direct to units
@@ -1515,6 +1538,10 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Optional Misc
+
+  void	Compute_MidMinus(LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_MidMinus(this, net); }
+  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm and ff weighting -- stores act_m2
 
   void	Compute_CycSynDep(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_CycSynDep(this, net, thread_no); }
