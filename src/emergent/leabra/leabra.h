@@ -765,6 +765,7 @@ public:
   float		clamp_max_p;	// #DEF_0.11 #MIN_0 #MAX_1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
   ClampType	clamp_type;	// how to generate spikes when layer is hard clamped -- in many cases soft clamping may work better
   float		vm_r;		// #DEF_0;0.15;0.3 #AKA_v_m_r post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init -- 0.30 is apropriate biologically-based value for AdEx (Brette & Gurstner, 2005) parameters
+  int		t_r;		// #DEF_0 post-spiking explicit refractory period, in cycles -- prevents v_m updating for this number of cycles post firing
   float		vm_dend;	// #DEF_0.3 how much to add to vm_dend value after every spike
   float		vm_dend_dt;	// #DEF_0.16 rate constant for updating the vm_dend value (used for spike-based learning)
   float		vm_dend_time;	// #READ_ONLY #SHOW time constant (in cycles, 1/vm_dend_dt) for updating the vm_dend value (used for spike-based learning)
@@ -1418,6 +1419,7 @@ public:
   float		spk_amp;	// #CAT_Activation amplitude/probability of spiking output (for synaptic depression function if unit spec depress.on is on)
   float		misc_1;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   float		misc_2;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
+  int		spk_t;		// #NO_SAVE #CAT_Activation time in ct_cycle units when spiking last occurred (-1 for not yet)
   float_CircBuffer act_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of activation states for synaptic delay computation
   float_CircBuffer spike_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of net input from spikes for synaptic integration over discrete spikes
 

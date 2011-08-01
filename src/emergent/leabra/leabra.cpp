@@ -579,6 +579,7 @@ void SpikeMiscSpec::Initialize() {
   exp_slope = 0.02f;
   spk_thr = 1.2f;
   vm_r = 0.30f;
+  t_r = 0;
   vm_dend = 0.3f;
   vm_dend_dt = 0.16f;
   vm_dend_time = 1.0f / vm_dend_dt;
@@ -1044,6 +1045,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->i_thr = 0.0f;
   if(depress.on)
     lu->spk_amp = depress.max_amp;
+  lu->spk_t = -1;
   lu->act_buf.Reset();
   lu->spike_buf.Reset();
 }
@@ -1526,6 +1528,12 @@ void LeabraUnitSpec::Compute_DaMod_PlusCont(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
+  if(act_fun == SPIKE && spike_misc.t_r > 0 && u->spk_t > 0) {
+    int spkdel = net->ct_cycle - u->spk_t;
+    if(spkdel >= 0 && spkdel <= spike_misc.t_r)
+      return;			// just bail
+  }
+
   if(net->cycle < dt.vm_eq_cyc) {
     // directly go to equilibrium value
     float new_v_m = Compute_EqVm(u);
@@ -1693,6 +1701,7 @@ void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
     u->act = 1.0f;
     u->v_m = spike_misc.vm_r;
     u->vm_dend += spike_misc.vm_dend;
+    u->spk_t = net->ct_cycle;
   }
   else {
     u->act = 0.0f;
@@ -2489,6 +2498,7 @@ void LeabraUnit::Initialize() {
   spk_amp = 1.0f;
   misc_1 = 0.0f;
   misc_2 = 0.0f;
+  spk_t = -1;
 }
 
 void LeabraUnit::InitLinks() {
@@ -2545,6 +2555,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;
   misc_2 = cp.misc_2;
+  spk_t = cp.spk_t;
   act_buf = cp.act_buf;
   spike_buf = cp.spike_buf;
 }
