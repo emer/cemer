@@ -2852,31 +2852,109 @@ private:
 ///////////////////////////////////////
 // Special Hippocampal Layerspecs
 
-// class LEABRA_API ECoutLayerSpec : public LeabraLayerSpec {
-//   // layer spec for EC out layers that implements quad phase learning
-// INHERITED(LeabraLayerSpec)
-// public:
-//   int		auto_plus_cycles; 	// #DEF_5 number of cycles for plus phase for auto-encoder (EC<->CA1) learning -- should be short, takes place in minus phase prior to assoc_minus_cycles
-//   int		assoc_minus_cycles;	// #DEF_30:50 number of cycles for minus phase where CA1 is driven by CA3 for training overall hippocampal associations via CA3 -> CA1 -- this happens at very end of minus phase 
-  
-//   override void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
-//   // clamp activity of the EC_out units based on EC_in 
-//   override bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+// timing of quadphase dynamics:
+// [ ------ minus ------- ][ ---- plus ---- ]
+// [ auto- ][auto+][assoc-][ --assoc plus-- ]
 
-//   virtual void ClampFromECin(LeabraLayer* lay, LeabraNetwork* net);
-//   // clamp ECout values from ECin values
+//  DG -> CA3 -> CA1
+//  /    /      /    \
+// [----EC_in---] -> [ EC_out ]
 
-//   TA_SIMPLE_BASEFUNS(ECoutLayerSpec);
-// protected:
-//   SPEC_DEFAULTS;
+// auto   CA3 -> CA1 = 0
+// auto-  EC_out free
+// auto+  EC_in -> EC_out clamp
+// assoc  CA3 -> CA1 = 1
+// assoc+ EC_in -> EC_out clamp
 
-// private:
-//   void 	Initialize();
-//   void	Destroy()		{ };
-//   void	Defaults_init();
-// };
+// act_m2 = auto encoder minus phase
+// act_p2 = auto encoder plus phase
+// act_m = assoc minus 
+// act_p = assoc plus
 
 
+class LEABRA_API HippoQuadLayerSpec : public LeabraLayerSpec {
+  // base layer spec for hippocampal layers that implements quad phase learning -- alternates clamping in auto-encoder and associative plus phases, drives learning appropriately
+INHERITED(LeabraLayerSpec)
+public:
+  int		auto_plus_cycles; 	// #DEF_5 number of cycles for plus phase for auto-encoder (EC<->CA1) learning -- should be short, takes place in minus phase prior to assoc_minus_cycles
+  int		assoc_minus_cycles;	// #DEF_30:50 number of cycles for minus phase where CA1 is driven by CA3 for training overall hippocampal associations via CA3 -> CA1 -- this happens at very end of minus phase 
+
+  TA_SIMPLE_BASEFUNS(HippoQuadLayerSpec);
+protected:
+  SPEC_DEFAULTS;
+
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init();
+};
+
+class LEABRA_API ECinLayerSpec : public HippoQuadLayerSpec {
+  // layer spec for EC input layers that implements quad phase learning -- this serves only as a marker for ECout layers to search for -- no new functionality over LeabraLayerSpec
+INHERITED(HippoQuadLayerSpec)
+public:
+  TA_SIMPLE_BASEFUNS(ECinLayerSpec);
+private:
+  void 	Initialize()		{ };
+  void	Destroy()		{ };
+};
+
+class LEABRA_API CA3LayerSpec : public HippoQuadLayerSpec {
+  // layer spec for CA3 layers that implements quad phase learning -- this serves only as a marker for CA1 layers to search for -- no new functionality over LeabraLayerSpec
+INHERITED(HippoQuadLayerSpec)
+public:
+  TA_SIMPLE_BASEFUNS(CA3LayerSpec);
+private:
+  void 	Initialize()		{ };
+  void	Destroy()		{ };
+};
+
+class LEABRA_API ECoutLayerSpec : public HippoQuadLayerSpec {
+  // layer spec for EC out layers that implements quad phase learning -- alternates clamping in auto-encoder and associative plus phases, drives learning appropriately
+INHERITED(HippoQuadLayerSpec)
+public:
+  // following is main hook into code:
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+
+  // learn only in "second plus" which is auto encoder phase, not in regular first plus
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return true; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
+
+  virtual void 	ClampFromECin(LeabraLayer* lay, LeabraNetwork* net);
+  // clamp ECout values from ECin values
+
+  TA_SIMPLE_BASEFUNS(ECoutLayerSpec);
+protected:
+  SPEC_DEFAULTS;
+
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init()		{ };
+};
+
+class LEABRA_API CA1LayerSpec : public HippoQuadLayerSpec {
+  // layer spec for CA1 layers that implements quad phase learning -- alternates clamping in auto-encoder and associative plus phases, drives learning appropriately
+INHERITED(HippoQuadLayerSpec)
+public:
+  // following are main hook into code:
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
+
+  override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
+  virtual void 	ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca3_on);
+  // control the strength of the CA3 -> CA1 projection according to ca3_on arg
+
+  TA_SIMPLE_BASEFUNS(CA1LayerSpec);
+protected:
+  SPEC_DEFAULTS;
+
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init()		{ };
+};
 
 
 #endif // leabra_extra_h

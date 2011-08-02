@@ -721,9 +721,9 @@ INHERITED(SpecMemberBase)
 public:
   float		rise;		// #DEF_0 #MIN_0 exponential rise time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to only include decay time (1/decay e^(-t/decay)), which is highly optimized (doesn't use window -- just uses recursive exp decay) and thus the default!
   float		decay;		// #DEF_5 #MIN_0 exponential decay time (in cycles) of the synaptic conductance according to the alpha function 1/(decay - rise) [e^(-t/decay) - e^(-t/rise)] -- set to 0 to implement a delta function (not very useful)
-  float		g_gain;		// #DEF_5 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
+  float		g_gain;		// #DEF_9 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
   int		window;		// #DEF_3 #MIN_0 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost
-  float		eq_gain;	// #DEF_10 #MIN_0 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
+  float		eq_gain;	// #DEF_8 #MIN_0 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
   float		eq_dt;		// #DEF_0.02 #MIN_0 #MAX_1 if non-zero, eq is computed as a running average with this time constant
 
   float		gg_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
@@ -762,10 +762,10 @@ public:
 
   float		exp_slope;	// #DEF_0.02;0 slope in v_m (2 mV = .02 in normalized units) for extra exponential excitatory current that drives v_m rapidly upward for spiking as it gets past its nominal firing threshold (act.thr) -- nicely captures the Hodgkin Huxley dynamics of Na and K channels -- uses Brette & Gurstner 2005 AdEx formulation -- a value of 0 disables this mechanism
   float		spk_thr;	// #DEF_0.5;1.2 membrane potential threshold for actually triggering a spike -- the nominal threshold in act.thr enters into the exponential mechanism, but this value is actually used for spike thresholding (if not using exp_slope > 0, then must set this to act.thr -- 0.5 std)
-  float		clamp_max_p;	// #DEF_0.11 #MIN_0 #MAX_1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
+  float		clamp_max_p;	// #DEF_0.12 #MIN_0 #MAX_1 maximum probability of spike rate firing for hard-clamped external inputs -- multiply ext value times this to get overall probability of firing a spike -- distribution is determined by clamp_type
   ClampType	clamp_type;	// how to generate spikes when layer is hard clamped -- in many cases soft clamping may work better
   float		vm_r;		// #DEF_0;0.15;0.3 #AKA_v_m_r post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init -- 0.30 is apropriate biologically-based value for AdEx (Brette & Gurstner, 2005) parameters
-  int		t_r;		// #DEF_0 post-spiking explicit refractory period, in cycles -- prevents v_m updating for this number of cycles post firing
+  int		t_r;		// #DEF_0;6 post-spiking explicit refractory period, in cycles -- prevents v_m updating for this number of cycles post firing
   float		vm_dend;	// #DEF_0.3 how much to add to vm_dend value after every spike
   float		vm_dend_dt;	// #DEF_0.16 rate constant for updating the vm_dend value (used for spike-based learning)
   float		vm_dend_time;	// #READ_ONLY #SHOW time constant (in cycles, 1/vm_dend_dt) for updating the vm_dend value (used for spike-based learning)
@@ -812,7 +812,7 @@ class LEABRA_API DepressSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
-  float		rec;		// #CONDSHOW_ON_on #DEF_0.2;0.015 #MIN_0 #MAX_1 rate of recovery of spike amplitude (determines overall time constant of depression function)
+  float		rec;		// #CONDSHOW_ON_on #DEF_0.2;0.015;0.005 #MIN_0 #MAX_1 rate of recovery of spike amplitude (determines overall time constant of depression function)
   float		asymp_act;	// #CONDSHOW_ON_on #DEF_0.2:0.5 #MIN_0 #MAX_1 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
   float		depl;		// #CONDSHOW_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
   int		interval;	// #CONDSHOW_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
@@ -887,7 +887,7 @@ public:
   float		integ;		// #DEF_1;0.5;0.001;0.0005 #MIN_0 overall rate constant for numerical integration -- affected by the timescale of the parameters and numerical stability issues -- typically 1 cycle = 1 ms, and if using ms normed units, this should be 1, otherwise 0.001 (1 ms in seconds) or possibly .5 or .0005 if there are stability issues
   float		vm;		// #DEF_0.1:0.357 #MIN_0 membrane potential rate constant -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized = .356 rate constant
   float		net;		// #DEF_0.7 #MIN_0 net input time constant -- how fast to update net input (damps oscillations) -- generally reflects time constants associated with synaptic channels which are not modeled in the most abstract rate code models (set to 1 for detailed spiking models with more realistic synaptic currents)
-  bool		midpoint;	// #DEF_false use the midpoint method in computing the vm value -- better avoids oscillations and allows a larger dt.vm parameter to be used
+  bool		midpoint;	// use the midpoint method in computing the vm value -- better avoids oscillations and allows a larger dt.vm parameter to be used -- this is critical to use with SPIKE mode
   float		d_vm_max;	// #DEF_100 #MIN_0 maximum change in vm at any timestep (limits blowup) -- this is a crude but effective safety valve for numerical integration problems (no longer necessary in gelin-based compuation)
   int		vm_eq_cyc;	// #AKA_cyc0_vm_eq #DEF_0 number of cycles to compute the vm as equilibirium potential given current inputs: set to 1 to quickly activate input layers; set to 100 to always use this computation
   float		vm_eq_dt;	// #DEF_1 #MIN_0 time constant for integrating the vm_eq values: how quickly to move toward the current eq value from previous vm value
@@ -909,11 +909,11 @@ class LEABRA_API LeabraActAvgSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- used in XCAL learning rules
 INHERITED(SpecMemberBase)
 public:
-  float		l_up_dt;	// #DEF_0.6 rate constant for increases in long time-average activation: avg_l -- should be faster than dn_dt
-  float		l_dn_dt;	// #DEF_0.05 rate constant for decreases in long time-average activation: avg_l -- should be slower than up_dt
+  float		l_up_dt;	// #DEF_0.6;0.006 rate constant for increases in long time-average activation: avg_l -- should be faster than dn_dt
+  float		l_dn_dt;	// #DEF_0.05;0.0005 rate constant for decreases in long time-average activation: avg_l -- should be slower than up_dt
   float		m_dt;		// #DEF_0.1;0.017 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
   float		s_dt;		// #DEF_0.2;0.02 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the short time-scale avg_s value
-  float		ss_dt;		// #DEF_1;0.1 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value
+  float		ss_dt;		// #DEF_1;0.1;0.08 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value
   bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing averages (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
 
   float		l_time;		// #READ_ONLY #SHOW time constant (in trials for XCAL, cycles for XCAL_C, 1/l_dn_dt) for continuously updating the long time-scale avg_l value -- only for the down time as up is typically quite rapid

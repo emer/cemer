@@ -539,11 +539,11 @@ void ActFunSpec::UpdateAfterEdit_impl() {
 }
 
 void SpikeFunSpec::Initialize() {
-  g_gain = 5.0f;
+  g_gain = 9.0f;
   rise = 0.0f;
   decay = 5.0f;
   window = 3;
-  eq_gain = 10.0f;
+  eq_gain = 8.0f;
   eq_dt = 0.02f;
   // vm_dt of .1 should also be used; vm_noise var .002???
   
@@ -579,11 +579,11 @@ void SpikeMiscSpec::Initialize() {
   exp_slope = 0.02f;
   spk_thr = 1.2f;
   vm_r = 0.30f;
-  t_r = 0;
+  t_r = 6;
   vm_dend = 0.3f;
   vm_dend_dt = 0.16f;
   vm_dend_time = 1.0f / vm_dend_dt;
-  clamp_max_p = .11f;
+  clamp_max_p = 0.12f;
   clamp_type = REGULAR;
 }
 
@@ -860,6 +860,11 @@ void LeabraUnitSpec::InitLinks() {
 
 void LeabraUnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  if(act_fun == SPIKE) {
+    dt.midpoint = true;		// must use midpoint for spiking
+  }
+
   clamp_range.UpdateAfterEdit_NoGui();
   vm_range.UpdateAfterEdit_NoGui();
   depress.UpdateAfterEdit_NoGui();

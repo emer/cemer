@@ -6208,28 +6208,153 @@ bool CerebConj2PrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 }
 
 
-///////////////////////////////////////
-// Special Hippocampal Layerspecs
+///////////////////////////////////////////////////////////////////////////////////////
+// 		Special Hippocampal Quadphase Layerspecs
 
-// act_m2 = auto encoder minus phase
-// act_p2 = auto encoder plus phase
-// act_m = assoc minus 
-// act_p = assoc plus
+void HippoQuadLayerSpec::Initialize() {
+  auto_plus_cycles = 5;
+  assoc_minus_cycles = 30;
+}
 
-// void ECoutLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-//   // note: only works with xcal!!!
-//   int start_auto_plus = net->ct_time.minus - (auto_plus_cyles + assoc_minus_cycles);
-//   int end_auto_plus = net->ct_time.minus - assoc_minus_cycles;
-//   if(net->ct_cycle >= start_auto_plus && net->ct_cycle < end_auto_plus) {
-//     // at start, set act_m2 to activities 
-//     ClampFromECin(lay, u, net);
-//   }
-//   if(net->ct_cycle == end_auto_plus) {
-//     // set act_p2 to activities in this phase
-//     Compute_dWt();
-//   }
-// }
+void HippoQuadLayerSpec::Defaults_init() {
+}
 
+void ECoutLayerSpec::Initialize() {
+}
+
+bool ECoutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
+
+  bool rval = true;
+
+  int in_prjn_idx;
+  LeabraLayer* in_lay = FindLayerFmSpec(lay, in_prjn_idx, &TA_ECinLayerSpec);
+  if(lay->CheckError(!in_lay, quiet, rval,
+		"no projection from ECin Layer found: must recv from layer with ECinLayerSpec!")) {
+    return false;
+  }
+  if(in_lay->unit_groups) {
+    if(lay->CheckError(in_lay->gp_geom.n != lay->gp_geom.n, quiet, rval,
+		       "ECout Layer unit groups must = ECinLayer unit groups, copiped from IN Layer; Please do a Build of network")) {
+      lay->unit_groups = true;
+      lay->gp_geom.n = in_lay->gp_geom.n;
+    }
+  }
+  if(lay->CheckError(in_lay->un_geom.n != lay->un_geom.n, quiet, rval,
+		"ECout Layer units must = ECinLayer units, copied from IN Layer; Please do a Build of network")) {
+    lay->un_geom = in_lay->un_geom;
+  }
+
+  return true;
+}
+
+void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
+  int in_prjn_idx;
+  LeabraLayer* in_lay = FindLayerFmSpec(lay, in_prjn_idx, &TA_ECinLayerSpec);
+  if(!in_lay) return;
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
+  int nunits = MIN(in_lay->units.leaves, lay->units.leaves);
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* ru = (LeabraUnit*)lay->units.Leaf(i);
+    LeabraUnit* inu = (LeabraUnit*)in_lay->units.Leaf(i);
+
+    // with mutex of mnt and out gating, can always just use current value!
+    ru->act = inu->act_eq;
+    ru->act_eq = ru->act_nd = ru->act;
+    ru->da = 0.0f;		// I'm fully settled!
+    ru->AddToActBuf(rus->syn_delay);
+  }
+}
+
+
+void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  // note: only works with xcal!!!
+  int start_auto_plus = net->ct_time.minus - (auto_plus_cycles + assoc_minus_cycles);
+  int end_auto_plus = net->ct_time.minus - assoc_minus_cycles;
+  if((net->ct_cycle >= start_auto_plus && net->ct_cycle < end_auto_plus) ||
+     net->phase == LeabraNetwork::PLUS_PHASE) {
+    if(net->ct_cycle == start_auto_plus) {
+      LeabraUnit* u;
+      taLeafItr i;
+      FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+	u->act_m2 = u->act_nd;	// record the minus phase before overwriting it..
+      }
+    }
+    ClampFromECin(lay, net);
+  }
+  if(net->ct_cycle == end_auto_plus) {
+    LeabraUnit* u;
+    taLeafItr i;
+    FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+      u->act_p2 = u->act_nd;	// record the auto plus phase
+    }
+//     lay->Compute_dWt_SecondPlus(); // layer specific version
+    net->Compute_dWt_SecondPlus(); 
+    // what are actual learning signals that would drive this?  xcal won't work right in this case..
+  }
+  inherited::Compute_CycleStats(lay, net);
+}
+
+/////////////////////////////////////////////
+//		CA1
+
+void CA1LayerSpec::Initialize() {
+}
+
+bool CA1LayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
+
+  bool rval = true;
+
+  int in_prjn_idx;
+  LeabraLayer* in_lay = FindLayerFmSpec(lay, in_prjn_idx, &TA_CA3LayerSpec);
+  if(lay->CheckError(!in_lay, quiet, rval,
+		"no projection from CA3 Layer found: must recv from layer with CA3LayerSpec!")) {
+    return false;
+  }
+
+  return true;
+}
+
+void CA1LayerSpec::ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca3_on) {
+  int ca3_prjn_idx;
+  LeabraLayer* ca3_lay = FindLayerFmSpec(lay, ca3_prjn_idx, &TA_CA3LayerSpec);
+  if(!ca3_lay) return;
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
+
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    if(ca3_on) {
+      u->Compute_NetinScale(net,0);
+    }
+    else {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ca3_prjn_idx);
+      if(!recv_gp) continue;
+      if(!ca3_on)
+	recv_gp->scale_eff = 0.0f;
+    }
+  }
+  if(ca3_on)
+    net->Compute_NetinScale_Senders(); // update senders!
+}
+
+void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->phase_no == 0)
+    ModulateCA3Prjn(lay, net, false); // turn off ca3 in minus phase until further notice
+  inherited::Settle_Init_Layer(lay, net);
+}
+
+void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  // note: only works with xcal!!!
+  int end_auto_plus = net->ct_time.minus - assoc_minus_cycles;
+  if(net->ct_cycle == end_auto_plus) {
+    ModulateCA3Prjn(lay, net, true); // turn on ca3
+  }
+  inherited::Compute_CycleStats(lay, net);
+}
 
 
 
