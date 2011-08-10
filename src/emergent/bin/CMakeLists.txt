@@ -22,6 +22,12 @@ install(TARGETS emergent
   RUNTIME DESTINATION bin
 )
 
+install(
+  DIRECTORY ${QT_PLUGINS_DIR}/imageformats
+  DESTINATION bin
+  USE_SOURCE_PERMISSIONS
+)
+
 # Add a desktop icon for Linux
 if (UNIX AND NOT APPLE)
   set (DESKTOP_ENTRY emergent.desktop)
