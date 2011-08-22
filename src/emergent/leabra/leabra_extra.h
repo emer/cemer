@@ -2956,6 +2956,60 @@ private:
   void	Defaults_init()		{ };
 };
 
+class LEABRA_API HippoEncoderConSpec : public LeabraConSpec {
+  // for EC <-> CA1 connections: basic delta-rule learning on encoder variables (ru_act_p2 - ru_act_m2) * su_act_m2, with sender in the minus phase -- soft bounding as specified in spec
+INHERITED(LeabraConSpec)
+public:
+  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    float lin_wt = LinFmSigWt(cn->wt);
+    float dwt = (ru->act_p2 - ru->act_m2) * su->act_m2; // basic delta rule, sender in minus
+    if(lmix.err_sb) {
+      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
+      else		dwt *= lin_wt;
+    }
+    cn->dwt += cur_lrate * dwt;
+  }
+
+  inline void C_Compute_dWt_Delta_CAL(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
+    float dwt = (ru->act_p2 - ru->act_m2) * su->act_m2; // basic delta rule, sender in minus
+    cn->dwt += cur_lrate * dwt;
+    // soft bounding is managed in the weight update phase, not in dwt
+  }
+
+  override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      C_Compute_dWt_Delta(cn, ru, su);  
+    }
+  }
+
+  override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      C_Compute_dWt_Delta_CAL(cn, ru, su);  
+    }
+  }
+
+  override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
+      C_Compute_dWt_Delta_CAL(cn, ru, su);  
+    }
+  }
+
+  TA_SIMPLE_BASEFUNS(HippoEncoderConSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init() 	{ Initialize(); }
+};
+
 
 #endif // leabra_extra_h
 
