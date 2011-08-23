@@ -6219,6 +6219,39 @@ void HippoQuadLayerSpec::Initialize() {
 void HippoQuadLayerSpec::Defaults_init() {
 }
 
+void HippoQuadLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    u->act_m2 = u->act_nd;	// record the minus phase before overwriting it..
+  }
+}
+
+void HippoQuadLayerSpec::RecordActP2(LeabraLayer* lay, LeabraNetwork* net) {
+  float cnt_err = 0.0f;
+  float sse_err = 0.0f;
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    u->act_p2 = u->act_nd;	// record the minus phase before overwriting it..
+    u->act_dif2 = u->act_p2 - u->act_m2;
+    float sse = u->act_dif2;
+    if(fabsf(sse) < 0.5f)
+      sse = 0.0f;
+    else
+      cnt_err += 1.0f;
+    sse *= sse;
+    sse_err += sse;
+  }
+  float avg_sse = 0.0f;
+  if(lay->units.leaves > 0)
+    avg_sse = sse_err / (float)lay->units.leaves;
+  lay->SetUserData("enc_sse", sse_err);
+  lay->SetUserData("enc_cnt_err", cnt_err);
+  lay->SetUserData("enc_avg_sse", avg_sse);
+}
+
+
 void ECoutLayerSpec::Initialize() {
 }
 
@@ -6267,31 +6300,18 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-
 void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   // note: only works with xcal!!!
   int start_auto_plus = net->ct_time.minus - (auto_plus_cycles + assoc_minus_cycles);
   int end_auto_plus = net->ct_time.minus - assoc_minus_cycles;
   if((net->ct_cycle >= start_auto_plus && net->ct_cycle < end_auto_plus) ||
      net->phase == LeabraNetwork::PLUS_PHASE) {
-    if(net->ct_cycle == start_auto_plus) {
-      LeabraUnit* u;
-      taLeafItr i;
-      FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-	u->act_m2 = u->act_nd;	// record the minus phase before overwriting it..
-      }
-    }
+    if(net->ct_cycle == start_auto_plus)
+      RecordActM2(lay,net);
     ClampFromECin(lay, net);
   }
-  if(net->ct_cycle == end_auto_plus) {
-    LeabraUnit* u;
-    taLeafItr i;
-    FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-      u->act_p2 = u->act_nd;	// record the auto plus phase
-    }
-//     lay->Compute_dWt_SecondPlus(); // layer specific version
-    net->Compute_dWt_SecondPlus(); 
-    // what are actual learning signals that would drive this?  xcal won't work right in this case..
+  if(net->ct_cycle == (end_auto_plus-1)) {
+    RecordActP2(lay,net);
   }
   inherited::Compute_CycleStats(lay, net);
 }
@@ -6337,8 +6357,10 @@ void CA1LayerSpec::ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca
 	recv_gp->scale_eff = 0.0f;
     }
   }
-  if(ca3_on)
+  if(ca3_on) {
     net->Compute_NetinScale_Senders(); // update senders!
+    net->DecayState(0.0f);	       // need to re-send activations -- this triggers resend
+  }
 }
 
 void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
@@ -6349,7 +6371,15 @@ void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 
 void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   // note: only works with xcal!!!
+  int start_auto_plus = net->ct_time.minus - (auto_plus_cycles + assoc_minus_cycles);
   int end_auto_plus = net->ct_time.minus - assoc_minus_cycles;
+  if(net->ct_cycle == start_auto_plus) {
+    RecordActM2(lay,net);
+  }
+  if(net->ct_cycle == (end_auto_plus-1)) {
+    RecordActP2(lay,net);
+    net->Compute_dWt_SecondPlus(); 
+  }
   if(net->ct_cycle == end_auto_plus) {
     ModulateCA3Prjn(lay, net, true); // turn on ca3
   }
