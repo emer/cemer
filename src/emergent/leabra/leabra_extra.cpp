@@ -6364,8 +6364,8 @@ void CA1LayerSpec::ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca
 }
 
 void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no == 0)
-    ModulateCA3Prjn(lay, net, false); // turn off ca3 in minus phase until further notice
+  // always off at start of minus and plus phase
+  ModulateCA3Prjn(lay, net, false); // turn off ca3 in minus phase until further notice
   inherited::Settle_Init_Layer(lay, net);
 }
 
