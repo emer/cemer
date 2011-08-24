@@ -2879,7 +2879,7 @@ class LEABRA_API HippoQuadLayerSpec : public LeabraLayerSpec {
 INHERITED(LeabraLayerSpec)
 public:
   int		auto_plus_cycles; 	// #DEF_5 number of cycles for plus phase for auto-encoder (EC<->CA1) learning -- should be short, takes place in minus phase prior to assoc_minus_cycles
-  int		assoc_minus_cycles;	// #DEF_30:50 number of cycles for minus phase where CA1 is driven by CA3 for training overall hippocampal associations via CA3 -> CA1 -- this happens at very end of minus phase 
+  int		assoc_minus_cycles;	// #DEF_25:50 number of cycles for minus phase where CA1 is driven by CA3 for training overall hippocampal associations via CA3 -> CA1 -- this happens at very end of minus phase 
 
   virtual void 	RecordActM2(LeabraLayer* lay, LeabraNetwork* net);
   // save current act_nd values as act_m2 -- minus phase for auto-encoder learning
@@ -2941,6 +2941,8 @@ class LEABRA_API CA1LayerSpec : public HippoQuadLayerSpec {
   // layer spec for CA1 layers that implements quad phase learning -- alternates clamping in auto-encoder and associative plus phases
 INHERITED(HippoQuadLayerSpec)
 public:
+  float		recall_decay; // #DEF_1 proportion to decay layer activations at start of recall phase
+
   // following are main hook into code:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
@@ -2948,6 +2950,10 @@ public:
   override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
   virtual void 	ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca3_on);
   // control the strength of the CA3 -> CA1 projection according to ca3_on arg
+  virtual void 	ModulateECinPrjn(LeabraLayer* lay, LeabraNetwork* net, bool ecin_on);
+  // control the strength of the EC_in -> CA1 projection according to ecin_on arg
+  virtual void 	FinalizePrjnMods(LeabraLayer* lay, LeabraNetwork* net);
+  // broadcast modifications to projection strengths to make them actually take effect (Network::Compute_NetinScale_Senders and Network::DecayState(0))
 
   TA_SIMPLE_BASEFUNS(CA1LayerSpec);
 protected:

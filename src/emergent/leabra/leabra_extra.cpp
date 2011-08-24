@@ -6320,6 +6320,7 @@ void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 //		CA1
 
 void CA1LayerSpec::Initialize() {
+  recall_decay = 1.0f;
 }
 
 bool CA1LayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -6332,6 +6333,11 @@ bool CA1LayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* in_lay = FindLayerFmSpec(lay, in_prjn_idx, &TA_CA3LayerSpec);
   if(lay->CheckError(!in_lay, quiet, rval,
 		"no projection from CA3 Layer found: must recv from layer with CA3LayerSpec!")) {
+    return false;
+  }
+  in_lay = FindLayerFmSpec(lay, in_prjn_idx, &TA_ECinLayerSpec);
+  if(lay->CheckError(!in_lay, quiet, rval,
+		"no projection from EC_in Layer found: must recv from layer with ECinLayerSpec!")) {
     return false;
   }
 
@@ -6357,10 +6363,32 @@ void CA1LayerSpec::ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca
 	recv_gp->scale_eff = 0.0f;
     }
   }
-  if(ca3_on) {
-    net->Compute_NetinScale_Senders(); // update senders!
-    net->DecayState(0.0f);	       // need to re-send activations -- this triggers resend
+}
+
+void CA1LayerSpec::ModulateECinPrjn(LeabraLayer* lay, LeabraNetwork* net, bool ecin_on) {
+  int ecin_prjn_idx;
+  LeabraLayer* ecin_lay = FindLayerFmSpec(lay, ecin_prjn_idx, &TA_ECinLayerSpec);
+  if(!ecin_lay) return;
+  LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
+
+  LeabraUnit* u;
+  taLeafItr i;
+  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+    if(ecin_on) {
+      u->Compute_NetinScale(net,0);
+    }
+    else {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ecin_prjn_idx);
+      if(!recv_gp) continue;
+      if(!ecin_on)
+	recv_gp->scale_eff = 0.0f;
+    }
   }
+}
+
+void CA1LayerSpec::FinalizePrjnMods(LeabraLayer* lay, LeabraNetwork* net) {
+  net->Compute_NetinScale_Senders(); // update senders!
+  net->DecayState(0.0f);	       // need to re-send activations -- this triggers resend
 }
 
 void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
@@ -6381,7 +6409,10 @@ void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
     net->Compute_dWt_SecondPlus(); 
   }
   if(net->ct_cycle == end_auto_plus) {
-    ModulateCA3Prjn(lay, net, true); // turn on ca3
+    lay->DecayState(net, recall_decay); // specifically CA1 activations at recall
+    ModulateCA3Prjn(lay, net, true);	// turn on ca3 -- calls netinscale
+    ModulateECinPrjn(lay, net, false); // turn off ecin -- must be after ca3 to specifically turn off
+    FinalizePrjnMods(lay, net);	       // make em stick
   }
   inherited::Compute_CycleStats(lay, net);
 }
