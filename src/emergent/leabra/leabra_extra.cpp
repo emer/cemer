@@ -6324,6 +6324,7 @@ void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 
 void CA1LayerSpec::Initialize() {
   recall_decay = 1.0f;
+  use_test_mode = true;
 }
 
 bool CA1LayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -6406,9 +6407,11 @@ void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->ct_cycle == start_rec-1)
     RecordActM2(lay,net);
   if(net->ct_cycle == start_rec) {
-    lay->DecayState(net, recall_decay); // specifically CA1 activations at recall
+    if(!(use_test_mode && net->train_mode == Network::TEST))
+      lay->DecayState(net, recall_decay); // specifically CA1 activations at recall
     ModulateCA3Prjn(lay, net, true);	// turn on ca3 -- calls netinscale
-    ModulateECinPrjn(lay, net, false); // turn off ecin -- must be after ca3 to specifically turn off
+    if(!(use_test_mode && net->train_mode == Network::TEST))
+      ModulateECinPrjn(lay, net, false); // turn off ecin -- must be after ca3 to specifically turn off
     FinalizePrjnMods(lay, net);	       // make 'em stick
   }
   inherited::Compute_CycleStats(lay, net);

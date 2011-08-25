@@ -2924,6 +2924,8 @@ public:
   // following is main hook into code:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
+  override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) { };
+  // no mid minus -- could overwrite!
 
   virtual void 	ClampFromECin(LeabraLayer* lay, LeabraNetwork* net);
   // clamp ECout values from ECin values
@@ -2942,11 +2944,14 @@ class LEABRA_API CA1LayerSpec : public HippoQuadLayerSpec {
   // layer spec for CA1 layers that implements quad phase learning -- alternates clamping in auto-encoder and associative plus phases
 INHERITED(HippoQuadLayerSpec)
 public:
-  float		recall_decay; // #DEF_1 proportion to decay layer activations at start of recall phase
+  float		recall_decay; 		// #DEF_1 proportion to decay layer activations at start of recall phase
+  bool		use_test_mode;		// #DEF_true if network train_mode == TEST, then keep EC_in -> CA1 on, and don't do recall_decay -- makes it more likely to at least get input parts right
 
   // following are main hook into code:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) { };
+  // no mid minus -- could overwrite!
 
   override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
   virtual void 	ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca3_on);
