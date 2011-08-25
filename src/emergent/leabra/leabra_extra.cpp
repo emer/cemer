@@ -6212,8 +6212,7 @@ bool CerebConj2PrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 // 		Special Hippocampal Quadphase Layerspecs
 
 void HippoQuadLayerSpec::Initialize() {
-  auto_plus_cycles = 5;
-  assoc_minus_cycles = 30;
+  recall_m_cycles = 40;
 }
 
 void HippoQuadLayerSpec::Defaults_init() {
@@ -6227,30 +6226,39 @@ void HippoQuadLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void HippoQuadLayerSpec::RecordActP2(LeabraLayer* lay, LeabraNetwork* net) {
-  float cnt_err = 0.0f;
+void HippoQuadLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net) {
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+  float norm_err = 0.0f;
   float sse_err = 0.0f;
   LeabraUnit* u;
   taLeafItr i;
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
-    u->act_p2 = u->act_nd;	// record the minus phase before overwriting it..
-    u->act_dif2 = u->act_p2 - u->act_m2;
+    u->act_dif2 = u->act_eq - u->act_m2;
     float sse = u->act_dif2;
-    if(fabsf(sse) < 0.5f)
+    if(fabsf(sse) < us->sse_tol)
       sse = 0.0f;
-    else
-      cnt_err += 1.0f;
     sse *= sse;
     sse_err += sse;
-  }
-  float avg_sse = 0.0f;
-  if(lay->units.leaves > 0)
-    avg_sse = sse_err / (float)lay->units.leaves;
-  lay->SetUserData("enc_sse", sse_err);
-  lay->SetUserData("enc_cnt_err", cnt_err);
-  lay->SetUserData("enc_avg_sse", avg_sse);
-}
 
+    if(net->on_errs) {
+      if(u->act_m2 > 0.5f && u->act_eq < 0.5f) norm_err += 1.0f;
+    }
+    if(net->off_errs) {
+      if(u->act_m2 < 0.5f && u->act_eq > 0.5f) norm_err += 1.0f;
+    }
+  }
+  int ntot = 0;
+  if(net->on_errs && net->off_errs)
+    ntot = 2 * lay->kwta.k;
+  else
+    ntot = lay->kwta.k;
+  if(ntot > 0)
+    norm_err = norm_err / (float)ntot;
+  if(norm_err > 1.0f)
+    norm_err = 1.0f;
+  lay->SetUserData("enc_sse", sse_err);
+  lay->SetUserData("enc_norm_err", norm_err);
+}
 
 void ECoutLayerSpec::Initialize() {
 }
@@ -6291,8 +6299,6 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
   for(int i=0;i<nunits;i++) {
     LeabraUnit* ru = (LeabraUnit*)lay->units.Leaf(i);
     LeabraUnit* inu = (LeabraUnit*)in_lay->units.Leaf(i);
-
-    // with mutex of mnt and out gating, can always just use current value!
     ru->act = inu->act_eq;
     ru->act_eq = ru->act_nd = ru->act;
     ru->da = 0.0f;		// I'm fully settled!
@@ -6302,16 +6308,13 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
 
 void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   // note: only works with xcal!!!
-  int start_auto_plus = net->ct_time.minus - (auto_plus_cycles + assoc_minus_cycles);
-  int end_auto_plus = net->ct_time.minus - assoc_minus_cycles;
-  if((net->ct_cycle >= start_auto_plus && net->ct_cycle < end_auto_plus) ||
-     net->phase == LeabraNetwork::PLUS_PHASE) {
-    if(net->ct_cycle == start_auto_plus)
-      RecordActM2(lay,net);
+  int start_rec = net->ct_time.minus - recall_m_cycles;
+  if(net->ct_cycle == start_rec-1)
+    RecordActM2(lay,net);
+  if(net->phase == LeabraNetwork::PLUS_PHASE) {
     ClampFromECin(lay, net);
-  }
-  if(net->ct_cycle == (end_auto_plus-1)) {
-    RecordActP2(lay,net);
+    if(net->cycle <= 1)
+      Compute_AutoEncStats(lay, net);
   }
   inherited::Compute_CycleStats(lay, net);
 }
@@ -6399,20 +6402,14 @@ void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 
 void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   // note: only works with xcal!!!
-  int start_auto_plus = net->ct_time.minus - (auto_plus_cycles + assoc_minus_cycles);
-  int end_auto_plus = net->ct_time.minus - assoc_minus_cycles;
-  if(net->ct_cycle == start_auto_plus) {
+  int start_rec = net->ct_time.minus - recall_m_cycles;
+  if(net->ct_cycle == start_rec-1)
     RecordActM2(lay,net);
-  }
-  if(net->ct_cycle == (end_auto_plus-1)) {
-    RecordActP2(lay,net);
-    net->Compute_dWt_SecondPlus(); 
-  }
-  if(net->ct_cycle == end_auto_plus) {
+  if(net->ct_cycle == start_rec) {
     lay->DecayState(net, recall_decay); // specifically CA1 activations at recall
     ModulateCA3Prjn(lay, net, true);	// turn on ca3 -- calls netinscale
     ModulateECinPrjn(lay, net, false); // turn off ecin -- must be after ca3 to specifically turn off
-    FinalizePrjnMods(lay, net);	       // make em stick
+    FinalizePrjnMods(lay, net);	       // make 'em stick
   }
   inherited::Compute_CycleStats(lay, net);
 }

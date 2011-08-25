@@ -2852,39 +2852,40 @@ private:
 ///////////////////////////////////////
 // Special Hippocampal Layerspecs
 
-// timing of quadphase dynamics:
+// timing of quadphase dynamics -- split minus and normal plus:
 // [ ------ minus ------- ][ ---- plus ---- ]
-// [ auto- ][auto+][assoc-][ --assoc plus-- ]
+// [   auto-  ][ recall-  ][ -- both plus-- ]
 
 //  DG -> CA3 -> CA1
 //  /    /      /    \
 // [----EC_in---] -> [ EC_out ]
 
-// auto   CA3 -> CA1 = 0
-// auto-  EC_out free
-// auto+  EC_in -> EC_out clamp
-// assoc  CA3 -> CA1 = 1
-// assoc+ EC_in -> EC_out clamp
+// minus phase: EC_out unclamped, driven by CA1
+// auto-   CA3 -> CA1 = 0, EC_in -> CA1 = 1
+// recall- CA3 -> CA1 = 1, EC_in -> CA1 = 0
 
-// act_m2 = auto encoder minus phase
-// act_p2 = auto encoder plus phase
-// act_m = assoc minus 
-// act_p = assoc plus
+// plus phase: EC_in -> EC_out auto clamped
+// CA3 -> CA1 = 0, EC_in -> CA1 = 1
+// (same as auto- -- training signal for CA3 -> CA1 is what EC would produce!
+
+// act_m2 = auto encoder minus phase state (in both CA1 and EC_out
+//   used by HippoEncoderConSpec relative to act_p plus phase)
+// act_m = recall minus phase (normal minus phase dynamics for CA3 recall learning)
+// act_p = plus (serves as plus phase for both auto and recall)
 
 // learning just happens at end of trial as usual, but encoder projections use
-// the act_m2, p2 variables to learn on the right signals
+// the act_m2, act_p variables to learn on the right signals
 
 class LEABRA_API HippoQuadLayerSpec : public LeabraLayerSpec {
   // base layer spec for hippocampal layers that implements quad phase learning -- alternates clamping in auto-encoder and associative plus phases, drives learning appropriately
 INHERITED(LeabraLayerSpec)
 public:
-  int		auto_plus_cycles; 	// #DEF_5 number of cycles for plus phase for auto-encoder (EC<->CA1) learning -- should be short, takes place in minus phase prior to assoc_minus_cycles
-  int		assoc_minus_cycles;	// #DEF_25:50 number of cycles for minus phase where CA1 is driven by CA3 for training overall hippocampal associations via CA3 -> CA1 -- this happens at very end of minus phase 
+  int		recall_m_cycles;	// #DEF_20:80 [40 is good default] number of cycles for recall minus phase where CA1 is driven by CA3 and not EC_in, for training overall hippocampal associations via CA3 -> CA1 for recall -- this happens in second half minus phase 
 
   virtual void 	RecordActM2(LeabraLayer* lay, LeabraNetwork* net);
   // save current act_nd values as act_m2 -- minus phase for auto-encoder learning
-  virtual void 	RecordActP2(LeabraLayer* lay, LeabraNetwork* net);
-  // save current act_nd values as act_p2, also compute act_dif2 relative to act_m2 -- plus phase for auto-encoder learning -- also compute error stats as user data on layer
+  virtual void 	Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net);
+  // compute act_dif2 as act_eq - act_m2, and based on that compute error stats as user data on layer (enc_sse, enc_norm_err)
 
   TA_SIMPLE_BASEFUNS(HippoQuadLayerSpec);
 protected:
@@ -2966,12 +2967,12 @@ private:
 };
 
 class LEABRA_API HippoEncoderConSpec : public LeabraConSpec {
-  // for EC <-> CA1 connections: basic delta-rule learning on encoder variables (ru_act_p2 - ru_act_m2) * su_act_m2, with sender in the minus phase -- soft bounding as specified in spec
+  // for EC <-> CA1 connections: basic delta-rule learning on encoder variables (ru_act_p - ru_act_m2) * su_act_m2, with sender in the minus phase -- soft bounding as specified in spec
 INHERITED(LeabraConSpec)
 public:
   inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
     float lin_wt = LinFmSigWt(cn->wt);
-    float dwt = (ru->act_p2 - ru->act_m2) * su->act_m2; // basic delta rule, sender in minus
+    float dwt = (ru->act_p - ru->act_m2) * su->act_m2; // basic delta rule, sender in minus
     if(lmix.err_sb) {
       if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
       else		dwt *= lin_wt;
@@ -2980,7 +2981,7 @@ public:
   }
 
   inline void C_Compute_dWt_Delta_CAL(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float dwt = (ru->act_p2 - ru->act_m2) * su->act_m2; // basic delta rule, sender in minus
+    float dwt = (ru->act_p - ru->act_m2) * su->act_m2; // basic delta rule, sender in minus
     cn->dwt += cur_lrate * dwt;
     // soft bounding is managed in the weight update phase, not in dwt
   }
