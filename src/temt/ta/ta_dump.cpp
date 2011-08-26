@@ -1557,6 +1557,10 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
   else if(taMisc::LexBuf.contains("// ta_Dump File v3.0")) {
     taMisc::strm_ver = 3;
   }
+  else {
+    taMisc::Warning("Dump file does not have proper format id:", taMisc::LexBuf);
+    return false;
+  }
   if(taMisc::strm_ver >= 2) {
     if(taMisc::LexBuf.contains(" -- code v")) { // code version stamped into file
       String ldver = taMisc::LexBuf.after(" -- code v");
@@ -1565,9 +1569,6 @@ int TypeDef::Dump_Load(istream& strm, void* base, void* par, void** el_) {
     else {
       taMisc::loading_version.set(4,0,19); // last version without explicit versioning
     }
-  } else {
-    taMisc::Warning("Dump file does not have proper format id:", taMisc::LexBuf);
-    return false;
   }
 
   if(taMisc::loading_version > taMisc::version_bin) {

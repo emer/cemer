@@ -2816,8 +2816,8 @@ bool LeabraLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   if(net && net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) {
-    if(lay->CheckError(decay.phase == 1.0f, quiet, rval,
-		       "LeabraLayerSpec decay.phase should be 0 or small for for CTLEABRA_X/CAL -- I just set it to 0 for you in spec:", name)) {
+    if(TestWarning(decay.phase == 1.0f, 
+		   "LeabraLayerSpec decay.phase should be 0 or small for for CTLEABRA_X/CAL -- I just set it to 0 for you in spec:", name)) {
       SetUnique("decay", true);
       decay.phase = 0.0f;
     }
