@@ -6398,6 +6398,8 @@ void CA1LayerSpec::FinalizePrjnMods(LeabraLayer* lay, LeabraNetwork* net) {
 void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   // always off at start of minus and plus phase
   ModulateCA3Prjn(lay, net, false); // turn off ca3 in minus phase until further notice
+  if(net->phase == LeabraNetwork::PLUS_PHASE)
+    lay->DecayState(net, recall_decay); // decay at start of plus phase too
   inherited::Settle_Init_Layer(lay, net);
 }
 
@@ -6443,6 +6445,9 @@ void HippoEncoderConSpec::UpdateAfterEdit_impl() {
   lmix.err = 1.0f;
 }
 
+void XCalCHLConSpec::Initialize() {
+  use_chl = true;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
