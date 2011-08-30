@@ -2004,7 +2004,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [2] 0.56559098;0.43440902;      };
+	    [2] 0.83464944;0.16535059;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -2037,10 +2037,10 @@ LeabraProject .projects["Project_0"] {
 "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
 "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
 "1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
-"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.0";"1.0";"1.0";
-"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
-"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
-"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
+"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
+"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
+"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";"1.1";
+"1.1";"1.1";"1.1";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
 "1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";"1.0";
       };
      };
@@ -2237,10 +2237,10 @@ LeabraProject .projects["Project_0"] {
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
       };
      };
@@ -2262,10 +2262,10 @@ LeabraProject .projects["Project_0"] {
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
 1;1;1;1;1;1;1;1;1;1;
-1;1;1;1;1;1;1;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;1;1;1;1;1;1;1;
+1;1;1;0;0;0;0;0;0;0;
 0;0;0;0;0;0;0;0;0;0;
       };
      };
@@ -2282,16 +2282,16 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [100] 0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;
-0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;
-0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;
-0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;
-0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;
-0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.56559098;0.43440902;0.43440902;0.43440902;
-0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;
-0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;
-0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;
-0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;0.43440902;
+	    [100] 0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;
+0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;
+0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;
+0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;
+0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;
+0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;
+0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;
+0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;0.83464944;
+0.83464944;0.83464944;0.83464944;0.16535059;0.16535059;0.16535059;0.16535059;0.16535059;0.16535059;0.16535059;
+0.16535059;0.16535059;0.16535059;0.16535059;0.16535059;0.16535059;0.16535059;0.16535059;0.16535059;0.16535059;
       };
      };
     };
@@ -2405,7 +2405,7 @@ LeabraProject .projects["Project_0"] {
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_10";
+       name="UserDataItem_List_62";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -2430,7 +2430,7 @@ LeabraProject .projects["Project_0"] {
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_11";
+       name="UserDataItem_List_63";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -2455,7 +2455,7 @@ LeabraProject .projects["Project_0"] {
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_12";
+       name="UserDataItem_List_64";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -2510,7 +2510,7 @@ LeabraProject .projects["Project_0"] {
      };
      int_Data @["phase_no"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_13";
+       name="UserDataItem_List_65";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -2653,7 +2653,7 @@ LeabraProject .projects["Project_0"] {
      el_def=0;
      int_Data @["batch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_12";
+       name="UserDataItem_List_64";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -2678,7 +2678,7 @@ LeabraProject .projects["Project_0"] {
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
-       name="UserDataItem_List_13";
+       name="UserDataItem_List_65";
        el_typ=UserDataItem;
        el_def=0;
        UserDataItem @["NARROW"] {
@@ -4154,7 +4154,7 @@ LeabraProject .projects["Project_0"] {
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=59;
+      int_val=45;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4284,7 +4284,7 @@ LeabraProject .projects["Project_0"] {
       cond {
        expr="network.epoch % prob_switch_interval == 0";
       };
-      show_false_code=1;
+      show_false_code=0;
       true_code {
        name="ProgEl_List_102";
        el_typ=ProgEl;
@@ -6055,7 +6055,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["sv1"] {
       name="sv1";
       var_type=T_Real;
-      real_val=0.6025290489196777;
+      real_val=0.943476140499115;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6065,7 +6065,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      ProgVar @["sv2"] {
       name="sv2";
       var_type=T_Real;
-      real_val=0.6175096035003662;
+      real_val=0.9355176687240601;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7326,7 +7326,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      ProgVar @["prob1"] {
       name="prob1";
       var_type=T_Real;
-      real_val=0.5655909876287022;
+      real_val=0.8346494142250414;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7336,7 +7336,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
      ProgVar @["prob2"] {
       name="prob2";
       var_type=T_Real;
-      real_val=0.4344090123712978;
+      real_val=0.1653505857749586;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7900,7 +7900,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=110: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=133: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -8415,8 +8415,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        bias_con_type=LeabraCon;
        bias_spec {type=LeabraBiasSpec: spec=$.projects["Project_0"].networks["LeabraNetwork_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$: };
        sse_tol=0.5;
-       act_fun=NOISY_XX1;
-       act {gelin=1: thr=0.5: gain=80: nvar=0.01: avg_dt=0.005: avg_init=0.15: i_thr=STD: vm_mod_max=0.95: };
+       act_fun=LINEAR;
+       act {gelin=1: thr=0.3: gain=20: nvar=0.01: avg_dt=0.005: avg_init=0.15: i_thr=STD: vm_mod_max=0.95: };
        spike {rise=0: decay=0.05: g_gain=9: window=3: eq_gain=10: eq_dt=0.02: };
        spike_misc {
 	exp_slope=0.02;
@@ -8504,7 +8504,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        v_m_init {name="": type=UNIFORM: mean=0.15: var=0: par=1: };
        dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
        act_avg {l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
-       g_bar {e=0.9999999: l=0.1: i=0.9999999: h=0.015: a=0.045: };
+       g_bar {e=1: l=0.1: i=1: h=0.015: a=0.045: };
        e_rev {e=1: l=0.15: i=0.15: h=1: a=0: };
        hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
        acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
@@ -8652,7 +8652,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        };
        scalar {rep=LOCALIST: un_width=0.3: norm_width=0: clamp_pat=0: min_sum_act=0.2: clip_val=1: send_thr=0: init_nms=1: };
        unit_range {min=0: max=1: range=1: scale=1: };
-       bias_val {un=GC: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
+       bias_val {un=NO_UN: un_shp=VAL: un_gain=1: wt=NO_WT: wt_gain=1: val=0: };
        val_range {min=0: max=1: range=1: scale=1: };
       };
       ScalarValLayerSpec @["SV2"] {

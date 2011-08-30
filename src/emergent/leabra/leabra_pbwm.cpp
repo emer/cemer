@@ -257,7 +257,7 @@ void SNrThalLayerSpec::Defaults_init() {
   tie_brk.loser_gain = 1.0f;
   SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = .8f;
+  inhib.kwta_pt = .7f;
 }
 
 void SNrThalLayerSpec::HelpConfig() {
@@ -708,8 +708,10 @@ void MatrixLayerSpec::Initialize() {
   //  SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
   //  SetUnique("inhib", true);
+//   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+//   inhib.kwta_pt = .5f;
   inhib.type = LeabraInhibSpec::KWTA_INHIB;
-  inhib.kwta_pt = .25f;
+  inhib.kwta_pt = .2f;
 
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
@@ -1181,7 +1183,7 @@ void PFCLayerSpec::Initialize() {
   inhib_group = UNIT_GROUPS;
   SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = .6f;
+  inhib.kwta_pt = .5f;
   SetUnique("decay", true);
   decay.event = 0.0f;
   decay.phase = 0.0f;
@@ -1654,7 +1656,7 @@ void PFCOutLayerSpec::Initialize() {
   inhib_group = UNIT_GROUPS;
 //   SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = .6f;
+  inhib.kwta_pt = .5f;
 //   SetUnique("decay", true);
   decay.event = 0.0f;
   decay.phase = 0.0f;
@@ -2694,11 +2696,16 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   // different PVLV defaults
 
   lvesp->lv.min_lvi = 0.4f;
+  lvesp->bias_val.un = ScalarValBias::NO_UN;
+  pvisp->bias_val.un = ScalarValBias::NO_UN;
+  pvrsp->bias_val.un = ScalarValBias::NO_UN;
+
   nvsp->nv.da_gain = 0.1f;
   dasp->da.da_gain = 1.0f;
   dasp->da.pv_gain = 0.1f;
 
-  matrixsp->matrix.da_gain = 0.1f;
+  // do NOT reset this -- unnec override of existing params!
+//   matrixsp->matrix.da_gain = 0.1f;
 
   // NOT unique: inherit from lve
   patchsp->SetUnique("decay", false);
@@ -2764,6 +2771,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   fixed_bias->SetUnique("lrate", true);
   fixed_bias->lrate = 0.0f;		// default is no bias learning
 
+  matrix_units->BioParams(true);
   matrix_units->g_bar.h = .01f; // old syn dep
   matrix_units->g_bar.a = .03f;
   matrix_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
@@ -2775,13 +2783,21 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   matrix_units->maxda.val = MaxDaSpec::NO_MAX_DA;
 
   matrixsp->bg_type = MatrixLayerSpec::MAINT;
+//   matrixsp->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+//   matrixsp->inhib.kwta_pt = 0.5f;
+  matrixsp->inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  matrixsp->inhib.kwta_pt = 0.2f;
+
+  pfcmsp->inhib.kwta_pt = 0.5f;
 
   snrthalsp->SetUnique("kwta", true);
   snrthalsp->kwta.k_from = KWTASpec::USE_K;
   snrthalsp->kwta.k = 2;
+  snrthalsp->inhib.kwta_pt = 0.7f;
 
   snrthalsp->bg_type = SNrThalLayerSpec::MAINT;
 
+  snrthal_units->BioParams(true);
   snrthal_units->SetUnique("maxda", true);
   snrthal_units->maxda.val = MaxDaSpec::NO_MAX_DA;
 
@@ -2831,6 +2847,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
     fmpfcout_cons->wt_scale.rel = 1.0f; // 2 might be better in some cases
   }
 
+  pfc_units->BioParams(true);
   pfc_units->SetUnique("g_bar", true);
   if(pfc_learns)
     pfc_units->g_bar.h = .5f;	// weaker act maint for learning pfc..
@@ -2865,12 +2882,15 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   pv_units->SetUnique("act_fun", true);
   pv_units->SetUnique("dt", true);
   pv_units->act_fun = LeabraUnitSpec::NOISY_LINEAR;
+  pv_units->act.gelin = false;
   pv_units->act.thr = .17f;
-  pv_units->act.gain = 220.0f;
+  pv_units->act.gain = 200.0f;
   pv_units->act.nvar = .01f;
+  pv_units->v_m_init.mean = 0.15f;
+  pv_units->e_rev.l = 0.15f;
+  pv_units->e_rev.i = 0.15f;
   pv_units->g_bar.l = .1f;
   pv_units->g_bar.h = .03f;  pv_units->g_bar.a = .09f;
-  pv_units->dt.vm = .05f;
   pv_units->dt.vm_eq_cyc = 100; // go straight to equilibrium!
   pv_units->SetUnique("maxda", true);
   pv_units->maxda.val = MaxDaSpec::NO_MAX_DA;
@@ -2966,7 +2986,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
 "Set OUTPUT kwta to a lower percent than MAINT kwta -- typically around 25% or so -- depends on how many different things PFC needs to maintain (lower the % for more maintenance demands)");
     }    
     snrthalsp->SelectForEditNm("inhib", edit, "snrthal", subgp,
-"Default is KWTA_AVG_INHIB with kwta_pt = .8 -- more competition but with some flexibility from avg-based computation");
+"Default is KWTA_AVG_INHIB with kwta_pt = .7 -- more competition but with some flexibility from avg-based computation");
 
 //       snrthal_units->SelectForEditNm("g_bar", edit, "snr_thal", subgp);
 //       snrthal_units->SelectForEditNm("dt", edit, "snr_thal", subgp);
