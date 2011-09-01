@@ -2858,7 +2858,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   pfc_units->dt.vm = .1f;	// slower is better..  .1 is even better!
 
   snrthal_units->dt.vm = .1f;
-  snrthal_units->g_bar.l = .8f;
+  snrthal_units->g_bar.l = .1f;	// was 0.8f -- doesn't work anymore..
 
   /////////////////////////
   // some key stuff from PVLV:
