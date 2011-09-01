@@ -2696,9 +2696,9 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   // different PVLV defaults
 
   lvesp->lv.min_lvi = 0.4f;
-  lvesp->bias_val.un = ScalarValBias::NO_UN;
-  pvisp->bias_val.un = ScalarValBias::NO_UN;
-  pvrsp->bias_val.un = ScalarValBias::NO_UN;
+//   lvesp->bias_val.un = ScalarValBias::NO_UN;
+//   pvisp->bias_val.un = ScalarValBias::NO_UN;
+//   pvrsp->bias_val.un = ScalarValBias::NO_UN;
 
   nvsp->nv.da_gain = 0.1f;
   dasp->da.da_gain = 1.0f;
@@ -2884,7 +2884,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   pv_units->act_fun = LeabraUnitSpec::NOISY_LINEAR;
   pv_units->act.gelin = false;
   pv_units->act.thr = .17f;
-  pv_units->act.gain = 200.0f;
+  pv_units->act.gain = 220.0f;
   pv_units->act.nvar = .01f;
   pv_units->v_m_init.mean = 0.15f;
   pv_units->e_rev.l = 0.15f;

@@ -2877,7 +2877,7 @@ private:
 // the act_m2, act_p variables to learn on the right signals
 
 class LEABRA_API HippoQuadLayerSpec : public LeabraLayerSpec {
-  // base layer spec for hippocampal layers that implements quad phase learning -- alternates clamping in auto-encoder and associative plus phases, drives learning appropriately
+  // base layer spec for hippocampal layers that implements quad phase learning
 INHERITED(LeabraLayerSpec)
 public:
   int		recall_m_cycles;	// #DEF_20:80 [40 is good default] number of cycles for recall minus phase where CA1 is driven by CA3 and not EC_in, for training overall hippocampal associations via CA3 -> CA1 for recall -- this happens in second half minus phase 
@@ -2918,7 +2918,7 @@ private:
 };
 
 class LEABRA_API ECoutLayerSpec : public HippoQuadLayerSpec {
-  // layer spec for EC out layers that implements quad phase learning -- alternates clamping in auto-encoder and associative plus phases -- must use HippoEncoderConSpec for connections
+  // layer spec for EC out layers that implements quad phase learning -- automatically clamps to EC in activations in plus phase and records act_m2 mid minus -- must use HippoEncoderConSpec for connections to learn from first half of minus phase (act_m2)
 INHERITED(HippoQuadLayerSpec)
 public:
   // following is main hook into code:
@@ -2941,7 +2941,7 @@ private:
 };
 
 class LEABRA_API CA1LayerSpec : public HippoQuadLayerSpec {
-  // layer spec for CA1 layers that implements quad phase learning -- alternates clamping in auto-encoder and associative plus phases
+  // layer spec for CA1 layers that implements quad phase learning -- modulates EC_in and CA1 weight scale strengths, and records act_m2 mid minus for auto encoder
 INHERITED(HippoQuadLayerSpec)
 public:
   float		recall_decay; 		// #DEF_1 proportion to decay layer activations at start of recall phase
