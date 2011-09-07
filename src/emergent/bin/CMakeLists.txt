@@ -22,11 +22,14 @@ install(TARGETS emergent
   RUNTIME DESTINATION bin
 )
 
-install(
-  DIRECTORY ${QT_PLUGINS_DIR}/imageformats
-  DESTINATION bin
-  USE_SOURCE_PERMISSIONS
-)
+# Windows builds rely on the libjpeg plugin from Qt being present.
+if (WIN32)
+  install(
+    DIRECTORY ${QT_PLUGINS_DIR}/imageformats
+    DESTINATION bin
+    USE_SOURCE_PERMISSIONS
+  )
+endif (WIN32)
 
 # Add a desktop icon for Linux
 if (UNIX AND NOT APPLE)
