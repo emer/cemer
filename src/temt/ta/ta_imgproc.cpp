@@ -151,7 +151,7 @@ bool taImage::ImageFromMatrix_grey(const float_Matrix& img_data) {
   
   for(int y=0; y<ht; y++) {
     for(int x=0; x< wd; x++) {
-      float gval = img_data.FastEl(x, y) * 255.0f;
+      int gval = (int)(img_data.FastEl(x, y) * 255.0f);
       QRgb pix = qRgb(gval, gval, gval);
       q_img.setPixel(x, ht-1-y, pix);
     }
@@ -169,9 +169,9 @@ bool taImage::ImageFromMatrix_rgb(const float_Matrix& rgb_data) {
 
   for(int y=0; y<ht; y++) {
     for(int x=0; x< wd; x++) {
-      float rval = rgb_data.FastEl(x, y, 0) * 255.0f;
-      float gval = rgb_data.FastEl(x, y, 1) * 255.0f;
-      float bval = rgb_data.FastEl(x, y, 2) * 255.0f;
+      int rval = (int)(rgb_data.FastEl(x, y, 0) * 255.0f);
+      int gval = (int)(rgb_data.FastEl(x, y, 1) * 255.0f);
+      int bval = (int)(rgb_data.FastEl(x, y, 2) * 255.0f);
       QRgb pix = qRgb(rval, gval, bval);
       q_img.setPixel(x, ht-1-y, pix);
     }
@@ -268,12 +268,12 @@ bool taImage::ImageFromDataCell(DataTable* dt, Variant col, int row) {
     for(int y=0; y<ht; y++) {
       for(int x=0; x< wd; x++) {
 	if(isfloat) {
-	  float gval = mat->FastElAsFloat(x, y) * 255.0f;
+	  int gval = (int)(mat->FastElAsFloat(x, y) * 255.0f);
 	  QRgb pix = qRgb(gval, gval, gval);
 	  q_img.setPixel(x, ht-1-y, pix);
 	}
 	else {
-	  float gval = mat->FastElAsFloat(x, y);
+	  int gval = (int)(mat->FastElAsFloat(x, y));
 	  QRgb pix = qRgb(gval, gval, gval);
 	  q_img.setPixel(x, ht-1-y, pix);
 	}
@@ -285,16 +285,16 @@ bool taImage::ImageFromDataCell(DataTable* dt, Variant col, int row) {
       for(int x=0; x< wd; x++) {
 	QRgb pix = q_img.pixel(x, y);
 	if(isfloat) {
-	  float rval = mat->FastElAsFloat(x, y, 0) * 255.0f;
-	  float gval = mat->FastElAsFloat(x, y, 1) * 255.0f;
-	  float bval = mat->FastElAsFloat(x, y, 2) * 255.0f;
+	  int rval = (int)(mat->FastElAsFloat(x, y, 0) * 255.0f);
+	  int gval = (int)(mat->FastElAsFloat(x, y, 1) * 255.0f);
+	  int bval = (int)(mat->FastElAsFloat(x, y, 2) * 255.0f);
 	  QRgb pix = qRgb(rval, gval, bval);
 	  q_img.setPixel(x, ht-1-y, pix);
 	}
 	else {			// assume int
-	  float rval = mat->FastElAsFloat(x, y, 0);
-	  float gval = mat->FastElAsFloat(x, y, 1);
-	  float bval = mat->FastElAsFloat(x, y, 2);
+	  int rval = (int)mat->FastElAsFloat(x, y, 0);
+	  int gval = (int)mat->FastElAsFloat(x, y, 1);
+	  int bval = (int)mat->FastElAsFloat(x, y, 2);
 	  QRgb pix = qRgb(rval, gval, bval);
 	  q_img.setPixel(x, ht-1-y, pix);
 	}

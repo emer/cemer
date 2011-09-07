@@ -760,7 +760,7 @@ static void Install_Internals() {
 static cssEl* cssElCFun_alias_stub(int, cssEl* arg[]) {
   cssElCFun* tmp = (cssElCFun *)((cssRef*)arg[2])->ptr.El();
   cssMisc::Commands.Push(new cssElCFun(tmp->argc, tmp->funp, arg[1]->GetStr(),
-				 tmp->parse));
+				       tmp->parse, ""));
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_backtrace_stub(int na, cssEl* arg[]) {

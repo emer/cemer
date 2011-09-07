@@ -1532,8 +1532,8 @@ void VELambdaMuscle::Compute_Force(float cur_norm_angle) {
     act = 0.0f;
   }
   else {
-    float del_len = len_buf.CircSafeEl(reflex_delay-1);
-    float del_dlen = dlen_buf.CircSafeEl(reflex_delay-1);
+    float del_len = len_buf.CircSafeEl((int)(reflex_delay-1));
+    float del_dlen = dlen_buf.CircSafeEl((int)(reflex_delay-1));
     act = (del_len - lambda) + vel_damp * del_dlen;
     if(act < 0.0f) act = 0.0f;
   }

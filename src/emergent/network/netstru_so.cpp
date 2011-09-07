@@ -783,7 +783,7 @@ void T3LayerGroupNode::setGeom(int px, int py, int pz,
 			       float max_x, float max_y, float max_z) {
   pos.setValue(px, py, pz);
   max_size.setValue(max_x, max_y, max_z);
-  lgp_max_size.setValue(lg_max_x, lg_max_y, lg_max_z);
+  lgp_max_size.setValue((int)lg_max_x, (int)lg_max_y, (int)lg_max_z);
   render();
 }
 

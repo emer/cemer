@@ -2575,7 +2575,7 @@ bool taMath_double::mat_trim(double_Matrix* dest, double_Matrix* src, Relation& 
     tol_cnt = 0;
     for(int i = 0;i < d0;i++) {
       mat_slice(mat,src,i,i);
-      n = vec_count(mat, thresh);
+      n = (int)vec_count(mat, thresh);
       if(n >= d1 - intol_within) {
 	trim_left++;
 	trim_left += tol_cnt;
@@ -2590,7 +2590,7 @@ bool taMath_double::mat_trim(double_Matrix* dest, double_Matrix* src, Relation& 
     tol_cnt = 0;
     for(int i = d0-1;i >= 0;i--) {
       mat_slice(mat,src,i,i);
-      n = vec_count(mat, thresh);
+      n = (int)vec_count(mat, thresh);
       if(n >= d1 - intol_within) {
 	trim_right++;
 	trim_right += tol_cnt;
@@ -2605,7 +2605,7 @@ bool taMath_double::mat_trim(double_Matrix* dest, double_Matrix* src, Relation& 
     tol_cnt = 0;
     for(int i = 0;i < d1;i++) {
       mat_slice(mat,src,0,-1,i,i);
-      n = vec_count(mat, thresh);
+      n = (int)vec_count(mat, thresh);
       if(n >= d0 - intol_within) {
 	trim_top++;
 	trim_top += tol_cnt;
@@ -2620,7 +2620,7 @@ bool taMath_double::mat_trim(double_Matrix* dest, double_Matrix* src, Relation& 
     tol_cnt = 0;
     for(int i = d1-1;i >= 0;i--) {
       mat_slice(mat,src,0,-1,i,i);
-      n = vec_count(mat, thresh);
+      n = (int)vec_count(mat, thresh);
       if(n >= d0 - intol_within) {
 	trim_bottom++;
 	trim_bottom += tol_cnt;
@@ -4825,7 +4825,7 @@ float taMath_float::vec_norm_abs_max(float_Matrix* vec, float max) {
 }
 
 int taMath_float::vec_threshold(float_Matrix* vec, float thresh, float low, float high) {
-  if(!vec_check_type(vec)) return 0.0f;
+  if(!vec_check_type(vec)) return 0;
   if(vec->size == 0)  return 0;
   int rval = 0;
   for(int i=0;i<vec->size;i++) {
@@ -5294,7 +5294,7 @@ bool taMath_float::mat_trim(float_Matrix* dest, float_Matrix* src, RelationFloat
     tol_cnt = 0;
     for(int i = 0;i < d0;i++) {
       mat_slice(mat,src,i,i);
-      n = vec_count_float(mat, thresh);
+      n = (int)vec_count_float(mat, thresh);
       if(n >= d1 - intol_within) {
 	trim_left++;
 	trim_left += tol_cnt;
@@ -5309,7 +5309,7 @@ bool taMath_float::mat_trim(float_Matrix* dest, float_Matrix* src, RelationFloat
     tol_cnt = 0;
     for(int i = d0-1;i >= 0;i--) {
       mat_slice(mat,src,i,i);
-      n = vec_count_float(mat, thresh);
+      n = (int)vec_count_float(mat, thresh);
       if(n >= d1 - intol_within) {
 	trim_right++;
 	trim_right += tol_cnt;
@@ -5324,7 +5324,7 @@ bool taMath_float::mat_trim(float_Matrix* dest, float_Matrix* src, RelationFloat
     tol_cnt = 0;
     for(int i = 0;i < d1;i++) {
       mat_slice(mat,src,0,-1,i,i);
-      n = vec_count_float(mat, thresh);
+      n = (int)vec_count_float(mat, thresh);
       if(n >= d0 - intol_within) {
 	trim_top++;
 	trim_top += tol_cnt;
@@ -5339,7 +5339,7 @@ bool taMath_float::mat_trim(float_Matrix* dest, float_Matrix* src, RelationFloat
     tol_cnt = 0;
     for(int i = d1-1;i >= 0;i--) {
       mat_slice(mat,src,0,-1,i,i);
-      n = vec_count_float(mat, thresh);
+      n = (int)vec_count_float(mat, thresh);
       if(n >= d0 - intol_within) {
 	trim_bottom++;
 	trim_bottom += tol_cnt;

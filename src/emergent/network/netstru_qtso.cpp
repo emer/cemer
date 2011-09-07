@@ -3045,8 +3045,8 @@ void NetView::Render_impl() {
   if((bool)wt_prjn_lay) {
     // this does all the heavy lifting: projecting into unit wt_prjn
     // if wt_line_thr < 0 then zero intermediates
-    net()->ProjectUnitWeights(unit_src, wt_prjn_k_un, wt_prjn_k_gp, wt_line_swt, 
-			      (wt_prjn_k_un > 0 && wt_line_thr < 0.0f));
+    net()->ProjectUnitWeights(unit_src, (int)wt_prjn_k_un, (int)wt_prjn_k_gp,
+	      wt_line_swt, (wt_prjn_k_un > 0 && wt_line_thr < 0.0f));
   }
 
   Render_wt_lines();

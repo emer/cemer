@@ -201,10 +201,10 @@ public:
   ////////////////////////////////////////////////
   // constructors & assignment
 
-  inline String() {newRep(ADDR_NIL_STR_REP);} // el blanco
-  inline String(const String& x) {newRep(x.mrep);} // copy constructor -- only a ref on source! (fast!)
+  String() {newRep(ADDR_NIL_STR_REP);} // el blanco
+  String(const String& x) {newRep(x.mrep);} // copy constructor -- only a ref on source! (fast!)
   String(const String* x) {if (x) newRep(x->mrep); else newRep(ADDR_NIL_STR_REP);} 
-  inline String(const char* s) {init(s, -1);} // s can be NULL
+  String(const char* s) {init(s, -1);} // s can be NULL
   String(const char* s, int slen) {init(s, slen);}
   String(taStrRep* x) {newRep(x);} // typically only used internally
   String(uint slen, uint sz, char fill); // for allocating a writeable buffer; (1) if sz==0, then sz=slen; (2) if fill==0, then slen will be forced to 0

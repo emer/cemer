@@ -318,7 +318,7 @@ void ColorPad::GetColors(){
       fg = scale->GetColor(0);
       tc = scale->GetContrastColor(0);
     }
-    bg = scale->GetColor(scale->zero);
+    bg = scale->GetColor((int)scale->zero);
   }
 }
 

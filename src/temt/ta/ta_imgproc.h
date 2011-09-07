@@ -319,7 +319,7 @@ public:
   }
   // #CAT_DoGFilter apply filter at given x,y point (-filter_width..filter_width) given image value (which can be either luminance or color contrast
   float		InvertFilterPoint(int x, int y, float act) {
-    return 0.5f * act * net_filter.FastEl(x+filter_width, y+filter_width + 0.5f);
+    return 0.5f * act * net_filter.FastEl(x+filter_width, (int)(y+filter_width + 0.5f));
   }
   // #CAT_DoGFilter invert filter at given x,y point with net activation, returning image value -- this is probably not very accurate
 

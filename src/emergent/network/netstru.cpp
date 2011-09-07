@@ -8004,7 +8004,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
 
 	// pick the top k groups in terms of weighting for top-k guys from that group -- not all..
 	float k_val = lay->units.gp.size * top_k_un;
-	float thr_eff = taMath_float::vec_kwta(&topk_un_vec, k_val, true); // descending
+	float thr_eff = taMath_float::vec_kwta(&topk_un_vec, (int)k_val, true); // descending
 
 	topk_gp_vec.SetGeom(1, lay->units.gp.size);
 

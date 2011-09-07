@@ -1220,12 +1220,12 @@ cssElInCFun::cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String&
 {
 }
 cssElInCFun::cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, int pt)
-  : cssElCFun(ac, fp, nm, pt)
+  : cssElCFun(ac, fp, nm, pt, "")
 {
 }
 cssElInCFun::cssElInCFun(int ac, cssEl* (*fp)(int, cssEl* args[]),
 			 const String& nm, cssEl* rtype)
-  : cssElCFun(ac, fp, nm, rtype)
+  : cssElCFun(ac, fp, nm, rtype, "")
 {
 }
 cssElInCFun::cssElInCFun(const cssElInCFun& cp)

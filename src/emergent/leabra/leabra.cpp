@@ -72,7 +72,7 @@ float WtScaleSpec::SLayActScale(float savg, float lay_sz, float n_cons) {
     rval = 1.0f / (float)slay_act_n;
   }
   else {
-    int r_max_act_n = MIN(n_cons, slay_act_n); // max number we could get
+    int r_max_act_n = MIN((int)n_cons, slay_act_n); // max number we could get
     int r_avg_act_n = (int)(savg * n_cons + .5f);// recv average actual # active if uniform
     r_avg_act_n = MAX(r_avg_act_n, 1);
     int r_exp_act_n = r_avg_act_n + sem_extra;
@@ -312,7 +312,7 @@ void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
 void LeabraConSpec::LogLrateSched(int epcs_per_step, float n_steps) {
   float log_ns[3] = {1, .5f, .2f};
   
-  lrate_sched.SetSize(n_steps);
+  lrate_sched.SetSize((int)n_steps);
   for(int i=0;i<n_steps;i++) {
     lrate_sched[i]->start_ctr = i * epcs_per_step;
     lrate_sched[i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
@@ -5399,7 +5399,7 @@ void LeabraNetwork::Init_Weights() {
   lrn_trig.lrn_max = 0.0f;
 
   lrn_trig.lrn_trig = 0.0f;
-  lrn_trig.lrn = 0.0f;
+  lrn_trig.lrn = 0;
 }
 
 void LeabraNetwork::DecayState(float decay) {
