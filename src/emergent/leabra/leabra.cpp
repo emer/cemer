@@ -6600,7 +6600,7 @@ bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
 //   if(net->InheritsFrom(&TA_CtLeabraNetwork))
 //     hid = (LeabraLayerSpec*)net->FindMakeSpec(NULL, &TA_CtLeabraLayerSpec);
 //   else
-    hid = (LeabraLayerSpec*)net->FindMakeSpec(NULL, &TA_LeabraLayerSpec);
+    hid = (LeabraLayerSpec*)net->FindMakeSpec("", &TA_LeabraLayerSpec);
   hid->name = "HiddenLayer";
   LeabraLayerSpec* inout;
 //   if(net->InheritsFrom(&TA_CtLeabraNetwork))
