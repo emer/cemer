@@ -6212,7 +6212,7 @@ bool CerebConj2PrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
 // 		Special Hippocampal Quadphase Layerspecs
 
 void HippoQuadLayerSpec::Initialize() {
-  recall_m_cycles = 40;
+  auto_m_cycles = 20;
 }
 
 void HippoQuadLayerSpec::Defaults_init() {
@@ -6260,6 +6260,13 @@ void HippoQuadLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* n
   lay->SetUserData("enc_norm_err", norm_err);
 }
 
+void ECinLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->ct_cycle == auto_m_cycles)
+    RecordActM2(lay,net);
+  inherited::Compute_CycleStats(lay, net);
+}
+
+
 void ECoutLayerSpec::Initialize() {
 }
 
@@ -6268,6 +6275,19 @@ bool ECoutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
 
   bool rval = true;
+
+  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  if(net) {
+    if(TestWarning(net->min_cycles < auto_m_cycles + 20, "CheckConfig",
+		   "ECoutLayerSpec: setting network min_cycles to be auto_m_cycles + 20 to ensure minimum amount of time to settle")) {
+      net->min_cycles = auto_m_cycles + 20;
+    }
+    if(TestWarning((net->learn_rule >= LeabraNetwork::CTLEABRA_CAL) && 
+		   (net->ct_time.minus < auto_m_cycles + 20), "CheckConfig",
+		   "ECoutLayerSpec: setting network ct_time.minus to be auto_m_cycles + 20 to ensure minimum amount of time to settle")) {
+      net->ct_time.minus = auto_m_cycles + 20;
+    }
+  }
 
   int in_prjn_idx;
   LeabraLayer* in_lay = FindLayerFmSpec(lay, in_prjn_idx, &TA_ECinLayerSpec);
@@ -6307,9 +6327,7 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  // note: only works with xcal!!!
-  int start_rec = net->ct_time.minus - recall_m_cycles;
-  if(net->ct_cycle == start_rec-1)
+  if(net->ct_cycle == auto_m_cycles)
     RecordActM2(lay,net);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     ClampFromECin(lay, net);
@@ -6404,11 +6422,9 @@ void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  // note: only works with xcal!!!
-  int start_rec = net->ct_time.minus - recall_m_cycles;
-  if(net->ct_cycle == start_rec-1)
+  if(net->ct_cycle == auto_m_cycles)
     RecordActM2(lay,net);
-  if(net->ct_cycle == start_rec) {
+  if(net->ct_cycle == auto_m_cycles+1) {
     if(!(use_test_mode && net->train_mode == Network::TEST))
       lay->DecayState(net, recall_decay); // specifically CA1 activations at recall
     ModulateCA3Prjn(lay, net, true);	// turn on ca3 -- calls netinscale

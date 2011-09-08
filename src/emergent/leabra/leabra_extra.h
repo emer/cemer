@@ -2880,7 +2880,7 @@ class LEABRA_API HippoQuadLayerSpec : public LeabraLayerSpec {
   // base layer spec for hippocampal layers that implements quad phase learning
 INHERITED(LeabraLayerSpec)
 public:
-  int		recall_m_cycles;	// #DEF_20:80 [40 is good default] number of cycles for recall minus phase where CA1 is driven by CA3 and not EC_in, for training overall hippocampal associations via CA3 -> CA1 for recall -- this happens in second half minus phase 
+  int		auto_m_cycles;	// #DEF_20:80 number of cycles for auto-encoder minus phase, at which point act_m2 is recorded for training the EC <-> CA1 auto-encoder -- this should be just long enough for information to reach EC_in and flow through CA1 to EC_out -- will set network min_cycles to be this number plus 20 cycles, which is a minimum for combined assoc and recall minus phases
 
   virtual void 	RecordActM2(LeabraLayer* lay, LeabraNetwork* net);
   // save current act_nd values as act_m2 -- minus phase for auto-encoder learning
@@ -2901,6 +2901,8 @@ class LEABRA_API ECinLayerSpec : public HippoQuadLayerSpec {
   // layer spec for EC input layers that implements quad phase learning -- this serves only as a marker for ECout layers to search for -- no new functionality over LeabraLayerSpec
 INHERITED(HippoQuadLayerSpec)
 public:
+  // following is main hook into code:
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   TA_SIMPLE_BASEFUNS(ECinLayerSpec);
 private:
   void 	Initialize()		{ };
@@ -2972,48 +2974,41 @@ private:
 };
 
 class LEABRA_API HippoEncoderConSpec : public LeabraConSpec {
-  // for EC <-> CA1 connections: basic delta-rule learning on encoder variables (ru_act_p - ru_act_m2) * su_act_m2, with sender in the minus phase -- soft bounding as specified in spec
+  // for EC <-> CA1 connections: CHL learning on encoder variables (ru_act_p vs. ru_act_m2) -- soft bounding as specified in spec
 INHERITED(LeabraConSpec)
 public:
-  inline void C_Compute_dWt_Delta(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float lin_wt = LinFmSigWt(cn->wt);
-    float dwt = (ru->act_p - ru->act_m2) * su->act_m2; // basic delta rule, sender in minus
-    if(lmix.err_sb) {
-      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
-      else		dwt *= lin_wt;
-    }
-    cn->dwt += cur_lrate * dwt;
-  }
-
-  inline void C_Compute_dWt_Delta_CAL(LeabraCon* cn, LeabraUnit* ru, LeabraUnit* su) {
-    float dwt = (ru->act_p - ru->act_m2) * su->act_m2; // basic delta rule, sender in minus
-    cn->dwt += cur_lrate * dwt;
-    // soft bounding is managed in the weight update phase, not in dwt
-  }
 
   override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
+    Compute_SAvgCor(cg, su);
+    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
+
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta(cn, ru, su);  
+      float lin_wt = LinFmSigWt(cn->wt);
+      C_Compute_dWt(cn, ru, 
+		    C_Compute_Hebb(cn, cg, lin_wt, ru->act_p, su->act_p),
+		    C_Compute_Err_LeabraCHL(cn, lin_wt, ru->act_p, ru->act_m2,
+					    su->act_p, su->act_m2));  
     }
   }
 
   override void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta_CAL(cn, ru, su);  
-    }
+    Compute_dWt_LeabraCHL(cg, su);
   }
 
   override void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
-    for(int i=0; i<cg->size; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-      LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);
-      C_Compute_dWt_Delta_CAL(cn, ru, su);  
-    }
+    Compute_dWt_LeabraCHL(cg, su);
   }
+
+  override void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    inherited::Compute_Weights_LeabraCHL(cg, su);
+  }
+  override void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su) {
+    inherited::Compute_Weights_LeabraCHL(cg, su);
+  }
+
+
 
   TA_BASEFUNS_NOCOPY(HippoEncoderConSpec);
 protected:
