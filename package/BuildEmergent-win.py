@@ -41,13 +41,16 @@ def getSysEnvVar(name):
   return getEnvVar(name, _winreg.HKEY_LOCAL_MACHINE, env)
 
 def setUserEnvVar(name, value):
-  setEnvVar(name, value, _winreg.HKEY_CURRENT_USER, 'Environment')
-  #os.system('setx ' + name + ' "' + value + '"')
+  # Using 'setx' is better since it is a "live" update,
+  # rather than just updating the registry and waiting
+  # for the next reboot for the changes to take effect.
+  #setEnvVar(name, value, _winreg.HKEY_CURRENT_USER, 'Environment')
+  os.system('setx ' + name + ' "' + value + '"')
 
 def setSysEnvVar(name, value):
-  env = 'SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment'
-  setEnvVar(name, value, _winreg.HKEY_LOCAL_MACHINE, env)
-  #os.system('setx ' + name + ' "' + value + '" /M')
+  #env = 'SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment'
+  #setEnvVar(name, value, _winreg.HKEY_LOCAL_MACHINE, env)
+  os.system('setx ' + name + ' "' + value + '" /M')
 
 try:
   progfiles = set([os.environ['ProgramFiles(x86)'], os.environ['ProgramFiles'], os.environ['ProgramW6432']])
