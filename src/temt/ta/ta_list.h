@@ -444,9 +444,8 @@ template<class T>
 class taPtrList : public taPtrList_impl { // #INSTANCE
 public:
   taPtrList(bool=false)					{ };
-  taPtrList(const taPtrList<T>& cp) 		{ Borrow(cp); }
   // borrow is guaranteed to work, others require EL_ functions..
-  taPtrList(const taPtrList<T>& cp, bool) 		{ Borrow(cp); }
+  taPtrList(const taPtrList<T>& cp, bool=false)		{ Borrow(cp); }
 
   ////////////////////////////////////////////////
   // 	functions that return the type		//

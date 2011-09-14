@@ -173,13 +173,11 @@ public: \
 
 #define TA_BASEFUNS_CTORS_(y) \
   explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
-  y (const y& cp):inherited(cp, false) { Initialize__(true); Copy__(cp);} \
-  y (const y& cp, bool reg):inherited(cp, reg) { Initialize__(reg); Copy__(cp);}
+  y (const y& cp, bool reg = true):inherited(cp, false) { Initialize__(reg); Copy__(cp);}
   
 #define TA_TMPLT_BASEFUNS_CTORS_(y,T) \
   explicit y (bool reg = true):inherited(false) { Initialize__(reg); } \
-  y (const y<T>& cp):inherited(cp, false) { Initialize__(true); Copy__(cp); } \
-  y (const y<T>& cp, bool reg):inherited(cp, reg) { Initialize__(reg); Copy__(cp);}
+  y (const y<T>& cp, bool reg = true):inherited(cp, false) { Initialize__(reg); Copy__(cp);}
 
 #endif
 
@@ -548,8 +546,7 @@ public:
   taBase(const taBase& cp);
 #else
   explicit taBase(bool=false)	{ Register(); Initialize(); }
-  taBase(const taBase& cp, bool)	{ Register(); Initialize(); Copy_impl(cp); }
-  taBase(const taBase& cp)	{ Register(); Initialize(); Copy_impl(cp); }
+  taBase(const taBase& cp, bool=false)	{ Register(); Initialize(); Copy_impl(cp); }
 #endif
   virtual ~taBase() 		{ Destroy(); } //
 
