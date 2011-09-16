@@ -739,6 +739,10 @@ public:
 		    LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO,
 		    int max_rows = -1,  bool reset_first=false);
   // #CAT_File #EXT_dat,tsv,csv,txt,log load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detect works in most cases for delimiters and string quoting, reset_first = reset any existing data before loading (else append) -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers)
+  
+  virtual void    LoadAnyData_stream(istream &stream, bool append, bool has_header_line = true);
+  // #CAT_File Load any kind of data from an existing stream.  File format, delimitation, and quoting are auto-detected, but whether the file has a header line or not must be set explicitly.  Set append=false to overwrite any existing data.
+  
   virtual void 		LoadAnyData_gui(const String& fname, bool headers = true)
   { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, true); }
   // #CAT_File #BUTTON #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_dat,tsv,csv,txt,log #FILE_DIALOG_LOAD #LABEL_Load_Any_Data load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detects type of delimiters and string quoting -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers).  See ImportData to manually specify delimiters if auto detect doesn't work.  See Load Any Data Append to append to existing data (this function resets data first)

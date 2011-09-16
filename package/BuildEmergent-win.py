@@ -277,8 +277,8 @@ def check_windows_update():
       with open(wu_done_file, 'w') as f:
         f.write('Checked Windows Update after installing VC++ 2010, WinSDK, SP1, WinSDK compiler update')
 
-# Default to VC++2008 for now, since that actually works.
-msvs = 2008
+# Default to VC++2010 now that it actually works.
+msvs = 2010
 def inst_msvs():
   global msvs
   while True:

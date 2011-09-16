@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -32,7 +32,7 @@
 #include <QFileInfo>
 
 //////////////////////////
-//   ColCalcExpr	//
+//   ColCalcExpr        //
 //////////////////////////
 
 void ColCalcExpr::Initialize() {
@@ -40,7 +40,7 @@ void ColCalcExpr::Initialize() {
   data_cols = NULL;
 }
 
-void ColCalcExpr::Destroy() {	
+void ColCalcExpr::Destroy() {
   CutLinks();
 }
 
@@ -62,7 +62,7 @@ void ColCalcExpr::Copy_(const ColCalcExpr& cp) {
     taBase::SetPointer((taBase**)&col_lookup, NULL);
   }
   expr = cp.expr;
-  UpdateAfterEdit_impl();	// gets everything
+  UpdateAfterEdit_impl();       // gets everything
 }
 
 void ColCalcExpr::UpdateAfterEdit_impl() {
@@ -81,7 +81,7 @@ void ColCalcExpr::UpdateAfterEdit_impl() {
 bool ColCalcExpr::SetExpr(const String& ex) {
   taBase::SetPointer((taBase**)&col_lookup, NULL); // justin case
   expr = ex;
-  UpdateAfterEdit();		// does parse
+  UpdateAfterEdit();            // does parse
   return true;
 }
 
@@ -96,7 +96,7 @@ String ColCalcExpr::GetFullExpr() const {
 
 
 //////////////////////////
-//     DataCol  	//
+//     DataCol          //
 //////////////////////////
 
 const String DataCol::udkey_width("WIDTH");
@@ -165,7 +165,7 @@ void DataCol::CopyFromCol_Robust(const DataCol& cp) {
   EnforceRows(rows);
   for (int i = 0; i < rows; ++i) {
     CopyFromRow_Robust(i, cp, i);
-  }  
+  }
   ClearBaseFlag(COPYING);
   StructUpdate(false);
 }
@@ -178,7 +178,7 @@ void DataCol::Copy_NoData(const DataCol& cp) {
   Copy_Common_(cp);
   Init(); //note: table should have no rows, so won't make any
   ClearBaseFlag(COPYING);
-  StructUpdate(false);			// initialize array to new geom
+  StructUpdate(false);                  // initialize array to new geom
 }
 
 void DataCol::CopyFromRow(int dest_row, const DataCol& src, int src_row) {
@@ -204,7 +204,7 @@ void DataCol::CopyFromRow_Robust(int dest_row, const DataCol& src, int src_row) 
     if(is_matrix) {
       int mx_sz = MIN(cell_size(), src.cell_size());
       for(int i=0; i<mx_sz; i++) {
-	SetValAsVarM(src.GetValAsVarM(src_row, i), dest_row, i);
+        SetValAsVarM(src.GetValAsVarM(src_row, i), dest_row, i);
       }
     }
     else {
@@ -294,7 +294,7 @@ void DataCol::ChangeColCellGeom(const MatrixGeom& new_geom) {
 }
 
 void DataCol::ChangeColCellGeomNs(int dims, int d0, int d1, int d2, int d3,
-				  int d4, int d5, int d6) {
+                                  int d4, int d5, int d6) {
   MatrixGeom mg;
   mg.SetGeom(dims, d0, d1, d2, d3, d4, d5, d6);
   ChangeColCellGeom(mg);
@@ -329,7 +329,7 @@ bool DataCol::InsertRows(int st_row, int n_rows) {
   bool rval = mat->InsertFrames(st_row, n_rows);
   if (!rval) return rval;
   return rval;
-}  
+}
 
 int DataCol::FindVal(const Variant& val, int st_row) const {
   if(TestError(isMatrix(), "FindVal", "column must be scalar, not matrix")) return -1;
@@ -411,7 +411,7 @@ int DataCol::displayWidth() const {
     rval = 8; // default
   // include name: not
   //  rval = MAX(rval, name.length());
-  
+
   return rval;
 }
 
@@ -421,21 +421,21 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
     // if no save, don't need to check DataTable global
     if (saveToDumpFile()) {
       if(dt && taMisc::is_undo_saving) {
-	// always save for obj itself
-	if(tabMisc::cur_undo_mod_obj == dt || tabMisc::cur_undo_mod_obj == this) {
-	  if((dt->Cells() > taMisc::undo_data_max_cells) ||
-	     !dt->HasDataFlag(DataTable::SAVE_ROWS)) {
-	    return DQR_NO_SAVE;	// too big or no save!
-	  }
-	  return DQR_SAVE;
-	}
-	if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
-	  // no need to save b/c unaffected by changes elsewhere..
-	  return DQR_NO_SAVE;
-	}
-	if(dt->Cells() > taMisc::undo_data_max_cells) {
-	  return DQR_NO_SAVE;	// too big!
-	}
+        // always save for obj itself
+        if(tabMisc::cur_undo_mod_obj == dt || tabMisc::cur_undo_mod_obj == this) {
+          if((dt->Cells() > taMisc::undo_data_max_cells) ||
+             !dt->HasDataFlag(DataTable::SAVE_ROWS)) {
+            return DQR_NO_SAVE; // too big or no save!
+          }
+          return DQR_SAVE;
+        }
+        if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
+          // no need to save b/c unaffected by changes elsewhere..
+          return DQR_NO_SAVE;
+        }
+        if(dt->Cells() > taMisc::undo_data_max_cells) {
+          return DQR_NO_SAVE;   // too big!
+        }
       }
       if(dt && dt->HasDataFlag(DataTable::SAVE_ROWS)) return DQR_SAVE;
     }
@@ -478,11 +478,11 @@ String DataCol::GetDisplayName() const {
 
 int DataCol::IndexOfEl_Flat(int row, int cell) const {
   if(TestError((cell < 0) || (cell >= cell_size()), "IndexOfEl_Flat",
-	       "cell index out of range")) return -1;
+               "cell index out of range")) return -1;
   if(row < 0) row = rows() + row; // abs row, if request was from end
   if(TestError((row < 0 || row >= rows()), "IndexOfEl_Flat", "row out of range")) return -1;
   return (row * cell_size()) + cell;
-} 
+}
 
 int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3) const {
   if(row < 0) row = rows() + row; // abs row, if request was from end
@@ -500,7 +500,7 @@ int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3) const 
     return AR()->SafeElIndex(d0, d1, d2, d3, row);
   }
   return -1;
-} 
+}
 
 /////////////////////
 // Access Var/String
@@ -508,27 +508,27 @@ int DataCol::IndexOfEl_Flat_Dims(int row, int d0, int d1, int d2, int d3) const 
 const String DataCol::GetValAsString_impl(int row, int cell) const {
   const taMatrix* ar = AR(); //cache, and preserves constness
   return ar->SafeElAsStr_Flat(IndexOfEl_Flat(row, cell));
-} 
+}
 
 const Variant DataCol::GetValAsVar_impl(int row, int cell) const {
   const taMatrix* ar = AR(); //cache, and preserves constness
   return ar->SafeElAsVar_Flat(IndexOfEl_Flat(row, cell));
-} 
+}
 
 bool DataCol::SetValAsString_impl(const String& val, int row, int cell) {
   AR()->SetFmStr_Flat(val, IndexOfEl_Flat(row, cell)); // note: safe operation
   return true;
-} 
+}
 
 bool DataCol::SetValAsVar_impl(const Variant& val, int row, int cell) {
   AR()->SetFmVar_Flat(val, IndexOfEl_Flat(row, cell)); // note: safe operation
   return true;
-} 
+}
 
 bool DataCol::InitVals(const Variant& init_val)  {
   AR()->InitValsFmVar(init_val);
   return true;
-} 
+}
 
 bool DataCol::InitValsToRowNo()  {
   if(TestError(is_matrix, "InitValsToRowNo", "column is a matrix")) return false;
@@ -536,13 +536,13 @@ bool DataCol::InitValsToRowNo()  {
     SetValAsInt(i, i);
   }
   return true;
-} 
+}
 
 ////////////////////
 // Access: Matrix
 
 taMatrix* DataCol::GetValAsMatrix(int row) {
-  taMatrix* ar = AR(); 
+  taMatrix* ar = AR();
   if(row < 0) row = rows() + row;
   taMatrix* rval = ar->GetFrameSlice_(row);
   if (col_flags & READ_ONLY)
@@ -566,10 +566,10 @@ bool DataCol::SetValAsMatrix(const taMatrix* val, int row) {
   return AR()->CopyFrame(*val, row);
 }
 
-void DataCol::WriteFmSubMatrix(int row, 
-			       const taMatrix* src, taMatrix::RenderOp render_op,
-			       int off0, int off1, int off2,
-			       int off3, int off4, int off5, int off6) {
+void DataCol::WriteFmSubMatrix(int row,
+                               const taMatrix* src, taMatrix::RenderOp render_op,
+                               int off0, int off1, int off2,
+                               int off3, int off4, int off5, int off6) {
   taMatrix* mat = GetValAsMatrix(row);
   if(mat) {
     taBase::Ref(mat);
@@ -578,10 +578,10 @@ void DataCol::WriteFmSubMatrix(int row,
   }
 }
 
-void DataCol::ReadToSubMatrix(int row, 
-			      taMatrix* dest, taMatrix::RenderOp render_op, 
-			      int off0, int off1, int off2,
-			      int off3, int off4, int off5, int off6) {
+void DataCol::ReadToSubMatrix(int row,
+                              taMatrix* dest, taMatrix::RenderOp render_op,
+                              int off0, int off1, int off2,
+                              int off3, int off4, int off5, int off6) {
   taMatrix* mat = GetValAsMatrix(row);
   if(mat) {
     taBase::Ref(mat);
@@ -611,14 +611,14 @@ bool DataCol::GetMinMaxScale(MinMax& mm) {
       mm.min = fm->FastEl_Flat(0);
       mm.max = fm->FastEl_Flat(0);
       for(int i=1;i<fm->size;i++) {
-	int val = fm->FastEl_Flat(i);
-	if(val > mm.max) mm.max = val;
-	if(val < mm.min) mm.min = val;
+        int val = fm->FastEl_Flat(i);
+        if(val > mm.max) mm.max = val;
+        if(val < mm.min) mm.min = val;
       }
     }
   }
   else {
-    return false;		// not worth it!
+    return false;               // not worth it!
   }
   return true;
 }
@@ -627,15 +627,15 @@ bool DataCol::GetMinMaxScale(MinMax& mm) {
 String DataCol::EncodeHeaderName(const MatrixGeom& dims) const {
   String typ_info;
   switch (valType()) {
-  case VT_STRING: 	typ_info = "$"; break;
-  case VT_FLOAT:  	typ_info = "%"; break;
-  case VT_DOUBLE:  	typ_info = "#"; break;
-  case VT_INT:  	typ_info = "|"; break;
-  case VT_BYTE:  	typ_info = "@"; break;
-  case VT_VARIANT: 	typ_info = "&"; break;
+  case VT_STRING:       typ_info = "$"; break;
+  case VT_FLOAT:        typ_info = "%"; break;
+  case VT_DOUBLE:       typ_info = "#"; break;
+  case VT_INT:          typ_info = "|"; break;
+  case VT_BYTE:         typ_info = "@"; break;
+  case VT_VARIANT:      typ_info = "&"; break;
   }
   String mat_info;
-  if(is_matrix) {		// specify which cell in matrix this is [dims:d0,d1,d2..]
+  if(is_matrix) {               // specify which cell in matrix this is [dims:d0,d1,d2..]
     mat_info = dims.GeomToString("[", "]");
     if(cell_geom.IndexFmDimsN(dims) == 0) { // first guy
       mat_info += cell_geom.GeomToString("<", ">");
@@ -645,7 +645,7 @@ String DataCol::EncodeHeaderName(const MatrixGeom& dims) const {
 }
 
 void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
-  MatrixGeom& mat_idx, MatrixGeom& mat_geom) 
+  MatrixGeom& mat_idx, MatrixGeom& mat_geom)
 {
   base_nm = nm;
   vt = -1; // unknown
@@ -675,7 +675,7 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
   } /*no: caller must set default else {
     vt = VT_FLOAT;
   }*/
-  
+
   if(nm.contains('[')) {
     String mat_info = nm;
     nm = nm.before('[');
@@ -687,8 +687,8 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
   base_nm = nm;
 }
 
-taObjDiffRec* DataCol::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, 
-			   const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+taObjDiffRec* DataCol::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
+                           const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // this is same as base objdiff but puts children last to make more sense for user
   taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
 
@@ -698,21 +698,21 @@ taObjDiffRec* DataCol::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDe
       taBase::Ref(mat);
       // stream each cell separately..
       for(int j=0;j<cell_size();j++) {
-	taObjDiffRec* clodr = new taObjDiffRec(odl, nest_lev+1, valTypeDef(), NULL,
-					       mat->FastEl_Flat_(j),
-					       (void*)this, GetTypeDef(), odr);
-	clodr->name = String(i) + "," + String(j);	// row, cell
-	clodr->ComputeHashCode();			// need to update
-	odl.Add(clodr);
+        taObjDiffRec* clodr = new taObjDiffRec(odl, nest_lev+1, valTypeDef(), NULL,
+                                               mat->FastEl_Flat_(j),
+                                               (void*)this, GetTypeDef(), odr);
+        clodr->name = String(i) + "," + String(j);      // row, cell
+        clodr->ComputeHashCode();                       // need to update
+        odl.Add(clodr);
       }
       taBase::unRefDone(mat);
     }
     else {
       taObjDiffRec* clodr = new taObjDiffRec(odl, nest_lev+1, valTypeDef(), NULL,
-					   (void*)AR()->FastEl_Flat_(i),
-					   (void*)this, GetTypeDef(), odr);
-      clodr->name = String(i);	// row
-      clodr->ComputeHashCode();	// need to update
+                                           (void*)AR()->FastEl_Flat_(i),
+                                           (void*)this, GetTypeDef(), odr);
+      clodr->name = String(i);  // row
+      clodr->ComputeHashCode(); // need to update
       odl.Add(clodr);
     }
   }
@@ -720,7 +720,7 @@ taObjDiffRec* DataCol::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDe
 }
 
 //////////////////////////
-//  DataTableCols	//
+//  DataTableCols       //
 //////////////////////////
 
 void DataTableCols::Initialize() {
@@ -728,7 +728,7 @@ void DataTableCols::Initialize() {
 }
 
 void DataTableCols::Copy_NoData(const DataTableCols& cp) {
-  Reset();	// get rid of ours
+  Reset();      // get rid of ours
   for(int i=0;i<cp.size; i++) {
     DataCol* sda = cp.FastEl(i);
     DataCol* nda = (DataCol*)sda->MakeToken();
@@ -743,7 +743,7 @@ void DataTableCols::CopyFromRow(int dest_row, const DataTableCols& src, int src_
     DataCol* dar = FastEl(i);
     DataCol* sar = src.FastEl(i);
     dar->CopyFromRow(dest_row, *sar, src_row);
-  }  
+  }
 }
 
 void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
@@ -760,7 +760,7 @@ void DataTableCols::DataChanged(int dcr, void* op1, void* op2) {
     dt->StructUpdate(true);
     dt->StructUpdate(false);
   }
-  
+
 }
 
 String DataTableCols::GetColHeading(const KeyString& key) const {
@@ -781,7 +781,7 @@ const KeyString DataTableCols::GetListColKey(int col) const {
 
 
 //////////////////////////
-//  FixedWidthColSpec	//
+//  FixedWidthColSpec   //
 //////////////////////////
 
 void FixedWidthColSpec::Initialize() {
@@ -797,7 +797,7 @@ void FixedWidthColSpec::WriteData(const String& val) {
 
 
 //////////////////////////
-//  FixedWidthSpec	//
+//  FixedWidthSpec      //
 //////////////////////////
 
 void FixedWidthColSpec_List::Initialize() {
@@ -810,7 +810,7 @@ void FixedWidthSpec::Load_Init(DataTable* dat_) {
     FixedWidthColSpec* fws = col_specs.FastEl(i);
     fws->col = dat->FindColName(fws->name);
     TestError(!fws->col, "Load_Init", "col name not in table:",
-      fws->name); 
+      fws->name);
   }
 }
 
@@ -827,14 +827,14 @@ void FixedWidthSpec::AddRow(const String& ln) {
     String s = ln.from(fws->start_col - 1);
     if (fws->col_width >= 0)
       s.truncate(fws->col_width);
-    fws->WriteData(s); 
+    fws->WriteData(s);
   }
 }
 
 
 
 //////////////////////////
-//	DataTable	//
+//      DataTable       //
 //////////////////////////
 
 void DataTable::Initialize() {
@@ -910,7 +910,7 @@ void DataTable::CopyFromRow(int dest_row, const DataTable& src, int src_row) {
 
 
 bool DataTable::CopyCell(Variant dest_col, int dest_row, const DataTable& src,
-  Variant src_col, int src_row) 
+  Variant src_col, int src_row)
 {
   DataCol* dar = GetColData(dest_col);
   DataCol* sar = src.GetColData(src_col);
@@ -926,7 +926,7 @@ bool DataTable::CopyCellName(const String& dest_col_name, int dest_row,
 }
 
 bool DataTable::CopyCell_impl(DataCol* dar, int dest_row, const DataTable& src,
-  DataCol* sar, int src_row) 
+  DataCol* sar, int src_row)
 {
   if(TestError(!dar || !sar, "CopyCell", "column(s) out of range, not copied!"))
     return false;
@@ -1000,7 +1000,7 @@ bool DataTable::ColMatchesChannelSpec(const DataCol* da, const ChannelSpec* cs) 
   // match matrix-ness
   if (da->is_matrix != cs->isMatrix()) return false;
   if (da->valType() != cs->val_type) return false;
-  
+
   if (cs->isMatrix()) {
     // geoms the same is only remaining criteria
     return da->cell_geom.Equal(cs->cellGeom());
@@ -1011,7 +1011,7 @@ bool DataTable::ColMatchesChannelSpec(const DataCol* da, const ChannelSpec* cs) 
 bool DataTable::AutoLoadData() {
   if(HasDataFlag(SAVE_ROWS) || taMisc::is_undo_loading) return false;
   if(auto_load == NO_AUTO_LOAD) return false;
-  
+
   if(taMisc::gui_active && (auto_load == PROMPT_LOAD)) {
     int chs = taMisc::Choice("Load data file: " + auto_load_file + " into data table: " + name, "Yes", "No");
     if(chs == 1) return false;
@@ -1021,7 +1021,7 @@ bool DataTable::AutoLoadData() {
     return false;
   QFileInfo qfi(auto_load_file);
   if(TestError(!(qfi.isFile() && qfi.isReadable()), "AutoLoadData",
-	       "auto_load_file is not a valid file that is readable:", auto_load_file))
+               "auto_load_file is not a valid file that is readable:", auto_load_file))
     return false;
 
   taMisc::Info("DataTable:", name, "auto loading data from:", auto_load_file);
@@ -1043,7 +1043,7 @@ bool DataTable::AutoLoadData() {
 
 bool DataTable::AutoSaveData() {
   if(HasDataFlag(SAVE_ROWS) || !HasDataFlag(SAVE_FILE)) return false;
-  
+
   if(TestError(auto_load_file.empty(), "AutoSaveData", "auto_load_file is empty!"))
     return false;
   // can't save to .dtbl type because that would recurse us -- TODO: could workaround somehow
@@ -1116,16 +1116,16 @@ void DataTable::SetColUserData(const String& name, const Variant& value, Variant
 
 taMatrix* DataTable::GetMatrixData_impl(int chan) {
   DataCol* da = GetColData(chan);
-  if(!da) return NULL;		// err msg already given
+  if(!da) return NULL;          // err msg already given
   int i;
   if(TestError(!da->is_matrix, "GetMatrixData_impl", "column is not a matrix")) return NULL;
   if(TestError(!idx(rd_itr, da->rows(), i), "GetMatrixData_impl",
-	       "read index is out of range -- need to set with ReadItem or ReadFirst/Next")) return NULL;
+               "read index is out of range -- need to set with ReadItem or ReadFirst/Next")) return NULL;
   return da->AR()->GetFrameSlice_(i);
 }
 
 ///////////////////////////////////////////
-//	Basic Access/Modify with Variant col spec
+//      Basic Access/Modify with Variant col spec
 
 const Variant DataTable::GetVal(Variant col, int row) const {
   if(col.isStringType())
@@ -1141,14 +1141,14 @@ bool DataTable::SetVal(const Variant& val, Variant col, int row) {
 
 
 const Variant DataTable::GetMatrixVal(Variant col, int row,
-				      int d0, int d1, int d2, int d3) const {
+                                      int d0, int d1, int d2, int d3) const {
   if(col.isStringType())
     return GetMatrixValColName(col.toString(), row, d0, d1, d2, d3);
   return GetValAsVarMDims(col.toInt(), row, d0, d1, d2, d3);
 }
 
 bool DataTable::SetMatrixVal(const Variant& val, Variant col, int row,
-			     int d0, int d1, int d2, int d3)  {
+                             int d0, int d1, int d2, int d3)  {
   if(col.isStringType())
     return SetMatrixValColName(val, col.toString(), row, d0, d1, d2, d3);
   return SetValAsVarMDims(val, col.toInt(), row, d0, d1, d2, d3);
@@ -1167,7 +1167,7 @@ bool DataTable::SetMatrixFlatVal(const Variant& val, Variant col, int row, int c
 }
 
 ///////////////////////////////////////////
-//	Column Name Access
+//      Column Name Access
 
 const Variant DataTable::GetValColName(const String& col_nm, int row, bool quiet) const {
   DataCol* da = FindColName(col_nm, true);
@@ -1189,7 +1189,7 @@ bool DataTable::SetValColName(const Variant& val, const String& col_nm, int row,
 }
 
 const Variant DataTable::GetMatrixValColName(const String& col_nm, int row,
-		     int d0, int d1, int d2, int d3, bool quiet) const {
+                     int d0, int d1, int d2, int d3, bool quiet) const {
   DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1199,7 +1199,7 @@ const Variant DataTable::GetMatrixValColName(const String& col_nm, int row,
 }
 
 bool DataTable::SetMatrixValColName(const Variant& val, const String& col_nm,
-		    int row, int d0, int d1, int d2, int d3, bool quiet) {
+                    int row, int d0, int d1, int d2, int d3, bool quiet) {
   DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1210,7 +1210,7 @@ bool DataTable::SetMatrixValColName(const Variant& val, const String& col_nm,
 }
 
 const Variant DataTable::GetMatrixFlatValColName(const String& col_nm, int row,
-						 int cell, bool quiet) const {
+                                                 int cell, bool quiet) const {
   DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1220,7 +1220,7 @@ const Variant DataTable::GetMatrixFlatValColName(const String& col_nm, int row,
 }
 
 bool DataTable::SetMatrixFlatValColName(const Variant& val, const String& col_nm,
-					int row, int cell, bool quiet) {
+                                        int row, int cell, bool quiet) {
   DataCol* da = FindColName(col_nm, true);
   if (!da || da->not_matrix_err()) return false;
   int i;
@@ -1233,7 +1233,7 @@ bool DataTable::SetMatrixFlatValColName(const Variant& val, const String& col_nm
 /////////////////////
 
 const Variant DataTable::GetValColRowName(const String& col_nm, const String& row_col_name,
-					  const Variant& row_value, bool quiet) const {
+                                          const Variant& row_value, bool quiet) const {
   DataCol* cda = FindColName(col_nm, true);
   if(!cda) return _nilVariant;
   DataCol* rda = FindColName(row_col_name, true);
@@ -1244,15 +1244,15 @@ const Variant DataTable::GetValColRowName(const String& col_nm, const String& ro
   }
   else {
     if(TestError(row < 0, "GetValColRowName", "value:", row_value.toString(),
-		 "of column named:", row_col_name, "not found"))
+                 "of column named:", row_col_name, "not found"))
       return _nilVariant;
   }
   return cda->GetValAsVar(row);
 }
 
 bool DataTable::SetValColRowName(const Variant& val, const String& col_nm,
-				 const String& row_col_name, const Variant& row_value,
-				 bool quiet) {
+                                 const String& row_col_name, const Variant& row_value,
+                                 bool quiet) {
   DataCol* cda = FindColName(col_nm, true);
   if(!cda || cda->is_matrix_err()) return false;
   DataCol* rda = FindColName(row_col_name, true);
@@ -1263,16 +1263,16 @@ bool DataTable::SetValColRowName(const Variant& val, const String& col_nm,
   }
   else {
     if(TestError(row < 0, "SetValColRowName", "value:", row_value.toString(),
-		 "of column named:", row_col_name, "not found"))
+                 "of column named:", row_col_name, "not found"))
       return false;
   }
   cda->SetValAsVar(val, row);
   return true;
 }
 
-const Variant DataTable::GetMatrixValColRowName(const String& col_nm, 
-				const String& row_col_name, const Variant& row_value,
-				int d0, int d1, int d2, int d3, bool quiet) const {
+const Variant DataTable::GetMatrixValColRowName(const String& col_nm,
+                                const String& row_col_name, const Variant& row_value,
+                                int d0, int d1, int d2, int d3, bool quiet) const {
   DataCol* cda = FindColName(col_nm, true);
   if(!cda || cda->not_matrix_err()) return _nilVariant;
   DataCol* rda = FindColName(row_col_name, true);
@@ -1283,15 +1283,15 @@ const Variant DataTable::GetMatrixValColRowName(const String& col_nm,
   }
   else {
     if(TestError(row < 0, "GetMatrixValColRowName", "value:", row_value.toString(),
-		 "of column named:", row_col_name, "not found"))
+                 "of column named:", row_col_name, "not found"))
       return _nilVariant;
   }
   return cda->GetValAsVarMDims(row, d0, d1, d2, d3);
 }
 
 bool DataTable::SetMatrixValColRowName(const Variant& val, const String& col_nm,
-	       const String& row_col_name, const Variant& row_value,
-	       int d0, int d1, int d2, int d3, bool quiet) {
+               const String& row_col_name, const Variant& row_value,
+               int d0, int d1, int d2, int d3, bool quiet) {
   DataCol* cda = FindColName(col_nm, true);
   if (!cda || cda->not_matrix_err()) return false;
   DataCol* rda = FindColName(row_col_name, true);
@@ -1302,16 +1302,16 @@ bool DataTable::SetMatrixValColRowName(const Variant& val, const String& col_nm,
   }
   else {
     if(TestError(row < 0, "SetMatrixValColRowName", "value:", row_value.toString(),
-		 "of column named:", row_col_name, "not found"))
+                 "of column named:", row_col_name, "not found"))
       return false;
   }
   cda->SetValAsVarMDims(val, row, d0, d1, d2, d3);
   return true;
 }
 
-const Variant DataTable::GetMatrixFlatValColRowName(const String& col_nm, 
-		const String& row_col_name, const Variant& row_value,
-   	        int cell, bool quiet) const {
+const Variant DataTable::GetMatrixFlatValColRowName(const String& col_nm,
+                const String& row_col_name, const Variant& row_value,
+                int cell, bool quiet) const {
   DataCol* cda = FindColName(col_nm, true);
   if(!cda || cda->not_matrix_err()) return _nilVariant;
   DataCol* rda = FindColName(row_col_name, true);
@@ -1322,15 +1322,15 @@ const Variant DataTable::GetMatrixFlatValColRowName(const String& col_nm,
   }
   else {
     if(TestError(row < 0, "GetMatrixFlatValColRowName", "value:", row_value.toString(),
-		 "of column named:", row_col_name, "not found"))
+                 "of column named:", row_col_name, "not found"))
       return _nilVariant;
   }
   return cda->GetValAsVarM(row, cell);
 }
 
 bool DataTable::SetMatrixFlatValColRowName(const Variant& val, const String& col_nm,
-		   const String& row_col_name, const Variant& row_value,
-		   int cell, bool quiet) {
+                   const String& row_col_name, const Variant& row_value,
+                   int cell, bool quiet) {
   DataCol* cda = FindColName(col_nm, true);
   if (!cda || cda->not_matrix_err()) return false;
   DataCol* rda = FindColName(row_col_name, true);
@@ -1341,7 +1341,7 @@ bool DataTable::SetMatrixFlatValColRowName(const Variant& val, const String& col
   }
   else {
     if(TestError(row < 0, "SetMatrixFlatValColRowName", "value:", row_value.toString(),
-		 "of column named:", row_col_name, "not found"))
+                 "of column named:", row_col_name, "not found"))
       return false;
   }
   cda->SetValAsVarMDims(val, row, cell);
@@ -1393,11 +1393,11 @@ int DataTable::FindValColName(const Variant& val, const String& col_nm, int st_r
 }
 
 int DataTable::FindMultiVal(int st_row, const Variant& val1, Variant col1,
-			    const Variant& val2, Variant col2,
-			    const Variant& val3, Variant col3,
-			    const Variant& val4, Variant col4,
-			    const Variant& val5, Variant col5,
-			    const Variant& val6, Variant col6) const {
+                            const Variant& val2, Variant col2,
+                            const Variant& val3, Variant col3,
+                            const Variant& val4, Variant col4,
+                            const Variant& val5, Variant col5,
+                            const Variant& val6, Variant col6) const {
   DataCol* cold1=GetColData(col1,true); // quiet
   DataCol* cold2=GetColData(col2,true);
   DataCol* cold3=GetColData(col3,true);
@@ -1405,16 +1405,16 @@ int DataTable::FindMultiVal(int st_row, const Variant& val1, Variant col1,
   DataCol* cold5=GetColData(col5,true);
   DataCol* cold6=GetColData(col6,true);
 
-  return FindMultiValCol(st_row, val1, cold1, val2, cold2, val3, cold3, val4, cold4, 
-			 val5, cold5, val6, cold6); 
+  return FindMultiValCol(st_row, val1, cold1, val2, cold2, val3, cold3, val4, cold4,
+                         val5, cold5, val6, cold6);
 }
 
 int DataTable::FindMultiValColName(int st_row, const Variant& val1, const String& col_nm1,
-				   const Variant& val2, const String& col_nm2,
-				   const Variant& val3, const String& col_nm3,
-				   const Variant& val4, const String& col_nm4,
-				   const Variant& val5, const String& col_nm5,
-				   const Variant& val6, const String& col_nm6) const {
+                                   const Variant& val2, const String& col_nm2,
+                                   const Variant& val3, const String& col_nm3,
+                                   const Variant& val4, const String& col_nm4,
+                                   const Variant& val5, const String& col_nm5,
+                                   const Variant& val6, const String& col_nm6) const {
   DataCol* col1=NULL;
   DataCol* col2=NULL;
   DataCol* col3=NULL;
@@ -1428,17 +1428,17 @@ int DataTable::FindMultiValColName(int st_row, const Variant& val1, const String
   if(col_nm4.nonempty()) col4 = FindColName(col_nm4, true);
   if(col_nm5.nonempty()) col5 = FindColName(col_nm5, true);
   if(col_nm6.nonempty()) col6 = FindColName(col_nm6, true);
-  
-  return FindMultiValCol(st_row, val1, col1, val2, col2, val3, col3, val4, col4, 
-			 val5, col5, val6, col6); 
+
+  return FindMultiValCol(st_row, val1, col1, val2, col2, val3, col3, val4, col4,
+                         val5, col5, val6, col6);
 }
 
 int DataTable::FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
-			       const Variant& val2, DataCol* col2,
-			       const Variant& val3, DataCol* col3,
-			       const Variant& val4, DataCol* col4,
-			       const Variant& val5, DataCol* col5,
-			       const Variant& val6, DataCol* col6) const {
+                               const Variant& val2, DataCol* col2,
+                               const Variant& val3, DataCol* col3,
+                               const Variant& val4, DataCol* col4,
+                               const Variant& val5, DataCol* col5,
+                               const Variant& val6, DataCol* col6) const {
   if(st_row >= 0) {
     for(int i=st_row; i<rows; i++) {
       if(col1 && col1->GetVal(i) != val1) continue;
@@ -1533,7 +1533,7 @@ taMatrix* DataTable::GetValAsMatrixColName(const String& col_nm, int row, bool q
 }
 
 taMatrix* DataTable::GetValAsMatrixColRowName(const String& col_nm, const String& row_col_name,
-					      const Variant& row_value, bool quiet)
+                                              const Variant& row_value, bool quiet)
 {
   DataCol* cda = FindColName(col_nm, true);
   if(!cda) return NULL;
@@ -1545,7 +1545,7 @@ taMatrix* DataTable::GetValAsMatrixColRowName(const String& col_nm, const String
   }
   else {
     if(TestError(row < 0, "GetValAsMatrixColRowName", "value:", row_value.toString(),
-		 "of column named:", row_col_name, "not found"))
+                 "of column named:", row_col_name, "not found"))
       return NULL;
   }
   return cda->GetValAsMatrix(row);
@@ -1564,31 +1564,31 @@ taMatrix* DataTable::GetRangeAsMatrix(Variant col, int st_row, int n_rows) {
 ///////////////////////////////////////
 // sub-matrix reading and writing functions
 
-void DataTable::WriteFmSubMatrix(Variant col, int row, 
-				 const taMatrix* src, taMatrix::RenderOp render_op,
-				 int off0, int off1, int off2,
-				 int off3, int off4, int off5, int off6) {
+void DataTable::WriteFmSubMatrix(Variant col, int row,
+                                 const taMatrix* src, taMatrix::RenderOp render_op,
+                                 int off0, int off1, int off2,
+                                 int off3, int off4, int off5, int off6) {
   DataCol* da = GetColData(col);
   int i;
   if (da && idx_err(row, da->rows(), i))
     da->WriteFmSubMatrix(row, src, render_op, off0, off1, off2, off3, off4, off5, off6);
 }
 
-void DataTable::ReadToSubMatrix(Variant col, int row, 
-				taMatrix* dest, taMatrix::RenderOp render_op, 
-				int off0, int off1, int off2,
-				int off3, int off4, int off5, int off6) {
+void DataTable::ReadToSubMatrix(Variant col, int row,
+                                taMatrix* dest, taMatrix::RenderOp render_op,
+                                int off0, int off1, int off2,
+                                int off3, int off4, int off5, int off6) {
   DataCol* da = GetColData(col);
   int i;
   if (da && idx_err(row, da->rows(), i))
     da->ReadToSubMatrix(row, dest, render_op, off0, off1, off2, off3, off4, off5, off6);
 }
 
-void DataTable::WriteFmSubMatrixTable(Variant col, int row, 
-				      const DataTable* src, Variant src_col, int src_row,
-				      taMatrix::RenderOp render_op,
-				      int off0, int off1, int off2,
-				      int off3, int off4, int off5, int off6) {
+void DataTable::WriteFmSubMatrixTable(Variant col, int row,
+                                      const DataTable* src, Variant src_col, int src_row,
+                                      taMatrix::RenderOp render_op,
+                                      int off0, int off1, int off2,
+                                      int off3, int off4, int off5, int off6) {
   if(TestError(!src, "WriteFmSubMatrixTable", "submat_src table is NULL"))
     return;
   DataCol* da = GetColData(col);
@@ -1604,11 +1604,11 @@ void DataTable::WriteFmSubMatrixTable(Variant col, int row,
   taBase::unRefDone(mat);
 }
 
-void DataTable::ReadToSubMatrixTable(Variant col, int row, 
-				     const DataTable* dest, Variant dest_col, int dest_row,
-				     taMatrix::RenderOp render_op, 
-				     int off0, int off1, int off2,
-				     int off3, int off4, int off5, int off6) {
+void DataTable::ReadToSubMatrixTable(Variant col, int row,
+                                     const DataTable* dest, Variant dest_col, int dest_row,
+                                     taMatrix::RenderOp render_op,
+                                     int off0, int off1, int off2,
+                                     int off3, int off4, int off5, int off6) {
   if(TestError(!dest, "ReadToSubMatrixTable", "submat_dest table is NULL"))
     return;
   DataCol* da = GetColData(col);
@@ -1626,11 +1626,11 @@ void DataTable::ReadToSubMatrixTable(Variant col, int row,
 
 // lookup versions:
 
-void DataTable::WriteFmSubMatrixTableLookup(Variant col, int row, 
-	      const DataTable* submat_src, Variant submat_src_col,
-	      Variant submat_lookup_val, Variant submat_lookup_col,
-	      taMatrix::RenderOp render_op, const DataTable* offset_lookup,
-	      Variant offset_col, Variant offset_lookup_val, Variant offset_lookup_col) {
+void DataTable::WriteFmSubMatrixTableLookup(Variant col, int row,
+              const DataTable* submat_src, Variant submat_src_col,
+              Variant submat_lookup_val, Variant submat_lookup_col,
+              taMatrix::RenderOp render_op, const DataTable* offset_lookup,
+              Variant offset_col, Variant offset_lookup_val, Variant offset_lookup_col) {
   if(TestError(!submat_src, "WriteFmSubMatrixTableLookup", "submat_src table is NULL"))
     return;
   if(TestError(!offset_lookup, "WriteFmSubMatrixTableLookup", "offset_lookup table is NULL"))
@@ -1643,16 +1643,16 @@ void DataTable::WriteFmSubMatrixTableLookup(Variant col, int row,
   if(!slda) return;
   int slrow = slda->FindVal(submat_lookup_val);
   if(TestError(slrow < 0, "WriteFmSubMatrixTableLookup", "cannot find submat_lookup_val",
-	       submat_lookup_val.toString(),
-	       "in submat_src table column:",slda->name)) return;
+               submat_lookup_val.toString(),
+               "in submat_src table column:",slda->name)) return;
   DataCol* olda = offset_lookup->GetColData(offset_lookup_col);
   if(!olda) return;
   DataCol* oda = offset_lookup->GetColData(offset_col);
   if(!oda) return;
   int olrow = olda->FindVal(offset_lookup_val);
-  if(TestError(olrow < 0, "WriteFmSubMatrixTableLookup", "cannot find offset_lookup_val", 
-	       offset_lookup_val.toString(),
-	       "in offset_lookup table column:",olda->name)) return;
+  if(TestError(olrow < 0, "WriteFmSubMatrixTableLookup", "cannot find offset_lookup_val",
+               offset_lookup_val.toString(),
+               "in offset_lookup table column:",olda->name)) return;
   int offs[7] = {0,0,0,0,0,0,0};
   int mx = MIN(oda->cell_size(), 7);
   for(int k=0;k<mx;k++) {
@@ -1662,15 +1662,15 @@ void DataTable::WriteFmSubMatrixTableLookup(Variant col, int row,
   if(!mat) return;
   taBase::Ref(mat);
   da->WriteFmSubMatrix(row, mat, render_op, offs[0], offs[1], offs[2], offs[3], offs[4],
-		       offs[5], offs[6]);
+                       offs[5], offs[6]);
   taBase::unRefDone(mat);
 }
 
-void DataTable::ReadToSubMatrixTableLookup(Variant col, int row, 
-		const DataTable* submat_dest, Variant submat_dest_col,
-	        Variant submat_lookup_val, Variant submat_lookup_col,
-		taMatrix::RenderOp render_op, const DataTable* offset_lookup,
-	        Variant offset_col, Variant offset_lookup_val, Variant offset_lookup_col) {
+void DataTable::ReadToSubMatrixTableLookup(Variant col, int row,
+                const DataTable* submat_dest, Variant submat_dest_col,
+                Variant submat_lookup_val, Variant submat_lookup_col,
+                taMatrix::RenderOp render_op, const DataTable* offset_lookup,
+                Variant offset_col, Variant offset_lookup_val, Variant offset_lookup_col) {
   if(TestError(!submat_dest, "ReadToSubMatrixTableLookup", "submat_dest table is NULL"))
     return;
   if(TestError(!offset_lookup, "ReadToSubMatrixTableLookup", "offset_lookup table is NULL"))
@@ -1683,16 +1683,16 @@ void DataTable::ReadToSubMatrixTableLookup(Variant col, int row,
   if(!slda) return;
   int slrow = slda->FindVal(submat_lookup_val);
   if(TestError(slrow < 0, "ReadToSubMatrixTableLookup", "cannot find submat_lookup_val",
-	       submat_lookup_val.toString(),
-	       "in submat_src table column:",slda->name)) return;
+               submat_lookup_val.toString(),
+               "in submat_src table column:",slda->name)) return;
   DataCol* olda = offset_lookup->GetColData(offset_lookup_col);
   if(!olda) return;
   DataCol* oda = offset_lookup->GetColData(offset_col);
   if(!oda) return;
   int olrow = olda->FindVal(offset_lookup_val);
   if(TestError(olrow < 0, "WriteFmSubMatrixTableLookup", "cannot find offset_lookup_val",
-	       offset_lookup_val.toString(),
-	       "in offset_lookup table column:",olda->name)) return;
+               offset_lookup_val.toString(),
+               "in offset_lookup table column:",olda->name)) return;
   int offs[7] = {0,0,0,0,0,0,0};
   int mx = MIN(oda->cell_size(), 7);
   for(int k=0;k<mx;k++) {
@@ -1702,7 +1702,7 @@ void DataTable::ReadToSubMatrixTableLookup(Variant col, int row,
   if(!mat) return;
   taBase::Ref(mat);
   da->ReadToSubMatrix(row, mat, render_op, offs[0], offs[1], offs[2], offs[3], offs[4],
-		       offs[5], offs[6]);
+                       offs[5], offs[6]);
   taBase::unRefDone(mat);
 }
 
@@ -1770,7 +1770,7 @@ bool DataTable::SetValAsMatrix(const taMatrix* val, Variant col, int row) {
 }
 
 bool DataTable::SetValAsMatrixColName(const taMatrix* val, const String& col_nm, int row,
-				      bool quiet) {
+                                      bool quiet) {
   DataCol* da = FindColName(col_nm, true);
   return SetValAsMatrix_impl(val, da, row, quiet);
 }
@@ -1819,7 +1819,7 @@ const String DataTable::GetValAsStringM(Variant col, int row, int cell, bool na)
   int i;
   if (da &&  idx_err(row, da->rows(), i))
     return da->GetValAsStringM(i, cell);
-  else 
+  else
     return (na) ? String("n/a") : _nilString;
 }
 
@@ -1885,7 +1885,7 @@ bool DataTable::SetValAsVarM(const Variant& val, Variant col, int row, int cell)
 }
 
 ////////////////////////
-//	Matrix Dims
+//      Matrix Dims
 
 double DataTable::GetValAsDoubleMDims(Variant col, int row, int d0, int d1, int d2, int d3) {
   DataCol* da = GetColData(col);
@@ -1920,7 +1920,7 @@ const String DataTable::GetValAsStringMDims(Variant col, int row, int d0, int d1
   int i;
   if (da &&  idx_err(row, da->rows(), i))
     return da->GetValAsStringMDims(i, d0, d1, d2, d3);
-  else 
+  else
     return (na) ? String("n/a") : _nilString;
 }
 
@@ -2030,7 +2030,7 @@ DataCol* DataTable::NewCol(DataCol::ValType val_type, const String& col_nm) {
   int idx;
   DataCol* rval = NewCol_impl(val_type, col_nm, idx);
   rval->Init(); // asserts geom
-  rval->EnforceRows(rows);	// new guys always get same # of rows as current table
+  rval->EnforceRows(rows);      // new guys always get same # of rows as current table
   StructUpdate(false);
   return rval;
 }
@@ -2043,8 +2043,8 @@ DataCol* DataTable::NewCol_gui(DataCol::ValType val_type, const String& col_nm) 
   return rval;
 }
 
-DataCol* DataTable::NewCol_impl(DataCol::ValType val_type, 
-  const String& col_nm, int& col_idx) 
+DataCol* DataTable::NewCol_impl(DataCol::ValType val_type,
+  const String& col_nm, int& col_idx)
 {
   TypeDef* td;
   switch (val_type) {
@@ -2060,15 +2060,15 @@ DataCol* DataTable::NewCol_impl(DataCol::ValType val_type,
   DataCol* rval = (DataCol*) data.New(1, td, col_nm);
   // additional specialized initialization
   switch (val_type) {
-  case VT_STRING: 
+  case VT_STRING:
     break;
-  case VT_FLOAT: 
+  case VT_FLOAT:
   case VT_DOUBLE:
     break;
-  case VT_INT: 
+  case VT_INT:
     rval->SetUserData(DataCol::udkey_narrow, true);
     break;
-  case VT_BYTE:  
+  case VT_BYTE:
     break;
   default: break; // compiler food
   }
@@ -2093,7 +2093,7 @@ DataCol* DataTable::NewColFromChannelSpec_impl(ChannelSpec* cs) {
   if (cs->isMatrix()) {
     rval = NewColMatrixN(cs->val_type, cs->name, cs->cellGeom(), idx);
   } else {
-    rval = NewCol(cs->val_type, cs->name); 
+    rval = NewCol(cs->val_type, cs->name);
   }
   if (rval) cs->chan_num = cols() - 1;
   return rval;
@@ -2104,7 +2104,7 @@ int_Data* DataTable::NewColInt(const String& col_nm) {
 }
 
 bool DataTable::NewColValid(const String& col_nm,
-  const MatrixGeom* cell_geom) 
+  const MatrixGeom* cell_geom)
 {
   String err_msg;
   if (TestError((data.FindName(col_nm) != NULL), "NewCol",
@@ -2122,7 +2122,7 @@ bool DataTable::NewColValid(const String& col_nm,
 DataCol* DataTable::NewColMatrix(DataCol::ValType val_type, const String& col_nm,
     int dims, int d0, int d1, int d2, int d3, int d4, int d5, int d6)
 {
-  if(dims < 1) {		// < 1 is shortcut for not actually a matrix!
+  if(dims < 1) {                // < 1 is shortcut for not actually a matrix!
     return NewCol(val_type, col_nm);
   }
   MatrixGeom geom(dims, d0, d1, d2, d3, d4, d5, d6);
@@ -2131,8 +2131,8 @@ DataCol* DataTable::NewColMatrix(DataCol::ValType val_type, const String& col_nm
   return rval;
 }
 
-DataCol* DataTable::NewColMatrixN(DataCol::ValType val_type, 
-  const String& col_nm, const MatrixGeom& cell_geom, int& col_idx) 
+DataCol* DataTable::NewColMatrixN(DataCol::ValType val_type,
+  const String& col_nm, const MatrixGeom& cell_geom, int& col_idx)
 {
   if (!NewColValid(col_nm, &cell_geom)) return NULL;
   StructUpdate(true);
@@ -2140,13 +2140,13 @@ DataCol* DataTable::NewColMatrixN(DataCol::ValType val_type,
   rval->is_matrix = true;
   rval->cell_geom = cell_geom;
   rval->Init(); // asserts geom
-  rval->EnforceRows(rows);	// new guys always get same # of rows as current table
+  rval->EnforceRows(rows);      // new guys always get same # of rows as current table
   StructUpdate(false);
   return rval;
 }
 
 DataCol* DataTable::NewColMatrixN_gui(DataCol::ValType val_type, const String& col_nm,
-				      const MatrixGeom& cell_geom) {
+                                      const MatrixGeom& cell_geom) {
   int idx;
   DataCol* rval = NewColMatrixN(val_type, col_nm, cell_geom, idx);
   if(rval && taMisc::gui_active) {
@@ -2156,8 +2156,8 @@ DataCol* DataTable::NewColMatrixN_gui(DataCol::ValType val_type, const String& c
 }
 
 DataCol* DataTable::NewColFmMatrix(taMatrix* mat, const String& col_nm) {
-  if(!mat) { taMisc::Error("taDataProc::NewColFmMatrix: mat cannot be NULL"); return false; }  
-  if(col_nm == "") { taMisc::Error("taDataProc::NewColFmMatrix: col_nm must be non-empty"); return false; }  
+  if(!mat) { taMisc::Error("taDataProc::NewColFmMatrix: mat cannot be NULL"); return false; }
+  if(col_nm == "") { taMisc::Error("taDataProc::NewColFmMatrix: col_nm must be non-empty"); return false; }
 
   ValType val_type = mat->GetDataValType();
   MatrixGeom geom(mat->dims(), mat->dim(0), mat->dim(1), mat->dim(2), mat->dim(3), mat->dim(4), mat->dim(5), mat->dim(6));
@@ -2199,7 +2199,7 @@ int DataTable::FindColNameIdx(const String& col_nm, bool err_msg) const {
 }
 
 DataCol* DataTable::FindMakeCol(const String& col_nm,
-  ValType val_type) 
+  ValType val_type)
 {
   int idx;
   return FindMakeColName(col_nm, idx, val_type, 0);
@@ -2223,23 +2223,23 @@ DataCol* DataTable::FindMakeColMatrixN(const String& col_nm,
       StructUpdate(true);
       DataCol* nda = NewColMatrixN(val_type, col_nm, cell_geom, col_idx);
       data.MoveIdx(data.size-1, col_idx);
-      data.RemoveEl(da);	// get rid of that guy
+      data.RemoveEl(da);        // get rid of that guy
       da = nda;
-      nda->EnforceRows(rows);	// keep row-constant
+      nda->EnforceRows(rows);   // keep row-constant
       StructUpdate(false);
     } else if ((!da->cell_geom.Equal(cell_geom)) || (!da->is_matrix)) {
       StructUpdate(true);
       da->cell_geom = cell_geom;
       da->is_matrix = true;
-      da->Init();		// asserts geom
-      da->EnforceRows(rows);	// keep row-constant
+      da->Init();               // asserts geom
+      da->EnforceRows(rows);    // keep row-constant
       StructUpdate(false);
     } else {
       if (cell_geom != da->cell_geom) {
-	StructUpdate(true);
-	da->cell_geom = cell_geom;
-	da->Init();
-	StructUpdate(false);
+        StructUpdate(true);
+        da->cell_geom = cell_geom;
+        da->Init();
+        StructUpdate(false);
       }
     }
     return da;
@@ -2250,8 +2250,8 @@ DataCol* DataTable::FindMakeColMatrixN(const String& col_nm,
 }
 
 DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
-  ValType val_type, int dims, int d0, int d1, int d2, 
-  int d3, int d4, int d5, int d6) 
+  ValType val_type, int dims, int d0, int d1, int d2,
+  int d3, int d4, int d5, int d6)
 {
   if (dims < 0) dims = 0; // causes invalid results if -ve; 0=flag for scalar
   col_idx = FindColNameIdx(col_nm);
@@ -2262,35 +2262,35 @@ DataCol* DataTable::FindMakeColName(const String& col_nm, int& col_idx,
       // need to remove old guy first, because validate doesn't permit dupl names
       data.RemoveIdx(col_idx); // get rid of that guy
       if(dims > 0)
-	da = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4, d5, d6);
+        da = NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4, d5, d6);
       else
-	da = NewCol(val_type, col_nm);
+        da = NewCol(val_type, col_nm);
       data.MoveIdx(data.size-1, col_idx);
-      da->EnforceRows(rows);	// keep row-constant
+      da->EnforceRows(rows);    // keep row-constant
       StructUpdate(false);
     } else if(da->cell_dims() != dims) {
       StructUpdate(true);
       da->cell_geom.SetGeom(dims, d0, d1, d2, d3, d4, d5, d6);
       if(dims == 0)
-	da->is_matrix = false;
+        da->is_matrix = false;
       else
-	da->is_matrix = true;
-      da->Init();		// asserts geom
-      da->EnforceRows(rows);	// keep row-constant
+        da->is_matrix = true;
+      da->Init();               // asserts geom
+      da->EnforceRows(rows);    // keep row-constant
       StructUpdate(false);
     } else {
       MatrixGeom mg(dims, d0, d1, d2, d3, d4, d5, d6);
       if(mg != da->cell_geom) {
-	StructUpdate(true);
-	da->cell_geom = mg;
-	da->Init();
-	StructUpdate(false);
+        StructUpdate(true);
+        da->cell_geom = mg;
+        da->Init();
+        StructUpdate(false);
       }
     }
     return da;
   }
-  else {			// not found -- make one
-    col_idx = data.size;	// will be the next guy
+  else {                        // not found -- make one
+    col_idx = data.size;        // will be the next guy
     if(dims >= 1)
       return NewColMatrix(val_type, col_nm, dims, d0, d1, d2, d3, d4, d5, d6);
     else
@@ -2308,7 +2308,7 @@ void DataTable::ChangeColTypeGeom_impl(DataCol* src, ValType new_type, const Mat
   }
   // make a new col of right type
   int old_idx = src->GetIndex();
-  String col_nm = src->name; 
+  String col_nm = src->name;
   src->name = _nilString; // for new
   DataCol* new_col = NULL;
   StructUpdate(true);
@@ -2329,13 +2329,13 @@ void DataTable::ChangeColTypeGeom_impl(DataCol* src, ValType new_type, const Mat
 }
 
 void DataTable::ChangeColTypeGeom(const String& col_nm, ValType new_type,
-				  int dims, int d0, int d1, int d2, int d3,
-				  int d4, int d5, int d6) {
+                                  int dims, int d0, int d1, int d2, int d3,
+                                  int d4, int d5, int d6) {
   DataCol* da = FindColName(col_nm, true);
   if(!da) return;
   MatrixGeom mg;
   mg.SetGeom(dims, d0, d1, d2, d3, d4, d5, d6);
-  if((da->valType() == new_type) && 
+  if((da->valType() == new_type) &&
      ((!da->is_matrix && (mg.dims() == 0)) || da->cell_geom.Equal(mg))) return;
   ChangeColTypeGeom_impl(da, new_type, mg);
 }
@@ -2345,7 +2345,7 @@ void DataTable::ChangeColType(Variant col, ValType new_type) {
   if(!da) return;
   if(da->valType() == new_type) return;
   MatrixGeom cell_geom;
-  if(da->is_matrix) cell_geom = da->cell_geom; 
+  if(da->is_matrix) cell_geom = da->cell_geom;
   ChangeColTypeGeom_impl(da, new_type, cell_geom);
 }
 
@@ -2358,7 +2358,7 @@ void DataTable::ChangeAllColsOfType(ValType cur_val_type, ValType new_val_type) 
 }
 
 bool DataTable::MatrixColToScalars(Variant mtx_col, const String& scalar_col_name_stub) {
-  return MatrixColToScalarsCol(GetColData(mtx_col), scalar_col_name_stub); 
+  return MatrixColToScalarsCol(GetColData(mtx_col), scalar_col_name_stub);
 }
 
 bool DataTable::MatrixColToScalarsCol(DataCol* da, const String& scalar_col_name_stub) {
@@ -2395,10 +2395,10 @@ bool DataTable::MatrixColFmScalarsCol(DataCol* da, const String& scalar_col_name
     for(int i=0;i<cls;i++) {
       DataCol* scda = FindColName(clstub + String(i));
       if(scda) {
-	for(int j=0;j<rows;j++) {
-	  Variant var = scda->GetVal(j);
-	  da->SetMatrixFlatVal(var, j, i);
-	}
+        for(int j=0;j<rows;j++) {
+          Variant var = scda->GetVal(j);
+          da->SetMatrixFlatVal(var, j, i);
+        }
       }
     }
   }
@@ -2409,11 +2409,11 @@ bool DataTable::MatrixColFmScalarsCol(DataCol* da, const String& scalar_col_name
       DataCol* scda = data[i];
       if(scda->isMatrix() || scda->valType() != da->valType()) continue;
       for(int j=0;j<rows;j++) {
-	Variant var = scda->GetVal(j);
-	da->SetMatrixFlatVal(var, j, cur_idx);
+        Variant var = scda->GetVal(j);
+        da->SetMatrixFlatVal(var, j, cur_idx);
       }
       cur_idx++;
-      if(cur_idx >= cls) break;	// all done
+      if(cur_idx >= cls) break; // all done
     }
   }
   StructUpdate(false);
@@ -2427,8 +2427,8 @@ void DataTable::UniqueColNames() {
     for(int j=i+1;j<data.size; j++) {
       DataCol* oda = data.FastEl(j);
       if(da->name == oda->name) {
-	dupl++;
-	oda->name += "_" + String(dupl);
+        dupl++;
+        oda->name += "_" + String(dupl);
       }
     }
   }
@@ -2441,7 +2441,7 @@ int DataTable::GetMaxCellRows(int col_fr, int col_to) {
     DataCol* da = GetColData(col);
     if (!da) continue;
     int x; int y;
-    da->Get2DCellGeom(x, y); 
+    da->Get2DCellGeom(x, y);
     max_cell_rows = MAX(max_cell_rows, y);
   }
   return max_cell_rows;
@@ -2455,7 +2455,7 @@ void DataTable::GetFlatGeom(const CellRange& cr, int& tot_cols, int& max_cell_ro
     DataCol* da = GetColData(col);
     if (!da) continue;
     int x; int y;
-    da->Get2DCellGeom(x, y); 
+    da->Get2DCellGeom(x, y);
     tot_cols += x;
     max_cell_rows = MAX(max_cell_rows, y);
   }
@@ -2468,21 +2468,21 @@ String DataTable::HeaderToTSV() {
   CellRange cr;
   cr.SetExtent(cols(), 1);
   GetFlatGeom(cr, tot_col, max_cell_rows);
-  
+
   // allocate a reasonable best-guess buffer
   STRING_BUF(rval, (tot_col * (cr.row_to - cr.row_fr + 1)) * 15);
   int flat_col = 0; // for tabs
   for (int col = cr.col_fr; col <= cr.col_to; ++col) {
     DataCol* da = GetColData(col);
     int cell_cols; int cell_rows;
-    da->Get2DCellGeom(cell_cols, cell_rows); 
+    da->Get2DCellGeom(cell_cols, cell_rows);
     if (cell_cols == 1) {
       if (flat_col++ > 0) rval.cat('\t');
-      rval.cat(da->name); 
-     } else { // mat, so deco all 
+      rval.cat(da->name);
+     } else { // mat, so deco all
       for (int cell_col = 0; cell_col < cell_cols; ++cell_col) {
         if (flat_col++ > 0) rval.cat('\t');
-        rval.cat(da->name).cat("_").cat(String(cell_col)); 
+        rval.cat(da->name).cat("_").cat(String(cell_col));
       }
     }
   }
@@ -2496,10 +2496,10 @@ String DataTable::RangeToTSV(const CellRange& cr) {
   int tot_col = 0; // total flat cols
   int max_cell_rows = 0; // max flat rows per cell
   GetFlatGeom(cr, tot_col, max_cell_rows);
-  
+
   // allocate a reasonable best-guess buffer
   STRING_BUF(rval, (tot_col * max_cell_rows * (cr.row_to - cr.row_fr + 1)) * 10);
-  
+
   int flat_row = 0; // for newlines
   for (int row = cr.row_fr; row <= cr.row_to; ++row) {
     for (int cell_row = 0; cell_row < max_cell_rows; ++cell_row) {
@@ -2508,14 +2508,14 @@ String DataTable::RangeToTSV(const CellRange& cr) {
       for (int col = cr.col_fr; col <= cr.col_to; ++col) {
         DataCol* da = GetColData(col);
         int cell_cols; int cell_rows;
-        da->Get2DCellGeom(cell_cols, cell_rows); 
+        da->Get2DCellGeom(cell_cols, cell_rows);
         for (int cell_col = 0; cell_col < cell_cols; ++cell_col) {
           if (flat_col > 0) rval.cat('\t');
           // if a real inner cell grab the value, otherwise it will be empty
           if (cell_row < cell_rows) {
             int cell = (cell_row * cell_cols) + cell_col;
             rval.cat(GetValAsStringM(col, row, cell, false));
-          } 
+          }
           ++flat_col;
         }
       }
@@ -2549,11 +2549,11 @@ void DataTable::RemoveOrphanCols() {
     StructUpdate(false);
   }
 }
-  
+
 bool DataTable::InsertRows(int st_row, int n_rows) {
-  if(st_row < 0) st_row = rows;	// end
+  if(st_row < 0) st_row = rows; // end
   if(TestError((st_row < 0 || st_row > rows), "InsertRows",
-	       "row not in range:",String(st_row))) return false;
+               "row not in range:",String(st_row))) return false;
   bool rval = true;
   DataUpdate(true);
   for(int i=0;i<data.size;i++) {
@@ -2562,19 +2562,19 @@ bool DataTable::InsertRows(int st_row, int n_rows) {
   }
   if(rval)
     rows += n_rows;
-  DataUpdate(false); 
+  DataUpdate(false);
   return rval;
 }
 
 bool DataTable::RemoveRows(int st_row, int n_rows) {
-  if(st_row < 0) st_row = rows-1;	// end
+  if(st_row < 0) st_row = rows-1;       // end
   if(TestError(!RowInRangeNormalize(st_row), "RemoveRows",
-	       "start row not in range:",String(st_row)))
+               "start row not in range:",String(st_row)))
     return false;
   if(n_rows < 0) n_rows = rows - st_row;
   int end_row = st_row + n_rows-1;
   if(TestError(!RowInRangeNormalize(end_row), "RemoveRows",
-	       "end row not in range:",String(end_row)))
+               "end row not in range:",String(end_row)))
     return false;
   DataUpdate(true);
   for(int i=0;i<data.size;i++) {
@@ -2591,7 +2591,7 @@ bool DataTable::RemoveRows(int st_row, int n_rows) {
 
 bool DataTable::DuplicateRow(int row_no, int n_copies) {
   if(TestError(!RowInRangeNormalize(row_no), "DuplicateRow",
-	       "row not in range:",String(row_no)))
+               "row not in range:",String(row_no)))
     return false;
   DataUpdate(true);// only data because for views, no change in column structure
   for(int k=0;k<n_copies;k++) {
@@ -2619,7 +2619,7 @@ bool DataTable::DuplicateRows(int st_row, int n_rows) {
 bool DataTable::RowInRangeNormalize(int& row) {
   if (row < 0) row = rows + row;
   return ((row >= 0) && (row < rows));
-} 
+}
 
 void DataTable::Reset() {
   StructUpdate(true);
@@ -2654,10 +2654,10 @@ void DataTable::RowsAdding(int n, bool begin) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-///	Saving / Loading from Emergent or Plain Text Files
+///     Saving / Loading from Emergent or Plain Text Files
 
 /*
-  Emergent Header format: 
+  Emergent Header format:
   $ = String
   % = float
   # = double
@@ -2667,24 +2667,24 @@ void DataTable::RowsAdding(int n, bool begin) {
 
   matrix: each cell has [dims:x,y..]
   first mat cell also has <dims:dx,dy..>
-  
+
   Plain Header Format
 */
 
 void DataTable::SaveHeader_strm_impl(ostream& strm, Delimiters delim,
-    bool row_mark, int col_fr, int col_to, bool native, bool quote_str) 
+    bool row_mark, int col_fr, int col_to, bool native, bool quote_str)
 {
   char cdlm = GetDelim(delim);
   bool need_delim = false; // goes true after first col written
   if (row_mark) {
-    strm << "_H:";		// indicates header
+    strm << "_H:";              // indicates header
     need_delim = true;
   }
   // validate and adjust col range
   if (col_fr < 0) col_fr = data.size + col_fr;
   if (col_fr < 0) col_fr = 0;
   if (col_to < 0) col_to = data.size + col_to;
-  if ((col_to < 0) || (col_to >= data.size)) 
+  if ((col_to < 0) || (col_to >= data.size))
     col_to = data.size - 1;
   MatrixGeom dims;
   for(int i=0;i<data.size;i++) {
@@ -2699,9 +2699,9 @@ void DataTable::SaveHeader_strm_impl(ostream& strm, Delimiters delim,
     if(da->isMatrix()) {
       for(int j=0;j<da->cell_size(); j++) {
         if (j > 0)
-	  strm << cdlm;
+          strm << cdlm;
         if (native) {
-	  da->cell_geom.DimsFmIndex(j, dims);
+          da->cell_geom.DimsFmIndex(j, dims);
           hdnm = da->EncodeHeaderName(dims);
         } else {
           hdnm = da->name + "_" + String(j);
@@ -2709,13 +2709,13 @@ void DataTable::SaveHeader_strm_impl(ostream& strm, Delimiters delim,
           if (quote_str)
           hdnm = "\"" + hdnm + "\"";
         }
-	strm << hdnm;
+        strm << hdnm;
       }
     }
     else {
       if (native) {
         hdnm = da->EncodeHeaderName(dims); //note: dims ignored
-      } else 
+      } else
         hdnm = da->name;
       strm << hdnm;
     }
@@ -2724,19 +2724,19 @@ void DataTable::SaveHeader_strm_impl(ostream& strm, Delimiters delim,
 }
 
 void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
-  bool quote_str, bool row_mark, int col_fr, int col_to) 
+  bool quote_str, bool row_mark, int col_fr, int col_to)
 {
   char cdlm = GetDelim(delim);
   bool need_delim = false; // goes true after first col written
   if (row_mark) {
-    strm << "_D:";		// indicates data row
+    strm << "_D:";              // indicates data row
     need_delim = true;
   }
   // validate and adjust col range
   if (col_fr < 0) col_fr = data.size + col_fr;
   if (col_fr < 0) col_fr = 0;
   if (col_to < 0) col_to = data.size + col_to;
-  if ((col_to < 0) || (col_to >= data.size)) 
+  if ((col_to < 0) || (col_to >= data.size))
     col_to = data.size - 1;
   for(int i = col_fr; i <= col_to;i++) {
     DataCol* da = data.FastEl(i);
@@ -2749,22 +2749,22 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
       for(int j=0;j<da->cell_size(); j++) {
         if (j > 0)
           strm << cdlm;
-	String val = da->GetValAsStringM(row, j);
-	//TODO: 1) need to check for Variant.String type
-	// 2) prob need to use fully escaped format, or at least escape "
-	if(quote_str && (da->valType() == VT_STRING))
-	  strm << "\"" << val << "\"";
-	else
-	  strm << val;
+        String val = da->GetValAsStringM(row, j);
+        //TODO: 1) need to check for Variant.String type
+        // 2) prob need to use fully escaped format, or at least escape "
+        if(quote_str && (da->valType() == VT_STRING))
+          strm << "\"" << val << "\"";
+        else
+          strm << val;
       }
     }
     else {
       String val = da->GetValAsString(row);
       //TODO: see above in mat
       if(quote_str && (da->valType() == VT_STRING))
-	strm << "\"" << val << "\"";
+        strm << "\"" << val << "\"";
       else
-	strm << val;
+        strm << val;
     }
   }
   strm << endl;
@@ -2782,12 +2782,12 @@ void DataTable::SaveData_strm(ostream& strm, Delimiters delim, bool quote_str, b
   SaveDataRows_strm(strm, delim, quote_str, save_headers); // last arg is row mark -- only if headers
 }
 
-void DataTable::ExportData_strm(ostream& strm, Delimiters delim, 
+void DataTable::ExportData_strm(ostream& strm, Delimiters delim,
   bool quote_str, bool headers)
 {
   if (headers)
     ExportHeader_strm(strm, delim);
-  SaveDataRows_strm(strm, delim, quote_str, false); // last arg is row mark -- never 
+  SaveDataRows_strm(strm, delim, quote_str, false); // last arg is row mark -- never
 }
 
 void DataTable::SaveHeader(const String& fname, Delimiters delim) {
@@ -2807,7 +2807,7 @@ void DataTable::SaveDataRow(const String& fname, int row, Delimiters delim, bool
 }
 
 void DataTable::SaveData(const String& fname, Delimiters delim,
-  bool quote_str, bool save_headers) 
+  bool quote_str, bool save_headers)
 {
   taFiler* flr = GetSaveFiler(fname, ".dat,.log", false, "Data");
   if (flr->ostrm) {
@@ -2818,7 +2818,7 @@ void DataTable::SaveData(const String& fname, Delimiters delim,
 }
 
 void DataTable::ExportData(const String& fname, Delimiters delim,
-  bool quote_str, bool save_headers) 
+  bool quote_str, bool save_headers)
 {
   // note: don't get file name when exporting
   taFiler* flr = GetSaveFiler(fname, ".csv,.tsv,.txt,.log", false, "Data", false);
@@ -2838,7 +2838,7 @@ void DataTable::AppendData(const String& fname, Delimiters delim, bool quote_str
 }
 
 void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) {
-  if(!log_file) return;		// shouldn't happen
+  if(!log_file) return;         // shouldn't happen
   if(log_file->IsOpen())
     log_file->Close();
 #ifdef DMEM_COMPILE
@@ -2846,21 +2846,21 @@ void DataTable::SaveDataLog(const String& fname, bool append, bool dmem_proc_0) 
 #endif
   log_file->SetFileName(fname);
   if(fname.empty()) {
-    if(append) 
+    if(append)
       log_file->Append();
     else {
-      log_file->SaveAs(false);	// no save to tmp
+      log_file->SaveAs(false);  // no save to tmp
       if(log_file->IsOpen())
-	SaveHeader_strm(*log_file->ostrm);
+        SaveHeader_strm(*log_file->ostrm);
     }
   }
   else {
-    if(append) 
+    if(append)
       log_file->open_append();
     else {
       log_file->open_write();
       if(log_file->IsOpen())
-	SaveHeader_strm(*log_file->ostrm);
+        SaveHeader_strm(*log_file->ostrm);
     }
   }
 }
@@ -2886,7 +2886,7 @@ char DataTable::GetDelim(Delimiters delim) {
 }
 
 int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool quote_str,
-			     bool& got_quote) {
+                             bool& got_quote) {
   got_quote = false;
   int c;
   int depth = 0;
@@ -2908,7 +2908,7 @@ int DataTable::ReadTillDelim(istream& strm, String& str, const char delim, bool 
 }
 
 int DataTable::ReadTillDelim_Str(const String& istr, int& idx, String& str,
-				 const char delim, bool quote_str, bool& got_quote) {
+                                 const char delim, bool quote_str, bool& got_quote) {
   got_quote = false;
   int c;
   int depth = 0;
@@ -2923,9 +2923,9 @@ int DataTable::ReadTillDelim_Str(const String& istr, int& idx, String& str,
     c = istr[idx++];
     if((c != '\n') && (c != '\r') && !((c == delim) && (depth <= 0))) {
       if(quote_str && (depth > 0) && (c == '\"'))
-	depth--;
+        depth--;
       else
-	str += (char)c;
+        str += (char)c;
     }
     else {
       break;
@@ -2940,7 +2940,7 @@ int DataTable::ReadTillDelim_Str(const String& istr, int& idx, String& str,
 int_Array DataTable::load_col_idx;
 int_Array DataTable::load_mat_idx;
 
-int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,	bool native, bool quote_str) 
+int DataTable::LoadHeader_impl(istream& strm, Delimiters delim, bool native, bool quote_str)
 {
   if (native) quote_str = false; // never quotes for native headers
   char cdlm = GetDelim(delim);
@@ -2955,7 +2955,7 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,	bool native, boo
     cont = !((c == '\n') || (c == '\r') || (c == EOF));
     if (str.empty()) {
       if (!cont) break;
-      continue;			// for some reason it is empty
+      continue;                 // for some reason it is empty
     }
     String base_nm;
     int val_typ;
@@ -2994,7 +2994,7 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,	bool native, boo
       if (col_idx >= 0) da = data.FastEl(col_idx);
       // we only accept _xxx as mat col designator if col already a mat, and cell in bounds
       if (!(da && (cell_idx >= 0) && (da->is_matrix) &&
-        (cell_idx < da->cell_geom.Product()))) 
+        (cell_idx < da->cell_geom.Product())))
       {
         da = FindMakeCol(str, VT_VARIANT);
         col_idx = da->col_idx;
@@ -3002,8 +3002,8 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim,	bool native, boo
       }
     }
     load_col_idx.Add(col_idx);
-    load_mat_idx.Add(cell_idx);	// no matrix info
-    
+    load_mat_idx.Add(cell_idx); // no matrix info
+
   }
   return c;
 }
@@ -3014,8 +3014,8 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
   StructUpdate(true);
   bool added_row = false;
   int last_mat_col = -1;
-  int load_col = 0;		// loading column (always incr)
-  int data_col = 0;		// data column (datacol index in data table)
+  int load_col = 0;             // loading column (always incr)
+  int data_col = 0;             // data column (datacol index in data table)
   bool got_quote = false;
   int c;
   while(true) {
@@ -3030,7 +3030,7 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
     if(str == "_D:") continue;
     // at this point it is safe to add a row -- load header already called
     if(!added_row) {
-      AddBlankRow();		
+      AddBlankRow();
       added_row = true;
     }
     if(load_col_idx.size > 0) {
@@ -3038,7 +3038,7 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
     }
     if(data_col >= data.size) {
       if(last_row_err_msg != rows-1) // don't repeat err msg a zillion times!
-	TestWarning(true, "LoadDataRow_strm", "columns exceeded!");
+        TestWarning(true, "LoadDataRow_strm", "columns exceeded!");
       last_row_err_msg = rows;
       c = '\n';
       break;
@@ -3047,30 +3047,30 @@ int DataTable::LoadDataRow_impl(istream& strm, Delimiters delim, bool quote_str)
     if(da->isMatrix()) {
       int mat_idx = 0;
       if(load_mat_idx.size > 0) {
-	mat_idx = load_mat_idx[load_col];
-	da->SetValAsStringM(str, -1, mat_idx);
+        mat_idx = load_mat_idx[load_col];
+        da->SetValAsStringM(str, -1, mat_idx);
       }
       else {
-	if(last_mat_col >= 0)
-	  mat_idx = load_col - last_mat_col;
-	else 
-	  last_mat_col = load_col;
-	if(mat_idx >= da->cell_size()) { // filled up the matrix!
-	  data_col++;
-	  if(data_col >= data.size) {
-	    if(last_row_err_msg != rows-1) // don't repeat err msg a zillion times!
-	      TestWarning(true, "LoadDataRow_strm", "matrix columns exceeded!");
-	    last_row_err_msg = rows;
-	    c = '\n';
-	    break;
-	  }
-	  da = data.FastEl(data_col);
-	  last_mat_col = -1;
-	  da->SetValAsString(str, -1);
-	}
-	else {
-	  da->SetValAsStringM(str, -1, mat_idx);
-	}
+        if(last_mat_col >= 0)
+          mat_idx = load_col - last_mat_col;
+        else
+          last_mat_col = load_col;
+        if(mat_idx >= da->cell_size()) { // filled up the matrix!
+          data_col++;
+          if(data_col >= data.size) {
+            if(last_row_err_msg != rows-1) // don't repeat err msg a zillion times!
+              TestWarning(true, "LoadDataRow_strm", "matrix columns exceeded!");
+            last_row_err_msg = rows;
+            c = '\n';
+            break;
+          }
+          da = data.FastEl(data_col);
+          last_mat_col = -1;
+          da->SetValAsString(str, -1);
+        }
+        else {
+          da->SetValAsStringM(str, -1, mat_idx);
+        }
       }
     }
     else {
@@ -3096,10 +3096,10 @@ int DataTable::LoadDataFixed_impl(istream& strm, FixedWidthSpec* fws) {
       continue;
     }
     // note: data() is not null terminated!
-    String ln(line.data(), line.length());
+    String ln(line.data(), static_cast<int>(line.length()));
     fws->AddRow(ln);
   }
-  
+
   StructUpdate(false);
   return true;
 }
@@ -3114,7 +3114,7 @@ int DataTable::LoadDataRow_strm(istream& strm, Delimiters delim, bool quote_str)
 }
 
 int DataTable::LoadDataRowEx_strm(istream& strm, Delimiters delim,
-  bool quote_str, bool reset_load_schema) 
+  bool quote_str, bool reset_load_schema)
 {
   if (reset_load_schema)
     ResetLoadSchema();
@@ -3127,7 +3127,7 @@ void DataTable::ResetLoadSchema() const {
 }
 
 void DataTable::LoadData_strm(istream& strm, Delimiters delim, bool quote_str,
-  int max_recs) 
+  int max_recs)
 {
   StructUpdate(true);
   ResetLoadSchema();
@@ -3162,7 +3162,7 @@ int DataTable::LoadDataRow(const String& fname, Delimiters delim, bool quote_str
 }
 
 void DataTable::LoadData(const String& fname, Delimiters delim, bool quote_str,
-  int max_recs, bool reset_first) 
+  int max_recs, bool reset_first)
 {
   taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
   if(flr->istrm) {
@@ -3185,11 +3185,11 @@ void DataTable::LoadAnyData(const String& fname, bool headers_req,
     bool quote_str;
     bool native;
     DetermineLoadDataParams(*flr->istrm, headers_req, delim_req, quote_str_req,
-			    headers, delim, quote_str, native);
+                            headers, delim, quote_str, native);
     if (reset_first)
       RemoveAllRows();
-    flr->open_read();		// always re-open -- if read goes past EOF, then bad
-				// things happen, and needed for compressed .gz 
+    flr->open_read();           // always re-open -- if read goes past EOF, then bad
+                                // things happen, and needed for compressed .gz
     if (native) {
       LoadData_strm(*flr->istrm, delim, quote_str, max_recs);
     } else {
@@ -3200,7 +3200,65 @@ void DataTable::LoadAnyData(const String& fname, bool headers_req,
   taRefN::unRefDone(flr);
 }
 
-void DataTable::ImportData_strm(istream& strm, bool headers, 
+void
+DataTable::LoadAnyData_stream(istream &stream, bool append, bool has_header_line)
+{
+  if (!stream.good())
+  {
+    taMisc::Warning("Stream is not good prior to auto-detection.");
+  }
+
+  // Get the current stream position so we can reset back to that
+  // position after auto-detecting the file format.
+  std::ios::streampos curStreamPos = stream.tellg();
+
+  // These are passed as out-parameters to an auto-detection function.
+  Delimiters delimeterType = COMMA;
+  bool hasQuotedStrings = false;
+  bool isNativeFile = false;
+
+  // Auto-detect file format.
+  DetermineLoadDataParams(stream, has_header_line, LD_AUTO, LQ_AUTO,
+    has_header_line, delimeterType, hasQuotedStrings, isNativeFile);
+
+  if (!stream.good())
+  {
+    taMisc::Warning("Stream is not good after auto-detection.");
+  }
+
+  // Clear any errors in the stream and reset it to the beginning.
+  stream.clear();
+  stream.seekg(curStreamPos);
+
+  if (!stream.good())
+  {
+    taMisc::Warning("Stream is not good after rewinding.");
+  }
+
+  // Clear existing data if append flag wasn't set.
+  if (!append)
+  {
+    RemoveAllRows();
+  }
+
+  int maxRecords = -1; // Get them all.
+  if (isNativeFile)
+  {
+    LoadData_strm(stream, delimeterType, hasQuotedStrings, maxRecords);
+  }
+  else
+  {
+    ImportData_strm(
+      stream, has_header_line, delimeterType, hasQuotedStrings, maxRecords);
+  }
+
+  // We know we reached EOF, so no point in checking stream.good().
+  if (stream.fail())
+  {
+    taMisc::Warning("Stream is failed after reading data.");
+  }
+}
+void DataTable::ImportData_strm(istream& strm, bool headers,
     Delimiters delim, bool quote_str, int max_recs)
 {
   StructUpdate(true);
@@ -3208,7 +3266,7 @@ void DataTable::ImportData_strm(istream& strm, bool headers,
   int st_row = rows;
   if (headers) {
     String hdr;
-    readline_auto(strm, hdr);	// discard header
+    readline_auto(strm, hdr);   // discard header
   }
   while (c != EOF) {
     c = LoadDataRow_impl(strm, delim, quote_str);
@@ -3217,7 +3275,7 @@ void DataTable::ImportData_strm(istream& strm, bool headers,
   StructUpdate(false);
 }
 
-void DataTable::DetermineLoadDataParams(istream& strm, 
+void DataTable::DetermineLoadDataParams(istream& strm,
     bool headers_req, LoadDelimiters delim_req, LoadQuotes quote_str_req,
     bool& headers, Delimiters& delim, bool& quote_str, bool& native)
 {
@@ -3230,34 +3288,34 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   bool native_h = ln0.startsWith("_H:");
   bool native_d = ln0.startsWith("_D:") || ln1.startsWith("_D:");
   native = native_h || native_d;
-  
+
   // headers is actually same as LH since the Emergent version is auto regardless
   // but we also set if we see the _H: so later quote check knows if 1st line is data
   headers = headers_req || native_h;
-  
+
   // for Emergent files, the default is TAB and will almost certainly be used
   // but regardless, Emergent files have at least one delim due to marker col
-  
+
   // note: we guess the delims and quotes so we can warn if override seems wrong
   // if it has TABS or COMMA then almost guaranteed that is delim, else assume SPACE
   int tabfreq = 0;
   int commafreq = 0;
   int spacefreq = 0;
   bool useln1 = false;
-  if(ln1.nonempty()) {		// use 2nd line if poss because header can have weird stuff
+  if(ln1.nonempty()) {          // use 2nd line if poss because header can have weird stuff
     tabfreq = ln1.freq('\t');
     commafreq = ln1.freq(',');
     spacefreq = ln1.freq(' ');
     useln1 = true;
   }
   else {
-    useln1 = false;					 // actually not good
+    useln1 = false;                                      // actually not good
     tabfreq = ln0.freq('\t');
     commafreq = ln0.freq(',');
     spacefreq = ln0.freq(' ');
   }
 
-  if(tabfreq > commafreq && tabfreq > spacefreq) 
+  if(tabfreq > commafreq && tabfreq > spacefreq)
     delim = TAB;
   else if (commafreq > tabfreq && commafreq > spacefreq)
     delim = COMMA;
@@ -3268,22 +3326,22 @@ void DataTable::DetermineLoadDataParams(istream& strm,
     else
       // must be a simple file with only one col, so default to most likely ','
       delim = COMMA;
-  }  
-  
+  }
+
   if (delim_req != LD_AUTO) {
     if ((int)delim != (int)delim_req) {
       taMisc::Warning("requested delim and the delim in the file do not seem the same... consider using delim=AUTO");
     }
     delim = (Delimiters)delim_req;
   }
-  
+
   // determining quotes is a bit trickier...
   // native headers will not have quotes so we have to check data line (default is quoted)
   // imported headers *may* be quoted as well as data
   // OpenOffice puts quotes around everything by default
   // Excel 2004 (Mac) doesn't quote headers, and only quotes data sometimes, ex. when it has a comma
   int quotefreq = 0;
-  if(useln1) {			// rely on delimiter parsing for where to look for quotes
+  if(useln1) {                  // rely on delimiter parsing for where to look for quotes
     quotefreq = ln1.freq('"');
   }
   else {
@@ -3300,7 +3358,7 @@ void DataTable::DetermineLoadDataParams(istream& strm,
   }
 
   if(!native) {
-    // get headers/columns 
+    // get headers/columns
     if(!headers)
       ImportHeaderCols(_nilString, ln0, delim, quote_str);
     else
@@ -3309,7 +3367,7 @@ void DataTable::DetermineLoadDataParams(istream& strm,
 }
 
 void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
-				Delimiters delim, bool quote_str) {
+                                Delimiters delim, bool quote_str) {
   char cdlm = GetDelim(delim);
   ResetLoadSchema();
   int hc; int dc;
@@ -3331,11 +3389,11 @@ void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
     cont = !((dc == '\n') || (dc == '\r') || (dc == EOF));
     if(dstr.empty() && hstr.empty()) {
       if (!cont) break;
-      continue;			// for some reason it is empty
+      continue;                 // for some reason it is empty
     }
 
     ValType val_typ = DecodeImportDataType(dstr);
-    if(dat_got_quote) 
+    if(dat_got_quote)
       val_typ = VT_STRING;
     DataCol* da = NULL;
     int col_idx;
@@ -3347,43 +3405,43 @@ void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
       if (col_idx >= 0) da = data.FastEl(col_idx);
       // we only accept _xxx as mat col designator if col already a mat, and cell in bounds
       if(!(da && (cell_idx >= 0) && (da->is_matrix) && (cell_idx < da->cell_size()))) {
-	da = FindMakeCol(hstr, val_typ);
-	col_idx = da->col_idx;
-	cell_idx = -1;
+        da = FindMakeCol(hstr, val_typ);
+        col_idx = da->col_idx;
+        cell_idx = -1;
       }
     }
     else {
       // just make a dummy header if needed, else use existing
       if(last_mat_da && (++last_mat_cell < last_mat_da->cell_size())) {
-	da = last_mat_da;
-	col_idx = nohdr_col_idx;
-	cell_idx = last_mat_cell;
+        da = last_mat_da;
+        col_idx = nohdr_col_idx;
+        cell_idx = last_mat_cell;
       }
       else {
-	if(++nohdr_col_idx < data.size)
-	  da = data[nohdr_col_idx];
-	else
-	  da = FindMakeCol("col_" + String(nohdr_col_idx), val_typ);
-	if(da->isMatrix()) {
-	  last_mat_da = da;
-	  last_mat_cell = 0;
-	  cell_idx = 0;
-	}
-	else {
-	  last_mat_da = NULL;
-	  last_mat_cell = -1;
-	  cell_idx = -1;
-	}
+        if(++nohdr_col_idx < data.size)
+          da = data[nohdr_col_idx];
+        else
+          da = FindMakeCol("col_" + String(nohdr_col_idx), val_typ);
+        if(da->isMatrix()) {
+          last_mat_da = da;
+          last_mat_cell = 0;
+          cell_idx = 0;
+        }
+        else {
+          last_mat_da = NULL;
+          last_mat_cell = -1;
+          cell_idx = -1;
+        }
       }
     }
     if(da->valType() != val_typ) {
       if(da->isNumeric() && val_typ == VT_STRING) {
-	taMisc::Warning("Import data for data table:", name, "column:", da->name,
-			"is numeric but first row of laded data is string format -- import may be bad.");
+        taMisc::Warning("Import data for data table:", name, "column:", da->name,
+                        "is numeric but first row of laded data is string format -- import may be bad.");
       }
       else if((da->isString() && (val_typ != VT_STRING && val_typ != VT_VARIANT))) {
-	taMisc::Warning("Import data for data table:", name, "column:", da->name,
-			"is String but first row of laded data is a numeric format -- import may be bad.");
+        taMisc::Warning("Import data for data table:", name, "column:", da->name,
+                        "is String but first row of laded data is a numeric format -- import may be bad.");
       }
     }
     load_col_idx.Add(da->col_idx);
@@ -3401,7 +3459,7 @@ void DataTable::DecodeImportHeaderName(String nm, String& base_nm, int& cell_idx
     if (ok) {
       base_nm = nm.before(pos_und);
       return;
-    } 
+    }
   }
   base_nm = nm;
   cell_idx = -1;
@@ -3420,26 +3478,26 @@ taBase::ValType DataTable::DecodeImportDataType(const String& dat_str) {
     c = dat_str[idx++];
     if(isspace(c)) continue;
 
-    if((c == '.') || isdigit(c) || (c == '-')) {	// number
+    if((c == '.') || isdigit(c) || (c == '-')) {        // number
       bool not_num = false;
       bool gotreal = false;
       if(c == '.') gotreal = true;
-      
+
       while(idx < dat_str.length()) {
-	c = dat_str[idx++];
-	if(isspace(c)) continue;
-	if((c == '.') || isxdigit(c) || (c == 'x') || (c == 'e') || (c == '-') ||
-	   (c == 'X') || (c == 'E')) {
-	  if(c == '.') gotreal = true;
-	}
-	else {
-	  not_num = true;
-	  break;
-	}
+        c = dat_str[idx++];
+        if(isspace(c)) continue;
+        if((c == '.') || isxdigit(c) || (c == 'x') || (c == 'e') || (c == '-') ||
+           (c == 'X') || (c == 'E')) {
+          if(c == '.') gotreal = true;
+        }
+        else {
+          not_num = true;
+          break;
+        }
       }
       if(!not_num) {
-	if(gotreal) return VT_DOUBLE;
-	return VT_INT;
+        if(gotreal) return VT_DOUBLE;
+        return VT_INT;
       }
     }
   }
@@ -3448,7 +3506,7 @@ taBase::ValType DataTable::DecodeImportDataType(const String& dat_str) {
 }
 
 void DataTable::LoadDataFixed(const String& fname, FixedWidthSpec* fws,
-  bool reset_first) 
+  bool reset_first)
 {
   if (!fws) return;
   taFiler* flr = GetLoadFiler(fname, ".dat,.tsv,.csv,.txt,.log", false, "Data");
@@ -3468,7 +3526,7 @@ void DataTable::WriteClose_impl() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-///		Calculating columns
+///             Calculating columns
 
 bool DataTable::UpdateColCalcs() {
   if(!CheckForCalcs()) return false;
@@ -3517,17 +3575,17 @@ void DataTable::CalcRowCodeGen(String& code_str) {
     for(int j=0;j<calc_rows.size; j++) {
       DataCol* cda = (DataCol*)calc_rows.FastEl(j);
       if(cda == da || cda->calc_expr.expr.contains(da->name)) {
-	is_used = true;
-	break;
+        is_used = true;
+        break;
       }
     }
     if(!is_used) continue;
     if(da->is_matrix)
       code_str += "taMatrix* " + da->name + " = this.GetValAsMatrix(" +
-	String(i) + ", row);\n";
+        String(i) + ", row);\n";
     else
       code_str += "Variant " + da->name + " = this.GetValAsVar(" +
-	String(i) + ", row);\n";
+        String(i) + ", row);\n";
   }
 
   for(int i=0;i<data.size; i++) { // need i to be in data for code gen: not calc_rows!
@@ -3535,11 +3593,11 @@ void DataTable::CalcRowCodeGen(String& code_str) {
     if(da->HasColFlag(DataCol::CALC) && !da->calc_expr.expr.empty()) {
       code_str += da->name + " = " + da->calc_expr.GetFullExpr() + ";\n";
       if(da->is_matrix)
-	code_str += "this.SetValAsMatrix(" + da->name
-	  + ", " + String(i) + ", row);\n";
+        code_str += "this.SetValAsMatrix(" + da->name
+          + ", " + String(i) + ", row);\n";
       else
-	code_str += "this.SetValAsVar("  + da->name
-	  + ", " + String(i) + ", row);\n";
+        code_str += "this.SetValAsVar("  + da->name
+          + ", " + String(i) + ", row);\n";
     }
   }
   calc_rows.Reset();
@@ -3584,11 +3642,11 @@ bool DataTable::CalcAllRows() {
 // core data processing -- see taDataProc for more elaborate options
 
 void DataTable::Sort(Variant col1, bool ascending1,
-		     Variant col2, bool ascending2,
-		     Variant col3, bool ascending3,
-		     Variant col4, bool ascending4,
-		     Variant col5, bool ascending5,
-		     Variant col6, bool ascending6) {
+                     Variant col2, bool ascending2,
+                     Variant col3, bool ascending3,
+                     Variant col4, bool ascending4,
+                     Variant col5, bool ascending5,
+                     Variant col6, bool ascending6) {
 
   DataSortSpec spec;
   if(col1.isStringType() || col1.toInt() >= 0) {
@@ -3645,16 +3703,16 @@ void DataTable::Sort(Variant col1, bool ascending1,
       else sp->order = DataSortEl::DESCENDING;
     }
   }
-  
+
   taDataProc::Sort_impl(this, &spec);
 }
 
 void DataTable::SortColName(const String& col1, bool ascending1,
-			    const String& col2, bool ascending2,
-			    const String& col3, bool ascending3,
-			    const String& col4, bool ascending4,
-			    const String& col5, bool ascending5,
-			    const String& col6, bool ascending6) {
+                            const String& col2, bool ascending2,
+                            const String& col3, bool ascending3,
+                            const String& col4, bool ascending4,
+                            const String& col5, bool ascending5,
+                            const String& col6, bool ascending6) {
 
   DataSortSpec spec;
   if(col1.nonempty()) {
@@ -3693,16 +3751,16 @@ void DataTable::SortColName(const String& col1, bool ascending1,
     if(ascending6) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
   }
-  
+
   taDataProc::Sort_impl(this, &spec);
 }
 
 void DataTable::SortCol(DataCol* col1, bool ascending1,
-			DataCol* col2, bool ascending2,
-			DataCol* col3, bool ascending3,
-			DataCol* col4, bool ascending4,
-			DataCol* col5, bool ascending5,
-			DataCol* col6, bool ascending6) {
+                        DataCol* col2, bool ascending2,
+                        DataCol* col3, bool ascending3,
+                        DataCol* col4, bool ascending4,
+                        DataCol* col5, bool ascending5,
+                        DataCol* col6, bool ascending6) {
 
   DataSortSpec spec;
   if(col1) {
@@ -3741,13 +3799,13 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
     if(ascending6) sp->order = DataSortEl::ASCENDING;
     else sp->order = DataSortEl::DESCENDING;
   }
-  
+
   taDataProc::Sort_impl(this, &spec);
 }
 
 bool DataTable::Filter(const String& filter_expr) {
   if(TestError(filter_expr.empty(), "Filter",
-	       "empty filter expression -- must specify a filter condition!"))
+               "empty filter expression -- must specify a filter condition!"))
     return false;
   InitCalcScript();
   calc_script->ClearAll();
@@ -3757,18 +3815,18 @@ bool DataTable::Filter(const String& filter_expr) {
   code_str += "for(int row=this.rows-1;row >= 0; row--) {\n";
   for(int i=0;i<data.size; i++) {
     DataCol* da = data.FastEl(i);
-    // only gen if possibly used 
+    // only gen if possibly used
     if(!filter_expr.contains(da->name)) continue;
     if(da->is_matrix)
       code_str += "taMatrix* " + da->name + " = this.GetValAsMatrix(" +
-	String(i) + ", row);\n";
+        String(i) + ", row);\n";
     else
       code_str += "Variant " + da->name + " = this.GetValAsVar(" +
-	String(i) + ", row);\n";
+        String(i) + ", row);\n";
   }
 
   code_str += "if(" + filter_expr + ") continue;\n"; // if ok, continue
-  code_str += "this.RemoveRows(row,1);\n";		     // else remove
+  code_str += "this.RemoveRows(row,1);\n";                   // else remove
   code_str += "}\n";
   code_str += "this.DataUpdate(false);\n";
   bool ok = calc_script->CompileCode(code_str);
@@ -3779,7 +3837,7 @@ bool DataTable::Filter(const String& filter_expr) {
 }
 
 bool DataTable::GroupMeanSEM(DataTable* dest_data, DataCol* col1,
-			     DataCol* col2, DataCol* col3, DataCol* col4) {
+                             DataCol* col2, DataCol* col3, DataCol* col4) {
   DataGroupSpec spec;
   if(col1) {
     DataGroupEl* sp = (DataGroupEl*)spec.ops.New(1);
@@ -3835,7 +3893,7 @@ String DataTable::ColStatsName(const String& col_nm) {
 
 
 ////////////////////////////////////////////////////////////////////////////
-//		DMEM
+//              DMEM
 
 void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
 #ifdef DMEM_COMPILE
@@ -3851,7 +3909,7 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
   int st_send_row = rows - n_rows;
   int st_recv_row = rows;
   int n_recv_rows = np * n_rows;
-  AddRows(n_recv_rows);		// make room for new ones
+  AddRows(n_recv_rows);         // make room for new ones
 
   static char_Array char_send;
   static char_Array char_recv;
@@ -3869,45 +3927,45 @@ void DataTable::DMem_ShareRows(MPI_Comm comm, int n_rows) {
     switch(da->valType()) {
     case VT_FLOAT:
       DMEM_MPICALL(MPI_Allgather(&(((float_Matrix*)da_mat)->el[send_idx]), n_send, MPI_FLOAT,
-				 &(((float_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_FLOAT,
-				 comm), "DataTable::DMem_ShareRows", "Allgather");
+                                 &(((float_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_FLOAT,
+                                 comm), "DataTable::DMem_ShareRows", "Allgather");
       break;
     case VT_DOUBLE:
       DMEM_MPICALL(MPI_Allgather(&(((double_Matrix*)da_mat)->el[send_idx]), n_send, MPI_DOUBLE,
-				 &(((double_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_DOUBLE,
-				 comm), "DataTable::DMem_ShareRows", "Allgather");
+                                 &(((double_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_DOUBLE,
+                                 comm), "DataTable::DMem_ShareRows", "Allgather");
       break;
     case VT_INT:
       DMEM_MPICALL(MPI_Allgather(&(((int_Matrix*)da_mat)->el[send_idx]), n_send, MPI_INT,
-				 &(((int_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_INT,
-				 comm), "DataTable::DMem_ShareRows", "Allgather");
+                                 &(((int_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_INT,
+                                 comm), "DataTable::DMem_ShareRows", "Allgather");
       break;
     case VT_BYTE:
       DMEM_MPICALL(MPI_Allgather(&(((byte_Matrix*)da_mat)->el[send_idx]), n_send, MPI_BYTE,
-				 &(((byte_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_BYTE,
-				 comm), "DataTable::DMem_ShareRows", "Allgather");
+                                 &(((byte_Matrix*)da_mat)->el[recv_idx]), n_send, MPI_BYTE,
+                                 comm), "DataTable::DMem_ShareRows", "Allgather");
       break;
     case VT_STRING: {
       int n_recv = n_recv_rows * frsz;
       char_send.SetSize(n_send * max_str_len);
       char_recv.SetSize(n_recv * max_str_len);
       for(int i=0;i<n_send;i++) {
-	String& str = ((String_Matrix*)da_mat)->FastEl_Flat(send_idx + i);
-	int st_idx = i * max_str_len;
-	int mxln = MIN(str.length(), max_str_len-1);
-	int j;
-	for(j=0;j<mxln;j++) {
-	  char_send[st_idx + j] = str[j];
-	}
-	char_send[st_idx + j] = '\0';
+        String& str = ((String_Matrix*)da_mat)->FastEl_Flat(send_idx + i);
+        int st_idx = i * max_str_len;
+        int mxln = MIN(str.length(), max_str_len-1);
+        int j;
+        for(j=0;j<mxln;j++) {
+          char_send[st_idx + j] = str[j];
+        }
+        char_send[st_idx + j] = '\0';
       }
       DMEM_MPICALL(MPI_Allgather(char_send.el, n_send * max_str_len, MPI_CHAR,
-				 char_recv.el, n_send * max_str_len, MPI_CHAR,
-				 comm), "DataTable::DMem_ShareRows", "Allgather");
+                                 char_recv.el, n_send * max_str_len, MPI_CHAR,
+                                 comm), "DataTable::DMem_ShareRows", "Allgather");
       for(int i=0;i<n_recv;i++) {
-	String& str = ((String_Matrix*)da_mat)->FastEl_Flat(recv_idx + i);
-	int st_idx = i * max_str_len;
-	str = &(char_recv[st_idx]);
+        String& str = ((String_Matrix*)da_mat)->FastEl_Flat(recv_idx + i);
+        int st_idx = i * max_str_len;
+        str = &(char_recv[st_idx]);
       }
       break;
     }
