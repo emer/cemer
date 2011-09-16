@@ -219,16 +219,15 @@ void LeabraConSpec::InitLinks() {
 }
 
 void LeabraConSpec::UpdateAfterEdit_impl() {
-  static bool in_uae = false;	// prevent recurrent calls
-  if(in_uae) return;
-  in_uae = true;
+  if(HasBaseFlag(BF_MISC2)) return; // flag used for marking UAE
+  SetBaseFlag(BF_MISC2);	      // now in it, mark..
   inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit_NoGui();
   lmix.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui();	// this calls owner
   rel_net_adapt.UpdateAfterEdit_NoGui();
   CreateWtSigFun();
-  in_uae = false;
+  ClearBaseFlag(BF_MISC2);	// done..
 }
 
 bool LeabraConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
