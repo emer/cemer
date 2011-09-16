@@ -110,27 +110,19 @@ void LearnMixSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
-  thr_l_mix = 0.005f;
-  thr_cpca_mix = 0.0f;
+  thr_l_mix = 0.01f;
   s_mix = 0.9f;
   d_rev = 0.10f;
   d_thr = 0.0001f;
   m_mix = 1.0f - s_mix;
-  thr_m_mix = 1.0f - (thr_l_mix + thr_cpca_mix);
+  thr_m_mix = 1.0f - thr_l_mix;
   d_rev_ratio = -(1.0f - d_rev) / d_rev;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   m_mix = 1.0f - s_mix;
-  
-  if(thr_l_mix + thr_cpca_mix > 1.0) {
-    float norm = thr_l_mix + thr_cpca_mix;
-    thr_l_mix = thr_l_mix / norm;
-    thr_cpca_mix = thr_cpca_mix / norm;
-  }
-
-  thr_m_mix = 1.0f - (thr_l_mix + thr_cpca_mix);
+  thr_m_mix = 1.0f - thr_l_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   if(d_rev > 0.0f)
     d_rev_ratio = -(1.0f - d_rev) / d_rev;

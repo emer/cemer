@@ -243,8 +243,7 @@ INHERITED(SpecMemberBase)
 public:
 
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.01 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
-  float		thr_cpca_mix;	// #DEF_0.001:1.0 [0.01 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
-  float		thr_m_mix;	// #READ_ONLY = 1 - (thr_l_mix + thr_cpca_mix) -- contribution of error-driven learning
+  float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
@@ -3454,8 +3453,7 @@ C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
   float srm = ru->avg_m * su_avg_m;
   float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
   float lthr = su_act_mult * ru->avg_l;
-  float cpcathr = xcal.thr_cpca_mix * cn->wt * ru->avg_s; // CPCA = y w 
-  float effthr = xcal.thr_m_mix * srm + lthr + cpcathr;
+  float effthr = xcal.thr_m_mix * srm + lthr;
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
