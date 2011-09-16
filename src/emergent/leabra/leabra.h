@@ -3461,7 +3461,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   float su_avg_s = su->avg_s;
   float su_avg_m = su->avg_m;
 
-  float su_act_mult = xcal.thr_l_mix * su->avg_s;
+  float su_act_mult = xcal.thr_l_mix * su->avg_m;
 
   for(int i=0; i<cg->size; i++) {
     LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
