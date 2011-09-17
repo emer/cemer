@@ -1170,6 +1170,11 @@ const String MemberAssign::GenCssBody_impl(int indent_level) {
   if (update_after) {
     rval += cssMisc::Indent(indent_level);
     rval += obj->name + "->UpdateAfterEdit();\n";
+    if(path.contains('.')) {
+      // also do uae on immediate owner!
+      rval += cssMisc::Indent(indent_level);
+      rval += obj->name + "->" + path.before('.',-1) + "->UpdateAfterEdit();\n";
+    }
   }
   if(IsVerbose())
     rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"assigned " + obj->name + "->" + path
@@ -1246,6 +1251,10 @@ const String MemberFmArg::GenCssBody_impl(int indent_level) {
   rval += "arg_str;\n";
   if (update_after) {
     rval += il2 + obj->name + "->UpdateAfterEdit();\n";
+    if(path.contains('.')) {
+      // also do uae on immediate owner!
+      rval += il2 + obj->name + "->" + path.before('.',-1) + "->UpdateAfterEdit();\n";
+    }
   }
 
   if(!quiet || IsVerbose())

@@ -1,10 +1,76 @@
-// ta_Dump File v2.0
-Program .projects[0].programs[0] { 
-  ProgVar_List @.args = [1] {
-    ProgVar @[0] { };
+// ta_Dump File v3.0 -- code v5.2.0.0 rev4999
+Program .projects[0].programs.gp[0][9] { 
+  ProgObjList @.objs = [4] {
+    Relation @[0] { };
+    DataTable @[1] { 
+      DataTableCols @.data = [25] {
+	float_Data @[0] { };
+	float_Data @[1] { };
+	float_Data @[2] { };
+	float_Data @[3] { };
+	float_Data @[4] { };
+	float_Data @[5] { };
+	float_Data @[6] { };
+	float_Data @[7] { };
+	float_Data @[8] { };
+	float_Data @[9] { };
+	float_Data @[10] { };
+	float_Data @[11] { };
+	float_Data @[12] { };
+	float_Data @[13] { };
+	float_Data @[14] { };
+	float_Data @[15] { };
+	float_Data @[16] { };
+	float_Data @[17] { };
+	float_Data @[18] { };
+	float_Data @[19] { };
+	float_Data @[20] { };
+	float_Data @[21] { };
+	float_Data @[22] { };
+	float_Data @[23] { };
+	float_Data @[24] { };
+      };
+    };
+    DataTable @[2] { 
+      DataTableCols @.data = [4] {
+	int_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @[0] { };
+     };
+};
+	float_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @[0] { };
+     };
+};
+	float_Data @[2] { };
+	float_Data @[3] { };
+      };
+    };
+    DataTable @[3] { 
+      DataTableCols @.data = [7] {
+	int_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @[0] { };
+     };
+};
+	float_Data @[1] { };
+	float_Data @[2] { };
+	float_Data @[3] { };
+	float_Data @[4] { };
+	float_Data @[5] { };
+	float_Data @[6] { };
+      };
+    };
   };
 
-  ProgVar_List @.vars = [11] {
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [0] {
+  };
+
+  ProgVar_List @.vars = [14] {
     ProgVar @[0] { };
     ProgVar @[1] { };
     ProgVar @[2] { };
@@ -16,54 +82,96 @@ Program .projects[0].programs[0] {
     ProgVar @[8] { };
     ProgVar @[9] { };
     ProgVar @[10] { };
+    ProgVar @[11] { };
+    ProgVar @[12] { };
+    ProgVar @[13] { };
   };
 
-  ProgEl_List @.prog_code = [26] {
-    Comment @[0] { };
-    MiscCall @[1] { 
-      ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
+  Function_List @.functions = [1] {
+    Function @[0] { 
+      ProgVar_List @.args = [2] {
+	ProgVar @[0] { };
+	ProgVar @[1] { };
+      };
+
+      ProgEl_List @.fun_code = [8] {
+	ProgVars @[0] { 
+	  ProgVar_List @.local_vars = [1] {
+	    ProgVar @[0] { };
+	  };
+	};
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	MethodCall @[3] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	MethodCall @[4] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	MethodCall @[5] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	MethodCall @[6] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	MethodCall @[7] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
       };
     };
-    MiscCall @[2] { 
-      ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
+  };
+
+  ProgEl_List @.load_code = [0] {
+  };
+
+  ProgEl_List @.init_code = [0] {
+  };
+
+  ProgEl_List @.prog_code = [29] {
+    DataGroupProg @[0] { 
+      DataOpList @.ops = [7] {
+	DataGroupEl @[0] { };
+	DataGroupEl @[1] { };
+	DataGroupEl @[2] { };
+	DataGroupEl @[3] { };
+	DataGroupEl @[4] { };
+	DataGroupEl @[5] { };
+	DataGroupEl @[6] { };
       };
     };
-    MiscCall @[3] { 
-      ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-      };
-    };
-    MiscCall @[4] { };
-    MethodCall @[5] { 
-      ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-      };
-    };
-    MethodCall @[6] { 
-      ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-      };
-    };
-    Comment @[7] { };
-    MethodCall @[8] { };
-    MethodCall @[9] { 
-      ProgArg_List @.meth_args = [4] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-	ProgArg @[3] { };
-      };
-    };
-    DataGroupProg @[10] { 
+    DataGroupProg @[1] { 
       DataOpList @.ops = [4] {
 	DataGroupEl @[0] { };
 	DataGroupEl @[1] { };
@@ -71,66 +179,649 @@ Program .projects[0].programs[0] {
 	DataGroupEl @[3] { };
       };
     };
-    PrintExpr @[11] { };
-    MethodCall @[12] { 
+    MemberMethodCall @[2] { 
       ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
       };
     };
-    PrintVar @[13] { };
+    Comment @[3] { };
+    MathCall @[4] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MemberAssign @[5] { };
+    MemberAssign @[6] { };
+    MathCall @[7] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    Comment @[8] { };
+    MemberAssign @[9] { };
+    MathCall @[10] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    Comment @[11] { };
+    MathCall @[12] { 
+      ProgArg_List @.meth_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    MemberAssign @[13] { };
     MathCall @[14] { 
       ProgArg_List @.meth_args = [2] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
       };
     };
-    UserScript @[15] { };
-    PrintExpr @[16] { };
+    Comment @[15] { };
+    MethodCall @[16] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
     MethodCall @[17] { 
-      ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
-    PrintVar @[18] { };
-    UserScript @[19] { };
-    PrintExpr @[20] { };
-    MethodCall @[21] { 
-      ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
-    PrintVar @[22] { };
-    MathCall @[23] { 
-      ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-      };
-    };
-    UserScript @[24] { };
-    DataAnalCall @[25] { 
-      ProgArg_List @.meth_args = [9] {
+      ProgArg_List @.meth_args = [3] {
 	ProgArg @[0] { };
 	ProgArg @[1] { };
 	ProgArg @[2] { };
-	ProgArg @[3] { };
-	ProgArg @[4] { };
-	ProgArg @[5] { };
-	ProgArg @[6] { };
-	ProgArg @[7] { };
-	ProgArg @[8] { };
+      };
+    };
+    Comment @[18] { };
+    MethodCall @[19] { 
+      ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+      };
+    };
+    FunctionCall @[20] { 
+      ProgArg_List @.fun_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    Comment @[21] { };
+    MethodCall @[22] { 
+      ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+      };
+    };
+    FunctionCall @[23] { 
+      ProgArg_List @.fun_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    Comment @[24] { };
+    MethodCall @[25] { 
+      ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+      };
+    };
+    FunctionCall @[26] { 
+      ProgArg_List @.fun_args = [2] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+      };
+    };
+    DoneWritingDataRow @[27] { };
+    IfElse @[28] { 
+      ProgEl_List @.true_code = [12] {
+	PrintExpr @[0] { };
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	PrintVar @[2] { };
+	PrintExpr @[3] { };
+	PrintExpr @[4] { };
+	MethodCall @[5] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	PrintVar @[6] { };
+	PrintExpr @[7] { };
+	PrintExpr @[8] { };
+	MethodCall @[9] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	PrintVar @[10] { };
+	PrintExpr @[11] { };
+      };
+
+      ProgEl_List @.false_code = [0] {
       };
     };
   };
 };
-Program .projects[0].programs[0] {
+Program .projects[0].programs.gp[0][9] {
  name="EpochsToTrain";
+ short_nm="EpchTTr";
  tags="Data, Analysis, Epoch, Training";
  desc="performs various stats on epochs to train to criterion, across multiple batches, including an additional err threshold that can be different than the training stopping criterion, and also the minimum error value achieved across batches";
- flags=STARTUP_RUN;
+ flags=NO_STOP_STEP;
  objs {
   name=;
-  el_typ=taNBase;
+  el_typ=Relation;
   el_def=0;
+  Relation @[0] {name="rel": rel=EQUAL: val=27: use_var=0: var=NULL: };
+  DataTable @[1] {
+   name="EpcToTrain_Stats";
+   desc="final stats for the epochs to train";
+   data {
+    name="data";
+    el_typ=float_Data;
+    el_def=0;
+    float_Data @[0] {
+     name="n";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[1] {
+     name="n_at_max";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[2] {
+     name="crit_min";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[3] {
+     name="crit_max";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[4] {
+     name="crit_mean";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[5] {
+     name="crit_median";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[6] {
+     name="crit_mode";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[7] {
+     name="crit_stdev";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[8] {
+     name="crit_sem";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[9] {
+     name="n_failed";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[10] {
+     name="thr_min";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[11] {
+     name="thr_max";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[12] {
+     name="thr_mean";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[13] {
+     name="thr_median";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[14] {
+     name="thr_mode";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[15] {
+     name="thr_stdev";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[16] {
+     name="thr_sem";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[17] {
+     name="n_at_min";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[18] {
+     name="min_min";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[19] {
+     name="min_max";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[20] {
+     name="min_mean";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[21] {
+     name="min_median";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[22] {
+     name="min_mode";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[23] {
+     name="min_stdev";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[24] {
+     name="min_sem";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[2] {
+   name="EpochData_Group";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColTp;
+    el_def=0;
+    int_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_44";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="batch_group";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_46";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="epoch_last";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[2] {
+     name="cnt_err_find_first";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[3] {
+     name="cnt_err_min";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[3] {
+   name="EpochData_AvgTraj";
+   desc=;
+   data {
+    name="data";
+    el_typ=int_Data;
+    el_def=0;
+    int_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_45";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="epoch";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[1] {
+     name="avg_sse";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[2] {
+     name="cnt_err";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[3] {
+     name="avg_ext_rew";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[4] {
+     name="avg_cycles";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[5] {
+     name="epoch_time_tot";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[6] {
+     name="epoch_time_usr";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
  };
  types {
   name=;
@@ -141,14 +832,6 @@ Program .projects[0].programs[0] {
   name=;
   el_typ=ProgVar;
   el_def=0;
-  ProgVar @[0] {
-   name="log_fname";
-   var_type=T_String;
-   string_val=;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
-   desc="log file name to load -- leave empty to choose from browser";
-  };
  };
  vars {
   name=;
@@ -157,100 +840,504 @@ Program .projects[0].programs[0] {
   ProgVar @[0] {
    name="err_thresh";
    var_type=T_Int;
-   int_val=0;
+   int_val=5;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
    desc="alternative error threshold to use";
+   init_from=NULL;
   };
   ProgVar @[1] {
-   name="kern_width";
-   var_type=T_Int;
-   int_val=14;
+   name="print_stats";
+   var_type=T_Bool;
+   bool_val=1;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
-   desc="width of the smoothing gaussian kernel for smoothing the epoch data";
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="generate printed output (on css console or to log file)";
+   init_from=NULL;
   };
   ProgVar @[2] {
-   name="kern_sig";
-   var_type=T_Real;
-   real_val=7;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK;
-   desc="sigma (standard deviation) of the gaussian smoothing kernel";
-  };
-  ProgVar @[3] {
    name="EpochData";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data[0]$0$;
+   object_val=.projects[0].data.gp[1][1]$$<DataTable,EpochOutputData>;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
    desc=;
+   init_from=NULL;
   };
-  ProgVar @[4] {
+  ProgVar @[3] {
    name="EpochData_Group";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[2][0]$1$;
-   objs_ptr=0;
-   flags=NULL_CHECK;
+   object_val=.projects[0].programs.gp[0][9].objs[2]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
    desc=;
+   init_from=NULL;
   };
-  ProgVar @[5] {
+  ProgVar @[4] {
    name="stats";
    var_type=T_String;
-   string_val="n=10; min=0; max=0; mean=0; median=0; mode=0; stdev=0; sem=0;";
+   string_val="n=10; min=27; max=40; mean=33.5; median=36; mode=29; stdev=4.6744; sem=1.55813;";
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
    desc=;
+   init_from=NULL;
   };
-  ProgVar @[6] {
+  ProgVar @[5] {
    name="max_idx";
    var_type=T_Int;
-   int_val=0;
+   int_val=7;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
    desc=;
+   init_from=NULL;
   };
-  ProgVar @[7] {
+  ProgVar @[6] {
    name="max_val";
    var_type=T_Real;
-   real_val=3.783505853677006e-44;
+   real_val=199;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
    desc=;
+   init_from=NULL;
+  };
+  ProgVar @[7] {
+   name="n_at_max";
+   var_type=T_Real;
+   real_val=10;
+   objs_ptr=0;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
   };
   ProgVar @[8] {
-   name="min_val";
+   name="n_failed";
    var_type=T_Real;
-   real_val=0;
+   real_val=10;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
    desc=;
+   init_from=NULL;
   };
   ProgVar @[9] {
-   name="EpochData_SmoothGauss";
-   var_type=T_Object;
-   object_type=DataTable;
-   object_val=.projects[0].data.gp[2][1]$2$;
+   name="n_at_min";
+   var_type=T_Real;
+   real_val=1;
    objs_ptr=0;
-   flags=NULL_CHECK;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
    desc=;
+   init_from=NULL;
   };
   ProgVar @[10] {
-   name="EpochsToTrain";
-   var_type=T_Object;
-   object_type=Program;
-   object_val=.projects[0].programs[0]$3$;
+   name="min_val";
+   var_type=T_Real;
+   real_val=27;
    objs_ptr=0;
-   flags=NULL_CHECK;
-   desc="pointer to ourself so we can set our own variables from startup args";
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[11] {
+   name="EpochData_AvgTraj";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[0][9].objs[3]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[12] {
+   name="rel";
+   var_type=T_Object;
+   object_type=Relation;
+   object_val=.projects[0].programs.gp[0][9].objs[0]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[13] {
+   name="EpcToTrain_Stats";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[0][9].objs[1]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
   };
  };
  functions {
   name=;
-  el_typ=ProgEl;
+  el_typ=Function;
   el_def=0;
+  Function @[0] {
+   desc="save stats from given ar, to column with given previx";
+   flags=0;
+   name="SaveStats";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="data_vec";
+     var_type=T_Object;
+     object_type=float_Matrix;
+     object_val=NULL;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="col_prefix";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   fun_code {
+    name="ProgEl_List_160";
+    el_typ=ProgVars;
+    el_def=0;
+    ProgVars @[0] {
+     desc=;
+     flags=0;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="tmp_idx";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=NULL_CHECK|SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=.projects[0].programs.gp[0][9].vars[13]$$;
+     method=DataTable::SetVal;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="const Variant&";
+       name="val";
+       required=1;
+       def_val=;
+       expr {
+	expr="taMath_float::vec_min(data_vec, tmp_idx)";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="col_prefix + \"_min\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="row";
+       required=1;
+       def_val=;
+       expr {
+	expr="-1";
+       };
+      };
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[0][9].vars[13]$;
+     method=DataTable::SetVal;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="const Variant&";
+       name="val";
+       required=1;
+       def_val=;
+       expr {
+	expr="taMath_float::vec_max(data_vec, tmp_idx)";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="col_prefix + \"_max\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="row";
+       required=1;
+       def_val=;
+       expr {
+	expr="-1";
+       };
+      };
+     };
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[0][9].vars[13]$;
+     method=DataTable::SetVal;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="const Variant&";
+       name="val";
+       required=1;
+       def_val=;
+       expr {
+	expr="taMath_float::vec_mean(data_vec)";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="col_prefix+ \"_mean\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="row";
+       required=1;
+       def_val=;
+       expr {
+	expr="-1";
+       };
+      };
+     };
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[0][9].vars[13]$;
+     method=DataTable::SetVal;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="const Variant&";
+       name="val";
+       required=1;
+       def_val=;
+       expr {
+	expr="taMath_float::vec_median(data_vec)";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="col_prefix+ \"_median\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="row";
+       required=1;
+       def_val=;
+       expr {
+	expr="-1";
+       };
+      };
+     };
+    };
+    MethodCall @[5] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[0][9].vars[13]$;
+     method=DataTable::SetVal;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="const Variant&";
+       name="val";
+       required=1;
+       def_val=;
+       expr {
+	expr="taMath_float::vec_mode(data_vec)";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="col_prefix + \"_mode\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="row";
+       required=1;
+       def_val=;
+       expr {
+	expr="-1";
+       };
+      };
+     };
+    };
+    MethodCall @[6] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[0][9].vars[13]$;
+     method=DataTable::SetVal;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="const Variant&";
+       name="val";
+       required=1;
+       def_val=;
+       expr {
+	expr="taMath_float::vec_std_dev(data_vec)";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="col_prefix + \"_stdev\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="row";
+       required=1;
+       def_val=;
+       expr {
+	expr="-1";
+       };
+      };
+     };
+    };
+    MethodCall @[7] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[0][9].vars[13]$;
+     method=DataTable::SetVal;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_Variant_ref;
+       type="const Variant&";
+       name="val";
+       required=1;
+       def_val=;
+       expr {
+	expr="taMath_float::vec_sem(data_vec)";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="col_prefix+ \"_sem\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=int;
+       type="int";
+       name="row";
+       required=1;
+       def_val=;
+       expr {
+	expr="-1";
+       };
+      };
+     };
+    };
+   };
+  };
  };
  load_code {
   name=;
@@ -266,371 +1353,54 @@ Program .projects[0].programs[0] {
   name=;
   el_typ=ProgEl;
   el_def=0;
-  Comment @[0] {
-   desc="startup arg processing";
-   flags=;
-  };
-  MiscCall @[1] {
+  DataGroupProg @[0] {
    desc=;
-   flags=;
-   result_var=NULL;
-   object_type=taMisc;
-   method=taMisc::AddArgName;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="flag";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"logfile=\"";
-      flags=;
-      var_expr="\"logfile=\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
+   flags=0;
+   src_data_var=.projects[0].programs.gp[0][9].vars[2]$$;
+   dest_data_var=.projects[0].programs.gp[0][9].vars[11]$$;
+   group_spec {
+    name="group_spec";
+    ops {
+     name="DataOpList_9";
+     el_typ=DataGroupEl;
+     el_def=0;
+     DataGroupEl @[0] {
+      col_name="epoch";
+      agg {name="AggregateSpec_48": op=GROUP: rel={name="Relation_50": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[1] {
+      col_name="avg_sse";
+      agg {name="AggregateSpec_49": op=MEAN: rel={name="Relation_51": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[2] {
+      col_name="cnt_err";
+      agg {name="AggregateSpec_50": op=MEAN: rel={name="Relation_52": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[3] {
+      col_name="avg_ext_rew";
+      agg {name="AggregateSpec_51": op=MEAN: rel={name="Relation_53": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[4] {
+      col_name="avg_cycles";
+      agg {name="AggregateSpec_52": op=MEAN: rel={name="Relation_54": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[5] {
+      col_name="epoch_time_tot";
+      agg {name="AggregateSpec_53": op=MEAN: rel={name="Relation_55": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     };
+     DataGroupEl @[6] {
+      col_name="epoch_time_usr";
+      agg {name="AggregateSpec_54": op=MEAN: rel={name="Relation_56": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
     };
-    ProgArg @[1] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="name";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"LogFile\"";
-      flags=;
-      var_expr="\"LogFile\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
+    append_agg_name=0;
    };
   };
-  MiscCall @[2] {
+  DataGroupProg @[1] {
    desc=;
-   flags=;
-   result_var=NULL;
-   object_type=taMisc;
-   method=taMisc::AddArgName;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="flag";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"log=\"";
-      flags=;
-      var_expr="\"log=\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[1] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="name";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"LogFile\"";
-      flags=;
-      var_expr="\"LogFile\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  MiscCall @[3] {
-   desc=;
-   flags=;
-   result_var=NULL;
-   object_type=taMisc;
-   method=taMisc::AddArgName;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="flag";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"err_thresh=\"";
-      flags=;
-      var_expr="\"err_thresh=\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[1] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="name";
-     required=0;
-     def_val="\"\"";
-     expr {
-      expr="\"ErrThresh\"";
-      flags=;
-      var_expr="\"ErrThresh\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  MiscCall @[4] {
-   desc="this processes args passed on command line with new arg values added above";
-   flags=;
-   result_var=NULL;
-   object_type=taMisc;
-   method=taMisc::UpdateArgs;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-   };
-  };
-  MethodCall @[5] {
-   desc=;
-   flags=;
-   result_var=NULL;
-   obj=.projects[0].programs[0].vars[10]$4$;
-   method=Program::SetVarFmArg;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="arg_nm";
-     required=1;
-     def_val=;
-     expr {
-      expr="\"LogFile\"";
-      flags=;
-      var_expr="\"LogFile\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[1] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="var_nm";
-     required=1;
-     def_val=;
-     expr {
-      expr="\"log_fname\"";
-      flags=;
-      var_expr="\"log_fname\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[2] {
-     arg_type=bool;
-     type="bool";
-     name="quiet";
-     required=0;
-     def_val="false";
-     expr {
-      expr="true";
-      flags=;
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  MethodCall @[6] {
-   desc=;
-   flags=;
-   result_var=NULL;
-   obj=$4$;
-   method=Program::SetVarFmArg;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="arg_nm";
-     required=1;
-     def_val=;
-     expr {
-      expr="\"ErrThresh\"";
-      flags=;
-      var_expr="\"ErrThresh\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[1] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="var_nm";
-     required=1;
-     def_val=;
-     expr {
-      expr="\"err_thresh\"";
-      flags=;
-      var_expr="\"err_thresh\"";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[2] {
-     arg_type=bool;
-     type="bool";
-     name="quiet";
-     required=0;
-     def_val="false";
-     expr {
-      expr="true";
-      flags=;
-      var_expr="true";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  Comment @[7] {
-   desc="Load the data -- if log_fname is empty, then it prompts you";
-   flags=;
-  };
-  MethodCall @[8] {
-   desc=;
-   flags=;
-   result_var=NULL;
-   obj=.projects[0].programs[0].vars[3]$5$;
-   method=DataTable::RemoveAllRows;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-   };
-  };
-  MethodCall @[9] {
-   desc=;
-   flags=;
-   result_var=NULL;
-   obj=$5$;
-   method=DataTable::LoadData;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_taString_ref;
-     type="const taString&";
-     name="fname";
-     required=1;
-     def_val=;
-     expr {
-      expr="log_fname";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ log_fname;      };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[1] {
-     arg_type=DataTable::Delimiters;
-     type="DataTable::Delimiters";
-     name="delim";
-     required=0;
-     def_val="DataTable::TAB";
-     expr {
-      expr=;
-      flags=;
-      var_expr=;
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[2] {
-     arg_type=bool;
-     type="bool";
-     name="quote_str";
-     required=0;
-     def_val="true";
-     expr {
-      expr=;
-      flags=;
-      var_expr=;
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[3] {
-     arg_type=int;
-     type="int";
-     name="max_recs";
-     required=0;
-     def_val="-1";
-     expr {
-      expr=;
-      flags=;
-      var_expr=;
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  DataGroupProg @[10] {
-   desc=;
-   flags=;
-   src_data_var=$5$;
-   dest_data_var=.projects[0].programs[0].vars[4]$6$;
+   flags=0;
+   src_data_var=$.projects[0].programs.gp[0][9].vars[2]$;
+   dest_data_var=.projects[0].programs.gp[0][9].vars[3]$$;
    group_spec {
     name="group_spec";
     ops {
@@ -647,465 +1417,715 @@ Program .projects[0].programs[0] {
      };
      DataGroupEl @[2] {
       col_name="cnt_err";
-      agg {name="": op=FIND_FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=.projects[0].programs[0].vars[0]$7$: }: };
+      agg {name="": op=FIND_FIRST: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=1: var=.projects[0].programs.gp[0][9].vars[0]$$: }: };
      };
      DataGroupEl @[3] {
       col_name="cnt_err";
       agg {name="": op=MIN: rel={name="": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
      };
     };
+    append_agg_name=1;
    };
   };
-  PrintExpr @[11] {
-   desc=;
-   flags=;
-   expr {
-    expr="\"=====================\\n\" << \"Epochs to criterion:\"";
-    flags=;
-    var_expr="\"=====================\\n\" << \"Epochs to criterion:\"";
-    vars {
-    };
-    var_names{     };
-    bad_vars{     };
-   };
-  };
-  MethodCall @[12] {
-   desc=;
-   flags=;
-   result_var=.projects[0].programs[0].vars[5]$8$;
-   obj=$6$;
-   method=DataTable::ColStats;
+  MemberMethodCall @[2] {
+   desc="change type to float, to enable subsequent analysis operations";
+   flags=0;
+   obj=$.projects[0].programs.gp[0][9].vars[3]$;
+   path="data.epoch_last";
+   result_var=NULL;
+   method=DataCol::ChangeColType;
    meth_args {
     name=;
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=DataCol_ptr;
-     type="DataCol*";
-     name="col";
-     required=0;
+     arg_type=taBase::ValType;
+     type="taBase::ValType";
+     name="new_type";
+     required=1;
      def_val=;
      expr {
-      expr="EpochData_Group.data.epoch_last";
-      flags=;
-      var_expr="$#0#$.data.epoch_last";
-      vars {
-      };
-      var_names{ EpochData_Group;      };
-      bad_vars{       };
+      expr="taBase::VT_FLOAT";
      };
     };
    };
   };
-  PrintVar @[13] {
-   desc=;
-   flags=;
-   message=;
-   print_var=$8$;
-   print_var2=NULL;
-   print_var3=NULL;
-   print_var4=NULL;
-   print_var5=NULL;
-   print_var6=NULL;
+  Comment @[3] {
+   desc="= compute n_at_max =";
+   flags=0;
   };
-  MathCall @[14] {
+  MathCall @[4] {
    desc=;
-   flags=;
-   result_var=.projects[0].programs[0].vars[7]$9$;
+   flags=0;
+   result_var=.projects[0].programs.gp[0][9].vars[6]$$;
    object_type=taMath_float;
    method=taMath_float::vec_max;
    meth_args {
-    name=;
+    name="ProgArg_List_0";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
      arg_type=const_float_Matrix_ptr;
      type="const float_Matrix*";
      name="vec";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="EpochData_Group.data.epoch_last.ar";
-      flags=;
-      var_expr="$#0#$.data.epoch_last.ar";
-      vars {
-      };
-      var_names{ EpochData_Group;      };
-      bad_vars{       };
      };
     };
     ProgArg @[1] {
      arg_type=int_ref;
      type="int&";
      name="idx";
-     required=0;
+     required=1;
      def_val=;
      expr {
       expr="max_idx";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ max_idx;      };
-      bad_vars{       };
      };
     };
    };
   };
-  UserScript @[15] {
+  MemberAssign @[5] {
    desc=;
-   flags=;
-   script {
-    expr="Relation rel;  rel.rel = Relation::EQUAL; rel.val = max_val;
-cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_last.ar, rel) << endl;
-";
-    flags=NO_VAR_ERRS;
-    var_expr="Relation rel;  rel.rel = Relation::EQUAL; rel.val = $#0#$;
-cerr << \"N at Max: \" << taMath_float::vec_count(EpochData_Group.data.epoch_last.ar, rel) << endl;
-";
-    vars {
+   flags=0;
+   obj=.projects[0].programs.gp[0][9].vars[12]$$;
+   path="rel";
+   expr {
+    expr="Relation::EQUAL";
+   };
+   update_after=0;
+  };
+  MemberAssign @[6] {
+   desc=;
+   flags=0;
+   obj=$.projects[0].programs.gp[0][9].vars[12]$;
+   path="val";
+   expr {
+    expr="max_val";
+   };
+   update_after=0;
+  };
+  MathCall @[7] {
+   desc=;
+   flags=0;
+   result_var=.projects[0].programs.gp[0][9].vars[7]$$;
+   object_type=taMath_float;
+   method=taMath_float::vec_count;
+   meth_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_float_Matrix_ptr;
+     type="const float_Matrix*";
+     name="vec";
+     required=1;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.epoch_last.AR()";
+     };
     };
-    var_names{ max_val;    };
-    bad_vars{ rel;    };
+    ProgArg @[1] {
+     arg_type=Relation_ref;
+     type="Relation&";
+     name="rel";
+     required=1;
+     def_val=;
+     expr {
+      expr="rel";
+     };
+    };
    };
   };
-  PrintExpr @[16] {
+  Comment @[8] {
+   desc="= compute n_failed =";
+   flags=0;
+  };
+  MemberAssign @[9] {
    desc=;
-   flags=;
+   flags=0;
+   obj=$.projects[0].programs.gp[0][9].vars[12]$;
+   path="val";
    expr {
-    expr="\"=====================\\n\" << \"Epochs to cnt_err < err_thresh: \" << err_thresh";
-    flags=;
-    var_expr="\"=====================\\n\" << \"Epochs to cnt_err < err_thresh: \" << err_thresh";
-    vars {
+    expr="-1";
+   };
+   update_after=0;
+  };
+  MathCall @[10] {
+   desc=;
+   flags=0;
+   result_var=.projects[0].programs.gp[0][9].vars[8]$$;
+   object_type=taMath_float;
+   method=taMath_float::vec_count;
+   meth_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_float_Matrix_ptr;
+     type="const float_Matrix*";
+     name="vec";
+     required=1;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.cnt_err_find_first.AR()";
+     };
     };
-    var_names{     };
-    bad_vars{     };
+    ProgArg @[1] {
+     arg_type=Relation_ref;
+     type="Relation&";
+     name="rel";
+     required=1;
+     def_val=;
+     expr {
+      expr="rel";
+     };
+    };
+   };
+  };
+  Comment @[11] {
+   desc="= compute n_at_min =";
+   flags=0;
+  };
+  MathCall @[12] {
+   desc=;
+   flags=0;
+   result_var=.projects[0].programs.gp[0][9].vars[10]$$;
+   object_type=taMath_float;
+   method=taMath_float::vec_min;
+   meth_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_float_Matrix_ptr;
+     type="const float_Matrix*";
+     name="vec";
+     required=1;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.cnt_err_min.ar";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=int_ref;
+     type="int&";
+     name="idx";
+     required=1;
+     def_val=;
+     expr {
+      expr="max_idx";
+     };
+    };
+   };
+  };
+  MemberAssign @[13] {
+   desc=;
+   flags=0;
+   obj=$.projects[0].programs.gp[0][9].vars[12]$;
+   path="val";
+   expr {
+    expr="min_val";
+   };
+   update_after=0;
+  };
+  MathCall @[14] {
+   desc=;
+   flags=0;
+   result_var=.projects[0].programs.gp[0][9].vars[9]$$;
+   object_type=taMath_float;
+   method=taMath_float::vec_count;
+   meth_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_float_Matrix_ptr;
+     type="const float_Matrix*";
+     name="vec";
+     required=1;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.cnt_err_min.AR()";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Relation_ref;
+     type="Relation&";
+     name="rel";
+     required=1;
+     def_val=;
+     expr {
+      expr="rel";
+     };
+    };
+   };
+  };
+  Comment @[15] {
+   desc="= get stats to EpcToTrain_Stats =";
+   flags=0;
+  };
+  MethodCall @[16] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][9].vars[13]$;
+   method=DataTable::EnforceRows;
+   meth_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=int;
+     type="int";
+     name="n_rows";
+     required=1;
+     def_val=;
+     expr {
+      expr="1";
+     };
+    };
    };
   };
   MethodCall @[17] {
    desc=;
-   flags=;
-   result_var=$8$;
-   obj=$6$;
-   method=DataTable::ColStats;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=DataCol_ptr;
-     type="DataCol*";
-     name="col";
-     required=0;
-     def_val=;
-     expr {
-      expr="EpochData_Group.data.cnt_err_find_first";
-      flags=;
-      var_expr="$#0#$.data.cnt_err_find_first";
-      vars {
-      };
-      var_names{ EpochData_Group;      };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  PrintVar @[18] {
-   desc=;
-   flags=;
-   message=;
-   print_var=$8$;
-   print_var2=NULL;
-   print_var3=NULL;
-   print_var4=NULL;
-   print_var5=NULL;
-   print_var6=NULL;
-  };
-  UserScript @[19] {
-   desc=;
-   flags=;
-   script {
-    expr="rel.rel = Relation::EQUAL; rel.val = -1;
-cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_find_first.ar, rel) << endl;
-";
-    flags=NO_VAR_ERRS;
-    var_expr="rel.rel = Relation::EQUAL; rel.val = -1;
-cerr << \"N failed: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_find_first.ar, rel) << endl;
-";
-    vars {
-    };
-    var_names{     };
-    bad_vars{ rel;    };
-   };
-  };
-  PrintExpr @[20] {
-   desc=;
-   flags=;
-   expr {
-    expr="\"=====================\\n\" << \"Min cnt_err value per batch:\"";
-    flags=;
-    var_expr="\"=====================\\n\" << \"Min cnt_err value per batch:\"";
-    vars {
-    };
-    var_names{     };
-    bad_vars{     };
-   };
-  };
-  MethodCall @[21] {
-   desc=;
-   flags=;
-   result_var=$8$;
-   obj=$6$;
-   method=DataTable::ColStats;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=DataCol_ptr;
-     type="DataCol*";
-     name="col";
-     required=0;
-     def_val=;
-     expr {
-      expr="EpochData_Group.data.cnt_err_min";
-      flags=;
-      var_expr="$#0#$.data.cnt_err_min";
-      vars {
-      };
-      var_names{ EpochData_Group;      };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  PrintVar @[22] {
-   desc=;
-   flags=;
-   message=;
-   print_var=$8$;
-   print_var2=NULL;
-   print_var3=NULL;
-   print_var4=NULL;
-   print_var5=NULL;
-   print_var6=NULL;
-  };
-  MathCall @[23] {
-   desc=;
-   flags=;
-   result_var=.projects[0].programs[0].vars[8]$10$;
-   object_type=taMath_float;
-   method=taMath_float::vec_min;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-    ProgArg @[0] {
-     arg_type=const_float_Matrix_ptr;
-     type="const float_Matrix*";
-     name="vec";
-     required=0;
-     def_val=;
-     expr {
-      expr="EpochData_Group.data.cnt_err_min.ar";
-      flags=;
-      var_expr="$#0#$.data.cnt_err_min.ar";
-      vars {
-      };
-      var_names{ EpochData_Group;      };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[1] {
-     arg_type=int_ref;
-     type="int&";
-     name="idx";
-     required=0;
-     def_val=;
-     expr {
-      expr="max_idx";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ max_idx;      };
-      bad_vars{       };
-     };
-    };
-   };
-  };
-  UserScript @[24] {
-   desc=;
-   flags=;
-   script {
-    expr="rel.rel = Relation::EQUAL; rel.val = min_val;
-cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_min.ar, rel) << endl;
-";
-    flags=NO_VAR_ERRS;
-    var_expr="rel.rel = Relation::EQUAL; rel.val = $#0#$;
-cerr << \"N at Min: \" << taMath_float::vec_count(EpochData_Group.data.cnt_err_min.ar, rel) << endl;
-";
-    vars {
-    };
-    var_names{ min_val;    };
-    bad_vars{ rel;    };
-   };
-  };
-  DataAnalCall @[25] {
-   desc="smooth the training data -- just for visualization, not other analyses";
-   flags=;
+   flags=0;
    result_var=NULL;
-   object_type=taDataAnal;
-   method=taDataAnal::SmoothGauss;
+   obj=$.projects[0].programs.gp[0][9].vars[13]$;
+   method=DataTable::SetVal;
    meth_args {
-    name=;
+    name="ProgArg_List_0";
     el_typ=ProgArg;
     el_def=0;
     ProgArg @[0] {
-     arg_type=DataTable_ptr;
-     type="DataTable*";
-     name="smooth_data";
+     arg_type=const_Variant_ref;
+     type="const Variant&";
+     name="val";
      required=1;
      def_val=;
      expr {
-      expr="EpochData_SmoothGauss";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ EpochData_SmoothGauss;      };
-      bad_vars{       };
+      expr="EpochData_Group.rows";
      };
     };
     ProgArg @[1] {
-     arg_type=bool;
-     type="bool";
-     name="view";
+     arg_type=Variant;
+     type="Variant";
+     name="col";
      required=1;
      def_val=;
      expr {
-      expr="false";
-      flags=;
-      var_expr="false";
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
+      expr="\"n\"";
      };
     };
     ProgArg @[2] {
-     arg_type=DataTable_ptr;
-     type="DataTable*";
-     name="src_data";
-     required=1;
-     def_val=;
-     expr {
-      expr="EpochData";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ EpochData;      };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[3] {
      arg_type=int;
      type="int";
-     name="kern_half_wd";
+     name="row";
      required=1;
      def_val=;
      expr {
-      expr="kern_width";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ kern_width;      };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[4] {
-     arg_type=float;
-     type="float";
-     name="kern_sigma";
-     required=1;
-     def_val=;
-     expr {
-      expr="kern_sig";
-      flags=;
-      var_expr="$#0#$";
-      vars {
-      };
-      var_names{ kern_sig;      };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[5] {
-     arg_type=bool;
-     type="bool";
-     name="neg_tail";
-     required=0;
-     def_val="true";
-     expr {
-      expr=;
-      flags=;
-      var_expr=;
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[6] {
-     arg_type=bool;
-     type="bool";
-     name="pos_tail";
-     required=0;
-     def_val="true";
-     expr {
-      expr=;
-      flags=;
-      var_expr=;
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[7] {
-     arg_type=bool;
-     type="bool";
-     name="keep_edges";
-     required=0;
-     def_val="true";
-     expr {
-      expr=;
-      flags=;
-      var_expr=;
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
-     };
-    };
-    ProgArg @[8] {
-     arg_type=bool;
-     type="bool";
-     name="float_only";
-     required=0;
-     def_val="true";
-     expr {
-      expr=;
-      flags=;
-      var_expr=;
-      vars {
-      };
-      var_names{       };
-      bad_vars{       };
+      expr="-1";
      };
     };
    };
   };
+  Comment @[18] {
+   desc="= To Actual Stopping Criterion  (crit) =";
+   flags=0;
+  };
+  MethodCall @[19] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][9].vars[13]$;
+   method=DataTable::SetVal;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_Variant_ref;
+     type="const Variant&";
+     name="val";
+     required=1;
+     def_val=;
+     expr {
+      expr="n_at_max";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Variant;
+     type="Variant";
+     name="col";
+     required=1;
+     def_val=;
+     expr {
+      expr="\"n_at_max\"";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=int;
+     type="int";
+     name="row";
+     required=1;
+     def_val=;
+     expr {
+      expr="-1";
+     };
+    };
+   };
+  };
+  FunctionCall @[20] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   fun=.projects[0].programs.gp[0][9].functions[0]$$;
+   fun_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=float_Matrix;
+     type="float_Matrix*";
+     name="data_vec";
+     required=1;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.epoch_last.AR()";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=taString;
+     type="String";
+     name="col_prefix";
+     required=1;
+     def_val=;
+     expr {
+      expr="\"crit\"";
+     };
+    };
+   };
+  };
+  Comment @[21] {
+   desc="= To Threshold Given Here =";
+   flags=0;
+  };
+  MethodCall @[22] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][9].vars[13]$;
+   method=DataTable::SetVal;
+   meth_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_Variant_ref;
+     type="const Variant&";
+     name="val";
+     required=1;
+     def_val=;
+     expr {
+      expr="n_failed";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Variant;
+     type="Variant";
+     name="col";
+     required=1;
+     def_val=;
+     expr {
+      expr="\"n_failed\"";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=int;
+     type="int";
+     name="row";
+     required=1;
+     def_val=;
+     expr {
+      expr="-1";
+     };
+    };
+   };
+  };
+  FunctionCall @[23] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   fun=$.projects[0].programs.gp[0][9].functions[0]$;
+   fun_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=float_Matrix;
+     type="float_Matrix*";
+     name="data_vec";
+     required=1;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.cnt_err_find_first.AR()";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=taString;
+     type="String";
+     name="col_prefix";
+     required=1;
+     def_val=;
+     expr {
+      expr="\"thr\"";
+     };
+    };
+   };
+  };
+  Comment @[24] {
+   desc="= Min Errs =";
+   flags=0;
+  };
+  MethodCall @[25] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][9].vars[13]$;
+   method=DataTable::SetVal;
+   meth_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=const_Variant_ref;
+     type="const Variant&";
+     name="val";
+     required=1;
+     def_val=;
+     expr {
+      expr="n_at_min";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=Variant;
+     type="Variant";
+     name="col";
+     required=1;
+     def_val=;
+     expr {
+      expr="\"n_at_min\"";
+     };
+    };
+    ProgArg @[2] {
+     arg_type=int;
+     type="int";
+     name="row";
+     required=1;
+     def_val=;
+     expr {
+      expr="-1";
+     };
+    };
+   };
+  };
+  FunctionCall @[26] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   fun=$.projects[0].programs.gp[0][9].functions[0]$;
+   fun_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=float_Matrix;
+     type="float_Matrix*";
+     name="data_vec";
+     required=1;
+     def_val=;
+     expr {
+      expr="EpochData_Group.data.cnt_err_min.AR()";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=taString;
+     type="String";
+     name="col_prefix";
+     required=1;
+     def_val=;
+     expr {
+      expr="\"min\"";
+     };
+    };
+   };
+  };
+  DoneWritingDataRow @[27] {
+   desc=;
+   flags=0;
+   data_var=$.projects[0].programs.gp[0][9].vars[13]$;
+  };
+  IfElse @[28] {
+   desc=;
+   flags=0;
+   cond {
+    expr="print_stats";
+   };
+   show_false_code=1;
+   true_code {
+    name="ProgEl_List_161";
+    el_typ=ProgEl;
+    el_def=0;
+    PrintExpr @[0] {
+     desc=;
+     flags=0;
+     expr {
+      expr="\"=====================\\n\" << \"Epochs to criterion:\"";
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     result_var=.projects[0].programs.gp[0][9].vars[4]$$;
+     obj=$.projects[0].programs.gp[0][9].vars[3]$;
+     method=DataTable::ColStats;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"epoch_last\"";
+       };
+      };
+     };
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     message=;
+     print_var=$.projects[0].programs.gp[0][9].vars[4]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+    };
+    PrintExpr @[3] {
+     desc=;
+     flags=0;
+     expr {
+      expr="\"N at Max: \" << n_at_max";
+     };
+    };
+    PrintExpr @[4] {
+     desc=;
+     flags=0;
+     expr {
+      expr="\"=====================\\n\" << \"Epochs to cnt_err < err_thresh: \" << err_thresh";
+     };
+    };
+    MethodCall @[5] {
+     desc=;
+     flags=0;
+     result_var=$.projects[0].programs.gp[0][9].vars[4]$;
+     obj=$.projects[0].programs.gp[0][9].vars[3]$;
+     method=DataTable::ColStats;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"cnt_err_find_first\"";
+       };
+      };
+     };
+    };
+    PrintVar @[6] {
+     desc=;
+     flags=0;
+     message=;
+     print_var=$.projects[0].programs.gp[0][9].vars[4]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+    };
+    PrintExpr @[7] {
+     desc=;
+     flags=0;
+     expr {
+      expr="\"N Failed: \" << n_failed";
+     };
+    };
+    PrintExpr @[8] {
+     desc=;
+     flags=0;
+     expr {
+      expr="\"=====================\\n\" << \"Min cnt_err value per batch:\"";
+     };
+    };
+    MethodCall @[9] {
+     desc=;
+     flags=0;
+     result_var=$.projects[0].programs.gp[0][9].vars[4]$;
+     obj=$.projects[0].programs.gp[0][9].vars[3]$;
+     method=DataTable::ColStats;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"cnt_err_min\"";
+       };
+      };
+     };
+    };
+    PrintVar @[10] {
+     desc=;
+     flags=0;
+     message=;
+     print_var=$.projects[0].programs.gp[0][9].vars[4]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+    };
+    PrintExpr @[11] {
+     desc=;
+     flags=0;
+     expr {
+      expr="\"N at Min: \" << n_at_min";
+     };
+    };
+   };
+   false_code {
+    name="ProgEl_List_162";
+    el_typ=ProgEl;
+    el_def=0;
+   };
+  };
  };
+ step_prog=NULL;
+ step_n=1;
 };
