@@ -1255,7 +1255,14 @@ bool PluginWizard::Editor() {
 }
 
 bool PluginWizard::LoadWiz(const String& wiz_file) {
-  return Load(wiz_file);
+  bool rval = Load(wiz_file);
+  if(rval) {
+    if(wiz_file.firstchar() != '.') {
+      plugin_location = taMisc::GetDirFmPath(wiz_file);
+      taMisc::Info("set location to:", plugin_location);
+    }
+  }
+  return rval;
 }
 
 bool PluginWizard::SaveWiz() {
