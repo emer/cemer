@@ -14,7 +14,10 @@ if [ "`id -u`" != "0" ]; then
 fi
 
 FTP_DIR=/var/ftp/pub/emergent
-for f in `find . -name "emergent*-win32.exe" -o -name "emergent*-mac64.dmg"`; do
+for f in `find . -name "emergent*-win32.exe" \
+              -o -name "emergent*-win64.exe" \
+              -o -name "emergent*-mac32.dmg" \
+              -o -name "emergent*-mac64.dmg"`; do
   mv $f $FTP_DIR
   chmod 644 $FTP_DIR/$f
   chown root.root $FTP_DIR/$f
