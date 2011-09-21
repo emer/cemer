@@ -3253,11 +3253,19 @@ DataTable::LoadAnyData_stream(istream &stream, bool append, bool has_header_line
   }
 
   // We know we reached EOF, so no point in checking stream.good().
-  if (stream.fail())
+  // When doing character-based input, EOF isn't detected until after
+  // reading past the end of the stream, so the failbit is expected
+  // to be set.  Thus, only need to verify EOF and badbit states.
+  if (!stream.eof())
   {
-    taMisc::Warning("Stream is failed after reading data.");
+    taMisc::Warning("Stream did not reach EOF while reading data.");
+  }
+  if (stream.bad())
+  {
+    taMisc::Warning("Stream is bad after reading data.");
   }
 }
+
 void DataTable::ImportData_strm(istream& strm, bool headers,
     Delimiters delim, bool quote_str, int max_recs)
 {
