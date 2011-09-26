@@ -259,6 +259,11 @@ void BrainVolumeView::Render_impl() {
 
 
 void BrainVolumeView::DoActionChildren_impl(DataViewAction acts) {
+  if (acts & RENDER_IMPL) {
+    acts = (DataViewAction)( acts & ~RENDER_IMPL); // note: only supposed to be one, but don't assume
+    Render_impl_children();
+    if (!acts) return;
+  } 
   inherited::DoActionChildren_impl(acts);
 }
 
@@ -319,7 +324,7 @@ void BrainVolumeView::Render_impl_blocks() {
   int v_idx = 0;
   int t_idx = 3;                // base color + complexity + font
   // these go in normal order; indexes are backwards
-  for(pos.z=0; pos.z<brain_geom.y; pos.y++) {
+  for(pos.z=0; pos.z<brain_geom.y; pos.z++) {
     for(pos.y=0; pos.y<brain_geom.y; pos.y++) {
       for(pos.x=0; pos.x<brain_geom.x; pos.x++) { // right to left
 	float xp = disp_scale * (((float)pos.x) / (float)brain_geom.x);
