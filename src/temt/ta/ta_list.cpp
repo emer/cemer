@@ -1267,6 +1267,21 @@ bool taArray_impl::Alloc(int sz) {
   return true;
 }
 
+bool taArray_impl::AllocExact(int sz) {
+  alloc_size = MAX(sz, 1);	// need at least 1
+  size = MIN(size, alloc_size);
+  char* nw = (char*)MakeArray_(alloc_size);
+  if(!nw) {
+    taMisc::Error("taArray_impl::Alloc -- malloc error -- array too big! this may be fatal");
+    return false;
+  }
+  for (int i = 0; i < size; ++i) {
+    El_Copy_(nw + (El_SizeOf_() * i), FastEl_(i));
+  }
+  SetArray_(nw);
+  return true;
+}
+
 void taArray_impl::AddBlank(int n_els) {
   if (n_els < 0) n_els = 0;
   SetSize(size + n_els);

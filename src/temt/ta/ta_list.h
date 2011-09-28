@@ -725,7 +725,9 @@ public:
   inline bool		InRange(int idx) const {return ((idx < size) && (idx >= 0));}
   // #CAT_XpertAccess is the specified index within range of 0 >= idx < size
   virtual bool		Alloc(int n);
-  // #CAT_Modify allocate storage for at least the given size
+  // #CAT_XpertModify allocate storage for at least the given size (allocates extra to allow for future expansion -- see AllocExact for exact alloc)
+  virtual bool		AllocExact(int n);
+  // #CAT_XpertModify allocate storage for exactly the given size
   virtual void		Reset()	{ Reset_impl(); DataChanged(DCR_ARY_SIZE_CHANGED); };
   // #CAT_Modify reset the list to zero size (does not free memory)
 
