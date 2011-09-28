@@ -293,6 +293,8 @@ public:
   inline taPlugin*	FindUniqueId(const String& value)
     {return (taPlugin*)inherited::FindUniqueId(value);}
   
+  void			EnableAllPlugins(); // enable all the available plugins
+  void			ListAllPlugins(); // list all the available plugins and their status
   void			LoadPlugins(); // Load all the enabled plugins (init's type system), unload remainder
   void			InitPlugins(); // Initialize all the loaded plugins -- creates/loads state object first; then plugin can post Wizards, etc.
   

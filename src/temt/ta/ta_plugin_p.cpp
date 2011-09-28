@@ -831,6 +831,30 @@ taPlugin* taPlugin_List::FindFilename(const String& value) {
   return NULL;
 }
 
+void taPlugin_List::ListAllPlugins() {
+  ReconcilePlugins();
+  
+  for (int i = 0; i < size; ++i) {
+    taPlugin* pl = FastEl(i);
+    cerr << i << ":\t" << pl->name << "\t" << (pl->enabled ? "enabled" : "disabled")
+	 << "\t" << pl->desc << "\t" << pl->unique_id << "\t" << pl->version << "\t"
+	 << pl->filename << endl;
+  }
+}
+
+void taPlugin_List::EnableAllPlugins() {
+  ReconcilePlugins();
+  
+  for (int i = 0; i < size; ++i) {
+    taPlugin* pl = FastEl(i);
+    pl->enabled = true;
+    cerr << i << ":\t" << pl->name << "\t" << (pl->enabled ? "enabled" : "disabled")
+	 << "\t" << pl->desc << "\t" << pl->unique_id << "\t" << pl->version << "\t"
+	 << pl->filename << endl;
+  }
+}
+
+
 void taPlugin_List::LoadPlugins() {
   // first, get us uptodate with actual plugin list
   ReconcilePlugins();

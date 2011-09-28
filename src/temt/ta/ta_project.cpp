@@ -2851,6 +2851,14 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("MakeSystemPlugin", "\
  -- (re)make specified plugin located in the system plugin directory -- these are typically installed with a make install from wherever original source is located, and source is installed to system plugin directory -- make will make from this installed source");
 
+  taMisc::AddArgName("--list_plugins", "ListAllPlugins");
+  taMisc::AddArgNameDesc("ListAllPlugins", "\
+ -- list all of the plugins and their current status.");
+
+  taMisc::AddArgName("--enable_all_plugins", "EnableAllPlugins");
+  taMisc::AddArgNameDesc("EnableAllPlugins", "\
+ -- mark all the available plugins as enabled -- useful for batch run environments where you cannot enable them via the gui.");
+
   taMisc::Init_Args(argc, argv);
   return true;
 }
@@ -2880,6 +2888,12 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
      || taMisc::CheckArgByName("MakeUserPlugin")
      || taMisc::CheckArgByName("MakeSystemPlugin")) { // auto nogui by default
     taMisc::use_plugins = false;		      // don't use if making
+    taMisc::use_gui = false;
+    cssMisc::init_interactive = false;
+  }
+
+  if(taMisc::CheckArgByName("ListAllPlugins")
+     || taMisc::CheckArgByName("EnableAllPlugins")) {
     taMisc::use_gui = false;
     cssMisc::init_interactive = false;
   }
@@ -3384,6 +3398,20 @@ bool taRootBase::Startup_EnumeratePlugins() {
   taPlugins::InitLog(taMisc::user_log_dir + PATH_SEP + plug_log);
   taPlugins::EnumeratePlugins();
 
+  if(taMisc::CheckArgByName("ListAllPlugins")) {
+    tabMisc::root->plugins.ListAllPlugins();
+  }
+  if(taMisc::CheckArgByName("EnableAllPlugins")) {
+    tabMisc::root->plugins.EnableAllPlugins();
+    tabMisc::root->Save();	// save after enabling
+  }
+  return true;
+}
+
+bool taRootBase::Startup_LoadPlugins() {
+  if (!tabMisc::root) return false; // should be made
+  if (!taMisc::use_plugins) return true;
+  tabMisc::root->plugins.LoadPlugins();
   return true;
 }
 
@@ -3483,13 +3511,6 @@ bool taRootBase::Startup_InitViewColors() {
   return true;
 }
   	
-bool taRootBase::Startup_LoadPlugins() {
-  if (!tabMisc::root) return false; // should be made
-  if (!taMisc::use_plugins) return true;
-  tabMisc::root->plugins.LoadPlugins();
-  return true;
-}
-
 bool taRootBase::Startup_ConsoleType() {
   // arbitrate console options
   // first, make sure requested console_type is a legal value for this platform
