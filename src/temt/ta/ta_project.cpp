@@ -3403,7 +3403,9 @@ bool taRootBase::Startup_EnumeratePlugins() {
   }
   if(taMisc::CheckArgByName("EnableAllPlugins")) {
     tabMisc::root->plugins.EnableAllPlugins();
+    --in_init;			// allow it to save!
     tabMisc::root->Save();	// save after enabling
+    ++in_init;
   }
   return true;
 }
