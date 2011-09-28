@@ -3740,6 +3740,9 @@ bool taRootBase::Startup_ProcessArgs() {
     taPlugins::CleanAllSystemPlugins();
     run_startup = false;
   }
+  if(taMisc::CheckArgByName("ListAllPlugins") || taMisc::CheckArgByName("EnableAllPlugins")) {
+    run_startup = false;
+  }
 
   // just load the thing!?
   String proj_ld = taMisc::FindArgByName("Project");
