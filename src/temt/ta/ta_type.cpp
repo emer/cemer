@@ -33,6 +33,7 @@
 # endif
 # include "ta_TA_type.h"
 # include <QDir>
+# include <QFileInfo>
 # include <QCoreApplication>
 # include <QTimer>
 # include <QNetworkInterface>
@@ -1762,6 +1763,11 @@ bool taMisc::FileExists(const String& fname) {
 }
 
 #ifndef NO_TA_BASE
+int64_t taMisc::FileSize(const String& fname) {
+  QFileInfo fi(fname);
+  return fi.size();
+}
+
 bool taMisc::RenameFile(const String& old_fn, const String& new_fn) {
   QDir d;
   return d.rename(old_fn, new_fn);

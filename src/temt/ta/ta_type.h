@@ -1088,6 +1088,8 @@ public:
   static bool 	FileExists(const String& filename);
   // #CAT_File returns true if the file exists in current working directory (or absolute path)
 #ifndef NO_TA_BASE
+  static int64_t FileSize(const String& filename);
+  // #CAT_File returns size of given file (0 if it does not exist -- see also FileExists)
   static bool 	RenameFile(const String& old_filename, const String& new_filename);
   // #CAT_File rename file from old to new name in current working directory (or absolute path) -- returns success
   static bool 	RemoveFile(const String& filename);

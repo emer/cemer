@@ -180,6 +180,7 @@ int taiChoiceDialog::ChoiceDialog(QWidget* parent_, const String& msg,
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   dlg->setIcon(QMessageBox::Question);
   dlg->setWindowModality(Qt::ApplicationModal);
+  dlg->resize( taiM->dialogSize(taiMisc::dlgMedium | taiMisc::dlgVer) );
   int rval = dlg->exec();
   QApplication::restoreOverrideCursor();
   delete dlg;
@@ -212,6 +213,7 @@ void taiChoiceDialog::ConfirmDialog(QWidget* parent_, const char* msg,
     QString(msg), "", parent_, copy_but_);
   dlg->setIcon(QMessageBox::Question);
   dlg->setWindowModality(Qt::ApplicationModal);
+  dlg->resize( taiM->dialogSize(taiMisc::dlgMedium | taiMisc::dlgVer) );
   dlg->exec();
   QApplication::restoreOverrideCursor();
   delete dlg;
