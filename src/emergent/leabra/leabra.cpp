@@ -2742,7 +2742,7 @@ void ClampSpec::Initialize() {
 }
 
 void ClampSpec::Defaults_init() {
-  max_plus = true;
+  max_plus = false;		// was true -- but may not work in some cases -- false safer?
   plus = 0.01f;
   min_clamp = 0.5f;
   if(taMisc::is_loading) {
