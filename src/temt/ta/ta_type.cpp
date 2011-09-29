@@ -1768,6 +1768,38 @@ int64_t taMisc::FileSize(const String& fname) {
   return fi.size();
 }
 
+bool taMisc::FileWritable(const String& fname) {
+  QFileInfo fi(fname);
+  return fi.isWritable();
+}
+
+bool taMisc::FileReadable(const String& fname) {
+  QFileInfo fi(fname);
+  return fi.isReadable();
+}
+
+bool taMisc::FileExecutable(const String& fname) {
+  QFileInfo fi(fname);
+  return fi.isExecutable();
+}
+
+bool taMisc::SetFilePermissions(const String& fname, bool user, bool group,
+				   bool other, bool readable, bool writable,
+				   bool executable) {
+  QFile fi(fname);
+  QFile::Permissions perm = 0;
+  if(user && readable) perm |= QFile::ReadUser;
+  if(user && writable) perm |= QFile::WriteUser;
+  if(user && executable) perm |= QFile::ExeUser;
+  if(group && readable) perm |= QFile::ReadGroup;
+  if(group && writable) perm |= QFile::WriteGroup;
+  if(group && executable) perm |= QFile::ExeGroup;
+  if(other && readable) perm |= QFile::ReadOther;
+  if(other && writable) perm |= QFile::WriteOther;
+  if(other && executable) perm |= QFile::ExeOther;
+  return fi.setPermissions(perm);
+}
+
 bool taMisc::RenameFile(const String& old_fn, const String& new_fn) {
   QDir d;
   return d.rename(old_fn, new_fn);
@@ -1907,6 +1939,10 @@ bool taMisc::InternetConnected() {
   }
 #endif
   return false;
+}
+
+int taMisc::ExecuteCommand(const String& cmd) {
+  return system(cmd);
 }
 
 /////////////////////////////////////////////////

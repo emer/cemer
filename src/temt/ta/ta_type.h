@@ -1090,6 +1090,16 @@ public:
 #ifndef NO_TA_BASE
   static int64_t FileSize(const String& filename);
   // #CAT_File returns size of given file (0 if it does not exist -- see also FileExists)
+  static bool 	FileWritable(const String& filename);
+  // #CAT_File returns true if file is writable according to file system permissions
+  static bool 	FileReadable(const String& filename);
+  // #CAT_File returns true if file is readable according to file system permissions
+  static bool 	FileExecutable(const String& filename);
+  // #CAT_File returns true if file is executable according to file system permissions
+  static bool 	SetFilePermissions(const String& filename, bool user=true, bool group=false,
+				   bool other=false, bool readable=true, bool writable=true,
+				   bool executable=false);
+  // #CAT_File set file permissions for different classes of users
   static bool 	RenameFile(const String& old_filename, const String& new_filename);
   // #CAT_File rename file from old to new name in current working directory (or absolute path) -- returns success
   static bool 	RemoveFile(const String& filename);
@@ -1130,6 +1140,8 @@ public:
 
   static bool	InternetConnected();
   // #CAT_File determine if the system has at least one active network interface -- i.e., is it connected to the internet?
+  static int	ExecuteCommand(const String& cmd);
+  // #CAT_File execute given command -- currently just uses the "system" function call on all platforms, which seems to work well
 
   /////////////////////////////////////////////////
   //	Recording GUI actions to css script

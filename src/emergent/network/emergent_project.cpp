@@ -70,7 +70,7 @@ static void emergent_viewcolor_init() {
     taRootBase::Startup_InitViewColors();
   }
   taMisc::view_colors->FindMakeViewColor("Network", "Emergent Neural network", true, "VioletRed1");
-  taMisc::view_colors->FindMakeViewColor("ConSpec", "Emergent Connection Spec", true, "SpringGreen");
+  taMisc::view_colors->FindMakeViewColor("ConSpec", "Emergent Connection Spec", true, "LimeGreen");
   taMisc::view_colors->FindMakeViewColor("Connection", "Emergent Connection", true, "SpringGreen");
   taMisc::view_colors->FindMakeViewColor("UnitSpec", "Emergent Unit Spec", true, "violet");
   taMisc::view_colors->FindMakeViewColor("Unit", "Emergent Unit", true, "violet");

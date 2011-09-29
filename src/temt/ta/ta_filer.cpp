@@ -371,7 +371,13 @@ void taFiler::Close() {
     if(FileExists()) {
       QFile::remove(cur_fnm.chars());
     }
-    QFile::rename(tmp_fnm.chars(), cur_fnm.chars());
+    if(FileExists()) {
+      taMisc::Error("Unable to overwite existing file named", cur_fnm,
+		    "for saving -- most likely you do not have appropriate permissions -- file is saved to temporary filename as:", tmp_fnm);
+    }
+    else {
+      QFile::rename(tmp_fnm.chars(), cur_fnm.chars());
+    }
   }
 }
 
@@ -541,6 +547,10 @@ ostream* taFiler::open_write() {
   Close();
   bool hasfx = m_fname.endsWith(taMisc::compress_sfx);
   String use_fnm = FileName();
+  if(FileExists() && !taMisc::FileWritable(use_fnm)) {
+    int chs = taMisc::Choice("File to save (" + use_fnm + ") already exists and is not set as writable by you -- overwrite anyway?", "Overwrite", "Cancel");
+    if(chs == 1) return NULL;
+  }
   if(HasFilerFlag(TMP_SAVE_FILE) && FileExists()) {
     SetFilerFlag(TMP_SAVE_FILE_USED);
     GetTmpFname();
