@@ -59,7 +59,7 @@ void PatchLayerSpec::Initialize() {
 
 void PatchLayerSpec::Send_LVeToMatrix(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR
-    (lay, 
+    (lay,
      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
      const float snd_val = u->act_eq;
      for(int g=0; g<u->send.size; g++) {
@@ -142,7 +142,7 @@ bool SNcLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   }
 
   return true;
-}  
+}
 
 void SNcLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   int lve_prjn_idx;
@@ -285,7 +285,7 @@ bool SNrThalLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   decay.clamp_phase2 = false;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  
+
   us->SetUnique("maxda", true);
   us->maxda.val = MaxDaSpec::NO_MAX_DA;
 
@@ -381,7 +381,7 @@ void SNrThalLayerSpec::Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net) {
   int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
   for(int g=0; g < lay->gp_geom.n; g++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(g);
-    
+
     bool zap_act_eq = false;
     if((bg_type == MAINT) && (gpd->gate_sig == PFCGateSpec::GATE_OUT_GO)) {
       zap_act_eq = true;
@@ -450,7 +450,7 @@ void SNrThalLayerSpec::SendGateStates(LeabraLayer* lay, LeabraNetwork* net,
 
     // everybody gets gate state info from PFC!
     snrgpd->mnt_count = mgpd->mnt_count = pfcgpd->mnt_count;
-    snrgpd->gate_state = pfcgpd->gate_state; 
+    snrgpd->gate_state = pfcgpd->gate_state;
     if(mgpd->gate_state < PFCGateSpec::NOGO_RND_GO) { // don't override random go signals
       mgpd->gate_state = pfcgpd->gate_state;
     }
@@ -719,7 +719,7 @@ void MatrixLayerSpec::Initialize() {
   ct_inhib_mod.trough_i = 0.0f;
 
   bg_type = MAINT;
-  
+
   Defaults_init();
 }
 
@@ -977,7 +977,7 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
 
 void MatrixLayerSpec::Compute_MultBias(LeabraLayer* lay,
 				       Layer::AccessMode acc_md, int gpidx,
-				       LeabraNetwork* net, float bias_dav) {	
+				       LeabraNetwork* net, float bias_dav) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
   int gp_sz = nunits / 2;
   for(int i=0;i<nunits;i++) {
@@ -1027,7 +1027,7 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 
   int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
   int gp_sz = nunits / 2;
-    
+
   for(int gi=0; gi<lay->gp_geom.n; gi++) {
     PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
     int snr_prjn_idx = 0;
@@ -1112,15 +1112,16 @@ void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay,
   lay->unit_idxs.SetSize(n_go_units); // just do go guys
   lay->unit_idxs.FillSeq();
   lay->unit_idxs.Permute();
+
+  // Set k of the permuted "go" units to the noise value
   int i;
-  for(i=0; i<n_go_units; i++) {
+  for(i=0; i<mgpd->kwta.k; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
-    if(i < mgpd->kwta.k)
-      u->noise = rnd_go.nogo_noise;
-    else
-      u->noise = 0.0f;
+    u->noise = rnd_go.nogo_noise;
   }
-  for(; i<nunits; i++) {
+
+  // Set the remainder of the "go" units to have no noise.
+  for(; i<n_go_units; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
     u->noise = 0.0f;
   }
@@ -1363,7 +1364,7 @@ void PFCLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
 //   inherited::Compute_MidMinus(lay, net);
   Compute_Gating_MidMinus(lay, net);
 }
-  
+
 void PFCLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
 					   Layer::AccessMode acc_md, int gpidx,
 					   LeabraNetwork* net) {
@@ -1535,7 +1536,7 @@ void PFCLayerSpec::Compute_Gating_MidMinus(LeabraLayer* lay, LeabraNetwork* net)
       gpd->cur_go_act = gate.go_learn_base;
     }
   }
-  
+
   // now have full set of info -- send it along -- provides an update
   SendGateStates(lay, net);
 }
@@ -1632,11 +1633,11 @@ void PFCLayerSpec::Compute_PfcMntAct(LeabraLayer* lay, LeabraNetwork* net) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
 
     float lrn_mod_val = gpd->cur_go_act; // learning modulation value as function of gating
-    
+
     for(int i=0;i<nunits;i++) {
       LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
       // only stray so far away from act_m  -- depending on gating strength
-      ru->act_nd = ru->act_m + lrn_mod_val * (ru->act_nd - ru->act_m); 
+      ru->act_nd = ru->act_m + lrn_mod_val * (ru->act_nd - ru->act_m);
     }
   }
 }
@@ -1742,7 +1743,7 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
     gpd->out_go_act = pfcgpd->out_go_act;
 
     float gate_val = gpd->out_go_act; // goes live whenver it goes live..
-    
+
     for(int i=0;i<nunits;i++) {
       LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
       LeabraUnit* pfcu = (LeabraUnit*)pfc_lay->UnitAccess(acc_md, i, mg);
@@ -2005,7 +2006,7 @@ bool LeabraWizard::PBWM_ToLayerGroups(LeabraNetwork* net) {
   if(lay = net->FindLayer("PFC")) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
   if(lay = net->FindLayer("PFC_mnt")) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
   if(lay = net->FindLayer("PFC_out")) { pfc_laygp->Transfer(lay); lay->pos.z = 0; }
-  
+
   if(new_bg_laygp || new_pfc_laygp) {
     bg_laygp->pos.z = 0;
     pfc_laygp->pos.z = 2;
@@ -2134,7 +2135,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   Layer_Group* bg_laygp = net->FindMakeLayerGroup("PBWM_BG", NULL, new_bg_laygp);
   bool new_pfc_laygp = false;
   Layer_Group* pfc_laygp = net->FindMakeLayerGroup("PBWM_PFC", NULL, new_pfc_laygp);
-  
+
   if(new_bg_laygp || new_pfc_laygp) {
     PBWM_ToLayerGroups(net);	// doesn't hurt to just do this..
   }
@@ -2202,7 +2203,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 	hidden_lays.Link(lay);
       else if(lay->layer_type == Layer::INPUT)
 	input_lays.Link(lay);
-      else 
+      else
 	output_lays.Link(lay);
     }
   }
@@ -2308,7 +2309,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
 
   patch->SetLayerSpec(patchsp); patch->SetUnitSpec(lv_units);
   snc->SetLayerSpec(sncsp); snc->SetUnitSpec(da_units);
-  
+
   snrthal_m->SetLayerSpec(snrthalsp); snrthal_m->SetUnitSpec(snrthal_units);
   matrix_m->SetLayerSpec(matrixsp);   matrix_m->SetUnitSpec(matrix_units);
   pfc_m->SetLayerSpec(pfcmsp);	pfc_m->SetUnitSpec(pfc_units);
@@ -2466,7 +2467,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
   }
   lay_set_geom(pfc_m, n_stripes);
 
-  if(matrix_m_new) { 
+  if(matrix_m_new) {
     matrix_m->pos.SetXYZ(mx_z1+1, 0, 1);
     matrix_m->un_geom.n = 28; matrix_m->un_geom.x = 4; matrix_m->un_geom.y = 7;
   }
@@ -2494,9 +2495,9 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     }
     lay_set_geom(pfc_o, n_stripes);
 
-    if(matrix_o_new) { 
+    if(matrix_o_new) {
       matrix_o->pos.z = matrix_m->pos.z; matrix_o->pos.y = matrix_m->pos.y;
-      matrix_o->pos.x = matrix_m->pos.x + matrix_m->disp_geom.x + 2; 
+      matrix_o->pos.x = matrix_m->pos.x + matrix_m->disp_geom.x + 2;
       matrix_o->un_geom.n = 28; matrix_o->un_geom.x = 4; matrix_o->un_geom.y = 7;
     }
     lay_set_geom(matrix_o, n_stripes);
@@ -2553,7 +2554,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
  function again after you have corrected the source of the error.";
   }
   else {
-    msg = 
+    msg =
     "BG/PFC configuration is now complete.  Do not forget the one remaining thing\
  you need to do manually:\n\n" + man_msg;
   }
@@ -2814,7 +2815,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
     matrixo_units->SetUnique("matrix_noise", true);
     matrixo_units->matrix_noise.patch_noise = false;
     matrixo_units->SetUnique("maxda", false);
-    
+
     matrixo_cons->SetUnique("lmix", false);
     matrixo_cons->SetUnique("lrate", true);
     matrixo_cons->lrate = .1f;
@@ -2871,7 +2872,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
     lsp->scalar.min_sum_act = .2f;
     lsp->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB; lsp->inhib.kwta_pt = 0.9f;
     lsp->kwta.k_from = KWTASpec::USE_K;    lsp->kwta.k = 1;
-    lsp->gp_kwta.k_from = KWTASpec::USE_K; lsp->gp_kwta.k = 1; 
+    lsp->gp_kwta.k_from = KWTASpec::USE_K; lsp->gp_kwta.k = 1;
     lsp->unit_range.min = 0.0f;  lsp->unit_range.max = 1.0f;
     lsp->unit_range.UpdateAfterEdit();
     lsp->val_range = lsp->unit_range;
@@ -2898,7 +2899,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
   pv_units->act.avg_dt = 0.0f;
 
   pvi_cons->SetUnique("lmix", true);
-  pvi_cons->lmix.err_sb = false; 
+  pvi_cons->lmix.err_sb = false;
   pvi_cons->SetUnique("rnd", true);
   pvi_cons->rnd.mean = 0.1f;
   pvi_cons->rnd.var = 0.0f;
@@ -2984,7 +2985,7 @@ bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool pfc_learns) {
     if(out_gate) {
       snrthalosp->SelectForEditNm("kwta", edit, "snrthal_out", subgp,
 "Set OUTPUT kwta to a lower percent than MAINT kwta -- typically around 25% or so -- depends on how many different things PFC needs to maintain (lower the % for more maintenance demands)");
-    }    
+    }
     snrthalsp->SelectForEditNm("inhib", edit, "snrthal", subgp,
 "Default is KWTA_AVG_INHIB with kwta_pt = .7 -- more competition but with some flexibility from avg-based computation");
 
