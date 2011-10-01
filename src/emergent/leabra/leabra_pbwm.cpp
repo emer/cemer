@@ -1125,6 +1125,12 @@ void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay,
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
     u->noise = 0.0f;
   }
+
+  // now fill in all the nogo guys with no noise just to be sure..
+  for(; i<nunits; i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx); // note: not unit_idxs[i] here!
+    u->noise = 0.0f;
+  }
 }
 
 void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
