@@ -355,33 +355,25 @@ String ForLoop::GetLoopVar(bool& is_local) const {
  
 void ForLoop::MakeIndexVar(const String& var_nm) {
   if(var_nm.empty()) return;
+
+  Program* my_prog = GET_MY_OWNER(Program);
+  if(!my_prog) return;
   Function* my_fun = GET_MY_OWNER(Function);
   
   if(my_fun) {			// use function scope by default
     if(my_fun->FindVarName(var_nm)) return; // all good
-    if(my_fun->fun_code.size > 0) {
-      ProgEl* fvars = my_fun->fun_code[0]; // first code element is vars by default
-      if(fvars->InheritsFrom(&TA_ProgVars)) {
-	ProgVar* var = ((ProgVars*)fvars)->AddVar();
-	var->name = var_nm;
-	var->SetInt(0);
-	var->ClearVarFlag(ProgVar::CTRL_PANEL);
-	var->DataChanged(DCR_ITEM_UPDATED);
-	// get the var ptrs in case someone changes them later!
-	init.ParseExpr();
-	test.ParseExpr();
-	iter.ParseExpr();
-	return;
-      }
-    }
-    // fall through if no var in fun
   }
+  if(my_prog->FindVarName(var_nm)) return; // still good
 
-  // default is to use program
-  Program* my_prog = GET_MY_OWNER(Program);
-  if(!my_prog) return;
-  if(!my_prog->vars.FindName(var_nm)) {
-    ProgVar* var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+  ProgVar* var = NULL;
+  ProgVars* locvars = FindLocalVarList();
+  if(locvars) {
+    var = locvars->AddVar();
+  }
+  else {
+    var = (ProgVar*)my_prog->vars.New(1, &TA_ProgVar);
+  }
+  if(var) {
     var->name = var_nm;
     var->SetInt(0);
     var->ClearVarFlag(ProgVar::CTRL_PANEL);
@@ -390,6 +382,7 @@ void ForLoop::MakeIndexVar(const String& var_nm) {
     init.ParseExpr();
     test.ParseExpr();
     iter.ParseExpr();
+    return;
   }
 }
 

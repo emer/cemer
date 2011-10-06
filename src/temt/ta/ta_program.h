@@ -43,6 +43,7 @@ class iProgramPanel;
 class Function;
 class ProgramCallBase;
 class ProgramCall;
+class ProgVars;
 class ProgramCallVar; //
 
 /////////////////////////////////////////////////////////////////////
@@ -765,6 +766,8 @@ public:
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found
+  virtual ProgVars* 	FindLocalVarList();
+  // find local variable list at the closest level of scope to this program element
 
   virtual void		SetProgExprFlags() { };
   // special temporary function to set flags for any ProgExpr objects -- needed for new css parsing and loading of old projects which saved these flags causes errors, so this fixes that.. todo: remove me after a few releases (introduced in 4.0.10)

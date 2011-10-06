@@ -674,6 +674,8 @@ void ProgVar::UpdateAfterEdit_impl() {
   SetFlagsByOwnership();
   UpdateUsedFlag();
   GetInitFromVar(true);		// warn 
+  TestError(HasVarFlag(LOCAL_VAR) && var_type == T_HardEnum, "UpdateAfterEdit",
+	      "Hard-coded (C++) enum's are not supported for local variables -- please use an int or String variable instead.");
 }
 
 ProgVar* ProgVar::GetInitFromVar(bool warn) {
@@ -1439,14 +1441,37 @@ void ProgExprBase::UpdateAfterEdit_impl() {
   if(!HasExprFlag(NO_VAR_ERRS)) {
     ProgEl* pel = GET_MY_OWNER(ProgEl);
     if(!taMisc::is_loading && bad_vars.size > 0) {
-      taMisc::Error("ProgExpr in program element:", pel->GetDisplayName(),"\n in program:", prg->name," Errors in expression -- the following variable names could not be found:", bad_vars[0],
-		    (bad_vars.size > 1 ? bad_vars[1] : _nilString),
-		    (bad_vars.size > 2 ? bad_vars[2] : _nilString),
-		    (bad_vars.size > 3 ? bad_vars[3] : _nilString)
-		    // (bad_vars.size > 4 ? bad_vars[4] : _nilString),
-		    // (bad_vars.size > 5 ? bad_vars[5] : _nilString),
-		    // (bad_vars.size > 6 ? bad_vars[6] : _nilString)
-		    );
+      String chs_str = "ProgExpr in program element:" + pel->GetDisplayName() +
+	"\n in program: " + prg->name +
+	" Errors in expression -- the following variable names could not be found: ";
+      for(int i=0; i<bad_vars.size; i++) {
+	chs_str += " " + bad_vars[i];
+      }
+      int chs = taMisc::Choice(chs_str, "Create as Globals", "Create as Locals", "I will fix Expr");
+      if(chs == 0) {
+	for(int i=0; i<bad_vars.size; i++) {
+	  ProgVar* nwvar = (ProgVar*)prg->vars.New(1, NULL, bad_vars[0]);
+	  if(taMisc::gui_active && i==0)
+	    tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
+	}
+      }
+      if(chs == 1) {
+	ProgVars* locvars = pel->FindLocalVarList();
+	if(!locvars) {
+	  ProgEl_List* pelst = GET_MY_OWNER(ProgEl_List);
+	  if(pelst) {
+	    locvars = new ProgVars;
+	    pelst->Insert(locvars, 0);
+	  }
+	}
+	if(locvars) {
+	  for(int i=0; i<bad_vars.size; i++) {
+	    ProgVar* nwvar = (ProgVar*)locvars->local_vars.New(1, NULL, bad_vars[0]);
+	    if(taMisc::gui_active && i==0)
+	      tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
+	  }
+	}
+      }
     }
   }
 }
@@ -2513,6 +2538,29 @@ void ProgEl::PreGen(int& item_id) {
 }
 
 ProgVar* ProgEl::FindVarName(const String& var_nm) const {
+  return NULL;
+}
+
+ProgVars* ProgEl::FindLocalVarList() {
+  ProgEl_List* pelst = GET_MY_OWNER(ProgEl_List);
+  if(!pelst) return NULL;
+  bool myidx = -1;
+  for(int i=pelst->size-1; i>= 0; i--) {
+    ProgEl* pe = pelst->FastEl(i);
+    if(myidx >= 0) {
+      if(pe->InheritsFrom(&TA_ProgVars)) {
+	return (ProgVars*)pe;
+      }
+    }
+    else {
+      if(pe == this) {
+	myidx = i;
+      }
+    }
+  }
+  ProgEl* ownpe = GET_OWNER(pelst, ProgEl);
+  if(ownpe)
+    return ownpe->FindLocalVarList();
   return NULL;
 }
 
