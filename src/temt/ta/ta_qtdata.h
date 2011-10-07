@@ -931,11 +931,11 @@ public:
   String		caption; 	// current caption at top of chooser
   String		path_str;	// current path string
   TABLPtr		lst_par_obj;	// parent object that is a list object
-  taBase*			reg_par_obj; 	// parent object that is *not* a list object
+  taBase*		reg_par_obj; 	// parent object that is *not* a list object
   TypeDef*		typ_par_obj; 	// parent object that is a typedef (get tokens)
-  taBase*			scope_ref;	// reference object for scoping
+  taBase*		scope_ref;	// reference object for scoping
 
-  taBase*			sel_obj() const {return msel_obj;}// current selected object
+  taBase*		sel_obj() const {return msel_obj;}// current selected object
   void			setSel_obj(const taBase* value);	// 
   String		sel_str() const {return msel_str;} 	// string rep of current selection
   String_Array		items;		// the items in the list
@@ -993,7 +993,8 @@ public:
 #ifndef __MAKETA__
   enum Roles { // extra roles, for additional data, etc.
     ObjDataRole = Qt::UserRole + 1,
-    ObjCatRole  // for object category string, whether shown or not
+    ObjCatRole,  // for object category string, whether shown or not
+    NewFunRole,  // new function call on object
   };
 #endif
   static const String	cat_none; // "none" category
@@ -1075,13 +1076,15 @@ private:
 };
 
 typedef bool (*item_filter_fun)(void*, void*); // optional filter, spec'ed in ITEM_FILTER_xxx
+typedef bool (*cust_chooser_fun)(taBase*, taiItemPtrBase*); // optional custom config, spec'ed in CUST_CHOOSER_xxx
 
 class TA_API taiItemPtrBase : public taiData {
-// common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
+  // common base for MemberDefs, MethodDefs, TypeDefs, Enums, and tokens, that use the ItemChooser
 INHERITED(taiData)
   Q_OBJECT
 public:
   item_filter_fun	item_filter; // #IGNORE optional filter, in ITEM_FILTER_xxx
+  cust_chooser_fun	cust_chooser; // #IGNORE customization call, in CUST_CHOOSER_xxx
   String		filter_start_txt; // if nonempty, item name must start with this text to be included
   
   virtual const String	labelText(); // "tag: name" for button
@@ -1108,6 +1111,12 @@ public:
 
   void			setNullText(const String& nt) { null_text = " " + nt; }
   // set text to display instead of NULL for a null item
+  void			setNewObj1(taBase* parent, const String& nt)
+  { new1_par = parent; new1_text = nt; }
+  // set new object option 
+  void			setNewObj2(taBase* parent, const String& nt)
+  { new2_par = parent; new2_text = nt; }
+  // set new object option 
   
   bool			ShowItemFilter(void* base, void* item, const String& itnm) const;
   // apply optional item_filter and filter_start_txt, else true
@@ -1115,8 +1124,8 @@ public:
   virtual void 		GetImage(void* cur_sel, TypeDef* targ_typ);
   
   virtual void		BuildCategories(); // for types that support categories
-  virtual void		BuildChooser(taiItemChooser* ic, int view = 0) {}
-    // builds the tree
+  virtual void		BuildChooser(taiItemChooser* ic, int view = 0);
+  // builds the tree
 
   ~taiItemPtrBase();
   
@@ -1133,7 +1142,11 @@ protected:
   QToolButton*		btnHelp; // typically for non-tokens, ex Type, Method, etc.
   TypeDef*		targ_typ; 
   String_Array*		cats; // categories -- only created if needed
-  String		null_text;	
+  String		null_text;
+  taBase*		new1_par; // where to create new object
+  String		new1_text;
+  taBase*		new2_par; // where to create new object
+  String		new2_text;
   
   virtual const String	itemTag() const {return _nilString;} // for "N: label" on button, is "N: "
   virtual const String	labelNameNonNull() const = 0; // name part of label, when obj non-null
@@ -1352,7 +1365,7 @@ class TA_API taiTokenPtrButton : public taiItemPtrBase {
 // for tokens of taBase objects
 INHERITED(taiItemPtrBase)
 public:
-  inline taBase*		token() const {return (taBase*)m_sel;}
+  inline taBase*	token() const {return (taBase*)m_sel;}
   override int		columnCount(int view) const;
   override const String	headerText(int index, int view) const;
   override int		viewCount() const {return 1;}
@@ -1395,7 +1408,7 @@ INHERITED(taiItemPtrBase)
 public:
   TypeSpace		type_list; // #LINK_GROUP set of types to generate tokens for -- must be set manually after construction and before GetImage etc -- be sure to only do Link here..
 
-  inline taBase*		token() const {return (taBase*)m_sel;}
+  inline taBase*	token() const {return (taBase*)m_sel;}
   override int		columnCount(int view) const;
   override const String	headerText(int index, int view) const;
   override int		viewCount() const; // n = size of type_list + 1

@@ -44,6 +44,7 @@ class Function;
 class ProgramCallBase;
 class ProgramCall;
 class ProgVars;
+class taiItemPtrBase;
 class ProgramCallVar; //
 
 /////////////////////////////////////////////////////////////////////
@@ -712,6 +713,7 @@ INHERITED(taOBase)
 public:
   // Signature of following functions must match that of the item_filter_fun typedef.
   static bool		StdProgVarFilter(void* base, void* var); // generic progvar filter -- excludes variables from functions if not itself in same function -- use this for most progvars in ITEM_FILTER comment directive
+ static bool		NewProgVarCustChooser(taBase* base, taiItemPtrBase* chooser); // add NewGlobalVar and NewLocalVar options to the chooser
   static bool		ObjProgVarFilter(void* base, void* var); // Object* progvar filter -- only shows Object* items -- use in ITEM_FILTER comment directive
   static bool		DataProgVarFilter(void* base, void* var); // data table* progvar filter -- only shows DataTable* items -- use in ITEM_FILTER comment directive
   static bool		DynEnumProgVarFilter(void* base, void* var); // DynEnum progvar filter -- only shows DynEnum items -- use in ITEM_FILTER comment directive
@@ -889,7 +891,7 @@ class TA_API StaticMethodCall: public ProgEl {
   // ##DEF_CHILD_meth_args call a static method (member function) on a type 
 INHERITED(ProgEl)
 public:
-  ProgVarRef		result_var; // #ITEM_FILTER_StdProgVarFilter result variable (optional -- can be NULL)
+  ProgVarRef		result_var; // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser result variable (optional -- can be NULL)
   TypeDef*		min_type; // #NO_SHOW #NO_SAVE #TYPE_taBase minimum object type to choose from -- anchors selection of object_type (derived versions can set this)
   TypeDef*		object_type; // #TYPE_ON_min_type The object type to look for methods on
   MethodDef*		method; //  #TYPE_ON_object_type the method to call
@@ -989,7 +991,7 @@ class TA_API FunctionCall: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVarRef		result_var;
-  // #ITEM_FILTER_StdProgVarFilter where to store the result (return value) of the function (optional -- can be NULL)
+  // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser where to store the result (return value) of the function (optional -- can be NULL)
   FunctionRef		fun;
   // the function to be called
   ProgArg_List		fun_args;
@@ -1577,7 +1579,7 @@ class TA_API ProgramCallVar: public ProgramCallBase {
 INHERITED(ProgramCallBase)
 public:
   Program_GroupRef	prog_group; // sub-group of programs to look in for program to call -- ALL of the programs in this group MUST have the same set of args, and all are considered potential candidates to be called (e.g., they are all Init'd when the calling program is Init'd)
-  ProgVarRef		prog_name_var; // #ITEM_FILTER_StdProgVarFilter variable that contains name of program within prog_group to call -- this is only used at the time the program call is made when the program is running
+  ProgVarRef		prog_name_var; // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable that contains name of program within prog_group to call -- this is only used at the time the program call is made when the program is running
 
   override Program*	GetTarget();
   override Program*	GetTarget_Compile();

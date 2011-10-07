@@ -2138,6 +2138,25 @@ bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
   return true;
 }
 
+bool ProgEl::NewProgVarCustChooser(taBase* base, taiItemPtrBase* chooser) {
+  if(!chooser || !base) return false;
+  Program* own_prg = GET_OWNER(base, Program);
+  if(!own_prg) return false;
+  chooser->setNewObj1(&(own_prg->vars), " New Global Var");
+  ProgEl* pel = NULL;
+  if(base->InheritsFrom(TA_ProgEl))
+    pel = (ProgEl*)base;
+  else
+    pel = GET_OWNER(base, ProgEl);
+  if(pel) {
+    ProgVars* pvs = pel->FindLocalVarList();
+    if(pvs) {
+      chooser->setNewObj2(&(pvs->local_vars), " New Local Var");
+    }
+  }
+  return true;
+}
+
 bool ProgEl::ObjProgVarFilter(void* base_, void* var_) {
   bool rval = StdProgVarFilter(base_, var_);
   if(!rval) return false;

@@ -2017,6 +2017,16 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
 //     cerr << "base_path empty: lookup a var, seed: " << lookup_seed << endl;
     taiTokenPtrMultiTypeButton* varlkup =  new taiTokenPtrMultiTypeButton
       (&TA_ProgVar, NULL, NULL,	NULL, 0, lookup_seed);
+    varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
+    if(expr_base) {
+      ProgEl* pel = GET_OWNER(expr_base, ProgEl);
+      if(pel) {
+	ProgVars* pvs = pel->FindLocalVarList();
+	if(pvs) {
+	  varlkup->setNewObj2(&(pvs->local_vars), " New Local Var");
+	}
+      }
+    }
     varlkup->item_filter = (item_filter_fun)ProgExprBase::ExprLookupVarFilter;
     expr_lookup_cur_base = expr_base;
     varlkup->type_list.Link(&TA_ProgVar);

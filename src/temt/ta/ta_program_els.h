@@ -335,7 +335,7 @@ class TA_API Switch: public ProgEl {
   // switches execution based on the value of given variable -- each case expression is matched to a corresponding case_code item one-to-one
 INHERITED(ProgEl)
 public:
-  ProgVarRef	    switch_var;	// #ITEM_FILTER_StdProgVarFilter variable to switch on
+  ProgVarRef	    switch_var;	// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to switch on
 
   ProgEl_List	    cases; 	// #SHOW_TREE variable value and code to execute for each case (list of CaseBlock objects)
 
@@ -372,7 +372,7 @@ class TA_API AssignExpr: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVarRef		result_var;
-  // #ITEM_FILTER_StdProgVarFilter where to store the result of the expression (the variable)
+  // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser where to store the result of the expression (the variable)
   ProgExpr		expr;
   // expression to assign to variable
   
@@ -395,7 +395,7 @@ class TA_API VarIncr: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVarRef		var;
-  // #ITEM_FILTER_StdProgVarFilter variable to increment
+  // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable to increment
   ProgExpr		expr;
   // expression for how much to add to variable (use a negative sign to decrement)
   
@@ -418,7 +418,7 @@ class TA_API MethodCall: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgVarRef		result_var;
-  // #ITEM_FILTER_StdProgVarFilter where to store the result of the method call (optional -- can be NULL)
+  // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser where to store the result of the method call (optional -- can be NULL)
   ProgVarRef		obj;
   // #ITEM_FILTER_ObjProgVarFilter program variable that points to the object with the method to call
   TypeDef*		obj_type;
@@ -538,7 +538,7 @@ class TA_API MemberMethodCall: public MemberProgEl {
 INHERITED(MemberProgEl)
 public:
   ProgVarRef		result_var;
-  // #ITEM_FILTER_StdProgVarFilter where to store the result of the method call (optional -- can be NULL)
+  // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser where to store the result of the method call (optional -- can be NULL)
   MethodDef*		method;
   // #TYPE_ON_obj_type the method to call on the member object that is at obj->path
   ProgArg_List		meth_args;
@@ -778,7 +778,7 @@ public:
 
   ProgVarRef	data_var;	// #ITEM_FILTER_DataProgVarFilter program variable pointing to data table with columns that are to be set from startup args
   RowType	row_spec;	// how the row number within data table is specified
-  ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter program variable containing information about which row to operate on (depends on row_spec for what this information is)
+  ProgVarRef	row_var;	// #CONDEDIT_OFF_row_spec:CUR_ROW #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable containing information about which row to operate on (depends on row_spec for what this information is)
 
   virtual DataTable* GetData() const;
   // get actual data table pointer from variable

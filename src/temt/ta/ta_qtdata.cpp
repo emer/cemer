@@ -2945,6 +2945,7 @@ void taiItemChooser::init(const String& caption_) {
 
 void taiItemChooser::accept() {
   QString text = filter->text(); // apply current filter
+  QTreeWidgetItem* itm = NULL;
   if(!text.isEmpty() && text != last_filter && !(last_filter.isEmpty() && text == "^")) {
     last_filter = text;
     QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::All);
@@ -2952,16 +2953,26 @@ void taiItemChooser::accept() {
     while ((item = *it++)) { 
       bool show = ShowItem(item);
       if(!show) continue;
-      m_selObj = (void*)QVARIANT_TO_INTPTR(item->data(0,ObjDataRole));
+      itm = item;
       break;
     }
   }
   else {
-    QTreeWidgetItem* itm = items->currentItem();
-    if (itm) {
-      m_selObj = (void*)QVARIANT_TO_INTPTR(itm->data(0,ObjDataRole));
+    itm = items->currentItem();
+  }
+
+  if(itm) {
+    m_selObj = (void*)QVARIANT_TO_INTPTR(itm->data(0,ObjDataRole));
+    bool new_fun = itm->data(0, NewFunRole).toBool();
+    if(new_fun && m_selObj) {
+      taBase* nw = ((taBase*)m_selObj)->New(1);
+      if(nw)
+	m_selObj = nw;
+//       if(taMisc::gui_active && nw)
+// 	tabMisc::DelayedFunCall_gui(nw, "BrowserSelectMe");
     }
   }
+
   m_client = NULL;
   inherited::accept();
 }
@@ -3182,9 +3193,14 @@ void taiItemChooser::Refresh() {
     }
     // set current item; if NO NULL and none, then first item by default
     void* tsel = m_client->sel();
-    if (!tsel && !m_client->HasFlag(taiData::flgNullOk)) {
-      if (items->topLevelItemCount() > 0) {
-        tsel = (void*)QVARIANT_TO_INTPTR(items->topLevelItem(0)->data(0, ObjDataRole));
+    if (!tsel) {
+      if(items->topLevelItemCount() > 1) {
+        tsel = (void*)QVARIANT_TO_INTPTR(items->topLevelItem(1)->data(0, ObjDataRole));
+      }
+      else if(items->topLevelItemCount() > 0) {
+	if(!m_client->HasFlag(taiData::flgNullOk)) {
+	  tsel = (void*)QVARIANT_TO_INTPTR(items->topLevelItem(0)->data(0, ObjDataRole));
+	}
       }
     }
     setSelObj(tsel, true);
@@ -3344,11 +3360,14 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   item_filter = NULL;
+  cust_chooser = NULL;
   filter_start_txt = flt_start_txt;
   targ_typ = NULL; // gets set later
   m_sel = NULL;
   cats = NULL;
   null_text = " NULL";
+  new1_par = NULL;
+  new2_par = NULL;
   btnEdit = NULL;
   btnHelp = NULL;
   // if we need more than one control, we make a widg w/layout
@@ -3409,6 +3428,19 @@ taiItemPtrBase::~taiItemPtrBase() {
   if (cats) {
     delete cats;
     cats = NULL;
+  }
+}
+
+void taiItemPtrBase::BuildChooser(taiItemChooser* ic, int view) {
+  if(new1_par) {
+    QTreeWidgetItem* item = ic->AddItem(new1_text, NULL, (void*)new1_par); 
+    item->setData(0, taiItemChooser::NewFunRole, true);
+    item->setData(1, Qt::DisplayRole, "Make a new object"); //note: no desc
+  }
+  if(new2_par) {
+    QTreeWidgetItem* item = ic->AddItem(new2_text, NULL, (void*)new2_par); 
+    item->setData(0, taiItemChooser::NewFunRole, true);
+    item->setData(1, Qt::DisplayRole, "Make a new object"); //note: no desc
   }
 }
 
@@ -3525,8 +3557,7 @@ void taiMemberDefButton::BuildCategories_impl() {
 }
 
 void taiMemberDefButton::BuildChooser(taiItemChooser* ic, int view) {
-  //assume only called if needed
-  
+  inherited::BuildChooser(ic, view);
   if (!targ_typ) {
     taMisc::Error("taiMemberDefButton::BuildChooser: targ_type needed");
     return;
@@ -3625,8 +3656,7 @@ void taiMethodDefButton::BuildCategories_impl() {
 }
 
 void taiMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
-  //assume only called if needed
-  
+  inherited::BuildChooser(ic, view);
   if (!targ_typ) {
     taMisc::Error("taiMethodDefButton::BuildChooser: targ_type needed");
     return;
@@ -3783,7 +3813,7 @@ void taiMemberMethodDefButton::BuildCategories_impl() {
 }
 
 void taiMemberMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
-  //assume only called if needed
+  inherited::BuildChooser(ic, view);
   
   if (!targ_typ) {
     taMisc::Error("taiMemberMethodDefButton::BuildChooser: targ_type needed");
@@ -3950,8 +3980,7 @@ void taiEnumStaticButton::BuildCategories_impl() {
 }
 
 void taiEnumStaticButton::BuildChooser(taiItemChooser* ic, int view) {
-  //assume only called if needed
-  
+  inherited::BuildChooser(ic, view);
   if (!targ_typ) {
     taMisc::Error("taiEnumStaticButton::BuildChooser: targ_type needed");
     return;
@@ -4176,8 +4205,7 @@ bool taiTypeDefButton::hasOnlyOneItem() {
 }
 
 void taiTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
-  //assume only called if needed
-  
+  inherited::BuildChooser(ic, view);
   if (!targ_typ) {
     taMisc::Error("taiTypeDefButton::BuildChooser: targ_type needed");
     return;
@@ -4306,8 +4334,7 @@ void taiEnumTypeDefButton::btnHelp_clicked() {
 }
 
 void taiEnumTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
-  //assume only called if needed
-  
+  inherited::BuildChooser(ic, view);
   if (!targ_typ) {
     taMisc::Error("taiEnumTypeDefButton::BuildChooser: targ_type needed");
     return;
@@ -4476,8 +4503,9 @@ bool taiTokenPtrButton::hasOnlyOneItem() {
 }
 
 void taiTokenPtrButton::BuildChooser(taiItemChooser* ic, int view) {
-  //assume only called if needed
-  
+  if(cust_chooser)
+    cust_chooser(scope_ref, this);
+  inherited::BuildChooser(ic, view);
   if (!targ_typ) {
     taMisc::Error("taiTokenPtrButton::BuildChooser: targ_type needed");
     return;
@@ -4620,7 +4648,10 @@ void taiTokenPtrMultiTypeButton::EditPanel() {
 
 
 void taiTokenPtrMultiTypeButton::BuildChooser(taiItemChooser* ic, int view) {
-  //assume only called if needed
+  if(cust_chooser)
+    cust_chooser(scope_ref, this);
+
+  inherited::BuildChooser(ic, view);
   
   if (!targ_typ) {
     taMisc::Error("taiTokenPtrMultiTypeButton::BuildChooser: targ_type needed");
