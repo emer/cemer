@@ -2553,8 +2553,10 @@ void iT3DataViewer::UpdateTabNames() {
     iT3DataViewFrame* idvf = dvf->widget();
     if (!idvf) continue;
     int idx = tw->indexOf(idvf);
-    if (idx >= 0)
+    if (idx >= 0) {
       tw->setTabText(idx, dvf->GetName());
+      tw->setTabToolTip(idx, dvf->GetName());
+    }
   }
 }
 

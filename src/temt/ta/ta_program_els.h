@@ -48,6 +48,8 @@ private:
   void	Destroy()	{CutLinks();}
 };
 
+// todo: rename this one to LocalVars at some point before wide release!
+
 class TA_API ProgVars: public ProgEl {
   // ##DEF_CHILD_local_vars local program variables -- these variables do NOT use or update the values that are shown -- they exist only as script variables (unlike global args and vars)
 INHERITED(ProgEl)
@@ -117,6 +119,9 @@ INHERITED(Loop)
 public:
   ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String	GetToolbarName() const { return "while"; }
 
@@ -137,6 +142,9 @@ INHERITED(Loop)
 public:
   ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String	GetToolbarName() const { return "do"; }
 
@@ -164,6 +172,9 @@ public:
 
   virtual String	GetLoopVar(bool& is_local) const;
   // this is a fuzzy "best guess" at the loop var -- it is used esp for creating a new one (j,k, etc.) in new nested loops; is_local is true if the var is declared in the init
+
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
   override void		SetProgExprFlags();
@@ -195,6 +206,9 @@ INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for continuing loop
 
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
   override String	GetToolbarName() const { return "if.cont"; }
@@ -215,6 +229,9 @@ INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for breaking loop
 
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
   override String	GetToolbarName() const { return "if.break"; }
@@ -234,6 +251,9 @@ class TA_API IfReturn: public ProgEl {
 INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for returning
+
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
@@ -257,6 +277,9 @@ public:
   bool		    show_false_code; // display the false_code, which is run when the cond condition is false -- forced to be true if there is any existing content in false_code
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
   ProgEl_List	    false_code; // #SHOW_TREE #CONDTREE_ON_show_false_code items to execute if condition false
+
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
@@ -315,6 +338,9 @@ class TA_API CaseBlock: public CodeBlock {
 public:
   ProgExpr		case_val; // value of the switch variable -- if switch_var is equal to this, then this code is run (must use literal expression here) -- if case_val is empty, then this represents the default case (run when no other case matches)
 
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String	GetToolbarName() const { return "case"; }
 
@@ -343,6 +369,9 @@ public:
   // #BUTTON make a new case item
   virtual void	    CasesFmEnum();
   // #BUTTON #CONFIRM add all the cases for an enumerated type (switch_var must be either HARD_ENUM or DYN_ENUM)
+
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
 
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
@@ -376,6 +405,9 @@ public:
   ProgExpr		expr;
   // expression to assign to variable
   
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "var="; }
@@ -399,6 +431,9 @@ public:
   ProgExpr		expr;
   // expression for how much to add to variable (use a negative sign to decrement)
   
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "var+="; }
@@ -431,6 +466,9 @@ public:
   // #READ_ONLY #NO_SAVE #SHOW signature of the method, for reference
   String		meth_desc;
   // #READ_ONLY #NO_SAVE #SHOW description of the method, for reference
+
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
 
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
@@ -487,6 +525,9 @@ public:
   ProgExpr		expr; // the expression to compute and assign to the member
   bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
   
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "memb="; }
@@ -544,6 +585,9 @@ public:
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
@@ -567,6 +611,9 @@ INHERITED(StaticMethodCall)
 public:
   override String	GetToolbarName() const { return "math()"; }
 
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   TA_BASEFUNS_NOCOPY(MathCall);
 private:
   void	Initialize();
@@ -579,6 +626,9 @@ INHERITED(StaticMethodCall)
 public:
   override String	GetToolbarName() const { return "random()"; }
 
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   TA_BASEFUNS_NOCOPY(RandomCall);
 private:
   void	Initialize();
@@ -590,6 +640,9 @@ class TA_API MiscCall : public StaticMethodCall {
 INHERITED(StaticMethodCall)
 public:
   override String	GetToolbarName() const { return "misc()"; }
+
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
 
   TA_BASEFUNS_NOCOPY(MiscCall);
 private:
@@ -609,6 +662,9 @@ public:
   ProgVarRef		print_var5; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		print_var6; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "print var"; }
@@ -630,6 +686,9 @@ public:
   ProgExpr		expr;
   // print out (to console) this expression -- it just does 'cerr << expr << endl;' so you can put multiple << segments in the expression to print out multiple things -- you DO need to include quotes around strings!
   
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "print"; }
@@ -648,6 +707,9 @@ class TA_API Comment: public ProgEl {
   // insert a highlighted (possibly) multi-line comment -- useful for describing an upcoming chunk of code
 INHERITED(ProgEl)
 public:
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String	GetTypeDecoKey() const { return "Comment"; }
   override String	GetToolbarName() const { return "comment"; }

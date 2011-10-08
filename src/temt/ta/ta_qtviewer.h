@@ -2078,6 +2078,7 @@ public slots:
   virtual void		CollapseAllUnder(iTreeViewItem* item); // collapse all nodes under item
 
   void			InsertEl(bool after=false); // insert new element at or after currently selected item
+  void			InsertDefaultEl(bool after=false); // insert default new element type object at or after currently selected item
 
 public: // ISelectableHost i/f
   override bool 	hasMultiSelect() const;

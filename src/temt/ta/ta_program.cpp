@@ -1450,26 +1450,16 @@ void ProgExprBase::UpdateAfterEdit_impl() {
       int chs = taMisc::Choice(chs_str, "Create as Globals", "Create as Locals", "I will fix Expr");
       if(chs == 0) {
 	for(int i=0; i<bad_vars.size; i++) {
-	  ProgVar* nwvar = (ProgVar*)prg->vars.New(1, NULL, bad_vars[0]);
+	  ProgVar* nwvar = (ProgVar*)prg->vars.New(1, NULL, bad_vars[i]);
 	  if(taMisc::gui_active && i==0)
 	    tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
 	}
       }
       if(chs == 1) {
-	ProgVars* locvars = pel->FindLocalVarList();
-	if(!locvars) {
-	  ProgEl_List* pelst = GET_MY_OWNER(ProgEl_List);
-	  if(pelst) {
-	    locvars = new ProgVars;
-	    pelst->Insert(locvars, 0);
-	  }
-	}
-	if(locvars) {
-	  for(int i=0; i<bad_vars.size; i++) {
-	    ProgVar* nwvar = (ProgVar*)locvars->local_vars.New(1, NULL, bad_vars[0]);
-	    if(taMisc::gui_active && i==0)
-	      tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
-	  }
+	for(int i=0; i<bad_vars.size; i++) {
+	  ProgVar* nwvar = pel->MakeLocalVar(bad_vars[i]);
+	  if(taMisc::gui_active && i==0)
+	    tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
 	}
       }
     }
@@ -2560,7 +2550,7 @@ ProgVar* ProgEl::FindVarName(const String& var_nm) const {
   return NULL;
 }
 
-ProgVars* ProgEl::FindLocalVarList() {
+ProgVars* ProgEl::FindLocalVarList() const {
   ProgEl_List* pelst = GET_MY_OWNER(ProgEl_List);
   if(!pelst) return NULL;
   bool myidx = -1;
@@ -2581,6 +2571,58 @@ ProgVars* ProgEl::FindLocalVarList() {
   if(ownpe)
     return ownpe->FindLocalVarList();
   return NULL;
+}
+
+ProgVar* ProgEl::MakeLocalVar(const String& var_nm) {
+  ProgVars* locvars = FindLocalVarList();
+  if(!locvars) {
+    ProgEl_List* pelst = GET_MY_OWNER(ProgEl_List);
+    if(pelst) {
+      locvars = new ProgVars;
+      pelst->Insert(locvars, 0);
+    }
+  }
+  if(locvars) {
+    ProgVar* nwvar = (ProgVar*)locvars->local_vars.New(1, NULL, var_nm);
+    return nwvar;
+  }
+  return NULL;
+}
+
+ProgVar* ProgEl::FindVarNameInScope(const String& var_nm, bool else_make) {
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg) return NULL;
+  ProgVar* rval = FindVarNameInScope_impl(var_nm);
+  if(!rval) {
+    String chs_str = "Program variable named: " + var_nm + " in program: " + prg->name
+      + " not found";
+    int chs = taMisc::Choice(chs_str, "Create as Global", "Create as Local", "Ignore");
+    if(chs == 0) {
+      rval = (ProgVar*)prg->vars.New(1, NULL, var_nm);
+      if(taMisc::gui_active)
+	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+    }
+    if(chs == 1) {
+      rval = MakeLocalVar(var_nm);
+      if(taMisc::gui_active)
+	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+    }
+  }
+  return rval;
+}
+
+ProgVar* ProgEl::FindVarNameInScope_impl(const String& var_nm) const {
+  ProgVars* loc = FindLocalVarList();
+  if(loc) {
+    ProgVar* rval = loc->FindVarName(var_nm);
+    if(rval) return rval;
+    ProgEl* loc_own = GET_OWNER(loc, ProgEl);
+    if(loc_own)
+      return loc_own->FindVarNameInScope_impl(var_nm);
+  }
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return NULL;
+  return prog->FindVarName(var_nm); // go all they way back down..
 }
 
 bool ProgEl::BrowserSelectMe() {
@@ -2623,6 +2665,7 @@ String ProgEl::GetToolbarName() const {
 
 void ProgEl_List::Initialize() {
   SetBaseType(&TA_ProgEl);
+  el_typ = &TA_ProgCode;
   setUseStale(true);
 }
 
@@ -2632,6 +2675,11 @@ void ProgEl_List::Destroy() {
 
 void ProgEl_List::Copy_(const ProgEl_List& cp) {
   UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
+}
+
+void ProgEl_List::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  el_typ = &TA_ProgCode;
 }
 
 const String ProgEl_List::GenCss(int indent_level) {
@@ -2702,6 +2750,83 @@ bool ProgEl_List::BrowserCollapseAll() {
   if(!prog) return false;
   return prog->BrowserCollapseAll_ProgItem(this);
 }
+
+//////////////////////////
+//  ProgCode		//
+//////////////////////////
+
+void ProgCode::Initialize() {
+  SetProgExprFlags();
+}
+
+void ProgCode::SetProgExprFlags() {
+  code.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  code.SetExprFlag(ProgExpr::FULL_STMT); // full statements for parsing
+}
+
+void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td, const String& code_str) {
+  ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
+  if(obj) {
+    if(obj->CanCvtFmCode(code_str)) {
+      candidates.Link(obj);
+    }
+  }
+  for(int i = 0; i < td->children.size; ++i) {
+    TypeDef* chld = td->children[i];
+    CvtCodeCheckType(candidates, chld, code_str);
+  }
+}
+
+ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str) {
+  ProgEl_List candidates;
+
+  CvtCodeCheckType(candidates, &TA_ProgEl, code_str);
+  if(candidates.size == 0)
+    return NULL;
+  ProgEl* cvt = candidates[0];
+  if(candidates.size > 1) {
+    int chs = taMisc::Choice("Multiple program elements match code string:\n" + code_str
+		     + "\nPlease choose correct one.",
+		     "Cancel",
+		     candidates[0]->GetToolbarName(),
+		     candidates[1]->GetToolbarName(),
+		     (candidates.size > 2 ? candidates[2]->GetToolbarName() : _nilString),
+		     (candidates.size > 3 ? candidates[3]->GetToolbarName() : _nilString),
+		     (candidates.size > 4 ? candidates[4]->GetToolbarName() : _nilString)
+			     );
+    if(chs == 0) return NULL;
+    cvt = candidates[chs-1];
+  }
+  
+  ProgEl* rval = (ProgEl*)cvt->MakeToken();
+  rval->CvtFmCode(code_str);
+  return rval;
+}
+
+void ProgCode::UpdateAfterEdit_impl() {
+  SetProgExprFlags();
+  inherited::UpdateAfterEdit_impl();
+  String code_str = trim(code.expr);
+  if(code_str.nonempty()) {
+    ProgEl* cvt = CvtCodeToProgEl(code_str);
+    if(cvt) {
+      cvt->desc = desc;		// transfer description
+      ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
+      if(own) {
+	int myidx = own->FindEl(this);
+	own->Insert(cvt, myidx); // insert at my position
+	this->CloseLater();	   // kill me later..
+	tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
+      }
+    }
+  }
+}
+
+String ProgCode::GetDisplayName() const {
+  return code.expr;
+}
+
+
 
 //////////////////////////
 //  Loop		//

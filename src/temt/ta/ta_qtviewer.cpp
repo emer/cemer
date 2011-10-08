@@ -5187,12 +5187,14 @@ void iTabBar::SetPanel(int idx, iDataPanel* value, bool force) {
   m_panel = value;
   if (m_panel) {
     setTabText(idx, m_panel->TabText());
+    setTabToolTip(idx, m_panel->TabText());
     setTabIcon(idx, m_panel->tabIcon());
 //    m_panel->mtab_cnt++;
     // make sure we show latest data (helps in case there are "holes" in data updating)
     m_panel->UpdatePanel();
   } else {
     setTabText(idx, "");
+    setTabToolTip(idx, "");
     setTabIcon(idx, TI_NONE); // no icon
   }
   data = (ta_intptr_t)m_panel;
@@ -6580,6 +6582,7 @@ void iViewPanelSet::UpdatePanel() {
   for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
     tbSubPanels->setTabText(i, pn->TabText());
+    tbSubPanels->setTabToolTip(i, pn->TabText());
   }
 }
 
@@ -7399,6 +7402,46 @@ void iTreeView::InsertEl(bool after) {
   delete typlkup;
 }
 
+void iTreeView::InsertDefaultEl(bool after) {
+  ISelectable* si = curItem();
+  if(!si || !si->link()) return;		// nothing selected
+  taBase* sb = si->link()->taData();
+  if(!sb) return;
+  taList_impl* sbo = NULL;
+  if(sb->InheritsFrom(&TA_taList_impl)) {
+    sbo = (taList_impl*)sb;
+  }
+  else {
+    sbo = GET_OWNER(sb, taList_impl);
+  }
+  if(!sbo) return;
+  TypeDef* td = sbo->el_typ;	// default type
+  if(td) {
+    taProject* proj = myProject();
+    if(proj) {
+      proj->undo_mgr.SaveUndo(sbo, "InsertDefaultEl", NULL, false, sbo); // global save
+    }
+    taBase* nwi = taBase::MakeToken(td);
+    if(nwi) {
+      int idx = 0;
+      if(sbo == sb) {		// it is the list
+	idx = sbo->size;
+      }
+      else {
+	idx = sbo->FindEl(sb);
+	if(after) idx++;
+      }
+      if(idx < 0) idx = 0;
+      if(idx > sbo->size) idx = sbo->size;
+      sbo->Insert(nwi, idx);
+      nwi->UpdateAfterEdit();
+      selectionModel()->clearSelection(); // force clear!
+      tabMisc::DelayedFunCall_gui(nwi, "BrowserExpandAll");
+      tabMisc::DelayedFunCall_gui(nwi, "BrowserSelectMe");
+    }
+  }
+}
+
 const KeyString iTreeView::colKey(int col) const {
   if ((col < 0) || (col >= columnCount())) return _nilKeyString;
   KeyString rval = (headerItem()->data(col, ColKeyRole)).toString();
@@ -7614,6 +7657,12 @@ QStringList iTreeView::mimeTypes () const {
 void iTreeView::keyPressEvent(QKeyEvent* e) {
   taProject* proj = myProject();
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  if((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter)) {
+    ext_select_on = false;
+    InsertDefaultEl();		// at
+    e->accept();
+    return;
+  }
   if(ctrl_pressed) {
     if(e->key() == Qt::Key_I) {
       ext_select_on = false;
@@ -9807,6 +9856,7 @@ void iHelpBrowser::brow_urlChanged(const QUrl& url)
   ++m_changing;
   url_text->setText(url.toString());
   tab->setTabText(tab->currentIndex(), UrlToTabText(url.toString()));
+  tab->setTabToolTip(tab->currentIndex(), UrlToTabText(url.toString()));
   --m_changing; 
 }
 
@@ -9971,6 +10021,7 @@ void iHelpBrowser::LoadExternal_impl(const String& url)
   String tab_text(UrlToTabText(url));
   wv->load(QUrl(url.toQString()));
   tab->setTabText(idx, tab_text.toQString());
+  tab->setTabToolTip(idx, tab_text.toQString());
   url_text->setText(wv->url().toString());
   --m_changing;
 }
@@ -10005,6 +10056,7 @@ void iHelpBrowser::LoadType_impl(TypeDef* typ, const String& base_url,
   }
   wv->setHtml(html.toQString(), url.toQString());
   tab->setTabText(idx, tab_text.toQString());
+  tab->setTabToolTip(idx, tab_text.toQString() + " url: " + wv->url().toString());
   url_text->setText(wv->url().toString());
   --m_changing;
 }

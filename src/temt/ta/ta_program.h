@@ -44,6 +44,7 @@ class Function;
 class ProgramCallBase;
 class ProgramCall;
 class ProgVars;
+class ProgCode;
 class taiItemPtrBase;
 class ProgramCallVar; //
 
@@ -768,11 +769,22 @@ public:
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found
-  virtual ProgVars* 	FindLocalVarList();
+  virtual ProgVars* 	FindLocalVarList() const;
   // find local variable list at the closest level of scope to this program element
+  virtual ProgVar* 	MakeLocalVar(const String& var_nm);
+  // make a new local variable with the given name -- creates a local vars if none found
+  virtual ProgVar* 	FindVarNameInScope(const String& var_nm, bool else_make = false);
+  // find variable name at the closest level of scope to this program element -- if else_make, then offer the option of creating the variable in global or local scope if not found
+    virtual ProgVar* 	FindVarNameInScope_impl(const String& var_nm) const;
+    // #IGNORE impl
 
   virtual void		SetProgExprFlags() { };
   // special temporary function to set flags for any ProgExpr objects -- needed for new css parsing and loading of old projects which saved these flags causes errors, so this fixes that.. todo: remove me after a few releases (introduced in 4.0.10)
+
+  virtual  bool		CanCvtFmCode(const String& code) const { return false; }
+  // can this program element type be converted from given code (ProgCode) text string -- code has had whitespace trimmed at start
+  virtual  bool		CvtFmCode(const String& code) { return false; }
+  // go ahead and convert the code (ProgCode) text string into this program element type  -- code has had whitespace trimmed at start
 
   override bool		BrowserSelectMe();
   override bool		BrowserExpandAll();
@@ -852,12 +864,38 @@ public:
 
   SIMPLE_LINKS(ProgEl_List);
   TA_BASEFUNS(ProgEl_List);
+protected:
+  override void UpdateAfterEdit_impl();
 private:
   void 	Copy_(const ProgEl_List& cp);
   void	Initialize();
   void	Destroy();
 };
 
+class TA_API ProgCode: public ProgEl { 
+  // generic program code where you can enter an expression in text and it will auto-convert to a known program element
+INHERITED(ProgEl)
+public:
+  ProgExpr		code;	// program code statement that will be converted into an appropriate program element if possible
+
+  override void		SetProgExprFlags();
+  override String	GetDisplayName() const;
+  override String	GetToolbarName() const { return "script"; }
+
+  static void		CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td, const String& code);
+  // #IGNORE
+  static ProgEl*	CvtCodeToProgEl(const String& code);
+  // convert code string to a program element -- NULL if cannot be converted
+
+  PROGEL_SIMPLE_BASEFUNS(ProgCode);
+protected:
+  override void UpdateAfterEdit_impl();
+//   override const String	GenCssBody_impl(int indent_level);
+
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
 
 class TA_API Loop: public ProgEl { 
   // #VIRT_BASE base class for loops

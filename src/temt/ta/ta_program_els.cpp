@@ -228,6 +228,22 @@ String WhileLoop::GetDisplayName() const {
   return "while (" + test.expr + ")";
 }
 
+bool WhileLoop::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("while")) return true;
+  return false;
+}
+
+bool WhileLoop::CvtFmCode(const String& code) {
+  String cd = trim(code.after("while"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  test.SetExpr(cd);
+  return true;
+}
+
 //////////////////////////
 //  DoLoop		//
 //////////////////////////
@@ -253,6 +269,22 @@ const String DoLoop::GenCssPost_impl(int indent_level) {
 
 String DoLoop::GetDisplayName() const {
   return "do ... while (" + test.expr + ")";
+}
+
+bool DoLoop::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("do")) return true;
+  return false;
+}
+
+bool DoLoop::CvtFmCode(const String& code) {
+  String cd = trim(code.after("do"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  test.SetExpr(cd);
+  return true;
 }
 
 //////////////////////////
@@ -431,6 +463,25 @@ void ForLoop::ChangeLoopVar(const String& to_var) {
   UpdateAfterEdit();
 }
 
+bool ForLoop::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("for")) return true;
+  return false;
+}
+
+bool ForLoop::CvtFmCode(const String& code) {
+  String cd = trim(code.after("for"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  init.SetExpr(cd.before(';'));
+  String rest = cd.after(';');
+  test.SetExpr(rest.before(';'));
+  iter.SetExpr(rest.after(';'));
+  return true;
+}
+
 
 //////////////////////////
 //  IfContinue		//
@@ -465,6 +516,23 @@ String IfContinue::GetDisplayName() const {
     return "if(" + cond.expr + ") continue;";
 }
 
+bool IfContinue::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("if") && code.contains("continue")) return true;
+  return false;
+}
+
+bool IfContinue::CvtFmCode(const String& code) {
+  String cd = trim(code.after("if"));
+  cd = trim(code.before("continue"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  cond.SetExpr(cd);
+  return true;
+}
+
 
 //////////////////////////
 //  IfBreak		//
@@ -497,6 +565,23 @@ String IfBreak::GetDisplayName() const {
     return "break;";
   else
     return "if(" + cond.expr + ") break;";
+}
+
+bool IfBreak::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("if") && code.contains("break")) return true;
+  return false;
+}
+
+bool IfBreak::CvtFmCode(const String& code) {
+  String cd = trim(code.after("if"));
+  cd = trim(code.before("break"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  cond.SetExpr(cd);
+  return true;
 }
 
 //////////////////////////
@@ -535,6 +620,23 @@ String IfReturn::GetDisplayName() const {
     return "return;";
   else
     return "if(" + cond.expr + ") return;";
+}
+
+bool IfReturn::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("if") && code.contains("return")) return true;
+  return false;
+}
+
+bool IfReturn::CvtFmCode(const String& code) {
+  String cd = trim(code.after("if"));
+  cd = trim(code.before("return"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  cond.SetExpr(cd);
+  return true;
 }
 
 //////////////////////////
@@ -621,6 +723,21 @@ String IfElse::GetDisplayName() const {
   return "if (" + cond.expr + ")";
 }
 
+bool IfElse::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("if")) return true;
+  return false;
+}
+
+bool IfElse::CvtFmCode(const String& code) {
+  String cd = trim(code.after("if"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  cond.SetExpr(cd);
+  return true;
+}
 
 //////////////////////////
 //  IfGuiPrompt		//
@@ -732,6 +849,27 @@ String CaseBlock::GetDisplayName() const {
   if(case_val.expr.empty()) return "default: (" + String(prog_code.size) + " items)";
   return "case: " + case_val.expr + " (" + String(prog_code.size) + " items)";
 }
+
+bool CaseBlock::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("case") || code.startsWith("default")) return true;
+  return false;
+}
+
+bool CaseBlock::CvtFmCode(const String& code) {
+  String cd;
+  if(code.startsWith("case")) cd = trim(code.after("case"));
+  else if(code.startsWith("default")) cd = trim(code.after("default"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  if(cd.endsWith(':'))
+    cd = cd.before(':', -1);
+  case_val.SetExpr(cd);
+  return true;
+}
+
 
 //////////////////////////
 //  Switch		//
@@ -872,6 +1010,22 @@ void Switch::CasesFmEnum_dyn() {
   }
 }
 
+bool Switch::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("switch")) return true;
+  return false;
+}
+
+bool Switch::CvtFmCode(const String& code) {
+  String cd = trim(code.after("switch"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  switch_var = FindVarNameInScope(cd, true); // prompt to make if not found
+  return true;
+}
+
 //////////////////////////
 //    AssignExpr	//
 //////////////////////////
@@ -908,6 +1062,26 @@ String AssignExpr::GetDisplayName() const {
   String rval;
   rval += result_var->name + "=" + expr.GetFullExpr();
   return rval;
+}
+
+bool AssignExpr::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("for")) return false;
+  if(code.freq('=') == 1) {
+    String lhs = code.before('=');
+    if(lhs.nonempty() && !lhs.contains('.') && !lhs.contains('-')) // no path
+      return true;
+  }
+  return false;
+}
+
+bool AssignExpr::CvtFmCode(const String& code) {
+  String lhs = trim(code.before('='));
+  String rhs = trim(code.after('='));
+  
+  result_var = FindVarNameInScope(lhs, true); // option to make
+  expr.SetExpr(rhs);
+  
+  return true;
 }
 
 //////////////////////////
@@ -947,6 +1121,30 @@ String VarIncr::GetDisplayName() const {
   String rval;
   rval += var->name + "+=" + expr.GetFullExpr();
   return rval;
+}
+
+bool VarIncr::CanCvtFmCode(const String& code) const {
+  if(code.freq("+=") == 1 || code.freq("-=") == 1) return true;
+  return false;
+}
+
+bool VarIncr::CvtFmCode(const String& code) {
+  String lhs, rhs;
+  bool neg = false;
+  if(code.contains("+=")) {
+    lhs = trim(code.before("+="));
+    rhs = trim(code.after("+="));
+  }
+  else {
+    lhs = trim(code.before("-="));
+    rhs = trim(code.after("-="));
+    neg = true;
+  }
+  
+  var = FindVarNameInScope(lhs, true); // option to make
+  expr.SetExpr("-" + rhs);
+  
+  return true;
 }
 
 //////////////////////////
@@ -1052,6 +1250,15 @@ void MethodCall::Help() {
   else return inherited::statusTip(ks);
 }*/
 
+bool MethodCall::CanCvtFmCode(const String& code) const {
+  return false;
+}
+
+bool MethodCall::CvtFmCode(const String& code) {
+  return false;
+}
+
+
 
 //////////////////////////
 //    MemberProgEl	//
@@ -1128,6 +1335,15 @@ void MemberProgEl::Help() {
   }
 }
 
+// bool MemberProgEl::CanCvtFmCode(const String& code) const {
+//   return false;
+// }
+
+// bool MemberProgEl::CvtFmCode(const String& code) {
+//   return false;
+// }
+
+
 //////////////////////////
 //    MemberAssign	//
 //////////////////////////
@@ -1185,6 +1401,16 @@ String MemberAssign::GetDisplayName() const {
   rval += expr.GetFullExpr();
   return rval;
 }
+
+bool MemberAssign::CanCvtFmCode(const String& code) const {
+  return false;
+}
+
+bool MemberAssign::CvtFmCode(const String& code) {
+  return false;
+}
+
+
 
 //////////////////////////
 //    MemberFmArg	//
@@ -1352,6 +1578,14 @@ String MemberMethodCall::GetDisplayName() const {
   return rval;
 }
 
+bool MemberMethodCall::CanCvtFmCode(const String& code) const {
+  return false;
+}
+
+bool MemberMethodCall::CvtFmCode(const String& code) {
+  return false;
+}
+
 //////////////////////////
 //      MathCall	//
 //////////////////////////
@@ -1361,14 +1595,38 @@ void MathCall::Initialize() {
   object_type = &TA_taMath_float;
 }
 
+bool MathCall::CanCvtFmCode(const String& code) const {
+  return false;
+}
+
+bool MathCall::CvtFmCode(const String& code) {
+  return false;
+}
+
 void RandomCall::Initialize() {
   min_type = &TA_Random;
   object_type = &TA_Random;
 }
 
+bool RandomCall::CanCvtFmCode(const String& code) const {
+  return false;
+}
+
+bool RandomCall::CvtFmCode(const String& code) {
+  return false;
+}
+
 void MiscCall::Initialize() {
   min_type = &TA_taMisc;
   object_type = &TA_taMisc;
+}
+
+bool MiscCall::CanCvtFmCode(const String& code) const {
+  return false;
+}
+
+bool MiscCall::CvtFmCode(const String& code) {
+  return false;
 }
 
 //////////////////////////
@@ -1425,6 +1683,13 @@ String PrintVar::GetDisplayName() const {
   return rval;
 }
 
+bool PrintVar::CanCvtFmCode(const String& code) const {
+  return false;
+}
+
+bool PrintVar::CvtFmCode(const String& code) {
+  return false;
+}
 
 //////////////////////////
 //      PrintExpr	//
@@ -1452,6 +1717,14 @@ String PrintExpr::GetDisplayName() const {
   return rval;
 }
 
+bool PrintExpr::CanCvtFmCode(const String& code) const {
+  return false;
+}
+
+bool PrintExpr::CvtFmCode(const String& code) {
+  return false;
+}
+
 
 //////////////////////////
 //      Comment 	//
@@ -1477,6 +1750,14 @@ const String Comment::GenCssBody_impl(int indent_level) {
 
 String Comment::GetDisplayName() const {
   return desc;
+}
+
+bool Comment::CanCvtFmCode(const String& code) const {
+  return false;
+}
+
+bool Comment::CvtFmCode(const String& code) {
+  return false;
 }
 
 
