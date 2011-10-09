@@ -1715,9 +1715,11 @@ void LayerGroupView::BuildAll() {
   Reset(); //for when we are invoked after initial construction
 //  String node_nm;
 
+  NetView* nv = this->nv();
   Layer_Group* lgp = layer_group(); //cache
   for(int li=0;li<lgp->size;li++) {
     Layer* lay = lgp->FastEl(li);
+    if(!nv->show_iconified && lay->Iconified()) continue;
     LayerView* lv = new LayerView();
     lv->SetData(lay);
     children.Add(lv);
@@ -2266,6 +2268,7 @@ void NetView::Initialize() {
   display = true;
   lay_mv = true;
   net_text = true;
+  show_iconified = false;
   net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
   net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
   net_text_xform.scale = 0.7f;
@@ -2477,9 +2480,12 @@ void NetView::BuildAll() { // populates all T3 guys
   Layer* lay;
   taLeafItr li;
   FOR_ITR_EL(Layer, lay, net()->layers., li) {
+    if(lay->lesioned() || lay->Iconified()) continue;
     Projection* prjn;
     taLeafItr j;
     FOR_ITR_EL(Projection, prjn, lay->projections., j) {
+      if((prjn->from.ptr() == NULL) || prjn->from->lesioned()
+	 || prjn->from->Iconified()) continue;
       PrjnView* pv = new PrjnView();
       pv->SetData(prjn);
       //nn prjns.Add(pv); // this is automatic from the childadding thing
@@ -3686,6 +3692,11 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   ////////////////////////////////////////////////////////////////////////////
   layFontsEtc = new QHBoxLayout();  layViewParams->addLayout(layFontsEtc);
 
+  chkShowIconified = new QCheckBox("Show\nIcon", widg);
+  chkShowIconified->setToolTip("Show iconified layers -- if this is off, then iconified layers are not displayed at all -- otherwise they are displayed with their name and optional iconified value, but projections are not displayed in any case");
+  connect(chkShowIconified, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layFontsEtc->addWidget(chkShowIconified);
+
   lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
   lblPrjnWdth->setToolTip("Width of projection lines -- .002 is default (very thin!) -- increase if editing projections so they are easier to select.");
   layFontsEtc->addWidget(lblPrjnWdth);
@@ -4046,6 +4057,7 @@ void NetViewPanel::UpdatePanel_impl() {
   fldWtPrjnKGp->GetImage((String)nv->wt_prjn_k_gp);
   gelWtPrjnLay->GetImage(&(nv->net()->layers), nv->wt_prjn_lay.ptr());
 
+  chkShowIconified->setChecked(nv->show_iconified);
   fldUnitTrans->GetImage((String)nv->view_params.unit_trans);
   fldUnitFont->GetImage((String)nv->font_sizes.unit);
   fldLayFont->GetImage((String)nv->font_sizes.layer);
@@ -4123,6 +4135,11 @@ void NetViewPanel::GetValue_impl() {
   nv->wt_prjn_k_un = (float)fldWtPrjnKUn->GetValue();
   nv->wt_prjn_k_gp = (float)fldWtPrjnKGp->GetValue();
   nv->wt_prjn_lay = (Layer*)gelWtPrjnLay->GetValue();
+  bool cur_si = chkShowIconified->isChecked();
+  if(cur_si != nv->show_iconified) {
+    nv->show_iconified = cur_si;
+    req_full_build = true;
+  }
   nv->view_params.xy_square = chkXYSquare->isChecked();
   nv->view_params.show_laygp = chkLayGp->isChecked();
 

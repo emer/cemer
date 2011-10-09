@@ -2437,6 +2437,7 @@ void iT3DataViewer::AddT3DataViewFrame(iT3DataViewFrame* idvf, int idx) {
     idx = tw->addTab(idvf, tab_label);
   else
     tw->insertTab(idx, idvf, tab_label);
+  tw->setTabToolTip(idx, tab_label);
   idvf->t3vs->Connect_SelectableHostNotifySignal(this, 
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
   tw->setCurrentIndex(idx); // not selected automatically

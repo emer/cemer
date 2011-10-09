@@ -70,6 +70,16 @@ ProgVar* CodeBlock::FindVarName(const String& var_nm) const {
   return prog_code.FindVarName(var_nm);
 }
 
+bool CodeBlock::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("{")) return true;
+  return false;
+}
+
+bool CodeBlock::CvtFmCode(const String& code) {
+  // just open bracket is all there is!
+  return true;
+}
+
 //////////////////////////
 //  ProgVars		//
 //////////////////////////
@@ -134,6 +144,38 @@ ProgVar* ProgVars::AddVarMatrix() {
   rval->SetObjectType(&TA_Variant_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
+}
+
+bool ProgVars::CanCvtFmCode(const String& code) const {
+  if(!code.contains(' ')) return false; // must have at least one space
+  String vartyp = trim(code.before(' '));
+  if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
+  TypeDef* td = taMisc::types.FindName(vartyp);
+  if(td != NULL) return true;	// yep.
+  return false;
+}
+
+bool ProgVars::CvtFmCode(const String& code) {
+  String vartyp = trim(code.before(' '));
+  if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
+  String varnm = trim(code.after(' '));
+  if(varnm.endsWith(';')) varnm = varnm.before(';',-1);
+  TypeDef* td = taMisc::types.FindName(vartyp);
+  if(td == NULL) return false; // shouldn't happen
+  ProgVar* var = AddVar();
+  var->SetName(varnm);
+  if(vartyp == "int")
+    var->SetInt(0);
+  else if((vartyp == "float") || (vartyp == "double"))
+    var->SetReal(0.0);
+  else if(vartyp == "String")
+    var->SetString("");
+  else if(vartyp == "bool")
+    var->SetBool(false);
+  else {
+    var->SetObjectType(td);	// catch all.
+  }
+  return true;
 }
 
 
@@ -237,9 +279,9 @@ bool WhileLoop::CvtFmCode(const String& code) {
   String cd = trim(code.after("while"));
   if(cd.startsWith('(')) {
     cd = cd.after('(');
-    if(cd.endsWith(')'))
-      cd = cd.before(')', -1);
+    if(cd.endsWith(')')) cd = cd.before(')', -1);
   }
+  if(cd.endsWith(';')) cd = cd.before(';',-1);
   test.SetExpr(cd);
   return true;
 }
@@ -283,6 +325,7 @@ bool DoLoop::CvtFmCode(const String& code) {
     if(cd.endsWith(')'))
       cd = cd.before(')', -1);
   }
+  if(cd.endsWith(';')) cd = cd.before(';',-1);
   test.SetExpr(cd);
   return true;
 }
@@ -475,10 +518,12 @@ bool ForLoop::CvtFmCode(const String& code) {
     if(cd.endsWith(')'))
       cd = cd.before(')', -1);
   }
+  if(cd.endsWith(';')) cd = cd.before(';',-1);
   init.SetExpr(cd.before(';'));
   String rest = cd.after(';');
   test.SetExpr(rest.before(';'));
   iter.SetExpr(rest.after(';'));
+  UpdateAfterEdit_impl();	// make local var
   return true;
 }
 
@@ -735,6 +780,7 @@ bool IfElse::CvtFmCode(const String& code) {
     if(cd.endsWith(')'))
       cd = cd.before(')', -1);
   }
+  if(cd.endsWith(';')) cd = cd.before(';',-1);
   cond.SetExpr(cd);
   return true;
 }
@@ -1022,6 +1068,7 @@ bool Switch::CvtFmCode(const String& code) {
     if(cd.endsWith(')'))
       cd = cd.before(')', -1);
   }
+  if(cd.endsWith(';')) cd = cd.before(';',-1);
   switch_var = FindVarNameInScope(cd, true); // prompt to make if not found
   return true;
 }
@@ -1065,7 +1112,8 @@ String AssignExpr::GetDisplayName() const {
 }
 
 bool AssignExpr::CanCvtFmCode(const String& code) const {
-  if(code.startsWith("for")) return false;
+  // note: AssignExpr is specifically excluded if multiple matches, so no need to exclude
+  // all the other things that might have an = in them -- it is just a fallback default
   if(code.freq('=') == 1) {
     String lhs = code.before('=');
     if(lhs.nonempty() && !lhs.contains('.') && !lhs.contains('-')) // no path
@@ -1077,6 +1125,7 @@ bool AssignExpr::CanCvtFmCode(const String& code) const {
 bool AssignExpr::CvtFmCode(const String& code) {
   String lhs = trim(code.before('='));
   String rhs = trim(code.after('='));
+  if(rhs.endsWith(';')) rhs = rhs.before(';',-1);
   
   result_var = FindVarNameInScope(lhs, true); // option to make
   expr.SetExpr(rhs);
@@ -1140,6 +1189,7 @@ bool VarIncr::CvtFmCode(const String& code) {
     rhs = trim(code.after("-="));
     neg = true;
   }
+  if(rhs.endsWith(';')) rhs = rhs.before(';',-1);
   
   var = FindVarNameInScope(lhs, true); // option to make
   expr.SetExpr("-" + rhs);
@@ -1251,11 +1301,68 @@ void MethodCall::Help() {
 }*/
 
 bool MethodCall::CanCvtFmCode(const String& code) const {
+  // fmt: [result = ]obj[.|->]method(args...
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  if((lhs.freq('.') + lhs.freq("->")) != 1) return false;
+  String mthobj = lhs;
+  if(lhs.contains('='))
+    mthobj = trim(lhs.after('='));
+  String objnm;
+  if(mthobj.contains('.'))
+    objnm = mthobj.before('.');
+  else 
+    objnm = mthobj.before("->");
+  if(objnm.nonempty()) return true; // syntax above should be enough to rule in..
   return false;
 }
 
 bool MethodCall::CvtFmCode(const String& code) {
-  return false;
+  String lhs = trim(code.before('('));
+  String mthobj = lhs;
+  String rval;
+  if(lhs.contains('=')) {
+    mthobj = trim(lhs.after('='));
+    rval = trim(lhs.before('='));
+  }
+  String objnm;
+  String methnm;
+  if(mthobj.contains('.')) {
+    objnm = mthobj.before('.');
+    methnm = mthobj.after('.');
+  }
+  else {
+    objnm = mthobj.before("->");
+    methnm = mthobj.after("->");
+  }
+  ProgVar* pv = FindVarNameInScope(objnm, true); // true = give option to make one
+  if(!pv) return false;
+  obj = pv;
+  if(rval.nonempty())
+    result_var = FindVarNameInScope(rval, true); // true = give option to make one
+  UpdateAfterEdit_impl();			   // update based on obj
+  MethodDef* md = obj_type->methods.FindName(methnm);
+  if(md) {
+    method = md;
+    UpdateAfterEdit_impl();			   // update based on obj
+  }
+  // now tackle the args
+  String args = trim(code.after('('));
+  if(args.endsWith(')')) args = trim(args.before(')',-1));
+  if(args.endsWith(';')) args = trim(args.before(';',-1));
+  for(int i=0; i<meth_args.size; i++) {
+    ProgArg* pa = meth_args.FastEl(i);
+    String arg;
+    if(args.contains(',')) {
+      arg = trim(args.before(','));
+      args = trim(args.after(','));
+    }
+    else {
+      arg = args;
+    }
+    pa->expr.SetExpr(arg);
+  }
+  return true;
 }
 
 
@@ -1403,10 +1510,32 @@ String MemberAssign::GetDisplayName() const {
 }
 
 bool MemberAssign::CanCvtFmCode(const String& code) const {
-  return false;
+  if(!code.contains('=')) return false;
+  String lhs = code.before('=');
+  if(!(lhs.contains('.') || lhs.contains("->"))) return false;
+  return true;			// probably enough?
 }
 
 bool MemberAssign::CvtFmCode(const String& code) {
+  String lhs = trim(code.before('='));
+  String objnm;
+  String pathnm;
+  if(lhs.contains('.')) {
+    objnm = lhs.before('.');
+    pathnm = lhs.after('.');
+  }
+  else {
+    objnm = lhs.before("->");
+    pathnm = lhs.after("->");
+  }
+  ProgVar* pv = FindVarNameInScope(objnm, true); // true = give option to make one
+  if(!pv) return false;
+  obj = pv;
+  path = pathnm;
+  String rhs = trim(code.after('='));
+  if(rhs.endsWith(';')) rhs = rhs.before(';',-1);
+  expr.SetExpr(rhs);
+  UpdateAfterEdit_impl();
   return false;
 }
 
@@ -1579,11 +1708,77 @@ String MemberMethodCall::GetDisplayName() const {
 }
 
 bool MemberMethodCall::CanCvtFmCode(const String& code) const {
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  if((lhs.freq('.') + lhs.freq("->")) <= 1) return false; // need at least 2!
+  String mthobj = lhs;
+  if(lhs.contains('='))
+    mthobj = trim(lhs.after('='));
+  String objnm;
+  if(mthobj.contains('.'))
+    objnm = mthobj.before('.');
+  else 
+    objnm = mthobj.before("->");
+  if(objnm.nonempty()) return true; // syntax above should be enough to rule in..
   return false;
 }
 
 bool MemberMethodCall::CvtFmCode(const String& code) {
-  return false;
+  String lhs = trim(code.before('('));
+  String mthobj = lhs;
+  String rval;
+  if(lhs.contains('=')) {
+    mthobj = trim(lhs.after('='));
+    rval = trim(lhs.before('='));
+  }
+  String objnm;
+  String pathnm;
+  if(mthobj.contains('.')) {
+    objnm = mthobj.before('.');
+    pathnm = mthobj.after('.');
+  }
+  else {
+    objnm = mthobj.before("->");
+    pathnm = mthobj.after("->");
+  }
+  ProgVar* pv = FindVarNameInScope(objnm, true); // true = give option to make one
+  if(!pv) return false;
+  obj = pv;
+  if(rval.nonempty())
+    result_var = FindVarNameInScope(rval, true); // true = give option to make one
+  String methnm;
+  if(pathnm.contains('.')) {
+    methnm = pathnm.after('.',-1);
+    pathnm = pathnm.before('.', -1);
+  }
+  else {
+    methnm = pathnm.after("->",-1);
+    pathnm = pathnm.before("->", -1);
+  }
+  path = pathnm;
+  UpdateAfterEdit_impl();			   // update based on obj and path
+  MethodDef* md = obj_type->methods.FindName(methnm);
+  if(md) {
+    method = md;
+    UpdateAfterEdit_impl();			   // update based on obj
+  }
+  // now tackle the args
+  String args = trim(code.after('('));
+  if(args.endsWith(')')) args = trim(args.before(')',-1));
+  if(args.endsWith(';')) args = trim(args.before(';',-1));
+  for(int i=0; i<meth_args.size; i++) {
+    ProgArg* pa = meth_args.FastEl(i);
+    String arg;
+    if(args.contains(',')) {
+      arg = trim(args.before(','));
+      args = trim(args.after(','));
+    }
+    else {
+      arg = args;
+    }
+    pa->expr.SetExpr(arg);
+  }
+  return true;
 }
 
 //////////////////////////
@@ -1596,11 +1791,21 @@ void MathCall::Initialize() {
 }
 
 bool MathCall::CanCvtFmCode(const String& code) const {
+  if(!code.contains("::")) return false;
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  String mthobj = lhs;
+  if(lhs.contains('='))
+    mthobj = trim(lhs.after('='));
+  String objnm = mthobj.before("::");
+  TypeDef* td = taMisc::types.FindName(objnm);
+  if(!td) return false;
+  if(objnm.contains("taMath")) return true;
   return false;
 }
 
 bool MathCall::CvtFmCode(const String& code) {
-  return false;
+  return inherited::CvtFmCode(code);
 }
 
 void RandomCall::Initialize() {
@@ -1609,11 +1814,21 @@ void RandomCall::Initialize() {
 }
 
 bool RandomCall::CanCvtFmCode(const String& code) const {
+  if(!code.contains("::")) return false;
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  String mthobj = lhs;
+  if(lhs.contains('='))
+    mthobj = trim(lhs.after('='));
+  String objnm = mthobj.before("::");
+  TypeDef* td = taMisc::types.FindName(objnm);
+  if(!td) return false;
+  if(objnm == "Random") return true;
   return false;
 }
 
 bool RandomCall::CvtFmCode(const String& code) {
-  return false;
+  return inherited::CvtFmCode(code);
 }
 
 void MiscCall::Initialize() {
@@ -1622,11 +1837,21 @@ void MiscCall::Initialize() {
 }
 
 bool MiscCall::CanCvtFmCode(const String& code) const {
+  if(!code.contains("::")) return false;
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  String mthobj = lhs;
+  if(lhs.contains('='))
+    mthobj = trim(lhs.after('='));
+  String objnm = mthobj.before("::");
+  TypeDef* td = taMisc::types.FindName(objnm);
+  if(!td) return false;
+  if(objnm == "taMisc") return true;
   return false;
 }
 
 bool MiscCall::CvtFmCode(const String& code) {
-  return false;
+  return inherited::CvtFmCode(code);
 }
 
 //////////////////////////
@@ -1684,11 +1909,63 @@ String PrintVar::GetDisplayName() const {
 }
 
 bool PrintVar::CanCvtFmCode(const String& code) const {
+  if(!(code.startsWith("print ") || code.startsWith("cerr << ") || code.startsWith("cout << ")))
+    return false;
+  String exprstr;
+  if(code.startsWith("print ")) exprstr = trim(code.after("print "));
+  else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
+  else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
+  if(exprstr.contains('"')) {
+    if(exprstr.freq('"') != 2) return false; // only one message
+    exprstr = trim(exprstr.after('"',-1));
+    if(exprstr.contains(',')) exprstr = trim(exprstr.after(','));
+    if(exprstr.contains("<<")) exprstr = trim(exprstr.after("<<"));
+  }
+  String varnm = exprstr;
+  if(exprstr.contains(',')) varnm = trim(exprstr.before(','));
+  if(exprstr.contains("<<")) varnm = trim(exprstr.before("<<"));
+  if(exprstr.contains(' ')) varnm = trim(exprstr.before(' '));
+  if(varnm.nonempty()) return true; // cannot look it up -- have to go on nonempty status
   return false;
 }
 
 bool PrintVar::CvtFmCode(const String& code) {
-  return false;
+  String exprstr;
+  if(code.startsWith("print ")) exprstr = trim(code.after("print "));
+  else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
+  else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
+  String msg;
+  String vars;
+  if(exprstr.contains('"')) {
+    msg = trim(exprstr.before('"',-1));
+    msg = msg.after('"');
+    message = msg;
+    exprstr = trim(exprstr.after('"',-1));
+    if(exprstr.contains(',')) exprstr = trim(exprstr.after(','));
+    if(exprstr.contains("<<")) exprstr = trim(exprstr.after("<<"));
+  }
+  if(exprstr.empty()) return true; // ok, we'll take it -- just a meassage
+  String varnms = exprstr;
+  int idx = 0;
+  ProgVarRef* refs[6] = {&print_var, &print_var2, &print_var3, &print_var4, &print_var5,
+			 &print_var6};
+  do {
+    String varnm = varnms;
+    if(varnms.contains(',')) {
+      varnm = trim(varnms.before(',')); varnms = trim(varnms.after(',')); }
+    if(varnms.contains("<<")) {
+      varnm = trim(varnms.before("<<")); varnms = trim(varnms.after("<<")); }
+    if(varnms.contains(' ')) {
+      varnm = trim(varnms.before(' ')); varnms = trim(varnms.after(' ')); }
+    if(varnm == varnms)
+      varnms = "";		// done
+    ProgVar* pv = FindVarNameInScope(varnm, false);
+    if(pv) {
+      *(refs[idx]) = pv;
+    }
+    idx++;
+  } while(varnms.nonempty());
+  return true;
 }
 
 //////////////////////////
@@ -1718,11 +1995,22 @@ String PrintExpr::GetDisplayName() const {
 }
 
 bool PrintExpr::CanCvtFmCode(const String& code) const {
+  if(!(code.startsWith("print ") || code.startsWith("cerr << ") || code.startsWith("cout << ")))
+    return false;
+  String exprstr;
+  if(code.startsWith("print ")) exprstr = trim(code.after("print "));
+  else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
+  else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
+  if(exprstr.freq('"') > 2) return true; // not a var guy
   return false;
 }
 
 bool PrintExpr::CvtFmCode(const String& code) {
-  return false;
+  String exprstr;
+  if(code.startsWith("print ")) exprstr = trim(code.after("print "));
+  else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
+  else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
+  expr.SetExpr(exprstr);
 }
 
 
@@ -1753,10 +2041,14 @@ String Comment::GetDisplayName() const {
 }
 
 bool Comment::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("//") || code.startsWith("/*")) return true;
   return false;
 }
 
 bool Comment::CvtFmCode(const String& code) {
+  if(code.startsWith("//")) desc = trim(code.after("//"));
+  else if(code.startsWith("/*")) trim(desc = code.after("/*"));
+  if(code.endsWith("*/")) desc = trim(desc.before("*/",-1));
   return false;
 }
 
@@ -1818,6 +2110,22 @@ String ReturnExpr::GetDisplayName() const {
   String rval;
   rval += "return " + expr.expr;
   return rval;
+}
+
+bool ReturnExpr::CanCvtFmCode(const String& code) const {
+  if(code.startsWith("return")) return true;
+  return false;
+}
+
+bool ReturnExpr::CvtFmCode(const String& code) {
+  String cd = trim(code.after("return"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')')) cd = cd.before(')', -1);
+  }
+  if(cd.endsWith(';')) cd = cd.before(';',-1);
+  expr.SetExpr(cd);
+  return true;
 }
 
 

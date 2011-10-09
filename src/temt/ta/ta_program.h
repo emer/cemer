@@ -773,7 +773,7 @@ public:
   // find local variable list at the closest level of scope to this program element
   virtual ProgVar* 	MakeLocalVar(const String& var_nm);
   // make a new local variable with the given name -- creates a local vars if none found
-  virtual ProgVar* 	FindVarNameInScope(const String& var_nm, bool else_make = false);
+  virtual ProgVar* 	FindVarNameInScope(const String& var_nm, bool else_make = false) const;
   // find variable name at the closest level of scope to this program element -- if else_make, then offer the option of creating the variable in global or local scope if not found
     virtual ProgVar* 	FindVarNameInScope_impl(const String& var_nm) const;
     // #IGNORE impl
@@ -781,9 +781,9 @@ public:
   virtual void		SetProgExprFlags() { };
   // special temporary function to set flags for any ProgExpr objects -- needed for new css parsing and loading of old projects which saved these flags causes errors, so this fixes that.. todo: remove me after a few releases (introduced in 4.0.10)
 
-  virtual  bool		CanCvtFmCode(const String& code) const { return false; }
+  virtual  bool		CanCvtFmCode(const String& code) const;
   // can this program element type be converted from given code (ProgCode) text string -- code has had whitespace trimmed at start
-  virtual  bool		CvtFmCode(const String& code) { return false; }
+  virtual  bool		CvtFmCode(const String& code);
   // go ahead and convert the code (ProgCode) text string into this program element type  -- code has had whitespace trimmed at start
 
   override bool		BrowserSelectMe();
@@ -935,6 +935,9 @@ public:
   MethodDef*		method; //  #TYPE_ON_object_type the method to call
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
+
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
 
   override taList_impl*	children_() {return &meth_args;}	
   override String	GetDisplayName() const;

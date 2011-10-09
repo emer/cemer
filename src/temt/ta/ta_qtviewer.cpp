@@ -7659,7 +7659,7 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter)) {
     ext_select_on = false;
-    InsertDefaultEl();		// at
+    InsertDefaultEl(true);		// after
     e->accept();
     return;
   }

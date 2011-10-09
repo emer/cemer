@@ -484,6 +484,7 @@ public:
   bool			display;       	// whether to update the display when values change (under control of programs)
   bool			lay_mv;       	// whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
   bool			net_text;       // whether to display text box below network with counters etc
+  bool			show_iconified;	// show iconified layers -- otherwise they are removed entirely
   FloatTransform	net_text_xform;  // transform of coordinate system for the net text display element
   float			net_text_rot;	 // rotation of the text in the Z plane (in degrees) - default is upright, but if text area is rotated, then a different angle might work better
   MemberSpace		membs;		// #NO_SAVE #NO_COPY #READ_ONLY list of all the members possible in units; note: all items are new clones
@@ -671,10 +672,11 @@ public:
   taiComboBox*		    cmbDispMode;
   QLabel*		    lblPrjnDisp;
   taiComboBox*		    cmbPrjnDisp;
-  QLabel*		    lblPrjnWdth;
-  taiField*		    fldPrjnWdth;
 
   QHBoxLayout*		  layFontsEtc;
+  QCheckBox*		    chkShowIconified;
+  QLabel*		    lblPrjnWdth;
+  taiField*		    fldPrjnWdth;
   QLabel*		    lblUnitTrans;
   taiField*		    fldUnitTrans;
   QLabel*		    lblUnitFont;

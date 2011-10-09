@@ -29,6 +29,9 @@ public:
  virtual ProgEl*	AddProgCode(TypeDef* el_type)	{ return (ProgEl*)prog_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new program code element
 
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
 //no  override taList_impl*	children_() {return &prog_code;}	
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
@@ -70,6 +73,9 @@ public:
   // #BUTTON add a new Variant_Matrix* variable -- these have to be in local vars so are frequently created..
 
   override ProgVar*	FindVarName(const String& var_nm) const;
+
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
 
   override taList_impl*	children_() {return &local_vars;}
   override String	GetDisplayName() const;
@@ -753,6 +759,9 @@ public:
   ProgExpr		expr;
   // expression to return from function with (can be empty to return from a void function)
   
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
   override String	GetToolbarName() const { return "return()"; }

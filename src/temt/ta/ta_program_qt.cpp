@@ -1700,9 +1700,11 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
     itv->clearExtSelection();
     itv->scrollTo(iti);
     itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
+    // make sure our operations are finished
+    taiMiscCore::ProcessEvents();
+    // tab into it by default
+    QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
   }
-  // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
   return (bool)iti;
 }
 

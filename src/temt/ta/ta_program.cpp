@@ -1564,6 +1564,7 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
   if(vnm == "__tmp") return 0;	// skip
 
   ProgExprBase* pe = (ProgExprBase*)udata;
+//   ProgEl* pel = GET_OWNER(pe, ProgEl);
   Program* prog = GET_OWNER(pe, Program);
   int idx = 0;
   ProgVar* var = NULL;
@@ -1589,10 +1590,16 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
     return el->GetParse();
   }
 
+  // todo: for some reason this does not work!  misses stuff..
+//   if(pel) {
+//     var = pel->FindVarNameInScope(vnm, false); // no make
+//   }
+//   else {
   if(fun)
     var = fun->FindVarName(vnm);
   if(!var)
     var = prog->FindVarName(vnm);
+//   }
   if(var) {
     if(!pe->vars.FindVar(var, idx)) {
       ProgVarRef* prf = new ProgVarRef;
@@ -2589,11 +2596,11 @@ ProgVar* ProgEl::MakeLocalVar(const String& var_nm) {
   return NULL;
 }
 
-ProgVar* ProgEl::FindVarNameInScope(const String& var_nm, bool else_make) {
+ProgVar* ProgEl::FindVarNameInScope(const String& var_nm, bool else_make) const {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return NULL;
   ProgVar* rval = FindVarNameInScope_impl(var_nm);
-  if(!rval) {
+  if(!rval && else_make) {
     String chs_str = "Program variable named: " + var_nm + " in program: " + prg->name
       + " not found";
     int chs = taMisc::Choice(chs_str, "Create as Global", "Create as Local", "Ignore");
@@ -2603,7 +2610,7 @@ ProgVar* ProgEl::FindVarNameInScope(const String& var_nm, bool else_make) {
 	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
     }
     if(chs == 1) {
-      rval = MakeLocalVar(var_nm);
+      rval = ((ProgEl*)this)->MakeLocalVar(var_nm);
       if(taMisc::gui_active)
 	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
     }
@@ -2656,6 +2663,16 @@ const String ProgEl::GetToolTip(const KeyString& key) const {
 
 String ProgEl::GetToolbarName() const {
   return "<base el>";
+}
+
+bool ProgEl::CanCvtFmCode(const String& code) const {
+  if(code.startsWith(GetToolbarName())) return true; // default is just to match toolbar
+  return false;
+}
+
+bool ProgEl::CvtFmCode(const String& code) {
+  // nothing to initialize
+  return true;
 }
 
 
@@ -2785,21 +2802,28 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str) {
     return NULL;
   ProgEl* cvt = candidates[0];
   if(candidates.size > 1) {
-    int chs = taMisc::Choice("Multiple program elements match code string:\n" + code_str
-		     + "\nPlease choose correct one.",
-		     "Cancel",
-		     candidates[0]->GetToolbarName(),
-		     candidates[1]->GetToolbarName(),
-		     (candidates.size > 2 ? candidates[2]->GetToolbarName() : _nilString),
-		     (candidates.size > 3 ? candidates[3]->GetToolbarName() : _nilString),
-		     (candidates.size > 4 ? candidates[4]->GetToolbarName() : _nilString)
-			     );
-    if(chs == 0) return NULL;
-    cvt = candidates[chs-1];
+    for(int i=candidates.size-1; i>= 0; i--) {
+      ProgEl* pel = candidates[i];
+      if(pel->InheritsFrom(&TA_AssignExpr)) // assign only matches if it is the only one..
+	candidates.RemoveIdx(i);
+    }
+    cvt = candidates[0];
+    if(candidates.size > 1) {
+      int chs = taMisc::Choice("Multiple program elements match code string:\n" + code_str
+			       + "\nPlease choose correct one.",
+			       "Cancel",
+		       candidates[0]->GetToolbarName(),
+		       candidates[1]->GetToolbarName(),
+		       (candidates.size > 2 ? candidates[2]->GetToolbarName() : _nilString),
+		       (candidates.size > 3 ? candidates[3]->GetToolbarName() : _nilString),
+		       (candidates.size > 4 ? candidates[4]->GetToolbarName() : _nilString)
+			       );
+      if(chs == 0) return NULL;
+      cvt = candidates[chs-1];
+    }
   }
   
   ProgEl* rval = (ProgEl*)cvt->MakeToken();
-  rval->CvtFmCode(code_str);
   return rval;
 }
 
@@ -2813,10 +2837,19 @@ void ProgCode::UpdateAfterEdit_impl() {
       cvt->desc = desc;		// transfer description
       ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
       if(own) {
+	tabMisc::DelayedFunCall_gui(own, "BrowserSelectMe"); // do this first so later one registers as diff..
 	int myidx = own->FindEl(this);
 	own->Insert(cvt, myidx); // insert at my position
-	this->CloseLater();	   // kill me later..
-	tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
+	bool ok = cvt->CvtFmCode(code_str); // convert once in position -- needs access to scope..
+	if(ok) {
+	  this->CloseLater();	   // kill me later..
+	  tabMisc::DelayedFunCall_gui(cvt, "BrowserExpandAll");
+	  tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
+	}
+	else {
+	  own->RemoveIdx(myidx); // remove it!
+	  tabMisc::DelayedFunCall_gui(this, "BrowserSelectMe");
+	}
       }
     }
   }
@@ -2929,6 +2962,60 @@ String StaticMethodCall::GetDisplayName() const {
   }
   rval += ")";
   return rval;
+}
+
+bool StaticMethodCall::CanCvtFmCode(const String& code) const {
+  if(!code.contains("::")) return false;
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  String mthobj = lhs;
+  if(lhs.contains('='))
+    mthobj = trim(lhs.after('='));
+  String objnm = mthobj.before("::");
+  TypeDef* td = taMisc::types.FindName(objnm);
+  if(!td) return false;	// todo: maybe trigger an err here??
+  // don't compete with subclasses
+  if(objnm != "taMisc" && !objnm.contains("taMath") && objnm != "Random")
+    return true;
+  return false;
+}
+
+bool StaticMethodCall::CvtFmCode(const String& code) {
+  String lhs = trim(code.before('('));
+  String mthobj = lhs;
+  String rval;
+  if(lhs.contains('=')) {
+    mthobj = trim(lhs.after('='));
+    rval = trim(lhs.before('='));
+  }
+  String objnm = mthobj.before("::");
+  String methnm = mthobj.after("::");
+  object_type = taMisc::types.FindName(objnm);
+  if(rval.nonempty())
+    result_var = FindVarNameInScope(rval, true); // true = give option to make one
+  UpdateAfterEdit_impl();			   // update based on obj
+  MethodDef* md = object_type->methods.FindName(methnm);
+  if(md) {
+    method = md;
+    UpdateAfterEdit_impl();			   // update based on obj
+  }
+  // now tackle the args
+  String args = trim(code.after('('));
+  if(args.endsWith(')')) args = trim(args.before(')',-1));
+  if(args.endsWith(';')) args = trim(args.before(';',-1));
+  for(int i=0; i<meth_args.size; i++) {
+    ProgArg* pa = meth_args.FastEl(i);
+    String arg;
+    if(args.contains(',')) {
+      arg = trim(args.before(','));
+      args = trim(args.after(','));
+    }
+    else {
+      arg = args;
+    }
+    pa->expr.SetExpr(arg);
+  }
+  return true;
 }
 
 //////////////////////////
