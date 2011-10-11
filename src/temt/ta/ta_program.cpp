@@ -2805,7 +2805,7 @@ String ProgEl::GetToolbarName() const {
   return "<base el>";
 }
 
-bool ProgEl::CanCvtFmCode(const String& code) const {
+bool ProgEl::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith(GetToolbarName())) return true; // default is just to match toolbar
   return false;
 }
@@ -2919,23 +2919,24 @@ void ProgCode::SetProgExprFlags() {
   code.SetExprFlag(ProgExpr::FULL_STMT); // full statements for parsing
 }
 
-void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td, const String& code_str) {
+void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td, const String& code_str,
+				ProgEl* scope_el) {
   ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
   if(obj) {
-    if(obj->CanCvtFmCode(code_str)) {
+    if(obj->CanCvtFmCode(code_str, scope_el)) {
       candidates.Link(obj);
     }
   }
   for(int i = 0; i < td->children.size; ++i) {
     TypeDef* chld = td->children[i];
-    CvtCodeCheckType(candidates, chld, code_str);
+    CvtCodeCheckType(candidates, chld, code_str, scope_el);
   }
 }
 
-ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str) {
+ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
   ProgEl_List candidates;
 
-  CvtCodeCheckType(candidates, &TA_ProgEl, code_str);
+  CvtCodeCheckType(candidates, &TA_ProgEl, code_str, scope_el);
   if(candidates.size == 0)
     return NULL;
   ProgEl* cvt = candidates[0];
@@ -2970,7 +2971,7 @@ void ProgCode::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   String code_str = trim(code.expr);
   if(code_str.nonempty()) {
-    ProgEl* cvt = CvtCodeToProgEl(code_str);
+    ProgEl* cvt = CvtCodeToProgEl(code_str, this);
     if(cvt) {
       cvt->desc = desc;		// transfer description
       ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
@@ -3100,7 +3101,7 @@ String StaticMethodCall::GetDisplayName() const {
   return rval;
 }
 
-bool StaticMethodCall::CanCvtFmCode(const String& code) const {
+bool StaticMethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains("::")) return false;
   if(!code.contains('(')) return false;
   String lhs = code.before('(');
@@ -3895,13 +3896,47 @@ void FunctionCall::UpdateArgs() {
 }
 
 // todo: write this!
-bool FunctionCall::CanCvtFmCode(const String& code) const {
-  if(code.startsWith(GetToolbarName())) return true; // default is just to match toolbar
+bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  String funm = lhs;
+  if(lhs.contains('='))
+    funm = trim(lhs.after('='));
+  if((funm.freq('.') + funm.freq("->")) > 0) return false; // exclude method call
+  if(!scope_el) return false;
+  Program* prog = GET_OWNER(scope_el, Program);
+  if(!prog) return false;
+  Function* fun = prog->functions.FindName(funm);
+  if(fun) return true;
   return false;
 }
 
 bool FunctionCall::CvtFmCode(const String& code) {
-  // nothing to initialize
+  String lhs = code.before('(');
+  String funm = lhs;
+  if(lhs.contains('='))
+    funm = trim(lhs.after('='));
+  Program* prog = GET_OWNER(this, Program);
+  if(!prog) return false;
+  Function* fn = prog->functions.FindName(funm);
+  if(!fn) return false;
+  fun = fn;
+  // now tackle the args
+  String args = trim(code.after('('));
+  if(args.endsWith(')')) args = trim(args.before(')',-1));
+  if(args.endsWith(';')) args = trim(args.before(';',-1));
+  for(int i=0; i<fun_args.size; i++) {
+    ProgArg* pa = fun_args.FastEl(i);
+    String arg;
+    if(args.contains(',')) {
+      arg = trim(args.before(','));
+      args = trim(args.after(','));
+    }
+    else {
+      arg = args;
+    }
+    pa->expr.SetExpr(arg);
+  }
   return true;
 }
 

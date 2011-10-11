@@ -858,14 +858,12 @@ public:
   // make a new local variable with the given name -- creates a local vars if none found
   virtual ProgVar* 	FindVarNameInScope(const String& var_nm, bool else_make = false) const;
   // find variable name at the closest level of scope to this program element -- if else_make, then offer the option of creating the variable in global or local scope if not found
-    virtual ProgVar* 	FindVarNameInScope_impl(const String& var_nm) const;
-    // #IGNORE impl
 
   virtual void		SetProgExprFlags() { };
   // special temporary function to set flags for any ProgExpr objects -- needed for new css parsing and loading of old projects which saved these flags causes errors, so this fixes that.. todo: remove me after a few releases (introduced in 4.0.10)
 
-  virtual  bool		CanCvtFmCode(const String& code) const;
-  // can this program element type be converted from given code (ProgCode) text string -- code has had whitespace trimmed at start
+  virtual  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  // can this program element type be converted from given code (ProgCode) text string -- code has had whitespace trimmed at start -- scope_el provides scope information for relevant variables etc where this new prog el would be created -- use FindVarNameInScope etc on that obj
   virtual  bool		CvtFmCode(const String& code);
   // go ahead and convert the code (ProgCode) text string into this program element type  -- code has had whitespace trimmed at start
 
@@ -900,6 +898,8 @@ protected:
   // check program variable reference to make sure it is in same Program scope as this progel
   virtual bool		UpdateProgVarRef_NewOwner(ProgVarRef& pvr);
   // if program variable reference is not in same Program scope as this progel (because progel was moved to a new program), then try to find the same progvar in new owner (by name), emit warning if not found -- auto called by UpdateAfterMove and UpdateAfterCopy
+    virtual ProgVar* 	FindVarNameInScope_impl(const String& var_nm) const;
+    // #IGNORE impl
 
   override bool 	CheckConfig_impl(bool quiet);
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
@@ -966,9 +966,10 @@ public:
   override String	GetDisplayName() const;
   override String	GetToolbarName() const { return "script"; }
 
-  static void		CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td, const String& code);
+  static void		CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
+					 const String& code, ProgEl* scope_el);
   // #IGNORE
-  static ProgEl*	CvtCodeToProgEl(const String& code);
+  static ProgEl*	CvtCodeToProgEl(const String& code, ProgEl* scope_el);
   // convert code string to a program element -- NULL if cannot be converted
 
   PROGEL_SIMPLE_BASEFUNS(ProgCode);
@@ -1017,7 +1018,7 @@ public:
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override taList_impl*	children_() {return &meth_args;}	
@@ -1122,7 +1123,7 @@ public:
   virtual void		UpdateArgs(); 
   // #BUTTON updates the argument list based on the function being called
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override taList_impl*	children_() {return &fun_args;}

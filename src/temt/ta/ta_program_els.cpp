@@ -70,7 +70,7 @@ ProgVar* CodeBlock::FindVarName(const String& var_nm) const {
   return prog_code.FindVarName(var_nm);
 }
 
-bool CodeBlock::CanCvtFmCode(const String& code) const {
+bool CodeBlock::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("{")) return true;
   return false;
 }
@@ -147,7 +147,7 @@ ProgVar* ProgVars::AddVarMatrix() {
   return rval;
 }
 
-bool ProgVars::CanCvtFmCode(const String& code) const {
+bool ProgVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains(' ')) return false; // must have at least one space
   String vartyp = trim(code.before(' '));
   if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
@@ -279,7 +279,7 @@ String WhileLoop::GetDisplayName() const {
   return "while (" + test.expr + ")";
 }
 
-bool WhileLoop::CanCvtFmCode(const String& code) const {
+bool WhileLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("while")) return true;
   return false;
 }
@@ -322,7 +322,7 @@ String DoLoop::GetDisplayName() const {
   return "do ... while (" + test.expr + ")";
 }
 
-bool DoLoop::CanCvtFmCode(const String& code) const {
+bool DoLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("do")) return true;
   return false;
 }
@@ -513,7 +513,7 @@ void ForLoop::ChangeLoopVar(const String& to_var) {
   UpdateAfterEdit();
 }
 
-bool ForLoop::CanCvtFmCode(const String& code) const {
+bool ForLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("for")) return true;
   return false;
 }
@@ -566,7 +566,7 @@ String IfContinue::GetDisplayName() const {
     return "if(" + cond.expr + ") continue;";
 }
 
-bool IfContinue::CanCvtFmCode(const String& code) const {
+bool IfContinue::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("if") && code.contains("continue")) return true;
   return false;
 }
@@ -615,7 +615,7 @@ String IfBreak::GetDisplayName() const {
     return "if(" + cond.expr + ") break;";
 }
 
-bool IfBreak::CanCvtFmCode(const String& code) const {
+bool IfBreak::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("if") && code.contains("break")) return true;
   return false;
 }
@@ -667,7 +667,7 @@ String IfReturn::GetDisplayName() const {
     return "if(" + cond.expr + ") return;";
 }
 
-bool IfReturn::CanCvtFmCode(const String& code) const {
+bool IfReturn::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("if") && code.contains("return")) return true;
   return false;
 }
@@ -769,7 +769,7 @@ String IfElse::GetDisplayName() const {
   return "if (" + cond.expr + ")";
 }
 
-bool IfElse::CanCvtFmCode(const String& code) const {
+bool IfElse::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("if")) return true;
   return false;
 }
@@ -893,7 +893,7 @@ String CaseBlock::GetDisplayName() const {
   return "case: " + case_val.expr + " (" + String(prog_code.size) + " items)";
 }
 
-bool CaseBlock::CanCvtFmCode(const String& code) const {
+bool CaseBlock::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("case") || code.startsWith("default")) return true;
   return false;
 }
@@ -1053,7 +1053,7 @@ void Switch::CasesFmEnum_dyn() {
   }
 }
 
-bool Switch::CanCvtFmCode(const String& code) const {
+bool Switch::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("switch")) return true;
   return false;
 }
@@ -1105,7 +1105,7 @@ String AssignExpr::GetDisplayName() const {
   return rval;
 }
 
-bool AssignExpr::CanCvtFmCode(const String& code) const {
+bool AssignExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   // note: AssignExpr is specifically excluded if multiple matches, so no need to exclude
   // all the other things that might have an = in them -- it is just a fallback default
   if(code.freq('=') == 1) {
@@ -1163,7 +1163,7 @@ String VarIncr::GetDisplayName() const {
   return rval;
 }
 
-bool VarIncr::CanCvtFmCode(const String& code) const {
+bool VarIncr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.freq("+=") == 1 || code.freq("-=") == 1) return true;
   return false;
 }
@@ -1289,14 +1289,14 @@ void MethodCall::Help() {
   else return inherited::statusTip(ks);
 }*/
 
-bool MethodCall::CanCvtFmCode(const String& code) const {
+bool MethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   // fmt: [result = ]obj[.|->]method(args...
   if(!code.contains('(')) return false;
   String lhs = code.before('(');
-  if((lhs.freq('.') + lhs.freq("->")) != 1) return false;
   String mthobj = lhs;
   if(lhs.contains('='))
     mthobj = trim(lhs.after('='));
+  if((mthobj.freq('.') + mthobj.freq("->")) != 1) return false;
   String objnm;
   if(mthobj.contains('.'))
     objnm = mthobj.before('.');
@@ -1431,7 +1431,7 @@ void MemberProgEl::Help() {
   }
 }
 
-// bool MemberProgEl::CanCvtFmCode(const String& code) const {
+// bool MemberProgEl::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 //   return false;
 // }
 
@@ -1492,7 +1492,7 @@ String MemberAssign::GetDisplayName() const {
   return rval;
 }
 
-bool MemberAssign::CanCvtFmCode(const String& code) const {
+bool MemberAssign::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains('=')) return false;
   String lhs = code.before('=');
   if(!(lhs.contains('.') || lhs.contains("->"))) return false;
@@ -1682,7 +1682,7 @@ String MemberMethodCall::GetDisplayName() const {
   return rval;
 }
 
-bool MemberMethodCall::CanCvtFmCode(const String& code) const {
+bool MemberMethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains('(')) return false;
   String lhs = code.before('(');
   if((lhs.freq('.') + lhs.freq("->")) <= 1) return false; // need at least 2!
@@ -1765,7 +1765,7 @@ void MathCall::Initialize() {
   object_type = &TA_taMath_float;
 }
 
-bool MathCall::CanCvtFmCode(const String& code) const {
+bool MathCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains("::")) return false;
   if(!code.contains('(')) return false;
   String lhs = code.before('(');
@@ -1788,7 +1788,7 @@ void RandomCall::Initialize() {
   object_type = &TA_Random;
 }
 
-bool RandomCall::CanCvtFmCode(const String& code) const {
+bool RandomCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains("::")) return false;
   if(!code.contains('(')) return false;
   String lhs = code.before('(');
@@ -1811,7 +1811,7 @@ void MiscCall::Initialize() {
   object_type = &TA_taMisc;
 }
 
-bool MiscCall::CanCvtFmCode(const String& code) const {
+bool MiscCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains("::")) return false;
   if(!code.contains('(')) return false;
   String lhs = code.before('(');
@@ -1882,7 +1882,7 @@ String PrintVar::GetDisplayName() const {
   return rval;
 }
 
-bool PrintVar::CanCvtFmCode(const String& code) const {
+bool PrintVar::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!(code.startsWith("print ") || code.startsWith("cerr << ") || code.startsWith("cout << ")))
     return false;
   String exprstr;
@@ -1965,7 +1965,7 @@ String PrintExpr::GetDisplayName() const {
   return rval;
 }
 
-bool PrintExpr::CanCvtFmCode(const String& code) const {
+bool PrintExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!(code.startsWith("print ") || code.startsWith("cerr << ") || code.startsWith("cout << ")))
     return false;
   String exprstr;
@@ -2005,7 +2005,7 @@ String Comment::GetDisplayName() const {
   return desc;
 }
 
-bool Comment::CanCvtFmCode(const String& code) const {
+bool Comment::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("//") || code.startsWith("/*")) return true;
   return false;
 }
@@ -2070,7 +2070,7 @@ String ReturnExpr::GetDisplayName() const {
   return rval;
 }
 
-bool ReturnExpr::CanCvtFmCode(const String& code) const {
+bool ReturnExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("return")) return true;
   return false;
 }

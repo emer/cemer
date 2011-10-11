@@ -29,7 +29,7 @@ public:
  virtual ProgEl*	AddProgCode(TypeDef* el_type)	{ return (ProgEl*)prog_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new program code element
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
 //no  override taList_impl*	children_() {return &prog_code;}	
@@ -74,7 +74,7 @@ public:
 
   override ProgVar*	FindVarName(const String& var_nm) const;
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override taList_impl*	children_() {return &local_vars;}
@@ -125,7 +125,7 @@ INHERITED(Loop)
 public:
   ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -148,7 +148,7 @@ INHERITED(Loop)
 public:
   ProgExpr		test; // a test expression for whether to continue looping (e.g., 'i < max')
   
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -179,7 +179,7 @@ public:
   virtual String	GetLoopVar(bool& is_local) const;
   // this is a fuzzy "best guess" at the loop var -- it is used esp for creating a new one (j,k, etc.) in new nested loops; is_local is true if the var is declared in the init
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -212,7 +212,7 @@ INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for continuing loop
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -235,7 +235,7 @@ INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for breaking loop
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -258,7 +258,7 @@ INHERITED(ProgEl)
 public:
   ProgExpr		cond; 		// conditionalizing expression for returning
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -284,7 +284,7 @@ public:
   ProgEl_List	    true_code; 	// #SHOW_TREE items to execute if condition true
   ProgEl_List	    false_code; // #SHOW_TREE #CONDTREE_ON_show_false_code items to execute if condition false
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -344,7 +344,7 @@ class TA_API CaseBlock: public CodeBlock {
 public:
   ProgExpr		case_val; // value of the switch variable -- if switch_var is equal to this, then this code is run (must use literal expression here) -- if case_val is empty, then this represents the default case (run when no other case matches)
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -376,7 +376,7 @@ public:
   virtual void	    CasesFmEnum();
   // #BUTTON #CONFIRM add all the cases for an enumerated type (switch_var must be either HARD_ENUM or DYN_ENUM)
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override ProgVar*	FindVarName(const String& var_nm) const;
@@ -411,7 +411,7 @@ public:
   ProgExpr		expr;
   // expression to assign to variable
   
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -437,7 +437,7 @@ public:
   ProgExpr		expr;
   // expression for how much to add to variable (use a negative sign to decrement)
   
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -473,7 +473,7 @@ public:
   String		meth_desc;
   // #READ_ONLY #NO_SAVE #SHOW description of the method, for reference
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override taList_impl*	children_() {return &meth_args;}	
@@ -531,7 +531,7 @@ public:
   ProgExpr		expr; // the expression to compute and assign to the member
   bool			update_after; // call UpdateAfterEdit after setting the member: useful for updating displays and triggering other computations based on changed value, but this comes at a performance cost 
   
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -591,7 +591,7 @@ public:
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override taList_impl*	children_() {return &meth_args;}	
@@ -617,7 +617,7 @@ INHERITED(StaticMethodCall)
 public:
   override String	GetToolbarName() const { return "math()"; }
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   TA_BASEFUNS_NOCOPY(MathCall);
@@ -632,7 +632,7 @@ INHERITED(StaticMethodCall)
 public:
   override String	GetToolbarName() const { return "random()"; }
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   TA_BASEFUNS_NOCOPY(RandomCall);
@@ -647,7 +647,7 @@ INHERITED(StaticMethodCall)
 public:
   override String	GetToolbarName() const { return "misc()"; }
 
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   TA_BASEFUNS_NOCOPY(MiscCall);
@@ -668,7 +668,7 @@ public:
   ProgVarRef		print_var5; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		print_var6; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -692,7 +692,7 @@ public:
   ProgExpr		expr;
   // print out (to console) this expression -- it just does 'cerr << expr << endl;' so you can put multiple << segments in the expression to print out multiple things -- you DO need to include quotes around strings!
   
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -713,7 +713,7 @@ class TA_API Comment: public ProgEl {
   // insert a highlighted (possibly) multi-line comment -- useful for describing an upcoming chunk of code
 INHERITED(ProgEl)
 public:
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
@@ -759,7 +759,7 @@ public:
   ProgExpr		expr;
   // expression to return from function with (can be empty to return from a void function)
   
-  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
 
   override String	GetDisplayName() const;
