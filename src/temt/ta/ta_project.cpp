@@ -3468,6 +3468,9 @@ bool taRootBase::Startup_InitViewColors() {
     taMisc::view_colors = new ViewColor_List;
     taMisc::view_colors->BuildHashTable(100); // speed this one up
   }
+
+  // args are: name, description, foreground, fg_color_name, background, bg_color_name
+
   taMisc::view_colors->FindMakeViewColor("NotEnabled", "State: !isEnabled",
 					 false, _nilString, true, "grey80");
   taMisc::view_colors->FindMakeViewColor("ThisInvalid", "State: item not valid according to CheckConfig",
@@ -3488,6 +3491,12 @@ bool taRootBase::Startup_InitViewColors() {
 					 false, _nilString, true, "SpringGreen1");
   taMisc::view_colors->FindMakeViewColor("ProgElVerbose", "State: program element is verbose",
 					 false, _nilString, true, "khaki");
+  taMisc::view_colors->FindMakeViewColor("ProgElError", "State: program element has Error",
+					 false, _nilString, true, "red2");
+  taMisc::view_colors->FindMakeViewColor("ProgElWarning", "State: program element has Warning",
+					 false, _nilString, true, "orange2");
+  taMisc::view_colors->FindMakeViewColor("ProgElBreakpoint", "State: program element is set for a breakpoint",
+					 false, _nilString, true, "violet");
   taMisc::view_colors->FindMakeViewColor("Comment", "Program comment",
 					 true, "firebrick", true, "firebrick1");
   taMisc::view_colors->FindMakeViewColor("ProgCtrl", "Program keyword",

@@ -34,6 +34,143 @@
 # include "ta_qtdialog.h"
 #endif
 
+///////////////////////////////////////////////////////////
+//		ProgLine and Listing
+///////////////////////////////////////////////////////////
+
+void ProgLine::Initialize() {
+  flags = PL_NONE;
+  line_no = -1;
+  indent = 0;
+}
+
+void ProgLine::Destroy() {
+  prog_el.CutLinks();
+}
+
+const String ProgLine::Indent() {
+  return cssMisc::Indent(indent);
+}
+
+void ProgLine::SetBreakpoint() {
+  SetPLineFlag(ProgLine::BREAKPOINT);
+  if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
+    ProgEl* pel = (ProgEl*)prog_el.ptr();
+    pel->SetProgFlag(ProgEl::BREAKPOINT);
+    pel->DataChanged(DCR_ITEM_UPDATED);
+  }
+}
+
+void ProgLine::ClearBreakpoint() {
+  ClearPLineFlag(ProgLine::BREAKPOINT);
+  if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
+    ProgEl* pel = (ProgEl*)prog_el.ptr();
+    pel->ClearProgFlag(ProgEl::BREAKPOINT);
+    pel->DataChanged(DCR_ITEM_UPDATED);
+  }
+}
+
+void ProgLine::SetError() {
+  SetPLineFlag(ProgLine::ERROR);
+  if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
+    ProgEl* pel = (ProgEl*)prog_el.ptr();
+    pel->SetProgFlag(ProgEl::ERROR);
+    pel->DataChanged(DCR_ITEM_UPDATED);
+    pel->BrowserSelectMe();
+  }
+}
+
+void ProgLine::ClearError() {
+  ClearPLineFlag(ProgLine::ERROR);
+  if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
+    ProgEl* pel = (ProgEl*)prog_el.ptr();
+    bool was_set = pel->HasProgFlag(ProgEl::ERROR);
+    if(was_set) {
+      pel->ClearProgFlag(ProgEl::ERROR);
+      pel->DataChanged(DCR_ITEM_UPDATED);
+    }
+  }
+}
+
+void ProgLine::SetWarning() {
+  SetPLineFlag(ProgLine::WARNING);
+  if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
+    ProgEl* pel = (ProgEl*)prog_el.ptr();
+    pel->SetProgFlag(ProgEl::WARNING);
+    pel->DataChanged(DCR_ITEM_UPDATED);
+  }
+}
+
+void ProgLine::ClearWarning() {
+  ClearPLineFlag(ProgLine::WARNING);
+  if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
+    ProgEl* pel = (ProgEl*)prog_el.ptr();
+    bool was_set = pel->HasProgFlag(ProgEl::WARNING);
+    if(was_set) {
+      pel->ClearProgFlag(ProgEl::WARNING);
+      pel->DataChanged(DCR_ITEM_UPDATED);
+    }
+  }
+}
+
+void ProgLine_List::Initialize() {
+  SetBaseType(&TA_ProgLine);
+}
+
+bool ProgLine_List::AddLine(taBase* prog_el, int indent, const String& code) {
+  ProgLine* pl = (ProgLine*)New(1);
+  pl->indent = indent;
+  pl->code = code;
+  pl->prog_el = prog_el;
+  return true;
+}
+
+void ProgLine_List::FullListing(String& script_code) {
+  for(int i=0; i<size; i++) {
+    ProgLine* pl = FastEl(i);
+    const String ci = pl->CodeIndented();
+//     taMisc::Info(String(i), ":\t", String(pl->indent), ":\t", ci);
+    script_code.cat(ci).cat('\n');
+  }
+}	
+
+int ProgLine_List::FindProgEl(taBase* prog_el, bool reverse) {
+  if(reverse) {
+    for(int i=size-1; i>=0; i--) {
+      ProgLine* pl = FastEl(i);
+      if(pl->prog_el == prog_el) return i;
+    }
+  }
+  else {
+    for(int i=0; i<size; i++) {
+      ProgLine* pl = FastEl(i);
+      if(pl->prog_el == prog_el) return i;
+    }
+  }
+  return -1;
+}	
+
+bool ProgLine_List::SetBreakpoint(int line_no) {
+  if(!InRange(line_no)) return false;
+  ProgLine* pl = FastEl(line_no);
+  pl->SetBreakpoint();
+  return true;
+}	
+
+void ProgLine_List::ClearAllBreakpoints() {
+  for(int i=0; i<size; i++) {
+    ProgLine* pl = FastEl(i);
+    pl->ClearBreakpoint();
+  }
+}	
+
+void ProgLine_List::ClearAllErrors() {
+  for(int i=0; i<size; i++) {
+    ProgLine* pl = FastEl(i);
+    pl->ClearError();
+    pl->ClearWarning();
+  }
+}	
 
 ///////////////////////////////////////////////////////////
 //		Program Types
@@ -69,12 +206,11 @@ const String ProgType::GenCssType() const {
   return "";
 }
 
-const String ProgType::GenCss(int indent_level) {
-  String rval = Program::GetDescString(desc, indent_level);
-  rval += GenCssPre_impl(indent_level);
-  rval += GenCssBody_impl(indent_level);
-  rval += GenCssPost_impl(indent_level);
-  return rval;
+void ProgType::GenCss(Program* prog) {
+  prog->AddDescString(this, desc);
+  GenCssPre_impl(prog);
+  GenCssBody_impl(prog);
+  GenCssPost_impl(prog);
 } 
 
 const String ProgType::GenListing(int indent_level) {
@@ -131,14 +267,13 @@ taBase* ProgType_List::FindTypeName(const String& nm)  const {
   return NULL;
 }
 
-const String ProgType_List::GenCss(int indent_level) const {
-  String rval(0, 40 * size, '\0'); // buffer with typical-ish room
+void ProgType_List::GenCss(Program* prog) const {
   for (int i = 0; i < size; ++i) {
     ProgType* it = FastEl(i);
-    rval += it->GenCss(indent_level); 
+    it->GenCss(prog); 
   }
-  return rval;
 }
+
 const String ProgType_List::GenListing(int indent_level) const {
   String rval(0, 40 * size, '\0'); // buffer with typical-ish room
   for (int i = 0; i < size; ++i) {
@@ -331,44 +466,43 @@ String DynEnumType::GetDisplayName() const {
   return "enum " + name + " (" + String(enums.size) + " items)";
 }
 
-const String DynEnumType::GenCssPre_impl(int indent_level) {
-  if(enums.size == 0) return _nilString;
-  String il = cssMisc::Indent(indent_level); 
-  String rval = il + "enum " + name + " {\n";
-  return rval;
+void DynEnumType::GenCssPre_impl(Program* prog) {
+  if(enums.size == 0) return;
+  prog->AddLine(this, "enum " + name + " {");
+  prog->IncIndent();
 }
 
-const String DynEnumType::GenCssBody_impl(int indent_level) {
-  if(enums.size == 0) return _nilString;
-  String il1 = cssMisc::Indent(indent_level+1);
-  String rval;
+void DynEnumType::GenCssBody_impl(Program* prog) {
+  if(enums.size == 0) return;
   for(int i=0;i<enums.size;i++) {
     DynEnumItem* it = enums.FastEl(i);
-    rval += il1 + it->name + " \t = ";
+    String code = it->name + " \t = ";
     if(bits)
-      rval += String(1 << it->value, "%x") + ",";
+      code += String(1 << it->value, "%x") + ",";
     else
-      rval += String(it->value) + ",";
-    if(!it->desc.empty()) {
-      if(it->desc.contains('\n'))
-	rval += "  /* " + it->desc + " */";
-      else
-	rval += "  // " + it->desc;
-    }
-    rval += "\n";
+      code += String(it->value) + ",";
+    prog->AddLine(it, code, it->desc);
   }
-  return rval;
 }
 
-const String DynEnumType::GenCssPost_impl(int indent_level) {
-  if(enums.size == 0) return _nilString;
-  String il = cssMisc::Indent(indent_level); 
-  String rval = il + "};\n";
-  return rval;
+void DynEnumType::GenCssPost_impl(Program* prog) {
+  if(enums.size == 0) return;
+  prog->DecIndent();
+  prog->AddLine(this, "};");
 }
 
 ostream& DynEnumType::OutputType(ostream& strm) const {
-  String rval = ((DynEnumType*)this)->GenCss(0);
+  String rval = "enum " + name + " {\n";
+  for(int i=0;i<enums.size;i++) {
+    DynEnumItem* it = enums.FastEl(i);
+    String code = it->name + " \t = ";
+    if(bits)
+      code += String(1 << it->value, "%x") + ",";
+    else
+      code += String(it->value) + ",";
+    rval += "  " + code + "  //  " + it->desc + "\n";
+  }
+  rval += "\n}";
   strm << rval;
   return strm;
 }
@@ -1099,7 +1233,7 @@ const String ProgVar::GenCssVar_impl() {
   rval += name;
   rval += ";  ";
   if(HasVarFlag(LOCAL_VAR)) {
-    rval += name + " = " + GenCssInitVal() + ";\n";
+    rval += name + " = " + GenCssInitVal() + ";";
   }
   return rval;
 }
@@ -1110,16 +1244,15 @@ Program* ProgVar::GetInitFromProg() {
 }
 
 
-const String ProgVar::GenCssInitFrom(int indent_level) {
+void ProgVar::GenCssInitFrom(Program* prog) {
   ProgVar* ivar = GetInitFromVar(false); // no warning now
-  if(!ivar) return _nilString;
-  String il = cssMisc::Indent(indent_level);
-  String il1 = cssMisc::Indent(indent_level+1);
-  String rval = il + "{ // init_from\n"; 
-  rval.cat(il1).cat("Program* init_fm_prog = this").cat(GetPath(NULL, program())).cat("->GetInitFromProg();\n");
-  rval.cat(il1).cat(name).cat(" = init_fm_prog->GetVar(\"").cat(name).cat("\");\n");
-  rval.cat(il).cat("}\n");
-  return rval;
+  if(!ivar) return;
+  prog->AddLine(this, "{ // init_from");
+  prog->IncIndent();
+  prog->AddLine(this, String("Program* init_fm_prog = this").cat(GetPath(NULL, program())).cat("->GetInitFromProg();"));
+  prog->AddLine(this, String(name + " = init_fm_prog->GetVar(\"").cat(name).cat("\");\n"));
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 cssEl* ProgVar::NewCssEl() {
@@ -1224,31 +1357,33 @@ void ProgVar_List::CreateDataColVars(DataTable* src) {
   }
 }
 
-const String ProgVar_List::GenCss(int indent_level) const {
-  String rval(0, 40 * size, '\0'); // buffer with typical-ish room
+const String ProgVar_List::GenCss_FuncArgs() const {
+  if(var_context != VC_FuncArgs) return _nilString;
+  String rval;
   int cnt = 0;
   for (int i = 0; i < size; ++i) {
     ProgVar* it = FastEl(i);
-    bool is_arg = (var_context == VC_FuncArgs);
-    if (is_arg) {
-      if (cnt > 0)
-        rval += ", ";
-    } else {
-      rval += cssMisc::Indent(indent_level); 
-    }
-    rval += it->GenCss(is_arg); 
+    if (cnt > 0)
+      rval += ", ";
+    rval += it->GenCss(true);
     ++cnt;
   }
   return rval;
 }
 
-const String ProgVar_List::GenCssInitFrom(int indent_level) const {
-  String rval;
+void ProgVar_List::GenCss_ProgVars(Program* prog) const {
+  if(var_context != VC_ProgVars) return;
+  for (int i = 0; i < size; ++i) {
+    ProgVar* it = FastEl(i);
+    prog->AddLine(it, it->GenCss(false));
+  }
+}
+
+void ProgVar_List::GenCssInitFrom(Program* prog) const {
   for(int i=0;i<size;i++) {
     ProgVar* var = FastEl(i);
-    rval += var->GenCssInitFrom(indent_level);
+    var->GenCssInitFrom(prog);
   }
-  return rval;
 }
 
 const String ProgVar_List::GenListing(int indent_level) const {
@@ -1590,7 +1725,7 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
     return el->GetParse();
   }
 
-  // todo: for some reason this does not work!  misses stuff..
+  // todo: for some reason this does not work!  misses stuf ..
 //   if(pel) {
 //     var = pel->FindVarNameInScope(vnm, false); // no make
 //   }
@@ -1975,17 +2110,17 @@ void ProgArg_List::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-const String ProgArg_List::GenCssBody_impl(int /*indent_level*/) {
+const String ProgArg_List::GenCssArgs() {
   String rval = "(";
-    for (int i = 0; i < size; ++ i) {
-      ProgArg* pa = FastEl(i);
-      //note: we test for violations of rules about def expressions, so
-      // ok for us to just break here when we get to the first def
-      if (!pa->required && pa->expr.empty()) break;
-      pa->expr.ParseExpr();		// re-parse just to be sure!
-      if (i > 0) rval += ", ";
-      rval += pa->expr.GetFullExpr();
-    }
+  for (int i = 0; i < size; ++ i) {
+    ProgArg* pa = FastEl(i);
+    //note: we test for violations of rules about def expressions, so
+    // ok for us to just break here when we get to the first def
+    if (!pa->required && pa->expr.empty()) break;
+    pa->expr.ParseExpr();		// re-parse just to be sure!
+    if (i > 0) rval += ", ";
+    rval += pa->expr.GetFullExpr();
+  }
   rval += ")";
   return rval;
 }
@@ -2455,21 +2590,14 @@ void ProgEl::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
 //  UpdateAfterEdit();		// just do this for all guys -- keeps display updated
 }
 
-const String ProgEl::GenCss(int indent_level) {
-  if(HasProgFlag(OFF)) return "";
-  String rval;
-  if (useDesc() && !desc.empty()) {
-    // we support multi-lines by using the multi-line form of comments
-    if (desc.contains('\n')) {
-      rval.cat(cssMisc::IndentLines("/* " + desc + " */\n", indent_level));
-    } else {
-      rval.cat(cssMisc::Indent(indent_level)).cat("// ").cat(desc).cat("\n");
-    }
+void ProgEl::GenCss(Program* prog) {
+  if(HasProgFlag(OFF)) return;
+  if(useDesc()) {
+    prog->AddDescString(this, desc);
   }
-  rval += GenCssPre_impl(indent_level);
-  rval += GenCssBody_impl(indent_level);
-  rval += GenCssPost_impl(indent_level);
-  return rval;
+  GenCssPre_impl(prog);
+  GenCssBody_impl(prog);
+  GenCssPost_impl(prog);
 }
 
 const String ProgEl::GenListing(int indent_level) {
@@ -2496,6 +2624,12 @@ void ProgEl::SetEnabled(bool value) {
 String ProgEl::GetStateDecoKey() const {
   String rval = inherited::GetStateDecoKey();
   if(rval.empty()) {
+    if(HasProgFlag(ERROR))
+      return "ProgElError";
+    if(HasProgFlag(WARNING))
+      return "ProgElWarning";
+    if(HasProgFlag(BREAKPOINT))
+      return "ProgElBreakpoint";
     if(HasProgFlag(NON_STD))
       return "ProgElNonStd";
     if(HasProgFlag(NEW_EL))
@@ -2544,6 +2678,12 @@ void ProgEl::SetVerboseFlag(bool new_el) {
 void ProgEl::ToggleVerboseFlag() {
   ToggleProgFlag(VERBOSE);
   DataChanged(DCR_ITEM_UPDATED);
+}
+
+void ProgEl::ToggleBreakpoint() {
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg) return;
+  prg->ToggleBreakpoint(this);	// this manages gui update
 }
 
 void ProgEl::PreGen(int& item_id) {
@@ -2699,13 +2839,11 @@ void ProgEl_List::UpdateAfterEdit_impl() {
   el_typ = &TA_ProgCode;
 }
 
-const String ProgEl_List::GenCss(int indent_level) {
-  String rval;
+void ProgEl_List::GenCss(Program* prog) {
   for (int i = 0; i < size; ++i) {
     ProgEl* el = FastEl(i);
-    rval += el->GenCss(indent_level); 
+    el->GenCss(prog); 
   }
-  return rval;;
 }
 
 const String ProgEl_List::GenListing(int indent_level) {
@@ -2870,8 +3008,8 @@ void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
   loop_code.CheckConfig(quiet, rval);
 }
 
-const String Loop::GenCssBody_impl(int indent_level) {
-  return loop_code.GenCss(indent_level + 1);
+void Loop::GenCssBody_impl(Program* prog) {
+  loop_code.GenCss(prog);
 }
 
 const String Loop::GenListing_children(int indent_level) {
@@ -2918,29 +3056,27 @@ void StaticMethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
   meth_args.CheckConfig(quiet, rval);
 }
 
-const String StaticMethodCall::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval += cssMisc::Indent(indent_level);
+void StaticMethodCall::GenCssBody_impl(Program* prog) {
   if (!method) {
-    rval += "//WARNING: StaticMethodCall not generated here -- object or method not specified\n";
-    return rval;
+    prog->AddLine(this, "//WARNING: StaticMethodCall not generated here -- object or method not specified");
+    return;
   }
   
   if(IsVerbose()) {
-    String argstmp = meth_args.GenCssBody_impl(indent_level);
-    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling static method " +
-      object_type->name + "::" + method->name + argstmp.quote_esc() + "\");\n";
+    String argstmp = meth_args.GenCssArgs();
+    prog->AddLine(this, String("taMisc::Info(\"calling static method ") +
+		  object_type->name + "::" + method->name + argstmp.quote_esc() + "\");");
   }
 
+  String rval;
   if (result_var)
     rval += result_var->name + " = ";
   rval += object_type->name;
   rval += "::";
   rval += method->name;
-  rval += meth_args.GenCssBody_impl(indent_level);
-  rval += ";\n";
-  
-  return rval;
+  rval += meth_args.GenCssArgs();
+  rval += ";";
+  prog->AddLine(this, rval);
 }
 
 String StaticMethodCall::GetDisplayName() const {
@@ -3048,14 +3184,12 @@ void ProgramCallBase::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-const String ProgramCallBase::GenCssArgSet_impl(const String trg_var_nm, int indent_level) {
+void ProgramCallBase::GenCssArgSet_impl(Program* prog, const String trg_var_nm) {
   Program* trg = GetTarget_Compile();
-  if(!trg) return _nilString;
+  if(!trg) return;
 
-  String rval;
   if (prog_args.size > 0) {
-    rval += cssMisc::Indent(indent_level+1);
-    rval += "// set global vars of target\n";
+    prog->AddLine(this, "// set global vars of target");
   }
   String nm;
   bool set_one = false;
@@ -3067,10 +3201,8 @@ const String ProgramCallBase::GenCssArgSet_impl(const String trg_var_nm, int ind
     String argval = ths_arg->expr.GetFullExpr();
     if (!prg_var || argval.empty() || argval == "<no_arg>") continue; 
     set_one = true;
-    rval += cssMisc::Indent(indent_level+1);
-    rval += trg_var_nm + "->SetVar(\"" + prg_var->name + "\", " + argval + ");\n";
+    prog->AddLine(this, trg_var_nm + "->SetVar(\"" + prg_var->name + "\", " + argval + ");");
   }
-  return rval;
 }
 
 void ProgramCallBase::UpdateArgs() {
@@ -3166,18 +3298,19 @@ void ProgramCall::SetTarget(Program* target_) {
   target = target_;
 }
 
-const String ProgramCall::GenCompileScript(Program* prg) {
-  String rval;
-  if(!target) return rval;
-  rval += "    target = this" + GetPath(NULL, prg) + "->GetTarget();\n";
-  rval += "    target->CompileScript(true); // true = force!\n";
-  return rval;
+bool ProgramCall::WillGenCompileScript(Program* prg) {
+  return (bool)target;
 }
 
-const String ProgramCall::GenCallInit(Program* prg) {
-  String rval;
-  if(!target) return rval;
-  rval += "    target = this" + GetPath(NULL, prg) + "->GetTarget();\n";
+void ProgramCall::GenCompileScript(Program* prog) {
+  if(!target) return;
+  prog->AddLine(this, String("target = this") + GetPath(NULL, prog) + "->GetTarget();");
+  prog->AddLine(this, "target->CompileScript(true); // true = force!");
+}
+
+void ProgramCall::GenCallInit(Program* prog) {
+  if(!target) return;
+  prog->AddLine(this, String("target = this") + GetPath(NULL, prog) + "->GetTarget();");
   // set args for guys that are just passing our existing args/vars along
   for (int j = 0; j < prog_args.size; ++j) {
     ProgArg* ths_arg = prog_args.FastEl(j);
@@ -3185,51 +3318,38 @@ const String ProgramCall::GenCallInit(Program* prg) {
     String argval = ths_arg->expr.GetFullExpr();
     if (!prg_var || argval.empty()) continue;
     // check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
-    ProgVar* arg_chk = prg->args.FindName(argval);
-    ProgVar* var_chk = prg->vars.FindName(argval);
+    ProgVar* arg_chk = prog->args.FindName(argval);
+    ProgVar* var_chk = prog->vars.FindName(argval);
     if(!arg_chk && !var_chk) continue; 
-    rval += "    target->SetVar(\"" + prg_var->name + "\", "
-      + argval + ");\n";
+    prog->AddLine(this, String("target->SetVar(\"") + prg_var->name + "\", " + argval + ");");
   }
-  rval += "    ret_val = target->CallInit(this);\n"; 
-  return rval;
+  prog->AddLine(this, "ret_val = target->CallInit(this);"); 
 }
 
-const String ProgramCall::GenCssPre_impl(int indent_level) {
-  String rval;
-  rval = cssMisc::Indent(indent_level);
-  rval += "{ // call program: "; 
-  if (target)
-    rval += target->name;
-  rval += "\n";
-  return rval;
+void ProgramCall::GenCssPre_impl(Program* prog) {
+  prog->AddLine(this, String("{ // call program: ") + (target ? target->name : "<no target>")); 
+  prog->IncIndent();
 }
 
-const String ProgramCall::GenCssBody_impl(int indent_level) {
-  if (!target) return _nilString;
-  String rval;
-  indent_level++;		// everything is indented from outer block
-  rval += cssMisc::Indent(indent_level);
-  rval += "Program* target = this" + GetPath(NULL, program())+ "->GetTarget();\n";
-  rval += cssMisc::Indent(indent_level);
-  rval += "if(target) {\n";
+void ProgramCall::GenCssBody_impl(Program* prog) {
+  if (!target) return;
+  prog->AddLine(this, String("Program* target = this") + GetPath(NULL, program())+ "->GetTarget();");
+  prog->AddLine(this, "if(target) {");
+  prog->IncIndent();
 
   if(IsVerbose()) {
-    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling program\",target->name);\n";
+    prog->AddLine(this, "taMisc::Info(\"calling program\",target->name);");
   }
+  GenCssArgSet_impl(prog, "target");
 
-  rval += GenCssArgSet_impl("target", indent_level);
-
-  rval += cssMisc::Indent(indent_level+1);
-  rval += "{ target->Call(this); }\n";
-  rval += cssMisc::Indent(indent_level);
-  rval += "}\n";
-  
-  return rval;
+  prog->AddLine(this, "{ target->Call(this); }");
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
-const String ProgramCall::GenCssPost_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "} // call program\n";
+void ProgramCall::GenCssPost_impl(Program* prog) {
+  prog->DecIndent();
+  prog->AddLine(this, "} // call program");
 }
 
 String ProgramCall::GetDisplayName() const {
@@ -3392,29 +3512,35 @@ void ProgramCallVar::AddTargetsToListAll(Program_List& all_lst) {
   }
 }
 
-const String ProgramCallVar::GenCompileScript(Program* prg) {
-  String rval;
-  if(!prog_group) return rval;
-  rval += "    {\n";
-  rval += "      Program_Group* spgp = this" + GetPath(NULL, prg) + "->GetProgramGp();\n";
-  rval += "      for(int spi=0; spi<spgp->leaves; spi++) {\n";
-  rval += "        Program* prg = spgp->Leaf(spi);\n";
-  rval += "        prg->CompileScript(true); // true = force!\n";
-  rval += "      }\n";
-  rval += "    }\n";
-  return rval;
+bool ProgramCallVar::WillGenCompileScript(Program* prg) {
+  return (bool)prog_group;
 }
 
-const String ProgramCallVar::GenCallInit(Program* prg) {
-  String rval;
-  if(!prog_group) return rval;
-  Program* trg = GetTarget_Compile();
-  if(!trg) return rval;
+void ProgramCallVar::GenCompileScript(Program* prog) {
+  if(!prog_group) return;
+  prog->AddLine(this, "{");
+  prog->IncIndent();
+  prog->AddLine(this, String("Program_Group* spgp = this") + GetPath(NULL, prog) + "->GetProgramGp();");
+  prog->AddLine(this, "for(int spi=0; spi<spgp->leaves; spi++) {");
+  prog->IncIndent();
+  prog->AddLine(this, "Program* prg = spgp->Leaf(spi);");
+  prog->AddLine(this, "prg->CompileScript(true); // true = force!");
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+}
 
-  rval += "    {\n";
-  rval += "      Program_Group* spgp = this" + GetPath(NULL, prg) + "->GetProgramGp();\n";
-  rval += "      for(int spi=0; spi<spgp->leaves; spi++) {\n";
-  rval += "        Program* prg = spgp->Leaf(spi);\n";
+void ProgramCallVar::GenCallInit(Program* prog) {
+  if(!prog_group) return;
+  Program* trg = GetTarget_Compile();
+  if(!trg) return;
+  prog->AddLine(this, "{");
+  prog->IncIndent();
+  prog->AddLine(this, String("Program_Group* spgp = this") + GetPath(NULL, prog) + "->GetProgramGp();");
+  prog->AddLine(this, "for(int spi=0; spi<spgp->leaves; spi++) {");
+  prog->IncIndent();
+  prog->AddLine(this, "Program* prg = spgp->Leaf(spi);");
 
   for (int j = 0; j < prog_args.size; ++j) {
     ProgArg* ths_arg = prog_args.FastEl(j);
@@ -3422,53 +3548,44 @@ const String ProgramCallVar::GenCallInit(Program* prg) {
     String argval = ths_arg->expr.GetFullExpr();
     if (!prg_var || argval.empty()) continue;
     // check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
-    ProgVar* arg_chk = prg->args.FindName(argval);
-    ProgVar* var_chk = prg->vars.FindName(argval);
+    ProgVar* arg_chk = prog->args.FindName(argval);
+    ProgVar* var_chk = prog->vars.FindName(argval);
     if(!arg_chk && !var_chk) continue; 
-    rval += "        prg->SetVar(\"" + prg_var->name + "\", "
-      + argval + ");\n";
+    prog->AddLine(this, String("prg->SetVar(\"") + prg_var->name + "\", " + argval + ");");
   }
-  rval += "        ret_val = prg->CallInit(this);\n"; 
-  rval += "      }\n";
-  rval += "    }\n";
-  return rval;
+  prog->AddLine(this, "ret_val = prg->CallInit(this);"); 
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
-const String ProgramCallVar::GenCssPre_impl(int indent_level) {
-  String rval;
-  rval = cssMisc::Indent(indent_level);
-  rval += "{ // call program from var (name) in group: "; 
-  if(prog_group)
-    rval += prog_group->name;
-  rval += "\n";
-  return rval;
+void ProgramCallVar::GenCssPre_impl(Program* prog) {
+  prog->AddLine(this, String("{ // call program from var (name) in group: ")
+		+ (prog_group ? prog_group->name : "<no prog_group>"));
+  prog->IncIndent();
 }
 
-const String ProgramCallVar::GenCssBody_impl(int indent_level) {
-  if(!prog_group) return _nilString;
-  String rval;
-  indent_level++;		// everything is indented from outer block
-  rval += cssMisc::Indent(indent_level);
-  rval += "Program* target = this" + GetPath(NULL, program())+ "->GetTarget();\n";
-  rval += cssMisc::Indent(indent_level);
-  rval += "if(target) {\n";
+void ProgramCallVar::GenCssBody_impl(Program* prog) {
+  if(!prog_group) return;
+  prog->AddLine(this, String("Program* target = this") + GetPath(NULL, program())+ "->GetTarget();");
+  prog->AddLine(this, "if(target) {");
+  prog->IncIndent();
 
   if(IsVerbose()) {
-    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling program\",target->name);\n";
+    prog->AddLine(this, "taMisc::Info(\"calling program\",target->name);");
   }
 
-  rval += GenCssArgSet_impl("target", indent_level);
+  GenCssArgSet_impl(prog, "target");
 
-  rval += cssMisc::Indent(indent_level+1);
-  rval += "{ target->Call(this); }\n";
-  rval += cssMisc::Indent(indent_level);
-  rval += "}\n";
-  
-  return rval;
+  prog->AddLine(this, "{ target->Call(this); }");
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
-const String ProgramCallVar::GenCssPost_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "} // call program fm var\n";
+void ProgramCallVar::GenCssPost_impl(Program* prog) {
+  prog->DecIndent();
+  prog->AddLine(this, "} // call program fm var");
 }
 
 String ProgramCallVar::GetDisplayName() const {
@@ -3510,13 +3627,11 @@ void Function_List::Copy_(const Function_List& cp) {
   UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
 }
 
-const String Function_List::GenCss(int indent_level) {
-  String rval;
+void Function_List::GenCss(Program* prog) {
   for (int i = 0; i < size; ++i) {
     Function* el = FastEl(i);
-    rval += el->GenCss(indent_level); 
+    el->GenCss(prog); 
   }
-  return rval;;
 }
 
 const String Function_List::GenListing(int indent_level) {
@@ -3636,17 +3751,18 @@ void Function::CheckChildConfig_impl(bool quiet, bool& rval) {
   fun_code.CheckConfig(quiet, rval);
 }
 
-const String Function::GenCssBody_impl(int indent_level) {
+void Function::GenCssBody_impl(Program* prog) {
   ProgVar rvt; rvt.var_type = return_type;  rvt.object_type = object_type;
-  String rval;
-  rval += cssMisc::Indent(indent_level) + rvt.GenCssType() + " " + name + "(";
+  String rval = rvt.GenCssType() + " " + name + "(";
   if(args.size > 0) {
-    rval += args.GenCss(0);
+    rval += args.GenCss_FuncArgs();
   }
-  rval += ") {\n";
-  rval += fun_code.GenCss(indent_level + 1);
-  rval += cssMisc::Indent(indent_level) + "}\n";
-  return rval;
+  rval += ") {";
+  prog->AddLine(this, rval);
+  prog->IncIndent();
+  fun_code.GenCss(prog);
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 const String Function::GenListing_children(int indent_level) {
@@ -3658,7 +3774,7 @@ String Function::GetDisplayName() const {
   String rval;
   rval += rvt.GenCssType() + " " + name + "(";
   if(args.size > 0) {
-    rval += args.GenCss(0);
+    rval += args.GenCss_FuncArgs();
   }
   rval += ")";
   return rval;
@@ -3727,17 +3843,16 @@ void FunctionCall::CheckChildConfig_impl(bool quiet, bool& rval) {
   fun_args.CheckConfig(quiet, rval);
 }
 
-const String FunctionCall::GenCssBody_impl(int indent_level) {
-  if (!fun) return _nilString;
-  String rval;
+void FunctionCall::GenCssBody_impl(Program* prog) {
+  if (!fun) return;
 
   if(IsVerbose()) {
-    String argstmp = fun_args.GenCssBody_impl(indent_level);
-    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling function " +
-      fun->name + argstmp.quote_esc() + "\");\n";
+    String argstmp = fun_args.GenCssArgs();
+    prog->AddLine(this, String("taMisc::Info(\"calling function ") +
+		  fun->name + argstmp.quote_esc() + "\");");
   }
 
-  rval += cssMisc::Indent(indent_level);
+  String rval;
   if(result_var) {
     rval += result_var->name + "=";
   }
@@ -3748,8 +3863,8 @@ const String FunctionCall::GenCssBody_impl(int indent_level) {
     ths_arg->expr.ParseExpr();		// re-parse just to be sure!
     rval += ths_arg->expr.GetFullExpr();
   }
-  rval += ");\n";
-  return rval;
+  rval += ");";
+  prog->AddLine(this, rval);
 }
 
 String FunctionCall::GetDisplayName() const {
@@ -3777,6 +3892,17 @@ String FunctionCall::GetDisplayName() const {
 void FunctionCall::UpdateArgs() {
   if(!fun) return; // just leave existing stuff for now
   fun_args.UpdateFromVarList(fun->args);
+}
+
+// todo: write this!
+bool FunctionCall::CanCvtFmCode(const String& code) const {
+  if(code.startsWith(GetToolbarName())) return true; // default is just to match toolbar
+  return false;
+}
+
+bool FunctionCall::CvtFmCode(const String& code) {
+  // nothing to initialize
+  return true;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -3913,7 +4039,6 @@ void Program::InitLinks() {
   taBase::Own(args, this);
   taBase::Own(vars, this);
   taBase::Own(functions, this);
-  taBase::Own(load_code, this);
   taBase::Own(init_code, this);
   taBase::Own(prog_code, this);
   taBase::Own(sub_prog_calls, this);
@@ -3940,7 +4065,6 @@ void Program::CutLinks() {
   sub_progs_dir.CutLinks();
   sub_prog_calls.CutLinks();
   prog_code.CutLinks();
-  load_code.CutLinks();
   init_code.CutLinks();
   functions.CutLinks();
   vars.CutLinks();
@@ -3961,7 +4085,6 @@ void Program::Reset() {
   sub_progs_dir.Reset();
   sub_prog_calls.Reset();
   prog_code.Reset();
-  load_code.Reset();
   init_code.Reset();
   functions.Reset();
   vars.Reset();
@@ -3983,7 +4106,6 @@ void Program::Copy_(const Program& cp) {
   args = cp.args;
   vars = cp.vars;
   functions = cp.functions;
-  load_code = cp.load_code;
   init_code = cp.init_code;
   prog_code = cp.prog_code;
   step_prog = cp.step_prog;
@@ -4049,7 +4171,6 @@ void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
   args.CheckConfig(quiet, rval);
   vars.CheckConfig(quiet, rval);
   functions.CheckConfig(quiet, rval);
-  load_code.CheckConfig(quiet, rval);
   init_code.CheckConfig(quiet, rval);
   prog_code.CheckConfig(quiet, rval);
 }
@@ -4138,6 +4259,7 @@ void Program::Init() {
 
 void Program::InitScriptObj_impl() {
   AbstractScriptBase::InitScriptObj_impl(); // default one turns out to be fine..
+  script->own_program = this;		    // enables error callbacks
 }
 
 bool Program::PreCompileScript_impl() {
@@ -4210,6 +4332,7 @@ void Program::Run() {
     return;
   }
   ClearStopReq();
+  SetAllBreakpoints();		// reinstate all active breakpoints
   step_mode = false;
   cur_step_prog = NULL;
   taMisc::Busy();
@@ -4376,6 +4499,10 @@ bool Program::StopCheck() {
   return false;
 }
 
+bool Program::RunFunction(const String& fun_name) {
+  return false;
+}
+
 void Program::Compile() {
   CompileScript(true);		// always force if command entered
 }
@@ -4402,8 +4529,37 @@ void Program::UpdateCallerArgs() {
   proj->programs.GuiFindFromMe(name);	// find all refs to me in programs
 }
 
+void Program::CssError(int src_ln_no, bool running, const String& err_msg) {
+  ProgLine* pl = script_list.SafeEl(src_ln_no-1); // css uses 1.. line numbers
+  if(!pl) return;
+  pl->SetError();
+  // css does not otherwise pull up an error dialog, so we can..
+  if (taMisc::gui_active) {
+    taMisc::Choice(cssMisc::last_err_msg, "Ok");
+  }
+}
+
+void Program::CssWarning(int src_ln_no, bool running, const String& err_msg) {
+  ProgLine* pl = script_list.SafeEl(src_ln_no-1); // css uses 1.. line numbers
+  if(!pl) return;
+  pl->SetWarning();
+}
+
+void Program::taError(int src_ln_no, bool running, const String& err_msg) {
+  ProgLine* pl = script_list.SafeEl(src_ln_no-1); // css uses 1.. line numbers
+  if(!pl) return;
+  pl->SetError();
+}
+
+void Program::taWarning(int src_ln_no, bool running, const String& err_msg) {
+  ProgLine* pl = script_list.SafeEl(src_ln_no-1); // css uses 1.. line numbers
+  if(!pl) return;
+  pl->SetWarning();
+}
+
 void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
+  script_list.ClearAllErrors();	// start fresh -- check if this doesn't work for actual errs..
   script_compiled = true;
   ret_val = 0;
   m_stale = false;
@@ -4524,6 +4680,26 @@ ProgramCallBase* Program::FindSubProgTarget(Program* prg) {
   return NULL;
 }
 
+bool Program::AddLine(taBase* prog_el, const String& code, const String& desc) {
+  String desc_oneline = desc;
+  desc_oneline.gsub('\n', ' ');	// no multiline in desc comments
+  String rmdr = code;
+  if(rmdr.contains('\n')) {
+    String curln;
+    do {
+      String curln = rmdr.before('\n');
+      rmdr = rmdr.after('\n');
+      script_list.AddLine(prog_el, cur_indent, curln);
+    } while(rmdr.contains('\n'));
+  }
+  if(rmdr.nonempty()) {
+    if(desc_oneline.nonempty())
+      rmdr += "   // " + desc_oneline;
+    script_list.AddLine(prog_el, cur_indent, rmdr);
+  }
+  return true;
+}
+
 const String Program::GetDescString(const String& dsc, int indent_level) {
   String rval;
   if(!dsc.empty()) {
@@ -4535,6 +4711,73 @@ const String Program::GetDescString(const String& dsc, int indent_level) {
     }
   }
   return rval;
+}
+
+void Program::AddDescString(taBase* prog_el, const String& dsc) {
+  if(dsc.empty()) return;
+  String rmdr = dsc;
+  if(rmdr.contains('\n')) {
+    String curln;
+    do {
+      String curln = rmdr.before('\n');
+      rmdr = rmdr.after('\n');
+      AddLine(prog_el, "// " + curln);
+    } while(rmdr.contains('\n'));
+  }
+  if(rmdr.nonempty()) {
+    AddLine(prog_el, "// " + rmdr);
+  }
+}
+
+
+void Program::ClearAllBreakpoints() {
+  if(!script) return;
+  script_list.ClearAllBreakpoints();
+  script->DelAllBreaks();
+}
+
+void Program::SetAllBreakpoints() {
+  if(!script) return;
+  int nbp = 0;
+  script->DelAllBreaks();	// start with clean slate
+  ProgEl* last_pel_set = NULL;
+  for(int i=script_list.size-1; i>=0; i--) {
+    ProgLine* pl = script_list.FastEl(i);
+    ProgEl* pel = NULL;
+    if(pl->prog_el && pl->prog_el->InheritsFrom(&TA_ProgEl))
+      pel = (ProgEl*)pl->prog_el.ptr();
+    if(pl->HasPLineFlag(ProgLine::BREAKPOINT) ||
+       (pel && pel != last_pel_set && pel->HasProgFlag(ProgEl::BREAKPOINT))) {
+      last_pel_set = pel;		      // don't repeat
+      pl->SetPLineFlag(ProgLine::BREAKPOINT); // make sure
+      script->SetBreak(i+1);	// set it -- css line no =  +1
+//       taMisc::Info("setting breakpoint to line:", String(i+1), pl->code);
+      nbp++;
+    }
+  }
+  if(nbp > 0) {
+    CmdShell();
+    script->ShowBreaks();
+  }
+}
+
+bool Program::ToggleBreakpoint(ProgEl* pel) {
+  int idx = script_list.FindProgEl(pel, true); // go in reverse
+  if(TestError((idx < 0 || !script), "ToggleBreakpoint", "Program element was not found in listing -- you may need to press Init first to generate and compile code"))
+    return false;
+  ProgLine* pl = script_list.FastEl(idx);
+  if(pel->HasProgFlag(ProgEl::BREAKPOINT)) {
+    pl->ClearBreakpoint();
+    script->DelBreak(idx+1);	// css line no +1
+  }
+  else {
+    pl->SetBreakpoint();
+    CmdShell();			// should be using cmd shell if setting breakpoints
+    script->SetBreak(idx+1);	// css line no +1
+//     taMisc::Info("setting breakpoint to line:", String(idx+1), pl->code);
+    script->ShowBreaks();		// debugging help output
+  }
+  return true;
 }
 
 void Program::GetSubProgsAll(int depth) {
@@ -4581,6 +4824,8 @@ const String Program::scriptString() {
   // outside of the stale mechanism.  When the user presses Init, they get the
   // current fresh code regardless!  note that it doesn't do this obligatory
   // recompiles all the time -- that is only done at init too.
+  script_list.Reset();
+  cur_indent = 0;
   sub_prog_calls.Reset();
   sub_progs_dir.Reset();
   ClearProgFlag(SELF_STEP); // this is set by StopStepPoint..
@@ -4590,82 +4835,106 @@ const String Program::scriptString() {
   prog_code.PreGen(item_id);
     
   // now, build the new script code
-  m_scriptCache = "// ";
-  m_scriptCache += GetName();
-  m_scriptCache += "\n\n/* globals added to hardvars:\n";
-  m_scriptCache += "Program::RunState run_state; // our program's run state\n";
-  m_scriptCache += "int ret_val;\n";
-  if (args.size > 0) {
-    m_scriptCache += "// args: global script parameters (arguments)\n";
-    m_scriptCache += args.GenCss(0);
+  AddLine(this, String("// ") + GetName());
+  AddLine(this, "");
+  AddLine(this, "/* globals added to hardvars:");
+  AddLine(this, "Program::RunState run_state; // our program's run state");
+  AddLine(this, "int ret_val;");
+  if(args.size > 0) {
+    AddLine(this, "// args: global script parameters (arguments)");
+    args.GenCss_ProgVars(this);
   }
-  if (vars.size > 0) {
-    m_scriptCache += "// vars: global (non-parameter) variables\n";
-    m_scriptCache += vars.GenCss(0);
+  if(vars.size > 0) {
+    AddLine(this, "// vars: global (non-parameter) variables");
+    vars.GenCss_ProgVars(this);
   }
-  m_scriptCache += "*/\n\n";
+  AddLine(this, "*/");
+  AddLine(this, "");
 
   // types
-  if (types.size > 0) {
-    m_scriptCache += types.GenCss(0);
+  if(types.size > 0) {
+    types.GenCss(this);
   }
 
   // Functions
-  m_scriptCache += functions.GenCss(0); // ok if empty, returns nothing
+  functions.GenCss(this);
     
   // __Init() routine, for our own els, and calls to subprog Init()
-  m_scriptCache += "void __Init() {\n";
+  AddLine(this, "void __Init() {");
+  IncIndent();
   // first, make sure any sub-progs are compiled
-  if (sub_prog_calls.size > 0) {
-    m_scriptCache += "  // First compile any subprogs that could be called from this one\n";
-    m_scriptCache += "  { Program* target;\n";
+  if(sub_prog_calls.size > 0) {
+    AddLine(this, "// First compile any subprogs that could be called from this one");
+    AddLine(this, "{ Program* target;");
+    IncIndent();
     // note: this is a list of ProgramCall's, not the actual prog itself!
     for (int i = 0; i < sub_prog_calls.size; ++i) {
       ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
-      String scrtmp = sp->GenCompileScript(this);
-      if(scrtmp.nonempty()) {
-	m_scriptCache += "    if (ret_val != Program::RV_OK) return; // checks previous\n"; 
-	m_scriptCache += scrtmp;
+      if(sp->WillGenCompileScript(this)) {
+	AddLine(sp, "if(ret_val != Program::RV_OK) return; // checks previous");
+	sp->GenCompileScript(this);
       }
     }
-    m_scriptCache += "  }\n";
+    DecIndent();
+    AddLine(this, "}");
   }
-  m_scriptCache += "  // init_from vars\n";
-  m_scriptCache += args.GenCssInitFrom(1);
-  m_scriptCache += vars.GenCssInitFrom(1);
-  m_scriptCache += "  // run our init code\n";
-  m_scriptCache += init_code.GenCss(1); // ok if empty, returns nothing
-  if (sub_prog_calls.size > 0) {
-    if (init_code.size >0) m_scriptCache += "\n";
-    m_scriptCache += "  // Then call init on any subprogs that could be called from this one\n";
-    m_scriptCache += "  { Program* target;\n";
+  AddLine(this, "// init_from vars");
+  args.GenCssInitFrom(this);
+  vars.GenCssInitFrom(this);
+  AddLine(this, "// run our init code");
+  init_code.GenCss(this);
+
+  if(sub_prog_calls.size > 0) {
+    if(init_code.size > 0)
+      AddLine(this, "");
+    AddLine(this, "// Then call init on any subprogs that could be called from this one");
+    AddLine(this, "{ Program* target;");
+    IncIndent();
     // note: this is a list of ProgramCall's, not the actual prog itself!
-    for (int i = 0; i < sub_prog_calls.size; ++i) {
-      ProgramCall* sp = (ProgramCall*)sub_prog_calls.FastEl(i);
-      m_scriptCache += sp->GenCallInit(this);
+    for(int i = 0; i < sub_prog_calls.size; ++i) {
+      ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
+      sp->GenCallInit(this);
     }
-    m_scriptCache += "  }\n";
+    DecIndent();
+    AddLine(this, "}");
   }
-  m_scriptCache += "}\n\n";
+  DecIndent();
+  AddLine(this, "}");
+  AddLine(this, "");
     
-  m_scriptCache += "void __Prog() {\n";
-  m_scriptCache += "  // init_from vars\n";
-  m_scriptCache += args.GenCssInitFrom(1);
-  m_scriptCache += vars.GenCssInitFrom(1);
-  m_scriptCache += "  // prog_code\n";
-  m_scriptCache += prog_code.GenCss(1);
+  AddLine(this, "void __Prog() {");
+  IncIndent();
+  AddLine(this, "// init_from vars");
+  args.GenCssInitFrom(this);
+  vars.GenCssInitFrom(this);
+  AddLine(this, "");
+  AddLine(this, "// prog_code");
+  prog_code.GenCss(this);
   if(!(flags & NO_STOP_STEP)) {
-    m_scriptCache += "  StopCheck(); // process pending events, including Stop and Step events\n";
+    AddLine(this, "StopCheck(); // process pending events, including Stop and Step events");
   }
-  m_scriptCache += "}\n\n";
-  m_scriptCache += "\n";
-    
-  m_scriptCache += "ret_val = Program::RV_OK; // set elsewise on failure\n";
-  m_scriptCache += "if (run_state == Program::INIT) {\n";
-  m_scriptCache += "  __Init();\n";
-  m_scriptCache += "} else {\n";
-  m_scriptCache += "  __Prog();\n";
-  m_scriptCache += "}\n";
+  DecIndent();
+  AddLine(this, "}");
+  AddLine(this, "");
+  AddLine(this, "");
+
+  AddLine(this, "ret_val = Program::RV_OK; // set elsewise on failure");
+  AddLine(this, "if (run_state == Program::INIT) {");
+  IncIndent();
+  AddLine(this, "__Init();");
+  DecIndent();
+  AddLine(this, "} else {");
+  IncIndent();
+  AddLine(this, "__Prog();");
+  DecIndent();
+  AddLine(this, "}");
+
+  // todo: check that indent is 0
+  // make check for /n debug only
+  // auto-fix any /n in AddLine
+
+  m_scriptCache.truncate(0);
+  script_list.FullListing(m_scriptCache);
 
   m_stale = false;
   return m_scriptCache;
@@ -4809,41 +5078,6 @@ void Program::RunLoadInitCode() {
     ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
     sp->LoadInitTarget();	// just call this directly!
   }
-
-  // then run the load_code
-  static cssProgSpace init_scr;
-  init_scr.ClearAll();
-
-  init_scr.prog_vars.Reset(); // removes/unref-deletes
-  
-  // add the ones in the object -- note, we use *pointers* to these
-  // just the most relevant guys: not all the other stuff!
-  cssEl* el = new cssTA_Base(&objs, 1, objs.GetTypeDef(), "objs");
-  init_scr.prog_vars.Push(el);
-
-  // add new in the program
-  for (int i = 0; i < args.size; ++i) {
-    ProgVar* sv = args.FastEl(i);
-    el = sv->NewCssEl();
-    init_scr.prog_vars.Push(el);
-  } 
-  for (int i = 0; i < vars.size; ++i) {
-    ProgVar* sv = vars.FastEl(i);
-    el = sv->NewCssEl();
-    init_scr.prog_vars.Push(el); //refs
-  } 
-
-  STRING_BUF(code_str, 2048);
-  code_str += "Program* this = " + GetPath() + ";\n";
-  code_str += load_code.GenCss(1); // ok if empty, returns nothing
-
-  // todo: debugging -- remove!
-//   cerr << code_str << endl;
-//   taMisc::FlushConsole();
-
-  init_scr.CompileCode(code_str);
-  init_scr.Run();
-  init_scr.ClearAll();
 }
 
 void Program::SaveScript(ostream& strm) {

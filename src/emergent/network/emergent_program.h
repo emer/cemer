@@ -76,9 +76,9 @@ protected:
   override void	GetOrderVar(); // make an order variable in program if not already set
   override void	GetIndexVar(); // make an index variable in program if not already set
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
 
 private:
   void	Initialize();
@@ -122,9 +122,9 @@ protected:
   virtual void	GetIndexVars(); // make index variables in program if not already set
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
 
 private:
   void	Initialize();
@@ -163,7 +163,7 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(NetCounterInit);
 protected:
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize() { };
@@ -179,7 +179,7 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(NetCounterIncr);
 protected:
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize() { };
@@ -203,7 +203,7 @@ protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual void	GetUpdateVar(); // get the update_var variable
 
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -251,7 +251,7 @@ protected:
   virtual bool	GetUnitNamesVar();
   virtual bool	GetNetworkVar();
 
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -280,9 +280,8 @@ protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual bool	GetInputDataVar();
 
-  override const String	GenCssBody_impl(int indent_level);
-  virtual bool	GenCss_OneUnit(String& rval, DynEnum& un, const String& idnm, 
-			       DataTable* idat, const String& il);
+  override void		GenCssBody_impl(Program* prog);
+  virtual bool	GenCss_OneUnit(Program* prog, DynEnum& un, const String& idnm, DataTable* idat);
 
 private:
   void	Initialize();
@@ -313,9 +312,8 @@ protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   virtual bool	GetInputDataVar();
 
-  override const String	GenCssBody_impl(int indent_level);
-  virtual bool	GenCss_OneUnit(String& rval, ProgVarRef& un, const String& idnm, 
-			       DataTable* idat, const String& il);
+  override void		GenCssBody_impl(Program* prog);
+  virtual bool	GenCss_OneUnit(Program* prog, ProgVarRef& un, const String& idnm, DataTable* idat);
 
 private:
   void	Initialize();
@@ -329,7 +327,7 @@ public:
   override String	GetToolbarName() const { return "wt init prmt"; }
   TA_BASEFUNS_NOCOPY(WtInitPrompt);
 protected:
-  override const String	GenCssPre_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
 
 private:
   void	Initialize();

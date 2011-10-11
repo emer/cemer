@@ -35,6 +35,7 @@
 //#include "ta_qtdata.h"
 #include "ta_qtdialog.h"
 #include "css_qt.h"
+#include "ta_program.h"
 
 #include "css_machine.h"	// for setting error code in taMisc::Error
 
@@ -74,6 +75,11 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   FlushConsole();
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top) {
+    if(cssMisc::cur_top->own_program) {
+      bool running = cssMisc::cur_top->state & cssProg::State_Run;
+      cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running,
+					      taMisc::last_err_msg);
+    }
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
     cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
   }

@@ -1545,7 +1545,7 @@ public:
   override MemberDef*	par_md() const;
   override iTabViewer*	tabViewerWin() const;
 
-
+  iDataPanelSet*       	data_panel_set() { return m_dps; }
   override void		ClearDataPanelSet() {m_dps = NULL;}
   override void		ClosePanel();
   override void		UpdatePanel(); // we add a test for HasChanged and invoke the inherited

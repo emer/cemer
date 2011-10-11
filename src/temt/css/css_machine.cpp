@@ -221,6 +221,21 @@ String cssMisc::GetSourceLoc(cssProg* prog) {
   }
 }
 
+int cssMisc::GetSourceLn(cssProg* prog) {
+  cssProgSpace* top;
+  if(prog)
+    top = prog->top;
+  else
+    top = cssMisc::cur_top;
+
+  if(top->state & (cssProg::State_Run)) {
+    return top->CurRunSrcLn();
+  }
+  else {			// parsing
+    return top->tok_src_ln;
+  }
+}
+
 void cssMisc::OutputSourceLoc(cssProg* prog) {
   cssProgSpace* top;
   if(prog)
@@ -247,9 +262,7 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
 {
   cssProgSpace* top = prog ? prog->top : cssMisc::cur_top;
   cssMisc::last_err_msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
-  if (prog) {
-    cssMisc::last_err_msg += "\n" + GetSourceLoc(prog);
-  }
+  cssMisc::last_err_msg += "\n" + GetSourceLoc(prog); // uses cur_top if prog = NULL
 
   if(taMisc::dmem_proc == 0) {
     ostream* fh = &cerr;
@@ -261,6 +274,11 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
   }
   top->run_stat = cssEl::ExecError;
   top->exec_err_msg = cssMisc::last_err_msg;
+
+  if(top->own_program) {
+    bool running = top->state & cssProg::State_Run;
+    top->own_program->CssError(GetSourceLn(prog), running, cssMisc::last_err_msg);
+  }
 }
 
 String cssMisc::last_warn_msg;
@@ -283,10 +301,14 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
     *(fh) << cssMisc::last_warn_msg << endl;
     taMisc::FlushConsole();
   }
+  if(top->own_program) {
+    bool running = top->state & cssProg::State_Run;
+    top->own_program->CssWarning(GetSourceLn(prog), running, cssMisc::last_err_msg);
+  }
 }
 
 String cssMisc::Indent(int indent_level, int indent_spc) {
-  if (indent_level == 0) return _nilString;
+  if (indent_level <= 0) return _nilString;
   else return String(indent_level * indent_spc, 0, ' ');
 }
 
@@ -3355,7 +3377,9 @@ void cssProg::ShowBreaks(ostream& fh) {
   if(breaks.size > 0) {
     fh << "prog: " << name << endl;
     for(int i=0; i<breaks.size; i++) {
-      fh << "breakpoint: " << i << "\t" << insts[breaks[i]]->PrintStr() << endl;
+      int ln_no = insts[breaks[i]]->line;
+      fh << "breakpoint: " << i << "\t pc: " << breaks[i] << " \t"
+	 << top->GetSrcLn(ln_no) << endl;
     }
   }
   for(int i=0; i < size; i++) {
@@ -3380,6 +3404,15 @@ bool cssProg::DelBreak(int srcln) {
     return false;
   }
   return breaks.RemoveEl(srcdx);
+}
+
+bool cssProg::DelBreakIdx(int idx) {
+  return breaks.RemoveIdx(idx);
+}
+
+bool cssProg::DelAllBreaks() {
+  breaks.Reset();
+  return true;
 }
 
 
@@ -3465,6 +3498,7 @@ void cssProgSpace::Constr() {
   ext_parse_user_data = NULL;
 
   cmd_shell = NULL;
+  own_program = NULL;
 
   SetName(name);
   AddProg(new cssProg("Top Level"));
@@ -3791,6 +3825,10 @@ String cssProgSpace::CurFullTokSrc() const {
 
 String cssProgSpace::CurFullRunSrc() const {
   return GetFullSrcLn(Prog()->CurSrcLn());
+}
+
+int cssProgSpace::CurRunSrcLn() const {
+  return Prog()->CurSrcLn();
 }
 
 String cssProgSpace::GetSrcListFnm(int i) const {
@@ -5018,6 +5056,31 @@ bool cssProgSpace::DelBreak(int srcln) {
   return false;
 }
 
+bool cssProgSpace::DelAllBreaks() {
+  for(int i=0;i<types.size;i++) {
+    cssEl* el = types[i];
+    if(el->GetType() == cssEl::T_ClassType) {
+      cssClassType* cl = (cssClassType*)el->GetNonRefObj();
+      for(int j=0;j<cl->methods->size;j++) {
+	cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
+	if(fun) {
+	  fun->DelAllBreaks();
+	}
+      }
+    }
+  }
+  for(int i=0;i<statics.size;i++) {
+    cssEl* el = statics[i];
+    if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
+      el->GetSubProg()->DelAllBreaks();
+    }
+  }
+  Prog(0)->DelAllBreaks();
+  return true;
+}
+
+
+
 //////////////////////////////////////////////////
 // 	cssProgSpace:    Watchpoints 		//
 //////////////////////////////////////////////////
@@ -5056,6 +5119,11 @@ bool cssProgSpace::DelWatch(cssEl* watch) {
 bool cssProgSpace::DelWatchIdx(int idx) {
   bool got = watchpoints.RemoveIdx(idx);
   return got;
+}
+
+bool cssProgSpace::DelAllWatches() {
+  watchpoints.Reset();
+  return true;
 }
 
 

@@ -835,6 +835,11 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
 #ifndef NO_TA_BASE
   if(cssMisc::cur_top) {
     taMisc::last_warn_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
+    if(cssMisc::cur_top->own_program) {
+      bool running = cssMisc::cur_top->state & cssProg::State_Run;
+      cssMisc::cur_top->own_program->taWarning(cssMisc::GetSourceLn(NULL), running,
+					      taMisc::last_err_msg);
+    }
   }
 #endif
   cerr << "***WARNING: " << taMisc::last_warn_msg << endl;
@@ -961,6 +966,11 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
   FlushConsole();
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top) {
+    if(cssMisc::cur_top->own_program) {
+      bool running = cssMisc::cur_top->state & cssProg::State_Run;
+      cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running,
+					      taMisc::last_err_msg);
+    }
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
     cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
   }

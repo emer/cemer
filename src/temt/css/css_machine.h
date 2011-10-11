@@ -100,6 +100,8 @@ class cssProg;
 class cssProgSpace;
 class cssCmdShell;
 
+class Program;
+
 class pager_ostream {
   // class that provides one page at a time output of streamed inputs
 public:
@@ -213,6 +215,8 @@ public:
 
   static String		GetSourceLoc(cssProg* prg);
   // get current source location information (for running program -- e.g., to report errs)
+  static int		GetSourceLn(cssProg* prg);
+  // get current source line number (for running program -- e.g., to report errs)
   static void 		OutputSourceLoc(cssProg* prg);
   // output current source location information (for running program -- e.g., to report errs)
 
@@ -1462,11 +1466,12 @@ public:
   bool 		SetBreak(int srcln);
   bool		DelBreak(int srcln);
   bool		DelBreakIdx(int idx);
+  bool		DelAllBreaks();
   bool		IsBreak(css_progdx pcval);
   bool		IsBreak()		{ return IsBreak(PC()); }
   void		ShowBreaks(ostream& fh = cout);
 
-  // breakpoints
+  // watchpoints
   bool 		SetWatch(cssEl* watch);
   bool 		DelWatch(cssEl* watch);
   bool 		DelWatchIdx(int idx);
@@ -1557,7 +1562,7 @@ public:
   void*		ext_parse_user_data; 	// user data passed to parse fun as first arg (typically object pointer)
 
   cssCmdShell*	cmd_shell;		// controlling command shell
-
+  Program*	own_program;		// program that owns this program space
 
   void Constr();
   cssProgSpace();
@@ -1605,6 +1610,7 @@ public:
   String	CurTokSrc() const; 	// current token src fm tok_src_ln, tok_src_col
   String	CurFullTokSrc() const; 	// current full token src fm tok_src_ln, tok_src_col
   String	CurFullRunSrc() const;	// current full running PC() source
+  int		CurRunSrcLn() const;	// current running source line number
   String	GetSrcListFnm(int i) const; // list fnm -- empty = name
   void 		ListSrc_impl(pager_ostream& fh, int stln = -1) const;
   // implementation of list source
@@ -1695,11 +1701,13 @@ public:
   // breakpoints
   bool 		SetBreak(int srcln);
   bool		DelBreak(int srcln);
+  bool		DelAllBreaks();
   void		ShowBreaks();
 
   bool 		SetWatch(cssEl* watch);
   bool		DelWatch(cssEl* watch);
   bool		DelWatchIdx(int idx);
+  bool		DelAllWatches();
   void		ShowWatchpoints();
 
 protected:

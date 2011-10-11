@@ -59,6 +59,83 @@ class ProgramCallVar; //
 // Note: ProgEl now automatically does update stuff in UpdateAfterMove_impl
 // and does CheckProgVarRef in CheckThisConfig, so these calls are not necc
 
+class TA_API ProgLine: public taOBase {
+  // ##NO_TOKENS ##EDIT_INLINE ##SCOPE_Program ##CAT_Program represents one line of the generated program css code -- manages stuff for one line of code
+INHERITED(taOBase)
+public:
+  enum PLineFlags { // #BITS flags for program listing elements
+    PL_NONE		= 0, // #NO_BIT
+    BREAKPOINT		= 0x0001, // a breakpoint has been set at this line
+    ERROR		= 0x0002, // there was an error at this point
+    WARNING		= 0x0004, // there was a warning at this point
+  };
+
+  PLineFlags	flags;		// flags for this line of code
+  int		line_no;	// line in listing -- starts at 0, is index for ProgLine_List
+  int		indent;		// how far indented is this item
+  String	code;		// code associated with this line
+  taBaseRef	prog_el;	// program element associated with this line (could be something besides ProgEl too, e.g., progvar or something)
+
+  inline void		SetPLineFlag(PLineFlags flg)   { flags = (PLineFlags)(flags | flg); }
+  // set flag state on
+  inline void		ClearPLineFlag(PLineFlags flg) { flags = (PLineFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool		HasPLineFlag(PLineFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void		SetPLineFlagState(PLineFlags flg, bool on)
+  { if(on) SetPLineFlag(flg); else ClearPLineFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void		TogglePLineFlag(PLineFlags flg) { SetPLineFlagState(flg, !HasPLineFlag(flg)); }
+  // toggle program flag
+
+  const String		Indent();
+  const String		CodeIndented() { return Indent() + code; }
+  // get the code with indentation
+
+  void			SetBreakpoint(); 	// set breakpoint here and in associated prog_el
+  void			ClearBreakpoint();	// clear breakpoint here and in associated prog_el
+  void			SetError();		// set error here and in associated prog_el
+  void			ClearError();		// clear error here and in associated prog_el
+
+  void			SetWarning();		// set warning here and in associated prog_el
+  void			ClearWarning();		// clear warning here and in associated prog_el
+
+  override int		GetIndex() const { return line_no; }
+  override void		SetIndex(int value) { line_no = value; }
+
+  TA_SIMPLE_BASEFUNS(ProgLine);
+private:
+  void	Initialize();
+  void	Destroy();
+};
+
+class TA_API ProgLine_List : public taList<ProgLine> {
+  // ##CAT_Program a list of program listing elements
+INHERITED(taList<ProgLine>)
+public:
+
+  bool		AddLine(taBase* prog_el, int indent, const String& code);
+  // add one line of code to the program listing -- this is the official interface for adding to program -- code should be pure code without any indent, 
+  void		FullListing(String& script_code);
+  // generate full listing of code from stored program lines into given string
+
+  bool		SetBreakpoint(int line_no);
+  // set breakpoint at given line
+  void		ClearAllBreakpoints();
+  // clear all the breakpoints
+  void		ClearAllErrors();
+  // clear all the error and warning flags
+  int		FindProgEl(taBase* prog_el, bool reverse = false);
+  // find program element in the listing, optionally going in reverse (safer b/c some prog els generate init code that may not be what is desired) -- returns line_no (index) of ProgLine that has this element or -1 if not found
+  
+  override String 	GetTypeDecoKey() const { return "Program"; }
+  TA_BASEFUNS_NOCOPY(ProgLine_List);
+private:
+  void	Initialize();
+  void 	Destroy()		{ Reset(); } //
+};
+
+
 ///////////////////////////////////////////////////////////
 //		Program Types
 ///////////////////////////////////////////////////////////
@@ -70,10 +147,10 @@ public:
   String	desc;	// #EDIT_DIALOG Description of this type
   
   virtual const String	GenCssType() const; // type name
-  virtual const String	GenCss(int indent_level); // generate css code
+  virtual void 		GenCss(Program* prog); // generate css code to program
   virtual const String	GenListing(int indent_level); // generate listing of program
   
-  virtual taBase* FindTypeName(const String& nm) const;
+  virtual taBase* 	FindTypeName(const String& nm) const;
   // find given type name (e.g., dynamic enum type or value) on variable
 
   override bool		BrowserSelectMe();
@@ -87,9 +164,9 @@ public:
 protected:
   override void 	UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  virtual const String	GenCssPre_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css prefix code (if any) for this object	
-  virtual const String	GenCssBody_impl(int indent_level) { return _nilString; } // #IGNORE generate the Css body code for this object
-  virtual const String	GenCssPost_impl(int indent_level) {return _nilString;} // #IGNORE generate the Css postfix code (if any) for this object
+  virtual void		GenCssPre_impl(Program* prog) {}; // #IGNORE generate the Css prefix code (if any) for this object	
+  virtual void		GenCssBody_impl(Program* prog) {}; // #IGNORE generate the Css body code for this object
+  virtual void		GenCssPost_impl(Program* prog) {}; // #IGNORE generate the Css postfix code (if any) for this object
 private:
   void	Initialize();
   void	Destroy();
@@ -99,7 +176,7 @@ class TA_API ProgType_List : public taList<ProgType> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of script variables
 INHERITED(taList<ProgType>)
 public:
-  virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
+  virtual void		GenCss(Program* prog) const; // generate css script code for the context
   virtual const String 	GenListing(int indent_level) const; // generate the listing of program
 
   virtual DynEnumType* NewDynEnum();
@@ -220,9 +297,9 @@ public:
   TA_SIMPLE_BASEFUNS(DynEnumType);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level);
-  override const String	GenCssBody_impl(int indent_level);
-  override const String	GenCssPost_impl(int indent_level);
+  override void		GenCssPre_impl(Program* prog);
+  override void		GenCssBody_impl(Program* prog);
+  override void		GenCssPost_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -323,7 +400,7 @@ public:
 
   virtual const String	GenCss(bool is_arg = false); // css code (terminated if Var);
   virtual const String	GenListing(bool is_arg = false, int indent_level = 0); // generate listing of program
-  virtual const String	GenCssInitFrom(int indent_level);
+  virtual void		GenCssInitFrom(Program* prog);
   // generate css code to initialize from other variable
   virtual Program*	GetInitFromProg(); // get the init_from program for use in program css code -- emits warning if NULL (shouldn't happen)
   
@@ -428,8 +505,9 @@ public:
   
   VarContext	var_context; // #DEF_VC_ProgVars #HIDDEN #NO_SAVE context of vars, set by owner
   
-  virtual const String 	GenCss(int indent_level) const; // generate css script code for the context
-  virtual const String	GenCssInitFrom(int indent_level) const;
+  virtual const String 	GenCss_FuncArgs() const; // generate css script code for func args
+  virtual void	 	GenCss_ProgVars(Program* prog) const; // generate css script code for prog vars
+  virtual void		GenCssInitFrom(Program* prog) const;
   // init_from code for all vars in list
   virtual const String 	GenListing(int indent_level) const; // generate listing of program
 
@@ -681,7 +759,7 @@ public:
   // update our list of args based on method def arguments -- returns true if updated
   
   override String GetTypeDecoKey() const { return "ProgArg"; }
-  virtual const String	GenCssBody_impl(int indent_level); 
+  virtual const String	GenCssArgs(); 
   
   virtual void	UpdateProgExpr_NewOwner();
   // calls UpdateProgExpr_NewOwner() on all the prog expr's in the list
@@ -725,6 +803,9 @@ public:
     NON_STD 		= 0x0002, // non-standard: not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
     NEW_EL 		= 0x0004, // new element: this element was recently added to the program (just for user information/highlighting)
     VERBOSE		= 0x0008, // print informative message about the operation of this program element to std output (e.g., css console or during -nogui startup) -- useful for debugging and for logging key steps during startup
+    BREAKPOINT		= 0x0100, // #NO_SHOW breakpoint set at this prog el
+    ERROR		= 0x0200, // #NO_SHOW css error was triggered at this prog el
+    WARNING		= 0x0400, // #NO_SHOW css warning was triggered at this prog el
   };
 
   String		desc; // #EDIT_DIALOG #HIDDEN_INLINE optional brief description of element's function; included as comment in script
@@ -735,7 +816,7 @@ public:
   Program*		program() {return GET_MY_OWNER(Program);} 
   
   void			PreGen(int& item_id); //recursive walk of items before code gen; each item bumps its id and calls subitems; esp. used to discover subprogs in order
-  virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object (usually override _impl's)
+  virtual void		GenCss(Program* prog); // generate the Css code for this object (usually override _impl's)
   virtual const String	GenListing(int indent_level = 0); // generate a listing of the program
 
   inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
@@ -766,6 +847,8 @@ public:
   // set verbose flag to given state: when this part of the program is run, an informational message will be printed out on the css Console -- very useful for debugging
   void			ToggleVerboseFlag();
   // #MENU #MENU_ON_Object #DYN1 toggle verbose flag to opposite of current state: when this part of the program is run, an informational message will be printed out on the css Console -- very useful for debugging
+  void			ToggleBreakpoint();
+  // #MENU #MENU_ON_Object #DYN1 toggle breakpoint flag to opposite of current state: will stop execution of the program at this point, so program variables can be examined, etc -- use the CmdShell button to access debugging information in the css console for this program
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found
@@ -827,11 +910,11 @@ protected:
 
   virtual void		PreGenMe_impl(int item_id) {}
   virtual void		PreGenChildren_impl(int& item_id) {}
-  virtual const String	GenCssPre_impl(int indent_level) {return _nilString;}
+  virtual void		GenCssPre_impl(Program* prog) {};
   // #IGNORE generate the Css prefix code (if any) for this object	
-  virtual const String	GenCssBody_impl(int indent_level) { return _nilString; }
+  virtual void		GenCssBody_impl(Program* prog) {};
   // #IGNORE generate the Css body code for this object
-  virtual const String	GenCssPost_impl(int indent_level) {return _nilString;}
+  virtual void		GenCssPost_impl(Program* prog) {};
   // #IGNORE generate the Css postfix code (if any) for this object
   virtual const String	GenListing_children(int indent_level) {return _nilString;}
   // generate listing of any children of this progel
@@ -842,13 +925,14 @@ private:
   void	Destroy();
 };
 
+SmartRef_Of(ProgEl,TA_ProgEl);
 
 class TA_API ProgEl_List: public taList<ProgEl> {
   // #TREEFILT_ProgGp ##CAT_Program list of program elements: a block of code
 INHERITED(taList<ProgEl>)
 public:
   virtual void		PreGen(int& item_id); // iterates over all items
-  virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object
+  virtual void		GenCss(Program* prog); // generate the Css code for this object
   virtual const String	GenListing(int indent_level = 0); // generate the listing of this program
   
   virtual ProgVar*	FindVarName(const String& var_nm) const;
@@ -890,7 +974,6 @@ public:
   PROGEL_SIMPLE_BASEFUNS(ProgCode);
 protected:
   override void UpdateAfterEdit_impl();
-//   override const String	GenCssBody_impl(int indent_level);
 
 private:
   void	Initialize();
@@ -907,8 +990,6 @@ public:
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
   override ProgVar*	FindVarName(const String& var_nm) const;
-  override String 	GetTypeDecoKey() const { return "ProgCtrl"; } //
-//no  override taList_impl* children_() {return &loop_code;}
 
   SIMPLE_COPY(Loop);
   SIMPLE_LINKS(Loop);
@@ -917,7 +998,7 @@ public:
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
   override const String	GenListing_children(int indent_level);
 
 private:
@@ -949,7 +1030,7 @@ protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); // generate the Css body code for this object
+  override void		GenCssBody_impl(Program* prog); // generate the Css body code for this object
 
 private:
   void	Initialize();
@@ -989,7 +1070,7 @@ protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
   override const String	GenListing_children(int indent_level);
 
 private:
@@ -1004,7 +1085,7 @@ class TA_API Function_List: public taList<Function> {
 INHERITED(taList<Function>)
 public:
   virtual void		PreGen(int& item_id); // iterates over all items
-  virtual const String	GenCss(int indent_level = 0); // generate the Css code for this object
+  virtual void		GenCss(Program* prog); // generate the Css code for this object
   virtual const String	GenListing(int indent_level = 0); // generate the listing of this program
 
   virtual ProgVar*	FindVarName(const String& var_nm) const;
@@ -1041,6 +1122,9 @@ public:
   virtual void		UpdateArgs(); 
   // #BUTTON updates the argument list based on the function being called
 
+  override bool		CanCvtFmCode(const String& code) const;
+  override bool		CvtFmCode(const String& code);
+
   override taList_impl*	children_() {return &fun_args;}
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "Function"; }
@@ -1051,7 +1135,7 @@ protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
 private:
   void	Initialize();
   void	Destroy()	{}
@@ -1060,7 +1144,7 @@ private:
 //		End of Prog Els!
 ///////////////////////////////////////////////////////////////////
 
-//Note: object operations per se don't affect Program::stale, but
+// Note: object operations per se don't affect Program::stale, but
 // they will indirectly to the extent that adding/removing them
 // causes a corresponding var to get created
 
@@ -1194,8 +1278,6 @@ public:
   // global variables accessible outside and inside script
   Function_List		functions;
   // function code (for defining subroutines): goes at top of script and can be called from init or prog code
-  ProgEl_List		load_code;
-  // #EXPERT_TREE load initialization code: run when the program is loaded from the program library or other external sources (does not appear in standard program -- is compiled and run in a separate css program space). Note: ProgramCall's are automatically initialized according to targ_ld_init_name
   ProgEl_List		init_code;
   // initialization code: run when the Init button is pressed -- this must be all local to this program (no ProgramCall to other programs), and should generally be very simple and robust code as it is not checked in advance of running (to prevent init-dependent Catch-22 scenarios)
   ProgEl_List		prog_code;
@@ -1239,7 +1321,6 @@ public:
   // #CAT_Run request that the currently-running program stop at its earliest convenience..
   static void		ClearStopReq();
   // #CAT_Run reset the stop request information
-
   static const String	GetDescString(const String& dsc, int indent_level);
   // #IGNORE get an appropriately formatted version of the description string for css code
 
@@ -1270,8 +1351,8 @@ public:
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F11 stop the current program at its next natural stopping point (i.e., cleanly stopping when appropriate chunks of computation have completed)
   virtual void	Abort();
   // #BUTTON #GHOST_OFF_run_state:RUN #CAT_Run #SHORTCUT_F12 stop the current program immediately, regardless of where it is
-
-
+  virtual bool  RunFunction(const String& fun_name);
+  // #CAT_Run run a particular function within the program -- returns false if function not found -- function must not take any args
 
   virtual bool	StopCheck();
   // #CAT_Run calls event loop, then checks for STOP state, true if so
@@ -1286,6 +1367,14 @@ public:
   // #BUTTON #GHOST_OFF_run_state:DONE,STOP #CAT_Code exit the command shell for this program (shell returns to previous script)
   virtual void  UpdateCallerArgs();
   // #BUTTON #CAT_Code run UpdateArgs on all the other programs that call me, and also display all these calls in the Find dialog (searching on this program's name) so you can make sure the args are correct for each such program
+  virtual void	CssError(int src_ln_no, bool running, const String& err_msg);
+  // #IGNORE an error was triggered by css -- this is callback from css Error handling routine for program to update gui with relevant info
+  virtual void	CssWarning(int src_ln_no, bool running, const String& err_msg);
+  // #IGNORE a warning was triggered by css -- this is callback from css Warning handling routine for program to update gui with relevant info
+  virtual void	taError(int src_ln_no, bool running, const String& err_msg);
+  // #IGNORE a general (ta) error was triggered -- this is callback from taMisc::Error handling routine for program to update gui with relevant info
+  virtual void	taWarning(int src_ln_no, bool running, const String& err_msg);
+  // #IGNORE a general (ta) warning was triggered -- this is callback from taMisc::Warning handling routine for program to update gui with relevant info
 
   int			Call(Program* caller); 
   // #CAT_Run runs the program as a subprogram called from another running program, 0=success
@@ -1347,6 +1436,11 @@ public: // XxxGui versions provide feedback to the user
   // #MENU #MENU_CONTEXT #CAT_Code open listing of the program in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
 #endif
 
+  virtual void		ClearAllBreakpoints();
+  // #MENU #MENU_SEP_BEFORE #MENU_ON_Script #MENU_CONTEXT #CAT_Code clear all breakpoints that might have been set in the program elements
+  virtual void		SetAllBreakpoints();
+  // #IGNORE re-set all the breakpoints in the code to be currently active -- after recompiling, need to reinstate them all
+
   static Program*	MakeTemplate(); // #IGNORE make a template instance (with children) suitable for root.templates
   static void		MakeTemplate_fmtype(Program* prog, TypeDef* td); // #IGNORE make from typedef
   
@@ -1373,6 +1467,19 @@ public: // XxxGui versions provide feedback to the user
   virtual bool		ViewProperties();
   // #CAT_Display select the edit/middle panel view of this object to be for the program properties
 
+  ////////////////////////////////////////////////////
+  //  	program script gen interface
+  virtual bool		AddLine(taBase* prog_el, const String& code, const String& desc = _nilString);
+  // #IGNORE add one line of code to the program listing -- this is the official interface for adding to program -- code should be pure code without any indent -- indent managed separately
+  inline int		IncIndent()	{ return ++cur_indent; }
+  // #IGNORE increment the indent level, returning new level
+  inline int		DecIndent()	{ return --cur_indent; }
+  // #IGNORE decrement the indent level, returning new level
+  virtual void		AddDescString(taBase* prog_el, const String& dsc);
+  // #IGNORE add an appropriately formatted version of the description string to code -- for a full line desc comment at start
+  virtual bool		ToggleBreakpoint(ProgEl* pel);
+  // #IGNORE toggle breakpoint for given program element -- handles updating -- returns false if not able to complete 
+
   override int		GetSpecialState() const;
   override String 	GetTypeDecoKey() const { return "Program"; }
   override Variant 	GetGuiArgVal(const String& fun_name, int arg_idx);
@@ -1392,6 +1499,10 @@ protected:
   String		m_scriptCache; // cache of script, managed by implementation
   String		m_listingCache; // cache of listing, managed by implementation
   bool			m_checked; // flag to help us avoid doing CheckConfig twice
+  ProgLine_List		script_list;
+  // list of the script lines with important meta-data etc -- this is official source of script listing
+  int			cur_indent;
+  // current indent level -- used in adding code
 
   override void		UpdateAfterEdit_impl();
   override bool 	CheckConfig_impl(bool quiet);
@@ -1552,13 +1663,15 @@ public:
   virtual Program*	GetTarget_Compile() { return NULL; }
   // safe call to get target during compile time -- fail silently
   virtual void		AddTargetsToListAll(Program_List& all_lst) { };
-  // add any actual targets of this program to the all list-- use LinkUnique -- only non-null!
+  // #IGNORE add any actual targets of this program to the all list-- use LinkUnique -- only non-null!
   virtual bool		CallsProgram(Program* prg) { return false; }
-  // return true if this program call calls given program
-  virtual const String	GenCompileScript(Program* prg) { return _nilString; }
-  // generate code to compile script on target
-  virtual const String	GenCallInit(Program* prg) { return _nilString; }
-  // generate code to call init on target
+  // #IGNORE return true if this program call calls given program
+  virtual bool		WillGenCompileScript(Program* prg) { return false; }
+  // #IGNORE generate code to compile script on target
+  virtual void		GenCompileScript(Program* prg) { };
+  // #IGNORE generate code to compile script on target
+  virtual void		GenCallInit(Program* prg) { };
+  // #IGNORE generate code to call init on target
 
   virtual bool		LoadInitTarget() { return false; }
   // initialize target based on targ_ld_init information
@@ -1570,7 +1683,7 @@ public:
 protected:
   override void		UpdateAfterEdit_impl();
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  virtual const String	GenCssArgSet_impl(const String trg_var_nm, int indent_level); 
+  virtual void		GenCssArgSet_impl(Program* prog, const String trg_var_nm); 
 private:
   void	Initialize();
   void	Destroy()	{}
@@ -1587,8 +1700,9 @@ public:
   override Program*	GetTarget_Compile();
   override void		AddTargetsToListAll(Program_List& all_lst);
   override bool		CallsProgram(Program* prg);
-  override const String	GenCompileScript(Program* prg);
-  override const String	GenCallInit(Program* prg);
+  override bool		WillGenCompileScript(Program* prg);
+  override void		GenCompileScript(Program* prg);
+  override void		GenCallInit(Program* prg);
 
   void			SetTarget(Program* target); // #DROP1
 
@@ -1607,9 +1721,9 @@ protected:
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
 private:
   void	Initialize();
   void	Destroy()	{}
@@ -1626,8 +1740,9 @@ public:
   override Program*	GetTarget_Compile();
   override void		AddTargetsToListAll(Program_List& all_lst);
   override bool		CallsProgram(Program* prg);
-  override const String	GenCompileScript(Program* prg);
-  override const String	GenCallInit(Program* prg);
+  override bool		WillGenCompileScript(Program* prg);
+  override void		GenCompileScript(Program* prg);
+  override void		GenCallInit(Program* prg);
 
   virtual Program_Group* GetProgramGp();
   // get prog_group pointer value in a safe way
@@ -1640,9 +1755,9 @@ protected:
   override void		PreGenMe_impl(int item_id); // register the target as a subprog of this one
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
 private:
   void	Initialize();
   void	Destroy()	{}

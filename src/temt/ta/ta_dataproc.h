@@ -467,9 +467,9 @@ protected:
   virtual void	GetIndexVar(); // make an index variable in program if not already set
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
   override void	SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
 				     int dcr, void* op1_, void* op2_);
 
@@ -506,11 +506,9 @@ protected:
   override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
 
-  override const String	GenCssBody_impl(int indent_level);
-  virtual bool	GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm,
-                              String il, int var_no);
-  virtual bool	GenCss_OneVarMat(String& rval, ProgVarRef& mat_var, const String& idnm,
-			      String il, int var_no);
+  override void		GenCssBody_impl(Program* prog);
+  virtual bool	GenCss_OneVar(Program* prog, ProgVarRef& var, const String& idnm, int var_no);
+  virtual bool	GenCss_OneVarMat(Program* prog, ProgVarRef& mat_var, const String& idnm, int var_no);
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
@@ -524,8 +522,7 @@ public:
 
   TA_BASEFUNS_NOCOPY(DataVarProgMatrix);
 protected:
-  override bool	GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm,
-			      String il, int var_no);
+  override bool	GenCss_OneVar(Program* prog, ProgVarRef& var, const String& idnm, int var_no);
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
@@ -540,7 +537,7 @@ public:
 
   TA_BASEFUNS_NOCOPY(ResetDataRows);
 protected:
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 private:
   void	Initialize();
   void	Destroy()	{ }
@@ -555,7 +552,7 @@ public:
 
   TA_BASEFUNS_NOCOPY(AddNewDataRow);
 protected:
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 private:
   void	Initialize();
   void	Destroy()	{ }
@@ -570,7 +567,7 @@ public:
 
   TA_BASEFUNS_NOCOPY(DoneWritingDataRow);
 protected:
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 private:
   void	Initialize();
   void	Destroy()	{ }
@@ -622,7 +619,7 @@ public:
 protected:
   override void UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
 
 private:
   void	Initialize();
@@ -648,7 +645,7 @@ public:
 protected:
   override void UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
 
 private:
   void	Initialize();
@@ -674,7 +671,7 @@ public:
 protected:
   override void UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
 
 private:
   void	Initialize();
@@ -703,7 +700,7 @@ public:
 protected:
   override void UpdateAfterEdit_impl();
   override void CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
 
 private:
   void	Initialize();
@@ -729,7 +726,7 @@ protected:
   override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
 
 private:
   void	Initialize();
@@ -781,9 +778,9 @@ protected:
   virtual void	UpdateColVars();
   // sync col vars from cols
 
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
   override const String	GenListing_children(int indent_level);
 
 private:
@@ -811,7 +808,7 @@ public:
 protected:
   override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
 
 private:
   void	Copy_(const DataCalcAddDestRow& cp);
@@ -839,7 +836,7 @@ public:
 protected:
   override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
 
 private:
   void	Copy_(const DataCalcSetDestRow& cp);
@@ -867,7 +864,7 @@ public:
 protected:
   override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
 
 private:
   void	Copy_(const DataCalcSetSrcRow& cp);
@@ -898,7 +895,7 @@ public:
 protected:
   override void UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level); 
+  override void		GenCssBody_impl(Program* prog); 
 
 private:
   void	Copy_(const DataCalcCopyCommonCols& cp);

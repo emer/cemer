@@ -41,9 +41,9 @@ public:
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level);
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog);
+  override void		GenCssPost_impl(Program* prog); 
   override const String	GenListing_children(int indent_level);
 
 private:
@@ -85,7 +85,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(ProgVars);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
   override const String	GenListing_children(int indent_level);
 
 private:
@@ -112,7 +112,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(UserScript);
 protected:
   override void UpdateAfterEdit_impl();
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -134,8 +134,8 @@ public:
   PROGEL_SIMPLE_BASEFUNS(WhileLoop);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
 
 private:
   void	Initialize() {}
@@ -157,8 +157,8 @@ public:
   PROGEL_SIMPLE_BASEFUNS(DoLoop);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
 
 private:
   void	Initialize() {}
@@ -199,8 +199,8 @@ protected:
   bool		ParentForLoopVarClashes(const String& loop_var); // true if a parent For loop is also using the loop_var
   void		MorphVar(String& cur_loop_var); // typically i,j,k, etc. or var2, var3, etc
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
 private:
   void	Initialize();
   void	Destroy()	{}
@@ -222,7 +222,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(IfContinue);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -245,7 +245,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(IfBreak);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -268,7 +268,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(IfReturn);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -298,9 +298,9 @@ protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); //replaces If
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog); //replaces If
+  override void		GenCssPost_impl(Program* prog); 
   override const String	GenListing_children(int indent_level);
 
 private:
@@ -328,9 +328,9 @@ protected:
   override void		UpdateAfterEdit_impl();
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
   override const String	GenListing_children(int indent_level);
 
 private:
@@ -353,9 +353,9 @@ public:
   PROGEL_SIMPLE_BASEFUNS(CaseBlock);
 protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level);
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog);
+  override void		GenCssPost_impl(Program* prog); 
 
 private:
   void	Initialize();
@@ -389,9 +389,9 @@ protected:
   override void		CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		PreGenChildren_impl(int& item_id);
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level); 
-  override const String	GenCssPost_impl(int indent_level); 
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssBody_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
   override const String	GenListing_children(int indent_level);
 
   virtual void	    CasesFmEnum_hard(); // switch_var is a hard enum
@@ -421,7 +421,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(AssignExpr);
 protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -447,7 +447,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(VarIncr);
 protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -487,7 +487,7 @@ protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -542,7 +542,7 @@ public:
 protected:
   override void		UpdateAfterEdit_impl();
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -561,7 +561,7 @@ public:
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "memb=arg"; }
 
-  const String	GenRegArgs(int indent_level);
+  void	GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
 
   //  PROGEL_SIMPLE_BASEFUNS(MemberFmArg);
@@ -573,7 +573,7 @@ protected:
   
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -604,7 +604,7 @@ protected:
   override void		UpdateAfterEdit_impl();
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -678,7 +678,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(PrintVar);
 protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -702,7 +702,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(PrintExpr);
 protected:
   override void 	CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -723,7 +723,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(Comment);
 protected:
   override bool		useDesc() const {return false;} 
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -745,7 +745,7 @@ public:
 protected:
   override void		PreGenMe_impl(int item_id);
   // register the target as a subprog of this one
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -769,7 +769,7 @@ public:
   PROGEL_SIMPLE_BASEFUNS(ReturnExpr);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void		GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -798,11 +798,10 @@ public:
 protected:
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
 
-  override const String	GenCssPre_impl(int indent_level); 
-  override const String	GenCssBody_impl(int indent_level);
-  override const String	GenCssPost_impl(int indent_level); 
-  virtual bool	GenCss_OneVar(String& rval, ProgVarRef& var,
-			      const String& il, int var_no);
+  override void	GenCssPre_impl(Program* prog); 
+  override void	GenCssBody_impl(Program* prog);
+  override void	GenCssPost_impl(Program* prog); 
+  virtual bool	GenCss_OneVar(Program* prog, ProgVarRef& var, int var_no);
 private:
   void	Initialize();
   void	Destroy()	{ CutLinks(); }
@@ -823,14 +822,14 @@ public:
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "var=arg"; }
 
-  const String	GenRegArgs(int indent_level);
+  void	GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
 
   PROGEL_SIMPLE_BASEFUNS(ProgVarFmArg);
 protected:
   override void UpdateAfterEdit_impl();
   override void CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void	GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -858,14 +857,14 @@ public:
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   override String	GetToolbarName() const { return "data=args"; }
 
-  const String	GenRegArgs(int indent_level);
+  void	GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
 
   PROGEL_SIMPLE_BASEFUNS(DataColsFmArgs);
 protected:
   override void UpdateAfterEdit_impl();
   override void CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void	GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -885,14 +884,14 @@ public:
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "sele=args"; }
 
-  const String	GenRegArgs(int indent_level);
+  void	GenRegArgs(Program* prog);
   // #IGNORE generate RegisterArgs code
 
   PROGEL_SIMPLE_BASEFUNS(SelectEditsFmArgs);
 protected:
   override void UpdateAfterEdit_impl();
   override void CheckThisConfig_impl(bool quiet, bool& rval);
-  override const String	GenCssBody_impl(int indent_level);
+  override void	GenCssBody_impl(Program* prog);
 
 private:
   void	Initialize();
@@ -909,9 +908,9 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(RegisterArgs);
 protected:
-  override const String	GenCssBody_impl(int indent_level);
+  override void	GenCssBody_impl(Program* prog);
 
-  virtual void		AddArgsFmCode(String& gen_code, ProgEl_List& progs, int indent_level);
+  virtual void		AddArgsFmCode(Program* prog, ProgEl_List& progs);
   // main function: iterates recursively through progs, adding any that add args to gen_code
 
 private:

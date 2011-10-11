@@ -1679,6 +1679,11 @@ iProgramPanel* Program::FindMyProgramPanel() {
   iProgramPanel* el;
   FOR_DLC_EL_OF_TYPE(iProgramPanel, el, link, itr) {
     if (el->prog() == this) {
+      BrowserSelectMe();	// select my program
+      iDataPanelSet* dps = el->data_panel_set();
+      if(dps) {
+	dps->setCurrentPanelId(1); // this is the editor
+      }
       return el;
     }
   }
@@ -1691,7 +1696,7 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
   if(!link) return false;
 
   iProgramPanel* mwv = FindMyProgramPanel();
-  if(!mwv || !mwv->pe) return itm->taBase::BrowserExpandAll();
+  if(!mwv || !mwv->pe) return itm->taBase::BrowserSelectMe();
 
   iTreeView* itv = mwv->pe->items;
   iTreeViewItem* iti = itv->AssertItem(link);

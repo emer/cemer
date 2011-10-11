@@ -1787,40 +1787,42 @@ void DataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!order_var, quiet, rval, "order_var = NULL");
 }
 
-const String DataLoop::GenCssPre_impl(int indent_level) {
-  String id1 = cssMisc::Indent(indent_level+1);
-  String id2 = cssMisc::Indent(indent_level+2);
-  String id3 = cssMisc::Indent(indent_level+3);
-  if(!data_var || !index_var) return id1 + "// DataLoop ERROR vars not set!\n";
+void DataLoop::GenCssPre_impl(Program* prog) {
+  if(!data_var || !index_var) {
+    prog->AddLine(this, "// DataLoop ERROR vars not set!");
+    return;
+  }
   String data_nm = data_var->name;
   String idx_nm = index_var->name;
 
-  String rval = cssMisc::Indent(indent_level) + "{ // DataLoop " + data_nm + "\n";
-  rval += id1 + "DataLoop* data_loop = this" + GetPath(NULL,program()) + ";\n";
-  rval += id1 + "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value\n";
-  rval += id1 + "data_loop->item_idx_list.SetSize(" + data_nm + "->ItemCount());\n";
-  rval += id1 + "data_loop->item_idx_list.FillSeq();\n";
-  rval += id1 + "if(data_loop->order == DataLoop::PERMUTED) data_loop->item_idx_list.Permute();\n";
-  rval += id1 + "for(" + idx_nm + " = 0; " + idx_nm + " < " + data_nm + "->ItemCount(); "
-    + idx_nm + "++) {\n";
-  rval += id2 + "int data_row_idx;\n";
-  rval += id2 + "if(data_loop->order == DataLoop::RANDOM) data_row_idx = Random::IntZeroN(data_loop->item_idx_list.size);\n";
-  rval += id2 + "else\n";
-  rval += id3 + "data_row_idx = data_loop->item_idx_list[" + idx_nm + "];\n";
-  rval += id2 + "if(!" + data_nm + "->ReadItem(data_row_idx)) break; // set read index\n";
-  rval += id2 + "if(!" + data_nm + "->WriteItem(data_row_idx)) break; // set write index too\n";
-  return rval;
+  prog->AddLine(this, String("{ // DataLoop ") + data_nm);
+  prog->IncIndent();
+  prog->AddLine(this, String("DataLoop* data_loop = this") + GetPath(NULL,program()) + ";");
+  prog->AddLine(this, "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value");
+  prog->AddLine(this, String("data_loop->item_idx_list.SetSize(") + data_nm + "->ItemCount());");
+  prog->AddLine(this, "data_loop->item_idx_list.FillSeq();");
+  prog->AddLine(this, "if(data_loop->order == DataLoop::PERMUTED) data_loop->item_idx_list.Permute();");
+  prog->AddLine(this, String("for(") + idx_nm + " = 0; " + idx_nm + " < " + data_nm + "->ItemCount(); "
+		+ idx_nm + "++) {");
+  prog->IncIndent();
+  prog->AddLine(this, "int data_row_idx;");
+  prog->AddLine(this, "if(data_loop->order == DataLoop::RANDOM) data_row_idx = Random::IntZeroN(data_loop->item_idx_list.size);");
+  prog->AddLine(this, "else");
+  prog->AddLine(this, String("  data_row_idx = data_loop->item_idx_list[") + idx_nm + "];");
+  prog->AddLine(this, String("if(!") + data_nm + "->ReadItem(data_row_idx)) break; // set read index");
+  prog->AddLine(this, String("if(!") + data_nm + "->WriteItem(data_row_idx)) break; // set write index too");
 }
 
-const String DataLoop::GenCssBody_impl(int indent_level) {
-  return loop_code.GenCss(indent_level + 2);
+void DataLoop::GenCssBody_impl(Program* prog) {
+  loop_code.GenCss(prog);
 }
 
-const String DataLoop::GenCssPost_impl(int indent_level) {
-  if(!data_var || !index_var) return cssMisc::Indent(indent_level+1) + "// DataLoop ERROR vars not set!\n";
-  String rval = cssMisc::Indent(indent_level+1) + "} // for loop\n";
-  rval += cssMisc::Indent(indent_level) + "} // DataLoop " + data_var->name + "\n";
-  return rval;
+void DataLoop::GenCssPost_impl(Program* prog) {
+  if(!data_var || !index_var) return;
+  prog->DecIndent();
+  prog->AddLine(this, "} // for loop");
+  prog->DecIndent();
+  prog->AddLine(this, "} // DataLoop " + data_var->name);
 }
 
 String DataLoop::GetDisplayName() const {
@@ -1892,14 +1894,12 @@ String DataVarProg::GetDisplayName() const {
   return rval;
 }
 
-bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm, 
-				String il, int var_no) 
-{
+bool DataVarProg::GenCss_OneVar(Program* prog, ProgVarRef& var, const String& idnm, int var_no) {
   if (!var) return false;
   // if the var is a matrix, then delegate to our Mat handler
   if ((var->var_type == ProgVar::T_Object) &&
     var->object_type->InheritsFrom(&TA_taMatrix))
-    return GenCss_OneVarMat(rval, var, idnm, il, var_no);
+    return GenCss_OneVarMat(prog, var, idnm, var_no);
     
   DataCol* da = NULL;
   DataTable* dt = GetData();
@@ -1911,33 +1911,30 @@ bool DataVarProg::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idn
   }
   if(row_spec == CUR_ROW) {
     if(set_data)
-      rval +=  il + idnm + ".SetDataByName(" + string_cvt + var->name + ", \"" + var->name +"\");\n";
+      prog->AddLine(this, idnm + ".SetDataByName(" + string_cvt + var->name + ", \"" + var->name +"\");");
     else
-      rval += il + var->name + " = " + idnm + ".GetDataByName(\"" + var->name + "\");\n";
+      prog->AddLine(this, var->name + " = " + idnm + ".GetDataByName(\"" + var->name + "\");");
   }
   else if(row_spec == ROW_NUM) {
     if(set_data)
-      rval +=  il + idnm + ".SetValColName(" + string_cvt + var->name + ", \"" + var->name +"\", "
-	+ row_var->name + ", " + String(quiet)  + ");\n";
+      prog->AddLine(this, idnm + ".SetValColName(" + string_cvt + var->name + ", \"" + var->name +"\", "
+		    + row_var->name + ", " + String(quiet)  + ");");
     else 
-      rval += il + var->name + " = " + idnm + ".GetValColName(\"" + var->name + "\", "
-	+ row_var->name + ", " + String(quiet) + ");\n";
+      prog->AddLine(this, var->name + " = " + idnm + ".GetValColName(\"" + var->name + "\", "
+		    + row_var->name + ", " + String(quiet) + ");");
   }
   else if(row_spec == ROW_VAL) {
     if(set_data)
-      rval +=  il + idnm + ".SetValColRowName(" + string_cvt + var->name + ", \"" + var->name+ "\", \""
-	+ row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");\n";
+      prog->AddLine(this, idnm + ".SetValColRowName(" + string_cvt + var->name + ", \"" + var->name+ "\", \""
+		    + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");");
     else 
-      rval += il + var->name + " = " + idnm + ".GetValColRowName(\"" + var->name +"\", \""
-	+ row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");\n";
+      prog->AddLine(this, var->name + " = " + idnm + ".GetValColRowName(\"" + var->name +"\", \""
+		    + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");");
   }
   return true;
 }
 
-bool DataVarProg::GenCss_OneVarMat(String& rval, ProgVarRef& var, const String& idnm, 
-  String il, int var_no) 
-{
-    
+bool DataVarProg::GenCss_OneVarMat(Program* prog, ProgVarRef& var, const String& idnm, int var_no) {
   DataCol* da = NULL;
   DataTable* dt = GetData();
   String string_cvt = "";
@@ -1947,38 +1944,46 @@ bool DataVarProg::GenCss_OneVarMat(String& rval, ProgVarRef& var, const String& 
       string_cvt = "(String)";	// cast variant value to a string for setting!
   }
   // in all cases, we need a temp var that is ref counted, to hold the mat slice for the col
-  rval += "{taMatrix* __tmp_mat;\n"; 
+  prog->AddLine(this, "{taMatrix* __tmp_mat;"); 
+  prog->IncIndent();
   // first, get the mat slice
   if (row_spec == CUR_ROW) {
-    rval += il + "__tmp_mat = " + idnm + ".GetMatrixDataByName(\"" + var->name + "\");\n";
-  } else if (row_spec == ROW_NUM) {
-    rval += il + "__tmp_mat = " + idnm + ".GetValAsMatrixColName(\"" + var->name + "\", "
-      + row_var->name + ", " + String(quiet) + ");\n";
-  } else if (row_spec == ROW_VAL) {
-    rval += il + "__tmp_mat = " + idnm + ".GetValAsMatrixColRowName(\"" + var->name +"\", \""
-      + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");\n";
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetMatrixDataByName(\"" + var->name + "\");");
+  }
+  else if (row_spec == ROW_NUM) {
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColName(\"" + var->name + "\", "
+		  + row_var->name + ", " + String(quiet) + ");");
+  }
+  else if (row_spec == ROW_VAL) {
+    prog->AddLine(this, String("__tmp_mat = ") + idnm + ".GetValAsMatrixColRowName(\"" + var->name +"\", \""
+		  + row_var->name + "\", " + row_var->name + ", " + String(quiet) + ");");
   }
   if(set_data) {
-    rval +=  il + "__tmp_mat.CopyFrom(" + var->name + ");\n";
-  } else {
-    rval += il + var->name + ".CopyFrom(__tmp_mat);\n";
+    prog->AddLine(this, String("__tmp_mat.CopyFrom(") + var->name + ");");
   }
-  rval += "}\n"; 
+  else {
+    prog->AddLine(this, var->name + ".CopyFrom(__tmp_mat);");
+  }
+  prog->DecIndent();
+  prog->AddLine(this, "}");
   return true;
 }
 
-const String DataVarProg::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  if(!data_var) return il + "// data_var not set!\n";
-  if(row_spec != CUR_ROW && !row_var) return il + "// row_var not set but needed!\n";
+void DataVarProg::GenCssBody_impl(Program* prog) {
+  if(!data_var) {
+    prog->AddLine(this, "// data_var not set!");
+    return;
+  }
+  if(row_spec != CUR_ROW && !row_var) {
+    prog->AddLine(this, "// row_var not set but needed!");
+    return;
+  }
   String idnm = data_var->name;
-  String rval;
-  rval += il + "// " + GetDisplayName() + "\n";
-  GenCss_OneVar(rval, var_1, idnm, il, 0);
-  GenCss_OneVar(rval, var_2, idnm, il, 1);
-  GenCss_OneVar(rval, var_3, idnm, il, 2);
-  GenCss_OneVar(rval, var_4, idnm, il, 3);
-  return rval;
+  prog->AddLine(this, "// " + GetDisplayName());
+  GenCss_OneVar(prog, var_1, idnm, 0);
+  GenCss_OneVar(prog, var_2, idnm, 1);
+  GenCss_OneVar(prog, var_3, idnm, 2);
+  GenCss_OneVar(prog, var_4, idnm, 3);
 }
 
 ///////////////////////////////////////////
@@ -1987,8 +1992,7 @@ const String DataVarProg::GenCssBody_impl(int indent_level) {
 void DataVarProgMatrix::Initialize() {
 }
 
-bool DataVarProgMatrix::GenCss_OneVar(String& rval, ProgVarRef& var, const String& idnm, 
-				      String il, int var_no) {
+bool DataVarProgMatrix::GenCss_OneVar(Program* prog, ProgVarRef& var, const String& idnm, int var_no) {
   if(!var) return false;
   DataCol* da = NULL;
   String col_nm = var->name.before('_', -1);
@@ -2004,29 +2008,28 @@ bool DataVarProgMatrix::GenCss_OneVar(String& rval, ProgVarRef& var, const Strin
   }
   if(row_spec == CUR_ROW) {
     if(set_data)
-      rval +=  il + idnm + ".SetMatrixCellDataByName(" + string_cvt + var->name
-	+ ", \"" + col_nm +"\", " + String(var_no) + ");\n";
+      prog->AddLine(this, idnm + ".SetMatrixCellDataByName(" + string_cvt + var->name
+		    + ", \"" + col_nm +"\", " + String(var_no) + ");");
     else
-      rval += il + var->name + " = " + idnm + ".GetMatrixCellDataByName(\"" + col_nm
-	+ "\", " + String(var_no) + ");\n";
+      prog->AddLine(this, var->name + " = " + idnm + ".GetMatrixCellDataByName(\"" + col_nm
+		    + "\", " + String(var_no) + ");");
   }
   else if(row_spec == ROW_NUM) {
     if(set_data)
-      rval +=  il + idnm + ".SetMatrixFlatValColName(" + string_cvt + var->name
-	+ ", \"" + col_nm +"\", " + row_var->name + ", " + String(var_no) + ");\n";
+      prog->AddLine(this, idnm + ".SetMatrixFlatValColName(" + string_cvt + var->name
+		    + ", \"" + col_nm +"\", " + row_var->name + ", " + String(var_no) + ");");
     else 
-      rval += il + var->name + " = " + idnm + ".GetMatrixFlatValColName(\"" + col_nm + "\", "
-	+ row_var->name + ", " + String(var_no) + ");\n";
+      prog->AddLine(this, var->name + " = " + idnm + ".GetMatrixFlatValColName(\"" + col_nm + "\", "
+		    + row_var->name + ", " + String(var_no) + ");");
   }
   else if(row_spec == ROW_VAL) {
     if(set_data)
-      rval +=  il + idnm + ".SetMatrixFlatValColRowName(" + string_cvt + var->name
-	+ ", \"" + col_nm + "\", \"" + row_var->name + "\", " + row_var->name
-	+ ", " + String(var_no) + ");\n";
+      prog->AddLine(this, idnm + ".SetMatrixFlatValColRowName(" + string_cvt + var->name
+		    + ", \"" + col_nm + "\", \"" + row_var->name + "\", " + row_var->name
+		    + ", " + String(var_no) + ");");
     else 
-      rval += il + var->name + " = " + idnm + ".GetMatrixFlatValColRowName(\"" + col_nm +"\", \""
-	+ row_var->name + "\", " + row_var->name
-	+ ", " + String(var_no) + ");\n";
+      prog->AddLine(this, var->name + " = " + idnm + ".GetMatrixFlatValColRowName(\"" + col_nm +"\", \""
+		    + row_var->name + "\", " + row_var->name + ", " + String(var_no) + ");");
   }
   return true;
 }
@@ -2044,10 +2047,12 @@ String ResetDataRows::GetDisplayName() const {
   return rval;
 }
 
-const String ResetDataRows::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  if(!data_var) return il + "// data_var not set!\n";
-  return il + data_var->name + ".RemoveAllRows();\n";
+void ResetDataRows::GenCssBody_impl(Program* prog) {
+  if(!data_var) {
+    prog->AddLine(this, "// data_var not set!");
+    return;
+  }
+  prog->AddLine(this, data_var->name + ".RemoveAllRows();");
 }
 
 ///////////////////////////////////////////
@@ -2063,10 +2068,12 @@ String AddNewDataRow::GetDisplayName() const {
   return rval;
 }
 
-const String AddNewDataRow::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  if(!data_var) return il + "// data_var not set!\n";
-  return il + data_var->name + ".AddBlankRow();\n";
+void AddNewDataRow::GenCssBody_impl(Program* prog) {
+  if(!data_var) {
+    prog->AddLine(this, "// data_var not set!");
+    return;
+  }
+  prog->AddLine(this, data_var->name + ".AddBlankRow();");
 }
 
 /////////////
@@ -2081,10 +2088,12 @@ String DoneWritingDataRow::GetDisplayName() const {
   return rval;
 }
 
-const String DoneWritingDataRow::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  if(!data_var) return il + "// data_var not set!\n";
-  return il + data_var->name + ".WriteClose();\n";
+void DoneWritingDataRow::GenCssBody_impl(Program* prog) {
+  if(!data_var) {
+    prog->AddLine(this, "// data_var not set!");
+    return;
+  }
+  prog->AddLine(this, data_var->name + ".WriteClose();");
 }
 
 
@@ -2155,25 +2164,25 @@ void DataSortProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-const String DataSortProg::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  String il1 = cssMisc::Indent(indent_level+1);
-  if(!src_data_var)
-    return il + "// DataSort: src_data_var not set!  cannot run\n";
-  String rval = il + "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+void DataSortProg::GenCssBody_impl(Program* prog) {
+  if(!src_data_var) {
+    prog->AddLine(this, "// DataSort: src_data_var not set!  cannot run");
+    return;
+  }
+  prog->AddLine(this, "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";");
+  prog->IncIndent();
   if(dest_data_var) {
-    rval += il1 + "taDataProc::Sort(" + dest_data_var->name + ", " + src_data_var->name
-      + ", dsp->sort_spec);\n";
+    prog->AddLine(this, String("taDataProc::Sort(") + dest_data_var->name + ", " + src_data_var->name
+		  + ", dsp->sort_spec);");
   }
   else {
-    rval += il1 + "taDataProc::Sort(NULL, " + src_data_var->name
-      + ", dsp->sort_spec);\n";
+    prog->AddLine(this, String("taDataProc::Sort(NULL, ") + src_data_var->name + ", dsp->sort_spec);");
   }
   if(dest_data_var) {
-    rval += il1 + "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL\n";
+    prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
   }
-  rval += il + "}\n";
-  return rval; 
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 void DataSortProg::AddAllColumns() {
@@ -2217,25 +2226,26 @@ void DataSelectRowsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-const String DataSelectRowsProg::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  String il1 = cssMisc::Indent(indent_level+1);
-  if(!src_data_var)
-    return il + "// DataSelectRows: src_data_var not set!  cannot run!\n";
-  String rval = il + "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+void DataSelectRowsProg::GenCssBody_impl(Program* prog) {
+  if(!src_data_var) {
+    prog->AddLine(this, "// DataSelectRows: src_data_var not set!  cannot run!");
+    return;
+  }
+  prog->AddLine(this, "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";");
+  prog->IncIndent();
   if(dest_data_var) {
-    rval += il1 + "taDataProc::SelectRows(" + dest_data_var->name + ", " + 
-      src_data_var->name + ", dsp->select_spec);\n";
+    prog->AddLine(this, "taDataProc::SelectRows(" + dest_data_var->name + ", " + 
+		  src_data_var->name + ", dsp->select_spec);");
   }
   else {
-    rval += il1 + "taDataProc::SelectRows(NULL, " + 
-      src_data_var->name + ", dsp->select_spec);\n";
+    prog->AddLine(this, "taDataProc::SelectRows(NULL, " + 
+		  src_data_var->name + ", dsp->select_spec);");
   }
   if(dest_data_var) {
-    rval += il1 + "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL\n";
+    prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
   }
-  rval += il + "}\n";
-  return rval; 
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 void DataSelectRowsProg::AddAllColumns() {
@@ -2279,25 +2289,26 @@ void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-const String DataSelectColsProg::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  String il1 = cssMisc::Indent(indent_level+1);
-  if(!src_data_var)
-    return il + "// DataSelectCols: src_data_var not set!  cannot run!\n";
-  String rval = il + "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+void DataSelectColsProg::GenCssBody_impl(Program* prog) {
+  if(!src_data_var) {
+    prog->AddLine(this, "// DataSelectCols: src_data_var not set!  cannot run!");
+    return;
+  }
+  prog->AddLine(this, "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";");
+  prog->IncIndent();
   if(dest_data_var) {
-    rval += il1 + "taDataProc::SelectCols(" + dest_data_var->name + ", " + src_data_var->name
-      + ", dsp->select_spec);\n";
+    prog->AddLine(this, "taDataProc::SelectCols(" + dest_data_var->name + ", " + src_data_var->name
+		  + ", dsp->select_spec);");
   }
   else {
-    rval += il1 + "taDataProc::SelectCols(NULL, " + src_data_var->name
-      + ", dsp->select_spec);\n";
+    prog->AddLine(this, "taDataProc::SelectCols(NULL, " + src_data_var->name
+		  + ", dsp->select_spec);");
   }
   if(dest_data_var) {
-    rval += il1 + "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL\n";
+    prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
   }
-  rval += il + "}\n";
-  return rval; 
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 void DataSelectColsProg::AddAllColumns() {
@@ -2341,25 +2352,25 @@ void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-const String DataGroupProg::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  String il1 = cssMisc::Indent(indent_level+1);
-  if(!src_data_var)
-    return il + "// DataGroup: src_data_var not set!  cannot run!\n";
-  String rval = il + "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+void DataGroupProg::GenCssBody_impl(Program* prog) {
+  if(!src_data_var) {
+    prog->AddLine(this, "// DataGroup: src_data_var not set!  cannot run!");
+    return;
+  }
+  prog->AddLine(this, "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";");
   if(dest_data_var) {
-    rval += il1 + "taDataProc::Group(" + dest_data_var->name + ", " + src_data_var->name
-      + ", dsp->group_spec);\n";
+    prog->AddLine(this, "taDataProc::Group(" + dest_data_var->name + ", " + src_data_var->name
+		  + ", dsp->group_spec);");
   }
   else {
-    rval += il1 + "taDataProc::Group(NULL, " + src_data_var->name
-      + ", dsp->group_spec);\n";
+    prog->AddLine(this, "taDataProc::Group(NULL, " + src_data_var->name
+		  + ", dsp->group_spec);");
   }
   if(dest_data_var) {
-    rval += il1 + "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL\n";
+    prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
   }
-  rval += il + "}\n";
-  return rval; 
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 void DataGroupProg::AddAllColumns() {
@@ -2421,25 +2432,26 @@ DataTable* DataJoinProg::GetSrcBData() {
   return (DataTable*)src_b_data_var->object_val.ptr();
 }
 
-const String DataJoinProg::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  String il1 = cssMisc::Indent(indent_level+1);
-  if(!src_data_var || !src_b_data_var)
-    return il + "// DataJoin: src_data_var or src_b_data_var not set!  cannot run\n";
-  String rval = il + "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";\n";
+void DataJoinProg::GenCssBody_impl(Program* prog) {
+  if(!src_data_var || !src_b_data_var) {
+    prog->AddLine(this, "// DataJoin: src_data_var or src_b_data_var not set!  cannot run");
+    return;
+  }
+  prog->AddLine(this, "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";");
+  prog->IncIndent();
   if(dest_data_var) {
-    rval += il1 + "taDataProc::Join(" + dest_data_var->name + ", " + 
-      src_data_var->name + ", " + src_b_data_var->name + ", dsp->join_spec);\n";
+    prog->AddLine(this, "taDataProc::Join(" + dest_data_var->name + ", " + 
+		  src_data_var->name + ", " + src_b_data_var->name + ", dsp->join_spec);");
   }
   else {
-    rval += il1 + "taDataProc::Join(NULL, " + 
-      src_data_var->name + ", " + src_b_data_var->name + ", dsp->join_spec);\n";
+    prog->AddLine(this, "taDataProc::Join(NULL, " + 
+		  src_data_var->name + ", " + src_b_data_var->name + ", dsp->join_spec);");
   }
   if(dest_data_var) {
-    rval += il1 + "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL\n";
+    prog->AddLine(this, "if(!dsp->GetDestData()) dsp->dest_data_var.SetObject(.data.gp.AnalysisData.Peek()); // get new one if NULL");
   }
-  rval += il + "}\n";
-  return rval; 
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 /////////////////////////////////////////////////////////
@@ -2609,34 +2621,39 @@ void DataCalcLoop::PreGenChildren_impl(int& item_id) {
   loop_code.PreGen(item_id);
 }
 
-const String DataCalcLoop::GenCssPre_impl(int indent_level) {
-  if(!GetSrcData()) return cssMisc::Indent(indent_level) + "// no src data!\n";
+void DataCalcLoop::GenCssPre_impl(Program* prog) {
+  if(!GetSrcData()) {
+    prog->AddLine(this, "// no src data!");
+    return;
+  }
   src_cols.GetColumns(GetSrcData());
-  String il1 = cssMisc::Indent(indent_level+1);
-  String il2 = cssMisc::Indent(indent_level+2);
-  String rval = cssMisc::Indent(indent_level) + "{ DataCalcLoop* dcl = this" + GetPath(NULL, program()) + ";\n";
+  prog->AddLine(this, "{ DataCalcLoop* dcl = this" + GetPath(NULL, program()) + ";");
+  prog->IncIndent();
   if(dest_data_var) {
-    rval += il1 + dest_data_var->name + ".ResetData(); // all data ops clear out old existing data\n";
-    rval += il1 + "DataOpList common_dest_cols; // pre-initialize, for CopyCommonCols\n";
-    rval += il1 + "DataOpList common_src_cols;\n";
-    rval += il1 + "DataOpList common_dest_cols_named; // only the cols named in dest_cols\n";
-    rval += il1 + "DataOpList common_src_cols_named;  // only the cols named in src_cols\n";
-    rval += il1 + "taDataProc::GetCommonCols(" + dest_data_var->name + ", " + src_data_var->name
-      + ", common_dest_cols, common_src_cols);\n";
-    rval += il1 + "common_dest_cols_named = common_dest_cols; common_src_cols_named = common_src_cols;\n";
-    rval += il1 + "taDataProc::GetColIntersection(common_dest_cols_named, dcl->dest_cols);\n";
-    rval += il1 + "taDataProc::GetColIntersection(common_dest_cols_named, dcl->src_cols);\n";
-    rval += il1 + "taDataProc::GetColIntersection(common_src_cols_named, dcl->dest_cols);\n";
-    rval += il1 + "taDataProc::GetColIntersection(common_src_cols_named, dcl->src_cols);\n";
-    rval += il1 + dest_data_var->name + "->StructUpdate(true);\n";
+    prog->AddLine(this, dest_data_var->name + ".ResetData(); // all data ops clear out old existing data");
+    prog->AddLine(this, "DataOpList common_dest_cols; // pre-initialize, for CopyCommonCols");
+    prog->AddLine(this, "DataOpList common_src_cols;");
+    prog->AddLine(this, "DataOpList common_dest_cols_named; // only the cols named in dest_cols");
+    prog->AddLine(this, "DataOpList common_src_cols_named;  // only the cols named in src_cols");
+    prog->AddLine(this, String("taDataProc::GetCommonCols(") + dest_data_var->name + ", "
+		  + src_data_var->name + ", common_dest_cols, common_src_cols);");
+    prog->AddLine(this, "common_dest_cols_named = common_dest_cols; common_src_cols_named = common_src_cols;");
+    prog->AddLine(this, "taDataProc::GetColIntersection(common_dest_cols_named, dcl->dest_cols);");
+    prog->AddLine(this, "taDataProc::GetColIntersection(common_dest_cols_named, dcl->src_cols);");
+    prog->AddLine(this, "taDataProc::GetColIntersection(common_src_cols_named, dcl->dest_cols);");
+    prog->AddLine(this, "taDataProc::GetColIntersection(common_src_cols_named, dcl->src_cols);");
+    prog->AddLine(this, dest_data_var->name + "->StructUpdate(true);");
   }    
-  rval += il1 + src_data_var->name + "->StructUpdate(true);\n";
+  prog->AddLine(this, src_data_var->name + "->StructUpdate(true);");
 
-  rval += il1 + "for(int src_row=0; src_row < " + src_data_var->name + ".rows; src_row++) {\n";
+  prog->AddLine(this, String("for(int src_row=0; src_row < ") + src_data_var->name + ".rows; src_row++) {");
+  prog->IncIndent();
+
   for(int i=0;i<src_cols.size; i++) {
     DataOpEl* ds = src_cols[i];
     if(ds->col_idx < 0) continue;
     DataCol* da = GetSrcData()->data[ds->col_idx];
+    String rval;
     if(da->is_matrix) {
       ValType vt = da->valType();
       String mat_type = "taMatrix";
@@ -2648,41 +2665,39 @@ const String DataCalcLoop::GenCssPre_impl(int indent_level) {
 	mat_type = "int_Matrix";
       else if(vt == VT_STRING)
 	mat_type = "String_Matrix";
-      rval += il2 + mat_type + "* s_" + ds->col_name + " = " + src_data_var->name +
-	".GetValAsMatrix(";
+      rval += mat_type + "* s_" + ds->col_name + " = " + src_data_var->name + ".GetValAsMatrix(";
     }
     else {
-      rval += il2 + "Variant s_" + ds->col_name + " = " + src_data_var->name +
-	".GetValAsVar(";
+      rval += "Variant s_" + ds->col_name + " = " + src_data_var->name + ".GetValAsVar(";
     }
     if(use_col_numbers)
       rval += String(ds->col_idx);
     else
       rval += String("\"") + da->name + String("\"");
-    rval += ", src_row);\n";
+    rval += ", src_row);";
+    prog->AddLine(this, rval);
   }
   src_cols.ClearColumns();
   // dest cols are only activated by DataAddDestRow
-  return rval;
 }
 
-const String DataCalcLoop::GenCssBody_impl(int indent_level) {
-  return loop_code.GenCss(indent_level + 2);
+void DataCalcLoop::GenCssBody_impl(Program* prog) {
+  loop_code.GenCss(prog);
+}
+
+void DataCalcLoop::GenCssPost_impl(Program* prog) {
+  if(!GetSrcData()) return;
+  prog->DecIndent();
+  prog->AddLine(this, "} // for loop");
+  if(dest_data_var)
+    prog->AddLine(this, dest_data_var->name + "->StructUpdate(false);");
+  prog->AddLine(this, src_data_var->name + "->StructUpdate(false);");
+  prog->DecIndent();
+  prog->AddLine(this, "} // DataCalcLoop dcl");
 }
 
 const String DataCalcLoop::GenListing_children(int indent_level) {
   return loop_code.GenListing(indent_level + 1);
-}
-
-const String DataCalcLoop::GenCssPost_impl(int indent_level) {
-  if(!GetSrcData()) return "";
-  String il1 = cssMisc::Indent(indent_level+1);
-  String rval = il1 + "} // for loop\n";
-  if(dest_data_var)
-    rval += il1 + dest_data_var->name + "->StructUpdate(false);\n";
-  rval += il1 + src_data_var->name + "->StructUpdate(false);\n";
-  rval += cssMisc::Indent(indent_level) + "} // DataCalcLoop dcl\n";
-  return rval;
 }
 
 void DataCalcLoop::AddAllSrcColumns() {
@@ -2757,22 +2772,27 @@ void DataCalcAddDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
 	     "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
 
-const String DataCalcAddDestRow::GenCssBody_impl(int indent_level) {
+void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
-  if(!dcl) return "// DataCalcAddDestRow Error -- DataCalcLoop not found!!\n";
+  if(!dcl) {
+    prog->AddLine(this, "// DataCalcAddDestRow Error -- DataCalcLoop not found!!");
+    return;
+  }
   DataTable* dd = dcl->GetDestData();
-  if(!dd) return "// DataCalcAddDestRow Error -- dest_data_var not set!!\n";
-
-  String il = cssMisc::Indent(indent_level);
+  if(!dd) {
+    prog->AddLine(this, "// DataCalcAddDestRow Error -- dest_data_var not set!!");
+    return;
+  }
 
   dcl->dest_cols.GetColumns(dd);
-  String rval = il + dcl->dest_data_var->name + "->AddBlankRow();\n";
+  prog->AddLine(this, dcl->dest_data_var->name + "->AddBlankRow();");
 
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
     if(ds->col_idx < 0) continue;
     DataCol* da = dd->data[ds->col_idx];
+    String rval;
     if(da->is_matrix) {
       ValType vt = da->valType();
       String mat_type = "taMatrix";
@@ -2784,21 +2804,19 @@ const String DataCalcAddDestRow::GenCssBody_impl(int indent_level) {
 	mat_type = "int_Matrix";
       else if(vt == VT_STRING)
 	mat_type = "String_Matrix";
-      rval += il + mat_type + "* d_" + ds->col_name + " = " + dcl->dest_data_var->name
-	+ ".GetValAsMatrix(";
+      rval += mat_type + "* d_" + ds->col_name + " = " + dcl->dest_data_var->name + ".GetValAsMatrix(";
     }
     else {
-      rval += il + "Variant d_" + ds->col_name + " = " + dcl->dest_data_var->name
-	+ ".GetValAsVar(";
+      rval += "Variant d_" + ds->col_name + " = " + dcl->dest_data_var->name + ".GetValAsVar(";
     }
     if(dcl->use_col_numbers)
       rval += String(ds->col_idx);
     else
       rval += String("\"") + da->name + String("\"");
-    rval += ", -1); // -1 = last row\n";
+    rval += ", -1); // -1 = last row";
+    prog->AddLine(this, rval);
   }
   dcl->dest_cols.ClearColumns();
-  return rval;
 }
 
 /////////////////////////////////////////////////////////
@@ -2852,36 +2870,41 @@ void DataCalcSetDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
 	     "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
 
-const String DataCalcSetDestRow::GenCssBody_impl(int indent_level) {
+void DataCalcSetDestRow::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
-  if(!dcl) return "// DataCalcSetDestRow Error -- DataCalcLoop not found!!\n";
+  if(!dcl) {
+    prog->AddLine(this, "// DataCalcSetDestRow Error -- DataCalcLoop not found!!");
+    return;
+  }
   DataTable* dd = dcl->GetDestData();
-  if(!dd) return "// DataCalcSetDestRow Error -- dest_data_var not set!!\n";
+  if(!dd) {
+    prog->AddLine(this, "// DataCalcSetDestRow Error -- dest_data_var not set!!");
+    return;
+  }
 
-  String il = cssMisc::Indent(indent_level);
-
-  String rval;
-  rval += il + "if(" + dcl->dest_data_var->name + ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }\n";
+  prog->AddLine(this, String("if(") + dcl->dest_data_var->name
+		+ ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }");
   dcl->dest_cols.GetColumns(dd);
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
     if(ds->col_idx < 0) continue;
     DataCol* da = dd->data[ds->col_idx];
+    String rval;
     if(da->is_matrix)
-      rval += il + dcl->dest_data_var->name + ".SetValAsMatrix(";
+      rval += dcl->dest_data_var->name + ".SetValAsMatrix(";
     else
-      rval += il + dcl->dest_data_var->name + ".SetValAsVar(";
+      rval += dcl->dest_data_var->name + ".SetValAsVar(";
     rval += "d_" + ds->col_name + ", ";
     if(dcl->use_col_numbers)
       rval += String(ds->col_idx);
     else
       rval += String("\"") + da->name + String("\"");
-    rval += ", -1); // -1 = last row\n";
+    rval += ", -1); // -1 = last row";
+    prog->AddLine(this, rval);
   }
-  rval += il + dcl->dest_data_var->name + ".WriteClose();\n";
+  prog->AddLine(this, dcl->dest_data_var->name + ".WriteClose();");
   dcl->dest_cols.ClearColumns();
-  return rval;
 }
 
 /////////////////////////////////////////////////////////
@@ -2929,35 +2952,39 @@ void DataCalcSetSrcRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!dcl, quiet, rval, "parent DataCalcLoop not found");
 }
 
-const String DataCalcSetSrcRow::GenCssBody_impl(int indent_level) {
+void DataCalcSetSrcRow::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
-  if(!dcl) return "// DataCalcSetSrcRow Error -- DataCalcLoop not found!!\n";
+  if(!dcl) {
+    prog->AddLine(this, "// DataCalcSetSrcRow Error -- DataCalcLoop not found!!");
+    return;
+  }
   DataTable* sd = dcl->GetSrcData();
-  if(!sd) return "// DataCalcSetSrcRow Error -- src_data_var not set!!\n";
+  if(!sd) {
+    prog->AddLine(this, "// DataCalcSetSrcRow Error -- src_data_var not set!!");
+    return;
+  }
 
-  String il = cssMisc::Indent(indent_level);
-
-  String rval;
   dcl->src_cols.GetColumns(sd);
   for(int i=0;i<dcl->src_cols.size; i++) {
     DataOpEl* ds = dcl->src_cols[i];
     if(ds->col_idx < 0) continue;
     DataCol* da = sd->data[ds->col_idx];
+    String rval;
     if(da->is_matrix)
-      rval += il + dcl->src_data_var->name + ".SetValAsMatrix(";
+      rval += dcl->src_data_var->name + ".SetValAsMatrix(";
     else
-      rval += il + dcl->src_data_var->name + ".SetValAsVar(";
+      rval += dcl->src_data_var->name + ".SetValAsVar(";
     rval += "s_" + ds->col_name + ", ";
     if(dcl->use_col_numbers)
       rval += String(ds->col_idx);
     else
       rval += String("\"") + da->name + String("\"");
-    rval += ", src_row);\n";
+    rval += ", src_row);";
+    prog->AddLine(this, rval);
   }
-  rval += il + dcl->src_data_var->name + ".WriteClose();\n";
+  prog->AddLine(this, dcl->src_data_var->name + ".WriteClose();");
   dcl->dest_cols.ClearColumns();
-  return rval;
 }
 
 /////////////////////////////////////////////////////////
@@ -3016,22 +3043,25 @@ void DataCalcCopyCommonCols::CheckThisConfig_impl(bool quiet, bool& rval) {
 	     "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
 
-const String DataCalcCopyCommonCols::GenCssBody_impl(int indent_level) {
+void DataCalcCopyCommonCols::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
-  if(!dcl) return "// DataCalcCopyCommonCols Error -- DataCalcLoop not found!!\n";
-  if(!dcl->dest_data_var) return "// DataCalcCopyCommonCols Error -- dest_data_var null in DataCalcLoop!!\n";
+  if(!dcl) {
+    prog->AddLine(this, "// DataCalcCopyCommonCols Error -- DataCalcLoop not found!!");
+    return;
+  }
+  if(!dcl->dest_data_var) {
+    prog->AddLine(this, "// DataCalcCopyCommonCols Error -- dest_data_var null in DataCalcLoop!!");
+    return;
+  }
 
-  String il = cssMisc::Indent(indent_level);
-
-  String rval;
-  rval += il + "if(" + dcl->dest_data_var->name + ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }\n";
+  prog->AddLine(this, String("if(") + dcl->dest_data_var->name
+		+ ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }");
   if(only_named_cols) 
-    rval += il + "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " + 
-      dcl->src_data_var->name + ", common_dest_cols_named, common_src_cols_named, -1, src_row);\n";
+    prog->AddLine(this, "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " + 
+	  dcl->src_data_var->name + ", common_dest_cols_named, common_src_cols_named, -1, src_row);");
   else
-    rval += il + "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " + 
-      dcl->src_data_var->name + ", common_dest_cols, common_src_cols, -1, src_row);\n";
-  return rval;
+    prog->AddLine(this, "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " + 
+		  dcl->src_data_var->name + ", common_dest_cols, common_src_cols, -1, src_row);");
 }
 

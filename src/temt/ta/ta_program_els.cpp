@@ -38,21 +38,21 @@ void CodeBlock::CheckChildConfig_impl(bool quiet, bool& rval) {
   prog_code.CheckConfig(quiet, rval);
 }
 
-const String CodeBlock::GenCssPre_impl(int indent_level) {
-  if(prog_code.size == 0) return _nilString;
-  String rval = cssMisc::Indent(indent_level) + "{\n";
-  return rval; 
+void CodeBlock::GenCssPre_impl(Program* prog) {
+  if(prog_code.size == 0) return;
+  prog->AddLine(this, "{");
+  prog->IncIndent();
 }
 
-const String CodeBlock::GenCssBody_impl(int indent_level) {
-  if(prog_code.size == 0) return _nilString;
-  return prog_code.GenCss(indent_level+1);
+void CodeBlock::GenCssBody_impl(Program* prog) {
+  if(prog_code.size == 0) return;
+  prog_code.GenCss(prog);
 }
 
-const String CodeBlock::GenCssPost_impl(int indent_level) {
-  if(prog_code.size == 0) return _nilString;
-  String rval = cssMisc::Indent(indent_level) + "}\n";
-  return rval; 
+void CodeBlock::GenCssPost_impl(Program* prog) {
+  if(prog_code.size == 0) return;
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 const String CodeBlock::GenListing_children(int indent_level) {
@@ -96,9 +96,10 @@ void ProgVars::CheckChildConfig_impl(bool quiet, bool& rval) {
   local_vars.CheckConfig(quiet, rval);
 }
 
-const String ProgVars::GenCssBody_impl(int indent_level) {
-  return local_vars.GenCss(indent_level);
+void ProgVars::GenCssBody_impl(Program* prog) {
+  local_vars.GenCss_ProgVars(prog);
 }
+
 const String ProgVars::GenListing_children(int indent_level) {
   return local_vars.GenListing(indent_level + 1);
 }
@@ -201,14 +202,21 @@ void UserScript::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 }
 
-const String UserScript::GenCssBody_impl(int indent_level) {
+void UserScript::GenCssBody_impl(Program* prog) {
   script.ParseExpr();		// re-parse just to be sure!
-  String rval(cssMisc::IndentLines(script.GetFullExpr(), indent_level));
-  // strip trailing non-newline ws, and make sure there is a trailing newline
-  rval = trimr(rval);
-  if (rval.lastchar() != '\n')
-    rval += '\n';
-  return rval;
+  String rval = script.GetFullExpr();
+  String rmdr = rval;
+  if(rmdr.contains('\n')) {
+    String curln;
+    do {
+      String curln = rmdr.before('\n');
+      rmdr = rmdr.after('\n');
+      prog->AddLine(this, curln);
+    } while(rmdr.contains('\n'));
+  }
+  if(rmdr.nonempty()) {
+    prog->AddLine(this, rmdr);
+  }
 }
 
 String UserScript::GetDisplayName() const {
@@ -252,18 +260,19 @@ void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(test.expr.empty(), quiet, rval, "test expression is empty");
 }
 
-const String WhileLoop::GenCssPre_impl(int indent_level) {
+void WhileLoop::GenCssPre_impl(Program* prog) {
   test.ParseExpr();		// re-parse just to be sure!
-  String rval = cssMisc::Indent(indent_level) + "while (" + test.GetFullExpr() + ") {\n";
+  prog->AddLine(this, String("while (") + test.GetFullExpr() + ") {");
+  prog->IncIndent();
   if(IsVerbose()) {
-    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"starting while(" +
-      test.GetFullExpr().quote_esc() + ") loop...\");\n";
+    prog->AddLine(this, String("taMisc::Info(\"starting while(") +
+		  test.GetFullExpr().quote_esc() + ") loop...\");");
   }
-  return rval;
 }
 
-const String WhileLoop::GenCssPost_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "}\n";
+void WhileLoop::GenCssPost_impl(Program* prog) {
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 String WhileLoop::GetDisplayName() const {
@@ -295,18 +304,18 @@ void DoLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(test.expr.empty(), quiet, rval, "test expression is empty");
 }
 
-const String DoLoop::GenCssPre_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "do {\n";
+void DoLoop::GenCssPre_impl(Program* prog) {
+  prog->AddLine(this, "do {");
+  prog->IncIndent();
   if(IsVerbose())
-    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"starting do..while(" +
-      test.GetFullExpr().quote_esc() + ") loop\");\n";
-  return rval; 
+    prog->AddLine(this, String("taMisc::Info(\"starting do..while(") +
+		  test.GetFullExpr().quote_esc() + ") loop\");");
 }
 
-const String DoLoop::GenCssPost_impl(int indent_level) {
+void DoLoop::GenCssPost_impl(Program* prog) {
   test.ParseExpr();		// re-parse just to be sure!
-  String rval = cssMisc::Indent(indent_level) + "} while (" + test.GetFullExpr() + ");\n";
-  return rval;
+  prog->DecIndent();
+  prog->AddLine(this, String("} while (") + test.GetFullExpr() + ");");
 }
 
 String DoLoop::GetDisplayName() const {
@@ -467,24 +476,22 @@ void ForLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(iter.expr.empty(), quiet, rval, "iter expression is empty");
 }
 
-const String ForLoop::GenCssPre_impl(int indent_level) {
+void ForLoop::GenCssPre_impl(Program* prog) {
   init.ParseExpr();		// re-parse just to be sure!
   test.ParseExpr();		// re-parse just to be sure!
   iter.ParseExpr();		// re-parse just to be sure!
-  String rval;
   String full_expr = init.GetFullExpr() + "; " + test.GetFullExpr() + "; " + iter.GetFullExpr();
-  rval = cssMisc::Indent(indent_level) + 
-    "for (" + full_expr + ") {\n";
+  prog->AddLine(this, String("for(") + full_expr + ") {");
+  prog->IncIndent();
   if(IsVerbose()) {
-    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"starting for(" + 
-      full_expr.quote_esc() + ") loop\");\n";
+    prog->AddLine(this, String("taMisc::Info(\"starting for(") + 
+		  full_expr.quote_esc() + ") loop\");");
   }
-  return rval; 
 }
 
-const String ForLoop::GenCssPost_impl(int indent_level) {
-  String rval = cssMisc::Indent(indent_level) + "}\n";
-  return rval;
+void ForLoop::GenCssPost_impl(Program* prog) {
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 String ForLoop::GetDisplayName() const {
@@ -541,17 +548,15 @@ void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckEqualsError(cond.expr, quiet, rval);
 }
 
-const String IfContinue::GenCssBody_impl(int indent_level) {
+void IfContinue::GenCssBody_impl(Program* prog) {
   cond.ParseExpr();		// re-parse just to be sure!
-  String rval;
-  rval = cssMisc::Indent(indent_level);
   String fexp = cond.GetFullExpr();
-  if(fexp.nonempty()) rval += "if(" + fexp + ") ";
+  if(fexp.nonempty()) 
+    prog->AddLine(this, "if(" + fexp + ") ");
   if(IsVerbose())
-    rval += "{ taMisc::Info(\"if(" + fexp.quote_esc() + ") == true, continuing\"); continue; }\n";
+    prog->AddLine(this, String("{ taMisc::Info(\"if(") + fexp.quote_esc() + ") == true, continuing\"); continue; }");
   else
-    rval += "continue;\n";
-  return rval; 
+    prog->AddLine(this, "continue;");
 }
 
 String IfContinue::GetDisplayName() const {
@@ -592,17 +597,15 @@ void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckEqualsError(cond.expr, quiet, rval);
 }
 
-const String IfBreak::GenCssBody_impl(int indent_level) {
+void IfBreak::GenCssBody_impl(Program* prog) {
   cond.ParseExpr();		// re-parse just to be sure!
-  String rval;
-  rval = cssMisc::Indent(indent_level);
   String fexp = cond.GetFullExpr();
-  if(fexp.nonempty()) rval += "if(" + fexp + ") ";
+  if(fexp.nonempty()) 
+    prog->AddLine(this, "if(" + fexp + ") ");
   if(IsVerbose())
-    rval += "{ taMisc::Info(\"if=true, breaking\"); break; }\n";
+    prog->AddLine(this, String("{ taMisc::Info(\"if(") + fexp.quote_esc() + ") == true, breaking\"); break; }");
   else
-    rval += "break;\n";
-  return rval; 
+    prog->AddLine(this, "break;");
 }
 
 String IfBreak::GetDisplayName() const {
@@ -642,22 +645,19 @@ void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckEqualsError(cond.expr, quiet, rval);
 }
 
-const String IfReturn::GenCssBody_impl(int indent_level) {
+void IfReturn::GenCssBody_impl(Program* prog) {
   cond.ParseExpr();		// re-parse just to be sure!
-  String rval;
-  rval = cssMisc::Indent(indent_level);
   String fexp = cond.GetFullExpr();
   if(fexp.empty()) {
-    rval += "return;\n";
+    prog->AddLine(this, "return;");
   }
   else {
-    rval += "if(" + fexp + ") ";
+    prog->AddLine(this, "if(" + fexp + ") ");
     if(IsVerbose())
-      rval += "{ taMisc::Info(\"if(" + fexp.quote_esc() + ") == true, returning\"); return; }\n";
+      prog->AddLine(this, String("{ taMisc::Info(\"if(") + fexp.quote_esc() + ") == true, returning\"); return; }");
     else
-      rval += "return;\n";
+      prog->AddLine(this, "return;");
   }
-  return rval; 
 }
 
 String IfReturn::GetDisplayName() const {
@@ -714,31 +714,32 @@ void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
   false_code.CheckConfig(quiet, rval);
 }
 
-const String IfElse::GenCssPre_impl(int indent_level) {
+void IfElse::GenCssPre_impl(Program* prog) {
   cond.ParseExpr();		// re-parse just to be sure!
-  String rval = cssMisc::Indent(indent_level);
-  rval += "if(" + cond.GetFullExpr() + ") {\n";
+  prog->AddLine(this, "if(" + cond.GetFullExpr() + ") {");
+  prog->IncIndent();
   if(IsVerbose())
-    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"if("
-      + cond.GetFullExpr().quote_esc() + ") == true...\");\n";
-  return rval; 
+    prog->AddLine(this, String("taMisc::Info(\"if(")
+		  + cond.GetFullExpr().quote_esc() + ") == true...\");");
 }
 
-const String IfElse::GenCssBody_impl(int indent_level) {
-  String rval = true_code.GenCss(indent_level + 1);
+void IfElse::GenCssBody_impl(Program* prog) {
+  true_code.GenCss(prog);
   // don't gen 'else' portion unless there are els
   if (false_code.size > 0) {
-    rval += cssMisc::Indent(indent_level) + "} else {\n";
+    prog->DecIndent();
+    prog->AddLine(this, "} else {");
+    prog->IncIndent();
     if(IsVerbose())
-      rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"if(" + 
-	cond.GetFullExpr().quote_esc() + ") == false, in else...\");\n";
-    rval += false_code.GenCss(indent_level + 1);
+      prog->AddLine(this, String("taMisc::Info(\"if(") + 
+		    cond.GetFullExpr().quote_esc() + ") == false, in else...\");");
+    false_code.GenCss(prog);
   }
-  return rval;
 }
 
-const String IfElse::GenCssPost_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "}\n";
+void IfElse::GenCssPost_impl(Program* prog) {
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 const String IfElse::GenListing_children(int indent_level) {
@@ -805,38 +806,36 @@ void IfGuiPrompt::CheckChildConfig_impl(bool quiet, bool& rval) {
   yes_code.CheckConfig(quiet, rval);
 }
 
-const String IfGuiPrompt::GenCssPre_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  String rval;
+void IfGuiPrompt::GenCssPre_impl(Program* prog) {
   if(taMisc::gui_active) {
-    rval = il + "{ int chs = taMisc::Choice(\"" + prompt + "\", \""
-      + yes_label + "\", \""
-      + no_label + "\");\n";
-    rval += cssMisc::Indent(indent_level+1) + "if(chs == 0) {\n";
+    prog->AddLine(this, "{ int chs = taMisc::Choice(\"" + prompt + "\", \""
+		  + yes_label + "\", \"" + no_label + "\");");
+    prog->IncIndent();
+    prog->AddLine(this, "if(chs == 0) {");
+    prog->IncIndent();
   }
   else {
-    rval = il + "{\n";		// just a block to run..
+    prog->AddLine(this, "{");		// just a block to run..
+    prog->IncIndent();
   }
-  return rval; 
 }
 
-const String IfGuiPrompt::GenCssBody_impl(int indent_level) {
-  String rval = yes_code.GenCss(indent_level + 1 + (int)taMisc::gui_active);
-  return rval;
+void IfGuiPrompt::GenCssBody_impl(Program* prog) {
+  yes_code.GenCss(prog);
 }
+
+void IfGuiPrompt::GenCssPost_impl(Program* prog) {
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+  if(taMisc::gui_active) {	// extra close
+    prog->DecIndent();
+    prog->AddLine(this, "}");
+  }
+}
+
 const String IfGuiPrompt::GenListing_children(int indent_level) {
   String rval = yes_code.GenListing(indent_level + 1 + (int)taMisc::gui_active);
   return rval;
-}
-
-const String IfGuiPrompt::GenCssPost_impl(int indent_level) {
-  if(taMisc::gui_active) {
-    return cssMisc::Indent(indent_level+1) + "}\n" +
-      cssMisc::Indent(indent_level) + "}\n"; // double close
-  }
-  else {
-    return cssMisc::Indent(indent_level) + "}\n";
-  }
 }
 
 String IfGuiPrompt::GetDisplayName() const {
@@ -863,32 +862,30 @@ void CaseBlock::CheckThisConfig_impl(bool quiet, bool& rval) {
   //  CheckError(case_val.empty(), quiet, rval,  "case value expression is empty!");
 }
 
-const String CaseBlock::GenCssPre_impl(int indent_level) {
+void CaseBlock::GenCssPre_impl(Program* prog) {
   case_val.ParseExpr();		// re-parse just to be sure!
-  if(prog_code.size == 0) return _nilString;
-  String il = cssMisc::Indent(indent_level);
+  if(prog_code.size == 0) return;
   String expr = case_val.GetFullExpr();
-  String rval;
   if(expr.empty())
-    rval = il + "default: {\n";
+    prog->AddLine(this, "default: {");
   else
-    rval = il + "case " + case_val.GetFullExpr() + ": {\n";
+    prog->AddLine(this, "case " + case_val.GetFullExpr() + ": {");
+  prog->IncIndent();
   if(IsVerbose())
-    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"in case " +
-      case_val.GetFullExpr().quote_esc() + "...\");\n";
-  return rval; 
+    prog->AddLine(this, "taMisc::Info(\"in case " +
+		  case_val.GetFullExpr().quote_esc() + "...\");");
 }
 
-const String CaseBlock::GenCssBody_impl(int indent_level) {
-  if(prog_code.size == 0) return _nilString;
-  return prog_code.GenCss(indent_level+1);
+void CaseBlock::GenCssBody_impl(Program* prog) {
+  if(prog_code.size == 0) return;
+  prog_code.GenCss(prog);
 }
 
-const String CaseBlock::GenCssPost_impl(int indent_level) {
-  if(prog_code.size == 0) return _nilString;
-  String rval = cssMisc::Indent(indent_level+1) + "break;\n"; // always break
-  rval += cssMisc::Indent(indent_level) + "}\n";
-  return rval; 
+void CaseBlock::GenCssPost_impl(Program* prog) {
+  if(prog_code.size == 0) return;
+  prog->AddLine(this, "break;"); // always break
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 String CaseBlock::GetDisplayName() const {
@@ -935,24 +932,24 @@ void Switch::CheckChildConfig_impl(bool quiet, bool& rval) {
   cases.CheckConfig(quiet, rval);
 }
 
-const String Switch::GenCssPre_impl(int indent_level) {
-  if(!switch_var) return _nilString;
-  String rval = cssMisc::Indent(indent_level);
-  rval += "switch(" + switch_var->name + ") {\n";
+void Switch::GenCssPre_impl(Program* prog) {
+  if(!switch_var) return;
+  prog->AddLine(this, "switch(" + switch_var->name + ") {");
+  prog->IncIndent();
   if(IsVerbose())
-    rval += cssMisc::Indent(indent_level+1) + "taMisc::Info(\"in switch(" +
-      switch_var->name + ")...\");\n";
-  return rval; 
+    prog->AddLine(this, "taMisc::Info(\"in switch(" +
+		  switch_var->name + ")...\");");
 }
 
-const String Switch::GenCssBody_impl(int indent_level) {
-  if(!switch_var) return _nilString;
-  return cases.GenCss(indent_level+1);
+void Switch::GenCssBody_impl(Program* prog) {
+  if(!switch_var) return;
+  cases.GenCss(prog);
 }
 
-const String Switch::GenCssPost_impl(int indent_level) {
-  if(!switch_var) return _nilString;
-  return cssMisc::Indent(indent_level) + "}\n";
+void Switch::GenCssPost_impl(Program* prog) {
+  if(!switch_var) return;
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 const String Switch::GenListing_children(int indent_level) {
@@ -1086,20 +1083,17 @@ void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
   expr.CheckConfig(quiet, rval);
 }
 
-const String AssignExpr::GenCssBody_impl(int indent_level) {
+void AssignExpr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();		// re-parse just to be sure!
-  String rval;
-  rval += cssMisc::Indent(indent_level);
   if (!result_var) {
-    rval += "//WARNING: AssignExpr not generated here -- result_var not specified\n";
-    return rval;
+    prog->AddLine(this, "// WARNING: AssignExpr not generated here -- result_var not specified");
+    return;
   }
   
-  rval += result_var->name + " = " + expr.GetFullExpr() + ";\n";
+  prog->AddLine(this, result_var->name + " = " + expr.GetFullExpr() + ";");
   if(IsVerbose())
-    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"assigned " + result_var->name
-      + " = " + expr.GetFullExpr().quote_esc() + "; now = \", " + result_var->name + ");\n";
-  return rval;
+    prog->AddLine(this, String("taMisc::Info(\"assigned ") + result_var->name
+	  + " = " + expr.GetFullExpr().quote_esc() + "; now = \", " + result_var->name + ");");
 }
 
 String AssignExpr::GetDisplayName() const {
@@ -1147,20 +1141,17 @@ void VarIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
   expr.CheckConfig(quiet, rval);
 }
 
-const String VarIncr::GenCssBody_impl(int indent_level) {
+void VarIncr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();		// re-parse just to be sure!
-  String rval;
-  rval += cssMisc::Indent(indent_level);
   if (!var) {
-    rval += "//WARNING: VarIncr not generated here -- var not specified\n";
-    return rval;
+    prog->AddLine(this, "// WARNING: VarIncr not generated here -- var not specified");
+    return;
   }
   
-  rval += var->name + " = " + var->name + " + " + expr.GetFullExpr() + ";\n";
+  prog->AddLine(this, var->name + " = " + var->name + " + " + expr.GetFullExpr() + ";");
   if(IsVerbose())
-    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"incremented " + var->name
-      + " += " + expr.GetFullExpr().quote_esc() + "; now = \", " + var->name + ");\n";
-  return rval;
+    prog->AddLine(this, "taMisc::Info(\"incremented " + var->name
+	  + " += " + expr.GetFullExpr().quote_esc() + "; now = \", " + var->name + ");");
 }
 
 String VarIncr::GetDisplayName() const {
@@ -1238,29 +1229,27 @@ void MethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
   meth_args.CheckConfig(quiet, rval);
 }
 
-const String MethodCall::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval += cssMisc::Indent(indent_level);
+void MethodCall::GenCssBody_impl(Program* prog) {
   if (!((bool)obj && method)) {
-    rval += "//WARNING: MethodCall not generated here -- obj or method not specified\n";
-   return rval;
+    prog->AddLine(this, "// WARNING: MethodCall not generated here -- obj or method not specified");
+    return;
   }
   
   if(IsVerbose()) {
-    String argstmp = meth_args.GenCssBody_impl(indent_level);
-    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling method " +
-      obj->name + "->" + method->name + argstmp.quote_esc() + "\");\n";
+    String argstmp = meth_args.GenCssArgs();
+    prog->AddLine(this, "taMisc::Info(\"calling method " +
+		  obj->name + "->" + method->name + argstmp.quote_esc() + "\");");
   }
 
+  String rval;
   if(result_var)
     rval += result_var->name + " = ";
   rval += obj->name;
   rval += "->";
   rval += method->name;
-  rval += meth_args.GenCssBody_impl(indent_level);
-  rval += ";\n";
-  
-  return rval;
+  rval += meth_args.GenCssArgs();
+  rval += ";";
+  prog->AddLine(this, rval);
 }
 
 String MethodCall::GetDisplayName() const {
@@ -1472,31 +1461,25 @@ void MemberAssign::CheckChildConfig_impl(bool quiet, bool& rval) {
   expr.CheckConfig(quiet, rval);
 }
 
-const String MemberAssign::GenCssBody_impl(int indent_level) {
+void MemberAssign::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();		// re-parse just to be sure!
-  STRING_BUF(rval, 80);
-  rval += cssMisc::Indent(indent_level);
   if (!(bool)obj || path.empty() || expr.empty()) {
-    rval += "//WARNING: MemberAssign not generated here -- obj or path not specified or expr empty\n";
-   return rval;
+    prog->AddLine(this, "// WARNING: MemberAssign not generated here -- obj or path not specified or expr empty");
+    return;
   }
   
-  rval += obj->name + "->" + path + " = ";
-  rval += expr.GetFullExpr() + ";\n";
+  prog->AddLine(this, obj->name + "->" + path + " = " + expr.GetFullExpr() + ";");
   if (update_after) {
-    rval += cssMisc::Indent(indent_level);
-    rval += obj->name + "->UpdateAfterEdit();\n";
+    prog->AddLine(this, obj->name + "->UpdateAfterEdit();");
     if(path.contains('.')) {
       // also do uae on immediate owner!
-      rval += cssMisc::Indent(indent_level);
-      rval += obj->name + "->" + path.before('.',-1) + "->UpdateAfterEdit();\n";
+      prog->AddLine(this, obj->name + "->" + path.before('.',-1) + "->UpdateAfterEdit();");
     }
   }
   if(IsVerbose())
-    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"assigned " + obj->name + "->" + path
-      + " = " + expr.GetFullExpr().quote_esc() + "; now = \", " +
-      obj->name + "->" + path + ");\n";
-  return rval;
+    prog->AddLine(this, String("taMisc::Info(\"assigned ") + obj->name + "->" + path
+		  + " = " + expr.GetFullExpr().quote_esc() + "; now = \", " +
+		  obj->name + "->" + path + ");");
 }
 
 String MemberAssign::GetDisplayName() const {
@@ -1536,7 +1519,7 @@ bool MemberAssign::CvtFmCode(const String& code) {
   if(rhs.endsWith(';')) rhs = rhs.before(';',-1);
   expr.SetExpr(rhs);
   UpdateAfterEdit_impl();
-  return false;
+  return true;
 }
 
 
@@ -1580,46 +1563,40 @@ void MemberFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(arg_name.empty(), quiet, rval, "arg_name is empty");
 }
 
-const String MemberFmArg::GenCssBody_impl(int indent_level) {
-  STRING_BUF(rval, 80);
-  String il = cssMisc::Indent(indent_level);
-  String il1 = cssMisc::Indent(indent_level+1);
-  String il2 = cssMisc::Indent(indent_level+2);
-  rval += il;
+void MemberFmArg::GenCssBody_impl(Program* prog) {
   if (!(bool)obj || path.empty() || arg_name.empty()) {
-    rval += "//WARNING: MemberFmArg not generated here -- obj or path not specified or expr empty\n";
-   return rval;
+    prog->AddLine(this, "// WARNING: MemberFmArg not generated here -- obj or path not specified or expr empty");
+    return;
   }
 
   String flpth = obj->name + "->" + path;
   
-  rval += "{ String arg_str = taMisc::FindArgByName(\"" + arg_name + "\");\n";
-  rval += il1 + "if(arg_str.nonempty()) {\n";
-  rval += il2 + flpth + " = ";
-  rval += "arg_str;\n";
-  if (update_after) {
-    rval += il2 + obj->name + "->UpdateAfterEdit();\n";
+  prog->AddLine(this, "{ String arg_str = taMisc::FindArgByName(\"" + arg_name + "\");");
+  prog->IncIndent();
+  prog->AddLine(this, "if(arg_str.nonempty()) {");
+  prog->IncIndent();
+  prog->AddLine(this, flpth + " = arg_str;");
+  if(update_after) {
+    prog->AddLine(this, obj->name + "->UpdateAfterEdit();");
     if(path.contains('.')) {
       // also do uae on immediate owner!
-      rval += il2 + obj->name + "->" + path.before('.',-1) + "->UpdateAfterEdit();\n";
+      prog->AddLine(this, obj->name + "->" + path.before('.',-1) + "->UpdateAfterEdit();");
     }
   }
 
   if(!quiet || IsVerbose())
-    rval += il2 + "taMisc::Info(\"Set " + flpth + " to:\"," + flpth + ");\n";
-  rval += il1 + "}\n";
-  rval += il + "}\n";
-  return rval;
+    prog->AddLine(this, String("taMisc::Info(\"Set ") + flpth + " to:\"," + flpth + ");");
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
-const String MemberFmArg::GenRegArgs(int indent_level) {
-  String gen_code;
-  String il = cssMisc::Indent(indent_level);
-  gen_code += il + "taMisc::AddEqualsArgName(\"" + arg_name + "\");\n";
-  gen_code += il + "taMisc::AddArgNameDesc(\"" + arg_name
-    + "\", \"MemberFmArg: obj = " + (((bool)obj) ? obj->name : "NOT SET")
-    + " path = " + path + "\");\n";
-  return gen_code;
+void MemberFmArg::GenRegArgs(Program* prog) {
+  prog->AddLine(this, String("taMisc::AddEqualsArgName(\"") + arg_name + "\");");
+  prog->AddLine(this, String("taMisc::AddArgNameDesc(\"") + arg_name
+		+ "\", \"MemberFmArg: obj = " + (((bool)obj) ? obj->name : "NOT SET")
+		+ " path = " + path + "\");");
 }
 
 String MemberFmArg::GetDisplayName() const {
@@ -1663,28 +1640,26 @@ void MemberMethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
   meth_args.CheckConfig(quiet, rval);
 }
 
-const String MemberMethodCall::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval += cssMisc::Indent(indent_level);
+void MemberMethodCall::GenCssBody_impl(Program* prog) {
   if (!((bool)obj && method)) {
-    rval += "//WARNING: MemberMethodCall not generated here -- obj or method not specified\n";
-   return rval;
+    prog->AddLine(this, "// WARNING: MemberMethodCall not generated here -- obj or method not specified");
+    return;
   }
   
   if(IsVerbose()) {
-    String argstmp = meth_args.GenCssBody_impl(indent_level);
-    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"calling method " +
-      obj->name + "->" + path + "->" + method->name + argstmp.quote_esc() + "\");\n";
+    String argstmp = meth_args.GenCssArgs();
+    prog->AddLine(this, "taMisc::Info(\"calling method " +
+		  obj->name + "->" + path + "->" + method->name + argstmp.quote_esc() + "\");");
   }
 
+  String rval;
   if(result_var)
     rval += result_var->name + " = ";
   rval += obj->name + "->" + path + "->";
   rval += method->name;
-  rval += meth_args.GenCssBody_impl(indent_level);
-  rval += ";\n";
-  
-  return rval;
+  rval += meth_args.GenCssArgs();
+  rval += ";";
+  prog->AddLine(this, rval);
 }
 
 String MemberMethodCall::GetDisplayName() const {
@@ -1866,11 +1841,10 @@ void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   //  CheckError(!print_var, quiet, rval, "print_var is NULL");
 }
 
-const String PrintVar::GenCssBody_impl(int indent_level) {
-  String rval;
+void PrintVar::GenCssBody_impl(Program* prog) {
   if(message.empty() && !print_var && !print_var2 && !print_var3 && !print_var4 && !print_var5 && !print_var6)
-    return _nilString;
-  rval += cssMisc::Indent(indent_level) + "cerr ";
+    return;
+  String rval = "cerr ";
   if(message.nonempty()) 
     rval += "<< \"" + message + "\"";
   if((bool)print_var)
@@ -1885,8 +1859,8 @@ const String PrintVar::GenCssBody_impl(int indent_level) {
     rval += "<< \"  " + print_var5->name + " = \" << " + print_var5->name;
   if((bool)print_var6)
     rval += "<< \"  " + print_var6->name + " = \" << " + print_var6->name;
-  rval += " << endl;\n";
-  return rval;
+  rval += " << endl;";
+  prog->AddLine(this, rval);
 }
 
 String PrintVar::GetDisplayName() const {
@@ -1980,12 +1954,9 @@ void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
   expr.CheckConfig(quiet, rval);
 }
 
-const String PrintExpr::GenCssBody_impl(int indent_level) {
+void PrintExpr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();		// re-parse just to be sure!
-  String rval;
-  rval += cssMisc::Indent(indent_level);
-  rval += "cerr << " + expr.GetFullExpr() + " << endl;\n";
-  return rval;
+  prog->AddLine(this, String("cerr << ") + expr.GetFullExpr() + " << endl;");
 }
 
 String PrintExpr::GetDisplayName() const {
@@ -2011,6 +1982,7 @@ bool PrintExpr::CvtFmCode(const String& code) {
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
   expr.SetExpr(exprstr);
+  return true;
 }
 
 
@@ -2019,21 +1991,14 @@ bool PrintExpr::CvtFmCode(const String& code) {
 //////////////////////////
 
 void Comment::Initialize() {
-  static String _def_comment("TODO: Add your program comment here (multi-lines ok).\n");
+  static String _def_comment("TODO: Add your program comment here (multi-lines ok).");
   desc = _def_comment;
 }
 
-const String Comment::GenCssBody_impl(int indent_level) {
-  STRING_BUF(rval, desc.length() + 160);
-  rval += cssMisc::Indent(indent_level);
-  rval += "/*******************************************************************\n";
-  rval += cssMisc::IndentLines(desc, indent_level);
-  rval = trimr(rval);
-  if (rval.lastchar() != '\n')
-    rval += '\n';
-  rval += cssMisc::Indent(indent_level);
-  rval += "*******************************************************************/\n";
-  return rval;
+void Comment::GenCssBody_impl(Program* prog) {
+  prog->AddLine(this, "/*******************************************************************");
+  prog->AddDescString(this, desc);
+  prog->AddLine(this, "*******************************************************************/");
 }
 
 String Comment::GetDisplayName() const {
@@ -2049,7 +2014,7 @@ bool Comment::CvtFmCode(const String& code) {
   if(code.startsWith("//")) desc = trim(code.after("//"));
   else if(code.startsWith("/*")) trim(desc = code.after("/*"));
   if(code.endsWith("*/")) desc = trim(desc.before("*/",-1));
-  return false;
+  return true;
 }
 
 
@@ -2060,10 +2025,8 @@ bool Comment::CvtFmCode(const String& code) {
 void StopStepPoint::Initialize() {
 }
 
-const String StopStepPoint::GenCssBody_impl(int indent_level) {
-  String rval;
-  rval += cssMisc::Indent(indent_level) + "StopCheck(); // check for Stop or Step button\n";
-  return rval;
+void StopStepPoint::GenCssBody_impl(Program* prog) {
+  prog->AddLine(this, "StopCheck(); // check for Stop or Step button");
 }
 
 String StopStepPoint::GetDisplayName() const {
@@ -2094,16 +2057,11 @@ void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
   expr.CheckConfig(quiet, rval);
 }
 
-const String ReturnExpr::GenCssBody_impl(int indent_level) {
+void ReturnExpr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();		// re-parse just to be sure!
-  String rval;
   if(IsVerbose())
-    rval += cssMisc::Indent(indent_level) + "taMisc::Info(\"returning value: "
-      + expr.GetFullExpr().quote_esc() + "\");\n";
-
-  rval += cssMisc::Indent(indent_level);
-  rval += "return " + expr.GetFullExpr() + ";\n";
-  return rval;
+    prog->AddLine(this, "taMisc::Info(\"returning value: " + expr.GetFullExpr().quote_esc() + "\");");
+  prog->AddLine(this, "return " + expr.GetFullExpr() + ";");
 }
 
 String ReturnExpr::GetDisplayName() const {
@@ -2193,48 +2151,46 @@ Program* OtherProgramVar::GetOtherProg() {
   return other_prog.ptr();
 }
 
-bool OtherProgramVar::GenCss_OneVar(String& rval, ProgVarRef& var,
-				    const String& il, int var_no) {
+bool OtherProgramVar::GenCss_OneVar(Program* prog, ProgVarRef& var, int var_no) {
   if(!var) return false;
   if(set_other)
-    rval += il + "other_prog->SetVar(\"" + var->name + "\", " + var->name +");\n";
+    prog->AddLine(this, String("other_prog->SetVar(\"") + var->name + "\", " + var->name +");");
   else
-    rval += il + var->name + " = other_prog->GetVar(\"" + var->name + "\");\n";
+    prog->AddLine(this, var->name + " = other_prog->GetVar(\"" + var->name + "\");");
   if(IsVerbose()) {
     if(set_other)
-      rval += il + "taMisc::Info(\"assigned var " + var->name
-	+ " in other program: " + other_prog->name + " to same variable in this program, which has value:\"," + var->name + ");\n";
+      prog->AddLine(this, String("taMisc::Info(\"assigned var ") + var->name + " in other program: "
+		    + other_prog->name + " to same variable in this program, which has value:\","
+		    + var->name + ");");
     else
-      rval += il + "taMisc::Info(\"assigned var " + var->name
-	+ " in this program to same variable in other program: " + other_prog->name + " -- now has value:\"," + var->name + ");\n";
+      prog->AddLine(this, String("taMisc::Info(\"assigned var ") + var->name
+		    + " in this program to same variable in other program: " + other_prog->name
+		    + " -- now has value:\"," + var->name + ");");
   }
   return true;
 }
 
-const String OtherProgramVar::GenCssPre_impl(int indent_level) {
-  String rval;
-  rval = cssMisc::Indent(indent_level);
-  rval += "{ // other program var: "; 
+void OtherProgramVar::GenCssPre_impl(Program* prog) {
+  String rval = "{ // other program var: "; 
   if (other_prog)
     rval += other_prog->name;
-  rval += "\n";
-  return rval;
+  prog->AddLine(this, rval);
+  prog->IncIndent();
 }
 
-const String OtherProgramVar::GenCssBody_impl(int indent_level) {
-  if (!other_prog) return _nilString;
-  String il = cssMisc::Indent(indent_level+1);
-  String rval;
-  rval += il + "Program* other_prog = this" + GetPath(NULL, program())+ "->GetOtherProg();\n";
-  GenCss_OneVar(rval, var_1, il, 0);
-  GenCss_OneVar(rval, var_2, il, 1);
-  GenCss_OneVar(rval, var_3, il, 2);
-  GenCss_OneVar(rval, var_4, il, 3);
-  return rval;
+void OtherProgramVar::GenCssBody_impl(Program* prog) {
+  if (!other_prog) return;
+  prog->AddLine(this, String("Program* other_prog = this") + GetPath(NULL, program())
+		+ "->GetOtherProg();");
+  GenCss_OneVar(prog, var_1, 0);
+  GenCss_OneVar(prog, var_2, 1);
+  GenCss_OneVar(prog, var_3, 2);
+  GenCss_OneVar(prog, var_4, 3);
 }
 
-const String OtherProgramVar::GenCssPost_impl(int indent_level) {
-  return cssMisc::Indent(indent_level) + "} // other program var\n";
+void OtherProgramVar::GenCssPost_impl(Program* prog) {
+  prog->DecIndent();
+  prog->AddLine(this, "} // other program var");
 }
 
 ///////////////////////////////////////////////////////
@@ -2285,25 +2241,22 @@ Program* ProgVarFmArg::GetOtherProg() {
   return prog.ptr();
 }
 
-const String ProgVarFmArg::GenCssBody_impl(int indent_level) {
-  if (!prog) return _nilString;
-  String il = cssMisc::Indent(indent_level);
-  String rval = il + "{ // prog var fm arg: " + prog->name;
-  rval += "\n";
-  rval += il + "  Program* other_prog = this" + GetPath(NULL, program())+ "->GetOtherProg();\n";
-  rval += il + "  other_prog->SetVarFmArg(\"" + arg_name + "\", \"" + var_name + "\");\n";
-  rval += il + "} // prog var fm arg\n";
-  return rval;
+void ProgVarFmArg::GenCssBody_impl(Program* prog) {
+  if (!prog) return;
+  prog->AddLine(this, String("{ // prog var fm arg: ") + prog->name);
+  prog->IncIndent();
+  prog->AddLine(this, String("Program* other_prog = this") + GetPath(NULL, program())
+		+ "->GetOtherProg();");
+  prog->AddLine(this, "other_prog->SetVarFmArg(\"" + arg_name + "\", \"" + var_name + "\");");
+  prog->DecIndent();
+  prog->AddLine(this, "} // prog var fm arg");
 }
 
-const String ProgVarFmArg::GenRegArgs(int indent_level) {
-  String gen_code;
-  String il = cssMisc::Indent(indent_level);
-  gen_code += il + "taMisc::AddEqualsArgName(\"" + arg_name + "\");\n";
-  gen_code += il + "taMisc::AddArgNameDesc(\"" + arg_name
-    + "\", \"ProgVarFmArg: prog = " + (((bool)prog) ? prog->name : "NOT SET")
-    + " var_name = " + var_name + "\");\n";
-  return gen_code;
+void ProgVarFmArg::GenRegArgs(Program* prog) {
+  prog->AddLine(this, String("taMisc::AddEqualsArgName(\"") + arg_name + "\");");
+  prog->AddLine(this, String("taMisc::AddArgNameDesc(\"") + arg_name
+			     + "\", \"ProgVarFmArg: prog = " + (((bool)prog) ? prog->name : "NOT SET")
+			     + " var_name = " + var_name + "\");");
 }
 
 
@@ -2353,51 +2306,51 @@ DataTable* DataColsFmArgs::GetData() const {
   return (DataTable*)data_var->object_val.ptr();
 }
 
-const String DataColsFmArgs::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  String il1 = cssMisc::Indent(indent_level+1);
-  String il2 = cssMisc::Indent(indent_level+2);
+void DataColsFmArgs::GenCssBody_impl(Program* prog) {
   DataTable* dt = GetData();
-  if(!dt) return il + "// DataColsFmArgs: data_var not set!\n";
-  String rval = il + "{ // DataColsFmArgs fm: " + dt->name + "\n";
-  rval += il1 + "String dcfma_colnm, dcfma_argval;\n";
-  rval += il1 + "for(int j=0;j<" + data_var->name + ".cols();j++) {\n";
-  rval += il2 + "dcfma_colnm = " + data_var->name + ".data[j].name;\n";
-  rval += il2 + "dcfma_argval = taMisc::FindArgByName(dcfma_colnm);\n";
-  rval += il2 + "if(dcfma_argval.empty()) continue;\n";
+  if(!dt) {
+    prog->AddLine(this, "// DataColsFmArgs: data_var not set!");
+    return;
+  }
+  prog->AddLine(this, "{ // DataColsFmArgs fm: " + dt->name);
+  prog->IncIndent();
+  prog->AddLine(this, "String dcfma_colnm, dcfma_argval;");
+  prog->AddLine(this, "for(int j=0;j<" + data_var->name + ".cols();j++) {");
+  prog->IncIndent();
+  prog->AddLine(this, "dcfma_colnm = " + data_var->name + ".data[j].name;");
+  prog->AddLine(this, "dcfma_argval = taMisc::FindArgByName(dcfma_colnm);");
+  prog->AddLine(this, "if(dcfma_argval.empty()) continue;");
   if(row_spec == CUR_ROW) {
-    rval += il2 + data_var->name + ".SetDataByName(dcfma_argval, dcfma_colnm);\n";
+    prog->AddLine(this, data_var->name + ".SetDataByName(dcfma_argval, dcfma_colnm);");
   }
   else if(row_spec == ROW_NUM) {
-    rval +=  il2 + data_var->name + ".SetValColName(dcfma_argval, dcfma_colnm, "
-      + row_var->name + ");\n";
+    prog->AddLine(this, data_var->name + ".SetValColName(dcfma_argval, dcfma_colnm, "
+		  + row_var->name + ");");
   }
   else if(row_spec == ROW_VAL) {
-    rval +=  il2 + data_var->name + ".SetValColRowName(dcfma_argval, dcfma_colnm, \""
-      + row_var->name + "\", " + row_var->name + ");\n";
+    prog->AddLine(this, data_var->name + ".SetValColRowName(dcfma_argval, dcfma_colnm, \""
+		  + row_var->name + "\", " + row_var->name + ");");
   }
   if(taMisc::dmem_proc == 0) {
-    rval += il2 + "cerr << \"Set column: \" << dcfma_colnm << \" in data table: \" << \"" +
-      dt->name + "\" << \" to val: \" << dcfma_argval << endl;\n";
+    prog->AddLine(this, String("taMisc::Info(\"Set column: \",dcfma_colnm,\"in data table:\",\"") +
+		  dt->name + "\",\"to val:\",dcfma_argval);");
   }
-  rval += il1 + "}\n";
-  rval += il + "}\n";
-  return rval;
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
-const String DataColsFmArgs::GenRegArgs(int indent_level) {
-  String gen_code;
-  String il = cssMisc::Indent(indent_level);
+void DataColsFmArgs::GenRegArgs(Program* prog) {
   DataTable* dt = GetData();
   if(dt) {
     for(int j=0;j<dt->cols();j++) {
       DataCol* dc = dt->data[j];
-      gen_code += il + "taMisc::AddEqualsArgName(\"" + dc->name + "\");\n";
-      gen_code += il + "taMisc::AddArgNameDesc(\"" + dc->name
-	+ "\", \"DataColsFmArgs: data_table = " + dt->name + "\");\n";
+      prog->AddLine(this, "taMisc::AddEqualsArgName(\"" + dc->name + "\");");
+      prog->AddLine(this, "taMisc::AddArgNameDesc(\"" + dc->name
+		    + "\", \"DataColsFmArgs: data_table = " + dt->name + "\");");
     }
   }
-  return gen_code;
 }
 
 ///////////////////////////////////////////////////////
@@ -2433,45 +2386,45 @@ SelectEdit* SelectEditsFmArgs::GetSelectEdit() const {
   return (SelectEdit*)sel_edit_var->object_val.ptr();
 }
 
-const String SelectEditsFmArgs::GenCssBody_impl(int indent_level) {
-  String il = cssMisc::Indent(indent_level);
-  String il1 = cssMisc::Indent(indent_level+1);
-  String il2 = cssMisc::Indent(indent_level+2);
+void SelectEditsFmArgs::GenCssBody_impl(Program* prog) {
   SelectEdit* se = GetSelectEdit();
-  if(!se) return il + "// SelectEditsFmArgs: sel_edit_var not set!\n";
-
-  String rval = il + "{ // SelectEditsFmArgs fm: " + se->name + "\n";
-  rval += il1 + "String sefma_lbl, sefma_argval;\n";
-  rval += il1 + "for(int j=0;j<" + se->name + ".mbrs.leaves;j++) {\n";
-  rval += il2 + "EditMbrItem* sei = " + se->name + ".mbrs.Leaf(j);\n";
-  rval += il2 + "if(!sei->is_numeric) continue;\n";
-  rval += il2 + "sefma_lbl = sei->label;\n";
-  rval += il2 + "sefma_argval = taMisc::FindArgByName(sefma_lbl);\n";
-  rval += il2 + "if(sefma_argval.empty()) continue;\n";
-  rval += il2 + "sei->PSearchCurVal_Set(sefma_argval);\n";
-  if(taMisc::dmem_proc == 0) {
-    rval += il2 + "cerr << \"Set select edit item: \" << sefma_lbl << \" in select edit: \" << \"" +
-      se->name + "\" << \" to val: \" << sefma_argval << endl;\n";
+  if(!se) {
+    prog->AddLine(this, "// SelectEditsFmArgs: sel_edit_var not set!");
+    return;
   }
-  rval += il1 + "}\n";
-  rval += il + "}\n";
-  return rval;
+
+  prog->AddLine(this, "{ // SelectEditsFmArgs fm: " + se->name);
+  prog->IncIndent();
+  prog->AddLine(this, "String sefma_lbl, sefma_argval;");
+  prog->AddLine(this, "for(int j=0;j<" + se->name + ".mbrs.leaves;j++) {");
+  prog->IncIndent();
+  prog->AddLine(this, "EditMbrItem* sei = " + se->name + ".mbrs.Leaf(j);");
+  prog->AddLine(this, "if(!sei->is_numeric) continue;");
+  prog->AddLine(this, "sefma_lbl = sei->label;");
+  prog->AddLine(this, "sefma_argval = taMisc::FindArgByName(sefma_lbl);");
+  prog->AddLine(this, "if(sefma_argval.empty()) continue;");
+  prog->AddLine(this, "sei->PSearchCurVal_Set(sefma_argval);");
+  if(taMisc::dmem_proc == 0) {
+    prog->AddLine(this, String("taMisc::Info(\"Set select edit item: \",sefma_lbl,\" in select edit: \",\"") +
+		  se->name + "\",\"to val:\",sefma_argval);");
+  }
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
-const String SelectEditsFmArgs::GenRegArgs(int indent_level) {
-  String gen_code;
-  String il = cssMisc::Indent(indent_level);
+void SelectEditsFmArgs::GenRegArgs(Program* prog) {
   SelectEdit* se = GetSelectEdit();
   if(se) {
     for(int j=0;j<se->mbrs.leaves;j++) {
       EditMbrItem* sei = se->mbrs.Leaf(j);
       if(!sei->is_numeric) continue;
-      gen_code += il + "taMisc::AddEqualsArgName(\"" + sei->label + "\");\n";
-      gen_code += il + "taMisc::AddArgNameDesc(\"" + sei->label
-	+ "\", \"SelectEditsFmArgs: sel_edit = " + se->name + "\");\n";
+      prog->AddLine(this, "taMisc::AddEqualsArgName(\"" + sei->label + "\");");
+      prog->AddLine(this, "taMisc::AddArgNameDesc(\"" + sei->label
+		    + "\", \"SelectEditsFmArgs: sel_edit = " + se->name + "\");");
     }
   }
-  return gen_code;
 }
 
 
@@ -2488,36 +2441,31 @@ String RegisterArgs::GetDisplayName() const {
   return rval;
 }
 
-const String RegisterArgs::GenCssBody_impl(int indent_level) {
-  String rval;
-  Program* prog = program();
-  if(!prog) return rval;
-  rval += cssMisc::Indent(indent_level) + "// Register Args:\n";
-  AddArgsFmCode(rval, prog->prog_code, indent_level);
-  rval += cssMisc::Indent(indent_level) + "taMisc::UpdateArgs();\n";
-  rval += "if(taMisc::CheckArgByName(\"Help\")) taMisc::HelpMsg();\n"; // extra help!
-  return rval;
+void RegisterArgs::GenCssBody_impl(Program* prog) {
+  prog->AddLine(this, "// Register Args:");
+  AddArgsFmCode(prog, prog->prog_code);
+  prog->AddLine(this, "taMisc::UpdateArgs();");
+  prog->AddLine(this, "if(taMisc::CheckArgByName(\"Help\")) taMisc::HelpMsg();"); // extra help!
 }
 
-void RegisterArgs::AddArgsFmCode(String& gen_code, ProgEl_List& progs, int indent_level) {
-  String il = cssMisc::Indent(indent_level);
+void RegisterArgs::AddArgsFmCode(Program* prog, ProgEl_List& progs) {
   for(int i=0;i<progs.size;i++) {
     ProgEl* pel = progs[i];
     if(pel->InheritsFrom(&TA_ProgVarFmArg)) {
       ProgVarFmArg* pva = (ProgVarFmArg*)pel;
-      gen_code += pva->GenRegArgs(indent_level);
+      pva->GenRegArgs(prog);
     }
     else if(pel->InheritsFrom(&TA_MemberFmArg)) {
       MemberFmArg* mfa = (MemberFmArg*)pel;
-      gen_code += mfa->GenRegArgs(indent_level);
+      mfa->GenRegArgs(prog);
     }
     else if(pel->InheritsFrom(&TA_DataColsFmArgs)) {
       DataColsFmArgs* dca = (DataColsFmArgs*)pel;
-      gen_code += dca->GenRegArgs(indent_level);
+      dca->GenRegArgs(prog);
     }
     else if(pel->InheritsFrom(&TA_SelectEditsFmArgs)) {
       SelectEditsFmArgs* sea = (SelectEditsFmArgs*)pel;
-      gen_code += sea->GenRegArgs(indent_level);
+      sea->GenRegArgs(prog);
     }
     else {			// look for sub-lists
       TypeDef* td = pel->GetTypeDef();
@@ -2525,7 +2473,7 @@ void RegisterArgs::AddArgsFmCode(String& gen_code, ProgEl_List& progs, int inden
 	MemberDef* md = td->members[j];
 	if(md->type->InheritsFrom(&TA_ProgEl_List)) {
 	  ProgEl_List* nxt_prgs = (ProgEl_List*)md->GetOff(pel);
-	  AddArgsFmCode(gen_code, *nxt_prgs, indent_level);
+	  AddArgsFmCode(prog, *nxt_prgs);
 	}
       }
     }
