@@ -1348,8 +1348,10 @@ bool MethodCall::CvtFmCode(const String& code) {
     }
     else {
       arg = args;
+      args = "";		// all done
     }
     pa->expr.SetExpr(arg);
+    if(args.empty()) break;
   }
   return true;
 }
@@ -1750,8 +1752,10 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
     }
     else {
       arg = args;
+      args = "";		// all done
     }
     pa->expr.SetExpr(arg);
+    if(args.empty()) break;
   }
   return true;
 }

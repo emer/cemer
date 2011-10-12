@@ -3149,8 +3149,10 @@ bool StaticMethodCall::CvtFmCode(const String& code) {
     }
     else {
       arg = args;
+      args = "";		// all done
     }
     pa->expr.SetExpr(arg);
+    if(args.empty()) break;
   }
   return true;
 }
@@ -3458,8 +3460,10 @@ bool ProgramCall::CvtFmCode(const String& code) {
     }
     else {
       arg = args;
+      args = "";		// all done
     }
     pa->expr.SetExpr(arg);
+    if(args.empty()) break;
   }
   UpdateAfterEdit_impl();
   return true;
@@ -3978,8 +3982,10 @@ bool FunctionCall::CvtFmCode(const String& code) {
     }
     else {
       arg = args;
+      args = "";		// all done
     }
     pa->expr.SetExpr(arg);
+    if(args.empty()) break;
   }
   return true;
 }
@@ -4587,7 +4593,13 @@ bool Program::StopCheck() {
 }
 
 bool Program::RunFunction(const String& fun_name) {
-  if(!script) return false;
+  if(run_state == NOT_INIT) {
+    Init();			// auto-press Init button!
+  }
+  if(run_state == STOP && stop_reason == SR_ERROR) {
+    Init();			// auto-reinit after errors!
+  }
+  // todo: not clear how much more control infrastructure we need..
   cssEl* rval = script->RunFun(fun_name); // no args right now
   return (bool)rval;
 }

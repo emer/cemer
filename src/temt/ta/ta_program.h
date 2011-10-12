@@ -110,7 +110,7 @@ private:
 };
 
 class TA_API ProgLine_List : public taList<ProgLine> {
-  // ##CAT_Program a list of program listing elements
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Program a list of program listing elements
 INHERITED(taList<ProgLine>)
 public:
 
