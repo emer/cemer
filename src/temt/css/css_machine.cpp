@@ -4561,6 +4561,21 @@ void cssProgSpace::Stop() {
   external_stop = true;
 }
 
+cssEl* cssProgSpace::RunFun(const String& fun_name, cssEl* arg1, cssEl* arg2,
+    cssEl* arg3, cssEl* arg4, cssEl* arg5, cssEl* arg6) {
+  cssElPtr fun = ParseName(fun_name);
+  if(!(bool)fun) return NULL;
+  cssEl* funel = fun.El();
+  if(!((funel->GetType() == cssEl::T_ScriptFun)
+       || (funel->GetType() == cssEl::T_ElCFun))) return NULL;
+  cssProgSpace funspace;	// run it here in separate space
+  funspace.Prog()->Code(cssMisc::VoidElPtr);
+  // todo: args
+  funspace.Prog()->Code(fun);
+  cssEl* rval = funspace.Run();		// run it!
+  return rval;
+}
+
 //////////////////////////////////////////////////
 // 	cssProgSpace:    Display, Status	//
 //////////////////////////////////////////////////

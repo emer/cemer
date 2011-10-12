@@ -420,7 +420,7 @@ LeabraProject .projects["Project_0"] {
 	  ProgVar @["rnd_seed"] { };
 	};
 
-	Function_List @.functions = [1] {
+	Function_List @.functions = [2] {
 	  Function @[0] { 
 	    ProgVar_List @.args = [0] {
 	    };
@@ -459,6 +459,18 @@ LeabraProject .projects["Project_0"] {
 		  };
 		};
 	      };
+	    };
+	  };
+	  Function @[1] { 
+	    ProgVar_List @.args = [0] {
+	    };
+
+	    ProgEl_List @.fun_code = [2] {
+	      ProgVars @[0] { 
+		ProgVar_List @.local_vars = [0] {
+		};
+	      };
+	      PrintExpr @[1] { };
 	    };
 	  };
 	};
@@ -4186,6 +4198,39 @@ LeabraProject .projects["Project_0"] {
 	   expr="BATCH_SEEDS";
 	  };
 	 };
+	};
+       };
+      };
+     };
+     Function @[1] {
+      desc=;
+      flags=0;
+      name="TestFun";
+      return_type=T_Int;
+      object_type=taOBase;
+      args {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+      fun_code {
+       name="ProgEl_List_147";
+       el_typ=ProgVars;
+       el_def=0;
+       ProgVars @[0] {
+	desc=;
+	flags=0;
+	local_vars {
+	 name="ProgVar_List_0";
+	 el_typ=ProgVar;
+	 el_def=0;
+	};
+       };
+       PrintExpr @[1] {
+	desc=;
+	flags=0;
+	expr {
+	 expr="\"this is cool, really\"";
 	};
        };
       };

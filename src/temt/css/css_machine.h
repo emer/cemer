@@ -1669,6 +1669,10 @@ public:
   cssEl*	Run();
   void		Stop(); // can be called from inside or outside a program to cause it to stop
   void		EndRunPop()		{ Prog()->EndRunPop(); }
+
+  cssEl*	RunFun(const String& fun_name, cssEl* arg1=NULL, cssEl* arg2=NULL,
+		       cssEl* arg3=NULL, cssEl* arg4=NULL, cssEl* arg5=NULL, cssEl* arg6=NULL);
+  // run function of given name, passing given arguments (n determined by function and how many are non-null -- return value returned..
   
   bool		ContinueLoop();	// process continue command for loops
   bool		BreakLoop();	// process break command for loops

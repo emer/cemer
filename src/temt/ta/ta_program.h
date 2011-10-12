@@ -964,7 +964,8 @@ public:
 
   override void		SetProgExprFlags();
   override String	GetDisplayName() const;
-  override String	GetToolbarName() const { return "script"; }
+  override String	GetToolbarName() const { return "code"; }
+  override String 	GetTypeDecoKey() const { return "Comment"; }
 
   static void		CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
 					 const String& code, ProgEl* scope_el);
@@ -1308,6 +1309,8 @@ public:
   int			step_n;
   // #MIN_1 how many steps to take when stepping at this program level (i.e., when this program name is clicked on the Step button of any other program) -- also set by the step button dynamically
 
+  ProgEl_List		load_code; // #HIDDEN #NO_SAVE #OBSOLETE obsolete and will be removed later -- only here to elminate load warnings
+
   inline void		SetProgFlag(ProgFlags flg)   { flags = (ProgFlags)(flags | flg); }
   // #CAT_Flags set flag state on
   inline void		ClearProgFlag(ProgFlags flg) { flags = (ProgFlags)(flags & ~flg); }
@@ -1485,6 +1488,7 @@ public: // XxxGui versions provide feedback to the user
   override String 	GetTypeDecoKey() const { return "Program"; }
   override Variant 	GetGuiArgVal(const String& fun_name, int arg_idx);
   override void		DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void		CallFun(const String& fun_name);
 
   void	InitLinks();
   void	CutLinks();
@@ -1711,6 +1715,9 @@ public:
   // initialize target based on targ_ld_init information
   virtual bool		LoadInitTarget_impl(const String& nm);
   // initialize target based on targ_ld_init information
+
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  override bool		CvtFmCode(const String& code);
 
   override taList_impl*	children_() {return &prog_args;}	
   override String	GetDisplayName() const;

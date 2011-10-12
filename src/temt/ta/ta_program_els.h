@@ -108,6 +108,7 @@ public:
   override void		SetProgExprFlags();
   override String	GetDisplayName() const;
   override String	GetToolbarName() const { return "script"; }
+  override String 	GetTypeDecoKey() const { return "Comment"; }
 
   PROGEL_SIMPLE_BASEFUNS(UserScript);
 protected:

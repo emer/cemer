@@ -3422,6 +3422,48 @@ bool ProgramCall::LoadInitTarget_impl(const String& nm) {
   return false;
 }
 
+bool ProgramCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(!code.contains('(')) return false;
+  String lhs = code.before('(');
+  String funm = lhs;
+  if(lhs.contains('=')) return false; // no rval for progcall
+  if((funm.freq('.') + funm.freq("->")) > 0) return false; // exclude method call
+  if(!scope_el) return false;
+  taProject* proj = GET_OWNER(scope_el, taProject);
+  if(!proj) return false;
+  Program* prg = proj->programs.FindLeafName(funm);
+  if(prg) return true;
+  return false;
+}
+
+bool ProgramCall::CvtFmCode(const String& code) {
+  String lhs = code.before('(');
+  String funm = lhs;
+  taProject* proj = GET_OWNER(this, taProject);
+  if(!proj) return false;
+  Program* prg = proj->programs.FindLeafName(funm);
+  if(!prg) return false;
+  target = prg;
+  UpdateAfterEdit_impl();			   // update based on targ
+  // now tackle the args
+  String args = trim(code.after('('));
+  if(args.endsWith(')')) args = trim(args.before(')',-1));
+  if(args.endsWith(';')) args = trim(args.before(';',-1));
+  for(int i=0; i<prog_args.size; i++) {
+    ProgArg* pa = prog_args.FastEl(i);
+    String arg;
+    if(args.contains(',')) {
+      arg = trim(args.before(','));
+      args = trim(args.after(','));
+    }
+    else {
+      arg = args;
+    }
+    pa->expr.SetExpr(arg);
+  }
+  UpdateAfterEdit_impl();
+  return true;
+}
 
 //////////////////////////
 //   ProgramCallVar	//
@@ -3717,10 +3759,12 @@ void Function::InitLinks() {
       fun_code.New(1, &TA_ProgVars); // make this by default because it is typically needed!
     }
   }
+  fun_code.el_typ = &TA_ProgCode;  // make sure this is default
 }
 
 void Function::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  fun_code.el_typ = &TA_ProgCode;  // make sure this is default
   name = taMisc::StringCVar(name); // make names C legal names
   if(Program::IsForbiddenName(name))
     name = "My" + name;
@@ -3895,7 +3939,6 @@ void FunctionCall::UpdateArgs() {
   fun_args.UpdateFromVarList(fun->args);
 }
 
-// todo: write this!
 bool FunctionCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains('(')) return false;
   String lhs = code.before('(');
@@ -3921,6 +3964,7 @@ bool FunctionCall::CvtFmCode(const String& code) {
   Function* fn = prog->functions.FindName(funm);
   if(!fn) return false;
   fun = fn;
+  UpdateAfterEdit_impl();			   // update based on fun
   // now tackle the args
   String args = trim(code.after('('));
   if(args.endsWith(')')) args = trim(args.before(')',-1));
@@ -4081,6 +4125,11 @@ void Program::InitLinks() {
   taBase::Own(sub_progs_all, this);
   taBase::Own(sub_progs_step, this);
   taBase::Own(step_prog, this);
+
+  taBase::Own(load_code, this);	// todo: obsolete, remove
+  init_code.el_typ = &TA_ProgCode;  // make sure this is default
+  prog_code.el_typ = &TA_ProgCode;  // make sure this is default
+
   prog_gp = GET_MY_OWNER(Program_Group);
   if(forbidden_names.size == 0)
     InitForbiddenNames();
@@ -4162,6 +4211,9 @@ void Program::UpdateAfterEdit_impl() {
   // such as ret_val -- therefore, DO NOT do things here that are incompatible
   // with the runtime, in particular, do NOT invalidate the following state flags:
   //   m_stale, script_compiled
+
+  init_code.el_typ = &TA_ProgCode;  // make sure this is default
+  prog_code.el_typ = &TA_ProgCode;  // make sure this is default
 
   if(HasProgFlag(LOCKED)) SetBaseFlag(BF_GUI_READ_ONLY);
   else			  ClearBaseFlag(BF_GUI_READ_ONLY);
@@ -4535,7 +4587,18 @@ bool Program::StopCheck() {
 }
 
 bool Program::RunFunction(const String& fun_name) {
-  return false;
+  if(!script) return false;
+  cssEl* rval = script->RunFun(fun_name); // no args right now
+  return (bool)rval;
+}
+
+void Program::CallFun(const String& fun_name) {
+  if(!taMisc::gui_active) return;
+  MethodDef* md = GetTypeDef()->methods.FindName(fun_name);
+  if(md != NULL)
+    md->CallFun((void*)this);
+  else if(!RunFunction(fun_name))
+    TestWarning(true, "CallFun", "function:", fun_name, "not found on object");
 }
 
 void Program::Compile() {
