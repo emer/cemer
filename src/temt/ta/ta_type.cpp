@@ -729,6 +729,7 @@ ContextFlag	taMisc::is_checking;
 ContextFlag	taMisc::in_gui_call;
 ContextFlag	taMisc::in_gui_multi_action;
 ContextFlag	taMisc::in_plugin_init;
+ContextFlag	taMisc::in_shutdown;
 ContextFlag	taMisc::no_auto_expand;
 TypeDef*	taMisc::plugin_loading;
 

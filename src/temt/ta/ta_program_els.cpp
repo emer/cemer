@@ -573,7 +573,7 @@ bool IfContinue::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 
 bool IfContinue::CvtFmCode(const String& code) {
   String cd = trim(code.after("if"));
-  cd = trim(code.before("continue"));
+  cd = trim(cd.before("continue"));
   if(cd.startsWith('(')) {
     cd = cd.after('(');
     if(cd.endsWith(')'))
@@ -622,7 +622,7 @@ bool IfBreak::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 
 bool IfBreak::CvtFmCode(const String& code) {
   String cd = trim(code.after("if"));
-  cd = trim(code.before("break"));
+  cd = trim(cd.before("break"));
   if(cd.startsWith('(')) {
     cd = cd.after('(');
     if(cd.endsWith(')'))
@@ -674,7 +674,7 @@ bool IfReturn::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 
 bool IfReturn::CvtFmCode(const String& code) {
   String cd = trim(code.after("if"));
-  cd = trim(code.before("return"));
+  cd = trim(cd.before("return"));
   if(cd.startsWith('(')) {
     cd = cd.after('(');
     if(cd.endsWith(')'))

@@ -821,7 +821,12 @@ void taiDataHostBase::Revert() {
 void taiDataHostBase::DoDestr_Dialog(iHostDialog*& dlg) { // common sub-code for destructing a dialog instance
   if (dlg != NULL) {
     dlg->owner = NULL; // prevent reverse deletion
-    dlg->deleteLater(); dlg->close(); // destructive close
+    if(taMisc::in_shutdown)
+      delete dlg;
+    else {
+      dlg->deleteLater(); 
+      dlg->close(); // destructive close
+    }
     dlg = NULL;
   }
 }
@@ -927,7 +932,7 @@ void taiDataHostBase::Constr_Prompt() {
 //NOTE: don't use RichText format because it doesn't word wrap!
   prompt = new QLabel(widget()); 
   prompt->setWordWrap(true); // so it doesn't dominate hor sizing
-  QFont f = taiM->nameFont(ctrl_size);
+  QFont f = taiM->nameFont(taiMisc::fonBig);
   f.setBold(true); 
   prompt->setFont(f);
   prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);

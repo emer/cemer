@@ -848,6 +848,7 @@ public:
   static ContextFlag	in_gui_call;	// #READ_ONLY #NO_SAVE #NO_SHOW true if we are running a function call from the gui (used to modalize warning dialogs)
   static ContextFlag	in_gui_multi_action; // #READ_ONLY #NO_SAVE #NO_SHOW we are currently in a gui multiple item action (e.g., drag/drop or cut/paste multiple items) -- good to suspend various update actions that might otherwise occur at this time.  The last item in the sequence does NOT have this flag set, so it can trigger relevant updates etc
   static ContextFlag	in_plugin_init;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading typeinfo for a plugin
+  static ContextFlag	in_shutdown;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently shutting down and cleaning up
   static ContextFlag	no_auto_expand;	// #READ_ONLY #NO_SAVE #NO_SHOW true to suppress auto-expanding (esp during code that makes a lot of objs)
   static TypeDef*	plugin_loading; // #READ_ONLY #NO_SAVE #NO_SHOW the TypeDef of the plugin currently loading -- we stamp this into all formal classes
 

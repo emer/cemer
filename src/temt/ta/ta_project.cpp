@@ -3901,6 +3901,7 @@ extern "C" {
 
 // todo: could partition these out into separate guys..  	
 void taRootBase::Cleanup_Main() {
+  taMisc::in_shutdown++;
   taMisc::aka_types.Reset();	// errs happen when this gets reset out of order
   // remove sig handler -- very nasty when baddies happen after this point
   if (milestone & SM_REG_SIG) {
