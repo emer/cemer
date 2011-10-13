@@ -55,7 +55,11 @@ public:
     foSave,
     foSaveAs,
     foAppend
-  };
+  }; //
+
+  // Would have liked to define the enum this way, but maketa won't have it!
+  // DEF_FLAGS                = CONFIRM_OVERWRITE | FILE_MUST_EXIST | COMPRESS_ENABLE
+  // DEF_FLAGS_COMPRESS       = DEF_FLAGS | COMPRESS_REQ_DEF
 
   enum FilerFlags { // #BITS flags to control operations
     NO_FLAGS    = 0,    // #NO_BIT
@@ -67,8 +71,8 @@ public:
     TMP_SAVE_FILE               = 0x200, // save to a temporary file name if the save file exists
     TMP_SAVE_FILE_USED          = 0x400, // a temporary save file was actually used on the last save -- Close function will rename
 
-    DEF_FLAGS                   = CONFIRM_OVERWRITE | FILE_MUST_EXIST | COMPRESS_ENABLE, // #NO_BIT default flags for no compression (compression is always enabled by default, just not requested)
-    DEF_FLAGS_COMPRESS          = DEF_FLAGS | COMPRESS_REQ_DEF // #NO_BIT default flags for compression w/ autocompress
+    DEF_FLAGS                   = 0x007, // #NO_BIT default flags for no compression (compression is always enabled by default, just not requested)
+    DEF_FLAGS_COMPRESS          = 0x107 // #NO_BIT default flags for compression w/ autocompress
   };
 
   static int buf_size;          // #HIDDEN #NO_SAVE size of the buffer for input operations

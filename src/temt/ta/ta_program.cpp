@@ -35,7 +35,7 @@
 #endif
 
 ///////////////////////////////////////////////////////////
-//		ProgLine and Listing
+//              ProgLine and Listing
 ///////////////////////////////////////////////////////////
 
 void ProgLine::Initialize() {
@@ -71,22 +71,22 @@ void ProgLine::ClearBreakpoint() {
 }
 
 void ProgLine::SetError() {
-  SetPLineFlag(ProgLine::ERROR);
+  SetPLineFlag(ProgLine::PROG_ERROR);
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
-    pel->SetProgFlag(ProgEl::ERROR);
+    pel->SetProgFlag(ProgEl::PROG_ERROR);
     pel->DataChanged(DCR_ITEM_UPDATED);
     pel->BrowserSelectMe();
   }
 }
 
 void ProgLine::ClearError() {
-  ClearPLineFlag(ProgLine::ERROR);
+  ClearPLineFlag(ProgLine::PROG_ERROR);
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
-    bool was_set = pel->HasProgFlag(ProgEl::ERROR);
+    bool was_set = pel->HasProgFlag(ProgEl::PROG_ERROR);
     if(was_set) {
-      pel->ClearProgFlag(ProgEl::ERROR);
+      pel->ClearProgFlag(ProgEl::PROG_ERROR);
       pel->DataChanged(DCR_ITEM_UPDATED);
     }
   }
@@ -132,7 +132,7 @@ void ProgLine_List::FullListing(String& script_code) {
 //     taMisc::Info(String(i), ":\t", String(pl->indent), ":\t", ci);
     script_code.cat(ci).cat('\n');
   }
-}	
+}
 
 int ProgLine_List::FindProgEl(taBase* prog_el, bool reverse) {
   if(reverse) {
@@ -148,21 +148,21 @@ int ProgLine_List::FindProgEl(taBase* prog_el, bool reverse) {
     }
   }
   return -1;
-}	
+}
 
 bool ProgLine_List::SetBreakpoint(int line_no) {
   if(!InRange(line_no)) return false;
   ProgLine* pl = FastEl(line_no);
   pl->SetBreakpoint();
   return true;
-}	
+}
 
 void ProgLine_List::ClearAllBreakpoints() {
   for(int i=0; i<size; i++) {
     ProgLine* pl = FastEl(i);
     pl->ClearBreakpoint();
   }
-}	
+}
 
 void ProgLine_List::ClearAllErrors() {
   for(int i=0; i<size; i++) {
@@ -170,10 +170,10 @@ void ProgLine_List::ClearAllErrors() {
     pl->ClearError();
     pl->ClearWarning();
   }
-}	
+}
 
 ///////////////////////////////////////////////////////////
-//		Program Types
+//              Program Types
 ///////////////////////////////////////////////////////////
 
 void ProgType::Initialize() {
@@ -193,7 +193,7 @@ void ProgType::UpdateAfterEdit_impl() {
 void ProgType::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
-		"Name:",name,"is forbidden -- choose another"))
+                "Name:",name,"is forbidden -- choose another"))
     name = "My" + name;
 }
 
@@ -211,7 +211,7 @@ void ProgType::GenCss(Program* prog) {
   GenCssPre_impl(prog);
   GenCssBody_impl(prog);
   GenCssPost_impl(prog);
-} 
+}
 
 const String ProgType::GenListing(int indent_level) {
   String rval = Program::GetDescString(desc, indent_level);
@@ -239,7 +239,7 @@ bool ProgType::BrowserCollapseAll() {
 
 
 //////////////////////////
-//   ProgType_List	//
+//   ProgType_List      //
 //////////////////////////
 
 void ProgType_List::Initialize() {
@@ -270,7 +270,7 @@ taBase* ProgType_List::FindTypeName(const String& nm)  const {
 void ProgType_List::GenCss(Program* prog) const {
   for (int i = 0; i < size; ++i) {
     ProgType* it = FastEl(i);
-    it->GenCss(prog); 
+    it->GenCss(prog);
   }
 }
 
@@ -278,7 +278,7 @@ const String ProgType_List::GenListing(int indent_level) const {
   String rval(0, 40 * size, '\0'); // buffer with typical-ish room
   for (int i = 0; i < size; ++i) {
     ProgType* it = FastEl(i);
-    rval += it->GenListing(indent_level); 
+    rval += it->GenListing(indent_level);
   }
   return rval;
 }
@@ -315,7 +315,7 @@ bool ProgType_List::BrowserCollapseAll() {
 }
 
 ///////////////////////////////////////////////////////////
-//		DynEnumType
+//              DynEnumType
 ///////////////////////////////////////////////////////////
 
 void DynEnumItem::UpdateAfterEdit_impl() {
@@ -327,7 +327,7 @@ void DynEnumItem::UpdateAfterEdit_impl() {
 void DynEnumItem::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
-		"Name:",name,"is forbidden -- choose another"))
+                "Name:",name,"is forbidden -- choose another"))
     name = "My" + name;
 }
 
@@ -410,7 +410,7 @@ bool DynEnumItem_List::BrowserCollapseAll() {
 }
 
 ///////////////////////////
-//	DynEnumType
+//      DynEnumType
 
 void DynEnumType::Initialize() {
   SetDefaultName();
@@ -508,7 +508,7 @@ ostream& DynEnumType::OutputType(ostream& strm) const {
 }
 
 void DynEnumType::DataChanged(int dcr, void* op1, void* op2) {
-  // dynenum is programmed to send us notifies, we trap those and 
+  // dynenum is programmed to send us notifies, we trap those and
   // turn them into changes of us, to force gui to update (esp enum list)
   if (dcr == DCR_CHILD_ITEM_UPDATED) {
     DataChanged(DCR_ITEM_UPDATED);
@@ -543,7 +543,7 @@ bool DynEnumType::BrowserCollapseAll() {
 }
 
 ///////////////////////////////////////////////////////////
-//		DynEnum value
+//              DynEnum value
 ///////////////////////////////////////////////////////////
 
 void DynEnum::Initialize() {
@@ -563,7 +563,7 @@ String DynEnum::GetDisplayName() const {
 }
 
 /*TEMP String DynEnum::GetValStr(void* par, MemberDef* md, TypeDef::StrContext sc,
-			  bool force_inline) const {
+                          bool force_inline) const {
   if(sc == TypeDef::SC_DISPLAY)
     return GetDisplayName();
   else
@@ -573,7 +573,7 @@ String DynEnum::GetDisplayName() const {
 void DynEnum::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!enum_type, quiet, rval,
-	     "enum_type is not set for this dynamic enum value");
+             "enum_type is not set for this dynamic enum value");
 }
 
 int DynEnum::NumVal() const {
@@ -590,8 +590,8 @@ const String DynEnum::NameVal() const {
     for(int i=0;i<enum_type->enums.size;i++) {
       DynEnumItem* it = enum_type->enums.FastEl(i);
       if(value & (1 << it->value)) {
-	if(!rval.empty()) rval += "|";
-	rval += it->name;
+        if(!rval.empty()) rval += "|";
+        rval += it->name;
       }
     }
     return rval;
@@ -603,7 +603,7 @@ const String DynEnum::NameVal() const {
 bool DynEnum::SetNumVal(int val) {
   if(!enum_type) return false;
   if(enum_type->bits) {
-    value = val;		// must just be literal value.. 
+    value = val;                // must just be literal value..
   }
   else {
     value = enum_type->FindNumIdx(val);
@@ -642,7 +642,7 @@ bool DynEnum::ClearBitName(const String& nm) {
 
 
 //////////////////////////
-//   ProgVar		//
+//   ProgVar            //
 //////////////////////////
 
 void ProgVar::Initialize() {
@@ -683,18 +683,18 @@ void ProgVar::SetFlagsByOwnership() {
   if(owner && owner->InheritsFrom(&TA_ProgVar_List)) {
     ProgVar_List* pvl = (ProgVar_List*)owner;
     if(pvl->owner && pvl->owner->InheritsFrom(&TA_Program))
-      is_global = true;		// this is the only case in which vars are global
+      is_global = true;         // this is the only case in which vars are global
   }
   if(is_global) {
     ClearVarFlag(LOCAL_VAR);
     ClearVarFlag(FUN_ARG);
     if(!objs_ptr && var_type == T_Object && object_type && object_type->InheritsFrom(&TA_taMatrix)) {
-	TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
-		    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+        TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
+                    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
     }
   }
   else {
-    objs_ptr = false;		// this is incompatible with being local
+    objs_ptr = false;           // this is incompatible with being local
     SetVarFlag(LOCAL_VAR);
     ClearVarFlag(CTRL_PANEL);
     ClearVarFlag(CTRL_READ_ONLY);
@@ -703,10 +703,10 @@ void ProgVar::SetFlagsByOwnership() {
     if(owner && owner->InheritsFrom(&TA_ProgVar_List)) {
       ProgVar_List* pvl = (ProgVar_List*)owner;
       if(pvl->owner && pvl->owner->InheritsFrom(&TA_Function))
-	SetVarFlag(FUN_ARG);
+        SetVarFlag(FUN_ARG);
     }
   }
-  if(init_from) {		// NOTE: LOCAL_VAR is now editable and provides initializer value for local variables
+  if(init_from) {               // NOTE: LOCAL_VAR is now editable and provides initializer value for local variables
     ClearVarFlag(EDIT_VAL);
   }
   else {
@@ -725,7 +725,7 @@ bool ProgVar::UpdateUsedFlag() {
     if(!spo) continue;
     cnt++;
   }
-  if(objs_ptr) cnt++;		// always get one count for this -- always used..
+  if(objs_ptr) cnt++;           // always get one count for this -- always used..
   bool prv_val = HasVarFlag(USED);
   if(cnt > 0) {
     SetVarFlag(USED);
@@ -768,9 +768,9 @@ void ProgVar::Copy_(const ProgVar& cp) {
       // note that updatepointers will reset to null if not found, so it is key
       // to call the appropriate one based on owner of object being pointed to
       if(object_val->GetOwner(&TA_Program) == cp.GetOwner(&TA_Program))
-	UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program); // only look in program
+        UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program); // only look in program
       else
-	UpdatePointers_NewPar_IfParNotCp(&cp, &TA_taProject); // only look outside of program
+        UpdatePointers_NewPar_IfParNotCp(&cp, &TA_taProject); // only look outside of program
     }
   }
   SetFlagsByOwnership();
@@ -784,7 +784,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl(); // this will make it a legal C name
-  if(object_val.ptr() == this)	// this would be bad..
+  if(object_val.ptr() == this)  // this would be bad..
     object_val.set(NULL);
   if(Program::IsForbiddenName(name))
     name = "My" + name;
@@ -807,16 +807,16 @@ void ProgVar::UpdateAfterEdit_impl() {
   }
   SetFlagsByOwnership();
   UpdateUsedFlag();
-  GetInitFromVar(true);		// warn 
+  GetInitFromVar(true);         // warn
   TestError(HasVarFlag(LOCAL_VAR) && var_type == T_HardEnum, "UpdateAfterEdit",
-	      "Hard-coded (C++) enum's are not supported for local variables -- please use an int or String variable instead.");
+              "Hard-coded (C++) enum's are not supported for local variables -- please use an int or String variable instead.");
 }
 
 ProgVar* ProgVar::GetInitFromVar(bool warn) {
   if(!(bool)init_from) return NULL;
   ProgVar* ivar = init_from->FindVarName(name); // use our name
   TestWarning(warn && !ivar, "GetInitFromVar", "variable with my name:",name,
-	      "in init_from program:",init_from->name,"not found.");
+              "in init_from program:",init_from->name,"not found.");
   SetVarFlag(CTRL_READ_ONLY);
   return ivar;
 }
@@ -827,21 +827,21 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   Program* prg = GET_MY_OWNER(Program);
   if (prg) prognm = prg->name;
   if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
-		"Name:",name,"is forbidden -- choose another"))
+                "Name:",name,"is forbidden -- choose another"))
     name = "My" + name;
   if(var_type == T_Object) {
     if(!HasVarFlag(LOCAL_VAR) && HasVarFlag(NULL_CHECK) && !object_val) {
       if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
-				    "object pointer is NULL");
+                                    "object pointer is NULL");
       rval = false;
     }
     if(object_type) {
       TestWarning(!objs_ptr && !HasVarFlag(LOCAL_VAR) && object_type->InheritsFrom(&TA_taMatrix),
-		  "ProgVar", "for Matrix* ProgVar named:",name,
-		  "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+                  "ProgVar", "for Matrix* ProgVar named:",name,
+                  "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
     }
   }
-  GetInitFromVar(true);		// warn 
+  GetInitFromVar(true);         // warn
 }
 
 void ProgVar::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -870,7 +870,7 @@ void ProgVar::GetSelectText(MemberDef* mbr, String xtra_lbl,
     full_lbl = xtra_lbl;
     if (full_lbl.nonempty()) full_lbl += " ";
     full_lbl += GetName().elidedTo(16); // var name, not the member name
-    if (desc.empty()) 
+    if (desc.empty())
       desc = GetDesc(); // leave empty if empty
   } else { // something else, just do default
     inherited::GetSelectText(mbr,xtra_lbl, full_lbl, desc );
@@ -926,7 +926,7 @@ MemberDef* ProgVar::GetValMemberDef() {
 bool ProgVar::schemaChanged() {
   return (m_this_sig != m_prev_sig);
 }
- 
+
 void ProgVar::SetInt(int val) {
   var_type = T_Int;
   int_val = val;
@@ -1051,7 +1051,7 @@ void ProgVar::Cleanup() {
 }
 
 void ProgVar::DataChanged(int dcr, void* op1, void* op2) {
-  // dynenum is programmed to send us notifies, we trap those and 
+  // dynenum is programmed to send us notifies, we trap those and
   // turn them into changes of us, to force gui to update (esp enum list)
   if ((dcr == DCR_CHILD_ITEM_UPDATED) && (op1 == &dyn_enum_val)) {
     DataChanged(DCR_ITEM_UPDATED);
@@ -1078,7 +1078,7 @@ String ProgVar::GetDisplayName() const {
   case T_Object:
     if(!object_type) rval = name + " = NULL object type";
     else rval = name + " = " + ((object_val ? object_val->GetDisplayName() : "NULL"))
-	   + " (" + object_type->name + ")";
+           + " (" + object_type->name + ")";
     break;
   case T_HardEnum:
     if(!hard_enum_type) rval = name + " = NULL hard enum type";
@@ -1114,7 +1114,7 @@ String ProgVar::GetSchemaSig() const {
    .cat((hard_enum_type) ? hard_enum_type->name : "");
   return rval;
 }
-  
+
 taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
   DumpQueryResult rval = DQR_SAVE; // only used for membs we match below
   if (md->name == "int_val")
@@ -1131,7 +1131,7 @@ taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
     rval = (var_type == T_HardEnum) ? DQR_SAVE : DQR_NO_SAVE;
   else if (md->name == "dyn_enum_val")
     rval = (var_type == T_DynEnum) ? DQR_SAVE : DQR_NO_SAVE;
-  else 
+  else
     return inherited::Dump_QuerySaveMember(md);
 
   if(!HasVarFlag(LOCAL_VAR) && !HasVarFlag(SAVE_VAL)) rval = DQR_NO_SAVE; // always save LOCAL_VAR's because they are initializers
@@ -1139,9 +1139,9 @@ taBase::DumpQueryResult ProgVar::Dump_QuerySaveMember(MemberDef* md) {
 }
 
 const String ProgVar::GenCss(bool is_arg) {
-  UpdateAfterEdit();		// update used and other flags
+  UpdateAfterEdit();            // update used and other flags
   return is_arg ? GenCssArg_impl() : GenCssVar_impl() ;
-} 
+}
 
 const String ProgVar::GenListing(bool is_arg, int indent_level) {
   if(is_arg) {
@@ -1265,7 +1265,7 @@ cssEl* ProgVar::NewCssEl() {
     return new cssCPtr_String(&string_val, 0, name);
   case T_Bool:
     return new cssCPtr_bool(&bool_val, 0, name);
-  case T_Object: 
+  case T_Object:
     return new cssSmartRef(&object_val, 0, &TA_taBaseRef, name);
   case T_HardEnum:
     return new cssCPtr_enum(&int_val, 0, name, hard_enum_type);
@@ -1294,7 +1294,7 @@ bool ProgVar::BrowserCollapseAll() {
 }
 
 //////////////////////////
-//   ProgVar_List	//
+//   ProgVar_List       //
 //////////////////////////
 
 void ProgVar_List::Initialize() {
@@ -1396,7 +1396,7 @@ const String ProgVar_List::GenListing(int indent_level) const {
       if (cnt > 0)
         rval += ", ";
     }
-    rval += it->GenListing(is_arg, indent_level); 
+    rval += it->GenListing(is_arg, indent_level);
     ++cnt;
   }
   return rval;
@@ -1407,17 +1407,17 @@ ProgVar* ProgVar_List::FindVarType(ProgVar::VarType vart, TypeDef* td) {
     ProgVar* it = FastEl(i);
     if(it->var_type == vart) {
       if((vart == ProgVar::T_Object) && (td != NULL)) {
-	if(it->object_type == td) {
-	  return it;
-	}
+        if(it->object_type == td) {
+          return it;
+        }
       }
       else if((vart == ProgVar::T_HardEnum) && (td != NULL)) {
-	if(it->hard_enum_type == td) {
-	  return it;
-	}
+        if(it->hard_enum_type == td) {
+          return it;
+        }
       }
       else {
-	return it;
+        return it;
       }
     }
   }
@@ -1426,7 +1426,7 @@ ProgVar* ProgVar_List::FindVarType(ProgVar::VarType vart, TypeDef* td) {
 
 void ProgVar_List::setStale() {
   inherited::setStale();
-  // note: there are no vars just in program groups anymore.. 
+  // note: there are no vars just in program groups anymore..
   // if we are in a program group, dirty all progs
   // note: we have to test if in a prog first, otherwise we'll always get a group
 //   Program* prog = GET_MY_OWNER(Program);
@@ -1456,7 +1456,7 @@ bool ProgVar_List::BrowserCollapseAll() {
 }
 
 //////////////////////////
-//   ProgVarRef_List	//
+//   ProgVarRef_List    //
 //////////////////////////
 
 void ProgVarRef_List::Initialize() {
@@ -1519,7 +1519,7 @@ int ProgVarRef_List::UpdatePointers_NewObj(taBase* lst_own, taBase* ptr_owner, t
 
 
 //////////////////////////
-//   ProgExprBase	//
+//   ProgExprBase       //
 //////////////////////////
 
 cssProgSpace ProgExprBase::parse_prog;
@@ -1531,7 +1531,7 @@ void ProgExprBase::Initialize() {
   parse_ve_pos = 0;
 }
 
-void ProgExprBase::Destroy() {	
+void ProgExprBase::Destroy() {
   CutLinks();
 }
 
@@ -1577,25 +1577,25 @@ void ProgExprBase::UpdateAfterEdit_impl() {
     ProgEl* pel = GET_MY_OWNER(ProgEl);
     if(!taMisc::is_loading && bad_vars.size > 0) {
       String chs_str = "ProgExpr in program element:" + pel->GetDisplayName() +
-	"\n in program: " + prg->name +
-	" Errors in expression -- the following variable names could not be found: ";
+        "\n in program: " + prg->name +
+        " Errors in expression -- the following variable names could not be found: ";
       for(int i=0; i<bad_vars.size; i++) {
-	chs_str += " " + bad_vars[i];
+        chs_str += " " + bad_vars[i];
       }
       int chs = taMisc::Choice(chs_str, "Create as Globals", "Create as Locals", "I will fix Expr");
       if(chs == 0) {
-	for(int i=0; i<bad_vars.size; i++) {
-	  ProgVar* nwvar = (ProgVar*)prg->vars.New(1, NULL, bad_vars[i]);
-	  if(taMisc::gui_active && i==0)
-	    tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
-	}
+        for(int i=0; i<bad_vars.size; i++) {
+          ProgVar* nwvar = (ProgVar*)prg->vars.New(1, NULL, bad_vars[i]);
+          if(taMisc::gui_active && i==0)
+            tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
+        }
       }
       if(chs == 1) {
-	for(int i=0; i<bad_vars.size; i++) {
-	  ProgVar* nwvar = pel->MakeLocalVar(bad_vars[i]);
-	  if(taMisc::gui_active && i==0)
-	    tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
-	}
+        for(int i=0; i<bad_vars.size; i++) {
+          ProgVar* nwvar = pel->MakeLocalVar(bad_vars[i]);
+          if(taMisc::gui_active && i==0)
+            tabMisc::DelayedFunCall_gui(nwvar, "BrowserSelectMe");
+        }
       }
     }
   }
@@ -1619,14 +1619,14 @@ void ProgExprBase::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(prg && pel && bad_vars.size > 0) {
       rval = false;
       if(!quiet)
-	taMisc::CheckError("ProgExpr in program element:", pel->GetDisplayName(),"\n in program:", prg->name," Errors in expression -- the following variable names could not be found:", bad_vars[0],
-			   (bad_vars.size > 1 ? bad_vars[1] : _nilString),
-			   (bad_vars.size > 2 ? bad_vars[2] : _nilString),
-			   (bad_vars.size > 3 ? bad_vars[3] : _nilString)
-			   // (bad_vars.size > 4 ? bad_vars[4] : _nilString),
-			   // (bad_vars.size > 5 ? bad_vars[5] : _nilString),
-			   // (bad_vars.size > 6 ? bad_vars[6] : _nilString)
-			   );
+        taMisc::CheckError("ProgExpr in program element:", pel->GetDisplayName(),"\n in program:", prg->name," Errors in expression -- the following variable names could not be found:", bad_vars[0],
+                           (bad_vars.size > 1 ? bad_vars[1] : _nilString),
+                           (bad_vars.size > 2 ? bad_vars[2] : _nilString),
+                           (bad_vars.size > 3 ? bad_vars[3] : _nilString)
+                           // (bad_vars.size > 4 ? bad_vars[4] : _nilString),
+                           // (bad_vars.size > 5 ? bad_vars[5] : _nilString),
+                           // (bad_vars.size > 6 ? bad_vars[6] : _nilString)
+                           );
     }
   }
 }
@@ -1654,17 +1654,17 @@ void ProgExprBase::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
 }
 
 void ProgExprBase::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
-				    int dcr, void* op1_, void* op2_)
+                                    int dcr, void* op1_, void* op2_)
 {
   // we only update ourself if the schema of a var changed
   if (obj && obj->InheritsFrom(&TA_ProgVar)) {
     ProgVar* pv = (ProgVar*)obj;
-    if (!pv->schemaChanged()) 
+    if (!pv->schemaChanged())
       return;
   }
-  
-  expr = GetFullExpr();		// update our expr to reflect any changes in variables.
-  if(owner)			// usu we are inside something else
+
+  expr = GetFullExpr();         // update our expr to reflect any changes in variables.
+  if(owner)                     // usu we are inside something else
     owner->UpdateAfterEdit();
   else
     UpdateAfterEdit();
@@ -1672,8 +1672,8 @@ void ProgExprBase::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
 
 bool ProgExprBase::SetExpr(const String& ex) {
   expr = ex;
-  UpdateAfterEdit();		// does parse
-  return (bad_vars.size == 0);	// do we have any bad variables??
+  UpdateAfterEdit();            // does parse
+  return (bad_vars.size == 0);  // do we have any bad variables??
 }
 
 String ProgExprBase::GetName() const {
@@ -1689,14 +1689,14 @@ void ProgExprBase::ParseExpr_SkipPath(int& pos) {
   int len = expr.length();
   int c;
   while((pos < len) && (isalnum(c=expr[pos]) || (c=='_') || (c=='.') || (c==':')
-			|| (c=='[') || (c==']')))
+                        || (c=='[') || (c==']')))
     { var_expr.cat((char)c); pos++; }
 }
 
 
 int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_ptr) {
   String vnm = nm;
-  if(vnm == "__tmp") return 0;	// skip
+  if(vnm == "__tmp") return 0;  // skip
 
   ProgExprBase* pe = (ProgExprBase*)udata;
 //   ProgEl* pel = GET_OWNER(pe, ProgEl);
@@ -1713,7 +1713,7 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
   }
   if(vnm == "run_state") {
     cssEl* el = new cssCPtr_enum(&(prog->run_state), 1, "run_state",
-				 TA_Program.sub_types.FindName("RunState"));
+                                 TA_Program.sub_types.FindName("RunState"));
     pe->parse_tmp.Push(el);
     el_ptr.SetDirect(el);
     return el->GetParse();
@@ -1738,7 +1738,7 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
   if(var) {
     if(!pe->vars.FindVar(var, idx)) {
       ProgVarRef* prf = new ProgVarRef;
-      prf->Init(pe);	// we own it
+      prf->Init(pe);    // we own it
       prf->set(var);
       pe->vars.Add(prf);
       pe->var_names.Add(vnm);
@@ -1755,7 +1755,7 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
     pe->parse_ve_pos = parse_prog.src_pos;
 
 //     cerr << "var: " << vnm << " pos: " << pe->parse_ve_pos-pe->parse_ve_off << " add_chunk: " << add_chunk
-// 	 << " vnm_chunk: " << vnm_chunk << endl;
+//       << " vnm_chunk: " << vnm_chunk << endl;
 
     return var->parse_css_el->GetParse();
   }
@@ -1764,40 +1764,40 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
     taBase* ptyp = prog->FindTypeName(vnm);
     if(ptyp) {
       if(ptyp->InheritsFrom(&TA_DynEnumType)) {
-	cssEnumType* etyp = new cssEnumType(ptyp->GetName());
-	pe->parse_tmp.Push(etyp);
-	el_ptr.SetDirect(etyp);
-	return CSS_TYPE;
+        cssEnumType* etyp = new cssEnumType(ptyp->GetName());
+        pe->parse_tmp.Push(etyp);
+        el_ptr.SetDirect(etyp);
+        return CSS_TYPE;
       }
       else if(ptyp->InheritsFrom(&TA_DynEnumItem)) {
-	DynEnumItem* eit = (DynEnumItem*)ptyp;
-	cssEnum* eval = new cssEnum(eit->value, eit->name);
-	pe->parse_tmp.Push(eval);
-	el_ptr.SetDirect(eval);
-	return CSS_VAR;
+        DynEnumItem* eit = (DynEnumItem*)ptyp;
+        cssEnum* eval = new cssEnum(eit->value, eit->name);
+        pe->parse_tmp.Push(eval);
+        el_ptr.SetDirect(eval);
+        return CSS_VAR;
       }
     }
     else {
       Function* fun = prog->functions.FindName(vnm);
       if(fun && fun->name == vnm) { // findname will do crazy inherits thing on types, giving wrong match, so you need to make sure it is actually of the same name
-	cssScriptFun* sfn = new cssScriptFun(vnm);
-	pe->parse_tmp.Push(sfn);
-	sfn->argc = fun->args.size;
-	el_ptr.SetDirect(sfn);
-	return CSS_FUN;
+        cssScriptFun* sfn = new cssScriptFun(vnm);
+        pe->parse_tmp.Push(sfn);
+        sfn->argc = fun->args.size;
+        el_ptr.SetDirect(sfn);
+        return CSS_FUN;
       }
     }
   }
-  return 0;			// not found!
+  return 0;                     // not found!
 }
 
 int ProgExprBase::cssExtParseFun_post(void* udata, const char* nm, cssElPtr& el_ptr) {
   String vnm = nm;
-  if(vnm == "__tmp" || vnm == "this") return 0;	// skip that guy
+  if(vnm == "__tmp" || vnm == "this") return 0; // skip that guy
   ProgExprBase* pe = (ProgExprBase*)udata;
-  pe->bad_vars.AddUnique(vnm);	// this will trigger err msg later..
+  pe->bad_vars.AddUnique(vnm);  // this will trigger err msg later..
 //   cerr << "added bad var: " << vnm << endl;
-  return 0;				// we don't do any cleanup -- return false
+  return 0;                             // we don't do any cleanup -- return false
 }
 
 bool ProgExprBase::ParseExpr() {
@@ -1831,7 +1831,7 @@ bool ProgExprBase::ParseExpr() {
       return true; // just a type name -- good!
     }
     parse_expr = "int __tmp= " + expr + ";";
-    parse_ve_off = 11;		// offset is 11 due to 'int _tmp= '
+    parse_ve_off = 11;          // offset is 11 due to 'int _tmp= '
   }
   parse_ve_pos = parse_ve_off;
   if(expr.empty() || expr == "<no_arg>") return true; // <no_arg> is a special flag..
@@ -1844,7 +1844,7 @@ bool ProgExprBase::ParseExpr() {
   // use this for debugging exprs:
   //  parse_prog.SetDebug(6);
 
-  parse_prog.CompileCode(parse_expr);	// use css to do all the parsing!
+  parse_prog.CompileCode(parse_expr);   // use css to do all the parsing!
 
   for(int i=0;i<vars.size;i++)  {
     ProgVarRef* vrf = vars.FastEl(i);
@@ -1865,7 +1865,7 @@ bool ProgExprBase::ParseExpr() {
 
 //   cerr << "var_expr: " << var_expr << endl;
 
-  return (bad_vars.size == 0);	// do we have any bad variables??
+  return (bad_vars.size == 0);  // do we have any bad variables??
 }
 
 String ProgExprBase::GetFullExpr() const {
@@ -1886,7 +1886,7 @@ String ProgExprBase::GetFullExpr() const {
 // StringFieldLookupFun is in ta_program_qt.cpp
 
 //////////////////////////
-//   ProgExpr		//
+//   ProgExpr           //
 //////////////////////////
 
 bool ProgExpr::StdProgVarFilter(void* base_, void* var_) {
@@ -1896,7 +1896,7 @@ bool ProgExpr::StdProgVarFilter(void* base_, void* var_) {
   ProgVar* var = dynamic_cast<ProgVar*>(static_cast<taBase*>(var_));
   if(!var || !var->HasVarFlag(ProgVar::LOCAL_VAR)) return true; // definitely all globals
   Function* varfun = GET_OWNER(var, Function);
-  if(!varfun) return true;	// not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
+  if(!varfun) return true;      // not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
   Function* basefun = GET_OWNER(base, Function);
   if(basefun != varfun) return false; // different function scope
   return true;
@@ -1906,7 +1906,7 @@ void ProgExpr::Initialize() {
   var_lookup = NULL;
 }
 
-void ProgExpr::Destroy() {	
+void ProgExpr::Destroy() {
   CutLinks();
 }
 
@@ -1944,7 +1944,7 @@ void ProgExpr_List::UpdateProgExpr_NewOwner() {
   }
 }
 //////////////////////////
-//   ProgArg		//
+//   ProgArg            //
 //////////////////////////
 
 void ProgArg::Initialize() {
@@ -1953,7 +1953,7 @@ void ProgArg::Initialize() {
   setUseStale(true); // always requires recompile
 }
 
-void ProgArg::Destroy() {	
+void ProgArg::Destroy() {
   CutLinks();
 }
 
@@ -2039,7 +2039,7 @@ bool ProgArg::UpdateFromVar(const ProgVar& cp) {
     }
   }
   return any_changes;
-} 
+}
 
 bool ProgArg::UpdateFromType(TypeDef* td) {
   bool any_changes = false;
@@ -2055,7 +2055,7 @@ bool ProgArg::UpdateFromType(TypeDef* td) {
     }
   }
   return any_changes;
-} 
+}
 
 String ProgArg::GetDisplayName() const {
   return type + " " + name + "=" + expr.GetFullExpr();
@@ -2081,7 +2081,7 @@ bool ProgArg::BrowserCollapseAll() {
 }
 
 //////////////////////////
-//   ProgArg_List	//
+//   ProgArg_List       //
 //////////////////////////
 
 void ProgArg_List::Initialize() {
@@ -2117,7 +2117,7 @@ const String ProgArg_List::GenCssArgs() {
     //note: we test for violations of rules about def expressions, so
     // ok for us to just break here when we get to the first def
     if (!pa->required && pa->expr.empty()) break;
-    pa->expr.ParseExpr();		// re-parse just to be sure!
+    pa->expr.ParseExpr();               // re-parse just to be sure!
     if (i > 0) rval += ", ";
     rval += pa->expr.GetFullExpr();
   }
@@ -2191,8 +2191,8 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
     else {
       pa = FastEl(i);
       if (i != ti) {
-	MoveIdx(i, ti);
-	any_changes = true;
+        MoveIdx(i, ti);
+        any_changes = true;
       }
     }
     // have to do default for all, since it is not saved
@@ -2209,21 +2209,21 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
           def_val = ot->name + "::" + def_val;
       }
       else if (arg_typ->InheritsFrom(TA_taString) ||
-        ((arg_typ->ptr == 1) && arg_typ->InheritsFrom(&TA_char))) 
+        ((arg_typ->ptr == 1) && arg_typ->InheritsFrom(&TA_char)))
       {
         if(def_val.empty()) def_val = "\"\""; // empty string
       }
       pa->def_val = def_val;
     }
-    else {			// required
+    else {                      // required
       if(pa->arg_type->InheritsFormal(&TA_enum) && pa->expr.expr.empty()) {
-	// pre-fill expr with lookup base for enum type -- makes lookup easier
-	String eprfx = pa->arg_type->GetEnumPrefix();
-	if(eprfx.nonempty()) {
-	  TypeDef* ot = pa->arg_type->GetOwnerType();
-	  if(ot) pa->expr.expr = ot->name + "::";
-	  pa->expr.expr += eprfx;
-	}
+        // pre-fill expr with lookup base for enum type -- makes lookup easier
+        String eprfx = pa->arg_type->GetEnumPrefix();
+        if(eprfx.nonempty()) {
+          TypeDef* ot = pa->arg_type->GetOwnerType();
+          if(ot) pa->expr.expr = ot->name + "::";
+          pa->expr.expr += eprfx;
+        }
       }
     }
   }
@@ -2249,7 +2249,7 @@ bool ProgArg_List::BrowserCollapseAll() {
 }
 
 //////////////////////////
-//  ProgEl		//
+//  ProgEl              //
 //////////////////////////
 
 bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
@@ -2263,7 +2263,7 @@ bool ProgEl::StdProgVarFilter(void* base_, void* var_) {
     return true; // definitely all globals
   Function* varfun = GET_OWNER(var, Function);
   if (!varfun)
-    return true;	// not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
+    return true;        // not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
   Function* basefun = GET_OWNER(base, Function);
   if (basefun != varfun)
     return false; // different function scope
@@ -2358,13 +2358,13 @@ void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
     else if(md->type->InheritsFrom(&TA_ProgramRef)) {
       ProgramRef* pvr = (ProgramRef*)md->GetOff((void*)this);
       if(pvr->ptr()) {
-	Program_Group* mygp = GET_MY_OWNER(Program_Group);
-	Program_Group* otgp = GET_OWNER(old_owner, Program_Group);
-	Program_Group* pvgp = GET_OWNER(pvr->ptr(), Program_Group);
-	if(mygp != otgp && (pvgp == otgp)) { // points to old group and we're in a new one
-	  Program* npg = mygp->FindName(pvr->ptr()->name); // try to find new guy in my group
-	  if(npg) pvr->set(npg);		    // set it!
-	}
+        Program_Group* mygp = GET_MY_OWNER(Program_Group);
+        Program_Group* otgp = GET_OWNER(old_owner, Program_Group);
+        Program_Group* pvgp = GET_OWNER(pvr->ptr(), Program_Group);
+        if(mygp != otgp && (pvgp == otgp)) { // points to old group and we're in a new one
+          Program* npg = mygp->FindName(pvr->ptr()->name); // try to find new guy in my group
+          if(npg) pvr->set(npg);                    // set it!
+        }
       }
     }
   }
@@ -2408,13 +2408,13 @@ void ProgEl::UpdateAfterCopy(const ProgEl& cp) {
     else if(md->type->InheritsFrom(&TA_ProgramRef)) {
       ProgramRef* pvr = (ProgramRef*)md->GetOff((void*)this);
       if(pvr->ptr()) {
-	Program_Group* mygp = GET_MY_OWNER(Program_Group);
-	Program_Group* otgp = GET_OWNER(otprg, Program_Group);
-	Program_Group* pvgp = GET_OWNER(pvr->ptr(), Program_Group);
-	if(mygp != otgp && (pvgp == otgp)) { // points to old group and we're in a new one
-	  Program* npg = mygp->FindName(pvr->ptr()->name); // try to find new guy in my group
-	  if(npg) pvr->set(npg);		    // set it!
-	}
+        Program_Group* mygp = GET_MY_OWNER(Program_Group);
+        Program_Group* otgp = GET_OWNER(otprg, Program_Group);
+        Program_Group* pvgp = GET_OWNER(pvr->ptr(), Program_Group);
+        if(mygp != otgp && (pvgp == otgp)) { // points to old group and we're in a new one
+          Program* npg = mygp->FindName(pvr->ptr()->name); // try to find new guy in my group
+          if(npg) pvr->set(npg);                    // set it!
+        }
       }
     }
   }
@@ -2425,8 +2425,8 @@ void ProgEl::UpdateAfterCopy(const ProgEl& cp) {
 }
 
 void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
-			    const char* d, const char* e, const char* f,
-			    const char* g, const char* h) const {
+                            const char* d, const char* e, const char* f,
+                            const char* g, const char* h) const {
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if(prg) prognm = prg->name;
@@ -2437,10 +2437,10 @@ void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
 
 bool ProgEl::CheckEqualsError(String& condition, bool quiet, bool& rval) {
   if(CheckError((condition.freq('=') == 1) && !(condition.contains(">=")
-						|| condition.contains("<=")
-						|| condition.contains("!=")),
-		quiet, rval,
-		"condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically")) {
+                                                || condition.contains("<=")
+                                                || condition.contains("!=")),
+                quiet, rval,
+                "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically")) {
     condition.gsub("=", "==");
     return true;
   }
@@ -2452,7 +2452,7 @@ bool ProgEl::CheckProgVarRef(ProgVarRef& pvr, bool quiet, bool& rval) {
   Program* myprg = GET_MY_OWNER(Program);
   Program* otprg = GET_OWNER(pvr.ptr(), Program);
   if(CheckError(myprg != otprg, quiet, rval,
-		"program variable:",pvr.ptr()->GetName(),"not in same program as me -- must be fixed!")) {
+                "program variable:",pvr.ptr()->GetName(),"not in same program as me -- must be fixed!")) {
     return true;
   }
   return false;
@@ -2467,7 +2467,7 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
   if(!my_prg || !ot_prg || my_prg->HasBaseFlag(taBase::COPYING)) return false; // not updated
   Function* ot_fun = GET_OWNER(cur_ptr, Function);
   Function* my_fun = GET_MY_OWNER(Function);
-  if(ot_fun && my_fun) {	       // both in functions
+  if(ot_fun && my_fun) {               // both in functions
     if(my_fun == ot_fun) return false; // nothing to do
     String cur_path = cur_ptr->GetPath(NULL, ot_fun);
     MemberDef* md;
@@ -2479,29 +2479,29 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     if(!pv_own_tab || !pv_own_tab->InheritsFrom(&TA_ProgVar_List)) {
       ProgVars* pvars = (ProgVars*)my_fun->fun_code.FindType(&TA_ProgVars);
       if(!pvars) {
-	taMisc::Warning("Warning: could not find owner for program variable:", 
-			var_nm, "in program:", my_prg->name, "on path:",
-			cur_own_path, "setting var to null!");
-	pvr.set(NULL);
-	return false;
+        taMisc::Warning("Warning: could not find owner for program variable:",
+                        var_nm, "in program:", my_prg->name, "on path:",
+                        cur_own_path, "setting var to null!");
+        pvr.set(NULL);
+        return false;
       }
       pv_own_tab = &(pvars->local_vars);
     }
     ProgVar_List* pv_own = (ProgVar_List*)pv_own_tab;
     pv = pv_own->FindName(var_nm);
-    if(pv) { pvr.set(pv); return true; }	// got it!
+    if(pv) { pvr.set(pv); return true; }        // got it!
     pv = my_fun->FindVarName(var_nm); // do more global search
-    if(pv) { pvr.set(pv); return true; }	// got it!
+    if(pv) { pvr.set(pv); return true; }        // got it!
     // now we need to add a clone of cur_ptr to our local list and use that!!
     pv = (ProgVar*)cur_ptr->Clone();
     pv_own->Add(pv);
-    pv->CopyFrom(cur_ptr);	// somehow clone is not copying stuff -- try this
-    pv->name = var_nm;		// just to be sure
+    pv->CopyFrom(cur_ptr);      // somehow clone is not copying stuff -- try this
+    pv->name = var_nm;          // just to be sure
     pv->DataChanged(DCR_ITEM_UPDATED);
     pvr.set(pv); // done!!
-    taMisc::Info("Note: copied program variable:", 
-		 var_nm, "from function:", ot_fun->name, "to function:",
-		 my_fun->name, "because copied program element refers to it");
+    taMisc::Info("Note: copied program variable:",
+                 var_nm, "from function:", ot_fun->name, "to function:",
+                 my_fun->name, "because copied program element refers to it");
     taProject* myproj = GET_OWNER(my_prg, taProject);
     taProject* otproj = GET_OWNER(ot_prg, taProject);
     // update possible var pointers from other project!
@@ -2510,7 +2510,7 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     }
   }
   else {
-    if(my_prg == ot_prg) return false;	      // same program, no problem
+    if(my_prg == ot_prg) return false;        // same program, no problem
     String cur_path = cur_ptr->GetPath(NULL, ot_prg);
     MemberDef* md;
     ProgVar* pv = (ProgVar*)my_prg->FindFromPath(cur_path, md);
@@ -2519,40 +2519,40 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     String cur_own_path = cur_ptr->owner->GetPath(NULL, ot_prg);
     taBase* pv_own_tab = my_prg->FindFromPath(cur_own_path, md);
     if(!pv_own_tab || !pv_own_tab->InheritsFrom(&TA_ProgVar_List)) {
-      taMisc::Warning("Warning: could not find owner for program variable:", 
-		      var_nm, "in program:", my_prg->name, "on path:",
-		      cur_own_path, "setting var to null!");
+      taMisc::Warning("Warning: could not find owner for program variable:",
+                      var_nm, "in program:", my_prg->name, "on path:",
+                      cur_own_path, "setting var to null!");
       pvr.set(NULL);
       return false;
     }
     ProgVar_List* pv_own = (ProgVar_List*)pv_own_tab;
     pv = pv_own->FindName(var_nm);
-    if(pv) { pvr.set(pv); return true; }	// got it!
+    if(pv) { pvr.set(pv); return true; }        // got it!
     pv = my_prg->FindVarName(var_nm); // do more global search
-    if(pv) { pvr.set(pv); return true; }	// got it!
+    if(pv) { pvr.set(pv); return true; }        // got it!
     // now we need to add a clone of cur_ptr to our local list and use that!!
     if(cur_ptr->objs_ptr && (bool)cur_ptr->object_val) {
       // copy the obj -- if copying var, by defn need to copy obj -- auto makes corresp var!
       taBase* varobj = cur_ptr->object_val.ptr();
       taBase* nwobj = varobj->Clone();
-      nwobj->CopyFrom(varobj);	// should not be nec..
+      nwobj->CopyFrom(varobj);  // should not be nec..
       nwobj->SetName(varobj->GetName()); // copy name in this case
       my_prg->objs.Add(nwobj);
-      taMisc::Info("Note: copied program object:", 
-		   varobj->GetName(), "from program:", ot_prg->name, "to program:",
-		   my_prg->name, "because copied program element refers to it");
+      taMisc::Info("Note: copied program object:",
+                   varobj->GetName(), "from program:", ot_prg->name, "to program:",
+                   my_prg->name, "because copied program element refers to it");
       pv = my_prg->FindVarName(var_nm); // get new var that was just created!
-      if(pv) { pvr.set(pv); return true; }	// got it!
+      if(pv) { pvr.set(pv); return true; }      // got it!
     }
     pv = (ProgVar*)cur_ptr->Clone();
     pv_own->Add(pv);
-    pv->CopyFrom(cur_ptr);	// somehow clone is not copying stuff -- try this
-    pv->name = var_nm;		// just to be sure
+    pv->CopyFrom(cur_ptr);      // somehow clone is not copying stuff -- try this
+    pv->name = var_nm;          // just to be sure
     pvr.set(pv); // done!!
     pv->DataChanged(DCR_ITEM_UPDATED);
-    taMisc::Info("Note: copied program variable:", 
-		 var_nm, "from program:", ot_prg->name, "to program:",
-		 my_prg->name, "because copied program element refers to it");
+    taMisc::Info("Note: copied program variable:",
+                 var_nm, "from program:", ot_prg->name, "to program:",
+                 my_prg->name, "because copied program element refers to it");
     taProject* myproj = GET_OWNER(my_prg, taProject);
     taProject* otproj = GET_OWNER(ot_prg, taProject);
     // update possible var pointers from other project!
@@ -2585,9 +2585,9 @@ void ProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void ProgEl::SmartRef_DataChanged(taSmartRef* ref, taBase* obj,
-				    int dcr, void* op1_, void* op2_) {
+                                    int dcr, void* op1_, void* op2_) {
 //NO!!!!! Does a UAE if content of ref changes; otherwise, don't need this
-//  UpdateAfterEdit();		// just do this for all guys -- keeps display updated
+//  UpdateAfterEdit();          // just do this for all guys -- keeps display updated
 }
 
 void ProgEl::GenCss(Program* prog) {
@@ -2624,7 +2624,7 @@ void ProgEl::SetEnabled(bool value) {
 String ProgEl::GetStateDecoKey() const {
   String rval = inherited::GetStateDecoKey();
   if(rval.empty()) {
-    if(HasProgFlag(ERROR))
+    if(HasProgFlag(PROG_ERROR))
       return "ProgElError";
     if(HasProgFlag(WARNING))
       return "ProgElWarning";
@@ -2683,7 +2683,7 @@ void ProgEl::ToggleVerboseFlag() {
 void ProgEl::ToggleBreakpoint() {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return;
-  prg->ToggleBreakpoint(this);	// this manages gui update
+  prg->ToggleBreakpoint(this);  // this manages gui update
 }
 
 void ProgEl::PreGen(int& item_id) {
@@ -2705,12 +2705,12 @@ ProgVars* ProgEl::FindLocalVarList() const {
     ProgEl* pe = pelst->FastEl(i);
     if(myidx >= 0) {
       if(pe->InheritsFrom(&TA_ProgVars)) {
-	return (ProgVars*)pe;
+        return (ProgVars*)pe;
       }
     }
     else {
       if(pe == this) {
-	myidx = i;
+        myidx = i;
       }
     }
   }
@@ -2747,12 +2747,12 @@ ProgVar* ProgEl::FindVarNameInScope(const String& var_nm, bool else_make) const 
     if(chs == 0) {
       rval = (ProgVar*)prg->vars.New(1, NULL, var_nm);
       if(taMisc::gui_active)
-	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+        tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
     }
     if(chs == 1) {
       rval = ((ProgEl*)this)->MakeLocalVar(var_nm);
       if(taMisc::gui_active)
-	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+        tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
     }
   }
   return rval;
@@ -2817,7 +2817,7 @@ bool ProgEl::CvtFmCode(const String& code) {
 
 
 //////////////////////////
-//   ProgEl_List	//
+//   ProgEl_List        //
 //////////////////////////
 
 void ProgEl_List::Initialize() {
@@ -2842,7 +2842,7 @@ void ProgEl_List::UpdateAfterEdit_impl() {
 void ProgEl_List::GenCss(Program* prog) {
   for (int i = 0; i < size; ++i) {
     ProgEl* el = FastEl(i);
-    el->GenCss(prog); 
+    el->GenCss(prog);
   }
 }
 
@@ -2850,7 +2850,7 @@ const String ProgEl_List::GenListing(int indent_level) {
   String rval;
   for (int i = 0; i < size; ++i) {
     ProgEl* el = FastEl(i);
-    rval += el->GenListing(indent_level); 
+    rval += el->GenListing(indent_level);
   }
   return rval;
 }
@@ -2907,7 +2907,7 @@ bool ProgEl_List::BrowserCollapseAll() {
 }
 
 //////////////////////////
-//  ProgCode		//
+//  ProgCode            //
 //////////////////////////
 
 void ProgCode::Initialize() {
@@ -2920,7 +2920,7 @@ void ProgCode::SetProgExprFlags() {
 }
 
 void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td, const String& code_str,
-				ProgEl* scope_el) {
+                                ProgEl* scope_el) {
   ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
   if(obj) {
     if(obj->CanCvtFmCode(code_str, scope_el)) {
@@ -2944,24 +2944,24 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
     for(int i=candidates.size-1; i>= 0; i--) {
       ProgEl* pel = candidates[i];
       if(pel->InheritsFrom(&TA_AssignExpr)) // assign only matches if it is the only one..
-	candidates.RemoveIdx(i);
+        candidates.RemoveIdx(i);
     }
     cvt = candidates[0];
     if(candidates.size > 1) {
       int chs = taMisc::Choice("Multiple program elements match code string:\n" + code_str
-			       + "\nPlease choose correct one.",
-			       "Cancel",
-		       candidates[0]->GetToolbarName(),
-		       candidates[1]->GetToolbarName(),
-		       (candidates.size > 2 ? candidates[2]->GetToolbarName() : _nilString),
-		       (candidates.size > 3 ? candidates[3]->GetToolbarName() : _nilString),
-		       (candidates.size > 4 ? candidates[4]->GetToolbarName() : _nilString)
-			       );
+                               + "\nPlease choose correct one.",
+                               "Cancel",
+                       candidates[0]->GetToolbarName(),
+                       candidates[1]->GetToolbarName(),
+                       (candidates.size > 2 ? candidates[2]->GetToolbarName() : _nilString),
+                       (candidates.size > 3 ? candidates[3]->GetToolbarName() : _nilString),
+                       (candidates.size > 4 ? candidates[4]->GetToolbarName() : _nilString)
+                               );
       if(chs == 0) return NULL;
       cvt = candidates[chs-1];
     }
   }
-  
+
   ProgEl* rval = (ProgEl*)cvt->MakeToken();
   return rval;
 }
@@ -2973,22 +2973,22 @@ void ProgCode::UpdateAfterEdit_impl() {
   if(code_str.nonempty()) {
     ProgEl* cvt = CvtCodeToProgEl(code_str, this);
     if(cvt) {
-      cvt->desc = desc;		// transfer description
+      cvt->desc = desc;         // transfer description
       ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
       if(own) {
-	tabMisc::DelayedFunCall_gui(own, "BrowserSelectMe"); // do this first so later one registers as diff..
-	int myidx = own->FindEl(this);
-	own->Insert(cvt, myidx); // insert at my position
-	bool ok = cvt->CvtFmCode(code_str); // convert once in position -- needs access to scope..
-	if(ok) {
-	  this->CloseLater();	   // kill me later..
-	  tabMisc::DelayedFunCall_gui(cvt, "BrowserExpandAll");
-	  tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
-	}
-	else {
-	  own->RemoveIdx(myidx); // remove it!
-	  tabMisc::DelayedFunCall_gui(this, "BrowserSelectMe");
-	}
+        tabMisc::DelayedFunCall_gui(own, "BrowserSelectMe"); // do this first so later one registers as diff..
+        int myidx = own->FindEl(this);
+        own->Insert(cvt, myidx); // insert at my position
+        bool ok = cvt->CvtFmCode(code_str); // convert once in position -- needs access to scope..
+        if(ok) {
+          this->CloseLater();      // kill me later..
+          tabMisc::DelayedFunCall_gui(cvt, "BrowserExpandAll");
+          tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
+        }
+        else {
+          own->RemoveIdx(myidx); // remove it!
+          tabMisc::DelayedFunCall_gui(this, "BrowserSelectMe");
+        }
       }
     }
   }
@@ -3001,7 +3001,7 @@ String ProgCode::GetDisplayName() const {
 
 
 //////////////////////////
-//  Loop		//
+//  Loop                //
 //////////////////////////
 
 void Loop::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -3025,7 +3025,7 @@ ProgVar* Loop::FindVarName(const String& var_nm) const {
 }
 
 //////////////////////////
-//    StaticMethodCall	//
+//    StaticMethodCall  //
 //////////////////////////
 
 void StaticMethodCall::Initialize() {
@@ -3041,7 +3041,7 @@ void StaticMethodCall::UpdateAfterEdit_impl() {
   if (method) { // needed to set required etc.
     if(meth_args.UpdateFromMethod(method)) { // changed
       if(taMisc::gui_active) {
-	tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
+        tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
       }
     }
   }
@@ -3062,11 +3062,11 @@ void StaticMethodCall::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, "//WARNING: StaticMethodCall not generated here -- object or method not specified");
     return;
   }
-  
+
   if(IsVerbose()) {
     String argstmp = meth_args.GenCssArgs();
     prog->AddLine(this, String("taMisc::Info(\"calling static method ") +
-		  object_type->name + "::" + method->name + argstmp.quote_esc() + "\");");
+                  object_type->name + "::" + method->name + argstmp.quote_esc() + "\");");
   }
 
   String rval;
@@ -3083,7 +3083,7 @@ void StaticMethodCall::GenCssBody_impl(Program* prog) {
 String StaticMethodCall::GetDisplayName() const {
   if (!method)
     return "(method not selected)";
-  
+
   String rval;
   if(result_var)
     rval += result_var->name + "=";
@@ -3110,7 +3110,7 @@ bool StaticMethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const 
     mthobj = trim(lhs.after('='));
   String objnm = mthobj.before("::");
   TypeDef* td = taMisc::types.FindName(objnm);
-  if(!td) return false;	// todo: maybe trigger an err here??
+  if(!td) return false; // todo: maybe trigger an err here??
   // don't compete with subclasses
   if(objnm != "taMisc" && !objnm.contains("taMath") && objnm != "Random")
     return true;
@@ -3130,11 +3130,11 @@ bool StaticMethodCall::CvtFmCode(const String& code) {
   object_type = taMisc::types.FindName(objnm);
   if(rval.nonempty())
     result_var = FindVarNameInScope(rval, true); // true = give option to make one
-  UpdateAfterEdit_impl();			   // update based on obj
+  UpdateAfterEdit_impl();                          // update based on obj
   MethodDef* md = object_type->methods.FindName(methnm);
   if(md) {
     method = md;
-    UpdateAfterEdit_impl();			   // update based on obj
+    UpdateAfterEdit_impl();                        // update based on obj
   }
   // now tackle the args
   String args = trim(code.after('('));
@@ -3149,7 +3149,7 @@ bool StaticMethodCall::CvtFmCode(const String& code) {
     }
     else {
       arg = args;
-      args = "";		// all done
+      args = "";                // all done
     }
     pa->expr.SetExpr(arg);
     if(args.empty()) break;
@@ -3158,7 +3158,7 @@ bool StaticMethodCall::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//   ProgramCallBase	//
+//   ProgramCallBase    //
 //////////////////////////
 
 void ProgramCallBase::Initialize() {
@@ -3166,7 +3166,7 @@ void ProgramCallBase::Initialize() {
 
 void ProgramCallBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateArgs();		// always do this..  nondestructive and sometimes stuff changes anyway
+  UpdateArgs();         // always do this..  nondestructive and sometimes stuff changes anyway
   Program* prg = program();
   if(prg && !HasProgFlag(OFF)) {
     if(TestError(prg->init_code.IsParentOf(this), "UAE", "Cannot have a program call within init_code -- init_code should generally be very simple and robust code as it is not checked in advance of running (to prevent init-dependent Catch-22 scenarios) -- turning this call OFF"))
@@ -3180,8 +3180,8 @@ void ProgramCallBase::CheckChildConfig_impl(bool quiet, bool& rval) {
   prog_args.CheckConfig(quiet, rval);
   Program* prg = program();
   if(prg && !HasProgFlag(OFF)) {
-    if(CheckError(prg->init_code.IsParentOf(this), quiet, rval, 
-		  "Cannot have a program call within init_code -- init_code should generally be very simple and robust code as it is not checked in advance of running (to prevent init-dependent Catch-22 scenarios) -- turning this call OFF")) {
+    if(CheckError(prg->init_code.IsParentOf(this), quiet, rval,
+                  "Cannot have a program call within init_code -- init_code should generally be very simple and robust code as it is not checked in advance of running (to prevent init-dependent Catch-22 scenarios) -- turning this call OFF")) {
       SetProgFlag(OFF);
     }
   }
@@ -3200,9 +3200,9 @@ void ProgramCallBase::GenCssArgSet_impl(Program* prog, const String trg_var_nm) 
     ProgArg* ths_arg = prog_args.FastEl(i);
     nm = ths_arg->name;
     ProgVar* prg_var = trg->args.FindName(nm);
-    ths_arg->expr.ParseExpr();		// re-parse just to be sure!
+    ths_arg->expr.ParseExpr();          // re-parse just to be sure!
     String argval = ths_arg->expr.GetFullExpr();
-    if (!prg_var || argval.empty() || argval == "<no_arg>") continue; 
+    if (!prg_var || argval.empty() || argval == "<no_arg>") continue;
     set_one = true;
     prog->AddLine(this, trg_var_nm + "->SetVar(\"" + prg_var->name + "\", " + argval + ");");
   }
@@ -3221,8 +3221,8 @@ void ProgramCallBase::UpdateArgs() {
     if(!pa->expr.expr.empty()) continue; // skip if already set
     ProgVar* arg_chk = prg->args.FindName(pa->name);
     ProgVar* var_chk = prg->vars.FindName(pa->name);
-    if(!arg_chk && !var_chk) continue; 
-    pa->expr.SetExpr(pa->name);	// we found var of same name; set as arg value
+    if(!arg_chk && !var_chk) continue;
+    pa->expr.SetExpr(pa->name); // we found var of same name; set as arg value
     pa->DataChanged(DCR_ITEM_UPDATED);
   }
   if(any_changes && taMisc::gui_active) {
@@ -3231,7 +3231,7 @@ void ProgramCallBase::UpdateArgs() {
 }
 
 //////////////////////////
-//   ProgramCall	//
+//   ProgramCall        //
 //////////////////////////
 
 void ProgramCall::Initialize() {
@@ -3243,7 +3243,7 @@ void ProgramCall::UpdateAfterEdit_impl() {
     if((bool)target) {
       String targ_ld_i = targ_ld_init.between("*", "*");
       if(targ_ld_init.empty() || !target.ptr()->GetName().contains(targ_ld_i)) {
-	targ_ld_init = String("*") + target.ptr()->GetName() + "*"; // make it wild!
+        targ_ld_init = String("*") + target.ptr()->GetName() + "*"; // make it wild!
       }
     }
   }
@@ -3261,14 +3261,14 @@ bool ProgramCall::CallsProgram(Program* prg) {
 Program* ProgramCall::GetTarget() {
   if(!target) {
     taMisc::CheckError("Program target is NULL in ProgramCall:",
-		       desc, "in program:", program()->name);
+                       desc, "in program:", program()->name);
   }
   // NOTE: we are assuming that it has been compiled from the Init process
   // calling here causes many recompiles because of the dirty bit propagation
   // during running
 //   if(!target->CompileScript()) {
 //     taMisc::CheckError("Program target script did not compile correctly in ProgramCall:",
-// 		       desc, "in program:", program()->name);
+//                     desc, "in program:", program()->name);
 //   }
   return target.ptr();
 }
@@ -3323,14 +3323,14 @@ void ProgramCall::GenCallInit(Program* prog) {
     // check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
     ProgVar* arg_chk = prog->args.FindName(argval);
     ProgVar* var_chk = prog->vars.FindName(argval);
-    if(!arg_chk && !var_chk) continue; 
+    if(!arg_chk && !var_chk) continue;
     prog->AddLine(this, String("target->SetVar(\"") + prg_var->name + "\", " + argval + ");");
   }
-  prog->AddLine(this, "ret_val = target->CallInit(this);"); 
+  prog->AddLine(this, "ret_val = target->CallInit(this);");
 }
 
 void ProgramCall::GenCssPre_impl(Program* prog) {
-  prog->AddLine(this, String("{ // call program: ") + (target ? target->name : "<no target>")); 
+  prog->AddLine(this, String("{ // call program: ") + (target ? target->name : "<no target>"));
   prog->IncIndent();
 }
 
@@ -3362,9 +3362,9 @@ String ProgramCall::GetDisplayName() const {
     if(prog_args.size > 0) {
       rval += "(";
       for(int i=0;i<prog_args.size;i++) {
-	ProgArg* pa = prog_args.FastEl(i);
-	if(i > 0) rval += ", ";
-	rval += pa->expr.expr;   // GetDisplayName();
+        ProgArg* pa = prog_args.FastEl(i);
+        if(i > 0) rval += ", ";
+        rval += pa->expr.expr;   // GetDisplayName();
       }
       rval += ")";
     }
@@ -3378,7 +3378,7 @@ bool ProgramCall::LoadInitTarget() {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return false;
 
-  target.set(NULL);		// default is always to start off empty
+  target.set(NULL);             // default is always to start off empty
   bool got = false;
   if(targ_ld_init.contains(',')) {
     String nm = targ_ld_init;
@@ -3388,8 +3388,8 @@ bool ProgramCall::LoadInitTarget() {
       while(nm.firstchar() == ' ') nm = nm.after(' ');
       got = LoadInitTarget_impl(snm);
       if(got) break;
-      if(!nm.contains(','))	// get last guy
-	got = LoadInitTarget_impl(nm);
+      if(!nm.contains(','))     // get last guy
+        got = LoadInitTarget_impl(nm);
     }
   }
   else {
@@ -3397,8 +3397,8 @@ bool ProgramCall::LoadInitTarget() {
   }
   if(!got) {
     taMisc::Warning("ProgramCall in program:", prg->name,
-		    "could not find load init target program to call named:",
-		    targ_ld_init, "target is set to NULL and must be fixed manually!");
+                    "could not find load init target program to call named:",
+                    targ_ld_init, "target is set to NULL and must be fixed manually!");
   }
   return got;
 }
@@ -3446,7 +3446,7 @@ bool ProgramCall::CvtFmCode(const String& code) {
   Program* prg = proj->programs.FindLeafName(funm);
   if(!prg) return false;
   target = prg;
-  UpdateAfterEdit_impl();			   // update based on targ
+  UpdateAfterEdit_impl();                          // update based on targ
   // now tackle the args
   String args = trim(code.after('('));
   if(args.endsWith(')')) args = trim(args.before(')',-1));
@@ -3460,7 +3460,7 @@ bool ProgramCall::CvtFmCode(const String& code) {
     }
     else {
       arg = args;
-      args = "";		// all done
+      args = "";                // all done
     }
     pa->expr.SetExpr(arg);
     if(args.empty()) break;
@@ -3470,7 +3470,7 @@ bool ProgramCall::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//   ProgramCallVar	//
+//   ProgramCallVar     //
 //////////////////////////
 
 void ProgramCallVar::Initialize() {
@@ -3485,7 +3485,7 @@ void ProgramCallVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   CheckError(!prog_group, quiet, rval, "prog_group is NULL");
   CheckError(!prog_name_var, quiet, rval, "prog_name_var is NULL");
   CheckError(prog_name_var->var_type != ProgVar::T_String, quiet, rval,
-	     "prog_name_var is not a String type -- must be");
+             "prog_name_var is not a String type -- must be");
   // todo: check all args!
 }
 
@@ -3497,7 +3497,7 @@ bool ProgramCallVar::CallsProgram(Program* prg) {
 Program_Group* ProgramCallVar::GetProgramGp() {
   if(!prog_group) {
     taMisc::CheckError("Program_Group prog_group is NULL in ProgramCallVar:",
-		       desc, "in program:", program()->name);
+                       desc, "in program:", program()->name);
     return NULL;
   }
   return prog_group;
@@ -3506,20 +3506,20 @@ Program_Group* ProgramCallVar::GetProgramGp() {
 Program* ProgramCallVar::GetTarget() {
   if(!prog_group) {
     taMisc::CheckError("Program_Group prog_group is NULL in ProgramCallVar:",
-		       desc, "in program:", program()->name);
+                       desc, "in program:", program()->name);
     return NULL;
   }
   if(!prog_name_var) {
     taMisc::CheckError("prog_name_var is NULL in ProgramCallVar:",
-		       desc, "in program:", program()->name);
+                       desc, "in program:", program()->name);
     return NULL;
   }
   String pnm = prog_name_var->string_val;
   Program* rval = prog_group->FindLeafName(pnm);
   if(!rval) {
     taMisc::CheckError("Program named:", pnm, "not found in Program_Group:",
-		       prog_group->name, "path:", prog_group->GetPathNames(),
-		       "in ProgramCallVar in program:", program()->name);
+                       prog_group->name, "path:", prog_group->GetPathNames(),
+                       "in ProgramCallVar in program:", program()->name);
     return NULL;
   }
   return rval;
@@ -3530,7 +3530,7 @@ Program* ProgramCallVar::GetTarget_Compile() {
     return NULL;
   }
   if(prog_group->leaves == 0) return NULL;
-  return prog_group->Leaf(0);	// just return first guy
+  return prog_group->Leaf(0);   // just return first guy
 }
 
 void ProgramCallVar::PreGenMe_impl(int item_id) {
@@ -3544,8 +3544,8 @@ void ProgramCallVar::PreGenMe_impl(int item_id) {
     prog->sub_prog_calls.LinkUnique(this);
     if(trg) {
       for(int j=0;j<prog_group->leaves;j++) {
-	Program* strg = prog_group->Leaf(j);
-	prog->sub_progs_dir.LinkUnique(strg); // add direct sub-progs
+        Program* strg = prog_group->Leaf(j);
+        prog->sub_progs_dir.LinkUnique(strg); // add direct sub-progs
       }
     }
   }
@@ -3597,10 +3597,10 @@ void ProgramCallVar::GenCallInit(Program* prog) {
     // check to see if the value of this guy is an arg or var of this guy -- if so, propagate it
     ProgVar* arg_chk = prog->args.FindName(argval);
     ProgVar* var_chk = prog->vars.FindName(argval);
-    if(!arg_chk && !var_chk) continue; 
+    if(!arg_chk && !var_chk) continue;
     prog->AddLine(this, String("prg->SetVar(\"") + prg_var->name + "\", " + argval + ");");
   }
-  prog->AddLine(this, "ret_val = prg->CallInit(this);"); 
+  prog->AddLine(this, "ret_val = prg->CallInit(this);");
   prog->DecIndent();
   prog->AddLine(this, "}");
   prog->DecIndent();
@@ -3609,7 +3609,7 @@ void ProgramCallVar::GenCallInit(Program* prog) {
 
 void ProgramCallVar::GenCssPre_impl(Program* prog) {
   prog->AddLine(this, String("{ // call program from var (name) in group: ")
-		+ (prog_group ? prog_group->name : "<no prog_group>"));
+                + (prog_group ? prog_group->name : "<no prog_group>"));
   prog->IncIndent();
 }
 
@@ -3645,9 +3645,9 @@ String ProgramCallVar::GetDisplayName() const {
     if(prog_args.size > 0) {
       rval += "(";
       for(int i=0;i<prog_args.size;i++) {
-	ProgArg* pa = prog_args.FastEl(i);
-	if(i > 0) rval += ", ";
-	rval += pa->expr.expr;   // GetDisplayName();
+        ProgArg* pa = prog_args.FastEl(i);
+        if(i > 0) rval += ", ";
+        rval += pa->expr.expr;   // GetDisplayName();
       }
       rval += ")";
     }
@@ -3658,7 +3658,7 @@ String ProgramCallVar::GetDisplayName() const {
 }
 
 //////////////////////////
-//   Function_List	//
+//   Function_List      //
 //////////////////////////
 
 void Function_List::Initialize() {
@@ -3677,7 +3677,7 @@ void Function_List::Copy_(const Function_List& cp) {
 void Function_List::GenCss(Program* prog) {
   for (int i = 0; i < size; ++i) {
     Function* el = FastEl(i);
-    el->GenCss(prog); 
+    el->GenCss(prog);
   }
 }
 
@@ -3685,7 +3685,7 @@ const String Function_List::GenListing(int indent_level) {
   String rval;
   for (int i = 0; i < size; ++i) {
     Function* el = FastEl(i);
-    rval += el->GenListing(indent_level); 
+    rval += el->GenListing(indent_level);
   }
   return rval;
 }
@@ -3743,7 +3743,7 @@ bool Function_List::BrowserCollapseAll() {
 
 
 //////////////////////////
-//  Function		//
+//  Function            //
 //////////////////////////
 
 void Function::Initialize() {
@@ -3779,7 +3779,7 @@ void Function::UpdateAfterCopy(const ProgEl& cp) {
   Program* myprg = GET_MY_OWNER(Program);
   Program* otprg = (Program*)cp.GetOwner(&TA_Program);
   if(myprg && otprg && myprg == otprg && !myprg->HasBaseFlag(taBase::COPYING)) {
-    // if within the same program, we need to update the *function* pointers 
+    // if within the same program, we need to update the *function* pointers
     UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
   }
 }
@@ -3788,7 +3788,7 @@ void Function::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(name.empty(), quiet, rval, "name is empty -- functions must be named");
   if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
-		"Name:",name,"is forbidden -- choose another"))
+                "Name:",name,"is forbidden -- choose another"))
     name = "My" + name;
   Function_List* flo = GET_MY_OWNER(Function_List);
   CheckError(!flo, quiet, rval, "Function must only be in .functions -- cannot be in .prog_code or .init_code -- this is the DEFINITION of the function, not calling the function (which is FunctionCall)");
@@ -3841,17 +3841,17 @@ ProgVar* Function::FindVarName(const String& var_nm) const {
 void Function::UpdateCallerArgs() {
   Program* prog = program();
   if(!prog) return;
-  
+
   taBase_PtrList fc_items;
   prog->Search("FunctionCall", fc_items, NULL,
-	       false, // contains
-	       true, // case_sensitive
-	       false, // obj_name
-	       true,   // obj_type
-	       false,  // obj_desc
-	       false,  // obj_val
-	       false,  // mbr_name
-	       false);  // type_desc
+               false, // contains
+               true, // case_sensitive
+               false, // obj_name
+               true,   // obj_type
+               false,  // obj_desc
+               false,  // obj_val
+               false,  // mbr_name
+               false);  // type_desc
 
   for(int i=0;i<fc_items.size; i++) {
     taBase* it = fc_items[i];
@@ -3861,11 +3861,11 @@ void Function::UpdateCallerArgs() {
       fc->UpdateArgs();
     }
   }
-  prog->GuiFindFromMe(name);	// find all refs to me
+  prog->GuiFindFromMe(name);    // find all refs to me
 }
 
 //////////////////////////
-//   FunctionCall	//
+//   FunctionCall       //
 //////////////////////////
 
 void FunctionCall::Initialize() {
@@ -3873,7 +3873,7 @@ void FunctionCall::Initialize() {
 
 void FunctionCall::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateArgs();		// always do this.. nondestructive and sometimes stuff changes anyway
+  UpdateArgs();         // always do this.. nondestructive and sometimes stuff changes anyway
 }
 
 void FunctionCall::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -3883,7 +3883,7 @@ void FunctionCall::CheckThisConfig_impl(bool quiet, bool& rval) {
     Program* myprg = GET_MY_OWNER(Program);
     Program* otprg = GET_OWNER(fun.ptr(), Program);
     CheckError(myprg != otprg, quiet, rval,
-	       "function call to:",fun.ptr()->GetName(),"not in same program as me -- must be fixed!");
+               "function call to:",fun.ptr()->GetName(),"not in same program as me -- must be fixed!");
   }
 }
 
@@ -3898,7 +3898,7 @@ void FunctionCall::GenCssBody_impl(Program* prog) {
   if(IsVerbose()) {
     String argstmp = fun_args.GenCssArgs();
     prog->AddLine(this, String("taMisc::Info(\"calling function ") +
-		  fun->name + argstmp.quote_esc() + "\");");
+                  fun->name + argstmp.quote_esc() + "\");");
   }
 
   String rval;
@@ -3909,7 +3909,7 @@ void FunctionCall::GenCssBody_impl(Program* prog) {
   for (int i = 0; i < fun_args.size; ++i) {
     ProgArg* ths_arg = fun_args.FastEl(i);
     if(i > 0) rval += ", ";
-    ths_arg->expr.ParseExpr();		// re-parse just to be sure!
+    ths_arg->expr.ParseExpr();          // re-parse just to be sure!
     rval += ths_arg->expr.GetFullExpr();
   }
   rval += ");";
@@ -3928,7 +3928,7 @@ String FunctionCall::GetDisplayName() const {
       rval += "(";
       for(int i=0;i<fun_args.size;i++) {
         ProgArg* pa = fun_args.FastEl(i);
-	if(i > 0) rval += ", ";
+        if(i > 0) rval += ", ";
         rval += pa->expr.expr;  // GetDisplayName();
       }
       rval += ")";
@@ -3968,7 +3968,7 @@ bool FunctionCall::CvtFmCode(const String& code) {
   Function* fn = prog->functions.FindName(funm);
   if(!fn) return false;
   fun = fn;
-  UpdateAfterEdit_impl();			   // update based on fun
+  UpdateAfterEdit_impl();                          // update based on fun
   // now tackle the args
   String args = trim(code.after('('));
   if(args.endsWith(')')) args = trim(args.before(')',-1));
@@ -3982,7 +3982,7 @@ bool FunctionCall::CvtFmCode(const String& code) {
     }
     else {
       arg = args;
-      args = "";		// all done
+      args = "";                // all done
     }
     pa->expr.SetExpr(arg);
     if(args.empty()) break;
@@ -3991,7 +3991,7 @@ bool FunctionCall::CvtFmCode(const String& code) {
 }
 
 ///////////////////////////////////////////////////////////////
-//  	ProgObjList
+//      ProgObjList
 
 
 DataTable* ProgObjList::NewDataTable(int n_tables) {
@@ -4008,48 +4008,48 @@ void ProgObjList::GetVarsForObjs() {
     ProgVar* var = prog->vars.FindName(nm);
     if(var) {
       if((var->var_type != ProgVar::T_Object) || (var->object_val != obj)) {
-	taMisc::Error("Program error: variable named:", nm,
-		      "exists, but does not refer to object in objs list -- rename either to avoid conflict");
+        taMisc::Error("Program error: variable named:", nm,
+                      "exists, but does not refer to object in objs list -- rename either to avoid conflict");
       }
       else {
-	var->objs_ptr = true;	// make sure
-	var->object_type = obj->GetTypeDef();
+        var->objs_ptr = true;   // make sure
+        var->object_type = obj->GetTypeDef();
         var->DataChanged(DCR_ITEM_UPDATED);
       }
     }
     else {
       bool found_it = false;
       for(int j=0;j<prog->vars.size; j++) {
-	ProgVar* tv = prog->vars[j];
-	if((tv->var_type == ProgVar::T_Object) && (tv->object_val.ptr() == obj)) {
-	  found_it = true;
-	  tv->name = nm;	// update the name
-	  tv->objs_ptr = true;	// make sure
-	  tv->object_type = obj->GetTypeDef();
-	  tv->UpdateAfterEdit(); // need UAE to update schema sig to cascade to progvar
-	  //	  tv->DataChanged(DCR_ITEM_UPDATED);
-	  break;
-	}
+        ProgVar* tv = prog->vars[j];
+        if((tv->var_type == ProgVar::T_Object) && (tv->object_val.ptr() == obj)) {
+          found_it = true;
+          tv->name = nm;        // update the name
+          tv->objs_ptr = true;  // make sure
+          tv->object_type = obj->GetTypeDef();
+          tv->UpdateAfterEdit(); // need UAE to update schema sig to cascade to progvar
+          //      tv->DataChanged(DCR_ITEM_UPDATED);
+          break;
+        }
       }
       if(!found_it) {
-	var = (ProgVar*)prog->vars.New(1, &TA_ProgVar);
-	var->name = nm;
-	var->var_type = ProgVar::T_Object;
-	var->object_val = obj;
-	var->objs_ptr = true;
-	var->object_type = obj->GetTypeDef();
-	var->ClearVarFlag(ProgVar::CTRL_PANEL); // don't show in ctrl panel by default
+        var = (ProgVar*)prog->vars.New(1, &TA_ProgVar);
+        var->name = nm;
+        var->var_type = ProgVar::T_Object;
+        var->object_val = obj;
+        var->objs_ptr = true;
+        var->object_type = obj->GetTypeDef();
+        var->ClearVarFlag(ProgVar::CTRL_PANEL); // don't show in ctrl panel by default
         var->DataChanged(DCR_ITEM_UPDATED);
       }
     }
   }
-  // now cleanup any orphaned 
+  // now cleanup any orphaned
   for(int i = prog->vars.size-1; i >= 0; --i) {
     ProgVar* var = prog->vars[i];
     if(!var->objs_ptr) continue;
     taBase* obj = FindName(var->name);
     if(obj == NULL)
-      prog->vars.RemoveIdx(i);		// get rid of it
+      prog->vars.RemoveIdx(i);          // get rid of it
   }
 }
 
@@ -4085,7 +4085,7 @@ void* ProgObjList::El_Own_(void* it_) {
 
 
 //////////////////////////
-//  Program		//
+//  Program             //
 //////////////////////////
 
 ProgLib* Program::prog_lib = NULL;
@@ -4105,7 +4105,7 @@ void Program::Initialize() {
   objs.SetBaseType(&TA_taNBase);
   ret_val = 0;
   sub_progs_updtd = false;
-  m_stale = true; 
+  m_stale = true;
   prog_gp = NULL;
   m_checked = false;
   step_n = 1;
@@ -4113,7 +4113,7 @@ void Program::Initialize() {
     prog_lib = &Program_Group::prog_lib;
 }
 
-void Program::Destroy()	{ 
+void Program::Destroy() {
   CutLinks();
 }
 
@@ -4132,7 +4132,7 @@ void Program::InitLinks() {
   taBase::Own(sub_progs_step, this);
   taBase::Own(step_prog, this);
 
-  taBase::Own(load_code, this);	// todo: obsolete, remove
+  taBase::Own(load_code, this); // todo: obsolete, remove
   init_code.el_typ = &TA_ProgCode;  // make sure this is default
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
 
@@ -4142,7 +4142,7 @@ void Program::InitLinks() {
 }
 
 void Program::CutLinks() {
-  if(script) {			// clear first, before trashing anything!
+  if(script) {                  // clear first, before trashing anything!
     ExitShellScript();
     script->ClearAll();
     script->prog_vars.Reset();
@@ -4166,7 +4166,7 @@ void Program::CutLinks() {
 }
 
 void Program::Reset() {
-  if(script) {			// clear first, before trashing anything!
+  if(script) {                  // clear first, before trashing anything!
     script->ClearAll();
     script->prog_vars.Reset();
   }
@@ -4184,7 +4184,7 @@ void Program::Reset() {
 }
 
 void Program::Copy_(const Program& cp) {
-  if(script) {			// clear first, before trashing anything!
+  if(script) {                  // clear first, before trashing anything!
     script->ClearAll();
     script->prog_vars.Reset();
   }
@@ -4222,8 +4222,8 @@ void Program::UpdateAfterEdit_impl() {
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
 
   if(HasProgFlag(LOCKED)) SetBaseFlag(BF_GUI_READ_ONLY);
-  else			  ClearBaseFlag(BF_GUI_READ_ONLY);
-  
+  else                    ClearBaseFlag(BF_GUI_READ_ONLY);
+
   //TODO: the following *do* affect generated script, so we should probably call
   // setDirty(true) if not running, and these changed:
   // name, (more TBD...)
@@ -4269,39 +4269,39 @@ void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 int Program::Call(Program* caller) {
-  run_state = RUN;		// just a local update
+  run_state = RUN;              // just a local update
   int rval = Cont_impl();
   if(stop_req) {
-    script->Stop();		// stop us
-    caller->script->Stop();	// stop caller!
+    script->Stop();             // stop us
+    caller->script->Stop();     // stop caller!
     caller->script->Prog()->Frame()->pc = 0;
-    run_state = STOP;		// we are done
+    run_state = STOP;           // we are done
     // NOTE: this backs up to restart the entire call to fun -- THIS DEPENDS ON THE CODE
     // that generates the call!!!!!  ALWAYS MUST BE IN A SUB-BLOCK of code..
   }
   else {
-    script->Restart();		// restart script at beginning if run again	
-    run_state = DONE;		// we are done
+    script->Restart();          // restart script at beginning if run again
+    run_state = DONE;           // we are done
   }
   return rval;
-} 
+}
 
 int Program::CallInit(Program* caller) {
   run_state = INIT;    // this is redundant if called from an existing INIT but otherwise needed
   Run_impl();
-  CheckConfig(false);	// check after running!  see below
-  script->Restart(); 	// for init, always restart script at beginning if run again	
+  CheckConfig(false);   // check after running!  see below
+  script->Restart();    // for init, always restart script at beginning if run again
   if(!taMisc::check_ok)
     run_state = NOT_INIT;
   else
     run_state = DONE;
   return ret_val;
-} 
+}
 
 void Program::Init() {
 //   cur_step_prog = NULL;  // if a program calls Init() directly, this will prevent stepping
   // it is not clear if we really need to clear this setting here
-  ClearStopReq();		// NOTE: newly added 4/18/09 -- check for breakage..
+  ClearStopReq();               // NOTE: newly added 4/18/09 -- check for breakage..
   taProject* proj = GET_MY_OWNER(taProject);
   if(proj && proj->file_name.nonempty()) {
     QFileInfo fi(proj->file_name); // set to current working dir on init
@@ -4311,9 +4311,9 @@ void Program::Init() {
   SetRunState(INIT);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
   // first run the Init code, THEN do the check.  this prevents a catch-22
-  // with Init code that is designed to configure things so there won't be 
-  // config errors!!  It exposes init code to the possibility of 
-  // running unchecked code, so we need to make sure all progel's have 
+  // with Init code that is designed to configure things so there won't be
+  // config errors!!  It exposes init code to the possibility of
+  // running unchecked code, so we need to make sure all progel's have
   // an extra compile-time check and don't just crash (fail quietly -- err will showup later)
   taMisc::CheckConfigStart(false); // CallInit will do CheckConfig..
   if(!CompileScript(true)) {
@@ -4340,7 +4340,7 @@ void Program::Init() {
   CheckConfig(false);
   taMisc::CheckConfigEnd(); // no flag, because any nested fails will have set it
   if (ret_val != RV_OK) ShowRunError();
-  script->Restart();		// restart script at beginning if run again
+  script->Restart();            // restart script at beginning if run again
 
   if(!taMisc::check_ok)
     SetRunState(NOT_INIT);
@@ -4348,16 +4348,16 @@ void Program::Init() {
     SetRunState(DONE);
   stop_req = false;  // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
-} 
+}
 
 void Program::InitScriptObj_impl() {
   AbstractScriptBase::InitScriptObj_impl(); // default one turns out to be fine..
-  script->own_program = this;		    // enables error callbacks
+  script->own_program = this;               // enables error callbacks
 }
 
 bool Program::PreCompileScript_impl() {
   // as noted in abstractscriptbase: you must call this first to reset the script
-  // because if you mess with the existing variables in prog_vars prior to 
+  // because if you mess with the existing variables in prog_vars prior to
   // resetting the script, it will get all messed up.  vars on this space are referred
   // to by a pointer to the space and an index off of it, which is important for autos
   // but actually not for these guys (but they are/were that way anyway).
@@ -4368,7 +4368,7 @@ bool Program::PreCompileScript_impl() {
 }
 
 bool Program::AlreadyRunning() {
-  if(run_state == RUN || run_state == INIT || global_run_state == RUN || 
+  if(run_state == RUN || run_state == INIT || global_run_state == RUN ||
      global_run_state == INIT) {
     taMisc::Info("A Program is already running -- cannot run until it is done");
     return true;
@@ -4415,17 +4415,17 @@ void Program::Run_Gui() {
 
 void Program::Run() {
   if(run_state == NOT_INIT) {
-    Init();			// auto-press Init button!
+    Init();                     // auto-press Init button!
   }
   if(run_state == STOP && stop_reason == SR_ERROR) {
-    Init();			// auto-reinit after errors!
+    Init();                     // auto-reinit after errors!
   }
   if(TestError(run_state != DONE && run_state != STOP, "Run",
-	       "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
+               "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Run")) {
     return;
   }
   ClearStopReq();
-  SetAllBreakpoints();		// reinstate all active breakpoints
+  SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = false;
   cur_step_prog = NULL;
   taMisc::Busy();
@@ -4454,7 +4454,7 @@ void Program::Run() {
   }
   stop_req = false;  // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
-} 
+}
 
 void Program::ShowRunError() {
   //note: if there was a ConfigCheck or runtime error, the user already got a dialog
@@ -4468,16 +4468,16 @@ void Program::ShowRunError() {
 }
 
 void Program::Step_Gui(Program* step_prg) {
-  if(AlreadyRunning()) return;	// already running!
+  if(AlreadyRunning()) return;  // already running!
   Step(step_prg);
 }
 
 void Program::Step(Program* step_prg) {
   if(run_state == NOT_INIT) {
-    Init();			// auto-press Init button!
+    Init();                     // auto-press Init button!
   }
   if(TestError(run_state != DONE && run_state != STOP, "Step",
-	       "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
+               "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
     return;
   }
   ClearStopReq();
@@ -4488,16 +4488,16 @@ void Program::Step(Program* step_prg) {
     cur_step_prog = step_prog;
 
   if(TestError(!cur_step_prog || !cur_step_prog->owner, "Step",
-	       "step program selected to step by is either NULL or unowned and likely was deleted -- not Stepping")) {
+               "step program selected to step by is either NULL or unowned and likely was deleted -- not Stepping")) {
     return;
   }
 
-  if(step_prog != step_prg)	// save this as new default..
+  if(step_prog != step_prg)     // save this as new default..
     step_prog = step_prg;
 
   cur_step_n = cur_step_prog->step_n; // get from target, not us..
   cur_step_cnt = 0;
-    
+
   taMisc::Busy();
   SetRunState(RUN);
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
@@ -4527,7 +4527,7 @@ void Program::Step(Program* step_prg) {
     script->Restart();
     SetRunState(DONE);
   }
-  stop_req = false;		    // this does not do full clear, so that information can be queried
+  stop_req = false;                 // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
@@ -4545,7 +4545,7 @@ void Program::ClearStopReq() {
 
 void Program::Stop() {
   if(TestError(run_state != RUN, "Stop",
-	       "Program is not running")) {
+               "Program is not running")) {
     return;
   }
   SetStopReq(SR_USER_STOP, name);
@@ -4584,8 +4584,8 @@ bool Program::StopCheck() {
   if(IsStepProg()) {
     cur_step_cnt++;
     if(cur_step_cnt >= cur_step_n) {
-      SetStopReq(SR_STEP_POINT, name);	// stop everyone else
-      Stop_impl();			// time for us to stop
+      SetStopReq(SR_STEP_POINT, name);  // stop everyone else
+      Stop_impl();                      // time for us to stop
       return true;
     }
   }
@@ -4594,10 +4594,10 @@ bool Program::StopCheck() {
 
 bool Program::RunFunction(const String& fun_name) {
   if(run_state == NOT_INIT) {
-    Init();			// auto-press Init button!
+    Init();                     // auto-press Init button!
   }
   if(run_state == STOP && stop_reason == SR_ERROR) {
-    Init();			// auto-reinit after errors!
+    Init();                     // auto-reinit after errors!
   }
   // todo: not clear how much more control infrastructure we need..
   cssEl* rval = script->RunFun(fun_name); // no args right now
@@ -4614,7 +4614,7 @@ void Program::CallFun(const String& fun_name) {
 }
 
 void Program::Compile() {
-  CompileScript(true);		// always force if command entered
+  CompileScript(true);          // always force if command entered
 }
 
 void Program::CmdShell() {
@@ -4636,7 +4636,7 @@ void Program::UpdateCallerArgs() {
       pc->UpdateArgs();
     }
   }
-  proj->programs.GuiFindFromMe(name);	// find all refs to me in programs
+  proj->programs.GuiFindFromMe(name);   // find all refs to me in programs
 }
 
 void Program::CssError(int src_ln_no, bool running, const String& err_msg) {
@@ -4669,7 +4669,7 @@ void Program::taWarning(int src_ln_no, bool running, const String& err_msg) {
 
 void Program::ScriptCompiled() {
   AbstractScriptBase::ScriptCompiled();
-  script_list.ClearAllErrors();	// start fresh -- check if this doesn't work for actual errs..
+  script_list.ClearAllErrors(); // start fresh -- check if this doesn't work for actual errs..
   script_compiled = true;
   ret_val = 0;
   m_stale = false;
@@ -4679,11 +4679,11 @@ void Program::ScriptCompiled() {
 void Program::setStale() {
   //note: we don't propagate setStale
   //note: 2nd recursive call of this during itself doesn't do anything
-  if(run_state == RUN || run_state == INIT) return;	     // change is likely self-generated during running, don't do it!
+  if(run_state == RUN || run_state == INIT) return;          // change is likely self-generated during running, don't do it!
   bool changed = false;
   if (script_compiled) {
     // make sure this always reflects stale status -- is used as check for compiling..
-    script_compiled = false; 
+    script_compiled = false;
     changed = true;
   }
   if (!m_stale) {  // prevent recursion and spurious inherited calls!!!!
@@ -4723,7 +4723,7 @@ bool Program::SetVarFmArg(const String& arg_nm, const String& var_nm, bool quiet
   if(arg_str.empty()) return false; // no arg, no action
   bool rval = SetVar(var_nm, arg_str);
   if(TestError(!rval, "SetVarFmArg", "variable:",var_nm,
-	       "not found in program:", name)) return false;
+               "not found in program:", name)) return false;
   if(!quiet)
     taMisc::Info("Set", var_nm, "in program:", name, "to:", arg_str);
   return true;
@@ -4750,13 +4750,13 @@ Program* Program::FindProgramName(const String& prog_nm, bool warn_not_found) co
     if(!rval) {
       taProject* proj = GET_MY_OWNER(taProject);
       if(proj) {
-	rval = proj->programs.FindLeafName(prog_nm);
+        rval = proj->programs.FindLeafName(prog_nm);
       }
     }
   }
   if(warn_not_found && !rval) {
     taMisc::Warning("program", name, "is looking for a program named:",
-		    prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
+                    prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
   }
   return rval;
 }
@@ -4769,13 +4769,13 @@ Program* Program::FindProgramNameContains(const String& prog_nm, bool warn_not_f
     if(!rval) {
       taProject* proj = GET_MY_OWNER(taProject);
       if(proj) {
-	rval = proj->programs.FindLeafNameContains(prog_nm);
+        rval = proj->programs.FindLeafNameContains(prog_nm);
       }
     }
   }
   if(warn_not_found && !rval) {
     taMisc::Warning("program", name, "is looking for a program containing:",
-		    prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
+                    prog_nm, "but it was not found! Probably there will be more specific errors when you try to Init the program");
   }
   return rval;
 }
@@ -4792,7 +4792,7 @@ ProgramCallBase* Program::FindSubProgTarget(Program* prg) {
 
 bool Program::AddLine(taBase* prog_el, const String& code, const String& desc) {
   String desc_oneline = desc;
-  desc_oneline.gsub('\n', ' ');	// no multiline in desc comments
+  desc_oneline.gsub('\n', ' '); // no multiline in desc comments
   String rmdr = code;
   if(rmdr.contains('\n')) {
     String curln;
@@ -4849,7 +4849,7 @@ void Program::ClearAllBreakpoints() {
 void Program::SetAllBreakpoints() {
   if(!script) return;
   int nbp = 0;
-  script->DelAllBreaks();	// start with clean slate
+  script->DelAllBreaks();       // start with clean slate
   ProgEl* last_pel_set = NULL;
   for(int i=script_list.size-1; i>=0; i--) {
     ProgLine* pl = script_list.FastEl(i);
@@ -4858,9 +4858,9 @@ void Program::SetAllBreakpoints() {
       pel = (ProgEl*)pl->prog_el.ptr();
     if(pl->HasPLineFlag(ProgLine::BREAKPOINT) ||
        (pel && pel != last_pel_set && pel->HasProgFlag(ProgEl::BREAKPOINT))) {
-      last_pel_set = pel;		      // don't repeat
+      last_pel_set = pel;                     // don't repeat
       pl->SetPLineFlag(ProgLine::BREAKPOINT); // make sure
-      script->SetBreak(i+1);	// set it -- css line no =  +1
+      script->SetBreak(i+1);    // set it -- css line no =  +1
 //       taMisc::Info("setting breakpoint to line:", String(i+1), pl->code);
       nbp++;
     }
@@ -4878,21 +4878,21 @@ bool Program::ToggleBreakpoint(ProgEl* pel) {
   ProgLine* pl = script_list.FastEl(idx);
   if(pel->HasProgFlag(ProgEl::BREAKPOINT)) {
     pl->ClearBreakpoint();
-    script->DelBreak(idx+1);	// css line no +1
+    script->DelBreak(idx+1);    // css line no +1
   }
   else {
     pl->SetBreakpoint();
-    CmdShell();			// should be using cmd shell if setting breakpoints
-    script->SetBreak(idx+1);	// css line no +1
+    CmdShell();                 // should be using cmd shell if setting breakpoints
+    script->SetBreak(idx+1);    // css line no +1
 //     taMisc::Info("setting breakpoint to line:", String(idx+1), pl->code);
-    script->ShowBreaks();		// debugging help output
+    script->ShowBreaks();               // debugging help output
   }
   return true;
 }
 
 void Program::GetSubProgsAll(int depth) {
   if(TestError((depth >= 100), "GetSubProgsAll",
-	       "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
+               "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
     return;
   sub_progs_updtd = true;
   sub_progs_all.Reset();
@@ -4903,7 +4903,7 @@ void Program::GetSubProgsAll(int depth) {
   int init_sz = sub_progs_all.size;
   for(int i=0;i<init_sz; i++) {
     Program* sp = sub_progs_all[i];
-    sp->GetSubProgsAll(depth+1);	// no loops please!!!
+    sp->GetSubProgsAll(depth+1);        // no loops please!!!
     // now get our sub-progs sub-progs..
     for(int j=0;j<sp->sub_progs_all.size;j++) {
       Program* ssp = sp->sub_progs_all[j];
@@ -4923,7 +4923,7 @@ void Program::GetSubProgsStep() {
   for(int i=0;i<sub_progs_all.size; i++) {
     Program* sp = (Program*)sub_progs_all.FastEl(i);
     if(!sp->HasProgFlag(Program::NO_STOP_STEP))
-      sub_progs_step.Link(sp);	// guaranteed to be unique already
+      sub_progs_step.Link(sp);  // guaranteed to be unique already
   }
 }
 
@@ -4943,7 +4943,7 @@ const String Program::scriptString() {
   functions.PreGen(item_id);
   init_code.PreGen(item_id);
   prog_code.PreGen(item_id);
-    
+
   // now, build the new script code
   AddLine(this, String("// ") + GetName());
   AddLine(this, "");
@@ -4968,7 +4968,7 @@ const String Program::scriptString() {
 
   // Functions
   functions.GenCss(this);
-    
+
   // __Init() routine, for our own els, and calls to subprog Init()
   AddLine(this, "void __Init() {");
   IncIndent();
@@ -4981,8 +4981,8 @@ const String Program::scriptString() {
     for (int i = 0; i < sub_prog_calls.size; ++i) {
       ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
       if(sp->WillGenCompileScript(this)) {
-	AddLine(sp, "if(ret_val != Program::RV_OK) return; // checks previous");
-	sp->GenCompileScript(this);
+        AddLine(sp, "if(ret_val != Program::RV_OK) return; // checks previous");
+        sp->GenCompileScript(this);
       }
     }
     DecIndent();
@@ -5011,7 +5011,7 @@ const String Program::scriptString() {
   DecIndent();
   AddLine(this, "}");
   AddLine(this, "");
-    
+
   AddLine(this, "void __Prog() {");
   IncIndent();
   AddLine(this, "// init_from vars");
@@ -5072,12 +5072,12 @@ const String Program::ProgramListing() {
     m_listingCache += "\n// functions: functions defined for this program\n";
     m_listingCache += functions.GenListing(0);
   }
-    
+
   if(init_code.size > 0) {
     m_listingCache += "\n// init_code: code to initialize the program\n";
     m_listingCache += init_code.GenListing(0); // ok if empty, returns nothing
   }
-    
+
   if(prog_code.size > 0) {
     m_listingCache += "\n// prog_code: main code to run program\n";
     m_listingCache += prog_code.GenListing(0);
@@ -5088,12 +5088,12 @@ const String Program::ProgramListing() {
 void  Program::UpdateProgVars() {
   // note: this assumes that script has been ClearAll'd
   script->prog_vars.Reset(); // removes/unref-deletes
-  
+
   // add the ones in the object -- note, we use *pointers* to these
   // these are already installed by the InstallThis routine!!
 //   cssEl* el = NULL;
 //   el = new cssCPtr_enum(&run_state, 1, "run_state",
-// 			TA_Program.sub_types.FindName("RunState"));
+//                      TA_Program.sub_types.FindName("RunState"));
 //   script->prog_vars.Push(el);
 //   el = new cssCPtr_int(&ret_val, 1, "ret_val");
 //   script->prog_vars.Push(el);
@@ -5105,12 +5105,12 @@ void  Program::UpdateProgVars() {
     ProgVar* sv = args.FastEl(i);
     cssEl* el = sv->NewCssEl();
     script->prog_vars.Push(el);
-  } 
+  }
   for (int i = 0; i < vars.size; ++i) {
     ProgVar* sv = vars.FastEl(i);
     cssEl* el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
-  } 
+  }
 }
 
 String Program::GetProgLibPath(ProgLibs library) {
@@ -5129,7 +5129,7 @@ String Program::GetProgLibPath(ProgLibs library) {
     QFileInfo qfi(path);
     if(!qfi.isDir()) {
       QDir qd;
-      qd.mkpath(path);		// attempt to make it..
+      qd.mkpath(path);          // attempt to make it..
       taMisc::Warning("Note: did mkdir for program library directory:", path);
     }
   }
@@ -5142,7 +5142,7 @@ void Program::SaveToProgLib(ProgLibs library) {
   QFileInfo qfi(fname);
   if(qfi.isFile()) {
     int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
-			     "Ok", "Cancel");
+                             "Ok", "Cancel");
     if(chs == 1) return;
   }
   SaveAs(fname);
@@ -5152,7 +5152,7 @@ void Program::SaveToProgLib(ProgLibs library) {
 Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
   if(fun_name != "LoadFromProgLib") return inherited::GetGuiArgVal(fun_name, arg_idx);
   if(!prog_lib) return  _nilVariant;
-  //  return _nilVariant;			     // return nil anyway!
+  //  return _nilVariant;                            // return nil anyway!
   ProgLibEl* pel = prog_lib->FindName(name); // find our name
   return Variant(pel);
 }
@@ -5167,7 +5167,7 @@ int Program::GetSpecialState() const {
 void Program::LoadFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type is null")) return;
   if(TestError(prog_type->is_group, "LoadFromProgLib",
-	       "cannot load a program group file into a single program!")) return;
+               "cannot load a program group file into a single program!")) return;
 //   Reset();
   prog_type->LoadProgram(this);
 }
@@ -5186,7 +5186,7 @@ void Program::RunLoadInitCode() {
   prog_code.PreGen(item_id);
   for (int i = 0; i < sub_prog_calls.size; ++i) {
     ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
-    sp->LoadInitTarget();	// just call this directly!
+    sp->LoadInitTarget();       // just call this directly!
   }
 }
 
@@ -5282,7 +5282,7 @@ bool Program::IsForbiddenName(const String& chk_nm, bool warn) {
   if((forbidden_names.FindEl(chk_nm) < 0) && !(bool)taMisc::types.FindName(chk_nm)) return false;
   if(!warn) return true;
   taMisc::Error("Program::IsForbiddenName -- Name:", chk_nm,
-		"is not allowed as it clashes with other hard-coded variable names -- please choose a different one!");
+                "is not allowed as it clashes with other hard-coded variable names -- please choose a different one!");
   return true;
 }
 
@@ -5306,13 +5306,13 @@ Program* Program::MakeTemplate() {
   //note: prog args go into a ProgramCall etc., so we just add the tmpl to the objects
   {ProgArg* o = new ProgArg; o->SetName("NewProgArg"); prog->objs.Add(o);}
   //note: put in .init since that will get searched first
-  
+
   MakeTemplate_fmtype(prog, &TA_ProgEl);
   return prog;
 }
-  
+
 bool Program::SelectCtrlFunsForEdit(SelectEdit* editor, const String& extra_label,
-				    const String& sub_gp_nm) {
+                                    const String& sub_gp_nm) {
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
     if(TestError(!proj, "SelectFunForEdit", "cannot find project")) return false;
@@ -5348,7 +5348,7 @@ bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
 #endif
 
 //////////////////////////
-//  Program_Group	//
+//  Program_Group       //
 //////////////////////////
 
 void Program_Group::Initialize() {
@@ -5378,7 +5378,7 @@ void Program_Group::SaveToProgLib(Program::ProgLibs library) {
   QFileInfo qfi(fname);
   if(qfi.isFile()) {
     int chs = taMisc::Choice("Program library file: " + fname + " already exists: Overwrite?",
-			     "Ok", "Cancel");
+                             "Ok", "Cancel");
     if(chs == 1) return;
   }
   SaveAs(fname);
@@ -5412,8 +5412,8 @@ Variant Program_Group::GetGuiArgVal(const String& fun_name, int arg_idx) {
 
 void Program_Group::LoadFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type to load is null")) return;
-  if(TestError(!prog_type->is_group, "LoadFromProgLib", 
-	       "cannot load a single program file into a program group!")) return;
+  if(TestError(!prog_type->is_group, "LoadFromProgLib",
+               "cannot load a single program file into a program group!")) return;
 //   taLeafItr itr;
 //   Program* prog;
 //   FOR_ITR_EL(Program, prog, this->, itr) {
@@ -5439,7 +5439,7 @@ bool Program_Group::RunStartupProgs() {
 }
 
 //////////////////////////
-//  Program_List	//
+//  Program_List        //
 //////////////////////////
 
 void Program_List::Initialize() {
@@ -5448,7 +5448,7 @@ void Program_List::Initialize() {
 
 
 //////////////////
-//  ProgLib	//
+//  ProgLib     //
 //////////////////
 
 void ProgLibEl::Initialize() {
@@ -5456,7 +5456,7 @@ void ProgLibEl::Initialize() {
 }
 
 void ProgLibEl::Destroy() {
-  is_group = false;		// just for a breakpoint..
+  is_group = false;             // just for a breakpoint..
 }
 
 taBase* ProgLibEl::NewProgram(Program_Group* new_owner) {
@@ -5490,7 +5490,7 @@ bool ProgLibEl::LoadProgram(Program* prog) {
     return false;
   }
   prog->Load(path);
-  prog->UpdateAfterEdit();	// make sure
+  prog->UpdateAfterEdit();      // make sure
   prog->RunLoadInitCode();
   return true;
 }
@@ -5508,7 +5508,7 @@ bool ProgLibEl::LoadProgramGroup(Program_Group* prog_gp) {
   prog_gp->UpdateAfterEdit();
   for(int i=0;i<prog_gp->leaves;i++) {
     Program* prog = prog_gp->Leaf(i);
-    prog->UpdateAfterEdit();	// make sure
+    prog->UpdateAfterEdit();    // make sure
     prog->RunLoadInitCode();
   }
   return true;
@@ -5567,12 +5567,12 @@ void ProgLibEl::ParseTags() {
   String tmp = tags;
   while(tmp.contains(',')) {
     String tag = tmp.before(',');
-    tag.gsub(" ","");		// nuke spaces
+    tag.gsub(" ","");           // nuke spaces
     tags_array.Add(tag);
     tmp = tmp.after(',');
   }
   if(!tmp.empty()) {
-    tmp.gsub(" ","");		// nuke spaces
+    tmp.gsub(" ","");           // nuke spaces
     tags_array.Add(tmp);
   }
 }
@@ -5585,7 +5585,7 @@ void ProgLib::Initialize() {
 }
 
 void ProgLib::FindPrograms() {
-  Reset();			// clear existing
+  Reset();                      // clear existing
   for(int pi=0; pi< taMisc::prog_lib_paths.size; pi++) {
     NameVar pathvar = taMisc::prog_lib_paths[pi];
     String path = pathvar.value.toString();
@@ -5598,9 +5598,9 @@ void ProgLib::FindPrograms() {
       ProgLibEl* pe = new ProgLibEl;
       pe->lib_name = lib_name;
       if(pe->ParseProgFile(fl, path))
-	Add(pe);
+        Add(pe);
       else
-	delete pe;
+        delete pe;
     }
   }
   not_init = false;
