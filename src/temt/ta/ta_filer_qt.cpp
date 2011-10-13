@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -18,10 +18,12 @@
 
 #include "ta_filer.h"
 
+#include <memory> // std::auto_ptr
+
 #include "ta_base.h"
 #include "ta_project.h"
 
-# include "ta_qt.h"
+#include "ta_qt.h"
 
 #include <QApplication>
 #include <QBoxLayout>
@@ -34,24 +36,23 @@
 #include <QUrl>
 
 //////////////////////////////////
-//  taiFileDialogExtension	//
+//  taiFileDialogExtension      //
 //////////////////////////////////
 
-class taiFileDialogExtension: public QWidget {
+class taiFileDialogExtension : public QWidget {
 INHERITED(QWidget)
 public:
   QVBoxLayout* lay1; // outer
-  QHBoxLayout* lay2; // for check boxes 
-  QCheckBox* 	cbCompress;
+  QHBoxLayout* lay2; // for check boxes
+  QCheckBox*   cbCompress;
   taiFileDialogExtension(QWidget* parent = NULL);
-  
-private:
-  void	init();
 
+private:
+  void init();
 };
 
 taiFileDialogExtension::taiFileDialogExtension(QWidget* parent)
-:inherited(parent)
+  : inherited(parent)
 {
   init();
 }
@@ -61,7 +62,7 @@ void taiFileDialogExtension::init() {
   QFrame* sep = new QFrame(this);
   sep->setFrameStyle(QFrame::HLine | QFrame::Sunken);
   lay1->addWidget(sep);
-  
+
   lay2 = new QHBoxLayout(); // def margin=2
   lay1->addLayout(lay2);
   cbCompress = new QCheckBox("compress", this);
@@ -69,22 +70,13 @@ void taiFileDialogExtension::init() {
   lay2->addStretch();
 }
 
-
 //////////////////////////////////
-//  taFiler			//
+//  taFiler                     //
 //////////////////////////////////
 
 bool taFiler::GetFileName(FileOperation filerOperation) {
-  // note: no static FileDialog!!! causes many issues: 
-  // * compression extension thing not always working
-  // * filters can only be added in ctor
-  // * some use-cases cause no Save dialog if prev is Open
-  // DO NOT MAKE STATIC!!!!
-  QFileDialog* fd = NULL;
-  taiFileDialogExtension* fde = NULL;
-
   String tfname;
-  if(!taMisc::gui_active) {
+  if (!taMisc::gui_active) {
     if (m_fname.empty()) {
       cout << "Please provide file name: ";
       cin >> tfname;
@@ -92,9 +84,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     }
     return true;
   }
-  bool result = false;
-  int rval = 0;
-  String caption;
+
   // get the path history in qt form
   // if there is a filename path, use that
   String eff_dir = m_dir;
@@ -103,150 +93,156 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
     //    tabMisc::root->recent_paths.ToQStringList(hist_paths);
     // note: filer seems to use reverse ordering: top in menu is last on this list:
     String_Array& rpth = tabMisc::root->recent_paths;
-    for (int i = rpth.size-1; i >= 0; i--) {
+    for (int i = rpth.size; i-- > 0; ) {
       hist_paths.append(rpth.FastEl(i).toQString());
     }
     // if no path specified, start at most recent, and if none, we'll just use none
-    if ((eff_dir.empty() || eff_dir == "."))
+    if (eff_dir.empty() || eff_dir == ".") {
       eff_dir = rpth.SafeEl(0);
+    }
   }
+
   // if still none, use user's home
-  if ((eff_dir.empty() || eff_dir == "."))
+  if (eff_dir.empty() || eff_dir == ".") {
     eff_dir = taMisc::user_dir;
+  }
    // gack! only way to use semi-sep filters is in constructor...
   // note: actual caption set later
 
   QStringList filter_list;
   String filtext = FilterText(true, &filter_list);
 
-  if(!fd) {
-    fd = new QFileDialog(NULL, "", eff_dir, filtext);
+  // note: no static FileDialog!!! causes many issues:
+  // * compression extension thing not always working
+  // * filters can only be added in ctor
+  // * some use-cases cause no Save dialog if prev is Open
+  // DO NOT MAKE STATIC!!!!
+  std::auto_ptr<QFileDialog> fd(new QFileDialog(NULL, "", eff_dir, filtext));
 
-    int nw_wd = (int)((float)taiM->scrn_s.w * .5f);
-    int nw_ht = (int)((float)taiM->scrn_s.h * .5f);
+  int nw_wd = (int)((float)taiM->scrn_s.w * .5f);
+  int nw_ht = (int)((float)taiM->scrn_s.h * .5f);
+  fd->resize(nw_wd, nw_ht);
 
-    fd->resize(nw_wd, nw_ht);
+  taiFileDialogExtension* fde = new taiFileDialogExtension();
+  fd->setExtension(fde);
 
-    fde = new taiFileDialogExtension();
-    fd->setExtension(fde);
-
-#ifdef TA_OS_MAC    
-    // native dialog does not support compression stuff
-    fd->setOptions(QFileDialog::DontUseNativeDialog);
+#ifdef TA_OS_MAC
+  // native dialog does not support compression stuff
+  fd->setOptions(QFileDialog::DontUseNativeDialog);
 #endif
 
-    QList<QUrl> urls;
-    taRootBase* root = tabMisc::root;
-    for(int i=0; i<root->sidebar_paths.size; i++) {
-      String sbp = root->sidebar_paths[i];
-      if(sbp.empty()) continue;
-      urls << QUrl::fromLocalFile(sbp);
-    }
-    fd->setSidebarUrls(urls);
+  QList<QUrl> urls;
+  taRootBase* root = tabMisc::root;
+  for (int i=0; i<root->sidebar_paths.size; i++) {
+    String sbp = root->sidebar_paths[i];
+    if (sbp.empty()) continue;
+    urls << QUrl::fromLocalFile(sbp);
   }
+  fd->setSidebarUrls(urls);
 
   fd->setDirectory(eff_dir);
   fd->setFilters(filter_list);
 
-  if(CompressEnabled() && (CompressReq() || IsCompressed()))
-    fd->setDefaultSuffix(defExt() + taMisc::compress_sfx);
-  else
-    fd->setDefaultSuffix(defExt());
+  bool isCompressed = CompressEnabled() && (CompressReq() || IsCompressed());
+  fd->setDefaultSuffix(isCompressed ? defExt() + taMisc::compress_sfx : defExt());
 
+  String caption;
   switch (filerOperation) {
-  case foOpen:
-    fd->setAcceptMode(QFileDialog::AcceptOpen);
-    if (flags & FILE_MUST_EXIST)
+    case foOpen:
+      fd->setAcceptMode(QFileDialog::AcceptOpen);
+      fd->setFileMode(HasFilerFlag(FILE_MUST_EXIST)
+                        ? QFileDialog::AnyFile : QFileDialog::ExistingFile);
+      caption = String("Open: ") + filter;
+      break;
+
+    case foSave:
+      // we already have filename!
+      return true;
+
+    case foSaveAs:
+      fd->showExtension(true);
+      fd->setConfirmOverwrite(HasFilerFlag(CONFIRM_OVERWRITE));
+      fd->setAcceptMode(QFileDialog::AcceptSave);
       fd->setFileMode(QFileDialog::AnyFile);
-    else
-      fd->setFileMode(QFileDialog::ExistingFile);
-//OBS:    fd->style()->attribute("caption", "Select File to Open for Reading");
-    caption = String("Open: ") + filter;
-    break;
-  case foSave:
-    // we already have filename!
-    result = true;
-    goto exit;
-  case foSaveAs: {
-    fd->showExtension(true);
-    fd->setConfirmOverwrite((flags & CONFIRM_OVERWRITE));
-    fd->setAcceptMode(QFileDialog::AcceptSave);
-    fd->setFileMode(QFileDialog::AnyFile);
-//OBS:    fd->style()->attribute("caption", "Select File to Save for Writing");
-    caption = String("Save: ") + filter;
-    
-    } break;
-  case foAppend:
-    fd->setConfirmOverwrite((flags & CONFIRM_OVERWRITE));
-    fd->setAcceptMode(QFileDialog::AcceptSave);
-    fd->setFileMode(QFileDialog::AnyFile);
-//OBS:    fd->style()->attribute("caption", "Select File to Append for Writing");
-    caption = String("Append: ") + filter;
-    break;
+      caption = String("Save: ") + filter;
+      break;
+
+    case foAppend:
+      fd->setConfirmOverwrite(HasFilerFlag(CONFIRM_OVERWRITE));
+      fd->setAcceptMode(QFileDialog::AcceptSave);
+      fd->setFileMode(QFileDialog::AnyFile);
+      caption = String("Append: ") + filter;
+      break;
   }
 
   fd->setWindowTitle(caption);
-  
+
   //  cerr << m_fname << endl;
   // todo: for some reason it is not using this arg if the file already exists!
   fd->selectFile(m_fname);
   // we always make and set the extension, but don't always show it
   fde->cbCompress->setEnabled(CompressEnabled());
-  fde->cbCompress->setChecked(CompressEnabled() && (CompressReq() || IsCompressed()));
+  fde->cbCompress->setChecked(isCompressed);
   //  fd->setOrientation(Qt::Vertical);
   fd->setViewMode(QFileDialog::Detail);
   fd->setHistory(hist_paths);
 
   QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
-  rval = fd->exec();
+  int rval = fd->exec();
   QApplication::restoreOverrideCursor();
-  if (rval == QDialog::Accepted) {
 
-    // first persist the sidebars
-    QList<QUrl> urls = fd->sidebarUrls();
-    taRootBase* root = tabMisc::root;
-    for(int i=0; i<urls.count(); i++) {
-      String sbp = urls[i].toLocalFile();
-      root->sidebar_paths.AddUnique(sbp); // save it!
-    }
-
-    //note: Qt4 requires us to get the file indirectly, from the list
-    QStringList sfs(fd->selectedFiles());
-    if (sfs.isEmpty()) goto exit; // shouldn't happen!
-    { // block necessitated by exit
-    tfname = sfs[0];
-    // some weird bugs showing up in qt filer!
-    tfname.gsub("..", ".");	// .. -> .
-//shouldn't happen anymore!    tfname.gsub(ext + ext, ext); // .proj.proj -> .proj
-
-    QFileInfo fi(tfname);
-    // we always add the path here, to the sys paths -- if added again, it is a noop
-    if (tabMisc::root) {
-      tabMisc::root->AddRecentPath(fi.path(), true);
-      save_paths = true;
-    }
-    // note: if we further fixup partial filenames, then compress could be true
-    if (fd->fileMode() & QFileDialog::ExistingFile)
-      file_exists = true;
-    else {
-      file_exists = fi.exists();
-    }
-    // compressed 'true' is absolutely based  on filename
-    compressed = tfname.endsWith(taMisc::compress_sfx);
-    // but if file doesn't exist, we could fix it up, so we set based on checkbox
-    if (!file_exists && !compressed) {
-      compressed = fde->cbCompress->isChecked();
-    } 
-    SetFileName(tfname);
-    //obs m_dir = fd->directory().absolutePath();
-    result = true;
-    }
+  if (rval != QDialog::Accepted) {
+    return false;
   }
 
-exit:
-   if (fd) {
-     delete fd;
-     fd = NULL;
-   }
-  return result; 
+  // first persist the sidebars
+  urls = fd->sidebarUrls();
+  for (int i=0; i<urls.count(); i++) {
+    String sbp = urls[i].toLocalFile();
+    root->sidebar_paths.AddUnique(sbp); // save it!
+  }
+
+  //note: Qt4 requires us to get the file indirectly, from the list
+  QStringList sfs(fd->selectedFiles());
+  if (sfs.isEmpty()) {
+    // shouldn't happen!
+    taMisc::Warning("No files returned");
+    return false;
+  }
+
+  tfname = sfs[0];
+
+// TBD: What was this gsub call actually supposed to fix???
+// It breaks opening files if any part of the path contains .., such as
+// c:\why-does-this-folder-have-..-two-dots\something\file.proj
+// Remove permanently if no regressions for a few builds.
+#if 0
+  // some weird bugs showing up in qt filer!
+  tfname.gsub("..", "."); // .. -> .
+#endif
+
+  //shouldn't happen anymore!    tfname.gsub(ext + ext, ext); // .proj.proj -> .proj
+
+  QFileInfo fi(tfname);
+  // we always add the path here, to the sys paths -- if added again, it is a noop
+  if (tabMisc::root) {
+    tabMisc::root->AddRecentPath(fi.path(), true);
+    save_paths = true;
+  }
+
+  // note: if we further fixup partial filenames, then compress could be true
+  file_exists = fd->fileMode() == QFileDialog::ExistingFile ||
+                fd->fileMode() == QFileDialog::ExistingFiles ||
+                fi.exists();
+
+  // compressed 'true' is absolutely based on filename,
+  compressed = tfname.endsWith(taMisc::compress_sfx);
+
+  // but if file doesn't exist, we could fix it up, so we set based on checkbox
+  if (!file_exists && !compressed) {
+    compressed = fde->cbCompress->isChecked();
+  }
+
+  SetFileName(tfname);
+  return true;
 }
