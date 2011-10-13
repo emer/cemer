@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -195,7 +195,7 @@ void tabMisc::WaitProc() {
 */
 bool tabMisc::DoDelayedCloses() {
   if (delayed_close.size == 0) return false;
-  // note: this is sleazy, but very efficient -- we just completely 
+  // note: this is sleazy, but very efficient -- we just completely
   // hijack the memory of the current list in this working copy
   taBase_RefList items;
   items.Hijack(delayed_close);
@@ -207,7 +207,7 @@ bool tabMisc::DoDelayedCloses() {
     taBase* it = items.FastEl(0);
     items.RemoveIdx(0);
 #ifdef DEBUG
-    int refn = taBase::GetRefn(it); 
+    int refn = taBase::GetRefn(it);
     if ((it->GetOwner() == NULL) && (refn != 1)) {
       taMisc::Warning("tabMisc::delayed_close: item had refn != 1, was=",
         String(refn), "type=", it->GetTypeDef()->name, "name=",
@@ -338,45 +338,45 @@ void tabMisc::DeleteRoot() {
     \endcode
 
     \section2 Lifetime Management
-    
-    taBase object lifetimes can be either Statically, or Dynamically 
-    managed, and the visibility can either be Internal or External. 
-    Static objects are created and destroyed by the compiler; Dynamic 
+
+    taBase object lifetimes can be either Statically, or Dynamically
+    managed, and the visibility can either be Internal or External.
+    Static objects are created and destroyed by the compiler; Dynamic
     objects are created/destroyed by the programmer (new/delete).
-    Internal objects are used solely by the managing owner, whereas 
+    Internal objects are used solely by the managing owner, whereas
     External objects can be accessed by an external client.
     In practice, this gives rise to three lifetime/visibility scenarios:
     Static External, Dynamic External, and Internal.
-     
+
     Internal objects need not be explicitly lifetime managed, and may
     be created statically or dynamically. Typically, refn remains 0
     for these objects, and no ref counting occurs for them.
-    
+
     External objects can be uniformly treated as if they obeyed ref
-    counting semantics. This enables external references to follow a 
+    counting semantics. This enables external references to follow a
     single paradigm. Of course the lifetime of static objects must be
     respected, but the ref counting mechanism will issue a warning if
     a "live" static object is deleted.
-    
+
     Ref Counting Mechanism -- Ref() causes refn++, UnRef() causes refn--;
     if refn goes from 1 to 0, the object deletes. The transition from
-    1 to 0 also causes refn to be set to a -ve sentinel value. The debug 
+    1 to 0 also causes refn to be set to a -ve sentinel value. The debug
     version of the program can detect double destruction, or ref count
     operations after destruction, based on this sentinel.
-    
+
     Statically Managed -- refn is set to 1 after creation (see below);
     Ref() causes refn++, UnRef() causes refn--; there
     should be no unref that causes refn to go from 1 to 0, so refn s/b
     1 on destruction.
-    
+
     The basic rule is that statically managed objects should always
-    be given an Own() operation, or a RefStatic() operation, after 
+    be given an Own() operation, or a RefStatic() operation, after
     creation, to insure the +1 refn is set. There is no corresponding
     unrefing operation.
-    
+
     Most statically owned objects have an Own() operation performed on
     them in the InitLinks routine. Own(obj&, owner*) is basically used
-    only when the obj is a static member of owner; therefore, this 
+    only when the obj is a static member of owner; therefore, this
     version of Own automatically calls RefStatic(). It is ok for RefStatic
     to get called multiple times during initialization of an object --
     this enables new objects to get a RefStatic put into their owner's
@@ -389,7 +389,7 @@ void tabMisc::DeleteRoot() {
 // 	Reference counting mechanisms, all static just for consistency..
 
 #ifdef DEBUG
-void taBase::Ref(taBase& it) { 
+void taBase::Ref(taBase& it) {
   Ref(&it);
 }
 void taBase::Ref(taBase* it) {
@@ -422,7 +422,7 @@ void taBase::Own(taBase* it, taBase* onr) {
 void taBase::Own(taBase& it, taBase* onr) {
 //was causing list transfers to break
 //  if (it.GetOwner() == onr) return; // same owner, redundant
-  
+
   Ref(it);
 //   bool prv_own = (it.GetOwner() != NULL);
   it.SetOwner(onr);
@@ -529,7 +529,7 @@ void taBase::CheckDestroyed() {
 void taBase::Destroying() {
   if (HasBaseFlag(DESTROYING)) return; // already done by parent
   SetBaseFlag(DESTROYING);
-  //note: following gets called in destructor of higher class, so 
+  //note: following gets called in destructor of higher class, so
   // its vtable accessor for datalinks will be valid in that context
   taDataLink* dl = data_link();
   if (dl) {
@@ -645,8 +645,8 @@ int taBase::GetOwnerEditableState_impl(int mask) const {
 ///////////////////////////////////////////////////////////////////////////
 //	Basic object properties: index in list, owner, name, description, etc
 
-String taBase::GetDisplayName() const { 
-  String rval = GetName(); 
+String taBase::GetDisplayName() const {
+  String rval = GetName();
   if (rval.nonempty()) return rval;
   // no name, so try the Owner.path name
   taBase* own = GetOwner();
@@ -655,7 +655,7 @@ String taBase::GetDisplayName() const {
     if (rval.nonempty()) return rval; // shouldn't be empty!
   }
   // last resort: (TypeName@HexAddr)
-  rval = "(" + GetTypeDef()->name + "@" 
+  rval = "(" + GetTypeDef()->name + "@"
       + String(QString::number((intptr_t)this, 16)) + ")";
   return rval;
 }
@@ -679,12 +679,12 @@ taBase* taBase::GetThisOrOwner(TypeDef* td) {
   return GetOwner(td);
 }
 
-taBase* taBase::GetParent() const	{ 
+taBase* taBase::GetParent() const	{
   taBase* rval = GetOwner();
   while (rval && (rval->InheritsFrom(TA_taList_impl)))
     rval = rval->GetOwner();
   return rval;
-} 
+}
 
 bool taBase::IsChildOf(const taBase* obj) const {
   // note: we define ourself as a child of ourself
@@ -714,11 +714,11 @@ void taBase::SetDefaultName_impl(int idx) {
   if(idx < 0) idx = 0;	// avoid -1 not found: can't just have typedef name for programs etc
   if (nm_style == 2) { // no number (for things that are unique in a container)
     ;
-  } 
+  }
   else if (nm_style == 1) {
     nm += String(++idx); // use 1-based, no _
   } else { // 0, or unknown style -- use legacy
-    nm += ("_" + String(idx)); 
+    nm += ("_" + String(idx));
   }
   SetName(nm);
 }
@@ -896,13 +896,13 @@ Variant taBase::GetValFromPath(const String& path, MemberDef*& ret_md, bool warn
     MemberDef* omd = eff_typ->members.FindName(membname);
     if(!omd) {
       TestError(warn_not_found, "GetValFromPath", "member:", membname, "not found in object of type:",
-		eff_typ->name); 
+		eff_typ->name);
       return _nilVariant;
     }
     eff_base = omd->GetOff(eff_base);
     if(!eff_base) {
       TestError(warn_not_found, "GetValFromPath", "could not get base value for member:", membname,
-		"in object of type:", eff_typ->name); 
+		"in object of type:", eff_typ->name);
       return _nilVariant;
     }
     eff_typ = omd->type;
@@ -913,13 +913,13 @@ Variant taBase::GetValFromPath(const String& path, MemberDef*& ret_md, bool warn
   MemberDef* md = eff_typ->members.FindName(eff_path);
   if(!md) {
     TestError(warn_not_found, "GetValFromPath", "member:", eff_path, "not found in object of type:",
-	      eff_typ->name); 
+	      eff_typ->name);
     return _nilVariant;
   }
   eff_base = md->GetOff(eff_base);
   if(!eff_base) {
     TestError(warn_not_found, "GetValFromPath", "could not get base value for member:", eff_path,
-	      "in object of type:", eff_typ->name); 
+	      "in object of type:", eff_typ->name);
     return _nilVariant;
   }
   eff_typ = md->type;
@@ -1007,7 +1007,7 @@ taBase* taBase::GetUndoBarrier() {
   return own->GetUndoBarrier();
 }
 
-////////////////////////////////////////////////////////////////////// 
+//////////////////////////////////////////////////////////////////////
 // 	Saving and Loading to/from files
 
 String taBase::GetFileNameFmProject(const String& ext, const String& tag, const String& subdir, bool dmem_proc_no) {
@@ -1063,10 +1063,10 @@ taFiler* taBase::GetFiler(TypeItem* td, const String& exts,
   return StatGetFiler(td, exts, compress, filetypes);
 }
 
-int taBase::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) { 
+int taBase::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr) {
   StructUpdate(true);
   Dump_Load_pre();
-  int rval = GetTypeDef()->Dump_Load(strm, (void*)this, par, (void**)loaded_obj_ptr); 
+  int rval = GetTypeDef()->Dump_Load(strm, (void*)this, par, (void**)loaded_obj_ptr);
   StructUpdate(false);
   DataChanged(DCR_STRUCT_UPDATE_ALL); // during loading, updates are blocked, so now we redo everything
   if(loaded_obj_ptr) {
@@ -1089,11 +1089,11 @@ void AppendFilerInfo(TypeDef* typ, String& exts, int& compress, String& filetype
     if (filetypes.nonempty()) filetypes.cat(",");
     filetypes.cat(str);
   }
-}    
+}
 
 
 taFiler* taBase::GetLoadFiler(const String& fname, String exts,
-  int compress, String filetypes, bool getset_file_name) 
+  int compress, String filetypes, bool getset_file_name)
 {
   // get names/types here, because save/load are different
   TypeDef* typ = GetTypeDef(); // will be replaced with item type if we are a list
@@ -1114,13 +1114,13 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
       AppendFilerInfo(typ, exts, compress, filetypes);
     }
   }
-  taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes); 
+  taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes);
   taRefN::Ref(flr);
-   
+
   if(fname.nonempty()) {
     flr->SetFileName(fname);
     flr->open_read();
-  } else { 
+  } else {
     String tfname;
     if (getset_file_name)
       tfname = GetFileName();
@@ -1158,10 +1158,12 @@ int taBase::Load_cvt(taFiler*& flr) {
   taFiler* cvt_flr = taFiler::New(flr->filetype, flr->defExt());
   taRefN::Ref(cvt_flr);
   String cvt_fname = flr->FileName();
-  QDir::setCurrent(taMisc::GetDirFmPath(cvt_fname));	
+  QDir::setCurrent(taMisc::GetDirFmPath(cvt_fname));
   String cvt_tag = "_v4precvt";
   if(!flr->defExt().empty()) {
-    if(cvt_fname.contains(flr->defExt())) cvt_fname = cvt_fname.before(flr->defExt());
+    if (cvt_fname.contains(flr->defExt())) {
+      cvt_fname = cvt_fname.before(flr->defExt());
+    }
     cvt_fname += cvt_tag + flr->defExt();
   }
   else {
@@ -1180,12 +1182,12 @@ int taBase::Load_cvt(taFiler*& flr) {
   taRefN::unRefDone(flr);	// get rid of orig filer
   flr = cvt_flr;		// use new one
   flr->open_read();		// read the converted file
-  int chs = taMisc::Choice("Note: converting old file of type: " + cvt->proj_type_base + 
-		".\n Created intermediate cvt file as: " + cvt_fname + 
+  int chs = taMisc::Choice("Note: converting old file of type: " + cvt->proj_type_base +
+		".\n Created intermediate cvt file as: " + cvt_fname +
 		".\n Many error messages are likely (and should be ignored)," +
 		 "\n and you will probably need to convert object using convert button",
         "Continue", "Cancel");
-  if (chs == 0) 
+  if (chs == 0)
     return true;
   else return false;
 }
@@ -1202,7 +1204,7 @@ int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
       if(rval && lobj) {
 	lobj->SetFileName(flr->FileName());
 	if(taMisc::gui_active) {
-	  if (lobj == this) { 
+	  if (lobj == this) {
 	    tabMisc::DelayedFunCall_gui(lobj, "RebuildAllViews");
 	  } else { // loaded a new guy
 	    tabMisc::DelayedFunCall_gui(lobj, "BrowserSelectMe");
@@ -1216,9 +1218,9 @@ int taBase::Load(const String& fname, taBase** loaded_obj_ptr) {
   return rval;
 }
 
-int taBase::Save_strm(ostream& strm, taBase* par, int indent) { 
+int taBase::Save_strm(ostream& strm, taBase* par, int indent) {
   taMisc::save_use_name_paths = false; // default is to NOT use name paths
-  int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); 
+  int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent);
   setDirty(false);
   return rval;
 }
@@ -1233,14 +1235,14 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
     typ = GetTypeDef(); // we are the group
     AppendFilerInfo(typ, exts, compress, filetypes);
   }
-  taFiler* flr = StatGetFiler(typ, exts, compress, filetypes); 
+  taFiler* flr = StatGetFiler(typ, exts, compress, filetypes);
   taRefN::Ref(flr);
-   
+
   if (fname.nonempty()) {
     flr->SetFileName(fname);
     flr->FixFileName();
     flr->Save();
-  } else { 
+  } else {
     String tfname;
     if (getset_file_name)
       tfname = GetFileName();
@@ -1249,7 +1251,7 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
     flr->SetFileName(tfname); // filer etc. does auto extension
     flr->SaveAs();
   }
-  
+
   if (flr->ostrm && getset_file_name) {
     SetFileName(flr->FileName());
     // don't notify! very dangerous in middle of save, and also marks Dirty
@@ -1259,15 +1261,15 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
 }
 
 taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int compress,
-  String filetypes, bool getset_file_name) 
+  String filetypes, bool getset_file_name)
 {
-  taFiler* flr = GetFiler(NULL, ext, compress, filetypes); 
+  taFiler* flr = GetFiler(NULL, ext, compress, filetypes);
   taRefN::Ref(flr);
-   
+
   if (fname.nonempty()) {
     flr->SetFileName(fname);
     flr->open_append();
-  } else { 
+  } else {
     String tfname;
     if (getset_file_name)
       tfname = GetFileName();
@@ -1276,14 +1278,14 @@ taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int comp
     flr->SetFileName(tfname); // filer etc. does auto extension
     flr->Append();
   }
-  
+
   if(flr->ostrm && getset_file_name) {
     SetFileName(flr->FileName());
   }
   return flr;
 }
 
-int taBase::Save() { 
+int taBase::Save() {
   String fname = GetFileName(); // empty if 1st or not supported
   return SaveAs(fname);
 }
@@ -1316,7 +1318,7 @@ int taBase::Load_String(const String& load_str, taBase* par, taBase** loaded_obj
   return rval;
 }
 
-taBase::DumpQueryResult taBase::Dump_QuerySaveMember(MemberDef* md) { 
+taBase::DumpQueryResult taBase::Dump_QuerySaveMember(MemberDef* md) {
   return DQR_DEFAULT;
 }
 
@@ -1402,7 +1404,7 @@ taBase* taBase::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el_typ)
 
 String taBase::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
 			 bool force_inline) const {
-  if (sc == TypeDef::SC_DEFAULT) 
+  if (sc == TypeDef::SC_DEFAULT)
     sc = (taMisc::is_saving) ? TypeDef::SC_STREAMING : TypeDef::SC_VALUE;
 
   TypeDef* td = GetTypeDef();
@@ -1434,9 +1436,9 @@ String taBase::GetValStr_ptr(const TypeDef* td, const void* base, void* par, Mem
   return String::con_NULL;
 }
 
-bool taBase::SetValStr(const String& val, void* par, MemberDef* memb_def, 
+bool taBase::SetValStr(const String& val, void* par, MemberDef* memb_def,
 		       TypeDef::StrContext sc, bool force_inline) {
-  if (sc == TypeDef::SC_DEFAULT) 
+  if (sc == TypeDef::SC_DEFAULT)
     sc = (taMisc::is_saving) ? TypeDef::SC_STREAMING : TypeDef::SC_VALUE;
 
   if(force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")) {
@@ -1466,7 +1468,7 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
 	taMisc::Warning("*** Invalid Path in SetValStr:",val);
 	return false;
       }
-      if(md) {			// otherwise it is a taBase* 
+      if(md) {			// otherwise it is a taBase*
 	if(md->type->ptr == 1) {
 	  bs = *((taBase**)bs);
 	  if(bs == NULL) {
@@ -1500,7 +1502,7 @@ taBaseObjDiffRecExtra::taBaseObjDiffRecExtra(taBase* tab) {
   tabref = tab;
 }
 
-taObjDiffRec* taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, 
+taObjDiffRec* taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
 			   const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
   taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
@@ -1673,7 +1675,7 @@ bool taBase::CheckConfig_Gui(bool confirm_success, bool quiet) {
 }
 
 bool taBase::CheckConfig_impl(bool quiet) {
-  int cp_flags = base_flags; 
+  int cp_flags = base_flags;
   bool this_rval = true;
   CheckThisConfig_impl(quiet, this_rval);
   if (this_rval) {
@@ -1701,7 +1703,7 @@ void taBase::ClearCheckConfig() {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-//	Copying and changing type 
+//	Copying and changing type
 
 bool taBase::CanDoCopy_impl(const taBase* cp, bool quiet, bool copy) {
   bool ok = true; // ref var needed for Check
@@ -1814,7 +1816,7 @@ taBase* taBase::ChildDuplicate(const taBase* chld) {
   if (lst) {
     taBase* rval = lst->DuplicateEl(chld);
     if(rval && taMisc::gui_active) {
-      if(!taMisc::in_gui_multi_action && 
+      if(!taMisc::in_gui_multi_action &&
 	 !lst->HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
 	tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
 	tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
@@ -2039,7 +2041,7 @@ void taBase::Search_impl(const String& srch, taBase_PtrList& items,
   }
 }
 
-void taBase::CompareSameTypeR(Member_List& mds, TypeSpace& base_types, 
+void taBase::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
 			      voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
 			      taBase* cp_base, int show_forbidden,
 			      int show_allowed, bool no_ptrs) {
@@ -2069,30 +2071,30 @@ taBase::ValType taBase::ValTypeForType(TypeDef* td) {
     }
     // note: char is generic char, and typically we won't use signed char
     else if (td->DerivesFrom(TA_char)) {
-      return VT_STRING; 
+      return VT_STRING;
     }
     // note: explicit use of signed char is treated like a number
     else if (td->DerivesFrom(TA_unsigned_char))
       return VT_BYTE;
-    else if (td->DerivesFrom(TA_signed_char) 
+    else if (td->DerivesFrom(TA_signed_char)
       || td->DerivesFrom(TA_short)
       || td->DerivesFrom(TA_unsigned_short)
       || td->DerivesFrom(TA_int)
       || td->DerivesFrom(TA_unsigned_int)
-      ) 
+      )
     {
-      return VT_INT; 
+      return VT_INT;
     }
-    else if (td->DerivesFrom(TA_double)) 
+    else if (td->DerivesFrom(TA_double))
     {
-      return VT_DOUBLE; 
+      return VT_DOUBLE;
     }
-    else if (td->DerivesFrom(TA_float)) 
+    else if (td->DerivesFrom(TA_float))
     {
-      return VT_FLOAT; 
+      return VT_FLOAT;
     }
     else if(td->DerivesFormal(TA_enum)) {
-      return VT_STRING; 
+      return VT_STRING;
     }
     else if(td->DerivesFrom(TA_taString))
       return VT_STRING;
@@ -2125,7 +2127,7 @@ const String taBase::ValTypeToStr(ValType vt) {
 //	Printing out object state values
 
 String taBase::GetStringRep(taBase* it) {
-  if (it == NULL) 
+  if (it == NULL)
     return String("NULL", 4);
   else
     return it->GetStringRep_impl();
@@ -2143,7 +2145,7 @@ bool taBase::HasUserData(const String& key) const {
   UserDataItem_List* ud = GetUserDataList();
   if (ud)
     return (ud->FindLeafName(key));
-  
+
   return false;
 }
 
@@ -2167,7 +2169,7 @@ UserDataItemBase* taBase::GetUserDataItem(const String& key) const {
 
 
 UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
-  const String& key, bool force_create) 
+  const String& key, bool force_create)
 {
   if (!typ) return NULL;
   typ = typ->GetNonPtrType();
@@ -2175,7 +2177,7 @@ UserDataItemBase* taBase::GetUserDataOfType(TypeDef* typ,
   if (!typ->InheritsFrom(&TA_UserDataItemBase)) return NULL;
   UserDataItem_List* ud = GetUserDataList(force_create);
   if (!ud) return NULL;
-  UserDataItemBase* rval = NULL; 
+  UserDataItemBase* rval = NULL;
   for (int i = 0; i < ud->leaves; ++i) {
     UserDataItemBase* udi = ud->Leaf(i);
     if (udi->name != key) continue;
@@ -2250,10 +2252,10 @@ UserDataItem* taBase::SetUserData(const String& name, const Variant& value)
     "name must be a valid name")) {
     return NULL;
   }
-  
+
   UserDataItem_List* ud = GetUserDataList(true);
   if (!ud) return NULL; // not supported, shouldn't be calling
-  
+
   bool notify = true; // always!
   UserDataItemBase* udi = ud->FindLeafName(name);
   if (udi) {
@@ -2277,7 +2279,7 @@ void taBase::SetUserData_Gui(const String& key, const Variant& value,
     const String& desc)
 {
   UserDataItem* udi = SetUserData(key, value);
-  if (udi && desc.nonempty()) 
+  if (udi && desc.nonempty())
     udi->SetDesc(desc);
 }
 
@@ -2287,9 +2289,9 @@ void taBase::SetUserData_Gui(const String& key, const Variant& value,
 const KeyString taBase::key_name("name");
 const KeyString taBase::key_type("type");
 const KeyString taBase::key_type_desc("type_desc");
-const KeyString taBase::key_desc("desc"); 
-const KeyString taBase::key_disp_name("disp_name"); 
-const KeyString taBase::key_unique_name("unique_name"); 
+const KeyString taBase::key_desc("desc");
+const KeyString taBase::key_disp_name("disp_name");
+const KeyString taBase::key_unique_name("unique_name");
 
 const String taBase::statusTip(const KeyString&) const {
   TypeDef* typ = GetTypeDef();
@@ -2307,8 +2309,8 @@ String taBase::GetColText(const KeyString& key, int /*itm_idx*/) const {
   else if (key == key_type) return GetTypeName();
   else if (key == key_type_desc) return GetTypeDef()->desc;
 // note: some classes override desc with dynamic desc's
-  else if (key == key_desc) return GetDesc(); 
-  else if (key == key_disp_name) return GetDisplayName(); 
+  else if (key == key_desc) return GetDesc();
+  else if (key == key_disp_name) return GetDisplayName();
   else return _nilString;
 }
 
@@ -2415,7 +2417,7 @@ const iColor taBase::GetEditColor(bool& ok) {
 	return vc->fg_color.color();
     }
   }
-  ok = false; 
+  ok = false;
   return iColor();
 }
 
@@ -2457,7 +2459,7 @@ String taBase::DiffCompareString(taBase* cmp_obj, taDoc*& doc) {
   }
   String str_a, str_b;
   taStringDiff diff;
-  
+
   Save_String(str_a);
   cmp_obj->Save_String(str_b);
   diff.DiffStrings(str_a, str_b);
@@ -2476,7 +2478,7 @@ bool taBase::DiffCompare(taBase* cmp_obj) {
   if(TestError(!cmp_obj, "DiffCompareString", "cmp_obj is null")) return false;
   taObjDiff_List odl_me;
   taObjDiff_List odl_cmp;
-  
+
   odl_me.tab_obj_a = this;
   odl_cmp.tab_obj_a = cmp_obj;
 
@@ -2576,7 +2578,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
 	tab_par_a = (taBase*)rec->par_addr;
       }
     }
-    if(rec->diff_odr && rec->diff_odr->par_type && 
+    if(rec->diff_odr && rec->diff_odr->par_type &&
        rec->diff_odr->par_type->InheritsFrom(&TA_taBase)) {
       // make sure *parent* pointer is still current
       if(rec->diff_odr->par_odr && rec->diff_odr->par_odr->extra) {
@@ -2591,7 +2593,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
 
     if(rec->HasDiffFlag(taObjDiffRec::ACT_COPY_AB) &&
        rec->HasDiffFlag(taObjDiffRec::ACT_COPY_BA)) {
-      // this is unfortunate but possible 
+      // this is unfortunate but possible
       taMisc::Info("Copying A -> B:", rec->diff_odr->GetDisplayName(), "=", rec->value);
       taMisc::Info("Copying B -> A:", rec->GetDisplayName(), "=", rec->diff_odr->value);
       if(tab_diff_typ) {
@@ -2632,7 +2634,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
 	  rec->type->SetValStr(rec->diff_odr->value, rec->addr, rec->par_addr, rec->mdef);
 	}
 	if(tab_par_a) tab_par_a->UpdateAfterEdit();
-	
+
       }
       continue;
     }
@@ -2695,7 +2697,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
       }
       continue;
     }
-    
+
     if(!ta_bases) continue;	// only ta bases from this point on!
 
     //////////////////////////////////
@@ -2831,7 +2833,7 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
     if(TestError(!proj, "SelectForEditSearch", "cannot find project")) return -1;
     editor = (SelectEdit*)proj->edits.New(1);
     editor->name = "Srch_" + memb_contains;
-    editor->desc = "Search of members containing: " + memb_contains 
+    editor->desc = "Search of members containing: " + memb_contains
       + " in object: " + GetDisplayName();
     editor->DataChanged(DCR_ITEM_UPDATED); // so name updates in treee
   }
@@ -2860,7 +2862,7 @@ int taBase::SelectForEditSearch(const String& memb_contains, SelectEdit*& editor
 
 int taBase::SelectForEditCompare(taBase*cmp_obj, SelectEdit*& editor, bool no_ptrs) {
   if(TestError(!cmp_obj, "SelectForEditCompare", "cmp_obj is null")) return -1;
-  if(TestError(GetTypeDef() != cmp_obj->GetTypeDef(), "SelectForEditCompare", 
+  if(TestError(GetTypeDef() != cmp_obj->GetTypeDef(), "SelectForEditCompare",
 	       "objects must have the exact same type to be able to be compared")) return -1;
   if(!editor) {
     taProject* proj = GET_MY_OWNER(taProject);
@@ -2895,7 +2897,7 @@ bool taBase::SelectFunForEditNm(const String& function, SelectEdit* editor,
 }
 
 ///////////////////////////////////////////////////////////////////////////
-//	Closing 
+//	Closing
 
 void taBase::Close() {
   if(isDestroying()) return;
@@ -2926,14 +2928,14 @@ void taBase::Help() {
 #ifdef TA_GUI
   iHelpBrowser::StatLoadType(mytd);
 #endif
-/*legacy... 
+/*legacy...
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return;
   taDoc* help_doc = proj->FindMakeDoc("HelpDoc", taMisc::web_help_wiki, mytd->name);
   help_doc->EditDialog();*/
 }
 
-// old help 
+// old help
 //   String full_file;
 //   while((mytd != NULL) && full_file.empty()) {
 //     String help_file = taMisc::help_file_tmplt;
@@ -3248,7 +3250,7 @@ int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
 
 /////////////
 
-bool taBase::UpdatePointers_NewObj_Ptr(taBase** ptr, taBase* ptr_owner, 
+bool taBase::UpdatePointers_NewObj_Ptr(taBase** ptr, taBase* ptr_owner,
 				       taBase* old_ptr, taBase* new_ptr) {
   if(!*ptr || (*ptr != old_ptr)) return false;
   if(ptr_owner->GetOwner(old_ptr->GetTypeDef()) == old_ptr) return false;
@@ -3258,7 +3260,7 @@ bool taBase::UpdatePointers_NewObj_Ptr(taBase** ptr, taBase* ptr_owner,
   return true;
 }
 
-bool taBase::UpdatePointers_NewObj_PtrNoSet(taBase** ptr, taBase* ptr_owner, 
+bool taBase::UpdatePointers_NewObj_PtrNoSet(taBase** ptr, taBase* ptr_owner,
 					    taBase* old_ptr, taBase* new_ptr) {
   if(!*ptr || (*ptr != old_ptr)) return false;
   if(ptr_owner->GetOwner(old_ptr->GetTypeDef()) == old_ptr) return false;
@@ -3268,7 +3270,7 @@ bool taBase::UpdatePointers_NewObj_PtrNoSet(taBase** ptr, taBase* ptr_owner,
   return true;
 }
 
-bool taBase::UpdatePointers_NewObj_SmPtr(taSmartPtr& ref, taBase* ptr_owner, 
+bool taBase::UpdatePointers_NewObj_SmPtr(taSmartPtr& ref, taBase* ptr_owner,
 					 taBase* old_ptr, taBase* new_ptr) {
   if(!ref.ptr() || (ref.ptr() != old_ptr)) return false;
   if(ptr_owner->GetOwner(old_ptr->GetTypeDef()) == old_ptr) return false;
@@ -3278,7 +3280,7 @@ bool taBase::UpdatePointers_NewObj_SmPtr(taSmartPtr& ref, taBase* ptr_owner,
   return true;
 }
 
-bool taBase::UpdatePointers_NewObj_Ref(taSmartRef& ref, taBase* ptr_owner, 
+bool taBase::UpdatePointers_NewObj_Ref(taSmartRef& ref, taBase* ptr_owner,
 				       taBase* old_ptr, taBase* new_ptr) {
   if(!ref.ptr() || (ref.ptr() != old_ptr)) return false;
   if(ptr_owner->GetOwner(old_ptr->GetTypeDef()) == old_ptr) return false;
@@ -3378,7 +3380,7 @@ TypeDef* taSmartPtr::GetBaseType(TypeDef* this_typ) {
   while (targ) {
     act_name = targ->name.after("taSmartPtrT_");
     if (act_name.nonempty()) {
-      TypeDef* rval = taMisc::FindTypeName(act_name); 
+      TypeDef* rval = taMisc::FindTypeName(act_name);
       if (rval && rval->InheritsFrom(&TA_taBase))
         return rval;
     }
@@ -3401,16 +3403,16 @@ void taSmartRef::DataLinkDestroying(taDataLink* dl) {
     taBase* tmp_ptr = m_ptr;
     m_ptr = NULL;
     //send a changing ref, in case it only monitors for setting/clearing (not destroying)
-    m_own->SmartRef_DataRefChanging(this, NULL, false); 
-    m_own->SmartRef_DataDestroying(this, tmp_ptr); 
+    m_own->SmartRef_DataRefChanging(this, NULL, false);
+    m_own->SmartRef_DataDestroying(this, tmp_ptr);
     //NO MORE CODE HERE -- object may have destroyed itself
-  } else 
+  } else
     m_ptr = NULL;
 }
 
 void taSmartRef::DataRefChanging(taBase* obj, bool setting) {
   if (m_own) {
-    m_own->SmartRef_DataRefChanging(this, obj, setting); 
+    m_own->SmartRef_DataRefChanging(this, obj, setting);
   }
 }
 
@@ -3445,14 +3447,14 @@ void taOBase::Copy_(const taOBase& cp) {
   }
 }
 
-UserDataItem_List* taOBase::GetUserDataList(bool force) const { 
+UserDataItem_List* taOBase::GetUserDataList(bool force) const {
   if (!user_data_ && force) {
-    user_data_ = new UserDataItem_List; 
+    user_data_ = new UserDataItem_List;
     taOBase* ths =  const_cast<taOBase*>(this); // note: harmless const casts
     taBase::Own(user_data_, ths);
     user_data_->el_typ = &TA_UserDataItem; // set default type to create
     ths->DataChanged(DCR_USER_DATA_UPDATED);
-  } 
+  }
   return user_data_;
 }
 
@@ -3539,7 +3541,7 @@ bool taFBase::SetFileName(const String& val) {
   //note: canonical paths only available if file actually exists...
   if (fi.exists()) {
     // we get the canonical path, so we insure we can do exact filename compares later
-    file_name = fi.canonicalFilePath(); 
+    file_name = fi.canonicalFilePath();
   } else
     file_name = val;
   return true;
@@ -3564,7 +3566,7 @@ void taBase_RefList::DataLinkDestroying(taDataLink* dl) {
   taBase* tab = dl->taData();
   if (tab) { // should exist!
     // note: we need to remove all instances, in case multiply-added
-    while (RemoveEl(tab)) {;} 
+    while (RemoveEl(tab)) {;}
     if (m_own) {
       m_own->DataDestroying_Ref(this, tab);
     }
@@ -3584,7 +3586,7 @@ void taBase_RefList::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* o
 
 void* taBase_RefList::El_Ref_(void* it_) {
   taBase* it = (taBase*)it_;
-  it->AddDataClient(this); 
+  it->AddDataClient(this);
   return it_;
 }
 
@@ -3643,7 +3645,7 @@ void taList_impl::CutLinks() {
 }
 
 void taList_impl::CanCopy_impl(const taBase* cp_fm_, bool quiet,
-  bool& ok, bool virt) const 
+  bool& ok, bool virt) const
 {
   if (virt) {
     inherited::CanCopy_impl(cp_fm_, quiet, ok, virt);
@@ -3792,7 +3794,7 @@ void taList_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
   for (int i = 0; i < size; ++i) {
     taBase* child = (taBase*)FastEl_(i);
     // we only include owned items, not linked
-    if (!child || (child->GetOwner() != this)) 
+    if (!child || (child->GetOwner() != this))
       continue;
     child->CheckConfig(quiet, rval);
   }
@@ -3809,7 +3811,7 @@ void taList_impl::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   }
 }
 
-String taList_impl::ChildGetColText(void* child, TypeDef* typ, const KeyString& key, 
+String taList_impl::ChildGetColText(void* child, TypeDef* typ, const KeyString& key,
   int itm_idx) const
 {
   if (child && typ && typ->InheritsFrom(&TA_taBase))
@@ -3839,7 +3841,7 @@ const KeyString taList_impl::GetListColKey(int col) const {
   switch (col) {
   case 0: return key_name;
   case 1: return key_type;
-  case 2: return key_desc; 
+  case 2: return key_desc;
   default: return _nilKeyString;
   }
 }
@@ -3953,7 +3955,7 @@ String taList_impl::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContex
   return nm;
 }
 
-bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def, 
+bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
 			    TypeDef::StrContext sc, bool force_inline) {
   if(val != String::con_NULL) {
     String tmp = val;
@@ -4001,7 +4003,7 @@ int taList_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
   // routine either for Dump_Save_PathR or when dumping list items
   // recursively -- when dump_my_path=false, we have already dumped the
   // item path one level above, so only need its members, and children
-  
+
   // first save any sub-members (there usually aren't any)
   int rval = GetTypeDef()->Dump_Save_PathR(strm, (void*)this, (void*)par, indent);
 
@@ -4009,20 +4011,20 @@ int taList_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
   // actually need to save this to be able to undo back to an empty group
 
   strm << "\n";			// actually saving a path: put a newline
-  if (dump_my_path) {		
+  if (dump_my_path) {
     taMisc::indent(strm, indent);
     Dump_Save_Path(strm, par, indent); // save my path!
     strm << " = [" << size << "] {\n";
-    ++indent; // bump up 
+    ++indent; // bump up
   }
   // note: we bumped indent if it is truly nested...
   Dump_Save_PathR_impl(strm, this, indent);
-  
+
   if (dump_my_path) {
     --indent;
     taMisc::indent(strm, indent);
     strm << "};\n";
-  } 
+  }
   return true;
 }
 
@@ -4157,7 +4159,7 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
     }
   }
   if(m_trg_load_size >= 0 && idx+1 == m_trg_load_size) {
-    // we are the last guy who is supposed to be loaded -- set the list size to be the 
+    // we are the last guy who is supposed to be loaded -- set the list size to be the
     // target size -- nukes any extra guys that might have been lingering!!
     SetSize(m_trg_load_size);
     m_trg_load_size = -1;	// reset for next time around
@@ -4231,7 +4233,7 @@ int taList_impl::Dump_Load_Value(istream& strm, taBase* par) {
 	    // if no items to load, it never happens!  This is the enforcer!
 	    // also: for undo optimized loading (i.e., not saving networks), this count
 	    // is actually set accurately pre-filtering so it is fine
-	    // also, using list version b/c groups may have sub guys and don't want to nuke 
+	    // also, using list version b/c groups may have sub guys and don't want to nuke
 	    // those guys!!
 	  }
 	  return GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
@@ -4321,7 +4323,7 @@ void taList_impl::EnforceType() {
 
 void* taList_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   ret_md = NULL;
-  
+
   // first look for special list index syntax
   String idx_str = nm;
   idx_str = idx_str.before(']');
@@ -4348,7 +4350,7 @@ void* taList_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   if(fnd)
     return fnd;
 
-  // then look on members of list obj itself, recursively 
+  // then look on members of list obj itself, recursively
   void* rval = inherited::FindMembeR(nm, ret_md);
   if(rval)
     return rval;
@@ -4561,7 +4563,7 @@ taBase* taList_impl::New_gui(int no, TypeDef* typ, const String& name_) {
   taBase* rval = New(no, typ, name_);
   if (rval) {
     if (taMisc::gui_active && !taMisc::no_auto_expand) {
-      if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) 
+      if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL"))
       {
         tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
         tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
@@ -4822,7 +4824,7 @@ void taDataView::CutLinks() {
   SetData(NULL);
   inherited::CutLinks();
 }
- 
+
 void taDataView::Copy_(const taDataView& cp) {
   SetData(cp.m_data);
 }
@@ -4836,7 +4838,7 @@ void taDataView::UpdateAfterEdit() {
 void taDataView::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (taMisc::is_loading) {
-    if (m_data) 
+    if (m_data)
       m_data->AddDataClient(this);
   }
 }
@@ -4874,9 +4876,9 @@ void taDataView::SetVisible_impl(DataViewAction act) {
       "m_vis_cnt went -ve, indicates show/hide issues"))
       m_vis_cnt = 0;
   }
-  
+
   DoActionChildren_impl(act);
-  
+
   if (do_defer_refresh == 0) return;
 
 #ifdef DEBUG
@@ -4893,7 +4895,7 @@ void taDataView::SetVisible_impl(DataViewAction act) {
 void taDataView::IgnoredDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   // note: should not need to track anything during loading
   if (taMisc::is_loading) return;
-  
+
   // keep track if we need to update -- struct has priority, and overrides data
   if ((dcr == DCR_STRUCT_UPDATE_BEGIN) ||
     (dcr == DCR_REBUILD_VIEWS))
@@ -4908,7 +4910,7 @@ void taDataView::IgnoredDataChanged(taDataLink*, int dcr, void* op1_, void* op2_
 
 void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   // detect the implicit DATA_UPDATE_END
-#ifdef DATA_DATA_DEBUG    
+#ifdef DATA_DATA_DEBUG
   if(dcr <= DCR_ITEM_UPDATED_ND) {
     cerr << GetName() << " iu: " << m_dbu_cnt << endl;
     taMisc::FlushConsole();
@@ -4921,7 +4923,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
     if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
     ++m_dbu_cnt;
-#ifdef DATA_DATA_DEBUG    
+#ifdef DATA_DATA_DEBUG
     cerr << GetName() << " stru start: " << m_dbu_cnt << endl;
     taMisc::FlushConsole();
 #endif
@@ -4929,7 +4931,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   } else if (dcr == DCR_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
     if (m_dbu_cnt > 0) ++m_dbu_cnt;
     else               --m_dbu_cnt;
-#ifdef DATA_DATA_DEBUG    
+#ifdef DATA_DATA_DEBUG
     cerr << GetName() << " data start: " << m_dbu_cnt << endl;
     taMisc::FlushConsole();
 #endif
@@ -4939,7 +4941,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
     bool stru = false;
     if (m_dbu_cnt < 0) ++m_dbu_cnt;
     else {stru = true; --m_dbu_cnt;}
-#ifdef DATA_DATA_DEBUG    
+#ifdef DATA_DATA_DEBUG
     if(dcr == DCR_DATA_UPDATE_END)
       cerr << GetName() << " data end: " << m_dbu_cnt << endl;
     else
@@ -4996,9 +4998,9 @@ void taDataView::DoActions(DataViewAction acts) {
     SetVisible_impl(acts); // note: only 1 will be called
     return; // NEVER combined with any other action
   }
-  // never do any rendering during load or copying, 
-  if (!(taMisc::is_loading || taMisc::is_duplicating)) { 
-  
+  // never do any rendering during load or copying,
+  if (!(taMisc::is_loading || taMisc::is_duplicating)) {
+
     if (acts & CONSTR_POST) {
       // note: only ever called manually
       Constr_post();
@@ -5015,8 +5017,8 @@ void taDataView::DoActions(DataViewAction acts) {
   if (acts & RESET_IMPL) {
     Reset_impl();
   }
-  
-  if (taMisc::is_loading || taMisc::is_duplicating) return; 
+
+  if (taMisc::is_loading || taMisc::is_duplicating) return;
   // no rendering should ever get done if not in gui mode, incl during late shutdown
   if (taMisc::gui_active || taMisc::gui_no_win) {
     if (acts & RENDER_PRE) {
@@ -5165,7 +5167,7 @@ String taArray_base::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrConte
   }
 }
 
-bool taArray_base::SetValStr(const String& val, void* par, MemberDef* memb_def, 
+bool taArray_base::SetValStr(const String& val, void* par, MemberDef* memb_def,
 			    TypeDef::StrContext sc, bool force_inline) {
   InitFromString(val);
   return true;
@@ -5305,7 +5307,7 @@ String SArg_Array::GetValue(const String& key) const {
 void SArg_Array::SetValue(const String& key, const String& value) {
   int idx = labels.FindEl(key);
   if (idx >= 0) {
-    if(TestWarning((idx >= size), "SetValue", 
+    if(TestWarning((idx >= size), "SetValue",
 		   "Consistency error: SArg_Array used as key/values has missing entry for key:", key)) {//nop
     }
     else {
@@ -5315,7 +5317,7 @@ void SArg_Array::SetValue(const String& key, const String& value) {
     labels.Add(key);
     Add(value);
   }
-#ifdef DEBUG // helpful when viewing stuff in gui 
+#ifdef DEBUG // helpful when viewing stuff in gui
   DataChanged(DCR_ITEM_UPDATED);
 #endif
 }
@@ -5435,7 +5437,7 @@ void taBase_FunCallList::El_Done_(void* it_) {
 bool taBase_FunCallList::AddBaseFun(taBase* obj, const String& fun_name) {
   FunCallItem* fci = new FunCallItem(obj, fun_name);
   Add(fci);
-  obj->AddDataClient(this); 
+  obj->AddDataClient(this);
   return true;
 }
 
@@ -5450,7 +5452,7 @@ void taBase_FunCallList::DataLinkDestroying(taDataLink* dl) {
       got_one = true;
     }
   }
-  
+
   if(!got_one) {
     taMisc::Error("Internal error -- taBase_FunCallList DataDestroying_Ref didn't find base in base_funs!");
   }
@@ -5460,7 +5462,7 @@ void taBase_FunCallList::DataLinkDestroying(taDataLink* dl) {
 // UserDataItemBase	//
 //////////////////////////
 
-UserDataItemBase::UserDataItemBase(const String& type_name, const String& key_) 
+UserDataItemBase::UserDataItemBase(const String& type_name, const String& key_)
 :inherited()
 {
   Initialize();

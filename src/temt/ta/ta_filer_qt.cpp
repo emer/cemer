@@ -18,8 +18,6 @@
 
 #include "ta_filer.h"
 
-#include <memory> // std::auto_ptr
-
 #include "ta_base.h"
 #include "ta_project.h"
 
@@ -32,6 +30,7 @@
 #include <QFileInfo>
 #include <QFrame>
 #include <QLayout>
+#include <QScopedPointer>
 #include <QWidget>
 #include <QUrl>
 
@@ -117,7 +116,8 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   // * filters can only be added in ctor
   // * some use-cases cause no Save dialog if prev is Open
   // DO NOT MAKE STATIC!!!!
-  std::auto_ptr<QFileDialog> fd(new QFileDialog(NULL, "", eff_dir, filtext));
+  // Use QScopedPointer to manage memory within this scope (function).
+  QScopedPointer<QFileDialog> fd(new QFileDialog(NULL, "", eff_dir, filtext));
 
   int nw_wd = (int)((float)taiM->scrn_s.w * .5f);
   int nw_ht = (int)((float)taiM->scrn_s.h * .5f);
@@ -143,15 +143,27 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fd->setDirectory(eff_dir);
   fd->setFilters(filter_list);
 
-  bool isCompressed = CompressEnabled() && (CompressReq() || IsCompressed());
-  fd->setDefaultSuffix(isCompressed ? defExt() + taMisc::compress_sfx : defExt());
+  bool isDefaultFilenameCompressed =
+    CompressEnabled() && (CompressReq() || IsCompressed());
+  // Qt expects a suffix without a leading dot.
+  String suffix = taFilerUtil::undottedExtension(
+    isDefaultFilenameCompressed ? defExt() + taMisc::compress_sfx : defExt());
+  fd->setDefaultSuffix(suffix);
 
   String caption;
   switch (filerOperation) {
     case foOpen:
       fd->setAcceptMode(QFileDialog::AcceptOpen);
-      fd->setFileMode(HasFilerFlag(FILE_MUST_EXIST)
-                        ? QFileDialog::AnyFile : QFileDialog::ExistingFile);
+      if (HasFilerFlag(FILE_MUST_EXIST))
+      {
+        fd->setFileMode(QFileDialog::ExistingFile);
+      }
+      else
+      {
+        // TBD: Is this ability actually useful?  Will it even work?
+        taMisc::Warning("File dialog will allow opening a non-existant file");
+        fd->setFileMode(QFileDialog::AnyFile);
+      }
       caption = String("Open: ") + filter;
       break;
 
@@ -182,7 +194,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fd->selectFile(m_fname);
   // we always make and set the extension, but don't always show it
   fde->cbCompress->setEnabled(CompressEnabled());
-  fde->cbCompress->setChecked(isCompressed);
+  fde->cbCompress->setChecked(isDefaultFilenameCompressed);
   //  fd->setOrientation(Qt::Vertical);
   fd->setViewMode(QFileDialog::Detail);
   fd->setHistory(hist_paths);
@@ -211,18 +223,6 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   }
 
   tfname = sfs[0];
-
-// TBD: What was this gsub call actually supposed to fix???
-// It breaks opening files if any part of the path contains .., such as
-// c:\why-does-this-folder-have-..-two-dots\something\file.proj
-// Remove permanently if no regressions for a few builds.
-#if 0
-  // some weird bugs showing up in qt filer!
-  tfname.gsub("..", "."); // .. -> .
-#endif
-
-  //shouldn't happen anymore!    tfname.gsub(ext + ext, ext); // .proj.proj -> .proj
-
   QFileInfo fi(tfname);
   // we always add the path here, to the sys paths -- if added again, it is a noop
   if (tabMisc::root) {

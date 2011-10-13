@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -32,7 +32,6 @@
 #include <fcntl.h>
 #include <time.h>
 
-//using namespace std;
 #undef String
 #define String taString
 
@@ -271,7 +270,7 @@ void gzstreambase::close() {
 
 
 //////////////////////////////////
-// 	taFiler		//
+//      taFiler                 //
 //////////////////////////////////
 
 #ifdef TA_OS_WIN
@@ -283,16 +282,16 @@ void gzstreambase::close() {
 
 int taFiler::buf_size = 1016;
 String taFiler::last_fname;
-ContextFlag taFiler::no_save_last_fname; 
+ContextFlag taFiler::no_save_last_fname;
 
-taFiler* taFiler::New(const String& filetype_, 
-  const String& exts_, FilerFlags flags_) 
+taFiler* taFiler::New(const String& filetype_,
+  const String& exts_, FilerFlags flags_)
 {
   taFiler* rval = new taFiler(flags_);
   rval->m_dir = ".";
   rval->filetype = filetype_;
   rval->exts = exts_;
-    
+
   return rval;
 }
 
@@ -349,7 +348,7 @@ void taFiler::Close() {
     fstrm->close();
     delete fstrm;
     fstrm = NULL;
-    istrm = NULL;		// these are ptrs to fstrm
+    istrm = NULL;               // these are ptrs to fstrm
     if(ostrm) was_ostrm = true;
     ostrm = NULL;
   }
@@ -363,7 +362,7 @@ void taFiler::Close() {
     ostrm = NULL;
   }
   open_file = false;
-  file_selected = true;		// closing a file is as good as opening one
+  file_selected = true;         // closing a file is as good as opening one
   if(was_ostrm && HasFilerFlag(TMP_SAVE_FILE) && HasFilerFlag(TMP_SAVE_FILE_USED)
      && m_tmp_fname.nonempty()) {
     String cur_fnm = FileName();
@@ -373,7 +372,7 @@ void taFiler::Close() {
     }
     if(FileExists()) {
       taMisc::Error("Unable to overwite existing file named", cur_fnm,
-		    "for saving -- most likely you do not have appropriate permissions -- file is saved to temporary filename as:", tmp_fnm);
+                    "for saving -- most likely you do not have appropriate permissions -- file is saved to temporary filename as:", tmp_fnm);
     }
     else {
       QFile::rename(tmp_fnm.chars(), cur_fnm.chars());
@@ -388,17 +387,18 @@ String taFiler::defExt() const {
     rval = exts.before(",");
   else
     rval = exts;
-  return rval;
+  // Add a dot if necessary.
+  return taFilerUtil::dottedExtension(rval);
 }
 
 String taFiler::FileName() const {
-  if (m_dir.empty()) 
+  if (m_dir.empty())
     return m_fname;
   else return m_dir + "/" + m_fname;
 }
 
 String taFiler::FileName_tmp() const {
-  if (m_dir.empty()) 
+  if (m_dir.empty())
     return m_tmp_fname;
   else return m_dir + "/" + m_tmp_fname;
 }
@@ -427,30 +427,19 @@ const String taFiler::FilterText(bool incl_allfiles, QStringList* list) const {
   sa_ex.SetFromString(exts, ",");
   // key on the exts, and just put a ? for type if we run out
   for (int i = 0; i < sa_ex.size; ++i) {
-    String tft = sa_ft.SafeEl(i);
-    if (tft.empty()) tft = sa_ft.SafeEl(0);
-    if (tft.empty()) tft = "?";
-    String tex = sa_ex.FastEl(i);
-    if (tex.nonempty() && tex[0] != '.')
-      tex = "." + tex;
-    String itm = tft.cat(" files (");
-    // note: ok if tex empty
-    itm.cat("*").cat(tex);
-    if (CompressEnabled()) {
-      itm.cat(" *").cat(tex).cat(taMisc::compress_sfx);
-    }
-    itm.cat(")");
-    if (rval.nonempty()) rval.cat(";;").cat(itm);
-    if (list)
-      *list << itm;
+    using namespace taFilerUtil;
+    String filetype = getFiletype(i, sa_ft);
+    String extension = getDottedExtension(i, sa_ex);
+    String filter = makeFilter(filetype, extension, CompressEnabled());
+    addFilter(filter, rval, list);
   }
+
   if (incl_allfiles) {
-    String itm = "All files (*)";
-    if (rval.nonempty()) rval.cat(";;");
-    rval.cat(itm);
-    if (list)
-      *list << itm;
+    using namespace taFilerUtil;
+    String filter = "All files (*)";
+    addFilter(filter, rval, list);
   }
+
   return rval;
 }
 
@@ -467,20 +456,28 @@ void taFiler::FixFileName() {
     base_fname = m_fname.before(taMisc::compress_sfx, -1);
   }
 
-  // otherwise, if no ext was supplied and we have one, we apply it
-  String act_ext = base_fname.after(".", -1); // the actual extension, if any
-  if (act_ext.empty()) act_ext = defExt();
+  // Get the actual extension (including dot), if any.
+  String act_ext = base_fname.from('.', -1);
+  if (act_ext.empty()) {
+    // If no ext was supplied and we have a default one, apply it.
+    act_ext = defExt(); // (might still be empty string after this call)
+  }
+
   String nocompr_ext = act_ext;
-  if (compressed) act_ext += taMisc::compress_sfx;
-  
-  if (m_fname.endsWith(act_ext)) return; // done!
+  if (compressed) {
+    act_ext += taMisc::compress_sfx;
+  }
+
+  if (m_fname.endsWith(act_ext)) {
+    return; // done!
+  }
 
   // ends with basic extension but not compressed one -- just add compresed
-  if(compressed && m_fname.endsWith(nocompr_ext)) {
+  if (compressed && m_fname.endsWith(nocompr_ext)) {
     m_fname += taMisc::compress_sfx;
     return;
   }
-  
+
   // if user already has an extension, don't change it
   //note: because paths can have . we have to look at file only
   QFileInfo fi(m_fname);
@@ -509,7 +506,7 @@ void taFiler::GetDir() {
 bool taFiler::IsCompressed() const {
   if (IsOpen()) return compressed;
   else return m_fname.endsWith(taMisc::compress_sfx);
-} 
+}
 
 istream* taFiler::open_read() {
   Close();
@@ -558,7 +555,7 @@ ostream* taFiler::open_write() {
   }
   else {
     ClearFilerFlag(TMP_SAVE_FILE_USED);
-    m_tmp_fname = "";		// clear this too for good measure
+    m_tmp_fname = "";           // clear this too for good measure
   }
   if (hasfx) {
     compressed = true;
@@ -643,9 +640,9 @@ ostream* taFiler::SaveAs(bool tmp_fname_save) {
     FixFileName();
     if (open_write()) {
       if (select_only)
-	Close();
+        Close();
       else {
-	rstrm = ostrm;
+        rstrm = ostrm;
       }
     }
   }
@@ -660,9 +657,9 @@ ostream* taFiler::Append() {
     file_selected = true;
     if (open_append()) {
       if (select_only)
-	Close();
+        Close();
       else
-	rstrm = ostrm;
+        rstrm = ostrm;
     }
   }
   return rstrm;
@@ -678,18 +675,84 @@ void taFiler::SetFileName(const String& value) {
   else
     m_dir = tdir;
 }
- 
-#ifdef TA_NO_GUI
 
-//////////////////////////
-//   taFiler		//
-//////////////////////////
+namespace taFilerUtil
+{
+  String dottedExtension(const String &extension)
+  {
+    // Ensure the extension (if any) begins with a dot.
+    if (extension.nonempty() && extension[0] != '.')
+    {
+      return "." + extension;
+    }
+    return extension;
+  }
 
-// this is not called in the NO_GUI version, see ta_qtdialog.cpp
+  String undottedExtension(const String &extension)
+  {
+    // Remove the leading dot from the extension (if there is one).
+    if (extension.nonempty() && extension[0] == '.')
+    {
+      return extension.from(1);
+    }
+    return extension;
+  }
 
-bool taFiler::GetFileName(FileOperation filerOperation) {
-  return false;
+  String getFiletype(int idx, const String_PArray &filetypes)
+  {
+    String type = filetypes.SafeEl(idx);
+    if (type.empty())
+    {
+      // No filetype at that index, so use the first filetype in the list.
+      type = filetypes.SafeEl(0);
+    }
+    if (type.empty())
+    {
+      // Still empty, so use "? files".
+      type = "?";
+    }
+    return type;
+  }
+
+  String getDottedExtension(int idx, const String_PArray &extensions)
+  {
+    String ext = extensions.FastEl(idx);
+    return taFilerUtil::dottedExtension(ext);
+  }
+
+  String makeFilter(const String &filetype, const String &extension, bool isCompressEnabled)
+  {
+    // note: it's ok if extension is empty
+    String filter = filetype + " files (*" + extension;
+    if (isCompressEnabled)
+    {
+      filter.cat(" *").cat(extension).cat(taMisc::compress_sfx);
+    }
+    filter.cat(")");
+    return filter;
+  }
+
+  void addFilter(const String &newFilter, String &filters, QStringList *list)
+  {
+    if (filters.nonempty())
+    {
+      filters.cat(";;");
+    }
+    filters.cat(newFilter);
+    if (list)
+    {
+      *list << newFilter;
+    }
+  }
 }
 
+#ifdef TA_NO_GUI
+  //////////////////////////
+  //   taFiler            //
+  //////////////////////////
 
+  // this is not called in the NO_GUI version, see ta_qtdialog.cpp
+  bool taFiler::GetFileName(FileOperation filerOperation) {
+    return false;
+  }
 #endif // TA_NO_GUI
