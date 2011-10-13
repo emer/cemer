@@ -2170,8 +2170,7 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
   return true;
 }
 
-bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig) {
-  // TODO: Allow vector input for bubble centers. Don't need for basic usage though, just gen randomly
+bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig, int_Matrix* bubble_coords) {
 
   // floor value for mask
   float floor_thr=pow(10.0f, -8.0f);
@@ -2179,7 +2178,7 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig)
   // get the img size -- need for lots of stuff
   TwoDCoord img_size(img.dim(0), img.dim(1));
   
-  // create the mask and temporary mask
+  // create the mask and temporary mask -- if bubble_coords is specified, init it for saving coords
   float_Matrix mask;
   mask.SetGeom(2, img_size.x, img_size.y);
   float_Matrix mask_tmp;
@@ -2189,6 +2188,9 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig)
       mask.FastEl(xi, yi) = 0.0f;
       mask_tmp.FastEl(xi, yi) = 0.0f;
     }
+  }
+  if(bubble_coords != NULL) {
+  	bubble_coords->SetGeom(2, n_bubbles, 2);
   }
   
   // ndgrid from matlab
@@ -2208,7 +2210,13 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig)
     // random center
    int xc = Random::IntMinMax(0, img_size.x-1);
    int yc = Random::IntMinMax(0, img_size.y-1);
-    
+   
+   // save the bubble coords
+   if(bubble_coords != NULL) {
+   		bubble_coords->FastEl(bubble, 0) = xc;
+   		bubble_coords->FastEl(bubble, 1) = yc;
+   }
+   
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {
 	    float &mask_iv = mask_tmp.FastEl(xi, yi);
