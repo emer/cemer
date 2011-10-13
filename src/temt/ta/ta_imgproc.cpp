@@ -2190,7 +2190,7 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
     }
   }
   if(bubble_coords != NULL) {
-  	bubble_coords->SetGeom(2, n_bubbles, 2);
+  	bubble_coords->SetGeom(2, 2, n_bubbles);
   }
   
   // ndgrid from matlab
@@ -2213,8 +2213,8 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
    
    // save the bubble coords
    if(bubble_coords != NULL) {
-   		bubble_coords->FastEl(bubble, 0) = xc;
-   		bubble_coords->FastEl(bubble, 1) = yc;
+   		bubble_coords->FastEl(0, bubble) = xc;
+   		bubble_coords->FastEl(1, bubble) = yc;
    }
    
     for(int yi=0; yi< img_size.y; yi++) {
