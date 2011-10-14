@@ -3003,6 +3003,14 @@ void Projection::UpdateAfterEdit_impl() {
 //   if(!net) return;
 }
 
+void Projection::UpdateName() {
+  if(from) {
+    String nwnm = "Fm_" + from->name;
+    SetName(nwnm);		// setname ensures uniqueness
+    DataChanged(DCR_ITEM_UPDATED);
+  }
+}
+
 void Projection::RemoveCons() {
   Unit* u;
   taLeafItr i;
@@ -6952,6 +6960,134 @@ void Network::Compute_EpochStats() {
     Compute_EpochPRerr();
 }
 
+
+void Network::NetStructToTable(DataTable* dt) {
+  if (!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable("NetStru_" + name, true);
+  }
+  dt->StructUpdate(true);
+  int idx;
+  dt->RemoveAllRows();
+  dt->FindMakeColName("Group", idx, VT_STRING); 
+  dt->FindMakeColName("Name", idx, VT_STRING); 
+  dt->FindMakeColName("Size_X", idx, VT_INT); 
+  dt->FindMakeColName("Size_Y", idx, VT_INT); 
+  dt->FindMakeColName("UnitGps_X", idx, VT_INT); 
+  dt->FindMakeColName("UnitGps_Y", idx, VT_INT); 
+  dt->FindMakeColName("RecvPrjns", idx, VT_STRING); 
+  dt->FindMakeColName("SendPrjns", idx, VT_STRING); 
+
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+//     if(l->lesioned()) continue;   // for this, get everything
+    Layer_Group* lg = NULL;
+    if(l->owner != &layers)
+      lg = (Layer_Group*)l->owner;
+    dt->AddBlankRow();
+    dt->SetVal(l->name, "Name", -1);
+    if(lg)
+      dt->SetVal(lg->name, "Group", -1);
+    dt->SetVal(l->un_geom.x, "Size_X", -1);
+    dt->SetVal(l->un_geom.y, "Size_Y", -1);
+    if(l->unit_groups) {
+      dt->SetVal(l->gp_geom.x, "UnitGps_X", -1);
+      dt->SetVal(l->gp_geom.y, "UnitGps_Y", -1);
+    }
+    String fmp;
+    for(int i=0; i<l->projections.size; i++) {
+      Projection* pj = l->projections.FastEl(i);
+      fmp += pj->from->name + " ";
+    }
+    dt->SetVal(fmp, "RecvPrjns", -1);
+
+    String snp;
+    for(int i=0; i<l->send_prjns.size; i++) {
+      Projection* pj = l->send_prjns.FastEl(i);
+      snp += pj->layer->name + " ";
+    }
+    dt->SetVal(snp, "SendPrjns", -1);
+    dt->WriteClose();
+  }
+  dt->StructUpdate(false);
+}
+
+void Network::NetStructFmTable(DataTable* dt) {
+  if(TestError(!dt, "NetStructFmTable", "must pass the data table argument"))
+    return;
+  Layer* l;
+  taLeafItr i;
+  // set tag for all layers to do cleanup at end
+  FOR_ITR_EL(Layer, l, layers., i) {
+    l->SetBaseFlag(BF_MISC1);
+  }
+  // first pass build all the layers
+  for(int i=0;i<dt->rows; i++) {
+    String gpnm = trim(dt->GetVal("Group", i).toString());
+    String lnm = trim(dt->GetVal("Name", i).toString());
+    int szx = dt->GetVal("Size_X", i).toInt();
+    int szy = dt->GetVal("Size_Y", i).toInt();
+    int gszx = dt->GetVal("UnitGps_X", i).toInt();
+    int gszy = dt->GetVal("UnitGps_Y", i).toInt();
+    String recvs = trim(dt->GetVal("RecvPrjns", i).toString());
+
+    if(gpnm.empty()) {
+      l = FindMakeLayer(lnm);
+    }
+    else {
+      Layer_Group* lgp = FindMakeLayerGroup(gpnm);
+      l = lgp->FindMakeLayer(lnm);
+    }
+    l->ClearBaseFlag(BF_MISC1);	// mark it
+    l->un_geom.x = szx;
+    l->un_geom.y = szy;
+    l->un_geom.UpdateAfterEdit();
+    if(gszx > 0 && gszy > 0) {
+      l->unit_groups = true;
+      l->gp_geom.x = gszx;
+      l->gp_geom.y = gszy;
+      l->gp_geom.UpdateAfterEdit();
+    }
+  }
+  // second pass make projections
+  for(int i=0;i<dt->rows; i++) {
+    String lnm = trim(dt->GetVal("Name", i).toString());
+    String recvs = trim(dt->GetVal("RecvPrjns", i).toString());
+
+    l = FindLayer(lnm);
+    for(int p=0;p<l->projections.size;p++) {
+      Projection* prjn = l->projections.FastEl(p);
+      prjn->SetBaseFlag(BF_MISC1);
+    }
+
+    String_Array rps;
+    rps.FmDelimString(recvs, " "); // fill with items
+    for(int p=0;p<rps.size; p++) {
+      String fmnm = rps.FastEl(p);
+      Layer* fm = FindLayer(fmnm);
+      if(fm) {
+	Projection* prjn = FindMakePrjn(l, fm);
+	prjn->ClearBaseFlag(BF_MISC1);
+      }
+    }
+
+    // cull any non-wanted projections
+    for(int p=l->projections.size-1; p>=0; p--) {
+      Projection* prjn = l->projections.FastEl(p);
+      if(prjn->HasBaseFlag(BF_MISC1)) {
+	l->projections.RemoveIdx(p);
+      }
+    }
+  }
+
+  // cull any non-wanted layers
+  for(int i=layers.leaves-1; i>=0; i--) {
+    l = layers.Leaf(i);
+    if(l->HasBaseFlag(BF_MISC1))
+      layers.RemoveLeafIdx(i);
+  }
+}
 
 #ifdef DMEM_COMPILE
 

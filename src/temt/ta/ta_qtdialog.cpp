@@ -821,9 +821,7 @@ void taiDataHostBase::Revert() {
 void taiDataHostBase::DoDestr_Dialog(iHostDialog*& dlg) { // common sub-code for destructing a dialog instance
   if (dlg != NULL) {
     dlg->owner = NULL; // prevent reverse deletion
-    if(taMisc::in_shutdown)
-      delete dlg;
-    else {
+    if(!taMisc::in_shutdown) {
       dlg->deleteLater(); 
       dlg->close(); // destructive close
     }
