@@ -5303,6 +5303,12 @@ void Layer::AddRelPos(TDCoord& rel_pos) {
     lgp->AddRelPos(rel_pos);
   }
 }
+
+bool Layer::InLayerSubGroup() {
+  if(owner && owner->GetOwner() && owner->GetOwner()->InheritsFrom(&TA_Network))
+    return false;
+  return true;
+}
  
 bool Layer::ChangeMyType(TypeDef* new_typ) {
   if(TestError(units.leaves > 0, "ChangeMyType", "You must first remove all units in the network before changing type of Layer -- otherwise it takes FOREVER -- do Network/Structure/Remove Units"))
@@ -6969,14 +6975,25 @@ void Network::NetStructToTable(DataTable* dt) {
   dt->StructUpdate(true);
   int idx;
   dt->RemoveAllRows();
-  dt->FindMakeColName("Group", idx, VT_STRING); 
-  dt->FindMakeColName("Name", idx, VT_STRING); 
-  dt->FindMakeColName("Size_X", idx, VT_INT); 
-  dt->FindMakeColName("Size_Y", idx, VT_INT); 
-  dt->FindMakeColName("UnitGps_X", idx, VT_INT); 
-  dt->FindMakeColName("UnitGps_Y", idx, VT_INT); 
-  dt->FindMakeColName("RecvPrjns", idx, VT_STRING); 
-  dt->FindMakeColName("SendPrjns", idx, VT_STRING); 
+  DataCol* col;
+  col = dt->FindMakeColName("Group", idx, VT_STRING); 
+  col->desc = "name of layer group to put layer in -- layer groups are useful for organizing layers logically, moving them together, etc";
+  col = dt->FindMakeColName("Name", idx, VT_STRING); 
+  col->desc = "name of layer -- will be updated to be a valid C language label so it can be referred to in Programs etc";
+  col = dt->FindMakeColName("Type", idx, VT_STRING); 
+  col->desc = "functional type of layer in terms of input/output data -- options are: INPUT, TARGET, OUTPUT, HIDDEN -- TARGET means it learns from target output data, while OUTPUT means it generates output error signals but does not use output values for error-driven learning, HIDDEN doesn't get any input/output, and INPUT is simply an input layer";
+  col = dt->FindMakeColName("Size_X", idx, VT_INT);
+  col->desc = "size of layer (number of units) in the horizontal (X) axis";
+  col = dt->FindMakeColName("Size_Y", idx, VT_INT); 
+  col->desc = "size of layer (number of units) in the vertical (Y) axis";
+  col = dt->FindMakeColName("UnitGps_X", idx, VT_INT); 
+  col->desc = "number of unit groups (subgroups of units within a layer) in the horizontal (X) axis -- set to 0 to not have any subgroups at all";
+  col = dt->FindMakeColName("UnitGps_Y", idx, VT_INT); 
+  col->desc = "number of unit groups (subgroups of units within a layer) in the vertical (Y) axis -- set to 0 to not have any subgroups at all";
+  col = dt->FindMakeColName("RecvPrjns", idx, VT_STRING); 
+  col->desc = "receiving projections -- connections from other layers that send into this one -- these must be valid names of other layers in the network, separated by a space if there are multiple";
+  col = dt->FindMakeColName("SendPrjns", idx, VT_STRING); 
+  col->desc = "sending projections -- the other layers that the layer sends connections to";
 
   Layer* l;
   taLeafItr i;
@@ -6989,6 +7006,8 @@ void Network::NetStructToTable(DataTable* dt) {
     dt->SetVal(l->name, "Name", -1);
     if(lg)
       dt->SetVal(lg->name, "Group", -1);
+    String ltype = l->GetEnumString("LayerType", l->layer_type);
+    dt->SetVal(ltype, "Type", -1);
     dt->SetVal(l->un_geom.x, "Size_X", -1);
     dt->SetVal(l->un_geom.y, "Size_Y", -1);
     if(l->unit_groups) {
@@ -7026,6 +7045,7 @@ void Network::NetStructFmTable(DataTable* dt) {
   for(int i=0;i<dt->rows; i++) {
     String gpnm = trim(dt->GetVal("Group", i).toString());
     String lnm = trim(dt->GetVal("Name", i).toString());
+    String ltyp = trim(dt->GetVal("Type", i).toString());
     int szx = dt->GetVal("Size_X", i).toInt();
     int szy = dt->GetVal("Size_Y", i).toInt();
     int gszx = dt->GetVal("UnitGps_X", i).toInt();
@@ -7034,12 +7054,23 @@ void Network::NetStructFmTable(DataTable* dt) {
 
     if(gpnm.empty()) {
       l = FindMakeLayer(lnm);
+      if(l->InLayerSubGroup()) {
+	layers.Transfer(l);	// transfer into main list
+      }
     }
     else {
       Layer_Group* lgp = FindMakeLayerGroup(gpnm);
-      l = lgp->FindMakeLayer(lnm);
+      l = FindLayer(lnm);
+      if(l && l->owner != lgp) {
+	lgp->Transfer(l);	// make it ours
+      }
+      else {
+	l = lgp->FindMakeLayer(lnm); // make new one
+      }
     }
     l->ClearBaseFlag(BF_MISC1);	// mark it
+    String etyp;
+    l->layer_type = (Layer::LayerType)l->GetEnumVal(ltyp, etyp);
     l->un_geom.x = szx;
     l->un_geom.y = szy;
     l->un_geom.UpdateAfterEdit();

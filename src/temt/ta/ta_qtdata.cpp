@@ -2036,10 +2036,8 @@ void taiActions::AddAction(taiAction* act) {
   }
   // font compliance
   act->setFont(taiM->menuFont(font_spec));
-#ifdef DEBUG
   if (act->parent()) 
-    cerr << "WARNING: taiAction has non-null parent!\n";
-#endif
+    taMisc::DebugInfo("WARNING: taiAction has non-null parent!");
   items.Add(act);
   ActionAdded(act);
   connect(act, SIGNAL(MenuAction(taiAction*)), this, SLOT(child_triggered_toggled(taiAction*)) );

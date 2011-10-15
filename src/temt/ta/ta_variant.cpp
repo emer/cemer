@@ -2267,9 +2267,9 @@ void Variant::setQVariant(const QVariant& cp) {
   case QVariant::String: 
     setString(cp.toString(), cp.isNull()); break;
   default:
-#ifdef DEBUG
-  taMisc::Warning("Attempt to set Variant from QVariant failed, can't handle QVariant::Type: ",
-    String(cp.userType()) );
+#ifdef DEBUG			// expensive
+  taMisc::DebugInfo("Attempt to set Variant from QVariant failed, can't handle QVariant::Type: ",
+		    String(cp.userType()) );
 #endif
     setInvalid(); break;
   }
@@ -2309,8 +2309,8 @@ QVariant Variant::toQVariant() const {
 */
   default: 
 #ifdef DEBUG
-  taMisc::Warning("Attempt to set QVariant from Variant failed, can't handle Variant::Type: ",
-    String(m_type) );
+  taMisc::DebugInfo("Attempt to set QVariant from Variant failed, can't handle Variant::Type: ",
+		    String(m_type) );
 #endif
     break ;
   }

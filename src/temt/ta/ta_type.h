@@ -669,7 +669,6 @@ public:
 #endif
   static String		console_font_name;	// #SAVE #CAT_GUI font name for the css console
   static int		console_font_size;	// #SAVE #CAT_GUI font size for the css console
-  static bool		log_console_out;	// #SAVE #CAT_GUI log the output of the console to the file "css_console_output.log" in current directory -- useful for debugging when console crashes and you can't read all the messages
   static float		doc_text_scale;	// #SAVE #CAT_GUI scale factor for text displayed in doc objects (including web pages) -- multiplies base setting from font_size parameter (above), plus any doc-specific text_size parameter -- values > 1 make the text bigger, < 1 = smaller
   static int		display_width;	// #SAVE #HIDDEN #MIN_40 #MAX_132 #CAT_GUI width of console display (in chars) -- set automatically by gui console
   
@@ -864,6 +863,8 @@ public:
   static int		err_cnt; //  #READ_ONLY #NO_SAVE cumulative error count; can be used/reset by Server to detect for errors after it calls a routine
   static int		CheckClearErrCnt(); // gets current value, and clears
 
+  static fstream	log_stream; // #IGNORE current logging output stream -- updated to project name + .plog extension whenever a program is opened or saved with a new name -- all significant events are logged to this stream via logging interface functions below
+  static String		log_fname;  // #READ_ONLY #NO_SAVE current log file output name
 
 #if (defined(TA_GUI) && !(defined(__MAKETA__) || defined(NO_TA_BASE)))
   static QPointer<QMainWindow>	console_win;	// #IGNORE the console window 
@@ -873,7 +874,7 @@ public:
   // #IGNORE set this to a work process for idle time processing
   static bool	do_wait_proc;
   // #IGNORE any case where something is added to the wait processing queue MUST set this flag -- it is reset again at the START of the wait proc so that subsequent stuff within the waitproc can request another waitproc visit the next time through
-  static void (*ScriptRecordingGui_Hook)(bool); // #IGNORE gui callback when script starts/stops; var is 'start'
+  static void 	(*ScriptRecordingGui_Hook)(bool); // #IGNORE gui callback when script starts/stops; var is 'start'
 
   /////////////////////////////////////////////////
   //	Configuration -- object as settings
@@ -929,6 +930,10 @@ public:
 		      const char* d=0, const char* e=0, const char* f=0,
 		      const char* g=0, const char* h=0, const char* i=0);
   // #CAT_Dialog displays informative msg to stdout and/or other logging mechanism
+  static void 	DebugInfo(const char* a, const char* b=0, const char* c=0,
+			  const char* d=0, const char* e=0, const char* f=0,
+			  const char* g=0, const char* h=0, const char* i=0);
+  // #CAT_Dialog displays informative msg to stdout and/or other logging mechanism -- always save to the log, but only displays to stdout if DEBUG mode is active
 
   static int 	Choice(const char* text="Choice", const char* a="Ok", const char* b=0,
 		       const char* c=0, const char* d=0, const char* e=0,
@@ -940,6 +945,11 @@ public:
 		      const char* d=0, const char* e=0, const char* f=0,
 		      const char* g=0, const char* h=0, const char* i=0);
   // #CAT_Dialog displays informative msg in a dialog -- use this instead of Choice for such confirmations
+
+  static void	LogEvent(const String& log_data);
+  // #CAT_Log record data to current log stream file -- log all significant data using this (errors and warnings above are logged for example)
+  static void	SetLogFile(const String& log_fname);
+  // #CAT_Log set log file to given file name -- always overwrites any existing log file
 
   static void	EditFile(const String& filename); 
   // #CAT_Dialog edit the file in the external editor

@@ -493,9 +493,7 @@ taiMimeItem* taiMimeSource::GetMimeItem(TypeDef* td, const String& subkey) {
 
 void taiMimeSource::ms_destroyed() {
   m_md = NULL;
-#ifdef DEBUG
-  taMisc::Warning("taiMimeSource::m_md destroyed before clip operations completed!");
-#endif
+  taMisc::DebugInfo("taiMimeSource::m_md destroyed before clip operations completed!");
 }
 
 taiObjectsMimeItem* taiMimeSource::objects() const {

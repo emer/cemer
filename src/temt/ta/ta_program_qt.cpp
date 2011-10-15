@@ -1475,9 +1475,7 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
       // then the type values can be wrong -- so we strongly cast
       if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) continue; // do this after the cnt++!
       if (!md || !mb_dat) {
-#ifdef DEBUG
-        taMisc::Warning("iProgramCtrlDataHost:GetValue_impl: ran out of controls!");
-#endif
+        taMisc::DebugInfo("iProgramCtrlDataHost:GetValue_impl: ran out of controls!");
         break;
       }
       if(pv->var_type == ProgVar::T_HardEnum) {
@@ -1557,9 +1555,7 @@ void iProgramCtrlDataHost::GetImage_Membs()
       MemberDef* md = memb_el(j).SafeEl(cnt);
       taiData* mb_dat = data_el(j).SafeEl(cnt++);
       if (!md || !mb_dat) {
-#ifdef DEBUG
-        taMisc::Warning("iProgramCtrlDataHost:GetImage_impl: ran out of controls!");
-#endif
+        taMisc::DebugInfo("iProgramCtrlDataHost:GetImage_impl: ran out of controls!");
         break;
       }
       // set base, for ctxt menu, so it won't try to use the Program (which is not the base)

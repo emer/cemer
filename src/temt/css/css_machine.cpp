@@ -263,6 +263,7 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
   cssProgSpace* top = prog ? prog->top : cssMisc::cur_top;
   cssMisc::last_err_msg = taMisc::SuperCat(a,b,c,d,e,f,g,h,i);
   cssMisc::last_err_msg += "\n" + GetSourceLoc(prog); // uses cur_top if prog = NULL
+  taMisc::LogEvent("css Error: " + cssMisc::last_err_msg);
 
   if(taMisc::dmem_proc == 0) {
     ostream* fh = &cerr;
@@ -292,6 +293,7 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
   if (prog) {
     cssMisc::last_warn_msg += "\n" + GetSourceLoc(prog);
   }
+  taMisc::LogEvent("css Warning: " + cssMisc::last_err_msg);
 
   if(taMisc::dmem_proc == 0) {
     ostream* fh = &cerr;
@@ -306,6 +308,33 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
     top->own_program->CssWarning(GetSourceLn(prog), running, cssMisc::last_err_msg);
   }
 }
+
+void cssMisc::SyntaxError(const char* er) {
+  String erm = er;
+  String src = cssMisc::cur_top->CurFullTokSrc();
+  String msg;
+  if(erm.startsWith("syntax error")) {
+    src.gsub('\t',' ');		// replace tabs
+    msg = erm + "\n" + src;
+    for(int i=0; i < cssMisc::cur_top->tok_src_col; i++)
+      msg += " ";
+    msg += "^";
+  }
+  else {
+    msg = String(er) + " " + src;
+  }
+
+  taMisc::LogEvent("css" + msg);
+  ostream* fh = &cerr;
+  if(cssMisc::cur_top->cmd_shell != NULL)
+    fh = cssMisc::cur_top->cmd_shell->ferr;
+  *fh << msg;
+  taMisc::FlushConsole();
+  if(cssMisc::cur_top->own_program) {
+    cssMisc::cur_top->own_program->CssError(cssMisc::cur_top->tok_src_ln, false, msg);
+  }
+}
+
 
 String cssMisc::Indent(int indent_level, int indent_spc) {
   if (indent_level <= 0) return _nilString;
@@ -3168,20 +3197,33 @@ cssProg* cssProg::SetSrcPC(int srcln) {
 
 void cssProg::RunDebugInfo(cssInst* nxt) {
   static int last_src_ln = -1;
-  if((top->debug == 0) || (!top->cmd_shell)) return;
+  if(top->debug == 0) return;
 
-  pager_ostream& fh = top->cmd_shell->pgout;
-  if(top->debug <= 1) {
-    if(nxt->line != last_src_ln) {
+  if(top->cmd_shell) {
+    pager_ostream& fh = top->cmd_shell->pgout;
+    if(top->debug <= 1) {
+      if(nxt->line != last_src_ln) {
+	String msg = top->name + ": \t" + nxt->PrintStr();
+	taMisc::LogEvent(msg);
+	fh << msg;
+	last_src_ln = nxt->line;
+      }
+    }
+    else {
       nxt->ListSrc(fh);
-      last_src_ln = nxt->line;
+      nxt->ListMachine(fh, top->size-1); // indent
+      if(top->debug >= 3) {
+	Stack()->List(fh, top->size); // indent
+      }
     }
   }
   else {
-    nxt->ListSrc(fh);
-    nxt->ListMachine(fh, top->size-1); // indent
-    if(top->debug >= 3) {
-      Stack()->List(fh, top->size); // indent
+    // not in shell only get basic trace debug
+    if(nxt->line != last_src_ln) {
+      String msg = top->name + ": \t" + nxt->PrintStr();
+      taMisc::LogEvent(msg);
+      cout << msg;
+      last_src_ln = nxt->line;
     }
   }
   taMisc::FlushConsole();

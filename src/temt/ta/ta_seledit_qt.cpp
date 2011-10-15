@@ -269,10 +269,8 @@ void iSelectEditDataHost::DoRemoveSelEdit() {
   if (sel_item_index >= 0) {
     sele->RemoveField(sel_item_index);
   }
-#ifdef DEBUG
   else
-    taMisc::Error("iSelectEditDataHost::DoRemoveSelEdit: could not find item");
-#endif
+    taMisc::DebugInfo("iSelectEditDataHost::DoRemoveSelEdit: could not find item");
 }
 
 void iSelectEditDataHost::FillLabelContextMenu_SelEdit(QMenu* menu,
@@ -293,9 +291,7 @@ void iSelectEditDataHost::GetImage_Membs_def() {
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {
-#ifdef DEBUG	
-        taMisc::Warning("iSelectEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
-#endif
+        taMisc::DebugInfo("iSelectEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i));
       }
       else {
         md->im->GetImage(mb_dat, item->base); // need to do this first, to affect visible
@@ -314,9 +310,7 @@ void iSelectEditDataHost::GetValue_Membs_def() {
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {
-#ifdef DEBUG
-        taMisc::Error("iSelectEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i), "\n");
-#endif
+        taMisc::DebugInfo("iSelectEditDataHost::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i));
       }
       else {
         bool first_diff = true;
@@ -1004,10 +998,8 @@ void iSelectEditDataHost2::DoRemoveSelEdit() {
   if (sel_item_index >= 0) {
     sele->RemoveField(sel_item_index);
   }
-#ifdef DEBUG
   else
-    taMisc::Error("iSelectEditDataHost::DoRemoveSelEdit: could not find item");
-#endif
+    taMisc::DebugInfo("iSelectEditDataHost::DoRemoveSelEdit: could not find item");
 }
 
 void iSelectEditDataHost2::FillLabelContextMenu_SelEdit(QMenu* menu,

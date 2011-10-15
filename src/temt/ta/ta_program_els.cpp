@@ -1503,6 +1503,7 @@ bool MemberAssign::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 
 bool MemberAssign::CvtFmCode(const String& code) {
   String lhs = trim(code.before('='));
+  if(lhs.contains('(') || lhs.contains(' ')) return false; // exclude others
   String objnm;
   String pathnm;
   if(lhs.contains('.')) {

@@ -1499,22 +1499,5 @@ end:	  /* nothing */		{ Code1(cssInst::Stop); $$ = cssMisc::cur_top->Prog()->siz
 
 
 void yyerror(const char* s) { 	/* called for yacc syntax error */
-  int i;
-
-  ostream* fh = &cerr;
-  if(cssMisc::cur_top->cmd_shell != NULL)
-    fh = cssMisc::cur_top->cmd_shell->ferr;
-
-  String src = cssMisc::cur_top->CurFullTokSrc();
-  if(strcmp(s, "parse error") == 0) {
-    src.gsub('\t',' ');		// replace tabs
-    *fh << "Syntax Error " << src;
-    for(i=0; i < cssMisc::cur_top->tok_src_col; i++)
-      *fh << " ";
-    *fh << "^\n";
-  }
-  else {
-    *fh << s << " " << src;
-  }
-  taMisc::FlushConsole();
+  cssMisc::SyntaxError(s);
 }

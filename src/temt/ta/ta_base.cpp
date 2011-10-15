@@ -206,14 +206,12 @@ bool tabMisc::DoDelayedCloses() {
     // so if item is owned, we just defer to it, otherwise
     taBase* it = items.FastEl(0);
     items.RemoveIdx(0);
-#ifdef DEBUG
     int refn = taBase::GetRefn(it);
     if ((it->GetOwner() == NULL) && (refn != 1)) {
-      taMisc::Warning("tabMisc::delayed_close: item had refn != 1, was=",
-        String(refn), "type=", it->GetTypeDef()->name, "name=",
-        it->GetName());
+      taMisc::DebugInfo("tabMisc::delayed_close: item had refn != 1, was=",
+			String(refn), "type=", it->GetTypeDef()->name, "name=",
+			it->GetName());
     }
-#endif
     it->Close();
   }
   return true;
@@ -1594,9 +1592,7 @@ void taBase::setStale() {
 taDataLink* taBase::GetDataLink() {
   if (!data_link()) {
     if (isDestroying()) {
-#ifdef DEBUG
-      taMisc::Warning("Attempt to GetDataLink on a destructing object");
-#endif
+      taMisc::DebugInfo("Attempt to GetDataLink on a destructing object");
       return NULL;
     }
     if (taiViewType* iv = GetTypeDef()->iv) {
@@ -1609,9 +1605,7 @@ taDataLink* taBase::GetDataLink() {
 bool taBase::AddDataClient(IDataLinkClient* dlc) {
   // refuse new links while destroying!
   if (isDestroying()) {
-#ifdef DEBUG
-    TestWarning(true,"AddDataClient","Attempt to add a DataLinkClient to a destructing object");
-#endif
+    DebugInfo("AddDataClient","Attempt to add a DataLinkClient to a destructing object");
     return false;
   }
   taDataLink* dl = GetDataLink(); // autocreates if necessary
@@ -1619,11 +1613,9 @@ bool taBase::AddDataClient(IDataLinkClient* dlc) {
     dl->AddDataClient(dlc);
     return true;
   }
-#ifdef DEBUG
   else {
-    TestError(true, "AddDataClient","Attempt to add a DataLinkClient to an obj with no DataLink!");
+    DebugInfo("AddDataClient","Attempt to add a DataLinkClient to an obj with no DataLink!");
   }
-#endif
   return false;
 }
 
@@ -1658,6 +1650,15 @@ void taBase::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj) {
 ///////////////////////////////////////////////////////////////////////////
 //	Checking the configuration of objects prior to using them
 
+
+void taBase::DebugInfo(const char* fun_name,
+		       const char* a, const char* b, const char* c,
+		       const char* d, const char* e, const char* f,
+		       const char* g, const char* h) const {
+  String objinfo = "obj: " + GetTypeDef()->name + " "
+    + GetDisplayName() + "::" + fun_name + "() (path: " + GetPathNames() + ")\n";
+  taMisc::DebugInfo(objinfo, a, b, c, d, e, f, g, h);
+}
 
 void taBase::CheckError_msg(const char* a, const char* b, const char* c,
 			    const char* d, const char* e, const char* f,
@@ -3571,11 +3572,9 @@ void taBase_RefList::DataLinkDestroying(taDataLink* dl) {
       m_own->DataDestroying_Ref(this, tab);
     }
   }
-#ifdef DEBUG //**CAUTION: warnings can cause gui eventloop events!
   else {
-    taMisc::Warning("Unexpected taData() NULL in taBase_RefList::DataLinkDestroying()");
+    taMisc::DebugInfo("Unexpected taData() NULL in taBase_RefList::DataLinkDestroying()");
   }
-#endif
 }
 
 void taBase_RefList::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
@@ -3925,12 +3924,10 @@ bool taList_impl::Close_Child(taBase* obj) {
 }
 
 bool taList_impl::CloseLater_Child(taBase* obj) {
-#ifdef DEBUG
   if (obj->refn <= 0) {
-    cerr << "WARNING: taList_impl::CloseLater_Child: taBase refn <= 0 for item type="
-      << obj->GetTypeDef()->name.chars() << "name='" << obj->GetName().chars() << "'\n";
+    DebugInfo("WARNING: taList_impl::CloseLater_Child: taBase refn <= 0 for item type=",
+	      obj->GetTypeDef()->name, "name=", obj->GetName().chars());
   }
-#endif
   // just add to list -- it will then close us
   tabMisc::DelayedClose(obj);
   return true;
@@ -4866,12 +4863,13 @@ void taDataView::SetVisible_impl(DataViewAction act) {
       else if (do_defer_refresh < 0)
         DataDataChanged(NULL, DCR_DATA_UPDATE_BEGIN, NULL, NULL);
     }
-#ifdef DEBUG
-    TestError((m_vis_cnt > MAX_VIS_CNT), "taDataView::SetVisible_impl",
-      "m_vis_cnt > likely max, may indicate show/hide issues (is:",
-      String(m_vis_cnt), ")");
-#endif
-  } else { // act & HIDING_IMPL
+    if(m_vis_cnt > MAX_VIS_CNT) {
+      DebugInfo("taDataView::SetVisible_impl",
+		"m_vis_cnt > likely max, may indicate show/hide issues (is:",
+		String(m_vis_cnt), ")");
+    }
+  }
+  else { // act & HIDING_IMPL
     if (TestError((--m_vis_cnt < 0), "taDataView::SetVisible_impl",
       "m_vis_cnt went -ve, indicates show/hide issues"))
       m_vis_cnt = 0;
@@ -4881,9 +4879,8 @@ void taDataView::SetVisible_impl(DataViewAction act) {
 
   if (do_defer_refresh == 0) return;
 
-#ifdef DEBUG
-  cerr << "doing deferred refresh: " << do_defer_refresh << " on: " << data()->GetName() << endl;
-#endif
+  DebugInfo("doing deferred refresh:", String(do_defer_refresh), " on: ",
+	    data()->GetName());
   m_defer_refresh = 0;
   if (do_defer_refresh > 0)
     DataDataChanged(NULL, DCR_STRUCT_UPDATE_END, NULL, NULL);

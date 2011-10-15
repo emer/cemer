@@ -49,6 +49,8 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   //TODO: should log errors on nodes > 0!!!
   if(taMisc::dmem_proc > 0) return;
 #endif
+  taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  String fmsg = "***ERROR: " + taMisc::last_err_msg;
 #if !defined(NO_TA_BASE)
   static bool cancel_mode = false;
   static QTime prv_time;
@@ -58,6 +60,7 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
       cancel_mode = false;
     }
     else {
+      taMisc::LogEvent(fmsg);
       cerr << ".";
       return;			// cancel!
     }
@@ -65,13 +68,13 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
 #endif
   // we always output to console
   if (beep_on_error) cerr << '\a'; // BEL character
-  taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top) {
     taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
   }
 #endif
-  cerr << "***ERROR: " << taMisc::last_err_msg << endl;
+  taMisc::LogEvent(fmsg);
+  cerr << fmsg << endl;
   FlushConsole();
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top) {
@@ -152,6 +155,7 @@ void taMisc::Confirm(const char* a, const char* b, const char* c,
   if (taMisc::dmem_proc > 0) return;
 #endif
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  taMisc::LogEvent("***CONFIRM: " + msg);
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
     taiChoiceDialog::ConfirmDialog(NULL, msg);

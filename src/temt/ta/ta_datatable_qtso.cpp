@@ -6880,9 +6880,7 @@ void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
     }
   }
   tab->DataUpdate(false);
-#ifdef DEBUG
   if (underflow)
-    taMisc::Warning("Unexpected underflow of table data pasting table-to-table");
-#endif
+    taMisc::DebugInfo("Unexpected underflow of table data pasting table-to-table");
 }
 

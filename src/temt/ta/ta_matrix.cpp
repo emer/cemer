@@ -505,11 +505,9 @@ void taMatrix::Destroy() {
     SliceDestroying(slice_par, this);
     slice_par = NULL; 
   }
-#ifdef DEBUG 
   if (sliceCount() > 0) {
-    taMisc::Warning("taMatrix being destroyed with slice_cnt=", String(sliceCount()));
+    DebugInfo("Destroy", "taMatrix being destroyed with slice_cnt=", String(sliceCount()));
   }
-#endif
   if (slices) {
     delete slices;
     slices = NULL;

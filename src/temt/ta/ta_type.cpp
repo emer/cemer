@@ -560,7 +560,6 @@ int  	taMisc::console_font_size = 10;
 
 float  	taMisc::doc_text_scale = 1.0f;
 
-bool	taMisc::log_console_out = false;
 String  taMisc::t3d_font_name = "Arial";
 String  taMisc::t3d_bg_color = "grey80";
 String  taMisc::t3d_text_color = "black";
@@ -757,6 +756,8 @@ void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when scrip
 
 String 	taMisc::LexBuf;
 int taMisc::err_cnt;
+fstream taMisc::log_stream;
+String taMisc::log_fname;
 
 /////////////////////////////////////////////////////////////////
 // 		taMisc funs
@@ -843,7 +844,9 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
     }
   }
 #endif
-  cerr << "***WARNING: " << taMisc::last_warn_msg << endl;
+  String wmsg = "***WARNING: " + taMisc::last_warn_msg;
+  taMisc::LogEvent(wmsg);
+  cerr << wmsg << endl;
   FlushConsole();
 }
 
@@ -854,7 +857,9 @@ void taMisc::Info(const char* a, const char* b, const char* c, const char* d,
 //TODO: should provide a way to log these somehow
   if(taMisc::dmem_proc > 0) return;
 #endif
-  cout << SuperCat(a, b, c, d, e, f, g, h, i) << endl;
+  String msg = SuperCat(a, b, c, d, e, f, g, h, i);
+  taMisc::LogEvent(msg);
+  cout << msg << endl;
   FlushConsole();
 }
 
@@ -877,7 +882,9 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
 #endif
   // always send to console
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
-  cerr << "***CHECK ERROR: " << msg << endl;
+  String fmsg = "***CHECK ERROR: " + msg;
+  taMisc::LogEvent(fmsg);
+  cerr << fmsg << endl;
   FlushConsole();
   if (is_checking) {
     last_check_msg.cat(msg).cat("\n");
@@ -963,7 +970,9 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
     taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
   }
 #endif
-  cerr << "***ERROR: " << taMisc::last_err_msg  << endl;
+  String fmsg = "***ERROR: " + taMisc::last_err_msg;
+  taMisc::LogEvent(fmsg);
+  cerr << fmsg << endl;
   FlushConsole();
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top) {
@@ -1030,12 +1039,50 @@ void taMisc::Confirm(const char* a, const char* b, const char* c,
 #endif
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
   {
+    taMisc::LogEvent(msg);
     cout << msg << "\n";
     FlushConsole();
   }
 }
 
 #endif // def TA_NO_GUI
+
+void taMisc::DebugInfo(const char* a, const char* b, const char* c, const char* d,
+       const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+  String ad = String("*** DEBUG: ") + a;
+#ifdef DEBUG
+  taMisc::Info(ad, b, c, d, e, f, g, h, i);
+#else
+  String msg = SuperCat(ad, b, c, d, e, f, g, h, i);
+  taMisc::LogEvent(msg);
+#endif
+}
+
+void taMisc::LogEvent(const String& log_data) {
+  if(taMisc::log_stream.bad()) return;
+  time_t tmp = time(NULL);
+  String tstamp = ctime(&tmp);
+  tstamp = tstamp.before('\n');
+  taMisc::log_stream << tstamp << ": " << log_data << endl;
+}
+
+void taMisc::SetLogFile(const String& log_fn) {
+  if(taMisc::log_fname == log_fn) return;
+  taMisc::log_fname = log_fn;
+  taMisc::log_stream.close();
+  taMisc::log_stream.clear();
+  taMisc::log_stream.open(log_fn, ios::out);
+  if(taMisc::log_stream.bad()) {
+    String bkup_fn = user_log_dir + "/default_project_log.plog";
+    taMisc::Error("taMisc::SetLogFile -- Could not open log stream as:", log_fn,
+		  "reverting to default:", bkup_fn);
+    taMisc::log_stream.close();
+    taMisc::log_stream.clear();
+    taMisc::log_stream.open(bkup_fn, ios::out);
+    taMisc::log_fname = bkup_fn;
+  }
+}
 
 void taMisc::EditFile(const String& filename) {
   String edtr = taMisc::edit_cmd; //don't run gsub on the original string!
@@ -2619,14 +2666,9 @@ IDataLinkClient::~IDataLinkClient() {
 }
 
 bool IDataLinkClient::AddDataLink(taDataLink* dl) {
-#ifdef DEBUG
   if (m_link && (m_link != dl)) {
-    taMisc::Error("IDataLinkClient::AddDataLink: a link has already been set!");
+    taMisc::DebugInfo("IDataLinkClient::AddDataLink: a link has already been set!");
   }
-/*  if (m_link) {
-    taMisc::Error("IDataLinkClient::AddDataLink: a link has already been set!");
-  }*/
-#endif
   bool r = (!m_link);
   m_link = dl;
   return r;
@@ -2674,11 +2716,9 @@ taDataLink::taDataLink(void* data_, taDataLink* &link_ref_)
 
 taDataLink::~taDataLink() {
   *m_link_ref = NULL; //note: m_link_ref is always valid, because the constructor passed it by reference
-#ifdef DEBUG
   if (clients.size > 0) {
-    taMisc::Error("taDataLink::~taDataLink: clients.size not zero!");
+    taMisc::DebugInfo("taDataLink::~taDataLink: clients.size not zero!");
   }
-#endif
 }
 
 bool taDataLink::AddDataClient(IDataLinkClient* dlc) {
@@ -2698,10 +2738,10 @@ void taDataLink::DataDestroying() { //note: linklist will automatically remove u
 }
 
 void taDataLink::DoNotify(int dcr, void* op1_, void* op2_) {
-#if defined(DEBUG) && !defined(NO_TA_BASE)
+#if !defined(NO_TA_BASE)
  // check for dispatch in a thread, which is Very Bad(TM)!!!
   if (!taTaskThread::inMainThread()) {
-    taMisc::Error_nogui("A non-main thread has caused a taDataLink::DoNotify -- not allowed, notify will not be sent");
+    taMisc::DebugInfo("A non-main thread has caused a taDataLink::DoNotify -- not allowed, notify will not be sent");
     return;
   }
 #endif

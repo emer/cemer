@@ -828,7 +828,8 @@ public:
   inline void           SetProgFlagState(ProgFlags flg, bool on)
   { if(on) SetProgFlag(flg); else ClearProgFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
-  inline void           ToggleProgFlag(ProgFlags flg) { SetProgFlagState(flg, !HasProgFlag(flg)); }
+  inline void           ToggleProgFlag(ProgFlags flg)
+  { SetProgFlagState(flg, !HasProgFlag(flg)); }
   // toggle program flag
 
   void                  SetOffFlag(bool off);
@@ -1197,9 +1198,10 @@ public:
     PF_NONE             = 0, // #NO_BIT
     NO_STOP_STEP        = 0x0001, // #AKA_NO_STOP this program cannot be stopped by Stop or Step buttons -- set this flag for simple helper programs to prevent them from showing up in the step list of other programs
     SELF_STEP           = 0x0002, // #NO_BIT this program has a StopStepPoint program element within it, and thus it shows up within its own list of Step programs -- this flag is set automatically during Init
-    STARTUP_RUN         = 0x0004, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
-    OBJS_UPDT_GUI       = 0x0008, // when this flag is set, changes to the objs objects update the gui as they happen -- otherwise they are only updated after the program finishes (much faster)
-    LOCKED              = 0x0010, // this program should not be edited -- you must uncheck this flag prior to editing
+    TRACE    	        = 0x0004, // trace the running of this program by recording each line to the css console as the program runs
+    STARTUP_RUN         = 0x0008, // run this prgram at startup (after project is fully loaded and everything else has been initialized) -- if multiple programs are so marked, they will be run in the order they appear in the browser (depth first)
+    OBJS_UPDT_GUI       = 0x0010, // when this flag is set, changes to the objs objects update the gui as they happen -- otherwise they are only updated after the program finishes (much faster)
+    LOCKED              = 0x0020, // this program should not be edited -- you must uncheck this flag prior to editing
   };
 
   enum ReturnVal { // system defined return values (<0 are for user defined)
@@ -1320,6 +1322,12 @@ public:
   inline void           SetProgFlagState(ProgFlags flg, bool on)
   { if(on) SetProgFlag(flg); else ClearProgFlag(flg); }
   // #CAT_Flags set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           ToggleProgFlag(ProgFlags flg)
+  { SetProgFlagState(flg, !HasProgFlag(flg)); }
+  // #CAT_Flags toggle program flag
+
+  void                  ToggleTrace();
+  // #MENU #MENU_ON_Object #DYN1 toggle the TRACE flag to opposite of current state: flag indicates whether to record a trace of program execution in the css console or not
 
   static void           SetStopReq(StopReason stop_rsn, const String& stop_message = "");
   // #CAT_Run request that the currently-running program stop at its earliest convenience..

@@ -877,6 +877,11 @@ public:
     return taMisc::TestWarning(this, test, fun_name, a, b, c, d, e, f, g, h);
   }
   // #CAT_ObjectMgmt if test, then report warning, including object name, type, and path information; returns test -- use e.g. if(TestWarning((condition), "fun", "msg")) return false;
+  virtual void 	DebugInfo(const char* fun_name, 
+			  const char* a, const char* b=0, const char* c=0,
+			  const char* d=0, const char* e=0, const char* f=0,
+			  const char* g=0, const char* h=0) const;
+  // #CAT_ObjectMgmt reports object identity in addition to the error message -- use this for any debug messages that get logged in reference to this object
 
 #ifndef __MAKETA__
   void			CheckConfig(bool quiet, bool& rval)

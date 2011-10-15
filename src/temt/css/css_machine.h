@@ -222,14 +222,18 @@ public:
 
   static String		last_err_msg;
   // last message from the Error function
-  static void 		Error(cssProg* prg, const char* a, const char* b="", const char* c="", const char* d="",
-			      const char* e="", const char* f="", const char* g="", const char* h="",
-			      const char* i="");
+  static void 		Error(cssProg* prg, const char* a, const char* b="",
+			      const char* c="", const char* d="",
+			      const char* e="", const char* f="",
+			      const char* g="", const char* h="", const char* i="");
   static String		last_warn_msg;
   // last message from the Warning function
-  static void		Warning(cssProg* prg, const char* a, const char* b="", const char* c="", const char* d="",
-				const char* e="", const char* f="", const char* g="", const char* h="",
-				const char* i="");
+  static void		Warning(cssProg* prg, const char* a, const char* b="",
+				const char* c="", const char* d="",
+				const char* e="", const char* f="",
+				const char* g="", const char* h="", const char* i="");
+  static void		SyntaxError(const char* msg);
+  // syntax error, from yyerror in css_parse.y
 
 public:
 #if (!defined(TA_OS_WIN))

@@ -564,6 +564,8 @@ public:
   override int		Save(); 
   override int		SaveAs(const String& fname = ""); 
   override int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
+  virtual void		OpenProjectLog();
+  // #CAT_File set the system event logging to record to the project name + .plog -- called for SaveAs and Load -- uses project file_name value
 
   virtual bool		CleanFiles();
   // #BUTTON #CAT_File remove autosave and recover files based on current file_name -- this is done by default after saving a non-recover or autosave version of the project

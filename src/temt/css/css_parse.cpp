@@ -274,7 +274,7 @@ typedef struct YYSTYPE
   int		ival;		/* for program indexes (progdx) and other ints */
   char*        	nm;
 }
-/* Line 187 of yacc.c.  */
+/* Line 193 of yacc.c.  */
 #line 279 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -338,7 +338,7 @@ typedef short int yytype_int16;
 #define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
 
 #ifndef YY_
-# if YYENABLE_NLS
+# if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
 #   define YY_(msgid) dgettext ("bison-runtime", msgid)
@@ -1548,7 +1548,7 @@ while (YYID (0))
    we won't break user code: when these are the locations we know.  */
 
 #ifndef YY_LOCATION_PRINT
-# if YYLTYPE_IS_TRIVIAL
+# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
 #  define YY_LOCATION_PRINT(File, Loc)			\
      fprintf (File, "%d.%d-%d.%d",			\
 	      (Loc).first_line, (Loc).first_column,	\
@@ -4402,23 +4402,6 @@ yyreturn:
 
 
 void yyerror(const char* s) { 	/* called for yacc syntax error */
-  int i;
-
-  ostream* fh = &cerr;
-  if(cssMisc::cur_top->cmd_shell != NULL)
-    fh = cssMisc::cur_top->cmd_shell->ferr;
-
-  String src = cssMisc::cur_top->CurFullTokSrc();
-  if(strcmp(s, "parse error") == 0) {
-    src.gsub('\t',' ');		// replace tabs
-    *fh << "Syntax Error " << src;
-    for(i=0; i < cssMisc::cur_top->tok_src_col; i++)
-      *fh << " ";
-    *fh << "^\n";
-  }
-  else {
-    *fh << s << " " << src;
-  }
-  taMisc::FlushConsole();
+  cssMisc::SyntaxError(s);
 }
 

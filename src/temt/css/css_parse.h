@@ -197,7 +197,7 @@ typedef struct YYSTYPE
   int		ival;		/* for program indexes (progdx) and other ints */
   char*        	nm;
 }
-/* Line 1489 of yacc.c.  */
+/* Line 1529 of yacc.c.  */
 #line 202 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

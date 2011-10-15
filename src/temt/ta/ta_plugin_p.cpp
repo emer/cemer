@@ -109,9 +109,7 @@ void taPlugins::AppendLogEntry(const String& entry, bool warn) {
     taMisc::Warning("Could not open plugin log file:", logfile);
   } else {
     if (warn) taMisc::Warning(entry);
-#ifdef DEBUG
-    else      taMisc::Info(entry);
-#endif
+    else      taMisc::DebugInfo(entry);
     if (warn)
       ofs << "**WARNING: ";
     ofs << entry << "\n";
@@ -1231,9 +1229,9 @@ bool PluginWizard::Create() {
     }
   }
 
-  SaveAs(plugin_location + PATH_SEP + "PluginWizard.wiz"); // save our settings!!
+  created = true;		// must come before saving!!
 
-  created = true;
+  SaveAs(plugin_location + PATH_SEP + "PluginWizard.wiz"); // save our settings!!
 
   if (ok) {
     taMisc::Info("The plugin was created successfully! See the CMakeLists.txt file in your plugin folder for build instructions");

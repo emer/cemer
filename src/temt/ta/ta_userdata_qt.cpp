@@ -366,10 +366,8 @@ void iUserDataDataHost::DoDeleteUserDataItem() {
    // removes the sel_item_index item 
   if (udil->RemoveLeafEl(sel_item_base)) {
   }
-#ifdef DEBUG
   else
-    taMisc::Error("iUserDataDataHost::DoDeleteUserDataItem: could not find item");
-#endif
+    taMisc::DebugInfo("iUserDataDataHost::DoDeleteUserDataItem: could not find item");
 }
 
 void iUserDataDataHost::DoRenameUserDataItem() {

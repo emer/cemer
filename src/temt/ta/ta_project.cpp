@@ -426,9 +426,7 @@ void taUndoDiffSrc::EncodeDiff(taUndoRec* rec) {
   last_diff_n = diff.GetLinesChanged(); // counts up total lines changed in diffs
   last_diff_pct = (.5f * (float)last_diff_n) / (float)diff.data_a.lines;
   // lines changed tends to double-count..
-#ifdef DEBUG	
-  cout << "last_diff_n: " << last_diff_n << " pct: " << last_diff_pct << endl;
-#endif  
+  taMisc::DebugInfo("last_diff_n: ", String(last_diff_n), " pct: ", String(last_diff_pct));
   // now nuke rec's saved data!!
   rec->save_data = _nilString;
   // if need to debug, turn this off and turn on comparison below..
@@ -609,10 +607,8 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   urec->save_top = save_top;
   urec->save_top_path = save_top->GetPath(NULL, owner);
 
-#ifdef DEBUG
-  taMisc::Info("SaveUndo of action:",urec->action,"on:",urec->mod_obj_name,
-	       "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
-#endif
+  taMisc::DebugInfo("SaveUndo of action:",urec->action,"on:",urec->mod_obj_name,
+		    "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
 
   tabMisc::cur_undo_save_top = save_top; // let others know who we're saving for..
   tabMisc::cur_undo_mod_obj = mod_obj; // let others know who we're saving for..
@@ -633,9 +629,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       cur_src = new taUndoDiffSrc;
       undo_srcs.CircAddLimit(cur_src, undo_depth); // large depth
       cur_src->InitFmRec(urec);			   // init
-#ifdef DEBUG
-      cerr << "New source added!" << endl;
-#endif
+      taMisc::DebugInfo("Undo: New source added!");
     }
     if(diff_threads.n_running > 0)
       diff_threads.SyncThreads();	// sync now before running again..
@@ -663,10 +657,8 @@ void taUndoMgr::PurgeUnusedSrcs() {
     if(!urec) continue;
     int cnt = urec->UseCount();
     if(cnt == 0) {
-#ifdef DEBUG
-      cout << "purging unused save rec, size: " << urec->save_data.length() << endl;
-      taMisc::FlushConsole();
-#endif
+      taMisc::DebugInfo("Undo: purging unused save rec, size: ",
+			String(urec->save_data.length()));
       undo_srcs.CircShiftLeft(1);
       did_purge = true;
       n_purges++;
@@ -675,12 +667,10 @@ void taUndoMgr::PurgeUnusedSrcs() {
     }
   } while(did_purge);
 
-#ifdef DEBUG
   if(n_purges > 0) {
-    cout << "Total Purges: " << n_purges << " remaining length: " << undo_srcs.length << endl;
-    taMisc::FlushConsole();
+    taMisc::DebugInfo("Undo: Total Purges: ", String(n_purges), " remaining length: ",
+		      String(undo_srcs.length));
   }
-#endif
 }
 
 bool taUndoMgr::Undo() {
@@ -1638,6 +1628,7 @@ MainWindowViewer* taProject::GetDefaultProjectViewer() {
 
 void taProject::Dump_Load_post() {
   inherited::Dump_Load_post();
+  OpenProjectLog();
   DoView();
   setDirty(false);		// nobody should start off dirty!
   if(!cssMisc::init_interactive) {
@@ -1863,6 +1854,7 @@ int taProject::SaveAs(const String& fname) {
     if(!fnm.contains("_recover") && !fnm.contains("_autosave")) {
       CleanFiles();
     }
+    OpenProjectLog();
   }
   taRefN::unRefDone(flr);
   DataChanged(DCR_ITEM_UPDATED_ND);
@@ -1872,6 +1864,15 @@ int taProject::SaveAs(const String& fname) {
 int taProject::Load(const String& fname, taBase** loaded_obj_ptr) {
   TestError(true, "Load", "Cannot load a new project file on top of an existing project -- must load an entirely new project");
   return 0;
+}
+
+void taProject::OpenProjectLog() {
+  if(file_name.empty()) return;
+  String log_fn = file_name;
+  if(log_fn.contains(".proj"))
+    log_fn = log_fn.before(".proj",-1);
+  log_fn += ".plog";
+  taMisc::SetLogFile(log_fn);
 }
 
 bool taProject::CleanFiles() {
@@ -1886,6 +1887,13 @@ bool taProject::CleanFiles() {
     tabMisc::root->recent_files.RemoveEl(recover);
     
     String console = fnm + "_console" + String(i) + ".txt";
+    QFile::remove(console.chars());
+
+    recover = fnm + "_autosave_recover" + String(i) + ".proj";
+    got_one |= QFile::remove(recover.chars());
+    tabMisc::root->recent_files.RemoveEl(recover);
+    
+    console = fnm + "_autosave_console" + String(i) + ".txt";
     QFile::remove(console.chars());
   }
   if(got_one && taMisc::dmem_proc == 0) {
@@ -2030,10 +2038,7 @@ void taProject::SaveRecoverFile() {
     saved = true;
   }
   if(usr_fl) {
-#ifdef DEBUG // NOTE: really only works on Linux, and is so marginal...
-      cerr << "Error saving recover file in original location -- now saved in user directory: " << fnm << endl;
-      taMisc::FlushConsole();
-#endif
+    taMisc::DebugInfo("Error saving recover file in original location -- now saved in user directory: ", fnm);
   }
   flr->Close();
   taRefN::unRefDone(flr);
@@ -2085,10 +2090,8 @@ bool taProject::AutoSave(bool force) {
   QFileInfo qfd(qfi.path());
   if(!qfd.isWritable()) {	// use path!
     fnm = taMisc::user_dir + PATH_SEP + taMisc::GetFileFmPath(fnm);
-#ifdef DEBUG // NOTE: really only works on Linux, and is so marginal...
-    taMisc::Info("Error saving auto save file in original location:", newfnm,
-		 " -- now saved in user directory:", fnm);
-#endif
+    taMisc::DebugInfo("Error saving auto save file in original location:", newfnm,
+		      " -- now saved in user directory:", fnm);
   }
   taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
   bool saved = false;
@@ -2103,9 +2106,7 @@ bool taProject::AutoSave(bool force) {
 
   auto_save_timer.StartTimer(true); // start it up for next time around..
 
-#ifdef DEBUG
-  taMisc::Info("Saved auto save file:", fnm);
-#endif
+  taMisc::DebugInfo("Saved auto save file:", fnm);
 
   // restore original:
   file_name = orig_fnm;
@@ -2609,15 +2610,6 @@ void taRootBase::Options() {
   int accepted = ie->EditDialog(inst, false, true, taiTypeBase::def_color, 
 				800, 600); // r/w, modal, min width, height
   if (accepted) {
-    if(taMisc::gui_active && (console_type == taMisc::CT_GUI)) {  
-      QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
-      if(taMisc::log_console_out) {
-	con->setStdLogfile("css_console_output.log");
-      }
-      else {
-	con->setStdLogfile("");
-      }
-    }
     inst->SaveConfig();
   }
 #endif
@@ -3005,10 +2997,9 @@ bool isAppDir(const String& path, String* plugin_path = NULL) {
         *plugin_path = path + PATH_SEP + "plugins";
     }
   }
-#ifdef DEBUG // don't clutter with success, just failures
-  else
-    taMisc::Info("Did not find app_dir as:", path);
-#endif
+  else {
+    taMisc::DebugInfo("Did not find app_dir as:", path);
+  }
   return rval;
 }
 
@@ -3380,6 +3371,10 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   instance()->sidebar_paths.AddUnique(desktop_path);
   instance()->sidebar_paths.AddUnique(docs_path);
 
+  // start recording stuff at this point..
+  String bkup_fn = taMisc::user_log_dir + "/default_project_log.plog";
+  taMisc::SetLogFile(bkup_fn);
+
   return true;
 }
   	
@@ -3645,9 +3640,6 @@ bool taRootBase::Startup_Console() {
     QObject::connect(con, SIGNAL(receivedNewStdin(int)), root_adapter, SLOT(ConsoleNewStdin(int)));
     // get notified
 
-    if(taMisc::log_console_out) {
-      con->setStdLogfile("css_console_output.log");
-    }
     if(!(console_options & taMisc::CO_GUI_DOCK)) {
       QMainWindow* cwin = new QMainWindow();
       cwin->setWindowTitle("css Console");

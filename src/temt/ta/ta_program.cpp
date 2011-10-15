@@ -698,6 +698,7 @@ void ProgVar::SetFlagsByOwnership() {
     SetVarFlag(LOCAL_VAR);
     ClearVarFlag(CTRL_PANEL);
     ClearVarFlag(CTRL_READ_ONLY);
+    ClearVarFlag(NULL_CHECK);
     // now check for fun args
     ClearVarFlag(FUN_ARG);
     if(owner && owner->InheritsFrom(&TA_ProgVar_List)) {
@@ -791,14 +792,15 @@ void ProgVar::UpdateAfterEdit_impl() {
   // only send stale if the schema changed, not just the value
   String tfs = GetSchemaSig();
   // loading is a special case: initialize
-  if (taMisc::is_loading) {
+  if(taMisc::is_loading) {
     taVersion v512(5, 1, 2);
     if(taMisc::loading_version < v512) { // everything prior to 5.1.2 had save val on by default
       SetVarFlag(SAVE_VAL);
     }
     m_prev_sig = tfs;
     m_this_sig = tfs;
-  } else {
+  }
+  else {
     m_prev_sig = m_this_sig;
     m_this_sig = tfs;
     if (m_prev_sig != m_this_sig) {
@@ -1699,7 +1701,7 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
   if(vnm == "__tmp") return 0;  // skip
 
   ProgExprBase* pe = (ProgExprBase*)udata;
-//   ProgEl* pel = GET_OWNER(pe, ProgEl);
+  ProgEl* pel = GET_OWNER(pe, ProgEl);
   Program* prog = GET_OWNER(pe, Program);
   int idx = 0;
   ProgVar* var = NULL;
@@ -1725,16 +1727,15 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
     return el->GetParse();
   }
 
-  // todo: for some reason this does not work!  misses stuf ..
-//   if(pel) {
-//     var = pel->FindVarNameInScope(vnm, false); // no make
-//   }
-//   else {
-  if(fun)
-    var = fun->FindVarName(vnm);
-  if(!var)
-    var = prog->FindVarName(vnm);
-//   }
+  if(pel) {
+    var = pel->FindVarNameInScope(vnm, false); // no make
+  }
+  else {
+    if(fun)
+      var = fun->FindVarName(vnm);
+    if(!var)
+      var = prog->FindVarName(vnm);
+  }
   if(var) {
     if(!pe->vars.FindVar(var, idx)) {
       ProgVarRef* prf = new ProgVarRef;
@@ -2759,6 +2760,10 @@ ProgVar* ProgEl::FindVarNameInScope(const String& var_nm, bool else_make) const 
 }
 
 ProgVar* ProgEl::FindVarNameInScope_impl(const String& var_nm) const {
+  if(InheritsFrom(&TA_Function)) { // we bubbled up to function object
+    ProgVar* rval = FindVarName(var_nm);
+     if(rval) return rval;
+  }
   ProgVars* loc = FindLocalVarList();
   if(loc) {
     ProgVar* rval = loc->FindVarName(var_nm);
@@ -4400,6 +4405,7 @@ int Program::Cont_impl() {
   // the user cannot access this without having pressed Init first, and that
   // does all the checks.  this is the standard paradigm for such things --
   // init does checks. run assumes things are ok & thus can be fast.
+  script->debug = (int)HasProgFlag(TRACE);
   script->Cont();
   // note: shared var state likely changed, so update gui
   script_compiled = true; // override any run-generated changes!!
@@ -4531,6 +4537,11 @@ void Program::Step(Program* step_prg) {
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
+void Program::ToggleTrace() {
+  ToggleProgFlag(TRACE);
+  DataChanged(DCR_ITEM_UPDATED);
+}
+
 void Program::SetStopReq(StopReason stop_rsn, const String& stop_message) {
   stop_req = true;
   stop_reason = stop_rsn;
@@ -4645,7 +4656,7 @@ void Program::CssError(int src_ln_no, bool running, const String& err_msg) {
   pl->SetError();
   // css does not otherwise pull up an error dialog, so we can..
   if (taMisc::gui_active) {
-    taMisc::Choice(cssMisc::last_err_msg, "Ok");
+    taMisc::Choice(err_msg, "Ok");
   }
 }
 
@@ -5158,6 +5169,7 @@ Variant Program::GetGuiArgVal(const String& fun_name, int arg_idx) {
 }
 
 int Program::GetSpecialState() const {
+  if(HasProgFlag(TRACE)) return 1; // ?
   if(HasProgFlag(LOCKED)) return 4; // red
   if(HasProgFlag(STARTUP_RUN)) return 3; // green
   if(HasProgFlag(NO_STOP_STEP)) return 2; // may not want this one -- might be too much color..

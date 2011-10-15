@@ -77,6 +77,7 @@ set(ta_HEADS_MAKETA_LOCAL_1
   fun_lookup.h
   ta_data_extras.h
   colorbar_qt.h
+  ta_gui.h
 )
 
 set(ta_HEADS_MAKETA_LOCAL_2
@@ -138,6 +139,7 @@ set(ta_HEADS_MOC
   colorbar_qt.h
   ta_datatable_qtso.h
   ta_virtenv_qtso.h
+  ta_gui.h
 )
 
 # gui-related source files to compile: NOTE: do NOT include .moc files -- auto generated
@@ -165,6 +167,7 @@ set(ta_SRCS_GUI
   ta_datatable_so.cpp
   ta_virtenv_qtso.cpp
   ta_virtenv_so.cpp
+  ta_gui.cpp
 )
 
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
