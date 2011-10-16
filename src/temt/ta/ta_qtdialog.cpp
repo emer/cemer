@@ -57,6 +57,7 @@
 #include <qwidget.h>
 #include <QPrintDialog>
 #include <QPrinter>
+#include <QTextCursor>
 
 #include "ibutton.h"
 #include "icolor.h"
@@ -2826,6 +2827,19 @@ void taiStringDataHost::Ok_impl() { //note: only used for Dialogs
     GetValue();
     Unchanged();
     //  }
+}
+
+void taiStringDataHost::SelectLines(int st_line, int end_line) {
+  if(!edit) return;
+  QTextCursor tc = edit->textCursor();
+  tc.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
+  if(st_line > 1) {
+    tc.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, st_line-1);
+  }
+  if(end_line >= st_line) {
+    tc.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, (end_line-st_line)+1);
+  }
+  edit->setTextCursor(tc);
 }
 
 bool taiStringDataHost::eventFilter(QObject* obj, QEvent* event) {

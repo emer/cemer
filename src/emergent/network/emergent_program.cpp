@@ -130,13 +130,14 @@ void NetDataLoop::GetItemList(int group_idx) {
 
 void NetDataLoop::GenCssPre_impl(Program* prog) {
   if(!data_var || !index_var) {
-    prog->AddLine(this, "// NetDataLoop ERROR vars not set!");
+    prog->AddLine(this, "// NetDataLoop ERROR vars not set!", ProgLine::MAIN_LINE);
     return;
   }
   String data_nm = data_var->name;
   String idx_nm = index_var->name;
   if(!grouped) {
-    prog->AddLine(this, "{ // NetDataLoop " + data_nm);
+    prog->AddLine(this, "{ // NetDataLoop " + data_nm, ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
     prog->IncIndent();
     prog->AddLine(this, "NetDataLoop* data_loop = this" + GetPath(NULL,program()) + ";");
     prog->AddLine(this, "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value");
@@ -155,6 +156,7 @@ void NetDataLoop::GenCssPre_impl(Program* prog) {
     prog->AddLine(this, "}");
     prog->AddLine(this, "for(" + idx_nm + " = st_idx; " + idx_nm + " < mx_idx; " + idx_nm + " += inc_idx) {");
     prog->IncIndent();
+    prog->AddVerboseLine(this, false, "\"in for loop\"");
     prog->AddLine(this, "int data_row_idx;");
     // note: cannot use random call here to select if over size because this throws off random
     // seed consistency between dmem processes!!!
@@ -169,12 +171,13 @@ void NetDataLoop::GenCssPre_impl(Program* prog) {
   }
   else {
     if(!group_index_var) {
-      prog->AddLine(this, "// NetDataLoop ERROR vars not set!");
+      prog->AddLine(this, "// NetDataLoop ERROR vars not set!", ProgLine::MAIN_LINE);
       return;
     }
     String gp_idx_nm = group_index_var->name;
 
-    prog->AddLine(this, "{ // NetDataLoop " + data_nm);
+    prog->AddLine(this, "{ // NetDataLoop " + data_nm, ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
     prog->IncIndent();
     prog->AddLine(this, "NetDataLoop* data_loop = this" + GetPath(NULL,program()) + ";");
     prog->AddLine(this, "data_loop->GetOrderVal(); // order_var variables control order -- make sure we have current values");
@@ -182,6 +185,7 @@ void NetDataLoop::GenCssPre_impl(Program* prog) {
     prog->AddLine(this, "if(data_loop->group_order == NetDataLoop::PERMUTED) data_loop->group_idx_list.Permute();");
     prog->AddLine(this,  "for(" + gp_idx_nm + " = 0; " + gp_idx_nm + " < data_loop->group_idx_list.size; " + gp_idx_nm + "++) {");
     prog->IncIndent();
+    prog->AddVerboseLine(this, false, "\"in group for loop\"");
     prog->AddLine(this, "network.group = " + gp_idx_nm + ";");
     prog->AddLine(this, "network.Init_Sequence(); // some algorithms use this to initialize at start");
     prog->AddLine(this, "int group_data_row_idx;");
@@ -192,6 +196,7 @@ void NetDataLoop::GenCssPre_impl(Program* prog) {
     prog->AddLine(this, "if(data_loop->order == NetDataLoop::PERMUTED) data_loop->item_idx_list.Permute();");
     prog->AddLine(this, "for(" + idx_nm + " = 0; " + idx_nm + " < data_loop->item_idx_list.size; " + idx_nm + "++) {");
     prog->IncIndent();
+    prog->AddVerboseLine(this, false, "\"in item for loop\"");
     prog->AddLine(this, "int item_data_row_idx;");
     prog->AddLine(this, "if(data_loop->order == NetDataLoop::RANDOM)");
     prog->AddLine(this, " item_data_row_idx = data_loop->item_idx_list[Random::IntZeroN(data_loop->item_idx_list.size)];");
@@ -378,14 +383,15 @@ void NetGroupedDataLoop::GetItemList(int group_idx) {
 
 void NetGroupedDataLoop::GenCssPre_impl(Program* prog) {
   if(!data_var || !group_index_var || !item_index_var) {
-    prog->AddLine(this, "// NetGroupedDataLoop ERROR vars not set!");
+    prog->AddLine(this, "// NetGroupedDataLoop ERROR vars not set!", ProgLine::MAIN_LINE);
     return;
   }
   String data_nm = data_var->name;
   String gp_idx_nm = group_index_var->name;
   String it_idx_nm = item_index_var->name;
 
-  prog->AddLine(this, "{ // NetGroupedDataLoop " + data_nm);
+  prog->AddLine(this, "{ // NetGroupedDataLoop " + data_nm, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
   prog->AddLine(this, "NetGroupedDataLoop* data_loop = this" + GetPath(NULL,program()) + ";");
   prog->AddLine(this, "data_loop->GetOrderVals(); // order_var variables control order -- make sure we have current values");
@@ -393,6 +399,7 @@ void NetGroupedDataLoop::GenCssPre_impl(Program* prog) {
   prog->AddLine(this, "if(data_loop->group_order == NetGroupedDataLoop::PERMUTED) data_loop->group_idx_list.Permute();");
   prog->AddLine(this, "for(" + gp_idx_nm + " = 0; " + gp_idx_nm + " < data_loop->group_idx_list.size; " + gp_idx_nm + "++) {");
   prog->IncIndent();
+  prog->AddVerboseLine(this, false, "\"in group for loop\"");
   prog->AddLine(this, "network.group = " + gp_idx_nm + ";");
   prog->AddLine(this, "network.Init_Sequence(); // some algorithms use this to initialize at start");
   prog->AddLine(this, "int group_data_row_idx;");
@@ -403,6 +410,7 @@ void NetGroupedDataLoop::GenCssPre_impl(Program* prog) {
   prog->AddLine(this, "if(data_loop->item_order == NetGroupedDataLoop::PERMUTED) data_loop->item_idx_list.Permute();");
   prog->AddLine(this, "for(" + it_idx_nm + " = 0; " + it_idx_nm + " < data_loop->item_idx_list.size; " + it_idx_nm + "++) {");
   prog->IncIndent();
+  prog->AddVerboseLine(this, false, "\"in item for loop\"");
   prog->AddLine(this, "int item_data_row_idx;");
   prog->AddLine(this, "if(data_loop->item_order == NetGroupedDataLoop::RANDOM)");
   prog->AddLine(this, " item_data_row_idx = data_loop->item_idx_list[Random::IntZeroN(data_loop->item_idx_list.size)];");
@@ -508,11 +516,14 @@ String NetCounterInit::GetDisplayName() const {
 
 void NetCounterInit::GenCssBody_impl(Program* prog) {
   if(!counter || !network_var) {
-    prog->AddLine(this, "// NetCounterInit ERROR: vars not set!");
+    prog->AddLine(this, "// NetCounterInit ERROR: vars not set!", ProgLine::MAIN_LINE);
     return;
   }
   prog->AddLine(this, counter->name + " = 0;");
-  prog->AddLine(this, network_var->name + "->" + counter->name + " = " + counter->name + ";");
+  prog->AddLine(this, network_var->name + "->" + counter->name + " = " + counter->name + ";",
+		ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
+  prog->AddVerboseLine(this, false, "\"new value:\", String(" + counter->name + ")");
   if(update_after)
     prog->AddLine(this, network_var->name + "->UpdateAfterEdit();");
 }
@@ -528,11 +539,14 @@ String NetCounterIncr::GetDisplayName() const {
 
 void NetCounterIncr::GenCssBody_impl(Program* prog) {
   if(!counter || !network_var) {
-    prog->AddLine(this, "// NetCounterIncr ERROR: vars not set!");
+    prog->AddLine(this, "// NetCounterIncr ERROR: vars not set!", ProgLine::MAIN_LINE);
     return;
   }
   prog->AddLine(this, counter->name + "++;");
-  prog->AddLine(this, network_var->name + "->" + counter->name + " = " + counter->name + ";");
+  prog->AddLine(this, network_var->name + "->" + counter->name + " = " + counter->name + ";",
+		ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
+  prog->AddVerboseLine(this, false, "\"new value:\", String(" + counter->name + ")");
   if(update_after)
     prog->AddLine(this, network_var->name + "->UpdateAfterEdit();");
 }
@@ -580,11 +594,12 @@ void NetUpdateView::GetUpdateVar() {
 
 void NetUpdateView::GenCssBody_impl(Program* prog) {
   if(!network_var) {
-    prog->AddLine(this, "// ERROR: network_var not set in NetUpdateView");
+    prog->AddLine(this, "// ERROR: network_var not set in NetUpdateView", ProgLine::MAIN_LINE);
     return;
   }
   prog->AddLine(this, "if(update_net_view || this.IsStepProg())"
-		+ network_var->name + "->UpdateAllViews();");
+		+ network_var->name + "->UpdateAllViews();", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 }
 
 
@@ -689,7 +704,7 @@ bool InitNamedUnits::GetNetworkVar() {
 }
 
 void InitNamedUnits::GenCssBody_impl(Program* prog) {
-  prog->AddLine(this, "// InitNamedUnits: no action taken");
+  prog->AddLine(this, "// InitNamedUnits: no action taken", ProgLine::MAIN_LINE);
 }
 
 bool InitNamedUnits::InitNamesTable() {
@@ -891,6 +906,7 @@ bool SetUnitsLit::GenCss_OneUnit(Program* prog, DynEnum& un, const String& idnm,
 	    + ", -1); if(!nm.empty()) nm += \"_\"; nm += \"" + un.NameVal().after("_") + "\"; "
 	    + idnm + ".SetValAsString(nm, " + String(colno) + ", -1); }";
 	  prog->AddLine(this, rval2);
+	  // todo: add verbose 
 	}
       }
       return true;
@@ -901,16 +917,17 @@ bool SetUnitsLit::GenCss_OneUnit(Program* prog, DynEnum& un, const String& idnm,
 
 void SetUnitsLit::GenCssBody_impl(Program* prog) {
   if(!input_data_var) {
-    prog->AddLine(this, "// input_data_var not set!");
+    prog->AddLine(this, "// input_data_var not set!", ProgLine::MAIN_LINE);
     return;
   }
   String idnm = input_data_var->name;
   DataTable* idat = (DataTable*)input_data_var->object_val.ptr();
   if(!idat) {
-    prog->AddLine(this, "// input_data not set!");
+    prog->AddLine(this, "// input_data not set!", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "// " + GetDisplayName());
+  prog->AddLine(this, "// " + GetDisplayName(), ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   GenCss_OneUnit(prog, unit_1, idnm, idat);
   GenCss_OneUnit(prog, unit_2, idnm, idat);
   GenCss_OneUnit(prog, unit_3, idnm, idat);
@@ -1026,16 +1043,17 @@ bool SetUnitsVar::GenCss_OneUnit(Program* prog, ProgVarRef& un, const String& id
 
 void SetUnitsVar::GenCssBody_impl(Program* prog) {
   if(!input_data_var) {
-    prog->AddLine(this, "// input_data_var not set!");
+    prog->AddLine(this, "// input_data_var not set!", ProgLine::MAIN_LINE);
     return;
   }
   String idnm = input_data_var->name;
   DataTable* idat = (DataTable*)input_data_var->object_val.ptr();
   if(!idat) {
-    prog->AddLine(this, "// input_data not set!");
+    prog->AddLine(this, "// input_data not set!", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "// " + GetDisplayName());
+  prog->AddLine(this, "// " + GetDisplayName(), ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   GenCss_OneUnit(prog, unit_1, idnm, idat);
   GenCss_OneUnit(prog, unit_2, idnm, idat);
   GenCss_OneUnit(prog, unit_3, idnm, idat);
@@ -1058,9 +1076,12 @@ void WtInitPrompt::GenCssPre_impl(Program* prog) {
     prog->AddLine(this, "{ int chs = 0;");
     prog->IncIndent();
     prog->AddLine(this, String("if(network->epoch > 0) chs = taMisc::Choice(\"")
-		  + prompt + "\", \"" + yes_label + "\", \"" + no_label + "\");");
+		  + prompt + "\", \"" + yes_label + "\", \"" + no_label + "\");",
+		  ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
     prog->AddLine(this, "if(chs == 0) {");
     prog->IncIndent();
+    prog->AddVerboseLine(this, false, "\"inside choice == yes\"");
   }
   else {
     prog->AddLine(this, "{");		// just a block to run..

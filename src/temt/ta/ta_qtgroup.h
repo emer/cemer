@@ -493,7 +493,17 @@ public:
   void			Destroy() {}
   TA_VIEW_TYPE_FUNS(tabDocViewType, tabOViewType) //
 protected:
-//nn  override taiDataLink*	CreateDataLink_impl(taBase* data_);
+  override void		CreateDataPanel_impl(taiDataLink* dl_);
+};
+
+class TA_API tabWizardViewType: public tabOViewType {
+INHERITED(tabOViewType)
+public:
+  override int		BidForView(TypeDef*);
+  void			Initialize() {}
+  void			Destroy() {}
+  TA_VIEW_TYPE_FUNS(tabWizardViewType, tabOViewType) //
+protected:
   override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 

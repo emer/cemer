@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.2.3.0 rev5056
+// ta_Dump File v3.0 -- code v5.2.3.0 rev5072
 LeabraProject .projects["Project_0"] { 
   taBase_Group @.templates = [0] {
   };
@@ -11,13 +11,7 @@ LeabraProject .projects["Project_0"] {
    UserDataItem_List @*(.user_data_) {
 	UserDataItem @["NO_CLIP"] { };
    };
-
-      LayerWizElList @.layer_cfg = [3] {
-	LayerWizEl @["Input"] { };
-	LayerWizEl @["Hidden"] { };
-	LayerWizEl @["Output"] { };
-      };
-    };
+};
   };
 
   SelectEdit_Group @.edits = [0] {
@@ -1861,26 +1855,6 @@ LeabraProject .projects["Project_0"] {
    name="LeabraWizard_0";
    auto_open=0;
    n_layers=3;
-   layer_cfg {
-    name=;
-    el_typ=LayerWizEl;
-    el_def=0;
-    LayerWizEl @["Input"] {
-     name="Input";
-     n_units=25;
-     io_type=INPUT;
-    };
-    LayerWizEl @["Hidden"] {
-     name="Hidden";
-     n_units=25;
-     io_type=HIDDEN;
-    };
-    LayerWizEl @["Output"] {
-     name="Output";
-     n_units=25;
-     io_type=OUTPUT;
-    };
-   };
    connectivity=BIDIRECTIONAL;
    default_net_type=LeabraNetwork;
   };
@@ -4215,7 +4189,7 @@ LeabraProject .projects["Project_0"] {
       };
       fun_code {
        name="ProgEl_List_147";
-       el_typ=ProgVars;
+       el_typ=ProgCode;
        el_def=0;
        ProgVars @[0] {
 	desc=;
@@ -4451,7 +4425,7 @@ LeabraProject .projects["Project_0"] {
      };
      AssignExpr @[6] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
-      flags=0;
+      flags=VERBOSE;
       result_var=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["epoch"]$;
       expr {
        expr="network.epoch";
@@ -4459,7 +4433,7 @@ LeabraProject .projects["Project_0"] {
      };
      MethodCall @[7] {
       desc=;
-      flags=0;
+      flags=OFF|PROG_ERROR;
       result_var=NULL;
       obj=.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["input_data"]$$;
       method=DataTable::GetVal;
@@ -4690,7 +4664,7 @@ LeabraProject .projects["Project_0"] {
       };
      };
     };
-    step_prog=.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraCycle"]$$;
+    step_prog=.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrial"]$$;
     step_n=1;
    };
    Program @["LeabraEpoch"] {
@@ -4787,7 +4761,7 @@ LeabraProject .projects["Project_0"] {
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=6;
+      int_val=0;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4855,7 +4829,7 @@ LeabraProject .projects["Project_0"] {
      };
      AssignExpr @[1] {
       desc="get pointer to epoch timer object on network";
-      flags=0;
+      flags=VERBOSE;
       result_var=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].vars["epoch_timer"]$;
       expr {
        expr="network.epoch_time";
@@ -4930,7 +4904,7 @@ LeabraProject .projects["Project_0"] {
 	  };
 	 };
 	};
-	target=.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrial"]$$;
+	target=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrial"]$;
 	targ_ld_init="*LeabraTrial*";
        };
       };
@@ -5238,7 +5212,7 @@ LeabraProject .projects["Project_0"] {
        el_def=0;
        ProgramCall @[0] {
 	desc="run the settle program (which iterates over cyles of network activation updating) for each phase";
-	flags=0;
+	flags=VERBOSE;
 	prog_args {
 	 name=;
 	 el_typ=ProgArg;
@@ -5293,7 +5267,7 @@ LeabraProject .projects["Project_0"] {
       };
      };
      MethodCall @[3] {
-      desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
+      desc=;
       flags=0;
       result_var=NULL;
       obj=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
@@ -5619,7 +5593,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  };
 	 };
 	};
-	target=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraCycle"]$;
+	target=.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraCycle"]$$;
 	targ_ld_init="*LeabraCycle*";
        };
        NetCounterIncr @[1] {
@@ -5841,7 +5815,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	na_by_range=0;
-	ext_flags=0;
+	ext_flags=EXT;
 	noise {name="RandomSpec_7": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
@@ -5851,7 +5825,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
 	offset {x=0: y=0: };
 	use_layer_type=1;
 	na_by_range=0;
-	ext_flags=0;
+	ext_flags=TARG;
 	noise {name="RandomSpec_8": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {

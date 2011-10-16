@@ -781,6 +781,9 @@ public:
   override void		GetImage();
   override void		GetValue();
   override void		Constr_Buttons();
+
+  virtual void		SelectLines(int st_line, int end_line);
+  // select a range of lines in the editor
   
   override bool 	eventFilter(QObject *obj, QEvent *event);
   // event filter to trigger apply button on Ctrl+Return

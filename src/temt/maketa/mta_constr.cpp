@@ -1122,10 +1122,12 @@ bool MethodSpace_Filter_Method(MethodSpace* ths, MethodDef* md) {
     return false;		// don't reproduce owners functions (except multi inh)
 
   // is_static is a problem in mult_inherit cases for compiler
+  // what is the problem exactly??
   if(ths->owner->HasOption("MULT_INHERIT")) {
     if(!md->is_static)
       return true;
-    return false;
+    // return false;
+    return true;
   }
 
   return true;

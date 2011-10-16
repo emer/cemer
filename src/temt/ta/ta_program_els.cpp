@@ -40,7 +40,7 @@ void CodeBlock::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void CodeBlock::GenCssPre_impl(Program* prog) {
   if(prog_code.size == 0) return;
-  prog->AddLine(this, "{");
+  prog->AddLine(this, "{", ProgLine::MAIN_LINE);
   prog->IncIndent();
 }
 
@@ -97,7 +97,10 @@ void ProgVars::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void ProgVars::GenCssBody_impl(Program* prog) {
-  local_vars.GenCss_ProgVars(prog);
+  if(local_vars.size > 0) {
+    prog->AddLine(this, "// local variables", ProgLine::MAIN_LINE); // best we've got
+    local_vars.GenCss_ProgVars(prog);
+  }
 }
 
 const String ProgVars::GenListing_children(int indent_level) {
@@ -204,19 +207,8 @@ void UserScript::UpdateAfterEdit_impl() {
 
 void UserScript::GenCssBody_impl(Program* prog) {
   script.ParseExpr();		// re-parse just to be sure!
-  String rval = script.GetFullExpr();
-  String rmdr = rval;
-  if(rmdr.contains('\n')) {
-    String curln;
-    do {
-      String curln = rmdr.before('\n');
-      rmdr = rmdr.after('\n');
-      prog->AddLine(this, curln);
-    } while(rmdr.contains('\n'));
-  }
-  if(rmdr.nonempty()) {
-    prog->AddLine(this, rmdr);
-  }
+  prog->AddLine(this, script.GetFullExpr(), ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 }
 
 String UserScript::GetDisplayName() const {
@@ -262,12 +254,10 @@ void WhileLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void WhileLoop::GenCssPre_impl(Program* prog) {
   test.ParseExpr();		// re-parse just to be sure!
-  prog->AddLine(this, String("while (") + test.GetFullExpr() + ") {");
+  prog->AddLine(this, String("while (") + test.GetFullExpr() + ") {", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this, true, "\"before entering loop\""); // move to start
   prog->IncIndent();
-  if(IsVerbose()) {
-    prog->AddLine(this, String("taMisc::Info(\"starting while(") +
-		  test.GetFullExpr().quote_esc() + ") loop...\");");
-  }
+  prog->AddVerboseLine(this, false, "\"starting in loop\""); // don't move to out
 }
 
 void WhileLoop::GenCssPost_impl(Program* prog) {
@@ -305,11 +295,10 @@ void DoLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void DoLoop::GenCssPre_impl(Program* prog) {
-  prog->AddLine(this, "do {");
+  prog->AddLine(this, "do {", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this, true, "\"before entering loop\""); // move to start
   prog->IncIndent();
-  if(IsVerbose())
-    prog->AddLine(this, String("taMisc::Info(\"starting do..while(") +
-		  test.GetFullExpr().quote_esc() + ") loop\");");
+  prog->AddVerboseLine(this, false, "\"starting in loop\""); // don't move to out
 }
 
 void DoLoop::GenCssPost_impl(Program* prog) {
@@ -481,12 +470,10 @@ void ForLoop::GenCssPre_impl(Program* prog) {
   test.ParseExpr();		// re-parse just to be sure!
   iter.ParseExpr();		// re-parse just to be sure!
   String full_expr = init.GetFullExpr() + "; " + test.GetFullExpr() + "; " + iter.GetFullExpr();
-  prog->AddLine(this, String("for(") + full_expr + ") {");
+  prog->AddLine(this, String("for(") + full_expr + ") {", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this, true, "\"before entering loop\""); // move to start
   prog->IncIndent();
-  if(IsVerbose()) {
-    prog->AddLine(this, String("taMisc::Info(\"starting for(") + 
-		  full_expr.quote_esc() + ") loop\");");
-  }
+  prog->AddVerboseLine(this, false, "\"starting in loop\""); // don't move to out
 }
 
 void ForLoop::GenCssPost_impl(Program* prog) {
@@ -551,12 +538,19 @@ void IfContinue::CheckThisConfig_impl(bool quiet, bool& rval) {
 void IfContinue::GenCssBody_impl(Program* prog) {
   cond.ParseExpr();		// re-parse just to be sure!
   String fexp = cond.GetFullExpr();
-  if(fexp.nonempty()) 
-    prog->AddLine(this, "if(" + fexp + ") ");
-  if(IsVerbose())
-    prog->AddLine(this, String("{ taMisc::Info(\"if(") + fexp.quote_esc() + ") == true, continuing\"); continue; }");
-  else
+  if(fexp.nonempty()) {
+    prog->AddLine(this, "if(" + fexp + ") {", ProgLine::MAIN_LINE);
     prog->AddLine(this, "continue;");
+    prog->AddVerboseLine(this, true, "\"before if\"");
+    prog->IncIndent();
+    prog->AddVerboseLine(this, false, "\"inside if -- continuing\"");
+    prog->DecIndent();
+    prog->AddLine(this, "}");
+  }
+  else {
+    prog->AddLine(this, "continue;", ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
+  }
 }
 
 String IfContinue::GetDisplayName() const {
@@ -600,12 +594,19 @@ void IfBreak::CheckThisConfig_impl(bool quiet, bool& rval) {
 void IfBreak::GenCssBody_impl(Program* prog) {
   cond.ParseExpr();		// re-parse just to be sure!
   String fexp = cond.GetFullExpr();
-  if(fexp.nonempty()) 
-    prog->AddLine(this, "if(" + fexp + ") ");
-  if(IsVerbose())
-    prog->AddLine(this, String("{ taMisc::Info(\"if(") + fexp.quote_esc() + ") == true, breaking\"); break; }");
-  else
+  if(fexp.nonempty()) {
+    prog->AddLine(this, "if(" + fexp + ") {", ProgLine::MAIN_LINE);
     prog->AddLine(this, "break;");
+    prog->AddVerboseLine(this, true, "\"before if\"");
+    prog->IncIndent();
+    prog->AddVerboseLine(this, false, "\"inside if -- breaking\"");
+    prog->DecIndent();
+    prog->AddLine(this, "}");
+  }
+  else {
+    prog->AddLine(this, "break;", ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
+  }
 }
 
 String IfBreak::GetDisplayName() const {
@@ -648,15 +649,18 @@ void IfReturn::CheckThisConfig_impl(bool quiet, bool& rval) {
 void IfReturn::GenCssBody_impl(Program* prog) {
   cond.ParseExpr();		// re-parse just to be sure!
   String fexp = cond.GetFullExpr();
-  if(fexp.empty()) {
+  if(fexp.nonempty()) {
+    prog->AddLine(this, "if(" + fexp + ") {", ProgLine::MAIN_LINE);
     prog->AddLine(this, "return;");
+    prog->AddVerboseLine(this, true, "\"before if\"");
+    prog->IncIndent();
+    prog->AddVerboseLine(this, false, "\"inside if -- returning\"");
+    prog->DecIndent();
+    prog->AddLine(this, "}");
   }
   else {
-    prog->AddLine(this, "if(" + fexp + ") ");
-    if(IsVerbose())
-      prog->AddLine(this, String("{ taMisc::Info(\"if(") + fexp.quote_esc() + ") == true, returning\"); return; }");
-    else
-      prog->AddLine(this, "return;");
+    prog->AddLine(this, "return;", ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
   }
 }
 
@@ -716,11 +720,10 @@ void IfElse::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void IfElse::GenCssPre_impl(Program* prog) {
   cond.ParseExpr();		// re-parse just to be sure!
-  prog->AddLine(this, "if(" + cond.GetFullExpr() + ") {");
+  prog->AddLine(this, "if(" + cond.GetFullExpr() + ") {", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this, true, "\"before if\"");
   prog->IncIndent();
-  if(IsVerbose())
-    prog->AddLine(this, String("taMisc::Info(\"if(")
-		  + cond.GetFullExpr().quote_esc() + ") == true...\");");
+  prog->AddVerboseLine(this, false, "\"inside if\"");
 }
 
 void IfElse::GenCssBody_impl(Program* prog) {
@@ -730,9 +733,7 @@ void IfElse::GenCssBody_impl(Program* prog) {
     prog->DecIndent();
     prog->AddLine(this, "} else {");
     prog->IncIndent();
-    if(IsVerbose())
-      prog->AddLine(this, String("taMisc::Info(\"if(") + 
-		    cond.GetFullExpr().quote_esc() + ") == false, in else...\");");
+    prog->AddVerboseLine(this, false, "\"inside else\"");
     false_code.GenCss(prog);
   }
 }
@@ -809,10 +810,12 @@ void IfGuiPrompt::CheckChildConfig_impl(bool quiet, bool& rval) {
 void IfGuiPrompt::GenCssPre_impl(Program* prog) {
   if(taMisc::gui_active) {
     prog->AddLine(this, "{ int chs = taMisc::Choice(\"" + prompt + "\", \""
-		  + yes_label + "\", \"" + no_label + "\");");
+		  + yes_label + "\", \"" + no_label + "\");", ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
     prog->IncIndent();
     prog->AddLine(this, "if(chs == 0) {");
     prog->IncIndent();
+    prog->AddVerboseLine(this, false, "\"inside choice == yes\"");
   }
   else {
     prog->AddLine(this, "{");		// just a block to run..
@@ -867,13 +870,11 @@ void CaseBlock::GenCssPre_impl(Program* prog) {
   if(prog_code.size == 0) return;
   String expr = case_val.GetFullExpr();
   if(expr.empty())
-    prog->AddLine(this, "default: {");
+    prog->AddLine(this, "default: {", ProgLine::MAIN_LINE);
   else
-    prog->AddLine(this, "case " + case_val.GetFullExpr() + ": {");
+    prog->AddLine(this, "case " + case_val.GetFullExpr() + ": {", ProgLine::MAIN_LINE);
   prog->IncIndent();
-  if(IsVerbose())
-    prog->AddLine(this, "taMisc::Info(\"in case " +
-		  case_val.GetFullExpr().quote_esc() + "...\");");
+  prog->AddVerboseLine(this, false, "\"inside case\"");
 }
 
 void CaseBlock::GenCssBody_impl(Program* prog) {
@@ -934,11 +935,9 @@ void Switch::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void Switch::GenCssPre_impl(Program* prog) {
   if(!switch_var) return;
-  prog->AddLine(this, "switch(" + switch_var->name + ") {");
+  prog->AddLine(this, "switch(" + switch_var->name + ") {", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
-  if(IsVerbose())
-    prog->AddLine(this, "taMisc::Info(\"in switch(" +
-		  switch_var->name + ")...\");");
 }
 
 void Switch::GenCssBody_impl(Program* prog) {
@@ -1086,14 +1085,13 @@ void AssignExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
 void AssignExpr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();		// re-parse just to be sure!
   if (!result_var) {
-    prog->AddLine(this, "// WARNING: AssignExpr not generated here -- result_var not specified");
+    prog->AddLine(this, "// WARNING: AssignExpr not generated here -- result_var not specified", ProgLine::MAIN_LINE);
     return;
   }
-  
-  prog->AddLine(this, result_var->name + " = " + expr.GetFullExpr() + ";");
-  if(IsVerbose())
-    prog->AddLine(this, String("taMisc::Info(\"assigned ") + result_var->name
-	  + " = " + expr.GetFullExpr().quote_esc() + "; now = \", " + result_var->name + ");");
+
+  prog->AddLine(this, result_var->name + " = " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this, true, "\"prev value:\", String(" + result_var->name + ")"); // moved above
+  prog->AddVerboseLine(this, false, "\"new  value:\", String(" + result_var->name + ")"); // after
 }
 
 String AssignExpr::GetDisplayName() const {
@@ -1144,14 +1142,13 @@ void VarIncr::CheckThisConfig_impl(bool quiet, bool& rval) {
 void VarIncr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();		// re-parse just to be sure!
   if (!var) {
-    prog->AddLine(this, "// WARNING: VarIncr not generated here -- var not specified");
+    prog->AddLine(this, "// WARNING: VarIncr not generated here -- var not specified", ProgLine::MAIN_LINE);
     return;
   }
   
-  prog->AddLine(this, var->name + " = " + var->name + " + " + expr.GetFullExpr() + ";");
-  if(IsVerbose())
-    prog->AddLine(this, "taMisc::Info(\"incremented " + var->name
-	  + " += " + expr.GetFullExpr().quote_esc() + "; now = \", " + var->name + ");");
+  prog->AddLine(this, var->name + " = " + var->name + " + " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this, true, "\"prev value:\", String(" + var->name + ")"); // moved above
+  prog->AddVerboseLine(this, false, "\"new  value:\", String(" + var->name + ")"); // after
 }
 
 String VarIncr::GetDisplayName() const {
@@ -1231,16 +1228,10 @@ void MethodCall::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void MethodCall::GenCssBody_impl(Program* prog) {
   if (!((bool)obj && method)) {
-    prog->AddLine(this, "// WARNING: MethodCall not generated here -- obj or method not specified");
+    prog->AddLine(this, "// WARNING: MethodCall not generated here -- obj or method not specified", ProgLine::MAIN_LINE);
     return;
   }
   
-  if(IsVerbose()) {
-    String argstmp = meth_args.GenCssArgs();
-    prog->AddLine(this, "taMisc::Info(\"calling method " +
-		  obj->name + "->" + method->name + argstmp.quote_esc() + "\");");
-  }
-
   String rval;
   if(result_var)
     rval += result_var->name + " = ";
@@ -1249,7 +1240,9 @@ void MethodCall::GenCssBody_impl(Program* prog) {
   rval += method->name;
   rval += meth_args.GenCssArgs();
   rval += ";";
-  prog->AddLine(this, rval);
+
+  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 }
 
 String MethodCall::GetDisplayName() const {
@@ -1466,11 +1459,12 @@ void MemberAssign::CheckChildConfig_impl(bool quiet, bool& rval) {
 void MemberAssign::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();		// re-parse just to be sure!
   if (!(bool)obj || path.empty() || expr.empty()) {
-    prog->AddLine(this, "// WARNING: MemberAssign not generated here -- obj or path not specified or expr empty");
+    prog->AddLine(this, "// WARNING: MemberAssign not generated here -- obj or path not specified or expr empty", ProgLine::MAIN_LINE);
     return;
   }
-  
-  prog->AddLine(this, obj->name + "->" + path + " = " + expr.GetFullExpr() + ";");
+
+  String opath = obj->name + "->" + path;
+  prog->AddLine(this, opath + " = " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
   if (update_after) {
     prog->AddLine(this, obj->name + "->UpdateAfterEdit();");
     if(path.contains('.')) {
@@ -1478,10 +1472,8 @@ void MemberAssign::GenCssBody_impl(Program* prog) {
       prog->AddLine(this, obj->name + "->" + path.before('.',-1) + "->UpdateAfterEdit();");
     }
   }
-  if(IsVerbose())
-    prog->AddLine(this, String("taMisc::Info(\"assigned ") + obj->name + "->" + path
-		  + " = " + expr.GetFullExpr().quote_esc() + "; now = \", " +
-		  obj->name + "->" + path + ");");
+  prog->AddVerboseLine(this, true, "\"prev value:\", String(" + opath + ")"); // moved above
+  prog->AddVerboseLine(this, false, "\"new  value:\", String(" + opath + ")"); // after
 }
 
 String MemberAssign::GetDisplayName() const {
@@ -1568,13 +1560,14 @@ void MemberFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void MemberFmArg::GenCssBody_impl(Program* prog) {
   if (!(bool)obj || path.empty() || arg_name.empty()) {
-    prog->AddLine(this, "// WARNING: MemberFmArg not generated here -- obj or path not specified or expr empty");
+    prog->AddLine(this, "// WARNING: MemberFmArg not generated here -- obj or path not specified or expr empty", ProgLine::MAIN_LINE);
     return;
   }
 
   String flpth = obj->name + "->" + path;
   
-  prog->AddLine(this, "{ String arg_str = taMisc::FindArgByName(\"" + arg_name + "\");");
+  prog->AddLine(this, "{ String arg_str = taMisc::FindArgByName(\"" + arg_name + "\");",
+		ProgLine::MAIN_LINE);
   prog->IncIndent();
   prog->AddLine(this, "if(arg_str.nonempty()) {");
   prog->IncIndent();
@@ -1587,7 +1580,7 @@ void MemberFmArg::GenCssBody_impl(Program* prog) {
     }
   }
 
-  if(!quiet || IsVerbose())
+  if(!quiet || IsVerbose())	// special case
     prog->AddLine(this, String("taMisc::Info(\"Set ") + flpth + " to:\"," + flpth + ");");
   prog->DecIndent();
   prog->AddLine(this, "}");
@@ -1649,12 +1642,6 @@ void MemberMethodCall::GenCssBody_impl(Program* prog) {
     return;
   }
   
-  if(IsVerbose()) {
-    String argstmp = meth_args.GenCssArgs();
-    prog->AddLine(this, "taMisc::Info(\"calling method " +
-		  obj->name + "->" + path + "->" + method->name + argstmp.quote_esc() + "\");");
-  }
-
   String rval;
   if(result_var)
     rval += result_var->name + " = ";
@@ -1662,7 +1649,9 @@ void MemberMethodCall::GenCssBody_impl(Program* prog) {
   rval += method->name;
   rval += meth_args.GenCssArgs();
   rval += ";";
-  prog->AddLine(this, rval);
+
+  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 }
 
 String MemberMethodCall::GetDisplayName() const {
@@ -1865,7 +1854,8 @@ void PrintVar::GenCssBody_impl(Program* prog) {
   if((bool)print_var6)
     rval += "<< \"  " + print_var6->name + " = \" << " + print_var6->name;
   rval += " << endl;";
-  prog->AddLine(this, rval);
+  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 }
 
 String PrintVar::GetDisplayName() const {
@@ -1961,7 +1951,9 @@ void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void PrintExpr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();		// re-parse just to be sure!
-  prog->AddLine(this, String("cerr << ") + expr.GetFullExpr() + " << endl;");
+  prog->AddLine(this, String("cerr << ") + expr.GetFullExpr() + " << endl;",
+		ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 }
 
 String PrintExpr::GetDisplayName() const {
@@ -2001,7 +1993,8 @@ void Comment::Initialize() {
 }
 
 void Comment::GenCssBody_impl(Program* prog) {
-  prog->AddLine(this, "/*******************************************************************");
+  prog->AddLine(this, "/*******************************************************************",
+		ProgLine::MAIN_LINE);
   prog->AddDescString(this, desc);
   prog->AddLine(this, "*******************************************************************/");
 }
@@ -2031,7 +2024,8 @@ void StopStepPoint::Initialize() {
 }
 
 void StopStepPoint::GenCssBody_impl(Program* prog) {
-  prog->AddLine(this, "StopCheck(); // check for Stop or Step button");
+  prog->AddLine(this, "StopCheck(); // check for Stop or Step button", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 }
 
 String StopStepPoint::GetDisplayName() const {
@@ -2064,9 +2058,8 @@ void ReturnExpr::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void ReturnExpr::GenCssBody_impl(Program* prog) {
   expr.ParseExpr();		// re-parse just to be sure!
-  if(IsVerbose())
-    prog->AddLine(this, "taMisc::Info(\"returning value: " + expr.GetFullExpr().quote_esc() + "\");");
-  prog->AddLine(this, "return " + expr.GetFullExpr() + ";");
+  prog->AddLine(this, "return " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 }
 
 String ReturnExpr::GetDisplayName() const {
@@ -2158,19 +2151,16 @@ Program* OtherProgramVar::GetOtherProg() {
 
 bool OtherProgramVar::GenCss_OneVar(Program* prog, ProgVarRef& var, int var_no) {
   if(!var) return false;
-  if(set_other)
+  if(set_other) {
+    prog->AddVerboseLine(this, false, "\"setting other prog's variable named: "+var->name +
+			 " to value:\", String(" + var->name + ")");
     prog->AddLine(this, String("other_prog->SetVar(\"") + var->name + "\", " + var->name +");");
-  else
+  }
+  else {
+    prog->AddVerboseLine(this, false, "\"setting my variable named: "+var->name +
+			 " current value:\", String(" + var->name + ")");
     prog->AddLine(this, var->name + " = other_prog->GetVar(\"" + var->name + "\");");
-  if(IsVerbose()) {
-    if(set_other)
-      prog->AddLine(this, String("taMisc::Info(\"assigned var ") + var->name + " in other program: "
-		    + other_prog->name + " to same variable in this program, which has value:\","
-		    + var->name + ");");
-    else
-      prog->AddLine(this, String("taMisc::Info(\"assigned var ") + var->name
-		    + " in this program to same variable in other program: " + other_prog->name
-		    + " -- now has value:\"," + var->name + ");");
+    prog->AddVerboseLine(this, false, "\"new value:\", String(" + var->name + ")");
   }
   return true;
 }
@@ -2179,7 +2169,8 @@ void OtherProgramVar::GenCssPre_impl(Program* prog) {
   String rval = "{ // other program var: "; 
   if (other_prog)
     rval += other_prog->name;
-  prog->AddLine(this, rval);
+  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
 }
 
@@ -2248,7 +2239,8 @@ Program* ProgVarFmArg::GetOtherProg() {
 
 void ProgVarFmArg::GenCssBody_impl(Program* prog) {
   if (!prog) return;
-  prog->AddLine(this, String("{ // prog var fm arg: ") + prog->name);
+  prog->AddLine(this, String("{ // prog var fm arg: ") + prog->name, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
   prog->AddLine(this, String("Program* other_prog = this") + GetPath(NULL, program())
 		+ "->GetOtherProg();");
@@ -2314,10 +2306,11 @@ DataTable* DataColsFmArgs::GetData() const {
 void DataColsFmArgs::GenCssBody_impl(Program* prog) {
   DataTable* dt = GetData();
   if(!dt) {
-    prog->AddLine(this, "// DataColsFmArgs: data_var not set!");
+    prog->AddLine(this, "// DataColsFmArgs: data_var not set!", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "{ // DataColsFmArgs fm: " + dt->name);
+  prog->AddLine(this, "{ // DataColsFmArgs fm: " + dt->name, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
   prog->AddLine(this, "String dcfma_colnm, dcfma_argval;");
   prog->AddLine(this, "for(int j=0;j<" + data_var->name + ".cols();j++) {");
@@ -2394,11 +2387,12 @@ SelectEdit* SelectEditsFmArgs::GetSelectEdit() const {
 void SelectEditsFmArgs::GenCssBody_impl(Program* prog) {
   SelectEdit* se = GetSelectEdit();
   if(!se) {
-    prog->AddLine(this, "// SelectEditsFmArgs: sel_edit_var not set!");
+    prog->AddLine(this, "// SelectEditsFmArgs: sel_edit_var not set!", ProgLine::MAIN_LINE);
     return;
   }
 
-  prog->AddLine(this, "{ // SelectEditsFmArgs fm: " + se->name);
+  prog->AddLine(this, "{ // SelectEditsFmArgs fm: " + se->name, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
   prog->AddLine(this, "String sefma_lbl, sefma_argval;");
   prog->AddLine(this, "for(int j=0;j<" + se->name + ".mbrs.leaves;j++) {");
@@ -2447,7 +2441,8 @@ String RegisterArgs::GetDisplayName() const {
 }
 
 void RegisterArgs::GenCssBody_impl(Program* prog) {
-  prog->AddLine(this, "// Register Args:");
+  prog->AddLine(this, "// Register Args:", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   AddArgsFmCode(prog, prog->prog_code);
   prog->AddLine(this, "taMisc::UpdateArgs();");
   prog->AddLine(this, "if(taMisc::CheckArgByName(\"Help\")) taMisc::HelpMsg();"); // extra help!

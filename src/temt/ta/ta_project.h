@@ -116,8 +116,14 @@ class TA_API taWizard : public taNBase {
 INHERITED(taNBase)
 public:
   bool		auto_open;	// open this wizard upon startup
+  taDoc		wiz_doc;	// #HIDDEN #NO_SAVE wizard doc object
+
+  virtual void		RenderWizDoc();
+  // render the wizard doc -- this is the interface that the user sees to select wizard elements -- called in InitLinks -- subtypes override completely
 
   override String 	GetTypeDecoKey() const { return "Wizard"; }
+
+  void	InitLinks();
   TA_BASEFUNS(taWizard);
 private:
   SIMPLE_COPY(taWizard);
@@ -497,6 +503,8 @@ public:
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool			m_no_save; // #HIDDEN #READ_ONLY #NO_SAVE -- flag to prevent double user query on exiting; cleared when undirtying
   String		last_change_desc; // #EXPERT description of the last change made to the project -- used for change log
+  String                view_plog;
+  // #READ_ONLY #NO_SAVE current view of project log data
 
   override bool		isDirty() const {return m_dirty;}
   override void 	setDirty(bool value);  //
@@ -577,6 +585,11 @@ public:
   // #CAT_File saves the project to a file using current file name, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving
   virtual int		SaveAsNoteChanges(const String& fname = ""); 
   // #CAT_File Saves object data to a new file -- if fname is empty, it prompts the user, but first prompts for a text note of changes that have been made, which are registered in the ChangeLog document within the project prior to saving
+
+  virtual void		ViewProjLog();
+  // #MENU #MENU_ON_View #MENU_CONTEXT #MENU_SEP_BEFORE #BUTTON #CAT_File view the current project log file in internal text viewer display
+  virtual void		ViewProjLog_Editor();
+  // #MENU #MENU_ON_View #MENU_CONTEXT #CAT_File view the current project log file in an external editor as specified in the preferences
 
   override void		Dump_Load_post();
   void			OpenViewers(); // open any yet unopen viewers

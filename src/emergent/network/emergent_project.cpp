@@ -126,6 +126,21 @@ void Wizard::UpdateAfterEdit() {
   inherited::UpdateAfterEdit();
 }
 
+void Wizard::RenderWizDoc() {
+  wiz_doc.text = "<html>\n<head></head>\n<body>\n\
+= Wizard =\n\
+This is the basic Emergent Wizard -- Select from the following options.\n\n\
+== Network == \n\
+* [[<this>.StdNetwork()|Standard Network]] -- click this to generate or configure a standard network, specifying number of layers, layer names, sizes, types, and connectivity.\n\
+</body>\n\
+</html>\n";
+  String my_path;
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  my_path = GetPath(NULL, proj);
+  wiz_doc.text.gsub("<this>", my_path);
+  wiz_doc.UpdateText();
+}
+
 bool Wizard::ThreeLayerNet() {
   n_layers = 3;
   layer_cfg.SetSize(n_layers);
@@ -837,6 +852,7 @@ void ProjectBase::Dump_Load_post() {
   //  inherited::Dump_Load_post(); -- don't do this -- need to do in correct order
   taFBase::Dump_Load_post();	      // parent of taProject
   if(taMisc::is_undo_loading) return; // none of this.
+  OpenProjectLog();
   DoView();
   taVersion v502(5, 0, 2);
   if(taMisc::loading_version < v502) { // fix old programs for < 5.0.2

@@ -1789,13 +1789,14 @@ void DataLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void DataLoop::GenCssPre_impl(Program* prog) {
   if(!data_var || !index_var) {
-    prog->AddLine(this, "// DataLoop ERROR vars not set!");
+    prog->AddLine(this, "// DataLoop ERROR vars not set!", ProgLine::MAIN_LINE);
     return;
   }
   String data_nm = data_var->name;
   String idx_nm = index_var->name;
 
-  prog->AddLine(this, String("{ // DataLoop ") + data_nm);
+  prog->AddLine(this, String("{ // DataLoop ") + data_nm, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
   prog->AddLine(this, String("DataLoop* data_loop = this") + GetPath(NULL,program()) + ";");
   prog->AddLine(this, "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value");
@@ -1900,6 +1901,8 @@ bool DataVarProg::GenCss_OneVar(Program* prog, ProgVarRef& var, const String& id
   if ((var->var_type == ProgVar::T_Object) &&
     var->object_type->InheritsFrom(&TA_taMatrix))
     return GenCss_OneVarMat(prog, var, idnm, var_no);
+
+  // todo: could do some verbose logging here..
     
   DataCol* da = NULL;
   DataTable* dt = GetData();
@@ -1971,15 +1974,16 @@ bool DataVarProg::GenCss_OneVarMat(Program* prog, ProgVarRef& var, const String&
 
 void DataVarProg::GenCssBody_impl(Program* prog) {
   if(!data_var) {
-    prog->AddLine(this, "// data_var not set!");
+    prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
     return;
   }
   if(row_spec != CUR_ROW && !row_var) {
-    prog->AddLine(this, "// row_var not set but needed!");
+    prog->AddLine(this, "// row_var not set but needed!", ProgLine::MAIN_LINE);
     return;
   }
   String idnm = data_var->name;
-  prog->AddLine(this, "// " + GetDisplayName());
+  prog->AddLine(this, "// " + GetDisplayName(), ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   GenCss_OneVar(prog, var_1, idnm, 0);
   GenCss_OneVar(prog, var_2, idnm, 1);
   GenCss_OneVar(prog, var_3, idnm, 2);
@@ -2049,10 +2053,11 @@ String ResetDataRows::GetDisplayName() const {
 
 void ResetDataRows::GenCssBody_impl(Program* prog) {
   if(!data_var) {
-    prog->AddLine(this, "// data_var not set!");
+    prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, data_var->name + ".RemoveAllRows();");
+  prog->AddLine(this, data_var->name + ".RemoveAllRows();", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 }
 
 ///////////////////////////////////////////
@@ -2070,10 +2075,11 @@ String AddNewDataRow::GetDisplayName() const {
 
 void AddNewDataRow::GenCssBody_impl(Program* prog) {
   if(!data_var) {
-    prog->AddLine(this, "// data_var not set!");
+    prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, data_var->name + ".AddBlankRow();");
+  prog->AddLine(this, data_var->name + ".AddBlankRow();", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 }
 
 /////////////
@@ -2090,10 +2096,11 @@ String DoneWritingDataRow::GetDisplayName() const {
 
 void DoneWritingDataRow::GenCssBody_impl(Program* prog) {
   if(!data_var) {
-    prog->AddLine(this, "// data_var not set!");
+    prog->AddLine(this, "// data_var not set!", ProgLine::MAIN_LINE);
     return;
   }
   prog->AddLine(this, data_var->name + ".WriteClose();");
+  prog->AddVerboseLine(this);
 }
 
 
@@ -2166,10 +2173,11 @@ void DataSortProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void DataSortProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var) {
-    prog->AddLine(this, "// DataSort: src_data_var not set!  cannot run");
+    prog->AddLine(this, "// DataSort: src_data_var not set!  cannot run", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";");
+  prog->AddLine(this, "{ DataSortProg* dsp = this" + GetPath(NULL, program()) + ";", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
     prog->AddLine(this, String("taDataProc::Sort(") + dest_data_var->name + ", " + src_data_var->name
@@ -2228,10 +2236,12 @@ void DataSelectRowsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void DataSelectRowsProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var) {
-    prog->AddLine(this, "// DataSelectRows: src_data_var not set!  cannot run!");
+    prog->AddLine(this, "// DataSelectRows: src_data_var not set!  cannot run!", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";");
+  prog->AddLine(this, "{ DataSelectRowsProg* dsp = this" + GetPath(NULL, program()) + ";",
+		ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
     prog->AddLine(this, "taDataProc::SelectRows(" + dest_data_var->name + ", " + 
@@ -2291,10 +2301,13 @@ void DataSelectColsProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void DataSelectColsProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var) {
-    prog->AddLine(this, "// DataSelectCols: src_data_var not set!  cannot run!");
+    prog->AddLine(this, "// DataSelectCols: src_data_var not set!  cannot run!",
+		  ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";");
+  prog->AddLine(this, "{ DataSelectColsProg* dsp = this" + GetPath(NULL, program()) + ";",
+		ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
     prog->AddLine(this, "taDataProc::SelectCols(" + dest_data_var->name + ", " + src_data_var->name
@@ -2354,10 +2367,12 @@ void DataGroupProg::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void DataGroupProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var) {
-    prog->AddLine(this, "// DataGroup: src_data_var not set!  cannot run!");
+    prog->AddLine(this, "// DataGroup: src_data_var not set!  cannot run!", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";");
+  prog->AddLine(this, "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";",
+		ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   if(dest_data_var) {
     prog->AddLine(this, "taDataProc::Group(" + dest_data_var->name + ", " + src_data_var->name
 		  + ", dsp->group_spec);");
@@ -2434,10 +2449,13 @@ DataTable* DataJoinProg::GetSrcBData() {
 
 void DataJoinProg::GenCssBody_impl(Program* prog) {
   if(!src_data_var || !src_b_data_var) {
-    prog->AddLine(this, "// DataJoin: src_data_var or src_b_data_var not set!  cannot run");
+    prog->AddLine(this, "// DataJoin: src_data_var or src_b_data_var not set!  cannot run",
+		  ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";");
+  prog->AddLine(this, "{ DataJoinProg* dsp = this" + GetPath(NULL, program()) + ";",
+		ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
     prog->AddLine(this, "taDataProc::Join(" + dest_data_var->name + ", " + 
@@ -2623,11 +2641,13 @@ void DataCalcLoop::PreGenChildren_impl(int& item_id) {
 
 void DataCalcLoop::GenCssPre_impl(Program* prog) {
   if(!GetSrcData()) {
-    prog->AddLine(this, "// no src data!");
+    prog->AddLine(this, "// no src data!", ProgLine::MAIN_LINE);
     return;
   }
   src_cols.GetColumns(GetSrcData());
-  prog->AddLine(this, "{ DataCalcLoop* dcl = this" + GetPath(NULL, program()) + ";");
+  prog->AddLine(this, "{ DataCalcLoop* dcl = this" + GetPath(NULL, program()) + ";",
+		ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   prog->IncIndent();
   if(dest_data_var) {
     prog->AddLine(this, dest_data_var->name + ".ResetData(); // all data ops clear out old existing data");
@@ -2648,6 +2668,7 @@ void DataCalcLoop::GenCssPre_impl(Program* prog) {
 
   prog->AddLine(this, String("for(int src_row=0; src_row < ") + src_data_var->name + ".rows; src_row++) {");
   prog->IncIndent();
+  prog->AddVerboseLine(this, false, "\"in for loop\"");
 
   for(int i=0;i<src_cols.size; i++) {
     DataOpEl* ds = src_cols[i];
@@ -2776,17 +2797,20 @@ void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
-    prog->AddLine(this, "// DataCalcAddDestRow Error -- DataCalcLoop not found!!");
+    prog->AddLine(this, "// DataCalcAddDestRow Error -- DataCalcLoop not found!!",
+		  ProgLine::MAIN_LINE);
     return;
   }
   DataTable* dd = dcl->GetDestData();
   if(!dd) {
-    prog->AddLine(this, "// DataCalcAddDestRow Error -- dest_data_var not set!!");
+    prog->AddLine(this, "// DataCalcAddDestRow Error -- dest_data_var not set!!",
+		  ProgLine::MAIN_LINE);
     return;
   }
 
   dcl->dest_cols.GetColumns(dd);
-  prog->AddLine(this, dcl->dest_data_var->name + "->AddBlankRow();");
+  prog->AddLine(this, dcl->dest_data_var->name + "->AddBlankRow();", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
 
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
@@ -2874,17 +2898,21 @@ void DataCalcSetDestRow::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
-    prog->AddLine(this, "// DataCalcSetDestRow Error -- DataCalcLoop not found!!");
+    prog->AddLine(this, "// DataCalcSetDestRow Error -- DataCalcLoop not found!!",
+		  ProgLine::MAIN_LINE);
     return;
   }
   DataTable* dd = dcl->GetDestData();
   if(!dd) {
-    prog->AddLine(this, "// DataCalcSetDestRow Error -- dest_data_var not set!!");
+    prog->AddLine(this, "// DataCalcSetDestRow Error -- dest_data_var not set!!",
+		  ProgLine::MAIN_LINE);
     return;
   }
 
   prog->AddLine(this, String("if(") + dcl->dest_data_var->name
-		+ ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }");
+	+ ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }",
+		ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   dcl->dest_cols.GetColumns(dd);
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
@@ -2956,12 +2984,14 @@ void DataCalcSetSrcRow::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
-    prog->AddLine(this, "// DataCalcSetSrcRow Error -- DataCalcLoop not found!!");
+    prog->AddLine(this, "// DataCalcSetSrcRow Error -- DataCalcLoop not found!!",
+		  ProgLine::MAIN_LINE);
     return;
   }
   DataTable* sd = dcl->GetSrcData();
   if(!sd) {
-    prog->AddLine(this, "// DataCalcSetSrcRow Error -- src_data_var not set!!");
+    prog->AddLine(this, "// DataCalcSetSrcRow Error -- src_data_var not set!!",
+		  ProgLine::MAIN_LINE);
     return;
   }
 
@@ -3047,16 +3077,18 @@ void DataCalcCopyCommonCols::GenCssBody_impl(Program* prog) {
   // can assume that the dcl variable has already been declared!!
   DataCalcLoop* dcl = GET_MY_OWNER(DataCalcLoop);
   if(!dcl) {
-    prog->AddLine(this, "// DataCalcCopyCommonCols Error -- DataCalcLoop not found!!");
+    prog->AddLine(this, "// DataCalcCopyCommonCols Error -- DataCalcLoop not found!!",
+		  ProgLine::MAIN_LINE);
     return;
   }
   if(!dcl->dest_data_var) {
-    prog->AddLine(this, "// DataCalcCopyCommonCols Error -- dest_data_var null in DataCalcLoop!!");
+    prog->AddLine(this, "// DataCalcCopyCommonCols Error -- dest_data_var null in DataCalcLoop!!", ProgLine::MAIN_LINE);
     return;
   }
 
   prog->AddLine(this, String("if(") + dcl->dest_data_var->name
-		+ ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }");
+		+ ".rows == 0) { taMisc::Error(\"Dest Rows == 0 -- forgot AddDestRow??\"); break; }", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
   if(only_named_cols) 
     prog->AddLine(this, "taDataProc::CopyCommonColsRow_impl(" + dcl->dest_data_var->name + ", " + 
 	  dcl->src_data_var->name + ", common_dest_cols_named, common_src_cols_named, -1, src_row);");

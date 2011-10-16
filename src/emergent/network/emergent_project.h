@@ -71,7 +71,7 @@ public:
   };
 
   int		n_layers;	// number of layers
-  LayerWizElList layer_cfg;	// provides configuration information for each layer
+  LayerWizElList layer_cfg;	// #HIDDEN #NO_SAVE provides configuration information for each layer
   Connectivity	connectivity;	// how to connect the layers
   TypeDef*	default_net_type; // #TYPE_Network default type of network to create
 
@@ -111,6 +111,8 @@ public:
   // #IGNORE impl that actually loads progs from proglib with given name; returns new program group or NULL if not found
   virtual bool	FixOldProgs();
   // #MENU_BUTTON #MENU_ON_Programs #MENU_SEP_BEFORE #CONFIRM fix programs from versions earlier than 5.0.2 to have default NO_STOP_STEP flags and short names..
+
+  override void RenderWizDoc();
 
   void	UpdateAfterEdit();
   void 	InitLinks();

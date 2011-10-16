@@ -372,6 +372,20 @@ void taWizard::Initialize() {
   SetBaseFlag(NAME_READONLY);
 }
 
+void taWizard::InitLinks() {
+  inherited::InitLinks();
+  RenderWizDoc();
+}
+
+void taWizard::RenderWizDoc() {
+  wiz_doc.text = "<html>\n<head></head>\n<body>\n\
+= taWizard =\n\
+this is a virtual base wizard -- not the real thing -- shouldn't see this!\n\
+</body>\n\
+</html>\n";
+  wiz_doc.UpdateText();
+}
+
 //////////////////////////////////
 // 	Wizard_Group		//
 //////////////////////////////////
@@ -1628,6 +1642,7 @@ MainWindowViewer* taProject::GetDefaultProjectViewer() {
 
 void taProject::Dump_Load_post() {
   inherited::Dump_Load_post();
+  if(taMisc::is_undo_loading) return; // none of this.
   OpenProjectLog();
   DoView();
   setDirty(false);		// nobody should start off dirty!
@@ -1867,6 +1882,7 @@ int taProject::Load(const String& fname, taBase** loaded_obj_ptr) {
 }
 
 void taProject::OpenProjectLog() {
+  if(!taMisc::gui_active) return; //  only for gui..
   if(file_name.empty()) return;
   String log_fn = file_name;
   if(log_fn.contains(".proj"))
@@ -1904,6 +1920,28 @@ bool taProject::CleanFiles() {
 
 void taProject::ViewLicense() {
   license.ViewLicense();
+}
+
+void taProject::ViewProjLog_Editor() {
+  String fnm = file_name.before(".proj");
+  fnm += ".plog";
+  taMisc::EditFile(fnm);
+}
+
+void taProject::ViewProjLog() {
+  String fnm = file_name.before(".proj");
+  fnm += ".plog";
+  fstream fh;
+  fh.open(fnm, ios::in);
+  if(fh.good()) {
+    view_plog.Load_str(fh);
+    TypeDef* td = GetTypeDef();
+    MemberDef* md = td->members.FindName("view_plog");
+    taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, true);
+    // args are: read_only, modal, parent, line_nos
+    host_->Constr("Project Log for Project: " + name);
+    host_->Edit(false);
+  }
 }
 
 int taProject::SaveNoteChanges() {
@@ -3371,10 +3409,11 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   instance()->sidebar_paths.AddUnique(desktop_path);
   instance()->sidebar_paths.AddUnique(docs_path);
 
-  // start recording stuff at this point..
-  String bkup_fn = taMisc::user_log_dir + "/default_project_log.plog";
-  taMisc::SetLogFile(bkup_fn);
-
+  // start recording stuff at this point -- only with gui active
+  if(taMisc::use_gui) {
+    String bkup_fn = taMisc::user_log_dir + "/default_project_log.plog";
+    taMisc::SetLogFile(bkup_fn);
+  }
   return true;
 }
   	
