@@ -399,9 +399,10 @@ LeabraProject .projects["Project_0"] {
 	  ProgVar @["no_prompts"] { };
 	};
 
-	ProgVar_List @.vars = [12] {
+	ProgVar_List @.vars = [13] {
 	  ProgVar @["max_epoch"] { };
 	  ProgVar @["epoch"] { };
+	  ProgVar @["batch"] { };
 	  ProgVar @["train_mode"] { };
 	  ProgVar @["rnd_init"] { };
 	  ProgVar @["err_stopcrit"] { };
@@ -498,20 +499,21 @@ LeabraProject .projects["Project_0"] {
 	  AssignExpr @[6] { };
 	};
 
-	ProgEl_List @.prog_code = [11] {
+	ProgEl_List @.prog_code = [12] {
 	  AssignExpr @[0] { };
 	  MethodCall @[1] { 
 	    ProgArg_List @.meth_args = [1] {
 	      ProgArg @[0] { };
 	    };
 	  };
-	  AssignExpr @[2] { };
-	  MemberAssign @[3] { };
-	  FunctionCall @[4] { 
+	  OtherProgramVar @[2] { };
+	  AssignExpr @[3] { };
+	  MemberAssign @[4] { };
+	  FunctionCall @[5] { 
 	    ProgArg_List @.fun_args = [0] {
 	    };
 	  };
-	  IfElse @[5] { 
+	  IfElse @[6] { 
 	    ProgEl_List @.true_code = [2] {
 	      MethodCall @[0] { 
 		ProgArg_List @.meth_args = [0] {
@@ -523,14 +525,14 @@ LeabraProject .projects["Project_0"] {
 	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
-	  AssignExpr @[6] { };
-	  MethodCall @[7] { 
+	  AssignExpr @[7] { };
+	  MethodCall @[8] { 
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	    };
 	  };
-	  WhileLoop @[8] { 
+	  WhileLoop @[9] { 
 	    ProgEl_List @.loop_code = [4] {
 	      ProgramCall @[0] { 
 		ProgArg_List @.prog_args = [2] {
@@ -570,7 +572,7 @@ LeabraProject .projects["Project_0"] {
 	      };
 	    };
 	  };
-	  IfElse @[9] { 
+	  IfElse @[10] { 
 	    ProgEl_List @.true_code = [1] {
 	      ProgramCall @[0] { 
 		ProgArg_List @.prog_args = [1] {
@@ -582,7 +584,7 @@ LeabraProject .projects["Project_0"] {
 	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
-	  MethodCall @[10] { 
+	  MethodCall @[11] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
@@ -1995,7 +1997,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 0;      };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -2020,7 +2022,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 0;      };
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
@@ -2045,7 +2047,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 0;      };
      };
      String_Data @["trial_name"] {
       name="trial_name";
@@ -2060,7 +2062,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] "ldiag";      };
      };
      String_Data @["group_name"] {
       name="group_name";
@@ -2075,7 +2077,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] ;      };
      };
      int_Data @["phase_no"] {
       UserDataItem_List @*(.user_data_) {
@@ -2100,7 +2102,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 2;      };
      };
      float_Data @["minus_cycles"] {
       name="minus_cycles";
@@ -2115,7 +2117,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 41;      };
      };
      float_Data @["sse"] {
       name="sse";
@@ -2130,7 +2132,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 7.3271799;      };
      };
      float_Data @["ext_rew"] {
       name="ext_rew";
@@ -2145,7 +2147,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [0]       };
+	    [1] 0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3946,6 +3948,16 @@ LeabraProject .projects["Project_0"] {
       desc=;
       init_from=NULL;
      };
+     ProgVar @["batch"] {
+      name="batch";
+      var_type=T_Int;
+      int_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
      ProgVar @["train_mode"] {
       name="train_mode";
       var_type=T_HardEnum;
@@ -4357,7 +4369,17 @@ LeabraProject .projects["Project_0"] {
        };
       };
      };
-     AssignExpr @[2] {
+     OtherProgramVar @[2] {
+      desc=;
+      flags=VERBOSE|PROG_ERROR;
+      other_prog=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$;
+      set_other=0;
+      var_1=.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["batch"]$$;
+      var_2=NULL;
+      var_3=NULL;
+      var_4=NULL;
+     };
+     AssignExpr @[3] {
       desc=;
       flags=0;
       result_var=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["n_under_cnt"]$;
@@ -4365,7 +4387,7 @@ LeabraProject .projects["Project_0"] {
        expr="0";
       };
      };
-     MemberAssign @[3] {
+     MemberAssign @[4] {
       desc="set network's training mode to our local value";
       flags=0;
       obj=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
@@ -4375,7 +4397,7 @@ LeabraProject .projects["Project_0"] {
       };
       update_after=0;
      };
-     FunctionCall @[4] {
+     FunctionCall @[5] {
       desc="initialize random seed";
       flags=0;
       result_var=NULL;
@@ -4386,7 +4408,7 @@ LeabraProject .projects["Project_0"] {
        el_def=0;
       };
      };
-     IfElse @[5] {
+     IfElse @[6] {
       desc=;
       flags=0;
       cond {
@@ -4423,7 +4445,7 @@ LeabraProject .projects["Project_0"] {
        el_def=0;
       };
      };
-     AssignExpr @[6] {
+     AssignExpr @[7] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=VERBOSE;
       result_var=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["epoch"]$;
@@ -4431,7 +4453,7 @@ LeabraProject .projects["Project_0"] {
        expr="network.epoch";
       };
      };
-     MethodCall @[7] {
+     MethodCall @[8] {
       desc=;
       flags=OFF|PROG_ERROR;
       result_var=NULL;
@@ -4463,7 +4485,7 @@ LeabraProject .projects["Project_0"] {
        };
       };
      };
-     WhileLoop @[8] {
+     WhileLoop @[9] {
       desc=;
       flags=0;
       loop_code {
@@ -4612,7 +4634,7 @@ LeabraProject .projects["Project_0"] {
        expr="epoch < max_epoch";
       };
      };
-     IfElse @[9] {
+     IfElse @[10] {
       desc=;
       flags=0;
       cond {
@@ -4651,7 +4673,7 @@ LeabraProject .projects["Project_0"] {
        el_def=0;
       };
      };
-     MethodCall @[10] {
+     MethodCall @[11] {
       desc=;
       flags=0;
       result_var=NULL;
@@ -5123,7 +5145,7 @@ LeabraProject .projects["Project_0"] {
      ProgVar @["phase_no"] {
       name="phase_no";
       var_type=T_Int;
-      int_val=0;
+      int_val=2;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5419,7 +5441,7 @@ LeabraProject .projects["Project_0"] {
      ProgVar @["cycle"] {
       name="cycle";
       var_type=T_Int;
-      int_val=0;
+      int_val=15;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;

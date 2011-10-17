@@ -28,6 +28,7 @@
 #include "ta_qtdialog.h"
 
 #ifndef __MAKETA__
+#include "numberedtextview.h"
 # include <QPointer>
 #endif
 
@@ -216,6 +217,42 @@ private:
   void			Init();
 };
 
+class TA_API iProgramViewScriptPanel: public iDataPanelFrame {
+  // a panel frame for viewing script code of program
+  Q_OBJECT
+INHERITED(iDataPanelFrame)
+public:
+#ifndef __MAKETA__    
+  NumberedTextView*	vs; // the view script widget
+#endif
+  
+  Program*		prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
+  override String	panel_type() const {return "css Script";}
+
+  override bool		HasChanged(); // 'true' if user has unsaved changes
+  void			FillList();
+
+  override QWidget*	firstTabFocusWidget();
+
+  iProgramViewScriptPanel(taiDataLink* dl_);
+  ~iProgramViewScriptPanel();
+
+public slots:
+  void	   lineFlagsUpdated(int lineno, int flags);
+  // view gui triggered update
+  void	   viewSource(int lineno);
+
+public: // IDataLinkClient interface
+  override void*	This() {return (void*)this;}
+  override TypeDef*	GetTypeDef() const {return &TA_iProgramViewScriptPanel;}
+  override bool		ignoreDataChanged() const;
+
+protected:
+  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void		OnWindowBind_impl(iTabViewer* itv);
+  override void		UpdatePanel_impl();
+  override void		ResolveChanges_impl(CancelOp& cancel_op);
+};
 
 class TA_API iProgramPanelBase: public iDataPanelFrame {
 // ##NO_CSS note: ProgramPanel and ProgramGroupPanel are almost identical

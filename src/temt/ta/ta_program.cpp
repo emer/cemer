@@ -27,6 +27,7 @@
 //#include <QUrlInfo>
 #include <QFileInfo>
 #include <QDateTime>
+#include <QTextEdit>
 
 #ifdef TA_GUI
 # include "ilineedit.h" // for iTextDialog
@@ -128,7 +129,7 @@ bool ProgLine_List::AddLine(taBase* prog_el, int indent, const String& code,
 }
 
 void ProgLine_List::FullListing(String& script_code) {
-  for(int i=0; i<size; i++) {
+  for(int i=1; i<size; i++) {
     ProgLine* pl = FastEl(i);
     const String ci = pl->CodeIndented();
 //     taMisc::Info(String(i), ":\t", String(pl->indent), ":\t", ci);
@@ -136,15 +137,44 @@ void ProgLine_List::FullListing(String& script_code) {
   }
 }
 
+void ProgLine_List::FullListingHTML(String& script_code) {
+  for(int i=1; i<size; i++) {
+    ProgLine* pl = FastEl(i);
+    String ci = "<p style=\"text-indent:" + String(pl->indent*10) + "px";
+    if(pl->prog_el) {
+      String dec_key = pl->prog_el->GetTypeDecoKey(); // nil if none
+      ViewColor* vc = taMisc::view_colors->FindName(dec_key);
+      if(vc) {
+	if(vc->use_fg) {
+	  String hex_color = vc->fg_color.color().toString();
+	  ci += "; color:#" + hex_color;
+	}
+      }
+      dec_key = pl->prog_el->GetStateDecoKey(); // nil if none
+      vc = taMisc::view_colors->FindName(dec_key);
+      if(vc) {
+	if(vc->use_bg) {
+	  String hex_color = vc->bg_color.color().toString();
+	  ci += "; background-color:#" + hex_color;
+	}
+      }
+    }
+    String cd = pl->code;
+    cd.xml_esc();
+    ci += "\">" + cd + "</p>\n";
+    script_code.cat(ci);
+  }
+}
+
 int ProgLine_List::FindProgEl(taBase* prog_el, bool reverse) {
   if(reverse) {
-    for(int i=size-1; i>=0; i--) {
+    for(int i=size-1; i>=1; i--) {
       ProgLine* pl = FastEl(i);
       if(pl->prog_el == prog_el) return i;
     }
   }
   else {
-    for(int i=0; i<size; i++) {
+    for(int i=1; i<size; i++) {
       ProgLine* pl = FastEl(i);
       if(pl->prog_el == prog_el) return i;
     }
@@ -153,7 +183,7 @@ int ProgLine_List::FindProgEl(taBase* prog_el, bool reverse) {
 }
 
 int ProgLine_List::FindMainLine(taBase* prog_el) {
-  for(int i=0; i<size; i++) {
+  for(int i=1; i<size; i++) {
     ProgLine* pl = FastEl(i);
     if(pl->prog_el == prog_el && pl->IsMainLine()) return i;
   }
@@ -168,14 +198,14 @@ bool ProgLine_List::SetBreakpoint(int line_no) {
 }
 
 void ProgLine_List::ClearAllBreakpoints() {
-  for(int i=0; i<size; i++) {
+  for(int i=1; i<size; i++) {
     ProgLine* pl = FastEl(i);
     pl->ClearBreakpoint();
   }
 }
 
 void ProgLine_List::ClearAllErrors() {
-  for(int i=0; i<size; i++) {
+  for(int i=1; i<size; i++) {
     ProgLine* pl = FastEl(i);
     pl->ClearError();
     pl->ClearWarning();
@@ -3338,14 +3368,16 @@ bool ProgramCall::WillGenCompileScript(Program* prg) {
 }
 
 void ProgramCall::GenCompileScript(Program* prog) {
+  // note: do not pass 'this' in addline -- don't want this to be the main association for this
   if(!target) return;
-  prog->AddLine(this, String("target = this") + GetPath(NULL, prog) + "->GetTarget();");
-  prog->AddLine(this, "target->CompileScript(true); // true = force!");
+  prog->AddLine(prog, String("target = this") + GetPath(NULL, prog) + "->GetTarget();");
+  prog->AddLine(prog, "target->CompileScript(true); // true = force!");
 }
 
 void ProgramCall::GenCallInit(Program* prog) {
+  // note: do not pass 'this' in addline -- don't want this to be the main association for this
   if(!target) return;
-  prog->AddLine(this, String("target = this") + GetPath(NULL, prog) + "->GetTarget();");
+  prog->AddLine(prog, String("target = this") + GetPath(NULL, prog) + "->GetTarget();");
   // set args for guys that are just passing our existing args/vars along
   for (int j = 0; j < prog_args.size; ++j) {
     ProgArg* ths_arg = prog_args.FastEl(j);
@@ -3356,9 +3388,9 @@ void ProgramCall::GenCallInit(Program* prog) {
     ProgVar* arg_chk = prog->args.FindName(argval);
     ProgVar* var_chk = prog->vars.FindName(argval);
     if(!arg_chk && !var_chk) continue;
-    prog->AddLine(this, String("target->SetVar(\"") + prg_var->name + "\", " + argval + ");");
+    prog->AddLine(prog, String("target->SetVar(\"") + prg_var->name + "\", " + argval + ");");
   }
-  prog->AddLine(this, "ret_val = target->CallInit(this);");
+  prog->AddLine(prog, "ret_val = target->CallInit(this);");
 }
 
 void ProgramCall::GenCssPre_impl(Program* prog) {
@@ -3595,30 +3627,32 @@ bool ProgramCallVar::WillGenCompileScript(Program* prg) {
 }
 
 void ProgramCallVar::GenCompileScript(Program* prog) {
+  // note: do not pass 'this' in addline -- don't want this to be the main association for this
   if(!prog_group) return;
-  prog->AddLine(this, "{");
+  prog->AddLine(prog, "{");
   prog->IncIndent();
-  prog->AddLine(this, String("Program_Group* spgp = this") + GetPath(NULL, prog) + "->GetProgramGp();");
-  prog->AddLine(this, "for(int spi=0; spi<spgp->leaves; spi++) {");
+  prog->AddLine(prog, String("Program_Group* spgp = this") + GetPath(NULL, prog) + "->GetProgramGp();");
+  prog->AddLine(prog, "for(int spi=0; spi<spgp->leaves; spi++) {");
   prog->IncIndent();
-  prog->AddLine(this, "Program* prg = spgp->Leaf(spi);");
-  prog->AddLine(this, "prg->CompileScript(true); // true = force!");
+  prog->AddLine(prog, "Program* prg = spgp->Leaf(spi);");
+  prog->AddLine(prog, "prg->CompileScript(true); // true = force!");
   prog->DecIndent();
-  prog->AddLine(this, "}");
+  prog->AddLine(prog, "}");
   prog->DecIndent();
-  prog->AddLine(this, "}");
+  prog->AddLine(prog, "}");
 }
 
 void ProgramCallVar::GenCallInit(Program* prog) {
+  // note: do not pass 'this' in addline -- don't want this to be the main association for this
   if(!prog_group) return;
   Program* trg = GetTarget_Compile();
   if(!trg) return;
-  prog->AddLine(this, "{");
+  prog->AddLine(prog, "{");
   prog->IncIndent();
-  prog->AddLine(this, String("Program_Group* spgp = this") + GetPath(NULL, prog) + "->GetProgramGp();");
-  prog->AddLine(this, "for(int spi=0; spi<spgp->leaves; spi++) {");
+  prog->AddLine(prog, String("Program_Group* spgp = this") + GetPath(NULL, prog) + "->GetProgramGp();");
+  prog->AddLine(prog, "for(int spi=0; spi<spgp->leaves; spi++) {");
   prog->IncIndent();
-  prog->AddLine(this, "Program* prg = spgp->Leaf(spi);");
+  prog->AddLine(prog, "Program* prg = spgp->Leaf(spi);");
 
   for (int j = 0; j < prog_args.size; ++j) {
     ProgArg* ths_arg = prog_args.FastEl(j);
@@ -3629,13 +3663,13 @@ void ProgramCallVar::GenCallInit(Program* prog) {
     ProgVar* arg_chk = prog->args.FindName(argval);
     ProgVar* var_chk = prog->vars.FindName(argval);
     if(!arg_chk && !var_chk) continue;
-    prog->AddLine(this, String("prg->SetVar(\"") + prg_var->name + "\", " + argval + ");");
+    prog->AddLine(prog, String("prg->SetVar(\"") + prg_var->name + "\", " + argval + ");");
   }
-  prog->AddLine(this, "ret_val = prg->CallInit(this);");
+  prog->AddLine(prog, "ret_val = prg->CallInit(this);");
   prog->DecIndent();
-  prog->AddLine(this, "}");
+  prog->AddLine(prog, "}");
   prog->DecIndent();
-  prog->AddLine(this, "}");
+  prog->AddLine(prog, "}");
 }
 
 void ProgramCallVar::GenCssPre_impl(Program* prog) {
@@ -4673,7 +4707,7 @@ void Program::UpdateCallerArgs() {
 }
 
 void Program::CssError(int src_ln_no, bool running, const String& err_msg) {
-  ProgLine* pl = script_list.SafeEl(src_ln_no-1); // css uses 1.. line numbers
+  ProgLine* pl = script_list.SafeEl(src_ln_no);
   if(!pl) return;
   pl->SetError();
   // css does not otherwise pull up an error dialog, so we can..
@@ -4683,19 +4717,19 @@ void Program::CssError(int src_ln_no, bool running, const String& err_msg) {
 }
 
 void Program::CssWarning(int src_ln_no, bool running, const String& err_msg) {
-  ProgLine* pl = script_list.SafeEl(src_ln_no-1); // css uses 1.. line numbers
+  ProgLine* pl = script_list.SafeEl(src_ln_no);
   if(!pl) return;
   pl->SetWarning();
 }
 
 void Program::taError(int src_ln_no, bool running, const String& err_msg) {
-  ProgLine* pl = script_list.SafeEl(src_ln_no-1); // css uses 1.. line numbers
+  ProgLine* pl = script_list.SafeEl(src_ln_no);
   if(!pl) return;
   pl->SetError();
 }
 
 void Program::taWarning(int src_ln_no, bool running, const String& err_msg) {
-  ProgLine* pl = script_list.SafeEl(src_ln_no-1); // css uses 1.. line numbers
+  ProgLine* pl = script_list.SafeEl(src_ln_no);
   if(!pl) return;
   pl->SetWarning();
 }
@@ -4851,15 +4885,17 @@ bool Program::AddVerboseLine(ProgEl* prog_el, bool insert_at_start, const String
   if(TestError(start_ln < 1, "AddVerboseLine", "programmer error -- must come after AddLine of at least some program elements"))
     return false;
   int main_line = script_list.FindMainLine(prog_el);
-  if(TestError(start_ln < 0, "AddVerboseLine", "programmer error -- must come after AddLine of main_line"))
+  if(TestError(main_line < 1, "AddVerboseLine", "programmer error -- must come after AddLine of main_line"))
     return false;
   int lno = main_line;
   if(insert_at_start) lno++;	// we're going to bump it..
-  String code = String("Program::VerboseOut(") + GetPath() + ", " + String(lno) + ", " +
-    msg_code + ");";
+  String code = String("Program::VerboseOut(") + GetPath() + ", " + String(lno);
+  if(msg_code.nonempty())
+    code += ", " + msg_code;
+  code += ");";
   bool rval = AddLine(prog_el, code, ProgLine::PROG_DEBUG);
   if(insert_at_start) {
-    int toln = start_ln-1;	// from css numbers
+    int toln = start_ln;
     while(script_list.FastEl(toln)->IsComment())
       toln++;			// come in after the comments, to make it look nicer
     script_list.MoveIdx(script_list.size-1, toln);
@@ -4932,7 +4968,7 @@ void Program::SetAllBreakpoints() {
   int nbp = 0;
   script->DelAllBreaks();       // start with clean slate
   ProgEl* last_pel_set = NULL;
-  for(int i=script_list.size-1; i>=0; i--) {
+  for(int i=script_list.size-1; i>=1; i--) {
     ProgLine* pl = script_list.FastEl(i);
     ProgEl* pel = NULL;
     if(pl->prog_el && pl->prog_el->InheritsFrom(&TA_ProgEl))
@@ -4941,8 +4977,7 @@ void Program::SetAllBreakpoints() {
        (pel && pel != last_pel_set && pel->HasProgFlag(ProgEl::BREAKPOINT))) {
       last_pel_set = pel;                     // don't repeat
       pl->SetPLineFlag(ProgLine::BREAKPOINT); // make sure
-      script->SetBreak(i+1);    // set it -- css line no =  +1
-//       taMisc::Info("setting breakpoint to line:", String(i+1), pl->code);
+      script->SetBreak(i);    // set it
       nbp++;
     }
   }
@@ -4956,7 +4991,7 @@ bool Program::ToggleBreakpoint(ProgEl* pel) {
   int start_ln, end_ln;
   if(!ScriptLinesEl(pel, start_ln, end_ln))
     return false;
-  ProgLine* pl = script_list.FastEl(start_ln-1); // in css, cvt to 0
+  ProgLine* pl = script_list.FastEl(start_ln);
   if(pel->HasProgFlag(ProgEl::BREAKPOINT)) {
     pl->ClearBreakpoint();
     script->DelBreak(start_ln); 
@@ -4964,7 +4999,7 @@ bool Program::ToggleBreakpoint(ProgEl* pel) {
   else {
     pl->SetBreakpoint();
     CmdShell();                 // should be using cmd shell if setting breakpoints
-    script->SetBreak(start_ln);    // css line no +1
+    script->SetBreak(start_ln);
     DebugInfo("setting breakpoint to line:", String(start_ln), pl->code);
     script->ShowBreaks();               // debugging help output
   }
@@ -4974,7 +5009,7 @@ bool Program::ToggleBreakpoint(ProgEl* pel) {
 bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {
   end_ln = -1;
   start_ln = script_list.FindProgEl(pel, false); // NOT go in reverse
-  if(TestError((start_ln < 0 || !script), "ScriptLinesEl", "Program element was not found in listing -- you may need to press Init or Compile first to generate and compile code"))
+  if(TestError((start_ln < 1 || !script), "ScriptLinesEl", "Program element was not found in listing -- you may need to press Init or Compile first to generate and compile code"))
     return false;
   // search back to find first line with this guy
   end_ln = start_ln;
@@ -4984,26 +5019,7 @@ bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {
     lprog = script_list.FastEl(end_ln)->prog_el;
   } while (lprog == pel);
   end_ln--; // overshot by one
-  // convert to css lines
-  end_ln++;
-  start_ln++;
   return true;
-  // not clear that we need to go in reverse and this messes up some other things
-//   start_ln = -1;
-//   end_ln = script_list.FindProgEl(pel, true); // go in reverse
-//   if(TestError((end_ln < 0 || !script), "ScriptLinesEl", "Program element was not found in listing -- you may need to press Init or Compile first to generate and compile code"))
-//     return false;
-//   // search back to find first line with this guy
-//   start_ln = end_ln;
-//   taBase* lprog;
-//   do {
-//     lprog = script_list.FastEl(--start_ln)->prog_el;
-//   } while (lprog == pel);
-//   start_ln++; // overshot by one
-//   // convert to css lines
-//   end_ln++;
-//   start_ln++;
-//   return true;
 }
 
 void Program::GetSubProgsAll(int depth) {
@@ -5051,6 +5067,7 @@ const String Program::scriptString() {
   // current fresh code regardless!  note that it doesn't do this obligatory
   // recompiles all the time -- that is only done at init too.
   script_list.Reset();
+  AddLine(this, "// blank 0 line to align with css", ProgLine::COMMENT);
   cur_indent = 0;
   sub_prog_calls.Reset();
   sub_progs_dir.Reset();
@@ -5098,7 +5115,7 @@ const String Program::scriptString() {
     for (int i = 0; i < sub_prog_calls.size; ++i) {
       ProgramCallBase* sp = (ProgramCallBase*)sub_prog_calls.FastEl(i);
       if(sp->WillGenCompileScript(this)) {
-        AddLine(sp, "if(ret_val != Program::RV_OK) return; // checks previous");
+        AddLine(this, "if(ret_val != Program::RV_OK) return; // checks previous");
         sp->GenCompileScript(this);
       }
     }
@@ -5162,6 +5179,7 @@ const String Program::scriptString() {
    
   m_scriptCache.truncate(0);
   script_list.FullListing(m_scriptCache);
+  ViewScriptUpdate();
 
   m_stale = false;
   return m_scriptCache;
@@ -5317,13 +5335,9 @@ void Program::ViewScript() {
   ViewScript_impl();
 }
 
-bool Program::ViewScriptEl(taBase* pel) {
-  int start_ln, end_ln;
-  if(!ScriptLinesEl(pel, start_ln, end_ln))
-    return false;
-  ViewScript_impl(start_ln, end_ln);
-  return true;
-}
+// defined in ta_program_qt.cpp
+// bool Program::ViewScriptEl(taBase* pel) {
+// }
 
 void Program::ViewScript_Editor() {
   String fnm = name + "_view.css";
@@ -5335,12 +5349,17 @@ void Program::ViewScript_Editor() {
   taMisc::EditFile(fnm);
 }
 
+void Program::ViewScriptUpdate() {
+  view_script.truncate(0);
+  script_list.FullListingHTML(view_script);
+}
+
 void Program::ViewScript_impl(int sel_ln_st, int sel_ln_ed) {
-  view_script = scriptString();
+  ViewScriptUpdate();
   TypeDef* td = GetTypeDef();
   MemberDef* md = td->members.FindName("view_script");
-  taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, true);
-  // args are: read_only, modal, parent, line_nos
+  taiStringDataHost* host_ = new taiStringDataHost(md, this, td, true, false, NULL, true, true);
+  // args are: read_only, modal, parent, line_nos, rich_text
   host_->Constr("Css Script for program: " + name);
   host_->Edit(false);
   if(sel_ln_st > 0)

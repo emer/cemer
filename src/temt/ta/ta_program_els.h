@@ -783,10 +783,10 @@ INHERITED(ProgEl)
 public:
   ProgramRef	other_prog; 	// the other program with variables that you want to get or set
   bool		set_other;	// if true, values in other program are set from our variable values, otherwise our variables get values from those in other program
-  ProgVarRef	var_1;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of variable in other program!
-  ProgVarRef	var_2;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of variable in other program!
-  ProgVarRef	var_3;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of variable in other program!
-  ProgVarRef	var_4;		// #ITEM_FILTER_StdProgVarFilter program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_1;		// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_2;		// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_3;		// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
+  ProgVarRef	var_4;		// #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser program variable to operate on -- name must match name of variable in other program!
 
   virtual Program*	GetOtherProg();
   // safe call to get other program: emits error if other_prog is null (used by program)

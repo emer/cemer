@@ -127,18 +127,50 @@ void Wizard::UpdateAfterEdit() {
 }
 
 void Wizard::RenderWizDoc() {
-  wiz_doc.text = "<html>\n<head></head>\n<body>\n\
-= Wizard =\n\
-This is the basic Emergent Wizard -- Select from the following options.\n\n\
-== Network == \n\
-* [[<this>.StdNetwork()|Standard Network]] -- click this to generate or configure a standard network, specifying number of layers, layer names, sizes, types, and connectivity.\n\
-</body>\n\
-</html>\n";
+  RenderWizDoc_header();
+  RenderWizDoc_impl();
+  RenderWizDoc_footer();
   String my_path;
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
   my_path = GetPath(NULL, proj);
-  wiz_doc.text.gsub("<this>", my_path);
+  wiz_doc.text.gsub("<this>", my_path); // shortcut for functions
   wiz_doc.UpdateText();
+}
+
+void Wizard::RenderWizDoc_impl() {
+  RenderWizDoc_intro();
+  RenderWizDoc_network();
+  RenderWizDoc_data();
+  RenderWizDoc_program();
+}
+
+void Wizard::RenderWizDoc_intro() {
+  wiz_doc.text += 
+"\n= Wizard =\n\
+This is the Emergent Wizard -- select from the options listed below.\n\n\
+== Standard Default Configuration ==\n\n\
+Selecting these options in sequence will configure a standard project to the point where a network can be trained in a standard way.\n\n\
+* [[<this>.StdNetwork()|Standard Network]] -- click this to generate or configure a standard network, specifying number of layers, layer names, sizes, types, and connectivity.\n\
+* [[<this>.StdData()|Standard Data]] -- click this to generate or configure standard input data, based on existing network configuration.\n\
+* [[<this>.StdProgs()|Standard Programs]] -- click this to install standard programs for running the network.\n";
+}
+
+void Wizard::RenderWizDoc_network() {
+  wiz_doc.text += 
+"\n== Network == \n\
+* [[<this>.StdNetwork()|Standard Network]] -- click this to generate or configure a standard network, specifying number of layers, layer names, sizes, types, and connectivity.\n";
+}
+
+void Wizard::RenderWizDoc_data() {
+  wiz_doc.text += 
+"\n== Input Data == \n\
+* [[<this>.StdData()|Standard Data]] -- click this to generate or configure standard input data, based on existing network configuration.\n";
+}
+
+void Wizard::RenderWizDoc_program() {
+  wiz_doc.text += 
+"\n== Programs == \n\
+* [[<this>.StdProgs()|Standard Programs]] -- click this to install standard programs for running the network.\n";
 }
 
 bool Wizard::ThreeLayerNet() {

@@ -89,6 +89,8 @@ public:
   void		clear() {setRgba(0,0,0,255);} // black
   void		intensities(float& r, float& g, float& b); // Iv->Qt compat
 
+  const String	toString() const; // returns in hex #RRGGBB web format
+  void		setString(const String& s); // set from hex #RRGGBB web format
 
   iColor& operator =(const iColor& cp) {c = cp.c; return *this;}
   iColor& operator =(float x) {setRgba(x, x, x, 1.0f); return *this;}

@@ -119,12 +119,16 @@ public:
   taDoc		wiz_doc;	// #HIDDEN #NO_SAVE wizard doc object
 
   virtual void		RenderWizDoc();
-  // render the wizard doc -- this is the interface that the user sees to select wizard elements -- called in InitLinks -- subtypes override completely
+  // #IGNORE render the wizard doc, providing the interface that the user sees to select wizard elements -- called in InitLinks -- calls header, impl, footer -- use impl to override raw text render
 
   override String 	GetTypeDecoKey() const { return "Wizard"; }
 
   void	InitLinks();
   TA_BASEFUNS(taWizard);
+protected:
+  virtual void	RenderWizDoc_header(); // the doc header (very start) text
+  virtual void	RenderWizDoc_footer(); // the doc footer (very end) text
+  virtual void	RenderWizDoc_impl();   // main render of content
 private:
   SIMPLE_COPY(taWizard);
   void 	Initialize();

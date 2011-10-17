@@ -30,45 +30,51 @@
 #include <QtGui/QTextObjectInterface>
 #include <QtGui/QToolTip>
 #include <QtCore/QDebug>
+#include <QtGui/QMenu>
 
 NumberBar::NumberBar( QWidget *parent, bool enable_icons)
-  : QWidget( parent ), edit(0), stopLine(-1), currentLine(-1), bugLine(-1)
+  : QWidget( parent ), edit(0), currentLine(-1)
 {
   // Make room for 4 digits and the breakpoint icon
   icons_enabled = enable_icons;
-  int txtwd = fontMetrics().width( QString("0000"));
+  text_width = fontMetrics().width( QString("0000"));
+  text_height = fontMetrics().height();
+  icon_width = text_width; // 10 + 32;
+  total_width = text_width;
   if(enable_icons) {
-    setFixedWidth(txtwd + 10 + 32 );
+    total_width += icon_width;
+    // note: can't seem to find these icons!  need to get them somehow..
     stopMarker = QPixmap( "images/no.png" );
     currentMarker = QPixmap( "images/next.png" );
     bugMarker = QPixmap( "images/bug.png" );
   }
-  else {
-    setFixedWidth(txtwd);
-  }
+  setFixedWidth(total_width);
 }
 
-NumberBar::~NumberBar()
-{
+NumberBar::~NumberBar() {
 }
 
-void NumberBar::setCurrentLine( int lineno )
-{
+void NumberBar::setCurrentLine( int lineno ) {
   currentLine = lineno;
 }
 
-void NumberBar::setStopLine( int lineno )
-{
-  stopLine = lineno;
+void NumberBar::setLineFlags(int lineno, int flags) {
+  if(lineno < 1 || lineno >= line_flags.size()) return;
+  line_flags.replace(lineno, flags);
 }
 
-void NumberBar::setBugLine( int lineno )
-{
-  bugLine = lineno;
+int NumberBar::lineFlags( int lineno ) const {
+  if(lineno < 1 || lineno >= line_flags.size()) return LF_NONE;
+  return line_flags.at(lineno);
 }
 
-void NumberBar::setTextEdit( iTextEdit *edit )
-{
+void NumberBar::clearAllLineFlags() {
+  for(int i=0; i<line_flags.size(); i++) {
+    line_flags[i] = LF_NONE;
+  }
+}
+
+void NumberBar::setTextEdit( iTextEdit *edit ) {
   this->edit = edit;
   connect( edit->document()->documentLayout(), SIGNAL( update(const QRectF &) ),
 	   this, SLOT( update() ) );
@@ -76,8 +82,37 @@ void NumberBar::setTextEdit( iTextEdit *edit )
 	   this, SLOT( update() ) );
 }
 
-void NumberBar::paintEvent( QPaintEvent * )
-{
+int NumberBar::lineNumberFmPos(float y_pos) {
+  QAbstractTextDocumentLayout *layout = edit->document()->documentLayout();
+  int contentsY = edit->verticalScrollBar()->value();
+  y_pos += contentsY;		// scroll us up..
+  int lineCount = 1;
+  for ( QTextBlock block = edit->document()->begin();
+	block.isValid(); block = block.next(), ++lineCount ) {
+
+    const QRectF boundingRect = layout->blockBoundingRect( block );
+    if(y_pos <= boundingRect.bottom() && y_pos >= boundingRect.top())
+      return lineCount;
+  }
+  return -1;
+}
+
+QRectF NumberBar::rectFromLineNumber(int lineno) {
+  QAbstractTextDocumentLayout *layout = edit->document()->documentLayout();
+  int contentsY = edit->verticalScrollBar()->value();
+  QRectF rval;
+  if(lineno < 1 || lineno >= edit->document()->blockCount()) return rval;
+  int lineCount = 1;
+  QTextBlock block = edit->document()->findBlockByNumber(lineno);
+  if(!block.isValid()) return rval;
+
+  const QRectF boundingRect = layout->blockBoundingRect( block );
+  QPointF position = boundingRect.topLeft();
+  rval = QRectF(0, qRound( position.y() ) - contentsY, total_width, text_height);
+  return rval;
+}
+
+void NumberBar::paintEvent( QPaintEvent * ) {
   QAbstractTextDocumentLayout *layout = edit->document()->documentLayout();
   int contentsY = edit->verticalScrollBar()->value();
   qreal pageBottom = contentsY + edit->viewport()->height();
@@ -85,11 +120,9 @@ void NumberBar::paintEvent( QPaintEvent * )
   const int ascent = fontMetrics().ascent() + 1; // height = ascent + descent + 1
   int lineCount = 1;
 
-  QPainter p(this);
+  line_flags.resize(edit->document()->blockCount()+1); // make sure we hold everything -- use 1+ indexing
 
-  bugRect = QRect();
-  stopRect = QRect();
-  currentRect = QRect();
+  QPainter p(this);
 
   for ( QTextBlock block = edit->document()->begin();
 	block.isValid(); block = block.next(), ++lineCount ) {
@@ -106,51 +139,93 @@ void NumberBar::paintEvent( QPaintEvent * )
     p.drawText( width() - fm.width(txt), qRound( position.y() ) - contentsY + ascent, txt );
 
     if(icons_enabled) {
-      // Bug marker
-      if ( bugLine == lineCount ) {
+      int lflag = lineFlags(lineCount);
+      if ( lflag & LF_ERROR || lflag & LF_WARNING) {
+	p.drawText(1, qRound( position.y() ) - contentsY + ascent, "ERR");
 	p.drawPixmap( 1, qRound( position.y() ) - contentsY, bugMarker );
-	bugRect = QRect( 1, qRound( position.y() ) - contentsY, bugMarker.width(), bugMarker.height() );
       }
 
       // Stop marker
-      if ( stopLine == lineCount ) {
-	p.drawPixmap( 19, qRound( position.y() ) - contentsY, stopMarker );
-	stopRect = QRect( 19, qRound( position.y() ) - contentsY, stopMarker.width(), stopMarker.height() );
+      if ( lflag & LF_BREAK ) {
+	p.drawText(1, qRound( position.y() ) - contentsY + ascent, "BRK");
+ 	p.drawPixmap(1, qRound( position.y() ) - contentsY, stopMarker );
       }
 
       // Current line marker
       if ( currentLine == lineCount ) {
 	p.drawPixmap( 19, qRound( position.y() ) - contentsY, currentMarker );
-	currentRect = QRect( 19, qRound( position.y() ) - contentsY, currentMarker.width(), currentMarker.height() );
       }
     }
   }
 }
 
-bool NumberBar::event( QEvent *event )
-{
+void NumberBar::contextMenuEvent(QContextMenuEvent * e) {
+  cur_lineno = lineNumberFmPos((float)e->pos().y());
+  if(cur_lineno < 1) return;	// invalid..
+  int lfg = lineFlags(cur_lineno);
+  QMenu* menu = new QMenu(this);
+  if(lfg & LF_BREAK)
+    menu->addAction("Clear Breakpoint", this, SLOT(clearBreakpointSlot())); 
+  else
+    menu->addAction("Set Breakpoint", this, SLOT(setBreakpointSlot())); 
+  menu->addAction("View Source", this, SLOT(viewSourceSlot())); 
+  menu->exec(QCursor::pos());
+  delete menu;
+}
+
+void NumberBar::setBreakpointSlot() {
+  int lfg = lineFlags(cur_lineno);
+  lfg |= LF_BREAK;
+  setLineFlags(cur_lineno, lfg);
+  emit lineFlagsUpdated(cur_lineno, lfg);
+}
+
+void NumberBar::clearBreakpointSlot() {
+  int lfg = lineFlags(cur_lineno);
+  lfg &= ~LF_BREAK;
+  setLineFlags(cur_lineno, lfg);
+  emit lineFlagsUpdated(cur_lineno, lfg);
+}
+
+void NumberBar::viewSourceSlot() {
+  emit viewSource(cur_lineno);
+}
+
+bool NumberBar::event( QEvent *event ) {
   if ( event->type() == QEvent::ToolTip ) {
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
-    if ( stopRect.contains( helpEvent->pos() ) ) {
+    int lineno = lineNumberFmPos(helpEvent->pos().y());
+    int lfg = lineFlags(cur_lineno);
+    if(lfg & LF_BREAK) {
       QToolTip::showText( helpEvent->globalPos(), "Stop Here" );
     }
-    else if ( currentRect.contains( helpEvent->pos() ) ) {
-      QToolTip::showText( helpEvent->globalPos(), "Current Line" );
+    else if(lfg & LF_ERROR) {
+      QToolTip::showText( helpEvent->globalPos(), "Error Here" );
     }
-    else if ( bugRect.contains( helpEvent->pos() ) ) {
-      QToolTip::showText( helpEvent->globalPos(), "Error Line" );
+    else if(lfg & LF_WARNING) {
+      QToolTip::showText( helpEvent->globalPos(), "Warning Here" );
+    }
+    else if ( lineno == currentLine ) {
+      QToolTip::showText( helpEvent->globalPos(), "Current Line" );
     }
   }
 
   return QWidget::event(event);
 }
 
+//////////////////////////////////////////////
+
+
 NumberedTextView::NumberedTextView( QWidget *parent, bool enable_icons )
   : QFrame( parent )
 {
   setFrameStyle( QFrame::StyledPanel | QFrame::Sunken );
   setLineWidth( 2 );
+
+  hl_line = -1;
+  hl_n = 1;
+  in_text_changed = false;
 
   // Setup the main view
   view = new iTextEdit( this );
@@ -164,10 +239,6 @@ NumberedTextView::NumberedTextView( QWidget *parent, bool enable_icons )
   // Setup the line number pane
   numbers = new NumberBar( this, enable_icons );
   numbers->setTextEdit( view );
-  // Testing...
-  //     numbers->setStopLine( 3 );
-  //     numbers->setBugLine( 1 );
-  //     setCurrentLine( 5 );
 
   box = new QHBoxLayout( this );
   box->setSpacing( 3 );	// some space btwn
@@ -176,56 +247,56 @@ NumberedTextView::NumberedTextView( QWidget *parent, bool enable_icons )
   box->addWidget( view );
 }
 
-NumberedTextView::~NumberedTextView()
-{
+NumberedTextView::~NumberedTextView() {
 }
 
-void NumberedTextView::setCurrentLine( int lineno )
-{
-  currentLine = lineno;
-  numbers->setCurrentLine( lineno );
+void NumberedTextView::setHighlightLines(int start_ln, int n_lines) {
+  hl_line = start_ln;
+  hl_n = n_lines;
   textChanged( 0, 0, 1 );
 }
 
-void NumberedTextView::setStopLine( int lineno )
-{
-  numbers->setStopLine( lineno );
-}
-
-void NumberedTextView::setBugLine( int lineno )
-{
-  numbers->setBugLine( lineno );
-}
-
-void NumberedTextView::textChanged( int pos, int removed, int added )
-{
+void NumberedTextView::textChanged( int pos, int removed, int added ) {
   Q_UNUSED( pos );
 
   if ( removed == 0 && added == 0 )
     return;
 
-  QTextBlock block = highlight.block();
-  QTextBlockFormat fmt = block.blockFormat();
-  QColor bg = view->palette().base().color();
-  fmt.setBackground( bg );
-  highlight.setBlockFormat( fmt );
+  if(in_text_changed) return;	// already in here -- this causes self-changes...
+  in_text_changed = true;
 
   int lineCount = 1;
   for ( QTextBlock block = view->document()->begin();
 	block.isValid(); block = block.next(), ++lineCount ) {
 
-    if ( lineCount == currentLine ) {
-      fmt = block.blockFormat();
-      QColor bg = view->palette().highlight().color().light( 175 );
-      fmt.setBackground( bg );
-
-      highlight = QTextCursor( block );
-      highlight.movePosition( QTextCursor::EndOfBlock, QTextCursor::KeepAnchor );
-      highlight.setBlockFormat( fmt );
-
-      break;
+    // set format to remove extra space in html mode paragraphs for viewing listings
+    // as this is intended for
+    QTextCursor tc = QTextCursor(block);
+    QTextBlockFormat fmt = block.blockFormat();
+    if(fmt.topMargin() != 1 || fmt.bottomMargin() != 1) {
+      fmt.setTopMargin(1);
+      fmt.setBottomMargin(1);
+      tc.setBlockFormat( fmt );
     }
+//     if(lineCount >= hl_line && lineCount < hl_line + hl_n) {
+//       QColor bg = view->palette().highlight().color().light( 175 );
+//       fmt.setBackground( bg );
+//     }
+//     else {
+//       QColor bg = view->palette().base().color();
+//       fmt.setBackground( bg );
+//     }
   }
+
+  if(hl_line > 1) {
+    QTextCursor tc = view->textCursor();
+    tc.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor, 1);
+    tc.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, hl_line-1);
+    tc.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, hl_n);
+    view->setTextCursor(tc);
+  }
+
+  in_text_changed = false;
 }
 
 bool NumberedTextView::eventFilter( QObject *obj, QEvent *event )

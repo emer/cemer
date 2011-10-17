@@ -775,6 +775,7 @@ public:
   QTextEdit*		edit;
   MemberDef*		mbr; // the member being edited (doesn't have to be String)
   bool			line_nos; // display line numbers in the editor view
+  bool			rich_text; // string has rich text, not plain
   
   void 			Constr(const char* prompt = "", const char* win_title = "");
   USING(inherited::GetImage)
@@ -790,7 +791,7 @@ public:
 
   taiStringDataHost(MemberDef* mbr, void* base, TypeDef* typ_ = NULL, 
 		    bool read_only_ = false, bool modal_ = false, QObject* parent = 0,
-		    bool line_nos_ = false);
+		    bool line_nos_ = false, bool rich_text_ = false);
   ~taiStringDataHost();
   
 

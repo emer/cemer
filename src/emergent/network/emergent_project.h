@@ -119,6 +119,13 @@ public:
   void	CutLinks();
   SIMPLE_COPY(Wizard);
   TA_BASEFUNS(Wizard);
+protected:
+  override void RenderWizDoc_impl();
+  virtual void 	RenderWizDoc_intro(); // introductory code
+  virtual void 	RenderWizDoc_network(); // network-level functions
+  virtual void 	RenderWizDoc_data(); // datatable functions
+  virtual void 	RenderWizDoc_program(); // program functions
+
 private:
   void 	Initialize();
   void 	Destroy()	{ CutLinks(); }

@@ -378,12 +378,24 @@ void taWizard::InitLinks() {
 }
 
 void taWizard::RenderWizDoc() {
-  wiz_doc.text = "<html>\n<head></head>\n<body>\n\
-= taWizard =\n\
-this is a virtual base wizard -- not the real thing -- shouldn't see this!\n\
-</body>\n\
-</html>\n";
+  RenderWizDoc_header();
+  RenderWizDoc_impl();
+  RenderWizDoc_footer();
   wiz_doc.UpdateText();
+}
+
+void taWizard::RenderWizDoc_header() {
+  wiz_doc.text = "<html>\n<head></head>\n<body>\n";
+}
+
+void taWizard::RenderWizDoc_footer() {
+  wiz_doc.text += "</body>\n</html>\n";
+}
+
+void taWizard::RenderWizDoc_impl() {
+  wiz_doc.text +=
+"= taWizard =\n\
+this is a virtual base wizard -- not the real thing -- shouldn't see this!\n";
 }
 
 //////////////////////////////////

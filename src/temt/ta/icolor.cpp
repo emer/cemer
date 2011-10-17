@@ -326,7 +326,7 @@ void rgb_t::setString(const String& s) {
 }
 
 const String rgb_t::toString() const {
-  return String(toInt(), "%x");
+  return String(toInt(), "%06x");
 }
 
 //////////////////////////
@@ -384,7 +384,17 @@ void iColor::intensities(float& r_, float& g_, float& b_) {
   b_ = ic2fc(b);
 }
 
+void iColor::setString(const String& s) {
+  rgb_t rgb;
+  rgb.setString(s);
+  setRgb(rgb.toInt());
+}
 
+const String iColor::toString() const {
+  rgb_t rgb;
+  rgb.setInt(c);
+  return rgb.toString();
+}
 
 /*
 //////////////////////////

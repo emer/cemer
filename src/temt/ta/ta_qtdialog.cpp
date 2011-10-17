@@ -2729,7 +2729,8 @@ bool taiEditDataHost::eventFilter(QObject* obj, QEvent* event) {
 //////////////////////////////////////////////////
 
 taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_,
-	     bool read_only_, bool modal_, QObject* parent, bool line_nos_)
+     bool read_only_, bool modal_, QObject* parent, bool line_nos_,
+				     bool rich_text_)
 :inherited(typ_ ,read_only_, modal_, parent)
 {
   root = base_;
@@ -2737,6 +2738,7 @@ taiStringDataHost::taiStringDataHost(MemberDef* mbr_, void* base_, TypeDef* typ_
   edit = NULL;
   btnPrint = NULL;
   line_nos = line_nos_;
+  rich_text = rich_text_;
 }
 
 taiStringDataHost::~taiStringDataHost() {
@@ -2805,8 +2807,11 @@ void taiStringDataHost::DoConstr_Dialog(iHostDialog*& dlg) {
 
 
 void taiStringDataHost::GetImage() {
-  String val = mbr->type->GetValStr(mbr->GetOff(root), root, mbr);
-  edit->setPlainText(val);
+  const String val = mbr->type->GetValStr(mbr->GetOff(root), root, mbr);
+  if(rich_text)
+    edit->setHtml(val);
+  else
+    edit->setPlainText(val);
 }
 
 void taiStringDataHost::GetValue() {
