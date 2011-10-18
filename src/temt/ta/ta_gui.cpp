@@ -25,7 +25,7 @@
 #include <QLabel>
 #include <QFrame>
 #include <QMenu>
-#include <QToolbar>
+#include <QToolBar>
 #include <QDesktopServices>
 
 /////////////////////////////////////////////////////
