@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -44,13 +44,14 @@
 # ifdef TA_GUI
 #   include "ta_qtdata.h"
 #   include "ta_qttype.h"
-#   include <QMainWindow> 
+#   include <QMainWindow>
 #   include "igeometry.h"
 # endif // TA_GUI
 #endif // NO_TA_BASE
 
 
 #include <sstream>		// for FormatValue
+#include <ctime>
 #include <ctype.h>
 #include <stdio.h>
 #include <signal.h>
@@ -73,7 +74,7 @@ const String String_PArray::AsString(const String& sep) const {
   for (i=0; i < size; ++i) xlen += FastEl(i).length();
   String rval(0, xlen, '\0');
   for (i = 0; i < size; ++i) {
-    if (i > 0) 
+    if (i > 0)
       rval.cat(sep);
     rval.cat(FastEl(i));
   }
@@ -136,7 +137,7 @@ const String NameVar_PArray::AsString(const String& sep) const {
   int i;
   String rval;
   for (i = 0; i < size; ++i) {
-    if (i > 0) 
+    if (i > 0)
       rval.cat(sep);
     rval.cat(FastEl(i).GetStr());
   }
@@ -254,7 +255,7 @@ extern "C" {
 }
 
 #ifndef NO_TA_BASE
-TA_API taiMiscCore* taiMC_ = NULL; 
+TA_API taiMiscCore* taiMC_ = NULL;
 
 int taiMiscCore::rl_callback() {
   QCoreApplication* app = QCoreApplication::instance();
@@ -263,7 +264,7 @@ int taiMiscCore::rl_callback() {
     app->processEvents();
   if (taMisc::quitting) goto quit_exit;
   return 0; // ???
-  
+
 quit_exit:
   rl_done = 1;
   return 0;
@@ -283,7 +284,7 @@ void taiMiscCore::Quit(CancelOp cancel_op) {
   if (tabMisc::root)
     tabMisc::root->Save();
 
-  taMisc::quitting = (cancel_op == CO_NOT_CANCELLABLE) ? 
+  taMisc::quitting = (cancel_op == CO_NOT_CANCELLABLE) ?
     taMisc::QF_FORCE_QUIT : taMisc::QF_USER_QUIT;
   OnQuitting(cancel_op); // saves changes
   if (cancel_op != CO_CANCEL) {
@@ -335,7 +336,7 @@ void taiMiscCore::WaitProc() {
 }
 
 taiMiscCore::taiMiscCore(QObject* parent)
-:inherited(parent) 
+:inherited(parent)
 {
 }
 
@@ -343,7 +344,7 @@ taiMiscCore::~taiMiscCore() {
   if (taiMC_ == this)
     taiMC_ = NULL;
 }
-  
+
 void taiMiscCore::app_aboutToQuit() {
 //NOTE: Qt will not process any more events at this point!
   if (timer)
@@ -405,7 +406,7 @@ int taiMiscCore::Exec_impl() {
 
 void taiMiscCore::Init(bool gui) {
   taMisc::gui_active = gui;
-  
+
   connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()),
     this, SLOT(app_aboutToQuit()) );
 
@@ -421,7 +422,7 @@ void taiMiscCore::PostUpdateAfter() {
 #ifndef NO_TA_BASE
   dumpMisc::PostUpdateAfter();
 #endif
-}  
+}
 
 void taiMiscCore::Quit_impl(CancelOp cancel_op) {
   // only for nogui
@@ -475,7 +476,7 @@ String	taMisc::app_name = "temt"; // must be set in main.cpp
 String	taMisc::app_prefs_key; // must be set in main.cpp, else defaults to app_name
 String	taMisc::default_app_install_folder_name = "Emergent";
 
-String	taMisc::org_name = "ccnlab"; 
+String	taMisc::org_name = "ccnlab";
 
 #ifndef SVN_REV // won't be defined if svnrev.h wasn't included
 #define SVN_REV -1
@@ -483,43 +484,43 @@ String	taMisc::org_name = "ccnlab";
 
 String	taMisc::svn_rev = String(SVN_REV);
 String	taMisc::version = String(VERSION);
-taVersion taMisc::version_bin(String(VERSION)); 
+taVersion taMisc::version_bin(String(VERSION));
 
 // ugh! but easiest way to just statically set the build_type and official extender string
 #ifdef DEBUG
 # ifdef DMEM_COMPILE
 #   ifdef NO_TA_GUI
 const taMisc::BuildType taMisc::build_type = (taMisc::BuildType)(taMisc::BT_DEBUG | taMisc::BT_DMEM | taMisc::BT_NO_GUI);
-const String             taMisc::build_str("nogui_dbg_mpi"); 
+const String             taMisc::build_str("nogui_dbg_mpi");
 #   else
 const taMisc::BuildType taMisc::build_type = (taMisc::BuildType)(taMisc::BT_DEBUG | taMisc::BT_DMEM);
-const String             taMisc::build_str("dbg_mpi"); 
+const String             taMisc::build_str("dbg_mpi");
 #   endif
 # else
 #   ifdef NO_TA_GUI
 const taMisc::BuildType taMisc::build_type = (taMisc::BuildType)(taMisc::BT_DEBUG | taMisc::BT_NO_GUI);
-const String             taMisc::build_str("nogui_dbg"); 
+const String             taMisc::build_str("nogui_dbg");
 #   else
 const taMisc::BuildType taMisc::build_type = taMisc::BT_DEBUG ;
-const String             taMisc::build_str("dbg"); 
+const String             taMisc::build_str("dbg");
 #   endif
 # endif
 #else
 # ifdef DMEM_COMPILE
 #   ifdef NO_TA_GUI
 const taMisc::BuildType taMisc::build_type = taMisc::BT_DMEM + taMisc::BT_NO_GUI;
-const String             taMisc::build_str("nogui_mpi"); 
+const String             taMisc::build_str("nogui_mpi");
 #   else
 const taMisc::BuildType taMisc::build_type = taMisc::BT_DMEM;
-const String             taMisc::build_str("mpi"); 
+const String             taMisc::build_str("mpi");
 #   endif
 # else
 #   ifdef NO_TA_GUI
 const taMisc::BuildType taMisc::build_type = taMisc::BT_NO_GUI;
-const String             taMisc::build_str("nogui"); 
+const String             taMisc::build_str("nogui");
 #   else
 const taMisc::BuildType taMisc::build_type = taMisc::BT_0; // default release version
-const String             taMisc::build_str; 
+const String             taMisc::build_str;
 #   endif
 # endif
 #endif
@@ -599,7 +600,7 @@ int	taMisc::jpeg_quality = 95;
 taMisc::ColorHints taMisc::color_hints = (taMisc::ColorHints)(taMisc::CH_EDITS | taMisc::CH_BROWSER);
 //note: we actually init this in ta_project, the first time, for the user
 //taMisc::ProjViewPref taMisc::proj_view_pref = (taMisc::ProjViewPref)-1;//taMisc::PVP_2x2;
-// nobody besides Brad uses 2x2.. 
+// nobody besides Brad uses 2x2..
 taMisc::ProjViewPref taMisc::proj_view_pref = taMisc::PVP_3PANE;
 taMisc::ViewerOptions	taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc::VO_DOUBLE_CLICK_EXP_ALL | taMisc::VO_AUTO_SELECT_NEW | taMisc::VO_AUTO_EXPAND_NEW);
 #ifndef NO_TA_BASE
@@ -616,12 +617,12 @@ taMisc::TypeInfo  	taMisc::type_info_ = taMisc::NO_OPTIONS_LISTS;
 taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
 bool			taMisc::auto_edit = false;
 taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
-taMisc::MatrixView	taMisc::matrix_view = taMisc::BOT_ZERO;	
+taMisc::MatrixView	taMisc::matrix_view = taMisc::BOT_ZERO;
 bool 			taMisc::beep_on_error = false;
 short			taMisc::num_recent_files = 10;
 short			taMisc::num_recent_paths = 10;
 short			taMisc::num_browse_history = 20;
- 
+
 ////////////////////////////////////////////////////////
 // 	File/Path/Arg Info
 
@@ -635,16 +636,16 @@ taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
 taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
 
 String	taMisc::app_dir; // set early in startup, algorithmically to find app dir
-String	taMisc::app_plugin_dir; 
+String	taMisc::app_plugin_dir;
 String	taMisc::app_dir_default; // emergency override, obtained from user
 String  taMisc::user_dir;			// this will be set in init call
 String	taMisc::prefs_dir; // this must be set at startup!
-String	taMisc::user_app_dir; 
-String	taMisc::user_plugin_dir; 
-String	taMisc::user_log_dir; 
+String	taMisc::user_app_dir;
+String	taMisc::user_plugin_dir;
+String	taMisc::user_log_dir;
 
 // note: app should set all these url's in its main or other app-specific code
-String	taMisc::web_home = "http://grey.colorado.edu/emergent/index.php/Main_Page"; 
+String	taMisc::web_home = "http://grey.colorado.edu/emergent/index.php/Main_Page";
 String	taMisc::web_help_wiki = "emergent";
 String	taMisc::web_help_general = "http://grey.colorado.edu/emergent/index.php/User_hub";
 
@@ -662,7 +663,7 @@ String_PArray	taMisc::load_paths;
 NameVar_PArray	taMisc::prog_lib_paths;
 NameVar_PArray	taMisc::named_paths;
 
-DumpFileCvtList taMisc::file_converters; 
+DumpFileCvtList taMisc::file_converters;
 
 String	taMisc::compress_sfx = ".gz";
 ostream*	taMisc::record_script = NULL;
@@ -716,7 +717,7 @@ bool 	taMisc::gui_active = false;
 bool 	taMisc::gui_no_win = false;
 bool 	taMisc::server_active = false; // true while connected
 ContextFlag	taMisc::is_loading;
-taVersion 	taMisc::loading_version; 
+taVersion 	taMisc::loading_version;
 ContextFlag	taMisc::is_post_loading;
 ContextFlag	taMisc::is_saving;
 bool		taMisc::save_use_name_paths;
@@ -741,8 +742,8 @@ bool taMisc::check_confirm_success = true;
 bool taMisc::check_ok = true;
 
 #ifndef NO_TA_BASE
-String_PArray* taMisc::deferred_schema_names; 
-UserDataItem_List* taMisc::deferred_schema_items; 
+String_PArray* taMisc::deferred_schema_names;
+UserDataItem_List* taMisc::deferred_schema_items;
 #endif
 
 #ifdef TA_GUI
@@ -786,7 +787,7 @@ void taMisc::LoadConfig() {
   strm.open(cfgfn, ios::in);
   if(!strm.bad() && !strm.eof())
     TA_taMisc.Dump_Load_Value(strm, (void*)this);
-  strm.close(); 
+  strm.close();
   strm.clear();
   --taFiler::no_save_last_fname;
   UpdateAfterEdit();
@@ -868,9 +869,9 @@ String taMisc::SuperCat(const char* a, const char* b, const char* c,
 		      const char* g, const char* h, const char* i)
 {
   STRING_BUF(s, 250);
-  s.cat(a); if(b) s.cat(" ").cat(b);  if(c) s.cat(" ").cat(c); 
-  if(d) s.cat(" ").cat(d); if(e) s.cat(" ").cat(e); if(f) s.cat(" ").cat(f); 
-  if(g) s.cat(" ").cat(g); if(h) s.cat(" ").cat(h); if(i) s.cat(" ").cat(i); 
+  s.cat(a); if(b) s.cat(" ").cat(b);  if(c) s.cat(" ").cat(c);
+  if(d) s.cat(" ").cat(d); if(e) s.cat(" ").cat(e); if(f) s.cat(" ").cat(f);
+  if(g) s.cat(" ").cat(g); if(h) s.cat(" ").cat(h); if(i) s.cat(" ").cat(i);
   return s;
 }
 
@@ -908,7 +909,7 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
 #endif
 
   if(obj) {
-    String objinfo = "Error in: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name 
+    String objinfo = "Error in: " + obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name
       + "() (path: " + obj->GetPathNames() + ")\n";
 
     if((obj == prv_obj) && (prv_fun == fun_name) && (prv_a == a)) {
@@ -942,7 +943,7 @@ bool taMisc::TestWarning(const taBase* obj, bool test, const char* fun_name,
 			 const char* e, const char* f, const char* g, const char* h) {
   if(!test) return false;
   if(obj) {
-    String objinfo = obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name 
+    String objinfo = obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name
       + "() (path: " + obj->GetPathNames() + ")\n";
     taMisc::Warning(objinfo, a, b, c, d, e, f, g, h);
   }
@@ -965,7 +966,7 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
 #endif
   if (beep_on_error) cerr << '\a'; // BEL character
   taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
-#if !defined(NO_TA_BASE) 
+#if !defined(NO_TA_BASE)
   if(cssMisc::cur_top) {
     taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
   }
@@ -974,7 +975,7 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
   taMisc::LogEvent(fmsg);
   cerr << fmsg << endl;
   FlushConsole();
-#if !defined(NO_TA_BASE) 
+#if !defined(NO_TA_BASE)
   if(cssMisc::cur_top) {
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
@@ -1146,11 +1147,11 @@ void taMisc::CheckConfigStart(bool confirm_success, bool quiet) {
 
 void taMisc::CheckConfigEnd(bool ok) {
 #ifndef NO_TA_BASE
-  // failure always cumulative for all nestings 
+  // failure always cumulative for all nestings
   if (!ok) check_ok = false;
   // if last exit, do notify stuff
   if (--taMisc::is_checking) return; // still checking
-  
+
   taMisc::DoneBusy();
   if (!check_quiet && (!check_ok || check_confirm_success)) {
     taiMC_->CheckConfigResult_(check_ok);
@@ -1201,7 +1202,7 @@ void taMisc::ListAllTokens(ostream& strm) {
 }
 
 taMisc::TypeInfoKind taMisc::TypeToTypeInfoKind(TypeDef* td) {
-  if (!td) return TIK_UNKNOWN; 
+  if (!td) return TIK_UNKNOWN;
 
   TypeInfoKind tik;
 #ifndef NO_TA_BASE
@@ -1216,7 +1217,7 @@ taMisc::TypeInfoKind taMisc::TypeToTypeInfoKind(TypeDef* td) {
   else if (td->InheritsFrom(&TA_EnumDef)) tik = TIK_ENUM;
   else if (td->InheritsFrom(&TA_EnumSpace)) tik = TIK_ENUMSPACE;
   else if (td->InheritsFrom(&TA_TokenSpace)) tik = TIK_TOKENSPACE;
-  else 
+  else
 #endif
     tik = TIK_UNKNOWN; // shouldn't happen
   return tik;
@@ -1304,11 +1305,11 @@ void taMisc::Init_Defaults_PostLoadConfig() {
   css_include_paths.AddUnique(user_app_dir); // for .init files in user app dir
   css_include_paths.AddUnique(user_dir); // needed for .init files **DEPRECATED**
 
-  prog_lib_paths.AddUnique(NameVar("SystemLib", 
+  prog_lib_paths.AddUnique(NameVar("SystemLib",
     (Variant)(app_dir + PATH_SEP + "prog_lib")));
-  prog_lib_paths.AddUnique(NameVar("UserLib", 
+  prog_lib_paths.AddUnique(NameVar("UserLib",
     (Variant)(user_app_dir + PATH_SEP + "prog_lib")));
-  prog_lib_paths.AddUnique(NameVar("WebLib", 
+  prog_lib_paths.AddUnique(NameVar("WebLib",
     (Variant)(web_home + "/prog_lib"))); //note: urls always use '/'
 
   String curdir = GetCurrentPath();
@@ -1631,16 +1632,16 @@ void taMisc::CharToStrArray(String_PArray& sa, const char* ch) {
 
 String taMisc::StrArrayToChar(const String_PArray& sa) {
 //NOTE: for historical reasons, this adds an extra sep on the end
-// more efficient to know the length, so we don't resize...  
-  uint xlen = sa.size; // for seps  
-  int i;  
-  for (i=0; i < sa.size; i++) xlen += sa.FastEl(i).length();  
-  String tmp(0, xlen, '\0');  
-  for (i = 0; i < sa.size; i++) {  
-    tmp += sa.FastEl(i);  
-    tmp += " ";  
-  }  
-  return tmp; 
+// more efficient to know the length, so we don't resize...
+  uint xlen = sa.size; // for seps
+  int i;
+  for (i=0; i < sa.size; i++) xlen += sa.FastEl(i).length();
+  String tmp(0, xlen, '\0');
+  for (i = 0; i < sa.size; i++) {
+    tmp += sa.FastEl(i);
+    tmp += " ";
+  }
+  return tmp;
 }
 
 // add spaces to a label
@@ -2326,11 +2327,11 @@ int taMisc::skip_till_start_quote_or_semi(istream& strm, bool peek) {
   int c = skip_white(strm, true);
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
-    while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';')) 
+    while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';'))
       cerr << strm.get(); // consume it
     taMisc::FlushConsole();
   } else {
-    while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';')) 
+    while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';'))
       strm.get(); // consume it
   }
   if(!peek)
@@ -2346,7 +2347,7 @@ int taMisc::read_till_end_quote(istream& strm, bool peek) {
   LexBuf = "";
   if (taMisc::verbose_load >= taMisc::SOURCE) {
     while (true) {
-      while (((c = strm.peek()) != EOF) && (bs || ((c != '\"') && (c != '\\')) ) ) 
+      while (((c = strm.peek()) != EOF) && (bs || ((c != '\"') && (c != '\\')) ) )
       {  // "
         bs = false;
         cerr << (char)c;
@@ -2387,7 +2388,7 @@ int taMisc::read_till_end_quote_semi(istream& strm, bool peek) {
   while (((c = strm.peek()) != EOF) && (c != ';'))
     c = strm.get();
   if (c == EOF) return c;
-  if (!peek) 
+  if (!peek)
     strm.get(); // consume the ;
   return c;
 }
@@ -2548,7 +2549,7 @@ taMisc::ReadTagStatus taMisc::read_tag(istream& strm, String& tag, String& val) 
   }
   return rval;
 }
-  
+
 int taMisc::read_till_rangle(istream& strm, bool peek) {
   int c;
   LexBuf = "";
@@ -2596,12 +2597,12 @@ ostream& taMisc::indent(ostream& strm, int indent, int tsp) {
 
 ostream& taMisc::write_quoted_string(ostream& strm, const String& str, bool write_if_empty) {
   if (!write_if_empty && str.empty()) return strm;
-  
+
   strm << '\"';
   int l = str.length();
   for (int i = 0; i < l; ++i) {
     char c = str.elem(i);
-    // we slash escape slashes and quotes 
+    // we slash escape slashes and quotes
     //TODO: perhaps we should escape other control chars as well
     if ((c == '\"') || (c == '\\'))
       strm << '\\';
@@ -2680,13 +2681,13 @@ bool IDataLinkClient::AddDataLink(taDataLink* dl) {
   bool r = (!m_link);
   m_link = dl;
   return r;
-} 
+}
 
 bool IDataLinkClient::RemoveDataLink(taDataLink* dl) {
   bool r = (m_link);
   m_link = NULL;
   return r;
-} 
+}
 
 //////////////////////////////////
 //   IMultiDataLinkClient 	//
@@ -2701,7 +2702,7 @@ IMultiDataLinkClient::~IMultiDataLinkClient() {
 
 bool IMultiDataLinkClient::AddDataLink(taDataLink* dl) {
   return dls.AddUnique(dl);
-} 
+}
 
 bool IMultiDataLinkClient::RemoveDataLink(taDataLink* dl) {
   return dls.RemoveEl(dl);
@@ -2758,7 +2759,7 @@ void taDataLink::DoNotify(int dcr, void* op1_, void* op2_) {
     if ((dcr == DCR_REBUILD_VIEWS) && !dlc->isDataView()) continue;
     if (dlc->ignoreDataChanged())
       dlc->IgnoredDataChanged(this, dcr, op1_, op2_);
-    else 
+    else
       dlc->DataDataChanged(this, dcr, op1_, op2_);
   }
 }
@@ -2775,7 +2776,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
   If we only ever issue DATA BEGIN/ENDs, we remain in DATA state;
   If we ever issue a STRUCT BEGIN, we get forced into STRUCT state,
     and any subsequent DATA commands get interpreted as STRUCT.
-    
+
   We try to suppress unnecessary guys.
   If we start with STRUCT or DATA and do all the same (no different)
   then we only issue the first and last; but if DATA->STRUCT,
@@ -2785,7 +2786,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
   actually occur, since Struct and Data ops are typically mutually
   exclusive, and even then, the most likely is DATA ops nested inside
   a STRUCT update (not the other way around.)
-  
+
     we need to send out all further STRUCT ops, and the final DATA one
 */
   bool send_iu = false; // set true if we should send a synthetic ITEM_UPDATED
@@ -2798,28 +2799,28 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
   if (dcr == DCR_STRUCT_UPDATE_BEGIN) { // forces us to be in struct state
     // only forward the first one (ex some clients do a reset step)
     // OR the first one where DATA->STRUCT
-    suppress = (m_dbu_cnt > 0); // send if first, or we were in DATA state 
+    suppress = (m_dbu_cnt > 0); // send if first, or we were in DATA state
     if (m_dbu_cnt < 0) { // switch state if in DATA state
-      m_dbu_cnt = -m_dbu_cnt; 
+      m_dbu_cnt = -m_dbu_cnt;
       dummy_end = true;
     }
     ++m_dbu_cnt;
-#ifdef DATA_DATA_DEBUG    
+#ifdef DATA_DATA_DEBUG
     cerr << (String)(int)this << " stru beg: " << m_dbu_cnt << endl;
     taMisc::FlushConsole();
 #endif
-  } 
-  else if (dcr == DCR_DATA_UPDATE_BEGIN) { 
+  }
+  else if (dcr == DCR_DATA_UPDATE_BEGIN) {
     suppress = (m_dbu_cnt != 0);
     if (m_dbu_cnt > 0) ++m_dbu_cnt; // stay in STRUCT state if STRUCT state
     else               --m_dbu_cnt;
-#ifdef DATA_DATA_DEBUG    
+#ifdef DATA_DATA_DEBUG
     cerr << (String)(int)this << " data beg: " << m_dbu_cnt << endl;
     taMisc::FlushConsole();
 #endif
-  } 
+  }
   else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
-#ifdef DATA_DATA_DEBUG    
+#ifdef DATA_DATA_DEBUG
     bool was_stru = false;	// debug only
     if(dcr == DCR_STRUCT_UPDATE_END)
       was_stru = true;
@@ -2829,8 +2830,8 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     } else if (m_dbu_cnt > 0) {
       --m_dbu_cnt;
       dcr = DCR_STRUCT_UPDATE_END; // force to be struct end, in case we notify
-    } 
-    // this situation might theoretically arise if some updating action 
+    }
+    // this situation might theoretically arise if some updating action
     // mid-update causes a link to an item to get created, which will then
     // not have been tracking all the BEGINs -- but it should be safe
     // to just keep letting them happen, doing gui updates, which should be harmless
@@ -2840,7 +2841,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
         << GetName() << " unexpectedly received a DATA or STRUCT END (cnt was 0)\n";
     }
 #endif
-#ifdef DATA_DATA_DEBUG    
+#ifdef DATA_DATA_DEBUG
     if(was_stru)
       cerr << (String)(int)this << " stru end: " << m_dbu_cnt << endl;
     else
@@ -2854,7 +2855,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
         // DATA_UPDATE_END as occurring when:
         // State=DATA, Count=1
         dcr = DCR_ITEM_UPDATED;
-#ifdef DATA_DATA_DEBUG    
+#ifdef DATA_DATA_DEBUG
 	cerr << (String)(int)this << " cvt to iu: " << m_dbu_cnt << endl;
 	taMisc::FlushConsole();
 #endif
@@ -2872,9 +2873,9 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     // if we are already updating, then ignore IUs, since we'll send one eventually
     if (m_dbu_cnt != 0) suppress = true;
   }
-  
+
   if (!suppress) {
-#ifdef DATA_DATA_DEBUG    
+#ifdef DATA_DATA_DEBUG
     cerr << (String)(int)this << " sending: " << dcr << endl;
     taMisc::FlushConsole();
 #endif
@@ -2882,7 +2883,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
   }
   if (dummy_end)
     DoNotify(DCR_DATA_UPDATE_END, NULL, NULL);
-  if (send_iu) 
+  if (send_iu)
     DoNotify(DCR_ITEM_UPDATED, NULL, NULL);
 }
 
@@ -2930,7 +2931,7 @@ void* taDataLinkItr::NextEl(taDataLink* dl, const TypeDef* typ) {
 // 	     TypeSpace		//
 //////////////////////////////////
 
-TypeSpace::~TypeSpace() { 
+TypeSpace::~TypeSpace() {
   Reset();
   if (data_link) {
     data_link->DataDestroying(); // link NULLs our pointer
@@ -2939,10 +2940,10 @@ TypeSpace::~TypeSpace() {
 
 String	TypeSpace::El_GetName_(void* it) const { return ((TypeDef*)it)->name; }
 TALPtr 	TypeSpace::El_GetOwnerList_(void* it) const { return ((TypeDef*)it)->owner; }
-void*	TypeSpace::El_SetOwner_(void* it_) { 
+void*	TypeSpace::El_SetOwner_(void* it_) {
   if (!it_) return it_;
   TypeDef* it = (TypeDef*)it_;
-  it->owner = this; 
+  it->owner = this;
   //if this type is being added to anything during a plugin init, then
   // it is a plugin class, and we stamp it as such
 #ifndef NO_TA_BASE
@@ -2951,7 +2952,7 @@ void*	TypeSpace::El_SetOwner_(void* it_) {
   }
 #endif
   return it_;
-  
+
 }
 void	TypeSpace::El_SetIndex_(void* it, int i){ ((TypeDef*)it)->idx = i; }
 
@@ -3027,8 +3028,8 @@ void*	EnumSpace::El_MakeToken_(void* it)  { return (void*)((EnumDef*)it)->MakeTo
 void*	EnumSpace::El_Copy_(void* trg, void* src)
 { ((EnumDef*)trg)->Copy(*((EnumDef*)src)); return trg; }
 
-EnumSpace::~EnumSpace() { 
-  Reset(); 
+EnumSpace::~EnumSpace() {
+  Reset();
   if (data_link) {
     data_link->DataDestroying(); // link NULLs our pointer
   }
@@ -3075,7 +3076,7 @@ void TokenSpace::Initialize() {
   data_link = NULL;
 }
 
-TokenSpace::~TokenSpace() { 
+TokenSpace::~TokenSpace() {
 //  Reset(); //note: TokenSpace never had a Reset, but maybe it should...
   if (data_link) {
     data_link->DataDestroying(); // link NULLs our pointer
@@ -3117,9 +3118,9 @@ void TokenSpace::List(ostream &strm) const {
 // 	    MemberSpace		//
 //////////////////////////////////
 
-String	MemberDefBase_List::El_GetName_(void* it) const 
+String	MemberDefBase_List::El_GetName_(void* it) const
   { return ((MemberDefBase*)it)->name; }
-TALPtr 	MemberDefBase_List::El_GetOwnerList_(void* it) const 
+TALPtr 	MemberDefBase_List::El_GetOwnerList_(void* it) const
   { return ((MemberDefBase*)it)->owner; }
 void*	MemberDefBase_List::El_SetOwner_(void* it)
   { return ((MemberDefBase*)it)->owner = this; }
@@ -3134,9 +3135,9 @@ void	MemberDefBase_List::El_Done_(void* it)
   { taRefN::Done((MemberDefBase*)it); }
 
 
-void*	MemberDefBase_List::El_MakeToken_(void* it) { 
+void*	MemberDefBase_List::El_MakeToken_(void* it) {
   switch (((MemberDefBase*)it)->typeInfoKind()) {
-  case taMisc::TIK_MEMBER: 
+  case taMisc::TIK_MEMBER:
     return (void*)((MemberDef*)it)->MakeToken();
   case taMisc::TIK_PROPERTY:
     return (void*)((PropertyDef*)it)->MakeToken();
@@ -3147,11 +3148,11 @@ void*	MemberDefBase_List::El_MakeToken_(void* it) {
 
 // note: this use the "pseudo-virtual" type guy
 void*	MemberDefBase_List::El_Copy_(void* trg, void* src)
-  { ((MemberDefBase*)trg)->Copy(((MemberDefBase*)src)); 
-  return trg; 
+  { ((MemberDefBase*)trg)->Copy(((MemberDefBase*)src));
+  return trg;
 }
 
-MemberDefBase_List::~MemberDefBase_List() { 
+MemberDefBase_List::~MemberDefBase_List() {
   Reset();
   if (data_link) {
     data_link->DataDestroying(); // link NULLs our pointer
@@ -3286,7 +3287,7 @@ int MemberSpace::FindPtr(void* base, void* mbr) const {
       if (mbr == var.toPtr())
         return i;
     }
-      
+
   }
   return -1;
 }
@@ -3316,7 +3317,7 @@ void PropertyDef::setType(TypeDef* typ) {
   type = typ;
 }
 
-#ifdef NO_TA_BASE  
+#ifdef NO_TA_BASE
 PropertyDef* PropertySpace::AssertProperty_impl(const char* nm, bool& is_new,
     bool get_nset, MemberDef* mbr, MethodDef* mth)
 {
@@ -3333,7 +3334,7 @@ PropertyDef* PropertySpace::AssertProperty_impl(const char* nm, bool& is_new,
     pd = new PropertyDef(nm);
     Add(pd);
     is_new = true;
-  } else 
+  } else
     is_new = false;
   if (mbr) {
     ti = mbr;
@@ -3424,7 +3425,7 @@ void*	MethodSpace::El_MakeToken_(void* it)  { return (void*)((MethodDef*)it)->Ma
 void*	MethodSpace::El_Copy_(void* trg, void* src)
 { ((MethodDef*)trg)->Copy(*((MethodDef*)src)); return trg; }
 
-MethodSpace::~MethodSpace() { 
+MethodSpace::~MethodSpace() {
   Reset();
   if (data_link) {
     data_link->DataDestroying(); // link NULLs our pointer
@@ -3442,7 +3443,7 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
   variants on names or default parameters to achieve overloading.
 */
   MethodDef* rval = NULL;
-  bool replace = false; // we set true if we should replace the one we find 
+  bool replace = false; // we set true if we should replace the one we find
   int idx;
   // we first see if it is an override of a virtual base...
   if (!it->is_static) // of course statics can't be virtual
@@ -3469,7 +3470,7 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
     idx = FindNameIdx(it->name);
     if(idx >= 0) rval = FastEl(idx);
     if (rval) {
-      replace = true; 
+      replace = true;
       if (it == rval) {result = false; goto end;}// could be the same one..
       it->fun_overld = rval->fun_overld;
       // if the args are identical, then we are lexically hiding the previous
@@ -3667,17 +3668,17 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
   // format: [CONDEDIT|CONDSHOW|GHOST]_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic
   String optedit = OptionAfter(condkey + "_");
   if (optedit.empty()) return false;
-  
+
   String onoff = optedit.before('_');
   is_on = (onoff == "ON"); //NOTE: should probably verify if OFF, otherwise it is an error
   optedit = optedit.after('_');
 
   val_is_eq = false;
-  int curlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR, 
+  int curlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR,
 
   while(true) {			// iterate on logical operations
     String nextedit;
-    int nextlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR, 
+    int nextlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR,
     int andloc = optedit.index("&&");
     int orloc = optedit.index("||");
     if(andloc > 0 && orloc > 0) {
@@ -3704,14 +3705,14 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
     }
 
     String val = optedit.after(':');
-  
+
     // find the member name -- depends on mode, see below
     String mbr;
     if (val.empty())
       mbr = optedit; // entire thing is the member, implied boolean
     else
       mbr = optedit.before(':');
-  
+
     void* mbr_base = NULL;	// base for conditionalizing member itself
     ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
     TypeDef* eff_td = (TypeDef*)base_td;
@@ -3720,7 +3721,7 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
     if (md) {
       mbr_base = MemberDef::GetOff_static(base, net_base_off, net_mbr_off);
     }
-    
+
     if (!md || !mbr_base) {
       // this can happen in valid cases (selectedit), and the msg is annoying
       //    taMisc::Warning("taiType::CheckProcessCondMembMeth: conditionalizing member", mbr, "not found!");
@@ -3932,7 +3933,7 @@ void MemberDefBase::Copy_(const MemberDefBase& cp) {
 MemberDefBase::~MemberDefBase() {
 #ifndef NO_TA_BASE
 # ifndef NO_TA_GUI
-  taRefN::SafeUnRefDone(im); 
+  taRefN::SafeUnRefDone(im);
   im = NULL;
 # endif
 #endif
@@ -3950,12 +3951,12 @@ bool MemberDefBase::CheckList(const String_PArray& lst) const {
 bool MemberDefBase::ShowMember(
   int show_forbidden,
   TypeItem::ShowContext show_context,
-  int show_allowed) const 
+  int show_allowed) const
 {
   //note: require exact match to special flag, so boolean operations don't match it
   if (show_forbidden == taMisc::USE_SHOW_GUI_DEF)
     show_forbidden = taMisc::show_gui;
-  
+
   // check if cache has been done yet
   if (show_any == 0) ShowMember_CalcCache();
   byte show_eff = 0;
@@ -3975,32 +3976,32 @@ bool MemberDefBase::ShowMember(
 //  return (show_eff) && !(show_eff & (byte)show);
   return (show_eff & (byte)show_allowed & ~(byte)show_forbidden);
 }
-  
+
 void MemberDefBase::ShowMember_CalcCache() const {
 #ifndef NO_TA_BASE
   // default children are never shown
   TypeDef* par_typ = GetOwnerType();
-  if (par_typ && par_typ->DerivesFrom(&TA_taOBase) && 
-   !par_typ->DerivesFrom(&TA_taList_impl)) 
+  if (par_typ && par_typ->DerivesFrom(&TA_taOBase) &&
+   !par_typ->DerivesFrom(&TA_taList_impl))
   {
     String mbr = par_typ->OptionAfter("DEF_CHILD_");
     if (mbr.nonempty() && (mbr == name)) {
     show_tree = 0x80; // set the "done" flag
-    show_any = 0x80; 
+    show_any = 0x80;
     show_edit = 0x80;
     return;
-    } 
+    }
   }
 #endif
-  
+
   // note that "normal" is a special case, which depends both on context and
   // on whether other bits are set, so we calc those individually
   show_any = taMisc::IS_NORMAL; // the default for any
   ShowMember_CalcCache_impl(show_any, _nilString);
-  
+
   show_edit = show_any; // start with the "any" settings
   ShowMember_CalcCache_impl(show_edit, "_EDIT");
-  
+
 #ifndef NO_TA_BASE
   show_tree = show_any;
   // for trees, we only browse lists/groups by default
@@ -4013,23 +4014,23 @@ void MemberDefBase::ShowMember_CalcCache() const {
 
 void MemberDefBase::ShowMember_CalcCache_impl(byte& show, const String& suff) const {
   show |= 0x80; // set the "done" flag
-  
+
   //note: keep in mind that these show bits are the opposite of the show flags,
   // i.e show flags are all negative, whereas these are all positive (bit = is that type)
-  
+
   //note: member flags should generally trump type flags, so you can SHOW a NO_SHOW type
   //note: NO_SHOW is special, since it negates, so we check for base NO_SHOW everywhere
   bool typ_show = type->HasOption("MEMB_SHOW" + suff);
   bool typ_no_show = type->HasOption("MEMB_NO_SHOW") || type->HasOption("MEMB_NO_SHOW" + suff);
   bool mbr_show = HasOption("SHOW" + suff);
   bool mbr_no_show = HasOption("NO_SHOW") || HasOption("NO_SHOW" + suff);
-  
+
   // the following are all cumulative, not mutually exclusive
   if (HasOption("HIDDEN" + suff) || type->HasOption("MEMB_HIDDEN" + suff))
     show |= (byte)taMisc::IS_HIDDEN;
   // RO are HIDDEN unless explicitly marked SHOW
   // note: no type-level, makes no sense
-  if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !HasOption("SHOW")) 
+  if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !HasOption("SHOW"))
     show |= (byte)taMisc::IS_HIDDEN;
   if (HasOption("EXPERT" + suff) || type->HasOption("MEMB_EXPERT" + suff))
     show |= (byte)taMisc::IS_EXPERT;
@@ -4037,9 +4038,9 @@ void MemberDefBase::ShowMember_CalcCache_impl(byte& show, const String& suff) co
   // if NO_SHOW and no SHOW or explicit other, then never shows
   if (mbr_no_show || (typ_no_show && (!mbr_show || (show & (byte)taMisc::NORM_MEMBS)))) {
     show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);
-    return; 
+    return;
   }
-  
+
   // if any of the special guys are set, we unset NORMAL (which may
   //   or may not have been already set by default)
   if (show & (byte)taMisc::NORM_MEMBS) // in "any" context, default is "normal"
@@ -4153,13 +4154,13 @@ void* MemberDef::GetOff_static(const void* base, int base_off_, ta_memb_ptr off_
 }
 
 const String MemberDef::GetPathName() const {
-  String rval; 
+  String rval;
   TypeDef* owtp = GetOwnerType();
-  if (owtp) 
+  if (owtp)
     rval = owtp->GetPathName();
   rval += "::" + name;
   return rval;
-} 
+}
 
 const Variant MemberDef::GetValVar(const void* base) const {
   return type->GetValVar(GetOff(base), this);
@@ -4290,7 +4291,7 @@ PropertyDef::PropertyDef(TypeDef* ty, const char* nm, const char* dsc,
 :inherited(ty, nm, dsc, op, lis, is_stat)
 {
   Initialize();
-  prop_get = get; 
+  prop_get = get;
   prop_set = set;
 }
 
@@ -4316,14 +4317,14 @@ void PropertyDef::Copy(const PropertyDef& cp) {
 }
 
 void PropertyDef::Copy_(const PropertyDef& cp) {
-  prop_get = cp.prop_get; 
+  prop_get = cp.prop_get;
   prop_set =cp.prop_set;
 }
 
 /*nn?? const String PropertyDef::GetPathName() const {
-  String rval; 
+  String rval;
   TypeDef* owtp = GetOwnerType();
-  if (owtp) 
+  if (owtp)
     rval = owtp->GetPathName();
   rval += "::" + name;
   return rval;
@@ -4449,7 +4450,7 @@ MethodDef::MethodDef(const MethodDef& cp)
 MethodDef::~MethodDef() {
 #ifndef NO_TA_BASE
 # ifndef NO_TA_GUI
-  taRefN::SafeUnRefDone(im); 
+  taRefN::SafeUnRefDone(im);
   im = NULL;
 # endif
 #endif
@@ -4531,17 +4532,17 @@ void MethodDef::CallFun(void* base) const {
 }
 
 const String MethodDef::GetPathName() const {
-  String rval; 
+  String rval;
   TypeDef* owtp = GetOwnerType();
-  if (owtp) 
+  if (owtp)
     rval = owtp->GetPathName();
   rval += "::" + name;
   return rval;
-} 
+}
 
 const String MethodDef::ParamsAsString() const {
   if (arg_types.size == 0) return _nilString;
-  STRING_BUF(rval, arg_types.size * 20); 
+  STRING_BUF(rval, arg_types.size * 20);
   String arg_def;
   for (int i = 0; i < arg_types.size; ++i) {
     if (i > 0) rval += ", ";
@@ -4552,7 +4553,7 @@ const String MethodDef::ParamsAsString() const {
     if (arg_def.length() > 0) {
       rval += " = " + arg_def;
     }
-  } 
+  }
   return rval;
 }
 
@@ -4571,15 +4572,15 @@ const String MethodDef::prototype() const {
   return rval;
 }
 
-bool MethodDef::ShowMethod(taMisc::ShowMembs show) const 
+bool MethodDef::ShowMethod(taMisc::ShowMembs show) const
 {
   if (show & taMisc::USE_SHOW_GUI_DEF)
     show = taMisc::show_gui;
-  
+
   // check if cache has been done yet
   if (show_any == 0) ShowMethod_CalcCache();
   byte show_eff = show_any;
-  
+
   // our show_eff is the positives (what it is) so if there is nothing there, then
   // we clearly can't show
   // if there is something (a positive) then bit-AND with the
@@ -4587,21 +4588,21 @@ bool MethodDef::ShowMethod(taMisc::ShowMembs show) const
   show_eff &= (byte)taMisc::SHOW_CHECK_MASK;
   return (show_eff) && !(show_eff & (byte)show);
 }
-  
+
 void MethodDef::ShowMethod_CalcCache() const {
   // note that "normal" is a special case, which depends both on context and
   // on whether other bits are set, so we calc those individually
   show_any = taMisc::IS_NORMAL; // the default for any
   ShowMethod_CalcCache_impl(show_any);
-  
+
 }
 
 void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
   show |= 0x80; // set the "done" flag
-  
+
   //note: keep in mind that these show bits are the opposite of the show flags,
   // i.e show flags are all negative, whereas these are all positive (bit = is that type)
-  
+
   //note: member flags should generally trump type flags, so you can SHOW a NO_SHOW type
   //note: NO_SHOW is special, since it negates, so we check for base NO_SHOW everywhere
   //MethodDef note: SHOW is implied in any of: MENU BUTTON or MENU_CONTEXT
@@ -4610,14 +4611,14 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
   bool mth_show = HasOption("SHOW") || HasOption("MENU") ||
     HasOption("BUTTON") || HasOption("MENU_CONTEXT") || HasOption("MENU_BUTTON");
   bool mth_no_show = HasOption("NO_SHOW") || HasOption("NO_SHOW");
-  
+
   // ok, so no explicit SHOW or NO_SHOW, so we do the special checks
   // you can't "undo" type-level specials, but you can always mark SHOW on the mth
 
   // the following are all cumulative, not mutually exclusive
   if (HasOption("HIDDEN") || type->HasOption("METH_HIDDEN"))
     show |= (byte)taMisc::IS_HIDDEN;
-  if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !mth_show) 
+  if ((HasOption("READ_ONLY") || HasOption("GUI_READ_ONLY")) && !mth_show)
     show |= (byte)taMisc::IS_HIDDEN;
   if (HasOption("EXPERT") || type->HasOption("METH_EXPERT"))
     show |= (byte)taMisc::IS_EXPERT;
@@ -4629,9 +4630,9 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
   // if NO_SHOW and no SHOW or explicit other, then never shows
   if (mth_no_show || (typ_no_show && (!mth_show || (show & (byte)taMisc::NORM_MEMBS)))) {
     show &= (byte)(0x80 | ~taMisc::SHOW_CHECK_MASK);
-    return; 
+    return;
   }
-  
+
   // if any of the special guys are set, we unset NORMAL (which may
   //   or may not have been already set by default)
   if (show & (byte)taMisc::NORM_MEMBS) // in "any" context, default is "normal"
@@ -4781,7 +4782,7 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
 #ifndef NO_TA_BASE
   instance = inst;
   tokens.keep = toks;
-#endif  
+#endif
   name = nm; desc = dsc;
   c_name = nm;
   taMisc::CharToStrArray(opts,op);
@@ -4790,7 +4791,7 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
 #ifndef NO_TA_BASE
   CleanupCats(true);		// save the last one for initialization
 #endif
-  size = siz; 
+  size = siz;
   ptr = ptrs;
   ref = refnc;
   if(global_obj)
@@ -4803,7 +4804,7 @@ TypeDef::TypeDef(const char* nm, bool intrnl, int ptrs, bool refnc, bool forml,
 :inherited()
 {
   Initialize();
-  name = nm; internal = intrnl; ptr = ptrs; ref = refnc; formal = forml; 
+  name = nm; internal = intrnl; ptr = ptrs; ref = refnc; formal = forml;
   size = siz; // note: may get updated later
   if (c_nm) c_name = c_nm;
   else c_name = name;
@@ -4868,7 +4869,7 @@ void TypeDef::Copy_(const TypeDef& cp) {
 }
 
 TypeDef::~TypeDef() {
-#ifndef NO_TA_BASE 
+#ifndef NO_TA_BASE
 # ifdef DMEM_COMPILE
   if (dmem_type) {
     delete (MPI_Datatype_PArray*)dmem_type;
@@ -4958,8 +4959,8 @@ void TypeDef::DuplicateMDFrom(const TypeDef* old) {
 bool TypeDef::InheritsNonAtomicClass() const {
   if (m_cacheInheritsNonAtomicClass == 0) {
     // set cache
-    m_cacheInheritsNonAtomicClass = (InheritsFormal(TA_class) 
-        && !InheritsFrom(TA_taString) 
+    m_cacheInheritsNonAtomicClass = (InheritsFormal(TA_class)
+        && !InheritsFrom(TA_taString)
         && !InheritsFrom(TA_Variant)
 #ifndef NO_TA_BASE
         && !InheritsFrom(TA_taSmartPtr)
@@ -4976,7 +4977,7 @@ bool TypeDef::InheritsNonAtomicClass() const {
 bool TypeDef::IsBasePointerType() const {
 #ifndef NO_TA_BASE
   if(((ptr == 1) && DerivesFrom(TA_taBase)) ||
-     ((ptr == 0) && (DerivesFrom(TA_taSmartPtr) || 
+     ((ptr == 0) && (DerivesFrom(TA_taSmartPtr) ||
 		     DerivesFrom(TA_taSmartRef))) )
     return true;
 #endif
@@ -5195,7 +5196,7 @@ String TypeDef::Get_C_Name() const {
   // where c_name was not set or updated, so most contexts the name is the same
   if (c_name.empty())
     rval += name;			// the default
-  else 
+  else
     rval += c_name;			// the default
   return rval;
 }
@@ -5384,13 +5385,13 @@ const String TypeDef::GetPathName() const {
 //TODO: this routine may not even be used!
   // are we owned?
   // are we an EnumDef?
-  
-  String rval; 
+
+  String rval;
   TypeDef* owtp = GetOwnerType();
-  if (owtp) { 
-    rval = owtp->GetPathName() + "::"; 
+  if (owtp) {
+    rval = owtp->GetPathName() + "::";
   }
-  rval += name; 
+  rval += name;
   return rval;
 }
 
@@ -5403,7 +5404,7 @@ TypeDef* TypeDef::GetPtrType() const {
     }
   }
   if (!rval) {
-    // need to make one, we use same pattern as maketa 
+    // need to make one, we use same pattern as maketa
     rval = new TypeDef(name + "_ptr", internal, ptr + 1, 0, 0, 0);
     taMisc::types.Add(rval);
     // unconstify us, this is an internal operation, still considered "const" access
@@ -5458,7 +5459,7 @@ bool TypeDef::is_enum() const {
 }
 
 MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
-					 ta_memb_ptr& net_mbr_off, 
+					 ta_memb_ptr& net_mbr_off,
 					 const String& path, bool warn) {
   void* cur_base_off = NULL;
   net_mbr_off = 0;
@@ -5550,7 +5551,7 @@ String TypeDef::GetEnumString(const String& enum_tp_nm, int enum_val) const {
 
 const String TypeDef::Get_C_EnumString(int enum_val, bool show_scope) const {
   STRING_BUF(rval, 80); // extends if needed
-  
+
   // If rendering string for CSS, need to scope the enum value properly.
   String scope_prefix;
   if (show_scope) {
@@ -5559,7 +5560,7 @@ const String TypeDef::Get_C_EnumString(int enum_val, bool show_scope) const {
       scope_prefix = par_td->GetPathName() + "::";
     }
   }
-  
+
   // If this enum type is marked #BITS, then render the set of enabled bits.
   if (HasOption(opt_bits)) {
     for (int i = 0; i < enum_vals.size; ++i) {
@@ -5570,7 +5571,7 @@ const String TypeDef::Get_C_EnumString(int enum_val, bool show_scope) const {
         rval.cat(scope_prefix).cat(ed->name);
       }
     }
-    
+
     // Probably better to reutrn "0" than an empty string if no bits were set.
     if (!rval.empty()) {
       return rval;
@@ -5581,7 +5582,7 @@ const String TypeDef::Get_C_EnumString(int enum_val, bool show_scope) const {
     rval.cat(scope_prefix).cat(ed->name);
     return rval;
   }
-  
+
   // Unable to render as BITS or as value, so just spit out the raw value.
   // If outputting for CSS, need to provide a cast.
   if (show_scope) {
@@ -5796,7 +5797,7 @@ void TypeDef::unRegisterFinal(void* it) {
 //////////////////////////////////
 
 String TypeDef::GetValStr_enum(const void* base, void* par, MemberDef* memb_def,
-			       StrContext sc, bool force_inline) const 
+			       StrContext sc, bool force_inline) const
 {
   int enval = *static_cast<const int *>(base);
   bool show_scope = false;
@@ -5804,7 +5805,7 @@ String TypeDef::GetValStr_enum(const void* base, void* par, MemberDef* memb_def,
 }
 
 String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* memb_def,
-				       StrContext sc, bool force_inline) const 
+				       StrContext sc, bool force_inline) const
 {
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   String rval;
@@ -5871,13 +5872,13 @@ namespace { // anonymous
       str = "nan";
       return;
     }
-    
+
     // Windows uses "1.#INF" or "-1.#INF" for infinities.
     if (str.contains_ci("inf")) {
       str = (str.elem(0) == '-') ? "-inf" : "inf";
       return;
     }
-    
+
     // Get rid of leading zeros in the exponent, since mac/win aren't
     // consistent in how many they output for padding.
     int exponent = str.index_ci("e+");
@@ -5890,11 +5891,11 @@ namespace { // anonymous
 	str.del(exponent, firstNonZero - exponent);
       }
     }
-    
+
     // Convert , to . for intl contexts so files are always uniform
     str.repl(",", ".");
   }
-  
+
   String formatFloat(float f, TypeDef::StrContext sc) {
     switch (sc) {
       case TypeDef::SC_STREAMING: {
@@ -5906,7 +5907,7 @@ namespace { // anonymous
 	return String(f);
     }
   }
-  
+
   String formatDouble(double d, TypeDef::StrContext sc) {
     switch (sc) {
       case TypeDef::SC_STREAMING: {
@@ -5921,9 +5922,9 @@ namespace { // anonymous
 }
 
 String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
-			  StrContext sc, bool force_inline) const 
+			  StrContext sc, bool force_inline) const
 {
-  if(sc == SC_DEFAULT) 
+  if(sc == SC_DEFAULT)
     sc = (taMisc::is_saving) ? SC_STREAMING : SC_VALUE;
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
@@ -6060,8 +6061,8 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       } else  return String::con_NULL;
     }
 #endif
-    else if(DerivesFormal(TA_class) && 
-	    (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) 
+    else if(DerivesFormal(TA_class) &&
+	    (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")))
     {
       return GetValStr_class_inline(base_, par, memb_def, sc, force_inline);
     }
@@ -6159,7 +6160,7 @@ void TypeDef::SetValStr_enum(const String& val, void* base, void* par, MemberDef
   }
 }
 
-void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par, 
+void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par,
 				     MemberDef* memb_def, StrContext sc, bool force_inline) {
   String rval = val;
   rval = rval.after('{');
@@ -6203,17 +6204,17 @@ void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par,
 	}
       }
     }
-    if((md != NULL) && !mb_val.empty()) { // note: changed par to base here.. 
+    if((md != NULL) && !mb_val.empty()) { // note: changed par to base here..
       md->type->SetValStr(mb_val, md->GetOff(base), base /* par */, md, sc, true);
       // force inline!
     }
   }
 }
 
-void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def, 
-			StrContext sc, bool force_inline) 
+void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def,
+			StrContext sc, bool force_inline)
 {
-  if (sc == SC_DEFAULT) 
+  if (sc == SC_DEFAULT)
     sc = (taMisc::is_loading) ? SC_STREAMING : SC_VALUE;
 
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
@@ -6337,7 +6338,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 #ifndef NO_TA_BASE
     if (DerivesFrom(TA_taBase)) {
       if (tabMisc::root) {
-        if (is_null) 
+        if (is_null)
           taBase::DelPointer((taBase**)base);
         else
           taBase::SetValStr_ptr(val, this, base, par, memb_def, sc, force_inline);
@@ -6391,7 +6392,7 @@ bool TypeDef::isVarCompat() const {
   return true;
 }
 
-const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) const 
+const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) const
 {
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
@@ -6407,7 +6408,7 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
       return fun->name;
     else if(*((void**)base) == NULL)
       return Variant((void*)NULL);//String::con_NULL;
-    else 
+    else
       return String((ta_intptr_t)*((void**)base)); //TODO: is this the best??
   }
   if (ptr == 0) {
@@ -6496,15 +6497,15 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
 #endif
   }
   // other types and degress of indirection not really supported
-  return _nilVariant; 
+  return _nilVariant;
 }
 
-bool TypeDef::ValIsDefault(const void* base, const MemberDef* memb_def, 
-    int for_show) const 
+bool TypeDef::ValIsDefault(const void* base, const MemberDef* memb_def,
+    int for_show) const
 {
   // some cases are simple, for non-class values
   if ((InheritsFrom(TA_void) || ((memb_def) && (memb_def->fun_ptr != 0))) ||
-    (ptr > 0) || 
+    (ptr > 0) ||
     !InheritsNonAtomicClass()
   ){
     return ValIsEmpty(base, memb_def); // note: show not used for single guy
@@ -6521,7 +6522,7 @@ bool TypeDef::ValIsDefault(const void* base, const MemberDef* memb_def,
   }
 }
 
-bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const 
+bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
 {
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   // if its void, odds are its a function..
@@ -6535,8 +6536,8 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
       fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
     if (fun)
       return false;
-    else 
-      return !(*((void**)base)); 
+    else
+      return !(*((void**)base));
   }
   if (ptr == 0) {
     if (DerivesFrom(TA_bool)) {
@@ -6556,10 +6557,10 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
       return (*((unsigned char*)base) == 0);
     }
     else if(DerivesFrom(TA_short)) {
-      return (*((short*)base) == 0); 
+      return (*((short*)base) == 0);
     }
     else if(DerivesFrom(TA_unsigned_short)) {
-      return (*((unsigned short*)base) == 0);  
+      return (*((unsigned short*)base) == 0);
     }
     else if(DerivesFrom(TA_int)) {
       return (*((int*)base) == 0);
@@ -6598,15 +6599,15 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
     }
 #endif
     // must be some other value or a class -- default to saying no to empty
-    else return false; 
+    else return false;
     // NOTE: other value types are not really supported, just fall through to return invalid
   }
-  else // (ptr >= 1) 
+  else // (ptr >= 1)
     return !(*((void**)base)); // only empty if NULL
 }
 
 void TypeDef::SetValVar(const Variant& val, void* base, void* par,
-			MemberDef* memb_def) 
+			MemberDef* memb_def)
 {
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     MethodDef* fun = TA_taRegFun.methods.FindName(val.toString());
@@ -6696,7 +6697,7 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
         taMisc::Warning("Attempt to set member of type", this->name, " from ",
           bs->GetTypeDef()->name);
         return;
-      
+
       }
       if (memb_def  && memb_def->HasOption("OWN_POINTER")) {
 	if(par == NULL)
@@ -6921,7 +6922,7 @@ bool MemberSpace::CompareSameType(Member_List& mds, TypeSpace& base_types,
     MemberDef* md = FastEl(i);
     if(md->ShowMember(show_forbidden, TypeItem::SC_ANY, show_allowed)) {
       if(no_ptrs && (md->type->ptr > 0 || md->type->HasOption("SMART_POINTER"))) continue;
-      some_diff |= md->CompareSameType(mds, base_types, trg_bases, src_bases, 
+      some_diff |= md->CompareSameType(mds, base_types, trg_bases, src_bases,
 				       base_typ, trg_base, src_base,
 				       show_forbidden, show_allowed, no_ptrs, test_only);
     }
@@ -6937,13 +6938,13 @@ bool MemberDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
   bool some_diff = false;
   if(type->InheritsFormal(TA_class)) {
     if(type->HasOption("EDIT_INLINE") || type->HasOption("INLINE")) {
-      // check the members 
+      // check the members
       some_diff = type->CompareSameType(mds, base_types, trg_bases, src_bases,
 					GetOff(trg_base), GetOff(src_base),
 					show_forbidden, show_allowed,
 					no_ptrs, true); // test only!
       if(some_diff && !test_only) {			// not already testing, add it
-	mds.Link(this); base_types.Link(base_typ); 
+	mds.Link(this); base_types.Link(base_typ);
 	trg_bases.Add(trg_base); src_bases.Add(src_base);
       }
     }
@@ -6958,7 +6959,7 @@ bool MemberDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
     if(type->GetValStr(GetOff(trg_base), trg_base, this) !=
        type->GetValStr(GetOff(src_base), src_base, this)) {
       if(!test_only) {
-	mds.Link(this); base_types.Link(base_typ); 
+	mds.Link(this); base_types.Link(base_typ);
 	trg_bases.Add(trg_base); src_bases.Add(src_base);
       }
       some_diff = true;
@@ -7330,7 +7331,7 @@ String TypeDef::GetHTMLLink(bool gendoc) const {
     npt = npt->GetNonConstType();
   if(npt) {
     if(npt->InheritsFormal(TA_class)) {
-      if(gendoc) 
+      if(gendoc)
 	rval.cat("<a href=\"").cat(npt->name).cat(".html\">").cat(Get_C_Name()).cat("</a>");
       else
 	rval.cat("<a href=\"ta:.Type.").cat(npt->name).cat("\">").cat(Get_C_Name()).cat("</a>");
@@ -7466,7 +7467,7 @@ String TypeDef::GetHTML(bool gendoc) const {
       rval.cat(par->GetHTMLLink(gendoc));
       inhi++;
     }
-    rval.cat("</p>\n\n");	
+    rval.cat("</p>\n\n");
   }
 
   if(children.size > 0) {
@@ -7479,7 +7480,7 @@ String TypeDef::GetHTML(bool gendoc) const {
       rval.cat(par->GetHTMLLink(gendoc));
       inhi++;
     }
-    rval.cat("</p>\n\n");	
+    rval.cat("</p>\n\n");
   }
 
   if(taMisc::help_detail >= taMisc::HD_DETAILS) {
@@ -7506,9 +7507,9 @@ String TypeDef::GetHTML(bool gendoc) const {
     }
     rval.cat("</ul>\n");
   }
-  
+
   /////////////////////////////////////////////////////////////////////
-  // collect the members and methods into string arrays for sorting 
+  // collect the members and methods into string arrays for sorting
   String_PArray memb_idx;
   for(int i=0;i<members.size;i++) {
     MemberDef* md = members[i];
@@ -7998,7 +7999,7 @@ void taObjDiff_List::Initialize() {
 #endif
 }
 
-taObjDiff_List::~taObjDiff_List() { 
+taObjDiff_List::~taObjDiff_List() {
   Reset();
 #ifndef NO_TA_BASE
   tab_obj_a = NULL;
@@ -8008,12 +8009,12 @@ taObjDiff_List::~taObjDiff_List() {
 
 String	taObjDiff_List::El_GetName_(void* it) const { return ((taObjDiffRec*)it)->name; }
 TALPtr 	taObjDiff_List::El_GetOwnerList_(void* it) const { return ((taObjDiffRec*)it)->owner; }
-void*	taObjDiff_List::El_SetOwner_(void* it_) { 
+void*	taObjDiff_List::El_SetOwner_(void* it_) {
   if (!it_) return it_;
   taObjDiffRec* it = (taObjDiffRec*)it_;
-  it->owner = this; 
+  it->owner = this;
   return it_;
-  
+
 }
 void	taObjDiff_List::El_SetIndex_(void* it, int i){ ((taObjDiffRec*)it)->idx = i; }
 
