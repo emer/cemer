@@ -3197,8 +3197,6 @@ cssProg* cssProg::SetSrcPC(int srcln) {
 
 void cssProg::RunDebugInfo(cssInst* nxt) {
   static int last_src_ln = -1;
-  if(top->debug == 0) return;
-
   if(top->cmd_shell) {
     pager_ostream& fh = top->cmd_shell->pgout;
     if(top->debug <= 1) {
@@ -3287,9 +3285,7 @@ cssEl* cssProg::Cont() {
       }
       else {
 	cssInst* nxt = insts[Frame()->pc++];
-#ifdef DEBUG
 	if(top->debug > 0) RunDebugInfo(nxt);
-#endif
 	cssEl::RunStat rval = nxt->Do();
 	if((top->watchpoints.size > 0) && CheckWatch()) {
 	  top->run_stat = cssEl::BreakPoint;
@@ -3303,8 +3299,8 @@ cssEl* cssProg::Cont() {
       }
     }
   }
-  else {
-    int stc, lim;
+  else {			// step_mode > 0
+    int stc, curc, lim;
     if(top->debug >= 2) {
       stc = 0;
       lim = top->step_mode;
@@ -3316,7 +3312,8 @@ cssEl* cssProg::Cont() {
 	stc = -1;
       lim = stc + top->step_mode;
     }
-    while((stc < lim) && (PC() < size) && (top->run_stat == cssEl::Running)) {
+    curc = stc;
+    while((PC() < size) && (top->run_stat == cssEl::Running)) {
       if((breaks.size > 0) && IsBreak(PC())) {
 	top->last_bp_prog = this;
 	top->last_bp_pc = PC();
@@ -3329,9 +3326,7 @@ cssEl* cssProg::Cont() {
       }
       else {
 	cssInst* nxt = insts[Frame()->pc++];
-#ifdef DEBUG
-	if(top->debug > 0) RunDebugInfo(nxt);
-#endif
+	RunDebugInfo(nxt);
 	cssEl::RunStat rval = nxt->Do();
 	if((top->watchpoints.size > 0) && CheckWatch()) {
 	  top->run_stat = cssEl::BreakPoint;
@@ -3343,12 +3338,14 @@ cssEl* cssProg::Cont() {
 	else
 	  top->run_stat = rval;
 	if(top->debug < 2)
-	  stc = nxt->line;
+	  curc = nxt->line;
 	else
-	  stc++;
+	  curc++;
+	if(curc >= lim) {
+	  top->run_stat = cssEl::BreakPoint; // indicate that we stoped for a reason other than stopping
+	}
       }
     }
-    top->step_mode = 0;		// always temporary
   }
 
   if(cssMisc::proc_events_timer.elapsed() > taMisc::css_gui_event_interval) {
@@ -4569,6 +4566,8 @@ cssEl* cssProgSpace::Cont() {
       }
     }
   } while(run_stat == cssEl::NewProgShoved);
+
+  step_mode = 0;		// always temporary
 
   state &= ~cssProg::State_Run;
   cssMisc::PopCurTop(old_top);

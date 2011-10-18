@@ -934,6 +934,10 @@ public:
 			  const char* d=0, const char* e=0, const char* f=0,
 			  const char* g=0, const char* h=0, const char* i=0);
   // #CAT_Dialog displays informative msg to stdout and/or other logging mechanism -- always save to the log, but only displays to stdout if DEBUG mode is active
+  static void 	LogInfo(const char* a, const char* b=0, const char* c=0,
+			const char* d=0, const char* e=0, const char* f=0,
+			const char* g=0, const char* h=0, const char* i=0);
+  // #CAT_Dialog easy method for calling LogEvent with discrete args like the rest of the dialog options -- just cats the args with LOG: tag and sends resulting string to LogEvent
 
   static int 	Choice(const char* text="Choice", const char* a="Ok", const char* b=0,
 		       const char* c=0, const char* d=0, const char* e=0,

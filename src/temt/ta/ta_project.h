@@ -126,6 +126,7 @@ public:
   void	InitLinks();
   TA_BASEFUNS(taWizard);
 protected:
+  void	UpdateAfterEdit_impl();
   virtual void	RenderWizDoc_header(); // the doc header (very start) text
   virtual void	RenderWizDoc_footer(); // the doc footer (very end) text
   virtual void	RenderWizDoc_impl();   // main render of content

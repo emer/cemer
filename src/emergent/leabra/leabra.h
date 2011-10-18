@@ -3788,7 +3788,7 @@ class LEABRA_API LeabraWizard : public Wizard {
   // #STEM_BASE ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
-  override bool StdNetwork(TypeDef* net_type = &TA_LeabraNetwork, Network* net = NULL);
+  override bool StdNetwork();
   override bool	UpdateInputDataFmNet(Network* net, DataTable* data_table);
 
   virtual bool	StdLayerSpecs(LeabraNetwork* net);

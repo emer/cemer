@@ -54,6 +54,10 @@ void taGuiWidget::UrlAction() {
 }
 
 void taGuiWidget::GetImage() {
+  if(widget_type == "DataTable") {
+    iDataTableEditor* edt = (iDataTableEditor*)widget.data();
+    edt->Refresh();
+  }
   if(!tai_data || data.isNull()) return;
   if(widget_type == "IntField") {
     ((taiIncrField*)tai_data)->GetImage((String)*((int*)data.toPtr()));
@@ -76,10 +80,6 @@ void taGuiWidget::GetImage() {
     if(typnm.nonempty()) td = taMisc::types.FindName(typnm);
     if(!td) td = &TA_taOBase;
     ((taiTokenPtrButton*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
-  }
-  if(widget_type == "DataTable") {
-    iDataTableEditor* edt = (iDataTableEditor*)widget.data();
-    edt->Refresh();
   }
 }
 
@@ -183,6 +183,7 @@ void taGuiDataHost::GetImage(bool force) {
 
 void taGuiDataHost::GetValue() {
   gui_owner->GetValue();
+  gui_owner->GetImage();
 }
 
 void taGuiDataHost::Ok_impl() {

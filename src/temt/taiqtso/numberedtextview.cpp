@@ -39,14 +39,14 @@ NumberBar::NumberBar( QWidget *parent, bool enable_icons)
   icons_enabled = enable_icons;
   text_width = fontMetrics().width( QString("0000"));
   text_height = fontMetrics().height();
-  icon_width = text_width; // 10 + 32;
+  icon_width = fontMetrics().width( QString("BRK"));
   total_width = text_width;
   if(enable_icons) {
-    total_width += icon_width;
-    // note: can't seem to find these icons!  need to get them somehow..
-    stopMarker = QPixmap( "images/no.png" );
-    currentMarker = QPixmap( "images/next.png" );
-    bugMarker = QPixmap( "images/bug.png" );
+    total_width += icon_width + fontMetrics().width( QString("=>"));
+//     // note: can't seem to find these icons!  need to get them somehow..
+//     stopMarker = QPixmap( "images/no.png" );
+//     currentMarker = QPixmap( "images/next.png" );
+//     bugMarker = QPixmap( "images/bug.png" );
   }
   setFixedWidth(total_width);
 }
@@ -54,8 +54,21 @@ NumberBar::NumberBar( QWidget *parent, bool enable_icons)
 NumberBar::~NumberBar() {
 }
 
-void NumberBar::setCurrentLine( int lineno ) {
+void NumberBar::setCurrentLine(int lineno, bool recenter) {
+  if(currentLine == lineno) return;
   currentLine = lineno;
+  if(edit && recenter) {
+    centerOnLine(currentLine);
+  }
+}
+
+void NumberBar::centerOnLine(int lineno) {
+  QRectF rect = rectFromLineNumber(lineno);
+  qreal hlf_ht = 0.5 * (qreal)edit->viewport()->height();
+  qreal curval = (qreal)edit->verticalScrollBar()->value();
+  qreal nwval = (rect.top() + curval) - hlf_ht; // rect is relative to current val!
+  if(nwval < 0.0) nwval = 0.0;
+  edit->verticalScrollBar()->setValue((int)nwval);
 }
 
 void NumberBar::setLineFlags(int lineno, int flags) {
@@ -142,18 +155,19 @@ void NumberBar::paintEvent( QPaintEvent * ) {
       int lflag = lineFlags(lineCount);
       if ( lflag & LF_ERROR || lflag & LF_WARNING) {
 	p.drawText(1, qRound( position.y() ) - contentsY + ascent, "ERR");
-	p.drawPixmap( 1, qRound( position.y() ) - contentsY, bugMarker );
+// 	p.drawPixmap( 1, qRound( position.y() ) - contentsY, bugMarker );
       }
 
       // Stop marker
       if ( lflag & LF_BREAK ) {
 	p.drawText(1, qRound( position.y() ) - contentsY + ascent, "BRK");
- 	p.drawPixmap(1, qRound( position.y() ) - contentsY, stopMarker );
+//  	p.drawPixmap(1, qRound( position.y() ) - contentsY, stopMarker );
       }
 
       // Current line marker
       if ( currentLine == lineCount ) {
-	p.drawPixmap( 19, qRound( position.y() ) - contentsY, currentMarker );
+	p.drawText(icon_width, qRound( position.y() ) - contentsY + ascent, "=>");
+// 	p.drawPixmap(icon_width, qRound( position.y() ) - contentsY, currentMarker );
       }
     }
   }
@@ -312,8 +326,8 @@ bool NumberedTextView::eventFilter( QObject *obj, QEvent *event )
     cursor.movePosition( QTextCursor::EndOfWord, QTextCursor::KeepAnchor );
 
     QString word = cursor.selectedText();
-    emit mouseHover( word );
-    emit mouseHover( helpEvent->pos(), word );
+    int lineno = numbers->lineNumberFmPos(helpEvent->pos().y());
+    emit mouseHover(helpEvent->globalPos(), lineno, word);
 
     // QToolTip::showText( helpEvent->globalPos(), word ); // For testing
   }

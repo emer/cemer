@@ -374,7 +374,13 @@ void taWizard::Initialize() {
 
 void taWizard::InitLinks() {
   inherited::InitLinks();
+  wiz_doc.SetName(name);	// same name as us..
   RenderWizDoc();
+}
+
+void taWizard::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  wiz_doc.SetName(name);	// same name as us..
 }
 
 void taWizard::RenderWizDoc() {
@@ -452,7 +458,7 @@ void taUndoDiffSrc::EncodeDiff(taUndoRec* rec) {
   last_diff_n = diff.GetLinesChanged(); // counts up total lines changed in diffs
   last_diff_pct = (.5f * (float)last_diff_n) / (float)diff.data_a.lines;
   // lines changed tends to double-count..
-  taMisc::DebugInfo("last_diff_n: ", String(last_diff_n), " pct: ", String(last_diff_pct));
+  taMisc::LogInfo("last_diff_n: ", String(last_diff_n), " pct: ", String(last_diff_pct));
   // now nuke rec's saved data!!
   rec->save_data = _nilString;
   // if need to debug, turn this off and turn on comparison below..
@@ -633,8 +639,8 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   urec->save_top = save_top;
   urec->save_top_path = save_top->GetPath(NULL, owner);
 
-  taMisc::DebugInfo("SaveUndo of action:",urec->action,"on:",urec->mod_obj_name,
-		    "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
+  taMisc::LogInfo("SaveUndo of action:",urec->action,"on:",urec->mod_obj_name,
+		  "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
 
   tabMisc::cur_undo_save_top = save_top; // let others know who we're saving for..
   tabMisc::cur_undo_mod_obj = mod_obj; // let others know who we're saving for..
@@ -655,7 +661,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       cur_src = new taUndoDiffSrc;
       undo_srcs.CircAddLimit(cur_src, undo_depth); // large depth
       cur_src->InitFmRec(urec);			   // init
-      taMisc::DebugInfo("Undo: New source added!");
+      taMisc::LogInfo("Undo: New source added!");
     }
     if(diff_threads.n_running > 0)
       diff_threads.SyncThreads();	// sync now before running again..

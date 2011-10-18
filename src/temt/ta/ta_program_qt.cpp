@@ -18,6 +18,7 @@
 #include "ta_qt.h"
 #include "ta_qtdialog.h" // for Hilight button
 #include "ta_TA_inst.h"
+#include "css_machine.h"
 
 #include <QApplication>
 #include <QButtonGroup>
@@ -906,6 +907,8 @@ iProgramViewScriptPanel::iProgramViewScriptPanel(taiDataLink* dl_)
 	    SLOT(lineFlagsUpdated(int, int)));
     connect(nb, SIGNAL(viewSource(int)), this,
 	    SLOT(viewSource(int)));
+    connect(vs, SIGNAL(mouseHover(const QPoint&, int, const QString&)), this,
+	    SLOT(mouseHover(const QPoint&, int, const QString&)));
   }
 }
 
@@ -923,10 +926,12 @@ bool iProgramViewScriptPanel::ignoreDataChanged() const {
 }
 
 void iProgramViewScriptPanel::DataChanged_impl(int dcr, void* op1_, void* op2_) {
-  if (dcr <= DCR_ITEM_UPDATED_ND) {
-    this->m_update_req = true; // so we update next time we show, if hidden
-  }
-  inherited::DataChanged_impl(dcr, op1_, op2_);
+  if(vs && vs->isVisible())
+    UpdatePanel_impl();
+//   if (dcr <= DCR_ITEM_UPDATED_ND) {
+//     this->m_update_req = true; // so we update next time we show, if hidden
+//   }
+//   inherited::DataChanged_impl(dcr, op1_, op2_);
 }
 
 bool iProgramViewScriptPanel::HasChanged() {
@@ -938,6 +943,7 @@ void iProgramViewScriptPanel::OnWindowBind_impl(iTabViewer* itv) {
 }
 
 void iProgramViewScriptPanel::UpdatePanel_impl() {
+  if(!vs) return;
   inherited::UpdatePanel_impl(); // clears reg flag and updates tab
   Program* prg_ = prog();
   if(!prg_) return;
@@ -955,7 +961,10 @@ void iProgramViewScriptPanel::UpdatePanel_impl() {
       pflg |= NumberBar::LF_WARNING;
     nb->setLineFlags(i, pflg);
   }
-  // todo: get current line from css..
+  
+  if(prg_->script) {
+    nb->setCurrentLine(prg_->script->CurRunSrcLn());
+  }
 
   prg_->ViewScriptUpdate();
   int contentsY = vs->textEdit()->verticalScrollBar()->value();
@@ -988,6 +997,14 @@ void iProgramViewScriptPanel::viewSource(int lineno) {
   ProgLine* pl = prg_->script_list.SafeEl(lineno);
   if(!pl || !pl->prog_el) return;
   tabMisc::DelayedFunCall_gui(pl->prog_el, "BrowserSelectMe");
+}
+
+void iProgramViewScriptPanel::mouseHover(const QPoint &pos, int lineno, const QString& word) {
+  Program* prg_ = prog();
+  if(!prg_) return;
+  String rval = prg_->GetProgCodeInfo(lineno, word);
+  if(rval.nonempty())
+    QToolTip::showText(pos, rval);
 }
 
 void iProgramViewScriptPanel::ResolveChanges_impl(CancelOp& cancel_op) {

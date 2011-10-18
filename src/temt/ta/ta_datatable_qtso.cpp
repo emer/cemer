@@ -5794,6 +5794,7 @@ void iDataTableEditor::DataLinkDestroying(taDataLink* dl) {
 }
 
 void iDataTableEditor::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
+//   taMisc::Info("idte:ddc", String(dcr));
 }
 
 DataTableModel* iDataTableEditor::dtm() const {
@@ -5814,6 +5815,9 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
   if (dt_ == m_dt.ptr()) return;
 
   m_dt = dt_;
+
+  // apparently not needed
+//   dt_->AddDataClient(this);
   
   DataTableModel* mod = dtm();
 

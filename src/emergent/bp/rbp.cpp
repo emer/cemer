@@ -390,7 +390,6 @@ void NoisyRBpUnitSpec::Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thread_n
 //////////////////////////////////
 
 void BpWizard::Initialize() {
-  default_net_type = &TA_BpNetwork;
 }
 
 bool BpWizard::StdProgs() {

@@ -2090,7 +2090,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, bool da_mod_all,
     net = (LeabraNetwork*)proj->GetNewNetwork();
     if(TestError(!net, "PBWM", "network is NULL and could not make a new one -- aborting!"))
       return false;
-    if(!StdNetwork(&TA_LeabraNetwork, net)) return false;
+    if(!StdNetwork()) return false;
   }
 
   // first configure PVLV system..

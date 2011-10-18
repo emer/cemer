@@ -34,6 +34,7 @@
 # include "ta_qttype_def.h"
 # include "ta_datatable_qtso.h"
 # include "netstru_qtso.h"
+# include "ta_gui.h"
 
 # include <qapplication.h>
 # include <QWidgetList>
@@ -88,41 +89,177 @@ void emergent_project_init() {
 // module initialization
 InitProcRegistrar mod_init_emergent_project(emergent_project_init);
 
+/////////////////////////////////////////////////
+//		StdNetWizDlg
 
-//////////////////////////
-//    LayerWizEl	//
-//////////////////////////
-
-void LayerWizEl::Initialize() {
-  n_units = 25;
+void StdNetWizDlg::Initialize() {
+  Dlg1 = NULL;
+  Dlg2 = NULL;
+  net_config = NULL;
+  n_layers = 3;
 }
 
+void StdNetWizDlg::NewNetwork() {
+//   network = .networks.New(1);
+  Dlg1->Revert();
+  taMisc::Info("New network created:", network->name);
+}
+
+void StdNetWizDlg::NLayersFmNetwork() {
+  if(!network) {
+    return;
+  }
+  n_layers = network->layers.leaves;
+  Dlg1->Revert();
+  taMisc::Info("Read n_layers from network:", String(n_layers), " network = ", network->name);
+}
+
+void StdNetWizDlg::ConfigOneLayer(int lay_no, const String& nm, const String& typ) {
+  net_config->SetVal(nm, "Name", lay_no);
+  net_config->SetVal(typ, "Type", lay_no);
+  net_config->SetVal(5, "Size_X", lay_no);
+  net_config->SetVal(5, "Size_Y", lay_no);
+}
+
+// configure default structure for a new network
+void StdNetWizDlg::NewNetDefaultConfig() {
+  // local variables
+  int n_lays;  n_lays = 0;
+  Layer* lay;  lay = NULL;
+  int i;  i = 0;
+  n_lays = net_config->rows;
+  if(n_lays > 0) {
+    ConfigOneLayer(0, "Input", "INPUT");
+  }
+  if(n_lays > 1) {
+    ConfigOneLayer(1, "Hidden", "HIDDEN");
+  }
+  if(n_lays == 3) {
+    ConfigOneLayer(2, "Output", "TARGET");
+  }
+  if(n_lays > 2) {
+    ConfigOneLayer(n_lays-1, "Output", "TARGET");
+    for(i=2; i<n_lays-1; i++) {
+      ConfigOneLayer(i, "Hidden_" + String(i-1), "HIDDEN");
+    }
+  }
+}
+
+void StdNetWizDlg::AddNewLayerRow() {
+  net_config->AddBlankRow();
+  Dlg2->Apply();
+}
+
+void StdNetWizDlg::RefreshLayerList() {
+  Dlg2->Apply();
+}
+
+void StdNetWizDlg::DoDialog() {
+  int new_net;  new_net = 0;
+  String curow;
+
+  Dlg1 = new taGuiDialog;
+  Dlg2 = new taGuiDialog;
+  net_config = new DataTable;
+  n_layers = 3;
+
+  Dlg1->Reset();
+  Dlg1->prompt = "Network Wizard Step 1 of 2: Select Network and Number of Layers";
+  Dlg1->win_title = "Network Wizard Step 1 of 2";
+  Dlg1->AddWidget("main", "", "");
+  Dlg1->AddVBoxLayout("mainv", "", "main", "");
+  curow = "instr";
+  Dlg1->AddHBoxLayout(curow, "mainv", "", "");
+  Dlg1->AddLabel("Instructions", "main", curow, "label=Please select a network (or make a new one) and enter the number of layers.\nYou will then be able to configure each layer in the next dialog (press OK to continue).;");
+  Dlg1->AddSpace(20, "mainv");
+  curow = "netsel";
+  Dlg1->AddHBoxLayout(curow, "mainv", "", "");
+  Dlg1->AddObjectPtr((taBaseRef*)&network, &TA_Network, "Network", "main", curow, "tooltip=select the network to configure;");
+  Dlg1->AddSpace(20, curow);
+  Dlg1->AddPushButton("NewNetwork", "main", curow, "this.NewNetwork()", "label=New Network; tooltip=press this button to create a new network to configure;");
+  Dlg1->AddSpace(20, "mainv");
+  curow = "nlayers";
+  Dlg1->AddHBoxLayout(curow, "mainv", "", "");
+  Dlg1->AddLabel("nlaylbl", "main", curow, "label=N Layers: ;");
+  Dlg1->AddIntField(&n_layers, "n_layers", "main", curow, "tooltip=enter the number of layers to create here\n you will be able to change this later too;");
+  Dlg1->AddStretch(curow);
+  Dlg1->AddPushButton("NLayersFmNetwork", "main", curow, "this.NLayersFmNetwork()", "label=Get N Layers From Network; tooltip=get the number of layers from the existing network;");
+  int rval = Dlg1->PostDialog(true);
+  if(rval == 0 || network.ptr() == NULL) {
+    goto cleanup;
+  }
+
+  /*******************************************************************
+  // == Dialog 2 ==
+  *******************************************************************/
+  if(network->layers.leaves == 0) {
+    new_net = true;
+  }
+  network->NetStructToTable(net_config);
+  net_config->RemoveCol("SendPrjns");
+  net_config->EnforceRows(n_layers);
+  if(new_net) {
+    NewNetDefaultConfig();
+  }
+  Dlg2->Reset();
+  Dlg2->prompt = "Network Wizard Step 2 of 2: Enter Layer Names, Sizes, and Projections (Prjns)";
+  Dlg2->win_title = "Network Wizard Step 2 of 2";
+  Dlg2->SetSize(900, 600);
+  Dlg2->AddWidget("main", "", "", "");
+  Dlg2->AddVBoxLayout("mainv", "", "main", "");
+  curow = "instr";
+  Dlg2->AddHBoxLayout(curow, "mainv", "", "");
+  Dlg2->AddLabel("LabelTest", "main", curow, "label=Enter the names of the network layers, optionally a Group for the layers to live in, and the number of units in X, Y dimensions per layer\nand the receiving projections (layer names, separated by spaces) to connect from\nHold the mouse over the colum names for more detailed information (e.g., for Type options);");
+  Dlg2->AddSpace(20, "mainv");
+  curow = "dtable";
+  Dlg2->AddHBoxLayout(curow, "mainv", "", "");
+  Dlg2->AddDataTable(net_config, "NetworkStructure", "main", curow, "max_width=850; max_height=500;");
+  curow = "buttons";
+  Dlg2->AddHBoxLayout(curow, "mainv", "", "");
+  Dlg2->AddToolButton("AddLayer", "main", curow, "this.AddNewLayerRow()", "label=Add New Layer; tooltip=Add a new layer row to layer list (above)\n use context menu on selected rows to delete (press Refresh Layer List afterwards);");
+  Dlg2->AddSpace(20, curow);
+  Dlg2->AddToolButton("RefreshList", "main", curow, "this.RefreshLayerList()", "label=Refresh Layer List; tooltip=updates the list of layers and their settings (above)\n if you used one of the context menu actions to insert or remove layers.\n the display updating does not work automatically in this dialog;");
+  rval = Dlg2->PostDialog(true);
+  if(rval == 0) {
+    goto cleanup;
+  }
+
+  /*******************************************************************
+  // == now build the network to spec ==
+  *******************************************************************/
+  network->NetStructFmTable(net_config);
+  network->Build();
+  network->LayerZPos_Unitize();
+  network->FindMakeView();
+  if(taMisc::gui_active) {
+    tabMisc::DelayedFunCall_gui(network, "BrowserExpandAll");
+    tabMisc::DelayedFunCall_gui(network, "BrowserSelectMe");
+  }
+
+ cleanup:
+  delete Dlg1;
+  delete Dlg2;
+  delete net_config;
+
+  Initialize();
+}
 
 //////////////////////////
 //   Wizard		//
 //////////////////////////
 
 void Wizard::Initialize() {
-  n_layers = 3;
-  layer_cfg.SetBaseType(&TA_LayerWizEl);
-  connectivity = FEEDFORWARD;
-  default_net_type = &TA_Network;
 }
 
 void Wizard::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(layer_cfg, this);
-  if(!taMisc::is_loading)
-    layer_cfg.SetSize(n_layers);
 }
 
 void Wizard::CutLinks() {
-  layer_cfg.RemoveAll();
   inherited::CutLinks();
 }
 
 void Wizard::UpdateAfterEdit() {
-  layer_cfg.SetSize(n_layers);
   inherited::UpdateAfterEdit();
 }
 
@@ -173,164 +310,13 @@ void Wizard::RenderWizDoc_program() {
 * [[<this>.StdProgs()|Standard Programs]] -- click this to install standard programs for running the network.\n";
 }
 
-bool Wizard::ThreeLayerNet() {
-  n_layers = 3;
-  layer_cfg.SetSize(n_layers);
-  layer_cfg[0]->name = "Input";
-  layer_cfg[0]->io_type = LayerWizEl::INPUT;
-  layer_cfg[0]->DataChanged(DCR_ITEM_UPDATED);
-  layer_cfg[1]->name = "Hidden";
-  layer_cfg[1]->io_type = LayerWizEl::HIDDEN;
-  layer_cfg[1]->DataChanged(DCR_ITEM_UPDATED);
-  layer_cfg[2]->name = "Output";
-  layer_cfg[2]->io_type = LayerWizEl::OUTPUT;
-  layer_cfg[2]->DataChanged(DCR_ITEM_UPDATED);
-  if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall_gui(&layer_cfg, "BrowserExpandAll");
-  }
-  return true;
-}
-
-bool Wizard::MultiLayerNet(int n_inputs, int n_hiddens, int n_outputs) {
-  n_layers = n_inputs + n_hiddens + n_outputs;
-  layer_cfg.SetSize(n_layers);
-  int i;
-  for(i=0;i<n_inputs;i++) {
-    LayerWizEl* lel = layer_cfg[i];
-    lel->name = "Input";
-    if(n_inputs > 1) lel->name += "_" + String(i);
-    lel->io_type = LayerWizEl::INPUT;
-    lel->DataChanged(DCR_ITEM_UPDATED);
-  }
-  for(;i<n_inputs + n_hiddens;i++) {
-    LayerWizEl* lel = layer_cfg[i];
-    lel->name = "Hidden";
-    if(n_hiddens > 1) lel->name += "_" + String(i-n_inputs);
-    lel->io_type = LayerWizEl::HIDDEN;
-    lel->DataChanged(DCR_ITEM_UPDATED);
-  }
-  for(;i<n_layers;i++) {
-    LayerWizEl* lel = layer_cfg[i];
-    lel->name = "Output";
-    if(n_outputs > 1) lel->name += "_" + String(i-(n_inputs+n_hiddens));
-    lel->io_type = LayerWizEl::OUTPUT;
-    lel->DataChanged(DCR_ITEM_UPDATED);
-  }
-  if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall_gui(&layer_cfg, "BrowserExpandAll");
-  }
-  return true;
-}
-
-bool Wizard::StdNetwork(TypeDef* net_type, Network* net) {
-  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if(!net) {
-    if(TestError(!proj, "StdNetwork", "network is NULL and could not find project owner to make a new one -- aborting!")) return false;
-    net = proj->GetNewNetwork(net_type);
-    if(TestError(!net, "StdNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
-  }
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork before -- actually saves network specifically");
-  }
-  net->StructUpdate(true);
-  layer_cfg.SetSize(n_layers);
-  net->layers.SetSize(n_layers);
-  int i;
-  int n_hid_layers = 0;
-  for(i=0;i<layer_cfg.size;i++) {
-    LayerWizEl* el = (LayerWizEl*)layer_cfg[i];
-    if(el->io_type == LayerWizEl::HIDDEN) n_hid_layers++;
-  }
-  for(i=0;i<layer_cfg.size;i++) {
-    LayerWizEl* el = (LayerWizEl*)layer_cfg[i];
-    Layer* lay = (Layer*)net->layers[i];
-    if(lay->name != el->name) {
-      lay->name = el->name;
-      if(el->io_type == LayerWizEl::INPUT) {
-        lay->layer_type = Layer::INPUT;
-	lay->pos.z = 0;
-	if(i > 0) {
-	  Layer* prv = (Layer*)net->layers[i-1];
-	  lay->pos.x = prv->pos.x + prv->un_geom.x + 1;
-	}
-      }
-      else if(el->io_type == LayerWizEl::HIDDEN) {
-        lay->layer_type = Layer::HIDDEN;
-	if(i > 0) {
-	  Layer* prv = (Layer*)net->layers[i-1];
-	  lay->pos.z = prv->pos.z + 1;
-	}
-      }
-      else {			// OUTPUT
-        lay->layer_type = Layer::TARGET;
-	lay->pos.z = n_hid_layers + 1;
-	if(i > 0) {
-	  LayerWizEl* prvel = (LayerWizEl*)layer_cfg[i-1];
-	  if(prvel->io_type == LayerWizEl::OUTPUT) {
-	    Layer* prv = (Layer*)net->layers[i-1];
-	    lay->pos.x = prv->pos.x + prv->un_geom.x + 1;
-	  }
-	}
-      }
-    }
-    lay->un_geom.n = el->n_units;
-    lay->un_geom.FitN(lay->un_geom.n);
-    if(lay->un_geom.x * lay->un_geom.y != lay->un_geom.n) {
-      lay->un_geom.n_not_xy = true;
-    }
-    lay->UpdateAfterEdit();
-  }
-  int hid_ctr = 0;
-  for(i=0;i<layer_cfg.size;i++) {
-    LayerWizEl* el = (LayerWizEl*)layer_cfg[i];
-    Layer* lay = (Layer*)net->layers[i];
-    if(el->io_type == LayerWizEl::INPUT) continue;
-    if(el->io_type == LayerWizEl::HIDDEN) {
-      for(int j=0;j<layer_cfg.size;j++) {
-	LayerWizEl* fmel = (LayerWizEl*)layer_cfg[j];
-	Layer* fm = net->FindLayer(fmel->name);
-	if(hid_ctr == 0) {
-	  if(fmel->io_type == LayerWizEl::INPUT)
-	    net->FindMakePrjn(lay, fm);
-	}
-	else {
-	  if(i==0) continue;
-	  LayerWizEl* prvel = (LayerWizEl*)layer_cfg[i-1];
-	  Layer* fm = net->FindLayer(prvel->name);
-	  net->FindMakePrjn(lay, fm);
-	  if(connectivity == BIDIRECTIONAL)
-	    net->FindMakePrjn(fm, lay);
-	}
-      }
-      hid_ctr++;
-    }
-    else {			// OUTPUT
-      for(int j=layer_cfg.size-1;j>=0;j--) {
-	LayerWizEl* fmel = (LayerWizEl*)layer_cfg[j];
-	Layer* fm = net->FindLayer(fmel->name);
-	if(fmel->io_type == LayerWizEl::HIDDEN) {
-	  net->FindMakePrjn(lay, fm);
-	  if(connectivity == BIDIRECTIONAL)
-	    net->FindMakePrjn(fm, lay);
-	  break;
-	}
-	else if((n_hid_layers == 0) && (fmel->io_type == LayerWizEl::INPUT)) {
-	  net->FindMakePrjn(lay, fm);
-	}
-      }
-    }
-  }
-  net->LayerZPos_Unitize();
-  net->Build();
-  net->StructUpdate(false);
-  net->FindMakeView();
-  if(taMisc::gui_active) {
-    tabMisc::DelayedFunCall_gui(net, "BrowserExpandAll");
-    tabMisc::DelayedFunCall_gui(net, "BrowserSelectMe");
-  }
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork after -- actually saves network specifically");
-  }
+bool Wizard::StdNetwork() {
+  StdNetWizDlg* wiz = new StdNetWizDlg;
+  wiz->DoDialog();
+  delete wiz;
+//   if(proj) {
+//     proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork after -- actually saves network specifically");
+//   }
   return true;
 }
 
@@ -853,8 +839,6 @@ void ProjectBase::InitLinks_post() {
     taWizard* wiz = wizards.SafeEl(0);
     if (!wiz) {
       wiz = (Wizard*)wizards.New(1, wizards.el_typ);
-      wiz->auto_open = 
-	((Wizard*)wiz)->ThreeLayerNet();
     }
   }
   inherited::InitLinks_post();

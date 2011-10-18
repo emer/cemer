@@ -30,6 +30,7 @@
 #ifndef __MAKETA__
 #include "numberedtextview.h"
 # include <QPointer>
+# include <QToolTip>
 #endif
 
 #include "ta_TA_type.h"
@@ -238,9 +239,10 @@ public:
   ~iProgramViewScriptPanel();
 
 public slots:
+  // these all connect from corresponding signals on the NumberBar or NumberedTextView
   void	   lineFlagsUpdated(int lineno, int flags);
-  // view gui triggered update
   void	   viewSource(int lineno);
+  void	   mouseHover(const QPoint &pos, int lineno, const QString& word);
 
 public: // IDataLinkClient interface
   override void*	This() {return (void*)this;}

@@ -4382,6 +4382,7 @@ void Program::Init() {
       ret_val = RV_COMPILE_ERR;
   }
   if(ret_val == RV_OK) {
+    SetAllBreakpoints();          // reinstate all active breakpoints
     bool did_struct_updt = false;
     if(!HasProgFlag(OBJS_UPDT_GUI)) {
       objs.StructUpdateEls(true);
@@ -4461,7 +4462,7 @@ int Program::Cont_impl() {
   // the user cannot access this without having pressed Init first, and that
   // does all the checks.  this is the standard paradigm for such things --
   // init does checks. run assumes things are ok & thus can be fast.
-  script->debug = (int)HasProgFlag(TRACE);
+  script->SetDebug((int)HasProgFlag(TRACE));
   script->Cont();
   // note: shared var state likely changed, so update gui
   script_compiled = true; // override any run-generated changes!!
@@ -4543,6 +4544,7 @@ void Program::Step(Program* step_prg) {
     return;
   }
   ClearStopReq();
+  SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = true;
   if(step_prg)
     cur_step_prog = step_prg;
@@ -4572,11 +4574,7 @@ void Program::Step(Program* step_prg) {
   if(did_struct_updt)
     objs.StructUpdateEls(false);
   taMisc::DoneBusy();
-  if (ret_val != 0) {//TODO: use enums and sensible output string
-    taiChoiceDialog::ErrorDialog(NULL, String(
-      "The Program did not run -- ret_val=").cat(String(ret_val)),
-      "Operation Failed");
-  }
+  if (ret_val != RV_OK) ShowRunError();
   step_mode = false;
   cur_step_prog = NULL;
   if(stop_req) {
@@ -4657,6 +4655,46 @@ bool Program::StopCheck() {
     }
   }
   return false;
+}
+
+void Program::StepCss() {
+  if(AlreadyRunning()) return;  // already running!
+  if(run_state == NOT_INIT) {
+    Init();                     // auto-press Init button!
+  }
+  if(TestError(run_state != DONE && run_state != STOP, "StepCss",
+               "There was a problem with the Initialization of the Program (see css console for error messages) -- must fix before you can run.  Press Init first, look for errors, then Step")) {
+    return;
+  }
+  SetAllBreakpoints();          // reinstate all active breakpoints
+  CmdShell();
+  taMisc::Busy();
+  SetRunState(RUN);
+  DataChanged(DCR_ITEM_UPDATED_ND); // update button state
+  bool did_struct_updt = false;
+  if(!HasProgFlag(OBJS_UPDT_GUI)) {
+    objs.StructUpdateEls(true);
+    did_struct_updt = true;
+  }
+  script->step_mode = 1;
+  Cont_impl();
+  script->step_mode = 0;
+  if(did_struct_updt)
+    objs.StructUpdateEls(false);
+  taMisc::DoneBusy();
+  if (ret_val != RV_OK) ShowRunError();
+  if(stop_req) {
+    SetRunState(STOP);
+    if((stop_reason == SR_ERROR) && (ret_val == RV_OK)) {
+      ret_val = RV_RUNTIME_ERR;
+    }
+  }
+  else {
+    // we stop every step so not done yet!
+    SetRunState(STOP);
+  }
+  stop_req = false;                 // this does not do full clear, so that information can be queried
+  DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
 bool Program::RunFunction(const String& fun_name) {
@@ -4956,6 +4994,24 @@ void Program::AddDescString(taBase* prog_el, const String& dsc) {
   }
 }
 
+String Program::GetProgCodeInfo(int line_no, const String& code_str) {
+//   return String("info on line: ") + String(line_no) + " str: " + code_str;
+  ProgVar* pv = FindVarName(code_str);
+  if(pv) {
+    return pv->GetDisplayName();
+  }
+  if(script) {
+    cssElPtr cssptr = script->ParseName(code_str);
+    if((bool)cssptr) {
+      return String(code_str) + ": " + cssptr.El()->PrintStr();
+    }
+  }
+  taBase* tv = FindTypeName(code_str);
+  if(tv) {
+    return tv->GetDisplayName();
+  }
+  return _nilString;
+}
 
 void Program::ClearAllBreakpoints() {
   if(!script) return;
@@ -4968,7 +5024,7 @@ void Program::SetAllBreakpoints() {
   int nbp = 0;
   script->DelAllBreaks();       // start with clean slate
   ProgEl* last_pel_set = NULL;
-  for(int i=script_list.size-1; i>=1; i--) {
+  for(int i=1; i<script_list.size; i++) {
     ProgLine* pl = script_list.FastEl(i);
     ProgEl* pel = NULL;
     if(pl->prog_el && pl->prog_el->InheritsFrom(&TA_ProgEl))

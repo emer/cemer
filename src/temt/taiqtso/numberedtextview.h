@@ -57,8 +57,10 @@ public:
 
   virtual void	clearAllLineFlags();
   // reset all line flags
-  virtual void 	setCurrentLine( int lineno );
-  // set line that is current executing
+  virtual void 	setCurrentLine(int lineno, bool recenter = true);
+  // set line that is current executing -- if recenter then center text view on the line if it is different than the previous setting
+  virtual void	centerOnLine(int lineno);
+  // center text on given line number
 
   virtual int	lineNumberFmPos(float y_pos);
   // get line number from position relative to y position within this widget
@@ -121,16 +123,10 @@ public:
 Q_SIGNALS:
   /**
    * Emitted when the mouse is hovered over the text edit component.
+   * @param lineno The line number that the mouse is on
    * @param word The word under the mouse pointer
    */
-  void mouseHover( const QString &word );
-
-  /**
-   * Emitted when the mouse is hovered over the text edit component.
-   * @param pos The position of the mouse pointer.
-   * @param word The word under the mouse pointer
-   */
-  void mouseHover( const QPoint &pos, const QString &word );
+  void mouseHover(const QPoint &pos, int lineno, const QString& word);
 
 protected Q_SLOTS:
   /** @internal Used to update the highlight on the current line. */

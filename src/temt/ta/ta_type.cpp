@@ -1059,6 +1059,14 @@ void taMisc::DebugInfo(const char* a, const char* b, const char* c, const char* 
 #endif
 }
 
+void taMisc::LogInfo(const char* a, const char* b, const char* c, const char* d,
+       const char* e, const char* f, const char* g, const char* h, const char* i)
+{
+  String ad = String("*** LOG: ") + a;
+  String msg = SuperCat(ad, b, c, d, e, f, g, h, i);
+  taMisc::LogEvent(msg);
+}
+
 void taMisc::LogEvent(const String& log_data) {
   if(taMisc::log_stream.bad()) return;
   time_t tmp = time(NULL);

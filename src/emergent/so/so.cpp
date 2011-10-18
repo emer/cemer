@@ -360,7 +360,6 @@ void SoProject::Initialize() {
 }
 
 void SoWizard::Initialize() {
-  default_net_type = &TA_SoNetwork;
 }
 
 bool SoWizard::StdProgs() {

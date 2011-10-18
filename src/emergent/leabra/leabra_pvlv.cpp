@@ -1099,7 +1099,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     net = (LeabraNetwork*)proj->GetNewNetwork();
     if(TestError(!net, "PVLV", "network is NULL and could not make a new one -- aborting!"))
       return false;
-    if(!StdNetwork(&TA_LeabraNetwork, net)) return false;
+    if(!StdNetwork()) return false;
   }
   if(proj) {
     proj->undo_mgr.SaveUndo(net, "Wizard::PVLV before -- actually saves network specifically");

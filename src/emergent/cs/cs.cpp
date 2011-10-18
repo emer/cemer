@@ -1202,8 +1202,6 @@ void CsProject::Initialize() {
 
 
 void CsWizard::Initialize() {
-  connectivity = BIDIRECTIONAL;
-  default_net_type = &TA_CsNetwork;
 }
 
 bool CsWizard::StdProgs() {

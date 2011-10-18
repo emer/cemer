@@ -6581,18 +6581,17 @@ void LeabraProject::Initialize() {
 //////////////////////////////////
 
 void LeabraWizard::Initialize() {
-  connectivity = BIDIRECTIONAL;
-  default_net_type = &TA_LeabraNetwork;
 }
 
-bool LeabraWizard::StdNetwork(TypeDef* net_type, Network* net) {
-  if(!net) {
-    LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-    net = proj->GetNewNetwork(net_type);
-    if(TestError(!net, "StdNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
-  }
-  if(!inherited::StdNetwork(net_type, net)) return false;
-  return StdLayerSpecs((LeabraNetwork*)net);
+bool LeabraWizard::StdNetwork() {
+  return inherited::StdNetwork();
+//   if(!net) {
+//     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+//     net = proj->GetNewNetwork(net_type);
+//     if(TestError(!net, "StdNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
+//   }
+//   if(!inherited::StdNetwork(net_type, net)) return false;
+//   return StdLayerSpecs((LeabraNetwork*)net);
 }
 
 bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
@@ -6621,27 +6620,27 @@ bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
   inout->kwta.k_from = KWTASpec::USE_PAT_K;
 
   int i;
-  if(net->layers.size == layer_cfg.size) {	// likely to be using specs
-    for(i=0;i<layer_cfg.size;i++) {
-      LayerWizEl* el = (LayerWizEl*)layer_cfg[i];
-      Layer* lay = (Layer*)net->layers.FindName(el->name);
-      if(lay != NULL) {
-	if(el->io_type == LayerWizEl::HIDDEN)
-	  lay->SetLayerSpec(hid);
-	else
-	  lay->SetLayerSpec(inout);
-      }
-    }
-  }
-  else {
-    for(i=0;i<net->layers.size;i++) {
-      Layer* lay = (Layer*)net->layers[i];
-      if(lay->layer_type == Layer::HIDDEN)
-	lay->SetLayerSpec(hid);
-      else
-	lay->SetLayerSpec(inout);
-    }
-  }
+//   if(net->layers.size == layer_cfg.size) {	// likely to be using specs
+//     for(i=0;i<layer_cfg.size;i++) {
+//       LayerWizEl* el = (LayerWizEl*)layer_cfg[i];
+//       Layer* lay = (Layer*)net->layers.FindName(el->name);
+//       if(lay != NULL) {
+// 	if(el->io_type == LayerWizEl::HIDDEN)
+// 	  lay->SetLayerSpec(hid);
+// 	else
+// 	  lay->SetLayerSpec(inout);
+//       }
+//     }
+//   }
+//   else {
+//     for(i=0;i<net->layers.size;i++) {
+//       Layer* lay = (Layer*)net->layers[i];
+//       if(lay->layer_type == Layer::HIDDEN)
+// 	lay->SetLayerSpec(hid);
+//       else
+// 	lay->SetLayerSpec(inout);
+//     }
+//   }
 
   // move the bias spec under the con spec
   LeabraBiasSpec* bs;

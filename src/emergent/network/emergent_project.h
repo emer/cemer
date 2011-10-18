@@ -21,6 +21,7 @@
 #include "ta_project.h"
 #include "netstru.h"
 
+class taGuiDialog;
 class Program;
 class Program_Group; //
 class RetinaProc; //
@@ -29,59 +30,44 @@ class RetinaProc; //
 //			Wizard			//
 //////////////////////////////////////////////////
 
-class EMERGENT_API LayerWizEl : public taNBase {
-  // ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Wizard specifies basic parameters for a layer
+class EMERGENT_API StdNetWizDlg : public taNBase {
+  // #CAT_Wizard dialog for StdNetwork() wizard action
 INHERITED(taNBase)
 public:
-  enum InputOutput {
-    INPUT,
-    HIDDEN,
-    OUTPUT
-  };
+  taGuiDialog* 	Dlg1;  
+  taGuiDialog*	Dlg2;  
+  NetworkRef 	network;  
+  int 		n_layers;  
+  DataTable*	net_config;	// network configuration data table
+ 
+  void 	NewNetwork();
+  // #CAT_zImpl callback for dialog
+  void 	NLayersFmNetwork();
+  // #CAT_zImpl callback for dialog
+  void 	ConfigOneLayer(int lay_no, const String& nm, const String& typ);
+  // #CAT_zImpl callback for dialog
+  void 	NewNetDefaultConfig();
+  // #CAT_zImpl callback for dialog
+  void 	AddNewLayerRow();
+  // #CAT_zImpl callback for dialog
+  void 	RefreshLayerList();
+  // #CAT_zImpl callback for dialog
 
-  int		n_units;	// number of units in the layer
-  InputOutput 	io_type;	// is it an input, hidden, or output layer -- determines environment patterns
+  virtual void	DoDialog();
 
-  override String 	GetDecorateKey() const { return "Wizard"; }
-
-  SIMPLE_COPY(LayerWizEl);
-  TA_BASEFUNS(LayerWizEl);
+  TA_SIMPLE_BASEFUNS(StdNetWizDlg);
 private:
-  void	Initialize();
-  void	Destroy() 	{ };
+  void 	Initialize();
+  void 	Destroy()	{ CutLinks(); }
 };
-
-class EMERGENT_API LayerWizElList : public taList<LayerWizEl> {
-  // ##CAT_Wizard a list of layer wiz elements
-INHERITED(taList<LayerWizEl>)
-public:
-  TA_BASEFUNS_NOCOPY(LayerWizElList);
-private:
-  void	Initialize() 		{ SetBaseType(&TA_LayerWizEl); }
-  void 	Destroy()		{ };
-};
-
+  
 class EMERGENT_API Wizard : public taWizard {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
 INHERITED(taWizard)
 public:
-  enum Connectivity {
-    FEEDFORWARD,		// each layer projects to the next one in sequence
-    BIDIRECTIONAL		// layers are bidirectionally connected in sequence (each sends and receives from its neighbors)
-  };
+  virtual bool	StdNetwork();
+  // #MENU_BUTTON #MENU_ON_Network configure a new or existing standard network -- user is prompted for full configuration settings
 
-  int		n_layers;	// number of layers
-  LayerWizElList layer_cfg;	// #HIDDEN #NO_SAVE provides configuration information for each layer
-  Connectivity	connectivity;	// how to connect the layers
-  TypeDef*	default_net_type; // #TYPE_Network default type of network to create
-
-  virtual bool	ThreeLayerNet();
-  // #MENU_BUTTON #MENU_ON_Defaults set configuration to a standard three-layer network (input, hidden, output) -- DOESN'T MAKE NETWORK (use StdEnv!)
-  virtual bool	MultiLayerNet(int n_inputs = 1, int n_hiddens = 1, int n_outputs = 1);
-  // #MENU_BUTTON set configuration for specified number of each type of layer -- DOESN'T MAKE NETWORK (use StdEnv!)
-
-  virtual bool	StdNetwork(TypeDef* net_type, Network* net=NULL);
-  // #MENU_BUTTON #MENU_ON_Network #NULL_OK_1 #NULL_TEXT_NewNetwork #TYPE_ON_default_net_type make a standard network according to the current settings (if net == NULL, new network is created)
   virtual bool	RetinaProcNetwork(RetinaProc* retina_proc, Network* net=NULL);
   // #MENU_BUTTON #NULL_OK_1 #NULL_TEXT_1_NewNetwork configure the input layers of the network to accept the output of the image processing performed by retina_proc (if net == NULL, new network is created)
 
