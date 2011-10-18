@@ -6319,7 +6319,7 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
   for(int i=0;i<nunits;i++) {
     LeabraUnit* ru = (LeabraUnit*)lay->units.Leaf(i);
     LeabraUnit* inu = (LeabraUnit*)in_lay->units.Leaf(i);
-    ru->act = inu->act_eq;
+    ru->act = rus->clamp_range.Clip(inu->act_eq);
     ru->act_eq = ru->act_nd = ru->act;
     ru->da = 0.0f;		// I'm fully settled!
     ru->AddToActBuf(rus->syn_delay);

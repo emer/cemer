@@ -2977,6 +2977,9 @@ class LEABRA_API HippoEncoderConSpec : public LeabraConSpec {
   // for EC <-> CA1 connections: CHL learning on encoder variables (ru_act_p vs. ru_act_m2) -- soft bounding as specified in spec
 INHERITED(LeabraConSpec)
 public:
+#ifdef __MAKETA__
+  LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning 
+#endif
 
   override void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su) {
     Compute_SAvgCor(cg, su);
