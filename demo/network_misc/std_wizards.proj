@@ -1,0 +1,3695 @@
+// ta_Dump File v3.0 -- code v5.2.3.0 rev5075
+LeabraProject .projects["Project_0"] { 
+  taBase_Group @.templates = [0] {
+  };
+
+  Doc_Group @.docs = [0] {
+  };
+
+  Wizard_Group @.wizards = [1] {
+    LeabraWizard @["LeabraWizard_0"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+  };
+
+  SelectEdit_Group @.edits = [0] {
+  };
+
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp["InputData"] { 
+    };
+    DataTable_Group @.gp["OutputData"] { 
+    };
+    DataTable_Group @.gp["AnalysisData"] { 
+    };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @["data_base"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taDataAnal @["data_anal"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taDataGen @["data_gen"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taImageProc @["image_proc"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+  };
+
+  Program_Group @.programs = [1] {
+    Program @["NetworkWizard"] { 
+      ProgObjList @.objs = [3] {
+	taGuiDialog @["Dlg1"] { };
+	taGuiDialog @["Dlg2"] { };
+	DataTable @["NetworkConfig"] { 
+	  DataTableCols @.data = [8] {
+	    String_Data @["Group"] { };
+	    String_Data @["Name"] { };
+	    String_Data @["Type"] { };
+	    int_Data @["Size_X"] { 
+       UserDataItem_List @*(.user_data_) {
+		UserDataItem @["NARROW"] { };
+       };
+};
+	    int_Data @["Size_Y"] { 
+       UserDataItem_List @*(.user_data_) {
+		UserDataItem @["NARROW"] { };
+       };
+};
+	    int_Data @["UnitGps_X"] { 
+       UserDataItem_List @*(.user_data_) {
+		UserDataItem @["NARROW"] { };
+       };
+};
+	    int_Data @["UnitGps_Y"] { 
+       UserDataItem_List @*(.user_data_) {
+		UserDataItem @["NARROW"] { };
+       };
+};
+	    String_Data @["RecvPrjns"] { };
+	  };
+	};
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgVar_List @.vars = [7] {
+	ProgVar @["Dlg1"] { };
+	ProgVar @["Dlg2"] { };
+	ProgVar @["network"] { };
+	ProgVar @["n_layers"] { };
+	ProgVar @["curow"] { };
+	ProgVar @["NetworkConfig"] { };
+	ProgVar @["rval"] { };
+      };
+
+      Function_List @.functions = [6] {
+	Function @[0] { 
+	  ProgVar_List @.args = [0] {
+	  };
+
+	  ProgEl_List @.fun_code = [4] {
+	    ProgVars @[0] { 
+	      ProgVar_List @.local_vars = [0] {
+	      };
+	    };
+	    AssignExpr @[1] { };
+	    MethodCall @[2] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
+	    PrintVar @[3] { };
+	  };
+	};
+	Function @[1] { 
+	  ProgVar_List @.args = [0] {
+	  };
+
+	  ProgEl_List @.fun_code = [5] {
+	    ProgVars @[0] { 
+	      ProgVar_List @.local_vars = [0] {
+	      };
+	    };
+	    IfReturn @[1] { };
+	    AssignExpr @[2] { };
+	    MethodCall @[3] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
+	    PrintVar @[4] { };
+	  };
+	};
+	Function @[2] { 
+	  ProgVar_List @.args = [3] {
+	    ProgVar @["lay_no"] { };
+	    ProgVar @["nm"] { };
+	    ProgVar @["typ"] { };
+	  };
+
+	  ProgEl_List @.fun_code = [5] {
+	    ProgVars @[0] { 
+	      ProgVar_List @.local_vars = [0] {
+	      };
+	    };
+	    MethodCall @[1] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	    MethodCall @[2] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	    MethodCall @[3] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	    MethodCall @[4] { 
+	      ProgArg_List @.meth_args = [3] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+	      };
+	    };
+	  };
+	};
+	Function @[3] { 
+	  ProgVar_List @.args = [0] {
+	  };
+
+	  ProgEl_List @.fun_code = [6] {
+	    ProgVars @[0] { 
+	      ProgVar_List @.local_vars = [3] {
+		ProgVar @["n_lays"] { };
+		ProgVar @["lay"] { };
+		ProgVar @["i"] { };
+	      };
+	    };
+	    AssignExpr @[1] { };
+	    IfElse @[2] { 
+	      ProgEl_List @.true_code = [1] {
+		FunctionCall @[0] { 
+		  ProgArg_List @.fun_args = [3] {
+		    ProgArg @[0] { };
+		    ProgArg @[1] { };
+		    ProgArg @[2] { };
+		  };
+		};
+	      };
+
+	      ProgEl_List @.false_code = [0] {
+	      };
+	    };
+	    IfElse @[3] { 
+	      ProgEl_List @.true_code = [1] {
+		FunctionCall @[0] { 
+		  ProgArg_List @.fun_args = [3] {
+		    ProgArg @[0] { };
+		    ProgArg @[1] { };
+		    ProgArg @[2] { };
+		  };
+		};
+	      };
+
+	      ProgEl_List @.false_code = [0] {
+	      };
+	    };
+	    IfElse @[4] { 
+	      ProgEl_List @.true_code = [1] {
+		FunctionCall @[0] { 
+		  ProgArg_List @.fun_args = [3] {
+		    ProgArg @[0] { };
+		    ProgArg @[1] { };
+		    ProgArg @[2] { };
+		  };
+		};
+	      };
+
+	      ProgEl_List @.false_code = [0] {
+	      };
+	    };
+	    IfElse @[5] { 
+	      ProgEl_List @.true_code = [2] {
+		FunctionCall @[0] { 
+		  ProgArg_List @.fun_args = [3] {
+		    ProgArg @[0] { };
+		    ProgArg @[1] { };
+		    ProgArg @[2] { };
+		  };
+		};
+		ForLoop @[1] { 
+		  ProgEl_List @.loop_code = [1] {
+		    FunctionCall @[0] { 
+		      ProgArg_List @.fun_args = [3] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+		      };
+		    };
+		  };
+		};
+	      };
+
+	      ProgEl_List @.false_code = [0] {
+	      };
+	    };
+	  };
+	};
+	Function @[4] { 
+	  ProgVar_List @.args = [0] {
+	  };
+
+	  ProgEl_List @.fun_code = [3] {
+	    ProgVars @[0] { 
+	      ProgVar_List @.local_vars = [0] {
+	      };
+	    };
+	    MethodCall @[1] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
+	    MethodCall @[2] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
+	  };
+	};
+	Function @[5] { 
+	  ProgVar_List @.args = [0] {
+	  };
+
+	  ProgEl_List @.fun_code = [2] {
+	    ProgVars @[0] { 
+	      ProgVar_List @.local_vars = [0] {
+	      };
+	    };
+	    MethodCall @[1] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
+	  };
+	};
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [53] {
+	ProgVars @[0] { 
+	  ProgVar_List @.local_vars = [1] {
+	    ProgVar @["new_net"] { };
+	  };
+	};
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	MemberAssign @[2] { };
+	MemberAssign @[3] { };
+	MethodCall @[4] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[5] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	AssignExpr @[6] { };
+	MethodCall @[7] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[8] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[9] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	AssignExpr @[10] { };
+	MethodCall @[11] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[12] { 
+	  ProgArg_List @.meth_args = [5] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	  };
+	};
+	MethodCall @[13] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	MethodCall @[14] { 
+	  ProgArg_List @.meth_args = [5] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	  };
+	};
+	MethodCall @[15] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	AssignExpr @[16] { };
+	MethodCall @[17] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[18] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[19] { 
+	  ProgArg_List @.meth_args = [5] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	  };
+	};
+	MethodCall @[20] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[21] { 
+	  ProgArg_List @.meth_args = [5] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	  };
+	};
+	MethodCall @[22] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	IfReturn @[23] { };
+	Comment @[24] { };
+	IfElse @[25] { 
+	  ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	  };
+
+	  ProgEl_List @.false_code = [0] {
+	  };
+	};
+	MethodCall @[26] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[27] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[28] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	IfElse @[29] { 
+	  ProgEl_List @.true_code = [1] {
+	    FunctionCall @[0] { 
+	      ProgArg_List @.fun_args = [0] {
+	      };
+	    };
+	  };
+
+	  ProgEl_List @.false_code = [0] {
+	  };
+	};
+	MethodCall @[30] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	MemberAssign @[31] { };
+	MemberAssign @[32] { };
+	MethodCall @[33] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	MethodCall @[34] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[35] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	AssignExpr @[36] { };
+	MethodCall @[37] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[38] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[39] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	AssignExpr @[40] { };
+	MethodCall @[41] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[42] { 
+	  ProgArg_List @.meth_args = [5] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	  };
+	};
+	AssignExpr @[43] { };
+	MethodCall @[44] { 
+	  ProgArg_List @.meth_args = [4] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	  };
+	};
+	MethodCall @[45] { 
+	  ProgArg_List @.meth_args = [5] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	  };
+	};
+	MethodCall @[46] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	MethodCall @[47] { 
+	  ProgArg_List @.meth_args = [5] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	    ProgArg @[3] { };
+	    ProgArg @[4] { };
+	  };
+	};
+	MethodCall @[48] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	IfReturn @[49] { };
+	Comment @[50] { };
+	MethodCall @[51] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[52] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+      };
+    };
+  };
+
+  DataViewer_List @.viewers = [1] {
+    MainWindowViewer @["Browser2"] { 
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @["Application"] { };
+      };
+
+      FrameViewer_List @.frames = [3] {
+	tabBrowseViewer @["Tree"] { };
+	PanelViewer @["Panels"] { };
+	T3DataViewer @["T3Frames"] { 
+	  T3DataViewFrame_List @.frames = [1] {
+	    T3DataViewFrame @["Frame1"] { 
+	      T3DataView_List @.children = [0] {
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @["View_0"] { };
+		T3SavedView @["View_1"] { };
+		T3SavedView @["View_2"] { };
+		T3SavedView @["View_3"] { };
+		T3SavedView @["View_4"] { };
+		T3SavedView @["View_5"] { };
+	      };
+	    };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @["Tools"] { };
+      };
+    };
+  };
+
+  Network_Group @.networks = [0] {
+  };
+};
+LeabraProject .projects["Project_0"] {
+ name="Project_0";
+ desc=;
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ license {
+  owner="Regents of the University of Colorado";
+  license=NO_LIC;
+  org="CCNLab at the University of Colorado Boulder";
+  year="2011";
+  custom=;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
+ templates {
+  name="taBase_Group_0";
+  el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name="Doc_Group_1";
+  el_typ=taDoc;
+  el_def=0;
+ };
+ wizards {
+  name="Wizard_Group_1";
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @["LeabraWizard_0"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_6";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="LeabraWizard_0";
+   auto_open=1;
+   n_layers=3;
+   connectivity=BIDIRECTIONAL;
+   default_net_type=LeabraNetwork;
+  };
+ };
+ edits {
+  name="SelectEdit_Group_0";
+  el_typ=SelectEdit;
+  el_def=0;
+ };
+ data {
+  name="DataTable_Group_0";
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp["InputData"] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp["OutputData"] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp["AnalysisData"] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+ };
+ data_proc {
+  name="taBase_Group_0";
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @["data_base"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_2";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_base";
+  };
+  taDataAnal @["data_anal"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_3";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_anal";
+  };
+  taDataGen @["data_gen"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_4";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_gen";
+  };
+  taImageProc @["image_proc"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_5";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="image_proc";
+  };
+ };
+ programs {
+  name="Program_Group_0";
+  el_typ=Program;
+  el_def=0;
+  tags=;
+  desc=;
+  Program @["NetworkWizard"] {
+   name="NetworkWizard";
+   short_nm="NtwWzr";
+   tags=;
+   desc="network wizard based on gui dialog technology";
+   flags=0;
+   objs {
+    name=;
+    el_typ=DataTable;
+    el_def=0;
+    taGuiDialog @["Dlg1"] {
+     name="Dlg1";
+     prompt="Network Wizard Step 1 of 2: Select Network and Number of Layers";
+     win_title="Network Wizard Step 1 of 2";
+     width=300;
+     height=200;
+    };
+    taGuiDialog @["Dlg2"] {
+     name="Dlg2";
+     prompt="Network Wizard Step 2 of 2: Enter Layer Names, Sizes, and Projections (Prjns)";
+     win_title="Network Wizard Step 2 of 2";
+     width=900;
+     height=600;
+    };
+    DataTable @["NetworkConfig"] {
+     name="NetworkConfig";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["Group"] {
+       name="Group";
+       desc="name of layer group to put layer in -- layer groups are useful for organizing layers logically, moving them together, etc";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [3] ;;;       };
+      };
+      String_Data @["Name"] {
+       name="Name";
+       desc="name of layer -- will be updated to be a valid C language label so it can be referred to in Programs etc";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [3] "Input";"Hidden";"Output";       };
+      };
+      String_Data @["Type"] {
+       name="Type";
+       desc="functional type of layer in terms of input/output data -- options are: INPUT, TARGET, OUTPUT, HIDDEN -- TARGET means it learns from target output data, while OUTPUT means it generates output error signals but does not use output values for error-driven learning, HIDDEN doesn't get any input/output, and INPUT is simply an input layer";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [3] "INPUT";"HIDDEN";"TARGET";       };
+      };
+      int_Data @["Size_X"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_8";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+       };
+       name="Size_X";
+       desc="size of layer (number of units) in the horizontal (X) axis";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [3] 5;5;5;       };
+      };
+      int_Data @["Size_Y"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_9";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+       };
+       name="Size_Y";
+       desc="size of layer (number of units) in the vertical (Y) axis";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [3] 5;5;5;       };
+      };
+      int_Data @["UnitGps_X"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_10";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+       };
+       name="UnitGps_X";
+       desc="number of unit groups (subgroups of units within a layer) in the horizontal (X) axis -- set to 0 to not have any subgroups at all";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [3] 0;0;0;       };
+      };
+      int_Data @["UnitGps_Y"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_11";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+       };
+       name="UnitGps_Y";
+       desc="number of unit groups (subgroups of units within a layer) in the vertical (Y) axis -- set to 0 to not have any subgroups at all";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [3] 0;0;0;       };
+      };
+      String_Data @["RecvPrjns"] {
+       name="RecvPrjns";
+       desc="receiving projections -- connections from other layers that send into this one -- these must be valid names of other layers in the network, separated by a space if there are multiple";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+       ar {
+	name=;
+	      [3] ;;;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+   };
+   types {
+    name=;
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["Dlg1"] {
+     name="Dlg1";
+     var_type=T_Object;
+     object_type=taGuiDialog;
+     object_val=.projects["Project_0"].programs["NetworkWizard"].objs["Dlg1"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["Dlg2"] {
+     name="Dlg2";
+     var_type=T_Object;
+     object_type=taGuiDialog;
+     object_val=.projects["Project_0"].programs["NetworkWizard"].objs["Dlg2"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["network"] {
+     name="network";
+     var_type=T_Object;
+     object_type=Network;
+     object_val=NULL;
+     objs_ptr=0;
+     flags=SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["n_layers"] {
+     name="n_layers";
+     var_type=T_Int;
+     int_val=3;
+     objs_ptr=0;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["curow"] {
+     name="curow";
+     var_type=T_String;
+     string_val="buttons";
+     objs_ptr=0;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["NetworkConfig"] {
+     name="NetworkConfig";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["Project_0"].programs["NetworkWizard"].objs["NetworkConfig"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["rval"] {
+     name="rval";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+    Function @[0] {
+     desc=;
+     flags=0;
+     name="NewNetwork";
+     return_type=T_Int;
+     object_type=taOBase;
+     args {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     fun_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      ProgVars @[0] {
+       desc=;
+       flags=0;
+       local_vars {
+	name=;
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=0;
+       result_var=.projects["Project_0"].programs["NetworkWizard"].vars["network"]$$;
+       expr {
+	expr=".networks.New(1)";
+       };
+      };
+      MethodCall @[2] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$$;
+       method=taGuiDialog::Revert;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+      PrintVar @[3] {
+       desc=;
+       flags=0;
+       message="New network created";
+       print_var=$.projects["Project_0"].programs["NetworkWizard"].vars["network"]$;
+       print_var2=NULL;
+       print_var3=NULL;
+       print_var4=NULL;
+       print_var5=NULL;
+       print_var6=NULL;
+      };
+     };
+    };
+    Function @[1] {
+     desc=;
+     flags=0;
+     name="NLayersFmNetwork";
+     return_type=T_Int;
+     object_type=taOBase;
+     args {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     fun_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      ProgVars @[0] {
+       desc=;
+       flags=0;
+       local_vars {
+	name=;
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      IfReturn @[1] {
+       desc=;
+       flags=0;
+       cond {
+	expr="!network";
+       };
+      };
+      AssignExpr @[2] {
+       desc=;
+       flags=0;
+       result_var=.projects["Project_0"].programs["NetworkWizard"].vars["n_layers"]$$;
+       expr {
+	expr="network.layers.leaves";
+       };
+      };
+      MethodCall @[3] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+       method=taGuiDialog::Revert;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+      PrintVar @[4] {
+       desc=;
+       flags=0;
+       message="Read n_layers from network";
+       print_var=$.projects["Project_0"].programs["NetworkWizard"].vars["n_layers"]$;
+       print_var2=$.projects["Project_0"].programs["NetworkWizard"].vars["network"]$;
+       print_var3=NULL;
+       print_var4=NULL;
+       print_var5=NULL;
+       print_var6=NULL;
+      };
+     };
+    };
+    Function @[2] {
+     desc=;
+     flags=0;
+     name="ConfigOneLayer";
+     return_type=T_Int;
+     object_type=taOBase;
+     args {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["lay_no"] {
+       name="lay_no";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["nm"] {
+       name="nm";
+       var_type=T_String;
+       string_val=;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["typ"] {
+       name="typ";
+       var_type=T_String;
+       string_val=;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+     fun_code {
+      name="ProgEl_List_55";
+      el_typ=ProgCode;
+      el_def=0;
+      ProgVars @[0] {
+       desc=;
+       flags=0;
+       local_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=.projects["Project_0"].programs["NetworkWizard"].vars["NetworkConfig"]$$;
+       method=DataTable::SetVal;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="const Variant&";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="nm";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=Variant;
+	 type="Variant";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="\"Name\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="lay_no";
+	 };
+	};
+       };
+      };
+      MethodCall @[2] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=$.projects["Project_0"].programs["NetworkWizard"].vars["NetworkConfig"]$;
+       method=DataTable::SetVal;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="const Variant&";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="typ";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=Variant;
+	 type="Variant";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="\"Type\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="lay_no";
+	 };
+	};
+       };
+      };
+      MethodCall @[3] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=$.projects["Project_0"].programs["NetworkWizard"].vars["NetworkConfig"]$;
+       method=DataTable::SetVal;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="const Variant&";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="5";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=Variant;
+	 type="Variant";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="\"Size_X\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="lay_no";
+	 };
+	};
+       };
+      };
+      MethodCall @[4] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=$.projects["Project_0"].programs["NetworkWizard"].vars["NetworkConfig"]$;
+       method=DataTable::SetVal;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_Variant_ref;
+	 type="const Variant&";
+	 name="val";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="5";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=Variant;
+	 type="Variant";
+	 name="col";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="\"Size_Y\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="row";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="lay_no";
+	 };
+	};
+       };
+      };
+     };
+    };
+    Function @[3] {
+     desc="configure default structure for a new network";
+     flags=0;
+     name="NewNetDefaultConfig";
+     return_type=T_Int;
+     object_type=taOBase;
+     args {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     fun_code {
+      name="ProgEl_List_52";
+      el_typ=ProgCode;
+      el_def=0;
+      ProgVars @[0] {
+       desc=;
+       flags=0;
+       local_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+	ProgVar @["n_lays"] {
+	 name="n_lays";
+	 var_type=T_Int;
+	 int_val=0;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+	ProgVar @["lay"] {
+	 name="lay";
+	 var_type=T_Object;
+	 object_type=Layer;
+	 object_val=NULL;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+	ProgVar @["i"] {
+	 name="i";
+	 var_type=T_Int;
+	 int_val=0;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=0;
+       result_var=.projects["Project_0"].programs["NetworkWizard"].functions[3].fun_code[0].local_vars["n_lays"]$$;
+       expr {
+	expr="NetworkConfig.rows";
+       };
+      };
+      IfElse @[2] {
+       desc=;
+       flags=0;
+       cond {
+	expr="n_lays > 0";
+       };
+       show_false_code=0;
+       true_code {
+	name="ProgEl_List_54";
+	el_typ=ProgCode;
+	el_def=0;
+	FunctionCall @[0] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 fun=.projects["Project_0"].programs["NetworkWizard"].functions[2]$$;
+	 fun_args {
+	  name="ProgArg_List_0";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="lay_no";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="0";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=taString;
+	   type="String";
+	   name="nm";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\"Input\"";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=taString;
+	   type="String";
+	   name="typ";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\"INPUT\"";
+	   };
+	  };
+	 };
+	};
+       };
+       false_code {
+	name="ProgEl_List_55";
+	el_typ=ProgCode;
+	el_def=0;
+       };
+      };
+      IfElse @[3] {
+       desc=;
+       flags=0;
+       cond {
+	expr="n_lays > 1";
+       };
+       show_false_code=0;
+       true_code {
+	name="ProgEl_List_57";
+	el_typ=ProgCode;
+	el_def=0;
+	FunctionCall @[0] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 fun=$.projects["Project_0"].programs["NetworkWizard"].functions[2]$;
+	 fun_args {
+	  name="ProgArg_List_0";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="lay_no";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="1";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=taString;
+	   type="String";
+	   name="nm";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\"Hidden\"";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=taString;
+	   type="String";
+	   name="typ";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\"HIDDEN\"";
+	   };
+	  };
+	 };
+	};
+       };
+       false_code {
+	name="ProgEl_List_58";
+	el_typ=ProgCode;
+	el_def=0;
+       };
+      };
+      IfElse @[4] {
+       desc=;
+       flags=0;
+       cond {
+	expr="n_lays == 3";
+       };
+       show_false_code=0;
+       true_code {
+	name=;
+	el_typ=ProgCode;
+	el_def=0;
+	FunctionCall @[0] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 fun=$.projects["Project_0"].programs["NetworkWizard"].functions[2]$;
+	 fun_args {
+	  name=;
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="lay_no";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="2";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=taString;
+	   type="String";
+	   name="nm";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\"Output\"";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=taString;
+	   type="String";
+	   name="typ";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\"TARGET\"";
+	   };
+	  };
+	 };
+	};
+       };
+       false_code {
+	name=;
+	el_typ=ProgCode;
+	el_def=0;
+       };
+      };
+      IfElse @[5] {
+       desc=;
+       flags=0;
+       cond {
+	expr="n_lays > 2";
+       };
+       show_false_code=0;
+       true_code {
+	name=;
+	el_typ=ProgCode;
+	el_def=0;
+	FunctionCall @[0] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 fun=$.projects["Project_0"].programs["NetworkWizard"].functions[2]$;
+	 fun_args {
+	  name=;
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="lay_no";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="n_lays-1";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=taString;
+	   type="String";
+	   name="nm";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\"Output\"";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=taString;
+	   type="String";
+	   name="typ";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\"TARGET\"";
+	   };
+	  };
+	 };
+	};
+	ForLoop @[1] {
+	 desc=;
+	 flags=0;
+	 loop_code {
+	  name="ProgEl_List_63";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  FunctionCall @[0] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   fun=$.projects["Project_0"].programs["NetworkWizard"].functions[2]$;
+	   fun_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=int;
+	     type="int";
+	     name="lay_no";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="i";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=taString;
+	     type="String";
+	     name="nm";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Hidden_\" + String(i-1)";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=taString;
+	     type="String";
+	     name="typ";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"HIDDEN\"";
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="i=2";
+	 };
+	 test {
+	  expr="i<n_lays-1";
+	 };
+	 iter {
+	  expr="i++";
+	 };
+	};
+       };
+       false_code {
+	name=;
+	el_typ=ProgCode;
+	el_def=0;
+       };
+      };
+     };
+    };
+    Function @[4] {
+     desc=;
+     flags=0;
+     name="AddNewLayerRow";
+     return_type=T_Int;
+     object_type=taOBase;
+     args {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     fun_code {
+      name="ProgEl_List_65";
+      el_typ=ProgCode;
+      el_def=0;
+      ProgVars @[0] {
+       desc=;
+       flags=0;
+       local_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=$.projects["Project_0"].programs["NetworkWizard"].vars["NetworkConfig"]$;
+       method=DataTable::AddBlankRow;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+      MethodCall @[2] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$$;
+       method=taGuiDialog::Apply;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+     };
+    };
+    Function @[5] {
+     desc=;
+     flags=0;
+     name="RefreshLayerList";
+     return_type=T_Int;
+     object_type=taOBase;
+     args {
+      name=;
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     fun_code {
+      name=;
+      el_typ=ProgCode;
+      el_def=0;
+      ProgVars @[0] {
+       desc=;
+       flags=0;
+       local_vars {
+	name=;
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+       method=taGuiDialog::Apply;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+     };
+    };
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    ProgVars @[0] {
+     desc=;
+     flags=0;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["new_net"] {
+       name="new_net";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::Reset;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    MemberAssign @[2] {
+     desc=;
+     flags=0;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     path="prompt";
+     expr {
+      expr="\"Network Wizard Step 1 of 2: Select Network and Number of Layers\"";
+     };
+     update_after=0;
+    };
+    MemberAssign @[3] {
+     desc=;
+     flags=0;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     path="win_title";
+     expr {
+      expr="\"Network Wizard Step 1 of 2\"";
+     };
+     update_after=0;
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddWidget;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr=;
+       };
+      };
+     };
+    };
+    MethodCall @[5] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddVBoxLayout;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="widget";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+     };
+    };
+    AssignExpr @[6] {
+     desc=;
+     flags=0;
+     result_var=.projects["Project_0"].programs["NetworkWizard"].vars["curow"]$$;
+     expr {
+      expr="\"instr\"";
+     };
+    };
+    MethodCall @[7] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddHBoxLayout;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="widget";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+     };
+    };
+    MethodCall @[8] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddLabel;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"Instructions\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"label=Please select a network (or make a new one) and enter the number of layers.\\nYou will then be able to configure each layer in the next dialog (press OK to continue).;\"";
+       };
+      };
+     };
+    };
+    MethodCall @[9] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddSpace;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="sp_size";
+       required=1;
+       def_val=;
+       expr {
+	expr="20";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+     };
+    };
+    AssignExpr @[10] {
+     desc=;
+     flags=0;
+     result_var=$.projects["Project_0"].programs["NetworkWizard"].vars["curow"]$;
+     expr {
+      expr="\"netsel\"";
+     };
+    };
+    MethodCall @[11] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddHBoxLayout;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="widget";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+     };
+    };
+    MethodCall @[12] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddProgVar;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=ProgVar_ref;
+       type="ProgVar&";
+       name="pvar";
+       required=1;
+       def_val=;
+       expr {
+	expr="this.vars.network";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"Network\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=1;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"tooltip=select the network to configure;\"";
+       };
+      };
+     };
+    };
+    MethodCall @[13] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddSpace;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="sp_size";
+       required=1;
+       def_val=;
+       expr {
+	expr="20";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=1;
+       def_val=;
+       expr {
+	expr="curow";
+       };
+      };
+     };
+    };
+    MethodCall @[14] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddPushButton;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"NewNetwork\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="url";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"this.NewNetwork()\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"label=New Network; tooltip=press this button to create a new network to configure;\"";
+       };
+      };
+     };
+    };
+    MethodCall @[15] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddSpace;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="sp_size";
+       required=1;
+       def_val=;
+       expr {
+	expr="20";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+     };
+    };
+    AssignExpr @[16] {
+     desc=;
+     flags=0;
+     result_var=$.projects["Project_0"].programs["NetworkWizard"].vars["curow"]$;
+     expr {
+      expr="\"nlayers\"";
+     };
+    };
+    MethodCall @[17] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddHBoxLayout;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="widget";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+     };
+    };
+    MethodCall @[18] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddLabel;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"nlaylbl\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"label=N Layers: ;\"";
+       };
+      };
+     };
+    };
+    MethodCall @[19] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddProgVar;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=ProgVar_ref;
+       type="ProgVar&";
+       name="pvar";
+       required=1;
+       def_val=;
+       expr {
+	expr="this.vars.n_layers";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"n_layers\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=1;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"tooltip=enter the number of layers to create here\\n you will be able to change this later too;\"";
+       };
+      };
+     };
+    };
+    MethodCall @[20] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddStretch;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=1;
+       def_val=;
+       expr {
+	expr="curow";
+       };
+      };
+     };
+    };
+    MethodCall @[21] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::AddPushButton;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"NLayersFmNetwork\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="url";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"this.NLayersFmNetwork()\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"label=Get N Layers From Network; tooltip=get the number of layers from the existing network;\"";
+       };
+      };
+     };
+    };
+    MethodCall @[22] {
+     desc=;
+     flags=0;
+     result_var=.projects["Project_0"].programs["NetworkWizard"].vars["rval"]$$;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg1"]$;
+     method=taGuiDialog::PostDialog;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="modal";
+       required=0;
+       def_val="false";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    IfReturn @[23] {
+     desc=;
+     flags=0;
+     cond {
+      expr="rval == 0 || network == NULL";
+     };
+    };
+    Comment @[24] {
+     desc="== Dialog 2 ==";
+     flags=0;
+    };
+    IfElse @[25] {
+     desc=;
+     flags=0;
+     cond {
+      expr="network.layers.leaves == 0";
+     };
+     show_false_code=0;
+     true_code {
+      name="ProgEl_List_51";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       desc=;
+       flags=0;
+       result_var=.projects["Project_0"].programs["NetworkWizard"].prog_code[0].local_vars["new_net"]$$;
+       expr {
+	expr="true";
+       };
+      };
+     };
+     false_code {
+      name="ProgEl_List_52";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+    };
+    MethodCall @[26] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["network"]$;
+     method=Network::NetStructToTable;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dt";
+       required=1;
+       def_val=;
+       expr {
+	expr="NetworkConfig";
+       };
+      };
+     };
+    };
+    MethodCall @[27] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["NetworkConfig"]$;
+     method=DataTable::RemoveCol;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"SendPrjns\"";
+       };
+      };
+     };
+    };
+    MethodCall @[28] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["NetworkConfig"]$;
+     method=DataTable::EnforceRows;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=1;
+       def_val=;
+       expr {
+	expr="n_layers";
+       };
+      };
+     };
+    };
+    IfElse @[29] {
+     desc=;
+     flags=0;
+     cond {
+      expr="new_net";
+     };
+     show_false_code=0;
+     true_code {
+      name="ProgEl_List_64";
+      el_typ=ProgCode;
+      el_def=0;
+      FunctionCall @[0] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       fun=.projects["Project_0"].programs["NetworkWizard"].functions[3]$$;
+       fun_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+     };
+     false_code {
+      name="ProgEl_List_65";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+    };
+    MethodCall @[30] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::Reset;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    MemberAssign @[31] {
+     desc=;
+     flags=0;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     path="prompt";
+     expr {
+      expr="\"Network Wizard Step 2 of 2: Enter Layer Names, Sizes, and Projections (Prjns)\"";
+     };
+     update_after=0;
+    };
+    MemberAssign @[32] {
+     desc=;
+     flags=0;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     path="win_title";
+     expr {
+      expr="\"Network Wizard Step 2 of 2\"";
+     };
+     update_after=0;
+    };
+    MethodCall @[33] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::SetSize;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="wd";
+       required=1;
+       def_val=;
+       expr {
+	expr="900";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="ht";
+       required=1;
+       def_val=;
+       expr {
+	expr="600";
+       };
+      };
+     };
+    };
+    MethodCall @[34] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddWidget;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+     };
+    };
+    MethodCall @[35] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddVBoxLayout;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="widget";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+     };
+    };
+    AssignExpr @[36] {
+     desc=;
+     flags=0;
+     result_var=$.projects["Project_0"].programs["NetworkWizard"].vars["curow"]$;
+     expr {
+      expr="\"instr\"";
+     };
+    };
+    MethodCall @[37] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddHBoxLayout;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="widget";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+     };
+    };
+    MethodCall @[38] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddLabel;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"LabelTest\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"label=Enter the names of the network layers, optionally a Group for the layers to live in, and the number of units in X, Y dimensions per layer\\nand the receiving projections (layer names, separated by spaces) to connect from\\nHold the mouse over the colum names for more detailed information (e.g., for Type options);\"";
+       };
+      };
+     };
+    };
+    MethodCall @[39] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddSpace;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="sp_size";
+       required=1;
+       def_val=;
+       expr {
+	expr="20";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+     };
+    };
+    AssignExpr @[40] {
+     desc=;
+     flags=0;
+     result_var=$.projects["Project_0"].programs["NetworkWizard"].vars["curow"]$;
+     expr {
+      expr="\"dtable\"";
+     };
+    };
+    MethodCall @[41] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddHBoxLayout;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="widget";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+     };
+    };
+    MethodCall @[42] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddDataTable;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dt";
+       required=1;
+       def_val=;
+       expr {
+	expr="NetworkConfig";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"NetworkStructure\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=1;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"max_width=850; max_height=500;\"";
+       };
+      };
+     };
+    };
+    AssignExpr @[43] {
+     desc=;
+     flags=0;
+     result_var=$.projects["Project_0"].programs["NetworkWizard"].vars["curow"]$;
+     expr {
+      expr="\"buttons\"";
+     };
+    };
+    MethodCall @[44] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddHBoxLayout;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"mainv\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="widget";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"\"";
+       };
+      };
+     };
+    };
+    MethodCall @[45] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddToolButton;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"AddLayer\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="url";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"this.AddNewLayerRow()\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"label=Add New Layer; tooltip=Add a new layer row to layer list (above)\\n use context menu on selected rows to delete (press Refresh Layer List afterwards);\"";
+       };
+      };
+     };
+    };
+    MethodCall @[46] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddSpace;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="sp_size";
+       required=1;
+       def_val=;
+       expr {
+	expr="20";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=1;
+       def_val=;
+       expr {
+	expr="curow";
+       };
+      };
+     };
+    };
+    MethodCall @[47] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::AddToolButton;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"RefreshList\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="parent";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"main\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="layout";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="curow";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="url";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"this.RefreshLayerList()\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="attributes";
+       required=0;
+       def_val="taString()";
+       expr {
+	expr="\"label=Refresh Layer List; tooltip=updates the list of layers and their settings (above)\\n if you used one of the context menu actions to insert or remove layers.\\n the display updating does not work automatically in this dialog;\"";
+       };
+      };
+     };
+    };
+    MethodCall @[48] {
+     desc=;
+     flags=0;
+     result_var=$.projects["Project_0"].programs["NetworkWizard"].vars["rval"]$;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["Dlg2"]$;
+     method=taGuiDialog::PostDialog;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=bool;
+       type="bool";
+       name="modal";
+       required=0;
+       def_val="false";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    IfReturn @[49] {
+     desc=;
+     flags=0;
+     cond {
+      expr="rval == 0";
+     };
+    };
+    Comment @[50] {
+     desc="== now build the network to spec ==";
+     flags=0;
+    };
+    MethodCall @[51] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["network"]$;
+     method=Network::NetStructFmTable;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dt";
+       required=1;
+       def_val=;
+       expr {
+	expr="NetworkConfig";
+       };
+      };
+     };
+    };
+    MethodCall @[52] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["NetworkWizard"].vars["network"]$;
+     method=Network::Build;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+ };
+ viewers {
+  name="DataViewer_List_0";
+  el_typ=TopLevelViewer;
+  el_def=0;
+  MainWindowViewer @["Browser2"] {
+   name="Browser2";
+   m_data=.projects["Project_0"]$$;
+   visible=1;
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name="ToolBar_List_1";
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @["Application"] {
+     name="Application";
+     m_data=NULL;
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name="FrameViewer_List_0";
+    el_typ=FrameViewer;
+    el_def=0;
+    tabBrowseViewer @["Tree"] {
+     name="Tree";
+     m_data=NULL;
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$.projects["Project_0"]$;
+    };
+    PanelViewer @["Panels"] {
+     name="Panels";
+     m_data=NULL;
+     visible=1;
+    };
+    T3DataViewer @["T3Frames"] {
+     name="T3Frames";
+     m_data=NULL;
+     visible=1;
+     frames {
+      name="T3DataViewFrame_List_0";
+      el_typ=T3DataViewFrame;
+      el_def=0;
+      T3DataViewFrame @["Frame1"] {
+       name="Frame1";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_0";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["View_0"] {
+	 name="View_0";
+	 view_saved=1;
+	 pos {x=0.5: y=0.9143143: z=2.327804: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=2.531116;
+	};
+	T3SavedView @["View_1"] {
+	 name="View_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_2"] {
+	 name="View_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_3"] {
+	 name="View_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_4"] {
+	 name="View_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_5"] {
+	 name="View_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+     };
+    };
+   };
+   docks {
+    name="DockViewer_List_0";
+    el_typ=DockViewer;
+    el_def=0;
+    ToolBoxDockViewer @["Tools"] {
+     name="Tools";
+     m_data=NULL;
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ last_change_desc=;
+ networks {
+  name="Network_Group_0";
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
+};
