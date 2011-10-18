@@ -77,6 +77,10 @@ void taGuiWidget::GetImage() {
     if(!td) td = &TA_taOBase;
     ((taiTokenPtrButton*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
   }
+  if(widget_type == "DataTable") {
+    iDataTableEditor* edt = (iDataTableEditor*)widget.data();
+    edt->Refresh();
+  }
 }
 
 void taGuiWidget::GetValue() {
@@ -99,6 +103,10 @@ void taGuiWidget::GetValue() {
   if(widget_type == "ObjectPtr") {
     *((taBaseRef*)data.toPtr()) = ((taiTokenPtrButton*)tai_data)->GetValue();
   }
+//   if(widget_type == "DataTable") {
+//     iDataTableEditor* edt = (iDataTableEditor*)widget;
+//     edt->Refresh();
+//   }
 }
 
 void taGuiWidget_List::Initialize() {
