@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -122,7 +122,7 @@ int _search_ci(const char* s, int start, int sl, const char* t, int tl) {
       while (p <= lasts) {
         const char* x = p++;
         const char* y = t;
-        while (tolower(*x++) == tolower(*y++)) 
+        while (tolower(*x++) == tolower(*y++))
           if (y >= lastt) return (int)(--p - s); //safeint
       }
     } else {
@@ -333,13 +333,13 @@ String trimr(const String& x) {
   char c = x.lastchar();
   if (!((c== ' ') || (c == '\t')))
     return x;
-  
+
   String rval(x);
   rval.makeUnique();
   do {
     rval.truncate(rval.length() - 1);
     c = rval.lastchar();
-  } while ((c== ' ') || (c == '\t')); 
+  } while ((c== ' ') || (c == '\t'));
   return rval;
 }
 
@@ -347,7 +347,7 @@ String trim(const String& x) {
   return trimr(triml(x));
 }
 
-void String::AppendCharToCppStringLiteral(String& str, char c, bool char_mode) { 
+void String::AppendCharToCppStringLiteral(String& str, char c, bool char_mode) {
   //note: char_mode=true is for doing a single conversion for a char literal
   switch (c) { // do the specials first, since some printables are special
   case '\n': str += "\\n"; break;
@@ -360,17 +360,17 @@ void String::AppendCharToCppStringLiteral(String& str, char c, bool char_mode) {
   case '\\': str += "\\\\"; break;
   case '\'': if (char_mode) str += "\\'"; else str += "'"; break;
   case '\"': if (char_mode) str += "\""; else str += "\\\""; break;
-  default: 
-    if ((c >= ' ') && ((uint)c < 127)) 
+  default:
+    if ((c >= ' ') && ((uint)c < 127))
       str += c;
     else { // octal format with 3 digits is deterministically parsable in strings
       str += "\\";
-      str += String((int)c, "%o03.3"); // exactly 3 octal digits 
+      str += String((int)c, "%o03.3"); // exactly 3 octal digits
     } break;
-  } 
+  }
 }
 
-const String String::CharToCppLiteral(char c) { 
+const String String::CharToCppLiteral(char c) {
   String rval(1, 6, '\''); // buffer
   AppendCharToCppStringLiteral(rval, c, true);
   rval += '\'';
@@ -380,7 +380,7 @@ const String String::CharToCppLiteral(char c) {
 const String String::StringToCppLiteral(const String& str) {
   String rval(1, (str.length() * 11 ) / 10, '"'); // 10% extra sized buffer
   int len = str.length(); // cache
-  for (int i = 0; i < len; ++i) 
+  for (int i = 0; i < len; ++i)
     AppendCharToCppStringLiteral(rval, str.elem(i), false);
   rval += '"';
   return rval;
@@ -509,7 +509,7 @@ int String::_gsub_lt(const char* pat, int pl, const char* r, int rl) {
     }
     memcpy((void*)&(s[pos]), r, rl);
     memmove((void*)&(s[pos + rl]), &(s[pos + pl]), sl - (pos + pl) );
-    if (rl > 0) si = pos + rl; 
+    if (rl > 0) si = pos + rl;
     else ++si;
     sl -= (pl - rl);
   }
@@ -556,7 +556,7 @@ int String::_gsub_gt(const char* pat, int pl, const char* r, int rl) {
     const char* s = chars();
     memmove((void*)&(s[pos + rl]), &(s[pos + pl]), sl - (pos + pl) );
     memcpy((void*)&(s[pos]), r, rl);
-    si = pos + rl; 
+    si = pos + rl;
     sl += (rl - pl);
     // keep it current here, so nothing funky happens when resizing
     mrep->len = sl;
@@ -719,7 +719,7 @@ String String::elidedTo(int width) const {
   // if too small to use ellipses, return chars
   if (width <= 3)
     return src.before(width);
-    
+
   STRING_BUF(rval, width);
   if (width <= 8) {
     // really short, just use first chars, and put ... at end
@@ -851,7 +851,7 @@ int String::Load_str(std::istream& istrm) {
     // append num read
     cat(buf, n_read);
   }
-  
+
   if (istrm.bad()) return 1;
   else return 0;
 }
@@ -906,7 +906,7 @@ String String::_substr(int first, int len) const {
   else if ((first == 0) && (len == length())) // same as us, so don't make a new rep!
     return String(*this);
   else {
-    if ((first + len) > length()) 
+    if ((first + len) > length())
       len = length() - first;
     return String(&(mrep->s[first]), len);
   }
@@ -1234,6 +1234,11 @@ TA_API istream& operator>>(istream& s, String& x) {
   return s;
 }
 
+TA_API std::ostream& operator<<(std::ostream& s, const String& x) {
+  s << x.chars();
+  return s;
+}
+
 TA_API int readline(istream& s, String& x, char terminator, int discard) {
 //   if (!s.ipfx(0))
 //     return 0;
@@ -1264,7 +1269,7 @@ TA_API int readline_auto(istream& strm, String& x) {
   int c;
   uint i = 0;
   x.makeUnique(x.mrep->len + ISTR_RESIZE_QUANTA);
-  
+
   // read the characters, stopping at an eof or eol char
   while (((c = strm.peek()) != EOF) && !((c == '\n') || (c == '\r'))) {
     if (i >= x.mrep->sz - 1) {
@@ -1274,7 +1279,7 @@ TA_API int readline_auto(istream& strm, String& x) {
     x.mrep->s[i++] = (char)c;
     strm.get();
   }
-  
+
   // discard the eol char(s)
   strm.get();
   // for Windows files, grab the extra cr
