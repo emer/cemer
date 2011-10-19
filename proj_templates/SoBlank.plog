@@ -1,5 +1,0 @@
-Wed Oct 19 04:29:40 2011: *** LOG: SaveUndo of action: Call Method: StdEverything on: SoWizard_0 at path: .wizards[0] saving at: .
-Wed Oct 19 04:29:40 2011: *** LOG: Undo: New source added!
-Wed Oct 19 04:29:40 2011: *** LOG: last_diff_n:  0  pct:  0
-Wed Oct 19 04:30:00 2011: *** LOG: SaveUndo of action: Wizard::StdNetwork after -- actually saves network specifically on: Network_0 at path: .networks[0] saving at: .
-Wed Oct 19 04:30:00 2011: *** LOG: last_diff_n:  427  pct:  0.577027
