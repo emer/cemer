@@ -30,7 +30,8 @@
 #include <QFileInfo>
 #include <QFrame>
 #include <QLayout>
-#include <QScopedPointer>
+// #include <QScopedPointer> // not avail it seems on some relatively recent platforms
+#include <memory> // std::auto_ptr
 #include <QWidget>
 #include <QUrl>
 
@@ -117,7 +118,8 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   // * some use-cases cause no Save dialog if prev is Open
   // DO NOT MAKE STATIC!!!!
   // Use QScopedPointer to manage memory within this scope (function).
-  QScopedPointer<QFileDialog> fd(new QFileDialog(NULL, "", eff_dir, filtext));
+  //  QScopedPointer<QFileDialog> fd(new QFileDialog(NULL, "", eff_dir, filtext));
+  std::auto_ptr<QFileDialog> fd(new QFileDialog(NULL, "", eff_dir, filtext));
 
   int nw_wd = (int)((float)taiM->scrn_s.w * .5f);
   int nw_ht = (int)((float)taiM->scrn_s.h * .5f);
