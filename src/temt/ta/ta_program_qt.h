@@ -423,8 +423,9 @@ class TA_API taiProgLibElsButton : public taiListElsButton {
 // for prog lib items
 INHERITED(taiListElsButton)
 public:
-  int			columnCount(int view) const; // override
-  const String		headerText(int index, int view) const; // override
+  override int		columnCount(int view) const;
+  override const String	headerText(int index, int view) const;
+  override const String	titleText();
 
   taiProgLibElsButton(TypeDef* typ, IDataHost* host, taiData* par,
 		      QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list

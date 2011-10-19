@@ -3810,6 +3810,7 @@ QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
   fileSaveAction->setIcon( QIcon( QPixmap(":/images/filesave.png") ) );
   fileSaveAsAction = AddAction(new taiAction("Save Project &As...", QKeySequence(), _fileSaveAsAction ));
   fileSaveNotesAction = AddAction(new taiAction("Save Note &Changes", QKeySequence(), "fileSaveNotesAction"));
+  fileSaveAsTemplateAction = AddAction(new taiAction("Save As &Template", QKeySequence(), "fileSaveAsTemplate"));
   fileUpdateChangeLogAction = AddAction(new taiAction("&Updt Change Log", QKeySequence(), "fileUpdateChangeLogAction"));
   fileSaveAllAction = AddAction(new taiAction("Save A&ll Projects", QKeySequence(), _fileSaveAsAction ));
   fileCloseAction = AddAction(new taiAction("Close Project", QKeySequence(), "fileCloseAction" ));
@@ -3823,6 +3824,7 @@ QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
   fileSaveAsAction->AddTo(fileMenu);
   fileMenu->insertSeparator();
   fileSaveNotesAction->AddTo(fileMenu );
+  fileSaveAsTemplateAction->AddTo(fileMenu );
   fileUpdateChangeLogAction->AddTo(fileMenu );
   fileSaveAllAction->AddTo(fileMenu);
   fileMenu->insertSeparator();
@@ -3844,6 +3846,7 @@ QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
     connect( fileSaveAction, SIGNAL( Action() ), this, SLOT( fileSave() ) );
     connect( fileSaveAsAction, SIGNAL( Action() ), this, SLOT( fileSaveAs() ) );
     connect( fileSaveNotesAction, SIGNAL( Action() ), this, SLOT( fileSaveNotes() ) );
+    connect( fileSaveAsTemplateAction, SIGNAL( Action() ), this, SLOT( fileSaveAsTemplate() ) );
     connect( fileUpdateChangeLogAction, SIGNAL( Action() ), this, SLOT( fileUpdateChangeLog() ) );
     connect( fileCloseAction, SIGNAL( Action() ), this, SLOT( fileClose() ) );
     // disable the CloseWindow to help emphasize that Closing will close proj
@@ -3852,6 +3855,7 @@ QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
     fileSaveAction->setEnabled(false);
     fileSaveAsAction->setEnabled(false);
     fileSaveNotesAction->setEnabled(false);
+    fileSaveAsTemplateAction->setEnabled(false);
     fileUpdateChangeLogAction->setEnabled(false);
     fileCloseAction->setEnabled(false);
   }
@@ -4077,7 +4081,8 @@ void iMainWindowViewer::fileCloseWindow() {
 //  unless they are applicable (ex Save only if it is a viewer)
 void iMainWindowViewer::fileNew() {
   if (!tabMisc::root) return;
-  tabMisc::root->projects.CallFun("New_gui"); // let user choose type
+//   tabMisc::root->projects.CallFun("New_gui"); // let user choose type
+  tabMisc::root->projects.CallFun("NewFromTemplate"); // let user choose type
   //should automatically open
 }
 
@@ -4166,6 +4171,12 @@ void iMainWindowViewer::fileSaveNotes() {
   taProject* proj = curProject();
   if (!proj) return;
   proj->SaveNoteChanges();
+}
+
+void iMainWindowViewer::fileSaveAsTemplate() {
+  taProject* proj = curProject();
+  if (!proj) return;
+  proj->CallFun("SaveAsTemplate"); // need to prompt for args
 }
 
 void iMainWindowViewer::fileUpdateChangeLog() {
@@ -7083,7 +7094,10 @@ void iDocDataPanel::UpdatePanel_impl() {
   wiki_edit->setText(doc_->wiki);
   url_edit->setText(doc_->url);
 
-  webview->setTextSizeMultiplier(taMisc::doc_text_scale * doc_->text_size * ((float)taMisc::font_size / 12.0f));
+  float trg_font_sz = 12.0f;
+  if(doc_->url.empty() || doc_->url == "local")
+    trg_font_sz = 14.0f;
+  webview->setTextSizeMultiplier(taMisc::doc_text_scale * doc_->text_size * ((float)taMisc::font_size / trg_font_sz));
 
   if(doc_->web_doc && taMisc::InternetConnected()) {
     String cur_url = webview->url().toString();

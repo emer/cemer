@@ -1617,3 +1617,132 @@ void tabWizardViewType::CreateDataPanel_impl(taiDataLink* dl_)
   // then standard properties
   inherited::CreateDataPanel_impl(dl_);
 }
+
+
+////////////////////////////////////////////////////////
+//  Special ProjTemplate browser support
+
+taiProjTemplateElsButton::taiProjTemplateElsButton(TypeDef* typ_, IDataHost* host, taiData* par,
+					 QWidget* gui_parent_, int flags_)
+ :inherited(typ_, host, par, gui_parent_, flags_)
+{
+  // nop
+}
+
+int taiProjTemplateElsButton::columnCount(int view) const {
+  switch (view) {
+  case 0: return 6;
+  default: return 0; // not supposed to happen
+  }
+}
+
+const String taiProjTemplateElsButton::headerText(int index, int view) const {
+  switch (view) {
+  case 0: switch (index) {
+    case 0: return "Name"; 
+    case 1: return "Type"; 
+    case 2: return "Tags"; 
+    case 3: return "Description"; 
+    case 4: return "Date Modified"; 
+    case 5: return "URL/filename"; 
+    } break; 
+  default: break; // compiler food
+  }
+  return _nilString; // shouldn't happen
+}
+
+const String taiProjTemplateElsButton::titleText() {
+  return "Please choose a project template from the choices below as the starting point for your new Project";
+}
+
+void taiProjTemplateElsButton::BuildCategories_impl() {
+  if (cats) cats->Reset();
+  else cats = new String_Array;
+
+  if(!list) return;		// shouldn't happen
+
+  ProjTemplates* plib = (ProjTemplates*)list;
+  for(int i=0;i<plib->size;i++) {
+    ProjTemplateEl* pel = plib->FastEl(i);
+    for(int j=0;j<pel->tags_array.size;j++) {
+      cats->AddUnique(pel->tags_array[j]);
+    }
+  }
+  cats->Sort(); // empty, if any, should sort to top
+}
+
+int taiProjTemplateElsButton::BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst, 
+					QTreeWidgetItem* top_item) 
+{
+  int rval = 0;
+
+  ic->multi_cats = true;	// multiple categories
+  
+  ProjTemplates* plib = (ProjTemplates*)top_lst;
+  for (int i = 0; i < plib->size; ++i) {
+    ProjTemplateEl* pel = plib->FastEl(i);
+    QTreeWidgetItem* item = ic->AddItem(pel->tags, pel->GetDisplayName(),
+					top_item, pel); 
+    item->setText(1, pel->lib_name); // GetColText(taBase::key_type));
+    item->setText(2, pel->tags);
+    item->setText(3, pel->desc); // GetColText(taBase::key_desc));
+    item->setText(4, pel->date);
+    if(pel->URL.nonempty())
+      item->setText(5, pel->URL);
+    else
+      item->setText(5, pel->filename);
+    ++rval;
+  }
+  return rval;
+}
+
+//////////////////////////////////////
+//        taiProjTemplateElArgType       //
+//////////////////////////////////////
+
+int taiProjTemplateElArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td) {
+  if ((argt->ptr != 1) || !argt->DerivesFrom(TA_ProjTemplateEl))
+    return 0;
+  return gpiFromGpArgType::BidForArgType(aidx,argt,md,td)+1;
+}
+
+taiData* taiProjTemplateElArgType::GetDataRep_impl(IDataHost* host_, taiData* par,
+  QWidget* gui_parent_, int flags_, MemberDef* mbr_)
+{
+  MemberDef* from_md = GetFromMd();
+  if(from_md == NULL)	return NULL;
+  int new_flags = flags_;
+  if (GetHasOption("NULL_OK"))
+    new_flags |= taiData::flgNullOk;
+  if (GetHasOption("EDIT_OK"))
+    new_flags |= taiData::flgEditOk;
+
+  if (GetHasOption("NO_GROUP_OPT"))
+    new_flags |= taiData::flgNoGroup; //aka flagNoList
+
+  return new taiProjTemplateElsButton(typ, host_, par, gui_parent_, new_flags);
+}
+
+void taiProjTemplateElArgType::GetImage_impl(taiData* dat, const void* base) {
+  if (arg_base == NULL)  return;
+  if (GetHasOption("ARG_VAL_FM_FUN")) {
+    Variant val = ((taBase*)base)->GetGuiArgVal(meth->name, arg_idx);
+    if(val != _nilVariant) {
+      taBase::SetPointer((taBase**)arg_base, val.toBase());
+    }
+  }
+  MemberDef* from_md = GetFromMd();
+  if (from_md == NULL)	return;
+  TABLPtr lst = GetList(from_md, base);
+  taiProjTemplateElsButton* els = (taiProjTemplateElsButton*)dat;
+  els->GetImage((TABLPtr)lst, *((taBase**)arg_base));
+}
+
+void taiProjTemplateElArgType::GetValue_impl(taiData* dat, void*) {
+  if (arg_base == NULL)
+    return;
+  taiProjTemplateElsButton* els = (taiProjTemplateElsButton*)dat;
+  // must use set pointer because cssTA_Base now does refcounts on pointer!
+  taBase::SetPointer((taBase**)arg_base, (taBase*)els->GetValue());
+}
+

@@ -50,7 +50,20 @@ void taGuiWidget::Connect_UrlAction(QObject* src_obj, const char* src_signal) {
 
 void taGuiWidget::UrlAction() {
   if(action_url.empty()) return;
-  QDesktopServices::openUrl(QUrl(action_url));
+  if(action_url.startsWith("ta:")) {
+    if(taiMisc::main_window)
+      taiMisc::main_window->taUrlHandler(QUrl(action_url));
+    // skip over middleman -- was not triggering in C++ dialogs for some reason..
+  }
+  else {
+    QDesktopServices::openUrl(QUrl(action_url));
+  }
+}
+
+void taGuiWidget::FixUrl(const String& url_tag, const String& path) {
+  if(action_url.startsWith(url_tag)) {
+    action_url = "ta:" + path + "." + action_url.after(url_tag);
+  }
 }
 
 void taGuiWidget::GetImage() {
@@ -127,6 +140,13 @@ void taGuiWidget_List::GetValue() {
   }
 }
 
+void taGuiWidget_List::FixAllUrl(const String& url_tag, const String& path) {
+  for(int i=0; i<size; i++) {
+    taGuiWidget* w = FastEl(i);
+    w->FixUrl(url_tag, path);
+  }
+}
+
 void taGuiLayout_List::Initialize() {
   SetBaseType(&TA_taGuiLayout);
 }
@@ -149,11 +169,31 @@ void taGuiAction::Connect_UrlAction(QObject* src_obj, const char* src_signal) {
 
 void taGuiAction::UrlAction() {
   if(action_url.empty()) return;
-  QDesktopServices::openUrl(QUrl(action_url));
+  if(action_url.startsWith("ta:")) {
+    if(taiMisc::main_window)
+      taiMisc::main_window->taUrlHandler(QUrl(action_url));
+    // skip over middleman -- was not triggering in C++ dialogs for some reason..
+  }
+  else {
+    QDesktopServices::openUrl(QUrl(action_url));
+  }
+}
+
+void taGuiAction::FixUrl(const String& url_tag, const String& path) {
+  if(action_url.startsWith(url_tag)) {
+    action_url = "ta:" + path + "." + action_url.after(url_tag);
+  }
 }
 
 void taGuiAction_List::Initialize() {
   SetBaseType(&TA_taGuiAction);
+}
+
+void taGuiAction_List::FixAllUrl(const String& url_tag, const String& path) {
+  for(int i=0; i<size; i++) {
+    taGuiAction* w = FastEl(i);
+    w->FixUrl(url_tag, path);
+  }
 }
 
 
@@ -245,6 +285,11 @@ void taGuiDialog::GetValue() {
   }
 }
 
+void taGuiDialog::FixAllUrl(const String& url_tag, const String& path) {
+  widgets.FixAllUrl(url_tag, path);
+  actions.FixAllUrl(url_tag, path);
+}
+
 taGuiWidget* taGuiDialog::FindWidget(const String& nm, bool err_msg) {
   taGuiWidget* rval = widgets.FindName(nm);
   TestError(!rval && err_msg, "FindWidget", "widget named", nm, "not found!");
@@ -295,9 +340,7 @@ taGuiWidget* taGuiDialog::AddWidget_impl(QWidget* widg, const String& nm, const 
   wid->action_url = url;
   Program* prog = GET_MY_OWNER(Program);
   if(prog) {
-    if(wid->action_url.startsWith("this.")) {
-      wid->action_url = "ta:" + prog->GetPath() + "." + wid->action_url.after("this.");
-    }
+    wid->FixUrl("this.", prog->GetPath());
   }
   wid->widget = widg;
 
@@ -344,9 +387,7 @@ taGuiAction* taGuiDialog::AddAction_impl(QAction* act, const String& nm,
   tact->menu = menu;
   Program* prog = GET_MY_OWNER(Program);
   if(prog) {
-    if(tact->action_url.startsWith("this.")) {
-      tact->action_url = "ta:" + prog->GetPath() + "." + tact->action_url.after("this.");
-    }
+    tact->FixUrl("this.", prog->GetPath());
   }
   tact->action = act;
 

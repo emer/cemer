@@ -41,19 +41,20 @@ public:
   DataTable*	net_config;	// network configuration data table
  
   void 	NewNetwork();
-  // #CAT_zImpl callback for dialog
+  // #MENU #MENU_ON_Actions callback for dialog
   void 	NLayersFmNetwork();
-  // #CAT_zImpl callback for dialog
+  // #MENU callback for dialog
   void 	ConfigOneLayer(int lay_no, const String& nm, const String& typ);
-  // #CAT_zImpl callback for dialog
+  // #MENU callback for dialog
   void 	NewNetDefaultConfig();
-  // #CAT_zImpl callback for dialog
+  // #MENU callback for dialog
   void 	AddNewLayerRow();
-  // #CAT_zImpl callback for dialog
+  // #MENU callback for dialog
   void 	RefreshLayerList();
-  // #CAT_zImpl callback for dialog
+  // #MENU callback for dialog
 
-  virtual void	DoDialog();
+  virtual bool	DoDialog();
+  // do the dialog and configure the network based on results -- returns true if network configured, false if not
 
   TA_SIMPLE_BASEFUNS(StdNetWizDlg);
 private:
@@ -65,6 +66,11 @@ class EMERGENT_API Wizard : public taWizard {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 wizard for automating construction of simulation objects
 INHERITED(taWizard)
 public:
+  StdNetWizDlg		std_net_dlg; // #HIDDEN #NO_SAVE std network dialog
+
+  virtual bool	StdEverything();
+  // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_AFTER make everything (Network, Data, Programs) according to the standard wizards
+
   virtual bool	StdNetwork();
   // #MENU_BUTTON #MENU_ON_Network configure a new or existing standard network -- user is prompted for full configuration settings
 
@@ -72,9 +78,9 @@ public:
   // #MENU_BUTTON #NULL_OK_1 #NULL_TEXT_1_NewNetwork configure the input layers of the network to accept the output of the image processing performed by retina_proc (if net == NULL, new network is created)
 
   virtual bool	StdData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
-  // #MENU_BUTTON #MENU_ON_Data #NULL_OK_1 #NULL_TEXT_1_NewDataTable make standard input and output data tables: make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.  also make standard output data to monitor network output
+  // #MENU_BUTTON #MENU_ON_Data #NULL_OK_1 #NULL_TEXT_1_NewDataTable make standard input and output data tables: make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences. also calls StdOutputData to create monitor output data, and UpdateLayerWriters to update any LayerWriter objects (typically in ApplyInputs programs) to the new data layout
   virtual bool	StdInputData(Network* net, DataTable* data_table=NULL, int n_patterns = 0, bool group=false);
-  // #MENU_BUTTON #MENU_SEP_BEFORE #NULL_OK_1 #NULL_TEXT_1_NewDataTable make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.  also calls StdOutputData to create monitor output data, and UpdateLayerWriters to update any LayerWriter objects (typically in ApplyInputs programs) to the new data layout
+  // #MENU_BUTTON #MENU_SEP_BEFORE #NULL_OK_1 #NULL_TEXT_1_NewDataTable make a standard data table of input patterns according to the given network (if data_table == NULL, new datatable is created), group = create a group column for grouping inputs into sequences.
   virtual bool	StdOutputData();
   // #MENU_BUTTON make standard set of output data (monitoring network performance) -- this just creates empty datatables in OutputData subgroup with names that standard programs look for
   virtual bool	UpdateInputDataFmNet(Network* net, DataTable* data_table);
@@ -101,16 +107,13 @@ public:
   override void RenderWizDoc();
 
   void	UpdateAfterEdit();
-  void 	InitLinks();
-  void	CutLinks();
-  SIMPLE_COPY(Wizard);
-  TA_BASEFUNS(Wizard);
+  TA_SIMPLE_BASEFUNS(Wizard);
 protected:
   override void RenderWizDoc_impl();
-  virtual void 	RenderWizDoc_intro(); // introductory code
-  virtual void 	RenderWizDoc_network(); // network-level functions
-  virtual void 	RenderWizDoc_data(); // datatable functions
-  virtual void 	RenderWizDoc_program(); // program functions
+  virtual String RenderWizDoc_intro(); // introductory code
+  virtual String RenderWizDoc_network(); // network-level functions
+  virtual String RenderWizDoc_data(); // datatable functions
+  virtual String RenderWizDoc_program(); // program functions
 
 private:
   void 	Initialize();

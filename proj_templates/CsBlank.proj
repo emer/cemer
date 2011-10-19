@@ -1,0 +1,370 @@
+// ta_Dump File v3.0 -- code v5.2.3.0 rev5081
+CsProject .projects["Project_0"] { 
+  taBase_Group @.templates = [0] {
+  };
+
+  Doc_Group @.docs = [0] {
+  };
+
+  Wizard_Group @.wizards = [1] {
+    CsWizard @["CsWizard_0"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+  };
+
+  SelectEdit_Group @.edits = [0] {
+  };
+
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp["InputData"] { 
+    };
+    DataTable_Group @.gp["OutputData"] { 
+    };
+    DataTable_Group @.gp["AnalysisData"] { 
+    };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @["data_base"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taDataAnal @["data_anal"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taDataGen @["data_gen"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taImageProc @["image_proc"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+  };
+
+  Program_Group @.programs = [0] {
+  };
+
+  DataViewer_List @.viewers = [1] {
+    MainWindowViewer @["Browser2"] { 
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @["Application"] { };
+      };
+
+      FrameViewer_List @.frames = [3] {
+	tabBrowseViewer @["Tree"] { };
+	PanelViewer @["Panels"] { };
+	T3DataViewer @["T3Frames"] { 
+	  T3DataViewFrame_List @.frames = [1] {
+	    T3DataViewFrame @["Frame1"] { 
+	      T3DataView_List @.children = [0] {
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @["View 0"] { };
+		T3SavedView @["View 1"] { };
+		T3SavedView @["View 2"] { };
+		T3SavedView @["View 3"] { };
+		T3SavedView @["View 4"] { };
+		T3SavedView @["View 5"] { };
+	      };
+	    };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @["Tools"] { };
+      };
+    };
+  };
+
+  Network_Group @.networks = [0] {
+  };
+};
+CsProject .projects["Project_0"] {
+ name="Project_0";
+ desc=;
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ license {
+  owner="Regents of the University of Colorado";
+  license=NO_LIC;
+  org="CCNLab at the University of Colorado Boulder";
+  year="2011";
+  custom=;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
+ templates {
+  name="taBase_Group_0";
+  el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name="Doc_Group_1";
+  el_typ=taDoc;
+  el_def=0;
+ };
+ wizards {
+  name="Wizard_Group_1";
+  el_typ=CsWizard;
+  el_def=0;
+  CsWizard @["CsWizard_0"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_6";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="CsWizard_0";
+   auto_open=1;
+  };
+ };
+ edits {
+  name="SelectEdit_Group_0";
+  el_typ=SelectEdit;
+  el_def=0;
+ };
+ data {
+  name="DataTable_Group_0";
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp["InputData"] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp["OutputData"] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp["AnalysisData"] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+ };
+ data_proc {
+  name="taBase_Group_0";
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @["data_base"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_2";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_base";
+  };
+  taDataAnal @["data_anal"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_3";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_anal";
+  };
+  taDataGen @["data_gen"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_4";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_gen";
+  };
+  taImageProc @["image_proc"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_5";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="image_proc";
+  };
+ };
+ programs {
+  name="Program_Group_0";
+  el_typ=Program;
+  el_def=0;
+  tags=;
+  desc=;
+ };
+ viewers {
+  name="DataViewer_List_0";
+  el_typ=TopLevelViewer;
+  el_def=0;
+  MainWindowViewer @["Browser2"] {
+   name="Browser2";
+   m_data=.projects["Project_0"]$$;
+   visible=1;
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name="ToolBar_List_1";
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @["Application"] {
+     name="Application";
+     m_data=NULL;
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name="FrameViewer_List_0";
+    el_typ=FrameViewer;
+    el_def=0;
+    tabBrowseViewer @["Tree"] {
+     name="Tree";
+     m_data=NULL;
+     visible=1;
+     root_typ=CsProject;
+     root_md=NULL;
+     m_root=$.projects["Project_0"]$;
+    };
+    PanelViewer @["Panels"] {
+     name="Panels";
+     m_data=NULL;
+     visible=1;
+    };
+    T3DataViewer @["T3Frames"] {
+     name="T3Frames";
+     m_data=NULL;
+     visible=1;
+     frames {
+      name="T3DataViewFrame_List_0";
+      el_typ=T3DataViewFrame;
+      el_def=0;
+      T3DataViewFrame @["Frame1"] {
+       name="Frame1";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_0";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["View 0"] {
+	 name="View 0";
+	 view_saved=1;
+	 pos {x=0: y=0: z=-0.4765596: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=3.52344;
+	};
+	T3SavedView @["View 1"] {
+	 name="View 1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View 2"] {
+	 name="View 2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View 3"] {
+	 name="View 3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View 4"] {
+	 name="View 4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View 5"] {
+	 name="View 5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+     };
+    };
+   };
+   docks {
+    name="DockViewer_List_0";
+    el_typ=DockViewer;
+    el_def=0;
+    ToolBoxDockViewer @["Tools"] {
+     name="Tools";
+     m_data=NULL;
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ last_change_desc=;
+ networks {
+  name="Network_Group_0";
+  el_typ=CsNetwork;
+  el_def=0;
+ };
+};

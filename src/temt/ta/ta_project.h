@@ -34,6 +34,7 @@
 class taDoc;
 class taWizard;
 class taProject;
+class Project_Group;
 class taRootBase;
 class iPluginEditor;//
 
@@ -472,6 +473,8 @@ private:
   void 	Destroy()    { };
 };
 
+//////////////////////////////////////
+//		taProject
 
 class TA_API taProject : public taFBase {
   // ##FILETYPE_Project ##EXT_proj ##COMPRESS #VIRT_BASE ##DUMP_LOAD_POST ##DEF_NAME_ROOT_Project ##CAT_Project ##UNDO_BARRIER ##EXPAND_DEF_2 Base class for a project object containing all relevant info for a given instance -- all ta GUI-based systems should have one..
@@ -487,6 +490,13 @@ public:
     APACHE,			// Apache License, version 2.0
     MOZILLA,			// Mozilla Public License 1.1 (MPL)
     RESEARCH,			// Research License based on CU Boulder template
+  };
+
+  enum ProjLibs {
+    USER_LIB,                   // user's personal library
+    SYSTEM_LIB,                 // local system library
+    WEB_LIB,                    // web-based library
+    SEARCH_LIBS,                // search through the libraries (for loading)
   };
   
   String 		tags;	   // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
@@ -513,6 +523,13 @@ public:
 
   override bool		isDirty() const {return m_dirty;}
   override void 	setDirty(bool value);  //
+
+  static String         GetProjTemplatePath(ProjLibs library);
+  // #CAT_ProjTemplates get path to given project template library
+
+  virtual void         	SaveAsTemplate(const String& template_name, const String& desc,
+		          const String& tags, ProjLibs library = USER_LIB);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #CAT_Project save the project to given project library -- please add a useful description and set of comma separated tags (especially if this is a new template) so others will know what it is for
 
   ///////////////////////////////////////////////////////////////////
   //	View/Browser Stuff
@@ -632,14 +649,93 @@ private:
   void 	Destroy() {}
 };
 
+//////////////////////////////////
+//      Project Template        //
+//////////////////////////////////
+
+class TA_API ProjTemplateEl: public taNBase {
+  // #INSTANCE #INLINE #CAT_Project an element in the project template listing
+INHERITED(taNBase)
+public:
+  String        desc;           // #EDIT_DIALOG description of what this project does and when it should be used
+  String        tags;           // #EDIT_DIALOG list of comma-separated tags describing function of project
+  String_Array  tags_array;     // #HIDDEN #READ_ONLY #NO_SAVE parsed version of the tags list, for internal use to actually operate on the tags
+  String        lib_name;       // #EDIT_DIALOG name of template that contains this project
+  String        URL;            // #EDIT_DIALOG full URL to find this project -- file: for files
+  String        filename;       // #EDIT_DIALOG file name given to this project
+  String        date;           // #EDIT_DIALOG last modify date for this project
+
+  virtual taProject* NewProject(Project_Group* new_owner);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT create a new project based on this template
+  virtual bool  LoadProject(taProject* prog);
+  // load into given project; true if loaded, false if not
+
+  virtual bool  ParseProjFile(const String& fnm, const String& path);
+  // get project information from project template info file name and associated meta data
+
+  virtual void  ParseTags(); // parse list of tags into tags_array
+
+  override String GetDesc() const { return desc; }
+  override String GetTypeName() const { return lib_name; }
+  // This shows up in chooser instead of ProjTemplateEl!
+
+  TA_SIMPLE_BASEFUNS(ProjTemplateEl);
+protected:
+
+private:
+  void  Initialize();
+  void  Destroy();
+};
+
+class TA_API ProjTemplateEl_List : public taList<ProjTemplateEl> {
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Project list of project template elements
+INHERITED(taList<ProjTemplateEl>)
+public:
+  TA_SIMPLE_BASEFUNS(ProjTemplateEl_List);
+protected:
+
+private:
+  void  Initialize();
+  void  Destroy() { Reset(); CutLinks(); }
+};
+
+class TA_API ProjTemplates: public ProjTemplateEl_List {
+  // #INSTANCE #INLINE #CAT_Project the set of project templates available
+INHERITED(ProjTemplateEl_List)
+public:
+  bool                  not_init; // list has not been initialized yet
+
+  void  	FindProjects();         // search paths to find all available projects
+  taProject* 	NewProject(ProjTemplateEl* proj_type, Project_Group* new_owner);
+  // #MENU #MENU_ON_Object #MENU_CONTEXT #NO_SAVE_ARG_VAL create a new project in new_owner of given type -- new_owner is group where project will be created
+  taProject* 	NewProjectFmName(const String& proj_nm, Project_Group* new_owner);
+  // create a new project (lookup by name) (NULL if not found); new_owner is group where project will be created
+
+  TA_SIMPLE_BASEFUNS(ProjTemplates);
+protected:
+
+private:
+  void  Initialize();
+  void  Destroy() { CutLinks(); }
+};
+
 class TA_API Project_Group : public taGroup<taProject> {
   //  ##CAT_Project group of projects
 INHERITED(taGroup<taProject>)
 friend class taProject;
 public:
+
+  static ProjTemplates  proj_templates; // #HIDDEN_TREE library of available projects
+
+  taProject* 	NewFromTemplate(ProjTemplateEl* proj_type);
+  // #BUTTON #MENU_CONTEXT #FROM_GROUP_proj_templates #NO_SAVE_ARG_VAL #CAT_Project create a new project from a library of existing project templates
+  taProject* 	NewFromTemplateByName(const String& proj_nm);
+  // #CAT_Project create a new project from a library of existing project templates, looking up by name (NULL if name not found)
+
   override int	 	Load_strm(istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
   override int	 	Load(const String& fname="", taBase** loaded_obj_ptr = NULL);
 
+  void	InitLinks();
   TA_BASEFUNS(Project_Group);
 private:
   NOCOPY(Project_Group)

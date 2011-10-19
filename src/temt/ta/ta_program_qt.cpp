@@ -1963,6 +1963,10 @@ const String taiProgLibElsButton::headerText(int index, int view) const {
   return _nilString; // shouldn't happen
 }
 
+const String taiProgLibElsButton::titleText() {
+  return "Please choose a program from the following in the available libraries";
+}
+
 void taiProgLibElsButton::BuildCategories_impl() {
   if (cats) cats->Reset();
   else cats = new String_Array;

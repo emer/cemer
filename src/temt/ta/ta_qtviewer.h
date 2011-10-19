@@ -1011,6 +1011,7 @@ public:
   taiAction* 		fileSaveAction;
   taiAction* 		fileSaveAsAction;
   taiAction* 		fileSaveNotesAction;
+  taiAction* 		fileSaveAsTemplateAction;
   taiAction* 		fileUpdateChangeLogAction;
   taiAction* 		fileSaveAllAction;
   taiAction* 		fileCloseAction;
@@ -1149,6 +1150,7 @@ public slots:
   virtual void 	fileSave();  // Save Project (only enabled if viewer)
   virtual void 	fileSaveAs();  // SaveAs Project (only enabled if viewer)
   virtual void 	fileSaveNotes();  // SaveNoteChanges Project (only enabled if viewer)
+  virtual void 	fileSaveAsTemplate();  // SaveAsTemplate Project (only enabled if viewer)
   virtual void 	fileUpdateChangeLog();  // UpdateChangeLog Project (only enabled if viewer)
   virtual void 	fileSaveAll();  // Save All Projects (always enabled)
   virtual void 	fileClose(); // Close Project (only enabled if viewer)

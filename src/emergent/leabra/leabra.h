@@ -3834,6 +3834,8 @@ public:
   override bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1);
 
   TA_BASEFUNS_NOCOPY(LeabraWizard);
+protected:
+  override String RenderWizDoc_network();
 private:
   void 	Initialize();
   void 	Destroy()	{ };

@@ -1682,6 +1682,9 @@ public:
   virtual void  LoadFromProgLib(ProgLibEl* prog_type);
   // #MENU #MENU_ON_Object #MENU_CONTEXT #FROM_GROUP_prog_lib #ARG_VAL_FM_FUN #CAT_Program (re)load the program from the program library element of given type
 
+  virtual void  ToggleTrace();
+  // #MENU #MENU_ON_Object #DYN1 toggle the TRACE flag to opposite of current state for all programs in the group: flag indicates whether to record a trace of program execution in the css console or not
+
   virtual bool  RunStartupProgs();
   // run programs marked as STARTUP_RUN -- typically only done by system at startup -- returns true if any run
 

@@ -5312,8 +5312,15 @@ String Program::GetProgLibPath(ProgLibs library) {
   String path = "./";
   if(library == USER_LIB)
     path = taMisc::prog_lib_paths.GetVal("UserLib").toString();
-  else if(library == SYSTEM_LIB)
-    path = taMisc::prog_lib_paths.GetVal("SystemLib").toString();
+  else if(library == SYSTEM_LIB) {
+    if(taMisc::in_dev_exe) {
+      String top_lev_path = taMisc::GetDirFmPath(taMisc::exe_path, 1); // go up 1
+      path = top_lev_path + "/prog_lib";
+    }
+    else {
+      path = taMisc::prog_lib_paths.GetVal("SystemLib").toString();
+    }
+  }
   else if(library == WEB_LIB)
     path = taMisc::prog_lib_paths.GetVal("WebLib").toString();
   if(library != WEB_LIB) {
@@ -5620,6 +5627,14 @@ void Program_Group::LoadFromProgLib(ProgLibEl* prog_type) {
 //     prog->Reset();
 //   }
   prog_type->LoadProgramGroup(this);
+}
+
+void Program_Group::ToggleTrace() {
+  taLeafItr itr;
+  Program* prog;
+  FOR_ITR_EL(Program, prog, this->, itr) {
+    prog->ToggleTrace();
+  }
 }
 
 bool Program_Group::RunStartupProgs() {

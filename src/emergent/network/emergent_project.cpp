@@ -100,7 +100,10 @@ void StdNetWizDlg::Initialize() {
 }
 
 void StdNetWizDlg::NewNetwork() {
-//   network = .networks.New(1);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  if(proj) {
+    network = (Network*)proj->networks.New(1);
+  }
   Dlg1->Revert();
   taMisc::Info("New network created:", network->name);
 }
@@ -154,14 +157,20 @@ void StdNetWizDlg::RefreshLayerList() {
   Dlg2->Apply();
 }
 
-void StdNetWizDlg::DoDialog() {
+bool StdNetWizDlg::DoDialog() {
   int new_net;  new_net = 0;
   String curow;
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  String mypath = GetPath();
 
   Dlg1 = new taGuiDialog;
+  taBase::Own(Dlg1, this);
   Dlg2 = new taGuiDialog;
+  taBase::Own(Dlg2, this);
   net_config = new DataTable;
   n_layers = 3;
+
+  bool rval = false;
 
   Dlg1->Reset();
   Dlg1->prompt = "Network Wizard Step 1 of 2: Select Network and Number of Layers";
@@ -176,16 +185,19 @@ void StdNetWizDlg::DoDialog() {
   Dlg1->AddHBoxLayout(curow, "mainv", "", "");
   Dlg1->AddObjectPtr((taBaseRef*)&network, &TA_Network, "Network", "main", curow, "tooltip=select the network to configure;");
   Dlg1->AddSpace(20, curow);
-  Dlg1->AddPushButton("NewNetwork", "main", curow, "this.NewNetwork()", "label=New Network; tooltip=press this button to create a new network to configure;");
+  Dlg1->AddPushButton("NewNetwork", "main", curow, "mdlg.NewNetwork()", "label=New Network; tooltip=press this button to create a new network to configure;");
   Dlg1->AddSpace(20, "mainv");
   curow = "nlayers";
   Dlg1->AddHBoxLayout(curow, "mainv", "", "");
   Dlg1->AddLabel("nlaylbl", "main", curow, "label=N Layers: ;");
   Dlg1->AddIntField(&n_layers, "n_layers", "main", curow, "tooltip=enter the number of layers to create here\n you will be able to change this later too;");
   Dlg1->AddStretch(curow);
-  Dlg1->AddPushButton("NLayersFmNetwork", "main", curow, "this.NLayersFmNetwork()", "label=Get N Layers From Network; tooltip=get the number of layers from the existing network;");
-  int rval = Dlg1->PostDialog(true);
-  if(rval == 0 || network.ptr() == NULL) {
+  Dlg1->AddPushButton("NLayersFmNetwork", "main", curow, "mdlg.NLayersFmNetwork()", "label=Get N Layers From Network; tooltip=get the number of layers from the existing network;");
+
+  Dlg1->FixAllUrl("mdlg.", mypath); // update all the urls
+
+  int drval = Dlg1->PostDialog(true);
+  if(drval == 0 || network.ptr() == NULL) {
     goto cleanup;
   }
 
@@ -216,11 +228,14 @@ void StdNetWizDlg::DoDialog() {
   Dlg2->AddDataTable(net_config, "NetworkStructure", "main", curow, "max_width=850; max_height=500;");
   curow = "buttons";
   Dlg2->AddHBoxLayout(curow, "mainv", "", "");
-  Dlg2->AddToolButton("AddLayer", "main", curow, "this.AddNewLayerRow()", "label=Add New Layer; tooltip=Add a new layer row to layer list (above)\n use context menu on selected rows to delete (press Refresh Layer List afterwards);");
+  Dlg2->AddToolButton("AddLayer", "main", curow, "mdlg.AddNewLayerRow()", "label=Add New Layer; tooltip=Add a new layer row to layer list (above)\n use context menu on selected rows to delete (press Refresh Layer List afterwards);");
   Dlg2->AddSpace(20, curow);
-  Dlg2->AddToolButton("RefreshList", "main", curow, "this.RefreshLayerList()", "label=Refresh Layer List; tooltip=updates the list of layers and their settings (above)\n if you used one of the context menu actions to insert or remove layers.\n the display updating does not work automatically in this dialog;");
-  rval = Dlg2->PostDialog(true);
-  if(rval == 0) {
+  Dlg2->AddToolButton("RefreshList", "main", curow, "mdlg.RefreshLayerList()", "label=Refresh Layer List; tooltip=updates the list of layers and their settings (above)\n if you used one of the context menu actions to insert or remove layers.\n the display updating does not work automatically in this dialog;");
+
+  Dlg2->FixAllUrl("mdlg.", mypath); // update all the urls
+
+  drval = Dlg2->PostDialog(true);
+  if(drval == 0) {
     goto cleanup;
   }
 
@@ -235,13 +250,18 @@ void StdNetWizDlg::DoDialog() {
     tabMisc::DelayedFunCall_gui(network, "BrowserExpandAll");
     tabMisc::DelayedFunCall_gui(network, "BrowserSelectMe");
   }
+  if(proj) {
+    proj->undo_mgr.SaveUndo(network.ptr(), "Wizard::StdNetwork after -- actually saves network specifically");
+  }
+  rval = true;
 
  cleanup:
-  delete Dlg1;
-  delete Dlg2;
+  taBase::unRefDone(Dlg1);
+  taBase::unRefDone(Dlg2);
   delete net_config;
 
   Initialize();
+  return rval;
 }
 
 //////////////////////////
@@ -249,14 +269,6 @@ void StdNetWizDlg::DoDialog() {
 //////////////////////////
 
 void Wizard::Initialize() {
-}
-
-void Wizard::InitLinks() {
-  inherited::InitLinks();
-}
-
-void Wizard::CutLinks() {
-  inherited::CutLinks();
 }
 
 void Wizard::UpdateAfterEdit() {
@@ -267,57 +279,82 @@ void Wizard::RenderWizDoc() {
   RenderWizDoc_header();
   RenderWizDoc_impl();
   RenderWizDoc_footer();
-  String my_path;
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  my_path = GetPath(NULL, proj);
+  String my_path = GetPath(NULL, proj);
+  String projpath = proj->GetPath();
   wiz_doc.text.gsub("<this>", my_path); // shortcut for functions
+  wiz_doc.text.gsub("<proj>", projpath); // shortcut for functions
   wiz_doc.UpdateText();
 }
 
 void Wizard::RenderWizDoc_impl() {
-  RenderWizDoc_intro();
-  RenderWizDoc_network();
-  RenderWizDoc_data();
-  RenderWizDoc_program();
+  wiz_doc.text = RenderWizDoc_intro();
+  wiz_doc.text += RenderWizDoc_network();
+  wiz_doc.text += RenderWizDoc_data();
+  wiz_doc.text += RenderWizDoc_program();
 }
 
-void Wizard::RenderWizDoc_intro() {
-  wiz_doc.text += 
-"\n= Wizard =\n\
+String Wizard::RenderWizDoc_intro() {
+  return String("\n= Emergent Wizard =\n\
 This is the Emergent Wizard -- select from the options listed below.\n\n\
+There are also other wizards available as programs -- use the [[<proj>.programs.NewFromLib()|programs NewFromLib]] button to create new programs from the available library, and search for the wizard keyword.\n\n\
 == Standard Default Configuration ==\n\n\
 Selecting these options in sequence will configure a standard project to the point where a network can be trained in a standard way.\n\n\
-* [[<this>.StdNetwork()|Standard Network]] -- click this to generate or configure a standard network, specifying number of layers, layer names, sizes, types, and connectivity.\n\
-* [[<this>.StdData()|Standard Data]] -- click this to generate or configure standard input data, based on existing network configuration.\n\
-* [[<this>.StdProgs()|Standard Programs]] -- click this to install standard programs for running the network.\n";
+* [[<this>.StdEverything()|Standard Everything]] -- does the following steps one after the other:\n\
+:* [[<this>.StdNetwork()|Standard Network]] -- generate or configure a standard network, specifying number of layers, layer names, sizes, types, and connectivity.\n\
+:* [[<this>.StdData()|Standard Data]] -- generate or configure standard input and output data tables, based on existing network configuration -- these provide external input to the network and record statistics from the network as it runs.\n\
+:* [[<this>.StdProgs()|Standard Programs]] -- install standard programs for running the network -- these programs coordinate presentation of input data and recording of output data.\n");
 }
 
-void Wizard::RenderWizDoc_network() {
-  wiz_doc.text += 
-"\n== Network == \n\
-* [[<this>.StdNetwork()|Standard Network]] -- click this to generate or configure a standard network, specifying number of layers, layer names, sizes, types, and connectivity.\n";
+String Wizard::RenderWizDoc_network() {
+  return String("\n== Network ==\n\
+* [[<this>.StdNetwork()|Standard Network]] -- generate or configure a standard network, specifying number of layers, layer names, sizes, types, and connectivity.\n\
+\n=== Specialized Networks ===\n\
+* [[<this>.RetinaProcNetwork()|Retina Processing Network]] -- configures input layers of network to accept image processing inputs ('''NOTE: currently nonfunctional''').\n");
 }
 
-void Wizard::RenderWizDoc_data() {
-  wiz_doc.text += 
-"\n== Input Data == \n\
-* [[<this>.StdData()|Standard Data]] -- click this to generate or configure standard input data, based on existing network configuration.\n";
+String Wizard::RenderWizDoc_data() {
+  return String("\n== Data Tables ==\n\
+* [[<this>.StdData()|Standard Data]] -- click this to generate or configure standard input and output data tables, based on existing network configuration -- these provide external input to the network and record statistics from the network as it runs -- calls these two functions:\n\
+:* [[<this>.StdInputData()|Standard Input Data]] -- generate or configure standard input data, based on existing network configuration (creates columns for each input/output layer).\n\
+:* [[<this>.StdOutputData()|Standard Output Data]] -- make standard set of output data (monitoring network performance) -- this just creates empty datatables in OutputData subgroup with names that standard programs look for.\n\
+\n=== Data Utility Functions ===\n\
+* [[<this>.UpdateInputDataFmNet()|Update Input Data From Network]] -- just update an existing input data datatable from a given network so that it has all the appropriate columns for the corresponding layers -- also calls Update Layer Writers.\n\
+* [[<this>.UpdateLayerWriters()|Update Layer Writers]] -- update LayerWriter configuration in ApplyInputs programs to fit any changes in the network or data table -- only affects LayerWriters that are already configured to use the given network and data table.\n");
 }
 
-void Wizard::RenderWizDoc_program() {
-  wiz_doc.text += 
-"\n== Programs == \n\
-* [[<this>.StdProgs()|Standard Programs]] -- click this to install standard programs for running the network.\n";
+String Wizard::RenderWizDoc_program() {
+  return String("\n== Programs ==\n\
+* [[<this>.StdProgs()|Standard Programs]] -- install standard programs for running the network.\n\
+* [[<this>.TestProgs()|Testing Programs]] -- create a standard set of testing programs for testing the network -- these can be configured to be called periodically during training\n");
 }
+
+////////////////////////////////////////////
+//		Wiz Code: Network
+
+
+bool Wizard::StdEverything() {
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  if(!proj) return false;
+  bool rval = false;
+  if(StdNetwork()) {
+    Network* net = proj->networks.SafeEl(0);
+    if(net) {
+      if(StdData(net)) {
+	rval = StdProgs();
+      }
+    }
+  }
+  return rval;
+}
+
 
 bool Wizard::StdNetwork() {
-  StdNetWizDlg* wiz = new StdNetWizDlg;
-  wiz->DoDialog();
-  delete wiz;
-//   if(proj) {
-//     proj->undo_mgr.SaveUndo(net, "Wizard::StdNetwork after -- actually saves network specifically");
-//   }
-  return true;
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  if(proj->networks.size == 0)	// make a new one for starters always
+    proj->networks.New(1);
+  bool rval = std_net_dlg.DoDialog();
+  return rval;
 }
 
 bool Wizard::RetinaProcNetwork(RetinaProc* retina_spec, Network* net) {

@@ -743,6 +743,10 @@ public:
   // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of installed user plugins 
   static String		user_log_dir;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_File location of log files, such as plugin log 
+  static String		exe_cmd;
+  // #SHOW #READ_ONLY #CAT_File executable command path and filename -- how was this program invoked (from argv0)
+  static String		exe_path;
+  // #SHOW #READ_ONLY #CAT_File full absoluate path to executable
 
   static String		web_home;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for location of main web home page for this application
@@ -775,6 +779,8 @@ public:
   // #NO_SAVE #HIDDEN #CAT_File paths to be used for loading object files for the ta dump file system
   static NameVar_PArray	prog_lib_paths;
   // #NO_SAVE #HIDDEN #CAT_File paths/url's for specific categories of program library files (e.g., System, User, Web)
+  static NameVar_PArray	proj_template_paths;
+  // #NO_SAVE #HIDDEN #CAT_File paths/url's for collections of project template files (e.g., System, User, Web)
   static NameVar_PArray	named_paths;
   // #NO_SAVE #HIDDEN #CAT_File paths/url's for misc purposes -- search by name, value = path
 
@@ -831,6 +837,7 @@ public:
   static bool		use_gui;	// #READ_ONLY #NO_SAVE #NO_SHOW whether the user has specified to use the gui or not (default = true)
   static bool		gui_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if gui has actually been started up or not -- this is the one that should be checked for gui modality in all non-startup code
   static bool		gui_no_win;	// #READ_ONLY #NO_SAVE #NO_SHOW an intermediate form of gui operation where the gui system is fully initialized, but no windows are created, and gui_active remains false -- this is useful for batch (background) jobs that need to do offscreen rendering or other gui-dependent functions
+  static bool		in_dev_exe;	// #READ_ONLY #NO_SAVE #NO_SHOW are we running a development executable -- running out of the build directory of the source code -- do some things differently in this case (e.g., no plugins)
   static bool		use_plugins;	// #READ_ONLY #NO_SAVE #NO_SHOW whether to use plugins
   static bool		server_active;	// #READ_ONLY #NO_SAVE #NO_SHOW if remote server has been started up or not
   static ContextFlag	is_loading;	// #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object

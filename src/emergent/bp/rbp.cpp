@@ -392,6 +392,13 @@ void NoisyRBpUnitSpec::Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thread_n
 void BpWizard::Initialize() {
 }
 
+String BpWizard::RenderWizDoc_network() {
+  String rval = inherited::RenderWizDoc_network();
+  rval += String("\
+* [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n");
+  return rval;
+}
+
 bool BpWizard::StdProgs() {
   if(!StdProgs_impl("BpAll_Std")) return false;
   return true;
@@ -402,6 +409,7 @@ bool BpWizard::TestProgs(Program* call_test_from, bool call_in_loop, int call_mo
     return false;
   return true;
 }
+
 
 bool BpWizard::SRNContext(Network* net) {
   if(!net) {

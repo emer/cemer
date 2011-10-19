@@ -643,6 +643,8 @@ String	taMisc::prefs_dir; // this must be set at startup!
 String	taMisc::user_app_dir;
 String	taMisc::user_plugin_dir;
 String	taMisc::user_log_dir;
+String	taMisc::exe_cmd;
+String	taMisc::exe_path;
 
 // note: app should set all these url's in its main or other app-specific code
 String	taMisc::web_home = "http://grey.colorado.edu/emergent/index.php/Main_Page";
@@ -661,6 +663,7 @@ NameVar_PArray	taMisc::wikis;
 String_PArray	taMisc::css_include_paths;
 String_PArray	taMisc::load_paths;
 NameVar_PArray	taMisc::prog_lib_paths;
+NameVar_PArray	taMisc::proj_template_paths;
 NameVar_PArray	taMisc::named_paths;
 
 DumpFileCvtList taMisc::file_converters;
@@ -712,7 +715,8 @@ bool	taMisc::in_event_loop = false;
 signed char	taMisc::quitting = QF_RUNNING;
 bool	taMisc::not_constr = true;
 bool	taMisc::use_gui = false; // set to default in Init_Gui
-bool	taMisc::use_plugins; // set to default in Init_Gui
+bool	taMisc::in_dev_exe = false;
+bool	taMisc::use_plugins = true;
 bool 	taMisc::gui_active = false;
 bool 	taMisc::gui_no_win = false;
 bool 	taMisc::server_active = false; // true while connected
@@ -1311,6 +1315,13 @@ void taMisc::Init_Defaults_PostLoadConfig() {
     (Variant)(user_app_dir + PATH_SEP + "prog_lib")));
   prog_lib_paths.AddUnique(NameVar("WebLib",
     (Variant)(web_home + "/prog_lib"))); //note: urls always use '/'
+
+  proj_template_paths.AddUnique(NameVar("SystemLib",
+    (Variant)(app_dir + PATH_SEP + "proj_templates")));
+  proj_template_paths.AddUnique(NameVar("UserLib",
+    (Variant)(user_app_dir + PATH_SEP + "proj_templates")));
+  proj_template_paths.AddUnique(NameVar("WebLib",
+    (Variant)(web_home + "/proj_templates"))); //note: urls always use '/'
 
   String curdir = GetCurrentPath();
   taMisc::load_paths.AddUnique(curdir);

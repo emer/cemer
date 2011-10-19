@@ -227,6 +227,11 @@ String taDoc::WikiParse(const String& in_str) {
       else cl = "<li> " + cl.after("** ");
       bullet2 = true;
     }
+    else if(cl.startsWith(":* ")) {
+      if(!bullet2) cl = "<ul><li> " + cl.after(":* ");
+      else cl = "<li> " + cl.after(":* ");
+      bullet2 = true;
+    }
     else if(cl.startsWith("# ")) {
       if(num2) { cl = "</ol> <li> " + cl.after("# "); num2 = false; }
       else if(!num1) cl = "<ol><li> " + cl.after("# ");
@@ -236,6 +241,11 @@ String taDoc::WikiParse(const String& in_str) {
     else if(cl.startsWith("## ")) {
       if(!num2) cl = "<ol><li> " + cl.after("## ");
       else cl = "<li> " + cl.after("## ");
+      num2 = true;
+    }
+    else if(cl.startsWith(":# ")) {
+      if(!num2) cl = "<ol><li> " + cl.after(":# ");
+      else cl = "<li> " + cl.after(":# ");
       num2 = true;
     }
     else {
@@ -1894,6 +1904,65 @@ int taProject::SaveAs(const String& fname) {
   return rval;
 } 
 
+String taProject::GetProjTemplatePath(ProjLibs library) {
+  if(library == SEARCH_LIBS) {
+    taMisc::Error("Cannot do SEARCH_LIBS for saving -- program saved in local directory!");
+    return "";
+  }
+  String path = "./";
+  if(library == USER_LIB)
+    path = taMisc::proj_template_paths.GetVal("UserLib").toString();
+  else if(library == SYSTEM_LIB) {
+    if(taMisc::in_dev_exe) {
+      String top_lev_path = taMisc::GetDirFmPath(taMisc::exe_path, 1); // go up 1
+      path = top_lev_path + "/proj_templates";
+    }
+    else {
+      path = taMisc::proj_template_paths.GetVal("SystemLib").toString();
+    }
+  }
+  else if(library == WEB_LIB)
+    path = taMisc::proj_template_paths.GetVal("WebLib").toString();
+  if(library != WEB_LIB) {
+    QFileInfo qfi(path);
+    if(!qfi.isDir()) {
+      QDir qd;
+      qd.mkpath(path);          // attempt to make it..
+      taMisc::Warning("Note: did mkdir for project template library directory:", path);
+    }
+  }
+  return path;
+}
+
+void taProject::SaveAsTemplate(const String& template_name, const String& desc,
+		          const String& tags, ProjLibs library) {
+  String path = GetProjTemplatePath(library);
+  String fname = path + "/" + template_name + ".proj";
+  QFileInfo qfi(fname);
+  if(qfi.isFile()) {
+    int chs = taMisc::Choice("Project template file: " + fname + " already exists: Overwrite?",
+                             "Ok", "Cancel");
+    if(chs == 1) return;
+  }
+  SaveAs(fname);
+
+  String infofnm = fname.before(".proj",-1) + ".tmplt"; // template info
+  fstream strm;
+  strm.open(infofnm, ios::out);
+  if(strm.bad() || strm.eof()) {
+    taMisc::Error("Project::SaveAsTemplate: could not open template info file name for saving:",
+		  infofnm);
+    strm.close();
+    return;
+  }
+  strm << "name=" + template_name << endl;
+  strm << "tags=" + tags << endl;
+  strm << "desc=" + desc << endl;
+  strm.close();
+
+  Project_Group::proj_templates.FindProjects();
+}
+
 int taProject::Load(const String& fname, taBase** loaded_obj_ptr) {
   TestError(true, "Load", "Cannot load a new project file on top of an existing project -- must load an entirely new project");
   return 0;
@@ -2177,6 +2246,15 @@ bool taProject::AutoSave(bool force) {
 //   Project_Group	//
 //////////////////////////
 
+void Project_Group::InitLinks() {
+  inherited::InitLinks();
+  if(proj_templates.not_init) {
+    taBase::Ref(proj_templates);
+    proj_templates.FindProjects();
+  }
+}
+
+
 int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) { 
   // chg working dir to that of project -- simplifies lots of stuff immensely
   QFileInfo fi(fname);
@@ -2191,6 +2269,147 @@ int Project_Group::Load_strm(istream& strm, taBase* par, taBase** loaded_obj_ptr
   // note: used to do Dump_Load_post here but now it is done where it should be..
   return rval;
 }
+
+ProjTemplates Project_Group::proj_templates;
+
+taProject* Project_Group::NewFromTemplate(ProjTemplateEl* proj_type) {
+  return proj_templates.NewProject(proj_type, this);
+}
+
+taProject* Project_Group::NewFromTemplateByName(const String& prog_nm) {
+  return proj_templates.NewProjectFmName(prog_nm, this);
+}
+
+////////////////////////////////////
+//  ProjTemplate   
+
+void ProjTemplateEl::Initialize() {
+}
+
+void ProjTemplateEl::Destroy() {
+}
+
+taProject* ProjTemplateEl::NewProject(Project_Group* new_owner) {
+  // todo: need to support full URL types -- assumed to be file right now
+  String path = URL;
+  if(path.contains("file:"))
+    path = path.after("file:");
+  taBase* pg;
+  new_owner->Load(path, &pg);
+  if(pg) {
+    pg->SetFileName("");	// nuke association with template file!
+  }
+  return (taProject*)pg;
+}
+
+bool ProjTemplateEl::LoadProject(taProject* proj) {
+  // todo: need to support full URL types -- assumed to be file right now
+  // also this barfs and is not supported!
+  String path = URL;
+  if(path.contains("file:"))
+    path = path.after("file:");
+  proj->Load(path);
+  proj->SetFileName("");
+  return true;
+}
+
+bool ProjTemplateEl::ParseProjFile(const String& fnm, const String& path) {
+  filename = fnm;
+  URL = "file:" + path + "/" + filename;
+  String infofnm = filename.before(".proj") + ".tmplt"; // template info
+  String openfnm = path + "/" + infofnm;
+  fstream strm;
+  strm.open(openfnm, ios::in);
+  if(strm.bad() || strm.eof()) {
+    taMisc::Error("ProjTemplateEl::ParseProgFile: could not open file name:", openfnm);
+    return false;
+  }
+  bool rval = false;
+  int c = taMisc::read_till_eol(strm); 
+  while((c != EOF) && !strm.eof() && !strm.bad()) {
+    if(taMisc::LexBuf.contains("name=")) {
+      name = taMisc::LexBuf.after("name=");
+      name.gsub("\"", "");
+      if(name.lastchar() == ';') name = name.before(';');
+    }
+    if(taMisc::LexBuf.contains("tags=")) {
+      tags = taMisc::LexBuf.after("tags=");
+      tags.gsub("\"", "");
+      if(tags.lastchar() == ';') tags = tags.before(';');
+      ParseTags();
+    }
+    if(taMisc::LexBuf.contains("desc=")) {
+      desc = taMisc::LexBuf.after("desc=");
+      desc.gsub("\"", "");
+      if(desc.lastchar() == ';') desc = desc.before(';');
+      rval = true;
+      break;
+    }
+    c = taMisc::read_till_eol(strm); 
+  }
+  strm.close();
+  // todo: should use QUrlInfo instead -- need QtNetwork module access!
+  QFileInfo urlinfo(openfnm);
+  QDateTime mod = urlinfo.lastModified();
+  date = mod.toString(Qt::ISODate);
+  return rval;
+}
+
+void ProjTemplateEl::ParseTags() {
+  tags_array.Reset();
+  if(tags.empty())
+    return;
+  String tmp = tags;
+  while(tmp.contains(',')) {
+    String tag = tmp.before(',');
+    tag.gsub(" ","");           // nuke spaces
+    tags_array.Add(tag);
+    tmp = tmp.after(',');
+  }
+  if(!tmp.empty()) {
+    tmp.gsub(" ","");           // nuke spaces
+    tags_array.Add(tmp);
+  }
+}
+
+void ProjTemplateEl_List::Initialize() {
+}
+
+void ProjTemplates::Initialize() {
+  not_init = true;
+}
+
+void ProjTemplates::FindProjects() {
+  Reset();                      // clear existing
+  for(int pi=0; pi< taMisc::proj_template_paths.size; pi++) {
+    NameVar pathvar = taMisc::proj_template_paths[pi];
+    String path = pathvar.value.toString();
+    String lib_name = pathvar.name;
+    QDir dir(path);
+    QStringList files = dir.entryList();
+    for(int i=0;i<files.size();i++) {
+      String fl = files[i];
+      if(!fl.contains(".proj")) continue;
+      ProjTemplateEl* pe = new ProjTemplateEl;
+      pe->lib_name = lib_name;
+      if(pe->ParseProjFile(fl, path))
+        Add(pe);
+      else
+        delete pe;
+    }
+  }
+  not_init = false;
+}
+
+taProject* ProjTemplates::NewProject(ProjTemplateEl* proj_type, Project_Group* new_owner) {
+  if(proj_type == NULL) return NULL;
+  return proj_type->NewProject(new_owner);
+}
+
+taProject* ProjTemplates::NewProjectFmName(const String& proj_nm, Project_Group* new_owner) {
+  return NewProject(FindName(proj_nm), new_owner);
+}
+
 
 //////////////////////////
 //   taApplication	//
@@ -3085,11 +3304,27 @@ bool taRootBase::Startup_InitTA_AppFolders() {
   
   //note: this is not how Qt does it, but it seems windows follows normal rules
   // and passes the arg[0] as the full path to the executable, so we just get path
-  QFileInfo fi(taMisc::args_raw.SafeEl(0));
+  taMisc::exe_cmd = taMisc::args_raw.SafeEl(0);
+  QFileInfo fi(taMisc::exe_cmd);
   //note: argv[0] can contain a relative path, so we need to absolutize
   // but *don't* dereference links, because we typically want to use the 
   // link file, not the target, which for dev contexts may be buried somewhere
-  String bin_dir = fi.absolutePath();
+  taMisc::exe_path = fi.absolutePath();
+
+# if defined(TA_OS_MAC)
+/* Note: for Mac, if the bin is in a bundle, then it will be a link
+  to the actual file, so in this case, we dereference it
+  {app_dir}/{appname.app}/Contents/MacOS (bundle in app root)
+  {app_dir}/bin/{appname.app}/Contents/MacOS (bundle in app bin)
+  {app_dir}/bin (typically non-gui only, since gui must run from bundle)
+*/
+  if(taMisc::exe_path.endsWith("/Contents/MacOS")) {
+    taMisc::exe_path = fi.canonicalPath();
+  }
+  // seemingly not in a bundle, so try Unix defaults...
+# endif // Mac
+
+  String bin_dir = taMisc::exe_path; // tmp to work on..
   
   String app_plugin_dir; // will get set for in-place contexts (Windows and dev)
   String app_dir = taMisc::FindArgByName("AppDir");
@@ -3108,6 +3343,7 @@ bool taRootBase::Startup_InitTA_AppFolders() {
       app_dir = bin_dir.before("\\build");
       if (isAppDir(app_dir, &app_plugin_dir)) {
 	taMisc::Info("Note: running development executable: not loading plugins.");
+	taMisc::in_dev_exe = true;
 	taMisc::use_plugins = false;
 	goto have_app_dir;
       }
@@ -3124,18 +3360,6 @@ bool taRootBase::Startup_InitTA_AppFolders() {
     if (isAppDir(app_dir)) goto have_app_dir;
   }
 #else // Mac and Unix -- defaults
-# if defined(TA_OS_MAC)
-/* Note: for Mac, if the bin is in a bundle, then it will be a link
-  to the actual file, so in this case, we dereference it
-  {app_dir}/{appname.app}/Contents/MacOS (bundle in app root)
-  {app_dir}/bin/{appname.app}/Contents/MacOS (bundle in app bin)
-  {app_dir}/bin (typically non-gui only, since gui must run from bundle)
-*/
-  if (bin_dir.endsWith("/Contents/MacOS")) {
-    bin_dir = fi.canonicalPath();
-  }
-  // seemingly not in a bundle, so try Unix defaults...
-# endif // Mac
 /*
   {app_dir}/build[{SUFF}]/bin (cmake development) TEST FIRST!
   {app_dir}/bin (legacy development)
@@ -3146,6 +3370,7 @@ bool taRootBase::Startup_InitTA_AppFolders() {
       app_dir = bin_dir.before("/build");
       if (isAppDir(app_dir, &app_plugin_dir)) {
 	taMisc::Info("Note: running development executable: not loading plugins.");
+	taMisc::in_dev_exe = true;
 	taMisc::use_plugins = false;
 	goto have_app_dir;
       }

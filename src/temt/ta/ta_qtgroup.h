@@ -507,5 +507,40 @@ protected:
   override void		CreateDataPanel_impl(taiDataLink* dl_);
 };
 
+////////////////////////////////////////////////////////
+//  Special ProjTemplate browser support
+
+class TA_API taiProjTemplateElsButton : public taiListElsButton {
+// for prog lib items
+INHERITED(taiListElsButton)
+public:
+  override int		columnCount(int view) const;
+  override const String	headerText(int index, int view) const;
+  override const String	titleText();
+
+  taiProjTemplateElsButton(TypeDef* typ, IDataHost* host, taiData* par,
+		      QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
+protected:
+  override void		BuildCategories_impl();
+  override int 		BuildChooser_0(taiItemChooser* ic, TABLPtr top_lst, 
+				       QTreeWidgetItem* top_item);
+};
+
+class TA_API taiProjTemplateElArgType : public gpiFromGpArgType {
+  // for ProjTemplateEl* ptr args
+public:
+  int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
+  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr_);
+  void		GetImage_impl(taiData* dat, const void* base);
+  void		GetValue_impl(taiData* dat, void* base);
+
+  TAQT_ARGTYPE_INSTANCE(taiProjTemplateElArgType, gpiFromGpArgType);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
+};
+
+
 #endif // ta_group_iv.h
 

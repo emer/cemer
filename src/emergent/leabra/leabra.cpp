@@ -6583,15 +6583,34 @@ void LeabraProject::Initialize() {
 void LeabraWizard::Initialize() {
 }
 
+
+String LeabraWizard::RenderWizDoc_network() {
+  String rval = inherited::RenderWizDoc_network();
+  rval += String("\
+* [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n\
+* [[<this>.UnitInhib()|Unit Inhib]] -- configure unit-based inhibition for all layers in selected network (as compared with standard kWTA inhibition) ('''NOTE: parameters are out of date''').\n\
+* [[<this>.TD()|Temporal Differences (TD)]] -- configure temporal-differences (TD) reinforcement learning layers.\n\
+* [[<this>.PVLV()|PVLV]] -- configure PVLV (Primary Value, Learned Value) biologically-motivated reinforcement learning layers -- provides a simulated dopamine signal that reflects unexpected primary rewards (PV = primary value system) and unexpected learned reward assocations (conditioned stimuli; LV = learned value = system).\n\
+:* [[<this>.PVLV_ConnectLayer()|PVLV Connect Layer]] -- connect or disconnect a layer as an input to the PVLV system -- multiple PVLV layers should be connected together so this automates that process and is strongly recommended.\n\
+:* [[<this>.PVLV_OutToPVe()|PVLV Connect Output to PVe]] -- connect or disconnect an Output layer to the PVe (primary value, excitatory) layer, which then computes reward based on network success in producing target outputs.\n\
+* [[<this>.PBWM()|PBWM]] -- create and configure prefrontal cortex basal ganglia working memory (PBWM) layers in the network -- also does a PVLV configuration, which does the reinforcement learning for PBWM.\n\
+:* [[<this>.PBWM_Defaults()|PBWM Defaults]] -- set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured and in a standard current format (i.e., everything in groups).\n\
+:* [[<this>.PBWM_SetNStripes()|PBWM Set N Stripes]] -- set the number of stripes (unit groups) throughout the set of PFC and BG layers that have stripes -- easier than doing it manually for each layer.\n\
+:* [[<this>.PBWM_Remove()|PBWM Remove]] -- Remove PBWM layers and specs from a network -- can be useful for converting between PBWM versions -- ONLY works when layers are organized into groups.\n\
+:* [[<this>.PBWM_ToLayerGroups()|PBWM To Layer Groups]] -- organize PFC and BG layers into layer groups, which makes them easier to manage, and is the preferred configuration (this is only for older projects that are not already so organized).\n\
+:* [[<this>.PVLV_ToLayerGroups()|PVLV To Layer Groups]] -- organize PVLV layers into layer groups, which makes them easier to manage, and is the preferred configuration (this is only for older projects that are not already so organized).\n");
+  return rval;
+}
+
 bool LeabraWizard::StdNetwork() {
-  return inherited::StdNetwork();
-//   if(!net) {
-//     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-//     net = proj->GetNewNetwork(net_type);
-//     if(TestError(!net, "StdNetwork", "network is NULL and could not make a new one -- aborting!")) return false;
-//   }
-//   if(!inherited::StdNetwork(net_type, net)) return false;
-//   return StdLayerSpecs((LeabraNetwork*)net);
+  ProjectBase* proj = GET_MY_OWNER(ProjectBase);
+  if(proj->networks.size == 0) {	// make a new one for starters always
+    LeabraNetwork* net = (LeabraNetwork*)proj->networks.New(1);
+    if(net)
+      StdLayerSpecs(net);
+  }
+  bool rval = std_net_dlg.DoDialog();
+  return rval;
 }
 
 bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
@@ -6601,16 +6620,10 @@ bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
     if(TestError(!net, "StdLayerSpecs", "network is NULL and could not make a new one -- aborting!")) return false;
   }
   LeabraLayerSpec* hid;
-//   if(net->InheritsFrom(&TA_CtLeabraNetwork))
-//     hid = (LeabraLayerSpec*)net->FindMakeSpec(NULL, &TA_CtLeabraLayerSpec);
-//   else
     hid = (LeabraLayerSpec*)net->FindMakeSpec("", &TA_LeabraLayerSpec);
   hid->name = "HiddenLayer";
   LeabraLayerSpec* inout;
-//   if(net->InheritsFrom(&TA_CtLeabraNetwork))
-//     inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_CtLeabraLayerSpec);
-//   else
-    inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_LeabraLayerSpec);
+  inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output", &TA_LeabraLayerSpec);
   hid->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
   hid->inhib.kwta_pt = .6f;
   inout->SetUnique("inhib", true);
@@ -6620,41 +6633,14 @@ bool LeabraWizard::StdLayerSpecs(LeabraNetwork* net) {
   inout->kwta.k_from = KWTASpec::USE_PAT_K;
 
   int i;
-//   if(net->layers.size == layer_cfg.size) {	// likely to be using specs
-//     for(i=0;i<layer_cfg.size;i++) {
-//       LayerWizEl* el = (LayerWizEl*)layer_cfg[i];
-//       Layer* lay = (Layer*)net->layers.FindName(el->name);
-//       if(lay != NULL) {
-// 	if(el->io_type == LayerWizEl::HIDDEN)
-// 	  lay->SetLayerSpec(hid);
-// 	else
-// 	  lay->SetLayerSpec(inout);
-//       }
-//     }
-//   }
-//   else {
-//     for(i=0;i<net->layers.size;i++) {
-//       Layer* lay = (Layer*)net->layers[i];
-//       if(lay->layer_type == Layer::HIDDEN)
-// 	lay->SetLayerSpec(hid);
-//       else
-// 	lay->SetLayerSpec(inout);
-//     }
-//   }
 
   // move the bias spec under the con spec
   LeabraBiasSpec* bs;
-//   if(net->InheritsFrom(&TA_CtLeabraNetwork))
-//     bs = (LeabraBiasSpec*)net->specs.FindType(&TA_CtLeabraBiasSpec);
-//   else
     bs = (LeabraBiasSpec*)net->specs.FindType(&TA_LeabraBiasSpec);
   if(bs != NULL) {
     LeabraConSpec* ps = (LeabraConSpec*)bs->FindParent();
     if(ps != NULL) return false;
-//     if(net->InheritsFrom(&TA_CtLeabraNetwork))
-//       ps = (LeabraConSpec*)net->specs.FindSpecTypeNotMe(&TA_CtLeabraConSpec, bs);
-//     else
-      ps = (LeabraConSpec*)net->specs.FindSpecTypeNotMe(&TA_LeabraConSpec, bs);
+    ps = (LeabraConSpec*)net->specs.FindSpecTypeNotMe(&TA_LeabraConSpec, bs);
     if(ps != NULL) {
       ps->children.Transfer(bs);
     }

@@ -42,6 +42,8 @@ public:
   virtual void		UrlAction();	// execute the action_url
   virtual void 		Connect_UrlAction(QObject* src_obj, const char* src_signal);
   // connects source object signal to the UrlAction via helper
+  virtual void		FixUrl(const String& url_tag, const String& path);
+  // replace starting tag in url with given path
 
   virtual void		GetImage();
   // get gui image, for tai_data controls
@@ -79,6 +81,9 @@ INHERITED(taList<taGuiWidget>)
 public:
   virtual void	GetImage();	// get image for all items in the list
   virtual void	GetValue();	// get value for all items in the list
+
+  virtual void		FixAllUrl(const String& url_tag, const String& path);
+  // replace starting tag in url with given path
 
   TA_SIMPLE_BASEFUNS(taGuiWidget_List);
 private:
@@ -130,6 +135,8 @@ public:
   virtual void		UrlAction();	// execute the action_url
   virtual void 		Connect_UrlAction(QObject* src_obj, const char* src_signal);
   // connects source object signal to the UrlAction via helper
+  virtual void		FixUrl(const String& url_tag, const String& path);
+  // replace starting tag in url with given path
 
   TA_SIMPLE_BASEFUNS(taGuiAction);
 protected:
@@ -160,6 +167,9 @@ class TA_API taGuiAction_List : public taList<taGuiAction> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CAT_Gui list of ta gui actions
 INHERITED(taList<taGuiAction>)
 public:
+  virtual void		FixAllUrl(const String& url_tag, const String& path);
+  // replace starting tag in url with given path
+
   TA_SIMPLE_BASEFUNS(taGuiAction_List);
 private:
   void	Initialize();
@@ -307,6 +317,9 @@ public:
   
   virtual void	GetImage();	// #IGNORE get image for all widgets that need it
   virtual void	GetValue();	// #IGNORE get value for all widgets that need it
+
+  virtual void		FixAllUrl(const String& url_tag, const String& path);
+  // replace starting tag in url with given path for all actions and widgets
   
   TA_SIMPLE_BASEFUNS(taGuiDialog);
 // protected:
