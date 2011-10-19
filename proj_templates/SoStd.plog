@@ -1,0 +1,17 @@
+Wed Oct 19 04:34:21 2011: ***WARNING: T3DataView::AddRemoveChildNode_impl Attempt to access NULL node_so
+
+
+Wed Oct 19 04:34:21 2011: Network: Network_0 auto building
+Wed Oct 19 04:36:01 2011: ***WARNING: Unknown type: LayerWizElList
+
+
+Wed Oct 19 04:36:02 2011: ***WARNING: Loaded a file saved in an earlier version of the software: 5.1.1.0   Current version is: 5.2.3.0 set verbose_load to VERSION_SKEW to see version skew warnings, which may have useful information -- see the current ChangeLog info on the emergent wiki for things you should be looking for
+
+
+Wed Oct 19 04:36:02 2011: ***WARNING: T3DataView::AddRemoveChildNode_impl Attempt to access NULL node_so
+
+
+Wed Oct 19 04:36:02 2011: ***WARNING: T3DataView::AddRemoveChildNode_impl Attempt to access NULL node_so
+
+
+Wed Oct 19 04:36:03 2011: Network: Network_0 auto building
