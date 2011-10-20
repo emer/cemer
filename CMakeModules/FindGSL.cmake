@@ -55,7 +55,7 @@ else (WIN32)
   ) 
  endif (WIN32)
 
-SET(GSL_LIBRARIES ${GSL_CBLAS_LIBRARY} ${GSL_GSL_LIBRARY})
+SET(GSL_LIBRARIES ${GSL_GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})
 
 # handle the QUIETLY and REQUIRED arguments and set COIN_FOUND to TRUE if 
 # all listed variables are TRUE
