@@ -51,6 +51,9 @@ void DataOpEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   //  CheckError(col_idx < 0, quiet, rval,"could not find", col_name,"in datatable");
   // note: an error can be too strong and prevent transitional code from running -- sometimes
   // at compile time the names aren't right, but they later end up being ok..
+  ProgEl* pel = GET_MY_OWNER(ProgEl);
+  if(pel && pel->HasProgFlag(ProgEl::QUIET))
+    return;
   TestWarning(col_idx < 0, "CheckConfig", "could not find", col_name,"in datatable");
 }
 

@@ -26,6 +26,7 @@
 #include <QSizePolicy>
 #include <QTextEdit>
 #include <QPalette>
+#include <QClipboard>
 
 iLineEdit::iLineEdit(QWidget* parent)
 : QLineEdit(parent)
@@ -269,6 +270,10 @@ void iTextEditDialog::init(bool readOnly_) {
   layButtons->addWidget(btnPrint);
   layButtons->addSpacing(16);
   connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );
+  btnCopy = new QPushButton("Copy to c&lipboard", this);
+  layButtons->addWidget(btnCopy);
+  layButtons->addSpacing(16);
+  connect(btnCopy, SIGNAL(clicked()), this, SLOT(copyToClipboard()) );
   if (m_readOnly) {
     txtText->setReadOnly(true);
     btnOk = NULL;
@@ -294,6 +299,10 @@ void iTextEditDialog::btnPrint_clicked() {
   if (pd.exec() != QDialog::Accepted) return;
   // print ...
   txtText->document()->print(&pr);
+}
+
+void iTextEditDialog::copyToClipboard() {
+  QApplication::clipboard()->setText(txtText->toPlainText());
 }
 
 void iTextEditDialog::setText(const QString& value) {

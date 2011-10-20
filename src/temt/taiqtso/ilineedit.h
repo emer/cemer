@@ -71,6 +71,7 @@ INHERITED(iDialog)
 public:
   QTextEdit*	txtText;
   QPushButton*	btnPrint;
+  QPushButton*	btnCopy;
   QPushButton*	btnOk; // read/write only
   QPushButton* 	btnCancel; // or close, if read only
   
@@ -84,6 +85,7 @@ protected:
   
 protected slots:
   void		btnPrint_clicked();
+  void		copyToClipboard(); // copy text of msg to clipboard
   
 private:
   void 		init(bool readOnly);

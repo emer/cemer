@@ -384,10 +384,11 @@ public:
     CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
     NULL_CHECK          = 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
     SAVE_VAL            = 0x0008, // #CONDSHOW_OFF_flags:LOCAL_VAR save the value of the variable in the project -- good idea to turn off saving for variables that don't require persistence across saving and loading (and that change for each run and thus might affect merging of project files)
-    LOCAL_VAR           = 0x0010, // #NO_SHOW this is a local variable which does not set or update values!
-    FUN_ARG             = 0x0020, // #NO_SHOW this is a function argument variable
-    USED                = 0x0040, // #NO_SHOW whether this variable is currently being used in the program (set automatically)
-    EDIT_VAL            = 0x0080, // #NO_SHOW allow value to be edited -- only if !LOCAL_VAR && !init_from
+    QUIET            	= 0x0010, // turn off warning messages if they are not relevant (e.g., regarding global matrix vars)
+    LOCAL_VAR           = 0x0020, // #NO_SHOW this is a local variable which does not set or update values!
+    FUN_ARG             = 0x0040, // #NO_SHOW this is a function argument variable
+    USED                = 0x0080, // #NO_SHOW whether this variable is currently being used in the program (set automatically)
+    EDIT_VAL            = 0x0100, // #NO_SHOW allow value to be edited -- only if !LOCAL_VAR && !init_from
   };
 
   VarType       var_type;       // type of variable -- determines which xxx_val(s) is/are used
@@ -820,6 +821,7 @@ public:
     NON_STD             = 0x0002, // non-standard: not part of the standard code for this program -- a special purpose modification (just for user information/highlighting)
     NEW_EL              = 0x0004, // new element: this element was recently added to the program (just for user information/highlighting)
     VERBOSE             = 0x0008, // print informative message about the operation of this program element to std output (e.g., css console or during -nogui startup) -- useful for debugging and for logging key steps during startup
+    QUIET            	= 0x0010, // turn off warning messages if they are not relevant
     BREAKPOINT          = 0x0100, // #NO_SHOW breakpoint set at this prog el
     PROG_ERROR          = 0x0200, // #NO_SHOW css error was triggered at this prog el
     WARNING             = 0x0400, // #NO_SHOW css warning was triggered at this prog el
