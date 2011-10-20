@@ -2992,7 +2992,8 @@ void Projection::UpdateAfterEdit_impl() {
       }
     }
     String nwnm = "Fm_" + from->name;
-    if(!name.contains(nwnm))	// only change if necc -- keep if multiple
+    // unique names are always _index so needs to at least fit that
+    if(!name.startsWith(nwnm) || !name.after(nwnm).startsWith('_'))
       SetName(nwnm);		// setname ensures uniqueness
   }
 
@@ -4000,6 +4001,7 @@ void Layer::UpdateAfterEdit_impl() {
     RecomputeGeometry();
     if(own_net)
       own_net->LayerPos_Cleanup();
+    UpdateSendPrjnNames();
   }
 }
 
@@ -4120,6 +4122,13 @@ void Layer::SyncSendPrjns() {
     if(p == NULL) continue;
     if((!(bool)p->layer) || (p->from.ptr() != this))
       send_prjns.RemoveIdx(pi);	// get rid of it!
+  }
+}
+
+void Layer::UpdateSendPrjnNames() {
+  for(int pi=0; pi< send_prjns.size; pi++) {
+    Projection* prj = send_prjns.FastEl(pi);
+    prj->UpdateName();
   }
 }
 
@@ -6965,7 +6974,7 @@ void Network::Compute_EpochStats() {
 }
 
 
-void Network::NetStructToTable(DataTable* dt) {
+DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
   if (!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("NetStru_" + name, true);
@@ -6992,6 +7001,12 @@ void Network::NetStructToTable(DataTable* dt) {
   col->desc = "receiving projections -- connections from other layers that send into this one -- these must be valid names of other layers in the network, separated by a space if there are multiple";
   col = dt->FindMakeColName("SendPrjns", idx, VT_STRING); 
   col->desc = "sending projections -- the other layers that the layer sends connections to";
+  if(list_specs) {
+    col = dt->FindMakeColName("UnitSpec", idx, VT_STRING); 
+    col->desc = "name of unit spec to use for this layer";
+    col = dt->FindMakeColName("LayerSpec", idx, VT_STRING); 
+    col->desc = "name of layer spec to use for this layer";
+  }
 
   Layer* l;
   taLeafItr i;
@@ -7025,9 +7040,23 @@ void Network::NetStructToTable(DataTable* dt) {
       snp += pj->layer->name + " ";
     }
     dt->SetVal(snp, "SendPrjns", -1);
+
+    if(list_specs) {
+      UnitSpec* us = l->GetUnitSpec();
+      if(us)
+	dt->SetVal(us->name, "UnitSpec", -1);
+      else
+	dt->SetVal("NULL", "UnitSpec", -1);
+      LayerSpec* ls = l->GetLayerSpec();
+      if(ls)
+	dt->SetVal(ls->name, "LayerSpec", -1);
+      else
+	dt->SetVal("NULL", "LayerSpec", -1);
+    }
     dt->WriteClose();
   }
   dt->StructUpdate(false);
+  return dt;
 }
 
 void Network::NetStructFmTable(DataTable* dt) {
@@ -7116,6 +7145,50 @@ void Network::NetStructFmTable(DataTable* dt) {
     if(l->HasBaseFlag(BF_MISC1))
       layers.RemoveLeafIdx(i);
   }
+}
+
+DataTable* Network::NetPrjnsToTable(DataTable* dt) {
+  if (!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable("NetPrjns_" + name, true);
+  }
+  dt->StructUpdate(true);
+  int idx;
+  dt->RemoveAllRows();
+  DataCol* col;
+  col = dt->FindMakeColName("LayerName", idx, VT_STRING); 
+  col->desc = "name of layer -- will be updated to be a valid C language label so it can be referred to in Programs etc";
+  col = dt->FindMakeColName("PrjnFrom", idx, VT_STRING); 
+  col->desc = "receiving projection -- name of sending layer that this layer receives from";
+  col = dt->FindMakeColName("PrjnSpec", idx, VT_STRING); 
+  col->desc = "name of projection spec for this projection";
+  col = dt->FindMakeColName("ConSpec", idx, VT_STRING); 
+  col->desc = "name of connection spec for this projection";
+
+  Layer* l;
+  taLeafItr i;
+  FOR_ITR_EL(Layer, l, layers., i) {
+//     if(l->lesioned()) continue;   // for this, get everything
+    for(int i=0; i<l->projections.size; i++) {
+      Projection* pj = l->projections.FastEl(i);
+      dt->AddBlankRow();
+      dt->SetVal(l->name, "LayerName", -1);
+      dt->SetVal(pj->from->name, "PrjnFrom", -1);
+      ProjectionSpec* ps = pj->GetPrjnSpec();
+      if(ps) 
+	dt->SetVal(ps->name, "PrjnSpec", -1);
+      else 
+	dt->SetVal("NULL", "PrjnSpec", -1);
+      ConSpec* cs = pj->GetConSpec();
+      if(cs) 
+	dt->SetVal(cs->name, "ConSpec", -1);
+      else 
+	dt->SetVal("NULL", "ConSpec", -1);
+    }
+    dt->WriteClose();
+  }
+  dt->StructUpdate(false);
+  return dt;
 }
 
 #ifdef DMEM_COMPILE

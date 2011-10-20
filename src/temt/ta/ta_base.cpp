@@ -2357,23 +2357,18 @@ bool taBase::EditDialog(bool modal) {
       //note: taiEdit looks up color, if hinting enabled
       return ie->EditDialog((void*)this, false, true); // r/w, modal
     }
-  } else {
-
+  }
+  else {
     // first, check for an edit dialog and use that if found
     MainWindowViewer* edlg = MainWindowViewer::FindEditDialog(this);
-    if(edlg) {
-      edlg->Show();		// focus on it
-      return true;
+    if(!edlg) {
+      edlg = MainWindowViewer::NewEditDialog(this);
     }
-
-    edlg = MainWindowViewer::NewEditDialog(this);
-    if (edlg) {
-      edlg->ViewWindow();
-      iMainWindowViewer* iwv = edlg->widget();
-      iwv->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
-      return iwv->AssertPanel((taiDataLink*)GetDataLink());
-        //bool new_tab, bool new_tab_lock)
-    }
+    edlg->ViewWindow();
+    iMainWindowViewer* iwv = edlg->widget();
+    iwv->resize( taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgVer) );
+    return iwv->AssertPanel((taiDataLink*)GetDataLink());
+    //bool new_tab, bool new_tab_lock)
   }
 #endif
   return false;
@@ -2929,27 +2924,8 @@ void taBase::Help() {
 #ifdef TA_GUI
   iHelpBrowser::StatLoadType(mytd);
 #endif
-/*legacy...
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!proj) return;
-  taDoc* help_doc = proj->FindMakeDoc("HelpDoc", taMisc::web_help_wiki, mytd->name);
-  help_doc->EditDialog();*/
 }
 
-// old help
-//   String full_file;
-//   while((mytd != NULL) && full_file.empty()) {
-//     String help_file = taMisc::help_file_tmplt;
-//     help_file.gsub("%t", mytd->name);
-//     full_file = taMisc::FindFileOnLoadPath(help_file);
-//     mytd = mytd->parents.SafeEl(0);	// go with the parent
-//   }
-//   if(TestError(full_file.empty(), "Help",
-// 	       "Sorry, no help available")) return;
-//   String help_cmd = taMisc::help_cmd;
-//   help_cmd.gsub("%s", full_file);
-//   int rval = system(help_cmd);	// rval is compiler food
-//}
 
 ///////////////////////////////////////////////////////////////////////////
 //	Updating pointers (when objects change type or are copied)

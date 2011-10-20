@@ -9104,8 +9104,6 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
     tree_nm = dl->GetDisplayName();
     if (tree_nm.empty()) {
       tree_nm = "(subgroup " + String(i) + ")";
-    } else {
-      tree_nm = tree_nm + " subgroup";
     }
     int idx;
     iTreeViewItem* node1 = this->FindChildForData(el, idx); //null if not found
@@ -9595,6 +9593,7 @@ iHelpBrowser* iHelpBrowser::instance() {
     iSize sz = taiM->dialogSize(taiMisc::dlgBig);
     inst->resize(sz.width(), (int)(1.2f * (float)sz.height())); // a bit bigger than .6h
     inst->show();
+    inst->raise();
     taiMiscCore::ProcessEvents(); // run default stuff
     taiMiscCore::ProcessEvents(); // run default stuff
     taiMiscCore::ProcessEvents(); // run default stuff

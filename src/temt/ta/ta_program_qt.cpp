@@ -2637,6 +2637,7 @@ QWidget* taiProgStepButton::GetButtonRep() {
     taiAction* act = new taiAction(taiActions::normal, sp->short_nm);
     act->usr_data = (void*)sp;
     act->connect(taiAction::ptr_act, this, SLOT(CallFunList(void*)));
+    act->setToolTip(sp->name);
     act->setFont(taiM->menuFont(defSize()));
     tbut->setDefaultAction(act);
     if(i == prg->sub_progs_step.size-1) {

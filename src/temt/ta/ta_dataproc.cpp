@@ -2373,6 +2373,7 @@ void DataGroupProg::GenCssBody_impl(Program* prog) {
   prog->AddLine(this, "{ DataGroupProg* dsp = this" + GetPath(NULL, program()) + ";",
 		ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
+  prog->IncIndent();
   if(dest_data_var) {
     prog->AddLine(this, "taDataProc::Group(" + dest_data_var->name + ", " + src_data_var->name
 		  + ", dsp->group_spec);");

@@ -586,8 +586,12 @@ void TopLevelViewer::SetWinState_impl() {
 
 void TopLevelViewer::DeIconify() {
   if (!isMapped() || !isTopLevel()) return;
-  if (widget()->isMinimized())
+  if (widget()->isMinimized()) {
     widget()->showNormal();
+  }
+  else {
+    widget()->raise();
+  }
 }
 
 bool TopLevelViewer::deleteOnWinClose() const {
