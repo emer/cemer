@@ -266,10 +266,11 @@ void iTextEditDialog::init(bool readOnly_) {
   layButtons->setSpacing(4);
   layOuter->addLayout(layButtons);
   layButtons->addStretch();
-  btnPrint = new QPushButton("&Print", this);
-  layButtons->addWidget(btnPrint);
-  layButtons->addSpacing(16);
-  connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );
+  btnPrint = NULL;	      // really is silly..
+//   btnPrint = new QPushButton("&Print", this);
+//   layButtons->addWidget(btnPrint);
+//   layButtons->addSpacing(16);
+//   connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );
   btnCopy = new QPushButton("Copy to c&lipboard", this);
   layButtons->addWidget(btnCopy);
   layButtons->addSpacing(16);

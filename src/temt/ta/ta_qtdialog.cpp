@@ -2782,10 +2782,11 @@ void taiStringDataHost::Constr_Strings() {
 
 void taiStringDataHost::Constr_Buttons() {
   inherited::Constr_Buttons();
-  btnPrint = new QPushButton("&Print", widget());
-  layButtons->addSpacing(16);
-  layButtons->addWidget(btnPrint, 0, (Qt::AlignVCenter));
-  connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );
+  // printing is now declared silly..
+//   btnPrint = new QPushButton("&Print", widget());
+//   layButtons->addSpacing(16);
+//   layButtons->addWidget(btnPrint, 0, (Qt::AlignVCenter));
+//   connect(btnPrint, SIGNAL(clicked()), this, SLOT(btnPrint_clicked()) );
 }
 
 
