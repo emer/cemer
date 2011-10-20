@@ -596,6 +596,7 @@ public:
     NO_VAR_ERRS         = 0x0001, // do not generate error messages for variables that cannot be found (e.g., for more complex expressions that might create local variables)
     FULL_STMT           = 0x0002, // expression is full css statement(s), not just isolated expressions -- this affects how the parsing works
     FOR_LOOP_EXPR       = 0x0004, // expression is an initializer or increment for a for loop -- requires different parsing due to possibility of commas..
+    NO_PARSE            = 0x0008, // do not parse expression in UAE
   };
 
   String        expr;           // #EDIT_DIALOG #EDIT_WIDTH_40 #LABEL_ enter the expression here -- use Ctrl-L to pull up a lookup dialog for members, methods, types, etc -- or you can just type in names of program variables or literal values.  enclose strings in double quotes.  variable names will be checked and automatically updated
@@ -765,7 +766,7 @@ private:
 
 
 class TA_API ProgArg_List : public taList<ProgArg> {
-  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE ##CAT_Program list of arguments
+  // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE #FIXED_SIZE ##CAT_Program list of arguments
 INHERITED(taList<ProgArg>)
 public:
 

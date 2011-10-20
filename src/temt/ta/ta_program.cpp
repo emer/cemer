@@ -1610,6 +1610,7 @@ void ProgExprBase::Copy_(const ProgExprBase& cp) {
 
 void ProgExprBase::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(HasExprFlag(NO_PARSE)) return;
   Program* prg = GET_MY_OWNER(Program);
   if(!prg || isDestroying()) return;
   ProgEl* pel = GET_MY_OWNER(ProgEl);
@@ -2981,8 +2982,7 @@ void ProgCode::Initialize() {
 }
 
 void ProgCode::SetProgExprFlags() {
-  code.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-  code.SetExprFlag(ProgExpr::FULL_STMT); // full statements for parsing
+  code.SetExprFlag(ProgExpr::NO_PARSE); // do not parse at all -- often nonsense..
 }
 
 void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td, const String& code_str,

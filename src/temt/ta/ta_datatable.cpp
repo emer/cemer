@@ -979,6 +979,15 @@ void DataTable::AllocRows(int n) {
   }
 }
 
+int DataTable::AddBlankRow() {
+  if(AddRows(1)) {
+    ScrollEditorsToBottom();
+    rd_itr = wr_itr = rows - 1;
+    return wr_itr;
+  }
+  else return -1;
+}
+
 void DataTable::EnforceRows(int nr) {
   if(rows > nr) {
     RemoveRows(nr, rows - nr);

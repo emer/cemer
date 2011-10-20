@@ -1205,6 +1205,8 @@ public:
   DataTable*		dt() const {return m_dt;}
   void			setDataTable(DataTable* dt); // only called once
   DataTableModel*	dtm() const;
+
+  virtual void		ScrollToBottom(); // scroll table to last row
   
   void			Refresh(); // for manual refresh
   

@@ -50,6 +50,7 @@
 #include <qpushbutton.h> // metrics
 #include <QSessionManager>
 #include <QKeyEvent>
+#include <QScrollBar>
 
 // #ifdef TA_USE_INVENTOR
 // #endif
@@ -939,3 +940,58 @@ bool taiMisc::KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e) {
   }
   return false;
 }
+
+void taiMisc::ScrollTo_SA(QAbstractScrollArea* sa, int scr_pos) {
+  sa->verticalScrollBar()->setValue(scr_pos);
+}
+
+void taiMisc::CenterOn_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidget* widg) {
+  int w_ht = widg->height();
+  int top_in_vc = MapToAreaV_SA(sa, sa_main_widg, widg, 0);
+  int ctr_pos = top_in_vc + w_ht / 2;
+  int vpt_ht = sa->viewport()->height();
+  ScrollTo_SA(sa, ctr_pos);
+}
+
+void taiMisc::KeepInView_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidget* widg) {
+  int w_ht = widg->height();
+  int top_in_vc = MapToAreaV_SA(sa, sa_main_widg, widg, 0);
+  int ctr_pos = top_in_vc + w_ht / 2;
+  int bot_pos = top_in_vc + w_ht;
+  
+  if(PosInView_SA(sa, top_in_vc) && PosInView_SA(sa, bot_pos))
+    return;			// already in view
+
+  int vpt_ht = sa->viewport()->height();
+  int scpos = sa->verticalScrollBar()->value();
+  int scbot = scpos + sa->viewport()->height();
+  if(ctr_pos < scpos) {		// closer to top
+    int nwtop = MAX(top_in_vc-12,0);
+    ScrollTo_SA(sa, nwtop); // scroll up to top, plus a bit of margin
+    taMisc::Info("Keep top:", String(nwtop));
+  }
+  else {
+    int nwbot = MIN(bot_pos+12,vpt_ht);
+    int nwtop = MAX(nwbot - vpt_ht, 0);
+    ScrollTo_SA(sa, nwtop); // scroll down to bottom plus some margin
+    taMisc::Info("Keep bot:", String(nwbot));
+  }
+}
+
+bool taiMisc::PosInView_SA(QAbstractScrollArea* sa, int scr_pos) {
+  int scpos = sa->verticalScrollBar()->value();
+  int scbot = scpos + sa->viewport()->height();
+  if(scr_pos <= scpos && scr_pos >= scbot) return true;
+  return false;
+}
+
+QPoint taiMisc::MapToArea_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidget* widg, const QPoint& pt) {
+  return widg->mapTo(sa_main_widg, pt);
+}
+
+int taiMisc::MapToAreaV_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidget* widg, int pt_y) {
+  QPoint pt(0, pt_y);
+  QPoint rv = MapToArea_SA(sa, sa_main_widg, widg, pt);
+  return rv.y();
+}
+

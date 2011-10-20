@@ -1003,13 +1003,14 @@ int taOBase::ChildEditActionLS_impl(const MemberDef* md, taBase* lst_itm, int ea
   taList_impl* list = children_();
   if (!list) return taiClipData::ER_IGNORED;
   if (lst_itm == NULL) return taiClipData::ER_IGNORED;
+  if (list->HasOption("FIXED_SIZE")) return taiClipData::ER_IGNORED;
   
   switch (ea & taiClipData::EA_OP_MASK) {
   //note: COPY is handled by the child object itself, or outer controller if multi
   case taiClipData::EA_UNLINK: {
     taProject* proj = (taProject*)list->GetOwner(&TA_taProject);
     if(proj) {
-      proj->undo_mgr.SaveUndo(lst_itm, "Remove", NULL, false, list);
+      proj->undo_mgr.SaveUndo(lst_itm, "Remove", NULL, false, this);
       // list is save_undo_owner
     }
     list->RemoveEl(lst_itm);
@@ -1032,7 +1033,10 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
 {
   taList_impl* list = children_();
   if (!list) return taiClipData::ER_IGNORED;
+  if (list->HasOption("FIXED_SIZE")) return taiClipData::ER_IGNORED;
   int itm_idx = list->FindEl(lst_itm); // -1 if NULL ie at end
+
+  taProject* proj = dynamic_cast<taProject*>(list->GetThisOrOwner(&TA_taProject));
   
   // itm_idx, -1 means parent itself
   int obj_idx = -1; // -1 means not in this list
@@ -1058,9 +1062,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     //  Cut/Paste is a move
     ((ea & taiClipData::EA_PASTE2) && (ms->srcAction() & taiClipData::EA_SRC_COPY))
   ) {
-    taProject* proj = dynamic_cast<taProject*>(list->GetThisOrOwner(&TA_taProject));
     if(proj) {
-      proj->undo_mgr.SaveUndo(list, "Paste/Copy", NULL, false, list);
+      proj->undo_mgr.SaveUndo(list, "Paste/Copy", NULL, false, this);
       // list is save_undo_owner
     }
     taBase* new_obj = obj->MakeToken();
@@ -1094,9 +1097,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     ((ea & taiClipData::EA_PASTE2) && (ms->srcAction() & taiClipData::EA_SRC_CUT))
   ) {
     if (obj == lst_itm) return 1; // nop
-    taProject* proj = dynamic_cast<taProject*>(list->GetThisOrOwner(&TA_taProject));
     if(proj) {
-      proj->undo_mgr.SaveUndo(obj, "Move", NULL, false, list);
+      proj->undo_mgr.SaveUndo(obj, "Move", NULL, false, this);
       // list is save_undo_owner
     }
     if (obj_idx >= 0) { // in this list: just do a list move
@@ -1124,6 +1126,10 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     (taiClipData::EA_LINK2 | taiClipData::EA_DROP_LINK2))
   {
     if (obj_idx >= 0) return -1; // in this list: link forbidden
+    if(proj) {
+      proj->undo_mgr.SaveUndo(obj, "Insert Link", NULL, false, this);
+      // list is save_undo_owner
+    }
     if (itm_idx < 0) 
       itm_idx = list->size; 
     list->InsertLink(obj, itm_idx);
@@ -1137,6 +1143,7 @@ int taOBase::ChildEditActionLD_impl_ext(const MemberDef* md,
 {
   taList_impl* list = children_();
   if (!list) return taiClipData::ER_IGNORED;
+  if (list->HasOption("FIXED_SIZE")) return taiClipData::ER_IGNORED;
   // if src is not even a taBase, we just stop
   if (!ms->isBase()) return taiClipData::ER_IGNORED;
 //Note: the OP/OP_INTO is actually encoded in lst_itm NULL or not, so we lump together
@@ -1149,7 +1156,7 @@ int taOBase::ChildEditActionLD_impl_ext(const MemberDef* md,
     if (ms->objectData(istr) > 0) {
       taProject* proj = dynamic_cast<taProject*>(list->GetThisOrOwner(&TA_taProject));
       if(proj) {
-	proj->undo_mgr.SaveUndo(list, "Paste/Copy", NULL, false, list);
+	proj->undo_mgr.SaveUndo(list, "Paste/Copy", NULL, false, this);
 	// list is save_undo_owner
       }
       TypeDef* td = list->GetTypeDef();
@@ -1300,6 +1307,11 @@ int taGroup_impl::ChildEditActionGS_impl(const MemberDef* md, taGroup_impl* subg
   case taiClipData::EA_CUT: return 1; //nothing to do, just acknowledge -- deletion triggered by the dst, whether local or remote
   case taiClipData::EA_DELETE: {
     if (subgrp) {
+      taProject* proj = dynamic_cast<taProject*>(GetThisOrOwner(&TA_taProject));
+      if(proj) {
+	proj->undo_mgr.SaveUndo(this, "Remove", NULL, false, this);
+	// list is save_undo_owner
+      }
       RemoveGpIdx(subgrp_idx);
       return taiClipData::ER_OK;
     } else return taiClipData::ER_ERROR; // error TODO: error message
@@ -1318,6 +1330,8 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, taGroup_imp
   if (!ms->isBase()) return taiClipData::ER_IGNORED;
   int srcgrp_idx = -1; // -1 means not in this group
   taBase* srcobj = NULL;
+
+  taProject* proj = dynamic_cast<taProject*>(GetThisOrOwner(&TA_taProject));
 
 //NOTE: OP/OP_INTO are implicitly encoded via existence of lst_itm so 
 //  we always lump the two variants together (OP2)
@@ -1340,6 +1354,10 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, taGroup_imp
     //  Cut/Paste is a move
     ((ea & taiClipData::EA_PASTE2) && (ms->srcAction() & taiClipData::EA_SRC_COPY))
   ) {
+    if(proj) {
+      proj->undo_mgr.SaveUndo(this, "Paste/Copy", NULL, false, this);
+      // list is save_undo_owner
+    }
     taBase* new_obj = srcobj->MakeToken();
     if (subgrp_idx < 0) 
       subgrp_idx = gp.size; // // at end if itm_idx=size
@@ -1362,6 +1380,10 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, taGroup_imp
     ((ea & taiClipData::EA_PASTE2) && (ms->srcAction() & taiClipData::EA_SRC_CUT))
   ) {
     if (srcobj == subgrp) return taiClipData::ER_OK; // nop
+    if(proj) {
+      proj->undo_mgr.SaveUndo(srcobj, "Move", NULL, false, this);
+      // list is save_undo_owner
+    }
     if (srcgrp_idx >= 0) { // in this group: just do a group move
       gp.MoveBeforeIdx(srcgrp_idx, subgrp_idx); // ok if -1, means end
       return taiClipData::ER_OK; // do nothing case of drop on self
@@ -1381,6 +1403,10 @@ int taGroup_impl::ChildEditActionGD_impl_inproc(const MemberDef* md, taGroup_imp
     (taiClipData::EA_LINK2 | taiClipData::EA_DROP_LINK2))
   {
     if (srcgrp_idx >= 0) return taiClipData::ER_FORBIDDEN; // in this list: link forbidden
+    if(proj) {
+      proj->undo_mgr.SaveUndo(srcobj, "Insert Link", NULL, false, this);
+      // list is save_undo_owner
+    }
     if (subgrp_idx < 0) 
       subgrp_idx = gp.size; 
     gp.InsertLink(srcobj, subgrp_idx);
@@ -1412,6 +1438,11 @@ int taGroup_impl::ChildEditActionGD_impl_ext(const MemberDef* md, taGroup_impl* 
         "Could not make new group for TypeDef:", td->name)) 
         return taiClipData::ER_ERROR; // load failed
       // move it now, before the load
+      taProject* proj = (taProject*)GetOwner(&TA_taProject);
+      if(proj) {
+	proj->undo_mgr.SaveUndo(this, "Move", NULL, false, this);
+	// list is save_undo_owner
+      }
       gp.MoveBefore(subgrp, new_gp);
       taBase* ld_par = this;
       int dump_val = td->Dump_Load(istr, new_gp, ld_par/*, &new_el_*/);

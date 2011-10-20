@@ -965,8 +965,7 @@ public:
   // #CAT_XpertRows normalizes row (if -ve) and tests result in range 
   virtual void		AllocRows(int n);
   // #CAT_Rows allocate space for at least n rows
-  virtual int		AddBlankRow() 
-  { if (AddRows(1)) {rd_itr = wr_itr = rows - 1; return wr_itr;} else return -1; }
+  virtual int		AddBlankRow();
   // #CAT_Rows add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row #
   virtual bool		AddRows(int n = 1);
   // #BUTTON #MENU #MENU_ON_Rows #CAT_Rows add n rows, returns true if successfully added
@@ -1343,6 +1342,8 @@ public:
   // #MENU_BUTTON #MENU #MENU_SEP_BEFORE #MENU_ON_View #CAT_Display move grid view to display starting at given row number -- operates on first grid view found -- use GridTableView::ViewRow_At on specific view if needed
   virtual bool GraphViewGotoRow(int row_no);
   // #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display move graph view to display starting at given row number -- operates on first graph view found -- use GraphTableView::ViewRow_At on specific view if needed
+  virtual void 	ScrollEditorsToBottom();
+  // #IGNORE scroll all data table editors to the bottom -- called when new blank row added
 
   virtual int  		MinLength();		// #IGNORE
   virtual int  		MaxLength();		// #IGNORE

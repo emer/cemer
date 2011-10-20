@@ -126,6 +126,26 @@ public:
   virtual void		clearExtSelection();	   // clear extended selection mode and also clear any existing selection
   virtual void		selectCurCell();	   // call clearExtSelection and then select current index
 
+  /////////////////////////////////////////////////////////////////
+  //		ScrollArea Management
+
+  virtual void		SaveScrollPos();
+  // save the current vertical scroll position for later restore
+  virtual void		RestoreScrollPos();
+  // restore the current vertical scroll position
+  virtual void		ScrollTo(int scr_pos);
+  // scroll vertically to given position -- directly controls vertical scroll bar
+  virtual void		CenterOn(QWidget* widg);
+  // center the scrollbar on center of given widget
+  virtual void		KeepInView(QWidget* widg);
+  // ensure that the given widget is fully in view -- just move up or down as needed to keep fully in view
+  virtual bool		PosInView(int scr_pos);
+  // is given position within the main scroll area (in coordinates relative to central widget) within view?
+  virtual QPoint	MapToTree(QWidget* widg, const QPoint& pt);
+  // map coordinate point within given child widget on panel to the coordinates of the panel scroll area
+  virtual int		MapToTreeV(QWidget* widg, int pt_y);
+  // map vertical coordinate value within given child widget on panel to the coordinates of the panel scroll area
+
 
   iTableView(QWidget* parent = NULL);
   
@@ -153,6 +173,7 @@ protected:
   };
   
   bool			ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
+  int			m_saved_scroll_pos;
 
   override bool		event(QEvent* ev);
   override void 	keyPressEvent(QKeyEvent* e);

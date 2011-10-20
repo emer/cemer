@@ -4410,10 +4410,13 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
   taiMiscCore::ProcessEvents();
   iTreeViewItem* rval = itv->AssertItem(link);
   if (rval) {
-    itv->setFocus();
-    itv->clearExtSelection();
-    itv->scrollTo(rval);
-    itv->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
+    if(!(itv == cur_tree_view && rval == itv->topLevelItem(0))) {
+      // never assert the first item on a non-main browser -- likely the owner of a sub browser and that is very distracting for scrolling
+      itv->setFocus();
+      itv->clearExtSelection();
+      itv->scrollTo(rval);
+      itv->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);
+    }
   }
   else if(itv == cur_tree_view) { // try again with main 
     itv = GetMainTreeView();
@@ -5728,6 +5731,7 @@ iDataPanel::iDataPanel(taiDataLink* dl_)
   setFrameStyle(NoFrame | Plain);
   scr = new QScrollArea(this);
   scr->setWidgetResizable(true);
+  m_saved_scroll_pos = 0;
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(0);
   layOuter->setSpacing(2); //def
@@ -5804,7 +5808,9 @@ void iDataPanel::OnWindowBind(iTabViewer* itv) {
 
 void iDataPanel::UpdatePanel() {
   if (!isVisible()) return;
+  SaveScrollPos();
   UpdatePanel_impl();
+  RestoreScrollPos();
 }
 
 void iDataPanel::UpdatePanel_impl() {
@@ -5818,7 +5824,6 @@ void iDataPanel::Render() {
     Render_impl();
     SetWinState();
     m_rendered = true;
-//NOTE: added 08/16/07 BA to try to solve netctrlpanel not initing right
     InitPanel();
     UpdatePanel();
   }
@@ -5865,7 +5870,9 @@ void iDataPanel::showEvent(QShowEvent* ev) {
   if (m_rendered) {
     if (updateOnShow() || m_update_req) {
       m_show_updt = true;
+      SaveScrollPos();
       UpdatePanel_impl();
+      RestoreScrollPos();
       m_show_updt = false;
     }
   } else            Render();
@@ -5891,6 +5898,41 @@ String iDataPanel::TabText() const {
   else return _nilString;
 }
 
+void iDataPanel::SaveScrollPos() {
+  m_saved_scroll_pos = ScrollBarV()->value();
+}
+
+void iDataPanel::RestoreScrollPos() {
+  ScrollTo(m_saved_scroll_pos);
+}
+
+QScrollBar* iDataPanel::ScrollBarV() {
+  return scr->verticalScrollBar();
+}
+
+void iDataPanel::ScrollTo(int scr_pos) {
+  taiMisc::ScrollTo_SA(scr, scr_pos);
+}
+
+void iDataPanel::CenterOn(QWidget* widg) {
+  taiMisc::CenterOn_SA(scr, scr->widget(), widg);
+}
+
+void iDataPanel::KeepInView(QWidget* widg) {
+  taiMisc::KeepInView_SA(scr, scr->widget(), widg);
+}  
+
+bool iDataPanel::PosInView(int scr_pos) {
+  return taiMisc::PosInView_SA(scr, scr_pos);
+}
+
+QPoint iDataPanel::MapToPanel(QWidget* widg, const QPoint& pt) {
+  return taiMisc::MapToArea_SA(scr, scr->widget(), widg, pt);
+}
+
+int iDataPanel::MapToPanelV(QWidget* widg, int pt_y) {
+  return taiMisc::MapToAreaV_SA(scr, scr->widget(), widg, pt_y);
+}
 
 //////////////////////////
 //   iDataPanel_PtrList	//
@@ -6147,7 +6189,9 @@ void iViewPanelFrame::UpdatePanel() {
   if (updating) return;
   if (!isVisible()) return; // no update when hidden!
   ++updating;
+  SaveScrollPos();
   UpdatePanel_impl();
+  RestoreScrollPos();
   --updating;
 }
 
@@ -6230,9 +6274,6 @@ void iDataPanelSetBase::DataLinkDestroying(taDataLink* dl) {
 } // nothing for us; subpanels handle
 
 void iDataPanelSetBase::UpdatePanel() {
-// #ifdef DEBUG
-//   cerr << "update all panels: " << TabText() << endl;
-// #endif
   for (int i = 0; i < panels.size; ++i) {
     iDataPanel* pn = panels.FastEl(i);
     pn->UpdatePanel();
@@ -7219,6 +7260,7 @@ iTreeView::iTreeView(QWidget* parent, int tv_flags_)
   m_decorate_enabled = true;
   italic_font = NULL; 
   in_mouse_press = 0;
+  m_saved_scroll_pos = 0;
   setIndentation(taMisc::tree_indent);
   // set default 'invalid' highlight colors, but don't enable highlighting by default
   setHighlightColor(1, 
@@ -7377,6 +7419,7 @@ void iTreeView::InsertEl(bool after) {
     sbo = GET_OWNER(sb, taList_impl);
   }
   if(!sbo) return;
+  if(sbo->HasOption("FIXED_SIZE")) return; // cannot manipulate in gui
   taiTypeDefButton* typlkup =
     new taiTypeDefButton(sbo->el_base, NULL, NULL, NULL, taiData::flgAutoApply);
   TypeDef* td = sbo->el_typ;
@@ -7429,6 +7472,7 @@ void iTreeView::InsertDefaultEl(bool after) {
     sbo = GET_OWNER(sb, taList_impl);
   }
   if(!sbo) return;
+  if(sbo->HasOption("FIXED_SIZE")) return; // cannot manipulate in gui
   TypeDef* td = sbo->el_typ;	// default type
   if(td) {
     taProject* proj = myProject();
@@ -7671,57 +7715,78 @@ QStringList iTreeView::mimeTypes () const {
 void iTreeView::keyPressEvent(QKeyEvent* e) {
   taProject* proj = myProject();
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  if((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter)) {
-    ext_select_on = false;
-    InsertDefaultEl(true);		// after
-    e->accept();
-    return;
+
+  bool stru_actions_enabled = true; // enabled by default
+  ISelectable* si = curItem();
+  if(si && si->link()) {
+    taBase* sb = si->link()->taData();
+    if(sb) {
+      taList_impl* sbo = NULL;
+      if(sb->InheritsFrom(&TA_taList_impl)) {
+	sbo = (taList_impl*)sb;
+      }
+      else {
+	sbo = GET_OWNER(sb, taList_impl);
+      }
+      if(sbo && sbo->HasOption("FIXED_SIZE")) {
+	stru_actions_enabled = false;
+      }
+    }
   }
-  if(ctrl_pressed) {
-    if(e->key() == Qt::Key_I) {
+
+  if(stru_actions_enabled) {
+    if((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter)) {
       ext_select_on = false;
-      InsertEl();		// at
+      InsertDefaultEl(true);		// after
       e->accept();
       return;
     }
-    if(e->key() == Qt::Key_O) {
-      ext_select_on = false;
-      InsertEl(true);		// after
-      e->accept();
-      return;
+    if(ctrl_pressed) {
+      if(e->key() == Qt::Key_I) {
+	ext_select_on = false;
+	InsertEl();		// at
+	e->accept();
+	return;
+      }
+      if(e->key() == Qt::Key_O) {
+	ext_select_on = false;
+	InsertEl(true);		// after
+	e->accept();
+	return;
+      }
+      if(e->key() == Qt::Key_M) {
+	ext_select_on = false;
+	ISelectable* si = curItem();
+	if(si && si->link()) {
+	  taBase* sb = si->link()->taData();
+	  if(sb) {
+	    if(proj) {
+	      proj->undo_mgr.SaveUndo(sb, "Duplicate", NULL, false, sb->GetOwner()); // global save
+	    }
+	    sb->DuplicateMe();
+	  }
+	}
+	e->accept();
+	return;
+      }
     }
-    if(e->key() == Qt::Key_M) {
+    if((ctrl_pressed && e->key() == Qt::Key_W) ||
+       (ctrl_pressed && e->key() == Qt::Key_D) || (e->key() == Qt::Key_Delete)
+       || (e->key() == Qt::Key_Backspace)) {
       ext_select_on = false;
       ISelectable* si = curItem();
-      if(si && si->link()) {
-	taBase* sb = si->link()->taData();
-	if(sb) {
-	  if(proj) {
-	    proj->undo_mgr.SaveUndo(sb, "Duplicate", NULL, false, sb->GetOwner()); // global save
-	  }
-	  sb->DuplicateMe();
+      ISelectableHost* host = NULL;
+      if(si && (host = si->host())) {
+	int ea = 0;
+	host->EditActionsEnabled(ea);
+	if (ea & taiClipData::EA_DELETE) {
+	  host->EditAction(taiClipData::EA_DELETE);
+	  //WARNING: we may be deleted at this point!!!
 	}
       }
       e->accept();
       return;
     }
-  }
-  if((ctrl_pressed && e->key() == Qt::Key_W) ||
-     (ctrl_pressed && e->key() == Qt::Key_D) || (e->key() == Qt::Key_Delete)
-     || (e->key() == Qt::Key_Backspace)) {
-    ext_select_on = false;
-    ISelectable* si = curItem();
-    ISelectableHost* host = NULL;
-      if(si && (host = si->host())) {
-      int ea = 0;
-      host->EditActionsEnabled(ea);
-      if (ea & taiClipData::EA_DELETE) {
-	host->EditAction(taiClipData::EA_DELETE);
-	//WARNING: we may be deleted at this point!!!
-      }
-    }
-    e->accept();
-    return;
   }
   if((e->modifiers() & Qt::AltModifier) && e->key() == Qt::Key_F) {
     ISelectable* si = curItem();
@@ -7851,6 +7916,7 @@ void iTreeView::setTvFlags(int value) {
 }
 
 void iTreeView::Refresh_impl() {
+  SaveScrollPos();
   //note: very similar to Show_impl
   QTreeWidgetItemIterator it(this);
   QTreeWidgetItem* item_;
@@ -7870,9 +7936,11 @@ void iTreeView::Refresh_impl() {
     }
     ++it;
   }
+  RestoreScrollPos();
 }
 
 void iTreeView::Show_impl() {
+  SaveScrollPos();
   //note: very similar to Refresh_impl
   QTreeWidgetItemIterator it(this, QTreeWidgetItemIterator::All);
   QTreeWidgetItem* item_;
@@ -7895,6 +7963,7 @@ void iTreeView::Show_impl() {
     }
     ++it;
   }
+  RestoreScrollPos();
 }
 
 void iTreeView::showEvent(QShowEvent* ev) {
@@ -8007,6 +8076,23 @@ void iTreeView::UpdateSelectedItems_impl() {
       if (item) setItemSelected(item, true);
     }
   }
+}
+
+
+void iTreeView::SaveScrollPos() {
+  m_saved_scroll_pos = verticalScrollBar()->value();
+}
+
+void iTreeView::RestoreScrollPos() {
+  ScrollTo(m_saved_scroll_pos);
+}
+
+void iTreeView::ScrollTo(int scr_pos) {
+  taiMisc::ScrollTo_SA(this, scr_pos);
+}
+
+bool iTreeView::PosInView(int scr_pos) {
+  return taiMisc::PosInView_SA(this, scr_pos);
 }
 
 //////////////////////////
@@ -8683,18 +8769,20 @@ void tabParTreeDataNode::DataChanged_impl(int dcr, void* op1_, void* op2_) {
     // only scroll to it if parent is visible
     if (isExpandedLeaf() && !taMisc::in_gui_multi_action)
       tv->scrollTo(new_node);
-  }
     break;
+  }
   case DCR_LIST_ITEM_REMOVE: {	// op1=item -- note, item not DisOwned yet, but has been removed from list
     taiTreeDataNode* gone_node = this->FindChildForData(op1_, idx); //null if not found
     if (gone_node) {
       iTreeView* tv = treeView();
       if(tv) {
+	tv->SaveScrollPos();
 	tv->setAutoScroll(false);	// auto scroll is very bad for this in 4.7.0 -- scrolls to top..
       }
       delete gone_node; // goodbye!
       iTreeView* tv2 = treeView(); // make sure it still exists!
       if(tv2) {
+	tv2->RestoreScrollPos();
 	tv2->setAutoScroll(true);
       }
     }
@@ -8885,8 +8973,6 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
     tree_nm = dl->GetDisplayName();
     if (tree_nm.empty()) {
       tree_nm = "(subgroup " + String(i) + ")";
-    } else {
-      tree_nm = tree_nm + " subgroup";
     }
     last_child_node = dl->CreateTreeDataNode(NULL, this, last_child_node, tree_nm,
       (iTreeViewItem::DNF_UPDATE_NAME | iTreeViewItem::DNF_CAN_DRAG));

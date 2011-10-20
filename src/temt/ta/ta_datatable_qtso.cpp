@@ -379,6 +379,18 @@ bool DataTable::GraphViewGotoRow(int row_no) {
   return true;
 }
 
+void DataTable::ScrollEditorsToBottom() {
+  if(!taMisc::gui_active) return;
+  taDataLink* dl = data_link();
+  if(dl) {
+    taDataLinkItr itr;
+    iDataTablePanel* el;
+    FOR_DLC_EL_OF_TYPE(iDataTablePanel, el, dl, itr) {
+      el->dte->ScrollToBottom();
+    }
+  }
+}
+
 //////////////////////////
 //   DataColView	//
 //////////////////////////
@@ -5864,8 +5876,6 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
 
 void iDataTableEditor::tvTable_layoutChanged() {
   if(!isVisible()) return;
-  if(tvTable && !tvTable->gui_edit_op)
-    tvTable->scrollToBottom();
   ConfigView();
 //no-causes recursive invocation!  Refresh();
   if (m_cell) {
@@ -5942,6 +5952,12 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
   }
   return tvTable->eventFilter(obj, event); // this has all the other good emacs xlations
 }
+
+void iDataTableEditor::ScrollToBottom() {
+  if(tvTable)
+    tvTable->scrollToBottom();
+}
+
 
 //////////////////////////
 //    iDataTablePanel 	//

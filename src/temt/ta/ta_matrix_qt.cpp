@@ -27,6 +27,7 @@
 #include <QTableView>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QScrollBar>
 
 //////////////////////////////////////////////////////////////////////////////
 // 		 class MatrixTableModel
@@ -328,6 +329,7 @@ iTableView::iTableView(QWidget* parent)
 :inherited(parent)
 {
   ext_select_on = false;
+  m_saved_scroll_pos = 0;
 
   setContextMenuPolicy(Qt::CustomContextMenu);
   connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
@@ -577,7 +579,37 @@ void iTableView::ver_customContextMenuRequested(const QPoint& pos) {
   ContextMenuRequested(ca, verticalHeader()->mapToGlobal(pos));
 }
 
+void iTableView::SaveScrollPos() {
+  m_saved_scroll_pos = verticalScrollBar()->value();
+}
 
+void iTableView::RestoreScrollPos() {
+  ScrollTo(m_saved_scroll_pos);
+}
+
+void iTableView::ScrollTo(int scr_pos) {
+  taiMisc::ScrollTo_SA(this, scr_pos);
+}
+
+void iTableView::CenterOn(QWidget* widg) {
+  taiMisc::CenterOn_SA(this, this, widg);
+}
+
+void iTableView::KeepInView(QWidget* widg) {
+  taiMisc::KeepInView_SA(this, this, widg);
+}  
+
+bool iTableView::PosInView(int scr_pos) {
+  return taiMisc::PosInView_SA(this, scr_pos);
+}
+
+QPoint iTableView::MapToTree(QWidget* widg, const QPoint& pt) {
+  return taiMisc::MapToArea_SA(this, this, widg, pt);
+}
+
+int iTableView::MapToTreeV(QWidget* widg, int pt_y) {
+  return taiMisc::MapToAreaV_SA(this, this, widg, pt_y);
+}
 
 //////////////////////////
 //    iMatrixTableView 	//

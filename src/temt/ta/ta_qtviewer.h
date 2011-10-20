@@ -1486,6 +1486,30 @@ public:
   virtual void 		GetWinState(); // when saving view state
   virtual void		SetWinState(); // when showing, from view state
 
+  /////////////////////////////////////////////////////////////////
+  //		ScrollArea Management
+
+  virtual void		SaveScrollPos();
+  // save the current vertical scroll position for later restore
+  virtual void		RestoreScrollPos();
+  // restore the current vertical scroll position
+  virtual QScrollArea* 	ScrollArea()	{ return scr; }
+  // controlling scroll area for this panel
+  virtual QScrollBar* 	ScrollBarV();
+  // controlling vertical scroll bar for this panel
+  virtual void		ScrollTo(int scr_pos);
+  // scroll vertically to given position -- directly controls vertical scroll bar
+  virtual void		CenterOn(QWidget* widg);
+  // center the scrollbar on center of given widget
+  virtual void		KeepInView(QWidget* widg);
+  // ensure that the given widget is fully in view -- just move up or down as needed to keep fully in view
+  virtual bool		PosInView(int scr_pos);
+  // is given position within the main scroll area (in coordinates relative to central widget) within view?
+  virtual QPoint	MapToPanel(QWidget* widg, const QPoint& pt);
+  // map coordinate point within given child widget on panel to the coordinates of the panel scroll area
+  virtual int		MapToPanelV(QWidget* widg, int pt_y);
+  // map vertical coordinate value within given child widget on panel to the coordinates of the panel scroll area
+
   iDataPanel(taiDataLink* dl_); //note: created with no parent -- later added to stack
   ~iDataPanel();
 
@@ -1510,6 +1534,7 @@ protected:
   bool			m_update_req; // for when data changes while hidden
   QVBoxLayout* 		layOuter; 
   QScrollArea*		scr; // central scrollview
+  int			m_saved_scroll_pos;
   override void 	customEvent(QEvent* ev_);
   override void		hideEvent(QHideEvent* ev); // auto-apply
   override void		showEvent(QShowEvent* ev);
@@ -2048,6 +2073,18 @@ public:
   virtual void		Refresh() {Refresh_impl();} // manually refresh
   virtual bool		ShowNode(iTreeViewItem* item) const;
     // whether the node is visible in this show context
+
+  /////////////////////////////////////////////////////////////////
+  //		ScrollArea Management
+
+  virtual void		SaveScrollPos();
+  // save the current vertical scroll position for later restore
+  virtual void		RestoreScrollPos();
+  // restore the current vertical scroll position
+  virtual void		ScrollTo(int scr_pos);
+  // scroll vertically to given position -- directly controls vertical scroll bar
+  virtual bool		PosInView(int scr_pos);
+  // is given position within the main scroll area (in coordinates relative to central widget) within view?
   
   iTreeView(QWidget* parent = 0, int tv_flags = 0);
   ~iTreeView();
@@ -2106,6 +2143,7 @@ protected:
   bool			m_decorate_enabled;
   String		m_show_context;
   int			in_mouse_press; // ugly hack
+  int			m_saved_scroll_pos;
   
   QFont&		italicFont() const; // so we don't create a new guy each node
 

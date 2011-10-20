@@ -37,6 +37,7 @@ class IDataViewWidget;
 class iMainWindowViewer;
 class iDockViewer;
 class iNetworkAccessManager;	// #IGNORE
+class QAbstractScrollArea;		// #IGNORE
 
 typedef taPtrList<QWidget> 	Widget_List;  // #IGNORE list of widgets
 
@@ -200,6 +201,26 @@ public:
   // #IGNORE translate emacs editing (includes nav + copy/paste, undo) key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
   static bool	KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e);
   // #IGNORE translate emacs copy/paste/undo only (no nav) key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
+
+  /////////////////////////////////////////////////////////////////
+  //		ScrollArea Management
+
+  // static helper functions to be used by any other class to implement similar functionality
+
+  static void		ScrollTo_SA(QAbstractScrollArea* sa, int scr_pos);
+  // scroll vertically to given position -- just scrollbar set value
+  static void		CenterOn_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg,
+				    QWidget* widg);
+  // center the scrollarea on center of given widget vertically -- sa_main_widg is the main widget() of the scroll area
+  static void		KeepInView_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidget* widg);
+  // ensure that the given widget is fully in view within scroll area -- just move up or down as needed to keep fully in view -- sa_main_widg is the main widget() of the scroll area
+  static bool		PosInView_SA(QAbstractScrollArea* sa, int scr_pos);
+  // is given position within the main scroll area (in coordinates relative to central widget) within view?
+  static QPoint		MapToArea_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidget* widg, const QPoint& pt);
+  // map coordinate point within given child widget on panel to the coordinates of the scroll area main widget (underlying space that is being scrolled over) -- sa_main_widg is the main widget() of the scroll area
+  static int		MapToAreaV_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidget* widg, int pt_y);
+  // map vertical coordinate value within given child widget to the coordinates of the scroll area main widget (underlying space that is being scrolled over) -- sa_main_widg is the main widget() of the scroll area
+
 
 protected:
   static void	SetWinCursors();

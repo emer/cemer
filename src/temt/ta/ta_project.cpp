@@ -683,10 +683,11 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   PurgeUnusedSrcs();		// get rid of unused source data
 
   // tell project to refresh ui
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(proj) {
-    tabMisc::DelayedFunCall_gui(proj,"UpdateUi");
-  }
+  // why?????
+//   taProject* proj = GET_MY_OWNER(taProject);
+//   if(proj) {
+//     tabMisc::DelayedFunCall_gui(proj,"UpdateUi");
+//   }
 
   return true;			// todo: need to check result of Save_String presumably
 }

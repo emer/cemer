@@ -1804,6 +1804,9 @@ iProgramPanel* Program::FindMyProgramPanel() {
   iProgramPanel* el;
   FOR_DLC_EL_OF_TYPE(iProgramPanel, el, link, itr) {
     if (el->prog() == this) {
+      // bad: this is what causes all the movement -- can't select program b/c that will do that
+      // in the program tree browser -- need to direct this to the other guy somehow and
+      // prevent program itself from selecting in prog editor!
       BrowserSelectMe();	// select my program
       iDataPanelSet* dps = el->data_panel_set();
       if(dps) {
