@@ -3756,7 +3756,7 @@ bool taRootBase::Startup_InitViewColors() {
   taMisc::view_colors->FindMakeViewColor("ChildInvalid", "State: child not valid according to CheckConfig",
 					 false, _nilString, true, "orange1");
   taMisc::view_colors->FindMakeViewColor("SpecialState1", "SpecialState = 1",
-					 false, _nilString, true, "LavenderBlush");
+					 false, _nilString, true, "lavender");
   taMisc::view_colors->FindMakeViewColor("SpecialState2", "SpecialState = 2",
 					 false, _nilString, true, "LightYellow");
   taMisc::view_colors->FindMakeViewColor("SpecialState3", "SpecialState = 3",

@@ -671,7 +671,7 @@ void SpecPtr_impl::CheckSpec(TypeDef* obj_td) {
   // and again
   sp = GetSpec();
   if(!sp) {
-    taMisc::CheckError("CheckSpec: spec is NULL in object:", owner->GetPath(),
+    taMisc::CheckError("CheckSpec: spec is NULL in object:", owner->GetPathNames(),
 		       "getting a new spec of type:", type->name);
     GetSpecOfType(true);	// verbose
   }
@@ -682,7 +682,7 @@ void SpecPtr_impl::CheckSpec(TypeDef* obj_td) {
     taMisc::CheckError("CheckSpec: incorrect type of object:", obj_td->name,
 		       "for spec of type:", sp->GetTypeDef()->name,
 		       "should be at least:", sp->min_obj_type->name,
-		       "in object:",owner->GetPath(),
+		       "in object:",owner->GetPathNames(),
 		       "DO NOT RUN NETWORK until fixed! (Use ChangeMyType on offending object)");
   }
 }
@@ -799,7 +799,7 @@ void SpecPtr_impl::GetSpecOfType(bool verbose) {
   if((sp) && (sp->GetTypeDef() == type)) {
     SetSpec(sp);
     if(verbose) {
-      taMisc::CheckError("GetSpecOfType for object:", owner->GetPath(),
+      taMisc::CheckError("GetSpecOfType for object:", owner->GetPathNames(),
 			 "set spec pointer to existing spec named:", sp->name,
 			 "of correct type:", type->name);
     }
@@ -811,7 +811,7 @@ void SpecPtr_impl::GetSpecOfType(bool verbose) {
   if (sp) {
     SetSpec(sp);
     if(verbose) {
-      taMisc::CheckError("GetSpecOfType for object:", owner->GetPath(),
+      taMisc::CheckError("GetSpecOfType for object:", owner->GetPathNames(),
 			 "set spec pointer to NEW spec I just created, named:", sp->name,
 			 "of type:", type->name);
     }

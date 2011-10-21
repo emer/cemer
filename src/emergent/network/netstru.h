@@ -1911,6 +1911,7 @@ public:
   override int	  GetEnabled() const 	{ return !lesioned(); }
   override void	  SetEnabled(bool value) { SetLayerFlagState(LESIONED, !value); }
   override String GetTypeDecoKey() const { return "Layer"; }
+  override int	  GetSpecialState() const;
 
   override bool	ChangeMyType(TypeDef* new_type);
 

@@ -4033,6 +4033,12 @@ void Layer::DeIconify()	{
   StructUpdate(false);
 }
 
+int Layer::GetSpecialState() const {
+  if(layer_type == HIDDEN) return 0;
+  if(layer_type == INPUT) return 3; // green
+  return 4;	// red for output/target layers
+}
+
 void Layer::ConnectFrom(Layer* from_lay) {
   Network* net = GET_MY_OWNER(Network);
   if (!net) return;

@@ -4198,6 +4198,13 @@ void Program::InitLinks() {
   taBase::Own(step_prog, this);
 
   taBase::Own(load_code, this); // todo: obsolete, remove
+
+  if(!taMisc::is_loading) {
+    if(prog_code.size == 0) {
+      prog_code.New(1, &TA_ProgVars); // make this by default because it is typically needed!
+    }
+  }
+
   init_code.el_typ = &TA_ProgCode;  // make sure this is default
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
 
