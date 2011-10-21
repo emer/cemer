@@ -494,7 +494,7 @@ public:
   virtual void	Copy_Weights(const BaseCons* src);
   // #CAT_ObjectMgmt copies weights from other con_group
 
-  virtual void	ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const String& var2 = "",
+  virtual DataTable*	ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const String& var2 = "",
 	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
 	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
 	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
@@ -997,9 +997,9 @@ public: //
   virtual bool	Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap=true);
   // #BUTTON #CAT_Statistic take a snapshot of given variable: assign snap value on unit to given variable value, optionally using simple math operation on that value.  if arg_is_snap is true, then the 'arg' argument to the math operation is the current value of the snap variable.  for example, to compute intersection of variable with snap value, use MIN and arg_is_snap.  
 
-  virtual void	VarToTable(DataTable* dt, const String& variable);
+  virtual DataTable*	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
-  virtual void	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
+  virtual DataTable*	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
 	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
 	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
 	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
@@ -1240,11 +1240,11 @@ public:
   virtual void	MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this projection
 
-  virtual void	WeightsToTable(DataTable* dt, const String& col_nm = "");
+  virtual DataTable*	WeightsToTable(DataTable* dt, const String& col_nm = "");
   // #MENU #NULL_OK  #NULL_TEXT_0_NewTable #CAT_Structure copy entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and one column (name is layer name if not otherwise specified) that has a float matrix cell of the geometry of the sending layer
-  virtual void	VarToTable(DataTable* dt, const String& variable);
+  virtual DataTable*	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
-  virtual void	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
+  virtual DataTable*	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
 	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
 	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
 	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
@@ -1355,9 +1355,9 @@ public:
   virtual bool	UnitValuesFromMatrix(float_Matrix& mat, const String& variable);
   // #CAT_Structure sets unit values from values in the given array
 
-  virtual void	VarToTable(DataTable* dt, const String& variable);
+  virtual DataTable*	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
-  virtual void	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
+  virtual DataTable*	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
 	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
 	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
 	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
@@ -1709,7 +1709,7 @@ public:
   virtual void  CheckSpecs();
   // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
   virtual void  BuildUnits();
-  // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure build the units based current geometry configuration
+  // #MENU #MENU_ON_Structure #CONFIRM #CAT_Structure build the units based current geometry configuration
   virtual void 	BuildUnits_Threads(Network* net);
   // #IGNORE build unit-level thread information: flat list of units, etc -- this is called by network BuildUnits_Threads so that layers (and layerspecs) can potentially modify which units get added to the compute lists, and thus which are subject to standard computations -- default is all units in the layer
   virtual void	RecomputeGeometry();
@@ -1787,7 +1787,7 @@ public:
   virtual void  Init_dWt(Network* net);
   // #CAT_Learning Initialize the weight change variables
   virtual void  Init_Weights(Network* net);
-  // #MENU #CONFIRM #CAT_Learning Initialize the weights
+  // #MENU #MENU_ON_State #CONFIRM #CAT_Learning Initialize the weights
   virtual void	Init_Weights_post(Network* net);
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
@@ -1807,7 +1807,7 @@ public:
   // #CAT_Structure compute the directions of projections based on the relative distances from input/output layers
 
   virtual bool	SetUnitNames(bool force_use_unit_names = false);
-  // #MENU #MENU_SEP_BEFORE #CAT_Structure set unit names from unit_names matrix (called automatically on Build) -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
+  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Structure set unit names from unit_names matrix (called automatically on Build) -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
   virtual bool	SetUnitNamesFromDataCol(const DataCol* unit_names_col, int max_unit_chars=-1);
   // #MENU #CAT_Structure set unit names from unit names table column (string matrix with one row) -- max_unit_chars is max length of name to apply to unit (-1 = all)
   virtual bool	GetUnitNames(bool force_use_unit_names = true);
@@ -1816,27 +1816,27 @@ public:
   // #CAT_XpertStructure look for a receiving projection from a single unit, which has a name: if found, set our unit name to that name (also sets unit_names)
 
   virtual void	TransformWeights(const SimpleMathSpec& trans);
-  // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
+  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
   virtual void	AddNoiseToWeights(const Random& noise_spec);
   // #MENU #CAT_Learning add noise to weights using given noise specification
   virtual int	PruneCons(const SimpleMathSpec& pre_proc,
 			     Relation::Relations rel, float cmp_val);
   // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
   virtual int	ProbAddCons(float p_add_con, float init_wt = 0.0);
-  // #MENU #USE_RVAL #CAT_Structure probabilistically add new connections (assuming prior pruning), init_wt = initial weight value of new connection
+  // #MENU #MENU_ON_Structure #USE_RVAL #CAT_Structure probabilistically add new connections (assuming prior pruning), init_wt = initial weight value of new connection
   virtual int	LesionCons(float p_lesion, bool permute=true);
-  // #MENU #USE_RVAL #CAT_Structure remove connectiosn with prob p_lesion (permute = fixed no. lesioned)
+  // #MENU #MENU_ON_Structure #USE_RVAL #CAT_Structure remove connectiosn with prob p_lesion (permute = fixed no. lesioned)
   virtual int	LesionUnits(float p_lesion, bool permute=true);
-  // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
+  // #MENU #MENU_ON_Structure #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
 
   virtual void	Iconify();
-  // #MENU #DYN1 #CAT_Display iconify this layer in the network display (shrink to size of 1 unit)
+  // #MENU #MENU_ON_State #DYN1 #CAT_Display iconify this layer in the network display (shrink to size of 1 unit)
   virtual void	DeIconify();
-  // #MENU #DYN1 #CAT_Display de-iconify this layer in the network display (make full size)
+  // #MENU #MENU_ON_State #DYN1 #CAT_Display de-iconify this layer in the network display (make full size)
   inline void	SetDispScale(float disp_sc) 	{ disp_scale = disp_sc; UpdateAfterEdit(); }
-  // #MENU #DYN1 #CAT_Display set the display scale for the layer -- can change how much space it takes up relative to other layers
+  // #MENU #MENU_ON_State #DYN1 #CAT_Display set the display scale for the layer -- can change how much space it takes up relative to other layers
   virtual void	Lesion();
-  // #MENU #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on layer -- removes it from all processing operations
+  // #MENU #MENU_ON_Structure #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on layer -- removes it from all processing operations
   virtual void	UnLesion();
   // #MENU #DYN1 #CAT_Structure un-set the lesion flag on layer -- restores it to engage in normal processing
 
@@ -1880,17 +1880,20 @@ public:
   virtual int	ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp);
   // #CAT_Structure switch any layers using old_sp to using new_sp
 
-  virtual void	WeightsToTable(DataTable* dt, Layer* send_lay);
-  // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
-  virtual void	VarToTable(DataTable* dt, const String& variable);
+  virtual DataTable*	WeightsToTable(DataTable* dt, Layer* send_lay);
+  // #MENU #MENU_ON_State #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
+  virtual DataTable*	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (for projection variables, specify prjns.; for connection variables, specify r. or s. (e.g., r.wt)) -- this uses a NetMonitor internally, so see documentation there for more information
-  virtual void	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
+  virtual DataTable*	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
 	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
 	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
 	       const String& var9 = "", const String& var10 = "", const String& var11 = "",
 	       const String& var12 = "", const String& var13 = "", const String& var14 = "",
 	       Projection* prjn=NULL);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var" -- prjn restricts to that prjn
+  virtual DataTable*	PrjnsToTable(DataTable* dt = NULL, bool sending = false);
+  // #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #NULL_OK_0 NULL_TEXT_0_NewTable #CAT_Structure record the layer projections (receiving unless sending clicked) to given data table, with one row per projection, including the connection and projection specs used
+
   virtual bool	VarToVarCopy(const String& dest_var, const String& src_var);
   // #CAT_Structure copy one unit variable to another (un->dest_var = un->src_var) for all units within this layer (must be a float type variable)
   virtual bool	VarToVal(const String& dest_var, float val);
@@ -2552,11 +2555,11 @@ public:
   virtual void	TwoD_Or_ThreeD(LayerLayout layout_type);
   // #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #CAT_Display Set 2d or 3d and reposition and redraw layers
 
-  virtual void	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
+  virtual DataTable*	WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit
-  virtual void	VarToTable(DataTable* dt, const String& variable);
+  virtual DataTable*	VarToTable(DataTable* dt, const String& variable);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send given variable to data table -- number of columns depends on variable (if a network, one col, if a layer, number of layers, etc).  for projection data, specify: prjns.xxx  for weight values, specify r. or s. (e.g., r.wt) -- this uses a NetMonitor internally (just does AddNetwork with variable, then gets data), so see documentation there for more information
-  virtual void	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
+  virtual DataTable*	ConVarsToTable(DataTable* dt, const String& var1, const String& var2 = "",
 	       const String& var3 = "", const String& var4 = "", const String& var5 = "",
 	       const String& var6 = "", const String& var7 = "", const String& var8 = "",
 	       const String& var9 = "", const String& var10 = "", const String& var11 = "",

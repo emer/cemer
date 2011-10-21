@@ -1309,17 +1309,19 @@ void BaseCons::LinkPtrCons(Unit* my_u) {
   }
 }
 
-void BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const String& var2,
+DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const String& var2,
 			      const String& var3, const String& var4, const String& var5,
 			      const String& var6, const String& var7, const String& var8,
 			      const String& var9, const String& var10, const String& var11,
 			      const String& var12, const String& var13, const String& var14) {
   if(TestError(!ru, "ConVarsToTable", "recv unit is NULL -- bailing"))
-    return;
-  if(size <= 0) return;		// nothing here
+    return NULL;
+  if(size <= 0) return NULL;		// nothing here
+  bool new_table = false;
   if (!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
+    new_table = true;
   }
   dt->StructUpdate(true);
   const int nvars = 14;
@@ -1434,6 +1436,9 @@ void BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const
     }
   }
   dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -2689,14 +2694,16 @@ int Unit::LesionCons(float p_lesion, bool permute, Projection* prjn) {
   return rval;
 }
 
-void Unit::VarToTable(DataTable* dt, const String& variable) {
+DataTable* Unit::VarToTable(DataTable* dt, const String& variable) {
+  bool new_table = false;
   if (!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("Unit_Var_" + variable, true);
+    new_table = true;
   }
 
   Network* net = GET_MY_OWNER(Network);
-  if(!net) return;
+  if(!net) return NULL;
 
   NetMonitor nm;
   taBase::Own(nm, this);
@@ -2707,17 +2714,22 @@ void Unit::VarToTable(DataTable* dt, const String& variable) {
   dt->AddBlankRow();
   nm.GetMonVals();
   dt->WriteClose();
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
-void Unit::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+DataTable* Unit::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
 			  const String& var3, const String& var4, const String& var5,
 			  const String& var6, const String& var7, const String& var8,
 			  const String& var9, const String& var10, const String& var11,
 			  const String& var12, const String& var13, const String& var14,
 			  Projection* prjn) {
+  bool new_table = false;
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
+    new_table = true;
   }
   dt->StructUpdate(true);
   for(int g=0; g<recv.size; g++) {
@@ -2727,6 +2739,9 @@ void Unit::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
 		       var9, var10, var11, var12, var13, var14);
   }
   dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
 bool Unit::ChangeMyType(TypeDef*) {
@@ -3038,11 +3053,13 @@ bool Projection::ChangeMyType(TypeDef* new_typ) {
   return inherited::ChangeMyType(new_typ);
 }
 
-void Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
-  if(!(bool)from) return;
+DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
+  if(!(bool)from) return NULL;
+  bool new_table = false;
   if (!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable(name + "_Weights", true);
+    new_table = true;
   }
   dt->StructUpdate(true);
   dt->ResetData();
@@ -3066,16 +3083,21 @@ void Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
     }
   }
   dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
-void Projection::VarToTable(DataTable* dt, const String& variable) {
+DataTable* Projection::VarToTable(DataTable* dt, const String& variable) {
+  bool new_table = false;
   if (!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
+    new_table = true;
   }
 
   Network* net = GET_MY_OWNER(Network);
-  if(!net) return;
+  if(!net) return NULL;
 
   NetMonitor nm;
   taBase::Own(nm, this);
@@ -3086,22 +3108,30 @@ void Projection::VarToTable(DataTable* dt, const String& variable) {
   dt->AddBlankRow();
   nm.GetMonVals();
   dt->WriteClose();
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
-void Projection::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
 				const String& var3, const String& var4, const String& var5,
 				const String& var6, const String& var7, const String& var8,
 				const String& var9, const String& var10, const String& var11,
 				const String& var12, const String& var13, const String& var14) {
-  if(!(bool)layer) return;
+  if(!(bool)layer) return NULL;
+  bool new_table = false;
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
+    new_table = true;
   }
   dt->StructUpdate(true);
   layer->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
 			var9, var10, var11, var12, var13, var14, this);
   dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
 void Projection::SetFrom() {
@@ -3692,14 +3722,16 @@ bool Unit_Group::UnitValuesFromMatrix(float_Matrix& mat, const String& variable)
   return true;
 }
 
-void Unit_Group::VarToTable(DataTable* dt, const String& variable) {
+DataTable* Unit_Group::VarToTable(DataTable* dt, const String& variable) {
+  bool new_table = false;
   if (!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
+    new_table = true;
   }
 
   Network* net = GET_MY_OWNER(Network);
-  if(!net) return;
+  if(!net) return NULL;
 
   NetMonitor nm;
   taBase::Own(nm, this);
@@ -3710,17 +3742,22 @@ void Unit_Group::VarToTable(DataTable* dt, const String& variable) {
   dt->AddBlankRow();
   nm.GetMonVals();
   dt->WriteClose();
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
-void Unit_Group::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+DataTable* Unit_Group::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
 				const String& var3, const String& var4, const String& var5,
 				const String& var6, const String& var7, const String& var8,
 				const String& var9, const String& var10, const String& var11,
 				const String& var12, const String& var13, const String& var14,
 				Projection* prjn) {
+  bool new_table = false;
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
+    new_table = true;
   }
   dt->StructUpdate(true);
   Unit* u;
@@ -3730,6 +3767,9 @@ void Unit_Group::ConVarsToTable(DataTable* dt, const String& var1, const String&
 		      var9, var10, var11, var12, var13, var14,  prjn);
   }
   dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
 bool Unit_Group::VarToVarCopy(const String& dest_var, const String& src_var) {
@@ -5153,8 +5193,14 @@ int Layer::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
   return 1;
 }
 
-void Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
-  if(send_lay == NULL) return;
+DataTable* Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
+  bool new_table = false;
+  if (!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable(name + "_Weights", true);
+    new_table = true;
+  }
+  if(send_lay == NULL) return NULL;
   bool gotone = false;
   Projection* p;
   taLeafItr i;
@@ -5164,16 +5210,21 @@ void Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
     gotone = true;
   }
   TestError(!gotone, "WeightsToTable", "No sending projection from:", send_lay->name);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
-void Layer::VarToTable(DataTable* dt, const String& variable) {
+DataTable* Layer::VarToTable(DataTable* dt, const String& variable) {
+  bool new_table = false;
   if (!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
+    new_table = true;
   }
 
   Network* net = GET_MY_OWNER(Network);
-  if(!net) return;
+  if(!net) return NULL;
 
   NetMonitor nm;
   taBase::Own(nm, this);
@@ -5184,22 +5235,90 @@ void Layer::VarToTable(DataTable* dt, const String& variable) {
   dt->AddBlankRow();
   nm.GetMonVals();
   dt->WriteClose();
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
-void Layer::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+DataTable* Layer::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
 			   const String& var3, const String& var4, const String& var5,
 			   const String& var6, const String& var7, const String& var8,
 			   const String& var9, const String& var10, const String& var11,
 			   const String& var12, const String& var13, const String& var14,
 			   Projection* prjn) {
+  bool new_table = false;
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
+    new_table = true;
   }
   dt->StructUpdate(true);
   units.ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
 		       var9, var10, var11, var12, var13, var14, prjn);
   dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
+}
+
+DataTable* Layer::PrjnsToTable(DataTable* dt, bool sending) {
+  bool new_table = false;
+  if(!dt) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    dt = proj->GetNewAnalysisDataTable("LayerPrjns_" + name, true);
+    new_table = true;
+  }
+  dt->StructUpdate(true);
+  int idx;
+  dt->RemoveAllRows();
+  DataCol* col;
+  String colnm = "PrjnFrom";
+  if(sending) colnm = "PrjnTo";
+  col = dt->FindMakeColName(colnm, idx, VT_STRING); 
+  col->desc = "receiving projection -- name of sending layer that this layer receives from";
+  col = dt->FindMakeColName("PrjnSpec", idx, VT_STRING); 
+  col->desc = "name of projection spec for this projection";
+  col = dt->FindMakeColName("ConSpec", idx, VT_STRING); 
+  col->desc = "name of connection spec for this projection";
+
+  if(sending) {
+    for(int i=0; i<send_prjns.size; i++) {
+      Projection* pj = send_prjns.FastEl(i);
+      dt->AddBlankRow();
+      dt->SetVal(pj->layer->name, colnm, -1);
+      ProjectionSpec* ps = pj->GetPrjnSpec();
+      if(ps) 
+	dt->SetVal(ps->name, "PrjnSpec", -1);
+      else 
+	dt->SetVal("NULL", "PrjnSpec", -1);
+      ConSpec* cs = pj->GetConSpec();
+      if(cs) 
+	dt->SetVal(cs->name, "ConSpec", -1);
+      else 
+	dt->SetVal("NULL", "ConSpec", -1);
+    }
+  }
+  else {
+    for(int i=0; i<projections.size; i++) {
+      Projection* pj = projections.FastEl(i);
+      dt->AddBlankRow();
+      dt->SetVal(pj->from->name, colnm, -1);
+      ProjectionSpec* ps = pj->GetPrjnSpec();
+      if(ps) 
+	dt->SetVal(ps->name, "PrjnSpec", -1);
+      else 
+	dt->SetVal("NULL", "PrjnSpec", -1);
+      ConSpec* cs = pj->GetConSpec();
+      if(cs) 
+	dt->SetVal(cs->name, "ConSpec", -1);
+      else 
+	dt->SetVal("NULL", "ConSpec", -1);
+    }
+  }
+  dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
 bool Layer::VarToVarCopy(const String& dest_var, const String& src_var) {
@@ -6981,9 +7100,11 @@ void Network::Compute_EpochStats() {
 
 
 DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
-  if (!dt) {
+  bool new_table = false;
+  if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("NetStru_" + name, true);
+    new_table = true;
   }
   dt->StructUpdate(true);
   int idx;
@@ -7059,9 +7180,10 @@ DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
       else
 	dt->SetVal("NULL", "LayerSpec", -1);
     }
-    dt->WriteClose();
   }
   dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
   return dt;
 }
 
@@ -7154,9 +7276,11 @@ void Network::NetStructFmTable(DataTable* dt) {
 }
 
 DataTable* Network::NetPrjnsToTable(DataTable* dt) {
-  if (!dt) {
+  bool new_table = false;
+  if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("NetPrjns_" + name, true);
+    new_table = true;
   }
   dt->StructUpdate(true);
   int idx;
@@ -7191,9 +7315,10 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt) {
       else 
 	dt->SetVal("NULL", "ConSpec", -1);
     }
-    dt->WriteClose();
   }
   dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
   return dt;
 }
 
@@ -8067,16 +8192,18 @@ int Network::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
   return nchg;
 }
 
-void Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
+DataTable* Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
 {
-  if(recv_lay == NULL) return;
-  recv_lay->WeightsToTable(dt, send_lay);
+  if(recv_lay == NULL) return NULL;
+  return recv_lay->WeightsToTable(dt, send_lay);
 }
 
-void Network::VarToTable(DataTable* dt, const String& variable) {
-  if (!dt) {
+DataTable* Network::VarToTable(DataTable* dt, const String& variable) {
+  bool new_table = false;
+  if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
+    new_table = true;
   }
 
   NetMonitor nm;
@@ -8088,16 +8215,21 @@ void Network::VarToTable(DataTable* dt, const String& variable) {
   dt->AddBlankRow();
   nm.GetMonVals();
   dt->WriteClose();
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
-void Network::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
+DataTable* Network::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
 			     const String& var3, const String& var4, const String& var5,
 			     const String& var6, const String& var7, const String& var8,
 			     const String& var9, const String& var10, const String& var11,
 			     const String& var12, const String& var13, const String& var14) {
+  bool new_table = false;
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
+    new_table = true;
   }
   dt->StructUpdate(true);
   Layer* l;
@@ -8108,6 +8240,9 @@ void Network::ConVarsToTable(DataTable* dt, const String& var1, const String& va
 			var9, var10, var11, var12, var13, var14);
   }
   dt->StructUpdate(false);
+  if(new_table)
+    tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
+  return dt;
 }
 
 bool Network::VarToVarCopy(const String& dest_var, const String& src_var) {
