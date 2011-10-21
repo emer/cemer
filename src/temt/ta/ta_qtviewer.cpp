@@ -7140,7 +7140,10 @@ void iDocDataPanel::UpdatePanel_impl() {
     trg_font_sz = 14.0f;
   webview->setTextSizeMultiplier(taMisc::doc_text_scale * doc_->text_size * ((float)taMisc::font_size / trg_font_sz));
 
-  if(doc_->web_doc && taMisc::InternetConnected()) {
+  String nw_url = doc_->GetURL();
+  bool net_doc = nw_url.contains(":/"); // indicates some kind of transport protocol..
+
+  if(doc_->web_doc && (!net_doc || taMisc::InternetConnected())) {
     String cur_url = webview->url().toString();
     String nw_url = doc_->GetURL();
     if(cur_url != nw_url)
