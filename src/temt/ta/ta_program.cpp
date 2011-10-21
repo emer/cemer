@@ -4392,6 +4392,7 @@ void Program::Init() {
       objs.StructUpdateEls(true);
       did_struct_updt = true;
     }
+    script->SetDebug((int)HasProgFlag(TRACE));
     script->Run();
     if(did_struct_updt)
       objs.StructUpdateEls(false);
@@ -4454,6 +4455,7 @@ int Program::Run_impl() {
       ret_val = RV_COMPILE_ERR;
   }
   if (ret_val == RV_OK) {
+    script->SetDebug((int)HasProgFlag(TRACE));
     script->Run();
     // DO NOT DO!
     // DataChanged(DCR_ITEM_UPDATED_ND);
@@ -4709,6 +4711,7 @@ bool Program::RunFunction(const String& fun_name) {
     Init();                     // auto-reinit after errors!
   }
   // todo: not clear how much more control infrastructure we need..
+  script->SetDebug((int)HasProgFlag(TRACE));
   cssEl* rval = script->RunFun(fun_name); // no args right now
   return (bool)rval;
 }
@@ -5418,7 +5421,10 @@ void Program::ViewScript_Editor() {
 
 void Program::ViewScriptUpdate() {
   view_script.truncate(0);
-  script_list.FullListingHTML(view_script);
+  if(script_list.size <= 1)
+    view_script = "// Program must be Compiled (e.g., hit Init button) before css Script is available.<P>\n";
+  else
+    script_list.FullListingHTML(view_script);
 }
 
 void Program::ViewScript_impl(int sel_ln_st, int sel_ln_ed) {

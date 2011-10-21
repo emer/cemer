@@ -899,6 +899,7 @@ iProgramViewScriptPanel::iProgramViewScriptPanel(taiDataLink* dl_)
   if (prg_) {
     prg_->ViewScriptUpdate();
     vs = new NumberedTextView(NULL, true); // enable icons
+    vs->textEdit()->setReadOnly(true);
     vs->textEdit()->setHtml(prg_->view_script);
     setCentralWidget(vs);
 

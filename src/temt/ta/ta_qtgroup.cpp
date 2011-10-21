@@ -1600,7 +1600,7 @@ void tabDocViewType::CreateDataPanel_impl(taiDataLink* dl_)
 //////////////////////////
 
 int tabWizardViewType::BidForView(TypeDef* td) {
-  if (td->InheritsFrom(&TA_taWizard))
+  if(td->InheritsFrom(&TA_taWizard) && !td->InheritsFrom(&TA_PluginWizard))
     return (inherited::BidForView(td) +1);
   return 0;
 }
