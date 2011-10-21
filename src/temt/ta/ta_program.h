@@ -1533,7 +1533,7 @@ public: // XxxGui versions provide feedback to the user
   // #IGNORE get the script code lines (in 1-based line numbers, as used in css) associated with the given program element
 
   static void		VerboseOut(Program* prg, int code_line,
-				   const char* a, const char* b=0, const char* c=0,
+				   const char* a=0, const char* b=0, const char* c=0,
 				   const char* d=0, const char* e=0, const char* f=0,
 				   const char* g=0, const char* h=0, const char* i=0);
   // #CAT_Debug generate verbose output as given by input strings for given code line -- this is called by verbose program elements when they run

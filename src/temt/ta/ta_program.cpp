@@ -4968,7 +4968,8 @@ void Program::VerboseOut(Program* prg, int code_line,
     }
     msg += pl->CodeLineNo() + "\n\t"; // start next line indented
   }
-  msg += a;
+  if(a)
+    msg += a;
   taMisc::Info(msg, b, c, d, e, f, g, h, i);
 }
 
