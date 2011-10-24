@@ -1679,6 +1679,9 @@ public:
   virtual void 	Compute_ExtToPlus_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 				      LeabraNetwork* net);
   // #CAT_ScalarVal copy ext values to act_p -- used for internally-generated training signals for learning in several subclasses
+  virtual void 	Compute_ExtToAct_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+				      LeabraNetwork* net);
+  // #CAT_ScalarVal copy ext values to act -- used for dynamically computed clamped layers
   virtual void HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_ScalarVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
     virtual void ResetAfterClamp(LeabraLayer* lay, LeabraNetwork* net);
@@ -2964,6 +2967,66 @@ public:
   // broadcast modifications to projection strengths to make them actually take effect (Network::Compute_NetinScale_Senders and Network::DecayState(0))
 
   TA_SIMPLE_BASEFUNS(CA1LayerSpec);
+protected:
+  SPEC_DEFAULTS;
+
+private:
+  void 	Initialize();
+  void	Destroy()		{ };
+  void	Defaults_init()		{ };
+};
+
+class LEABRA_API SubiculumNoveltySpec : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra how to compute novelty from normalized error, and then modulate learning rate as a function of novelty
+INHERITED(taOBase)
+public:
+  float		max_norm_err;	// #MAX_1 #MIN_0 maximum effective norm err value for computing novelty -- novelty is linear between 0 and this max value, renormalized to 0-1 range
+  float		base_lrate;	// #MIN_0 lowest possible learning rate -- for fully familiar item
+  float		max_lrate;	// #MIN_0.00001 maximum possible learning rate -- for fully novel item
+
+  float		nov_rescale;	// #READ_ONLY #NO_SAVE 1/max_norm_err -- rescale novelty after clipping to max
+  float		lrate_factor;	// #READ_ONLY #NO_SAVE (max_lrate - base_lrate) -- convert 0-1 novelty into learning rate
+
+
+  inline float	ComputeNovelty(float norm_err) {
+    float eff_nov = nov_rescale * MIN(norm_err, max_norm_err);
+    return eff_nov;
+  }
+  inline float	ComputeLrate(float novelty) {
+    float lrate = base_lrate + novelty * lrate_factor;
+    return lrate;
+  }
+
+  TA_SIMPLE_BASEFUNS(SubiculumNoveltySpec);
+protected:
+  override void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
+class LEABRA_API SubiculumLayerSpec : public ScalarValLayerSpec {
+  // layer spec for subiculum layer that computes an online novely signal based on the mismatch between EC_in and EC_out, and optionally modulates learning rate in conspec (for perforant path etc) as a function of novelty -- recv prjns must be sequential matched pairs of ECin and ECout layers
+INHERITED(ScalarValLayerSpec)
+public:
+  SubiculumNoveltySpec	novelty;
+  // parameters for computing novelty from norm err over ECout compared to ECin targets, and adapting learning rate in lrate_mod_con_spec from this novelty value
+  ConSpec_SPtr		lrate_mod_con_spec;
+  // LeabraConSpec to modulate the learning rate of based on novelty value
+
+  // following is main hook into code:
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
+  override bool CheckConfig_Layer(Layer* lay, bool quiet=false);
+
+  virtual float Compute_ECNormErr_ugp(LeabraLayer* lin, LeabraLayer* lout,
+				     Layer::AccessMode acc_md, int gpidx,
+				     LeabraNetwork* net);
+  // impl routine for computing EC norm error across in and out layers
+
+  virtual void 	Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net);
+  // compute novelty based on EC_in vs. out discrepancy -- sets USER_DATA values on layer to reflect norm_err, novelty value, and lrate, and activation in layer is always clamped scalar val to reflect novelty
+
+  TA_SIMPLE_BASEFUNS(SubiculumLayerSpec);
 protected:
   SPEC_DEFAULTS;
 

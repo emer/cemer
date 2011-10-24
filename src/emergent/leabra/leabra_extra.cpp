@@ -1202,6 +1202,21 @@ void ScalarValLayerSpec::Compute_ExtToPlus_ugp(LeabraLayer* lay,
   }
 }
 
+void ScalarValLayerSpec::Compute_ExtToAct_ugp(LeabraLayer* lay, 
+					      Layer::AccessMode acc_md, int gpidx,
+					      LeabraNetwork*) {
+  int nunits = lay->UnitAccess_NUnits(acc_md);
+  if(nunits < 3) return;
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(i > 0) u->act_eq = u->act = us->clamp_range.Clip(u->ext);
+    else u->act_eq = u->ext;
+    u->ext = 0.0f;
+    u->ext_flag = Unit::NO_EXTERNAL;
+  }
+}
+
 void ScalarValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_HardClamp(lay, net);
   ResetAfterClamp(lay, net);
@@ -6319,7 +6334,14 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
   for(int i=0;i<nunits;i++) {
     LeabraUnit* ru = (LeabraUnit*)lay->units.Leaf(i);
     LeabraUnit* inu = (LeabraUnit*)in_lay->units.Leaf(i);
-    ru->act = rus->clamp_range.Clip(inu->act_eq);
+    float inval = inu->act_eq;
+    if(clamp.max_plus) {
+      float min_max = lay->acts_m.max;
+      float clmp = min_max + clamp.plus;
+      clmp = MAX(clmp, clamp.min_clamp);
+      inval *= clmp;		// downscale
+    }
+    ru->act = rus->clamp_range.Clip(inval);
     ru->act_eq = ru->act_nd = ru->act;
     ru->da = 0.0f;		// I'm fully settled!
     ru->AddToActBuf(rus->syn_delay);
@@ -6434,6 +6456,148 @@ void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   }
   inherited::Compute_CycleStats(lay, net);
 }
+
+///////////////////////////////////////////////////////////////
+//   SubiculumLayerSpec
+
+void SubiculumNoveltySpec::Initialize() {
+  max_norm_err = 0.2f;
+  base_lrate = 0.0001f;
+  max_lrate = 0.2f;
+
+  nov_rescale = 1.0f / max_norm_err;
+  lrate_factor = (max_lrate - base_lrate);
+}
+
+void SubiculumNoveltySpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  nov_rescale = 1.0f / max_norm_err;
+  lrate_factor = (max_lrate - base_lrate);
+}  
+
+void SubiculumLayerSpec::Initialize() {
+  lrate_mod_con_spec.SetBaseType(&TA_LeabraConSpec);
+}
+
+bool SubiculumLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+  LeabraLayer* lay = (LeabraLayer*)ly;
+  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
+
+  bool rval = true;
+
+  if(lay->CheckError(lay->projections.size < 2, quiet, rval,
+	"must receive from at least 2 other layers -- one pair of EC_in / EC_out layers!")) {
+    return false;
+  }
+  if(lay->CheckError(lay->projections.size % 2 != 0, quiet, rval,
+	"must receive from an even number of other layers -- sequential matched pairs of EC_in / EC_out layers!")) {
+    return false;
+  }
+
+  for(int pi=0; pi<lay->projections.size; pi+=2) {
+    Projection* pin = lay->projections.FastEl(pi);
+    Projection* pout = lay->projections.FastEl(pi+1);
+    LeabraLayer* lin = (LeabraLayer*)pin->from.ptr();
+    LeabraLayer* lout = (LeabraLayer*)pout->from.ptr();
+    LeabraLayerSpec* lsin = (LeabraLayerSpec*)lin->GetLayerSpec();
+    LeabraLayerSpec* lsout = (LeabraLayerSpec*)lout->GetLayerSpec();
+    if(lay->CheckError(!lsin->InheritsFrom(&TA_ECinLayerSpec), quiet, rval,
+		       "projection number:", String(pi), "should have been ECin, instead was:",
+		       lsin->name, "type:", lsin->GetTypeDef()->name)) {
+      return false;
+    }
+    if(lay->CheckError(!lsout->InheritsFrom(&TA_ECoutLayerSpec), quiet, rval,
+	       "projection number:", String(pi+1), "should have been ECout, instead was:",
+	       lsout->name, "type:", lsout->GetTypeDef()->name)) {
+      return false;
+    }
+    bool geom_eq = (lin->un_geom == lout->un_geom) && (lin->gp_geom == lout->gp_geom);
+    if(lay->CheckError(!geom_eq, quiet, rval,
+	       "projection numbers starting at:", String(pi), "do not have the same geometry, ECin layer:",
+		       lin->name, "ECout layer:", lout->name)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+float SubiculumLayerSpec::Compute_ECNormErr_ugp(LeabraLayer* lin, LeabraLayer* lout,
+					   Layer::AccessMode acc_md, int gpidx,
+					   LeabraNetwork* net) {
+  int nunits = lin->UnitAccess_NUnits(acc_md);
+  float nerr = 0.0f;
+  for(int i=0; i<nunits; i++) {
+    LeabraUnit* uin = (LeabraUnit*)lin->UnitAccess(acc_md, i, gpidx);
+    LeabraUnit* uout = (LeabraUnit*)lout->UnitAccess(acc_md, i, gpidx);
+    float outval = uout->act_eq;
+    if(net->phase == LeabraNetwork::PLUS_PHASE) outval = uout->act_m; // use minus
+    if(net->on_errs) { if(outval > 0.5f && uin->act_eq < 0.5f) nerr += 1.0f; }
+    if(net->off_errs) { if(outval < 0.5f && uin->act_eq > 0.5f) nerr += 1.0f; }
+  }
+  return nerr;
+}
+
+void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net) {
+  float nerr = 0.0f;
+  int ntot = 0;
+  for(int pi=0; pi<lay->projections.size; pi+=2) {
+    Projection* pin = lay->projections.FastEl(pi);
+    Projection* pout = lay->projections.FastEl(pi+1);
+    LeabraLayer* lin = (LeabraLayer*)pin->from.ptr();
+    LeabraLayer* lout = (LeabraLayer*)pout->from.ptr();
+    LeabraLayerSpec* lsin = (LeabraLayerSpec*)lin->GetLayerSpec();
+    LeabraLayerSpec* lsout = (LeabraLayerSpec*)lout->GetLayerSpec();
+
+    if((lsin->inhib_group != ENTIRE_LAYER) && lin->unit_groups) {
+      for(int g=0; g < lay->gp_geom.n; g++) {
+	LeabraUnGpData* gpdin = lin->ungp_data.FastEl(g);
+	nerr += Compute_ECNormErr_ugp(lin, lout, Layer::ACC_GP, g, net);
+	if(net->on_errs && net->off_errs)
+	  ntot += 2 * gpdin->kwta.k;
+	else
+	  ntot += gpdin->kwta.k;
+      }
+    }
+    else {
+      nerr += Compute_ECNormErr_ugp(lin, lout, Layer::ACC_LAY, 0, net);
+      if(net->on_errs && net->off_errs)
+	ntot += 2 * lin->kwta.k;
+      else
+	ntot += lin->kwta.k;
+    }
+  }
+
+  // store norm_err on us too..
+  lay->norm_err = nerr / (float)ntot;
+  if(lay->norm_err > 1.0f) lay->norm_err = 1.0f;
+
+  float nov = novelty.ComputeNovelty(lay->norm_err);
+  float lrate = novelty.ComputeLrate(nov);
+  lay->SetUserData("novelty", nov);
+  lay->SetUserData("lrate", lrate);
+
+  LeabraConSpec* cs = (LeabraConSpec*)lrate_mod_con_spec.SPtr();
+  if(cs) {
+    cs->lrate = lrate;
+    cs->UpdateAfterEdit_NoGui();	// get into cur_lrate with lrate schedule etc
+  }
+
+  // clamp novelty value on our layer
+  UNIT_GP_ITR
+    (lay,
+     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
+     u->ext = nov;
+     ClampValue_ugp(lay, acc_md, gpidx, net);
+     Compute_ExtToAct_ugp(lay, acc_md, gpidx, net);
+     );
+}
+
+
+void SubiculumLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  Compute_ECNovelty(lay, net);
+  inherited::Compute_CycleStats(lay, net);
+}  
 
 ///////////////////////////////////////////////////////////////
 //   HippoEncoderConSpec

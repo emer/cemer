@@ -3846,6 +3846,13 @@ taObjDiffRec* Unit_Group::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, Membe
 //  Projection_Group  //
 ////////////////////////
 
+Projection* Projection_Group::ConnectFrom(Layer* lay) {
+  if(!lay) return NULL;
+  Projection* prjn = (Projection*)NewEl(1);
+  prjn->SetCustomFrom(lay);
+  return prjn;
+}
+
 void Projection_Group::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
   if(send_prjns) return;

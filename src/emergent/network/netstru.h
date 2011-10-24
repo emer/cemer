@@ -1163,7 +1163,7 @@ public:
   // #CAT_Structure set where to receive from based on selections
 
   virtual void	SetCustomFrom(Layer* from_lay);
-  // #CAT_Structure set a CUSTOM projection from given layer (if from_lay == layer, turns into SELF)
+  // #MENU #MENU_ON_Actions #MENU_CONTEXT #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_from set a CUSTOM projection from given layer (if from_lay == layer, turns into SELF)
 
   virtual void 	RemoveCons();
   // #MENU #MENU_ON_Actions #CONFIRM #CAT_Structure Reset all connections for this projection
@@ -1279,6 +1279,9 @@ INHERITED(taGroup<Projection>)
 public:
   bool	send_prjns;	// #NO_SAVE #HIDDEN if true, this is a sending projection group which is just links
   
+  virtual Projection*	ConnectFrom(Layer* lay);
+  // #BUTTON #DROP1 #DYN1 #CAT_Structure make a new projection from given layer (can also drag and drop a layer into projections group to call this function)
+
   override String 	GetTypeDecoKey() const { return "Projection"; }
 
   void	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
