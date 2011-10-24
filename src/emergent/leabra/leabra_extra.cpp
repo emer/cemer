@@ -6462,17 +6462,16 @@ void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 
 void SubiculumNoveltySpec::Initialize() {
   max_norm_err = 0.2f;
-  base_lrate = 0.0001f;
-  max_lrate = 0.2f;
+  min_lrate = 0.01f;
 
   nov_rescale = 1.0f / max_norm_err;
-  lrate_factor = (max_lrate - base_lrate);
+  lrate_factor = (1.0f - min_lrate);
 }
 
 void SubiculumNoveltySpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   nov_rescale = 1.0f / max_norm_err;
-  lrate_factor = (max_lrate - base_lrate);
+  lrate_factor = (1.0f - min_lrate);
 }  
 
 void SubiculumLayerSpec::Initialize() {
@@ -6518,6 +6517,19 @@ bool SubiculumLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
       return false;
     }
   }
+
+  LeabraConSpec* cs = (LeabraConSpec*)lrate_mod_con_spec.SPtr();
+  if(lay->CheckError(!cs, quiet, rval,
+		     "lrate_mod_con_spec is NULL")) {
+      return false;
+  }
+  if(cs->lrate_sched.size > 0) {
+    TestWarning(true, "CheckConfig", "configuring lrate_sched on lrate_mod_con_spec to be empty:"
+		, cs->name);
+    cs->lrate_sched.SetSize(0);
+    cs->UpdateAfterEdit();	// update subs
+  }
+
 
   return true;
 }
@@ -6579,7 +6591,7 @@ void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net)
 
   LeabraConSpec* cs = (LeabraConSpec*)lrate_mod_con_spec.SPtr();
   if(cs) {
-    cs->lrate = lrate;
+    cs->lrate_sched.default_val = lrate;
     cs->UpdateAfterEdit_NoGui();	// get into cur_lrate with lrate schedule etc
   }
 

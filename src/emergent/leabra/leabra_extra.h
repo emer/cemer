@@ -2981,11 +2981,10 @@ class LEABRA_API SubiculumNoveltySpec : public taOBase {
 INHERITED(taOBase)
 public:
   float		max_norm_err;	// #MAX_1 #MIN_0 maximum effective norm err value for computing novelty -- novelty is linear between 0 and this max value, renormalized to 0-1 range
-  float		base_lrate;	// #MIN_0 lowest possible learning rate -- for fully familiar item
-  float		max_lrate;	// #MIN_0.00001 maximum possible learning rate -- for fully novel item
+  float		min_lrate;	// #MIN_0 lowest possible learning rate multiplier -- for fully familiar item -- note this is a multiplier on lrate that the spec otherwise has
 
   float		nov_rescale;	// #READ_ONLY #NO_SAVE 1/max_norm_err -- rescale novelty after clipping to max
-  float		lrate_factor;	// #READ_ONLY #NO_SAVE (max_lrate - base_lrate) -- convert 0-1 novelty into learning rate
+  float		lrate_factor;	// #READ_ONLY #NO_SAVE (1.0 - min_lrate) -- to convert 0-1 novelty into learning rate
 
 
   inline float	ComputeNovelty(float norm_err) {
@@ -2993,7 +2992,7 @@ public:
     return eff_nov;
   }
   inline float	ComputeLrate(float novelty) {
-    float lrate = base_lrate + novelty * lrate_factor;
+    float lrate = min_lrate + novelty * lrate_factor;
     return lrate;
   }
 
@@ -3012,7 +3011,7 @@ public:
   SubiculumNoveltySpec	novelty;
   // parameters for computing novelty from norm err over ECout compared to ECin targets, and adapting learning rate in lrate_mod_con_spec from this novelty value
   ConSpec_SPtr		lrate_mod_con_spec;
-  // LeabraConSpec to modulate the learning rate of based on novelty value
+  // LeabraConSpec to modulate the learning rate of based on novelty value -- actually sets the learning rate schedule multiplier value, so diff specs can have diff lrates (but cannot have actual schedules -- this is in effect an automatic schedule)
 
   // following is main hook into code:
   override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
