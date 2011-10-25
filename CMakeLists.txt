@@ -28,6 +28,13 @@ if(POLICY CMP0011)
    cmake_policy(SET CMP0011 NEW)
 endif(POLICY CMP0011)
 
+# Make 32-bit Mac build if user did:
+# ./configure --emer-mac-arch-bits=32
+if (EMER_MAC_ARCH_BITS EQUAL 32)
+  message(STATUS "Making 32-bit Mac build")
+  set(CMAKE_OSX_ARCHITECTURES "i386")
+endif()
+
 ################################################################
 # Step 1: set all the basic parameters about the project
 

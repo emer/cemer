@@ -15,6 +15,7 @@ echo "  --clean                      clean existing cmake cache etc first: start
 echo "  --build-dir=<name>           provide a custom build directory name (else auto)."
 echo "  --generator=<name>           use given code generator (-G in cmake, which also works)"
 echo "  --verbose-build (or --verbose or -v) turn on verbose make output: for make probs"
+echo "  --emer-mac-arch-bits=NN      set up for 32-bit or 64-bit compilation"
 echo " "
 echo "  (note: -- before args is optional, and - works too!)"
 echo " "
@@ -77,6 +78,11 @@ do
     ;;
     # needed for MOTU
     --includedir | --mandir | --infodir | --sysconfdir | --localstatedir | --libexecdir | --disable-maintainer-mode | --disable-dependency-tracking)
+      shift 1
+    ;;
+
+    --emer-mac-arch-bits)
+      cmake_cmd="$cmake_cmd -DEMER_MAC_ARCH_BITS=${1##*=}"
       shift 1
     ;;
 
