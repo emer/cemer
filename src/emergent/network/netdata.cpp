@@ -191,7 +191,7 @@ void LayerWriterEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(net_target == LAYER) {
     Layer* lay = (Layer*)network->layers.FindLeafName(layer_name);
     if(!lay) return;		// already checked in parent
-    TestWarning(lay->layer_type == Layer::HIDDEN, "CheckConfig",
+    TestWarning(use_layer_type && lay->layer_type == Layer::HIDDEN, "CheckConfig",
       "layer_type is HIDDEN -- not appropriate for writing to (by default). Turn use_layer_type off and set appropriate ext_flags if this is intentional.");
   }
 }
