@@ -40,7 +40,7 @@
 # include <QNetworkAddressEntry>
 # include <QHostAddress>
 # include <QList>
-# include "css_machine.h"	// for setting error code in taMisc::Error
+# include "css_machine.h"       // for setting error code in taMisc::Error
 # ifdef TA_GUI
 #   include "ta_qtdata.h"
 #   include "ta_qttype.h"
@@ -50,7 +50,7 @@
 #endif // NO_TA_BASE
 
 
-#include <sstream>		// for FormatValue
+#include <sstream>              // for FormatValue
 #include <ctime>
 #include <ctype.h>
 #include <stdio.h>
@@ -83,16 +83,16 @@ const String String_PArray::AsString(const String& sep) const {
 
 int String_PArray::FindContains(const String& op, int start) const {
   int i;
-  if(start < 0) {		// search backwards if start < 0
+  if(start < 0) {               // search backwards if start < 0
     for(i=size-1; i>=0; i--) {
       if(FastEl(i).contains(op))
-	return i;
+        return i;
     }
   }
   else {
     for(i=start; i<size; i++) {
       if(FastEl(i).contains(op))
-	return i;
+        return i;
     }
   }
   return -1;
@@ -100,16 +100,16 @@ int String_PArray::FindContains(const String& op, int start) const {
 
 int String_PArray::FindStartsWith(const String& op, int start) const {
   int i;
-  if(start < 0) {		// search backwards if start < 0
+  if(start < 0) {               // search backwards if start < 0
     for(i=size-1; i>=0; i--) {
       if(FastEl(i).startsWith(op))
-	return i;
+        return i;
     }
   }
   else {
     for(i=start; i<size; i++) {
       if(FastEl(i).startsWith(op))
-	return i;
+        return i;
     }
   }
   return -1;
@@ -146,16 +146,16 @@ const String NameVar_PArray::AsString(const String& sep) const {
 
 int NameVar_PArray::FindName(const String& op, int start) const {
   int i;
-  if(start < 0) {		// search backwards if start < 0
+  if(start < 0) {               // search backwards if start < 0
     for(i=size-1; i>=0; i--) {
       if(FastEl(i).name == op)
-	return i;
+        return i;
     }
   }
   else {
     for(i=start; i<size; i++) {
       if(FastEl(i).name == op)
-	return i;
+        return i;
     }
   }
   return -1;
@@ -163,16 +163,16 @@ int NameVar_PArray::FindName(const String& op, int start) const {
 
 int NameVar_PArray::FindNameContains(const String& op, int start) const {
   int i;
-  if(start < 0) {		// search backwards if start < 0
+  if(start < 0) {               // search backwards if start < 0
     for(i=size-1; i>=0; i--) {
       if(FastEl(i).name.contains(op))
-	return i;
+        return i;
     }
   }
   else {
     for(i=start; i<size; i++) {
       if(FastEl(i).name.contains(op))
-	return i;
+        return i;
     }
   }
   return -1;
@@ -180,16 +180,16 @@ int NameVar_PArray::FindNameContains(const String& op, int start) const {
 
 int NameVar_PArray::FindValue(const Variant& op, int start) const {
   int i;
-  if(start < 0) {		// search backwards if start < 0
+  if(start < 0) {               // search backwards if start < 0
     for(i=size-1; i>=0; i--) {
       if(FastEl(i).value == op)
-	return i;
+        return i;
     }
   }
   else {
     for(i=start; i<size; i++) {
       if(FastEl(i).value == op)
-	return i;
+        return i;
     }
   }
   return -1;
@@ -197,16 +197,16 @@ int NameVar_PArray::FindValue(const Variant& op, int start) const {
 
 int NameVar_PArray::FindValueContains(const String& op, int start) const {
   int i;
-  if(start < 0) {		// search backwards if start < 0
+  if(start < 0) {               // search backwards if start < 0
     for(i=size-1; i>=0; i--) {
       if(FastEl(i).value.toString().contains(op))
-	return i;
+        return i;
     }
   }
   else {
     for(i=start; i<size; i++) {
       if(FastEl(i).value.toString().contains(op))
-	return i;
+        return i;
     }
   }
   return -1;
@@ -247,7 +247,7 @@ bool NameVar_PArray::SetVal(const String& nm, const Variant& vl) {
 }
 
 //////////////////////////
-//  taiMiscCore		//
+//  taiMiscCore         //
 //////////////////////////
 
 extern "C" {
@@ -331,7 +331,7 @@ int taiMiscCore::RunPending() {
 
 void taiMiscCore::WaitProc() {
   if(!taMisc::do_wait_proc) return;
-  taMisc::do_wait_proc = false;	// reset at the START so other waitproc guys can get on the list from within the current waitproc
+  taMisc::do_wait_proc = false; // reset at the START so other waitproc guys can get on the list from within the current waitproc
   tabMisc::WaitProc();
 }
 
@@ -469,21 +469,21 @@ int taVersion::BeforeOrOf(char sep, String& in) {
 }
 
 //////////////////////////////////
-// 	     taMisc		//
+//           taMisc             //
 //////////////////////////////////
 
-String	taMisc::app_name = "temt"; // must be set in main.cpp
-String	taMisc::app_prefs_key; // must be set in main.cpp, else defaults to app_name
-String	taMisc::default_app_install_folder_name = "Emergent";
+String  taMisc::app_name = "temt"; // must be set in main.cpp
+String  taMisc::app_prefs_key; // must be set in main.cpp, else defaults to app_name
+String  taMisc::default_app_install_folder_name = "Emergent";
 
-String	taMisc::org_name = "ccnlab";
+String  taMisc::org_name = "ccnlab";
 
 #ifndef SVN_REV // won't be defined if svnrev.h wasn't included
 #define SVN_REV -1
 #endif
 
-String	taMisc::svn_rev = String(SVN_REV);
-String	taMisc::version = String(VERSION);
+String  taMisc::svn_rev = String(SVN_REV);
+String  taMisc::version = String(VERSION);
 taVersion taMisc::version_bin(String(VERSION));
 
 // ugh! but easiest way to just statically set the build_type and official extender string
@@ -536,30 +536,30 @@ taThreadDefaults::taThreadDefaults() {
 
 taThreadDefaults taMisc::thread_defaults;
 
-bool 	taMisc::save_old_fmt = false;
+bool    taMisc::save_old_fmt = false;
 
 ////////////////////////////////////////////////////////
-// 	TA GUI parameters
+//      TA GUI parameters
 
 // parameters that are strictly platform specific
 #ifdef TA_OS_MAC
 String  taMisc::font_name = "Lucida Grande";
-int  	taMisc::font_size = 10;
+int     taMisc::font_size = 10;
 String  taMisc::console_font_name = "Andale Mono";
-int  	taMisc::console_font_size = 10;
+int     taMisc::console_font_size = 10;
 #elif defined(TA_OS_WIN)
 String  taMisc::font_name = "Verdana"; // looks nice on Win
-int  	taMisc::font_size = 11;
+int     taMisc::font_size = 11;
 String  taMisc::console_font_name = "Fixed";
-int  	taMisc::console_font_size = 10;
+int     taMisc::console_font_size = 10;
 #else // Linux or some Unix variant
 String  taMisc::font_name = "Nimbus Sans";
-int  	taMisc::font_size = 10;
+int     taMisc::font_size = 10;
 String  taMisc::console_font_name = "LucidaTypewriter";
-int  	taMisc::console_font_size = 10;
+int     taMisc::console_font_size = 10;
 #endif
 
-float  	taMisc::doc_text_scale = 1.0f;
+float   taMisc::doc_text_scale = 1.0f;
 
 String  taMisc::t3d_font_name = "Arial";
 String  taMisc::t3d_bg_color = "grey80";
@@ -575,172 +575,172 @@ taMisc::ConsoleOptions taMisc::console_options = (taMisc::ConsoleOptions)(CO_USE
 #endif
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
-int	taMisc::display_width = 80;
+int     taMisc::display_width = 80;
 #ifdef TA_OS_MAC
-bool	taMisc::emacs_mode = true;
+bool    taMisc::emacs_mode = true;
 #else
-bool	taMisc::emacs_mode = false;
+bool    taMisc::emacs_mode = false;
 #endif
-int	taMisc::undo_depth = 100;
-int	taMisc::undo_data_max_cells = 1000;
-float	taMisc::undo_new_src_thr = 0.3f;
-int	taMisc::auto_save_interval = 120;
-int	taMisc::wait_proc_delay = 20;
-int	taMisc::css_gui_event_interval = 200;
-bool	taMisc::delete_prompts = false;
-//bool	taMisc::delete_prompts = true;
-int	taMisc::tree_indent = 12; // 12 is necessary in 4.7 -- otherwise widgets cut off
+int     taMisc::undo_depth = 100;
+int     taMisc::undo_data_max_cells = 1000;
+float   taMisc::undo_new_src_thr = 0.3f;
+int     taMisc::auto_save_interval = 120;
+int     taMisc::wait_proc_delay = 20;
+int     taMisc::css_gui_event_interval = 200;
+bool    taMisc::delete_prompts = false;
+//bool  taMisc::delete_prompts = true;
+int     taMisc::tree_indent = 12; // 12 is necessary in 4.7 -- otherwise widgets cut off
 taMisc::HelpDetail taMisc::help_detail = taMisc::HD_DEFAULT;
-int	taMisc::program_editor_width = 60;
-int	taMisc::program_editor_lines = 5;
-int	taMisc::max_menu = 1000; // no cost now in QT for making it large..
-int 	taMisc::search_depth = 4;
-int	taMisc::color_scale_size = 128;
-int	taMisc::jpeg_quality = 95;
+int     taMisc::program_editor_width = 60;
+int     taMisc::program_editor_lines = 5;
+int     taMisc::max_menu = 1000; // no cost now in QT for making it large..
+int     taMisc::search_depth = 4;
+int     taMisc::color_scale_size = 128;
+int     taMisc::jpeg_quality = 95;
 taMisc::ColorHints taMisc::color_hints = (taMisc::ColorHints)(taMisc::CH_EDITS | taMisc::CH_BROWSER);
 //note: we actually init this in ta_project, the first time, for the user
 //taMisc::ProjViewPref taMisc::proj_view_pref = (taMisc::ProjViewPref)-1;//taMisc::PVP_2x2;
 // nobody besides Brad uses 2x2..
 taMisc::ProjViewPref taMisc::proj_view_pref = taMisc::PVP_3PANE;
-taMisc::ViewerOptions	taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc::VO_DOUBLE_CLICK_EXP_ALL | taMisc::VO_AUTO_SELECT_NEW | taMisc::VO_AUTO_EXPAND_NEW);
+taMisc::ViewerOptions   taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc::VO_DOUBLE_CLICK_EXP_ALL | taMisc::VO_AUTO_SELECT_NEW | taMisc::VO_AUTO_EXPAND_NEW);
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 #endif
-taMisc::EditStyle	taMisc::select_edit_style = taMisc::ES_ACTIVE_CONTROL;
-taMisc::EditStyle	taMisc::std_edit_style = taMisc::ES_ALL_CONTROLS;
+taMisc::EditStyle       taMisc::select_edit_style = taMisc::ES_ACTIVE_CONTROL;
+taMisc::EditStyle       taMisc::std_edit_style = taMisc::ES_ALL_CONTROLS;
 
-int	taMisc::antialiasing_level = 4;
-float	taMisc::text_complexity = .2f;
+int     taMisc::antialiasing_level = 4;
+float   taMisc::text_complexity = .2f;
 
-taMisc::ShowMembs  	taMisc::show_gui = taMisc::NORM_MEMBS;
-taMisc::TypeInfo  	taMisc::type_info_ = taMisc::NO_OPTIONS_LISTS;
-taMisc::KeepTokens 	taMisc::keep_tokens = taMisc::Tokens;
-bool			taMisc::auto_edit = false;
-taMisc::AutoRevert 	taMisc::auto_revert = taMisc::AUTO_APPLY;
-taMisc::MatrixView	taMisc::matrix_view = taMisc::BOT_ZERO;
-bool 			taMisc::beep_on_error = false;
-short			taMisc::num_recent_files = 10;
-short			taMisc::num_recent_paths = 10;
-short			taMisc::num_browse_history = 20;
+taMisc::ShowMembs       taMisc::show_gui = taMisc::NORM_MEMBS;
+taMisc::TypeInfo        taMisc::type_info_ = taMisc::NO_OPTIONS_LISTS;
+taMisc::KeepTokens      taMisc::keep_tokens = taMisc::Tokens;
+bool                    taMisc::auto_edit = false;
+taMisc::AutoRevert      taMisc::auto_revert = taMisc::AUTO_APPLY;
+taMisc::MatrixView      taMisc::matrix_view = taMisc::BOT_ZERO;
+bool                    taMisc::beep_on_error = false;
+short                   taMisc::num_recent_files = 10;
+short                   taMisc::num_recent_paths = 10;
+short                   taMisc::num_browse_history = 20;
 
 ////////////////////////////////////////////////////////
-// 	File/Path/Arg Info
+//      File/Path/Arg Info
 
-int	taMisc::strm_ver = 2;
-bool 		taMisc::save_compress = false; // compression not the default in v4
-TypeDef*	taMisc::default_proj_type = NULL;
+int     taMisc::strm_ver = 2;
+bool            taMisc::save_compress = false; // compression not the default in v4
+TypeDef*        taMisc::default_proj_type = NULL;
 taMisc::StdLicense taMisc::license_def = taMisc::NO_LIC;
-String		taMisc::license_owner;
-String		taMisc::license_org;
-taMisc::SaveFormat	taMisc::save_format = taMisc::PRETTY;
-taMisc::LoadVerbosity	taMisc::verbose_load = taMisc::QUIET;
+String          taMisc::license_owner;
+String          taMisc::license_org;
+taMisc::SaveFormat      taMisc::save_format = taMisc::PRETTY;
+taMisc::LoadVerbosity   taMisc::verbose_load = taMisc::QUIET;
 
-String	taMisc::app_dir; // set early in startup, algorithmically to find app dir
-String	taMisc::app_plugin_dir;
-String	taMisc::app_dir_default; // emergency override, obtained from user
-String  taMisc::user_dir;			// this will be set in init call
-String	taMisc::prefs_dir; // this must be set at startup!
-String	taMisc::user_app_dir;
-String	taMisc::user_plugin_dir;
-String	taMisc::user_log_dir;
-String	taMisc::exe_cmd;
-String	taMisc::exe_path;
+String  taMisc::app_dir; // set early in startup, algorithmically to find app dir
+String  taMisc::app_plugin_dir;
+String  taMisc::app_dir_default; // emergency override, obtained from user
+String  taMisc::user_dir;                       // this will be set in init call
+String  taMisc::prefs_dir; // this must be set at startup!
+String  taMisc::user_app_dir;
+String  taMisc::user_plugin_dir;
+String  taMisc::user_log_dir;
+String  taMisc::exe_cmd;
+String  taMisc::exe_path;
 
 // note: app should set all these url's in its main or other app-specific code
-String	taMisc::web_home = "http://grey.colorado.edu/emergent/index.php/Main_Page";
-String	taMisc::web_help_wiki = "emergent";
-String	taMisc::web_help_general = "http://grey.colorado.edu/emergent/index.php/User_hub";
+String  taMisc::web_home = "http://grey.colorado.edu/emergent/index.php/Main_Page";
+String  taMisc::web_help_wiki = "emergent";
+String  taMisc::web_help_general = "http://grey.colorado.edu/emergent/index.php/User_hub";
 
-NamedURL	taMisc::wiki1_url("emergent", "http://grey.colorado.edu/emergent");
-NamedURL	taMisc::wiki2_url("CCN", "http://grey.colorado.edu/CompCogNeuro");
-NamedURL	taMisc::wiki3_url;
-NamedURL	taMisc::wiki4_url;
-NamedURL	taMisc::wiki5_url;
-NamedURL	taMisc::wiki6_url;
+NamedURL        taMisc::wiki1_url("emergent", "http://grey.colorado.edu/emergent");
+NamedURL        taMisc::wiki2_url("CCN", "http://grey.colorado.edu/CompCogNeuro");
+NamedURL        taMisc::wiki3_url;
+NamedURL        taMisc::wiki4_url;
+NamedURL        taMisc::wiki5_url;
+NamedURL        taMisc::wiki6_url;
 
-NameVar_PArray	taMisc::wikis;
+NameVar_PArray  taMisc::wikis;
 
-String_PArray	taMisc::css_include_paths;
-String_PArray	taMisc::load_paths;
-NameVar_PArray	taMisc::prog_lib_paths;
-NameVar_PArray	taMisc::proj_template_paths;
-NameVar_PArray	taMisc::named_paths;
+String_PArray   taMisc::css_include_paths;
+String_PArray   taMisc::load_paths;
+NameVar_PArray  taMisc::prog_lib_paths;
+NameVar_PArray  taMisc::proj_template_paths;
+NameVar_PArray  taMisc::named_paths;
 
 DumpFileCvtList taMisc::file_converters;
 
-String	taMisc::compress_sfx = ".gz";
-ostream*	taMisc::record_script = NULL;
+String  taMisc::compress_sfx = ".gz";
+ostream*        taMisc::record_script = NULL;
 
 // NOTE: we quote all filenames in case they have spaces
 #ifdef TA_OS_WIN
 //NOTE: Notepad could possibly really screw up files, because of crlf
-String	taMisc::edit_cmd = "Notepad.exe \"%s\"";
+String  taMisc::edit_cmd = "Notepad.exe \"%s\"";
 String  taMisc::plugin_make_env_cmd = "call \"C:\\Program Files\\Microsoft Visual Studio 9.0\\VC\\vcvarsall.bat\" x86";
 #else
 #ifdef TA_OS_MAC
-String	taMisc::edit_cmd = "emacs \"%s\" &";
+String  taMisc::edit_cmd = "emacs \"%s\" &";
 #else // prob Linux, or some Unix for sure
-String	taMisc::edit_cmd = "emacs \"%s\" &";
+String  taMisc::edit_cmd = "emacs \"%s\" &";
 #endif
 #endif
 
 ////////////////////////////////////////////////////////
-// 	Args
+//      Args
 
-String_PArray	taMisc::args_raw;
-NameVar_PArray	taMisc::arg_names;
-NameVar_PArray	taMisc::arg_name_descs;
-NameVar_PArray	taMisc::args;
-String_PArray	taMisc::args_tmp;
-
-////////////////////////////////////////////////////////
-// 	DMEM: Distributed Memory
-
-int	taMisc::dmem_proc = 0;
-int	taMisc::dmem_nprocs = 1;
-bool	taMisc::dmem_debug = false;
+String_PArray   taMisc::args_raw;
+NameVar_PArray  taMisc::arg_names;
+NameVar_PArray  taMisc::arg_name_descs;
+NameVar_PArray  taMisc::args;
+String_PArray   taMisc::args_tmp;
 
 ////////////////////////////////////////////////////////
-// 	Global State, Flags Etc
+//      DMEM: Distributed Memory
+
+int     taMisc::dmem_proc = 0;
+int     taMisc::dmem_nprocs = 1;
+bool    taMisc::dmem_debug = false;
+
+////////////////////////////////////////////////////////
+//      Global State, Flags Etc
 
 // give the main typespace a big hash table..
 TypeSpace taMisc::types("taMisc::types", 10000);
 TypeSpace taMisc::aka_types("taMisc::aka_types", 100);
-TypeDef*	taMisc::default_scope = NULL;
+TypeDef*        taMisc::default_scope = NULL;
 
-taPtrList_impl*	taMisc::init_hook_list = NULL;
+taPtrList_impl* taMisc::init_hook_list = NULL;
 
-bool	taMisc::in_init = false;
-bool	taMisc::in_event_loop = false;
-signed char	taMisc::quitting = QF_RUNNING;
-bool	taMisc::not_constr = true;
-bool	taMisc::use_gui = false; // set to default in Init_Gui
-bool	taMisc::in_dev_exe = false;
-bool	taMisc::use_plugins = true;
-bool 	taMisc::gui_active = false;
-bool 	taMisc::gui_no_win = false;
-bool 	taMisc::server_active = false; // true while connected
-ContextFlag	taMisc::is_loading;
-taVersion 	taMisc::loading_version;
-ContextFlag	taMisc::is_post_loading;
-ContextFlag	taMisc::is_saving;
-bool		taMisc::save_use_name_paths;
-ContextFlag	taMisc::is_undo_loading;
-ContextFlag	taMisc::is_undo_saving;
-ContextFlag	taMisc::is_duplicating;
-ContextFlag	taMisc::is_changing_type;
-ContextFlag	taMisc::is_checking;
-ContextFlag	taMisc::in_gui_call;
-ContextFlag	taMisc::in_gui_multi_action;
-ContextFlag	taMisc::in_plugin_init;
-ContextFlag	taMisc::in_shutdown;
-ContextFlag	taMisc::no_auto_expand;
-TypeDef*	taMisc::plugin_loading;
+bool    taMisc::in_init = false;
+bool    taMisc::in_event_loop = false;
+signed char     taMisc::quitting = QF_RUNNING;
+bool    taMisc::not_constr = true;
+bool    taMisc::use_gui = false; // set to default in Init_Gui
+bool    taMisc::in_dev_exe = false;
+bool    taMisc::use_plugins = true;
+bool    taMisc::gui_active = false;
+bool    taMisc::gui_no_win = false;
+bool    taMisc::server_active = false; // true while connected
+ContextFlag     taMisc::is_loading;
+taVersion       taMisc::loading_version;
+ContextFlag     taMisc::is_post_loading;
+ContextFlag     taMisc::is_saving;
+bool            taMisc::save_use_name_paths;
+ContextFlag     taMisc::is_undo_loading;
+ContextFlag     taMisc::is_undo_saving;
+ContextFlag     taMisc::is_duplicating;
+ContextFlag     taMisc::is_changing_type;
+ContextFlag     taMisc::is_checking;
+ContextFlag     taMisc::in_gui_call;
+ContextFlag     taMisc::in_gui_multi_action;
+ContextFlag     taMisc::in_plugin_init;
+ContextFlag     taMisc::in_shutdown;
+ContextFlag     taMisc::no_auto_expand;
+TypeDef*        taMisc::plugin_loading;
 
-String	taMisc::last_err_msg;
-String	taMisc::last_warn_msg;
+String  taMisc::last_err_msg;
+String  taMisc::last_warn_msg;
 
-String	taMisc::last_check_msg;
+String  taMisc::last_check_msg;
 bool taMisc::check_quiet = false;
 bool taMisc::check_confirm_success = true;
 bool taMisc::check_ok = true;
@@ -755,20 +755,20 @@ QPointer<QMainWindow> taMisc::console_win = NULL;
 #endif
 
 void (*taMisc::WaitProc)() = NULL;
-bool	taMisc::do_wait_proc = false;
+bool    taMisc::do_wait_proc = false;
 
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 
-String 	taMisc::LexBuf;
+String  taMisc::LexBuf;
 int taMisc::err_cnt;
 fstream taMisc::log_stream;
 String taMisc::log_fname;
 
 /////////////////////////////////////////////////////////////////
-// 		taMisc funs
+//              taMisc funs
 
 /////////////////////////////////////////////////
-//	Configuration -- object as settings
+//      Configuration -- object as settings
 
 void taMisc::SaveConfig() {
 #ifndef NO_TA_BASE
@@ -823,7 +823,7 @@ void taMisc::UpdateAfterEdit() {
 }
 
 /////////////////////////////////////////////////
-//	Errors, Warnings, Simple Dialogs
+//      Errors, Warnings, Simple Dialogs
 
 int taMisc::CheckClearErrCnt() {
   int rval = err_cnt;
@@ -845,7 +845,7 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
       cssMisc::cur_top->own_program->taWarning(cssMisc::GetSourceLn(NULL), running,
-					      taMisc::last_err_msg);
+                                              taMisc::last_err_msg);
     }
   }
 #endif
@@ -869,8 +869,8 @@ void taMisc::Info(const char* a, const char* b, const char* c, const char* d,
 }
 
 String taMisc::SuperCat(const char* a, const char* b, const char* c,
-		      const char* d, const char* e, const char* f,
-		      const char* g, const char* h, const char* i)
+                      const char* d, const char* e, const char* f,
+                      const char* g, const char* h, const char* i)
 {
   STRING_BUF(s, 250);
   s.cat(a); if(b) s.cat(" ").cat(b);  if(c) s.cat(" ").cat(c);
@@ -900,8 +900,8 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
 
 #ifndef NO_TA_BASE
 bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
-		       const char* a, const char* b, const char* c, const char* d,
-		       const char* e, const char* f, const char* g, const char* h) {
+                       const char* a, const char* b, const char* c, const char* d,
+                       const char* e, const char* f, const char* g, const char* h) {
   static taBase* prv_obj = NULL;
   static String prv_fun;
   static String prv_a;
@@ -943,8 +943,8 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
 }
 
 bool taMisc::TestWarning(const taBase* obj, bool test, const char* fun_name,
-			 const char* a, const char* b, const char* c, const char* d,
-			 const char* e, const char* f, const char* g, const char* h) {
+                         const char* a, const char* b, const char* c, const char* d,
+                         const char* e, const char* f, const char* g, const char* h) {
   if(!test) return false;
   if(obj) {
     String objinfo = obj->GetTypeDef()->name + " " + obj->GetDisplayName() + "::" + fun_name
@@ -960,7 +960,7 @@ bool taMisc::TestWarning(const taBase* obj, bool test, const char* fun_name,
 #endif
 
 void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char* d,
-			 const char* e, const char* f, const char* g, const char* h, const char* i)
+                         const char* e, const char* f, const char* g, const char* h, const char* i)
 {
   ++err_cnt;
 #if !defined(NO_TA_BASE) && defined(DMEM_COMPILE)
@@ -984,7 +984,7 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
       cssMisc::cur_top->own_program->taError(cssMisc::GetSourceLn(NULL), running,
-					      taMisc::last_err_msg);
+                                              taMisc::last_err_msg);
     }
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
     cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
@@ -1089,7 +1089,7 @@ void taMisc::SetLogFile(const String& log_fn) {
   if(taMisc::log_stream.bad()) {
     String bkup_fn = user_log_dir + "/default_project_log.plog";
     taMisc::Error("taMisc::SetLogFile -- Could not open log stream as:", log_fn,
-		  "reverting to default:", bkup_fn);
+                  "reverting to default:", bkup_fn);
     taMisc::log_stream.close();
     taMisc::log_stream.clear();
     taMisc::log_stream.open(bkup_fn, ios::out);
@@ -1104,7 +1104,7 @@ void taMisc::EditFile(const String& filename) {
 }
 
 /////////////////////////////////////////////////
-//	Global state management
+//      Global state management
 
 void taMisc::FlushConsole() {
 #ifndef NO_TA_BASE
@@ -1177,26 +1177,26 @@ void taMisc::MallocInfo(ostream& strm) {
   struct mallinfo mi = mallinfo();
 #endif
   strm << "Memory Allocation Information (and change since last call):\n" <<
-"arena		total space in arena 		"
-<<	mi.arena   << "\t(" << mi.arena - prv_mi.arena << ")\n" <<
-"ordblks		number of ordinary blocks	"
-<<	mi.ordblks << "\t(" << mi.ordblks - prv_mi.ordblks << ")\n" <<
-"uordblks	space in ordinary blocks in use	"
-<<	mi.uordblks << "\t(" << mi.uordblks - prv_mi.uordblks << ")\n" <<
-"fordblks	space in free ordinary blocks	"
-<<	mi.fordblks << "\t(" << mi.fordblks - prv_mi.fordblks << ")\n" <<
-"smblks		number of small blocks		"
-<<	mi.smblks  << "\t(" << mi.smblks - prv_mi.smblks << ")\n" <<
-"usmblks		space in small blocks in use	"
-<<	mi.usmblks << "\t(" << mi.usmblks - prv_mi.usmblks << ")\n" <<
-"fsmblks		space in free small blocks	"
-<<	mi.fsmblks << "\t(" << mi.fsmblks - prv_mi.fsmblks << ")\n" <<
-"hblks		number of holding blocks	"
-<<	mi.hblks   << "\t(" << mi.hblks - prv_mi.hblks << ")\n" <<
-"hblkhd		space in holding block headers	"
-<<	mi.hblkhd  << "\t(" << mi.hblkhd - prv_mi.hblkhd << ")\n" <<
-"keepcost	space penalty if keep option	"
-<<	mi.keepcost << "\t(" << mi.keepcost - prv_mi.keepcost << ")\n";
+"arena          total space in arena            "
+<<      mi.arena   << "\t(" << mi.arena - prv_mi.arena << ")\n" <<
+"ordblks                number of ordinary blocks       "
+<<      mi.ordblks << "\t(" << mi.ordblks - prv_mi.ordblks << ")\n" <<
+"uordblks       space in ordinary blocks in use "
+<<      mi.uordblks << "\t(" << mi.uordblks - prv_mi.uordblks << ")\n" <<
+"fordblks       space in free ordinary blocks   "
+<<      mi.fordblks << "\t(" << mi.fordblks - prv_mi.fordblks << ")\n" <<
+"smblks         number of small blocks          "
+<<      mi.smblks  << "\t(" << mi.smblks - prv_mi.smblks << ")\n" <<
+"usmblks                space in small blocks in use    "
+<<      mi.usmblks << "\t(" << mi.usmblks - prv_mi.usmblks << ")\n" <<
+"fsmblks                space in free small blocks      "
+<<      mi.fsmblks << "\t(" << mi.fsmblks - prv_mi.fsmblks << ")\n" <<
+"hblks          number of holding blocks        "
+<<      mi.hblks   << "\t(" << mi.hblks - prv_mi.hblks << ")\n" <<
+"hblkhd         space in holding block headers  "
+<<      mi.hblkhd  << "\t(" << mi.hblkhd - prv_mi.hblkhd << ")\n" <<
+"keepcost       space penalty if keep option    "
+<<      mi.keepcost << "\t(" << mi.keepcost - prv_mi.keepcost << ")\n";
   prv_mi = mi;
 }
 #endif
@@ -1231,12 +1231,12 @@ void taMisc::Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun)) {
   // this should be the full set of terminal signals
 //  signal(SIGHUP,  fun); // 1
 //NOTE: SIGABRT is only ansi signal MS CRT really supports
-  signal(SIGABRT, fun);	// 6
+  signal(SIGABRT, fun); // 6
 #ifndef TA_OS_WIN
-  signal(SIGILL,  fun);	// 4
+  signal(SIGILL,  fun); // 4
   signal(SIGSEGV, fun); // 11
-  //  signal(SIGINT,  fun);	// 2 -- this is caught by css!!
-  signal(SIGQUIT, fun);	// 3
+  //  signal(SIGINT,  fun);     // 2 -- this is caught by css!!
+  signal(SIGQUIT, fun); // 3
   signal(SIGBUS,  fun); // 7
   signal(SIGUSR1, fun); // 10
   signal(SIGUSR2, fun); // 12
@@ -1252,31 +1252,31 @@ void taMisc::Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun)) {
 
 void taMisc::Decode_Signal(int err) {
   switch(err) {
-  case SIGABRT:	cerr << "abort"; break;
+  case SIGABRT: cerr << "abort"; break;
 #ifndef TA_OS_WIN
-  case SIGHUP:	cerr << "hangup"; break;
-  case SIGQUIT:	cerr << "quit";	break;
-  case SIGILL:	cerr << "illegal instruction"; break;
-  case SIGBUS:	cerr << "bus error"; break;
-  case SIGSEGV:	cerr << "segmentation violation"; break;
+  case SIGHUP:  cerr << "hangup"; break;
+  case SIGQUIT: cerr << "quit"; break;
+  case SIGILL:  cerr << "illegal instruction"; break;
+  case SIGBUS:  cerr << "bus error"; break;
+  case SIGSEGV: cerr << "segmentation violation"; break;
 # ifndef LINUX
-  case SIGSYS:	cerr << "bad argument to system call"; break;
+  case SIGSYS:  cerr << "bad argument to system call"; break;
 # endif
-  case SIGPIPE:	cerr << "broken pipe"; break;
-  case SIGALRM:	cerr << "alarm clock"; break;
-  case SIGTERM:	cerr << "software termination signal"; break;
-  case SIGFPE:	cerr << "floating point exception"; break;
-  case SIGUSR1:	cerr << "user signal 1"; break;
-  case SIGUSR2:	cerr << "user signal 2"; break;
+  case SIGPIPE: cerr << "broken pipe"; break;
+  case SIGALRM: cerr << "alarm clock"; break;
+  case SIGTERM: cerr << "software termination signal"; break;
+  case SIGFPE:  cerr << "floating point exception"; break;
+  case SIGUSR1: cerr << "user signal 1"; break;
+  case SIGUSR2: cerr << "user signal 2"; break;
 #endif  //!TA_OS_WIN
-  default:	cerr << "unknown"; break;
+  default:      cerr << "unknown"; break;
   }
 }
 
 
 
 /////////////////////////////////////////////////
-//	Startup
+//      Startup
 
 void taMisc::Initialize() {
   not_constr = false;
@@ -1381,7 +1381,7 @@ void taMisc::Init_Args(int argc, const char* argv[]) {
     while(av.contains(" -")) { // sometimes multiple flag args get munged together in scripts
       String frst = av.before(" -");
       av = av.from(" -");
-      av = av.after(0);		// skip space
+      av = av.after(0);         // skip space
       args_raw.Add(frst);
     }
     args_raw.Add(av);
@@ -1398,12 +1398,12 @@ void taMisc::Init_Types() {// called after all type info has been loaded into ty
       // look for an initClass method
       MethodDef* md = typ->methods.FindName("initClass");
       if (!md)
-	md = typ->methods.FindName("InitClass");
+        md = typ->methods.FindName("InitClass");
       if (!md) continue;
       if (!(md->is_static && md->addr && (md->arg_types.size == 0) )) continue;
       // call the init function
       md->addr();
-      md->addr = NULL;		// reset so it isn't run again!
+      md->addr = NULL;          // reset so it isn't run again!
     }
   }
   // add any Schema that couldn't be added earlier
@@ -1495,28 +1495,28 @@ void taMisc::UpdateArgs() {
     if(av[0] == '-') { // a flag
       Variant vl = arg_names.GetVal(av);
       if(vl.isNull()) {
-	nv.name = av;
+        nv.name = av;
       }
       else {
-	nv.name = vl.toString();
+        nv.name = vl.toString();
       }
       if(i < args_raw.size-1) {
-	String nxt = args_raw[i+1];
-	if((nxt[0] != '-') && !nxt.contains('=')) {
-	  // not another flag or n=v; treat as value for this guy
-	  nv.value = nxt;
-	}
-	// don't consume this arg in any case: it will show up as argv[i+1] too
+        String nxt = args_raw[i+1];
+        if((nxt[0] != '-') && !nxt.contains('=')) {
+          // not another flag or n=v; treat as value for this guy
+          nv.value = nxt;
+        }
+        // don't consume this arg in any case: it will show up as argv[i+1] too
       }
     }
-    else if(av.contains('=')) {	// name=value arg
+    else if(av.contains('=')) { // name=value arg
       nv.name = av.before('=');
       nv.value = av.after('=');
       Variant vl = arg_names.GetVal(nv.name + "="); // register "flag=" to convert to names
       if(!vl.isNull())
-	nv.name = vl.toString();
+        nv.name = vl.toString();
     }
-    else {			// regular arg: enter name as argv[x]
+    else {                      // regular arg: enter name as argv[x]
       nv.name = "argv[" + String(i) + "]";
       nv.value = av;
     }
@@ -1551,24 +1551,24 @@ bool taMisc::FullArgStringToFile(const String& fname) {
     return false;
   }
   strm << ars << endl;
-  strm.close();	strm.clear();
+  strm.close(); strm.clear();
   return true;
 }
 
 
 String taMisc::FullArgStringName(bool exclude_flags, const String& exclude_names,
-				 bool shorten_names, int max_len, int seg_len,
-				 int rm_vowels_thr,
-				 const String& nm_val_sep, const String& arg_sep,
-				 const String& space_repl, const String& period_repl,
-				 const String& slash_repl) {
+                                 bool shorten_names, int max_len, int seg_len,
+                                 int rm_vowels_thr,
+                                 const String& nm_val_sep, const String& arg_sep,
+                                 const String& space_repl, const String& period_repl,
+                                 const String& slash_repl) {
 
   String_PArray excludes;
   excludes.SetFromString(exclude_names, ", ");
 
   String act_arg_sep = arg_sep;
   if(act_arg_sep.empty())
-    act_arg_sep = "#";		// makea barfs if this is in the default args!
+    act_arg_sep = "#";          // makea barfs if this is in the default args!
 
   String rval;
   for(int i=1; i<args.size; i++) {
@@ -1577,8 +1577,8 @@ String taMisc::FullArgStringName(bool exclude_flags, const String& exclude_names
     bool excl = false;
     for(int j=0; j<excludes.size; j++) {
       if(nv.name.contains(excludes[j])) {
-	excl = true;
-	break;
+        excl = true;
+        break;
       }
     }
     if(excl) continue;
@@ -1631,7 +1631,7 @@ String taMisc::FindArgValContains(const String& vl) {
 #endif // NO_TA_BASE for al startup/args functions
 
 /////////////////////////////////////////////////
-//	Commonly used utility functions on strings/arrays/values
+//      Commonly used utility functions on strings/arrays/values
 
 void taMisc::CharToStrArray(String_PArray& sa, const char* ch) {
   String tmp = ch;
@@ -1744,7 +1744,7 @@ String taMisc::ShortName(const String& name, int max_len, int seg_len, int rm_vo
     nm = RemoveVowels(name);
     ln = nm.length();
   }
-  int_PArray brks;		// locations of break points
+  int_PArray brks;              // locations of break points
   for(int i = 1; i < ln; i++) {
     char c = nm[i];
     if(c == ' ' || c == '_') {
@@ -1789,11 +1789,11 @@ String taMisc::StringCVar(const String& str) {
     char c = str[i];
     if(isalnum(c) || c == '_') {
       if(!(isdigit(c) && (rval.length()==0)))
-	rval += c;
+        rval += c;
     }
     else {
       if((rval.length() > 0) && (rval.lastchar() != '_'))
-	rval += '_';		// use _ to replace all strange chars
+        rval += '_';            // use _ to replace all strange chars
     }
   }
   return rval;
@@ -1801,7 +1801,7 @@ String taMisc::StringCVar(const String& str) {
 
 
 /////////////////////////////////////////////////
-//	File Paths etc
+//      File Paths etc
 
 TypeDef* taMisc::FindTypeName(const String& typ_nm) {
   TypeDef* td = taMisc::types.FindName(typ_nm);
@@ -1862,8 +1862,8 @@ bool taMisc::FileExecutable(const String& fname) {
 }
 
 bool taMisc::SetFilePermissions(const String& fname, bool user, bool group,
-				   bool other, bool readable, bool writable,
-				   bool executable) {
+                                   bool other, bool readable, bool writable,
+                                   bool executable) {
   QFile fi(fname);
   QFile::Permissions perm = 0;
   if(user && readable) perm |= QFile::ReadUser;
@@ -1947,20 +1947,20 @@ String taMisc::FindFileOnLoadPath(const char* fname) {
 int taMisc::GetUniqueFileNumber(int st_no, const String& prefix, const String& suffix) {
   String fname;
   int i;
-  for(i=st_no; i<10000; i++) {	// stop at 10,000
+  for(i=st_no; i<10000; i++) {  // stop at 10,000
     fname = prefix + String(i) + suffix;
     int acc = access(fname, R_OK);
     if(acc != 0)
-      break;			// its ok..
+      break;                    // its ok..
   }
   fstream strm;
-  strm.open(fname, ios::out);	// this should hold the place for the file
-  strm.close();	strm.clear();		// while it is being saved, etc..
+  strm.open(fname, ios::out);   // this should hold the place for the file
+  strm.close(); strm.clear();           // while it is being saved, etc..
   return i;
 }
 
 String taMisc::FileDiff(const String& fname_a, const String& fname_b,
-			bool trimSpace, bool ignoreSpace, bool ignoreCase) {
+                        bool trimSpace, bool ignoreSpace, bool ignoreCase) {
   String str_a, str_b;
   taStringDiff diff;
   diff.DiffFiles(fname_a, fname_b, str_a, str_b, trimSpace, ignoreSpace, ignoreCase);
@@ -1990,33 +1990,57 @@ String taMisc::FixURL(const String& urltxt) {
 }
 
 bool taMisc::InternetConnected() {
+bool any_valid = false;
 #ifndef NO_TA_BASE
+  const bool DEBUG_LOG = false;
   QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
+  if (DEBUG_LOG) cerr << "Inspecting network interfaces..." << endl;
   for (int i = 0; i < ifaces.size(); ++i) {
+    if (DEBUG_LOG) cerr << " Looking at interface #" << i << endl;
     const QNetworkInterface& ifc = ifaces.at(i);
-    if(!ifc.isValid()) continue;
-    if(ifc.flags() & (QNetworkInterface::IsLoopBack | QNetworkInterface::IsPointToPoint))
+    if(!ifc.isValid()) {
+      if (DEBUG_LOG) cerr << "  Skipping, not valid" << endl;
       continue;
+    }
+    if(ifc.flags() & (QNetworkInterface::IsLoopBack | QNetworkInterface::IsPointToPoint)) {
+      if (DEBUG_LOG) cerr << "  Skipping, isloopback or ptp" << endl;
+      continue;
+    }
     if(ifc.flags() & (QNetworkInterface::IsRunning | QNetworkInterface::IsUp)) {
 
       QList<QNetworkAddressEntry> addrs = ifc.addressEntries();
-      if(addrs.size() == 0) continue;
+      if(addrs.size() == 0) {
+        if (DEBUG_LOG) cerr << "  Skipping, addrs.size()==0" << endl;
+        continue;
+      }
 
       String nm = ifc.name();
-      if(nm.startsWith("vm")) continue; // avoid virtual machine guys!
-//      bool any_valid = false;
-      for (int j = 0; j < addrs.size(); ++j) {
-	QHostAddress ip = addrs.at(j).ip();
-	if(ip.isNull()) continue;
-	String adr = ip.toString();
-// 	cerr << nm << " has addr:" << adr << endl;
+      if(nm.startsWith("vm")) {
+        // This check isn't necessarily reliable: a VirtualBox VM
+        // interface may be named with a GUID.
+        if (DEBUG_LOG) cerr << "  Skipping, VM name: " << nm << endl;
+        continue; // avoid virtual machine guys!
       }
-//       cerr << nm << " is up and running" << endl;
-      return true;
+      for (int j = 0; j < addrs.size(); ++j) {
+        QHostAddress ip = addrs.at(j).ip();
+        if(ip.isNull()) {
+          if (DEBUG_LOG) cerr << "   Skipping address #" << j << ", IP is null" << endl;
+        }
+        else {
+          String adr = ip.toString();
+          if (DEBUG_LOG) cerr << "   Up and running: " << nm << " with addr:" << adr << endl;
+          any_valid = true;
+          // could break/return here, but for logging purposes, keep going.
+        }
+      }
+    }
+    else
+    {
+      if (DEBUG_LOG) cerr << "intf #" << i << " is not up" << endl;
     }
   }
 #endif
-  return false;
+  return any_valid;
 }
 
 int taMisc::ExecuteCommand(const String& cmd) {
@@ -2024,7 +2048,7 @@ int taMisc::ExecuteCommand(const String& cmd) {
 }
 
 /////////////////////////////////////////////////
-//	Recording GUI actions to css script
+//      Recording GUI actions to css script
 
 void taMisc::StartRecording(ostream* strm){
   record_script = strm;
@@ -2043,13 +2067,13 @@ bool taMisc::RecordScript(const char* cmd) {
     return false;
   if (record_script->bad() || record_script->eof()) {
     taMisc::Warning("*** Error: recording script is bad or eof, no script command recorded!!",
-		  cmd);
+                  cmd);
     return false;
   }
   *record_script << cmd;
   if(cmd[strlen(cmd)-1] != '\n') {
     taMisc::Warning("*** Warning: cmd must end in a newline, but doesn't -- should be fixed:",
-		  cmd);
+                  cmd);
     *record_script << '\n';
   }
   record_script->flush();
@@ -2084,7 +2108,7 @@ void taMisc::SREAssignment(taBase* tab,MemberDef* md){
 #endif
 
 ////////////////////////////////////////////////////////////////////////
-// 	File Parsing Stuff for Dump routines
+//      File Parsing Stuff for Dump routines
 
 int taMisc::skip_white(istream& strm, bool peek) {
   int c;
@@ -2280,7 +2304,7 @@ int taMisc::read_till_rbracket(istream& strm, bool peek) {
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
       cerr << (char)c;
-      if(c == '\n') 	taMisc::FlushConsole();
+      if(c == '\n')     taMisc::FlushConsole();
       LexBuf += (char)c;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
@@ -2309,7 +2333,7 @@ int taMisc::read_till_rb_or_semi(istream& strm, bool peek) {
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
       cerr << (char)c;
-      if(c == '\n') 	taMisc::FlushConsole();
+      if(c == '\n')     taMisc::FlushConsole();
       LexBuf += (char)c;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
@@ -2442,7 +2466,7 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
     cerr << "<<err_skp ->>";
     while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
       cerr << (char)c;
-      if(c == '\n') 	taMisc::FlushConsole();
+      if(c == '\n')     taMisc::FlushConsole();
       if(c == '{')      depth++;
       if(c == '}')      depth--;
       strm.get();
@@ -2472,8 +2496,8 @@ int taMisc::find_not_in_quotes(const String& str, char c, int start) {
     for(int i=len+start; i>=0; i--) {
       char cv = str[i];
       if(cv == '\"') {
-	in_str = !in_str;
-	continue;
+        in_str = !in_str;
+        continue;
       }
       if(!in_str && cv == c) return i;
     }
@@ -2482,8 +2506,8 @@ int taMisc::find_not_in_quotes(const String& str, char c, int start) {
     for(int i=start; i<len; i++) {
       char cv = str[i];
       if(cv == '\"') {
-	in_str = !in_str;
-	continue;
+        in_str = !in_str;
+        continue;
       }
       if(!in_str && cv == c) return i;
     }
@@ -2500,16 +2524,16 @@ int taMisc::replace_strings(istream& istrm, ostream& ostrm, NameVar_PArray& repl
     for(int i=0;i<repl_list.size;i++) {
       String repl = repl_list[i].name;
       if(repl.contains("/w")) { // special whitespace flag
-	String pre = repl.before("/w");
-	if(!nwln.contains(pre)) continue;
-	String post = repl.after("/w");
-	if(!nwln.contains(post)) continue;
-	String nwpre = nwln.before(pre);
-	String nwpost = nwln.after(post);
-	nwln = nwpre + repl_list[i].value.toString() + nwpost;
+        String pre = repl.before("/w");
+        if(!nwln.contains(pre)) continue;
+        String post = repl.after("/w");
+        if(!nwln.contains(post)) continue;
+        String nwpre = nwln.before(pre);
+        String nwpost = nwln.after(post);
+        nwln = nwpre + repl_list[i].value.toString() + nwpost;
       }
       else {
-	n_repl += nwln.gsub(repl, repl_list[i].value.toString());
+        n_repl += nwln.gsub(repl, repl_list[i].value.toString());
       }
     }
     ostrm << nwln << endl;
@@ -2529,7 +2553,7 @@ int taMisc::find_strings(istream& istrm, String_PArray& strs) {
 }
 
 ////////////////////////////////////////////////////////////////////////
-//	HTML-style tags
+//      HTML-style tags
 
 taMisc::ReadTagStatus taMisc::read_tag(istream& strm, String& tag, String& val) {
   int c = skip_white(strm, true);
@@ -2556,7 +2580,7 @@ taMisc::ReadTagStatus taMisc::read_tag(istream& strm, String& tag, String& val) 
   if(c == '\r' || c == '\n') strm.get(); // absorb an immediate cr after tag, which is common
   if(c == '\r') {
     c = strm.peek();
-    if(c == '\n') strm.get();	// absorb an immediate cr after tag, which is common
+    if(c == '\n') strm.get();   // absorb an immediate cr after tag, which is common
   }
   return rval;
 }
@@ -2568,7 +2592,7 @@ int taMisc::read_till_rangle(istream& strm, bool peek) {
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !((c == '>') && (depth <= 0))) {
       cerr << (char)c;
-      if(c == '\n') 	taMisc::FlushConsole();
+      if(c == '\n')     taMisc::FlushConsole();
       LexBuf += (char)c;
       if(c == '<')      depth++;
       if(c == '>')      depth--;
@@ -2591,7 +2615,7 @@ int taMisc::read_till_rangle(istream& strm, bool peek) {
 }
 
 ////////////////////////////////////////////////////////////////////////
-// 	File Parsing Stuff for Dump routines: Output
+//      File Parsing Stuff for Dump routines: Output
 
 ostream& taMisc::indent(ostream& strm, int indent, int tsp) {
   // don't do any fancy things for undo saving -- just wastes space!
@@ -2644,7 +2668,7 @@ ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, i
   int i;
   int itabs = (indent * tsp) / 8;
   int ispcs = (indent * tsp) % 8;
-  if(no == 0) {			// indent
+  if(no == 0) {                 // indent
     for(i=0; i<itabs; i++)
       strm << "\t";
     for(i=0; i<ispcs; i++)
@@ -2654,7 +2678,7 @@ ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, i
   strm << itm << " ";
 
   int len = itm.length() + 1 + ispcs;
-  for(i=2; i>=0; i--) {		// sep_tabs = 2
+  for(i=2; i>=0; i--) {         // sep_tabs = 2
     if(len < i * 8)
       strm << "\t";
   }
@@ -2665,7 +2689,7 @@ ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, i
 
 
 //////////////////////////
-//   IDataLinkProxy 	//
+//   IDataLinkProxy     //
 //////////////////////////
 
 TypeDef* IDataLinkProxy::GetDataTypeDef() const {
@@ -2674,7 +2698,7 @@ TypeDef* IDataLinkProxy::GetDataTypeDef() const {
 }
 
 //////////////////////////
-//   IDataLinkClient 	//
+//   IDataLinkClient    //
 //////////////////////////
 
 IDataLinkClient::~IDataLinkClient() {
@@ -2701,7 +2725,7 @@ bool IDataLinkClient::RemoveDataLink(taDataLink* dl) {
 }
 
 //////////////////////////////////
-//   IMultiDataLinkClient 	//
+//   IMultiDataLinkClient       //
 //////////////////////////////////
 
 IMultiDataLinkClient::~IMultiDataLinkClient() {
@@ -2720,7 +2744,7 @@ bool IMultiDataLinkClient::RemoveDataLink(taDataLink* dl) {
 }
 
 //////////////////////////
-//   taDataLink 	//
+//   taDataLink         //
 //////////////////////////
 
 const KeyString taDataLink::key_name("name");
@@ -2832,7 +2856,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
   }
   else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
 #ifdef DATA_DATA_DEBUG
-    bool was_stru = false;	// debug only
+    bool was_stru = false;      // debug only
     if(dcr == DCR_STRUCT_UPDATE_END)
       was_stru = true;
 #endif
@@ -2867,8 +2891,8 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
         // State=DATA, Count=1
         dcr = DCR_ITEM_UPDATED;
 #ifdef DATA_DATA_DEBUG
-	cerr << (String)(int)this << " cvt to iu: " << m_dbu_cnt << endl;
-	taMisc::FlushConsole();
+        cerr << (String)(int)this << " cvt to iu: " << m_dbu_cnt << endl;
+        taMisc::FlushConsole();
 #endif
       }
       else {// otherwise, we send both
@@ -2939,7 +2963,7 @@ void* taDataLinkItr::NextEl(taDataLink* dl, const TypeDef* typ) {
 
 
 //////////////////////////////////
-// 	     TypeSpace		//
+//           TypeSpace          //
 //////////////////////////////////
 
 TypeSpace::~TypeSpace() {
@@ -2949,9 +2973,9 @@ TypeSpace::~TypeSpace() {
   }
 }
 
-String	TypeSpace::El_GetName_(void* it) const { return ((TypeDef*)it)->name; }
-TALPtr 	TypeSpace::El_GetOwnerList_(void* it) const { return ((TypeDef*)it)->owner; }
-void*	TypeSpace::El_SetOwner_(void* it_) {
+String  TypeSpace::El_GetName_(void* it) const { return ((TypeDef*)it)->name; }
+TALPtr  TypeSpace::El_GetOwnerList_(void* it) const { return ((TypeDef*)it)->owner; }
+void*   TypeSpace::El_SetOwner_(void* it_) {
   if (!it_) return it_;
   TypeDef* it = (TypeDef*)it_;
   it->owner = this;
@@ -2965,13 +2989,13 @@ void*	TypeSpace::El_SetOwner_(void* it_) {
   return it_;
 
 }
-void	TypeSpace::El_SetIndex_(void* it, int i){ ((TypeDef*)it)->idx = i; }
+void    TypeSpace::El_SetIndex_(void* it, int i){ ((TypeDef*)it)->idx = i; }
 
-void*	TypeSpace::El_Ref_(void* it)   	  { taRefN::Ref((TypeDef*)it); return it; }
-void* 	TypeSpace::El_unRef_(void* it) 	  { taRefN::unRef((TypeDef*)it); return it; }
-void	TypeSpace::El_Done_(void* it)	  { taRefN::Done((TypeDef*)it); }
-void*	TypeSpace::El_MakeToken_(void* it)  { return (void*)((TypeDef*)it)->MakeToken(); }
-void*	TypeSpace::El_Copy_(void* trg, void* src)
+void*   TypeSpace::El_Ref_(void* it)      { taRefN::Ref((TypeDef*)it); return it; }
+void*   TypeSpace::El_unRef_(void* it)    { taRefN::unRef((TypeDef*)it); return it; }
+void    TypeSpace::El_Done_(void* it)     { taRefN::Done((TypeDef*)it); }
+void*   TypeSpace::El_MakeToken_(void* it)  { return (void*)((TypeDef*)it)->MakeToken(); }
+void*   TypeSpace::El_Copy_(void* trg, void* src)
 { ((TypeDef*)trg)->Copy(*((TypeDef*)src)); return trg; }
 
 TypeDef* TypeSpace::FindTypeR(const String& fqname) const {
@@ -3004,10 +3028,10 @@ bool TypeSpace::ReplaceParents(const TypeSpace& ol, const TypeSpace& nw) {
     int j;
     for(j=0; j<ol.size; j++) {
       TypeDef* old_st = ol.FastEl(j);
-      TypeDef* new_st = nw.FastEl(j); 	// assumes one-to-one correspondence
+      TypeDef* new_st = nw.FastEl(j);   // assumes one-to-one correspondence
 
       if(FastEl(i)->ReplaceParent(old_st, new_st))
-	rval = true;
+        rval = true;
     }
   }
   return rval;
@@ -3024,19 +3048,19 @@ void TypeSpace::ListAllTokens(ostream& strm) {
 }
 
 //////////////////////////////////
-// 	     EnumSpace		//
+//           EnumSpace          //
 //////////////////////////////////
 
-String	EnumSpace::El_GetName_(void* it) const { return ((EnumDef*)it)->name; }
-TALPtr 	EnumSpace::El_GetOwnerList_(void* it) const { return ((EnumDef*)it)->owner; }
-void*	EnumSpace::El_SetOwner_(void* it) { return ((EnumDef*)it)->owner = this; }
-void	EnumSpace::El_SetIndex_(void* it, int i){ ((EnumDef*)it)->idx = i; }
+String  EnumSpace::El_GetName_(void* it) const { return ((EnumDef*)it)->name; }
+TALPtr  EnumSpace::El_GetOwnerList_(void* it) const { return ((EnumDef*)it)->owner; }
+void*   EnumSpace::El_SetOwner_(void* it) { return ((EnumDef*)it)->owner = this; }
+void    EnumSpace::El_SetIndex_(void* it, int i){ ((EnumDef*)it)->idx = i; }
 
-void*	EnumSpace::El_Ref_(void* it)   	  { taRefN::Ref((EnumDef*)it); return it; }
-void* 	EnumSpace::El_unRef_(void* it) 	  { taRefN::unRef((EnumDef*)it); return it; }
-void	EnumSpace::El_Done_(void* it)	  { taRefN::Done((EnumDef*)it); }
-void*	EnumSpace::El_MakeToken_(void* it)  { return (void*)((EnumDef*)it)->MakeToken(); }
-void*	EnumSpace::El_Copy_(void* trg, void* src)
+void*   EnumSpace::El_Ref_(void* it)      { taRefN::Ref((EnumDef*)it); return it; }
+void*   EnumSpace::El_unRef_(void* it)    { taRefN::unRef((EnumDef*)it); return it; }
+void    EnumSpace::El_Done_(void* it)     { taRefN::Done((EnumDef*)it); }
+void*   EnumSpace::El_MakeToken_(void* it)  { return (void*)((EnumDef*)it)->MakeToken(); }
+void*   EnumSpace::El_Copy_(void* trg, void* src)
 { ((EnumDef*)trg)->Copy(*((EnumDef*)src)); return trg; }
 
 EnumSpace::~EnumSpace() {
@@ -3075,7 +3099,7 @@ EnumDef* EnumSpace::FindNo(int eno) const {
 
 
 //////////////////////////////////
-// 	     TokenSpace		//
+//           TokenSpace         //
 //////////////////////////////////
 
 String TokenSpace::tmp_el_name;
@@ -3126,27 +3150,27 @@ void TokenSpace::List(ostream &strm) const {
 
 
 //////////////////////////////////
-// 	    MemberSpace		//
+//          MemberSpace         //
 //////////////////////////////////
 
-String	MemberDefBase_List::El_GetName_(void* it) const
+String  MemberDefBase_List::El_GetName_(void* it) const
   { return ((MemberDefBase*)it)->name; }
-TALPtr 	MemberDefBase_List::El_GetOwnerList_(void* it) const
+TALPtr  MemberDefBase_List::El_GetOwnerList_(void* it) const
   { return ((MemberDefBase*)it)->owner; }
-void*	MemberDefBase_List::El_SetOwner_(void* it)
+void*   MemberDefBase_List::El_SetOwner_(void* it)
   { return ((MemberDefBase*)it)->owner = this; }
-void	MemberDefBase_List::El_SetIndex_(void* it, int i)
+void    MemberDefBase_List::El_SetIndex_(void* it, int i)
   { ((MemberDefBase*)it)->idx = i; }
 
-void*	MemberDefBase_List::El_Ref_(void* it)
+void*   MemberDefBase_List::El_Ref_(void* it)
   { taRefN::Ref((MemberDefBase*)it); return it; }
-void* 	MemberDefBase_List::El_unRef_(void* it)
+void*   MemberDefBase_List::El_unRef_(void* it)
   { taRefN::unRef((MemberDefBase*)it); return it; }
-void	MemberDefBase_List::El_Done_(void* it)
+void    MemberDefBase_List::El_Done_(void* it)
   { taRefN::Done((MemberDefBase*)it); }
 
 
-void*	MemberDefBase_List::El_MakeToken_(void* it) {
+void*   MemberDefBase_List::El_MakeToken_(void* it) {
   switch (((MemberDefBase*)it)->typeInfoKind()) {
   case taMisc::TIK_MEMBER:
     return (void*)((MemberDef*)it)->MakeToken();
@@ -3158,7 +3182,7 @@ void*	MemberDefBase_List::El_MakeToken_(void* it) {
 }
 
 // note: this use the "pseudo-virtual" type guy
-void*	MemberDefBase_List::El_Copy_(void* trg, void* src)
+void*   MemberDefBase_List::El_Copy_(void* trg, void* src)
   { ((MemberDefBase*)trg)->Copy(((MemberDefBase*)src));
   return trg;
 }
@@ -3171,10 +3195,10 @@ MemberDefBase_List::~MemberDefBase_List() {
 }
 
 //////////////////////////////////
-// MemberSpace: Find By Name	//
+// MemberSpace: Find By Name    //
 //////////////////////////////////
 
-int MemberSpace::FindNameOrType(const char *nm) const {	// lookup by name
+int MemberSpace::FindNameOrType(const char *nm) const { // lookup by name
   int rval = FindNameIdx(nm);
   if(rval >= 0)
     return rval;
@@ -3216,7 +3240,7 @@ MemberDef* MemberSpace::FindNameAddr(const char* nm, void* base, void*& ptr) con
 }
 
 //////////////////////////////////
-// MemberSpace: Find By Type	//
+// MemberSpace: Find By Type    //
 //////////////////////////////////
 
 MemberDef* MemberSpace::FindType(TypeDef* it) const {
@@ -3254,7 +3278,7 @@ MemberDef* MemberSpace::FindTypeAddr(TypeDef* it, void* base, void*& ptr) const 
 }
 
 //////////////////////////////////
-// MemberSpace: other Find 	//
+// MemberSpace: other Find      //
 //////////////////////////////////
 
 int MemberSpace::FindDerives(TypeDef* it) const {
@@ -3312,7 +3336,7 @@ MemberDef* MemberSpace::FindAddrPtr(void* base, void* mbr, int& idx) const {
 
 
 //////////////////////////////////
-//  PropertySpace		//
+//  PropertySpace               //
 //////////////////////////////////
 
 void PropertyDef::setType(TypeDef* typ) {
@@ -3384,10 +3408,10 @@ PropertyDef* PropertySpace::AssertProperty_impl(const char* nm, bool& is_new,
 #endif
 
 //////////////////////////////////
-// PropertySpace: Find By Name	//
+// PropertySpace: Find By Name  //
 //////////////////////////////////
 
-int PropertySpace::FindNameOrType(const char *nm) const {	// lookup by name
+int PropertySpace::FindNameOrType(const char *nm) const {       // lookup by name
   int rval = 0; //init just to keep msvc happy
   // first check names
   if(FindName(nm),rval)
@@ -3421,19 +3445,19 @@ MemberDefBase* PropertySpace::FindNameR(const char* nm) const {
 
 
 //////////////////////////////////
-// 	    MethodSpace		//
+//          MethodSpace         //
 //////////////////////////////////
 
-String	MethodSpace::El_GetName_(void* it) const { return ((MethodDef*)it)->name; }
-TALPtr 	MethodSpace::El_GetOwnerList_(void* it) const { return ((MethodDef*)it)->owner; }
-void*	MethodSpace::El_SetOwner_(void* it) { return ((MethodDef*)it)->owner = this; }
-void	MethodSpace::El_SetIndex_(void* it, int i){ ((MethodDef*)it)->idx = i; }
+String  MethodSpace::El_GetName_(void* it) const { return ((MethodDef*)it)->name; }
+TALPtr  MethodSpace::El_GetOwnerList_(void* it) const { return ((MethodDef*)it)->owner; }
+void*   MethodSpace::El_SetOwner_(void* it) { return ((MethodDef*)it)->owner = this; }
+void    MethodSpace::El_SetIndex_(void* it, int i){ ((MethodDef*)it)->idx = i; }
 
-void*	MethodSpace::El_Ref_(void* it)    { taRefN::Ref((MethodDef*)it); return it; }
-void* 	MethodSpace::El_unRef_(void* it)  { taRefN::unRef((MethodDef*)it); return it; }
-void	MethodSpace::El_Done_(void* it)	  { taRefN::Done((MethodDef*)it); }
-void*	MethodSpace::El_MakeToken_(void* it)  { return (void*)((MethodDef*)it)->MakeToken(); }
-void*	MethodSpace::El_Copy_(void* trg, void* src)
+void*   MethodSpace::El_Ref_(void* it)    { taRefN::Ref((MethodDef*)it); return it; }
+void*   MethodSpace::El_unRef_(void* it)  { taRefN::unRef((MethodDef*)it); return it; }
+void    MethodSpace::El_Done_(void* it)   { taRefN::Done((MethodDef*)it); }
+void*   MethodSpace::El_MakeToken_(void* it)  { return (void*)((MethodDef*)it)->MakeToken(); }
+void*   MethodSpace::El_Copy_(void* trg, void* src)
 { ((MethodDef*)trg)->Copy(*((MethodDef*)src)); return trg; }
 
 MethodSpace::~MethodSpace() {
@@ -3473,7 +3497,7 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
 //    it->opts.DupeUnique(rval->inh_opts);
 //    it->inh_opts.DupeUnique(rval->inh_opts);
     if ((it->desc.empty()) || (it->desc == " "))
-      it->desc = rval->desc;	// get the comment if we don't actually have one now..
+      it->desc = rval->desc;    // get the comment if we don't actually have one now..
     replace = true; // always replace
   } else {
     // ok, we are not a virtual override, but check if we are an overload or lexical hide
@@ -3498,12 +3522,12 @@ bool MethodSpace::AddUniqNameNew(MethodDef *it) {
     }
   }
   if (replace) {
-    ReplaceIdx(idx, it);		// new one replaces old if overloaded or overridden
+    ReplaceIdx(idx, it);                // new one replaces old if overloaded or overridden
     result = false;
     goto end;
   }
   inherited::Add(it);
-  result = true;			// yes, its unique
+  result = true;                        // yes, its unique
   } // block, for jump
 end:
   return result;
@@ -3529,7 +3553,7 @@ MethodDef* MethodSpace::FindOnListAddr(ta_void_fun funa, const String_PArray& ls
   for(i=0; i<size; i++) {
     if(FastEl(i)->CheckList(lst)) {
       if(FastEl(i)->addr == funa)
-	return FastEl(i);
+        return FastEl(i);
       lidx++;
     }
   }
@@ -3541,7 +3565,7 @@ MethodDef* MethodSpace::FindOnListIdx(int lidx, const String_PArray& lst) const 
   for(i=0; i<size; i++) {
     if(FastEl(i)->CheckList(lst)) {
       if(chk == lidx)
-	return FastEl(i);
+        return FastEl(i);
       chk++;
     }
   }
@@ -3563,7 +3587,7 @@ MethodDef* MethodSpace::FindVirtualBase(MethodDef* it, int& idx) {
 
 
 //////////////////////////
-//   TypeItem		//
+//   TypeItem           //
 //////////////////////////
 const String TypeItem::opt_show("SHOW");
 const String TypeItem::opt_no_show("NO_SHOW");
@@ -3613,10 +3637,10 @@ void TypeItem::Copy(const TypeItem& cp) {
 }
 
 void TypeItem::Copy_(const TypeItem& cp) {
-  name 		= cp.name;
-  desc		= cp.desc;
-  opts		= cp.opts;
-  lists		= cp.lists;
+  name          = cp.name;
+  desc          = cp.desc;
+  opts          = cp.opts;
+  lists         = cp.lists;
 }
 
 String TypeItem::OptionAfter(const String& op) const {
@@ -3655,10 +3679,10 @@ bool TypeItem::NextOptionAfter(const String& pre, int& itr, String& res) const
 
 String TypeItem::GetLabel() const {
   String rval =  OptionAfter("LABEL_");
-  if((rval.empty()) && !HasOption("LABEL_")) {	// not intentionally blank
+  if((rval.empty()) && !HasOption("LABEL_")) {  // not intentionally blank
     rval = name;
     taMisc::SpaceLabel(rval);
-  } else				// do translate spaces..
+  } else                                // do translate spaces..
     rval.gsub('_', ' ');
   return rval;
 }
@@ -3675,7 +3699,7 @@ String TypeItem::GetOptsHTML() const {
 }
 
 bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const void* base,
-			  bool& is_on, bool& val_is_eq) const {
+                          bool& is_on, bool& val_is_eq) const {
   // format: [CONDEDIT|CONDSHOW|GHOST]_[ON|OFF]_member[:value{,value}[&&,||member[:value{,value}...]] -- must all be && or || for logic
   String optedit = OptionAfter(condkey + "_");
   if (optedit.empty()) return false;
@@ -3685,23 +3709,23 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
   optedit = optedit.after('_');
 
   val_is_eq = false;
-  int curlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR,
+  int curlogic = 0;             // 0 = nothing, 1 = AND, 2 = OR,
 
-  while(true) {			// iterate on logical operations
+  while(true) {                 // iterate on logical operations
     String nextedit;
-    int nextlogic = 0;		// 0 = nothing, 1 = AND, 2 = OR,
+    int nextlogic = 0;          // 0 = nothing, 1 = AND, 2 = OR,
     int andloc = optedit.index("&&");
     int orloc = optedit.index("||");
     if(andloc > 0 && orloc > 0) {
       if(andloc < orloc) {
-	nextlogic = 1;
-	nextedit = optedit.after(andloc+1);
-	optedit = optedit.before(andloc);
+        nextlogic = 1;
+        nextedit = optedit.after(andloc+1);
+        optedit = optedit.before(andloc);
       }
       else {
-	nextlogic = 2;
-	nextedit = optedit.after(orloc+1);
-	optedit = optedit.before(orloc);
+        nextlogic = 2;
+        nextedit = optedit.after(orloc+1);
+        optedit = optedit.before(orloc);
       }
     }
     else if(andloc > 0) {
@@ -3724,11 +3748,11 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
     else
       mbr = optedit.before(':');
 
-    void* mbr_base = NULL;	// base for conditionalizing member itself
+    void* mbr_base = NULL;      // base for conditionalizing member itself
     ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
     TypeDef* eff_td = (TypeDef*)base_td;
     MemberDef* md = TypeDef::FindMemberPathStatic(eff_td, net_base_off, net_mbr_off,
-						  mbr, false); // no warn..
+                                                  mbr, false); // no warn..
     if (md) {
       mbr_base = MemberDef::GetOff_static(base, net_base_off, net_mbr_off);
     }
@@ -3749,32 +3773,32 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
       // explicit value mode
       String mbr_val = md->type->GetValStr(mbr_base, NULL, md, TypeDef::SC_DEFAULT, true); // inline
       while (true) {
-	String nxtval;
-	if (val.contains(',')) {
-	  nxtval = val.after(',');
-	  val = val.before(',');
-	}
-	if(md->type->InheritsFormal(TA_enum) && mbr_val.contains('|')) { // bits!
-	  if(mbr_val.contains(val)) {
-	    String aft = mbr_val.after(val);
-	    String bef = mbr_val.before(val);
-	    if((aft.empty() || aft.firstchar() == '|') && (bef.empty() || bef.lastchar() == '|')) {
-	      // make sure it is not just a subset of something else..
-	      tmp_val_is_eq = true;
-	      break;
-	    }
-	  }
-	}
-	else {
-	  if (val == mbr_val) {
-	    tmp_val_is_eq = true;
-	    break;
-	  }
-	}
-	if (!nxtval.empty())
-	  val = nxtval;
-	else
-	  break;
+        String nxtval;
+        if (val.contains(',')) {
+          nxtval = val.after(',');
+          val = val.before(',');
+        }
+        if(md->type->InheritsFormal(TA_enum) && mbr_val.contains('|')) { // bits!
+          if(mbr_val.contains(val)) {
+            String aft = mbr_val.after(val);
+            String bef = mbr_val.before(val);
+            if((aft.empty() || aft.firstchar() == '|') && (bef.empty() || bef.lastchar() == '|')) {
+              // make sure it is not just a subset of something else..
+              tmp_val_is_eq = true;
+              break;
+            }
+          }
+        }
+        else {
+          if (val == mbr_val) {
+            tmp_val_is_eq = true;
+            break;
+          }
+        }
+        if (!nxtval.empty())
+          val = nxtval;
+        else
+          break;
       } // value while
     } // if
 
@@ -3790,14 +3814,14 @@ bool TypeItem::GetCondOpt(const String condkey, const TypeDef* base_td, const vo
       curlogic = nextlogic;
     }
     else {
-      break;			// done!
+      break;                    // done!
     }
   } // outer logic while
   return true;
 }
 
 bool TypeItem::GetCondOptTest(const String condkey, const TypeDef* base_td, const void* base) const {
-  bool is_on = false; 	// defaults here make it return true if no opt spec'd at all
+  bool is_on = false;   // defaults here make it return true if no opt spec'd at all
   bool val_is_eq = false;
   bool rval = GetCondOpt(condkey, base_td, base, is_on, val_is_eq);
   return ((is_on && val_is_eq) || (!is_on && !val_is_eq));
@@ -3805,7 +3829,7 @@ bool TypeItem::GetCondOptTest(const String condkey, const TypeDef* base_td, cons
 
 
 //////////////////////////
-//   EnumDef		//
+//   EnumDef            //
 //////////////////////////
 
 
@@ -3864,7 +3888,7 @@ bool EnumDef::CheckList(const String_PArray& lst) const {
 
 
 //////////////////////////////////
-//  MemberDefBase		//
+//  MemberDefBase               //
 //////////////////////////////////
 
 void MemberDefBase::Initialize() {
@@ -4065,7 +4089,7 @@ void MemberDefBase::ShowMember_CalcCache_impl(byte& show, const String& suff) co
 
 
 //////////////////////////////////
-// 	     MemberDef		//
+//           MemberDef          //
 //////////////////////////////////
 
 void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
@@ -4087,7 +4111,7 @@ void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
       MemberDef* smd = md->type->members.FastEl(i);
       if (!smd->ShowMember(taMisc::show_gui, TypeItem::SC_EDIT) ||
         smd->HasOption("HIDDEN_INLINE"))
-	continue;
+        continue;
       GetMembDesc(smd, dsc_str, indent);
     }
   } else if (md->type->InheritsFormal(TA_enum)) {
@@ -4192,9 +4216,9 @@ MemberDef::DefaultStatus MemberDef::GetDefaultStatus(const void* base) {
     while(true) {
       if(cur_val == dv1) return EQU_DEF;
       if(dvr.contains(';')) {
-	dv1 = dvr.before(';');
-	dvr = dvr.after(';');
-	continue;
+        dv1 = dvr.before(';');
+        dvr = dvr.after(';');
+        continue;
       }
       return (cur_val == dvr) ? EQU_DEF : NOT_DEF;
     }
@@ -4262,7 +4286,7 @@ String MemberDef::GetHTML(bool gendoc, bool short_fmt) const {
     if(taMisc::help_detail >= taMisc::HD_DETAILS) {
       rval.cat("<p> Size: ").cat(String(type->size)).cat("</p>\n");
       if(opts.size > 0) {
-	rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+        rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
       }
     }
   }
@@ -4270,7 +4294,7 @@ String MemberDef::GetHTML(bool gendoc, bool short_fmt) const {
 }
 
 //////////////////////////////////
-// 	    PropertyDef		//
+//          PropertyDef         //
 //////////////////////////////////
 
 void PropertyDef::Initialize() {
@@ -4391,7 +4415,7 @@ String PropertyDef::GetHTML(bool gendoc, bool short_fmt) const {
     if(taMisc::help_detail >= taMisc::HD_DETAILS) {
       rval.cat("<p> Size: ").cat(String(type->size)).cat("</p>\n");
       if(opts.size > 0) {
-	rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+        rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
       }
     }
   }
@@ -4399,7 +4423,7 @@ String PropertyDef::GetHTML(bool gendoc, bool short_fmt) const {
 }
 
 //////////////////////////////////
-// 	     MethodDef		//
+//           MethodDef          //
 //////////////////////////////////
 
 void MethodDef::Initialize() {
@@ -4437,8 +4461,8 @@ MethodDef::MethodDef(const char* nm)
 }
 
 MethodDef::MethodDef(TypeDef* ty, const char* nm, const char* dsc, const char* op, const char* lis,
-		     int fover, int farc, int fard, bool is_stat, ta_void_fun funa,
-		     css_fun_stub_ptr stb, bool is_virt)
+                     int fover, int farc, int fard, bool is_stat, ta_void_fun funa,
+                     css_fun_stub_ptr stb, bool is_virt)
 :inherited()
 {
   Initialize();
@@ -4527,15 +4551,15 @@ void MethodDef::CallFun(void* base) const {
       ++taMisc::in_gui_call;
       cssEl* rval = (*(stubp))(base, 0, (cssEl**)NULL);
       if(rval) {
-	cssEl::Ref(rval);
-	cssEl::unRefDone(rval);
+        cssEl::Ref(rval);
+        cssEl::unRefDone(rval);
       }
       --taMisc::in_gui_call;
     }
     else {
       taMisc::Warning("*** CallFun Error: function:", name,
-		    "not available, because args are required and no dialog requestor can be opened",
-		    "(must be gui, and function must have #MENU or #BUTTON");
+                    "not available, because args are required and no dialog requestor can be opened",
+                    "(must be gui, and function must have #MENU or #BUTTON");
       return;
     }
   }
@@ -4635,7 +4659,7 @@ void MethodDef::ShowMethod_CalcCache_impl(byte& show) const {
     show |= (byte)taMisc::IS_EXPERT;
 
 //   String cat = OptionAfter("CAT_");
-//   if(cat.contains("Xpert"))	// special code for expert -- no need for redundant #EXPERT flag
+//   if(cat.contains("Xpert"))  // special code for expert -- no need for redundant #EXPERT flag
 //     show |= (byte)taMisc::IS_EXPERT;
 
   // if NO_SHOW and no SHOW or explicit other, then never shows
@@ -4669,7 +4693,7 @@ String MethodDef::GetHTML(bool gendoc, bool short_fmt) const {
       rval.cat("<i>").cat(arg_names[i]).cat("</i>");
       String def = arg_defs[i];
       if (def.nonempty())
-	rval.cat(" = ").cat(trim(def).xml_esc());
+        rval.cat(" = ").cat(trim(def).xml_esc());
     }
     rval.cat(" )");
     if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
@@ -4683,7 +4707,7 @@ String MethodDef::GetHTML(bool gendoc, bool short_fmt) const {
       rval.cat("<i>").cat(arg_names[i]).cat("</i>");
       String def = arg_defs[i];
       if (def.nonempty())
-	rval.cat(" = ").cat(trim(def).xml_esc());
+        rval.cat(" = ").cat(trim(def).xml_esc());
     }
     rval.cat(" )");
     if(is_static) rval.cat("&nbsp;&nbsp;<tt> [static]</tt>");
@@ -4691,7 +4715,7 @@ String MethodDef::GetHTML(bool gendoc, bool short_fmt) const {
     rval += "<p>" + trim(desc).xml_esc() + "</p>\n";
     if(taMisc::help_detail >= taMisc::HD_DETAILS) {
       if(opts.size > 0) {
-	rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
+        rval.cat("<p>").cat(GetOptsHTML()).cat("</p>\n");
       }
     }
     rval.cat("<span class=\"fakelink\" onclick='writesrc(this,\"");
@@ -4701,7 +4725,7 @@ String MethodDef::GetHTML(bool gendoc, bool short_fmt) const {
 }
 
 //////////////////////////
-//    TypeDef		//
+//    TypeDef           //
 //////////////////////////
 
 TypeDef* TypeDef::GetCommonSubtype(TypeDef* typ1, TypeDef* typ2) {
@@ -4729,7 +4753,7 @@ void TypeDef::Initialize() {
   iv = NULL;
 #endif
 #ifdef NO_TA_BASE
-  pre_parsed = false;	// true if previously parsed by maketa
+  pre_parsed = false;   // true if previously parsed by maketa
 #else
   is_subclass = false;
   plugin = NULL; // set true by TypeSpace::SetOwner if initing a plugin
@@ -4800,17 +4824,17 @@ TypeDef::TypeDef(const char* nm, const char* dsc, const char* inop, const char* 
   taMisc::CharToStrArray(inh_opts,inop);
   taMisc::CharToStrArray(lists,lis);
 #ifndef NO_TA_BASE
-  CleanupCats(true);		// save the last one for initialization
+  CleanupCats(true);            // save the last one for initialization
 #endif
   size = siz;
   ptr = ptrs;
   ref = refnc;
   if(global_obj)
-    taRefN::Ref(this);		// reference if static (non-new'ed) global object
+    taRefN::Ref(this);          // reference if static (non-new'ed) global object
 }
 
 TypeDef::TypeDef(const char* nm, bool intrnl, int ptrs, bool refnc, bool forml,
-		 bool global_obj, uint siz, const char* c_nm
+                 bool global_obj, uint siz, const char* c_nm
 )
 :inherited()
 {
@@ -4821,7 +4845,7 @@ TypeDef::TypeDef(const char* nm, bool intrnl, int ptrs, bool refnc, bool forml,
   else c_name = name;
   if(ptr > 0) size = sizeof(void*);
   if(global_obj)
-    taRefN::Ref(this);		// reference if static (non-new'ed) global object
+    taRefN::Ref(this);          // reference if static (non-new'ed) global object
 }
 
 TypeDef::TypeDef(const TypeDef& cp)
@@ -4838,44 +4862,44 @@ void TypeDef::Copy(const TypeDef& cp) {
 
 void TypeDef::Copy_(const TypeDef& cp) {
 #ifdef NO_TA_BASE
-  pre_parsed	= cp.pre_parsed;
+  pre_parsed    = cp.pre_parsed;
 #else
-  is_subclass	= cp.is_subclass;
+  is_subclass   = cp.is_subclass;
   plugin = cp.plugin;
   instance = cp.instance ;
   //TODO: copy the schema
 // don't copy the tokens..
 #endif
-  c_name	= cp.c_name;
-  size		= cp.size    ;
-  ptr		= cp.ptr     ;
-  ref		= cp.ref     ;
-  internal	= cp.internal;
-  formal	= cp.formal  ;
+  c_name        = cp.c_name;
+  size          = cp.size    ;
+  ptr           = cp.ptr     ;
+  ref           = cp.ref     ;
+  internal      = cp.internal;
+  formal        = cp.formal  ;
 
-  inh_opts	= cp.inh_opts ;
+  inh_opts      = cp.inh_opts ;
 
-  parents	= cp.parents  ;
-  par_formal 	= cp.par_formal;
-  par_cache	= cp.par_cache;
-  children	= cp.children ;	// not sure about this one..
+  parents       = cp.parents  ;
+  par_formal    = cp.par_formal;
+  par_cache     = cp.par_cache;
+  children      = cp.children ; // not sure about this one..
 
 // don't copy the it's
-//   it	 	= cp.it       ;
-//   ie	   	= cp.ie      ;
+//   it         = cp.it       ;
+//   ie         = cp.ie      ;
 // or the defaults
-//  defaults 	= cp.defaults ;
+//  defaults    = cp.defaults ;
 
-  enum_vals	= cp.enum_vals;
-  //  sub_types 	= cp.sub_types;
+  enum_vals     = cp.enum_vals;
+  //  sub_types         = cp.sub_types;
   sub_types.Duplicate(cp.sub_types);// important: add to subtypes..
-  members	= cp.members;
-  properties	= cp.properties;
-  methods	= cp.methods;
-  templ_pars	= cp.templ_pars;
+  members       = cp.members;
+  properties    = cp.properties;
+  methods       = cp.methods;
+  templ_pars    = cp.templ_pars;
 
   sub_types.ReplaceParents(cp.sub_types, sub_types); // make our sub types consistent
-  DuplicateMDFrom(&cp);		// duplicate members owned by source
+  DuplicateMDFrom(&cp);         // duplicate members owned by source
   UpdateMDTypes(cp.sub_types, sub_types); // since sub-types are new, point to them
 }
 
@@ -4921,8 +4945,8 @@ void TypeDef::CleanupCats(bool save_last) {
       String op = opts[i];
       if(!op.contains("CAT_")) continue;
       if(got_op) {
-	opts.RemoveIdx(i);
-      }	// remove all other previous ones
+        opts.RemoveIdx(i);
+      } // remove all other previous ones
       else got_op = true;
     }
     got_op = false;
@@ -4930,17 +4954,17 @@ void TypeDef::CleanupCats(bool save_last) {
       String op = inh_opts[i];
       if(!op.contains("CAT_")) continue;
       if(got_op) {
-	inh_opts.RemoveIdx(i);
+        inh_opts.RemoveIdx(i);
       } // remove all other previous ones
       else got_op = true;
     }
   }
-  else {			// save first
+  else {                        // save first
     bool got_op = false;
     for(int i=0; i< opts.size;i++) {
       String op = opts[i];
       if(!op.contains("CAT_")) continue;
-      if(got_op) { opts.RemoveIdx(i); i--; }	// remove all other previous ones
+      if(got_op) { opts.RemoveIdx(i); i--; }    // remove all other previous ones
       else got_op = true;
     }
     got_op = false;
@@ -4989,7 +5013,7 @@ bool TypeDef::IsBasePointerType() const {
 #ifndef NO_TA_BASE
   if(((ptr == 1) && DerivesFrom(TA_taBase)) ||
      ((ptr == 0) && (DerivesFrom(TA_taSmartPtr) ||
-		     DerivesFrom(TA_taSmartRef))) )
+                     DerivesFrom(TA_taSmartRef))) )
     return true;
 #endif
   return false;
@@ -5015,16 +5039,16 @@ void TypeDef::UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw) {
   int i;
   for(i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
-    if(md->owner != &members)	// only for members we own
+    if(md->owner != &members)   // only for members we own
       continue;
 
     int j;
     for(j=0; j<ol.size; j++) {
       TypeDef* old_st = ol.FastEl(j);
-      TypeDef* new_st = nw.FastEl(j); 	// assumes one-to-one correspondence
+      TypeDef* new_st = nw.FastEl(j);   // assumes one-to-one correspondence
 
       if(md->type == old_st)
-	md->type = new_st;
+        md->type = new_st;
     }
   }
   for(i=0; i<methods.size; i++) {
@@ -5035,10 +5059,10 @@ void TypeDef::UpdateMDTypes(const TypeSpace& ol, const TypeSpace& nw) {
     int j;
     for(j=0; j<ol.size; j++) {
       TypeDef* old_st = ol.FastEl(j);
-      TypeDef* new_st = nw.FastEl(j); 	// assumes one-to-one correspondence
+      TypeDef* new_st = nw.FastEl(j);   // assumes one-to-one correspondence
 
       if(md->type == old_st)
-	md->type = new_st;
+        md->type = new_st;
 
       md->arg_types.ReplaceLinkAll(old_st, new_st);
     }
@@ -5197,7 +5221,7 @@ String TypeDef::Get_C_Name() const {
     for (i=0; i<templ_pars.size; i++) {
       rval += templ_pars.FastEl(i)->Get_C_Name();
       if(i < templ_pars.size-1)
-	rval += ",";
+        rval += ",";
     }
     rval += ">";
     return rval;
@@ -5206,15 +5230,15 @@ String TypeDef::Get_C_Name() const {
   //note: normally, c_name should be valid, but may be cases, ex. templates, dynamic types, etc
   // where c_name was not set or updated, so most contexts the name is the same
   if (c_name.empty())
-    rval += name;			// the default
+    rval += name;                       // the default
   else
-    rval += c_name;			// the default
+    rval += c_name;                     // the default
   return rval;
 }
 
 TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
   if(parents.LinkUnique(it))
-    par_off.Add(p_off);		// it was unique, add offset
+    par_off.Add(p_off);         // it was unique, add offset
   // only add to children if not internal (except when parent is)
   bool templ = InheritsFormal(TA_template); // cache
   if (templ || (!internal || it->internal))
@@ -5227,13 +5251,13 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
 #endif
 
   opts.DupeUnique(it->inh_opts);
-  inh_opts.DupeUnique(it->inh_opts);	// and so on
+  inh_opts.DupeUnique(it->inh_opts);    // and so on
 
   if(InheritsFrom(TA_taBase))
-    opts.AddUnique(opt_instance);	// ta_bases always have an instance
+    opts.AddUnique(opt_instance);       // ta_bases always have an instance
 
 #ifndef NO_TA_BASE
-  CleanupCats(false);		// save first guy for add parent!
+  CleanupCats(false);           // save first guy for add parent!
 #endif
 
   // no need to get all this junk for internals
@@ -5249,7 +5273,7 @@ TypeDef* TypeDef::AddParent(TypeDef* it, int p_off) {
 }
 
 void TypeDef::AddParents(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
-			 TypeDef* p5, TypeDef* p6) {
+                         TypeDef* p5, TypeDef* p6) {
   if(p1 != NULL)    AddParent(p1);
   if(p2 != NULL)    AddParent(p2);
   if(p3 != NULL)    AddParent(p3);
@@ -5259,8 +5283,8 @@ void TypeDef::AddParents(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
 }
 
 void TypeDef::AddClassPar(TypeDef* p1, int p1_off, TypeDef* p2, int p2_off,
-			  TypeDef* p3, int p3_off, TypeDef* p4, int p4_off,
-			  TypeDef* p5, int p5_off, TypeDef* p6, int p6_off)
+                          TypeDef* p3, int p3_off, TypeDef* p4, int p4_off,
+                          TypeDef* p5, int p5_off, TypeDef* p6, int p6_off)
 {
 #ifndef NO_TA_BASE
   is_subclass = true;
@@ -5273,11 +5297,11 @@ void TypeDef::AddClassPar(TypeDef* p1, int p1_off, TypeDef* p2, int p2_off,
   if(p5 != NULL)    AddParent(p5,p5_off);
   if(p6 != NULL)    AddParent(p6,p6_off);
 
-  if(mi)	    ComputeMembBaseOff();
+  if(mi)            ComputeMembBaseOff();
 }
 
 void TypeDef::AddParFormal(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
-			   TypeDef* p5, TypeDef* p6) {
+                           TypeDef* p5, TypeDef* p6) {
   if(p1 != NULL)    par_formal.LinkUnique(p1);
   if(p2 != NULL)    par_formal.LinkUnique(p2);
   if(p3 != NULL)    par_formal.LinkUnique(p3);
@@ -5287,7 +5311,7 @@ void TypeDef::AddParFormal(TypeDef* p1, TypeDef* p2, TypeDef* p3, TypeDef* p4,
 }
 
 void TypeDef::CacheParents() {
-  par_cache.Reset();		// justin case
+  par_cache.Reset();            // justin case
   for(int i=0; i<parents.size; i++) {
     parents.FastEl(i)->CacheParents_impl(this);
   }
@@ -5311,14 +5335,14 @@ void TypeDef::ComputeMembBaseOff() {
       continue;
 
     int base_off = GetParOff(mo);
-    if(base_off > 0) {		// only those that need it!
+    if(base_off > 0) {          // only those that need it!
       MemberDef* nmd = md->Clone();
       nmd->base_off = base_off;
       members.ReplaceIdx(i, nmd);
     }
     else if(base_off < 0) {
       taMisc::Error("ComputeMembBaseOff(): parent type not found:",mo->name,
-		     "in type of:", name);
+                     "in type of:", name);
     }
   }
 }
@@ -5345,7 +5369,7 @@ bool TypeDef::FindChild(TypeDef* it) const {
 }
 
 void* TypeDef::GetParAddr(const char* it, void* base) const {
-  if(name == it) return base;	// you are it!
+  if(name == it) return base;   // you are it!
   int anidx = parents.FindNameIdx(it);
   if(anidx >= 0)
     return (void*)((char*)base + par_off[anidx]);
@@ -5360,7 +5384,7 @@ void* TypeDef::GetParAddr(const char* it, void* base) const {
 }
 
 void* TypeDef::GetParAddr(TypeDef* it, void* base) const {
-  if(it==this) return base;	// you are it!
+  if(it==this) return base;     // you are it!
   int anidx = parents.FindEl(it);
   if(anidx >= 0)
     return (void*)((char*)base + par_off[anidx]);
@@ -5379,7 +5403,7 @@ int TypeDef::GetParOff(TypeDef* it, int boff) const {
   int use_boff=0;
   if(boff >= 0)
     use_boff = boff;
-  if(it==this) return use_boff;	// you are it!
+  if(it==this) return use_boff; // you are it!
   int anidx;
   if((anidx = parents.FindEl(it)) >= 0)
     return use_boff + par_off[anidx];
@@ -5470,12 +5494,12 @@ bool TypeDef::is_enum() const {
 }
 
 MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
-					 ta_memb_ptr& net_mbr_off,
-					 const String& path, bool warn) {
+                                         ta_memb_ptr& net_mbr_off,
+                                         const String& path, bool warn) {
   void* cur_base_off = NULL;
   net_mbr_off = 0;
   if(!own_td || path.empty()) {
-    return NULL;		// no warning..
+    return NULL;                // no warning..
   }
   String pth = path;
   while(pth.contains('.')) {
@@ -5484,8 +5508,8 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
     MemberDef* md = own_td->members.FindName(bef);
     if(!md) {
       if(warn) {
-	taMisc::Warning("FindMemberPathStatic: member:", bef, "not found in object type:",
-			own_td->name);
+        taMisc::Warning("FindMemberPathStatic: member:", bef, "not found in object type:",
+                        own_td->name);
       }
       return NULL;
     }
@@ -5499,7 +5523,7 @@ MemberDef* TypeDef::FindMemberPathStatic(TypeDef*& own_td, int& net_base_off,
   if(!md) {
     if(warn) {
       taMisc::Warning("FindMemberPathStatic: member:", pth, "not found in object type:",
-		      own_td->name);
+                      own_td->name);
     }
     return NULL;
   }
@@ -5518,7 +5542,7 @@ EnumDef* TypeDef::FindEnum(const String& nm) const {
     TypeDef* td = sub_types.FastEl(i);
     if(td->InheritsFormal(TA_enum)) {
       if((rval = td->FindEnum(nm)) != NULL)
-	return rval;
+        return rval;
     }
   }
 
@@ -5677,27 +5701,27 @@ bool TypeDef::HasSubTypes() const {
 }
 
 /*obs void TypeDef::Register(void* it) {
-  if(taMisc::in_init)		// don't register the instance tokens
+  if(taMisc::in_init)           // don't register the instance tokens
     return;
   if((taMisc::keep_tokens != taMisc::ForceTokens) &&
      (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
     return;
 
-  TypeDef* par = GetParent();	// un-register from parent..
+  TypeDef* par = GetParent();   // un-register from parent..
   int pos;
   if(par && (par->tokens.keep ||
-	     (taMisc::keep_tokens == taMisc::ForceTokens))
+             (taMisc::keep_tokens == taMisc::ForceTokens))
      && ((pos = par->tokens.FindEl(it)) >= 0))
   {
     par->tokens.RemoveIdx(pos);
-    par->tokens.sub_tokens.ref();	// sub class got a new token..
+    par->tokens.sub_tokens.ref();       // sub class got a new token..
   }
-  if(par)			// only register if you have a parent...
+  if(par)                       // only register if you have a parent...
     tokens.Link(it);
 }*/
 
 void TypeDef::RegisterFinal(void* it) {
-  if(taMisc::in_init)		// don't register the instance tokens
+  if(taMisc::in_init)           // don't register the instance tokens
     return;
   if((taMisc::keep_tokens != taMisc::ForceTokens) &&
      (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
@@ -5713,7 +5737,7 @@ return;
 #endif
   tokens.Link(it);
   while (par) {
-    par->tokens.sub_tokens.ref();	// sub class got a new token..
+    par->tokens.sub_tokens.ref();       // sub class got a new token..
     par = par->GetParent();
   }
 }
@@ -5741,7 +5765,7 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
     String defn_no(templ_pars.size);
     String inst_no(inst_pars.size);
     taMisc::Error("Template",name,"defined with",defn_no,"parameters, instantiated with",
-		   inst_no);
+                   inst_no);
     cerr << "Defined with parameters: ";
     templ_pars.List(cerr);
     cerr << "\nInstantiated with parameters: ";
@@ -5749,13 +5773,13 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
     return;
   }
 
-  parents.Reset();			// bag the template's parents
-  parents.LinkUnique(templ_par);	// parent is the templ_par
+  parents.Reset();                      // bag the template's parents
+  parents.LinkUnique(templ_par);        // parent is the templ_par
   par_formal.RemoveEl(&TA_template);
-  par_formal.Link(&TA_templ_inst); 	// now a template instantiation
+  par_formal.Link(&TA_templ_inst);      // now a template instantiation
   templ_par->children.LinkUnique(this);
-  internal = false;			// not internal any more
-  children.Reset();			// don't have any real children..
+  internal = false;                     // not internal any more
+  children.Reset();                     // don't have any real children..
 
   // todo: need to add support for arbitrary strings here, which are not just types
 
@@ -5782,7 +5806,7 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
      (!tokens.keep || (taMisc::keep_tokens == taMisc::NoTokens)))
     return;
 
-  if(!tokens.RemoveEl(it)) {	// if we couldn't find this one, must be a sub-tok..
+  if(!tokens.RemoveEl(it)) {    // if we couldn't find this one, must be a sub-tok..
     int subt = (int)(tokens.sub_tokens) - 1;
     tokens.sub_tokens = MAX(subt, 0); // might blow down..
   }
@@ -5804,11 +5828,11 @@ void TypeDef::unRegisterFinal(void* it) {
 
 
 //////////////////////////////////
-// 	Get/SetVal		//
+//      Get/SetVal              //
 //////////////////////////////////
 
 String TypeDef::GetValStr_enum(const void* base, void* par, MemberDef* memb_def,
-			       StrContext sc, bool force_inline) const
+                               StrContext sc, bool force_inline) const
 {
   int enval = *static_cast<const int *>(base);
   bool show_scope = false;
@@ -5816,7 +5840,7 @@ String TypeDef::GetValStr_enum(const void* base, void* par, MemberDef* memb_def,
 }
 
 String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* memb_def,
-				       StrContext sc, bool force_inline) const
+                                       StrContext sc, bool force_inline) const
 {
   void* base = (void*)base_; // hack to avoid having to go through entire code below and fix
   String rval;
@@ -5826,13 +5850,13 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
     // if streaming, do full save check, else just check for NO_SAVE
     if (sc == SC_STREAMING) {
       if (!md->DumpMember(base))
-	continue;
+        continue;
     } else if (sc == SC_DISPLAY) {
       if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, SC_EDIT))
-	continue;
+        continue;
     } else {
       if(md->HasOption("NO_SAVE"))
-	continue;
+        continue;
     }
     if(sc == SC_DISPLAY) {
       bool condshow = md->GetCondOptTest("CONDSHOW", this, base);
@@ -5841,31 +5865,31 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
       if(!condedit) continue;
       bool non_def = false;
       if(md->GetDefaultStatus(base) == MemberDef::NOT_DEF) {
-	non_def = true;
-	rval += "<font style=\"background-color: yellow\">&nbsp;";
+        non_def = true;
+        rval += "<font style=\"background-color: yellow\">&nbsp;";
       }
       rval += md->name + "&nbsp;";
       if(non_def) {
-	rval += "</font>";
+        rval += "</font>";
       }
       if(md->type->DerivesFormal(TA_enum) || md->type->ptr > 0
 #ifndef NO_TA_BASE
-	 || md->type->DerivesFrom(TA_taSmartPtr) || md->type->DerivesFrom(TA_taSmartRef)
+         || md->type->DerivesFrom(TA_taSmartPtr) || md->type->DerivesFrom(TA_taSmartRef)
 #endif
-	 )
-	rval += "<font style=\"background-color: LightGrey\">&nbsp;&nbsp;";
+         )
+        rval += "<font style=\"background-color: LightGrey\">&nbsp;&nbsp;";
       else
-	rval += "<font style=\"background-color: white\">&nbsp;&nbsp;";
-      if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+        rval += "<font style=\"background-color: white\">&nbsp;&nbsp;";
+      if(md->type->InheritsFrom(TA_taString))     rval += "\"";
       rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
-      if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+      if(md->type->InheritsFrom(TA_taString))     rval += "\"";
       rval += "&nbsp;&nbsp;</font>&nbsp;&nbsp;&nbsp;&nbsp;";
     }
     else {
       rval += md->name + "=";
-      if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+      if(md->type->InheritsFrom(TA_taString))     rval += "\"";
       rval += md->type->GetValStr(md->GetOff(base), base, md, sc, force_inline);
-      if(md->type->InheritsFrom(TA_taString))	  rval += "\"";
+      if(md->type->InheritsFrom(TA_taString))     rval += "\"";
       rval += ": ";
     }
   }
@@ -5899,7 +5923,7 @@ namespace { // anonymous
       int firstNonZero = exponent;
       while (str.elem(firstNonZero) == '0') ++firstNonZero;
       if (firstNonZero > exponent) {
-	str.del(exponent, firstNonZero - exponent);
+        str.del(exponent, firstNonZero - exponent);
       }
     }
 
@@ -5910,30 +5934,30 @@ namespace { // anonymous
   String formatFloat(float f, TypeDef::StrContext sc) {
     switch (sc) {
       case TypeDef::SC_STREAMING: {
-	String ret(f, "%.7g");
-	normalizeRealString(ret);
-	return ret;
+        String ret(f, "%.7g");
+        normalizeRealString(ret);
+        return ret;
       }
       default:
-	return String(f);
+        return String(f);
     }
   }
 
   String formatDouble(double d, TypeDef::StrContext sc) {
     switch (sc) {
       case TypeDef::SC_STREAMING: {
-	String ret(d, "%.16lg");
-	normalizeRealString(ret);
-	return ret;
+        String ret(d, "%.16lg");
+        normalizeRealString(ret);
+        return ret;
       }
       default:
-	return String(d);
+        return String(d);
     }
   }
 }
 
 String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
-			  StrContext sc, bool force_inline) const
+                          StrContext sc, bool force_inline) const
 {
   if(sc == SC_DEFAULT)
     sc = (taMisc::is_saving) ? SC_STREAMING : SC_VALUE;
@@ -5944,7 +5968,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     MethodDef* fun;
     if(memb_def != NULL)
       fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
-						 memb_def->lists, lidx);
+                                                 memb_def->lists, lidx);
     else
       fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
     if(fun != NULL)
@@ -5988,13 +6012,13 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     else if(DerivesFrom(TA_int)) {
 #ifndef NO_TA_BASE
       if(sc == SC_DISPLAY && par && memb_def && memb_def->HasOption("DYNENUM_ON_enum_type")) {
-	// shameless hack to get dyn enum to display text value
-	DynEnum* dye = (DynEnum*)par;
-	return dye->NameVal();
+        // shameless hack to get dyn enum to display text value
+        DynEnum* dye = (DynEnum*)par;
+        return dye->NameVal();
       }
       else
 #endif
-	return String(*((int*)base));
+        return String(*((int*)base));
     }
     else if(DerivesFrom(TA_unsigned_int)) {
       return String(*((uint*)base));
@@ -6038,15 +6062,15 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     else if(DerivesFrom(TA_taBase)) {
       taBase* rbase = (taBase*)base;
       if(rbase)
-	return rbase->GetValStr(par, memb_def, sc, force_inline);
+        return rbase->GetValStr(par, memb_def, sc, force_inline);
     }
     else if(DerivesFrom(TA_taArray_impl)) {
       taArray_impl* gp = (taArray_impl*)base;
       if(gp != NULL) {
-	String nm = " Size: ";
-	nm += String(gp->size);
-	nm += String(" (") + name + ")";
-	return nm;
+        String nm = " Size: ";
+        nm += String(gp->size);
+        nm += String(" (") + name + ")";
+        return nm;
       }
       return name;
     }
@@ -6061,7 +6085,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
         if ((rbase->GetOwner() != NULL) || (rbase == tabMisc::root)) {
           switch (sc) {
           case SC_STREAMING:
-            return dumpMisc::path_tokens.GetPath(rbase);	// use path tokens when saving..
+            return dumpMisc::path_tokens.GetPath(rbase);        // use path tokens when saving..
           case SC_DISPLAY:
             return rbase->GetName();
           default:
@@ -6073,7 +6097,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
     }
 #endif
     else if(DerivesFormal(TA_class) &&
-	    (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")))
+            (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP")))
     {
       return GetValStr_class_inline(base_, par, memb_def, sc, force_inline);
     }
@@ -6098,32 +6122,32 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       if (td) {
         return td->GetPathName();
       } else
-	return String::con_NULL;
+        return String::con_NULL;
     }
     else if (DerivesFrom(TA_MemberDef)) {
       MemberDef* md = *((MemberDef**)base);
       if (md) {
         return md->GetPathName();
       } else
-	return String::con_NULL;
+        return String::con_NULL;
     }
     else if (DerivesFrom(TA_MethodDef)) {
       MethodDef* md = *((MethodDef**)base);
       if (md) {
         return md->GetPathName();
       } else
-	return String::con_NULL;
+        return String::con_NULL;
     }
   }
   return name;
 }
 
 void TypeDef::SetValStr_enum(const String& val, void* base, void* par, MemberDef* memb_def,
-			     StrContext sc, bool force_inline) {
+                             StrContext sc, bool force_inline) {
   String strval = val;
   if(strval.contains(')')) {
     strval = strval.after(')');
-    if(strval.empty())	// oops
+    if(strval.empty())  // oops
       strval = val;
   }
   strval.gsub(" ",""); strval.gsub("\t",""); strval.gsub("\n","");
@@ -6143,17 +6167,17 @@ void TypeDef::SetValStr_enum(const String& val, void* base, void* par, MemberDef
     while(strval.nonempty()) {
       String curstr = strval;
       if(strval.contains('|')) {
-	curstr = strval.before('|');
-	strval = strval.after('|');
+        curstr = strval.before('|');
+        strval = strval.after('|');
       }
       else
-	strval = _nilString;
+        strval = _nilString;
       EnumDef* ed = FindEnum(curstr);
       if(ed) {
-	bits |= ed->enum_no;
+        bits |= ed->enum_no;
       }
       else {
-	taMisc::Warning("Enum named:", curstr, "not found in enum type:", name);
+        taMisc::Warning("Enum named:", curstr, "not found in enum type:", name);
       }
     }
     *((int*)base) = bits;
@@ -6172,7 +6196,7 @@ void TypeDef::SetValStr_enum(const String& val, void* base, void* par, MemberDef
 }
 
 void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par,
-				     MemberDef* memb_def, StrContext sc, bool force_inline) {
+                                     MemberDef* memb_def, StrContext sc, bool force_inline) {
   String rval = val;
   rval = rval.after('{');
   while(rval.contains(':')) {
@@ -6182,7 +6206,7 @@ void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par,
     int pos = 0;
     int next_val_len = next_val.length();
     int c = next_val[pos];
-    if(c == '\"') {		// "
+    if(c == '\"') {             // "
       st_pos++;
       next_val = next_val.after(0);
       next_val_len--;
@@ -6192,27 +6216,27 @@ void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par,
     else {
       int depth = 0;
       while(!(((c == ':') || (c == '}')) && (depth <= 0)) && (pos < next_val_len)) {
-	if(c == '{')  depth++;
-	if(c == '}')  depth--;
-	c = next_val[++pos];
+        if(c == '{')  depth++;
+        if(c == '}')  depth--;
+        c = next_val[++pos];
       }
     }
     String mb_val = next_val.before(pos);
     rval = rval.after(pos + st_pos + 1); // next position
-    if(c == '\"')			     // "
-      rval = rval.after(':');	// skip the semi-colon which was not groked
+    if(c == '\"')                            // "
+      rval = rval.after(':');   // skip the semi-colon which was not groked
     mb_nm.gsub(" ", "");
     MemberDef* md = members.FindName(mb_nm);
-    if(md == NULL) {		// try to find a name with an aka..
+    if(md == NULL) {            // try to find a name with an aka..
       int a;
       for(a=0;a<members.size;a++) {
-	MemberDef* amd = members.FastEl(a);
-	String aka = amd->OptionAfter("AKA_");
-	if(aka.empty()) continue;
-	if(aka == mb_nm) {
-	  md = amd;
-	  break;
-	}
+        MemberDef* amd = members.FastEl(a);
+        String aka = amd->OptionAfter("AKA_");
+        if(aka.empty()) continue;
+        if(aka == mb_nm) {
+          md = amd;
+          break;
+        }
       }
     }
     if((md != NULL) && !mb_val.empty()) { // note: changed par to base here..
@@ -6223,7 +6247,7 @@ void TypeDef::SetValStr_class_inline(const String& val, void* base, void* par,
 }
 
 void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* memb_def,
-			StrContext sc, bool force_inline)
+                        StrContext sc, bool force_inline)
 {
   if (sc == SC_DEFAULT)
     sc = (taMisc::is_loading) ? SC_STREAMING : SC_VALUE;
@@ -6295,12 +6319,12 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     else if(DerivesFrom(TA_taBase)) {
       taBase* rbase = (taBase*)base;
       if(rbase)
-	rbase->SetValStr(val, par, memb_def, sc, force_inline);
+        rbase->SetValStr(val, par, memb_def, sc, force_inline);
     }
     else if(DerivesFrom(TA_taArray_impl)) {
       taArray_impl* gp = (taArray_impl*)base;
       if(gp != NULL)
-	gp->InitFromString(val);
+        gp->InitFromString(val);
     }
     else if (DerivesFrom(TA_taSmartPtr)) {
       // we just delegate, since we are binary compat
@@ -6311,36 +6335,36 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       taBase* bs = NULL;
       if ((val != String::con_NULL) && (val != "Null")) {
         String tmp_val(val); // FindFromPath can change it
-	if (sc == SC_STREAMING) {
-	  bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
-	  if (!bs)return;	// indicates deferred
-	} else {
-	  MemberDef* md = NULL;
-	  bs = tabMisc::root->FindFromPath(tmp_val, md);
-	  if(!bs) {
-	    taMisc::Warning("*** Invalid Path in SetValStr:",val);
-	    return;
-	  }
-	  if(md) {
-	    if (md->type->ptr == 1) {
-	      bs = *((taBase**)bs);
-	      if(bs == NULL) {
-		taMisc::Warning("*** Null object at end of path in SetValStr:",val);
-		return;
-	      }
-	    } else if(md->type->ptr != 0) {
-	      taMisc::Warning("*** ptr count greater than 1 in path:", val);
-	      return;
-	    }
-	  }
-	}
+        if (sc == SC_STREAMING) {
+          bs = dumpMisc::path_tokens.FindFromPath(tmp_val, this, base, par, memb_def);
+          if (!bs)return;       // indicates deferred
+        } else {
+          MemberDef* md = NULL;
+          bs = tabMisc::root->FindFromPath(tmp_val, md);
+          if(!bs) {
+            taMisc::Warning("*** Invalid Path in SetValStr:",val);
+            return;
+          }
+          if(md) {
+            if (md->type->ptr == 1) {
+              bs = *((taBase**)bs);
+              if(bs == NULL) {
+                taMisc::Warning("*** Null object at end of path in SetValStr:",val);
+                return;
+              }
+            } else if(md->type->ptr != 0) {
+              taMisc::Warning("*** ptr count greater than 1 in path:", val);
+              return;
+            }
+          }
+        }
       }
       taSmartRef& ref = *((taSmartRef*)base);
       ref = bs;
     }
 #endif
     else if(DerivesFormal(TA_class) &&
-	    (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
+            (force_inline || HasOption("INLINE") || HasOption("INLINE_DUMP"))) {
       SetValStr_class_inline(val, base, par, memb_def, sc, force_inline);
     }
   }
@@ -6363,30 +6387,30 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
     else if(DerivesFrom(TA_TypeDef)) {
       TypeDef* td = taMisc::types.FindTypeR(val);
       if(td != NULL)
-	*((TypeDef**)base) = td;
+        *((TypeDef**)base) = td;
     }
     else if(DerivesFrom(TA_MemberDef)) {
       String fqtypnm = val.before("::", -1); // before final ::
       String mbnm = val.after("::", -1); // after final ::
       if(!fqtypnm.empty() && !mbnm.empty()) {
-	TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
-	if(td != NULL) {
-	  MemberDef* md = td->members.FindName(mbnm);
-	  if(md != NULL)
-	    *((MemberDef**)base) = md;
-	}
+        TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
+        if(td != NULL) {
+          MemberDef* md = td->members.FindName(mbnm);
+          if(md != NULL)
+            *((MemberDef**)base) = md;
+        }
       }
     }
     else if(DerivesFrom(TA_MethodDef)) {
       String fqtypnm = val.before("::", -1); // before final ::
       String mthnm = val.after("::", -1);
       if(!fqtypnm.empty() && !mthnm.empty()) {
-	TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
-	if(td != NULL) {
-	  MethodDef* md = td->methods.FindName(mthnm);
-	  if(md != NULL)
-	    *((MethodDef**)base) = md;
-	}
+        TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
+        if(td != NULL) {
+          MethodDef* md = td->methods.FindName(mthnm);
+          if(md != NULL)
+            *((MethodDef**)base) = md;
+        }
       }
     }
   }
@@ -6412,7 +6436,7 @@ const Variant TypeDef::GetValVar(const void* base_, const MemberDef* memb_def) c
     MethodDef* fun;
     if(memb_def != NULL)
       fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
-						 memb_def->lists, lidx);
+                                                 memb_def->lists, lidx);
     else
       fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
     if (fun != NULL)
@@ -6542,7 +6566,7 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
     MethodDef* fun;
     if(memb_def != NULL)
       fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)base),
-						 memb_def->lists, lidx);
+                                                 memb_def->lists, lidx);
     else
       fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)base), lidx);
     if (fun)
@@ -6618,7 +6642,7 @@ bool TypeDef::ValIsEmpty(const void* base_, const MemberDef* memb_def) const
 }
 
 void TypeDef::SetValVar(const Variant& val, void* base, void* par,
-			MemberDef* memb_def)
+                        MemberDef* memb_def)
 {
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
     MethodDef* fun = TA_taRegFun.methods.FindName(val.toString());
@@ -6677,13 +6701,13 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
     else if(DerivesFrom(TA_taArray_base)) {
       taArray_base* gp = (taArray_base*)base;
       if(gp != NULL)
-	gp->InitFromString(val.toString());
+        gp->InitFromString(val.toString());
       return;
     }
     else if(DerivesFrom(TA_taArray_impl)) {
       taArray_impl* gp = (taArray_impl*)base;
       if (gp != NULL) {
-	gp->InitFromString(val.toString());
+        gp->InitFromString(val.toString());
       }
       return;
     }
@@ -6711,16 +6735,16 @@ void TypeDef::SetValVar(const Variant& val, void* base, void* par,
 
       }
       if (memb_def  && memb_def->HasOption("OWN_POINTER")) {
-	if(par == NULL)
-	  taMisc::Warning("*** NULL parent for owned pointer:");
-	else
-	  taBase::OwnPointer((taBase**)base, bs, (taBase*)par);
+        if(par == NULL)
+          taMisc::Warning("*** NULL parent for owned pointer:");
+        else
+          taBase::OwnPointer((taBase**)base, bs, (taBase*)par);
       }
       else {
         if (memb_def && memb_def->HasOption("NO_SET_POINTER"))
-	  (*(taBase**)base) = bs;
+          (*(taBase**)base) = bs;
         else
-	  taBase::SetPointer((taBase**)base, bs);
+          taBase::SetPointer((taBase**)base, bs);
       }
       return;
     }
@@ -6754,9 +6778,9 @@ MPI_Datatype TypeDef::GetDMemType(int share_set) {
     if(shrset.empty()) continue;
     if (md->type->ptr > 0) {
       if(taMisc::dmem_proc == 0) {
-	taMisc::Error("WARNING: DMEM_SHARE_SET Specified for a pointer.",
-		      "Pointers can not be shared.");
-	continue;
+        taMisc::Error("WARNING: DMEM_SHARE_SET Specified for a pointer.",
+                      "Pointers can not be shared.");
+        continue;
       }
     }
     if (md->type->InheritsFormal(TA_class)) {
@@ -6779,7 +6803,7 @@ MPI_Datatype TypeDef::GetDMemType(int share_set) {
     }
     else {
       taMisc::Error("WARNING: DMEM_SHARE_SET Specified for an unrecognized type.",
-		    "unrecoginized types can not be shared.");
+                    "unrecoginized types can not be shared.");
       continue;
     }
 
@@ -6803,7 +6827,7 @@ MPI_Datatype TypeDef::GetDMemType(int share_set) {
 #endif
 
 //////////////////////////////////
-// 	CopyFromSameType	//
+//      CopyFromSameType        //
 //////////////////////////////////
 
 void MemberSpace::CopyFromSameType(void* trg_base, void* src_base) {
@@ -6820,7 +6844,7 @@ void MemberSpace::CopyOnlySameType(void* trg_base, void* src_base) {
   for(i=0; i<size; i++) {
     MemberDef* md = FastEl(i);
     if((md->owner == this) && !md->HasOption("NO_COPY")) // only same type provision
-      md->CopyFromSameType(trg_base, src_base); 	// then copy whole thing..
+      md->CopyFromSameType(trg_base, src_base);         // then copy whole thing..
   }
 }
 
@@ -6833,7 +6857,7 @@ void MemberDef::CopyOnlySameType(void* trg_base, void* src_base) {
 }
 
 void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
-			       MemberDef* memb_def)
+                               MemberDef* memb_def)
 {
   // if its void, odds are it is a fun pointer
   if(InheritsFrom(TA_void) || ((memb_def != NULL) && (memb_def->fun_ptr != 0))) {
@@ -6841,7 +6865,7 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
     MethodDef* fun;
     if(memb_def != NULL)
       fun = TA_taRegFun.methods.FindOnListAddr(*((ta_void_fun*)src_base),
-						 memb_def->lists, lidx);
+                                                 memb_def->lists, lidx);
     else
       fun = TA_taRegFun.methods.FindAddr(*((ta_void_fun*)src_base), lidx);
     if((fun != NULL) || (memb_def != NULL))
@@ -6871,7 +6895,7 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
       taBase* rbase = (taBase*)trg_base;
       taBase* sbase = (taBase*)src_base;
       if(sbase->InheritsFrom(rbase->GetTypeDef()) || rbase->InheritsFrom(sbase->GetTypeDef())) // makin it safe..
-	rbase->UnSafeCopy(sbase);
+        rbase->UnSafeCopy(sbase);
     }
 #endif
     else if(DerivesFormal(TA_class))
@@ -6894,7 +6918,7 @@ void TypeDef::CopyFromSameType(void* trg_base, void* src_base,
 }
 
 void TypeDef::CopyOnlySameType(void* trg_base, void* src_base,
-			       MemberDef* memb_def)
+                               MemberDef* memb_def)
 {
   if(InheritsFormal(TA_class)) {
 #ifndef NO_TA_BASE
@@ -6902,8 +6926,8 @@ void TypeDef::CopyOnlySameType(void* trg_base, void* src_base,
       taBase* src = (taBase*)src_base;
       // I actually inherit from the other guy, need to use their type for copying!
       if((src->GetTypeDef() != this) && InheritsFrom(src->GetTypeDef())) {
-	src->GetTypeDef()->CopyOnlySameType(trg_base, src_base);
-	return;
+        src->GetTypeDef()->CopyOnlySameType(trg_base, src_base);
+        return;
       }
     }
 #endif // NO_TA_BASE
@@ -6919,14 +6943,14 @@ void TypeDef::MemberCopyFrom(int memb_no, void* trg_base, void* src_base) {
 }
 
 //////////////////////////////////
-// 	CompareSameType		//
+//      CompareSameType         //
 //////////////////////////////////
 
 bool MemberSpace::CompareSameType(Member_List& mds, TypeSpace& base_types,
-				  voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-				  TypeDef* base_typ, void* trg_base, void* src_base,
-				  int show_forbidden, int show_allowed, bool no_ptrs,
-				  bool test_only) {
+                                  voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                                  TypeDef* base_typ, void* trg_base, void* src_base,
+                                  int show_forbidden, int show_allowed, bool no_ptrs,
+                                  bool test_only) {
   bool some_diff = false;
   int i;
   for(i=0; i<size; i++) {
@@ -6934,35 +6958,35 @@ bool MemberSpace::CompareSameType(Member_List& mds, TypeSpace& base_types,
     if(md->ShowMember(show_forbidden, TypeItem::SC_ANY, show_allowed)) {
       if(no_ptrs && (md->type->ptr > 0 || md->type->HasOption("SMART_POINTER"))) continue;
       some_diff |= md->CompareSameType(mds, base_types, trg_bases, src_bases,
-				       base_typ, trg_base, src_base,
-				       show_forbidden, show_allowed, no_ptrs, test_only);
+                                       base_typ, trg_base, src_base,
+                                       show_forbidden, show_allowed, no_ptrs, test_only);
     }
   }
   return some_diff;
 }
 
 bool MemberDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
-				voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-				TypeDef* base_typ, void* trg_base, void* src_base,
-				int show_forbidden, int show_allowed, bool no_ptrs,
-				bool test_only) {
+                                voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                                TypeDef* base_typ, void* trg_base, void* src_base,
+                                int show_forbidden, int show_allowed, bool no_ptrs,
+                                bool test_only) {
   bool some_diff = false;
   if(type->InheritsFormal(TA_class)) {
     if(type->HasOption("EDIT_INLINE") || type->HasOption("INLINE")) {
       // check the members
       some_diff = type->CompareSameType(mds, base_types, trg_bases, src_bases,
-					GetOff(trg_base), GetOff(src_base),
-					show_forbidden, show_allowed,
-					no_ptrs, true); // test only!
-      if(some_diff && !test_only) {			// not already testing, add it
-	mds.Link(this); base_types.Link(base_typ);
-	trg_bases.Add(trg_base); src_bases.Add(src_base);
+                                        GetOff(trg_base), GetOff(src_base),
+                                        show_forbidden, show_allowed,
+                                        no_ptrs, true); // test only!
+      if(some_diff && !test_only) {                     // not already testing, add it
+        mds.Link(this); base_types.Link(base_typ);
+        trg_bases.Add(trg_base); src_bases.Add(src_base);
       }
     }
     else {
       some_diff = type->CompareSameType(mds, base_types, trg_bases, src_bases,
-					GetOff(trg_base), GetOff(src_base),
-					show_forbidden, show_allowed, no_ptrs);
+                                        GetOff(trg_base), GetOff(src_base),
+                                        show_forbidden, show_allowed, no_ptrs);
     }
   }
   else {
@@ -6970,8 +6994,8 @@ bool MemberDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
     if(type->GetValStr(GetOff(trg_base), trg_base, this) !=
        type->GetValStr(GetOff(src_base), src_base, this)) {
       if(!test_only) {
-	mds.Link(this); base_types.Link(base_typ);
-	trg_bases.Add(trg_base); src_bases.Add(src_base);
+        mds.Link(this); base_types.Link(base_typ);
+        trg_bases.Add(trg_base); src_bases.Add(src_base);
       }
       some_diff = true;
     }
@@ -6980,14 +7004,14 @@ bool MemberDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
 }
 
 bool TypeDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
-			      voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-			      void* trg_base, void* src_base,
-			      int show_forbidden, int show_allowed, bool no_ptrs,
-			      bool test_only) {
+                              voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                              void* trg_base, void* src_base,
+                              int show_forbidden, int show_allowed, bool no_ptrs,
+                              bool test_only) {
   if(InheritsFormal(TA_class)) {
     return members.CompareSameType(mds, base_types, trg_bases, src_bases,
-				   this, trg_base, src_base,
-				   show_forbidden, show_allowed, no_ptrs, test_only);
+                                   this, trg_base, src_base,
+                                   show_forbidden, show_allowed, no_ptrs, test_only);
   }
   else {
     taMisc::Error("CompareSameType called on non-class object -- does not work!");
@@ -6996,11 +7020,11 @@ bool TypeDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
 }
 
 //////////////////////////////////////////////////////////
-// 			OutputType			//
+//                      OutputType                      //
 //////////////////////////////////////////////////////////
 
 static void OutputType_OptsLists(ostream& strm, const String_PArray& opts,
-			    const String_PArray& lists)
+                            const String_PArray& lists)
 {
   if((opts.size > 0) && (taMisc::type_info_ == taMisc::ALL_INFO) ||
      (taMisc::type_info_ == taMisc::NO_LISTS)) {
@@ -7073,8 +7097,8 @@ ostream& TypeDef::OutputType(ostream& strm, int indent) const {
       taMisc::indent(strm, indent+1) << "// sub-types\n";
       int i;
       for(i=0; i<sub_types.size; i++) {
-	if(!(sub_types.FastEl(i)->internal))
-	  sub_types.FastEl(i)->OutputType(strm,indent+1) << "\n";
+        if(!(sub_types.FastEl(i)->internal))
+          sub_types.FastEl(i)->OutputType(strm,indent+1) << "\n";
       }
     }
     members.OutputType(strm, indent+1);
@@ -7084,9 +7108,9 @@ ostream& TypeDef::OutputType(ostream& strm, int indent) const {
       strm << " children: ";
       int i;
       for(i=0; i<children.size; i++) {
-	strm << children.FastEl(i)->name;
-	if(i < children.size - 1)
-	  strm << ", ";
+        strm << children.FastEl(i)->name;
+        if(i < children.size - 1)
+          strm << ", ";
       }
     }
     strm << "\n";
@@ -7151,11 +7175,11 @@ ostream& MemberDef::OutputType(ostream& strm, int indent) const {
   strm << "// ";
   if(taMisc::type_info_ == taMisc::MEMB_OFFSETS) {
     intptr_t ui_off = (intptr_t)GetOff((void*)0x100); // 0x100 is arbitrary non-zero number..
-    ui_off -= 0x100;			      // now get rid of offset
+    ui_off -= 0x100;                          // now get rid of offset
     if(ui_off > 0) {
       strm << "+" << ui_off;
       if(base_off > 0)
-	strm << "+" << base_off;
+        strm << "+" << base_off;
     }
     if(base_off > 0)
       strm << "+" << base_off;
@@ -7176,10 +7200,10 @@ ostream& MethodDef::OutputType(ostream& strm, int indent) const {
     int i;
     for(i=0; i<fun_argc; i++) {
       strm << arg_types[i]->Get_C_Name() << " " << arg_names[i];
-      if((fun_argd >= 0) && (i >= fun_argd))	// indicate a default
-	strm << "=" << arg_defs[i];
+      if((fun_argd >= 0) && (i >= fun_argd))    // indicate a default
+        strm << "=" << arg_defs[i];
       if(i+1 < fun_argc)
-	strm << ", ";
+        strm << ", ";
     }
   }
   strm << ");";
@@ -7191,7 +7215,7 @@ ostream& MethodDef::OutputType(ostream& strm, int indent) const {
 
 
 //////////////////////////////////////////////////////////
-// 			output/R 			//
+//                      output/R                        //
 //////////////////////////////////////////////////////////
 
 ostream& MemberSpace::Output(ostream& strm, void* base, int indent) const {
@@ -7236,11 +7260,11 @@ ostream& MemberDef::OutputR(ostream& strm, void* base, int indent) const {
     taMisc::fmt_sep(strm, name, 1, indent);
     if(type->ptr == 0) {
       if(type->DerivesFrom(TA_taBase)) {
-	taBase* rbase = (taBase*)GetOff(base);
-	rbase->OutputR(strm, indent);
+        taBase* rbase = (taBase*)GetOff(base);
+        rbase->OutputR(strm, indent);
       }
       else
-	type->OutputR(strm, GetOff(base), indent);
+        type->OutputR(strm, GetOff(base), indent);
     }
     else
       strm << "= " << type->GetValStr(GetOff(base), base, (MemberDef*)this) << ";\n";
@@ -7276,7 +7300,7 @@ ostream& TypeDef::Output(ostream& strm, void* base, int indent) const {
   if(InheritsFrom(TA_taBase)) {
     taBase* rbase = (taBase*)base;
     strm << " " << rbase->GetName()
-	 << " (refn=" << taBase::GetRefn(rbase) << ")";
+         << " (refn=" << taBase::GetRefn(rbase) << ")";
   }
 #endif
 
@@ -7316,7 +7340,7 @@ ostream& TypeDef::OutputR(ostream& strm, void* base, int indent) const {
   if(InheritsFrom(TA_taBase)) {
     taBase* rbase = (taBase*)base;
     strm << " " << rbase->GetName()
-	 << " (refn=" << taBase::GetRefn(rbase) << ")";
+         << " (refn=" << taBase::GetRefn(rbase) << ")";
   }
 #endif
 
@@ -7343,9 +7367,9 @@ String TypeDef::GetHTMLLink(bool gendoc) const {
   if(npt) {
     if(npt->InheritsFormal(TA_class)) {
       if(gendoc)
-	rval.cat("<a href=\"").cat(npt->name).cat(".html\">").cat(Get_C_Name()).cat("</a>");
+        rval.cat("<a href=\"").cat(npt->name).cat(".html\">").cat(Get_C_Name()).cat("</a>");
       else
-	rval.cat("<a href=\"ta:.Type.").cat(npt->name).cat("\">").cat(Get_C_Name()).cat("</a>");
+        rval.cat("<a href=\"ta:.Type.").cat(npt->name).cat("\">").cat(Get_C_Name()).cat("</a>");
     }
     else if(npt->InheritsFormal(TA_enum)) {
       rval.cat("<a href=\"#").cat(npt->name).cat("\">").cat(Get_C_Name()).cat("</a>");
@@ -7374,9 +7398,9 @@ String TypeDef::GetHTMLSubType(bool gendoc, bool short_fmt) const {
     if(short_fmt) {
       rval.cat("enum <b><a href=\"#").cat(name).cat("\">").cat(own_typ).cat(name).cat("</a></b> { ");
       for(int i=0;i<enum_vals.size;i++) {
-	EnumDef* ed = enum_vals[i];
-	if(i > 0) rval.cat(", ");
-	rval.cat(ed->name);
+        EnumDef* ed = enum_vals[i];
+        if(i > 0) rval.cat(", ");
+        rval.cat(ed->name);
       }
       rval.cat(" }");
     }
@@ -7387,10 +7411,10 @@ String TypeDef::GetHTMLSubType(bool gendoc, bool short_fmt) const {
       rval.cat("<p><table border=\"1\" cellpadding=\"2\" cellspacing=\"1\" width=\"100%\">\n");
       rval.cat("<tr><th width=\"25%\">Constant</th><th width=\"15%\">Value</th><th width=\"60%\">Description</th></tr>\n");
       for(int i=0;i<enum_vals.size;i++) {
-	EnumDef* ed = enum_vals[i];
-	rval.cat("<tr><td valign=\"top\"><tt>").cat(own_typ).cat(ed->name).cat("</tt></td>");
-	rval.cat("<td align=\"center\" valign=\"top\"><tt>0x").cat(String(ed->enum_no,"%08X")).cat("</tt></td>");
-	rval.cat("<td valign=\"top\">").cat(trim(ed->desc).xml_esc()).cat("</td></tr>\n");
+        EnumDef* ed = enum_vals[i];
+        rval.cat("<tr><td valign=\"top\"><tt>").cat(own_typ).cat(ed->name).cat("</tt></td>");
+        rval.cat("<td align=\"center\" valign=\"top\"><tt>0x").cat(String(ed->enum_no,"%08X")).cat("</tt></td>");
+        rval.cat("<td valign=\"top\">").cat(trim(ed->desc).xml_esc()).cat("</td></tr>\n");
       }
       rval.cat("</table></p>\n");
     }
@@ -7533,7 +7557,7 @@ String TypeDef::GetHTML(bool gendoc) const {
     String key = cat + ":" + md->name;
     memb_idx.Add(key);
   }
-  memb_idx.Sort();		// sorts by category then key, in effect
+  memb_idx.Sort();              // sorts by category then key, in effect
 
   String_PArray meth_idx;
   for(int i=0;i<methods.size;i++) {
@@ -7548,7 +7572,7 @@ String TypeDef::GetHTML(bool gendoc) const {
     String key = cat + ":" + md->name;
     meth_idx.Add(key);
   }
-  meth_idx.Sort();		// sorts by category then key, in effect
+  meth_idx.Sort();              // sorts by category then key, in effect
 
   //////////////////////////////////////////
   // then do first pass output
@@ -7563,10 +7587,10 @@ String TypeDef::GetHTML(bool gendoc) const {
       String mnm = key.after(':');
       MemberDef* md = members.FindName(mnm);
       if(cat != prv_cat) {
-	if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
-	rval.cat("<h4>Member Category: <a href=\"#MbrCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
-	rval.cat("<ul>\n");
-	prv_cat = cat;
+        if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
+        rval.cat("<h4>Member Category: <a href=\"#MbrCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
+        rval.cat("<ul>\n");
+        prv_cat = cat;
       }
       rval.cat("<li>").cat(md->GetHTML(gendoc, true)).cat("</li>\n"); // true = short_fmt
     }
@@ -7583,10 +7607,10 @@ String TypeDef::GetHTML(bool gendoc) const {
       String mnm = key.after(':');
       MethodDef* md = methods.FindName(mnm);
       if(cat != prv_cat) {
-	if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
-	rval.cat("<h4>Method Category: <a href=\"#MthCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
-	rval.cat("<ul>\n");
-	prv_cat = cat;
+        if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
+        rval.cat("<h4>Method Category: <a href=\"#MthCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
+        rval.cat("<ul>\n");
+        prv_cat = cat;
       }
       rval.cat("<li>").cat(md->GetHTML(gendoc, true)).cat("</li>\n"); // true = short_fmt
     }
@@ -7620,9 +7644,9 @@ String TypeDef::GetHTML(bool gendoc) const {
       String mnm = key.after(':');
       MemberDef* md = members.FindName(mnm);
       if(cat != prv_cat) {
-	rval.cat("<a name=\"MbrCat-").cat(cat).cat("\"></a>\n");
-	rval.cat("<h3>Member Category: ").cat(cat).cat("</h3>\n");
-	prv_cat = cat;
+        rval.cat("<a name=\"MbrCat-").cat(cat).cat("\"></a>\n");
+        rval.cat("<h3>Member Category: ").cat(cat).cat("</h3>\n");
+        prv_cat = cat;
       }
       rval.cat(md->GetHTML(gendoc, false)).cat("\n"); // extra cr for good readability
     }
@@ -7639,9 +7663,9 @@ String TypeDef::GetHTML(bool gendoc) const {
       String mnm = key.after(':');
       MethodDef* md = methods.FindName(mnm);
       if(cat != prv_cat) {
-	rval.cat("<a name=\"MthCat-").cat(cat).cat("\"></a>\n");
-	rval.cat("<h3>Method Category: ").cat(cat).cat("</h3>\n");
-	prv_cat = cat;
+        rval.cat("<a name=\"MthCat-").cat(cat).cat("\"></a>\n");
+        rval.cat("<h3>Method Category: ").cat(cat).cat("</h3>\n");
+        prv_cat = cat;
       }
       rval.cat(md->GetHTML(gendoc, false)).cat("\n"); // extra cr for good readability
     }
@@ -7661,8 +7685,8 @@ String TypeDef::GetHTML(bool gendoc) const {
 
 
 void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
-			    MemberDef* memb_def, const void* par,
-			    TypeDef* par_typ, taObjDiffRec* par_od) const {
+                            MemberDef* memb_def, const void* par,
+                            TypeDef* par_typ, taObjDiffRec* par_od) const {
 #ifndef NO_TA_BASE
   if(InheritsFrom(TA_taBase)) {
     taBase* rbase = (taBase*)base;
@@ -7674,7 +7698,7 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
 #endif
   // always just add a record for this guy
   taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, (TypeDef*)this, memb_def, (void*)base,
-				       (void*)par, par_typ, par_od);
+                                       (void*)par, par_typ, par_od);
   odl.Add(odr);
 //   if(ptr > 0) {
 //     // this will be set wrong here..  need some complex logic probaly to fix it..
@@ -7687,8 +7711,8 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
 }
 
 void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void* base,
-				  MemberDef* memb_def, const void* par, TypeDef* par_typ,
-				  taObjDiffRec* par_od) const {
+                                  MemberDef* memb_def, const void* par, TypeDef* par_typ,
+                                  taObjDiffRec* par_od) const {
   MemberDef* last_md = NULL;
   for(int i=0; i<members.size; i++) {
     MemberDef* md = members.FastEl(i);
@@ -7709,14 +7733,14 @@ void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void*
   }
   if(last_md) {
     last_md->type->GetObjDiffVal(odl, nest_lev+1, last_md->GetOff(base), last_md, base,
-				 (TypeDef*)this, par_od);
+                                 (TypeDef*)this, par_od);
   }
 }
 
 #ifdef NO_TA_BASE
 
 //////////////////////////////////////////////////////////
-//  dummy versions of dump load/save: see ta_dump.cc	//
+//  dummy versions of dump load/save: see ta_dump.cc    //
 //////////////////////////////////////////////////////////
 
 int MemberSpace::Dump_Save(ostream&, void*, void*, int) {
@@ -7777,7 +7801,7 @@ int TypeDef::Dump_SaveR(ostream&, void*, void*, int) {
 
 
 //////////////////////////////////////////////////////////
-// 			dump load			//
+//                      dump load                       //
 //////////////////////////////////////////////////////////
 
 int MemberSpace::Dump_Load(istream&, void*, void*, const char*, int) {
@@ -7811,7 +7835,7 @@ int TypeDef::Dump_Load(istream&, void*, void*, void**) {
 #endif // NO_TA_BASE
 
 //////////////////////////////////
-// 	     taObjDiffRec	//
+//           taObjDiffRec       //
 //////////////////////////////////
 
 void taObjDiffRec::Initialize() {
@@ -7855,7 +7879,7 @@ taObjDiffRec::taObjDiffRec(const taObjDiffRec& cp) {
 }
 
 taObjDiffRec::taObjDiffRec(taObjDiff_List& odl, int nest, TypeDef* td, MemberDef* md, void* adr,
-			   void* par_adr, TypeDef* par_typ, taObjDiffRec* par_od) {
+                           void* par_adr, TypeDef* par_typ, taObjDiffRec* par_od) {
   Initialize();
   nest_level = nest;
   type = td;
@@ -7878,7 +7902,7 @@ void taObjDiffRec::Copy(const taObjDiffRec& cp) {
 }
 
 void taObjDiffRec::GetValue(taObjDiff_List& odl) {
-  if(!type || !addr) return;		// not set!
+  if(!type || !addr) return;            // not set!
   value = type->GetValStr(addr, par_addr, mdef, TypeDef::SC_VALUE);
   if(mdef) {
     name = mdef->name;
@@ -7891,23 +7915,23 @@ void taObjDiffRec::GetValue(taObjDiff_List& odl) {
     if(!mdef && nest_level > 0)
       value = type->name + ": " + ((taBase*)addr)->GetDisplayName();
     else
-      value = type->name;		// this is the relevant info at this level for diffing
+      value = type->name;               // this is the relevant info at this level for diffing
   }
   else if(((type->ptr == 1) && type->DerivesFrom(&TA_taBase)) ||
-	   type->InheritsFrom(TA_taSmartRef) ||
-	   type->InheritsFrom(TA_taSmartPtr)) {
+           type->InheritsFrom(TA_taSmartRef) ||
+           type->InheritsFrom(TA_taSmartPtr)) {
     taBase* rbase = NULL;
     if((type->ptr == 1) && type->DerivesFrom(&TA_taBase)) rbase = *((taBase**)addr);
     else if(type->InheritsFrom(TA_taSmartRef)) rbase = ((taSmartRef*)addr)->ptr();
     else if(type->InheritsFrom(TA_taSmartPtr)) rbase = ((taSmartPtr*)addr)->ptr();
     if(rbase && (rbase->GetOwner() || (rbase == tabMisc::root))) {
       if(rbase->IsChildOf(odl.tab_obj_a)) {
-	value = rbase->GetPathNames(NULL, odl.tab_obj_a); // scope by tab obj
-	SetDiffFlag(VAL_PATH_REL);
+        value = rbase->GetPathNames(NULL, odl.tab_obj_a); // scope by tab obj
+        SetDiffFlag(VAL_PATH_REL);
       }
       else {
-	// otherwise, always do it relative to project
-	value = rbase->GetPathNames(NULL, rbase->GetOwner(&TA_taProject));
+        // otherwise, always do it relative to project
+        value = rbase->GetPathNames(NULL, rbase->GetOwner(&TA_taProject));
       }
     }
   }
@@ -7944,7 +7968,7 @@ bool taObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
   bool rval = false;
   lbl = _nilString;
   if(HasDiffFlag(DIFF_DEL)) {
-    if(a_or_b == 0) {		// "a" guy
+    if(a_or_b == 0) {           // "a" guy
       rval = HasDiffFlag(ACT_DEL_A);
       lbl = "Del A";
     } else {
@@ -7953,7 +7977,7 @@ bool taObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
     }
   }
   else if(HasDiffFlag(DIFF_ADD)) {
-    if(a_or_b == 0) {		// "a" guy
+    if(a_or_b == 0) {           // "a" guy
       rval = HasDiffFlag(ACT_ADD_B);
       lbl = "Add B";
     } else {
@@ -7962,7 +7986,7 @@ bool taObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
     }
   }
   else if(HasDiffFlag(DIFF_CHG)) {
-    if(a_or_b == 0) {		// "a" guy
+    if(a_or_b == 0) {           // "a" guy
       rval = HasDiffFlag(ACT_COPY_BA);
       lbl = "Cpy B";
     } else {
@@ -7975,21 +7999,21 @@ bool taObjDiffRec::GetCurAction(int a_or_b, String& lbl) {
 
 void taObjDiffRec::SetCurAction(int a_or_b, bool on_off) {
   if(HasDiffFlag(DIFF_DEL)) {
-    if(a_or_b == 0) {		// "a" guy
+    if(a_or_b == 0) {           // "a" guy
       SetDiffFlagState(ACT_DEL_A, on_off);
     } else {
       SetDiffFlagState(ACT_ADD_A, on_off);
     }
   }
   else if(HasDiffFlag(DIFF_ADD)) {
-    if(a_or_b == 0) {		// "a" guy
+    if(a_or_b == 0) {           // "a" guy
       SetDiffFlagState(ACT_ADD_B, on_off);
     } else {
       SetDiffFlagState(ACT_DEL_B, on_off);
     }
   }
   else if(HasDiffFlag(DIFF_CHG)) {
-    if(a_or_b == 0) {		// "a" guy
+    if(a_or_b == 0) {           // "a" guy
       SetDiffFlagState(ACT_COPY_BA, on_off);
     } else {
       SetDiffFlagState(ACT_COPY_AB, on_off);
@@ -7999,7 +8023,7 @@ void taObjDiffRec::SetCurAction(int a_or_b, bool on_off) {
 
 
 //////////////////////////////////
-// 	     taObjDiff_List	//
+//           taObjDiff_List     //
 //////////////////////////////////
 
 
@@ -8018,22 +8042,22 @@ taObjDiff_List::~taObjDiff_List() {
 #endif
 }
 
-String	taObjDiff_List::El_GetName_(void* it) const { return ((taObjDiffRec*)it)->name; }
-TALPtr 	taObjDiff_List::El_GetOwnerList_(void* it) const { return ((taObjDiffRec*)it)->owner; }
-void*	taObjDiff_List::El_SetOwner_(void* it_) {
+String  taObjDiff_List::El_GetName_(void* it) const { return ((taObjDiffRec*)it)->name; }
+TALPtr  taObjDiff_List::El_GetOwnerList_(void* it) const { return ((taObjDiffRec*)it)->owner; }
+void*   taObjDiff_List::El_SetOwner_(void* it_) {
   if (!it_) return it_;
   taObjDiffRec* it = (taObjDiffRec*)it_;
   it->owner = this;
   return it_;
 
 }
-void	taObjDiff_List::El_SetIndex_(void* it, int i){ ((taObjDiffRec*)it)->idx = i; }
+void    taObjDiff_List::El_SetIndex_(void* it, int i){ ((taObjDiffRec*)it)->idx = i; }
 
-void*	taObjDiff_List::El_Ref_(void* it)   	  { taRefN::Ref((taObjDiffRec*)it); return it; }
-void* 	taObjDiff_List::El_unRef_(void* it) 	  { taRefN::unRef((taObjDiffRec*)it); return it; }
-void	taObjDiff_List::El_Done_(void* it)	  { taRefN::Done((taObjDiffRec*)it); }
-void*	taObjDiff_List::El_MakeToken_(void* it)  { return (void*)((taObjDiffRec*)it)->MakeToken(); }
-void*	taObjDiff_List::El_Copy_(void* trg, void* src)
+void*   taObjDiff_List::El_Ref_(void* it)         { taRefN::Ref((taObjDiffRec*)it); return it; }
+void*   taObjDiff_List::El_unRef_(void* it)       { taRefN::unRef((taObjDiffRec*)it); return it; }
+void    taObjDiff_List::El_Done_(void* it)        { taRefN::Done((taObjDiffRec*)it); }
+void*   taObjDiff_List::El_MakeToken_(void* it)  { return (void*)((taObjDiffRec*)it)->MakeToken(); }
+void*   taObjDiff_List::El_Copy_(void* trg, void* src)
 { ((taObjDiffRec*)trg)->Copy(*((taObjDiffRec*)src)); return trg; }
 
 void taObjDiff_List::HashToIntArray(int_PArray& array) {
@@ -8068,13 +8092,13 @@ bool taObjDiff_List::CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec
     if(cur_rec != rec) {
       taObjDiffRec* nw_par = cur_rec->Clone();
       if(a_list)
-	nw_par->flags = taObjDiffRec::DIFF_PAR_A; // indicate that it is just a parent
+        nw_par->flags = taObjDiffRec::DIFF_PAR_A; // indicate that it is just a parent
       else
-	nw_par->flags = taObjDiffRec::DIFF_PAR_B; // indicate that it is just a parent
+        nw_par->flags = taObjDiffRec::DIFF_PAR_B; // indicate that it is just a parent
       diff_ods.Add(nw_par);
-// 	cerr << "add par: " << cur_rec->name << " = " << cur_rec->value << endl;
-// 	taMisc::FlushConsole();
-      rval = true;		// got one..
+//      cerr << "add par: " << cur_rec->name << " = " << cur_rec->value << endl;
+//      taMisc::FlushConsole();
+      rval = true;              // got one..
     }
   }
 
@@ -8089,7 +8113,7 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
   HashToIntArray(diff.data_a.data);
   cmp_list.HashToIntArray(diff.data_b.data);
 
-  diff.Diff_impl("", "");	// null strings
+  diff.Diff_impl("", "");       // null strings
 
   nest_pars.Reset();
   for(int i=0;i<diff.diffs.size;i++) {
@@ -8100,102 +8124,102 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
     if(df.delete_a == df.insert_b) {
       cur_flag = taObjDiffRec::DIFF_CHG;
       for(int l=0; l<df.delete_a; l++) {
-	taObjDiffRec* rec_a = SafeEl(df.start_a + l);
-	CheckAddParents(diffs_list, rec_a, true);
-	diffs_list.Link(rec_a);
-	rec_a->SetDiffFlag(cur_flag);
-	taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
-	rec_a->diff_odr = rec_b; // this is the paired guy
-	rec_b->diff_odr = rec_a; // bidir pairing: why not..
+        taObjDiffRec* rec_a = SafeEl(df.start_a + l);
+        CheckAddParents(diffs_list, rec_a, true);
+        diffs_list.Link(rec_a);
+        rec_a->SetDiffFlag(cur_flag);
+        taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
+        rec_a->diff_odr = rec_b; // this is the paired guy
+        rec_b->diff_odr = rec_a; // bidir pairing: why not..
 #ifndef NO_TA_BASE
-	if(rec_a->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
-	  if(!((taBase*)rec_a->addr)->GetOwner())
-	    rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	}
-	if(rec_b->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
-	  if(!((taBase*)rec_b->addr)->GetOwner())
-	    rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	}
+        if(rec_a->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+          if(!((taBase*)rec_a->addr)->GetOwner())
+            rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+        }
+        if(rec_b->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+          if(!((taBase*)rec_b->addr)->GetOwner())
+            rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+        }
 #endif
       }
     }
     else {
       if(df.delete_a > 0) {
-	cur_flag = taObjDiffRec::DIFF_DEL;
-	taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b);
-	if(!rec_b) {
-	  rec_b = cmp_list.Peek();
-	}
-	 // find a ta_base!
-	while(!rec_b->extra && (!rec_b->par_odr || !rec_b->par_odr->extra))
-	  rec_b = rec_b->par_odr;
-	taObjDiffRec* rec0 = SafeEl(df.start_a);
-	int del_nest = rec0->nest_level;
-	for(int l=0; l<df.delete_a; l++) {
-	  taObjDiffRec* rec_a = SafeEl(df.start_a + l);
-	  if(CheckAddParents(diffs_list, rec_a, true)) // reset nest level if parents needed to be added
-	    del_nest = rec_a->nest_level;
-	  diffs_list.Link(rec_a);
-	  rec_a->SetDiffFlag(cur_flag);
-	  rec_a->diff_odr = rec_b; // starting point in b..
-// 	  cerr << "add del_a: " << rec_a->name << " = " << rec_a->value << endl;
-// 	  taMisc::FlushConsole();
-	  if(rec_a->mdef) {	// never actionable
-	    rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	  }
-	  else {
-	    if(rec_a->nest_level > del_nest) {
-	      rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	    }
+        cur_flag = taObjDiffRec::DIFF_DEL;
+        taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b);
+        if(!rec_b) {
+          rec_b = cmp_list.Peek();
+        }
+         // find a ta_base!
+        while(!rec_b->extra && (!rec_b->par_odr || !rec_b->par_odr->extra))
+          rec_b = rec_b->par_odr;
+        taObjDiffRec* rec0 = SafeEl(df.start_a);
+        int del_nest = rec0->nest_level;
+        for(int l=0; l<df.delete_a; l++) {
+          taObjDiffRec* rec_a = SafeEl(df.start_a + l);
+          if(CheckAddParents(diffs_list, rec_a, true)) // reset nest level if parents needed to be added
+            del_nest = rec_a->nest_level;
+          diffs_list.Link(rec_a);
+          rec_a->SetDiffFlag(cur_flag);
+          rec_a->diff_odr = rec_b; // starting point in b..
+//        cerr << "add del_a: " << rec_a->name << " = " << rec_a->value << endl;
+//        taMisc::FlushConsole();
+          if(rec_a->mdef) {     // never actionable
+            rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+          }
+          else {
+            if(rec_a->nest_level > del_nest) {
+              rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+            }
 #ifndef NO_TA_BASE
-	    if(rec_a->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
-	      if(!((taBase*)rec_a->addr)->GetOwner())
-		rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	    }
-	    else {
-	      // and cannot be a non-ta-base for add/del
-	      rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	    }
+            if(rec_a->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+              if(!((taBase*)rec_a->addr)->GetOwner())
+                rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+            }
+            else {
+              // and cannot be a non-ta-base for add/del
+              rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+            }
 #endif
-	  }
-	}
+          }
+        }
       }
       if(df.insert_b > 0) {
-	cur_flag = taObjDiffRec::DIFF_ADD;
-	taObjDiffRec* rec_a = SafeEl(df.start_a);
-	if(!rec_a) {
-	  rec_a = Peek();
-	}
-	while(rec_a->par_odr && (!rec_a->extra || !rec_a->par_odr->extra))
-	  rec_a = rec_a->par_odr;
-	taObjDiffRec* rec0 = cmp_list.SafeEl(df.start_b);
-	int add_nest = rec0->nest_level;
-	for(int l=0; l<df.insert_b; l++) {
-	  taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
-	  if(CheckAddParents(diffs_list, rec_b, false)) // b list
-	    add_nest = rec_b->nest_level;
-	  diffs_list.Link(rec_b);
-	  rec_b->SetDiffFlag(cur_flag);
-	  rec_b->diff_odr = rec_a; // starting point in a..
-	  if(rec_b->mdef) {	// never actionable
-	    rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	  }
-	  else {
-	    if(rec_b->nest_level > add_nest) {
-	      rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	    }
+        cur_flag = taObjDiffRec::DIFF_ADD;
+        taObjDiffRec* rec_a = SafeEl(df.start_a);
+        if(!rec_a) {
+          rec_a = Peek();
+        }
+        while(rec_a->par_odr && (!rec_a->extra || !rec_a->par_odr->extra))
+          rec_a = rec_a->par_odr;
+        taObjDiffRec* rec0 = cmp_list.SafeEl(df.start_b);
+        int add_nest = rec0->nest_level;
+        for(int l=0; l<df.insert_b; l++) {
+          taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
+          if(CheckAddParents(diffs_list, rec_b, false)) // b list
+            add_nest = rec_b->nest_level;
+          diffs_list.Link(rec_b);
+          rec_b->SetDiffFlag(cur_flag);
+          rec_b->diff_odr = rec_a; // starting point in a..
+          if(rec_b->mdef) {     // never actionable
+            rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+          }
+          else {
+            if(rec_b->nest_level > add_nest) {
+              rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+            }
 #ifndef NO_TA_BASE
-	    if(rec_b->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
-	      if(!((taBase*)rec_b->addr)->GetOwner())
-		rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	    }
-	    else {
-	      // and cannot be a non-ta-base for add/del
-	      rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
-	    }
+            if(rec_b->type->InheritsFrom(&TA_taBase)) { // must have owner to do diff actd
+              if(!((taBase*)rec_b->addr)->GetOwner())
+                rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+            }
+            else {
+              // and cannot be a non-ta-base for add/del
+              rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
+            }
 #endif
-	  }
-	}
+          }
+        }
       }
     }
   }
