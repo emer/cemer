@@ -17,7 +17,7 @@ DIST_ROOT=/usr/local/ubuntu
 # Don't mess with the 'main' repositories, those should be stable
 # for months at a time.  Make a new repo called "latest".
 REPO=latest
-for DIST in lucid maverick natty; do
+for DIST in lucid maverick natty oneiric; do
   for ARCH in i386 amd64; do
     echo "Moving ${ARCH} files ..."
     SUBDIR=dists/${DIST}/${REPO}/binary-${ARCH}
