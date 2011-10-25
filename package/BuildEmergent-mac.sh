@@ -1,6 +1,5 @@
 #!/bin/bash
 # This script builds a Mac package of emergent.
-# Currently only for 64-bit Macs.
 set -e
 
 # Make sure this is a mac.
@@ -23,14 +22,21 @@ if [ -z $TAG ]; then
 fi
 if [ $TAG != "trunk" ]; then TAG="tags/$TAG"; fi
 
+ARCH="$3"
+if [ -z $ARCH ]; then
+  read -p "Build 32-bit or 64-bit installer? [64] " ARCH
+  if [ -z $TAG ]; then TAG="64"; fi
+fi
+
 # Update source code and make package.
 EMERGENT_SRC_DIR=~/emergent
 mkdir -p ${EMERGENT_SRC_DIR}
 cd ${EMERGENT_SRC_DIR}
 svn checkout -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} .
-./configure
+./configure --emer-mac-arch-bits=$ARCH
 cd build
-make -j2 package
+NCPU=`sysctl -n hw.ncpu`
+make -j ${NCPU} package
 
 # Do this after building since config.h is a generated file.
 EMERGENT_VERSION=`sed -n '/VERSION/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_SRC_DIR}/config.h`
@@ -38,8 +44,8 @@ echo -e "\nBuilt emergent version ${EMERGENT_VERSION}-${REV}\n"
 
 # The package just build by 'make package' is an upgrader, not a full installer.
 # Move it to the home directory and put the svn rev and 'upgrade' in its name.
-INSTALL_DMG=~/emergent-${EMERGENT_VERSION}-${REV}-mac64.dmg
-UPGRADE_DMG=~/emergent-${EMERGENT_VERSION}-${REV}-upgrade-mac64.dmg
+INSTALL_DMG=~/emergent-${EMERGENT_VERSION}-${REV}-mac${ARCH}.dmg
+UPGRADE_DMG=~/emergent-${EMERGENT_VERSION}-${REV}-upgrade-mac${ARCH}.dmg
 echo "Moving upgrader package to home directory ..."
 mv -f emergent-${EMERGENT_VERSION}-mac.dmg ${UPGRADE_DMG}
 
