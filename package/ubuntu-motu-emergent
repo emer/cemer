@@ -57,8 +57,9 @@ Emergent
 
 # These packages aren't strictly needed on the Depends line, but the desire
 # is to have a single package for emergent, vs. having an emergnet.deb and
-# a separate emergent-dev.deb for people who want to compile plugins.
-EMERGENT_BLD_DEPS="cmake, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0"
+# a separate emergent-dev.deb for people who want to compile plugins.  Also
+# include subversion so users can download and compile the latest emergent.
+EMERGENT_BLD_DEPS="cmake, subversion, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0"
 
 cat > debian/control <<Emergent
 Source: emergent
