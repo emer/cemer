@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.2.3.0 rev5090
+// ta_Dump File v3.0 -- code v5.2.3.0 rev5096
 LeabraProject .projects["Project_0"] { 
   taBase_Group @.templates = [0] {
   };
@@ -503,27 +503,41 @@ LeabraProject .projects["Project_0"] {
 	  AssignExpr @[6] { };
 	};
 
-	ProgEl_List @.prog_code = [13] {
-	  AssignExpr @[0] { };
-	  MethodCall @[1] { 
+	ProgEl_List @.prog_code = [16] {
+	  ProgVars @[0] { 
+	    ProgVar_List @.local_vars = [2] {
+	      ProgVar @["fred"] { };
+	      ProgVar @["george"] { };
+	    };
+	  };
+	  AssignExpr @[1] { };
+	  MethodCall @[2] { 
 	    ProgArg_List @.meth_args = [1] {
 	      ProgArg @[0] { };
 	    };
 	  };
-	  OtherProgramVar @[2] { };
-	  AssignExpr @[3] { };
-	  FunctionCall @[4] { 
+	  OtherProgramVar @[3] { };
+	  AssignExpr @[4] { };
+	  AssignExpr @[5] { };
+	  IfElse @[6] { 
+	    ProgEl_List @.true_code = [0] {
+	    };
+
+	    ProgEl_List @.false_code = [0] {
+	    };
+	  };
+	  FunctionCall @[7] { 
 	    ProgArg_List @.fun_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	    };
 	  };
-	  MemberAssign @[5] { };
-	  FunctionCall @[6] { 
+	  MemberAssign @[8] { };
+	  FunctionCall @[9] { 
 	    ProgArg_List @.fun_args = [0] {
 	    };
 	  };
-	  IfElse @[7] { 
+	  IfElse @[10] { 
 	    ProgEl_List @.true_code = [2] {
 	      MethodCall @[0] { 
 		ProgArg_List @.meth_args = [0] {
@@ -535,14 +549,14 @@ LeabraProject .projects["Project_0"] {
 	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
-	  AssignExpr @[8] { };
-	  MethodCall @[9] { 
+	  AssignExpr @[11] { };
+	  MethodCall @[12] { 
 	    ProgArg_List @.meth_args = [2] {
 	      ProgArg @[0] { };
 	      ProgArg @[1] { };
 	    };
 	  };
-	  WhileLoop @[10] { 
+	  WhileLoop @[13] { 
 	    ProgEl_List @.loop_code = [4] {
 	      ProgramCall @[0] { 
 		ProgArg_List @.prog_args = [2] {
@@ -582,7 +596,7 @@ LeabraProject .projects["Project_0"] {
 	      };
 	    };
 	  };
-	  IfElse @[11] { 
+	  IfElse @[14] { 
 	    ProgEl_List @.true_code = [1] {
 	      ProgramCall @[0] { 
 		ProgArg_List @.prog_args = [1] {
@@ -594,7 +608,7 @@ LeabraProject .projects["Project_0"] {
 	    ProgEl_List @.false_code = [0] {
 	    };
 	  };
-	  MethodCall @[12] { 
+	  MethodCall @[15] { 
 	    ProgArg_List @.meth_args = [0] {
 	    };
 	  };
@@ -4387,7 +4401,36 @@ LeabraProject .projects["Project_0"] {
      name=;
      el_typ=ProgCode;
      el_def=0;
-     AssignExpr @[0] {
+     ProgVars @[0] {
+      desc=;
+      flags=0;
+      local_vars {
+       name="ProgVar_List_0";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["fred"] {
+	name="fred";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["george"] {
+	name="george";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     AssignExpr @[1] {
       desc=;
       flags=0;
       result_var=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["train_timer"]$;
@@ -4395,7 +4438,7 @@ LeabraProject .projects["Project_0"] {
        expr="network.train_time";
       };
      };
-     MethodCall @[1] {
+     MethodCall @[2] {
       desc=;
       flags=VERBOSE;
       result_var=NULL;
@@ -4417,7 +4460,7 @@ LeabraProject .projects["Project_0"] {
        };
       };
      };
-     OtherProgramVar @[2] {
+     OtherProgramVar @[3] {
       desc=;
       flags=0;
       other_prog=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraBatch"]$;
@@ -4427,7 +4470,7 @@ LeabraProject .projects["Project_0"] {
       var_3=NULL;
       var_4=NULL;
      };
-     AssignExpr @[3] {
+     AssignExpr @[4] {
       desc=;
       flags=0;
       result_var=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["n_under_cnt"]$;
@@ -4435,7 +4478,33 @@ LeabraProject .projects["Project_0"] {
        expr="0";
       };
      };
-     FunctionCall @[4] {
+     AssignExpr @[5] {
+      desc=;
+      flags=0;
+      result_var=.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].prog_code[0].local_vars["fred"]$$;
+      expr {
+       expr="22";
+      };
+     };
+     IfElse @[6] {
+      desc=;
+      flags=0;
+      cond {
+       expr="fred == george";
+      };
+      show_false_code=1;
+      true_code {
+       name="ProgEl_List_149";
+       el_typ=ProgCode;
+       el_def=0;
+      };
+      false_code {
+       name="ProgEl_List_150";
+       el_typ=ProgCode;
+       el_def=0;
+      };
+     };
+     FunctionCall @[7] {
       desc=;
       flags=0;
       result_var=NULL;
@@ -4466,7 +4535,7 @@ LeabraProject .projects["Project_0"] {
        };
       };
      };
-     MemberAssign @[5] {
+     MemberAssign @[8] {
       desc="set network's training mode to our local value";
       flags=0;
       obj=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
@@ -4476,7 +4545,7 @@ LeabraProject .projects["Project_0"] {
       };
       update_after=0;
      };
-     FunctionCall @[6] {
+     FunctionCall @[9] {
       desc="initialize random seed";
       flags=0;
       result_var=NULL;
@@ -4487,7 +4556,7 @@ LeabraProject .projects["Project_0"] {
        el_def=0;
       };
      };
-     IfElse @[7] {
+     IfElse @[10] {
       desc=;
       flags=0;
       cond {
@@ -4524,7 +4593,7 @@ LeabraProject .projects["Project_0"] {
        el_def=0;
       };
      };
-     AssignExpr @[8] {
+     AssignExpr @[11] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=0;
       result_var=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].vars["epoch"]$;
@@ -4532,7 +4601,7 @@ LeabraProject .projects["Project_0"] {
        expr="network.epoch";
       };
      };
-     MethodCall @[9] {
+     MethodCall @[12] {
       desc=;
       flags=OFF|PROG_ERROR;
       result_var=NULL;
@@ -4564,7 +4633,7 @@ LeabraProject .projects["Project_0"] {
        };
       };
      };
-     WhileLoop @[10] {
+     WhileLoop @[13] {
       desc=;
       flags=0;
       loop_code {
@@ -4713,7 +4782,7 @@ LeabraProject .projects["Project_0"] {
        expr="epoch < max_epoch";
       };
      };
-     IfElse @[11] {
+     IfElse @[14] {
       desc=;
       flags=0;
       cond {
@@ -4752,7 +4821,7 @@ LeabraProject .projects["Project_0"] {
        el_def=0;
       };
      };
-     MethodCall @[12] {
+     MethodCall @[15] {
       desc=;
       flags=0;
       result_var=NULL;
@@ -10182,7 +10251,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=52: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;

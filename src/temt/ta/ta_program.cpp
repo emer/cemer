@@ -3039,6 +3039,7 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
 void ProgCode::UpdateAfterEdit_impl() {
   SetProgExprFlags();
   inherited::UpdateAfterEdit_impl();
+  if(HasBaseFlag(BF_MISC4)) return; // already did the conversion -- going to be nuked!
   String code_str = trim(code.expr);
   if(code_str.nonempty()) {
     ProgEl* cvt = CvtCodeToProgEl(code_str, this);
@@ -3051,6 +3052,7 @@ void ProgCode::UpdateAfterEdit_impl() {
         own->Insert(cvt, myidx); // insert at my position
         bool ok = cvt->CvtFmCode(code_str); // convert once in position -- needs access to scope..
         if(ok) {
+	  SetBaseFlag(BF_MISC4); // indicates that we're done..
           this->CloseLater();      // kill me later..
           tabMisc::DelayedFunCall_gui(cvt, "BrowserExpandAll");
           tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
