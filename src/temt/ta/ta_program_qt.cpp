@@ -1836,8 +1836,8 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
     itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
     // make sure our operations are finished
     taiMiscCore::ProcessEvents();
-    // tab into ProgCode by default, but not others..
-    if(itm->InheritsFrom(&TA_ProgCode))
+    // tab into ProgCode but not other ProgEls, and into all other items
+    if(itm->InheritsFrom(&TA_ProgCode) || !itm->InheritsFrom(&TA_ProgEl))
       QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
   }
   return (bool)iti;
