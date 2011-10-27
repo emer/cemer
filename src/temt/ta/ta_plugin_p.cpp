@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -27,7 +27,7 @@
 
 
 //////////////////////////
-//  taPluginInst	//
+//  taPluginInst        //
 //////////////////////////
 
 taPluginInst::taPluginInst(const String& fileName)
@@ -39,7 +39,7 @@ taPluginInst::taPluginInst(const String& fileName)
 
 IPlugin* taPluginInst::plugin() {
   QObject* in = instance();
-  return qobject_cast<IPlugin*>(in); 
+  return qobject_cast<IPlugin*>(in);
 }
 
 bool taPluginInst::InitPlugin() {
@@ -82,11 +82,11 @@ bool taPluginInst::InitTypes() {
 }
 
 //////////////////////////
-//  taPlugins		//
+//  taPlugins           //
 //////////////////////////
 
-String_PArray taPlugins::plugin_folders; 
-taPluginInst_PList taPlugins::plugins; 
+String_PArray taPlugins::plugin_folders;
+taPluginInst_PList taPlugins::plugins;
 String taPlugins::logfile;
 
 void taPlugins::AddPluginFolder(const String& folder) {
@@ -180,7 +180,7 @@ void taPlugins::EnumeratePlugins() {
         plugins.Add(pl);
       }
     }
-  } 
+  }
 }
 
 void taPlugins::MakeAllPlugins() {
@@ -303,7 +303,7 @@ bool taPlugins::ExecMakeCmd(const String& cmd, const String& working_dir) {
   QString curpath = QDir::currentPath();
   QDir::setCurrent(working_dir);
   system(cmd);
-  QDir::setCurrent(curpath);	// restore previous
+  QDir::setCurrent(curpath);    // restore previous
   return true;
 
 // #ifdef TA_OS_WIN
@@ -321,7 +321,7 @@ bool taPlugins::ExecMakeCmd(const String& cmd, const String& working_dir) {
 }
 
 ////////////////////////////
-// 	make plugin threading
+//      make plugin threading
 
 PluginMakeThreadMgr* taPlugins::make_thread = NULL;
 
@@ -338,12 +338,12 @@ void PluginMakeTask::run() {
   if(!mkmg->make_pending) return;
 
   taPlugins::MakePlugin_impl(mkmg->plugin_path, mkmg->plugin_name, mkmg->system_plugin,
-			     mkmg->full_rebuild);
+                             mkmg->full_rebuild);
   mkmg->make_pending = false;
 }
 
 void PluginMakeThreadMgr::Initialize() {
-  n_threads = 2;		// don't use 0, just 1..
+  n_threads = 2;                // don't use 0, just 1..
   task_type = &TA_PluginMakeTask;
 }
 
@@ -351,20 +351,20 @@ void PluginMakeThreadMgr::Destroy() {
 }
 
 void PluginMakeThreadMgr::MakePlugin(const String& pl_path, const String& pl_name,
-				     bool sys_plugin, bool full_reb) {
-  n_threads = 2;		// don't use 0, just 1..
+                                     bool sys_plugin, bool full_reb) {
+  n_threads = 2;                // don't use 0, just 1..
   InitAll();
   make_pending = true;
   plugin_path = pl_path;
   plugin_name = pl_name;
   system_plugin = sys_plugin;
   full_rebuild = full_reb;
-  RunThreads();			// just run the thread, not main guy
+  RunThreads();                 // just run the thread, not main guy
 }
 
 
 bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
-			   bool system_plugin, bool full_rebuild) {
+                           bool system_plugin, bool full_rebuild) {
   if(taMisc::gui_active) {
     if(!make_thread) {
       make_thread = new PluginMakeThreadMgr;
@@ -372,7 +372,7 @@ bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
     }
     else {
       if(make_thread->n_running > 0)
-	make_thread->SyncThreads();	// sync now before running again..
+        make_thread->SyncThreads();     // sync now before running again..
     }
     make_thread->MakePlugin(plugin_path, plugin_name, system_plugin, full_rebuild);
   }
@@ -384,7 +384,7 @@ bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
 }
 
 bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_name,
-			   bool system_plugin, bool full_rebuild) {
+                           bool system_plugin, bool full_rebuild) {
   cout << "=========================================================================" << endl;
   cout << "Making Plugin: " << plugin_name << " in dir: " << plugin_path << endl;
   cout << "=========================================================================" << endl;
@@ -429,18 +429,18 @@ bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_
     String cmake_cmd = env_cmd + sudo_cmd + "cmake ../ ";
     if(taMisc::build_str.nonempty()) {
       if(taMisc::build_str.contains("dbg")) {
-	cmake_cmd += "-DCMAKE_BUILD_TYPE=Debug ";
+        cmake_cmd += "-DCMAKE_BUILD_TYPE=Debug ";
       }
-	  else {
-	cmake_cmd += "-DCMAKE_BUILD_TYPE=RelWithDebInfo ";
-	  }
+          else {
+        cmake_cmd += "-DCMAKE_BUILD_TYPE=RelWithDebInfo ";
+          }
       if(taMisc::build_str.contains("mpi")) {
-	cmake_cmd += "-DMPI_BUILD=TRUE ";
+        cmake_cmd += "-DMPI_BUILD=TRUE ";
       }
     }
-	else {
-	cmake_cmd += "-DCMAKE_BUILD_TYPE=RelWithDebInfo ";
-	}
+        else {
+        cmake_cmd += "-DCMAKE_BUILD_TYPE=RelWithDebInfo ";
+        }
 
     if(system_plugin)
       cmake_cmd += "-DEMERGENT_PLUGIN_TYPE=System ";
@@ -466,7 +466,7 @@ bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_
 }
 
 //////////////////////////////////////////////////
-// 	Clean Plugins
+//      Clean Plugins
 
 void taPlugins::CleanAllPlugins() {
   CleanAllUserPlugins();
@@ -542,7 +542,7 @@ bool taPlugins::CleanSystemPlugin(const String& plugin_name) {
 }
 
 bool taPlugins::CleanPlugin(const String& plugin_path, const String& plugin_name,
-			   bool system_plugin) {
+                           bool system_plugin) {
   taMisc::Info("=========================================================================");
   taMisc::Info("Cleaning Plugin:", plugin_name, "in dir:", plugin_path);
   taMisc::Info("=========================================================================");
@@ -560,7 +560,7 @@ bool taPlugins::CleanPlugin(const String& plugin_path, const String& plugin_name
 
 
 //////////////////////////
-//  taPluginBase	//
+//  taPluginBase        //
 //////////////////////////
 
 void taPluginBase::Initialize() {
@@ -575,7 +575,7 @@ void taPluginBase::Copy_(const taPluginBase& cp) {
 }
 
 //////////////////////////
-//  taPlugin		//
+//  taPlugin            //
 //////////////////////////
 
 void taPlugin::Initialize() {
@@ -665,7 +665,7 @@ bool taPlugin::Compile() {
 
   bool sys_plug = false;
   if(plug_path.contains(taMisc::app_plugin_dir)) sys_plug = true;
-  
+
   taPlugins::MakePlugin(plug_path, plugin_nm, sys_plug);
 
   return true;
@@ -677,7 +677,7 @@ bool taPlugin::Clean() {
 
   bool sys_plug = false;
   if(base_path.contains(taMisc::app_plugin_dir)) sys_plug = true;
-  
+
   taPlugins::CleanPlugin(base_path, plugin_nm_full, sys_plug);
 
   return true;
@@ -701,12 +701,12 @@ bool taPlugin::LoadWiz() {
   QFileInfo qfiosf(orig_src_file);
   if(!qfiosf.isFile()) {
     taMisc::Error("LoadWiz Plugin -- orig_src_path.txt file not found in:", plug_path,
-		  "(plugin predates version 5.1) -- may not find the correct wizard");
+                  "(plugin predates version 5.1) -- may not find the correct wizard");
     wiz_file = plug_path + PATH_SEP + "PluginWizard.wiz";
     QFileInfo qfiwiz(wiz_file);
     if(!qfiwiz.isFile()) {
       taMisc::Error("LoadWiz Plugin -- PluginWizard.wiz file not found in:", plug_path,
-		    "(plugin predates version 5.0.2) -- auto wizard loading not possible -- try to find the original source directory manually to see if the file might be there");
+                    "(plugin predates version 5.0.2) -- auto wizard loading not possible -- try to find the original source directory manually to see if the file might be there");
       return false;
     }
   }
@@ -723,7 +723,7 @@ bool taPlugin::LoadWiz() {
     taMisc::Error("LoadWiz Plugin -- PluginWizard object not found in root -- this is weird and should be reported to developers");
     return false;
   }
-    
+
   taMisc::Info("Loading wizard info from:", wiz_file);
 
   wiz->LoadWiz(wiz_file);
@@ -736,14 +736,14 @@ bool taPlugin::LoadWiz() {
 bool taPlugin::Editor() {
   bool rval = LoadWiz();
   if(!rval) return false;
-  
+
   PluginWizard* wiz = (PluginWizard*)tabMisc::root->wizards.FindName("PluginWizard");
   if(!wiz) return false;
   return wiz->Editor();
 }
 
 //////////////////////////
-//  taPluginDep		//
+//  taPluginDep         //
 //////////////////////////
 
 void taPluginDep::Initialize() {
@@ -758,13 +758,13 @@ void taPluginDep::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if (dep_check != DC_OK) {
     if (!quiet) {
-      String msg; 
+      String msg;
       switch (dep_check) {
       case DC_MISSING: msg = " is missing"; break;
       case DC_NOT_LOADED: msg = " is not loaded"; break;
       default: break; // compiler food
       }
-      taMisc::CheckError("Required plugin: ", 
+      taMisc::CheckError("Required plugin: ",
         GetDisplayName(), msg);
     }
     rval = false;
@@ -773,7 +773,7 @@ void taPluginDep::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 
 //////////////////////////
-//  taPluginBase_List	//
+//  taPluginBase_List   //
 //////////////////////////
 
 taPluginBase* taPluginBase_List::FindUniqueId(const String& value) {
@@ -800,7 +800,7 @@ void taPluginBase_List::ChildQueryEditActions_impl(const MemberDef* md, const ta
 }
 
 //////////////////////////
-//  taPlugin_List	//
+//  taPlugin_List       //
 //////////////////////////
 
 void RootFilename(String& f) {
@@ -809,7 +809,7 @@ void RootFilename(String& f) {
   // just blindly remove any suffixes we use
   f.gsub("_dbg", "");
   f.gsub("_nogui", "");
-  f.gsub("_mpi", ""); 
+  f.gsub("_mpi", "");
 }
 bool RootFilenameEq(String f1, String f2) {
 //note: sleazy: we just see if either matches first part of other
@@ -823,7 +823,7 @@ taPlugin* taPlugin_List::FindFilename(const String& value) {
   for (int i = 0; i < size; ++i) {
     taPlugin* rval = FastEl(i);
     if (!rval) continue;
-    if (RootFilenameEq(rval->filename, value)) 
+    if (RootFilenameEq(rval->filename, value))
       return rval;
   }
   return NULL;
@@ -831,24 +831,24 @@ taPlugin* taPlugin_List::FindFilename(const String& value) {
 
 void taPlugin_List::ListAllPlugins() {
   ReconcilePlugins();
-  
+
   for (int i = 0; i < size; ++i) {
     taPlugin* pl = FastEl(i);
     cerr << i << ":\t" << pl->name << "\t" << (pl->enabled ? "enabled" : "disabled")
-	 << "\t" << pl->desc << "\t" << pl->unique_id << "\t" << pl->version << "\t"
-	 << pl->filename << endl;
+         << "\t" << pl->desc << "\t" << pl->unique_id << "\t" << pl->version << "\t"
+         << pl->filename << endl;
   }
 }
 
 void taPlugin_List::EnableAllPlugins() {
   ReconcilePlugins();
-  
+
   for (int i = 0; i < size; ++i) {
     taPlugin* pl = FastEl(i);
     pl->enabled = true;
     cerr << i << ":\t" << pl->name << "\t" << (pl->enabled ? "enabled" : "disabled")
-	 << "\t" << pl->desc << "\t" << pl->unique_id << "\t" << pl->version << "\t"
-	 << pl->filename << endl;
+         << "\t" << pl->desc << "\t" << pl->unique_id << "\t" << pl->version << "\t"
+         << pl->filename << endl;
   }
 }
 
@@ -856,33 +856,33 @@ void taPlugin_List::EnableAllPlugins() {
 void taPlugin_List::LoadPlugins() {
   // first, get us uptodate with actual plugin list
   ReconcilePlugins();
-  
+
   // unload any plugins not used
   for (int i = size - 1; i >= 0; --i) {
     taPlugin* pl = FastEl(i);
     if (pl->enabled) continue;
-    
+
     taPluginInst* pli = pl->plugin;
     if (!pli) continue;
-    
+
     pli->unload();
     pl->plugin = NULL;
     taPlugins::plugins.RemoveEl(pli);
   }
-  
+
   // make a blank line in log
   taPlugins::AppendLogEntry("");
-    
+
   String log_entry;
   // register types for everyone
   for (int i = 0; i < size; ++i) {
     taPlugin* pl = FastEl(i);
     if (!pl->enabled) continue;
-    
+
     taPluginInst* pli = pl->plugin;
-    
+
     if (pli->load_state != taPluginInst::LS_LOADED) continue;
-    
+
     log_entry = "Attempting to InitTypes for plugin: " + pl->filename;
     taPlugins::AppendLogEntry(log_entry);
     if (pli->InitTypes()) {
@@ -893,20 +893,20 @@ void taPlugin_List::LoadPlugins() {
       taPlugins::AppendLogEntry(log_entry, true);
       continue; // in case more is added after this if
     }
-  } 
+  }
 }
 
 
 void taPlugin_List::InitPlugins() {
   // make a blank line in log
   taPlugins::AppendLogEntry("");
-    
+
   String log_entry;
   // initialize each plugin
   for (int i = 0; i < size; ++i) {
     taPlugin* pl = FastEl(i);
     if (!pl->enabled) continue;
-    
+
     taPluginInst* pli = pl->plugin;
     if (pli->load_state != taPluginInst::LS_TYPE_INIT) continue;
     log_entry = "Attempting to InitPlugin for plugin: " + pl->filename;
@@ -920,7 +920,7 @@ void taPlugin_List::InitPlugins() {
       continue;
     }
     pl->DataChanged(DCR_ITEM_UPDATED);
-  } 
+  }
 }
 
 
@@ -939,7 +939,7 @@ void taPlugin_List::ReconcilePlugins() {
       if (pl) {
         // update
       } else {
-        // create new 
+        // create new
         pl = (taPlugin*)New(1);
         pl->unique_id = uid;
       }
@@ -947,7 +947,7 @@ void taPlugin_List::ReconcilePlugins() {
       pl->desc = ip->desc();
       ip->GetVersion(ver);
       pl->version = ver.toString();
-      
+
     } else { // not loaded -- but match up the root filename to a persistent guy if found
       pl = FindFilename(pli->fileName());
       // we don't update anything, and we don't make a new guy if not found before,
@@ -955,7 +955,7 @@ void taPlugin_List::ReconcilePlugins() {
       // init/update
       if (pl) {
       } else {
-        // create new 
+        // create new
         pl = (taPlugin*)New(1);
         // since we can't know anything about the guy, just name him by the file
         pl->name = QFileInfo(pli->fileName()).fileName();
@@ -970,7 +970,7 @@ void taPlugin_List::ReconcilePlugins() {
       pl->DataChanged(DCR_ITEM_UPDATED);
     }
   }
-   
+
    // now, nuke any that are missing
    for (int i = size - 1; i >= 0; --i) {
      taPlugin* pl = FastEl(i);
@@ -983,12 +983,12 @@ void taPlugin_List::ReconcilePlugins() {
 void taPlugin_List::ViewPluginLog() {
   if (taPlugins::logfile.empty()) return; // shouldn't happen...
   taMisc::EditFile(taPlugins::logfile);
-  
+
 }
 
 
 //////////////////////////
-//  PluginWizard	//
+//  PluginWizard        //
 //////////////////////////
 
 // NOTE: header is in ta_project.cpp due to dependency issues
@@ -1000,8 +1000,8 @@ void PluginWizard::Initialize() {
   validated = false;
   created = false;
   editor = NULL;
-  plugin_location = taMisc::user_dir + PATH_SEP + "plugins" + PATH_SEP +
-        plugin_name;
+  plugin_location = taMisc::user_dir + PATH_SEP + taMisc::GetUserPluginDir() +
+    PATH_SEP + plugin_name;
   desc = "enter description of your plugin";
   uniqueId = "myplugin.dept.organization.org";
   url = "(replace this with a url for help or information on the plugin)";
@@ -1033,23 +1033,23 @@ void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
   inherited::CheckThisConfig_impl(quiet, ok);
   // must be C valid, otherwise bail -- we assume our transform made it legal...
   if (CheckError(plugin_name.empty(), quiet, ok,
-    "you must provide a C-valid name for your plugin")) 
+    "you must provide a C-valid name for your plugin"))
     return;
-  
+
   CheckError((plugin_name == "template"), quiet, ok,
-	     "you cannot use the name \"template\"");
+             "you cannot use the name \"template\"");
   //TODO: do our name conflict checks!
   //TODO: check if a plugin already exists there!
 
   CheckError(plugin_name != "myplugin" && uniqueId.startsWith("myplugin."), quiet, ok,
-	     "the uniqueId cannot start with the default 'myplugin.' -- it MUST actually be unique!");
+             "the uniqueId cannot start with the default 'myplugin.' -- it MUST actually be unique!");
   CheckError(uniqueId.contains(".dept.organization."), quiet, ok,
-	     "the uniqueId cannot contain the initial '.dept.organization.' -- it MUST actually be unique -- please change to be your actual department and organization -- make one up if you need to!");
-  
+             "the uniqueId cannot contain the initial '.dept.organization.' -- it MUST actually be unique -- please change to be your actual department and organization -- make one up if you need to!");
+
   QFileInfo qfi(plugin_location);
   CheckError((qfi.isDir()), quiet, ok,
-	     "plugin location already exists:", plugin_location,
-	     "you can move out of way or load wiz from that location to compile");
+             "plugin location already exists:", plugin_location,
+             "you can move out of way or load wiz from that location to compile");
 
 }
 
@@ -1101,30 +1101,30 @@ void PluginWizard::TemplatizeFile(const String& src_file,
 //TODO: detailed enablings of things like _qtso names, etc.
 }
 
-void PluginWizard::CreateDestFile(const String& src_file, 
+void PluginWizard::CreateDestFile(const String& src_file,
     const String& dst_file, bool& ok)
 {
   fstream fsrc, fdst;
   fsrc.open(src_file, ios::in | ios::binary);
   if (TestError((!fsrc.is_open()),
-    "PluginWizard::CreateDestFile", 
+    "PluginWizard::CreateDestFile",
     "Could not open template file:", src_file)) {
-    ok = false; 
+    ok = false;
     return;
   }
   fdst.open(dst_file, ios::out | ios::binary);
   if (TestError((!fdst.is_open()),
-    "PluginWizard::CreateDestFile", 
+    "PluginWizard::CreateDestFile",
     "Could not open destination file:", dst_file,
     " -- make sure the file does not exist and/or is not write_protected and/or you have permission to create files in the destination")) {
-    ok = false; 
+    ok = false;
     return;
   }
   String src;
   if (TestError(src.Load_str(fsrc),
-    "PluginWizard::CreateDestFile", 
+    "PluginWizard::CreateDestFile",
     "Could not read contents of file:", src_file)) {
-    ok = false; 
+    ok = false;
     return;
   }
   fsrc.close();
@@ -1132,10 +1132,10 @@ void PluginWizard::CreateDestFile(const String& src_file,
   TemplatizeFile(src_file, src, dst, ok);
   if (!ok) return;
   if (TestError((dst.Save_str(fdst)),
-    "PluginWizard::CreateDestFile", 
+    "PluginWizard::CreateDestFile",
     "Could not write results to:", dst_file,
     " -- make sure the file does not exist and/or is not write_protected and/or you have permission to create files in the destination")) {
-    ok = false; 
+    ok = false;
     return;
   }
   fdst.close();
@@ -1144,12 +1144,13 @@ void PluginWizard::CreateDestFile(const String& src_file,
 bool PluginWizard::Create() {
   bool upgrade_only = false; //TODO: check for upgrade
   if (TestError((!validated),
-    "PluginWizard::Create", 
+    "PluginWizard::Create",
     "You must Validate the plugin before you can make it"))
     return false;
   // extract dirs
-  src_dir = taMisc::app_dir + PATH_SEP + "plugins" + PATH_SEP + "template" + PATH_SEP;
-  
+  src_dir = taMisc::app_dir + PATH_SEP + taMisc::GetSysPluginDir() + PATH_SEP +
+    "template" + PATH_SEP;
+
   QFileInfo qfi(plugin_location);
   if(qfi.isDir()) {
     String wiz_file = plugin_location + PATH_SEP + "PluginWizard.wiz";
@@ -1158,8 +1159,8 @@ bool PluginWizard::Create() {
       int chs = taMisc::Choice("Plugin directory: " + plugin_location + " already exists and has previously-created Wizard data -- you can load that existing information (overwrites current configuration info in this wizard) or rename existing directory to _old and create a new blank plugin, or cancel", "Load Existing", "Rename Existing, Make New", "Cancel");
       if(chs == 2) return false;
       if(chs == 0) {
-	LoadWiz(wiz_file);
-	return false;
+        LoadWiz(wiz_file);
+        return false;
       }
       String justpath = taMisc::GetDirFmPath(plugin_location);
       String dirnm = taMisc::GetFileFmPath(plugin_location);
@@ -1178,23 +1179,23 @@ bool PluginWizard::Create() {
 
   // make the dest dir
   if (TestError(!taPlatform::mkdir(plugin_location),
-    "PluginWizard::Create", 
+    "PluginWizard::Create",
     "Could not make folder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
     return false;
   // std build dirs
   if (TestError(!taPlatform::mkdir(plugin_location + PATH_SEP + "build"),
-    "PluginWizard::Create", 
+    "PluginWizard::Create",
     "Could not make 'build' subfolder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
     return false;
   if (TestError(!taPlatform::mkdir(plugin_location + PATH_SEP + "build_dbg"),
-    "PluginWizard::Create", 
+    "PluginWizard::Create",
     "Could not make 'build' subfolder for plugin -- make sure the path is valid, and you have permission to create a folder in that location"))
     return false;
-  
+
   // build file list to templatize
   files.Reset();
   AddTemplatedFiles(upgrade_only);
-  
+
   // iterate files
   bool ok = true;
   for (int i = 0; (i < files.size) && ok; ++i) {
@@ -1203,16 +1204,16 @@ bool PluginWizard::Create() {
     // note: files like CMakeLists.txt keep their name
     dst_file.gsub("template", plugin_name);
     CreateDestFile(
-      src_dir + src_file, 
-      plugin_location + PATH_SEP + dst_file, 
+      src_dir + src_file,
+      plugin_location + PATH_SEP + dst_file,
       ok
     );
   }
-  
+
   // files to just link or copy (no templating)
   files.Reset();
   AddCopyFiles(upgrade_only);
-  
+
   // iterate files
   for (int i = 0; (i < files.size) && ok; ++i) {
     String src_file = src_dir + files[i];
@@ -1229,7 +1230,7 @@ bool PluginWizard::Create() {
     }
   }
 
-  created = true;		// must come before saving!!
+  created = true;               // must come before saving!!
 
   SaveAs(plugin_location + PATH_SEP + "PluginWizard.wiz"); // save our settings!!
 
@@ -1237,7 +1238,7 @@ bool PluginWizard::Create() {
     taMisc::Info("The plugin was created successfully! See the CMakeLists.txt file in your plugin folder for build instructions");
   } else {
     taMisc::Error(
-      "PluginWizard::Create", 
+      "PluginWizard::Create",
       "Could not copy and templatize files for plugin -- make sure the path is valid, and you have permission to create files in that location");
     return false;
   }
@@ -1246,7 +1247,7 @@ bool PluginWizard::Create() {
 
 bool PluginWizard::Compile() {
   if (TestError((!created),
-    "PluginWizard::Compile", 
+    "PluginWizard::Compile",
     "You must Create the plugin before you can compile it"))
     return false;
 
@@ -1255,7 +1256,7 @@ bool PluginWizard::Compile() {
 
 bool PluginWizard::Clean() {
   if (TestError((!created),
-    "PluginWizard::Compile", 
+    "PluginWizard::Compile",
     "You must Create the plugin before you can clean it"))
     return false;
 
@@ -1289,7 +1290,7 @@ bool PluginWizard::LoadWiz(const String& wiz_file) {
 
 bool PluginWizard::SaveWiz() {
   if (TestError((!created),
-    "PluginWizard::SaveWiz", 
+    "PluginWizard::SaveWiz",
     "You must Create the plugin before you can save the wizard file"))
     return false;
   String fname = plugin_location + PATH_SEP + "PluginWizard.wiz";

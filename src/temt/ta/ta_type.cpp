@@ -1073,15 +1073,20 @@ void taMisc::LogInfo(const char* a, const char* b, const char* c, const char* d,
 }
 
 void taMisc::LogEvent(const String& log_data) {
-  if(taMisc::log_stream.bad()) return;
   time_t tmp = time(NULL);
   String tstamp = ctime(&tmp);
   tstamp = tstamp.before('\n');
-  taMisc::log_stream << tstamp << ": " << log_data << endl;
+  if (taMisc::log_stream.bad()) {
+    cout << tstamp << ": " << log_data << endl;
+  }
+  else {
+    taMisc::log_stream << tstamp << ": " << log_data << endl;
+  }
 }
 
 void taMisc::SetLogFile(const String& log_fn) {
   if(taMisc::log_fname == log_fn) return;
+  taMisc::LogEvent("taMisc::SetLogFile -- Setting log file to: " + log_fn);
   taMisc::log_fname = log_fn;
   taMisc::log_stream.close();
   taMisc::log_stream.clear();
@@ -1094,6 +1099,9 @@ void taMisc::SetLogFile(const String& log_fn) {
     taMisc::log_stream.clear();
     taMisc::log_stream.open(bkup_fn, ios::out);
     taMisc::log_fname = bkup_fn;
+  }
+  else {
+    taMisc::LogEvent("taMisc::SetLogFile -- Log file opened for writing.");
   }
 }
 
@@ -1834,6 +1842,34 @@ String taMisc::GetDirFmPath(const String& path, int n_up) {
 
 String taMisc::GetHomePath() {
   return taPlatform::getHomePath();
+}
+
+String taMisc::GetUserPluginDir() {
+#ifdef TA_OS_WIN
+  // Use a separate directory for 64-bit plugins.  Otherwise, if the user has
+  // both 32-bit emergent and 64-bit emergent installed, it can cause problems
+  // with the Qt Plugin Cache, see:
+  //   http://doc.qt.nokia.com/stable/deployment-plugins.html#the-plugin-cache
+  // The problem is that the 32-bit version of emergent might mark a 64-bit
+  // plugin DLL as "bad" in the cache, thus preventing it from working with
+  // the 64-bit version of emergent (and vice versa).  Separating the DLLs
+  // prevents 32-bit emergent from ever seeing a 64-bit DLL, so this can't
+  // happen.
+  if (sizeof(void *) >= 8) {
+    return "plugins64";
+  }
+#endif
+
+  return "plugins";
+}
+
+String taMisc::GetSysPluginDir() {
+  // Not necessary to separate 32/64 here, since this directory only exists
+  // within the directory emergent was installed to, which is already distinct
+  // for 32-bit and 64-bit installations.  Also, this directory is created by
+  // the installer/CMake/CPack system, and would be more difficult to name
+  // differently on Windows for 32 vs. 64.
+  return "plugins";
 }
 
 bool taMisc::FileExists(const String& fname) {

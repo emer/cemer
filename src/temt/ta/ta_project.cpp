@@ -29,7 +29,7 @@
 
 #ifdef TA_GUI
 # include "ta_qt.h"
-# include "ta_qtdata.h" 
+# include "ta_qtdata.h"
 # include "ta_qtdialog.h"
 # include "ta_qttype_def.h"
 # include "colorscale.h"
@@ -67,7 +67,7 @@
 #endif
 #include <ode/ode.h>
 
-#ifdef GPROF			// turn on for profiling
+#ifdef GPROF                    // turn on for profiling
 extern "C" void moncontrol(int mode);
 #endif
 
@@ -80,7 +80,7 @@ extern "C" void moncontrol(int mode);
 #endif
 
 //////////////////////////
-//   taDoc		//
+//   taDoc              //
 //////////////////////////
 
 const String taDoc::init_text(
@@ -122,10 +122,10 @@ void taDoc::SetURL(const String& new_url) {
       String wiknm = taMisc::wikis[i].name;
       String base_url = taMisc::GetWikiURL(wiknm, true); // index.php
       if(new_url.startsWith(base_url)) {
-	wiki = wiknm;
-	url = new_url.after(base_url);
-	got_one = true;
-	break;
+        wiki = wiknm;
+        url = new_url.after(base_url);
+        got_one = true;
+        break;
       }
     }
     if(!got_one) {
@@ -140,7 +140,7 @@ String taDoc::GetURL() {
   if(wiki.nonempty()) {
     String wiki_url = taMisc::GetWikiURL(wiki, true); // true = add index.php
     if(TestWarning(wiki_url.empty(), "GetURL", "wiki named:", wiki,
-		   "not found in global preferences/options under wiki_url settings -- using full url backup instead.")) {
+                   "not found in global preferences/options under wiki_url settings -- using full url backup instead.")) {
       wiki = _nilString;
       url = full_url;
       return url;
@@ -153,7 +153,7 @@ String taDoc::GetURL() {
 
 void taDoc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(url.empty() || url == "local") 
+  if(url.empty() || url == "local")
     web_doc = false;
   else
     web_doc = true;
@@ -175,8 +175,8 @@ static String wiki_parse_str_between(const String& cl, const String& sts, const 
   return _nilString;
 }
 
-static bool wiki_parse_check_seq(const String& cl, int cur_pos, char trg, char trg1 = '\0', 
-				 char trg2 = '\0', char trg3 = '\0') {
+static bool wiki_parse_check_seq(const String& cl, int cur_pos, char trg, char trg1 = '\0',
+                                 char trg2 = '\0', char trg3 = '\0') {
   int ln = cl.length();
   if(cl[cur_pos] != trg) return false;
   if(trg1 == '\0') return true;
@@ -188,8 +188,8 @@ static bool wiki_parse_check_seq(const String& cl, int cur_pos, char trg, char t
   return true;
 }
 
-static int wiki_parse_find_term(const String& cl, int cur_pos, char trg, char trg1 = '\0', 
-				 char trg2 = '\0', char trg3 = '\0') {
+static int wiki_parse_find_term(const String& cl, int cur_pos, char trg, char trg1 = '\0',
+                                 char trg2 = '\0', char trg3 = '\0') {
   int ln = cl.length();
   for(int i=cur_pos; i<ln; i++) {
     if(cl[i] != trg) continue;
@@ -256,7 +256,7 @@ String taDoc::WikiParse(const String& in_str) {
       if(num1) { cl += "</ol>"; num1 = false; }
     }
 
-    if(cl.empty()) {		// make a <P> for blank lines..
+    if(cl.empty()) {            // make a <P> for blank lines..
       rval += "<P>\n";
       continue;
     }
@@ -281,57 +281,57 @@ String taDoc::WikiParse(const String& in_str) {
 
     // now process remainder of string looking for various formatting things
     int cur_pos = 0;
-    
+
     while(cur_pos < cl.length()) {
       if(wiki_parse_check_seq(cl, cur_pos, '[', '[')) {
-	int epos = wiki_parse_find_term(cl, cur_pos+2, ']', ']');
-	if(epos > cur_pos+2) {
-	  String href = cl.at(cur_pos+2, epos-cur_pos-3); // 2 * delim -1
-	  bool ta_tag = false;
-	  if(href.startsWith('.')) {
-	    ta_tag = true;
-	    href = "ta:" + href;
-	  }
-	  String tag = href;
-	  if(tag.contains('|')) {
-	    href = href.before('|');
-	    tag = tag.after('|');
-	  }
-	  else if(ta_tag) {
-	    if(tag.contains("()")) {
-	      String fnm = tag.after('.',-1);
-	      tag = tag.before('.',-1);
-	      if(tag.contains('.')) { // should!
-		tag = tag.after('.',-1);
-	      }
-	      tag += "." + fnm;
-	    }
-	    else {
-	      tag = tag.after('.',-1);
-	    }
-	  }
-	  cl = cl.before(cur_pos) + "<a href=\"" + href + "\">" + tag + "</a>" + cl.after(epos);
-	  cur_pos = epos+1;
-	  continue;
-	}
+        int epos = wiki_parse_find_term(cl, cur_pos+2, ']', ']');
+        if(epos > cur_pos+2) {
+          String href = cl.at(cur_pos+2, epos-cur_pos-3); // 2 * delim -1
+          bool ta_tag = false;
+          if(href.startsWith('.')) {
+            ta_tag = true;
+            href = "ta:" + href;
+          }
+          String tag = href;
+          if(tag.contains('|')) {
+            href = href.before('|');
+            tag = tag.after('|');
+          }
+          else if(ta_tag) {
+            if(tag.contains("()")) {
+              String fnm = tag.after('.',-1);
+              tag = tag.before('.',-1);
+              if(tag.contains('.')) { // should!
+                tag = tag.after('.',-1);
+              }
+              tag += "." + fnm;
+            }
+            else {
+              tag = tag.after('.',-1);
+            }
+          }
+          cl = cl.before(cur_pos) + "<a href=\"" + href + "\">" + tag + "</a>" + cl.after(epos);
+          cur_pos = epos+1;
+          continue;
+        }
       }
       if(wiki_parse_check_seq(cl, cur_pos, '\'', '\'', '\'')) { // bold
-	int epos = wiki_parse_find_term(cl, cur_pos+3, '\'', '\'', '\'');
-	if(epos > cur_pos+3) {
-	  String bld = cl.at(cur_pos+3, epos-cur_pos-5); // 2 * delim -1
-	  cl = cl.before(cur_pos) + " <b>" + bld + "</b> " + cl.after(epos);
-	  cur_pos = epos+1;
-	  continue;
-	}
+        int epos = wiki_parse_find_term(cl, cur_pos+3, '\'', '\'', '\'');
+        if(epos > cur_pos+3) {
+          String bld = cl.at(cur_pos+3, epos-cur_pos-5); // 2 * delim -1
+          cl = cl.before(cur_pos) + " <b>" + bld + "</b> " + cl.after(epos);
+          cur_pos = epos+1;
+          continue;
+        }
       }
       if(wiki_parse_check_seq(cl, cur_pos, '\'', '\'')) { // emph
-	int epos = wiki_parse_find_term(cl, cur_pos+2, '\'', '\'');
-	if(epos > cur_pos+2) {
-	  String bld = cl.at(cur_pos+2, epos-cur_pos-3); // 2 * delim -1
-	  cl = cl.before(cur_pos) + " <i>" + bld + "</i> " + cl.after(epos);
-	  cur_pos = epos+1;
-	  continue;
-	}
+        int epos = wiki_parse_find_term(cl, cur_pos+2, '\'', '\'');
+        if(epos > cur_pos+2) {
+          String bld = cl.at(cur_pos+2, epos-cur_pos-3); // 2 * delim -1
+          cl = cl.before(cur_pos) + " <i>" + bld + "</i> " + cl.after(epos);
+          cur_pos = epos+1;
+          continue;
+        }
       }
       cur_pos++;
     }
@@ -343,7 +343,7 @@ String taDoc::WikiParse(const String& in_str) {
 
 
 //////////////////////////////////
-//  UserData_DocLink		//
+//  UserData_DocLink            //
 //////////////////////////////////
 
 void UserData_DocLink::Initialize() {
@@ -353,13 +353,13 @@ void UserData_DocLink::Initialize() {
 void UserData_DocLink::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj)
 {
   // destroy ourself, so we don't have this stale ref left over
-  if(isDestroying()) return;	// already going..
+  if(isDestroying()) return;    // already going..
   if (ref == &doc)
     this->CloseLater();
 }
 
 //////////////////////////////////
-//  Doc_Group		//
+//  Doc_Group           //
 //////////////////////////////////
 
 void Doc_Group::AutoEdit() {
@@ -373,7 +373,7 @@ void Doc_Group::AutoEdit() {
 
 
 //////////////////////////
-//   taWizard		//
+//   taWizard           //
 //////////////////////////
 
 void taWizard::Initialize() {
@@ -384,13 +384,13 @@ void taWizard::Initialize() {
 
 void taWizard::InitLinks() {
   inherited::InitLinks();
-  wiz_doc.SetName(name);	// same name as us..
+  wiz_doc.SetName(name);        // same name as us..
   RenderWizDoc();
 }
 
 void taWizard::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  wiz_doc.SetName(name);	// same name as us..
+  wiz_doc.SetName(name);        // same name as us..
 }
 
 void taWizard::RenderWizDoc() {
@@ -415,7 +415,7 @@ this is a virtual base wizard -- not the real thing -- shouldn't see this!\n";
 }
 
 //////////////////////////////////
-// 	Wizard_Group		//
+//      Wizard_Group            //
 //////////////////////////////////
 
 void Wizard_Group::AutoEdit() {
@@ -428,7 +428,7 @@ void Wizard_Group::AutoEdit() {
 }
 
 //////////////////////////////////
-//	SelectEdit_Group	//
+//      SelectEdit_Group        //
 //////////////////////////////////
 
 void SelectEdit_Group::AutoEdit() {
@@ -436,12 +436,12 @@ void SelectEdit_Group::AutoEdit() {
   SelectEdit* se;
   FOR_ITR_EL(SelectEdit, se, this->, i) {
     if(se->autoEdit())
-      se->EditPanel(true, true);	// true,true = new tab, pinned in place
+      se->EditPanel(true, true);        // true,true = new tab, pinned in place
   }
 }
 
 //////////////////////////////////
-//	Undo Stuff		//
+//      Undo Stuff              //
 //////////////////////////////////
 
 void taUndoDiffSrc::Initialize() {
@@ -454,17 +454,17 @@ void taUndoDiffSrc::InitFmRec(taUndoRec* urec) {
   save_top = urec->save_top;
   save_top_path = urec->save_top_path;
   save_data = urec->save_data;
-  diff.Reset();			// just in case..
+  diff.Reset();                 // just in case..
 }
 
 void taUndoDiffSrc::EncodeDiff(taUndoRec* rec) {
   if(diff.data_a.line_st.size > 0) { // already done
     diff.ReDiffB(save_data, rec->save_data, false, false, false); // trim, no ignore case
   }
-  else {			    // first time
+  else {                            // first time
     diff.DiffStrings(save_data, rec->save_data, false, false, false); // trim, no ignore case
   }
-  diff.GetEdits(rec->diff_edits);	// save to guy
+  diff.GetEdits(rec->diff_edits);       // save to guy
   last_diff_n = diff.GetLinesChanged(); // counts up total lines changed in diffs
   last_diff_pct = (.5f * (float)last_diff_n) / (float)diff.data_a.lines;
   // lines changed tends to double-count..
@@ -507,19 +507,19 @@ void taUndoDiffSrc_List::Reset() {
 }
 
 ////////////////////////////
-// 	taUndoRec
+//      taUndoRec
 
 void taUndoRec::Initialize() {
 }
 
 String taUndoRec::GetData() {
   if(save_data.nonempty()) {
-    return save_data;		// easy
+    return save_data;           // easy
   }
   String rval = diff_edits.GenerateB(diff_src->save_data); // generate against A
 #if 0
   // this is no longer enabled because we are nuking the save_data for all cases..
-  int oops = compare(rval, save_data); // double check! 
+  int oops = compare(rval, save_data); // double check!
   if(oops > 0) {
     fstream ostrm;
     ostrm.open("rec_regen.txt", ios::out);
@@ -531,7 +531,7 @@ String taUndoRec::GetData() {
     ostrm.close();
 
     taMisc::Error("taUndoRec GetData() did not recover original data -- n diffs:",
-		  String(oops), "see rec_save_data.txt and rec_regen.txt for orig texts");
+                  String(oops), "see rec_save_data.txt and rec_regen.txt for orig texts");
   }
 #endif
   return rval;
@@ -559,7 +559,7 @@ void taUndoRec_List::Reset() {
 }
 
 ////////////////////////////
-// 	undo threading
+//      undo threading
 
 
 void UndoDiffTask::Initialize() {
@@ -578,11 +578,11 @@ void UndoDiffTask::run() {
   if(um->isDestroying()) return; // checks owner..
 
   um->rec_to_diff->EncodeMyDiff();
-  um->rec_to_diff = NULL;	// done, reset!
+  um->rec_to_diff = NULL;       // done, reset!
 }
 
 void UndoDiffThreadMgr::Initialize() {
-  n_threads = 2;		// don't use 0, just 1..
+  n_threads = 2;                // don't use 0, just 1..
   task_type = &TA_UndoDiffTask;
 }
 
@@ -590,20 +590,20 @@ void UndoDiffThreadMgr::Destroy() {
 }
 
 void UndoDiffThreadMgr::Run() {
-  n_threads = 2;		// don't use 0, just 1..
+  n_threads = 2;                // don't use 0, just 1..
   InitAll();
-  RunThreads();			// just run the thread, not main guy
+  RunThreads();                 // just run the thread, not main guy
 }
 
 ////////////////////////////
-// 	taUndoMgr
+//      taUndoMgr
 
 void taUndoMgr::Initialize() {
   cur_undo_idx = 0;
   undo_depth = taMisc::undo_depth;
   new_src_thr = taMisc::undo_new_src_thr;
 #ifdef DEBUG
-  save_load_file = false;	// can set to true if need to do debugging on undo
+  save_load_file = false;       // can set to true if need to do debugging on undo
 #else
   save_load_file = false;
 #endif
@@ -620,7 +620,7 @@ void taUndoMgr::Nest(bool nest) {
 }
 
 bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top,
-			 bool force_proj_save, taBase* undo_save_owner) {
+                         bool force_proj_save, taBase* undo_save_owner) {
   // only do the undo guy for first call when nested
   if ((nest_count > 0) && (loop_count++ > 0)) return false;
   if(!owner || !mod_obj) return false;
@@ -630,11 +630,11 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
     else {
       save_top = mod_obj->GetUndoBarrier();
       if(!save_top)
-	save_top = owner;
+        save_top = owner;
     }
   }
   if(mod_obj == save_top && mod_obj->HasOption("UNDO_SAVE_ALL")) {
-    save_top = owner;		// save all instead..
+    save_top = owner;           // save all instead..
   }
   if(cur_undo_idx < undo_recs.length) {
     undo_recs.length = cur_undo_idx; // lop off all the changes that were previously undone
@@ -650,7 +650,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
   urec->save_top_path = save_top->GetPath(NULL, owner);
 
   taMisc::LogInfo("SaveUndo of action:",urec->action,"on:",urec->mod_obj_name,
-		  "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
+                  "at path:", urec->mod_obj_path, "saving at:", urec->save_top_path);
 
   tabMisc::cur_undo_save_top = save_top; // let others know who we're saving for..
   tabMisc::cur_undo_mod_obj = mod_obj; // let others know who we're saving for..
@@ -670,17 +670,17 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
     if(!cur_src || cur_src->last_diff_pct > new_src_thr) {
       cur_src = new taUndoDiffSrc;
       undo_srcs.CircAddLimit(cur_src, undo_depth); // large depth
-      cur_src->InitFmRec(urec);			   // init
+      cur_src->InitFmRec(urec);                    // init
       taMisc::LogInfo("Undo: New source added!");
     }
     if(diff_threads.n_running > 0)
-      diff_threads.SyncThreads();	// sync now before running again..
-    urec->diff_src = cur_src;	// this smartref ptr needs to be set in main task
+      diff_threads.SyncThreads();       // sync now before running again..
+    urec->diff_src = cur_src;   // this smartref ptr needs to be set in main task
     rec_to_diff = urec;
-    diff_threads.Run();	// run diff in separate thread
+    diff_threads.Run(); // run diff in separate thread
   }
 
-  PurgeUnusedSrcs();		// get rid of unused source data
+  PurgeUnusedSrcs();            // get rid of unused source data
 
   // tell project to refresh ui
   // why?????
@@ -689,7 +689,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 //     tabMisc::DelayedFunCall_gui(proj,"UpdateUi");
 //   }
 
-  return true;			// todo: need to check result of Save_String presumably
+  return true;                  // todo: need to check result of Save_String presumably
 }
 
 void taUndoMgr::PurgeUnusedSrcs() {
@@ -701,7 +701,7 @@ void taUndoMgr::PurgeUnusedSrcs() {
     int cnt = urec->UseCount();
     if(cnt == 0) {
       taMisc::DebugInfo("Undo: purging unused save rec, size: ",
-			String(urec->save_data.length()));
+                        String(urec->save_data.length()));
       undo_srcs.CircShiftLeft(1);
       did_purge = true;
       n_purges++;
@@ -712,7 +712,7 @@ void taUndoMgr::PurgeUnusedSrcs() {
 
   if(n_purges > 0) {
     taMisc::DebugInfo("Undo: Total Purges: ", String(n_purges), " remaining length: ",
-		      String(undo_srcs.length));
+                      String(undo_srcs.length));
   }
 }
 
@@ -728,35 +728,35 @@ bool taUndoMgr::Undo() {
   if(cur_undo_idx == undo_recs.length) {
     if(urec->action == "Undo") { // already the final undo guy -- skip to earlier one
       --cur_undo_idx;
-      urec = undo_recs.CircSafeEl(cur_undo_idx-1); // anticipate decrement      
+      urec = undo_recs.CircSafeEl(cur_undo_idx-1); // anticipate decrement
     }
     else {
       // this is the first undo -- we need to save this current state so we can then redo it!
       first_undo = true;
       if(urec->save_top == owner) {
-	SaveUndo(owner, "Undo", owner);
+        SaveUndo(owner, "Undo", owner);
       }
       else {
-	MemberDef* md;
-	taBase* modobj = owner->FindFromPath(urec->mod_obj_path, md);
-	if(modobj)
-	  SaveUndo(modobj, "Undo", urec->save_top);
-	else
-	  SaveUndo(owner, "Undo", owner); // bail to full save
+        MemberDef* md;
+        taBase* modobj = owner->FindFromPath(urec->mod_obj_path, md);
+        if(modobj)
+          SaveUndo(modobj, "Undo", urec->save_top);
+        else
+          SaveUndo(owner, "Undo", owner); // bail to full save
       }
     }
   }
-  if(!urec->save_top) {		// it was nuked -- try to reconstruct from path..
+  if(!urec->save_top) {         // it was nuked -- try to reconstruct from path..
     MemberDef* md;
     taBase* st = owner->FindFromPath(urec->save_top_path, md);
     if(st) urec->save_top = st;
   }
   if(!urec->save_top) {
     taMisc::Warning("Undo action:", urec->action, "on object named:", urec->mod_obj_name,
-		    "at path:", urec->mod_obj_path,
-		    "cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
-    --cur_undo_idx;		// need to skip past to get to other levels that might work..
-    if(first_undo) --cur_undo_idx;	// need an extra because of extra saveundo.
+                    "at path:", urec->mod_obj_path,
+                    "cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
+    --cur_undo_idx;             // need to skip past to get to other levels that might work..
+    if(first_undo) --cur_undo_idx;      // need an extra because of extra saveundo.
     return false;
   }
   cout << "Undoing action: " << urec->action << " on: " << urec->mod_obj_name
@@ -765,8 +765,8 @@ bool taUndoMgr::Undo() {
 
   bool rval = LoadFromRec_impl(urec);
   if(rval) {
-    --cur_undo_idx;		// only decrement on success
-    if(first_undo) --cur_undo_idx;	// need an extra because of extra saveundo.
+    --cur_undo_idx;             // only decrement on success
+    if(first_undo) --cur_undo_idx;      // need an extra because of extra saveundo.
   }
   return rval;
 }
@@ -783,7 +783,7 @@ bool taUndoMgr::LoadFromRec_impl(taUndoRec* urec) {
   // actually do the load..
   ++taMisc::is_undo_loading;
   urec->save_top->Load_String(udata);
-  taMisc::ProcessEvents();	// get any post-load things *before* turning off undo flag..
+  taMisc::ProcessEvents();      // get any post-load things *before* turning off undo flag..
   --taMisc::is_undo_loading;
 
   // tell project to refresh
@@ -804,23 +804,23 @@ bool taUndoMgr::LoadFromRec_impl(taUndoRec* urec) {
 
 bool taUndoMgr::Redo() {
   if(!owner) return false;
-  if(cur_undo_idx == 0) cur_undo_idx = 1;		// 0 is just err state
+  if(cur_undo_idx == 0) cur_undo_idx = 1;               // 0 is just err state
   if(cur_undo_idx >= undo_recs.length) {
     taMisc::Error("No more steps available to redo -- at end of undo list");
     return false;
   }
   taUndoRec* urec = undo_recs.CircSafeEl(cur_undo_idx); // always at current val for redo..
   if(!urec) return false;
-  if(!urec->save_top) {		// it was nuked -- try to reconstruct from path..
+  if(!urec->save_top) {         // it was nuked -- try to reconstruct from path..
     MemberDef* md;
     taBase* st = owner->FindFromPath(urec->save_top_path, md);
     if(st) urec->save_top = st;
   }
   if(!urec->save_top) {
     taMisc::Warning("Redo action:", urec->action, "on object named: ", urec->mod_obj_name,
-		    "at path:", urec->mod_obj_path,
-		    "cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
-    ++cur_undo_idx;		// need to skip past to get to other levels that might work..
+                    "at path:", urec->mod_obj_path,
+                    "cannot complete, because saved data is relative to an object that has dissappeared -- it used to live here:", urec->save_top_path);
+    ++cur_undo_idx;             // need to skip past to get to other levels that might work..
     return false;
   }
   cout << "Redoing action: " << urec->action << " on: " << urec->mod_obj_name
@@ -829,7 +829,7 @@ bool taUndoMgr::Redo() {
 
   bool rval = LoadFromRec_impl(urec);
   if(rval) {
-    ++cur_undo_idx;		// only increment on success
+    ++cur_undo_idx;             // only increment on success
   }
   return rval;
 }
@@ -858,17 +858,17 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
     }
     if(show_list) {
       cout << "  " << taMisc::LeadingZeros(i, 2) << " size: " << urec->save_data.length()
-	   << " diffs: " << dif_lns
-	   << " action: " << urec->action << " on: " << urec->mod_obj_name
-	   << " at path: " << urec->mod_obj_path << endl;
+           << " diffs: " << dif_lns
+           << " action: " << urec->action << " on: " << urec->mod_obj_name
+           << " at path: " << urec->mod_obj_path << endl;
       taMisc::FlushConsole();
       if(show_diffs && (bool)urec->diff_src && urec->save_data.empty()) {
-	String diffstr = urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
-	for(int j=0; j<diffstr.length(); j++) {
-	  cout << diffstr[j];
-	  if(diffstr[j] == '\n')
-	    taMisc::FlushConsole();
-	}
+        String diffstr = urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
+        for(int j=0; j<diffstr.length(); j++) {
+          cout << diffstr[j];
+          if(diffstr[j] == '\n')
+            taMisc::FlushConsole();
+        }
       }
     }
   }
@@ -887,25 +887,25 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
 }
 
 //////////////////////////
-//  taProject	 Helpers
+//  taProject    Helpers
 //////////////////////////
 
 #ifdef TA_GUI
 class SimLogEditDialog: public taiEditDataHost {
 public:
-  override bool	ShowMember(MemberDef* md) const {
+  override bool ShowMember(MemberDef* md) const {
     // just show a small subset of the members
     bool rval = (md->ShowMember(show()) && (md->im != NULL));
     if (!rval) return rval;
 // note: we also include a couple of members we know are in taProject
     if (!(md->name.contains("desc") || (md->name == "version") || (md->name == "save_rmv_units")
-	 || (md->name == "file_name"))) return false;
+         || (md->name == "file_name"))) return false;
     return true;
   }
-  override void	Constr_Methods_impl() { }	// suppress methods
+  override void Constr_Methods_impl() { }       // suppress methods
 
   SimLogEditDialog(void* base, TypeDef* tp, bool read_only_,
-  	bool modal_) : taiEditDataHost(base, tp, read_only_, modal_) { };
+        bool modal_) : taiEditDataHost(base, tp, read_only_, modal_) { };
 };
 #endif
 
@@ -919,7 +919,7 @@ void taProjVersion::SetFromString(String ver) {
 }
 
 bool taProjVersion::GtEq(int mj, int mn, int st) {
-  return (major > mj) || 
+  return (major > mj) ||
     ((major == mj) && (minor > mn)) ||
      ((major == mj) && (minor == mn) && (step >= st));
 }
@@ -1457,9 +1457,9 @@ This Research License Agreement (the 'Agreement') is between YOU and " + ownr + 
 \n\
 OWNER grants, and You accept, a personal, nonexclusive, nontransferable license:\n\
 \n\
-a)	to use Software, at no charge, in accordance with the terms herein, solely for Internal Research and Development; and\n\
+a)      to use Software, at no charge, in accordance with the terms herein, solely for Internal Research and Development; and\n\
 b) to develop Derivative Works that may be used solely for Internal Research and, Development; and\n\
-c)	to copy, distribute and sublicense Software and Derivative Works solely in accordance with the terms herein. Any Software or Derivative Works distributed shall be pursuant to a license agreement that contains all of the terms herein; and shall contain prominent notices stating how the Software, Derivative Works, or documentation were changed, the author and date of any such change and\n\
+c)      to copy, distribute and sublicense Software and Derivative Works solely in accordance with the terms herein. Any Software or Derivative Works distributed shall be pursuant to a license agreement that contains all of the terms herein; and shall contain prominent notices stating how the Software, Derivative Works, or documentation were changed, the author and date of any such change and\n\
 d) You acknowledge that the Software is a valuable, proprietary asset of OWNER. You shall not market or sell the Software or Derivative Works.\n\
 \n\
 3. LICENSE EXCLUSIONS\n\
@@ -1468,7 +1468,7 @@ a) EXCEPT AS EXPRESSLY PROVIDED HEREIN, YOU SHALL MAKE NO OTHER USE OF THE SOFTW
 b) You must obtain permission from OWNER before receiving payment for distribution of the Software or Derivative Works.\n\
 c) You shall not allege or enjoin infringement or misappropriation by OWNER in any Derivative Works, or by any third party obtaining Derivative Works, prepared by OWNER and under license from OWNER.\n\
 \n\
-4.	TITLE AND PROTECTION OF SOFTWARE\n\
+4.      TITLE AND PROTECTION OF SOFTWARE\n\
 \n\
 a) OWNER retains all title, right and interest to the Software.\n\
 b) Except for the Software, You retain all title, right and interest to the Derivative Works, subject to the terms of this Agreement.\n\
@@ -1505,7 +1505,7 @@ b) This Agreement shall be governed by the laws of the OWNER's locale. Venue for
 
 
 //////////////////////////
-//  taProject		//
+//  taProject           //
 //////////////////////////
 
 void taProject::Initialize() {
@@ -1515,7 +1515,7 @@ void taProject::Initialize() {
   viewers_tmp.SetBaseType(&TA_TopLevelViewer);
 }
 
-void taProject::Destroy() { 
+void taProject::Destroy() {
   CutLinks();
 }
 
@@ -1565,8 +1565,8 @@ void taProject::CutLinks() {
 }
 
 void taProject::CutLinks_impl() {
-  viewers_tmp.CutLinks(); 
-  viewers.CutLinks(); 
+  viewers_tmp.CutLinks();
+  viewers.CutLinks();
   programs.CutLinks();
   data_proc.CutLinks();
   data.CutLinks();
@@ -1592,7 +1592,7 @@ void taProject::Copy_(const taProject& cp) {
   edits = cp.edits;
   data = cp.data;
   data_proc = cp.data_proc;
-  viewers = cp.viewers;		// todo: open windows here etc
+  viewers = cp.viewers;         // todo: open windows here etc
   programs = cp.programs;
   // NOTE: once a derived project has all the relevant stuff copied, it needs to call this:
   // UpdatePointers_NewPar(&cp, this); // update pointers within entire project..
@@ -1643,7 +1643,7 @@ taDoc* taProject::FindMakeDoc(const String& nm, const String& wiki_nm, const Str
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
 //NOTE: doesn't really work properly in 2x2
   // try official default first
-//  MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.DefaultEl()); 
+//  MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.DefaultEl());
 //  if (vwr) return vwr;
 
 //TODO: this is not really that good, becaus
@@ -1674,15 +1674,15 @@ void taProject::Dump_Load_post() {
   if(taMisc::is_undo_loading) return; // none of this.
   OpenProjectLog();
   DoView();
-  setDirty(false);		// nobody should start off dirty!
+  setDirty(false);              // nobody should start off dirty!
   if(!cssMisc::init_interactive) {
-    bool startup_run = programs.RunStartupProgs();	// run startups now..
+    bool startup_run = programs.RunStartupProgs();      // run startups now..
     if(!taMisc::gui_active && startup_run) taiMC_->Quit();
   }
 }
 
 void taProject::DoView() {
-  if (!taMisc::gui_active || taMisc::is_undo_loading) return; 
+  if (!taMisc::gui_active || taMisc::is_undo_loading) return;
   MainWindowViewer* vwr = AssertDefaultProjectBrowser(true);
 #ifdef TA_OS_WIN
   taMisc::ProcessEvents(); // needed for Windows
@@ -1691,7 +1691,7 @@ void taProject::DoView() {
   docs.AutoEdit();
   wizards.AutoEdit();
   edits.AutoEdit();
-  // this is very hacky... select the 2nd tab, which will 
+  // this is very hacky... select the 2nd tab, which will
   // be the first auto guy if there were any
   taiMiscCore::ProcessEvents();
   vwr->SelectPanelTabNo(1);
@@ -1782,14 +1782,14 @@ void taProject::SelectT3ViewTabNo(int tab_idx) {
   MainWindowViewer* proj_view = GetDefaultProjectViewer();
   if(!proj_view || !proj_view->SelectT3ViewTabNo(tab_idx)) {
     taMisc::Warning("could not activate 3D View Tab number:", String(tab_idx));
-  }      
+  }
 }
 
 void taProject::SelectT3ViewTabName(const String& tab_nm) {
   MainWindowViewer* proj_view = GetDefaultProjectViewer();
   if(!proj_view || !proj_view->SelectT3ViewTabName(tab_nm)) {
     taMisc::Warning("could not activate 3D View Tab named:", tab_nm);
-  }      
+  }
 }
 
 DataTable* taProject::GetNewInputDataTable(const String& nw_nm, bool msg) {
@@ -1857,26 +1857,26 @@ bool taProject::SetFileName(const String& val) {
   return true;
 }
 
-int taProject::Save_strm(ostream& strm, taBase* par, int indent) { 
+int taProject::Save_strm(ostream& strm, taBase* par, int indent) {
   taMisc::save_use_name_paths = true; // project is one guy that DOES use name paths!
-  int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent); 
+  int rval = GetTypeDef()->Dump_Save(strm, (void*)this, par, indent);
   setDirty(false);
   taMisc::save_use_name_paths = false; // default is off, so restore to default for everything else
   return rval;
 }
 
-int taProject::Save() { 
+int taProject::Save() {
   String fname = GetFileName(); // empty if 1st or not supported
   if(fname.contains("_recover")) {
     int chs = taMisc::Choice("This appears to be a recover file that was saved during a previous crash -- you may not want to save to this file name", "Save to this _recover file", "Let me choose a new name", "Save to non-_recover version of this file");
-    if(chs == 1) fname = "";	// this will prompt for name
+    if(chs == 1) fname = "";    // this will prompt for name
     else if(chs == 2) {
       fname = fname.before("_recover") + fname.from(".",-1);
     }
   }
   if(fname.contains("_autosave")) {
     int chs = taMisc::Choice("This appears to be an auto-save file -- you may not want to save to this file name", "Save to this _autosave file", "Let me choose a new name", "Save to non-_autosave version of this file");
-    if(chs == 1) fname = "";	// this will prompt for name
+    if(chs == 1) fname = "";    // this will prompt for name
     else if(chs == 2) {
       fname = fname.before("_autosave") + fname.from(".",-1);
     }
@@ -1903,7 +1903,7 @@ int taProject::SaveAs(const String& fname) {
   taRefN::unRefDone(flr);
   DataChanged(DCR_ITEM_UPDATED_ND);
   return rval;
-} 
+}
 
 String taProject::GetProjTemplatePath(ProjLibs library) {
   if(library == SEARCH_LIBS) {
@@ -1936,7 +1936,7 @@ String taProject::GetProjTemplatePath(ProjLibs library) {
 }
 
 void taProject::SaveAsTemplate(const String& template_name, const String& desc,
-		          const String& tags, ProjLibs library) {
+                          const String& tags, ProjLibs library) {
   String path = GetProjTemplatePath(library);
   String fname = path + "/" + template_name + ".proj";
   QFileInfo qfi(fname);
@@ -1952,7 +1952,7 @@ void taProject::SaveAsTemplate(const String& template_name, const String& desc,
   strm.open(infofnm, ios::out);
   if(strm.bad() || strm.eof()) {
     taMisc::Error("Project::SaveAsTemplate: could not open template info file name for saving:",
-		  infofnm);
+                  infofnm);
     strm.close();
     return;
   }
@@ -1989,19 +1989,19 @@ bool taProject::CleanFiles() {
     String recover = fnm + "_recover" + String(i) + ".proj";
     got_one |= QFile::remove(recover.chars());
     tabMisc::root->recent_files.RemoveEl(recover);
-    
+
     String console = fnm + "_console" + String(i) + ".txt";
     QFile::remove(console.chars());
 
     recover = fnm + "_autosave_recover" + String(i) + ".proj";
     got_one |= QFile::remove(recover.chars());
     tabMisc::root->recent_files.RemoveEl(recover);
-    
+
     console = fnm + "_autosave_console" + String(i) + ".txt";
     QFile::remove(console.chars());
   }
   if(got_one && taMisc::dmem_proc == 0) {
-    tabMisc::root->Save();	// save with updated files list
+    tabMisc::root->Save();      // save with updated files list
   }
   return got_one;
 }
@@ -2062,7 +2062,7 @@ void taProject::setDirty(bool value) {
 
 void taProject::UpdateChangeLog() {
 #ifdef TA_GUI
-  version.step++;		// increment the step always
+  version.step++;               // increment the step always
   TypeDef* td = GetTypeDef();
   MemberDef* md = td->members.FindName("last_change_desc");
   taiStringDataHost* dlg = new taiStringDataHost(md, this, td, false); // false = not read only
@@ -2129,7 +2129,7 @@ String taProject::GetAutoFileName(const String& suffix, const String& ftype_ext)
       rval = file_name.before(ftype_ext, -1);
     }
     else {
-      rval = file_name;		// whatever
+      rval = file_name;         // whatever
     }
   }
   if(rval.contains(suffix))
@@ -2141,13 +2141,13 @@ String taProject::GetAutoFileName(const String& suffix, const String& ftype_ext)
 
 void taProject::SaveRecoverFile_strm(ostream& strm) {
   taMisc::save_use_name_paths = false; // no name paths for recover files
-  int rval = GetTypeDef()->Dump_Save(strm, (void*)this); 
+  int rval = GetTypeDef()->Dump_Save(strm, (void*)this);
   //  setDirty(false);  // definitely not
 }
 
 void taProject::SaveRecoverFile() {
   String ftype_ext = ".proj";
-  String newfm = GetAutoFileName("_recover", ftype_ext); 
+  String newfm = GetAutoFileName("_recover", ftype_ext);
   int cnt = taMisc::GetUniqueFileNumber(0, newfm, ftype_ext);
   String fnm = newfm + String(cnt) + ftype_ext; // note: this is a full path!
   QFileInfo qfi(fnm);
@@ -2183,7 +2183,7 @@ void taProject::SaveRecoverFile() {
       cfnm.gsub((const char*)ftype_ext, ".txt");
       QcssConsole* qcons = QcssConsole::getInstance();
       if(qcons)
-	qcons->saveContents(cfnm);
+        qcons->saveContents(cfnm);
     }
   }
 #endif
@@ -2191,7 +2191,7 @@ void taProject::SaveRecoverFile() {
 
 bool taProject::AutoSave(bool force) {
   if(!force) {
-    if(!isDirty()) {			// don't save until dirty
+    if(!isDirty()) {                    // don't save until dirty
       auto_save_timer.StartTimer(true); // reset
       return false;
     }
@@ -2202,7 +2202,7 @@ bool taProject::AutoSave(bool force) {
     auto_save_timer.EndTimer();
     if(auto_save_timer.s_used < (double)taMisc::auto_save_interval) {
       auto_save_timer.StartTimer(false); // don't reset!
-      return false;		// not yet
+      return false;             // not yet
     }
     // ok, times up!
   }
@@ -2214,16 +2214,16 @@ bool taProject::AutoSave(bool force) {
   String fnm = newfnm; // note: this is a full path!
   QFileInfo qfi(fnm);
   QFileInfo qfd(qfi.path());
-  if(!qfd.isWritable()) {	// use path!
+  if(!qfd.isWritable()) {       // use path!
     fnm = taMisc::user_dir + PATH_SEP + taMisc::GetFileFmPath(fnm);
     taMisc::DebugInfo("Error saving auto save file in original location:", newfnm,
-		      " -- now saved in user directory:", fnm);
+                      " -- now saved in user directory:", fnm);
   }
   taFiler* flr = GetSaveFiler(fnm, _nilString, -1, _nilString);
   bool saved = false;
   if(flr->ostrm) {
     taMisc::save_use_name_paths = false; // don't use name paths for autosave!
-    int rval = GetTypeDef()->Dump_Save(*flr->ostrm, (void*)this); 
+    int rval = GetTypeDef()->Dump_Save(*flr->ostrm, (void*)this);
     // note: not using Save_strm to preserve the dirty bit!
     saved = true;
   }
@@ -2244,7 +2244,7 @@ bool taProject::AutoSave(bool force) {
 }
 
 //////////////////////////
-//   Project_Group	//
+//   Project_Group      //
 //////////////////////////
 
 void Project_Group::InitLinks() {
@@ -2256,7 +2256,7 @@ void Project_Group::InitLinks() {
 }
 
 
-int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) { 
+int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) {
   // chg working dir to that of project -- simplifies lots of stuff immensely
   QFileInfo fi(fname);
   QDir::setCurrent(fi.absolutePath());
@@ -2282,7 +2282,7 @@ taProject* Project_Group::NewFromTemplateByName(const String& prog_nm) {
 }
 
 ////////////////////////////////////
-//  ProjTemplate   
+//  ProjTemplate
 
 void ProjTemplateEl::Initialize() {
 }
@@ -2298,7 +2298,7 @@ taProject* ProjTemplateEl::NewProject(Project_Group* new_owner) {
   taBase* pg;
   new_owner->Load(path, &pg);
   if(pg) {
-    pg->SetFileName("");	// nuke association with template file!
+    pg->SetFileName("");        // nuke association with template file!
   }
   return (taProject*)pg;
 }
@@ -2326,7 +2326,7 @@ bool ProjTemplateEl::ParseProjFile(const String& fnm, const String& path) {
     return false;
   }
   bool rval = false;
-  int c = taMisc::read_till_eol(strm); 
+  int c = taMisc::read_till_eol(strm);
   while((c != EOF) && !strm.eof() && !strm.bad()) {
     if(taMisc::LexBuf.contains("name=")) {
       name = taMisc::LexBuf.after("name=");
@@ -2346,7 +2346,7 @@ bool ProjTemplateEl::ParseProjFile(const String& fnm, const String& path) {
       rval = true;
       break;
     }
-    c = taMisc::read_till_eol(strm); 
+    c = taMisc::read_till_eol(strm);
   }
   strm.close();
   // todo: should use QUrlInfo instead -- need QtNetwork module access!
@@ -2413,7 +2413,7 @@ taProject* ProjTemplates::NewProjectFmName(const String& proj_nm, Project_Group*
 
 
 //////////////////////////
-//   taApplication	//
+//   taApplication      //
 //////////////////////////
 
 taApplication::taApplication(int & argc, char ** argv) : QApplication(argc, argv) {
@@ -2429,7 +2429,7 @@ bool taApplication::event(QEvent *event) {
 }
 
 //////////////////////////
-//   taRootBaseAdapter	//
+//   taRootBaseAdapter  //
 //////////////////////////
 
 void taRootBaseAdapter::Startup_ProcessArgs() {
@@ -2452,7 +2452,7 @@ void taRootBaseAdapter::DMem_SubEventLoop() {
 #endif // DMEM_COMPILE
 
 //////////////////////////
-//   taRoot		//
+//   taRoot             //
 //////////////////////////
 
 int taRootBase::milestone;
@@ -2518,7 +2518,7 @@ void taRootBase::InitLinks() {
   taBase::Own(mime_factories, this);
   taBase::Own(colorspecs, this);
   // create colorspecs even if nogui, since they are referenced in projects
-  colorspecs.SetDefaultColor();	
+  colorspecs.SetDefaultColor();
   taBase::Own(objs, this);
   taBase::Own(recent_files, this);
   taBase::Own(recent_paths, this);
@@ -2547,7 +2547,7 @@ void taRootBase::CutLinks() {
   inherited::CutLinks();
 }
 
-#ifdef TA_OS_LINUX  
+#ifdef TA_OS_LINUX
 int taRootBase::GetFEFlags(FPExceptFlags fpef) {
   int rval = 0;
   if (fpef & FPE_INEXACT) rval |= FE_INEXACT;
@@ -2580,7 +2580,7 @@ void taRootBase::UpdateAfterEdit_impl() {
 #endif
 }
 
-#ifdef GPROF			// turn on for profiling
+#ifdef GPROF                    // turn on for profiling
 void taRootBase::MonControl(bool on) {
   moncontrol(on);
 }
@@ -2701,7 +2701,7 @@ bool taRootBase::CheckAddPluginDep(TypeDef* td) {
     if (ipl->GetTypeDef() == pl_td) {
       // this is the guy!
       rval = true;
-      // see if already listedbool		VerifyHasPlugins()
+      // see if already listedbool              VerifyHasPlugins()
       if (plugin_deps.FindName(pl->GetName())) break;
       // otherwise, clone a dep, and add
       taPluginDep* pl_dep = new taPluginDep;
@@ -2710,7 +2710,7 @@ bool taRootBase::CheckAddPluginDep(TypeDef* td) {
       break;
     }
   }
-  
+
   return rval;
 }
 
@@ -2797,7 +2797,7 @@ taDoc* taRootBase::FindMakeDoc(const String& nm, const String& wiki_nm, const St
   return rval;
 }
 
-taBase* taRootBase::FindGlobalObject(TypeDef* base_type, 
+taBase* taRootBase::FindGlobalObject(TypeDef* base_type,
     const String& name)
 {
   for (int i = 0; i < objs.size; ++i) {
@@ -2820,7 +2820,7 @@ void taRootBase::OpenRemoteServer(ushort port) {
   if (!srv->OpenServer()) {
     taMisc::Error("Could not open server");
   }
-  
+
 }
 
 void taRootBase::CloseRemoteServer() {
@@ -2832,13 +2832,13 @@ void taRootBase::CloseRemoteServer() {
 
 taBase* taRootBase::GetTemplateInstance(TypeDef* typ) {
   return GetTemplateInstance_impl(typ, &templates);
-} 
+}
 
 taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
   taBase* rval = NULL;
   TypeDef* btyp = base->GetTypeDef();
   if (btyp->name == typ->name) return base;
-  
+
   // if it is a list, check its children first (vastly more likely than member pointers)
   if (btyp->InheritsFrom(&TA_taList_impl)) {
     taList_impl* lst = (taList_impl*)base;
@@ -2850,24 +2850,24 @@ taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
       if (rval) return rval;
     }
   }
-  
+
   // check all taBase* members (but NOT embedded objects) and list children
   for (int i = 0; i < btyp->members.size; ++i) {
     MemberDef* md = btyp->members.FastEl(i);
     // if base is an embedded list, then check all its children
-    if (md->type->InheritsFrom(&TA_taList_impl) && 
+    if (md->type->InheritsFrom(&TA_taList_impl) &&
       (md->type->ptr == 0))
-    { 
+    {
       taList_impl* lst = (taList_impl*)md->GetOff(base);
       rval = GetTemplateInstance_impl(typ, lst);
       if (rval) return rval;
     }
-    
+
     //TODO: if we find it is needed, then also check taBase* ptrs, or ptrs to lists
   }
   return NULL;
-    
-} 
+
+}
 
 void taRootBase::SaveAll() {
   taLeafItr i;
@@ -2883,8 +2883,8 @@ void taRootBase::Options() {
   taiEdit* ie =  TA_taMisc.ie;
   if (!ie) return;
   taMisc* inst = (taMisc*)TA_taMisc.GetInstance();
-  int accepted = ie->EditDialog(inst, false, true, taiTypeBase::def_color, 
-				800, 600); // r/w, modal, min width, height
+  int accepted = ie->EditDialog(inst, false, true, taiTypeBase::def_color,
+                                800, 600); // r/w, modal, min width, height
   if (accepted) {
     inst->SaveConfig();
   }
@@ -2902,7 +2902,7 @@ void taRootBase::MakeWizards_impl() {
 
 
 /////////////////////////////////////////
-// 	startup code
+//      startup code
 
 
 bool taRootBase::Startup_InitDMem(int& argc, const char* argv[]) {
@@ -3029,13 +3029,13 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
  -- Specifies that css reference count tracing should be performed (debugging tool)");
 
   ////////////////////////////////////////////////////
-  // 	All the multi-threading stuff has standard default startup args
-  
+  //    All the multi-threading stuff has standard default startup args
+
   taMisc::AddArgName("--max_cpus", "MaxCpus");
   taMisc::AddArgName("max_cpus=", "MaxCpus");
   taMisc::AddArgNameDesc("MaxCpus", "\
  -- Maximum number of cpus -- this should normally be detected automatically, but in case it isn't -- see n_threads for the actual number to use");
-  
+
   taMisc::AddArgName("--n_threads", "NThreads");
   taMisc::AddArgName("n_threads=", "NThreads");
   taMisc::AddArgNameDesc("NThreads", "\
@@ -3060,10 +3060,10 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgName("thread_min_units=", "ThreadMinUnits");
   taMisc::AddArgNameDesc("ThreadMinUnits", "\
  -- minimum number of computational units (e.g., network units) to apply parallel threading to -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.");
-  
+
   ////////////////////////////////////////////////////
-  // 	Server variables
-  
+  //    Server variables
+
   taMisc::AddArgName("--server", "Server");
   taMisc::AddArgName("-server", "Server");
   taMisc::AddArgNameDesc("Server", "\
@@ -3077,8 +3077,8 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
 
 
   ////////////////////////////////////////////////////
-  // 	Plugin making
-  
+  //    Plugin making
+
   taMisc::AddArgName("--no_plugins", "NoPlugins");
   taMisc::AddArgNameDesc("NoPlugins", "\
  -- do not load any plugins -- can be useful if some plugins are misbehaving -- may be better to re-make all the plugins (--make_all_plugins) to fix plugin problems though");
@@ -3141,7 +3141,7 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
   // process gui flag right away -- has other implications
   if(taMisc::CheckArgByName("GenDoc") || taMisc::CheckArgByName("Version")
      || taMisc::CheckArgByName("Help")) {
-    taMisc::use_plugins = false;		      // no need for plugins for these..
+    taMisc::use_plugins = false;                      // no need for plugins for these..
     taMisc::use_gui = false;
     cssMisc::init_interactive = false;
   }
@@ -3155,7 +3155,7 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
      || taMisc::CheckArgByName("CleanAllPlugins")
      || taMisc::CheckArgByName("MakeUserPlugin")
      || taMisc::CheckArgByName("MakeSystemPlugin")) { // auto nogui by default
-    taMisc::use_plugins = false;		      // don't use if making
+    taMisc::use_plugins = false;                      // don't use if making
     taMisc::use_gui = false;
     cssMisc::init_interactive = false;
   }
@@ -3167,17 +3167,17 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
   }
 
   if(taMisc::CheckArgByName("NoPlugins"))
-    taMisc::use_plugins = false;		      // don't use if making
+    taMisc::use_plugins = false;                      // don't use if making
 
   // need to use Init_Args and entire system because sometimes flags get munged together
-  if(taMisc::CheckArgByName("NoGui")) 
+  if(taMisc::CheckArgByName("NoGui"))
     taMisc::use_gui = false;
   else if(taMisc::CheckArgByName("Gui"))
     taMisc::use_gui = true;
 
   if(taMisc::CheckArgByName("NoWin"))
     taMisc::gui_no_win = true;
-  else 
+  else
     taMisc::gui_no_win = false;
 
 #ifndef TA_GUI
@@ -3231,24 +3231,24 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
     // test for various GL compatibilities now, before we get bitten later!
     if(!QGLFormat::hasOpenGL()) {
       cerr << "This display does NOT have OpenGL support, which is required for 3d displays!\n"
-	   << "Please read the emergent manual for required 3D graphics driver information.\n"
-	   << "If you open a project with a 3D display, or create one, the program will likely crash!" << endl;
+           << "Please read the emergent manual for required 3D graphics driver information.\n"
+           << "If you open a project with a 3D display, or create one, the program will likely crash!" << endl;
     }
 
 #ifdef TA_USE_INVENTOR
 # if COIN_MAJOR_VERSION >= 3
-    // this installs the callback to eliminate dependency on simage 
+    // this installs the callback to eliminate dependency on simage
     coin_image_reader_cb_obj = new CoinImageReaderCB;
 # endif
 #endif
-  } else 
+  } else
 #endif // TA_GUI
 
   {
     new QCoreApplication(argc, (char**)argv); // accessed as qApp
     QFileInfo fi(argv[0]);
     milestone |= SM_QAPP_OBJ;
-  }    
+  }
   QCoreApplication::instance()->setApplicationName(taMisc::app_name);
   // probably as good a place as any to init ODE
   dInitODE();
@@ -3264,13 +3264,15 @@ bool isAppDir(const String& path, String* plugin_path = NULL) {
 //NOTE: this is a test that is supposed to confirm a dir is an app dir
 // our first version checks for the prog_lib folder
 // If requested, we also check if there is a plugin folder, and set that
-// thus leaving it valid for dev installs 
+// thus leaving it valid for dev installs
   QDir dir(path);
   bool rval = dir.exists("prog_lib");
   if (rval) {
     if (plugin_path) {
-      if (dir.exists("plugins"))
-        *plugin_path = path + PATH_SEP + "plugins";
+      String plugin_dir = taMisc::GetSysPluginDir();
+      if (dir.exists(plugin_dir)) {
+        *plugin_path = path + PATH_SEP + plugin_dir;
+      }
     }
   }
   else {
@@ -3282,16 +3284,17 @@ bool isAppDir(const String& path, String* plugin_path = NULL) {
 
 #ifndef TA_OS_WIN
 const char* def_prefixes[] = {
-  "/usr/local", "/usr", "/opt/local", "/opt"};
+  "/usr/local", "/usr", "/opt/local", "/opt"
+};
 const int def_prefix_n = 4;
 #endif
-  
+
 // hairy, modal, issue-prone -- we put in its own routine
 bool taRootBase::Startup_InitTA_AppFolders() {
 #ifndef TA_OS_WIN
   String prefix_dir; // empty unless we found app_dir under here
 #endif
-  
+
 /* We search for app path in following order:
    1. app_dir command line switch (may require app_plugin_dir switch too)
    2. "in-place" development (this is either the same as
@@ -3302,13 +3305,13 @@ bool taRootBase::Startup_InitTA_AppFolders() {
 */
 //WARNING: cannot use QCoreApplication::applicationDirPath() at this point because
 // QCoreApplication has not been instantiated yet
-  
+
   //note: this is not how Qt does it, but it seems windows follows normal rules
   // and passes the arg[0] as the full path to the executable, so we just get path
   taMisc::exe_cmd = taMisc::args_raw.SafeEl(0);
   QFileInfo fi(taMisc::exe_cmd);
   //note: argv[0] can contain a relative path, so we need to absolutize
-  // but *don't* dereference links, because we typically want to use the 
+  // but *don't* dereference links, because we typically want to use the
   // link file, not the target, which for dev contexts may be buried somewhere
   taMisc::exe_path = fi.absolutePath();
 
@@ -3326,7 +3329,7 @@ bool taRootBase::Startup_InitTA_AppFolders() {
 # endif // Mac
 
   String bin_dir = taMisc::exe_path; // tmp to work on..
-  
+
   String app_plugin_dir; // will get set for in-place contexts (Windows and dev)
   String app_dir = taMisc::FindArgByName("AppDir");
   if (app_dir.nonempty() && isAppDir(app_dir))
@@ -3334,7 +3337,7 @@ bool taRootBase::Startup_InitTA_AppFolders() {
 
 #ifdef TA_OS_WIN
 /*
-  {app_dir}\bin\xxx (MSVS build) 
+  {app_dir}\bin\xxx (MSVS build)
   {app_dir}\bin (normal release, nmake build)
 */
   // note: Qt docs say it returns the '/' version...
@@ -3343,10 +3346,10 @@ bool taRootBase::Startup_InitTA_AppFolders() {
     if (bin_dir.contains("\\build")) {
       app_dir = bin_dir.before("\\build");
       if (isAppDir(app_dir, &app_plugin_dir)) {
-	taMisc::Info("Note: running development executable: not loading plugins.");
-	taMisc::in_dev_exe = true;
-	taMisc::use_plugins = false;
-	goto have_app_dir;
+        taMisc::Info("Note: running development executable: not loading plugins.");
+        taMisc::in_dev_exe = true;
+        taMisc::use_plugins = false;
+        goto have_app_dir;
       }
     }
     app_dir = bin_dir.before("\\bin\\");
@@ -3370,10 +3373,10 @@ bool taRootBase::Startup_InitTA_AppFolders() {
     if (bin_dir.contains("/build")) {
       app_dir = bin_dir.before("/build");
       if (isAppDir(app_dir, &app_plugin_dir)) {
-	taMisc::Info("Note: running development executable: not loading plugins.");
-	taMisc::in_dev_exe = true;
-	taMisc::use_plugins = false;
-	goto have_app_dir;
+        taMisc::Info("Note: running development executable: not loading plugins.");
+        taMisc::in_dev_exe = true;
+        taMisc::use_plugins = false;
+        goto have_app_dir;
       }
     }
 
@@ -3413,7 +3416,7 @@ bool taRootBase::Startup_InitTA_AppFolders() {
   // use a Choice so console etc. doesn't disappear immediately, ex. on Windows
   taMisc::Choice("The application will now terminate.");
   return false;
-  
+
 have_app_dir:
 
   // initialize the key folders
@@ -3432,18 +3435,18 @@ have_app_dir:
    NOTE: for "in-place" contexts, plugin dir is local, else look independently
 */
 
-
   String app_plugin_dir_cmd = taMisc::FindArgByName("AppPluginDir");
   if (app_plugin_dir_cmd.nonempty()) {
     app_plugin_dir = app_plugin_dir_cmd;
     goto check_plugin_dir;
   }
+
   if (app_plugin_dir.nonempty()) goto check_plugin_dir;
   app_plugin_dir = getenv("EMERGENT_PLUGIN_DIR");
   if (app_plugin_dir.nonempty()) goto check_plugin_dir;
-  
+
 #ifdef TA_OS_WIN
-  app_plugin_dir = app_dir + "\\plugins"; // better be!!!
+  app_plugin_dir = app_dir + "\\" + taMisc::GetSysPluginDir(); // better be!!!
 #else
   // Unix and Mac
   // only got here because not in-place -- we first try the folder
@@ -3457,19 +3460,24 @@ have_app_dir:
     } else {
       prefix_dir = def_prefixes[i];
     }
-    app_plugin_dir = prefix_dir + "/lib/" + taMisc::default_app_install_folder_name + "/plugins";
+    app_plugin_dir = prefix_dir + "/lib/" +
+      taMisc::default_app_install_folder_name + "/" + taMisc::GetSysPluginDir();
     if (isPluginDir(app_plugin_dir))  goto have_plugin_dir;
   }
   goto warn_no_plugin_dir;
 #endif
+
 check_plugin_dir:
-  if (isPluginDir(app_plugin_dir)) goto have_plugin_dir;
+  if (isPluginDir(app_plugin_dir)) {
+    goto have_plugin_dir;
+  }
+
 warn_no_plugin_dir:
-  taMisc::Error("Expected application plugin folder", 
+  taMisc::Error("Expected application plugin folder",
     taMisc::app_plugin_dir, "does not exist! You should check your installation and/or create this folder, otherwise runtime errors may occur.");
 
 have_plugin_dir:
-  taMisc::app_plugin_dir = app_plugin_dir; 
+  taMisc::app_plugin_dir = app_plugin_dir;
   return true;
 }
 
@@ -3485,12 +3493,12 @@ bool FileWithContentExists(const String& in1, const String& fname) {
   while (true) {
     g1 = (i1 < in1.length()); // we have at least one more char
     g2 = in2.get(c2);
-    if (!g1 && !g2) break; // same size, done 
+    if (!g1 && !g2) break; // same size, done
     if (!(g1 && g2)) goto exit; // different sizes
     c1 = in1.elem(i1++);
     if (c1 != c2) goto exit;  // different content
   }
-  rval = true; 
+  rval = true;
 
 exit:
   in2.close();
@@ -3514,7 +3522,7 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
   // can make/read the user folder, then very unlikely will these fail
   dir.mkpath(taMisc::user_app_dir + PATH_SEP + "css_lib");
   dir.mkpath(taMisc::user_app_dir + PATH_SEP + "log");
-  dir.mkpath(taMisc::user_app_dir + PATH_SEP + "plugins");
+  dir.mkpath(taMisc::user_app_dir + PATH_SEP + taMisc::GetUserPluginDir());
   dir.mkpath(taMisc::user_app_dir + PATH_SEP + "prefs");
   dir.mkpath(taMisc::user_app_dir + PATH_SEP + "prog_lib");
   return true;
@@ -3540,7 +3548,7 @@ void Startup_InitTA_MoveLegacyUserFiles() {
   // fixup if possible -- just move legacy to most recent user_app_dir folder
   QDir uad(legacy_uad);
   if (!uad.exists()) return;
-  
+
   taMisc::Info("Moving preferences to new default location...");
   // note, 'prefs' subfolder shouldn't exist yet...
   if (uad.exists("prefs")) {
@@ -3551,16 +3559,16 @@ void Startup_InitTA_MoveLegacyUserFiles() {
     taMisc::Info("...preferences moved.");
     goto move_uad;
   }
-    
+
 prefs_move_failed:
   taMisc::Error("PREFERENCES COULD NOT BE MOVED -- your preferences may revert to defaults.");
-  
+
 move_uad:
 
   String user_app_dir = taPlatform::getAppDocPath(taMisc::app_prefs_key);
   taMisc::Info("Moving user data dir to new default location...");
   // note, Emergent folder shouldn't exist yet...
-  if (QDir(user_app_dir).exists()) 
+  if (QDir(user_app_dir).exists())
     goto uad_move_failed;
   if (!taPlatform::mv(legacy_uad, user_app_dir))
     goto uad_move_failed;
@@ -3568,9 +3576,9 @@ move_uad:
     "from: " + legacy_uad + "\n"
     "  to: " + user_app_dir + "\n\n";
   taMisc::Info(msg);
-  
+
   return;
-  
+
 uad_move_failed:
   msg = "Your current emergent data folder could not be moved\n"
     "from: " + legacy_uad + "\n"
@@ -3583,20 +3591,20 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   // first initialize the types
   if(ta_init_fun)
     (*ta_init_fun)();
-  taMisc::Init_Hooks();	// client dlls register init hooks -- this calls them!
+  taMisc::Init_Hooks(); // client dlls register init hooks -- this calls them!
   milestone |= SM_TYPES_INIT;
-    
+
   // user directory, aka Home folder -- we don't necessarily use it as a base here though
   // cmd line override of UserDir takes preference
   taMisc::user_dir = taMisc::FindArgByName("UserDir");
   if (taMisc::user_dir.empty()) {
     taMisc::user_dir = taPlatform::getHomePath();
   }
-  
+
   // move legacy prefs into current default location
   Startup_InitTA_MoveLegacyUserFiles();
   // we can assume files are in their default location now
-  
+
   // Application folder
   // env var overrides default
   String user_app_dir_env_var = upcase(taMisc::app_prefs_key) + "_USER_APP_DIR";
@@ -3614,10 +3622,11 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
   // ugh: reload because legacy options file will load its value
   taMisc::user_app_dir = user_app_dir;
-  
-  taMisc::user_plugin_dir = taMisc::user_app_dir + PATH_SEP + "plugins";
+
+  taMisc::user_plugin_dir = taMisc::user_app_dir + PATH_SEP +
+    taMisc::GetUserPluginDir();
   taMisc::user_log_dir = taMisc::user_app_dir + PATH_SEP + "log";
-  
+
   // System (Share) Folder, System Plugins
   if (!Startup_InitTA_AppFolders()) return false;
 
@@ -3627,7 +3636,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   console_options = taMisc::console_options;
 
   taMisc::default_scope = &TA_taProject; // this is general default
-  
+
   // load prefs values for us
   taRootBase* inst = instance();
   milestone |= SM_ROOT_CREATE;
@@ -3660,7 +3669,7 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   }
   return true;
 }
-  	
+
 bool taRootBase::Startup_EnumeratePlugins() {
   if (!taMisc::use_plugins) return true;
   String plug_log;
@@ -3672,7 +3681,7 @@ bool taRootBase::Startup_EnumeratePlugins() {
   // add plugin folders
   taPlugins::AddPluginFolder(taMisc::app_plugin_dir);
   taPlugins::AddPluginFolder(taMisc::user_plugin_dir);
-  
+
   taPlugins::InitLog(taMisc::user_log_dir + PATH_SEP + plug_log);
   taPlugins::EnumeratePlugins();
 
@@ -3681,8 +3690,8 @@ bool taRootBase::Startup_EnumeratePlugins() {
   }
   if(taMisc::CheckArgByName("EnableAllPlugins")) {
     tabMisc::root->plugins.EnableAllPlugins();
-    --in_init;			// allow it to save!
-    tabMisc::root->Save();	// save after enabling
+    --in_init;                  // allow it to save!
+    tabMisc::root->Save();      // save after enabling
     ++in_init;
   }
   return true;
@@ -3699,11 +3708,11 @@ bool taRootBase::Startup_InitTypes() {
   taMisc::Init_Types();
   return true;
 }
-  	
+
 bool taRootBase::Startup_InitCss() {
   return cssMisc::Initialize();
 }
-  	
+
 bool taRootBase::Startup_InitGui() {
 #ifdef TA_GUI
   if(taMisc::use_gui && (taMisc::dmem_proc == 0)) {
@@ -3711,18 +3720,18 @@ bool taRootBase::Startup_InitGui() {
     taiMC_ = taiM_;
     // the following should be done in the specific app's Main function
 //     taiM->icon_bitmap = new QBitmap(emergent_bitmap_width,
-//     	emergent_bitmap_height, emergent_bitmap_bits);
+//      emergent_bitmap_height, emergent_bitmap_bits);
 //    qApp->setWindowIcon(QIcon(*(taiM->icon_bitmap)));
 
     if(taMisc::gui_no_win)
-      taMisc::gui_active = false;	// in effect, we start as use_gui but never get to gui_active -- everything is initialized but no windows are created
+      taMisc::gui_active = false;       // in effect, we start as use_gui but never get to gui_active -- everything is initialized but no windows are created
     else
-      taMisc::gui_active = true;	// officially active!
+      taMisc::gui_active = true;        // officially active!
     Startup_InitViewColors();
   }
   else
 #endif // TA_GUI
-  { 
+  {
     taiMC_ = taiMiscCore::New();
   }
   milestone |= SM_APP_OBJ;
@@ -3730,15 +3739,15 @@ bool taRootBase::Startup_InitGui() {
 }
 
 /* emacs colors:
- comment	Firebrick
- string		RosyBrown
- keyword	Purple
- builtin	Orchid (also preprocessor)
- function-name	Blue1
- variable-name	DarkGoldenrod
- type		ForestGreen
- constant	CadetBlue
- warning	Red1
+ comment        Firebrick
+ string         RosyBrown
+ keyword        Purple
+ builtin        Orchid (also preprocessor)
+ function-name  Blue1
+ variable-name  DarkGoldenrod
+ type           ForestGreen
+ constant       CadetBlue
+ warning        Red1
 */
 
 bool taRootBase::Startup_InitViewColors() {
@@ -3750,60 +3759,60 @@ bool taRootBase::Startup_InitViewColors() {
   // args are: name, description, foreground, fg_color_name, background, bg_color_name
 
   taMisc::view_colors->FindMakeViewColor("NotEnabled", "State: !isEnabled",
-					 false, _nilString, true, "grey80");
+                                         false, _nilString, true, "grey80");
   taMisc::view_colors->FindMakeViewColor("ThisInvalid", "State: item not valid according to CheckConfig",
-					 false, _nilString, true, "red1");
+                                         false, _nilString, true, "red1");
   taMisc::view_colors->FindMakeViewColor("ChildInvalid", "State: child not valid according to CheckConfig",
-					 false, _nilString, true, "orange1");
+                                         false, _nilString, true, "orange1");
   taMisc::view_colors->FindMakeViewColor("SpecialState1", "SpecialState = 1",
-					 false, _nilString, true, "lavender");
+                                         false, _nilString, true, "lavender");
   taMisc::view_colors->FindMakeViewColor("SpecialState2", "SpecialState = 2",
-					 false, _nilString, true, "LightYellow");
+                                         false, _nilString, true, "LightYellow");
   taMisc::view_colors->FindMakeViewColor("SpecialState3", "SpecialState = 3",
-					 false, _nilString, true, "PaleGreen");
+                                         false, _nilString, true, "PaleGreen");
   taMisc::view_colors->FindMakeViewColor("SpecialState4", "SpecialState = 4",
-					 false, _nilString, true, "MistyRose");
+                                         false, _nilString, true, "MistyRose");
   taMisc::view_colors->FindMakeViewColor("ProgElNonStd", "State: program element is not standard",
-					 false, _nilString, true, "yellow1");
+                                         false, _nilString, true, "yellow1");
   taMisc::view_colors->FindMakeViewColor("ProgElNewEl", "State: program element is newly added",
-					 false, _nilString, true, "SpringGreen1");
+                                         false, _nilString, true, "SpringGreen1");
   taMisc::view_colors->FindMakeViewColor("ProgElVerbose", "State: program element is verbose",
-					 false, _nilString, true, "khaki");
+                                         false, _nilString, true, "khaki");
   taMisc::view_colors->FindMakeViewColor("ProgElError", "State: program element has Error",
-					 false, _nilString, true, "red2");
+                                         false, _nilString, true, "red2");
   taMisc::view_colors->FindMakeViewColor("ProgElWarning", "State: program element has Warning",
-					 false, _nilString, true, "orange2");
+                                         false, _nilString, true, "orange2");
   taMisc::view_colors->FindMakeViewColor("ProgElBreakpoint", "State: program element is set for a breakpoint",
-					 false, _nilString, true, "violet");
+                                         false, _nilString, true, "violet");
   taMisc::view_colors->FindMakeViewColor("Comment", "Program comment",
-					 true, "firebrick", true, "firebrick1");
+                                         true, "firebrick", true, "firebrick1");
   taMisc::view_colors->FindMakeViewColor("ProgCtrl", "Program keyword",
-					 true, "purple2", true, "MediumPurple1");
+                                         true, "purple2", true, "MediumPurple1");
   taMisc::view_colors->FindMakeViewColor("Function", "Program function",
-					 true, "blue1", true, "LightBlue2");
+                                         true, "blue1", true, "LightBlue2");
   taMisc::view_colors->FindMakeViewColor("ProgType", "Program type",
-					 true, "lime green", true, "lime green");
+                                         true, "lime green", true, "lime green");
   taMisc::view_colors->FindMakeViewColor("ProgVar", "Program variable",
-					 true, "dark goldenrod");
+                                         true, "dark goldenrod");
   taMisc::view_colors->FindMakeViewColor("ProgArg", "Program argument",
-					 true, "goldenrod");
+                                         true, "goldenrod");
   taMisc::view_colors->FindMakeViewColor("Program", "Program itself",
-					 true, "coral2", true, "coral1");
+                                         true, "coral2", true, "coral1");
   taMisc::view_colors->FindMakeViewColor("DataTable", "DataTable and associated objects",
-					 true, "forest green", true, "pale green");
+                                         true, "forest green", true, "pale green");
   taMisc::view_colors->FindMakeViewColor("Wizard", "Wizard and associated objects",
-					 true, "azure4", true, "azure1");
+                                         true, "azure4", true, "azure1");
   taMisc::view_colors->FindMakeViewColor("SelectEdit", "SelectEdit -- editor for selected variables across different objects",
-					 true, "azure4", true, "azure1");
+                                         true, "azure4", true, "azure1");
   taMisc::view_colors->FindMakeViewColor("Doc", "Documentation object",
-					 true, "azure4", true, "azure1");
+                                         true, "azure4", true, "azure1");
   return true;
 }
-  	
+
 bool taRootBase::Startup_ConsoleType() {
   // arbitrate console options
   // first, make sure requested console_type is a legal value for this platform
-  
+
   // note: is_batch could be extended to include "headless" cmd line invocation
   //   it would also include contexts such as piping or other stdin/out redirects
   bool is_batch = !cssMisc::init_interactive;
@@ -3813,10 +3822,10 @@ bool taRootBase::Startup_ConsoleType() {
       is_batch = true;
   }
   else {
-    if(taMisc::dmem_nprocs > 1)	// nogui dmem is *ALWAYS* batch for all procs
+    if(taMisc::dmem_nprocs > 1) // nogui dmem is *ALWAYS* batch for all procs
       is_batch = true;
   }
-#endif  
+#endif
 
   if (is_batch) {
     console_type = taMisc::CT_NONE;
@@ -3836,7 +3845,7 @@ bool taRootBase::Startup_ConsoleType() {
     if (!((console_type == taMisc::CT_OS_SHELL) ||
          (console_type == taMisc::CT_NONE))
     ) console_type = taMisc::CT_OS_SHELL;
-  }  
+  }
   return true; // always works
 }
 
@@ -3874,7 +3883,7 @@ bool taRootBase::Startup_MakeMainWin() {
     ConsoleDockViewer* cdv = new ConsoleDockViewer;
     vwr->docks.Add(cdv);
   }
-  vwr->SetUserData("view_win_ht", ht); 
+  vwr->SetUserData("view_win_ht", ht);
   vwr->ViewWindow();
 #ifdef TA_OS_WIN
   taMisc::ProcessEvents(); // may be needed for Windows (see taProject::DoView)
@@ -3901,7 +3910,7 @@ void taRootBase::WindowShowHook() {
   bool static done = false;
   if (!done) {
     done = true; // set now in case ProcessEvents recurses
-    // this is very hacky... select the 2nd tab, which will 
+    // this is very hacky... select the 2nd tab, which will
     // be the first auto guy if there were any
     MainWindowViewer* vwr = dynamic_cast<MainWindowViewer*>(viewers.SafeEl(0)); // always the default
     if (vwr) {
@@ -3916,7 +3925,7 @@ void taRootBase::WindowShowHook() {
 
 bool taRootBase::Startup_Console() {
 #ifdef HAVE_QT_CONSOLE
-  if(taMisc::gui_active && (console_type == taMisc::CT_GUI)) {  
+  if(taMisc::gui_active && (console_type == taMisc::CT_GUI)) {
     //note: nothing else to do here for gui_dockable
     QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
 
@@ -3933,9 +3942,9 @@ bool taRootBase::Startup_Console() {
       taMisc::console_win = cwin; // note: uses a guarded QPointer
 
       if(tabMisc::root->viewers.size >= 1) {
- 	taMisc::ProcessEvents();
- 	MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
- 	db->ViewWindow();		// make sure root guy is on top
+        taMisc::ProcessEvents();
+        MainWindowViewer* db = (MainWindowViewer*)tabMisc::root->viewers[0];
+        db->ViewWindow();               // make sure root guy is on top
       }
     }
   }
@@ -3963,7 +3972,7 @@ void taRootBase::ConsoleNewStdin(int n_lines) {
 
 
 bool taRootBase::Startup_RegisterSigHandler() {
-// #if (!defined(DMEM_COMPILE)) 
+// #if (!defined(DMEM_COMPILE))
   // let's see if this works now!
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
   milestone |= SM_REG_SIG;
@@ -4039,7 +4048,7 @@ bool taRootBase::Startup_ProcessArgs() {
 
   if(run_startup) {
     // chain the next step -- this will hopefully happen *after* any post-loading
-    // events triggered by the projects.load 
+    // events triggered by the projects.load
     QTimer::singleShot(0, root_adapter, SLOT(Startup_RunStartupScript()));
   }
   else {
@@ -4056,17 +4065,17 @@ bool taRootBase::Startup_RunStartupScript() {
   return true;
 }
 
-bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init_fun, 
-			      TypeDef* root_typ) 
+bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init_fun,
+                              TypeDef* root_typ)
 {
   ++in_init;
   root_type = root_typ;
 #ifdef GPROF
-  moncontrol(0);		// turn off at start
+  moncontrol(0);                // turn off at start
 #endif
 #ifdef SATURN_PROF
   // this actually seems bad: get a warning
-  // initSaturn("");		// store in current wd
+  // initSaturn("");            // store in current wd
 #endif
 
 #ifdef TA_OS_MAC
@@ -4077,7 +4086,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   // just create the adapter obj, whether needed or not
   root_adapter = new taRootBaseAdapter;
   cssMisc::prompt = taMisc::app_name; // the same
-  if (taMisc::app_prefs_key.empty()) 
+  if (taMisc::app_prefs_key.empty())
     taMisc::app_prefs_key = taMisc::app_name;
   if(!Startup_InitDMem(argc, argv)) goto startup_failed;
   if(!Startup_InitArgs(argc, argv)) goto startup_failed;
@@ -4099,11 +4108,11 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   // note: don't call event loop yet, because we haven't initialized main event loop
   // happens in Startup_Run()
   --in_init;
-  if(taMisc::gui_active && (taMisc::dmem_proc == 0))	// only guy and don't have all the other nodes save
+  if(taMisc::gui_active && (taMisc::dmem_proc == 0))    // only guy and don't have all the other nodes save
     instance()->Save();
 
   if(taMisc::CheckArgByName("AttachWait")) {
-#ifdef DMEM_COMPILE    
+#ifdef DMEM_COMPILE
     String awval = taMisc::FindArgByName("AttachWait");
     if(awval.nonempty()) {
       int procno = (int)awval;
@@ -4112,7 +4121,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
 #endif
     volatile int i = 0;
     printf("PID %d on %s ready for attach\n", taPlatform::processId(),
-	   taPlatform::hostName().chars());
+           taPlatform::hostName().chars());
     fflush(stdout);
     // NOTE to programmer: in gdb debugger, do: set var i = 1  then continue -- this will break out of
     // following infinite loop and allow code to continue execution
@@ -4122,14 +4131,14 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   }
 
   return true;
-  
+
 startup_failed:
   Cleanup_Main();
   return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-//	Run & Cleanup
+//      Run & Cleanup
 
 bool taRootBase::Startup_Run() {
 #ifdef DMEM_COMPILE
@@ -4150,8 +4159,8 @@ bool taRootBase::Startup_Run() {
       cerr << "ERROR: could not Initialize or Open TemtServer\n";
     }
   }
-  
-  
+
+
   // first thing to do upon entering event loop:
   QTimer::singleShot(0, root_adapter, SLOT(Startup_ProcessArgs()));
 
@@ -4174,19 +4183,19 @@ extern "C" {
   extern void rl_cleanup_after_signal(void);
 }
 
-// todo: could partition these out into separate guys..  	
+// todo: could partition these out into separate guys..
 void taRootBase::Cleanup_Main() {
   taMisc::in_shutdown++;
-  taMisc::aka_types.Reset();	// errs happen when this gets reset out of order
+  taMisc::aka_types.Reset();    // errs happen when this gets reset out of order
   // remove sig handler -- very nasty when baddies happen after this point
   if (milestone & SM_REG_SIG) {
     taMisc::Register_Cleanup(SIG_DFL); // replace back to using default
   }
-  cssMisc::Shutdown();		// shut down css..
+  cssMisc::Shutdown();          // shut down css..
   if (milestone & SM_ROOT_CREATE)
     tabMisc::DeleteRoot();
   if (milestone & SM_TYPES_INIT)
-    taMisc::types.RemoveAll();	// get rid of all the types before global dtor!
+    taMisc::types.RemoveAll();  // get rid of all the types before global dtor!
 
 #ifdef TA_USE_INVENTOR
   if(taMisc::gui_active && (milestone & SM_SOQT_INIT)) {
@@ -4234,7 +4243,7 @@ bool taRootBase::Run_GuiDMem() {
   }
   return true;
 }
-  	
+
 static cssProgSpace* dmem_space1 = NULL;
 static cssProgSpace* dmem_space2 = NULL;
 
@@ -4244,7 +4253,7 @@ void taRootBase::DMem_WaitProc(bool send_stop_to_subs) {
 
   if(DMemShare::cmdstream->bad() || DMemShare::cmdstream->eof()) {
     taMisc::Error("DMem: Error! cmstream is bad or eof.",
-		  "Software will not respond to any commands, must quit!!");
+                  "Software will not respond to any commands, must quit!!");
   }
   while(DMemShare::cmdstream->tellp() > DMemShare::cmdstream->tellg()) {
     DMemShare::cmdstream->seekg(0, ios::beg);
@@ -4261,10 +4270,10 @@ void taRootBase::DMem_WaitProc(bool send_stop_to_subs) {
     int cmdlen = cmdstr.length();
 
     DMEM_MPICALL(MPI_Bcast((void*)&cmdlen, 1, MPI_INT, 0, MPI_COMM_WORLD),
-		 "Proc 0 WaitProc", "MPI_Bcast - cmdlen");
+                 "Proc 0 WaitProc", "MPI_Bcast - cmdlen");
 
     DMEM_MPICALL(MPI_Bcast((void*)(const char*)cmdstr, cmdlen, MPI_CHAR, 0, MPI_COMM_WORLD),
-		 "Proc 0 WaitProc", "MPI_Bcast - cmd");
+                 "Proc 0 WaitProc", "MPI_Bcast - cmd");
 
     if(taMisc::dmem_debug) {
       cerr << "proc 0 running cmd: " << cmdstr << endl;
@@ -4273,7 +4282,7 @@ void taRootBase::DMem_WaitProc(bool send_stop_to_subs) {
     cssProgSpace* sp = dmem_space1; // if first space is currently running, use another
     if(sp->state & cssProg::State_Run) {
       if(taMisc::dmem_debug)
-	cerr << "proc 0 using 2nd space!" << endl;
+        cerr << "proc 0 using 2nd space!" << endl;
       sp = dmem_space2;
     }
 
@@ -4285,9 +4294,9 @@ void taRootBase::DMem_WaitProc(bool send_stop_to_subs) {
     String cmdstr = "stop";
     int cmdlen = cmdstr.length();
     DMEM_MPICALL(MPI_Bcast((void*)&cmdlen, 1, MPI_INT, 0, MPI_COMM_WORLD),
-		 "Proc 0 WaitProc, SendStop", "MPI_Bcast - cmdlen");
+                 "Proc 0 WaitProc, SendStop", "MPI_Bcast - cmdlen");
     DMEM_MPICALL(MPI_Bcast((void*)(const char*)cmdstr, cmdlen, MPI_CHAR, 0, MPI_COMM_WORLD),
-		 "Proc 0 WaitProc, SendStop", "MPI_Bcast - cmdstr");
+                 "Proc 0 WaitProc, SendStop", "MPI_Bcast - cmdstr");
   }
 }
 
@@ -4302,10 +4311,10 @@ int taRootBase::DMem_SubEventLoop() {
   while(true) {
     int cmdlen;
     DMEM_MPICALL(MPI_Bcast((void*)&cmdlen, 1, MPI_INT, 0, MPI_COMM_WORLD),
-		 "Proc n SubEventLoop", "MPI_Bcast");
+                 "Proc n SubEventLoop", "MPI_Bcast");
     char* recv_buf = new char[cmdlen+2];
     DMEM_MPICALL(MPI_Bcast(recv_buf, cmdlen, MPI_CHAR, 0, MPI_COMM_WORLD),
-		 "Proc n SubEventLoop", "MPI_Bcast");
+                 "Proc n SubEventLoop", "MPI_Bcast");
     recv_buf[cmdlen] = '\0';
     String cmd = recv_buf;
     delete[] recv_buf;
@@ -4316,32 +4325,32 @@ int taRootBase::DMem_SubEventLoop() {
        cerr << "proc " << taMisc::dmem_proc << " recv cmd: " << cmd << endl << endl;
       }
       if(cmd == "stop") {
-	if(taMisc::dmem_debug)
-	  cerr << "proc " << taMisc::dmem_proc << " got stop command, stopping out of sub event processing loop." << endl;
-	return 1;
+        if(taMisc::dmem_debug)
+          cerr << "proc " << taMisc::dmem_proc << " got stop command, stopping out of sub event processing loop." << endl;
+        return 1;
       }
       else if(!cmd.contains("Save(") && !cmd.contains("SaveAs(")) {
-	if(taMisc::dmem_debug) {
-	  cerr << "proc " << taMisc::dmem_proc << " running cmd: " << cmd << endl;
-	}
+        if(taMisc::dmem_debug) {
+          cerr << "proc " << taMisc::dmem_proc << " running cmd: " << cmd << endl;
+        }
 
-	cssProgSpace* sp = dmem_space1; // if first space is currenntly running, use another
-	if(sp->state & cssProg::State_Run) {
-	  if(taMisc::dmem_debug)
-	    cerr << "proc " << taMisc::dmem_proc << " using 2nd space!" << endl;
-	  sp = dmem_space2;
-	}
+        cssProgSpace* sp = dmem_space1; // if first space is currenntly running, use another
+        if(sp->state & cssProg::State_Run) {
+          if(taMisc::dmem_debug)
+            cerr << "proc " << taMisc::dmem_proc << " using 2nd space!" << endl;
+          sp = dmem_space2;
+        }
 
-	sp->CompileCode(cmd);
-	sp->Run();
-	sp->ClearAll();
+        sp->CompileCode(cmd);
+        sp->Run();
+        sp->ClearAll();
 
-	if(cmd.contains("Quit()")) {
-	  if(taMisc::dmem_debug)
-	    cerr << "proc " << taMisc::dmem_proc << " got quit command, quitting." << endl;
-	  taiMiscCore::Quit(); // unconditional
-	  return 1;
-	}
+        if(cmd.contains("Quit()")) {
+          if(taMisc::dmem_debug)
+            cerr << "proc " << taMisc::dmem_proc << " got quit command, quitting." << endl;
+          taiMiscCore::Quit(); // unconditional
+          return 1;
+        }
       }
     }
     else {
@@ -4356,7 +4365,7 @@ int taRootBase::DMem_SubEventLoop() {
 #endif // DMEM
 
 //////////////////////////////////////////////////////////////////////////////
-// 		Recover File Handler
+//              Recover File Handler
 
 //#ifndef TA_OS_WIN
 
@@ -4367,13 +4376,13 @@ int taRootBase::DMem_SubEventLoop() {
 // for saving a recovery file if program crashes, is killed, etc.
 void taRootBase::SaveRecoverFileHandler(int err) {
   static bool has_crashed = false;
-  signal(err, SIG_DFL);		// disable catcher
+  signal(err, SIG_DFL);         // disable catcher
 
   if(has_crashed) {
     cerr << "Unable to save recover file (multiple errors)...sorry" << endl;
     exit(err);
   }
-  has_crashed = true;		// to prevent recursive crashing..
+  has_crashed = true;           // to prevent recursive crashing..
 
 #ifdef TA_OS_WIN
   bool non_term_sig = false;
@@ -4387,7 +4396,7 @@ void taRootBase::SaveRecoverFileHandler(int err) {
 #endif
     taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
 #ifdef TA_GUI
-    taiMisc::Cleanup(err);	// cleanup stuff in tai
+    taiMisc::Cleanup(err);      // cleanup stuff in tai
 #endif
   }
 
@@ -4415,14 +4424,14 @@ void taRootBase::SaveRecoverFileHandler(int err) {
     has_crashed = false;
   } else {
     if(err == SIGTERM) {
-      exit(err);		// we need to forcibly exit on this one
+      exit(err);                // we need to forcibly exit on this one
     }
     else {
-      kill(getpid(), err);	// activate signal
+      kill(getpid(), err);      // activate signal
     }
   }
-#endif // 
- 
+#endif //
+
 }
 
 //#endif // TA_OS_WIN
@@ -4431,7 +4440,7 @@ void taRootBase::SaveRecoverFileHandler(int err) {
 
 
 void TestWizard::LaunchWizard() {
-  
+
   TypeDef* td = GetTypeDef();
   taiWizardDataHost* dlg = new taiWizardDataHost(this, td, false); // false = not read only
   dlg->Constr("Wizard");
