@@ -186,8 +186,8 @@ void LayerWriterEl::Destroy() {
   CutLinks();
 }
 
-void LayerWriterEl::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
+void LayerWriterEl::CheckThisConfig_impl(bool qt, bool& rval) {
+  inherited::CheckThisConfig_impl(qt, rval);
   if(!network) return;
   if(net_target == LAYER) {
     Layer* lay = (Layer*)network->layers.FindLeafName(layer_name);
