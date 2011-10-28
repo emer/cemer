@@ -121,6 +121,8 @@ Done!
 
 INSTRUCTIONS
 
+scp ${DMGS} dpfurlani@grey.colorado.edu:/home/dpfurlani/
+
 exit
 
 

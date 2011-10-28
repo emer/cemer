@@ -822,6 +822,9 @@ def rename_package():
     if ok_to_overwrite or askUser('\nOK to rename?'):
       os.rename(old_name, new_name)
       print 'Installer renamed.'
+      scp_exe = 'c:\\cygwin\\bin\\scp.exe'
+      if fileExists(scp_exe) and askUser('\nOK to scp to grey?'):
+        os.system(scp_exe + ' ' + new_name ' dpfurlani@grey.colorado.edu:/home/dpfurlani/')
 
 def main():
   try:

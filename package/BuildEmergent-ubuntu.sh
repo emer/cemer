@@ -164,3 +164,4 @@ Done!
 
 INSTRUCTIONS
 
+scp ${DEBS} dpfurlani@grey.colorado.edu:/home/dpfurlani/$REPONAME/
