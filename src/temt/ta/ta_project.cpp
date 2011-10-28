@@ -3264,15 +3264,19 @@ namespace { // anon
 
   // Determine if a dir is an app dir.
   bool isAppDir(const String& path, String* plugin_path = NULL) {
-    // First check if the path contains a prog_lib folder.
+    // First check if the path contains a prog_lib subdirectory.
     QDir dir(path);
     if (dir.exists("prog_lib")) {
       if (plugin_path) {
-        // If requested, check if there is a plugin folder, and set that
-        // thus leaving it valid for dev installs
+        // If requested, check if there is a plugin subdirectory; if so,
+        // set the out-parameter to it (valid for dev installs).
         String plugin_dir = taMisc::GetSysPluginDir();
         if (dir.exists(plugin_dir)) {
           *plugin_path = path + PATH_SEP + plugin_dir;
+        }
+        else {
+          // Doesn't disqualify the directory as an app dir, so just inform.
+          taMisc::DebugInfo("Did not find", plugin_dir, "subdir in", path);
         }
       }
 
@@ -3429,7 +3433,7 @@ namespace { // anon
 
   #endif // Unix/Mac
 
-    // No valid app_dir found, so clear out parameters.
+    // No valid app_dir found, so clear out-parameters.
     app_dir = _nilString;
     app_plugin_dir = _nilString;
     prefix_dir = _nilString;
@@ -3465,8 +3469,9 @@ namespace { // anon
     }
 
   #ifdef TA_OS_WIN
-    // This should exist already.
+    // This directory was created when emergent was installed.
     app_plugin_dir = taMisc::app_dir + "\\" + taMisc::GetSysPluginDir();
+    return true;
   #else // Unix/Mac
     // Only got here because no command line arg, no in-place location,
     // and no environment variable.
@@ -3489,11 +3494,11 @@ namespace { // anon
         return true;
       }
     }
-  #endif // Unix/Mac
 
     // App plugin directory not found.
     app_plugin_dir = _nilString;
     return false;
+  #endif // Unix/Mac
   }
 }
 
@@ -3504,7 +3509,6 @@ namespace { // anon
 // * taMisc::app_dir
 // * taMisc::in_dev_exe
 // * taMisc::use_plugins
-
 bool taRootBase::Startup_InitTA_AppFolders() {
   // WARNING: cannot use QCoreApplication::applicationDirPath() at this point
   // because QCoreApplication has not been instantiated yet
