@@ -141,7 +141,8 @@ class EMERGENT_API LayerWriterEl : public LayerDataEl {
 INHERITED(LayerDataEl)
 public: 
   bool		use_layer_type; // #DEF_true use layer_type information on the layer to determine flags to set (if false, turn on EXPERT showing to view flags)
-  bool		na_by_range;	// use act_range on the unitspec for the units to determine inputs that are not appplicable (n/a) and thus do not get relevant flags or values set: those that have input values outside the range are n/a
+  bool		quiet;		// turn off warning messages (e.g., about layer_type = HIDDEN)
+  bool		na_by_range;	// #EXPERT use act_range on the unitspec for the units to determine inputs that are not appplicable (n/a) and thus do not get relevant flags or values set: those that have input values outside the range are n/a
   Unit::ExtType	ext_flags;	// #EXPERT #CONDSHOW_OFF_use_layer_type:true how to flag the unit/layer's external input status
   RandomSpec	noise;		// #EXPERT noise optionally added to values when applied
 
@@ -198,43 +199,6 @@ private:
   void 	Destroy() {}
 };
 
-
-//////////////////////////////////////////////
-//		Layer Reader
-
-/*TODO
-class EMERGENT_API LayerReader: public LayerDataEl {
-  // object that reads data from a Layer to a DataSink 
-INHERITED(LayerDataEl)
-public:
-
-  
-  void  InitLinks();
-  void	CutLinks();
-  void 	Copy_(const LayerReader& cp);
-  TA_BASEFUNS(LayerReader);
-  
-private:
-  void	Initialize();
-  void 	Destroy();
-};
-
-
-class EMERGENT_API LayerReader_List: public LayerDataEl_List {
-  // ##TOKENS #INSTANCE list of LayerReader objects
-INHERITED(LayerDataEl_List)
-public:
-  TA_BASEFUNS(LayerReader_List); //
-
-protected:
-  override void		AutoConfig_impl(DataBlock* db, Network* net,
-    bool freshen, Layer::LayerType lt);
-    
-private:
-  void	Initialize() {SetBaseType(&TA_LayerReader);}
-  void 	Destroy() {}
-};
-*/
 
 /////////////////////////////////////////////////////////////////
 //	Network Monitor: record values from objects!

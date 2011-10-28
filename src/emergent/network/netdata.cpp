@@ -174,6 +174,7 @@ LayerDataEl* LayerDataEl_List::FindMakeLayerData(const String& cnm, const String
 
 void LayerWriterEl::Initialize() {
   use_layer_type = true;
+  quiet = false;
   na_by_range = false;
   ext_flags = Unit::NO_EXTERNAL;
   noise.type = Random::NONE;
@@ -191,7 +192,7 @@ void LayerWriterEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(net_target == LAYER) {
     Layer* lay = (Layer*)network->layers.FindLeafName(layer_name);
     if(!lay) return;		// already checked in parent
-    TestWarning(use_layer_type && lay->layer_type == Layer::HIDDEN, "CheckConfig",
+    TestWarning(!quiet && use_layer_type && lay->layer_type == Layer::HIDDEN, "CheckConfig",
       "layer_type is HIDDEN -- not appropriate for writing to (by default). Turn use_layer_type off and set appropriate ext_flags if this is intentional.");
   }
 }
@@ -347,61 +348,6 @@ bool LayerWriter::ApplyInputData() {
   return rval;
 }
 
-/*TODO
-//////////////////////
-//   LayerReader    //
-//////////////////////
-
-void LayerReader::Initialize() {
-}
-
-void LayerReader::Destroy() {
-  CutLinks();
-}
-
-void LayerReader::InitLinks(){
-  inherited::InitLinks();
-  //TODO:
-}
-
-void LayerReader::CutLinks() {
-  //TODO:
-  inherited::CutLinks();
-}
-
-void LayerReader::Copy_(const LayerReader& cp) {
-  //TODO: need to copy source info
-}
-
-//////////////////////////
-//  LayerReader_List	//
-//////////////////////////
-
-void LayerReader_List::AutoConfig_impl(DataBlock* db, Network* net,
-  bool freshen, Layer::LayerType lt) 
-{
-  if (!freshen) Reset();
-  Layer* lay;
-  taLeafItr itr;
-  FOR_ITR_EL(Layer, lay, net->layers., itr) {
-    //note: we only look for any lt flags, not all of them
-    if (!(lay->layer_type & lt)) continue;
-    int chan = db->GetSinkChannelIndexByName(lay->name);
-    if (chan < 0) continue;
-    // find matching existing, or make new
-    LayerReader* lrw = NULL;
-    if (freshen) 
-      lrw = (LayerReader*)FindByDataAndLayer(db, lay);
-    if (!lrw) {
-      lrw = (LayerReader*)New(1);
-      SET_POINTER(lrw->data, db);
-      SET_POINTER(lrw->layer, lay);
-    }
-    //TODO: set additional props
-    lrw->DataChanged(DCR_ITEM_UPDATED);
-  }
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////////
 //  NetMonItem
