@@ -451,6 +451,24 @@ bool BaseSpec::CheckObjectType_impl(taBase* obj) {
   return true;
 }
 
+String BaseSpec::WhereUsed() {
+  String rval;
+  taDataLink* dl = data_link();
+  if(!dl) return rval;
+  taSmartRef* sref;
+  taDataLinkItr i;
+  FOR_DLC_EL_OF_TYPE(taSmartRef, sref, dl, i) {
+    taBase* sown = sref->GetOwner();
+    if(!sown) continue;
+    if(!sown->InheritsFrom(&TA_SpecPtr_impl)) continue;
+    taBase* ownown = sown->GetOwner();
+    if(ownown)
+      rval += ownown->GetPathNames() + "\n";
+  }
+  return rval;
+}
+
+
 //////////////////////////////////
 //	BaseSubSpec		//
 //////////////////////////////////

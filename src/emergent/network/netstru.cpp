@@ -2932,6 +2932,8 @@ void Projection::CutLinks() {
 
 void Projection::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(spec, this);
+  taBase::Own(con_spec, this);
   Network* mynet = GET_MY_OWNER(Network);
   if(mynet) {
     mynet->SetProjectionDefaultTypes(this);

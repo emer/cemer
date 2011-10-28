@@ -4929,6 +4929,7 @@ void LeabraLayer::Initialize() {
 
 void LeabraLayer::InitLinks() {
   inherited::InitLinks();
+  taBase::Own(spec, this);
   taBase::Own(netin, this);
   taBase::Own(netin_top_k, this);
   taBase::Own(i_thrs, this);

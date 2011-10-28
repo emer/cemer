@@ -1012,10 +1012,11 @@ INHERITED(ProgEl)
 public:
   ProgEl_List           loop_code; // #SHOW_TREE the items to execute in the loop
 
- virtual ProgEl*        AddLoopCode(TypeDef* el_type)   { return (ProgEl*)loop_code.New(1, el_type); }
+  virtual ProgEl*        AddLoopCode(TypeDef* el_type)   { return (ProgEl*)loop_code.New(1, el_type); }
   // #BUTTON #TYPE_ProgEl add a new loop code element
 
   override ProgVar*     FindVarName(const String& var_nm) const;
+  override String       GetTypeDecoKey() const { return "ProgCtrl"; }
 
   SIMPLE_COPY(Loop);
   SIMPLE_LINKS(Loop);
