@@ -651,7 +651,7 @@ def compile_quarter():
           global yes_to_all
           yes_to_all = False
           print_horizontal()
-          if not askUser('Compilation failed.  OK to rebuild?'): quit(0)
+          if not askUser('Compilation failed.  OK to rebuild?', default=''): quit(0)
         print_horizontal()
         print 'Compilation succeeded.\n'
 
@@ -824,7 +824,9 @@ def rename_package():
       print 'Installer renamed.'
       scp_exe = 'c:\\cygwin\\bin\\scp.exe'
       if fileExists(scp_exe) and askUser('\nOK to scp to grey?'):
-        os.system(scp_exe + ' ' + new_name ' dpfurlani@grey.colorado.edu:/home/dpfurlani/')
+        cygpath_exe = 'c:\\cygwin\\bin\\cygpath.exe'
+        cygname = subprocess.check_output([cygpath_exe, new_name]).strip()
+        subprocess.call([scp_exe, cygname, 'dpfurlani@grey.colorado.edu:/home/dpfurlani/'])
 
 def main():
   try:
