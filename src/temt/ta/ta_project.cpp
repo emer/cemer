@@ -2296,10 +2296,13 @@ taProject* ProjTemplateEl::NewProject(Project_Group* new_owner) {
   if(path.contains("file:"))
     path = path.after("file:");
   taBase* pg;
-  new_owner->Load(path, &pg);
+//   String oldpath = QDir::currentPath();
+//   taMisc::Info("oldpath", oldpath);
+  new_owner->taGroup<taProject>::Load(path, &pg); // avoid setting current wd based on load
   if(pg) {
     pg->SetFileName("");        // nuke association with template file!
   }
+//   QDir::setCurrent(oldpath);
   return (taProject*)pg;
 }
 

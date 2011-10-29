@@ -3270,7 +3270,23 @@ bool cssProg::CheckWatch() {
 cssEl* cssProg::Cont() {
   top->run_stat = cssEl::Running;
 
-  if(top->step_mode == 0) {
+  if(top->step_mode == 0 && top->debug == 0 && breaks.size == 0 && top->watchpoints.size == 0) {
+    // optimized run -- just run!
+    while((PC() < size) && (top->run_stat == cssEl::Running)) {
+      if(top->external_stop && !(state & State_NoBreak)) {
+	top->run_stat = cssEl::BreakPoint;
+      }
+      else {
+	cssInst* nxt = insts[Frame()->pc++];
+	cssEl::RunStat rval = nxt->Do();
+	if(top->run_stat == cssEl::ExecError) // do could have triggered an exec error
+	  Program::SetStopReq(Program::SR_ERROR, top->exec_err_msg);
+	else
+	  top->run_stat = rval;
+      }
+    }
+  }
+  else if(top->step_mode == 0) {
     while((PC() < size) && (top->run_stat == cssEl::Running)) {
       if((breaks.size > 0) && IsBreak(PC())) {
 	top->last_bp_prog = this;
@@ -3313,6 +3329,11 @@ cssEl* cssProg::Cont() {
       lim = stc + top->step_mode;
     }
     curc = stc;
+    if(PC() == 0 && !(top->last_bp_prog == this && top->last_bp_pc == 0)) {
+      top->last_bp_prog = this;
+      top->last_bp_pc = 0;
+      top->run_stat = cssEl::BreakPoint; // for stepping, at start, always just break, once..
+    }
     while((PC() < size) && (top->run_stat == cssEl::Running)) {
       if((breaks.size > 0) && IsBreak(PC())) {
 	top->last_bp_prog = this;
@@ -3342,7 +3363,8 @@ cssEl* cssProg::Cont() {
 	else
 	  curc++;
 	if(curc >= lim) {
-	  top->run_stat = cssEl::BreakPoint; // indicate that we stoped for a reason other than stopping
+	  if(top->run_stat == cssEl::Running) // only breakpoint if otherwise running -- otherwise interferes with loop continue/break etc
+	    top->run_stat = cssEl::BreakPoint; // indicate that we stoped for a reason other than stopping
 	}
       }
     }
