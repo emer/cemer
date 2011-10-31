@@ -1076,8 +1076,10 @@ void taMisc::LogEvent(const String& log_data) {
   time_t tmp = time(NULL);
   String tstamp = ctime(&tmp);
   tstamp = tstamp.before('\n');
-  if (taMisc::log_stream.bad()) {
-    cout << tstamp << ": " << log_data << endl;
+  if(taMisc::log_stream.bad()) {
+    if(taMisc::gui_active) {
+      cout << tstamp << ": " << log_data << endl;
+    }
   }
   else {
     taMisc::log_stream << tstamp << ": " << log_data << endl;

@@ -210,15 +210,10 @@ void NetDataLoop::GenCssPre_impl(Program* prog) {
   }
 }
 
-void NetDataLoop::GenCssBody_impl(Program* prog) {
-  if(!grouped)
-    inherited::GenCssBody_impl(prog);
-  loop_code.GenCss(prog);
-}
-
 void NetDataLoop::GenCssPost_impl(Program* prog) {
   if(!grouped) {
     inherited::GenCssPost_impl(prog);
+    return;
   }
 
   if(!data_var || !group_index_var || !index_var) {
@@ -421,10 +416,6 @@ void NetGroupedDataLoop::GenCssPre_impl(Program* prog) {
   if(update_after) {
     prog->AddLine(this, "network.UpdateAfterEdit();");
   }
-}
-
-void NetGroupedDataLoop::GenCssBody_impl(Program* prog) {
-  loop_code.GenCss(prog);
 }
 
 void NetGroupedDataLoop::GenCssPost_impl(Program* prog) {

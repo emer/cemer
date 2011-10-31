@@ -77,7 +77,6 @@ protected:
   override void	GetIndexVar(); // make an index variable in program if not already set
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		GenCssPre_impl(Program* prog); 
-  override void		GenCssBody_impl(Program* prog); 
   override void		GenCssPost_impl(Program* prog); 
 
 private:
@@ -123,7 +122,6 @@ protected:
   override void	UpdateAfterEdit_impl();
   override void	CheckThisConfig_impl(bool quiet, bool& rval);
   override void		GenCssPre_impl(Program* prog); 
-  override void		GenCssBody_impl(Program* prog); 
   override void		GenCssPost_impl(Program* prog); 
 
 private:
