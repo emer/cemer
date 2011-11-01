@@ -1399,12 +1399,14 @@ bool MemberProgEl::GetTypeFromPath(bool quiet) {
       rval = true;
     }
   }
-  else {
+  if(!rval) {			// didn't get it yet, try with static
     int net_base_off = 0;
     ta_memb_ptr net_mbr_off = 0;
     md = TypeDef::FindMemberPathStatic(ot, net_base_off, net_mbr_off, path, false);
-    // gets static path based just on member types, updates ot to point to owner type of md
-    obj_type = ot;
+    // gets static path based just on member types..
+    if(md) {
+      obj_type = md->type;	// it is the type of the member, not the owner type.
+    }
     rval = (bool)md;
   }
   return rval;
