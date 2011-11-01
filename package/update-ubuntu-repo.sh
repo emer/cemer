@@ -24,9 +24,12 @@ for DIST in lucid maverick natty oneiric; do
     mkdir -p ${DIST_ROOT}/${SUBDIR}
     cd ${DIST_ROOT}
     for PACKAGE in emergent libquarter; do
-      FILE=${CWD}/${DIST}/${PACKAGE}*${ARCH}.deb
-      echo "  Moving ${FILE} to ${SUBDIR} ..."
-      mv ${FILE} ${SUBDIR}
+      FILE=${PACKAGE}*${ARCH}.deb
+      FILEPATH=${CWD}/${DIST}/${FILE}
+      echo "  Moving ${FILEPATH} to ${SUBDIR} ..."
+      mv ${FILEPATH} ${SUBDIR}
+      chmod 644 ${SUBDIR}/${FILE}
+      chown root.root ${SUBDIR}/${FILE}
     done
     echo "  Updating ${ARCH} repository ..."
     dpkg-scanpackages ${SUBDIR} /dev/null | grep -v -E 'Depends:[^a-z]$' > ${SUBDIR}/Packages

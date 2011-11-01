@@ -25,7 +25,7 @@ if [ $TAG != "trunk" ]; then TAG="tags/$TAG"; fi
 ARCH="$3"
 if [ -z $ARCH ]; then
   read -p "Build 32-bit or 64-bit installer? [64] " ARCH
-  if [ -z $TAG ]; then TAG="64"; fi
+  if [ -z $ARCH ]; then ARCH="64"; fi
 fi
 
 # Update source code and make package.
