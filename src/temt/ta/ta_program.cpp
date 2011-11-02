@@ -170,13 +170,13 @@ int ProgLine_List::FindProgEl(taBase* prog_el, bool reverse) {
   if(reverse) {
     for(int i=size-1; i>=1; i--) {
       ProgLine* pl = FastEl(i);
-      if(pl->prog_el == prog_el) return i;
+      if(pl->prog_el == prog_el && !pl->HasPLineFlag(ProgLine::COMMENT)) return i;
     }
   }
   else {
     for(int i=1; i<size; i++) {
       ProgLine* pl = FastEl(i);
-      if(pl->prog_el == prog_el) return i;
+      if(pl->prog_el == prog_el && !pl->HasPLineFlag(ProgLine::COMMENT)) return i;
     }
   }
   return -1;
@@ -5043,6 +5043,7 @@ void Program::SetAllBreakpoints() {
   ProgEl* last_pel_set = NULL;
   for(int i=1; i<script_list.size; i++) {
     ProgLine* pl = script_list.FastEl(i);
+    if(pl->HasPLineFlag(ProgLine::COMMENT)) continue; // never mark comments..
     ProgEl* pel = NULL;
     if(pl->prog_el && pl->prog_el->InheritsFrom(&TA_ProgEl))
       pel = (ProgEl*)pl->prog_el.ptr();
@@ -5084,7 +5085,7 @@ bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {
   start_ln = script_list.FindProgEl(pel, false); // NOT go in reverse
   if(TestError((start_ln < 1 || !script), "ScriptLinesEl", "Program element was not found in listing -- you may need to press Init or Compile first to generate and compile code"))
     return false;
-  // search back to find first line with this guy
+  // search forward to find last line with this guy
   end_ln = start_ln;
   taBase* lprog;
   do {
