@@ -848,6 +848,8 @@ public:
   // #CAT_Display #BUTTON set size of 3d viewer (and thus SaveImageAs image) to given size parameters
   virtual  void		SetColorScheme(ColorScheme color_scheme);
   // #CAT_Display #BUTTON Choose a preset color scheme
+  virtual  void		GridLayout(int n_horiz = 2, float horiz_space = 0.05, float vert_space = 0.05);
+  // #CAT_Display #BUTTON layout the elements within this view in a grid, starting with the first item in the lower left corner, moving horizontally and up through the items, with given number of items along the horizontal axis, and given spacing between items (can be negative to pack closer together)
 
   virtual bool		SaveImageEPS(const String& fname = "");
   // #CAT_Display save image in EPS format

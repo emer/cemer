@@ -2351,6 +2351,24 @@ void T3DataViewFrame::SetColorScheme(ColorScheme color_scheme) {
   UpdateAfterEdit();
 }
 
+void T3DataViewFrame::GridLayout(int n_horiz, float horiz_sp, float vert_sp) {
+  if(n_horiz < 1) n_horiz = 1;
+  int idx = 0;
+  for(int i = 0; i < root_view.children.size; ++i) {
+    T3DataViewMain* dv;
+    if (!(dv = dynamic_cast<T3DataViewMain*>(root_view.children[i]))) continue;
+    int cur_x = idx % n_horiz;
+    int cur_y = idx / n_horiz;
+    float xp = (float)cur_x * (1.0 + horiz_sp);
+    float yp = (float)cur_y * (1.0 + vert_sp);
+    dv->main_xform.translate.x = xp;
+    dv->main_xform.translate.y = yp;
+    idx++;
+  }
+  UpdateAfterEdit();
+}
+
+
 //////////////////////////
 //   iTabBarEx		//
 //////////////////////////
