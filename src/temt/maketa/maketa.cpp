@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -59,10 +59,10 @@ TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_long_long		("long_long", 	1, 0, 0, 0, 1, 1, "long long");
 TypeDef TA_signed_long_long("signed_long_long", 1, 0, 0, 0, 1, 1, "signed long long");
 TypeDef TA_uint64_t		("uint64_t", 	1, 0, 0, 0, 1, 1);
-TypeDef 
+TypeDef
     TA_unsigned_long_long("unsigned_long_long", 1, 0, 0, 0, 1, 1, "unsigned long long");
 // all the long types will get parented to either int (typical) or int64 types
-TypeDef TA_long			("long", 	1, 0, 0, 0, 1, 1); 
+TypeDef TA_long			("long", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_signed_long		("signed_long", 1, 0, 0, 0, 1, 1, "signed long");
 TypeDef TA_long_int		("long_int", 1, 0, 0, 0, 1, 1, "long int");
 TypeDef TA_signed_long_int	("signed_long_int", 1, 0, 0, 0, 1, 1, "signed long int");
@@ -71,7 +71,7 @@ TypeDef TA_unsigned_long_int    ("unsigned_long_int", 1, 0, 0, 0, 1, 1, "unsigne
 TypeDef TA_ulong	("ulong", 1, 0, 0, 0, 1, 1, "ulong");
 // (u)intptr_t gets parented to either (u)int or (u)int64
 TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_uintptr_t		("uintptr_t", 	1, 0, 0, 0, 1, 1); 
+TypeDef TA_uintptr_t		("uintptr_t", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_float		("float", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_double		("double", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1, 1);
@@ -93,17 +93,17 @@ TypeDef TA_PropertyDef		("PropertyDef",	1, 0, 0, 0, 1, 1);
 TypeDef TA_MethodDef		("MethodDef", 	1, 0, 0, 0, 1, 1);
 TypeDef TA_void_ptr		("void_ptr", 	1, 1, 0, 1, 1, 1, "void*");
 
-//                               s nm, s dsc, 
+//                               s nm, s dsc,
 //                               s inop, s op, s lis, u siz, i ptrs, b ref, b global
 //NOTE: the actual versions generated into the target code dynamically compute their size in the runtime
 TypeDef TA_taString		("taString", "", "", "", "", 0, 0, 0, 1);
 TypeDef TA_Variant		("Variant", "", "", "", "", 0, 0, 0, 1);
 TypeDef TA_QAtomicInt		("QAtomicInt", "", "", "", "", 0, 0, 0, 1);
 //NOTE: taBase is never actually encountered while building maketa, so its size is irrelevant...
-// it is only here (and in ta_type.h header) because it is referenced in ta_type.cpp 
+// it is only here (and in ta_type.h header) because it is referenced in ta_type.cpp
 TypeDef TA_taBase("taBase", " Base type for all type-aware classes",
-	"", "", "", 0, 0, 0, 1); 
-	  
+	"", "", "", 0, 0, 0, 1);
+
 extern int yydebug;
 extern "C" int getpid();
 MTA* mta;		// holds mta
@@ -141,11 +141,11 @@ bool files_same(const char* fname1, const char* fname2) {
   while (true) {
     g1 = in1.get(c1);
     g2 = in2.get(c2);
-    if (!g1 && !g2) break; // same size, done 
+    if (!g1 && !g2) break; // same size, done
     if (!(g1 && g2)) goto exit; // different sizes
     if (c1 != c2) goto exit;  // different content
   }
-  rval = true; 
+  rval = true;
 
 exit:
   in2.close();
@@ -314,12 +314,12 @@ void MTA::InitBuiltIn() {
   TA_int16_t.AddParents(&TA_short);
   TA_unsigned_short_int.AddParents(&TA_unsigned_short);
   TA_uint16_t.AddParents(&TA_unsigned_short);
-  TA_signed_int.AddParents(&TA_int); 
-  TA_signed.AddParents(&TA_int); 
-  TA_int32_t.AddParents(&TA_int); 
+  TA_signed_int.AddParents(&TA_int);
+  TA_signed.AddParents(&TA_int);
+  TA_int32_t.AddParents(&TA_int);
   TA_unsigned.AddParents(&TA_unsigned_int);
-  TA_uint.AddParents(&TA_unsigned_int); 
-  TA_uint32_t.AddParents(&TA_unsigned_int); 
+  TA_uint.AddParents(&TA_unsigned_int);
+  TA_uint32_t.AddParents(&TA_unsigned_int);
   TA_signed_long.AddParents(&TA_long);
   TA_long_int.AddParents(&TA_long);
   TA_signed_long_int.AddParents(&TA_long);
@@ -414,7 +414,7 @@ String MTA::FindFile(const String& fname, bool& ok) {
     }
   }
   // not found -- we return fname, but set error
-  
+
   cerr <<  "W!!: Warning: file could not be found on the include paths:: " << fname.chars() << "\n";
   ok = false;
   return fname;
@@ -448,7 +448,7 @@ void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
 
 void MTA::TypeNotAdded(const char* typ, TypeSpace* sp, TypeDef* ext_td, TypeDef* new_td) {
   if(ext_td->name != new_td->name) {
-    cerr << "E!!: Error in hash table name lookup -- names: " << ext_td->name << " and: " 
+    cerr << "E!!: Error in hash table name lookup -- names: " << ext_td->name << " and: "
 	 << new_td->name << " should be the same!" << endl;
   }
   if(verbose <= 2)	return;
@@ -540,7 +540,7 @@ void mta_cleanup(int err) {
   cerr << endl;
   String tmp_file = String("/tmp/mta_tmp.") + String(getpid());
   String rm_tmp = String("/bin/rm ") + tmp_file + " >/dev/null 2>&1";
-//  int res = 
+//  int res =
   system(rm_tmp);
   kill(getpid(), err);		// activate signal
 }
@@ -580,7 +580,7 @@ int main(int argc, char* argv[])
   String cpp = "cpp";
   String rm = "rm ";
 #elif (defined(TA_OS_WIN))
-  String cpp = "cl.exe /E /C"; //NOTE: preprocesses, preserving comments, inhibits compilation
+  String cpp = "cl.exe /nologo /E /C"; //NOTE: preprocesses, preserving comments, inhibits compilation
   String rm = String("del ");
 #else
   taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) mta_cleanup);
@@ -598,7 +598,7 @@ int main(int argc, char* argv[])
   mta->paths.Add(taPlatform::finalSep("."));
   for(i=1; i<argc; i++) {
     tmp = argv[i];
-    if( (tmp == "-help") || (tmp == "--help") 
+    if( (tmp == "-help") || (tmp == "--help")
       || (tmp == "-?") || (tmp == "--?") || (tmp == "/?")
     ) {
       mta_print_commandline_args(argv); return 1; 		// EXIT
@@ -610,7 +610,7 @@ int main(int argc, char* argv[])
       mta->gen_css = false;
     else if(tmp == "-instances")
       mta->gen_instances = true;
-    else if(tmp == "-nohx") 
+    else if(tmp == "-nohx")
       mta->make_hx = false;
     else if(tmp == "-hx")
       mta->make_hx = true;
@@ -625,9 +625,9 @@ int main(int argc, char* argv[])
       mta->class_only = true;
     else if(tmp == "-struct_union")
       mta->class_only = false;
-    else if(tmp == "-w") 
+    else if(tmp == "-w")
       wait = true;
-    else if(tmp == "-k") 
+    else if(tmp == "-k")
       keep_tmp = true;
     else if(tmp(0,2) == "-v") {
       mta->verbose = 1;
@@ -717,7 +717,7 @@ int main(int argc, char* argv[])
       }
     }
   }
-  
+
 #ifdef TA_OS_WIN
   if (mta->win_dll) { // make sure macro value is set
     if (mta->win_dll_str.empty())
@@ -761,7 +761,7 @@ int main(int argc, char* argv[])
   mta->ta_type_h = mta->basename + "_TA_type.h";
   mta->ta_inst_h = mta->basename + "_TA_inst.h";
   mta->ta_ccname = mta->basename + "_TA.cpp";
-  
+
   // create stub _type.h file if doesn't exist, so compiles don't fail
   FILE* dummy = fopen(mta->ta_type_h, "r");
   if (!dummy) {
@@ -771,7 +771,7 @@ int main(int argc, char* argv[])
 
   String comnd;
   for(i=0; i<mta->headv.size; i++) {
-    String tmp_file = taPlatform::finalSep(taPlatform::getTempPath()) + 
+    String tmp_file = taPlatform::finalSep(taPlatform::getTempPath()) +
       taPlatform::getFileName(mta->headv.FastEl(i)) + "." + String(getpid()) + String(".~mta");
     mta->fname = mta->headv.FastEl(i);
 #if (defined(TA_OS_WIN) && !defined(CYGWIN))
@@ -809,16 +809,15 @@ int main(int argc, char* argv[])
     mta->line = 1;
     mta->col = 0;
     mta->strm_pos=0;
-    cout << "Processing: " << mta->fname << "\n";
-    cout.flush();
-    // NOTE: we start by assuming target space -- 
+    cout << "Running maketa on: " << mta->fname << endl;
+    // NOTE: we start by assuming target space --
     // mta_lex will modify this as/if #[line] xxx "..." directives are encountered in preprocessed file
     mta->spc = &(mta->spc_target);
     while(mta->yy_state != MTA::YYRet_Exit) yyparse();
     mta->fh.close(); mta->fh.clear();
     mta->included.DupeUnique(mta->tmp_include); // copy over
     if (!keep_tmp) {
-//      int res = 
+//      int res =
       system(rm + tmp_file);
     }
   }
@@ -850,7 +849,7 @@ int main(int argc, char* argv[])
   if(mta->verbose > 3) {
     mta->spc_target.List();
   }
-  
+
   // if using hx mode, modify filenames now at this point for output
   if(mta->make_hx) {
     mta->ta_type_h = mta->basename + "_TA_type.hx";
@@ -909,7 +908,7 @@ int main(int argc, char* argv[])
       }
     }
   }
-  
+
   if((mta->verbose > 0) && (mta->spc_target.hash_table != NULL)) {
     cerr << "\nM!!: TypeSpace size and hash_table bucket_max values:\n"
 	 << "spc_target:\t" << mta->spc_target.size << "\t" << mta->spc_target.hash_table->bucket_max << "\n"

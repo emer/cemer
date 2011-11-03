@@ -71,6 +71,12 @@ makeDir(devtool_dir)
 def fixPath(path):
   return re.sub(r'/', r'\\', path)
 
+def quote(string):
+  return '"' + string + '"'
+
+def quoteFixPath(path):
+  return quote(fixPath(path))
+
 def fileExists(file):
   if os.path.isfile(file):
     print '  Detected ' + fixPath(file)
@@ -257,12 +263,12 @@ def create_vcvars64_bat():
     print_horizontal()
     print 'Need to create vcvars64.bat file, since it is missing (as expected).'
     print 'A Windows security dialog will appear -- click Yes on it.'
-    if askUser('\nOK to create "' + vcvars64_bat + '"?'):
+    if askUser('\nOK to create ' + quote(vcvars64_bat) + '?'):
       # Have to make a temp batch file to be run as admin to create the
       # batch file we actually care about.  "runas" is kinda like sudo.
       make_vcvars64_bat = os.path.join(devtool_dir, 'make_vcvars64.bat')
       with open(make_vcvars64_bat, 'w') as f:
-        f.write('echo call "' + fixPath(setenv_cmd) + '" /x64 > "' + vcvars64_bat + '"')
+        f.write('echo call ' + quoteFixPath(setenv_cmd) + ' /x64 > ' + quote(vcvars64_bat))
       os.startfile(make_vcvars64_bat, 'runas')
       # Without this prompt, python won't notice the file creation.
       response = raw_input('After clicking Yes on the Windows security dialog, hit enter in this window...')
@@ -434,6 +440,14 @@ def ask_32_or_64():
         if askUser('\nMake 32-bit build? (say no for 64)'): break
         else: build_64bit = True
 
+# Ask user if they want verbose compile output.
+verbose_build = False
+def ask_verbose():
+  global verbose_build
+  print_horizontal()
+  if askUser('\nVerbose compile?', default='N'):
+    verbose_build = True
+
 # Get the extension to add to directories to differentiate
 # VC++2008 vs VC++2010, 32-bit vs 64-bit, and debug vs release.
 def get_compiler_extension_args(is_64, is_dbg):
@@ -459,7 +473,7 @@ def inst_emer_src():
         quit(1)
 
       response = raw_input('\nEnter your username (blank for anonymous) [anonymous]: ')
-      cmd = '"' + svnclient + '" checkout -r ' + svn_rev
+      cmd = quote(svnclient) + ' checkout -r ' + svn_rev
       if response == '' or response == 'anonymous':
         cmd += ' --username anonymous --password emergent'
       else:
@@ -482,7 +496,7 @@ def inst_emer_src():
       if not svnclient:
         print "Can't continue because SVN client needs to be installed!  Quitting."
         quit(1)
-      cmd = '"' + svnclient + '" update -r ' + svn_rev + ' ' + emer_src
+      cmd = quote(svnclient) + ' update -r ' + svn_rev + ' ' + emer_src
       print '\nUpdating emergent source code...'
       print cmd
       os.system(cmd)
@@ -645,7 +659,7 @@ def compile_quarter():
         quarter_build_bat = os.path.join(tools_dir, 'Quarter/build/make-quarter-' + config + '-' + platform + '.bat')
         with open(quarter_build_bat, 'w') as f:
           # setenv sets the path so the right msbuild is in the path.
-          f.write('call "' + fixPath(setenv_cmd) + '" ' + arch + ' /' + config + '\n')
+          f.write('call ' + quoteFixPath(setenv_cmd) + ' ' + arch + ' /' + config + '\n')
           f.write('msbuild "/p:Configuration=DLL (' + config + ')" /p:Platform=' + platform + ' ' + quarter_sln + '\n')
         while 0 != os.system(quarter_build_bat):
           global yes_to_all
@@ -755,26 +769,33 @@ def build_emergent():
   f = open(cmake_bat, 'w')
   f.write('echo on\n')
   if build_64bit:
-    f.write('call "' + fixPath(vcvarsall_bat) + '" x64\n')
+    f.write('call ' + quoteFixPath(vcvarsall_bat) + ' x64\n')
   else:
-    f.write('call "' + fixPath(vcvarsall_bat) + '" x86\n')
+    f.write('call ' + quoteFixPath(vcvarsall_bat) + ' x86\n')
   f.write('cd /d ' + fixPath(emer_build) + '\n')
+
+  # DOS-ify the path to CMake and add a verbose flag if requested.
+  cmake_cmd = quoteFixPath(cmake_exe)
+  if verbose_build:
+    cmake_cmd = cmake_cmd + ' -DCMAKE_VERBOSE_MAKEFILE=ON'
+
+  # Output the appropriate CMake command based on selected build type.
   if build_debug:
     if msvs == 2008:
-      f.write('"' + fixPath(cmake_exe) + '" .. -G "Visual Studio 9 2008" -DCMAKE_BUILD_TYPE=Debug\n')
+      f.write(cmake_cmd + ' .. -G "Visual Studio 9 2008" -DCMAKE_BUILD_TYPE=Debug\n')
     elif msvs == 2010:
       if build_64bit:
-        f.write('"' + fixPath(cmake_exe) + '" .. -G "Visual Studio 10 Win64" -DCMAKE_BUILD_TYPE=Debug\n')
+        f.write(cmake_cmd + ' .. -G "Visual Studio 10 Win64" -DCMAKE_BUILD_TYPE=Debug\n')
       else:
-        f.write('"' + fixPath(cmake_exe) + '" .. -G "Visual Studio 10" -DCMAKE_BUILD_TYPE=Debug\n')
+        f.write(cmake_cmd + ' .. -G "Visual Studio 10" -DCMAKE_BUILD_TYPE=Debug\n')
     f.write('if ERRORLEVEL 1 exit\n')
     f.write('start Emergent.sln\n')
   elif use_jom:
-    f.write('"' + fixPath(cmake_exe) + '" .. -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release\n')
+    f.write(cmake_cmd + ' .. -G "NMake Makefiles JOM" -DCMAKE_BUILD_TYPE=Release\n')
     f.write('if ERRORLEVEL 1 exit\n')
-    f.write('"' + fixPath(jom_exe) + '" package\n')
+    f.write(quoteFixPath(jom_exe) + ' package\n')
   else:
-    f.write('"' + fixPath(cmake_exe) + '" .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release\n')
+    f.write(cmake_cmd + ' .. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release\n')
     f.write('if ERRORLEVEL 1 exit\n')
     f.write('nmake package\n')
   f.close()
@@ -839,6 +860,7 @@ def main():
     get_emer_src_path()
     ask_debug_or_release()
     ask_32_or_64()
+    ask_verbose()
     inst_emer_src()
     inst_3rd_party()
     inst_qt()
