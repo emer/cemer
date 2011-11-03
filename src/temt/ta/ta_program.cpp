@@ -2760,7 +2760,7 @@ ProgVar* ProgEl::FindVarName(const String& var_nm) const {
 ProgVars* ProgEl::FindLocalVarList() const {
   ProgEl_List* pelst = GET_MY_OWNER(ProgEl_List);
   if(!pelst) return NULL;
-  bool myidx = -1;
+  int myidx = -1;
   for(int i=pelst->size-1; i>= 0; i--) {
     ProgEl* pe = pelst->FastEl(i);
     if(myidx >= 0) {
@@ -4911,7 +4911,7 @@ ProgramCallBase* Program::FindSubProgTarget(Program* prg) {
   return NULL;
 }
 
-bool Program::AddLine(taBase* prog_el, const String& code, int pline_flags, 
+bool Program::AddLine(taBase* prog_el, const String& code, int pline_flags,
 		      const String& desc) {
   String desc_oneline = desc;
   desc_oneline.gsub('\n', ' '); // no multiline in desc comments
@@ -5068,7 +5068,7 @@ bool Program::ToggleBreakpoint(ProgEl* pel) {
   ProgLine* pl = script_list.FastEl(start_ln);
   if(pel->HasProgFlag(ProgEl::BREAKPOINT)) {
     pl->ClearBreakpoint();
-    script->DelBreak(start_ln); 
+    script->DelBreak(start_ln);
   }
   else {
     pl->SetBreakpoint();
@@ -5250,7 +5250,7 @@ const String Program::scriptString() {
 
   TestWarning(cur_indent != 0, "scriptString",
 	      "programmer error -- current indentation at end of script generation is != 0");
-   
+
   m_scriptCache.truncate(0);
   script_list.FullListing(m_scriptCache);
   ViewScriptUpdate();
