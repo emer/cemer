@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -59,20 +59,34 @@
    email: matumoto@math.keio.ac.jp
 */
 
-uint MTRnd::mt[MTRnd::N]; /* the array for the state vector  */
-int MTRnd::mti=MTRnd::N+1; /* mti==N+1 means mt[N] is not initialized */
+MTRndState::MTRndState()
+  : mti(N + 1)
+  , isGaussDoubleCached(false)
+  , cachedGaussDouble(0.0)
+{
+}
+
+void
+MTRndState::reset()
+{
+  isGaussDoubleCached = false;
+}
+
+// Initialize the static MT-RNG state instance.
+MTRndState MTRnd::state;
 
 /* initializes mt[N] with a seed */
 void MTRnd::seed(uint s) {
-  mt[0]= s & 0xffffffffUL;
-  for (mti=1; mti<N; mti++) {
-    mt[mti] =
-      (1812433253UL * (mt[mti-1] ^ (mt[mti-1] >> 30)) + mti);
+  state.reset();
+  state.mt[0] = s & 0xffffffffUL;
+  for (state.mti = 1; state.mti < N; state.mti++) {
+    state.mt[state.mti] =
+      (1812433253UL * (state.mt[state.mti-1] ^ (state.mt[state.mti-1] >> 30)) + state.mti);
     /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
     /* In the previous versions, MSBs of the seed affect   */
     /* only MSBs of the array mt[].                        */
     /* 2002/01/09 modified by Makoto Matsumoto             */
-    mt[mti] &= 0xffffffffUL;
+    state.mt[state.mti] &= 0xffffffffUL;
     /* for >32 bit machines */
   }
 }
@@ -81,7 +95,7 @@ uint MTRnd::seed_time_pid() {
 //NOTE: this is a bit simpler than the 3.2 version
   int pid = taPlatform::processId();
   int tc = taPlatform::tickCount(); // ms since system started
-  ulong sdval = (ulong)tc * (ulong)pid; 
+  ulong sdval = (ulong)tc * (ulong)pid;
   sdval = sdval & 0xffffffffUL;
   seed(sdval);		// use microseconds..
   return sdval;
@@ -96,22 +110,36 @@ void MTRnd::seed_array(uint init_key[], int key_length) {
   i=1; j=0;
   k = (N>key_length ? N : key_length);
   for (; k; k--) {
-    mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1664525UL))
+    state.mt[i] = (state.mt[i] ^ ((state.mt[i-1] ^ (state.mt[i-1] >> 30)) * 1664525UL))
       + init_key[j] + j; /* non linear */
-    mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
+    state.mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
     i++; j++;
-    if (i>=N) { mt[0] = mt[N-1]; i=1; }
+    if (i>=N) { state.mt[0] = state.mt[N-1]; i=1; }
     if (j>=key_length) j=0;
   }
   for (k=N-1; k; k--) {
-    mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >> 30)) * 1566083941UL))
+    state.mt[i] = (state.mt[i] ^ ((state.mt[i-1] ^ (state.mt[i-1] >> 30)) * 1566083941UL))
       - i; /* non linear */
-    mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
+    state.mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
     i++;
-    if (i>=N) { mt[0] = mt[N-1]; i=1; }
+    if (i>=N) { state.mt[0] = state.mt[N-1]; i=1; }
   }
 
-  mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */
+  state.mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */
+}
+
+const MTRndState &
+MTRnd::get_state()
+{
+  // Returns a reference to private data, but it's const so less risk.
+  return state;
+}
+
+void
+MTRnd::set_state(const MTRndState &newState)
+{
+  state.reset();
+  state = newState;
 }
 
 /* generates a random number on [0,0xffffffff]-interval */
@@ -120,27 +148,27 @@ uint MTRnd::genrand_int32() {
   static ulong mag01[2]={0x0UL, MATRIX_A};
   /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
-  if (mti >= N) { /* generate N words at one time */
+  if (state.mti >= N) { /* generate N words at one time */
     int kk;
 
-    if (mti == N+1)   /* if init_genrand() has not been called, */
+    if (state.mti == N+1)   /* if init_genrand() has not been called, */
       seed_time_pid();  // (5489UL); a default initial seed is used
 
     for (kk=0;kk<N-M;kk++) {
-      y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-      mt[kk] = mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
+      y = (state.mt[kk]&UPPER_MASK)|(state.mt[kk+1]&LOWER_MASK);
+      state.mt[kk] = state.mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
     }
     for (;kk<N-1;kk++) {
-      y = (mt[kk]&UPPER_MASK)|(mt[kk+1]&LOWER_MASK);
-      mt[kk] = mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
+      y = (state.mt[kk]&UPPER_MASK)|(state.mt[kk+1]&LOWER_MASK);
+      state.mt[kk] = state.mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
     }
-    y = (mt[N-1]&UPPER_MASK)|(mt[0]&LOWER_MASK);
-    mt[N-1] = mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
+    y = (state.mt[N-1]&UPPER_MASK)|(state.mt[0]&LOWER_MASK);
+    state.mt[N-1] = state.mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
 
-    mti = 0;
+    state.mti = 0;
   }
 
-  y = mt[mti++];
+  y = state.mt[state.mti++];
 
   /* Tempering */
   y ^= (y >> 11);
@@ -180,3 +208,26 @@ double MTRnd::genrand_res53() {
   return(a*67108864.0+b)*(1.0/9007199254740992.0);
 }
 /* These real versions are due to Isaku Wada, 2002/01/09 added */
+
+double
+MTRnd::genrand_gauss_dev_double()
+{
+  if (state.isGaussDoubleCached) {
+    state.isGaussDoubleCached = false;
+    return state.cachedGaussDouble;
+  }
+
+  double fac, r, v1, v2;
+  do
+  {
+    v1 = 2.0 * MTRnd::genrand_res53() - 1.0;
+    v2 = 2.0 * MTRnd::genrand_res53() - 1.0;
+    r = v1 * v1 + v2 * v2;
+  }
+  while (r >= 1.0 || r == 0);
+
+  fac = sqrt(-2.0 * log(r) / r);
+  state.cachedGaussDouble = v1 * fac;
+  state.isGaussDoubleCached = true;
+  return v2 * fac;
+}
