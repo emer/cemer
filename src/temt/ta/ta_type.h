@@ -2608,7 +2608,9 @@ public:
   // #CAT_ObjectMgmt set data column flag state on
   inline void           ClearDiffFlag(DiffFlags flg) { flags = (DiffFlags)(flags & ~flg); }
   // #CAT_ObjectMgmt clear data column flag state (set off)
-  inline bool           HasDiffFlag(DiffFlags flg) const { return (flags & flg); }
+  inline bool           HasDiffFlag(DiffFlags flg) const {
+    return 0 != (flags & flg);
+  }
   // #CAT_ObjectMgmt check if data column flag is set
   inline void           SetDiffFlagState(DiffFlags flg, bool on)
   { if(on) SetDiffFlag(flg); else ClearDiffFlag(flg); }

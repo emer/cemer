@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -36,7 +36,7 @@ using namespace std;
 
 /* prototype case
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
   case T_Bool:
   case T_Int:
   case T_UInt:
@@ -44,9 +44,9 @@ using namespace std;
   case T_UInt64:
   case T_Double:
   case T_Char:
-  case T_String: 
-  case T_Ptr: 
-  case T_Base: 
+  case T_String:
+  case T_Ptr:
+  case T_Base:
   case T_Matrix:
   case T_TypeItem:
   default: return ;
@@ -61,10 +61,10 @@ ostream& operator<<(ostream& s, const Variant& x) {
 istream& operator>>(istream& s, Variant& x) {
   x.load(s);
   return s;
-} 
+}
 
 const String Variant::formatNumber_impl(const Variant& val,
-     short prec, bool hex) const 
+     short prec, bool hex) const
 {
   switch (m_type) {
   case T_Invalid: return _nilString;
@@ -79,9 +79,9 @@ const String Variant::formatNumber_impl(const Variant& val,
     return String(d.d, p); // hex ignored
   }
 //case T_Char:
-//case T_String: 
-//case T_Ptr: 
-//case T_Base: 
+//case T_String:
+//case T_Ptr:
+//case T_Base:
 //case T_Matrix:
   default: return toString();
   }
@@ -93,11 +93,11 @@ Variant::Variant(VarType type) {
   m_is_null = false; // except ptr types
   switch (type) {
   case T_String: new(&d.str)String(); break;
-  case T_Ptr: 
-  case T_Base: 
+  case T_Ptr:
+  case T_Base:
   case T_Matrix:
   case T_TypeItem:
-    m_is_null = true; 
+    m_is_null = true;
     break;
   default: break;
   }
@@ -105,7 +105,7 @@ Variant::Variant(VarType type) {
 }
 
 Variant::Variant(const Variant &cp) {
-  init(cp.m_type, cp.m_is_numeric, cp.m_is_numeric_valid, cp.m_is_null);
+  init(cp.m_type, 0 != cp.m_is_numeric, 0 != cp.m_is_numeric_valid, 0 != cp.m_is_null);
   switch (cp.m_type) {
   case T_String: new(&d.str)String(cp.getString()); break;
 #ifndef NO_TA_BASE
@@ -117,7 +117,7 @@ Variant::Variant(const Variant &cp) {
 }
 
 #ifndef NO_TA_BASE
-Variant::Variant(taBase* val) 
+Variant::Variant(taBase* val)
 {
   init(T_Base);
   if (val == NULL) {
@@ -130,7 +130,7 @@ Variant::Variant(taBase* val)
   }
 }
 
-Variant::Variant(taMatrix* val) 
+Variant::Variant(taMatrix* val)
 {
   init(T_Matrix);
   if (val == NULL) {
@@ -144,7 +144,7 @@ Variant::Variant(taMatrix* val)
 }
 #endif
 
-Variant::~Variant() { 
+Variant::~Variant() {
   releaseType();
   m_type = T_Invalid; m_is_null = true; // helps avoid hard-to-find zombie problems
 }
@@ -176,11 +176,11 @@ int Variant::cmpBool(bool val) const {
   if (isNull()) return false;
   switch (m_type) {
   case T_Bool: return cmp(d.b, val);
-  case T_Int: 
-  case T_UInt: 
-  case T_Int64: 
+  case T_Int:
+  case T_UInt:
+  case T_Int64:
   case T_UInt64:
-  case T_Char: 
+  case T_Char:
      return cmp(toBool(), val);
   default: return -2;
   }
@@ -303,7 +303,7 @@ bool Variant::Dump_Load_Type(istream& strm, int& c) {
 
 void Variant::Dump_Save_Type(ostream& strm) const {
   strm << " " << (int)type() << " " << ((isNull()) ? '1' : '0');
-} 
+}
 
 bool Variant::eqVariant(const Variant& b) const {
   // invalid never equates
@@ -339,10 +339,10 @@ bool Variant::eqInt(int val) const {
   switch (m_type) {
   case T_Bool: return ((int)d.b == val);
   case T_Int: return (d.i == val);
-  case T_UInt: 
+  case T_UInt:
     return ((val > 0) && (d.u <= (unsigned)INT_MAX) && (d.u == (unsigned)val));
   case T_Int64:  return (d.i64 == val);
-  case T_UInt64: 
+  case T_UInt64:
     return ((val > 0) && (d.u64 <= (unsigned)INT_MAX) && (d.u64 == (unsigned)val));
   case T_Double:
     return qFuzzyCompare(d.d, (double)val);
@@ -374,10 +374,10 @@ bool  Variant::eqInt64(ta_int64_t val) const {
   switch (m_type) {
   case T_Bool: return ((ta_int64_t)d.b == val);
   case T_Int: return (d.i == val);
-  case T_UInt: 
+  case T_UInt:
     return ((val > 0) && (d.u == val));
   case T_Int64:  return (d.i64 == val);
-  case T_UInt64: 
+  case T_UInt64:
     return ((val > 0) && (d.u64 < (unsigned)LLONG_MAX) && (d.u64 == (unsigned)val));
   case T_Double: // note: the conversion could overflow...
     return qFuzzyCompare(d.d, (double)val);
@@ -408,10 +408,10 @@ bool  Variant::eqDouble(double val) const {
   if (isNull()) return false;
   switch (m_type) {
   case T_Bool: return false; // note: never really makes sense
-  case T_Int: 
-  case T_UInt:  
-  case T_Int64:  
-  case T_UInt64: 
+  case T_Int:
+  case T_UInt:
+  case T_Int64:
+  case T_UInt64:
     return (toDouble() == val);
   case T_Double:
     return qFuzzyCompare(d.d, val);
@@ -426,14 +426,14 @@ bool  Variant::eqChar(char val) const {
   // note: unsigned conversions below a bit sleazy, but usually what we want
   if (isNull()) return false;
   switch (m_type)  {
-  case T_Bool: return (d.b == (bool)(val));
+  case T_Bool: return (d.b == (0 != (val)));
   case T_Int: return (d.i == val);
   case T_UInt:  return (d.u == (unsigned char)val);
   case T_Int64:  return (d.i64 == val);
   case T_UInt64: return (d.u64 == (unsigned char)val);
   case T_Double:
     return qFuzzyCompare(d.d, (double)val);
-  case T_Char: return (d.c == val); 
+  case T_Char: return (d.c == val);
   case T_String: {
     const String& str = getString();
     return ((str.length() == 1) && (str[0] == val));
@@ -471,7 +471,7 @@ void Variant::ForceType(VarType vt, bool null) {
 }
 
 void Variant::GetRepInfo(TypeDef*& typ, void*& data) const {
-  data = const_cast<Data*>(&d); 
+  data = const_cast<Data*>(&d);
   switch (m_type) {
   case T_Invalid: typ = &TA_void; break;
   case T_Bool: typ = &TA_bool; break;
@@ -483,9 +483,9 @@ void Variant::GetRepInfo(TypeDef*& typ, void*& data) const {
   case T_Char: typ = &TA_char; break;
   case T_String:  typ = &TA_taString; break;
   //note: in pdp, a member variable of type "void*" return md->type = "void_ptr"
-  case T_Ptr: typ = &TA_void_ptr; break; 
+  case T_Ptr: typ = &TA_void_ptr; break;
 #ifndef NO_TA_BASE
-  case T_Base:  
+  case T_Base:
   case T_Matrix: {
     // if null, get the base type, else the actual type
     TypeDef* temp_typ;
@@ -513,7 +513,7 @@ void Variant::GetRepInfo(TypeDef*& typ, void*& data) const {
 
 bool Variant::isDefault() const {
   switch (m_type) {
-  case T_Invalid: return true; 
+  case T_Invalid: return true;
   case T_Bool: return (!d.b);
   case T_Int: return (d.i == 0);
   case T_UInt: return (d.u == 0U);
@@ -521,10 +521,10 @@ bool Variant::isDefault() const {
   case T_UInt64: return (d.u64 == 0ULL);
   case T_Double: return (d.d == 0.0);
   case T_Char: return (d.c == '\0');
-  case T_String: return (getString().empty()); 
-  case T_Ptr: 
-  case T_Base:  
-  case T_Matrix: 
+  case T_String: return (getString().empty());
+  case T_Ptr:
+  case T_Base:
+  case T_Matrix:
   case T_TypeItem:
      return (d.ptr == 0) ;
 //  default: return ;
@@ -533,12 +533,12 @@ bool Variant::isDefault() const {
 }
 
 bool Variant::isNull() const {
-  //note: we try to keep m_is_null valid, but way safer to 
+  //note: we try to keep m_is_null valid, but way safer to
   // base this on the actual value, particularly to avoid
   // obscure issues when streaming in values, in case FixNull not called
-  if (isPtrType()) 
+  if (isPtrType())
     return (d.ptr == NULL);
-  return m_is_null;
+  return 0 != m_is_null;
 }
 
 bool Variant::isNumeric() const {
@@ -558,12 +558,12 @@ bool Variant::isNumeric() const {
       warn("isNumeric() routine without Qt");
 #endif
     }
-    return m_is_numeric;
+    return 0 != m_is_numeric;
   } else return false;
 }
 
 bool Variant::isNumericStrict() const {
-  return (((m_type >= T_Int) && (m_type <= T_Double)) 
+  return (((m_type >= T_Int) && (m_type <= T_Double))
     || (m_type == T_Char));
 }
 
@@ -1416,7 +1416,7 @@ Variant Variant::operator--(int) {
 Variant& Variant::operator-() {
   switch (m_type) {
   case T_Invalid: break;
-  case T_Bool: d.b = -(int)d.b; break; // makes no sense, but compiler allows
+  case T_Bool: d.b = !d.b; break; // makes more sense than -d.b
   case T_Int: d.i = -d.i; break;
   case T_UInt: d.u = (uint)-((int)d.u); break; // forces unsigned
   case T_Int64: d.i64 = -d.i64; break;
@@ -1431,9 +1431,9 @@ Variant& Variant::operator-() {
 Variant& Variant::operator~() {
   switch (m_type) {
   case T_Invalid: break;
-  case T_Bool: d.b = ~(int)d.b; break; // makes no sense, but compiler allows
+  case T_Bool: d.b = !d.b; break; // makes more sense than ~d.b
   case T_Int: d.i = ~d.i; break;
-  case T_UInt: d.u = ~d.u; break; 
+  case T_UInt: d.u = ~d.u; break;
   case T_Int64: d.i64 = ~d.i64; break;
   case T_UInt64: d.u64 = ~d.u64; break;
   case T_Char: d.c = -d.c; break;
@@ -1457,10 +1457,10 @@ void Variant::releaseType() {
 
 void Variant::save(ostream& s) const {
   s << (int)type();
-  
+
   switch (m_type) {
   case T_Invalid:
-    break; 
+    break;
   case T_Bool:
     s << d.b;
     break;
@@ -1483,13 +1483,13 @@ void Variant::save(ostream& s) const {
     s << d.c;
     break;
   case T_String:
-    s << getString(); 
+    s << getString();
     break;
-  case T_Ptr: 
+  case T_Ptr:
     s << toString(); //NOTE: cannot be streamed back in!!!
     break;
 #ifndef NO_TA_BASE
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     if (d.tab == NULL) {
      s << "TA_void"; // indicates NULL
@@ -1520,7 +1520,7 @@ void Variant::setVariant(const Variant &cp) {
   case T_Base: setBase(cp.d.tab); break;
   case T_Matrix: setMatrix(cp.getMatrix()); break;
 #endif
-  default: 
+  default:
     releaseType();
     d = cp.d; // just copy bits, valid for all other types
     m_type = cp.m_type;
@@ -1533,7 +1533,7 @@ void Variant::setVariant(const Variant &cp) {
 void Variant::setVariantData(const Variant& cp) {
   switch (m_type) {
   case T_Invalid:
-    break; 
+    break;
   case T_Bool:
     setBool(cp.toBool());
     break;
@@ -1558,18 +1558,18 @@ void Variant::setVariantData(const Variant& cp) {
   case T_String:
     setString(cp.toString());
     break;
-  case T_Ptr: 
+  case T_Ptr:
     setPtr(cp.toPtr());
     break;
 #ifndef NO_TA_BASE
-  case T_Base: 
+  case T_Base:
     setBase(cp.toBase());
     break;
   case T_Matrix:
     setMatrix(cp.toMatrix());
     break;
 #endif
-  case T_TypeItem: 
+  case T_TypeItem:
     setTypeItem(cp.toTypeItem());
     break;
   default: break ;
@@ -1701,7 +1701,7 @@ void Variant::setType(VarType value) {
   case T_String:  setString(""); break;
   case T_Ptr:  setPtr(NULL); break;
 #ifndef NO_TA_BASE
-  case T_Base:  
+  case T_Base:
   case T_Matrix: setBase(NULL); break;
 #endif
   case T_TypeItem:  setTypeItem(NULL); break;
@@ -1719,7 +1719,7 @@ String Variant::getTypeAsString() const {
 
 bool Variant::toBool() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     return false;
   case T_Bool:
     return d.b;
@@ -1744,10 +1744,10 @@ bool Variant::toBool() const {
     }
     } break;
   case T_Ptr:
-  case T_TypeItem: 
+  case T_TypeItem:
     return (d.ptr != NULL);
 #ifndef NO_TA_BASE
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     return (d.tab != NULL);
 #endif
@@ -1763,33 +1763,33 @@ const String Variant::toCssLiteral() const {
   case T_Bool: rval = toString(); break;
   case T_Int: rval = toString(); break;
   case T_UInt:
-    rval = toString(); 
+    rval = toString();
     rval += "U";
     break;
   case T_Int64:
-    rval = toString(); 
+    rval = toString();
     rval += "LL";
     break;
   case T_UInt64:
-    rval = toString(); 
+    rval = toString();
     rval += "ULL";
     break;
   case T_Double: rval = toString(); break;
   case T_Char:
     rval = String::CharToCppLiteral(d.c);
     break;
-  case T_String: 
+  case T_String:
     rval = String::StringToCppLiteral(getString());
     break;
-  case T_Ptr: 
+  case T_Ptr:
     if (isNull()) {
       rval += "NULL";
     } else {
       warn("toCssLiteral() on a non-null raw pointer");
       // todo, maybe should emit code breaking literal
-    }  break; 
+    }  break;
 #ifndef NO_TA_BASE
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     if (isNull()) {
       rval += "NULL";
@@ -1797,13 +1797,13 @@ const String Variant::toCssLiteral() const {
       rval += d.tab->GetPathNames();
     }
 #endif
-  case T_TypeItem: 
+  case T_TypeItem:
     if (isNull()) {
       rval += "NULL";
     } else {
       rval += "&";
       rval += toString();
-    }  break; 
+    }  break;
   default: break ;
   }
   return rval;
@@ -1811,7 +1811,7 @@ const String Variant::toCssLiteral() const {
 
 int Variant::toInt() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     break ;
   case T_Bool:
     return (d.b) ? 1 : 0;
@@ -1827,11 +1827,11 @@ int Variant::toInt() const {
     return (int)d.d;
   case T_Char:
     return d.c;
-  case T_String: 
+  case T_String:
     return getString().toInt();
   case T_Ptr: // note: not a word-size-safe conversion
     break;
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     break ;
   default: break ;
@@ -1841,7 +1841,7 @@ int Variant::toInt() const {
 
 uint Variant::toUInt() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     break ;
   case T_Bool:
     return (d.b) ? 1 : 0;
@@ -1857,11 +1857,11 @@ uint Variant::toUInt() const {
     return (uint)d.d;
   case T_Char:
     return d.c;
-  case T_String: 
+  case T_String:
     return getString().toUInt();
   case T_Ptr: // note: not a word-size-safe conversion
     break;
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     break ;
   default: break ;
@@ -1871,7 +1871,7 @@ uint Variant::toUInt() const {
 
 ta_int64_t Variant::toInt64() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     break ;
   case T_Bool:
     return (d.b) ? 1 : 0;
@@ -1887,12 +1887,12 @@ ta_int64_t Variant::toInt64() const {
     return (ta_int64_t)d.d;
   case T_Char:
     return d.c;
-  case T_String: 
+  case T_String:
     return getString().toInt64();
   case T_Ptr:
-  case T_TypeItem: 
+  case T_TypeItem:
     return (ta_int64_t)d.ptr;
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     break ;
   default: break ;
@@ -1902,7 +1902,7 @@ ta_int64_t Variant::toInt64() const {
 
 ta_uint64_t Variant::toUInt64() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     break ;
   case T_Bool:
     return (d.b) ? 1 : 0;
@@ -1918,22 +1918,22 @@ ta_uint64_t Variant::toUInt64() const {
     return (ta_uint64_t)d.d;
   case T_Char:
     return d.c;
-  case T_String: 
+  case T_String:
     return getString().toUInt64();
-  case T_Ptr: 
+  case T_Ptr:
   case T_TypeItem:
     return (ta_uint64_t)d.ptr;
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     break ;
   default: break ;
   }
   return 0;
-} 
+}
 
 double Variant::toDouble() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     break ;
   case T_Bool:
     return (d.b) ? 1.0 : 0.0;
@@ -1951,9 +1951,9 @@ double Variant::toDouble() const {
     return (double)d.c;
   case T_String: //note: may fail, if so, 0.0
     return getString().toDouble();
-  case T_Ptr: 
+  case T_Ptr:
     return (double)(intptr_t)d.ptr;
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     break ;
   default: break ;
@@ -1964,7 +1964,7 @@ double Variant::toDouble() const {
 char Variant::toChar() const {
   //note: we sort of follow Qt here
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     break;
   case T_Bool:
     if (d.b) return '1'; else return '0';
@@ -1982,12 +1982,12 @@ char Variant::toChar() const {
     return d.c;
   case T_String: {
     const String& str = getString();
-    if (str.length() >= 1) 
+    if (str.length() >= 1)
       return str.elem(0);
     } break;
-  case T_Ptr: 
+  case T_Ptr:
     break ;
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     break ;
   default: break ;
@@ -1997,7 +1997,7 @@ char Variant::toChar() const {
 
 void* Variant::toPtr() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     return NULL;
   case T_Bool:
     return NULL;
@@ -2013,78 +2013,78 @@ void* Variant::toPtr() const {
     return NULL;
   case T_Char:
     return NULL;
-  case T_String: 
+  case T_String:
     return NULL;
-  case T_Ptr: 
+  case T_Ptr:
     return d.ptr;
 #ifndef NO_TA_BASE
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     return d.tab;
 #endif
-  case T_TypeItem: 
+  case T_TypeItem:
     return d.ti;
   default: break ;
   }
   return NULL;
 }
- 
+
 TypeItem* Variant::toTypeItem() const {
   if (m_type == T_TypeItem) {
     return d.ti;
   }
   return NULL;
 }
- 
+
 EnumDef* Variant::toEnumDef() const {
   if (m_type == T_TypeItem) {
     return dynamic_cast<EnumDef*>(d.ti);
   }
   return NULL;
 }
- 
+
 TypeDef* Variant::toTypeDef() const {
   if (m_type == T_TypeItem) {
     return dynamic_cast<TypeDef*>(d.ti);
   }
   return NULL;
 }
- 
+
 MemberDefBase* Variant::toMemberDefBase() const {
   if (m_type == T_TypeItem) {
     return dynamic_cast<MemberDefBase*>(d.ti);
   }
   return NULL;
 }
- 
+
 MemberDef* Variant::toMemberDef() const {
   if (m_type == T_TypeItem) {
     return dynamic_cast<MemberDef*>(d.ti);
   }
   return NULL;
 }
- 
+
 PropertyDef* Variant::toPropertyDef() const {
   if (m_type == T_TypeItem) {
     return dynamic_cast<PropertyDef*>(d.ti);
   }
   return NULL;
 }
- 
+
 MethodDef* Variant::toMethodDef() const {
   if (m_type == T_TypeItem) {
     return dynamic_cast<MethodDef*>(d.ti);
   }
   return NULL;
 }
- 
- 
+
+
 String Variant::toString() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     return _nilString;
   case T_Bool:
-    if (d.b) return String("true"); 
+    if (d.b) return String("true");
     else     return String("false");
   case T_Int:
     return String(d.i);
@@ -2098,12 +2098,12 @@ String Variant::toString() const {
     return String(d.d);
   case T_Char:
     return String(d.c);
-  case T_String: 
+  case T_String:
     return getString();
-  case T_Ptr: 
+  case T_Ptr:
     return String(d.ptr); // renders as hex
 #ifndef NO_TA_BASE
-  case T_Base: 
+  case T_Base:
   case T_Matrix:
     return taBase::GetStringRep(d.tab);
 #endif
@@ -2122,7 +2122,7 @@ void Variant::UpdateAfterLoad() {
   switch (m_type) {
   case T_Ptr: m_is_null = (d.ptr == NULL); break;
 #ifndef NO_TA_BASE
-  case T_Base: 
+  case T_Base:
   case T_Matrix: m_is_null = (d.tab == NULL); break;
 #endif
   default: break ;
@@ -2131,7 +2131,7 @@ void Variant::UpdateAfterLoad() {
 
 void Variant::updateFromString(const String& val) {
   switch (m_type) {
-  case T_Invalid: break; // ignored 
+  case T_Invalid: break; // ignored
   case T_Bool: d.b = val.toBool(); break;
   case T_Int: d.i = val.toInt(); break;
   case T_UInt: d.u = val.toUInt(); break;
@@ -2143,10 +2143,10 @@ void Variant::updateFromString(const String& val) {
   case T_Ptr:
     if ((val == "NULL") || (val == "(NULL)")) d.ptr = NULL;
     else warn("updateFromString() setting ptr to other than NULL");
-    break; 
+    break;
 #ifndef NO_TA_BASE
  // TODO: should look up from path
-  case T_Base: 
+  case T_Base:
   case T_Matrix: {
     warn("updateFromString() setting T_Base");
   }
@@ -2168,7 +2168,7 @@ void Variant::warn(const char* msg) const {
 #ifndef NO_TA_BASE
 taBase* Variant::toBase() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     return NULL;
   case T_Bool:
     return NULL;
@@ -2184,10 +2184,10 @@ taBase* Variant::toBase() const {
     return NULL;
   case T_Char:
     return NULL;
-  case T_String: 
+  case T_String:
     return NULL;
   case T_Ptr:
-  case T_TypeItem: 
+  case T_TypeItem:
     return NULL;
 #ifndef NO_TA_BASE
   case T_Base:
@@ -2197,11 +2197,11 @@ taBase* Variant::toBase() const {
   default: break ;
   }
   return NULL;
-} 
+}
 
 taMatrix* Variant::toMatrix() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     return NULL;
   case T_Bool:
     return NULL;
@@ -2217,10 +2217,10 @@ taMatrix* Variant::toMatrix() const {
     return NULL;
   case T_Char:
     return NULL;
-  case T_String: 
+  case T_String:
     return NULL;
   case T_Ptr:
-  case T_TypeItem: 
+  case T_TypeItem:
     return NULL;
   case T_Base:
     if ((d.tab != NULL) && (d.tab->GetTypeDef()->InheritsFrom(TA_taMatrix)))
@@ -2231,8 +2231,8 @@ taMatrix* Variant::toMatrix() const {
   default: break ;
   }
   return NULL;
-} 
-#endif 
+}
+#endif
 
 #ifdef TA_USE_QT
 Variant::Variant(const QVariant &val) {
@@ -2248,10 +2248,10 @@ Variant::Variant(const QString& val) {
 
 void Variant::setQVariant(const QVariant& cp) {
   switch (cp.userType()) {
-  case QVariant::Invalid: 
+  case QVariant::Invalid:
     setInvalid(); break;
   case QVariant::Bool:
-    setBool(cp.toBool(), cp.isNull()); break; 
+    setBool(cp.toBool(), cp.isNull()); break;
   case QVariant::Int:
     setInt(cp.toInt(), cp.isNull()); break;
   case QVariant::UInt:
@@ -2264,12 +2264,12 @@ void Variant::setQVariant(const QVariant& cp) {
     setDouble(cp.toDouble(), cp.isNull()); break;
   case QVariant::Char:
     setChar(cp.toChar().toLatin1(), cp.isNull()); break;
-  case QVariant::String: 
+  case QVariant::String:
     setString(cp.toString(), cp.isNull()); break;
   default:
-#ifdef DEBUG			// expensive
+#ifdef DEBUG                    // expensive
   taMisc::DebugInfo("Attempt to set Variant from QVariant failed, can't handle QVariant::Type: ",
-		    String(cp.userType()) );
+                    String(cp.userType()) );
 #endif
     setInvalid(); break;
   }
@@ -2278,10 +2278,10 @@ void Variant::setQVariant(const QVariant& cp) {
 
 QVariant Variant::toQVariant() const {
   switch (m_type) {
-  case T_Invalid: 
+  case T_Invalid:
     return QVariant();
   case T_Bool:
-    return QVariant(d.b); 
+    return QVariant(d.b);
   case T_Int:
     return QVariant(d.i);
   case T_UInt:
@@ -2294,32 +2294,32 @@ QVariant Variant::toQVariant() const {
     return QVariant(d.d);
   case T_Char:
     return QVariant(d.c);
-  case T_String: 
+  case T_String:
     return QVariant(getString().chars());
 /* others are invalid
-  case T_Ptr: 
+  case T_Ptr:
     return QVariant(d.ptr); // renders as hex
 #ifndef NO_TA_BASE
-//TODO:  maybe stream the data, or copy the path 
-  case T_Base: 
+//TODO:  maybe stream the data, or copy the path
+  case T_Base:
   case T_Matrix:
     return taBase::GetStringRep(d.tab);
-    
+
 #endif
 */
-  default: 
+  default:
 #ifdef DEBUG
   taMisc::DebugInfo("Attempt to set QVariant from Variant failed, can't handle Variant::Type: ",
-		    String(m_type) );
+                    String(m_type) );
 #endif
     break ;
   }
   return QVariant();
 }
-#endif 
+#endif
 
 //////////////////////////////////
-//  NameVar			//
+//  NameVar                     //
 //////////////////////////////////
 
 bool NameVar::Parse(const String& raw, String& name, String& val) {
@@ -2334,7 +2334,7 @@ void NameVar::SetFmStr(const String& val) {
   String valt;
   if (Parse(val, name, valt)) {
     if(value.type() == Variant::T_Invalid) {
-      value = valt;		// sets as string
+      value = valt;             // sets as string
     }
     else {
       value.updateFromString(valt);

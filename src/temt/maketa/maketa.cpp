@@ -33,80 +33,80 @@
 // sz=1: generate sizeof info, ex. "sizeof(int)"
 
 //                               s nm, b intrnl, i ptrs, b ref, b forml, b global, u sz, s c_nm
-TypeDef TA_void			("void", 	1, 0, 0, 0, 1);
-TypeDef TA_char			("char", 	1, 0, 0, 0, 1, 1, "char");
-TypeDef TA_signed_char		("signed_char", 1, 0, 0, 0, 1, 1, "signed char");
-TypeDef TA_int8_t		("int8_t",      1, 0, 0, 0, 1, 1);//note, derives char on MSVC
+TypeDef TA_void                 ("void",        1, 0, 0, 0, 1);
+TypeDef TA_char                 ("char",        1, 0, 0, 0, 1, 1, "char");
+TypeDef TA_signed_char          ("signed_char", 1, 0, 0, 0, 1, 1, "signed char");
+TypeDef TA_int8_t               ("int8_t",      1, 0, 0, 0, 1, 1);//note, derives char on MSVC
 TypeDef TA_unsigned_char      ("unsigned_char", 1, 0, 0, 0, 1, 1, "unsigned char");
-TypeDef TA_uint8_t		("uint8_t",     1, 0, 0, 0, 1, 1);//note, derives char on MSVC
-TypeDef TA_short		("short", 	1, 0, 0, 0, 1, 1, "short");
-TypeDef TA_signed_short	       ("signed_short", 1, 0, 0, 0, 1, 1, "signed short");
-TypeDef TA_short_int	       ("short_int"   , 1, 0, 0, 0, 1, 1, "short int");
+TypeDef TA_uint8_t              ("uint8_t",     1, 0, 0, 0, 1, 1);//note, derives char on MSVC
+TypeDef TA_short                ("short",       1, 0, 0, 0, 1, 1, "short");
+TypeDef TA_signed_short        ("signed_short", 1, 0, 0, 0, 1, 1, "signed short");
+TypeDef TA_short_int           ("short_int"   , 1, 0, 0, 0, 1, 1, "short int");
 TypeDef TA_signed_short_int("signed_short_int", 1, 0, 0, 0, 1, 1, "signed short int");
-TypeDef TA_int16_t		("int16_t",     1, 0, 0, 0, 1, 1);
+TypeDef TA_int16_t              ("int16_t",     1, 0, 0, 0, 1, 1);
 TypeDef TA_unsigned_short    ("unsigned_short", 1, 0, 0, 0, 1, 1, "unsigned short");
 TypeDef TA_unsigned_short_int("unsigned_short_int", 1, 0, 0, 0, 1, 1, "unsigned short int");
-TypeDef TA_uint16_t		("uint16_t",    1, 0, 0, 0, 1, 1);
-TypeDef TA_int			("int", 	1, 0, 0, 0, 1, 1, "int");
-TypeDef TA_signed_int		("signed_int", 	1, 0, 0, 0, 1, 1, "signed int");
-TypeDef TA_signed		("signed", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_int32_t		("int32_t", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_unsigned_int	       ("unsigned_int", 1, 0, 0, 0, 1, 1, "unsigned int");
-TypeDef TA_unsigned		("unsigned", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_uint		("uint", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_uint32_t		("uint32_t",    1, 0, 0, 0, 1, 1);
-TypeDef TA_int64_t		("int64_t", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_long_long		("long_long", 	1, 0, 0, 0, 1, 1, "long long");
+TypeDef TA_uint16_t             ("uint16_t",    1, 0, 0, 0, 1, 1);
+TypeDef TA_int                  ("int",         1, 0, 0, 0, 1, 1, "int");
+TypeDef TA_signed_int           ("signed_int",  1, 0, 0, 0, 1, 1, "signed int");
+TypeDef TA_signed               ("signed",      1, 0, 0, 0, 1, 1);
+TypeDef TA_int32_t              ("int32_t",     1, 0, 0, 0, 1, 1);
+TypeDef TA_unsigned_int        ("unsigned_int", 1, 0, 0, 0, 1, 1, "unsigned int");
+TypeDef TA_unsigned             ("unsigned",    1, 0, 0, 0, 1, 1);
+TypeDef TA_uint         ("uint",        1, 0, 0, 0, 1, 1);
+TypeDef TA_uint32_t             ("uint32_t",    1, 0, 0, 0, 1, 1);
+TypeDef TA_int64_t              ("int64_t",     1, 0, 0, 0, 1, 1);
+TypeDef TA_long_long            ("long_long",   1, 0, 0, 0, 1, 1, "long long");
 TypeDef TA_signed_long_long("signed_long_long", 1, 0, 0, 0, 1, 1, "signed long long");
-TypeDef TA_uint64_t		("uint64_t", 	1, 0, 0, 0, 1, 1);
+TypeDef TA_uint64_t             ("uint64_t",    1, 0, 0, 0, 1, 1);
 TypeDef
     TA_unsigned_long_long("unsigned_long_long", 1, 0, 0, 0, 1, 1, "unsigned long long");
 // all the long types will get parented to either int (typical) or int64 types
-TypeDef TA_long			("long", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_signed_long		("signed_long", 1, 0, 0, 0, 1, 1, "signed long");
-TypeDef TA_long_int		("long_int", 1, 0, 0, 0, 1, 1, "long int");
-TypeDef TA_signed_long_int	("signed_long_int", 1, 0, 0, 0, 1, 1, "signed long int");
-TypeDef TA_unsigned_long	("unsigned_long", 1, 0, 0, 0, 1, 1, "unsigned long");
+TypeDef TA_long                 ("long",        1, 0, 0, 0, 1, 1);
+TypeDef TA_signed_long          ("signed_long", 1, 0, 0, 0, 1, 1, "signed long");
+TypeDef TA_long_int             ("long_int", 1, 0, 0, 0, 1, 1, "long int");
+TypeDef TA_signed_long_int      ("signed_long_int", 1, 0, 0, 0, 1, 1, "signed long int");
+TypeDef TA_unsigned_long        ("unsigned_long", 1, 0, 0, 0, 1, 1, "unsigned long");
 TypeDef TA_unsigned_long_int    ("unsigned_long_int", 1, 0, 0, 0, 1, 1, "unsigned long int");
-TypeDef TA_ulong	("ulong", 1, 0, 0, 0, 1, 1, "ulong");
+TypeDef TA_ulong        ("ulong", 1, 0, 0, 0, 1, 1, "ulong");
 // (u)intptr_t gets parented to either (u)int or (u)int64
-TypeDef TA_intptr_t		("intptr_t", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_uintptr_t		("uintptr_t", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_float		("float", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_double		("double", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_bool			("bool", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_const		("const", 	1, 0, 0, 1, 1); // formal
-TypeDef TA_enum			("enum", 	1, 0, 0, 1, 1); // formal
-TypeDef TA_struct		("struct", 	1, 0, 0, 1, 1);	// formal
-TypeDef TA_union		("union", 	1, 0, 0, 1, 1);	// formal
-TypeDef TA_class		("class", 	1, 0, 0, 1, 1);	// formal
-TypeDef TA_template		("template", 	1, 0, 0, 1, 1); // formal
-TypeDef TA_templ_inst		("templ_inst", 	1, 0, 0, 1, 1);	// formal
-TypeDef TA_ta_array		("ta_array", 	1, 0, 0, 1, 1);	// formal
-TypeDef TA_taRegFun		("taRegFun", 	1, 0, 0, 0, 1); // pseudo formal, for global functions
-TypeDef TA_TypeItem		("TypeItem", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_TypeDef		("TypeDef", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_EnumDef		("EnumDef", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_MemberDefBase	("MemberDefBase", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_MemberDef		("MemberDef", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_PropertyDef		("PropertyDef",	1, 0, 0, 0, 1, 1);
-TypeDef TA_MethodDef		("MethodDef", 	1, 0, 0, 0, 1, 1);
-TypeDef TA_void_ptr		("void_ptr", 	1, 1, 0, 1, 1, 1, "void*");
+TypeDef TA_intptr_t             ("intptr_t",    1, 0, 0, 0, 1, 1);
+TypeDef TA_uintptr_t            ("uintptr_t",   1, 0, 0, 0, 1, 1);
+TypeDef TA_float                ("float",       1, 0, 0, 0, 1, 1);
+TypeDef TA_double               ("double",      1, 0, 0, 0, 1, 1);
+TypeDef TA_bool                 ("bool",        1, 0, 0, 0, 1, 1);
+TypeDef TA_const                ("const",       1, 0, 0, 1, 1); // formal
+TypeDef TA_enum                 ("enum",        1, 0, 0, 1, 1); // formal
+TypeDef TA_struct               ("struct",      1, 0, 0, 1, 1); // formal
+TypeDef TA_union                ("union",       1, 0, 0, 1, 1); // formal
+TypeDef TA_class                ("class",       1, 0, 0, 1, 1); // formal
+TypeDef TA_template             ("template",    1, 0, 0, 1, 1); // formal
+TypeDef TA_templ_inst           ("templ_inst",  1, 0, 0, 1, 1); // formal
+TypeDef TA_ta_array             ("ta_array",    1, 0, 0, 1, 1); // formal
+TypeDef TA_taRegFun             ("taRegFun",    1, 0, 0, 0, 1); // pseudo formal, for global functions
+TypeDef TA_TypeItem             ("TypeItem",    1, 0, 0, 0, 1, 1);
+TypeDef TA_TypeDef              ("TypeDef",     1, 0, 0, 0, 1, 1);
+TypeDef TA_EnumDef              ("EnumDef",     1, 0, 0, 0, 1, 1);
+TypeDef TA_MemberDefBase        ("MemberDefBase",       1, 0, 0, 0, 1, 1);
+TypeDef TA_MemberDef            ("MemberDef",   1, 0, 0, 0, 1, 1);
+TypeDef TA_PropertyDef          ("PropertyDef", 1, 0, 0, 0, 1, 1);
+TypeDef TA_MethodDef            ("MethodDef",   1, 0, 0, 0, 1, 1);
+TypeDef TA_void_ptr             ("void_ptr",    1, 1, 0, 1, 1, 1, "void*");
 
 //                               s nm, s dsc,
 //                               s inop, s op, s lis, u siz, i ptrs, b ref, b global
 //NOTE: the actual versions generated into the target code dynamically compute their size in the runtime
-TypeDef TA_taString		("taString", "", "", "", "", 0, 0, 0, 1);
-TypeDef TA_Variant		("Variant", "", "", "", "", 0, 0, 0, 1);
-TypeDef TA_QAtomicInt		("QAtomicInt", "", "", "", "", 0, 0, 0, 1);
+TypeDef TA_taString             ("taString", "", "", "", "", 0, 0, 0, 1);
+TypeDef TA_Variant              ("Variant", "", "", "", "", 0, 0, 0, 1);
+TypeDef TA_QAtomicInt           ("QAtomicInt", "", "", "", "", 0, 0, 0, 1);
 //NOTE: taBase is never actually encountered while building maketa, so its size is irrelevant...
 // it is only here (and in ta_type.h header) because it is referenced in ta_type.cpp
 TypeDef TA_taBase("taBase", " Base type for all type-aware classes",
-	"", "", "", 0, 0, 0, 1);
+        "", "", "", 0, 0, 0, 1);
 
 extern int yydebug;
 extern "C" int getpid();
-MTA* mta;		// holds mta
+MTA* mta;               // holds mta
 
 // copy the source to the destination, returning true if successful
 bool copy_file(const char* src, const char* dst) {
@@ -139,8 +139,8 @@ bool files_same(const char* fname1, const char* fname2) {
   char c1;  char c2;
   bool g1;  bool g2;
   while (true) {
-    g1 = in1.get(c1);
-    g2 = in2.get(c2);
+    g1 = 0 != in1.get(c1);
+    g2 = 0 != in2.get(c2);
     if (!g1 && !g2) break; // same size, done
     if (!(g1 && g2)) goto exit; // different sizes
     if (c1 != c2) goto exit;  // different content
@@ -206,7 +206,7 @@ MTA::MTA() {
   InitKeyWords();
   InitBuiltIn();
 
-  InitTypeSpace(spc_other);	// when target not being searched (need base types)
+  InitTypeSpace(spc_other);     // when target not being searched (need base types)
   InitTypeSpace(spc_target);
 
   // only add a subset of things to spc_builtin
@@ -228,7 +228,7 @@ MTA::~MTA() {
 //   spc_keywords.Reset();
 //   spc_builtin.Reset();
 
-//  if(verbose < 1)	return;
+//  if(verbose < 1)     return;
 //  cerr << "mta object destroyed\n";
 }
 
@@ -281,23 +281,23 @@ void MTA::AddBuiltIn(TypeSpace& ts) { // common code
 void MTA::InitKeyWords() {
   TypeDef* ky;
   ky = new TypeDef("typedef");  spc_keywords.Add(ky); ky->idx = TYPEDEF;
-  ky = new TypeDef("class"); 	spc_keywords.Add(ky); ky->idx = CLASS;
-  ky = new TypeDef("typename");	spc_keywords.Add(ky); ky->idx = TYPENAME;
-  ky = new TypeDef("struct"); 	spc_keywords.Add(ky); ky->idx = STRUCT;
-  ky = new TypeDef("union"); 	spc_keywords.Add(ky); ky->idx = UNION;
+  ky = new TypeDef("class");    spc_keywords.Add(ky); ky->idx = CLASS;
+  ky = new TypeDef("typename"); spc_keywords.Add(ky); ky->idx = TYPENAME;
+  ky = new TypeDef("struct");   spc_keywords.Add(ky); ky->idx = STRUCT;
+  ky = new TypeDef("union");    spc_keywords.Add(ky); ky->idx = UNION;
   ky = new TypeDef("template"); spc_keywords.Add(ky); ky->idx = TEMPLATE;
-  ky = new TypeDef("enum"); 	spc_keywords.Add(ky); ky->idx = ENUM;
-  ky = new TypeDef("TypeDef"); 	spc_keywords.Add(ky); ky->idx = TA_TYPEDEF;
-  ky = new TypeDef("public"); 	spc_keywords.Add(ky); ky->idx = PUBLIC;
-  ky = new TypeDef("private"); 	spc_keywords.Add(ky); ky->idx = PRIVATE;
+  ky = new TypeDef("enum");     spc_keywords.Add(ky); ky->idx = ENUM;
+  ky = new TypeDef("TypeDef");  spc_keywords.Add(ky); ky->idx = TA_TYPEDEF;
+  ky = new TypeDef("public");   spc_keywords.Add(ky); ky->idx = PUBLIC;
+  ky = new TypeDef("private");  spc_keywords.Add(ky); ky->idx = PRIVATE;
   ky = new TypeDef("protected");spc_keywords.Add(ky); ky->idx = PROTECTED;
-  ky = new TypeDef("inline"); 	spc_keywords.Add(ky); ky->idx = FUNTYPE;
-  ky = new TypeDef("mutable"); 	spc_keywords.Add(ky); ky->idx = FUNTYPE;
-  ky = new TypeDef("virtual"); 	spc_keywords.Add(ky); ky->idx = VIRTUAL;
-  ky = new TypeDef("static"); 	spc_keywords.Add(ky); ky->idx = STATIC;
-  ky = new TypeDef("operator");	spc_keywords.Add(ky); ky->idx = OPERATOR;
-  ky = new TypeDef("friend"); 	spc_keywords.Add(ky); ky->idx = FRIEND;
-  ky = new TypeDef("REG_FUN"); 	spc_keywords.Add(ky); ky->idx = REGFUN;
+  ky = new TypeDef("inline");   spc_keywords.Add(ky); ky->idx = FUNTYPE;
+  ky = new TypeDef("mutable");  spc_keywords.Add(ky); ky->idx = FUNTYPE;
+  ky = new TypeDef("virtual");  spc_keywords.Add(ky); ky->idx = VIRTUAL;
+  ky = new TypeDef("static");   spc_keywords.Add(ky); ky->idx = STATIC;
+  ky = new TypeDef("operator"); spc_keywords.Add(ky); ky->idx = OPERATOR;
+  ky = new TypeDef("friend");   spc_keywords.Add(ky); ky->idx = FRIEND;
+  ky = new TypeDef("REG_FUN");  spc_keywords.Add(ky); ky->idx = REGFUN;
 }
 
 void MTA::InitBuiltIn() {
@@ -441,7 +441,7 @@ TypeSpace* MTA::GetTypeSpace(TypeDef* td) {
 }
 
 void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
-  if(verbose <= 2)	return;
+  if(verbose <= 2)      return;
   cerr << "M!!: " << typ << " added: " << td->name << " to: "
        << sp->name << " idx: " << td->idx << endl;
 }
@@ -449,18 +449,18 @@ void MTA::TypeAdded(const char* typ, TypeSpace* sp, TypeDef* td) {
 void MTA::TypeNotAdded(const char* typ, TypeSpace* sp, TypeDef* ext_td, TypeDef* new_td) {
   if(ext_td->name != new_td->name) {
     cerr << "E!!: Error in hash table name lookup -- names: " << ext_td->name << " and: "
-	 << new_td->name << " should be the same!" << endl;
+         << new_td->name << " should be the same!" << endl;
   }
-  if(verbose <= 2)	return;
+  if(verbose <= 2)      return;
   cerr << "M!!: " << typ << " NOT added: " << new_td->name << " to: "
        << sp->name << " because of existing type: " << ext_td->name
        << " idx: " << ext_td->idx << endl;
 }
 
 void MTA::SetDesc(const char* comnt, String& desc, String_PArray& inh_opts,
-		  String_PArray& opts, String_PArray& lists) {
+                  String_PArray& opts, String_PArray& lists) {
   String tmp = comnt;
-  tmp.gsub("\"", "'");		// don't let any quotes get through
+  tmp.gsub("\"", "'");          // don't let any quotes get through
   String ud;
   while(tmp.contains('#')) {
     desc += tmp.before('#');
@@ -476,8 +476,8 @@ void MTA::SetDesc(const char* comnt, String& desc, String_PArray& inh_opts,
     }
     else {
       if(ud(0,1) == '#') {
-	ud = ud.after('#');
-	inh_opts.AddUnique(ud);
+        ud = ud.after('#');
+        inh_opts.AddUnique(ud);
       }
       opts.AddUnique(ud);
     }
@@ -488,7 +488,7 @@ void MTA::SetDesc(const char* comnt, String& desc, String_PArray& inh_opts,
 TypeDef* MTA::FindName(const char* nm, int& lex_token) {
   TypeDef* itm;
 
-  lex_token = TYPE;		// this is the default
+  lex_token = TYPE;             // this is the default
 
   if((state == Parse_inclass) && (cur_class != NULL)) {
     if(cur_class->name == nm) {
@@ -542,7 +542,7 @@ void mta_cleanup(int err) {
   String rm_tmp = String("/bin/rm ") + tmp_file + " >/dev/null 2>&1";
 //  int res =
   system(rm_tmp);
-  kill(getpid(), err);		// activate signal
+  kill(getpid(), err);          // activate signal
 }
 #endif
 
@@ -588,7 +588,7 @@ int main(int argc, char* argv[])
   String rm = String("/bin/rm ");
 #endif
   String incs;
-  mta->basename = "";		// initialize
+  mta->basename = "";           // initialize
 
   bool wait = false;
   bool keep_tmp = false;
@@ -601,7 +601,7 @@ int main(int argc, char* argv[])
     if( (tmp == "-help") || (tmp == "--help")
       || (tmp == "-?") || (tmp == "--?") || (tmp == "/?")
     ) {
-      mta_print_commandline_args(argv); return 1; 		// EXIT
+      mta_print_commandline_args(argv); return 1;               // EXIT
     }
     mta->gen_doc = false;
     if(tmp == "-css")
@@ -636,7 +636,7 @@ int main(int argc, char* argv[])
       vls = tmp.after(1);
       vl = atoi((char*)vls);
       if(vl > 0)
-	mta->verbose = vl;
+        mta->verbose = vl;
     }
     else if(tmp(0,5) == "-hash") {
       int vl;
@@ -644,7 +644,7 @@ int main(int argc, char* argv[])
       vls = tmp.after("-hash");
       vl = atoi((char*)vls);
       if(vl > 0)
-	mta->hash_size = vl;
+        mta->hash_size = vl;
     }
     else if(tmp(0,2) == "-I") {
 #if (defined(TA_OS_WIN) && !defined(CYGWIN))
@@ -679,27 +679,27 @@ int main(int argc, char* argv[])
     } else if(tmp(0,2) == "-f") {
       fstream fh(argv[i+1], ios::in);
       if(fh.bad() || fh.eof()) {
-	cerr << argv[0] << " could not open -f file: " << argv[i+1] << "\n";
+        cerr << argv[0] << " could not open -f file: " << argv[i+1] << "\n";
       }
       else {
-	while(fh.good() && !fh.eof()) {
-	  String fl;
-	  fh >> fl;
-	  fl = trim(fl);
-	  if (fl.empty()) continue; // maybe last line
-	  //note: warn on duplicates, because these cause havoc if they slip in
-	  // but order is also sometimes important in the master input list
-	  // so we shouldn't just ignore them
-	  bool ok = true;
-	  String tfl = mta->FindFile(fl, ok);
-	  if (!ok) continue; // warning was printed
-	  if (!mta->headv.AddUnique(taPlatform::lexCanonical(tfl))) {
-	    cerr <<  "W!!: Warning: duplicate file specified, duplicate ignored:: " << fl.chars() << "\n";
-	  }
-	}
+        while(fh.good() && !fh.eof()) {
+          String fl;
+          fh >> fl;
+          fl = trim(fl);
+          if (fl.empty()) continue; // maybe last line
+          //note: warn on duplicates, because these cause havoc if they slip in
+          // but order is also sometimes important in the master input list
+          // so we shouldn't just ignore them
+          bool ok = true;
+          String tfl = mta->FindFile(fl, ok);
+          if (!ok) continue; // warning was printed
+          if (!mta->headv.AddUnique(taPlatform::lexCanonical(tfl))) {
+            cerr <<  "W!!: Warning: duplicate file specified, duplicate ignored:: " << fl.chars() << "\n";
+          }
+        }
       }
       fh.close(); fh.clear();
-      i++;			// skip to next one
+      i++;                      // skip to next one
     }
     else if(tmp[0] == '-')
       cerr << argv[0] << " unknown flag: " << tmp << "\n";
@@ -713,7 +713,7 @@ int main(int argc, char* argv[])
       String tfl = mta->FindFile(tmp, ok);
       if (!ok) continue; // warning was printed
       if (!mta->headv.AddUnique(taPlatform::lexCanonical(tfl))) {
-	cerr <<  "**WARNING: duplicate file specified, duplicate ignored:: " << tmp.chars() << "\n";
+        cerr <<  "**WARNING: duplicate file specified, duplicate ignored:: " << tmp.chars() << "\n";
       }
     }
   }
@@ -729,7 +729,7 @@ int main(int argc, char* argv[])
     cin.get();
   }
 
-  mta->BuildHashTables();	// after getting any user-spec'd hash size
+  mta->BuildHashTables();       // after getting any user-spec'd hash size
   // parse the file names a bit
 
   for(i=0; i<mta->headv.size; i++) {
@@ -746,7 +746,7 @@ int main(int argc, char* argv[])
   }
 
   if(mta->verbose > 4)
-    yydebug = 1;			// debug it.
+    yydebug = 1;                        // debug it.
   else
     yydebug = 0;
 
@@ -894,29 +894,29 @@ int main(int argc, char* argv[])
       fin = mta->basename + "_TA_type.hx";
       fout = mta->basename + "_TA_type.h";
       if (!files_same(fin.chars(), fout.chars())) {
-	copy_file(fin.chars(), fout.chars());
+        copy_file(fin.chars(), fout.chars());
       }
       fin = mta->basename + "_TA_inst.hx";
       fout = mta->basename + "_TA_inst.h";
       if (!files_same(fin.chars(), fout.chars())) {
-	copy_file(fin.chars(), fout.chars());
+        copy_file(fin.chars(), fout.chars());
       }
       fin = mta->basename + "_TA.ccx";
       fout = mta->basename + "_TA.cpp";
       if (!files_same(fin.chars(), fout.chars())) {
-	copy_file(fin.chars(), fout.chars());
+        copy_file(fin.chars(), fout.chars());
       }
     }
   }
 
   if((mta->verbose > 0) && (mta->spc_target.hash_table != NULL)) {
     cerr << "\nM!!: TypeSpace size and hash_table bucket_max values:\n"
-	 << "spc_target:\t" << mta->spc_target.size << "\t" << mta->spc_target.hash_table->bucket_max << "\n"
-	 << "spc_other:\t" << mta->spc_other.size << "\t" << mta->spc_other.hash_table->bucket_max << "\n"
-	 << "spc_extern:\t" << mta->spc_extern.size << "\t" << mta->spc_extern.hash_table->bucket_max << "\n"
-	 << "spc_ignore:\t" << mta->spc_ignore.size << "\t" << mta->spc_ignore.hash_table->bucket_max << "\n"
-	 << "spc_pre_parse:\t" << mta->spc_pre_parse.size << "\t" << mta->spc_pre_parse.hash_table->bucket_max << "\n"
-	 << "spc_keywords:\t" << mta->spc_keywords.size << "\t" << mta->spc_keywords.hash_table->bucket_max << "\n";
+         << "spc_target:\t" << mta->spc_target.size << "\t" << mta->spc_target.hash_table->bucket_max << "\n"
+         << "spc_other:\t" << mta->spc_other.size << "\t" << mta->spc_other.hash_table->bucket_max << "\n"
+         << "spc_extern:\t" << mta->spc_extern.size << "\t" << mta->spc_extern.hash_table->bucket_max << "\n"
+         << "spc_ignore:\t" << mta->spc_ignore.size << "\t" << mta->spc_ignore.hash_table->bucket_max << "\n"
+         << "spc_pre_parse:\t" << mta->spc_pre_parse.size << "\t" << mta->spc_pre_parse.hash_table->bucket_max << "\n"
+         << "spc_keywords:\t" << mta->spc_keywords.size << "\t" << mta->spc_keywords.hash_table->bucket_max << "\n";
   }
   if(mta->verbose > 1) {
     cout << "\nPreParsed Types\n";   mta->spc_pre_parse.List();

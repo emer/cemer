@@ -2751,13 +2751,13 @@ bool IDataLinkClient::AddDataLink(taDataLink* dl) {
   if (m_link && (m_link != dl)) {
     taMisc::DebugInfo("IDataLinkClient::AddDataLink: a link has already been set!");
   }
-  bool r = (!m_link);
+  bool r = (0 == m_link);
   m_link = dl;
   return r;
 }
 
 bool IDataLinkClient::RemoveDataLink(taDataLink* dl) {
-  bool r = (m_link);
+  bool r = (0 != m_link);
   m_link = NULL;
   return r;
 }
@@ -4047,7 +4047,7 @@ bool MemberDefBase::ShowMember(
   // show, which is negatives (what not to show), and if anything remains, don't show!
 //  show_eff &= (byte)taMisc::SHOW_CHECK_MASK;
 //  return (show_eff) && !(show_eff & (byte)show);
-  return (show_eff & (byte)show_allowed & ~(byte)show_forbidden);
+  return 0 != (show_eff & (byte)show_allowed & ~(byte)show_forbidden);
 }
 
 void MemberDefBase::ShowMember_CalcCache() const {
