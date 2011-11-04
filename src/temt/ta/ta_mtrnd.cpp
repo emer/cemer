@@ -15,6 +15,7 @@
 
 #include "ta_mtrnd.h"
 #include "ta_platform.h"
+#include <cmath>
 
 /*
    A C-program for MT19937, with initialization improved 2002/1/26.

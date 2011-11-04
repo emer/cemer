@@ -2351,7 +2351,7 @@ void T3DataViewFrame::SetColorScheme(ColorScheme color_scheme) {
   UpdateAfterEdit();
 }
 
-void T3DataViewFrame::GridLayout(int n_horiz, float horiz_sp, float vert_sp) {
+void T3DataViewFrame::GridLayout(int n_horiz, float horiz_sp, float vert_sp, bool save_views) {
   if(n_horiz < 1) n_horiz = 1;
   int idx = 0;
   for(int i = 0; i < root_view.children.size; ++i) {
@@ -2363,6 +2363,11 @@ void T3DataViewFrame::GridLayout(int n_horiz, float horiz_sp, float vert_sp) {
     float yp = (float)cur_y * (1.0 + vert_sp);
     dv->main_xform.translate.x = xp;
     dv->main_xform.translate.y = yp;
+    if(save_views && idx+1 < saved_views.size) {
+      // todo: this is not functional: need to do appropriate projection per quarter viewAll calculation involving bounding boxes etc...
+      SetCameraPos(idx+1, xp + .5 * (1.0 + horiz_sp), yp + .5 * (1.0 + vert_sp), 1.6);
+      SetCameraFocDist(idx+1, 1.6);
+    }
     idx++;
   }
   UpdateAfterEdit();
