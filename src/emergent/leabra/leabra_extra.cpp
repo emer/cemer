@@ -6239,6 +6239,27 @@ void HippoQuadLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
   FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
     u->act_m2 = u->act_nd;	// record the minus phase before overwriting it..
   }
+
+  // record stats for act_m2
+  AvgMaxVals& vals = lay->acts_m2;
+  static ta_memb_ptr mb_off = 0;
+  if(mb_off == 0) {
+    TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
+    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_m2");
+  }
+  if(lay->unit_groups) {
+    vals.InitVals();
+    int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
+    for(int g=0; g < lay->gp_geom.n; g++) {
+      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+      Compute_AvgMaxVals_ugp(lay, Layer::ACC_GP, g, gpd->acts_m2, mb_off);
+      vals.UpdtFmAvgMax(gpd->acts_m2, nunits, g);
+    }
+    vals.CalcAvg(lay->units.leaves);
+  }
+  else {
+    Compute_AvgMaxVals_ugp(lay, Layer::ACC_LAY, 0, vals, mb_off);
+  }
 }
 
 void HippoQuadLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -6336,7 +6357,7 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraUnit* inu = (LeabraUnit*)in_lay->units.Leaf(i);
     float inval = inu->act_eq;
     if(clamp.max_plus) {
-      float min_max = lay->acts_m.max;
+      float min_max = MAX(lay->acts_m.max, lay->acts_m2.max); // consider auto enc max too -- esp if doing pretraining on encoder only, this is important
       float clmp = min_max + clamp.plus;
       clmp = MAX(clmp, clamp.min_clamp);
       inval *= clmp;		// downscale
