@@ -13,18 +13,16 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-
-
-// netstru.cc
 // Functions specific to structures defined in netstru.h
 
-
 #include "netstru.h"
+
 #include "netdata.h"
 #include "emergent_project.h"
 #include "ta_data.h"
 #include "ta_filer.h"
 #include "BrainView.h"
+#include "NetworkVoxelMapper.h"
 
 #ifdef TA_GUI
 #include "ta_qt.h"
@@ -39,7 +37,7 @@ bool Network_InStructUpdate(Network* net) {
 }
 
 //////////////////////////
-//  SigmoidSpec		//
+//  SigmoidSpec         //
 //////////////////////////
 
 #ifdef _MSC_VER
@@ -53,7 +51,7 @@ const float SigmoidSpec::SIGMOID_MAX_NET;
 #endif
 
 //////////////////////////
-//  	Schedule	//
+//      Schedule        //
 //////////////////////////
 
 void SchedItem::Initialize() {
@@ -97,7 +95,7 @@ void Schedule::UpdateAfterEdit_impl() {
     SchedItem* itm = temp.FastEl(0);
     int j;
     for(j=0; (j < size) && (itm->start_ctr > FastEl(j)->start_ctr); j++);
-    Insert(itm,j);		// always insert item in new spot
+    Insert(itm,j);              // always insert item in new spot
     temp.RemoveIdx(0);
   }
 
@@ -133,12 +131,12 @@ float Schedule::GetVal(int ctr) {
     SchedItem* itm = FastEl(i);
     if((ctr >= itm->start_ctr) && (ctr < (itm->start_ctr + itm->duration))) {
       if(i == size-1)
-	cur_val = itm->start_val;
+        cur_val = itm->start_val;
       else {
-	if(interpolate)
-	  cur_val = itm->GetVal(ctr);
-	else
-	  cur_val = itm->start_val;
+        if(interpolate)
+          cur_val = itm->GetVal(ctr);
+        else
+          cur_val = itm->start_val;
       }
       return cur_val;
     }
@@ -158,7 +156,7 @@ float Schedule::GetVal(int ctr) {
 #define DEFAULT_2D_NETVIEW_SKEW 0
 
 ////////////////////////////////////////
-//	Connection - Groups & Specs   //
+//      Connection - Groups & Specs   //
 ////////////////////////////////////////
 
 static int conspec_repl_bias_ptr(UnitSpec* us, ConSpec* old, ConSpec* nw) {
@@ -246,14 +244,14 @@ void ConSpec::ApplySymmetry(RecvCons* cg, Unit* ru) {
     rc = cg->Cn(i);
     su_rc = BaseCons::FindRecipRecvCon(cg->Un(i), ru, cg->prjn->layer);
     if(su_rc)
-      su_rc->wt = rc->wt;	// set other's weight to ours (otherwise no random..)
+      su_rc->wt = rc->wt;       // set other's weight to ours (otherwise no random..)
   }
 }
 
 /////////////////////////////////////////////////////////////////////
-//	UnitPtrList
+//      UnitPtrList
 
-int UnitPtrList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) { 
+int UnitPtrList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int nchg = 0;
   if(old_par->InheritsFrom(&TA_Network) && new_par->InheritsFrom(&TA_Network)) {
     // this is optimized for networks to use the getmyleafindex
@@ -266,17 +264,17 @@ int UnitPtrList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       int lidx = old_net->layers.FindLeafEl(old_lay);
       int uidx = itm->GetMyLeafIndex();
       if((lidx >= 0) && (uidx >= 0)) {
-	Layer* nw_lay = (Layer*)nw_net->layers.Leaf(lidx);
-	if(nw_lay) {
-	  Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
-	  if(nw_un) {
-	    ReplaceLinkIdx(i, nw_un);
-	    nchg++;
-	  }
-	  else {
-	    RemoveIdx(i);
-	  }
-	}
+        Layer* nw_lay = (Layer*)nw_net->layers.Leaf(lidx);
+        if(nw_lay) {
+          Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
+          if(nw_un) {
+            ReplaceLinkIdx(i, nw_un);
+            nchg++;
+          }
+          else {
+            RemoveIdx(i);
+          }
+        }
       }
     }
   }
@@ -290,18 +288,18 @@ int UnitPtrList::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       MemberDef* md;
       Unit* nitm = (Unit*)new_par->FindFromPath(old_path, md);
       if(nitm) {
-	ReplaceLinkIdx(i, nitm);
-	nchg++;
+        ReplaceLinkIdx(i, nitm);
+        nchg++;
       }
       else {
-	RemoveIdx(i);
+        RemoveIdx(i);
       }
     }
   }
   return nchg;
 }
 
-int UnitPtrList::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) { 
+int UnitPtrList::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
   if(size <= 0) return 0;
   Unit* itm = FastEl(0);
   taBase* old_par = itm->GetOwner(par_typ);
@@ -313,11 +311,11 @@ int UnitPtrList::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   for(int i=size-1; i>=0; i--) {
     Unit* itm = FastEl(i);
     if(!itm) continue;
-    if(itm == old_ptr) {	   // if it is the old guy, it is by defn a link because we're not the owner..
-      if(!new_ptr)		   // if replacement is null, just remove it
-	RemoveIdx(i);
+    if(itm == old_ptr) {           // if it is the old guy, it is by defn a link because we're not the owner..
+      if(!new_ptr)                 // if replacement is null, just remove it
+        RemoveIdx(i);
       else
-	ReplaceLinkIdx(i, (Unit*)new_ptr);    // it is a link to old guy; replace it!
+        ReplaceLinkIdx(i, (Unit*)new_ptr);    // it is a link to old guy; replace it!
       nchg++;
     }
   }
@@ -325,7 +323,7 @@ int UnitPtrList::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
 }
 
 /////////////////////////////////////////////////////////////////////
-//	BaseCons
+//      BaseCons
 
 void BaseCons::Initialize() {
   // derived classes need to set new basic con types
@@ -362,37 +360,37 @@ void BaseCons::Copy_(const BaseCons& cp) {
   CopyCons(cp);
 }
 
-void BaseCons::CheckThisConfig_impl(bool quiet, bool& rval) { 
+void BaseCons::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
 
   if(CheckError(!GetConSpec(), quiet, rval, "No con spec set")) {
-    return;			// fatal!
+    return;                     // fatal!
   }
   if(CheckError(!prjn, quiet, rval, "null projection! (Connect will fix)")) {
-    return; 			// fatal!
+    return;                     // fatal!
   }
   if(IsRecv()) {
     if(CheckError((GetTypeDef() != prjn->recvcons_type), quiet, rval,
-		  "type does not match recvcons_type for projection -- should be:",
-		  prjn->recvcons_type->name)) {
+                  "type does not match recvcons_type for projection -- should be:",
+                  prjn->recvcons_type->name)) {
       prjn->projected = false;
     }
   }
   else {
     if(CheckError((GetTypeDef() != prjn->sendcons_type), quiet, rval,
-		  "type does not match sendcons_type for projection -- should be:",
-		  prjn->recvcons_type->name)) {
+                  "type does not match sendcons_type for projection -- should be:",
+                  prjn->recvcons_type->name)) {
       prjn->projected = false;
     }
   }
   if(CheckError((con_type != prjn->con_type), quiet, rval,
-		"connection type does not match prjn con_type -- should be:",
-		prjn->con_type->name)) {
+                "connection type does not match prjn con_type -- should be:",
+                prjn->con_type->name)) {
     prjn->projected = false;
   }
 }
 
-int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) { 
+int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
   if(old_par->InheritsFrom(&TA_Network) && new_par->InheritsFrom(&TA_Network)) {
     // this is optimized for networks to use the getmyleafindex
@@ -405,17 +403,17 @@ int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       int lidx = old_net->layers.FindLeafEl(old_lay);
       int uidx = itm->GetMyLeafIndex();
       if((lidx >= 0) && (uidx >= 0)) {
-	Layer* nw_lay = (Layer*)nw_net->layers.Leaf(lidx);
-	if(nw_lay) {
-	  Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
-	  if(nw_un) {
-	    SetUn(i, nw_un);
-	    nchg++;
-	  }
-	  else {
-	    RemoveConIdx(i);
-	  }
-	}
+        Layer* nw_lay = (Layer*)nw_net->layers.Leaf(lidx);
+        if(nw_lay) {
+          Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
+          if(nw_un) {
+            SetUn(i, nw_un);
+            nchg++;
+          }
+          else {
+            RemoveConIdx(i);
+          }
+        }
       }
     }
   }
@@ -429,18 +427,18 @@ int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
       MemberDef* md;
       Unit* nitm = (Unit*)new_par->FindFromPath(old_path, md);
       if(nitm) {
-	SetUn(i, nitm);
-	nchg++;
+        SetUn(i, nitm);
+        nchg++;
       }
       else {
-	RemoveConIdx(i);
+        RemoveConIdx(i);
       }
     }
   }
   return nchg;
 }
 
-int BaseCons::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) { 
+int BaseCons::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
   int nchg = inherited::UpdatePointers_NewParType(par_typ, new_par);
   if(size <= 0) return 0;
   Unit* itm = Un(0);
@@ -454,11 +452,11 @@ int BaseCons::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   for(int i=size-1; i>=0; i--) {
     Unit* itm = Un(i);
     if(!itm) continue;
-    if(itm == old_ptr) {	   // if it is the old guy, it is by defn a link because we're not the owner..
-      if(!new_ptr)		   // if replacement is null, just remove it
-	RemoveConIdx(i);
+    if(itm == old_ptr) {           // if it is the old guy, it is by defn a link because we're not the owner..
+      if(!new_ptr)                 // if replacement is null, just remove it
+        RemoveConIdx(i);
       else
-	SetUn(i, (Unit*)new_ptr);    // it is a link to old guy; replace it!
+        SetUn(i, (Unit*)new_ptr);    // it is a link to old guy; replace it!
       nchg++;
     }
   }
@@ -481,7 +479,7 @@ Connection* BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs) {
     return NULL;
   if(size >= alloc_size) {
     TestError(!ignore_alloc_errs, "ConnectUnOwnCn", "size already at maximum allocated of",
-	      String(alloc_size),"this is a programmer error -- please report the bug");
+              String(alloc_size),"this is a programmer error -- please report the bug");
     return NULL;
   }
   Connection* rval = OwnCn(size);
@@ -494,7 +492,7 @@ bool BaseCons::ConnectUnPtrCn(Unit* un, Connection* cn, bool ignore_alloc_errs) 
     return false;
   if(size >= alloc_size) {
     TestError(!ignore_alloc_errs, "ConnectUnPtrCn", "size already at maximum allocated of",
-	      String(alloc_size),"this is a programmer error -- please report the bug");
+              String(alloc_size),"this is a programmer error -- please report the bug");
     return false;
   }
   cons_ptr[size] = cn;
@@ -502,18 +500,18 @@ bool BaseCons::ConnectUnPtrCn(Unit* un, Connection* cn, bool ignore_alloc_errs) 
   return true;
 }
 
-Connection* BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons, 
-				   bool ignore_alloc_errs) {
+Connection* BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_cons,
+                                   bool ignore_alloc_errs) {
   Connection* con = NULL;
   if(OwnCons()) {
     con = ConnectUnOwnCn(oth_un, ignore_alloc_errs);
     if(con) {
       if(oth_cons->ConnectUnPtrCn(our_un, con, ignore_alloc_errs)) {
-	return con;
+        return con;
       }
       else {
-	con = NULL;
-	RemoveConIdx(size-1);	// remove last guy!  otherwise it is a dangler
+        con = NULL;
+        RemoveConIdx(size-1);   // remove last guy!  otherwise it is a dangler
       }
     }
   }
@@ -521,11 +519,11 @@ Connection* BaseCons::ConnectUnits(Unit* our_un, Unit* oth_un, BaseCons* oth_con
     con = oth_cons->ConnectUnOwnCn(our_un, ignore_alloc_errs);
     if(con) {
       if(ConnectUnPtrCn(oth_un, con, ignore_alloc_errs)) {
-	return con;
+        return con;
       }
       else {
-	con = NULL;
-	oth_cons->RemoveConIdx(size-1);	// remove last guy!  otherwise it is a dangler
+        con = NULL;
+        oth_cons->RemoveConIdx(size-1); // remove last guy!  otherwise it is a dangler
       }
     }
   }
@@ -537,7 +535,7 @@ void BaseCons::ConnectAllocInc(int inc_n) {
 }
 
 void BaseCons::AllocConsFmSize() {
-  AllocCons(size);		// this sets size back to zero and does full alloc
+  AllocCons(size);              // this sets size back to zero and does full alloc
 }
 
 bool BaseCons::SetConType(TypeDef* cn_tp) {
@@ -696,24 +694,24 @@ void BaseCons::MonitorVar(NetMonitor* net_mon, const String& variable) {
 }
 
 /////////////////////////////////////////////////////////////
-// 	Weight ops
+//      Weight ops
 
 void BaseCons::TransformWeights(const SimpleMathSpec& trans) {
   for(int i=0; i < size; i++)
     Cn(i)->wt = trans.Evaluate(Cn(i)->wt);
   Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru);	// update weights after mod
+  Init_Weights_post(ru);        // update weights after mod
 }
 
 void BaseCons::AddNoiseToWeights(const Random& noise_spec) {
   for(int i=0; i < size; i++)
     Cn(i)->wt += noise_spec.Gen();
   Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru);	// update weights after mod
+  Init_Weights_post(ru);        // update weights after mod
 }
 
 int BaseCons::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
-			    Relation::Relations rel, float cmp_val)
+                            Relation::Relations rel, float cmp_val)
 {
   Relation cond;
   cond.rel = rel; cond.val = cmp_val;
@@ -746,8 +744,8 @@ int BaseCons::LesionCons(Unit* un, float p_lesion, bool permute) {
     int j;
     for(j=size-1; j>=0; j--) {
       if(Random::ZeroOne() <= p_lesion) {
-	un->DisConnectFrom(Un(j), prjn);
-	rval++;
+        un->DisConnectFrom(Un(j), prjn);
+        rval++;
       }
     }
   }
@@ -755,13 +753,13 @@ int BaseCons::LesionCons(Unit* un, float p_lesion, bool permute) {
 }
 
 /////////////////////////////////////////////////////////////
-// 	To/From Arrays/Matrix
+//      To/From Arrays/Matrix
 
 bool BaseCons::ConValuesToArray(float_Array& ary, const String& variable) {
   MemberDef* md = con_type->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesToArray",
-		 "Variable:", variable, "not found or not a float on units of type:",
-		 con_type->name)) {
+                 "Variable:", variable, "not found or not a float on units of type:",
+                 con_type->name)) {
     return false;
   }
   for(int i=0; i<size; i++) {
@@ -774,8 +772,8 @@ bool BaseCons::ConValuesToArray(float_Array& ary, const String& variable) {
 bool BaseCons::ConValuesToMatrix(float_Matrix& mat, const String& variable) {
   MemberDef* md = con_type->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesToMatrix",
-		 "Variable:", variable, "not found or not a float on units of type:",
-		 con_type->name)) {
+                 "Variable:", variable, "not found or not a float on units of type:",
+                 con_type->name)) {
     return false;
   }
   if(TestWarning(mat.size < size, "ConValuesToMatrix", "matrix size too small")) {
@@ -792,8 +790,8 @@ bool BaseCons::ConValuesToMatrix(float_Matrix& mat, const String& variable) {
 bool BaseCons::ConValuesFromArray(float_Array& ary, const String& variable) {
   MemberDef* md = con_type->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesFromArray",
-		 "Variable:", variable, "not found or not a float on units of type:",
-		 con_type->name)) {
+                 "Variable:", variable, "not found or not a float on units of type:",
+                 con_type->name)) {
     return false;
   }
   int mx = MIN(size, ary.size);
@@ -802,15 +800,15 @@ bool BaseCons::ConValuesFromArray(float_Array& ary, const String& variable) {
     *val = ary[i];
   }
   Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru);	// update weights after mod
+  Init_Weights_post(ru);        // update weights after mod
   return true;
 }
 
 bool BaseCons::ConValuesFromMatrix(float_Matrix& mat, const String& variable) {
   MemberDef* md = con_type->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "ConValuesFromMatrix",
-		 "Variable:", variable, "not found or not a float on units of type:",
-		 con_type->name)) {
+                 "Variable:", variable, "not found or not a float on units of type:",
+                 con_type->name)) {
     return false;
   }
   int mx = MIN(size, mat.size);
@@ -819,17 +817,17 @@ bool BaseCons::ConValuesFromMatrix(float_Matrix& mat, const String& variable) {
     *val = mat.FastEl_Flat(i);
   }
   Unit* ru = GET_MY_OWNER(Unit);
-  Init_Weights_post(ru);	// update weights after mod
+  Init_Weights_post(ru);        // update weights after mod
   return true;
 }
 
 /////////////////////////////////////////////////////////////
-// 	Save/Load Weights
+//      Save/Load Weights
 
 void BaseCons::SaveWeights_strm(ostream& strm, Unit*, BaseCons::WtSaveFormat fmt) {
   if((prjn == NULL) || (!(bool)prjn->from)) {
     strm << "<Cn 0>\n";
-    goto end_tag;		// don't do anything
+    goto end_tag;               // don't do anything
   }
   strm << "<Cn " << size << ">\n";
   switch(fmt) {
@@ -837,7 +835,7 @@ void BaseCons::SaveWeights_strm(ostream& strm, Unit*, BaseCons::WtSaveFormat fmt
     for(int i=0; i < size; i++) {
       int lidx = Un(i)->GetMyLeafIndex();
       if(TestWarning(lidx < 0, "SaveWeights_strm", "can't find unit")) {
-	lidx = 0;
+        lidx = 0;
       }
       strm << lidx << " " << Cn(i)->wt << "\n";
     }
@@ -846,7 +844,7 @@ void BaseCons::SaveWeights_strm(ostream& strm, Unit*, BaseCons::WtSaveFormat fmt
     for(int i=0; i < size; i++) {
       int lidx = Un(i)->GetMyLeafIndex();
       if(TestWarning(lidx < 0, "SaveWeights_strm", "can't find unit")) {
-	lidx = 0;
+        lidx = 0;
       }
       strm.write((char*)&(lidx), sizeof(lidx));
       strm.write((char*)&(Cn(i)->wt), sizeof(Cn(i)->wt));
@@ -873,7 +871,7 @@ int BaseCons::LoadWeights_StartTag(istream& strm, const String& tag, String& val
   }
   if(in_tag != tag) {
     if(!quiet) taMisc::Warning("BaseCons::LoadWeights: read different start tag:", in_tag,
-			       "expecting:", tag);
+                               "expecting:", tag);
     return taMisc::TAG_NONE; // bumping up against some other tag
   }
   return stat;
@@ -881,11 +879,11 @@ int BaseCons::LoadWeights_StartTag(istream& strm, const String& tag, String& val
 
 int BaseCons::LoadWeights_EndTag(istream& strm, const String& trg_tag, String& cur_tag, int& stat, bool quiet) {
   String val;
-  if(stat != taMisc::TAG_END)	// haven't already hit the end
+  if(stat != taMisc::TAG_END)   // haven't already hit the end
     stat = taMisc::read_tag(strm, cur_tag, val);
   if((stat != taMisc::TAG_END) || (cur_tag != trg_tag)) {
     if(!quiet) taMisc::Warning("BaseCons::LoadWeights: bad read of end tag:", trg_tag, "got:",
-			       cur_tag, "stat:", String(stat));
+                               cur_tag, "stat:", String(stat));
     if(stat == taMisc::TAG_END) stat = taMisc::TAG_NONE;
   }
   return stat;
@@ -906,7 +904,7 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
   }
   if(sz < size) {
     TestWarning(!quiet, "LoadWeights_strm", "weights file has fewer connections:", String(sz),
-		"than existing group size of:", String(size));
+                "than existing group size of:", String(size));
     // doesn't really make sense to nuke these -- maybe add a flag overall to enable this
 //     for(int i=size-1; i >= sz; i--) {
 //       Unit* su = Un(i);
@@ -916,17 +914,17 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
   else if(sz > size) {
     if(sz > alloc_size) {
       TestWarning(!quiet, "LoadWeights_strm", "weights file has more connections:", String(sz),
-		  "than allocated size:",
-		  String(alloc_size), "-- only alloc_size will be loaded");
+                  "than allocated size:",
+                  String(alloc_size), "-- only alloc_size will be loaded");
       sz = alloc_size;
     }
     else {
       TestWarning(!quiet, "LoadWeights_strm", "weights file has more connections:", String(sz),
-		  "than existing group size of:",
-		  String(size), "-- but these will fit within alloc_size and will be loaded");
+                  "than existing group size of:",
+                  String(size), "-- but these will fit within alloc_size and will be loaded");
     }
   }
-  for(int i=0; i < sz; i++) {	// using load size as key factor
+  for(int i=0; i < sz; i++) {   // using load size as key factor
     int lidx;
     float wtval;
     if(fmt == BaseCons::TEXT) {
@@ -934,59 +932,59 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, BaseCons::WtSaveFormat f
       lidx = (int)taMisc::LexBuf.before(' ');
       wtval = (float)taMisc::LexBuf.after(' ');
     }
-    else {			// binary
+    else {                      // binary
       strm.read((char*)&(lidx), sizeof(lidx));
       strm.read((char*)&(wtval), sizeof(wtval));
     }
     Unit* su = prjn->from->units.Leaf(lidx);
     if(!su) {
       TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
-		  String(lidx), "not found in layer:", prjn->from->name,
-		  "removing this connection");
+                  String(lidx), "not found in layer:", prjn->from->name,
+                  "removing this connection");
       if(size > i)
-	ru->DisConnectFrom(Un(i), prjn); // remove this guy to keep total size straight
-      sz--;			       // now doing less..
+        ru->DisConnectFrom(Un(i), prjn); // remove this guy to keep total size straight
+      sz--;                            // now doing less..
       i--;
       continue;
     }
     SendCons* send_gp = su->send.SafeEl(prjn->send_idx);
     if(!send_gp) {
       TestWarning(!quiet, "LoadWeights_strm", "unit at leaf index: ",
-		  String(lidx), "does not have proper send group:", String(prjn->send_idx));
+                  String(lidx), "does not have proper send group:", String(prjn->send_idx));
       if(size > i)
-	ru->DisConnectFrom(Un(i), prjn); // remove this guy to keep total size straight
-      sz--;			       // now doing less..
+        ru->DisConnectFrom(Un(i), prjn); // remove this guy to keep total size straight
+      sz--;                            // now doing less..
       i--;
       continue;
     }
-    if(i >= size) {		// new connection
+    if(i >= size) {             // new connection
       Connection* cn = ru->ConnectFromCk(su, prjn);
       if(cn)
-	cn->wt = wtval;
+        cn->wt = wtval;
     }
     else if(su != Un(i)) {
       // not same unit -- note that at this point, the only viable strategy is to discon
       // all existing cons and start over, as otherwise everything will be hopelessly out
       // of whack
       TestWarning(!quiet, "LoadWeights_strm", "unit at index:", String(i),
-		  "in cons group does not match the loaded unit",
-		  "-- removing all subsequent units and reconnecting");
+                  "in cons group does not match the loaded unit",
+                  "-- removing all subsequent units and reconnecting");
       for(int j=size-1; j >= i; j--) {
-	Unit* su = Un(j);
-	ru->DisConnectFrom(su, prjn);
+        Unit* su = Un(j);
+        ru->DisConnectFrom(su, prjn);
       }
       Connection* cn = ru->ConnectFromCk(su, prjn);
       if(cn)
-	cn->wt = wtval;
+        cn->wt = wtval;
     }
-    else {			// all good normal case, just set the weights!
+    else {                      // all good normal case, just set the weights!
       Cn(i)->wt = wtval;
     }
   }
   BaseCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
 
-  Init_Weights_post(ru);	// update weights after loading
-  return stat;			// should be tag end!
+  Init_Weights_post(ru);        // update weights after loading
+  return stat;                  // should be tag end!
 }
 
 int BaseCons::SkipWeights_strm(istream& strm, BaseCons::WtSaveFormat fmt, bool quiet) {
@@ -1005,7 +1003,7 @@ int BaseCons::SkipWeights_strm(istream& strm, BaseCons::WtSaveFormat fmt, bool q
     if(fmt == BaseCons::TEXT) {
       taMisc::read_till_eol(strm);
     }
-    else {			// binary
+    else {                      // binary
       strm.read((char*)&(lidx), sizeof(lidx));
       strm.read((char*)&(wt), sizeof(wt));
     }
@@ -1036,7 +1034,7 @@ int BaseCons::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
   // first save any sub-members (there usually aren't any)
 //   int rval = GetTypeDef()->Dump_Save_PathR(strm, (void*)this, (void*)par, indent);
 
-  if(this == par) {		   // hack signal to just save as a sub-guy
+  if(this == par) {                // hack signal to just save as a sub-guy
     strm << "\n";
     taMisc::indent(strm, indent+1, 1) << "[" << size << "]"; // just add the size here
   }
@@ -1045,8 +1043,8 @@ int BaseCons::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
 
 int BaseCons::Dump_Load_Value(istream& strm, taBase* par) {
   int c = taMisc::skip_white(strm);
-  if(c == EOF)	return EOF;
-  if(c == ';')	return 2;	// signal that its a path
+  if(c == EOF)  return EOF;
+  if(c == ';')  return 2;       // signal that its a path
   if(c == '}') {
     if(strm.peek() == ';') strm.get();
     return 2;
@@ -1058,7 +1056,7 @@ int BaseCons::Dump_Load_Value(istream& strm, taBase* par) {
   }
   // now, load members (if we have dims, will exit at that point)
   int rval = GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
-  // 3 is a hacky code to tell us that it got the [ 
+  // 3 is a hacky code to tell us that it got the [
   if ((rval != 3) || (rval == EOF)) return rval;
 
   c = taMisc::read_word(strm);
@@ -1066,19 +1064,19 @@ int BaseCons::Dump_Load_Value(istream& strm, taBase* par) {
     c = taMisc::read_word(strm);
     if(c == ']') {
       int sz = atoi(taMisc::LexBuf);
-      FreeCons();		// need to explicitly nuke old guys!
+      FreeCons();               // need to explicitly nuke old guys!
       AllocCons(sz);
     }
   }
   c = taMisc::read_till_rbracket(strm);
-  if (c==EOF)	return EOF;
+  if (c==EOF)   return EOF;
   c = taMisc::read_till_semi(strm);
-  if (c==EOF)	return EOF;
-  return 2;			// path signal -- if we got this!
+  if (c==EOF)   return EOF;
+  return 2;                     // path signal -- if we got this!
 }
 
 /////////////////////////////////////////////////////////////
-// 	Dump Load/Save
+//      Dump Load/Save
 
 int BaseCons::Dump_Save_Cons(ostream& strm, int indent) {
   // output the units
@@ -1088,7 +1086,7 @@ int BaseCons::Dump_Save_Cons(ostream& strm, int indent) {
     if(Un(i))
       strm << Un(i)->GetMyLeafIndex() << "; ";
     else
-      strm << -1 << "; ";	// null..
+      strm << -1 << "; ";       // null..
   }
   strm << "};\n";
 
@@ -1112,18 +1110,18 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
     return false;
   }
 
-  int c = taMisc::read_till_lbracket(strm);	// get past opening bracket
+  int c = taMisc::read_till_lbracket(strm);     // get past opening bracket
   if(c == EOF) return EOF;
   c = taMisc::read_word(strm);
   if(TestWarning(taMisc::LexBuf != "con_alloc", "Dump_Load_Cons",
-		 "Expecting: 'con_alloc' in load file, got:",
-		 taMisc::LexBuf,"instead")) {
+                 "Expecting: 'con_alloc' in load file, got:",
+                 taMisc::LexBuf,"instead")) {
     return false;
   }
   // skip =
   c = taMisc::skip_white(strm);
   if(TestWarning(c != '=', "Dump_Load_Cons",
-		 "Missing '=' in dump file for con_alloc in RecvCons")) {
+                 "Missing '=' in dump file for con_alloc in RecvCons")) {
     return false;
   }
   c = taMisc::read_till_semi(strm);
@@ -1145,15 +1143,15 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
       old_load = true;
     }
   }
-  String load_str;		// this will be the load string 
+  String load_str;              // this will be the load string
   if(old_load) {
 //     cerr << "old load: con_alloc: " << con_alloc << " alloc_size: " << alloc_size << endl;
     load_str += "{ con_alloc = " + String(con_alloc) + ";\n";
   }
   c = taMisc::read_word(strm);
   if(TestWarning(taMisc::LexBuf != "units",
-		 "Dump_Load_Cons", "Expecting 'units' in load file, got:",
-		 taMisc::LexBuf,"instead")) {
+                 "Dump_Load_Cons", "Expecting 'units' in load file, got:",
+                 taMisc::LexBuf,"instead")) {
     return false;
   }
   // skip =
@@ -1173,26 +1171,26 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
 
   // first read in the units
   Unit_Group* ug = NULL;
-  if(prjn && prjn->from.ptr()) 
+  if(prjn && prjn->from.ptr())
     ug = &(prjn->from->units);
-  int c_count = 0;		// number of connections
+  int c_count = 0;              // number of connections
   while(true) {
     c = taMisc::read_till_rb_or_semi(strm);
     if(c == EOF) return EOF;
     if(c == '}') {
-      if(old_load)	load_str += "};\n";
+      if(old_load)      load_str += "};\n";
       break;
     }
     if(old_load) {
       load_str += taMisc::LexBuf + "; ";
-      continue;			// just load and save
+      continue;                 // just load and save
     }
     Unit* un = NULL;
     int lfidx = (int)taMisc::LexBuf;
     if(ug && (lfidx >= 0)) {
       un = (Unit*)ug->Leaf(lfidx);
       if(TestWarning(!un, "Dump_Load_Cons", "Connection unit not found")) {
-	continue;
+        continue;
       }
     }
     if(!old_2nd_load && un && size <= c_count) {
@@ -1203,8 +1201,8 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
 
   if(!old_load && c_count > alloc_size) {
     TestWarning(true, "Dump_Load_Cons", "More connections read:", String(c_count),
-		"than allocated:", String(alloc_size),
-		"-- weights will be incomplete");
+                "than allocated:", String(alloc_size),
+                "-- weights will be incomplete");
   }
 
   // now read in the values
@@ -1213,11 +1211,11 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
     if(c == EOF) return EOF;
     if(c == '}') {
       if(strm.peek() == ';') strm.get(); // get the semi
-      break;		// done
+      break;            // done
     }
     MemberDef* md = con_type->members.FindName(taMisc::LexBuf);
     if(TestWarning(!md, "Dump_Load_Cons",
-		   "Connection member not found:", taMisc::LexBuf)) {
+                   "Connection member not found:", taMisc::LexBuf)) {
       c = taMisc::skip_past_err(strm);
       if(c == '}') break;
       continue;
@@ -1225,14 +1223,14 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
     // skip =
     c = taMisc::skip_white(strm);
     if(TestWarning(c != '=', "Dump_Load_Cons",
-		   "Missing '=' in dump file for unit")) {
+                   "Missing '=' in dump file for unit")) {
       c = taMisc::skip_past_err(strm);
       continue;
     }
     // skip {
     c = taMisc::skip_white(strm);
     if(TestWarning(c != '{', "Dump_Load_Cons",
-		   "Missing '{' in dump file for unit")) {
+                   "Missing '{' in dump file for unit")) {
       c = taMisc::skip_past_err(strm);
       continue;
     }
@@ -1244,35 +1242,35 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
       c = taMisc::read_till_rb_or_semi(strm);
       if(c == EOF) return EOF;
       if(c == '}') {
-	if(old_load)	load_str += "};\n";
-	break;
+        if(old_load)    load_str += "};\n";
+        break;
       }
-      if(old_load) {		// just save it up..
-	load_str += taMisc::LexBuf + "; ";
-	continue;
+      if(old_load) {            // just save it up..
+        load_str += taMisc::LexBuf + "; ";
+        continue;
       }
       if(i >= size) {
-	c = taMisc::skip_past_err_rb(strm); // bail to ending rb
-	if(old_load)	load_str += "};\n";
-	break;
+        c = taMisc::skip_past_err_rb(strm); // bail to ending rb
+        if(old_load)    load_str += "};\n";
+        break;
       }
       Connection* cn = Cn(i);
       md->type->SetValStr(taMisc::LexBuf, md->GetOff((void*)cn));
       i++;
     }
   }
-  
+
   if(prjn && prjn->con_spec.spec) {
     SetConSpec(prjn->con_spec.spec); // must set conspec b/c not otherwise saved or set
     if(!old_load)
-      Init_Weights_post(own_ru);	// update weights after loading
+      Init_Weights_post(own_ru);        // update weights after loading
   }
 
   if(old_load) {
     if(own_ru->own_lay() && own_ru->own_lay()->own_net) {
       int my_idx = own_ru->recv.FindEl(this);
       own_ru->SetUserData("OldLoadCons_" + String(my_idx), load_str);
-      // save in user data for loading later -- important: can't save in this because we 
+      // save in user data for loading later -- important: can't save in this because we
       // have to do a Connect later and that nukes us! :(  So, we use the unit instead
       Network* net = own_ru->own_lay()->own_net;
       net->old_load_cons = true; // tell network to load later
@@ -1282,7 +1280,7 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
 }
 
 void BaseCons::LinkPtrCons(Unit* my_u) {
-  if(OwnCons()) return;		// only for ptr cons
+  if(OwnCons()) return;         // only for ptr cons
 
   for(int j=0; j< size; j++) {
     Unit* fmu = Un(j);
@@ -1291,32 +1289,32 @@ void BaseCons::LinkPtrCons(Unit* my_u) {
     if(IsRecv()) {
       SendCons* send_gp = GetPrjnSendCons(fmu);
       if(send_gp) {
-	int myi = FindConFromIdx(my_u);
-	if(myi >= 0) {
-	  SetPtrCn(j, send_gp->Cn(myi));
-	}
+        int myi = FindConFromIdx(my_u);
+        if(myi >= 0) {
+          SetPtrCn(j, send_gp->Cn(myi));
+        }
       }
     }
     else {
       RecvCons* recv_gp = GetPrjnRecvCons(fmu);
       if(recv_gp) {
-	int myi = FindConFromIdx(my_u);
-	if(myi >= 0) {
-	  SetPtrCn(j, recv_gp->Cn(myi));
-	}
+        int myi = FindConFromIdx(my_u);
+        if(myi >= 0) {
+          SetPtrCn(j, recv_gp->Cn(myi));
+        }
       }
     }
   }
 }
 
 DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1, const String& var2,
-			      const String& var3, const String& var4, const String& var5,
-			      const String& var6, const String& var7, const String& var8,
-			      const String& var9, const String& var10, const String& var11,
-			      const String& var12, const String& var13, const String& var14) {
+                              const String& var3, const String& var4, const String& var5,
+                              const String& var6, const String& var7, const String& var8,
+                              const String& var9, const String& var10, const String& var11,
+                              const String& var12, const String& var13, const String& var14) {
   if(TestError(!ru, "ConVarsToTable", "recv unit is NULL -- bailing"))
     return NULL;
-  if(size <= 0) return NULL;		// nothing here
+  if(size <= 0) return NULL;            // nothing here
   bool new_table = false;
   if (!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
@@ -1327,11 +1325,11 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
   const int nvars = 14;
   DataCol* cols[nvars];
   const String vars[nvars] = {var1, var2, var3, var4, var5, var6, var7, var8,
-			      var9, var10, var11, var12, var13, var14};
+                              var9, var10, var11, var12, var13, var14};
   MemberDef* mds[nvars];
-  bool ruv[nvars];		// recv unit var
-  bool suv[nvars];		// send unit var
-  bool biasv[nvars];		// bias var
+  bool ruv[nvars];              // recv unit var
+  bool suv[nvars];              // send unit var
+  bool biasv[nvars];            // bias var
 
   TypeDef* rutd = ru->GetTypeDef();
   Unit* su0 = Un(0);
@@ -1354,53 +1352,53 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
   for(int i=0;i<nvars;i++) {
     if(vars[i].nonempty()) {
       String colnm = taMisc::StringCVar(vars[i]);
-      cols[i] = dt->FindMakeColName(colnm, idx, VT_FLOAT); 
+      cols[i] = dt->FindMakeColName(colnm, idx, VT_FLOAT);
       ruv[i] = suv[i] = biasv[i] = false;
       if(vars[i].startsWith("r.")) {
-	ruv[i] = true;
-	String varnxt = vars[i].after("r.");
-	if(varnxt.startsWith("bias.")) {
-	  if(TestWarning(!rubiastd || !rubias, "ConVarstoTable", "recv bias type or con not set"))
-	    continue;
-	  biasv[i] = true;
-	  varnxt = varnxt.after("bias.");
-	  mds[i] = rubiastd->members.FindName(varnxt);
-	  if(TestWarning(!mds[i], "ConVarsToTable", "recv unit bias variable named:", varnxt,
-			 "not found in type:", rubiastd->name))
-	    continue;
-	}
-	else {
-	  mds[i] = rutd->members.FindName(varnxt);
-	  if(TestWarning(!mds[i], "ConVarsToTable", "recv unit variable named:", varnxt,
-			 "not found in type:", rutd->name))
-	    continue;
-	}
+        ruv[i] = true;
+        String varnxt = vars[i].after("r.");
+        if(varnxt.startsWith("bias.")) {
+          if(TestWarning(!rubiastd || !rubias, "ConVarstoTable", "recv bias type or con not set"))
+            continue;
+          biasv[i] = true;
+          varnxt = varnxt.after("bias.");
+          mds[i] = rubiastd->members.FindName(varnxt);
+          if(TestWarning(!mds[i], "ConVarsToTable", "recv unit bias variable named:", varnxt,
+                         "not found in type:", rubiastd->name))
+            continue;
+        }
+        else {
+          mds[i] = rutd->members.FindName(varnxt);
+          if(TestWarning(!mds[i], "ConVarsToTable", "recv unit variable named:", varnxt,
+                         "not found in type:", rutd->name))
+            continue;
+        }
       }
       else if(vars[i].startsWith("s.")) {
-	suv[i] = true;
-	String varnxt = vars[i].after("s.");
-	if(varnxt.startsWith("bias.")) {
-	  if(TestWarning(!subiastd || !subias0, "ConVarstoTable", "recv bias type or con not set"))
-	    continue;
-	  biasv[i] = true;
-	  varnxt = varnxt.after("bias.");
-	  mds[i] = subiastd->members.FindName(varnxt);
-	  if(TestWarning(!mds[i], "ConVarsToTable", "send unit bias variable named:", varnxt,
-			 "not found in type:", subiastd->name))
-	    continue;
-	}
-	else {
-	  mds[i] = sutd->members.FindName(varnxt);
-	  if(TestWarning(!mds[i], "ConVarsToTable", "send unit variable named:", varnxt,
-			 "not found in type:", sutd->name))
-	    continue;
-	}
+        suv[i] = true;
+        String varnxt = vars[i].after("s.");
+        if(varnxt.startsWith("bias.")) {
+          if(TestWarning(!subiastd || !subias0, "ConVarstoTable", "recv bias type or con not set"))
+            continue;
+          biasv[i] = true;
+          varnxt = varnxt.after("bias.");
+          mds[i] = subiastd->members.FindName(varnxt);
+          if(TestWarning(!mds[i], "ConVarsToTable", "send unit bias variable named:", varnxt,
+                         "not found in type:", subiastd->name))
+            continue;
+        }
+        else {
+          mds[i] = sutd->members.FindName(varnxt);
+          if(TestWarning(!mds[i], "ConVarsToTable", "send unit variable named:", varnxt,
+                         "not found in type:", sutd->name))
+            continue;
+        }
       }
       else {
-	mds[i] = con_type->members.FindName(vars[i]);
-	if(TestWarning(!mds[i], "ConVarsToTable", "connection variable named:", vars[i],
-		       "not found in type:", con_type->name))
-	  continue;
+        mds[i] = con_type->members.FindName(vars[i]);
+        if(TestWarning(!mds[i], "ConVarsToTable", "connection variable named:", vars[i],
+                       "not found in type:", con_type->name))
+          continue;
       }
     }
     else {
@@ -1414,23 +1412,23 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
       if(!mds[i]) continue;
       Variant val;
       if(ruv[i]) {
-	if(biasv[i]) {
-	  val = mds[i]->GetValVar((void*)rubias);
-	}
-	else {
-	  val = mds[i]->GetValVar((void*)ru);
-	}
+        if(biasv[i]) {
+          val = mds[i]->GetValVar((void*)rubias);
+        }
+        else {
+          val = mds[i]->GetValVar((void*)ru);
+        }
       }
       else if(suv[i]) {
-	if(biasv[i]) {
-	  val = mds[i]->GetValVar((void*)(Un(j)->bias.Cn(0)));
-	}
-	else {
-	  val = mds[i]->GetValVar((void*)Un(j));
-	}
+        if(biasv[i]) {
+          val = mds[i]->GetValVar((void*)(Un(j)->bias.Cn(0)));
+        }
+        else {
+          val = mds[i]->GetValVar((void*)Un(j));
+        }
       }
       else {
-	val = mds[i]->GetValVar((void*)Cn(j));
+        val = mds[i]->GetValVar((void*)Cn(j));
       }
       cols[i]->SetVal(val, -1);
     }
@@ -1442,51 +1440,51 @@ DataTable* BaseCons::ConVarsToTable(DataTable* dt, Unit* ru, const String& var1,
 }
 
 /////////////////////////////////////////////////////////////////////
-//	RecvCons
+//      RecvCons
 
 void RecvCons::Initialize() {
-  SetBaseFlag(OWN_CONS);	// we own by default
-  SetBaseFlag(RECV_CONS);	// definitely recv
+  SetBaseFlag(OWN_CONS);        // we own by default
+  SetBaseFlag(RECV_CONS);       // definitely recv
 }
 
-void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) { 
+void RecvCons::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
 
-  if(size > 0) {		// connections exist
+  if(size > 0) {                // connections exist
     if(CheckError((send_idx() < 0) || (send_idx() != prjn->send_idx), quiet, rval,
-		  "unset send_idx, do FixPrjnIndexes or Connect")) {
+                  "unset send_idx, do FixPrjnIndexes or Connect")) {
       prjn->projected = false;
     }
 
     Unit* su = Un(0);
     if(CheckError(!su, quiet, rval,
-		  "sending unit is null when it should not be!  rebuild network!")) {
+                  "sending unit is null when it should not be!  rebuild network!")) {
       prjn->projected = false;
     }
     else if(CheckError((su->send.size <= send_idx()), quiet, rval,
-		  "send_idx is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
+                  "send_idx is out of range on sending unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
       prjn->projected = false;
     }
     else {
       SendCons* sucg = su->send.SafeEl(send_idx());
       if(CheckError(!sucg, quiet, rval,
-		    "send_idx is not set correctly (send guy is NULL). Do Actions/Remove Cons, then Build, Connect on Network")) {
-	prjn->projected = false;
+                    "send_idx is not set correctly (send guy is NULL). Do Actions/Remove Cons, then Build, Connect on Network")) {
+        prjn->projected = false;
       }
       else {
-	if(CheckError((sucg->prjn != prjn), quiet, rval,
-		      "send_idx doesn't have correct prjn on sending unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
-	  prjn->projected = false;
-	}
+        if(CheckError((sucg->prjn != prjn), quiet, rval,
+                      "send_idx doesn't have correct prjn on sending unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
+          prjn->projected = false;
+        }
       }
     }
   }
-  if(!GetConSpec()->CheckConfig_RecvCons(this, quiet)) 
-    rval = false; 
+  if(!GetConSpec()->CheckConfig_RecvCons(this, quiet))
+    rval = false;
 }
 
 /////////////////////////////////////////////////////////////
-// 	Dump Load/Save
+//      Dump Load/Save
 
 // have to implement after save_value because we're not saving a real
 // path that can be loaded with Load
@@ -1521,7 +1519,7 @@ int RecvCons::Dump_Load_Old_Cons(Unit* ru, int recv_gp_idx) {
 }
 
 /////////////////////////////////////////////////////////////////////
-//	RecvCons_List
+//      RecvCons_List
 
 RecvCons* RecvCons_List::NewPrjn(Projection* aprjn) {
   RecvCons* rval = (RecvCons*)New(1, aprjn->recvcons_type);
@@ -1628,41 +1626,41 @@ bool RecvCons_List::RemoveFrom(Layer* from) {
 }
 
 /////////////////////////////////////////////////////////////////////
-//	SendCons
+//      SendCons
 
 void SendCons::Initialize() {
-  ClearBaseFlag(OWN_CONS);	// we don't own by default
-  ClearBaseFlag(RECV_CONS);	// definitely Send
+  ClearBaseFlag(OWN_CONS);      // we don't own by default
+  ClearBaseFlag(RECV_CONS);     // definitely Send
 }
 
-void SendCons::CheckThisConfig_impl(bool quiet, bool& rval) { 
+void SendCons::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
 
-  if(size > 0) {		// connections exist
+  if(size > 0) {                // connections exist
     if(CheckError((recv_idx() < 0) || (recv_idx() != prjn->recv_idx), quiet, rval,
-		  "unset recv_idx, do FixPrjnIndexes or Connect")) {
+                  "unset recv_idx, do FixPrjnIndexes or Connect")) {
       prjn->projected = false;
     }
     Unit* ru = Un(0);
     if(CheckError(!ru, quiet, rval,
-		  "recv unit is null when it should not be!  rebuild network!")) {
+                  "recv unit is null when it should not be!  rebuild network!")) {
       prjn->projected = false;
     }
     else if(CheckError((ru->recv.size <= recv_idx()), quiet, rval,
-		       "recv_idx is out of range on recv unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
+                       "recv_idx is out of range on recv unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
       prjn->projected = false;
     }
     else {
       RecvCons* rucg = ru->recv.SafeEl(recv_idx());
       if(CheckError(!rucg, quiet, rval,
-		    "recv_idx is not set correctly (recv guy is NULL). Do Actions/Remove Cons, then Build, Connect on Network")) {
-	prjn->projected = false;
+                    "recv_idx is not set correctly (recv guy is NULL). Do Actions/Remove Cons, then Build, Connect on Network")) {
+        prjn->projected = false;
       }
       else {
-	if(CheckError((rucg->prjn != prjn), quiet, rval,
-		      "recv_idx doesn't have correct prjn on recv unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
-	  prjn->projected = false;
-	}
+        if(CheckError((rucg->prjn != prjn), quiet, rval,
+                      "recv_idx doesn't have correct prjn on recv unit. Do Actions/Remove Cons, then Build, Connect on Network")) {
+          prjn->projected = false;
+        }
       }
     }
   }
@@ -1670,7 +1668,7 @@ void SendCons::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 
 /////////////////////////////////////////////////////////////////////
-//	SendCons_List
+//      SendCons_List
 
 SendCons* SendCons_List::NewPrjn(Projection* aprjn) {
   SendCons* rval = (SendCons*)New(1, aprjn->sendcons_type);
@@ -1776,7 +1774,7 @@ bool SendCons_List::RemoveTo(Layer* to) {
 }
 
 ////////////////////////
-//	Unit	      //
+//      Unit          //
 ////////////////////////
 
 void UnitSpec::Initialize() {
@@ -1822,13 +1820,13 @@ void UnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   if(!bias_con_type) return;
   if(CheckError(!bias_spec.spec, quiet, rval,
-		 "Bias con type of:", bias_con_type->name,
-		 "does not have a spec set!"))
+                 "Bias con type of:", bias_con_type->name,
+                 "does not have a spec set!"))
     return;
   CheckError((!bias_con_type->InheritsFrom(bias_spec.spec->min_obj_type)), quiet, rval,
-	     "Bias con type of:", bias_con_type->name,
-	     "is not of the correct type for the bias con spec,"
-	     "which needs at least a:", bias_spec.spec->min_obj_type->name);
+             "Bias con type of:", bias_con_type->name,
+             "is not of the correct type for the bias con spec,"
+             "which needs at least a:", bias_spec.spec->min_obj_type->name);
 }
 
 bool UnitSpec::CheckType_impl(TypeDef* td) {
@@ -1859,13 +1857,13 @@ void UnitSpec::BuildBiasCons() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//	Below are the primary computational interface to the Network Objects
-//	for performing algorithm-specific activation and learning
-//	Many functions operate directly on the units via threads, and then
-//	call through to the layers for any layer-level subsequent processing
-// 	units typically call spec versions except for basic stuff
+//      Below are the primary computational interface to the Network Objects
+//      for performing algorithm-specific activation and learning
+//      Many functions operate directly on the units via threads, and then
+//      call through to the layers for any layer-level subsequent processing
+//      units typically call spec versions except for basic stuff
 
-// 	Init functions are NOT threaded, while Compute functions are
+//      Init functions are NOT threaded, while Compute functions are
 
 void UnitSpec::Init_Acts(Unit* u, Network* net) {
   u->Init_InputData();
@@ -1895,10 +1893,10 @@ void UnitSpec::Init_Weights(Unit* u, Network* net) {
 #endif
     {
       for(int g = 0; g < u->recv.size; g++) {
-	RecvCons* recv_gp = u->recv.FastEl(g);
-	// ignore lesion here because n_recv_cons does not take into account lesioned layers, so dmem would get out of sync
-	//    if(!recv_gp->prjn->from->lesioned())
-	recv_gp->Init_Weights(u);
+        RecvCons* recv_gp = u->recv.FastEl(g);
+        // ignore lesion here because n_recv_cons does not take into account lesioned layers, so dmem would get out of sync
+        //    if(!recv_gp->prjn->from->lesioned())
+        recv_gp->Init_Weights(u);
       }
     }
 
@@ -2000,12 +1998,12 @@ bool UnitSpec::Compute_PRerr(Unit* u, Network* net, float& true_pos, float& fals
     }
     else {
       if(u->targ > u->act) {
-	true_pos = u->act;
-	false_neg = u->targ - u->act;
+        true_pos = u->act;
+        false_neg = u->targ - u->act;
       }
       else {
-	true_pos = u->targ;
-	false_pos = u->act - u->targ;
+        true_pos = u->targ;
+        false_pos = u->act - u->targ;
       }
     }
   }
@@ -2023,7 +2021,11 @@ void Unit::Initialize() {
   net = 0.0f;
   wt_prjn = tmp_calc1 = 0.0f;
   snap = 0.0f;
+  // recv, send, bias = ??
   n_recv_cons = 0;
+  // pos = ??
+  voxel.x = voxel.y = voxel.z = -1.0;
+  voxel_size = -1.0;
   idx = -1;
   flat_idx = 0;
   m_unit_spec = NULL;
@@ -2035,10 +2037,11 @@ void Unit::Destroy() {
 
 void Unit::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(recv, this);	// always own your constitutents
+  taBase::Own(recv, this);      // always own your constitutents
   taBase::Own(send, this);
   taBase::Own(bias, this);
   taBase::Own(pos, this);
+  taBase::Own(voxel, this);
   BuildUnits();
 }
 
@@ -2054,6 +2057,8 @@ void Unit::CutLinks() {
 
 void Unit::Copy_(const Unit& cp) {
   pos = cp.pos;
+  voxel = cp.voxel;
+  voxel_size = cp.voxel_size;
   ext_flag = cp.ext_flag;
   targ = cp.targ;
   ext = cp.ext;
@@ -2072,12 +2077,14 @@ void Unit::Copy_(const Unit& cp) {
 void Unit::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   // no negative positions
-  pos.x = MAX(0,pos.x); pos.y = MAX(0,pos.y);  pos.z = MAX(0,pos.z);
+  pos.x = MAX(0,pos.x);
+  pos.y = MAX(0,pos.y);
+  pos.z = MAX(0,pos.z);
   // stay within layer->un_geom
 //   Layer* lay = GET_MY_OWNER(Layer);
 //   if(!lay) return;
 //   pos.x = MIN(lay->un_geom.x-1,pos.x); pos.y = MIN(lay->un_geom.y-1,pos.y);
-  pos.z = 0;			// always zero: can't go out of plane
+  pos.z = 0;                    // always zero: can't go out of plane
 }
 
 int Unit::GetMyLeafIndex() {
@@ -2111,19 +2118,19 @@ void Unit::AddRelPos(TDCoord& rel_pos) {
     ugp->AddRelPos(rel_pos);
   }
 }
- 
+
 #ifdef DMEM_COMPILE
 int Unit::dmem_this_proc = 0;
 #endif
 
 void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran, bool na_by_range) {
   // note: not all flag values are valid, so following is a fuzzy cascade
-  // ext is the default place, so we check for 
+  // ext is the default place, so we check for
   if(na_by_range) {
     UnitSpec* us = GetUnitSpec();
     if(us) {
       if(!us->act_range.RangeTestEq(val))
-	return;
+        return;
     }
   }
 
@@ -2169,11 +2176,11 @@ void Unit::CheckChildConfig_impl(bool quiet, bool& rval) {
   send.CheckConfig(quiet, rval);
 }
 
-void Unit::CheckThisConfig_impl(bool quiet, bool& rval) { 
+void Unit::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
 
   if(CheckError(!GetUnitSpec(), quiet, rval, "No unit spec set for unit")) {
-    return;			// fatal
+    return;                     // fatal
   }
   if(!GetUnitSpec()->CheckConfig_Unit(this, quiet)) {
     rval = false;
@@ -2183,20 +2190,20 @@ void Unit::CheckThisConfig_impl(bool quiet, bool& rval) {
 bool Unit::CheckBuild(bool quiet) {
   bool rval;
   if(CheckError(!GetUnitSpec(), quiet, rval,
-		"Unit CheckBuild: no unit spec set for unit")) {
-    return false;		// fatal
+                "Unit CheckBuild: no unit spec set for unit")) {
+    return false;               // fatal
   }
   UnitSpec* us = GetUnitSpec();
   if(!us->bias_con_type) {
     if(CheckError(bias.size > 0, quiet, rval,
-		  "Unit CheckBuild: bias weight exists but no type")) {
+                  "Unit CheckBuild: bias weight exists but no type")) {
       return false;
     }
   }
   else {
     if(CheckError((!bias.size || (bias.con_type != us->bias_con_type)),
-		  quiet, rval, 
-		  "Unit CheckBuild: bias weight null or not same type as specified in UnitSpec:", us->name)) {
+                  quiet, rval,
+                  "Unit CheckBuild: bias weight null or not same type as specified in UnitSpec:", us->name)) {
       return false;
     }
   }
@@ -2204,7 +2211,7 @@ bool Unit::CheckBuild(bool quiet) {
 }
 
 void Unit::RemoveCons() {
-  recv.RemoveAll();		// blunt, but effective
+  recv.RemoveAll();             // blunt, but effective
   send.RemoveAll();
   n_recv_cons = 0;
 }
@@ -2225,24 +2232,24 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
     bool is_send = var.startsWith("s.");
     if(is_send) {
       for(int g=0;g<recv.size;g++) {
-	RecvCons* tcong = recv.FastEl(g);
-	MemberDef* act_md = tcong->con_type->members.FindName(cvar);
-	if(!act_md) continue;
-	Connection* con = tcong->FindConFrom(src_u);
-	if(!con) continue;
-	val = *((float*)act_md->GetOff(con));
-	break;
+        RecvCons* tcong = recv.FastEl(g);
+        MemberDef* act_md = tcong->con_type->members.FindName(cvar);
+        if(!act_md) continue;
+        Connection* con = tcong->FindConFrom(src_u);
+        if(!con) continue;
+        val = *((float*)act_md->GetOff(con));
+        break;
       }
     }
     else {
       for(int g=0;g<send.size;g++) {
-	SendCons* tcong = send.FastEl(g);
-	MemberDef* act_md = tcong->con_type->members.FindName(cvar);
-	if(!act_md)	continue;
-	Connection* con = tcong->FindConFrom(src_u);
-	if(!con) continue;
-	val = *((float*)act_md->GetOff(con));
-	break;
+        SendCons* tcong = send.FastEl(g);
+        MemberDef* act_md = tcong->con_type->members.FindName(cvar);
+        if(!act_md)     continue;
+        Connection* con = tcong->FindConFrom(src_u);
+        if(!con) continue;
+        val = *((float*)act_md->GetOff(con));
+        break;
       }
     }
   }
@@ -2347,7 +2354,7 @@ void Unit::RecvConsPostAlloc(Projection* prjn) {
 }
 
 Connection* Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
-			      bool ignore_alloc_errs) {
+                              bool ignore_alloc_errs) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
@@ -2367,18 +2374,18 @@ Connection* Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
     send_gp->other_idx = prjn->recv_idx;
 
   if(alloc_send) {
-    send_gp->ConnectAllocInc();	// just do alloc increment
+    send_gp->ConnectAllocInc(); // just do alloc increment
     return NULL;
   }
 
   Connection* con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs);
-  if(con) 
+  if(con)
     n_recv_cons++;
   return con;
 }
 
 Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn,
-				bool ignore_alloc_errs) {
+                                bool ignore_alloc_errs) {
 #ifdef DMEM_COMPILE
   if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
 #endif
@@ -2401,7 +2408,7 @@ Connection* Unit::ConnectFromCk(Unit* su, Projection* prjn,
     return NULL;
 
   Connection* con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs);
-  if(con) 
+  if(con)
     n_recv_cons++;
   return con;
 }
@@ -2418,7 +2425,7 @@ bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
   else {
     Layer* su_lay = GET_OWNER(su,Layer);
     recv_gp = recv.FindFrom(su_lay);
-    if(!recv_gp)	return false;
+    if(!recv_gp)        return false;
     if(recv_gp->send_idx() >= 0)
       send_gp = su->send.SafeEl(recv_gp->send_idx());
     else
@@ -2443,13 +2450,13 @@ void Unit::DisConnectAll() {
     recv_gp = recv.FastEl(g);
     for(i=recv_gp->size-1; i>=0; i--) {
       if(recv_gp->send_idx() >= 0)
-	send_gp = recv_gp->Un(i)->send.SafeEl(recv_gp->send_idx());
+        send_gp = recv_gp->Un(i)->send.SafeEl(recv_gp->send_idx());
       else
-	send_gp = NULL;
+        send_gp = NULL;
       if(send_gp == NULL)
-	send_gp = recv_gp->Un(i)->send.FindPrjn(recv_gp->prjn);
+        send_gp = recv_gp->Un(i)->send.FindPrjn(recv_gp->prjn);
       if(send_gp)
-	send_gp->RemoveConUn(this);
+        send_gp->RemoveConUn(this);
       recv_gp->RemoveConIdx(i);
     }
     recv_gp->other_idx = -1;
@@ -2458,13 +2465,13 @@ void Unit::DisConnectAll() {
     send_gp = send.FastEl(g);
     for(i=send_gp->size-1; i>=0; i--) {
       if(send_gp->recv_idx() >= 0)
-	recv_gp = send_gp->Un(i)->recv.SafeEl(send_gp->recv_idx());
+        recv_gp = send_gp->Un(i)->recv.SafeEl(send_gp->recv_idx());
       else
-	recv_gp = NULL;
+        recv_gp = NULL;
       if(recv_gp == NULL)
-	recv_gp = send_gp->Un(i)->recv.FindPrjn(send_gp->prjn);
+        recv_gp = send_gp->Un(i)->recv.FindPrjn(send_gp->prjn);
       if(recv_gp)
-	recv_gp->RemoveConUn(this);
+        recv_gp->RemoveConUn(this);
       send_gp->RemoveConIdx(i);
     }
     send_gp->other_idx = -1;
@@ -2535,7 +2542,7 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
     break;
   case RecvCons::BINARY:
     strm.read((char*)&bwt, sizeof(bwt));
-    strm.get();		// get the /n
+    strm.get();         // get the /n
     break;
   }
   if(bias.size) {
@@ -2547,11 +2554,11 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
     // bypass non-local connections!
     while(true) {
       stat = taMisc::read_tag(strm, tag, val);
-      if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END of Un
+      if(stat != taMisc::TAG_GOT) break;                // *should* break at TAG_END of Un
       if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
       stat = RecvCons::SkipWeights_strm(strm, fmt, quiet); // skip over
       if(stat != taMisc::TAG_END) break; // something is wrong
-      stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+      stat = taMisc::TAG_NONE;         // reset so EndTag will definitely read new tag
       RecvCons::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
       if(stat != taMisc::TAG_END) break;
     }
@@ -2560,7 +2567,7 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
 #endif
   while(true) {
     stat = taMisc::read_tag(strm, tag, val);
-    if(stat != taMisc::TAG_GOT) break;			// *should* break at TAG_END
+    if(stat != taMisc::TAG_GOT) break;                  // *should* break at TAG_END
     if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
     int gi = (int)val.before(' ');
     String fm = val.after("Fm:");
@@ -2568,19 +2575,19 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
     if(recv.size > gi) {
       cg = recv.FastEl(gi);
       if(cg->prjn->from->name != fm)
-	cg = recv.FindFromName(fm);
+        cg = recv.FindFromName(fm);
     }
     else {
-      cg = recv.FindFromName(fm); 
+      cg = recv.FindFromName(fm);
     }
-    if(cg) {		
+    if(cg) {
       stat = cg->LoadWeights_strm(strm, this, fmt, quiet);
     }
     else {
       stat = RecvCons::SkipWeights_strm(strm, fmt, quiet); // skip over
     }
     if(stat != taMisc::TAG_END) break; // something is wrong
-    stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+    stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
     RecvCons::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
@@ -2604,16 +2611,16 @@ int Unit::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet
     break;
   case RecvCons::BINARY:
     strm.read((char*)&bwt, sizeof(bwt));
-    strm.get();		// get the /n
+    strm.get();         // get the /n
     break;
   }
   while(true) {
     stat = taMisc::read_tag(strm, tag, val);
-    if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END
+    if(stat != taMisc::TAG_GOT) break;          // *should* break at TAG_END
     if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
     stat = RecvCons::SkipWeights_strm(strm, fmt, quiet); // skip over
     if(stat != taMisc::TAG_END) break; // something is wrong
-    stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+    stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
     RecvCons::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
@@ -2640,7 +2647,7 @@ int Unit::LoadWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFor
 }
 
 void Unit::GetLocalistName() {
-  if(name.nonempty()) return;	// only if not otherwise named!
+  if(name.nonempty()) return;   // only if not otherwise named!
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesioned()) continue;
@@ -2648,7 +2655,7 @@ void Unit::GetLocalistName() {
     Unit* un = cg->Un(0);
     if(!un->name.empty()) {
       SetName(un->name);
-      break;			// done!
+      break;                    // done!
     }
   }
 }
@@ -2670,7 +2677,7 @@ void Unit::AddNoiseToWeights(const Random& noise_spec, Projection* prjn) {
 }
 
 int Unit::PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,
-		       float cmp_val, Projection* prjn)
+                       float cmp_val, Projection* prjn)
 {
   int rval = 0;
   int g;
@@ -2720,11 +2727,11 @@ DataTable* Unit::VarToTable(DataTable* dt, const String& variable) {
 }
 
 DataTable* Unit::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
-			  const String& var3, const String& var4, const String& var5,
-			  const String& var6, const String& var7, const String& var8,
-			  const String& var9, const String& var10, const String& var11,
-			  const String& var12, const String& var13, const String& var14,
-			  Projection* prjn) {
+                          const String& var3, const String& var4, const String& var5,
+                          const String& var6, const String& var7, const String& var8,
+                          const String& var9, const String& var10, const String& var11,
+                          const String& var12, const String& var13, const String& var14,
+                          Projection* prjn) {
   bool new_table = false;
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
@@ -2736,7 +2743,7 @@ DataTable* Unit::ConVarsToTable(DataTable* dt, const String& var1, const String&
     RecvCons* cg = recv.FastEl(g);
     if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->ConVarsToTable(dt, this, var1, var2, var3, var4, var5, var6, var7, var8,
-		       var9, var10, var11, var12, var13, var14);
+                       var9, var10, var11, var12, var13, var14);
   }
   dt->StructUpdate(false);
   if(new_table)
@@ -2750,7 +2757,7 @@ bool Unit::ChangeMyType(TypeDef*) {
 }
 
 ////////////////////////////
-//	ProjectionSpec    //
+//      ProjectionSpec    //
 ////////////////////////////
 
 void ProjectionSpec::Initialize() {
@@ -2767,7 +2774,7 @@ void ProjectionSpec::InitLinks() {
 }
 
 void ProjectionSpec::PreConnect(Projection* prjn) {
-  if(!(bool)prjn->from)	return;
+  if(!(bool)prjn->from) return;
 
   // make first set of congroups to get indicies
   Unit* first_ru = (Unit*)prjn->layer->units.Leaf(0);
@@ -2786,12 +2793,12 @@ void ProjectionSpec::PreConnect(Projection* prjn) {
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
-    if(u == first_ru)	continue; // skip over first one..
+    if(u == first_ru)   continue; // skip over first one..
     recv_gp = u->recv.NewPrjn(prjn);
     recv_gp->other_idx = prjn->send_idx;
   }
   FOR_ITR_EL(Unit, u, prjn->from->units., i) {
-    if(u == first_su)	continue; // skip over first one..
+    if(u == first_su)   continue; // skip over first one..
     send_gp = u->send.NewPrjn(prjn);
     send_gp->other_idx = prjn->recv_idx;
   }
@@ -2827,7 +2834,7 @@ void ProjectionSpec::Init_Weights(Projection* prjn) {
     for(int g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
       if(cg->prjn == prjn)
-	cg->Init_Weights(u);
+        cg->Init_Weights(u);
     }
   }
 }
@@ -2840,7 +2847,7 @@ void ProjectionSpec::Init_Weights_post(Projection* prjn) {
     for(int g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
       if(cg->prjn == prjn)
-	cg->Init_Weights_post(u);
+        cg->Init_Weights_post(u);
     }
   }
 }
@@ -2858,7 +2865,7 @@ void ProjectionSpec::Init_dWt(Projection* prjn) {
     for(g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
       if(cg->prjn == prjn)
-	cg->Init_dWt(u);
+        cg->Init_dWt(u);
     }
   }
 }
@@ -2877,14 +2884,14 @@ bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {
     return false;
   }
   if(CheckError(!prjn->con_spec->CheckObjectType(prjn), quiet, rval,
-		"does not have correct spec/object type")) {
+                "does not have correct spec/object type")) {
     return false;
   }
   return true;
 }
 
 ////////////////////////
-//	Projection    //
+//      Projection    //
 ////////////////////////
 
 void Projection::Initialize() {
@@ -2909,7 +2916,7 @@ void Projection::Destroy(){
 
 void Projection::CutLinks() {
   if(owner == NULL) return;
-  RemoveCons();		// remove actual connections
+  RemoveCons();         // remove actual connections
   if((bool)from) {
     // remove from sending links, being sure to protect against a spurious re-delete
     taBase::Ref(this);
@@ -2921,7 +2928,7 @@ void Projection::CutLinks() {
   con_spec.CutLinks();
   m_prv_con_spec = NULL;
   if(((bool)layer) && taMisc::gui_active) {
-    owner = NULL;		// tell view that we're not really here
+    owner = NULL;               // tell view that we're not really here
     if(layer->own_net) {
       layer->own_net->RemoveCons(); // get rid of connections in any other layers!
     }
@@ -2945,9 +2952,9 @@ void Projection::InitLinks() {
     if(!(myindex == 0) && (from_type == PREV)) { // is it not the first?
       SetFrom();
       if((bool)from) {
-	String nwnm = "Fm_" + from->name;
-	if(!name.contains(nwnm))	// only change if necc -- keep if multiple
-	  SetName(nwnm);		// setname ensures uniqueness
+        String nwnm = "Fm_" + from->name;
+        if(!name.contains(nwnm))        // only change if necc -- keep if multiple
+          SetName(nwnm);                // setname ensures uniqueness
       }
     }
   }
@@ -2999,19 +3006,19 @@ void Projection::UpdateAfterEdit_impl() {
     if(fmnet != mynet) {
       Layer* ly = mynet->FindLayer(from->name);
       if(ly) {
-	from_type = CUSTOM;	// most likely already is..
-	from = ly;
+        from_type = CUSTOM;     // most likely already is..
+        from = ly;
       }
       else {
-	TestWarning(true, "UAE", "'from' layer is not within this Network, and layer of same name was not found, so setting from = PREV -- most likely you need to fix this!");
-	from_type = PREV;
-	SetFrom();
+        TestWarning(true, "UAE", "'from' layer is not within this Network, and layer of same name was not found, so setting from = PREV -- most likely you need to fix this!");
+        from_type = PREV;
+        SetFrom();
       }
     }
     String nwnm = "Fm_" + from->name;
     // unique names are always _index so needs to at least fit that
     if(!name.startsWith(nwnm) || !name.after(nwnm).startsWith('_'))
-      SetName(nwnm);		// setname ensures uniqueness
+      SetName(nwnm);            // setname ensures uniqueness
   }
 
   UpdateConSpecs((bool)taMisc::is_loading);
@@ -3024,7 +3031,7 @@ void Projection::UpdateAfterEdit_impl() {
 void Projection::UpdateName() {
   if(from) {
     String nwnm = "Fm_" + from->name;
-    SetName(nwnm);		// setname ensures uniqueness
+    SetName(nwnm);              // setname ensures uniqueness
     DataChanged(DCR_ITEM_UPDATED);
   }
 }
@@ -3116,10 +3123,10 @@ DataTable* Projection::VarToTable(DataTable* dt, const String& variable) {
 }
 
 DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
-				const String& var3, const String& var4, const String& var5,
-				const String& var6, const String& var7, const String& var8,
-				const String& var9, const String& var10, const String& var11,
-				const String& var12, const String& var13, const String& var14) {
+                                const String& var3, const String& var4, const String& var5,
+                                const String& var6, const String& var7, const String& var8,
+                                const String& var9, const String& var10, const String& var11,
+                                const String& var12, const String& var13, const String& var14) {
   if(!(bool)layer) return NULL;
   bool new_table = false;
   if(!dt) {
@@ -3129,7 +3136,7 @@ DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const S
   }
   dt->StructUpdate(true);
   layer->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
-			var9, var10, var11, var12, var13, var14, this);
+                        var9, var10, var11, var12, var13, var14, this);
   dt->StructUpdate(false);
   if(new_table)
     tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
@@ -3149,7 +3156,7 @@ void Projection::SetFrom() {
   switch(from_type) { // this is where the projection is coming from
   case NEXT:
     if(TestWarning(myindex == (mynet->layers.leaves - 1), "SetFrom",
-		   "Last Layer projects from NEXT layer")) {
+                   "Last Layer projects from NEXT layer")) {
       return;
     }
     else {
@@ -3161,7 +3168,7 @@ void Projection::SetFrom() {
     break;
   case PREV:
     if(TestWarning(myindex == 0, "SetFrom",
-		   "First Layer recieves projection from PREV layer")) {
+                   "First Layer recieves projection from PREV layer")) {
       return;
     }
     else {
@@ -3204,14 +3211,14 @@ bool Projection::UpdateConSpecs(bool force) {
   ConSpec* sp = con_spec.SPtr();
   if(sp) {
     if(TestWarning(!con_type->InheritsFrom(sp->min_obj_type), "UpdateConSpec",
-		   "connection type set to:",sp->min_obj_type->name,
-		   "as required by the connection spec:", sp->name)) {
+                   "connection type set to:",sp->min_obj_type->name,
+                   "as required by the connection spec:", sp->name)) {
       con_type = sp->min_obj_type;
     }
   }
   if(!force && (sp == m_prv_con_spec)) return false;
   if(!sp) return false;
-  m_prv_con_spec = sp;		// don't redo it
+  m_prv_con_spec = sp;          // don't redo it
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, layer->units., i) {
@@ -3219,10 +3226,10 @@ bool Projection::UpdateConSpecs(bool force) {
     for(g=0; g<u->recv.size; g++) {
       RecvCons* recv_gp = u->recv.FastEl(g);
       if(recv_gp->prjn == this) {
-	if(sp->CheckObjectType(recv_gp))
-	  recv_gp->SetConSpec(sp);
-	else
-	  return false;
+        if(sp->CheckObjectType(recv_gp))
+          recv_gp->SetConSpec(sp);
+        else
+          return false;
       }
     }
   }
@@ -3232,10 +3239,10 @@ bool Projection::UpdateConSpecs(bool force) {
     for(g=0; g<u->send.size; g++) {
       SendCons* send_gp = u->send.FastEl(g);
       if(send_gp->prjn == this) {
-	if(sp->CheckObjectType(send_gp))
-	  send_gp->SetConSpec(sp);
-	else
-	  return false;
+        if(sp->CheckObjectType(send_gp))
+          send_gp->SetConSpec(sp);
+        else
+          return false;
       }
     }
   }
@@ -3243,18 +3250,18 @@ bool Projection::UpdateConSpecs(bool force) {
 }
 
 bool Projection::SetPrjnSpec(ProjectionSpec* sp) {
-  if(sp == NULL)	return false;
+  if(sp == NULL)        return false;
   spec.SetSpec(sp);
   return true;
 }
 
 bool Projection::SetConSpec(ConSpec* sp) {
-  if(!sp)	return false;
+  if(!sp)       return false;
   if(!con_spec.SetSpec(sp)) return false;
   if(!con_spec.CheckObjTypeForSpec(con_type)) {
     if(taMisc::Choice("The con spec you are setting is not compatible with the con type for connections in this projection -- should I change the con type to be: " +  con_spec->min_obj_type->name
-		      + " (if you answer No, you will continue to get errors until a compatible selection is made)",
-		      "Yes", "No") == 0) {
+                      + " (if you answer No, you will continue to get errors until a compatible selection is made)",
+                      "Yes", "No") == 0) {
       con_type = con_spec->min_obj_type;
     }
   }
@@ -3328,17 +3335,17 @@ int Projection::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) 
   return 1;
 }
 
-void Projection::CheckThisConfig_impl(bool quiet, bool& rval) { 
+void Projection::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  
-  CheckSpecs();			// just check!
+
+  CheckSpecs();                 // just check!
 
   if(CheckError((recvcons_type == &TA_RecvCons), quiet, rval,
-		"recvcons_type is base type; should be special one for specific algorithm")) {
+                "recvcons_type is base type; should be special one for specific algorithm")) {
     projected = false;
   }
   if(CheckError((sendcons_type == &TA_SendCons), quiet, rval,
-		"sendcons_type is base type; should be special one for specific algorithm")) {
+                "sendcons_type is base type; should be special one for specific algorithm")) {
     projected = false;
   }
 }
@@ -3405,7 +3412,7 @@ void Projection::AddNoiseToWeights(const Random& noise_spec) {
 }
 
 int Projection::PruneCons(const SimpleMathSpec& pre_proc,
-			      Relation::Relations rel, float cmp_val)
+                              Relation::Relations rel, float cmp_val)
 {
   int rval = 0;
   Unit* u;
@@ -3426,7 +3433,7 @@ int Projection::LesionCons(float p_lesion, bool permute) {
 
 
 ////////////////////////
-//	Unit_Group    //
+//      Unit_Group    //
 ////////////////////////
 
 void Unit_Group::Initialize() {
@@ -3436,7 +3443,7 @@ void Unit_Group::Initialize() {
 
 void Unit_Group::InitLinks() {
   taGroup<Unit>::InitLinks();
-  taBase::Own(pos,this);
+  taBase::Own(pos, this);
   own_lay = GET_MY_OWNER(Layer);
 }
 
@@ -3485,7 +3492,7 @@ void Unit_Group::AddRelPos(TDCoord& rel_pos) {
     }
   }
 }
- 
+
 void Unit_Group::MonitorVar(NetMonitor* net_mon, const String& variable) {
   if(!net_mon) return;
   net_mon->AddObject(this, variable);
@@ -3522,7 +3529,7 @@ int Unit_Group::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool
 
   while(true) {
     stat = taMisc::read_tag(strm, tag, val);
-    if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END
+    if(stat != taMisc::TAG_GOT) break;          // *should* break at TAG_END
     if(tag != "UgUn") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
     int lfi = (int)val.before(' ');
     if(leaves > lfi) {
@@ -3533,7 +3540,7 @@ int Unit_Group::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool
       stat = Unit::SkipWeights_strm(strm, fmt, quiet);
     }
     if(stat != taMisc::TAG_END) break;
-    stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+    stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
     RecvCons::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
@@ -3548,11 +3555,11 @@ int Unit_Group::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool
 
   while(true) {
     stat = taMisc::read_tag(strm, tag, val);
-    if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END
+    if(stat != taMisc::TAG_GOT) break;          // *should* break at TAG_END
     if(tag != "UgUn") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
     stat = Unit::SkipWeights_strm(strm, fmt, quiet);
     if(stat != taMisc::TAG_END) break;
-    stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+    stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
     RecvCons::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
@@ -3593,7 +3600,7 @@ void Unit_Group::AddNoiseToWeights(const Random& noise_spec) {
 }
 
 int Unit_Group::PruneCons(const SimpleMathSpec& pre_proc,
-			Relation::Relations rel, float cmp_val)
+                        Relation::Relations rel, float cmp_val)
 {
   int rval = 0;
   Unit* u;
@@ -3635,14 +3642,14 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
     int j;
     for(j=leaves-1; j>=0; j--) {
       if(Random::ZeroOne() <= p_lesion) {
-	Unit* un = (Unit*)Leaf(j);
-	un->DisConnectAll();
-	RemoveLeafIdx(j);
-	rval++;
+        Unit* un = (Unit*)Leaf(j);
+        un->DisConnectAll();
+        RemoveLeafIdx(j);
+        rval++;
       }
     }
   }
-  own_lay->units_lesioned = true;	// record that units were lesioned
+  own_lay->units_lesioned = true;       // record that units were lesioned
   StructUpdate(false);
   if(!Network_InStructUpdate(own_lay->own_net)) {
     own_lay->own_net->UpdtAfterNetMod();
@@ -3653,8 +3660,8 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
 bool Unit_Group::UnitValuesToArray(float_Array& ary, const String& variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesToArray",
-		 "Variable:", variable, "not found or not a float on units of type:",
-		 el_typ->name)) {
+                 "Variable:", variable, "not found or not a float on units of type:",
+                 el_typ->name)) {
     return false;
   }
   Unit* u;
@@ -3669,8 +3676,8 @@ bool Unit_Group::UnitValuesToArray(float_Array& ary, const String& variable) {
 bool Unit_Group::UnitValuesToMatrix(float_Matrix& mat, const String& variable) {
   MemberDef* md = el_typ->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesToMatrix",
-		 "Variable:", variable, "not found or not a float on units of type:",
-		 el_typ->name)) {
+                 "Variable:", variable, "not found or not a float on units of type:",
+                 el_typ->name)) {
     return false;
   }
   if(mat.size < leaves) return false;
@@ -3688,8 +3695,8 @@ bool Unit_Group::UnitValuesFromArray(float_Array& ary, const String& variable) {
   if(ary.size == 0) return false;
   MemberDef* md = el_typ->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesFromArray",
-		 "Variable:", variable, "not found or not a float on units of type:",
-		 el_typ->name)) {
+                 "Variable:", variable, "not found or not a float on units of type:",
+                 el_typ->name)) {
     return false;
   }
   int cnt=0;
@@ -3708,8 +3715,8 @@ bool Unit_Group::UnitValuesFromMatrix(float_Matrix& mat, const String& variable)
   if(mat.size == 0) return false;
   MemberDef* md = el_typ->members.FindName(variable);
   if(TestWarning(!md || !md->type->InheritsFrom(TA_float), "UnitValuesFromMatrix",
-		 "Variable:", variable, "not found or not a float on units of type:",
-		 el_typ->name)) {
+                 "Variable:", variable, "not found or not a float on units of type:",
+                 el_typ->name)) {
     return false;
   }
   int cnt=0;
@@ -3750,11 +3757,11 @@ DataTable* Unit_Group::VarToTable(DataTable* dt, const String& variable) {
 }
 
 DataTable* Unit_Group::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
-				const String& var3, const String& var4, const String& var5,
-				const String& var6, const String& var7, const String& var8,
-				const String& var9, const String& var10, const String& var11,
-				const String& var12, const String& var13, const String& var14,
-				Projection* prjn) {
+                                const String& var3, const String& var4, const String& var5,
+                                const String& var6, const String& var7, const String& var8,
+                                const String& var9, const String& var10, const String& var11,
+                                const String& var12, const String& var13, const String& var14,
+                                Projection* prjn) {
   bool new_table = false;
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
@@ -3766,7 +3773,7 @@ DataTable* Unit_Group::ConVarsToTable(DataTable* dt, const String& var1, const S
   taLeafItr i;
   FOR_ITR_EL(Unit, u, this->, i) {
     u->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
-		      var9, var10, var11, var12, var13, var14,  prjn);
+                      var9, var10, var11, var12, var13, var14,  prjn);
   }
   dt->StructUpdate(false);
   if(new_table)
@@ -3777,14 +3784,14 @@ DataTable* Unit_Group::ConVarsToTable(DataTable* dt, const String& var1, const S
 bool Unit_Group::VarToVarCopy(const String& dest_var, const String& src_var) {
   MemberDef* dest_md = el_typ->members.FindName(dest_var);
   if(TestWarning(!dest_md || !dest_md->type->InheritsFrom(TA_float), "VarToVarCopy",
-		 "Variable:", dest_var, "not found or not a float on units of type:",
-		 el_typ->name)) {
+                 "Variable:", dest_var, "not found or not a float on units of type:",
+                 el_typ->name)) {
     return false;
   }
   MemberDef* src_md = el_typ->members.FindName(src_var);
   if(TestWarning(!src_md || !src_md->type->InheritsFrom(TA_float), "VarToVarCopy",
-		 "Variable:", src_var, "not found or not a float on units of type:",
-		 el_typ->name)) {
+                 "Variable:", src_var, "not found or not a float on units of type:",
+                 el_typ->name)) {
     return false;
   }
   Unit* u;
@@ -3798,8 +3805,8 @@ bool Unit_Group::VarToVarCopy(const String& dest_var, const String& src_var) {
 bool Unit_Group::VarToVal(const String& dest_var, float val) {
   MemberDef* dest_md = el_typ->members.FindName(dest_var);
   if(TestWarning(!dest_md || !dest_md->type->InheritsFrom(TA_float), "VarToVarCopy",
-		 "Variable:", dest_var, "not found or not a float on units of type:",
-		 el_typ->name)) {
+                 "Variable:", dest_var, "not found or not a float on units of type:",
+                 el_typ->name)) {
     return false;
   }
   Unit* u;
@@ -3838,8 +3845,8 @@ bool Unit_Group::Dump_QuerySaveChildren() {
      && !own_lay->HasLayerFlag(Layer::NO_SAVE_UNITS)));
 }
 
-taObjDiffRec* Unit_Group::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def, 
-			   const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
+taObjDiffRec* Unit_Group::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
+                           const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // do NOT go below unit group in diffing!
   return taBase::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
 }
@@ -3860,13 +3867,13 @@ void Projection_Group::DataChanged(int dcr, void* op1, void* op2) {
   if(send_prjns) return;
   if (dcr == DCR_LIST_ITEM_INSERT) {
     Network* net = GET_MY_OWNER(Network);
-    if (net) 
+    if (net)
       net->RebuildAllViews();
   }
 }
 
 ////////////////////////
-//	Layer	      //
+//      Layer         //
 ////////////////////////
 
 void LayerSpec::Initialize() {
@@ -3883,30 +3890,42 @@ void LayerSpec::CutLinks() {
 }
 
 void Layer::Initialize() {
+  // desc = ??
   own_net = NULL;
   lesion_ = false;
   flags = LF_NONE;
   layer_type = HIDDEN;
+  // pos = ??
   disp_scale = 1.0f;
+  // un_geom = ??
   unit_groups = false;
   virt_groups = true;
-  gp_spc.x = 1;  gp_spc.y = 1;
+  // gp_geom = ??
+  gp_spc.x = 1;
+  gp_spc.y = 1;
   projections.SetBaseType(&TA_Projection);
   send_prjns.send_prjns = true;
   units.SetBaseType(&TA_Unit);
+  // unit_spec = ??
   ext_flag = Unit::NO_EXTERNAL;
+  // flat_geom = ??
   disp_geom = un_geom;
   scaled_disp_geom = disp_geom;
   dmem_dist = DMEM_DIST_DEFAULT;
+  // dist = ??
+  // output_name = ??
+  // gp_output_names = ??
   m_prv_unit_spec = NULL;
 
   sse = 0.0f;
+  // prerr = ??
   icon_value = 0.0f;
   units_flat_idx = 0;
   units_lesioned = false;
   gp_unit_names_4d = false;
-
-  n_units = 0;			// note: v3compat obs
+  // unit_names = ??
+  brain_area = "";
+  n_units = 0;                  // note: v3compat obs
 }
 
 void Layer::InitLinks() {
@@ -3959,7 +3978,7 @@ void Layer::CutLinks() {
 void Layer::Copy_(const Layer& cp) {
   if(own_net && !own_net->HasBaseFlag(COPYING)) {
     // if we're the only guy copying, then all connections are invalid now -- just nuke
-    own_net->RemoveCons();	
+    own_net->RemoveCons();
   }
 
   layer_type = cp.layer_type;
@@ -3987,7 +4006,7 @@ void Layer::Copy_(const Layer& cp) {
   gp_unit_names_4d = cp.gp_unit_names_4d;
   unit_names = cp.unit_names;
 
-  n_units = cp.n_units;		// note: v3compat obs
+  n_units = cp.n_units;         // note: v3compat obs
 
   // this will update all pointers under us to new network if we are copied from other guy
   // only if the network is not otherwise already copying too!!
@@ -4010,7 +4029,7 @@ void Layer::UpdateAfterMove_impl(taBase* old_owner) {
 void Layer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
-  if (lesion_) {		// obs: v3compat conversion obs remove later
+  if (lesion_) {                // obs: v3compat conversion obs remove later
     SetLayerFlag(LESIONED);
     lesion_ = false;
   }
@@ -4021,15 +4040,15 @@ void Layer::UpdateAfterEdit_impl() {
   // also causes problems during copy..
 
   if(taMisc::is_loading) {
-    if(n_units > 0) {		// obs: v3compat conversion
+    if(n_units > 0) {           // obs: v3compat conversion
       if(n_units != un_geom.x * un_geom.y) {
         un_geom.n_not_xy = true;
         un_geom.n = n_units;
       }
       n_units = 0;
     }
-    if(un_geom.z > 1) {		// obs: v3compat conversion
-      gp_geom.UpdateAfterEdit_NoGui();	// get n from xy
+    if(un_geom.z > 1) {         // obs: v3compat conversion
+      gp_geom.UpdateAfterEdit_NoGui();  // get n from xy
       unit_groups = true;
       if(gp_geom.n != un_geom.z) {
         gp_geom.n_not_xy = true;
@@ -4046,7 +4065,7 @@ void Layer::UpdateAfterEdit_impl() {
     }
     RecomputeGeometry();
   }
-  else {			// not loading
+  else {                        // not loading
     RecomputeGeometry();
     if(own_net)
       own_net->LayerPos_Cleanup();
@@ -4062,7 +4081,7 @@ void Layer::Lesion() {
     own_net->UpdtAfterNetMod();
 }
 
-void Layer::UnLesion()	{
+void Layer::UnLesion()  {
   StructUpdate(true);
   ClearLayerFlag(LESIONED);
   StructUpdate(false);
@@ -4076,7 +4095,7 @@ void Layer::Iconify() {
   StructUpdate(false);
 }
 
-void Layer::DeIconify()	{
+void Layer::DeIconify() {
   StructUpdate(true);
   ClearLayerFlag(ICONIFIED);
   StructUpdate(false);
@@ -4085,7 +4104,7 @@ void Layer::DeIconify()	{
 int Layer::GetSpecialState() const {
   if(layer_type == HIDDEN) return 0;
   if(layer_type == INPUT) return 3; // green
-  return 4;	// red for output/target layers
+  return 4;     // red for output/target layers
 }
 
 void Layer::ConnectFrom(Layer* from_lay) {
@@ -4129,7 +4148,7 @@ void Layer::ConnectSelf() {
 
 taBase::DumpQueryResult Layer::Dump_QuerySaveMember(MemberDef* md) {
   // only save unit_names if any (to ease backwards compat)
-  if (md->name != "unit_names") 
+  if (md->name != "unit_names")
     return inherited::Dump_QuerySaveMember(md);
   return (unit_names.dims()) ? DQR_SAVE : DQR_NO_SAVE;
 }
@@ -4176,7 +4195,7 @@ void Layer::SyncSendPrjns() {
     p = (Projection*)send_prjns.FastEl(pi);
     if(p == NULL) continue;
     if((!(bool)p->layer) || (p->from.ptr() != this))
-      send_prjns.RemoveIdx(pi);	// get rid of it!
+      send_prjns.RemoveIdx(pi); // get rid of it!
   }
 }
 
@@ -4198,7 +4217,7 @@ void Layer::RecomputeGeometry() {
       flat_geom.n_not_xy = true;
     TwoDCoord eff_un_sz = un_geom + gp_spc;
     disp_geom = gp_geom * eff_un_sz;
-    disp_geom -= gp_spc;	// no space at the end!
+    disp_geom -= gp_spc;        // no space at the end!
   }
   else {
     flat_geom = un_geom;
@@ -4226,7 +4245,7 @@ void Layer::SetLayerUnitGpGeom(int x, int y, bool n_not_xy, int n) {
 }
 
 bool Layer::SetLayerSpec(LayerSpec*) {
-  return false;			// no layer spec for layers!
+  return false;                 // no layer spec for layers!
 }
 
 void Layer::SetDefaultPos() {
@@ -4254,7 +4273,7 @@ void Layer::SetDefaultPos() {
 void Layer::LayoutUnits() {
   StructUpdate(true);
   RecomputeGeometry();
-  units.pos = 0;		// our base guy must always be 0..
+  units.pos = 0;                // our base guy must always be 0..
   if(unit_groups) {
     TwoDCoord eff_un_sz = un_geom + gp_spc;
     TwoDCoord gpgeo;
@@ -4263,25 +4282,25 @@ void Layer::LayoutUnits() {
     Unit_Group* eff_ug = &units;
     for(gpgeo.y=0; gpgeo.y < gp_geom.y; gpgeo.y++) {
       for(gpgeo.x=0; gpgeo.x < gp_geom.x; gpgeo.x++) {
-	TwoDCoord gp_pos = gpgeo * eff_un_sz;
-	if(!virt_groups) {
-	  Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi++);
-	  ug->pos.x = gp_pos.x; ug->pos.y = gp_pos.y;
-	  eff_ug = ug;
-	  ui = 0;
-	}
-	TwoDCoord ugeo;
-	for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
-	  for(ugeo.x=0; ugeo.x < un_geom.x; ugeo.x++) {
-	    if(ui >= eff_ug->size)
-	      break;
-	    Unit* un = (Unit*)eff_ug->FastEl(ui++);
-	    TwoDCoord upos = ugeo;
-	    if(virt_groups)
-	      upos += gp_pos;
-	    un->pos.x = upos.x; un->pos.y = upos.y;
-	  }
-	}
+        TwoDCoord gp_pos = gpgeo * eff_un_sz;
+        if(!virt_groups) {
+          Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi++);
+          ug->pos.x = gp_pos.x; ug->pos.y = gp_pos.y;
+          eff_ug = ug;
+          ui = 0;
+        }
+        TwoDCoord ugeo;
+        for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
+          for(ugeo.x=0; ugeo.x < un_geom.x; ugeo.x++) {
+            if(ui >= eff_ug->size)
+              break;
+            Unit* un = (Unit*)eff_ug->FastEl(ui++);
+            TwoDCoord upos = ugeo;
+            if(virt_groups)
+              upos += gp_pos;
+            un->pos.x = upos.x; un->pos.y = upos.y;
+          }
+        }
       }
     }
   }
@@ -4290,10 +4309,10 @@ void Layer::LayoutUnits() {
     int i = 0;
     for(ugeo.y=0; ugeo.y < un_geom.y; ugeo.y++) {
       for(ugeo.x=0; ugeo.x <un_geom.x; ugeo.x++) {
-	if(i >= units.size)
-	  break;
-	Unit* un = (Unit*)units.FastEl(i++);
-	un->pos.x = ugeo.x; un->pos.y = ugeo.y;
+        if(i >= units.size)
+          break;
+        Unit* un = (Unit*)units.FastEl(i++);
+        un->pos.x = ugeo.x; un->pos.y = ugeo.y;
       }
     }
   }
@@ -4309,7 +4328,7 @@ void Layer::SetNUnits(int n_units) {
 
 void Layer::SetNUnitGroups(int n_groups) {
   if(un_geom.n == n_groups || n_groups <= 0) return; // only if diff or sensible
-  unit_groups = true;		// presumably this is the point..
+  unit_groups = true;           // presumably this is the point..
   gp_geom.FitN(n_groups);
   UpdateAfterEdit();
 }
@@ -4336,44 +4355,44 @@ void Layer::BuildUnits() {
     gp_output_names.SetGeom(2,gp_geom.x,gp_geom.y);
     if(virt_groups) {
       if(units.gp.size > 0)
-	units_changed = true;
-      units.gp.RemoveAll();	// in case there were any subgroups..
+        units_changed = true;
+      units.gp.RemoveAll();     // in case there were any subgroups..
       if(units.size != flat_geom.n)
-	units_changed = true;
+        units_changed = true;
       units.SetSize(flat_geom.n);
       units.EnforceType();
       Unit* u;
       taLeafItr i;
       FOR_ITR_EL(Unit, u, units., i)
-	u->BuildUnits();
+        u->BuildUnits();
     }
     else {
       while(units.size > 0) {
-	units_changed = true;
-	units.RemoveIdx(units.size-1); // get rid of any in top-level
+        units_changed = true;
+        units.RemoveIdx(units.size-1); // get rid of any in top-level
       }
       units.gp.SetSize(gp_geom.n);
       for(int k=0; k< units.gp.size; k++) {
-	Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
-	ug->UpdateAfterEdit_NoGui();
-	ug->StructUpdate(true);
-	if(ug->size != un_geom.n)
-	  units_changed = true;
-	ug->SetSize(un_geom.n);
-	ug->EnforceType();
-	Unit* u;
-	taLeafItr ui;
-	FOR_ITR_EL(Unit, u, ug->, ui)
-	  u->BuildUnits();
-	ug->StructUpdate(false);
+        Unit_Group* ug = (Unit_Group*)units.gp.FastEl(k);
+        ug->UpdateAfterEdit_NoGui();
+        ug->StructUpdate(true);
+        if(ug->size != un_geom.n)
+          units_changed = true;
+        ug->SetSize(un_geom.n);
+        ug->EnforceType();
+        Unit* u;
+        taLeafItr ui;
+        FOR_ITR_EL(Unit, u, ug->, ui)
+          u->BuildUnits();
+        ug->StructUpdate(false);
       }
     }
   }
   else {
-    gp_geom.SetXYN(1,1,1);	// reset gp geom to reflect a single group -- used in some computations to generically operate over different geoms
+    gp_geom.SetXYN(1,1,1);      // reset gp geom to reflect a single group -- used in some computations to generically operate over different geoms
     if(units.gp.size > 0)
       units_changed = true;
-    units.gp.RemoveAll();	// in case there were any subgroups..
+    units.gp.RemoveAll();       // in case there were any subgroups..
     if(units.size != un_geom.n)
       units_changed = true;
     units.SetSize(un_geom.n);
@@ -4415,7 +4434,7 @@ void Layer::BuildUnits_Threads(Network* net) {
     un->flat_idx = net->units_flat.size;
     net->units_flat.Add(un);
   }
-  // this is needed after loading for no_build nets -- _threads called then.. 
+  // this is needed after loading for no_build nets -- _threads called then..
   if(unit_groups && gp_geom.n > 0)
     gp_output_names.SetGeom(2,gp_geom.x,gp_geom.y);
 }
@@ -4425,24 +4444,24 @@ bool Layer::CheckBuild(bool quiet) {
   if(!units_lesioned) {
     if(unit_groups && !virt_groups) {
       if(CheckError((units.gp.size != gp_geom.n), quiet, rval,
-		    "number of unit groups != target -- is:", String(units.gp.size),
-		    "should be:", String(gp_geom.n))) {
-	return false;
+                    "number of unit groups != target -- is:", String(units.gp.size),
+                    "should be:", String(gp_geom.n))) {
+        return false;
       }
       for(int g=0; g<units.gp.size; g++) {
-	Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
-	if(CheckError((ug->size != un_geom.n), quiet, rval,
-		      "number of units in group:",String(g),"!= target -- is:", String(ug->size),
-		      "should be:", String(un_geom.n))) {
-	  return false;
-	}
+        Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
+        if(CheckError((ug->size != un_geom.n), quiet, rval,
+                      "number of units in group:",String(g),"!= target -- is:", String(ug->size),
+                      "should be:", String(un_geom.n))) {
+          return false;
+        }
       }
     }
     else {
       if(CheckError((units.size != flat_geom.n), quiet, rval,
-		    "number of units != target -- is:", String(units.size),
-		    "should be:", String(flat_geom.n))) {
-	return false;
+                    "number of units != target -- is:", String(units.size),
+                    "should be:", String(flat_geom.n))) {
+        return false;
       }
     }
   }
@@ -4451,7 +4470,7 @@ bool Layer::CheckBuild(bool quiet) {
   taLeafItr ui;
   FOR_ITR_EL(Unit, u, units., ui) {
     if(CheckError((u->GetTypeDef() != units.el_typ), quiet, rval,
-		  "unit type not correct -- should be:", units.el_typ->name)) {
+                  "unit type not correct -- should be:", units.el_typ->name)) {
       return false;
     }
     if(!u->CheckBuild(quiet))
@@ -4560,7 +4579,7 @@ void Layer::Connect() {
     p->Connect();
   Unit* u;
   FOR_ITR_EL(Unit, u, units., i)
-    u->BuildUnits();			// this is for the bias connections!
+    u->BuildUnits();                    // this is for the bias connections!
   StructUpdate(false);
   taMisc::DoneBusy();
 }
@@ -4608,19 +4627,19 @@ void Layer::SetLayUnitExtFlags(int flg) {
 }
 
 void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
-	   Random* ran, const PosTwoDCoord* offset, bool na_by_range) 
+           Random* ran, const PosTwoDCoord* offset, bool na_by_range)
 {
-  // note: when use LayerWriters, we typically always just get a single frame of 
+  // note: when use LayerWriters, we typically always just get a single frame of
   // the exact dimensions, and so ignore 'frame'
   if (!data || lesioned()) return;
   // check correct geom of data
   if(TestError((data->dims() != 2) && (data->dims() != 4), "ApplyInputData",
-	       "data->dims must be 2 (2-d) or 4 (4-d)")) {
+               "data->dims must be 2 (2-d) or 4 (4-d)")) {
     return;
   }
   TwoDCoord offs(0,0);
   if(offset) offs = *offset;
-  
+
   // apply flags if we are the controller (zero offset)
   if((offs.x == 0) && (offs.y == 0)) {
     ApplyLayerFlags(ext_flags);
@@ -4640,7 +4659,7 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
 }
 
 void Layer::ApplyInputData_1d(taMatrix* data, Unit::ExtType ext_flags,
-			      Random* ran, bool na_by_range) {
+                              Random* ran, bool na_by_range) {
   for(int d_x = 0; d_x < data->dim(0); d_x++) {
     Unit* un = units.Leaf(d_x);
     if(un) {
@@ -4651,55 +4670,55 @@ void Layer::ApplyInputData_1d(taMatrix* data, Unit::ExtType ext_flags,
 }
 
 void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
-			      Random* ran, const TwoDCoord& offs, bool na_by_range) {
+                              Random* ran, const TwoDCoord& offs, bool na_by_range) {
   for(int d_y = 0; d_y < data->dim(1); d_y++) {
     int u_y = offs.y + d_y;
     for(int d_x = 0; d_x < data->dim(0); d_x++) {
       int u_x = offs.x + d_x;
       Unit* un = UnitAtCoord(u_x, u_y);
       if(un) {
-	float val = data->SafeElAsVar(d_x, d_y).toFloat();
-	un->ApplyInputData(val, ext_flags, ran, na_by_range);
+        float val = data->SafeElAsVar(d_x, d_y).toFloat();
+        un->ApplyInputData(val, ext_flags, ran, na_by_range);
       }
     }
   }
 }
 
 void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
-				  Random* ran, const TwoDCoord& offs, bool na_by_range) {
+                                  Random* ran, const TwoDCoord& offs, bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
     for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
 
       for(int d_y = 0; d_y < data->dim(1); d_y++) {
-	int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
-	for(int d_x = 0; d_x < data->dim(0); d_x++) {
-	  int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
-	  Unit* un = UnitAtCoord(u_x, u_y);
-	  if(un) {
-	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-	    un->ApplyInputData(val, ext_flags, ran, na_by_range);
-	  }
-	}
+        int u_y = offs.y + dg_y * data->dim(1) + d_y; // multiply out data indicies
+        for(int d_x = 0; d_x < data->dim(0); d_x++) {
+          int u_x = offs.x + dg_x * data->dim(0) + d_x; // multiply out data indicies
+          Unit* un = UnitAtCoord(u_x, u_y);
+          if(un) {
+            float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
+            un->ApplyInputData(val, ext_flags, ran, na_by_range);
+          }
+        }
       }
     }
   }
 }
 
 void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random* ran,
-				bool na_by_range) {
+                                bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
     for(int dg_x = 0; dg_x < data->dim(2); dg_x++) {
 
       for(int d_y = 0; d_y < data->dim(1); d_y++) {
-	for(int d_x = 0; d_x < data->dim(0); d_x++) {
-	  Unit* un = UnitAtGpCoord(dg_x, dg_y, d_x, d_y);
-	  if(un) {
-	    float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
-	    un->ApplyInputData(val, ext_flags, ran, na_by_range);
-	  }
-	}
+        for(int d_x = 0; d_x < data->dim(0); d_x++) {
+          Unit* un = UnitAtGpCoord(dg_x, dg_y, d_x, d_y);
+          if(un) {
+            float val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y).toFloat();
+            un->ApplyInputData(val, ext_flags, ran, na_by_range);
+          }
+        }
       }
     }
   }
@@ -4710,10 +4729,10 @@ void Layer::ApplyLayerFlags(Unit::ExtType act_ext_flags) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//	Below are the primary computational interface to the Network Objects
-//	for performing algorithm-specific activation and learning
-//	Many functions operate directly on the units via threads, with
-//	optional call through to the layers for any layer-level subsequent processing
+//      Below are the primary computational interface to the Network Objects
+//      for performing algorithm-specific activation and learning
+//      Many functions operate directly on the units via threads, with
+//      optional call through to the layers for any layer-level subsequent processing
 
 void Layer::Init_InputData(Network* net) {
   if(ext_flag == Unit::NO_EXTERNAL)
@@ -4802,7 +4821,7 @@ int Layer::Compute_PRerr(Network* net) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//	The following are misc functionality not required for primary computing
+//      The following are misc functionality not required for primary computing
 
 void Layer::Copy_Weights(const Layer* src) {
   units.Copy_Weights(&(src->units));
@@ -4846,9 +4865,9 @@ void Layer::PropagateInputDistance() {
     if(!p->layer || p->layer->lesioned()) continue;
     if(p->layer->dist.fm_input >= 0) { // already set
       if(new_dist < p->layer->dist.fm_input) { // but we're closer
-	p->layer->dist.fm_input = new_dist;
-	p->layer->PropagateInputDistance(); // note: this could lead back to us, but big deal.
-	// the < sign prevents loops from continuing indefinitely.
+        p->layer->dist.fm_input = new_dist;
+        p->layer->PropagateInputDistance(); // note: this could lead back to us, but big deal.
+        // the < sign prevents loops from continuing indefinitely.
       }
     }
     else { // not set yet
@@ -4866,9 +4885,9 @@ void Layer::PropagateOutputDistance() {
     if(!p->from || p->from->lesioned()) continue;
     if(p->from->dist.fm_output >= 0) { // already set
       if(new_dist < p->from->dist.fm_output) { // but we're closer
-	p->from->dist.fm_output = new_dist;
-	p->from->PropagateOutputDistance(); // note: this could lead back to us, but big deal.
-	// the < sign prevents loops from continuing indefinitely.
+        p->from->dist.fm_output = new_dist;
+        p->from->PropagateOutputDistance(); // note: this could lead back to us, but big deal.
+        // the < sign prevents loops from continuing indefinitely.
       }
     }
     else { // not set yet
@@ -4889,27 +4908,27 @@ void Layer::Compute_PrjnDirections() {
     // use the smallest value first..
     if(p->from->dist.fm_input <= p->from->dist.fm_output) {
       if(p->from->dist.fm_input < dist.fm_input) {
-	p->direction = Projection::FM_INPUT;
+        p->direction = Projection::FM_INPUT;
       }
       else if(p->from->dist.fm_output < dist.fm_output) {
-	p->direction = Projection::FM_OUTPUT;
+        p->direction = Projection::FM_OUTPUT;
       }
       else {
-	p->direction = Projection::LATERAL;
+        p->direction = Projection::LATERAL;
       }
     }
     else {
       if(p->from->dist.fm_output < dist.fm_output) {
-	p->direction = Projection::FM_OUTPUT;
+        p->direction = Projection::FM_OUTPUT;
       }
       else if(p->from->dist.fm_input < dist.fm_input) {
-	p->direction = Projection::FM_INPUT;
+        p->direction = Projection::FM_INPUT;
       }
       else {
-	p->direction = Projection::LATERAL;
+        p->direction = Projection::LATERAL;
       }
     }
-  }  
+  }
 }
 
 bool Layer::SetUnitNames(bool force_use_unit_names) {
@@ -4920,30 +4939,30 @@ bool Layer::SetUnitNames(bool force_use_unit_names) {
       unit_names.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
       int gx, gy, ux, uy;
       for (gy = 0; gy < gp_geom.y; ++gy) {
-	for (gx = 0; gx < gp_geom.x; ++gx) {
-	  for (uy = 0; uy < un_geom.y; ++uy) {
-	    for (ux = 0; ux < un_geom.x; ++ux) {
-	      Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
-	      if (!un) continue;
-	      un->SetName(unit_names.SafeEl(ux, uy, gx, gy));
-	    }
-	  }
-	}
+        for (gx = 0; gx < gp_geom.x; ++gx) {
+          for (uy = 0; uy < un_geom.y; ++uy) {
+            for (ux = 0; ux < un_geom.x; ++ux) {
+              Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
+              if (!un) continue;
+              un->SetName(unit_names.SafeEl(ux, uy, gx, gy));
+            }
+          }
+        }
       }
     }
-    else { 
+    else {
       unit_names.SetGeom(2, un_geom.x, un_geom.y);
       int gx, gy, ux, uy;
       for (gy = 0; gy < gp_geom.y; ++gy) {
-	for (gx = 0; gx < gp_geom.x; ++gx) {
-	  for (uy = 0; uy < un_geom.y; ++uy) {
-	    for (ux = 0; ux < un_geom.x; ++ux) {
-	      Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
-	      if (!un) continue;
-	      un->SetName(unit_names.SafeEl(ux, uy));
-	    }
-	  }
-	}
+        for (gx = 0; gx < gp_geom.x; ++gx) {
+          for (uy = 0; uy < un_geom.y; ++uy) {
+            for (ux = 0; ux < un_geom.x; ++ux) {
+              Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
+              if (!un) continue;
+              un->SetName(unit_names.SafeEl(ux, uy));
+            }
+          }
+        }
       }
     }
   }
@@ -4952,9 +4971,9 @@ bool Layer::SetUnitNames(bool force_use_unit_names) {
     int x, y;
     for (y = 0; y < un_geom.y; ++y) {
       for (x = 0; x < un_geom.x; ++x) {
-	Unit* un = UnitAtCoord(x, y);
-	if (!un) continue;
-	un->SetName(unit_names.SafeEl(x, y));
+        Unit* un = UnitAtCoord(x, y);
+        if (!un) continue;
+        un->SetName(unit_names.SafeEl(x, y));
       }
     }
   }
@@ -4969,30 +4988,30 @@ bool Layer::GetUnitNames(bool force_use_unit_names) {
       unit_names.SetGeom(4, un_geom.x, un_geom.y, gp_geom.x, gp_geom.y);
       int gx, gy, ux, uy;
       for (gy = 0; gy < gp_geom.y; ++gy) {
-	for (gx = 0; gx < gp_geom.x; ++gx) {
-	  for (uy = 0; uy < un_geom.y; ++uy) {
-	    for (ux = 0; ux < un_geom.x; ++ux) {
-	      Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
-	      if (!un) continue;
-	      unit_names.Set(un->GetName(), ux, uy, gx, gy);
-	    }
-	  }
-	}
+        for (gx = 0; gx < gp_geom.x; ++gx) {
+          for (uy = 0; uy < un_geom.y; ++uy) {
+            for (ux = 0; ux < un_geom.x; ++ux) {
+              Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
+              if (!un) continue;
+              unit_names.Set(un->GetName(), ux, uy, gx, gy);
+            }
+          }
+        }
       }
     }
-    else { 
+    else {
       unit_names.SetGeom(2, un_geom.x, un_geom.y);
       int gx, gy, ux, uy;
       for (gy = 0; gy < gp_geom.y; ++gy) {
-	for (gx = 0; gx < gp_geom.x; ++gx) {
-	  for (uy = 0; uy < un_geom.y; ++uy) {
-	    for (ux = 0; ux < un_geom.x; ++ux) {
-	      Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
-	      if (!un) continue;
-	      unit_names.Set(un->GetName(), ux, uy);
-	    }
-	  }
-	}
+        for (gx = 0; gx < gp_geom.x; ++gx) {
+          for (uy = 0; uy < un_geom.y; ++uy) {
+            for (ux = 0; ux < un_geom.x; ++ux) {
+              Unit* un = UnitAtGpCoord(gx, gy, ux, uy);
+              if (!un) continue;
+              unit_names.Set(un->GetName(), ux, uy);
+            }
+          }
+        }
       }
     }
   }
@@ -5001,9 +5020,9 @@ bool Layer::GetUnitNames(bool force_use_unit_names) {
     int x, y;
     for (y = 0; y < un_geom.y; ++y) {
       for (x = 0; x < un_geom.x; ++x) {
-	Unit* un = UnitAtCoord(x, y);
-	if (!un) continue;
-	unit_names.Set(un->GetName(), x, y);
+        Unit* un = UnitAtCoord(x, y);
+        if (!un) continue;
+        unit_names.Set(un->GetName(), x, y);
       }
     }
   }
@@ -5024,15 +5043,15 @@ bool Layer::SetUnitNamesFromDataCol(const DataCol* unit_names_col, int max_un_ch
     int gx, gy, ux, uy;
     for(gy = 0; gy<cg.dim(3); gy++) {
       for(gx = 0; gx<cg.dim(2); gx++) {
-	if(gx == 0 && gy == 0) continue; // skip 1st gp
-	for(uy = 0; uy<cg.dim(1); uy++) {
-	  for(ux = 0; ux<cg.dim(0); ux++) {
-	    if(nmat->SafeElAsStr(ux,uy,gx,gy).nonempty()) {
-	      hugp_empty = false;
-	      break;
-	    }
-	  }
-	}
+        if(gx == 0 && gy == 0) continue; // skip 1st gp
+        for(uy = 0; uy<cg.dim(1); uy++) {
+          for(ux = 0; ux<cg.dim(0); ux++) {
+            if(nmat->SafeElAsStr(ux,uy,gx,gy).nonempty()) {
+              hugp_empty = false;
+              break;
+            }
+          }
+        }
       }
     }
     if(hugp_empty) {
@@ -5050,7 +5069,7 @@ bool Layer::SetUnitNamesFromDataCol(const DataCol* unit_names_col, int max_un_ch
     unit_names.SetFmStr_Flat(cnm.elidedTo(max_un_chars), i);
   }
   taBase::unRefDone(nmat);
-  SetUnitNames();		// actually set from these names
+  SetUnitNames();               // actually set from these names
   return true;
 }
 
@@ -5072,7 +5091,7 @@ void Layer::AddNoiseToWeights(const Random& noise_spec) {
 }
 
 int Layer::PruneCons(const SimpleMathSpec& pre_proc,
-			Relation::Relations rel, float cmp_val)
+                        Relation::Relations rel, float cmp_val)
 {
   return units.PruneCons(pre_proc, rel, cmp_val);
 }
@@ -5103,14 +5122,14 @@ bool Layer::UpdateUnitSpecs(bool force) {
   if(!force && (unit_spec.SPtr() == m_prv_unit_spec)) return false;
   UnitSpec* sp = unit_spec.SPtr();
   if(!sp) return false;
-  m_prv_unit_spec = sp;		// don't redo it
+  m_prv_unit_spec = sp;         // don't redo it
   Unit* u;
   taLeafItr i;
   FOR_ITR_EL(Unit, u, units., i) {
     if(sp->CheckObjectType(u))
       u->SetUnitSpec(sp);
     else
-      return false;		// don't generate a bunch of redundant messages..
+      return false;             // don't generate a bunch of redundant messages..
   }
   return true;
 }
@@ -5127,12 +5146,12 @@ bool Layer::UpdateConSpecs(bool force) {
 }
 
 bool Layer::SetUnitSpec(UnitSpec* sp) {
-  if(!sp)	return false;
+  if(!sp)       return false;
   if(!unit_spec.SetSpec(sp)) return false;
   if(!unit_spec.CheckObjTypeForSpec(units.el_typ)) {
     if(taMisc::Choice("The unit spec you are setting is not compatible with the unit type for units in this layer -- should I change the unit type to be: " +  unit_spec->min_obj_type->name
-		      + " (if you answer No, you will continue to get errors until a compatible selection is made)",
-		      "Yes", "No") == 0) {
+                      + " (if you answer No, you will continue to get errors until a compatible selection is made)",
+                      "Yes", "No") == 0) {
       units.el_typ = unit_spec->min_obj_type;
     }
   }
@@ -5250,11 +5269,11 @@ DataTable* Layer::VarToTable(DataTable* dt, const String& variable) {
 }
 
 DataTable* Layer::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
-			   const String& var3, const String& var4, const String& var5,
-			   const String& var6, const String& var7, const String& var8,
-			   const String& var9, const String& var10, const String& var11,
-			   const String& var12, const String& var13, const String& var14,
-			   Projection* prjn) {
+                           const String& var3, const String& var4, const String& var5,
+                           const String& var6, const String& var7, const String& var8,
+                           const String& var9, const String& var10, const String& var11,
+                           const String& var12, const String& var13, const String& var14,
+                           Projection* prjn) {
   bool new_table = false;
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
@@ -5263,7 +5282,7 @@ DataTable* Layer::ConVarsToTable(DataTable* dt, const String& var1, const String
   }
   dt->StructUpdate(true);
   units.ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
-		       var9, var10, var11, var12, var13, var14, prjn);
+                       var9, var10, var11, var12, var13, var14, prjn);
   dt->StructUpdate(false);
   if(new_table)
     tabMisc::DelayedFunCall_gui(dt, "BrowserSelectMe");
@@ -5283,11 +5302,11 @@ DataTable* Layer::PrjnsToTable(DataTable* dt, bool sending) {
   DataCol* col;
   String colnm = "PrjnFrom";
   if(sending) colnm = "PrjnTo";
-  col = dt->FindMakeColName(colnm, idx, VT_STRING); 
+  col = dt->FindMakeColName(colnm, idx, VT_STRING);
   col->desc = "receiving projection -- name of sending layer that this layer receives from";
-  col = dt->FindMakeColName("PrjnSpec", idx, VT_STRING); 
+  col = dt->FindMakeColName("PrjnSpec", idx, VT_STRING);
   col->desc = "name of projection spec for this projection";
-  col = dt->FindMakeColName("ConSpec", idx, VT_STRING); 
+  col = dt->FindMakeColName("ConSpec", idx, VT_STRING);
   col->desc = "name of connection spec for this projection";
 
   if(sending) {
@@ -5296,15 +5315,15 @@ DataTable* Layer::PrjnsToTable(DataTable* dt, bool sending) {
       dt->AddBlankRow();
       dt->SetVal(pj->layer->name, colnm, -1);
       ProjectionSpec* ps = pj->GetPrjnSpec();
-      if(ps) 
-	dt->SetVal(ps->name, "PrjnSpec", -1);
-      else 
-	dt->SetVal("NULL", "PrjnSpec", -1);
+      if(ps)
+        dt->SetVal(ps->name, "PrjnSpec", -1);
+      else
+        dt->SetVal("NULL", "PrjnSpec", -1);
       ConSpec* cs = pj->GetConSpec();
-      if(cs) 
-	dt->SetVal(cs->name, "ConSpec", -1);
-      else 
-	dt->SetVal("NULL", "ConSpec", -1);
+      if(cs)
+        dt->SetVal(cs->name, "ConSpec", -1);
+      else
+        dt->SetVal("NULL", "ConSpec", -1);
     }
   }
   else {
@@ -5313,15 +5332,15 @@ DataTable* Layer::PrjnsToTable(DataTable* dt, bool sending) {
       dt->AddBlankRow();
       dt->SetVal(pj->from->name, colnm, -1);
       ProjectionSpec* ps = pj->GetPrjnSpec();
-      if(ps) 
-	dt->SetVal(ps->name, "PrjnSpec", -1);
-      else 
-	dt->SetVal("NULL", "PrjnSpec", -1);
+      if(ps)
+        dt->SetVal(ps->name, "PrjnSpec", -1);
+      else
+        dt->SetVal("NULL", "PrjnSpec", -1);
       ConSpec* cs = pj->GetConSpec();
-      if(cs) 
-	dt->SetVal(cs->name, "ConSpec", -1);
-      else 
-	dt->SetVal("NULL", "ConSpec", -1);
+      if(cs)
+        dt->SetVal(cs->name, "ConSpec", -1);
+      else
+        dt->SetVal("NULL", "ConSpec", -1);
     }
   }
   dt->StructUpdate(false);
@@ -5380,7 +5399,7 @@ void Layer::UnitLogPos(Unit* un, int& x, int& y) const {
     y = gpos.y + un->pos.y;
   }
   else {
-    y = un->idx / flat_geom.x;	// unit index relative to flat geom
+    y = un->idx / flat_geom.x;  // unit index relative to flat geom
     x = un->idx % flat_geom.x;
   }
 }
@@ -5391,11 +5410,11 @@ Unit* Layer::UnitAtDispCoord(int x, int y) const {
     for(int gi = 0; gi< units.gp.size; gi++) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi);
       if(x >= ug->pos.x && x < ug->pos.x + un_geom.x &&
-	 y >= ug->pos.y && y < ug->pos.y + un_geom.y) {
-	return ug->UnitAtCoord(x - ug->pos.x, y - ug->pos.y);
+         y >= ug->pos.y && y < ug->pos.y + un_geom.y) {
+        return ug->UnitAtCoord(x - ug->pos.x, y - ug->pos.y);
       }
     }
-    return NULL;		// not found
+    return NULL;                // not found
   }
   else if(unit_groups && virt_groups) {
     int gpsz_x = un_geom.x + gp_spc.x;
@@ -5420,7 +5439,7 @@ void Layer::UnitDispPos(Unit* un, int& x, int& y) const {
     x = own_sgp->pos.x + un->pos.x;
     y = own_sgp->pos.y + un->pos.y;
   }
-  else {			// otherwise unit has it directly..
+  else {                        // otherwise unit has it directly..
     x = un->pos.x;
     y = un->pos.y;
   }
@@ -5452,7 +5471,7 @@ bool Layer::InLayerSubGroup() {
     return false;
   return true;
 }
- 
+
 bool Layer::ChangeMyType(TypeDef* new_typ) {
   if(TestError(units.leaves > 0, "ChangeMyType", "You must first remove all units in the network before changing type of Layer -- otherwise it takes FOREVER -- do Network/Structure/Remove Units"))
     return false;
@@ -5489,10 +5508,10 @@ bool Layer::DMem_DistributeUnits_impl(DMemShare& dms) {
       taLeafItr ui;
       Unit* u;
       FOR_ITR_EL(Unit, u, ug->, ui) {
-	u->DMem_SetLocalProc(cnt % np);
-	u->DMem_SetThisProc(this_proc);
-	dms.Link(u);
-	cnt++;
+        u->DMem_SetLocalProc(cnt % np);
+        u->DMem_SetThisProc(this_proc);
+        dms.Link(u);
+        cnt++;
       }
     }
     return true;
@@ -5501,7 +5520,7 @@ bool Layer::DMem_DistributeUnits_impl(DMemShare& dms) {
 
 void Layer::DMem_SyncNRecvCons() {
   if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncNRecvCons",
-	       "attempt to DMem sync at layer level, should only be at network level!")) {
+               "attempt to DMem sync at layer level, should only be at network level!")) {
     return;
   }
   dmem_share_units.Sync(0);
@@ -5509,7 +5528,7 @@ void Layer::DMem_SyncNRecvCons() {
 
 void Layer::DMem_SyncNet() {
   if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncNet",
-	       "attempt to DMem sync layer level, should only be at network level!")) {
+               "attempt to DMem sync layer level, should only be at network level!")) {
     return;
   }
   dmem_share_units.Sync(1);
@@ -5517,7 +5536,7 @@ void Layer::DMem_SyncNet() {
 
 void Layer::DMem_SyncAct() {
   if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncAct",
-	       "attempt to DMem sync layer level, should only be at network level!")) {
+               "attempt to DMem sync layer level, should only be at network level!")) {
     return;
   }
   dmem_share_units.Sync(2);
@@ -5526,19 +5545,19 @@ void Layer::DMem_SyncAct() {
 
 
 ////////////////////////
-//  Layer_Group	      //
+//  Layer_Group       //
 ////////////////////////
 
 bool Layer_Group::nw_itm_def_arg = false;
 
-void Layer_Group::InitLinks() { 
-  inherited::InitLinks(); 
+void Layer_Group::InitLinks() {
+  inherited::InitLinks();
   taBase::Own(pos,this);
 }
 
-void Layer_Group::CutLinks() { 
+void Layer_Group::CutLinks() {
   pos.CutLinks();
-  inherited::CutLinks(); 
+  inherited::CutLinks();
 }
 
 void Layer_Group::UpdateAfterEdit_impl() {
@@ -5557,7 +5576,7 @@ void Layer_Group::DataChanged(int dcr, void* op1, void* op2) {
   inherited::DataChanged(dcr, op1, op2);
   if (dcr == DCR_LIST_ITEM_INSERT) {
     Network* net = GET_MY_OWNER(Network);
-    if (net) 
+    if (net)
       net->RebuildAllViews();
   }
 }
@@ -5588,7 +5607,7 @@ void Layer_Group::UpdateMaxDispSize() {
       min_size = l_pos;
     }
     else {
-      min_size.Min(l_pos);	// min of each coord
+      min_size.Min(l_pos);      // min of each coord
     }
   }
 
@@ -5596,10 +5615,10 @@ void Layer_Group::UpdateMaxDispSize() {
     if(min_size != pos) {
       TDCoord pos_chg = min_size - pos;
       FOR_ITR_EL(Layer, l, this->, i) {
-	l->pos -= pos_chg;	// fix up all the layer rels to be less.
+        l->pos -= pos_chg;      // fix up all the layer rels to be less.
       }
-      max_disp_size -= pos_chg;	// reduce by amount moving
-      pos = min_size;		// new position
+      max_disp_size -= pos_chg; // reduce by amount moving
+      pos = min_size;           // new position
     }
   }
 
@@ -5624,7 +5643,7 @@ void Layer_Group::BuildLayers_impl() {
 
 void Layer_Group::BuildPrjns() {
   BuildPrjns_impl();
-} 
+}
 
 void Layer_Group::BuildPrjns_impl() {
   Layer_Group* lg;
@@ -5632,7 +5651,7 @@ void Layer_Group::BuildPrjns_impl() {
     lg = (Layer_Group*)gp.FastEl(i);
     lg->BuildPrjns();
   }
-} 
+}
 
 void Layer_Group::Clean() {
   Layer_Group* lg;
@@ -5655,34 +5674,34 @@ void Layer_Group::LayerPos_Cleanup() {
       TwoDCoord l1s = (TwoDCoord)l1abs;
       TwoDCoord l1e = l1s + (TwoDCoord)l1->scaled_disp_geom;
       for(int i2 = i1+1; i2<leaves;i2++) {
-	Layer* l2 = Leaf(i2);
-	TDCoord l2abs;
-	l2->GetAbsPos(l2abs);
-	TwoDCoord l2s = (TwoDCoord)l2abs;
-	TwoDCoord l2e = l2s + (TwoDCoord)l2->scaled_disp_geom;
-	if(l2abs.z != l1abs.z) continue;
-	if(l2s.x >= l1s.x && l2s.x < l1e.x &&
-	    l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
-	  if(l1e.x - l2s.x <= l1e.y - l2s.y) {	  // closer to x than y
-	    l2->pos.x += (l1e.x + 2) - l2s.x;
-	  }
-	  else {
-	    l2->pos.y += (l1e.y + 2) - l2s.y;
-	  }
-	  l2->DataChanged(DCR_ITEM_UPDATED);
-	  moved = true;
-	}
-	else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
-		l1s.y >= l2s.y && l1s.y < l2e.y) { // l1 starts in l2; move l1 rt/back
-	  if(l2e.x - l1s.x <= l2e.y - l1s.y) {	  // closer to x than y
-	    l1->pos.x += (l2e.x + 2) - l1s.x;
-	  }
-	  else {
-	    l1->pos.y += (l2e.y + 2) - l1s.y;
-	  }
-	  l1->DataChanged(DCR_ITEM_UPDATED);
-	  moved = true;
-	}
+        Layer* l2 = Leaf(i2);
+        TDCoord l2abs;
+        l2->GetAbsPos(l2abs);
+        TwoDCoord l2s = (TwoDCoord)l2abs;
+        TwoDCoord l2e = l2s + (TwoDCoord)l2->scaled_disp_geom;
+        if(l2abs.z != l1abs.z) continue;
+        if(l2s.x >= l1s.x && l2s.x < l1e.x &&
+            l2s.y >= l1s.y && l2s.y < l1e.y) { // l2 starts in l1; move l2 rt/back
+          if(l1e.x - l2s.x <= l1e.y - l2s.y) {    // closer to x than y
+            l2->pos.x += (l1e.x + 2) - l2s.x;
+          }
+          else {
+            l2->pos.y += (l1e.y + 2) - l2s.y;
+          }
+          l2->DataChanged(DCR_ITEM_UPDATED);
+          moved = true;
+        }
+        else if(l1s.x >= l2s.x && l1s.x < l2e.x &&
+                l1s.y >= l2s.y && l1s.y < l2e.y) { // l1 starts in l2; move l1 rt/back
+          if(l2e.x - l1s.x <= l2e.y - l1s.y) {    // closer to x than y
+            l1->pos.x += (l2e.x + 2) - l1s.x;
+          }
+          else {
+            l1->pos.y += (l2e.y + 2) - l1s.y;
+          }
+          l1->DataChanged(DCR_ITEM_UPDATED);
+          moved = true;
+        }
       }
     }
     n_itr++;
@@ -5744,7 +5763,7 @@ void Layer_Group::DispScaleLayers(float disp_scale) {
 }
 
 Layer* Layer_Group::FindMakeLayer(const String& nm, TypeDef* td, bool& nw_itm,
-				  const String& alt_nm) {
+                                  const String& alt_nm) {
   nw_itm = false;
   Layer* lay = (Layer*)FindName(nm);
   if(!lay && alt_nm.nonempty()) {
@@ -5766,7 +5785,7 @@ Layer* Layer_Group::FindMakeLayer(const String& nm, TypeDef* td, bool& nw_itm,
 }
 
 Layer_Group* Layer_Group::FindMakeLayerGroup(const String& nm, TypeDef* td, bool& nw_itm,
-				       const String& alt_nm) {
+                                       const String& alt_nm) {
   nw_itm = false;
   Layer_Group* lay = (Layer_Group*)gp.FindName(nm);
   if(!lay && alt_nm.nonempty()) {
@@ -5788,7 +5807,7 @@ Layer_Group* Layer_Group::FindMakeLayerGroup(const String& nm, TypeDef* td, bool
 }
 
 ////////////////////////////////////////////////////////
-//	Threading
+//      Threading
 
 void UnitCallTask::Initialize() {
   uidx_st = -1;
@@ -5806,14 +5825,14 @@ void UnitCallTask::run() {
   UnitCallThreadMgr* mg = mgr();
   const int nib_stop = mg->nibble_stop;
 
-  if(uidx_inc > 0) {		// a forward run
+  if(uidx_inc > 0) {            // a forward run
     for(int i=uidx_st; i<uidx_ed; i+=uidx_inc) {
       Unit* un = network->units_flat[i];
       unit_call->call(un, network, task_id); // task id indicates threading, and which thread
       // debugging:
 //       un->name = (String)task_id;
     }
-  
+
     // then auto-nibble until done!
     const int nib_chnk = mg->nibble_chunk;
     while(true) {
@@ -5821,22 +5840,22 @@ void UnitCallTask::run() {
       if(nxt_uidx >= nib_stop) break;
       const int mx = MIN(nib_stop, nxt_uidx + nib_chnk);
       for(int i=nxt_uidx; i <mx; i++) {
-	Unit* un = network->units_flat[i];
-	unit_call->call(un, network, task_id); // task id indicates threading, and which thread
-	// debugging:
-// 	un->name = "n" + (String)task_id;
+        Unit* un = network->units_flat[i];
+        unit_call->call(un, network, task_id); // task id indicates threading, and which thread
+        // debugging:
+//      un->name = "n" + (String)task_id;
       }
-      if(mx == nib_stop) break;		// we're the last guy
+      if(mx == nib_stop) break;         // we're the last guy
     }
   }
-  else {			// backwards!
+  else {                        // backwards!
     for(int i=uidx_st; i>=uidx_ed; i+=uidx_inc) {
       Unit* un = network->units_flat[i];
       unit_call->call(un, network, task_id); // task id indicates threading, and which thread
-	// debugging:
-// 	un->name = (String)task_id;
+        // debugging:
+//      un->name = (String)task_id;
     }
-  
+
     // then auto-nibble until done!
     const int nib_chnk = -mg->nibble_chunk;
     while(true) {
@@ -5844,12 +5863,12 @@ void UnitCallTask::run() {
       if(nxt_uidx < nib_stop) break;
       const int mx = MAX(nib_stop, nxt_uidx + nib_chnk);
       for(int i=nxt_uidx; i>=mx; i--) {
-	Unit* un = network->units_flat[i];
-	unit_call->call(un, network, task_id); // task id indicates threading, and which thread
-// 	// debugging:
-//  	un->name = "n"+(String)task_id;
+        Unit* un = network->units_flat[i];
+        unit_call->call(un, network, task_id); // task id indicates threading, and which thread
+//      // debugging:
+//      un->name = "n"+(String)task_id;
       }
-      if(mx == nib_stop) break;		// we're the last guy
+      if(mx == nib_stop) break;         // we're the last guy
     }
   }
 }
@@ -5890,17 +5909,17 @@ void UnitCallThreadMgr::InitAll() {
 }
 
 void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
-			    bool backwards, bool layer_sync) {
+                            bool backwards, bool layer_sync) {
   Network* net = network();
 
   bool other_reasons = (comp_level < compute_thr || net->units_flat.size < min_units
-			|| net->units_flat.size < tasks.size);
+                        || net->units_flat.size < tasks.size);
 
   if(n_threads == 1 || other_reasons) {
 
     if(get_timing && n_threads == 1 && !other_reasons) { // only include if running in 1 thread only, and if n_threads was larger, it would not have been run in thread0
-      total_time.StartTimer(false);	// don't reset
-      run_time.StartTimer(false);		// don't reset
+      total_time.StartTimer(false);     // don't reset
+      run_time.StartTimer(false);               // don't reset
     }
 
     RunThread0(unit_call, backwards);
@@ -5913,21 +5932,21 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
   else {
 //     { // debugging: clear names
 //       const int nu = net->units_flat.size;
-//       for(int i=1;i<nu;i++) {	// 0 = dummy idx
-// 	net->units_flat[i]->name = "";
+//       for(int i=1;i<nu;i++) {        // 0 = dummy idx
+//      net->units_flat[i]->name = "";
 //       }
 //     }
     if(backwards) {
       if(layer_sync && !ignore_lay_sync)
-	RunThreads_BkwdLaySync(unit_call);
+        RunThreads_BkwdLaySync(unit_call);
       else
-	RunThreads_BkwdNetSync(unit_call);
+        RunThreads_BkwdNetSync(unit_call);
     }
     else {
       if(layer_sync && !ignore_lay_sync)
-	RunThreads_FwdLaySync(unit_call);
+        RunThreads_FwdLaySync(unit_call);
       else
-	RunThreads_FwdNetSync(unit_call);
+        RunThreads_FwdNetSync(unit_call);
     }
   }
 }
@@ -5937,12 +5956,12 @@ void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call, bool backwards) {
   Network* net = network();
   const int nu = net->units_flat.size;
   if(backwards) {
-    for(int i=nu-1;i>=1;i--) {	// 0 = dummy idx
+    for(int i=nu-1;i>=1;i--) {  // 0 = dummy idx
       unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
     }
   }
-  else {			// forwards
-    for(int i=1;i<nu;i++) {	// 0 = dummy idx
+  else {                        // forwards
+    for(int i=1;i<nu;i++) {     // 0 = dummy idx
       unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
     }
   }
@@ -5952,7 +5971,7 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
   // note: units_flat[0] is a dummy so we have to add 1 to all idx's and skip over it
   using_threads = true;
   Network* net = network();
-  const int nu = net->units_flat.size-1;	// 0 = dummy idx
+  const int nu = net->units_flat.size-1;        // 0 = dummy idx
   const int nt = tasks.size;
   int n_chunked = (int)((float)nu * alloc_pct);
   n_chunked = MAX(n_chunked, nt);
@@ -5995,9 +6014,9 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
   nibble_i = 1+n_chunked;
   nibble_stop = 1+nu;
 
-  RunThreads(); 	// then run the subsidiary guys
+  RunThreads();         // then run the subsidiary guys
 
-  tasks[0]->run();	// run our own set..
+  tasks[0]->run();      // run our own set..
 
   // note: all the nibbling is automatic within the single run() deploy
   // finally, always need to sync at end to ensure that everyone is done!
@@ -6008,7 +6027,7 @@ void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
   // note: units_flat[0] is a dummy so we have to add 1 to all idx's and skip over it
   using_threads = true;
   Network* net = network();
-  const int nu = net->units_flat.size-1;	// 0 = dummy idx
+  const int nu = net->units_flat.size-1;        // 0 = dummy idx
   const int nt = tasks.size;
   int n_chunked = (int)((float)nu * alloc_pct);
   n_chunked = MAX(n_chunked, nt);
@@ -6019,7 +6038,7 @@ void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
     n_chunked -= nt;
   chnks = n_chunked / nt;
 
-  int st_base = nu;			     // starting index (-1 already taken above)
+  int st_base = nu;                          // starting index (-1 already taken above)
   int end_base = st_base - (n_chunked - nt); // no -1 b/c >= end_base
 
   for(int i=0;i<nt;i++) {
@@ -6029,12 +6048,12 @@ void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
     uct->uidx_ed = end_base - i;
     uct->uidx_inc = -nt;
   }
-  nibble_i = nu - n_chunked;	// where to start nibbling
-  nibble_stop = 1;	// 0 = dummy idx
+  nibble_i = nu - n_chunked;    // where to start nibbling
+  nibble_stop = 1;      // 0 = dummy idx
 
-  RunThreads();		// then run the subsidiary guys
+  RunThreads();         // then run the subsidiary guys
 
-  tasks[0]->run();	// run our own set..
+  tasks[0]->run();      // run our own set..
 
   // note: all the nibbling is automatic within the single run() deploy
   // finally, always need to sync at end to ensure that everyone is done!
@@ -6060,7 +6079,7 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
     if(nu < min_units || nu < nt) {
       // run locally
       for(int i=0;i<nu;i++) {
-	unit_call->call(net->units_flat[st_idx + i], net, -1); // -1 indicates no threading
+        unit_call->call(net->units_flat[st_idx + i], net, -1); // -1 indicates no threading
       }
     }
     else {
@@ -6070,23 +6089,23 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
       int chnks = n_chunked / nt;
       n_chunked = chnks * nt; // must be even multiple of threads!
       while(n_chunked > nu)
-	n_chunked -= nt;
+        n_chunked -= nt;
 
       int end_base = st_idx + 1 + n_chunked - nt; // add 1 b/c uses < ed and not <= ed
 
       for(int i=0;i<nt;i++) {
-	UnitCallTask* uct = (UnitCallTask*)tasks[i];
-	uct->unit_call = unit_call;
-	uct->uidx_st = st_idx + i;
-	uct->uidx_ed = end_base + i;
-	uct->uidx_inc = nt;
+        UnitCallTask* uct = (UnitCallTask*)tasks[i];
+        uct->unit_call = unit_call;
+        uct->uidx_st = st_idx + i;
+        uct->uidx_ed = end_base + i;
+        uct->uidx_inc = nt;
       }
       nibble_i = st_idx + n_chunked;
       nibble_stop = st_idx + nu;
-      
-      RunThreads();	// then run the subsidiary guys
 
-      tasks[0]->run();		// run our own set..
+      RunThreads();     // then run the subsidiary guys
+
+      tasks[0]->run();          // run our own set..
 
       // note: all the nibbling is automatic within the single run() deploy
       // finally, always need to sync at end to ensure that everyone is done!
@@ -6114,7 +6133,7 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
     if(nu < min_units || nu < nt) {
       // run locally
       for(int i=nu-1;i>=0;i--) {
-	unit_call->call(net->units_flat[st_idx + i], net, -1); // -1 indicates no threading
+        unit_call->call(net->units_flat[st_idx + i], net, -1); // -1 indicates no threading
       }
     }
     else {
@@ -6124,24 +6143,24 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
       int chnks = n_chunked / nt;
       n_chunked = chnks * nt; // must be even multiple of threads!
       while(n_chunked > nu)
-	n_chunked -= nt;
+        n_chunked -= nt;
 
-      int st_base = st_idx + nu-1;			     // starting index
+      int st_base = st_idx + nu-1;                           // starting index
       int end_base = st_base - (n_chunked - nt); // no -1 b/c >= end_base
 
       for(int i=0;i<nt;i++) {
-	UnitCallTask* uct = (UnitCallTask*)tasks[i];
-	uct->unit_call = unit_call;
-	uct->uidx_st = st_base - i;
-	uct->uidx_ed = end_base - i;
-	uct->uidx_inc = -nt;
+        UnitCallTask* uct = (UnitCallTask*)tasks[i];
+        uct->unit_call = unit_call;
+        uct->uidx_st = st_base - i;
+        uct->uidx_ed = end_base - i;
+        uct->uidx_inc = -nt;
       }
       nibble_i = st_idx + nu-1 - n_chunked;
       nibble_stop = st_idx;
 
-      RunThreads();	// then run the subsidiary guys
+      RunThreads();     // then run the subsidiary guys
 
-      tasks[0]->run();		// run our own set..
+      tasks[0]->run();          // run our own set..
 
       // note: all the nibbling is automatic within the single run() deploy
       // finally, always need to sync at end to ensure that everyone is done!
@@ -6151,7 +6170,7 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
 }
 
 ////////////////////////
-//	Network	 View //
+//      Network  View //
 ////////////////////////
 
 void NetViewObj::Initialize() {
@@ -6171,9 +6190,12 @@ void NetViewObj::UpdateAfterEdit_impl() {
 void Network::Initialize() {
   specs.SetBaseType(&TA_BaseSpec);
   layers.SetBaseType(&TA_Layer);
-  
+  // view_objs = ?
+
   flags = NF_NONE;
   auto_build = AUTO_BUILD;
+
+  atlas_name = "";
 
   train_mode = TRAIN;
   wt_update = ON_LINE;
@@ -6187,6 +6209,10 @@ void Network::Initialize() {
   tick = 0;
   cycle = 0;
   time = 0.0f;
+
+  // group_name = ??
+  // trial_name = ??
+  // output_name = ??
 
   sse_unit_avg = false;
   sse_sqrt = false;
@@ -6205,6 +6231,21 @@ void Network::Initialize() {
 
   compute_prerr = false;
 
+  // prerr = ??
+  // sum_prerr = ??
+  // epc_prerr = ??
+  // train_time = ??
+  // epoch_time = ??
+  // group_time = ??
+  // trial_time = ??
+  // settle_time = ??
+  // cycle_time = ??
+  // wt_sync_time = ??
+  // misc_time = ??
+  // threads = ??
+  // units_flat = ??
+  // send_netin_tmp = ??
+
   dmem_sync_level = DMEM_SYNC_NETWORK;
   dmem_nprocs = 1;
   dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
@@ -6222,13 +6263,15 @@ void Network::Initialize() {
   old_load_cons = false;
 
 #ifdef DMEM_COMPILE
+  // dmem_net_comm = ??
+  // dmem_trl_comm = ??
   dmem_share_units.comm = (MPI_Comm)MPI_COMM_WORLD;
   dmem_agg_sum.agg_op = MPI_SUM;
 #endif
 }
 
-void Network::Destroy()	{ 
-  CutLinks(); 
+void Network::Destroy() {
+  CutLinks();
 }
 
 void Network::InitLinks() {
@@ -6277,8 +6320,8 @@ void Network::CutLinks() {
   units_flat.Reset();
   send_netin_tmp.CutLinks();
   threads.CutLinks();
-  RemoveCons();			// do this first in optimized way!
-  RemoveUnitGroups();		// then units
+  RemoveCons();                 // do this first in optimized way!
+  RemoveUnitGroups();           // then units
   misc_time.CutLinks();
   wt_sync_time.CutLinks();
   cycle_time.CutLinks();
@@ -6289,7 +6332,7 @@ void Network::CutLinks() {
   train_time.CutLinks();
   max_disp_size.CutLinks();
   view_objs.CutLinks();
-  layers.CutLinks();		// then std kills
+  layers.CutLinks();            // then std kills
   specs.CutLinks();
   proj = NULL;
   inherited::CutLinks();
@@ -6301,6 +6344,8 @@ void Network::Copy_(const Network& cp) {
   view_objs = cp.view_objs;
 
   auto_build = cp.auto_build;
+
+  atlas_name = cp.atlas_name;
 
   train_mode = cp.train_mode;
   wt_update = cp.wt_update;
@@ -6349,9 +6394,9 @@ void Network::Copy_(const Network& cp) {
 
   UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers
   SyncSendPrjns();
-  FixPrjnIndexes();			     // fix the recv_idx and send_idx (not copied!)
+  FixPrjnIndexes();                          // fix the recv_idx and send_idx (not copied!)
   UpdateAllSpecs();
-  LinkPtrCons();		// set the pointer cons, which are not updatable by the UpdatePointers function
+  LinkPtrCons();                // set the pointer cons, which are not updatable by the UpdatePointers function
   BuildUnits_Threads();
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
@@ -6368,7 +6413,7 @@ void Network::UpdateAfterEdit_impl(){
   if(name.empty()) {
     taMisc::Error("name should not be empty -- this indicates the dreaded null dialog bug!!  triggering div zero now -- please report the trace to Randy!");
     int zero = 0;
-    cerr << 1 / zero << endl;	// should trigger sigfpe here
+    cerr << 1 / zero << endl;   // should trigger sigfpe here
   }
 
   ClearNetFlag(SAVE_UNITS_FORCE); // might have been saved in on state from recover file or something!
@@ -6388,7 +6433,7 @@ void Network::UpdtAfterNetMod() {
 
 void Network::SetProjectionDefaultTypes(Projection* prjn) {
   // noop for base case: algorithms must override!
-  prjn->spec.type = &TA_FullPrjnSpec; 
+  prjn->spec.type = &TA_FullPrjnSpec;
 }
 
 bool Network::ChangeMyType(TypeDef* new_typ) {
@@ -6402,17 +6447,17 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
   int rval = inherited::Dump_Load_Value(strm, par);
 
   if(old_load_cons) { // old dump format
-    Connect();			  // needs an explicit connect to make everything
+    Connect();                    // needs an explicit connect to make everything
     Layer* lay;
     taLeafItr li;
     FOR_ITR_EL(Layer, lay, layers., li) {
       Unit* u;
       taLeafItr ui;
       FOR_ITR_EL(Unit, u, lay->units., ui) {
-	for(int g=0; g<u->recv.size; g++) {
-	  RecvCons* cg = u->recv.FastEl(g);
-	  cg->Dump_Load_Old_Cons(u, g);
-	}
+        for(int g=0; g<u->recv.size; g++) {
+          RecvCons* cg = u->recv.FastEl(g);
+          cg->Dump_Load_Old_Cons(u, g);
+        }
       }
     }
     old_load_cons = false;
@@ -6421,7 +6466,7 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
 //   if(rval)
 //     LinkPtrCons();
 
-  ClearNetFlag(SAVE_UNITS_FORCE);	// might have been saved in on state from recover file or something!
+  ClearNetFlag(SAVE_UNITS_FORCE);       // might have been saved in on state from recover file or something!
 
   BuildUnits_Threads();
 #ifdef DMEM_COMPILE
@@ -6438,9 +6483,9 @@ int Network::Dump_Save_impl(ostream& strm, taBase* par, int indent) {
     if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
       // no need to save b/c unaffected by changes elsewhere..
       if(!tabMisc::cur_undo_mod_obj || !tabMisc::cur_undo_mod_obj->IsChildOf(this)) {
-	// affected object is not under us
-	taMisc::LogInfo("NOT saving for Undo network named:", name);
-	return 1;
+        // affected object is not under us
+        taMisc::LogInfo("NOT saving for Undo network named:", name);
+        return 1;
       }
     }
   }
@@ -6448,7 +6493,7 @@ int Network::Dump_Save_impl(ostream& strm, taBase* par, int indent) {
 }
 
 int Network::Save_strm(ostream& strm, taBase* par, int indent) {
-  if(!taMisc::is_undo_saving)	  // don't do it for undo!!
+  if(!taMisc::is_undo_saving)     // don't do it for undo!!
     SetNetFlag(SAVE_UNITS_FORCE); // override if !SAVE_UNITS
   int rval = inherited::Save_strm(strm, par, indent);
   ClearNetFlag(SAVE_UNITS_FORCE);
@@ -6458,8 +6503,8 @@ int Network::Save_strm(ostream& strm, taBase* par, int indent) {
 int Network::GetDefaultX(){
   int rval = 1;
   switch(lay_layout) {
-  case THREE_D:	rval = DEFAULT_3D_NETSIZE_X; break;
-  case TWO_D:	rval = DEFAULT_2D_NETSIZE_X; break;
+  case THREE_D: rval = DEFAULT_3D_NETSIZE_X; break;
+  case TWO_D:   rval = DEFAULT_2D_NETSIZE_X; break;
   }
   return rval;
 }
@@ -6467,8 +6512,8 @@ int Network::GetDefaultX(){
 int Network::GetDefaultY(){
   int rval = 1;
   switch(lay_layout) {
-  case THREE_D:	rval = DEFAULT_3D_NETSIZE_Y; break;
-  case TWO_D:	rval = DEFAULT_2D_NETSIZE_Y; break;
+  case THREE_D: rval = DEFAULT_3D_NETSIZE_Y; break;
+  case TWO_D:   rval = DEFAULT_2D_NETSIZE_Y; break;
   }
   return rval;
 }
@@ -6476,8 +6521,8 @@ int Network::GetDefaultY(){
 int Network::GetDefaultZ(){
   int rval = 1;
   switch(lay_layout) {
-  case THREE_D:	rval = DEFAULT_3D_NETSIZE_Z; break;
-  case TWO_D:	rval = DEFAULT_2D_NETSIZE_Z; break;
+  case THREE_D: rval = DEFAULT_3D_NETSIZE_Z; break;
+  case TWO_D:   rval = DEFAULT_2D_NETSIZE_Z; break;
   }
   return rval;
 }
@@ -6532,7 +6577,7 @@ void Network::BuildUnits() {
 #ifdef DMEM_COMPILE
   DMem_DistributeUnits();
 #endif
-  UpdtAfterNetMod();		// calls BuildUnits_Threads
+  UpdtAfterNetMod();            // calls BuildUnits_Threads
   if(!taMisc::gui_active)    return;
 }
 
@@ -6541,7 +6586,7 @@ void Network::BuildUnits_Threads() {
   units_flat.Reset();
   // real indexes start at 1, to allow 0 to be a dummy case for inactive units that may
   // nevertheless get a send netin call to them -- all those just go to this 0 bin
-  units_flat.Add(NULL);		// add a dummy null 
+  units_flat.Add(NULL);         // add a dummy null
   Layer* l;
   taLeafItr li;
   FOR_ITR_EL(Layer, l, layers., li) {
@@ -6609,7 +6654,7 @@ bool Network::CheckBuild(bool quiet) {
     if(l->lesioned()) continue;
     if(!l->CheckBuild(quiet)) {
       if(!quiet)
-	taMisc::CheckError("Network:",GetName(),"Needs the 'Build' command to be run");
+        taMisc::CheckError("Network:",GetName(),"Needs the 'Build' command to be run");
       return false;
     }
   }
@@ -6623,7 +6668,7 @@ bool Network::CheckConnect(bool quiet) {
     if(l->lesioned()) continue;
     if(!l->CheckConnect(quiet)) {
       if(!quiet)
-	taMisc::CheckError("Network:",GetName(), "Needs the 'Connect' command to be run");
+        taMisc::CheckError("Network:",GetName(), "Needs the 'Connect' command to be run");
       return false;
     }
   }
@@ -6634,7 +6679,7 @@ void Network::CheckThisConfig_impl(bool quiet, bool& rval) {
   //NOTE: slightly non-standard, because we bail on first detected issue
   if (!CheckBuild(quiet)) { rval = false; return; }
   if (!CheckConnect(quiet)) { rval = false; return; }
-  UpdtAfterNetMod();		// just to be sure..
+  UpdtAfterNetMod();            // just to be sure..
   inherited::CheckThisConfig_impl(quiet, rval);
 }
 
@@ -6691,7 +6736,7 @@ void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* consp
       pjn->SetCustomFrom(l_from);
       pjn->spec.type = &TA_CustomPrjnSpec;
       if(conspec)
-	pjn->con_spec.SetSpec(conspec);
+        pjn->con_spec.SetSpec(conspec);
       pjn->spec.UpdateAfterEdit();
       pjn->projected = true;
       pjn->UpdateAfterEdit();
@@ -6709,7 +6754,7 @@ void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* consp
   u_to->ConnectFromCk(u_from,pjn);
   if (record)
     taMisc::RecordScript(u_to->GetPath() + ".ConnectFromCk(" + u_from->GetPath() +
-					    ", " + pjn->GetPath() + ");\n");
+                                            ", " + pjn->GetPath() + ");\n");
   lay->UpdateAfterEdit();
 }
 
@@ -6763,7 +6808,12 @@ NetViewObj* Network::NewGlassBrain() {
 // in defined brain areas.  If no frame is specified, a new one
 // will be created.
 BrainView* Network::NewBrainView(T3DataViewFrame* fr) {
-  return BrainView::New(this, fr);
+  // Assign voxel coordinates to the network's units.
+  NetworkVoxelMapper nvm(this);
+  nvm.assignVoxels();
+
+  // Create the new BrainView.
+  return BrainView::New(this, fr); // might trigger a second UAE?
 }
 
 // PlaceNetText is in netstru_qtso.cpp
@@ -6778,10 +6828,10 @@ void Network::NetTextUserData() {
     MemberDef* md = td->members[i];
     if(!md->HasOption("VIEW")) continue;
     UserDataItem* ud = (UserDataItem*)GetUserDataItem(md->name);
-    if(!ud) 
+    if(!ud)
       ud = SetUserData(md->name, bool_on_val);
     ud->val_type_fixed = true;
-  }  
+  }
 }
 
 Layer* Network::NewLayer() {
@@ -6865,14 +6915,14 @@ void Network::Init_Weights() {
     if(!l->lesioned())
       l->Init_Weights(this);
   }
-  Init_Weights_post();		// done after all initialization (for scaling wts...)
+  Init_Weights_post();          // done after all initialization (for scaling wts...)
 
 #ifdef DMEM_COMPILE
   // do the dmem weight symmetrizing!
   DMem_SymmetrizeWts();
 #endif
 
-  Init_Acts();			// also re-init state at this point..
+  Init_Acts();                  // also re-init state at this point..
   Init_Metrics();
   UpdateAllViews();
   taMisc::DoneBusy();
@@ -6952,17 +7002,17 @@ void Network::Send_Netin() {
   const int nu = units_flat.size;
   const int nt = threads.tasks.size;
   if(threads.using_threads) {
-    for(int i=1;i<nu;i++) {	// 0 = dummy idx
+    for(int i=1;i<nu;i++) {     // 0 = dummy idx
       Unit* un = units_flat[i];
       float nw_nt = 0.0f;
       for(int j=0;j<nt;j++) {
-	nw_nt += send_netin_tmp.FastEl(i, j);
+        nw_nt += send_netin_tmp.FastEl(i, j);
       }
       un->Compute_SentNetin(this, nw_nt);
     }
   }
   else {
-    for(int i=1;i<nu;i++) {	// 0 = dummy idx
+    for(int i=1;i<nu;i++) {     // 0 = dummy idx
       Unit* un = units_flat[i];
       float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
       un->Compute_SentNetin(this, nw_nt);
@@ -6981,11 +7031,11 @@ void Network::Compute_Act() {
 }
 
 void Network::Compute_NetinAct() {
-  // important note: any algorithms using this for feedforward computation are not 
+  // important note: any algorithms using this for feedforward computation are not
   // compatible with dmem computation on the network level (over connections)
   // because otherwise the netinput needs to be sync'd at the layer level prior to calling
   // the activation function at the layer level.  Threading should be much faster than
-  // dmem in general so this takes precidence.  See BpNetwork::UpdateAfterEdit_impl for 
+  // dmem in general so this takes precidence.  See BpNetwork::UpdateAfterEdit_impl for
   // a warning message that should be included.
   ThreadUnitCall un_call(&Unit::Compute_NetinAct);
   threads.Run(&un_call, 1.0f, false, true); // backwards = false, layer_sync=true
@@ -7075,7 +7125,7 @@ void Network::Compute_TrialStats() {
 void Network::DMem_ShareTrialData(DataTable* dt, int n_rows) {
 #ifdef DMEM_COMPILE
   dt->DMem_ShareRows(dmem_trl_comm.comm, n_rows);
-#endif  
+#endif
 }
 
 void Network::Compute_EpochSSE() {
@@ -7086,7 +7136,7 @@ void Network::Compute_EpochSSE() {
     pct_err = cnt_err / (float)avg_sse_n;
     pct_cor = 1.0f - pct_err;
   }
-  
+
   cur_sum_sse = 0.0f;
   avg_sse_n = 0;
   cur_cnt_err = 0.0f;
@@ -7094,8 +7144,8 @@ void Network::Compute_EpochSSE() {
 
 void Network::Compute_EpochPRerr() {
   epc_prerr = sum_prerr;
-  epc_prerr.ComputePR();	// make sure, in case of dmem summing
-  sum_prerr.InitVals();		// reset!
+  epc_prerr.ComputePR();        // make sure, in case of dmem summing
+  sum_prerr.InitVals();         // reset!
 }
 
 void Network::Compute_EpochStats() {
@@ -7119,28 +7169,28 @@ DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
   int idx;
   dt->RemoveAllRows();
   DataCol* col;
-  col = dt->FindMakeColName("Group", idx, VT_STRING); 
+  col = dt->FindMakeColName("Group", idx, VT_STRING);
   col->desc = "name of layer group to put layer in -- layer groups are useful for organizing layers logically, moving them together, etc";
-  col = dt->FindMakeColName("Name", idx, VT_STRING); 
+  col = dt->FindMakeColName("Name", idx, VT_STRING);
   col->desc = "name of layer -- will be updated to be a valid C language label so it can be referred to in Programs etc";
-  col = dt->FindMakeColName("Type", idx, VT_STRING); 
+  col = dt->FindMakeColName("Type", idx, VT_STRING);
   col->desc = "functional type of layer in terms of input/output data -- options are: INPUT, TARGET, OUTPUT, HIDDEN -- TARGET means it learns from target output data, while OUTPUT means it generates output error signals but does not use output values for error-driven learning, HIDDEN doesn't get any input/output, and INPUT is simply an input layer";
   col = dt->FindMakeColName("Size_X", idx, VT_INT);
   col->desc = "size of layer (number of units) in the horizontal (X) axis";
-  col = dt->FindMakeColName("Size_Y", idx, VT_INT); 
+  col = dt->FindMakeColName("Size_Y", idx, VT_INT);
   col->desc = "size of layer (number of units) in the vertical (Y) axis";
-  col = dt->FindMakeColName("UnitGps_X", idx, VT_INT); 
+  col = dt->FindMakeColName("UnitGps_X", idx, VT_INT);
   col->desc = "number of unit groups (subgroups of units within a layer) in the horizontal (X) axis -- set to 0 to not have any subgroups at all";
-  col = dt->FindMakeColName("UnitGps_Y", idx, VT_INT); 
+  col = dt->FindMakeColName("UnitGps_Y", idx, VT_INT);
   col->desc = "number of unit groups (subgroups of units within a layer) in the vertical (Y) axis -- set to 0 to not have any subgroups at all";
-  col = dt->FindMakeColName("RecvPrjns", idx, VT_STRING); 
+  col = dt->FindMakeColName("RecvPrjns", idx, VT_STRING);
   col->desc = "receiving projections -- connections from other layers that send into this one -- these must be valid names of other layers in the network, separated by a space if there are multiple";
-  col = dt->FindMakeColName("SendPrjns", idx, VT_STRING); 
+  col = dt->FindMakeColName("SendPrjns", idx, VT_STRING);
   col->desc = "sending projections -- the other layers that the layer sends connections to";
   if(list_specs) {
-    col = dt->FindMakeColName("UnitSpec", idx, VT_STRING); 
+    col = dt->FindMakeColName("UnitSpec", idx, VT_STRING);
     col->desc = "name of unit spec to use for this layer";
-    col = dt->FindMakeColName("LayerSpec", idx, VT_STRING); 
+    col = dt->FindMakeColName("LayerSpec", idx, VT_STRING);
     col->desc = "name of layer spec to use for this layer";
   }
 
@@ -7180,14 +7230,14 @@ DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
     if(list_specs) {
       UnitSpec* us = l->GetUnitSpec();
       if(us)
-	dt->SetVal(us->name, "UnitSpec", -1);
+        dt->SetVal(us->name, "UnitSpec", -1);
       else
-	dt->SetVal("NULL", "UnitSpec", -1);
+        dt->SetVal("NULL", "UnitSpec", -1);
       LayerSpec* ls = l->GetLayerSpec();
       if(ls)
-	dt->SetVal(ls->name, "LayerSpec", -1);
+        dt->SetVal(ls->name, "LayerSpec", -1);
       else
-	dt->SetVal("NULL", "LayerSpec", -1);
+        dt->SetVal("NULL", "LayerSpec", -1);
     }
   }
   dt->StructUpdate(false);
@@ -7219,20 +7269,20 @@ void Network::NetStructFmTable(DataTable* dt) {
     if(gpnm.empty()) {
       l = FindMakeLayer(lnm);
       if(l->InLayerSubGroup()) {
-	layers.Transfer(l);	// transfer into main list
+        layers.Transfer(l);     // transfer into main list
       }
     }
     else {
       Layer_Group* lgp = FindMakeLayerGroup(gpnm);
       l = FindLayer(lnm);
       if(l && l->owner != lgp) {
-	lgp->Transfer(l);	// make it ours
+        lgp->Transfer(l);       // make it ours
       }
       else {
-	l = lgp->FindMakeLayer(lnm); // make new one
+        l = lgp->FindMakeLayer(lnm); // make new one
       }
     }
-    l->ClearBaseFlag(BF_MISC1);	// mark it
+    l->ClearBaseFlag(BF_MISC1); // mark it
     String etyp;
     l->layer_type = (Layer::LayerType)l->GetEnumVal(ltyp, etyp);
     l->un_geom.x = szx;
@@ -7262,8 +7312,8 @@ void Network::NetStructFmTable(DataTable* dt) {
       String fmnm = rps.FastEl(p);
       Layer* fm = FindLayer(fmnm);
       if(fm) {
-	Projection* prjn = FindMakePrjn(l, fm);
-	prjn->ClearBaseFlag(BF_MISC1);
+        Projection* prjn = FindMakePrjn(l, fm);
+        prjn->ClearBaseFlag(BF_MISC1);
       }
     }
 
@@ -7271,7 +7321,7 @@ void Network::NetStructFmTable(DataTable* dt) {
     for(int p=l->projections.size-1; p>=0; p--) {
       Projection* prjn = l->projections.FastEl(p);
       if(prjn->HasBaseFlag(BF_MISC1)) {
-	l->projections.RemoveIdx(p);
+        l->projections.RemoveIdx(p);
       }
     }
   }
@@ -7295,13 +7345,13 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt) {
   int idx;
   dt->RemoveAllRows();
   DataCol* col;
-  col = dt->FindMakeColName("LayerName", idx, VT_STRING); 
+  col = dt->FindMakeColName("LayerName", idx, VT_STRING);
   col->desc = "name of layer -- will be updated to be a valid C language label so it can be referred to in Programs etc";
-  col = dt->FindMakeColName("PrjnFrom", idx, VT_STRING); 
+  col = dt->FindMakeColName("PrjnFrom", idx, VT_STRING);
   col->desc = "receiving projection -- name of sending layer that this layer receives from";
-  col = dt->FindMakeColName("PrjnSpec", idx, VT_STRING); 
+  col = dt->FindMakeColName("PrjnSpec", idx, VT_STRING);
   col->desc = "name of projection spec for this projection";
-  col = dt->FindMakeColName("ConSpec", idx, VT_STRING); 
+  col = dt->FindMakeColName("ConSpec", idx, VT_STRING);
   col->desc = "name of connection spec for this projection";
 
   Layer* l;
@@ -7314,15 +7364,15 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt) {
       dt->SetVal(l->name, "LayerName", -1);
       dt->SetVal(pj->from->name, "PrjnFrom", -1);
       ProjectionSpec* ps = pj->GetPrjnSpec();
-      if(ps) 
-	dt->SetVal(ps->name, "PrjnSpec", -1);
-      else 
-	dt->SetVal("NULL", "PrjnSpec", -1);
+      if(ps)
+        dt->SetVal(ps->name, "PrjnSpec", -1);
+      else
+        dt->SetVal("NULL", "PrjnSpec", -1);
       ConSpec* cs = pj->GetConSpec();
-      if(cs) 
-	dt->SetVal(cs->name, "ConSpec", -1);
-      else 
-	dt->SetVal("NULL", "ConSpec", -1);
+      if(cs)
+        dt->SetVal(cs->name, "ConSpec", -1);
+      else
+        dt->SetVal("NULL", "ConSpec", -1);
     }
   }
   dt->StructUpdate(false);
@@ -7341,7 +7391,7 @@ void Network::DMem_SyncNRecvCons() {
     taLeafItr i;
     FOR_ITR_EL(Layer, l, layers., i) {
       if(!l->lesioned())
-	l->DMem_SyncNRecvCons();
+        l->DMem_SyncNRecvCons();
     }
   }
   else {
@@ -7364,7 +7414,7 @@ void Network::DMem_SyncNRecvCons() {
 void Network::DMem_SyncNet() {
   if(dmem_nprocs_actual <= 1) return;
   if(TestError(dmem_sync_level != DMEM_SYNC_NETWORK, "DMem_SyncNet",
-	       "attempt to DMem sync at network level, should only be at layer level!")) {
+               "attempt to DMem sync at network level, should only be at layer level!")) {
     return;
   }
   dmem_share_units.Sync(1);
@@ -7373,7 +7423,7 @@ void Network::DMem_SyncNet() {
 void Network::DMem_SyncAct() {
   if(dmem_nprocs_actual <= 1) return;
   if(TestError(dmem_sync_level != DMEM_SYNC_NETWORK, "DMem_SyncAct",
-	       "attempt to DMem sync at network level, should only be at layer level!")) {
+               "attempt to DMem sync at network level, should only be at layer level!")) {
     return;
   }
   dmem_share_units.Sync(2);
@@ -7382,8 +7432,8 @@ void Network::DMem_SyncAct() {
 void Network::DMem_DistributeUnits() {
   //  cerr << "proc " << taMisc::dmem_proc << " in distribunits" << endl;
   dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
-  dmem_net_comm.CommSubGpInner(dmem_nprocs_actual);	// network is inner-group
-  dmem_trl_comm.CommSubGpOuter(dmem_nprocs_actual);	// trial is outer-group
+  dmem_net_comm.CommSubGpInner(dmem_nprocs_actual);     // network is inner-group
+  dmem_trl_comm.CommSubGpOuter(dmem_nprocs_actual);     // trial is outer-group
   dmem_share_units.comm = dmem_net_comm.comm;
 
   dmem_share_units.Reset();
@@ -7398,7 +7448,7 @@ void Network::DMem_DistributeUnits() {
     }
     else {
       if(lay->DMem_DistributeUnits_impl(dmem_share_units))
-	any_custom_distrib = true;
+        any_custom_distrib = true;
     }
   }
   if(dmem_sync_level == DMEM_SYNC_NETWORK) {
@@ -7413,8 +7463,8 @@ void Network::DMem_DistributeUnits() {
 void Network::DMem_UpdtWtUpdt() {
   if(dmem_trl_comm.nprocs > 1) {
     TestWarning(wt_update != SMALL_BATCH, "DMem_UpdtWtUpdt",
-		"changing wt_update to SMALL_BATCH because dmem trial nprocs > 1");
-    wt_update = SMALL_BATCH;			  // must be small batch
+                "changing wt_update to SMALL_BATCH because dmem trial nprocs > 1");
+    wt_update = SMALL_BATCH;                      // must be small batch
     small_batch_n_eff = small_batch_n / dmem_trl_comm.nprocs; // effective small_batch_n
     if(small_batch_n_eff < 1) small_batch_n_eff = 1;
   }
@@ -7434,17 +7484,17 @@ void Network::DMem_PruneNonLocalCons() {
     if(l->lesioned()) continue;
     FOR_ITR_EL(Unit, u, l->units., ui) {
       if(u->DMem_IsLocal()) {
-	continue;
+        continue;
       }
       // only non-local
       RecvCons* recv_gp;
       int g;
       for (g = 0; g < u->recv.size; g++) {
-	recv_gp = (RecvCons *)u->recv.FastEl(g);
-	if(recv_gp->GetConSpec()->DMem_AlwaysLocal()) continue;
-	for (int sui = recv_gp->size-1; sui >= 0; sui--) {
-	  u->DisConnectFrom(recv_gp->Un(sui), NULL);
-	}
+        recv_gp = (RecvCons *)u->recv.FastEl(g);
+        if(recv_gp->GetConSpec()->DMem_AlwaysLocal()) continue;
+        for (int sui = recv_gp->size-1; sui >= 0; sui--) {
+          u->DisConnectFrom(recv_gp->Un(sui), NULL);
+        }
       }
     }
   }
@@ -7469,27 +7519,27 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       if(un->bias.size)
-	values.FastEl(cidx++) = un->bias.OwnCn(0)->dwt;
+        values.FastEl(cidx++) = un->bias.OwnCn(0)->dwt;
       if(RecvOwnsCons()) {
-	for(int g = 0; g < un->recv.size; g++) {
-	  RecvCons* cg = un->recv.FastEl(g);
-	  for(int i = 0;i<cg->size;i++)
-	    values.FastEl(cidx++) = cg->Cn(i)->dwt;
-	}
+        for(int g = 0; g < un->recv.size; g++) {
+          RecvCons* cg = un->recv.FastEl(g);
+          for(int i = 0;i<cg->size;i++)
+            values.FastEl(cidx++) = cg->Cn(i)->dwt;
+        }
       }
       else {
-	for(int g = 0; g < un->send.size; g++) {
-	  SendCons* cg = un->send.FastEl(g);
-	  for(int i = 0;i<cg->size;i++)
-	    values.FastEl(cidx++) = cg->Cn(i)->dwt;
-	}
+        for(int g = 0; g < un->send.size; g++) {
+          SendCons* cg = un->send.FastEl(g);
+          for(int i = 0;i<cg->size;i++)
+            values.FastEl(cidx++) = cg->Cn(i)->dwt;
+        }
       }
     }
   }
 
   results.SetSize(cidx);
   DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
-	       "Network::SumDWts", "Allreduce");
+               "Network::SumDWts", "Allreduce");
 
   cidx = 0;
   FOR_ITR_EL(Layer, lay, layers., li) {
@@ -7498,20 +7548,20 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       if(un->bias.size)
-	un->bias.OwnCn(0)->dwt = results.FastEl(cidx++);
+        un->bias.OwnCn(0)->dwt = results.FastEl(cidx++);
       if(RecvOwnsCons()) {
-	for(int g = 0; g < un->recv.size; g++) {
-	  RecvCons* cg = un->recv.FastEl(g);
-	  for(int i = 0;i<cg->size;i++)
-	    cg->Cn(i)->dwt = results.FastEl(cidx++);
-	}
+        for(int g = 0; g < un->recv.size; g++) {
+          RecvCons* cg = un->recv.FastEl(g);
+          for(int i = 0;i<cg->size;i++)
+            cg->Cn(i)->dwt = results.FastEl(cidx++);
+        }
       }
       else {
-	for(int g = 0; g < un->send.size; g++) {
-	  SendCons* cg = un->send.FastEl(g);
-	  for(int i = 0;i<cg->size;i++)
-	    cg->Cn(i)->dwt = results.FastEl(cidx++);
-	}
+        for(int g = 0; g < un->send.size; g++) {
+          SendCons* cg = un->send.FastEl(g);
+          for(int i = 0;i<cg->size;i++)
+            cg->Cn(i)->dwt = results.FastEl(cidx++);
+        }
       }
     }
   }
@@ -7536,27 +7586,27 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       if(un->bias.size)
-	values.FastEl(cidx++) = un->bias.OwnCn(0)->wt;
+        values.FastEl(cidx++) = un->bias.OwnCn(0)->wt;
       if(RecvOwnsCons()) {
-	for(int g = 0; g < un->recv.size; g++) {
-	  RecvCons* cg = un->recv.FastEl(g);
-	  for(int i = 0;i<cg->size;i++)
-	    values.FastEl(cidx++) = cg->Cn(i)->wt;
-	}
+        for(int g = 0; g < un->recv.size; g++) {
+          RecvCons* cg = un->recv.FastEl(g);
+          for(int i = 0;i<cg->size;i++)
+            values.FastEl(cidx++) = cg->Cn(i)->wt;
+        }
       }
       else {
-	for(int g = 0; g < un->send.size; g++) {
-	  SendCons* cg = un->send.FastEl(g);
-	  for(int i = 0;i<cg->size;i++)
-	    values.FastEl(cidx++) = cg->Cn(i)->wt;
-	}
+        for(int g = 0; g < un->send.size; g++) {
+          SendCons* cg = un->send.FastEl(g);
+          for(int i = 0;i<cg->size;i++)
+            values.FastEl(cidx++) = cg->Cn(i)->wt;
+        }
       }
     }
   }
 
   results.SetSize(cidx);
   DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
-		     "Network::AvgWts", "Allreduce");
+                     "Network::AvgWts", "Allreduce");
 
   float avg_mult = 1.0f / (float)np;
   cidx = 0;
@@ -7566,20 +7616,20 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
     taLeafItr ui;
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       if(un->bias.size)
-	un->bias.OwnCn(0)->wt = avg_mult * results.FastEl(cidx++);
+        un->bias.OwnCn(0)->wt = avg_mult * results.FastEl(cidx++);
       if(RecvOwnsCons()) {
-	for(int g = 0; g < un->recv.size; g++) {
-	  RecvCons* cg = un->recv.FastEl(g);
-	  for(int i = 0;i<cg->size;i++)
-	    cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
-	}
+        for(int g = 0; g < un->recv.size; g++) {
+          RecvCons* cg = un->recv.FastEl(g);
+          for(int i = 0;i<cg->size;i++)
+            cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
+        }
       }
       else {
-	for(int g = 0; g < un->send.size; g++) {
-	  SendCons* cg = un->send.FastEl(g);
-	  for(int i = 0;i<cg->size;i++)
-	    cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
-	}
+        for(int g = 0; g < un->send.size; g++) {
+          SendCons* cg = un->send.FastEl(g);
+          for(int i = 0;i<cg->size;i++)
+            cg->Cn(i)->wt = avg_mult * results.FastEl(cidx++);
+        }
       }
     }
   }
@@ -7611,86 +7661,86 @@ void Network::DMem_SymmetrizeWts() {
     FOR_ITR_EL(Unit, un, lay->units., ui) {
       int gi;
       for(gi=0;gi<un->recv.size;gi++) {
-	RecvCons* cg = un->recv[gi];
-	if(!cg->GetConSpec()->wt_limits.sym) continue;
+        RecvCons* cg = un->recv[gi];
+        if(!cg->GetConSpec()->wt_limits.sym) continue;
 
-	// check for presence of reciprocal connections in the first place..
-	Layer* fmlay = cg->prjn->from;
-	bool has_recip_prjn = false;
-	Projection* fmpj;
-	taLeafItr pji;
-	FOR_ITR_EL(Projection, fmpj, fmlay->projections., pji) {
-	  if(fmpj->from == lay) {
-	    has_recip_prjn = true;
-	    break;
-	  }
-	}
-	if(!has_recip_prjn) continue; // no sym cons there anyway
+        // check for presence of reciprocal connections in the first place..
+        Layer* fmlay = cg->prjn->from;
+        bool has_recip_prjn = false;
+        Projection* fmpj;
+        taLeafItr pji;
+        FOR_ITR_EL(Projection, fmpj, fmlay->projections., pji) {
+          if(fmpj->from == lay) {
+            has_recip_prjn = true;
+            break;
+          }
+        }
+        if(!has_recip_prjn) continue; // no sym cons there anyway
 
-	if(un->DMem_IsLocal()) {
-	  // I'm local: I recv values from all other procs: each sends unit index and wt
-	  all_unit_idxs.Reset();
-	  all_wt_vals.Reset();
-	  int proc;
-	  for(proc = 0; proc < np; proc++) {
-	    if(proc == un->dmem_local_proc) continue;
-	    // recv the number of connection values obtained
-	    int msgsize = 0;
-	    MPI_Status status;
-	    DMEM_MPICALL(MPI_Recv((void*)&msgsize, 1, MPI_INT, proc, 101, comm, &status),
-			 "DMem_SymmetrizeWts", "MPI_Recv msgsize");
-	    if(msgsize > 0) {
-	      unit_idxs.SetSize(msgsize);
-	      wt_vals.SetSize(msgsize);
-	      DMEM_MPICALL(MPI_Recv(unit_idxs.el, msgsize, MPI_INT, proc, 102, comm, &status),
-			   "DMem_SymmetrizeWts", "MPI_Recv unit_idxs");
-	      DMEM_MPICALL(MPI_Recv(wt_vals.el, msgsize, MPI_FLOAT, proc, 103, comm, &status),
-			   "DMem_SymmetrizeWts", "MPI_Recv wt_vals");
+        if(un->DMem_IsLocal()) {
+          // I'm local: I recv values from all other procs: each sends unit index and wt
+          all_unit_idxs.Reset();
+          all_wt_vals.Reset();
+          int proc;
+          for(proc = 0; proc < np; proc++) {
+            if(proc == un->dmem_local_proc) continue;
+            // recv the number of connection values obtained
+            int msgsize = 0;
+            MPI_Status status;
+            DMEM_MPICALL(MPI_Recv((void*)&msgsize, 1, MPI_INT, proc, 101, comm, &status),
+                         "DMem_SymmetrizeWts", "MPI_Recv msgsize");
+            if(msgsize > 0) {
+              unit_idxs.SetSize(msgsize);
+              wt_vals.SetSize(msgsize);
+              DMEM_MPICALL(MPI_Recv(unit_idxs.el, msgsize, MPI_INT, proc, 102, comm, &status),
+                           "DMem_SymmetrizeWts", "MPI_Recv unit_idxs");
+              DMEM_MPICALL(MPI_Recv(wt_vals.el, msgsize, MPI_FLOAT, proc, 103, comm, &status),
+                           "DMem_SymmetrizeWts", "MPI_Recv wt_vals");
 
-	      all_unit_idxs.CopyVals(unit_idxs, 0, -1, all_unit_idxs.size);
-	      all_wt_vals.CopyVals(wt_vals, 0, -1, all_wt_vals.size);
-	    }
-	  }
-	  // now have all the data collected, to through and get the sym values!
-	  for(int i=0;i<cg->size;i++) {
-	    Unit* fm = cg->Un(i);
-	    int uidx = fm->GetMyLeafIndex();
-	    if(uidx < 0) continue;
-	    int sidx = all_unit_idxs.FindEl(uidx);
-	    if(sidx < 0) continue;
-	    cg->Cn(i)->wt = all_wt_vals[sidx];
-	  }
-	}
-	else {
-	  // collect my data and send it off!
-	  unit_idxs.Reset();
-	  wt_vals.Reset();
-	  int uni;
-	  for(uni=0;uni<fmlay->units.leaves;uni++) {
-	    Unit* fm = fmlay->units.Leaf(uni);
-	    if(!fm->DMem_IsLocal()) continue;
-	    for(int g = 0; g < fm->recv.size; g++) {
-	      RecvCons* fmg = fm->recv.FastEl(g);
-	      if(fmg->prjn->from != lay) continue;
-	      Connection* con = fmg->FindConFrom(un);
-	      if(con) {
-		unit_idxs.Add(uni);
-		wt_vals.Add(con->wt);
-	      }
-	    }
-	  }
-	  // send the number, then the data
-	  int msgsize = unit_idxs.size;
-	  DMEM_MPICALL(MPI_Send((void*)&msgsize, 1, MPI_INT, un->dmem_local_proc, 101, comm),
-		       "DMem_SymmetrizeWts", "MPI_Send msgsize");
+              all_unit_idxs.CopyVals(unit_idxs, 0, -1, all_unit_idxs.size);
+              all_wt_vals.CopyVals(wt_vals, 0, -1, all_wt_vals.size);
+            }
+          }
+          // now have all the data collected, to through and get the sym values!
+          for(int i=0;i<cg->size;i++) {
+            Unit* fm = cg->Un(i);
+            int uidx = fm->GetMyLeafIndex();
+            if(uidx < 0) continue;
+            int sidx = all_unit_idxs.FindEl(uidx);
+            if(sidx < 0) continue;
+            cg->Cn(i)->wt = all_wt_vals[sidx];
+          }
+        }
+        else {
+          // collect my data and send it off!
+          unit_idxs.Reset();
+          wt_vals.Reset();
+          int uni;
+          for(uni=0;uni<fmlay->units.leaves;uni++) {
+            Unit* fm = fmlay->units.Leaf(uni);
+            if(!fm->DMem_IsLocal()) continue;
+            for(int g = 0; g < fm->recv.size; g++) {
+              RecvCons* fmg = fm->recv.FastEl(g);
+              if(fmg->prjn->from != lay) continue;
+              Connection* con = fmg->FindConFrom(un);
+              if(con) {
+                unit_idxs.Add(uni);
+                wt_vals.Add(con->wt);
+              }
+            }
+          }
+          // send the number, then the data
+          int msgsize = unit_idxs.size;
+          DMEM_MPICALL(MPI_Send((void*)&msgsize, 1, MPI_INT, un->dmem_local_proc, 101, comm),
+                       "DMem_SymmetrizeWts", "MPI_Send msgsize");
 
-	  if(msgsize > 0) {
-	    DMEM_MPICALL(MPI_Send(unit_idxs.el, msgsize, MPI_INT, un->dmem_local_proc, 102, comm),
-			 "DMem_SymmetrizeWts", "MPI_Send unit_idxs");
-	    DMEM_MPICALL(MPI_Send(wt_vals.el, msgsize, MPI_FLOAT, un->dmem_local_proc, 103, comm),
-			 "DMem_SymmetrizeWts", "MPI_Send wt_vals");
-	  }
-	}
+          if(msgsize > 0) {
+            DMEM_MPICALL(MPI_Send(unit_idxs.el, msgsize, MPI_INT, un->dmem_local_proc, 102, comm),
+                         "DMem_SymmetrizeWts", "MPI_Send unit_idxs");
+            DMEM_MPICALL(MPI_Send(wt_vals.el, msgsize, MPI_FLOAT, un->dmem_local_proc, 103, comm),
+                         "DMem_SymmetrizeWts", "MPI_Send wt_vals");
+          }
+        }
       }
     }
   }
@@ -7701,7 +7751,7 @@ void Network::DMem_SymmetrizeWts() {
 //     cerr << "---------- past sym_wts barrier ---------" << endl;
 }
 
-#endif	// DMEM
+#endif  // DMEM
 
 void Network::Copy_Weights(const Network* src) {
   taMisc::Busy();
@@ -7744,7 +7794,7 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
   taMisc::Busy();
   int c = strm.peek();
   if(TestError(c == '#', "LoadWeights_strm",
-	       "cannot read old formats from version 3.2 -- must use network save")) {
+               "cannot read old formats from version 3.2 -- must use network save")) {
     goto exit;
   }
   stat = taMisc::read_tag(strm, tag, val);
@@ -7763,7 +7813,7 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
 
   while(true) {
     stat = taMisc::read_tag(strm, tag, val);
-    if(stat != taMisc::TAG_GOT) break;		// *should* break at TAG_END
+    if(stat != taMisc::TAG_GOT) break;          // *should* break at TAG_END
     if(tag != "Lay") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
     Layer* lay = layers.FindLeafName(val);
     if(lay) {
@@ -7774,7 +7824,7 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
       stat = Layer::SkipWeights_strm(strm, fmt, quiet);
     }
     if(stat != taMisc::TAG_END) break;
-    stat = taMisc::TAG_NONE;	       // reset so EndTag will definitely read new tag
+    stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
     RecvCons::LoadWeights_EndTag(strm, "Lay", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
@@ -7824,11 +7874,11 @@ void Network::LayerZPos_Unitize() {
 void Network::LayerPos_Cleanup() {
   if (flags & MANUAL_POS) return;
   layers.LayerPos_Cleanup();
-  UpdateMaxDispSize();		// must do that in case something moves
+  UpdateMaxDispSize();          // must do that in case something moves
 }
 
 void Network::Compute_LayerDistances() {
-  // first reset all 
+  // first reset all
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
@@ -7853,7 +7903,7 @@ void Network::Compute_LayerDistances() {
 }
 
 void Network::Compute_PrjnDirections() {
-  Compute_LayerDistances();	// required data
+  Compute_LayerDistances();     // required data
   Layer* l;
   taLeafItr i;
   FOR_ITR_EL(Layer, l, layers., i) {
@@ -7872,8 +7922,8 @@ void Network::SetUnitNames(bool force_use_unit_names) {
   UpdateAllViews();
 }
 
-void Network::SetUnitNamesFromDataTable(DataTable* undt, int max_unit_chars, 
-					bool propagate_names) {
+void Network::SetUnitNamesFromDataTable(DataTable* undt, int max_unit_chars,
+                                        bool propagate_names) {
   if(TestError(!undt || undt->rows < 1, "SetUnitNamesFromDataTable", "null unit names table or doesn't have 1 or more rows!")) {
     return;
   }
@@ -7885,7 +7935,7 @@ void Network::SetUnitNamesFromDataTable(DataTable* undt, int max_unit_chars,
     lay->SetUnitNamesFromDataCol(ndc, max_unit_chars);
   }
   if(propagate_names)
-    GetLocalistName();	// propagate
+    GetLocalistName();  // propagate
   return;
 }
 
@@ -8026,7 +8076,7 @@ void Network::AddNoiseToWeights(const Random& noise_spec) {
 }
 
 int Network::PruneCons(const SimpleMathSpec& pre_proc,
-			  Relation::Relations rel, float cmp_val)
+                          Relation::Relations rel, float cmp_val)
 {
   taMisc::Busy();
   StructUpdate(true);
@@ -8143,7 +8193,7 @@ void Network::ReplaceSpecs(BaseSpec* old_sp, BaseSpec* new_sp) {
     ReplacePrjnSpec((ProjectionSpec*)old_sp, (ProjectionSpec*)new_sp);
   else if(old_sp->InheritsFrom(&TA_LayerSpec))
     ReplaceLayerSpec((LayerSpec*)old_sp, (LayerSpec*)new_sp);
-  
+
   ReplaceSpecs_Gp(old_sp->children, new_sp->children);
 }
 
@@ -8230,10 +8280,10 @@ DataTable* Network::VarToTable(DataTable* dt, const String& variable) {
 }
 
 DataTable* Network::ConVarsToTable(DataTable* dt, const String& var1, const String& var2,
-			     const String& var3, const String& var4, const String& var5,
-			     const String& var6, const String& var7, const String& var8,
-			     const String& var9, const String& var10, const String& var11,
-			     const String& var12, const String& var13, const String& var14) {
+                             const String& var3, const String& var4, const String& var5,
+                             const String& var6, const String& var7, const String& var8,
+                             const String& var9, const String& var10, const String& var11,
+                             const String& var12, const String& var13, const String& var14) {
   bool new_table = false;
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
@@ -8246,7 +8296,7 @@ DataTable* Network::ConVarsToTable(DataTable* dt, const String& var1, const Stri
   FOR_ITR_EL(Layer, l, layers., i) {
     if(!l->lesioned())
       l->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
-			var9, var10, var11, var12, var13, var14);
+                        var9, var10, var11, var12, var13, var14);
   }
   dt->StructUpdate(false);
   if(new_table)
@@ -8286,24 +8336,24 @@ static bool net_project_wts_propagate(Unit* u, bool swt) {
     if(slay->lesioned() || (prjn->from.ptr() == prjn->layer) ||
        slay->HasLayerFlag(Layer::PROJECT_WTS_DONE)) continue;
     slay->SetLayerFlag(Layer::PROJECT_WTS_NEXT); // next..
-    got_some = true;			       // keep going..
+    got_some = true;                           // keep going..
 
     if(swt) {
       SendCons* scg = (SendCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
-	float wtv = scg->Cn(ci)->wt;
-	Unit* su = scg->Un(ci);
-	su->wt_prjn += u->wt_prjn * wtv;
-	su->tmp_calc1 += u->wt_prjn;
+        float wtv = scg->Cn(ci)->wt;
+        Unit* su = scg->Un(ci);
+        su->wt_prjn += u->wt_prjn * wtv;
+        su->tmp_calc1 += u->wt_prjn;
       }
     }
     else {
       RecvCons* scg = (RecvCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
-	float wtv = scg->Cn(ci)->wt;
-	Unit* su = scg->Un(ci);
-	su->wt_prjn += u->wt_prjn * wtv;
-	su->tmp_calc1 += u->wt_prjn;
+        float wtv = scg->Cn(ci)->wt;
+        Unit* su = scg->Un(ci);
+        su->wt_prjn += u->wt_prjn * wtv;
+        su->tmp_calc1 += u->wt_prjn;
       }
     }
   }
@@ -8311,11 +8361,11 @@ static bool net_project_wts_propagate(Unit* u, bool swt) {
 }
 
 void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool swt,
-				 bool zero_sub_hiddens) {
+                                 bool zero_sub_hiddens) {
   if(!src_u) return;
 
-  float_Matrix topk_un_vec;		// for computing kwta
-  float_Matrix topk_gp_vec;		// for computing kwta
+  float_Matrix topk_un_vec;             // for computing kwta
+  float_Matrix topk_gp_vec;             // for computing kwta
 
   // first initialize all vars
   Layer* lay;
@@ -8344,19 +8394,19 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
     if(swt) {
       SendCons* scg = (SendCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
-	float wtv = scg->Cn(ci)->wt;
-	Unit* su = scg->Un(ci);
-	su->wt_prjn += wtv;
-	su->tmp_calc1 += 1.0f;	// sum to 1
+        float wtv = scg->Cn(ci)->wt;
+        Unit* su = scg->Un(ci);
+        su->wt_prjn += wtv;
+        su->tmp_calc1 += 1.0f;  // sum to 1
       }
     }
     else {
       RecvCons* scg = (RecvCons*)cg;
       for(int ci = 0; ci < scg->size; ci++) {
-	float wtv = scg->Cn(ci)->wt;
-	Unit* su = scg->Un(ci);
-	su->wt_prjn += wtv;
-	su->tmp_calc1 += 1.0f;	// sum to 1
+        float wtv = scg->Cn(ci)->wt;
+        Unit* su = scg->Un(ci);
+        su->wt_prjn += wtv;
+        su->tmp_calc1 += 1.0f;  // sum to 1
       }
     }
   }
@@ -8379,79 +8429,79 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
       taLeafItr ui;
       int uidx = 0;
       FOR_ITR_EL(Unit, u, lay->units., ui) {
-	if(u->tmp_calc1 > 0.0f)
-	  u->wt_prjn /= u->tmp_calc1;
-	abs_max = MAX(abs_max, fabsf(u->wt_prjn));
-	topk_un_vec.FastEl_Flat(uidx) = u->wt_prjn;
-	uidx++;
+        if(u->tmp_calc1 > 0.0f)
+          u->wt_prjn /= u->tmp_calc1;
+        abs_max = MAX(abs_max, fabsf(u->wt_prjn));
+        topk_un_vec.FastEl_Flat(uidx) = u->wt_prjn;
+        uidx++;
       }
       if(abs_max == 0.0f) abs_max = 1.0f;
 
       if(lay->layer_type == Layer::HIDDEN && lay->units.gp.size > 0 && top_k_gp > 0) {
-	// units group version -- only for hidden layers..
+        // units group version -- only for hidden layers..
 
-	// pick the top k groups in terms of weighting for top-k guys from that group -- not all..
-	float k_val = lay->units.gp.size * top_k_un;
-	float thr_eff = taMath_float::vec_kwta(&topk_un_vec, (int)k_val, true); // descending
+        // pick the top k groups in terms of weighting for top-k guys from that group -- not all..
+        float k_val = lay->units.gp.size * top_k_un;
+        float thr_eff = taMath_float::vec_kwta(&topk_un_vec, (int)k_val, true); // descending
 
-	topk_gp_vec.SetGeom(1, lay->units.gp.size);
+        topk_gp_vec.SetGeom(1, lay->units.gp.size);
 
-	for(int gi=0;gi<lay->units.gp.size;gi++) {
-	  Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
-	  float gp_val = 0.0f;
-	  Unit* u;
-	  taLeafItr ui;
-	  FOR_ITR_EL(Unit, u, ug->, ui) {
-	    if(u->wt_prjn > thr_eff) // only for those above threshold
-	      gp_val += u->wt_prjn;
-	  }
-	  topk_gp_vec.FastEl_Flat(gi) = gp_val;
-	}
+        for(int gi=0;gi<lay->units.gp.size;gi++) {
+          Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
+          float gp_val = 0.0f;
+          Unit* u;
+          taLeafItr ui;
+          FOR_ITR_EL(Unit, u, ug->, ui) {
+            if(u->wt_prjn > thr_eff) // only for those above threshold
+              gp_val += u->wt_prjn;
+          }
+          topk_gp_vec.FastEl_Flat(gi) = gp_val;
+        }
 
-	float gp_thr_eff = taMath_float::vec_kwta(&topk_gp_vec, top_k_gp, true); // descending
-	for(int gi=0;gi<lay->units.gp.size;gi++) {
-	  Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
-	  topk_un_vec.SetGeom(1, ug->leaves);
+        float gp_thr_eff = taMath_float::vec_kwta(&topk_gp_vec, top_k_gp, true); // descending
+        for(int gi=0;gi<lay->units.gp.size;gi++) {
+          Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
+          topk_un_vec.SetGeom(1, ug->leaves);
 
-	  Unit* u;
-	  taLeafItr ui;
-	  int uidx = 0;
-	  FOR_ITR_EL(Unit, u, ug->, ui) {
-	    topk_un_vec.FastEl_Flat(uidx) = u->wt_prjn;
-	    uidx++;
-	  }
+          Unit* u;
+          taLeafItr ui;
+          int uidx = 0;
+          FOR_ITR_EL(Unit, u, ug->, ui) {
+            topk_un_vec.FastEl_Flat(uidx) = u->wt_prjn;
+            uidx++;
+          }
 
-	  float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
-	  FOR_ITR_EL(Unit, u, ug->, ui) {
-	    float prjval = u->wt_prjn;
-	    u->wt_prjn /= abs_max;	// normalize -- 
-	    if((top_k_un > 0 && prjval < thr_eff) || 
-	       (topk_gp_vec.FastEl_Flat(gi) < gp_thr_eff)) {
-	      if(zero_sub_hiddens)
-		u->wt_prjn = 0.0f; // these are always HIDDEN so no need to check.
-	      continue;
-	    }
+          float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
+          FOR_ITR_EL(Unit, u, ug->, ui) {
+            float prjval = u->wt_prjn;
+            u->wt_prjn /= abs_max;      // normalize --
+            if((top_k_un > 0 && prjval < thr_eff) ||
+               (topk_gp_vec.FastEl_Flat(gi) < gp_thr_eff)) {
+              if(zero_sub_hiddens)
+                u->wt_prjn = 0.0f; // these are always HIDDEN so no need to check.
+              continue;
+            }
 
-	    bool got = net_project_wts_propagate(u, swt);
-	    got_some |= got;
-	  }
-	}
+            bool got = net_project_wts_propagate(u, swt);
+            got_some |= got;
+          }
+        }
       }
-      else {						// flat layer version
-	float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
+      else {                                            // flat layer version
+        float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
 
-	FOR_ITR_EL(Unit, u, lay->units., ui) {
-	  float prjval = u->wt_prjn;
-	  u->wt_prjn /= abs_max;	// normalize
-	  if(top_k_un > 0 && prjval < thr_eff) {
-	    if(lay->layer_type == Layer::HIDDEN && zero_sub_hiddens)
-	      u->wt_prjn = 0.0f;
-	    continue; // bail
-	  }
+        FOR_ITR_EL(Unit, u, lay->units., ui) {
+          float prjval = u->wt_prjn;
+          u->wt_prjn /= abs_max;        // normalize
+          if(top_k_un > 0 && prjval < thr_eff) {
+            if(lay->layer_type == Layer::HIDDEN && zero_sub_hiddens)
+              u->wt_prjn = 0.0f;
+            continue; // bail
+          }
 
-	  bool got = net_project_wts_propagate(u, swt);
-	  got_some |= got;
-	}
+          bool got = net_project_wts_propagate(u, swt);
+          got_some |= got;
+        }
       }
     }
   } while(got_some);
@@ -8460,7 +8510,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
 // new monitor is in emergent_project.cc
 
 ////////////////////////////////////////////
-//  	Wizard functions
+//      Wizard functions
 ////////////////////////////////////////////
 
 bool Network::nw_itm_def_arg = false;
@@ -8500,7 +8550,7 @@ Layer_Group* Network::FindMakeLayerGroup(const String& nm, TypeDef* td, bool& nw
   return layers.FindMakeLayerGroup(nm, td, nw_itm, alt_nm);
 }
 
-Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* cs, bool& nw_itm) 
+Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* cs, bool& nw_itm)
 {
   nw_itm = false; // default, esp for early return
   Projection* use_prj = NULL;
@@ -8509,15 +8559,15 @@ Projection* Network::FindMakePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, 
     Projection* prj = (Projection*)recv->projections[i];
     if(prj->from.ptr() == send) {
       if((ps == NULL) && (cs == NULL)) {
-	return prj;
+        return prj;
       }
       if((ps) && (prj->spec.spec.ptr() != ps)) {
-	use_prj = prj;
-	break;
+        use_prj = prj;
+        break;
       }
       if((cs) && (prj->con_spec.spec.ptr() != cs)) {
-	use_prj = prj;
-	break;
+        use_prj = prj;
+        break;
       }
       return prj;
     }
@@ -8543,8 +8593,8 @@ Projection* Network::FindMakePrjnAdd(Layer* recv, Layer* send, ProjectionSpec* p
     Projection* prj = (Projection*)recv->projections[i];
     if((prj->from.ptr() == send)
        && ((ps == NULL) || (prj->spec.spec.ptr() == ps) ||
-	   (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
-	    ps->InheritsFrom(TA_FullPrjnSpec)))
+           (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
+            ps->InheritsFrom(TA_FullPrjnSpec)))
        && ((cs == NULL) || (prj->con_spec.spec.ptr() == cs))) {
       nw_itm = false;
       return prj;
@@ -8570,16 +8620,16 @@ Projection* Network::FindMakeSelfPrjn(Layer* recv, ProjectionSpec* ps, ConSpec* 
     Projection* prj = (Projection*)recv->projections[i];
     if(prj->from.ptr() == recv) {
       if((ps == NULL) && (cs == NULL)) {
-	nw_itm = false;
-	return prj;
+        nw_itm = false;
+        return prj;
       }
       if((ps) && (prj->spec.spec.ptr() != ps)) {
-	use_prj = prj;
-	break;
+        use_prj = prj;
+        break;
       }
       if((cs) && (prj->con_spec.spec.ptr() != cs)) {
-	use_prj = prj;
-	break;
+        use_prj = prj;
+        break;
       }
       nw_itm = false;
       return prj;
@@ -8627,8 +8677,8 @@ bool Network::RemovePrjn(Layer* recv, Layer* send, ProjectionSpec* ps, ConSpec* 
     Projection* prj = (Projection*)recv->projections[i];
     if((prj->from.ptr() == send)
        && ((ps == NULL) || (prj->spec.spec.ptr() == ps) ||
-	   (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
-	    ps->InheritsFrom(TA_FullPrjnSpec)))
+           (prj->spec.spec->InheritsFrom(TA_FullPrjnSpec) &&
+            ps->InheritsFrom(TA_FullPrjnSpec)))
        && ((cs == NULL) || (prj->con_spec.spec.ptr() == cs))) {
       recv->projections.RemoveEl(prj);
       return true;

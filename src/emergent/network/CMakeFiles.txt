@@ -36,6 +36,7 @@ set(network_HEADS_MAKETA
 # all heads -- include maketa generated ones here
 set(network_HEADS
     ${network_HEADS_MAKETA_LOCAL}
+    NetworkVoxelMapper.h
     network_TA_type.h
     network_TA_inst.h
 )
@@ -67,6 +68,7 @@ set(network_SRCS
     netstru.cpp
     netstru_extra.cpp
     netdata.cpp
+    NetworkVoxelMapper.cpp
     emergent_program.cpp
     emergent_project.cpp
     emergent_ti.cpp
