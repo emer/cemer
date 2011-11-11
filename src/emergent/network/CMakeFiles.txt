@@ -39,6 +39,10 @@ set(network_HEADS
     NetworkVoxelMapper.h
     network_TA_type.h
     network_TA_inst.h
+    znzlib.h
+    nifti1.h
+    nifti1_io.h
+    niftireader.h
 )
 
 # headers that need Qt moc run
@@ -74,6 +78,9 @@ set(network_SRCS
     emergent_ti.cpp
     v3_compat.cpp
     network_TA.cpp
+    znzlib.c
+    nifti1_io.c
+    niftireader.cpp
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})
