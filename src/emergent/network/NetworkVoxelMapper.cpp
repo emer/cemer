@@ -29,7 +29,7 @@ namespace { // anonymous
 
 NetworkVoxelMapper::NetworkVoxelMapper(Network *network)
   : unitMap_()
-  , atlasName_(network->atlas_name)
+  , atlasName_(network->atlas_name.toQString())
 {
   // The network pointer is not stored, so create a map of unit pointers.
   createUnitMap(network);
@@ -66,7 +66,7 @@ NetworkVoxelMapper::createUnitMap(Network *network)
       for (int unitIdx = 0; unitIdx < numUnitsInLayer; ++unitIdx)
       {
         Unit *unit = layer->UnitAccess(mode, unitIdx, 0);
-        unitMap_.insert(layer->brain_area, unit);
+        unitMap_.insert(layer->brain_area.toQString(), unit);
       }
     }
   }
