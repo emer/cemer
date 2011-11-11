@@ -388,7 +388,7 @@ String taFiler::defExt() const {
   else
     rval = exts;
   // Add a dot if necessary.
-  return taFilerUtil::dottedExtension(rval);
+  return taFilerUtil::DottedExtension(rval);
 }
 
 String taFiler::FileName() const {
@@ -428,16 +428,16 @@ const String taFiler::FilterText(bool incl_allfiles, QStringList* list) const {
   // key on the exts, and just put a ? for type if we run out
   for (int i = 0; i < sa_ex.size; ++i) {
     using namespace taFilerUtil;
-    String filetype = getFiletype(i, sa_ft);
-    String extension = getDottedExtension(i, sa_ex);
-    String filter = makeFilter(filetype, extension, CompressEnabled());
-    addFilter(filter, rval, list);
+    String filetype = GetFiletype(i, sa_ft);
+    String extension = GetDottedExtension(i, sa_ex);
+    String filter = MakeFilter(filetype, extension, CompressEnabled());
+    AddFilter(filter, rval, list);
   }
 
   if (incl_allfiles) {
     using namespace taFilerUtil;
     String filter = "All files (*)";
-    addFilter(filter, rval, list);
+    AddFilter(filter, rval, list);
   }
 
   return rval;
@@ -678,7 +678,7 @@ void taFiler::SetFileName(const String& value) {
 
 namespace taFilerUtil
 {
-  String dottedExtension(const String &extension)
+  String DottedExtension(const String &extension)
   {
     // Ensure the extension (if any) begins with a dot.
     if (extension.nonempty() && extension[0] != '.')
@@ -688,7 +688,7 @@ namespace taFilerUtil
     return extension;
   }
 
-  String undottedExtension(const String &extension)
+  String UndottedExtension(const String &extension)
   {
     // Remove the leading dot from the extension (if there is one).
     if (extension.nonempty() && extension[0] == '.')
@@ -698,7 +698,7 @@ namespace taFilerUtil
     return extension;
   }
 
-  String getFiletype(int idx, const String_PArray &filetypes)
+  String GetFiletype(int idx, const String_PArray &filetypes)
   {
     String type = filetypes.SafeEl(idx);
     if (type.empty())
@@ -714,17 +714,17 @@ namespace taFilerUtil
     return type;
   }
 
-  String getDottedExtension(int idx, const String_PArray &extensions)
+  String GetDottedExtension(int idx, const String_PArray &extensions)
   {
     String ext = extensions.FastEl(idx);
-    return taFilerUtil::dottedExtension(ext);
+    return taFilerUtil::DottedExtension(ext);
   }
 
-  String makeFilter(const String &filetype, const String &extension, bool isCompressEnabled)
+  String MakeFilter(const String &filetype, const String &extension, bool is_compress_enabled)
   {
     // note: it's ok if extension is empty
     String filter = filetype + " files (*" + extension;
-    if (isCompressEnabled)
+    if (is_compress_enabled)
     {
       filter.cat(" *").cat(extension).cat(taMisc::compress_sfx);
     }
@@ -732,16 +732,16 @@ namespace taFilerUtil
     return filter;
   }
 
-  void addFilter(const String &newFilter, String &filters, QStringList *list)
+  void AddFilter(const String &new_filter, String &filters, QStringList *list)
   {
     if (filters.nonempty())
     {
       filters.cat(";;");
     }
-    filters.cat(newFilter);
+    filters.cat(new_filter);
     if (list)
     {
-      *list << newFilter;
+      *list << new_filter;
     }
   }
 }

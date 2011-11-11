@@ -3261,12 +3261,12 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 // helper functions for taRootBase::Startup_InitTA_AppFolders()
 namespace { // anon
   // Determine if a dir is a plugin dir.
-  bool isPluginDir(const String& path) {
+  bool IsPluginDir(const String& path) {
     return QDir(path).exists();
   }
 
   // Determine if a dir is an app dir.
-  bool isAppDir(const String& path, String* plugin_path = NULL) {
+  bool IsAppDir(const String& path, String* plugin_path = NULL) {
     // First check if the path contains a prog_lib subdirectory.
     QDir dir(path);
     if (dir.exists("prog_lib")) {
@@ -3291,7 +3291,7 @@ namespace { // anon
   }
 
   // Setup the global variables taMisc::exe_cmd and taMisc::exe_path
-  void initExecCmdPath()
+  void InitExecCmdPath()
   {
     //note: this is not how Qt does it, but it seems windows follows normal rules
     // and passes the arg[0] as the full path to the executable, so we just get path
@@ -3328,7 +3328,7 @@ namespace { // anon
   // app_plugin_dir may be set for in-place contexts (Windows and dev).
   // Out parameter prefix_dir may be set for non-windows platforms.
   // Side effect: sets taMisc::in_dev_exe and taMisc::use_plugins.
-  bool getAppDir(String &app_dir, String &app_plugin_dir, String &prefix_dir)
+  bool GetAppDir(String &app_dir, String &app_plugin_dir, String &prefix_dir)
   {
     // Search for app path in following order:
     // 1. app_dir command line switch (may require app_plugin_dir switch too)
@@ -3339,7 +3339,7 @@ namespace { // anon
     // NOTE: for "in-place" contexts, plugin dir is local, else look independently
 
     app_dir = taMisc::FindArgByName("AppDir");
-    if (app_dir.nonempty() && isAppDir(app_dir)) {
+    if (app_dir.nonempty() && IsAppDir(app_dir)) {
       return true;
     }
 
@@ -3352,7 +3352,7 @@ namespace { // anon
     if (bin_dir.contains("\\bin\\")) {
       if (bin_dir.contains("\\build")) {
         app_dir = bin_dir.before("\\build");
-        if (isAppDir(app_dir, &app_plugin_dir)) {
+        if (IsAppDir(app_dir, &app_plugin_dir)) {
           taMisc::Info("Note: running development executable: not loading plugins.");
           taMisc::in_dev_exe = true;
           taMisc::use_plugins = false;
@@ -3361,19 +3361,19 @@ namespace { // anon
       }
 
       app_dir = bin_dir.before("\\bin\\");
-      if (isAppDir(app_dir, &app_plugin_dir)) {
+      if (IsAppDir(app_dir, &app_plugin_dir)) {
         return true;
       }
     }
 
     app_dir = getenv("EMERGENTDIR");
-    if (app_dir.nonempty() && isAppDir(app_dir)) {
+    if (app_dir.nonempty() && IsAppDir(app_dir)) {
       return true;
     }
 
     if (bin_dir.endsWith("\\bin")) {
       app_dir = bin_dir.at(0, bin_dir.length() - 4);
-      if (isAppDir(app_dir)) {
+      if (IsAppDir(app_dir)) {
         return true;
       }
     }
@@ -3387,7 +3387,7 @@ namespace { // anon
     if (bin_dir.endsWith("/bin")) {
       if (bin_dir.contains("/build")) {
         app_dir = bin_dir.before("/build");
-        if (isAppDir(app_dir, &app_plugin_dir)) {
+        if (IsAppDir(app_dir, &app_plugin_dir)) {
           taMisc::Info("Note: running development executable: not loading plugins.");
           taMisc::in_dev_exe = true;
           taMisc::use_plugins = false;
@@ -3398,12 +3398,12 @@ namespace { // anon
       // always try to find share install guy first
       String tmp_dir = bin_dir.at(0, bin_dir.length() - 4);
       app_dir = tmp_dir + "/share/" + taMisc::default_app_install_folder_name;
-      if (isAppDir(app_dir, &app_plugin_dir)) {
+      if (IsAppDir(app_dir, &app_plugin_dir)) {
         return true;
       }
 
       app_dir = tmp_dir;
-      if (isAppDir(app_dir, &app_plugin_dir)) {
+      if (IsAppDir(app_dir, &app_plugin_dir)) {
         return true;
       }
     }
@@ -3427,7 +3427,7 @@ namespace { // anon
     for (int i = 0; i < search_prefixes.size(); ++i) {
       prefix_dir = search_prefixes[i];
       app_dir = prefix_dir + "/share/" + taMisc::default_app_install_folder_name;
-      if (isAppDir(app_dir)) {
+      if (IsAppDir(app_dir)) {
         // Note: the prefix_dir that successfully produced app_dir will
         // be returned by out-parameter.
         return true;
@@ -3443,7 +3443,7 @@ namespace { // anon
     return false;
   }
 
-  bool getAppPluginDir(String &app_plugin_dir, const String &prefix_dir) {
+  bool GetAppPluginDir(String &app_plugin_dir, const String &prefix_dir) {
     // We search for plugin path in following order:
     // 1. app_plugin_dir command line switch
     // 2. previously established "in-place" location (only for Windows
@@ -3493,7 +3493,7 @@ namespace { // anon
     for (int i = 0; i < search_prefixes.size(); ++i) {
       app_plugin_dir = search_prefixes[i] + "/lib/" +
         taMisc::default_app_install_folder_name + "/" + taMisc::GetSysPluginDir();
-      if (isPluginDir(app_plugin_dir)) {
+      if (IsPluginDir(app_plugin_dir)) {
         return true;
       }
     }
@@ -3517,7 +3517,7 @@ bool taRootBase::Startup_InitTA_AppFolders() {
   // because QCoreApplication has not been instantiated yet
 
   // Set taMisc::exe_cmd and taMisc::exe_path.
-  initExecCmdPath();
+  InitExecCmdPath();
 
   // Initialize the key folders.
   String app_dir;
@@ -3526,7 +3526,7 @@ bool taRootBase::Startup_InitTA_AppFolders() {
 
   // Find the application directory (and if possible, also get the
   // plugin directory and prefix for the application directory).
-  bool found = getAppDir(app_dir, app_plugin_dir, prefix_dir);
+  bool found = GetAppDir(app_dir, app_plugin_dir, prefix_dir);
 
   // If found, set taMisc::app_dir.
   if (found) {
@@ -3549,10 +3549,10 @@ bool taRootBase::Startup_InitTA_AppFolders() {
   }
 
   // Determine which directory to use as the plugin directory.
-  found = getAppPluginDir(app_plugin_dir, prefix_dir);
+  found = GetAppPluginDir(app_plugin_dir, prefix_dir);
 
   // If no plugin directory found, warn the user.
-  if (!found || !isPluginDir(app_plugin_dir)) {
+  if (!found || !IsPluginDir(app_plugin_dir)) {
     taMisc::Error("Expected application plugin folder",
       app_plugin_dir, "does not exist! You should check your installation "
       "and/or create this folder, otherwise runtime errors may occur.");

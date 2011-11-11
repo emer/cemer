@@ -62,15 +62,15 @@
 
 MTRndState::MTRndState()
   : mti(N + 1)
-  , isGaussDoubleCached(false)
-  , cachedGaussDouble(0.0)
+  , is_gauss_double_cached(false)
+  , cached_gauss_double(0.0)
 {
 }
 
 void
 MTRndState::reset()
 {
-  isGaussDoubleCached = false;
+  is_gauss_double_cached = false;
 }
 
 // Initialize the static MT-RNG state instance.
@@ -98,7 +98,7 @@ uint MTRnd::seed_time_pid() {
   int tc = taPlatform::tickCount(); // ms since system started
   ulong sdval = (ulong)tc * (ulong)pid;
   sdval = sdval & 0xffffffffUL;
-  seed(sdval);		// use microseconds..
+  seed(sdval);          // use microseconds..
   return sdval;
 }
 
@@ -213,9 +213,9 @@ double MTRnd::genrand_res53() {
 double
 MTRnd::genrand_gauss_dev_double()
 {
-  if (state.isGaussDoubleCached) {
-    state.isGaussDoubleCached = false;
-    return state.cachedGaussDouble;
+  if (state.is_gauss_double_cached) {
+    state.is_gauss_double_cached = false;
+    return state.cached_gauss_double;
   }
 
   double fac, r, v1, v2;
@@ -228,7 +228,7 @@ MTRnd::genrand_gauss_dev_double()
   while (r >= 1.0 || r == 0);
 
   fac = sqrt(-2.0 * log(r) / r);
-  state.cachedGaussDouble = v1 * fac;
-  state.isGaussDoubleCached = true;
+  state.cached_gauss_double = v1 * fac;
+  state.is_gauss_double_cached = true;
   return v2 * fac;
 }

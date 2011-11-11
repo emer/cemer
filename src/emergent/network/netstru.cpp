@@ -6810,10 +6810,10 @@ NetViewObj* Network::NewGlassBrain() {
 BrainView* Network::NewBrainView(T3DataViewFrame* fr) {
   // Assign voxel coordinates to the network's units.
   NetworkVoxelMapper nvm(this);
-  nvm.assignVoxels();
+  nvm.AssignVoxels();
 
   // Create the new BrainView.
-  return BrainView::New(this, fr); // might trigger a second UAE?
+  return BrainView::New(this, fr);
 }
 
 // PlaceNetText is in netstru_qtso.cpp

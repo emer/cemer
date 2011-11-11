@@ -145,11 +145,11 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fd->setDirectory(eff_dir);
   fd->setFilters(filter_list);
 
-  bool isDefaultFilenameCompressed =
+  bool is_default_filename_compressed =
     CompressEnabled() && (CompressReq() || IsCompressed());
   // Qt expects a suffix without a leading dot.
-  String suffix = taFilerUtil::undottedExtension(
-    isDefaultFilenameCompressed ? defExt() + taMisc::compress_sfx : defExt());
+  String suffix = taFilerUtil::UndottedExtension(
+    is_default_filename_compressed ? defExt() + taMisc::compress_sfx : defExt());
   fd->setDefaultSuffix(suffix);
 
   String caption;
@@ -196,7 +196,7 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
   fd->selectFile(m_fname);
   // we always make and set the extension, but don't always show it
   fde->cbCompress->setEnabled(CompressEnabled());
-  fde->cbCompress->setChecked(isDefaultFilenameCompressed);
+  fde->cbCompress->setChecked(is_default_filename_compressed);
   //  fd->setOrientation(Qt::Vertical);
   fd->setViewMode(QFileDialog::Detail);
   fd->setHistory(hist_paths);

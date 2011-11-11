@@ -2028,7 +2028,7 @@ String taMisc::FixURL(const String& urltxt) {
 }
 
 bool taMisc::InternetConnected() {
-bool any_valid = false;
+  bool any_valid = false;
 #ifndef NO_TA_BASE
   const bool DEBUG_LOG = false;
   QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
@@ -5938,7 +5938,7 @@ String TypeDef::GetValStr_class_inline(const void* base_, void* par, MemberDef* 
 namespace { // anonymous
   // Functions to format float/double values consistently across platforms.
 
-  void normalizeRealString(String &str) {
+  void NormalizeRealString(String &str) {
     // Make NaN and infinity representations consistent.
     // Windows may use "1.#QNAN" or "-1.#IND" for nan.
     if (str.contains_ci("nan") || str.contains_ci("ind")) {
@@ -5958,10 +5958,10 @@ namespace { // anonymous
     if (exponent == -1) exponent = str.index_ci("e-");
     if (exponent > 0) {
       exponent += 2;
-      int firstNonZero = exponent;
-      while (str.elem(firstNonZero) == '0') ++firstNonZero;
-      if (firstNonZero > exponent) {
-        str.del(exponent, firstNonZero - exponent);
+      int first_non_zero = exponent;
+      while (str.elem(first_non_zero) == '0') ++first_non_zero;
+      if (first_non_zero > exponent) {
+        str.del(exponent, first_non_zero - exponent);
       }
     }
 
@@ -5969,11 +5969,11 @@ namespace { // anonymous
     str.repl(",", ".");
   }
 
-  String formatFloat(float f, TypeDef::StrContext sc) {
+  String FormatFloat(float f, TypeDef::StrContext sc) {
     switch (sc) {
       case TypeDef::SC_STREAMING: {
         String ret(f, "%.7g");
-        normalizeRealString(ret);
+        NormalizeRealString(ret);
         return ret;
       }
       default:
@@ -5981,11 +5981,11 @@ namespace { // anonymous
     }
   }
 
-  String formatDouble(double d, TypeDef::StrContext sc) {
+  String FormatDouble(double d, TypeDef::StrContext sc) {
     switch (sc) {
       case TypeDef::SC_STREAMING: {
         String ret(d, "%.16lg");
-        normalizeRealString(ret);
+        NormalizeRealString(ret);
         return ret;
       }
       default:
@@ -6068,10 +6068,10 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
       return String(*((uint64_t*)base));
     }
     else if(DerivesFrom(TA_float)) {
-      return formatFloat(*static_cast<const float *>(base), sc);
+      return FormatFloat(*static_cast<const float *>(base), sc);
     }
     else if(DerivesFrom(TA_double)) {
-      return formatDouble(*static_cast<const double *>(base), sc);
+      return FormatDouble(*static_cast<const double *>(base), sc);
     }
     else if(DerivesFormal(TA_enum)) {
       return GetValStr_enum(base, par, memb_def, sc, force_inline);

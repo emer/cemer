@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -76,10 +76,10 @@
 #define DIST(x,y) sqrt((double) ((x * x) + (y*y)))
 
 //////////////////////////////////
-//   DataTableModel		//
+//   DataTableModel             //
 //////////////////////////////////
 
-DataTableModel::DataTableModel(DataTable* dt_) 
+DataTableModel::DataTableModel(DataTable* dt_)
 :inherited(NULL)
 {
   m_dt = dt_;
@@ -109,7 +109,7 @@ void DataTableModel::DataDataChanged(taDataLink* dl, int dcr,
   if ((dcr <= DCR_ITEM_UPDATED_ND) || // data itself updated
     (dcr == DCR_STRUCT_UPDATE_END) ||  // for col insert/deletes
     (dcr == DCR_DATA_UPDATE_END)) // for row insert/deletes
-  { 
+  {
     emit_layoutChanged();
   }
 }
@@ -119,22 +119,22 @@ QVariant DataTableModel::data(const QModelIndex& index, int role) const {
   //NOTES:
   // * it would be nice to just italicize the "matrix" text, but we have no
   //   no access to the font being used, and cannot only pass modifiers
-  
+
   DataCol* col = m_dt->GetColData(index.column(), true); // quiet
   // if no col, we really don't care about anything else...
   if (!col) return QVariant(); // nil
-  
+
   switch (role) {
   case Qt::DisplayRole: //note: we may choose to format different for display, ex floats
   case Qt::EditRole: {
-    if (col->is_matrix) 
+    if (col->is_matrix)
       return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
     else {
       int dx;
       if(m_dt->idx(index.row(), col->rows(), dx))
-	return col->GetValAsString(dx);
+        return col->GetValAsString(dx);
       else
-	return QVariant();	// nil
+        return QVariant();      // nil
     }
   }
 // Qt::FontRole: //  QFont: font for the text
@@ -173,8 +173,8 @@ void DataTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int co
   if (!m_dt) return;
   // lookup actual end values when we are called with sentinels
   if (row_to < 0) row_to = rowCount() - 1;
-  if (col_to < 0) col_to = columnCount() - 1;  
-  
+  if (col_to < 0) col_to = columnCount() - 1;
+
   emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
 }
 
@@ -203,7 +203,7 @@ Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
       rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
       DataCol* col = m_dt->GetColData(index.column(), true); // quiet
       if (col && !(col->is_matrix || (col->col_flags & DataCol::READ_ONLY) ||
-         col->isGuiReadOnly()) ) 
+         col->isGuiReadOnly()) )
         rval |= Qt::ItemIsEditable;
     }
   }
@@ -211,17 +211,17 @@ Qt::ItemFlags DataTableModel::flags(const QModelIndex& index) const {
 }
 
 QVariant DataTableModel::headerData(int section, Qt::Orientation orientation,
-  int role) const 
+  int role) const
 {
   if (m_dt) {
     if (orientation == Qt::Horizontal) {
       DataCol* col = m_dt->GetColData(section, true); // quiet
-      if (col) { 
+      if (col) {
         if (role == Qt::DisplayRole)
           return QString(col->GetDisplayName().chars());
         else if (role == Qt::ToolTipRole)
           return QString(col->GetDesc().chars());
-      } else 
+      } else
         return QString();
     } else {
       if (role == Qt::DisplayRole)
@@ -233,7 +233,7 @@ QVariant DataTableModel::headerData(int section, Qt::Orientation orientation,
 
 void DataTableModel::refreshViews() {
   emit_layoutChanged();
-/*  emit dataChanged(createIndex(0, 0), 
+/*  emit dataChanged(createIndex(0, 0),
     createIndex(rowCount() - 1, columnCount() - 1));*/
 }
 
@@ -243,10 +243,10 @@ int DataTableModel::rowCount(const QModelIndex& parent) const {
 
 void DataTableModel::matDataChanged(int col_idx) {
   if (!m_dt) return;
-  
+
   DataCol* col = m_dt->GetColData(col_idx, true); // quiet
   // if no col, we really don't care about anything else...
-  if (!col) return; 
+  if (!col) return;
   ++notifying;
   col->DataChanged(DCR_ITEM_UPDATED); // for calc refresh and other clients
   --notifying;
@@ -254,13 +254,13 @@ void DataTableModel::matDataChanged(int col_idx) {
 
 bool DataTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
   if (!m_dt || !index.isValid()) return false;
-  
+
   DataCol* col = m_dt->GetColData(index.column(), true); // quiet
   // if no col, we really don't care about anything else...
-  if (!col) return false; 
+  if (!col) return false;
   //we restrict setData for scalars only -- use delegate for matrix
   if (col->is_matrix) return false;
-  
+
   bool rval = false;
   switch (role) {
   case Qt::EditRole:
@@ -282,7 +282,7 @@ bool DataTableModel::ValidateIndex(const QModelIndex& index) const {
 
 
 //////////////////////////
-//   DataTable (gui)	//
+//   DataTable (gui)    //
 //////////////////////////
 
 GridTableView* DataTable::NewGridView(T3DataViewFrame* fr) {
@@ -306,10 +306,10 @@ GridTableView* DataTable::FindMakeGridView(T3DataViewFrame* fr) {
       el->UpdateDisplay();
       fr = el->GetFrame();
       if(fr) {
-	MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
-	if(mwv) {
-	  mwv->SelectT3ViewTabName(fr->name);
-	}
+        MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
+        if(mwv) {
+          mwv->SelectT3ViewTabName(fr->name);
+        }
       }
       return el;
     }
@@ -330,10 +330,10 @@ GraphTableView* DataTable::FindMakeGraphView(T3DataViewFrame* fr) {
       el->UpdateDisplay();
       fr = el->GetFrame();
       if(fr) {
-	MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
-	if(mwv) {
-	  mwv->SelectT3ViewTabName(fr->name);
-	}
+        MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
+        if(mwv) {
+          mwv->SelectT3ViewTabName(fr->name);
+        }
       }
       return el;
     }
@@ -392,7 +392,7 @@ void DataTable::ScrollEditorsToBottom() {
 }
 
 //////////////////////////
-//   DataColView	//
+//   DataColView        //
 //////////////////////////
 
 /*
@@ -470,7 +470,7 @@ void DataColView::Hide() {
 }
 
 //////////////////////////
-// DataTableView	//
+// DataTableView        //
 //////////////////////////
 
 void DataTableView::Initialize() {
@@ -514,7 +514,7 @@ void DataTableView::UpdateAfterEdit_impl() {
 }
 
 void DataTableView::IgnoredDataChanged(taDataLink* dl, int dcr,
-    void* op1, void* op2) 
+    void* op1, void* op2)
 {
   // if it is a struct begin or end, we better not ignore it, because
   // it could require us to reset, so we free locked matrix col slices
@@ -527,7 +527,7 @@ void DataTableView::IgnoredDataChanged(taDataLink* dl, int dcr,
 }
 
 const String DataTableView::caption() const {
-  DataTable* dt = dataTable(); 
+  DataTable* dt = dataTable();
   String rval;
   if (dt) {
     rval = dt->GetDisplayName();
@@ -551,7 +551,7 @@ void DataTableView::ClearViewRange() {
 }
 
 void DataTableView::Unbind_impl() {
-  if (m_data) { 
+  if (m_data) {
     SetData(NULL);
     DataTableUnlinked();
   }
@@ -652,7 +652,7 @@ void DataTableView::UpdateName() {
       SetName("no_table");
   }
 }
-  
+
 void DataTableView::DataUpdateAfterEdit_impl() {
   UpdateName();
   inherited::DataUpdateAfterEdit_impl();
@@ -687,9 +687,9 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
     int old_colno = cols->FindEl(dcs->dataCol());
     if (old_colno >= 0) {
       if(old_colno != i)
-	dcs->UpdateFromDataCol(true); // first = get options
+        dcs->UpdateFromDataCol(true); // first = get options
       else
-	dcs->UpdateFromDataCol(false); // no options
+        dcs->UpdateFromDataCol(false); // no options
       continue;
     }
     // if not bound, try to find it by name
@@ -704,7 +704,7 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
         children.RemoveIdx(i);
 //       }
     }
-  }  
+  }
 // items: add missing, order correctly, and update existing (will be only action 1st time)
   for (i = 0; i < cols->size; ++i) {
     dc = cols->FastEl(i);
@@ -719,7 +719,7 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
       children.Insert(dcs, i);
     }
     dcs->setDataCol(dc, first);
-  }  
+  }
 //   cerr << "data spec cols updated: " << cols->size << " " << colViewCount() << endl;
 }
 
@@ -770,7 +770,7 @@ void DataTableView::setDisplay(bool value) {
   if (display_on == value) return;
   display_on = value;
   //  UpdateAfterEdit(); // does the whole kahuna
-  UpdateDisplay(false);		// 
+  UpdateDisplay(false);         //
 }
 
 void DataTableView::ViewRow_At(int start) {
@@ -818,10 +818,10 @@ void DataTableView::RowFwdAll() {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-//  	Grid View
+//      Grid View
 
 //////////////////////////////////
-//   GridColView		//
+//   GridColView                //
 //////////////////////////////////
 
 void GridColView::Initialize(){
@@ -844,8 +844,8 @@ void GridColView::Copy_(const GridColView& cp){
 }
 
 void GridColView::CopyFromView(GridColView* cp){
-  Copy_(*cp);			// get per above
-  visible = cp->visible;		// from inh
+  Copy_(*cp);                   // get per above
+  visible = cp->visible;                // from inh
 }
 
 void GridColView::Destroy() {
@@ -912,7 +912,7 @@ void GridColView::ComputeColSizes() {
     row_height = par->mat_size_range.Clip(raw_height);
   }
   else {
-    row_height = 1.0f;		// always just one char high
+    row_height = 1.0f;          // always just one char high
     col_width = text_width;
   }
 }
@@ -934,13 +934,13 @@ void GridColView::SetTextWidth(int text_wdth) {
 
 
 //////////////////////////////////
-//  GridTableView		//
+//  GridTableView               //
 //////////////////////////////////
 
 // Add a new GridTableView object to the frame for the given DataTable.
 GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
-  NewNetViewHelper newNetView(fr, dt, "table");
-  if (!newNetView.isValid()) return NULL;
+  NewNetViewHelper new_net_view(fr, dt, "table");
+  if (!new_net_view.isValid()) return NULL;
 
   GridTableView* vw = new GridTableView;
   fr->AddView(vw);
@@ -948,7 +948,7 @@ GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   // make sure we get it all setup!
   vw->BuildAll();
 
-  newNetView.showFrame();
+  new_net_view.showFrame();
   return vw;
 }
 
@@ -956,11 +956,11 @@ void GridTableView::Initialize() {
   view_rows = 10;
   col_n = 5;
 
-  width	= 1.0f;
+  width = 1.0f;
   grid_on = true;
   header_on = true;
   row_num_on = false;
-  two_d_font = false;		// true -- this is causing mysterious so crash, disabled for now
+  two_d_font = false;           // true -- this is causing mysterious so crash, disabled for now
   two_d_font_scale = 350.0f;
   mat_val_text = false;
 
@@ -1040,7 +1040,7 @@ void GridTableView::Copy_(const GridTableView& cp) {
 }
 
 void GridTableView::CopyFromView(GridTableView* cp) {
-  Copy_(*cp);			// get stuff as above
+  Copy_(*cp);                   // get stuff as above
   for(int i=0;i<children.size;i++) {
     GridColView* cvs = (GridColView*)colView(i);
     GridColView* cpvs = (GridColView*)cp->children.FindName(cvs->name);
@@ -1068,7 +1068,7 @@ void GridTableView::UpdateName() {
       SetName("grid_no_table");
   }
 }
-  
+
 const String GridTableView::caption() const {
   String rval = inherited::caption();
   if(last_sel_got) {
@@ -1151,7 +1151,7 @@ void GridTableView::Render_pre() {
     node_so()->addChild(ecb);
   }
 
-  UpdatePanel();		// otherwise doesn't get updated without explicit click..
+  UpdatePanel();                // otherwise doesn't get updated without explicit click..
   inherited::Render_pre();
 }
 
@@ -1160,9 +1160,9 @@ void GridTableView::Render_impl() {
   T3GridViewNode* node_so = this->node_so(); // cache
   if(!node_so || !dataTable())
     return;
-  node_so->setWidth(width);	// does a render too -- ensure always up to date on width
+  node_so->setWidth(width);     // does a render too -- ensure always up to date on width
   int orig_rows;
-  CheckRowsChanged(orig_rows);	// don't do anything with this here, but just make sure m_rows is up to date
+  CheckRowsChanged(orig_rows);  // don't do anything with this here, but just make sure m_rows is up to date
   MakeViewRangeValid();
   CalcViewMetrics();
   GetScaleRange();
@@ -1196,7 +1196,7 @@ void GridTableView::UpdateDisplay(bool update_panel) {
       return;
     }
     // scroll down to end of new data
-    view_range.max = m_rows - 1; 
+    view_range.max = m_rows - 1;
     view_range.min = view_range.max - view_rows + 1;
     view_range.min = MAX(0, view_range.min);
   }
@@ -1248,7 +1248,7 @@ void GridTableView::CalcViewMetrics() {
     tot_wd_raw += (float)row_num_width;
   }
 
-  bool has_mat = false;		// has a matrix?
+  bool has_mat = false;         // has a matrix?
   row_height_raw = 1.0f;
   for(int col = col_range.min; col<=col_range.max; ++col) {
     GridColView* cvs = (GridColView*)colVis(col);
@@ -1259,7 +1259,7 @@ void GridTableView::CalcViewMetrics() {
     row_height_raw = MAX(row_height_raw, cvs->row_height);
   }
 
-  if(tot_wd_raw == 0.0f) return;	// something wrong
+  if(tot_wd_raw == 0.0f) return;        // something wrong
 
   // now normalize
   col_widths.SetSize(col_widths_raw.size);
@@ -1297,26 +1297,26 @@ void GridTableView::CalcViewMetrics() {
   if(!redo) {
     font_scale = MIN(col_font_scale, row_font_scale);
     if(font_scale > text_size_range.max && has_mat) {
-      redo = true;		// don't do more than once
+      redo = true;              // don't do more than once
       float red_rat = text_size_range.max / font_scale;
       // we have a matrix and font size is too big: rescale it and then recompute
       font_scale = text_size_range.max;
       tot_wd_raw = 0.0f;
       int cidx = 0;
       if(row_num_on) {
-	col_widths_raw[cidx] *= red_rat;
-	tot_wd_raw += col_widths_raw[cidx];
-	cidx++;
+        col_widths_raw[cidx] *= red_rat;
+        tot_wd_raw += col_widths_raw[cidx];
+        cidx++;
       }
       for(int col = col_range.min; col<=col_range.max; ++col) {
-	GridColView* cvs = (GridColView*)colVis(col);
-	if(!cvs) continue;
-	if(!cvs->dataCol()->is_matrix)
-	  col_widths_raw[cidx] *= red_rat;
-	tot_wd_raw += col_widths_raw[cidx];
-	cidx++;
+        GridColView* cvs = (GridColView*)colVis(col);
+        if(!cvs) continue;
+        if(!cvs->dataCol()->is_matrix)
+          col_widths_raw[cidx] *= red_rat;
+        tot_wd_raw += col_widths_raw[cidx];
+        cidx++;
       }
-      goto normalize;		// redo
+      goto normalize;           // redo
     }
   }
 
@@ -1350,7 +1350,7 @@ void GridTableView::GetScaleRange() {
     DataCol* da = cvs->dataCol();
     if(!da->isNumeric() || !da->is_matrix) continue;
     da->GetMinMaxScale(sc_rg);
-    sc_rg.SymRange();		// keep range symmetric around zero!
+    sc_rg.SymRange();           // keep range symmetric around zero!
     if(!got_one)
       colorscale.SetMinMax(sc_rg.min, sc_rg.max);
     else
@@ -1374,7 +1374,7 @@ void GridTableView_RowScrollCB(SoScrollBar* sb, int val, void* user_data) {
 }
 
 void GridTableView::SetScrollBars() {
-  if(scrolling_) return;		     // do't redo if currently doing!
+  if(scrolling_) return;                     // do't redo if currently doing!
   T3GridViewNode* node_so = this->node_so(); // cache
   if(!node_so) return;
 
@@ -1439,7 +1439,7 @@ void GridTableView::RemoveLines(){
 }
 
 ///////////////////////////////////////////////////////////////
-//	Actual Rendering of grid display
+//      Actual Rendering of grid display
 //
 // margins are applied *within* cells -- cells are a specific height and width
 // and then contents are indented by margin size
@@ -1459,7 +1459,7 @@ void GridTableView::RenderGrid() {
   // note: VERY unlikely to not need at least one line, so always make it
   SoCube* ln = new SoCube;
   ln->ref(); // our unref later will delete it if we never use it
-  ln->width = gr_ln_sz; 
+  ln->width = gr_ln_sz;
   ln->depth = gr_ln_sz; //note: give it depth to try to avoid disappearing lines issue
   ln->height = 1.0f;
 
@@ -1495,7 +1495,7 @@ void GridTableView::RenderGrid() {
   // note: VERY unlikely to not need at least one line, so always make it
   ln = new SoCube;
   ln->ref(); // our unref later will delete it if we never use it
-  ln->width = width; 
+  ln->width = width;
   ln->depth = gr_ln_sz; //note: give it depth to try to avoid disappearing lines issue
   ln->height = gr_ln_sz;
   tr = new SoTranslation();
@@ -1522,7 +1522,7 @@ void GridTableView::RenderGrid() {
 void GridTableView::RenderHeader() {
   T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
-  
+
   // safely/correctly clear all the column headers
   // we remove first manually from us...
   SoSeparator* hdr = node_so->header();
@@ -1532,7 +1532,7 @@ void GridTableView::RenderHeader() {
     GridColView* gcv = (GridColView*)colView(i);
     gcv->Clear();
   }
-  
+
   if(!header_on || dataTable()->data.size == 0) return; // normally shouldn't be called if off
 
   SoComplexity* cplx = new SoComplexity;
@@ -1585,7 +1585,7 @@ void GridTableView::RenderHeader() {
   for (int col = col_range.min; col <= col_range.max; ++col) {
     GridColView* cvs = (GridColView*)colVis(col);
     if (!cvs) continue;
-    if (col_wd_lst > 0.0f) { 
+    if (col_wd_lst > 0.0f) {
       tr = new SoTranslation();
       hdr->addChild(tr);
       tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
@@ -1695,9 +1695,9 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     //calculate the actual col row index, for the case of a jagged data table
     int act_idx; // <0 for null
     dt->idx(data_row, dc->rows(), act_idx);
-    
+
     // translate the col to proper location
-    if (col_wd_lst > 0.0f) { 
+    if (col_wd_lst > 0.0f) {
       tr = new SoTranslation();
       ln->addChild(tr);
       tr->translation.setValue(col_wd_lst, 0.0f, 0.0f);
@@ -1705,7 +1705,7 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
     col_wd_lst = col_widths[col_idx++]; // index is now +1 already..
 
     float col_wd = col_wd_lst - gr_mg_sz2;
-    
+
     // null columns just get single "n/a" regardless of geom etc.
     if (act_idx < 0) {
       SoSeparator* nul_sep = new SoSeparator;
@@ -1713,16 +1713,16 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       tr = new SoTranslation;
       nul_sep->addChild(tr);
       if(two_d_font) {
-	SoText2* txt = new SoText2;
-	nul_sep->addChild(txt);
-	txt->justification = SoText2::CENTER;
-	txt->string.setValue("n/a");
+        SoText2* txt = new SoText2;
+        nul_sep->addChild(txt);
+        txt->justification = SoText2::CENTER;
+        txt->string.setValue("n/a");
       }
       else {
-	SoAsciiText* txt = new SoAsciiText;
-	nul_sep->addChild(txt);
-	txt->justification = SoAsciiText::CENTER;
-	txt->string.setValue("n/a");
+        SoAsciiText* txt = new SoAsciiText;
+        nul_sep->addChild(txt);
+        txt->justification = SoAsciiText::CENTER;
+        txt->string.setValue("n/a");
       }
       // center the n/a in the cell
       float x_offs = .5f * col_wd_lst;
@@ -1733,55 +1733,55 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
 
     if(dc->is_matrix) {
       if(cvs->mat_image) {
-	SoSeparator* img = new SoSeparator;
-	ln->addChild(img);
-	SoTransform* tr = new SoTransform();
-	img->addChild(tr);
-	// scale the image according to pixel metrics
-	// note: image defaults to 1 geom unit width, so we scale by our act width
-	tr->scaleFactor.setValue(col_wd, row_ht, 1.0f);
-	// center the shape in the middle of the cell
-	tr->translation.setValue(col_wd_lst * .5f, -(row_height *.5f), 0.0f);
-	SoImageEx* img_so = new SoImageEx;
-	img->addChild(img_so);
+        SoSeparator* img = new SoSeparator;
+        ln->addChild(img);
+        SoTransform* tr = new SoTransform();
+        img->addChild(tr);
+        // scale the image according to pixel metrics
+        // note: image defaults to 1 geom unit width, so we scale by our act width
+        tr->scaleFactor.setValue(col_wd, row_ht, 1.0f);
+        // center the shape in the middle of the cell
+        tr->translation.setValue(col_wd_lst * .5f, -(row_height *.5f), 0.0f);
+        SoImageEx* img_so = new SoImageEx;
+        img->addChild(img_so);
 
-	taMatrix* cell_mat =  dc->GetValAsMatrix(act_idx);
-	if(cell_mat) {
-	  taBase::Ref(cell_mat);
-	  bool top_zero = (cvs->mat_layout == taMisc::TOP_ZERO);
-	  img_so->setImage(*cell_mat, top_zero);
-	  taBase::UnRef(cell_mat);
-	}
+        taMatrix* cell_mat =  dc->GetValAsMatrix(act_idx);
+        if(cell_mat) {
+          taBase::Ref(cell_mat);
+          bool top_zero = (cvs->mat_layout == taMisc::TOP_ZERO);
+          img_so->setImage(*cell_mat, top_zero);
+          taBase::UnRef(cell_mat);
+        }
       }
       else {
-	float mat_ht = row_ht;
-	if(col_wd > mat_ht)	// make it more square as height increases..
-	  mat_ht += (col_wd - mat_ht) * fabsf(sinf(mat_rot_rad));
-	SoSeparator* grsep = new SoSeparator;
-	ln->addChild(grsep);
-	SoTransform* tr = new SoTransform(); // todo: add this to image object! get rid of extra
-	grsep->addChild(tr);
-	tr->scaleFactor.setValue(col_wd, mat_ht, 1.0f);
-	tr->translation.setValue(gr_mg_sz, -(row_height-gr_mg_sz), 0.0f);
-	tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), mat_rot_rad);
-	
-	taMatrix* cell_mat =  dc->GetValAsMatrix(act_idx);
-	if(cell_mat) {
-	  taBase::Ref(cell_mat);
-	  SoMatrixGrid* sogr = new SoMatrixGrid
-	    (cell_mat, cvs->mat_odd_vert, &colorscale, (SoMatrixGrid::MatrixLayout)cvs->mat_layout, 
-	     mat_val_text);
-	  sogr->spacing = mat_block_spc;
-	  sogr->block_height = mat_block_height;
-	  sogr->trans_max = mat_trans;
-	  sogr->user_data = dc;	// needed for point picking
-	  sogr->render();
-	  taBase::UnRef(cell_mat);
-	  grsep->addChild(sogr);
-	}
+        float mat_ht = row_ht;
+        if(col_wd > mat_ht)     // make it more square as height increases..
+          mat_ht += (col_wd - mat_ht) * fabsf(sinf(mat_rot_rad));
+        SoSeparator* grsep = new SoSeparator;
+        ln->addChild(grsep);
+        SoTransform* tr = new SoTransform(); // todo: add this to image object! get rid of extra
+        grsep->addChild(tr);
+        tr->scaleFactor.setValue(col_wd, mat_ht, 1.0f);
+        tr->translation.setValue(gr_mg_sz, -(row_height-gr_mg_sz), 0.0f);
+        tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), mat_rot_rad);
+
+        taMatrix* cell_mat =  dc->GetValAsMatrix(act_idx);
+        if(cell_mat) {
+          taBase::Ref(cell_mat);
+          SoMatrixGrid* sogr = new SoMatrixGrid
+            (cell_mat, cvs->mat_odd_vert, &colorscale, (SoMatrixGrid::MatrixLayout)cvs->mat_layout,
+             mat_val_text);
+          sogr->spacing = mat_block_spc;
+          sogr->block_height = mat_block_height;
+          sogr->trans_max = mat_trans;
+          sogr->user_data = dc; // needed for point picking
+          sogr->render();
+          taBase::UnRef(cell_mat);
+          grsep->addChild(sogr);
+        }
       }
     }
-    else {			// scalar: always text
+    else {                      // scalar: always text
       SoSeparator* txt_sep = new SoSeparator;
       ln->addChild(txt_sep);
       // text origin is bottom left (Left) or bottom right (Right)
@@ -1794,29 +1794,29 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
       bc->rgb.setValue(txtcolr.redf(), txtcolr.greenf(), txtcolr.bluef());
       txt_sep->addChild(bc);
       float y_offs = ((row_height - text_ht) *.5f) +
-	text_ht - txt_base_adj;
+        text_ht - txt_base_adj;
       if (dc->isNumeric()) {
-	just = SoAsciiText::RIGHT;
-	x_offs = col_wd - gr_mg_sz2;
-	el = Variant::formatNumber(dc->GetValAsVar(act_idx),6); // 6 = precision
+        just = SoAsciiText::RIGHT;
+        x_offs = col_wd - gr_mg_sz2;
+        el = Variant::formatNumber(dc->GetValAsVar(act_idx),6); // 6 = precision
       } else {
-	int max_chars = (int)(t3Misc::char_ht_to_wd_pts * col_wd / font_scale) + 1;
-	el = dc->GetValAsString(act_idx).elidedTo(max_chars);
+        int max_chars = (int)(t3Misc::char_ht_to_wd_pts * col_wd / font_scale) + 1;
+        el = dc->GetValAsString(act_idx).elidedTo(max_chars);
       }
       tr->translation.setValue(x_offs, -y_offs, 0.0f);
       if(two_d_font) {
-	SoText2* txt = new SoText2;
-	txt_sep->addChild(txt);
-	txt->justification = (SoText2::Justification)just;
-	txt->string.setValue(el.chars());
+        SoText2* txt = new SoText2;
+        txt_sep->addChild(txt);
+        txt->justification = (SoText2::Justification)just;
+        txt->string.setValue(el.chars());
       }
       else {
-	SoAsciiText* txt = new SoAsciiText;
-	txt_sep->addChild(txt);
-	txt->justification = just;
-	txt->string.setValue(el.chars());
+        SoAsciiText* txt = new SoAsciiText;
+        txt_sep->addChild(txt);
+        txt->justification = just;
+        txt->string.setValue(el.chars());
       }
-    
+
     } //text
   }
   node_so->body()->addChild(ln);
@@ -1904,7 +1904,7 @@ void GridTableView::VScroll(bool left) {
 void GridTableView::ViewCol_At(int start) {
   if (start < 0) start = 0;
   col_range.min = start;
-  UpdateDisplay();		// takes care of keeping col in range 
+  UpdateDisplay();              // takes care of keeping col in range
 }
 
 void GridTableView::ColBackAll() {
@@ -1947,8 +1947,8 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   GridTableView* nv = static_cast<GridTableView*>(vnd->dataView());
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
-			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
+  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y,
+                           nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
@@ -1962,7 +1962,7 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
 
   SbVec3f axis;
@@ -2002,7 +2002,7 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
   SoMouseButtonEvent::Button but = mouseevent->getButton();
   if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases
 //   cerr << "but: " << but << endl;
-  bool left_but = false;	// assume other button -- don't really care what it is
+  bool left_but = false;        // assume other button -- don't really care what it is
   if(but == SoMouseButtonEvent::BUTTON1)
     left_but = true;
   bool got_one = false;
@@ -2020,18 +2020,18 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
       if(!pobj) continue;
 //       cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
       if(!pobj->isOfType(SoMatrixGrid::getClassTypeId())) {
-// 	cerr << "not SoMatrixGrid!" << endl;
-	continue;
+//      cerr << "not SoMatrixGrid!" << endl;
+        continue;
       }
       SoMatrixGrid* mtxg = (SoMatrixGrid*)pobj;
       DataCol* dcol = (DataCol*)mtxg->user_data;
       taMatrix* matrix = mtxg->matrix;
-      SbVec3f pt = pp->getObjectPoint(pobj); 
+      SbVec3f pt = pp->getObjectPoint(pobj);
 //       cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
 
       int geom_x, geom_y;
       matrix->geom.Get2DGeomGui(geom_x, geom_y, mtxg->odd_y, 1);
-//      float cl_x = 1.0f / (float)geom_x;	// how big each cell is
+//      float cl_x = 1.0f / (float)geom_x;      // how big each cell is
 //      float cl_y = 1.0f / (float)geom_y;
       int xp = (int)((pt[0] * geom_x));
       int yp = (int)((pt[1] * geom_y));
@@ -2039,63 +2039,63 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
 
       float val_to_set = 0.0f;
       if(tgv->click_vals) {
-	if(left_but) val_to_set = tgv->lmb_val;
-	else val_to_set = tgv->mmb_val;
-	taProject* proj = (taProject*)tgv->GetOwner(&TA_taProject);
-	// save undo state!
-	if(proj && dcol) {
-	  proj->undo_mgr.SaveUndo(dcol, "GridView Click Vals", dcol);
-	}
+        if(left_but) val_to_set = tgv->lmb_val;
+        else val_to_set = tgv->mmb_val;
+        taProject* proj = (taProject*)tgv->GetOwner(&TA_taProject);
+        // save undo state!
+        if(proj && dcol) {
+          proj->undo_mgr.SaveUndo(dcol, "GridView Click Vals", dcol);
+        }
       }
 
       // note: all the bot zero stuff is backwards due to coord inversion -- coin is bot zero!
       if(matrix->dims() == 1) {
-	int ymax = matrix->dim(0);	// assumes odd_y
-	int yeff = yp;
-	if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) yeff = ymax-1-yp;
-	if(tgv->click_vals)
-	  matrix->SetFmVar(val_to_set, yeff);
-	else
-	  tgv->last_sel_val = matrix->SafeElAsFloat(yeff);
+        int ymax = matrix->dim(0);      // assumes odd_y
+        int yeff = yp;
+        if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) yeff = ymax-1-yp;
+        if(tgv->click_vals)
+          matrix->SetFmVar(val_to_set, yeff);
+        else
+          tgv->last_sel_val = matrix->SafeElAsFloat(yeff);
       }
       if(matrix->dims() == 2) {
-	int yeff = yp;
-	if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) yeff = geom_y-1-yp;
-	if(tgv->click_vals)
-	  matrix->SetFmVar(val_to_set, xp, yeff);
-	else
-	  tgv->last_sel_val = matrix->SafeElAsFloat(xp, yeff);
+        int yeff = yp;
+        if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) yeff = geom_y-1-yp;
+        if(tgv->click_vals)
+          matrix->SetFmVar(val_to_set, xp, yeff);
+        else
+          tgv->last_sel_val = matrix->SafeElAsFloat(xp, yeff);
       }
       if(matrix->dims() == 4) {
-	yp--;			// yp has 1 extra in 4d by some reason.. spacing..
-	int xmax = matrix->dim(0);	int ymax = matrix->dim(1);
-	int xxmax = matrix->dim(2);	int yymax = matrix->dim(3);
+        yp--;                   // yp has 1 extra in 4d by some reason.. spacing..
+        int xmax = matrix->dim(0);      int ymax = matrix->dim(1);
+        int xxmax = matrix->dim(2);     int yymax = matrix->dim(3);
 
-	int oxp = xp / (xmax+1);	int oyp = yp / (ymax+1);
-	int ixp = xp % (xmax+1);	int iyp = yp % (ymax+1);
-// 	cerr << "4d: " << ixp << ", " << iyp << ", " << oxp << ", " << oyp << endl;
+        int oxp = xp / (xmax+1);        int oyp = yp / (ymax+1);
+        int ixp = xp % (xmax+1);        int iyp = yp % (ymax+1);
+//      cerr << "4d: " << ixp << ", " << iyp << ", " << oxp << ", " << oyp << endl;
 
-	int iyeff = iyp;  int oyeff = oyp;
-	if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) {
-	  iyeff = ymax-1-iyp;	  oyeff = yymax-1-oyp;
-	}
-	if(tgv->click_vals) 
-	  matrix->SetFmVar(val_to_set, ixp, iyeff, oxp, oyeff);
-	else
-	  tgv->last_sel_val = matrix->SafeElAsFloat(ixp, iyeff, oxp, oyeff);
+        int iyeff = iyp;  int oyeff = oyp;
+        if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) {
+          iyeff = ymax-1-iyp;     oyeff = yymax-1-oyp;
+        }
+        if(tgv->click_vals)
+          matrix->SetFmVar(val_to_set, ixp, iyeff, oxp, oyeff);
+        else
+          tgv->last_sel_val = matrix->SafeElAsFloat(ixp, iyeff, oxp, oyeff);
       }
       if(tgv->click_vals) {
-	// this causes a crash
-// 	if(dcol)
-// 	  dcol->DataChanged(DCR_ITEM_UPDATED); // col drives updating
+        // this causes a crash
+//      if(dcol)
+//        dcol->DataChanged(DCR_ITEM_UPDATED); // col drives updating
       }
       else {
-	tgv->last_sel_got = true;
-	if(dcol) {
-	  tgv->last_sel_col_nm = dcol->name;
-	}
+        tgv->last_sel_got = true;
+        if(dcol) {
+          tgv->last_sel_col_nm = dcol->name;
+        }
       }
-      tgv->UpdateDisplay();	// update to show last viewed val
+      tgv->UpdateDisplay();     // update to show last viewed val
       got_one = true;
       break;
     }
@@ -2113,7 +2113,7 @@ iDataTableView_Panel::iDataTableView_Panel(DataTableView* lv)
 {
   widg = new QWidget();
 //  widg->setFrameStyle( QFrame::GroupBoxPanel | QFrame::Sunken );
-  layWidg = new QVBoxLayout(widg); //def margin/spacing=2  
+  layWidg = new QVBoxLayout(widg); //def margin/spacing=2
   layWidg->setMargin(0); layWidg->setSpacing(2);
 
   ////////////////////////////////////////////////////////////////////////////
@@ -2122,8 +2122,8 @@ iDataTableView_Panel::iDataTableView_Panel(DataTableView* lv)
   iFlowLayout* fl = new iFlowLayout(widCmdButtons);
 //  layTopCtrls->addWidget(widCmdButtons);
   layOuter->addWidget(widCmdButtons);
-  
-  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
+
+  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons);
   meth_but_mgr->Constr(lv->dataTable());
 
   MakeButtons(layOuter);
@@ -2150,7 +2150,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   int font_spec = taiMisc::fonMedium;
 
   layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);
-//   layTopCtrls->setSpacing(2);	// plenty of room
+//   layTopCtrls->setSpacing(2);        // plenty of room
 
   // note: check boxes require spacing after them apparently, at least on mac..
 
@@ -2199,7 +2199,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   connect(butRefresh, SIGNAL(pressed()), this, SLOT(butRefresh_pressed()) );
 
   layVals = new QHBoxLayout; layWidg->addLayout(layVals);
-  layVals->setSpacing(2);	// plenty of room
+  layVals->setSpacing(2);       // plenty of room
 
   lblRows = taiM->NewLabel("Rows", widg, font_spec);
   lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
@@ -2238,7 +2238,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////////////
   layMatrix = new QHBoxLayout; layWidg->addLayout(layMatrix);
-  layMatrix->setSpacing(2);	// plenty of room
+  layMatrix->setSpacing(2);     // plenty of room
 
   lblMatrix = taiM->NewLabel("Matrix\nDisplay", widg, font_spec);
   lblMatrix->setToolTip("This row contains parameters that control the display of matrix values (shown in a grid of colored blocks)");
@@ -2274,9 +2274,9 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
   layMatrix->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
-  // 	Colorscale etc
+  //    Colorscale etc
   layColorScale = new QHBoxLayout; layWidg->addLayout(layColorScale);
-  
+
   chkAutoScale = new QCheckBox("auto\nscale", widg);
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScale->addWidget(chkAutoScale);
@@ -2295,7 +2295,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////////////
   layClickVals = new QHBoxLayout; layWidg->addLayout(layClickVals);
-  layClickVals->setSpacing(2);	// plenty of room
+  layClickVals->setSpacing(2);  // plenty of room
 
   chkClickVals =  new QCheckBox("Click\nVals", widg); chkClickVals->setObjectName( "chkClickVals");
   chkClickVals->setToolTip("If on, then clicking on cell values in the grid view display in interact mode (red arrow) will change the values.");
@@ -2321,7 +2321,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////////////
   layRowNav = new QHBoxLayout; layWidg->addLayout(layRowNav);
-  //  layRowNav->setSpacing(2);	// plenty of room
+  //  layRowNav->setSpacing(2); // plenty of room
 
   rowNavTB = new QToolBar(widg);
   layRowNav->addWidget(rowNavTB);
@@ -2368,7 +2368,7 @@ iGridTableView_Panel::iGridTableView_Panel(GridTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////////////
   layColNav = new QHBoxLayout; layWidg->addLayout(layColNav);
-  //  layColNav->setSpacing(2);	// plenty of room
+  //  layColNav->setSpacing(2); // plenty of room
 
   colNavTB = new QToolBar(widg);
   layColNav->addWidget(colNavTB);
@@ -2433,7 +2433,7 @@ void iGridTableView_Panel::GetValue_impl() {
 
   GridTableView* glv = this->glv(); //cache
   if (!glv) return;
-  
+
   glv->display_on = chkDisplay->isChecked();
   glv->manip_ctrl_on = chkManip->isChecked();
   glv->header_on = chkHeaders->isChecked();
@@ -2453,7 +2453,7 @@ void iGridTableView_Panel::GetValue_impl() {
   glv->click_vals = chkClickVals->isChecked();
   glv->lmb_val = (float)fldLMBVal->GetValue();
   glv->mmb_val = (float)fldMMBVal->GetValue();
-  
+
   glv->UpdateDisplay(false); // don't update us, because logic will do that anyway
 }
 
@@ -2605,7 +2605,7 @@ void iGridTableView_Panel::cbar_scaleValueChanged() {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-//  	Graph View
+//      Graph View
 
 #define UNIT_LEGEND_OFFSET 0.04f // space between end of axis and unit legend text
 #define TICK_OFFSET 0.01f // gap between tick and label
@@ -2613,7 +2613,7 @@ void iGridTableView_Panel::cbar_scaleValueChanged() {
 float GraphTableView::tick_size = 0.05f;
 
 //////////////////////////////////
-//   GraphColView		//
+//   GraphColView               //
 //////////////////////////////////
 
 void GraphColView::Initialize(){
@@ -2638,7 +2638,7 @@ String GraphColView::GetDisplayName() const {
 }
 
 //////////////////////////
-// 	GraphAxisBase	//
+//      GraphAxisBase   //
 //////////////////////////
 
 void GraphAxisBase::Initialize() {
@@ -2712,7 +2712,7 @@ void GraphAxisBase::UpdateFmColLookup() {
     }
     col_name = col_lookup->GetName();
 //     cerr << "updated fm col: " << col_name << endl;
-    fixed_range = col_lookup->fixed_range;	     // get range from that guy
+    fixed_range = col_lookup->fixed_range;           // get range from that guy
     if(taBase::GetRefn(col_lookup) <= 1) {
 //       cerr << "oops: refn <= 1" << endl;
     }
@@ -2763,7 +2763,7 @@ void GraphAxisBase::InitFromUserData() {
 }
 
 ///////////////////////////////////////////////////
-// 	Range Management
+//      Range Management
 
 void GraphAxisBase::SetRange_impl(float first, float last) {
   data_range.Set(first, last);
@@ -2787,7 +2787,7 @@ bool GraphAxisBase::UpdateRange_impl(float first, float last) {
 
   if(((first >= range.min) && (last <= range.max)) && (range.Range() >= range_min_limit)) { // special case
 //     cerr << "not changing range: " << first << ", " << last << " rng: " << range.min << ", " << range.max << endl;
-    return false;			// not changed
+    return false;                       // not changed
   }
 
   first = data_range.min;
@@ -2800,11 +2800,11 @@ bool GraphAxisBase::UpdateRange_impl(float first, float last) {
     } else {
       double maxval = MAX(fabs(last), fabs(first));
       if (maxval > .01f) {
-	last += range_zero_range * maxval;
-	first -= range_zero_range * maxval;
+        last += range_zero_range * maxval;
+        first -= range_zero_range * maxval;
       } else {
-	last += .51 * range_min_limit;
-	first -= .51 * range_min_limit;
+        last += .51 * range_min_limit;
+        first -= .51 * range_min_limit;
       }
     }
   }
@@ -2820,7 +2820,7 @@ bool GraphAxisBase::UpdateRange_impl(float first, float last) {
 
   range.Set(newmin, newmax);
   fixed_range.FixRange(range);
-  return true;			// changed
+  return true;                  // changed
 }
 
 void GraphAxisBase::ComputeRange() {
@@ -2842,18 +2842,18 @@ bool GraphAxisBase::UpdateRange() {
     DataCol* da = gcv->dataCol();
     if(da->rows() > 0) {
       if(da->is_matrix) {
-	float first = da->GetValAsFloatM(-1,0);
-	float last = first;
-	for(int i=1;i<da->cell_size();i++) {
-	  float val = da->GetValAsFloatM(-1,i);
-	  first = MIN(val, first);
-	  last = MAX(val, last);
-	}
-	rval = UpdateRange_impl(first, last);
+        float first = da->GetValAsFloatM(-1,0);
+        float last = first;
+        for(int i=1;i<da->cell_size();i++) {
+          float val = da->GetValAsFloatM(-1,i);
+          first = MIN(val, first);
+          last = MAX(val, last);
+        }
+        rval = UpdateRange_impl(first, last);
       }
       else {
-	float lstval = da->GetValAsFloat(-1);
-	rval = UpdateRange_impl(lstval, lstval);
+        float lstval = da->GetValAsFloat(-1);
+        rval = UpdateRange_impl(lstval, lstval);
       }
     }
   }
@@ -2892,7 +2892,7 @@ void GraphAxisBase::ComputeTicks() {
   else
     units_order = (int)log10(units_val);
 
-  units_order /= 3;		// introduce a factor of 2 rounding here..
+  units_order /= 3;             // introduce a factor of 2 rounding here..
   units_order *= 3;
 
   units = pow(10.0, (double)units_order);
@@ -2906,12 +2906,12 @@ void GraphAxisBase::ComputeTicks() {
 }
 
 /////////////////////////////////////////////////////////
-//	rendering
+//      rendering
 
 void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only) {
   t3ax->clear();
   if(!on) return;
-  ComputeTicks();		// do this always..
+  ComputeTicks();               // do this always..
   SoMaterial* mat = t3ax->material();
   color.color().copyTo(mat->diffuseColor);
   switch (axis) {
@@ -2929,7 +2929,7 @@ void GraphAxisBase::RenderAxis(T3Axis* t3ax, int n_ax, bool ticks_only) {
 
 */
 void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
-  iVec3f fm;			// init to 0
+  iVec3f fm;                    // init to 0
   iVec3f to;
 
   // axis line itself
@@ -2938,7 +2938,7 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
 
   bool use_str_labels = false;
 
-  if(!ticks_only) { 
+  if(!ticks_only) {
     // units legend
     if(units != 1.0) {
       fm.x = axis_length + UNIT_LEGEND_OFFSET;
@@ -2953,12 +2953,12 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
       String label = col_name;
       taMisc::SpaceLabel(label);
       if(((GraphAxisView*)this)->row_num) {
-	if(isString()) {
-	  use_str_labels = true;
-	}
-	else {
-	  label = "Row Number";
-	}
+        if(isString()) {
+          use_str_labels = true;
+        }
+        else {
+          label = "Row Number";
+        }
       }
       t3ax->addLabel(label.chars(), fm, SoAsciiText::CENTER);
     }
@@ -2984,19 +2984,19 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, bool ticks_only) {
     if(!ticks_only) {
       float lab_val = val / units;
       if (fabsf(val / tick_incr) < range_zero_label_range)
-	lab_val = 0.0f;		// the 0 can be screwy
+        lab_val = 0.0f;         // the 0 can be screwy
       label = String(lab_val);
       if(use_str_labels && da) {
-	int rnum = (int)lab_val;// lab_val is row number!
-	if((float)rnum == lab_val && rnum >= 0 && rnum < da->rows()) // only int and in range
-	  label = da->GetValAsString(rnum);
-	else
-	  label = "";		// empty it!
+        int rnum = (int)lab_val;// lab_val is row number!
+        if((float)rnum == lab_val && rnum >= 0 && rnum < da->rows()) // only int and in range
+          label = da->GetValAsString(rnum);
+        else
+          label = "";           // empty it!
       }
       if(label.nonempty()) {
-	t3ax->addLabel(label.chars(),
-		     iVec3f(fm.x, fm.y - y_lab_off, fm.z),
-		     SoAsciiText::CENTER);
+        t3ax->addLabel(label.chars(),
+                     iVec3f(fm.x, fm.y - y_lab_off, fm.z),
+                     SoAsciiText::CENTER);
       }
     }
   }
@@ -3010,18 +3010,18 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
   to.y = axis_length;
   t3ax->addLine(fm, to);
 
-  if(!ticks_only) { 
+  if(!ticks_only) {
     // units legend
     if(units != 1.0) {
       fm.y = axis_length + UNIT_LEGEND_OFFSET;
       String label = "x " + String(units,"%.5g");
       if(n_ax > 0) {
-	fm.x = TICK_OFFSET;
-	t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
+        fm.x = TICK_OFFSET;
+        t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
       }
       else {
-	fm.x = -TICK_OFFSET;
-	t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
+        fm.x = -TICK_OFFSET;
+        t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
       }
     }
 
@@ -3031,12 +3031,12 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
       fm.y = .5f * axis_length;
       String label = col_name; taMisc::SpaceLabel(label);
       if(n_ax > 0) {
-	fm.x = GraphTableView::tick_size + TICK_OFFSET + 1.2f * t3ax->fontSize();
-	t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
+        fm.x = GraphTableView::tick_size + TICK_OFFSET + 1.2f * t3ax->fontSize();
+        t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
       }
       else {
-	fm.x = -GraphTableView::tick_size - TICK_OFFSET - 1.2f * t3ax->fontSize();
-	t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
+        fm.x = -GraphTableView::tick_size - TICK_OFFSET - 1.2f * t3ax->fontSize();
+        t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
       }
     }
   }
@@ -3057,15 +3057,15 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, int n_ax, bool ticks_only) {
     if(!ticks_only) {
       float lab_val = val / units;
       if (fabsf(val / tick_incr) < range_zero_label_range)
-	lab_val = 0.0f;		// the 0 can be screwy
+        lab_val = 0.0f;         // the 0 can be screwy
       label = String(lab_val);
       if(n_ax > 0) {
-	t3ax->addLabel(label.chars(),
-		       iVec3f(to.x + TICK_OFFSET, fm.y - (.5f * t3ax->fontSize()), fm.z));
+        t3ax->addLabel(label.chars(),
+                       iVec3f(to.x + TICK_OFFSET, fm.y - (.5f * t3ax->fontSize()), fm.z));
       }
       else {
-	t3ax->addLabel(label.chars(),
-		       iVec3f(fm.x - TICK_OFFSET, fm.y - (.5f * t3ax->fontSize()), fm.z));
+        t3ax->addLabel(label.chars(),
+                       iVec3f(fm.x - TICK_OFFSET, fm.y - (.5f * t3ax->fontSize()), fm.z));
       }
     }
   }
@@ -3100,12 +3100,12 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
       String label = col_name;
       taMisc::SpaceLabel(label);
       if(((GraphAxisView*)this)->row_num) {
-	if(isString()) {
-	  use_str_labels = true;
-	}
-	else {
-	  label = "Row Number";
-	}
+        if(isString()) {
+          use_str_labels = true;
+        }
+        else {
+          label = "Row Number";
+        }
       }
       t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
     }
@@ -3116,7 +3116,7 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
   to = 0.0f;
   fm.x = -(.5f * GraphTableView::tick_size);
   to.x =  (.5f * GraphTableView::tick_size);
-  
+
   float y_lab_off = (.5f * GraphTableView::tick_size + TICK_OFFSET + t3ax->fontSize());
 
   DataCol* da = GetDAPtr();
@@ -3131,23 +3131,23 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, bool ticks_only) {
     if(!ticks_only) {
       float lab_val = val / units;
       if (fabsf(val / tick_incr) < range_zero_label_range)
-	lab_val = 0.0f;		// the 0 can be screwy
+        lab_val = 0.0f;         // the 0 can be screwy
       label = String(lab_val);
       if(use_str_labels && da) {
-	int rnum = (int)lab_val;// lab_val is row number!
-	if(rnum >= 0 && rnum < da->rows())
-	  label = da->GetValAsString(rnum); 
+        int rnum = (int)lab_val;// lab_val is row number!
+        if(rnum >= 0 && rnum < da->rows())
+          label = da->GetValAsString(rnum);
       }
       if(label.nonempty()) {
-	t3ax->addLabel(label.chars(),
-		       iVec3f(fm.x - TICK_OFFSET, fm.y - y_lab_off, fm.z));
+        t3ax->addLabel(label.chars(),
+                       iVec3f(fm.x - TICK_OFFSET, fm.y - y_lab_off, fm.z));
       }
     }
   }
 }
 
 //////////////////////////////////
-//  GraphPlotView		//
+//  GraphPlotView               //
 //////////////////////////////////
 
 void GraphPlotView::Initialize() {
@@ -3167,7 +3167,7 @@ void GraphPlotView::Initialize() {
 // }
 
 void GraphPlotView::CopyFromView(GraphPlotView* cp){
-  CopyFromView_base(cp);	// get the base
+  CopyFromView_base(cp);        // get the base
   line_style = cp->line_style;
   point_style = cp->point_style;
   alt_y = cp->alt_y;
@@ -3196,7 +3196,7 @@ void GraphPlotView::UpdateAfterEdit_impl() {
 }
 
 //////////////////////////////////
-//  GraphAxisView		//
+//  GraphAxisView               //
 //////////////////////////////////
 
 void GraphAxisView::Initialize() {
@@ -3204,7 +3204,7 @@ void GraphAxisView::Initialize() {
 }
 
 void GraphAxisView::CopyFromView(GraphAxisView* cp){
-  CopyFromView_base(cp);	// get the base
+  CopyFromView_base(cp);        // get the base
   row_num = cp->row_num;
 }
 
@@ -3235,13 +3235,13 @@ bool GraphAxisView::UpdateRange() {
 
 
 //////////////////////////////////
-//  GraphTableView		//
+//  GraphTableView              //
 //////////////////////////////////
 
 // Add a new GraphTableView object to the frame for the given DataTable.
 GraphTableView* GraphTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
-  NewNetViewHelper newNetView(fr, dt, "table");
-  if (!newNetView.isValid()) return NULL;
+  NewNetViewHelper new_net_view(fr, dt, "table");
+  if (!new_net_view.isValid()) return NULL;
 
   GraphTableView* vw = new GraphTableView;
   fr->AddView(vw);
@@ -3249,7 +3249,7 @@ GraphTableView* GraphTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   // make sure we get it all setup!
   vw->BuildAll();
 
-  newNetView.showFrame();
+  new_net_view.showFrame();
   return vw;
 }
 
@@ -3258,13 +3258,13 @@ void GraphTableView::Initialize() {
 
   x_axis.axis = GraphAxisBase::X;
   x_axis.color.name = taMisc::t3d_text_color;
-  x_axis.color.UpdateAfterEdit_NoGui();	// needed to pick up color name
+  x_axis.color.UpdateAfterEdit_NoGui(); // needed to pick up color name
   z_axis.axis = GraphAxisBase::Z;
   z_axis.color.name = taMisc::t3d_text_color;
-  z_axis.color.UpdateAfterEdit_NoGui();	// needed to pick up color name
+  z_axis.color.UpdateAfterEdit_NoGui(); // needed to pick up color name
   plot_1.color.name = taMisc::t3d_text_color;
   plot_1.point_style = GraphPlotView::CIRCLE;
-  plot_1.color.UpdateAfterEdit_NoGui();	// needed to pick up color name
+  plot_1.color.UpdateAfterEdit_NoGui(); // needed to pick up color name
   plot_2.color.name = "red";
   plot_2.point_style = GraphPlotView::SQUARE;
   plot_2.color.UpdateAfterEdit_NoGui();
@@ -3327,10 +3327,10 @@ void GraphTableView::Initialize() {
   thresh = .5f;
   thr_line_len = .48f;
 
-  width	= 1.0f;
+  width = 1.0f;
   depth = 1.0f;
 
-  two_d_font = false;	// true -- this is causing mysterious so crash, disabled for now
+  two_d_font = false;   // true -- this is causing mysterious so crash, disabled for now
   two_d_font_scale = 350.0f;
 
   last_sel_pt = 0.0f;
@@ -3442,7 +3442,7 @@ void GraphTableView::CopyFromView(GraphTableView* cp) {
   depth = cp->depth;
   axis_font_size = cp->axis_font_size;
   label_font_size = cp->label_font_size;
-  
+
   x_axis.CopyFromView(&(cp->x_axis));
   z_axis.CopyFromView(&(cp->z_axis));
   for(int i=0;i<max_plots;i++) {
@@ -3466,7 +3466,7 @@ void GraphTableView::CopyFromView(GraphTableView* cp) {
 
   two_d_font = cp->two_d_font;
   two_d_font_scale = cp->two_d_font_scale;
-  
+
   for(int i=0;i<children.size;i++) {
     GraphColView* cvs = (GraphColView*)colView(i);
     GraphColView* cpvs = (GraphColView*)cp->children.FindName(cvs->name);
@@ -3482,11 +3482,11 @@ void GraphTableView::UpdateAfterEdit_impl(){
 
   // capture saved alt_y vals and reset in favor of new ones on the plot_x guys
   // todo: obsolete stuff should be removed after some point
-  if(alt_y_1) { plot_1.alt_y = true; alt_y_1 = false; } 
-  if(alt_y_2) { plot_2.alt_y = true; alt_y_1 = false; } 
-  if(alt_y_3) { plot_3.alt_y = true; alt_y_1 = false; } 
-  if(alt_y_4) { plot_4.alt_y = true; alt_y_1 = false; } 
-  if(alt_y_5) { plot_5.alt_y = true; alt_y_1 = false; } 
+  if(alt_y_1) { plot_1.alt_y = true; alt_y_1 = false; }
+  if(alt_y_2) { plot_2.alt_y = true; alt_y_1 = false; }
+  if(alt_y_3) { plot_3.alt_y = true; alt_y_1 = false; }
+  if(alt_y_4) { plot_4.alt_y = true; alt_y_1 = false; }
+  if(alt_y_5) { plot_5.alt_y = true; alt_y_1 = false; }
 
   if(taMisc::is_loading) return;
 
@@ -3495,7 +3495,7 @@ void GraphTableView::UpdateAfterEdit_impl(){
   x_axis.axis_length = width;
   z_axis.axis_length = depth;
 
-  x_axis.on = true;		// try to keep it on
+  x_axis.on = true;             // try to keep it on
   x_axis.UpdateOnFlag();
   z_axis.UpdateOnFlag();
   for(int i=0;i<max_plots;i++) {
@@ -3524,7 +3524,7 @@ void GraphTableView::UpdateAfterEdit_impl(){
     if(!pl->on) continue;
     n_plots++;
     if(pl->alt_y) alt_y_plots.Add(i);
-    else	  main_y_plots.Add(i);
+    else          main_y_plots.Add(i);
     GraphColView* plc = all_plots[i]->GetColPtr();
     if(plc->dataCol()->is_matrix) {
       if(!do_matrix_plot) first_mat = i;
@@ -3540,9 +3540,9 @@ void GraphTableView::UpdateAfterEdit_impl(){
       GraphPlotView* pl = all_plots[i];
       if(!pl->on) continue;
       if(i == first_mat) continue;
-      pl->on = false;		// turn off
+      pl->on = false;           // turn off
       if(pl->alt_y) alt_y_plots.RemoveIdx(i);
-      else	    main_y_plots.RemoveIdx(i);
+      else          main_y_plots.RemoveIdx(i);
     }
   }
 
@@ -3551,47 +3551,47 @@ void GraphTableView::UpdateAfterEdit_impl(){
     if(pl->isString()) {
       int non_str = -1;
       for(int i=1; i< main_y_plots.size; i++) {
-	if(!all_plots[main_y_plots[i]]->isString()) {
-	  non_str = i;
-	  break;
-	}
+        if(!all_plots[main_y_plots[i]]->isString()) {
+          non_str = i;
+          break;
+        }
       }
 
       if(non_str == -1) {
-	taMisc::Warning("GraphTableView -- can't have only a string value(s) plotted on main Y axis -- must also include a numeric column to provide Y axis values -- turning off plot!");
-	for(int i=0; i< main_y_plots.size; i++) {
-	  all_plots[main_y_plots[i]]->on = false;
-	}
-	n_plots -= main_y_plots.size;
-	main_y_plots.Reset();
+        taMisc::Warning("GraphTableView -- can't have only a string value(s) plotted on main Y axis -- must also include a numeric column to provide Y axis values -- turning off plot!");
+        for(int i=0; i< main_y_plots.size; i++) {
+          all_plots[main_y_plots[i]]->on = false;
+        }
+        n_plots -= main_y_plots.size;
+        main_y_plots.Reset();
       }
       else {
-	main_y_plots.SwapIdx(0,non_str); // exchange
+        main_y_plots.SwapIdx(0,non_str); // exchange
       }
     }
   }
 
   if(alt_y_plots.size > 0) {
     GraphPlotView* pl = all_plots[alt_y_plots[0]];
-    if(pl->isString()) {	// oops.. not again!
+    if(pl->isString()) {        // oops.. not again!
       int non_str = -1;
       for(int i=1; i< alt_y_plots.size; i++) {
-	if(!all_plots[alt_y_plots[i]]->isString()) {
-	  non_str = i;
-	  break;
-	}
+        if(!all_plots[alt_y_plots[i]]->isString()) {
+          non_str = i;
+          break;
+        }
       }
 
       if(non_str == -1) {
-	taMisc::Warning("GraphTableView -- can't have only a string value(s) plotted on alt Y axis -- must also include a numeric column to provide Y axis values -- turning off plot!");
-	for(int i=0; i< alt_y_plots.size; i++) {
-	  all_plots[alt_y_plots[i]]->on = false;
-	}
-	n_plots -= alt_y_plots.size;
-	alt_y_plots.Reset();
+        taMisc::Warning("GraphTableView -- can't have only a string value(s) plotted on alt Y axis -- must also include a numeric column to provide Y axis values -- turning off plot!");
+        for(int i=0; i< alt_y_plots.size; i++) {
+          all_plots[alt_y_plots[i]]->on = false;
+        }
+        n_plots -= alt_y_plots.size;
+        alt_y_plots.Reset();
       }
       else {
-	alt_y_plots.SwapIdx(0,non_str); // exchange
+        alt_y_plots.SwapIdx(0,non_str); // exchange
       }
     }
   }
@@ -3618,19 +3618,19 @@ void GraphTableView::UpdateAfterEdit_impl(){
   }
   else {
     if(x_axis.isString()) {
-      x_axis.row_num = true;	// must be row num!
+      x_axis.row_num = true;    // must be row num!
     }
     if(!x_axis.row_num) {
       GraphColView* xa = x_axis.GetColPtr();
       if(xa->dataCol()->is_matrix) {
-	taMisc::Warning("GraphTableView -- column", x_axis.col_name, "is a matrix -- cannot be used for an X axis -- resetting to default");
-	FindDefaultXZAxes();
+        taMisc::Warning("GraphTableView -- column", x_axis.col_name, "is a matrix -- cannot be used for an X axis -- resetting to default");
+        FindDefaultXZAxes();
       }
     }
   }
 
   if(z_axis.isString()) {
-    z_axis.row_num = true;	// must be row num!
+    z_axis.row_num = true;      // must be row num!
   }
 
   if(graph_type == RASTER) {
@@ -3640,15 +3640,15 @@ void GraphTableView::UpdateAfterEdit_impl(){
     raster_axis.UpdateOnFlag();
     if(!raster_axis.on) {
       if(!no_cols) {
-	taMisc::Warning("GraphTableView -- graph_type = RASTER and no valid col_name found for raster_axis -- nothing will be plotted!");
+        taMisc::Warning("GraphTableView -- graph_type = RASTER and no valid col_name found for raster_axis -- nothing will be plotted!");
       }
     }
     else {
       GraphColView* ra = raster_axis.GetColPtr();
       if(ra->dataCol()->is_matrix) {
-	taMisc::Warning("GraphTableView -- column", raster_axis.col_name, "is a matrix -- cannot be used for raster_axis");
-	raster_axis.col_name = "";
-	raster_axis.on = false;
+        taMisc::Warning("GraphTableView -- column", raster_axis.col_name, "is a matrix -- cannot be used for raster_axis");
+        raster_axis.col_name = "";
+        raster_axis.on = false;
       }
     }
   }
@@ -3658,15 +3658,15 @@ void GraphTableView::UpdateAfterEdit_impl(){
     color_axis.UpdateOnFlag();
     if(!color_axis.on) {
       if(!no_cols) {
-	taMisc::Warning("GraphTableView -- color_mode = COLOR_AXIS and no valid col_name found for color_axis -- nothing will be plotted!");
+        taMisc::Warning("GraphTableView -- color_mode = COLOR_AXIS and no valid col_name found for color_axis -- nothing will be plotted!");
       }
     }
     else {
       GraphColView* ca = color_axis.GetColPtr();
       if(ca->dataCol()->is_matrix) {
-	taMisc::Warning("GraphTableView -- column", color_axis.col_name, "is a matrix -- cannot be used for color_axis");
-	color_axis.col_name = "";
-	color_axis.on = false;
+        taMisc::Warning("GraphTableView -- column", color_axis.col_name, "is a matrix -- cannot be used for color_axis");
+        color_axis.col_name = "";
+        color_axis.on = false;
       }
     }
   }
@@ -3688,7 +3688,7 @@ void GraphTableView::UpdateName() {
       SetName("graph_no_table");
   }
 }
-  
+
 const String GraphTableView::caption() const {
   String rval = inherited::caption();
   if(last_sel_col_nm.nonempty()) {
@@ -3719,28 +3719,28 @@ void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
       if(!pobj) continue;
       //   cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
       if(!pobj->isOfType(T3GraphLine::getClassTypeId())) {
-	//     cerr << "not graph line!" << endl;
-	continue;
+        //     cerr << "not graph line!" << endl;
+        continue;
       }
       GraphAxisBase* gab = static_cast<GraphAxisBase*>(((T3GraphLine*)pobj)->dataView());
       if(!gab) continue;
       if(!gab->InheritsFrom(&TA_GraphPlotView)) continue;
       GraphPlotView* gpv = (GraphPlotView*)gab;
       if(!gpv->eff_y_axis) continue;
-      SbVec3f pt = pp->getObjectPoint(pobj); 
+      SbVec3f pt = pp->getObjectPoint(pobj);
 //       cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
       if(pt[1] == 0.0f && pt[2] == 0.0f) continue; // indicates an axis caption line!
       float xv = tgv->x_axis.range.Project(pt[0] / tgv->width);
       float yv = gpv->eff_y_axis->range.Project(pt[1]);
       float zv = 0.0f;
       if(tgv->z_axis.on)
-	zv = tgv->z_axis.range.Project(pt[2] / tgv->depth);
+        zv = tgv->z_axis.range.Project(pt[2] / tgv->depth);
       tgv->last_sel_pt.SetXYZ(xv, yv, zv);
       tgv->last_sel_col_nm = gpv->col_name;
       //      tgv->InitDisplay();
       tgv->UpdateDisplay();
       got_one = true;
-      break;			// once you get one, stop!
+      break;                    // once you get one, stop!
     }
   }
   if(got_one)
@@ -3777,15 +3777,15 @@ void GraphTableView::Render_impl() {
   T3GraphViewNode* node_so = this->node_so(); // cache
   if(!node_so || !dataTable())
     return;
-  
-  node_so->setWidth(width);	// does a render too -- ensure always up to date on width
+
+  node_so->setWidth(width);     // does a render too -- ensure always up to date on width
   int orig_rows;
-  CheckRowsChanged(orig_rows);	// don't do anything with this here, but just make sure m_rows is up to date
+  CheckRowsChanged(orig_rows);  // don't do anything with this here, but just make sure m_rows is up to date
   MakeViewRangeValid();
   ComputeAxisRanges();
   SetScrollBars();
   RenderGraph();
-  //  UpdatePanel();		// otherwise doesn't get updated without explicit click..
+  //  UpdatePanel();            // otherwise doesn't get updated without explicit click..
   // nein!  this is called in UpdateDisplay -- gets called 2x with this!
 }
 
@@ -3814,7 +3814,7 @@ void GraphTableView::UpdateDisplay(bool update_panel) {
       return;
     }
     // scroll down to end of new data
-    view_range.max = m_rows - 1; 
+    view_range.max = m_rows - 1;
     view_range.min = view_range.max - view_rows + 1;
     view_range.min = MAX(0, view_range.min);
   }
@@ -3875,7 +3875,7 @@ void GraphTableView_RowScrollCB(SoScrollBar* sb, int val, void* user_data) {
 }
 
 void GraphTableView::SetScrollBars() {
-  if(scrolling_) return;		     // don't redo if currently doing!
+  if(scrolling_) return;                     // don't redo if currently doing!
   T3GraphViewNode* node_so = this->node_so(); // cache
   if(!node_so) return;
 
@@ -3913,7 +3913,7 @@ void GraphTableView::RemoveGraph(){
 void GraphTableView::FindDefaultXZAxes() {
   // first, look for explicit flags
   bool set_x = false;
-  z_axis.on = false;		// assume we're not going to find it
+  z_axis.on = false;            // assume we're not going to find it
   for(int i=children.size-1;i>=0;i--) {
     GraphColView* cvs = (GraphColView*)colView(i);
     DataCol* da = cvs->dataCol();
@@ -3937,12 +3937,12 @@ void GraphTableView::FindDefaultXZAxes() {
     GraphColView* cvs = (GraphColView*)colView(i);
     DataCol* da = cvs->dataCol();
     if(da->is_matrix || da->valType() != VT_INT) continue;
-    if(set_x) {			// must be Z
+    if(set_x) {                 // must be Z
       z_axis.col_name = cvs->name;
-      z_axis.on = true;		// found one
+      z_axis.on = true;         // found one
       z_axis.InitFromUserData();
       z_axis.UpdateOnFlag();
-      break;			// done
+      break;                    // done
     }
     else {
       x_axis.col_name = cvs->name;
@@ -3951,7 +3951,7 @@ void GraphTableView::FindDefaultXZAxes() {
       set_x = true;
     }
   }
-  if(!set_x) {			// didn't find it -- look for first numeric column, just for x
+  if(!set_x) {                  // didn't find it -- look for first numeric column, just for x
     for(int i=0;i<children.size;i++) {
       GraphColView* cvs = (GraphColView*)colView(i);
       DataCol* da = cvs->dataCol();
@@ -3988,7 +3988,7 @@ void GraphTableView::FindDefaultPlot1() {
     plot_1.col_name = cvs->name;
     plot_1.InitFromUserData();
     plot_1.UpdateOnFlag();
-    break;			// once you get one, that's it
+    break;                      // once you get one, that's it
   }
 }
 
@@ -4004,15 +4004,15 @@ void GraphTableView::InitFromUserData() {
     for(int i=1; i<max_plots; i++) {
       String pltst = "PLOT_" + String(i+1);
       if(da->HasUserData(pltst)) {
-	all_plots[i]->col_name = cvs->name;  all_plots[i]->on = true;
-	all_plots[i]->InitFromUserData();    all_plots[i]->UpdateOnFlag();
+        all_plots[i]->col_name = cvs->name;  all_plots[i]->on = true;
+        all_plots[i]->InitFromUserData();    all_plots[i]->UpdateOnFlag();
       }
     }
     for(int i=0; i<max_plots; i++) {
       String pltst = "ERR_" + String(i+1);
       if(da->HasUserData(pltst)) {
-	all_errs[i]->col_name = cvs->name;  all_errs[i]->on = true;
-	all_errs[i]->InitFromUserData();    all_errs[i]->UpdateOnFlag();
+        all_errs[i]->col_name = cvs->name;  all_errs[i]->on = true;
+        all_errs[i]->InitFromUserData();    all_errs[i]->UpdateOnFlag();
       }
     }
     if(da->HasUserData("COLOR_AXIS")) {
@@ -4083,7 +4083,7 @@ void GraphTableView::UpdateFromDataTable_this(bool first) {
 }
 
 ///////////////////////////////////////////////////////////////
-//	Actual Rendering of graph display
+//      Actual Rendering of graph display
 
 void GraphTableView::RenderGraph() {
 //   cerr << "render graph" << endl;
@@ -4219,17 +4219,17 @@ void GraphTableView::RenderAxes() {
       alty->RenderAxis(t3_y_axis_rt, 1); // indicate second axis!
       tr = new SoTranslation();  yax->addChild(tr);
       tr->translation.setValue(x_axis.axis_length, 0.0f, 0.0f); // put on right hand side!
-      yax->addChild(t3_y_axis_rt);		  
+      yax->addChild(t3_y_axis_rt);
 
       if(z_axis.on) {
-	t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)alty->axis, alty, axis_font_size, 1);
-	alty->RenderAxis(t3_y_axis_far_rt, 1, true); // only ticks
-	tr = new SoTranslation();   yax->addChild(tr);
-	tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
-	yax->addChild(t3_y_axis_far_rt);
+        t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)alty->axis, alty, axis_font_size, 1);
+        alty->RenderAxis(t3_y_axis_far_rt, 1, true); // only ticks
+        tr = new SoTranslation();   yax->addChild(tr);
+        tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
+        yax->addChild(t3_y_axis_far_rt);
       }
       else {
-	t3_y_axis_far_rt = NULL;
+        t3_y_axis_far_rt = NULL;
       }
     }
     else {
@@ -4241,14 +4241,14 @@ void GraphTableView::RenderAxes() {
       yax->addChild(t3_y_axis_rt);
 
       if(z_axis.on) {
-	t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
-	mainy->RenderAxis(t3_y_axis_far_rt, 0, true); // only ticks
-	tr = new SoTranslation();   yax->addChild(tr);
-	tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
-	yax->addChild(t3_y_axis_far_rt);
+        t3_y_axis_far_rt = new T3Axis((T3Axis::Axis)mainy->axis, mainy, axis_font_size);
+        mainy->RenderAxis(t3_y_axis_far_rt, 0, true); // only ticks
+        tr = new SoTranslation();   yax->addChild(tr);
+        tr->translation.setValue(0.0f, 0.0f, -z_axis.axis_length);
+        yax->addChild(t3_y_axis_far_rt);
       }
       else {
-	t3_y_axis_far_rt = NULL;
+        t3_y_axis_far_rt = NULL;
       }
     }
   }
@@ -4270,7 +4270,7 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl) {
   t3gl->moveTo(st);
   t3gl->lineTo(ed);
   t3gl->textAt(iVec3f(ed.x + TICK_OFFSET,  ed.y - (.5f * label_font_size), ed.z),
-	       label.chars());
+               label.chars());
   t3gl->finishBatch();
 }
 
@@ -4289,7 +4289,7 @@ void GraphTableView::RenderLegend() {
 
   float over_amt = .33f * x_axis.axis_length;
   float dn_amt = -1.1f * axis_font_size;
-  bool mv_dn = true;		// else over
+  bool mv_dn = true;            // else over
 
   // keep in same order as plotting: main then alt
   for(int i=0;i<main_y_plots.size;i++) {
@@ -4298,8 +4298,8 @@ void GraphTableView::RenderLegend() {
     RenderLegend_Ln(*pl, ln);
     tr = new SoTranslation();  leg->addChild(tr);
     if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
-    else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
-    mv_dn = !mv_dn;		// flip
+    else         tr->translation.setValue(over_amt, -dn_amt, 0.0f);
+    mv_dn = !mv_dn;             // flip
   }
 
   for(int i=0;i<alt_y_plots.size;i++) {
@@ -4308,8 +4308,8 @@ void GraphTableView::RenderLegend() {
     RenderLegend_Ln(*pl, ln);
     tr = new SoTranslation();  leg->addChild(tr);
     if(mv_dn)    tr->translation.setValue(0.0f, dn_amt, 0.0f);
-    else	 tr->translation.setValue(over_amt, -dn_amt, 0.0f);
-    mv_dn = !mv_dn;		// flip
+    else         tr->translation.setValue(over_amt, -dn_amt, 0.0f);
+    mv_dn = !mv_dn;             // flip
   }
 }
 
@@ -4460,7 +4460,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
 
   int geom_x, geom_y;
   mgeom.Get2DGeomGui(geom_x, geom_y, mat_odd_vert, 1);
-  float cl_x = 1.0f / (float)geom_x;	// how big each cell is
+  float cl_x = 1.0f / (float)geom_x;    // how big each cell is
   float cl_y = 1.0f / (float)geom_y;
   float max_xy = MAX(cl_x, cl_y);
 
@@ -4469,37 +4469,37 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   if(mgeom.dims() <= 2) {
     for(pos.y=0; pos.y<geom_y; pos.y++) {
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
-	float xp = ((float)pos.x) * cl_x;
-	float yp = ((float)pos.y) * cl_y;
+        float xp = ((float)pos.x) * cl_x;
+        float yp = ((float)pos.y) * cl_y;
 
-	SoSeparator* gr = new SoSeparator;
-	graphs->addChild(gr);
+        SoSeparator* gr = new SoSeparator;
+        graphs->addChild(gr);
 
-	SoTranslation* tr = new SoTranslation();
-	gr->addChild(tr);
-	tr->translation.setValue(xp, yp, 0.0f);
+        SoTranslation* tr = new SoTranslation();
+        gr->addChild(tr);
+        tr->translation.setValue(xp, yp, 0.0f);
 
-	// each graph has a box and lines..
-	SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy, false); // not ctr
-	gr->addChild(lbox);
-	SoTransform* tx = new SoTransform();
-	gr->addChild(tx);
-	tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
-	T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
-	gr->addChild(ln);
-	if(mat_layout == taMisc::TOP_ZERO) {
-	  if(mgeom.dims() == 1)
-	    idx = MAX(geom_y-1-pos.y, pos.x);
-	  else
-	    idx = mgeom.IndexFmDims(pos.x, geom_y-1-pos.y);
-	}
-	else {
-	  if(mgeom.dims() == 1)
-	    idx = MAX(pos.y,pos.y);
-	  else
-	    idx = mgeom.IndexFmDims(pos.x, pos.y);
-	}
-	PlotData_XY(*mainy, *erry, *mainy, ln, idx);
+        // each graph has a box and lines..
+        SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy, false); // not ctr
+        gr->addChild(lbox);
+        SoTransform* tx = new SoTransform();
+        gr->addChild(tx);
+        tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
+        T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
+        gr->addChild(ln);
+        if(mat_layout == taMisc::TOP_ZERO) {
+          if(mgeom.dims() == 1)
+            idx = MAX(geom_y-1-pos.y, pos.x);
+          else
+            idx = mgeom.IndexFmDims(pos.x, geom_y-1-pos.y);
+        }
+        else {
+          if(mgeom.dims() == 1)
+            idx = MAX(pos.y,pos.y);
+          else
+            idx = mgeom.IndexFmDims(pos.x, pos.y);
+        }
+        PlotData_XY(*mainy, *erry, *mainy, ln, idx);
       }
     }
   }
@@ -4509,36 +4509,36 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
     int zmax = mgeom[2];
     for(int z=0; z<zmax; z++) {
       for(pos.y=0; pos.y<ymax; pos.y++) {
-	for(pos.x=0; pos.x<xmax; pos.x++) {
-	  TwoDCoord apos = pos;
-	  if(mat_odd_vert)
-	    apos.y += z * (ymax+1);
-	  else
-	    apos.x += z * (xmax+1);
-	  float xp = ((float)apos.x) * cl_x;
-	  float yp = ((float)apos.y) * cl_y;
+        for(pos.x=0; pos.x<xmax; pos.x++) {
+          TwoDCoord apos = pos;
+          if(mat_odd_vert)
+            apos.y += z * (ymax+1);
+          else
+            apos.x += z * (xmax+1);
+          float xp = ((float)apos.x) * cl_x;
+          float yp = ((float)apos.y) * cl_y;
 
-	  SoSeparator* gr = new SoSeparator;
-	  graphs->addChild(gr);
+          SoSeparator* gr = new SoSeparator;
+          graphs->addChild(gr);
 
-	  SoTranslation* tr = new SoTranslation();
-	  gr->addChild(tr);
-	  tr->translation.setValue(xp, yp, 0.0f);
+          SoTranslation* tr = new SoTranslation();
+          gr->addChild(tr);
+          tr->translation.setValue(xp, yp, 0.0f);
 
-	  // each graph has a box and lines..
-	  SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy, false); // not ctr
-	  gr->addChild(lbox);
-	  SoTransform* tx = new SoTransform();
-	  gr->addChild(tx);
-	  tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
-	  T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
-	  gr->addChild(ln);
-	  if(mat_layout == taMisc::TOP_ZERO)
-	    idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, zmax-1-z);
-	  else
-	    idx = mgeom.IndexFmDims(pos.x, pos.y, z);
-	  PlotData_XY(*mainy, *erry, *mainy, ln, idx);
-	}
+          // each graph has a box and lines..
+          SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy, false); // not ctr
+          gr->addChild(lbox);
+          SoTransform* tx = new SoTransform();
+          gr->addChild(tx);
+          tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
+          T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
+          gr->addChild(ln);
+          if(mat_layout == taMisc::TOP_ZERO)
+            idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, zmax-1-z);
+          else
+            idx = mgeom.IndexFmDims(pos.x, pos.y, z);
+          PlotData_XY(*mainy, *erry, *mainy, ln, idx);
+        }
       }
     }
   }
@@ -4550,36 +4550,36 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
     TwoDCoord opos;
     for(opos.y=0; opos.y<yymax; opos.y++) {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
-	for(pos.y=0; pos.y<ymax; pos.y++) {
-	  for(pos.x=0; pos.x<xmax; pos.x++) {
-	    TwoDCoord apos = pos;
-	    apos.x += opos.x * (xmax+1);
-	    apos.y += opos.y * (ymax+1);
-	    float xp = ((float)apos.x) * cl_x;
-	    float yp = ((float)apos.y) * cl_y;
+        for(pos.y=0; pos.y<ymax; pos.y++) {
+          for(pos.x=0; pos.x<xmax; pos.x++) {
+            TwoDCoord apos = pos;
+            apos.x += opos.x * (xmax+1);
+            apos.y += opos.y * (ymax+1);
+            float xp = ((float)apos.x) * cl_x;
+            float yp = ((float)apos.y) * cl_y;
 
-	    SoSeparator* gr = new SoSeparator;
-	    graphs->addChild(gr);
+            SoSeparator* gr = new SoSeparator;
+            graphs->addChild(gr);
 
-	    SoTranslation* tr = new SoTranslation();
-	    gr->addChild(tr);
-	    tr->translation.setValue(xp, yp, 0.0f);
+            SoTranslation* tr = new SoTranslation();
+            gr->addChild(tr);
+            tr->translation.setValue(xp, yp, 0.0f);
 
-	    // each graph has a box and lines..
-	    SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy, false); // not ctr
-	    gr->addChild(lbox);
-	    SoTransform* tx = new SoTransform();
-	    gr->addChild(tx);
-	    tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
-	    T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
-	    gr->addChild(ln);
-	    if(mat_layout == taMisc::TOP_ZERO)
-	      idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
-	    else
-	      idx = mgeom.IndexFmDims(pos.x, pos.y, opos.x, opos.y);
-	    PlotData_XY(*mainy, *erry, *mainy, ln, idx);
+            // each graph has a box and lines..
+            SoLineBox3d* lbox = new SoLineBox3d(width * cl_x, cl_y, boxd * max_xy, false); // not ctr
+            gr->addChild(lbox);
+            SoTransform* tx = new SoTransform();
+            gr->addChild(tx);
+            tx->scaleFactor.setValue(cl_x, cl_y, max_xy);
+            T3GraphLine* ln = new T3GraphLine(mainy, label_font_size);
+            gr->addChild(ln);
+            if(mat_layout == taMisc::TOP_ZERO)
+              idx = mgeom.IndexFmDims(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
+            else
+              idx = mgeom.IndexFmDims(pos.x, pos.y, opos.x, opos.y);
+            PlotData_XY(*mainy, *erry, *mainy, ln, idx);
           }
-	}
+        }
       }
     }
   }
@@ -4605,8 +4605,8 @@ const iColor GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
   return clr;
 }
 
-void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax, 
-				 T3GraphLine* t3gl, int mat_cell) {
+void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax,
+                                 T3GraphLine* t3gl, int mat_cell) {
   t3gl->clear();
 
   DataCol* da_y = plv.GetDAPtr();
@@ -4620,7 +4620,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
 
-  plv.eff_y_axis = &yax;		// set this for point clicking!
+  plv.eff_y_axis = &yax;                // set this for point clicking!
 
   t3gl->startBatch();
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
@@ -4644,7 +4644,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
       ax_clr = &color_axis;
       da_clr = color_axis.GetDAPtr();
     }
-    if(!da_clr) {		// fallback
+    if(!da_clr) {               // fallback
       t3gl->setValueColorMode(false);
       t3gl->setDefaultColor((T3Color)(plv.color.color()));
     }
@@ -4672,10 +4672,10 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     last_x = view_range.min;
   else
     last_x = da_x->GetValAsFloat(view_range.min);
-  iVec3f dat;			// data point
-  iVec3f plt;			// plot coords
-  iVec3f th_st;			// start of thresholded line
-  iVec3f th_ed;			// end of thresholded line
+  iVec3f dat;                   // data point
+  iVec3f plt;                   // plot coords
+  iVec3f th_st;                 // start of thresholded line
+  iVec3f th_ed;                 // end of thresholded line
   bool first = true;
   for (int row = view_range.min; row <= view_range.max; row++) {
     iColor clr; // only used for color modes
@@ -4689,15 +4689,15 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     if(dat.x < x_axis.range.min || dat.x > x_axis.range.max) continue;
     if(z_axis.on) {
       if(z_axis.row_num)
-	dat.z = row;
+        dat.z = row;
       else if(da_z)
-	dat.z = da_z->GetValAsFloat(row);
+        dat.z = da_z->GetValAsFloat(row);
       if(dat.z < z_axis.range.min || dat.z > z_axis.range.max) continue;
     }
     if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) {
       dat.z = mat_cell;
     }
-    float yval; 
+    float yval;
     if(mat_cell >= 0) {
       yval = da_y->GetValAsFloatM(row, mat_cell);
     }
@@ -4732,83 +4732,83 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
     if(da_clr) {
       clr_ok = true;
       if(color_mode == VALUE_COLOR) {
-	clr = GetValueColor(ax_clr, yval);
+        clr = GetValueColor(ax_clr, yval);
       }
       else {
-	clr = GetValueColor(ax_clr, da_clr->GetValAsFloat(row));
+        clr = GetValueColor(ax_clr, da_clr->GetValAsFloat(row));
       }
     }
 
     // draw the line
     if(plot_style == LINE || plot_style == LINE_AND_POINTS) {
       if(first || (new_trace && !negative_draw) || (new_trace_z && !negative_draw_z))
-      {	// just starting out
-	if(clr_ok)
-	  t3gl->moveTo(plt, (T3Color)(clr));
-	else
-	  t3gl->moveTo(plt);
+      { // just starting out
+        if(clr_ok)
+          t3gl->moveTo(plt, (T3Color)(clr));
+        else
+          t3gl->moveTo(plt);
       }
       else {
-	if(clr_ok)
-	  t3gl->lineTo(plt, (T3Color)(clr));
-	else
-	  t3gl->lineTo(plt);
+        if(clr_ok)
+          t3gl->lineTo(plt, (T3Color)(clr));
+        else
+          t3gl->lineTo(plt);
       }
     }
     else if(plot_style == THRESH_LINE) {
       if(yval >= thresh) {
-	th_st = plt;  th_st.x = x_axis.DataToPlot(dat.x - thr_line_len);
-	th_ed = plt;  th_ed.x = x_axis.DataToPlot(dat.x + thr_line_len);
-	if(clr_ok) {
-	  t3gl->moveTo(th_st, (T3Color)(clr));
-	  t3gl->lineTo(th_ed, (T3Color)(clr));
-	}
-	else {
-	  t3gl->moveTo(th_st);
-	  t3gl->moveTo(th_ed);
-	}
+        th_st = plt;  th_st.x = x_axis.DataToPlot(dat.x - thr_line_len);
+        th_ed = plt;  th_ed.x = x_axis.DataToPlot(dat.x + thr_line_len);
+        if(clr_ok) {
+          t3gl->moveTo(th_st, (T3Color)(clr));
+          t3gl->lineTo(th_ed, (T3Color)(clr));
+        }
+        else {
+          t3gl->moveTo(th_st);
+          t3gl->moveTo(th_ed);
+        }
       }
     }
     else if(plot_style == THRESH_POINT) {
       if(yval >= thresh) {
-	if(clr_ok)
-	  t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(clr));
-	else
-	  t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+        if(clr_ok)
+          t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(clr));
+        else
+          t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
       }
     }
 
     // render marker, if any
     if((plot_style == POINTS) || (plot_style == LINE_AND_POINTS)) {
       if(row % point_spacing == 0) {
-	if(clr_ok)
-	  t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(clr));
-	else
-	  t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+        if(clr_ok)
+          t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(clr));
+        else
+          t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
       }
     }
 
     if(erv.on && da_er && (row % err_spacing == 0)) {
       float err_dat;
       if(da_er->is_matrix && mat_cell >= 0) {
-	err_dat = da_er->GetValAsFloatM(row, mat_cell);
+        err_dat = da_er->GetValAsFloatM(row, mat_cell);
       }
       else {
-	err_dat = da_er->GetValAsFloat(row);
+        err_dat = da_er->GetValAsFloat(row);
       }
       float err_plt = err_dat;
       if(yax.range.Range() > 0.0f) err_plt /= yax.range.Range();
-      
+
       if(clr_ok)
-	t3gl->errBar(plt, err_plt, err_bar_width, (T3Color)(clr));
+        t3gl->errBar(plt, err_plt, err_bar_width, (T3Color)(clr));
       else
-	t3gl->errBar(plt, err_plt, err_bar_width);
+        t3gl->errBar(plt, err_plt, err_bar_width);
     }
 
     if((label_spacing > 0) && (row % label_spacing == 0)) {
       String str = String(dat.y); // todo: could spec format..
       t3gl->textAt(iVec3f(plt.x,  plt.y - (.5f * label_font_size), plt.z),
-		   str.chars());
+                   str.chars());
     }
     // post draw updates:
     first = false;
@@ -4818,8 +4818,8 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPl
   t3gl->finishBatch();
 }
 
-void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax, 
-				  T3GraphLine* t3gl, float bar_off, int mat_cell) {
+void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax,
+                                  T3GraphLine* t3gl, float bar_off, int mat_cell) {
   t3gl->clear();
 
   DataCol* da_y = plv.GetDAPtr();
@@ -4833,7 +4833,7 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
   if((view_range.min < 0) || (view_range.min >= dt->rows)) return;
 
-  plv.eff_y_axis = &yax;		// set this for point clicking!
+  plv.eff_y_axis = &yax;                // set this for point clicking!
 
   t3gl->startBatch();
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, line_width);
@@ -4857,7 +4857,7 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
       ax_clr = &color_axis;
       da_clr = color_axis.GetDAPtr();
     }
-    if(!da_clr) {		// fallback
+    if(!da_clr) {               // fallback
       t3gl->setValueColorMode(false);
       t3gl->setDefaultColor((T3Color)(plv.color.color()));
     }
@@ -4876,8 +4876,8 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
   float bar_wd_plt = bar_width * x_axis.axis_length / x_axis.range.Range();
   float bar_off_plt = bar_off * x_axis.axis_length / x_axis.range.Range();
 
-  iVec3f dat;			// data point
-  iVec3f plt;			// plot coords
+  iVec3f dat;                   // data point
+  iVec3f plt;                   // plot coords
   for (int row = view_range.min; row <= view_range.max; row++) {
     iColor clr; // only used for color modes
     bool clr_ok = false;
@@ -4888,9 +4888,9 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
     if(dat.x < x_axis.range.min || dat.x > x_axis.range.max) continue;
     if(z_axis.on) {
       if(z_axis.row_num)
-	dat.z = row;
+        dat.z = row;
       else if(da_z)
-	dat.z = da_z->GetValAsFloat(row);
+        dat.z = da_z->GetValAsFloat(row);
       if(dat.z < z_axis.range.min || dat.z > z_axis.range.max) continue;
     }
     if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) {
@@ -4913,10 +4913,10 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
     if(da_clr) {
       clr_ok = true;
       if(color_mode == VALUE_COLOR) {
-	clr = GetValueColor(ax_clr, dat.y);
+        clr = GetValueColor(ax_clr, dat.y);
       }
       else {
-	clr = GetValueColor(ax_clr, da_clr->GetValAsFloat(row));
+        clr = GetValueColor(ax_clr, da_clr->GetValAsFloat(row));
       }
     }
 
@@ -4946,26 +4946,26 @@ void GraphTableView::PlotData_Bar(GraphPlotView& plv, GraphPlotView& erv, GraphP
     if(erv.on && da_er && (row % err_spacing == 0)) {
       float err_dat;
       if(da_er->is_matrix && mat_cell >= 0) {
-	err_dat = da_er->GetValAsFloatM(row, mat_cell);
+        err_dat = da_er->GetValAsFloatM(row, mat_cell);
       }
       else {
-	err_dat = da_er->GetValAsFloat(row);
+        err_dat = da_er->GetValAsFloat(row);
       }
       float err_plt = err_dat;
       if(yax.range.Range() > 0.0f) err_plt /= yax.range.Range();
 
       pt = plt;  pt.x += bar_off_plt + bar_wd_plt * 0.5f;
-      
+
       if(clr_ok)
-	t3gl->errBar(pt, err_plt, err_bar_width, (T3Color)(clr));
+        t3gl->errBar(pt, err_plt, err_bar_width, (T3Color)(clr));
       else
-	t3gl->errBar(pt, err_plt, err_bar_width);
+        t3gl->errBar(pt, err_plt, err_bar_width);
     }
 
     if((label_spacing > 0) && (row % label_spacing == 0)) {
       String str = String(dat.y); // todo: could spec format..
       t3gl->textAt(iVec3f(plt.x,  plt.y - (.5f * label_font_size), plt.z),
-		   str.chars());
+                   str.chars());
     }
   }
   t3gl->finishBatch();
@@ -4981,15 +4981,15 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
   DataCol* da_x = x_axis.GetDAPtr();
   DataCol* da_z = z_axis.GetDAPtr();
 
-  plv_str.eff_y_axis = &plv_y;		// set this for point clicking!
+  plv_str.eff_y_axis = &plv_y;          // set this for point clicking!
 
   // always plot in color assoc with plv_str, regardless of mode!
   t3gl->startBatch();
   t3gl->setValueColorMode(false);
   t3gl->setDefaultColor((T3Color)(plv_str.color.color()));
 
-  iVec3f dat;			// data point
-  iVec3f plt;			// plot coords
+  iVec3f dat;                   // data point
+  iVec3f plt;                   // plot coords
   for (int row = view_range.min; row <= view_range.max; row++) {
     if(x_axis.row_num)
       dat.x = row;
@@ -4998,9 +4998,9 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
     if(dat.x < x_axis.range.min || dat.x > x_axis.range.max) continue;
     if(z_axis.on) {
       if(z_axis.row_num)
-	dat.z = row;
+        dat.z = row;
       else if(da_z)
-	dat.z = da_z->GetValAsFloat(row);
+        dat.z = da_z->GetValAsFloat(row);
       if(dat.z < z_axis.range.min || dat.z > z_axis.range.max) continue;
     }
     dat.y = da_y->GetValAsFloat(row);
@@ -5014,7 +5014,7 @@ void GraphTableView::PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_
     String str = da_str->GetValAsString(row);
     if(!str.empty()) {
       t3gl->textAt(iVec3f(plt.x,  plt.y - (.5f * label_font_size), plt.z),
-		   str.chars());
+                   str.chars());
     }
   }
   t3gl->finishBatch();
@@ -5054,8 +5054,8 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   GraphTableView* nv = static_cast<GraphTableView*>(vnd->dataView());
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
-			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
+  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y,
+                           nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
@@ -5069,7 +5069,7 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
 
   SbVec3f axis;
@@ -5135,7 +5135,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblGraphType->setToolTip("How to display the graph");
   layTopCtrls->addWidget(lblGraphType);
   cmbGraphType = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("GraphType"),
-				 this, NULL, widg, taiData::flgAutoApply));
+                                 this, NULL, widg, taiData::flgAutoApply));
   layTopCtrls->addWidget(cmbGraphType->GetRep());
   layTopCtrls->addSpacing(taiM->hsep_c);
 
@@ -5143,7 +5143,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   lblPlotStyle->setToolTip("How to plot the lines");
   layTopCtrls->addWidget(lblPlotStyle);
   cmbPlotStyle = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
-				 this, NULL, widg, taiData::flgAutoApply));
+                                 this, NULL, widg, taiData::flgAutoApply));
   layTopCtrls->addWidget(cmbPlotStyle->GetRep());
   layTopCtrls->addSpacing(taiM->hsep_c);
 
@@ -5213,7 +5213,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layVals->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
-  // 	Axes
+  //    Axes
 
   ////////////////////////////////////////////////////////////////////
   // X AXis
@@ -5303,7 +5303,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   // Error bars
   layErr[0] = new QHBoxLayout; layWidg->addLayout(layErr[0]);
   layErr[1] = new QHBoxLayout; layWidg->addLayout(layErr[1]);
-  
+
   for(int i=0;i<max_plots; i++) {
     int rw = (i < 4) ? 0 : 1;
     String lbl = String(i+1) + " Err:";
@@ -5327,14 +5327,14 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layErr[1]->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
-  // 	Colors
+  //    Colors
 
   layCAxis = new QHBoxLayout; layWidg->addLayout(layCAxis);
   lblColorMode = taiM->NewLabel("Color\nMode", widg, font_spec);
   lblColorMode->setToolTip("How to determine line color:\n VALUE_COLOR makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED_COLOR uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n COLOR_AXIS uses a separate column of data to determine color value");
   layCAxis->addWidget(lblColorMode);
   cmbColorMode = dl.Add(new taiComboBox(true, TA_GraphTableView.sub_types.FindName("ColorMode"),
-	this, NULL, widg, taiData::flgAutoApply));
+        this, NULL, widg, taiData::flgAutoApply));
   layCAxis->addWidget(cmbColorMode->GetRep());
   //  layColorScale->addSpacing(taiM->hsep_c);
 
@@ -5390,7 +5390,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
   layRAxis->addWidget(pdtRAxis->GetRep());
 
   layRAxis->addStretch();
-  
+
   layWidg->addStretch();
 
   MakeButtons(layOuter);
@@ -5475,7 +5475,7 @@ void iGraphTableView_Panel::UpdatePanel_impl() {
 void iGraphTableView_Panel::GetValue_impl() {
   GraphTableView* glv = this->glv(); //cache
   if (!glv) return;
-  
+
   glv->display_on = chkDisplay->isChecked();
   glv->manip_ctrl_on = chkManip->isChecked();
   int i = 0;
@@ -5490,9 +5490,9 @@ void iGraphTableView_Panel::GetValue_impl() {
   glv->negative_draw_z = chkNegDrawZ->isChecked();
   glv->width = (float)fldWidth->GetValue();
   glv->depth = (float)fldDepth->GetValue();
-  
+
   glv->setScaleData(false, cbar->min(), cbar->max());
-  
+
   glv->x_axis.row_num = rncXAxis->isChecked();
   pdtXAxis->GetValue_(&(glv->x_axis.fixed_range));
   glv->x_axis.SetColPtr((GraphColView*)lelXAxis->GetValue());
@@ -5514,8 +5514,8 @@ void iGraphTableView_Panel::GetValue_impl() {
     pdtYAxis[i]->GetValue_(&(glv->all_plots[i]->fixed_range)); // this can change, so update
     glv->all_plots[i]->alt_y = chkYAltY[i]->isChecked();
     glv->all_plots[i]->SetColPtr(tcol);
-  }  
-  
+  }
+
   for(int i=0;i<max_plots; i++) {
     tcol = (GraphColView*)lelErr[i]->GetValue();
     if (tcol && !glv->all_errs[i]->GetColPtr())
@@ -5523,19 +5523,19 @@ void iGraphTableView_Panel::GetValue_impl() {
     glv->all_errs[i]->on = oncErr[i]->isChecked();
     glv->all_errs[i]->SetColPtr(tcol);
   }
-  
+
   glv->err_spacing = (int)fldErrSpacing->GetValue();
-  
+
   cmbColorMode->GetEnumValue(i); glv->color_mode = (GraphTableView::ColorMode)i;
   glv->color_axis.SetColPtr((GraphColView*)lelCAxis->GetValue());
-  
+
   glv->thresh = (float)fldThresh->GetValue();
-  
+
   glv->setScaleData(false, cbar->min(), cbar->max());
-  
+
   glv->raster_axis.SetColPtr((GraphColView*)lelRAxis->GetValue());
   pdtRAxis->GetValue_(&(glv->raster_axis.fixed_range));
-  
+
   glv->UpdateAfterEdit(); // so many guys require this, we just always do it
   glv->UpdateDisplay(false); // don't update us, because logic will do that anyway
 }
@@ -5571,10 +5571,10 @@ void iGraphTableView_Panel::butSetColor_pressed() {
 
 
 /////////////////////////////////////////////////////////////////////////////////
-//		Other GUI stuff
+//              Other GUI stuff
 
 //////////////////////////
-// tabDataTableViewType	//
+// tabDataTableViewType //
 //////////////////////////
 
 int tabDataTableViewType::BidForView(TypeDef* td) {
@@ -5596,7 +5596,7 @@ void tabDataTableViewType::CreateDataPanel_impl(taiDataLink* dl_)
 }
 
 //////////////////////////
-//   iDataTableView	//
+//   iDataTableView     //
 //////////////////////////
 
 iDataTableView::iDataTableView(QWidget* parent)
@@ -5608,7 +5608,7 @@ iDataTableView::iDataTableView(QWidget* parent)
   // this is important for faster viewing:
   verticalHeader()->setResizeMode(QHeaderView::Interactive);
 }
-  
+
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
   inherited::currentChanged(current, previous);
   emit sig_currentChanged(current);
@@ -5624,7 +5624,7 @@ void iDataTableView::dataChanged(const QModelIndex& topLeft,
 DataTable* iDataTableView::dataTable() const {
   DataTableModel* mod = qobject_cast<DataTableModel*>(model());
   if (mod) return mod->dataTable();
-  else return NULL; 
+  else return NULL;
 }
 
 void iDataTableView::EditAction(int ea) {
@@ -5668,37 +5668,37 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE))) {
       if (sel.height() < 1) goto bail;
       if (op_code & OP_APPEND) {
-	if(proj) proj->undo_mgr.SaveUndo(tab, "AddRows", tab);
+        if(proj) proj->undo_mgr.SaveUndo(tab, "AddRows", tab);
         tab->AddRows(sel.height());
       } else if (op_code & OP_INSERT) {
-	if(proj) proj->undo_mgr.SaveUndo(tab, "Insertows", tab);
+        if(proj) proj->undo_mgr.SaveUndo(tab, "Insertows", tab);
         tab->InsertRows(sel.row_fr, sel.height());
       } else if (op_code & OP_DUPLICATE) {
-	if(proj) proj->undo_mgr.SaveUndo(tab, "DuplicateRows", tab);
+        if(proj) proj->undo_mgr.SaveUndo(tab, "DuplicateRows", tab);
         tab->DuplicateRows(sel.row_fr, sel.height());
       } else if (op_code & OP_DELETE) {
-	if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
-	  if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0) goto bail;
-	}
-	if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveRows", tab);
+        if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
+          if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0) goto bail;
+        }
+        if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveRows", tab);
         tab->RemoveRows(sel.row_fr, sel.height());
       }
     }
-  } else if (op_code & OP_COL) { 
+  } else if (op_code & OP_COL) {
     // must have >=1 col selected to make sense
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE))) {
       if (sel.width() < 1) goto bail;
 /*note: not supporting col ops here
       if (op_code & OP_APPEND) {
-      } else 
+      } else
       if (op_code & OP_INSERT) {
       } else */
       if (op_code & OP_DELETE) {
-	if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
-	  if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) goto bail;
-	}
+        if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
+          if (taMisc::Choice("Are you sure you want to delete the selected columns?", "Yes", "Cancel") != 0) goto bail;
+        }
         tab->StructUpdate(true);
-	if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveCols", tab);
+        if(proj) proj->undo_mgr.SaveUndo(tab, "RemoveCols", tab);
         for (int col = sel.col_to; col >= sel.col_fr; --col) {
           tab->RemoveCol(col);
         }
@@ -5708,7 +5708,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   }
  bail:
   gui_edit_op = false;
-} 
+}
 
 void iDataTableView::FillContextMenu_impl(ContextArea ca,
   taiMenu* menu, const CellRange& sel)
@@ -5727,10 +5727,10 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca,
 }
 
 //////////////////////////
-//    DataTableDelegate	//
+//    DataTableDelegate //
 //////////////////////////
 
-DataTableDelegate::DataTableDelegate(DataTable* dt_) 
+DataTableDelegate::DataTableDelegate(DataTable* dt_)
 :inherited(NULL)
 {
   dt = dt_;
@@ -5741,10 +5741,10 @@ DataTableDelegate::~DataTableDelegate() {
 
 
 //////////////////////////
-//    iDataTableEditor 	//
+//    iDataTableEditor  //
 //////////////////////////
 
-iDataTableEditor::iDataTableEditor(QWidget* parent) 
+iDataTableEditor::iDataTableEditor(QWidget* parent)
 :inherited(parent)
 {
   m_cell_par = NULL;
@@ -5830,21 +5830,21 @@ void iDataTableEditor::setDataTable(DataTable* dt_) {
 
   // apparently not needed
 //   dt_->AddDataClient(this);
-  
+
   DataTableModel* mod = dtm();
 
   if (mod) {
 //nn    tv->setItemDelegate(new DataTableDelegate(dt_));
     tvTable->setModel(mod);
     connect(mod, SIGNAL(layoutChanged()),
-	    this, SLOT(tvTable_layoutChanged()) );
+            this, SLOT(tvTable_layoutChanged()) );
   }
-  
+
   ConfigView();
 }
 
 void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
-    bool pat_4d) 
+    bool pat_4d)
 {
   // unlink old parent
   if (m_cell_par) {
@@ -5860,7 +5860,7 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
   }
 
   m_cell = mat;
-   
+
   m_cell_index = index;
   // actually set mat last, because gui immediately calls back
   tvCell->setMatrix(mat, pat_4d);
@@ -5870,7 +5870,7 @@ void iDataTableEditor::setCellMat(taMatrix* mat, const QModelIndex& index,
     // connect the magic signal that updates the table -- note that there is just
     // one of these, and it hangs around even when the cell isn't viewed
     connect(mat_model, SIGNAL(matDataChanged(int)),
-	    dtm(), SLOT(matDataChanged(int)) );
+            dtm(), SLOT(matDataChanged(int)) );
   }
 }
 
@@ -5936,16 +5936,16 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
   if(ctrl_pressed) {
     if(e->key() == Qt::Key_T) {
       if(obj->inherits("iDataTableView")) {
-	tvTable->clearExtSelection();
-	if(m_cell) {
-	  tvCell->tv->setFocus();
-	  tvCell->tv->selectCurCell();
-	}
+        tvTable->clearExtSelection();
+        if(m_cell) {
+          tvCell->tv->setFocus();
+          tvCell->tv->selectCurCell();
+        }
       }
       else {
-	tvCell->tv->clearExtSelection();
-	tvTable->setFocus();
-	tvTable->selectCurCell();
+        tvCell->tv->clearExtSelection();
+        tvTable->setFocus();
+        tvTable->selectCurCell();
       }
       return true;
     }
@@ -5960,7 +5960,7 @@ void iDataTableEditor::ScrollToBottom() {
 
 
 //////////////////////////
-//    iDataTablePanel 	//
+//    iDataTablePanel   //
 //////////////////////////
 
 iDataTablePanel::iDataTablePanel(taiDataLink* dl_)
@@ -6076,12 +6076,12 @@ void iDataTablePanel::UpdatePanel_impl() {
 void iDataTablePanel::Render_impl() {
   dte = new iDataTableEditor();
   setCentralWidget(dte);
-  
+
   dte->setDataTable(dt());
   connect(dte->tvTable, SIGNAL(hasFocus(iTableView*)),
-	  this, SLOT(tv_hasFocus(iTableView*)) );
+          this, SLOT(tv_hasFocus(iTableView*)) );
   connect(dte->tvCell->tv, SIGNAL(hasFocus(iTableView*)),
-	  this, SLOT(tv_hasFocus(iTableView*)) );
+          this, SLOT(tv_hasFocus(iTableView*)) );
 
   iMainWindowViewer* vw = viewerWindow();
   if (vw) {
@@ -6095,35 +6095,35 @@ void iDataTablePanel::tv_hasFocus(iTableView* sender) {
   iMainWindowViewer* vw = viewerWindow();
   if (vw) {
     vw->SetClipboardHandler(sender,
-			    SLOT(GetEditActionsEnabled(int&)),
-			    SLOT(EditAction(int)),
-			    NULL,
-			    SIGNAL(UpdateUi()) );
+                            SLOT(GetEditActionsEnabled(int&)),
+                            SLOT(EditAction(int)),
+                            NULL,
+                            SIGNAL(UpdateUi()) );
   }
 }
 
 
 //////////////////////////////////
-//  taiTabularDataMimeFactory	//
+//  taiTabularDataMimeFactory   //
 //////////////////////////////////
 
 /* Tabular Data semantics
 
   In general, we do not try to interpret the tabular data, since there
   are so many combinations, including from external sources -- we will
-  make a "best effort" to paste data, by using the built-in string 
+  make a "best effort" to paste data, by using the built-in string
   converters.
-  
+
   We can always (try) pasting data into a Matrix, since we can always
   interpret the data in a flattened way.
-  
-  
-  
+
+
+
   Paste semantics
- 
-  Matrix: 
+
+  Matrix:
     * if 1 cell is selected, it is assumed that we want to paste
-      "as much as possible"; 
+      "as much as possible";
     * if there is a selection, then we limit the pasting to that
       region
 */
@@ -6131,7 +6131,7 @@ void iDataTablePanel::tv_hasFocus(iTableView* sender) {
 const String taiTabularDataMimeFactory::tacss_matrixdesc("tacss/matrixdesc");
 const String taiTabularDataMimeFactory::tacss_tabledesc("tacss/tabledesc");
 
-void taiTabularDataMimeFactory::Initialize() { 
+void taiTabularDataMimeFactory::Initialize() {
 }
 
 void taiTabularDataMimeFactory::Mat_Clear(taMatrix* mat,
@@ -6147,26 +6147,26 @@ void taiTabularDataMimeFactory::Mat_Clear(taMatrix* mat,
   mat->DataUpdate(false);
 }
 
-void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat, 
+void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat,
   const CellRange& sel, taiMimeSource* ms,
   int& allowed, int& forbidden) const
 {
   // ops that are never allowed on mats
   forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   // forbidden on ro
-  if (mat->isGuiReadOnly()) 
+  if (mat->isGuiReadOnly())
     forbidden |= taiClipData::EA_FORB_ON_DST_READONLY;
   // src ops
   if (sel.nonempty())
     allowed |= (taiClipData::EA_COPY | taiClipData::EA_CLEAR);
-    
+
   if (!ms) return;
   // dst ops -- none allowed if no selection
   if (sel.empty()) {
     forbidden = taiClipData::EA_DST_OPS;
     return;
   }
-  
+
   // Priority is: Mat, Table, Generic
   {taiMatrixDataMimeItem* mi = (taiMatrixDataMimeItem*)
      ms->GetMimeItem(&TA_taiMatrixDataMimeItem);
@@ -6189,20 +6189,20 @@ void taiTabularDataMimeFactory::Mat_QueryEditActions(taMatrix* mat,
   }}
 }
 
-void taiTabularDataMimeFactory::Mat_EditActionD(taMatrix* mat, 
+void taiTabularDataMimeFactory::Mat_EditActionD(taMatrix* mat,
   const CellRange& sel, taiMimeSource* ms, int ea) const
 {
   int allowed = 0;
   int forbidden = 0;
   Mat_QueryEditActions(mat, sel, ms, allowed, forbidden);
   ea = ea & (allowed & ~forbidden);
-  
+
   if (ea & taiClipData::EA_PASTE) {
     taProject* proj = dynamic_cast<taProject*>(mat->GetThisOrOwner(&TA_taProject));
     if(proj) {
       proj->undo_mgr.SaveUndo(mat, "Paste/Copy", mat);
     }
-    
+
     CellRange sel2(sel);
     // if sel is a single cell, adjust to max
     if (sel2.single()) {
@@ -6232,14 +6232,14 @@ void taiTabularDataMimeFactory::Mat_EditActionD(taMatrix* mat,
   }
 }
 
-void taiTabularDataMimeFactory::Mat_EditActionS(taMatrix* mat, 
+void taiTabularDataMimeFactory::Mat_EditActionS(taMatrix* mat,
   const CellRange& sel, int ea) const
 {
   int allowed = 0;
   int forbidden = 0;
   Mat_QueryEditActions(mat, sel, NULL, allowed, forbidden);
   ea = ea & (allowed & ~forbidden);
-  
+
   if (ea & taiClipData::EA_COPY) {
     taiClipData* cd = Mat_GetClipData(mat,
       sel, taiClipData::EA_SRC_COPY, false);
@@ -6299,14 +6299,14 @@ void taiTabularDataMimeFactory::Table_Clear(DataTable* tab,
 }
 
 
-void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab, 
+void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab,
   const CellRange& sel, taiMimeSource* ms,
   int& allowed, int& forbidden) const
 {
   // ops that are never allowed on mats
   forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
   // forbidden on ro -- whole table
-  if (isGuiReadOnly()) 
+  if (isGuiReadOnly())
     forbidden |= taiClipData::EA_FORB_ON_DST_READONLY;
   // selected cols
   bool sel_ro = false; // we'll or in
@@ -6317,18 +6317,18 @@ void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab,
   if (sel_ro) {
     forbidden |= taiClipData::EA_FORB_ON_DST_READONLY;
   }
-  
+
   // src ops
   if (sel.nonempty())
     allowed |= (taiClipData::EA_COPY | taiClipData::EA_CLEAR);
-    
+
   if (!ms) return;
   // dst ops -- none allowed if no selection
   if (sel.empty()) {
     forbidden = taiClipData::EA_DST_OPS;
     return;
   }
-  
+
   // Priority is: Table, Matrix, Generic
   // Table
   {taiTableDataMimeItem* mi = (taiTableDataMimeItem*)
@@ -6352,14 +6352,14 @@ void taiTabularDataMimeFactory::Table_QueryEditActions(DataTable* tab,
   }}
 }
 
-void taiTabularDataMimeFactory::Table_EditActionD(DataTable* tab, 
+void taiTabularDataMimeFactory::Table_EditActionD(DataTable* tab,
   const CellRange& sel, taiMimeSource* ms, int ea) const
 {
   int allowed = 0;
   int forbidden = 0;
   Table_QueryEditActions(tab, sel, ms, allowed, forbidden);
   ea = ea & (allowed & ~forbidden);
-  
+
   if (ea & taiClipData::EA_PASTE) {
     taProject* proj = dynamic_cast<taProject*>(tab->GetThisOrOwner(&TA_taProject));
     if(proj) {
@@ -6369,7 +6369,7 @@ void taiTabularDataMimeFactory::Table_EditActionD(DataTable* tab,
     CellRange sel2(sel);
     //NOTE: unlike matrix pastes, we do NOT adjust selection
     // (the Table item may adjust the selection to fit)
-    
+
     // Priority is: Table, Matrix, Generic
     // Table
     {taiTableDataMimeItem* mi = (taiTableDataMimeItem*)
@@ -6394,14 +6394,14 @@ void taiTabularDataMimeFactory::Table_EditActionD(DataTable* tab,
   }
 }
 
-void taiTabularDataMimeFactory::Table_EditActionS(DataTable* tab, 
+void taiTabularDataMimeFactory::Table_EditActionS(DataTable* tab,
   const CellRange& sel, int ea) const
 {
   int allowed = 0;
   int forbidden = 0;
   Table_QueryEditActions(tab, sel, NULL, allowed, forbidden);
   ea = ea & (allowed & ~forbidden);
-  
+
   if (ea & taiClipData::EA_COPY) {
     taiClipData* cd = Table_GetClipData(tab,
       sel, taiClipData::EA_SRC_COPY, false);
@@ -6437,16 +6437,16 @@ void taiTabularDataMimeFactory::AddTableDesc(QMimeData* md,
   int max_cell_row = 0; // max flat rows per cell
   tab->GetFlatGeom(sel, tot_col, max_cell_row);
   str.cat(String(tot_col)).cat(';').cat(String(max_cell_row)).cat(";\n");
- 
+
   // add the table dims
   AddDims(sel, str);
   str.cat('\n');
-  
+
   // add the col descs
   for (int col = sel.col_fr; col <= sel.col_to; ++col) {
     DataCol* da = tab->GetColData(col, true); // quiet
     int x; int y;
-    da->Get2DCellGeom(x, y); 
+    da->Get2DCellGeom(x, y);
     str.cat(String(x)).cat(';').cat(String(y)).cat(';');
     str.cat(String(da->isImage())).cat(";\n");
   }
@@ -6456,7 +6456,7 @@ void taiTabularDataMimeFactory::AddTableDesc(QMimeData* md,
 
 
 //////////////////////////////////
-//  taiTabularDataMimeItem 	//
+//  taiTabularDataMimeItem      //
 //////////////////////////////////
 
 /* TSV reading engine
@@ -6464,7 +6464,7 @@ void taiTabularDataMimeFactory::AddTableDesc(QMimeData* md,
 the most common spreadsheet format is TSV -- note that
 tabs and eols are separators, not terminators
 
-value[<tab>value] 
+value[<tab>value]
 [<eol>] value[<tab>value]
 
 We need to be able to read, being able to skip cols,
@@ -6474,7 +6474,7 @@ Parsing geoms:
 
   #rows = #eols - 1
   #cols = row0(#tabs - 1)
-  
+
 
 
 */
@@ -6494,9 +6494,9 @@ bool taiTabularDataMimeItem::ExtractGeom(String& arg, iSize& val) {
   String str;
   bool ok = ReadInt(arg, val.w);
   if (!ok) goto end;
-  ok = ReadInt(arg, val.h); 
+  ok = ReadInt(arg, val.h);
   if (!ok) goto end;
-  
+
 end:
   return ok;
 }
@@ -6506,12 +6506,12 @@ void taiTabularDataMimeItem::WriteMatrix(taMatrix* mat, const CellRange& sel) {
   istringstream istr;
   QByteArray ba = data(taiMimeFactory::text_plain);
   istr.str(string(ba.data(), ba.size()));
-  
+
   String val; // each cell val
   TsvSep sep; // sep after reading the cell val
 
   // client needs to have adjust paste region if necessary; we take it literally
-  
+
   int row = sel.row_fr;
   mat->DataUpdate(true);
   while (row <= sel.row_to) {
@@ -6524,7 +6524,7 @@ void taiTabularDataMimeItem::WriteMatrix(taMatrix* mat, const CellRange& sel) {
       // if we've run out of col data, skip to next row
       if (sep == TSV_EOL) goto next_row;
       ++col;
-      
+
     }
     // if we haven't run out of col data yet, skip input data
     while (sep != TSV_EOL) {
@@ -6554,43 +6554,43 @@ void taiTabularDataMimeItem::WriteTable_Generic(DataTable* tab, const CellRange&
   istringstream istr;
   QByteArray ba = data(taiMimeFactory::text_plain);
   istr.str(string(ba.data(), ba.size()));
-  
+
   String val; // each cell val
   TsvSep sep; // sep after reading the cell val
-  
+
   // for generic source, for single-cell, we autoextend the range
   // to the entire extent of the table
-  
+
   CellRange sel(sel_);
   if (sel_.single()) {
     sel.row_to = tab->rows - 1;
     sel.col_to = tab->cols() - 1;
-  } 
-  
+  }
+
   // we will use the first row pass to find the max cell rows
   int max_cell_rows = 1; // has to be at least 1 (for all scalars)
-  tab->DataUpdate(true); 
-  // we only iterate over the dst rows; we'll just stop reading data when done 
+  tab->DataUpdate(true);
+  // we only iterate over the dst rows; we'll just stop reading data when done
   // and/or break out if we run out of data
   for (int dst_row = sel.row_fr; dst_row <= sel.row_to; ++dst_row) {
     for (int cell_row = 0; cell_row < max_cell_rows; ++cell_row) {
       // we keep iterating while we have data and cols
-      for (int dst_col = sel.col_fr; dst_col <= sel.col_to; ++dst_col) 
+      for (int dst_col = sel.col_fr; dst_col <= sel.col_to; ++dst_col)
       {
         // here, we get the detailed cell geom for src and dst
         // just assume either could be empty, for robustness
         int dst_cell_cols = 0; //dummy
         int dst_cell_rows = 0;
         DataCol* da = tab->GetColData(dst_col, true); // quiet
-        if (da) da->Get2DCellGeom(dst_cell_cols, dst_cell_rows); 
+        if (da) da->Get2DCellGeom(dst_cell_cols, dst_cell_rows);
         //note: only need to do the following in the very first cell_row
         max_cell_rows = MAX(max_cell_rows, dst_cell_rows);
         // we break if we run out of data
-        for (int cell_col = 0; cell_col < dst_cell_cols; ++cell_col) 
+        for (int cell_col = 0; cell_col < dst_cell_cols; ++cell_col)
         {
-          // we are always in source range here... 
+          // we are always in source range here...
           if (!ReadTsvValue(istr, val, sep)) goto done;
-          
+
           // if we are in dst range then write the value
           if (/*row always valid*/ (cell_row < dst_cell_rows) &&
              (cell_col < dst_cell_cols))
@@ -6598,7 +6598,7 @@ void taiTabularDataMimeItem::WriteTable_Generic(DataTable* tab, const CellRange&
             int dst_cell = (cell_row * dst_cell_cols) + cell_col;
             tab->SetValAsStringM(val, dst_col, dst_row, dst_cell);
           }
-          
+
           if (sep == TSV_EOF) goto done;
           // if we've run out of col data, skip to next row
           if (sep == TSV_EOL) {
@@ -6651,8 +6651,8 @@ bool taiTabularDataMimeItem::ReadTsvValue(istringstream& strm, String& val,
       }
       break;
     }
-    
-    val += (char)c; 
+
+    val += (char)c;
     strm.get();
     c = strm.peek();
     if (c == EOF) {
@@ -6664,13 +6664,13 @@ bool taiTabularDataMimeItem::ReadTsvValue(istringstream& strm, String& val,
 }
 
 //////////////////////////////////
-//  taiMatrixDataMimeItem 	//
+//  taiMatrixDataMimeItem       //
 //////////////////////////////////
 
-taiMimeItem* taiMatrixDataMimeItem::Extract(taiMimeSource* ms, 
+taiMimeItem* taiMatrixDataMimeItem::Extract(taiMimeSource* ms,
     const String& subkey)
 {
-  if (!ms->hasFormat(taiTabularDataMimeFactory::tacss_matrixdesc)) 
+  if (!ms->hasFormat(taiTabularDataMimeFactory::tacss_matrixdesc))
     return NULL;
   taiMatrixDataMimeItem* rval = new taiMatrixDataMimeItem;
   rval->Constr(ms, subkey);
@@ -6680,7 +6680,7 @@ taiMimeItem* taiMatrixDataMimeItem::Extract(taiMimeSource* ms,
 bool taiMatrixDataMimeItem::Constr_impl(const String&) {
   String arg;
   data(mimeData(), taiTabularDataMimeFactory::tacss_matrixdesc, arg);
-  
+
   return ExtractGeom(arg, m_flat_geom);
 }
 
@@ -6690,10 +6690,10 @@ void  taiMatrixDataMimeItem::DecodeData_impl() {
 
 
 //////////////////////////////////
-//  taiTsvMimeItem	 	//
+//  taiTsvMimeItem              //
 //////////////////////////////////
 
-taiMimeItem* taiTsvMimeItem::Extract(taiMimeSource* ms, 
+taiMimeItem* taiTsvMimeItem::Extract(taiMimeSource* ms,
     const String& subkey)
 {
   // note: virtually everything has text/plain, so we just grab and examine
@@ -6701,23 +6701,23 @@ taiMimeItem* taiTsvMimeItem::Extract(taiMimeSource* ms,
   // note: some formats (ex Excel) use eol as a sep, others (ex OO.org) as a terminator
   QByteArray ba = ms->data(taiTabularDataMimeFactory::text_plain);
   if (ba.size() == 0) return NULL;
-  // first, look at the first line -- we will pull tent cols from this, then 
+  // first, look at the first line -- we will pull tent cols from this, then
   // double check against the remainder
   QTextStream ts(ba, QIODevice::ReadOnly); // ro stream
   QString str = ts.readLine();
   int cols = str.count('\t', Qt::CaseInsensitive) + 1;
   // now, if it is really a table, it should have total metrics consistent
-  
+
   // see if it ends in an eol, adjust if necessary
-  int tot_rows = 1; 
+  int tot_rows = 1;
   if (ba.endsWith('\n')) // note: works for Unix or Windows
     tot_rows = 0;
-  
+
   tot_rows = ba.count('\n') + tot_rows; // note: works for Unix or Windows
   int tot_tabs = ba.count('\t');
   if (((cols - 1) * tot_rows) != tot_tabs)
     return NULL;
-  
+
   taiTsvMimeItem* rval = new taiTsvMimeItem;
   rval->Constr(ms, subkey); //note: doesn't do anything
   rval->m_flat_geom.set(cols, tot_rows);
@@ -6730,13 +6730,13 @@ void taiTsvMimeItem::Initialize() {
 
 
 //////////////////////////////////
-//  taiTableDataMimeItem	 	//
+//  taiTableDataMimeItem                //
 //////////////////////////////////
 
-taiMimeItem* taiTableDataMimeItem::Extract(taiMimeSource* ms, 
+taiMimeItem* taiTableDataMimeItem::Extract(taiMimeSource* ms,
     const String& subkey)
 {
-  if (!ms->hasFormat(taiTabularDataMimeFactory::tacss_tabledesc)) 
+  if (!ms->hasFormat(taiTabularDataMimeFactory::tacss_tabledesc))
     return NULL;
   taiTableDataMimeItem* rval = new taiTableDataMimeItem;
   rval->Constr(ms, subkey);
@@ -6750,7 +6750,7 @@ void taiTableDataMimeItem::Initialize() {
 bool taiTableDataMimeItem::Constr_impl(const String&) {
   String arg;
   data(mimeData(), taiTabularDataMimeFactory::tacss_tabledesc, arg);
- 
+
   String str; // temp
   bool ok = ExtractGeom(arg, m_flat_geom);
   if (!ok) goto done;
@@ -6758,7 +6758,7 @@ bool taiTableDataMimeItem::Constr_impl(const String&) {
   ok = ExtractGeom(arg, m_tab_geom);
   if (!ok) goto done;
   arg = arg.after('\n');
-   
+
   col_descs.Alloc(m_tab_geom.w);
   m_max_row_geom = 0;
   for (int col = 0; col < m_tab_geom.w; ++col) {
@@ -6766,11 +6766,11 @@ bool taiTableDataMimeItem::Constr_impl(const String&) {
     ok = ExtractGeom(arg, desc.flat_geom);
     if (!ok) goto done;
     str = arg.before(';');
-    desc.is_image = str.toBool(); 
+    desc.is_image = str.toBool();
     arg = arg.after('\n');
     m_max_row_geom = MAX(m_max_row_geom, desc.flat_geom.h);
   }
-   
+
 done:
   return ok;
 }
@@ -6790,7 +6790,7 @@ void taiTableDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {
   }
 }
 
-/* 
+/*
   A table supports two kinds of paste:
     * Paste -- starting at upper-left of select region, no new rows made
     * Paste Append -- appends all data to new rows; the first dst col is
@@ -6798,7 +6798,7 @@ void taiTableDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {
       has no significance
   (Paste Append is especially convenient when selected from the Table
     object itself, rather than in the data grid.)
-    
+
   For table-to-table copy, we assume the user wants the source col mappings
   to be preserved at the destination. This leads to three possibilities for
   each dimension in each cell:
@@ -6810,12 +6810,12 @@ void taiTableDataMimeItem::GetColGeom(int col, int& cols, int& rows) const {
   skipping src data, or clearing out dst data; the only exception is row:
   we only need iterate the dst_rows, since we can just stop reading src
   data when we are finished.
-  
+
   Since we placed the exact dims for each col on the clipboard, and we
   have a deterministic mapping of the flat data, we can therefore "dumbly"
   just read in the data, without checking for tabs/eols etc.
-  
-  
+
+
 */
 void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
   // for table-to-table copy, we apply data on a table-cell basis
@@ -6823,21 +6823,21 @@ void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
   istringstream istr;
   QByteArray ba = data(taiMimeFactory::text_plain);
   istr.str(string(ba.data(), ba.size()));
-  
+
   String val; // each cell val
 //nn  TsvSep sep; // sep after reading the cell val
-  
+
   // if dest is a single cell, we will extend to size of src
   CellRange sel(sel_);
   if (sel_.single()) {
     sel.SetExtent(tabCols(), tabRows());
     sel.LimitRange(tab->rows - 1, tab->cols() - 1);
-  } 
+  }
   // if dest is larger than src, we shrink to src
   else {
     sel.LimitExtent(tabCols(), tabRows());
   }
-  
+
   // calculate the controlling params, for efficiency and clarity
   int src_rows = tabRows();
   int dst_max_cell_rows = tab->GetMaxCellRows(sel.col_fr, sel.col_to);
@@ -6846,14 +6846,14 @@ void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
   // for cols, we only iterate over src, since we don't clear excess dst cols
   int src_cols = tabCols();
 //nn  int dst_cols = sel.width();
-  
+
   bool underflow = false;
-  tab->DataUpdate(true); 
-  // we only iterate over the dst rows; we'll just stop reading data when done 
+  tab->DataUpdate(true);
+  // we only iterate over the dst rows; we'll just stop reading data when done
   int dst_row; int src_row;
   for (dst_row = sel.row_fr, src_row = 0;
        dst_row <= sel.row_to;
-       ++dst_row, ++src_row) 
+       ++dst_row, ++src_row)
   {
     // cell_row is same for src/dst (0-based), but we need to iterate the largest
     for (int cell_row = 0; cell_row < max_cell_rows; ++cell_row) {
@@ -6861,14 +6861,14 @@ void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
       int dst_col; int src_col;
       for (dst_col = sel.col_fr, src_col = 0;
           src_col < src_cols;
-          ++dst_col, ++src_col) 
+          ++dst_col, ++src_col)
       {
         // here, we get the detailed cell geom for src and dst
         // just assume either could be empty, for robustness
-        int dst_cell_cols = 0; 
+        int dst_cell_cols = 0;
         int dst_cell_rows = 0;
         DataCol* da = tab->GetColData(dst_col, true); // quiet
-        if (da) da->Get2DCellGeom(dst_cell_cols, dst_cell_rows); 
+        if (da) da->Get2DCellGeom(dst_cell_cols, dst_cell_rows);
         int src_cell_cols = 0;
         int src_cell_rows = 0;
         if (src_col < src_cols) {
@@ -6878,15 +6878,15 @@ void taiTableDataMimeItem::WriteTable(DataTable* tab, const CellRange& sel_) {
         }
         int cell_cols = MAX(src_cell_cols, dst_cell_cols);
         for (int cell_col = 0; cell_col < cell_cols; ++cell_col) {
-          // if we are in **flat** source range then read a value 
+          // if we are in **flat** source range then read a value
           // note that src values are always zero-based
           if ((src_row < src_rows) && (cell_row < src_max_cell_rows) &&
             (src_col < src_cols) && (cell_col < src_cell_cols))
           {
             underflow = underflow || (!ReadTsvValue(istr, val/*, sep*/));
-          } else 
+          } else
             val = _nilString;
-          
+
           // if we are in dst range then write (the maybe nil) value
           // we only need to check upper bound, since we always started at lower
           if (/*row always valid*/ (cell_row < dst_cell_rows) &&

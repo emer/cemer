@@ -19,7 +19,7 @@
 
 #include "ta_geometry.h"
 #include "emergent_project.h"
-#include "css_qt.h"		// for the cssiSession
+#include "css_qt.h"             // for the cssiSession
 #include "ta_qtclipdata.h"
 #include "ta_qt.h"
 #include "ta_qtgroup.h"
@@ -74,7 +74,7 @@
 #include <float.h>
 
 //////////////////////////
-//   ScaleRange		//
+//   ScaleRange         //
 //////////////////////////
 
 void ScaleRange::SetFromScale(ColorScale& cs) {
@@ -110,7 +110,7 @@ void nvDataView::CutLinks() {
 }
 
 //////////////////////////
-//   UnitView		//
+//   UnitView           //
 //////////////////////////
 
 void UnitView::Initialize() {
@@ -167,7 +167,7 @@ void UnitView::Render_pre() {
 
 
 //////////////////////////
-//   UnitGroupView	//
+//   UnitGroupView      //
 //////////////////////////
 
 void UnitGroupView::Initialize() {
@@ -210,9 +210,9 @@ void UnitGroupView::AllocUnitViewData() {
       nv->hist_max = 1;
       nwgm2.Set(3, nv->hist_max);
       uvd_hist.SetGeomN(nwgm2); // still might fail, but it's the best we can do.
-	}
+        }
     reset_idx = true;
-    nv->hist_reset_req = true;	// tell main netview history guy to reset and reset everyone
+    nv->hist_reset_req = true;  // tell main netview history guy to reset and reset everyone
   }
   if (reset_idx) {
     uvd_hist_idx.Reset();
@@ -259,7 +259,7 @@ float UnitGroupView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
       val = uvd_hist.FastEl(co.x, co.y, nv->unit_disp_idx, midx);
     else {
       taMisc::Info("midx idx problem:", String(midx), "cidx:",
-		   String(cidx), "mbs:", String(uvd_hist.dim(3)));
+                   String(cidx), "mbs:", String(uvd_hist.dim(3)));
     }
   }
   else {
@@ -327,26 +327,26 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
 
       if (is_send) {
-	for(int g=0;g<unit->recv.size;g++) {
-	  RecvCons* tcong = unit->recv.FastEl(g);
-	  MemberDef* act_md = tcong->con_type->members.FindName(nm);
-	  if (!act_md)	continue;
-	  Connection* con = tcong->FindConFrom(src_u);
-	  if (!con) continue;
-	  uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
-	  break;		// once you've got one, done!
-	}
+        for(int g=0;g<unit->recv.size;g++) {
+          RecvCons* tcong = unit->recv.FastEl(g);
+          MemberDef* act_md = tcong->con_type->members.FindName(nm);
+          if (!act_md)  continue;
+          Connection* con = tcong->FindConFrom(src_u);
+          if (!con) continue;
+          uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
+          break;                // once you've got one, done!
+        }
       }
       else {
-	for(int g=0;g<unit->send.size;g++) {
-	  SendCons* tcong = unit->send.FastEl(g);
-	  MemberDef* act_md = tcong->con_type->members.FindName(nm);
-	  if (!act_md)	continue;
-	  Connection* con = tcong->FindConFrom(src_u);
-	  if (!con) continue;
-	  uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
-	  break;		// once you've got one, done!
-	}
+        for(int g=0;g<unit->send.size;g++) {
+          SendCons* tcong = unit->send.FastEl(g);
+          MemberDef* act_md = tcong->con_type->members.FindName(nm);
+          if (!act_md)  continue;
+          Connection* con = tcong->FindConFrom(src_u);
+          if (!con) continue;
+          uvd_bases.Set(act_md->GetOff(con), coord.x, coord.y, midx);
+          break;                // once you've got one, done!
+        }
       }
     }
   }
@@ -389,7 +389,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
   ta_memb_ptr net_mbr_off = 0;
   int net_base_off = 0;
   MemberDef* smd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-						 disp_md->name, false); // no warn
+                                                 disp_md->name, false); // no warn
   TwoDCoord coord;
   for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
@@ -412,12 +412,12 @@ void UnitGroupView::UpdateAutoScale(bool& updated) {
     for (co.x = 0; co.x < lay->flat_geom.x; ++co.x) {
       float val = GetUnitDisplayVal(co, base);
       if(base) {
-	if(!updated) {
-	  nv->scale.SetMinMax(val, val);
-	  updated = true;
-	}
-	else
-	  nv->scale.UpdateMinMax(val);
+        if(!updated) {
+          nv->scale.SetMinMax(val, val);
+          updated = true;
+        }
+        else
+          nv->scale.UpdateMinMax(val);
       }
     }
   }
@@ -446,38 +446,38 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
       if(!pobj) continue;
 //       cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
       if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
-	pobj = pp->getPath()->getNodeFromTail(3);
-// 	cerr << "2: obj typ: " << pobj->getTypeId().getName() << endl;
-	if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
-	  pobj = pp->getPath()->getNodeFromTail(1);
-// 	  cerr << "3: obj typ: " << pobj->getTypeId().getName() << endl;
-	  if(pobj->getName() == "WtLines") {
-	    // disable selecting of wt lines!
-	    ecb->setHandled();
-	    return;
-	  }
-// 	  cerr << "not unitgroupnode!" << endl;
-	  continue;
-	}
+        pobj = pp->getPath()->getNodeFromTail(3);
+//      cerr << "2: obj typ: " << pobj->getTypeId().getName() << endl;
+        if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
+          pobj = pp->getPath()->getNodeFromTail(1);
+//        cerr << "3: obj typ: " << pobj->getTypeId().getName() << endl;
+          if(pobj->getName() == "WtLines") {
+            // disable selecting of wt lines!
+            ecb->setHandled();
+            return;
+          }
+//        cerr << "not unitgroupnode!" << endl;
+          continue;
+        }
       }
       UnitGroupView* act_ugv = static_cast<UnitGroupView*>(((T3UnitGroupNode*)pobj)->dataView());
       Layer* lay = act_ugv->layer(); //cache
       float disp_scale = lay->disp_scale;
 
-      SbVec3f pt = pp->getObjectPoint(pobj); 
+      SbVec3f pt = pp->getObjectPoint(pobj);
       //   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
       int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
       int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
       //   cerr << xp << ", " << yp << endl;
 //       xp -= ugrp->pos.x; yp -= ugrp->pos.y;
-   
+
       if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
-	Unit* unit = lay->UnitAtDispCoord(xp, yp);
-	if(unit && tnv->unit_src != unit) {
-	  tnv->setUnitSrc(NULL, unit);
- 	  tnv->InitDisplay();	// this is apparently needed here!!
-	  tnv->UpdateDisplay();
-	}
+        Unit* unit = lay->UnitAtDispCoord(xp, yp);
+        if(unit && tnv->unit_src != unit) {
+          tnv->setUnitSrc(NULL, unit);
+          tnv->InitDisplay();   // this is apparently needed here!!
+          tnv->UpdateDisplay();
+        }
       }
       got_one = true;
     }
@@ -491,7 +491,7 @@ void UnitGroupView::Render_pre() {
   Layer* lay = this->layer(); //cache
 
   if(!lay || lay->Iconified()) {
-    return;			// don't render anything!
+    return;                     // don't render anything!
   }
 
   bool no_units = true;
@@ -503,7 +503,7 @@ void UnitGroupView::Render_pre() {
   T3UnitGroupNode* ugrp_so = node_so(); // cache
 
   ugrp_so->setGeom(lay->disp_geom.x, lay->disp_geom.y, nv->max_size.x,
-		   nv->max_size.y, nv->max_size.z, lay->disp_scale);
+                   nv->max_size.y, nv->max_size.z, lay->disp_scale);
 
   inherited::Render_pre();
 }
@@ -518,8 +518,8 @@ void UnitGroupView::Render_impl() {
 //   float disp_scale = lay->disp_scale;
 //   FloatTransform* ft = transform(true);
 //   ft->translate.SetXYZ(disp_scale * ((float)pos.x / nv->max_size.x),
-// 		       disp_scale * ((float)pos.z / nv->max_size.z),
-// 		       disp_scale * ((float)-pos.y / nv->max_size.y));
+//                     disp_scale * ((float)pos.z / nv->max_size.z),
+//                     disp_scale * ((float)-pos.y / nv->max_size.y));
 
   inherited::Render_impl();
 }
@@ -545,7 +545,7 @@ void UnitGroupView::DoActionChildren_impl(DataViewAction acts) {
     acts = (DataViewAction)( acts & ~RENDER_IMPL); // note: only supposed to be one, but don't assume
     Render_impl_children();
     if (!acts) return;
-  } 
+  }
   inherited::DoActionChildren_impl(acts);
 }
 
@@ -555,7 +555,7 @@ void UnitGroupView::Render_impl_children() {
   if(!lay || !nv) return;
 
   if(lay->Iconified() || !lv() || (lv()->disp_mode == LayerView::DISP_FRAME)) {
-    return;			// don't render anything!
+    return;                     // don't render anything!
   }
 
   T3UnitGroupNode* node_so = this->node_so(); // cache
@@ -614,32 +614,32 @@ void UnitGroupView::Render_impl_children() {
       // Text (if any)
       SoAsciiText* at = unit_so->captionNode(false);
       if (nv->unit_text_disp == NetView::UTD_NONE) {
-	if (at)
-	  at->string.setValue( "");
+        if (at)
+          at->string.setValue( "");
       } else { // text of some kind
-	unit_so->transformCaption(font_xform);
-	if (nv->unit_text_disp & NetView::UTD_VALUES) {
-	  ValToDispText(val, val_str);
-	}
-	if (!at) // force captionNode creation
-	  at = unit_so->captionNode(true);
-	SoMFString* mfs = &(at->string);
-	// fastest is to do each case in one operation
-	switch (nv->unit_text_disp) {
-	case NetView::UTD_VALUES:
-	  mfs->setValue(val_str.chars());
-	  break;
-	case NetView::UTD_NAMES:
-	  mfs->setValue(unit->name.chars());
-	  break;
-	case NetView::UTD_BOTH:
-	  const char* strs[2];
-	  strs[0] = val_str.chars();
-	  strs[1] = unit->name.chars();
-	  mfs->setValues(0, 2, strs);
-	  break;
-	default: break; // compiler food, won't happen
-	}
+        unit_so->transformCaption(font_xform);
+        if (nv->unit_text_disp & NetView::UTD_VALUES) {
+          ValToDispText(val, val_str);
+        }
+        if (!at) // force captionNode creation
+          at = unit_so->captionNode(true);
+        SoMFString* mfs = &(at->string);
+        // fastest is to do each case in one operation
+        switch (nv->unit_text_disp) {
+        case NetView::UTD_VALUES:
+          mfs->setValue(val_str.chars());
+          break;
+        case NetView::UTD_NAMES:
+          mfs->setValue(unit->name.chars());
+          break;
+        case NetView::UTD_BOTH:
+          const char* strs[2];
+          strs[0] = val_str.chars();
+          strs[1] = unit->name.chars();
+          mfs->setValues(0, 2, strs);
+          break;
+        default: break; // compiler food, won't happen
+        }
       }
     }
   }
@@ -727,19 +727,19 @@ void UnitGroupView::Render_impl_blocks() {
 
   SbVec3f* vertex_dat = vertex.startEditing();
 
-  String val_str = "0.0";	// initial default
+  String val_str = "0.0";       // initial default
   String unit_name;
   T3Color col;
   TwoDCoord pos;
   TwoDCoord upos;
   int v_idx = 0;
-  int t_idx = 3;		// base color + complexity + font
+  int t_idx = 3;                // base color + complexity + font
   // these go in normal order; indexes are backwards
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       Unit* unit = lay->UnitAtCoord(pos);
       if(unit)
-	lay->UnitDispPos(unit, upos);
+        lay->UnitDispPos(unit, upos);
       float xp = disp_scale * (((float)upos.x + spacing) / nv->max_size.x);
       float yp = -disp_scale * (((float)upos.y + spacing) / nv->max_size.y);
       float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->max_size.x);
@@ -757,47 +757,47 @@ void UnitGroupView::Render_impl_blocks() {
       vertex_dat[v_idx++].setValue(xp1, zp, yp1); // 11_v = 4
 
       if(nv->unit_text_disp != NetView::UTD_NONE) {
-	if(build_text || un_txt->getNumChildren() <= t_idx) {
-	  SoSeparator* tsep = new SoSeparator;
-	  un_txt->addChild(tsep);
-	  SoTranslation* tr = new SoTranslation;
-	  tsep->addChild(tr);
-	  SoAsciiText* txt = new SoAsciiText();
-	  txt->justification = SoAsciiText::CENTER;
-	  tsep->addChild(txt);
-	}
-	// todo: could figure out how to do this without a separator
-	// but it just isn't clear that it is that big a deal..  very convenient
-	SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
-	SoTranslation* tr = (SoTranslation*)tsep->getChild(0);
-	float xfp = .5f * (xp + xp1);
-	tr->translation.setValue(xfp, MAX(zp,0.0f) + .01f, yp);
-	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-// 	if(nv->unit_text_disp & NetView::UTD_VALUES) {
-	  //	  ValToDispText(0.0f, val_str); // just use default
-// 	}
-	if(nv->unit_text_disp & NetView::UTD_NAMES) {
-	  if(unit)
-	    unit_name = unit->name;
-	}
-	SoMFString* mfs = &(txt->string);
-	// fastest is to do each case in one operation
-	switch (nv->unit_text_disp) {
-	case NetView::UTD_VALUES:
-	  mfs->setValue(val_str.chars());
-	  break;
-	case NetView::UTD_NAMES:
-	  mfs->setValue(unit_name.chars());
-	  break;
-	case NetView::UTD_BOTH:
-	  const char* strs[2];
-	  strs[0] = val_str.chars();
-	  strs[1] = unit_name.chars();
-	  mfs->setValues(0, 2, strs);
-	  break;
-	default: break; // compiler food, won't happen
-	}
-	t_idx++;
+        if(build_text || un_txt->getNumChildren() <= t_idx) {
+          SoSeparator* tsep = new SoSeparator;
+          un_txt->addChild(tsep);
+          SoTranslation* tr = new SoTranslation;
+          tsep->addChild(tr);
+          SoAsciiText* txt = new SoAsciiText();
+          txt->justification = SoAsciiText::CENTER;
+          tsep->addChild(txt);
+        }
+        // todo: could figure out how to do this without a separator
+        // but it just isn't clear that it is that big a deal..  very convenient
+        SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
+        SoTranslation* tr = (SoTranslation*)tsep->getChild(0);
+        float xfp = .5f * (xp + xp1);
+        tr->translation.setValue(xfp, MAX(zp,0.0f) + .01f, yp);
+        SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
+//      if(nv->unit_text_disp & NetView::UTD_VALUES) {
+          //      ValToDispText(0.0f, val_str); // just use default
+//      }
+        if(nv->unit_text_disp & NetView::UTD_NAMES) {
+          if(unit)
+            unit_name = unit->name;
+        }
+        SoMFString* mfs = &(txt->string);
+        // fastest is to do each case in one operation
+        switch (nv->unit_text_disp) {
+        case NetView::UTD_VALUES:
+          mfs->setValue(val_str.chars());
+          break;
+        case NetView::UTD_NAMES:
+          mfs->setValue(unit_name.chars());
+          break;
+        case NetView::UTD_BOTH:
+          const char* strs[2];
+          strs[0] = val_str.chars();
+          strs[1] = unit_name.chars();
+          mfs->setValues(0, 2, strs);
+          break;
+        default: break; // compiler food, won't happen
+        }
+        t_idx++;
       }
     }
   }
@@ -808,9 +808,9 @@ void UnitGroupView::Render_impl_blocks() {
   SoMFInt32& coords = sits->coordIndex;
   SoMFInt32& norms = sits->normalIndex;
   SoMFInt32& mats = sits->materialIndex;
-  int nc_per_idx = 19;		// number of coords per index
-  int nn_per_idx = 10;		// number of norms per index
-  int nm_per_idx = 3;		// number of mats per index
+  int nc_per_idx = 19;          // number of coords per index
+  int nn_per_idx = 10;          // number of norms per index
+  int nm_per_idx = 3;           // number of mats per index
   coords.setNum(n_geom * nc_per_idx);
   norms.setNum(n_geom * nn_per_idx);
   mats.setNum(n_geom * nm_per_idx);
@@ -818,10 +818,10 @@ void UnitGroupView::Render_impl_blocks() {
   int nx = lay->flat_geom.x;
 
   // values of the cubes xy_[0,v]
-  //     01_v   11_v   
-  //   01_0   11_0     
-  //     00_v   10_v    
-  //   00_0   10_0     
+  //     01_v   11_v
+  //   01_0   11_0
+  //     00_v   10_v
+  //   00_0   10_0
 
   // triangle strip order is 0 1 2, 2 1 3, 2 3 4
 
@@ -846,9 +846,9 @@ void UnitGroupView::Render_impl_blocks() {
 
       // back - right     think this:     not this:
       //     1    3          x----x         x----x
-      //   0    2          x | top|       x----x | 
-      //     x    5        | x----x       |frnt| x 
-      //   x    4          x----x         x----x   
+      //   0    2          x | top|       x----x |
+      //     x    5        | x----x       |frnt| x
+      //   x    4          x----x         x----x
 
       coords_dat[cidx++] = (c01_0); // 0
       coords_dat[cidx++] = (c01_v); // 1
@@ -866,10 +866,10 @@ void UnitGroupView::Render_impl_blocks() {
       mats_dat[midx++] = (mat_idx);
 
       // left - front
-      //     1    x 
-      //   0    x   
+      //     1    x
+      //   0    x
       //     3    5
-      //   2    4   
+      //   2    4
 
       coords_dat[cidx++] = (c01_0); // 0
       coords_dat[cidx++] = (c01_v); // 1
@@ -889,9 +889,9 @@ void UnitGroupView::Render_impl_blocks() {
       // triangle strip order is 0 1 2, 2 1 3, 2 3 4
       // top
       //     0    1
-      //   x    x  
+      //   x    x
       //     2    3
-      //   x    x  
+      //   x    x
 
       coords_dat[cidx++] = (c01_v); // 0
       coords_dat[cidx++] = (c11_v); // 1
@@ -949,17 +949,17 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   TwoDCoord pos;
   int v_idx = 0;
   int c_idx = 0;
-  int t_idx = 3;		// base color + font
+  int t_idx = 3;                // base color + font
   // these go in normal order; indexes are backwards
   for(pos.y=0; pos.y<lay->flat_geom.y; pos.y++) {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       nv->GetUnitDisplayVals(this, pos, val, col, sc_val);
       Unit* unit = lay->UnitAtCoord(pos);
       if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
-	col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
+        col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
       }
       float zp = .5f * sc_val / max_z;
-      v_idx+=4;			// skip the _0 cases
+      v_idx+=4;                 // skip the _0 cases
 
       vertex_dat[v_idx++][1] = zp; // 00_v = 1
       vertex_dat[v_idx++][1] = zp; // 10_v = 2
@@ -970,22 +970,22 @@ void UnitGroupView::UpdateUnitValues_blocks() {
       color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
 
       if(nv->unit_text_disp & NetView::UTD_VALUES) {
-	SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
-	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-	SoMFString* mfs = &(txt->string);
-	ValToDispText(val, val_str);
-	switch (nv->unit_text_disp) {
-	case NetView::UTD_VALUES:
-	  mfs->setValue(val_str.chars());
-	  break;
-	case NetView::UTD_NAMES:
-	  break;
-	case NetView::UTD_BOTH:
-	  mfs->set1Value(0, val_str.chars());
-	  break;
-	default: break; // compiler food, won't happen
-	}
-	t_idx++;
+        SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
+        SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
+        SoMFString* mfs = &(txt->string);
+        ValToDispText(val, val_str);
+        switch (nv->unit_text_disp) {
+        case NetView::UTD_VALUES:
+          mfs->setValue(val_str.chars());
+          break;
+        case NetView::UTD_NAMES:
+          break;
+        case NetView::UTD_BOTH:
+          mfs->set1Value(0, val_str.chars());
+          break;
+        default: break; // compiler food, won't happen
+        }
+        t_idx++;
       }
     }
   }
@@ -998,7 +998,7 @@ void UnitGroupView::UpdateUnitValues() {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   if(lay->Iconified() || !lv() || lv()->disp_mode == LayerView::DISP_FRAME) {
-    return;			// don't render anything!
+    return;                     // don't render anything!
   }
   if(nv->hist_save)
     SaveHist();
@@ -1029,9 +1029,9 @@ void UnitGroupView::SaveHist() {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
       for(int midx=0; midx < nv->membs.size; midx++) {
-	void* base;
-	float val = GetUnitDisplayVal_Idx(coord, midx, base);
-	uvd_hist.Set(val, coord.x, coord.y, midx, eff_hist_idx);
+        void* base;
+        float val = GetUnitDisplayVal_Idx(coord, midx, base);
+        uvd_hist.Set(val, coord.x, coord.y, midx, eff_hist_idx);
       }
     }
   }
@@ -1095,7 +1095,7 @@ void UnitGroupView::Render_impl_outnm() {
   SoFont* fnt = (SoFont*)un_txt->getChild(2);
   fnt->size.setValue(ufontsz);
 
-  UpdateUnitValues_outnm();		// hand off to next guy..
+  UpdateUnitValues_outnm();             // hand off to next guy..
 }
 
 void UnitGroupView::UpdateUnitValues_outnm() {
@@ -1151,8 +1151,8 @@ void UnitGroupView::Render_impl_snap_bord() {
 
   int n_geom = lay->flat_geom.Product();
 
-  vertex.setNum(n_geom * 4);	// 4 virtex per
-  coords.setNum(n_geom * 6);	// 6 coords per
+  vertex.setNum(n_geom * 4);    // 4 virtex per
+  coords.setNum(n_geom * 6);    // 6 coords per
   color.setNum(n_geom);
   mats.setNum(n_geom);
 
@@ -1175,7 +1175,7 @@ void UnitGroupView::Render_impl_snap_bord() {
     for(pos.x=0; pos.x<lay->flat_geom.x; pos.x++) { // right to left
       Unit* unit = lay->UnitAtCoord(pos);
       if(unit)
-	lay->UnitDispPos(unit, upos);
+        lay->UnitDispPos(unit, upos);
       float xp = disp_scale * (((float)upos.x + spacing) / nv->max_size.x);
       float yp = -disp_scale * (((float)upos.y + spacing) / nv->max_size.y);
       float xp1 = disp_scale * (((float)upos.x+1 - spacing) / nv->max_size.x);
@@ -1197,7 +1197,7 @@ void UnitGroupView::Render_impl_snap_bord() {
   coords.finishEditing();
   mats.finishEditing();
 
-  UpdateUnitValues_snap_bord();		// hand off to next guy..
+  UpdateUnitValues_snap_bord();         // hand off to next guy..
 }
 
 void UnitGroupView::UpdateUnitValues_snap_bord() {
@@ -1217,7 +1217,7 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   int cur_disp_idx = nv->unit_disp_idx;
 
   MemberDef* md = (MemberDef*)nv->membs.FindName("snap");
-  if(!md) return;		// shouldn't happen
+  if(!md) return;               // shouldn't happen
   nv->unit_disp_idx = nv->membs.FindEl(md);
 
   float trans = nv->view_params.unit_trans;
@@ -1232,8 +1232,8 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
       val = 0.0f;
       Unit* unit = lay->UnitAtCoord(pos);
       if(unit) {
-	void* base;
-	val = GetUnitDisplayVal(pos, base);
+        void* base;
+        val = GetUnitDisplayVal(pos, base);
       }
       nv->GetUnitColor(val, tc, sc_val);
       col.setValue(tc.redf(), tc.greenf(), tc.bluef());
@@ -1258,7 +1258,7 @@ void nvhDataView::Copy_(const nvhDataView& cp) {
 void nvhDataView::setHighlightColor(const T3Color& color) {
   m_hcolor = color;
   DoHighlightColor(true);
-} 
+}
 
 
 ////////////////////////////////////////////////////
@@ -1295,8 +1295,8 @@ void LayerView::BuildAll() {
 
   Reset(); //for when we are invoked after initial construction
 
-  UnitGroupView* ugv = new UnitGroupView;	// always just one guy to run everything there
-  ugv->SetData(lay);		// unitgroupview data is layer!
+  UnitGroupView* ugv = new UnitGroupView;       // always just one guy to run everything there
+  ugv->SetData(lay);            // unitgroupview data is layer!
   ugv->SetLayerView(this);
   children.Add(ugv);
   ugv->BuildAll();
@@ -1341,7 +1341,7 @@ void LayerView::DoHighlightColor(bool apply) {
   T3LayerNode* nd = node_so();
   if (!nd) return;
   NetView* nv = this->nv();
-  
+
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
     mat->diffuseColor.setValue(m_hcolor);
@@ -1354,7 +1354,7 @@ void LayerView::DoHighlightColor(bool apply) {
       mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // aqua
     mat->transparency.setValue(nv->view_params.lay_trans);
   }
-} 
+}
 
 void LayerView::Render_pre() {
   bool show_drag = true;;
@@ -1376,12 +1376,12 @@ void LayerView::Render_impl() {
   if(!lay) return;
   NetView* nv = this->nv();
 
-  TDCoord& pos = lay->pos;	// with layer groups as real things now, use this!
+  TDCoord& pos = lay->pos;      // with layer groups as real things now, use this!
   //  TDCoord pos; lay->GetAbsPos(pos);
   FloatTransform* ft = transform(true);
   ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
-		       (float)pos.z / nv->max_size.z,
-		       (float)-pos.y / nv->max_size.y);
+                       (float)pos.z / nv->max_size.z,
+                       (float)-pos.y / nv->max_size.y);
 
   T3LayerNode* node_so = this->node_so(); // cache
   if(!node_so) return;
@@ -1390,7 +1390,7 @@ void LayerView::Render_impl() {
   }
   else {
     node_so->setGeom(lay->disp_geom.x, lay->disp_geom.y,
-		     nv->max_size.x, nv->max_size.y, nv->max_size.z, lay->disp_scale);
+                     nv->max_size.x, nv->max_size.y, nv->max_size.z, lay->disp_scale);
   }
   node_so->setCaption(data()->GetName().chars());
 
@@ -1431,10 +1431,10 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& trans = dragger->translation.getValue();
   float new_x = trans[0] * nv->max_size.x;
   float new_y = trans[1] * nv->max_size.y;
-  if(new_x < 0.0f) 	new_x -= .5f; // add an offset to effect rounding.
-  else			new_x += .5f;
-  if(new_y < 0.0f) 	new_y -= .5f;
-  else			new_y += .5f;
+  if(new_x < 0.0f)      new_x -= .5f; // add an offset to effect rounding.
+  else                  new_x += .5f;
+  if(new_y < 0.0f)      new_y -= .5f;
+  else                  new_y += .5f;
 
 //   cerr << "lay: " << lay->name << " " << trans[0] << " " << trans[1] << " drg: " <<
 //     drag_sc << " fx: " << fx << " fy: " << fy << " new: " << new_x << " " << new_y << endl;
@@ -1463,8 +1463,8 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
 
   const SbVec3f& trans = dragger->translation.getValue();
   float new_z = trans[0] * nv->max_size.z;
-  if(new_z < 0.0f)	new_z -= .5f;
-  else			new_z += .5f;
+  if(new_z < 0.0f)      new_z -= .5f;
+  else                  new_z += .5f;
 
 //   cerr << "lay: " << lay->name << " z:" << trans[0] << " new_z: " << new_z << endl;
 
@@ -1508,8 +1508,8 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
   viewer->main_xform = nv->main_xform; // first get the network
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
-			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
+  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y,
+                           nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
   float szx = ((float)lay->scaled_disp_geom.x / nv->max_size.x);
   float szy = ((float)lay->scaled_disp_geom.y / nv->max_size.y);
@@ -1549,7 +1549,7 @@ void LayerView::SetHighlightSpec(BaseSpec* spec) {
   if(lay && NetView::UsesSpec(lay, spec)) {
     bool ok;
     iColor hc = spec->GetEditColorInherit(ok);
-    if (ok) { 
+    if (ok) {
       setHighlightColor(T3Color(hc));
     }
   }
@@ -1559,7 +1559,7 @@ void LayerView::SetHighlightSpec(BaseSpec* spec) {
 }
 
 //////////////////////////
-//   PrjnView		//
+//   PrjnView           //
 //////////////////////////
 
 void PrjnView::Initialize() {
@@ -1578,7 +1578,7 @@ void PrjnView::DoHighlightColor(bool apply) {
   float prjn_trans = nv->view_params.prjn_trans;
   if(!prjn->projected)
     prjn_trans = .8f;
-  
+
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
     mat->diffuseColor.setValue(m_hcolor);
@@ -1588,7 +1588,7 @@ void PrjnView::DoHighlightColor(bool apply) {
     mat->transparency.setValue(prjn_trans);
   }
   nd->setArrowColor(SbColor(1.0f, .8f, 0.0f), prjn_trans);
-} 
+}
 
 void PrjnView::Render_pre() {
   NetView* nv = this->nv();
@@ -1610,7 +1610,7 @@ void PrjnView::Render_impl() {
 
   if(lay_fr == NULL) lay_fr = lay_to;
 
-  FloatTDCoord src;		// source and dest coords
+  FloatTDCoord src;             // source and dest coords
   FloatTDCoord dst;
   TDCoord lay_fr_pos; lay_fr->GetAbsPos(lay_fr_pos);
   TDCoord lay_to_pos; lay_to->GetAbsPos(lay_to_pos);
@@ -1664,7 +1664,7 @@ void PrjnView::Render_impl() {
   }
 
   if(dst.y == src.y && dst.x == src.x && dst.z == src.z) {
-    dst.x += lay_wd;		// give it some minimal something
+    dst.x += lay_wd;            // give it some minimal something
   }
 
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
@@ -1690,7 +1690,7 @@ void PrjnView::SetHighlightSpec(BaseSpec* spec) {
   if(prjn && NetView::UsesSpec(prjn, spec)) {
     bool ok;
     iColor hc = spec->GetEditColorInherit(ok);
-    if (ok) { 
+    if (ok) {
       setHighlightColor(T3Color(hc));
     }
   }
@@ -1704,7 +1704,7 @@ void PrjnView::SetHighlightSpec(BaseSpec* spec) {
 
 void LayerGroupView::Initialize() {
   data_base = &TA_Layer_Group;
-  root_laygp = false;		// set by NetView after init, during build
+  root_laygp = false;           // set by NetView after init, during build
 }
 
 void LayerGroupView::Destroy() {
@@ -1804,7 +1804,7 @@ void LayerGroupView::DoHighlightColor(bool apply) {
   T3LayerGroupNode* nd = node_so();
   if (!nd) return;
 //  NetView* nv = this->nv();
-  
+
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
     mat->diffuseColor.setValue(m_hcolor);
@@ -1813,7 +1813,7 @@ void LayerGroupView::DoHighlightColor(bool apply) {
     mat->diffuseColor.setValue(0.8f, 0.5f, 0.8f); // violet
     mat->transparency.setValue(0.3f);
   }
-} 
+}
 
 void LayerGroupView::Render_pre() {
   bool show_drag = true;;
@@ -1825,7 +1825,7 @@ void LayerGroupView::Render_pre() {
   if(!nv->lay_mv) show_drag = false;
 
   if(root_laygp)
-    show_drag = false;		// never for root.
+    show_drag = false;          // never for root.
 
   bool hide_lines = !nv->view_params.show_laygp;
   if(root_laygp) hide_lines = true; // always true
@@ -1844,20 +1844,20 @@ void LayerGroupView::Render_impl() {
   FloatTransform* ft = transform(true);
   if(root_laygp) {
     ft->translate.SetXYZ((float)pos.x / nv->max_size.x,
-			 ((float)pos.z) / nv->max_size.z,
-			 (float)-pos.y / nv->max_size.y);
+                         ((float)pos.z) / nv->max_size.z,
+                         (float)-pos.y / nv->max_size.y);
   }
   else {
     ft->translate.SetXYZ(((float)pos.x) / nv->max_size.x,
-			 ((float)pos.z) / nv->max_size.z,
-			 (float)-pos.y / nv->max_size.y);
+                         ((float)pos.z) / nv->max_size.z,
+                         (float)-pos.y / nv->max_size.y);
   }
 
   T3LayerGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
   node_so->setGeom(lgp->pos.x, lgp->pos.y, lgp->pos.z,
-		   lgp->max_disp_size.x, lgp->max_disp_size.y, lgp->max_disp_size.z,
-		   nv->max_size.x, nv->max_size.y, nv->max_size.z);
+                   lgp->max_disp_size.x, lgp->max_disp_size.y, lgp->max_disp_size.z,
+                   nv->max_size.x, nv->max_size.y, nv->max_size.z);
 
   if(!node_so->hideLines()) {
     node_so->drawStyle()->lineWidth = nv->view_params.laygp_width;
@@ -1901,10 +1901,10 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& trans = dragger->translation.getValue();
   float new_x = trans[0] * nv->max_size.x;
   float new_y = trans[1] * nv->max_size.y;
-  if(new_x < 0.0f) 	new_x -= .5f; // add an offset to effect rounding.
-  else			new_x += .5f;
-  if(new_y < 0.0f) 	new_y -= .5f;
-  else			new_y += .5f;
+  if(new_x < 0.0f)      new_x -= .5f; // add an offset to effect rounding.
+  else                  new_x += .5f;
+  if(new_y < 0.0f)      new_y -= .5f;
+  else                  new_y += .5f;
 
 //   cerr << "lay: " << lgp->name << " " << trans[0] << " " << trans[1] << " drg: " <<
 //     drag_sc << " fx: " << fx << " fy: " << fy << " new: " << new_x << " " << new_y << endl;
@@ -1936,8 +1936,8 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
 
   const SbVec3f& trans = dragger->translation.getValue();
   float new_z = trans[0] * nv->max_size.z;
-  if(new_z < 0.0f)	new_z -= .5f;
-  else			new_z += .5f;
+  if(new_z < 0.0f)      new_z -= .5f;
+  else                  new_z += .5f;
 
 //   cerr << "lay: " << lgp->name << " z:" << trans[0] << " new_z: " << new_z << endl;
 
@@ -1956,7 +1956,7 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
 
 
 ///////////////////////////////////////////////////////////////////////
-//	NetViewObjView
+//      NetViewObjView
 
 void NetViewObjView::Initialize(){
   data_base = &TA_NetViewObj;
@@ -1993,14 +1993,14 @@ void NetViewObjView::Render_pre() {
     if(ob->obj_type == NetViewObj::OBJECT) {
       int acc = access(ob->obj_fname, F_OK);
       if (acc == 0) {
-	SoInput in;
-	if ((access(ob->obj_fname, F_OK) == 0) && in.openFile(ob->obj_fname)) {
-	  SoSeparator* root = SoDB::readAll(&in);
-	  if (root) {
-	    ssep->addChild(root);
-	    goto finish;
-	  }
-	}
+        SoInput in;
+        if ((access(ob->obj_fname, F_OK) == 0) && in.openFile(ob->obj_fname)) {
+          SoSeparator* root = SoDB::readAll(&in);
+          if (root) {
+            ssep->addChild(root);
+            goto finish;
+          }
+        }
       }
       taMisc::Warning("object file:", ob->obj_fname, "not found or unable to be loaded!");
       ob->obj_type = NetViewObj::TEXT;
@@ -2068,7 +2068,7 @@ void T3NetViewObj_DragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nvo->scale *= sc;
 
   SbVec3f axis;
@@ -2095,7 +2095,7 @@ void T3NetViewObj_DragFinishCB(void* userData, SoDragger* dragr) {
 }
 
 //////////////////////////
-//   NetView		//
+//   NetView            //
 //////////////////////////
 
 void NetViewFontSizes::Initialize() {
@@ -2134,10 +2134,10 @@ void NetViewParams::Initialize() {
 
 // Add a new NetView object to the frame for the given Network.
 NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
-  NewNetViewHelper newNetView(fr, net, "network");
+  NewNetViewHelper new_net_view(fr, net, "network");
   // true == Allow only one NetView instances in a frame
   // for a given network.
-  if (!newNetView.isValid(true)) return NULL;
+  if (!new_net_view.isValid(true)) return NULL;
 
   // create NetView
   NetView* nv = new NetView();
@@ -2149,7 +2149,7 @@ NetView* NetView::New(Network* net, T3DataViewFrame*& fr) {
   nv->main_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, .35f);
   nv->BuildAll();
 
-  newNetView.showFrame();
+  new_net_view.showFrame();
   return nv;
 }
 
@@ -2175,10 +2175,10 @@ NetView* Network::FindMakeView(T3DataViewFrame* fr) {
       el->UpdateDisplay();
       fr = el->GetFrame();
       if(fr) {
-	MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
-	if(mwv) {
-	  mwv->SelectT3ViewTabName(fr->name);
-	}
+        MainWindowViewer* mwv = GET_OWNER(fr, MainWindowViewer);
+        if(mwv) {
+          mwv->SelectT3ViewTabName(fr->name);
+        }
       }
       return el;
     }
@@ -2222,7 +2222,7 @@ void Network::PlaceNetText(NetTextLoc net_text_loc, float scale) {
   nv->net_text_xform.scale = scale;
 
   switch(net_text_loc) {
-  case NT_BOTTOM:		// x, z, y from perspective of netview
+  case NT_BOTTOM:               // x, z, y from perspective of netview
     nv->net_text_xform.translate.SetXYZ(0.0f, -0.5f, 0.0f);
     nv->net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.0f);
     nv->net_text_rot = 0.0f;
@@ -2456,14 +2456,14 @@ void NetView::BuildAll() { // populates all T3 guys
   // add layers not in us, move in position
   for(int li = 0; li < nt->layers.leaves; ++li) {
     Layer* ly = nt->layers.Leaf(li);
-    if(!ly) continue;		// can happen, apparently!
+    if(!ly) continue;           // can happen, apparently!
     int i = lay_disp_modes.FindName(ly->name);
     if(i < 0) {
       NameVar dmv;
       dmv.name = ly->name;
-      dmv.value = -1;		// uninit val
+      dmv.value = -1;           // uninit val
       lay_disp_modes.Insert(dmv, li);
-    } 
+    }
     else if(i != li) {
       lay_disp_modes.MoveIdx(i, li);
     }
@@ -2472,7 +2472,7 @@ void NetView::BuildAll() { // populates all T3 guys
   { // delegate everything to the layers group
     LayerGroupView* lv = new LayerGroupView();
     lv->SetData(&nt->layers);
-    lv->root_laygp = true;	// root guy 4 sure!
+    lv->root_laygp = true;      // root guy 4 sure!
     children.Add(lv);
     lv->BuildAll();
   }
@@ -2485,7 +2485,7 @@ void NetView::BuildAll() { // populates all T3 guys
     taLeafItr j;
     FOR_ITR_EL(Projection, prjn, lay->projections., j) {
       if((prjn->from.ptr() == NULL) || prjn->from->lesioned()
-	 || prjn->from->Iconified()) continue;
+         || prjn->from->Iconified()) continue;
       PrjnView* pv = new PrjnView();
       pv->SetData(prjn);
       //nn prjns.Add(pv); // this is automatic from the childadding thing
@@ -2502,7 +2502,7 @@ void NetView::BuildAll() { // populates all T3 guys
   }
 }
 
-void NetView::SetLayDispMode(const String& lay_nm, int disp_md) {	
+void NetView::SetLayDispMode(const String& lay_nm, int disp_md) {
   int i = lay_disp_modes.FindName(lay_nm);
   if(i < 0) return;
   lay_disp_modes.FastEl(i).value = disp_md;
@@ -2527,7 +2527,7 @@ void NetView::ChildAdding(taDataView* child_) {
 void NetView::ChildRemoving(taDataView* child_) {
   T3DataView* child = dynamic_cast<T3DataView*>(child_);
   if(child) {
-    prjns.RemoveEl(child);	// just try it
+    prjns.RemoveEl(child);      // just try it
   }
   inherited::ChildRemoving(child_);
 }
@@ -2558,7 +2558,7 @@ void NetView::Dump_Load_post() {
   inherited::Dump_Load_post();
   if(taMisc::is_undo_loading) return; // none of this.
   // do full rebuild!
-  Reset();			
+  Reset();
   BuildAll();
   Render();
 }
@@ -2569,7 +2569,7 @@ taBase::DumpQueryResult NetView::Dump_QuerySaveMember(MemberDef* md) {
     return DQR_NO_SAVE;
   } else
     return inherited::Dump_QuerySaveMember(md);
-} 
+}
 
 UnitView* NetView::FindUnitView(Unit* unit) {
   UnitView* uv = NULL;
@@ -2584,10 +2584,10 @@ UnitView* NetView::FindUnitView(Unit* unit) {
 }
 
 // this fills a member group with the valid memberdefs from the units and connections
-void NetView::GetMembs() { 
+void NetView::GetMembs() {
   if(!net()) return;
 
-  // try as hard as possible to find a unit to view if nothing selected -- this 
+  // try as hard as possible to find a unit to view if nothing selected -- this
   // minimizes issues with history etc
   if(!unit_src) {
     if(unit_src_path.nonempty()) {
@@ -2598,7 +2598,7 @@ void NetView::GetMembs() {
     if(!unit_src && net()->layers.leaves > 0) {
       Layer* lay = net()->layers.Leaf(net()->layers.leaves-1);
       if(lay->units.leaves > 0)
-	setUnitSrc(NULL, lay->units.Leaf(0));
+        setUnitSrc(NULL, lay->units.Leaf(0));
     }
   }
 
@@ -2607,7 +2607,7 @@ void NetView::GetMembs() {
   TypeDef* prv_td = NULL;
   Layer* lay;
   taLeafItr l_itr;
-  
+
   // first do the unit variables
   FOR_ITR_EL(Layer, lay, net()->layers., l_itr) {
     Unit* u;
@@ -2618,64 +2618,64 @@ void NetView::GetMembs() {
       prv_td = td;
 
       for(int m=0; m<td->members.size; m++) {
-	MemberDef* md = td->members.FastEl(m);
-	if((md->HasOption("NO_VIEW") || md->HasOption("HIDDEN") ||
-	    md->HasOption("READ_ONLY")))
-	  continue;
-	if((md->type->InheritsFrom(&TA_float) || md->type->InheritsFrom(&TA_double))
-	   && (membs.FindName(md->name)==NULL))
-	{
-	  MemberDef* nmd = md->Clone();
-	  membs.Add(nmd);	// index now reflects position in list...
-	  nmd->idx = md->idx;	// so restore it to the orig one
-	}	// check for nongroup owned sub fields (ex. bias)
-	else if(md->type->DerivesFrom(&TA_taBase) && !md->type->DerivesFrom(&TA_taGroup)) {
-	  if(md->type->ptr > 1) continue; // only one level of pointer tolerated
-	  TypeDef* nptd;
-	  if(md->type->ptr > 0) {
-	    taBase** par_ptr = (taBase**)md->GetOff((void*)u);
-	    if(*par_ptr == NULL) continue; // null pointer
-	    nptd = (*par_ptr)->GetTypeDef(); // get actual type of connection
-	  }
-	  else
-	    nptd = md->type;
-	  int k;
-	  for(k=0; k<nptd->members.size; k++) {
-	    MemberDef* smd = nptd->members.FastEl(k);
-	    if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-	      if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-		  smd->HasOption("READ_ONLY")))
-		continue;
-	      String nm = md->name + "." + smd->name;
-	      if(membs.FindName(nm)==NULL) {
-		MemberDef* nmd = smd->Clone();
-		nmd->name = nm;
-		membs.Add(nmd);
-		nmd->idx = smd->idx;
-	      }
-	    }
-	  }
-	}
+        MemberDef* md = td->members.FastEl(m);
+        if((md->HasOption("NO_VIEW") || md->HasOption("HIDDEN") ||
+            md->HasOption("READ_ONLY")))
+          continue;
+        if((md->type->InheritsFrom(&TA_float) || md->type->InheritsFrom(&TA_double))
+           && (membs.FindName(md->name)==NULL))
+        {
+          MemberDef* nmd = md->Clone();
+          membs.Add(nmd);       // index now reflects position in list...
+          nmd->idx = md->idx;   // so restore it to the orig one
+        }       // check for nongroup owned sub fields (ex. bias)
+        else if(md->type->DerivesFrom(&TA_taBase) && !md->type->DerivesFrom(&TA_taGroup)) {
+          if(md->type->ptr > 1) continue; // only one level of pointer tolerated
+          TypeDef* nptd;
+          if(md->type->ptr > 0) {
+            taBase** par_ptr = (taBase**)md->GetOff((void*)u);
+            if(*par_ptr == NULL) continue; // null pointer
+            nptd = (*par_ptr)->GetTypeDef(); // get actual type of connection
+          }
+          else
+            nptd = md->type;
+          int k;
+          for(k=0; k<nptd->members.size; k++) {
+            MemberDef* smd = nptd->members.FastEl(k);
+            if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
+              if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
+                  smd->HasOption("READ_ONLY")))
+                continue;
+              String nm = md->name + "." + smd->name;
+              if(membs.FindName(nm)==NULL) {
+                MemberDef* nmd = smd->Clone();
+                nmd->name = nm;
+                membs.Add(nmd);
+                nmd->idx = smd->idx;
+              }
+            }
+          }
+        }
       }
 
       // then do bias weights
       if(u->bias.size) {
-	TypeDef* td = u->bias.con_type;
-	for(int k=0; k<td->members.size; k++) {
-	  MemberDef* smd = td->members.FastEl(k);
-	  if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-	    if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-		smd->HasOption("READ_ONLY")))
-	      continue;
-	    String nm = "bias." + smd->name;
-	    if(membs.FindName(nm)==NULL) {
-	      MemberDef* nmd = smd->Clone();
-	      nmd->name = nm;
-	      membs.Add(nmd);
-	      nmd->idx = smd->idx;
-	    }
-	  }
-	}
+        TypeDef* td = u->bias.con_type;
+        for(int k=0; k<td->members.size; k++) {
+          MemberDef* smd = td->members.FastEl(k);
+          if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
+            if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
+                smd->HasOption("READ_ONLY")))
+              continue;
+            String nm = "bias." + smd->name;
+            if(membs.FindName(nm)==NULL) {
+              MemberDef* nmd = smd->Clone();
+              nmd->name = nm;
+              membs.Add(nmd);
+              nmd->idx = smd->idx;
+            }
+          }
+        }
       }
     }
   }
@@ -2687,32 +2687,32 @@ void NetView::GetMembs() {
       Projection* prjn;
       taLeafItr p_itr;
       FOR_ITR_EL(Projection, prjn, lay->projections., p_itr) {
-	TypeDef* td = prjn->con_type;
-	if(td == prv_td) continue; // don't re-scan!
-	prv_td = td;
-	int k;
-	for (k=0; k<td->members.size; k++) {
-	  MemberDef* smd = td->members.FastEl(k);
-	  if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-	    if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-		smd->HasOption("READ_ONLY")))
-	      continue;
-	    String nm = "r." + smd->name;
-	    if(membs.FindName(nm)==NULL) {
-	      MemberDef* nmd = smd->Clone();
-	      nmd->name = nm;
-	      membs.Add(nmd);
-	      nmd->idx = smd->idx;
-	    }
-	    nm = "s." + smd->name;
-	    if(membs.FindName(nm)==NULL) {
-	      MemberDef* nmd = smd->Clone();
-	      nmd->name = nm;
-	      membs.Add(nmd);
-	      nmd->idx = smd->idx;
-	    }
-	  }
-	}
+        TypeDef* td = prjn->con_type;
+        if(td == prv_td) continue; // don't re-scan!
+        prv_td = td;
+        int k;
+        for (k=0; k<td->members.size; k++) {
+          MemberDef* smd = td->members.FastEl(k);
+          if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
+            if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
+                smd->HasOption("READ_ONLY")))
+              continue;
+            String nm = "r." + smd->name;
+            if(membs.FindName(nm)==NULL) {
+              MemberDef* nmd = smd->Clone();
+              nmd->name = nm;
+              membs.Add(nmd);
+              nmd->idx = smd->idx;
+            }
+            nm = "s." + smd->name;
+            if(membs.FindName(nm)==NULL) {
+              MemberDef* nmd = smd->Clone();
+              nmd->name = nm;
+              membs.Add(nmd);
+              nmd->idx = smd->idx;
+            }
+          }
+        }
       }
     }
   }
@@ -2720,7 +2720,7 @@ void NetView::GetMembs() {
   // remove any stale items from sel list, but only if we were built
   if (membs.size > 0) {
     String_Array& oul = cur_unit_vals;
-    for (int i=oul.size-1; i>=0; i--) { 
+    for (int i=oul.size-1; i>=0; i--) {
       if (!membs.FindName(oul[i]))
         oul.RemoveIdx(i,1);
     }
@@ -2745,7 +2745,7 @@ void NetView::InitCtrHist(bool force) {
   }
   if(init_idx) {
     ctr_hist_idx.Reset();
-    hist_reset_req = true;	// tell everyone about it
+    hist_reset_req = true;      // tell everyone about it
     hist_idx = 0;
   }
 }
@@ -2757,7 +2757,7 @@ void NetView::GetUnitColor(float val,  iColor& col, float& sc_val) {
 }
 
 void NetView::GetUnitDisplayVals(UnitGroupView* ugrv, TwoDCoord& co, float& val, T3Color& col,
-				 float& sc_val) {
+                                 float& sc_val) {
   sc_val = scale.zero;
   void* base = NULL;
   if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
@@ -2778,8 +2778,8 @@ void NetView::InitDisplay(bool init_panel) {
   GetMaxSize();
   GetMembs();
 
-  hist_reset_req = false;	// this flag is used to sync history index resetting among
-				// all the history elements in unit groups and network
+  hist_reset_req = false;       // this flag is used to sync history index resetting among
+                                // all the history elements in unit groups and network
   InitCtrHist();
 
   if (init_panel) {
@@ -2804,11 +2804,11 @@ void NetView::InitDisplay(bool init_panel) {
     LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
     lv->InitDisplay();
   }
-  if(hist_reset_req) {		// someone reset history somewhere -- sync everyone!
-    InitCtrHist(true);		// force!
+  if(hist_reset_req) {          // someone reset history somewhere -- sync everyone!
+    InitCtrHist(true);          // force!
     if(children.size > 0) {
       LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
-      lv->InitDisplay();	// unit groups will reset in here
+      lv->InitDisplay();        // unit groups will reset in here
     }
   }
   hist_reset_req = false;
@@ -2873,7 +2873,7 @@ void NetView::Render_pre() {
   if(!no_init_on_rerender)
     InitDisplay();
   no_init_on_rerender = false;
-  
+
   bool show_drag = true;;
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
@@ -2893,7 +2893,7 @@ void NetView::Render_pre() {
     node_so()->addChild(ecb);
   }
 
-  if(vw) {			// add hot buttons to viewer
+  if(vw) {                      // add hot buttons to viewer
     MemberDef* md;
     for (int i=0; i < membs.size; i++) {
       md = membs[i];
@@ -2911,8 +2911,8 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   NetView* nv = static_cast<NetView*>(netnd->dataView());
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y, 
-			   nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
+  cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y,
+                           nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
@@ -2925,7 +2925,7 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
 
   SbVec3f axis;
@@ -2958,8 +2958,8 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
   NetView* nv = static_cast<NetView*>(netnd->dataView());
 
   SbRotation cur_rot;
-  cur_rot.setValue(SbVec3f(nv->net_text_xform.rotate.x, nv->net_text_xform.rotate.y, 
-			   nv->net_text_xform.rotate.z), nv->net_text_xform.rotate.rot);
+  cur_rot.setValue(SbVec3f(nv->net_text_xform.rotate.x, nv->net_text_xform.rotate.y,
+                           nv->net_text_xform.rotate.z), nv->net_text_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
 //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
@@ -2972,7 +2972,7 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->net_text_xform.scale *= sc;
 
   SbVec3f axis;
@@ -3012,10 +3012,10 @@ void NetView::Render_impl() {
     if(unit_disp_md) {
       int but_no = vw->dyn_buttons.FindName(unit_disp_md->name);
       if(but_no >= 0) {
-	vw->setDynButtonChecked(but_no, true, true); // mutex
+        vw->setDynButtonChecked(but_no, true, true); // mutex
       }
       else {
-	vw->setDynButtonChecked(0, false, true); // mutex -- turn all off
+        vw->setDynButtonChecked(0, false, true); // mutex -- turn all off
       }
     }
   }
@@ -3052,7 +3052,7 @@ void NetView::Render_impl() {
     // this does all the heavy lifting: projecting into unit wt_prjn
     // if wt_line_thr < 0 then zero intermediates
     net()->ProjectUnitWeights(unit_src, (int)wt_prjn_k_un, (int)wt_prjn_k_gp,
-	      wt_line_swt, (wt_prjn_k_un > 0 && wt_line_thr < 0.0f));
+              wt_line_swt, (wt_prjn_k_un > 0 && wt_line_thr < 0.0f));
   }
 
   Render_wt_lines();
@@ -3064,7 +3064,7 @@ void NetView::Render_impl() {
 void NetView::Render_net_text() {
   T3NetNode* node_so = this->node_so(); //cache
   SoSeparator* net_txt = node_so->netText();
-  if(!net_txt) return;		// screwup
+  if(!net_txt) return;          // screwup
 
   TypeDef* td = net()->GetTypeDef();
   int per_row = 2;
@@ -3079,8 +3079,8 @@ void NetView::Render_net_text() {
     chld_idx++;
     if(md->type->InheritsFrom(&TA_taString) || md->type->InheritsFormal(&TA_enum)) {
       if(cur_col > 0) {
-	cur_row++;
-	cur_col=0;
+        cur_row++;
+        cur_col=0;
       }
       cur_row++;
       cur_col=0;
@@ -3088,17 +3088,17 @@ void NetView::Render_net_text() {
     else {
       cur_col++;
       if(cur_col >= per_row) {
-	cur_col = 0;
-	cur_row++;
+        cur_col = 0;
+        cur_row++;
       }
     }
   }
   int n_rows = cur_row;
 //  int n_texts = chld_idx;
 
-  int txt_st_off = 3 + 1;	// 3 we add below + 1 transform
+  int txt_st_off = 3 + 1;       // 3 we add below + 1 transform
   if(node_so->netTextDrag())
-    txt_st_off+=2;		// dragger + extra xform
+    txt_st_off+=2;              // dragger + extra xform
 
   bool build_text = false;
 
@@ -3144,11 +3144,11 @@ void NetView::Render_net_text() {
       tsep->addChild(tr);
       bool cur_str = false;
       if((md->type->InheritsFrom(&TA_taString) || md->type->InheritsFormal(&TA_enum))) {
-	cur_str = true;
-	if(cur_col > 0) { // go to next
-	  cur_row++;
-	  cur_col=0;
-	}
+        cur_str = true;
+        if(cur_col > 0) { // go to next
+          cur_row++;
+          cur_col=0;
+        }
       }
       float xv = 0.05f + (float)cur_col / (float)(per_row);
       float yv = ((float)(cur_row+1.0f) / (float)(n_rows + 2.0f));
@@ -3158,15 +3158,15 @@ void NetView::Render_net_text() {
       txt->justification = SoAsciiText::LEFT;
       tsep->addChild(txt);
       if(cur_str) {
-	cur_row++;
-	cur_col=0;
+        cur_row++;
+        cur_col=0;
       }
       else {
-	cur_col++;
-	if(cur_col >= per_row) {
-	  cur_col = 0;
-	  cur_row++;
-	}
+        cur_col++;
+        if(cur_col >= per_row) {
+          cur_col = 0;
+          cur_row++;
+        }
       }
     }
     SoSeparator* tsep = (SoSeparator*)net_txt->getChild(chld_idx + txt_st_off);
@@ -3177,7 +3177,7 @@ void NetView::Render_net_text() {
       int cidx = (ctr_hist_idx.length - hist_idx);
       int midx = ctr_hist_idx.CircIdx(cidx);
       if(ctr_hist.InRange(chld_idx, midx)) {
-	val = ctr_hist.SafeEl(chld_idx, midx);
+        val = ctr_hist.SafeEl(chld_idx, midx);
       }
     }
     el += val;
@@ -3211,7 +3211,7 @@ void NetView::Render_wt_lines() {
     return;
   }
   TDCoord src_lay_pos; src_lay->GetAbsPos(src_lay_pos);
-  
+
   drw->style = SoDrawStyleElement::LINES;
   drw->lineWidth = MAX(wt_line_width, 0.0f);
   vtx_prop->materialBinding.setValue(SoMaterialBinding::PER_PART_INDEXED); // part = line segment = same as FACE but likely to be faster to compute line segs?
@@ -3234,8 +3234,8 @@ void NetView::Render_wt_lines() {
       n_prjns++;
       int n_con = 0;
       for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
-	float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
-	if(wt >= wt_line_thr) n_con++;
+        float wt = (swt ? ((SendCons*)cg)->Cn(i)->wt : ((RecvCons*)cg)->Cn(i)->wt);
+        if(wt >= wt_line_thr) n_con++;
       }
 
       n_vtx += 1 + n_con;   // one for recv + senders
@@ -3275,7 +3275,7 @@ void NetView::Render_wt_lines() {
 
   // note: only want layer_rel for ru_pos
   TwoDCoord ru_pos; unit_src->LayerDispPos(ru_pos);
-  FloatTDCoord src;		// source and dest coords
+  FloatTDCoord src;             // source and dest coords
   FloatTDCoord dst;
 
   float max_xy = MAX(max_size.x, max_size.y);
@@ -3295,7 +3295,7 @@ void NetView::Render_wt_lines() {
     Layer* lay_to = (swt ? prjn->from : prjn->layer);
     TDCoord lay_fr_pos; lay_fr->GetAbsPos(lay_fr_pos);
     TDCoord lay_to_pos; lay_to->GetAbsPos(lay_to_pos);
-    
+
     // y = network z coords -- same for all cases
     src.y = ((float)lay_to_pos.z) / max_size.z;
     dst.y = ((float)lay_fr_pos.z) / max_size.z;
@@ -3322,7 +3322,7 @@ void NetView::Render_wt_lines() {
       dst.z = -((float)lay_fr_pos.y + (float)su_pos.y + .5f) / max_size.y;
 
       coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
-      mats_dat[midx++] = c_idx;	// one per
+      mats_dat[midx++] = c_idx; // one per
 
       vertex_dat[v_idx++].setValue(dst.x, dst.y, dst.z);
 
@@ -3336,7 +3336,7 @@ void NetView::Render_wt_lines() {
 
   if((bool)wt_prjn_lay) {
     TDCoord wt_prjn_lay_pos; wt_prjn_lay->GetAbsPos(wt_prjn_lay_pos);
-    
+
     // y = network z coords -- same for all cases
     src.y = ((float)src_lay_pos.z) / max_size.z;
     dst.y = ((float)wt_prjn_lay_pos.z) / max_size.z;
@@ -3363,7 +3363,7 @@ void NetView::Render_wt_lines() {
       dst.z = -((float)wt_prjn_lay_pos.y + (float)su_pos.y + .5f) / max_size.y;
 
       coords_dat[cidx++] = ru_idx; coords_dat[cidx++] = v_idx; coords_dat[cidx++] = -1;
-      mats_dat[midx++] = c_idx;	// one per
+      mats_dat[midx++] = c_idx; // one per
 
       vertex_dat[v_idx++].setValue(dst.x, dst.y, dst.z);
 
@@ -3424,7 +3424,7 @@ void NetView::SetScaleDefault() {
 
 void NetView::SetColorSpec(ColorScaleSpec* color_spec) {
   scale.SetColorSpec(color_spec);
-  UpdateDisplay(true);		// true causes button to remain pressed..
+  UpdateDisplay(true);          // true causes button to remain pressed..
 }
 
 void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
@@ -3442,7 +3442,7 @@ void NetView::setUnitSrc(UnitView* uv, Unit* unit) {
       uv->picked = true;
     unit_src_path = unit_src->GetPath(NULL, net());
   }
-  hist_idx = 0;			// reset index to current time for new unit selection
+  hist_idx = 0;                 // reset index to current time for new unit selection
 }
 
 void NetView::setUnitDisp(int value) {
@@ -3482,7 +3482,7 @@ void NetView::setUnitDispMd(MemberDef* md) {
 void NetView::UpdateViewerModeForMd(MemberDef* md) {
   T3ExaminerViewer* vw = GetViewer();
   if(vw) {
-    no_init_on_rerender = true;	// prevent loss of history..
+    no_init_on_rerender = true; // prevent loss of history..
     if(md->name.startsWith("r.") || md->name.startsWith("s.")) {
       vw->setInteractionModeOn(true, true); // select! -- true = re-render
     }
@@ -3535,7 +3535,7 @@ void NetView::UpdateAutoScale() {
     lv->UpdateAutoScale(updated);
   }
   if (updated) { //note: could really only not be updated if there were no items
-    scale.SymRange();		// keep it symmetric
+    scale.SymRange();           // keep it symmetric
     if (unit_sr)
       unit_sr->SetFromScale(scale); // update values
     if (nvp) {
@@ -3610,7 +3610,7 @@ void NetView::viewWin_NotifySignal(ISelectableHost* src, int op) {
 
 
 //////////////////////////
-//   NetViewPanel 	//
+//   NetViewPanel       //
 //////////////////////////
 
 NetViewPanel::NetViewPanel(NetView* dv_)
@@ -3624,7 +3624,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   T3ExaminerViewer* vw = dv_->GetViewer();
   if(vw)
     connect(vw, SIGNAL(dynbuttonActivated(int)), this, SLOT(dynbuttonActivated(int)) );
-  
+
   QWidget* widg = new QWidget();
   layTopCtrls = new QVBoxLayout(widg); //layWidg->addLayout(layTopCtrls);
   layTopCtrls->setSpacing(2);
@@ -3665,7 +3665,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   lblUnitText->setToolTip("What text to display for each unit (values, names)");
   layDispCheck->addWidget(lblUnitText);
   cmbUnitText = dl.Add(new taiComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
-				this, NULL, widg, taiData::flgAutoApply));
+                                this, NULL, widg, taiData::flgAutoApply));
   layDispCheck->addWidget(cmbUnitText->GetRep());
   layDispCheck->addSpacing(taiM->hsep_c);
 
@@ -3677,7 +3677,7 @@ NetViewPanel::NetViewPanel(NetView* dv_)
     this, NULL, widg, taiData::flgAutoApply));
   layDispCheck->addWidget(cmbDispMode->GetRep());
   layDispCheck->addSpacing(taiM->hsep_c);
-  
+
   lblPrjnDisp = taiM->NewLabel("Prjn\nDisp", widg, font_spec);
   lblPrjnDisp->setToolTip("How to display projections between layers:\n\
 L_R_F: Left = sender, Right = receiver, all arrows at the Front of the layer\n\
@@ -3685,10 +3685,10 @@ L_R_B: Left = sender, Right = receiver, all arrows at the Back of the layer\n\
 B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layDispCheck->addWidget(lblPrjnDisp);
   cmbPrjnDisp = dl.Add(new taiComboBox(true, TA_NetViewParams.sub_types.FindName("PrjnDisp"),
-				this, NULL, widg, taiData::flgAutoApply));
+                                this, NULL, widg, taiData::flgAutoApply));
   layDispCheck->addWidget(cmbPrjnDisp->GetRep());
   layDispCheck->addStretch();
-  
+
   ////////////////////////////////////////////////////////////////////////////
   layFontsEtc = new QHBoxLayout();  layViewParams->addLayout(layFontsEtc);
 
@@ -3754,7 +3754,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layDisplayValues->setMargin(0);
 
   layColorScaleCtrls = new QHBoxLayout();  layDisplayValues->addLayout(layColorScaleCtrls);
-  
+
   chkSnapBord = new QCheckBox("Snap\nBord", widg);
   chkSnapBord->setToolTip("Whether to display unit snapshot value snap as a border around units");
   connect(chkSnapBord, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
@@ -3762,7 +3762,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblSnapBordWdth = taiM->NewLabel("Bord\nWdth", widg, font_spec);
-  lblSnapBordWdth->setToolTip("Width of snap border lines"); 
+  lblSnapBordWdth->setToolTip("Width of snap border lines");
   layColorScaleCtrls->addWidget(lblSnapBordWdth);
   fldSnapBordWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldSnapBordWdth->GetRep());
@@ -3770,7 +3770,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblUnitSpacing = taiM->NewLabel("Unit\nSpace", widg, font_spec);
-  lblUnitSpacing->setToolTip("Spacing between units, as a proportion of the total width of the unit box"); 
+  lblUnitSpacing->setToolTip("Spacing between units, as a proportion of the total width of the unit box");
   layColorScaleCtrls->addWidget(lblUnitSpacing);
   fldUnitSpacing = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldUnitSpacing->GetRep());
@@ -3790,7 +3790,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblWtLineWdth = taiM->NewLabel("Wdth", widg, font_spec);
-  lblWtLineWdth->setToolTip("Width of weight lines -- 0 = thinnest lines (-1 = no lines, redundant with turning wt_lines off)"); 
+  lblWtLineWdth->setToolTip("Width of weight lines -- 0 = thinnest lines (-1 = no lines, redundant with turning wt_lines off)");
   layColorScaleCtrls->addWidget(lblWtLineWdth);
   fldWtLineWdth = dl.Add(new taiField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineWdth->GetRep());
@@ -3844,13 +3844,13 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   butScaleDefault->setMaximumWidth(taiM->maxButtonWidth() / 2);
   layColorBar->addWidget(butScaleDefault);
   connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
-  
+
   cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, widg);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
 //  cbar->setMaximumWidth(30);
 //   layColorSCaleCtrls->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
   layColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
-  
+
   butSetColor = new QPushButton("Colors", widg);
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   butSetColor->setMaximumWidth(taiM->maxButtonWidth() / 2);
@@ -3903,7 +3903,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   connect(actFwd_All, SIGNAL(triggered()), this, SLOT(hist_fwd_all()) );
 
   histTB->addSeparator();
- 
+
   QLabel* lblbk = taiM->NewLabel("Hist, Pos:", histTB, font_spec);
   lblbk->setToolTip("number of stored display states in the history buffer right now, and current position relative to the last update (pos numbers = further back in time)");
   histTB->addWidget(lblbk);
@@ -3937,7 +3937,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 //   splt-> addWidget(widg);
 
   setCentralWidget(widg);
-  
+
   tw = new QTabWidget(this);
   ////////////////////////////////////////////////////////////////////////////
   lvDisplayValues = new QTreeWidget();
@@ -3950,10 +3950,10 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   lvDisplayValues->setSelectionMode(QAbstractItemView::SingleSelection);
   //layDisplayValues->addWidget(lvDisplayValues, 1);
   connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
-  
+
   ////////////////////////////////////////////////////////////////////////////
   // Spec tree
-  
+
   tvSpecs = new iTreeView(NULL, iTreeView::TV_AUTO_EXPAND);
   tw->addTab(tvSpecs, "Spec Explorer");
   tvSpecs->setDefaultExpandLevels(6); // shouldn't generally be more than this
@@ -3976,7 +3976,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
     if (specs_) {
       taiDataLink* dl = (taiDataLink*)specs_->GetDataLink();
       if (dl) {
-	dl->CreateTreeDataNode(md, tvSpecs, NULL, "specs");
+        dl->CreateTreeDataNode(md, tvSpecs, NULL, "specs");
       }
     }
   }
@@ -3988,27 +3988,27 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
 //   connect(tvSpecs, SIGNAL(ItemSelected(iTreeViewItem*)),
 //     this, SLOT(tvSpecs_ItemSelected(iTreeViewItem*)) );
   connect(tvSpecs, SIGNAL(CustomExpandFilter(iTreeViewItem*, int, bool&)),
-    this, SLOT(tvSpecs_CustomExpandFilter(iTreeViewItem*, int, bool&)) ); 
-  
+    this, SLOT(tvSpecs_CustomExpandFilter(iTreeViewItem*, int, bool&)) );
+
 //   layOuter->setStretchFactor(scr, 0); // so it only uses exact spacing
   // so doesn't have tiny scrollable annoying area:
-  // (the tradeoff is that if you squish the whole thing, eventually you can't 
+  // (the tradeoff is that if you squish the whole thing, eventually you can't
   // get at all the properties)
 //   scr->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   layTopCtrls->addWidget(tw);
-  
+
 //   layOuter->addWidget(tw, 2);
 //   splt->addWidget(tw);
-  
+
   ////////////////////////////////////////////////////////////////////////////
   // Command Buttons
   widCmdButtons = new QWidget(widg);
   iFlowLayout* fl = new iFlowLayout(widCmdButtons);
 //  layTopCtrls->addWidget(widCmdButtons);
   layOuter->addWidget(widCmdButtons);
-  
-  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
+
+  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons);
   meth_but_mgr->Constr(nv()->net());
 
   MakeButtons(layOuter);
@@ -4035,7 +4035,7 @@ void NetViewPanel::UpdatePanel_impl() {
     req_full_render = false;
     nv->Render();
   }
-  
+
   chkDisplay->setChecked(nv->display);
   chkLayMove->setChecked(nv->lay_mv);
   chkNetText->setChecked(nv->net_text);
@@ -4097,7 +4097,7 @@ void NetViewPanel::GetValue_impl() {
   inherited::GetValue_impl();
   NetView* nv = this->nv(); // cache
   if (!nv) return;
-  req_full_render = true;	// everything requires a re-render
+  req_full_render = true;       // everything requires a re-render
   req_full_build = false;
 
   nv->display = chkDisplay->isChecked();
@@ -4105,7 +4105,7 @@ void NetViewPanel::GetValue_impl() {
   nv->net_text = chkNetText->isChecked();
   nv->net_text_rot = (float)fldTextRot->GetValue();
 
-  int i; 
+  int i;
   cmbUnitText->GetEnumValue(i);
   nv->unit_text_disp = (NetView::UnitTextDisplay)i;
 
@@ -4113,10 +4113,10 @@ void NetViewPanel::GetValue_impl() {
   cmbDispMode->GetEnumValue(i);
   req_full_build = req_full_build || (nv->unit_disp_mode != i);
   nv->unit_disp_mode = (NetView::UnitDisplayMode)i;
-  
+
   cmbPrjnDisp->GetEnumValue(i);
   nv->view_params.prjn_disp = (NetViewParams::PrjnDisp)i;
-  
+
   nv->view_params.prjn_width = (float)fldPrjnWdth->GetValue();
 
   nv->view_params.unit_trans = (float)fldUnitTrans->GetValue();
@@ -4263,7 +4263,7 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   NetView* nv_;
   if (!(nv_ = nv())) return;
   // redo the list each time, to guard against stale values
-  nv_->cur_unit_vals.Reset(); 
+  nv_->cur_unit_vals.Reset();
   QList<QTreeWidgetItem*> items(lvDisplayValues->selectedItems());
   QTreeWidgetItem* item = NULL;
   for (int j = 0; j < items.size(); ++j) {
@@ -4272,7 +4272,7 @@ void NetViewPanel::lvDisplayValues_selectionChanged() {
   }
   MemberDef* md = (MemberDef*)nv_->membs.FindName(nv_->cur_unit_vals.SafeEl(0));
   if (md) {
-    nv_->setUnitDispMd(md); 
+    nv_->setUnitDispMd(md);
     nv_->UpdateViewerModeForMd(md);
   }
   ColorScaleFromData();
@@ -4289,7 +4289,7 @@ void NetViewPanel::setHighlightSpec(BaseSpec* spec, bool force) {
 }
 
 void NetViewPanel::tvSpecs_CustomExpandFilter(iTreeViewItem* item,
-  int level, bool& expand) 
+  int level, bool& expand)
 {
   if (level < 1) return; // always expand root level
   // by default, we only expand specs themselves, not the args, objs, etc.
@@ -4354,15 +4354,15 @@ void NetViewPanel::dynbuttonActivated(int but_no) {
   taiAction* dyb = vw->getDynButton(but_no);
   if(!dyb) return;
   String nm = dyb->text();
-  nv_->cur_unit_vals.Reset(); 
+  nv_->cur_unit_vals.Reset();
   nv_->cur_unit_vals.Add(nm);
   MemberDef* md = (MemberDef*)nv_->membs.FindName(nm);
   if(md) {
-    nv_->setUnitDispMd(md); 
+    nv_->setUnitDispMd(md);
     nv_->UpdateViewerModeForMd(md);
     vw->setDynButtonChecked(but_no, true, true); // mutex
   }
   ColorScaleFromData();
 //   nv_->InitDisplay(false);
-  nv_->UpdateDisplay(true);	// update panel
+  nv_->UpdateDisplay(true);     // update panel
 }

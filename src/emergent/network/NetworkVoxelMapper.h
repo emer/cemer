@@ -1,7 +1,7 @@
 // Copyright, 1995-2011, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
-// This file is part of The Emergent Toolkit
+// This file is part of Emergent
 //
 //   Emergent is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -30,19 +30,19 @@ class NetworkVoxelMapper
 {
 public:
   NetworkVoxelMapper(Network *network);
-  void assignVoxels();
+  void AssignVoxels();
 
 private:
-  void createUnitMap(Network *network);
-  QList<TDCoord> getVoxelsInArea(const QString &brainArea);
-  void assignVoxelsInArea(const QString &brainArea, const QList<TDCoord> &voxels);
-  double getVoxelSize(unsigned numUnits, unsigned numVoxels);
-  unsigned getVoxelDivisions(unsigned numUnits, unsigned numVoxels);
-  QList<unsigned> getSubvoxelIndexes(unsigned numUnits, unsigned numSubvoxels);
-  FloatTDCoord getCoord(unsigned subvoxelIdx, const QList<TDCoord> &voxels, unsigned voxelDivisions);
+  void CreateUnitMap(Network *network);
+  QList<TDCoord> GetVoxelsInArea(const QString &brain_area);
+  void AssignVoxelsInArea(const QString &brain_area, const QList<TDCoord> &voxels);
+  double GetVoxelSize(unsigned num_units, unsigned num_voxels);
+  unsigned GetVoxelDivisions(unsigned num_units, unsigned num_voxels);
+  QList<unsigned> GetSubvoxelIndexes(unsigned num_units, unsigned num_subvoxels);
+  FloatTDCoord GetCoord(unsigned subvoxel_idx, const QList<TDCoord> &voxels, unsigned voxel_divisions);
 
-  QMultiHash<QString, Unit *> unitMap_;
-  QString atlasName_;
+  QMultiHash<QString, Unit *> unit_map;
+  QString atlas_name;
 };
 
 #endif // NETWORK_VOXEL_MAPPER_H

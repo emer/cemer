@@ -1,7 +1,7 @@
 // Copyright, 1995-2011, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
-// This file is part of The Emergent Toolkit
+// This file is part of Emergent
 //
 //   Emergent is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License as published by
@@ -21,27 +21,27 @@
 
 namespace { // anonymous
   double
-  cubeRoot(double val)
+  CubeRoot(double val)
   {
     return std::pow(val, 1.0/3.0);
   }
 }
 
 NetworkVoxelMapper::NetworkVoxelMapper(Network *network)
-  : unitMap_()
-  , atlasName_(network->atlas_name.toQString())
+  : unit_map()
+  , atlas_name(network->atlas_name.toQString())
 {
   // The network pointer is not stored, so create a map of unit pointers.
-  createUnitMap(network);
+  CreateUnitMap(network);
 }
 
 void
-NetworkVoxelMapper::createUnitMap(Network *network)
+NetworkVoxelMapper::CreateUnitMap(Network *network)
 {
   // Walk network layers and map unit pointers to brain areas.
-  for (int layIdx = 0; layIdx < network->layers.leaves; ++layIdx)
+  for (int lay_idx = 0; lay_idx < network->layers.leaves; ++lay_idx)
   {
-    if (Layer *layer = network->layers.Leaf(layIdx))
+    if (Layer *layer = network->layers.Leaf(lay_idx))
     {
       // TBD: check if the layer is lesioned?  Or just assign
       // coordinates to any layer that has a brain area associated?
@@ -60,22 +60,22 @@ NetworkVoxelMapper::createUnitMap(Network *network)
 
       // Get the number of units in this layer.
       Layer::AccessMode mode = Layer::ACC_LAY;
-      int numUnitsInLayer = layer->UnitAccess_NUnits(mode);
+      int num_units_in_layer = layer->UnitAccess_NUnits(mode);
 
       // Iterate through units.
-      for (int unitIdx = 0; unitIdx < numUnitsInLayer; ++unitIdx)
+      for (int unit_idx = 0; unit_idx < num_units_in_layer; ++unit_idx)
       {
-        Unit *unit = layer->UnitAccess(mode, unitIdx, 0);
-        unitMap_.insert(layer->brain_area.toQString(), unit);
+        Unit *unit = layer->UnitAccess(mode, unit_idx, 0);
+        unit_map.insert(layer->brain_area.toQString(), unit);
       }
     }
   }
 }
 
 void
-NetworkVoxelMapper::assignVoxels()
+NetworkVoxelMapper::AssignVoxels()
 {
-  if (atlasName_.isEmpty())
+  if (atlas_name.isEmpty())
   {
     taMisc::Warning("No atlas_name specified in network;",
       "cannot map units to voxel coordinates.");
@@ -83,20 +83,20 @@ NetworkVoxelMapper::assignVoxels()
   }
 
   // Iterate through brain areas.
-  QList<QString> brainAreas = unitMap_.uniqueKeys();
-  foreach(const QString &brainArea, brainAreas)
+  QList<QString> brain_areas = unit_map.uniqueKeys();
+  foreach(const QString &brain_area, brain_areas)
   {
     // Get the collection of voxel coordinates associated with that
     // brain area.
-    QList<TDCoord> voxels = getVoxelsInArea(brainArea);
+    QList<TDCoord> voxels = GetVoxelsInArea(brain_area);
 
     // Assign voxel coordinates and sizes to all units.
-    assignVoxelsInArea(brainArea, voxels);
+    AssignVoxelsInArea(brain_area, voxels);
   }
 }
 
 QList<TDCoord>
-NetworkVoxelMapper::getVoxelsInArea(const QString &brainArea)
+NetworkVoxelMapper::GetVoxelsInArea(const QString &brain_area)
 {
   QList<TDCoord> voxels;
   // TBD: atlas-specific code to get the collection of voxels
@@ -105,25 +105,25 @@ NetworkVoxelMapper::getVoxelsInArea(const QString &brainArea)
 }
 
 void
-NetworkVoxelMapper::assignVoxelsInArea(const QString &brainArea, const QList<TDCoord> &voxels)
+NetworkVoxelMapper::AssignVoxelsInArea(const QString &brain_area, const QList<TDCoord> &voxels)
 {
   // Get the list of units that need voxel assignments for this brain area.
-  QList<Unit *> units = unitMap_.values(brainArea);
+  QList<Unit *> units = unit_map.values(brain_area);
 
   // Each unit's voxel coordinate and size will be based on the number of
   // units vs. voxels per brain area.
-  unsigned numUnits = unitMap_.count(brainArea);
-  unsigned numVoxels = voxels.count();
+  unsigned num_units = unit_map.count(brain_area);
+  unsigned num_voxels = voxels.count();
 
   // Check if any voxels were found for this brain area.
-  if (numVoxels == 0)
+  if (num_voxels == 0)
   {
-    if (!brainArea.isEmpty())
+    if (!brain_area.isEmpty())
     {
-      // Already warned about empty brain_area fields in createUnitMap().
+      // Already warned about empty brain_area fields in CreateUnitMap().
       // This warning is to catch typos.
       taMisc::Warning("No voxels were found for brain area",
-        brainArea.toLatin1(), "in atlas", atlasName_.toLatin1());
+        brain_area.toLatin1(), "in atlas", atlas_name.toLatin1());
     }
 
     // Not much can be done other than assigning each unit to render at 0.0 size.
@@ -136,55 +136,55 @@ NetworkVoxelMapper::assignVoxelsInArea(const QString &brainArea, const QList<TDC
   }
 
   // Get the size to render each unit in the brain view.
-  double voxelSize = getVoxelSize(numUnits, numVoxels);
+  double voxel_size = GetVoxelSize(num_units, num_voxels);
 
   // Get the number of subdivisions each voxel needs along each dimension
   // in order to accomodate the number of units.  This isn't necessarily
-  // related to voxelSize.
-  unsigned voxelDivisions = getVoxelDivisions(numUnits, numVoxels);
+  // related to voxel_size.
+  unsigned voxel_divisions = GetVoxelDivisions(num_units, num_voxels);
 
   // Calculate the total number of subvoxels after division, and get a list
   // of indices for which subvoxels will be assigned to units.
-  unsigned numSubvoxels =
-    numVoxels * voxelDivisions * voxelDivisions * voxelDivisions;
-  QList<unsigned> subvoxelIdxs = getSubvoxelIndexes(numUnits, numSubvoxels);
+  unsigned num_subvoxels =
+    num_voxels * voxel_divisions * voxel_divisions * voxel_divisions;
+  QList<unsigned> subvoxel_idxs = GetSubvoxelIndexes(num_units, num_subvoxels);
 
   // Assign coordinates to each unit.
-  assert(subvoxelIdxs.size() == units.size());
+  assert(subvoxel_idxs.size() == units.size());
   unsigned idx = 0;
   foreach(Unit *unit, units)
   {
-    unsigned subvoxelIdx = subvoxelIdxs[idx++];
-    unit->voxel = getCoord(subvoxelIdx, voxels, voxelDivisions);
-    unit->voxel_size = voxelSize;
+    unsigned subvoxel_idx = subvoxel_idxs[idx++];
+    unit->voxel = GetCoord(subvoxel_idx, voxels, voxel_divisions);
+    unit->voxel_size = voxel_size;
   }
 }
 
 // Determine the size in mm per edge of the (sub)voxel cube.
 double
-NetworkVoxelMapper::getVoxelSize(unsigned numUnits, unsigned numVoxels)
+NetworkVoxelMapper::GetVoxelSize(unsigned num_units, unsigned num_voxels)
 {
   // As long as there are at least as many voxels as units for a brain area,
   // each unit will get rendered as a full-size voxel.
-  if (numVoxels >= numUnits)
+  if (num_voxels >= num_units)
   {
     return 1.0;
   }
 
   // Otherwise, if fewer voxels exist than units, then each unit
   // should be rendered in a scaled-down manner.
-  double ratio = static_cast<double>(numVoxels) / numUnits;
+  double ratio = static_cast<double>(num_voxels) / num_units;
 
   // Take the cube root to get the voxel edge-length.
-  return cubeRoot(ratio);
+  return CubeRoot(ratio);
 }
 
 unsigned
-NetworkVoxelMapper::getVoxelDivisions(unsigned numUnits, unsigned numVoxels)
+NetworkVoxelMapper::GetVoxelDivisions(unsigned num_units, unsigned num_voxels)
 {
   // If there are at least as many voxels as units, then there is no need
   // to divide voxels up.
-  if (numVoxels >= numUnits)
+  if (num_voxels >= num_units)
   {
     return 1;
   }
@@ -192,63 +192,63 @@ NetworkVoxelMapper::getVoxelDivisions(unsigned numUnits, unsigned numVoxels)
   // Otherwise, divide a voxel along each dimension into sub-voxels
   // (for example, into 8, 27, or 64 cubes).  This may result in many
   // more sub-voxels than units.
-  unsigned voxelDivisions = static_cast<unsigned>(
-    cubeRoot(static_cast<double>(numUnits) / numVoxels));
+  unsigned voxel_divisions = static_cast<unsigned>(
+    CubeRoot(static_cast<double>(num_units) / num_voxels));
 
   // Account for off-by-one type errors due to rounding in
   // floating point math.
-  while (voxelDivisions * voxelDivisions * voxelDivisions * numVoxels < numUnits)
+  while (voxel_divisions * voxel_divisions * voxel_divisions * num_voxels < num_units)
   {
-    ++voxelDivisions;
+    ++voxel_divisions;
   }
 
-  return voxelDivisions;
+  return voxel_divisions;
 }
 
 QList<unsigned>
-NetworkVoxelMapper::getSubvoxelIndexes(unsigned numUnits, unsigned numSubvoxels)
+NetworkVoxelMapper::GetSubvoxelIndexes(unsigned num_units, unsigned num_subvoxels)
 {
-  QList<unsigned> subvoxelIdxs;
+  QList<unsigned> subvoxel_idxs;
 
   // Use Bresenham line algo to determine which subvoxels to use.
-  assert(numSubvoxels >= numUnits);
-  int dx = 2 * numSubvoxels;
-  int dy = 2 * numUnits;
-  int D = dy - numSubvoxels;
+  assert(num_subvoxels >= num_units);
+  int dx = 2 * num_subvoxels;
+  int dy = 2 * num_units;
+  int D = dy - num_subvoxels;
 
-  for (unsigned idx = 0; idx < numSubvoxels; ++idx)
+  for (unsigned idx = 0; idx < num_subvoxels; ++idx)
   {
     if (D > 0)
     {
-      subvoxelIdxs << idx;
+      subvoxel_idxs << idx;
       D -= dx;
     }
     D += dy;
   }
 
-  return subvoxelIdxs;
+  return subvoxel_idxs;
 }
 
 FloatTDCoord
-NetworkVoxelMapper::getCoord(unsigned subvoxelIdx, const QList<TDCoord> &voxels, unsigned voxelDivisions)
+NetworkVoxelMapper::GetCoord(unsigned subvoxel_idx, const QList<TDCoord> &voxels, unsigned voxel_divisions)
 {
   // Turn a subvoxel index into a voxel and x,y,z offset into that voxel.
-  int temp = subvoxelIdx;
-  int dz = temp % voxelDivisions;
+  int temp = subvoxel_idx;
+  int dz = temp % voxel_divisions;
 
-  temp /= voxelDivisions;
-  int dy = temp % voxelDivisions;
+  temp /= voxel_divisions;
+  int dy = temp % voxel_divisions;
 
-  temp /= voxelDivisions;
-  int dx = temp % voxelDivisions;
+  temp /= voxel_divisions;
+  int dx = temp % voxel_divisions;
 
-  temp /= voxelDivisions;
-  int voxelIdx = temp;
-  assert(voxelIdx < voxels.size());
+  temp /= voxel_divisions;
+  int voxel_idx = temp;
+  assert(voxel_idx < voxels.size());
 
-  FloatTDCoord coord(voxels[voxelIdx]);
-  FloatTDCoord subvoxelOffset(dx, dy, dz);
-  coord += subvoxelOffset / static_cast<float>(voxelDivisions);
+  FloatTDCoord coord(voxels[voxel_idx]);
+  FloatTDCoord subvoxel_offset(dx, dy, dz);
+  coord += subvoxel_offset / static_cast<float>(voxel_divisions);
 
   return coord;
 }

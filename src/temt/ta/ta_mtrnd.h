@@ -28,8 +28,8 @@ public:
 
   uint   mt[N]; // the array for the state vector
   int    mti;   // mti==N+1 means mt[N] is not initialized
-  bool   isGaussDoubleCached;
-  double cachedGaussDouble;
+  bool   is_gauss_double_cached;
+  double cached_gauss_double;
 };
 
 class TA_API MTRnd {

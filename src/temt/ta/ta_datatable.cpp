@@ -3219,16 +3219,16 @@ DataTable::LoadAnyData_stream(istream &stream, bool append, bool has_header_line
 
   // Get the current stream position so we can reset back to that
   // position after auto-detecting the file format.
-  std::ios::streampos curStreamPos = stream.tellg();
+  std::ios::streampos cur_stream_pos = stream.tellg();
 
   // These are passed as out-parameters to an auto-detection function.
-  Delimiters delimeterType = COMMA;
-  bool hasQuotedStrings = false;
-  bool isNativeFile = false;
+  Delimiters delimeter_type = COMMA;
+  bool has_quoted_strings = false;
+  bool is_native_file = false;
 
   // Auto-detect file format.
   DetermineLoadDataParams(stream, has_header_line, LD_AUTO, LQ_AUTO,
-    has_header_line, delimeterType, hasQuotedStrings, isNativeFile);
+    has_header_line, delimeter_type, has_quoted_strings, is_native_file);
 
   if (!stream.good())
   {
@@ -3237,7 +3237,7 @@ DataTable::LoadAnyData_stream(istream &stream, bool append, bool has_header_line
 
   // Clear any errors in the stream and reset it to the beginning.
   stream.clear();
-  stream.seekg(curStreamPos);
+  stream.seekg(cur_stream_pos);
 
   if (!stream.good())
   {
@@ -3250,15 +3250,15 @@ DataTable::LoadAnyData_stream(istream &stream, bool append, bool has_header_line
     RemoveAllRows();
   }
 
-  int maxRecords = -1; // Get them all.
-  if (isNativeFile)
+  int max_records = -1; // Get them all.
+  if (is_native_file)
   {
-    LoadData_strm(stream, delimeterType, hasQuotedStrings, maxRecords);
+    LoadData_strm(stream, delimeter_type, has_quoted_strings, max_records);
   }
   else
   {
     ImportData_strm(
-      stream, has_header_line, delimeterType, hasQuotedStrings, maxRecords);
+      stream, has_header_line, delimeter_type, has_quoted_strings, max_records);
   }
 
   // We know we reached EOF, so no point in checking stream.good().

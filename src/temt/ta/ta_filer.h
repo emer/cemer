@@ -175,12 +175,12 @@ private:
 
 namespace taFilerUtil
 {
-  String dottedExtension(const String &extension);
-  String undottedExtension(const String &extension);
-  String getFiletype(int idx, const String_PArray &filetypes);
-  String getDottedExtension(int idx, const String_PArray &extensions);
-  String makeFilter(const String &filetype, const String &extension, bool isCompressEnabled);
-  void addFilter(const String &newFilter, String &filters, QStringList *list);
+  String DottedExtension(const String &extension);
+  String UndottedExtension(const String &extension);
+  String GetFiletype(int idx, const String_PArray &filetypes);
+  String GetDottedExtension(int idx, const String_PArray &extensions);
+  String MakeFilter(const String &filetype, const String &extension, bool is_compress_enabled);
+  void   AddFilter(const String &new_filter, String &filters, QStringList *list);
 }
 
 #endif // ta_filer_h

@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -96,8 +96,8 @@ using namespace Qt;
 #include "print.xpm"
 #include "snapshot.xpm"
 
-#define WHEEL_LENGTH 60		// long axis
-#define WHEEL_WIDTH 20		// short axis
+#define WHEEL_LENGTH 60         // long axis
+#define WHEEL_WIDTH 20          // short axis
 #define BUTTON_WIDTH 20
 #define BUTTON_HEIGHT 20
 
@@ -143,42 +143,42 @@ void T3SavedView_List::Initialize() {
 void T3SavedView_List::SetCameraPos(int view_no, float x, float y, float z) {
   T3SavedView* sv = SafeEl(view_no);
   if(TestError(!sv, "SetCameraPos", "view no out of range:", String(view_no), "n views:",
-	       String(size))) return;
+               String(size))) return;
   sv->SetCameraPos(x,y,z);
 }
 
 void T3SavedView_List::SetCameraOrient(int view_no, float x, float y, float z, float r) {
   T3SavedView* sv = SafeEl(view_no);
   if(TestError(!sv, "SetCameraOrient", "view no out of range:", String(view_no), "n views:",
-	       String(size))) return;
+               String(size))) return;
   sv->SetCameraOrient(x,y,z,r);
 }
 
 void T3SavedView_List::SetCameraFocDist(int view_no, float fd) {
   T3SavedView* sv = SafeEl(view_no);
   if(TestError(!sv, "SetCameraFocDist", "view no out of range:", String(view_no), "n views:",
-	       String(size))) return;
+               String(size))) return;
   sv->SetCameraFocDist(fd);
 }
 
 void T3SavedView_List::GetCameraPos(int view_no, float& x, float& y, float& z) {
   T3SavedView* sv = SafeEl(view_no);
   if(TestError(!sv, "GetCameraPos", "view no out of range:", String(view_no), "n views:",
-	       String(size))) return;
+               String(size))) return;
   sv->GetCameraPos(x,y,z);
 }
 
 void T3SavedView_List::GetCameraOrient(int view_no, float& x, float& y, float& z, float& r) {
   T3SavedView* sv = SafeEl(view_no);
   if(TestError(!sv, "GetCameraOrient", "view no out of range:", String(view_no), "n views:",
-	       String(size))) return;
+               String(size))) return;
   sv->GetCameraOrient(x,y,z,r);
 }
 
 void T3SavedView_List::GetCameraFocDist(int view_no, float& fd) {
   T3SavedView* sv = SafeEl(view_no);
   if(TestError(!sv, "GetCameraFocDist", "view no out of range:", String(view_no), "n views:",
-	       String(size))) return;
+               String(size))) return;
   sv->GetCameraFocDist(fd);
 }
 
@@ -194,7 +194,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   : QWidget(parent)
 {
   t3vw = parent;
-  quarter = NULL;		// for startup events
+  quarter = NULL;               // for startup events
 
   viewer_mode = VIEW;
 
@@ -234,7 +234,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   rhs_vbox->setMargin(0); rhs_vbox->setSpacing(0);
   main_hbox->addLayout(rhs_vbox);
 
-  /////	make wheels all together
+  ///// make wheels all together
 
   hrot_wheel = new QtThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Horizontal, this);
   t3ev_config_wheel(hrot_wheel);
@@ -331,11 +331,11 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   Constr_Bot_Buttons();
 
 //   quarter->setInteractionModeOn(false);
-  setInteractionModeOn(false);	// default start it off!
+  setInteractionModeOn(false);  // default start it off!
 }
 
 T3ExaminerViewer::~T3ExaminerViewer() {
-  
+
 }
 
 T3DataViewFrame* T3ExaminerViewer::GetFrame() {
@@ -395,16 +395,16 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
 }
 
 void T3ExaminerViewer::Constr_LHS_Buttons() {
-  
+
 }
 
 void T3ExaminerViewer::Constr_Bot_Buttons() {
-  cur_view_no = -1;		// nothing set yet
+  cur_view_no = -1;             // nothing set yet
   saved_views.SetSize(n_views);
   for(int i=0; i<n_views; i++) {
     T3SavedView* sv = saved_views[i];
     String nm = sv->name;
-    if(nm.contains("T3SavedView")) {		// uninitialized
+    if(nm.contains("T3SavedView")) {            // uninitialized
       nm = "View " + String(i);
       sv->name = nm;
     }
@@ -412,7 +412,7 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
     QToolButton* view_button = new iContextMenuButton(this);
 
     taiAction* view_act = new taiAction(i, nm, QKeySequence());
-    view_act->connect(taiAction::int_act, this,  SLOT(gotoviewbuttonClicked(int))); 
+    view_act->connect(taiAction::int_act, this,  SLOT(gotoviewbuttonClicked(int)));
     view_act->setParent(view_button);
     view_act->setCheckable(true);
     view_act->setChecked(sv->view_saved);
@@ -430,19 +430,19 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
 
     taiAction* save_act = new taiAction(i, "&Save View", QKeySequence());
     save_act->setStatusTip("Save the current view settings to this view button");
-    save_act->connect(taiAction::int_act, this,  SLOT(saveviewTriggered(int))); 
+    save_act->connect(taiAction::int_act, this,  SLOT(saveviewTriggered(int)));
     save_act->setParent(view_menu);
     view_menu->addAction(save_act);
 
     taiAction* name_act = new taiAction(i, "&Name View", QKeySequence());
     name_act->setStatusTip("Name this view button");
-    name_act->connect(taiAction::int_act, this,  SLOT(nameviewTriggered(int))); 
+    name_act->connect(taiAction::int_act, this,  SLOT(nameviewTriggered(int)));
     name_act->setParent(view_menu);
     view_menu->addAction(name_act);
 
     taiAction* sname_act = new taiAction(i, "&Save + Name", QKeySequence());
     sname_act->setStatusTip("Save the current view settings to this view button, and then name it");
-    sname_act->connect(taiAction::int_act, this,  SLOT(savenameviewTriggered(int))); 
+    sname_act->connect(taiAction::int_act, this,  SLOT(savenameviewTriggered(int)));
     sname_act->setParent(view_menu);
     view_menu->addAction(sname_act);
 
@@ -457,13 +457,13 @@ int T3ExaminerViewer::addDynButton(const String& label, const String& tooltip) {
   but_no = dyn_buttons.size;
   NameVar nv(label, but_no);
   dyn_buttons.Add(nv);
-  
+
   QToolButton* dyn_button = new QToolButton(this);
   // make them all the same size
   QSizePolicy sp(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
   dyn_button->setSizePolicy(sp);
   taiAction* dyn_act = new taiAction(but_no, label, QKeySequence());
-  dyn_act->connect(taiAction::int_act, this,  SLOT(dynbuttonClicked(int))); 
+  dyn_act->connect(taiAction::int_act, this,  SLOT(dynbuttonClicked(int)));
   dyn_act->setParent(dyn_button);
 //   dyn_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   dyn_button->setDefaultAction(dyn_act);
@@ -522,7 +522,7 @@ bool T3ExaminerViewer::removeDynButtonName(const String& label) {
 }
 
 ///////////////////////////////////////////////////////////////
-//		Main Button Actions
+//              Main Button Actions
 
 #define ROT_DELTA_MULT  0.002f
 #define PAN_DELTA_MULT  0.002f
@@ -533,7 +533,7 @@ void T3ExaminerViewer::hrotwheelChanged(int value) {
   if(fabsf(delta) > THUMB_WRAP_THR) {  // first detect wraparound
     int new_value = value;
     if(hrot_start_val < THUMB_INIT_VAL) new_value -= THUMB_MAX_VAL;
-    else		     new_value += THUMB_MAX_VAL;
+    else                     new_value += THUMB_MAX_VAL;
     delta = (float)(new_value - hrot_start_val);
   }
   hrot_start_val = value;
@@ -545,7 +545,7 @@ void T3ExaminerViewer::vrotwheelChanged(int value) {
   if(fabsf(delta) > THUMB_WRAP_THR) {  // first detect wraparound
     int new_value = value;
     if(vrot_start_val < THUMB_INIT_VAL) new_value -= THUMB_MAX_VAL;
-    else		     new_value += THUMB_MAX_VAL;
+    else                     new_value += THUMB_MAX_VAL;
     delta = (float)(new_value - vrot_start_val);
   }
   vrot_start_val = value;
@@ -557,7 +557,7 @@ void T3ExaminerViewer::zoomwheelChanged(int value) {
   if(fabsf(delta) > THUMB_WRAP_THR) {  // first detect wraparound
     int new_value = value;
     if(zoom_start_val < THUMB_INIT_VAL) new_value -= THUMB_MAX_VAL;
-    else		     new_value += THUMB_MAX_VAL;
+    else                     new_value += THUMB_MAX_VAL;
     delta = (float)(new_value - zoom_start_val);
   }
   zoom_start_val = value;
@@ -569,7 +569,7 @@ void T3ExaminerViewer::hpanwheelChanged(int value) {
   if(fabsf(delta) > THUMB_WRAP_THR) {  // first detect wraparound
     int new_value = value;
     if(hpan_start_val < THUMB_INIT_VAL) new_value -= THUMB_MAX_VAL;
-    else		     new_value += THUMB_MAX_VAL;
+    else                     new_value += THUMB_MAX_VAL;
     delta = (float)(new_value - hpan_start_val);
   }
   hpan_start_val = value;
@@ -581,7 +581,7 @@ void T3ExaminerViewer::vpanwheelChanged(int value) {
   if(fabsf(delta) > THUMB_WRAP_THR) {  // first detect wraparound
     int new_value = value;
     if(vpan_start_val < THUMB_INIT_VAL) new_value -= THUMB_MAX_VAL;
-    else		     new_value += THUMB_MAX_VAL;
+    else                     new_value += THUMB_MAX_VAL;
     delta = (float)(new_value - vpan_start_val);
   }
   vpan_start_val = value;
@@ -631,7 +631,7 @@ void T3ExaminerViewer::saveviewTriggered(int view_no) {
 void T3ExaminerViewer::nameviewTriggered(int view_no) {
   T3SavedView* sv = saved_views.SafeEl(view_no);
   if(!sv) return;
-  if(sv->EditDialog(true))		// modal!
+  if(sv->EditDialog(true))              // modal!
     nameView(view_no, sv->name);
 }
 
@@ -639,7 +639,7 @@ void T3ExaminerViewer::savenameviewTriggered(int view_no) {
   saveView(view_no);
   T3SavedView* sv = saved_views.SafeEl(view_no);
   if(!sv) return;
-  if(sv->EditDialog(true))		// modal!
+  if(sv->EditDialog(true))              // modal!
     nameView(view_no, sv->name);
 }
 
@@ -669,7 +669,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     return;
   }
   if((e->key() == Qt::Key_Home) || (e->key() == Qt::Key_H)) {
-    gotoView(0);			// 0 is base guy
+    gotoView(0);                        // 0 is base guy
     e->accept();
     return;
   }
@@ -678,7 +678,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-  if(e->key() == Qt::Key_S) {	// seek
+  if(e->key() == Qt::Key_S) {   // seek
     quarter->seek();
     e->accept();
     return;
@@ -689,7 +689,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
 
 
 ///////////////////////////////////////////////////////////////
-//		Actual functions
+//              Actual functions
 
 SoCamera* T3ExaminerViewer::getViewerCamera() const {
   SoEventManager* mgr = quarter->getSoEventManager();
@@ -708,7 +708,7 @@ void T3ExaminerViewer::viewAll() {
   // restore camera position to head-on
   cam->orientation.setValue(SbVec3f(-1.0f, 0.0f, 0.0f), 0.0f);
   quarter->viewAll();
-  zoomView(-.35f);		// zoom in !!
+  zoomView(-.35f);              // zoom in !!
 }
 
 // this is copied directly from SoQtFullViewer.cpp, which defines it as a static
@@ -749,7 +749,7 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
         first = FALSE;
       }
     }
-    
+
     const float oldfocaldist = cam->focalDistance.getValue();
     const float newfocaldist = oldfocaldist * multiplicator;
 
@@ -781,7 +781,7 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
       cam->focalDistance = newfocaldist;
     }
   }
-  syncViewerMode();		// keep it sync'd -- this tends to throw it off
+  syncViewerMode();             // keep it sync'd -- this tends to throw it off
 }
 
 void T3ExaminerViewer::horizRotateView(const float rot_value) {
@@ -821,7 +821,7 @@ void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
   SbVec3f newdir;
   cam->orientation.getValue().multVec(DEFAULTDIRECTION, newdir);
   cam->position = focalpoint - cam->focalDistance.getValue() * newdir;
-  syncViewerMode();		// keep it sync'd -- this tends to throw it off
+  syncViewerMode();             // keep it sync'd -- this tends to throw it off
 }
 
 void T3ExaminerViewer::PanView(const SbVec3f& dir, const float dist) {
@@ -832,7 +832,7 @@ void T3ExaminerViewer::PanView(const SbVec3f& dir, const float dist) {
 
   SbVec3f newpos = cam->position.getValue() + mvec;
   cam->position = newpos;
-  syncViewerMode();		// keep it sync'd -- this tends to throw it off
+  syncViewerMode();             // keep it sync'd -- this tends to throw it off
 }
 
 
@@ -882,7 +882,7 @@ void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
     if(re_render) {
       T3DataViewFrame* dvf = GetFrame();
       if(dvf) {
-	dvf->Render();
+        dvf->Render();
       }
     }
   }
@@ -923,7 +923,7 @@ bool T3ExaminerViewer::nameView(int view_no, const String& label) {
   sv->name = label;
   if(sv->view_action)
     sv->view_action->setText(label);
-  emit viewSaved(view_no);	// view updated -- propagate
+  emit viewSaved(view_no);      // view updated -- propagate
   return true;
 }
 
@@ -936,7 +936,7 @@ void T3ExaminerViewer::updtViewName(int view_no) {
   }
 }
 
-QImage	T3ExaminerViewer::grabImage() {
+QImage  T3ExaminerViewer::grabImage() {
   return quarter->grabFrameBuffer(true); // true = get alpha
 }
 
@@ -969,7 +969,7 @@ bool T3ExaminerViewer::event(QEvent* ev_) {
     if(!inside_event_loop) {
       inside_event_loop = true;
       while(so_scrollbar_is_dragging) { // remain inside local scroll event loop until end!
-	taiMiscCore::ProcessEvents();
+        taiMiscCore::ProcessEvents();
       }
       inside_event_loop = false;
     }
@@ -980,7 +980,7 @@ bool T3ExaminerViewer::event(QEvent* ev_) {
 bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
   if(!t3vw || (obj != this && obj != quarter)) goto do_inherited;
 
-  if((ev_->type() == QEvent::MouseMove) || (ev_->type() == QEvent::MouseButtonPress) || 
+  if((ev_->type() == QEvent::MouseMove) || (ev_->type() == QEvent::MouseButtonPress) ||
      (ev_->type() == QEvent::Enter) || (ev_->type() == QEvent::FocusIn)) {
     syncViewerMode();
   }
@@ -1003,7 +1003,7 @@ bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
     if(!inside_event_loop) {
       inside_event_loop = true;
       while(so_scrollbar_is_dragging) { // remain inside local scroll event loop until end!
-	taiMiscCore::ProcessEvents();
+        taiMiscCore::ProcessEvents();
       }
       inside_event_loop = false;
     }
@@ -1013,7 +1013,7 @@ bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
 }
 
 //////////////////////////
-//	T3DataView	//
+//      T3DataView      //
 //////////////////////////
 
 #ifdef TA_PROFILE
@@ -1044,7 +1044,7 @@ T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
       T3Node* t3node = (T3Node*)node;
       rval = t3node->dataView();
       break;
-    } 
+    }
     path->truncate(path->getLength() - 1);
   }
   path->unref();
@@ -1053,7 +1053,7 @@ T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
 
 
 void T3DataView::Initialize() {
-  flags = 0; 
+  flags = 0;
   m_md = NULL; // set later
 //  m_viewer = NULL;
   last_child_node = NULL;
@@ -1083,7 +1083,7 @@ void T3DataView::Copy_(const T3DataView& cp) {
   m_md = cp.m_md;
   Clear_impl(); // hope this works!
   last_child_node = NULL;
-  FloatTransform* ft = cp.m_transform; 
+  FloatTransform* ft = cp.m_transform;
   if (ft)
     transform(true)->Copy(*ft);
 }
@@ -1108,7 +1108,7 @@ bool T3DataView::fixTransformAxis() {
   if(!m_transform) return false;
   if(m_transform->rotate.x == 0.0f && m_transform->rotate.y == 0.0f &&
      m_transform->rotate.z == 0.0f) {
-    m_transform->rotate.z = 1.0f;	// axis must be defined, even if not used.
+    m_transform->rotate.z = 1.0f;       // axis must be defined, even if not used.
     return true;
   }
   return false;
@@ -1234,7 +1234,7 @@ T3ExaminerViewer* T3DataView::GetViewer() {
 }
 
 void T3DataView::QueryEditActionsS_impl_(int& allowed, int& forbidden,
-  GuiContext sh_typ) const 
+  GuiContext sh_typ) const
 {
   if ((sh_typ == GC_DUAL_DEF_DATA) && (flags & DNF_IS_MEMBER)) {
     forbidden |= (taiClipData::EA_CUT | taiClipData::EA_DELETE);
@@ -1286,11 +1286,11 @@ void T3DataView::ReInit_impl() {
 
 void T3DataView::Render_impl() {
   T3ExaminerViewer* vw = GetViewer();
-  if(vw) vw->syncViewerMode();	// always make sure it is sync'd with what we think it should be
+  if(vw) vw->syncViewerMode();  // always make sure it is sync'd with what we think it should be
 
   T3Node* node = m_node_so.ptr();
   if (m_transform && node) {
-    fixTransformAxis();		// make sure
+    fixTransformAxis();         // make sure
     m_transform->CopyTo(node->transform());
   }
   inherited::Render_impl();
@@ -1325,7 +1325,7 @@ void T3DataView::UpdateChildNames(T3DataView*) {
 
 taiDataLink* T3DataView::viewLink() const {
   return (taiDataLink*)const_cast<T3DataView*>(this)->GetDataLink();
-}  
+}
 
 
 void T3DataView::ViewProperties() {
@@ -1334,7 +1334,7 @@ void T3DataView::ViewProperties() {
 
 
 //////////////////////////
-//    T3DataViewPar	//
+//    T3DataViewPar     //
 //////////////////////////
 
 void T3DataViewPar::InitLinks() {
@@ -1350,7 +1350,7 @@ void T3DataViewPar::CutLinks() {
 
 void T3DataViewPar::Copy_(const T3DataViewPar& cp) {
   Clear_impl(); // hope this works!
-  children = cp.children; 
+  children = cp.children;
 }
 void T3DataViewPar::CloseChild(taDataView* child) {
   child->Reset();
@@ -1395,7 +1395,7 @@ void T3DataViewPar::ReInit() {
 }
 
 //////////////////////////
-//    T3DataViewRoot	//
+//    T3DataViewRoot    //
 //////////////////////////
 
 void T3DataViewRoot::Initialize() {
@@ -1408,7 +1408,7 @@ void T3DataViewRoot::Constr_Node_impl() {
 }
 
 //////////////////////////
-//    T3DataViewMain	//
+//    T3DataViewMain    //
 //////////////////////////
 
 void T3DataViewMain::InitLinks() {
@@ -1440,7 +1440,7 @@ void T3DataViewMain::setInteractionModeOn(bool on_off, bool re_render) {
 
 
 //////////////////////////
-//   iSoSelectionEvent	//
+//   iSoSelectionEvent  //
 //////////////////////////
 
 iSoSelectionEvent::iSoSelectionEvent(bool is_selected_, const SoPath* path_)
@@ -1449,7 +1449,7 @@ iSoSelectionEvent::iSoSelectionEvent(bool is_selected_, const SoPath* path_)
 }
 
 //////////////////////////////////
-//    iT3ViewspaceWidget	//
+//    iT3ViewspaceWidget        //
 //////////////////////////////////
 
 void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
@@ -1560,23 +1560,21 @@ static bool CheckExtension(const char *extName ) {
   const char *p = exts;
 
   const char *end;
-  int extNameLen;
-
-  extNameLen = strlen(extName);
+  std::size_t extNameLen = strlen(extName);
   end = p + strlen(p);
-    
+
   while (p < end) {
-    int n = strcspn(p, " ");
+    std::size_t n = strcspn(p, " ");
     if ((extNameLen == n) && (strncmp(extName, p, n) == 0)) {
       return true;
     }
     p += (n + 1);
   }
   taMisc::Error("This display does NOT have OpenGL support for the extension:",
-		extName, "which is required -- your system will likely crash soon.",
-		"Please read the emergent manual for required 3D graphics driver information."
-		"Here is a list of your extensions:",
-		exts);
+                extName, "which is required -- your system will likely crash soon.",
+                "Please read the emergent manual for required 3D graphics driver information."
+                "Here is a list of your extensions:",
+                exts);
   return false;
 }
 
@@ -1600,36 +1598,36 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   if(taMisc::antialiasing_level > 1) {
     fmt.setSampleBuffers(true);
     fmt.setSamples(taMisc::antialiasing_level);
-    qglw->setFormat(fmt);		// obs: this is supposedly deprecated..
+    qglw->setFormat(fmt);               // obs: this is supposedly deprecated..
     qglw->makeCurrent();
     glEnable(GL_MULTISAMPLE);
   }
   else {
     fmt.setSampleBuffers(false);
-    qglw->setFormat(fmt);		// obs: this is supposedly deprecated..
+    qglw->setFormat(fmt);               // obs: this is supposedly deprecated..
     qglw->makeCurrent();
     glDisable(GL_MULTISAMPLE);
   }
 
 #ifdef DEBUG
   // as of 6/28/09 -- this stuff no longer seems to be the problem -- just crashes
-  // in low-level Qt gl code around direct rendering. 
+  // in low-level Qt gl code around direct rendering.
   // todo: try fmt->setDirectRendering(false) to test for remote viewing
 
-  // apparently the key problem e.g., with remote X into mac X server 
+  // apparently the key problem e.g., with remote X into mac X server
   // is this code, GL_TEXTURE_3D:
   //     void
   //       SoGLTexture3EnabledElement::updategl(void)
   //     {
   //       const cc_glglue * glw = sogl_glue_instance(this->state);
-  
+
   //       if (SoGLDriverDatabase::isSupported(glw, SO_GL_3D_TEXTURES)) {
-  // 	if (this->data) glEnable(GL_TEXTURE_3D);
-  // 	else glDisable(GL_TEXTURE_3D);
+  //    if (this->data) glEnable(GL_TEXTURE_3D);
+  //    else glDisable(GL_TEXTURE_3D);
   //       }
   //     }
 
-  // but the glxinfo suggests that it should be supported, and doing it 
+  // but the glxinfo suggests that it should be supported, and doing it
   // directly here does NOT cause a problem
 
   // this extension is also used quite a bit, but apparently is not the problem:
@@ -1637,7 +1635,7 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
 
   // this will tell you what version is running for debugging purposes:
   //     String gl_vers = (int)QGLFormat::openGLVersionFlags();
-  //     taMisc::Error("GL version:", gl_vers); 
+  //     taMisc::Error("GL version:", gl_vers);
 #endif
 
   if (m_selMode == SM_NONE)
@@ -1658,8 +1656,8 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     SoRenderManager* rman = m_t3viewer->quarter->getSoRenderManager();
     rman->setGLRenderAction(rend_act);
     // following may be important for smoothing in offscreen rendering!
-    //    rman->setAntialiasing(true, MAX(taMisc::antialiasing_level, 1)); 
-    rman->setAntialiasing(true, 1); 
+    //    rman->setAntialiasing(true, MAX(taMisc::antialiasing_level, 1));
+    rman->setAntialiasing(true, 1);
     m_t3viewer->quarter->setTransparencyType(QuarterWidget::BLEND);
     // make sure it has the transparency set for new guy
   }
@@ -1774,7 +1772,7 @@ void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
     if(link) {
       taBase* obj = (taBase*)link->data();
       if(obj)
-	tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe");
+        tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe");
     }
   }
   else {
@@ -1793,7 +1791,7 @@ void iT3ViewspaceWidget::UpdateSelectedItems_impl() {
 }
 
 //////////////////////////
-//   iT3DataViewFrame	//
+//   iT3DataViewFrame   //
 //////////////////////////
 
 iT3DataViewFrame::iT3DataViewFrame(T3DataViewFrame* viewer_, QWidget* parent)
@@ -1810,7 +1808,7 @@ iT3DataViewFrame::~iT3DataViewFrame() {
 
 void iT3DataViewFrame::Constr_impl() {
   m_t3viewer->show();
-}  
+}
 
 void iT3DataViewFrame::Init() {
   QVBoxLayout* lay = new QVBoxLayout(this);
@@ -1827,7 +1825,7 @@ void iT3DataViewFrame::Init() {
 
 void iT3DataViewFrame::viewSaved(int view_no) {
   T3DataViewFrame* t3dvf = viewer();
-  if(!t3dvf) return;		// shouldn't happen
+  if(!t3dvf) return;            // shouldn't happen
   t3dvf->GetSavedView(view_no);
 }
 
@@ -1854,7 +1852,7 @@ void iT3DataViewFrame::fileExportInventor() {
   // check if exists, to warn user
   QFile f(fileName.toLatin1());
   if (f.exists()) {
-    if (taiChoiceDialog::ChoiceDialog(this, 
+    if (taiChoiceDialog::ChoiceDialog(this,
       "That file already exists, overwrite it?",
       "Confirm file overwrite",
       "&Ok" + taiChoiceDialog::delimiter + "&Cancel") != 0) return;
@@ -1925,7 +1923,7 @@ void iT3DataViewFrame::Refresh_impl() {
 void iT3DataViewFrame::RegisterPanel(iViewPanelFrame* pan) {
     if (panel_set) {
       panel_set->AddSubPanel(pan);
-    } 
+    }
 #ifdef DEBUG
     else {
       taMisc::Warning("Attempt to RegisterPanel failed because it doesn't exist!");
@@ -1961,7 +1959,7 @@ void iT3DataViewFrame::viewRefresh() {
 
 
 //////////////////////////
-//	T3DataViewFrame	//
+//      T3DataViewFrame //
 //////////////////////////
 
 void T3DataViewFrame::Initialize() {
@@ -2022,7 +2020,7 @@ void T3DataViewFrame::Clear_impl() {
 
 void T3DataViewFrame::Constr_impl(QWidget* gui_parent) {
   inherited::Constr_impl(gui_parent);
-  root_view.host = widget()->t3vs; 
+  root_view.host = widget()->t3vs;
   // note: set top view to the root, not us, because we don't pass doactions down
   widget()->t3vs->setTopView(&root_view);
 }
@@ -2081,9 +2079,9 @@ const iColor T3DataViewFrame::GetBgColor() const {
       bool ok = false;
       rval = sng->bgColor(ok);
       if (ok) {
-	if(bg_color.r != 0.8f || bg_color.g != 0.8f || bg_color.b != 0.8f) 
-	  rval = bg_color;	// when frame is set to something different, it overrides regardless
-	return rval;
+        if(bg_color.r != 0.8f || bg_color.g != 0.8f || bg_color.b != 0.8f)
+          rval = bg_color;      // when frame is set to something different, it overrides regardless
+        return rval;
       }
     }
   }
@@ -2103,8 +2101,8 @@ void T3DataViewFrame::Render_pre() {
   T3ExaminerViewer* viewer = widget()->t3viewer();
   if(viewer) {
     if(viewer->cur_view_no < 0) {
-      SetAllSavedViews();		// init from us
-      viewer->gotoView(0);		// goto first saved view as default
+      SetAllSavedViews();               // init from us
+      viewer->gotoView(0);              // goto first saved view as default
     }
   }
 }
@@ -2119,7 +2117,7 @@ void T3DataViewFrame::Render_impl() {
       viewer->quarter->setStereoMode((QuarterWidget::StereoMode)stereo_view);
     if(viewer->quarter->headlightEnabled() != headlight_on)
       viewer->quarter->setHeadlightEnabled(headlight_on);
-    viewer->syncViewerMode();	// keep it in sync
+    viewer->syncViewerMode();   // keep it in sync
   }
   inherited::Render_impl();
   root_view.Render_impl();
@@ -2134,7 +2132,7 @@ void T3DataViewFrame::Render_post() {
   // on first opening, do a viewall to center all geometry in viewer
   if(saved_views[0]->pos == 0.0f && saved_views[0]->focal_dist == 0.0f) {
     ViewAll();
-    SaveCurView(0);		// save to 0 view
+    SaveCurView(0);             // save to 0 view
   }
 }
 
@@ -2165,8 +2163,8 @@ void T3DataViewFrame::GetSavedView(int view_no) {
   T3SavedView* oursc = saved_views.SafeEl(view_no);
   T3SavedView* sc = viewer->saved_views.SafeEl(view_no);
   if(!sc || !oursc) return;
-  oursc->CopyFrom(sc);	// initialize from them
-  oursc->name = sc->name;	// names not usu copied
+  oursc->CopyFrom(sc);  // initialize from them
+  oursc->name = sc->name;       // names not usu copied
 }
 
 void T3DataViewFrame::SetSavedView(int view_no) {
@@ -2176,8 +2174,8 @@ void T3DataViewFrame::SetSavedView(int view_no) {
   T3SavedView* oursc = saved_views.SafeEl(view_no);
   T3SavedView* sc = viewer->saved_views.SafeEl(view_no);
   if(!sc || !oursc) return;
-  sc->CopyFrom(oursc);	// initialize from us
-  sc->name = oursc->name;	// names not usu copied
+  sc->CopyFrom(oursc);  // initialize from us
+  sc->name = oursc->name;       // names not usu copied
   viewer->updtViewName(view_no); // trigger update of label
 }
 
@@ -2187,7 +2185,7 @@ void T3DataViewFrame::SetAllSavedViews() {
   saved_views.SetSize(viewer->n_views); // make sure
   for(int i=0;i<saved_views.size;i++) {
     T3SavedView* sv = saved_views[i];
-    if(sv->name.contains("T3SavedView")) {		// uninitialized
+    if(sv->name.contains("T3SavedView")) {              // uninitialized
       sv->name = "View " + String(i);
     }
     SetSavedView(i);
@@ -2232,7 +2230,7 @@ bool T3DataViewFrame::SaveImageAs(const String& fname, ImageFormat img_fmt) {
     return SaveImageIV(fname);
 
   return inherited::SaveImageAs(fname, img_fmt);
-}      
+}
 
 bool T3DataViewFrame::SaveImageEPS(const String& fname) {
   T3ExaminerViewer* viewer = widget()->t3viewer();
@@ -2334,9 +2332,9 @@ void T3DataViewFrame::SetImageSize(int width, int height) {
   viewer->quarter->resize(width, height);
 }
 
-void T3DataViewFrame::SetTextBgColor(const String &textColor, const String &bgColor) {
-  text_color.setColorName(textColor);
-  bg_color.setColorName(bgColor);
+void T3DataViewFrame::SetTextBgColor(const String &new_text_color, const String &new_bg_color) {
+  text_color.setColorName(new_text_color);
+  bg_color.setColorName(new_bg_color);
 }
 
 void T3DataViewFrame::SetColorScheme(ColorScheme color_scheme) {
@@ -2352,9 +2350,9 @@ void T3DataViewFrame::SetColorScheme(ColorScheme color_scheme) {
 }
 
 void T3DataViewFrame::GridLayout(int n_horiz, float horiz_sp, float vert_sp, bool save_views) {
-  if(n_horiz < 1) n_horiz = 1;
+  if (n_horiz < 1) n_horiz = 1;
   int idx = 0;
-  for(int i = 0; i < root_view.children.size; ++i) {
+  for (int i = 0; i < root_view.children.size; ++i) {
     T3DataViewMain* dv;
     if (!(dv = dynamic_cast<T3DataViewMain*>(root_view.children[i]))) continue;
     int cur_x = idx % n_horiz;
@@ -2363,10 +2361,10 @@ void T3DataViewFrame::GridLayout(int n_horiz, float horiz_sp, float vert_sp, boo
     float yp = (float)cur_y * (1.0 + vert_sp);
     dv->main_xform.translate.x = xp;
     dv->main_xform.translate.y = yp;
-    if(save_views && idx+1 < saved_views.size) {
+    if (save_views && idx + 1 < saved_views.size) {
       // todo: this is not functional: need to do appropriate projection per quarter viewAll calculation involving bounding boxes etc...
-      SetCameraPos(idx+1, xp + .5 * (1.0 + horiz_sp), yp + .5 * (1.0 + vert_sp), 1.6);
-      SetCameraFocDist(idx+1, 1.6);
+      SetCameraPos(idx + 1, xp + .5F * (1.0F + horiz_sp), yp + .5F * (1.0F + vert_sp), 1.6F);
+      SetCameraFocDist(idx + 1, 1.6F);
     }
     idx++;
   }
@@ -2375,7 +2373,7 @@ void T3DataViewFrame::GridLayout(int n_horiz, float horiz_sp, float vert_sp, boo
 
 
 //////////////////////////
-//   iTabBarEx		//
+//   iTabBarEx          //
 //////////////////////////
 
 iTabBarEx::iTabBarEx(iTabWidget* parent)
@@ -2421,7 +2419,7 @@ void iTabWidget::contextMenuEvent(QContextMenuEvent* e) {
 }
 
 //////////////////////////
-//   iT3DataViewer	//
+//   iT3DataViewer      //
 //////////////////////////
 
 iT3DataViewer::iT3DataViewer(T3DataViewer* viewer_, QWidget* parent)
@@ -2445,9 +2443,9 @@ void iT3DataViewer::Init() {
 #endif
   lay->addWidget(tw);
   connect(tw, SIGNAL(customContextMenuRequested2(const QPoint&, int)),
-	  this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
+          this, SLOT(tw_customContextMenuRequested2(const QPoint&, int)) );
   connect(tw, SIGNAL(currentChanged(int)),
-	  this, SLOT(tw_currentChanged(int)) );
+          this, SLOT(tw_currentChanged(int)) );
   // punt, and just connect a timer to focus first tab
   // if any ProcessEvents get called (should not!) may have to make non-zero time
   QTimer::singleShot(0, this, SLOT(FocusFirstTab()) );
@@ -2461,13 +2459,13 @@ void iT3DataViewer::AddT3DataViewFrame(iT3DataViewFrame* idvf, int idx) {
   else
     tw->insertTab(idx, idvf, tab_label);
   tw->setTabToolTip(idx, tab_label);
-  idvf->t3vs->Connect_SelectableHostNotifySignal(this, 
+  idvf->t3vs->Connect_SelectableHostNotifySignal(this,
     SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
   tw->setCurrentIndex(idx); // not selected automatically
 }
 
 void iT3DataViewer::AddFrame() {
-// T3DataViewFrame* fr  = 
+// T3DataViewFrame* fr  =
  viewer()->NewT3DataViewFrame();
 }
 
@@ -2488,11 +2486,11 @@ void iT3DataViewer::FillContextMenu_impl(taiMenu* menu, int tab_idx) {
   taiAction*
   act = menu->AddItem("&Add Frame", taiAction::action,
     this, SLOT(AddFrame()),_nilVariant);
-  
+
   if (tab_idx >= 0) {
     act = menu->AddItem("&Delete Frame", taiAction::int_act,
       this, SLOT(DeleteFrame(int)), tab_idx);
-    
+
     menu->AddSep();
     // should always be at bottom:
     act = menu->AddItem("Frame &Properties...", taiAction::int_act,
@@ -2537,8 +2535,8 @@ void iT3DataViewer::tw_currentChanged(int tab_idx) {
     if (idvf) { // should exist
       idvf->Showing(true);
       idvf = iViewFrame(last_idx);
-      if (idvf) { 
-	idvf->Showing(false);
+      if (idvf) {
+        idvf->Showing(false);
       }
     }
   }
@@ -2615,7 +2613,7 @@ void iT3DataViewer::focusInEvent(QFocusEvent* ev) {
 
 
 //////////////////////////
-//	T3DataViewer	//
+//      T3DataViewer    //
 //////////////////////////
 
 T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
@@ -2633,7 +2631,7 @@ T3DataViewFrame* T3DataViewer::GetBlankOrNewT3DataViewFrame(taBase* obj) {
     if(!fr)
       fr = t3vw->NewT3DataViewFrame();
     fr->SetName(obj->GetDisplayName()); // tis better to have one good name.. can always
-    fr->UpdateAfterEdit();		// show name
+    fr->UpdateAfterEdit();              // show name
   }
   return fr;
 }
@@ -2652,7 +2650,7 @@ void T3DataViewer::InitLinks() {
   taBase::Own(frames, this);
   // add a default frame, if none yet
   if(!taMisc::is_loading && frames.size == 0) {
-    //T3DataViewFrame* fv = 
+    //T3DataViewFrame* fv =
     (T3DataViewFrame*)frames.New(1);
     //nuke fv->SetName("DefaultFrame");
   }
@@ -2674,7 +2672,7 @@ IDataViewWidget* T3DataViewer::ConstrWidget_impl(QWidget* gui_parent) {
 void T3DataViewer::Constr_impl(QWidget* gui_parent) {
   inherited::Constr_impl(gui_parent); // prob just creates the widget
   if (!dvwidget()) return; // shouldn't happen
-  
+
   ConstrFrames_impl();
 }
 
@@ -2727,7 +2725,7 @@ T3DataView* T3DataViewer::FindRootViewOfData(taBase* data) {
 T3DataViewFrame* T3DataViewer::FirstEmptyT3DataViewFrame() {
   for (int i = 0; i < frames.size; ++i) {
     T3DataViewFrame* fv = frames.FastEl(i);
-    if (fv->root_view.children.size == 0) 
+    if (fv->root_view.children.size == 0)
       return fv;
   }
   return NULL;
@@ -2751,7 +2749,7 @@ void T3DataViewer::GetWinState_impl() {
 void T3DataViewer::SetWinState_impl() {
   inherited::SetWinState_impl();
   iT3DataViewer* w = widget();
-  int view_frame_selected = 
+  int view_frame_selected =
     GetUserDataDef("view_frame_selected", 0).toInt();
   if (view_frame_selected < w->tw->count())
     w->tw->setCurrentIndex(view_frame_selected);

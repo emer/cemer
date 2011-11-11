@@ -63,7 +63,7 @@
 #endif
 
 ///////////////////////////////////////////////////////////////////////
-//		So configure classes defined in ta_virtenv.h
+//              So configure classes defined in ta_virtenv.h
 
 void VETexture::SetTexture(SoTexture2* sotx) {
   if(fname.empty()) return;
@@ -186,17 +186,17 @@ bool VELight::UpdateLight() {
   SoGroup* lg = ((T3VEWorld*)wv->node_so())->getLightGroup();
   if(!lg || lg->getNumChildren() == 0) return false;
   if(wrld->light_0.ptr() == this) {
-    SoLight* lgt = (SoLight*)lg->getChild(0); 
+    SoLight* lgt = (SoLight*)lg->getChild(0);
     ConfigLight(lgt);
     rval = true;
   }
   else if(wrld->light_1.ptr() == this) {
     if(lg->getNumChildren() == 2) {
-      SoLight* lgt = (SoLight*)lg->getChild(1); 
+      SoLight* lgt = (SoLight*)lg->getChild(1);
       ConfigLight(lgt);
     }
     else {
-      SoLight* lgt = (SoLight*)lg->getChild(0); 
+      SoLight* lgt = (SoLight*)lg->getChild(0);
       ConfigLight(lgt);
     }
     rval = true;
@@ -205,7 +205,7 @@ bool VELight::UpdateLight() {
 }
 
 ///////////////////////////////////////////////////////////////////////
-//		T3 DataView Guys
+//              T3 DataView Guys
 
 void VEBodyView::Initialize(){
   data_base = &TA_VEBody;
@@ -226,7 +226,7 @@ void VEBodyView::SetBody(VEBody* ob) {
 }
 
 void VEBodyView::Render_pre() {
-  bool show_drag = false;	// default is off!
+  bool show_drag = false;       // default is off!
   T3ExaminerViewer* vw = GetViewer();
   if(vw)
     show_drag = vw->interactionModeOn();
@@ -243,31 +243,31 @@ void VEBodyView::Render_pre() {
       SoInput in;
       QFileInfo qfi(ob->obj_fname);
       if(qfi.isFile() && qfi.isReadable() && in.openFile(ob->obj_fname)) {
-	SoSeparator* root = SoDB::readAll(&in);
-	if (root) {
-	  ssep->addChild(root);
-	  SoTransform* tx = obv->txfm_shape();
-	  ob->obj_xform.CopyTo(tx);
-	  goto finish;
-	}
+        SoSeparator* root = SoDB::readAll(&in);
+        if (root) {
+          ssep->addChild(root);
+          SoTransform* tx = obv->txfm_shape();
+          ob->obj_xform.CopyTo(tx);
+          goto finish;
+        }
       }
       cerr << "object file: " << ob->obj_fname << " not found, reverting to shape" << endl;
       // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
 //       ob->ClearBodyFlag(VEBody::FM_FILE);
     }
-    
+
     if((bool)ob->texture && wv) {
       SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
       SoSwitch* txfsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
       VETexture* vtex = ob->texture.ptr();
       int idx = vtex->GetIndex();
       if(idx >= 0 && tsw->getNumChildren() > idx) {
-	SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
-	ssep->addChild(tex);
-	if(vtex->NeedsTransform()) {
-	  SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
-	  ssep->addChild(ttx);
-	}
+        SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
+        ssep->addChild(tex);
+        if(vtex->NeedsTransform()) {
+          SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
+          ssep->addChild(ttx);
+        }
       }
     }
 
@@ -304,7 +304,7 @@ void VEBodyView::Render_pre() {
       break;
     }
     }
-  }      
+  }
  finish:
 
   FixOrientation(true);
@@ -321,21 +321,21 @@ void VEBodyView::FixOrientation(bool force) {
     case VEBody::CAPSULE: {
       SoTransform* tx = obv->txfm_shape();
       if(ob->long_axis == VEBody::LONG_X)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
       else if(ob->long_axis == VEBody::LONG_Y)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
       else if(ob->long_axis == VEBody::LONG_Z)
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
     }
     case VEBody::CYLINDER: {
       SoTransform* tx = obv->txfm_shape();
       if(ob->long_axis == VEBody::LONG_X)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
       else if(ob->long_axis == VEBody::LONG_Y)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
       else if(ob->long_axis == VEBody::LONG_Z)
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
     }
     }
@@ -397,8 +397,8 @@ void VEBodyView::Render_impl() {
     if(ob->full_colors) {
       mat->ambientColor.setValue(ob->ambient_color.r, ob->ambient_color.g, ob->ambient_color.b);
       if(ob->specular_color.a > 0.0f) {
-	mat->specularColor.setValue(ob->specular_color.r, ob->specular_color.g, ob->specular_color.b);
-	mat->shininess.setValue(ob->specular_color.a);
+        mat->specularColor.setValue(ob->specular_color.r, ob->specular_color.g, ob->specular_color.b);
+        mat->shininess.setValue(ob->specular_color.a);
       }
       mat->emissiveColor.setValue(ob->emissive_color.r, ob->emissive_color.g, ob->emissive_color.b);
     }
@@ -410,70 +410,70 @@ void VEBodyView::Render_impl() {
 
   SoSeparator* ssep = obv->shapeSeparator();
 
-  float off_size = 1.0e-12f;	// tiny size if it is turned off..
+  float off_size = 1.0e-12f;    // tiny size if it is turned off..
 
   if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     if(ob->HasBodyFlag(VEBody::FM_FILE)) {
       SoTransform* tx = node_so()->txfm_shape();
       if(ob->HasBodyFlag(VEBody::OFF)) {
-	FloatTransform off_tx = ob->obj_xform;
-	off_tx.scale.SetXYZ(off_size, off_size, off_size);
-	off_tx.CopyTo(tx);
+        FloatTransform off_tx = ob->obj_xform;
+        off_tx.scale.SetXYZ(off_size, off_size, off_size);
+        off_tx.CopyTo(tx);
       }
       else {
-	ob->obj_xform.CopyTo(tx);
+        ob->obj_xform.CopyTo(tx);
       }
     }
     else {
       switch(ob->shape) {
       case VEBody::SPHERE: {
-	SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	if(ob->HasBodyFlag(VEBody::OFF))
-	  sp->radius = off_size;
-	else
-	  sp->radius = ob->radius;
-	break;
+        SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+        if(ob->HasBodyFlag(VEBody::OFF))
+          sp->radius = off_size;
+        else
+          sp->radius = ob->radius;
+        break;
       }
       case VEBody::CAPSULE: {
-	SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	if(ob->HasBodyFlag(VEBody::OFF)) {
-	  sp->radius = off_size;
-	  sp->height = off_size;
-	}
-	else {
-	  sp->radius = ob->radius;
-	  sp->height = ob->length;
-	}
-	break;
+        SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+        if(ob->HasBodyFlag(VEBody::OFF)) {
+          sp->radius = off_size;
+          sp->height = off_size;
+        }
+        else {
+          sp->radius = ob->radius;
+          sp->height = ob->length;
+        }
+        break;
       }
       case VEBody::CYLINDER: {
-	SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	if(ob->HasBodyFlag(VEBody::OFF)) {
-	  sp->radius = off_size;
-	  sp->height = off_size;
-	}
-	else {
-	  sp->radius = ob->radius;
-	  sp->height = ob->length;
-	}
-	break;
+        SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+        if(ob->HasBodyFlag(VEBody::OFF)) {
+          sp->radius = off_size;
+          sp->height = off_size;
+        }
+        else {
+          sp->radius = ob->radius;
+          sp->height = ob->length;
+        }
+        break;
       }
       case VEBody::BOX: {
-	SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	if(ob->HasBodyFlag(VEBody::OFF)) {
-	  sp->width = off_size;
-	  sp->depth = off_size;
-	  sp->height = off_size;
-	}
-	else {
-	  sp->width = ob->box.x;
-	  sp->depth = ob->box.z;
-	  sp->height = ob->box.y;
-	}
-	break;
+        SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+        if(ob->HasBodyFlag(VEBody::OFF)) {
+          sp->width = off_size;
+          sp->depth = off_size;
+          sp->height = off_size;
+        }
+        else {
+          sp->width = ob->box.x;
+          sp->depth = ob->box.z;
+          sp->height = ob->box.y;
+        }
+        break;
       }
       case VEBody::NO_SHAPE: {
-	break;
+        break;
       }
       }
     }
@@ -503,7 +503,7 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   ob->radius *= sc.x;
   ob->length *= sc.x;
   ob->box *= sc;
@@ -538,7 +538,7 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
 }
 
 //////////////////////////////////////////////////////////
-//		VEObjCarousel
+//              VEObjCarousel
 
 void VEObjCarousel::Destroy() {
   if(obj_switch) {
@@ -550,7 +550,7 @@ void VEObjCarousel::Destroy() {
 void VEObjCarousel::MakeSwitch() {
   if(!obj_switch) {
     obj_switch = new SoSwitch;
-    obj_switch->ref();	// ref it so it hangs around 
+    obj_switch->ref();  // ref it so it hangs around
   }
 }
 
@@ -565,7 +565,7 @@ bool VEObjCarousel::LoadObjs(bool force) {
   SoSwitch* sw = obj_switch;
 
   if(!force && (sw->getNumChildren() == obj_table->rows))
-    return false;		// already good
+    return false;               // already good
 
   sw->removeAllChildren();
 
@@ -588,8 +588,8 @@ bool VEObjCarousel::LoadObjs(bool force) {
       taMisc::FlushConsole();
       SoSeparator* root = SoDB::readAll(&in);
       if (root) {
-	sw->addChild(root);
-	continue;
+        sw->addChild(root);
+        continue;
       }
     }
     taMisc::Warning("object file:", fpath, "at row:", String(i), "not found");
@@ -618,7 +618,7 @@ void VEObjCarouselView::SetObjCarousel(VEObjCarousel* ob) {
 void VEObjCarouselView::Render_pre() {
   VEObjCarousel* ob = ObjCarousel();
   if(!ob || !ob->HasBodyFlag(VEBody::FM_FILE) || !ob->obj_table) {
-    VEBodyView::Render_pre();	// fall back on basic code
+    VEBodyView::Render_pre();   // fall back on basic code
     return;
   }
 
@@ -634,7 +634,7 @@ void VEObjCarouselView::Render_pre() {
   SoSeparator* ssep = obv->shapeSeparator();
 
   if(ob) {
-    ob->MakeSwitch();		// ensures
+    ob->MakeSwitch();           // ensures
     ssep->addChild(ob->obj_switch);
     SoTransform* tx = obv->txfm_shape();
     ob->obj_xform.CopyTo(tx);
@@ -642,17 +642,17 @@ void VEObjCarouselView::Render_pre() {
 
   SetDraggerPos();
 
-  T3DataView::Render_pre();	// note: skipping over VEBodyView render!
+  T3DataView::Render_pre();     // note: skipping over VEBodyView render!
 }
 
 void VEObjCarouselView::Render_impl() {
   VEObjCarousel* ob = ObjCarousel();
   if(!ob || !ob->HasBodyFlag(VEBody::FM_FILE) || !ob->obj_table) {
-    VEBodyView::Render_impl();	// fall back on basic code
+    VEBodyView::Render_impl();  // fall back on basic code
     return;
   }
 
-  T3DataView::Render_impl();	// note: skipping over VEBodyView render!
+  T3DataView::Render_impl();    // note: skipping over VEBodyView render!
 
   T3VEBody* obv = (T3VEBody*)this->node_so(); // cache
   if(!obv) return;
@@ -674,7 +674,7 @@ void VEObjCarouselView::Render_impl() {
 }
 
 //////////////////////////////////////////////
-//		VE Joint
+//              VE Joint
 
 void VEJointView::Initialize(){
   data_base = &TA_VEJoint;
@@ -702,7 +702,7 @@ void VEJointView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
-  show_drag = false;		// disable for now -- not that much time on my hands
+  show_drag = false;            // disable for now -- not that much time on my hands
 
   if(!wv->show_joints) return;
 
@@ -760,7 +760,7 @@ void VEJointView::Render_pre() {
       break;
     }
     }
-  }      
+  }
 
  finalize:
   FixOrientation(true);
@@ -780,7 +780,7 @@ void VEJointView::FixOrientation(bool force) {
       SoTransform* tx = obv->txfm_shape();
       SbRotation netrot;
       // construct rotation that rotates from Y axis to desired target axis
-      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z)); 
+      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z));
       tx->rotation.setValue(netrot);
       break;
     }
@@ -790,13 +790,13 @@ void VEJointView::FixOrientation(bool force) {
       SoTransform* tx2 = (SoTransform*)sep2->getChild(0);
       SbRotation netrot;
       // construct rotation that rotates from Y axis to desired target axis
-      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z)); 
+      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis.x, ob->axis.y, ob->axis.z));
       tx2->rotation.setValue(netrot);
       // next joint
       sep2 = (SoSeparator*)ssep->getChild(ssep->getNumChildren()-1);
       tx2 = (SoTransform*)sep2->getChild(0);
       // construct rotation that rotates from Y axis to desired target axis
-      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis2.x, ob->axis2.y, ob->axis2.z)); 
+      netrot.setValue(SbVec3f(0.0f, 1.0f, 0.0f), SbVec3f(ob->axis2.x, ob->axis2.y, ob->axis2.z));
       tx2->rotation.setValue(netrot);
       break;
     }
@@ -852,13 +852,13 @@ void VEJointView::Render_impl() {
 
   SoTransform* tx = obv->transform();
   SbRotation sbrot;
-  sbrot.setValue(SbVec3f(bod1->cur_rot.x, bod1->cur_rot.y, bod1->cur_rot.z), bod1->cur_rot.rot); 
+  sbrot.setValue(SbVec3f(bod1->cur_rot.x, bod1->cur_rot.y, bod1->cur_rot.z), bod1->cur_rot.rot);
   // rotate the anchor too!
   SbVec3f anchor(ob->anchor.x, ob->anchor.y, ob->anchor.z);
   SbVec3f nw_anc;
   sbrot.multVec(anchor, nw_anc);
   tx->translation.setValue(bod1->cur_pos.x + nw_anc[0], bod1->cur_pos.y + nw_anc[1],
-			   bod1->cur_pos.z + nw_anc[2]);
+                           bod1->cur_pos.z + nw_anc[2]);
 //   tx->rotation.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
 
   SoMaterial* mat = obv->material();
@@ -925,7 +925,7 @@ void T3VEJoint_DragFinishCB(void* userData, SoDragger* dragr) {
 //   const SbVec3f& scale = dragger->scaleFactor.getValue();
 // //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
 //   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-//   if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+//   if(sc < .1f) sc = .1f;     // prevent scale from going to small too fast!!
 //   ob->radius *= sc.x;
 //   ob->length *= sc.x;
 //   ob->box *= sc;
@@ -961,7 +961,7 @@ void T3VEJoint_DragFinishCB(void* userData, SoDragger* dragr) {
 
 
 //////////////////////////
-//   VEObjectView	//
+//   VEObjectView       //
 //////////////////////////
 
 void VEObjectView::Initialize(){
@@ -1031,7 +1031,7 @@ void VEObjectView::Render_impl() {
 }
 
 //////////////////////////
-//   VEStaticView 	//
+//   VEStaticView       //
 //////////////////////////
 
 void VEStaticView::Initialize(){
@@ -1069,13 +1069,13 @@ void VEStaticView::Render_pre() {
       SoInput in;
       QFileInfo qfi(ob->obj_fname);
       if(qfi.isFile() && qfi.isReadable() && in.openFile(ob->obj_fname)) {
-	SoSeparator* root = SoDB::readAll(&in);
-	if (root) {
-	  ssep->addChild(root);
-	  SoTransform* tx = node_so()->txfm_shape();
-	  ob->obj_xform.CopyTo(tx);
-	  goto finish;
-	}
+        SoSeparator* root = SoDB::readAll(&in);
+        if (root) {
+          ssep->addChild(root);
+          SoTransform* tx = node_so()->txfm_shape();
+          ob->obj_xform.CopyTo(tx);
+          goto finish;
+        }
       }
       cerr << "object file: " << ob->obj_fname << " not found, reverting to shape" << endl;
       // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
@@ -1088,12 +1088,12 @@ void VEStaticView::Render_pre() {
       VETexture* vtex = ob->texture.ptr();
       int idx = vtex->GetIndex();
       if(idx >= 0 && tsw->getNumChildren() > idx) {
-	SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
-	ssep->addChild(tex);
-	if(vtex->NeedsTransform()) {
-	  SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
-	  ssep->addChild(ttx);
-	}
+        SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
+        ssep->addChild(tex);
+        if(vtex->NeedsTransform()) {
+          SoTexture2Transform* ttx = (SoTexture2Transform*)txfsw->getChild(idx);
+          ssep->addChild(ttx);
+        }
       }
     }
 
@@ -1135,14 +1135,14 @@ void VEStaticView::Render_pre() {
       SoTransform* tx = node_so()->txfm_shape();
       switch (ob->plane_norm) {
       case VEStatic::NORM_X:
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-	break;
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+        break;
       case VEStatic::NORM_Y:
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-	break;
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+        break;
       case VEStatic::NORM_Z:
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-	break;
+        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+        break;
       }
       break;
     }
@@ -1150,7 +1150,7 @@ void VEStaticView::Render_pre() {
       break;
     }
     }
-  }      
+  }
  finish:
 
   SetDraggerPos();
@@ -1167,35 +1167,35 @@ void VEStaticView::FixOrientation(bool force) {
     case VEStatic::CAPSULE: {
       SoTransform* tx = obv->txfm_shape();
       if(ob->long_axis == VEStatic::LONG_X)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
       else if(ob->long_axis == VEStatic::LONG_Y)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
       else if(ob->long_axis == VEStatic::LONG_Z)
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
     }
     case VEStatic::CYLINDER: {
       SoTransform* tx = obv->txfm_shape();
       if(ob->long_axis == VEStatic::LONG_X)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
       else if(ob->long_axis == VEStatic::LONG_Y)
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
       else if(ob->long_axis == VEStatic::LONG_Z)
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
       break;
     }
     case VEStatic::PLANE: {
       SoTransform* tx = node_so()->txfm_shape();
       switch (ob->plane_norm) {
       case VEStatic::NORM_X:
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
-	break;
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 1.5708f);
+        break;
       case VEStatic::NORM_Y:
-	tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-	break;
+        tx->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
+        break;
       case VEStatic::NORM_Z:
-	tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
-	break;
+        tx->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), 1.5708f);
+        break;
       }
       break;
     }
@@ -1260,8 +1260,8 @@ void VEStaticView::Render_impl() {
     if(ob->full_colors) {
       mat->ambientColor.setValue(ob->ambient_color.r, ob->ambient_color.g, ob->ambient_color.b);
       if(ob->specular_color.a > 0.0f) {
-	mat->specularColor.setValue(ob->specular_color.r, ob->specular_color.g, ob->specular_color.b);
-	mat->shininess.setValue(ob->specular_color.a);
+        mat->specularColor.setValue(ob->specular_color.r, ob->specular_color.g, ob->specular_color.b);
+        mat->shininess.setValue(ob->specular_color.a);
       }
       mat->emissiveColor.setValue(ob->emissive_color.r, ob->emissive_color.g, ob->emissive_color.b);
     }
@@ -1269,84 +1269,84 @@ void VEStaticView::Render_impl() {
 
   SoSeparator* ssep = obv->shapeSeparator();
 
-  float off_size = 1.0e-12f;	// tiny size if it is turned off..
+  float off_size = 1.0e-12f;    // tiny size if it is turned off..
 
   if(ob->IsCurShape()) {// only if we are currently the right shape, incl fm file flag
     if(ob->HasStaticFlag(VEStatic::FM_FILE)) {
       if(ob->HasStaticFlag(VEStatic::OFF)) {
-	FloatTransform off_tx = ob->obj_xform;
-	off_tx.scale.SetXYZ(off_size, off_size, off_size);
-	off_tx.CopyTo(tx);
+        FloatTransform off_tx = ob->obj_xform;
+        off_tx.scale.SetXYZ(off_size, off_size, off_size);
+        off_tx.CopyTo(tx);
       }
       else {
-	SoTransform* tx = obv->txfm_shape();
-	ob->obj_xform.CopyTo(tx);
+        SoTransform* tx = obv->txfm_shape();
+        ob->obj_xform.CopyTo(tx);
       }
     }
     else {
       switch(ob->shape) {
       case VEStatic::SPHERE: {
-	SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	if(ob->HasStaticFlag(VEStatic::OFF))
-	  sp->radius = off_size;
-	else
-	  sp->radius = ob->radius;
-	break;
+        SoSphere* sp = (SoSphere*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+        if(ob->HasStaticFlag(VEStatic::OFF))
+          sp->radius = off_size;
+        else
+          sp->radius = ob->radius;
+        break;
       }
       case VEStatic::CAPSULE: {
-	SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	if(ob->HasStaticFlag(VEStatic::OFF)) {
-	  sp->radius = off_size;
-	  sp->height = off_size;
-	}
-	else {
-	  sp->radius = ob->radius;
-	  sp->height = ob->length;
-	}
-	break;
+        SoCapsule* sp = (SoCapsule*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+        if(ob->HasStaticFlag(VEStatic::OFF)) {
+          sp->radius = off_size;
+          sp->height = off_size;
+        }
+        else {
+          sp->radius = ob->radius;
+          sp->height = ob->length;
+        }
+        break;
       }
       case VEStatic::CYLINDER: {
-	SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	if(ob->HasStaticFlag(VEStatic::OFF)) {
-	  sp->radius = off_size;
-	  sp->height = off_size;
-	}
-	else {
-	  sp->radius = ob->radius;
-	  sp->height = ob->length;
-	}
-	break;
+        SoCylinder* sp = (SoCylinder*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+        if(ob->HasStaticFlag(VEStatic::OFF)) {
+          sp->radius = off_size;
+          sp->height = off_size;
+        }
+        else {
+          sp->radius = ob->radius;
+          sp->height = ob->length;
+        }
+        break;
       }
       case VEStatic::BOX: {
-	SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	if(ob->HasStaticFlag(VEStatic::OFF)) {
-	  sp->width = off_size;
-	  sp->depth = off_size;
-	  sp->height = off_size;
-	}
-	else {
-	  sp->width = ob->box.x;
-	  sp->depth = ob->box.z;
-	  sp->height = ob->box.y;
-	}
-	break;
+        SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+        if(ob->HasStaticFlag(VEStatic::OFF)) {
+          sp->width = off_size;
+          sp->depth = off_size;
+          sp->height = off_size;
+        }
+        else {
+          sp->width = ob->box.x;
+          sp->depth = ob->box.z;
+          sp->height = ob->box.y;
+        }
+        break;
       }
       case VEStatic::PLANE: {
-	SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
-	if(ob->HasStaticFlag(VEStatic::OFF)) {
-	  sp->height = off_size;
-	  sp->width = off_size;
-	  sp->depth = off_size;
-	}
-	else {
-	  sp->height = .01f;
-	  sp->width = ob->plane_vis_size.x;
-	  sp->depth = ob->plane_vis_size.y;
-	}
-	break;
+        SoCube* sp = (SoCube*)ssep->getChild(ssep->getNumChildren()-1); // last thing
+        if(ob->HasStaticFlag(VEStatic::OFF)) {
+          sp->height = off_size;
+          sp->width = off_size;
+          sp->depth = off_size;
+        }
+        else {
+          sp->height = .01f;
+          sp->width = ob->plane_vis_size.x;
+          sp->depth = ob->plane_vis_size.y;
+        }
+        break;
       }
       case VEStatic::NO_SHAPE: {
-	break;
+        break;
       }
       }
     }
@@ -1375,7 +1375,7 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
   const SbVec3f& scale = dragger->scaleFactor.getValue();
 //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-  if(sc < .1f) sc = .1f;	// prevent scale from going to small too fast!!
+  if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   ob->radius *= sc.x;
   ob->length *= sc.x;
   ob->box *= sc;
@@ -1407,7 +1407,7 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
 }
 
 //////////////////////////
-//   VESpaceView	//
+//   VESpaceView        //
 //////////////////////////
 
 void VESpaceView::Initialize(){
@@ -1459,7 +1459,7 @@ void VESpaceView::Render_impl() {
 }
 
 //////////////////////////
-//   VEWorld		//
+//   VEWorld            //
 //////////////////////////
 
 VEWorldView* VEWorld::NewView(T3DataViewFrame* fr) {
@@ -1468,8 +1468,8 @@ VEWorldView* VEWorld::NewView(T3DataViewFrame* fr) {
 
 // Add a new VEWorldView object to the frame for the given VEWorld.
 VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
-  NewNetViewHelper newNetView(fr, wl, "world");
-  if (!newNetView.isValid()) return NULL;
+  NewNetViewHelper new_net_view(fr, wl, "world");
+  if (!new_net_view.isValid()) return NULL;
 
   VEWorldView* vw = new VEWorldView;
   fr->AddView(vw);
@@ -1477,7 +1477,7 @@ VEWorldView* VEWorldView::New(VEWorld* wl, T3DataViewFrame*& fr) {
   // make sure we get it all setup!
   vw->BuildAll();
 
-  newNetView.showFrame();
+  new_net_view.showFrame();
   return vw;
 }
 
@@ -1497,11 +1497,11 @@ VEWorldView* VEWorld::FindView() {
 void VEWorld::UpdateView() {
   VEWorldView* vew = FindView();
   if(!vew) return;
-  vew->UpdateDisplay(false);	// no update panel
+  vew->UpdateDisplay(false);    // no update panel
 }
 
 //////////////////////////
-//   VEWorldView	//
+//   VEWorldView        //
 //////////////////////////
 
 void VEWorldView::Initialize() {
@@ -1534,7 +1534,7 @@ void VEWorldView::UpdateAfterEdit_impl() {
 }
 
 void VEWorldView::UpdateName() {
-  VEWorld* wl = World(); 
+  VEWorld* wl = World();
   if (wl) {
     if (!name.contains(wl->name))
       SetName(wl->name + "_View");
@@ -1551,7 +1551,7 @@ void VEWorldView::DataUpdateAfterEdit_impl() {
 }
 
 const String VEWorldView::caption() const {
-  VEWorld* wl = World(); 
+  VEWorld* wl = World();
   String rval;
   if (wl) {
     rval = wl->GetDisplayName();
@@ -1749,7 +1749,7 @@ void VEWorldView::SetupCameras() {
   if(cam_light) {
     obv->setCamLightOn(true);
     obv->setCamLightDir(cam_light->dir_norm.x, cam_light->dir_norm.y,
-			    -cam_light->dir_norm.z);
+                            -cam_light->dir_norm.z);
   }
   else {
     obv->setCamLightOn(false);
@@ -1793,7 +1793,7 @@ void VEWorldView::SetupLights() {
 // void VEWorldView::setDisplay(bool value) {
 //   if (display_on == value) return;
 //   display_on = value;
-//   UpdateDisplay(false);		// 
+//   UpdateDisplay(false);              //
 // }
 
 QImage VEWorld::GetCameraImage(int cam_no) {
@@ -1820,7 +1820,7 @@ QImage VEWorld::GetCameraImage(int cam_no) {
   VEWorldView* el;
   FOR_DLC_EL_OF_TYPE(VEWorldView, el, dl, itr) {
     return el->GetCameraImage(cam_no);
-  } 
+  }
 
   TestError(true, "GetCameraImage", "No View of this world found -- must create View in order to get camera images");
 
@@ -1834,14 +1834,14 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 
   T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
   if(!obv) {
-    if(taMisc::gui_no_win) {	// offscreen rendering mode -- need to build a new worldview
+    if(taMisc::gui_no_win) {    // offscreen rendering mode -- need to build a new worldview
       BuildAll();
       Render_pre();
       Render_impl();
       Render_post();
       obv = (T3VEWorld*)this->node_so(); // cache
     }
-    if(!obv) {		// still didn't work
+    if(!obv) {          // still didn't work
       return img;
     }
   }
@@ -1871,11 +1871,11 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
   vpreg.setWindowSize(cur_img_size.x, cur_img_size.y);
 
   static TwoDCoord last_img_size;
-  
+
   if(!cam_renderer) {
     cam_renderer = new SoOffscreenRendererQt(vpreg);
     SoGLRenderAction* action = cam_renderer->getGLRenderAction();
-    action->setSmoothing(true); 
+    action->setSmoothing(true);
     action->setTransparencyType(SoGLRenderAction::BLEND);
 
     last_img_size = cur_img_size;
@@ -1900,10 +1900,10 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 
   bool ok = cam_renderer->render(obv);
 
-  cam_switch->whichChild = -1;	// switch off for regular viewing!
+  cam_switch->whichChild = -1;  // switch off for regular viewing!
 
   if(TestError(!ok, "GetCameraImage", "offscreen render failed!")) return img;
-  
+
   img = cam_renderer->getImage();
 //   img = QImage(cur_img_size.x, cur_img_size.y, QImage::Format_RGB32);
 
@@ -1913,16 +1913,16 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
 //   if(vecam->color_cam) {
 //     for(int y=cur_img_size.y-1; y>= 0; y--) {
 //       for(int x=0;x<cur_img_size.x;x++) {
-// 	int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
-// 	img.setPixel(x,y, qRgb(r,g,b));
+//      int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
+//      img.setPixel(x,y, qRgb(r,g,b));
 //       }
 //     }
 //   }
 //   else {
 //     for(int y=cur_img_size.y-1; y>= 0; y--) {
 //       for(int x=0;x<cur_img_size.x;x++) {
-// 	int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
-// 	img.setPixel(x,y, qGray(r,g,b));
+//      int r = gbuf[idx++]; int g = gbuf[idx++]; int b = gbuf[idx++];
+//      img.setPixel(x,y, qGray(r,g,b));
 //       }
 //     }
 //   }
@@ -1991,8 +1991,8 @@ VEWorldViewPanel::VEWorldViewPanel(VEWorldView* dv_)
   iFlowLayout* fl = new iFlowLayout(widCmdButtons);
 //  layTopCtrls->addWidget(widCmdButtons);
   layOuter->addWidget(widCmdButtons);
-  
-  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
+
+  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons);
   meth_but_mgr->Constr(wv()->World());
 
   setCentralWidget(widg);
@@ -2010,10 +2010,10 @@ void VEWorldViewPanel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
   VEWorldView* wv_ = wv();
   if(!wv_) return;
-  
+
   VEWorld* wl = wv_->World();
   if(!wl) return;
-  
+
   if (req_full_redraw) {
     req_full_redraw = false;
     wv_->Reset();
@@ -2029,11 +2029,11 @@ void VEWorldViewPanel::UpdatePanel_impl() {
     if(wl->camera_0) {
       QImage img = wv_->GetCameraImage(0);
       if(!img.isNull()) {
-	QPixmap pm = QPixmap::fromImage(img);
-	labcam0->setPixmap(pm);
+        QPixmap pm = QPixmap::fromImage(img);
+        labcam0->setPixmap(pm);
       }
       else {
-	labcam0->setText("Render Failed!");
+        labcam0->setText("Render Failed!");
       }
     }
     else {
@@ -2043,11 +2043,11 @@ void VEWorldViewPanel::UpdatePanel_impl() {
     if(wl->camera_1) {
       QImage img = wv_->GetCameraImage(1);
       if(!img.isNull()) {
-	QPixmap pm = QPixmap::fromImage(img);
-	labcam1->setPixmap(pm);
+        QPixmap pm = QPixmap::fromImage(img);
+        labcam1->setPixmap(pm);
       }
       else {
-	labcam1->setText("Render Failed!");
+        labcam1->setText("Render Failed!");
       }
     }
     else {
@@ -2065,5 +2065,5 @@ void VEWorldViewPanel::GetValue_impl() {
   wv_->drag_objs = chkDragObjs->isChecked();
   wv_->show_joints = chkShowJoints->isChecked();
 
-  req_full_redraw = true;	// not worth micro-managing: MOST changes require full redraw!
+  req_full_redraw = true;       // not worth micro-managing: MOST changes require full redraw!
 }

@@ -5957,8 +5957,8 @@ void RndSeed::GetCurrent() {
     seed.FastEl(idx) = (long)state.mt[idx];
   }
   mti = state.mti;
-  isGaussDoubleCached = state.isGaussDoubleCached;
-  cachedGaussDouble = state.cachedGaussDouble;
+  is_gauss_double_cached = state.is_gauss_double_cached;
+  cached_gauss_double = state.cached_gauss_double;
 }
 
 void RndSeed::NewSeed() {
@@ -5988,8 +5988,8 @@ void RndSeed::OldSeed() {
     state.mt[idx] = (ulong)seed.FastEl(idx);
   }
   state.mti = mti;
-  state.isGaussDoubleCached = isGaussDoubleCached;
-  state.cachedGaussDouble = cachedGaussDouble;
+  state.is_gauss_double_cached = is_gauss_double_cached;
+  state.cached_gauss_double = cached_gauss_double;
   MTRnd::set_state(state);
 }
 
