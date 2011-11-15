@@ -20,11 +20,10 @@
 #include <QMultiHash>
 #include <QString>
 
-//#include "netstru.h" // Network, Unit
+#include "niftireader.h"
+#include "ta_geometry.h" // FloatTDCoord
 class Network;
 class Unit;
-
-#include "ta_geometry.h" // FloatTDCoord
 
 class NetworkVoxelMapper
 {
@@ -34,15 +33,16 @@ public:
 
 private:
   void CreateUnitMap(Network *network);
-  QList<TDCoord> GetVoxelsInArea(const QString &brain_area);
-  void AssignVoxelsInArea(const QString &brain_area, const QList<TDCoord> &voxels);
+  QList<FloatTDCoord> GetVoxelsInArea(const QString &brain_area);
+  void AssignVoxelsInArea(const QString &brain_area, const QList<FloatTDCoord> &voxels);
   double GetVoxelSize(unsigned num_units, unsigned num_voxels);
   unsigned GetVoxelDivisions(unsigned num_units, unsigned num_voxels);
   QList<unsigned> GetSubvoxelIndexes(unsigned num_units, unsigned num_subvoxels);
-  FloatTDCoord GetCoord(unsigned subvoxel_idx, const QList<TDCoord> &voxels, unsigned voxel_divisions);
+  FloatTDCoord GetCoord(unsigned subvoxel_idx, const QList<FloatTDCoord> &voxels, unsigned voxel_divisions);
 
   QMultiHash<QString, Unit *> unit_map;
   QString atlas_name;
+  TalairachAtlas atlas;
 };
 
 #endif // NETWORK_VOXEL_MAPPER_H

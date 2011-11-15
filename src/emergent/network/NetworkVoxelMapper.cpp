@@ -25,11 +25,18 @@ namespace { // anonymous
   {
     return std::pow(val, 1.0/3.0);
   }
+
+  QString GetAtlasName() {
+    // For now, only read from the Talairach atlas.
+    String talairachFilename = taMisc::app_dir + "/data/atlases/talairach.nii";
+    return talairachFilename.toQString();
+  }
 }
 
 NetworkVoxelMapper::NetworkVoxelMapper(Network *network)
   : unit_map()
   , atlas_name(network->atlas_name.toQString())
+  , atlas(GetAtlasName())
 {
   // The network pointer is not stored, so create a map of unit pointers.
   CreateUnitMap(network);
@@ -88,24 +95,33 @@ NetworkVoxelMapper::AssignVoxels()
   {
     // Get the collection of voxel coordinates associated with that
     // brain area.
-    QList<TDCoord> voxels = GetVoxelsInArea(brain_area);
+    QList<FloatTDCoord> voxels = GetVoxelsInArea(brain_area);
 
     // Assign voxel coordinates and sizes to all units.
     AssignVoxelsInArea(brain_area, voxels);
   }
 }
 
-QList<TDCoord>
+// Get the collection of voxels associated with the given brain area,
+// in an atlas-specific manner.
+QList<FloatTDCoord>
 NetworkVoxelMapper::GetVoxelsInArea(const QString &brain_area)
 {
-  QList<TDCoord> voxels;
-  // TBD: atlas-specific code to get the collection of voxels
-  // associated with the given brain area.
+  QList<FloatTDCoord> voxels;
+
+  // Return no voxels if no brain area was specified.
+  if (!brain_area.isEmpty()) {
+    // Get the list of voxels, first by their i,j,k indices, then convert
+    // to x,y,z coordinates.
+    QList<TDCoord> voxelIdxs = atlas.GetVoxelsInArea(brain_area);
+    voxels = atlas.GetVoxelCoords(voxelIdxs);
+  }
+
   return voxels;
 }
 
 void
-NetworkVoxelMapper::AssignVoxelsInArea(const QString &brain_area, const QList<TDCoord> &voxels)
+NetworkVoxelMapper::AssignVoxelsInArea(const QString &brain_area, const QList<FloatTDCoord> &voxels)
 {
   // Get the list of units that need voxel assignments for this brain area.
   QList<Unit *> units = unit_map.values(brain_area);
@@ -230,7 +246,7 @@ NetworkVoxelMapper::GetSubvoxelIndexes(unsigned num_units, unsigned num_subvoxel
 }
 
 FloatTDCoord
-NetworkVoxelMapper::GetCoord(unsigned subvoxel_idx, const QList<TDCoord> &voxels, unsigned voxel_divisions)
+NetworkVoxelMapper::GetCoord(unsigned subvoxel_idx, const QList<FloatTDCoord> &voxels, unsigned voxel_divisions)
 {
   // Turn a subvoxel index into a voxel and x,y,z offset into that voxel.
   int temp = subvoxel_idx;
@@ -246,9 +262,9 @@ NetworkVoxelMapper::GetCoord(unsigned subvoxel_idx, const QList<TDCoord> &voxels
   int voxel_idx = temp;
   assert(voxel_idx < voxels.size());
 
-  FloatTDCoord coord(voxels[voxel_idx]);
-  FloatTDCoord subvoxel_offset(dx, dy, dz);
-  coord += subvoxel_offset / static_cast<float>(voxel_divisions);
+  FloatTDCoord coord(dx, dy, dz);
+  coord /= static_cast<float>(voxel_divisions);
+  coord += voxels[voxel_idx];
 
   return coord;
 }

@@ -19,8 +19,10 @@
 #ifndef NIFTIREADER_H
 #define NIFTIREADER_H
 
+#include <QList>
 class QStringList;
 class QString;
+class FloatTDCoord;
 class TDCoord;
 class NiftiReaderPrivate;
 class TalairachAtlasPrivate;
@@ -30,10 +32,10 @@ public:
   enum AnatomicalPlane {
     AXIAL = 0x0000,
     SAGITTAL,
-    CORONAL 
+    CORONAL
   };
-  
-  explicit NiftiReader(const QString& file); 
+
+  explicit NiftiReader(const QString& file);
   virtual ~NiftiReader();
 
   bool    isValid() const;
@@ -43,15 +45,17 @@ public:
   void    slice(AnatomicalPlane p, int index, unsigned short* data) const;
   void    sliceAsTexture(AnatomicalPlane p, int index, unsigned char* data) const;
   int     numExtensions() const;
-  
+
 protected:
+  const void *rawData() const;
+
   NiftiReaderPrivate* m_d;
-  
+
 private:
   NiftiReader();
   NiftiReader(const NiftiReader&);
   NiftiReader operator=(const NiftiReader&);
-    
+
 };
 
 
@@ -62,14 +66,16 @@ public:
 
   const QStringList& labels() const;
   QString label(int index) const;
-  
+  QList<TDCoord> GetVoxelsInArea(const QString &labelRegexp) const;
+  QList<FloatTDCoord> GetVoxelCoords(const QList<TDCoord> &voxelIdxs) const;
+
 protected:
   TalairachAtlasPrivate* m_d;
-  
+
 private:
   TalairachAtlas();
   TalairachAtlas(const TalairachAtlas&);
   TalairachAtlas operator=(const TalairachAtlas&);
-  
+
 };
 #endif // niftireader_h
