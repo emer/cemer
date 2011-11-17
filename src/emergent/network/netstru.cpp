@@ -2025,7 +2025,7 @@ void Unit::Initialize() {
   n_recv_cons = 0;
   // pos = ??
   voxel.x = voxel.y = voxel.z = -1.0;
-  voxel_size = -1.0;
+  voxel_size = 0.0;
   idx = -1;
   flat_idx = 0;
   m_unit_spec = NULL;
