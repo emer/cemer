@@ -29,10 +29,11 @@ class TalairachAtlasPrivate;
 
 class NiftiReader {
 public:
-  enum AnatomicalPlane {
-    AXIAL = 0x0000,
-    SAGITTAL,
-    CORONAL
+  enum AnatomicalPlane 
+  { 
+    AXIAL     = 0x0000, 
+    SAGITTAL  = 0x0001, 
+    CORONAL   = 0x0002    
   };
 
   explicit NiftiReader(const QString& file);
@@ -45,6 +46,8 @@ public:
   void    slice(AnatomicalPlane p, int index, unsigned short* data) const;
   void    sliceAsTexture(AnatomicalPlane p, int index, unsigned char* data) const;
   int     numExtensions() const;
+  FloatTDCoord XyzToIjk(const FloatTDCoord &xyzCoord) const;
+  FloatTDCoord IjkToXyz(const FloatTDCoord &ijkCoord) const;
 
 protected:
   const void *rawData() const;
@@ -68,6 +71,7 @@ public:
   QString label(int index) const;
   QList<TDCoord> GetVoxelsInArea(const QString &labelRegexp) const;
   QList<FloatTDCoord> GetVoxelCoords(const QList<TDCoord> &voxelIdxs) const;
+  static FloatTDCoord Tal2Mni(const FloatTDCoord &talCoord);
 
 protected:
   TalairachAtlasPrivate* m_d;
