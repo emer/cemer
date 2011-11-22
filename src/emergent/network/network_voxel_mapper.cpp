@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "NetworkVoxelMapper.h"
+#include "network_voxel_mapper.h"
 
 #include <cassert>
 #include "netstru.h" // Network, Unit

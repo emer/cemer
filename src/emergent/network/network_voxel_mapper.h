@@ -20,7 +20,7 @@
 #include <QMultiHash>
 #include <QString>
 
-#include "niftireader.h"
+#include "nifti_reader.h"
 #include "ta_geometry.h" // FloatTDCoord
 class Network;
 class Unit;
