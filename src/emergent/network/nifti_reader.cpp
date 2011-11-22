@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "niftireader.h"
+#include "nifti_reader.h"
 #include "ta_geometry.h"
 #include "ta_type.h"
 #include "nifti1_io.h"
@@ -40,7 +40,8 @@ public:
   QStringList labels;
 };
 
-QSet<int> TalairachAtlasPrivate::getMatchingLabelIdxs(const QString &regexpStr) {
+QSet<int> TalairachAtlasPrivate::getMatchingLabelIdxs(const QString &regexpStr) 
+{
   // The set of label indices to return.
   QSet<int> matchingLabelIdxs;
 
@@ -84,7 +85,8 @@ NiftiReader::~NiftiReader()
   delete m_d;
 }
 
-bool NiftiReader::isValid() const {
+bool NiftiReader::isValid() const 
+{
   return (m_d->img == 0) ? false : true;
 }
 
@@ -157,27 +159,90 @@ void NiftiReader::sliceAsTexture(AnatomicalPlane p, int index, unsigned char* da
   int prange = pmax-pmin;
   int j(0);
   int nbytes(bytesPerVoxel());
-  int pixel(0); unsigned char pixel8(0);
+  unsigned int pixel(0); unsigned char pixel8(0);
   for (int i=0; i<planeSize; i++ )
   {
-    pixel = (s[i]>pmax) ? pmax : s[i];
-    pixel = (s[i]<pmin) ? pmin : s[i];
-    pixel8 = static_cast<unsigned char>( ((pixel-pmin)*255)/prange );
-    j=i*nbytes;
+    if (s[i] > pmax) {
+      pixel = pmax;
+    }
+    else if (s[i] < pmin) {
+      pixel = pmin;
+    }
+    else {
+      pixel = s[i];
+    }
+    pixel8 = static_cast<unsigned char>(((pixel-pmin) * 255) / prange);
+    j = i * nbytes;
     data[j] = pixel8;
     data[j+1] = (pixel8 == 0) ? 0 : 255;
   }
   delete [] s;
 }
 
-int NiftiReader::numExtensions() const {
+int NiftiReader::numExtensions() const 
+{
   return m_d->img->num_ext;
 }
 
-const void * NiftiReader::rawData() const {
+const void * NiftiReader::rawData() const 
+{
   return m_d->img->data;
 }
 
+FloatTDCoord NiftiReader::XyzToIjk(const FloatTDCoord &xyzCoord) const 
+{
+  FloatTDCoord ijkCoord(0,0,0);
+ 
+  if (isValid()) {
+    // Get the transform object from the nifti file -- this is loaded from
+    // srow_x[], srow_y[], and srow_z[].
+    const mat44 &xf = NiftiReader::m_d->img->sto_xyz;
+    
+    // Inverse transform each xyz-based coordinate into an ijk-based coordinate.
+    // This is the inverse of the transform method applied in the IjkToXyz() 
+    // method, which is based on the NIfTI-1 header file.
+
+    // Perform the inverse: translation first, inverse matrix next
+    float x = xyzCoord.x - xf.m[0][3];
+    float y = xyzCoord.y - xf.m[1][3];
+    float z = xyzCoord.z - xf.m[2][3];  
+    float i = x * xf.m[0][0] + y * xf.m[1][0] + z * xf.m[2][0];
+    float j = x * xf.m[0][1] + y * xf.m[1][1] + z * xf.m[2][1];
+    float k = x * xf.m[0][2] + y * xf.m[1][2] + z * xf.m[2][2];
+    
+    ijkCoord.SetXYZ(i, j, k);
+  }
+  return ijkCoord;
+}
+
+FloatTDCoord NiftiReader::IjkToXyz(const FloatTDCoord &ijkCoord) const 
+{
+  FloatTDCoord xyzCoord(0,0,0);
+  
+  if (isValid()) {
+    // Get the transform object from the nifti file -- this is loaded from
+    // srow_x[], srow_y[], and srow_z[].
+    const mat44 &xf = NiftiReader::m_d->img->sto_xyz;
+    
+    // Transform each ijk-based coordinate to an xyz-based coordinate.
+    // METHOD 3 (used when sform_code > 0):
+    // -----------------------------------
+    // The (x,y,z) coordinates are given by a general affine transformation
+    // of the (i,j,k) indexes:
+    //   x = srow_x[0] * i + srow_x[1] * j + srow_x[2] * k + srow_x[3]
+    //   y = srow_y[0] * i + srow_y[1] * j + srow_y[2] * k + srow_y[3]
+    //   z = srow_z[0] * i + srow_z[1] * j + srow_z[2] * k + srow_z[3]
+    float i = ijkCoord.x;
+    float j = ijkCoord.y;
+    float k = ijkCoord.z;
+    float x = xf.m[0][0] * i + xf.m[0][1] * j + xf.m[0][2] * k + xf.m[0][3];
+    float y = xf.m[1][0] * i + xf.m[1][1] * j + xf.m[1][2] * k + xf.m[1][3];
+    float z = xf.m[2][0] * i + xf.m[2][1] * j + xf.m[2][2] * k + xf.m[2][3];
+      
+    xyzCoord.SetXYZ(x, y, z);
+  }
+  return xyzCoord;
+}
 
 /////////////////////////////////////////////////////////////////////
 
@@ -256,6 +321,9 @@ QList<FloatTDCoord> TalairachAtlas::GetVoxelCoords(const QList<TDCoord> &voxelId
     // Transform each ijk-based coordinate to an xyz-based coordinate.
     voxelCoords.reserve(voxelIdxs.size());
     foreach(const TDCoord &ijkCoord, voxelIdxs) {
+      // @TODO: call the function instead - if call overhead performance is not bad
+      //voxelCoords << IjkToXyz(ijkCoord);
+      
       // METHOD 3 (used when sform_code > 0):
       // -----------------------------------
       // The (x,y,z) coordinates are given by a general affine transformation
@@ -273,6 +341,37 @@ QList<FloatTDCoord> TalairachAtlas::GetVoxelCoords(const QList<TDCoord> &voxelId
       voxelCoords << FloatTDCoord(x, y, z);
     }
   }
-
   return voxelCoords;
+}
+
+
+FloatTDCoord TalairachAtlas::Tal2Mni(const FloatTDCoord &talCoord)
+{
+  // Adapted from the tal2icbm.m MATLAB file available at:
+  // http://brainmap.org/icbm2tal/
+  //
+  // This function converts coordinates from Talairach space to MNI
+  // space (normalized using the FSL software package) using the 
+  // tal2icbm transform developed and validated by Jack Lancaster 
+  // at the Research Imaging Center in San Antonio, Texas.
+  //
+  // ric.uthscsa.edu 3/14/07
+  // http://www3.interscience.wiley.com/cgi-bin/abstract/114104479/ABSTRACT
+  
+  // Inverted icbm_fsl transformation matrix
+  float xf[4][4] = {
+    {  1.0566, -0.0040, 0.0028,  1.1155 },
+    {  0.0088,  1.0505, 0.0677,  0.8694 },
+    { -0.0068, -0.0719, 1.1052, -3.6047 },
+    {  0.0000,  0.0000, 0.0000,  1.0000 }
+  };
+    
+  int   x = talCoord.x;
+  int   y = talCoord.y;
+  int   z = talCoord.z;
+  float i = x * xf[0][0] + y * xf[0][1] + z * xf[0][2] + 1.00 * xf[0][3];
+  float j = x * xf[1][0] + y * xf[1][1] + z * xf[1][2] + 1.00 * xf[1][3];
+  float k = x * xf[2][0] + y * xf[2][1] + z * xf[2][2] + 1.00 * xf[2][3];
+
+  return FloatTDCoord(i, j, k);
 }
