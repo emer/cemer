@@ -21,8 +21,8 @@
 #include "emergent_project.h"
 #include "ta_data.h"
 #include "ta_filer.h"
-#include "BrainView.h"
-#include "NetworkVoxelMapper.h"
+#include "brain_view.h"
+#include "network_voxel_mapper.h"
 
 #ifdef TA_GUI
 #include "ta_qt.h"
