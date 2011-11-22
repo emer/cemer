@@ -18,7 +18,12 @@
 
 #include "netstru_so.h" // overkill #include
 
+class SoSeparator;      // #IGNORE
 class SoIndexedFaceSet; // #IGNORE
+class SoVertexProperty; // #IGNORE
+class SoMaterial;       // #IGNORE
+class SoTransform;      // #IGNORE
+
 
 class EMERGENT_API T3BrainNode: public T3NodeLeaf {
 #ifndef __MAKETA__
@@ -29,17 +34,17 @@ class EMERGENT_API T3BrainNode: public T3NodeLeaf {
 public:
   static void		initClass();
 
-  SoIndexedFaceSet*     shape();
-  SoVertexProperty* 	vtxProp() {return vtx_prop_;}
+  SoSeparator*          brain_group; //#IGNORE
+  SoMaterial*           brain_mat; //#IGNORE
+  SoMaterial**          brain_tex_mat_array; //#IGNORE
+  SoVertexProperty**    voxel_vrtx_prop_array; //#IGNORE
+  SoIndexedFaceSet**    voxel_face_set_array; //#IGNORE
+  SoTransform*          spacing_xform; //#IGNORE
 
   T3BrainNode(T3DataView* dataView_ = NULL);
 
 protected:
   ~T3BrainNode();
-
-protected:
-  SoIndexedFaceSet*     shape_; //#IGNORE
-  SoVertexProperty*	vtx_prop_;
 
 };
 

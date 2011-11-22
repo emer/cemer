@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef BRAIN_VIEW_H
-#define BRAIN_VIEW_H
+#ifndef brain_view_h
+#define brain_view_h
 
 // could just #include "emergent_base.h" instead of the next two
 #include "network_TA_type.h" // to get TA_BrainView, etc.
@@ -24,12 +24,96 @@
 class Network;
 class BrainViewPanel;
 class BrainVolumeView;
+class NiftiReader; // #IGNORE
+class TalairachAtlas; // #IGNORE
+class BrainViewState; // #IGNORE
+
+
+class NiftiReader;
+class EMERGENT_API BrainViewState: public QObject {
+  INHERITED(QObject)
+  Q_OBJECT
+  
+public:  
+  enum AnatomicalPlane 
+  { 
+    AXIAL     = 0x0000, 
+    SAGITTAL  = 0x0001, 
+    CORONAL   = 0x0002
+  };
+  enum StateChange 
+  { 
+    NONE      = 0x0000,
+    MINOR     = 0x0001, 
+    MAJOR     = 0x0002 
+  };  
+  
+  BrainViewState( QObject* parent=0 );
+  virtual ~BrainViewState();
+  
+  bool          IsValid() const;
+  
+  QString       DataName() const;  
+  TDCoord       Dimensions() const; 
+  AnatomicalPlane ViewPlane() const;
+  int           SliceStart() const;
+  int           SliceEnd() const;
+  bool          NumSlicesAreLocked() const;
+  int           SliceSpacing() const;
+  int           SliceTransparency() const;
+  int           NumSlicesValid() const;
+  int           NumSlices() const;
+  int           MaxSlices() const;
+  
+  public slots:
+  void          SetDataName(const QString& data_name);
+  void          SetDimensions(const TDCoord& dimensions);
+  void          SetViewPlane( AnatomicalPlane plane );
+  void          SetViewPlane( int plane );
+  void          SetSliceStart(int start);
+  void          SetSliceEnd(int end);
+  void          SetLockSlices(int state);
+  void          SetSliceSpacing(int spacing);
+  void          SetSliceTransparency(int transparency);
+  
+signals:
+  void          DataNameChanged(const QString& name);
+  void          DimensionsChanged(const TDCoord& d);
+  void          ViewPlaneChanged(int plane);
+  void          NumSlicesChanged(int nSlices);
+  void          SliceStartChanged(int start);
+  void          SliceEndChanged(int end);
+  void          SliceSpacingChanged(int spacing);
+  void          SliceTransparencyChanged(int transparency);
+  void          StateChanged(int);
+  
+private:
+  bool          state_valid_;
+  QString       data_name_;
+  TDCoord       dimensions_;
+  AnatomicalPlane   view_plane_;
+  int           slice_start_;
+  int           slice_end_;
+  int           num_slices_;
+  bool          lock_num_slices_;
+  int           slice_spacing_;
+  int           slice_transparency_;
+  StateChange   last_state_change_;
+  
+  bool          ValidSliceStart() const;
+  bool          ValidSliceEnd() const;
+  void          ValidateState();
+  void          EmitAndClearState();
+};
+
+
 
 class EMERGENT_API BrainView : public T3DataViewMain {
 // ##DUMP_LOAD_POST
 INHERITED(T3DataViewMain)
 
   friend class BrainViewPanel;
+  friend class BrainVolumeView;
 
 public:
   enum MDFlags { // indicates type that unit.disp_base points to
@@ -38,9 +122,27 @@ public:
     MD_INT		= 0x0002,
     MD_UNKNOWN 		= 0x000F
   };
-
+  
+//  enum ViewPlane { 
+//    AXIAL = 0x0000, 
+//    SAGITTAL, 
+//    CORONAL
+//  };
+  
+  BrainViewState      bv_state;
+//  int               view_plane;
+//  float             slice_spacing;
+//  float             slice_transparency;
+//  int               slice_start;
+//  int               slice_end;
+//  TDCoord           brain_geom;
+//  void              setSliceTransparency(float pctTrans);
+//  void              setSliceRange(int start, int end);
+//  void              setSliceSpacing(int spacing);
+  void              AsyncRenderUpdate();
+  
   static BrainView*	New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
-
+  
   bool			display;       	// whether to update the display when values change (under control of programs)
   bool			lay_mv;		// keep this..
   bool			net_text;       // whether to display text box below network with counters etc
@@ -93,6 +195,8 @@ public:
   virtual void		GetMaxSize(); // get max size from network
 
   void 			GetUnitColor(float val, iColor& col, float& sc_val);
+  virtual void 		GetUnitDisplayVals(BrainVolumeView* bvv, Unit* u, float& val,
+                                       T3Color& col, float& sc_val);
   virtual void 		GetUnitDisplayVals(BrainVolumeView* bvv, TwoDCoord& co, float& val,
 					   T3Color& col, float& sc_val);
   void			InitScaleRange(ScaleRange& sr);
@@ -138,10 +242,16 @@ protected:
   override void		Reset_impl(); // #IGNORE
   void 			UpdateAutoScale(); // #IGNORE prepass updates scale from values
   void			viewWin_NotifySignal(ISelectableHost* src, int op);
+//  NiftiReader*      mni_brain; // #IGNORE
+//  TalairachAtlas*   tal_brain; // #IGNORE
+  
 private:
   SIMPLE_COPY(BrainView)
   void			Initialize();
   void			Destroy();
 };
 
-#endif // BRAIN_VIEW_H
+
+
+  
+#endif // brain_view_h

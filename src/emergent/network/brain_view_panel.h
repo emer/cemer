@@ -17,25 +17,26 @@
 #define BRAIN_VIEW_PANEL_H
 
 #include "netstru_qtso.h" // overkill #include
+class QString;
 
 class EMERGENT_API BrainViewPanel: public iViewPanelFrame {
   // frame for gui interface to a BrainView -- usually posted by the netview
 INHERITED(iViewPanelFrame)
   Q_OBJECT
-public:
-  QWidget*		widg;
-
+public:  
+  
+  QWidget*          widg;
   QVBoxLayout*		layTopCtrls;
   QVBoxLayout*		layViewParams;
-  QHBoxLayout*		  layDispCheck;
-  QCheckBox*		    chkDisplay;
-  QCheckBox*		    chkLayMove;
+  QHBoxLayout*		layDispCheck;
+  QCheckBox*		chkDisplay;
+  QCheckBox*		chkLayMove;
   QLabel*		    lblTextRot;
   taiField*		    fldTextRot;
   QLabel*		    lblDispMode;
-  taiComboBox*		    cmbDispMode;
+  taiComboBox*		cmbDispMode;
 
-  QHBoxLayout*		  layFontsEtc;
+  QHBoxLayout*		layFontsEtc;
   QLabel*		    lblUnitTrans;
   taiField*		    fldUnitTrans;
   QLabel*		    lblUnitFont;
@@ -44,29 +45,29 @@ public:
   taiField*		    fldLayFont;
   QLabel*		    lblMinLayFont;
   taiField*		    fldMinLayFont;
-  QCheckBox*		    chkXYSquare;
-  QCheckBox*		    chkLayGp;
+  QCheckBox*		chkXYSquare;
+  QCheckBox*		chkLayGp;
 
   QVBoxLayout*		layDisplayValues;
-  QHBoxLayout*		  layColorScaleCtrls;
-  QCheckBox*		    chkAutoScale;       // autoscale ck_box
-  QPushButton*		    butScaleDefault;    // revert to default  
+  QHBoxLayout*		layColorScaleCtrls;
+  QCheckBox*		chkAutoScale;       // autoscale ck_box
+  QPushButton*		butScaleDefault;    // revert to default  
 
-  QHBoxLayout*		 layColorBar;
-  QLabel*		    lblUnitSpacing;
+  QHBoxLayout*		layColorBar;
+  QLabel*           lblUnitSpacing;
   taiField*		    fldUnitSpacing;
-  ScaleBar*		   cbar;	      // colorbar
-  QPushButton*		   butSetColor;
+  ScaleBar*         cbar;	      // colorbar
+  QPushButton*		butSetColor;
 
   QTabWidget* 		tw; 
-  QTreeWidget*		  lvDisplayValues;
+  QTreeWidget*		lvDisplayValues;
   
   iMethodButtonMgr*	meth_but_mgr;
-  QWidget*		widCmdButtons;
+  QWidget*          widCmdButtons;
 
-  BrainView*		bv();
+  BrainView*		bv();  
 
-  void 			ColorScaleFromData();
+  void              ColorScaleFromData();
   virtual void		GetVars();
   virtual void		InitPanel();
 
@@ -77,7 +78,7 @@ public: // IDataLinkClient interface
   override void*	This();
   override TypeDef*     GetTypeDef() const;
 
-protected:
+protected:  
   int			cmd_x; // current coords of where to place next button/ctrl
   int			cmd_y;
   bool			req_full_render; // when updating, call Render on netview
@@ -89,11 +90,36 @@ protected:
 public slots:
   void			viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
   void			dynbuttonActivated(int but_no); // for hot member buttons
-
+  void          UpdateViewFromState(int state);
+  
+signals:
+  void          nameChanged(const QString& name);
+  void          dimensionsChanged(TDCoord& d);
+  void          viewPlaneChanged(int p);
+  void          numSlicesChanged(int nSlices);
+  void          sliceStartChanged(int start);
+  void          sliceEndChanged(int end);
+  void          sliceSpacingChanged(int spacing);
+  void          sliceTransparencyChanged(int pctTrans);
+  
 protected slots:
   void			butScaleDefault_pressed();
   void 			butSetColor_pressed();
   void			lvDisplayValues_selectionChanged();
+
+private:
+  QComboBox*        view_plane_comb_;
+  QSpinBox*         slice_strt_sbox_;
+  QSlider*          slice_strt_slid_;
+  QCheckBox*        lock_slices_chbox_;
+  QSpinBox*         slice_end_sbox_;
+  QSlider*          slice_end_slid_;
+  QSpinBox*         slice_spac_sbox_;
+  QSlider*          slice_spac_slid_;
+  QSpinBox*         slice_trans_sbox_;
+  QSlider*          slice_tran_slid_;
+  QString           name;
+  void              UpdateWidgetLimits();
 
 };
 
