@@ -41,7 +41,7 @@ private:
   FloatTDCoord GetCoord(unsigned subvoxel_idx, const QList<FloatTDCoord> &voxels, unsigned voxel_divisions);
 
   QMultiHash<QString, Unit *> unit_map;
-  QString atlas_name;
+  Network *network;
   TalairachAtlas atlas;
 };
 

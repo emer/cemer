@@ -26,7 +26,7 @@ namespace { // anonymous
     return std::pow(val, 1.0/3.0);
   }
 
-  QString GetAtlasName() {
+  QString GetAtlasFilename() {
     // For now, only read from the Talairach atlas.
     String talairachFilename = taMisc::app_dir + "/data/atlases/talairach.nii";
     return talairachFilename.toQString();
@@ -35,11 +35,35 @@ namespace { // anonymous
 
 NetworkVoxelMapper::NetworkVoxelMapper(Network *network)
   : unit_map()
-  , atlas_name(network->atlas_name.toQString())
-  , atlas(GetAtlasName())
+  , network(network)
+  , atlas(GetAtlasFilename())
 {
-  // The network pointer is not stored, so create a map of unit pointers.
+}
+
+void
+NetworkVoxelMapper::AssignVoxels()
+{
+  if (network->atlas_name.empty())
+  {
+    taMisc::Warning("No atlas_name specified in network;",
+      "cannot map units to voxel coordinates.");
+    return;
+  }
+
+  // Create a map of unit pointers.
   CreateUnitMap(network);
+
+  // Iterate through brain areas.
+  QList<QString> brain_areas = unit_map.uniqueKeys();
+  foreach(const QString &brain_area, brain_areas)
+  {
+    // Get the collection of voxel coordinates associated with that
+    // brain area.
+    QList<FloatTDCoord> voxels = GetVoxelsInArea(brain_area);
+
+    // Assign voxel coordinates and sizes to all units.
+    AssignVoxelsInArea(brain_area, voxels);
+  }
 }
 
 void
@@ -76,29 +100,6 @@ NetworkVoxelMapper::CreateUnitMap(Network *network)
         unit_map.insert(layer->brain_area.toQString(), unit);
       }
     }
-  }
-}
-
-void
-NetworkVoxelMapper::AssignVoxels()
-{
-  if (atlas_name.isEmpty())
-  {
-    taMisc::Warning("No atlas_name specified in network;",
-      "cannot map units to voxel coordinates.");
-    return;
-  }
-
-  // Iterate through brain areas.
-  QList<QString> brain_areas = unit_map.uniqueKeys();
-  foreach(const QString &brain_area, brain_areas)
-  {
-    // Get the collection of voxel coordinates associated with that
-    // brain area.
-    QList<FloatTDCoord> voxels = GetVoxelsInArea(brain_area);
-
-    // Assign voxel coordinates and sizes to all units.
-    AssignVoxelsInArea(brain_area, voxels);
   }
 }
 
@@ -139,7 +140,7 @@ NetworkVoxelMapper::AssignVoxelsInArea(const QString &brain_area, const QList<Fl
       // Already warned about empty brain_area fields in CreateUnitMap().
       // This warning is to catch typos.
       taMisc::Warning("No voxels were found for brain area",
-        brain_area.toLatin1(), "in atlas", atlas_name.toLatin1());
+        brain_area.toLatin1(), "in atlas", network->atlas_name);
     }
 
     // Not much can be done other than assigning each unit to render at 0.0 size.
