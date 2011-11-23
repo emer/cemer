@@ -399,8 +399,6 @@ void BrainVolumeView::CreateFaceSets()
     color.setNum(units.size());
     uint32_t* color_dat = color.startEditing();
     SbVec3f* vertex_dat = vertex.startEditing();
-    
-    float alpha(0.0);
     int v_idx = 0;
     int c_idx = 0;
     
@@ -409,25 +407,26 @@ void BrainVolumeView::CreateFaceSets()
       float ri      = unit_coord.x;
       float rj      = unit_coord.y;
       float rk      = unit_coord.z;
-      float extent  = u->voxel_size;
-      
+      float extent  = u->voxel_size/2.0f; //half voxel size
+
+      //@TODO add voxel size in 3rd dimension...(by adding more faces at different depth levels)
       if ( view_plane == BrainViewState::AXIAL){
-        vertex_dat[v_idx++].setValue(ri-halfDims.x, rj-halfDims.y, rk-s); // 00_0 = 0
-        vertex_dat[v_idx++].setValue(ri+extent-halfDims.x, rj-halfDims.y, rk-s ); // 10_0 = 0
+        vertex_dat[v_idx++].setValue(ri-extent-halfDims.x, rj-extent-halfDims.y, rk-s); // 00_0 = 0
+        vertex_dat[v_idx++].setValue(ri+extent-halfDims.x, rj-extent-halfDims.y, rk-s );// 10_0 = 0
         vertex_dat[v_idx++].setValue(ri+extent-halfDims.x, rj+extent-halfDims.y, rk-s); // 11_0 = 0
-        vertex_dat[v_idx++].setValue(ri-halfDims.x, rj+extent-halfDims.y, rk-s); // 01_0 = 0
+        vertex_dat[v_idx++].setValue(ri-extent-halfDims.x, rj+extent-halfDims.y, rk-s); // 01_0 = 0
       }
       else if ( view_plane == BrainViewState::SAGITTAL ){
-        vertex_dat[v_idx++].setValue(rj-halfDims.y, rk-halfDims.z, ri-s); // 00_0 = 0
-        vertex_dat[v_idx++].setValue(rj+extent-halfDims.y, rk-halfDims.z, ri-s); // 10_0 = 0
+        vertex_dat[v_idx++].setValue(rj-extent-halfDims.y, rk-extent-halfDims.z, ri-s); // 00_0 = 0
+        vertex_dat[v_idx++].setValue(rj+extent-halfDims.y, rk-extent-halfDims.z, ri-s); // 10_0 = 0
         vertex_dat[v_idx++].setValue(rj+extent-halfDims.y, rk+extent-halfDims.z, ri-s); // 11_0 = 0
-        vertex_dat[v_idx++].setValue(rj-halfDims.y, rk+extent-halfDims.z, ri-s); // 01_0 = 0
+        vertex_dat[v_idx++].setValue(rj-extent-halfDims.y, rk+extent-halfDims.z, ri-s); // 01_0 = 0
       }
       else{ //CORONAL
-        vertex_dat[v_idx++].setValue(ri-halfDims.x, rk-halfDims.z, rj-s); // 00_0 = 0
-        vertex_dat[v_idx++].setValue(ri+extent-halfDims.x, rk-halfDims.z, rj-s); // 10_0 = 0
+        vertex_dat[v_idx++].setValue(ri-extent-halfDims.x, rk-extent-halfDims.z, rj-s); // 00_0 = 0
+        vertex_dat[v_idx++].setValue(ri+extent-halfDims.x, rk-extent-halfDims.z, rj-s); // 10_0 = 0
         vertex_dat[v_idx++].setValue(ri+extent-halfDims.x, rk+extent-halfDims.z, rj-s); // 11_0 = 0
-        vertex_dat[v_idx++].setValue(ri-halfDims.x, rk+extent-halfDims.z, rj-s); // 01_0 = 0
+        vertex_dat[v_idx++].setValue(ri-extent-halfDims.x, rk+extent-halfDims.z, rj-s); // 01_0 = 0
       }
       color_dat[c_idx++] = T3Color::makePackedRGBA(1.0f, 0.0f, 0.0f, 0.5f);    
     }
