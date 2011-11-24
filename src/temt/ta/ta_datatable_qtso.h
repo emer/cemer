@@ -1016,6 +1016,7 @@ protected:
   override void		Render_post(); // #IGNORE
 
   override void		UpdateFromDataTable_this(bool first);
+  override void		DataUpdateView_impl();
 
   override void 	UpdateAfterEdit_impl();
 private:

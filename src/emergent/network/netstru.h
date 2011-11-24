@@ -2498,9 +2498,11 @@ public:
   virtual NetViewObj* NewViewText(const String& txt);
   // #MENU_BUTTON #MENU_ON_NetView #MENU_SEP_BEFORE #CAT_Display add a new text label to the network view objects -- this is an arbitrary fixed text label that can be placed anywhere in the display for annotating the model or other view elements
   virtual NetViewObj* NewGlassBrain();
-  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
+  // #MENU #MENU_ON_Structure #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
   virtual BrainView* NewBrainView(T3DataViewFrame* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display Create an fMRI-style brain visualization to show activations in defined brain areas.
+  virtual void	AssignVoxels();
+  // #MENU_BUTTON #MENU_ON_NetView #CAT_Display assign voxel coordinates to units in the network according to current atlas_name on the Network and brain_area specifications on the Layers
   virtual void  NetTextUserData();
   // #IGNORE auto-called in InitLinks -- enable the filtering of what information is shown in the network text data display (typically shown at bottom of network, though see PlaceNetText for options on where to locate) -- this function creates entries for each of the viewable items in the UserData for this network -- just click on the UserData button to edit which items to display.
   virtual void          HistMovie(int x_size=640, int y_size=480,

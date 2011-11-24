@@ -540,8 +540,8 @@ void T3GraphLine::finishBatch() {
   marker.enableNotify(true);
   mpoint.enableNotify(true);
 
-  point.touch();
-  mpoint.touch();
+//   point.touch();
+//   mpoint.touch();
 }
 
 void T3GraphLine::moveTo(const iVec3f& pt) {

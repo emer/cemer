@@ -62,6 +62,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   req_full_render = false;
   req_full_build = false;
 
+  const int min_slider = 80;
+
   T3ExaminerViewer* vw = dv_->GetViewer();
   if(vw)
     connect(vw, SIGNAL(dynbuttonActivated(int)), this, SLOT(dynbuttonActivated(int)) );
@@ -89,7 +91,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   connect(view_plane_comb_, SIGNAL(currentIndexChanged(int)), bvs, SLOT(SetViewPlane(int)) );
   connect(bvs, SIGNAL(ViewPlaneChanged(int)), view_plane_comb_, SLOT(setCurrentIndex(int)) );
   bvControls->addWidget(view_plane_comb_);
-  bvControls->addStretch(taiM->hspc_c); 
+  bvControls->addSpacing(taiM->hspc_c); 
   
   label = taiM->NewLabel("Starting\nSlice:", widg, font_spec);
   label->setToolTip("The starting slice number to view."); 
@@ -105,10 +107,11 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_strt_slid_ =  new QSlider(Qt::Horizontal, widg);
   slice_strt_slid_->setRange(1, max_slices);
   slice_strt_slid_->setValue(1);
+  slice_strt_slid_->setMinimumWidth(min_slider);
   connect(slice_strt_slid_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceStart(int)) );
   connect(bvs, SIGNAL(SliceStartChanged(int)), slice_strt_slid_, SLOT(setValue(int)) );
   bvControls->addWidget(slice_strt_slid_);
-  bvControls->addStretch(taiM->hspc_c);  
+  bvControls->addSpacing(taiM->hspc_c);  
   
   label = taiM->NewLabel("Lock\n#Slices:", widg, font_spec);
   label->setToolTip("Lock slice sliders to maintain number of slices."); 
@@ -117,7 +120,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   lock_slices_chbox_->setCheckState(Qt::Unchecked);
   connect(lock_slices_chbox_, SIGNAL(stateChanged(int)), bvs, SLOT(SetLockSlices(int)) );
   bvControls->addWidget(lock_slices_chbox_);  
-  bvControls->addStretch(taiM->hspc_c); 
+  bvControls->addSpacing(taiM->hspc_c); 
   
   label = taiM->NewLabel("Ending\nSlice:", widg, font_spec);
   label->setToolTip("The ending slice number to view."); 
@@ -134,10 +137,11 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_end_slid_->setTickPosition(QSlider::NoTicks);
   slice_end_slid_->setRange(1, max_slices);
   slice_end_slid_->setValue(max_slices);
+  slice_end_slid_->setMinimumWidth(min_slider);
   connect(bvs, SIGNAL(SliceEndChanged(int)), slice_end_slid_, SLOT(setValue(int)) );
   connect(slice_end_slid_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceEnd(int)) );
   bvControls->addWidget(slice_end_slid_);
-  bvControls->addStretch(taiM->hspc_c); 
+  bvControls->addStretch();	// need final stretch to prevent full stretching
   
   bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);
   
@@ -156,10 +160,11 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_spac_slid_->setTickPosition(QSlider::NoTicks);
   slice_spac_slid_->setRange(1,40);
   slice_spac_slid_->setValue(1);
+  slice_spac_slid_->setMinimumWidth(min_slider);
   connect(slice_spac_slid_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceSpacing(int)) );
   connect(bvs, SIGNAL(SliceSpacingChanged(int)), slice_spac_slid_, SLOT(setValue(int)) );
   bvControls->addWidget(slice_spac_slid_);
-  bvControls->addStretch(taiM->hspc_c); 
+  bvControls->addSpacing(taiM->hspc_c); 
 
   label = taiM->NewLabel("Slice\nTransparency:", widg, font_spec);
   label->setToolTip("The transparency value of brain slices."); 
@@ -177,10 +182,11 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_tran_slid_->setTickPosition(QSlider::NoTicks);
   slice_tran_slid_->setRange(1,100);
   slice_tran_slid_->setValue(98);
+  slice_tran_slid_->setMinimumWidth(min_slider);
   connect(slice_tran_slid_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceTransparency(int)) );
   connect(bvs, SIGNAL(SliceTransparencyChanged(int)), slice_tran_slid_, SLOT(setValue(int)) );
   bvControls->addWidget(slice_tran_slid_);
-  bvControls->addStretch(taiM->hspc_c); 
+  bvControls->addStretch(); 
  
   // listen for BrainViewState state changed
   connect(bvs, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)) );

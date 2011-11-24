@@ -6195,7 +6195,7 @@ void Network::Initialize() {
   flags = NF_NONE;
   auto_build = AUTO_BUILD;
 
-  atlas_name = "";
+  atlas_name = "talairach.nii";
 
   train_mode = TRAIN;
   wt_update = ON_LINE;
@@ -6536,6 +6536,7 @@ void Network::Build() {
   BuildUnits();
   BuildPrjns(); // note: for Area constructs
   Connect();
+  AssignVoxels();
   StructUpdate(false);
 //   if (net_inst.ptr()) {
 //     net_inst->OnBuild();
@@ -6814,6 +6815,12 @@ BrainView* Network::NewBrainView(T3DataViewFrame* fr) {
 
   // Create the new BrainView.
   return BrainView::New(this, fr);
+}
+
+void Network::AssignVoxels() {
+  // Assign voxel coordinates to the network's units.
+  NetworkVoxelMapper nvm(this);
+  nvm.AssignVoxels();
 }
 
 // PlaceNetText is in netstru_qtso.cpp

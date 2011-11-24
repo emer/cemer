@@ -50,6 +50,8 @@ NetworkVoxelMapper::AssignVoxels()
     return;
   }
 
+  network->StructUpdate(true);	// prevent any upddates during mapping
+
   // Create a map of unit pointers.
   CreateUnitMap(network);
 
@@ -64,6 +66,8 @@ NetworkVoxelMapper::AssignVoxels()
     // Assign voxel coordinates and sizes to all units.
     AssignVoxelsInArea(brain_area, voxels);
   }
+
+  network->StructUpdate(false);	// trigger update after mapping
 }
 
 void
@@ -79,14 +83,18 @@ NetworkVoxelMapper::CreateUnitMap(Network *network)
       // If no brain area is associated, still need to assign coords?
       // Could assign size <= 0.0 to indicate not to render.
       //if (layer->HasLayerFlag(Layer::LESIONED))
+      if(layer->lesioned() || layer->Iconified()) continue;
+      // always ignore lesioned and iconified layers
 
       // If no brain_area was specified for this layer, warn the user,
       // but continue to add its units to the map so they can be set
       // to zero voxel_size later.
       if (layer->brain_area.empty())
       {
-        taMisc::Warning("No brain_area specified for layer", layer->name,
-          "; units will not be rendered in BrainView.");
+	// do not warn: mapping often called on nets with nothing set, and some
+	// you just don't want to map in any case.  it is easy to see if empty..
+//         taMisc::Warning("No brain_area specified for layer", layer->name,
+//           "; units will not be rendered in BrainView.");
       }
 
       // Get the number of units in this layer.

@@ -3823,6 +3823,46 @@ void GraphTableView::UpdateDisplay(bool update_panel) {
   Render_impl();
 }
 
+void GraphTableView::DataUpdateView_impl() {
+//   taMisc::Info("data update view");
+  if(!display_on) return;
+  int old_rows;
+  int delta_rows = CheckRowsChanged(old_rows);
+
+  if (!isVisible()) return;
+
+  if(delta_rows > 0) {
+    // if we were not at the very end, then don't scroll, but do update the panel
+    if((view_range.max < old_rows-1) && (view_range.max > 0)) {
+      UpdatePanel();
+      return;
+    }
+    // scroll down to end of new data
+    view_range.max = m_rows - 1;
+    view_range.min = view_range.max - view_rows + 1;
+    view_range.min = MAX(0, view_range.min);
+  }
+
+  MakeViewRangeValid();
+  ComputeAxisRanges();
+
+  RenderAxes();
+
+  if(do_matrix_plot && mainy && mainy->GetDAPtr()->is_matrix) {
+    if(matrix_mode == SEP_GRAPHS)
+      RenderGraph_Matrix_Sep();
+    else
+      RenderGraph_Matrix_Zi();
+  }
+  else {
+    RenderLegend();
+    if(graph_type == BAR)
+      RenderGraph_Bar();
+    else
+      RenderGraph_XY();
+  }
+}
+
 void GraphTableView::ComputeAxisRanges() {
   UpdateAfterEdit_impl();
 
@@ -4086,7 +4126,7 @@ void GraphTableView::UpdateFromDataTable_this(bool first) {
 //      Actual Rendering of graph display
 
 void GraphTableView::RenderGraph() {
-//   cerr << "render graph" << endl;
+//   taMisc::Info("render graph");
   UpdateAfterEdit_impl();
   if(n_plots == 0 || !x_axis.on) return;
 
@@ -4323,22 +4363,40 @@ void GraphTableView::RenderGraph_XY() {
   if(!da_1) return;
 
   SoSeparator* graphs = node_so->graphs();
-  graphs->removeAllChildren();
-
-  SoSeparator* gr1 = new SoSeparator;
-  graphs->addChild(gr1);
+  SoSeparator* gr1 = NULL;
+  if(graphs->getNumChildren() == 1) {
+    gr1 = (SoSeparator*)graphs->getChild(0);
+  }
+  else {
+    gr1 = new SoSeparator;
+    graphs->addChild(gr1);
+  }
 
   float boxd = 0.0f;
   if(z_axis.on)
     boxd = depth;
 
   // each graph has a box and lines..
-  SoLineBox3d* lbox = new SoLineBox3d(width, 1.0f, boxd, false); // not centered
-  gr1->addChild(lbox);
+  SoLineBox3d* lbox = NULL;
+  if(gr1->getNumChildren() > 0) {
+    lbox = (SoLineBox3d*)gr1->getChild(0);
+  }
+  else {
+    lbox = new SoLineBox3d(width, 1.0f, boxd, false); // not centered
+    gr1->addChild(lbox);
+  }
 
   for(int i=0;i<main_y_plots.size;i++) {
     GraphPlotView* pl = all_plots[main_y_plots[i]];
-    T3GraphLine* ln = new T3GraphLine(pl, label_font_size); gr1->addChild(ln);
+    T3GraphLine* ln = NULL;
+    if(gr1->getNumChildren() > i+1) {
+      ln = (T3GraphLine*)gr1->getChild(i+1);
+      ln->clear();
+    }
+    else {
+      ln = new T3GraphLine(pl, label_font_size);
+      gr1->addChild(ln);
+    }
     if(pl->isString()) {
       PlotData_String(*pl, *mainy, ln);
     }
@@ -4347,9 +4405,19 @@ void GraphTableView::RenderGraph_XY() {
     }
   }
 
+  int stidx = main_y_plots.size + 1;
+
   for(int i=0;i<alt_y_plots.size;i++) {
     GraphPlotView* pl = all_plots[alt_y_plots[i]];
-    T3GraphLine* ln = new T3GraphLine(pl, label_font_size); gr1->addChild(ln);
+    T3GraphLine* ln = NULL;
+    if(gr1->getNumChildren() > stidx+i) {
+      ln = (T3GraphLine*)gr1->getChild(stidx+i);
+      ln->clear();
+    }
+    else {
+      T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
+      gr1->addChild(ln);
+    }
     if(pl->isString()) {
       PlotData_String(*pl, *alty, ln);
     }

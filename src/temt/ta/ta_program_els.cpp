@@ -501,7 +501,7 @@ void ForLoop::ChangeLoopVar(const String& to_var) {
 }
 
 bool ForLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  if(code.startsWith("for")) return true;
+  if(code.startsWith("for(") || code.startsWith("for (")) return true;
   return false;
 }
 
