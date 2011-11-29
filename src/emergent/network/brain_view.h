@@ -119,27 +119,12 @@ public:
   enum MDFlags { // indicates type that unit.disp_base points to
     MD_FLOAT		= 0x0000,
     MD_DOUBLE		= 0x0001,
-    MD_INT		= 0x0002,
+    MD_INT          = 0x0002,
     MD_UNKNOWN 		= 0x000F
   };
   
-//  enum ViewPlane { 
-//    AXIAL = 0x0000, 
-//    SAGITTAL, 
-//    CORONAL
-//  };
-  
   BrainViewState      bv_state;
-//  int               view_plane;
-//  float             slice_spacing;
-//  float             slice_transparency;
-//  int               slice_start;
-//  int               slice_end;
-//  TDCoord           brain_geom;
-//  void              setSliceTransparency(float pctTrans);
-//  void              setSliceRange(int start, int end);
-//  void              setSliceSpacing(int spacing);
-  void              AsyncRenderUpdate();
+  void                AsyncRenderUpdate();
   
   static BrainView*	New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
   
