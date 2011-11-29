@@ -37,8 +37,6 @@
 #include <Inventor/nodes/SoVertexProperty.h>
 #include <Inventor/nodes/SoNormal.h>
 
-//#include <cmath>
-
 Network* BrainVolumeView::net() const 
 {
   return (Network*) data();
@@ -167,13 +165,11 @@ void BrainVolumeView::UpdateAutoScale(bool& updated) {}
 
 void BrainVolumeView::Render_pre() 
 {
-
   BrainViewState& bvs = this->bv()->bv_state;
   brain_data_ = new NiftiReader(bvs.DataName());
   if (true == brain_data_->isValid()) {
     setNode(new T3BrainNode(this));
     RenderBrain();
-    UpdateSlices();
   }
   inherited::Render_pre();
 }
@@ -284,15 +280,17 @@ void BrainVolumeView::UpdateSlices()
   if (NULL == this->node_so()) return;
   T3BrainNode& node = *(this->node_so()); // cache
   
+  // now update slices
   float transparency(bvs.SliceTransparency()/100.0f);
-  for (int i=0; i<bvs.MaxSlices(); i++){
+  for (int i=0; i<bvs.MaxSlices(); i++) {
     if ( ((bvs.SliceStart() - 1) <= i) && (i <= (bvs.SliceEnd() - 1)) ) {
       node.brain_tex_mat_array[i]->transparency = transparency;
     }
     else {
       node.brain_tex_mat_array[i]->transparency = 1.0f;
     }
-  }  
+  }
+  UpdateUnitValues_blocks();
 }
 
 void BrainVolumeView::Render_impl() 
@@ -324,7 +322,7 @@ void BrainVolumeView::Render_impl_blocks()
 {   
   // create unit/voxel face sets & set values
   CreateFaceSets();
-  UpdateUnitValues_blocks(); // hand off to next guy..
+  UpdateSlices(); // will call UpdateUnitValues_blocks ...
 }
 
 void BrainVolumeView::CreateFaceSets()
@@ -339,6 +337,10 @@ void BrainVolumeView::CreateFaceSets()
   FloatTDCoord dims(bvs.Dimensions());
   FloatTDCoord halfDims;
   halfDims.SetXYZ(dims.x/2.0f, dims.y/2.0f, dims.z/2.0f);
+  
+  // clear the old maps
+  depth_map_.clear();
+  unit_map_.clear();
   
   //  // need to iterate once to get number of mapped units so we
   //  // can allocate number of vertices, etc.
@@ -389,7 +391,7 @@ void BrainVolumeView::CreateFaceSets()
     normal.setNum(1);
     SbVec3f* normal_dat = normal.startEditing();
     int idx=0;
-    normal_dat[idx++].setValue(0.0f, 0.0f, 1.0f); // top
+    normal_dat[idx++].setValue(0.0f, 0.0f, 1.0f);
     normal.finishEditing();
     
     int n_per_vtx = 4;
@@ -504,7 +506,7 @@ void BrainVolumeView::UpdateUnitValues_blocks()
       unit_coord = unit_map_.value(u);
       if ( view_plane == BrainViewState::AXIAL) {
         if ( (unit_coord.z > bvs.SliceEnd()) || (unit_coord.z < bvs.SliceStart()) ) {
-          makeTransparent=true;
+          makeTransparent = true;
         }
       }
       else if ( view_plane == BrainViewState::SAGITTAL ) {
@@ -542,7 +544,8 @@ void BrainVolumeView::DataUpdateView_impl()
 //do nothing...we don't need to re-render when Network data changes 
 }
 
-void BrainVolumeView::Reset_impl() {
+void BrainVolumeView::Reset_impl() 
+{
   if (NULL != brain_data_) {
     delete brain_data_;
     brain_data_ = NULL;
