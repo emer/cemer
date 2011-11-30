@@ -218,7 +218,9 @@ void taGuiDataHost::Constr_Body() {
 }
 
 void taGuiDataHost::GetImage(bool force) {
+  ++updating;			// prevents spurious changed flags from coming in
   gui_owner->GetImage();
+  --updating;
 }
 
 void taGuiDataHost::GetValue() {

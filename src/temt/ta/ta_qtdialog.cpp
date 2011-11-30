@@ -1515,6 +1515,7 @@ void taiDataHost_impl::ReConstr_Body() {
 //   cerr << "ReConstr_Body on: " << typ->name << endl;
 //   taMisc::FlushConsole();
   rebuild_body = true;
+  ++updating;			// prevents spurious changed flags from coming in
   Constr_Body();
   {		// this is key for selectedit rebuilding on bool toggles, for example
     taMisc::RunPending();
@@ -1524,6 +1525,7 @@ void taiDataHost_impl::ReConstr_Body() {
   GetImage_Async();		// async all the way -- otherwise doesn't work
 //   GetImage(false);
   rebuild_body = false;		// in case..
+  --updating;
 }
 
 bool taiDataHost_impl::ReShow(bool force) {
