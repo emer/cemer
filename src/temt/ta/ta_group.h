@@ -416,11 +416,11 @@ public:
     GpIt gp_end = group_->leaf_gp_end();
     // If already past-the-end, don't increment anything.
     // Otherwise, increment the element index.
-    if (gp_it_ != end && ++el_idx_ >= gp_it_->size) {
+    if (gp_it_ != gp_end && ++el_idx_ >= gp_it_->size) {
       // We incremented past the last element in the subgroup,
       // so move on to the next non-empty subgroup.  This could
       // end up iterating all the way to the end.
-      while (++gp_it_ != end && gp_it_->size == 0) {}
+      while (++gp_it_ != gp_end && gp_it_->size == 0) {}
       el_idx_ = 0;
     }
     return *this;
@@ -434,13 +434,13 @@ public:
   Self & operator--() // prefix
   {
     assert(group_);
-    GpIt begin = group_->leaf_gp_begin();
+    GpIt gp_begin = group_->leaf_gp_begin();
     // Decrement the element index, unless we're already "past-the-begin".
-    if (!(gp_it_ == begin && el_idx_ < 0) && --el_idx_ < 0) {
+    if (!(gp_it_ == gp_begin && el_idx_ < 0) && --el_idx_ < 0) {
       // We decremented past the first element in the subgroup, so move back
       // to the previous non-empty subgroup.  This could iterate all the way
       // back to the beginning (but not beyond).
-      while (gp_it_ != begin && (--gp_it_)->size == 0) ;
+      while (gp_it_ != gp_begin && (--gp_it_)->size == 0) {}
       // Now, either gp_it_ == begin, or gp_it_ has elements, or both.  Set
       // the index to the last element in the group, or -1 if no elements.
       // Allow decrementing to "past-the-begin" so --i; ++i; is a null op.

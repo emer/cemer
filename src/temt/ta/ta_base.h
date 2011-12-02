@@ -25,6 +25,7 @@
 #ifdef TA_GUI
 # include <qobject.h>
 #endif
+#include <cassert>
 #endif
 
 
