@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -75,7 +75,7 @@ int tai_rl_hook_proc() {
 
 
 //////////////////////////////////////////////////////////
-// 	taiMisc: miscellaneous useful stuff 		//
+//      taiMisc: miscellaneous useful stuff             //
 //////////////////////////////////////////////////////////
 
 iMainWindowViewer* iTopLevelWindow_List::FindMainWindowById(int id) {
@@ -84,7 +84,7 @@ iMainWindowViewer* iTopLevelWindow_List::FindMainWindowById(int id) {
     if (rval && (rval->uniqueId() == id)) return rval;
   }
   return NULL;
-} 
+}
 
 iMainWindowViewer* iTopLevelWindow_List::SafeElAsMainWindow(int i) {
   return dynamic_cast<iMainWindowViewer*>(PosSafeEl(i)->widget());
@@ -126,15 +126,15 @@ TA_API taiMisc* taiM_ = NULL;
 const int taiMisc::FONT_MED = 1;
 const int taiMisc::FONT_SM = 2;
 
-taiHostDialog_List 	taiMisc::active_dialogs;
-taiEditDataHost_List	taiMisc::active_edits;
-taiEditDataHost_List 	taiMisc::css_active_edits;
-iTopLevelWindow_List	taiMisc::active_wins;
-TypeSpace		taiMisc::arg_types;
+taiHostDialog_List      taiMisc::active_dialogs;
+taiEditDataHost_List    taiMisc::active_edits;
+taiEditDataHost_List    taiMisc::css_active_edits;
+iTopLevelWindow_List    taiMisc::active_wins;
+TypeSpace               taiMisc::arg_types;
 QPointer<iMainWindowViewer> taiMisc::main_window;
-taBase_PtrList		taiMisc::unopened_windows;
+taBase_PtrList          taiMisc::unopened_windows;
 void (*taiMisc::Update_Hook)(taBase*) = NULL;
-iNetworkAccessManager*	taiMisc::net_access_mgr = NULL;
+iNetworkAccessManager*  taiMisc::net_access_mgr = NULL;
 
 int taiMisc::busy_count = 0;
 
@@ -146,7 +146,7 @@ taiMisc* taiMisc::New(bool gui, QObject* parent) {
 }
 
 taiMisc::taiMisc(QObject* parent)
-:inherited(parent) 
+:inherited(parent)
 {
 }
 
@@ -159,27 +159,27 @@ void taiMisc::Init(bool gui) {
   load_dlg = NULL;
   InitMetrics();
 
-  if (taMisc::not_constr || taMisc::in_init) 
+  if (taMisc::not_constr || taMisc::in_init)
     return;
 
-  QBitmap waiter = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height), 
+  QBitmap waiter = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height),
     wait_cursor_bits, QImage::Format_MonoLSB);
-  QBitmap waiter_m = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height), 
+  QBitmap waiter_m = QBitmap::fromData(QSize(wait_cursor_width, wait_cursor_height),
     wait_mask_bits, QImage::Format_MonoLSB);
   wait_cursor = new QCursor(waiter, waiter_m, wait_cursor_x_hot, wait_cursor_y_hot);
 
   // Record cursor
   QBitmap recorder = QBitmap::fromData(QSize(record_cursor_width, record_cursor_height),
     record_cursor_bits, QImage::Format_MonoLSB);
-  QBitmap recorder_m = QBitmap::fromData(QSize(record_cursor_width, record_cursor_height), 
+  QBitmap recorder_m = QBitmap::fromData(QSize(record_cursor_width, record_cursor_height),
     record_mask_bits, QImage::Format_MonoLSB);
   record_cursor = new QCursor(recorder, recorder_m, record_cursor_x_hot, record_cursor_y_hot);
 
   icon_bitmap = NULL;
   QDesktopWidget* dw = QApplication::desktop();
-  connect(dw, SIGNAL(resized(int)), 
+  connect(dw, SIGNAL(resized(int)),
     this, SLOT(desktopWidget_resized(int)));
-  connect(dw, SIGNAL(workAreaResized(int)), 
+  connect(dw, SIGNAL(workAreaResized(int)),
     this, SLOT(desktopWidget_workAreaResized(int)));
 
   QWebSettings *defaultSettings = QWebSettings::globalSettings();
@@ -208,7 +208,7 @@ taiMisc::~taiMisc() {
 void taiMisc::Busy_(bool busy) {
   if (!taMisc::gui_active)    return;
   if (busy) {
-    ++busy_count;	// keep track of number of times called
+    ++busy_count;       // keep track of number of times called
   //  if (cssiSession::block_in_event == true) // already busy
   //    return;
   //  cssiSession::block_in_event = true;
@@ -230,9 +230,9 @@ void taiMisc::CheckConfigResult_(bool ok) {
     inherited::CheckConfigResult_(ok);
     return;
   }
-  
+
   if (ok) {
-    taiChoiceDialog::ConfirmDialog(QApplication::activeWindow(), 
+    taiChoiceDialog::ConfirmDialog(QApplication::activeWindow(),
       "No configuration errors were found.",
       "Check Succeeded", false);
   } else {
@@ -280,11 +280,11 @@ void taiMisc::HandleScreenGeomChange_Window(const QRect& old_scrn_geom, QWidget*
   QSize new_sz((int)(r.width() * ((float)scrn_s.width() / old_scrn_geom.width())),
     (int)(r.height() * ((float)scrn_s.height() / old_scrn_geom.height())));
   win->resize(new_sz);
-  
+
   //TODO
   // move it to same size-relative point, in new coords
   // this handles off-screen cases, as well as things like task bar redocks, etc.
-  
+
   // moves only if top left no longer accessible
   const int marg = 50; // so user is able to grab title bar etc.
   bool redo = false;
@@ -310,17 +310,17 @@ void taiMisc::HandleScreenGeomChange_Window(const QRect& old_scrn_geom, QWidget*
 
 void taiMisc::InitMetrics(bool reinit) {
   // everything that requires Qt to be initialized and could depend on Settings being loaded
-  
+
   if (!reinit) {
     // set up the initial font from (already loaded) Settings
     QFont font(taMisc::font_name, taMisc::font_size);
     //TODO: we should probably put practical lower/upper limits on font sizes
     qApp->setFont(font);
-    
+
     edit_darkbg_brightness = -0.15f;
     edit_lightbg_brightness = 0.50f;
   }
-  
+
   ctrl_size = sizMedium;
   vsep_c = 3;
   hsep_c = 3;
@@ -338,7 +338,7 @@ void taiMisc::InitMetrics(bool reinit) {
     base_height = 25;
   else
     base_height = 29;
-    
+
   // control sizes -- depend on size of default font
   if (taMisc::font_size <= 10) {
     // Small
@@ -357,8 +357,8 @@ void taiMisc::InitMetrics(bool reinit) {
     mbutton_ht[0] = 24;  mbutton_ht[1] = 25;  mbutton_ht[2] = 27;
     mlabel_ht[0] = 20;  mlabel_ht[1] = 21;  mlabel_ht[2] = 24;
     mtext_ht[0] = 22;  mtext_ht[1] = 23;  mtext_ht[2] = 26;
-  } 
-  
+  }
+
   // fonts -- note, no way to get Qt's metrics without instances!
   QWidget* w = NULL;
   w = new QPushButton("the rain in spain", (QWidget*)NULL);
@@ -376,7 +376,7 @@ void taiMisc::InitMetrics(bool reinit) {
   w = new QLabel("the rain in spain", (QWidget*)NULL);
     mbig_name_font = QApplication::font(w);
   delete w;
-  
+
 }
 
 /* Qt Metrics note
@@ -386,25 +386,25 @@ On Linux/X11, using Sans font (default)
 Default Widget sizes for various default font sizes --
 () indicates a usable size
 
-			Sans-9		Sans-10		Sans-11
-QPushButton		31 (24)		32 (25)		35 (27)
-QLabel			20		20		20
-QLineEdit		22		23		26
-  QSpinBox		22		23
-QComboBox		27 (24)		27 (25)		27
-QRadioButton		20		21		24
-  QCheckBox		20
+                        Sans-9          Sans-10         Sans-11
+QPushButton             31 (24)         32 (25)         35 (27)
+QLabel                  20              20              20
+QLineEdit               22              23              26
+  QSpinBox              22              23
+QComboBox               27 (24)         27 (25)         27
+QRadioButton            20              21              24
+  QCheckBox             20
 
 
 Actual Widget sizes for SizeSpec sizes --
  indented names means ctrl assumes size of outdented control above it
 
-			sizSmall	sizMed		sizBig
-QPushButton		24		25		27
+                        sizSmall        sizMed          sizBig
+QPushButton             24              25              27
   QComboBox
-QLabel			20		21		24
+QLabel                  20              21              24
   QCheckBox
-QLineEdit		22		23		26
+QLineEdit               22              23              26
   QSpinBox
 
 
@@ -453,9 +453,9 @@ void taiMisc::AdjustFont(int fontSpec, iFont& font) {
   case fonSmall:
     font.setPointSize(font.pointSize - FONT_SM);
     break;
-     //NOTE: assumes not using pixel-size, otherwise       
+     //NOTE: assumes not using pixel-size, otherwise
   case fonMedium:
-     font.setPointSize(font.pointSize - FONT_MED); 
+     font.setPointSize(font.pointSize - FONT_MED);
   case fonBig: // BIG is the default, no adjust needed
   default: //defFontSize
     break;
@@ -514,7 +514,7 @@ iFont taiMisc::nameFont(int fontSpec) {
 }
 
 void taiMisc::FormatButton(QAbstractButton* but, const String& text,
-  int fontSpec) 
+  int fontSpec)
 {
   but->setFont(taiM->menuFont(fontSpec)); //note: we use menu font -- TODO: might need to use a button font
   but->setMaximumWidth(maxButtonWidth(fontSpec));
@@ -535,7 +535,9 @@ int taiMisc::maxButtonWidth(int sizeSpec) const {
 QLabel* taiMisc::NewLabel(const String& text, QWidget* parent, int fontSpec) {
   if (fontSpec == 0) fontSpec = ctrl_size;
   QLabel* rval = new QLabel(text, parent);
-  rval->setFixedHeight(label_height(fontSpec));
+  // This line is commented out because it causes problems on the
+  // NetViewPanel dialog (two-line text labels get clipped).
+  //rval->setFixedHeight(label_height(fontSpec));
   rval->setFont(nameFont(fontSpec));
   return rval;
 }
@@ -649,7 +651,7 @@ void taiMisc::SetWinCursors() {
     taiEditDataHost* edh = active_edits.FastEl(i);
     if((edh->root == obj) && (edh->state == taiDataHost::ACTIVE)) {
       edh->ReShow_Async(force);
-      got_one = true; 
+      got_one = true;
     }
   }
   return got_one;
@@ -687,7 +689,7 @@ taiEditDataHost* taiMisc::FindEditDialog(void* obj, bool read_only_state) {
 }
 
 taiEditDataHost* taiMisc::FindEditPanel(void* obj, bool read_only,
-  iMainWindowViewer* not_in_win) 
+  iMainWindowViewer* not_in_win)
 {
   //NOTE: not_in_win works as follows:
   // NULL: ok to return any edit (typically used to get show value)
@@ -706,7 +708,7 @@ taiEditDataHost* taiMisc::FindEditPanel(void* obj, bool read_only,
 }
 
 void taiMisc::OpenWindows(){
-  if(unopened_windows.size == 0)	return;
+  if(unopened_windows.size == 0)        return;
   if (taMisc::is_loading) return; // don't recurse
 
   //TODO: WHY are we setting the loading context????
@@ -797,7 +799,7 @@ void taiMisc::Cleanup(int) {
 #ifndef __GNUG__
   String cmd = "/bin/rm ";
   cmd += taPlatform::getTempPath() + "/tai_gf." + String((int)taPlatform::processId()) + ".* >/dev/null 2>&1";
-  system(cmd);			// get rid of any remaining temp files
+  system(cmd);                  // get rid of any remaining temp files
 #endif
 }
 
@@ -843,36 +845,36 @@ bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
   switch(e->key()) {
   case Qt::Key_P:
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
-    return true;		// we absorb this event
+    return true;                // we absorb this event
   case Qt::Key_N:
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-    return true;		// we absorb this event
+    return true;                // we absorb this event
   case Qt::Key_A:
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::ControlModifier));
-    return true;		// we absorb this event
+    return true;                // we absorb this event
   case Qt::Key_E:
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::ControlModifier));
-    return true;		// we absorb this event
+    return true;                // we absorb this event
   case Qt::Key_F:
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
-    return true;		// we absorb this event
+    return true;                // we absorb this event
   case Qt::Key_B:
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
-    return true;		// we absorb this event
+    return true;                // we absorb this event
   case Qt::Key_U:
-  case Qt::Key_Up:		// translate ctrl+up to page up
+  case Qt::Key_Up:              // translate ctrl+up to page up
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
-    return true;		// we absorb this event
-  case Qt::Key_Down:		// translate ctrl+down to page down
+    return true;                // we absorb this event
+  case Qt::Key_Down:            // translate ctrl+down to page down
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
     return true;
   case Qt::Key_V:
     if(taMisc::emacs_mode) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     }
     else {
-      return false;		// pass it on..
+      return false;             // pass it on..
     }
   }
   return false;
@@ -887,30 +889,30 @@ bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
     switch(e->key()) {
     case Qt::Key_D:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_H:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_K:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_Y:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_W:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_Slash:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_Minus:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     }
   }
   if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-    return true;		// we absorb this event
+    return true;                // we absorb this event
   }
   return false;
 }
@@ -922,21 +924,21 @@ bool taiMisc::KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e) {
     switch(e->key()) {
     case Qt::Key_Y:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_W:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_Slash:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     case Qt::Key_Minus:
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;		// we absorb this event
+      return true;              // we absorb this event
     }
   }
   if(e->modifiers() & Qt::AltModifier && e->key() == Qt::Key_W) { // copy
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-    return true;		// we absorb this event
+    return true;                // we absorb this event
   }
   return false;
 }
@@ -958,14 +960,14 @@ void taiMisc::KeepInView_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWid
   int top_in_vc = MapToAreaV_SA(sa, sa_main_widg, widg, 0);
   int ctr_pos = top_in_vc + w_ht / 2;
   int bot_pos = top_in_vc + w_ht;
-  
+
   if(PosInView_SA(sa, top_in_vc) && PosInView_SA(sa, bot_pos))
-    return;			// already in view
+    return;                     // already in view
 
   int vpt_ht = sa->viewport()->height();
   int scpos = sa->verticalScrollBar()->value();
   int scbot = scpos + sa->viewport()->height();
-  if(ctr_pos < scpos) {		// closer to top
+  if(ctr_pos < scpos) {         // closer to top
     int nwtop = MAX(top_in_vc-12,0);
     ScrollTo_SA(sa, nwtop); // scroll up to top, plus a bit of margin
     taMisc::Info("Keep top:", String(nwtop));

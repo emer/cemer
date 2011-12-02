@@ -4226,6 +4226,7 @@ void NetViewPanel::GetVars() {
   QTreeWidgetItem* lvi = NULL;
   for (int i=0; i < nv_->membs.size; i++) {
     md = nv_->membs[i];
+    if (md->HasOption("NO_VIEW")) continue;
     QStringList itm;
     itm << md->name << md->desc;
     lvi = new QTreeWidgetItem(lvDisplayValues, itm);

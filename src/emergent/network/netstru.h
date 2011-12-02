@@ -838,9 +838,9 @@ public: //
   TDCoord       pos;
   // #CAT_Structure display position in space relative to owning group or layer
   FloatTDCoord  voxel;
-  // #CAT_Structure Position of this unit as a voxel in a brain view.
+  // #CAT_Structure #NO_VIEW Position of this unit as a voxel in a brain view.
   float         voxel_size;
-  // #CAT_Structure Size of the voxel in a brain view.
+  // #CAT_Structure #NO_VIEW Size of the voxel in a brain view.
   int           idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit within containing unit group
   int           flat_idx;
@@ -2501,7 +2501,7 @@ public:
   // #MENU #MENU_ON_Structure #CAT_Display add a new glass brain (as two separate hemispheres) to netview objects -- useful for situating biologically-based network models
   virtual BrainView* NewBrainView(T3DataViewFrame* fr = NULL);
   // #NULL_OK_0 #NULL_TEXT_0_NewFrame #MENU_BUTTON #MENU_ON_NetView #CAT_Display Create an fMRI-style brain visualization to show activations in defined brain areas.
-  virtual void	AssignVoxels();
+  virtual void  AssignVoxels();
   // #MENU_BUTTON #MENU_ON_NetView #CAT_Display assign voxel coordinates to units in the network according to current atlas_name on the Network and brain_area specifications on the Layers
   virtual void  NetTextUserData();
   // #IGNORE auto-called in InitLinks -- enable the filtering of what information is shown in the network text data display (typically shown at bottom of network, though see PlaceNetText for options on where to locate) -- this function creates entries for each of the viewable items in the UserData for this network -- just click on the UserData button to edit which items to display.
