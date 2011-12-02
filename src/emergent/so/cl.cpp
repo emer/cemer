@@ -28,7 +28,7 @@ void ClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
   }
   if(lay->units.leaves == 0)
     return;
-  
+
   SoUnit* win_u = FindWinner(lay);
   if(win_u == NULL) return;
 
@@ -39,7 +39,7 @@ void ClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
     (((lvcnt - 1.0f) * uspec->act_range.min) / lvcnt);
 
   win_u->act = uspec->act_range.max;
-  win_u->act_i = lay->avg_act;	// this is the rescaled value..
+  win_u->act_i = lay->avg_act;  // this is the rescaled value..
 }
 
 void SoftClUnitSpec::Initialize() {
@@ -64,7 +64,7 @@ void SoftClUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
     for(int g=0; g<u->recv.size; g++) {
       SoRecvCons* recv_gp = (SoRecvCons*)u->recv.FastEl(g);
       if(!recv_gp->prjn->from->lesioned())
-	u->net += recv_gp->Compute_Dist(u);
+        u->net += recv_gp->Compute_Dist(u);
     }
   }
 }
@@ -78,7 +78,7 @@ void SoftClUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 }
 
 void SoftClLayerSpec::Initialize() {
-  netin_type = MIN_NETIN_WINS;	// not that this is actually used..
+  netin_type = MIN_NETIN_WINS;  // not that this is actually used..
 }
 
 void SoftClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
@@ -90,15 +90,13 @@ void SoftClLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
   SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
 
   float sum = 0.0f;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, lay->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
     // act has already been computed..
     sum += u->act;
   }
 
   if(sum > 0.0f) {
-    FOR_ITR_EL(Unit, u, lay->units., i) {
+    FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
       u->act = uspec->act_range.Project(u->act / sum);
       // normalize by sum, rescale to act range range
     }

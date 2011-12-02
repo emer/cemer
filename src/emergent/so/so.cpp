@@ -40,15 +40,15 @@ static void so_converter_init() {
 }
 
 void so_module_init() {
-  ta_Init_so();			// initialize types 
-  so_converter_init();		// configure converter
+  ta_Init_so();                 // initialize types
+  so_converter_init();          // configure converter
 }
 
 // module initialization
 InitProcRegistrar mod_init_so(so_module_init);
 
 //////////////////////////
-//	Con,Spec	//
+//      Con,Spec        //
 //////////////////////////
 
 void SoConSpec::Initialize() {
@@ -88,7 +88,7 @@ void HebbConSpec::Initialize() {
 }
 
 //////////////////////////
-//	Unit,Spec	//
+//      Unit,Spec       //
 //////////////////////////
 
 void SoUnitSpec::Initialize() {
@@ -115,11 +115,10 @@ void SoUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 }
 
 void SoUnitSpec::Compute_AvgInAct(Unit* u) {
-  SoRecvCons* recv_gp;
-  taListItr g;
-  FOR_ITR_EL(SoRecvCons, recv_gp, u->recv., g) {
-    if(!recv_gp->prjn->from->lesioned())
+  FOREACH_ELEM_IN_LIST(SoRecvCons, recv_gp, u->recv) {
+    if (!recv_gp->prjn->from->lesioned()) {
       recv_gp->Compute_AvgInAct(u);
+    }
   }
 }
 
@@ -163,21 +162,19 @@ void SoUnit::Initialize() {
 }
 
 //////////////////////////
-//	Layer,Spec	//
+//      Layer,Spec      //
 //////////////////////////
 
 void SoLayerSpec::Initialize() {
   min_obj_type = &TA_SoLayer;
-  netin_type = MAX_NETIN_WINS;	// competitive learning style
+  netin_type = MAX_NETIN_WINS;  // competitive learning style
 }
 
 SoUnit* SoLayerSpec::FindMaxNetIn(SoLayer* lay) {
   SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
   float max_val = -1.0e20f;
   SoUnit* max_val_u = NULL;
-  SoUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(SoUnit, u, lay->units., i) {
+  FOREACH_ELEM_IN_GROUP(SoUnit, u, lay->units) {
     u->act = uspec->act_range.min;
     u->act_i = uspec->act_range.min;
     if(u->net > max_val) {
@@ -192,9 +189,7 @@ SoUnit* SoLayerSpec::FindMinNetIn(SoLayer* lay) {
   SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
   float min_val = 1.0e20f;
   SoUnit* min_val_u = NULL;
-  SoUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(SoUnit, u, lay->units., i) {
+  FOREACH_ELEM_IN_GROUP(SoUnit, u, lay->units) {
     u->act = uspec->act_range.min;
     u->act_i = uspec->act_range.min;
     if(u->net < min_val) {
@@ -217,10 +212,8 @@ void SoLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
 
 void SoLayerSpec::Compute_AvgAct(SoLayer* lay, SoNetwork* net) {
   lay->sum_act = 0.0f;
-  if(lay->units.leaves == 0)	return;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, lay->units., i)
+  if(lay->units.leaves == 0)    return;
+  FOREACH_ELEM_IN_GROUP(Unit, u, lay->units)
     lay->sum_act += u->act;
   lay->avg_act = lay->sum_act / (float)lay->units.leaves;
 }
@@ -252,13 +245,13 @@ void SoLayer::CutLinks() {
 }
 
 bool SoLayer::SetLayerSpec(LayerSpec* sp) {
-  if(sp == NULL)	return false;
+  if(sp == NULL)        return false;
   if(sp->CheckObjectType(this))
     spec.SetSpec((SoLayerSpec*)sp);
   else
     return false;
   return true;
-} 
+}
 
 void SoLayer::CheckSpecs() {
   spec.CheckSpec();
@@ -266,7 +259,7 @@ void SoLayer::CheckSpecs() {
 }
 
 //////////////////////////////////
-//	Simple SoftMax		//
+//      Simple SoftMax          //
 //////////////////////////////////
 
 void SoftMaxLayerSpec::Initialize() {
@@ -282,15 +275,13 @@ void SoftMaxLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
   SoUnitSpec* uspec = (SoUnitSpec*)lay->unit_spec.SPtr();
 
   float sum = 0.0f;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, lay->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
     u->act = expf(softmax_gain * u->net); // e to the net
     sum += u->act;
   }
 
   if(sum > 0.0f) {
-    FOR_ITR_EL(Unit, u, lay->units., i) {
+    FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
       u->act = uspec->act_range.Project(u->act / sum);
       // normalize by sum, rescale to act range range
     }
@@ -301,7 +292,7 @@ void SoftMaxLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
 
 
 //////////////////////////
-//  SoNetwork		//
+//  SoNetwork           //
 //////////////////////////
 
 void SoNetwork::Initialize() {
@@ -318,11 +309,11 @@ void SoNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 }
 
 void SoNetwork::Compute_NetinAct() {
-  // important note: any algorithms using this for feedforward computation are not 
+  // important note: any algorithms using this for feedforward computation are not
   // compatible with dmem computation on the network level (over connections)
   // because otherwise the netinput needs to be sync'd at the layer level prior to calling
   // the activation function at the layer level.  Threading should be much faster than
-  // dmem in general so this takes precidence.  See BpNetwork::UpdateAfterEdit_impl for 
+  // dmem in general so this takes precidence.  See BpNetwork::UpdateAfterEdit_impl for
   // a warning message that should be included.
   ThreadUnitCall un_call(&Unit::Compute_NetinAct);
   threads.Run(&un_call, 1.0f, false, true); // backwards = false, layer_sync=true
@@ -331,16 +322,14 @@ void SoNetwork::Compute_NetinAct() {
   // so anything relying on that (e.g., multilayer nets) will not work!  hmm.
   // may need to change this to a pure non-thread call, or add a layer-level
   // callback to occur with layer_sync mode
-  SoLayer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(SoLayer, lay, layers., l) {
+  FOREACH_ELEM_IN_GROUP(SoLayer, lay, layers) {
     lay->Compute_Act_post(this);
   }
 }
 
 void SoNetwork::Trial_Run() {
   DataUpdate(true);
-  
+
   Compute_NetinAct();
 
   if(train_mode == TRAIN)
@@ -351,7 +340,7 @@ void SoNetwork::Trial_Run() {
 }
 
 //////////////////////////
-//   SoProject	        //
+//   SoProject          //
 //////////////////////////
 
 void SoProject::Initialize() {

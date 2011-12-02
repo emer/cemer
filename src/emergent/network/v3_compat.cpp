@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -28,7 +28,7 @@
 
 
 /////////////////////////
-//	float_RArray	//
+//      float_RArray    //
 //////////////////////////
 
 void float_RArray::InitLinks() {
@@ -42,7 +42,7 @@ void float_RArray::Copy_(const float_RArray& cp) {
 
 
 //////////////////////////
-//  	CritParam      	//
+//      CritParam       //
 //////////////////////////
 
 void CritParam::Initialize() {
@@ -66,22 +66,22 @@ bool CritParam::Evaluate(float cmp) {
   bool met = false;
   switch(rel) {
   case EQUAL:
-    if(cmp == val)	met = true;
+    if(cmp == val)      met = true;
     break;
   case NOTEQUAL:
-    if(cmp != val)	met = true;
+    if(cmp != val)      met = true;
     break;
   case LESSTHAN:
-    if(cmp < val)	met = true;
+    if(cmp < val)       met = true;
     break;
   case GREATERTHAN:
-    if(cmp > val)	met = true;
+    if(cmp > val)       met = true;
     break;
   case LESSTHANOREQUAL:
-    if(cmp <= val)	met = true;
+    if(cmp <= val)      met = true;
     break;
   case GREATERTHANOREQUAL:
-    if(cmp >= val)	met = true;
+    if(cmp >= val)      met = true;
     break;
   }
   if(met) {
@@ -89,13 +89,13 @@ bool CritParam::Evaluate(float cmp) {
     if(n_met >= cnt) return true;
   }
   else
-    n_met = 0;		// reset the counter (has to be consecutive)
+    n_met = 0;          // reset the counter (has to be consecutive)
   return false;
 }
 
 
 //////////////////////////
-// 	CtrlPanelData	//
+//      CtrlPanelData   //
 //////////////////////////
 
 void CtrlPanelData::Initialize() {
@@ -108,7 +108,7 @@ void CtrlPanelData::Initialize() {
 
 
 ///////////////////////////
-// 	Script		//
+//      Script          //
 //////////////////////////
 
 void Script::Initialize() {
@@ -124,7 +124,7 @@ void Script::Initialize() {
 //   taNBase::InitLinks();
 // //filer not a taBase  taBase::Own(script_file, this);
 //   taBase::Own(s_args, this);
-//   if(script_file->fname.empty())	// initialize only on startup up, not transfer
+//   if(script_file->fname.empty())     // initialize only on startup up, not transfer
 //     SetScript("");
 // }
 
@@ -244,7 +244,7 @@ void Script::Initialize() {
 
 
 //////////////////////////
-// 	Script_Group	//
+//      Script_Group    //
 //////////////////////////
 
 void Script_Group::Initialize() {
@@ -253,22 +253,18 @@ void Script_Group::Initialize() {
 }
 
 // void Script_Group::StopRecording() {
-//   taLeafItr i;
-//   Script* sb;
-//   FOR_ITR_EL(Script, sb, this->, i)
+//   FOREACH_ELEM_IN_GROUP(Script, sb, *this)
 //     sb->StopRecording();
 // }
 
 // void Script_Group::AutoRun() {
-//   taLeafItr i;
-//   Script* sb;
-//   FOR_ITR_EL(Script, sb, this->, i)
+//   FOREACH_ELEM_IN_GROUP(Script, sb, *this)
 //     sb->AutoRun();
 // }
 
 
 //////////////////////////
-// 	Process		//
+//      Process         //
 //////////////////////////
 
 void Process::Initialize() {
@@ -285,7 +281,7 @@ void Process::Initialize() {
 void DataItem::Initialize() {
   is_string = false;
   vec_n = 0;
-  disp_opts = " ";		// always pad with initial blank
+  disp_opts = " ";              // always pad with initial blank
 }
 
 void StatVal::Initialize() {
@@ -365,7 +361,7 @@ void EpochProcess::Initialize() {
   batch_n = 10;
   batch_n_eff = 10;
   enviro_group = NULL;
-  dmem_nprocs = 1024;		// take a large number if possible!
+  dmem_nprocs = 1024;           // take a large number if possible!
 }
 
 void SequenceProcess::Initialize() {
@@ -381,7 +377,7 @@ void SequenceProcess::Initialize() {
 
 void SequenceEpoch::Initialize() {
   sub_proc_type = &TA_SequenceProcess;
-  small_batch = SEQUENCE;	// prior default setting..
+  small_batch = SEQUENCE;       // prior default setting..
   cur_event_gp = NULL;
 }
 
@@ -411,7 +407,7 @@ void BatchProcess::Initialize() {
 }
 
 //////////////////////////////////
-//	Environment		//
+//      Environment             //
 //////////////////////////////////
 
 void PatternSpec::Initialize() {
@@ -489,7 +485,7 @@ void TimeEnvironment::Initialize() {
 
 void FreqTimeEnv::Initialize() {
   n_sample = 1;
-  freq_level = GROUP;		// group is typically used with time
+  freq_level = GROUP;           // group is typically used with time
   sample_type = RANDOM;
   events.SetBaseType(&TA_FreqTimeEvent);
   events.gp.SetBaseType(&TA_FreqTimeEvent_Group);
@@ -530,7 +526,7 @@ void GroupPatternSpec::Initialize() {
 }
 
 //////////////////////////////////
-//	Basic Processes		//
+//      Basic Processes         //
 //////////////////////////////////
 
 void ScriptProcess::Initialize() {
@@ -586,7 +582,7 @@ void PatternFlagProcess::Initialize() {
 }
 
 //////////////////////////////////
-//	Stats Processes		//
+//      Stats Processes         //
 //////////////////////////////////
 
 void ClosestEventStat::Initialize() {
@@ -616,7 +612,7 @@ void ActThreshRTStat::Initialize() {
 
 void ScriptStat::Initialize() {
 }
-  
+
 void CompareStat::Initialize() {
   stat_1 = NULL;
   stat_2 = NULL;
@@ -718,7 +714,7 @@ void ClearLogProc::Initialize() {
 }
 
 //////////////////////////////////
-//	TypeDefault_Group	//
+//      TypeDefault_Group       //
 //////////////////////////////////
 
 int TypeDefault_Group::Dump_Load_Value(istream& strm, taBase* par) {
@@ -727,7 +723,7 @@ int TypeDefault_Group::Dump_Load_Value(istream& strm, taBase* par) {
 }
 
 //////////////////////////
-// 	PDPLog		//
+//      PDPLog          //
 //////////////////////////
 
 void PDPLog::Initialize() {
@@ -780,7 +776,7 @@ void PDPLog::CutLinks() {
 
 
 //////////////////////////////////
-// 	 V3ProjectBase		//
+//       V3ProjectBase          //
 //////////////////////////////////
 
 void V3ProjectBase::Initialize() {
@@ -833,8 +829,8 @@ bool V3ProjectBase::ConvertToV4_impl() {
   return false;
 }
 
-bool V3ProjectBase::ConvertToV4_Script_impl(Program_Group* pg, const String& objnm, 
-					    const String& fname, SArg_Array& s_args) {
+bool V3ProjectBase::ConvertToV4_Script_impl(Program_Group* pg, const String& objnm,
+                                            const String& fname, SArg_Array& s_args) {
   Program* prog = (Program*)pg->NewEl(1, &TA_Program);
   prog->name = objnm;
   UserScript* us = (UserScript*)prog->prog_code.New(1, &TA_UserScript);
@@ -855,12 +851,12 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
     DataTable* dt = dgp->NewEl(1,&TA_DataTable);
     dt->name = env->name;
     String_Data* gpcol = NULL;
-    int st_col = 0;		// starting column for standard fields
+    int st_col = 0;             // starting column for standard fields
     if(env->events.gp.size > 0) {
       gpcol = dt->NewColString("Group");
       st_col++;
     }
-    //String_Data* nmcol = 
+    //String_Data* nmcol =
     dt->NewColString("Name");
     if(env->event_specs.size == 0) continue;
     EventSpec* es = (EventSpec*)env->event_specs[0];
@@ -873,65 +869,63 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
     if(env->InheritsFrom(&TA_FreqEnv)) {
       dt->NewColFloat("frequency");
       spec_type = 1;
-    }      
+    }
     if(env->InheritsFrom(&TA_TimeEnvironment)) {
       dt->NewColFloat("time");
       spec_type = 2;
-    }      
+    }
     if(env->InheritsFrom(&TA_FreqTimeEnv)) {
       dt->NewColFloat("frequency");
       dt->NewColFloat("time");
       spec_type = 3;
-    }      
+    }
     if(env->events.leaves > 0 && env->events.Leaf(0)->InheritsFrom(&TA_DurEvent)) {
       dt->NewColFloat("duration");
       spec_type = 4;
     }
 
-    taLeafItr evi;
-    Event* ev;
-    FOR_ITR_EL(Event, ev, env->events., evi) {
+    FOREACH_ELEM_IN_GROUP(Event, ev, env->events) {
       dt->AddBlankRow();
       if(gpcol) {
-	Event_Group* eg = (Event_Group*)ev->GetOwner();
-	if(!eg->name.empty())
-	  dt->SetValAsString(eg->name, 0, -1); // -1 = last row
+        Event_Group* eg = (Event_Group*)ev->GetOwner();
+        if(!eg->name.empty())
+          dt->SetValAsString(eg->name, 0, -1); // -1 = last row
       }
       dt->SetValAsString(ev->name, st_col, -1); // -1 = last row
       if(ev->spec.SPtr() && ev->spec.SPtr() != es) { // not default spec, and not child thereof
-	if(ev->spec.spec->GetOwner(&TA_EventSpec) != es) 
-	  continue;
+        if(ev->spec.spec->GetOwner(&TA_EventSpec) != es)
+          continue;
       }
       for(int pi=0; pi < ev->patterns.size; pi++) {
-	Pattern* pat = (Pattern*)ev->patterns[pi];
-	taMatrix* mat = dt->GetValAsMatrix(st_col + 1 + pi, -1);
-	if(mat) {
-	  taBase::Ref(mat);
-	  for(int vi=0; vi<pat->value.size; vi++) {
-	    mat->SetFmVar_Flat(pat->value[vi], vi);
-	  }
-	  taBase::unRefDone(mat);
-	}
+        Pattern* pat = (Pattern*)ev->patterns[pi];
+        taMatrix* mat = dt->GetValAsMatrix(st_col + 1 + pi, -1);
+        if(mat) {
+          taBase::Ref(mat);
+          for(int vi=0; vi<pat->value.size; vi++) {
+            mat->SetFmVar_Flat(pat->value[vi], vi);
+          }
+          taBase::unRefDone(mat);
+        }
       }
       if(spec_type == 1) {
-	dt->SetValColName(((FreqEvent*)ev)->frequency, "frequency", -1);
+        dt->SetValColName(((FreqEvent*)ev)->frequency, "frequency", -1);
       }
       if(spec_type == 2) {
-	dt->SetValColName(((TimeEvent*)ev)->time, "time", -1);
+        dt->SetValColName(((TimeEvent*)ev)->time, "time", -1);
       }
       if(spec_type == 3) {
-	dt->SetValColName(((FreqTimeEvent*)ev)->time, "time", -1);
-	dt->SetValColName(((FreqTimeEvent*)ev)->frequency, "frequency", -1);
+        dt->SetValColName(((FreqTimeEvent*)ev)->time, "time", -1);
+        dt->SetValColName(((FreqTimeEvent*)ev)->frequency, "frequency", -1);
       }
       if(spec_type == 4) {
-	dt->SetValColName(((DurEvent*)ev)->duration, "duration", -1);
+        dt->SetValColName(((DurEvent*)ev)->duration, "duration", -1);
       }
     }
     if(env->InheritsFrom(&TA_ScriptEnv)) {
       ScriptEnv* se = (ScriptEnv*)env;
       if(!se->script_file.fname.empty()) {
-	ConvertToV4_Script_impl(&nwproj->programs, env->name + "_ScriptEnv",
-				se->script_file.fname, se->s_args);
+        ConvertToV4_Script_impl(&nwproj->programs, env->name + "_ScriptEnv",
+                                se->script_file.fname, se->s_args);
       }
     }
   }
@@ -939,32 +933,28 @@ bool V3ProjectBase::ConvertToV4_Enviros(ProjectBase* nwproj) {
 }
 
 bool V3ProjectBase::ConvertToV4_Nets(ProjectBase* nwproj) {
-  taLeafItr ni;
-  Network* net;
-  FOR_ITR_EL(Network, net, networks., ni) {
-    net->specs = specs;		// copy specs into network
+  FOREACH_ELEM_IN_GROUP(Network, net, networks) {
+    net->specs = specs;         // copy specs into network
     net->ReplaceSpecs_Gp(specs, net->specs); // replace pointers
 
     // convert layer types!
-    taLeafItr li;
-    Layer* lay;
-    FOR_ITR_EL(Layer, lay, net->layers., li) {
+    FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
       lay->UpdateAfterEdit();
       String lnm = lay->name;  lnm.downcase();
       if(lnm.contains("in") || lnm.contains("stim"))
-	lay->layer_type = Layer::INPUT;
+        lay->layer_type = Layer::INPUT;
       else if(lnm.contains("out") || lnm.contains("trg") || lnm.contains("targ")
-	      || lnm.contains("resp"))
-	lay->layer_type = Layer::TARGET;
+              || lnm.contains("resp"))
+        lay->layer_type = Layer::TARGET;
       else
-	lay->layer_type = Layer::HIDDEN;
+        lay->layer_type = Layer::HIDDEN;
     }
   }
 
   networks.el_base = nwproj->networks.el_base; // make sure the copy goes through!
-  nwproj->networks = networks;	// this should the do spec updating automatically!
+  nwproj->networks = networks;  // this should the do spec updating automatically!
 
-  FOR_ITR_EL(Network, net, nwproj->networks., ni) {
+  FOREACH_ELEM_IN_GROUP(Network, net, nwproj->networks) {
     net->RemoveUnits();
     net->Build();
     net->NewView();
@@ -977,14 +967,14 @@ bool V3ProjectBase::ConvertToV4_Scripts(ProjectBase* nwproj) {
     Script* scr = scripts[i];
     if(!scr->script_file.fname.empty()) {
       ConvertToV4_Script_impl(&nwproj->programs, scr->name,
-				scr->script_file.fname, scr->s_args);
+                                scr->script_file.fname, scr->s_args);
     }
   }
   return true;
 }
 
 bool V3ProjectBase::ConvertToV4_ProcScripts_impl(ProjectBase* nwproj, taBase_Group* gp,
-						 const String& nm_extra) {
+                                                 const String& nm_extra) {
   SArg_Array null_args;
   for(int i=0; i < gp->size; i++) {
     Process* proc = (Process*)gp->FastEl(i);
@@ -992,15 +982,15 @@ bool V3ProjectBase::ConvertToV4_ProcScripts_impl(ProjectBase* nwproj, taBase_Gro
     if(proc->script_file.fname.empty()) continue;
     if(proc->InheritsFrom(&TA_ScriptProcess)) {
       ConvertToV4_Script_impl(&nwproj->programs, proc->name + nm_extra,
-			      proc->script_file.fname, ((ScriptProcess*)proc)->s_args);
+                              proc->script_file.fname, ((ScriptProcess*)proc)->s_args);
     }
     else if(proc->InheritsFrom(&TA_ScriptStat)) {
       ConvertToV4_Script_impl(&nwproj->programs, proc->name + nm_extra,
-			      proc->script_file.fname, ((ScriptStat*)proc)->s_args);
+                              proc->script_file.fname, ((ScriptStat*)proc)->s_args);
     }
     else {
       ConvertToV4_Script_impl(&nwproj->programs, proc->name + nm_extra,
-			      proc->script_file.fname, null_args);
+                              proc->script_file.fname, null_args);
     }
   }
   return true;
@@ -1011,9 +1001,7 @@ bool V3ProjectBase::ConvertToV4_ProcScripts(ProjectBase* nwproj) {
   // replacement programs that would get loaded from prog_lib in the same places, etc
   // not sure this is worth it..
 
-  taLeafItr pi;
-  SchedProcess* proc;
-  FOR_ITR_EL(SchedProcess, proc, processes., pi) {
+  FOREACH_ELEM_IN_GROUP(SchedProcess, proc, processes) {
     ConvertToV4_ProcScripts_impl(nwproj, (taBase_Group*)&proc->loop_stats, "_" + proc->name + "_loop_stats");
     ConvertToV4_ProcScripts_impl(nwproj, (taBase_Group*)&proc->final_stats, "_" + proc->name + "_final_stats");
     ConvertToV4_ProcScripts_impl(nwproj, (taBase_Group*)&proc->init_procs, "_" + proc->name + "_init_procs");
@@ -1024,9 +1012,7 @@ bool V3ProjectBase::ConvertToV4_ProcScripts(ProjectBase* nwproj) {
 }
 
 bool V3ProjectBase::ConvertToV4_Edits(ProjectBase* nwproj) {
-  taLeafItr i;
-  SelectEdit* se;
-  FOR_ITR_EL(SelectEdit, se, edits., i) {
+  FOREACH_ELEM_IN_GROUP(SelectEdit, se, edits) {
     SelectEdit* ned = (SelectEdit*)nwproj->edits.New(1, &TA_SelectEdit);
     ned->CopyFrom(se);
   }
@@ -1042,7 +1028,7 @@ bool V3ProjectBase::ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj) {
 
   Program* apply_ins = ((Program_Group*)nwproj->programs.gp[0])->FindName("ApplyInputs");
   if(!apply_ins) return false;
-  
+
   LayerWriter* lw = (LayerWriter*)apply_ins->objs.FindType(&TA_LayerWriter);
   if(!lw) return false;
 
@@ -1054,7 +1040,7 @@ bool V3ProjectBase::ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj) {
   DataTable_Group* dgp = (DataTable_Group*)nwproj->data.FindMakeGpName("InputData");
   DataTable* dt = (DataTable*)dgp->FindName(env->name);
   if(!dt) return false;
-  
+
   if(networks.leaves <= 0) return false;
   Network* net = (Network*)nwproj->networks.Leaf(0);
 
@@ -1062,7 +1048,7 @@ bool V3ProjectBase::ConvertToV4_DefaultApplyInputs(ProjectBase* nwproj) {
 }
 
 bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter* lw, EventSpec* es,
-					    Network* net, DataTable* dt) {
+                                            Network* net, DataTable* dt) {
   lw->layer_data.Reset();
   lw->data = dt;
   lw->network = net;
@@ -1088,6 +1074,6 @@ bool V3ProjectBase::ConvertToV4_ApplyInputs(LayerWriter* lw, EventSpec* es,
     LayerWriterEl* le = (LayerWriterEl*)lw->layer_data.FindMakeChanName("Group", made_new);
     le->net_target = LayerDataEl::GROUP_NAME;
   }
-  lw->UpdateAfterEdit();	// sets subguys
+  lw->UpdateAfterEdit();        // sets subguys
   return true;
 }

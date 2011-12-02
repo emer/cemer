@@ -987,9 +987,7 @@ void VEObjectView::BuildAll() {
   VEObject* obj = Object();
   if(!obj) return;
 
-  VEBody* bod;
-  taLeafItr i;
-  FOR_ITR_EL(VEBody, bod, obj->bodies., i) {
+  FOREACH_ELEM_IN_GROUP(VEBody, bod, obj->bodies) {
     if(bod->HasBodyFlag(VEBody::OFF)) continue;
     if(bod->InheritsFrom(&TA_VEObjCarousel)) {
       taMisc::FlushConsole();
@@ -1006,8 +1004,7 @@ void VEObjectView::BuildAll() {
     }
   }
 
-  VEJoint* jnt;
-  FOR_ITR_EL(VEJoint, jnt, obj->joints., i) {
+  FOREACH_ELEM_IN_GROUP(VEJoint, jnt, obj->joints) {
     if(jnt->HasJointFlag(VEJoint::OFF)) continue;
     VEJointView* ov = new VEJointView();
     ov->SetJoint(jnt);
@@ -1433,9 +1430,7 @@ void VESpaceView::BuildAll() {
   VESpace* obj = Space();
   if(!obj) return;
 
-  VEStatic* bod;
-  taLeafItr i;
-  FOR_ITR_EL(VEStatic, bod, obj->static_els., i) {
+  FOREACH_ELEM_IN_GROUP(VEStatic, bod, obj->static_els) {
     if(bod->HasStaticFlag(VEStatic::OFF)) continue;
     VEStaticView* ov = new VEStaticView();
     ov->SetStatic(bod);
@@ -1583,9 +1578,7 @@ void VEWorldView::InitDisplay(bool init_panel) {
     UpdatePanel();
   }
   // descend into sub items
-//   LayerView* lv;
-//   taListItr i;
-//   FOR_ITR_EL(LayerView, lv, children., i) {
+//   FOREACH_ELEM_IN_GROUP(LayerView, lv, children) {
 //     InitDisplay_Layer(lv, false);
 //   }
 }
@@ -1615,25 +1608,20 @@ void VEWorldView::BuildAll() {
   VEWorld* wl = World();
   if(!wl) return;
 
-  taLeafItr i;
-
   // do background spaces first..
-  VESpace* spc;
-  FOR_ITR_EL(VESpace, spc, wl->spaces., i) {
+  FOREACH_ELEM_IN_GROUP(VESpace, spc, wl->spaces) {
     VESpaceView* ov = new VESpaceView();
     ov->SetSpace(spc);
     children.Add(ov);
     ov->BuildAll();
   }
 
-  VEObject* obj;
-  FOR_ITR_EL(VEObject, obj, wl->objects., i) {
+  FOREACH_ELEM_IN_GROUP(VEObject, obj, wl->objects) {
     VEObjectView* ov = new VEObjectView();
     ov->SetObject(obj);
     children.Add(ov);
     ov->BuildAll();
   }
-
 }
 
 void VEWorldView::Render_pre() {

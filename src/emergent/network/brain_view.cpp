@@ -245,14 +245,10 @@ void BrainView::GetMembs() {
   setUnitDispMd(NULL);
   membs.Reset();
   TypeDef* prv_td = NULL;
-  Layer* lay;
-  taLeafItr l_itr;
 
   // first do the unit variables
-  FOR_ITR_EL(Layer, lay, net()->layers., l_itr) {
-    Unit* u;
-    taLeafItr u_itr;
-    FOR_ITR_EL(Unit, u, lay->units., u_itr) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
+    FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
       TypeDef* td = u->GetTypeDef();
       if(td == prv_td) continue; // don't re-scan!
       prv_td = td;
@@ -323,10 +319,8 @@ void BrainView::GetMembs() {
   // then, only do the connections if any Unit guys, otherwise we are
   // not built yet, so we leave ourselves empty to signal that
   if (membs.size > 0) {
-    FOR_ITR_EL(Layer, lay, net()->layers., l_itr) {
-      Projection* prjn;
-      taLeafItr p_itr;
-      FOR_ITR_EL(Projection, prjn, lay->projections., p_itr) {
+    FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
+      FOREACH_ELEM_IN_GROUP(Projection, prjn, lay->projections) {
         TypeDef* td = prjn->con_type;
         if(td == prv_td) continue; // don't re-scan!
         prv_td = td;

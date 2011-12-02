@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -22,7 +22,7 @@
 #include "ta_datatable.h"
 
 //////////////////////////////////
-//  taBase			//
+//  taBase                      //
 //////////////////////////////////
 
 void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,
@@ -34,22 +34,20 @@ void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,
   if (full_lbl.nonempty()) full_lbl += " ";
   full_lbl += mbr->GetLabel();
   // desc is the member description
-//   if (desc.empty()) 
+//   if (desc.empty())
 //     MemberDef::GetMembDesc(mbr, desc, "");
 }
 
 
 //////////////////////////////////
-//  SelectEditItem		//
+//  SelectEditItem              //
 //////////////////////////////////
 
 SelectEditItem* SelectEditItem::StatFindItemBase(const taGroup_impl* grp,
    taBase* base, TypeItem* ti, int& idx)
 {
-  SelectEditItem* rval = NULL;
-  taLeafItr itr;
   idx = 0;
-  FOR_ITR_EL(SelectEditItem, rval, grp->, itr) {
+  FOREACH_ELEM_IN_GROUP(SelectEditItem, rval, *grp) {
     if ((rval->base == base) && (rval->typeItem() == ti))
       return rval;
     ++idx;
@@ -70,9 +68,7 @@ bool SelectEditItem::StatGetBase_Flat(const taGroup_impl* grp, int idx,
 }
 
 bool SelectEditItem::StatHasBase(taGroup_impl* grp, taBase* base) {
-  SelectEditItem* ei;
-  taLeafItr itr;
-  FOR_ITR_EL(SelectEditItem, ei, grp->, itr) {
+  FOREACH_ELEM_IN_GROUP(SelectEditItem, ei, *grp) {
     if (ei->base == base) return true;
   }
   return false;
@@ -80,9 +76,7 @@ bool SelectEditItem::StatHasBase(taGroup_impl* grp, taBase* base) {
 
 bool SelectEditItem::StatRemoveItemBase(taGroup_impl* grp, taBase* base) {
   bool rval = false;
-  SelectEditItem* ei;
-  taLeafItr itr;
-  FOR_ITR_EL_REV(SelectEditItem, ei, grp->, itr) {
+  FOREACH_ELEM_IN_GROUP_REV(SelectEditItem, ei, *grp) {
     if (ei->base == base) {
       rval = true;
       ei->Close();
@@ -104,7 +98,7 @@ void SelectEditItem::Copy_(const SelectEditItem& cp) {
   label = cp.label;
   desc = cp.desc;
   cust_desc = cp.cust_desc;
-  prv_desc = desc;	       // no change here
+  prv_desc = desc;             // no change here
   base = cp.base;
   item_nm = cp.item_nm;
 }
@@ -133,7 +127,7 @@ String SelectEditItem::GetName() const {
 String SelectEditItem::GetColText(const KeyString& key, int itm_idx) const {
   if (key == "base_name") return (base) ? base->GetName() : String("NULL");
   else if (key == "base_type") return (base) ? base->GetTypeDef()->name : String("NULL");
-  else if (key == "item_name") 
+  else if (key == "item_name")
     return (typeItem()) ? typeItem()->name : String("NULL");
   else if (key == "label") return label;
   else return inherited::GetColText(key, itm_idx);
@@ -141,7 +135,7 @@ String SelectEditItem::GetColText(const KeyString& key, int itm_idx) const {
 
 
 //////////////////////////////////
-//  EditMbrItem		//
+//  EditMbrItem         //
 //////////////////////////////////
 
 void EditParamSearch::Initialize() {
@@ -184,13 +178,13 @@ void EditMbrItem::UpdateAfterEdit_impl() {
     if(mbr->type->InheritsFrom(&TA_float) || mbr->type->InheritsFrom(&TA_double)
        || mbr->type->InheritsFrom(&TA_int) || mbr->type->InheritsFrom(&TA_int64_t)) {
       if(!mbr->HasOption("READ_ONLY") && !mbr->HasOption("GUI_READ_ONLY"))
-	is_numeric = true;
+        is_numeric = true;
     }
   }
 }
 
 String EditMbrItem::GetColText(const KeyString& key, int itm_idx) const {
-  if (key == "mbr_type") 
+  if (key == "mbr_type")
     return (mbr) ? mbr->type->name : String("NULL");
   else return inherited::GetColText(key, itm_idx);
 }
@@ -206,21 +200,21 @@ bool EditMbrItem::PSearchValidTest() {
 Variant EditMbrItem::PSearchCurVal() {
   if(!PSearchValidTest()) return 0.0;
   return mbr->type->GetValVar(mbr->GetOff(base), mbr);
-}  
+}
 
 bool EditMbrItem::PSearchCurVal_Set(const Variant& cur_val) {
   if(!PSearchValidTest()) return false;
   mbr->type->SetValVar(cur_val, mbr->GetOff(base), NULL, mbr);
   base->UpdateAfterEdit();
   return true;
-}  
+}
 
 bool EditMbrItem::PSearchMinToCur() {
   if(!PSearchValidTest()) return false;
   mbr->type->SetValVar(param_search.min_val, mbr->GetOff(base), NULL, mbr);
   base->UpdateAfterEdit();
   return true;
-}  
+}
 
 bool EditMbrItem::PSearchNextIncr() {
   if(!PSearchValidTest()) return false;
@@ -231,20 +225,20 @@ bool EditMbrItem::PSearchNextIncr() {
     return false;
   }
   return true;
-}  
+}
 
 bool EditMbrItem::PSearchNextToCur() {
   if(!PSearchValidTest()) return false;
   mbr->type->SetValVar(param_search.next_val, mbr->GetOff(base), NULL, mbr);
   base->UpdateAfterEdit();
   return true;
-}  
+}
 
 //////////////////////////////////
-//  EditMthItem_Group		//
+//  EditMthItem_Group           //
 //////////////////////////////////
 
-void EditMbrItem_Group::DataChanged(int dcr, void* op1, void* op2) 
+void EditMbrItem_Group::DataChanged(int dcr, void* op1, void* op2)
 {
   inherited::DataChanged(dcr, op1, op2);
   SelectEdit::StatDataChanged_Group(this, dcr, op1, op2);
@@ -278,18 +272,16 @@ const KeyString EditMbrItem_Group::GetListColKey(int col) const {
 }
 
 //////////////////////////////////////////////////
-// 	Parameter Searching Interface
+//      Parameter Searching Interface
 
 EditMbrItem* EditMbrItem_Group::FindMbrName(const String& mbr_nm, const String& label) {
-  taLeafItr itr;
-  EditMbrItem* sei;
-  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
     if(!sei->mbr) continue;
     if(sei->mbr->name == mbr_nm) {
       if(label.nonempty()) {
-	if(sei->label.contains(label)) {
-	  return sei;
-	}
+        if(sei->label.contains(label)) {
+          return sei;
+        }
       }
     }
   }
@@ -297,20 +289,18 @@ EditMbrItem* EditMbrItem_Group::FindMbrName(const String& mbr_nm, const String& 
 }
 
 EditMbrItem* EditMbrItem_Group::PSearchFind(const String& mbr_nm, const String& label) {
-  taLeafItr itr;
-  EditMbrItem* sei;
-  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
     if(!sei->mbr || !sei->is_numeric) continue;
     if(sei->mbr->name == mbr_nm) {
       if(label.nonempty()) {
-	if(sei->label.contains(label)) {
-	  return sei;
-	}
+        if(sei->label.contains(label)) {
+          return sei;
+        }
       }
     }
   }
   TestError(true, "PSearchFind", "could not find member named:", mbr_nm, "label:", label);
-  return NULL; 
+  return NULL;
 }
 
 EditMbrItem* EditMbrItem_Group::PSearchNext(int& st_idx) {
@@ -428,11 +418,9 @@ bool EditMbrItem_Group::PSearchNextToCur(const String& mbr_nm, const String& lab
 
 bool EditMbrItem_Group::PSearchMinToCur_All() {
   bool rval = false;
-  taLeafItr itr;
-  EditMbrItem* sei;
-  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
     if(!sei->mbr || !sei->is_numeric || !sei->param_search.search) continue;
-    bool psr = sei->PSearchMinToCur(); 
+    bool psr = sei->PSearchMinToCur();
     rval |= psr;
   }
   return rval;
@@ -447,16 +435,14 @@ bool EditMbrItem_Group::PSearchNextIncr_Grid() {
       return true;
     cur_idx++;
   }
-  return false;			// never gets here..
+  return false;                 // never gets here..
 }
 
 bool EditMbrItem_Group::PSearchNextToCur_All() {
   bool rval = false;
-  taLeafItr itr;
-  EditMbrItem* sei;
-  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
     if(!sei->mbr || !sei->is_numeric || !sei->param_search.search) continue;
-    bool psr = sei->PSearchNextToCur(); 
+    bool psr = sei->PSearchNextToCur();
     rval |= psr;
   }
   return rval;
@@ -465,9 +451,7 @@ bool EditMbrItem_Group::PSearchNextToCur_All() {
 void EditMbrItem_Group::PSearchConfigTable(DataTable* dat, bool all_nums, bool add_eval) {
   if(TestError(!dat, "PSearchConfigTable", "data table is NULL"))
     return;
-  taLeafItr itr;
-  EditMbrItem* sei;
-  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
     if(!sei->mbr || !sei->is_numeric) continue;
     if(!all_nums && !sei->param_search.search) continue;
     String nm = taMisc::StringCVar(sei->label);
@@ -478,12 +462,10 @@ void EditMbrItem_Group::PSearchConfigTable(DataTable* dat, bool all_nums, bool a
 }
 
 void EditMbrItem_Group::PSearchRecordData(DataTable* dat, bool all_nums, bool add_eval,
-					  double eval_val) {
+                                          double eval_val) {
   if(TestError(!dat, "PSearchRecord", "data table is NULL"))
     return;
-  taLeafItr itr;
-  EditMbrItem* sei;
-  FOR_ITR_EL(EditMbrItem, sei, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, *this) {
     if(!sei->mbr || !sei->is_numeric) continue;
     if(!all_nums && !sei->param_search.search) continue;
     String nm = taMisc::StringCVar(sei->label);
@@ -495,7 +477,7 @@ void EditMbrItem_Group::PSearchRecordData(DataTable* dat, bool all_nums, bool ad
 }
 
 //////////////////////////////////
-//  EditMthItem			//
+//  EditMthItem                 //
 //////////////////////////////////
 
 void EditMthItem::Initialize() {
@@ -515,7 +497,7 @@ void EditMthItem::UpdateAfterEdit_impl() {
     if(((mth->name == "Run") || (mth->name == "Step")) && !mth->im) {
       MethodDef* nwmth = mth->owner->FindName(mth->name + "_Gui");
       if(nwmth) {
-	mth = nwmth;
+        mth = nwmth;
       }
     }
   }
@@ -528,7 +510,7 @@ void EditMthItem::UpdateAfterEdit_impl() {
 
 
 //////////////////////////////////
-//  EditMthItem_Group		//
+//  EditMthItem_Group           //
 //////////////////////////////////
 
 void EditMthItem_Group::Initialize() {
@@ -538,7 +520,7 @@ void EditMthItem_Group::Initialize() {
 }
 
 void EditMthItem_Group::Copy_(const EditMthItem_Group& cp) {
-  group_type = cp.group_type; 
+  group_type = cp.group_type;
 }
 
 void EditMthItem_Group::InitLinks() {
@@ -548,7 +530,7 @@ void EditMthItem_Group::InitLinks() {
     group_type = GT_MENU_BUTTON;
 }
 
-void EditMthItem_Group::DataChanged(int dcr, void* op1, void* op2) 
+void EditMthItem_Group::DataChanged(int dcr, void* op1, void* op2)
 {
   inherited::DataChanged(dcr, op1, op2);
   SelectEdit::StatDataChanged_Group(this, dcr, op1, op2);
@@ -588,11 +570,11 @@ void EditMthItem_Group::SetGroupType(MthGroupType group_type_) {
 
 
 //////////////////////////////////
-//  SelectEdit			//
+//  SelectEdit                  //
 //////////////////////////////////
 
 void SelectEdit::StatDataChanged_Group(taGroup_impl* grp, int dcr,
-  void* op1, void* op2) 
+  void* op1, void* op2)
 {
   if (!grp->owner || !grp->owner->InheritsFrom(&TA_SelectEdit)) return;
   ((SelectEdit*)(grp->owner))->DataChanged_Group(grp, dcr, op1, op2);
@@ -619,22 +601,20 @@ void SelectEdit::Copy_(const SelectEdit& cp) {
   base_refs.Reset(); // should get added by copies below
   mbrs = cp.mbrs;
   mths = cp.mths;
-  
+
   UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject);
 }
 
 void SelectEdit::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl(); 
+  inherited::UpdateAfterEdit_impl();
   if (taMisc::is_loading) {
     ConvertLegacy(); // LEGACY
     // add all the bases, since they weren't available during load
     // this is harmless if Convert actually did this instead
-    taLeafItr itr;
-    SelectEditItem* sei = NULL;
-    FOR_ITR_EL(SelectEditItem, sei, mbrs., itr) {
+    FOREACH_ELEM_IN_GROUP(SelectEditItem, sei, mbrs) {
       BaseAdded(sei->base);
     }
-    FOR_ITR_EL(SelectEditItem, sei, mths., itr) {
+    FOREACH_ELEM_IN_GROUP(SelectEditItem, sei, mths) {
       BaseAdded(sei->base);
     }
   }
@@ -660,7 +640,7 @@ void SelectEdit::BaseRemoved(taBase* base) {
   // ok, no extant refs to the guy, so remove from list
   base_refs.RemoveEl(base);
 }
- 
+
 void SelectEdit::DataDestroying_Ref(taBase_RefList* src, taBase* base) {
   // note: item will already have been removed from list
   if (m_changing) return;
@@ -702,9 +682,9 @@ void SelectEdit::DataChanged_Group(taGroup_impl* grp,
 int SelectEdit::CompareObjs(taBase* obj_a, taBase* obj_b, bool no_ptrs) {
   if(TestError(!obj_a || !obj_b, "CompareObjs", "null object(s)")) return -1;
   if(TestError(obj_a->GetTypeDef() != obj_b->GetTypeDef(), "CompareObjs",
-	       "objects must have the exact same type to be able to be compared")) return -1;
+               "objects must have the exact same type to be able to be compared")) return -1;
   name = "Cmp_" + obj_a->GetName() + "_" + obj_b->GetName();
-  desc = "Differences between: A: " + obj_a->GetDisplayName() + " and B: " + 
+  desc = "Differences between: A: " + obj_a->GetDisplayName() + " and B: " +
     obj_b->GetDisplayName();
   Member_List mds;
   voidptr_PArray trg_bases;
@@ -735,7 +715,7 @@ void SelectEdit::RemoveField(int idx) {
 
 void SelectEdit::RemoveField_impl(int idx) {
   EditMbrItem* item = mbrs.Leaf(idx);
-  if (item) 
+  if (item)
     item->Close();
 }
 
@@ -746,7 +726,7 @@ void SelectEdit::RemoveFun(int idx) {
 
 void SelectEdit::RemoveFun_impl(int idx) {
   EditMthItem* item = mths.Leaf(idx);
-  if (item) 
+  if (item)
     item->Close();
 }
 
@@ -772,8 +752,8 @@ bool SelectEdit::ReShowEdit(bool force) {
 
 
 int SelectEdit::SearchMembers(taNBase* obj, const String& memb_contains) {
-  if(TestError(!obj || memb_contains.empty(), "SearchMembers", 
-	       "null object or empty search")) return -1;
+  if(TestError(!obj || memb_contains.empty(), "SearchMembers",
+               "null object or empty search")) return -1;
   SelectEdit* se = this;
   int rval = obj->SelectForEditSearch(memb_contains, se);
   ReShowEdit(true); //forced
@@ -781,7 +761,7 @@ int SelectEdit::SearchMembers(taNBase* obj, const String& memb_contains) {
 }
 
 bool SelectEdit::SelectMember(taBase* base, MemberDef* mbr,
-  const String& xtra_lbl, const String& desc, const String& sub_gp_nm) 
+  const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
 {
   if (!base) return false;
   String eff_desc = desc; // non-const
@@ -793,7 +773,7 @@ bool SelectEdit::SelectMember(taBase* base, MemberDef* mbr,
 }
 
 bool SelectEdit::SelectMemberNm(taBase* base, const String& md_nm,
-  const String& xtra_lbl, const String& desc, const String& sub_gp_nm) 
+  const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
 {
   if(base == NULL) return false;
   MemberDef* md = (MemberDef*)base->FindMember(md_nm);
@@ -802,7 +782,7 @@ bool SelectEdit::SelectMemberNm(taBase* base, const String& md_nm,
 }
 
 bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
-	    const String& full_lbl, const String& desc, const String& sub_gp_nm)
+            const String& full_lbl, const String& desc, const String& sub_gp_nm)
 {
   int bidx = -1;
   // this looks at the leaves:
@@ -832,7 +812,7 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
     EditMbrItem_Group* egp = (EditMbrItem_Group*)item->owner;
     if(egp == &mbrs || egp->name != sub_gp_nm) {
       EditMbrItem_Group* negp = (EditMbrItem_Group*)mbrs.FindMakeGpName(sub_gp_nm);
-      negp->Transfer(item);	// grab it
+      negp->Transfer(item);     // grab it
     }
   }
   item->UpdateAfterEdit();
@@ -840,7 +820,7 @@ bool SelectEdit::SelectMember_impl(taBase* base, MemberDef* md,
 }
 
 bool SelectEdit::SelectMethod(taBase* base, MethodDef* md,
-  const String& xtra_lbl, const String& desc, const String& sub_gp_nm) 
+  const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
 {
   bool rval = SelectMethod_impl(base, md, xtra_lbl, desc, sub_gp_nm);
   ReShowEdit(true); //forced
@@ -848,7 +828,7 @@ bool SelectEdit::SelectMethod(taBase* base, MethodDef* md,
 }
 
 bool SelectEdit::SelectMethodNm(taBase* base, const String& md_nm,
-  const String& xtra_lbl, const String& desc, const String& sub_gp_nm) 
+  const String& xtra_lbl, const String& desc, const String& sub_gp_nm)
 {
   if(base == NULL) return false;
   MethodDef* md = (MethodDef*)base->GetTypeDef()->methods.FindName(md_nm);
@@ -889,7 +869,7 @@ bool SelectEdit::SelectMethod_impl(taBase* base, MethodDef* mth,
     EditMthItem_Group* egp = (EditMthItem_Group*)item->owner;
     if(egp == &mths || egp->name != sub_gp_nm) {
       EditMthItem_Group* negp = (EditMthItem_Group*)mths.FindMakeGpName(sub_gp_nm);
-      negp->Transfer(item);	// grab it
+      negp->Transfer(item);     // grab it
     }
   }
   item->UpdateAfterEdit();
@@ -918,7 +898,7 @@ int SelectEdit::FindMethBase(taBase* base, MethodDef* md) {
 }
 
 //////////////////////////////////
-//	LEGACY	//
+//      LEGACY  //
 //////////////////////////////////
 
 void SelectEdit::ConvertLegacy() {
@@ -948,9 +928,7 @@ void SelectEdit::ConvertLegacy() {
     meth_strs.Reset();
   }
   { // load memberdefs -- this only needed for legacy, and for brief crossover period projs
-  EditMbrItem* item;
-  taLeafItr itr;
-  FOR_ITR_EL_REV(EditMbrItem, item, this->mbrs., itr) {
+  FOREACH_ELEM_IN_GROUP_REV(EditMbrItem, item, this->mbrs) {
     taBase* bs = item->base;
     if (bs == NULL) { // didn't get loaded, bail..
       taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, "in object to edit");
@@ -967,11 +945,9 @@ void SelectEdit::ConvertLegacy() {
       continue;
     }
   }}
-  // GetMethsFmStrs() 
+  // GetMethsFmStrs()
   {
-  EditMthItem* item;
-  taLeafItr itr;
-  FOR_ITR_EL_REV(EditMthItem, item, this->mths., itr) {
+  FOREACH_ELEM_IN_GROUP_REV(EditMthItem, item, this->mths) {
     taBase* bs = item->base;
     if (bs == NULL) { // didn't get loaded, bail..
       taMisc::Warning("*** SelectEdit: couldn't find object:", item->label, "in object to edit");

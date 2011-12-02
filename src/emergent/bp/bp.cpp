@@ -51,15 +51,15 @@ static void bp_converter_init() {
 }
 
 void bp_module_init() {
-  ta_Init_bp();			// initialize types 
-  bp_converter_init();		// configure converter
+  ta_Init_bp();                 // initialize types
+  bp_converter_init();          // configure converter
 }
 
 // module initialization
 InitProcRegistrar mod_init_bp(bp_module_init);
 
 //////////////////////////
-//  	Con, Spec	//
+//      Con, Spec       //
 //////////////////////////
 
 void BpConSpec::Initialize() {
@@ -114,7 +114,7 @@ void Bp_WtElim_WtDecay(BpConSpec* spec, BpCon* cn, BpUnit*, BpUnit*) {
 
 
 //////////////////////////
-//  	Unit, Spec	//
+//      Unit, Spec      //
 //////////////////////////
 
 void BpUnitSpec::Initialize() {
@@ -261,7 +261,7 @@ void BpUnit::Copy_(const BpUnit& cp) {
 }
 
 //////////////////////////////////////////
-//	Additional Con Types		//
+//      Additional Con Types            //
 //////////////////////////////////////////
 
 void DeltaBarDeltaBpConSpec::Initialize() {
@@ -282,11 +282,11 @@ void DeltaBarDeltaBpConSpec::UpdateAfterEdit_impl() {
 
 
 //////////////////////////////////////////
-//	Additional Unit Types		//
+//      Additional Unit Types           //
 //////////////////////////////////////////
 
 //////////////////////////
-//  	Context		//
+//      Context         //
 //////////////////////////
 
 void BpContextSpec::Initialize() {
@@ -315,20 +315,20 @@ void BpContextSpec::UpdateAfterEdit_impl() {
   RecvCons* recv_gp = (RecvCons*)un->recv.SafeGp(0); // first group
   if(recv_gp == NULL) {
     taMisc::Error("BpContextSpec: expecting one one-to-one projection from layer",
-		   "did not find con group");
+                   "did not find con group");
     return false;
   }
   Unit* hu = (Unit*)recv_gp->Un(0);
   if(hu == NULL) {
     taMisc::Error("BpContextSpec: expecting one one-to-one projection from layer",
-		   "did not find unit");
+                   "did not find unit");
     return false;
   }
   int myidx = lay->own_net->layers.FindLeaf(lay);
   int fmidx = lay->own_net->layers.FindLeaf(recv_gp->prjn->from);
   if(myidx < fmidx) {
     taMisc::Error("BpContextSpec: context layer:", lay->name, "must be AFTER layer it copies from:",
-		  recv_gp->prjn->from->name, "in list of .layers");
+                  recv_gp->prjn->from->name, "in list of .layers");
     return false;
   }
   return true;
@@ -350,7 +350,7 @@ void BpContextSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 
 
 //////////////////////////
-//  	Linear		//
+//      Linear          //
 //////////////////////////
 
 void LinearBpUnitSpec::Initialize() {
@@ -376,11 +376,11 @@ void LinearBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 }
 
 void LinearBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no) {
-  u->dEdNet = u->dEdA;		// that's pretty easy!
+  u->dEdNet = u->dEdA;          // that's pretty easy!
 }
 
 //////////////////////////
-//  	ThreshLinear	//
+//      ThreshLinear    //
 //////////////////////////
 
 void ThreshLinBpUnitSpec::Initialize() {
@@ -414,7 +414,7 @@ void ThreshLinBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_n
 
 
 //////////////////
-//    Noisy	//
+//    Noisy     //
 //////////////////
 
 void NoisyBpUnitSpec::Initialize() {
@@ -539,7 +539,7 @@ void SoftMaxBpUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   if((u->recv.size < 2) || (((RecvCons*)u->recv[0])->size == 0)
      || (((RecvCons*)u->recv[1])->size == 0)) {
     taMisc::Error("*** SoftMaxBpUnitSpec: expecting one one-to-one projection from",
-		  "exponential units (in first projection) and from linear sum unit (in second), did not find these.");
+                  "exponential units (in first projection) and from linear sum unit (in second), did not find these.");
     return;
   }
   BpUnit* exp_unit = (BpUnit*)((RecvCons*)u->recv[0])->Un(0);
@@ -559,7 +559,7 @@ void SoftMaxBpUnitSpec::Compute_dEdNet(BpUnit* u, BpNetwork* net, int thread_no)
 }
 
 //////////////////////////
-//   BpLayer	        //
+//   BpLayer            //
 //////////////////////////
 
 void BpLayer::Initialize() {
@@ -568,7 +568,7 @@ void BpLayer::Initialize() {
 }
 
 //////////////////////////
-//   BpNetwork	        //
+//   BpNetwork          //
 //////////////////////////
 
 void BpNetwork::Initialize() {
@@ -578,9 +578,9 @@ void BpNetwork::Initialize() {
 
 void BpNetwork::UpdateAfterEdit_impl() {
   if(TestWarning(dmem_nprocs > 1,
-	      "Note: you cannot currently use dmem (MPI) to compute in Bp networks,",
-	      "due to incompatibilities with the new threading mechanism.",
-		 "dmem_nprocs was set back to 1 for you.")) {
+              "Note: you cannot currently use dmem (MPI) to compute in Bp networks,",
+              "due to incompatibilities with the new threading mechanism.",
+                 "dmem_nprocs was set back to 1 for you.")) {
     dmem_nprocs = 1;
   }
   inherited::UpdateAfterEdit_impl();
@@ -595,14 +595,12 @@ void BpNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 }
 
 void BpNetwork::SetCurLrate() {
-  Layer* layer;
-  taLeafItr l_itr;
-  FOR_ITR_EL(Layer, layer, layers., l_itr) {
-    if (layer->lesioned())	continue;
-    BpUnit* u;
-    taLeafItr u_itr;
-    FOR_ITR_EL(BpUnit, u, layer->units., u_itr)
-      u->SetCurLrate(epoch);
+  FOREACH_ELEM_IN_GROUP(Layer, layer, layers) {
+    if (!layer->lesioned()) {
+      FOREACH_ELEM_IN_GROUP(BpUnit, u, layer->units) {
+        u->SetCurLrate(epoch);
+      }
+    }
   }
 }
 
@@ -617,12 +615,12 @@ void BpNetwork::Compute_dEdA_dEdNet() {
 
 // #ifdef DMEM_COMPILE
 //     // first compute dEdA from connections and share it
-//     FOR_ITR_EL(BpUnit, u, lay->units., u_itr)
+//     FOREACH_ELEM_IN_GROUP(BpUnit, u, lay->units)
 //       u->Compute_dEdA();
 //     lay->dmem_share_units.Aggregate(3, MPI_SUM);
 
 //     // then compute error to add to dEdA, and dEdNet
-//     FOR_ITR_EL(BpUnit, u, lay->units., u_itr) {
+//     FOREACH_ELEM_IN_GROUP(BpUnit, u, lay->units) {
 //       u->Compute_Error();
 //       u->Compute_dEdNet();
 //     }
@@ -631,17 +629,12 @@ void BpNetwork::Compute_dEdA_dEdNet() {
 
 void BpNetwork::Compute_Error() {
   // compute errors -- definitely not worth threading due to very limited units it run on
-  Layer* lay;
-  taLeafItr l_itr;
-  FOR_ITR_EL(Layer, lay, layers., l_itr) {
-    if (lay->lesioned() || !(lay->ext_flag & Unit::TARG)) // only compute err on targs
-      continue;
-
-    BpUnit* u;
-    taLeafItr u_itr;
-    FOR_ITR_EL(BpUnit, u, lay->units., u_itr) {
-      u->dEdA = 0.0f;		// must reset -- error is incremental!
-      u->Compute_Error(this);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if (!lay->lesioned() && (lay->ext_flag & Unit::TARG)) { // only compute err on targs
+      FOREACH_ELEM_IN_GROUP(BpUnit, u, lay->units) {
+        u->dEdA = 0.0f;           // must reset -- error is incremental!
+        u->Compute_Error(this);
+      }
     }
   }
 }
@@ -667,7 +660,7 @@ void BpNetwork::Trial_Run() {
   if(train_mode == TRAIN) {
     Compute_dWt();
   } else {
-    Compute_Error();		// for display purposes only..
+    Compute_Error();            // for display purposes only..
   }
   // weight update taken care of by the epoch program
   DataUpdate(false);
@@ -675,7 +668,7 @@ void BpNetwork::Trial_Run() {
 
 
 //////////////////////////
-//   BpProject	        //
+//   BpProject          //
 //////////////////////////
 
 void BpProject::Initialize() {

@@ -43,7 +43,7 @@ software work for purposes of copyright.
 using namespace std;
 
 //////////////////////////
-//	misc funcs	//
+//      misc funcs      //
 //////////////////////////
 
 // capitalize a string, in-place
@@ -60,8 +60,8 @@ void _capitalize(char* p, int n) {
       while (++p < e) {
         if (isupper(*p))
           *p = tolower(*p);
-	/* A '\'' does not break a word, so that "Nathan's" stays
-	   "Nathan's" rather than turning into "Nathan'S". */
+        /* A '\'' does not break a word, so that "Nathan's" stays
+           "Nathan's" rather than turning into "Nathan'S". */
         else if (!islower(*p) && !isdigit(*p) && (*p != '\''))
           break;
       }
@@ -152,7 +152,7 @@ inline static int ncmp(const char* a, int al, const char* b, int bl)
 
 
 //////////////////////////
-//	SRep		//
+//      SRep            //
 //////////////////////////
 
 // note: compilers may report the size of taStrRep to be an even multiple of 4
@@ -211,7 +211,7 @@ TA_API taStrRep* Scat(taStrRep* srep, const char* s, int slen) {
   return Scat(srep->s, srep->len, s, slen);
 }
 
-TA_API taStrRep*	Scat(const char* s1, int slen1, const char* s2, int slen2) { // slen can be -1
+TA_API taStrRep*        Scat(const char* s1, int slen1, const char* s2, int slen2) { // slen can be -1
   if (slen1 < 0) slen1 = s1 ? (int)strlen(s1) : 0;
   if (slen2 < 0) slen2 = s2 ? (int)strlen(s2) : 0;
   uint newlen = slen1 + slen2;
@@ -310,7 +310,7 @@ void taStrRep::upcase() {//note: should only be called on cnt<=1
 
 
 //////////////////////////
-//	String		//
+//      String          //
 //////////////////////////
 
 const String String::con_0("0");
@@ -596,7 +596,7 @@ String& String::cat(const String& y) {
 }
 
 String& String::cat(const char* y, int slen) {
-  if (slen < 0) slen = strlen(y);
+  if (slen < 0) slen = static_cast<int>(strlen(y));
   if (y && (slen > 0) ) {
     if (mrep->canCat(slen))
       mrep->cat(y, slen);
@@ -845,7 +845,7 @@ int String::Load_str(std::istream& istrm) {
     int n_read = buf_len;
     if (istrm.bad()) break;
     if (istrm.eof()) {
-      n_read = istrm.gcount();
+      n_read = static_cast<int>(istrm.gcount());
       done = true;
     }
     // append num read

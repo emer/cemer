@@ -172,8 +172,6 @@ enum DataChangedReason { /* reason why DataChanged being called, as well as defi
 #define DCR_ListItem_GroupItem_Offset   (DCR_GROUP_ITEM_MIN - DCR_LIST_ITEM_TO_GROUP_ITEM_MIN)
 #define DCR_ListItem_Group_Offset       (DCR_GROUP_MIN - DCR_LIST_ITEM_TO_GROUP_MIN)
 
-typedef int taListItr; // pseudo class, compatible with the FOR_ITR_EL macro in ta_group
-
 //typedef uintptr_t taHashVal;
 typedef unsigned long taHashVal;
 
@@ -378,9 +376,9 @@ public:
   virtual void  Sort_(bool descending=false);   // #IGNORE implementation of sorting function
   virtual void  UpdateAllIndicies();    // #IGNORE update all indices of elements in list
 
-  void*         FirstEl(taListItr& itr) {itr = 0; return SafeEl_(0);}
+  void*         FirstEl(int& itr) {itr = 0; return SafeEl_(0);}
   // #CAT_XpertAccess get the first item on the list, initialize iterator
-  void*         NextEl(taListItr& itr) {return (++itr < size) ? FastEl_(itr) : NULL;}
+  void*         NextEl(int& itr) {return (++itr < size) ? FastEl_(itr) : NULL;}
   // #CAT_XpertAccess get the next item on the list according to iterator
 
   /////////////////////////////////////////////////////////////////////////

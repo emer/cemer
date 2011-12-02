@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-// 
+//
 
 #include "emergent_project.h"
 
@@ -90,7 +90,7 @@ void emergent_project_init() {
 InitProcRegistrar mod_init_emergent_project(emergent_project_init);
 
 /////////////////////////////////////////////////
-//		StdNetWizDlg
+//              StdNetWizDlg
 
 void StdNetWizDlg::Initialize() {
   Dlg1 = NULL;
@@ -265,7 +265,7 @@ bool StdNetWizDlg::DoDialog() {
 }
 
 //////////////////////////
-//   Wizard		//
+//   Wizard             //
 //////////////////////////
 
 void Wizard::Initialize() {
@@ -330,7 +330,7 @@ String Wizard::RenderWizDoc_program() {
 }
 
 ////////////////////////////////////////////
-//		Wiz Code: Network
+//              Wiz Code: Network
 
 
 bool Wizard::StdEverything() {
@@ -341,7 +341,7 @@ bool Wizard::StdEverything() {
     Network* net = proj->networks.SafeEl(0);
     if(net) {
       if(StdData(net)) {
-	rval = StdProgs();
+        rval = StdProgs();
       }
     }
   }
@@ -351,7 +351,7 @@ bool Wizard::StdEverything() {
 
 bool Wizard::StdNetwork() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  if(proj->networks.size == 0)	// make a new one for starters always
+  if(proj->networks.size == 0)  // make a new one for starters always
     proj->networks.New(1);
   bool rval = std_net_dlg.DoDialog();
   return rval;
@@ -398,7 +398,7 @@ bool Wizard::RetinaProcNetwork(RetinaProc* retina_spec, Network* net) {
 }
 
 //////////////////////////////////
-// 	Enviro Wizard		//
+//      Enviro Wizard           //
 //////////////////////////////////
 
 bool Wizard::StdData(Network* net, DataTable* data_table, int n_patterns, bool group) {
@@ -438,24 +438,22 @@ bool Wizard::StdInputData(Network* net, DataTable* data_table, int n_patterns, b
 
 bool Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
   if(TestError(!data_table || !net, "UpdateInputDataFmNet",
-	       "must specify both a network and a data table")) return false;
+               "must specify both a network and a data table")) return false;
   data_table->StructUpdate(true);
-  taLeafItr li;
-  Layer* lay;
-  FOR_ITR_EL(Layer, lay, net->layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if(lay->layer_type == Layer::HIDDEN) continue;
     int lay_idx = 0;
-    //DataCol* ld = 
+    //DataCol* ld =
     if(lay->unit_groups) {
       data_table->FindMakeColName
-	(lay->name, lay_idx, DataTable::VT_FLOAT, 4,
-	 MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1),
-	 MAX(lay->gp_geom.x,1), MAX(lay->gp_geom.y,1));
+        (lay->name, lay_idx, DataTable::VT_FLOAT, 4,
+         MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1),
+         MAX(lay->gp_geom.x,1), MAX(lay->gp_geom.y,1));
     }
     else {
       data_table->FindMakeColName
-	(lay->name, lay_idx, DataTable::VT_FLOAT, 2,
-	 MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1));
+        (lay->name, lay_idx, DataTable::VT_FLOAT, 2,
+         MAX(lay->un_geom.x,1), MAX(lay->un_geom.y,1));
     }
   }
   data_table->StructUpdate(false);
@@ -470,7 +468,7 @@ bool Wizard::UpdateInputDataFmNet(Network* net, DataTable* data_table) {
 
 bool Wizard::UpdateLayerWriters(Network* net, DataTable* data_table) {
   if(TestError(!data_table || !net, "UpdateLayerWriters",
-	       "must specify both a network and a data table")) return false;
+               "must specify both a network and a data table")) return false;
   TypeDef* td = &TA_LayerWriter;
   for(int i=0; i<td->tokens.size; i++) {
     LayerWriter* lw = (LayerWriter*)td->tokens.FastEl(i);
@@ -483,7 +481,7 @@ bool Wizard::UpdateLayerWriters(Network* net, DataTable* data_table) {
 
 bool Wizard::StdOutputData() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  // DataTable* trl_data 
+  // DataTable* trl_data
   proj->GetNewOutputDataTable("TrialOutputData");
   DataTable* epc_data =
     proj->GetNewOutputDataTable("EpochOutputData");
@@ -494,18 +492,18 @@ bool Wizard::StdOutputData() {
 }
 
 //////////////////////////////////
-// 	Progs Wizard		//
+//      Progs Wizard            //
 //////////////////////////////////
 
 bool Wizard::StdProgs() {
   TestError(true, "StdProgs", "This must be redefined in algorithm-specific project!",
-	     "Just call StdProgs_impl with name of std program from prog lib");
+             "Just call StdProgs_impl with name of std program from prog lib");
   return false;
 }
 
 bool Wizard::TestProgs(Program* call_test_from, bool call_in_loop, int call_modulus) {
   TestError(true, "TestProgs", "This must be redefined in algorithm-specific project!",
-	     "Just call StdProgs_impl with name of std program from prog lib");
+             "Just call StdProgs_impl with name of std program from prog lib");
   return false;
 }
 
@@ -515,7 +513,7 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
   if(!rval) return NULL;
   if(!rval->InheritsFrom(&TA_Program_Group)) {
     taMisc::Error("Wizard::StdProgs_impl program named:", prog_nm,
-		  "is not a group of programs -- invalid for this function");
+                  "is not a group of programs -- invalid for this function");
     return NULL;
   }
 
@@ -534,7 +532,7 @@ Program_Group* Wizard::StdProgs_impl(const String& prog_nm) {
 }
 
 Program_Group* Wizard::TestProgs_impl(const String& prog_nm, Program* call_test_from,
-				      bool call_in_loop, int call_modulus) {
+                                      bool call_in_loop, int call_modulus) {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
 
   // make testing output data tables -- used by the test programs
@@ -548,7 +546,7 @@ Program_Group* Wizard::TestProgs_impl(const String& prog_nm, Program* call_test_
   if(!rval) return NULL;
   if(!rval->InheritsFrom(&TA_Program_Group)) {
     taMisc::Error("Wizard::TestProgs_impl program named:", prog_nm,
-		  "is not a group of programs -- invalid for this function");
+                  "is not a group of programs -- invalid for this function");
     return NULL;
   }
 
@@ -565,32 +563,32 @@ Program_Group* Wizard::TestProgs_impl(const String& prog_nm, Program* call_test_
     tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
     if(call_test_from) {
       if(call_in_loop) {
-	Loop* loopel = (Loop*)call_test_from->prog_code.FindType(&TA_Loop);
-	if(!TestWarning(!loopel, "TestProgs", "Loop program element not found -- cannot call test program within loop!")) {
-	  if(call_modulus > 1) {
-	    IfElse* ife = (IfElse*)loopel->loop_code.New(1, &TA_IfElse);
-	    ife->SetProgFlag(ProgEl::NEW_EL);
-	    ife->cond.SetExpr("network.epoch % " + String(call_modulus) + " == 0");
-	    ife->desc = "only call every n epochs -- make sure epochs is appropriate, and its also a good idea to make n a variable";
+        Loop* loopel = (Loop*)call_test_from->prog_code.FindType(&TA_Loop);
+        if(!TestWarning(!loopel, "TestProgs", "Loop program element not found -- cannot call test program within loop!")) {
+          if(call_modulus > 1) {
+            IfElse* ife = (IfElse*)loopel->loop_code.New(1, &TA_IfElse);
+            ife->SetProgFlag(ProgEl::NEW_EL);
+            ife->cond.SetExpr("network.epoch % " + String(call_modulus) + " == 0");
+            ife->desc = "only call every n epochs -- make sure epochs is appropriate, and its also a good idea to make n a variable";
 
-	    ProgramCall* pcall = (ProgramCall*)ife->true_code.New(1, &TA_ProgramCall);
-	    pcall->SetProgFlag(ProgEl::NEW_EL);
-	    pcall->target = first_guy;	    pcall->UpdateArgs();
-	    pcall->desc = "call testing program";
-	  }
-	  else {
-	    ProgramCall* pcall = (ProgramCall*)loopel->loop_code.New(1, &TA_ProgramCall);
-	    pcall->SetProgFlag(ProgEl::NEW_EL);
-	    pcall->target = first_guy;	    pcall->UpdateArgs();
-	    pcall->desc = "call testing program";
-	  }
-	}
+            ProgramCall* pcall = (ProgramCall*)ife->true_code.New(1, &TA_ProgramCall);
+            pcall->SetProgFlag(ProgEl::NEW_EL);
+            pcall->target = first_guy;      pcall->UpdateArgs();
+            pcall->desc = "call testing program";
+          }
+          else {
+            ProgramCall* pcall = (ProgramCall*)loopel->loop_code.New(1, &TA_ProgramCall);
+            pcall->SetProgFlag(ProgEl::NEW_EL);
+            pcall->target = first_guy;      pcall->UpdateArgs();
+            pcall->desc = "call testing program";
+          }
+        }
       }
       else {
-	ProgramCall* pcall = (ProgramCall*)call_test_from->prog_code.New(1, &TA_ProgramCall);
-	pcall->SetProgFlag(ProgEl::NEW_EL);
-	pcall->target = first_guy;	pcall->UpdateArgs();
-	pcall->desc = "call testing program";
+        ProgramCall* pcall = (ProgramCall*)call_test_from->prog_code.New(1, &TA_ProgramCall);
+        pcall->SetProgFlag(ProgEl::NEW_EL);
+        pcall->target = first_guy;      pcall->UpdateArgs();
+        pcall->desc = "call testing program";
       }
     }
   }
@@ -599,9 +597,7 @@ Program_Group* Wizard::TestProgs_impl(const String& prog_nm, Program* call_test_
 
 bool Wizard::FixOldProgs() {
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
-  Program* prg;
-  taLeafItr i;
-  FOR_ITR_EL(Program, prg, proj->programs., i) {
+  FOREACH_ELEM_IN_GROUP(Program, prg, proj->programs) {
     if(prg->name.contains("Apply") || prg->name.contains("Input")) {
       prg->SetProgFlag(Program::NO_STOP_STEP);
       prg->short_nm = "AplyIn";
@@ -609,9 +605,9 @@ bool Wizard::FixOldProgs() {
     else if(prg->name.contains("Mon")) {
       prg->SetProgFlag(Program::NO_STOP_STEP);
       if(prg->name.contains("Trial"))
-	prg->short_nm = "TrlMon";
+        prg->short_nm = "TrlMon";
       else if(prg->name.contains("Epoch"))
-	prg->short_nm = "EpcMon";
+        prg->short_nm = "EpcMon";
     }
     else if(prg->name.contains("Save")) {
       prg->SetProgFlag(Program::NO_STOP_STEP);
@@ -639,20 +635,18 @@ void Wizard::NetAutoSave(SchedProcess* proc, bool just_weights) {
 EpochProcess* Wizard::CrossValidation(SchedProcess* tproc, Environment* tenv) {
   if((tproc == NULL) || (tenv == NULL)) return NULL;
   EpochProcess* cve = AutoTestProc(tproc, tenv);
-  Stat* sst;
-  taLeafItr i;
-  FOR_ITR_EL(Stat, sst, tproc->loop_stats.,i) {
+  FOREACH_ELEM_IN_GROUP(Stat, sst, tproc->loop_stats) {
     if(!sst->InheritsFrom(&TA_SE_Stat) || (sst->time_agg.from == NULL)) continue;
     Stat* fst = sst->time_agg.from;
     if(fst->GetMySchedProc() == cve) {
-      ((SE_Stat*)sst)->se.stopcrit.flag = true;	// stop on this one
+      ((SE_Stat*)sst)->se.stopcrit.flag = true; // stop on this one
     }
   }
   return cve;
 }
 
 //////////////////////////////////
-// 	Stats Wizard		//
+//      Stats Wizard            //
 //////////////////////////////////
 
 MonitorStat* Wizard::RecordLayerValues(SchedProcess* proc, SchedProcess::StatLoc loc, Layer* lay, const char* var) {
@@ -692,14 +686,12 @@ CopyToEnvStat* Wizard::SaveValuesInDataEnv(MonitorStat* stat) {
 }
 
 DispDataEnvProc* Wizard::AutoAnalyzeDataEnv(Environment* data_env, int pat_no,
-					    DispDataEnvProc::DispType disp_type,
-					    SchedProcess* proc, SchedProcess::ProcLoc loc) {
+                                            DispDataEnvProc::DispType disp_type,
+                                            SchedProcess* proc, SchedProcess::ProcLoc loc) {
   if((proc == NULL) || (data_env == NULL)) return NULL;
   Process_Group* tgp = proc->GetProcGroup(loc);
   DispDataEnvProc* ddep = NULL;
-  taLeafItr i;
-  Process* pr;
-  FOR_ITR_EL(Process, pr, tgp->, i) {
+  FOREACH_ELEM_IN_GROUP(Process, pr, *tgp) {
     if(!pr->InheritsFrom(TA_DispDataEnvProc)) continue;
     DispDataEnvProc* dp = (DispDataEnvProc*)pr;
     if((dp->data_env == data_env) && (dp->disp_type == disp_type) && (dp->pat_no == pat_no)) {
@@ -713,15 +705,15 @@ DispDataEnvProc* Wizard::AutoAnalyzeDataEnv(Environment* data_env, int pat_no,
   taBase::SetPointer((taBase**)&ddep->data_env, data_env);
   ddep->pat_no = pat_no;
   ddep->disp_type = disp_type;
-  ddep->C_Code();		// run it!
+  ddep->C_Code();               // run it!
   taMisc::DelayedMenuUpdate(proc);
   return ddep;
 }
 
 DispDataEnvProc* Wizard::AnalyzeNetLayer(SchedProcess* rec_proc, SchedProcess::StatLoc rec_loc,
-			     Layer* lay, const char* var,
-			     DispDataEnvProc::DispType disp_type, SchedProcess* anal_proc,
-			     SchedProcess::ProcLoc anal_loc) {
+                             Layer* lay, const char* var,
+                             DispDataEnvProc::DispType disp_type, SchedProcess* anal_proc,
+                             SchedProcess::ProcLoc anal_loc) {
   MonitorStat* mst = RecordLayerValues(rec_proc, rec_loc, lay, var);
   if(mst == NULL) return NULL;
   CopyToEnvStat* cte = SaveValuesInDataEnv(mst);
@@ -731,8 +723,8 @@ DispDataEnvProc* Wizard::AnalyzeNetLayer(SchedProcess* rec_proc, SchedProcess::S
 }
 
 UnitActRFStat* Wizard::ActBasedReceptiveField(SchedProcess* rec_proc, SchedProcess::StatLoc rec_loc,
-					      Layer* recv_layer, Layer* send_layer, Layer* send2_layer,
-					      SchedProcess* disp_proc, SchedProcess::ProcLoc disp_loc)
+                                              Layer* recv_layer, Layer* send_layer, Layer* send2_layer,
+                                              SchedProcess* disp_proc, SchedProcess::ProcLoc disp_loc)
 {
   if((rec_proc == NULL) || (disp_proc == NULL)) return NULL;
   ProjectBase* proj = GET_MY_OWNER(ProjectBase);
@@ -792,15 +784,13 @@ void Wizard::AddCountersToTest(SchedProcess* te_proc, SchedProcess* tr_proc) {
 
 void Wizard::GetStatsFromProc(SchedProcess* sproc, SchedProcess* tproc, SchedProcess::StatLoc tloc, Aggregate::Operator agg_op) {
   if((sproc == NULL) || (tproc == NULL)) return;
-  Stat* sst;
-  taLeafItr i;
-  FOR_ITR_EL(Stat, sst, sproc->loop_stats.,i) {
+  FOREACH_ELEM_IN_GROUP(Stat, sst, sproc->loop_stats) {
     Stat_Group* tgp = tproc->GetStatGroup(sst->GetTypeDef(), tloc);
     Stat* trst = tgp->FindAggregator(sst, agg_op);
     if(trst == NULL)
       tproc->MakeAggregator(sst, tloc, agg_op);
   }
-  FOR_ITR_EL(Stat, sst, sproc->final_stats.,i) {
+  FOREACH_ELEM_IN_GROUP(Stat, sst, sproc->final_stats) {
     Stat_Group* tgp = tproc->GetStatGroup(sst->GetTypeDef(), tloc);
     Stat* trst = tgp->FindAggregator(sst, agg_op);
     if(trst == NULL)
@@ -852,7 +842,7 @@ void Wizard::StdLogs(SchedProcess* proc) {
 */
 
 //////////////////////////
-//  ProjectBase		//
+//  ProjectBase         //
 //////////////////////////
 
 void ProjectBase::Initialize() {
@@ -872,7 +862,7 @@ void ProjectBase::InitLinks_impl() {
 }
 
 void ProjectBase::InitLinks_post() {
-  if(!taMisc::is_loading) {	// only if not loading!
+  if(!taMisc::is_loading) {     // only if not loading!
     taWizard* wiz = wizards.SafeEl(0);
     if (!wiz) {
       wiz = (Wizard*)wizards.New(1, wizards.el_typ);
@@ -903,7 +893,7 @@ void ProjectBase::UpdateAfterEdit_impl() {
 
 void ProjectBase::Dump_Load_post() {
   //  inherited::Dump_Load_post(); -- don't do this -- need to do in correct order
-  taFBase::Dump_Load_post();	      // parent of taProject
+  taFBase::Dump_Load_post();          // parent of taProject
   if(taMisc::is_undo_loading) return; // none of this.
   OpenProjectLog();
   DoView();
@@ -913,30 +903,26 @@ void ProjectBase::Dump_Load_post() {
     if(wiz) wiz->FixOldProgs();
   }
   AutoBuildNets();
-  setDirty(false);		// nobody should start off dirty!
+  setDirty(false);              // nobody should start off dirty!
   if(!cssMisc::init_interactive) {
-    bool startup_run = programs.RunStartupProgs();	// run startups as last step..
+    bool startup_run = programs.RunStartupProgs();      // run startups as last step..
     if(!taMisc::gui_active && startup_run) taiMC_->Quit();
   }
 }
 
 void ProjectBase::SaveRecoverFile_strm(ostream& strm) {
   // really there is no compelling reason to force it to save units if project otherwise does not
-//   Network* net;
-//   taLeafItr i;
-//   FOR_ITR_EL(Network, net, networks., i) {
+//   FOREACH_ELEM_IN_GROUP(Network, net, networks) {
 //     net->SetNetFlag(Network::SAVE_UNITS_FORCE); // force to save units for recover file!
 //   }
   Save_strm(strm);
-//   FOR_ITR_EL(Network, net, networks., i) {
+//   FOREACH_ELEM_IN_GROUP(Network, net, networks) {
 //     net->ClearNetFlag(Network::SAVE_UNITS_FORCE);
 //   }
 }
 
 void ProjectBase::AutoBuildNets() {
-  Network* net;
-  taLeafItr i;
-  FOR_ITR_EL(Network, net, networks., i) {
+  FOREACH_ELEM_IN_GROUP(Network, net, networks) {
     if(net->auto_build == Network::NO_BUILD) continue;
     if(taMisc::gui_active && (net->auto_build == Network::PROMPT_BUILD)) {
       int chs = taMisc::Choice("Build network: " + net->name, "Yes", "No");
@@ -961,7 +947,7 @@ Network* ProjectBase::GetDefNetwork() {
 
 
 //////////////////////////
-//  EmergentRoot	//
+//  EmergentRoot        //
 //////////////////////////
 
 void EmergentRoot::Initialize() {

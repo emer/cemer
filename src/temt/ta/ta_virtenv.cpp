@@ -20,7 +20,7 @@
 static taBase* VE_last_ve_set_vals_to_ode = NULL;
 
 ////////////////////////////////////////////////
-//	parameters
+//      parameters
 
 void ODEIntParams::Initialize() {
   erp = 0.2f;
@@ -50,7 +50,7 @@ void ODEFiniteRotation::Initialize() {
 
 
 ////////////////////////////////////////////////
-//		surfaces and textures
+//              surfaces and textures
 
 void VESurface::Initialize() {
   friction = 1.0e22f;
@@ -85,7 +85,7 @@ bool VETexture::NeedsTransform() {
 
 
 ////////////////////////////////////////////////
-//		bodies (ridid object elements)
+//              bodies (ridid object elements)
 
 
 #include <Inventor/SbLinear.h>
@@ -102,7 +102,7 @@ void VEBody::Initialize() {
   long_axis = LONG_X;
   box = 1.0f;
   set_color = true;
-  color.Set(0.2f, 0.2f, .5f, .5f);	// transparent blue.. why not..
+  color.Set(0.2f, 0.2f, .5f, .5f);      // transparent blue.. why not..
   full_colors = false;
   ambient_color.Set(0.2f, 0.2f, .2f);
   ambient_color.no_a = true;
@@ -230,10 +230,10 @@ void VEBody::SetValsToODE_Shape() {
   case BOX:
     geom_id = dCreateBox(sid, box.x, box.y, box.z);
     break;
-  case NO_SHAPE:		// compiler food
+  case NO_SHAPE:                // compiler food
     break;
   }
-  
+
   if(TestError(!geom_id, "CreateODE", "could not create body geom!"))
     return;
 
@@ -254,10 +254,10 @@ void VEBody::SetValsToODE_InitPos() {
     if(!fixed_joint_id) {
       dWorldID wid = (dWorldID)GetWorldID();
       if(TestError(!wid, "SetValsToODE", "no valid world id -- cannot create stuff!"))
-	return;
+        return;
       fixed_joint_id = dJointCreateFixed(wid, 0);
     }
-    dJointAttach((dJointID)fixed_joint_id, bid, 0);	// 0 = attach to static object
+    dJointAttach((dJointID)fixed_joint_id, bid, 0);     // 0 = attach to static object
   }
   else if(fixed_joint_id) {
     dJointDestroy((dJointID)fixed_joint_id);
@@ -342,12 +342,12 @@ void VEBody::SetValsToODE_FiniteRotation() {
   if (finite_rotation.on) {
     SetFiniteRotationMode(1);
     if (finite_rotation.axis.x != 0.0 ||
-	finite_rotation.axis.y != 0.0 ||
-	finite_rotation.axis.z != 0.0)
+        finite_rotation.axis.y != 0.0 ||
+        finite_rotation.axis.z != 0.0)
       SetFiniteRotationAxis(finite_rotation.axis.x, finite_rotation.axis.y, finite_rotation.axis.z);
   }
   else
-    SetFiniteRotationMode(0);    
+    SetFiniteRotationMode(0);
 }
 
 void VEBody::SetValsToODE_Gravity() {
@@ -424,12 +424,12 @@ void VEBody::FixExtRotation(SbRotation& sbrot) {
 
 void VEBody::Translate(float dx, float dy, float dz, bool init) {
   if(init) {
-    init_pos.x += dx; 
+    init_pos.x += dx;
     init_pos.y += dy;
     init_pos.z += dz;
   }
   else {
-    cur_pos.x += dx; 
+    cur_pos.x += dx;
     cur_pos.y += dy;
     cur_pos.z += dz;
   }
@@ -463,7 +463,7 @@ void VEBody::Scale(float sx, float sy, float sz) {
 }
 
 void VEBody::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
-  if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f), 
+  if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f),
     "Rotate", "must specify a non-zero axis!"))
     return;
 
@@ -493,7 +493,7 @@ void VEBody::CopyColorFrom(VEBody* cpy_fm) {
   if(!cpy_fm) return;
   set_color = cpy_fm->set_color;
   color = cpy_fm->color;
-  full_colors = cpy_fm->full_colors; 
+  full_colors = cpy_fm->full_colors;
   ambient_color = cpy_fm->ambient_color;
   specular_color = cpy_fm->specular_color;
   emissive_color = cpy_fm->emissive_color;
@@ -521,7 +521,7 @@ void VEBody::AddForce(float fx, float fy, float fz, bool torque, bool rel) {
 }
 
 void VEBody::AddForceAtPos(float fx, float fy, float fz, float px, float py, float pz,
-			   bool rel_force, bool rel_pos) {
+                           bool rel_force, bool rel_pos) {
   if(!body_id) CreateODE();
   if(!body_id) return;
   dBodyID bid = (dBodyID)body_id;
@@ -566,7 +566,7 @@ void VEBody::SnapPosToGrid(float grid_size, bool do_init_pos) {
 }
 
   //////////////////////////////
-  //	Set Damping
+  //    Set Damping
 
 void VEBody::SetLinearDamping(float ldamp) {
   if(!body_id) CreateODE();
@@ -604,7 +604,7 @@ void VEBody::SetMaxAngularSpeed(float maxaspeed) {
 }
 
 //////////////////////////////
-//	Finite Rotation Mode
+//      Finite Rotation Mode
 
 void VEBody::SetFiniteRotationMode(int rotmode) {
   if(!body_id) CreateODE();
@@ -621,7 +621,7 @@ void VEBody::SetFiniteRotationAxis(float xr, float yr, float zr) {
 }
 
 //////////////////////////////
-//	Gravity mode
+//      Gravity mode
 
 void VEBody::SetGravityMode(int mode) {
   if(!body_id) CreateODE();
@@ -631,88 +631,70 @@ void VEBody::SetGravityMode(int mode) {
 }
 
 /////////////////////////////////////////////
-//		Group
+//              Group
 
 void VEBody_Group::SetValsToODE() {
-  VEBody* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEBody, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->SetValsToODE();
   }
 }
 
 void VEBody_Group::GetValsFmODE(bool updt_disp) {
-  VEBody* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEBody, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->GetValsFmODE(updt_disp);
   }
 }
 
 void VEBody_Group::DestroyODE() {
-  VEBody* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEBody, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->DestroyODE();
   }
 }
 
 void VEBody_Group::CurToInit() {
-  VEBody* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEBody, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->CurToInit();
   }
 }
 
 void VEBody_Group::SnapPosToGrid(float grid_size, bool init_pos) {
-  VEBody* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEBody, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->SnapPosToGrid(grid_size, init_pos);
   }
 }
 
 void VEBody_Group::Translate(float dx, float dy, float dz, bool init) {
-  VEBody* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEBody, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->Translate(dx, dy, dz, init);
   }
 }
 
 void VEBody_Group::Scale(float sx, float sy, float sz) {
-  VEBody* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEBody, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->Scale(sx, sy, sz);
   }
 }
 
 void VEBody_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
-  VEBody* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEBody, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->Rotate(x_ax, y_ax, z_ax, rot, init);
   }
 }
 
 void VEBody_Group::CopyColorFrom(VEBody* cpy_fm) {
-  VEBody* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEBody, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEBody, ob, *this) {
     ob->CopyColorFrom(cpy_fm);
   }
 }
 
 
 /////////////////////////////////////////////
-//		Camera and Lights
+//              Camera and Lights
 
 void VELightParams::Initialize() {
   on = true;
   intensity = 1.0f;
-  color.no_a = true; 
+  color.no_a = true;
   color.r = 1.0f; color.g = 1.0f; color.b = 1.0f;
 }
 
@@ -727,12 +709,12 @@ void VECamera::Initialize() {
   img_size.y = 240;
   color_cam = true;
   field_of_view = 90.0f;
-  light.intensity = .2f;		// keep it not so bright relative to the sun..
+  light.intensity = .2f;                // keep it not so bright relative to the sun..
   mass = .01f;
   radius = .01f;
   length = .01f;
   shape = CYLINDER;
-  long_axis = LONG_Z;		// default orientation: must remain!
+  long_axis = LONG_Z;           // default orientation: must remain!
   dir_norm.x = 0.0f; dir_norm.y = 0.0f; dir_norm.z = -1.0f;
 }
 
@@ -755,14 +737,14 @@ void VECamera::GetValsFmODE(bool updt_disp) {
 // in ta_virtenv_qtso.cpp:  void VECamera::ConfigCamera(SoPerspectiveCamera* cam)
 
 ///////////////////////////////////////////////////
-//		Lights
+//              Lights
 
 void VELight::Initialize() {
   light_type = SPOT_LIGHT;
   drop_off_rate = 0.0f;
   cut_off_angle = 45.0f;
   dir_norm.x = 0.0f; dir_norm.y = 0.0f; dir_norm.z = -1.0f;
-  shape = NO_SHAPE;		// having a shape will interfere with light!  but might want to see where it is sometimes..
+  shape = NO_SHAPE;             // having a shape will interfere with light!  but might want to see where it is sometimes..
   long_axis = LONG_Z;
   mass = .01f;
   radius = .01f;
@@ -790,7 +772,7 @@ void VELight::GetValsFmODE(bool updt_disp) {
 }
 
 ///////////////////////////////////////////////////
-//		VEObjCarousel
+//              VEObjCarousel
 
 void VEObjCarousel::Initialize() {
   cur_obj_no = -1;
@@ -804,7 +786,7 @@ bool VEObjCarousel::ViewObjNo(int obj_no) {
   if(TestError(!(bool)obj_table, "ViewObjNo", "no obj_table data table set -- must set this first -- falling back on basic body render for now!"))
     return false;
   if(TestError(obj_no >= obj_table->rows, "ViewObjNo", "obj_no out of range -- only:",
-	       String(obj_table->rows), "rows in the obj_table data table"))
+               String(obj_table->rows), "rows in the obj_table data table"))
     return false;
   cur_obj_no = obj_no;
   obj_fname = obj_table->GetVal("FileName", cur_obj_no);
@@ -817,7 +799,7 @@ bool VEObjCarousel::ViewObjName(const String& obj_nm) {
     return false;
   int obj_no = obj_table->FindVal(obj_nm, "FileName");
   if(TestError(obj_no < 0, "ViewObjName", "object file named:", obj_nm,
-	       "not found in the obj_table data table"))
+               "not found in the obj_table data table"))
     return false;
   cur_obj_no = obj_no;
   obj_fname = obj_nm;
@@ -827,7 +809,7 @@ bool VEObjCarousel::ViewObjName(const String& obj_nm) {
 
 
 ////////////////////////////////////////////////
-//		Joints
+//              Joints
 
 void VEJointStops::Initialize() {
   stops_on = true;
@@ -981,10 +963,10 @@ void VEJoint::SetValsToODE() {
   }
 
   if(TestError(!body1 || !body1->body_id,
-	       "SetValsToODE", "body1 of joint MUST be specified and already exist!"))
+               "SetValsToODE", "body1 of joint MUST be specified and already exist!"))
     return;
   if(TestError(!body2 || !body2->body_id,
-	       "SetValsToODE", "body2 of joint MUST be specified and already exist -- use fixed field on body to set fixed bodies!"))
+               "SetValsToODE", "body2 of joint MUST be specified and already exist -- use fixed field on body to set fixed bodies!"))
     return;
 
   dJointAttach(jid, (dBodyID)body1->body_id, (dBodyID)body2->body_id);
@@ -1303,7 +1285,7 @@ void VEJoint::GetValsFmODE(bool updt_disp) {
   }
 
   if((motor.motor_on && motor.servo_on) || (motor2.motor_on && motor2.servo_on)) {
-    SetValsToODE_Motor();	// update the motor each step..
+    SetValsToODE_Motor();       // update the motor each step..
   }
 
   if(updt_disp)
@@ -1407,34 +1389,28 @@ void VEJoint::ApplyServoNorm(float trg_norm_pos1, float trg_norm_pos2, float sto
 
 
 /////////////////////////////////////////////
-//		Group
+//              Group
 
 void VEJoint_Group::SetValsToODE() {
-  VEJoint* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEJoint, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEJoint, ob, *this) {
     ob->SetValsToODE();
   }
 }
 
 void VEJoint_Group::GetValsFmODE(bool updt_disp) {
-  VEJoint* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEJoint, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEJoint, ob, *this) {
     ob->GetValsFmODE(updt_disp);
   }
 }
 
 void VEJoint_Group::DestroyODE() {
-  VEJoint* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEJoint, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEJoint, ob, *this) {
     ob->DestroyODE();
   }
 }
 
 ////////////////////////////////////////////////
-//	Special VE stuff for robotic arm sims
+//      Special VE stuff for robotic arm sims
 
 void VELambdaMuscle::Initialize() {
   lambda_norm = 0.5f;
@@ -1470,15 +1446,15 @@ void VELambdaMuscle::Initialize() {
   torque = 0.0f;
 }
 
-void VELambdaMuscle::Init(float step_sz, float rest_norm_angle, float init_norm_angle, 
-			  float co_contract) {
+void VELambdaMuscle::Init(float step_sz, float rest_norm_angle, float init_norm_angle,
+                          float co_contract) {
   step_size = step_sz;
   lambda_norm = rest_norm_angle; // target is to go to rest
   rest_len = LenFmAngle(rest_norm_angle);
   len = LenFmAngle(init_norm_angle);
   co_contract_pct = co_contract;
 
-  Compute_Lambda();		// get lambda from params
+  Compute_Lambda();             // get lambda from params
 
   dlen = 0.0f;
   act = 0.0f;
@@ -1538,9 +1514,9 @@ void VELambdaMuscle::Compute_Force(float cur_norm_angle) {
     if(act < 0.0f) act = 0.0f;
   }
   m_act_force = m_mag * (expf(m_rec_grad * act) - 1.0f);
-  m_force += ca_dt_cmp * (m_act_force - m_force); // first order low-pass filter, not 2nd order 
+  m_force += ca_dt_cmp * (m_act_force - m_force); // first order low-pass filter, not 2nd order
   force = extra_force + m_force * (fv1 + fv2 * atanf(fv3 + fv4 * dlen)) + passive_k * (len - rest_len);
-  torque = force * moment_arm;	// assume constant moment arm: could compute based on geom.
+  torque = force * moment_arm;  // assume constant moment arm: could compute based on geom.
 
   if(muscle_obj) {
     muscle_obj->length = len;
@@ -1552,8 +1528,8 @@ void VELambdaMuscle::Compute_Force(float cur_norm_angle) {
 void VELambdaMuscle::SetTargAngle(float targ_norm_angle, float co_contract) {
   co_contract_pct = co_contract;
   lambda = LenFmAngle(targ_norm_angle);
-  lambda = len_range.Clip(lambda);		// keep in range
-  lambda_norm = len_range.Normalize(lambda); 	// this is still key command
+  lambda = len_range.Clip(lambda);              // keep in range
+  lambda_norm = len_range.Normalize(lambda);    // this is still key command
   Compute_Lambda();
 }
 
@@ -1570,7 +1546,7 @@ void VELambdaMuscle::UpdateAfterEdit_impl() {
 }
 
 ///////////////////////////////
-//	VEMuscleJoint
+//      VEMuscleJoint
 
 void VEMuscleJoint::Initialize() {
   joint_type = HINGE;
@@ -1593,7 +1569,7 @@ void VEMuscleJoint::Initialize() {
   co_contract_pct = 0.5f;
 
   motor.motor_on = true;
-  stops.stops_on = true;	// need stops
+  stops.stops_on = true;        // need stops
 }
 
 void VEMuscleJoint::UpdateAfterEdit_impl() {
@@ -1603,7 +1579,7 @@ void VEMuscleJoint::UpdateAfterEdit_impl() {
     joint_type = HINGE;
   }
 
-  SetJointFlag(FEEDBACK);	// definitely need this
+  SetJointFlag(FEEDBACK);       // definitely need this
   if(HasTwoAxes()) {
     motor2.motor_on = true;
     stops2.stops_on = true;
@@ -1621,7 +1597,7 @@ void VEMuscleJoint::SetValsToODE() {
   float step_sz = wld->stepsize;
 
   float rest_norm_angle = stops.Normalize(stops.def); // def = rest
-  float init_norm_angle = stops.Normalize(pos);	      // pos = cur position/angle
+  float init_norm_angle = stops.Normalize(pos);       // pos = cur position/angle
 
   targ_norm_angle = rest_norm_angle;
   targ_angle = stops.def;
@@ -1632,7 +1608,7 @@ void VEMuscleJoint::SetValsToODE() {
 
   if(HasTwoAxes()) {
     float rest_norm_angle2 = stops2.Normalize(stops2.def); // def = rest
-    float init_norm_angle2 = stops2.Normalize(pos2);	      // pos = cur position/angle
+    float init_norm_angle2 = stops2.Normalize(pos2);          // pos = cur position/angle
 
     targ_norm_angle2 = rest_norm_angle2;
     targ_angle2 = stops2.def;
@@ -1700,7 +1676,7 @@ void VEMuscleJoint::SetTargAngle(float trg_angle, float co_contract, float trg_a
 }
 
 void VEMuscleJoint::SetTargNormAngle(float trg_norm_angle, float co_contract,
-				     float trg_norm_angle2) {
+                                     float trg_norm_angle2) {
   co_contract_pct = co_contract;
 
   targ_norm_angle = trg_norm_angle;
@@ -1719,7 +1695,7 @@ void VEMuscleJoint::SetTargNormAngle(float trg_norm_angle, float co_contract,
 }
 
 ////////////////////////////////////////////////
-//	Object: collection of bodies and joints
+//      Object: collection of bodies and joints
 
 void VEObject::Initialize() {
   space_id = NULL;
@@ -1777,7 +1753,7 @@ bool VEObject::CreateODE() {
 }
 
 void VEObject::DestroyODE() {
-  bodies.DestroyODE();	// bodies first!
+  bodies.DestroyODE();  // bodies first!
   joints.DestroyODE();
   if(space_id) dSpaceDestroy((dSpaceID)space_id);
   space_id = NULL;
@@ -1790,12 +1766,12 @@ void VEObject::SetValsToODE() {
   if(space_type == HASH_SPACE) {
     dHashSpaceSetLevels(sid, hash_levels.min, hash_levels.max);
   }
-  bodies.SetValsToODE();	// bodies first!
+  bodies.SetValsToODE();        // bodies first!
   joints.SetValsToODE();
 }
 
 void VEObject::GetValsFmODE(bool updt_disp) {
-  bodies.GetValsFmODE(updt_disp);	// bodies first!
+  bodies.GetValsFmODE(updt_disp);       // bodies first!
   joints.GetValsFmODE(updt_disp);
 }
 
@@ -1826,76 +1802,58 @@ void VEObject::CopyColorFrom(VEBody* cpy_fm) {
 
 
 /////////////////////////////////////////////
-//		Group
+//              Group
 
 void VEObject_Group::SetValsToODE() {
-  VEObject* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEObject, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->SetValsToODE();
   }
 }
 
 void VEObject_Group::GetValsFmODE(bool updt_disp) {
-  VEObject* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEObject, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->GetValsFmODE(updt_disp);
   }
 }
 
 void VEObject_Group::DestroyODE() {
-  VEObject* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEObject, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->DestroyODE();
   }
 }
 
 void VEObject_Group::CurToInit() {
-  VEObject* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEObject, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->CurToInit();
   }
 }
 
 void VEObject_Group::SnapPosToGrid(float grid_size, bool init_pos) {
-  VEObject* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEObject, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->SnapPosToGrid(grid_size, init_pos);
   }
 }
 
 void VEObject_Group::Translate(float dx, float dy, float dz, bool init) {
-  VEObject* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEObject, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->Translate(dx, dy, dz, init);
   }
 }
 
 void VEObject_Group::Scale(float sx, float sy, float sz) {
-  VEObject* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEObject, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->Scale(sx, sy, sz);
   }
 }
 
 void VEObject_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot, bool init) {
-  VEObject* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEObject, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->Rotate(x_ax, y_ax, z_ax, rot, init);
   }
 }
 
 void VEObject_Group::CopyColorFrom(VEBody* cpy_fm) {
-  VEObject* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEObject, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEObject, ob, *this) {
     ob->CopyColorFrom(cpy_fm);
   }
 }
@@ -1904,7 +1862,7 @@ void VEObject_Group::CopyColorFrom(VEBody* cpy_fm) {
 
 
 ////////////////////////////////////////////////
-//	Static bodies
+//      Static bodies
 
 void VEStatic::Initialize() {
   geom_id = NULL;
@@ -1918,7 +1876,7 @@ void VEStatic::Initialize() {
   plane_height = 0.0f;
   plane_vis_size = 100.0f;
   set_color = true;
-  color.Set(0.4f, 0.3f, .1f, 1.0f);	// brownish..
+  color.Set(0.4f, 0.3f, .1f, 1.0f);     // brownish..
   full_colors = false;
   ambient_color.Set(0.2f, 0.2f, .2f);
   ambient_color.no_a = true;
@@ -2038,7 +1996,7 @@ void VEStatic::SetValsToODE_Shape() {
   case NO_SHAPE:
     break;
   }
-  
+
   if(TestError(!geom_id, "CreateODE", "could not create static item geom!"))
     return;
 
@@ -2067,7 +2025,7 @@ void VEStatic::SnapPosToGrid(float grid_size) {
 }
 
 void VEStatic::Translate(float dx, float dy, float dz) {
-  pos.x += dx; 
+  pos.x += dx;
   pos.y += dy;
   pos.z += dz;
   DataChanged(DCR_ITEM_UPDATED); // update displays..
@@ -2100,7 +2058,7 @@ void VEStatic::Scale(float sx, float sy, float sz) {
 }
 
 void VEStatic::Rotate(float x_ax, float y_ax, float z_ax, float rt) {
-  if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f), 
+  if(TestError((x_ax == 0.0f) && (y_ax == 0.0f) && (z_ax == 0.0f),
     "RotateBody", "must specify a non-zero axis!"))
     return;
 
@@ -2120,7 +2078,7 @@ void VEStatic::CopyColorFrom(VEStatic* cpy_fm) {
   if(!cpy_fm) return;
   set_color = cpy_fm->set_color;
   color = cpy_fm->color;
-  full_colors = cpy_fm->full_colors; 
+  full_colors = cpy_fm->full_colors;
   ambient_color = cpy_fm->ambient_color;
   specular_color = cpy_fm->specular_color;
   emissive_color = cpy_fm->emissive_color;
@@ -2130,7 +2088,7 @@ void VEStatic::CopyColorFrom(VEStatic* cpy_fm) {
 
 
 /////////////////////////////////////////////
-//		HeightField
+//              HeightField
 
 void VEHeightField::Initialize() {
   // todo: do this
@@ -2141,66 +2099,52 @@ void VEHeightField::SetValsToODE() {
 }
 
 /////////////////////////////////////////////
-//		Group
+//              Group
 
 void VEStatic_Group::SetValsToODE() {
-  VEStatic* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEStatic, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
     ob->SetValsToODE();
   }
 }
 
 void VEStatic_Group::DestroyODE() {
-  VEStatic* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEStatic, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
     ob->DestroyODE();
   }
 }
 
 void VEStatic_Group::SnapPosToGrid(float grid_size) {
-  VEStatic* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEStatic, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
     ob->SnapPosToGrid(grid_size);
   }
 }
 
 void VEStatic_Group::Translate(float dx, float dy, float dz) {
-  VEStatic* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEStatic, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
     ob->Translate(dx, dy, dz);
   }
 }
 
 void VEStatic_Group::Scale(float sx, float sy, float sz) {
-  VEStatic* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEStatic, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
     ob->Scale(sx, sy, sz);
   }
 }
 
 void VEStatic_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot) {
-  VEStatic* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEStatic, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
     ob->Rotate(x_ax, y_ax, z_ax, rot);
   }
 }
 
 void VEStatic_Group::CopyColorFrom(VEStatic* cpy_fm) {
-  VEStatic* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VEStatic, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VEStatic, ob, *this) {
     ob->CopyColorFrom(cpy_fm);
   }
 }
 
 ////////////////////////////////////////////////
-//	Space: collection of static elements
+//      Space: collection of static elements
 
 void VESpace::Initialize() {
   space_id = NULL;
@@ -2294,67 +2238,53 @@ void VESpace::CopyColorFrom(VEStatic* cpy_fm) {
 
 
 /////////////////////////////////////////////
-//		Group
+//              Group
 
 void VESpace_Group::SetValsToODE() {
-  VESpace* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VESpace, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
     ob->SetValsToODE();
   }
 }
 
 void VESpace_Group::DestroyODE() {
-  VESpace* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VESpace, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
     ob->DestroyODE();
   }
 }
 
 void VESpace_Group::SnapPosToGrid(float grid_size) {
-  VESpace* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VESpace, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
     ob->SnapPosToGrid(grid_size);
   }
 }
 
 void VESpace_Group::Translate(float dx, float dy, float dz) {
-  VESpace* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VESpace, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
     ob->Translate(dx, dy, dz);
   }
 }
 
 void VESpace_Group::Scale(float sx, float sy, float sz) {
-  VESpace* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VESpace, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
     ob->Scale(sx, sy, sz);
   }
 }
 
 void VESpace_Group::Rotate(float x_ax, float y_ax, float z_ax, float rot) {
-  VESpace* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VESpace, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
     ob->Rotate(x_ax, y_ax, z_ax, rot);
   }
 }
 
 void VESpace_Group::CopyColorFrom(VEStatic* cpy_fm) {
-  VESpace* ob;
-  taLeafItr i;
-  FOR_ITR_EL(VESpace, ob, this->, i) {
+  FOREACH_ELEM_IN_GROUP(VESpace, ob, *this) {
     ob->CopyColorFrom(cpy_fm);
   }
 }
 
 
 ///////////////////////////////////////////////////////////////
-//	Error handling!!
+//      Error handling!!
 
 #include <ode/error.h>
 
@@ -2362,7 +2292,7 @@ static VEWorld* VE_last_ve_stepped = NULL;
 
 // this is the default message guy from ODE
 static void VE_Err_printMessage (int num, const char *msg1, const char *msg2,
-				 va_list ap)
+                                 va_list ap)
 {
   fflush (stderr);
   fflush (stdout);
@@ -2386,9 +2316,9 @@ extern "C" void VE_ErrorHandler(int errnum, const char* msg, va_list ap) {
   VE_Err_printMessage(errnum, "ODE Error", msg, ap); // provide ap stuff
 
   taMisc::Error("ODE Fatal Error (details on console) number:", String(errnum), msg,
-		"last VEWorld Step'd:", step_nm,
-		"last VE item doing SetValsToODE:", set_vals_nm,
-		"DO NOT ATTEMPT TO RUN VIRTUAL ENV without restarting");
+                "last VEWorld Step'd:", step_nm,
+                "last VE item doing SetValsToODE:", set_vals_nm,
+                "DO NOT ATTEMPT TO RUN VIRTUAL ENV without restarting");
 }
 
 extern "C" void VE_DebugHandler(int errnum, const char* msg, va_list ap) {
@@ -2404,9 +2334,9 @@ extern "C" void VE_DebugHandler(int errnum, const char* msg, va_list ap) {
   VE_Err_printMessage(errnum, "ODE INTERNAL ERROR", msg, ap); // provide ap stuff
 
   taMisc::Error("ODE Debug Error (details on console) number:", String(errnum), msg,
-		"last VEWorld Step'd:", step_nm,
-		"last VE item doing SetValsToODE:", set_vals_nm,
-		"DO NOT ATTEMPT TO RUN VIRTUAL ENV without restarting");
+                "last VEWorld Step'd:", step_nm,
+                "last VE item doing SetValsToODE:", set_vals_nm,
+                "DO NOT ATTEMPT TO RUN VIRTUAL ENV without restarting");
 }
 
 extern "C" void VE_MessageHandler(int errnum, const char* msg, va_list ap) {
@@ -2422,12 +2352,12 @@ extern "C" void VE_MessageHandler(int errnum, const char* msg, va_list ap) {
   VE_Err_printMessage(errnum, "ODE Message", msg, ap); // provide ap stuff
 
   taMisc::Warning("ODE Message number:", String(errnum), msg,
-		"last VEWorld Step'd:", step_nm,
-		"last VE item doing SetValsToODE:", set_vals_nm);
+                "last VEWorld Step'd:", step_nm,
+                "last VE item doing SetValsToODE:", set_vals_nm);
 }
 
 ///////////////////////////////////////////////////////////////
-//	World!
+//      World!
 
 void ODEWorldParams::Initialize() {
   max_cor_vel = 1.0e6f;
@@ -2452,7 +2382,7 @@ void VEWorld::Initialize() {
   step_type = STD_STEP;
   stepsize = .01f;
   quick_iters = 20;
-  bg_color.no_a = true; 
+  bg_color.no_a = true;
   bg_color.r = 0.8f;
   bg_color.g = 0.8f;
   bg_color.b = 0.8f;
@@ -2465,7 +2395,7 @@ void VEWorld::Destroy() {
 void VEWorld::CutLinks() {
   objects.CutLinks();
   spaces.CutLinks();
-  DestroyODE();			// do this last!
+  DestroyODE();                 // do this last!
   inherited::CutLinks();
 }
 
@@ -2531,8 +2461,8 @@ void VEWorld::SetValsToODE() {
   dWorldSetGravity(wid, gravity.x, gravity.y, gravity.z);
   dWorldSetERP(wid, ode_params.erp);
   dWorldSetCFM(wid, ode_params.cfm);
-  dWorldSetContactMaxCorrectingVel(wid, ode_params.max_cor_vel); 
-  dWorldSetContactSurfaceLayer(wid, ode_params.contact_depth); 
+  dWorldSetContactMaxCorrectingVel(wid, ode_params.max_cor_vel);
+  dWorldSetContactSurfaceLayer(wid, ode_params.contact_depth);
 
   if(space_type == HASH_SPACE) {
     dHashSpaceSetLevels(sid, hash_levels.min, hash_levels.max);
@@ -2541,7 +2471,7 @@ void VEWorld::SetValsToODE() {
   StructUpdate(true);
   objects.SetValsToODE();
   spaces.SetValsToODE();
-  StructUpdate(false);		// trigger full rebuild!
+  StructUpdate(false);          // trigger full rebuild!
 
   VE_last_ve_set_vals_to_ode = NULL; // turn off!
 }
@@ -2591,7 +2521,7 @@ void VEWorld::CollisionCallback(dGeomID o1, dGeomID o2) {
   cont.surface.soft_cfm = .5f * (b1->softness.cfm + b2->softness.cfm);
   // todo: not seting slip1 or second directions (as in tires)
   if(num_contact > 0) {
-    for(int i=0;i<num_contact;i++) { 
+    for(int i=0;i<num_contact;i++) {
       cont.geom = cgs[i];
       dJointID c = dJointCreateContact(wid, gid, &cont);
       dJointAttach(c, dGeomGetBody(cont.geom.g1), dGeomGetBody(cont.geom.g2));

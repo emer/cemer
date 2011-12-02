@@ -29,7 +29,7 @@
 #include "iflowlayout.h"
 
 //////////////////////////////////
-//  tabSelectEditViewType 	//
+//  tabSelectEditViewType       //
 /////////////////////////////////
 
 int tabSelectEditViewType::BidForView(TypeDef* td) {
@@ -48,7 +48,7 @@ void tabSelectEditViewType::CreateDataPanel_impl(taiDataLink* dl_)
 
 
 //////////////////////////////////
-//  iSelectEditDataHostBase	//
+//  iSelectEditDataHostBase     //
 //////////////////////////////////
 
 iSelectEditDataHostBase::iSelectEditDataHostBase(void* base, TypeDef* td,
@@ -80,26 +80,22 @@ void iSelectEditDataHostBase::Constr_Body() {
     frmMethButtons->setHidden(!showMethButtons());
   }
 }
-  
+
 void iSelectEditDataHostBase::Constr_Methods_impl() {
   inherited::Constr_Methods_impl();
   Insert_Methods();
 
-  taGroupItr itr;
-  EditMthItem_Group* grp;
-  //int set_idx = 0;
-  // only iterates non-empty groups
-  FOR_ITR_GP(EditMthItem_Group, grp, sele->mths., itr) {
+  FOREACH_SUBGROUP(EditMthItem_Group, grp, sele->mths) {
     //note: root group uses only buttons (hard wired)
     EditMthItem_Group::MthGroupType group_type = grp->group_type;
-    
+
     // make a menu or button group if needed
     String men_nm = grp->GetDisplayName(); // blank for default
     switch (group_type) {
     case EditMthItem_Group::GT_MENU: {
       SetCurMenu_Name(men_nm); // default is "Actions"
     } break;
-    case EditMthItem_Group::GT_MENU_BUTTON: { 
+    case EditMthItem_Group::GT_MENU_BUTTON: {
       if (men_nm.empty()) // shouldn't happen
         men_nm = "Actions";
       cur_menu_but = ta_menu_buttons.FindName(men_nm);
@@ -114,7 +110,7 @@ void iSelectEditDataHostBase::Constr_Methods_impl() {
     } break;
     default: break; // nothing for butts
     } // switch group_type
-          
+
     for (int i = 0; i < grp->size; ++i) {
       EditMthItem* item = grp->FastEl(i);
       MethodDef* md = item->mth;
@@ -122,7 +118,7 @@ void iSelectEditDataHostBase::Constr_Methods_impl() {
       if (!md || (md->im == NULL) || (base == NULL)) continue;
       taiMethod* im = md->im;
       if (im == NULL) continue;
-  
+
       //NOTE: for seledit functions, we never place them on the last menu or button, because that may
       // make no sense -- the label specifies the place, or Actions if no label
       String mth_cap = item->caption();
@@ -141,7 +137,7 @@ void iSelectEditDataHostBase::Constr_Methods_impl() {
         if (statustip.nonempty())
           act->setStatusTip(statustip);
       } break;
-      case EditMthItem_Group::GT_MENU_BUTTON: { 
+      case EditMthItem_Group::GT_MENU_BUTTON: {
         mth_rep = im->GetMenuMethodRep(base, this, NULL, NULL/*frmMethButtons*/);
 //        mth_rep->AddToMenu(cur_menu_but);
         taiAction* act = cur_menu_but->AddItem(mth_cap, taiMenu::use_default,
@@ -176,7 +172,7 @@ void iSelectEditDataHostBase::mnuRemoveMethod_select(int idx) {
 
 
 //////////////////////////
-//  iSelectEditDataHost	//
+//  iSelectEditDataHost //
 //////////////////////////
 
 iSelectEditDataHost::iSelectEditDataHost(void* base, TypeDef* td,
@@ -227,12 +223,10 @@ void iSelectEditDataHost::Constr_Data_Labels() {
   String nm;
   String help_text;
   MembSet* memb_set = NULL;
-  
-  taGroupItr itr;
-  EditMbrItem_Group* grp;
+
   int set_idx = 0;
   // note: iterates non-empty groups only
-  FOR_ITR_GP(EditMbrItem_Group, grp, sele->mbrs., itr) {
+  FOREACH_SUBGROUP(EditMbrItem_Group, grp, sele->mbrs) {
     bool def_grp = (grp == &(sele->mbrs));// root group
     membs.SetMinSize(set_idx + 1);
     memb_set = membs.FastEl(set_idx);
@@ -251,7 +245,7 @@ void iSelectEditDataHost::Constr_Data_Labels() {
       memb_set->data_el.Add(mb_dat);
       QWidget* data = mb_dat->GetRep();
       //int row = AddData(-1, data);
-  
+
       help_text = item->GetDesc();
       String new_lbl = item->caption();
       //obs GetName(md, nm, help_text); //note: we just call this to get the help text
@@ -264,7 +258,7 @@ void iSelectEditDataHost::Constr_Data_Labels() {
 }
 
 void iSelectEditDataHost::DoRemoveSelEdit() {
-   // removes the sel_item_index item 
+   // removes the sel_item_index item
   int sel_item_index = membs.GetFlatDataIndex(sel_item_dat);
   if (sel_item_index >= 0) {
     sele->RemoveField(sel_item_index);
@@ -277,8 +271,8 @@ void iSelectEditDataHost::FillLabelContextMenu_SelEdit(QMenu* menu,
   int& last_id)
 {
   int sel_item_index = membs.GetFlatDataIndex(sel_item_mbr, sel_item_base);
-  if (sel_item_index < 0) return; 
-  //QAction* act = 
+  if (sel_item_index < 0) return;
+  //QAction* act =
   menu->addAction("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()));
 }
 
@@ -314,10 +308,10 @@ void iSelectEditDataHost::GetValue_Membs_def() {
       }
       else {
         bool first_diff = true;
-        md->im->GetMbrValue(mb_dat, item->base, first_diff); 
+        md->im->GetMbrValue(mb_dat, item->base, first_diff);
         if (!first_diff)
           taiMember::EndScript(item->base);
-	item->base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
+        item->base->UpdateAfterEdit(); // call UAE on item bases because won't happen elsewise!
       }
       ++itm_idx;
     }
@@ -326,11 +320,11 @@ void iSelectEditDataHost::GetValue_Membs_def() {
 
 
 //////////////////////////
-//   taiDataDelegate	//
+//   taiDataDelegate    //
 //////////////////////////
 
 
-taiDataDelegate::taiDataDelegate(taiEditDataHost* edh_) 
+taiDataDelegate::taiDataDelegate(taiEditDataHost* edh_)
 {
   edh = edh_;
   m_dat_row = -1;
@@ -340,7 +334,7 @@ taiDataDelegate::taiDataDelegate(taiEditDataHost* edh_)
     QAbstractItemDelegate::EndEditHint)) );
 }
 
-QWidget* taiDataDelegate::createEditor(QWidget* parent, 
+QWidget* taiDataDelegate::createEditor(QWidget* parent,
     const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   MemberDef* md = NULL;
@@ -349,14 +343,14 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
     if (md->im == NULL) goto exit; // shouldn't happen
     // we create a wrap widget for many of these guys, mostly so that smaller
     // guys like Combo don't try to be stretched the whole way
-    bool wrap = true;		// NOTE: wrap is always true!!
+    bool wrap = true;           // NOTE: wrap is always true!!
     QWidget* rep_par = (wrap) ?  new QWidget(parent) : parent;
-    
+
     dat = md->im->GetDataRep(edh, NULL, rep_par);
     m_dat_row = index.row();
     dat->SetBase(base);
     dat->SetMemberDef(md);
-    rep = dat->GetRep(); // note: rep may get replaced by rep_par 
+    rep = dat->GetRep(); // note: rep may get replaced by rep_par
     // color stuff
     // by default, the table color shines through widget, which is weird
     // so we will shut that off if it isn't merely a container widget
@@ -379,7 +373,7 @@ QWidget* taiDataDelegate::createEditor(QWidget* parent,
     }
     connect(rep, SIGNAL(destroyed(QObject*)),
       dat, SLOT(deleteLater()) );
-      
+
     EditorCreated(parent, rep, option, index);
     return rep;
   }
@@ -387,7 +381,7 @@ exit:
   return inherited::createEditor(parent, option, index);
 }
 
-void taiDataDelegate::EditorCreated(QWidget* parent, QWidget* editor, 
+void taiDataDelegate::EditorCreated(QWidget* parent, QWidget* editor,
     const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   // resize the column to accommodate the controls
@@ -448,7 +442,7 @@ bool taiDataDelegate::eventFilter(QObject *object, QEvent *event)
     if (editor->parentWidget())
         editor->parentWidget()->setFocus();
     return true;
-  } 
+  }
 /*  else if (event->type() == QEvent::FocusOut) {
     if (!editor->isActiveWindow() || (QApplication::focusWidget() != editor)) {
       QWidget *w = QApplication::focusWidget();
@@ -497,7 +491,7 @@ void taiDataDelegate::GetValue() const {
   taBase* base = dat->Base(); // cache
   if (dat->mbr) { // has member (typical case)
     bool first_diff = true;
-    dat->mbr->im->GetMbrValue(dat, base, first_diff); 
+    dat->mbr->im->GetMbrValue(dat, base, first_diff);
     if (!first_diff)
       taiMember::EndScript(base);
   } else { // no mbr, typically an inline taBase, esp for userdata
@@ -526,7 +520,7 @@ void taiDataDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
       (&option);
     opt.locale = v3 ? v3->locale : QLocale();
     opt.widget = v3 ? v3->widget : 0;
- 
+
     // draw rich text:
     painter->save();
 
@@ -599,7 +593,7 @@ void taiDataDelegate::this_closeEditor(QWidget* /*editor*/,
 }
 
 //////////////////////////
-//   SelectEditDelegate	//
+//   SelectEditDelegate //
 //////////////////////////
 
 QTableWidgetItem* /*SelectEditDelegate::*/ItemFromIndex(QTableWidget* tw,
@@ -617,7 +611,7 @@ SelectEditDelegate::SelectEditDelegate(SelectEdit* sele_,
   sedh = sedh_;
 }
 
-QWidget* SelectEditDelegate::createEditor(QWidget* parent, 
+QWidget* SelectEditDelegate::createEditor(QWidget* parent,
     const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QWidget* rval = inherited::createEditor(parent, option, index);
@@ -628,14 +622,14 @@ QWidget* SelectEditDelegate::createEditor(QWidget* parent,
       ps_dat = psmd->im->GetDataRep(edh, NULL, rep);
       ps_dat->SetBase(emi);
       ps_dat->SetMemberDef(psmd);
-      ps_rep = ps_dat->GetRep(); // note: rep may get replaced by rep_par 
+      ps_rep = ps_dat->GetRep(); // note: rep may get replaced by rep_par
 
       hbl->addWidget(ps_rep);
       // some controls do better without stretch
       if (!(dynamic_cast<taiField*>((taiData*)ps_dat)))
-	hbl->addStretch();
+        hbl->addStretch();
       connect(ps_rep, SIGNAL(destroyed(QObject*)),
-	      ps_dat, SLOT(deleteLater()) );
+              ps_dat, SLOT(deleteLater()) );
     }
   }
 
@@ -670,7 +664,7 @@ void SelectEditDelegate::GetValue() const {
   taBase* base = dat->Base(); // cache
   if (dat->mbr) { // has member (typical case)
     bool first_diff = true;
-    dat->mbr->im->GetMbrValue(dat, base, first_diff); 
+    dat->mbr->im->GetMbrValue(dat, base, first_diff);
     if (!first_diff)
       taiMember::EndScript(base);
   } else { // no mbr, typically an inline taBase, esp for userdata
@@ -680,9 +674,9 @@ void SelectEditDelegate::GetValue() const {
     taBase* ps_base = ps_dat->Base(); // cache
     if (ps_dat->mbr) { // has member (typical case)
       bool first_diff = true;
-      ps_dat->mbr->im->GetMbrValue(ps_dat, ps_base, first_diff); 
+      ps_dat->mbr->im->GetMbrValue(ps_dat, ps_base, first_diff);
       if (!first_diff)
-	taiMember::EndScript(ps_base);
+        taiMember::EndScript(ps_base);
     } else { // no mbr, typically an inline taBase, esp for userdata
       ps_dat->GetValue_(ps_base);
     }
@@ -709,7 +703,7 @@ bool SelectEditDelegate::IndexToMembBase(const QModelIndex& index,
 }
 
 ///////////////////////////////////////////////////////////////////////
-//		taiEditTableWidget
+//              taiEditTableWidget
 
 taiEditTableWidget::taiEditTableWidget(QWidget* parent)
 :inherited(parent)
@@ -718,7 +712,7 @@ taiEditTableWidget::taiEditTableWidget(QWidget* parent)
 
 void taiEditTableWidget::keyPressEvent(QKeyEvent* e) {
   if((e->key() == Qt::Key_Tab) || (e->key() == Qt::Key_Backtab)) {
-    e->ignore();			// tell that we don't want this -- send to others
+    e->ignore();                        // tell that we don't want this -- send to others
     return;
   }
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
@@ -752,13 +746,13 @@ void taiEditTableWidget::keyPressEvent(QKeyEvent* e) {
     if (newCurrent != oldCurrent && newCurrent.isValid()) {
       QItemSelectionModel::SelectionFlags command = selectionCommand(newCurrent, e);
       if (command != QItemSelectionModel::NoUpdate
-	  || style()->styleHint(QStyle::SH_ItemView_MovementWithoutUpdatingSelection, 0, this)) {
-	if (command & QItemSelectionModel::Current) {
-	  selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
-	} else {
- 	  selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::ClearAndSelect);
-	}
-	return;
+          || style()->styleHint(QStyle::SH_ItemView_MovementWithoutUpdatingSelection, 0, this)) {
+        if (command & QItemSelectionModel::Current) {
+          selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
+        } else {
+          selectionModel()->setCurrentIndex(newCurrent, QItemSelectionModel::ClearAndSelect);
+        }
+        return;
       }
     }
   }
@@ -767,7 +761,7 @@ void taiEditTableWidget::keyPressEvent(QKeyEvent* e) {
 
 
 //////////////////////////
-//  iSelectEditDataHost2	//
+//  iSelectEditDataHost2        //
 //////////////////////////
 
 iSelectEditDataHost2::iSelectEditDataHost2(void* base, TypeDef* td,
@@ -793,9 +787,9 @@ void iSelectEditDataHost2::Initialize()
 
 void iSelectEditDataHost2::Constr_Body_impl() {
 }
- 
+
 void iSelectEditDataHost2::Constr_Box() {
-  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if 
+  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if
   if (tw) return;
   tw = new taiEditTableWidget(widget());
   tw->setColumnCount(2);
@@ -814,16 +808,16 @@ void iSelectEditDataHost2::Constr_Box() {
   tw->setPalette(palette);
   tw->setAlternatingRowColors(true);
   tw->setContextMenuPolicy(Qt::CustomContextMenu);
-  
+
   tw->setItemDelegateForColumn(1, sed);
   vblDialog->addWidget(tw, 1);
-  connect(tw, SIGNAL(currentCellChanged(int, int, int, int)), 
+  connect(tw, SIGNAL(currentCellChanged(int, int, int, int)),
     this, SLOT(tw_currentCellChanged(int, int, int, int)) );
-  connect(tw, SIGNAL(customContextMenuRequested(const QPoint&)), 
+  connect(tw, SIGNAL(customContextMenuRequested(const QPoint&)),
     this, SLOT(tw_customContextMenuRequested(const QPoint&)) );
   body = tw;
 }
- 
+
 
 void iSelectEditDataHost2::ClearBody_impl() {
   // we also clear all the methods, and then rebuild them
@@ -861,13 +855,11 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
   String nm;
   String help_text;
   MembSet* ms = NULL;
-  
-  taGroupItr itr;
-  EditMbrItem_Group* grp;
+
   int set_idx = 0;
   int row = 0;
   // note: iterates non-empty groups only
-  FOR_ITR_GP(EditMbrItem_Group, grp, sele->mbrs., itr) {
+  FOREACH_SUBGROUP(EditMbrItem_Group, grp, sele->mbrs) {
     bool def_grp = (grp == &(sele->mbrs));// root group
     membs.SetMinSize(set_idx + 1);
     ms = membs.FastEl(set_idx);
@@ -895,7 +887,7 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
       EditMbrItem* item = grp->FastEl(i);
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL)) continue; // shouldn't happen
-      
+
       ms->memb_el.Add(md);
       // force span, in case this row had a group before
       // this is now giving an error in 4.6.0 beta -- unnec?
@@ -911,7 +903,7 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
       item_flags = Qt::ItemIsEnabled;
       twi->setFlags((Qt::ItemFlags)item_flags);
       tw->setItem(row, 0, twi);
-      
+
       // data item
       twi = new QTableWidgetItem;
       item_flags = Qt::ItemIsEnabled; // |Qt::ItemIsSelectable;
@@ -922,7 +914,7 @@ void iSelectEditDataHost2::Constr_Data_Labels() {
       twi->setFlags((Qt::ItemFlags)item_flags);
       // set EditMbrItem into 1.data
       twi->setData(Qt::UserRole, QVariant((ta_intptr_t)item));
-      
+
       tw->setItem(row, 1, twi);
       tw->setRowHeight(row, row_height);
       ++row;
@@ -943,15 +935,15 @@ void iSelectEditDataHost2::GetImage_Item(int row) {
   if ((item == NULL) || (item->base == NULL) ||  (item->mbr == NULL)) return;
   if(!item->base->InheritsFrom((TypeDef*)item->mbr->owner->owner)) {
     taMisc::Warning("type mismatch in select edit", item->label, "-- should be removed asap",
-		    ((TypeDef*)item->mbr->owner->owner)->name, "!=",
-		    item->base->GetTypeDef()->name);
+                    ((TypeDef*)item->mbr->owner->owner)->name, "!=",
+                    item->base->GetTypeDef()->name);
     return;
   }
   void* off = item->mbr->GetOff(item->base);
   String txt = item->mbr->type->GetValStr(off, item->base,
-                                          item->mbr, TypeDef::SC_DISPLAY, true); 
+                                          item->mbr, TypeDef::SC_DISPLAY, true);
   if(item->is_numeric) {
-    txt += "&nbsp;&nbsp;|&nbsp;&nbsp;" + TA_EditParamSearch.GetValStr(&(item->param_search), NULL, NULL, TypeDef::SC_DISPLAY, true); 
+    txt += "&nbsp;&nbsp;|&nbsp;&nbsp;" + TA_EditParamSearch.GetValStr(&(item->param_search), NULL, NULL, TypeDef::SC_DISPLAY, true);
   }
 
   // true = force inline
@@ -966,15 +958,15 @@ void iSelectEditDataHost2::GetImage_Item(int row) {
 
   it->setText(txt);
   it->setToolTip(txt); // for when over
-  
+
   // default highlighting
   switch (item->mbr->GetDefaultStatus(item->base)) {
-  case MemberDef::NOT_DEF: 
-    lbl->setData(Qt::BackgroundRole, QColor(Qt::yellow)); 
+  case MemberDef::NOT_DEF:
+    lbl->setData(Qt::BackgroundRole, QColor(Qt::yellow));
     break;
   case MemberDef::EQU_DEF:
     //note: setting nil Variant will force it to ignore and use bg
-    lbl->setData(Qt::BackgroundRole, QVariant()); 
+    lbl->setData(Qt::BackgroundRole, QVariant());
     break;
   default: break; // compiler food
   }
@@ -992,7 +984,7 @@ void iSelectEditDataHost2::GetImage_Membs_def() {
 }
 
 void iSelectEditDataHost2::DoRemoveSelEdit() {
-   // removes the sel_item_index item 
+   // removes the sel_item_index item
   int sel_item_index = -1;
   sele->mbrs.FindItemBase(sel_item_base, sel_item_mbr, sel_item_index);
   if (sel_item_index >= 0) {
@@ -1007,8 +999,8 @@ void iSelectEditDataHost2::FillLabelContextMenu_SelEdit(QMenu* menu,
 {
   int sel_item_index = -1;
   sele->mbrs.FindItemBase(sel_item_base, sel_item_mbr, sel_item_index);
-  if (sel_item_index < 0) return; 
-  //QAction* act = 
+  if (sel_item_index < 0) return;
+  //QAction* act =
   menu->addAction("Remove from SelectEdit", this, SLOT(DoRemoveSelEdit()));
 }
 
@@ -1016,7 +1008,7 @@ void iSelectEditDataHost2::GetValue_Membs_def() {
   sed->GetValue();
 }
 
-void iSelectEditDataHost2::tw_currentCellChanged(int row, 
+void iSelectEditDataHost2::tw_currentCellChanged(int row,
     int col, int previousRow, int previousColumn)
 {
   if ((row < 0) || (col < 1)) return;
@@ -1033,11 +1025,11 @@ void iSelectEditDataHost2::tw_customContextMenuRequested(const QPoint& pos)
   // we want the data item for the label, to get its goodies...
   QTableWidgetItem* twi = tw->item(row, 1);
   if (!twi) return; // ex. right clicking on a section
-  
+
   EditMbrItem* item = dynamic_cast<EditMbrItem*>(
     (taBase*)(twi->data(Qt::UserRole).value<ta_intptr_t>()));
   if ((item == NULL) || (item->base == NULL)) return;
-    
+
   sel_item_mbr = item->mbr;
   sel_item_base = item->base;
   QMenu* menu = new QMenu(widget());
@@ -1046,13 +1038,13 @@ void iSelectEditDataHost2::tw_customContextMenuRequested(const QPoint& pos)
   if (menu->actions().count() > 0)
     menu->exec(tw->mapToGlobal(pos));
   delete menu;
-  
+
 }
 
 
 
 //////////////////////////
-//   iSelectEditPanel 	//
+//   iSelectEditPanel   //
 //////////////////////////
 
 iSelectEditPanel::iSelectEditPanel(taiDataLink* dl_)
@@ -1063,10 +1055,10 @@ iSelectEditPanel::iSelectEditPanel(taiDataLink* dl_)
   if (se_) {
     switch (taMisc::select_edit_style) {
     case taMisc::ES_ALL_CONTROLS:
-      se = new iSelectEditDataHost(se_, se_->GetTypeDef()); 
+      se = new iSelectEditDataHost(se_, se_->GetTypeDef());
       break;
     case taMisc::ES_ACTIVE_CONTROL:
-      se = new iSelectEditDataHost2(se_, se_->GetTypeDef()); 
+      se = new iSelectEditDataHost2(se_, se_->GetTypeDef());
       break;
     }
     if (taMisc::color_hints & taMisc::CH_EDITS) {
@@ -1116,11 +1108,11 @@ void iSelectEditPanel::ResolveChanges_impl(CancelOp& cancel_op) {
 }
 
 //////////////////////////////////
-//   taiObjDiffBrowser		//
+//   taiObjDiffBrowser          //
 //////////////////////////////////
 
-taiObjDiffBrowser* taiObjDiffBrowser::New(taObjDiff_List& diffs, 
-					  int font_type, QWidget* par_window_) {
+taiObjDiffBrowser* taiObjDiffBrowser::New(taObjDiff_List& diffs,
+                                          int font_type, QWidget* par_window_) {
   String caption = "DiffCompare_" + diffs.tab_obj_a->GetDisplayName() + "_" +
     diffs.tab_obj_b->GetDisplayName();
 
@@ -1164,7 +1156,7 @@ Q_DECLARE_METATYPE(taObjDiffRec*);
 void taiObjDiffBrowser::Constr() {
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(taiM->vsep_c);
-  layOuter->setSpacing(taiM->vspc_c); 
+  layOuter->setSpacing(taiM->vspc_c);
 
   String a_path = odl->tab_obj_a->GetPathNames();
   String b_path = odl->tab_obj_b->GetPathNames();
@@ -1174,7 +1166,7 @@ void taiObjDiffBrowser::Constr() {
   QLabel* lbl = new QLabel(lb_txt);
   layOuter->addWidget(lbl);
   //  layOuter->addSpacing(taiM->vsep_c);
-  
+
   QHBoxLayout* lay = new QHBoxLayout();
   btnAllA = new QPushButton("Toggle All &A's", this);
   btnAllA->setToolTip("Toggle selection of all the selectable actions for the A item -- i.e., make the A equivalent to the B");
@@ -1250,7 +1242,7 @@ void taiObjDiffBrowser::Constr() {
   connect(btnFiltB, SIGNAL(clicked()), this, SLOT(setFilteredB()) );
 
   connect(items, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this,
-	  SLOT(itemClicked(QTreeWidgetItem*,int)));
+          SLOT(itemClicked(QTreeWidgetItem*,int)));
 
   AddItems();
 
@@ -1265,7 +1257,7 @@ void taiObjDiffBrowser::AddItems() {
   QBrush chg_color(Qt::yellow);
   int max_width = 40;
 
-  voidptr_PArray	nest_pars;
+  voidptr_PArray        nest_pars;
 
   int init_nest = odl->FastEl(0)->nest_level; // should be 0..
 
@@ -1281,19 +1273,19 @@ void taiObjDiffBrowser::AddItems() {
     int par_nest = rec->nest_level-1;
     if(par_nest > init_nest) {
       if(par_nest < nest_pars.size) {
-	parw = (QTreeWidgetItem*)nest_pars[par_nest];
-	if(!parw) {
-	  cerr << "par widg null: " << rec->name << " = " << rec->value <<endl;
-	  taMisc::FlushConsole();
-	}
+        parw = (QTreeWidgetItem*)nest_pars[par_nest];
+        if(!parw) {
+          cerr << "par widg null: " << rec->name << " = " << rec->value <<endl;
+          taMisc::FlushConsole();
+        }
       }
       else {
-	cerr << "par nest: " << par_nest << " >= nest pars: " << nest_pars.size <<endl;
-	taMisc::FlushConsole();
+        cerr << "par nest: " << par_nest << " >= nest pars: " << nest_pars.size <<endl;
+        taMisc::FlushConsole();
       }
       if(!parw) {
-	if(rec->par_odr)
-	  parw = (QTreeWidgetItem*)rec->par_odr->widget;
+        if(rec->par_odr)
+          parw = (QTreeWidgetItem*)rec->par_odr->widget;
       }
     }
     if(parw)
@@ -1324,16 +1316,16 @@ void taiObjDiffBrowser::AddItems() {
       if(chk_b) witm->setBackground(COL_B_FLG, add_color);
       witm->setBackground(COL_B_VAL, add_color);
       witm->setBackground(COL_B_NM, add_color);
-      witm->setExpanded(false);	// never expand a del -- only applies to parents anyway..
+      witm->setExpanded(false); // never expand a del -- only applies to parents anyway..
       if(!rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
-	// only ta base items really feasible here..
-	if(rec->type->InheritsFrom(&TA_taBase)) {
-	  witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-	  witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-	  witm->setCheckState(COL_B_FLG, Qt::Unchecked);
-	  witm->setText(COL_A_FLG, lbl_a);
-	  witm->setText(COL_B_FLG, lbl_b);
-	}
+        // only ta base items really feasible here..
+        if(rec->type->InheritsFrom(&TA_taBase)) {
+          witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+          witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+          witm->setCheckState(COL_B_FLG, Qt::Unchecked);
+          witm->setText(COL_A_FLG, lbl_a);
+          witm->setText(COL_B_FLG, lbl_b);
+        }
       }
     }
     else if(rec->HasDiffFlag(taObjDiffRec::DIFF_ADD)) {
@@ -1350,14 +1342,14 @@ void taiObjDiffBrowser::AddItems() {
       witm->setBackground(COL_B_NM, del_color);
       witm->setExpanded(false);
       if(!rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
-	// only ta base items really feasible here..
-	if(rec->type->InheritsFrom(&TA_taBase)) {
-	  witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
-	  witm->setCheckState(COL_A_FLG, Qt::Unchecked);
-	  witm->setCheckState(COL_B_FLG, Qt::Unchecked);
-	  witm->setText(COL_A_FLG, lbl_a);
-	  witm->setText(COL_B_FLG, lbl_b);
-	}
+        // only ta base items really feasible here..
+        if(rec->type->InheritsFrom(&TA_taBase)) {
+          witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+          witm->setCheckState(COL_A_FLG, Qt::Unchecked);
+          witm->setCheckState(COL_B_FLG, Qt::Unchecked);
+          witm->setText(COL_A_FLG, lbl_a);
+          witm->setText(COL_B_FLG, lbl_b);
+        }
       }
     }
     else if(rec->HasDiffFlag(taObjDiffRec::DIFF_CHG)) {
@@ -1450,7 +1442,7 @@ void taiObjDiffBrowser::ToggleAll(int a_or_b) {
     if(!rec->ActionAllowed()) continue;
 
     QTreeWidgetItem* witm = (QTreeWidgetItem*)rec->widget;
-    if(!witm) continue;		// shouldn't happen
+    if(!witm) continue;         // shouldn't happen
 
     String lbl;
     bool chk = rec->GetCurAction(a_or_b, lbl);
@@ -1467,9 +1459,9 @@ void taiObjDiffBrowser::toggleAllB() {
   ToggleAll(1);
 }
 
-void taiObjDiffBrowser::SetFiltered(int a_or_b, bool on, bool add, bool del, bool chg, 
-				    bool nm_not, String nm_contains, bool val_not, 
-				    String val_contains) {
+void taiObjDiffBrowser::SetFiltered(int a_or_b, bool on, bool add, bool del, bool chg,
+                                    bool nm_not, String nm_contains, bool val_not,
+                                    String val_contains) {
   for(int i=0;i<odl->size; i++) {
     taObjDiffRec* rec = odl->FastEl(i);
 
@@ -1479,7 +1471,7 @@ void taiObjDiffBrowser::SetFiltered(int a_or_b, bool on, bool add, bool del, boo
       if(rec->HasDiffFlag(taObjDiffRec::DIFF_ADD) && !add) continue;
       if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL) && !del) continue;
     }
-    else {			// switched for b
+    else {                      // switched for b
       if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL) && !add) continue;
       if(rec->HasDiffFlag(taObjDiffRec::DIFF_ADD) && !del) continue;
     }
@@ -1487,23 +1479,23 @@ void taiObjDiffBrowser::SetFiltered(int a_or_b, bool on, bool add, bool del, boo
     if(rec->HasDiffFlag(taObjDiffRec::DIFF_CHG) && !chg) continue;
     if(nm_contains.nonempty()) {
       if(nm_not) {
-	if(rec->name.contains(nm_contains)) continue;
+        if(rec->name.contains(nm_contains)) continue;
       }
       else {
-	if(!rec->name.contains(nm_contains)) continue;
+        if(!rec->name.contains(nm_contains)) continue;
       }
     }
     if(val_contains.nonempty()) {
       if(val_not) {
-	if(rec->value.contains(val_contains)) continue;
+        if(rec->value.contains(val_contains)) continue;
       }
       else {
-	if(!rec->value.contains(val_contains)) continue;
+        if(!rec->value.contains(val_contains)) continue;
       }
     }
 
     QTreeWidgetItem* witm = (QTreeWidgetItem*)rec->widget;
-    if(!witm) continue;		// shouldn't happen
+    if(!witm) continue;         // shouldn't happen
 
     rec->SetCurAction(a_or_b, on);
     UpdateItemDisp(witm, rec, a_or_b);
@@ -1513,24 +1505,24 @@ void taiObjDiffBrowser::SetFiltered(int a_or_b, bool on, bool add, bool del, boo
 void taiObjDiffBrowser::setFilteredA() {
   if(filter_dlg->Browse()) {
     SetFiltered(0, filter_dlg->action_on, filter_dlg->add, filter_dlg->del,
-		filter_dlg->chg, filter_dlg->nm_not, filter_dlg->nm_contains,
-		filter_dlg->val_not, filter_dlg->val_contains);
+                filter_dlg->chg, filter_dlg->nm_not, filter_dlg->nm_contains,
+                filter_dlg->val_not, filter_dlg->val_contains);
   }
 }
 
 void taiObjDiffBrowser::setFilteredB() {
   if(filter_dlg->Browse()) {
     SetFiltered(1, filter_dlg->action_on, filter_dlg->add, filter_dlg->del,
-		filter_dlg->chg, filter_dlg->nm_not, filter_dlg->nm_contains,
-		filter_dlg->val_not, filter_dlg->val_contains);
+                filter_dlg->chg, filter_dlg->nm_not, filter_dlg->nm_contains,
+                filter_dlg->val_not, filter_dlg->val_contains);
   }
 }
 
 /////////////////////////////////////////////////////////////
-//	taiObjDiffBrowserFilter
+//      taiObjDiffBrowserFilter
 
 taiObjDiffBrowserFilter* taiObjDiffBrowserFilter::New(int font_type,
-						      QWidget* par_window_) {
+                                                      QWidget* par_window_) {
   taiObjDiffBrowserFilter* rval = new taiObjDiffBrowserFilter(par_window_);
   rval->setFont(taiM->dialogFont(font_type));
   rval->Constr();
@@ -1575,7 +1567,7 @@ void taiObjDiffBrowserFilter::Constr() {
 
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(taiM->vsep_c);
-  layOuter->setSpacing(taiM->vspc_c); 
+  layOuter->setSpacing(taiM->vspc_c);
 
   String lb_txt = "Select types of diffs records to change, and value to set\n";
 
@@ -1583,7 +1575,7 @@ void taiObjDiffBrowserFilter::Constr() {
   layOuter->addWidget(lbl);
   layOuter->addSpacing(taiM->vsep_c);
   layOuter->addSpacing(taiM->vsep_c);
-  
+
   chkActionOn = new QCheckBox("Action &On", this);
   chkActionOn->setToolTip("State to set for the action flag for diff items -- on or off");
   chkActionOn->setCheckState(Qt::Checked);

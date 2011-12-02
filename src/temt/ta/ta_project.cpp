@@ -363,9 +363,7 @@ void UserData_DocLink::SmartRef_DataDestroying(taSmartRef* ref, taBase* obj)
 //////////////////////////////////
 
 void Doc_Group::AutoEdit() {
-  taDoc* doc;
-  taLeafItr i;
-  FOR_ITR_EL(taDoc, doc, this->, i) {
+  FOREACH_ELEM_IN_GROUP(taDoc, doc, *this) {
     if (doc->auto_open)
       doc->EditPanel(true, true); // true,true = new tab, pinned in place
   }
@@ -419,9 +417,7 @@ this is a virtual base wizard -- not the real thing -- shouldn't see this!\n";
 //////////////////////////////////
 
 void Wizard_Group::AutoEdit() {
-  taWizard* wz;
-  taLeafItr i;
-  FOR_ITR_EL(taWizard, wz, this->, i) {
+  FOREACH_ELEM_IN_GROUP(taWizard, wz, *this) {
     if (wz->auto_open)
       wz->EditPanel(true, true);// true,true = new tab, pinned in place
   }
@@ -432,9 +428,7 @@ void Wizard_Group::AutoEdit() {
 //////////////////////////////////
 
 void SelectEdit_Group::AutoEdit() {
-  taLeafItr i;
-  SelectEdit* se;
-  FOR_ITR_EL(SelectEdit, se, this->, i) {
+  FOREACH_ELEM_IN_GROUP(SelectEdit, se, *this) {
     if(se->autoEdit())
       se->EditPanel(true, true);        // true,true = new tab, pinned in place
   }
@@ -2873,9 +2867,7 @@ taBase* taRootBase::GetTemplateInstance_impl(TypeDef* typ, taBase* base) {
 }
 
 void taRootBase::SaveAll() {
-  taLeafItr i;
-  taProject* pr;
-  FOR_ITR_EL(taProject, pr, projects., i) {
+  FOREACH_ELEM_IN_GROUP(taProject, pr, projects) {
     pr->Save(); // does SaveAs if no filename
   }
 }

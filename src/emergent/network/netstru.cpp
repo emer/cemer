@@ -161,9 +161,7 @@ float Schedule::GetVal(int ctr) {
 
 static int conspec_repl_bias_ptr(UnitSpec* us, ConSpec* old, ConSpec* nw) {
   int cnt = 0;
-  UnitSpec* u2;
-  taLeafItr i;
-  FOR_ITR_EL(UnitSpec, u2, us->children., i) {
+  FOREACH_ELEM_IN_GROUP(UnitSpec, u2, us->children) {
     if(u2->bias_spec.spec.ptr() == old) {
       u2->bias_spec.SetSpec(nw); // update to new
       cnt++;
@@ -2790,14 +2788,12 @@ void ProjectionSpec::PreConnect(Projection* prjn) {
   send_gp->other_idx = prjn->recv_idx;
 
   // then crank out for remainder of units..
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, prjn->layer->units) {
     if(u == first_ru)   continue; // skip over first one..
     recv_gp = u->recv.NewPrjn(prjn);
     recv_gp->other_idx = prjn->send_idx;
   }
-  FOR_ITR_EL(Unit, u, prjn->from->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, prjn->from->units) {
     if(u == first_su)   continue; // skip over first one..
     send_gp = u->send.NewPrjn(prjn);
     send_gp->other_idx = prjn->recv_idx;
@@ -2828,9 +2824,7 @@ int ProjectionSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt
 
 void ProjectionSpec::Init_Weights(Projection* prjn) {
   if(prjn->off) return;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, prjn->layer->units) {
     for(int g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
       if(cg->prjn == prjn)
@@ -2841,9 +2835,7 @@ void ProjectionSpec::Init_Weights(Projection* prjn) {
 
 void ProjectionSpec::Init_Weights_post(Projection* prjn) {
   if(prjn->off) return;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, prjn->layer->units) {
     for(int g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
       if(cg->prjn == prjn)
@@ -2858,9 +2850,7 @@ void ProjectionSpec::C_Init_Weights(Projection*, RecvCons* cg, Unit* ru) {
 }
 
 void ProjectionSpec::Init_dWt(Projection* prjn) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, prjn->layer->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, prjn->layer->units) {
     int g;
     for(g=0; g < u->recv.size; g++) {
       RecvCons* cg = u->recv.FastEl(g);
@@ -3037,17 +3027,15 @@ void Projection::UpdateName() {
 }
 
 void Projection::RemoveCons() {
-  Unit* u;
-  taLeafItr i;
   if(layer) {
-    FOR_ITR_EL(Unit, u, layer->units., i) {
+    FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
       u->recv.RemovePrjn(this);
       u->n_recv_cons = 0;
     }
   }
 
   if(from) {
-    FOR_ITR_EL(Unit, u, from->units., i)
+    FOREACH_ELEM_IN_GROUP(Unit, u, from->units)
       u->send.RemovePrjn(this);
   }
 
@@ -3079,9 +3067,7 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
   int idx;
   DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2, from->flat_geom.x, from->flat_geom.y);
 
-  taLeafItr ri;
-  Unit* ru;
-  FOR_ITR_EL(Unit, ru, layer->units., ri) {
+  FOREACH_ELEM_IN_GROUP(Unit, ru, layer->units) {
     RecvCons* cg = ru->recv.FindFrom(from);
     if(cg == NULL)
       break;
@@ -3219,9 +3205,7 @@ bool Projection::UpdateConSpecs(bool force) {
   if(!force && (sp == m_prv_con_spec)) return false;
   if(!sp) return false;
   m_prv_con_spec = sp;          // don't redo it
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, layer->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     int g;
     for(g=0; g<u->recv.size; g++) {
       RecvCons* recv_gp = u->recv.FastEl(g);
@@ -3234,7 +3218,7 @@ bool Projection::UpdateConSpecs(bool force) {
     }
   }
   // also do the from!
-  FOR_ITR_EL(Unit, u, from->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, from->units) {
     int g;
     for(g=0; g<u->send.size; g++) {
       SendCons* send_gp = u->send.FastEl(g);
@@ -3302,16 +3286,14 @@ void Projection::FixPrjnIndexes() {
   Unit* su = from->units.Leaf(0);
   recv_idx = ru->recv.FindPrjnIdx(this);
   send_idx = su->send.FindPrjnIdx(this);
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, layer->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     for(int g=0; g<u->recv.size; g++) {
       RecvCons* recv_gp = u->recv.FastEl(g);
       if(recv_gp->prjn != this) continue;
       recv_gp->other_idx = send_idx;
     }
   }
-  FOR_ITR_EL(Unit, u, from->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, from->units) {
     int g;
     for(g=0; g<u->send.size; g++) {
       SendCons* send_gp = u->send.FastEl(g);
@@ -3362,17 +3344,13 @@ void Projection::Copy_Weights(const Projection* src) {
 }
 
 void Projection::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, layer->units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units)
     u->SaveWeights_strm(strm, this, fmt);
 }
 
 int Projection::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
   int rval = 0;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, layer->units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     rval = u->LoadWeights_strm(strm, this, fmt, quiet);
     if(rval != taMisc::TAG_END) break;
   }
@@ -3398,16 +3376,12 @@ int Projection::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, boo
 }
 
 void Projection::TransformWeights(const SimpleMathSpec& trans) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, layer->units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units)
     u->TransformWeights(trans, this);
 }
 
 void Projection::AddNoiseToWeights(const Random& noise_spec) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, layer->units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units)
     u->AddNoiseToWeights(noise_spec, this);
 }
 
@@ -3415,18 +3389,14 @@ int Projection::PruneCons(const SimpleMathSpec& pre_proc,
                               Relation::Relations rel, float cmp_val)
 {
   int rval = 0;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, layer->units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units)
     rval += u->PruneCons(pre_proc, rel, cmp_val, this);
   return rval;
 }
 
 int Projection::LesionCons(float p_lesion, bool permute) {
   int rval = 0;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, layer->units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units)
     rval += u->LesionCons(p_lesion, permute, this);
   return rval;
 }
@@ -3511,9 +3481,7 @@ void Unit_Group::Copy_Weights(const Unit_Group* src) {
 
 void Unit_Group::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
   strm << "<Ug>\n";
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     int lfi = u->GetMyLeafIndex();
     strm << "<UgUn " << lfi << " " << u->name << ">\n";
     u->SaveWeights_strm(strm, NULL, fmt);
@@ -3586,16 +3554,12 @@ int Unit_Group::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, boo
 }
 
 void Unit_Group::TransformWeights(const SimpleMathSpec& trans) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this)
     u->TransformWeights(trans);
 }
 
 void Unit_Group::AddNoiseToWeights(const Random& noise_spec) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this)
     u->AddNoiseToWeights(noise_spec);
 }
 
@@ -3603,18 +3567,14 @@ int Unit_Group::PruneCons(const SimpleMathSpec& pre_proc,
                         Relation::Relations rel, float cmp_val)
 {
   int rval = 0;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this)
     rval += u->PruneCons(pre_proc, rel, cmp_val);
   return rval;
 }
 
 int Unit_Group::LesionCons(float p_lesion, bool permute) {
   int rval = 0;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this)
     rval += u->LesionCons(p_lesion, permute);
   return rval;
 }
@@ -3664,9 +3624,7 @@ bool Unit_Group::UnitValuesToArray(float_Array& ary, const String& variable) {
                  el_typ->name)) {
     return false;
   }
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     float* val = (float*)md->GetOff((void*)u);
     ary.Add(*val);
   }
@@ -3682,9 +3640,7 @@ bool Unit_Group::UnitValuesToMatrix(float_Matrix& mat, const String& variable) {
   }
   if(mat.size < leaves) return false;
   int cnt=0;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     float* val = (float*)md->GetOff((void*)u);
     mat.FastEl_Flat(cnt++) = *val;
   }
@@ -3700,9 +3656,7 @@ bool Unit_Group::UnitValuesFromArray(float_Array& ary, const String& variable) {
     return false;
   }
   int cnt=0;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     float* val = (float*)md->GetOff((void*)u);
     *val = ary[cnt++];
     if(cnt >= ary.size)
@@ -3720,9 +3674,7 @@ bool Unit_Group::UnitValuesFromMatrix(float_Matrix& mat, const String& variable)
     return false;
   }
   int cnt=0;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     float* val = (float*)md->GetOff((void*)u);
     *val = mat.FastEl_Flat(cnt++);
     if(cnt >= mat.size)
@@ -3769,9 +3721,7 @@ DataTable* Unit_Group::ConVarsToTable(DataTable* dt, const String& var1, const S
     new_table = true;
   }
   dt->StructUpdate(true);
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     u->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
                       var9, var10, var11, var12, var13, var14,  prjn);
   }
@@ -3794,9 +3744,7 @@ bool Unit_Group::VarToVarCopy(const String& dest_var, const String& src_var) {
                  el_typ->name)) {
     return false;
   }
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     *((float*)dest_md->GetOff((void*)u)) = *((float*)src_md->GetOff((void*)u));
   }
   return true;
@@ -3809,9 +3757,7 @@ bool Unit_Group::VarToVal(const String& dest_var, float val) {
                  el_typ->name)) {
     return false;
   }
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, this->, i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     *((float*)dest_md->GetOff((void*)u)) = val;
   }
   return true;
@@ -4155,48 +4101,36 @@ taBase::DumpQueryResult Layer::Dump_QuerySaveMember(MemberDef* md) {
 }
 
 void Layer::RecvConsPreAlloc(int alloc_no, Projection* prjn) {
-  Unit* ru;
-  taLeafItr ru_itr;
-  FOR_ITR_EL(Unit, ru, units., ru_itr)
+  FOREACH_ELEM_IN_GROUP(Unit, ru, units)
     ru->RecvConsPreAlloc(alloc_no, prjn);
 }
 
 void Layer::SendConsPreAlloc(int alloc_no, Projection* prjn) {
-  Unit* su;
-  taLeafItr su_itr;
-  FOR_ITR_EL(Unit, su, units., su_itr)
+  FOREACH_ELEM_IN_GROUP(Unit, su, units)
     su->SendConsPreAlloc(alloc_no, prjn);
 }
 
 void Layer::SendConsPostAlloc(Projection* prjn) {
-  Unit* su;
-  taLeafItr su_itr;
-  FOR_ITR_EL(Unit, su, units., su_itr)
+  FOREACH_ELEM_IN_GROUP(Unit, su, units)
     su->SendConsPostAlloc(prjn);
 }
 
 void Layer::RecvConsPostAlloc(Projection* prjn) {
-  Unit* su;
-  taLeafItr su_itr;
-  FOR_ITR_EL(Unit, su, units., su_itr)
+  FOREACH_ELEM_IN_GROUP(Unit, su, units)
     su->RecvConsPostAlloc(prjn);
 }
 
 void Layer::SyncSendPrjns() {
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i) {
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
     Layer* snd = p->from;
     if(snd == NULL) continue;
     snd->send_prjns.LinkUnique(p); // make sure senders are all represented
   }
   // now make sure that we don't have any spurious ones
-  int pi;
-  for(pi=send_prjns.size-1; pi>=0; pi--) {
-    p = (Projection*)send_prjns.FastEl(pi);
-    if(p == NULL) continue;
-    if((!(bool)p->layer) || (p->from.ptr() != this))
-      send_prjns.RemoveIdx(pi); // get rid of it!
+  for(int pi = send_prjns.size-1; pi >= 0; pi--) {
+    if (Projection* p = (Projection*)send_prjns.FastEl(pi))
+      if((!(bool)p->layer) || (p->from.ptr() != this))
+        send_prjns.RemoveIdx(pi); // get rid of it!
   }
 }
 
@@ -4339,9 +4273,7 @@ void Layer::CheckSpecs() {
   unit_spec.CheckSpec(units.el_typ);
   UpdateUnitSpecs();
 
-  Projection* prjn;
-  taLeafItr j;
-  FOR_ITR_EL(Projection, prjn, projections.,j) {
+  FOREACH_ELEM_IN_GROUP(Projection, prjn, projections) {
     prjn->CheckSpecs();
   }
 }
@@ -4362,9 +4294,7 @@ void Layer::BuildUnits() {
         units_changed = true;
       units.SetSize(flat_geom.n);
       units.EnforceType();
-      Unit* u;
-      taLeafItr i;
-      FOR_ITR_EL(Unit, u, units., i)
+      FOREACH_ELEM_IN_GROUP(Unit, u, units)
         u->BuildUnits();
     }
     else {
@@ -4381,9 +4311,7 @@ void Layer::BuildUnits() {
           units_changed = true;
         ug->SetSize(un_geom.n);
         ug->EnforceType();
-        Unit* u;
-        taLeafItr ui;
-        FOR_ITR_EL(Unit, u, ug->, ui)
+        FOREACH_ELEM_IN_GROUP(Unit, u, *ug)
           u->BuildUnits();
         ug->StructUpdate(false);
       }
@@ -4398,27 +4326,21 @@ void Layer::BuildUnits() {
       units_changed = true;
     units.SetSize(un_geom.n);
     units.EnforceType();
-    Unit* u;
-    taLeafItr i;
-    FOR_ITR_EL(Unit, u, units., i)
+    FOREACH_ELEM_IN_GROUP(Unit, u, units)
       u->BuildUnits();
   }
 
   LayoutUnits();
   // assign the spec
-  taLeafItr i;
-  Unit* u;
-  FOR_ITR_EL(Unit, u, units.,i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     u->SetUnitSpec(unit_spec.SPtr());
   }
   if(units_changed) {
     // tell all projections that they need to be connected
-    Projection* pjn;
-    taLeafItr j;
-    FOR_ITR_EL(Projection, pjn, projections., j) {
+    FOREACH_ELEM_IN_GROUP(Projection, pjn, projections) {
       pjn->projected = false;
     }
-    FOR_ITR_EL(Projection, pjn, send_prjns., j) {
+    FOREACH_ELEM_IN_GROUP(Projection, pjn, send_prjns) {
       pjn->projected = false;
     }
   }
@@ -4429,9 +4351,7 @@ void Layer::BuildUnits() {
 
 void Layer::BuildUnits_Threads(Network* net) {
   units_flat_idx = net->units_flat.size;
-  Unit* un;
-  taLeafItr ui;
-  FOR_ITR_EL(Unit, un, units., ui) {
+  FOREACH_ELEM_IN_GROUP(Unit, un, units) {
     un->flat_idx = net->units_flat.size;
     net->units_flat.Add(un);
   }
@@ -4467,9 +4387,7 @@ bool Layer::CheckBuild(bool quiet) {
     }
   }
 
-  Unit* u;
-  taLeafItr ui;
-  FOR_ITR_EL(Unit, u, units., ui) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     if(CheckError((u->GetTypeDef() != units.el_typ), quiet, rval,
                   "unit type not correct -- should be:", units.el_typ->name)) {
       return false;
@@ -4481,9 +4399,7 @@ bool Layer::CheckBuild(bool quiet) {
 }
 
 bool Layer::CheckConnect(bool quiet) {
-  Projection* prjn;
-  taLeafItr j;
-  FOR_ITR_EL(Projection, prjn, projections.,j) {
+  FOREACH_ELEM_IN_GROUP(Projection, prjn, projections) {
     if(!prjn->CheckConnect(quiet)) return false;
   }
   return true;
@@ -4510,31 +4426,24 @@ void Layer::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void Layer::FixPrjnIndexes() {
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i)
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
     p->FixPrjnIndexes();
 }
 
 void Layer::RemoveCons() {
   taMisc::Busy();
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i) {
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
     if(p->spec.spec)
       p->RemoveCons();
   }
-  Unit* u;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units)
     u->RemoveCons();
   taMisc::DoneBusy();
 }
 
 void Layer::RemoveCons_Net() {
   taMisc::Busy();
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units)
     u->RemoveCons();
   taMisc::DoneBusy();
 }
@@ -4565,21 +4474,16 @@ void Layer::RemoveUnitGroups() {
 }
 
 void Layer::PreConnect() {
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i)
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
     p->PreConnect();
 }
 
 void Layer::Connect() {
   taMisc::Busy();
   StructUpdate(true);
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i)
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
     p->Connect();
-  Unit* u;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units)
     u->BuildUnits();                    // this is for the bias connections!
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -4604,26 +4508,20 @@ void Layer::DisConnect() {
 
 int Layer::CountRecvCons() {
   int n_cons = 0;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     n_cons += u->CountRecvCons();
   }
   return n_cons;
 }
 
 void Layer::LinkPtrCons() {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units)
     u->LinkPtrCons();
 }
 
 void Layer::SetLayUnitExtFlags(int flg) {
   SetExtFlag(flg);
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units)
     u->SetExtFlag((Unit::ExtType)flg);
 }
 
@@ -4738,40 +4636,30 @@ void Layer::ApplyLayerFlags(Unit::ExtType act_ext_flags) {
 void Layer::Init_InputData(Network* net) {
   if(ext_flag == Unit::NO_EXTERNAL)
     return;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units)
     u->Init_InputData();
   ext_flag = Unit::NO_EXTERNAL;
 }
 
 void  Layer::Init_Acts(Network* net) {
   ext_flag = Unit::NO_EXTERNAL;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units)
     u->Init_Acts(net);
 }
 
 void  Layer::Init_dWt(Network* net) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units)
     u->Init_dWt(net);
 }
 
 void Layer::Init_Weights(Network* net) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units)
     u->Init_Weights(net);
   sse = 0.0f;
 }
 
 void Layer::Init_Weights_post(Network* net) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units)
     u->Init_Weights_post(net);
 }
 
@@ -4779,10 +4667,8 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   sse = 0.0f;
   if(!HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
-  Unit* u;
-  taLeafItr i;
   bool has_targ;
-  FOR_ITR_EL(Unit, u, units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     sse += u->Compute_SSE(net, has_targ);
     if(has_targ) n_vals++;
   }
@@ -4802,10 +4688,8 @@ int Layer::Compute_PRerr(Network* net) {
   int n_vals = 0;
   prerr.InitVals();
   if(!HasExtFlag(Unit::TARG | Unit::COMP)) return 0;
-  Unit* u;
-  taLeafItr i;
   float true_pos, false_pos, false_neg;
-  FOR_ITR_EL(Unit, u, units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     bool has_targ = u->Compute_PRerr(net, true_pos, false_pos, false_neg);
     if(has_targ) {
       n_vals++;
@@ -4860,9 +4744,7 @@ int Layer::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool qui
 
 void Layer::PropagateInputDistance() {
   int new_dist = dist.fm_input + 1;
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, send_prjns., i) {
+  FOREACH_ELEM_IN_GROUP(Projection, p, send_prjns) {
     if(!p->layer || p->layer->lesioned()) continue;
     if(p->layer->dist.fm_input >= 0) { // already set
       if(new_dist < p->layer->dist.fm_input) { // but we're closer
@@ -4880,9 +4762,7 @@ void Layer::PropagateInputDistance() {
 
 void Layer::PropagateOutputDistance() {
   int new_dist = dist.fm_output + 1;
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i) {
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
     if(!p->from || p->from->lesioned()) continue;
     if(p->from->dist.fm_output >= 0) { // already set
       if(new_dist < p->from->dist.fm_output) { // but we're closer
@@ -4899,9 +4779,7 @@ void Layer::PropagateOutputDistance() {
 }
 
 void Layer::Compute_PrjnDirections() {
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i) {
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
     if(!p->from || p->from->lesioned()) {
       p->direction = Projection::DIR_UNKNOWN;
       continue;
@@ -5075,9 +4953,7 @@ bool Layer::SetUnitNamesFromDataCol(const DataCol* unit_names_col, int max_un_ch
 }
 
 void Layer::GetLocalistName() {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     u->GetLocalistName();
   }
   GetUnitNames(); // grab from units
@@ -5099,9 +4975,7 @@ int Layer::PruneCons(const SimpleMathSpec& pre_proc,
 
 int Layer::ProbAddCons(float p_add_con, float init_wt) {
   int rval = 0;
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i)
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
     rval += p->ProbAddCons(p_add_con, init_wt);
   return rval;
 }
@@ -5124,9 +4998,7 @@ bool Layer::UpdateUnitSpecs(bool force) {
   UnitSpec* sp = unit_spec.SPtr();
   if(!sp) return false;
   m_prv_unit_spec = sp;         // don't redo it
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     if(sp->CheckObjectType(u))
       u->SetUnitSpec(sp);
     else
@@ -5137,9 +5009,7 @@ bool Layer::UpdateUnitSpecs(bool force) {
 
 bool Layer::UpdateConSpecs(bool force) {
   bool rval = true;
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i) {
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
     if(!p->UpdateConSpecs(force))
       rval = false;
   }
@@ -5176,9 +5046,7 @@ void Layer::MonitorVar(NetMonitor* net_mon, const String& variable) {
 }
 
 bool Layer::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap) {
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     if(!u->Snapshot(variable, math_op, arg_is_snap)) return false;
   }
   return true;
@@ -5200,18 +5068,14 @@ int Layer::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
 
 int Layer::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
   int nchg = 0;
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i)
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
     nchg += p->ReplaceConSpec(old_sp, new_sp);
   return nchg;
 }
 
 int Layer::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) {
   int nchg = 0;
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i)
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
     nchg += p->ReplacePrjnSpec(old_sp, new_sp);
   return nchg;
 }
@@ -5231,9 +5095,7 @@ DataTable* Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
   }
   if(send_lay == NULL) return NULL;
   bool gotone = false;
-  Projection* p;
-  taLeafItr i;
-  FOR_ITR_EL(Projection, p, projections., i) {
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
     if(p->from.ptr() != send_lay) continue;
     p->WeightsToTable(dt);
     gotone = true;
@@ -5491,9 +5353,7 @@ bool Layer::DMem_DistributeUnits_impl(DMemShare& dms) {
   int this_proc = 0; MPI_Comm_rank(dmem_share_units.comm, &this_proc);
   if((dmem_dist == DMEM_DIST_DEFAULT) || (units.gp.size <= 0)) {
     int cnt = 0;
-    taLeafItr ui;
-    Unit* u;
-    FOR_ITR_EL(Unit, u, units., ui) {
+    FOREACH_ELEM_IN_GROUP(Unit, u, units) {
       u->DMem_SetLocalProc(cnt % np);
       u->DMem_SetThisProc(this_proc);
       dms.Link(u);
@@ -5506,9 +5366,7 @@ bool Layer::DMem_DistributeUnits_impl(DMemShare& dms) {
     for(g=0; g<units.gp.size; g++) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
       int cnt = 0;
-      taLeafItr ui;
-      Unit* u;
-      FOR_ITR_EL(Unit, u, ug->, ui) {
+      FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
         u->DMem_SetLocalProc(cnt % np);
         u->DMem_SetThisProc(this_proc);
         dms.Link(u);
@@ -5588,10 +5446,8 @@ void Layer_Group::UpdateMaxDispSize() {
   TDCoord min_size;
   bool first_min = true;
 
-  Layer* l;
-  taLeafItr i;
   TDCoord l_pos; // for abs_pos
-  FOR_ITR_EL(Layer, l, this->, i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
     l->GetAbsPos(l_pos);
     TDCoord lrelpos = l_pos - pos; // subtract us
     max_disp_size.z = MAX(max_disp_size.z, 1 + lrelpos.z);
@@ -5615,7 +5471,7 @@ void Layer_Group::UpdateMaxDispSize() {
   if(!owner->InheritsFrom(&TA_Network)) {
     if(min_size != pos) {
       TDCoord pos_chg = min_size - pos;
-      FOR_ITR_EL(Layer, l, this->, i) {
+      FOREACH_ELEM_IN_GROUP(Layer, l, *this) {
         l->pos -= pos_chg;      // fix up all the layer rels to be less.
       }
       max_disp_size -= pos_chg; // reduce by amount moving
@@ -5710,33 +5566,25 @@ void Layer_Group::LayerPos_Cleanup() {
 }
 
 void Layer_Group::TriggerContextUpdate() {
-  taLeafItr itr;
-  Layer* lay;
-  FOR_ITR_EL_REV(Layer, lay, this->, itr) {
+  FOREACH_ELEM_IN_GROUP_REV(Layer, lay, *this) {
     lay->TriggerContextUpdate();
   }
 }
 
 void Layer_Group::LesionLayers() {
-  taLeafItr itr;
-  Layer* lay;
-  FOR_ITR_EL(Layer, lay, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, *this) {
     lay->Lesion();
   }
 }
 
 void Layer_Group::UnLesionLayers() {
-  taLeafItr itr;
-  Layer* lay;
-  FOR_ITR_EL(Layer, lay, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, *this) {
     lay->UnLesion();
   }
 }
 
 void Layer_Group::IconifyLayers() {
-  taLeafItr itr;
-  Layer* lay;
-  FOR_ITR_EL(Layer, lay, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, *this) {
     lay->Iconify();
   }
   UpdateMaxDispSize();
@@ -5744,9 +5592,7 @@ void Layer_Group::IconifyLayers() {
 }
 
 void Layer_Group::DeIconifyLayers() {
-  taLeafItr itr;
-  Layer* lay;
-  FOR_ITR_EL(Layer, lay, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, *this) {
     lay->DeIconify();
   }
   UpdateMaxDispSize();
@@ -5754,9 +5600,7 @@ void Layer_Group::DeIconifyLayers() {
 }
 
 void Layer_Group::DispScaleLayers(float disp_scale) {
-  taLeafItr itr;
-  Layer* lay;
-  FOR_ITR_EL(Layer, lay, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, *this) {
     lay->SetDispScale(disp_scale);
   }
   UpdateMaxDispSize();
@@ -6070,9 +5914,7 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
   // IMPORTANT: lay sync guys MUST have all units.leaves units in units_flat --
   // the run code assumes this is true
 
-  Layer* lay;
-  taLeafItr li;
-  FOR_ITR_EL(Layer, lay, net->layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if(lay->lesioned()) continue; // don't even add units from lesioned layers!!
     int st_idx = lay->units_flat_idx;
     const int nu = lay->units.leaves;
@@ -6449,12 +6291,8 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
 
   if(old_load_cons) { // old dump format
     Connect();                    // needs an explicit connect to make everything
-    Layer* lay;
-    taLeafItr li;
-    FOR_ITR_EL(Layer, lay, layers., li) {
-      Unit* u;
-      taLeafItr ui;
-      FOR_ITR_EL(Unit, u, lay->units., ui) {
+    FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+      FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
         for(int g=0; g<u->recv.size; g++) {
           RecvCons* cg = u->recv.FastEl(g);
           cg->Dump_Load_Old_Cons(u, g);
@@ -6547,9 +6385,7 @@ void Network::Build() {
 }
 
 void Network::CheckSpecs() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i)
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers)
     l->CheckSpecs();
 }
 
@@ -6568,9 +6404,7 @@ void Network::BuildLayers() {
 void Network::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     l->BuildUnits();
   }
@@ -6589,9 +6423,7 @@ void Network::BuildUnits_Threads() {
   // real indexes start at 1, to allow 0 to be a dummy case for inactive units that may
   // nevertheless get a send netin call to them -- all those just go to this 0 bin
   units_flat.Add(NULL);         // add a dummy null
-  Layer* l;
-  taLeafItr li;
-  FOR_ITR_EL(Layer, l, layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) {
       l->units_flat_idx = 0;
       continue; // don't even add units from lesioned layers!!
@@ -6641,18 +6473,14 @@ void Network::Connect() {
 void Network::CountRecvCons() {
   n_units = 0;
   n_cons = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     n_cons += l->CountRecvCons();
     n_units += l->units.leaves;
   }
 }
 
 bool Network::CheckBuild(bool quiet) {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     if(!l->CheckBuild(quiet)) {
       if(!quiet)
@@ -6664,9 +6492,7 @@ bool Network::CheckBuild(bool quiet) {
 }
 
 bool Network::CheckConnect(bool quiet) {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     if(!l->CheckConnect(quiet)) {
       if(!quiet)
@@ -6692,25 +6518,19 @@ void Network::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 void Network::SetUnitType(TypeDef* td) {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     l->SetUnitType(td);
   }
 }
 
 void Network::SyncSendPrjns() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     l->SyncSendPrjns();
   }
 }
 
 void Network::FixPrjnIndexes() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     l->FixPrjnIndexes();
   }
 }
@@ -6721,49 +6541,47 @@ void Network::ConnectUnits(Unit* u_to, Unit* u_from, bool record, ConSpec* consp
 
   Layer* lay = GET_OWNER(u_to,Layer);
   Layer* l_from = GET_OWNER(u_from,Layer);
-  Projection* pjn = NULL;
-  taLeafItr p;
   // check to see if a pjrn already exists
-  FOR_ITR_EL(Projection, pjn, lay->projections., p) {
+  FOREACH_ELEM_IN_GROUP(Projection, pjn, lay->projections) {
     if((pjn->from.ptr() == l_from) &&
        (pjn->spec->InheritsFrom(&TA_CustomPrjnSpec)) &&
        ((conspec == NULL) || (pjn->con_spec == conspec)))
-      break; // ok found one
-  }
-  if(pjn==NULL) { // no projection
-#ifdef DMEM_COMPILE
-    if(record && (taMisc::dmem_nprocs == 1)) { // don't actually run under gui in dmem mode
-#endif
-      pjn = (Projection*) lay->projections.New(1);
-      pjn->SetCustomFrom(l_from);
-      pjn->spec.type = &TA_CustomPrjnSpec;
-      if(conspec)
-        pjn->con_spec.SetSpec(conspec);
-      pjn->spec.UpdateAfterEdit();
-      pjn->projected = true;
-      pjn->UpdateAfterEdit();
-#ifdef DMEM_COMPILE
-    }
-#endif
-    if (record) {
-      taMisc::RecordScript(lay->projections.GetPath() + ".NewEl(1);\n");
-      taMisc::SREAssignment(pjn,pjn->FindMember("from_type"));
-      taMisc::ScriptRecordAssignment(pjn,pjn->FindMember("from"));
-      taMisc::RecordScript(pjn->GetPath() + ".spec.type = CustomPrjnSpec;");
+    {
+      u_to->ConnectFromCk(u_from,pjn);
+      if (record)
+        taMisc::RecordScript(u_to->GetPath() + ".ConnectFromCk(" + u_from->GetPath() +
+                                                ", " + pjn->GetPath() + ");\n");
+      lay->UpdateAfterEdit();
+      return;
     }
   }
 
-  u_to->ConnectFromCk(u_from,pjn);
-  if (record)
-    taMisc::RecordScript(u_to->GetPath() + ".ConnectFromCk(" + u_from->GetPath() +
-                                            ", " + pjn->GetPath() + ");\n");
-  lay->UpdateAfterEdit();
+  // no such projection found
+  Projection* pjn = 0;
+#ifdef DMEM_COMPILE
+  if(record && (taMisc::dmem_nprocs == 1)) { // don't actually run under gui in dmem mode
+#endif
+    pjn = (Projection*) lay->projections.New(1);
+    pjn->SetCustomFrom(l_from);
+    pjn->spec.type = &TA_CustomPrjnSpec;
+    if(conspec)
+      pjn->con_spec.SetSpec(conspec);
+    pjn->spec.UpdateAfterEdit();
+    pjn->projected = true;
+    pjn->UpdateAfterEdit();
+#ifdef DMEM_COMPILE
+  }
+#endif
+  if (record && pjn) {
+    taMisc::RecordScript(lay->projections.GetPath() + ".NewEl(1);\n");
+    taMisc::SREAssignment(pjn,pjn->FindMember("from_type"));
+    taMisc::ScriptRecordAssignment(pjn,pjn->FindMember("from"));
+    taMisc::RecordScript(pjn->GetPath() + ".spec.type = CustomPrjnSpec;");
+  }
 }
 
 void Network::LinkPtrCons() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i)
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers)
     l->LinkPtrCons();
 }
 
@@ -6850,9 +6668,7 @@ void Network::RemoveUnits() {
   taMisc::Busy();
   StructUpdate(true);
   //  RemoveMonitors(); // not needed with smartref!
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i)
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers)
     l->RemoveUnits();
   n_cons = 0;
   StructUpdate(false);
@@ -6863,9 +6679,7 @@ void Network::RemoveUnitGroups() {
   taMisc::Busy();
   StructUpdate(true);
   // RemoveMonitors(); // not needed with smartref!
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i)
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers)
     l->RemoveUnitGroups();
   StructUpdate(false);
   taMisc::DoneBusy();
@@ -6875,18 +6689,14 @@ void Network::RemoveCons() {
   taMisc::Busy();
   StructUpdate(true);
   //  RemoveMonitors(); // not needed with smartref!
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i)
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers)
     l->RemoveCons_Net();
   StructUpdate(false);
   taMisc::DoneBusy();
 }
 
 void Network::Init_InputData(){
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->Init_InputData(this);
   }
@@ -6894,18 +6704,14 @@ void Network::Init_InputData(){
 
 void Network::Init_Acts(){
   send_netin_tmp.InitVals(0.0f);
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->Init_Acts(this);
   }
 }
 
 void Network::Init_dWt(){
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->Init_dWt(this);
   }
@@ -6917,9 +6723,7 @@ void Network::Init_Weights() {
   if (!CheckConfig(false)) return;
 
   taMisc::Busy();
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->Init_Weights(this);
   }
@@ -6937,9 +6741,7 @@ void Network::Init_Weights() {
 }
 
 void Network::Init_Weights_post() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->Init_Weights_post(this);
   }
@@ -7087,9 +6889,7 @@ void Network::Compute_SSE(bool unit_avg, bool sqrt) {
   sse = 0.0f;
   int n_vals = 0;
   int lay_vals = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     sse += l->Compute_SSE(this, lay_vals, unit_avg, sqrt);
     n_vals += lay_vals;
@@ -7107,9 +6907,7 @@ void Network::Compute_SSE(bool unit_avg, bool sqrt) {
 void Network::Compute_PRerr() {
   prerr.InitVals();
   int n_vals = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     int lay_vals = l->Compute_PRerr(this);
     if(lay_vals > 0) {
@@ -7202,9 +7000,7 @@ DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
     col->desc = "name of layer spec to use for this layer";
   }
 
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
 //     if(l->lesioned()) continue;   // for this, get everything
     Layer_Group* lg = NULL;
     if(l->owner != &layers)
@@ -7257,12 +7053,12 @@ DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
 void Network::NetStructFmTable(DataTable* dt) {
   if(TestError(!dt, "NetStructFmTable", "must pass the data table argument"))
     return;
-  Layer* l;
-  taLeafItr i;
   // set tag for all layers to do cleanup at end
-  FOR_ITR_EL(Layer, l, layers., i) {
-    l->SetBaseFlag(BF_MISC1);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    lay->SetBaseFlag(BF_MISC1);
   }
+
+  Layer *l = 0;
   // first pass build all the layers
   for(int i=0;i<dt->rows; i++) {
     String gpnm = trim(dt->GetVal("Group", i).toString());
@@ -7362,9 +7158,7 @@ DataTable* Network::NetPrjnsToTable(DataTable* dt) {
   col = dt->FindMakeColName("ConSpec", idx, VT_STRING);
   col->desc = "name of connection spec for this projection";
 
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
 //     if(l->lesioned()) continue;   // for this, get everything
     for(int i=0; i<l->projections.size; i++) {
       Projection* pj = l->projections.FastEl(i);
@@ -7395,9 +7189,7 @@ void Network::DMem_SyncNRecvCons() {
   if(dmem_nprocs_actual <= 1) return;
   if(n_cons <= 0) return;
   if(dmem_sync_level == DMEM_SYNC_LAYER) {
-    Layer* l;
-    taLeafItr i;
-    FOR_ITR_EL(Layer, l, layers., i) {
+    FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
       if(!l->lesioned())
         l->DMem_SyncNRecvCons();
     }
@@ -7407,13 +7199,9 @@ void Network::DMem_SyncNRecvCons() {
   }
   // need to re-agg all the cons after syncing!
   n_cons = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
-    Unit* u;
-    taLeafItr i;
-    FOR_ITR_EL(Unit, u, l->units., i) {
+    FOREACH_ELEM_IN_GROUP(Unit, u, l->units) {
       n_cons += u->n_recv_cons;
     }
   }
@@ -7446,9 +7234,7 @@ void Network::DMem_DistributeUnits() {
 
   dmem_share_units.Reset();
   bool any_custom_distrib = false;
-  Layer* lay;
-  taLeafItr li;
-  FOR_ITR_EL(Layer, lay, layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
     lay->dmem_share_units.comm = dmem_share_units.comm;
     if(dmem_sync_level == DMEM_SYNC_LAYER) {
@@ -7485,12 +7271,9 @@ void Network::DMem_InitAggs() {
 
 void Network::DMem_PruneNonLocalCons() {
   if(dmem_nprocs_actual <= 1) return;
-  taLeafItr li, ui;
-  Unit* u;
-  Layer *l;
-  FOR_ITR_EL(Layer, l, layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
-    FOR_ITR_EL(Unit, u, l->units., ui) {
+    FOREACH_ELEM_IN_GROUP(Unit, u, l->units) {
       if(u->DMem_IsLocal()) {
         continue;
       }
@@ -7519,13 +7302,9 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   values.SetSize(n_cons + n_units);
 
   int cidx = 0;
-  Layer* lay;
-  taLeafItr li;
-  FOR_ITR_EL(Layer, lay, layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
-    Unit* un;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, un, lay->units., ui) {
+    FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
       if(un->bias.size)
         values.FastEl(cidx++) = un->bias.OwnCn(0)->dwt;
       if(RecvOwnsCons()) {
@@ -7550,11 +7329,9 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
                "Network::SumDWts", "Allreduce");
 
   cidx = 0;
-  FOR_ITR_EL(Layer, lay, layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
-    Unit* un;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, un, lay->units., ui) {
+    FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
       if(un->bias.size)
         un->bias.OwnCn(0)->dwt = results.FastEl(cidx++);
       if(RecvOwnsCons()) {
@@ -7586,13 +7363,9 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
   values.SetSize(n_cons + n_units);
 
   int cidx = 0;
-  Layer* lay;
-  taLeafItr li;
-  FOR_ITR_EL(Layer, lay, layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
-    Unit* un;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, un, lay->units., ui) {
+    FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
       if(un->bias.size)
         values.FastEl(cidx++) = un->bias.OwnCn(0)->wt;
       if(RecvOwnsCons()) {
@@ -7618,11 +7391,9 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
 
   float avg_mult = 1.0f / (float)np;
   cidx = 0;
-  FOR_ITR_EL(Layer, lay, layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
-    Unit* un;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, un, lay->units., ui) {
+    FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
       if(un->bias.size)
         un->bias.OwnCn(0)->wt = avg_mult * results.FastEl(cidx++);
       if(RecvOwnsCons()) {
@@ -7659,14 +7430,10 @@ void Network::DMem_SymmetrizeWts() {
   static int_Array all_unit_idxs;
   static float_Array all_wt_vals;
 
-  Layer* lay;
-  taLeafItr li;
-  FOR_ITR_EL(Layer, lay, layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
     if(lay->projections.size == 0) continue;
-    Unit* un;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, un, lay->units., ui) {
+    FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
       int gi;
       for(gi=0;gi<un->recv.size;gi++) {
         RecvCons* cg = un->recv[gi];
@@ -7675,9 +7442,7 @@ void Network::DMem_SymmetrizeWts() {
         // check for presence of reciprocal connections in the first place..
         Layer* fmlay = cg->prjn->from;
         bool has_recip_prjn = false;
-        Projection* fmpj;
-        taLeafItr pji;
-        FOR_ITR_EL(Projection, fmpj, fmlay->projections., pji) {
+        FOREACH_ELEM_IN_GROUP(Projection, fmpj, fmlay->projections) {
           if(fmpj->from == lay) {
             has_recip_prjn = true;
             break;
@@ -7783,9 +7548,7 @@ void Network::SaveWeights_strm(ostream& strm, Network::WtSaveFormat fmt) {
   strm << "<Fmt " << GetTypeDef()->GetEnumString("WtSaveFormat", fmt) << ">\n"
        << "<Name " << GetName() << ">\n"
        << "<Epoch " << epoch << ">\n";
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     strm << "<Lay " << l->name << ">\n";
     l->SaveWeights_strm(strm, (RecvCons::WtSaveFormat)fmt);
@@ -7865,14 +7628,12 @@ bool Network::LoadWeights(const String& fname, bool quiet) {
 void Network::LayerZPos_Unitize() {
   int_Array zvals;
   TDCoord lpos;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     l->GetAbsPos(lpos);
     zvals.AddUnique(lpos.z);
   }
   zvals.Sort();
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     int nw_z = zvals.FindEl(l->pos.z); // replace with its index on sorted list..
     l->pos.z += nw_z - l->pos.z;
   }
@@ -7887,22 +7648,20 @@ void Network::LayerPos_Cleanup() {
 
 void Network::Compute_LayerDistances() {
   // first reset all
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     l->dist.fm_input = -1; l->dist.fm_output = -1;
   }
 
   // next go through and find inputs
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     if(l->layer_type != Layer::INPUT) continue;
     l->dist.fm_input = 0;
     l->PropagateInputDistance();
   }
   // then outputs
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     if(!((l->layer_type == Layer::OUTPUT) || (l->layer_type == Layer::TARGET))) continue;
     l->dist.fm_output = 0;
@@ -7912,18 +7671,14 @@ void Network::Compute_LayerDistances() {
 
 void Network::Compute_PrjnDirections() {
   Compute_LayerDistances();     // required data
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     l->Compute_PrjnDirections();
   }
 }
 
 void Network::SetUnitNames(bool force_use_unit_names) {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->SetUnitNames(force_use_unit_names);
   }
@@ -7948,9 +7703,7 @@ void Network::SetUnitNamesFromDataTable(DataTable* undt, int max_unit_chars,
 }
 
 void Network::GetUnitNames(bool force_use_unit_names) {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->GetUnitNames(force_use_unit_names);
   }
@@ -7958,9 +7711,7 @@ void Network::GetUnitNames(bool force_use_unit_names) {
 }
 
 void Network::GetLocalistName() {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->GetLocalistName();
   }
@@ -8009,9 +7760,7 @@ bool Network::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg
       return false;
   }
 
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     if(!l->Snapshot(var, math_op, arg_is_snap)) return false;
   }
@@ -8061,9 +7810,7 @@ void Network::NetControlPanel(SelectEdit* editor, const String& extra_label, con
 
 void Network::TransformWeights(const SimpleMathSpec& trans) {
   taMisc::Busy();
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->TransformWeights(trans);
   }
@@ -8073,9 +7820,7 @@ void Network::TransformWeights(const SimpleMathSpec& trans) {
 
 void Network::AddNoiseToWeights(const Random& noise_spec) {
   taMisc::Busy();
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->AddNoiseToWeights(noise_spec);
   }
@@ -8089,9 +7834,7 @@ int Network::PruneCons(const SimpleMathSpec& pre_proc,
   taMisc::Busy();
   StructUpdate(true);
   int rval = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       rval += l->PruneCons(pre_proc, rel, cmp_val);
   }
@@ -8105,9 +7848,7 @@ int Network::ProbAddCons(float p_add_con, float init_wt) {
   taMisc::Busy();
   StructUpdate(true);
   int rval = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       rval += l->ProbAddCons(p_add_con, init_wt);
   }
@@ -8121,9 +7862,7 @@ int Network::LesionCons(float p_lesion, bool permute) {
   taMisc::Busy();
   StructUpdate(true);
   int rval = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       rval += l->LesionCons(p_lesion, permute);
   }
@@ -8137,9 +7876,7 @@ int Network::LesionUnits(float p_lesion, bool permute) {
   taMisc::Busy();
   StructUpdate(true);
   int rval = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       rval += l->LesionUnits(p_lesion, permute);
   }
@@ -8156,18 +7893,14 @@ void Network::UpdateMaxDispSize() {
 
 void Network::TwoD_Or_ThreeD(LayerLayout lo){
   lay_layout = lo;
-  Layer * lay;
-  taLeafItr j;
-  FOR_ITR_EL(Layer, lay, layers., j){
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers){
     lay->SetDefaultPos();
   }
 }
 
 bool Network::UpdateUnitSpecs(bool force) {
   bool rval = true;
-  Layer * lay;
-  taLeafItr j;
-  FOR_ITR_EL(Layer, lay, layers., j){
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers){
     if(!lay->UpdateUnitSpecs(force))
       rval = false;
   }
@@ -8176,9 +7909,7 @@ bool Network::UpdateUnitSpecs(bool force) {
 
 bool Network::UpdateConSpecs(bool force) {
   bool rval = true;
-  Layer * lay;
-  taLeafItr j;
-  FOR_ITR_EL(Layer, lay, layers., j){
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers){
     if(!lay->UpdateConSpecs(force))
       rval = false;
   }
@@ -8217,9 +7948,7 @@ void Network::ReplaceSpecs_Gp(const BaseSpec_Group& old_spg, BaseSpec_Group& new
 
 int Network::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
   int nchg = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       nchg += l->ReplaceUnitSpec(old_sp, new_sp);
   }
@@ -8228,9 +7957,7 @@ int Network::ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp) {
 
 int Network::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
   int nchg = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       nchg += l->ReplaceConSpec(old_sp, new_sp);
   }
@@ -8239,9 +7966,7 @@ int Network::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
 
 int Network::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) {
   int nchg = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       nchg += l->ReplacePrjnSpec(old_sp, new_sp);
   }
@@ -8250,9 +7975,7 @@ int Network::ReplacePrjnSpec(ProjectionSpec* old_sp, ProjectionSpec* new_sp) {
 
 int Network::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
   int nchg = 0;
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       nchg += l->ReplaceLayerSpec(old_sp, new_sp);
   }
@@ -8299,9 +8022,7 @@ DataTable* Network::ConVarsToTable(DataTable* dt, const String& var1, const Stri
     new_table = true;
   }
   dt->StructUpdate(true);
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->ConVarsToTable(dt, var1, var2, var3, var4, var5, var6, var7, var8,
                         var9, var10, var11, var12, var13, var14);
@@ -8313,9 +8034,7 @@ DataTable* Network::ConVarsToTable(DataTable* dt, const String& var1, const Stri
 }
 
 bool Network::VarToVarCopy(const String& dest_var, const String& src_var) {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->VarToVarCopy(dest_var, src_var);
   }
@@ -8323,9 +8042,7 @@ bool Network::VarToVarCopy(const String& dest_var, const String& src_var) {
 }
 
 bool Network::VarToVal(const String& dest_var, float val) {
-  Layer* l;
-  taLeafItr i;
-  FOR_ITR_EL(Layer, l, layers., i) {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->VarToVal(dest_var, val);
   }
@@ -8376,15 +8093,11 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
   float_Matrix topk_gp_vec;             // for computing kwta
 
   // first initialize all vars
-  Layer* lay;
-  taLeafItr li;
-  FOR_ITR_EL(Layer, lay, layers., li) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
     lay->ClearLayerFlag(Layer::PROJECT_WTS_NEXT);
     lay->ClearLayerFlag(Layer::PROJECT_WTS_DONE);
-    Unit* u;
-    taLeafItr ui;
-    FOR_ITR_EL(Unit, u, lay->units., ui) {
+    FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
       u->wt_prjn = u->tmp_calc1 = 0.0f;
     }
   }
@@ -8423,9 +8136,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
   bool got_some = false;
   do {
     got_some = false;
-    Layer* lay;
-    taLeafItr li;
-    FOR_ITR_EL(Layer, lay, layers., li) {
+    FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
       if(lay->lesioned() || !lay->HasLayerFlag(Layer::PROJECT_WTS_NEXT)) continue;
 
       lay->SetLayerFlag(Layer::PROJECT_WTS_DONE); // we're done!
@@ -8433,10 +8144,8 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
       topk_un_vec.SetGeom(1, lay->units.leaves);
       // first normalize the weights on this guy
       float abs_max = 0.0f;
-      Unit* u;
-      taLeafItr ui;
       int uidx = 0;
-      FOR_ITR_EL(Unit, u, lay->units., ui) {
+      FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
         if(u->tmp_calc1 > 0.0f)
           u->wt_prjn /= u->tmp_calc1;
         abs_max = MAX(abs_max, fabsf(u->wt_prjn));
@@ -8457,9 +8166,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
         for(int gi=0;gi<lay->units.gp.size;gi++) {
           Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
           float gp_val = 0.0f;
-          Unit* u;
-          taLeafItr ui;
-          FOR_ITR_EL(Unit, u, ug->, ui) {
+          FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
             if(u->wt_prjn > thr_eff) // only for those above threshold
               gp_val += u->wt_prjn;
           }
@@ -8471,16 +8178,14 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
           Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
           topk_un_vec.SetGeom(1, ug->leaves);
 
-          Unit* u;
-          taLeafItr ui;
           int uidx = 0;
-          FOR_ITR_EL(Unit, u, ug->, ui) {
+          FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
             topk_un_vec.FastEl_Flat(uidx) = u->wt_prjn;
             uidx++;
           }
 
           float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
-          FOR_ITR_EL(Unit, u, ug->, ui) {
+          FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
             float prjval = u->wt_prjn;
             u->wt_prjn /= abs_max;      // normalize --
             if((top_k_un > 0 && prjval < thr_eff) ||
@@ -8498,7 +8203,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
       else {                                            // flat layer version
         float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
 
-        FOR_ITR_EL(Unit, u, lay->units., ui) {
+        FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
           float prjval = u->wt_prjn;
           u->wt_prjn /= abs_max;        // normalize
           if(top_k_un > 0 && prjval < thr_eff) {

@@ -27,7 +27,7 @@
 
 
 //////////////////////////
-//   UserDataDelegate	//
+//   UserDataDelegate   //
 //////////////////////////
 
 UserDataDelegate::UserDataDelegate(UserDataItem_List* udil_,
@@ -38,7 +38,7 @@ UserDataDelegate::UserDataDelegate(UserDataItem_List* udil_,
   uddh = uddh_;
 }
 
-QWidget* UserDataDelegate::createEditor(QWidget* parent, 
+QWidget* UserDataDelegate::createEditor(QWidget* parent,
     const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   MemberDef* md = NULL;
@@ -50,10 +50,10 @@ QWidget* UserDataDelegate::createEditor(QWidget* parent,
       // guys like Combo don't try to be stretched the whole way
       bool wrap = true;
       QWidget* rep_par = (wrap) ?  new QWidget(parent) : parent;
-      
+
       dat = md->im->GetDataRep(edh, NULL, rep_par);
       dat->SetMemberDef(md);
-      rep = dat->GetRep(); // note: rep may get replaced by rep_par 
+      rep = dat->GetRep(); // note: rep may get replaced by rep_par
       if (wrap) {
         QHBoxLayout* hbl = new QHBoxLayout(rep_par);
         hbl->setMargin(0);
@@ -77,7 +77,7 @@ QWidget* UserDataDelegate::createEditor(QWidget* parent,
     }
     dat->SetBase(base);
     m_dat_row = index.row();
-    
+
     connect(rep, SIGNAL(destroyed(QObject*)),
       dat, SLOT(deleteLater()) );
     EditorCreated(parent, rep, option, index);
@@ -85,7 +85,7 @@ QWidget* UserDataDelegate::createEditor(QWidget* parent,
   }
 exit:
   return inherited::createEditor(parent, option, index);
-  
+
 }
 
 bool UserDataDelegate::IndexToMembBase(const QModelIndex& index,
@@ -110,7 +110,7 @@ bool UserDataDelegate::IndexToMembBase(const QModelIndex& index,
 
 
 //////////////////////////////////
-//  iUserDataDataHost		//
+//  iUserDataDataHost           //
 //////////////////////////////////
 
 iUserDataDataHost::iUserDataDataHost(void* base, TypeDef* td,
@@ -142,12 +142,12 @@ void iUserDataDataHost::Constr_impl() {
   Constr_Methods();
   frmMethButtons->setHidden(!showMethButtons());
 }
-  
+
 void iUserDataDataHost::Constr_Body_impl() {
 }
- 
+
 void iUserDataDataHost::Constr_Box() {
-  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if 
+  row_height = taiM->max_control_height(ctrl_size); // 3 if using line between; 2 if
   if (tw) return;
   tw = new QTableWidget(widget());
   tw->setColumnCount(2);
@@ -164,18 +164,18 @@ void iUserDataDataHost::Constr_Box() {
   tw->setPalette(palette);
   tw->setAlternatingRowColors(true);
   tw->setContextMenuPolicy(Qt::CustomContextMenu);
-  
+
   tw->setItemDelegateForColumn(1, udd);
   vblDialog->addWidget(tw, 1);
-  connect(tw, SIGNAL(currentCellChanged(int, int, int, int)), 
+  connect(tw, SIGNAL(currentCellChanged(int, int, int, int)),
     this, SLOT(tw_currentCellChanged(int, int, int, int)) );
-  connect(tw, SIGNAL(customContextMenuRequested(const QPoint&)), 
+  connect(tw, SIGNAL(customContextMenuRequested(const QPoint&)),
     this, SLOT(tw_customContextMenuRequested(const QPoint&)) );
-  connect(tw, SIGNAL(itemChanged(QTableWidgetItem*)), 
+  connect(tw, SIGNAL(itemChanged(QTableWidgetItem*)),
     this, SLOT(tw_itemChanged(QTableWidgetItem*)) );
   body = tw;
 }
- 
+
 
 void iUserDataDataHost::ClearBody_impl() {
   // note: we don't nuke control, we just clear it
@@ -191,13 +191,11 @@ void iUserDataDataHost::Constr_Data_Labels() {
   String nm;
   String help_text;
   MembSet* ms = NULL;
-  
-  taGroupItr itr;
-  UserDataItem_List* grp;
+
   int set_idx = 0;
   int row = 0;
   // iterates all non-empty groups...
-  FOR_ITR_GP(UserDataItem_List, grp, udil->, itr) {
+  FOREACH_SUBGROUP(UserDataItem_List, grp, *udil) {
     bool def_grp = (grp == udil);// root group
     membs.SetMinSize(set_idx + 1);
     ms = membs.FastEl(set_idx);
@@ -219,16 +217,16 @@ void iUserDataDataHost::Constr_Data_Labels() {
       tw->setRowHeight(row, row_height);
       ++row;
     }
-    
+
     for (int i = 0; i < grp->size; ++i) {
       int item_flags = 0;
       UserDataItemBase* item_ = grp->FastEl(i);
       // normally don't show invisible guys, unless HIDDEN is selected
       if (!item_->isVisible() && (show() & taMisc::NO_HIDDEN)) continue;
-      
+
       tw->setRowCount(row + 1);
       QTableWidgetItem* twi = NULL;
-      
+
       // force span, in case this row had a group before
       // this is now giving an error in 4.6.0 beta -- unnec?
       // but it needs the call in 4.5.x -- otherwise row is blank.
@@ -252,13 +250,13 @@ void iUserDataDataHost::Constr_Data_Labels() {
         MemberDef* mbr = item_->FindMember("value"); // better be found!
         ms->memb_el.Add(mbr); // keep synced
         if (!mbr || (mbr->im == NULL)) continue; // shouldn't happen
-        
+
       } else {
       // complex user data -- just do an inline guy
         ms->memb_el.Add(NULL);
       }
       tw->setItem(row, 1, twi);
-      
+
       // label item -- same for all types
       twi = new QTableWidgetItem;
       twi->setText(item_->GetName());
@@ -270,7 +268,7 @@ void iUserDataDataHost::Constr_Data_Labels() {
         item_flags |= Qt::ItemIsEditable;
       twi->setFlags((Qt::ItemFlags)item_flags);
       tw->setItem(row, 0, twi);
-      
+
       tw->setRowHeight(row, row_height);
       ++row;
     }
@@ -292,7 +290,7 @@ void iUserDataDataHost::GetImage_Item(int row) {
     MemberDef* mbr = item->FindMember("value"); // better be found!
     if (!mbr) return; // shouldn't happen
     void* off = mbr->GetOff(item);
-    String txt = mbr->type->GetValStr(off, item, mbr, TypeDef::SC_DISPLAY, true); 
+    String txt = mbr->type->GetValStr(off, item, mbr, TypeDef::SC_DISPLAY, true);
     // augment plain non-class vals with bg color
     if(!txt.contains("<font style=\"background-color:")) {
       if(mbr->type->DerivesFormal(TA_enum) || mbr->type->DerivesFrom(TA_taSmartPtr)
@@ -303,22 +301,22 @@ void iUserDataDataHost::GetImage_Item(int row) {
     }
     it->setText(txt);
     it->setToolTip(txt); // for when over
-  
+
     // default highlighting
     switch (mbr->GetDefaultStatus(item)) {
-    case MemberDef::NOT_DEF: 
-      lbl->setData(Qt::BackgroundRole, QColor(Qt::yellow)); 
+    case MemberDef::NOT_DEF:
+      lbl->setData(Qt::BackgroundRole, QColor(Qt::yellow));
       break;
     case MemberDef::EQU_DEF:
       //note: setting nil Variant will force it to ignore and use bg
-      lbl->setData(Qt::BackgroundRole, QVariant()); 
+      lbl->setData(Qt::BackgroundRole, QVariant());
       break;
     default: break; // compiler food
     }
   } else {
   //complex
     String txt = item_->GetTypeDef()->GetValStr(item_, NULL,
-      NULL, TypeDef::SC_DISPLAY, true); 
+      NULL, TypeDef::SC_DISPLAY, true);
     it->setText(txt);
     it->setToolTip(txt); // for when over
   }
@@ -340,7 +338,7 @@ void iUserDataDataHost::Constr_Methods_impl() {
 void iUserDataDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2) {
 //note: we completely replace default, and basically rebuild on any Group notify,
 // and ignore the other notifies (i.e the List guys, which will be echoes of a Group
-  
+
   // note: because of deferred construction, we may still need to update buttons/menus
   if (state == DEFERRED1) {
     Refresh_impl(false);
@@ -348,7 +346,7 @@ void iUserDataDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void
   }
   // note: we should have unlinked if cancelled, but if not, ignore if cancelled
   if (!isConstructed()) return;
-  
+
   if (updating) return; // it is us that caused this
   // only do simple refresh if an item is updated, otherwise, the major changes
   // of Insert, Remove, etc. need full refresh
@@ -356,14 +354,14 @@ void iUserDataDataHost::DataDataChanged(taDataLink* dl, int dcr, void* op1, void
   {
     Refresh_impl(false);
   } else if ((dcr > DCR_GROUP_ITEM_UPDATE) &&
-    (dcr <= DCR_GROUP_LIST_SORTED)) 
+    (dcr <= DCR_GROUP_LIST_SORTED))
   {
     Refresh_impl(true);
-  } 
+  }
 }
 
 void iUserDataDataHost::DoDeleteUserDataItem() {
-   // removes the sel_item_index item 
+   // removes the sel_item_index item
   if (udil->RemoveLeafEl(sel_item_base)) {
   }
   else
@@ -386,10 +384,10 @@ void iUserDataDataHost::FillLabelContextMenu_SelEdit(QMenu* menu,
   int sel_item_index = udil->FindLeafEl(item);
   if (sel_item_index < 0) return;  //huh?
   if (item->canDelete())
-    //QAction* act = 
+    //QAction* act =
     menu->addAction("Delete UserDataItem", this, SLOT(DoDeleteUserDataItem()));
   if (item->canRename())
-    //QAction* act = 
+    //QAction* act =
     menu->addAction("Rename UserDataItem", this, SLOT(DoRenameUserDataItem()));
 }
 
@@ -408,7 +406,7 @@ void iUserDataDataHost::GetValue_Membs_def() {
     udil->owner->UpdateAfterEdit(); // update owner too
 }
 
-void iUserDataDataHost::tw_currentCellChanged(int row, 
+void iUserDataDataHost::tw_currentCellChanged(int row,
     int col, int previousRow, int previousColumn)
 {
   if ((row < 0) || (col < 1)) return;
@@ -424,10 +422,10 @@ void iUserDataDataHost::tw_customContextMenuRequested(const QPoint& pos)
   int col = tw->columnAt(pos.x());
   if ((row < 0) || (col != 0)) return;
   // we want the data item for the label, to get its goodies...
-  
+
   UserDataItemBase* item = GetUserDataItem(row);
   if ((item == NULL) ) return;
-    
+
   //na sel_item_mbr = item->mbr;
   sel_item_row = row;
   sel_item_base = item;
@@ -437,7 +435,7 @@ void iUserDataDataHost::tw_customContextMenuRequested(const QPoint& pos)
   if (menu->actions().count() > 0)
     menu->exec(tw->mapToGlobal(pos));
   delete menu;
-  
+
 }
 
 void iUserDataDataHost::tw_itemChanged(QTableWidgetItem* item)
@@ -451,7 +449,7 @@ void iUserDataDataHost::tw_itemChanged(QTableWidgetItem* item)
 }
 
 //////////////////////////
-//   iUserDataPanel 	//
+//   iUserDataPanel     //
 //////////////////////////
 
 iUserDataPanel::iUserDataPanel(taiDataLink* dl_)
@@ -462,10 +460,10 @@ iUserDataPanel::iUserDataPanel(taiDataLink* dl_)
   if (se_) {
     switch (taMisc::select_edit_style) { // NOTE: the two below look identical to me...
     case taMisc::ES_ALL_CONTROLS:
-      se = new iUserDataDataHost(se_, se_->GetTypeDef()); 
+      se = new iUserDataDataHost(se_, se_->GetTypeDef());
       break;
     case taMisc::ES_ACTIVE_CONTROL:
-      se = new iUserDataDataHost(se_, se_->GetTypeDef()); 
+      se = new iUserDataDataHost(se_, se_->GetTypeDef());
       break;
     }
     if (taMisc::color_hints & taMisc::CH_EDITS) {

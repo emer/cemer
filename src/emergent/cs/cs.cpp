@@ -39,8 +39,8 @@ static void cs_converter_init() {
 }
 
 void cs_module_init() {
-  ta_Init_cs();			// initialize types 
-  cs_converter_init();		// configure converter
+  ta_Init_cs();                 // initialize types
+  cs_converter_init();          // configure converter
 }
 
 // module initialization
@@ -48,12 +48,12 @@ InitProcRegistrar mod_init_cs(cs_module_init);
 
 
 //////////////////////////
-//  	Con, Spec	//
+//      Con, Spec       //
 //////////////////////////
 
 void CsConSpec::Initialize() {
   min_obj_type = &TA_CsCon;
-  wt_limits.sym = true;		// default is to have symmetric initial weights!
+  wt_limits.sym = true;         // default is to have symmetric initial weights!
   Defaults_init();
 }
 
@@ -94,7 +94,7 @@ void CsSendCons::Initialize() {
 }
 
 //////////////////////////
-//  	Unit, Spec	//
+//      Unit, Spec      //
 //////////////////////////
 
 void CsUnitSpec::Initialize() {
@@ -172,7 +172,7 @@ void CsUnitSpec::Init_Weights(Unit* u, Network* net) {
 void CsUnitSpec::Compute_ClampAct(CsUnit* u, CsNetwork* net) {
   if((clamp_type != HARD_FAST_CLAMP) || !(u->ext_flag & Unit::EXT))
     return;
-  u->act = real_range.Clip(u->ext);	// keep everything in range
+  u->act = real_range.Clip(u->ext);     // keep everything in range
   u->da = 0.0f;
 }
 
@@ -199,7 +199,7 @@ void CsUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
       CsRecvCons* recv_gp = (CsRecvCons*)u->recv.FastEl(g);
       Layer* lay = recv_gp->prjn->from;
       if(lay->lesioned() || (lay->ext_flag & Unit::EXT)) // don't add from clamped!
-	continue;
+        continue;
       u->net += recv_gp->Compute_Netin(u);
     }
     u->net += u->bias.OwnCn(0)->wt;
@@ -209,7 +209,7 @@ void CsUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
       return;
     inherited::Compute_Netin(u, net, thread_no);
   }
-  else {			// soft clamping (or soft-then-hard), always compute net
+  else {                        // soft clamping (or soft-then-hard), always compute net
     inherited::Compute_Netin(u, net, thread_no);
   }
   cu->net += cu->clmp_net; // add in clamped input
@@ -221,28 +221,28 @@ void CsUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   int phase = cnet->phase;
 
   CsUnit* cu = (CsUnit*)u;
-  if(u->ext_flag & Unit::EXT) {	// receiving external input
+  if(u->ext_flag & Unit::EXT) { // receiving external input
     if(clamp_type == HARD_FAST_CLAMP) // already processed this one!
       return;
     ClampType ct = clamp_type;
     if(clamp_type == SOFT_THEN_HARD_CLAMP) {
       if(phase == CsNetwork::MINUS_PHASE)
-	ct = SOFT_CLAMP;
+        ct = SOFT_CLAMP;
       else
-	ct = HARD_CLAMP;
+        ct = HARD_CLAMP;
     }
     if(ct == HARD_CLAMP) {
-      cu->act = real_range.Clip(cu->ext);	// keep everything in range
+      cu->act = real_range.Clip(cu->ext);       // keep everything in range
       cu->da = 0.0f;
       if(noise.type != Random::NONE) { // can add noise to the inputs
-	float noise_anneal = 1.0f;
-	if((cycle != -1) && use_annealing)
-	  noise_anneal = noise_sched.GetVal(cycle);
-	u->act += sqrt_step * noise_anneal * noise.Gen();
+        float noise_anneal = 1.0f;
+        if((cycle != -1) && use_annealing)
+          noise_anneal = noise_sched.GetVal(cycle);
+        u->act += sqrt_step * noise_anneal * noise.Gen();
       }
       // don't call Compute_Act_impl
     }
-    else {			// soft clamp
+    else {                      // soft clamp
       cu->net += clamp_gain * cu->ext;
       Compute_Act_impl(cu, cycle, phase); // go ahead and compute activation
     }
@@ -253,14 +253,14 @@ void CsUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 
   if(cu->act >= real_range.max) {
     cu->act = real_range.max;
-    cu->da = 0.0f;		// don't count pegged units..
+    cu->da = 0.0f;              // don't count pegged units..
   }
   else if(cu->act <= real_range.min) {
     cu->act = real_range.min;
-    cu->da = 0.0f;		// ditto..
+    cu->da = 0.0f;              // ditto..
   }
 
-  //  
+  //
 }
 
 void CsUnitSpec::Aggregate_dWt(CsUnit* cu, CsNetwork* net, int thread_no) {
@@ -299,7 +299,7 @@ void CsUnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   inherited::Compute_dWt(u, net, thread_no);
   CsUnit* cu = (CsUnit*)u;
   ((CsConSpec*)bias_spec.SPtr())->B_Compute_dWt((CsCon*)cu->bias.OwnCn(0), cu);
-  cu->n_dwt_aggs = 0;		// reset after wts are aggd
+  cu->n_dwt_aggs = 0;           // reset after wts are aggd
 }
 
 void CsUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
@@ -356,9 +356,9 @@ void CsUnit::Copy_(const CsUnit& cp) {
 
 // default is inverse-logistic
 void CsUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
-  float	noise_anneal = 1.0f;	// like temp
-  float	gain_sharp = 1.0f;	// sharpening
-  
+  float noise_anneal = 1.0f;    // like temp
+  float gain_sharp = 1.0f;      // sharpening
+
   if(cycle != -1) {
     if(use_annealing)
       noise_anneal = noise_sched.GetVal(cycle);
@@ -378,8 +378,8 @@ void SigmoidUnitSpec::Initialize() {
 }
 
 void SigmoidUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
-  float	noise_anneal = 1.0f;
-  float	gain_sharp = 1.0f;
+  float noise_anneal = 1.0f;
+  float gain_sharp = 1.0f;
 
   if(cycle != -1) {
     if(use_annealing)
@@ -408,11 +408,11 @@ void BoltzUnitSpec::Initialize() {
 
 void BoltzUnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  gain = 1.0f / temp;		// keep gain and temp aligned
+  gain = 1.0f / temp;           // keep gain and temp aligned
 }
 
 void BoltzUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
-  float	temp_anneal = 1.0f;
+  float temp_anneal = 1.0f;
 
   if(cycle != -1) {
     if(use_annealing)
@@ -435,11 +435,11 @@ void IACUnitSpec::Initialize() {
 
 void IACUnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  gain = 1.0f / decay;		// keep gain and decay aligned
+  gain = 1.0f / decay;          // keep gain and decay aligned
 }
 
 void IACUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
-  float	noise_anneal = 1.0f;
+  float noise_anneal = 1.0f;
   if(cycle != -1) {
     if(use_annealing)
       noise_anneal = noise_sched.GetVal(cycle);
@@ -458,7 +458,7 @@ void LinearCsUnitSpec::Initialize() {
 }
 
 void LinearCsUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
-  float	noise_anneal = 1.0f;
+  float noise_anneal = 1.0f;
   if(cycle != -1) {
     if(use_annealing)
       noise_anneal = noise_sched.GetVal(cycle);
@@ -478,7 +478,7 @@ void ThreshLinCsUnitSpec::Initialize() {
 }
 
 void ThreshLinCsUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
-  float	noise_anneal = 1.0f;
+  float noise_anneal = 1.0f;
   if(cycle != -1) {
     if(use_annealing)
       noise_anneal = noise_sched.GetVal(cycle);
@@ -495,7 +495,7 @@ void ThreshLinCsUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
 /////////////////////////////////////////////////////////////////////////
 
 //////////////////////////
-//   CsLayer	        //
+//   CsLayer            //
 //////////////////////////
 
 void CsLayer::Initialize() {
@@ -503,18 +503,18 @@ void CsLayer::Initialize() {
   unit_spec.SetBaseType(&TA_CsUnitSpec);
 }
 
-void CsLayer::Init_Acts(Network* net) {	
-  // commenting this out is only diff from orig fun:
+void CsLayer::Init_Acts(Network* net) {
+  // This override of Layer::Init_Acts() is done so the following line
+  // can be commented out.
   //  ext_flag = Unit::NO_EXTERNAL;
-  Unit* u;
-  taLeafItr i;
-  FOR_ITR_EL(Unit, u, units., i)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     u->Init_Acts(net);
+  }
 }
 
 
 //////////////////////////////////
-//	Cs Network		//
+//      Cs Network              //
 //////////////////////////////////
 
 void CsNetwork::Initialize() {
@@ -553,7 +553,7 @@ void CsNetwork::UpdateAfterEdit_impl() {
 #endif
 
   if(TestError(!deterministic && start_stats > cycle_max, "UpdateAfterEdit",
-	       "start_stats is > cycle_max -- won't work -- setting to cycle_max -10 -- might want to set to desired value")) {
+               "start_stats is > cycle_max -- won't work -- setting to cycle_max -10 -- might want to set to desired value")) {
     start_stats = cycle_max - 10;
     if(start_stats < 0) start_stats = 0;
   }
@@ -585,18 +585,18 @@ void CsNetwork::Init_Stats() {
 }
 
 ////////////////////////////////
-// 	     Cycle            //
+//           Cycle            //
 ////////////////////////////////
 
 void CsNetwork::Compute_SyncAct() {
-  // same as the basic call: just add a diff cost 
+  // same as the basic call: just add a diff cost
   ThreadUnitCall un_call(&Unit::Compute_Act);
-  threads.Run(&un_call, .2f);	// todo: get new cost!
+  threads.Run(&un_call, .2f);   // todo: get new cost!
 }
 
 void CsNetwork::Compute_AsyncAct() {
   if(units_flat.size == 0) return; // error check
-  for (int i=0; i < n_updates; i++) {	// do this n_updates times
+  for (int i=0; i < n_updates; i++) {   // do this n_updates times
     int rnd_num = Random::IntZeroN(units_flat.size);
     CsUnit* u = (CsUnit*) units_flat[rnd_num];
     u->Compute_Netin(this);
@@ -606,28 +606,25 @@ void CsNetwork::Compute_AsyncAct() {
 
 void CsNetwork::Compute_MaxDa() {
   // this has to be a separate step due to threading
-  maxda = 0.0f;		// initialize
-  output_name = "";	// todo: update this
-  Layer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(Layer, lay, layers., l) {
-    if(lay->lesioned()) continue;
-    CsUnit* un;
-    taLeafItr u;
-    FOR_ITR_EL(CsUnit, un, lay->units., u) {
-      maxda = MAX(fabsf(un->da), maxda);
+  maxda = 0.0f;         // initialize
+  output_name = "";     // todo: update this
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if (!lay->lesioned()) {
+      FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+        maxda = MAX(fabsf(un->da), maxda);
+      }
     }
   }
 }
 
 void CsNetwork::Aggregate_dWt() {
   ThreadUnitCall un_call((ThreadUnitMethod)(CsUnitMethod)&CsUnit::Aggregate_dWt);
-  threads.Run(&un_call, .5f);	// todo: update est
+  threads.Run(&un_call, .5f);   // todo: update est
 }
 
 void CsNetwork::Cycle_Run() {
   if(update_mode == SYNCHRONOUS) {
-    Compute_Netin();	// two-stage update of nets and acts
+    Compute_Netin();    // two-stage update of nets and acts
     Compute_SyncAct();
   }
   else {
@@ -659,70 +656,56 @@ void CsNetwork::Settle_Init() {
 }
 
 void CsNetwork::Compute_ClampAct() {
-  Layer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(Layer, lay, layers., l) {
-    if(lay->lesioned() || !(lay->ext_flag & Unit::EXT)) // only clamped layers
-      continue;
-    CsUnit* un;
-    taLeafItr u;
-    FOR_ITR_EL(CsUnit, un, lay->units., u)
-      un->Compute_ClampAct(this);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if (!lay->lesioned() && (lay->ext_flag & Unit::EXT)) { // only clamped layers
+      FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+        un->Compute_ClampAct(this);
+      }
+    }
   }
 }
 
 void CsNetwork::Compute_ClampNet() {
-  Layer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(Layer, lay, layers., l) {
-    if(lay->lesioned() || (lay->ext_flag & Unit::EXT)) // only non-clamped layers
-      continue;
-    CsUnit* un;
-    taLeafItr u;
-    FOR_ITR_EL(CsUnit, un, lay->units., u)
-      un->Compute_ClampNet(this);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if (!lay->lesioned() && !(lay->ext_flag & Unit::EXT)) { // only non-clamped layers
+      FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+        un->Compute_ClampNet(this);
+      }
+    }
   }
 }
 
 void CsNetwork::PhaseInit() {
-  Layer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(Layer, lay, layers., l) {
-    if(lay->lesioned())
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if (lay->lesioned())
       continue;
-    if(lay->ext_flag & Unit::TARG) {
-      if(phase == PLUS_PHASE)
-	lay->SetExtFlag(Unit::EXT);
+    if (lay->ext_flag & Unit::TARG) {
+      if(phase == PLUS_PHASE) {
+        lay->SetExtFlag(Unit::EXT);
+      }
     }
-    CsUnit* un;
-    taLeafItr u;
-    FOR_ITR_EL(CsUnit, un, lay->units., u)
+    FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
       un->PhaseInit(this);
+    }
   }
 }
 
 void CsNetwork::DecayState() {
-  Layer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(Layer, lay, layers., l) {
-    if(lay->lesioned())
-      continue;
-    CsUnit* un;
-    taLeafItr u;
-    FOR_ITR_EL(CsUnit, un, lay->units., u)
-      un->DecayState(this);
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
+    if (!lay->lesioned()) {
+      FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+        un->DecayState(this);
+      }
+    }
   }
 }
 
 void CsNetwork::PostSettle() {
-  Layer* lay;
-  taLeafItr l;
-  FOR_ITR_EL(Layer, lay, layers., l) {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(!lay->lesioned()) {
-      CsUnit* un;
-      taLeafItr u;
-      FOR_ITR_EL(CsUnit, un, lay->units., u)
-	un->PostSettle(this);
+      FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+        un->PostSettle(this);
+      }
     }
   }
 }
@@ -733,9 +716,9 @@ void CsNetwork::Settle_Final() {
   }
   PostSettle();
 }
-  
+
 ////////////////////////////////
-// 	   Trial             //
+//         Trial             //
 ////////////////////////////////
 
 void CsNetwork::Trial_Init() {
@@ -756,7 +739,7 @@ void CsNetwork::Trial_Final() {
 }
 
 void CsNetwork::Trial_UpdatePhase() {
-  phase = PLUS_PHASE;		// always just next phase..
+  phase = PLUS_PHASE;           // always just next phase..
 }
 
 void CsNetwork::Compute_MinusCycles() {
@@ -784,7 +767,7 @@ void CsNetwork::Compute_EpochStats() {
 }
 
 // ////////////////////////////////
-// // 	    CsSample          //
+// //       CsSample          //
 // ////////////////////////////////
 
 // void CsSample::Initialize() {
@@ -808,10 +791,10 @@ void CsNetwork::Compute_EpochStats() {
 
 // void CsSample::Compute_dWt() {
 //   Compute_dWt();
-// }  
+// }
 
 // void CsSample::Final() {
-//   TrialProcess::Final();	// do anything else
+//   TrialProcess::Final();     // do anything else
 
 //   if((epoch_proc != NULL) && (epoch_proc->wt_update != EpochProcess::TEST))
 //     Compute_dWt();
@@ -829,14 +812,14 @@ void CsNetwork::Compute_EpochStats() {
 
 
 // ////////////////////////////////
-// // 	   CsDistStat         //
+// //      CsDistStat         //
 // ////////////////////////////////
 
 // void CsDistStat::Initialize() {
 //   cs_settle = NULL;
 //   tolerance = 0.25f;
 //   n_updates = 0;
-//   loop_init = INIT_START_ONLY;		// don't initialize in the loop!!
+//   loop_init = INIT_START_ONLY;               // don't initialize in the loop!!
 // }
 
 // void CsDistStat::InitLinks() {
@@ -880,9 +863,7 @@ void CsNetwork::Compute_EpochStats() {
 //   ProbEventSpec* es = (ProbEventSpec*)ev->spec.SPtr();
 
 //   int num_targets = 0;
-//   taLeafItr psitr;
-//   PatternSpec* ps;
-//   FOR_ITR_EL(PatternSpec, ps, es->patterns., psitr) {
+//   FOREACH_ELEM_IN_GROUP(PatternSpec, ps, es->patterns) {
 //     if(ps->type == PatternSpec::TARGET)
 //       num_targets++;
 //   }
@@ -914,26 +895,24 @@ void CsNetwork::Compute_EpochStats() {
 //   Pattern* p;
 //   PatternSpec* ps;
 //   int statval_index = 0;
-  
+
 //   FOR_ITR_PAT_SPEC(Pattern, p, ev->patterns., pitr,
-// 		   PatternSpec, ps, es->patterns., psitr)
+//                 PatternSpec, ps, es->patterns., psitr)
 //   {
 //     if(ps->type == PatternSpec::TARGET) {
 //       if((ps->layer != NULL) && (ps->layer != cur_lay)) {
-//       	act_vals.Reset();
-// 	Unit* u;
-// 	taLeafItr uitr;
-// 	cur_lay = ps->layer;
-// 	FOR_ITR_EL(Unit, u, cur_lay->units., uitr) {
-// 	  act_vals.Add(u->act);
-// 	}
+//              act_vals.Reset();
+//      cur_lay = ps->layer;
+//      FOREACH_ELEM_IN_GROUP(Unit, u, cur_lay->units) {
+//        act_vals.Add(u->act);
+//      }
 //       }
 //       float within_tol = 0.0f;
 //       if(p->value.SumSquaresDist(act_vals, false, tolerance) == 0.0f)
-// 	within_tol = 1.0f;
+//      within_tol = 1.0f;
 //       StatVal* sv = (StatVal*)probs[statval_index];
-//       sv->val =	((sv->val * (float) n_updates) + within_tol)
-// 		     / (float) (n_updates + 1);
+//       sv->val =      ((sv->val * (float) n_updates) + within_tol)
+//                   / (float) (n_updates + 1);
 //       statval_index++;
 //     }
 //   }
@@ -945,10 +924,10 @@ void CsNetwork::Compute_EpochStats() {
 //     return;
 
 //   SchedProcess* sproc= (SchedProcess *) own_proc->super_proc;
-//   Stat*		stat_to_agg = this;
+//   Stat*              stat_to_agg = this;
 
 //   while((sproc != NULL) && (sproc->InheritsFrom(&TA_SchedProcess))
-// 	&& !(sproc->InheritsFrom(&TA_EpochProcess)))
+//      && !(sproc->InheritsFrom(&TA_EpochProcess)))
 //   {
 //     Stat* nag = (Stat*)stat_to_agg->Clone(); // clone original one
 //     sproc->loop_stats.Add(nag);
@@ -959,7 +938,7 @@ void CsNetwork::Compute_EpochStats() {
 //     sproc = (SchedProcess *) sproc->super_proc;
 //     stat_to_agg = nag;
 //   }
-  
+
 //   CsSample* smp_proc = (CsSample*) own_proc->FindSuperProc(&TA_CsSample);
 //   if(smp_proc == NULL)    return;
 //   CsTIGstat* tig_stat = new CsTIGstat;
@@ -972,7 +951,7 @@ void CsNetwork::Compute_EpochStats() {
 
 
 // ////////////////////////////////
-// // 	    CsTIGStat         //
+// //       CsTIGStat         //
 // ////////////////////////////////
 
 // void CsTIGstat::Initialize() {
@@ -1026,21 +1005,21 @@ void CsNetwork::Compute_EpochStats() {
 //   Pattern* p;
 //   PatternSpec* ps;
 //   int statval_index = 0;
-  
+
 //   FOR_ITR_PAT_SPEC(Pattern, p, ev->patterns., pitr,
-// 		   PatternSpec, ps, es->patterns., psitr)
+//                 PatternSpec, ps, es->patterns., psitr)
 //   {
 //     if(ps->type == PatternSpec::TARGET) {
 //       float exp_prob = 1.0f;
 //       float act_prob = ((StatVal*)((CsDistStat*) dist_stat)->probs[statval_index])->val;
 //       if(p->InheritsFrom(&TA_ProbPattern))
-// 	exp_prob = ((ProbPattern*)p)->prob;
+//      exp_prob = ((ProbPattern*)p)->prob;
 //       if(act_prob < .0001f)
-// 	act_prob = .0001f;
+//      act_prob = .0001f;
 //       if(exp_prob <= 0.0f)
-// 	net_agg.ComputeAgg(&tig, 0.0f);
+//      net_agg.ComputeAgg(&tig, 0.0f);
 //       else
-// 	net_agg.ComputeAgg(&tig, exp_prob * logf(exp_prob / act_prob));
+//      net_agg.ComputeAgg(&tig, exp_prob * logf(exp_prob / act_prob));
 
 //       statval_index++;
 //     }
@@ -1049,7 +1028,7 @@ void CsNetwork::Compute_EpochStats() {
 
 
 // ////////////////////////////////
-// // 	   CsTargStat         //
+// //      CsTargStat         //
 // ////////////////////////////////
 
 // void CsTargStat::Initialize() {
@@ -1101,7 +1080,7 @@ void CsNetwork::Compute_EpochStats() {
 
 
 // ////////////////////////////////
-// // 	   CsGoodStat         //
+// //      CsGoodStat         //
 // ////////////////////////////////
 
 // void CsGoodStat::Initialize() {
@@ -1136,9 +1115,9 @@ void CsNetwork::Compute_EpochStats() {
 // bool CsGoodStat::Crit() {
 //   if(!has_stop_crit)    return false;
 //   if(n_copy_vals > 0)   return copy_vals.Crit();
-//   if(hrmny.Crit())	return true;
-//   if(strss.Crit())	return true;
-//   if(gdnss.Crit())	return true;
+//   if(hrmny.Crit())   return true;
+//   if(strss.Crit())   return true;
+//   if(gdnss.Crit())   return true;
 //   return false;
 // }
 
@@ -1148,7 +1127,7 @@ void CsNetwork::Compute_EpochStats() {
 
 // void CsGoodStat::Unit_Init(Unit*) {
 //   netin_hrmny = 0.0f;
-// }  
+// }
 
 // void CsGoodStat::RecvCon_Run(Unit* unit) {
 //   if(use_netin)    return;
@@ -1162,7 +1141,7 @@ void CsNetwork::Compute_EpochStats() {
 // void CsGoodStat::Con_Stat(Unit* , Connection* cn, Unit* su) {
 //   netin_hrmny += su->act * cn->wt;
 // }
-  
+
 // void CsGoodStat::Unit_Stat(Unit* un) {
 //   // do harmony first since it was possibly computed before this in the recvcon
 //   if(use_netin) {
@@ -1171,8 +1150,8 @@ void CsNetwork::Compute_EpochStats() {
 //     // since everything is being mult by .5, but bias and ext
 //     // were already included in the net, so they are added again giving 1
 //     net_agg.ComputeAggNoUpdt(hrmny.val, 0.5f * csun->act *
-// 			     (csun->net + csun->bias.OwnCn(0)->wt + csun->ext));
-// 			// don't update because update happens on stress
+//                           (csun->net + csun->bias.OwnCn(0)->wt + csun->ext));
+//                      // don't update because update happens on stress
 //   }
 //   // todo: this assumes a logistic-style activation function..
 //   UnitSpec* us = un->spec.SPtr();
@@ -1181,7 +1160,7 @@ void CsNetwork::Compute_EpochStats() {
 //   float stress = 0.0f;
 //   if(above_min > 0.0f) stress = above_min * logf(above_min);
 //   if(below_max > 0.0f) stress = below_max * logf(below_max);
-//   stress += .6931472f;	// compensate for log vs. log2?
+//   stress += .6931472f;       // compensate for log vs. log2?
 //   net_agg.ComputeAgg(strss.val, stress);
 // }
 
@@ -1192,7 +1171,7 @@ void CsNetwork::Compute_EpochStats() {
 
 
 //////////////////////////
-//   CsProject	        //
+//   CsProject          //
 //////////////////////////
 
 void CsProject::Initialize() {

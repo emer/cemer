@@ -1036,9 +1036,7 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 //     Event_MGroup* gp = (Event_MGroup*)events.gp.FastEl(g);
 
 //     int ev_ctr = 0;
-//     taLeafItr i;
-//     Event* ev;
-//     FOR_ITR_EL(Event, ev, gp->, i) {
+//     FOREACH_ELEM_IN_GROUP(Event, ev, *gp) {
 //       Pattern* pat = (Pattern*)ev->patterns.Leaf(pat_no);
 //       if(pat == NULL) {
 //      taMisc::Error("*** Pattern number:", String(pat_no), "not found");
@@ -1100,9 +1098,7 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 //     return rval;
 //   }
 
-//   taLeafItr i;
-//   Event* ev;
-//   FOR_ITR_EL(Event, ev, gp->, i) {
+//   FOREACH_ELEM_IN_GROUP(Event, ev, *gp) {
 //     if(ev == trg_ev) break;
 //     Pattern* pat = (Pattern*)ev->patterns.Leaf(pat_no);
 //     if(pat == NULL) {
@@ -1121,9 +1117,7 @@ float taDataGen::LastMinMaxDist(DataCol* da, int row, float& max_dist,
 // {
 //   float rval = FLT_MAX;
 //   max_dist = 0;
-//   taLeafItr i;
-//   Event* ev;
-//   FOR_ITR_EL(Event, ev, gp->, i) {
+//   FOREACH_ELEM_IN_GROUP(Event, ev, *gp) {
 //     Pattern* pat = (Pattern*)ev->patterns.Leaf(pat_no);
 //     if(pat == NULL) {
 //       taMisc::Error("*** Pattern number:", String(pat_no), "not found");

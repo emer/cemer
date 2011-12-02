@@ -22,7 +22,7 @@
 #include <float.h>
 
 //////////////////////////////////////////
-// 	PV Con Spec			//
+//      PV Con Spec                     //
 //////////////////////////////////////////
 
 void PVConSpec::Initialize() {
@@ -35,7 +35,7 @@ void PVConSpec::Initialize() {
   lrs_value = NO_LRS;
 
   send_act = ACT_P;
-  
+
   Defaults_init();
 }
 
@@ -66,7 +66,7 @@ void PVConSpec::UpdateAfterEdit_impl() {
 }
 
 /////////////////////////////////////////////////////////////////////
-//	PVi (NAc) Layer Spec
+//      PVi (NAc) Layer Spec
 
 void PVMiscSpec::Initialize() {
   min_pvi = 0.4f;
@@ -82,7 +82,7 @@ void PViLayerSpec::Initialize() {
   decay.clamp_phase2 = false;
 
   bias_val.un = ScalarValBias::GC;
-  bias_val.val = .5f;		// default is no-information case; extrew = .5
+  bias_val.val = .5f;           // default is no-information case; extrew = .5
 
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
@@ -124,8 +124,8 @@ bool PViLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
-		"requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
+                "requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
+                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
     us->SetUnique("act", true);
     us->act.avg_dt = 0.0f;
   }
@@ -138,7 +138,7 @@ bool PViLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   // check for conspecs with correct params
   LeabraLayer* ext_rew_lay = NULL;
   if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
@@ -152,14 +152,14 @@ bool PViLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(lay->CheckError(!cs->InheritsFrom(TA_PVConSpec), quiet, rval,
-		  "requires recv connections to be of type PVConSpec")) {
+                  "requires recv connections to be of type PVConSpec")) {
       return false;
     }
   }
-  
+
   LeabraLayer* pvr_lay = FindLayerFmSpecNet(net, &TA_PVrLayerSpec);
   if(lay->CheckError(!pvr_lay, quiet, rval,
-		"PVLV requires a PVrLayerSpec layer to detect when primary rewards are avail -- run wizard or create manually!")) {
+                "PVLV requires a PVrLayerSpec layer to detect when primary rewards are avail -- run wizard or create manually!")) {
     return false;
   }
 
@@ -173,21 +173,21 @@ void PViLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
   }
 
   UNIT_GP_ITR
-    (lay, 
+    (lay,
      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-     u->ext = pvi_targ_val;	// clamp to target value
-     ClampValue_ugp(lay, acc_md, gpidx, net); 	// apply new value
+     u->ext = pvi_targ_val;     // clamp to target value
+     ClampValue_ugp(lay, acc_md, gpidx, net);   // apply new value
      Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net); // copy ext values to act_p
      );
 }
 
 // todo: to support multiple different PVe's, we really need everything to be in vector form
 // but currently using network ext_rew* vals as intermediary to save a lot of hassle
-// so even though this supports multiple PVi's, it does not support multiple PVe's in a 
+// so even though this supports multiple PVi's, it does not support multiple PVe's in a
 // pairwise manner, even though it is possible to have multiple PVe's
 
 float PViLayerSpec::Compute_PVDa_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-				     float pve_val, LeabraNetwork* net) {
+                                     float pve_val, LeabraNetwork* net) {
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
 
   float pvd = 0.0f;
@@ -203,7 +203,7 @@ float PViLayerSpec::Compute_PVDa_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* du = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-    du->dav = pvd;		// store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
+    du->dav = pvd;              // store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
   }
   return pv_da;
 }
@@ -228,13 +228,13 @@ float PViLayerSpec::Compute_PVDa(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void PViLayerSpec::Update_PVPrior_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-				      bool er_avail) {
+                                      bool er_avail) {
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   if(er_avail && pv.er_reset_prior) {
     u->misc_1 = 0.0f;
   }
   else {
-    u->misc_1 = pv.prior_gain * u->dav;	// already stored in da value: note includes min_pvi, which is appropriate -- this was missing prior to 2/12/2009
+    u->misc_1 = pv.prior_gain * u->dav; // already stored in da value: note includes min_pvi, which is appropriate -- this was missing prior to 2/12/2009
   }
 }
 
@@ -287,7 +287,7 @@ bool PViLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 }
 
 ////////////////////////////////////////////////////////
-//	PVr = PV reward detection system (habenula?)
+//      PVr = PV reward detection system (habenula?)
 ////////////////////////////////////////////////////////
 
 void PVrConSpec::Initialize() {
@@ -305,7 +305,7 @@ void PVrLayerSpec::Initialize() {
   decay.clamp_phase2 = false;
 
   bias_val.un = ScalarValBias::GC;
-  bias_val.val = .5f;		// default is no-information case; extrew = .5
+  bias_val.val = .5f;           // default is no-information case; extrew = .5
 
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
@@ -348,8 +348,8 @@ bool PVrLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
-		"requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
+                "requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
+                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
     us->SetUnique("act", true);
     us->act.avg_dt = 0.0f;
   }
@@ -362,7 +362,7 @@ bool PVrLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   // check for conspecs with correct params
   LeabraLayer* ext_rew_lay = NULL;
   if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
@@ -376,11 +376,11 @@ bool PVrLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(lay->CheckError(!cs->InheritsFrom(TA_PVrConSpec), quiet, rval,
-		  "requires recv connections to be of type PVrConSpec")) {
+                  "requires recv connections to be of type PVrConSpec")) {
       return false;
     }
   }
-  
+
   return true;
 }
 
@@ -397,19 +397,19 @@ bool PVrLayerSpec::Compute_PVDetect(LeabraLayer* lay, LeabraNetwork* net) {
 void PVrLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_CycleStats(lay, net);
   if(net->phase_no == 0)
-    Compute_PVDetect(lay, net);	// detect in the minus phase -- continuous!
+    Compute_PVDetect(lay, net); // detect in the minus phase -- continuous!
 }
 
 void PVrLayerSpec::Compute_PVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
   float pvr_targ_val = 0.5f;
   if(net->ext_rew_avail)
-    pvr_targ_val = 1.0f;	// any kind of primary reward is trained with a 1
+    pvr_targ_val = 1.0f;        // any kind of primary reward is trained with a 1
 
   UNIT_GP_ITR
-    (lay, 
+    (lay,
      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-     u->ext = pvr_targ_val;	// clamp to target value
-     ClampValue_ugp(lay, acc_md, gpidx, net); 	// apply new value
+     u->ext = pvr_targ_val;     // clamp to target value
+     ClampValue_ugp(lay, acc_md, gpidx, net);   // apply new value
      Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net); // copy ext values to act_p
      );
 }
@@ -442,7 +442,7 @@ bool PVrLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 }
 
 //////////////////////////////////////////
-//	LV Layer Spec: Perceived Value	//
+//      LV Layer Spec: Perceived Value  //
 //////////////////////////////////////////
 
 void LVMiscSpec::Initialize() {
@@ -510,7 +510,7 @@ bool LVeLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   // check for conspecs with correct params
   LeabraLayer* pvi_lay = NULL;
   if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
@@ -524,13 +524,13 @@ bool LVeLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(lay->CheckError(!cs->InheritsFrom(TA_PVConSpec), quiet, rval,
-		       "requires recv connections to be of type PVConSpec")) {
+                       "requires recv connections to be of type PVConSpec")) {
       return false;
     }
   }
-  
+
 //   if(lay->CheckError(!pvi_lay, quiet, rval,
-// 		"requires MarkerConSpec connection from PViLayerSpec layer to get DA values!")) {
+//              "requires MarkerConSpec connection from PViLayerSpec layer to get DA values!")) {
 //     return false;
 //   }
 
@@ -546,19 +546,19 @@ void LVeLayerSpec::Compute_LVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) 
 
   if(er_avail) {
     UNIT_GP_ITR
-      (lay, 
+      (lay,
        LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
        u->ext = pve_val;
-       ClampValue_ugp(lay, acc_md, gpidx, net); 		// apply new value
-       Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net); 	// copy ext values to act_p
+       ClampValue_ugp(lay, acc_md, gpidx, net);                 // apply new value
+       Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net);  // copy ext values to act_p
      );
   }
 }
 
 float LVeLayerSpec::Compute_LVDa_ugp(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
-				     Layer::AccessMode lve_acc_md, int lve_gpidx,
-				     Layer::AccessMode lvi_acc_md, int lvi_gpidx,
-				     LeabraNetwork* net) {
+                                     Layer::AccessMode lve_acc_md, int lve_gpidx,
+                                     Layer::AccessMode lvi_acc_md, int lvi_gpidx,
+                                     LeabraNetwork* net) {
   LeabraUnit* lveu = (LeabraUnit*)lve_lay->UnitAccess(lve_acc_md, 0, lve_gpidx);
   LeabraUnit* lviu = (LeabraUnit*)lvi_lay->UnitAccess(lvi_acc_md, 0, lvi_gpidx);
 
@@ -571,13 +571,13 @@ float LVeLayerSpec::Compute_LVDa_ugp(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
   int nunits = lve_lay->UnitAccess_NUnits(lve_acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* du = (LeabraUnit*)lve_lay->UnitAccess(lve_acc_md, i, lve_gpidx);
-    du->dav = lvd;		// store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
+    du->dav = lvd;              // store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
   }
   return lv_da;
 }
 
 float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
-				 LeabraNetwork* net) {
+                                 LeabraNetwork* net) {
   float lv_da = 0.0f;
   if(lve_lay->unit_groups && (lve_lay->gp_geom.n == lvi_lay->gp_geom.n)) {
     for(int g=0; g<lve_lay->gp_geom.n; g++) {
@@ -601,18 +601,18 @@ float LVeLayerSpec::Compute_LVDa(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
   }
   else {
     lv_da = Compute_LVDa_ugp(lve_lay, lvi_lay, Layer::ACC_LAY, 0, Layer::ACC_LAY, 0, net);
-  } 
+  }
   return lv_da;
 }
 
 void LVeLayerSpec::Update_LVPrior_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-				      bool er_avail) {
+                                      bool er_avail) {
   LeabraUnit* lveu = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   if(er_avail && lv.er_reset_prior) {
     lveu->misc_1 = 0.0f;
   }
   else {
-    lveu->misc_1 = lv.prior_gain * lveu->dav;	// already stored in da value: note includes min_lvi, which is appropriate -- this was missing prior to 2/12/2009
+    lveu->misc_1 = lv.prior_gain * lveu->dav;   // already stored in da value: note includes min_lvi, which is appropriate -- this was missing prior to 2/12/2009
   }
 }
 
@@ -680,7 +680,7 @@ bool LVeLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net
 
 
 //////////////////////////////////////////
-//	NV (Novelty Value) Layer Spec	//
+//      NV (Novelty Value) Layer Spec   //
 //////////////////////////////////////////
 
 void NVConSpec::Initialize() {
@@ -701,7 +701,7 @@ void NVLayerSpec::Initialize() {
   decay.clamp_phase2 = false;
 
   bias_val.un = ScalarValBias::GC;
-  bias_val.val = 1.0f;		// this is the completely novel value
+  bias_val.val = 1.0f;          // this is the completely novel value
 
   SetUnique("ct_inhib_mod", true);
   ct_inhib_mod.use_sin = true;
@@ -746,8 +746,8 @@ bool NVLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
-		"requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
+                "requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
+                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
     us->SetUnique("act", true);
     us->act.avg_dt = 0.0f;
   }
@@ -759,7 +759,7 @@ bool NVLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   // check for conspecs with correct params
   if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) { // self projection, skip it
@@ -767,11 +767,11 @@ bool NVLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(lay->CheckError(!cs->InheritsFrom(TA_PVConSpec), quiet, rval,
-		       "requires recv connections to be of type PVConSpec")) {
+                       "requires recv connections to be of type PVConSpec")) {
       return false;
     }
   }
-  
+
   return true;
 }
 
@@ -784,17 +784,17 @@ float NVLayerSpec::Compute_NVDa(LeabraLayer* lay, LeabraNetwork* net) {
 
   for(int i=0;i<lay->units.leaves;i++) {
     LeabraUnit* du = (LeabraUnit*)lay->units.Leaf(i);
-    du->dav = nvd;		// store in all units for visualization, updating -- NOT the nv_da which is already relative to prior
+    du->dav = nvd;              // store in all units for visualization, updating -- NOT the nv_da which is already relative to prior
   }
   return nv.da_gain * nv_da;
 }
 
 void NVLayerSpec::Compute_NVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR
-    (lay, 
+    (lay,
      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-     u->ext = 0.0f;		// clamp to pve value
-     ClampValue_ugp(lay, acc_md, gpidx, net); 	// apply new value
+     u->ext = 0.0f;             // clamp to pve value
+     ClampValue_ugp(lay, acc_md, gpidx, net);   // apply new value
      Compute_ExtToPlus_ugp(lay, acc_md, gpidx, net); // copy ext values to act_p
      );
 }
@@ -806,7 +806,7 @@ void NVLayerSpec::Update_NVPrior(LeabraLayer* lay, LeabraNetwork* net) {
     nvsu->misc_1 = 0.0f;
   }
   else {
-    nvsu->misc_1 = nv.prior_gain * nvsu->dav;	// previous da value
+    nvsu->misc_1 = nv.prior_gain * nvsu->dav;   // previous da value
   }
 }
 
@@ -846,7 +846,7 @@ bool NVLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net)
 }
 
 //////////////////////////////////
-//	PVLVDa Layer Spec	//
+//      PVLVDa Layer Spec       //
 //////////////////////////////////
 
 void PVLVDaSpec::Initialize() {
@@ -904,31 +904,31 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   us->maxda.val = MaxDaSpec::NO_MAX_DA;
 
   if(lay->CheckError((us->act_range.max != 2.0f) || (us->act_range.min != -2.0f), quiet, rval,
-		"requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
+                "requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:",
+                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
     us->SetUnique("act_range", true);
     us->act_range.max = 2.0f;
     us->act_range.min = -2.0f;
     us->act_range.UpdateAfterEdit();
   }
   if(lay->CheckError((us->clamp_range.max != 2.0f) || (us->clamp_range.min != -2.0f), quiet, rval,
-		"requires UnitSpec clamp_range.max = 2, min = -2, I just set it for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
+                "requires UnitSpec clamp_range.max = 2, min = -2, I just set it for you in spec:",
+                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
     us->SetUnique("clamp_range", true);
     us->clamp_range.max = 2.0f;
     us->clamp_range.min = -2.0f;
     us->clamp_range.UpdateAfterEdit();
   }
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
-		"requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
-		us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
+                "requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
+                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
     us->SetUnique("act", true);
     us->act.avg_dt = 0.0f;
   }
 
   // check recv connection
   if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);	// taking 1st unit as representative
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   LeabraLayer* lve_lay = NULL;
   LeabraLayer* lvi_lay = NULL;
   LeabraLayer* pvi_lay = NULL;
@@ -939,8 +939,8 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
     if(cs->InheritsFrom(TA_MarkerConSpec)) {
       if(lay->CheckError(recv_gp->size <= 0, quiet, rval,
-		    "requires one recv projection with at least one unit!")) {
-	return false;
+                    "requires one recv projection with at least one unit!")) {
+        return false;
       }
       if(fls->InheritsFrom(TA_LVeLayerSpec)) lve_lay = fmlay;
       if(fls->InheritsFrom(TA_LViLayerSpec)) lvi_lay = fmlay;
@@ -949,15 +949,15 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   }
 
   if(lay->CheckError(!lve_lay, quiet, rval,
-		"did not find LVe layer to get Da from!")) {
+                "did not find LVe layer to get Da from!")) {
     return false;
   }
   if(lay->CheckError(!lvi_lay, quiet, rval,
-		"did not find LVi layer to get Da from!")) {
+                "did not find LVi layer to get Da from!")) {
     return false;
   }
   if(lay->CheckError(!pvi_lay, quiet, rval,
-		"did not find PVi layer to get Da from!")) {
+                "did not find PVi layer to get Da from!")) {
     return false;
   }
 
@@ -1000,9 +1000,7 @@ void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   }
 
   lay->dav = net_da;
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     u->dav = net_da;
     u->ext = da.tonic_da + u->dav;
     u->act_eq = u->act_nd = u->act = u->net = u->ext;
@@ -1010,16 +1008,14 @@ void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
-  LeabraUnit* u;
-  taLeafItr i;
-  FOR_ITR_EL(LeabraUnit, u, lay->units., i) {
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     const float snd_val = u->act;
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(tol->lesioned())	continue;
+      if(tol->lesioned())       continue;
       for(int j=0;j<send_gp->size; j++) {
-	((LeabraUnit*)send_gp->Un(j))->dav = snd_val;
+        ((LeabraUnit*)send_gp->Un(j))->dav = snd_val;
       }
     }
   }
@@ -1028,9 +1024,7 @@ void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
 void PVLVDaLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
   // that's it: don't do any processing on this layer: set all idx to 0
   lay->units_flat_idx = 0;
-  Unit* un;
-  taLeafItr ui;
-  FOR_ITR_EL(Unit, un, lay->units., ui) {
+  FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
     un->flat_idx = 0;
   }
 }
@@ -1049,11 +1043,11 @@ void PVLVDaLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
 ///////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////
-//		Wizard		//
+//              Wizard          //
 //////////////////////////////////
 
 ///////////////////////////////////////////////////////////////
-//			PVLV
+//                      PVLV
 ///////////////////////////////////////////////////////////////
 
 
@@ -1072,11 +1066,11 @@ bool LeabraWizard::PVLV_ToLayerGroup(LeabraNetwork* net) {
 
   if(new_laygp) {
     laygp->pos.z = 0;
-    net->RebuildAllViews();	// trigger update
+    net->RebuildAllViews();     // trigger update
   }
 
   Layer* lay;
-  if(lay = net->FindLayer(pvenm)) { laygp->Transfer(lay); lay->pos.z = 0; } 
+  if(lay = net->FindLayer(pvenm)) { laygp->Transfer(lay); lay->pos.z = 0; }
   if(lay = net->FindLayer(pvinm)) { laygp->Transfer(lay); lay->pos.z = 0; }
   if(lay = net->FindLayer(pvrnm)) { laygp->Transfer(lay); lay->pos.z = 0; }
   if(lay = net->FindLayer(lvenm)) { laygp->Transfer(lay); lay->pos.z = 0; }
@@ -1086,7 +1080,7 @@ bool LeabraWizard::PVLV_ToLayerGroup(LeabraNetwork* net) {
   if(lay = net->FindLayer("DA")) { laygp->Transfer(lay); lay->pos.z = 0; }
   if(lay = net->FindLayer("RewTarg")) { laygp->Transfer(lay); lay->pos.z = 0; }
 
-  net->RebuildAllViews();	// trigger update
+  net->RebuildAllViews();       // trigger update
 
   return true;
 }
@@ -1127,9 +1121,9 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   //////////////////////////////////////////////////////////////////////////////////
   // make layers
 
-  bool	lve_new = false;
-  bool	pvr_new = false;
-  bool	nv_new = false;
+  bool  lve_new = false;
+  bool  pvr_new = false;
+  bool  nv_new = false;
   String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
   String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
   String vtanm = "VTA";
@@ -1142,7 +1136,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   LeabraLayer* nv;   LeabraLayer* vta;
 
   if(new_laygp) {
-    PVLV_ToLayerGroup(net);	// doesn't hurt to just do this..
+    PVLV_ToLayerGroup(net);     // doesn't hurt to just do this..
   }
 
   bool dumbo;
@@ -1176,11 +1170,11 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
       other_lays.Link(lay);
       if(lay->pos.z == 0) lay->pos.z = 2; // nobody allowed in 0!
       if(lay->layer_type == Layer::HIDDEN)
-	hidden_lays.Link(lay);
+        hidden_lays.Link(lay);
       else if(lay->layer_type == Layer::INPUT)
-	input_lays.Link(lay);
-      else 
-	output_lays.Link(lay);
+        input_lays.Link(lay);
+      else
+        output_lays.Link(lay);
     }
   }
 
@@ -1299,7 +1293,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     lsp->scalar.min_sum_act = .2f;
     lsp->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB; lsp->inhib.kwta_pt = 0.9f;
     lsp->kwta.k_from = KWTASpec::USE_K;    lsp->kwta.k = 1;
-    lsp->gp_kwta.k_from = KWTASpec::USE_K; lsp->gp_kwta.k = 1; 
+    lsp->gp_kwta.k_from = KWTASpec::USE_K; lsp->gp_kwta.k = 1;
     lsp->unit_range.min = 0.0f;  lsp->unit_range.max = 1.0f;
     lsp->unit_range.UpdateAfterEdit();
     lsp->val_range = lsp->unit_range;
@@ -1340,7 +1334,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   pv_units->act.avg_dt = 0.0f;
 
   pvi_cons->SetUnique("lmix", true);
-  pvi_cons->lmix.err_sb = false; 
+  pvi_cons->lmix.err_sb = false;
   pvi_cons->SetUnique("rnd", true);
   pvi_cons->rnd.mean = 0.1f;
   pvi_cons->rnd.var = 0.0f;
@@ -1369,7 +1363,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   else
     pvesp->rew_type = ExtRewLayerSpec::EXT_REW;
 
-  int n_lv_u;		// number of pvlv-type units
+  int n_lv_u;           // number of pvlv-type units
   if(pvisp->scalar.rep == ScalarValSpec::LOCALIST)
     n_lv_u = 4;
   else if(pvisp->scalar.rep == ScalarValSpec::GAUSSIAN)
@@ -1426,18 +1420,18 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   // apply specs to objects
 
   rew_targ_lay->SetLayerSpec(rewtargsp);
-  pve->SetLayerSpec(pvesp);	pve->SetUnitSpec(pv_units);
-  pvi->SetLayerSpec(pvisp);	pvi->SetUnitSpec(pv_units);
-  lve->SetLayerSpec(lvesp);	lve->SetUnitSpec(lv_units);
-  lvi->SetLayerSpec(lvisp);	lvi->SetUnitSpec(lv_units);
-  vta->SetLayerSpec(dasp);	vta->SetUnitSpec(da_units);
-  pvr->SetLayerSpec(pvrsp);	pvr->SetUnitSpec(pv_units);
-  nv->SetLayerSpec(nvsp);	nv->SetUnitSpec(pv_units);
+  pve->SetLayerSpec(pvesp);     pve->SetUnitSpec(pv_units);
+  pvi->SetLayerSpec(pvisp);     pvi->SetUnitSpec(pv_units);
+  lve->SetLayerSpec(lvesp);     lve->SetUnitSpec(lv_units);
+  lvi->SetLayerSpec(lvisp);     lvi->SetUnitSpec(lv_units);
+  vta->SetLayerSpec(dasp);      vta->SetUnitSpec(da_units);
+  pvr->SetLayerSpec(pvrsp);     pvr->SetUnitSpec(pv_units);
+  nv->SetLayerSpec(nvsp);       nv->SetUnitSpec(pv_units);
 
   pv_units->bias_spec.SetSpec(bg_bias);
   lv_units->bias_spec.SetSpec(bg_bias);
   da_units->bias_spec.SetSpec(fixed_bias);
-  
+
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
 
@@ -1471,7 +1465,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     for(i=0; i<pvr->projections.size;i++) {
       Projection* prjn = pvr->projections[i];
       if(!prjn->con_spec.GetSpec())
-	prjn->SetConSpec(pvr_cons);
+        prjn->SetConSpec(pvr_cons);
     }
   }
 
@@ -1494,8 +1488,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   net->LayerPos_Cleanup();
 
   if(new_laygp) {
-    laygp->pos.z = 0;		// move back!
-    net->RebuildAllViews();	// trigger update
+    laygp->pos.z = 0;           // move back!
+    net->RebuildAllViews();     // trigger update
   }
 
   taMisc::CheckConfigStart(false, false);
@@ -1518,7 +1512,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
  function again after you have corrected the source of the error.";
   }
   else {
-    msg = 
+    msg =
     "PVLV configuration is now complete.  Do not forget the one remaining thing\
  you need to do manually:\n\n" + man_msg;
   }
@@ -1530,7 +1524,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
   lvisp->UpdateAfterEdit();
   pvrsp->UpdateAfterEdit();
   nvsp->UpdateAfterEdit();
-  
+
   for(j=0;j<net->specs.leaves;j++) {
     BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
     sp->UpdateAfterEdit();
@@ -1566,7 +1560,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
 }
 
 bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
-				     bool disconnect) {
+                                     bool disconnect) {
   if(TestError(!net || !sending_layer, "PVLV_ConnectLayer", "must specify a network and a sending layer!")) return false;
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
@@ -1633,7 +1627,7 @@ bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_la
 }
 
 bool LeabraWizard::PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
-				     bool disconnect) {
+                                     bool disconnect) {
   if(TestError(!net || !output_layer, "PVLV_OutToPVe", "must specify a network and an output layer!")) return false;
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);

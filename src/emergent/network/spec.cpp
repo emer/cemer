@@ -26,7 +26,7 @@
 #endif
 
 //////////////////////////////////
-//	BaseSpec_Group		//
+//      BaseSpec_Group          //
 //////////////////////////////////
 
 bool BaseSpec_Group::nw_itm_def_arg = false;
@@ -44,17 +44,15 @@ String BaseSpec_Group::GetTypeDecoKey() const {
 
 BaseSpec* BaseSpec_Group::FindSpecType(TypeDef* td) {
   // breadth-first search
-  BaseSpec* bs;
-  taLeafItr i;
-  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     if(!bs->isDestroying() && (bs->GetTypeDef() == td))
       return bs;    // use equals to find type of spec object
   }
   // then check the children
-  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     // this is not true -- bad!!
 //     if(!(bs->InheritsFrom(td) || td->InheritsFrom(bs->GetTypeDef())))
-//       continue;			// no hope..
+//       continue;                      // no hope..
     BaseSpec* rval = bs->children.FindSpecType(td);
     if(rval)
       return rval;
@@ -64,18 +62,16 @@ BaseSpec* BaseSpec_Group::FindSpecType(TypeDef* td) {
 
 BaseSpec* BaseSpec_Group::FindSpecInherits(TypeDef* td, taBase* for_obj) {
   // breadth-first search
-  BaseSpec* bs;
-  taLeafItr i;
-  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     if(bs->InheritsFrom(td)) {
       if((for_obj == NULL) || (bs->CheckObjectType_impl(for_obj)))
-	return bs;    // object must also be sufficient..
+        return bs;    // object must also be sufficient..
     }
   }
   // then check the children
-  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     if(!(bs->InheritsFrom(td) || td->InheritsFrom(bs->GetTypeDef())))
-      continue;			// no hope..
+      continue;                 // no hope..
     BaseSpec* rval = bs->children.FindSpecInherits(td, for_obj);
     if(rval)
       return rval;
@@ -85,16 +81,14 @@ BaseSpec* BaseSpec_Group::FindSpecInherits(TypeDef* td, taBase* for_obj) {
 
 BaseSpec* BaseSpec_Group::FindSpecTypeNotMe(TypeDef* td, BaseSpec* not_me) {
   // breadth-first search
-  BaseSpec* bs;
-  taLeafItr i;
-  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     if((bs->GetTypeDef() == td) && (bs != not_me))
       return bs;    // use equals to find type of spec object
   }
   // then check the children
-  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     if(!(bs->InheritsFrom(td) || td->InheritsFrom(bs->GetTypeDef()) || (bs != not_me)))
-      continue;			// no hope..
+      continue;                 // no hope..
     BaseSpec* rval = bs->children.FindSpecTypeNotMe(td, not_me);
     if(rval)
       return rval;
@@ -104,18 +98,16 @@ BaseSpec* BaseSpec_Group::FindSpecTypeNotMe(TypeDef* td, BaseSpec* not_me) {
 
 BaseSpec* BaseSpec_Group::FindSpecInheritsNotMe(TypeDef* td, BaseSpec* not_me, taBase* for_obj) {
   // breadth-first search
-  BaseSpec* bs;
-  taLeafItr i;
-  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     if(bs->InheritsFrom(td) && (bs != not_me)) {
       if((for_obj == NULL) || (bs->CheckObjectType_impl(for_obj)))
-	return bs;    // object must also be sufficient..
+        return bs;    // object must also be sufficient..
     }
   }
   // then check the children
-  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     if(!(bs->InheritsFrom(td) || td->InheritsFrom(bs->GetTypeDef()) || (bs != not_me)))
-      continue;			// no hope..
+      continue;                 // no hope..
     BaseSpec* rval = bs->children.FindSpecInheritsNotMe(td, not_me, for_obj);
     if(rval)
       return rval;
@@ -128,9 +120,7 @@ BaseSpec* BaseSpec_Group::FindSpecName(const char* nm) {
   BaseSpec* rval = (BaseSpec*)FindLeafName((char*)nm);
   if(rval)
     return rval;
-  BaseSpec* bs;
-  taLeafItr i;
-  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     rval = bs->children.FindSpecName(nm);
     if(rval)
       return rval;
@@ -182,16 +172,14 @@ bool BaseSpec_Group::RemoveSpec(const char* nm, TypeDef* tp) {
 }
 
 void BaseSpec_Group::Defaults() {
-  BaseSpec* bs;
-  taLeafItr i;
-  FOR_ITR_EL(BaseSpec, bs, this->, i) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     bs->Defaults();
     bs->children.Defaults();
   }
 }
 
 //////////////////////////////////
-//	SpecMemberBase		//
+//      SpecMemberBase          //
 //////////////////////////////////
 
 void SpecMemberBase::Defaults() {
@@ -214,7 +202,7 @@ void SpecMemberBase::DefaultsMembers() {
 }
 
 //////////////////////////////////
-//	BaseSpec		//
+//      BaseSpec                //
 //////////////////////////////////
 
 bool BaseSpec::nw_itm_def_arg = false;
@@ -258,7 +246,7 @@ void BaseSpec::UpdateAfterEdit_impl() {
 }
 
 void BaseSpec::Defaults() {
-  DefaultsMembers();	// members has to come first, so they can be overridden by master!
+  DefaultsMembers();    // members has to come first, so they can be overridden by master!
   Defaults_impl();
   UpdateAfterEdit();
 }
@@ -307,7 +295,7 @@ void BaseSpec::SetUnique(const char* memb_nm, bool on) {
     SetUnique(md->idx, on);
   else {
     TestError(GetTypeDef()->members.size > 0, "SetUnique",
-	      "Member named:", memb_nm, "not found");
+              "Member named:", memb_nm, "not found");
   }
 }
 
@@ -343,9 +331,7 @@ bool BaseSpec::GetUnique(int memb_no) {
 bool BaseSpec::SpecInheritsFrom(BaseSpec* spec) const {
   if (this == spec) return true;
   // just iterate here, no need for recursion
-  taLeafItr itr;
-  BaseSpec* child;
-  FOR_ITR_EL(BaseSpec, child, spec->children., itr) {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, child, spec->children) {
     if (this == child) return true;
   }
   return false;
@@ -368,36 +354,34 @@ void BaseSpec::UpdateMember(BaseSpec* from, int memb_no) {
     return;
   TypeDef* td = GetTypeDef();
   TypeDef* frm_td = from->GetTypeDef();
-  if(memb_no < frm_td->members.size) {	// parent must have this member
+  if(memb_no < frm_td->members.size) {  // parent must have this member
     MemberDef* md = td->members[memb_no];
-    if(frm_td->members[memb_no] == md) { 	// must be the same member
+    if(frm_td->members[memb_no] == md) {        // must be the same member
       // don't copy read only or hidden members! (usually set automatically
       // and might depend on local variables)
       if(!GetUnique(memb_no) &&
-	 !(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") ||
-	   md->HasOption("NO_INHERIT")))
+         !(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") ||
+           md->HasOption("NO_INHERIT")))
       {
-	if(md->type->InheritsFrom(TA_taList_impl)) {
-	  ((taList_impl*)md->GetOff((void*)this))->SetSize
-	    (((taList_impl*)md->GetOff((void*)from))->size);
-	}
-	if(md->type->InheritsFrom(TA_taArray_impl)) {
-	  ((taArray_impl*)md->GetOff((void*)this))->SetSize
-	    (((taArray_impl*)md->GetOff((void*)from))->size);
-	}
-	MemberCopyFrom(memb_no, from);
-	// NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
-// 	DataChanged(DCR_ITEM_UPDATED);
+        if(md->type->InheritsFrom(TA_taList_impl)) {
+          ((taList_impl*)md->GetOff((void*)this))->SetSize
+            (((taList_impl*)md->GetOff((void*)from))->size);
+        }
+        if(md->type->InheritsFrom(TA_taArray_impl)) {
+          ((taArray_impl*)md->GetOff((void*)this))->SetSize
+            (((taArray_impl*)md->GetOff((void*)from))->size);
+        }
+        MemberCopyFrom(memb_no, from);
+        // NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
+//      DataChanged(DCR_ITEM_UPDATED);
       }
     }
   }
 }
 
 void BaseSpec::UpdateChildren() {
-  BaseSpec* kid;
-  taLeafItr i;
-  FOR_ITR_EL(BaseSpec, kid, children., i) {
-    kid->UpdateAfterEdit();	// calls updatespec and updates gui too -- can be wasteful but also needed for e.g., ctrl panels to update properly, so no real way around it..
+  FOREACH_ELEM_IN_GROUP(BaseSpec, kid, children) {
+    kid->UpdateAfterEdit();     // calls updatespec and updates gui too -- can be wasteful but also needed for e.g., ctrl panels to update properly, so no real way around it..
   }
 }
 
@@ -405,9 +389,9 @@ bool BaseSpec::CheckType(TypeDef* td) {
   if(TestWarning(!td, "CheckType", "type is null, should be at least:", min_obj_type->name)) {
     return false;
   }
-  if(TestWarning(!CheckType_impl(td),  "CheckType", 
-		 "incorrect type:", td->name,
-		 "should be at least:", min_obj_type->name)) {
+  if(TestWarning(!CheckType_impl(td),  "CheckType",
+                 "incorrect type:", td->name,
+                 "should be at least:", min_obj_type->name)) {
     return false;
   }
   return true;
@@ -415,13 +399,13 @@ bool BaseSpec::CheckType(TypeDef* td) {
 
 bool BaseSpec::CheckObjectType(taBase* obj) {
   if(TestWarning(!obj, "CheckObjectType",
-		 "object is null",
-		 "should be at least:", min_obj_type->name)) {
+                 "object is null",
+                 "should be at least:", min_obj_type->name)) {
     return false;
   }
   if(TestWarning(!CheckObjectType_impl(obj), "CheckObjectType",
-		 "incorrect type of obj:", obj->GetTypeDef()->name,
-		 "should be at least:", min_obj_type->name)) {
+                 "incorrect type of obj:", obj->GetTypeDef()->name,
+                 "should be at least:", min_obj_type->name)) {
     return false;
   }
   return true;
@@ -470,7 +454,7 @@ String BaseSpec::WhereUsed() {
 
 
 //////////////////////////////////
-//	BaseSubSpec		//
+//      BaseSubSpec             //
 //////////////////////////////////
 
 void BaseSubSpec::Initialize() {
@@ -504,15 +488,15 @@ BaseSpec* BaseSubSpec::FindParentBaseSpec() {
 
 BaseSubSpec* BaseSubSpec::FindParent() {
   BaseSpec* bso = FindParentBaseSpec();
-  if(bso == NULL)	return NULL;
+  if(bso == NULL)       return NULL;
   BaseSpec* bsoo = bso->FindParent(); // parent's owner
-  if(bsoo == NULL)	return NULL;
+  if(bsoo == NULL)      return NULL;
 
   String my_path = GetPath(NULL, bso); // get my path to owner..
   MemberDef* md;
   BaseSubSpec* from = (BaseSubSpec*)bsoo->FindFromPath(my_path, md);
   if(!from || !from->InheritsFrom(TA_BaseSubSpec))
-    return NULL;			// corresponding subspec object not found..
+    return NULL;                        // corresponding subspec object not found..
   return from;
 }
 
@@ -521,8 +505,8 @@ void BaseSubSpec::SetUnique(const char* memb_nm, bool on) {
   if(md)
     SetUnique(md->idx, on);
   else {
-    TestError(GetTypeDef()->members.size > 0, "SetUnique", 
-	      "Member named:", memb_nm, "not found");
+    TestError(GetTypeDef()->members.size > 0, "SetUnique",
+              "Member named:", memb_nm, "not found");
   }
 }
 
@@ -530,8 +514,8 @@ void BaseSubSpec::SetUnique(int memb_no, bool on) {
   if(memb_no < TA_BaseSubSpec.members.size)
     return;
   MemberDef* md = GetTypeDef()->members[memb_no];
-  if(TestError(!md, "SetUnique", 
-	       "Member number:", String(memb_no), "not found")) {
+  if(TestError(!md, "SetUnique",
+               "Member number:", String(memb_no), "not found")) {
     return;
   }
   if(on)
@@ -574,25 +558,25 @@ void BaseSubSpec::UpdateMember(BaseSubSpec* from, int memb_no) {
     return;
   TypeDef* td = GetTypeDef();
   TypeDef* frm_td = from->GetTypeDef();
-  if(memb_no < frm_td->members.size) {	// parent must have this member
+  if(memb_no < frm_td->members.size) {  // parent must have this member
     MemberDef* md = td->members[memb_no];
-    if(frm_td->members[memb_no] == md) { 	// must be the same member
+    if(frm_td->members[memb_no] == md) {        // must be the same member
       // don't copy read only or hidden members! (usually set automatically
       // and might depend on local variables)
       if(!GetUnique(memb_no) &&
-	 !(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") ||
-	   md->HasOption("NO_INHERIT")))
+         !(md->HasOption("READ_ONLY") || md->HasOption("HIDDEN") ||
+           md->HasOption("NO_INHERIT")))
       {
-	MemberCopyFrom(memb_no, from);
-	// NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
-// 	DataChanged(DCR_ITEM_UPDATED);
+        MemberCopyFrom(memb_no, from);
+        // NO NO NO 1000 times no (literally!) -- this causes MASSIVE update chains
+//      DataChanged(DCR_ITEM_UPDATED);
       }
     }
   }
 }
 
 //////////////////////////////////
-//	SpecPtr_impl		//
+//      SpecPtr_impl            //
 //////////////////////////////////
 
 void SpecPtr_impl::Initialize() {
@@ -607,23 +591,23 @@ void SpecPtr_impl::Copy_(const SpecPtr_impl& cp) {
 }
 
 taBase* SpecPtr_impl::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par,
-						    taBase* new_par) {
+                                                    taBase* new_par) {
   taBase* new_guy = inherited::UpdatePointers_NewPar_FindNew(old_guy, old_par, new_par);
   String og_nm = old_guy->GetName();
-  if(old_guy->InheritsFrom(&TA_BaseSpec) && old_guy->GetOwner() && 
+  if(old_guy->InheritsFrom(&TA_BaseSpec) && old_guy->GetOwner() &&
      (!new_guy || (og_nm != new_guy->GetName()))) {
     // still not right -- look globally
     BaseSpec_Group* spgp = GetSpecGroup();
     if(spgp) {
       new_guy = spgp->FindSpecName(og_nm);
       if(!new_guy) {
-	/// just make a new one!
-	new_guy = old_guy->Clone();
-	spgp->Add(new_guy);
-	new_guy->SetName(og_nm);
-	new_guy->DataChanged(DCR_ITEM_UPDATED);
-	taMisc::Info("Note: copied Spec:", og_nm,
-		     "into .specs on new network because it was not otherwise found");
+        /// just make a new one!
+        new_guy = old_guy->Clone();
+        spgp->Add(new_guy);
+        new_guy->SetName(og_nm);
+        new_guy->DataChanged(DCR_ITEM_UPDATED);
+        taMisc::Info("Note: copied Spec:", og_nm,
+                     "into .specs on new network because it was not otherwise found");
       }
     }
   }
@@ -635,7 +619,7 @@ int SpecPtr_impl::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
   if(sp != old_ptr) return 0;
   if(GetOwner(old_ptr->GetTypeDef()) == old_ptr) return 0;
   // don't replace on children of the old object
-  SetSpec((BaseSpec*)new_ptr);		// call set spec so type is updated!
+  SetSpec((BaseSpec*)new_ptr);          // call set spec so type is updated!
   return 1;
 }
 
@@ -652,37 +636,37 @@ void SpecPtr_impl::CheckSpec(TypeDef* obj_td) {
   if(!owner_net || owner_net->isDestroying()) return;
 
   if(TestError(!type->InheritsFrom(base_type),
-	       "CheckSpec",
-	       "spec type:", type->name, "does not inherit from base_type:",
-	       base_type->name, "this should not happen (programmer error).",
-	       "Reverting type to base_type")) {
+               "CheckSpec",
+               "spec type:", type->name, "does not inherit from base_type:",
+               base_type->name, "this should not happen (programmer error).",
+               "Reverting type to base_type")) {
     type = base_type;
   }
 
   BaseSpec* sp = GetSpec();
 
-  if(sp && (owner_net != net)) {	// oops!
+  if(sp && (owner_net != net)) {        // oops!
     // try to find same name one first:
     BaseSpec_Group* spgp = GetSpecGroup();
     if(spgp) {
       BaseSpec* nsp = spgp->FindSpecName(sp->name);
-      SetSpec(nsp);		// set -- either null or a candidate
-      sp = nsp;			// update our cur ptr guy
+      SetSpec(nsp);             // set -- either null or a candidate
+      sp = nsp;                 // update our cur ptr guy
       DataChanged(DCR_ITEM_UPDATED);
     }
     else {
-      SetSpec(NULL);		// get rid of existing -- will try to find new one
+      SetSpec(NULL);            // get rid of existing -- will try to find new one
     }
   }
 
   // check again
   sp = GetSpec();
   if(sp) {
-    if(sp->isDestroying()) {	// shouldn't happen, but just in case
+    if(sp->isDestroying()) {    // shouldn't happen, but just in case
       SetSpec(NULL);
     }
     else if(sp->GetTypeDef() != type) {
-      SetSpec(NULL);		// get rid of existing spec
+      SetSpec(NULL);            // get rid of existing spec
     }
   }
 
@@ -690,18 +674,18 @@ void SpecPtr_impl::CheckSpec(TypeDef* obj_td) {
   sp = GetSpec();
   if(!sp) {
     taMisc::CheckError("CheckSpec: spec is NULL in object:", owner->GetPathNames(),
-		       "getting a new spec of type:", type->name);
-    GetSpecOfType(true);	// verbose
+                       "getting a new spec of type:", type->name);
+    GetSpecOfType(true);        // verbose
   }
 
   // and again
   sp = GetSpec();
   if(sp && !obj_td->InheritsFrom(sp->min_obj_type)) {
     taMisc::CheckError("CheckSpec: incorrect type of object:", obj_td->name,
-		       "for spec of type:", sp->GetTypeDef()->name,
-		       "should be at least:", sp->min_obj_type->name,
-		       "in object:",owner->GetPathNames(),
-		       "DO NOT RUN NETWORK until fixed! (Use ChangeMyType on offending object)");
+                       "for spec of type:", sp->GetTypeDef()->name,
+                       "should be at least:", sp->min_obj_type->name,
+                       "in object:",owner->GetPathNames(),
+                       "DO NOT RUN NETWORK until fixed! (Use ChangeMyType on offending object)");
   }
 }
 
@@ -729,32 +713,32 @@ void SpecPtr_impl::UpdateAfterEdit_impl() {
   if(!owner_net || owner_net->isDestroying()) return;
 
   if(TestError(type && base_type && !type->InheritsFrom(base_type),
-	       "UpdateAfterEdit",
-	       "spec type:", type->name, "does not inherit from base_type:",
-	       base_type->name, "this should not happen (programmer error).",
-	       "Reverting type to base_type")) {
+               "UpdateAfterEdit",
+               "spec type:", type->name, "does not inherit from base_type:",
+               base_type->name, "this should not happen (programmer error).",
+               "Reverting type to base_type")) {
     type = base_type;
   }
 
   BaseSpec* sp = GetSpec();
 
-  if(sp && (owner_net != net)) {	// oops!
+  if(sp && (owner_net != net)) {        // oops!
     // try to find same name one first:
     BaseSpec_Group* spgp = GetSpecGroup();
     if(spgp) {
       BaseSpec* nsp = spgp->FindSpecName(sp->name);
-      SetSpec(nsp);		// set -- either null or a candidate
+      SetSpec(nsp);             // set -- either null or a candidate
       DataChanged(DCR_ITEM_UPDATED);
     }
     else {
-      SetSpec(NULL);		// get rid of existing -- will try to find new one later
+      SetSpec(NULL);            // get rid of existing -- will try to find new one later
     }
   }
 }
 
 void SpecPtr_impl::SetBaseType(TypeDef* td) {
   type = td;
-  base_type = td;		// this doesn't get set by defaults
+  base_type = td;               // this doesn't get set by defaults
 }
 
 void SpecPtr_impl::SetDefaultSpec(taBase* ownr, TypeDef* td) {
@@ -766,7 +750,7 @@ void SpecPtr_impl::SetDefaultSpec(taBase* ownr, TypeDef* td) {
 
   owner = (taBase*)ownr;
   if(taBase::GetRefn(this) == 0) {
-    taBase::Ref(this);		// refer to this object..
+    taBase::Ref(this);          // refer to this object..
   }
 
   BaseSpec* sp = GetSpec();
@@ -818,8 +802,8 @@ void SpecPtr_impl::GetSpecOfType(bool verbose) {
     SetSpec(sp);
     if(verbose) {
       taMisc::CheckError("GetSpecOfType for object:", owner->GetPathNames(),
-			 "set spec pointer to existing spec named:", sp->name,
-			 "of correct type:", type->name);
+                         "set spec pointer to existing spec named:", sp->name,
+                         "of correct type:", type->name);
     }
     DataChanged(DCR_ITEM_UPDATED);
     return;
@@ -830,8 +814,8 @@ void SpecPtr_impl::GetSpecOfType(bool verbose) {
     SetSpec(sp);
     if(verbose) {
       taMisc::CheckError("GetSpecOfType for object:", owner->GetPathNames(),
-			 "set spec pointer to NEW spec I just created, named:", sp->name,
-			 "of type:", type->name);
+                         "set spec pointer to NEW spec I just created, named:", sp->name,
+                         "of type:", type->name);
     }
     DataChanged(DCR_ITEM_UPDATED);
   }
@@ -840,7 +824,7 @@ void SpecPtr_impl::GetSpecOfType(bool verbose) {
 // todo: could add the UAE for the relevant smartref_destroy call..
 // void SpecPtr_impl::DataLinkDestroying(taDataLink* dl) {
 //   if (owner && !owner->isDestroying()) {
-// //     owner->SmartRef_DataDestroying(this, GetSpec()); 
+// //     owner->SmartRef_DataDestroying(this, GetSpec());
 //     SetSpec(NULL);
 //     owner->UpdateAfterEdit();
 //   } else

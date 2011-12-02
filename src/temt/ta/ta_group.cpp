@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -29,7 +29,7 @@
 
 
 ////////////////////////////
-//      taSubGroup  	  //
+//      taSubGroup        //
 ////////////////////////////
 
 // not only sub-groups cause dirtiness, because if you add an el to a
@@ -62,7 +62,7 @@ bool taSubGroup::Transfer(taBase* it) {
 
 
 ////////////////////////////
-//      taGroup_impl  	  //
+//      taGroup_impl      //
 ////////////////////////////
 
 bool taGroup_impl::def_nw_item;
@@ -85,7 +85,7 @@ void taGroup_impl::Destroy() {
 
 void taGroup_impl::InitLinks() {
   inherited::InitLinks();
-  gp.SetBaseType(GetTypeDef());	// more of the same type of group
+  gp.SetBaseType(GetTypeDef()); // more of the same type of group
   taBase::Own(gp, this);
 
   super_gp = GetSuperGp_();
@@ -115,7 +115,7 @@ void taGroup_impl::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
   // group staling
-  if (useStale() && (!taMisc::is_loading) && 
+  if (useStale() && (!taMisc::is_loading) &&
     ((dcr >= DCR_GROUP_MIN) && (dcr <= DCR_GROUP_MAX)))
     setStale();
   taList_impl::DataChanged(dcr, op1, op2); // normal processing
@@ -123,12 +123,12 @@ void taGroup_impl::DataChanged(int dcr, void* op1, void* op2) {
   if (root_gp && (dcr >= DCR_LIST_ITEM_TO_GROUP_ITEM_MIN) &&
      (dcr <= DCR_LIST_ITEM_TO_GROUP_ITEM_MAX)) {
     root_gp->DataChanged(dcr + DCR_ListItem_GroupItem_Offset, op1, op2);
-  } 
+  }
   // GROUP_ITEM +/- and GROUP +/- events cause invalidation of the group iteration cache
   // have to trigger on items too, because iteration cache does funky stuff for size==0
   if ( (dcr == DCR_LIST_ITEM_INSERT) || (dcr == DCR_LIST_ITEM_REMOVE)
     || (dcr == DCR_GROUP_ITEM_INSERT) || (dcr == DCR_GROUP_ITEM_REMOVE)
-    || ((dcr >= DCR_GROUP_MIN) && (dcr <= DCR_GROUP_MAX)) ) 
+    || ((dcr >= DCR_GROUP_MIN) && (dcr <= DCR_GROUP_MAX)) )
   {
     if (leaf_gp) {
       taBase::unRefDone(leaf_gp);
@@ -154,8 +154,8 @@ void taGroup_impl::InitLeafGp_impl(TALOG* lg) const {
     FastGp_(i)->InitLeafGp_impl(lg);
 }
 
-void taGroup_impl::CanCopy_impl(const taBase* cp_fm_, bool quiet, 
-  bool& ok, bool virt) const 
+void taGroup_impl::CanCopy_impl(const taBase* cp_fm_, bool quiet,
+  bool& ok, bool virt) const
 {
   if (virt) {
     inherited::CanCopy_impl(cp_fm_, quiet, ok, virt);
@@ -182,7 +182,7 @@ bool taGroup_impl::ChildCanDuplicate(const taBase* chld,
   if (gp.FindEl(chld) >= 0) {
     return true;
   }
-  return inherited::ChildCanDuplicate(chld, quiet); 
+  return inherited::ChildCanDuplicate(chld, quiet);
 }
 
 taBase* taGroup_impl::ChildDuplicate(const taBase* chld) {
@@ -194,7 +194,7 @@ taBase* taGroup_impl::ChildDuplicate(const taBase* chld) {
 
 void taGroup_impl::AddOnly_(void* it) {
   inherited::AddOnly_(it);
-  UpdateLeafCount_(1);		// not the most efficient, but gets it at a low level
+  UpdateLeafCount_(1);          // not the most efficient, but gets it at a low level
 }
 
 void taGroup_impl::Borrow(const taGroup_impl& cp) {
@@ -239,19 +239,19 @@ int taGroup_impl::SelectForEditSearch(const String& memb_contains, SelectEdit*& 
 }
 
 void taGroup_impl::Search_impl(const String& srch, taBase_PtrList& items,
-			       taBase_PtrList* owners,
-			       bool contains, bool case_sensitive,
-			       bool obj_name, bool obj_type,
-			       bool obj_desc, bool obj_val,
-			       bool mbr_name, bool type_desc) {
+                               taBase_PtrList* owners,
+                               bool contains, bool case_sensitive,
+                               bool obj_name, bool obj_type,
+                               bool obj_desc, bool obj_val,
+                               bool mbr_name, bool type_desc) {
   int st_sz = items.size;
   inherited::Search_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
-		       obj_desc, obj_val, mbr_name, type_desc);
+                       obj_desc, obj_val, mbr_name, type_desc);
   bool already_added_me = false;
   if(items.size > st_sz)
     already_added_me = true;
   gp.Search_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
-		 obj_desc, obj_val, mbr_name, type_desc);
+                 obj_desc, obj_val, mbr_name, type_desc);
   if(owners && (items.size > st_sz) && !already_added_me) { // we added somebody somewhere..
     owners->Link(this);
   }
@@ -259,16 +259,16 @@ void taGroup_impl::Search_impl(const String& srch, taBase_PtrList& items,
 
 
 void taGroup_impl::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-				    voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-				    taBase* cp_base,
-				    int show_forbidden, int show_allowed, bool no_ptrs) {
+                                    voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                                    taBase* cp_base,
+                                    int show_forbidden, int show_allowed, bool no_ptrs) {
   if(!cp_base) return;
   if(GetTypeDef() != cp_base->GetTypeDef()) return; // must be same type..
   inherited::CompareSameTypeR(mds, base_types, trg_bases, src_bases, cp_base, show_forbidden,
-			      show_allowed, no_ptrs);
+                              show_allowed, no_ptrs);
   taGroup_impl* cp_gp = (taGroup_impl*)cp_base;
   gp.CompareSameTypeR(mds, base_types, trg_bases, src_bases, &(cp_gp->gp),
-		      show_forbidden, show_allowed, no_ptrs);
+                      show_forbidden, show_allowed, no_ptrs);
 }
 
 int taGroup_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
@@ -303,7 +303,7 @@ int taGroup_impl::UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr
 }
 
 String taGroup_impl::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrContext sc,
-			      bool force_inline) const {
+                              bool force_inline) const {
   String nm = " Size: ";
   nm += String(size);
   if(gp.size > 0)
@@ -314,8 +314,8 @@ String taGroup_impl::GetValStr(void* par, MemberDef* memb_def, TypeDef::StrConte
   return nm;
 }
 
-bool taGroup_impl::SetValStr(const String& val, void* par, MemberDef* memb_def, 
-			    TypeDef::StrContext sc, bool force_inline) {
+bool taGroup_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
+                            TypeDef::StrContext sc, bool force_inline) {
   if(val != String::con_NULL) {
     String tmp = val;
     if(tmp.contains('(')) {
@@ -524,7 +524,7 @@ TAGPtr taGroup_impl::FindMakeGpName(const String& nm, TypeDef* typ, bool& nw_ite
 
 void* taGroup_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   ret_md = NULL;
-  
+
   // first look for special list index syntax
   String idx_str = nm;
   idx_str = idx_str.before(']');
@@ -534,13 +534,13 @@ void* taGroup_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
       String elnm = idx_str.between('\"','\"');
       elnm = taMisc::StringCVar(elnm);
       if(TestWarning(elnm.empty(), "FindMembeR","empty string index name:", idx_str))
-	return NULL;
+        return NULL;
       return FindName_(elnm);
     }
     else {
       int idx = atoi(idx_str);
       if((idx >= size) || (idx < 0)) {
-	return NULL;
+        return NULL;
       }
       return el[idx];
     }
@@ -551,7 +551,7 @@ void* taGroup_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   if(fnd)
     return fnd;
 
-  // then look on members of list obj itself, recursively 
+  // then look on members of list obj itself, recursively
   void* rval = taBase::FindMembeR(nm, ret_md); // don't call taList guy!
   if(rval)
     return rval;
@@ -564,7 +564,7 @@ void* taGroup_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
     if(itm && itm->GetOwner() == this) {
       rval = itm->FindMembeR(nm, ret_md);
       if(rval)
-	return rval;
+        return rval;
     }
   }
 
@@ -623,7 +623,7 @@ TAGPtr taGroup_impl::LeafGp_(int leaf_idx) const {
       return sbg->LeafGp_(nw_idx);
     nw_idx -= (int)sbg->leaves;
   }
-  return NULL; 
+  return NULL;
 }
 
 void taGroup_impl::List(ostream& strm) const {
@@ -638,14 +638,14 @@ taBase* taGroup_impl::New_impl(int no, TypeDef* typ, const String& name_)
   taBase* rval = NULL;
   if (typ == NULL)
     typ = el_typ;
-  // if requested typ inherits from the list el_base, then 
+  // if requested typ inherits from the list el_base, then
   // just create list el
-  else if (!typ->InheritsFrom(el_base)) 
+  else if (!typ->InheritsFrom(el_base))
     goto cont;
-  
+
   rval = taList_impl::New_impl(no, typ, name_);
   return rval;
-  
+
 cont:
   // otherwise, we assume it will be a group, but do some additional
   // checks here that we wouldn't do for the Gp guy...
@@ -664,11 +664,11 @@ cont:
   rval = (TAGPtr)gp.New(no, typ, name_);
 //  UpdateAfterEdit();
   return rval;
-    
-err: 
+
+err:
   taMisc::Warning("*** Attempt to create type:", typ->name,
-		   "in group of type:", GetTypeDef()->name,
-		   "with base element type:", el_base->name);
+                   "in group of type:", GetTypeDef()->name,
+                   "with base element type:", el_base->name);
   return NULL;
 }
 
@@ -681,7 +681,7 @@ taBase* taGroup_impl::NewEl_(int no, TypeDef* typ) {
 
 TAGPtr taGroup_impl::NewGp_(int no, TypeDef* typ, const String& name_) {
   if (typ == NULL)
-    typ = GetTypeDef();	// always create one of yourself..
+    typ = GetTypeDef(); // always create one of yourself..
 
   // note: following will spit it out if it isn't a taGroup_impl of right type
   TAGPtr rval = (TAGPtr)gp.New(no, typ, name_);
@@ -693,7 +693,7 @@ TAGPtr taGroup_impl::NewGp_gui(int no, TypeDef* typ, const String& name_) {
   TAGPtr rval = NewGp_(no, typ, name_);
   if (rval) {
     if (taMisc::gui_active && !taMisc::no_auto_expand) {
-      if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) 
+      if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL"))
       {
         tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
         tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
@@ -701,7 +701,7 @@ TAGPtr taGroup_impl::NewGp_gui(int no, TypeDef* typ, const String& name_) {
     }
   }
   return rval;
-}  
+}
 
 ostream& taGroup_impl::OutputR(ostream& strm, int indent) const {
   taMisc::indent(strm, indent) << name << "[" << size << "] = {\n";
@@ -714,7 +714,7 @@ ostream& taGroup_impl::OutputR(ostream& strm, int indent) const {
   }
 
   for(i=0; i<size; i++) {
-    if(el[i] == NULL)	continue;
+    if(el[i] == NULL)   continue;
     ((taBase*)el[i])->OutputR(strm, indent+1);
   }
 
@@ -791,14 +791,12 @@ void taGroup_impl::UpdateLeafCount_(int no) {
 
 
 ////////////////////////////
-//  UserDataItem_List  	  //
+//  UserDataItem_List     //
 ////////////////////////////
 
 bool UserDataItem_List::hasVisibleItems() const {
   // iterate all items and return true on first isVisible found
-  taLeafItr itr;
-  UserDataItemBase* udi;
-  FOR_ITR_EL(UserDataItemBase, udi, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(UserDataItemBase, udi, *this) {
     if (udi->isVisible()) return true;
   }
   return false;
@@ -822,7 +820,7 @@ UserDataItem* UserDataItem_List::NewItem(const String& name, const Variant& valu
 }
 
 //////////////////////////
-//  	CircBuffer	//
+//      CircBuffer      //
 //////////////////////////
 
 void float_CircBuffer::Initialize() {

@@ -119,7 +119,7 @@ void ProgLine_List::Initialize() {
 }
 
 bool ProgLine_List::AddLine(taBase* prog_el, int indent, const String& code,
-			    int pline_flags) {
+                            int pline_flags) {
   ProgLine* pl = (ProgLine*)New(1);
   pl->indent = indent;
   pl->code = code;
@@ -145,18 +145,18 @@ void ProgLine_List::FullListingHTML(String& script_code) {
       String dec_key = pl->prog_el->GetTypeDecoKey(); // nil if none
       ViewColor* vc = taMisc::view_colors->FindName(dec_key);
       if(vc) {
-	if(vc->use_fg) {
-	  String hex_color = vc->fg_color.color().toString();
-	  ci += "; color:#" + hex_color;
-	}
+        if(vc->use_fg) {
+          String hex_color = vc->fg_color.color().toString();
+          ci += "; color:#" + hex_color;
+        }
       }
       dec_key = pl->prog_el->GetStateDecoKey(); // nil if none
       vc = taMisc::view_colors->FindName(dec_key);
       if(vc) {
-	if(vc->use_bg) {
-	  String hex_color = vc->bg_color.color().toString();
-	  ci += "; background-color:#" + hex_color;
-	}
+        if(vc->use_bg) {
+          String hex_color = vc->bg_color.color().toString();
+          ci += "; background-color:#" + hex_color;
+        }
       }
     }
     String cd = pl->code;
@@ -483,9 +483,7 @@ void DynEnumType::SeqNumberItems(int first_val) {
 bool DynEnumType::CopyToAllProgs() {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
-  Program* pg;
-  taLeafItr i;
-  FOR_ITR_EL(Program, pg, proj->programs., i) {
+  FOREACH_ELEM_IN_GROUP(Program, pg, proj->programs) {
     DynEnumType* tp = (DynEnumType*)pg->types.FindName(name); // find my name
     if(!tp || tp == this || !tp->InheritsFrom(&TA_DynEnumType)) continue;
     tp->CopyFrom(this);
@@ -881,9 +879,9 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
     }
     if(object_type) {
       if(!HasVarFlag(QUIET)) {
-	TestWarning(!objs_ptr && !HasVarFlag(LOCAL_VAR) && object_type->InheritsFrom(&TA_taMatrix),
-		    "ProgVar", "for Matrix* ProgVar named:",name,
-		    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+        TestWarning(!objs_ptr && !HasVarFlag(LOCAL_VAR) && object_type->InheritsFrom(&TA_taMatrix),
+                    "ProgVar", "for Matrix* ProgVar named:",name,
+                    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
       }
     }
   }
@@ -3052,7 +3050,7 @@ void ProgCode::UpdateAfterEdit_impl() {
         own->Insert(cvt, myidx); // insert at my position
         bool ok = cvt->CvtFmCode(code_str); // convert once in position -- needs access to scope..
         if(ok) {
-	  SetBaseFlag(BF_MISC4); // indicates that we're done..
+          SetBaseFlag(BF_MISC4); // indicates that we're done..
           this->CloseLater();      // kill me later..
           tabMisc::DelayedFunCall_gui(cvt, "BrowserExpandAll");
           tabMisc::DelayedFunCall_gui(cvt, "BrowserSelectMe");
@@ -3401,7 +3399,7 @@ void ProgramCall::GenCallInit(Program* prog) {
 
 void ProgramCall::GenCssPre_impl(Program* prog) {
   prog->AddLine(this, String("{ // call program: ") + (target ? target->name : "<no target>"),
-		ProgLine::MAIN_LINE); // best we have for main line in this case
+                ProgLine::MAIN_LINE); // best we have for main line in this case
   prog->IncIndent();
 }
 
@@ -3681,7 +3679,7 @@ void ProgramCallVar::GenCallInit(Program* prog) {
 void ProgramCallVar::GenCssPre_impl(Program* prog) {
   prog->AddLine(this, String("{ // call program from var (name) in group: ")
                 + (prog_group ? prog_group->name : "<no prog_group>"),
-		ProgLine::MAIN_LINE);
+                ProgLine::MAIN_LINE);
   prog->IncIndent();
 }
 
@@ -4749,9 +4747,7 @@ void Program::ExitShell() {
 void Program::UpdateCallerArgs() {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return;
-  Program* pg;
-  taLeafItr i;
-  FOR_ITR_EL(Program, pg, proj->programs., i) {
+  FOREACH_ELEM_IN_GROUP(Program, pg, proj->programs) {
     ProgramCallBase* pc = pg->FindSubProgTarget(this);
     if(pc) {
       pc->UpdateArgs();
@@ -4912,7 +4908,7 @@ ProgramCallBase* Program::FindSubProgTarget(Program* prg) {
 }
 
 bool Program::AddLine(taBase* prog_el, const String& code, int pline_flags,
-		      const String& desc) {
+                      const String& desc) {
   String desc_oneline = desc;
   desc_oneline.gsub('\n', ' '); // no multiline in desc comments
   String rmdr = code;
@@ -4942,7 +4938,7 @@ bool Program::AddVerboseLine(ProgEl* prog_el, bool insert_at_start, const String
   if(TestError(main_line < 1, "AddVerboseLine", "programmer error -- must come after AddLine of main_line"))
     return false;
   int lno = main_line;
-  if(insert_at_start) lno++;	// we're going to bump it..
+  if(insert_at_start) lno++;    // we're going to bump it..
   String code = String("Program::VerboseOut(") + GetPath() + ", " + String(lno);
   if(msg_code.nonempty())
     code += ", " + msg_code;
@@ -4951,16 +4947,16 @@ bool Program::AddVerboseLine(ProgEl* prog_el, bool insert_at_start, const String
   if(insert_at_start) {
     int toln = start_ln;
     while(script_list.FastEl(toln)->IsComment())
-      toln++;			// come in after the comments, to make it look nicer
+      toln++;                   // come in after the comments, to make it look nicer
     script_list.MoveIdx(script_list.size-1, toln);
   }
   return rval;
 }
 
 void Program::VerboseOut(Program* prg, int code_line,
-			 const char* a, const char* b, const char* c,
-			 const char* d, const char* e, const char* f,
-			 const char* g, const char* h, const char* i) {
+                         const char* a, const char* b, const char* c,
+                         const char* d, const char* e, const char* f,
+                         const char* g, const char* h, const char* i) {
   if(!prg) return;
   String msg;
   taProject* proj = GET_OWNER(prg, taProject);
@@ -5182,7 +5178,7 @@ const String Program::scriptString() {
   // first, make sure any sub-progs are compiled
   if(sub_prog_calls.size > 0) {
     AddLine(this, "// First compile any subprogs that could be called from this one",
-	    ProgLine::COMMENT);
+            ProgLine::COMMENT);
     AddLine(this, "{ Program* target;");
     IncIndent();
     // note: this is a list of ProgramCall's, not the actual prog itself!
@@ -5206,7 +5202,7 @@ const String Program::scriptString() {
     if(init_code.size > 0)
       AddLine(this, "");
     AddLine(this, "// Then call init on any subprogs that could be called from this one",
-	    ProgLine::COMMENT);
+            ProgLine::COMMENT);
     AddLine(this, "{ Program* target;");
     IncIndent();
     // note: this is a list of ProgramCall's, not the actual prog itself!
@@ -5249,7 +5245,7 @@ const String Program::scriptString() {
   AddLine(this, "}");
 
   TestWarning(cur_indent != 0, "scriptString",
-	      "programmer error -- current indentation at end of script generation is != 0");
+              "programmer error -- current indentation at end of script generation is != 0");
 
   m_scriptCache.truncate(0);
   script_list.FullListing(m_scriptCache);
@@ -5614,10 +5610,8 @@ void Program_Group::SaveToProgLib(Program::ProgLibs library) {
 }
 
 void Program_Group::SetProgsStale() {
-//obs: WARNING: this will cause us to also receive setStale for each prog call
-  taLeafItr itr;
-  Program* prog;
-  FOR_ITR_EL(Program, prog, this->, itr) {
+  //obs: WARNING: this will cause us to also receive setStale for each prog call
+  FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
     prog->setStale();
   }
 }
@@ -5642,27 +5636,21 @@ void Program_Group::LoadFromProgLib(ProgLibEl* prog_type) {
   if(TestError(!prog_type, "LoadFromProgLib", "program type to load is null")) return;
   if(TestError(!prog_type->is_group, "LoadFromProgLib",
                "cannot load a single program file into a program group!")) return;
-//   taLeafItr itr;
-//   Program* prog;
-//   FOR_ITR_EL(Program, prog, this->, itr) {
+//   FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
 //     prog->Reset();
 //   }
   prog_type->LoadProgramGroup(this);
 }
 
 void Program_Group::ToggleTrace() {
-  taLeafItr itr;
-  Program* prog;
-  FOR_ITR_EL(Program, prog, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
     prog->ToggleTrace();
   }
 }
 
 bool Program_Group::RunStartupProgs() {
   bool any_run = false;
-  taLeafItr itr;
-  Program* prog;
-  FOR_ITR_EL(Program, prog, this->, itr) {
+  FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
     if(!prog->HasProgFlag(Program::STARTUP_RUN)) continue;
     cerr << "Running startup program: " << prog->name << endl;
     prog->Init();
