@@ -28,6 +28,7 @@
 #include "ta_qtgroup.h"
 #include "ta_program_qt.h"
 #include "t3viewer.h"
+#include "ta_gui.h"
 
 #include "css_qt.h"
 #include "css_qtdialog.h"
@@ -4037,6 +4038,50 @@ void iMainWindowViewer::Find(taiDataLink* root, const String& find_str) {
     dlg->setSearchStr(find_str);
 }
 
+void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_items,
+				const String& srch, const String& repl) {
+  
+  taGuiDialog Dlg1;
+  String curow;
+
+  bool rval = false;
+
+  String sr_val = srch;
+  String rp_val = repl;
+
+  Dlg1.Reset();
+  Dlg1.prompt = "Search and Replace";
+  Dlg1.win_title = "Search and Replace";
+  Dlg1.AddWidget("main", "", "");
+  Dlg1.AddVBoxLayout("mainv", "", "main", "");
+  curow = "instr";
+  Dlg1.AddHBoxLayout(curow, "mainv", "", "");
+  Dlg1.AddLabel("Instructions", "main", curow, "label=Enter strings to search and replace for\nin currently selected items\n(does not use regular expressions);");
+  Dlg1.AddSpace(20, "mainv");
+  curow = "srch";
+  Dlg1.AddHBoxLayout(curow, "mainv", "", "");
+  Dlg1.AddLabel("srchlbl", "main", curow, "label=Search: ;");
+  Dlg1.AddStringField(&sr_val, "srch", "main", curow, "tooltip=enter string value to search for;");
+  curow = "repl";
+  Dlg1.AddHBoxLayout(curow, "mainv", "", "");
+  Dlg1.AddLabel("repllbl", "main", curow, "label=Replace: ;");
+  Dlg1.AddStringField(&rp_val, "repl", "main", curow, "tooltip=enter string value to replace with;");
+  Dlg1.AddSpace(20, "mainv");
+
+  int drval = Dlg1.PostDialog(true);
+  if(drval == 0) {
+    return;
+  }
+
+  for (int i = 0; i < sel_items.size; ++i) {
+    ISelectable* ci = sel_items.SafeEl(i); 
+    if (!ci) continue;
+    taBase* tab =  ci->taData();// is the effLink data
+    if (!tab) continue;
+    tab->ReplaceValStr(sr_val, rp_val);
+  }
+}
+
 void iMainWindowViewer::editUndo() {
   taProject* proj = curProject();
   if (!proj) return;
@@ -7836,6 +7881,14 @@ void iTreeView::mnuFindFromHere(taiAction* mel) {
   imw->Find(dl);
 }
 
+void iTreeView::mnuReplaceFromHere(taiAction* mel) {
+  iMainWindowViewer* imw = mainWindow();
+  if (!imw) return;
+  iTreeViewItem* node = (iTreeViewItem*)(mel->usr_data.toPtr());
+  taiDataLink* dl = node->link();
+  imw->Replace(dl, selItems());
+}
+
 void iTreeView::mouseDoubleClickEvent(QMouseEvent* event) {
   if (!doubleClickExpandsAll()) {
     // just does default stuff, which includes single level exp/collapse
@@ -8316,6 +8369,8 @@ void iTreeViewItem::FillContextMenu_impl(taiActions* menu,
   //taiAction* mel =
   menu->AddItem("Find from here (Alt+F)...", taiMenu::use_default,
 		taiAction::men_act, treeView(), SLOT(mnuFindFromHere(taiAction*)), this);
+  menu->AddItem("Replace from here (Alt+R)...", taiMenu::use_default,
+		taiAction::men_act, treeView(), SLOT(mnuReplaceFromHere(taiAction*)), this);
   // note: this causes it to always search from the first one entered!  need to trap
   // specific keyboard input
 //   menu->AddItem("Find from here...", taiAction::men_act, treeView(),

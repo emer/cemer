@@ -332,6 +332,13 @@ bool taGroup_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return false;
 }
 
+int taGroup_impl::ReplaceValStr(const String& srch, const String& repl,
+				void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
+  int rval = inherited::ReplaceValStr(srch, repl, par, memb_def, sc);
+  rval += gp.ReplaceValStr(srch, repl, par, memb_def, sc);
+  return rval;
+}
+
 taObjDiffRec* taGroup_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
   MemberDef* memb_def, const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy

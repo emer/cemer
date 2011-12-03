@@ -113,6 +113,9 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                            bool force_inline = false);
+  override int 	ReplaceValStr(const String& srch, const String& repl,
+			      void* par = NULL, MemberDef* md = NULL,
+			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
 
   override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                                        MemberDef* memb_def=NULL, const void* par=NULL,

@@ -6454,6 +6454,69 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
   }
 }
 
+int TypeDef::ReplaceValStr_class(const String& srch, const String& repl,
+				 void* base, void* par, MemberDef* memb_def,
+				 StrContext sc)
+{
+  int rval = 0;
+  for(int i=0; i<members.size; i++) {
+    MemberDef* md = members.FastEl(i);
+    // if streaming, do full save check, else just check for NO_SAVE
+    if (sc == SC_STREAMING) {
+      if (!md->DumpMember(base))
+        continue;
+    } else if (sc == SC_DISPLAY) {
+      if (!md->ShowMember(taMisc::USE_SHOW_GUI_DEF, SC_EDIT))
+        continue;
+    } else {
+      if(md->HasOption("NO_SAVE"))
+        continue;
+    }
+    if(sc == SC_DISPLAY) {
+      bool condshow = md->GetCondOptTest("CONDSHOW", this, base);
+      if(!condshow) continue;
+      bool condedit = md->GetCondOptTest("CONDEDIT", this, base);
+      if(!condedit) continue;
+    }
+    rval += md->type->ReplaceValStr(srch, repl, md->GetOff(base), base, md, sc);
+  }
+  return rval;
+}
+
+int TypeDef::ReplaceValStr(const String& srch, const String& repl, 
+			   void* base, void* par, MemberDef* memb_def,
+			   StrContext sc)
+{
+  if(ptr == 1) return 0;	// just not a good idea to replace in paths..
+  if(ptr == 0) {
+#ifndef NO_TA_BASE
+    if(DerivesFrom(TA_taBase)) {
+      taBase* rbase = (taBase*)base;
+      if(rbase)
+        return rbase->ReplaceValStr(srch, repl, par, memb_def, sc);
+    }
+    else
+#endif
+      if(DerivesFormal(TA_class) &&
+	    !(DerivesFrom(TA_taString) || DerivesFrom(TA_Variant)
+#ifndef NO_TA_BASE
+	      || DerivesFrom(TA_QAtomicInt) || DerivesFrom(TA_taArray_impl)
+	      || DerivesFrom(TA_taSmartPtr) || DerivesFrom(TA_taSmartRef)
+#endif
+	      )
+	 )
+    {
+      return ReplaceValStr_class(srch, repl, base, par, memb_def, sc);
+    }
+  }
+  String str = GetValStr(base, par, memb_def, sc, false);
+  // note: just using literal replace here, not regexp..
+  if(!str.contains(srch)) return 0;
+  int rval = str.gsub(srch, repl);
+  SetValStr(str, base, par, memb_def, sc, false);
+  return rval;
+}
+
 bool TypeDef::isVarCompat() const {
   // a few "blockers"
   if (ref || (ptr > 1) || InheritsFrom(TA_void)) return false;

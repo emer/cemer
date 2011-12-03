@@ -2459,6 +2459,16 @@ public:
                                        bool force_inline = false);
   // set the inline class value from a string representation
 
+  int        	ReplaceValStr(const String& srch, const String& repl,
+			      void* base, void* par=NULL,
+			      MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
+  // replace string value -- does a GetValStr, replace srch with repl in that string, then does a SetValStr -- always iterates over members of classes instead of doing inline to prevent replacing member names -- returns number replaced (0 = none)
+
+  int        	ReplaceValStr_class(const String& srch, const String& repl,
+				    void* base, void* par=NULL,
+				    MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
+  // for a class type: replace string value for each member accordidng to streaming context
+
   /////////////////////////////////////////////////////////////
   //            Get/Set From Variant
 

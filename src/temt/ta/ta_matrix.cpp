@@ -718,6 +718,18 @@ bool taMatrix::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return true;
 }
 
+int taMatrix::ReplaceValStr(const String& srch, const String& repl,
+			    void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
+  int rval = 0;
+  for(int i=0; i<size; i++) {
+    String str = FastElAsStr_Flat(i);
+    if(!str.contains(srch)) continue;
+    rval += str.gsub(srch, repl);
+    SetFmStr_Flat(str, i);
+  }
+  return rval;
+}
+
 int taMatrix::Dump_Load_Item(istream& strm, int idx) {
   int c = taMisc::read_till_semi(strm);
   if (c != EOF) {

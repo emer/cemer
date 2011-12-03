@@ -1073,6 +1073,9 @@ public:
 
   void 			Find(taiDataLink* root, const String& find_str="");
   // common find called by main menu, and context menu finds
+  void 			Replace(taiDataLink* root, ISelectable_PtrList& sel_items,
+				const String& srch="", const String& repl="");
+  // replace called by main menu, and context menu
 #endif
 
   //////////////////////////////////////////////////////////////
@@ -2105,6 +2108,7 @@ signals:
   
 public slots:
   virtual void		mnuFindFromHere(taiAction* mel); // called from context 'Find from here'; cast obj to iTreeViewItem*
+  virtual void		mnuReplaceFromHere(taiAction* mel); // called from context 'Replace from here'; cast obj to iTreeViewItem*
   virtual void		ExpandDefault(); 
   // expand to the default level specified for this tree, or invokes CustomExpand if set 
   virtual void		ExpandAll(int max_levels = 6); 

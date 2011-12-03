@@ -4675,6 +4675,7 @@ const iColor GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
 
 void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv, GraphPlotView& yax,
                                  T3GraphLine* t3gl, int mat_cell) {
+  if(!t3gl) return;
   t3gl->clear();
 
   DataCol* da_y = plv.GetDAPtr();

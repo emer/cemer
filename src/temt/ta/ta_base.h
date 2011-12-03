@@ -748,6 +748,10 @@ public:
                               TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                               bool force_inline = false);
   // #IGNORE set value from a string for ptr to taBase (ptr=1) -- called by TypeDef SetValStr
+  virtual int 	ReplaceValStr(const String& srch, const String& repl,
+			      void* par = NULL, MemberDef* md = NULL,
+			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
+  // #IGNORE replace srch with repl in GetValStr and set as SetValStr -- called by TypeDef ReplaceValStr -- returns number replaced (0 = none)
 
   virtual taObjDiffRec*  GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                                MemberDef* memb_def=NULL, const void* par=NULL,
@@ -1817,6 +1821,9 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                            bool force_inline = false);
+  override int 	ReplaceValStr(const String& srch, const String& repl,
+			      void* par = NULL, MemberDef* md = NULL,
+			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
 
   override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                                        MemberDef* memb_def=NULL, const void* par=NULL,
@@ -2419,6 +2426,10 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                            bool force_inline = false);
+  override int 	ReplaceValStr(const String& srch, const String& repl,
+			      void* par = NULL, MemberDef* md = NULL,
+			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
+
   int           Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
   int           Dump_Load_Value(istream& strm, taBase* par=NULL);
 

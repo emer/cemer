@@ -1495,6 +1495,12 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
   return true;
 }
 
+int taBase::ReplaceValStr(const String& srch, const String& repl,
+			     void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
+  TypeDef* td = GetTypeDef();
+  return td->ReplaceValStr_class(srch, repl, this, par, memb_def, sc);
+}
+
 taBaseObjDiffRecExtra::taBaseObjDiffRecExtra(taBase* tab) {
   tabref = tab;
 }
@@ -3945,6 +3951,18 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return false;
 }
 
+int taList_impl::ReplaceValStr(const String& srch, const String& repl,
+			       void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
+  int rval = 0;
+  for(int i=0; i<size; i++) {
+    taBase* itm = (taBase*)el[i];
+    if(itm && itm->GetOwner() == this) { // only owned is key for preventing recursion
+      rval += itm->ReplaceValStr(srch, repl, par, memb_def, sc);
+    }
+  }
+  return rval;
+}
+
 taObjDiffRec* taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def,
           const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
@@ -5143,6 +5161,18 @@ bool taArray_base::SetValStr(const String& val, void* par, MemberDef* memb_def,
                             TypeDef::StrContext sc, bool force_inline) {
   InitFromString(val);
   return true;
+}
+
+int taArray_base::ReplaceValStr(const String& srch, const String& repl,
+			       void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
+  int rval = 0;
+  for(int i=0; i<size; i++) {
+    String str = El_GetStr_(FastEl_(i));
+    if(!str.contains(srch)) continue;
+    rval += str.gsub(srch, repl);
+    El_SetFmStr_(FastEl_(i), str);
+  }	
+  return rval;
 }
 
 int taArray_base::Dump_Save_Value(ostream& strm, taBase*, int) {
