@@ -26,38 +26,38 @@ INHERITED(iViewPanelFrame)
 public:
 
   QWidget*          widg;
-  QVBoxLayout*          layTopCtrls;
-  QVBoxLayout*          layViewParams;
-  QHBoxLayout*          layDispCheck;
-  QCheckBox*            chkDisplay;
-  QCheckBox*            chkLayMove;
-  QLabel*                   lblTextRot;
-  taiField*                 fldTextRot;
-  QLabel*                   lblDispMode;
-  taiComboBox*          cmbDispMode;
+  QVBoxLayout*		layTopCtrls;
+  QVBoxLayout*		layViewParams;
+  QHBoxLayout*		layDispCheck;
+  QCheckBox*		chkDisplay;
+  // QCheckBox*		chkLayMove;
+  //QLabel*		    lblTextRot;
+  //taiField*		    fldTextRot;
+  //QLabel*		    lblDispMode;
+  //taiComboBox*		cmbDispMode;
 
-  QHBoxLayout*          layFontsEtc;
-  QLabel*                   lblUnitTrans;
-  taiField*                 fldUnitTrans;
-  QLabel*                   lblUnitFont;
-  taiField*                 fldUnitFont;
-  QLabel*                   lblLayFont;
-  taiField*                 fldLayFont;
-  QLabel*                   lblMinLayFont;
-  taiField*                 fldMinLayFont;
-  QCheckBox*            chkXYSquare;
-  QCheckBox*            chkLayGp;
+  QHBoxLayout*		layFontsEtc;
+  QLabel*		    lblUnitTrans;
+  taiField*		    fldUnitTrans;
+  //QLabel*		    lblUnitFont;
+  //taiField*		    fldUnitFont;
+  //QLabel*		    lblLayFont;
+  //taiField*		    fldLayFont;
+  //QLabel*		    lblMinLayFont;
+  //taiField*		    fldMinLayFont;
+  //QCheckBox*		chkXYSquare;
+  //QCheckBox*		chkLayGp;
 
-  QVBoxLayout*          layDisplayValues;
-  QHBoxLayout*          layColorScaleCtrls;
-  QCheckBox*            chkAutoScale;       // autoscale ck_box
-  QPushButton*          butScaleDefault;    // revert to default
+  QVBoxLayout*		layDisplayValues;
+  QHBoxLayout*		layColorScaleCtrls;
+  //QCheckBox*		chkAutoScale;       // autoscale ck_box
+  //QPushButton*		butScaleDefault;    // revert to default  
 
   QHBoxLayout*          layColorBar;
-  QLabel*           lblUnitSpacing;
-  taiField*                 fldUnitSpacing;
-  ScaleBar*         cbar;             // colorbar
-  QPushButton*          butSetColor;
+  //QLabel*           lblUnitSpacing;
+  //taiField*		    fldUnitSpacing;
+  ScaleBar*         cbar;	      // colorbar
+  QPushButton*		butSetColor;
 
   QTabWidget*           tw;
   QTreeWidget*          lvDisplayValues;
@@ -102,12 +102,13 @@ signals:
   void          sliceEndChanged(int end);
   void          sliceSpacingChanged(int spacing);
   void          sliceTransparencyChanged(int pctTrans);
+  void          actsTransparencyChanged(int pctTrans);
 #endif
-
+  
 protected slots:
-  void                  butScaleDefault_pressed();
-  void                  butSetColor_pressed();
-  void                  lvDisplayValues_selectionChanged();
+  //  void			butScaleDefault_pressed();
+  void 			butSetColor_pressed();
+  void			lvDisplayValues_selectionChanged();
 
 private:
   QComboBox*        view_plane_comb_;
@@ -116,8 +117,10 @@ private:
   QCheckBox*        lock_slices_chbox_;
   QSpinBox*         slice_end_sbox_;
   QSlider*          slice_end_slid_;
-  QSpinBox*         slice_spac_sbox_;
-  QSlider*          slice_spac_slid_;
+//  QSpinBox*         slice_spac_sbox_;
+//  QSlider*          slice_spac_slid_;
+  QSpinBox*         unit_val_tran_sbox_;
+  QSlider*          unit_val_tran_slid_;
   QSpinBox*         slice_trans_sbox_;
   QSlider*          slice_tran_slid_;
   QString           name;

@@ -61,6 +61,7 @@ public:
   bool          NumSlicesAreLocked() const;
   int           SliceSpacing() const;
   int           SliceTransparency() const;
+  int           UnitValuesTransparency() const;
   int           NumSlicesValid() const;
   int           NumSlices() const;
   int           MaxSlices() const;
@@ -75,6 +76,7 @@ public:
   void          SetLockSlices(int state);
   void          SetSliceSpacing(int spacing);
   void          SetSliceTransparency(int transparency);
+  void          SetUnitValuesTransparency(int transparency);
 
 #ifndef __MAKETA__
 signals:
@@ -86,7 +88,8 @@ signals:
   void          SliceEndChanged(int end);
   void          SliceSpacingChanged(int spacing);
   void          SliceTransparencyChanged(int transparency);
-  void          StateChanged(int);
+  void          UnitValuesTransparencyChanged(int transparency);
+  void          StateChanged(int state);
 #endif
 
 private:
@@ -100,7 +103,8 @@ private:
   bool          lock_num_slices_;
   int           slice_spacing_;
   int           slice_transparency_;
-  StateChange   last_state_change_;
+  int           unit_val_transparency_;
+  int           last_state_change_;
 
   bool          ValidSliceStart() const;
   bool          ValidSliceEnd() const;

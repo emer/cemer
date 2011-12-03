@@ -27,6 +27,7 @@
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoEventCallback.h>
 #include <Inventor/nodes/SoFont.h>
+#include <Inventor/nodes/SoFaceSet.h>
 #include <Inventor/nodes/SoIndexedFaceSet.h>
 #include <Inventor/nodes/SoTranslation.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -34,8 +35,12 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoCube.h>
 #include <Inventor/nodes/SoTexture2.h>
+#include <Inventor/nodes/SoTextureCoordinate2.h>
+#include <Inventor/nodes/SoCoordinate3.h>
+#include <Inventor/nodes/SoNormalBinding.h>
 #include <Inventor/nodes/SoVertexProperty.h>
 #include <Inventor/nodes/SoNormal.h>
+#include <Inventor/nodes/SoShapeHints.h>
 
 Network* BrainVolumeView::net() const
 {
@@ -189,11 +194,6 @@ void BrainVolumeView::RenderBrain()
   global_xform->translation.setValue(SbVec3f(0.0,-0.5,0.0)); //shift down a bit for comfort
   global_xform->scaleFactor.setValue(SbVec3f(0.01,0.01,0.01)); //arbitrary scale seems to work
 
-  node.brain_mat = new SoMaterial;
-  node.brain_group->addChild(node.brain_mat);
-  node.brain_mat->transparency = 0.99f;
-  node.brain_mat->diffuseColor.setValue(1.0,1.0,1.0);
-
   // set the "origin"
   TDCoord dims(brain_data_->xyzDimensions());
   SoTransform* b0 = new SoTransform;
@@ -233,29 +233,49 @@ void BrainVolumeView::RenderBrain()
     tex = static_cast<unsigned char*>(malloc(d1*d2*2));
     brain_data_->sliceAsTexture((NiftiReader::AnatomicalPlane)bvs.ViewPlane(), 1+i, tex);
 
-    SoNormal* norm = new SoNormal;
-    node.brain_group->addChild(norm);
-    norm->vector.set1Value(0,SbVec3f(0.0,0.0,1.0));
-
     node.brain_tex_mat_array[i] = new SoMaterial;
-    node.brain_group->addChild(node.brain_tex_mat_array[i]);
     node.brain_tex_mat_array[i]->transparency = transparency;
+    node.brain_tex_mat_array[i]->diffuseColor.setValue(SbVec3f(1.0f,1.0f,1.0f));
 
     node.voxel_face_set_array[i] = new SoIndexedFaceSet;
     node.voxel_vrtx_prop_array[i] = new SoVertexProperty;
     node.voxel_face_set_array[i]->vertexProperty.setValue(node.voxel_vrtx_prop_array[i]);
-
+    
     SoSeparator* b = new SoSeparator;
+    // shape hint needed for sorted blend rendering (when used)
+    SoShapeHints* sh = new SoShapeHints;
+    sh->vertexOrdering = SoShapeHints::COUNTERCLOCKWISE;
+    sh->shapeType = SoShapeHints::UNKNOWN_SHAPE_TYPE;
+
     SoTexture2* texture = new SoTexture2;
     //using a CopyPolicy may cause intermittent crashes on Windows??
     //http://doc.coin3d.org/Coin-3.1/classSoSFImage.html
     texture->image.setValue(SbVec2s(d1, d2),2,tex,SoSFImage::NO_COPY_AND_FREE);
+    texture->wrapS = SoTexture2::CLAMP;
+    texture->wrapT = SoTexture2::CLAMP;
+
+    // slice face
+    SoTextureCoordinate2* tcoords = new SoTextureCoordinate2;
+    tcoords->point.set1Value(0, SbVec2f(0.0f, 1.0f));
+    tcoords->point.set1Value(1, SbVec2f(0.0f, 0.0f));
+    tcoords->point.set1Value(2, SbVec2f(1.0f, 0.0f));
+    tcoords->point.set1Value(3, SbVec2f(1.0f, 1.0f));
+        
+    SoCoordinate3* coords = new SoCoordinate3;
+    coords->point.set1Value(0, SbVec3f(-d1/2.0f,  d2/2.0f, 0));
+    coords->point.set1Value(1, SbVec3f(-d1/2.0f, -d2/2.0f, 0));
+    coords->point.set1Value(2, SbVec3f( d1/2.0f, -d2/2.0f, 0));
+    coords->point.set1Value(3, SbVec3f( d1/2.0f,  d2/2.0f, 0));
+    
+    SoFaceSet* fs = new SoFaceSet;
+    fs->numVertices.set1Value(0,4);
+    
+    b->addChild(sh);
+    b->addChild(node.brain_tex_mat_array[i]);
     b->addChild(texture);
-    SoCube* cube = new SoCube;
-    b->addChild(cube);
-    cube->height = d2;
-    cube->width = d1;
-    cube->depth = 0.01;
+    b->addChild(tcoords);
+    b->addChild(coords);
+    b->addChild(fs);
 
     SoSeparator* s = new SoSeparator; //necessary to separate texmap
     s->addChild(node.voxel_face_set_array[i]);

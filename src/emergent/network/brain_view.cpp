@@ -942,6 +942,11 @@ int BrainViewState::SliceTransparency() const
   return slice_transparency_;
 }
 
+int BrainViewState::UnitValuesTransparency() const
+{
+  return unit_val_transparency_;
+}
+
 int BrainViewState::NumSlicesValid() const
 {
   return (MaxSlices() - slice_start_ + 1);
@@ -986,7 +991,7 @@ void BrainViewState::SetDataName(const QString& data_name)
   data_name_ = data_name;
   SetDimensions(tmp.xyzDimensions());
 
-  last_state_change_  = MAJOR;
+  last_state_change_ |= MAJOR;
   emit DataNameChanged(data_name);
   ValidateState();
   state_valid_ = true;
@@ -998,7 +1003,7 @@ void BrainViewState::SetDimensions(const TDCoord& dimensions)
     return;
 
   dimensions_ = dimensions;
-  last_state_change_  = MAJOR;
+  last_state_change_ |= MAJOR;
   emit DimensionsChanged(dimensions);
   ValidateState();
 }
@@ -1009,7 +1014,7 @@ void  BrainViewState::SetViewPlane( AnatomicalPlane plane )
     return;
 
   view_plane_ = plane;
-  last_state_change_  = MAJOR;
+  last_state_change_ |= MAJOR;
   emit ViewPlaneChanged(static_cast<int>(plane));
   ValidateState();
 }
@@ -1030,7 +1035,7 @@ void  BrainViewState::SetSliceStart(int start)
     if ( (0 < start) && ((start + num_slices_) <= MaxSlices()) ) {
       slice_start_ = start;
       SetSliceEnd(slice_start_ + num_slices_);
-      last_state_change_  = MINOR;
+      last_state_change_ |= MINOR;
       emit SliceStartChanged(slice_start_);
       ValidateState();
     }
@@ -1043,7 +1048,7 @@ void  BrainViewState::SetSliceStart(int start)
       if ( slice_start_ > slice_end_) {
         SetSliceEnd(slice_start_);
       }
-      last_state_change_  = MINOR;
+      last_state_change_ |= MINOR;
       emit SliceStartChanged(slice_start_);
       ValidateState();
     }
@@ -1061,7 +1066,7 @@ void  BrainViewState::SetSliceEnd(int end)
     if ( (0 < (end - num_slices_)) && (end <= MaxSlices()) ) {
       slice_end_ = end;
       SetSliceStart(slice_end_ - num_slices_);
-      last_state_change_  = MINOR;
+      last_state_change_ |= MINOR;
       emit SliceEndChanged(slice_end_);
       ValidateState();
     }
@@ -1074,7 +1079,7 @@ void  BrainViewState::SetSliceEnd(int end)
       if ( slice_end_ < slice_start_) {
         SetSliceStart(slice_end_);
       }
-      last_state_change_  = MINOR;
+      last_state_change_ |= MINOR;
       emit SliceEndChanged(slice_end_);
       ValidateState();
     }
@@ -1094,7 +1099,7 @@ void BrainViewState::SetLockSlices(int state)
 
   lock_num_slices_ = newState;
   num_slices_ = slice_end_ - slice_start_;
-  last_state_change_  = MINOR;
+  last_state_change_ |= MINOR;
   EmitAndClearState();
 }
 
@@ -1104,7 +1109,7 @@ void  BrainViewState::SetSliceSpacing(int spacing)
     return;
 
   slice_spacing_ = spacing;
-  last_state_change_  = MAJOR;
+  last_state_change_ |= MAJOR;
   emit SliceSpacingChanged(slice_spacing_);
   EmitAndClearState();
 }
@@ -1115,11 +1120,21 @@ void  BrainViewState::SetSliceTransparency(int transparency)
     return;
 
   slice_transparency_ = transparency;
-  last_state_change_  = MINOR;
+  last_state_change_ |= MINOR;
   emit SliceTransparencyChanged(slice_transparency_);
   EmitAndClearState();
 }
 
+void  BrainViewState::SetUnitValuesTransparency(int transparency)
+{
+  if ( transparency == unit_val_transparency_ )
+    return;
+  
+  unit_val_transparency_ = transparency;
+  last_state_change_ |= MINOR;
+  emit UnitValuesTransparencyChanged(unit_val_transparency_);
+  EmitAndClearState();
+}
 
 bool BrainViewState::ValidSliceStart() const
 {

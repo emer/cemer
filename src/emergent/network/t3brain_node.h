@@ -35,7 +35,6 @@ public:
   static void		initClass();
 
   SoSeparator*          brain_group; //#IGNORE
-  SoMaterial*           brain_mat; //#IGNORE
   SoMaterial**          brain_tex_mat_array; //#IGNORE
   SoVertexProperty**    voxel_vrtx_prop_array; //#IGNORE
   SoIndexedFaceSet**    voxel_face_set_array; //#IGNORE
