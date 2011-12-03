@@ -7847,6 +7847,16 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
+  if((e->modifiers() & Qt::AltModifier) && e->key() == Qt::Key_R) {
+    ISelectable* si = curItem();
+    if(si && si->link()) {
+      taiDataLink* link = si->link();
+      iMainWindowViewer* imw = mainWindow();
+      if(imw) imw->Replace(link, selItems());
+    }
+    e->accept();
+    return;
+  }
   if(ctrl_pressed && (e->key() == Qt::Key_Left || e->key() == Qt::Key_Right)) {
     iMainWindowViewer* imw = mainWindow();
     if(imw && imw->brow_hist) {

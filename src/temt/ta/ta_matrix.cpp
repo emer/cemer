@@ -727,6 +727,8 @@ int taMatrix::ReplaceValStr(const String& srch, const String& repl,
     rval += str.gsub(srch, repl);
     SetFmStr_Flat(str, i);
   }
+  if(rval > 0)
+    UpdateAfterEdit();
   return rval;
 }
 

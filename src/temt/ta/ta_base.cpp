@@ -1498,7 +1498,10 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
 int taBase::ReplaceValStr(const String& srch, const String& repl,
 			     void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
   TypeDef* td = GetTypeDef();
-  return td->ReplaceValStr_class(srch, repl, this, par, memb_def, sc);
+  int rval = td->ReplaceValStr_class(srch, repl, this, par, memb_def, sc);
+  if(rval > 0)
+    UpdateAfterEdit();
+  return rval;
 }
 
 taBaseObjDiffRecExtra::taBaseObjDiffRecExtra(taBase* tab) {
@@ -3953,13 +3956,15 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
 
 int taList_impl::ReplaceValStr(const String& srch, const String& repl,
 			       void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
-  int rval = 0;
+  int rval = inherited::ReplaceValStr(srch, repl, par, memb_def, sc);
   for(int i=0; i<size; i++) {
     taBase* itm = (taBase*)el[i];
     if(itm && itm->GetOwner() == this) { // only owned is key for preventing recursion
       rval += itm->ReplaceValStr(srch, repl, par, memb_def, sc);
     }
   }
+  if(rval > 0)
+    UpdateAfterEdit();
   return rval;
 }
 
@@ -5172,6 +5177,8 @@ int taArray_base::ReplaceValStr(const String& srch, const String& repl,
     rval += str.gsub(srch, repl);
     El_SetFmStr_(FastEl_(i), str);
   }	
+  if(rval > 0)
+    UpdateAfterEdit();
   return rval;
 }
 
