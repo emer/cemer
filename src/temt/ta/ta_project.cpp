@@ -2109,6 +2109,8 @@ void taProject::UndoStats(bool show_list, bool show_diffs) {
 
 
 void taProject::ReplaceString(const String& srch, const String& repl) {
+  undo_mgr.SaveUndo(this, "ReplaceString", NULL, false, this); // global save
+
   String proj_str;
   tabMisc::cur_undo_save_top = this; // let others know who we're saving for..
   tabMisc::cur_undo_mod_obj = this; // let others know who we're saving for..
