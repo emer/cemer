@@ -4079,6 +4079,11 @@ void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_item
     return;
   }
 
+  taProject* proj = curProject();
+  if(proj) {
+    proj->undo_mgr.SaveUndo(proj, "ReplaceValStr", NULL, false, proj); // global save
+  }
+
   for (int i = 0; i < sel_items.size; ++i) {
     ISelectable* ci = sel_items.SafeEl(i); 
     if (!ci) continue;

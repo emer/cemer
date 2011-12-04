@@ -997,3 +997,38 @@ int taiMisc::MapToAreaV_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidg
   return rv.y();
 }
 
+void taiMisc::DeleteWidgetsLater(QObject* obj) {
+  if (obj == NULL) return;
+  QObject* chobj;
+  const QObjectList& ol = obj->children(); 
+  for(int i = ol.count()-1; i >= 0; i--) {
+    chobj = ol.at(i);
+    if(chobj->inherits("QWidget")) {
+      ((QWidget*)chobj)->hide();
+    }
+    chobj->deleteLater();
+  }
+}
+
+void taiMisc::DeleteChildrenLater(QObject* obj) {
+  if (obj == NULL) return;
+  QObject* chobj;
+  const QObjectList& ol = obj->children(); 
+  for(int i = ol.count()-1; i >= 0; i--) {
+    chobj = ol.at(i);
+    chobj->deleteLater();
+  }
+}
+
+void taiMisc::DeleteChildrenNow(QObject* obj) {
+  if (obj == NULL) return;
+  QObject* chobj;
+  const QObjectList& ol = obj->children(); 
+  int i = 0;
+  while (ol.count() > 0) {
+    i = ol.size() - 1;
+    chobj = ol.at(i);
+    delete chobj;
+  }
+}
+

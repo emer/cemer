@@ -202,7 +202,7 @@ void iSelectEditDataHost::ClearBody_impl() {
       delete frmMethButtons->layout();
     }
     layMethButtons = NULL;
-    DeleteChildrenLater(frmMethButtons);
+    taiMisc::DeleteChildrenLater(frmMethButtons);
   }
   show_meth_buttons = false;
 
@@ -833,7 +833,7 @@ void iSelectEditDataHost2::ClearBody_impl() {
       delete frmMethButtons->layout();
     }
     layMethButtons = NULL;
-    DeleteChildrenLater(frmMethButtons);
+    taiMisc::DeleteChildrenLater(frmMethButtons);
   }
   show_meth_buttons = false;
 

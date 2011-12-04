@@ -49,7 +49,7 @@ void taiDynEnumMember::Initialize() {
 int taiDynEnumMember::BidForMember(MemberDef* md, TypeDef* td){
   TypeDef* mtd = md->type;
   if(td->InheritsFrom(&TA_DynEnum) && mtd->InheritsFrom(&TA_int) &&
-     (md->OptionAfter("DYNENUM_ON_") != ""))
+     md->OptionAfter("DYNENUM_ON_").nonempty())
     return taiMember::BidForMember(md,td)+1;
   return 0;
 }
@@ -57,48 +57,88 @@ int taiDynEnumMember::BidForMember(MemberDef* md, TypeDef* td){
 taiData* taiDynEnumMember::GetDataRep_impl(IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
   isBit = false;		// oops -- we don't have base and can't find out!
-  if (isBit) {
-    return new taiBitBox(true, typ, host_, par, gui_parent_, flags_);
-  } else if (flags_ & taiData::flgReadOnly) {
-    return new taiField(typ, host_, par, gui_parent_, flags_);
-  } else {
-    taiComboBox* rval = new taiComboBox(true, NULL, host_, par, gui_parent_, flags_);
-    return rval;
+  taiDataDeck* rval = new taiDataDeck(NULL, host_, par, gui_parent_, flags_);
+  rval->InitLayout();
+  gui_parent_ = rval->GetRep();
+  taiBitBox* bit_rep = new taiBitBox(typ, host_, rval, gui_parent_, flags_);
+  taiField*  field_rep = new taiField(typ, host_, rval, gui_parent_, flags_); // read only
+  taiComboBox* combo_rep = new taiComboBox(true, NULL, host_, rval, gui_parent_, flags_);
+  rval->data_el.Add(bit_rep);
+  rval->AddChildWidget(bit_rep->rep());
+  rval->data_el.Add(field_rep);
+  rval->AddChildWidget(field_rep->rep());
+  rval->data_el.Add(combo_rep);
+  rval->AddChildWidget(combo_rep->rep());
+  rval->EndLayout();
+  return rval;
+}
+
+void taiDynEnumMember::UpdateDynEnumCombo(taiComboBox* cb, DynEnum& de) {
+  cb->Clear();
+  if(!de.enum_type) return;
+  for (int i = 0; i < de.enum_type->enums.size; ++i) {
+    const DynEnumItem* dei = de.enum_type->enums.FastEl(i);
+    //note: dynenums store the index of the value, not the value
+    cb->AddItem(dei->name, i); //TODO: desc in status bar or such would be nice!
   }
+  if(de.value < 0) de.value = 0; // un-init -- init!
+  cb->GetImage(de.value);
+}
+
+void taiDynEnumMember::UpdateDynEnumBits(taiBitBox* cb, DynEnum& de) {
+  cb->Clear();
+  if(!de.enum_type) return;
+  for (int i = 0; i < de.enum_type->enums.size; ++i) {
+    const DynEnumItem* dei = de.enum_type->enums.FastEl(i);
+    //note: dynenums store the index of the value, not the value
+    cb->AddBoolItem(true, dei->name, dei->value, dei->desc, false);
+  }
+  cb->lay->addStretch();
+  if(de.value < 0) de.value = 0; // un-init -- init!
+  cb->GetImage(de.value);
 }
 
 void taiDynEnumMember::GetImage_impl(taiData* dat, const void* base) {
   DynEnum* dye = (DynEnum*)base;
-  if (isBit) {
-    taiBitBox* rval = (taiBitBox*)dat;
-    rval->GetImage(dye->value);
-  } else if (isReadOnly(dat)) {
-    taiField* rval = (taiField*)(dat);
+  taiDataDeck* rval = (taiDataDeck*)dat;
+  if(!isBit && dye->enum_type && dye->enum_type->bits) {
+    isBit = true;
+  }
+  if(isBit) {
+    rval->GetImage(0);
+    taiBitBox* bit_rep = dynamic_cast<taiBitBox*>(rval->data_el.SafeEl(0));
+    if(!bit_rep) return;
+    UpdateDynEnumBits(bit_rep, *dye);
+  }
+  else if (isReadOnly(dat)) {
+    rval->GetImage(1);
+    taiField* field_rep = dynamic_cast<taiField*>(rval->data_el.SafeEl(1));
+    if(!field_rep) return;
     String str = dye->NameVal();
-    rval->GetImage(str);
-  } else {
-    taiComboBox* rval = (taiComboBox*)dat;
-    rval->Clear();
-    if(dye->enum_type) {
-      for (int i = 0; i < dye->enum_type->enums.size; ++i) {
-	const DynEnumItem* dei = dye->enum_type->enums.FastEl(i);
-	rval->AddItem(dei->name, i); //TODO: desc in status bar or such would be nice!
-      }
-    }
-    int dei = dye->value;
-    if (dei < 0) dei = 0;
-    rval->GetImage(dei);
+    field_rep->GetImage(str);
+  }
+  else {
+    rval->GetImage(2);
+    taiComboBox* combo_rep = dynamic_cast<taiComboBox*>(rval->data_el.SafeEl(2));
+    if(!combo_rep) return;
+    UpdateDynEnumCombo(combo_rep, *dye);
   }
 }
 
 void taiDynEnumMember::GetMbrValue_impl(taiData* dat, void* base) {
   DynEnum* dye = (DynEnum*)base;
-  if (isBit) {
-    taiBitBox* rval = (taiBitBox*)dat;
-    rval->GetValue(dye->value);
-  } else if (!isReadOnly(dat)) {
-    taiComboBox* rval = (taiComboBox*)dat;
-    rval->GetValue(dye->value);
+  taiDataDeck* rval = (taiDataDeck*)dat;
+  if(!isReadOnly(dat)) {
+    if(isBit) {
+      taiBitBox* bit_rep = dynamic_cast<taiBitBox*>(rval->data_el.SafeEl(0));
+      if(!bit_rep) return;
+      bit_rep->GetValue(dye->value);
+    }
+    else {
+      taiComboBox* combo_rep = dynamic_cast<taiComboBox*>(rval->data_el.SafeEl(2));
+      if(!combo_rep) return;
+      combo_rep->GetValue(dye->value);
+    }
   }
 }
 
@@ -123,10 +163,13 @@ taiData* taiProgVarIntValMember::GetDataRep_impl(IDataHost* host_, taiData* par,
   taiIncrField*	int_rep = new taiIncrField(typ, host_, rval, gui_parent_, flags_);
   int_rep->setMinimum(INT_MIN);
   taiComboBox*	enum_rep = new taiComboBox(true, NULL, host_, rval, gui_parent_, flags_);
+  taiBitBox* bit_rep = new taiBitBox(typ, host_, rval, gui_parent_, flags_);
   rval->data_el.Add(int_rep);
   rval->AddChildWidget(int_rep->rep());
   rval->data_el.Add(enum_rep);
   rval->AddChildWidget(enum_rep->rep());
+  rval->data_el.Add(bit_rep);
+  rval->AddChildWidget(bit_rep->rep());
   rval->EndLayout();
   return rval;
 }
@@ -137,13 +180,20 @@ void taiProgVarIntValMember::GetImage_impl(taiData* dat, const void* base) {
   taiDataDeck* rval = (taiDataDeck*)dat;
 
   if(pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type) {
-    rval->GetImage(1);
-    taiComboBox* enum_rep = dynamic_cast<taiComboBox*>(rval->data_el.SafeEl(1));
-    if (!enum_rep) return; // shouldn't happen
-    enum_rep->SetEnumType(pv->hard_enum_type);
-    EnumDef* td = pv->hard_enum_type->enum_vals.FindNo(val);
-    if(td != NULL)
-      enum_rep->GetImage(td->idx);
+    if(pv->hard_enum_type->HasOption("BITS")) {
+      rval->GetImage(2);
+      taiBitBox* bit_rep = dynamic_cast<taiBitBox*>(rval->data_el.SafeEl(2));
+      if (!bit_rep) return; // shouldn't happen
+      bit_rep->SetEnumType(pv->hard_enum_type);
+      bit_rep->GetImage(val);
+    }
+    else {
+      rval->GetImage(1);
+      taiComboBox* enum_rep = dynamic_cast<taiComboBox*>(rval->data_el.SafeEl(1));
+      if (!enum_rep) return; // shouldn't happen
+      enum_rep->SetEnumType(pv->hard_enum_type);
+      enum_rep->GetEnumImage(val);
+    }
   }
   else {
     rval->GetImage(0);
@@ -159,15 +209,17 @@ void taiProgVarIntValMember::GetMbrValue_impl(taiData* dat, void* base) {
   taiDataDeck* rval = (taiDataDeck*)dat;
 
   if(pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type) {
-    int itm_no = -1;
-    taiComboBox* enum_rep = dynamic_cast<taiComboBox*>(rval->data_el.SafeEl(1));
-    if (!enum_rep) return; // shouldn't happen
-    enum_rep->GetValue(itm_no);
-    EnumDef* td = NULL;
-    if ((itm_no >= 0) && (itm_no < pv->hard_enum_type->enum_vals.size))
-      td = pv->hard_enum_type->enum_vals.FastEl(itm_no);
-    if (td != NULL)
-      val = td->enum_no;
+    if(pv->hard_enum_type->HasOption("BITS")) {
+      taiBitBox* bit_rep = dynamic_cast<taiBitBox*>(rval->data_el.SafeEl(2));
+      if (!bit_rep) return; // shouldn't happen
+      bit_rep->GetValue(val);
+    }
+    else {
+      int itm_no = -1;
+      taiComboBox* enum_rep = dynamic_cast<taiComboBox*>(rval->data_el.SafeEl(1));
+      if (!enum_rep) return; // shouldn't happen
+      enum_rep->GetEnumValue(val);
+    }
   }
   else {
     taiIncrField* int_rep = dynamic_cast<taiIncrField*>(rval->data_el.SafeEl(0));
@@ -1481,14 +1533,20 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
       int flags_ = 0;
       if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY))
 	flags_ |= taiData::flgReadOnly;
-      if ((pv->var_type == ProgVar::T_HardEnum) ||
-        (pv->var_type == ProgVar::T_DynEnum)) 
-      {
-	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY))
+      if((pv->var_type == ProgVar::T_HardEnum) || (pv->var_type == ProgVar::T_DynEnum)) {
+	if(pv->HasVarFlag(ProgVar::CTRL_READ_ONLY)) {
 	  mb_dat = new taiField(NULL, this, NULL, body, flags_);
-	else
+	}
+	else if((pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type &&
+		 pv->hard_enum_type->HasOption("BITS")) ||
+		(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits)) {
+	  mb_dat = new taiBitBox(NULL, this, NULL, body, flags_);
+	}
+	else {
 	  mb_dat = new taiComboBox(true, NULL, this, NULL, body, flags_);
-      } else if (pv->var_type == ProgVar::T_Int) {
+	}
+      }
+      else if (pv->var_type == ProgVar::T_Int) {
         taiIncrField* int_rep = new taiIncrField(NULL, this, NULL, body, flags_);
         int_rep->setMinimum(INT_MIN);
         mb_dat = int_rep;
@@ -1609,17 +1667,33 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
         break;
       }
       if(pv->var_type == ProgVar::T_HardEnum) {
-        taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
-        //note: use of pv for tests is just a hook, pv not really germane
-        if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
-          mb_dat->metaObject()->className())) continue;
-        tmb_dat->GetEnumValue(pv->int_val); // todo: not supporting first_diff
+	if(pv->hard_enum_type && pv->hard_enum_type->HasOption("BITS")) {
+	  taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
+	  if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ", 
+			    mb_dat->metaObject()->className())) continue;
+	  tmb_dat->GetValue(pv->int_val);
+	}
+	else {
+	  taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+	  //note: use of pv for tests is just a hook, pv not really germane
+	  if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
+			    mb_dat->metaObject()->className())) continue;
+	  tmb_dat->GetEnumValue(pv->int_val); // todo: not supporting first_diff
+	}
       }
       else if(pv->var_type == ProgVar::T_DynEnum) { // todo: not supporting first_diff
-        taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
-        if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
-          mb_dat->metaObject()->className())) continue;
-        tmb_dat->GetValue(pv->dyn_enum_val.value);
+	if(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits) {
+	  taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
+	  if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ", 
+			    mb_dat->metaObject()->className())) continue;
+	  tmb_dat->GetValue(pv->dyn_enum_val.value);
+	}
+	else {
+	  taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
+	  if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
+			    mb_dat->metaObject()->className())) continue;
+	  tmb_dat->GetValue(pv->dyn_enum_val.value);
+	}
       }
       else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff
         taiIncrField* tmb_dat = dynamic_cast<taiIncrField*>(mb_dat);
@@ -1635,17 +1709,6 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
         first_diff = true;
       }
     }
-  }
-}
-
-void iProgramCtrlDataHost::UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* var) {
-  cb->Clear();
-  const DynEnum& de = var->dyn_enum_val; // convenience
-  if(!de.enum_type) return;
-  for (int i = 0; i < de.enum_type->enums.size; ++i) {
-    const DynEnumItem* dei = de.enum_type->enums.FastEl(i);
-    //note: dynenums store the index of the value, not the value
-    cb->AddItem(dei->name, i); //TODO: desc in status bar or such would be nice!
   }
 }
 
@@ -1697,6 +1760,13 @@ void iProgramCtrlDataHost::GetImage_Membs()
 			    mb_dat->metaObject()->className())) continue;
 	  tmb_dat->GetImage(pv->GenCssInitVal());
 	}
+	else if(pv->hard_enum_type && pv->hard_enum_type->HasOption("BITS")) {
+	  taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
+	  if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ", 
+			    mb_dat->metaObject()->className())) continue;
+	  tmb_dat->SetEnumType(pv->hard_enum_type);
+	  tmb_dat->GetImage(pv->int_val);
+	}
 	else {
 	  taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
 	  if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
@@ -1713,14 +1783,17 @@ void iProgramCtrlDataHost::GetImage_Membs()
 			    mb_dat->metaObject()->className())) continue;
 	  tmb_dat->GetImage(pv->GenCssInitVal());
 	}
+	else if(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits) {
+	  taiBitBox* tmb_dat = dynamic_cast<taiBitBox*>(mb_dat);
+	  if (pv->TestError(!tmb_dat, "expected taiBitBox, not: ", 
+			    mb_dat->metaObject()->className())) continue;
+	  taiDynEnumMember::UpdateDynEnumBits(tmb_dat, pv->dyn_enum_val);
+	}
 	else {
 	  taiComboBox* tmb_dat = dynamic_cast<taiComboBox*>(mb_dat);
 	  if (pv->TestError(!tmb_dat, "expected taiComboBox, not: ", 
 			    mb_dat->metaObject()->className())) continue;
-	  UpdateDynEnumCombo((tmb_dat), pv);
-	  int dei = pv->dyn_enum_val.value;
-	  if (dei < 0) dei = 0;
-	  tmb_dat->GetImage(dei);
+	  taiDynEnumMember::UpdateDynEnumCombo(tmb_dat, pv->dyn_enum_val);
 	}
       }
       else if(pv->var_type == ProgVar::T_Int) { // todo: not supporting first_diff

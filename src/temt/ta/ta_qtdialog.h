@@ -285,13 +285,6 @@ public:
     HT_CONTROL		// host/owner is a control -- we won't show menus or obj buttons
   };
   
-  static void	DeleteChildrenLater(QObject* obj); 
-  // convenience function -- deleteLater all children
-  static void	DeleteChildrenNow(QObject* obj);
-  // convenience function -- delete *now* all children
-  static void	DeleteWidgetsLater(QObject* obj);
-  // convenience function -- deleteLater all widgets -- does hide first -- prevents bugs
-
   static void   MakeDarkBgColor(const iColor& bg, iColor& dk_bg); // for use by other users of stripe grids, to make the right dk bg color
 
   TypeDef*	typ;		// type of object (if relevant)

@@ -375,21 +375,24 @@ public:
   int			no_show; // any bits that should be temporarily hidden
   int			no_edit; // any bits that should be set readonly
   
-  inline QWidget*	rep() const { return (QWidget*)(QWidget*)m_rep; }
+  inline QWidget*	rep() const { return (QWidget*)m_rep; }
   bool			fillHor() {return true;} // override 
 
   taiBitBox(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags_ = 0);
   taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host, taiData* par,
     QWidget* gui_parent_, int flags_ = 0); // treats typ as enum, and fills values
 
-  void		AddBoolItem(bool auto_apply, String name, int val,
+  virtual void	SetEnumType(TypeDef* enum_typ, bool force = false); // sets a new enum type
+  virtual void	AddBoolItem(bool auto_apply, String name, int val,
      const String& desc = _nilString, bool bit_ro = false); // add an item to the list
+  virtual void	Clear();				    // remove all existing items
 
   void 		GetImage(int val);  // set to this value, according to bit fields
   void		GetValue(int& val) const;
 
   void*			m_par_obj_base;
   // if GetImage/Value is called by a taiMember, it will set this to point to parent object's base
+  QHBoxLayout* 	lay; //#IGNORE
 
 public slots:
   void		bitCheck_clicked(iBitCheckBox* sender, bool on); // #IGNORE
@@ -400,7 +403,6 @@ signals:
 #endif
 
 protected:
-  QHBoxLayout* 	lay; //#IGNORE
   int		m_val; //#IGNORE
   override void		GetImageVar_impl(const Variant& val)  {GetImage(val.toInt());}
   override void		GetValueVar_impl(Variant& val) const 

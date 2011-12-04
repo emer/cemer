@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.2.6.0 rev5152
+// ta_Dump File v3.0 -- code v5.2.6.0 rev5162
 LeabraProject .projects["Project_0"] { 
   taBase_Group @.templates = [0] {
   };
@@ -4001,7 +4001,7 @@ LeabraProject .projects["Project_0"] {
 	desc="use a fixed list of random seeds with the current batch number selecting the seed to use -- provides a consistent set of initial conditions for each batch regardless..";
        };
       };
-      bits=0;
+      bits=1;
      };
     };
     args {
@@ -10385,7 +10385,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=8: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -10408,7 +10408,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=X;
 	   col_name="epoch";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=110: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=8: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -10434,7 +10434,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   on=1;
 	   axis=Y;
 	   col_name="avg_sse";
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   fixed_range {fix_min=0: min=0.1942763: fix_max=0: max=5.912342: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;

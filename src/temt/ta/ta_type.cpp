@@ -6487,7 +6487,6 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
 			   void* base, void* par, MemberDef* memb_def,
 			   StrContext sc)
 {
-  if(ptr == 1) return 0;	// just not a good idea to replace in paths..
   if(ptr == 0) {
 #ifndef NO_TA_BASE
     if(DerivesFrom(TA_taBase)) {

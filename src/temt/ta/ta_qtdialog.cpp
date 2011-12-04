@@ -688,41 +688,6 @@ void iMethodButtonMgr::SetCurMenuButton(MethodDef* md) {
 #define LAYBODY_MARGIN	1
 #define LAYBODY_SPACING	0
 
-void taiDataHostBase::DeleteWidgetsLater(QObject* obj) {
-  if (obj == NULL) return;
-  QObject* chobj;
-  const QObjectList& ol = obj->children(); 
-  for(int i = ol.count()-1; i >= 0; i--) {
-    chobj = ol.at(i);
-    if(chobj->inherits("QWidget")) {
-      ((QWidget*)chobj)->hide();
-    }
-    chobj->deleteLater();
-  }
-}
-
-void taiDataHostBase::DeleteChildrenLater(QObject* obj) {
-  if (obj == NULL) return;
-  QObject* chobj;
-  const QObjectList& ol = obj->children(); 
-  for(int i = ol.count()-1; i >= 0; i--) {
-    chobj = ol.at(i);
-    chobj->deleteLater();
-  }
-}
-
-void taiDataHostBase::DeleteChildrenNow(QObject* obj) {
-  if (obj == NULL) return;
-  QObject* chobj;
-  const QObjectList& ol = obj->children(); 
-  int i = 0;
-  while (ol.count() > 0) {
-    i = ol.size() - 1;
-    chobj = ol.at(i);
-    delete chobj;
-  }
-}
-
 void taiDataHostBase::MakeDarkBgColor(const iColor& bg, iColor& dk_bg) {
   dk_bg.set(taiMisc::ivBrightness_to_Qt_lightdark(bg, taiM->edit_darkbg_brightness));
 }
@@ -1507,7 +1472,7 @@ void taiDataHost_impl::ClearBody(bool waitproc) {
 }
 
 void taiDataHost_impl::ClearBody_impl() {
-  DeleteChildrenLater(body);
+  taiMisc::DeleteChildrenLater(body);
 }
 
 void taiDataHost_impl::ReConstr_Body() {
@@ -1872,7 +1837,7 @@ void taiDataHost::Constr_Body_impl() {
 void taiDataHost::ClearBody_impl() {
   if(body) {
     delete body->layout();	// nuke our vboxlayout guy
-    DeleteWidgetsLater(body);
+    taiMisc::DeleteWidgetsLater(body);
     body_vlay = new QVBoxLayout(body);
     body_vlay->setMargin(0);
   }

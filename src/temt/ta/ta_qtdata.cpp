@@ -1246,19 +1246,24 @@ taiBitBox::taiBitBox(bool is_enum, TypeDef* typ_, IDataHost* host_, taiData* par
 {
   Initialize(gui_parent_);
   if (is_enum && typ) {
-    int cnt = 0;
+    SetEnumType(typ, true);
+  }
+}
+
+void taiBitBox::SetEnumType(TypeDef* enum_typ, bool force) {
+  if ((typ != enum_typ) || force) {
+    Clear();
+    typ = enum_typ;
     for (int i = 0; i < typ->enum_vals.size; ++i) {
       EnumDef* ed = typ->enum_vals.FastEl(i);
       if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
-        ed->HasOption("NO_SHOW"))
-        continue;
+	  ed->HasOption("NO_SHOW"))
+	continue;
       // auto apply if entire guy marked, or if item is marked
-      bool auto_apply = ((flags_ & taiData::flgAutoApply)
-        || (ed->HasOption(TypeItem::opt_APPLY_IMMED)));
-      if (cnt++ > 0)
-        lay->addSpacing(taiM->hsep_c);
+      bool auto_apply = ((flags() & taiData::flgAutoApply)
+			 || (ed->HasOption(TypeItem::opt_APPLY_IMMED)));
       AddBoolItem(auto_apply, ed->GetLabel(), ed->enum_no, ed->desc,
-        ed->HasOption("READ_ONLY"));
+		  ed->HasOption("READ_ONLY"));
     }
     lay->addStretch();
   }
@@ -1282,6 +1287,16 @@ void taiBitBox::bitCheck_clicked(iBitCheckBox* sender, bool on) {
     DataChanged();
 }
 
+void taiBitBox::Clear() {
+//   QLayoutItem *child;
+//   while ((child = lay->takeAt(0)) != 0) {
+//     delete child;
+//   }
+  taiMisc::DeleteChildrenNow(m_rep);
+  lay = new QHBoxLayout(m_rep);
+  lay->setMargin(0); // in Qt4 it adds style-dependent defaults
+}
+
 void taiBitBox::AddBoolItem(bool auto_apply, String name, int val,
   const String& desc, bool bit_ro) 
 {
@@ -1289,6 +1304,8 @@ void taiBitBox::AddBoolItem(bool auto_apply, String name, int val,
   if (desc.nonempty()) {
     bcb->setToolTip(desc);
   }
+  if(lay->count() > 0)
+    lay->addSpacing(taiM->hsep_c);
   lay->addWidget(bcb);
   if (readOnly() || bit_ro) {
     bcb->setReadOnly(true);

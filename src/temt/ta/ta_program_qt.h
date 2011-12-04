@@ -42,6 +42,12 @@ public:
   taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
 
+
+  static void  	UpdateDynEnumCombo(taiComboBox* cb, DynEnum& de);
+  // helper function for populating combobox with dyn enum values
+  static void  	UpdateDynEnumBits(taiBitBox* cb, DynEnum& de);
+  // helper function for populating bit box with dyn enum values
+
   TAQT_MEMBER_INSTANCE(taiDynEnumMember, taiMember);
 protected:
   override void GetImage_impl(taiData* dat, const void* base);
@@ -379,9 +385,6 @@ protected: //
   override void		GetValue_Membs_def();
   override void		GetImage_Membs();
 
-  void	UpdateDynEnumCombo(taiComboBox* cb, const ProgVar* var); 
-
- 
 public: // IRefListClient i/f
   TYPED_OBJECT(iProgramCtrlDataHost);
   override void		DataDestroying_Ref(taBase_RefList* src, taBase* ta);

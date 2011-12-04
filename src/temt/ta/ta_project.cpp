@@ -2107,6 +2107,29 @@ void taProject::UndoStats(bool show_list, bool show_diffs) {
   undo_mgr.ReportStats(show_list, show_diffs);
 }
 
+
+void taProject::ReplaceString(const String& srch, const String& repl) {
+  String proj_str;
+  tabMisc::cur_undo_save_top = this; // let others know who we're saving for..
+  tabMisc::cur_undo_mod_obj = this; // let others know who we're saving for..
+  tabMisc::cur_undo_save_owner = this;
+  ++taMisc::is_undo_saving;
+  Save_String(proj_str);
+  --taMisc::is_undo_saving;
+  tabMisc::cur_undo_save_top = NULL;
+  tabMisc::cur_undo_mod_obj = NULL;
+  tabMisc::cur_undo_save_owner = NULL;
+
+  proj_str.gsub(srch, repl);
+
+  ++taMisc::is_undo_loading;
+  Load_String(proj_str);
+  taMisc::ProcessEvents();      // get any post-load things *before* turning off undo flag..
+  --taMisc::is_undo_loading;
+
+  tabMisc::DelayedFunCall_gui(this,"RefreshAllViews");
+}
+
 String taProject::GetAutoFileName(const String& suffix, const String& ftype_ext) {
   String rval;
   if(file_name.empty()) {
