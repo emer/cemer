@@ -4048,6 +4048,7 @@ void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_item
 
   String sr_val = srch;
   String rp_val = repl;
+  String mb_flt;
 
   Dlg1.Reset();
   Dlg1.prompt = "Search and Replace";
@@ -4060,12 +4061,17 @@ void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_item
   Dlg1.AddSpace(20, "mainv");
   curow = "srch";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
-  Dlg1.AddLabel("srchlbl", "main", curow, "label=Search: ;");
+  Dlg1.AddLabel("srchlbl", "main", curow, "label=Search for:    ;");
   Dlg1.AddStringField(&sr_val, "srch", "main", curow, "tooltip=enter string value to search for;");
   curow = "repl";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
-  Dlg1.AddLabel("repllbl", "main", curow, "label=Replace: ;");
+  Dlg1.AddLabel("repllbl", "main", curow, "label=Replace with: ;");
   Dlg1.AddStringField(&rp_val, "repl", "main", curow, "tooltip=enter string value to replace with;");
+  Dlg1.AddSpace(20, "mainv");
+  curow = "mbflt";
+  Dlg1.AddHBoxLayout(curow, "mainv", "", "");
+  Dlg1.AddLabel("mbfltlbl", "main", curow, "label=Member filter: ;");
+  Dlg1.AddStringField(&mb_flt, "repl", "main", curow, "tooltip=enter string that the end value member where replacement actually occurs must contain in its member name\n -- this restricts the replacement to specific types of values (e.g., 'name' or 'lrate')\n instead of applying to everything (which is what happens when this is blank);");
   Dlg1.AddSpace(20, "mainv");
 
   int drval = Dlg1.PostDialog(true);
@@ -4078,7 +4084,7 @@ void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_item
     if (!ci) continue;
     taBase* tab =  ci->taData();// is the effLink data
     if (!tab) continue;
-    tab->ReplaceValStr(sr_val, rp_val);
+    tab->ReplaceValStr(sr_val, rp_val, mb_flt);
   }
 }
 
@@ -8379,7 +8385,7 @@ void iTreeViewItem::FillContextMenu_impl(taiActions* menu,
   //taiAction* mel =
   menu->AddItem("Find from here (Alt+F)...", taiMenu::use_default,
 		taiAction::men_act, treeView(), SLOT(mnuFindFromHere(taiAction*)), this);
-  menu->AddItem("Replace from here (Alt+R)...", taiMenu::use_default,
+  menu->AddItem("Replace in selected (Alt+R)...", taiMenu::use_default,
 		taiAction::men_act, treeView(), SLOT(mnuReplaceFromHere(taiAction*)), this);
   // note: this causes it to always search from the first one entered!  need to trap
   // specific keyboard input

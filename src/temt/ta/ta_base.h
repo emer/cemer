@@ -748,10 +748,10 @@ public:
                               TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                               bool force_inline = false);
   // #IGNORE set value from a string for ptr to taBase (ptr=1) -- called by TypeDef SetValStr
-  virtual int 	ReplaceValStr(const String& srch, const String& repl,
+  virtual int 	ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
 			      void* par = NULL, MemberDef* md = NULL,
 			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
-  // #IGNORE replace srch with repl in GetValStr and set as SetValStr -- called by TypeDef ReplaceValStr -- returns number replaced (0 = none)
+  // #IGNORE replace string value -- does a GetValStr, replace srch with repl in that string, then does a SetValStr -- always iterates over members of classes instead of doing inline to prevent replacing member names -- returns number replaced (0 = none) -- mbr_filt = filter for members to replace in -- if non-empty, member name for terminal value members where replace actually occurs (as opposed to owner class objects) must contain this string
 
   virtual taObjDiffRec*  GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
                                MemberDef* memb_def=NULL, const void* par=NULL,
@@ -1821,7 +1821,7 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                            bool force_inline = false);
-  override int 	ReplaceValStr(const String& srch, const String& repl,
+  override int 	ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
 			      void* par = NULL, MemberDef* md = NULL,
 			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
 
@@ -2426,7 +2426,7 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                            bool force_inline = false);
-  override int 	ReplaceValStr(const String& srch, const String& repl,
+  override int 	ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
 			      void* par = NULL, MemberDef* md = NULL,
 			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
 

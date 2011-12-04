@@ -718,7 +718,7 @@ bool taMatrix::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return true;
 }
 
-int taMatrix::ReplaceValStr(const String& srch, const String& repl,
+int taMatrix::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
 			    void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
   int rval = 0;
   for(int i=0; i<size; i++) {

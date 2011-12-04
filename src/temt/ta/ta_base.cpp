@@ -1495,10 +1495,10 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
   return true;
 }
 
-int taBase::ReplaceValStr(const String& srch, const String& repl,
+int taBase::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
 			     void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
   TypeDef* td = GetTypeDef();
-  int rval = td->ReplaceValStr_class(srch, repl, this, par, memb_def, sc);
+  int rval = td->ReplaceValStr_class(srch, repl, mbr_filt, this, par, memb_def, sc);
   if(rval > 0)
     UpdateAfterEdit();
   return rval;
@@ -3954,13 +3954,13 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return false;
 }
 
-int taList_impl::ReplaceValStr(const String& srch, const String& repl,
+int taList_impl::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
 			       void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
-  int rval = inherited::ReplaceValStr(srch, repl, par, memb_def, sc);
+  int rval = inherited::ReplaceValStr(srch, repl, mbr_filt, par, memb_def, sc);
   for(int i=0; i<size; i++) {
     taBase* itm = (taBase*)el[i];
     if(itm && itm->GetOwner() == this) { // only owned is key for preventing recursion
-      rval += itm->ReplaceValStr(srch, repl, par, memb_def, sc);
+      rval += itm->ReplaceValStr(srch, repl, mbr_filt, par, memb_def, sc);
     }
   }
   if(rval > 0)
@@ -5168,7 +5168,7 @@ bool taArray_base::SetValStr(const String& val, void* par, MemberDef* memb_def,
   return true;
 }
 
-int taArray_base::ReplaceValStr(const String& srch, const String& repl,
+int taArray_base::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
 			       void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
   int rval = 0;
   for(int i=0; i<size; i++) {

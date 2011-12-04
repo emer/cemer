@@ -637,7 +637,7 @@ public:
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
 			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			   bool force_inline = false);
-  override int 	ReplaceValStr(const String& srch, const String& repl,
+  override int 	ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
 			      void* par = NULL, MemberDef* md = NULL,
 			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
 

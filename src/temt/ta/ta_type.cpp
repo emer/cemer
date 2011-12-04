@@ -6454,7 +6454,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
   }
 }
 
-int TypeDef::ReplaceValStr_class(const String& srch, const String& repl,
+int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const String& mbr_filt,
 				 void* base, void* par, MemberDef* memb_def,
 				 StrContext sc)
 {
@@ -6478,12 +6478,12 @@ int TypeDef::ReplaceValStr_class(const String& srch, const String& repl,
       bool condedit = md->GetCondOptTest("CONDEDIT", this, base);
       if(!condedit) continue;
     }
-    rval += md->type->ReplaceValStr(srch, repl, md->GetOff(base), base, md, sc);
+    rval += md->type->ReplaceValStr(srch, repl, mbr_filt, md->GetOff(base), base, md, sc);
   }
   return rval;
 }
 
-int TypeDef::ReplaceValStr(const String& srch, const String& repl, 
+int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
 			   void* base, void* par, MemberDef* memb_def,
 			   StrContext sc)
 {
@@ -6493,7 +6493,7 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl,
     if(DerivesFrom(TA_taBase)) {
       taBase* rbase = (taBase*)base;
       if(rbase)
-        return rbase->ReplaceValStr(srch, repl, par, memb_def, sc);
+        return rbase->ReplaceValStr(srch, repl, mbr_filt, par, memb_def, sc);
     }
     else
 #endif
@@ -6506,9 +6506,12 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl,
 	      )
 	 )
     {
-      return ReplaceValStr_class(srch, repl, base, par, memb_def, sc);
+      return ReplaceValStr_class(srch, repl, mbr_filt, base, par, memb_def, sc);
     }
   }
+  // only apply filtering to the terminal leaves case here, not to higher level owners
+  if(memb_def && mbr_filt.nonempty() && !memb_def->name.contains(mbr_filt))
+    return 0;
   String str = GetValStr(base, par, memb_def, sc, false);
   // note: just using literal replace here, not regexp..
   if(!str.contains(srch)) return 0;
