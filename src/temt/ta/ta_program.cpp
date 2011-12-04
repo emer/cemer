@@ -362,6 +362,13 @@ void DynEnumItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(Program::IsForbiddenName(name))
     name = "My" + name;
+  DynEnumType* typ = GET_MY_OWNER(DynEnumType);
+  if(typ) {
+    if(typ->bits && value <= 0) {
+      value = 1;
+      typ->enums.OrderItems();
+    }
+  }
 }
 
 void DynEnumItem::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -406,15 +413,30 @@ int DynEnumItem_List::FindNumIdx(int val) const {
 }
 
 void DynEnumItem_List::OrderItems() {
-  if(size == 0) return;
-  int prval = FastEl(0)->value;
-  for(int i=1;i<size;i++) {
-    DynEnumItem* it = FastEl(i);
-    if(it->value <= prval) {
-      it->value = prval + 1;
-      it->DataChanged(DCR_ITEM_UPDATED);
+  if(size == 0 || !owner) return;
+  DynEnumType* own = dynamic_cast<DynEnumType*>(owner);
+  if(!own) return;
+  if(own->bits) {
+    int prval = FastEl(0)->value;
+    for(int i=1;i<size;i++) {
+      DynEnumItem* it = FastEl(i);
+      if(it->value <= prval) {
+	it->value = prval << 1;
+	it->DataChanged(DCR_ITEM_UPDATED);
+      }
+      prval = it->value;
     }
-    prval = it->value;
+  }
+  else {
+    int prval = FastEl(0)->value;
+    for(int i=1;i<size;i++) {
+      DynEnumItem* it = FastEl(i);
+      if(it->value <= prval) {
+	it->value = prval + 1;
+	it->DataChanged(DCR_ITEM_UPDATED);
+      }
+      prval = it->value;
+    }
   }
 }
 
@@ -471,12 +493,23 @@ DynEnumItem* DynEnumType::AddEnum(const String& nm, int val) {
 }
 
 void DynEnumType::SeqNumberItems(int first_val) {
-  int val = first_val;
-  for(int i=0;i<enums.size;i++) {
-    DynEnumItem* it = enums.FastEl(i);
-    it->value = val;
-    it->DataChanged(DCR_ITEM_UPDATED);
-    val++;
+  if(bits) {
+    int val = 1;
+    for(int i=0;i<enums.size;i++) {
+      DynEnumItem* it = enums.FastEl(i);
+      it->value = val;
+      it->DataChanged(DCR_ITEM_UPDATED);
+      val = val << 1;
+    }
+  }
+  else {
+    int val = first_val;
+    for(int i=0;i<enums.size;i++) {
+      DynEnumItem* it = enums.FastEl(i);
+      it->value = val;
+      it->DataChanged(DCR_ITEM_UPDATED);
+      val++;
+    }
   }
 }
 
@@ -627,7 +660,7 @@ const String DynEnum::NameVal() const {
     String rval;
     for(int i=0;i<enum_type->enums.size;i++) {
       DynEnumItem* it = enum_type->enums.FastEl(i);
-      if(value & (1 << it->value)) {
+      if(value & it->value) {
         if(!rval.empty()) rval += "|";
         rval += it->name;
       }
