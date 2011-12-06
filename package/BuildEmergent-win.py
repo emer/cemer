@@ -333,9 +333,9 @@ def inst_svn():
       print '\nDownloading Slik Subversion client.  When the download completes,'
       print 'installation will begin.  Accept default installation options.'
       print 'Return to this script when complete.'
-      url = 'http://www.sliksvn.com/pub/Slik-Subversion-1.6.15-win32.msi'
+      url = 'http://www.sliksvn.com/pub/Slik-Subversion-1.7.2-win32.msi'
       if isWin64:
-        url = 'http://www.sliksvn.com/pub/Slik-Subversion-1.6.15-x64.msi'
+        url = 'http://www.sliksvn.com/pub/Slik-Subversion-1.7.2-x64.msi'
       file = getUrl(url)
       os.system(file)
       response = raw_input('\nOnce Subversion has been installed, press enter to continue...')

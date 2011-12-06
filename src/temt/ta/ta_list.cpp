@@ -78,9 +78,9 @@ taPtrList_impl::~taPtrList_impl() {
 // memory manger
 
 bool taPtrList_impl::Alloc(int sz) {
-  if(alloc_size >= sz)	return true;	// no need to increase..
+  if(alloc_size >= sz)  return true;    // no need to increase..
   int old_alloc_sz = alloc_size;
-  sz = MAX(16-TA_ALLOC_OVERHEAD-1,sz);		// once allocating, use a minimum of 16
+  sz = MAX(16-TA_ALLOC_OVERHEAD-1,sz);          // once allocating, use a minimum of 16
   alloc_size += TA_ALLOC_OVERHEAD; // increment to full power of 2
   while((alloc_size-TA_ALLOC_OVERHEAD) <= sz) alloc_size <<= 1;
   alloc_size -= TA_ALLOC_OVERHEAD;
@@ -154,20 +154,27 @@ String taPtrList_impl::El_GetHashString_(void* it) const {
 }
 
 void* taPtrList_impl::GetTA_Element_(Variant i, TypeDef*& eltd) const {
-  eltd = NULL;
-  if(i.isStringType()) {	// lookup by name if string
-    void* rval = FindName_(i.toString());
-    if(rval) { eltd = El_GetType_(rval); return rval; }
+  void* rval = 0;
+  if (i.isStringType()) {
+    // lookup by name if string
+    rval = FindName_(i.toString());
   }
-  int dx = i.toInt();	// string could be number in disguise -- try that next
-  void* rval = SafeEl_(dx);
-  if(rval) {
+
+  if (!rval) {
+    // string could be number in disguise -- try that next
+    rval = SafeEl_(i.toInt());
+  }
+
+  if (rval) {
     eltd = El_GetType_(rval);
-    return rval;
   }
-  taMisc::Error("taPtrList_impl: Attempt to access list element with index/name:", i.toString(),
-		"which is out of range or not found -- list size:", String(size));
-  return NULL;
+  else {
+    eltd = 0;
+    taMisc::Error("taPtrList_impl: Attempt to access list element with index/name:", i.toString(),
+                  "which is out of range or not found -- list size:", String(size));
+  }
+
+  return rval;
 }
 
 int taPtrList_impl::FindEl_(const void* it) const {
@@ -233,7 +240,7 @@ bool taPtrList_impl::MoveIdx(int fm, int to) {
   // algo is diff depending on whether fm is > or < to
   if (fm < to) {
     // 'to' gets pushed up, to make room for fm
-    for (int j = fm; j < to; j++) {		// compact, if necc
+    for (int j = fm; j < to; j++) {             // compact, if necc
       el[j] = el[j+1];
       UpdateIndex_(j);
     }
@@ -337,7 +344,7 @@ void taPtrList_impl::Add_(void* it, bool no_notify) {
   if (no_notify) return;
   void* op2 = NULL;
   if (idx > 0) op2 = FastEl_(idx - 1);
-  DataChanged(DCR_LIST_ITEM_INSERT, it, op2); 
+  DataChanged(DCR_LIST_ITEM_INSERT, it, op2);
 }
 
 bool taPtrList_impl::AddUnique_(void* it) {
@@ -374,7 +381,7 @@ bool taPtrList_impl::RemoveIdx(int i) {
       hash_table->RemoveHash(El_GetHashVal_(tel), El_GetHashString_(tel));
   }
   int j;
-  for(j=i; j < size-1; j++) {		// compact, if necc
+  for(j=i; j < size-1; j++) {           // compact, if necc
     el[j] = el[j+1];
     UpdateIndex_(j);
   }
@@ -413,7 +420,7 @@ bool taPtrList_impl::Insert_(void* it, int where, bool no_notify) {
     Add_(it, no_notify);
     return true;
   }
-  AddOnly_(NULL); 
+  AddOnly_(NULL);
   int i;
   for(i=size-1; i > where; i--) {
     el[i] = el[i-1];
@@ -470,8 +477,8 @@ bool taPtrList_impl::Transfer_(void* it) {
   taPtrList_impl* old_own = El_GetOwnerList_(it);
   if (old_own == this)
     return false;
-  El_Ref_(it);			// extra ref so no delete on remove
-  El_SetOwner_(it);		// change owner to us so it doesn't call CutLinks with Remove..
+  El_Ref_(it);                  // extra ref so no delete on remove
+  El_SetOwner_(it);             // change owner to us so it doesn't call CutLinks with Remove..
   if (old_own)
     old_own->RemoveEl_(it);
   Add_(it);
@@ -493,7 +500,7 @@ void taPtrList_impl::Link_(void* it) {
   }
   void* op2 = NULL;
   if (size > 1) op2 = FastEl_(size - 2); //for DataChanged
-  DataChanged(DCR_LIST_ITEM_INSERT, it, op2); 
+  DataChanged(DCR_LIST_ITEM_INSERT, it, op2);
 }
 
 bool taPtrList_impl::LinkUnique_(void* it) {
@@ -506,7 +513,7 @@ bool taPtrList_impl::LinkUnique_(void* it) {
 bool taPtrList_impl::LinkUniqNameNew_(void* it) {
   int i = FindNameIdx(El_GetName_(it));
   if(i >= 0) {
-    ReplaceLinkIdx_(i,it);	// semantics of LinkUniqName is to update..
+    ReplaceLinkIdx_(i,it);      // semantics of LinkUniqName is to update..
     return false;
   }
   Link_(it);
@@ -644,7 +651,7 @@ void taPtrList_impl::Sort(bool descending) {
 
 void taPtrList_impl::Sort_(bool descending) {
   if(size <= 1) return;
-  int lt_compval = -1;		// comparison return value for less-than
+  int lt_compval = -1;          // comparison return value for less-than
   if(descending)
     lt_compval = 1;
   // lets do a heap sort since it requires no secondary storage
@@ -661,8 +668,8 @@ void taPtrList_impl::Sort_(bool descending) {
       tmp = el[ir-1]; // tmp = ra[ir]
       el[ir-1] = el[0]; // ra[ir] = ra[1]
       if(--ir == 1) {
-	el[0] = tmp; // ra[1]=tmp
-	return;
+        el[0] = tmp; // ra[1]=tmp
+        return;
       }
     }
     i=l;
@@ -670,8 +677,8 @@ void taPtrList_impl::Sort_(bool descending) {
     while(j<= ir) {
       if(j<ir && (El_Compare_(el[j-1],el[j]) == lt_compval)) j++;
       if(El_Compare_(tmp,el[j-1]) == lt_compval) { // tmp < ra[j]
-	el[i-1] = el[j-1]; // ra[i]=ra[j];
-	j += (i=j);
+        el[i-1] = el[j-1]; // ra[i]=ra[j];
+        j += (i=j);
       }
       else j = ir+1;
     }
@@ -708,7 +715,7 @@ void* taPtrList_impl::DuplicateEl_(void* it) {
   Insert_(nw, idx + 1, true); //defer notify until after copy
   El_Copy_(nw, it); // note: DONT set name, leave as default
   --taMisc::is_duplicating;
-  DataChanged(DCR_LIST_ITEM_INSERT, nw, SafeEl_(idx)); 
+  DataChanged(DCR_LIST_ITEM_INSERT, nw, SafeEl_(idx));
   return nw;
 }
 
@@ -746,7 +753,7 @@ void taPtrList_impl::Duplicate(const taPtrList_impl& cp) {
       void* it = El_MakeToken_(cp.el[i]);
       Add_(it, true);
       El_Copy_(it, cp.el[i]);
-      DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2)); 
+      DataChanged(DCR_LIST_ITEM_INSERT, it, SafeEl_(size - 2));
       --taMisc::is_duplicating;
     }
   }
@@ -759,8 +766,8 @@ void taPtrList_impl::Duplicate(const taPtrList_impl& cp) {
 void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
   if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
-  scratch_list.Borrow(*this);	// get this into scratch for find (since replacing
-				// we need to refer to these items (no stealth)
+  scratch_list.Borrow(*this);   // get this into scratch for find (since replacing
+                                // we need to refer to these items (no stealth)
   int i;
   for(i=0; i < cp.size; i++) {
     if(cp.el[i] == NULL)  continue;
@@ -770,11 +777,11 @@ void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
     if((idx=Scratch_Find_(El_GetName_(cp.el[i]))) >= 0) {
       ReplaceIdx_(idx,it, true); //note: only insert notify is suppressed
       El_Copy_(it, cp.el[i]);
-      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(idx - 1)); 
+      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(idx - 1));
     }  else {
       Add_(it, true);
       El_Copy_(it, cp.el[i]);
-      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2)); 
+      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
     }
     --taMisc::is_duplicating;
   }
@@ -783,7 +790,7 @@ void taPtrList_impl::DupeUniqNameNew(const taPtrList_impl& cp) {
 void taPtrList_impl::DupeUniqNameOld(const taPtrList_impl& cp) {
   if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
-  scratch_list.Stealth_Borrow(*this);	// get this into scratch for find
+  scratch_list.Stealth_Borrow(*this);   // get this into scratch for find
   int i;
   for(i=0; i < cp.size; i++) {
     if(cp.el[i] == NULL)  continue;
@@ -792,7 +799,7 @@ void taPtrList_impl::DupeUniqNameOld(const taPtrList_impl& cp) {
       void* it = El_MakeToken_(cp.el[i]);
       Add_(it, true);
       El_Copy_(it, cp.el[i]);
-      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2)); 
+      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
       --taMisc::is_duplicating;
     }
   }
@@ -808,7 +815,7 @@ void taPtrList_impl::Borrow(const taPtrList_impl& cp) {
 void taPtrList_impl::BorrowUnique(const taPtrList_impl& cp) {
   if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
-  scratch_list.Stealth_Borrow(*this);	// get this into scratch for find
+  scratch_list.Stealth_Borrow(*this);   // get this into scratch for find
   int i;
   for(i=0; i < cp.size; i++) {
     void* it = cp.el[i];
@@ -820,7 +827,7 @@ void taPtrList_impl::BorrowUnique(const taPtrList_impl& cp) {
 void taPtrList_impl::BorrowUniqNameNew(const taPtrList_impl& cp) {
   if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
-  scratch_list.Borrow(*this);	// get this into scratch for find (using replace..)
+  scratch_list.Borrow(*this);   // get this into scratch for find (using replace..)
   int i;
   for(i=0; i < cp.size; i++) {
     void* it = cp.el[i];
@@ -835,7 +842,7 @@ void taPtrList_impl::BorrowUniqNameNew(const taPtrList_impl& cp) {
 void taPtrList_impl::BorrowUniqNameOld(const taPtrList_impl& cp) {
   if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
-  scratch_list.Stealth_Borrow(*this);	// get this into scratch for find
+  scratch_list.Stealth_Borrow(*this);   // get this into scratch for find
   int i;
   for(i=0; i < cp.size; i++) {
     void* it = cp.el[i];
@@ -855,7 +862,7 @@ void taPtrList_impl::Copy_Common(const taPtrList_impl& cp) {
     ++taMisc::is_duplicating;
     El_CopyN_(it, cp.el[i]); //+name
     --taMisc::is_duplicating;
-    DataChanged(DCR_LIST_ITEM_UPDATE, it); 
+    DataChanged(DCR_LIST_ITEM_UPDATE, it);
   }
 }
 
@@ -878,7 +885,7 @@ void taPtrList_impl::Copy_Duplicate_impl(const taPtrList_impl& cp) {
       void* it = El_MakeToken_(cp_it);
       Add_(it, true);
       El_CopyN_(it, cp_it);
-      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2)); 
+      DataChanged(DCR_LIST_ITEM_INSERT, it, PosSafeEl_(size - 2));
       --taMisc::is_duplicating;
     } break;
     case EK_LINK:
@@ -918,7 +925,7 @@ void taPtrList_impl::Copy_Exact(const taPtrList_impl& cp) {
         ++taMisc::is_duplicating;
         El_CopyN_(it, cp_it);
         --taMisc::is_duplicating;
-        DataChanged(DCR_LIST_ITEM_UPDATE, it); 
+        DataChanged(DCR_LIST_ITEM_UPDATE, it);
         goto cont;
       } // otherwise fall through
     }
@@ -927,7 +934,7 @@ void taPtrList_impl::Copy_Exact(const taPtrList_impl& cp) {
       if (it == cp_it) goto cont;
     }
     // if either null, then both must be null
-    else if ((it == NULL) || (cp_it == NULL)) { 
+    else if ((it == NULL) || (cp_it == NULL)) {
       if (it == cp_it) goto cont;
     }
     // not commensurable,
@@ -943,7 +950,7 @@ cont:
 taPtrList_impl::ElKind taPtrList_impl::El_Kind_(void* it) const {
   if (!it) return EK_NULL;
   // if object is owned by us, or has no owner it is an instance
-  else if ((El_GetOwnerList_(it) == this) || 
+  else if ((El_GetOwnerList_(it) == this) ||
     (El_GetOwnerObj_(it) == NULL))
     return EK_OWN;
   // otherwise a link
@@ -1010,15 +1017,15 @@ void taPtrList_impl::List(ostream& strm) const {
 int taHashTable::n_bucket_primes[] =
                      {3, 7, 13, 19, 29, 41, 53, 67, 83, 97, 113, 137,
                       163, 191, 223, 263, 307, 349, 401, 461, 521,
-		      653, 719, 773, 839, 911, 983, 1049, 1123, 1201,
-		      1279, 1367, 1459, 1549, 1657, 1759, 1861, 1973,
-		      2081, 2179, 2281, 2383, 2503, 2617, 2729, 2843,
-		      2963, 3089, 3203, 3323, 3449, 3571, 3697, 3833,
-		      3967, 4099, 4241, 4391, 4549, 4703, 4861, 5011,
-		      5171, 5333, 5483, 5669, 5839, 6029, 6197, 6361,
-		      6547, 6761, 6961, 7177, 7393, 7517, 7727, 7951,
-		      8101, 8209, 16411, 32771, 65537, 131301, 262147,
-		      524287};
+                      653, 719, 773, 839, 911, 983, 1049, 1123, 1201,
+                      1279, 1367, 1459, 1549, 1657, 1759, 1861, 1973,
+                      2081, 2179, 2281, 2383, 2503, 2617, 2729, 2843,
+                      2963, 3089, 3203, 3323, 3449, 3571, 3697, 3833,
+                      3967, 4099, 4241, 4391, 4549, 4703, 4861, 5011,
+                      5171, 5333, 5483, 5669, 5839, 6029, 6197, 6361,
+                      6547, 6761, 6961, 7177, 7393, 7517, 7727, 7951,
+                      8101, 8209, 16411, 32771, 65537, 131301, 262147,
+                      524287};
 
 int taHashTable::n_primes = 86;
 
@@ -1027,7 +1034,7 @@ void taHashTable::InitList_() {
 }
 
 void taHashTable::AddHash(taHashVal hash, int val, const String& str) {
-  if (size == 0) return;		// this shouldn't happen, but justin case..
+  if (size == 0) return;                // this shouldn't happen, but justin case..
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
   if(!bucket) {
@@ -1039,14 +1046,14 @@ void taHashTable::AddHash(taHashVal hash, int val, const String& str) {
 }
 
 bool taHashTable::Alloc(int sz) {
-  Reset();			// get rid of any existing ones
+  Reset();                      // get rid of any existing ones
   bucket_max = 0;
   int act_sz = 0;
   int cnt = 0;
-  while((cnt < n_primes) && (act_sz < sz))	act_sz = n_bucket_primes[cnt++];
+  while((cnt < n_primes) && (act_sz < sz))      act_sz = n_bucket_primes[cnt++];
   if(!taPtrList<taHashBucket>::Alloc(act_sz)) return false;
   int i;
-  for(i=0; i<act_sz; i++)	// initialize with nulls
+  for(i=0; i<act_sz; i++)       // initialize with nulls
     AddOnly_(NULL);
   return true;
 }
@@ -1072,7 +1079,7 @@ int taHashBucket::FindHashVal(taHashVal hash, const String& str) const {
 }
 
 int taHashTable::FindHashVal(taHashVal hash, const String& str) const {
-  if(size == 0)	return -1;
+  if(size == 0) return -1;
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
   if(bucket == NULL) return -1;
@@ -1080,7 +1087,7 @@ int taHashTable::FindHashVal(taHashVal hash, const String& str) const {
 }
 
 bool taHashTable::UpdateHashVal(taHashVal hash, int val, const String& str) {
-  if(size == 0)	return false;
+  if(size == 0) return false;
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
   if(bucket == NULL) return false;
@@ -1091,7 +1098,7 @@ bool taHashTable::UpdateHashVal(taHashVal hash, int val, const String& str) {
 }
 
 bool taHashTable::RemoveHash(taHashVal hash, const String& str) {
-  if(size == 0)	return false;
+  if(size == 0) return false;
   int buck_no = (int)(hash % size);
   taHashBucket* bucket = FastEl(buck_no);
   if(bucket == NULL) return false;
@@ -1138,7 +1145,7 @@ bool taFixedArray_impl::Alloc_(uint alloc) {
 void taFixedArray_impl::Copy_(const taFixedArray_impl& cp) {
   if (cp.size < size) ReclaimOrphans_(cp.size, size - 1);
   else if(!Alloc_(cp.size)) return;
-  
+
   for (int i=0; i < cp.size; ++i) {
     El_Copy_(FastEl_(i), cp.FastEl_(i));
   }
@@ -1156,7 +1163,7 @@ void taFixedArray_impl::SetSize(int new_size) {
   } else if (new_size < size) {
     ReclaimOrphans_(new_size, size - 1);
   }
-  size = new_size;	
+  size = new_size;
 }
 
 bool taFixedArray_impl::Equal_(const taFixedArray_impl& src) const {
@@ -1178,7 +1185,7 @@ int taFixedArray_impl::Find_(const void* it, int where) const {
 }
 
 void taFixedArray_impl::InitVals_(const void* it, int start, int end) {
-  if (end == -1) end = size;  
+  if (end == -1) end = size;
   else end = MIN(size, end);
   for (int i = start; i < end; ++i) {
     El_Copy_(FastEl_(i), it);
@@ -1188,13 +1195,13 @@ void taFixedArray_impl::InitVals_(const void* it, int start, int end) {
 void taFixedArray_impl::Insert_(const void* it, int where, int n) {
   if ((where > size) || (n <= 0)) return; // errors
   if (where < 0) where = size; // -1 means at end
-  if(!Alloc_(size + n)) return;	// pre-add stuff
+  if(!Alloc_(size + n)) return; // pre-add stuff
 
   int i;
   // if not appending, move the items
-  if ((where < size)) { 
-    int n_mv = size - where;	// number that must be moved
-    for (i = size - 1; i >= where; --i)	{	// shift everyone over
+  if ((where < size)) {
+    int n_mv = size - where;    // number that must be moved
+    for (i = size - 1; i >= where; --i) {       // shift everyone over
       El_Copy_(FastEl_(i + n_mv), FastEl_(i));
     }
   }
@@ -1206,13 +1213,13 @@ void taFixedArray_impl::Insert_(const void* it, int where, int n) {
 
 const void* taFixedArray_impl::SafeEl_(int i) const {
   i=Index(i);
-  if (InRange(i)) return FastEl_(i); 
+  if (InRange(i)) return FastEl_(i);
   else            return El_GetErr_();
 }
 
 
 //////////////////////////
-//  taArray_impl	//
+//  taArray_impl        //
 //////////////////////////
 
 
@@ -1249,7 +1256,7 @@ bool taArray_impl::AddUnique_(const void* it) {
 }
 
 bool taArray_impl::Alloc(int sz) {
-  if (alloc_size < sz)	{
+  if (alloc_size < sz)  {
     // start w/ 4, double up to 64, then 1.5x thereafter
     if (alloc_size == 0) alloc_size = MAX(4, sz);
     else if (alloc_size < 64) alloc_size = MAX((alloc_size * 2), sz);
@@ -1268,7 +1275,7 @@ bool taArray_impl::Alloc(int sz) {
 }
 
 bool taArray_impl::AllocExact(int sz) {
-  alloc_size = MAX(sz, 1);	// need at least 1
+  alloc_size = MAX(sz, 1);      // need at least 1
   size = MIN(size, alloc_size);
   char* nw = (char*)MakeArray_(alloc_size);
   if(!nw) {
@@ -1292,7 +1299,7 @@ void taArray_impl::Copy_(const taArray_impl& cp) {
   else if (cp.size > alloc_size) {
     if(!Alloc(cp.size)) return;
   }
-  
+
   for (int i=0; i < cp.size; ++i) {
     El_Copy_(FastEl_(i), cp.FastEl_(i));
   }
@@ -1301,7 +1308,7 @@ void taArray_impl::Copy_(const taArray_impl& cp) {
 
 void taArray_impl::SetSize(int new_size) {
   if (new_size < 0) new_size = 0;
-  if (new_size == size) return; 
+  if (new_size == size) return;
   else if (new_size > size) {
     if(!Alloc(new_size)) return;
     Clear_Tmp_();
@@ -1330,7 +1337,7 @@ int taArray_impl::FindEl_(const void* it, int where) const {
 }
 
 void taArray_impl::InitVals_(const void* it, int start, int end) {
-  if(end == -1)	end = size;  else end = MIN(size, end);
+  if(end == -1) end = size;  else end = MIN(size, end);
   int i;
   for(i=start;i<end;i++) {
     El_Copy_(FastEl_(i), it);
@@ -1340,7 +1347,7 @@ void taArray_impl::InitVals_(const void* it, int start, int end) {
 void taArray_impl::Insert_(const void* it, int where, int n) {
   if((where > size) || (n <= 0)) return;
   if ((size + n) > alloc_size) {
-    if(!Alloc(size + n)) return;	// pre-add stuff
+    if(!Alloc(size + n)) return;        // pre-add stuff
   }
   if((where==size) || (where < 0)) {
     int i;
@@ -1349,11 +1356,11 @@ void taArray_impl::Insert_(const void* it, int where, int n) {
     return;
   }
   int i;
-  int n_mv = size - where;	// number that must be moved
+  int n_mv = size - where;      // number that must be moved
   size += n;
   int trg_o = size-1;
   int src_o = size-1-n;
-  for(i=0; i<n_mv; i++)		// shift everyone over
+  for(i=0; i<n_mv; i++)         // shift everyone over
     El_Copy_(FastEl_(trg_o - i), FastEl_(src_o - i));
   for(i=where; i<where+n; i++)
     El_Copy_(FastEl_(i), it);
@@ -1366,7 +1373,7 @@ bool taArray_impl::MoveIdx(int fm, int to) {
   void* tmp = El_GetTmp_();
   El_Copy_(tmp, FastEl_(fm));
   int j;
-  for(j=fm; j < size-1; j++) {		// compact, if necc
+  for(j=fm; j < size-1; j++) {          // compact, if necc
     El_Copy_(FastEl_(j), FastEl_(j+1));
   }
   for(j=size-1; j>to; j--) {
@@ -1392,7 +1399,7 @@ void taArray_impl::Permute() {
   for(i=0; i<size; i++) {
     nv = (int) ((MTRnd::genrand_int32() % (size - i)) + i); // get someone from the future
     El_Copy_(tmp, FastEl_(i));
-    El_Copy_(FastEl_(i), FastEl_(nv));	// swap with yourself
+    El_Copy_(FastEl_(i), FastEl_(nv));  // swap with yourself
     El_Copy_(FastEl_(nv), tmp);
   }
 }
@@ -1429,7 +1436,7 @@ const void* taArray_impl::SafeEl_(int i) const {
 
 void taArray_impl::Sort(bool descending) {
   if(size <= 1) return;
-  int lt_compval = -1;		// comparison return value for less-than
+  int lt_compval = -1;          // comparison return value for less-than
   if(descending)
     lt_compval = 1;
   // lets do a heap sort since it requires no secondary storage
@@ -1446,8 +1453,8 @@ void taArray_impl::Sort(bool descending) {
       El_Copy_(tmp,FastEl_(ir-1)); // tmp = ra[ir]
       El_Copy_(FastEl_(ir-1),FastEl_(0)); // ra[ir] = ra[1]
       if(--ir == 1) {
-	El_Copy_(FastEl_(0),tmp); // ra[1]=tmp
-	return;
+        El_Copy_(FastEl_(0),tmp); // ra[1]=tmp
+        return;
       }
     }
     i=l;
@@ -1455,8 +1462,8 @@ void taArray_impl::Sort(bool descending) {
     while(j<= ir) {
       if(j<ir && (El_Compare_(FastEl_(j-1),FastEl_(j)) == lt_compval)) j++;
       if(El_Compare_(tmp,FastEl_(j-1)) == lt_compval) { // tmp < ra[j]
-	El_Copy_(FastEl_(i-1),FastEl_(j-1)); // ra[i]=ra[j];
-	j += (i=j);
+        El_Copy_(FastEl_(i-1),FastEl_(j-1)); // ra[i]=ra[j];
+        j += (i=j);
       }
       else j = ir+1;
     }
@@ -1475,7 +1482,7 @@ void taArray_impl::ShiftLeft(int nshift) {
   for(i=0; i < size - nshift; i++) {
     El_Copy_(FastEl_(i), FastEl_(i+nshift)); // move left..
   }
-  size = size - nshift;		// update the size now..
+  size = size - nshift;         // update the size now..
   DataChanged(DCR_ARY_SIZE_CHANGED);
 }
 
@@ -1540,7 +1547,7 @@ void taArray_impl::Copy_Duplicate(const taArray_impl& cp) {
 }
 
 void taArray_impl::CopyVals(const taArray_impl& from, int start, int end, int at) {
-  if(end == -1)	end = from.size;  else end = MIN(from.size, end);
+  if(end == -1) end = from.size;  else end = MIN(from.size, end);
   int len = end - start;
   if(size < at + len)
     SetSize(at + len);
@@ -1574,18 +1581,18 @@ void taArray_impl::InitFromString(const String& val) {
   int size_orig = size;
   String tmp = val;
   Reset_impl();
-  tmp = tmp.after('{');		// find starting point
+  tmp = tmp.after('{');         // find starting point
   while(tmp.length() > 0) {
     String el_val = tmp.before(',');
     if(el_val.empty()) {
       el_val = tmp.before('}');
       if (el_val.empty())
-	break;
+        break;
     }
     tmp = tmp.after(',');
     if (el_val.contains(' '))
       el_val = el_val.after(' ');
-    AddOnly_(El_GetTmp_());		// add a blank
+    AddOnly_(El_GetTmp_());             // add a blank
     El_SetFmStr_(FastEl_(size-1), String(el_val));
   }
   if (size_orig != size)
@@ -1593,16 +1600,16 @@ void taArray_impl::InitFromString(const String& val) {
 }
 
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 // String-Based Text Diff Algorithm
 
-// C++ version of C# code by Matthias Hertel: 
+// C++ version of C# code by Matthias Hertel:
 // http://www.mathertel.de/Diff
 
 // This Class implements the Difference Algorithm published in
 // "An O(ND) Difference Algorithm and its Variations" by Eugene Myers
-// Algorithmica Vol. 1 No. 2, 1986, p 251.  
-// 
+// Algorithmica Vol. 1 No. 2, 1986, p 251.
+//
 // There are many C, Java, Lisp implementations public available but they all
 // seem to come from the same source (diffutils) that is under the (unfree)
 // GNU public License and cannot be reused as a sourcecode for a commercial
@@ -1615,10 +1622,10 @@ void taArray_impl::InitFromString(const String& val) {
 // avaliable without the GNU license limitations.  I do not need a high
 // performance diff tool because it is used only sometimes.  I will do some
 // performace tweaking when needed.
-// 
+//
 // The algorithm itself is comparing 2 arrays of numbers so when comparing 2
 // text documents each line is converted into a (hash) number. See DiffText().
-// 
+//
 // Some chages to the original algorithm: The original algorithm was described
 // using a recursive approach and comparing zero indexed arrays.  Extracting
 // sub-arrays and rejoining them is very performance and memory intensive so
@@ -1626,11 +1633,11 @@ void taArray_impl::InitFromString(const String& val) {
 // lower and upper bounds.  This circumstance makes the LCS and SMS functions
 // more complicate.  I added some code to the LCS function to get a fast
 // response on sub-arrays that are identical, completely deleted or inserted.
-// 
+//
 // The result from a comparisation is stored in 2 arrays that flag for
 // modified (deleted or inserted) lines in the 2 data arrays. These bits are
 // then analysed to produce a array of Item objects.
-// 
+//
 // Further possible optimizations: (first rule: don't do it; second: don't do
 // it yet) The arrays DataA and DataB are passed as parameters, but are never
 // changed after the creation so they can be members of the class to avoid the
@@ -1639,7 +1646,7 @@ void taArray_impl::InitFromString(const String& val) {
 // The DownVector and UpVector arrays are alywas created and destroyed each
 // time the SMS gets called.  It is possible to reuse tehm when transfering
 // them to members of the class.  See TODO: hints.
-// 
+//
 // diff.cs: A port of the algorythm to C# Copyright (c) by Matthias Hertel,
 // http://www.mathertel.de This work is licensed under a BSD style
 // license. See http://www.mathertel.de/License.aspx
@@ -1672,20 +1679,20 @@ void taArray_impl::InitFromString(const String& val) {
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-// 
+//
 // Changes: 2002.09.20 There was a "hang" in some situations.  Now I undestand
 // a little bit more of the SMS algorithm.  There have been overlapping boxes;
 // that where analyzed partial differently.  One return-point is enough.  A
 // assertion was added in CreateDiffs when in debug-mode, that counts the
 // number of equal (no modified) lines in both arrays.  They must be
 // identical.
-// 
+//
 // 2003.02.07 Out of bounds error in the Up/Down vector arrays in some
 // situations.  The two vetors are now accessed using different offsets that
 // are adjusted using the start k-Line.  A test case is added.
-// 
+//
 // 2006.03.05 Some documentation and a direct Diff entry point.
-// 
+//
 // 2006.03.08 Refactored the API to static methods on the Diff class to make
 // usage simpler.  2006.03.10 using the standard Debug class for self-test
 // now.  compile with: csc /target:exe /out:diffTest.exe /d:DEBUG /d:TRACE
@@ -1703,7 +1710,7 @@ void taArray_impl::InitFromString(const String& val) {
 // is inserted.
 
 void taStringDiff::DiffStrings(const String& str_a, const String& str_b,
-			       bool trimSpace, bool ignoreSpace, bool ignoreCase) {
+                               bool trimSpace, bool ignoreSpace, bool ignoreCase) {
   GetLines(data_a, str_a); // get starting line positions within strings
   GetLines(data_b, str_b); // get starting line positions within strings
 
@@ -1735,7 +1742,7 @@ void taStringDiff::Diff_impl(const String& str_a, const String& str_b) {
 }
 
 void taStringDiff::ReDiffB(const String& str_a, const String& str_b,
-		       bool trimSpace, bool ignoreSpace, bool ignoreCase) {
+                       bool trimSpace, bool ignoreSpace, bool ignoreCase) {
   GetLines(data_b, str_b); // get starting line positions within strings
 
   data_a.modified.InitVals(0);
@@ -1747,8 +1754,8 @@ void taStringDiff::ReDiffB(const String& str_a, const String& str_b,
 }
 
 bool taStringDiff::DiffFiles(const String& fname_a, const String& fname_b,
-			     String& str_a, String& str_b,
-			     bool trimSpace, bool ignoreSpace, bool ignoreCase) {
+                             String& str_a, String& str_b,
+                             bool trimSpace, bool ignoreSpace, bool ignoreCase) {
   bool rval = false;
   fstream istrm;
   int err;
@@ -1788,8 +1795,8 @@ void taStringDiff::GetLines(taStringDiffData& ddata, const String& str) {
 
 // This function converts all textlines of the text into unique numbers for
 // every unique textline so further work can work only with simple numbers.
-void taStringDiff::DiffCodes(taStringDiffData& ddata, const String& str, 
-			     bool trimSpace, bool ignoreSpace, bool ignoreCase) {
+void taStringDiff::DiffCodes(taStringDiffData& ddata, const String& str,
+                             bool trimSpace, bool ignoreSpace, bool ignoreCase) {
   ddata.data.Reset();
   for(int i=0; i< ddata.lines; i++) {
     String cur_ln = ddata.GetLine(str, i);
@@ -1845,8 +1852,8 @@ void taStringDiff::DiffInts(const int_PArray& array_a, const int_PArray& array_b
   // The B-Version of the data (modified data) to be compared.
   data_b.data = array_b;
 
-  Diff_impl("", "");		// null strings
-} 
+  Diff_impl("", "");            // null strings
+}
 
 // This is the algorithm to find the Shortest Middle Snake (SMS).
 
@@ -1878,27 +1885,27 @@ void taStringDiff::SMS(int& sms_x, int& sms_y, int lower_a, int upper_a, int low
       // find the only or better starting point
       int x, y;
       if (k == down_k - d) {
-	x = down_vector[down_off + k + 1]; // down
+        x = down_vector[down_off + k + 1]; // down
       } else {
-	x = down_vector[down_off + k - 1] + 1; // a step to the right
-	if ((k < down_k + d) && (down_vector[down_off + k + 1] >= x))
-	  x = down_vector[down_off + k + 1]; // down
+        x = down_vector[down_off + k - 1] + 1; // a step to the right
+        if ((k < down_k + d) && (down_vector[down_off + k + 1] >= x))
+          x = down_vector[down_off + k + 1]; // down
       }
       y = x - k;
 
       // find the end of the furthest reaching forward d-path in diagonal k.
       while ((x < upper_a) && (y < upper_b) && (data_a.data[x] == data_b.data[y])) {
-	x++; y++;
+        x++; y++;
       }
       down_vector[down_off + k] = x;
 
       // overlap ?
       if (odddelta && (up_k - d < k) && (k < up_k + d)) {
-	if (up_vector[up_off + k] <= down_vector[down_off + k]) {
-	  sms_x = down_vector[down_off + k];
-	  sms_y = down_vector[down_off + k] - k;
-	  return;
-	} // if
+        if (up_vector[up_off + k] <= down_vector[down_off + k]) {
+          sms_x = down_vector[down_off + k];
+          sms_y = down_vector[down_off + k] - k;
+          return;
+        } // if
       } // if
 
     } // for k
@@ -1908,26 +1915,26 @@ void taStringDiff::SMS(int& sms_x, int& sms_y, int lower_a, int upper_a, int low
       // find the only or better starting point
       int x, y;
       if (k == up_k + d) {
-	x = up_vector[up_off + k - 1]; // up
+        x = up_vector[up_off + k - 1]; // up
       } else {
-	x = up_vector[up_off + k + 1] - 1; // left
-	if ((k > up_k - d) && (up_vector[up_off + k - 1] < x))
-	  x = up_vector[up_off + k - 1]; // up
+        x = up_vector[up_off + k + 1] - 1; // left
+        if ((k > up_k - d) && (up_vector[up_off + k - 1] < x))
+          x = up_vector[up_off + k - 1]; // up
       } // if
       y = x - k;
 
       while ((x > lower_a) && (y > lower_b) && (data_a.data[x - 1] == data_b.data[y - 1])) {
-	x--; y--; // diagonal
+        x--; y--; // diagonal
       }
       up_vector[up_off + k] = x;
 
       // overlap ?
       if (!odddelta && (down_k - d <= k) && (k <= down_k + d)) {
-	if (up_vector[up_off + k] <= down_vector[down_off + k]) {
-	  sms_x = down_vector[down_off + k];
-	  sms_y = down_vector[down_off + k] - k;
-	  return;
-	} // if
+        if (up_vector[up_off + k] <= down_vector[down_off + k]) {
+          sms_x = down_vector[down_off + k];
+          sms_y = down_vector[down_off + k] - k;
+          return;
+        } // if
       } // if
 
     } // for k
@@ -1935,7 +1942,7 @@ void taStringDiff::SMS(int& sms_x, int& sms_y, int lower_a, int upper_a, int low
   } // for d
 
   taMisc::Error("taStringDiff: the algorithm should never come here!");
-} 
+}
 
 // This is the divide-and-conquer implementation of the longes
 // common-subsequence (LCS) algorithm.  The published algorithm passes
@@ -1971,13 +1978,13 @@ void taStringDiff::LCS(int lower_a, int upper_a, int lower_b, int upper_b) {
 
     // The path is from LowerX to (x,y) and (x,y) to UpperX
     LCS(lower_a, sms_x, lower_b, sms_y);
-    LCS(sms_x, upper_a, sms_y, upper_b);  // 2002.09.20: no need for 2 points 
+    LCS(sms_x, upper_a, sms_y, upper_b);  // 2002.09.20: no need for 2 points
   }
-} 
+}
 
 
 // Scan the tables of which lines are inserted and deleted,
-// producing an edit script in forward order.  
+// producing an edit script in forward order.
 
 void taStringDiff::CreateDiffs(const String& str_a, const String& str_b) {
   diffs.Reset();
@@ -1988,7 +1995,7 @@ void taStringDiff::CreateDiffs(const String& str_a, const String& str_b) {
 
   while (line_a < data_a.lines || line_b < data_b.lines) {
     if ((line_a < data_a.lines) && (!data_a.GetModified(line_a))
-	&& (line_b < data_b.lines) && (!data_b.GetModified(line_b))) {
+        && (line_b < data_b.lines) && (!data_b.GetModified(line_b))) {
       // equal lines
       line_a++;
       line_b++;
@@ -1999,24 +2006,24 @@ void taStringDiff::CreateDiffs(const String& str_a, const String& str_b) {
       start_b = line_b;
 
       while (line_a < data_a.lines && (line_b >= data_b.lines || data_a.GetModified(line_a)))
-	// while (line_a < data_a.lines && data_a.GetModified(line_a])
-	line_a++;
+        // while (line_a < data_a.lines && data_a.GetModified(line_a])
+        line_a++;
 
       while (line_b < data_b.lines && (line_a >= data_a.lines || data_b.GetModified(line_b)))
-	// while (line_b < data_b.lines && data_b.GetModified(line_b])
-	line_b++;
+        // while (line_b < data_b.lines && data_b.GetModified(line_b])
+        line_b++;
 
       if ((start_a < line_a) || (start_b < line_b)) {
-	taStringDiffItem nw_itm;
-	// store a new difference-item
-	nw_itm.start_a = start_a;
-	nw_itm.start_b = start_b;
-	nw_itm.delete_a = line_a - start_a;
-	nw_itm.insert_b = line_b - start_b;
-	if(str_b.nonempty() && nw_itm.insert_b > 0) {
-	  nw_itm.insert_b_str = data_b.GetLine(str_b, start_b, line_b-1);
-	}
-	diffs.Add(nw_itm);
+        taStringDiffItem nw_itm;
+        // store a new difference-item
+        nw_itm.start_a = start_a;
+        nw_itm.start_b = start_b;
+        nw_itm.delete_a = line_a - start_a;
+        nw_itm.insert_b = line_b - start_b;
+        if(str_b.nonempty() && nw_itm.insert_b > 0) {
+          nw_itm.insert_b_str = data_b.GetLine(str_b, start_b, line_b-1);
+        }
+        diffs.Add(nw_itm);
       } // if
     } // if
   } // while
@@ -2034,7 +2041,7 @@ String taStringDiff::GetDiffStr(const String& str_a, const String& str_b, Output
   if(fmt == NORMAL) {
     return GetDiffStr_normal(str_a, str_b);
   }
-  else {			// context
+  else {                        // context
     return GetDiffStr_context(str_a, str_b);
   }
 }
@@ -2052,28 +2059,28 @@ String taStringDiff::GetDiffStr_normal(const String& str_a, const String& str_b)
     bool chg = false;
     if(df.delete_a == df.insert_b) {
       rval += String(df.start_a+1) + "c" + String(df.start_b+1) +
-	GetDiffRange(df.start_b, df.insert_b) + "\n";
+        GetDiffRange(df.start_b, df.insert_b) + "\n";
       chg = true;
     }
     if(df.delete_a > 0) {
       if(!chg) {
-	rval += String(df.start_a+1) +
-	  GetDiffRange(df.start_a, df.delete_a)
-	  + "d" + String(df.start_b+1) + "\n";
+        rval += String(df.start_a+1) +
+          GetDiffRange(df.start_a, df.delete_a)
+          + "d" + String(df.start_b+1) + "\n";
       }
       for(int l=df.start_a; l<df.start_a + df.delete_a; l++)
-	rval += "< " + data_a.GetLine(str_a, l) + "\n";
+        rval += "< " + data_a.GetLine(str_a, l) + "\n";
       if(chg) {
-	rval += "---\n";
+        rval += "---\n";
       }
     }
     if(df.insert_b > 0) {
       if(!chg) {
-	rval += String(df.start_a+1) + "a" + String(df.start_b+1) +
-	  GetDiffRange(df.start_b, df.insert_b) + "\n";
+        rval += String(df.start_a+1) + "a" + String(df.start_b+1) +
+          GetDiffRange(df.start_b, df.insert_b) + "\n";
       }
       for(int l=df.start_b; l<df.start_b + df.insert_b; l++)
-	rval += "> " + data_b.GetLine(str_b, l) + "\n";
+        rval += "> " + data_b.GetLine(str_b, l) + "\n";
     }
   }
   return rval;
@@ -2129,30 +2136,30 @@ String taStringDiffEdits::GetDiffStr(const String& str_a) {
     bool chg = false;
     if(df.delete_a == df.insert_b) {
       rval += String(df.start_a+1) + "c" + String(df.start_b+1) +
-	taStringDiff::GetDiffRange(df.start_b, df.insert_b) + "\n";
+        taStringDiff::GetDiffRange(df.start_b, df.insert_b) + "\n";
       chg = true;
     }
     if(df.delete_a > 0) {
       if(!chg) {
-	rval += String(df.start_a+1) +
-	  taStringDiff::GetDiffRange(df.start_a, df.delete_a)
-	  + "d" + String(df.start_b+1) + "\n";
+        rval += String(df.start_a+1) +
+          taStringDiff::GetDiffRange(df.start_a, df.delete_a)
+          + "d" + String(df.start_b+1) + "\n";
       }
       if(str_a.nonempty()) {
-	for(int l=df.start_a; l<df.start_a + df.delete_a; l++)
-	  rval += "< " + GetLine(str_a, l) + "\n";
-	if(chg) {
-	  rval += "---\n";
-	}
+        for(int l=df.start_a; l<df.start_a + df.delete_a; l++)
+          rval += "< " + GetLine(str_a, l) + "\n";
+        if(chg) {
+          rval += "---\n";
+        }
       }
     }
     if(df.insert_b > 0) {
       if(!chg) {
-	rval += String(df.start_a+1) + "a" + String(df.start_b+1) +
-	  taStringDiff::GetDiffRange(df.start_b, df.insert_b) + "\n";
+        rval += String(df.start_a+1) + "a" + String(df.start_b+1) +
+          taStringDiff::GetDiffRange(df.start_b, df.insert_b) + "\n";
       }
       for(int l=df.start_b; l<df.start_b + df.insert_b; l++)
-	rval += "> " + df.insert_b_str + "\n"; // todo: need to line-a-fy with > 
+        rval += "> " + df.insert_b_str + "\n"; // todo: need to line-a-fy with >
     }
   }
   return rval;

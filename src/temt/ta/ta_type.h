@@ -1275,7 +1275,6 @@ class TA_API taRefN {
   // #NO_TOKENS #NO_MEMBERS #NO_CSS reference counting base class
 public:
   static void           Ref(taRefN* it) { it->refn.ref(); }
-  static void           SafeRef(taRefN* it)     { if(it) it->refn.ref(); }
   static void           Ref(taRefN& it) { it.refn.ref(); }
   static void           unRef(taRefN* it)       { it->refn.deref(); }
   static void           Done(taRefN* it)        { if(it->refn == 0) delete it; }
@@ -1283,12 +1282,19 @@ public:
     {if (!it->refn.deref()) delete it; }
   static void           SafeUnRefDone(taRefN* it) { if(it) unRefDone(it); }
   static void           SetRefDone(taRefN*& var, taRefN* it) // does it fast, but safe, even for var==it
-    {if (it) Ref(it); if (var != NULL) unRefDone(var); var = it;}
+  {
+    if (it)
+      Ref(it);
+    if (var != NULL)
+      unRefDone(var);
+    var = it;
+  }
 
-  taRefN()              {}
 protected:
-  QAtomicInt            refn;
+  taRefN()              {}
   virtual ~taRefN()     { }; // all instances should consistently use ref counting for lifetime management
+
+  QAtomicInt            refn;
 };
 
 
@@ -2459,14 +2465,14 @@ public:
                                        bool force_inline = false);
   // set the inline class value from a string representation
 
-  int        	ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-			      void* base, void* par=NULL,
-			      MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
+  int           ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
+                              void* base, void* par=NULL,
+                              MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
   // replace string value -- does a GetValStr, replace srch with repl in that string, then does a SetValStr -- always iterates over members of classes instead of doing inline to prevent replacing member names -- returns number replaced (0 = none) -- mbr_filt = filter for members to replace in -- if non-empty, member name for terminal value members where replace actually occurs (as opposed to owner class objects) must contain this string
 
-  int        	ReplaceValStr_class(const String& srch, const String& repl, const String& mbr_filt,
-				    void* base, void* par=NULL,
-				    MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
+  int           ReplaceValStr_class(const String& srch, const String& repl, const String& mbr_filt,
+                                    void* base, void* par=NULL,
+                                    MemberDef* memb_def = NULL, StrContext vc = SC_DEFAULT);
   // for a class type: replace string value for each member accordidng to streaming context
 
   /////////////////////////////////////////////////////////////

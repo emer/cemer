@@ -1,6 +1,6 @@
-# This script is a bootstrap for the Python script BuildEmergent-win.py
-# NOTE: if you commit a new version of this file to svn, make sure to
-# update the file on the ftp site as well
+REM This script is a bootstrap for the Python script BuildEmergent-win.py
+REM NOTE: if you commit a new version of this file to svn, make sure to
+REM update the file on the ftp site as well
 
 @echo off
 setLocal EnableDelayedExpansion
