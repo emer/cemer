@@ -81,76 +81,76 @@ bool CodeBlock::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
-//  ProgVars		//
+//  LocalVars		//
 //////////////////////////
 
-void ProgVars::Initialize() {
+void LocalVars::Initialize() {
 }
 
-void ProgVars::Destroy() {
+void LocalVars::Destroy() {
   CutLinks();
 }
 
-void ProgVars::CheckChildConfig_impl(bool quiet, bool& rval) {
+void LocalVars::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
   local_vars.CheckConfig(quiet, rval);
 }
 
-void ProgVars::GenCssBody_impl(Program* prog) {
+void LocalVars::GenCssBody_impl(Program* prog) {
   if(local_vars.size > 0) {
     prog->AddLine(this, "// local variables", ProgLine::MAIN_LINE); // best we've got
     local_vars.GenCss_ProgVars(prog);
   }
 }
 
-const String ProgVars::GenListing_children(int indent_level) {
+const String LocalVars::GenListing_children(int indent_level) {
   return local_vars.GenListing(indent_level + 1);
 }
 
-String ProgVars::GetDisplayName() const {
+String LocalVars::GetDisplayName() const {
   String rval;
-  rval += "ProgVars (";
+  rval += "LocalVars (";
   rval += String(local_vars.size);
   rval += " vars)";
   return rval;
 }
 
-ProgVar* ProgVars::FindVarName(const String& var_nm) const {
+ProgVar* LocalVars::FindVarName(const String& var_nm) const {
   return local_vars.FindName(var_nm);
 }
 
-ProgVar* ProgVars::AddFloatMatrix() {
+ProgVar* LocalVars::AddFloatMatrix() {
   ProgVar* rval = (ProgVar*)local_vars.New(1);
   rval->SetObjectType(&TA_float_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
 }
-ProgVar* ProgVars::AddDoubleMatrix() {
+ProgVar* LocalVars::AddDoubleMatrix() {
   ProgVar* rval = (ProgVar*)local_vars.New(1);
   rval->SetObjectType(&TA_double_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
 }
-ProgVar* ProgVars::AddIntMatrix() {
+ProgVar* LocalVars::AddIntMatrix() {
   ProgVar* rval = (ProgVar*)local_vars.New(1);
   rval->SetObjectType(&TA_int_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
 }
-ProgVar* ProgVars::AddStringMatrix() {
+ProgVar* LocalVars::AddStringMatrix() {
   ProgVar* rval = (ProgVar*)local_vars.New(1);
   rval->SetObjectType(&TA_String_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
 }
-ProgVar* ProgVars::AddVarMatrix() {
+ProgVar* LocalVars::AddVarMatrix() {
   ProgVar* rval = (ProgVar*)local_vars.New(1);
   rval->SetObjectType(&TA_Variant_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
 }
 
-bool ProgVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+bool LocalVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains(' ')) return false; // must have at least one space
   String vartyp = trim(code.before(' '));
   if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
@@ -159,7 +159,7 @@ bool ProgVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   return false;
 }
 
-bool ProgVars::CvtFmCode(const String& code) {
+bool LocalVars::CvtFmCode(const String& code) {
   String vartyp = trim(code.before(' '));
   if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
   String varnm = trim(code.after(' '));
@@ -439,7 +439,7 @@ void ForLoop::MakeIndexVar(const String& var_nm) {
   if(my_prog->FindVarName(var_nm)) return; // still good
 
   ProgVar* var = NULL;
-  ProgVars* locvars = FindLocalVarList();
+  LocalVars* locvars = FindLocalVarList();
   if(locvars) {
     var = locvars->AddVar();
   }

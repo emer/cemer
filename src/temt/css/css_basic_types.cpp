@@ -323,6 +323,11 @@ cssEl* cssVariant::operator-() {
   return r; 
 }
 
+cssEl* cssVariant::operator~() { 
+  cssVariant* r = new cssVariant(~val,""); 
+  return r; 
+}
+
 void cssVariant::operator+=(cssEl& s) 	{ val += s.GetVar(); }
 void cssVariant::operator-=(cssEl& s) 	{ val -= s.GetVar(); }
 void cssVariant::operator*=(cssEl& s) 	{ val *= s.GetVar(); }

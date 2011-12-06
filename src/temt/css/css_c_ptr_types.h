@@ -84,6 +84,8 @@ public:
 
   cssEl* operator-()
   { cssInt *r = new cssInt(GetIntRef("-")); r->val = -r->val; return r; }
+  cssEl* operator~()
+  { cssInt *r = new cssInt(GetIntRef("~")); r->val = ~r->val; return r; }
 
   void operator+=(cssEl& t);
   void operator-=(cssEl& t);
@@ -219,6 +221,8 @@ public:
 
   cssEl* operator-()
   { cssInt *r = new cssInt(GetShortRef("-")); r->val = -r->val; return r; }
+  cssEl* operator~()
+  { cssInt *r = new cssInt(GetShortRef("-")); r->val = ~r->val; return r; }
 
   // operators
   void operator=(const cssEl& t);
@@ -300,6 +304,8 @@ public:
 
   cssEl* operator-()
   { cssInt *r = new cssInt(GetLongRef("-")); r->val = -r->val; return r; }
+  cssEl* operator~()
+  { cssInt *r = new cssInt(GetLongRef("~")); r->val = ~r->val; return r; }
 
   // operators
   void operator=(const cssEl& t);
@@ -377,6 +383,8 @@ public:
 
   cssEl* operator-()
   { cssInt *r = new cssInt(GetLongLongRef("-")); r->val = -r->val; return r; }
+  cssEl* operator~()
+  { cssInt *r = new cssInt(GetLongLongRef("~")); r->val = ~r->val; return r; }
 
   // operators
   void operator=(const cssEl& t);
@@ -458,6 +466,8 @@ public:
 
   cssEl* operator-()
   { cssInt *r = new cssInt(GetCharRef("-")); r->val = -r->val; return r; }
+  cssEl* operator~()
+  { cssInt *r = new cssInt(GetCharRef("~")); r->val = ~r->val; return r; }
 
   // operators
   void operator=(const cssEl& t);
@@ -775,6 +785,8 @@ public:
   { cssVariant *r = new cssVariant(GetVarRef("%"),""); r->val %= t.GetVar(); return r; }
   cssEl* operator-()
   { cssVariant *r = new cssVariant(-GetVarRef("-"),""); return r; }
+  cssEl* operator~()
+  { cssVariant *r = new cssVariant(~GetVarRef("~"),""); return r; }
 
   void operator+=(cssEl& t);
   void operator-=(cssEl& t);
@@ -859,6 +871,8 @@ public:
 
   cssEl* operator-()
   { cssInt *r = new cssInt(GetEnumRef("-").NumVal()); r->val = -r->val; return r; }
+  cssEl* operator~()
+  { cssInt *r = new cssInt(GetEnumRef("~").NumVal()); r->val = ~r->val; return r; }
 
   bool operator< (cssEl& s) 	{ return (GetEnumRef("<").NumVal() < (Int)s); }
   bool operator> (cssEl& s) 	{ return (GetEnumRef(">").NumVal() > (Int)s); }

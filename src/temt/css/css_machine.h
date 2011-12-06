@@ -628,6 +628,7 @@ public:
   virtual cssEl* operator|(cssEl&) { NopErr("|"); return &cssMisc::Void; }
   virtual cssEl* operator-()       { NopErr("-"); return &cssMisc::Void; } // unary minus
   virtual cssEl* operator*()	   { NopErr("*"); return &cssMisc::Void; } // unary de-ptr
+  virtual cssEl* operator~()	   { NopErr("~"); return &cssMisc::Void; } // unary bitwise negation
   virtual cssEl* operator[](Variant) const { NopErr("[]"); return &cssMisc::Void; }
 
   static cssEl* GetElFromTA(TypeDef* td, void* itm, const String& nm, 

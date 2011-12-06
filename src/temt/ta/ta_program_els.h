@@ -51,10 +51,8 @@ private:
   void	Destroy()	{CutLinks();}
 };
 
-// todo: rename this one to LocalVars at some point before wide release!
-
-class TA_API ProgVars: public ProgEl {
-  // ##DEF_CHILD_local_vars local program variables -- these variables do NOT use or update the values that are shown -- they exist only as script variables (unlike global args and vars)
+class TA_API LocalVars: public ProgEl {
+  // ##DEF_CHILD_local_vars #AKA_ProgVars local program variables -- these variables do NOT use or update the values that are shown -- they exist only as script variables (unlike global args and vars)
 INHERITED(ProgEl)
 public:
   ProgVar_List		local_vars;	// the list of variables -- these variables do NOT update their values as shown here -- they exist only as script variables (unlike global args and vars)
@@ -82,7 +80,7 @@ public:
   override String 	GetTypeDecoKey() const { return "ProgVar"; }
   override String	GetToolbarName() const { return "loc vars"; }
 
-  PROGEL_SIMPLE_BASEFUNS(ProgVars);
+  PROGEL_SIMPLE_BASEFUNS(LocalVars);
 protected:
   override void		CheckChildConfig_impl(bool quiet, bool& rval);
   override void		GenCssBody_impl(Program* prog);

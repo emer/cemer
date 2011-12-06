@@ -87,6 +87,7 @@ public:
   static cssElCFun*	land;
   static cssElCFun*	lor;
   static cssElCFun*	lnot;
+  static cssElCFun*	bitneg;
   static cssElCFun*	power;
 
   static cssTA_Base*	root;		// root script element

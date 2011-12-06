@@ -106,10 +106,11 @@
      CSS_MINMIN = 322,
      CSS_PLUSPLUS = 323,
      CSS_UNARY = 324,
-     CSS_NOT = 325,
-     CSS_UNARYMINUS = 326,
-     CSS_SCOPER = 327,
-     CSS_POINTSAT = 328
+     CSS_BITNEG = 325,
+     CSS_NOT = 326,
+     CSS_UNARYMINUS = 327,
+     CSS_SCOPER = 328,
+     CSS_POINTSAT = 329
    };
 #endif
 /* Tokens.  */
@@ -180,10 +181,11 @@
 #define CSS_MINMIN 322
 #define CSS_PLUSPLUS 323
 #define CSS_UNARY 324
-#define CSS_NOT 325
-#define CSS_UNARYMINUS 326
-#define CSS_SCOPER 327
-#define CSS_POINTSAT 328
+#define CSS_BITNEG 325
+#define CSS_NOT 326
+#define CSS_UNARYMINUS 327
+#define CSS_SCOPER 328
+#define CSS_POINTSAT 329
 
 
 
@@ -198,7 +200,7 @@ typedef struct YYSTYPE
   char*        	nm;
 }
 /* Line 1529 of yacc.c.  */
-#line 202 "y.tab.h"
+#line 204 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

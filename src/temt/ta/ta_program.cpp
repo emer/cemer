@@ -379,7 +379,11 @@ void DynEnumItem::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 String DynEnumItem::GetDisplayName() const {
-  return name + "=" + String(value);
+  String rval = name + "=";
+  DynEnumType* typ = GET_MY_OWNER(DynEnumType);
+  if(typ && typ->bits)
+    return rval + String(value, "%x");
+  return rval + String(value);
 }
 
 bool DynEnumItem::BrowserSelectMe() {
@@ -549,7 +553,7 @@ void DynEnumType::GenCssBody_impl(Program* prog) {
     DynEnumItem* it = enums.FastEl(i);
     String code = it->name + " \t = ";
     if(bits)
-      code += String(1 << it->value, "%x") + ",";
+      code += String(it->value, "%x") + ",";
     else
       code += String(it->value) + ",";
     prog->AddLine(it, code, it->desc);
@@ -568,7 +572,7 @@ ostream& DynEnumType::OutputType(ostream& strm) const {
     DynEnumItem* it = enums.FastEl(i);
     String code = it->name + " \t = ";
     if(bits)
-      code += String(1 << it->value, "%x") + ",";
+      code += String(it->value, "%x") + ",";
     else
       code += String(it->value) + ",";
     rval += "  " + code + "  //  " + it->desc + "\n";
@@ -587,8 +591,6 @@ void DynEnumType::DataChanged(int dcr, void* op1, void* op2) {
   }
   inherited::DataChanged(dcr, op1, op2);
 }
-
-// todo: check config on bits with value > 31
 
 void DynEnumType::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
@@ -618,12 +620,11 @@ bool DynEnumType::BrowserCollapseAll() {
 ///////////////////////////////////////////////////////////
 
 void DynEnum::Initialize() {
-  value = -1;
+  value = 0;
 }
 
 void DynEnum::Destroy() {
   CutLinks();
-  value = -1;
 }
 
 String DynEnum::GetDisplayName() const {
@@ -633,29 +634,14 @@ String DynEnum::GetDisplayName() const {
     return "(no dyn enum type!)";
 }
 
-/*TEMP String DynEnum::GetValStr(void* par, MemberDef* md, TypeDef::StrContext sc,
-                          bool force_inline) const {
-  if(sc == TypeDef::SC_DISPLAY)
-    return GetDisplayName();
-  else
-    return inherited::GetValStr(par, md, sc, force_inline);
-}*/
-
 void DynEnum::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!enum_type, quiet, rval,
              "enum_type is not set for this dynamic enum value");
 }
 
-int DynEnum::NumVal() const {
-  if(!enum_type) return -1;
-  if(enum_type->bits) return value;
-  if(value < 0 || value >= enum_type->enums.size) return -1;
-  return enum_type->enums.FastEl(value)->value;
-}
-
 const String DynEnum::NameVal() const {
-  if(!enum_type) return -1;
+  if(!enum_type) return _nilString;
   if(enum_type->bits) {
     String rval;
     for(int i=0;i<enum_type->enums.size;i++) {
@@ -667,50 +653,25 @@ const String DynEnum::NameVal() const {
     }
     return rval;
   }
-  if(value < 0 || value >= enum_type->enums.size) return "";
-  return enum_type->enums.FastEl(value)->name;
-}
-
-bool DynEnum::SetNumVal(int val) {
-  if(!enum_type) return false;
-  if(enum_type->bits) {
-    value = val;                // must just be literal value..
-  }
   else {
-    value = enum_type->FindNumIdx(val);
-    if(TestError(value < 0, "SetNumVal", "value:", (String)val, "not found!"))
-      return false;
+    for(int i=0;i<enum_type->enums.size;i++) {
+      DynEnumItem* it = enum_type->enums.FastEl(i);
+      if(value == it->value) {
+        return it->name;
+      }
+    }
   }
-  return true;
+  return _nilString;
 }
 
 bool DynEnum::SetNameVal(const String& nm) {
   if(!enum_type) return false;
-  if(enum_type->bits) {
-    DynEnumItem* it = enum_type->enums.FindName(nm);
-    if(TestError(!it, "SetNameVal", "value label:", nm, "not found!"))
-      return false;
-    value |= 1 << it->value;
-  }
-  else {
-    value = enum_type->FindNameIdx(nm);
-    if(TestError(value < 0, "SetNameVal", "value label:", nm, "not found!"))
-      return false;
-  }
-  return true;
-}
-
-bool DynEnum::ClearBitName(const String& nm) {
-  if(!enum_type) return false;
-  if(TestError(!enum_type->bits, "ClearBitName", "this can only be used for bits type enums"))
-    return false;
   DynEnumItem* it = enum_type->enums.FindName(nm);
-  if(TestError(!it, "value label:", nm, "not found!"))
+  if(TestError(!it, "SetNameVal", "value label:", nm, "not found!"))
     return false;
-  value &= ~(1 << it->value);
+  value = it->value;
   return true;
 }
-
 
 //////////////////////////
 //   ProgVar            //
@@ -762,7 +723,7 @@ void ProgVar::SetFlagsByOwnership() {
     if(!objs_ptr && var_type == T_Object && object_type && object_type->InheritsFrom(&TA_taMatrix)) {
       if(!HasVarFlag(QUIET)) {
         TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
-                    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+                    "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
       }
     }
   }
@@ -914,7 +875,7 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
       if(!HasVarFlag(QUIET)) {
         TestWarning(!objs_ptr && !HasVarFlag(LOCAL_VAR) && object_type->InheritsFrom(&TA_taMatrix),
                     "ProgVar", "for Matrix* ProgVar named:",name,
-                    "Matrix pointers should be located in ProgVars (local vars) within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
+                    "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
       }
     }
   }
@@ -2358,7 +2319,7 @@ bool ProgEl::NewProgVarCustChooser(taBase* base, taiItemPtrBase* chooser) {
   else
     pel = GET_OWNER(base, ProgEl);
   if(pel) {
-    ProgVars* pvs = pel->FindLocalVarList();
+    LocalVars* pvs = pel->FindLocalVarList();
     if(pvs) {
       chooser->setNewObj2(&(pvs->local_vars), " New Local Var");
     }
@@ -2554,7 +2515,7 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     String cur_own_path = cur_ptr->owner->GetPath(NULL, ot_fun);
     taBase* pv_own_tab = my_fun->FindFromPath(cur_own_path, md);
     if(!pv_own_tab || !pv_own_tab->InheritsFrom(&TA_ProgVar_List)) {
-      ProgVars* pvars = (ProgVars*)my_fun->fun_code.FindType(&TA_ProgVars);
+      LocalVars* pvars = (LocalVars*)my_fun->fun_code.FindType(&TA_LocalVars);
       if(!pvars) {
         taMisc::Warning("Warning: could not find owner for program variable:",
                         var_nm, "in program:", my_prg->name, "on path:",
@@ -2788,15 +2749,15 @@ ProgVar* ProgEl::FindVarName(const String& var_nm) const {
   return NULL;
 }
 
-ProgVars* ProgEl::FindLocalVarList() const {
+LocalVars* ProgEl::FindLocalVarList() const {
   ProgEl_List* pelst = GET_MY_OWNER(ProgEl_List);
   if(!pelst) return NULL;
   int myidx = -1;
   for(int i=pelst->size-1; i>= 0; i--) {
     ProgEl* pe = pelst->FastEl(i);
     if(myidx >= 0) {
-      if(pe->InheritsFrom(&TA_ProgVars)) {
-        return (ProgVars*)pe;
+      if(pe->InheritsFrom(&TA_LocalVars)) {
+        return (LocalVars*)pe;
       }
     }
     else {
@@ -2812,11 +2773,11 @@ ProgVars* ProgEl::FindLocalVarList() const {
 }
 
 ProgVar* ProgEl::MakeLocalVar(const String& var_nm) {
-  ProgVars* locvars = FindLocalVarList();
+  LocalVars* locvars = FindLocalVarList();
   if(!locvars) {
     ProgEl_List* pelst = GET_MY_OWNER(ProgEl_List);
     if(pelst) {
-      locvars = new ProgVars;
+      locvars = new LocalVars;
       pelst->Insert(locvars, 0);
     }
   }
@@ -2854,7 +2815,7 @@ ProgVar* ProgEl::FindVarNameInScope_impl(const String& var_nm) const {
     ProgVar* rval = FindVarName(var_nm);
      if(rval) return rval;
   }
-  ProgVars* loc = FindLocalVarList();
+  LocalVars* loc = FindLocalVarList();
   if(loc) {
     ProgVar* rval = loc->FindVarName(var_nm);
     if(rval) return rval;
@@ -3860,8 +3821,8 @@ void Function::InitLinks() {
 
   if(!taMisc::is_loading) {
     if(fun_code.size == 0) {
-      //      ProgVars* pv = (ProgVars*)
-      fun_code.New(1, &TA_ProgVars); // make this by default because it is typically needed!
+      //      LocalVars* pv = (LocalVars*)
+      fun_code.New(1, &TA_LocalVars); // make this by default because it is typically needed!
     }
   }
   fun_code.el_typ = &TA_ProgCode;  // make sure this is default
@@ -4234,7 +4195,7 @@ void Program::InitLinks() {
 
   if(!taMisc::is_loading) {
     if(prog_code.size == 0) {
-      prog_code.New(1, &TA_ProgVars); // make this by default because it is typically needed!
+      prog_code.New(1, &TA_LocalVars); // make this by default because it is typically needed!
     }
   }
 

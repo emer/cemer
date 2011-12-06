@@ -17,6 +17,7 @@
 
 #include "ta_project.h"
 #include "ta_datatable_qtso.h"
+#include "ta_program_qt.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -94,6 +95,18 @@ void taGuiWidget::GetImage() {
     if(!td) td = &TA_taOBase;
     ((taiTokenPtrButton*)tai_data)->GetImage(((taBaseRef*)data.toPtr())->ptr(), td);
   }
+  if(widget_type == "HardEnum_Enum") {
+    ((taiComboBox*)tai_data)->GetImage(*((int*)data.toPtr()));
+  }
+  if(widget_type == "HardEnum_Bits") {
+    ((taiBitBox*)tai_data)->GetImage(*((int*)data.toPtr()));
+  }
+  if(widget_type == "DynEnum_Enum") {
+    ((taiComboBox*)tai_data)->GetImage(((DynEnum*)data.toPtr())->value);
+  }
+  if(widget_type == "DynEnum_Bits") {
+    ((taiBitBox*)tai_data)->GetImage(((DynEnum*)data.toPtr())->value);
+  }
 }
 
 void taGuiWidget::GetValue() {
@@ -115,6 +128,18 @@ void taGuiWidget::GetValue() {
   }
   if(widget_type == "ObjectPtr") {
     *((taBaseRef*)data.toPtr()) = ((taiTokenPtrButton*)tai_data)->GetValue();
+  }
+  if(widget_type == "HardEnum_Enum") {
+    ((taiComboBox*)tai_data)->GetValue(*((int*)data.toPtr()));
+  }
+  if(widget_type == "HardEnum_Bits") {
+    ((taiBitBox*)tai_data)->GetValue(*((int*)data.toPtr()));
+  }
+  if(widget_type == "DynEnum_Enum") {
+    ((taiComboBox*)tai_data)->GetValue(((DynEnum*)data.toPtr())->value);
+  }
+  if(widget_type == "DynEnum_Bits") {
+    ((taiBitBox*)tai_data)->GetValue(((DynEnum*)data.toPtr())->value);
   }
 //   if(widget_type == "DataTable") {
 //     iDataTableEditor* edt = (iDataTableEditor*)widget;
@@ -720,8 +745,55 @@ bool taGuiDialog::AddObjectPtr(taBaseRef* obj, TypeDef* td, const String& nm, co
     atts = String("type=") + td->name + "; " + atts;
   taiTokenPtrButton* taidata = new taiTokenPtrButton(td, data_host, NULL, par->widget);
   taGuiWidget* w = AddWidget_impl(taidata->GetRep(), nm, "ObjectPtr",
-				  layout, atts,  Variant((void*)obj),
-				  _nilString, taidata);
+				  layout, atts,  Variant((void*)obj), _nilString, taidata);
+  return (bool)w;
+}
+
+bool taGuiDialog::AddHardEnum(int* iptr, TypeDef* enum_td, const String& nm,
+	      const String& parent, const String& layout, const String& attributes) {
+  if(!iptr || !enum_td) return false;
+  if(TestError(parent.empty(), "AddHardEnum", "a parent widget is required"))
+    return false;
+  taGuiWidget* par = FindWidget(parent, true);
+  if(!par) return false;
+  String atts = attributes;
+  atts = String("enum_type=") + enum_td->name + "; " + atts;
+  taGuiWidget* w = NULL;
+  if(enum_td->HasOption("BITS")) {
+    taiBitBox* taidata = new taiBitBox(true, enum_td, data_host, NULL, par->widget);
+    w = AddWidget_impl(taidata->GetRep(), nm, "HardEnum_Bits",
+		       layout, atts, Variant((void*)iptr), _nilString, taidata);
+  }
+  else {
+    taiComboBox* taidata = new taiComboBox(true, enum_td, data_host, NULL, par->widget);
+    w = AddWidget_impl(taidata->GetRep(), nm, "HardEnum_Enum",
+		       layout, atts, Variant((void*)iptr), _nilString, taidata);
+  }
+  return (bool)w;
+}
+
+bool taGuiDialog::AddDynEnum(DynEnum* deptr, const String& nm,
+	      const String& parent, const String& layout, const String& attributes) {
+  if(!deptr || !deptr->enum_type) return false;
+  if(TestError(parent.empty(), "AddDynEnum", "a parent widget is required"))
+    return false;
+  taGuiWidget* par = FindWidget(parent, true);
+  if(!par) return false;
+  String atts = attributes;
+//   atts = String("enum_type=") + enum_td->name + "; " + atts;
+  taGuiWidget* w = NULL;
+  if(deptr->enum_type->bits) {
+    taiBitBox* taidata = new taiBitBox(&TA_DynEnum, data_host, NULL, par->widget);
+    taiDynEnumMember::UpdateDynEnumBits(taidata, *deptr);
+    w = AddWidget_impl(taidata->GetRep(), nm, "DynEnum_Bits",
+		       layout, atts, Variant((void*)deptr), _nilString, taidata);
+  }
+  else {
+    taiComboBox* taidata = new taiComboBox(&TA_DynEnum, data_host, NULL, par->widget);
+    taiDynEnumMember::UpdateDynEnumCombo(taidata, *deptr);
+    w = AddWidget_impl(taidata->GetRep(), nm, "DynEnum_Enum",
+		       layout, atts, Variant((void*)deptr), _nilString, taidata);
+  }
   return (bool)w;
 }
 
@@ -754,6 +826,14 @@ bool taGuiDialog::AddProgVar(ProgVar& pvar, const String& nm, const String& pare
   }
   case ProgVar::T_Object: {
     rval = AddObjectPtr(&(pvar.object_val), pvar.object_type, nm, parent, layout, attributes);
+    break;
+  }
+  case ProgVar::T_HardEnum: {
+    rval = AddHardEnum(&(pvar.int_val), pvar.hard_enum_type, nm, parent, layout, attributes);
+    break;
+  }
+  case ProgVar::T_DynEnum: {
+    rval = AddDynEnum(&(pvar.dyn_enum_val), nm, parent, layout, attributes);
     break;
   }
   }

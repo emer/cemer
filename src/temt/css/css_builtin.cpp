@@ -126,6 +126,7 @@ cssElCFun*	cssBI::ne=NULL;
 cssElCFun*	cssBI::land=NULL;
 cssElCFun*	cssBI::lor=NULL;
 cssElCFun*	cssBI::lnot=NULL;
+cssElCFun*	cssBI::bitneg=NULL;
 cssElCFun*	cssBI::power=NULL;
 
 cssTA_Base*	cssBI::root;		// root script element
@@ -496,6 +497,9 @@ static cssEl* cssElCFun_bit_or_stub(int, cssEl* arg[]) {
 static cssEl* cssElCFun_neg_stub(int, cssEl* arg[]) {
   return -(*(arg[1]));
 }
+static cssEl* cssElCFun_bitneg_stub(int, cssEl* arg[]) {
+  return ~(*(arg[1]));
+}
 
 static cssEl* cssElCFun_sstream_rewind_stub(int, cssEl* arg[]) {
   std::stringstream* strm = (std::stringstream*)(void*)*(arg[1]);
@@ -680,6 +684,7 @@ static void Install_Internals() {
   cssElInCFun_inst_ptr(cssMisc::Internal, bit_xor, 2, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, bit_or, 2, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, neg, 1, CSS_FUN);
+  cssElInCFun_inst_ptr(cssMisc::Internal, bitneg, 1, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, addr_of, 1, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, de_ptr, 1, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, de_array, 2, CSS_FUN);

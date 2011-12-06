@@ -43,7 +43,7 @@ class iProgramPanel;
 class Function;
 class ProgramCallBase;
 class ProgramCall;
-class ProgVars;
+class LocalVars;
 class ProgCode;
 class taiItemPtrBase;
 class ProgramCallVar; //
@@ -228,7 +228,7 @@ class TA_API DynEnumItem : public taNBase {
   // ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated type value (name and numerical int value)
 INHERITED(taNBase)
 public:
-  int           value;          // numerical (integer) value of this enum
+  int           value;          // numerical (integer) value of this enum -- automatically set to be sequential or orthogonal bits if using bits mode -- order must be increasing in list order
   String        desc;           // #EDIT_DIALOG description of item
 
   override String       GetDisplayName() const;
@@ -324,32 +324,32 @@ private:
 
 SmartRef_Of(DynEnumType,TA_DynEnumType); // DynEnumTypeRef
 
+// NOTE: prior to 12/11 the value for a non-bits enum was encoded as the index into the list
+// of enums.  this is typically the same as the actual int value, but not always.  it 
+// has now been changed to the more conventional storage of the actual numerical value in 
+// all cases..
+
 class TA_API DynEnum : public taOBase {
   // #STEM_BASE #NO_TOKENS #NO_UPDATE_AFTER ##EDIT_INLINE ##CAT_Program ##SCOPE_Program dynamic enumerated value -- represents one item from a list of enumerated alternative labeled values
 INHERITED(taOBase)
 public:
   DynEnumTypeRef        enum_type; // enum type information (list of enum labels)
-  int                   value;     // #DYNENUM_ON_enum_type current value, which for normal mutually-exclusive options is index into list of enums (-1 = not set), and for bits is the bit values
+  int                   value;     // #DYNENUM_ON_enum_type current integer value
 
-  virtual bool  IsSet() const
-  { return ((bool)enum_type && (value >= 0)); }
-  // check whether there is a value set (enum_type is set and value >= 0)
-  virtual int   NumVal() const;
+  inline bool 	IsSet() const { return (bool)enum_type; }
+  // has the type been set for this enum?
+
+  inline int   NumVal() const { return value; }
   // current numerical (integer) value of enum (-1 = no value set)
   virtual const String NameVal() const;
   // current name (string) value of enum ("" = no value set)
 
-  virtual bool  SetNumVal(int val);
-  // set current enum value by numerical value (for bits mode, literally set value); false (and error msg) if not found
-  virtual bool  SetNameVal(const String& nm);
-  // set current enum value by name (for bits mode, set bit for name); false (and error msg) if not found
-  virtual bool  ClearBitName(const String& val);
-  // only for bits type, clear bit with given name
+  inline void  SetNumVal(int val)  { value = val; }
+  // set current enum value by numerical value 
+  bool  SetNameVal(const String& nm);
+  // set current enum value by name -- for bits this clears any existing bits (use css |= to set bits without clearing)
 
-  override String       GetDisplayName() const;//
-/*TEMP  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
-                                  TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                                  bool force_inline = false) const;*/
+  override String       GetDisplayName() const;
 
   TA_SIMPLE_BASEFUNS_UPDT_PTR_PAR(DynEnum, Program);
 protected:
@@ -876,7 +876,7 @@ public:
 
   virtual ProgVar*      FindVarName(const String& var_nm) const;
   // find given variable within this program element -- NULL if not found
-  virtual ProgVars*     FindLocalVarList() const;
+  virtual LocalVars*     FindLocalVarList() const;
   // find local variable list at the closest level of scope to this program element
   virtual ProgVar*      MakeLocalVar(const String& var_nm);
   // make a new local variable with the given name -- creates a local vars if none found

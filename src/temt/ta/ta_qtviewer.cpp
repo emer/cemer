@@ -4059,19 +4059,19 @@ void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_item
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
   Dlg1.AddLabel("Instructions", "main", curow, "label=Enter strings to search and replace for\nin currently selected items\n(does not use regular expressions);");
   Dlg1.AddSpace(20, "mainv");
-  curow = "srch";
+  curow = "srchrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
   Dlg1.AddLabel("srchlbl", "main", curow, "label=Search for:    ;");
   Dlg1.AddStringField(&sr_val, "srch", "main", curow, "tooltip=enter string value to search for;");
-  curow = "repl";
+  curow = "replrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
   Dlg1.AddLabel("repllbl", "main", curow, "label=Replace with: ;");
   Dlg1.AddStringField(&rp_val, "repl", "main", curow, "tooltip=enter string value to replace with;");
   Dlg1.AddSpace(20, "mainv");
-  curow = "mbflt";
+  curow = "mbfltrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
   Dlg1.AddLabel("mbfltlbl", "main", curow, "label=Member filter: ;");
-  Dlg1.AddStringField(&mb_flt, "repl", "main", curow, "tooltip=enter string that the end value member where replacement actually occurs must contain in its member name\n -- this restricts the replacement to specific types of values (e.g., 'name' or 'lrate')\n instead of applying to everything (which is what happens when this is blank);");
+  Dlg1.AddStringField(&mb_flt, "mbflt", "main", curow, "tooltip=enter string that the end value member where replacement actually occurs must contain in its member name\n -- this restricts the replacement to specific types of values (e.g., 'name' or 'lrate')\n instead of applying to everything (which is what happens when this is blank);");
   Dlg1.AddSpace(20, "mainv");
 
   int drval = Dlg1.PostDialog(true);

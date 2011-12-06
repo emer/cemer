@@ -147,7 +147,7 @@ int yylex();
 %left	'+' '-'
 %left	'*' '/'	'%'
 %right  CSS_UNARY CSS_PLUSPLUS CSS_MINMIN
-%left	CSS_UNARYMINUS CSS_NOT
+%left	CSS_UNARYMINUS CSS_NOT CSS_BITNEG
 %left   CSS_POINTSAT '.' CSS_SCOPER '(' '['
 
 %%
@@ -1269,6 +1269,7 @@ comb_expr:
         | CSS_MINMIN expr		{ $$ = $2; Code1(cssBI::asgn_pre_mm); }
 	| '-' expr %prec CSS_UNARYMINUS	{ $$ = $2; Code1(cssBI::neg); }
 	| CSS_NOT expr			{ $$ = $2; Code1(cssBI::lnot); }
+	| '~' expr %prec CSS_BITNEG	{ $$ = $2; Code1(cssBI::bitneg); }
 	| expr '[' expr ']'		{ Code1(cssBI::de_array); }
         | '(' type ')' expr %prec CSS_UNARY {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */

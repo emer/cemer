@@ -1436,7 +1436,7 @@ Variant& Variant::operator~() {
   case T_UInt: d.u = ~d.u; break;
   case T_Int64: d.i64 = ~d.i64; break;
   case T_UInt64: d.u64 = ~d.u64; break;
-  case T_Char: d.c = -d.c; break;
+  case T_Char: d.c = ~d.c; break;
   default: warn("~ operator"); break ;
   }
   return *this;

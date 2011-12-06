@@ -270,6 +270,14 @@ public:
 			    const String& parent, const String& layout = _nilString,
 			    const String& attributes = _nilString);
   // #CAT_XpertWidget add an object (taBase) pointer button -- attributes are:
+  virtual bool	AddHardEnum(int* iptr, TypeDef* enum_td, const String& nm,
+			    const String& parent, const String& layout = _nilString,
+			    const String& attributes = _nilString);
+  // #CAT_XpertWidget add a hard enum combo-box chooser -- attributes are:
+  virtual bool	AddDynEnum(DynEnum* deptr, const String& nm,
+			    const String& parent, const String& layout = _nilString,
+			    const String& attributes = _nilString);
+  // #CAT_XpertWidget add a dynamic enum item -- attributes are:
   virtual bool	AddProgVar(ProgVar& pvar, const String& nm,
 			   const String& parent, const String& layout = _nilString,
 			   const String& attributes = _nilString);

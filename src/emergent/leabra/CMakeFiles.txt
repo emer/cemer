@@ -18,6 +18,7 @@ set(leabra_HEADS_MAKETA
     leabra_td.h
     leabra_pvlv.h
     leabra_pbwm.h
+    leabra_hippo.h
     leabra_v3_compat.h
 )
 
@@ -29,6 +30,7 @@ set(leabra_HEADS
     leabra_td.h
     leabra_pvlv.h
     leabra_pbwm.h
+    leabra_hippo.h
     leabra_v3_compat.h
     leabra_TA_inst.h
     leabra_TA_type.h
@@ -42,6 +44,7 @@ set(leabra_SRCS
     leabra_td.cpp
     leabra_pvlv.cpp
     leabra_pbwm.cpp
+    leabra_hippo.cpp
     leabra_v3_compat.cpp
     leabra_TA.cpp
 )

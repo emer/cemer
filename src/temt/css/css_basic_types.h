@@ -131,6 +131,8 @@ public:
 
   cssEl* operator-()
   { cssInt* r = new cssInt(*this,""); r->val = -val; return r; }
+  cssEl* operator~()
+  { cssInt* r = new cssInt(*this,""); r->val = ~val; return r; }
 
   void operator+=(cssEl& t) 	{ val += (Int)t; }
   void operator-=(cssEl& t) 	{ val -= (Int)t; }
@@ -274,6 +276,8 @@ public:
 
   cssEl* operator-()
   { cssInt64* r = new cssInt64(*this,""); r->val = -val; return r; }
+  cssEl* operator~()
+  { cssInt64* r = new cssInt64(*this,""); r->val = ~val; return r; }
 
   void operator+=(cssEl& t) 	{ val += (ta_int64_t)t; }
   void operator-=(cssEl& t) 	{ val -= (ta_int64_t)t; }
@@ -712,6 +716,7 @@ public:
   cssEl* operator^(cssEl& t);
 
   cssEl* operator-();
+  cssEl* operator~();
 
   void operator+=(cssEl& t);
   void operator-=(cssEl& t);
@@ -1113,6 +1118,7 @@ public:
   cssEl* operator^(cssEl& s)	{ return ptr.El()->operator^(s); }
   cssEl* operator|(cssEl& s)	{ return ptr.El()->operator|(s); }
   cssEl* operator-()       	{ return ptr.El()->operator-(); }
+  cssEl* operator~()       	{ return ptr.El()->operator~(); }
   cssEl* operator*()	   	{ return ptr.El()->operator*(); }
   cssEl* operator[](Variant i) const	{ return ptr.El()->operator[](i); }
 

@@ -56,6 +56,7 @@ int taiDynEnumMember::BidForMember(MemberDef* md, TypeDef* td){
 
 taiData* taiDynEnumMember::GetDataRep_impl(IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_, MemberDef* mbr_) {
+  flags_ |= taiData::flgAutoApply; // always auto-apply
   isBit = false;		// oops -- we don't have base and can't find out!
   taiDataDeck* rval = new taiDataDeck(NULL, host_, par, gui_parent_, flags_);
   rval->InitLayout();
@@ -1322,7 +1323,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   QWidget* widg = tb->AddClipToolWidget(sec, new iBaseClipWidgetAction("var",
 		       tabMisc::root->GetTemplateInstance(&TA_ProgVar)));
   ptbp_deco_widget(widg, tabMisc::root->GetTemplateInstance(&TA_ProgVar));
-  ptbp_add_widget(tb, sec, &TA_ProgVars);
+  ptbp_add_widget(tb, sec, &TA_LocalVars);
 
   tb->AddSeparator(sec);
   ptbp_add_widget(tb, sec, &TA_AssignExpr);
@@ -1540,10 +1541,10 @@ void iProgramCtrlDataHost::Constr_Data_Labels() {
 	else if((pv->var_type == ProgVar::T_HardEnum && pv->hard_enum_type &&
 		 pv->hard_enum_type->HasOption("BITS")) ||
 		(pv->dyn_enum_val.enum_type && pv->dyn_enum_val.enum_type->bits)) {
-	  mb_dat = new taiBitBox(NULL, this, NULL, body, flags_);
+	  mb_dat = new taiBitBox(NULL, this, NULL, body, flags_ | taiData::flgAutoApply);
 	}
 	else {
-	  mb_dat = new taiComboBox(true, NULL, this, NULL, body, flags_);
+	  mb_dat = new taiComboBox(true, NULL, this, NULL, body, flags_ | taiData::flgAutoApply);
 	}
       }
       else if (pv->var_type == ProgVar::T_Int) {
@@ -2256,7 +2257,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     if(expr_base) {
       ProgEl* pel = GET_OWNER(expr_base, ProgEl);
       if(pel) {
-	ProgVars* pvs = pel->FindLocalVarList();
+	LocalVars* pvs = pel->FindLocalVarList();
 	if(pvs) {
 	  varlkup->setNewObj2(&(pvs->local_vars), " New Local Var");
 	}
