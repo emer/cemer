@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -38,7 +38,7 @@
 
 
 //////////////////////////
-//   DataViewer		//
+//   DataViewer         //
 //////////////////////////
 
 String_Array DataViewer::image_exts;
@@ -55,15 +55,15 @@ bool DataViewer::InitImageExts() {
 }
 
 void DataViewer::GetFileProps(TypeDef* td, String& fltr, bool& cmprs) {
-  int opt;
-  if ((opt = td->opts.FindContains("EXT_")) >= 0) {
+  int opt = td->opts.FindContains("EXT_");
+  if (opt >= 0) {
     fltr = td->opts.FastEl(opt).after("EXT_");
     fltr = "*." + fltr + "*";
-  } else
+  }
+  else {
     fltr = "*";
-  cmprs = false;
-  if (td->HasOption("COMPRESS"))
-    cmprs = true;
+  }
+  cmprs = td->HasOption("COMPRESS");
 }
 
 void DataViewer::Initialize() {
@@ -83,7 +83,7 @@ void DataViewer::InitLinks() {
 void DataViewer::CutLinks() {
   if (m_dvwidget) {
     m_dvwidget->Close(); // destructive close
-    m_dvwidget = NULL; // 
+    m_dvwidget = NULL; //
   }
   inherited::CutLinks();
 }
@@ -190,7 +190,7 @@ QPixmap DataViewer::GrabImage(bool& got_image) {
 
 bool DataViewer::SaveImageAs(const String& fname, ImageFormat img_fmt) {
   if(TestError(img_fmt == EPS || img_fmt == IV, "SaveImageAs",
-	       "EPS (encapsulated postscript) or IV (Open Inventor) not supported for this type of view"))
+               "EPS (encapsulated postscript) or IV (Open Inventor) not supported for this type of view"))
     return false;
   bool rval = false;
   String ext = image_exts.SafeEl(img_fmt);
@@ -224,7 +224,7 @@ bool DataViewer::PrintImage() {
       QPainter p(&pr);
       p.drawPixmap(0, 0, pix);
     }
-  }  
+  }
   return rval;
 }
 
@@ -268,7 +268,7 @@ MainWindowViewer* DataViewer::parent() const {
     m_parent = (taDataView*)GetOwner(parentType()); // NULL if no owner, or no compatible type
   }
   return dynamic_cast<MainWindowViewer*>(m_parent); // dyn for safety
-} 
+}
 
 /*obs void DataViewer::ReSize(float width, float height) {
   if (!taMisc::gui_active || (dvwidget() == NULL)) return;
@@ -282,7 +282,7 @@ MainWindowViewer* DataViewer::parent() const {
 } */
 
 iMainWindowViewer* DataViewer::viewerWindow() const {
-  if (m_dvwidget) return m_dvwidget->viewerWindow(); 
+  if (m_dvwidget) return m_dvwidget->viewerWindow();
   else return NULL;
 }
 
@@ -301,12 +301,12 @@ void DataViewer::WidgetDeleting_impl() {
 }
 
 QWidget* DataViewer::widget() {
-  return (m_dvwidget) ? m_dvwidget->widget() : NULL; 
+  return (m_dvwidget) ? m_dvwidget->widget() : NULL;
 }
 
 
 //////////////////////////////////
-//   DataViewer_List	 	//
+//   DataViewer_List            //
 //////////////////////////////////
 
 void DataViewer_List::GetWinState() {
@@ -323,7 +323,7 @@ void DataViewer_List::SetWinState() {
 
 
 //////////////////////////////////
-//   FrameViewer	 	//
+//   FrameViewer                //
 //////////////////////////////////
 
 void FrameViewer::Initialize() {
@@ -343,7 +343,7 @@ void FrameViewer::SetWinState_impl() {
 
 
 //////////////////////////////////
-// 	BrowseViewer	 	//
+//      BrowseViewer            //
 //////////////////////////////////
 
 void BrowseViewer::Initialize() {
@@ -368,7 +368,7 @@ void BrowseViewer::Render_pre() {
 
 
 //////////////////////////////////
-//  tabBrowseViewer	 	//
+//  tabBrowseViewer             //
 //////////////////////////////////
 
 tabBrowseViewer* tabBrowseViewer::New(taBase* root, MemberDef* root_md) {
@@ -408,7 +408,7 @@ void tabBrowseViewer::UpdateAfterEdit() {
 
 
 //////////////////////////////////
-//   ClassBrowseViewer	 	//
+//   ClassBrowseViewer          //
 //////////////////////////////////
 
 ClassBrowseViewer* ClassBrowseViewer::New(void* root, TypeDef* root_typ, MemberDef* root_md) {
@@ -447,7 +447,7 @@ void ClassBrowseViewer::RootToStr() {
   // for now, we only support the root typespace
   if (m_root == &taMisc::types)
     root_str = ".types";
-  else 
+  else
     root_str = _nilString; // TEMP
 }
 
@@ -472,7 +472,7 @@ void ClassBrowseViewer::StrToRoot() {
 
 
 //////////////////////////////////
-// 	PanelViewer	 	//
+//      PanelViewer             //
 //////////////////////////////////
 
 void PanelViewer::Initialize() {
@@ -494,7 +494,7 @@ iTabBarBase* PanelViewer::tabBar() {
 
 
 //////////////////////////
-//   TopLevelViewer	//
+//   TopLevelViewer     //
 //////////////////////////
 
 void TopLevelViewer::Initialize() {
@@ -522,7 +522,7 @@ void TopLevelViewer::GetWinState_impl() {
   iRect r = widget->frameGeometry(); //note: same as size() for widgets
   // convert from screen coords to relative (note, allowed to be >1.0)
   // adjust for scrn geom, esp for evil mac
-  float lft = (float)(r.left() - taiM->scrn_geom.left()) / 
+  float lft = (float)(r.left() - taiM->scrn_geom.left()) /
     (float)(taiM->scrn_s.w); // all of these convert from screen coords
   float top = (float)(r.top() - taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h);
   float wd = (float)r.width() / (float)(taiM->scrn_s.w);
@@ -552,14 +552,14 @@ void TopLevelViewer::SetWinState_impl() {
   //TODO: maybe this should be used for all? ex. windows or kde taskbar etc.
 #ifdef TA_OS_MAC
   if (taiM) { // guard for instance creation before sys init
-    lft = MAX(lft, (taiM->scrn_s.w > 0) ? 
+    lft = MAX(lft, (taiM->scrn_s.w > 0) ?
       (float)(taiM->scrn_geom.left()) / (float)(taiM->scrn_s.w) : 0.0f);
-    top = MAX(top, (taiM->scrn_s.h > 0) ? 
+    top = MAX(top, (taiM->scrn_s.h > 0) ?
       (float)(taiM->scrn_geom.top()) / (float)(taiM->scrn_s.h) : 0.0f);
   }
 //TODO: prob should limit wd and ht too, because of dock, and inability to size if grip is offscreen
 #endif */
-  
+
   QWidget* widget = this->widget(); // cache
 
   // convert to pixels
@@ -580,7 +580,7 @@ void TopLevelViewer::SetWinState_impl() {
     widget->showMinimized();
   else
     widget->show();
-  
+
   SetWinName();
 }
 
@@ -624,10 +624,10 @@ void TopLevelViewer::ViewWindow() {
     // if not owned yet, put us in the global guy
     if (!GetOwner() && tabMisc::root)
       tabMisc::root->viewers_tmp.Add(this); // does InitLinks
-    Constr(); // NO parent 
+    Constr(); // NO parent
 //     Constr(QApplication::activeWindow()); // parent to current active
     Render();
-    
+
 //    if(((left != -1.0f) && (top != -1.0f)) || ((width != -1.0f) && (height != -1.0f)))
 //      SetWinState(left, top, width, height);
   }
@@ -637,7 +637,7 @@ void TopLevelViewer::ViewWindow() {
 void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
   ResolveChanges(cancel_op); // note, may have been done earlier
   if (cancel_op == CO_CANCEL) return;
-  
+
   // root win is special, since closing it forces shutdown
   if (isRoot()) {
     switch (taMisc::quitting) {
@@ -649,7 +649,7 @@ void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
       cancel_op = CO_CANCEL;
       return;
     }
-    case taMisc::QF_USER_QUIT: 
+    case taMisc::QF_USER_QUIT:
       // ok, upgrade to non-cancellable
       taMisc::quitting = taMisc::QF_FORCE_QUIT;
     default: break; // force-quit
@@ -659,7 +659,7 @@ void TopLevelViewer::WindowClosing(CancelOp& cancel_op) {
 
 
 //////////////////////////
-//   DockViewer		//
+//   DockViewer         //
 //////////////////////////
 
 void DockViewer::Initialize() {
@@ -715,7 +715,7 @@ void ConsoleDockViewer::MakeWinName_impl() {
 }
 
 //////////////////////////
-//   ToolBoxDockViewer	//
+//   ToolBoxDockViewer  //
 //////////////////////////
 
 ToolBoxDockViewer* ToolBoxDockViewer::New() {
@@ -736,7 +736,7 @@ void ToolBoxDockViewer::MakeWinName_impl() {
 
 
 //////////////////////////
-//   ToolBoxRegistrar	//
+//   ToolBoxRegistrar   //
 //////////////////////////
 
 ToolBoxRegistrar_PtrList* ToolBoxRegistrar::m_instances;
@@ -755,7 +755,7 @@ ToolBoxRegistrar::ToolBoxRegistrar(ToolBoxProc proc_)
 
 
 //////////////////////////
-//   ToolBar		//
+//   ToolBar            //
 //////////////////////////
 
 void ToolBar::Initialize() {
@@ -807,59 +807,59 @@ void ToolBar::WidgetDeleting_impl() {
 
 
 //////////////////////////
-//   MainWindowViewer	//
+//   MainWindowViewer   //
 //////////////////////////
 
 // TEMP
 
-void MainWindowViewer:: FileOptionsAction(){} // 
+void MainWindowViewer:: FileOptionsAction(){} //
 void MainWindowViewer:: FileCloseAction(){} // #ACT #MM_&File|&Close #MENUGP_LAST #MENU_GP_FileClose Quit Action(root) or Close Window Action(non-root)
-void MainWindowViewer::	EditUndoAction(){} // #ACT 
-void MainWindowViewer::	EditRedoAction(){} // #ACT 
-void MainWindowViewer::	EditCutAction(){} // #ACT 
-void MainWindowViewer::	EditCopyAction(){} // #ACT 
-void MainWindowViewer::	EditPasteAction(){} // #ACT 
-void MainWindowViewer::	EditFindAction(){} // #ACT 
-void MainWindowViewer::	HelpIndexAction(){} // #ACT 
-void MainWindowViewer::	HelpContentsAction(){} // #ACT 
+void MainWindowViewer:: EditUndoAction(){} // #ACT
+void MainWindowViewer:: EditRedoAction(){} // #ACT
+void MainWindowViewer:: EditCutAction(){} // #ACT
+void MainWindowViewer:: EditCopyAction(){} // #ACT
+void MainWindowViewer:: EditPasteAction(){} // #ACT
+void MainWindowViewer:: EditFindAction(){} // #ACT
+void MainWindowViewer:: HelpIndexAction(){} // #ACT
+void MainWindowViewer:: HelpContentsAction(){} // #ACT
 
 // /TEMP
 
-TypeDef* MainWindowViewer::def_browser_type = &TA_MainWindowViewer; 
-TypeDef* MainWindowViewer::def_viewer_type = &TA_MainWindowViewer; 
+TypeDef* MainWindowViewer::def_browser_type = &TA_MainWindowViewer;
+TypeDef* MainWindowViewer::def_viewer_type = &TA_MainWindowViewer;
 
 MainWindowViewer* MainWindowViewer::GetDefaultProjectBrowser(taProject* proj) {
 // look in list of viewer wins for most current
   for (int i = taiMisc::active_wins. size - 1; i >= 0; --i) {
-    iMainWindowViewer* ivw = taiMisc::active_wins.SafeElAsMainWindow(i); 
+    iMainWindowViewer* ivw = taiMisc::active_wins.SafeElAsMainWindow(i);
     // check if it is a proj viewer
     if (!ivw || !ivw->isProjBrowser()) continue;
     // if proj specified, check if same
     if (proj && (ivw->curProject() != proj)) continue;
     return ivw->viewer();
-  } 
+  }
   return NULL;
 }
 
 MainWindowViewer* MainWindowViewer::GetDefaultProjectViewer(taProject* proj) {
 // look in list of viewer wins for most current
   for (int i = taiMisc::active_wins. size - 1; i >= 0; --i) {
-    iMainWindowViewer* ivw = taiMisc::active_wins.SafeElAsMainWindow(i); 
+    iMainWindowViewer* ivw = taiMisc::active_wins.SafeElAsMainWindow(i);
     // check if it is a proj viewer
     if (!ivw || !ivw->isProjViewer()) continue;
     // if proj specified, check if same
     if (proj && (ivw->curProject() != proj)) continue;
     return ivw->viewer();
-  } 
+  }
   return NULL;
 }
 
 MainWindowViewer* MainWindowViewer::NewBrowser(taBase* root,
   MemberDef* root_md, bool is_root)
 {
-  if (!def_browser_type || !(def_browser_type->InheritsFrom(&TA_MainWindowViewer))) 
+  if (!def_browser_type || !(def_browser_type->InheritsFrom(&TA_MainWindowViewer)))
     def_browser_type = &TA_MainWindowViewer; // just in case
-  
+
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_browser_type);
   rval->SetData(root);
   rval->m_is_root = is_root;
@@ -875,9 +875,9 @@ MainWindowViewer* MainWindowViewer::NewBrowser(taBase* root,
   else {
     if(tabMisc::root) {
       if(is_root)
-	tabMisc::root->viewers.Add(rval); // this is our guy!
+        tabMisc::root->viewers.Add(rval); // this is our guy!
       else
-	tabMisc::root->viewers_tmp.Add(rval); // does InitLinks
+        tabMisc::root->viewers_tmp.Add(rval); // does InitLinks
     }
   }
   return rval;
@@ -898,9 +898,9 @@ MainWindowViewer* MainWindowViewer::NewClassBrowser(void* root, TypeDef* root_ty
 }
 
 MainWindowViewer* MainWindowViewer::NewEditDialog(taBase* root) {
-  if (!def_browser_type || !(def_browser_type->InheritsFrom(&TA_MainWindowViewer))) 
+  if (!def_browser_type || !(def_browser_type->InheritsFrom(&TA_MainWindowViewer)))
     def_browser_type = &TA_MainWindowViewer; // just in case
-  
+
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_browser_type);
   rval->SetData(root);
   rval->m_is_root = false;
@@ -918,7 +918,7 @@ MainWindowViewer* MainWindowViewer::NewEditDialog(taBase* root) {
       tabMisc::root->viewers.Add(rval); // does InitLinks
   }
   return rval;
-} 
+}
 
 MainWindowViewer* MainWindowViewer::FindEditDialog(taBase* root) {
   DataViewer_List* vwrs = NULL;
@@ -927,7 +927,7 @@ MainWindowViewer* MainWindowViewer::FindEditDialog(taBase* root) {
     vwrs = &(proj->viewers_tmp);
   }
   else {
-    if(tabMisc::root) 
+    if(tabMisc::root)
       vwrs = &(tabMisc::root->viewers_tmp);
   }
   if(!vwrs) return NULL;
@@ -942,9 +942,9 @@ MainWindowViewer* MainWindowViewer::FindEditDialog(taBase* root) {
 
 MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   if (!proj) return NULL;
-  if (!def_viewer_type || !(def_viewer_type->InheritsFrom(&TA_MainWindowViewer))) 
+  if (!def_viewer_type || !(def_viewer_type->InheritsFrom(&TA_MainWindowViewer)))
     def_viewer_type = &TA_MainWindowViewer; // just in case
-  
+
   FrameViewer* fv = NULL;
   MainWindowViewer* rval = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
   rval->SetData(proj);
@@ -987,9 +987,9 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
 
 MainWindowViewer* MainWindowViewer::NewProjectViewer(taProject* proj) {
   if (!proj) return NULL;
-  if (!def_viewer_type || !(def_viewer_type->InheritsFrom(&TA_MainWindowViewer))) 
+  if (!def_viewer_type || !(def_viewer_type->InheritsFrom(&TA_MainWindowViewer)))
     def_viewer_type = &TA_MainWindowViewer; // just in case
-  
+
   MainWindowViewer* viewer  = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
   FrameViewer* fv = viewer->AddFrameByType(&TA_PanelViewer);
   fv = viewer->AddFrameByType(&TA_T3DataViewer);
@@ -1055,7 +1055,7 @@ bool MainWindowViewer::GetWinState() {
   toolbars.GetWinState();
   frames.GetWinState();
   docks.GetWinState();
-  // relative sizes of panels 
+  // relative sizes of panels
   QSplitter* spl = widget()->body;
   SetUserData("view_splitter_state",
     String(spl->saveState().toBase64().constData()));
@@ -1080,17 +1080,17 @@ void MainWindowViewer::AddDock(DockViewer* dv) {
   docks.Add(dv);
 }
 
-void MainWindowViewer::AddFrame(FrameViewer* fv, int at_index) 
+void MainWindowViewer::AddFrame(FrameViewer* fv, int at_index)
 {
   if (!fv) return;
   //TODO: note: if we are mapped, then the chg detector for .frames will map the guy
   if (at_index < 0)
     frames.Add(fv);
-  else 
+  else
     frames.Insert(fv, at_index);
 }
 
-FrameViewer* MainWindowViewer::AddFrameByType(TypeDef* typ, int at_index) 
+FrameViewer* MainWindowViewer::AddFrameByType(TypeDef* typ, int at_index)
 {
   if (!typ || !typ->InheritsFrom(&TA_FrameViewer)) return NULL;
   FrameViewer* rval = (FrameViewer*)taBase::MakeToken(typ);
@@ -1105,8 +1105,8 @@ bool MainWindowViewer::AddToolBar(ToolBar* tb) {
   return true;
 }
 
-ToolBar* MainWindowViewer::AddToolBarByType(TypeDef* typ, 
-  const String& tb_name) 
+ToolBar* MainWindowViewer::AddToolBarByType(TypeDef* typ,
+  const String& tb_name)
  {
    if (toolbars.FindName(tb_name)) return NULL;
    ToolBar* tb = (ToolBar*)taBase::MakeToken(typ);
@@ -1222,12 +1222,12 @@ FrameViewer* MainWindowViewer::FindFrameByType(TypeDef* typ, int& at_index, int 
   return NULL;
 }
 
-ToolBar* MainWindowViewer::FindToolBarByType(TypeDef* typ, 
-  const String& tb_name) 
+ToolBar* MainWindowViewer::FindToolBarByType(TypeDef* typ,
+  const String& tb_name)
 {
   for (int i = 0; i < toolbars.size; ++i) {
     ToolBar* tb = toolbars.FastEl(i);
-    if ((tb->name == tb_name) && 
+    if ((tb->name == tb_name) &&
       tb->GetTypeDef()->InheritsFrom(typ))
       return tb;
   }
@@ -1251,7 +1251,7 @@ bool MainWindowViewer::isProjBrowser() const {
 bool MainWindowViewer::isProjShower() const {
   return !(m_is_proj_viewer || m_is_viewer_xor_browser);
 }
-   
+
 void MainWindowViewer::setBrowserViewer(bool is_browser, bool is_viewer) {
   m_is_proj_viewer = is_viewer;
   m_is_viewer_xor_browser = is_viewer ? !is_browser : is_browser;
@@ -1279,12 +1279,12 @@ void MainWindowViewer::MakeWinName_impl() {
 }
 
 void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
-//TODO: just nuke the post_constr variable -- 
+//TODO: just nuke the post_constr variable --
   iMainWindowViewer* win = viewerWindow(); //cache
   //note: always costructed, even if not visible
   ((DataViewer*)tb)->Constr_impl(NULL);
-  
-  // add to the toolbar view menu 
+
+  // add to the toolbar view menu
   win->AddToolBar(tb->widget());
   if (post_constr) {
     ((DataViewer*)tb)->Constr_post(); // gotta do this manually post-Constr
@@ -1372,7 +1372,7 @@ T3DataViewer* MainWindowViewer::GetRightViewer() {
 }
 
 //////////////////////////
-//   TreeDecorationSpec	//
+//   TreeDecorationSpec //
 //////////////////////////
 
 

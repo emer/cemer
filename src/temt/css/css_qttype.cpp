@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -34,7 +34,7 @@
 */
 
 //////////////////////////////////////////////////
-// 		cssiType			//
+//              cssiType                        //
 //////////////////////////////////////////////////
 
 cssiType_QObj::cssiType_QObj(cssiType* owner_)
@@ -80,7 +80,7 @@ void  cssiType::Assert_QObj() {
 }
 
 taiData* cssiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  taiType*, int, MemberDef*) 
+  taiType*, int, MemberDef*)
 {
   if (use_it)
     return use_it->GetDataRep(host_, par, gui_parent);
@@ -105,7 +105,7 @@ void cssiType::GetValue(taiData* dat, void* base) {
 //TODO: update to use the ReadOnly approach used by ta_qtdata (using handlesReadOnly aware types)
 
 //////////////////////////////////////////////////
-// 		cssiROType			//
+//              cssiROType                      //
 //////////////////////////////////////////////////
 
 cssiROType::cssiROType(cssEl* orgo, TypeDef* tp, void* bs, bool use_ptr_type)
@@ -114,7 +114,7 @@ cssiROType::cssiROType(cssEl* orgo, TypeDef* tp, void* bs, bool use_ptr_type)
 }
 
 taiData* cssiROType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  taiType*, int, MemberDef*) 
+  taiType*, int, MemberDef*)
 {
   taiField* rval = new taiField(typ, host_, par, gui_parent, true);
   return rval;
@@ -127,7 +127,7 @@ void cssiROType::GetImage(taiData* dat, const void* base) {
 }
 
 //////////////////////////////////////////////////
-// 		cssiEnumType			//
+//              cssiEnumType                    //
 //////////////////////////////////////////////////
 
 cssiEnumType::cssiEnumType(cssEl* orgo, cssEnumType* enum_typ, void* bs)
@@ -136,7 +136,7 @@ cssiEnumType::cssiEnumType(cssEl* orgo, cssEnumType* enum_typ, void* bs)
 }
 
 taiData* cssiEnumType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  taiType*, int, MemberDef*) 
+  taiType*, int, MemberDef*)
 {
   taiComboBox* rval = new taiComboBox(typ, host_, par, gui_parent);
   for (int i = 0; i < enum_type->enums->size; ++i) {
@@ -177,11 +177,11 @@ cssiClassType::cssiClassType(cssEl* orgo, void* bs)
 }
 
 taiData* cssiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  taiType*, int, MemberDef*) 
+  taiType*, int, MemberDef*)
 {
   cssClassInst* obj = (cssClassInst*) cur_base;
   if ((obj->type_def != NULL) && (obj->type_def->HasOption("INLINE")
-	|| obj->type_def->HasOption("EDIT_INLINE")))
+        || obj->type_def->HasOption("EDIT_INLINE")))
   {
     cssiPolyData* rval = new cssiPolyData(obj, typ, host_, par, gui_parent);
     return rval;
@@ -191,7 +191,7 @@ taiData* cssiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_
       (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
     Assert_QObj();
     rval->AddItem("Edit", taiMenu::use_default, taiAction::action,
-	qobj, SLOT(CallEdit()), (void*)NULL);
+        qobj, SLOT(CallEdit()), (void*)NULL);
     String lbl = String(obj->GetTypeName()) + ": Actions";
     rval->setLabel(lbl);
     return rval;
@@ -201,7 +201,7 @@ taiData* cssiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_
 void cssiClassType::GetImage(taiData* dat, const void* base) {
   cssClassInst* obj = (cssClassInst*) cur_base;
   if((obj->type_def != NULL) && (obj->type_def->HasOption("INLINE")
-				 || obj->type_def->HasOption("EDIT_INLINE"))) {
+                                 || obj->type_def->HasOption("EDIT_INLINE"))) {
     cssiPolyData* rval = (cssiPolyData*)dat;
     rval->GetImage_(base);
   }
@@ -210,7 +210,7 @@ void cssiClassType::GetImage(taiData* dat, const void* base) {
 void cssiClassType::GetValue(taiData* dat, void* base) {
   cssClassInst* obj = (cssClassInst*) cur_base;
   if ((obj->type_def != NULL) && (obj->type_def->HasOption("INLINE")
-	 || obj->type_def->HasOption("EDIT_INLINE")))
+         || obj->type_def->HasOption("EDIT_INLINE")))
   {
     cssiPolyData* rval = (cssiPolyData*)dat;
     rval->GetValue_(base);
@@ -233,13 +233,13 @@ cssiArrayType::cssiArrayType(cssEl* orgo, void* bs)
 }
 
 taiData* cssiArrayType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  taiType*, int, MemberDef*) 
+  taiType*, int, MemberDef*)
 {
   taiButtonMenu* rval = new taiButtonMenu
     (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
   Assert_QObj();
   rval->AddItem("Edit", taiMenu::use_default, taiAction::action,
-  	qobj, SLOT(CallEdit), (void*)NULL);
+        qobj, SLOT(CallEdit), (void*)NULL);
   cssArray* obj = (cssArray*) cur_base;
   String lbl = String(obj->GetTypeName()) + ": Actions";
   rval->setLabel(lbl);
@@ -255,7 +255,7 @@ void cssiArrayType::CallEdit() {
   arg_obj->members->Push(eldx);
   cssiEditDialog* carg_dlg = new cssiEditDialog(arg_obj, NULL, true); //modal
   carg_dlg->Constr();
-  int ok_can = carg_dlg->Edit();	// true = wait for a response
+  int ok_can = carg_dlg->Edit();        // true = wait for a response
   if(ok_can) {
     cssEl* el = obj->items->El(eldx->val);
     el->Edit();

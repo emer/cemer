@@ -98,21 +98,26 @@ void taiType::AddToType(TypeDef* td) {
 taiData* taiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
         taiType* parent_type_, int flags_, MemberDef* mbr)
 {
-  //note: user can pass in flgReadOnly to force readonly, but we can also force it
-  bool ro = isReadOnly(par, host_);
-  // must also take account of whether parent_type is read only
-  if (parent_type_ != NULL)
-    ro = ro || parent_type_->isReadOnly(par);
-  if (ro)
+  // Note: user can pass in flgReadOnly to force readonly, but we can also set it.
+  // Must also take account of whether parent_type is read only.
+  if (isReadOnly(par, host_)
+      || (parent_type_ && parent_type_->isReadOnly(par))) {
     flags_ |= taiData::flgReadOnly;
-  if (requiresInline())
+  }
+  if (requiresInline()) {
     flags_ |= taiData::flgInline;
+  }
   taiData* rval = NULL;
   if ((flags_ & taiData::flgReadOnly) && !handlesReadOnly()) {
+    // The field needs to be displayed read-only, but the subclass isn't able
+    // to handle it as a read-only field, so let taiType take care of things.
+    // Note: this is not a virtual function call due to the taiType:: scoping.
     rval = taiType::GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
-  } else if ((flags_ & taiData::flgInline) && allowsInline()) {
+  }
+  else if ((flags_ & taiData::flgInline) && allowsInline()) {
     rval = GetDataRepInline_impl(host_, par, gui_parent_, flags_, mbr);
-  } else {
+  }
+  else {
     rval = GetDataRep_impl(host_, par, gui_parent_, flags_, mbr);
   }
   rval->mbr = mbr;
@@ -1860,7 +1865,6 @@ int taiFileDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
 }
 
 taiData* taiFileDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-
   String file_act = mbr->OptionAfter("FILE_DIALOG_");
   taiFileDialogField::FileActionType fact = taiFileDialogField::FA_LOAD;
   if(file_act == "SAVE")
@@ -1870,14 +1874,9 @@ taiData* taiFileDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, QW
 
   String fext = String(".") + mbr->OptionAfter("EXT_");
   String ftyp = mbr->OptionAfter("FILETYPE_");
-  bool cmprs = mbr->HasOption("COMPRESS");
+  int cmpr = mbr->HasOption("COMPRESS") ? 1 : -1;
 
-  int cmpr = -1;
-  if(cmprs)
-    cmpr = 1;
-
-  return new taiFileDialogField(mbr->type, host_, par, gui_parent_, flags_, fact, fext,
-                                ftyp, cmpr);
+  return new taiFileDialogField(mbr->type, host_, par, gui_parent_, flags_, fact, fext, ftyp, cmpr);
 }
 
 void taiFileDialogMember::GetImage_impl(taiData* dat, const void* base){
@@ -1892,14 +1891,13 @@ void taiFileDialogMember::GetMbrValue_impl(taiData* dat, void* base) {
   *((String*)new_base) = rval->GetValue();
 }
 
-
 /////////////////////////////
 //    taiTDefaultMember  //
 /////////////////////////////
 
 int taiTDefaultMember::BidForMember(MemberDef*, TypeDef*) {
-// TD_Default member does not bid, it is only applied in special cases.
-  return (0);
+  // TD_Default member does not bid, it is only applied in special cases.
+  return 0;
 }
 
 taiData* taiTDefaultMember::GetDataRep(IDataHost* host_,
@@ -2626,7 +2624,6 @@ void taiMethodPtrArgType::GetValue_impl(taiData* dat, void*) {
   *((void**)arg_base) = rval->GetValue();
 }
 
-
 //////////////////////////////////
 //       taiFileDialogArgType     //
 //////////////////////////////////
@@ -2651,7 +2648,6 @@ cssEl* taiFileDialogArgType::GetElFromArg(const char* nm, void*) {
 
 taiData* taiFileDialogArgType::GetDataRep_impl(IDataHost* host_, taiData* par,
                                                QWidget* gui_parent_, int flags_, MemberDef*) {
-
   String file_act = GetOptionAfter("FILE_DIALOG_");
   taiFileDialogField::FileActionType fact = taiFileDialogField::FA_LOAD;
   if(file_act == "SAVE")
@@ -2661,14 +2657,9 @@ taiData* taiFileDialogArgType::GetDataRep_impl(IDataHost* host_, taiData* par,
 
   String fext = String(".") + GetOptionAfter("EXT_");
   String ftyp = GetOptionAfter("FILETYPE_");
-  bool cmprs = GetHasOption("COMPRESS");
+  int cmpr = GetHasOption("COMPRESS")? 1 : -1;
 
-  int cmpr = -1;
-  if(cmprs)
-    cmpr = 1;
-
-  return new taiFileDialogField(meth->type, host_, par, gui_parent_, flags_, fact, fext,
-                                ftyp, cmpr);
+  return new taiFileDialogField(meth->type, host_, par, gui_parent_, flags_, fact, fext, ftyp, cmpr);
 }
 
 void taiFileDialogArgType::GetImage_impl(taiData* dat, const void* base){

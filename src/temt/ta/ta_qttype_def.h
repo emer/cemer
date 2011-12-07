@@ -120,7 +120,7 @@ public:
 
   virtual taiData*      GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
         taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
-  // get taiData rep of type -- delegates to _impl of type, except if readonly and it can't handle ro
+  // get taiData rep of type -- delegates to _impl of type, except if readonly and the type can't handle ro
   virtual bool          CanBrowse() {return false;} // only things from taBase classes up can be browse nodes
 
   virtual void          GetImage(taiData* dat, const void* base);
@@ -133,11 +133,13 @@ public:
     m_par_obj_type = pob_typ;
   }
   // called by taiMember::GetImage_impl and GetValue_impl prior to calling respective functions
+
   void                  ClearCurParObjType() {
     m_par_obj_base = NULL;
     m_par_obj_type = NULL;
   }
   // called by taiMember::GetImage_impl and GetValue_impl after calling respective functions
+
   void*                 GetCurParObjBase() { return m_par_obj_base; }
   void*                 GetCurParObjType() { return m_par_obj_type; }
 
@@ -145,7 +147,8 @@ public:
   void                  Destroy();
 
 protected:
-  virtual bool          isReadOnly(taiData* dat, IDataHost* host_ = NULL); // works in both GetDataRep, passing par=dat, as well as GetImage/GetValue, passing dat=dat and dlg=NULL
+  virtual bool          isReadOnly(taiData* dat, IDataHost* host_ = NULL);
+  // works in both GetDataRep, passing par=dat, as well as GetImage/GetValue, passing dat=dat and dlg=NULL
   virtual taiData*      GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
   // default behavior uses a taiField type
   virtual taiData*      GetDataRepInline_impl(IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_, MemberDef* mbr_);
