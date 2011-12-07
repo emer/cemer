@@ -3800,7 +3800,7 @@ public:
   virtual bool	UnitInhib(LeabraNetwork* net, int n_inhib_units=10);
   // #MENU_BUTTON configures unit-based inhibition for all layers in the network
 
-  virtual bool 	Hippo(LeabraNetwork* net);
+  virtual bool 	Hippo(LeabraNetwork* net, int n_ec_slots = 8);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure standard Hippocampus system, using specialized QuadPhase learning mechanisms
 
   virtual bool 	TD(LeabraNetwork* net, bool bio_labels = false, bool td_mod_all = false);

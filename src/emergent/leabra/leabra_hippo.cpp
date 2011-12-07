@@ -452,7 +452,7 @@ void XCalCHLConSpec::Initialize() {
 //              Wizard          //
 //////////////////////////////////
 
-bool LeabraWizard::Hippo(LeabraNetwork* net) {
+bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = (LeabraNetwork*)proj->GetNewNetwork();
@@ -496,8 +496,9 @@ bool LeabraWizard::Hippo(LeabraNetwork* net) {
   HippoEncoderConSpec* ecout_ca1_cons = (HippoEncoderConSpec*)ecca1_cons->FindMakeChild("EC_out_CA1", &TA_HippoEncoderConSpec);
   HippoEncoderConSpec* ecin_ecout_cons = (HippoEncoderConSpec*)ecca1_cons->FindMakeChild("EC_in_EC_out", &TA_HippoEncoderConSpec);
   HippoEncoderConSpec* ecout_ecin_cons = (HippoEncoderConSpec*)ecca1_cons->FindMakeChild("EC_out_EC_in", &TA_HippoEncoderConSpec);
-  HippoEncoderConSpec* in_ecin_cons = (HippoEncoderConSpec*)ecca1_cons->FindMakeChild("Input_EC_in", &TA_HippoEncoderConSpec);
-  HippoEncoderConSpec* ecout_out_cons = (HippoEncoderConSpec*)ecca1_cons->FindMakeChild("EC_out_Output", &TA_HippoEncoderConSpec);
+  LeabraConSpec* in_ecin_cons = (LeabraConSpec*)ecca1_cons->FindMakeChild("Input_EC_in", &TA_LeabraConSpec);
+  LeabraConSpec* ecout_out_cons = (LeabraConSpec*)ecca1_cons->FindMakeChild("EC_out_Output", &TA_LeabraConSpec);
+  LeabraConSpec* tosubic_cons = (LeabraConSpec*)ecca1_cons->FindMakeChild("ToSubic", &TA_LeabraConSpec);
 
   // connection specs
   XCalCHLConSpec* hip_cons = (XCalCHLConSpec*)hipspec->FindMakeSpec("HippoConSpecs", &TA_XCalCHLConSpec);
@@ -551,211 +552,60 @@ bool LeabraWizard::Hippo(LeabraNetwork* net) {
 
   // FindMakePrjn(Layer* recv, Layer* send,
 
-//   net->FindMakePrjn(snc, pvi, onetoone, marker_cons);
-//   net->FindMakePrjn(snc, lve, onetoone, marker_cons);
-//   net->FindMakePrjn(snc, lvi, onetoone, marker_cons);
-//   net->FindMakePrjn(snc, pvr, onetoone, marker_cons);
-//   net->FindMakePrjn(snc, nv,  onetoone, marker_cons);
-//   net->FindMakePrjn(snc, patch,  onetoone, marker_cons);
+  net->FindMakePrjn(ecin, ecout, onetoone, ecout_ecin_cons);
 
-//   // patch has same basic connectivity as lve
-//   net->FindMakePrjn(patch, pvr, onetoone, marker_cons);
+  net->FindMakePrjn(ecout, ecin, onetoone, ecin_ecout_cons);
+  net->FindMakePrjn(ecout, ca1, gponetoone, ca1_ecout_cons);
 
-//   if(patch_new) {
-//     for(i=0;i<input_lays.size;i++) {
-//       Layer* il = (Layer*)input_lays[i];
-//       net->FindMakePrjn(patch, il, fullprjn, lve_cons);
-//     }
-//   }
+  net->FindMakePrjn(dg, ecin, ppath_prjn, ppath_cons);
 
-//   net->RemovePrjn(matrix_m, vta); // no more vta prjn!
-//   net->FindMakePrjn(matrix_m, snc, gponetoone, marker_cons);
+  net->FindMakePrjn(ca3, ecin, ppath_prjn, ppath_cons);
+  net->FindMakePrjn(ca3, dg, mossy_prjn, mossy_cons);
+  net->FindMakePrjn(ca3, ca3, fullprjn, ca3ca3_cons);
 
-//   net->FindMakePrjn(snrthal_m, matrix_m, gponetoone, marker_cons);
-//   net->FindMakePrjn(pfc_m, snrthal_m, gponetoone, marker_cons);
-//   net->FindMakePrjn(matrix_m, snrthal_m, gponetoone, marker_cons);
-//   net->FindMakePrjn(matrix_m, patch, gponetoone, marker_cons); // for noise
+  net->FindMakePrjn(ca1, ecin, gponetoone, ecin_ca1_cons);
+  net->FindMakePrjn(ca1, ecout, gponetoone, ecout_ca1_cons);
+  net->FindMakePrjn(ca1, ca3, fullprjn, ca3ca1_cons);
 
-//   if(out_gate) {
-//     net->RemovePrjn(matrix_o, snc); // transiently made that so nuke it if there
-//     net->FindMakePrjn(matrix_o, vta, fullprjn, marker_cons);
-//     // output gets from vta, not snc
+  net->FindMakePrjn(subic, ecin, onetoone, tosubic_cons);
+  net->FindMakePrjn(subic, ecout, onetoone, tosubic_cons);
 
-//     net->FindMakePrjn(snrthal_o, matrix_o, gponetoone, marker_cons);
-//     net->FindMakePrjn(pfc_o, snrthal_o, gponetoone, marker_cons);
-//     net->FindMakePrjn(matrix_o, snrthal_o, gponetoone, marker_cons);
+  //////////////////////////////////////////////////////////////////////////////////
+  // set positions & geometries
 
-//     net->FindMakePrjn(pfc_o, pfc_m, onetoone, marker_cons);
+  ecin->unit_groups = true;
+  ecin->SetNUnitGroups(n_ec_slots);
+  ecin->SetNUnits(49);
 
-// //     net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
-// //     net->FindMakePrjn(matrix_o, pfc_m, gponetoone, mofmpfc_cons);
+  ecout->unit_groups = true;
+  ecout->SetNUnitGroups(n_ec_slots);
+  ecout->SetNUnits(49);
 
-//     net->FindMakeSelfPrjn(pfc_m, pfc_selfps, pfc_self);
-//     //  net->FindMakeSelfPrjn(pfc_m, intra_pfcps, intra_pfc);
+  ca1->unit_groups = true;
+  ca1->SetNUnitGroups(n_ec_slots);
+  ca1->SetNUnits(100);
 
-//     // this part in particular doesn't make sense for pfc_o only..
-//     // critics need up reflect updating!
-//     net->FindMakePrjn(pvr, pfc_m, fullprjn, pvr_cons);
-//     net->FindMakePrjn(pvi, pfc_m, fullprjn, pvi_cons);
-//     net->FindMakePrjn(lve, pfc_m, pfc_lv_prjn, lve_cons);
-//     net->FindMakePrjn(lvi, pfc_m, pfc_lv_prjn, lvi_cons);
-//     net->FindMakePrjn(nv,  pfc_m, fullprjn, nv_cons);
+  dg->SetNUnits(1000);
 
-//     net->FindMakePrjn(patch, pfc_m, gponetoone, lve_cons);
-//   }
-//   else {                        // !out_gate
-// //     net->FindMakePrjn(matrix_m, pfc_m, gponetoone, mfmpfc_cons);
+  ca3->SetNUnits(225);
 
-//     net->FindMakeSelfPrjn(pfc_m, pfc_selfps, pfc_self);
-//     //  net->FindMakeSelfPrjn(pfc, intra_pfcps, intra_pfc);
+  subic->SetNUnits(12);
+  subic->un_geom.x = 12;
+  subic->un_geom.y = 1;
 
-//     net->FindMakePrjn(pvr, pfc_m, fullprjn, pvr_cons);
-//     net->FindMakePrjn(pvi, pfc_m, fullprjn, pvi_cons);
-//     net->FindMakePrjn(lve, pfc_m, pfc_lv_prjn, lve_cons);
-//     net->FindMakePrjn(lvi, pfc_m, pfc_lv_prjn, lvi_cons);
-//     net->FindMakePrjn(nv,  pfc_m, fullprjn, nv_cons);
+  hip_laygp->pos.SetXYZ(0, 0, 1);
+  ecin->pos.SetXYZ(0, 0, 0);
+  ecout->pos.SetXYZ(35, 0, 0);
+  subic->pos.SetXYZ(70, 0, 0);
+  dg->pos.SetXYZ(0, 0, 1);
+  ca3->pos.SetXYZ(0, 0, 2);
+  ca1->pos.SetXYZ(35, 0, 2);
 
-//     net->FindMakePrjn(patch, pfc_m, gponetoone, lve_cons);
-//   }
+  //////////////////////////////////////////////////////////////////////////////////
+  // build and check
 
-//   for(i=0;i<input_lays.size;i++) {
-//     Layer* il = (Layer*)input_lays[i];
-//     if(pfc_m_new) {
-//       if(pfc_learns)
-//         net->FindMakePrjn(pfc_m, il, fullprjn, topfc_cons);
-//       else
-//         net->FindMakePrjn(pfc_m, il, input_pfc, topfc_cons);
-//     }
-//     if(matrix_m_new)
-//       net->FindMakePrjn(matrix_m, il, fullprjn, matrix_cons);
-//     if(matrix_o_new)
-//       net->FindMakePrjn(matrix_o, il, fullprjn, matrixo_cons);
-//   }
-//   for(i=0;i<hidden_lays.size;i++) {
-//     Layer* hl = (Layer*)hidden_lays[i];
-//     if(out_gate) {
-//       net->FindMakePrjn(hl, pfc_o, fullprjn, fmpfcout_cons);
-//       net->FindMakePrjn(hl, pfc_m, fullprjn, fmpfcmnt_cons);
-//     }
-//     else {
-//       net->FindMakePrjn(hl, pfc_m, fullprjn, learn_cons);
-//     }
-//   }
-//   if(pfc_m_new && pfc_learns) {
-//     for(i=0;i<output_lays.size;i++) {
-//       Layer* ol = (Layer*)output_lays[i];
-//       net->FindMakePrjn(pfc_m, ol, fullprjn, topfc_cons);
-//     }
-//   }
-
-//   //////////////////////////////////////////////////////////////////////////////////
-//   // set positions & geometries
-
-//   int n_lv_u;           // number of pvlv-type units
-//   if(lvesp->scalar.rep == ScalarValSpec::LOCALIST)
-//     n_lv_u = 4;
-//   else if(lvesp->scalar.rep == ScalarValSpec::GAUSSIAN)
-//     n_lv_u = 12;
-//   else
-//     n_lv_u = 21;
-
-//   lay_set_geom(lve, 1); // patch has the per-stripe lve guys basically
-//   lay_set_geom(lvi, 1);
-//   lvesp->SetUnique("inhib_group", true);
-//   lvesp->SetUnique("gp_kwta", true);
-//   lvisp->SetUnique("inhib_group", false);
-//   lvisp->SetUnique("gp_kwta", false);
-//   lvesp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
-//   lvesp->gp_kwta.k_from = KWTASpec::USE_K;
-//   lvesp->gp_kwta.k = 1;
-
-//   if(patch_new) {
-//     patch->pos.SetXYZ(vta->pos.x+3, 0, 0);
-//   }
-//   if(snc_new) {
-//     snc->pos.SetXYZ(vta->pos.x+3 + n_lv_u, 4, 0);
-//   }
-
-//   if(patch->un_geom.n != n_lv_u) { patch->un_geom.n = n_lv_u; patch->un_geom.x = n_lv_u; patch->un_geom.y = 1; }
-
-//   lay_set_geom(patch, n_stripes);
-//   lay_set_geom(snc, n_stripes, 1); // one unit
-
-//   if(pfc_m_new) {
-//     pfc_m->pos.SetXYZ(mx_z2 + 1, 0, 2);
-//     if(!pfc_learns && (input_lays.size > 0)) {
-//       Layer* il = (Layer*)input_lays[0];
-//       pfc_m->un_geom = il->un_geom;
-//     }
-//     else {
-//       pfc_m->un_geom.n = 30; pfc_m->un_geom.x = 5; pfc_m->un_geom.y = 6;
-//     }
-//   }
-//   lay_set_geom(pfc_m, n_stripes);
-
-//   if(matrix_m_new) {
-//     matrix_m->pos.SetXYZ(mx_z1+1, 0, 1);
-//     matrix_m->un_geom.n = 28; matrix_m->un_geom.x = 4; matrix_m->un_geom.y = 7;
-//   }
-//   lay_set_geom(matrix_m, n_stripes);
-
-//   if(snrthal_m_new) {
-//     snrthal_m->pos.SetXYZ(patch->pos.x + (patch->un_geom.x +1) * patch->gp_geom.x +1, 0, 0);
-//   }
-//   lay_set_geom(snrthal_m, n_stripes, 1);
-
-//   // this is here, to allow it to get disp_geom for laying out the pfc and matrix guys!
-//   Hippo_SetNStripes(net, n_stripes);
-
-//   if(out_gate) {
-//     if(pfc_o_new) {
-//       pfc_o->pos.z = pfc_m->pos.z; pfc_o->pos.y = pfc_m->pos.y;
-//       pfc_o->pos.x = pfc_m->pos.x + pfc_m->disp_geom.x + 2;
-//       if(!pfc_learns && (input_lays.size > 0)) {
-//         Layer* il = (Layer*)input_lays[0];
-//         pfc_o->un_geom = il->un_geom;
-//       }
-//       else {
-//         pfc_o->un_geom = pfc_m->un_geom;
-//       }
-//     }
-//     lay_set_geom(pfc_o, n_stripes);
-
-//     if(matrix_o_new) {
-//       matrix_o->pos.z = matrix_m->pos.z; matrix_o->pos.y = matrix_m->pos.y;
-//       matrix_o->pos.x = matrix_m->pos.x + matrix_m->disp_geom.x + 2;
-//       matrix_o->un_geom.n = 28; matrix_o->un_geom.x = 4; matrix_o->un_geom.y = 7;
-//     }
-//     lay_set_geom(matrix_o, n_stripes);
-
-//     snrthal_o->un_geom.n = 1;
-//     if(snrthal_o_new) {
-//       snrthal_o->pos.SetXYZ(snrthal_m->pos.x + (snrthal_m->gp_geom.x*2)+1, 0, 0);
-//     }
-//     lay_set_geom(snrthal_o, n_stripes);
-//   }
-
-//   if(new_bg_laygp) {
-//     bg_laygp->pos.z = 0;
-//   }
-//   if(new_pfc_laygp) {
-//     pfc_laygp->pos.z = 2;
-//   }
-
-//   //////////////////////////////////////////////////////////////////////////////////
-//   // build and check
-
-//   Hippo_SetNStripes(net, n_stripes);
-//   Hippo_Defaults(net, pfc_learns); // sets all default params and gets selectedits
-
-//   net->LayerPos_Cleanup();
-
-//   // move back!
-//   if(new_bg_laygp || new_pfc_laygp) {
-//     bg_laygp->pos.z = 0;
-//     pfc_laygp->pos.z = 2;
-//     net->RebuildAllViews();     // trigger update
-//   }
+  net->Build();
+  net->LayerPos_Cleanup();
 
 //   taMisc::CheckConfigStart(false, false);
 
@@ -786,15 +636,15 @@ bool LeabraWizard::Hippo(LeabraNetwork* net) {
 //   }
 //   taMisc::Confirm(msg);
 
-//   for(int j=0;j<net->specs.leaves;j++) {
-//     BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
-//     sp->UpdateAfterEdit();
-//   }
+  for(int j=0;j<net->specs.leaves;j++) {
+    BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
+    sp->UpdateAfterEdit();
+  }
 
-//   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-//   if(proj) {
-//     proj->undo_mgr.SaveUndo(net, "Wizard::Hippo -- actually saves network specifically");
-//   }
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  if(proj) {
+    proj->undo_mgr.SaveUndo(net, "Wizard::Hippo -- actually saves network specifically");
+  }
   return true;
 }
 
