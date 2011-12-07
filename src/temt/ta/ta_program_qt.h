@@ -37,191 +37,185 @@
 
 class TA_API taiDynEnumMember : public taiMember {
   // an int member with #DYNENUM_ON_xxx flag indicating DynEnumType guy
+  TAI_MEMBER_SUBCLASS(taiDynEnumMember, taiMember);
 public:
-  int		BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
+  int           BidForMember(MemberDef* md, TypeDef* td);
+  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
 
-
-  static void  	UpdateDynEnumCombo(taiComboBox* cb, DynEnum& de);
+  static void   UpdateDynEnumCombo(taiComboBox* cb, DynEnum& de);
   // helper function for populating combobox with dyn enum values
-  static void  	UpdateDynEnumBits(taiBitBox* cb, DynEnum& de);
+  static void   UpdateDynEnumBits(taiBitBox* cb, DynEnum& de);
   // helper function for populating bit box with dyn enum values
 
-  TAQT_MEMBER_INSTANCE(taiDynEnumMember, taiMember);
 protected:
   override void GetImage_impl(taiData* dat, const void* base);
-  override void	GetMbrValue_impl(taiData* dat, void* base);
+  override void GetMbrValue_impl(taiData* dat, void* base);
 
-  bool		isBit; // true if a bits type enum
+  bool          isBit; // true if a bits type enum
+
 private:
-  void		Initialize();
-  void 		Destroy() {};
+  void          Initialize();
+  void          Destroy() {};
 };
 
 class TA_API taiProgVarIntValMember : public taiMember {
   // the int_val member in a ProgVar -- switches from plain int to hard_enum
+  TAI_MEMBER_SUBCLASS(taiProgVarIntValMember, taiMember);
 public:
-  int		BidForMember(MemberDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
+  int           BidForMember(MemberDef* md, TypeDef* td);
+  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
-
-  TAQT_MEMBER_INSTANCE(taiProgVarIntValMember, taiMember);
 protected:
   override void GetImage_impl(taiData* dat, const void* base);
-  override void	GetMbrValue_impl(taiData* dat, void* base);
-
+  override void GetMbrValue_impl(taiData* dat, void* base);
 private:
-  void		Initialize();
-  void 		Destroy() {};
+  void          Initialize();
+  void          Destroy() {};
 };
 
 class TA_API tabProgramViewType: public tabOViewType {
-INHERITED(tabOViewType)
+  TAI_TYPEBASE_SUBCLASS(tabProgramViewType, tabOViewType) //
 public:
-  override int		BidForView(TypeDef*);
-  void			Initialize() {}
-  void			Destroy() {}
-  TA_VIEW_TYPE_FUNS(tabProgramViewType, tabOViewType) //
+  override int          BidForView(TypeDef*);
+  void                  Initialize() {}
+  void                  Destroy() {}
 protected:
-//nn  override taiDataLink*	CreateDataLink_impl(taBase* data_);
-  override void		CreateDataPanel_impl(taiDataLink* dl_);
+  override void         CreateDataPanel_impl(taiDataLink* dl_);
 };
 
 class TA_API tabProgramGroupViewType: public tabGroupViewType {
-INHERITED(tabGroupViewType)
+  TAI_TYPEBASE_SUBCLASS(tabProgramGroupViewType, tabGroupViewType) //
 public:
-  override int		BidForView(TypeDef*);
-  void			Initialize() {}
-  void			Destroy() {}
-  TA_VIEW_TYPE_FUNS(tabProgramGroupViewType, tabGroupViewType) //
+  override int          BidForView(TypeDef*);
+  void                  Initialize() {}
+  void                  Destroy() {}
 protected:
-//nn  override taiDataLink*	CreateDataLink_impl(taBase* data_);
-  override void		CreateDataPanel_impl(taiDataLink* dl_);
+  override void         CreateDataPanel_impl(taiDataLink* dl_);
 };
 
-class TA_API iProgramEditor: public QWidget, public virtual IDataHost, 
-			     public virtual IDataLinkClient {
+class TA_API iProgramEditor: public QWidget, public virtual IDataHost,
+                             public virtual IDataLinkClient {
   // #NO_CSS widget for editing entire programs
-INHERITED(QWidget)
+  INHERITED(QWidget)
   Q_OBJECT
 public:
 #ifndef __MAKETA__
   enum CustomEventType { // note: just copied from taiDataHost, not all used
-    CET_RESHOW		= QEvent::User + 1,  // uses ReShowEvent
+    CET_RESHOW          = QEvent::User + 1,  // uses ReShowEvent
     CET_GET_IMAGE,
     CET_APPLY
   };
 #endif
 
-  iBrowseHistory*	brow_hist;
-  taiAction* 		historyBackAction;
-  taiAction* 		historyForwardAction;
-  
-  QVBoxLayout*		layOuter;
-  QScrollArea*		  scrBody;
-  iStripeWidget*	  body; // container for the actual taiData items
-  iMethodButtonMgr*	    meth_but_mgr; // note: not a widget
-  QHBoxLayout*		  layButtons;
-  QToolBar*		    tb; // for the history buttons
-  HiLightButton*	    btnHelp;
-  HiLightButton*	    btnApply;
-  HiLightButton*	    btnRevert;
-  iTreeView*		  items;
+  iBrowseHistory*       brow_hist;
+  taiAction*            historyBackAction;
+  taiAction*            historyForwardAction;
+
+  QVBoxLayout*          layOuter;
+  QScrollArea*            scrBody;
+  iStripeWidget*          body; // container for the actual taiData items
+  iMethodButtonMgr*         meth_but_mgr; // note: not a widget
+  QHBoxLayout*            layButtons;
+  QToolBar*                 tb; // for the history buttons
+  HiLightButton*            btnHelp;
+  HiLightButton*            btnApply;
+  HiLightButton*            btnRevert;
+  iTreeView*              items;
 #ifndef __MAKETA__
-  QPointer<QWidget> 	first_tab_foc;	// first tab focus widget
+  QPointer<QWidget>     first_tab_foc;  // first tab focus widget
 #endif
-  
-  bool			read_only; // set true if we are
-#ifndef __MAKETA__ 
+
+  bool                  read_only; // set true if we are
+#ifndef __MAKETA__
   QPointer<iMainWindowViewer> m_window; // set this so cliphandler can be set for controls
-#endif 
-  int			editLines() const {return m_editLines;} // number of edit lines (min 4) 
-  void			setEditLines(int val);
-  void			setEditNode(taBase* value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
-  void 			setEditBgColor(const iColor& value); // set bg for edit, null for default
-  void			defEditBgColor(); // set default color
-  void			setShow(int value); // only used by expert toggle
-  iTreeViewItem* 	AssertBrowserItem(taiDataLink* link);
-  virtual void		Refresh(); // manual refresh
-  virtual QWidget*	firstTabFocusWidget();
+#endif
+  int                   editLines() const {return m_editLines;} // number of edit lines (min 4)
+  void                  setEditLines(int val);
+  void                  setEditNode(taBase* value, bool autosave = true); // sets the object to show editor for; autosaves previous if requested
+  void                  setEditBgColor(const iColor& value); // set bg for edit, null for default
+  void                  defEditBgColor(); // set default color
+  void                  setShow(int value); // only used by expert toggle
+  iTreeViewItem*        AssertBrowserItem(taiDataLink* link);
+  virtual void          Refresh(); // manual refresh
+  virtual QWidget*      firstTabFocusWidget();
 
   iProgramEditor(QWidget* parent = NULL); //
   ~iProgramEditor();
 
 public slots:
-  void			Apply();
-  void			Revert();
-  void			Help();
-  void			ExpandAll(); // expands all, and resizes columns
-  void		 	slot_AssertBrowserItem(taiDataLink* link)
+  void                  Apply();
+  void                  Revert();
+  void                  Help();
+  void                  ExpandAll(); // expands all, and resizes columns
+  void                  slot_AssertBrowserItem(taiDataLink* link)
     {AssertBrowserItem(link);}
 
-  
+
 public: // ITypedObject i/f
-  void*			This() {return this;} 
-  TypeDef*		GetTypeDef() const {return &TA_iProgramEditor;}
-  
-public: // IDataLinkClient i/f 
-  void			DataLinkDestroying(taDataLink* dl); 
-  void			DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
+  void*                 This() {return this;}
+  TypeDef*              GetTypeDef() const {return &TA_iProgramEditor;}
+
+public: // IDataLinkClient i/f
+  void                  DataLinkDestroying(taDataLink* dl);
+  void                  DataDataChanged(taDataLink* dl, int dcr, void* op1, void* op2);
 
 public: // IDataHost i/f -- some delegate up to mommy
-  const iColor	 	colorOfCurRow() const; // #IGNORE 
-  bool  		HasChanged() {return m_modified;}	
-  bool			isConstructed() {return true;}
-  bool			isModal() {return false;} // never for us
-  bool			isReadOnly() {return read_only;}
-  taMisc::ShowMembs 	show() const {return (taMisc::ShowMembs)m_show;} 
+  const iColor          colorOfCurRow() const; // #IGNORE
+  bool                  HasChanged() {return m_modified;}
+  bool                  isConstructed() {return true;}
+  bool                  isModal() {return false;} // never for us
+  bool                  isReadOnly() {return read_only;}
+  taMisc::ShowMembs     show() const {return (taMisc::ShowMembs)m_show;}
     // used by polydata
-  iMainWindowViewer* 	window() const;
-  void*			Root() const {return (void*)base;} // base of the object
-  taBase*		Base() const {return base;} // root of the object, if a taBase 
-  TypeDef*		GetRootTypeDef() const; // TypeDef on the base, for casting
-  void			GetValue();
-  void			GetImage();
-  void			Changed(); // called by embedded item to indicate contents have changed
-  void			Apply_Async();
+  iMainWindowViewer*    window() const;
+  void*                 Root() const {return (void*)base;} // base of the object
+  taBase*               Base() const {return base;} // root of the object, if a taBase
+  TypeDef*              GetRootTypeDef() const; // TypeDef on the base, for casting
+  void                  GetValue();
+  void                  GetImage();
+  void                  Changed(); // called by embedded item to indicate contents have changed
+  void                  Apply_Async();
 
 protected:
-  int			ln_sz; // const, the line size, without margins
-  int			ln_vmargin; // const, margin, typ 1 
-  int 			line_ht; // const, size of each stripe
-  int			m_editLines;
-  int			m_changing; // for suppressing spurious notifies
-  iColor		bg_color; // for edit area
-  iColor		bg_color_dark; // for edit area
-  bool			m_modified;
-  bool			warn_clobber; // set if we get a notify and are already modified
-  bool			apply_req;
-  taBase*		base; // no need for smartref, because we are a dlc
-  MembSet_List		membs; // the member items, one set per line
-  
-  int 			row;
-  int			m_show;
-  MemberDef*		sel_item_mbr; // used (and only valid!) for context menus
-  taBase*		sel_item_base; // used (and only valid!) for context menus
- 
-  override void 	customEvent(QEvent* ev_);
-  override bool 	eventFilter(QObject *obj, QEvent *event);
+  int                   ln_sz; // const, the line size, without margins
+  int                   ln_vmargin; // const, margin, typ 1
+  int                   line_ht; // const, size of each stripe
+  int                   m_editLines;
+  int                   m_changing; // for suppressing spurious notifies
+  iColor                bg_color; // for edit area
+  iColor                bg_color_dark; // for edit area
+  bool                  m_modified;
+  bool                  warn_clobber; // set if we get a notify and are already modified
+  bool                  apply_req;
+  taBase*               base; // no need for smartref, because we are a dlc
+  MembSet_List          membs; // the member items, one set per line
+
+  int                   row;
+  int                   m_show;
+  MemberDef*            sel_item_mbr; // used (and only valid!) for context menus
+  taBase*               sel_item_base; // used (and only valid!) for context menus
+
+  override void         customEvent(QEvent* ev_);
+  override bool         eventFilter(QObject *obj, QEvent *event);
   // event filter to trigger apply button on Ctrl+Return
 
-  virtual void		Base_Remove(); // removes base and deletes the current set of edit controls
-  virtual void		Base_Add(); // adds controls etc for base
-  bool			ShowMember(MemberDef* md);
-  
-  void			InternalSetModified(bool value); // does all the gui config
-  void 			UpdateButtons();
-  void			Controls_Remove(); // when Base_Remove or lines changes
-  void			Controls_Add(); // when Base_Add or lines changes
-  
+  virtual void          Base_Remove(); // removes base and deletes the current set of edit controls
+  virtual void          Base_Add(); // adds controls etc for base
+  bool                  ShowMember(MemberDef* md);
+
+  void                  InternalSetModified(bool value); // does all the gui config
+  void                  UpdateButtons();
+  void                  Controls_Remove(); // when Base_Remove or lines changes
+  void                  Controls_Add(); // when Base_Add or lines changes
+
 protected slots:
-  void			label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
-  void			items_Notify(ISelectableHost* src, int op); // note: NULL if none
-  void 			DoSelectForEdit(QAction* act);
-  
+  void                  label_contextMenuInvoked(iLabel* sender, QContextMenuEvent* e); // note, it MUST have this name
+  void                  items_Notify(ISelectableHost* src, int op); // note: NULL if none
+  void                  DoSelectForEdit(QAction* act);
+
 private:
-  void			Init();
+  void                  Init();
 };
 
 class TA_API iProgramViewScriptPanel: public iDataPanelFrame {
@@ -229,37 +223,37 @@ class TA_API iProgramViewScriptPanel: public iDataPanelFrame {
   Q_OBJECT
 INHERITED(iDataPanelFrame)
 public:
-#ifndef __MAKETA__    
-  NumberedTextView*	vs; // the view script widget
+#ifndef __MAKETA__
+  NumberedTextView*     vs; // the view script widget
 #endif
-  
-  Program*		prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
-  override String	panel_type() const {return "css Script";}
 
-  override bool		HasChanged(); // 'true' if user has unsaved changes
-  void			FillList();
+  Program*              prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
+  override String       panel_type() const {return "css Script";}
 
-  override QWidget*	firstTabFocusWidget();
+  override bool         HasChanged(); // 'true' if user has unsaved changes
+  void                  FillList();
+
+  override QWidget*     firstTabFocusWidget();
 
   iProgramViewScriptPanel(taiDataLink* dl_);
   ~iProgramViewScriptPanel();
 
 public slots:
   // these all connect from corresponding signals on the NumberBar or NumberedTextView
-  void	   lineFlagsUpdated(int lineno, int flags);
-  void	   viewSource(int lineno);
-  void	   mouseHover(const QPoint &pos, int lineno, const QString& word);
+  void     lineFlagsUpdated(int lineno, int flags);
+  void     viewSource(int lineno);
+  void     mouseHover(const QPoint &pos, int lineno, const QString& word);
 
 public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iProgramViewScriptPanel;}
-  override bool		ignoreDataChanged() const;
+  override void*        This() {return (void*)this;}
+  override TypeDef*     GetTypeDef() const {return &TA_iProgramViewScriptPanel;}
+  override bool         ignoreDataChanged() const;
 
 protected:
-  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-  override void		OnWindowBind_impl(iTabViewer* itv);
-  override void		UpdatePanel_impl();
-  override void		ResolveChanges_impl(CancelOp& cancel_op);
+  override void         DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void         OnWindowBind_impl(iTabViewer* itv);
+  override void         UpdatePanel_impl();
+  override void         ResolveChanges_impl(CancelOp& cancel_op);
 };
 
 class TA_API iProgramPanelBase: public iDataPanelFrame {
@@ -267,27 +261,27 @@ class TA_API iProgramPanelBase: public iDataPanelFrame {
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
-  iProgramEditor*	pe;
-  
-  override bool		HasChanged_impl(); // 'true' if user has unsaved changes
-  void			FillList();
-  override QWidget*	firstTabFocusWidget();
+  iProgramEditor*       pe;
+
+  override bool         HasChanged_impl(); // 'true' if user has unsaved changes
+  void                  FillList();
+  override QWidget*     firstTabFocusWidget();
 
   iProgramPanelBase(taiDataLink* dl_);
-  
+
 public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;}
-//  override TypeDef*	GetTypeDef() const {return &TA_iProgramPanel;}
-  
+  override void*        This() {return (void*)this;}
+//  override TypeDef*   GetTypeDef() const {return &TA_iProgramPanel;}
+
 protected:
-  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-  override void		OnWindowBind_impl(iTabViewer* itv);
-  override void		UpdatePanel_impl();
-  override void		ResolveChanges_impl(CancelOp& cancel_op);
-  
+  override void         DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void         OnWindowBind_impl(iTabViewer* itv);
+  override void         UpdatePanel_impl();
+  override void         ResolveChanges_impl(CancelOp& cancel_op);
+
 protected slots:
-  void			mb_Expert(bool checked); // expert button on minibar
-  void			mb_Lines(int val); // lines spin on minibar
+  void                  mb_Expert(bool checked); // expert button on minibar
+  void                  mb_Lines(int val); // lines spin on minibar
 };
 
 
@@ -295,22 +289,22 @@ class TA_API iProgramPanel: public iProgramPanelBase {
 INHERITED(iProgramPanelBase)
   Q_OBJECT
 public:
-  Program*		prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
-  override String	panel_type() const {return "Edit Program";}
+  Program*              prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
+  override String       panel_type() const {return "Edit Program";}
 
-  void			FillList();
+  void                  FillList();
 
   iProgramPanel(taiDataLink* dl_);
-  
+
 public: // IDataLinkClient interface
-//  override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iProgramPanel;}
-  
+//  override void*      This() {return (void*)this;}
+  override TypeDef*     GetTypeDef() const {return &TA_iProgramPanel;}
+
 protected:
-  override void		OnWindowBind_impl(iTabViewer* itv);
-  
+  override void         OnWindowBind_impl(iTabViewer* itv);
+
 protected slots:
-  void			items_CustomExpandFilter(iTreeViewItem* item,
+  void                  items_CustomExpandFilter(iTreeViewItem* item,
     int level, bool& expand);
 };
 
@@ -318,20 +312,20 @@ class TA_API iProgramGroupPanel: public iProgramPanelBase {
 INHERITED(iProgramPanelBase)
   Q_OBJECT
 public:
-  Program_Group*	progGroup() {return (m_link) ? 
+  Program_Group*        progGroup() {return (m_link) ?
     (Program_Group*)(link()->data()) : NULL;}
-  override String	panel_type() const {return "Program Params";} 
+  override String       panel_type() const {return "Program Params";}
 
-  void			FillList();
+  void                  FillList();
 
   iProgramGroupPanel(taiDataLink* dl_);
-  
+
 public: // IDataLinkClient interface
-//  override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iProgramGroupPanel;}
-  
+//  override void*      This() {return (void*)this;}
+  override TypeDef*     GetTypeDef() const {return &TA_iProgramGroupPanel;}
+
 protected slots:
-  void			items_CustomExpandFilter(iTreeViewItem* item,
+  void                  items_CustomExpandFilter(iTreeViewItem* item,
     int level, bool& expand);
 };
 
@@ -345,7 +339,7 @@ public:
   iProgramToolBar(ToolBar* viewer, QWidget* parent = NULL)
   :iToolBar(viewer, parent){}
 protected:
-  override void		Constr_post(); 
+  override void         Constr_post();
 };
 
 class TA_API iProgramCtrlDataHost : public taiEditDataHost, public virtual IRefListClient {
@@ -359,36 +353,36 @@ public: //
 //     MS_GP,
     MS_ARGS,
     MS_VARS, // note: must ARGS..VARS must be in numerical sequence
-    
-    MS_CNT	= 4, 
-  };
-  
-  inline Program*	prog() const {return (Program*)root;}
 
-  
+    MS_CNT      = 4,
+  };
+
+  inline Program*       prog() const {return (Program*)root;}
+
+
   iProgramCtrlDataHost(Program* base, bool read_only_ = false,
-		       bool modal_ = false, QObject* parent = 0);
-  iProgramCtrlDataHost()		{ };
+                       bool modal_ = false, QObject* parent = 0);
+  iProgramCtrlDataHost()                { };
   ~iProgramCtrlDataHost();
 
   override bool ShowMember(MemberDef* md) const; //
 
 protected: //
   // we maintain several lists to simply mgt and notify handling
-  taBase_RefList	refs; // the data members from the Program
-  taBase_RefList	refs_struct; // structural guys: arg and var lists themselves, gp
-  override void		Enum_Members();
-  override void		Constr_Data_Labels();
-  override void 	Cancel_impl(); 
-  override MemberDef*	GetMemberPropsForSelect(int sel_idx, taBase** base,
+  taBase_RefList        refs; // the data members from the Program
+  taBase_RefList        refs_struct; // structural guys: arg and var lists themselves, gp
+  override void         Enum_Members();
+  override void         Constr_Data_Labels();
+  override void         Cancel_impl();
+  override MemberDef*   GetMemberPropsForSelect(int sel_idx, taBase** base,
     String& lbl, String& desc); // (use sel_item_idx) enables things like ProgCtrl to play
-  override void		GetValue_Membs_def();
-  override void		GetImage_Membs();
+  override void         GetValue_Membs_def();
+  override void         GetImage_Membs();
 
 public: // IRefListClient i/f
   TYPED_OBJECT(iProgramCtrlDataHost);
-  override void		DataDestroying_Ref(taBase_RefList* src, taBase* ta);
-  override void		DataChanged_Ref(taBase_RefList* src, taBase* ta,
+  override void         DataDestroying_Ref(taBase_RefList* src, taBase* ta);
+  override void         DataChanged_Ref(taBase_RefList* src, taBase* ta,
     int dcr, void* op1, void* op2);
 };
 
@@ -397,26 +391,26 @@ class TA_API iProgramCtrlPanel: public iDataPanelFrame {
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
-  iProgramCtrlDataHost*	pc;
-  
-  Program*		prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
-  override String	panel_type() const {return "Program Ctrl";}
+  iProgramCtrlDataHost* pc;
 
-  override bool		HasChanged_impl(); // 'true' if user has unsaved changes
-  void			FillList();
+  Program*              prog() {return (m_link) ? (Program*)(link()->data()) : NULL;}
+  override String       panel_type() const {return "Program Ctrl";}
+
+  override bool         HasChanged_impl(); // 'true' if user has unsaved changes
+  void                  FillList();
 
   iProgramCtrlPanel(taiDataLink* dl_);
   ~iProgramCtrlPanel();
-  
+
 public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iProgramCtrlPanel;}
-  
+  override void*        This() {return (void*)this;}
+  override TypeDef*     GetTypeDef() const {return &TA_iProgramCtrlPanel;}
+
 protected:
-  override void		DataChanged_impl(int dcr, void* op1, void* op2);
-  override void		OnWindowBind_impl(iTabViewer* itv);
-  override void		UpdatePanel_impl();
-  override void		ResolveChanges_impl(CancelOp& cancel_op);
+  override void         DataChanged_impl(int dcr, void* op1, void* op2);
+  override void         OnWindowBind_impl(iTabViewer* itv);
+  override void         UpdatePanel_impl();
+  override void         ResolveChanges_impl(CancelOp& cancel_op);
 };
 
 ////////////////////////////////////////////////////////
@@ -426,31 +420,30 @@ class TA_API taiProgLibElsButton : public taiListElsButton {
 // for prog lib items
 INHERITED(taiListElsButton)
 public:
-  override int		columnCount(int view) const;
-  override const String	headerText(int index, int view) const;
-  override const String	titleText();
+  override int          columnCount(int view) const;
+  override const String headerText(int index, int view) const;
+  override const String titleText();
 
   taiProgLibElsButton(TypeDef* typ, IDataHost* host, taiData* par,
-		      QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
+                      QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
 protected:
-  override void		BuildCategories_impl();
-  override int 		BuildChooser_0(taiItemChooser* ic, TABLPtr top_lst, 
-				       QTreeWidgetItem* top_item);
+  override void         BuildCategories_impl();
+  override int          BuildChooser_0(taiItemChooser* ic, TABLPtr top_lst,
+                                       QTreeWidgetItem* top_item);
 };
 
 class TA_API taiProgLibElArgType : public gpiFromGpArgType {
   // for ProgLibEl* ptr args
+  TAI_ARGTYPE_SUBCLASS(taiProgLibElArgType, gpiFromGpArgType);
 public:
-  int 		BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
-  taiData*	GetDataRep_impl(IDataHost* host_, taiData* par,
+  int           BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeDef* td);
+  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
-  void		GetImage_impl(taiData* dat, const void* base);
-  void		GetValue_impl(taiData* dat, void* base);
-
-  TAQT_ARGTYPE_INSTANCE(taiProgLibElArgType, gpiFromGpArgType);
+  void          GetImage_impl(taiData* dat, const void* base);
+  void          GetValue_impl(taiData* dat, void* base);
 private:
-  void		Initialize() {}
-  void		Destroy() {}
+  void          Initialize() {}
+  void          Destroy() {}
 };
 
 class TA_API taiProgStepButton : public taiMethodData {
@@ -458,38 +451,36 @@ class TA_API taiProgStepButton : public taiMethodData {
   Q_OBJECT
 public:
   override QWidget* GetButtonRep();
-  override bool	UpdateButtonRep();
+  override bool UpdateButtonRep();
 
   taiProgStepButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host, taiData* par,
       QWidget* gui_parent_, int flags_ = 0);
 
  public slots:
-  virtual void 	CallFunList(void* prg); // call step on given program (void* needed for callback)
-  virtual void  Step1(bool on);		// step level callbacks
+  virtual void  CallFunList(void* prg); // call step on given program (void* needed for callback)
+  virtual void  Step1(bool on);         // step level callbacks
   virtual void  Step5(bool on);
   virtual void  Step10(bool on);
 
  protected:
-  Program*	last_step;	// last program stepped -- used to reset step size when switching
-  int		new_step_n;	// if > 0, then this is the new value to apply to next program stepped
-  int		last_step_n;	// last step n value used
-  int 		step10_val;
-  int		n_step_progs;	// number of step progs we have rendered currently
-  QToolBar* 	tool_bar;
+  Program*      last_step;      // last program stepped -- used to reset step size when switching
+  int           new_step_n;     // if > 0, then this is the new value to apply to next program stepped
+  int           last_step_n;    // last step n value used
+  int           step10_val;
+  int           n_step_progs;   // number of step progs we have rendered currently
+  QToolBar*     tool_bar;
   QRadioButton* stp1;
   QRadioButton* stp5;
   QRadioButton* stp10;
 };
 
 class TA_API taiStepButtonMethod : public taiActuatorMethod {
-INHERITED(taiActuatorMethod)
+  TAI_METHOD_SUBCLASS(taiStepButtonMethod, taiActuatorMethod);
 public:
-  int			BidForMethod(MethodDef* md, TypeDef* td);
-
-  TAQT_METHOD_INSTANCE(taiStepButtonMethod, taiActuatorMethod);
+  int                   BidForMethod(MethodDef* md, TypeDef* td);
 protected:
-  taiMethodData*	GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
-  taiMethodData*	GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiMethodData*        GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
+  taiMethodData*        GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
 
 #endif

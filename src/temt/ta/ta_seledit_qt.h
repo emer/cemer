@@ -34,44 +34,40 @@
 
 
 class TA_API tabSelectEditViewType: public tabOViewType {
-INHERITED(tabOViewType)
+  TAI_TYPEBASE_SUBCLASS(tabSelectEditViewType, tabOViewType)
 public:
-  override int		BidForView(TypeDef*);
-  void			Initialize() {}
-  void			Destroy() {}
-  TA_VIEW_TYPE_FUNS(tabSelectEditViewType, tabOViewType) //
+  override int          BidForView(TypeDef*);
+  void                  Initialize() {}
+  void                  Destroy() {}
 protected:
-//nn  override taiDataLink*	CreateDataLink_impl(taBase* data_);
-  override void		CreateDataPanel_impl(taiDataLink* dl_);
+  override void         CreateDataPanel_impl(taiDataLink* dl_);
 };
-
-
 
 class TA_API iSelectEditDataHostBase : public taiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS edit only selected items from a range of ta-base objects
 INHERITED(taiEditDataHost)
   Q_OBJECT
 public:
-  SelectEdit*	sele;
+  SelectEdit*   sele;
 
-  override void		Constr_Body();
-  override taBase*	GetMembBase_Flat(int idx); // these are overridden by seledit
-  override taBase*	GetMethBase_Flat(int idx);
-  
+  override void         Constr_Body();
+  override taBase*      GetMembBase_Flat(int idx); // these are overridden by seledit
+  override taBase*      GetMethBase_Flat(int idx);
+
   iSelectEditDataHostBase(void* base, TypeDef* td, bool read_only_ = false,
-  	QObject* parent = 0);
-  iSelectEditDataHostBase()	{ Initialize();};
+        QObject* parent = 0);
+  iSelectEditDataHostBase()     { Initialize();};
   ~iSelectEditDataHostBase();
 
 protected:
-  override void 	Constr_Methods_impl();
+  override void         Constr_Methods_impl();
 
 protected slots:
-  virtual void		DoRemoveSelEdit() = 0;
-  virtual void		mnuRemoveMember_select(int idx); // #IGNORE removes the indicated member
-  virtual void		mnuRemoveMethod_select(int idx); // #IGNORE removes the indicated method
+  virtual void          DoRemoveSelEdit() = 0;
+  virtual void          mnuRemoveMember_select(int idx); // #IGNORE removes the indicated member
+  virtual void          mnuRemoveMethod_select(int idx); // #IGNORE removes the indicated method
 private:
-  void	Initialize();
+  void  Initialize();
 };
 
 //
@@ -80,25 +76,25 @@ class TA_API iSelectEditDataHost : public iSelectEditDataHostBase {
 INHERITED(iSelectEditDataHostBase)
   Q_OBJECT
 public:
-  
+
   iSelectEditDataHost(void* base, TypeDef* td, bool read_only_ = false,
-  	QObject* parent = 0);
-  iSelectEditDataHost()	{ Initialize();};
+        QObject* parent = 0);
+  iSelectEditDataHost() { Initialize();};
   ~iSelectEditDataHost();
 
 protected slots:
-  override void		DoRemoveSelEdit();
+  override void         DoRemoveSelEdit();
 
 protected:
-  override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
+  override void         ClearBody_impl();       // we also clear all the methods, and then rebuild them
 
-  override void		Constr_Data_Labels(); 
-  override void		FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
-  override void 	GetImage_Membs_def();
-  override void 	GetValue_Membs_def();
+  override void         Constr_Data_Labels();
+  override void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
+  override void         GetImage_Membs_def();
+  override void         GetValue_Membs_def();
 
 private:
-  void	Initialize();
+  void  Initialize();
 };
 
 //
@@ -107,40 +103,40 @@ class TA_API taiDataDelegate: public QItemDelegate {
 INHERITED(QItemDelegate)
 Q_OBJECT
 public:
-  taiEditDataHost*	edh;
-  
-  virtual void		GetImage() const; // callable from edh any time
-  virtual void		GetValue() const; // callable from edh
-  virtual bool		IndexToMembBase(const QModelIndex& index,
+  taiEditDataHost*      edh;
+
+  virtual void          GetImage() const; // callable from edh any time
+  virtual void          GetValue() const; // callable from edh
+  virtual bool          IndexToMembBase(const QModelIndex& index,
     MemberDef*& mbr, taBase*& base) const = 0;
-    
+
   taiDataDelegate(taiEditDataHost* edh_);
-  
+
 public: // overrides
-  override QWidget* 	createEditor(QWidget* parent, 
+  override QWidget*     createEditor(QWidget* parent,
     const QStyleOptionViewItem& option, const QModelIndex& index) const;
-  override void 	paint(QPainter* painter, const QStyleOptionViewItem& option,
+  override void         paint(QPainter* painter, const QStyleOptionViewItem& option,
     const QModelIndex& index) const;
-  override void 	setEditorData(QWidget* editor, 
+  override void         setEditorData(QWidget* editor,
     const QModelIndex& index) const;
-  override void 	setModelData(QWidget* editor, QAbstractItemModel* model,
+  override void         setModelData(QWidget* editor, QAbstractItemModel* model,
     const QModelIndex& index ) const;
-  override QSize	sizeHint(const QStyleOptionViewItem& option,
+  override QSize        sizeHint(const QStyleOptionViewItem& option,
     const QModelIndex& index) const;
 protected:
   mutable QPointer<taiData> dat; // most recently created
   mutable QPointer<QWidget> rep; // most recently created
-  mutable int		m_dat_row; // row corresponding to dat, -1 if none
-  mutable QSize		sh; // current size hint -- we return greatest
-  mutable QPointer<QHBoxLayout>	hbl;
+  mutable int           m_dat_row; // row corresponding to dat, -1 if none
+  mutable QSize         sh; // current size hint -- we return greatest
+  mutable QPointer<QHBoxLayout> hbl;
 
-  override bool 	eventFilter(QObject* object, QEvent* event); // replace
-  virtual void		EditorCreated(QWidget* parent, QWidget* editor, 
+  override bool         eventFilter(QObject* object, QEvent* event); // replace
+  virtual void          EditorCreated(QWidget* parent, QWidget* editor,
     const QStyleOptionViewItem& option, const QModelIndex& index) const;
-  
+
 protected slots:
-  virtual void		rep_destroyed(QObject* rep); // when dat.rep destroys
-  virtual void 		this_closeEditor(QWidget* editor,
+  virtual void          rep_destroyed(QObject* rep); // when dat.rep destroys
+  virtual void          this_closeEditor(QWidget* editor,
     QAbstractItemDelegate::EndEditHint hint = NoHint);
 };
 #endif // !__MAKETA__
@@ -157,7 +153,7 @@ public:
 
 
 protected:
-  override void 	keyPressEvent(QKeyEvent* e);
+  override void         keyPressEvent(QKeyEvent* e);
 };
 
 class TA_API iSelectEditDataHost2 : public iSelectEditDataHostBase {
@@ -165,35 +161,35 @@ class TA_API iSelectEditDataHost2 : public iSelectEditDataHostBase {
 INHERITED(iSelectEditDataHostBase)
   Q_OBJECT
 public:
-  taiEditTableWidget*	tw;
+  taiEditTableWidget*   tw;
 
-  override void		Constr_Box();
-  override void 	GetImage_Item(int row); // called from GetImage and ed->GetValue
-  
+  override void         Constr_Box();
+  override void         GetImage_Item(int row); // called from GetImage and ed->GetValue
+
   iSelectEditDataHost2(void* base, TypeDef* td, bool read_only_ = false,
-  	QObject* parent = 0);
-  iSelectEditDataHost2()	{ Initialize();};
+        QObject* parent = 0);
+  iSelectEditDataHost2()        { Initialize();};
   ~iSelectEditDataHost2();
 
 protected slots:
-  override void		DoRemoveSelEdit();
-  void 			tw_currentCellChanged( int currentRow, 
+  override void         DoRemoveSelEdit();
+  void                  tw_currentCellChanged( int currentRow,
     int currentColumn, int previousRow, int previousColumn);
-  void 			tw_customContextMenuRequested(const QPoint& pos);
+  void                  tw_customContextMenuRequested(const QPoint& pos);
 
 protected:
-  SelectEditDelegate*	sed;
-  
-  override void		Constr_Body_impl();
-  override void		ClearBody_impl();	// we also clear all the methods, and then rebuild them
+  SelectEditDelegate*   sed;
 
-  override void		Constr_Data_Labels(); 
-  override void		FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
-  override void 	GetImage_Membs_def();
-  override void 	GetValue_Membs_def();
+  override void         Constr_Body_impl();
+  override void         ClearBody_impl();       // we also clear all the methods, and then rebuild them
+
+  override void         Constr_Data_Labels();
+  override void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id);
+  override void         GetImage_Membs_def();
+  override void         GetValue_Membs_def();
 
 private:
-  void	Initialize();
+  void  Initialize();
 };
 //
 #ifndef __MAKETA__
@@ -201,18 +197,18 @@ class TA_API SelectEditDelegate: public taiDataDelegate {
 INHERITED(taiDataDelegate)
 Q_OBJECT
 public:
-  SelectEdit*		sele;
-  iSelectEditDataHost2*	sedh;
+  SelectEdit*           sele;
+  iSelectEditDataHost2* sedh;
 
-  override void		GetImage() const; // callable from edh any time
-  override void		GetValue() const; // callable from edh
+  override void         GetImage() const; // callable from edh any time
+  override void         GetValue() const; // callable from edh
 
-  override bool		IndexToMembBase(const QModelIndex& index,
+  override bool         IndexToMembBase(const QModelIndex& index,
     MemberDef*& mbr, taBase*& base) const;
 
-  override QWidget* createEditor(QWidget* parent, 
+  override QWidget* createEditor(QWidget* parent,
     const QStyleOptionViewItem& option, const QModelIndex& index) const;
-  
+
   SelectEditDelegate(SelectEdit* sele_, iSelectEditDataHost2* sedh_);
 
  protected:
@@ -230,31 +226,31 @@ class TA_API iSelectEditPanel: public iDataPanelFrame {
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
-  taiDataHost_impl*	se;
-  SelectEdit*		sele() {return (m_link) ? (SelectEdit*)(link()->data()) : NULL;}
-  
-  override bool		HasChanged(); // 'true' if user has unsaved changes
+  taiDataHost_impl*     se;
+  SelectEdit*           sele() {return (m_link) ? (SelectEdit*)(link()->data()) : NULL;}
 
-  override String	panel_type() const {return "Select Edit";}
+  override bool         HasChanged(); // 'true' if user has unsaved changes
+
+  override String       panel_type() const {return "Select Edit";}
 
   iSelectEditPanel(taiDataLink* dl_);
   ~iSelectEditPanel();
-  
+
 public: // IDataLinkClient interface
-  override void*	This() {return (void*)this;}
-  override TypeDef*	GetTypeDef() const {return &TA_iSelectEditPanel;}
-  override bool		ignoreDataChanged() const;
-  
+  override void*        This() {return (void*)this;}
+  override TypeDef*     GetTypeDef() const {return &TA_iSelectEditPanel;}
+  override bool         ignoreDataChanged() const;
+
 protected:
-  override void		DataChanged_impl(int dcr, void* op1, void* op2); //
-  override void		OnWindowBind_impl(iTabViewer* itv);
-  override void		UpdatePanel_impl();
-  override void		ResolveChanges_impl(CancelOp& cancel_op);
+  override void         DataChanged_impl(int dcr, void* op1, void* op2); //
+  override void         OnWindowBind_impl(iTabViewer* itv);
+  override void         UpdatePanel_impl();
+  override void         ResolveChanges_impl(CancelOp& cancel_op);
 };
 
 
 //////////////////////////////////
-// 	taiObjDiffBrowser	//
+//      taiObjDiffBrowser       //
 //////////////////////////////////
 
 class TA_API taiObjDiffBrowserFilter : iDialog {
@@ -266,45 +262,45 @@ public:
   static taiObjDiffBrowserFilter* New(int font_type, QWidget* par_window_ = NULL);
 
   // state to set action to:
-  bool		action_on;
+  bool          action_on;
 
   // what types of changes to include
-  bool		add;
-  bool		del;
-  bool		chg;
+  bool          add;
+  bool          del;
+  bool          chg;
 
   // string value checking
-  bool		nm_not;
-  String	nm_contains;
+  bool          nm_not;
+  String        nm_contains;
 
-  bool		val_not;
-  String	val_contains;
+  bool          val_not;
+  String        val_contains;
 
-  QVBoxLayout*		layOuter;
-  QCheckBox*		  chkActionOn;
+  QVBoxLayout*          layOuter;
+  QCheckBox*              chkActionOn;
 
-  QCheckBox*		  chkAdd;
-  QCheckBox*		  chkDel;
-  QCheckBox*		  chkChg;
+  QCheckBox*              chkAdd;
+  QCheckBox*              chkDel;
+  QCheckBox*              chkChg;
 
-  QCheckBox*		  chkNmNot;
-  iLineEdit*		  editNm;
-  QCheckBox*		  chkValNot;
-  iLineEdit*		  editVal;
+  QCheckBox*              chkNmNot;
+  iLineEdit*              editNm;
+  QCheckBox*              chkValNot;
+  iLineEdit*              editVal;
 
-  QPushButton*		  btnOk;
-  QPushButton*		  btnCancel;
+  QPushButton*            btnOk;
+  QPushButton*            btnCancel;
 
-  virtual bool		Browse();
+  virtual bool          Browse();
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel -- examine the member vals for results
-  virtual void	Constr();
+  virtual void  Constr();
 
   taiObjDiffBrowserFilter(QWidget* par_window_);
-  ~taiObjDiffBrowserFilter();							      
+  ~taiObjDiffBrowserFilter();
 
 protected slots:
-  override void 	accept();
-  override void 	reject();
+  override void         accept();
+  override void         reject();
 };
 
 
@@ -325,46 +321,46 @@ public:
     COL_N,
   };
 
-  static taiObjDiffBrowser* New(taObjDiff_List& diffs, 
-				int font_type, QWidget* par_window_ = NULL);
+  static taiObjDiffBrowser* New(taObjDiff_List& diffs,
+                                int font_type, QWidget* par_window_ = NULL);
 
-  String		caption; 	// current caption at top of chooser
-  taObjDiff_List*	odl;
+  String                caption;        // current caption at top of chooser
+  taObjDiff_List*       odl;
   taiObjDiffBrowserFilter* filter_dlg;
 
-  QVBoxLayout*		layOuter;
-  QTreeWidget* 		  items; 	// list of items
-  QPushButton*		    btnAllA;
-  QPushButton*		    btnFiltA;
-  QPushButton*		    btnAllB;
-  QPushButton*		    btnFiltB;
-  QPushButton*		    btnOk;
-  QPushButton*		    btnCancel;
+  QVBoxLayout*          layOuter;
+  QTreeWidget*            items;        // list of items
+  QPushButton*              btnAllA;
+  QPushButton*              btnFiltA;
+  QPushButton*              btnAllB;
+  QPushButton*              btnFiltB;
+  QPushButton*              btnOk;
+  QPushButton*              btnCancel;
 
-  virtual bool		Browse();
+  virtual bool          Browse();
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
 
-  virtual void	Constr();
-  virtual void	AddItems();
-  virtual void	ToggleAll(int a_or_b);
+  virtual void  Constr();
+  virtual void  AddItems();
+  virtual void  ToggleAll(int a_or_b);
   // toggle checked state of all items -- a_or_b = 0 for A, 1 for B
-  virtual void	SetFiltered(int a_or_b, bool on, bool add, bool del, bool chg, 
-			    bool nm_not, String nm_contains, bool val_not, 
-			    String val_contains);
+  virtual void  SetFiltered(int a_or_b, bool on, bool add, bool del, bool chg,
+                            bool nm_not, String nm_contains, bool val_not,
+                            String val_contains);
   // toggle checked state of all items -- a_or_b = 0 for A, 1 for B filtered by given filter settings
-  virtual void	UpdateItemDisp(QTreeWidgetItem* witm, taObjDiffRec* rec, int a_or_b);
+  virtual void  UpdateItemDisp(QTreeWidgetItem* witm, taObjDiffRec* rec, int a_or_b);
   // update display of item
 
   taiObjDiffBrowser(const String& captn, QWidget* par_window_);
-  ~taiObjDiffBrowser();							      
+  ~taiObjDiffBrowser();
 protected slots:
-  override void 	accept();
-  override void 	reject();
-  virtual  void 	toggleAllA();
-  virtual  void 	setFilteredA();
-  virtual  void 	toggleAllB();
-  virtual  void 	setFilteredB();
-  void			itemClicked(QTreeWidgetItem* itm, int column);
+  override void         accept();
+  override void         reject();
+  virtual  void         toggleAllA();
+  virtual  void         setFilteredA();
+  virtual  void         toggleAllB();
+  virtual  void         setFilteredB();
+  void                  itemClicked(QTreeWidgetItem* itm, int column);
 };
 
 

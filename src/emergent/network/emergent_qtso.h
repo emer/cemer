@@ -28,18 +28,18 @@
 
 class EMERGENT_API taiSpecMember : public taiMember {
   // special for the spec type member (adds the unique box)
+  TAI_MEMBER_SUBCLASS(taiSpecMember, taiMember);
 public:
-  int		BidForMember(MemberDef* md, TypeDef* td);
+  int           BidForMember(MemberDef* md, TypeDef* td);
 
-  void		CmpOrigVal(taiData* dat, const void* base, bool& first_diff); // replaces
+  void          CmpOrigVal(taiData* dat, const void* base, bool& first_diff); // replaces
 
-  virtual bool	NoCheckBox(IDataHost* host_) const; // deterimine if check box should be used
+  virtual bool  NoCheckBox(IDataHost* host_) const; // deterimine if check box should be used
 
-  TAQT_MEMBER_INSTANCE(taiSpecMember, taiMember);
 protected:
-  override taiData*	GetArbitrateDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_);
-  override void		GetArbitrateImage(taiData* dat, const void* base);
-  override void		GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
+  override taiData*     GetArbitrateDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_);
+  override void         GetArbitrateImage(taiData* dat, const void* base);
+  override void         GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
 };
 
 #endif // emergent_qt_h
