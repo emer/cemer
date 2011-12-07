@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -75,8 +75,8 @@
 #include <time.h>
 
 // pointer alignment for putting up windows based on the mouse
-#define POINTER_ALIGN_X		.5
-#define POINTER_ALIGN_Y		.5
+#define POINTER_ALIGN_X         .5
+#define POINTER_ALIGN_Y         .5
 
 using namespace Qt;
 
@@ -84,7 +84,7 @@ class cssiArgDialog;
 
 
 //////////////////////////
-//    taiDataList	//
+//    taiDataList       //
 //////////////////////////
 
 taiDataList::~taiDataList() {
@@ -96,36 +96,41 @@ void taiDataList::El_Done_(void* it) {
 }
 
 //////////////////////////////////////////////////////////
-// 	taiData: glyphs to represent kinds of data	//
+//      taiData: glyphs to represent kinds of data      //
 //////////////////////////////////////////////////////////
 
 // NOTE: this is for ta_TA.cpp only
 taiData::taiData()
-:QObject()
+  : QObject()
+  , typ(0)
+  , mbr(0)
+  , host(0)
+  , orig_val()
+  , mhighlight(false)
+  , m_visible(true)
+  , m_rep(0)
+  , m_label()
+  , mparent(0)
+  , mflags(0)
+  , m_base()
 {
-  typ = NULL;
-  host = NULL;
-  mhighlight = false;
-  m_visible = true;
-  m_rep = NULL;
-  mparent = NULL;
-  mflags = 0;
-  m_base = NULL;
 }
 
-taiData::taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_widget, int flags_)
-:QObject()
+taiData::taiData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget*, int flags_)
+  : QObject()
+  , typ(typ_)
+  , mbr(0)
+  , host(host_)
+  , orig_val()
+  , mhighlight(false)
+  , m_visible(true)
+  , m_rep(0)
+  , m_label()
+  , mparent(0) // must be initialized before calling setParent!
+  , mflags(flags_)
+  , m_base()
 {
-  typ = typ_;
-  mbr = NULL;
-  host = host_;
-  mhighlight = false;
-  m_visible = true;
-  m_rep = NULL;
-  mparent = NULL; // must be valid before calling setParent!
-  mflags = flags_;
   setParent(parent_);
-  m_base = NULL;
 }
 
 taiData::~taiData() {
@@ -180,8 +185,8 @@ void taiData::DataChanged(taiData* chld) {
   else if (host)
     host->Changed();
 
-  if(!ths) return;		// above could have done it
-  
+  if(!ths) return;              // above could have done it
+
   DataChanged_impl(chld);
   if (!chld)
     emit DataChangedNotify(this);
@@ -340,7 +345,7 @@ void taiData::repChanged() {
 }
 
 //////////////////////////////////
-//	taiCompData		//
+//      taiCompData             //
 //////////////////////////////////
 
 taiCompData::taiCompData(TypeDef* typ_, IDataHost* host_, taiData* parent_, QWidget* gui_parent_, int flags_)
@@ -392,7 +397,7 @@ void taiCompData::InitLayout() { //virtual/overridable
 
 void taiCompData::AddChildMember(MemberDef* md) {
   const int ctrl_size = taiM->ctrl_size;
-  
+
   // establish container
   QWidget* wid;
   switch (lay_type) {
@@ -408,28 +413,28 @@ void taiCompData::AddChildMember(MemberDef* md) {
   int child_flags = (mflags & flg_INHERIT_MASK);
   taiData* mb_dat = md->im->GetDataRep(host, this, wid, NULL, child_flags); //adds to list
   //nn, done by im mb_dat->SetMemberDef(md);
-  
+
   // get caption
   String name;
   String desc;
   taiDataHost::GetName(md, name, desc);
   iLabel* lbl = taiDataHost::MakeInitEditLabel(name, wid, ctrl_size, desc, mb_dat);
   lbl->setUserData((ta_intptr_t)mb_dat); // primarily for context menu, esp for SelectEdit
-  
+
   QWidget* ctrl = mb_dat->GetRep();
   connect(mb_dat, SIGNAL(DataChangedNotify(taiData*)),
-	  this, SLOT(ChildDataChanged(taiData*)) );
-	  
+          this, SLOT(ChildDataChanged(taiData*)) );
+
   // check for a compatible taiDataHost, and if so, connect context menu
   if (host) {
-    
+
     taiDataHost* tadh = dynamic_cast<taiDataHost*>((QObject*)host->This());
     if (tadh) {
       connect(lbl, SIGNAL(contextMenuInvoked(iLabel*, QContextMenuEvent*)),
         tadh, SLOT(label_contextMenuInvoked(iLabel*, QContextMenuEvent*)));
     }
   }
-  
+
   switch (lay_type) {
   case LT_HBox:
     AddChildWidget(lbl, 1); // taiM->hsep_c);
@@ -465,8 +470,8 @@ void taiCompData::EndLayout() { //virtual/overridable
 }
 
 void taiCompData::AddChildWidget(QWidget* child_widget, int space_after,
-  int stretch) 
-{ 
+  int stretch)
+{
   if (space_after == -1) space_after = taiM->hsep_c;
   mwidgets->append(child_widget);
   AddChildWidget_impl(child_widget, last_spc, stretch);
@@ -474,8 +479,8 @@ void taiCompData::AddChildWidget(QWidget* child_widget, int space_after,
 }
 
 void taiCompData::AddChildWidget_impl(QWidget* child_widget, int spacing,
-  int stretch) 
-{ 
+  int stretch)
+{
   switch (lay_type) {
   case LT_HBox:
     if (spacing != -1)
@@ -509,10 +514,10 @@ void taiCompData::ChildDataChanged(taiData* sender) {
 
 
 //////////////////////////////////
-//	taiField		//
+//      taiField                //
 //////////////////////////////////
 
-iFieldEditDialog::iFieldEditDialog(bool modal_, bool read_only_, 
+iFieldEditDialog::iFieldEditDialog(bool modal_, bool read_only_,
   const String& desc, taiField* parent)
 :inherited()
 {
@@ -524,14 +529,14 @@ iFieldEditDialog::iFieldEditDialog(bool modal_, bool read_only_,
 void iFieldEditDialog::init(bool read_only_, const String& desc) {
   m_read_only = read_only_;
   this->resize( taiM->dialogSize(taiMisc::dlgSmall | taiMisc::dlgHor) );
-  
+
   this->setFont(taiM->dialogFont(taiM->ctrl_size));
   QVBoxLayout* layOuter = new QVBoxLayout(this);
   if (desc.nonempty()) {
     iLabel* prompt = new iLabel(desc, this);
     prompt->setWordWrap(true);
     QFont f = taiM->nameFont(taiM->ctrl_size);
-    f.setBold(true); 
+    f.setBold(true);
     prompt->setFont(f);
     prompt->setAlignment(Qt::AlignCenter | Qt::AlignVCenter);
     layOuter->addWidget(prompt);
@@ -572,7 +577,7 @@ void iFieldEditDialog::init(bool read_only_, const String& desc) {
     connect(btnRevert, SIGNAL(clicked()), this, SLOT(btnRevert_clicked()) );
   }
 }
- 
+
 iFieldEditDialog::~iFieldEditDialog() {
   if (field) {
     field->edit = NULL;
@@ -612,7 +617,7 @@ void iFieldEditDialog::setText(const QString& value) {
 
 void iFieldEditDialog::btnApply_clicked() {
   field->rep()->setText(txtText->toPlainText());
-  // unless explicitly overridden, we always do an autoapply 
+  // unless explicitly overridden, we always do an autoapply
   if (!(field->flags() & taiData::flgNoEditDialogAutoApply)) {
     field->applyNow();
   }
@@ -628,7 +633,7 @@ void iFieldEditDialog::repChanged() {
 }
 
 /////////////////////////////////////////////////
-//		taiField
+//              taiField
 
 taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
  : taiData(typ_, host_, par, gui_parent_, flags_)
@@ -668,7 +673,7 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
     this, SLOT(selectionChanged() ) );
 
   QObject::connect(rep(), SIGNAL(lookupKeyPressed()),
-		   this, SLOT(lookupKeyPressed()) );
+                   this, SLOT(lookupKeyPressed()) );
 
   // min width for some popular types
   if (typ) {
@@ -707,7 +712,7 @@ void taiField::btnEdit_clicked(bool) {
     edit->setText(rep()->text());
     edit->setWindowTitle(wintxt);
     QObject::connect(edit->txtText, SIGNAL(lookupKeyPressed()),
-		     this, SLOT(lookupKeyPressed_dialog()) );
+                     this, SLOT(lookupKeyPressed_dialog()) );
   }
   edit->show();
   edit->raise();
@@ -735,7 +740,7 @@ void taiField::lookupKeyPressed() {
   int cur_pos = rep()->cursorPosition();
   int new_pos = -1;
   String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos,
-					  lookupfun_md->name, new_pos);
+                                          lookupfun_md->name, new_pos);
   if(rval.nonempty()) {
     rep()->setText(rval);
     if(new_pos >= 0)
@@ -755,7 +760,7 @@ void taiField::lookupKeyPressed_dialog() {
   int cur_pos = cursor.position();
   int new_pos = -1;
   String rval = tab->StringFieldLookupFun(edit->txtText->toPlainText(), cur_pos,
-					  lookupfun_md->name, new_pos);
+                                          lookupfun_md->name, new_pos);
   if(rval.nonempty()) {
     edit->txtText->setPlainText(rval);
     QTextCursor cur2(edit->txtText->textCursor());
@@ -800,11 +805,11 @@ void taiField::this_SetActionsEnabled() {
 }
 
 /////////////////////////////////////////////////
-//		taiField
+//              taiField
 
 taiFileDialogField::taiFileDialogField(TypeDef* typ_, IDataHost* host_, taiData* par,
-				       QWidget* gui_parent_, int flags_, FileActionType fact,
-				       const String& fext, const String& ftyp, int fcmprs)
+                                       QWidget* gui_parent_, int flags_, FileActionType fact,
+                                       const String& fext, const String& ftyp, int fcmprs)
  : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   file_ext = fext;
@@ -826,7 +831,7 @@ taiFileDialogField::taiFileDialogField(TypeDef* typ_, IDataHost* host_, taiData*
   lay->addWidget(btnEdit);
   SetRep(act_par);
   connect(btnEdit, SIGNAL(clicked(bool)),
-	  this, SLOT(filebtn_clicked(bool)) );
+          this, SLOT(filebtn_clicked(bool)) );
 
   rep()->setFixedHeight(taiM->text_height(defSize()));
   if (readOnly()) {
@@ -840,9 +845,9 @@ taiFileDialogField::taiFileDialogField(TypeDef* typ_, IDataHost* host_, taiData*
     this, SLOT(selectionChanged() ) );
 
   QObject::connect(rep(), SIGNAL(lookupKeyPressed()),
-		   this, SLOT(lookupKeyPressed()) );
+                   this, SLOT(lookupKeyPressed()) );
 
-  setMinCharWidth(40);		// file names are longer in general..
+  setMinCharWidth(40);          // file names are longer in general..
 }
 
 taiFileDialogField::~taiFileDialogField() {
@@ -857,43 +862,43 @@ void taiFileDialogField::lookupKeyPressed() {
     if(file_act == FA_SAVE) {
       flr = base_obj->GetSaveFiler("", file_ext, file_cmprs, desc);
       if (flr->ostrm) {
-	rep()->setText(flr->FileName());
+        rep()->setText(flr->FileName());
       }
     }
     else if(file_act == FA_LOAD) {
       flr = base_obj->GetLoadFiler("", file_ext, file_cmprs, desc);
       if (flr->istrm) {
-	rep()->setText(flr->FileName());
+        rep()->setText(flr->FileName());
       }
     }
     else if(file_act == FA_APPEND) {
       flr = base_obj->GetAppendFiler("", file_ext, file_cmprs, desc);
       if (flr->ostrm) {
-	rep()->setText(flr->FileName());
+        rep()->setText(flr->FileName());
       }
     }
     flr->Close();
     taRefN::unRefDone(flr);
   }
-  else {			// do a static dialog
+  else {                        // do a static dialog
     taFiler* flr = taBase::StatGetFiler(NULL, file_ext, file_cmprs, file_type);
     taRefN::Ref(flr);
     if(file_act == FA_LOAD) {
       flr->Open();
       if (flr->istrm) {
-	rep()->setText(flr->FileName());
+        rep()->setText(flr->FileName());
       }
     }
     else if(file_act == FA_SAVE) {
       flr->SaveAs();
       if (flr->ostrm) {
-	rep()->setText(flr->FileName());
+        rep()->setText(flr->FileName());
       }
     }
     else if(file_act == FA_APPEND) {
       flr->Append();
       if (flr->ostrm) {
-	rep()->setText(flr->FileName());
+        rep()->setText(flr->FileName());
       }
     }
     flr->Close();
@@ -902,7 +907,7 @@ void taiFileDialogField::lookupKeyPressed() {
 }
 
 void taiFileDialogField::filebtn_clicked(bool) {
-  lookupKeyPressed();		// all the code is there
+  lookupKeyPressed();           // all the code is there
 }
 
 void taiFileDialogField::GetImage(const String& val) {
@@ -952,7 +957,7 @@ void taiFileDialogField::this_SetActionsEnabled() {
 }
 
 //////////////////////////////////
-//	taiIncrField		//
+//      taiIncrField            //
 //////////////////////////////////
 
 taiIncrField::taiIncrField(TypeDef* typ_, IDataHost* host_, taiData* par,
@@ -991,7 +996,7 @@ void taiIncrField::selectionChanged() {
 }
 
 void taiIncrField::setMinimum(const Variant& min) {
-  rep()->setMinimum(min.toInt()); 
+  rep()->setMinimum(min.toInt());
 }
 
 void taiIncrField::setMaximum(const Variant& max) {
@@ -1028,7 +1033,7 @@ void taiIncrField::this_SetActionsEnabled() {
 
 
 //////////////////////////////////
-//	taiToggle		//
+//      taiToggle               //
 //////////////////////////////////
 
 taiToggle::taiToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_) :
@@ -1063,7 +1068,7 @@ bool taiToggle::GetValue() const {
 
 
 //////////////////////////////////
-//	taiPlusToggle		//
+//      taiPlusToggle           //
 //////////////////////////////////
 
 taiPlusToggle::taiPlusToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
@@ -1114,7 +1119,7 @@ void taiPlusToggle::DataChanged_impl(taiData* chld) {
 
 
 //////////////////////////
-//     taiComboBox	//
+//     taiComboBox      //
 //////////////////////////
 
 taiComboBox::taiComboBox(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
@@ -1138,7 +1143,7 @@ void taiComboBox::Initialize(QWidget* gui_parent_, bool is_enum_) {
   SetRep(new iComboBox(gui_parent_));
   rep()->setFixedHeight(taiM->combo_height(defSize()));
 
-  //connect changed signal to our slot, or apply 
+  //connect changed signal to our slot, or apply
   if (mflags & flgAutoApply)
     QObject::connect(m_rep, SIGNAL(activated(int) ),
           this, SLOT(applyNow() ) );
@@ -1209,7 +1214,7 @@ void taiComboBox::SetEnumType(TypeDef* enum_typ, bool force) {
 
 
 //////////////////////////
-//     taiBitBox	//
+//     taiBitBox        //
 //////////////////////////
 
 /* IMPORTANT NOTE:
@@ -1257,13 +1262,13 @@ void taiBitBox::SetEnumType(TypeDef* enum_typ, bool force) {
     for (int i = 0; i < typ->enum_vals.size; ++i) {
       EnumDef* ed = typ->enum_vals.FastEl(i);
       if (ed->HasOption("NO_BIT") || ed->HasOption("IGNORE") ||
-	  ed->HasOption("NO_SHOW"))
-	continue;
+          ed->HasOption("NO_SHOW"))
+        continue;
       // auto apply if entire guy marked, or if item is marked
       bool auto_apply = ((flags() & taiData::flgAutoApply)
-			 || (ed->HasOption(TypeItem::opt_APPLY_IMMED)));
+                         || (ed->HasOption(TypeItem::opt_APPLY_IMMED)));
       AddBoolItem(auto_apply, ed->GetLabel(), ed->enum_no, ed->desc,
-		  ed->HasOption("READ_ONLY"));
+                  ed->HasOption("READ_ONLY"));
     }
     lay->addStretch();
   }
@@ -1298,7 +1303,7 @@ void taiBitBox::Clear() {
 }
 
 void taiBitBox::AddBoolItem(bool auto_apply, String name, int val,
-  const String& desc, bool bit_ro) 
+  const String& desc, bool bit_ro)
 {
   iBitCheckBox* bcb = new iBitCheckBox(auto_apply, val, name, m_rep);
   if (desc.nonempty()) {
@@ -1322,7 +1327,7 @@ void taiBitBox::GetImage(int val) {
     if (bcb) {
       // CONDSHOW
       bcb->setVisible(!(no_show & bcb->val));
-      // CONDEDIT 
+      // CONDEDIT
       if (!readOnly())
         bcb->setEnabled(!(no_edit & bcb->val));
       // value
@@ -1338,7 +1343,7 @@ void taiBitBox::GetValue(int& val) const {
 
 
 //////////////////////////////////
-// 	taiDimEdit		//
+//      taiDimEdit              //
 //////////////////////////////////
 
 taiDimEdit::taiDimEdit(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
@@ -1377,7 +1382,7 @@ void taiDimEdit::GetValue(MatrixGeom* arr) const {
 
 
 //////////////////////////////////
-// 	taiPolyData		//
+//      taiPolyData             //
 //////////////////////////////////
 
 taiPolyData* taiPolyData::New(bool add_members, TypeDef* typ_, IDataHost* host_,
@@ -1385,14 +1390,14 @@ taiPolyData* taiPolyData::New(bool add_members, TypeDef* typ_, IDataHost* host_,
 {
   taiPolyData*  rval = new taiPolyData(typ_, host_, par, gui_parent_, flags);
   rval->Constr(gui_parent_);
-  if (add_members) 
+  if (add_members)
     rval->AddTypeMembers();
   return rval;
 }
 
 bool taiPolyData::ShowMemberStat(MemberDef* md, int show) {
   if (md->HasOption("HIDDEN_INLINE") ||
-    (md->type->HasOption("HIDDEN_INLINE") && !md->HasOption("SHOW_INLINE")) 
+    (md->type->HasOption("HIDDEN_INLINE") && !md->HasOption("SHOW_INLINE"))
     )
     return false;
   else
@@ -1400,7 +1405,7 @@ bool taiPolyData::ShowMemberStat(MemberDef* md, int show) {
 }
 
 
-taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par, 
+taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_)
 : inherited(typ_, host_, par, gui_parent_, flags_)
 {
@@ -1472,19 +1477,19 @@ void taiPolyData::GetValue_impl(void* base_) const {
     md->im->GetMbrValue(mb_dat, base_, first_diff);
   }
   if (m_child_base && !HasFlag(flgNoUAE)) {
-     m_child_base->UpdateAfterEdit();	// hook to update the contents after an edit..
+     m_child_base->UpdateAfterEdit();   // hook to update the contents after an edit..
   }
   taMisc::record_script = rec_scrpt;
 }
 
 
 //////////////////////////////////
-//  taiColor			//
+//  taiColor                    //
 //////////////////////////////////
 
 taiColor::taiColor(TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags)
-: inherited(typ_, host_, par, gui_parent_, flags) 
+: inherited(typ_, host_, par, gui_parent_, flags)
 {
   iColorButton* rep = new iColorButton(gui_parent_);
   rep->setFixedHeight(taiM->button_height(defSize()));
@@ -1510,11 +1515,11 @@ iColor taiColor::GetValue() const {
 
 
 //////////////////////////////////
-// 	taiDataDeck		//
+//      taiDataDeck             //
 //////////////////////////////////
 
 taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
-: taiCompData(typ_, host_, par, gui_parent_, flags) 
+: taiCompData(typ_, host_, par, gui_parent_, flags)
 {
   lay_type = LT_Stacked;
   SetRep(MakeLayoutWidget(gui_parent_));
@@ -1530,7 +1535,7 @@ void taiDataDeck::GetImage(int i) {
 
 
 //////////////////////////////////
-// 	taiVariantBase		//
+//      taiVariantBase          //
 //////////////////////////////////
 
 taiVariantBase::taiVariantBase(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
@@ -1543,12 +1548,12 @@ taiVariantBase::~taiVariantBase() {
   data_el.Reset();
 }
 
-void taiVariantBase::Constr(QWidget* gui_parent_) { 
+void taiVariantBase::Constr(QWidget* gui_parent_) {
   cmbVarType = NULL;
   fldVal = NULL;
   togVal = NULL;
   m_updating = 0;
-  
+
   QWidget* rep_ = MakeLayoutWidget(gui_parent_);
   SetRep(rep_);
   if (host != NULL) {
@@ -1559,7 +1564,7 @@ void taiVariantBase::Constr(QWidget* gui_parent_) {
   EndLayout();
 }
 
-void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) { 
+void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   // type stuff
   QWidget* rep_ =  GetRep();
   QLabel* lbl = NULL;
@@ -1567,7 +1572,7 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   if(!(mflags & flgFixedType)) {
     lbl = MakeLabel("var type", rep_);
     AddChildWidget(lbl, taiM->hsep_c);
-  
+
     TypeDef* typ_var_enum = TA_Variant.sub_types.FindName("VarType");
     cmbVarType = new taiComboBox(true, typ_var_enum, host, this, rep_);
     //remove unused variant enum types according to flags
@@ -1575,9 +1580,9 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
       cmbVarType->RemoveItemByData(QVariant(Variant::T_Invalid));
     }
     if (mflags & (flgNoAtomics | flgIntOnly)) {
-      for (int vt = Variant::T_Atomic_Min; vt <= Variant::T_Atomic_Max; ++vt) { 
-	if (!((vt == Variant::T_Int) && (mflags & flgIntOnly)))
-	  cmbVarType->RemoveItemByData(QVariant(vt));
+      for (int vt = Variant::T_Atomic_Min; vt <= Variant::T_Atomic_Max; ++vt) {
+        if (!((vt == Variant::T_Int) && (mflags & flgIntOnly)))
+          cmbVarType->RemoveItemByData(QVariant(vt));
       }
     }
     if (mflags & (flgNoPtr | flgIntOnly)) {
@@ -1601,12 +1606,12 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
     lbl = MakeLabel("var value", rep_);
     AddChildWidget(lbl, taiM->hsep_c);
   }
-  
+
   stack = new QStackedWidget(rep_);
   AddChildWidget(stack); // fill rest of space
   if(lbl)
     lbl->setBuddy(stack);
-  
+
   // created in order of StackControls
   lbl = MakeLabel("(no value for type Invalid)");
   stack->addWidget(lbl);
@@ -1620,14 +1625,14 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   stack->addWidget(fldVal->rep());
   lbl = MakeLabel("(Ptr cannot be set)");
   stack->addWidget(lbl);
-  
+
   tabVal = new taiTokenPtrButton(&TA_taBase, host, this, NULL, flgEditDialog);
   stack->addWidget(tabVal->GetRep());
-  
+
   tiVal = MakeLabel("(TypeItem cannot be set)");
   stack->addWidget(tiVal);
 }
-    
+
 
 /*
 bool taiVariantBase::ShowMember(MemberDef* md) {
@@ -1644,31 +1649,31 @@ void taiVariantBase::cmbVarType_itemChanged(int itm) {
   // set combo box to right type
   cmbVarType->GetEnumValue(vt);
   switch (vt) {
-  case Variant::T_Invalid: 
+  case Variant::T_Invalid:
     stack->setCurrentIndex(scInvalid);
     break;
-  
+
   case Variant::T_Bool:
     stack->setCurrentIndex(scBool);
     break;
-  
+
   case Variant::T_Int:
     stack->setCurrentIndex(scInt);
     break;
-  
+
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
   case Variant::T_Double:
   case Variant::T_Char:
-  case Variant::T_String: 
+  case Variant::T_String:
     stack->setCurrentIndex(scField);
     break;
-  
-  case Variant::T_Ptr: 
+
+  case Variant::T_Ptr:
     stack->setCurrentIndex(scPtr);
     break;
-  case Variant::T_Base: 
+  case Variant::T_Base:
     stack->setCurrentIndex(scBase);
     tabVal->GetImage(NULL, &TA_taBase); // obj, no scope
     break;
@@ -1676,7 +1681,7 @@ void taiVariantBase::cmbVarType_itemChanged(int itm) {
     stack->setCurrentIndex(scBase);
     tabVal->GetImage(NULL, &TA_taMatrix); // obj, no scope
     break;
-  case Variant::T_TypeItem: 
+  case Variant::T_TypeItem:
     stack->setCurrentIndex(scTypeItem);
     break;
   default: return ;
@@ -1689,37 +1694,37 @@ void taiVariantBase::GetImage_Variant(const Variant& var) {
   // set combo box to right type
   if(cmbVarType)
     cmbVarType->GetEnumImage(var.type());
-  
+
   switch (var.type()) {
-  case Variant::T_Invalid: 
+  case Variant::T_Invalid:
     stack->setCurrentIndex(scInvalid);
     break;
-  
+
   case Variant::T_Bool:
     stack->setCurrentIndex(scBool);
     togVal->GetImage(var.toBool());
     break;
-  
+
   case Variant::T_Int:
     stack->setCurrentIndex(scInt);
     incVal->GetImage(var.toInt());
     break;
-  
+
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
   case Variant::T_Double:
   case Variant::T_Char:
-  case Variant::T_String: 
+  case Variant::T_String:
     stack->setCurrentIndex(scField);
     fldVal->GetImage(var.toString());
     break;
-  
-  case Variant::T_Ptr: 
+
+  case Variant::T_Ptr:
     stack->setCurrentIndex(scPtr);
-    //TODO: need to set something! 
+    //TODO: need to set something!
     break;
-  case Variant::T_Base: 
+  case Variant::T_Base:
     stack->setCurrentIndex(scBase);
     tabVal->GetImage(var.toBase(), &TA_taBase); // obj, no scope
     break;
@@ -1727,9 +1732,9 @@ void taiVariantBase::GetImage_Variant(const Variant& var) {
     stack->setCurrentIndex(scBase);
     tabVal->GetImage(var.toMatrix(), &TA_taMatrix); // obj, no scope
     break;
-  case Variant::T_TypeItem: 
+  case Variant::T_TypeItem:
     stack->setCurrentIndex(scTypeItem);
-    tiVal->setText(var.toString()); 
+    tiVal->setText(var.toString());
     break;
   default: return ;
   }
@@ -1744,41 +1749,41 @@ void taiVariantBase::GetValue_Variant(Variant& var) const {
     cmbVarType->GetEnumValue(vt);
     var.setType((Variant::VarType)vt);
   }
-  
+
   //note: the correct widget should be visible...
-  
+
   switch (var.type()) {
-  case Variant::T_Invalid: 
+  case Variant::T_Invalid:
     var = _nilVariant;
     break;
-  
+
   case Variant::T_Bool:
     var.setBool(togVal->GetValue());
     break;
-  
+
   case Variant::T_Int:
     var = incVal->GetValue();
     break;
-  
+
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
   case Variant::T_Double:
   case Variant::T_Char:
-  case Variant::T_String: 
+  case Variant::T_String:
     var.updateFromString(fldVal->GetValue());
     break;
-  
-  case Variant::T_Ptr: 
+
+  case Variant::T_Ptr:
     //nothing for now (will get set to NULL);
     break;
-  case Variant::T_Base: 
+  case Variant::T_Base:
     var.setBase(tabVal->GetValue());
     break;
   case Variant::T_Matrix:
     var.setBase(tabVal->GetValue());
     break;
-  case Variant::T_TypeItem: 
+  case Variant::T_TypeItem:
     //nothing for now (will get set to NULL);
     break;
   default: break;
@@ -1789,7 +1794,7 @@ void taiVariantBase::GetValue_Variant(Variant& var) const {
 
 
 //////////////////////////////////
-// 	taiVariant		//
+//      taiVariant              //
 //////////////////////////////////
 
 taiVariant::taiVariant(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
@@ -1805,7 +1810,7 @@ taiVariant::~taiVariant() {
 
 
 //////////////////////////
-// 	taiAction	//
+//      taiAction       //
 //////////////////////////
 
 taiAction::taiAction(int sel_type_, const String& label_)
@@ -1832,7 +1837,7 @@ taiAction::taiAction(const QString& label_, QObject* receiver, const char* membe
 
 
 taiAction::taiAction(const Variant& usr_data_, const QString& label_, const QKeySequence& accel,
-  const char* name_) 
+  const char* name_)
 : QAction(label_, NULL)
 {
   init(taiMenu::use_default);
@@ -1847,7 +1852,7 @@ taiAction::~taiAction() {
 void taiAction::init(int sel_type_)
 {
   sel_type = sel_type_;
-  //note: we do this here, but also at AddAction time in case we create default here, 
+  //note: we do this here, but also at AddAction time in case we create default here,
   // and it only gets its true sel_type when added
   if (sel_type & (taiActions::radio | taiActions::toggle)) {
     setCheckable(true);
@@ -1878,7 +1883,7 @@ bool taiAction::isGrouped() {
   if (isSubMenu())
     return false;
   else return rep->isChecked();
-} 
+}
 
 void taiAction::setChecked(bool value) {
    // ignored if not a radio or toggle item
@@ -1935,11 +1940,11 @@ void taiAction::this_triggered_toggled(bool checked) {
   if (m_changing > 0) return;
   ++m_changing;
   emitActions(); // will also cause curSel update, and datachanged
-  --m_changing;	
+  --m_changing;
 }
 
 //////////////////////////
-// 	taiSubMenuEl	//
+//      taiSubMenuEl    //
 //////////////////////////
 
 taiSubMenuEl::taiSubMenuEl(const String& label_, taiMenu* sub_menu_data_)
@@ -1959,10 +1964,10 @@ taiSubMenuEl::~taiSubMenuEl() {
 
 
 //////////////////////////
-//  taiAction_List	//
+//  taiAction_List      //
 //////////////////////////
 
-void taiAction_List::El_Done_(void* it_)	{ 
+void taiAction_List::El_Done_(void* it_)        {
   taiAction* it = (taiAction*)it_;
   if (it->nref == 0)
     delete it; //NB: don't deleteLater, because taiData->parent will be invalid by then
@@ -1981,7 +1986,7 @@ taiAction* taiAction_List::PeekNonSep() {
 
 
 //////////////////////////
-//  taiActions	//
+//  taiActions  //
 //////////////////////////
 
 taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* typ_, IDataHost* host,
@@ -1989,15 +1994,15 @@ taiActions* taiActions::New(RepType rt, int sel_type_, int font_spec_, TypeDef* 
 {
   taiActions* rval = NULL; //note: switch handles all actual cases, NULL=compiler food
   switch (rt) {
-  case popupmenu: 
+  case popupmenu:
     rval = new taiMenu(sel_type_, font_spec_, typ_, host, par, gui_parent_, flags_, par_menu_);
-  case buttonmenu: 
+  case buttonmenu:
     rval = new taiButtonMenu(sel_type_, font_spec_, typ_, host, par, gui_parent_, flags_, par_menu_);
   }
   return rval;
 }
 
-taiActions::taiActions(int sel_type_, int ft, TypeDef* typ_, 
+taiActions::taiActions(int sel_type_, int ft, TypeDef* typ_,
   IDataHost* host_, taiData* par_, QWidget* gui_parent_, int flags_, taiActions* par_menu_,
       bool has_menu, QMenu* exist_menu)
 : taiData(typ_, host_, par_, gui_parent_, flags_)
@@ -2014,13 +2019,13 @@ taiActions::taiActions(int sel_type_, int ft, TypeDef* typ_,
     m_menu->setFont(taiM->menuFont(font_spec));
   } else {
     m_menu = NULL;
-  } 
+  }
 }
 
 taiActions::~taiActions() {
-  Reset(); 
+  Reset();
   if (m_menu) {
-    m_menu->setParent(NULL); // avoid potential issues 
+    m_menu->setParent(NULL); // avoid potential issues
     m_menu->deleteLater();
     m_menu = NULL;
   }
@@ -2053,14 +2058,14 @@ void taiActions::AddAction(taiAction* act) {
   }
   // font compliance
   act->setFont(taiM->menuFont(font_spec));
-  if (act->parent()) 
+  if (act->parent())
     taMisc::DebugInfo("WARNING: taiAction has non-null parent!");
   items.Add(act);
   ActionAdded(act);
   connect(act, SIGNAL(MenuAction(taiAction*)), this, SLOT(child_triggered_toggled(taiAction*)) );
 }
 
-taiAction* taiActions::AddItem(const String& val, SelType st, 
+taiAction* taiActions::AddItem(const String& val, SelType st,
   taiAction::CallbackType ct_, const QObject *receiver, const char* member,
   const Variant& usr)
 { // 'member' is the result of the SLOT() macro
@@ -2081,8 +2086,8 @@ taiAction* taiActions::AddItem(const String& val, SelType st,
   rval->usr_data = usr;
   AddAction(rval);
   rval->connect(ct_, receiver, member);
-  
-/*TODO: modify for Qt4  
+
+/*TODO: modify for Qt4
   // connect any parent submenu handler
   if (par_menu_el) {
     if (par_menu_el->default_child_action.receiver) {
@@ -2092,16 +2097,16 @@ taiAction* taiActions::AddItem(const String& val, SelType st,
   return rval;
 }
 
-taiAction* taiActions::AddItem(const String& val, SelType st, const taiMenuAction* mact, 
+taiAction* taiActions::AddItem(const String& val, SelType st, const taiMenuAction* mact,
   const Variant& usr)
 {
   if (mact != NULL)
-    return AddItem(val, st, taiAction::men_act, mact->receiver, mact->member, usr); 
+    return AddItem(val, st, taiAction::men_act, mact->receiver, mact->member, usr);
   else
     return AddItem(val, st, taiAction::none, NULL, NULL, usr);
 }
 
-taiAction* taiActions::AddItem(const String& val, taiAction::CallbackType ct, 
+taiAction* taiActions::AddItem(const String& val, taiAction::CallbackType ct,
     const QObject *receiver, const char* member,
     const Variant& usr, const QKeySequence& shortcut)
 {
@@ -2120,7 +2125,7 @@ void taiActions::AddSep(bool new_radio_grp) {
   //  whether a previous operation added items and/or seps, or not)
   QWidget* ar = actionsRep();
   QAction* it = NULL;
-  if (ar->actions().count() > 0) 
+  if (ar->actions().count() > 0)
     it = ar->actions().last();
 //  taiAction* it = items.Peek();
   if ((it == NULL) || it->isSeparator()) return;
@@ -2138,7 +2143,7 @@ taiMenu* taiActions::AddSubMenu(const String& val, TypeDef* typ_) {
       return ((taiSubMenuEl*)act)->sub_menu_data;
     }
   }
-  
+
   taiMenu* rval = new taiMenu(sel_type, font_spec, typ_, host, this, gui_parent, mflags, this);
   taiSubMenuEl* sme = new taiSubMenuEl(val, rval);
   rval->par_menu_el = sme;
@@ -2157,15 +2162,15 @@ void taiActions::child_triggered_toggled(taiAction* act) {
         act->setChecked(true);
         return; // skip data change, because nothing actually changed
       }
-    } else { 
+    } else {
       // just request the change on select
       setCurSel(act); // gets ignored while already setting, ex. when unsetting the other item
     }
   }
 
   if (act->sel_type & taiActions::update) {
-    DataChanged();		// something was selected..
-  } 
+    DataChanged();              // something was selected..
+  }
 }
 
 taiAction* taiActions::curSel() const {
@@ -2207,7 +2212,7 @@ taiMenu* taiActions::FindSubMenu(const String& nm) {
 bool taiActions::GetImageByData(const Variant& usr) {
   // first try to find item by iterating through all eligible items and subitems
   if (GetImage_impl(usr))
-      return true; 
+      return true;
   return false;
 }
 
@@ -2220,7 +2225,7 @@ bool taiActions::GetImage_impl(const Variant& usr) {
     if (itm->usr_data == usr) {
 //TODO Qt4: make sure this case is automatically handled now
 //      if (usr.isPtrType() && (usr.toPtr() == NULL) && (itm->text() != String::con_NULL))
-//	continue;
+//      continue;
       setCurSel(itm);
       return true;
     }
@@ -2313,11 +2318,11 @@ void taiActions::setLabel(const String& val) {
 
 
 //////////////////////////
-// 	taiMenu	//
+//      taiMenu //
 //////////////////////////
 
 taiMenu::taiMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
-	QWidget* gui_parent_, int flags_, taiActions* par_menu_)
+        QWidget* gui_parent_, int flags_, taiActions* par_menu_)
 : taiActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
 {
   init();
@@ -2355,11 +2360,11 @@ taiAction* taiMenu::insertItem(const char* val, const QObject *receiver, const c
 }
 
 //////////////////////////
-//  taiButtonMenu 	//
+//  taiButtonMenu       //
 //////////////////////////
 
 taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
-	QWidget* gui_parent_, int flags_, taiActions* par_menu_)
+        QWidget* gui_parent_, int flags_, taiActions* par_menu_)
 : taiActions(st, ft, typ_, host_, par, gui_parent_, flags_, par_menu_, true, NULL)
 {
   init();
@@ -2392,7 +2397,7 @@ void taiButtonMenu::Delete() {
 
 
 //////////////////////////
-//  taiMenuBar	 	//
+//  taiMenuBar          //
 //////////////////////////
 
 taiMenuBar::taiMenuBar(int ft, TypeDef* typ_, IDataHost* host_,
@@ -2440,15 +2445,15 @@ void taiMenuBar::init(QMenuBar* exist_menu)
 
 
 //////////////////////////////////
-// 	taiToolBar	 	//
+//      taiToolBar              //
 //////////////////////////////////
 
-taiToolBar::taiToolBar(QWidget* gui_parent_, int ft, QToolBar* exist_bar) 
+taiToolBar::taiToolBar(QWidget* gui_parent_, int ft, QToolBar* exist_bar)
 : taiActions(normal, ft, NULL, NULL, NULL, gui_parent_, 0)
 {
   init(exist_bar);
 }
-  
+
 void taiToolBar::init(QToolBar* exist_bar) {
   if (exist_bar == NULL) {
     exist_bar = new QToolBar(gui_parent);
@@ -2458,7 +2463,7 @@ void taiToolBar::init(QToolBar* exist_bar) {
 
 
 //////////////////////////////////
-// 	taiEditButton	 	//
+//      taiEditButton           //
 //////////////////////////////////
 
 
@@ -2473,11 +2478,11 @@ taiEditButton* taiEditButton::New(void* base, taiEdit *taie, TypeDef* typ_,
 }
 
 taiEditButton::taiEditButton(void* base, taiEdit *taie, TypeDef* typ_,
-	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+        IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiButtonMenu(taiMenu::normal_update, taiMisc::fonSmall, typ_, host_, par, gui_parent_, flags_)
 {
   cur_base = base;
-  ie = taie;	// note: if null, it uses type's ie
+  ie = taie;    // note: if null, it uses type's ie
   // if true edit-only button, we just wire the action right to the button, and don't make any menu items
   // otherwise,  we create a menu
   if (HasFlag(flgEditOnly)) {
@@ -2506,7 +2511,7 @@ void taiEditButton::SetLabel() {
 }
 
 void taiEditButton::GetMethMenus() {
-  if (meth_el.size > 0)		// only do this once..
+  if (meth_el.size > 0)         // only do this once..
     return;
   if (HasFlag(flgEditOnly)) return;
 
@@ -2570,7 +2575,7 @@ void taiEditButton::setRepLabel(const char* label) {
 
 
 //////////////////////////////////////////
-// 		taiObjChooser		//
+//              taiObjChooser           //
 //////////////////////////////////////////
 
 
@@ -2635,7 +2640,7 @@ void taiObjChooser::setSel_obj(const taBase* value) {
       return;
     }
   }
-  browser->setCurrentRow(-1);	// 0 = default is to select first item!  not sure about that
+  browser->setCurrentRow(-1);   // 0 = default is to select first item!  not sure about that
 }
 
 bool taiObjChooser::Choose() {
@@ -2662,7 +2667,7 @@ void taiObjChooser::Build() {
 //Qt3  layOuter = new QGridLayout(this, 3, 1, taiM->vsep_c, taiM->vspc_c); // rows, cols, margin, space
   layOuter = new QGridLayout(this);
   layOuter->setMargin(taiM->vsep_c);
-  layOuter->setSpacing(taiM->vspc_c); 
+  layOuter->setSpacing(taiM->vspc_c);
   browser = new QListWidget(this);
   layOuter->addWidget(browser, 1, 0);
   layOuter->setRowStretch(1, 1); // list is item to expand in host
@@ -2713,7 +2718,7 @@ void taiObjChooser::Load() {
       taBase* ob = (taBase*)lst_par_obj->FastEl_(i);
       String lbl = ob->GetName();
       if(lbl.length() == 0)
-	lbl = String("[") + String(i) + "]";
+        lbl = String("[") + String(i) + "]";
       AddItem((const char*)lbl, ob);
     }
   }
@@ -2747,13 +2752,13 @@ void taiObjChooser::AddTokens(TypeDef* td) {
     if(td->InheritsFrom(TA_taBase)) {
       taBase* btmp = (taBase*)tmp;
       if((scope_ref != NULL) && !btmp->SameScope(scope_ref))
-	continue;
+        continue;
       if(!btmp->GetName().empty()) {
-	AddItem(btmp->GetName(), tmp);
-	items[items.size - 1] = adrnm;	// always store the actual address in the string!
+        AddItem(btmp->GetName(), tmp);
+        items[items.size - 1] = adrnm;  // always store the actual address in the string!
       }
       else {
-	AddItem(adrnm, tmp);
+        AddItem(adrnm, tmp);
       }
     }
     else {
@@ -2776,7 +2781,7 @@ void taiObjChooser::AddItem(const char* itm, const void* data_) {
   items.Add(itm);
   QListWidgetItem* lwi = new QListWidgetItem(QString(itm), browser);
   lwi->setData(Qt::UserRole, (ta_intptr_t)data_);
-  //browser->insertItem(new ocListBoxItem(, data_)); 
+  //browser->insertItem(new ocListBoxItem(, data_));
   if (msel_obj == data_)
     browser->setCurrentRow(browser->count() - 1);
 }
@@ -2818,14 +2823,14 @@ void taiObjChooser::accept() {
   int i = browser->currentRow();
   if (i == -1) {
     if (!select_only)
-      AcceptEditor_impl(NULL);	// null is clue to not fork to descend!
+      AcceptEditor_impl(NULL);  // null is clue to not fork to descend!
     else
       AcceptEditor_impl(editor);
     return;
   }
   msel_str = items.FastEl(i);
 
-  UpdateFmSelStr();		// get the new selection based on that!
+  UpdateFmSelStr();             // get the new selection based on that!
   if (msel_obj != NULL)
     iDialog::accept();
 }
@@ -2869,7 +2874,7 @@ void taiObjChooser::DescendBrowser() {
     msel_str = items.FastEl(i);
   }
 
-  UpdateFmSelStr();		// get the new selection based on that!
+  UpdateFmSelStr();             // get the new selection based on that!
   if (msel_obj == NULL) return;
 
   String nw_txt = msel_obj->GetPathNames();
@@ -2904,7 +2909,7 @@ void taiObjChooser::AcceptEditor_impl(QLineEdit* e) {
   msel_str = e->text();
   if (select_only) {
     msel_str = msel_str.after(path_str);
-    UpdateFmSelStr();		// get the new selection based on that!
+    UpdateFmSelStr();           // get the new selection based on that!
     if (msel_obj != NULL)
       iDialog::accept();
   } else {
@@ -2918,14 +2923,14 @@ void taiObjChooser::AcceptEditor_impl(QLineEdit* e) {
 
 
 //////////////////////////////////
-//   taiItemChooser		//
+//   taiItemChooser             //
 //////////////////////////////////
 
 const String taiItemChooser::cat_none("(none)");
-int taiItemChooser::filt_delay = 500; 
+int taiItemChooser::filt_delay = 500;
 
-taiItemChooser* taiItemChooser::New(const String& caption_, taiItemPtrBase* client_, 
-  int ft, QWidget* par_window_) 
+taiItemChooser* taiItemChooser::New(const String& caption_, taiItemPtrBase* client_,
+  int ft, QWidget* par_window_)
 {
 /*no, let qt choose  if (par_window_ == NULL)
     par_window_ = taiMisc::main_window;*/
@@ -2965,7 +2970,7 @@ void taiItemChooser::accept() {
     last_filter = text;
     QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::All);
     QTreeWidgetItem* item;
-    while ((item = *it++)) { 
+    while ((item = *it++)) {
       bool show = ShowItem(item);
       if(!show) continue;
       itm = item;
@@ -2982,9 +2987,9 @@ void taiItemChooser::accept() {
     if(new_fun && m_selObj) {
       taBase* nw = ((taBase*)m_selObj)->New(1);
       if(nw)
-	m_selObj = nw;
+        m_selObj = nw;
 //       if(taMisc::gui_active && nw)
-// 	tabMisc::DelayedFunCall_gui(nw, "BrowserSelectMe");
+//      tabMisc::DelayedFunCall_gui(nw, "BrowserSelectMe");
     }
   }
 
@@ -3026,12 +3031,12 @@ void taiItemChooser::ApplyFiltering() {
   QString s;
   QTreeWidgetItem* first_item = NULL;
   int n_items = 0;
-  while ((item = *it)) { 
+  while ((item = *it)) {
     bool show = ShowItem(item);
     items->setItemHidden(item, !show);
     if(show) {
       if(n_items == 0)
-	first_item = item;
+        first_item = item;
       n_items++;
     }
     ++it;
@@ -3073,13 +3078,13 @@ void taiItemChooser::ClearFilter() {
   last_filter.clear();
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Hidden);
   QTreeWidgetItem* item;
-  while ((item = *it)) { 
+  while ((item = *it)) {
     items->setItemHidden(item, false);
     ++it;
   }
   taMisc::DoneBusy();
   --m_changing;
-} 
+}
 
 void taiItemChooser::cmbView_currentIndexChanged(int index) {
   if (m_changing > 0) return;
@@ -3096,10 +3101,10 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   m_client = client_; // revoked at end
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(taiM->vsep_c);
-  layOuter->setSpacing(taiM->vspc_c); 
+  layOuter->setSpacing(taiM->vspc_c);
   QHBoxLayout* layFilter = NULL; // only if needed
   QLabel* lbl = NULL;
-  
+
   // we only put a cats selector if there are cats
   if (client_->catCount() > 0) {
     if (!layFilter) {
@@ -3119,7 +3124,7 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
     connect(cmbCat, SIGNAL(currentIndexChanged(int)),
       this, SLOT(cmbCat_currentIndexChanged(int)) );
   } else cmbCat = NULL;
-  
+
   // we only put up a view selector if more than 1 view supported
   if (client_->viewCount() > 1) {
     if (!layFilter) {
@@ -3136,9 +3141,9 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
       this, SLOT(cmbView_currentIndexChanged(int)) );
   } else cmbView = NULL;
   if (layFilter) layOuter->addLayout(layFilter);
-  
+
   QHBoxLayout* lay = new QHBoxLayout();
-  lay->addSpacing(taiM->hspc_c); 
+  lay->addSpacing(taiM->hspc_c);
   lbl = new QLabel("search", this);
   lbl->setToolTip("Search for items that contain this text, showing only them -- if starts with a ^ then only look for items in the first column that start with the text after the ^");
   lay->addWidget(lbl);
@@ -3146,9 +3151,9 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   filter = new iLineEdit(this);
   filter->setToolTip(lbl->toolTip());
   lay->addWidget(filter, 1);
-  lay->addSpacing(taiM->hspc_c); 
+  lay->addSpacing(taiM->hspc_c);
   layOuter->addLayout(lay);
-  
+
   items = new iTreeWidget(this);
   items->setSortingEnabled(true);
   layOuter->addWidget(items, 1); // list is item to expand in host
@@ -3166,7 +3171,7 @@ void taiItemChooser::Constr(taiItemPtrBase* client_) {
   timFilter = new QTimer(this);
   timFilter->setSingleShot(true);
   timFilter->setInterval(filt_delay);
-  
+
   connect(btnOk, SIGNAL(clicked()), this, SLOT(accept()) );
   connect(btnCancel, SIGNAL(clicked()), this, SLOT(reject()) );
   connect(items, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
@@ -3213,9 +3218,9 @@ void taiItemChooser::Refresh() {
         tsel = (void*)QVARIANT_TO_INTPTR(items->topLevelItem(1)->data(0, ObjDataRole));
       }
       else if(items->topLevelItemCount() > 0) {
-	if(!m_client->HasFlag(taiData::flgNullOk)) {
-	  tsel = (void*)QVARIANT_TO_INTPTR(items->topLevelItem(0)->data(0, ObjDataRole));
-	}
+        if(!m_client->HasFlag(taiData::flgNullOk)) {
+          tsel = (void*)QVARIANT_TO_INTPTR(items->topLevelItem(0)->data(0, ObjDataRole));
+        }
       }
     }
     setSelObj(tsel, true);
@@ -3240,7 +3245,7 @@ bool taiItemChooser::SetCurrentItemByData(void* value) {
   // note: assumes at most 1 selectable item for NULL
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Selectable);
   QTreeWidgetItem* item;
-  while ((item = *it)) { 
+  while ((item = *it)) {
     void* data = (void*)QVARIANT_TO_INTPTR(item->data(0, ObjDataRole));
     if (value == data) {
       items->setCurrentItem(item);
@@ -3258,7 +3263,7 @@ bool taiItemChooser::SetCurrentItemByData(void* value) {
 
 bool taiItemChooser::ShowItem(const QTreeWidgetItem* item) const {
   // we show the item unless it either doesn't meet filter criteria, or not in cat
-  
+
   // category filter
   if (m_cat_filter != 0) {
     String act_cat = item->data(0, ObjCatRole).toString(); //s/b blank if none set
@@ -3266,34 +3271,34 @@ bool taiItemChooser::ShowItem(const QTreeWidgetItem* item) const {
     if(multi_cats && act_cat.contains(", ")) {
       bool any_match = false;
       while(true) {
-	String cur_cat = act_cat.before(", ");
-	act_cat = act_cat.after(", ");
-	if(cur_cat == cat_txt) {
-	  any_match = true; break;
-	}
-	if(act_cat.contains(", ")) continue;
-	if(act_cat == cat_txt) {
-	  any_match = true;
-	}
-	break;
+        String cur_cat = act_cat.before(", ");
+        act_cat = act_cat.after(", ");
+        if(cur_cat == cat_txt) {
+          any_match = true; break;
+        }
+        if(act_cat.contains(", ")) continue;
+        if(act_cat == cat_txt) {
+          any_match = true;
+        }
+        break;
       }
       if(!any_match) return false;
     }
     else {
-      if (act_cat != cat_txt) 
-	return false;
+      if (act_cat != cat_txt)
+        return false;
     }
   }
-  
+
   // filter text filter
   if (!last_filter.isEmpty()) {
     bool hide = true;
     if(last_filter.startsWith("^")) { // special start of string search (on by default)
       QString flt = last_filter.mid(1); // skip ^
-      if(flt.isEmpty()) return true;	// nothing after it!
-      QString s = item->text(0);	// only 1st col
+      if(flt.isEmpty()) return true;    // nothing after it!
+      QString s = item->text(0);        // only 1st col
       if(s.startsWith(flt, Qt::CaseInsensitive)) {
-	hide = false;
+        hide = false;
       }
       if (hide) return false;
     }
@@ -3301,11 +3306,11 @@ bool taiItemChooser::ShowItem(const QTreeWidgetItem* item) const {
       QString s;
       int cols = items->columnCount();
       for (int i = 0; i < cols; ++i) {
-	s = item->text(i);
-	if (s.contains(last_filter, Qt::CaseInsensitive)) {
-	  hide = false;
-	  break;
-	}  
+        s = item->text(i);
+        if (s.contains(last_filter, Qt::CaseInsensitive)) {
+          hide = false;
+          break;
+        }
       }
       if (hide) return false;
     }
@@ -3365,13 +3370,13 @@ void taiItemChooser::timFilter_timeout() {
 
 
 //////////////////////////////////
-//   taiItemPtrBase		//
+//   taiItemPtrBase             //
 //////////////////////////////////
 
 taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
-			       IDataHost* host_, taiData* par, 
-			       QWidget* gui_parent_, int flags_,
-			       const String& flt_start_txt)
+                               IDataHost* host_, taiData* par,
+                               QWidget* gui_parent_, int flags_,
+                               const String& flt_start_txt)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   item_filter = NULL;
@@ -3405,7 +3410,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
   }
   taiM->FormatButton(m_but, _nilString, defSize());
   m_but->setFixedHeight(taiM->button_height(defSize()));
-  
+
   if (flags_ & flgEditDialog) {
     if (!(flags_ & flgReadOnly)) {
       btnEdit = new QToolButton(act_par);
@@ -3417,7 +3422,7 @@ taiItemPtrBase::taiItemPtrBase(TypeDef* typ_,
       lay->addWidget(btnEdit);
     }
   }
-  
+
   if (!(flags_ & flgNoHelp)) {
     btnHelp = new QToolButton(act_par);
     btnHelp->setText("?");
@@ -3448,12 +3453,12 @@ taiItemPtrBase::~taiItemPtrBase() {
 
 void taiItemPtrBase::BuildChooser(taiItemChooser* ic, int view) {
   if(new1_par) {
-    QTreeWidgetItem* item = ic->AddItem(new1_text, NULL, (void*)new1_par); 
+    QTreeWidgetItem* item = ic->AddItem(new1_text, NULL, (void*)new1_par);
     item->setData(0, taiItemChooser::NewFunRole, true);
     item->setData(1, Qt::DisplayRole, "Make a new object"); //note: no desc
   }
   if(new2_par) {
-    QTreeWidgetItem* item = ic->AddItem(new2_text, NULL, (void*)new2_par); 
+    QTreeWidgetItem* item = ic->AddItem(new2_text, NULL, (void*)new2_par);
     item->setData(0, taiItemChooser::NewFunRole, true);
     item->setData(1, Qt::DisplayRole, "Make a new object"); //note: no desc
   }
@@ -3470,11 +3475,11 @@ int taiItemPtrBase::catCount() const {
     if ((cats->size == 1) && (cats->FastEl(0).empty())) return 0;
     else return cats->size;
   } else return 0;
-} 
+}
 
 const String taiItemPtrBase::catText(int index) const {
   return (cats) ? cats->SafeEl(index) : _nilString;
-} 
+}
 
 void taiItemPtrBase::GetImage(void* cur_sel, TypeDef* targ_typ_) {
   targ_typ = targ_typ_;
@@ -3501,7 +3506,7 @@ bool taiItemPtrBase::OpenChooser() {
   String chs_title = titleText();
   taiItemChooser* ic = taiItemChooser::New(chs_title, this);
   if (ic->Choose(this)) {
-    rval = true;		// hit ok
+    rval = true;                // hit ok
     if (m_sel != ic->selObj()) {
       UpdateImage(ic->selObj());
       if (mflags & flgAutoApply)
@@ -3516,7 +3521,7 @@ bool taiItemPtrBase::OpenChooser() {
 
 bool taiItemPtrBase::ShowItemFilter(void* base, void* item, const String& itnm) const {
 //   if(filter_start_txt.nonempty() && !itnm.startsWith(filter_start_txt)) return false;
-  if (item_filter) 
+  if (item_filter)
     return item_filter(base, item);
   return true;
 }
@@ -3525,12 +3530,12 @@ void taiItemPtrBase::UpdateImage(void* cur_sel) {
   // note: don't optimize this if same msel, since we use it to set label
   m_sel = cur_sel;
   if(hasNoItems()) {
-    rep()->setEnabled(false);	// if no options
+    rep()->setEnabled(false);   // if no options
     rep()->setText("No Items Available to Choose!");
     return;
   }
   if(hasOnlyOneItem()) {
-    rep()->setEnabled(false);	// if only one option, this is it -- will override m_sel!
+    rep()->setEnabled(false);   // if only one option, this is it -- will override m_sel!
   }
   else {
     rep()->setEnabled(true);
@@ -3540,12 +3545,12 @@ void taiItemPtrBase::UpdateImage(void* cur_sel) {
 
 
 //////////////////////////////////
-//   taiMemberDefButton		//
+//   taiMemberDefButton         //
 //////////////////////////////////
 
 taiMemberDefButton::taiMemberDefButton(TypeDef* typ_, IDataHost* host,
-				       taiData* par, QWidget* gui_parent_, int flags_, 
-				       const String& flt_start_txt)
+                                       taiData* par, QWidget* gui_parent_, int flags_,
+                                       const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
@@ -3559,7 +3564,7 @@ void taiMemberDefButton::btnHelp_clicked() {
 void taiMemberDefButton::BuildCategories_impl() {
   if (cats) cats->Reset();
   else cats = new String_Array;
-  
+
   MemberSpace* mbs = &targ_typ->members;
   String cat;
   for (int i = 0; i < mbs->size; ++i) {
@@ -3578,10 +3583,10 @@ void taiMemberDefButton::BuildChooser(taiItemChooser* ic, int view) {
     return;
   }
   switch (view) {
-  case 0: 
-    BuildChooser_0(ic); 
+  case 0:
+    BuildChooser_0(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
+    break;
   default: break; // shouldn't happen
   }
 }
@@ -3609,9 +3614,9 @@ int taiMemberDefButton::columnCount(int view) const {
 const String taiMemberDefButton::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
-    case 0: return "Member"; 
-    case 1: return "Description"; 
-    } break; 
+    case 0: return "Member";
+    case 1: return "Description";
+    } break;
   default: break; // compiler food
   }
   return _nilString; // shouldn't happen
@@ -3632,19 +3637,19 @@ bool taiMemberDefButton::ShowMember(MemberDef* mbr) {
 
 const String taiMemberDefButton::viewText(int index) const {
   switch (index) {
-  case 0: return "Flat List"; 
+  case 0: return "Flat List";
   default: return _nilString;
   }
 }
 
 
 //////////////////////////////////
-//   taiMethodDefButton		//
+//   taiMethodDefButton         //
 //////////////////////////////////
 
 taiMethodDefButton::taiMethodDefButton(TypeDef* typ_, IDataHost* host,
-				       taiData* par, QWidget* gui_parent_, int flags_,
-				       const String& flt_start_txt)
+                                       taiData* par, QWidget* gui_parent_, int flags_,
+                                       const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
@@ -3658,7 +3663,7 @@ void taiMethodDefButton::btnHelp_clicked() {
 void taiMethodDefButton::BuildCategories_impl() {
   if (cats) cats->Reset();
   else cats = new String_Array;
-  
+
   MethodSpace* mbs = &targ_typ->methods;
   String cat;
   for (int i = 0; i < mbs->size; ++i) {
@@ -3677,15 +3682,15 @@ void taiMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
     return;
   }
   switch (view) {
-  case 0: 
-    BuildChooser_0(ic); 
+  case 0:
+    BuildChooser_0(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
-  case 1: 
+    break;
+  case 1:
     ic->items->sortItems(1, Qt::AscendingOrder); // so items aren't sorted by 0
-    BuildChooser_1(ic, targ_typ, NULL); 
-    ic->items->sortItems(1, Qt::AscendingOrder); 
-    break; 
+    BuildChooser_1(ic, targ_typ, NULL);
+    ic->items->sortItems(1, Qt::AscendingOrder);
+    break;
   default: break; // shouldn't happen
   }
 }
@@ -3703,8 +3708,8 @@ void taiMethodDefButton::BuildChooser_0(taiItemChooser* ic) {
   }
 }
 
-int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ, 
-  QTreeWidgetItem* top_item) 
+int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
+  QTreeWidgetItem* top_item)
 {
   int rval = 0;
   String cat;
@@ -3727,7 +3732,7 @@ int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
   // do parent type(s) as non-selectable folders
   for (int i = 0; i < top_typ->parents.size; ++i) {
     TypeDef* par_typ = top_typ->parents.FastEl(i);
-    
+
     QTreeWidgetItem* item = ic->AddItem(par_typ->name, top_item, (void*)NULL);
     item->setFlags(Qt::ItemIsEnabled); // but not selectable
     //NOTE: no other column data, to keep the display clean
@@ -3750,14 +3755,14 @@ int taiMethodDefButton::columnCount(int view) const {
 const String taiMethodDefButton::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
-    case 0: return "Method"; 
-    case 1: return "Description"; 
-    } break; 
+    case 0: return "Method";
+    case 1: return "Description";
+    } break;
   case 1: switch (index) {
-    case 0: return "Class"; 
-    case 1: return "Method"; 
-    case 2: return "Description"; 
-    } break; 
+    case 0: return "Class";
+    case 1: return "Method";
+    case 2: return "Description";
+    } break;
   default: break; // compiler food
   }
   return _nilString; // shouldn't happen
@@ -3773,20 +3778,20 @@ bool taiMethodDefButton::ShowMethod(MethodDef* mth) {
 
 const String taiMethodDefButton::viewText(int index) const {
   switch (index) {
-  case 0: return "Flat List"; 
-  case 1: return "Grouped By Class"; 
+  case 0: return "Flat List";
+  case 1: return "Grouped By Class";
   default: return _nilString;
   }
 }
 
 
 //////////////////////////////////////////
-//   taiMemberMethodDefButton		//
+//   taiMemberMethodDefButton           //
 //////////////////////////////////////////
 
 taiMemberMethodDefButton::taiMemberMethodDefButton(TypeDef* typ_, IDataHost* host,
-		   taiData* par, QWidget* gui_parent_, int flags_,
-						   const String& flt_start_txt)
+                   taiData* par, QWidget* gui_parent_, int flags_,
+                                                   const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
@@ -3829,24 +3834,24 @@ void taiMemberMethodDefButton::BuildCategories_impl() {
 
 void taiMemberMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
   inherited::BuildChooser(ic, view);
-  
+
   if (!targ_typ) {
     taMisc::Error("taiMemberMethodDefButton::BuildChooser: targ_type needed");
     return;
   }
   switch (view) {
-  case 0: 
-    BuildChooser_0(ic); 
+  case 0:
+    BuildChooser_0(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
-  case 1: 
-    BuildChooser_1(ic); 
+    break;
+  case 1:
+    BuildChooser_1(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
-  case 2: 
-    BuildChooser_2(ic); 
+    break;
+  case 2:
+    BuildChooser_2(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
+    break;
   default: break; // shouldn't happen
   }
 }
@@ -3900,16 +3905,16 @@ void taiMemberMethodDefButton::BuildChooser_2(taiItemChooser* ic) {
 
 
 int taiMemberMethodDefButton::columnCount(int view) const {
-  return 2;			// always 2
+  return 2;                     // always 2
 }
 
 const String taiMemberMethodDefButton::headerText(int index, int view) const {
-  if(index == 1) return "Description"; 
+  if(index == 1) return "Description";
   if(index == 0) {
     switch (view) {
-    case 0: return "Member/Method"; 
-    case 1: return "Member"; 
-    case 2: return "Method"; 
+    case 0: return "Member/Method";
+    case 1: return "Member";
+    case 2: return "Method";
     default: break; // compiler food
     }
   }
@@ -3934,20 +3939,20 @@ bool taiMemberMethodDefButton::ShowMember(MemberDef* mbr) {
 
 const String taiMemberMethodDefButton::viewText(int index) const {
   switch (index) {
-  case 0: return "Members & Methods"; 
-  case 1: return "Members"; 
-  case 2: return "Methods"; 
+  case 0: return "Members & Methods";
+  case 1: return "Members";
+  case 2: return "Methods";
   default: return _nilString;
   }
 }
 
 //////////////////////////////////////////
-//   taiEnumStaticButton		//
+//   taiEnumStaticButton                //
 //////////////////////////////////////////
 
 taiEnumStaticButton::taiEnumStaticButton(TypeDef* typ_, IDataHost* host,
-					 taiData* par, QWidget* gui_parent_, int flags_,
-					 const String& flt_start_txt)
+                                         taiData* par, QWidget* gui_parent_, int flags_,
+                                         const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
@@ -4001,22 +4006,22 @@ void taiEnumStaticButton::BuildChooser(taiItemChooser* ic, int view) {
     return;
   }
   switch (view) {
-  case 0: 
-    BuildChooser_0(ic); 
+  case 0:
+    BuildChooser_0(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
-  case 1: 
-    BuildChooser_1(ic); 
+    break;
+  case 1:
+    BuildChooser_1(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
-  case 2: 
-    BuildChooser_2(ic); 
+    break;
+  case 2:
+    BuildChooser_2(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
-  case 3: 
-    BuildChooser_3(ic); 
+    break;
+  case 3:
+    BuildChooser_3(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
+    break;
   default: break; // shouldn't happen
   }
 }
@@ -4028,10 +4033,10 @@ void taiEnumStaticButton::BuildChooser_0(taiItemChooser* ic) {
     TypeDef* td = targ_typ->sub_types.FastEl(i);
     if(td->InheritsFormal(TA_enum)) {
       for(int j=0;j< td->enum_vals.size; j++) {
-	EnumDef* ed = td->enum_vals.FastEl(j);
-	if(!ShowEnum(ed)) continue;
-	QTreeWidgetItem* item = ic->AddItem(cat, ed->name + " (enum)", NULL, (void*)ed);
-	item->setData(1, Qt::DisplayRole, ed->desc);
+        EnumDef* ed = td->enum_vals.FastEl(j);
+        if(!ShowEnum(ed)) continue;
+        QTreeWidgetItem* item = ic->AddItem(cat, ed->name + " (enum)", NULL, (void*)ed);
+        item->setData(1, Qt::DisplayRole, ed->desc);
       }
     }
   }
@@ -4063,10 +4068,10 @@ void taiEnumStaticButton::BuildChooser_1(taiItemChooser* ic) {
     TypeDef* td = targ_typ->sub_types.FastEl(i);
     if(td->InheritsFormal(TA_enum)) {
       for(int j=0;j< td->enum_vals.size; j++) {
-	EnumDef* ed = td->enum_vals.FastEl(j);
-	if(!ShowEnum(ed)) continue;
-	QTreeWidgetItem* item = ic->AddItem(cat, ed->name, NULL, (void*)ed);
-	item->setData(1, Qt::DisplayRole, ed->desc);
+        EnumDef* ed = td->enum_vals.FastEl(j);
+        if(!ShowEnum(ed)) continue;
+        QTreeWidgetItem* item = ic->AddItem(cat, ed->name, NULL, (void*)ed);
+        item->setData(1, Qt::DisplayRole, ed->desc);
       }
     }
   }
@@ -4099,17 +4104,17 @@ void taiEnumStaticButton::BuildChooser_3(taiItemChooser* ic) {
 
 
 int taiEnumStaticButton::columnCount(int view) const {
-  return 2;			// always 2
+  return 2;                     // always 2
 }
 
 const String taiEnumStaticButton::headerText(int index, int view) const {
-  if(index == 1) return "Description"; 
+  if(index == 1) return "Description";
   if(index == 0) {
     switch (view) {
-    case 0: return "Item"; 
-    case 1: return "Enum"; 
-    case 2: return "Static Member"; 
-    case 3: return "Static Method"; 
+    case 0: return "Item";
+    case 1: return "Enum";
+    case 2: return "Static Member";
+    case 3: return "Static Method";
     default: break; // compiler food
     }
   }
@@ -4139,21 +4144,21 @@ bool taiEnumStaticButton::ShowMember(MemberDef* mbr) {
 
 const String taiEnumStaticButton::viewText(int index) const {
   switch (index) {
-  case 0: return "Enums & statics"; 
-  case 1: return "Enums"; 
-  case 2: return "Static Members"; 
-  case 3: return "Static Methods"; 
+  case 0: return "Enums & statics";
+  case 1: return "Enums";
+  case 2: return "Static Members";
+  case 3: return "Static Methods";
   default: return _nilString;
   }
 }
 
 //////////////////////////////////
-//   taiTypeDefButton		//
+//   taiTypeDefButton           //
 //////////////////////////////////
 
 taiTypeDefButton::taiTypeDefButton(TypeDef* typ_, IDataHost* host,
-				   taiData* par, QWidget* gui_parent_, int flags_, 
-				   const String& flt_start_txt)
+                                   taiData* par, QWidget* gui_parent_, int flags_,
+                                   const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
@@ -4164,7 +4169,7 @@ taiTypeDefButton::TypeCat taiTypeDefButton::AddType_Class(TypeDef* typ_) {
     return TC_NoAdd;
   // no nested typedefs TODO: find a better way to identify nested typedefs
   if (typ_->name == "inherited") return TC_NoAdd;
-  
+
   // we don't add templates, but we do add their children
   if (typ_->InheritsFormal(TA_templ_inst))
     return TC_NoAddCheckChildren;
@@ -4175,7 +4180,7 @@ taiTypeDefButton::TypeCat taiTypeDefButton::AddType_Class(TypeDef* typ_) {
 
   // don't clutter list with these..
   if((typ_->members.size==0) && (typ_->methods.size==0) && !(typ_ == &TA_taBase))
-    return TC_NoAdd;		
+    return TC_NoAdd;
   return TC_Add;
 }
 
@@ -4215,7 +4220,7 @@ bool taiTypeDefButton::hasNoItems() {
 
 bool taiTypeDefButton::hasOnlyOneItem() {
   if(HasFlag(flgNullOk)) return false; // we now have 2 -- targ_typ and null
-  if(!targ_typ) return false;	       // shouldn't happen
+  if(!targ_typ) return false;          // shouldn't happen
   return (targ_typ->children.size == 0); // if we have no children, then there is only 1!
 }
 
@@ -4226,20 +4231,20 @@ void taiTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
     return;
   }
   switch (view) {
-  case 0: 
+  case 0:
     if (HasFlag(flgNullOk)) {
-      QTreeWidgetItem* item = ic->AddItem(nullText(), NULL, (void*)NULL); 
+      QTreeWidgetItem* item = ic->AddItem(nullText(), NULL, (void*)NULL);
       item->setData(1, Qt::DisplayRole, " "); //note: no desc
     }
-    BuildChooser_0(ic, targ_typ, NULL); 
+    BuildChooser_0(ic, targ_typ, NULL);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
+    break;
   default: break; // shouldn't happen
   }
 }
 
-int taiTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
-				     QTreeWidgetItem* top_item)
+int taiTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
+                                     QTreeWidgetItem* top_item)
 {
   int rval = 0;
   QTreeWidgetItem* item = NULL; // used for intermediate items
@@ -4291,10 +4296,10 @@ int taiTypeDefButton::CountChildren(TypeDef* td) {
 const String taiTypeDefButton::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
-    case 0: return "Type"; 
-    case 1: return "Par Type"; 
-    case 2: return "Description"; 
-    } break; 
+    case 0: return "Type";
+    case 1: return "Par Type";
+    case 2: return "Description";
+    } break;
   default: break; // compiler food
   }
   return _nilString; // shouldn't happen
@@ -4306,20 +4311,20 @@ const String taiTypeDefButton::labelNameNonNull() const {
 
 const String taiTypeDefButton::viewText(int index) const {
   switch (index) {
-  case 0: return "Flat List"; 
-//case 1: return "By Class Hierarchy"; 
+  case 0: return "Flat List";
+//case 1: return "By Class Hierarchy";
   default: return _nilString;
   }
 }
 
 
 //////////////////////////////////
-//   taiEnumTypeDefButton		//
+//   taiEnumTypeDefButton               //
 //////////////////////////////////
 
 taiEnumTypeDefButton::taiEnumTypeDefButton(TypeDef* typ_, IDataHost* host,
-					   taiData* par, QWidget* gui_parent_, int flags_,
-					   const String& flt_start_txt)
+                                           taiData* par, QWidget* gui_parent_, int flags_,
+                                           const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
 }
@@ -4332,7 +4337,7 @@ bool taiEnumTypeDefButton::AddType_Enum(TypeDef* typ_, TypeDef* par_typ) {
   // because enums are inherited, only show in the type itself
   // we will show all base and inherited from top, but then only
   // base for all inherited from top
-  
+
   // easiest to determine is when this is directly in parent
   TypeDef* ot = typ_->GetOwnerType(); //cache
   if (ot == par_typ) return true;
@@ -4355,24 +4360,24 @@ void taiEnumTypeDefButton::BuildChooser(taiItemChooser* ic, int view) {
     return;
   }
   switch (view) {
-  case 0: 
+  case 0:
     if (HasFlag(flgNullOk)) {
       // note: ' ' makes it sort to the top
       QTreeWidgetItem* item = ic->AddItem(" ", NULL, (void*)NULL); //note: no desc
       item->setData(1, Qt::DisplayRole, nullText());
     }
-    BuildChooser_0(ic, targ_typ, NULL); 
+    BuildChooser_0(ic, targ_typ, NULL);
     ic->items->sortItems(0, Qt::AscendingOrder);
-    break; 
+    break;
   default: break; // shouldn't happen
   }
 }
 
-int taiEnumTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ, 
+int taiEnumTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
   QTreeWidgetItem* top_item)
 {
   int rval = 0;
-  
+
   // add Enums of this type
   for (int i = 0; i < top_typ->sub_types.size; ++i) {
     TypeDef* chld = top_typ->sub_types.FastEl(i);
@@ -4389,7 +4394,7 @@ int taiEnumTypeDefButton::BuildChooser_0(taiItemChooser* ic, TypeDef* top_typ,
     TypeDef* chld = top_typ->children.FastEl(i);
     if ((chld->ptr != 0) || !chld->is_class())
       continue;
-    //note: we are recursive, but aren't making a tree  
+    //note: we are recursive, but aren't making a tree
     int num = BuildChooser_0(ic, chld, top_item);
     rval += num;
   }
@@ -4406,10 +4411,10 @@ int taiEnumTypeDefButton::columnCount(int view) const {
 const String taiEnumTypeDefButton::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
-    case 0: return "Type"; 
-    case 1: return "Enum"; 
-    case 2: return "Description"; 
-    } break; 
+    case 0: return "Type";
+    case 1: return "Enum";
+    case 2: return "Description";
+    } break;
   default: break; // compiler food
   }
   return _nilString; // shouldn't happen
@@ -4417,12 +4422,12 @@ const String taiEnumTypeDefButton::headerText(int index, int view) const {
 
 
 //////////////////////////////////
-//   taiTokenPtrButton		//
+//   taiTokenPtrButton          //
 //////////////////////////////////
 
 taiTokenPtrButton::taiTokenPtrButton(TypeDef* typ_, IDataHost* host,
-				     taiData* par, QWidget* gui_parent_, int flags_,
-				     const String& flt_start_txt)
+                                     taiData* par, QWidget* gui_parent_, int flags_,
+                                     const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
   scope_typ = NULL;
@@ -4471,7 +4476,7 @@ bool taiTokenPtrButton::countTokensToN(int& cnt, TypeDef* td, int n, void*& last
     if (!ShowToken(btmp)) continue;
     cnt++;
     last_itm = (void*)btmp;
-    if(cnt >= n) return true;	// got it!
+    if(cnt >= n) return true;   // got it!
   }
   if(td->tokens.sub_tokens == 0) return false; // not gonna happen
 
@@ -4479,39 +4484,39 @@ bool taiTokenPtrButton::countTokensToN(int& cnt, TypeDef* td, int n, void*& last
     TypeDef* chld = td->children[i];
     if(countTokensToN(cnt, chld, n, last_itm)) return true;
   }
-  return false;			// didn't happen
+  return false;                 // didn't happen
 }
 
 bool taiTokenPtrButton::hasNoItems() {
-  if(!targ_typ) return false;	       // shouldn't happen
+  if(!targ_typ) return false;          // shouldn't happen
   if(HasFlag(flgNullOk)) return false; // we now have 1..
   if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return true;
   int cnt = 0;
   void* last_itm = NULL;
   bool got_one = countTokensToN(cnt, targ_typ, 1, last_itm);
   if(!got_one) {
-    m_sel = NULL;		// select the null!
+    m_sel = NULL;               // select the null!
     return true;
   }
   return false;
 }
 
 bool taiTokenPtrButton::hasOnlyOneItem() {
-  if(!targ_typ) return false;	       // shouldn't happen
+  if(!targ_typ) return false;          // shouldn't happen
   int cnt = 0;
   void* last_itm = NULL;
   if(HasFlag(flgNullOk)) {
     // now check that we don't have any others -- same logic as has no items
     if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return true;
     if(!countTokensToN(cnt, targ_typ, 1, last_itm)) {
-      m_sel = NULL;		// select NULL
+      m_sel = NULL;             // select NULL
       return true;
     }
   }
   if(targ_typ->tokens.size == 0 && targ_typ->tokens.sub_tokens == 0) return false; // no way
   bool got_two = countTokensToN(cnt, targ_typ, 2, last_itm); // if we get 2, then we're bust!
   if(!got_two && cnt == 1) {
-    m_sel = last_itm;		// select the one item!
+    m_sel = last_itm;           // select the one item!
     return true;
   }
   return false;
@@ -4526,30 +4531,30 @@ void taiTokenPtrButton::BuildChooser(taiItemChooser* ic, int view) {
     return;
   }
   switch (view) {
-  case 0: 
+  case 0:
     if (HasFlag(flgNullOk)) {
       // note: ' ' makes it sort to the top
       QTreeWidgetItem* item = ic->AddItem(nullText(), NULL, (void*)NULL); //note: no desc
       item->setData(1, Qt::DisplayRole, " ");
     }
-    BuildChooser_0(ic, targ_typ, NULL); 
-    ic->items->sortItems(0, Qt::AscendingOrder); 
-    break; 
+    BuildChooser_0(ic, targ_typ, NULL);
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break;
   default: break; // shouldn't happen
   }
 }
 
-int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td, 
-  QTreeWidgetItem* top_item) 
+int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
+  QTreeWidgetItem* top_item)
 {
-  if (!td->InheritsFrom(TA_taBase) 
+  if (!td->InheritsFrom(TA_taBase)
      || (td->ptr > 0)
   ) return 0;
   int rval = 0;
-  
+
   //NOTES:
   // if !tokens.keep then tokens.size==0
-  
+
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
@@ -4557,7 +4562,7 @@ int taiTokenPtrButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
     if (!ShowToken(btmp)) continue;
     //todo: need to get a more globally unique name, maybe key_unique_name
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
-      top_item, (void*)btmp); 
+      top_item, (void*)btmp);
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
     taBase* own = btmp->GetParent();
     if (own) {
@@ -4590,7 +4595,7 @@ void taiTokenPtrButton::GetImage(void* cur_sel_, TypeDef* targ_typ_)
 }
 
 void taiTokenPtrButton::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
-  taBase* scope_, TypeDef* scope_type_) 
+  taBase* scope_, TypeDef* scope_type_)
 {
   scope_ref = scope_;
   scope_typ = scope_type_;
@@ -4600,12 +4605,12 @@ void taiTokenPtrButton::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
 const String taiTokenPtrButton::headerText(int index, int view) const {
   switch (view) {
   case 0: switch (index) {
-    case 0: return "Name"; 
-    case 1: return "Type"; 
-    case 2: return "Parent Name"; 
-    case 3: return "Parent Type"; 
-    case 4: return "Path"; 
-    } break; 
+    case 0: return "Name";
+    case 1: return "Type";
+    case 2: return "Parent Name";
+    case 3: return "Parent Type";
+    case 4: return "Path";
+    } break;
   default: break; // compiler food
   }
   return _nilString; // shouldn't happen
@@ -4621,18 +4626,18 @@ bool taiTokenPtrButton::ShowToken(taBase* obj) const {
 
 const String taiTokenPtrButton::viewText(int index) const {
   switch (index) {
-  case 0: return "Flat List"; 
+  case 0: return "Flat List";
   default: return _nilString;
   }
 }
 
 //////////////////////////////////
-//   taiTokenPtrMultiTypeButton		//
+//   taiTokenPtrMultiTypeButton         //
 //////////////////////////////////
 
 taiTokenPtrMultiTypeButton::taiTokenPtrMultiTypeButton(TypeDef* typ_, IDataHost* host,
-				     taiData* par, QWidget* gui_parent_, int flags_,
-				     const String& flt_start_txt)
+                                     taiData* par, QWidget* gui_parent_, int flags_,
+                                     const String& flt_start_txt)
  :inherited(typ_, host, par, gui_parent_, flags_, flt_start_txt)
 {
   scope_typ = NULL;
@@ -4667,7 +4672,7 @@ void taiTokenPtrMultiTypeButton::BuildChooser(taiItemChooser* ic, int view) {
     cust_chooser(scope_ref, this);
 
   inherited::BuildChooser(ic, view);
-  
+
   if (!targ_typ) {
     taMisc::Error("taiTokenPtrMultiTypeButton::BuildChooser: targ_type needed");
     return;
@@ -4685,22 +4690,22 @@ void taiTokenPtrMultiTypeButton::BuildChooser(taiItemChooser* ic, int view) {
   }
   for(int i = st_typ; i<= ed_typ; i++) {
     TypeDef* td = type_list.SafeEl(i);
-    BuildChooser_0(ic, td, NULL); 
+    BuildChooser_0(ic, td, NULL);
   }
-  ic->items->sortItems(0, Qt::AscendingOrder); 
+  ic->items->sortItems(0, Qt::AscendingOrder);
 }
 
-int taiTokenPtrMultiTypeButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td, 
-  QTreeWidgetItem* top_item) 
+int taiTokenPtrMultiTypeButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
+  QTreeWidgetItem* top_item)
 {
-  if (!td->InheritsFrom(TA_taBase) 
+  if (!td->InheritsFrom(TA_taBase)
      || (td->ptr > 0)
   ) return 0;
   int rval = 0;
-  
+
   //NOTES:
   // if !tokens.keep then tokens.size==0
-  
+
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
@@ -4708,7 +4713,7 @@ int taiTokenPtrMultiTypeButton::BuildChooser_0(taiItemChooser* ic, TypeDef* td,
     if (!ShowToken(btmp)) continue;
     //todo: need to get a more globally unique name, maybe key_unique_name
     QTreeWidgetItem* item = ic->AddItem(btmp->GetColText(taBase::key_disp_name),
-      top_item, (void*)btmp); 
+      top_item, (void*)btmp);
     item->setData(1, Qt::DisplayRole, btmp->GetTypeDef()->name);
     taBase* own = btmp->GetOwner();
     if (own) {
@@ -4737,7 +4742,7 @@ void taiTokenPtrMultiTypeButton::GetImage(void* cur_sel_, TypeDef* targ_typ_)
 }
 
 void taiTokenPtrMultiTypeButton::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
-  taBase* scope_, TypeDef* scope_type_) 
+  taBase* scope_, TypeDef* scope_type_)
 {
   scope_ref = scope_;
   scope_typ = scope_type_;
@@ -4746,10 +4751,10 @@ void taiTokenPtrMultiTypeButton::GetImageScoped(taBase* ths, TypeDef* targ_typ_,
 
 const String taiTokenPtrMultiTypeButton::headerText(int index, int view) const {
   switch (index) {
-  case 0: return "Name"; 
-  case 1: return "Type"; 
-  case 2: return "Owner Name"; 
-  case 3: return "Owner Type"; 
+  case 0: return "Name";
+  case 1: return "Type";
+  case 2: return "Owner Name";
+  case 3: return "Owner Type";
   }
   return _nilString; // shouldn't happen
 }
@@ -4772,11 +4777,11 @@ const String taiTokenPtrMultiTypeButton::viewText(int index) const {
 }
 
 //////////////////////////////////////////
-// 		taiFileButton		//
+//              taiFileButton           //
 //////////////////////////////////////////
 
 taiFileButton::taiFileButton(TypeDef* typ_, IDataHost* host_, taiData* par,
-	QWidget* gui_parent_, int flags_, bool rd_only, bool wrt_only)
+        QWidget* gui_parent_, int flags_, bool rd_only, bool wrt_only)
 : taiButtonMenu(taiMenu::normal, taiMisc::fonSmall, typ_, host_, par, gui_parent_, flags_)
 {
   gf = NULL;
@@ -4803,19 +4808,19 @@ void taiFileButton::GetImage() {
   if (items.size == 0) {
     if (!write_only)
       AddItem("Open", taiMenu::use_default,
-	taiAction::action, this, SLOT(Open()) );
+        taiAction::action, this, SLOT(Open()) );
     if(!read_only && ((gf == NULL) || !gf->select_only)) {
       AddItem("Save", taiMenu::use_default,
-	taiAction::action, this, SLOT(Save()) );
+        taiAction::action, this, SLOT(Save()) );
       AddItem("SaveAs", taiMenu::use_default,
-	taiAction::action, this, SLOT(SaveAs()) );
+        taiAction::action, this, SLOT(SaveAs()) );
       AddItem("Append", taiMenu::use_default,
-	taiAction::action, this, SLOT(Append()) );
+        taiAction::action, this, SLOT(Append()) );
     }
     AddItem("Close", taiMenu::use_default,
-	taiAction::action, this, SLOT(Close()) );
+        taiAction::action, this, SLOT(Close()) );
     AddItem("Edit", taiMenu::use_default,
-	taiAction::action, this, SLOT(Edit()) );
+        taiAction::action, this, SLOT(Edit()) );
   }
 
   if ((gf == NULL) || (!gf->select_only && !gf->open_file) || gf->FileName().empty() )
@@ -4862,7 +4867,7 @@ void taiFileButton::Close() {
   GetGetFile();
   gf->Close();
   if(gf->select_only)
-    gf->SetFname("");		// reset file name on close
+    gf->SetFname("");           // reset file name on close
   GetImage();
 }
 
@@ -4907,7 +4912,7 @@ void taiElBase::setCur_obj(taBase* value, bool do_chng) {
 }
 
 //////////////////////////
-// 	taiToken	//
+//      taiToken        //
 //////////////////////////
 
 taiToken::taiToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
@@ -5000,12 +5005,12 @@ void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* 
       taiAction* mnel = menu->AddItem
         ("<Over max, select...>", taiMenu::normal,
         taiAction::action, this, SLOT(Chooser()) );
-      if (actn != NULL) {		// also set callback action!
+      if (actn != NULL) {               // also set callback action!
         mnel->connect(actn);
       }
     } else {
       taiMenuAction ma(this, SLOT(ItemChosen(taiAction*)));
-      String	nm;
+      String    nm;
       for (int i = 0; i < td->tokens.size; ++i) {
         taBase* btmp = (taBase*)td->tokens.FastEl(i);
         if ((scope_ref != NULL) && !btmp->SameScope(scope_ref))
@@ -5036,7 +5041,7 @@ void taiToken::GetMenu_impl(taiActions* menu, TypeDef* td, const taiMenuAction* 
 //huh?? why??      menu->AddSep();
       GetMenu_impl(submenu, chld, actn);
     } else {
-      GetMenu_impl(menu, chld, actn);	// if no tokens, don't add a submenu..
+      GetMenu_impl(menu, chld, actn);   // if no tokens, don't add a submenu..
     }
   }
 }
@@ -5046,11 +5051,11 @@ void taiToken::ItemChosen(taiAction* menu_el) {
 }
 
 //////////////////////////////////
-// 	taiSubToken		//
+//      taiSubToken             //
 //////////////////////////////////
 
 taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
-	QWidget* gui_parent_, int flags_)
+        QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
   menubase = NULL;
@@ -5059,7 +5064,7 @@ taiSubToken::taiSubToken(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHos
 }
 
 taiSubToken::taiSubToken(taiMenu* existing_menu, TypeDef* typ_, IDataHost* host_,
-	taiData* par, QWidget* gui_parent_, int flags_)
+        taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
   menubase = NULL;
@@ -5138,7 +5143,7 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
     if (md->type->DerivesFrom(typ) && !(md->HasOption("NO_SUBTYPE"))) {
       memb = (taBase **) md->GetOff((void*)rbase);
       if ((*memb != NULL) && ((void *) *memb != (void *) rbase)) {
-	GetMenuImpl((void *) *memb, actn);
+        GetMenuImpl((void *) *memb, actn);
       }
     }
   }
@@ -5147,16 +5152,16 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
 
 
 //////////////////////////////////
-//   taiTypeInfoBase	//
+//   taiTypeInfoBase    //
 //////////////////////////////////
 
-taiTypeInfoBase::taiTypeInfoBase(taiActions::RepType rt, int ft, 
-  MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par, 
+taiTypeInfoBase::taiTypeInfoBase(taiActions::RepType rt, int ft,
+  MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   targ_typ = NULL; // gets set later
-  memb_md = memb_md_; 
+  memb_md = memb_md_;
   menubase = NULL;
   ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, NULL, host_, this, gui_parent_);
 }
@@ -5189,7 +5194,7 @@ void taiTypeInfoBase::GetTarget() {
   // a XxxDef* can have one of these options to specify the
   // target type for its XxxDef menu.
   // 1) a TYPE_xxxx in its comment directives
-  // 2) a TYPE_ON_this in comment directives, specifying that the 
+  // 2) a TYPE_ON_this in comment directives, specifying that the
   //    type should be the same as the parent
   // 3) a TYPE_ON_xxx in comment directives, specifying the name
   //    of the member in the same object which is a TypeDef*
@@ -5204,18 +5209,18 @@ void taiTypeInfoBase::GetTarget() {
         targ_typ = ((taBase*)menubase)->GetTypeDef();
       }
       else {
-	TypeDef* own_td = typ;
-	ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
-	MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
-							mb_nm, false); // no warn
-	if (tdmd && (tdmd->type == &TA_TypeDef_ptr)) {
-	  targ_typ = *(TypeDef**)(MemberDef::GetOff_static(menubase, net_base_off, net_mbr_off));
-	}
+        TypeDef* own_td = typ;
+        ta_memb_ptr net_mbr_off = 0;      int net_base_off = 0;
+        MemberDef* tdmd = TypeDef::FindMemberPathStatic(own_td, net_base_off, net_mbr_off,
+                                                        mb_nm, false); // no warn
+        if (tdmd && (tdmd->type == &TA_TypeDef_ptr)) {
+          targ_typ = *(TypeDef**)(MemberDef::GetOff_static(menubase, net_base_off, net_mbr_off));
+        }
       }
     }
     return;
   }
-  
+
   mb_nm = memb_md->OptionAfter("TYPE_");
   if (!mb_nm.empty()) {
     targ_typ = taMisc::types.FindName(mb_nm);
@@ -5225,11 +5230,11 @@ void taiTypeInfoBase::GetTarget() {
 
 /*
 //////////////////////////////////
-// 	taiMemberDefMenu	//
+//      taiMemberDefMenu        //
 //////////////////////////////////
 
-taiMemberDefMenu::taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* md_, 
-  MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par, 
+taiMemberDefMenu::taiMemberDefMenu(taiActions::RepType rt, int ft, MemberDef* md_,
+  MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_)
 : inherited(rt, ft, memb_md_, typ_, host_, par, gui_parent_, flags_)
 {
@@ -5277,11 +5282,11 @@ void taiMemberDefMenu::GetMenu() {
 */
 
 //////////////////////////////////
-// 	taiMethodDefMenu	//
+//      taiMethodDefMenu        //
 //////////////////////////////////
 
-taiMethodDefMenu::taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* md_, 
-  MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par, 
+taiMethodDefMenu::taiMethodDefMenu(taiActions::RepType rt, int ft, MethodDef* md_,
+  MemberDef* memb_md_, TypeDef* typ_, IDataHost* host_, taiData* par,
   QWidget* gui_parent_, int flags_)
 : inherited(rt, ft, memb_md_, typ_, host_, par, gui_parent_, flags_)
 {
@@ -5312,7 +5317,7 @@ void taiMethodDefMenu::GetMenu(const taiMenuAction* actn) {
   }
   MethodDef* mbd;
   MethodSpace* mbs = sp;
-  if (!mbs) 
+  if (!mbs)
     mbs = &targ_typ->methods;
   for (int i = 0; i < mbs->size; ++i){
     mbd = mbs->FastEl(i);
@@ -5321,11 +5326,11 @@ void taiMethodDefMenu::GetMenu(const taiMenuAction* actn) {
 }
 
 //////////////////////////////////
-// 	taiTypeHier		//
+//      taiTypeHier             //
 //////////////////////////////////
 
 taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHost* host_,
-	taiData* par, QWidget* gui_parent_, int flags_)
+        taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   ta_actions = taiActions::New(rt, taiMenu::radio_update, ft, typ, host_, this, gui_parent_);
@@ -5334,7 +5339,7 @@ taiTypeHier::taiTypeHier(taiActions::RepType rt, int ft, TypeDef* typ_, IDataHos
 }
 
 taiTypeHier::taiTypeHier(taiMenu* existing_menu, TypeDef* typ_,
-	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+        IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiData(typ_, host_, par, gui_parent_, flags_)
 {
   ta_actions = existing_menu;
@@ -5360,7 +5365,7 @@ bool taiTypeHier::AddType_Class(TypeDef* typ_) {
 
   // don't clutter list with these..
   if((typ_->members.size==0) && (typ_->methods.size==0) && !(typ_ == &TA_taBase))
-    return false;		
+    return false;
   return true;
 }
 
@@ -5419,7 +5424,7 @@ void taiTypeHier::GetMenu_Enum_impl(taiActions* menu, TypeDef* typ_, const taiMe
       menu->AddItem(typ_->name + "::" + chld->name, taiMenu::use_default, acn, (void*)chld);
     }
   }
-  menu->AddSep(false); 
+  menu->AddSep(false);
   // add entries for the subclasses
   for (int i = 0; i < typ_->children.size; ++i) {
     TypeDef* chld = typ_->children.FastEl(i);
@@ -5446,7 +5451,7 @@ void taiTypeHier::GetMenu_impl(taiActions* menu, TypeDef* typ_, const taiMenuAct
       continue;
     if (!AddType_Class(chld)) {
       if (chld->InheritsFormal(TA_templ_inst) && (chld->children.size == 1)) {
-	GetMenu_impl(menu, chld->children.FastEl(0), acn);
+        GetMenu_impl(menu, chld->children.FastEl(0), acn);
       }
       continue;
     }
@@ -5471,11 +5476,11 @@ void taiTypeHier::UpdateMenu(const taiMenuAction* acn) {
 
 
 ///////////////////////////
-// 	taiMethodData     //
+//      taiMethodData     //
 ///////////////////////////
 
 void taiMethodData::ShowReturnVal(cssEl* rval, IDataHost* host,
-  const String& meth_name) 
+  const String& meth_name)
 {
   if ((rval->GetType() == cssEl::T_TA) || (rval->GetType() == cssEl::T_Class)) {
     if (host != NULL)
@@ -5510,7 +5515,7 @@ void taiMethodData::AddToMenu(taiActions* mnu) {
   if (meth->HasOption("MENU_SEP_BEFORE"))
     mnu->AddSep();
   taiAction* act = mnu->AddItem(meth->GetLabel(), taiMenu::use_default,
-	taiAction::action, this, SLOT(CallFun()) );
+        taiAction::action, this, SLOT(CallFun()) );
   // add meth desc as a status item
   String statustip = meth->desc;
   if (statustip.nonempty())
@@ -5526,7 +5531,7 @@ bool taiMethodData::CallFun_impl() {
   QPointer<taiMethodData> ths = this; // to detect us being deleted
   ApplyBefore();
   // note: this is not a great situation, whereby applying deletes us, but
-  // we warn user (and should probably do something, ie a directive that you 
+  // we warn user (and should probably do something, ie a directive that you
   // have to save before)
   if (!ths) {
     taMisc::Error("This menu item or button action apparently cannot be invoked when you have not applied changes. Please try the operation again. (The developers would appreciate hearing about this situation.");
@@ -5547,7 +5552,7 @@ bool taiMethodData::CallFun_impl() {
       // true = force project-level save
     }
   }
-  
+
   use_argc = meth->fun_argc;
   String argc_str = meth->OptionAfter("ARGC_");
   if (argc_str != "")
@@ -5571,10 +5576,10 @@ bool taiMethodData::CallFun_impl() {
         UpdateAfter();
       if (use_busy) taMisc::Busy(false);
       if ((show_rval && (rval != &cssMisc::Void)))
-	ShowReturnVal(rval, thost, meth_name);
+        ShowReturnVal(rval, thost, meth_name);
       if(rval) {
-	cssEl::Ref(rval);
-	cssEl::unRefDone(rval);
+        cssEl::Ref(rval);
+        cssEl::unRefDone(rval);
       }
     } // NOTE: end of DMEM_COMPILE
     return (bool)ths;
@@ -5586,7 +5591,7 @@ bool taiMethodData::CallFun_impl() {
     if (ok) arg_dlg->setBgColor(bgclr);
   }
   arg_dlg->Constr("", "");
-  int ok_can = arg_dlg->Edit(true);	// true = wait for a response
+  int ok_can = arg_dlg->Edit(true);     // true = wait for a response
   if (ok_can && !arg_dlg->err_flag) {
     GenerateScript();
 #ifdef DMEM_COMPILE
@@ -5595,17 +5600,17 @@ bool taiMethodData::CallFun_impl() {
 #endif
       taMisc::Busy(true);
       cssEl* rval = (*(meth->stubp))(base, arg_dlg->obj->members->size-1,
-				     arg_dlg->obj->members->els);
+                                     arg_dlg->obj->members->els);
       // only UA if we still exist!
       if (ths)
         UpdateAfter();
 
       taMisc::Busy(false);
       if ((show_rval && (rval != &cssMisc::Void)))
-	ShowReturnVal(rval, thost, meth_name);
+        ShowReturnVal(rval, thost, meth_name);
       if(rval) {
-	cssEl::Ref(rval);
-	cssEl::unRefDone(rval);
+        cssEl::Ref(rval);
+        cssEl::unRefDone(rval);
       }
 #ifdef DMEM_COMPILE
     }
@@ -5643,7 +5648,7 @@ bool taiMethodData::UpdateButtonRep() {
     bool ghost = meth->GetCondOptTest("GHOST", typ, base);
     buttonRep->setEnabled(!ghost);
     if(!ghost) {
-      buttonRep->show();	// make it real?
+      buttonRep->show();        // make it real?
     }
     return true;
   }
@@ -5659,9 +5664,9 @@ void taiMethodData::ApplyBefore() {
     int chs = taMisc::Choice("Auto Apply/Revert: You have edited the dialog--apply or revert and lose changes?", "Apply", "Revert");
     if (chs != 0) return;
   }*/
-  
+
 /*was:  applyNow();
-  // note: applyNow is async, so we have to do event loop 
+  // note: applyNow is async, so we have to do event loop
   taiMiscCore::ProcessEvents(); */
   // send the RESOLVE_NOW operator to all clients
   taBase* base = host->Base();
@@ -5675,9 +5680,9 @@ void taiMethodData::UpdateAfter() {
   if (meth->HasOption("NO_REVERT_AFTER"))
     return;
   // this is for stuff just called from menus, not host
-  if ((host == NULL) || 
-    (host->GetTypeDef()->InheritsFrom(&TA_taiDataHost) && 
-    (((taiDataHost*)host->This())->state != taiDataHost::ACTIVE)) ) 
+  if ((host == NULL) ||
+    (host->GetTypeDef()->InheritsFrom(&TA_taiDataHost) &&
+    (((taiDataHost*)host->This())->state != taiDataHost::ACTIVE)) )
   {
     if(base == NULL) return;
     taBase* tap = (taBase*)base;
@@ -5686,12 +5691,12 @@ void taiMethodData::UpdateAfter() {
     return;
   }
   // this is inside the host itself
-  if ((host->GetRootTypeDef() != NULL) && 
-    host->GetRootTypeDef()->InheritsFrom(TA_taBase)) 
+  if ((host->GetRootTypeDef() != NULL) &&
+    host->GetRootTypeDef()->InheritsFrom(TA_taBase))
   {
     taBase* tap = host->Base();
     if (tap && meth->HasOption("UPDATE_MENUS")) {
-      taiMisc::Update(tap);	// update menus and stuff
+      taiMisc::Update(tap);     // update menus and stuff
       tap->UpdateAllViews(); // tell others to update
     }
   }
@@ -5720,7 +5725,7 @@ void taiMethodData::GenerateScript() {
     return;
   }
 
-  int_Array tmp_objs;		// indicies of the temp objects
+  int_Array tmp_objs;           // indicies of the temp objects
   for (int i = 0; i < arg_dlg->type_el.size; ++i) {
     taiArgType* art = (taiArgType*)arg_dlg->type_el.FastEl(i);
     if((art->arg_typ->ptr == 0) && art->arg_typ->DerivesFrom(TA_taBase))
@@ -5732,8 +5737,8 @@ void taiMethodData::GenerateScript() {
       taiArgType* art = (taiArgType*)arg_dlg->type_el.FastEl(tmp_objs.FastEl(i) - 1);
       cssEl* argv = arg_dlg->obj->members->FastEl(tmp_objs.FastEl(i));
       *taMisc::record_script << art->arg_typ->name << " tmp_" << i
-			       << " = new " << art->arg_typ->name << "; \t tmp_" << i
-			       << " = \"" << argv->GetStr() << "\";\n  ";
+                               << " = new " << art->arg_typ->name << "; \t tmp_" << i
+                               << " = \"" << argv->GetStr() << "\";\n  ";
     }
   }
 
@@ -5747,22 +5752,22 @@ void taiMethodData::GenerateScript() {
     else {
       cssEl* argv = arg_dlg->obj->members->FastEl(i);
       if(argv->GetType() == cssEl::T_String) {
-	arg_str += "\"";
-	arg_str += argv->PrintFStr();
-	arg_str += "\"";
+        arg_str += "\"";
+        arg_str += argv->PrintFStr();
+        arg_str += "\"";
       }
       else if(argv->GetType() == cssEl::T_TA) {
-	cssTA* cssta = (cssTA*)argv;
-	TypeDef* csstd = cssta->type_def;
-	if(csstd->InheritsFrom(&TA_istream) || csstd->InheritsFrom(&TA_fstream)
-	   || csstd->InheritsFrom(&TA_ostream))
-	  arg_str += "\"" + taFiler::last_fname + "\"";
-	else {
-	  arg_str += argv->PrintFStr();
-	}
+        cssTA* cssta = (cssTA*)argv;
+        TypeDef* csstd = cssta->type_def;
+        if(csstd->InheritsFrom(&TA_istream) || csstd->InheritsFrom(&TA_fstream)
+           || csstd->InheritsFrom(&TA_ostream))
+          arg_str += "\"" + taFiler::last_fname + "\"";
+        else {
+          arg_str += argv->PrintFStr();
+        }
       }
       else {
-	arg_str += argv->PrintFStr();
+        arg_str += argv->PrintFStr();
       }
     }
   }
@@ -5784,7 +5789,7 @@ void taiMethodData::GenerateScript() {
 
 
 /////////////////////////////
-// 	taiMethMenu    //
+//      taiMethMenu    //
 /////////////////////////////
 
 taiMethMenu::taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
@@ -5795,7 +5800,7 @@ taiMethMenu::taiMethMenu(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host
 
 
 /////////////////////////////
-// 	taiMethButton    //
+//      taiMethButton    //
 /////////////////////////////
 
 taiMethButton::taiMethButton(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,
@@ -5814,7 +5819,7 @@ QWidget* taiMethButton::GetButtonRep() {
 }
 
 //////////////////////////////
-// 	taiMethToggle     //
+//      taiMethToggle     //
 //////////////////////////////
 
 taiMethToggle::taiMethToggle(void* bs, MethodDef* md, TypeDef* typ_, IDataHost* host_, taiData* par,

@@ -7,7 +7,7 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -31,54 +31,54 @@ class cssProgSpace;
 
 
 //////////////////////////////
-//   taiData for css       //
+//   taiData for css        //
 //////////////////////////////
 
 class CSS_API cssiPolyData : public taiData {
   // supports INLINE members for css
 public:
-  cssClassInst*	obj;
-  taiDataList 	data_el;
-  taiType_List type_el;	// type elements (not stored on classes, so kept here)
-
+  cssClassInst* obj;
+  taiDataList   data_el;
+  taiType_List  type_el; // type elements (not stored on classes, so kept here)
 
   cssiPolyData(cssClassInst* ob, TypeDef* typ_, IDataHost* host_, taiData* par,
-      QWidget* gui_parent, int flags_ = 0);
+               QWidget* gui_parent, int flags_ = 0);
   ~cssiPolyData();
 
-  inline QFrame*	rep() const { return (QFrame*)(QWidget*)m_rep; } //note: actual class may be subclass of QFrame
+  inline QFrame* rep() const {
+    // note: actual class may be subclass of QFrame
+    return static_cast<QFrame*>(m_rep.data());
+  }
 
 protected:
-  virtual void	Constr(QWidget* gui_parent_);
+  virtual void  Constr(QWidget* gui_parent_);
   virtual void  GetImage_impl(const void* base);
-  virtual void	GetValue_impl(void* base) const;
-
+  virtual void  GetValue_impl(void* base) const;
 };
-
 
 class CSS_API cssiMethMenu : public taiMethMenu {
   // css member functions of css classes
   Q_OBJECT
 public:
-  cssClassInst*		obj;		// parent object
-  cssProgSpace*		top;		// top-level progspace where edit was called
-  cssMbrScriptFun*	css_fun; 	// the function itself
-  cssClassInst*		arg_obj; 	// argument object (if necc)
+  cssClassInst*         obj;            // parent object
+  cssProgSpace*         top;            // top-level progspace where edit was called
+  cssMbrScriptFun*      css_fun;        // the function itself
+  cssClassInst*         arg_obj;        // argument object (if necc)
 
   cssiMethMenu(cssClassInst* ob, cssProgSpace* tp, cssMbrScriptFun* cfn,
-	TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_ = 0);
+        TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent, int flags_ = 0);
 //  ~cssiMethMenu();
 
-  void		ShowReturnVal(cssEl* rval);
-  void		ApplyBefore();	// apply changes before performing menu call
-  void		UpdateAfter();	// update display after performing menu call
+  void          ShowReturnVal(cssEl* rval);
+  void          ApplyBefore();  // apply changes before performing menu call
+  void          UpdateAfter();  // update display after performing menu call
 
-  void		GenerateScript(); // output script code equivalent if recording
+  void          GenerateScript(); // output script code equivalent if recording
 
-  override void		AddToMenu(taiActions* menu);
+  override void         AddToMenu(taiActions* menu);
 
 public slots:
-  void		CallFun();	// (override) call the function..
+  void          CallFun();      // (override) call the function..
 };
 
 

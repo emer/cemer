@@ -95,6 +95,10 @@ void taiType::AddToType(TypeDef* td) {
   *ptr_to_it = this;                    // put us here
 }
 
+// Based on various flags, this function calls one of the following:
+//   GetDataRep_impl()       // from this class, as a default
+//   GetDataRep_impl()       // virtual
+//   GetDataRepInline_impl() // virtual
 taiData* taiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
         taiType* parent_type_, int flags_, MemberDef* mbr)
 {
@@ -141,11 +145,20 @@ taiData* taiType::GetDataRepInline_impl(IDataHost* host_, taiData* par,
 
 void taiType::GetImage(taiData* dat, const void* base) {
 //  bool ro = isReadOnly(dat);
-  // use the exact criteria we used in the GetRep
+  // Use similar critera as in GetDataRep to determine whether the subclass
+  // can handle this field as read-only.
+  // TODO: The old comment said:
+  //   use the exact criteria we used in the GetRep
+  // However, that would look more like:
+  //   if (isReadOnly(dat, 0)) // no flags and no parent_type, soo this is allw e can do
+  // which is the same as:
+  //   if (dat->readOnly() || dat->host->isReadOnly())
+  //   // tests if flags/parent
   bool ro = dat->HasFlag(taiData::flgReadOnly);
   if (ro && !handlesReadOnly()) {
     taiType::GetImage_impl(dat, base);
-  } else {
+  }
+  else {
     GetImage_impl(dat, base);
   }
 }
@@ -175,20 +188,17 @@ void taiType::GetValue_impl(taiData* dat, void* base) {
 
 bool taiType::isReadOnly(taiData* dat, IDataHost* host_) { // used in GetImage and GetValue
   // ReadOnly if host_ is RO, OR par is RO, OR directives state RO
-  bool rval = false;
-  if (dat != NULL) {
-    rval = rval || dat->readOnly();
-    if (host_ == NULL)
-      host_ = dat->host;
+  if (dat && dat->readOnly()) {
+    return true;
   }
-  if (host_ != NULL) {
-    rval = rval || host_->isReadOnly();
+  if (!host_ && dat) {
+    host_ = dat->host;
   }
-  rval = rval || typ->HasOption("READ_ONLY");
-  return rval;
+  if (host_ && host_->isReadOnly()) {
+    return true;
+  }
+  return typ->HasOption("READ_ONLY");
 }
-
-
 
 //////////////////////////
 //  taiIntType          //
