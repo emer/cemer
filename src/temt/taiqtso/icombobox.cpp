@@ -7,73 +7,29 @@
 //   modify it under the terms of the GNU Lesser General Public
 //   License as published by the Free Software Foundation; either
 //   version 2.1 of the License, or (at your option) any later version.
-//   
+//
 //   This library is distributed in the hope that it will be useful,
 //   but WITHOUT ANY WARRANTY; without even the implied warranty of
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
 #include "icombobox.h"
 
-#include <qcheckbox.h>
-
-#include <qpalette.h>
-#include <qbrush.h>
-#include <qpainter.h>
-#include <qdrawutil.h>
-#include <qpixmap.h>
-#include <qpixmapcache.h>
-#include <qbitmap.h>
-#include <qtextstream.h>
-#include <qapplication.h>
-#include <qstyle.h>
-
-
 iComboBox::iComboBox(QWidget* parent)
-: QComboBox(parent)
+  : QComboBox(parent)
 {
-  defPalette = palette();
-  init();
-}
-
-void iComboBox::init() {
-  mhilight = false;
-}
-
-void iComboBox::setHilight(bool value){
-  if (mhilight == value) return;
-  mhilight = value;
-  if (value) {
-    QPalette pal = QPalette(defPalette);
-    pal.setColor(QPalette::Active, QPalette::Button, COLOR_HILIGHT);
-    pal.setColor(QPalette::Inactive, QPalette::Button, COLOR_HILIGHT);
-
-    ((iComboBox*)this)->setPalette(pal);
-  } else {
-    ((iComboBox*)this)->setPalette(defPalette);
-  }
-  update();
+  // Workaround for bug 1147: combo boxes for DynEnum's weren't wide enough
+  // to show the full enum text.
+  // The default SizeAdjustPolicy is AdjustToContentsOnFirstShow, which should
+  // work as long as items are added to the combo box before it is shown, but
+  // for some reason it seems this isn't the case.
+  setSizeAdjustPolicy(QComboBox::AdjustToContents);
 }
 
 void iComboBox::wheelEvent(QWheelEvent * event) {
-  event->ignore();		// don't process this event!
-  return;
+  // This override prevents the combo box value from being changed by the
+  // mouse wheel -- it's too easy to accidentally change the value that way.
+
+  // Call ignore() to allow the parent widget to process this event.
+  event->ignore();
 }
-
-
-/*void iComboBox::paintEvent(QPaintEvent* pe) { // override
-  if (mhilight) {
-    QPalette pal = QPalette(defPalette);
-    pal.setColor(QPalette::Active, QColorGroup::Button, COLOR_HILIGHT);
-    pal.setColor(QPalette::Inactive, QColorGroup::Button, COLOR_HILIGHT);
-
-    ((iComboBox*)this)->setPalette(pal);
-    QComboBox::paintEvent(pe);
-    ((iComboBox*)this)->setPalette(defPalette);
-  } else {
-    QComboBox::paintEvent(pe);
-  }
-} */
-
-
