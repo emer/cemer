@@ -547,19 +547,20 @@ String  taMisc::font_name = "Lucida Grande";
 int     taMisc::font_size = 10;
 String  taMisc::console_font_name = "Andale Mono";
 int     taMisc::console_font_size = 10;
+float   taMisc::doc_text_scale = 1.0f;
 #elif defined(TA_OS_WIN)
-String  taMisc::font_name = "Verdana"; // looks nice on Win
-int     taMisc::font_size = 11;
+String  taMisc::font_name = "Arial";
+int     taMisc::font_size = 8;
 String  taMisc::console_font_name = "Fixed";
 int     taMisc::console_font_size = 10;
+float   taMisc::doc_text_scale = 1.5f;
 #else // Linux or some Unix variant
 String  taMisc::font_name = "Nimbus Sans";
 int     taMisc::font_size = 10;
 String  taMisc::console_font_name = "LucidaTypewriter";
 int     taMisc::console_font_size = 10;
-#endif
-
 float   taMisc::doc_text_scale = 1.0f;
+#endif
 
 String  taMisc::t3d_font_name = "Arial";
 String  taMisc::t3d_bg_color = "grey80";
@@ -6455,8 +6456,8 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 }
 
 int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const String& mbr_filt,
-				 void* base, void* par, MemberDef* memb_def,
-				 StrContext sc)
+                                 void* base, void* par, MemberDef* memb_def,
+                                 StrContext sc)
 {
   int rval = 0;
   for(int i=0; i<members.size; i++) {
@@ -6484,8 +6485,8 @@ int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const S
 }
 
 int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-			   void* base, void* par, MemberDef* memb_def,
-			   StrContext sc)
+                           void* base, void* par, MemberDef* memb_def,
+                           StrContext sc)
 {
   if(ptr == 0) {
 #ifndef NO_TA_BASE
@@ -6497,13 +6498,13 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
     else
 #endif
       if(DerivesFormal(TA_class) &&
-	    !(DerivesFrom(TA_taString) || DerivesFrom(TA_Variant)
+            !(DerivesFrom(TA_taString) || DerivesFrom(TA_Variant)
 #ifndef NO_TA_BASE
-	      || DerivesFrom(TA_QAtomicInt) || DerivesFrom(TA_taArray_impl)
-	      || DerivesFrom(TA_taSmartPtr) || DerivesFrom(TA_taSmartRef)
+              || DerivesFrom(TA_QAtomicInt) || DerivesFrom(TA_taArray_impl)
+              || DerivesFrom(TA_taSmartPtr) || DerivesFrom(TA_taSmartRef)
 #endif
-	      )
-	 )
+              )
+         )
     {
       return ReplaceValStr_class(srch, repl, mbr_filt, base, par, memb_def, sc);
     }
