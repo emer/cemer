@@ -429,7 +429,10 @@ void HippoEncoderConSpec::Initialize() {
   wt_limits.sym = false;
 
   SetUnique("wt_sig", true);
-  wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
+  wt_sig.gain = 6.0f;  wt_sig.off = 1.25f;
+
+  SetUnique("savg_cor", true);
+  savg_cor.cor = 1.0f;
 
 //   SetUnique("xcalm", true);
 //   xcalm.use_sb = false;
@@ -554,7 +557,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
 
   net->FindMakePrjn(ecin, ecout, onetoone, ecout_ecin_cons);
 
-  net->FindMakePrjn(ecout, ecin, onetoone, ecin_ecout_cons);
+//   net->FindMakePrjn(ecout, ecin, onetoone, ecin_ecout_cons);
   net->FindMakePrjn(ecout, ca1, gponetoone, ca1_ecout_cons);
 
   net->FindMakePrjn(dg, ecin, ppath_prjn, ppath_cons);
@@ -601,6 +604,53 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   ca3->pos.SetXYZ(0, 0, 2);
   ca1->pos.SetXYZ(35, 0, 2);
 
+  //////////////////////////////////////////////////////////////////////////////////
+  // params
+
+  // EC_CA1ConSpecs, wt_sig.gain = 6, off 1.25, cor = 1 (not .4)
+
+  // EC_in_CA1, abs = 2
+  ecin_ca1_cons->SetUnique("wt_scale", true);
+  ecin_ca1_cons->wt_scale.abs = 2.0f;
+
+  // CA1_EC_out, abs = 4
+  ca1_ecout_cons->SetUnique("wt_scale", true);
+  ca1_ecout_cons->wt_scale.abs = 4.0f;
+
+  // EC_in_EC_out mean/var = .9, .01, rel = 0, lrate = 0
+  ecin_ecout_cons->SetUnique("wt_scale", true);
+  ecin_ecout_cons->wt_scale.rel = 0.0f;
+  ecin_ecout_cons->SetUnique("lrate", true);
+  ecin_ecout_cons->lrate = 0.0f;
+  ecin_ecout_cons->SetUnique("rnd", true);
+  ecin_ecout_cons->rnd.mean = 0.9f;
+  ecin_ecout_cons->rnd.var = 0.01f;
+
+  // HippoConSpecs, lrate = .2, hebb = 0.05
+  hip_cons->SetUnique("lrate", true);
+  hip_cons->lrate = 0.2f;
+  hip_cons->SetUnique("lmix", true);
+  hip_cons->lmix.hebb = 0.05f;
+  
+  // mossy mean = 0.9 var = 0.01, rel = 8 , lrate = 0
+  mossy_cons->SetUnique("rnd", true);
+  mossy_cons->rnd.mean = 0.9f;
+  mossy_cons->rnd.var = 0.01f;
+  mossy_cons->SetUnique("wt_scale", true);
+  mossy_cons->wt_scale.rel = 8.0f;
+  mossy_cons->SetUnique("lrate", true);
+  mossy_cons->lrate = 0.0f;
+  
+  // ca3_ca3 rel = 2, 
+  ca3ca3_cons->SetUnique("wt_scale", true);
+  ca3ca3_cons->wt_scale.rel = 2.0f;
+
+  // ca3_ca1 lrate = 0.05
+  ca3ca1_cons->SetUnique("lrate", true);
+  ca3ca1_cons->lrate = 0.05f;
+
+  // todo; lrate schedule!
+  
   //////////////////////////////////////////////////////////////////////////////////
   // build and check
 
