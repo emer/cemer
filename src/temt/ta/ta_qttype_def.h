@@ -107,10 +107,12 @@ class TA_API taiType: public taiTypeBase {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
   TAI_TYPEBASE_SUBCLASS(taiType, taiTypeBase);
 public:
-  virtual bool          allowsInline() const {return false;} // the type allows inline reps, obtained GetDataRepInline
-  virtual bool          requiresInline() const {return false;} // only inline reps allowed, no member-by-member reps
-  virtual bool          handlesReadOnly() { return false; } // for types like taiString and taiInt whose editors handle readOnly
-  virtual bool          isCompound() const {return false;} // true if requires multiple edit fields
+  virtual bool          allowsInline() const    { return false; } // the type allows inline reps, obtained GetDataRepInline
+  virtual bool          requiresInline() const  { return false; } // only inline reps allowed, no member-by-member reps
+  virtual bool          handlesReadOnly() const { return false; } // for types like taiString and taiInt whose editors handle readOnly
+  virtual bool          isCompound() const      { return false; } // true if requires multiple edit fields
+  virtual bool          CanBrowse() const       { return false; } // only things from taBase classes up can be browse nodes
+
   taiType*              sub_types() {return (taiType*)m_sub_types;}
   taiType**             addr_sub_types() {return (taiType**)&m_sub_types;}
 
@@ -119,9 +121,8 @@ public:
   // bid for (appropriateness) for given type
 
   virtual taiData*      GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-        taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
   // get taiData rep of type -- delegates to _impl of type, except if readonly and the type can't handle ro
-  virtual bool          CanBrowse() {return false;} // only things from taBase classes up can be browse nodes
 
   virtual void          GetImage(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep

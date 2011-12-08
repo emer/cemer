@@ -52,12 +52,13 @@ public:
 class TA_API taiIntType : public taiType { // handles numeric int types, up to 32-bits
   TAI_TYPEBASE_SUBCLASS(taiIntType, taiType);
 public:
+  override bool handlesReadOnly() const { return true; } // uses a RO iSpinBox
+
   int           BidForType(TypeDef* td);
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiData* dat, const void* base);
   void          GetValue_impl(taiData* dat, void* base);
-  bool          handlesReadOnly() { return true; } // uses a RO iSpinBox
 };
 
 class TA_API taiInt64Type : public taiType { // handles 64-bit numeric int types
@@ -79,8 +80,9 @@ protected:
 class TA_API taiEnumType : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiEnumType, taiType);
 public:
+  override bool handlesReadOnly() const { return true; } // uses a RO iLineEdit w/ enum name
+
   inline bool   isCond() const {return m_is_cond;} // true if a BIT, and has any CONDxxxx bits
-  bool          handlesReadOnly() { return true; } // uses a RO iLineEdit w/ enum name
   int           BidForType(TypeDef* td);
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
@@ -96,7 +98,8 @@ protected:
 class TA_API taiBoolType : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiBoolType, taiType);
 public:
-  bool          handlesReadOnly() { return true; } // uses a RO iCheckBox
+  override bool handlesReadOnly() const { return true; } // uses a RO iCheckBox
+
   int           BidForType(TypeDef* td);
 protected:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
@@ -108,7 +111,8 @@ protected:
 class TA_API taiStringType : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiStringType, taiType);
 public:
-  bool          handlesReadOnly() { return true; }
+  override bool handlesReadOnly() const { return true; }
+
   int           BidForType(TypeDef* td);
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
@@ -119,7 +123,7 @@ public:
 class TA_API taiVariantType : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiVariantType, taiType);
 public:
-  bool          handlesReadOnly() { return true; }
+  override bool handlesReadOnly() const { return true; }
   int           BidForType(TypeDef* td);
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
@@ -130,15 +134,16 @@ public:
 class TA_API taiClassType : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiClassType, taiType);
 public:
-  bool          allowsInline() const {return true;}
-  bool          handlesReadOnly() { return true; } // uses a RO PolyData or RO EditButton
+  override bool allowsInline() const    { return true; }
+  override bool handlesReadOnly() const { return true; } // uses a RO PolyData or RO EditButton
+  override bool CanBrowse() const;
+
   int           BidForType(TypeDef* td);
   override taiData*     GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-        taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
          // add in req for inline
   void          GetImage_impl(taiData* dat, const void* base);
   void          GetValue_impl(taiData* dat, void* base);
-  override bool         CanBrowse();
 protected:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr_);
@@ -149,7 +154,7 @@ protected:
 class TA_API taiMatrixGeomType : public taiClassType { // special editor for matrix geoms
   TAI_TYPEBASE_SUBCLASS(taiMatrixGeomType, taiClassType);
 public:
-  bool          requiresInline() const {return true;}
+  override bool requiresInline() const { return true; }
   int           BidForType(TypeDef* td);
 protected:
   taiData*      GetDataRepInline_impl(IDataHost* host_, taiData* par,
@@ -159,8 +164,8 @@ protected:
 class TA_API taiColorType : public taiClassType { // special editor for colors, add dialog
   TAI_TYPEBASE_SUBCLASS(taiColorType, taiClassType);
 public:
-  bool          handlesReadOnly() {return true;}
-  bool          requiresInline() const {return true;}
+  override bool handlesReadOnly() const { return true; }
+  override bool requiresInline() const  { return true; }
   int           BidForType(TypeDef* td);
 protected:
   taiData*      GetDataRepInline_impl(IDataHost* host_, taiData* par,
@@ -197,7 +202,7 @@ protected:
 class TA_API gpiArray_Type : public taiClassType {
   TAI_TYPEBASE_SUBCLASS(gpiArray_Type, taiClassType);
 public:
-  bool          allowsInline() const {return false;}
+  override bool allowsInline() const { return false; }
   int           BidForType(TypeDef* td);
 protected:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
@@ -212,7 +217,7 @@ public:
     MD_SMART_PTR,       // taSmartPtr -- acts almost identical to taBase*
     MD_SMART_REF        // taSmartRef
   };
-  bool          handlesReadOnly() { return true; } // uses a RO tokenptr button
+  override bool handlesReadOnly() const { return true; } // uses a RO tokenptr button
   taBase*       GetTokenPtr(const void* base) const; // depends on mode
   TypeDef*      GetMinType(const void* base);
   int           BidForType(TypeDef* td);
@@ -285,29 +290,31 @@ public:
 
   taiMember*            sub_types() {return (taiMember*)m_sub_types;}
   taiMember**           addr_sub_types() {return (taiMember**)&m_sub_types;}
-  override bool         handlesReadOnly();
+  override bool         handlesReadOnly() const;
   bool                  isCondEdit() const;
   bool                  isCondShow() const;
 
-   int          BidForType(TypeDef*)                    {return 0; }
-        // none of the member specific ones should apply types
-   virtual int  BidForMember(MemberDef*, TypeDef*)      {return 1;}
-        // bid for (appropriateness) for given type of member (and members owner type)
+  int                   BidForType(TypeDef*) { return 0; }
+  // none of the member specific ones should apply types
+  virtual int           BidForMember(MemberDef*, TypeDef*) { return 1; }
+  // bid for (appropriateness) for given type of member (and members owner type)
+
 //
 //   // default member action is to pass thru to the type
 //
-  override taiData*     GetDataRep(IDataHost* host_, taiData* par,
-    QWidget* gui_parent, taiType* parent_type_ = NULL,
-    int flags = 0, MemberDef* mbr_ = NULL);
+  override taiData*     GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
   // get taiData rep of type -- delegates to mbr's it
   DefaultStatus         GetDefaultStatus(String memb_val);
     // get status of value, if is default value or not
   override void         GetImage(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
   virtual void          GetMbrValue(taiData* dat, void* base, bool& first_diff);
-        // this is the one to call to get a member value (GetValue is not used)
+  // this is the one to call to get a member value (GetValue is not used)
+  // TODO: should this class override void GetValue(taiData* dat, void * base); as a noop?
 
-  virtual TypeDef*      GetTargetType(const void* base); // for XxxDef* and token ptrs, returns the target type, which can be specified in several ways, or this can be overridden
+  virtual TypeDef*      GetTargetType(const void* base);
+  // for XxxDef* and token ptrs, returns the target type, which can be specified in several ways, or this can be overridden
 
   // script-generation code
   virtual void  GetOrigVal(taiData* dat, const void* base);
@@ -321,8 +328,9 @@ public:
   ~taiMember()                                          { };
 
   virtual void          AddMember(MemberDef* md);       // add an iv to a member
-  virtual taiMember*    MembInst(MemberDef* md, TypeDef* td) const
-        { return new taiMember(md, td);}
+  virtual taiMember*    MembInst(MemberDef* md, TypeDef* td) const {
+    return new taiMember(md, td);
+  }
   TypeDef*      GetTypeDef() const {return &TA_taiMember;}
 
 protected:
@@ -332,8 +340,7 @@ protected:
     QWidget* gui_parent_, int flags_, MemberDef* mbr); // gets sub or this, and factors ro
   virtual void          GetArbitrateImage(taiData* dat, const void* base);
   // generate the gui representation of the data -- same rules as GetDataRep
-  virtual void          GetArbitrateMbrValue(taiData* dat, void* base,
-    bool& first_diff);
+  virtual void          GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff);
 
   override taiData*     GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
@@ -341,8 +348,7 @@ protected:
   // generate the gui representation of the data -- same rules as GetDataRep
   virtual void          GetMbrValue_impl(taiData* dat, void* base);
   override bool         isReadOnly(taiData* dat, IDataHost* host_ = NULL); // used dlg, par, and member directives to determine if RO
-  void                  CheckProcessCondEnum(taiEnumType* et, taiData* dat,
-    const void* base);
+  void                  CheckProcessCondEnum(taiEnumType* et, taiData* dat, const void* base);
 };
 
 #define TAI_MEMBER_SUBCLASS(x, y)        \
@@ -387,7 +393,7 @@ public:
     MD_SMART_REF        // taSmartRef
   };
 
-  bool          handlesReadOnly() { return true; }
+  override bool handlesReadOnly() const { return true; }
   TypeDef*      GetMinType(const void* base);
   taBase*       GetTokenPtr(const void* base) const; // depends on mode
   int           BidForMember(MemberDef* md, TypeDef* td);
@@ -530,14 +536,12 @@ class TA_API taiTDefaultMember : public taiMember {
 public:
   TypeDefault*  tpdflt;
 
-  virtual int   BidForMember(MemberDef* md, TypeDef* td);//
-  USING(inherited::GetDataRep) // WARNING: following is NOT the standard api sig -- might be bug???
-  taiData*      GetDataRep(IDataHost* host_, taiData* par,
-   QWidget* gui_parent_, int flags_, MemberDef* mbr);
-  override void GetImage(taiData* dat, const void* base);
-  override void GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  virtual int           BidForMember(MemberDef* md, TypeDef* td);//
+  override taiData*     GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+                                   taiType* parent_type_ = NULL, int flags = 0, MemberDef* mbr = NULL);
+  override void         GetImage(taiData* dat, const void* base);
+  override void         GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
-protected:
 private:
   void          Initialize()    { tpdflt = NULL; }
   void          Destroy()       { m_sub_types = NULL; } // prevent from being destroyed
@@ -569,7 +573,7 @@ public:
   taiMethodData*        GetButtonMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_);
   taiMethodData*        GetMenuMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_); // covers MENU and MENU_BUTTON types
   USING(inherited::GetImage)
-  override void         GetImage(taiData*, void*)       { }
+  override void         GetImage(taiData*, const void*) { }
   override void         GetValue(taiData*, void*)       { }
 
   taiMethod(MethodDef* mb, TypeDef* td) : taiType(td)   { meth = mb; }
@@ -811,7 +815,7 @@ public:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiData* dat, const void* base);
-  void          GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  override void GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
 private:
   void          Initialize() {}
@@ -825,7 +829,7 @@ public:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiData* dat, const void* base);
-  void          GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  override void GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
 private:
   void          Initialize() {}
@@ -839,7 +843,7 @@ public:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiData* dat, const void* base);
-  void          GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  override void GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
 private:
   void          Initialize() {}
@@ -853,7 +857,7 @@ public:
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
   void          GetImage_impl(taiData* dat, const void* base);
-  void          GetMbrValue(taiData* dat, void* base, bool& first_diff);
+  override void GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   virtual MemberDef*    GetFromMd();
   virtual TABLPtr       GetList(MemberDef* from_md, const void* base);

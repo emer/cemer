@@ -100,15 +100,17 @@ void taiType::AddToType(TypeDef* td) {
 //   GetDataRep_impl()       // virtual
 //   GetDataRepInline_impl() // virtual
 taiData* taiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-        taiType* parent_type_, int flags_, MemberDef* mbr)
+                             taiType* parent_type_, int flags_, MemberDef* mbr)
 {
   // Note: user can pass in flgReadOnly to force readonly, but we can also set it.
   // Must also take account of whether parent_type is read only.
   if (isReadOnly(par, host_)
-      || (parent_type_ && parent_type_->isReadOnly(par))) {
+      || (parent_type_ && parent_type_->isReadOnly(par)))
+  {
     flags_ |= taiData::flgReadOnly;
   }
-  if (requiresInline()) {
+  if (requiresInline())
+  {
     flags_ |= taiData::flgInline;
   }
   taiData* rval = NULL;
@@ -129,7 +131,8 @@ taiData* taiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent
 }
 
 taiData* taiType::GetDataRep_impl(IDataHost* host_, taiData* par,
-  QWidget* gui_parent_, int flags_, MemberDef*)
+                                  QWidget* gui_parent_, int flags_,
+                                  MemberDef*)
 {
   // taiField: your friend when all else fails...
   taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
@@ -137,23 +140,22 @@ taiData* taiType::GetDataRep_impl(IDataHost* host_, taiData* par,
 }
 
 taiData* taiType::GetDataRepInline_impl(IDataHost* host_, taiData* par,
-  QWidget* gui_parent, int flags_, MemberDef* mbr_)
+                                        QWidget* gui_parent, int flags_,
+                                        MemberDef* mbr_)
 {
   // base type doesn't know what to do for inline, so just returns the basic guy
   return GetDataRep_impl(host_, par, gui_parent, flags_, mbr_);
 }
 
 void taiType::GetImage(taiData* dat, const void* base) {
-//  bool ro = isReadOnly(dat);
-  // Use similar critera as in GetDataRep to determine whether the subclass
-  // can handle this field as read-only.
+  // Use similar critera as in GetDataRep() to determine whether the
+  // subclass can handle this field as read-only.
+  //
   // TODO: The old comment said:
-  //   use the exact criteria we used in the GetRep
-  // However, that would look more like:
-  //   if (isReadOnly(dat, 0)) // no flags and no parent_type, soo this is allw e can do
-  // which is the same as:
-  //   if (dat->readOnly() || dat->host->isReadOnly())
-  //   // tests if flags/parent
+  //   // use the exact criteria we used in the GetRep
+  // The logic in this function isn't *exactly* the same, since it
+  // doesn't call isReadOnly(dat), which would additionally check if
+  // the taiData's parent or host are read only.
   bool ro = dat->HasFlag(taiData::flgReadOnly);
   if (ro && !handlesReadOnly()) {
     taiType::GetImage_impl(dat, base);
@@ -171,6 +173,7 @@ void taiType::GetImage_impl(taiData* dat, const void* base) {
 }
 
 void taiType::GetValue(taiData* dat, void* base) {
+  // TODO: see comment in taiType::GetImage().
 //  bool ro = isReadOnly(dat);
   // use the exact criteria we used in the GetRep
   bool ro = dat->HasFlag(taiData::flgReadOnly);
@@ -186,7 +189,7 @@ void taiType::GetValue_impl(taiData* dat, void* base) {
   typ->SetValStr(strval, base);
 }
 
-bool taiType::isReadOnly(taiData* dat, IDataHost* host_) { // used in GetImage and GetValue
+bool taiType::isReadOnly(taiData* dat, IDataHost* host_) {
   // ReadOnly if host_ is RO, OR par is RO, OR directives state RO
   if (dat && dat->readOnly()) {
     return true;
@@ -209,12 +212,18 @@ int taiIntType::BidForType(TypeDef* td){
 // we left the handler code in the other routines, in case we implement them
   // we handle all numeric int types < 32 bits but NOT uint/ulong
   if (td->DerivesFrom(&TA_int)
-    || td->DerivesFrom(&TA_short) || td->DerivesFrom(&TA_unsigned_short)
-    || td->DerivesFrom(&TA_signed_char) || td->DerivesFrom(&TA_unsigned_char)
-  )
+      || td->DerivesFrom(&TA_short)
+      || td->DerivesFrom(&TA_unsigned_short)
+      || td->DerivesFrom(&TA_signed_char)
+      || td->DerivesFrom(&TA_unsigned_char))
+  {
     return (taiType::BidForType(td) +1);
-  else if (td->DerivesFrom(&TA_QAtomicInt)) // needs higher bid to overcome class
+  }
+  else if (td->DerivesFrom(&TA_QAtomicInt))
+  {
+    // needs higher bid to overcome class
     return (taiType::BidForType(td) +10);
+  }
   return 0;
 }
 
@@ -241,17 +250,27 @@ taiData* taiIntType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gu
     max = MIN(max, it);
   }
   if (typ->DerivesFrom(&TA_int) || typ->DerivesFrom(&TA_QAtomicInt)) {
-    min = MAX(min, INT_MIN);  max = MIN(max, INT_MAX);
-//  } else if (typ->DerivesFrom(&TA_unsigned_int)) {
+    min = MAX(min, INT_MIN);
+    max = MIN(max, INT_MAX);
+//  }
+//  else if (typ->DerivesFrom(&TA_unsigned_int)) {
 //    min = 0;  max = INT_MAX;//NOTE: does not cover entire uint range
-  } else if (typ->DerivesFrom(&TA_short)) {
-    min = MAX(min, SHRT_MIN);  max = MIN(max, SHRT_MAX);
-  } else if (typ->DerivesFrom(&TA_unsigned_short)) {
-    min = MAX(min, 0);  max = MIN(max, USHRT_MAX);
-  } else if (typ->DerivesFrom(&TA_signed_char)) {
-    min = MAX(min, SCHAR_MIN);  max = MIN(max, SCHAR_MAX);
-  } else { //if typ->DerivesFrom(&TA_unsigned_char)
-    min = MAX(min, 0);  max = MIN(max, UCHAR_MAX);
+  }
+  else if (typ->DerivesFrom(&TA_short)) {
+    min = MAX(min, SHRT_MIN);
+    max = MIN(max, SHRT_MAX);
+  }
+  else if (typ->DerivesFrom(&TA_unsigned_short)) {
+    min = MAX(min, 0);
+    max = MIN(max, USHRT_MAX);
+  }
+  else if (typ->DerivesFrom(&TA_signed_char)) {
+    min = MAX(min, SCHAR_MIN);
+    max = MIN(max, SCHAR_MAX);
+  }
+  else { //if typ->DerivesFrom(&TA_unsigned_char)
+    min = MAX(min, 0);
+    max = MIN(max, UCHAR_MAX);
   }
   rval->setMinimum(min);
   rval->setMaximum(max);
@@ -262,19 +281,29 @@ void taiIntType::GetImage_impl(taiData* dat, const void* base) {
   int val = 0;
   if (typ->DerivesFrom(&TA_int)) {
     val = *((int*)base);
-  } else if (typ->DerivesFrom(&TA_unsigned_int)) {
+  }
+  else if (typ->DerivesFrom(&TA_unsigned_int)) {
     val = (int)*((uint*)base); //NOTE: overflow issue
-  } else if (typ->DerivesFrom(&TA_short)) {
+  }
+  else if (typ->DerivesFrom(&TA_short)) {
     val = (int)*((short*)base);
-  } else if (typ->DerivesFrom(&TA_unsigned_short)) {
+  }
+  else if (typ->DerivesFrom(&TA_unsigned_short)) {
     val = (int)*((unsigned short*)base);
-  } else if (typ->DerivesFrom(&TA_signed_char)) {
+  }
+  else if (typ->DerivesFrom(&TA_signed_char)) {
     val = (int)*((signed char*)base);
-  } else if (typ->DerivesFrom(&TA_unsigned_char)) {
+  }
+  else if (typ->DerivesFrom(&TA_unsigned_char)) {
     val = (int)*((unsigned char*)base);
-  } else if (typ->DerivesFrom(&TA_QAtomicInt)) {
+  }
+  else if (typ->DerivesFrom(&TA_QAtomicInt)) {
     val = (int)*((QAtomicInt*)base);
-  } //note: should never not be one of these
+  }
+  else {
+    // should never happen
+  }
+
   taiIncrField* rval = (taiIncrField*)dat;
   rval->GetImage(val);
 }
@@ -284,21 +313,29 @@ void taiIntType::GetValue_impl(taiData* dat, void* base) {
   int val = rval->GetValue();
   if (typ->DerivesFrom(&TA_int)) {
     *((int*)base) = val;
-  } else if (typ->DerivesFrom(&TA_unsigned_int)) {
+  }
+  else if (typ->DerivesFrom(&TA_unsigned_int)) {
    *((uint*)base) = (uint)val; //NOTE: range issue
-  } else if (typ->DerivesFrom(&TA_short)) {
+  }
+  else if (typ->DerivesFrom(&TA_short)) {
     *((short*)base) = (short)val;
-  } else if (typ->DerivesFrom(&TA_unsigned_short)) {
+  }
+  else if (typ->DerivesFrom(&TA_unsigned_short)) {
     *((unsigned short*)base) = (unsigned short)val;
-  } else if (typ->DerivesFrom(&TA_signed_char)) {
+  }
+  else if (typ->DerivesFrom(&TA_signed_char)) {
     *((signed char*)base) = (signed char)val;
-  } else if (typ->DerivesFrom(&TA_unsigned_char)) {
+  }
+  else if (typ->DerivesFrom(&TA_unsigned_char)) {
     *((unsigned char*)base) = (unsigned char)val;
-  } else if (typ->DerivesFrom(&TA_QAtomicInt)) {
+  }
+  else if (typ->DerivesFrom(&TA_QAtomicInt)) {
     *((QAtomicInt*)base) = val;
-  } //note: should never not be one of these
+  }
+  else {
+    // should never happen
+  }
 }
-
 
 //////////////////////////
 //  taiInt64Type        //
@@ -381,7 +418,6 @@ void taiRealType::GetValue_impl(taiData* dat, void* base) {
   }
   typ->SetValVar(dval, base);
 }
-
 
 ////////////////////////
 //  taiEnumType     //
@@ -586,11 +622,11 @@ int taiClassType::BidForType(TypeDef* td) {
 }
 
 taiData* taiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-  taiType* parent_type_, int flags_, MemberDef* mbr_)
+                                  taiType* parent_type_, int flags_, MemberDef* mbr)
 {
   if (typ->HasOption("INLINE") || typ->HasOption("EDIT_INLINE"))
     flags_ |= taiData::flgInline;
-  return inherited::GetDataRep(host_, par, gui_parent_, parent_type_, flags_, mbr_);
+  return inherited::GetDataRep(host_, par, gui_parent_, parent_type_, flags_, mbr);
 }
 
 taiData* taiClassType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
@@ -612,7 +648,7 @@ void taiClassType::GetValue_impl(taiData* dat, void* base) {
   dat->GetValue_(base); //noop for taiEditButton
 }
 
-bool taiClassType::CanBrowse() {
+bool taiClassType::CanBrowse() const {
   //TODO: add additionally supported base types
   return (typ->InheritsFrom(TA_taBase)  && !typ->HasOption("HIDDEN"));
 }
@@ -1065,7 +1101,6 @@ const iColor taiEdit::GetBackgroundColor(void* base, bool& ok) {
     return; \
   }
 
-
 void taiMember::EndScript(const void* base) {
   if(taMisc::record_script == NULL)
     return;
@@ -1081,13 +1116,13 @@ bool taiMember::isReadOnly(taiData* dat, IDataHost* host_) {
     mbr->HasOption("IV_READ_ONLY") || mbr->HasOption("GUI_READ_ONLY");
   return rval;
 }
-bool taiMember::handlesReadOnly() {
+
+bool taiMember::handlesReadOnly() const {
   return mbr->type->it->handlesReadOnly();
 }
 
-
 taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
-        taiType* parent_type_, int flags_, MemberDef*)
+                               taiType* parent_type_, int flags_, MemberDef*)
 {//note: we ignore MemberDef because we use our own
   bool ro = isReadOnly(par, host_);
   // we must communicate read_only when getting item
@@ -1113,7 +1148,8 @@ taiData* taiMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_pare
   taiData* rval = NULL;
   if (ro || !isCondEdit()) { // condedit is irrelevant
     rval = GetArbitrateDataRep(host_, par, gui_parent_, flags_, mbr);
-  } else { // rw && condEdit
+  }
+  else { // rw && condEdit
     taiDataDeck* deck = new taiDataDeck(typ, host_, par, gui_parent_, flags_);
 
     deck->InitLayout();
@@ -1910,16 +1946,16 @@ int taiTDefaultMember::BidForMember(MemberDef*, TypeDef*) {
   return 0;
 }
 
-taiData* taiTDefaultMember::GetDataRep(IDataHost* host_,
-  taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr_)
+taiData* taiTDefaultMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+                                       taiType*, int flags_, MemberDef* mbr)
 {
   taiPlusToggle* rval = new taiPlusToggle(typ, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   taiData* rdat;
   if (m_sub_types)
-    rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr_);
+    rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr);
   else
-    rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_, mbr_);
+    rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_, mbr);
   rval->data = rdat;
   rval->AddChildWidget(rdat->GetRep());
   rval->EndLayout();
@@ -1930,7 +1966,8 @@ void taiTDefaultMember::GetImage(taiData* dat, const void* base) {
   QCAST_MBR_SAFE_EXIT(taiPlusToggle*, rval, dat)
   if (m_sub_types) {
     sub_types()->GetImage(rval->data, base);
-  } else {
+  }
+  else {
     taiMember::GetImage_impl(rval->data, base);
   }
   taBase_List* gp = typ->defaults;
@@ -1954,15 +1991,13 @@ void taiTDefaultMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) 
   QCAST_MBR_SAFE_EXIT(taiPlusToggle*, rval, dat)
   if (m_sub_types) {
     sub_types()->GetMbrValue(rval->data, base, first_diff);
-  } else {
+  }
+  else {
     taiMember::GetMbrValue(rval->data, base,first_diff);
   }
   if (tpdflt != NULL)           // gotten by prev GetImage
     tpdflt->SetActive(mbr->idx, rval->GetValue());
-//nn  CmpOrigVal(dat, base, first_diff);
 }
-
-
 
 //////////////////////////
 //      taiMethod       //
@@ -3556,9 +3591,9 @@ void taiTypeBase::InitializeTypes(bool gui) {
     for (j=0; j < v_type_space.size; ++j) {
       taiViewType* tit_v = (taiViewType*) v_type_space.FastEl(j)->GetInstance();
       if ((bid = tit_v->BidForView(td)) > 0) {
-        taiViewType* tit = tit_v->TypeInst(td); // make one
-        tit->bid = bid;
-        tit->AddView(td);               // add it
+        taiViewType* tiv = tit_v->TypeInst(td); // make one
+        tiv->bid = bid;
+        tiv->AddView(td);               // add it
       }
     }
 
