@@ -2420,8 +2420,7 @@ public:
   // if all enum names start with the same prefix before an _ (underbar), then this returns that prefix, else an empty string -- useful for removing that prefix etc
 
 #ifndef NO_TA_BASE
-  void*         GetInstance() const
-  { void* rval=NULL; if(instance != NULL) rval = *instance; return rval; }
+  void*         GetInstance() const { return instance ? *instance : 0; }
   int           FindTokenR(void* addr, TypeDef*& ptr) const;
   int           FindTokenR(const char* nm, TypeDef*& ptr) const;
   // recursive search for token among children

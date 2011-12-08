@@ -48,26 +48,42 @@ class taiTypeHier; //
 class TA_API taiTypeBase: public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS graphically represents a type
 public:
+  static void InitializeTypes(bool gui);  // called at startup to initialize the type system
+
   taiTypeBase(TypeDef* typ_);
   taiTypeBase();
   virtual ~taiTypeBase();
 
-  static void InitializeTypes(bool gui);  // called at startup to initialize the type system
-  virtual TypeDef* GetTypeDef() const
-  {
+  bool HasSubtypes() const {
+    return m_sub_types;
+  }
+  virtual TypeDef* GetTypeDef() const {
     return &TA_taiTypeBase;
   }
-  virtual taiTypeBase* TypeInst(TypeDef* td) const
-  {
+  virtual taiTypeBase* TypeInst(TypeDef* td) const {
     return new taiTypeBase(td);
   }
+
+private:
+  void InsertThisIntoBidList_impl(taiTypeBase *&pHead);
+  // Insert this object into a list of taiTypeBase objects bidding for some type.  The list is sorted in order of the objects' bids.
+
+protected:
+#ifndef __MAKETA__ // maketa doesn't like template methods
+  template<typename T>
+  void InsertThisIntoBidList(T *&pHead) {
+    // Need this little helper function since Der** isn't-a Base**.
+    taiTypeBase *pHeadBase = pHead;
+    InsertThisIntoBidList_impl(pHeadBase);
+    pHead = static_cast<T*>(pHeadBase);
+  }
+#endif
 
 public:
   static const iColor   def_color;      // passed as a default, or explicitly, to indicate using default
   TypeDef*              typ;            // typedef of base object
-  int                   bid;            // its bid
-  taiTypeBase*          m_sub_types;    // lower bid type (which has lower one, and so on) -- is cast to correct type
-  String                orig_val;       // original value of the item
+  int                   bid;            // this object's bid for typ.
+  taiTypeBase*          m_sub_types;    // "next" pointer in the linked-list, pointint to an item with a lower bid
   bool                  no_setpointer;  // don't use SetPointer for taBase pointers (ie., for css or other secondary pointers)
 };
 
@@ -113,8 +129,7 @@ public:
   virtual bool          isCompound() const      { return false; } // true if requires multiple edit fields
   virtual bool          CanBrowse() const       { return false; } // only things from taBase classes up can be browse nodes
 
-  taiType*              sub_types() {return (taiType*)m_sub_types;}
-  taiType**             addr_sub_types() {return (taiType**)&m_sub_types;}
+  taiType*              sub_types() { return static_cast<taiType*>(m_sub_types); }
 
   void                  AddToType(TypeDef* td); // add an instance to a type
   virtual int           BidForType(TypeDef*) { return 1; }
@@ -176,8 +191,7 @@ class TA_API taiViewType: public taiTypeBase {
 public:
   static taiDataLink*   StatGetDataLink(void* el, TypeDef* el_typ); // get correct one
 
-  taiViewType*          sub_types() {return (taiViewType*)m_sub_types;}
-  taiViewType**         addr_sub_types() {return (taiViewType**)&m_sub_types;}
+  taiViewType*          sub_types() { return static_cast<taiViewType*>(m_sub_types); }
   virtual bool          needSet() const {return m_need_set;} // only valid during constr of panels
   void                  AddView(TypeDef* td);   // add an instance to a type
   virtual int           BidForView(TypeDef*) {return 1;}
@@ -185,9 +199,9 @@ public:
   virtual void          CheckUpdateDataPanelSet(iDataPanelSet* pan) {} // dynamically updates a data panel set; currently only called when set gets a USER_DATA_UPDATED notify
   virtual taiDataLink*  GetDataLink(void* data_, TypeDef* el_typ) {return NULL;}
     // get an existing, or create new if needed
-  virtual const iColor GetEditColorInherit(taiDataLink* dl, bool& ok) const {ok = false; return def_color;} // #IGNORE background color for edit dialog, include inherited colors from parents
+  virtual const iColor  GetEditColorInherit(taiDataLink* dl, bool& ok) const {ok = false; return def_color;} // #IGNORE background color for edit dialog, include inherited colors from parents
 
-  virtual iDataPanelSet*  GetDataPanelSet() { return m_dps; }
+  virtual iDataPanelSet* GetDataPanelSet() { return m_dps; }
   // return the data panel set that contains multiple data panels if present -- use to control flipping between them..
 
   void                  Initialize();
@@ -213,8 +227,7 @@ private:
 class TA_API taiEdit : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiEdit, taiType);
 public:
-  taiEdit*              sub_types() {return (taiEdit*)m_sub_types;}
-  taiEdit**             addr_sub_types() {return (taiEdit**)&m_sub_types;}
+  taiEdit*              sub_types() { return static_cast<taiEdit*>(m_sub_types); }
 
   virtual const iColor  GetBackgroundColor(void* base, bool& ok); // gets for taBase
   virtual int           Edit(void* base=NULL, bool read_only=false, const iColor& bgcol = def_color); //edit wherever found (note: rarely overridden)

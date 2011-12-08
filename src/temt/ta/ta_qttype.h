@@ -288,8 +288,7 @@ public:
 
   MemberDef*    mbr;
 
-  taiMember*            sub_types() {return (taiMember*)m_sub_types;}
-  taiMember**           addr_sub_types() {return (taiMember**)&m_sub_types;}
+  taiMember*            sub_types() { return static_cast<taiMember*>(m_sub_types); }
   override bool         handlesReadOnly() const;
   bool                  isCondEdit() const;
   bool                  isCondShow() const;
@@ -461,8 +460,8 @@ class TA_API taiEnumTypePtrMember : public taiTypePtrMember {
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
 protected:
-   taiData*     GetDataRep_impl(IDataHost* host_, taiData* par,
-     QWidget* gui_parent_, int flags_, MemberDef* mbr);
+  taiData*     GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr);
 private:
   void          Initialize() {}
   void          Destroy() {}
@@ -474,8 +473,8 @@ class TA_API taiMemberDefPtrMember : public taiMember {
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
 protected:
-   taiData*     GetDataRep_impl(IDataHost* host_, taiData* par,
-     QWidget* gui_parent_, int flags_, MemberDef* mbr);
+  taiData*     GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr);
   override void GetImage_impl(taiData* dat, const void* base);
   override void GetMbrValue_impl(taiData* dat, void* base);
 private:
@@ -489,8 +488,8 @@ class TA_API taiMethodDefPtrMember : public taiMember {
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
 protected:
-   taiData*     GetDataRep_impl(IDataHost* host_, taiData* par,
-     QWidget* gui_parent_, int flags_, MemberDef* mbr);
+  taiData*     GetDataRep_impl(IDataHost* host_, taiData* par,
+    QWidget* gui_parent_, int flags_, MemberDef* mbr);
   override void GetImage_impl(taiData* dat, const void* base);
   override void GetMbrValue_impl(taiData* dat, void* base);
 private:
@@ -560,8 +559,7 @@ INHERITED(taiType)
 public:
   MethodDef*    meth;
 
-  taiMethod*            sub_types() {return (taiMethod*)m_sub_types;}
-  taiMethod**           addr_sub_types() {return (taiMethod**)&m_sub_types;}
+  taiMethod*            sub_types() { return static_cast<taiMethod*>(m_sub_types); }
 
   int           BidForType(TypeDef*)                    { return 0; }
   // none of the method specific ones should apply to types
@@ -866,8 +864,6 @@ private:
   void          Initialize() {}
   void          Destroy() {}
 };
-
-
 
 //////////////////////////////////////////////////
 //       taiArgTypes:   Lists and Groups        //

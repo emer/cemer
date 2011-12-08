@@ -39,7 +39,7 @@
 
 
 //////////////////////////////////
-//	taiSpecMember		//
+//      taiSpecMember           //
 //////////////////////////////////
 
 int taiSpecMember::BidForMember(MemberDef* md, TypeDef* td) {
@@ -64,46 +64,49 @@ bool taiSpecMember::NoCheckBox(IDataHost* host_) const {
   if (!base || !typ) return true;
 
   if(typ->InheritsFrom(TA_BaseSpec_Group))
-    return false;		// always use a check box for these..
+    return false;               // always use a check box for these..
 
   if(typ->InheritsFrom(TA_BaseSpec)) {
     BaseSpec* bs = (BaseSpec*)base;
     if(bs->FindParent() != NULL)
-      return false;		// owner has a parent spec, needs a box
-    return true;		// no owner, no box..
-  } else if(typ->InheritsFrom(TA_BaseSubSpec)) {
+      return false;             // owner has a parent spec, needs a box
+    return true;                // no owner, no box..
+  }
+  else if(typ->InheritsFrom(TA_BaseSubSpec)) {
     BaseSubSpec* bs = (BaseSubSpec*)base;
     if(bs->FindParent() != NULL)
-      return false;		// owner has a parent spec, needs a box
-    return true;		// no owner, no box..
-  } else {
+      return false;             // owner has a parent spec, needs a box
+    return true;                // no owner, no box..
+  }
+  else {
     taBase* tap = (taBase*)base;
     BaseSpec* bs = (BaseSpec*)tap->GetOwner(&TA_BaseSpec); // find an owner..
     if(bs == NULL)
-      return true;		// no owner, no box..
+      return true;              // no owner, no box..
     if(bs->FindParent() != NULL)
-      return false;		// owner is owned by a spec, needs a box..
+      return false;             // owner is owned by a spec, needs a box..
   }
-  return true;			// default is to not have box...
+  return true;                  // default is to not have box...
 }
 
 taiData* taiSpecMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
-  QWidget* gui_parent, int flags_, MemberDef* mbr_) 
+  QWidget* gui_parent, int flags_, MemberDef* mbr_)
 {
   if (!mbr_) mbr_ = mbr;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
     taiData* rdat;
-    if (m_sub_types != NULL)
+    if (HasSubtypes())
       rdat = sub_types()->GetDataRep(host_, par, gui_parent, NULL, flags_, mbr_);
     else
       rdat = taiMember::GetDataRep_impl(host_, par, gui_parent, flags_, mbr_);
     return rdat;
-  } else {
+  }
+  else {
     taiPlusToggle* rval = new taiPlusToggle(NULL, host_, par, gui_parent, flags_);
     rval->InitLayout();
     taiData* rdat;
-    if (m_sub_types)
+    if (HasSubtypes())
       rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr_);
     else
       rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_, mbr_);
@@ -118,17 +121,18 @@ void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
   IDataHost* host_ = dat->host;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
-    if (m_sub_types != NULL)
+    if (HasSubtypes())
       sub_types()->GetImage(dat,base);
     else
       taiMember::GetImage_impl(dat, base);
-  } else {
+  }
+  else {
     taiPlusToggle* rval = dynamic_cast<taiPlusToggle*>(dat);
     if(!rval || !rval->data) {
       cerr << "spec mbr bug: null data in: " << mbr->name << endl;
       return;
     }
-    if (m_sub_types != NULL)
+    if (HasSubtypes())
       sub_types()->GetImage(rval->data,base);
     else
       taiMember::GetImage_impl(rval->data, base);
@@ -153,7 +157,7 @@ void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_d
   IDataHost* host_ = dat->host;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
-    if (m_sub_types != NULL)
+    if (HasSubtypes())
       sub_types()->GetMbrValue(dat, base, first_diff);
     else
       taiMember::GetMbrValue(dat, base, first_diff);
@@ -183,7 +187,7 @@ void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_d
     return;
   }
 
-  if (m_sub_types != NULL)
+  if (HasSubtypes())
     sub_types()->GetMbrValue(rval->data, base, first_diff);
   else
     taiMember::GetMbrValue(rval->data, base, first_diff);
@@ -213,7 +217,7 @@ void taiSpecMember::CmpOrigVal(taiData* dat, const void* base, bool& first_diff)
   first_diff = false;
 
   *taMisc::record_script << "  ths->SetUnique(\"" << mbr->name << "\", "
-			   << new_val << ");" << endl;
+                           << new_val << ");" << endl;
 }
 
 
