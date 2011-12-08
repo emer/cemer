@@ -79,13 +79,13 @@ void  cssiType::Assert_QObj() {
   }
 }
 
-taiData* cssiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  taiType*, int, MemberDef*)
+taiData* cssiType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+                              taiType*, int, MemberDef*)
 {
   if (use_it)
-    return use_it->GetDataRep(host_, par, gui_parent);
+    return use_it->GetDataRep(host_, par, gui_parent_);
   else
-    return typ->it->GetDataRep(host_, par, gui_parent);
+    return typ->it->GetDataRep(host_, par, gui_parent_);
 }
 
 void cssiType::GetImage(taiData* dat, const void* base) {
@@ -113,10 +113,10 @@ cssiROType::cssiROType(cssEl* orgo, TypeDef* tp, void* bs, bool use_ptr_type)
 {
 }
 
-taiData* cssiROType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  taiType*, int, MemberDef*)
+taiData* cssiROType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+                                taiType*, int, MemberDef*)
 {
-  taiField* rval = new taiField(typ, host_, par, gui_parent, true);
+  taiField* rval = new taiField(typ, host_, par, gui_parent_, true);
   return rval;
 }
 
@@ -131,14 +131,15 @@ void cssiROType::GetImage(taiData* dat, const void* base) {
 //////////////////////////////////////////////////
 
 cssiEnumType::cssiEnumType(cssEl* orgo, cssEnumType* enum_typ, void* bs)
-: cssiType(orgo, &TA_enum, bs, false) {
+  : cssiType(orgo, &TA_enum, bs, false)
+{
   enum_type = enum_typ;
 }
 
-taiData* cssiEnumType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  taiType*, int, MemberDef*)
+taiData* cssiEnumType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+                                  taiType*, int, MemberDef*)
 {
-  taiComboBox* rval = new taiComboBox(typ, host_, par, gui_parent);
+  taiComboBox* rval = new taiComboBox(typ, host_, par, gui_parent_);
   for (int i = 0; i < enum_type->enums->size; ++i) {
     rval->AddItem(enum_type->enums->FastEl(i)->name);
   }
@@ -173,22 +174,23 @@ void cssiEnumType::GetValue(taiData* dat, void* base) {
 //////////////////////////////////////////////////
 
 cssiClassType::cssiClassType(cssEl* orgo, void* bs)
-: cssiType(orgo, &TA_void, bs, false) {
+  : cssiType(orgo, &TA_void, bs, false)
+{
 }
 
-taiData* cssiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  taiType*, int, MemberDef*)
+taiData* cssiClassType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+                                   taiType*, int, MemberDef*)
 {
   cssClassInst* obj = (cssClassInst*) cur_base;
   if ((obj->type_def != NULL) && (obj->type_def->HasOption("INLINE")
         || obj->type_def->HasOption("EDIT_INLINE")))
   {
-    cssiPolyData* rval = new cssiPolyData(obj, typ, host_, par, gui_parent);
+    cssiPolyData* rval = new cssiPolyData(obj, typ, host_, par, gui_parent_);
     return rval;
   }
   else {
     taiButtonMenu* rval = new taiButtonMenu
-      (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
+      (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent_);
     Assert_QObj();
     rval->AddItem("Edit", taiMenu::use_default, taiAction::action,
         qobj, SLOT(CallEdit()), (void*)NULL);
@@ -228,15 +230,15 @@ void cssiClassType::CallEdit() {
 //////////////////////////////////////////////////
 
 cssiArrayType::cssiArrayType(cssEl* orgo, void* bs)
-: cssiType(orgo, &TA_void, bs, false)
+  : cssiType(orgo, &TA_void, bs, false)
 {
 }
 
-taiData* cssiArrayType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent,
-  taiType*, int, MemberDef*)
+taiData* cssiArrayType::GetDataRep(IDataHost* host_, taiData* par, QWidget* gui_parent_,
+                                   taiType*, int, MemberDef*)
 {
   taiButtonMenu* rval = new taiButtonMenu
-    (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent);
+    (taiMenu::normal_update, taiMisc::fonSmall, typ, host_, par, gui_parent_);
   Assert_QObj();
   rval->AddItem("Edit", taiMenu::use_default, taiAction::action,
         qobj, SLOT(CallEdit), (void*)NULL);
