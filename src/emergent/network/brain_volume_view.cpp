@@ -191,8 +191,8 @@ void BrainVolumeView::RenderBrain()
 
   SoTransform* global_xform = new SoTransform;
   node.brain_group->addChild(global_xform);
-  global_xform->translation.setValue(SbVec3f(0.0,-0.5,0.0)); //shift down a bit for comfort
-  global_xform->scaleFactor.setValue(SbVec3f(0.01,0.01,0.01)); //arbitrary scale seems to work
+  global_xform->translation.setValue(SbVec3f(0.0,0.0,0.0)); 
+  global_xform->scaleFactor.setValue(SbVec3f(0.0075,0.0075,0.0075)); //arbitrary scale seems to work
 
   // set the "origin"
   TDCoord dims(brain_data_->xyzDimensions());
@@ -214,7 +214,10 @@ void BrainVolumeView::RenderBrain()
     d1 = dims.x;
     d2 = dims.y;
     d3 = dims.z;
-    b0->translation.setValue(SbVec3f(0.0f, dims.y/2.0f, -dims.z/2.0f));
+    //this used to be offset by dims.y/2.0f, but not important now that we're 
+    //drawing everything from same coordinate transform space...so we make it 
+    //close/similar to same offset as with other viewplanes
+    b0->translation.setValue(SbVec3f(0.0f, dims.z/2.0f, -dims.z/2.0f));
   }
   node.brain_group->addChild(b0);
 
