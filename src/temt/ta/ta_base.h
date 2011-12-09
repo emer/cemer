@@ -824,6 +824,8 @@ public:
   // #CAT_ObjectMgmt bracket structural changes with (nestable) true/false calls;
   void                  DataUpdate(bool begin) { BatchUpdate(begin, false); }
   // #CAT_ObjectMgmt bracket data value changes with (nestable) true/false calls;
+  bool			InStructUpdate();
+  // #CAT_ObjectMgmt is object currently within a struct update already?
 
   virtual bool          isDirty() const {return false;}
   // #IGNORE implemented by very few, esp. Project -- Dirty is used to indicate the need to resave an object

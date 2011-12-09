@@ -346,7 +346,9 @@ float SubiculumLayerSpec::Compute_ECNormErr_ugp(LeabraLayer* lin, LeabraLayer* l
   float nerr = 0.0f;
   for(int i=0; i<nunits; i++) {
     LeabraUnit* uin = (LeabraUnit*)lin->UnitAccess(acc_md, i, gpidx);
+    if(uin->lesioned()) continue;
     LeabraUnit* uout = (LeabraUnit*)lout->UnitAccess(acc_md, i, gpidx);
+    if(uout->lesioned()) continue;
     float outval = uout->act_eq;
     if(net->phase == LeabraNetwork::PLUS_PHASE) outval = uout->act_m; // use minus
     if(net->on_errs) { if(outval > 0.5f && uin->act_eq < 0.5f) nerr += 1.0f; }

@@ -809,6 +809,13 @@ public: //
     COMP_TARG_EXT       = 0x07  // #NO_BIT as a comparison, target, and external input layer
   };
 
+  enum UnitFlags { // #BITS misc flags for units
+    UF_NONE 		= 0,	// #NO_BIT no flags
+    LESIONED		= 0x0001, // unit is temporarily lesioned (inactivated for all network-level processing functions) -- IMPORTANT: use the Lesion and UnLesion functions to set this flag -- they provide proper updating after changes -- otherwise network dynamics will be wrong and the display will not be properly updated
+  };
+
+  UnitFlags	flags;
+  // #CAT_Structure flags controlling various aspects of unit state and function
   ExtType       ext_flag;
   // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
   float         targ;
@@ -856,10 +863,30 @@ public: //
   virtual void  DMem_SetThisProc(int proc)      { dmem_this_proc = proc; } // #IGNORE
 #endif
 
-  inline bool   lesioned() const;
-  // #IGNORE refers to the layer-level LESIONED flag -- important for thread code
+  inline void           SetUnitFlag(UnitFlags flg)   { flags = (UnitFlags)(flags | flg); }
+  // set flag state on
+  inline void           ClearUnitFlag(UnitFlags flg) { flags = (UnitFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool           HasUnitFlag(UnitFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void           SetUnitFlagState(UnitFlags flg, bool on)
+  { if(on) SetUnitFlag(flg); else ClearUnitFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
+
+  inline bool   lesioned() const { return HasUnitFlag(LESIONED); }
+  // check if this unit is lesioned -- must check for all processing functions (threaded calls automatically exclude lesioned units)
+  
+  virtual void  Lesion();
+  // #MENU #MENU_ON_Structure #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on unit -- removes it from all processing operations
+  virtual void  UnLesion();
+  // #MENU #DYN1 #CAT_Structure un-set the lesion flag on unit -- restores it to engage in normal processing
+
+  inline bool   lay_lesioned() const;
+  // #CAT_Structure is the layer this unit is in lesioned?
   inline Layer* own_lay() const;
   // #CAT_Structure get the owning layer of this unit
+  inline Network* own_net() const;
+  // #CAT_Structure get the owning network of this unit
   inline Unit_Group* own_subgp() const;
   // #CAT_Structure get the owning subgroup of this unit -- NULL if unit lives directly within the layer and not in a subgroup -- note that with virt_groups as default, most units do not have an owning subgroup even if there are logical subgroups
   inline int    UnitGpIdx() const;
@@ -1969,7 +1996,13 @@ inline Layer* Unit::own_lay() const {
   return ((Unit_Group*)owner)->own_lay;
 }
 
-inline bool Unit::lesioned() const {
+inline Network* Unit::own_net() const {
+  Layer* ol = own_lay();
+  if(!ol) return NULL;
+  return ol->own_net;
+}
+
+inline bool Unit::lay_lesioned() const {
   return own_lay()->lesioned();
 }
 

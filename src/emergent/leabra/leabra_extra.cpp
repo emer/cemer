@@ -990,6 +990,7 @@ void ScalarValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode 
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     float act = .03f * bias_val.wt_gain * scalar.GetUnitAct(i);
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -1014,6 +1015,7 @@ void ScalarValLayerSpec::Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode 
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     float act = bias_val.un_gain * scalar.GetUnitAct(i);
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_h = act;
@@ -1030,6 +1032,7 @@ void ScalarValLayerSpec::Compute_UnBias_NegSlp(LeabraLayer* lay, Layer::AccessMo
   float incr = bias_val.un_gain / (float)(nunits - 2);
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_a = val;
     else if(bias_val.un == ScalarValBias::BWT)
@@ -1045,6 +1048,7 @@ void ScalarValLayerSpec::Compute_UnBias_PosSlp(LeabraLayer* lay, Layer::AccessMo
   float incr = bias_val.un_gain / (float)(nunits - 2);
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     if(bias_val.un == ScalarValBias::GC)
       u->vcb.g_h = val;
     else if(bias_val.un == ScalarValBias::BWT)
@@ -1075,6 +1079,7 @@ void ScalarValLayerSpec::BuildUnits_Threads_ugp(LeabraLayer* lay,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* un = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(un->lesioned()) continue;
     if(i == 0) { un->flat_idx = 0; continue; }
     un->flat_idx = net->units_flat.size;
     net->units_flat.Add(un);
@@ -1101,6 +1106,7 @@ void ScalarValLayerSpec::Compute_AvgMaxVals_ugp(LeabraLayer* lay,
   vals.InitVals();
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     if(i == 0) { continue; } // skip first unit
     float val = *((float*)MemberDef::GetOff_static((void*)u, 0, mb_off));
     vals.UpdtVals(val, i);
@@ -1125,6 +1131,7 @@ void ScalarValLayerSpec::ClampValue_ugp(LeabraLayer* lay,
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     float act = rescale * scalar.GetUnitAct(i);
     if(act < us->opt_thresh.send)
       act = 0.0f;
@@ -1156,6 +1163,7 @@ float ScalarValLayerSpec::ReadValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_
   float sum_act = 0.0f;
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
     float cur = scalar.GetUnitVal(i);
     float act_val = 0.0f;
@@ -1187,6 +1195,7 @@ void ScalarValLayerSpec::Compute_ExtToPlus_ugp(LeabraLayer* lay,
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     if(i > 0) u->act_p = us->clamp_range.Clip(u->ext);
     else u->act_p = u->ext;
     u->act_dif = u->act_p - u->act_m;
@@ -1204,6 +1213,7 @@ void ScalarValLayerSpec::Compute_ExtToAct_ugp(LeabraLayer* lay,
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     if(i > 0) u->act_eq = u->act = us->clamp_range.Clip(u->ext);
     else u->act_eq = u->ext;
     u->ext = 0.0f;
@@ -1238,6 +1248,7 @@ void ScalarValLayerSpec::LabelUnits_ugp(LeabraLayer* lay, Layer::AccessMode acc_
   scalar.InitVal(0.0f, nunits, unit_range.min, unit_range.range);
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     float cur = scalar.GetUnitVal(i);
     u->name = (String)cur;
   }
@@ -2007,6 +2018,7 @@ void TwoDValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode ac
   twod.InitVal(x_val, y_val, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     float act = .03f * bias_val.wt_gain * twod.GetUnitAct(i);
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -2031,6 +2043,7 @@ void TwoDValLayerSpec::Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode ac
   twod.InitVal(x_val, y_val, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     float act = bias_val.un_gain * twod.GetUnitAct(i);
     if(bias_val.un == TwoDValBias::GC)
       u->vcb.g_h = act;
@@ -2063,6 +2076,7 @@ void TwoDValLayerSpec::ClampValue_ugp(TwoDValLeabraLayer* lay,
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     u->SetExtFlag(Unit::EXT);
     u->ext = 0.0;
   }
@@ -2078,6 +2092,7 @@ void TwoDValLayerSpec::ClampValue_ugp(TwoDValLeabraLayer* lay,
     twod.InitVal(x_val, y_val, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
     for(int i=0;i<nunits;i++) {
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+      if(u->lesioned()) continue;
       float act = rescale * twod.GetUnitAct(i);
       if(act < us->opt_thresh.send)
         act = 0.0f;
@@ -2102,6 +2117,7 @@ void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
     float sum_act = 0.0f;
     for(int i=0;i<nunits;i++) {
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+      if(u->lesioned()) continue;
       float x_cur, y_cur;  twod.GetUnitVal(i, x_cur, y_cur);
       float act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
       x_avg += x_cur * act_val;
@@ -2130,6 +2146,7 @@ void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
           int idx = i + y * lay->un_geom.x + x;
           if(idx < 0 || idx >= nunits) continue;
           LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, idx, gpidx);
+	  if(u->lesioned()) continue;
           float act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
           nsum += 1.0f;
           sum += act_val;
@@ -2175,6 +2192,7 @@ void TwoDValLayerSpec::LabelUnits_ugp(LeabraLayer* lay, Layer::AccessMode acc_md
   twod.InitVal(0.0f, 0.0f, lay->un_geom.x, lay->un_geom.y, x_range.min, x_range.range, y_range.min, y_range.range);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     float x_cur, y_cur; twod.GetUnitVal(i, x_cur, y_cur);
     u->name = (String)x_cur + "," + String(y_cur);
   }
@@ -2561,6 +2579,7 @@ void DecodeTwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     if(u->recv.size == 0) continue;
     LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[0];
     if(cg->size == 0) continue;

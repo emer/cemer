@@ -203,6 +203,7 @@ float PViLayerSpec::Compute_PVDa_ugp(LeabraLayer* lay, Layer::AccessMode acc_md,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* du = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(du->lesioned()) continue;
     du->dav = pvd;              // store in all units for visualization & prior updating -- note: NOT the pv_da guy which already has prior delta subtracted!
   }
   return pv_da;
@@ -571,6 +572,7 @@ float LVeLayerSpec::Compute_LVDa_ugp(LeabraLayer* lve_lay, LeabraLayer* lvi_lay,
   int nunits = lve_lay->UnitAccess_NUnits(lve_acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* du = (LeabraUnit*)lve_lay->UnitAccess(lve_acc_md, i, lve_gpidx);
+    if(du->lesioned()) continue;
     du->dav = lvd;              // store in all units for visualization and prior update (NOT lv_da which already has misc1 subtracted!)
   }
   return lv_da;

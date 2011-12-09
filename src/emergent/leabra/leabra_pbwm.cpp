@@ -345,6 +345,7 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
       float sum_nogo = 0.0f;
       for(int i=0; i<munits; i++) {
         LeabraUnit* u = (LeabraUnit*)matrix_lay->UnitAccess(Layer::ACC_GP, i, mg);
+	if(u->lesioned()) continue;
         PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz); // GO = 0, NOGO = 1
         if(go_no == PFCGateSpec::GATE_GO)
           sum_go += u->act_eq;
@@ -365,6 +366,7 @@ void SNrThalLayerSpec::Compute_GoNogoNet(LeabraLayer* lay, LeabraNetwork* net) {
 
     for(int i=0;i<nunits;i++) {
       LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, mg);
+      if(ru->lesioned()) continue;
       ru->net = net_eff;
       ru->i_thr = ru->Compute_IThresh(net);
     }
@@ -394,6 +396,7 @@ void SNrThalLayerSpec::Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net) {
       // due to competition with other type of gating
       for(int i=0;i<nunits;i++) {
         LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, g);
+	if(u->lesioned()) continue;
         u->act = u->act_eq = 0.0f; // now zapping act too!
       }
     }
@@ -403,6 +406,7 @@ void SNrThalLayerSpec::Compute_GatedActs(LeabraLayer* lay, LeabraNetwork* net) {
         // that was active at time of gating, not what current activity is..
         for(int i=0;i<nunits;i++) {
           LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, g);
+	  if(u->lesioned()) continue;
           u->act = u->act_eq = u->act_m2; // always reflect act_m2 gating signal if gated!
         }
       }
@@ -427,6 +431,7 @@ void SNrThalLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     u->act_m2 = u->act_eq;
   }
 
@@ -891,6 +896,7 @@ void MatrixLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     us->Compute_MidMinusAct(u, net);
   }
 }
@@ -982,6 +988,7 @@ void MatrixLayerSpec::Compute_MultBias(LeabraLayer* lay,
   int gp_sz = nunits / 2;
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz);
     float netin_extra = 0.0f;
     if(go_no == PFCGateSpec::GATE_NOGO) {
@@ -1052,6 +1059,7 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
 
     for(int i=0;i<nunits;i++) {
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
+      if(u->lesioned()) continue;
       PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz);
 
       // critical gating activation value is mid-minus state
@@ -1117,18 +1125,21 @@ void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay,
   int i;
   for(i=0; i<mgpd->kwta.k; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
+    if(u->lesioned()) continue;
     u->noise = rnd_go.nogo_noise;
   }
 
   // Set the remainder of the "go" units to have no noise.
   for(; i<n_go_units; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
+    if(u->lesioned()) continue;
     u->noise = 0.0f;
   }
 
   // now fill in all the nogo guys with no noise just to be sure..
   for(; i<nunits; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx); // note: not unit_idxs[i] here!
+    if(u->lesioned()) continue;
     u->noise = 0.0f;
   }
 }
@@ -1146,6 +1157,7 @@ void MatrixLayerSpec::LabelUnits_impl(LeabraLayer* lay, Layer::AccessMode acc_md
   int gp_sz = nunits / 2;
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     PFCGateSpec::GateSignal go_no = (PFCGateSpec::GateSignal)(i / gp_sz); // GO = 0, NOGO = 1
     if(go_no == PFCGateSpec::GATE_GO)
       u->name = "Go";
@@ -1373,6 +1385,7 @@ void PFCLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     u->act_m2 = u->act_eq;
   }
 }
@@ -1383,6 +1396,7 @@ void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int j=0;j<nunits;j++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
+    if(u->lesioned()) continue;
     if(updt_act == STORE) {
       u->vcb.g_h = u->maint_h = u->act_eq; // note: store current act value
       if(gate.off_accom > 0.0f)
@@ -1638,6 +1652,7 @@ void PFCLayerSpec::Compute_PfcMntAct(LeabraLayer* lay, LeabraNetwork* net) {
 
     for(int i=0;i<nunits;i++) {
       LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+      if(ru->lesioned()) continue;
       // only stray so far away from act_m  -- depending on gating strength
       ru->act_nd = ru->act_m + lrn_mod_val * (ru->act_nd - ru->act_m);
     }
@@ -1748,7 +1763,9 @@ void PFCOutLayerSpec::Compute_PfcOutAct(LeabraLayer* lay, LeabraNetwork* net) {
 
     for(int i=0;i<nunits;i++) {
       LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
+      if(ru->lesioned()) continue;
       LeabraUnit* pfcu = (LeabraUnit*)pfc_lay->UnitAccess(acc_md, i, mg);
+      if(pfcu->lesioned()) continue;
 
       // with mutex of mnt and out gating, can always just use current value!
       ru->act = gate_val * pfcu->act_eq;

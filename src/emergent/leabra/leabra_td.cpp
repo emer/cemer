@@ -516,6 +516,7 @@ void TDRewPredLayerSpec::Compute_SavePred(LeabraLayer* lay, Layer::AccessMode ac
   if(nunits < 3) return;
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     u->misc_1 = u->act_eq;
   }
 }
@@ -526,6 +527,7 @@ void TDRewPredLayerSpec::Compute_ClampPred(LeabraLayer* lay, Layer::AccessMode a
   if(nunits < 3) return;
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     u->ext = u->misc_1;
     u->SetExtFlag(Unit::EXT);
   }

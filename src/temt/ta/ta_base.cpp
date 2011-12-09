@@ -1580,6 +1580,11 @@ void taBase::DataChanged(int dcr, void* op1, void* op2) {
   if (dl) dl->DataDataChanged(dcr, op1, op2);
 }
 
+bool taBase::InStructUpdate() {
+  taDataLink* dl = data_link(); // doesn't autocreate
+  return (dl ? (dl->dbuCnt() > 0) : false);
+}
+
 void taBase::setDirty(bool value) {
   //note: base has no storage, and only forwards dirty (not !dirty)
   if (!value) return;

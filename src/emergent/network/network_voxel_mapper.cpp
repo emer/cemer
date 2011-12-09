@@ -105,6 +105,7 @@ NetworkVoxelMapper::CreateUnitMap(Network *network)
       for (int unit_idx = 0; unit_idx < num_units_in_layer; ++unit_idx)
       {
         Unit *unit = layer->UnitAccess(mode, unit_idx, 0);
+	if(unit->lesioned()) continue;
         unit_map.insert(layer->brain_area.toQString(), unit);
       }
     }

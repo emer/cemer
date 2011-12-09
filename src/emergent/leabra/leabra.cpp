@@ -3058,6 +3058,7 @@ void LeabraLayerSpec::Trial_NoiseInit_KPos_ugp(LeabraLayer* lay,
   lay->unit_idxs.Permute();
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
+    if(u->lesioned()) continue;
     if(i < thr->kwta.k)
       u->noise = us->noise.var;
     else
@@ -3165,6 +3166,7 @@ int LeabraLayerSpec::Compute_Pat_K(LeabraLayer* lay,
   int pat_k = 0;
   for(int i=0; i<nunits; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     // use either EXT or TARG information...
     if(u->HasExtFlag(Unit::EXT)) {
       if(u->ext >= kwta.pat_q)
@@ -3272,6 +3274,7 @@ void LeabraLayerSpec::Compute_NetinStats_ugp(LeabraLayer* lay,
   thr->netin.InitVals();  thr->i_thrs.InitVals();
   for(int i=0; i<nunits; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     thr->netin.UpdtVals(u->net, i);    thr->i_thrs.UpdtVals(u->i_thr, i);
   }
   thr->netin.CalcAvg(nunits);  thr->i_thrs.CalcAvg(nunits);
@@ -3393,6 +3396,7 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Sort(LeabraLayer* lay, Layer::AccessMod
     act_buff.ResetGp(gpidx);
     for(j=0; j < k_eff; j++) {
       u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
+      if(u->lesioned()) continue;
       act_buff.Add(u, gpidx); // add to list
       if(u->i_thr < k_net) {
         k_net = u->i_thr;       k_idx = j;
@@ -3402,6 +3406,7 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Sort(LeabraLayer* lay, Layer::AccessMod
     // now, use the "replace-the-lowest" sorting technique
     for(; j < nunits; j++) {
       u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
+      if(u->lesioned()) continue;
       if(u->i_thr <= k_net) {   // not bigger than smallest one in sort buffer
         inact_buff.Add(u, gpidx);
         continue;
@@ -3836,12 +3841,14 @@ void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay,
     float inhib_loser = thr->kwta.eff_loser_gain * thr->i_val.g_i;
     for(int i=0; i<nunits; i++) {
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+      if(u->lesioned()) continue;
       u->Compute_ApplyInhib_LoserGain(net, inhib_thr, inhib_val, inhib_loser);
     }
   }
   else {
     for(int i=0; i<nunits; i++) {
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+      if(u->lesioned()) continue;
       u->Compute_ApplyInhib(net, inhib_val);
     }
   }
@@ -3884,6 +3891,7 @@ void LeabraLayerSpec::Compute_AvgMaxVals_ugp(LeabraLayer* lay,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0; i<nunits; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     float val = *((float*)MemberDef::GetOff_static((void*)u, 0, mb_off));
     vals.UpdtVals(val, i);
   }
@@ -3897,6 +3905,7 @@ void LeabraLayerSpec::Compute_AvgMaxActs_ugp(LeabraLayer* lay,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0; i<nunits; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     thr->acts.UpdtVals(u->act_eq, i);
   }
   thr->acts.CalcAvg(nunits);
@@ -3988,6 +3997,7 @@ void LeabraLayerSpec::Compute_MaxDa_ugp(LeabraLayer* lay,
   int nunits = lay->UnitAccess_NUnits(acc_md);
   for(int i=0; i<nunits; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     float fda = u->Compute_MaxDa(net);
     lay->maxda = MAX(fda, lay->maxda);
     thr->maxda = MAX(fda, thr->maxda);
@@ -4022,7 +4032,7 @@ void LeabraLayerSpec::Compute_OutputName_ugp(LeabraLayer* lay,
     return;
   }
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, thr->acts.max_i, gpidx);
-  if(!u) {
+  if(!u || u->lesioned()) {
     *onm = "n/a";
     return;
   }
@@ -4449,6 +4459,7 @@ float LeabraLayerSpec::Compute_NormErr_ugp(LeabraLayer* lay,
   float nerr = 0.0f;
   for(int i=0; i<nunits; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
     nerr += u->Compute_NormErr(net);
   }
   return nerr;

@@ -30,11 +30,6 @@
 #include "netstru_qtso.h"
 #endif
 
-// Static function -- could be put onto Network, but I didn't want to change header
-bool Network_InStructUpdate(Network* net) {
-  taDataLink* dl = net->data_link(); // doesn't autocreate
-  return (dl ? (dl->dbuCnt() > 0) : false);
-}
 
 //////////////////////////
 //  SigmoidSpec         //
@@ -602,11 +597,11 @@ bool BaseCons::RemoveConIdx(int i) {
   }
   else {
     for(int j=i; j<size-1; j++)
-      memcpy((void*)PtrCn(j), (void*)PtrCn(j+1), sizeof(Connection*));
+      memcpy(&(cons_ptr[j]), &(cons_ptr[j+1]), sizeof(Connection*));
   }
 
   for(int j=i; j<size-1; j++)
-    memcpy((void*)Un(j), (void*)Un(j+1), sizeof(Unit*));
+    memcpy(&(units[j]), &(units[j+1]), sizeof(Unit*));
 
   size--;
   return true;
@@ -2012,6 +2007,7 @@ bool UnitSpec::Compute_PRerr(Unit* u, Network* net, float& true_pos, float& fals
 /////// Unit ///////
 
 void Unit::Initialize() {
+  flags = UF_NONE;
   ext_flag = NO_EXTERNAL;
   targ = 0.0f;
   ext = 0.0f;
@@ -2083,6 +2079,30 @@ void Unit::UpdateAfterEdit_impl() {
 //   if(!lay) return;
 //   pos.x = MIN(lay->un_geom.x-1,pos.x); pos.y = MIN(lay->un_geom.y-1,pos.y);
   pos.z = 0;                    // always zero: can't go out of plane
+}
+
+void Unit::Lesion() {
+  StructUpdate(true);
+  SetUnitFlag(LESIONED);
+  StructUpdate(false);
+  Network* on = own_net();
+  if(on) {
+    if(!on->InStructUpdate()) {
+      on->UpdtAfterNetMod();
+    }
+  }
+}
+
+void Unit::UnLesion()  {
+  StructUpdate(true);
+  ClearUnitFlag(LESIONED);
+  StructUpdate(false);
+  Network* on = own_net();
+  if(on) {
+    if(!on->InStructUpdate()) {
+      on->UpdtAfterNetMod();
+    }
+  }
 }
 
 int Unit::GetMyLeafIndex() {
@@ -3594,8 +3614,9 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
     ary.Sort();
     for(j=ary.size-1; j>=0; j--) {
       Unit* un = Leaf(ary.FastEl(j));
-      un->DisConnectAll();
-      RemoveLeafEl(un);
+      un->Lesion();
+//       un->DisConnectAll();
+//       RemoveLeafEl(un);
     }
   }
   else {
@@ -3603,15 +3624,16 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
     for(j=leaves-1; j>=0; j--) {
       if(Random::ZeroOne() <= p_lesion) {
         Unit* un = (Unit*)Leaf(j);
-        un->DisConnectAll();
-        RemoveLeafIdx(j);
+	un->Lesion();
+//         un->DisConnectAll();
+//         RemoveLeafIdx(j);
         rval++;
       }
     }
   }
-  own_lay->units_lesioned = true;       // record that units were lesioned
+//   own_lay->units_lesioned = true;       // record that units were lesioned
   StructUpdate(false);
-  if(!Network_InStructUpdate(own_lay->own_net)) {
+  if(!own_lay->own_net->InStructUpdate()) {
     own_lay->own_net->UpdtAfterNetMod();
   }
   return rval;
@@ -4352,6 +4374,7 @@ void Layer::BuildUnits() {
 void Layer::BuildUnits_Threads(Network* net) {
   units_flat_idx = net->units_flat.size;
   FOREACH_ELEM_IN_GROUP(Unit, un, units) {
+    if(un->lesioned()) continue;
     un->flat_idx = net->units_flat.size;
     net->units_flat.Add(un);
   }
@@ -4988,7 +5011,7 @@ int Layer::LesionUnits(float p_lesion, bool permute) {
   StructUpdate(true);
   return units.LesionUnits(p_lesion, permute);
   StructUpdate(false);
-  if (!Network_InStructUpdate(own_net)) {
+  if(!own_net->InStructUpdate()) {
     own_net->UpdtAfterNetMod();
   }
 }
