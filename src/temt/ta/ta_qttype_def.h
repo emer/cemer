@@ -54,8 +54,8 @@ public:
   taiTypeBase();
   virtual ~taiTypeBase();
 
-  bool HasSubtypes() const {
-    return m_sub_types;
+  bool HasLowerBidder() const {
+    return next_lower_bidder;
   }
   virtual TypeDef* GetTypeDef() const {
     return &TA_taiTypeBase;
@@ -83,7 +83,7 @@ public:
   static const iColor   def_color;      // passed as a default, or explicitly, to indicate using default
   TypeDef*              typ;            // typedef of base object
   int                   bid;            // this object's bid for typ.
-  taiTypeBase*          m_sub_types;    // "next" pointer in the linked-list, pointint to an item with a lower bid
+  taiTypeBase*          next_lower_bidder; // points to the next bidder in the linked-list
   bool                  no_setpointer;  // don't use SetPointer for taBase pointers (ie., for css or other secondary pointers)
 };
 
@@ -129,7 +129,7 @@ public:
   virtual bool          isCompound() const      { return false; } // true if requires multiple edit fields
   virtual bool          CanBrowse() const       { return false; } // only things from taBase classes up can be browse nodes
 
-  taiType*              sub_types() { return static_cast<taiType*>(m_sub_types); }
+  taiType*              LowerBidder() { return static_cast<taiType*>(next_lower_bidder); }
 
   void                  AddToType(TypeDef* td); // add an instance to a type
   virtual int           BidForType(TypeDef*) { return 1; }
@@ -191,7 +191,7 @@ class TA_API taiViewType: public taiTypeBase {
 public:
   static taiDataLink*   StatGetDataLink(void* el, TypeDef* el_typ); // get correct one
 
-  taiViewType*          sub_types() { return static_cast<taiViewType*>(m_sub_types); }
+  taiViewType*          LowerBidder() { return static_cast<taiViewType*>(next_lower_bidder); }
   virtual bool          needSet() const {return m_need_set;} // only valid during constr of panels
   void                  AddView(TypeDef* td);   // add an instance to a type
   virtual int           BidForView(TypeDef*) {return 1;}
@@ -227,7 +227,7 @@ private:
 class TA_API taiEdit : public taiType {
   TAI_TYPEBASE_SUBCLASS(taiEdit, taiType);
 public:
-  taiEdit*              sub_types() { return static_cast<taiEdit*>(m_sub_types); }
+  taiEdit*              LowerBidder() { return static_cast<taiEdit*>(next_lower_bidder); }
 
   virtual const iColor  GetBackgroundColor(void* base, bool& ok); // gets for taBase
   virtual int           Edit(void* base=NULL, bool read_only=false, const iColor& bgcol = def_color); //edit wherever found (note: rarely overridden)

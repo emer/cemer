@@ -40,7 +40,7 @@ const iColor taiTypeBase::def_color;
 taiTypeBase::taiTypeBase()
   : typ(0)
   , bid(0)
-  , m_sub_types(0)
+  , next_lower_bidder(0)
   , no_setpointer(false)
 {
 }
@@ -48,14 +48,14 @@ taiTypeBase::taiTypeBase()
 taiTypeBase::taiTypeBase(TypeDef* typ_)
   : typ(typ_)
   , bid(0)
-  , m_sub_types(0)
+  , next_lower_bidder(0)
   , no_setpointer(false)
 {
 }
 
 taiTypeBase::~taiTypeBase() {
-  delete m_sub_types;
-  m_sub_types = 0;
+  delete next_lower_bidder;
+  next_lower_bidder = 0;
 }
 
 // Insert this object into a list of taiTypeBase objects bidding
@@ -67,16 +67,16 @@ void taiTypeBase::InsertThisIntoBidList_impl(taiTypeBase *&pHead) {
   taiTypeBase** ppCurr = &pHead;
   while (*ppCurr && this->bid < (*ppCurr)->bid) {
     // Move on to the next object in the list.
-    ppCurr = &(*ppCurr)->m_sub_types;
+    ppCurr = &(*ppCurr)->next_lower_bidder;
   }
 
   // If this object already has subtypes linked to it, then unref them.
   // This shouldn't be needed, since typically this function is called
-  // after an object is first created and its m_sub_types is null.
-  taRefN::SafeUnRefDone(m_sub_types);
+  // after an object is first created and its next_lower_bidder is null.
+  taRefN::SafeUnRefDone(next_lower_bidder);
 
   // Link the current item under us, since our bid is higher.
-  this->m_sub_types = *ppCurr;
+  this->next_lower_bidder = *ppCurr;
 
   // Bump our reference count and insert us into the list.
   // TODO: it would be better if the taRefN() ctor set the
@@ -102,8 +102,8 @@ void taiType::AddToType(TypeDef* td) {
   // td->it is the head-pointer of a linked list of taiTypeBase objects.
   // Objects in the list are sorted by their bid values for the td type,
   // so that the object with the highest bid for the type is the one directly
-  // pointed to by td->it.  The "next" pointer in the linked list is called
-  // m_sub_types.
+  // pointed to by td->it.  The next item in the list is pointed to by
+  // next_lower_bidder.
   InsertThisIntoBidList(td->it);
 }
 
@@ -374,12 +374,7 @@ int taiRealType::BidForType(TypeDef* td){
 }
 
 taiData* taiRealType::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef* mbr) {
-  taiData* rval_ = inherited::GetDataRep_impl(host_, par, gui_parent_,
-    flags_, mbr);
-  // supposed to be a generic field...
-  taiField* rval = dynamic_cast<taiField*>(rval_);
-  if (!rval) return rval_; // oops...
-
+  taiField* rval = new taiField(typ, host_, par, gui_parent_, flags_);
   // now, decorate with a validator, and init
   QDoubleValidator* dv = new QDoubleValidator(rval->rep());
   // set std notation, otherwise default is scientific
@@ -971,11 +966,10 @@ taiEditDataHost* taiEdit::CreateDataHost(void* base, bool read_only) {
 }
 
 int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
-  taiEditDataHost* host = NULL;
   // get currently active win -- we will only look in any other window
   iMainWindowViewer* cur_win = taiMisc::active_wins.Peek_MainWindow();
-  host = taiMisc::FindEdit(base, cur_win);
-  if (host == NULL) {
+  taiEditDataHost* host = taiMisc::FindEdit(base, cur_win);
+  if (!host) {
     host = CreateDataHost(base, readonly);
 
     if (typ->HasOption("NO_OK"))
@@ -987,13 +981,15 @@ int taiEdit::Edit(void* base, bool readonly, const iColor& bgcol) {
         bool ok = false;
         iColor bg = GetBackgroundColor(base, ok);
         if (ok) host->setBgColor(bg);
-      } else
+      }
+      else
         host->setBgColor(bgcol);
     }
     host->Constr("", "");
 //TODO: no longer supported:    host->cancel_only = readonly;
     return host->Edit(false);
-  } else if (!host->modal) {
+  }
+  else if (!host->modal) {
     host->Raise();
   }
   return 2;
@@ -1016,10 +1012,12 @@ int taiEdit::EditDialog(void* base, bool read_only, bool modal,
       bool ok = false;
       iColor bg = GetBackgroundColor(base, ok);
       if (ok) host->setBgColor(bg);
-    } else
+    }
+    else
         host->setBgColor(bgcol);
-  } else {
-  //TODO: maybe we always null out, or should we allow caller to specify?
+  }
+  else {
+    //TODO: maybe we always null out, or should we allow caller to specify?
     //bgcol = NULL;
   }
   host->Constr("", "", taiDataHost::HT_DIALOG);
@@ -1035,10 +1033,12 @@ EditDataPanel* taiEdit::EditNewPanel(taiDataLink* link, void* base,
       bool ok = false;
       iColor bg = GetBackgroundColor(base, ok);
       if (ok) host->setBgColor(bg);
-    } else
+    }
+    else
       host->setBgColor(bgcol);
-  } else {
-  //TODO: maybe we always null out, or should we allow caller to specify?
+  }
+  else {
+    //TODO: maybe we always null out, or should we allow caller to specify?
     //bgcol = NULL;
   }
 
@@ -1055,7 +1055,8 @@ EditDataPanel* taiEdit::EditPanel(taiDataLink* link, void* base,
   if (host) {
     host->Raise();
     return host->dataPanel();
-  } else {
+  }
+  else {
     return EditNewPanel(link, base, read_only, bgcol);
   }
 }
@@ -1178,7 +1179,8 @@ void taiMember::GetImage(taiData* dat, const void* base) {
 
   if (ro || !isCondEdit()) { // condedit is irrelevant
     GetArbitrateImage(dat, base);
-  } else { // rw && condEdit
+  }
+  else { // rw && condEdit
     QCAST_MBR_SAFE_EXIT(taiDataDeck*, deck, dat)
     int img = !mbr->GetCondOptTest("CONDEDIT", typ, base);
     deck->GetImage(img); // this is the one that is visible
@@ -1364,8 +1366,8 @@ taiData* taiMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
 {
   taiData* rval = NULL;
 
-//  if (HasSubtypes()) {
-//    rval = sub_types()->GetDataRep(host_, rval, gui_parent_, NULL, flags_);
+//  if (HasLowerBidder()) {
+//    rval = LowerBidder()->GetDataRep(host_, rval, gui_parent_, NULL, flags_);
 //  }
 //  else
   {
@@ -1380,8 +1382,8 @@ taiData* taiMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
 }
 
 void taiMember::GetArbitrateImage(taiData* dat, const void* base) {
-//  if (HasSubtypes()) {
-//    sub_types()->GetImage(dat, base);
+//  if (HasLowerBidder()) {
+//    LowerBidder()->GetImage(dat, base);
 //  }
 //  else
   {
@@ -1395,8 +1397,8 @@ void taiMember::GetArbitrateImage(taiData* dat, const void* base) {
 }
 
 void taiMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_diff) {
-//  if (HasSubtypes()) {
-//    sub_types()->GetMbrValue(dat, base, first_diff);
+//  if (HasLowerBidder()) {
+//    LowerBidder()->GetMbrValue(dat, base, first_diff);
 //  }
 //  else
   {
@@ -1914,8 +1916,8 @@ taiData* taiTDefaultMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* 
   taiPlusToggle* rval = new taiPlusToggle(typ, host_, par, gui_parent_, flags_);
   rval->InitLayout();
   taiData* rdat;
-  if (HasSubtypes()) {
-    rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr);
+  if (HasLowerBidder()) {
+    rdat = LowerBidder()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr);
   }
   else {
     rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_, mbr);
@@ -1928,8 +1930,8 @@ taiData* taiTDefaultMember::GetDataRep(IDataHost* host_, taiData* par, QWidget* 
 
 void taiTDefaultMember::GetImage(taiData* dat, const void* base) {
   QCAST_MBR_SAFE_EXIT(taiPlusToggle*, rval, dat)
-  if (HasSubtypes()) {
-    sub_types()->GetImage(rval->data, base);
+  if (HasLowerBidder()) {
+    LowerBidder()->GetImage(rval->data, base);
   }
   else {
     taiMember::GetImage_impl(rval->data, base);
@@ -1953,8 +1955,8 @@ void taiTDefaultMember::GetImage(taiData* dat, const void* base) {
 void taiTDefaultMember::GetMbrValue(taiData* dat, void* base, bool& first_diff) {
   //note: we don't call the inherited, or use the impls
   QCAST_MBR_SAFE_EXIT(taiPlusToggle*, rval, dat)
-  if (HasSubtypes()) {
-    sub_types()->GetMbrValue(rval->data, base, first_diff);
+  if (HasLowerBidder()) {
+    LowerBidder()->GetMbrValue(rval->data, base, first_diff);
   }
   else {
     taiMember::GetMbrValue(rval->data, base,first_diff);

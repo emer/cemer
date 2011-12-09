@@ -44,7 +44,6 @@ public:
   ~taiType_List()              { Reset(); }
 };
 
-
 //////////////////////////////
 //       taiTypes         //
 //////////////////////////////
@@ -254,7 +253,6 @@ public:
   void          GetValue_impl(taiData* dat, void* base);
 };
 
-
 //////////////////////////////
 //       taiEdits         //
 //////////////////////////////
@@ -266,7 +264,6 @@ public:
 protected:
   override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
-
 
 //////////////////////////
 //      taiMember       //
@@ -288,7 +285,7 @@ public:
 
   MemberDef*    mbr;
 
-  taiMember*            sub_types() { return static_cast<taiMember*>(m_sub_types); }
+  taiMember*            LowerBidder() { return static_cast<taiMember*>(next_lower_bidder); }
   override bool         handlesReadOnly() const;
   bool                  isCondEdit() const;
   bool                  isCondShow() const;
@@ -543,7 +540,7 @@ public:
 
 private:
   void          Initialize()    { tpdflt = NULL; }
-  void          Destroy()       { m_sub_types = NULL; } // prevent from being destroyed
+  void          Destroy()       { next_lower_bidder = NULL; } // prevent from being destroyed
 };
 
 //////////////////////////
@@ -559,13 +556,12 @@ INHERITED(taiType)
 public:
   MethodDef*    meth;
 
-  taiMethod*            sub_types() { return static_cast<taiMethod*>(m_sub_types); }
+  taiMethod*            LowerBidder() { return static_cast<taiMethod*>(next_lower_bidder); }
 
   int           BidForType(TypeDef*)                    { return 0; }
   // none of the method specific ones should apply to types
   virtual int   BidForMethod(MethodDef*, TypeDef*)      { return 0; }
   // bid for (appropriateness) for given type of method (default is not at all approp.)
-
 
   taiMethodData*        GetGenericMethodRep(void* base, taiData* par); // this is just for CallFun
   taiMethodData*        GetButtonMethodRep(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_);
@@ -628,7 +624,6 @@ protected:
   taiMethodData*        GetButtonMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
   taiMethodData*        GetMenuMethodRep_impl(void* base, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_);
 };
-
 
 //////////////////////////
 //      taiArgType      //
@@ -927,7 +922,6 @@ protected:
   override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
 
-
 class TA_API gpiArrayEdit : public taiEdit {
   TAI_TYPEBASE_SUBCLASS(gpiArrayEdit, taiEdit);
 public:
@@ -936,7 +930,6 @@ protected:
   override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
 
-
 class TA_API SArgEdit : public gpiArrayEdit {
   TAI_TYPEBASE_SUBCLASS(SArgEdit, gpiArrayEdit);
 public:
@@ -944,7 +937,6 @@ public:
 protected:
   override taiEditDataHost* CreateDataHost(void* base, bool readonly); // called when we need a new instance
 };
-
 
 //////////////////////////
 //   Viewer Types       //

@@ -96,8 +96,8 @@ taiData* taiSpecMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
     taiData* rdat;
-    if (HasSubtypes())
-      rdat = sub_types()->GetDataRep(host_, par, gui_parent, NULL, flags_, mbr_);
+    if (HasLowerBidder())
+      rdat = LowerBidder()->GetDataRep(host_, par, gui_parent, NULL, flags_, mbr_);
     else
       rdat = taiMember::GetDataRep_impl(host_, par, gui_parent, flags_, mbr_);
     return rdat;
@@ -106,8 +106,8 @@ taiData* taiSpecMember::GetArbitrateDataRep(IDataHost* host_, taiData* par,
     taiPlusToggle* rval = new taiPlusToggle(NULL, host_, par, gui_parent, flags_);
     rval->InitLayout();
     taiData* rdat;
-    if (HasSubtypes())
-      rdat = sub_types()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr_);
+    if (HasLowerBidder())
+      rdat = LowerBidder()->GetDataRep(host_, rval, rval->GetRep(), NULL, flags_, mbr_);
     else
       rdat = taiMember::GetDataRep_impl(host_, rval, rval->GetRep(), flags_, mbr_);
     rval->data = rdat;
@@ -121,8 +121,8 @@ void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
   IDataHost* host_ = dat->host;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
-    if (HasSubtypes())
-      sub_types()->GetImage(dat,base);
+    if (HasLowerBidder())
+      LowerBidder()->GetImage(dat,base);
     else
       taiMember::GetImage_impl(dat, base);
   }
@@ -132,8 +132,8 @@ void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
       cerr << "spec mbr bug: null data in: " << mbr->name << endl;
       return;
     }
-    if (HasSubtypes())
-      sub_types()->GetImage(rval->data,base);
+    if (HasLowerBidder())
+      LowerBidder()->GetImage(rval->data,base);
     else
       taiMember::GetImage_impl(rval->data, base);
     bool uniq = false;
@@ -157,8 +157,8 @@ void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_d
   IDataHost* host_ = dat->host;
   bool no_check_box = NoCheckBox(host_);
   if (no_check_box) {
-    if (HasSubtypes())
-      sub_types()->GetMbrValue(dat, base, first_diff);
+    if (HasLowerBidder())
+      LowerBidder()->GetMbrValue(dat, base, first_diff);
     else
       taiMember::GetMbrValue(dat, base, first_diff);
     return;
@@ -187,8 +187,8 @@ void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_d
     return;
   }
 
-  if (HasSubtypes())
-    sub_types()->GetMbrValue(rval->data, base, first_diff);
+  if (HasLowerBidder())
+    LowerBidder()->GetMbrValue(rval->data, base, first_diff);
   else
     taiMember::GetMbrValue(rval->data, base, first_diff);
 }

@@ -170,7 +170,6 @@ protected:
   virtual ~taFiler();
 private:
   taFiler(const taFiler& cp); // #IGNORE copy construction not allowed
-  void  Init(FilerFlags flags_); // same as constructor
 };
 
 namespace taFilerUtil

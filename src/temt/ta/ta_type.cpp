@@ -4153,7 +4153,8 @@ void MemberDef::GetMembDesc(MemberDef* md, String& dsc_str, String indent) {
         continue;
       GetMembDesc(smd, dsc_str, indent);
     }
-  } else if (md->type->InheritsFormal(TA_enum)) {
+  }
+  else if (md->type->InheritsFormal(TA_enum)) {
     for (int i = 0; i < md->type->enum_vals.size; ++i) {
       EnumDef* ed = md->type->enum_vals.FastEl(i);
       if (ed->desc.empty() || (ed->desc == " ") || (ed->desc == "  ")) continue;

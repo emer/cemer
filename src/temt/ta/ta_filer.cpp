@@ -295,27 +295,31 @@ taFiler* taFiler::New(const String& filetype_,
   return rval;
 }
 
-taFiler::taFiler(FilerFlags flags_) {
-  Init(flags_);
-}
-
-void taFiler::Init(FilerFlags flags_) {
-  if (flags_ && COMPRESS_REQ_DEF) {
+taFiler::taFiler(FilerFlags flags_)
+  : taRefN()
+  , filter()
+  , filetype()
+  , select_only(false)
+  , istrm(0)
+  , ostrm(0)
+  , open_file(false)
+  , file_selected(false)
+  , m_dir()
+  , m_fname()
+  , m_tmp_fname()
+  , exts()
+  , flags(flags_)
+  , fstrm(0)
+  , compressed(false)
+  , file_exists(false)
+  , save_paths(false)
+{
+  if (HasFilerFlag(COMPRESS_REQ_DEF)) {
     if (taMisc::save_compress)
-      flags_ = (FilerFlags)(flags_ | COMPRESS_REQ);
+      SetFilerFlag(COMPRESS_REQ);
     else
-      flags_ = (FilerFlags)(flags_ & ~COMPRESS_REQ);
+      ClearFilerFlag(COMPRESS_REQ);
   }
-  flags = flags_;
-  fstrm = NULL;
-  istrm = NULL;
-  ostrm = NULL;
-  open_file = false;
-  select_only = false;
-  file_selected = false;
-  compressed = false;
-  file_exists = false;
-  save_paths = false;
 }
 
 taFiler::~taFiler() {
