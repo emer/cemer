@@ -63,8 +63,14 @@ BrainView::hasViewProperties() const {
 
 BrainView* BrainView::New(Network* net, T3DataViewFrame*& fr) {
   NewNetViewHelper newNetView(fr, net, "network");
-  if (!newNetView.isValid()) return NULL;
-
+  if (!newNetView.isValid(true)) return NULL;
+  
+  // set a black background color
+  taColor c; c.Set(0.0f, 0.0f, 0.0f, 1.0f);
+  fr->bg_color = c;
+  c.Set(0.8f, 0.8f, 0.8f, 1.0f);
+  fr->text_color = c;
+  
   // create BrainView
   BrainView* bv = new BrainView();
   bv->SetData(net);
