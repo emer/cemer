@@ -197,6 +197,7 @@ void ExtRewLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
   // that's it: don't do any processing on this layer: set all idx to 0
   lay->units_flat_idx = 0;
   FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
+    if(un->lesioned()) continue;
     un->flat_idx = 0;
   }
 }
@@ -894,6 +895,7 @@ void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork*) {
 
 void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork*) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
@@ -909,6 +911,7 @@ void TdLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
   // that's it: don't do any processing on this layer: set all idx to 0
   lay->units_flat_idx = 0;
   FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
+    if(un->lesioned()) continue;
     un->flat_idx = 0;
   }
 }

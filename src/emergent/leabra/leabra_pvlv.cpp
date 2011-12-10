@@ -1003,6 +1003,7 @@ void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
 
   lay->dav = net_da;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->dav = net_da;
     u->ext = da.tonic_da + u->dav;
     u->act_eq = u->act_nd = u->act = u->net = u->ext;
@@ -1011,6 +1012,7 @@ void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
 
 void PVLVDaLayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork*) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     const float snd_val = u->act;
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
@@ -1027,6 +1029,7 @@ void PVLVDaLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
   // that's it: don't do any processing on this layer: set all idx to 0
   lay->units_flat_idx = 0;
   FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
+    if(un->lesioned()) continue;
     un->flat_idx = 0;
   }
 }

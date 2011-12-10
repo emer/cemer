@@ -128,6 +128,7 @@ void LeabraContextLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* 
   lay->Inhib_SetVals(inhib.kwta_pt);            // assume 0 - 1 clamped inputs
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     Compute_Context(lay, u, net);
   }
   Compute_CycleStats(lay, net);
@@ -187,6 +188,7 @@ bool LeabraMultCopyLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
 void LeabraMultCopyLayerSpec::Compute_MultCopyAct(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     if(u->recv.size < 2) continue;
 
     LeabraRecvCons* copy_gp = (LeabraRecvCons*)u->recv.FastEl(0);
@@ -5632,6 +5634,7 @@ bool VisDisparityLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
 void VisDisparityLayerSpec::ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     float right = 0.0f;
     float left = 0.0f;
 
@@ -5700,6 +5703,7 @@ void VisDisparityLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* 
     return;
   }
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->act = u->ext;
     u->act_eq = u->act_nd = u->act;
     u->da = 0.0f;               // I'm fully settled!

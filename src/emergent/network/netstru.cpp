@@ -3364,8 +3364,9 @@ void Projection::Copy_Weights(const Projection* src) {
 }
 
 void Projection::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     u->SaveWeights_strm(strm, this, fmt);
+  }
 }
 
 int Projection::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
@@ -3396,28 +3397,32 @@ int Projection::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, boo
 }
 
 void Projection::TransformWeights(const SimpleMathSpec& trans) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     u->TransformWeights(trans, this);
+  }
 }
 
 void Projection::AddNoiseToWeights(const Random& noise_spec) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     u->AddNoiseToWeights(noise_spec, this);
+  }
 }
 
 int Projection::PruneCons(const SimpleMathSpec& pre_proc,
                               Relation::Relations rel, float cmp_val)
 {
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     rval += u->PruneCons(pre_proc, rel, cmp_val, this);
+  }
   return rval;
 }
 
 int Projection::LesionCons(float p_lesion, bool permute) {
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     rval += u->LesionCons(p_lesion, permute, this);
+  }
   return rval;
 }
 
@@ -3574,28 +3579,32 @@ int Unit_Group::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, boo
 }
 
 void Unit_Group::TransformWeights(const SimpleMathSpec& trans) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, *this)
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     u->TransformWeights(trans);
+  }
 }
 
 void Unit_Group::AddNoiseToWeights(const Random& noise_spec) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, *this)
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     u->AddNoiseToWeights(noise_spec);
+  }
 }
 
 int Unit_Group::PruneCons(const SimpleMathSpec& pre_proc,
                         Relation::Relations rel, float cmp_val)
 {
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, u, *this)
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     rval += u->PruneCons(pre_proc, rel, cmp_val);
+  }
   return rval;
 }
 
 int Unit_Group::LesionCons(float p_lesion, bool permute) {
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, u, *this)
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     rval += u->LesionCons(p_lesion, permute);
+  }
   return rval;
 }
 
@@ -4123,23 +4132,27 @@ taBase::DumpQueryResult Layer::Dump_QuerySaveMember(MemberDef* md) {
 }
 
 void Layer::RecvConsPreAlloc(int alloc_no, Projection* prjn) {
-  FOREACH_ELEM_IN_GROUP(Unit, ru, units)
+  FOREACH_ELEM_IN_GROUP(Unit, ru, units) {
     ru->RecvConsPreAlloc(alloc_no, prjn);
+  }
 }
 
 void Layer::SendConsPreAlloc(int alloc_no, Projection* prjn) {
-  FOREACH_ELEM_IN_GROUP(Unit, su, units)
+  FOREACH_ELEM_IN_GROUP(Unit, su, units) {
     su->SendConsPreAlloc(alloc_no, prjn);
+  }
 }
 
 void Layer::SendConsPostAlloc(Projection* prjn) {
-  FOREACH_ELEM_IN_GROUP(Unit, su, units)
+  FOREACH_ELEM_IN_GROUP(Unit, su, units) {
     su->SendConsPostAlloc(prjn);
+  }
 }
 
 void Layer::RecvConsPostAlloc(Projection* prjn) {
-  FOREACH_ELEM_IN_GROUP(Unit, su, units)
+  FOREACH_ELEM_IN_GROUP(Unit, su, units) {
     su->RecvConsPostAlloc(prjn);
+  }
 }
 
 void Layer::SyncSendPrjns() {
@@ -4316,8 +4329,9 @@ void Layer::BuildUnits() {
         units_changed = true;
       units.SetSize(flat_geom.n);
       units.EnforceType();
-      FOREACH_ELEM_IN_GROUP(Unit, u, units)
+      FOREACH_ELEM_IN_GROUP(Unit, u, units) {
         u->BuildUnits();
+      }
     }
     else {
       while(units.size > 0) {
@@ -4333,8 +4347,9 @@ void Layer::BuildUnits() {
           units_changed = true;
         ug->SetSize(un_geom.n);
         ug->EnforceType();
-        FOREACH_ELEM_IN_GROUP(Unit, u, *ug)
+        FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
           u->BuildUnits();
+	}
         ug->StructUpdate(false);
       }
     }
@@ -4348,8 +4363,9 @@ void Layer::BuildUnits() {
       units_changed = true;
     units.SetSize(un_geom.n);
     units.EnforceType();
-    FOREACH_ELEM_IN_GROUP(Unit, u, units)
+    FOREACH_ELEM_IN_GROUP(Unit, u, units) {
       u->BuildUnits();
+    }
   }
 
   LayoutUnits();
@@ -4415,6 +4431,7 @@ bool Layer::CheckBuild(bool quiet) {
                   "unit type not correct -- should be:", units.el_typ->name)) {
       return false;
     }
+    if(u->lesioned()) continue;
     if(!u->CheckBuild(quiet))
       return false;
   }
@@ -4459,15 +4476,17 @@ void Layer::RemoveCons() {
     if(p->spec.spec)
       p->RemoveCons();
   }
-  FOREACH_ELEM_IN_GROUP(Unit, u, units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     u->RemoveCons();
+  }
   taMisc::DoneBusy();
 }
 
 void Layer::RemoveCons_Net() {
   taMisc::Busy();
-  FOREACH_ELEM_IN_GROUP(Unit, u, units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     u->RemoveCons();
+  }
   taMisc::DoneBusy();
 }
 
@@ -4504,10 +4523,12 @@ void Layer::PreConnect() {
 void Layer::Connect() {
   taMisc::Busy();
   StructUpdate(true);
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
     p->Connect();
-  FOREACH_ELEM_IN_GROUP(Unit, u, units)
+  }
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     u->BuildUnits();                    // this is for the bias connections!
+  }
   StructUpdate(false);
   taMisc::DoneBusy();
 }
@@ -4532,20 +4553,24 @@ void Layer::DisConnect() {
 int Layer::CountRecvCons() {
   int n_cons = 0;
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+    if(u->lesioned()) continue;
     n_cons += u->CountRecvCons();
   }
   return n_cons;
 }
 
 void Layer::LinkPtrCons() {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     u->LinkPtrCons();
+  }
 }
 
 void Layer::SetLayUnitExtFlags(int flg) {
   SetExtFlag(flg);
-  FOREACH_ELEM_IN_GROUP(Unit, u, units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+    if(u->lesioned()) continue;
     u->SetExtFlag((Unit::ExtType)flg);
+  }
 }
 
 void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
@@ -4659,31 +4684,38 @@ void Layer::ApplyLayerFlags(Unit::ExtType act_ext_flags) {
 void Layer::Init_InputData(Network* net) {
   if(ext_flag == Unit::NO_EXTERNAL)
     return;
-  FOREACH_ELEM_IN_GROUP(Unit, u, units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+    if(u->lesioned()) continue;
     u->Init_InputData();
+  }
   ext_flag = Unit::NO_EXTERNAL;
 }
 
 void  Layer::Init_Acts(Network* net) {
   ext_flag = Unit::NO_EXTERNAL;
-  FOREACH_ELEM_IN_GROUP(Unit, u, units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+    if(u->lesioned()) continue;
     u->Init_Acts(net);
+  }
 }
 
 void  Layer::Init_dWt(Network* net) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     u->Init_dWt(net);
+  }
 }
 
 void Layer::Init_Weights(Network* net) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     u->Init_Weights(net);
+  }
   sse = 0.0f;
 }
 
 void Layer::Init_Weights_post(Network* net) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     u->Init_Weights_post(net);
+  }
 }
 
 float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
@@ -4692,6 +4724,7 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   if(!HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
   bool has_targ;
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+    if(u->lesioned()) continue;
     sse += u->Compute_SSE(net, has_targ);
     if(has_targ) n_vals++;
   }
@@ -4713,6 +4746,7 @@ int Layer::Compute_PRerr(Network* net) {
   if(!HasExtFlag(Unit::TARG | Unit::COMP)) return 0;
   float true_pos, false_pos, false_neg;
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+    if(u->lesioned()) continue;
     bool has_targ = u->Compute_PRerr(net, true_pos, false_pos, false_neg);
     if(has_targ) {
       n_vals++;
@@ -4977,6 +5011,7 @@ bool Layer::SetUnitNamesFromDataCol(const DataCol* unit_names_col, int max_un_ch
 
 void Layer::GetLocalistName() {
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+    if(u->lesioned()) continue;
     u->GetLocalistName();
   }
   GetUnitNames(); // grab from units
@@ -5070,6 +5105,7 @@ void Layer::MonitorVar(NetMonitor* net_mon, const String& variable) {
 
 bool Layer::Snapshot(const String& variable, SimpleMathSpec& math_op, bool arg_is_snap) {
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+    if(u->lesioned()) continue;
     if(!u->Snapshot(variable, math_op, arg_is_snap)) return false;
   }
   return true;
@@ -5377,6 +5413,7 @@ bool Layer::DMem_DistributeUnits_impl(DMemShare& dms) {
   if((dmem_dist == DMEM_DIST_DEFAULT) || (units.gp.size <= 0)) {
     int cnt = 0;
     FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+      if(u->lesioned()) continue;
       u->DMem_SetLocalProc(cnt % np);
       u->DMem_SetThisProc(this_proc);
       dms.Link(u);
@@ -5390,6 +5427,7 @@ bool Layer::DMem_DistributeUnits_impl(DMemShare& dms) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
       int cnt = 0;
       FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
+	if(u->lesioned()) continue;
         u->DMem_SetLocalProc(cnt % np);
         u->DMem_SetThisProc(this_proc);
         dms.Link(u);
@@ -7225,6 +7263,7 @@ void Network::DMem_SyncNRecvCons() {
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, l->units) {
+      if(u->lesioned()) continue;
       n_cons += u->n_recv_cons;
     }
   }
@@ -7328,6 +7367,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
+      if(un->lesioned()) continue;
       if(un->bias.size)
         values.FastEl(cidx++) = un->bias.OwnCn(0)->dwt;
       if(RecvOwnsCons()) {
@@ -7355,6 +7395,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
+      if(un->lesioned()) continue;
       if(un->bias.size)
         un->bias.OwnCn(0)->dwt = results.FastEl(cidx++);
       if(RecvOwnsCons()) {
@@ -7389,6 +7430,7 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
+      if(un->lesioned()) continue;
       if(un->bias.size)
         values.FastEl(cidx++) = un->bias.OwnCn(0)->wt;
       if(RecvOwnsCons()) {
@@ -7417,6 +7459,7 @@ void Network::DMem_AvgWts(MPI_Comm comm) {
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
+      if(un->lesioned()) continue;
       if(un->bias.size)
         un->bias.OwnCn(0)->wt = avg_mult * results.FastEl(cidx++);
       if(RecvOwnsCons()) {
@@ -7457,6 +7500,7 @@ void Network::DMem_SymmetrizeWts() {
     if(lay->lesioned()) continue;
     if(lay->projections.size == 0) continue;
     FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
+      if(un->lesioned()) continue;
       int gi;
       for(gi=0;gi<un->recv.size;gi++) {
         RecvCons* cg = un->recv[gi];
@@ -8121,6 +8165,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
     lay->ClearLayerFlag(Layer::PROJECT_WTS_NEXT);
     lay->ClearLayerFlag(Layer::PROJECT_WTS_DONE);
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+      if(u->lesioned()) continue;
       u->wt_prjn = u->tmp_calc1 = 0.0f;
     }
   }
@@ -8169,6 +8214,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
       float abs_max = 0.0f;
       int uidx = 0;
       FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+	if(u->lesioned()) continue;
         if(u->tmp_calc1 > 0.0f)
           u->wt_prjn /= u->tmp_calc1;
         abs_max = MAX(abs_max, fabsf(u->wt_prjn));
@@ -8190,6 +8236,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
           Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
           float gp_val = 0.0f;
           FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
+	    if(u->lesioned()) continue;
             if(u->wt_prjn > thr_eff) // only for those above threshold
               gp_val += u->wt_prjn;
           }
@@ -8203,12 +8250,14 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
 
           int uidx = 0;
           FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
+	    if(u->lesioned()) continue;
             topk_un_vec.FastEl_Flat(uidx) = u->wt_prjn;
             uidx++;
           }
 
           float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
           FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
+	    if(u->lesioned()) continue;
             float prjval = u->wt_prjn;
             u->wt_prjn /= abs_max;      // normalize --
             if((top_k_un > 0 && prjval < thr_eff) ||
@@ -8227,6 +8276,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
         float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
 
         FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+	  if(u->lesioned()) continue;
           float prjval = u->wt_prjn;
           u->wt_prjn /= abs_max;        // normalize
           if(top_k_un > 0 && prjval < thr_eff) {

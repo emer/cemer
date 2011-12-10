@@ -2995,8 +2995,9 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Init_ActAvg(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units)
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     u->Init_ActAvg(net);
+  }
 }
 
 void LeabraLayerSpec::Init_Acts(LeabraLayer* lay, LeabraNetwork* net) {
@@ -3011,12 +3012,15 @@ void LeabraLayerSpec::Init_Acts(LeabraLayer* lay, LeabraNetwork* net) {
       gpd->Inhib_Init_Acts(this);
     }
   }
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units)
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->Init_Acts(net);
+  }
 }
 
 void LeabraLayerSpec::DecayState(LeabraLayer* lay, LeabraNetwork* net, float decay) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->DecayState(net, decay);
   }
 }
@@ -3042,6 +3046,7 @@ void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraLayerSpec::Trial_DecayState(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->Trial_DecayState(net);
   }
 }
@@ -3085,6 +3090,7 @@ void LeabraLayerSpec::Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net) {
   // don't do this b/c already done at unit level for this case..
 //   else {
 //     FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+//      if(u->lesioned()) continue;
 //       u->Trial_NoiseInit(net);
 //     }
 //   }
@@ -3092,6 +3098,7 @@ void LeabraLayerSpec::Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraLayerSpec::Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->Trial_Init_SRAvg(net);
   }
 }
@@ -3190,6 +3197,7 @@ void LeabraLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraLayerSpec::Settle_Init_TargFlags(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->Settle_Init_TargFlags(net);
   }
 
@@ -3210,6 +3218,7 @@ void LeabraLayerSpec::Compute_HardClampPhase2(LeabraLayer* lay, LeabraNetwork* n
   lay->Inhib_SetVals(inhib.kwta_pt);            // assume 0 - 1 clamped inputs
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->SetExtFlag(Unit::EXT);
     u->ext = u->act_p;
     u->Compute_HardClampNoClip(net); // important: uses no clip here: not really external values!
@@ -3236,11 +3245,13 @@ void LeabraLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
     clmp = MAX(clmp, clamp.min_clamp);
 
     FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+      if(u->lesioned()) continue;
       u->ext *= clmp;           // modify!
     }
   }
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->Compute_HardClamp(net);
   }
   Compute_CycleStats(lay, net); // compute once only
@@ -3251,8 +3262,10 @@ void LeabraLayerSpec::ExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
     return;
   lay->ext_flag = Unit::COMP;   // totally reset to comparison
 
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units)
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->ExtToComp(net);
+  }
 }
 
 void LeabraLayerSpec::TargExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
@@ -3260,8 +3273,10 @@ void LeabraLayerSpec::TargExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
     return;
   lay->ext_flag = Unit::COMP;   // totally reset to comparison
 
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units)
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->TargExtToComp(net);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -3394,9 +3409,13 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Sort(LeabraLayer* lay, Layer::AccessMod
   int j;
   if(act_buff.Size(gpidx) != k_eff) { // need to fill the sort buf..
     act_buff.ResetGp(gpidx);
-    for(j=0; j < k_eff; j++) {
+    int end_j = k_eff;
+    for(j=0; j < end_j; j++) {
       u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
-      if(u->lesioned()) continue;
+      if(u->lesioned()) {
+	end_j++;
+	continue;
+      }
       act_buff.Add(u, gpidx); // add to list
       if(u->i_thr < k_net) {
         k_net = u->i_thr;       k_idx = j;
@@ -4164,6 +4183,7 @@ float LeabraLayerSpec::Compute_TopKAvgNetin(LeabraLayer* lay, LeabraNetwork* net
 void LeabraLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
   // just snapshot the activation state
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->Compute_MidMinus(net);
   }
 }
@@ -4270,8 +4290,10 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
     break;
   }
 
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units)
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->PostSettle(net);
+  }
 
   if((adapt_i.type == AdaptISpec::G_BAR_I) || (adapt_i.type == AdaptISpec::G_BAR_IL)) {
     AdaptGBarI(lay, net);
@@ -4407,13 +4429,17 @@ void LeabraLayerSpec::Compute_ActP_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
 // todo: could probably package these at unit level...
 
 void LeabraLayerSpec::EncodeState(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units)
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->EncodeState(net);
+  }
 }
 
 void LeabraLayerSpec::Compute_SelfReg_Trial(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units)
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->Compute_SelfReg_Trial(net);
+  }
 }
 
 
@@ -4546,6 +4572,7 @@ void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) 
     prjn->netin_avg = 0.0f;
     int netin_avg_n = 0;
     FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+      if(u->lesioned()) continue;
       LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
       if(u->act_eq < us->opt_thresh.send) continue; // ignore if not above sending thr
       LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(prjn->recv_idx);

@@ -27,6 +27,7 @@ void HippoQuadLayerSpec::Defaults_init() {
 
 void HippoQuadLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->act_m2 = u->act_nd;      // record the minus phase before overwriting it..
   }
 
@@ -57,6 +58,7 @@ void HippoQuadLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* n
   float norm_err = 0.0f;
   float sse_err = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->act_dif2 = u->act_eq - u->act_m2;
     float sse = u->act_dif2;
     if(fabsf(sse) < us->sse_tol)
@@ -204,6 +206,7 @@ void CA1LayerSpec::ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca
   LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     if(ca3_on) {
       u->Compute_NetinScale(net,0);
     }
@@ -223,6 +226,7 @@ void CA1LayerSpec::ModulateECinPrjn(LeabraLayer* lay, LeabraNetwork* net, bool e
   LeabraUnitSpec* rus = (LeabraUnitSpec*)lay->GetUnitSpec();
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     if(ecin_on) {
       u->Compute_NetinScale(net,0);
     }
