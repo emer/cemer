@@ -175,7 +175,7 @@ public:
    // child base, typically obtained from parent or host, except ex. PolyData
   virtual void          Delete(); // use this to dynamically delete this, including the rep
 
-  int                   defSize() const;                // default taiMisc::SizeSpec value, for sizing controls (taken from parent, else dlg, else "default")
+  int                   defSize() const;        // default taiMisc::SizeSpec value, for sizing controls (taken from parent, else "default")
   virtual bool          isConstructed();        // true if our parents (ex dialog) are fully constructed
   bool                  highlight() const { return mhighlight; }        // #GET_highlight  changed highlight
   QLabel*               label() const {return m_label;}

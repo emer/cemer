@@ -810,11 +810,11 @@ public: //
   };
 
   enum UnitFlags { // #BITS misc flags for units
-    UF_NONE 		= 0,	// #NO_BIT no flags
-    LESIONED		= 0x0001, // unit is temporarily lesioned (inactivated for all network-level processing functions) -- IMPORTANT: use the Lesion and UnLesion functions to set this flag -- they provide proper updating after changes -- otherwise network dynamics will be wrong and the display will not be properly updated
+    UF_NONE             = 0,    // #NO_BIT no flags
+    LESIONED            = 0x0001, // unit is temporarily lesioned (inactivated for all network-level processing functions) -- IMPORTANT: use the Lesion and UnLesion functions to set this flag -- they provide proper updating after changes -- otherwise network dynamics will be wrong and the display will not be properly updated
   };
 
-  UnitFlags	flags;
+  UnitFlags     flags;
   // #CAT_Structure flags controlling various aspects of unit state and function
   ExtType       ext_flag;
   // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
@@ -875,7 +875,7 @@ public: //
 
   inline bool   lesioned() const { return HasUnitFlag(LESIONED); }
   // check if this unit is lesioned -- must check for all processing functions (threaded calls automatically exclude lesioned units)
-  
+
   virtual void  Lesion();
   // #MENU #MENU_ON_Structure #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on unit -- removes it from all processing operations
   virtual void  UnLesion();
@@ -1570,7 +1570,7 @@ public:
   bool                  gp_unit_names_4d; // #CONDSHOW_ON_unit_groups if there are unit subgroups, create a 4 dimensional set of unit names which allows for distinct names for each unit in the layer -- otherwise a 2d set of names is created of size un_geom, all unit groups have the same repeated set of names
   String_Matrix         unit_names;     // #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
-  String                brain_area;     // #CAT_Structure #EDIT_DIALOG Which brain area this layer's units should be mapped to in a brain view.  Must match a label from the atlas chosen for the network.  Layer will not render to brain view if LESIONED flag is checked.
+  String                brain_area;     // #CAT_Structure #REGEXP_DIALOG Which brain area this layer's units should be mapped to in a brain view.  Must match a label from the atlas chosen for the network.  Layer will not render to brain view if LESIONED flag is checked.
 
   int                   n_units;
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!

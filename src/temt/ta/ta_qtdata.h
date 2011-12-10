@@ -152,49 +152,64 @@ private:
   void          init(bool readOnly, const String& desc);
 };
 
-
-class TA_API taiField : public taiData {
-INHERITED(taiData)
+class TA_API taiText : public taiData {
+  // Base class for string edit controls that might have a "..." button to bring up an editor dialog or somesuch.
+  INHERITED(taiData)
   Q_OBJECT
-friend class iFieldEditDialog;
 public:
+  taiText(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
+          int flags, bool needs_edit_button, const char *tooltip);
+
   iLineEdit*            rep() const { return leText; }
-  bool                  fillHor() {return true;} // override
+  override bool         fillHor() { return true; }
   void                  setMinCharWidth(int num); // hint for min chars, 0=no min
 
-  MemberDef*            lookupfun_md;   // for lookup function, member def
-  void*                 lookupfun_base; // for lookup function, base of owner
-
-  taiField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
-  ~taiField();
-
-  void  GetImage(const String& val);
-  String GetValue() const;
+  void                  GetImage(const String& val);
+  String                GetValue() const;
 
 protected slots:
   void                  selectionChanged();
-  void                  btnEdit_clicked(bool);
-  void                  lookupKeyPressed();
-  void                  lookupKeyPressed_dialog();
+  virtual void          btnEdit_clicked(bool) = 0;
+  virtual void          lookupKeyPressed() = 0;
 
 protected:
 #ifndef __MAKETA__
   QPointer<iLineEdit>   leText;
   QPointer<QToolButton> btnEdit; // if requested, button to invoke dialog editor
 #endif
-  iFieldEditDialog*     edit; // an edit dialog, if created
-  override void         GetImage_impl(const void* base) {GetImage(*((String*)base));}
-  override void         GetValue_impl(void* base) const {*((String*)base) = GetValue();}
-  override void         GetImageVar_impl(const Variant& val) {GetImage(val.toString());}
-  override void         GetValueVar_impl(Variant& val) const {val.updateFromString(GetValue());}
+  override void         GetImage_impl(const void* base)      { GetImage(*((String*)base)); }
+  override void         GetValue_impl(void* base) const      { *((String*)base) = GetValue(); }
+  override void         GetImageVar_impl(const Variant& val) { GetImage(val.toString()); }
+  override void         GetValueVar_impl(Variant& val) const { val.updateFromString(GetValue()); }
   override void         this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
   override void         this_EditAction(int param); // for when control is clipboard handler
   override void         this_SetActionsEnabled(); // for when control is clipboard handler
 };
 
-class TA_API taiFileDialogField : public taiData {
-INHERITED(taiData)
+class TA_API taiField : public taiText {
+  INHERITED(taiText)
+  Q_OBJECT
+  friend class iFieldEditDialog;
+public:
+  taiField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  ~taiField();
+
+protected slots:
+  override void         btnEdit_clicked(bool);
+  override void         lookupKeyPressed();
+  void                  lookupKeyPressed_dialog();
+
+public:
+  MemberDef*            lookupfun_md;   // for lookup function, member def
+  void*                 lookupfun_base; // for lookup function, base of owner
+
+protected:
+  iFieldEditDialog*     edit; // an edit dialog, if created
+};
+
+class TA_API taiFileDialogField : public taiText {
   // for FILE_DIALOG_xxx strings
+  INHERITED(taiText)
   Q_OBJECT
 public:
   enum FileActionType {
@@ -203,41 +218,41 @@ public:
     FA_APPEND,
   };
 
+  taiFileDialogField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
+                     int flags = 0, FileActionType fact=FA_LOAD, const String& fext = "",
+                     const String& ftyp = "", int fcmprs = -1);
+
+protected slots:
+  override void         btnEdit_clicked(bool);
+  override void         lookupKeyPressed(); // remap to file dialog
+
+public:
   FileActionType        file_act;       // file action to take for file dialog
   String                file_ext;       // file extention list (from EXT_xxx)
   String                file_type;      // file type information (from FILETYPE_xxx)
   int                   file_cmprs;     // compress?  from #COMPRESS -1 = default, 0 = no, 1 = yes
   taBase*               base_obj;       // taBase object for saving/loading
+};
 
-  iLineEdit*            rep() const { return leText; }
-  bool                  fillHor() {return true;} // override
-  void                  setMinCharWidth(int num); // hint for min chars, 0=no min
-
-  taiFileDialogField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_,
-                     int flags = 0, FileActionType fact=FA_LOAD, const String& fext = "",
-                     const String& ftyp = "", int fcmprs = -1);
-  ~taiFileDialogField();
-
-  void  GetImage(const String& val);
-  String GetValue() const;
+// TODO: for now, just a copy&paste of taiField
+class TA_API taiRegexpField : public taiText {
+  INHERITED(taiText)
+  Q_OBJECT
+public:
+  taiRegexpField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags = 0);
+  ~taiRegexpField();
 
 protected slots:
-  void                  selectionChanged();
-  void                  filebtn_clicked(bool);
-  void                  lookupKeyPressed(); // remap to file dialog
+  override void         btnEdit_clicked(bool);
+  override void         lookupKeyPressed();
+  void                  lookupKeyPressed_dialog();
+
+public:
+  MemberDef*            lookupfun_md;   // for lookup function, member def
+  void*                 lookupfun_base; // for lookup function, base of owner
 
 protected:
-#ifndef __MAKETA__
-  QPointer<iLineEdit>   leText;
-  QPointer<QToolButton> btnEdit; // if requested, button to invoke file dialog
-#endif
-  override void         GetImage_impl(const void* base) {GetImage(*((String*)base));}
-  override void         GetValue_impl(void* base) const {*((String*)base) = GetValue();}
-  override void         GetImageVar_impl(const Variant& val) {GetImage(val.toString());}
-  override void         GetValueVar_impl(Variant& val) const {val.updateFromString(GetValue());}
-  override void         this_GetEditActionsEnabled(int& ea); // for when control is clipboard handler
-  override void         this_EditAction(int param); // for when control is clipboard handler
-  override void         this_SetActionsEnabled(); // for when control is clipboard handler
+  iFieldEditDialog*     edit; // an edit dialog, if created
 };
 
 // this is for integers -- includes up and down arrow buttons

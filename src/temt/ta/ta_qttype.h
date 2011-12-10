@@ -510,12 +510,28 @@ private:
 };
 
 class TA_API taiFileDialogMember : public taiMember {
-  // string with file dialog directive
+  // string with FILE_DIALOG_xxx directive
   TAI_MEMBER_SUBCLASS(taiFileDialogMember, taiMember);
 public:
   int           BidForMember(MemberDef* md, TypeDef* td);
   taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
     QWidget* gui_parent_, int flags_, MemberDef* mbr);
+protected:
+  override void GetImage_impl(taiData* dat, const void* base);
+  override void GetMbrValue_impl(taiData* dat, void* base);
+private:
+  void          Initialize() {}
+  void          Destroy() {}
+};
+
+class TA_API taiRegexpDialogMember : public taiMember {
+  // string with REGEXP_DIALOG directive
+  TAI_MEMBER_SUBCLASS(taiRegexpDialogMember, taiMember);
+public:
+  int           BidForMember(MemberDef* md, TypeDef* td);
+  taiData*      GetDataRep_impl(IDataHost* host_, taiData* par,
+                                QWidget* gui_parent_, int flags_,
+                                MemberDef* mbr);
 protected:
   override void GetImage_impl(taiData* dat, const void* base);
   override void GetMbrValue_impl(taiData* dat, void* base);

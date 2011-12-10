@@ -195,8 +195,6 @@ void taiData::DataChanged(taiData* chld) {
 int taiData::defSize() const {
   if (mparent != NULL)
     return mparent->defSize();
-/*  else if (host != NULL)
-    return host->ctrl_size; */
   else return taiM->ctrl_size;
 }
 
@@ -633,28 +631,27 @@ void iFieldEditDialog::repChanged() {
 }
 
 /////////////////////////////////////////////////
-//              taiField                       //
+//                   taiText                   //
 /////////////////////////////////////////////////
 
-taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+taiText::taiText(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_,
+                 bool needs_edit_button, const char *tooltip)
   : taiData(typ_, host_, par, gui_parent_, flags_)
-  , lookupfun_md(0)
-  , lookupfun_base(0)
   , leText()
   , btnEdit()
-  , edit(0)
 {
-  if (HasFlag(flgEditDialog)) {
+  if (needs_edit_button) {
     QWidget* act_par = MakeLayoutWidget(gui_parent_);
     QHBoxLayout* lay = new QHBoxLayout(act_par);
     lay->setMargin(0);
     lay->setSpacing(1);
+
     leText = new iLineEdit(act_par);
     lay->addWidget(leText, 1);
 
     btnEdit = new QToolButton(act_par);
     btnEdit->setText("...");
-    btnEdit->setToolTip("edit this field in an editor dialog");
+    btnEdit->setToolTip(tooltip);
     btnEdit->setFixedHeight(taiM->text_height(defSize()));
     lay->addWidget(btnEdit);
 
@@ -663,23 +660,84 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
       this, SLOT(btnEdit_clicked(bool)) );
   }
   else {
-    SetRep(leText = new iLineEdit(gui_parent_));
-    btnEdit = NULL;
+    leText = new iLineEdit(gui_parent_);
+    SetRep(leText);
   }
+
   rep()->setFixedHeight(taiM->text_height(defSize()));
   if (readOnly()) {
     rep()->setReadOnly(true);
-  } else {
+  }
+  else {
     QObject::connect(rep(), SIGNAL(textChanged(const QString&) ),
           this, SLOT(repChanged() ) );
   }
+
   // cliphandling connections
   QObject::connect(rep(), SIGNAL(selectionChanged()),
     this, SLOT(selectionChanged() ) );
 
   QObject::connect(rep(), SIGNAL(lookupKeyPressed()),
                    this, SLOT(lookupKeyPressed()) );
+}
 
+void taiText::GetImage(const String& val) {
+  if(!rep()) return;
+  rep()->setText(val);
+}
+
+String taiText::GetValue() const {
+  if(!rep()) return _nilString;
+  return rep()->text();
+}
+
+void taiText::selectionChanged() {
+  emit_UpdateUi();
+}
+
+void taiText::setMinCharWidth(int num) {
+  rep()->setMinCharWidth(num);
+}
+
+void taiText::this_GetEditActionsEnabled(int& ea) {
+  if(!rep()) return;
+  if (!readOnly())
+    ea |= taiClipData::EA_PASTE;
+  if (rep()->hasSelectedText()) {
+    ea |= (taiClipData::EA_COPY);
+    if (!readOnly())
+      ea |= (taiClipData::EA_CUT |  taiClipData::EA_DELETE);
+  }
+}
+
+void taiText::this_EditAction(int ea) {
+  if(!rep()) return;
+  if (ea & taiClipData::EA_CUT) {
+    rep()->cut();
+  } else if (ea & taiClipData::EA_COPY) {
+    rep()->copy();
+  } else if (ea & taiClipData::EA_PASTE) {
+    rep()->paste();
+  } else if (ea & taiClipData::EA_DELETE) {
+    rep()->del(); //note: assumes we already qualified with hasSelectedText, otherwise it is a BS
+  }
+}
+
+void taiText::this_SetActionsEnabled() {
+  //TODO: UNDO/REDO
+}
+
+/////////////////////////////////////////////////
+//                  taiField                   //
+/////////////////////////////////////////////////
+
+taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+  : taiText(typ_, host_, par, gui_parent_, flags_, (flags_ & flgEditDialog),
+            "Edit this field in a multi-line dialog.")
+  , lookupfun_md(0)
+  , lookupfun_base(0)
+  , edit(0)
+{
   // min width for some popular types
   if (typ) {
     if (typ->DerivesFrom(TA_float))
@@ -694,7 +752,6 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
 taiField::~taiField() {
   delete edit;
   edit = NULL;
-  leText = NULL;
 }
 
 void taiField::btnEdit_clicked(bool) {
@@ -720,22 +777,6 @@ void taiField::btnEdit_clicked(bool) {
   }
   edit->show();
   edit->raise();
-}
-
-void taiField::GetImage(const String& val) {
-  if(!rep()) return;
-  rep()->setText(val);
-  if (edit)
-    edit->setText(val);
-}
-
-String taiField::GetValue() const {
-  if(!rep()) return _nilString;
-  return rep()->text();
-}
-
-void taiField::selectionChanged() {
-  emit_UpdateUi();
 }
 
 void taiField::lookupKeyPressed() {
@@ -776,38 +817,6 @@ void taiField::lookupKeyPressed_dialog() {
   }
 }
 
-void taiField::setMinCharWidth(int num) {
-  rep()->setMinCharWidth(num);
-}
-
-void taiField::this_GetEditActionsEnabled(int& ea) {
-  if(!rep()) return;
-  if (!readOnly())
-    ea |= taiClipData::EA_PASTE;
-  if (rep()->hasSelectedText()) {
-    ea |= (taiClipData::EA_COPY);
-    if (!readOnly())
-      ea |= (taiClipData::EA_CUT |  taiClipData::EA_DELETE);
-  }
-}
-
-void taiField::this_EditAction(int ea) {
-  if(!rep()) return;
-  if (ea & taiClipData::EA_CUT) {
-    rep()->cut();
-  } else if (ea & taiClipData::EA_COPY) {
-    rep()->copy();
-  } else if (ea & taiClipData::EA_PASTE) {
-    rep()->paste();
-  } else if (ea & taiClipData::EA_DELETE) {
-    rep()->del(); //note: assumes we already qualified with hasSelectedText, otherwise it is a BS
-  }
-}
-
-void taiField::this_SetActionsEnabled() {
-  //TODO: UNDO/REDO
-}
-
 /////////////////////////////////////////////////
 //             taiFileDialogField              //
 /////////////////////////////////////////////////
@@ -815,48 +824,19 @@ void taiField::this_SetActionsEnabled() {
 taiFileDialogField::taiFileDialogField(TypeDef* typ_, IDataHost* host_, taiData* par,
                                        QWidget* gui_parent_, int flags_, FileActionType fact,
                                        const String& fext, const String& ftyp, int fcmprs)
-  : taiData(typ_, host_, par, gui_parent_, flags_)
+  : taiText(typ_, host_, par, gui_parent_, flags_, true,
+            "Open a file chooser dialog to select a file name.")
+  , file_act(fact)
+  , file_ext(fext)
+  , file_type(ftyp)
+  , file_cmprs(fcmprs)
+  , base_obj(0)
 {
-  file_ext = fext;
-  file_act = fact;
-  file_type = ftyp;
-  file_cmprs = fcmprs;
-  base_obj = NULL;
-
-  QWidget* act_par = new QWidget(gui_parent_);
-  QHBoxLayout* lay = new QHBoxLayout(act_par);
-  lay->setMargin(0);
-  lay->setSpacing(1);
-  leText = new iLineEdit(act_par);
-  lay->addWidget(leText, 1);
-  btnEdit = new QToolButton(act_par);
-  btnEdit->setText("...");
-  btnEdit->setToolTip("open a file chooser dialog to select a file name");
-  btnEdit->setFixedHeight(taiM->text_height(defSize()));
-  lay->addWidget(btnEdit);
-  SetRep(act_par);
-  connect(btnEdit, SIGNAL(clicked(bool)),
-          this, SLOT(filebtn_clicked(bool)) );
-
-  rep()->setFixedHeight(taiM->text_height(defSize()));
-  if (readOnly()) {
-    rep()->setReadOnly(true);
-  } else {
-    QObject::connect(rep(), SIGNAL(textChanged(const QString&) ),
-          this, SLOT(repChanged() ) );
-  }
-  // cliphandling connections
-  QObject::connect(rep(), SIGNAL(selectionChanged()),
-    this, SLOT(selectionChanged() ) );
-
-  QObject::connect(rep(), SIGNAL(lookupKeyPressed()),
-                   this, SLOT(lookupKeyPressed()) );
-
   setMinCharWidth(40);          // file names are longer in general..
 }
 
-taiFileDialogField::~taiFileDialogField() {
-  leText = NULL;
+void taiFileDialogField::btnEdit_clicked(bool) {
+  lookupKeyPressed();           // all the code is there
 }
 
 void taiFileDialogField::lookupKeyPressed() {
@@ -911,54 +891,90 @@ void taiFileDialogField::lookupKeyPressed() {
   }
 }
 
-void taiFileDialogField::filebtn_clicked(bool) {
-  lookupKeyPressed();           // all the code is there
+/////////////////////////////////////////////////
+//               taiRegexpField                //
+/////////////////////////////////////////////////
+
+// TODO: for now, just a copy&paste of taiField
+taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
+  : taiText(typ_, host_, par, gui_parent_, flags_, true,
+            "Edit this field using a Regular Expression dialog")
+  , lookupfun_md(0)
+  , lookupfun_base(0)
+  , edit(0)
+{
+  setMinCharWidth(40);
 }
 
-void taiFileDialogField::GetImage(const String& val) {
-  if(!rep()) return;
-  rep()->setText(val);
+taiRegexpField::~taiRegexpField() {
+  delete edit;
+  edit = NULL;
 }
 
-String taiFileDialogField::GetValue() const {
-  if(!rep()) return _nilString;
-  return rep()->text();
+void taiRegexpField::btnEdit_clicked(bool) {
+  std::cout << "Regular Expression dialog TBD" << std::endl;
+#if 0
+  if (!edit) { // has to be modeless
+    String wintxt;
+    String desc;
+    //TODO: we could in theory trap the raw GetImage and derive the object parent
+    // to provide additional information, such as the object name (if base)
+    if (mbr) {
+      wintxt = "Editing field: " + mbr->name;
+      desc = mbr->desc;
+    }
+    else {
+      wintxt = "Editing field";
+      //desc =
+    }
+    edit = new iFieldEditDialog(true, readOnly(), desc, this);
+    // true = must always be modal -- otherwise crazy stuff can happen.  Brad was right..
+    edit->setText(rep()->text());
+    edit->setWindowTitle(wintxt);
+    QObject::connect(edit->txtText, SIGNAL(lookupKeyPressed()),
+                     this, SLOT(lookupKeyPressed_dialog()) );
+  }
+  edit->show();
+  edit->raise();
+#endif
 }
 
-void taiFileDialogField::selectionChanged() {
-  emit_UpdateUi();
-}
-
-void taiFileDialogField::setMinCharWidth(int num) {
-  rep()->setMinCharWidth(num);
-}
-
-void taiFileDialogField::this_GetEditActionsEnabled(int& ea) {
-  if(!rep()) return;
-  if (!readOnly())
-    ea |= taiClipData::EA_PASTE;
-  if (rep()->hasSelectedText()) {
-    ea |= (taiClipData::EA_COPY);
-    if (!readOnly())
-      ea |= (taiClipData::EA_CUT |  taiClipData::EA_DELETE);
+void taiRegexpField::lookupKeyPressed() {
+  if(!lookupfun_md || !lookupfun_base) return;
+  taBase* tab = (taBase*)lookupfun_base;
+  int cur_pos = rep()->cursorPosition();
+  int new_pos = -1;
+  String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos,
+                                          lookupfun_md->name, new_pos);
+  if(rval.nonempty()) {
+    rep()->setText(rval);
+    if(new_pos >= 0)
+      rep()->setCursorPosition(new_pos); // go back to orig pos
+    else
+      rep()->setCursorPosition(cur_pos); // go back to orig pos
   }
 }
 
-void taiFileDialogField::this_EditAction(int ea) {
-  if(!rep()) return;
-  if (ea & taiClipData::EA_CUT) {
-    rep()->cut();
-  } else if (ea & taiClipData::EA_COPY) {
-    rep()->copy();
-  } else if (ea & taiClipData::EA_PASTE) {
-    rep()->paste();
-  } else if (ea & taiClipData::EA_DELETE) {
-    rep()->del(); //note: assumes we already qualified with hasSelectedText, otherwise it is a BS
-  }
-}
+void taiRegexpField::lookupKeyPressed_dialog() {
+  if(!lookupfun_md || !lookupfun_base) return;
+  if(!edit) return;
 
-void taiFileDialogField::this_SetActionsEnabled() {
-  //TODO: UNDO/REDO
+  QTextCursor cursor(edit->txtText->textCursor());
+
+  taBase* tab = (taBase*)lookupfun_base;
+  int cur_pos = cursor.position();
+  int new_pos = -1;
+  String rval = tab->StringFieldLookupFun(edit->txtText->toPlainText(), cur_pos,
+                                          lookupfun_md->name, new_pos);
+  if(rval.nonempty()) {
+    edit->txtText->setPlainText(rval);
+    QTextCursor cur2(edit->txtText->textCursor());
+    if(new_pos >= 0)
+      cur2.setPosition(new_pos);
+    else
+      cur2.setPosition(cur_pos);
+    edit->txtText->setTextCursor(cur2);
+  }
 }
 
 //////////////////////////////////
@@ -1077,7 +1093,7 @@ bool taiToggle::GetValue() const {
 //////////////////////////////////
 
 taiPlusToggle::taiPlusToggle(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
-: taiCompData(typ_, host_, par, gui_parent_, flags_)
+  : taiCompData(typ_, host_, par, gui_parent_, flags_)
 {
   SetRep(MakeLayoutWidget(gui_parent_));
   but_rep = NULL;
@@ -1100,7 +1116,8 @@ void taiPlusToggle::InitLayout() {
   AddChildWidget(but_rep, taiM->hsep_c);
   if (HasFlag(flgToggleReadOnly)) {
     but_rep->setReadOnly(true);
-  } else {
+  }
+  else {
     connect(but_rep, SIGNAL(clicked(bool)),
         this, SLOT(Toggle_Callback()) );
   }
@@ -1518,14 +1535,12 @@ iColor taiColor::GetValue() const {
   return rval;
 }
 
-
-
 //////////////////////////////////
 //      taiDataDeck             //
 //////////////////////////////////
 
 taiDataDeck::taiDataDeck(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
-: taiCompData(typ_, host_, par, gui_parent_, flags)
+  : taiCompData(typ_, host_, par, gui_parent_, flags)
 {
   lay_type = LT_Stacked;
   SetRep(MakeLayoutWidget(gui_parent_));
@@ -1538,14 +1553,12 @@ void taiDataDeck::GetImage(int i) {
   layStacked()->setCurrentIndex(i);
 }
 
-
-
 //////////////////////////////////
 //      taiVariantBase          //
 //////////////////////////////////
 
 taiVariantBase::taiVariantBase(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags)
-: taiCompData(typ_, host_, par, gui_parent_, flags)
+  : taiCompData(typ_, host_, par, gui_parent_, flags)
 {
   //note: call Constr in your own class' constructor
 }

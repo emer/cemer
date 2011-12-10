@@ -1865,7 +1865,7 @@ void taiFunPtrMember::GetMbrValue_impl(taiData* dat, void* base) {
 }
 
 //////////////////////////////
-//      taiFileDialogMember   //
+//    taiFileDialogMember   //
 //////////////////////////////
 
 int taiFileDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
@@ -1901,8 +1901,35 @@ void taiFileDialogMember::GetMbrValue_impl(taiData* dat, void* base) {
   *((String*)new_base) = rval->GetValue();
 }
 
+//////////////////////////////
+//   taiRegexpDialogMember  //
+//////////////////////////////
+
+int taiRegexpDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
+  if (md->type->InheritsFrom(&TA_taString) && md->HasOption("REGEXP_DIALOG"))
+    return (taiMember::BidForMember(md,td) + 1);
+  return 0;
+}
+
+// TODO: for now, just a copy&paste of taiFileDialogMember
+taiData* taiRegexpDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
+  return new taiRegexpField(mbr->type, host_, par, gui_parent_, flags_);
+}
+
+void taiRegexpDialogMember::GetImage_impl(taiData* dat, const void* base){
+  void* new_base = mbr->GetOff(base);
+  taiRegexpField* rval = (taiRegexpField*)dat;
+  rval->GetImage(*((String*)new_base));
+}
+
+void taiRegexpDialogMember::GetMbrValue_impl(taiData* dat, void* base) {
+  void* new_base = mbr->GetOff(base);
+  taiRegexpField* rval = (taiRegexpField*)dat;
+  *((String*)new_base) = rval->GetValue();
+}
+
 /////////////////////////////
-//    taiTDefaultMember  //
+//    taiTDefaultMember    //
 /////////////////////////////
 
 int taiTDefaultMember::BidForMember(MemberDef*, TypeDef*) {
@@ -2614,7 +2641,7 @@ void taiMethodPtrArgType::GetValue_impl(taiData* dat, void*) {
 }
 
 //////////////////////////////////
-//       taiFileDialogArgType     //
+//     taiFileDialogArgType     //
 //////////////////////////////////
 
 void taiFileDialogArgType::Initialize() {
