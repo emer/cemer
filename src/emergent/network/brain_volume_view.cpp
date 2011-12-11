@@ -41,6 +41,7 @@
 #include <Inventor/nodes/SoVertexProperty.h>
 #include <Inventor/nodes/SoNormal.h>
 #include <Inventor/nodes/SoShapeHints.h>
+#include <cmath>
 
 Network* BrainVolumeView::net() const
 {
@@ -238,7 +239,8 @@ void BrainVolumeView::RenderBrain()
 
     node.brain_tex_mat_array[i] = new SoMaterial;
     node.brain_tex_mat_array[i]->transparency = transparency;
-    node.brain_tex_mat_array[i]->diffuseColor.setValue(SbVec3f(1.0f,1.0f,1.0f));
+    node.brain_tex_mat_array[i]->diffuseColor.setValue(SbVec3f(0.0f,0.0f,0.0f));
+    node.brain_tex_mat_array[i]->emissiveColor.setValue(SbVec3f(1.0f,1.0f,1.0f));
 
     node.voxel_face_set_array[i] = new SoIndexedFaceSet;
     node.voxel_vrtx_prop_array[i] = new SoVertexProperty;
@@ -373,11 +375,12 @@ void BrainVolumeView::CreateFaceSets()
       //if (u->voxel == FloatTDCoord(-1,-1,-1)) continue;
       FloatTDCoord talCoord(u->voxel);
       FloatTDCoord mniCoord(TalairachAtlas::Tal2Mni(talCoord));
-      if ( (view_plane == BrainViewState::AXIAL) || (view_plane == BrainViewState::SAGITTAL)) {
-        mniCoord.x = mniCoord.x * -1; // reverse coordinates for Inventor directions
-      }
       FloatTDCoord ijkCoord(brain_data_->XyzToIjk(mniCoord));
-
+      if ( (view_plane == BrainViewState::AXIAL) || (view_plane == BrainViewState::SAGITTAL) ) {
+        // reverse x coordinates...since we draw X in opposite direction in Inventor
+        ijkCoord.x = abs(ijkCoord.x - (dims.x - 1));
+      }
+      
       if (view_plane == BrainViewState::AXIAL) {
         depth_map_.insert((unsigned int)ijkCoord.z, u);
       }
