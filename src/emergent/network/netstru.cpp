@@ -2082,27 +2082,26 @@ void Unit::UpdateAfterEdit_impl() {
 }
 
 void Unit::Lesion() {
+  if(lesioned()) return;
   StructUpdate(true);
   SetUnitFlag(LESIONED);
   StructUpdate(false);
-  Network* on = own_net();
-  if(on) {
-    if(!on->InStructUpdate()) {
-      on->UpdtAfterNetMod();
-    }
-  }
+  UpdtAfterNetModIfNecc();
 }
 
 void Unit::UnLesion()  {
+  if(!lesioned()) return;
   StructUpdate(true);
   ClearUnitFlag(LESIONED);
   StructUpdate(false);
-  Network* on = own_net();
-  if(on) {
-    if(!on->InStructUpdate()) {
-      on->UpdtAfterNetMod();
-    }
-  }
+  UpdtAfterNetModIfNecc();
+}
+
+void Unit::UpdtAfterNetModIfNecc() {
+  if(!owner || owner->InStructUpdate()) return;
+  if(!own_lay() || own_lay()->InStructUpdate()) return;
+  if(!own_net() || own_net()->InStructUpdate()) return;
+  own_net()->UpdtAfterNetMod();
 }
 
 int Unit::GetMyLeafIndex() {
@@ -3611,6 +3610,7 @@ int Unit_Group::LesionCons(float p_lesion, bool permute) {
 int Unit_Group::LesionUnits(float p_lesion, bool permute) {
   int rval = 0;
   StructUpdate(true);
+  UnLesionUnits();		// always start unlesioned
   if(permute) {
     rval = (int) (p_lesion * (float)leaves);
     if(rval == 0) return 0;
@@ -3642,10 +3642,23 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
   }
 //   own_lay->units_lesioned = true;       // record that units were lesioned
   StructUpdate(false);
-  if(!own_lay->own_net->InStructUpdate()) {
-    own_lay->own_net->UpdtAfterNetMod();
-  }
+  UpdtAfterNetModIfNecc();
   return rval;
+}
+
+void Unit_Group::UnLesionUnits() {
+  StructUpdate(true);
+  FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
+    u->UnLesion();
+  }
+  StructUpdate(false);
+  UpdtAfterNetModIfNecc();
+}
+
+void Unit_Group::UpdtAfterNetModIfNecc() {
+  if(!own_lay || own_lay->InStructUpdate()) return;
+  if(!own_lay->own_net || own_lay->own_net->InStructUpdate()) return;
+  own_lay->own_net->UpdtAfterNetMod();
 }
 
 bool Unit_Group::UnitValuesToArray(float_Array& ary, const String& variable) {
@@ -5044,11 +5057,22 @@ int Layer::LesionCons(float p_lesion, bool permute) {
 
 int Layer::LesionUnits(float p_lesion, bool permute) {
   StructUpdate(true);
-  return units.LesionUnits(p_lesion, permute);
+  int rval = units.LesionUnits(p_lesion, permute);
   StructUpdate(false);
-  if(!own_net->InStructUpdate()) {
-    own_net->UpdtAfterNetMod();
-  }
+  UpdtAfterNetModIfNecc();
+  return rval;
+}
+
+void Layer::UnLesionUnits() {
+  StructUpdate(true);
+  units.UnLesionUnits();
+  StructUpdate(false);
+  UpdtAfterNetModIfNecc();
+}
+
+void Layer::UpdtAfterNetModIfNecc() {
+  if(!own_net || own_net->InStructUpdate()) return;
+  own_net->UpdtAfterNetMod();
 }
 
 bool Layer::UpdateUnitSpecs(bool force) {
@@ -7951,6 +7975,19 @@ int Network::LesionUnits(float p_lesion, bool permute) {
   taMisc::DoneBusy();
   UpdtAfterNetMod();
   return rval;
+}
+
+void Network::UnLesionUnits() {
+  taMisc::Busy();
+  StructUpdate(true);
+  int rval = 0;
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+    if(!l->lesioned())
+      l->UnLesionUnits();
+  }
+  StructUpdate(false);
+  taMisc::DoneBusy();
+  UpdtAfterNetMod();
 }
 
 void Network::UpdateMaxDispSize() {

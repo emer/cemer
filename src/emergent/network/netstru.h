@@ -880,6 +880,8 @@ public: //
   // #MENU #MENU_ON_Structure #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on unit -- removes it from all processing operations
   virtual void  UnLesion();
   // #MENU #DYN1 #CAT_Structure un-set the lesion flag on unit -- restores it to engage in normal processing
+  virtual void	UpdtAfterNetModIfNecc();
+  // #IGNORE call network UpdtAfterNetMod only if it is not otherwise being called at a higher level
 
   inline bool   lay_lesioned() const;
   // #CAT_Structure is the layer this unit is in lesioned?
@@ -1378,7 +1380,11 @@ public:
   virtual int   LesionCons(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove connections with prob p_lesion (permute = fixed no. lesioned)
   virtual int   LesionUnits(float p_lesion, bool permute=true);
-  // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
+  // #MENU #USE_RVAL #CAT_Structure turn on unit LESIONED flags with prob p_lesion (permute = fixed no. lesioned)
+  virtual void  UnLesionUnits();
+  // #MENU #USE_RVAL #CAT_Structure un-lesion units: turn off all unit LESIONED flags
+  virtual void	UpdtAfterNetModIfNecc();
+  // #IGNORE call network UpdtAfterNetMod only if it is not otherwise being called at a higher level
 
   virtual bool  UnitValuesToArray(float_Array& ary, const String& variable);
   // #CAT_Structure adds values of variable from the units into the given array
@@ -1863,7 +1869,11 @@ public:
   virtual int   LesionCons(float p_lesion, bool permute=true);
   // #MENU #MENU_ON_Structure #USE_RVAL #CAT_Structure remove connectiosn with prob p_lesion (permute = fixed no. lesioned)
   virtual int   LesionUnits(float p_lesion, bool permute=true);
-  // #MENU #MENU_ON_Structure #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
+  // #MENU #MENU_ON_Structure #USE_RVAL #CAT_Structure turn on unit LESIONED flags with prob p_lesion (permute = fixed no. lesioned)
+  virtual void  UnLesionUnits();
+  // #MENU #USE_RVAL #CAT_Structure un-lesion units: turn off all unit LESIONED flags
+  virtual void	UpdtAfterNetModIfNecc();
+  // #IGNORE call network UpdtAfterNetMod only if it is not otherwise being called at a higher level
 
   virtual void  Iconify();
   // #MENU #MENU_ON_State #DYN1 #CAT_Display iconify this layer in the network display (shrink to size of 1 unit)
@@ -2596,7 +2606,9 @@ public:
   virtual int   LesionCons(float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove connections with prob p_lesion (permute = fixed no. lesioned)
   virtual int   LesionUnits(float p_lesion, bool permute=true);
-  // #MENU #USE_RVAL #CAT_Structure remove units with prob p_lesion (permute = fixed no. lesioned)
+  // #MENU #USE_RVAL #CAT_Structure turn on unit LESIONED flags with prob p_lesion (permute = fixed no. lesioned)
+  virtual void  UnLesionUnits();
+  // #MENU #USE_RVAL #CAT_Structure un-lesion units: turn off all unit LESIONED flags
 
   virtual void  TwoD_Or_ThreeD(LayerLayout layout_type);
   // #MENU #MENU_ON_Structure #MENU_SEP_BEFORE #CAT_Display Set 2d or 3d and reposition and redraw layers

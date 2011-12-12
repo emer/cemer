@@ -683,6 +683,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
+  emit unTrappedKeyPressEvent(e);
   QWidget::keyPressEvent(e);
 }
 

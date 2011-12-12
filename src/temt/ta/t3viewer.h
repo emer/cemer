@@ -313,9 +313,10 @@ public slots:
 
 #ifndef __MAKETA__
 signals:
-  void viewSaved(int view_no);  // the given view location was saved (e.g., can now save to more permanent storage)
-  void viewSelected(int view_no); // the given view location was selected for viewing -- other saved elements can now be activated by this signal
-  void dynbuttonActivated(int but_no); // dynamic button of given number was activated by user
+  void 	viewSaved(int view_no);  // the given view location was saved (e.g., can now save to more permanent storage)
+  void 	viewSelected(int view_no); // the given view location was selected for viewing -- other saved elements can now be activated by this signal
+  void 	dynbuttonActivated(int but_no); // dynamic button of given number was activated by user
+  void	unTrappedKeyPressEvent(QKeyEvent* e);
 #endif
 
 protected:

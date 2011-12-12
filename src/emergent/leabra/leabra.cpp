@@ -3404,7 +3404,7 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay,
 void LeabraLayerSpec::Compute_Inhib_kWTA_Sort(LeabraLayer* lay, Layer::AccessMode acc_md,
                                       int gpidx, int nunits, LeabraInhib* thr,
                                       KwtaSortBuff& act_buff, KwtaSortBuff& inact_buff,
-                                      int k_eff, float& k_net, int& k_idx) {
+                                      int& k_eff, float& k_net, int& k_idx) {
   LeabraUnit* u;
   int j;
   if(act_buff.Size(gpidx) != k_eff) { // need to fill the sort buf..
@@ -3414,11 +3414,15 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Sort(LeabraLayer* lay, Layer::AccessMod
       u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gpidx);
       if(u->lesioned()) {
 	end_j++;
+	if(end_j >= nunits) {
+	  k_eff = act_buff.Size(gpidx); // this may not end well really..
+	  break;
+	}
 	continue;
       }
       act_buff.Add(u, gpidx); // add to list
       if(u->i_thr < k_net) {
-        k_net = u->i_thr;       k_idx = j;
+        k_net = u->i_thr;       k_idx = act_buff.Size(gpidx)-1;
       }
     }
     inact_buff.ResetGp(gpidx);
@@ -3506,6 +3510,11 @@ void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer* lay,
   Compute_Inhib_kWTA_Sort(lay, acc_md, gpidx, nunits, thr,
                           *act_buff, *inact_buff, k_plus_1, k1_net, k1_idx);
 
+  if(k_plus_1 <= 1) {		// something bad happened
+    thr->Inhib_SetVals(ispec.kwta_pt);
+    return;
+  }
+
   // active_buf now has k+1 most active units, get the next-highest one
   int k_idx = -1;
   float net_k = FLT_MAX;
@@ -3559,6 +3568,11 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer* lay,
 
   Compute_Inhib_kWTA_Sort(lay, acc_md, gpidx, nunits, thr,
                           *act_buff, *inact_buff, k_eff, k_net, k_idx);
+
+  if(k_eff <= 0) {		// something bad happened
+    thr->Inhib_SetVals(ispec.kwta_pt);
+    return;
+  }
 
   // active_buf now has k most active units, get averages of both groups
   int j;
@@ -3614,6 +3628,11 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_kv2k(LeabraLayer* lay,
   Compute_Inhib_kWTA_Sort(lay, acc_md, gpidx, nunits, thr,
                           *act_buff, *inact_buff, k_eff, k_net, k_idx);
 
+  if(k_eff <= 0) {		// something bad happened
+    thr->Inhib_SetVals(ispec.kwta_pt);
+    return;
+  }
+
   // active_buf now has k most active units, get average from act buf
   int j;
   float oth_avg = 0.0f;
@@ -3641,6 +3660,11 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_kv2k(LeabraLayer* lay,
 
     Compute_Inhib_kWTA_Sort(lay, acc_md, gpidx, nunits, thr,
                             *act_buff2k, *inact_buff2k, k2_eff, k2_net, k2_idx);
+
+    if(k2_eff <= 0) {		// something bad happened
+      thr->Inhib_SetVals(ispec.kwta_pt);
+      return;
+    }
 
     for(j=0; j < k2_eff; j++)
       oth_avg += act_buff2k->Un(j, gpidx)->i_thr;
@@ -3681,6 +3705,11 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_CompCost(LeabraLayer* lay,
 
   Compute_Inhib_kWTA_Sort(lay, acc_md, gpidx, nunits, thr,
                           *act_buff, *inact_buff, k_eff, k_net, k_idx);
+
+  if(k_eff <= 0) {		// something bad happened
+    thr->Inhib_SetVals(ispec.kwta_pt);
+    return;
+  }
 
   LeabraUnit* k_u = act_buff->Un(k_idx, gpidx);
   float k_ithr = k_u->i_thr;

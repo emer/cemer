@@ -232,6 +232,7 @@ void UnitGroupView::BuildAll() {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
       if (!unit) continue;
+      if(unit->lesioned()) continue;
 
       UnitView* uv = new UnitView();
       uv->SetData(unit);
@@ -325,6 +326,7 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
       Unit* unit = lay->UnitAtCoord(coord);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
+      if(unit->lesioned()) continue;
 
       if (is_send) {
         for(int g=0;g<unit->recv.size;g++) {
@@ -361,6 +363,7 @@ void UnitGroupView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
       Unit* unit = lay->UnitAtCoord(coord);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
+      if(unit->lesioned()) continue;
       if(unit->bias.size == 0) continue;
       Connection* con = unit->bias.Cn(0);
       uvd_bases.Set(disp_md->GetOff(con), coord.x, coord.y, midx);
@@ -377,6 +380,7 @@ void UnitGroupView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
       Unit* unit = lay->UnitAtCoord(coord);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
+      if(unit->lesioned()) continue;
       uvd_bases.Set(disp_md->GetOff(unit), coord.x, coord.y, midx);
     }
   }
@@ -396,6 +400,7 @@ void UnitGroupView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {
       Unit* unit = lay->UnitAtCoord(coord);
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if(!unit || !smd) continue;  // rest will be null too, but we loop to null disp_base
+      if(unit->lesioned()) continue;
       void* sbaddr = MemberDef::GetOff_static(unit, net_base_off, net_mbr_off);
       uvd_bases.Set(sbaddr, coord.x, coord.y, midx);
     }
@@ -438,50 +443,73 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
       NetView* tnv = (NetView*)dv;
       T3ExaminerViewer* viewer = tnv->GetViewer();
       SoRayPickAction rp( viewer->getViewportRegion());
-      rp.setPoint(mouseevent->getPosition());
-      rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
-      SoPickedPoint* pp = rp.getPickedPoint(0);
-      if(!pp) continue;
-      SoNode* pobj = pp->getPath()->getNodeFromTail(2);
-      if(!pobj) continue;
-//       cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
-      if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
-        pobj = pp->getPath()->getNodeFromTail(3);
-//      cerr << "2: obj typ: " << pobj->getTypeId().getName() << endl;
-        if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
-          pobj = pp->getPath()->getNodeFromTail(1);
-//        cerr << "3: obj typ: " << pobj->getTypeId().getName() << endl;
-          if(pobj->getName() == "WtLines") {
-            // disable selecting of wt lines!
-            ecb->setHandled();
-            return;
-          }
-//        cerr << "not unitgroupnode!" << endl;
-          continue;
-        }
-      }
-      UnitGroupView* act_ugv = static_cast<UnitGroupView*>(((T3UnitGroupNode*)pobj)->dataView());
-      Layer* lay = act_ugv->layer(); //cache
-      float disp_scale = lay->disp_scale;
+      SbVec2s mpos_orig = mouseevent->getPosition();
+      SbVec2s mpos = mpos_orig;
+      int fail_cnt = 0;
+      do {
+	rp.setPoint(mpos);
+	rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
+	SoPickedPoint* pp = rp.getPickedPoint(0);
+	if(!pp) {
+// 	  taMisc::Info("no pick:", String(fail_cnt));
+	  int pm_x = fail_cnt % 4 < 2 ? -1 : 1;
+	  int pm_y = (fail_cnt % 4) % 2 == 0 ? -1 : 1;
+	  // search in increasingly wide area around central point to see if we pick
+	  mpos.setValue(mpos_orig[0] + pm_x * (fail_cnt / 4),
+			mpos_orig[1] + pm_y * (fail_cnt / 4));
+	  fail_cnt++;
+	  continue;
+	}
+	SoNode* pobj = pp->getPath()->getNodeFromTail(2);
+	if(!pobj) {
+	  // 	taMisc::Info("no pobj");
+	  fail_cnt++;
+	  continue;
+	}
+	//       taMisc::Info("obj typ: ", pobj->getTypeId().getName());
+	if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
+	  pobj = pp->getPath()->getNodeFromTail(3);
+	  // 	taMisc::Info("2: obj typ: ", pobj->getTypeId().getName());
+	  if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
+	    pobj = pp->getPath()->getNodeFromTail(1);
+	    // 	  taMisc::Info("3: obj typ: ", pobj->getTypeId().getName());
+	    if(pobj->getName() == "WtLines") {
+	      // disable selecting of wt lines!
+	      ecb->setHandled();
+	      // 	    taMisc::Info("wt lines bail");
+	      return;
+	    }
+	    // 	  taMisc::Info("not unitgroupnode! bail");
+	    fail_cnt++;
+	    continue;
+	  }
+	}
+	UnitGroupView* act_ugv = static_cast<UnitGroupView*>(((T3UnitGroupNode*)pobj)->dataView());
+	Layer* lay = act_ugv->layer(); //cache
+	float disp_scale = lay->disp_scale;
 
-      SbVec3f pt = pp->getObjectPoint(pobj);
-      //   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
-      int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
-      int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
-      //   cerr << xp << ", " << yp << endl;
-//       xp -= ugrp->pos.x; yp -= ugrp->pos.y;
+	SbVec3f pt = pp->getObjectPoint(pobj);
+	//   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
+	int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
+	int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
+	//   cerr << xp << ", " << yp << endl;
+	//       xp -= ugrp->pos.x; yp -= ugrp->pos.y;
 
-      if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
-        Unit* unit = lay->UnitAtDispCoord(xp, yp);
-        if(unit && tnv->unit_src != unit) {
-          tnv->setUnitSrc(NULL, unit);
-          tnv->InitDisplay();   // this is apparently needed here!!
-          tnv->UpdateDisplay();
-        }
-      }
-      got_one = true;
-    }
-  }
+	if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
+	  Unit* unit = lay->UnitAtDispCoord(xp, yp);
+	  if(unit && tnv->unit_src != unit) {
+	    tnv->setUnitSrc(NULL, unit);
+	    tnv->InitDisplay();   // this is apparently needed here!!
+	    tnv->UpdateDisplay();
+	  }
+	}
+	//       else {
+	// 	taMisc::Info("coords off");
+	//       }
+	got_one = true;
+      } while(!got_one && fail_cnt < 100);
+    }  // for
+  } // if 
   if(got_one)
     ecb->setHandled();
 }
@@ -601,6 +629,7 @@ void UnitGroupView::Render_impl_children() {
     for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
       Unit* unit = lay->UnitAtCoord(coord);
       if(!unit) continue;
+      if(unit->lesioned()) continue;
       UnitView* uv = (UnitView*)children.FastEl(ui++);
       unit_so = uv->node_so();
       if(!unit_so) continue; // shouldn't happen
@@ -616,7 +645,8 @@ void UnitGroupView::Render_impl_children() {
       if (nv->unit_text_disp == NetView::UTD_NONE) {
         if (at)
           at->string.setValue( "");
-      } else { // text of some kind
+      }
+      else { // text of some kind
         unit_so->transformCaption(font_xform);
         if (nv->unit_text_disp & NetView::UTD_VALUES) {
           ValToDispText(val, val_str);
@@ -958,6 +988,10 @@ void UnitGroupView::UpdateUnitValues_blocks() {
       if(nv->unit_con_md && (unit == nv->unit_src.ptr())) {
         col.r = 0.0f; col.g = 1.0f; col.b = 0.0f;
       }
+      if(unit && unit->lesioned()) {
+	sc_val = 0.0f;
+      }
+
       float zp = .5f * sc_val / max_z;
       v_idx+=4;                 // skip the _0 cases
 
@@ -967,6 +1001,9 @@ void UnitGroupView::UpdateUnitValues_blocks() {
       vertex_dat[v_idx++][1] = zp; // 11_v = 4
 
       float alpha = 1.0f - ((1.0f - fabsf(sc_val)) * trans);
+      if(unit && unit->lesioned()) {
+	alpha = 0.0f;
+      }
       color_dat[c_idx++] = T3Color::makePackedRGBA(col.r, col.g, col.b, alpha);
 
       if(nv->unit_text_disp & NetView::UTD_VALUES) {
@@ -2424,6 +2461,39 @@ void NetView::HistMovie(int x_size, int y_size, const String& fname_stub) {
   UpdateDisplay(true);
 }
 
+void NetView::unTrappedKeyPressEvent(QKeyEvent* e) {
+  bool got_arw = false;
+  TwoDCoord dir;
+  if(e->key() == Qt::Key_Right) {
+    got_arw = true;
+    dir.x=1;
+  }
+  else if(e->key() == Qt::Key_Left) {
+    got_arw = true;
+    dir.x=-1;
+  }
+  else if(e->key() == Qt::Key_Up) {
+    got_arw = true;
+    dir.y=1;
+  }
+  else if(e->key() == Qt::Key_Down) {
+    got_arw = true;
+    dir.y=-1;
+  }
+  if(!got_arw) return;
+  if(!(bool)unit_src) return;
+  TwoDCoord pos = (TwoDCoord)unit_src->pos;
+  pos += dir;
+  Layer* lay = unit_src->own_lay();
+  if(!lay) return;
+  Unit* nw_u = lay->UnitAtCoord(pos);
+  if(nw_u) {
+    setUnitSrc(NULL, nw_u);
+    InitDisplay();   // this is apparently needed here!!
+    UpdateDisplay();
+  }
+}
+
 void NetView::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   if(taMisc::is_loading || !taMisc::gui_active) return;
   TypeDef* typ = child->GetTypeDef();
@@ -3606,8 +3676,10 @@ NetViewPanel::NetViewPanel(NetView* dv_)
   req_full_build = false;
 
   T3ExaminerViewer* vw = dv_->GetViewer();
-  if(vw)
+  if(vw) {
     connect(vw, SIGNAL(dynbuttonActivated(int)), this, SLOT(dynbuttonActivated(int)) );
+    connect(vw, SIGNAL(unTrappedKeyPressEvent(QKeyEvent*)), this, SLOT(unTrappedKeyPressEvent(QKeyEvent*)) );
+  }
 
   QWidget* widg = new QWidget();
   layTopCtrls = new QVBoxLayout(widg); //layWidg->addLayout(layTopCtrls);
@@ -4350,4 +4422,10 @@ void NetViewPanel::dynbuttonActivated(int but_no) {
   ColorScaleFromData();
 //   nv_->InitDisplay(false);
   nv_->UpdateDisplay(true);     // update panel
+}
+
+void NetViewPanel::unTrappedKeyPressEvent(QKeyEvent* e) {
+  NetView* nv_;
+  if (!(nv_ = nv())) return;
+  nv_->unTrappedKeyPressEvent(e);
 }

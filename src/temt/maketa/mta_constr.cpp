@@ -974,7 +974,7 @@ void EnumSpace_Generate_Data(EnumSpace* ths, ostream& strm) {
     strm << "  {\"" << enm->name << "\",\"" << enm->desc << "\",\""
 	 << str_opts << "\"," << enm->enum_no << "},\n";
   }
-  strm << "  NULL};\n";
+  strm << "  {NULL}};\n";
 }
 
 
@@ -1073,7 +1073,7 @@ void MemberSpace_Generate_Data(MemberSpace* ths, TypeDef* ownr, ostream& strm) {
     else		strm << ",0";
     strm << "},\n";
   }
-  strm << "  NULL};\n";
+  strm << "  {NULL}};\n";
 }
 
 void TypeDef_Init_MemberData(TypeDef* ths, ostream& strm) {
@@ -1155,7 +1155,7 @@ void MethodDef_Generate_ArgData(MethodDef* ths, TypeDef* ownr, ostream& strm) {
     strm << "  {" << tpfld << ",\"" << ths->arg_names[i] << "\",\""
 	 << ths->arg_defs[i] << "\"},\n";
   }
-  strm << "  NULL};\n";
+  strm << "  {NULL}};\n";
 }
 
 
@@ -1207,7 +1207,7 @@ void MethodSpace_Generate_Data(MethodSpace* ths, TypeDef* ownr, ostream& strm) {
 
     strm << "},\n";
   }
-  strm << "  NULL};\n";
+  strm << "  {NULL}};\n";
 }
 
 
@@ -1302,7 +1302,7 @@ void PropertySpace_Generate_Data(PropertySpace* ths, TypeDef* ownr, ostream& str
     }
     strm << "},\n";
   }
-  strm << "  NULL};\n";
+  strm << "  {NULL}};\n";
 }
 
 void TypeDef_Init_PropertyData(TypeDef* ths, ostream& strm) {

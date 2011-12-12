@@ -2020,7 +2020,7 @@ public:
     virtual void Compute_Inhib_kWTA_Sort(LeabraLayer* lay, Layer::AccessMode acc_md,
 					 int gpidx, int nunits,  LeabraInhib* thr,
 					 KwtaSortBuff& act_buff, KwtaSortBuff& inact_buff,
-					 int k_eff, float& k_net, int& k_idx);
+					 int& k_eff, float& k_net, int& k_idx);
     // #CAT_Activation implementation of sort into active and inactive unit buffers -- basic to various kwta functions: eff_k = effective k to use, k_net = net of kth unit (lowest unit in act_buf), k_idx = index of kth unit
     virtual void Compute_Inhib_BreakTie(LeabraInhib* thr);
     // #IGNORE break any ties in the kwta function -- called by specific kwta functions, and depends on tie_brk.on

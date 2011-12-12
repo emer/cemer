@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.2.6.0 rev5162
+// ta_Dump File v3.0 -- code v5.2.6.0 rev5183
 LeabraProject .projects["Project_0"] { 
   taBase_Group @.templates = [0] {
   };
@@ -423,7 +423,7 @@ LeabraProject .projects["Project_0"] {
 	    };
 
 	    ProgEl_List @.fun_code = [2] {
-	      ProgVars @[0] { 
+	      LocalVars @[0] { 
 		ProgVar_List @.local_vars = [0] {
 		};
 	      };
@@ -465,7 +465,7 @@ LeabraProject .projects["Project_0"] {
 	    };
 
 	    ProgEl_List @.fun_code = [3] {
-	      ProgVars @[0] { 
+	      LocalVars @[0] { 
 		ProgVar_List @.local_vars = [1] {
 		  ProgVar @["localvar"] { };
 		};
@@ -506,7 +506,7 @@ LeabraProject .projects["Project_0"] {
 	};
 
 	ProgEl_List @.prog_code = [16] {
-	  ProgVars @[0] { 
+	  LocalVars @[0] { 
 	    ProgVar_List @.local_vars = [2] {
 	      ProgVar @["fred"] { };
 	      ProgVar @["george"] { };
@@ -4214,7 +4214,7 @@ LeabraProject .projects["Project_0"] {
        name=;
        el_typ=ProgCode;
        el_def=0;
-       ProgVars @[0] {
+       LocalVars @[0] {
 	desc=;
 	flags=0;
 	local_vars {
@@ -4352,7 +4352,7 @@ LeabraProject .projects["Project_0"] {
        name="ProgEl_List_147";
        el_typ=ProgCode;
        el_def=0;
-       ProgVars @[0] {
+       LocalVars @[0] {
 	desc=;
 	flags=0;
 	local_vars {
@@ -4465,7 +4465,7 @@ LeabraProject .projects["Project_0"] {
        el_def=0;
        MethodCall @[0] {
 	desc="need to have built network by now in any case, so do it here to make double sure -- prevents errs when loading project with startup program";
-	flags=0;
+	flags=OFF;
 	result_var=NULL;
 	obj=$.projects["Project_0"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
 	method=Network::Build;
@@ -4509,7 +4509,7 @@ LeabraProject .projects["Project_0"] {
      name=;
      el_typ=ProgCode;
      el_def=0;
-     ProgVars @[0] {
+     LocalVars @[0] {
       desc=;
       flags=0;
       local_vars {
@@ -11552,7 +11552,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
    wt_save_fmt=TEXT;
    lay_layout=THREE_D;
    n_units=75;
-   n_cons=1875;
+   n_cons=1825;
    max_disp_size {x=5: y=5: z=3: };
    learn_rule=LEABRA_CHL;
    phase_order=MINUS_PLUS;

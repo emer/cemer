@@ -451,9 +451,8 @@ private:
 */
 
 class EMERGENT_API NetView: public T3DataViewMain {
-// ##DUMP_LOAD_POST
+// ##DUMP_LOAD_POST network view main object -- represents the network in view, manages all sub-types
 INHERITED(T3DataViewMain)
-friend class NetViewAdapter;
 friend class NetViewPanel;
 public:
   enum MDFlags { // indicates type that unit.disp_base points to
@@ -608,6 +607,9 @@ public:
   virtual void		HistMovie(int x_size=640, int y_size=480, 
 				  const String& fname_stub = "movie_img_");
   // #BUTTON record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats
+
+  virtual void		unTrappedKeyPressEvent(QKeyEvent* e);
+  // process key presses from examiner viewer -- for arrow-key navigation
 
   override void		Dump_Load_post();
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
@@ -764,6 +766,8 @@ protected:
 public slots:
   void			viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
   void			dynbuttonActivated(int but_no); // for hot member buttons
+  void			unTrappedKeyPressEvent(QKeyEvent* e);
+  // gets signal of same name from T3ExaminerViewer -- used for keyboard arrow nav
 
 protected slots:
   void			butScaleDefault_pressed();
