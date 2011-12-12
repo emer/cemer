@@ -175,6 +175,7 @@ SoUnit* SoLayerSpec::FindMaxNetIn(SoLayer* lay) {
   float max_val = -1.0e20f;
   SoUnit* max_val_u = NULL;
   FOREACH_ELEM_IN_GROUP(SoUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->act = uspec->act_range.min;
     u->act_i = uspec->act_range.min;
     if(u->net > max_val) {
@@ -190,6 +191,7 @@ SoUnit* SoLayerSpec::FindMinNetIn(SoLayer* lay) {
   float min_val = 1.0e20f;
   SoUnit* min_val_u = NULL;
   FOREACH_ELEM_IN_GROUP(SoUnit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->act = uspec->act_range.min;
     u->act_i = uspec->act_range.min;
     if(u->net < min_val) {
@@ -213,8 +215,10 @@ void SoLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
 void SoLayerSpec::Compute_AvgAct(SoLayer* lay, SoNetwork* net) {
   lay->sum_act = 0.0f;
   if(lay->units.leaves == 0)    return;
-  FOREACH_ELEM_IN_GROUP(Unit, u, lay->units)
+  FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+    if(u->lesioned()) continue;
     lay->sum_act += u->act;
+  }
   lay->avg_act = lay->sum_act / (float)lay->units.leaves;
 }
 
@@ -276,12 +280,14 @@ void SoftMaxLayerSpec::Compute_Act_post(SoLayer* lay, SoNetwork* net) {
 
   float sum = 0.0f;
   FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+    if(u->lesioned()) continue;
     u->act = expf(softmax_gain * u->net); // e to the net
     sum += u->act;
   }
 
   if(sum > 0.0f) {
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+      if(u->lesioned()) continue;
       u->act = uspec->act_range.Project(u->act / sum);
       // normalize by sum, rescale to act range range
     }

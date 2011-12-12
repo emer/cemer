@@ -611,6 +611,7 @@ void CsNetwork::Compute_MaxDa() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if (!lay->lesioned()) {
       FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+	if(un->lesioned()) continue;
         maxda = MAX(fabsf(un->da), maxda);
       }
     }
@@ -659,6 +660,7 @@ void CsNetwork::Compute_ClampAct() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if (!lay->lesioned() && (lay->ext_flag & Unit::EXT)) { // only clamped layers
       FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+	if(un->lesioned()) continue;
         un->Compute_ClampAct(this);
       }
     }
@@ -669,6 +671,7 @@ void CsNetwork::Compute_ClampNet() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if (!lay->lesioned() && !(lay->ext_flag & Unit::EXT)) { // only non-clamped layers
       FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+	if(un->lesioned()) continue;
         un->Compute_ClampNet(this);
       }
     }
@@ -685,6 +688,7 @@ void CsNetwork::PhaseInit() {
       }
     }
     FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+      if(un->lesioned()) continue;
       un->PhaseInit(this);
     }
   }
@@ -694,6 +698,7 @@ void CsNetwork::DecayState() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if (!lay->lesioned()) {
       FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+	if(un->lesioned()) continue;
         un->DecayState(this);
       }
     }
@@ -704,6 +709,7 @@ void CsNetwork::PostSettle() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(!lay->lesioned()) {
       FOREACH_ELEM_IN_GROUP(CsUnit, un, lay->units) {
+	if(un->lesioned()) continue;
         un->PostSettle(this);
       }
     }
@@ -904,6 +910,7 @@ void CsNetwork::Compute_EpochStats() {
 //              act_vals.Reset();
 //      cur_lay = ps->layer;
 //      FOREACH_ELEM_IN_GROUP(Unit, u, cur_lay->units) {
+//	  if(un->lesioned()) continue;
 //        act_vals.Add(u->act);
 //      }
 //       }
