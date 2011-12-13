@@ -115,7 +115,7 @@ private:
 
 
 class EMERGENT_API BrainView : public T3DataViewMain {
-// ##DUMP_LOAD_POST
+// ##DUMP_LOAD_POST #NO_INSTANCE
 INHERITED(T3DataViewMain)
 
   friend class BrainViewPanel;
