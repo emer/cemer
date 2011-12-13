@@ -189,9 +189,9 @@ public:
   };
 
   static taHashVal      HashCode_String(const String& string);
-  // #CAT_XpertAccess get a hash code value from given string
+  // #EXPERT #CAT_Access get a hash code value from given string
   static taHashVal      HashCode_Ptr(const void* ptr);
-  // #CAT_XpertAccess get a hash code value from given ptr
+  // #EXPERT #CAT_Access get a hash code value from given ptr
 
 protected:
   static taPtrList_impl scratch_list;   // a list for any temporary processing needs
@@ -334,13 +334,13 @@ public:
   virtual void  DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
   // #IGNORE called when list has changed -- more fine-grained than Dirty(), and may be multiple calls per event
   inline int    Index(int idx) const { if(idx < 0) idx += size; return idx; }
-  // #CAT_XpertAccess get actual index from index value that can also be negative, meaning access from end of list
+  // #EXPERT #CAT_Access get actual index from index value that can also be negative, meaning access from end of list
   inline bool   InRange(int idx) const { return ((idx < size) && (idx >= 0)); }
-  // #CAT_XpertAccess is the specified index within range of 0 >= idx < size
+  // #EXPERT #CAT_Access is the specified index within range of 0 >= idx < size
   virtual bool  Alloc(int sz);
-  // #CAT_XpertModify allocate a list big enough for given number of elements (or current size) -- uses optimized memory allocation policies and generally allocates more than currently needed
+  // #EXPERT #CAT_Modify allocate a list big enough for given number of elements (or current size) -- uses optimized memory allocation policies and generally allocates more than currently needed
   virtual bool  AllocExact(int sz);
-  // #CAT_XpertModify allocate exact number specified
+  // #EXPERT #CAT_Modify allocate exact number specified
   void          Trim(int n); // #IGNORE if larger than n, trim to n (does NOT expand)
   virtual void  Reset()                 { RemoveAll(); }
   // #CAT_Modify reset the list (remove all elements)
@@ -377,9 +377,9 @@ public:
   virtual void  UpdateAllIndicies();    // #IGNORE update all indices of elements in list
 
   void*         FirstEl(int& itr) {itr = 0; return SafeEl_(0);}
-  // #CAT_XpertAccess get the first item on the list, initialize iterator
+  // #EXPERT #CAT_Access get the first item on the list, initialize iterator
   void*         NextEl(int& itr) {return (++itr < size) ? FastEl_(itr) : NULL;}
-  // #CAT_XpertAccess get the next item on the list according to iterator
+  // #EXPERT #CAT_Access get the next item on the list according to iterator
 
   /////////////////////////////////////////////////////////////////////////
   // replicating items: either by clone/add (duplicate) or link (borrow) //
@@ -492,7 +492,7 @@ public:
   virtual bool  AddUnique(T* item)              { return AddUnique_((void*)item); }
   // #CAT_Modify add so that object is unique, true if unique
   virtual bool  AddUniqNameNew(T* item)         { return AddUniqNameNew_((void*)item); }
-  // #CAT_XpertModify add so that name is unique, true if unique, new replaces existing
+  // #EXPERT #CAT_Modify add so that name is unique, true if unique, new replaces existing
 
   virtual bool  Insert(T* item, int idx)        { return Insert_((void*)item, idx); }
   // #CAT_Modify Add or insert element at idx (-1 for end)
@@ -514,7 +514,7 @@ public:
   virtual bool  LinkUnique(T* item)             { return LinkUnique_((void*)item); }
   // #CAT_Modify link so that object is unique, true if unique
   virtual bool  LinkUniqNameNew(T* item)                { return LinkUniqNameNew_((void*)item); }
-  // #CAT_XpertModify link so that name is unique, true if unique, new replaces existing
+  // #EXPERT #CAT_Modify link so that name is unique, true if unique, new replaces existing
   virtual bool  InsertLink(T* item, int idx= -1) { return InsertLink_((void*)item, idx);}
   // #CAT_Modify #MENU Insert a link at index (-1 for end)
   virtual bool  ReplaceLinkEl(T* old_it, T* new_it)     { return ReplaceLinkEl_((void*)old_it, (void*)new_it); }
@@ -719,13 +719,13 @@ public:
   virtual void          DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL) {}
   // #IGNORE only called when size changes
   inline int            Index(int idx) const { if(idx < 0) idx += size; return idx; }
-  // #CAT_XpertAccess get actual index from index value that can also be negative, meaning access from end of array
+  // #EXPERT #CAT_Access get actual index from index value that can also be negative, meaning access from end of array
   inline bool           InRange(int idx) const {return ((idx < size) && (idx >= 0));}
-  // #CAT_XpertAccess is the specified index within range of 0 >= idx < size
+  // #EXPERT #CAT_Access is the specified index within range of 0 >= idx < size
   virtual bool          Alloc(int n);
-  // #CAT_XpertModify allocate storage for at least the given size (allocates extra to allow for future expansion -- see AllocExact for exact alloc)
+  // #EXPERT #CAT_Modify allocate storage for at least the given size (allocates extra to allow for future expansion -- see AllocExact for exact alloc)
   virtual bool          AllocExact(int n);
-  // #CAT_XpertModify allocate storage for exactly the given size
+  // #EXPERT #CAT_Modify allocate storage for exactly the given size
   virtual void          Reset() { Reset_impl(); DataChanged(DCR_ARY_SIZE_CHANGED); };
   // #CAT_Modify reset the list to zero size (does not free memory)
 
@@ -793,7 +793,7 @@ public:
   virtual void  ShiftLeftPct(float pct);
   // #CAT_Modify shift the array to the left by given percentage of current size
   virtual int   V_Flip(int width);
-  // #CAT_XpertModify vertically flip the array as if it was arrange in a matrix of width
+  // #EXPERT #CAT_Modify vertically flip the array as if it was arrange in a matrix of width
 
   virtual void  Duplicate(const taArray_impl& cp);
   // #CAT_Copy duplicate the items in the list
@@ -925,9 +925,9 @@ public:
   virtual ~taFixedArray_impl()          {size = 0;}
 
   inline int            Index(int idx) const { if(idx < 0) idx += size; return idx; }
-  // #CAT_XpertAccess get actual index from index value that can also be negative, meaning access from end of list
+  // #EXPERT #CAT_Access get actual index from index value that can also be negative, meaning access from end of list
   inline bool           InRange(int idx) const {return ((idx >= 0) && (idx < size));}
-  // #CAT_XpertAccess is the specified index within range of 0 >= idx < size
+  // #EXPERT #CAT_Access is the specified index within range of 0 >= idx < size
   virtual void          Reset()         {SetSize(0);}
   // #CAT_Modify
 

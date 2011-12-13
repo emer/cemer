@@ -703,7 +703,7 @@ public:
   // #IGNORE gets filer for this object (or TypeItem if non-null) -- clients must ref/unrefdone; ext is for non-default extension (otherwise looks up EXT_); compress -1=default, 0=none, 1=yes; exts/ft's must match, and are ,-separated lists
 
   virtual int           Load_strm(istream& strm, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
-  // #CAT_XpertFile Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
+  // #EXPERT #CAT_File Load object data from a file -- sets pointer to loaded obj if non-null: could actually load a different object than this (e.g. if this is a list or group)
   taFiler*              GetLoadFiler(const String& fname, String exts = _nilString,
     int compress=-1, String filetypes = _nilString, bool getset_file_name = true);
   // #IGNORE get filer with istrm opened for loading for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
@@ -713,7 +713,7 @@ public:
   // #IGNORE convert stream from old to new format (if needed)
 
   virtual int           Save_strm(ostream& strm, taBase* par=NULL, int indent=0);
-  // #CAT_XpertFile Save object data to a file stream
+  // #EXPERT #CAT_File Save object data to a file stream
   taFiler*              GetSaveFiler(const String& fname, String ext = _nilString,
     int compress=-1, String filetypes=_nilString, bool getset_file_name = true);
   // #IGNORE get filer with ostrm opened for saving for file fname; if empty, prompts user with filer chooser.  NOTE: must unRefDone the filer when done with it in calling function!
@@ -726,9 +726,9 @@ public:
   // #MENU #ARGC_0 #EDIT_READ_ONLY #CAT_File Saves object data to a new file -- if fname is empty, the user is prompted with a file dialog
 
   virtual int           Save_String(String& save_str, taBase* par=NULL, int indent=0);
-  // #CAT_XpertFile dump full object save information to a string, which contains the exact information that would be saved to a file for Save_strm -- just a string-stream (sstream) wrapper around Save_strm
+  // #EXPERT #CAT_File dump full object save information to a string, which contains the exact information that would be saved to a file for Save_strm -- just a string-stream (sstream) wrapper around Save_strm
   virtual int           Load_String(const String& load_str, taBase* par=NULL, taBase** loaded_obj_ptr = NULL);
-  // #CAT_XpertFile load full object information from a string, which should have been generated through a corresponding Save_String call -- must contain the exact information that would be saved to a file for Save_strm -- just a string-stream (sstream) wrapper around Load_strm
+  // #EXPERT #CAT_File load full object information from a string, which should have been generated through a corresponding Save_String call -- must contain the exact information that would be saved to a file for Save_strm -- just a string-stream (sstream) wrapper around Load_strm
 
   virtual String GetValStr(void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,

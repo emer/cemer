@@ -199,30 +199,17 @@ public:
   void			emit_scaleValueChanged();
   virtual void SetRange(float val);
   virtual void SetRoundRange(float val);
-//obs  virtual void ModRange(float val);
-//obs  virtual void ModRoundRange(float val);
-
-//obs  virtual void FixRangeZero(); // sets range and zero according to min,max
-//  virtual void UpdateMinMax(float mn, float mx);
   virtual void SetMinMax(float min,float max);
-//  virtual int GetIdx(float val);	// returns index of the value
   virtual float GetVal(int idx);	// returns value of the index
-//  virtual iColor* GetColor(float val, iColor** maincolor=NULL,
-//			    iColor** contrast=NULL);
-   // return color object for val
   virtual const iColor GetColor(int idx, bool* ok = NULL);	// return color[idx];
   virtual const iColor GetContrastColor(int idx, bool* ok = NULL);	// return color[idx];
 
   virtual void SetColorScale(ColorScale* c);
 
-//  virtual float GetAbsPercent(float val);
-
   virtual void UpdatePads();
   virtual void Adjust(); //TODO: prob not needed
   virtual bool GetScaleValues();      // gets from the edit into nums; if conv error, then returns false and sets values back
   virtual void UpdateScaleValues();   // puts from nums into glyph
-
-
 
   ScaleBar(bool hor, SpanMode sm, bool adj, bool ed, QWidget* parent = NULL);
   virtual ~ScaleBar();
@@ -244,6 +231,9 @@ signals:
 
 protected:
   bool		hor; // true for horizontal, false for vertical
+  float		cur_min;	// currently displayed values
+  float		cur_max;	// currently displayed values
+  bool		cur_minmax_set;	// there are currently set values
   
   void 		InitLayout(); // call this in final inherited class constructor
 private:

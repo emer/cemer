@@ -244,110 +244,110 @@ public:
   // -ve values are from end, and are valid for both low-level col access, and DataTable access
   
   const Variant GetValAsVar(int row) const {return GetValAsVar_impl(row, 0);}
-  // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVar(const Variant& val, int row) 
   { return SetValAsVar_impl(val, row, 0);} 
-  // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid for all types, -ve row is from end (-1=last)
   const String 	GetValAsString(int row) const {return GetValAsString_impl(row, 0);}
-  // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsString(const String& val, int row) 
   {return SetValAsString_impl(val, row, 0);} 
-  // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloat(int row) const {return GetValAsFloat_impl(row, 0);} 
-  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsFloat(float val, int row) 
-  // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
   {return SetValAsFloat_impl(val, row, 0);} 
   double 	GetValAsDouble(int row) const {return GetValAsDouble_impl(row, 0);} 
-  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsDouble(double val, int row) 
-  // #CAT_XpertModify valid only if type is double, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid only if type is double, -ve row is from end (-1=last)
   {return SetValAsDouble_impl(val, row, 0);} 
   int	 	GetValAsInt(int row) const {return GetValAsInt_impl(row, 0);} 
-  // #CAT_XpertAccess valid if type is int or byte, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid if type is int or byte, -ve row is from end (-1=last)
   bool	 	SetValAsInt(int val, int row) 
-  // #CAT_XpertModify valid if type is int or float, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
   {return SetValAsInt_impl(val, row, 0);} 
   byte	 	GetValAsByte(int row) const {return GetValAsByte_impl(row, 0);} 
-  // #CAT_XpertAccess valid only if type is byte, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
   bool	 	SetValAsByte(byte val, int row) 
-  // #CAT_XpertModify valid if type is numeric, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
   {return SetValAsByte_impl(val, row, 0);} 
     
   ///////////////////////////////////////////////////////////////
   // Matrix versions, cell index
 
   const Variant GetValAsVarM(int row, int cell) const {return GetValAsVar_impl(row, cell);} 
-  // #CAT_XpertAccess get value as a variant (safe for all program usage), matrix version, valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access get value as a variant (safe for all program usage), matrix version, valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVarM(const Variant& val, int row, int cell) 
   { return SetValAsVar_impl(val, row, cell);} 
-  // #CAT_XpertModify set value as a variant, matrix version, valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify set value as a variant, matrix version, valid for all types, -ve row is from end (-1=last)
   const String 	GetValAsStringM(int row, int cell) const {return GetValAsString_impl(row, cell);} 
-  // #CAT_XpertAccess get value as a string, matrix version, valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access get value as a string, matrix version, valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsStringM(const String& val, int row, int cell) 
   {return SetValAsString_impl(val, row, cell);} 
-  // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloatM(int row, int cell) const {return GetValAsFloat_impl(row, cell);} 
-  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsFloatM(float val, int row, int cell) 
-  // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
   {return SetValAsFloat_impl(val, row, cell);} 
   double 	GetValAsDoubleM(int row, int cell) const {return GetValAsDouble_impl(row, cell);} 
-  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsDoubleM(double val, int row, int cell) 
-  // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
   {return SetValAsDouble_impl(val, row, cell);} 
   int	 	GetValAsIntM(int row, int cell) const {return GetValAsInt_impl(row, cell);} 
-  // #CAT_XpertAccess valid if type is int or byte, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid if type is int or byte, -ve row is from end (-1=last)
   bool	 	SetValAsIntM(int val, int row, int cell) 
-  // #CAT_XpertModify valid if type is int or float, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
   {return SetValAsInt_impl(val, row, cell);} 
   byte	 	GetValAsByteM(int row, int cell) const {return GetValAsByte_impl(row, cell);} 
-  // #CAT_XpertAccess valid only if type is byte, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
   bool	 	SetValAsByteM(byte val, int row, int cell) 
-  // #CAT_XpertModify valid if type is numeric, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
   {return SetValAsByte_impl(val, row, cell);} 
 
   ///////////////////////////////////////////////////////////////
   // Matrix versions, with dimensions passed
   const Variant GetValAsVarMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
   { return GetValAsVar_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
-  // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsVarMDims(const Variant& val, int row, 
 				 int d0, int d1=0, int d2=0, int d3=0)
   {return SetValAsVar_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
-  // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid for all types, -ve row is from end (-1=last)
   const String 	GetValAsStringMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
   { return GetValAsString_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
-  // #CAT_XpertAccess valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid for all types, -ve row is from end (-1=last)
   bool	 	SetValAsStringMDims(const String& val, int row,
 				    int d0, int d1=0, int d2=0, int d3=0)
   {return SetValAsString_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
-  // #CAT_XpertModify valid for all types, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid for all types, -ve row is from end (-1=last)
   float 	GetValAsFloatMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const 
   { return GetValAsFloat_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
-  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsFloatMDims(float val, int row, int d0, int d1=0, int d2=0, int d3=0)
   {return SetValAsFloat_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
-  // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
   double 	GetValAsDoubleMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
   { return GetValAsDouble_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
-  // #CAT_XpertAccess valid if type is numeric, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid if type is numeric, -ve row is from end (-1=last)
   bool	 	SetValAsDoubleMDims(double val, int row, int d0, int d1=0, int d2=0, int d3=0)
   {return SetValAsDouble_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
-  // #CAT_XpertModify valid only if type is float, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid only if type is float, -ve row is from end (-1=last)
   int	 	GetValAsIntMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
   { return GetValAsInt_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
-  // #CAT_XpertAccess valid if type is int or byte, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid if type is int or byte, -ve row is from end (-1=last)
   bool	 	SetValAsIntMDims(int val, int row, int d0, int d1=0, int d2=0, int d3=0)
   {return SetValAsInt_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
-  // #CAT_XpertModify valid if type is int or float, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid if type is int or float, -ve row is from end (-1=last)
   byte	 	GetValAsByteMDims(int row, int d0, int d1=0, int d2=0, int d3=0) const
   { return GetValAsByte_impl(row, cell_geom.IndexFmDims(d0,d1,d2,d3)); }
-  // #CAT_XpertAccess valid only if type is byte, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Access valid only if type is byte, -ve row is from end (-1=last)
   bool	 	SetValAsByteMDims(byte val, int row, int d0, int d1=0, int d2=0, int d3=0) 
   {return SetValAsByte_impl(val, row, cell_geom.IndexFmDims(d0,d1,d2,d3));} 
-  // #CAT_XpertModify valid if type is numeric, -ve row is from end (-1=last)
+  // #EXPERT #CAT_Modify valid if type is numeric, -ve row is from end (-1=last)
 
   ///////////////////////////////////////////////////////////////
   // Matrix ops -- you must Ref/UnRef taMatrix return types
@@ -356,7 +356,7 @@ public:
   bool	 	SetValAsMatrix(const taMatrix* val, int row);
   // #CAT_Modify set the matrix cell from a same-sized matrix 
   taMatrix*	GetRangeAsMatrix(int st_row, int n_rows);
-  // #CAT_XpertAccess gets a slice of the entire column from starting row for n_rows (note: not const -- you can write it) -- must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it
+  // #EXPERT #CAT_Access gets a slice of the entire column from starting row for n_rows (note: not const -- you can write it) -- must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it
 
   ///////////////////////////////////////
   // sub-matrix reading and writing functions
@@ -680,18 +680,18 @@ public:
   // dumping and loading -- see .cpp file for detailed format information, not saved as standard taBase obj
   virtual void 		SaveData_strm(ostream& strm, Delimiters delim = TAB,
 				      bool quote_str = true, bool save_headers=true);
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
+  // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log saves data, one line per rec, with delimiter between columns, and optionally quoting strings -- if save-headers then special _H: formatted column header information is saved and data rows are marked with _D:
   void 			SaveHeader_strm(ostream& strm, Delimiters delim = TAB,
 	bool row_mark = true, int col_fr = 0, int col_to = -1)
     {SaveHeader_strm_impl(strm, delim, row_mark, col_fr, col_to, true, false);}
-  // #CAT_XpertFile #EXT_dat,txt,log saves header information, with delimiter between columns, and optional row_mark _H:
+  // #EXPERT #CAT_File #EXT_dat,txt,log saves header information, with delimiter between columns, and optional row_mark _H:
   virtual void 		SaveDataRow_strm(ostream& strm, int row=-1,
 				 Delimiters delim = TAB, bool quote_str = true,
 				 bool row_mark = true, int col_fr = 0, int col_to = -1); 
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; -ve cols/rows are relative to end -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
+  // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log saves one row of data (-1 = last row), with delimiter between columns, and optionally quoting strings; -ve cols/rows are relative to end -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
   virtual void 		SaveDataRows_strm(ostream& strm, Delimiters delim = TAB,
 					  bool quote_str = true, bool row_mark=true); 
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log saves all rows of data (no header) with delimiter between columns, and optionally quoting strings -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
+  // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log saves all rows of data (no header) with delimiter between columns, and optionally quoting strings -- if row_mark then mark data rows with _D: at start (to differentiate from _H: headers)
 
   virtual void 		SaveData(const String& fname="", Delimiters delim = TAB,
     bool quote_str = true, bool save_headers=true);
@@ -724,12 +724,12 @@ public:
 
   virtual void 		LoadData_strm(istream& strm, Delimiters delim = TAB,
 				 bool quote_str = true, int max_recs = -1);
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
+  // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log loads data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings
   virtual int 		LoadHeader_strm(istream& strm, Delimiters delim = TAB);
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end) -- note: Emergent-native does not use quotes in header line and quote_str is ignore when native=true
+  // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log loads header information -- preserves current headers if possible (called from LoadData if header line found) (returns EOF if strm is at end) -- note: Emergent-native does not use quotes in header line and quote_str is ignore when native=true
   virtual int 		LoadDataRow_strm(istream& strm, Delimiters delim = TAB,
     bool quote_str = true);
-  // #CAT_XpertFile #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
+  // #EXPERT #CAT_File #EXT_dat,tsv,csv,txt,log load one row of data, up to max num of recs (-1 for all), with delimiter between columns and optionaly quoting strings (returns EOF if strm is at end)
   int 			LoadDataRowEx_strm(istream& strm, Delimiters delim = TAB,
     bool quote_str = true, bool reset_load_schema = true); // #IGNORE used by Server
   virtual void 		LoadData(const String& fname, Delimiters delim = TAB,
@@ -762,10 +762,10 @@ public:
   virtual void 		ExportHeader_strm(ostream& strm, Delimiters delim = TAB,
 	bool quote_str = true, int col_fr = 0, int col_to = -1)
   { SaveHeader_strm_impl(strm, delim, false, col_fr, col_to, false, quote_str); }
-  // #CAT_XpertFile #EXT_csv,tsv,txt,log saves header information, with delimiter between columns
+  // #EXPERT #CAT_File #EXT_csv,tsv,txt,log saves header information, with delimiter between columns
   void 			ExportData_strm(ostream& strm, Delimiters delim = COMMA,
 					bool quote_str = true, bool headers = true);
-  // #CAT_XpertFile #EXT_csv,tsv,txt,log exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)
+  // #EXPERT #CAT_File #EXT_csv,tsv,txt,log exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)
   
   void 			ExportData(const String& fname="", Delimiters delim = COMMA,
 			   bool quote_str = true, bool headers = true);
@@ -933,14 +933,14 @@ public:
   
   virtual bool		MatrixColToScalarsCol(DataCol* mtx_col,
 					      const String& scalar_col_name_stub="");
-  // #CAT_XpertColumns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #FROM_GROUP_data #LABEL_MatrixColToScalars convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
+  // #EXPERT #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #FROM_GROUP_data #LABEL_MatrixColToScalars convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
   virtual bool		MatrixColToScalars(Variant mtx_col,
 					   const String& scalar_col_name_stub="");
   // #CAT_Columns convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes
 
   virtual bool		MatrixColFmScalarsCol(DataCol* mtx_col,
 					      const String& scalar_col_name_stub="");
-  // #CAT_XpertColumns #MENU #FROM_GROUP_data #LABEL_MatrixColFmScalars convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
+  // #EXPERT #CAT_Columns #MENU #FROM_GROUP_data #LABEL_MatrixColFmScalars convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
   virtual bool		MatrixColFmScalars(Variant mtx_col, const String& scalar_col_name_stub="");
   // #CAT_Columns convert a sequence of scalar columns to a matrix column -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, all non-matrix numeric fields with same value type as the matrix column will be used -- matrix column must already exist and be configured properly
 
@@ -962,7 +962,7 @@ public:
     if(!quiet) TestWarning(!rval, "idx_err", "index out of range"); return rval; }
   // #IGNORE 
   virtual bool		RowInRangeNormalize(int& row);
-  // #CAT_XpertRows normalizes row (if -ve) and tests result in range 
+  // #EXPERT #CAT_Rows normalizes row (if -ve) and tests result in range 
   virtual void		AllocRows(int n);
   // #CAT_Rows allocate space for at least n rows
   virtual int		AddBlankRow();
@@ -1028,32 +1028,32 @@ public:
 
   const Variant 	GetValColName(const String& col_name, int row,
 				      bool quiet = false) const;
-  // #CAT_XpertAccess get data of scalar type, in Variant form (any data type, use for Programs), for given column name, row  -- quiet = fail quietly
+  // #EXPERT #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column name, row  -- quiet = fail quietly
   bool 			SetValColName(const Variant& val, const String& col_name, int row,
 				      bool quiet = false);
-  // #CAT_XpertModify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly
+  // #EXPERT #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   const Variant 	GetMatrixValColName(const String& col_name, int row,
 		    int d0, int d1=0, int d2=0, int d3=0, bool quiet = false) const;
-  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies -- quiet = fail quietly
+  // #EXPERT #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies -- quiet = fail quietly
   bool 			SetMatrixValColName(const Variant& val, const String& col_name,
 		    int row, int d0, int d1=0, int d2=0, int d3=0, bool quiet = false);
-  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful -- quiet = fail quietly
+  // #EXPERT #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   const Variant 	GetMatrixFlatValColName(const String& col_name, int row,
 						int cell, bool quiet = false) const;
-  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality) -- quiet = fail quietly
+  // #EXPERT #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality) -- quiet = fail quietly
   bool 			SetMatrixFlatValColName(const Variant& val, const String& col_name,
 						int row, int cell, bool quiet = false);
-  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality); returns 'true' if valid access and set is successful -- quiet = fail quietly
+  // #EXPERT #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and flat matrix cell index (flat index into elements of the matrix, regardless of dimensionality); returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   bool	 	InitValsColName(const Variant& init_val, const String& col_name);
-  // #CAT_XpertModify initialize all values in column of given name to given value
+  // #EXPERT #CAT_Modify initialize all values in column of given name to given value
   bool	 	InitValsToRowNoColName(const String& col_name);
-  // #CAT_XpertModify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
+  // #EXPERT #CAT_Modify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
 
   int 		FindValColName(const Variant& val, const String& col_name, int st_row = 0) const;
-  // #CAT_XpertAccess find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #EXPERT #CAT_Access find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
   int 		FindMultiValColName(int st_row, const Variant& val1, const String& col_name1,
 				    const Variant& val2=0, const String& col_name2="",
@@ -1061,56 +1061,56 @@ public:
 				    const Variant& val4=0, const String& col_name4="",
 				    const Variant& vall5=0, const String& col_name5="",
 				    const Variant& val6=0, const String& col_name6="") const;
-  // #CAT_XpertAccess find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #EXPERT #CAT_Access find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
   /////////////////////////////
   // column and row name versions:
 
   const Variant 	GetValColRowName(const String& col_name, const String& row_col_name,
 					 const Variant& row_value, bool quiet = false) const;
-  // #CAT_XpertAccess get data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name -- quiet = fail quietly
+  // #EXPERT #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name -- quiet = fail quietly
   bool 			SetValColRowName(const Variant& val, const String& col_name,
 					 const String& row_col_name, const Variant& row_value,
 					 bool quiet = false);
-  // #CAT_XpertModify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name; returns 'true' if valid access and set is successful -- quiet = fail quietly
+  // #EXPERT #CAT_Modify set data of scalar type, in Variant form (any data type, use for Programs), for given column name, and row by looking up row_value in column named row_col_name; returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   const Variant 	GetMatrixValColRowName(const String& col_name,
 				const String& row_col_name, const Variant& row_value,
 			       int d0, int d1=0, int d2=0, int d3=0, bool quiet = false) const;
-  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies -- quiet = fail quietly
+  // #EXPERT #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix dimension indicies -- quiet = fail quietly
   bool 			SetMatrixValColRowName(const Variant& val, const String& col_name,
 				    const String& row_col_name, const Variant& row_value,
 			       int d0, int d1=0, int d2=0, int d3=0, bool quiet = false);
-  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful -- quiet = fail quietly
+  // #EXPERT #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   const Variant 	GetMatrixFlatValColRowName(const String& col_name,
 				const String& row_col_name, const Variant& row_value,
 				    int cell, bool quiet = false) const;
-  // #CAT_XpertAccess get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix cell index (flat index into matrix cells) -- quiet = fail quietly
+  // #EXPERT #CAT_Access get data of matrix type, in Variant form (any data type, use for Programs), for given column name, row, and matrix cell index (flat index into matrix cells) -- quiet = fail quietly
   bool 			SetMatrixFlatValColRowName(const Variant& val, const String& col_name,
 				    const String& row_col_name, const Variant& row_value,
 				       int cell, bool quiet = false);
-  // #CAT_XpertModify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix cell index (flat index into matrix cells); returns 'true' if valid access and set is successful -- quiet = fail quietly
+  // #EXPERT #CAT_Modify set data of matrix type, in Variant form (any data type, use for Programs), for given column, row, and matrix cell index (flat index into matrix cells); returns 'true' if valid access and set is successful -- quiet = fail quietly
 
   /////////////////////////////
   // column pointer versions, just for the gui:
 
   bool	 	InitValsCol(DataCol* col, const Variant& init_val)
   { return col->InitVals(init_val); }
-  // #CAT_XpertModify #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals #FROM_GROUP_data initialize all values in given column to given value
+  // #EXPERT #CAT_Modify #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals #FROM_GROUP_data initialize all values in given column to given value
   bool	 	InitValsToRowNoCol(DataCol* col) 
   { return col->InitValsToRowNo(); }
   // #CAT_Columns #MENU #LABEL_InitValsToRowNo #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
   int 		FindValCol(DataCol* col, const Variant& val, int st_row = 0) const 
   { return col->FindVal(val, st_row); }
-  // #CAT_XpertAccess #MENU #FROM_GROUP_data #USE_RVAL find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #EXPERT #CAT_Access #MENU #FROM_GROUP_data #USE_RVAL find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
   int 		FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
 				const Variant& val2=0, DataCol* col2=NULL,
 				const Variant& val3=0, DataCol* col3=NULL,
 				const Variant& val4=0, DataCol* col4=NULL,
 				const Variant& vall5=0, DataCol* col5=NULL,
 				const Variant& val6=0, DataCol* col6=NULL) const;
-  // #CAT_XpertAccess #MENU #FROM_GROUP_data #USE_RVAL find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  // #EXPERT #CAT_Access #MENU #FROM_GROUP_data #USE_RVAL find row number for multiple values across different columns of scalar type, starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
 
 
   /////////////////////////////////////////////////////////
@@ -1120,78 +1120,78 @@ public:
   // Scalar
 
   const Variant 	GetValAsVar(Variant col, int row) const;
-  // #CAT_XpertAccess get data of scalar type, in Variant form, for given column, row
+  // #EXPERT #CAT_Access get data of scalar type, in Variant form, for given column, row
   bool 			SetValAsVar(const Variant& val, Variant col, int row);
-  // #CAT_XpertModify set data of scalar type, in Variant form, for given column, row; returns 'true' if valid access and set is successful
+  // #EXPERT #CAT_Modify set data of scalar type, in Variant form, for given column, row; returns 'true' if valid access and set is successful
   double 		GetValAsDouble(Variant col, int row);
-  // #CAT_XpertAccess get data of scalar type, in double form, for given col, row; if data is NULL, then 0 is returned
+  // #EXPERT #CAT_Access get data of scalar type, in double form, for given col, row; if data is NULL, then 0 is returned
   bool 			SetValAsDouble(double val, Variant col, int row);
-  // #CAT_XpertModify set data of scalar type, in double form, for given column, row; does nothing if no cell' 'true' if set
+  // #EXPERT #CAT_Modify set data of scalar type, in double form, for given column, row; does nothing if no cell' 'true' if set
   float 		GetValAsFloat(Variant col, int row);
-  // #CAT_XpertAccess get data of scalar type, in float form, for given col, row; if data is NULL, then 0 is returned
+  // #EXPERT #CAT_Access get data of scalar type, in float form, for given col, row; if data is NULL, then 0 is returned
   bool 			SetValAsFloat(float val, Variant col, int row);
-  // #CAT_XpertModify set data of scalar type, in float form, for given column, row; does nothing if no cell' 'true' if set
+  // #EXPERT #CAT_Modify set data of scalar type, in float form, for given column, row; does nothing if no cell' 'true' if set
   int 			GetValAsInt(Variant col, int row);
-  // #CAT_XpertAccess get data of scalar type, in int form, for given col, row; if data is NULL, then 0 is returned
+  // #EXPERT #CAT_Access get data of scalar type, in int form, for given col, row; if data is NULL, then 0 is returned
   bool 			SetValAsInt(int val, Variant col, int row);
-  // #CAT_XpertModify set data of scalar type, in int form, for given column, row; does nothing if no cell' 'true' if set
+  // #EXPERT #CAT_Modify set data of scalar type, in int form, for given column, row; does nothing if no cell' 'true' if set
   const String 		GetValAsString(Variant col, int row) const;
-  // #CAT_XpertAccess get data of scalar type, in String form, for given column, row; if data is NULL, then "n/a" is returned
+  // #EXPERT #CAT_Access get data of scalar type, in String form, for given column, row; if data is NULL, then "n/a" is returned
   bool 			SetValAsString(const String& val, Variant col, int row);
-  // #CAT_XpertModify set data of scalar type, in String form, for given column, row; does nothing if no cell; 'true if set
+  // #EXPERT #CAT_Modify set data of scalar type, in String form, for given column, row; does nothing if no cell; 'true if set
 
   ///////////////
   // Matrix, Flat Idx
 
   const Variant 	GetValAsVarM(Variant col, int row, int cell) const;
-  // #CAT_XpertAccess get data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix
+  // #EXPERT #CAT_Access get data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix
   bool 			SetValAsVarM(const Variant& val, Variant col, int row, int cell);
-  // #CAT_XpertModify set data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix; returns 'true' if valid access and set is successful
+  // #EXPERT #CAT_Modify set data of matrix type, in Variant form, for given column, row, and cell (flat index) in matrix; returns 'true' if valid access and set is successful
   double 		GetValAsDoubleM(Variant col, int row, int cell);
-  // #CAT_XpertAccess get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  // #EXPERT #CAT_Access get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool 			SetValAsDoubleM(double val, Variant col, int row, int cell);
-  // #CAT_XpertModify set data of matrix type, in double form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  // #EXPERT #CAT_Modify set data of matrix type, in double form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
   float 		GetValAsFloatM(Variant col, int row, int cell);
-  // #CAT_XpertAccess get data of matrix type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  // #EXPERT #CAT_Access get data of matrix type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool 			SetValAsFloatM(float val, Variant col, int row, int cell);
-  // #CAT_XpertModify set data of matrix type, in float form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  // #EXPERT #CAT_Modify set data of matrix type, in float form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
   int 			GetValAsIntM(Variant col, int row, int cell);
-  // #CAT_XpertAccess get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  // #EXPERT #CAT_Access get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool 			SetValAsIntM(int val, Variant col, int row, int cell);
-  // #CAT_XpertModify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  // #EXPERT #CAT_Modify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
   const String 		GetValAsStringM(Variant col, int row, int cell,
      bool na = true) const;
-  // #CAT_XpertAccess get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
+  // #EXPERT #CAT_Access get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
   bool 			SetValAsStringM(const String& val, Variant col, int row, int cell);
-  // #CAT_XpertModify set data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
+  // #EXPERT #CAT_Modify set data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
 
   ///////////////
   // Matrix, Dims
 
   const Variant 	GetValAsVarMDims(Variant col, int row,
 					 int d0, int d1=0, int d2=0, int d3=0) const;
-  // #CAT_XpertAccess get data of matrix type, in Variant form, for given column, row, and matrix dimension indicies
+  // #EXPERT #CAT_Access get data of matrix type, in Variant form, for given column, row, and matrix dimension indicies
   bool 			SetValAsVarMDims(const Variant& val, Variant col, int row, 
 					 int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_XpertModify set data of matrix type, in Variant form, for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
+  // #EXPERT #CAT_Modify set data of matrix type, in Variant form, for given column, row, and matrix dimension indicies; returns 'true' if valid access and set is successful
 
   double 		GetValAsDoubleMDims(Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_XpertAccess get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  // #EXPERT #CAT_Access get data of matrix type, in double form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool 			SetValAsDoubleMDims(double val, Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_XpertModify set data of matrix type, in double form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  // #EXPERT #CAT_Modify set data of matrix type, in double form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
   float 		GetValAsFloatMDims(Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_XpertAccess get data of matrix type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  // #EXPERT #CAT_Access get data of matrix type, in float form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool 			SetValAsFloatMDims(float val, Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_XpertModify set data of matrix type, in float form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  // #EXPERT #CAT_Modify set data of matrix type, in float form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
   int 			GetValAsIntMDims(Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_XpertAccess get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
+  // #EXPERT #CAT_Access get data of matrix type, in int form, for given col, row, and cell (flat index) in matrix; if data is NULL, then 0 is returned
   bool 			SetValAsIntMDims(int val, Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_XpertModify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
+  // #EXPERT #CAT_Modify set data of matrix type, in int form, for given column, row, and cell (flat index) in matrix; does nothing if no cell' 'true' if set
   const String 		GetValAsStringMDims(Variant col, int row, int d0, int d1=0, int d2=0, int d3=0,
      bool na = true) const;
-  // #CAT_XpertAccess get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
+  // #EXPERT #CAT_Access get data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; if data is NULL, then na="n/a" else "" is returned
   bool 			SetValAsStringMDims(const String& val, Variant col, int row, int d0, int d1=0, int d2=0, int d3=0);
-  // #CAT_XpertModify set data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
+  // #EXPERT #CAT_Modify set data of matrix type, in String form, for given column, row, and cell (flat index) in matrix; does nothing if no cell; 'true if set
 
   //////////////////////
   // 	Entire Matrix
@@ -1202,14 +1202,14 @@ public:
   // #CAT_Access get data of matrix type, in Matrix form (one frame), for given column, row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it -- quiet = fail quietly
   taMatrix*	 	GetValAsMatrixColRowName(const String& col_name,
 		const String& row_col_name, const Variant& row_value, bool quiet = false);
-  // #CAT_XpertAccess get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it -- quiet = fail quietly
+  // #EXPERT #CAT_Access get data of matrix type, in Matrix form (one frame), for given column name, and row by looking up row_value in column named row_col_name; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it -- quiet = fail quietly
   bool 			SetValAsMatrix(const taMatrix* val, Variant col, int row);
   // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set
   bool 			SetValAsMatrixColName(const taMatrix* val, const String& col_name,
 					      int row, bool quiet = false);
   // #CAT_Modify  set data of any type, in Variant form, for given column, row; does nothing if no cell; 'true' if set -- quiet = fail quietly
   taMatrix*	 	GetRangeAsMatrix(Variant col, int st_row, int n_rows);
-  // #CAT_XpertAccess get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
+  // #EXPERT #CAT_Access get data as a Matrix for a range of rows, for given column, st_row, and n_rows; row; Invalid/NULL if no cell; must do taBase::Ref(mat) and taBase::unRefDone(mat) on return value surrounding use of it; note: not const because you can write it
 
   ///////////////////////////////////////
   // sub-matrix reading and writing functions
@@ -1218,12 +1218,12 @@ public:
 		 const taMatrix* submat_src, taMatrix::RenderOp render_op = taMatrix::COPY,
 		 int off0=0, int off1=0, int off2=0,
 		 int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_XpertSubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: write to matrix cell in this table at given col, row from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  // #EXPERT #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: write to matrix cell in this table at given col, row from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
   virtual void	ReadToSubMatrix(Variant col, int row, 
 		taMatrix* submat_dest, taMatrix::RenderOp render_op = taMatrix::COPY, 
 		int off0=0, int off1=0, int off2=0,
 		int off3=0, int off4=0, int off5=0, int off6=0);
-  // #CAT_XpertSubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from matrix cell in this table at given col, row to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  // #EXPERT #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from matrix cell in this table at given col, row to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
 
   virtual void	WriteFmSubMatrixTable(Variant col, int row, 
 		      const DataTable* submat_src, Variant submat_src_col, int submat_src_row,
@@ -1299,7 +1299,7 @@ public:
 				    const String& col4 = "", bool ascending4 = true,
 				    const String& col5 = "", bool ascending5 = true,
 				    const String& col6 = "", bool ascending6 = true);
-  // #CAT_XpertDataProc sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
+  // #EXPERT #CAT_DataProc sort table according to selected columns of data: NOTE that this modifies this table and currently cannot be undone -- make a duplicate table first if you want to save the original data!
   virtual void		SortCol(DataCol* col1, bool ascending1 = true,
 				DataCol* col2 = NULL, bool ascending2 = true,
 				DataCol* col3 = NULL, bool ascending3 = true,
@@ -1318,7 +1318,7 @@ public:
   virtual String	ColStatsCol(DataCol* col);
   // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_ColStats #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
   virtual String	ColStatsName(const String& col_name);
-  // #CAT_XpertDataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  // #EXPERT #CAT_DataProc compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   /////////////////////////////////////////////////////////
   // misc funs
@@ -1357,9 +1357,9 @@ public:
   virtual bool	CopyCell(Variant dest_col, int dest_row, const DataTable& src, Variant src_col, int src_row);
   // #CAT_Copy copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful) -- column can be specified as either integer index or a string that is then used to find the given column name
   virtual bool	CopyColRow(int dest_col, int dest_row, const DataTable& src, int src_col, int src_row) { return CopyCell(dest_col, dest_row, src, src_col, src_row); }
-  // #CAT_XpertObsolete this is an obsolete name for CopyCell -- use CopyCell instead
+  // #EXPERT #CAT_Obsolete this is an obsolete name for CopyCell -- use CopyCell instead
   bool		CopyCellName(const String& dest_col_name, int dest_row, const DataTable& src, const String& src_col_name, int src_row);
-  // #CAT_XpertCopy copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful)
+  // #EXPERT #CAT_Copy copy one cell (indexed by column, row) from source to this data table in given col,row cell -- is robust to differences in type and matrix sizing (returns false if not successful)
 
   virtual void	UniqueColNames();
   // #CAT_ObjectMgmt ensure that the column names are all unique (adds _n for repeats)

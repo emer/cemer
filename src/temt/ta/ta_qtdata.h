@@ -1069,9 +1069,10 @@ protected:
 
   void                  showEvent(QShowEvent* event); //override
 
-  void                  ApplyFiltering();
+  int                   ApplyFiltering();
   virtual void          Refresh();      // rebuild current view
   bool                  SetCurrentItemByData(void* value);
+  bool                  SetInitView(void* sel_val, const String& filt_str);
   bool                  ShowItem(const QTreeWidgetItem* item) const;
   virtual void          Constr(taiItemPtrBase* client_);
    // does constr, called in static, so can extend
@@ -1184,7 +1185,7 @@ public:
   inline MemberDef*     md() const {return (MemberDef*)m_sel;}
   int                   columnCount(int view) const; // override
   const String          headerText(int index, int view) const; // override
-  int                   viewCount() const {return 1;} // override
+  int                   viewCount() const {return 2;} // override
   const String          viewText(int index) const; // override
 
   USING(inherited::GetImage)
@@ -1206,6 +1207,7 @@ protected:
 
   override void         BuildCategories_impl();
   void                  BuildChooser_0(taiItemChooser* ic);
+  void                  BuildChooser_1(taiItemChooser* ic);
 };
 
 
@@ -1216,7 +1218,7 @@ public:
   inline MethodDef*     md() const {return (MethodDef*)m_sel;}
   int                   columnCount(int view) const; // override
   const String          headerText(int index, int view) const; // override
-  int                   viewCount() const {return 2;} // override
+  int                   viewCount() const {return 3;} // override
   const String          viewText(int index) const; // override
 
   USING(inherited::GetImage)
@@ -1238,6 +1240,7 @@ protected:
   void                  BuildChooser_0(taiItemChooser* ic);
   int                   BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
     QTreeWidgetItem* top_item); // we use this recursively
+  void                  BuildChooser_2(taiItemChooser* ic);
 
   virtual bool          ShowMethod(MethodDef* mth);
 };
@@ -1251,7 +1254,7 @@ public:
 
   int                   columnCount(int view) const; // override
   const String          headerText(int index, int view) const; // override
-  int                   viewCount() const {return 3;} // override
+  int                   viewCount() const {return 4;} // override
   const String          viewText(int index) const; // override
 
   USING(inherited::GetImage)
@@ -1276,6 +1279,7 @@ protected:
   void                  BuildChooser_0(taiItemChooser* ic); // all
   void                  BuildChooser_1(taiItemChooser* ic); // just mbr
   void                  BuildChooser_2(taiItemChooser* ic); // just mth
+  void                  BuildChooser_3(taiItemChooser* ic); // expert
 };
 
 
@@ -1287,7 +1291,7 @@ public:
 
   int                   columnCount(int view) const; // override
   const String          headerText(int index, int view) const; // override
-  int                   viewCount() const {return 4;} // override
+  int                   viewCount() const {return 5;} // override
   const String          viewText(int index) const; // override
 
   USING(inherited::GetImage)
@@ -1314,6 +1318,7 @@ protected:
   void                  BuildChooser_1(taiItemChooser* ic); // just enum
   void                  BuildChooser_2(taiItemChooser* ic); // just static mbr
   void                  BuildChooser_3(taiItemChooser* ic); // just static meth
+  void                  BuildChooser_4(taiItemChooser* ic); // all expert
 };
 
 

@@ -1237,11 +1237,20 @@ const String ProgVar::GenCssInitVal() const {
     return "\"" + string_val + "\"";
   case T_Bool:
     return bool_val;
-  case T_Object:
-    if(object_val)
+  case T_Object: {
+    if(object_val) {
       return object_val->GetPath();
-    else
-      return "NULL";
+    }
+    else {
+      if(object_type && HasVarFlag(NEW_OBJ)) {
+	return "new " + object_type->name;
+      }
+      else {
+	return "NULL";
+      }
+    }
+    break;
+  }
   case T_HardEnum:
     if(hard_enum_type)
       return hard_enum_type->Get_C_EnumString(int_val);

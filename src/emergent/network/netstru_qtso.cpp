@@ -421,8 +421,9 @@ void UnitGroupView::UpdateAutoScale(bool& updated) {
           nv->scale.SetMinMax(val, val);
           updated = true;
         }
-        else
+        else {
           nv->scale.UpdateMinMax(val);
+	}
       }
     }
   }
@@ -2320,7 +2321,7 @@ void NetView::Initialize() {
   hist_max = 100;
   hist_ff = 5;
 
-  unit_sr = NULL;
+  unit_scrng = NULL;
   unit_md_flags = MD_UNKNOWN;
   unit_disp_mode = UDM_BLOCK;
   unit_text_disp = UTD_NONE;
@@ -2850,9 +2851,10 @@ void NetView::InitDisplay(bool init_panel) {
     if (cur_unit_vals.size > 0) {
       md = membs.FindName(cur_unit_vals[0]);
     }
-    if (md) {
+    if(md) {
       setUnitDispMd(md);
-    } else {// default
+    }
+    else { // default
       SelectVar("act", false, false);
     }
   }
@@ -3460,17 +3462,18 @@ void NetView::SetScaleData(bool auto_scale_, float min_, float max_, bool update
   scale.auto_scale = auto_scale_;
   if (!auto_scale_)
     scale.SetMinMax(min_, max_);
-  if (unit_sr) {
-    unit_sr->SetFromScale(scale);
+  if (unit_scrng) {
+    unit_scrng->SetFromScale(scale);
   }
   if (update_panel) UpdatePanel();
 }
 
 void NetView::SetScaleDefault() {
-  if (unit_sr)  {
-    InitScaleRange(*unit_sr);
-    unit_sr->SetFromScaleRange(scale);
-  } else {
+  if (unit_scrng) {
+    InitScaleRange(*unit_scrng);
+    unit_scrng->SetFromScaleRange(scale);
+  }
+  else {
     scale.auto_scale = false;
     scale.SetMinMax(-1.0f, 1.0f);
   }
@@ -3505,10 +3508,10 @@ void NetView::setUnitDisp(int value) {
 }
 
 void NetView::setUnitDispMd(MemberDef* md) {
-  if (md == unit_disp_md) return;
+  if(md == unit_disp_md) return;
   unit_disp_md = md;
   unit_disp_idx = membs.FindEl(md);
-  unit_sr = NULL;
+  unit_scrng = NULL;
   unit_md_flags = MD_UNKNOWN;
   unit_con_md = false;
   if (!unit_disp_md) return;
@@ -3522,15 +3525,14 @@ void NetView::setUnitDispMd(MemberDef* md) {
   }
   if(unit_disp_md->name.startsWith("r.") || md->name.startsWith("s."))
     unit_con_md = true;
-
   String nm = unit_disp_md->name;
-  unit_sr = scale_ranges.FindName(nm);
-  if (unit_sr == NULL) {
-    unit_sr = (ScaleRange*)(scale_ranges.New(1,&TA_ScaleRange));
-    unit_sr->var_name = nm;
-    InitScaleRange(*unit_sr);
+  unit_scrng = scale_ranges.FindName(nm);
+  if (unit_scrng == NULL) {
+    unit_scrng = (ScaleRange*)(scale_ranges.New(1,&TA_ScaleRange));
+    unit_scrng->var_name = nm;
+    InitScaleRange(*unit_scrng);
   }
-  unit_sr->SetFromScaleRange(scale);
+  unit_scrng->SetFromScaleRange(scale);
 }
 
 void NetView::UpdateViewerModeForMd(MemberDef* md) {
@@ -3590,8 +3592,9 @@ void NetView::UpdateAutoScale() {
   }
   if (updated) { //note: could really only not be updated if there were no items
     scale.SymRange();           // keep it symmetric
-    if (unit_sr)
-      unit_sr->SetFromScale(scale); // update values
+    if (unit_scrng) {
+      unit_scrng->SetFromScale(scale); // update values
+    }
     if (nvp) {
       nvp->ColorScaleFromData();
     }
@@ -3610,6 +3613,12 @@ void NetView::UpdateUnitValues() { // *actually* only does unit value updating
   if(children.size == 0) return;
   if(hist_save)
     SaveCtrHist();
+  if (scale.auto_scale) {
+    UpdateAutoScale();
+    if (nvp) {
+      nvp->ColorScaleFromData();
+    }
+  }
 //   taMisc::Info("UpdateUnitValues");
   LayerGroupView* lv = (LayerGroupView*)children.FastEl(0);
   lv->UpdateUnitValues();
@@ -4283,7 +4292,8 @@ void NetViewPanel::ColorScaleFromData() {
 
   ++updating;
   cbar->UpdateScaleValues();
-  chkAutoScale->setChecked(nv_->scale.auto_scale); //note: raises signal on widget! (grr...)
+  if(chkAutoScale->isChecked() != nv_->scale.auto_scale)
+    chkAutoScale->setChecked(nv_->scale.auto_scale); //note: raises signal on widget! (grr...)
   --updating;
 }
 

@@ -422,6 +422,9 @@ void ScaleBar::UpdatePads(){
 }
 
 void ScaleBar::Init(bool hor_, bool adj, bool ed){
+  cur_minmax_set = false;
+  cur_min = -1.01f;
+  cur_max = -0.99f;
   hor = hor_;
   adjustflag = adj;
   editflag = ed;
@@ -688,13 +691,13 @@ void ScaleBar::SetRoundRange(float val){
   UpdateScaleValues();
 }
 
-/*void ScaleBar::UpdateMinMax(float mn, float mx) {
-  if(mn < min) min = mn;
-  if(mx > max) max = mx;
-  FixRangeZero();
-} */
+void ScaleBar::UpdateScaleValues() {
+  if(cur_minmax_set && min() == cur_min && max() == cur_max)
+    return;
+  cur_minmax_set = true;
+  cur_min = min();
+  cur_max = max();
 
-void ScaleBar::UpdateScaleValues(){
   String min_str(min(), "%5.3f");
   String max_str(max(), "%5.3f");
 

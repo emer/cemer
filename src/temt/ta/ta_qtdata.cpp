@@ -3033,7 +3033,37 @@ QTreeWidgetItem* taiItemChooser::AddItem(const QString& itm_txt, QTreeWidgetItem
   return rval;
 }
 
-void taiItemChooser::ApplyFiltering() {
+bool taiItemChooser::SetInitView(void* sel_val, const String& filt_str) {
+  if(sel_val == NULL && filt_str.empty()) {
+    setView(0, true);		// nothing..
+    return false;
+  }
+  else if(filt_str.nonempty()) {
+    last_filter = init_filter.chars();
+    for(int vw = 0; vw < m_client->viewCount(); vw++) {
+      setView(vw, true);
+//       taMisc::ProcessEvents();
+      int n_items = ApplyFiltering();
+      if(n_items > 0) {
+	return true;		// stop when get any hits
+      }
+    }
+  }
+  else if(sel_val != NULL) {
+    for(int vw = 0; vw < m_client->viewCount(); vw++) {
+      setView(vw, true);
+//       taMisc::ProcessEvents();
+      if(SetCurrentItemByData(sel_val)) {
+	return true;		// stop when get any hits
+      }
+    }
+  }
+  setView(0, true);		// go back to start..
+  ApplyFiltering();
+  return false;
+}
+
+int taiItemChooser::ApplyFiltering() {
   ++m_changing;
   taMisc::Busy();
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::All);
@@ -3055,23 +3085,20 @@ void taiItemChooser::ApplyFiltering() {
   if(first_item)
     items->setCurrentItem(first_item); // auto-select first item always
   --m_changing;
+  return n_items;
 }
 
 bool taiItemChooser::Choose(taiItemPtrBase* client_) {
-//NOTE: current semantics is simple: always rebuild each show
-// more complex caching would require flags etc. to track whether the
-// inputs to the item changed -- cpus are so fast now, this may not be worth it
+  // NOTE: current semantics is simple: always rebuild each show
+  // more complex caching would require flags etc. to track whether the
+  // inputs to the item changed -- cpus are so fast now, this may not be worth it
   m_client = client_;
   if(client_->filter_start_txt.nonempty())
     init_filter = String("^") + client_->filter_start_txt;
   else
     init_filter = "^";
-  if (view() < 0) {
-    setView(0); // triggers build, and sets sel
-  } else {
-    Refresh(); // input data could have changed since last view
-    setSelObj(m_client->sel());
-  }
+  SetInitView(m_client->sel(), client_->filter_start_txt);
+  setSelObj(m_client->sel());
   return (exec() == iDialog::Accepted);
 }
 
@@ -3233,7 +3260,6 @@ void taiItemChooser::Refresh() {
         }
       }
     }
-    setSelObj(tsel, true);
   }
   --m_changing;
 }
@@ -3252,7 +3278,6 @@ void taiItemChooser::setCatFilter(int value, bool force) {
 }
 
 bool taiItemChooser::SetCurrentItemByData(void* value) {
-  // note: assumes at most 1 selectable item for NULL
   QTreeWidgetItemIterator it(items, QTreeWidgetItemIterator::Selectable);
   QTreeWidgetItem* item;
   while ((item = *it)) {
@@ -3342,6 +3367,7 @@ void taiItemChooser::setSelObj(void* value, bool force) {
 void taiItemChooser::setView(int value, bool force) {
   if ((m_view == value) && !force) return;
   m_view = value; //so its valid for any subcalls, etc.
+  cmbView->setCurrentIndex(value);
   Refresh();
   QString text = filter->text();
   if (!text.isEmpty()) SetFilter(text);
@@ -3598,6 +3624,10 @@ void taiMemberDefButton::BuildChooser(taiItemChooser* ic, int view) {
     BuildChooser_0(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
     break;
+  case 1:
+    BuildChooser_1(ic);
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break;
   default: break; // shouldn't happen
   }
 }
@@ -3614,20 +3644,32 @@ void taiMemberDefButton::BuildChooser_0(taiItemChooser* ic) {
   }
 }
 
+void taiMemberDefButton::BuildChooser_1(taiItemChooser* ic) {
+  MemberSpace* mbs = &targ_typ->members;
+  String cat;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+    if(!mbr->HasOption("EXPERT")) continue;
+    cat = mbr->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name, NULL, (void*)mbr);
+    item->setData(1, Qt::DisplayRole, mbr->desc);
+  }
+}
 
 int taiMemberDefButton::columnCount(int view) const {
-  switch (view) {
-  case 0: return 2;
-  default: return 0; // not supposed to happen
-  }
+  return 2;                     // always 2
 }
 
 const String taiMemberDefButton::headerText(int index, int view) const {
   switch (view) {
-  case 0: switch (index) {
+  case 1:
+  case 0: {
+    switch (index) {
     case 0: return "Member";
     case 1: return "Description";
-    } break;
+    }
+    break;
+  }
   default: break; // compiler food
   }
   return _nilString; // shouldn't happen
@@ -3648,7 +3690,8 @@ bool taiMemberDefButton::ShowMember(MemberDef* mbr) {
 
 const String taiMemberDefButton::viewText(int index) const {
   switch (index) {
-  case 0: return "Flat List";
+  case 0: return "Members";
+  case 1: return "Expert";
   default: return _nilString;
   }
 }
@@ -3701,6 +3744,10 @@ void taiMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
     ic->items->sortItems(1, Qt::AscendingOrder); // so items aren't sorted by 0
     BuildChooser_1(ic, targ_typ, NULL);
     ic->items->sortItems(1, Qt::AscendingOrder);
+    break;
+  case 2:
+    BuildChooser_2(ic);
+    ic->items->sortItems(0, Qt::AscendingOrder);
     break;
   default: break; // shouldn't happen
   }
@@ -3755,8 +3802,22 @@ int taiMethodDefButton::BuildChooser_1(taiItemChooser* ic, TypeDef* top_typ,
   return rval;
 }
 
+void taiMethodDefButton::BuildChooser_2(taiItemChooser* ic) {
+  MethodSpace* mbs = &targ_typ->methods;
+  String cat;
+  for (int i = 0; i < mbs->size; ++i) {
+    MethodDef* mth = mbs->FastEl(i);
+    if(!mth->HasOption("EXPERT")) continue;
+    cat = mth->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name, NULL, (void*)mth);
+    item->setData(0, Qt::ToolTipRole, mth->prototype());
+    item->setData(1, Qt::DisplayRole, mth->desc);
+  }
+}
+
 int taiMethodDefButton::columnCount(int view) const {
   switch (view) {
+  case 2:
   case 0: return 2;
   case 1: return 3;
   default: return 0; // not supposed to happen
@@ -3765,15 +3826,22 @@ int taiMethodDefButton::columnCount(int view) const {
 
 const String taiMethodDefButton::headerText(int index, int view) const {
   switch (view) {
-  case 0: switch (index) {
+  case 2:
+  case 0: {
+    switch (index) {
     case 0: return "Method";
     case 1: return "Description";
-    } break;
-  case 1: switch (index) {
+    }
+    break;
+  }
+  case 1: {
+    switch (index) {
     case 0: return "Class";
     case 1: return "Method";
     case 2: return "Description";
-    } break;
+    }
+    break;
+  }
   default: break; // compiler food
   }
   return _nilString; // shouldn't happen
@@ -3791,6 +3859,7 @@ const String taiMethodDefButton::viewText(int index) const {
   switch (index) {
   case 0: return "Flat List";
   case 1: return "Grouped By Class";
+  case 2: return "Expert";
   default: return _nilString;
   }
 }
@@ -3863,6 +3932,10 @@ void taiMemberMethodDefButton::BuildChooser(taiItemChooser* ic, int view) {
     BuildChooser_2(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
     break;
+  case 3:
+    BuildChooser_3(ic);
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break;
   default: break; // shouldn't happen
   }
 }
@@ -3914,6 +3987,28 @@ void taiMemberMethodDefButton::BuildChooser_2(taiItemChooser* ic) {
   }
 }
 
+void taiMemberMethodDefButton::BuildChooser_3(taiItemChooser* ic) {
+  String cat;
+  MemberSpace* mbs = &targ_typ->members;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+    if(!mbr->HasOption("EXPERT")) continue;
+    cat = "member: " + mbr->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr);
+    item->setData(1, Qt::DisplayRole, mbr->desc);
+  }
+
+  MethodSpace* mts = &targ_typ->methods;
+  for (int i = 0; i < mts->size; ++i) {
+    MethodDef* mth = mts->FastEl(i);
+    if(!mth->HasOption("EXPERT")) continue;
+    cat = "method: " + mth->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth);
+    item->setData(0, Qt::ToolTipRole, mth->prototype());
+    item->setData(1, Qt::DisplayRole, mth->desc);
+  }
+}
+
 
 int taiMemberMethodDefButton::columnCount(int view) const {
   return 2;                     // always 2
@@ -3926,6 +4021,7 @@ const String taiMemberMethodDefButton::headerText(int index, int view) const {
     case 0: return "Member/Method";
     case 1: return "Member";
     case 2: return "Method";
+    case 3: return "Member/Method";
     default: break; // compiler food
     }
   }
@@ -3953,6 +4049,7 @@ const String taiMemberMethodDefButton::viewText(int index) const {
   case 0: return "Members & Methods";
   case 1: return "Members";
   case 2: return "Methods";
+  case 3: return "Expert Items";
   default: return _nilString;
   }
 }
@@ -4031,6 +4128,10 @@ void taiEnumStaticButton::BuildChooser(taiItemChooser* ic, int view) {
     break;
   case 3:
     BuildChooser_3(ic);
+    ic->items->sortItems(0, Qt::AscendingOrder);
+    break;
+  case 4:
+    BuildChooser_4(ic);
     ic->items->sortItems(0, Qt::AscendingOrder);
     break;
   default: break; // shouldn't happen
@@ -4113,6 +4214,41 @@ void taiEnumStaticButton::BuildChooser_3(taiItemChooser* ic) {
   }
 }
 
+void taiEnumStaticButton::BuildChooser_4(taiItemChooser* ic) {
+  String cat;
+  cat = "Enum";
+  for(int i=0; i < targ_typ->sub_types.size; i++) {
+    TypeDef* td = targ_typ->sub_types.FastEl(i);
+    if(td->InheritsFormal(TA_enum)) {
+      for(int j=0;j< td->enum_vals.size; j++) {
+        EnumDef* ed = td->enum_vals.FastEl(j);
+	if(!ed->HasOption("EXPERT")) continue;
+        QTreeWidgetItem* item = ic->AddItem(cat, ed->name + " (enum)", NULL, (void*)ed);
+        item->setData(1, Qt::DisplayRole, ed->desc);
+      }
+    }
+  }
+
+  MemberSpace* mbs = &targ_typ->members;
+  for (int i = 0; i < mbs->size; ++i) {
+    MemberDef* mbr = mbs->FastEl(i);
+    if(!mbr->HasOption("EXPERT")) continue;
+    cat = "member: " + mbr->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mbr->name + " (member)", NULL, (void*)mbr);
+    item->setData(1, Qt::DisplayRole, mbr->desc);
+  }
+
+  MethodSpace* mts = &targ_typ->methods;
+  for (int i = 0; i < mts->size; ++i) {
+    MethodDef* mth = mts->FastEl(i);
+    if(!mth->HasOption("EXPERT")) continue;
+    cat = "method: " + mth->OptionAfter("CAT_");
+    QTreeWidgetItem* item = ic->AddItem(cat, mth->name + " (method)", NULL, (void*)mth);
+    item->setData(0, Qt::ToolTipRole, mth->prototype());
+    item->setData(1, Qt::DisplayRole, mth->desc);
+  }
+}
+
 
 int taiEnumStaticButton::columnCount(int view) const {
   return 2;                     // always 2
@@ -4126,6 +4262,7 @@ const String taiEnumStaticButton::headerText(int index, int view) const {
     case 1: return "Enum";
     case 2: return "Static Member";
     case 3: return "Static Method";
+    case 4: return "Item";
     default: break; // compiler food
     }
   }
@@ -4159,6 +4296,7 @@ const String taiEnumStaticButton::viewText(int index) const {
   case 1: return "Enums";
   case 2: return "Static Members";
   case 3: return "Static Methods";
+  case 4: return "Expert Items";
   default: return _nilString;
   }
 }

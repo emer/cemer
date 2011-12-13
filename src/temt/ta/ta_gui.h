@@ -249,35 +249,35 @@ public:
   virtual bool	AddIntField(int* iptr, const String& nm,
 			    const String& parent, const String& layout = _nilString,
 			    const String& attributes = _nilString);
-  // #CAT_XpertWidget add an integer value edit field -- attributes are:
+  // #EXPERT #CAT_Widget add an integer value edit field -- attributes are:
   virtual bool	AddDoubleField(double* dptr, const String& nm,
 			    const String& parent, const String& layout = _nilString,
 			    const String& attributes = _nilString);
-  // #CAT_XpertWidget add a double-precision floating point value edit field -- attributes are:
+  // #EXPERT #CAT_Widget add a double-precision floating point value edit field -- attributes are:
   virtual bool	AddFloatField(float* fptr, const String& nm,
 			    const String& parent, const String& layout = _nilString,
 			    const String& attributes = _nilString);
-  // #CAT_XpertWidget add a floating point value edit field -- attributes are:
+  // #EXPERT #CAT_Widget add a floating point value edit field -- attributes are:
   virtual bool	AddStringField(String* sptr, const String& nm,
 			    const String& parent, const String& layout = _nilString,
 			    const String& attributes = _nilString);
-  // #CAT_XpertWidget add a string value edit field -- attributes are:
+  // #EXPERT #CAT_Widget add a string value edit field -- attributes are:
   virtual bool	AddBoolCheckbox(bool* bptr, const String& nm,
 			    const String& parent, const String& layout = _nilString,
 			    const String& attributes = _nilString);
-  // #CAT_XpertWidget add a bool checkbox -- attributes are:
+  // #EXPERT #CAT_Widget add a bool checkbox -- attributes are:
   virtual bool	AddObjectPtr(taBaseRef* obj, TypeDef* td, const String& nm,
 			    const String& parent, const String& layout = _nilString,
 			    const String& attributes = _nilString);
-  // #CAT_XpertWidget add an object (taBase) pointer button -- attributes are:
+  // #EXPERT #CAT_Widget add an object (taBase) pointer button -- attributes are:
   virtual bool	AddHardEnum(int* iptr, TypeDef* enum_td, const String& nm,
 			    const String& parent, const String& layout = _nilString,
 			    const String& attributes = _nilString);
-  // #CAT_XpertWidget add a hard enum combo-box chooser -- attributes are:
+  // #EXPERT #CAT_Widget add a hard enum combo-box chooser -- attributes are:
   virtual bool	AddDynEnum(DynEnum* deptr, const String& nm,
 			    const String& parent, const String& layout = _nilString,
 			    const String& attributes = _nilString);
-  // #CAT_XpertWidget add a dynamic enum item -- attributes are:
+  // #EXPERT #CAT_Widget add a dynamic enum item -- attributes are:
   virtual bool	AddProgVar(ProgVar& pvar, const String& nm,
 			   const String& parent, const String& layout = _nilString,
 			   const String& attributes = _nilString);

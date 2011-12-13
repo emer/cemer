@@ -502,7 +502,7 @@ public:
   int			hist_ff;	// #MIN_2 how many steps to take in the fast forward/ fast backward interface
   bool			hist_reset_req; // #NO_SAVE #NO_COPY #READ_ONLY reset of history index position requested because of data reset in one or more of the unit groups
 
-  ScaleRange*		unit_sr; 	// #NO_SAVE #NO_COPY #READ_ONLY scalerange of disp_md
+  ScaleRange*		unit_scrng; 	// #NO_SAVE #NO_COPY #READ_ONLY scalerange of disp_md
   MDFlags		unit_md_flags;  // #NO_SAVE #READ_ONLY type to display in units
   UnitDisplayMode	unit_disp_mode; // how to display unit values
   UnitTextDisplay	unit_text_disp; // what labels to display with units

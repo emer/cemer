@@ -1339,14 +1339,14 @@ public:
 
   Unit*         UnitAtCoord(const TwoDCoord& coord)
   { return UnitAtCoord(coord.x,coord.y); }
-  // #CAT_XpertStructure returns unit at given coordinates within unit group
+  // #EXPERT #CAT_Structure returns unit at given coordinates within unit group
   Unit*         UnitAtCoord(int x, int y);
-  // #CAT_XpertStructure get unit from given set of x and y coordinates within this group
+  // #EXPERT #CAT_Structure get unit from given set of x and y coordinates within this group
   TwoDCoord     GpLogPos();
-  // #CAT_XpertStructure returns unit group *logical* position in terms of layer unit group geometry gp_geom -- computed from idx -- only for subgroups
+  // #EXPERT #CAT_Structure returns unit group *logical* position in terms of layer unit group geometry gp_geom -- computed from idx -- only for subgroups
 
   void          GetAbsPos(TDCoord& abs_pos) { abs_pos = pos; AddRelPos(abs_pos); }
-  // #CAT_XpertStructure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
+  // #EXPERT #CAT_Structure get absolute pos, which factors in offsets from Unit_Groups, Layer, and Layer_Groups
   void          AddRelPos(TDCoord& rel_pos);
   // #IGNORE add relative pos, which factors in offsets from above
 
@@ -1653,9 +1653,9 @@ public:
 
   Unit_Group*   UnitGpAtCoord(const TwoDCoord& coord) const
   { return UnitGpAtCoord(coord.x,coord.y); }
-  // #CAT_XpertAccess get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
+  // #EXPERT #CAT_Access get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
   Unit_Group*   UnitGpAtCoord(int gp_x, int gp_y) const;
-  // #CAT_XpertAccess get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
+  // #EXPERT #CAT_Access get unit group at logical group coordinates (i.e., within gp_geom) -- note that if virt_groups is on, then there are no unit subgroups -- better to use UnitAtGpCoord to access units directly at the unit level
 
   void          UnitLogPos(Unit* un, TwoDCoord& upos) const
   { UnitLogPos(un, upos.x, upos.y); }
@@ -1779,19 +1779,19 @@ public:
   virtual void  RemoveUnitGroups();
   // #MENU #DYN1 #CAT_Structure remove all unit groups in this layer
   virtual void  PreConnect();
-  // #CAT_XpertStructure prepare to connect the layer (create con_groups)
+  // #EXPERT #CAT_Structure prepare to connect the layer (create con_groups)
   virtual void  SyncSendPrjns();
-  // #CAT_XpertStructure synchronize sending projections with the recv projections so everyone's happy
+  // #EXPERT #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
   virtual void  UpdateSendPrjnNames();
-  // #CAT_XpertStructure update sending prjn names to reflect any name change that might have occured with this layer
+  // #EXPERT #CAT_Structure update sending prjn names to reflect any name change that might have occured with this layer
   virtual void  RecvConsPreAlloc(int alloc_no, Projection* prjn);
-  // #CAT_XpertStructure allocate given number of recv connections for all units in layer, for given projection
+  // #EXPERT #CAT_Structure allocate given number of recv connections for all units in layer, for given projection
   virtual void  SendConsPreAlloc(int alloc_no, Projection* prjn);
-  // #CAT_XpertStructure allocate given number of send connections for all units in layer, for given projection
+  // #EXPERT #CAT_Structure allocate given number of send connections for all units in layer, for given projection
   virtual void  SendConsPostAlloc(Projection* prjn);
-  // #CAT_XpertStructure allocate sending connections based on those allocated previously
+  // #EXPERT #CAT_Structure allocate sending connections based on those allocated previously
   virtual void  RecvConsPostAlloc(Projection* prjn);
-  // #CAT_XpertStructure allocate recv connections based on those allocated previously
+  // #EXPERT #CAT_Structure allocate recv connections based on those allocated previously
   virtual void  LinkPtrCons();
   // #IGNORE link pointer connections from the corresponding owned connections -- only needed after a Copy
   virtual void  DisConnect();
@@ -1842,9 +1842,9 @@ public:
   //    The following are misc functionality not required for primary computing
 
   virtual void  PropagateInputDistance();
-  // #CAT_XpertStructure propagate my input distance (dist.fm_input) to layers I send to
+  // #EXPERT #CAT_Structure propagate my input distance (dist.fm_input) to layers I send to
   virtual void  PropagateOutputDistance();
-  // #CAT_XpertStructure propagate my output distance (dist.fm_output) to layers I receive from
+  // #EXPERT #CAT_Structure propagate my output distance (dist.fm_output) to layers I receive from
   virtual void  Compute_PrjnDirections();
   // #CAT_Structure compute the directions of projections based on the relative distances from input/output layers
 
@@ -1855,7 +1855,7 @@ public:
   virtual bool  GetUnitNames(bool force_use_unit_names = true);
   // #MENU #CAT_Structure get unit_names matrix values from current unit name values -- also ensures unit_names fits geometry of layer -- if force_use_unit_names is true, then unit_names will be configured to save values it is not already
   virtual void  GetLocalistName();
-  // #CAT_XpertStructure look for a receiving projection from a single unit, which has a name: if found, set our unit name to that name (also sets unit_names)
+  // #EXPERT #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our unit name to that name (also sets unit_names)
 
   virtual void  TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights

@@ -116,17 +116,17 @@ public:
   virtual DBOptions	dbOptions() const = 0; // #CAT_Access options the instance type support
   
   inline bool		isIndexable() const {return (dbOptions() & DB_INDEXABLE);} 
-  // #CAT_XpertAccess true if can be accessed by index
+  // #EXPERT #CAT_Access true if can be accessed by index
   inline bool		isSequencable() const {return (dbOptions() & DB_SEQUENCABLE);} 
-  // #CAT_XpertAccess true if can be accessed sequentially
+  // #EXPERT #CAT_Access true if can be accessed sequentially
   inline bool		isSource() const {return (dbOptions() & DB_SOURCE);} 
-  // #CAT_XpertAccess true if is a data source
+  // #EXPERT #CAT_Access true if is a data source
   inline bool		isSink() const {return (dbOptions() & DB_SINK);} 
-  // #CAT_XpertAccess true if is a data sink
+  // #EXPERT #CAT_Access true if is a data sink
   inline bool		isSinkGrowable() const {return (dbOptions() & DB_SINK_GROWABLE);} 
-  // #CAT_XpertAccess true if sink is growable (via AddItem)
+  // #EXPERT #CAT_Access true if sink is growable (via AddItem)
   inline bool		isSinkDynamic() const {return (dbOptions() & DB_SINK_DYNAMIC);} 
-  // #CAT_XpertAccess true if sink schema can be modified
+  // #EXPERT #CAT_Access true if sink schema can be modified
   
   virtual int		ItemCount() const {return 0;} 
   // #CAT_Access number of items (if indexable)

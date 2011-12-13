@@ -5862,6 +5862,7 @@ void iDataTableEditor::ConfigView() {
   if (dt->rows == 0) {
     setCellMat(NULL, QModelIndex());
   }
+  tvTable->setCurrentIndex(QModelIndex());
 }
 
 
@@ -5986,7 +5987,7 @@ void iDataTableEditor::tvTable_dataChanged(const QModelIndex& topLeft,
 }
 
 void iDataTableEditor::UpdateSelectedItems_impl() {
-  //note: not needed
+  taMisc::Info("updt sel itms");
 }
 
 
