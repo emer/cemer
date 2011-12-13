@@ -2522,6 +2522,10 @@ public:
   String        GetHTMLSubType(bool gendoc=false, bool short_fmt=false) const;
   // gets an HTML representation of a sub type (typdef or enum) -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
+  String        GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx,
+		const String& label_prefix, const String& link_prefix, bool gendoc=false) const;
+  // render the members and methods for given lists of items -- can pre-filter the lists and render them separately (e.g., to separate regular from EXPERT items)
+
   void          GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
                         MemberDef* memb_def=NULL, const void* par=NULL, TypeDef* par_typ=NULL,
                         taObjDiffRec* par_od=NULL) const;

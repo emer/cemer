@@ -7631,8 +7631,11 @@ String TypeDef::GetHTML(bool gendoc) const {
   }
 
   rval.cat("<p>Index: <a href=\"#subtypes\">SubTypes</a>, ");
+
   rval.cat("<a href=\"#members\">Members</a>, ");
-  rval.cat("<a href=\"#methods\">Methods</a></p>");
+  rval.cat("<a href=\"#methods\">Methods</a>, ");
+  rval.cat("<a href=\"#expert_members\">Expert Members</a>, ");
+  rval.cat("<a href=\"#expert_methods\">Expert Methods</a></p>");
 
   rval.cat("<a name=\"subtypes\"></a>\n");
   rval.cat("<h3>Sub Types</h3>\n");
@@ -7644,80 +7647,6 @@ String TypeDef::GetHTML(bool gendoc) const {
       if((this != &TA_taBase) && (st->GetOwnerType() == &TA_taBase)) continue;
       if(st->GetOwnerType()->InheritsFormal(TA_templ_inst)) continue;
       rval.cat("<li>").cat(st->GetHTMLSubType(gendoc, true)).cat("</li>\n"); // true=short fmt
-    }
-    rval.cat("</ul>\n");
-  }
-
-  /////////////////////////////////////////////////////////////////////
-  // collect the members and methods into string arrays for sorting
-  String_PArray memb_idx;
-  for(int i=0;i<members.size;i++) {
-    MemberDef* md = members[i];
-    if(taMisc::help_detail == taMisc::HD_DEFAULT) {
-      if(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN")) continue;
-    }
-    if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
-    String cat = md->GetCat();
-    if(cat.empty()) cat = "_NoCategory";
-    String key = cat + ":" + md->name;
-    memb_idx.Add(key);
-  }
-  memb_idx.Sort();              // sorts by category then key, in effect
-
-  String_PArray meth_idx;
-  for(int i=0;i<methods.size;i++) {
-    MethodDef* md = methods[i];
-    // expert methods are fine for this kind of doc rendering, given that they are grouped at bottom typically
-//     if(taMisc::help_detail == taMisc::HD_DEFAULT) {
-//       if(md->HasOption("EXPERT")) continue;
-//     }
-    if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
-    String cat = md->GetCat();
-    if(cat.empty()) cat = "_NoCategory";
-    String key = cat + ":" + md->name;
-    meth_idx.Add(key);
-  }
-  meth_idx.Sort();              // sorts by category then key, in effect
-
-  //////////////////////////////////////////
-  // then do first pass output
-
-  rval.cat("<a name=\"members\"></a>\n");
-  rval.cat("<h3>Members</h3>\n");
-  if(memb_idx.size > 0) {
-    String prv_cat;
-    for(int i=0;i<memb_idx.size;i++) {
-      String key = memb_idx[i];
-      String cat = key.before(':');
-      String mnm = key.after(':');
-      MemberDef* md = members.FindName(mnm);
-      if(cat != prv_cat) {
-        if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
-        rval.cat("<h4>Member Category: <a href=\"#MbrCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
-        rval.cat("<ul>\n");
-        prv_cat = cat;
-      }
-      rval.cat("<li>").cat(md->GetHTML(gendoc, true)).cat("</li>\n"); // true = short_fmt
-    }
-    rval.cat("</ul>\n");
-  }
-
-  rval.cat("<a name=\"methods\"></a>\n");
-  rval.cat("<h3>Methods</h3>\n");
-  if(meth_idx.size > 0) {
-    String prv_cat;
-    for(int i=0;i<meth_idx.size;i++) {
-      String key = meth_idx[i];
-      String cat = key.before(':');
-      String mnm = key.after(':');
-      MethodDef* md = methods.FindName(mnm);
-      if(cat != prv_cat) {
-        if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
-        rval.cat("<h4>Method Category: <a href=\"#MthCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
-        rval.cat("<ul>\n");
-        prv_cat = cat;
-      }
-      rval.cat("<li>").cat(md->GetHTML(gendoc, true)).cat("</li>\n"); // true = short_fmt
     }
     rval.cat("</ul>\n");
   }
@@ -7736,6 +7665,139 @@ String TypeDef::GetHTML(bool gendoc) const {
       if(st->GetOwnerType()->InheritsFormal(TA_templ_inst)) continue;
       rval.cat(st->GetHTMLSubType(gendoc, false));
     }
+  }
+  
+  ///////////////////////////////////////////////////////
+  //	REGULAR members and methods
+  { 
+    rval.cat("<hr />\n");
+    rval.cat("<h2>Regular (preferred) Member and Method Documentation</h2>\n");
+
+    /////////////////////////////////////////////////////////////////////
+    // collect the members and methods into string arrays for sorting
+    String_PArray memb_idx;
+    for(int i=0;i<members.size;i++) {
+      MemberDef* md = members[i];
+      if(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN") || md->HasOption("EXPERT"))
+	continue;
+      if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
+      String cat = md->GetCat();
+      if(cat.empty()) cat = "_NoCategory";
+      String key = cat + ":" + md->name;
+      memb_idx.Add(key);
+    }
+    memb_idx.Sort();              // sorts by category then key, in effect
+
+    String_PArray meth_idx;
+    for(int i=0;i<methods.size;i++) {
+      MethodDef* md = methods[i];
+      if(md->HasOption("EXPERT")) continue;
+      if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
+      String cat = md->GetCat();
+      if(cat.empty()) cat = "_NoCategory";
+      String key = cat + ":" + md->name;
+      meth_idx.Add(key);
+    }
+    meth_idx.Sort();              // sorts by category then key, in effect
+
+    rval.cat(GetHTMLMembMeth(memb_idx, meth_idx, "", "", gendoc));
+  }
+
+  ///////////////////////////////////////////////////////
+  //	EXPERT members and methods
+  { 
+    rval.cat("<hr />\n");
+    rval.cat("<h2>Expert Member and Method Documentation</h2>\n");
+
+    /////////////////////////////////////////////////////////////////////
+    // collect the members and methods into string arrays for sorting
+    String_PArray memb_idx;
+    for(int i=0;i<members.size;i++) {
+      MemberDef* md = members[i];
+      if(!(md->HasOption("NO_SHOW") || md->HasOption("HIDDEN") || md->HasOption("EXPERT")))
+	continue;
+      if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
+      String cat = md->GetCat();
+      if(cat.empty()) cat = "_NoCategory";
+      String key = cat + ":" + md->name;
+      memb_idx.Add(key);
+    }
+    memb_idx.Sort();              // sorts by category then key, in effect
+
+    String_PArray meth_idx;
+    for(int i=0;i<methods.size;i++) {
+      MethodDef* md = methods[i];
+      if(!md->HasOption("EXPERT")) continue;
+      if((this != &TA_taBase) && (md->GetOwnerType() == &TA_taBase)) continue;
+      String cat = md->GetCat();
+      if(cat.empty()) cat = "_NoCategory";
+      String key = cat + ":" + md->name;
+      meth_idx.Add(key);
+    }
+    meth_idx.Sort();              // sorts by category then key, in effect
+
+    rval.cat(GetHTMLMembMeth(memb_idx, meth_idx, "Expert ", "expert_", gendoc));
+  }
+
+  /////////////////////////
+  // postscript/footer
+  rval.cat("<p /><address><hr /><div align=\"center\">\n");
+  rval.cat("<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n");
+  rval.cat("<td width=\"70%\" align=\"left\">Copyright &copy; 2011 Regents of the University of Colorado, Carnegie Mellon University, Princeton University.</td>\n");
+  //  rval.cat("<td width=\"40%\" align=\"center\"><a href=\"trademarks.html\">Trademarks</a></td>\n");
+  rval.cat("<td width=\"30%\" align=\"right\"><div align=\"right\"> ").cat(taMisc::app_name).cat(" ").cat(taMisc::version).cat("</div></td>\n");
+  rval.cat("</tr></table></div></address></body>\n");
+  rval.cat("</html>\n");
+  return rval;
+}
+
+
+String TypeDef::GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx,
+	const String& label_prefix, const String& link_prefix, bool gendoc) const {
+
+  String rval;
+ 
+  //////////////////////////////////////////
+  // first pass output
+
+  rval.cat("<a name=\"" + link_prefix + "members\"></a>\n");
+  rval.cat("<h3>" + label_prefix + "Members</h3>\n");
+  if(memb_idx.size > 0) {
+    String prv_cat;
+    for(int i=0;i<memb_idx.size;i++) {
+      String key = memb_idx[i];
+      String cat = key.before(':');
+      String mnm = key.after(':');
+      MemberDef* md = members.FindName(mnm);
+      if(cat != prv_cat) {
+        if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
+        rval.cat("<h4>" + label_prefix + "Member Category: <a href=\"#MbrCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
+        rval.cat("<ul>\n");
+        prv_cat = cat;
+      }
+      rval.cat("<li>").cat(md->GetHTML(gendoc, true)).cat("</li>\n"); // true = short_fmt
+    }
+    rval.cat("</ul>\n");
+  }
+
+  rval.cat("<a name=\"" + link_prefix + "methods\"></a>\n");
+  rval.cat("<h3>" + label_prefix + "Methods</h3>\n");
+  if(meth_idx.size > 0) {
+    String prv_cat;
+    for(int i=0;i<meth_idx.size;i++) {
+      String key = meth_idx[i];
+      String cat = key.before(':');
+      String mnm = key.after(':');
+      MethodDef* md = methods.FindName(mnm);
+      if(cat != prv_cat) {
+        if(prv_cat.nonempty()) rval.cat("</ul>\n"); // terminate prev
+        rval.cat("<h4>" + label_prefix + "Method Category: <a href=\"#MthCat-").cat(cat).cat("\">").cat(cat).cat("</a></h4>\n");
+        rval.cat("<ul>\n");
+        prv_cat = cat;
+      }
+      rval.cat("<li>").cat(md->GetHTML(gendoc, true)).cat("</li>\n"); // true = short_fmt
+    }
+    rval.cat("</ul>\n");
   }
 
   if(memb_idx.size > 0) {
@@ -7775,19 +7837,8 @@ String TypeDef::GetHTML(bool gendoc) const {
       rval.cat(md->GetHTML(gendoc, false)).cat("\n"); // extra cr for good readability
     }
   }
-
-  /////////////////////////
-  // postscript/footer
-  rval.cat("<p /><address><hr /><div align=\"center\">\n");
-  rval.cat("<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n");
-  rval.cat("<td width=\"70%\" align=\"left\">Copyright &copy; 2009 Regents of the University of Colorado, Carnegie Mellon University, Princeton University.</td>\n");
-  //  rval.cat("<td width=\"40%\" align=\"center\"><a href=\"trademarks.html\">Trademarks</a></td>\n");
-  rval.cat("<td width=\"30%\" align=\"right\"><div align=\"right\"> ").cat(taMisc::app_name).cat(" ").cat(taMisc::version).cat("</div></td>\n");
-  rval.cat("</tr></table></div></address></body>\n");
-  rval.cat("</html>\n");
   return rval;
 }
-
 
 void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
                             MemberDef* memb_def, const void* par,
