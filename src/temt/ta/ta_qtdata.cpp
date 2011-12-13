@@ -3035,7 +3035,7 @@ QTreeWidgetItem* taiItemChooser::AddItem(const QString& itm_txt, QTreeWidgetItem
 
 bool taiItemChooser::SetInitView(void* sel_val, const String& filt_str) {
   if(sel_val == NULL && filt_str.empty()) {
-    setView(0, true);		// nothing..
+    setView(0, true);           // nothing..
     return false;
   }
   else if(filt_str.nonempty()) {
@@ -3045,7 +3045,7 @@ bool taiItemChooser::SetInitView(void* sel_val, const String& filt_str) {
 //       taMisc::ProcessEvents();
       int n_items = ApplyFiltering();
       if(n_items > 0) {
-	return true;		// stop when get any hits
+        return true;            // stop when get any hits
       }
     }
   }
@@ -3054,11 +3054,11 @@ bool taiItemChooser::SetInitView(void* sel_val, const String& filt_str) {
       setView(vw, true);
 //       taMisc::ProcessEvents();
       if(SetCurrentItemByData(sel_val)) {
-	return true;		// stop when get any hits
+        return true;            // stop when get any hits
       }
     }
   }
-  setView(0, true);		// go back to start..
+  setView(0, true);             // go back to start..
   ApplyFiltering();
   return false;
 }
@@ -3367,7 +3367,9 @@ void taiItemChooser::setSelObj(void* value, bool force) {
 void taiItemChooser::setView(int value, bool force) {
   if ((m_view == value) && !force) return;
   m_view = value; //so its valid for any subcalls, etc.
-  cmbView->setCurrentIndex(value);
+  if (cmbView) {
+    cmbView->setCurrentIndex(value);
+  }
   Refresh();
   QString text = filter->text();
   if (!text.isEmpty()) SetFilter(text);
@@ -4222,7 +4224,7 @@ void taiEnumStaticButton::BuildChooser_4(taiItemChooser* ic) {
     if(td->InheritsFormal(TA_enum)) {
       for(int j=0;j< td->enum_vals.size; j++) {
         EnumDef* ed = td->enum_vals.FastEl(j);
-	if(!ed->HasOption("EXPERT")) continue;
+        if(!ed->HasOption("EXPERT")) continue;
         QTreeWidgetItem* item = ic->AddItem(cat, ed->name + " (enum)", NULL, (void*)ed);
         item->setData(1, Qt::DisplayRole, ed->desc);
       }
