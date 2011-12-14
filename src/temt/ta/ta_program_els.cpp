@@ -119,32 +119,36 @@ ProgVar* LocalVars::FindVarName(const String& var_nm) const {
   return local_vars.FindName(var_nm);
 }
 
+ProgVar* LocalVars::AddVar() {
+  return (ProgVar*)local_vars.New_gui(1);
+}
+
 ProgVar* LocalVars::AddFloatMatrix() {
-  ProgVar* rval = (ProgVar*)local_vars.New(1);
+  ProgVar* rval = (ProgVar*)local_vars.New_gui(1);
   rval->SetObjectType(&TA_float_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
 }
 ProgVar* LocalVars::AddDoubleMatrix() {
-  ProgVar* rval = (ProgVar*)local_vars.New(1);
+  ProgVar* rval = (ProgVar*)local_vars.New_gui(1);
   rval->SetObjectType(&TA_double_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
 }
 ProgVar* LocalVars::AddIntMatrix() {
-  ProgVar* rval = (ProgVar*)local_vars.New(1);
+  ProgVar* rval = (ProgVar*)local_vars.New_gui(1);
   rval->SetObjectType(&TA_int_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
 }
 ProgVar* LocalVars::AddStringMatrix() {
-  ProgVar* rval = (ProgVar*)local_vars.New(1);
+  ProgVar* rval = (ProgVar*)local_vars.New_gui(1);
   rval->SetObjectType(&TA_String_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;
 }
 ProgVar* LocalVars::AddVarMatrix() {
-  ProgVar* rval = (ProgVar*)local_vars.New(1);
+  ProgVar* rval = (ProgVar*)local_vars.New_gui(1);
   rval->SetObjectType(&TA_Variant_Matrix);
   rval->ClearVarFlag(ProgVar::NULL_CHECK);
   return rval;

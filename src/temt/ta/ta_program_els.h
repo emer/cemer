@@ -57,7 +57,7 @@ INHERITED(ProgEl)
 public:
   ProgVar_List		local_vars;	// the list of variables -- these variables do NOT update their values as shown here -- they exist only as script variables (unlike global args and vars)
   
-  virtual ProgVar*	AddVar()	{ return (ProgVar*)local_vars.New(1); }
+  virtual ProgVar*	AddVar();
   // #BUTTON add a new variable
   virtual ProgVar*	AddFloatMatrix();
   // #BUTTON add a new float_Matrix* variable -- these have to be in local vars so are frequently created..

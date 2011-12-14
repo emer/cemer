@@ -343,7 +343,7 @@ int DataCol::FindVal(const Variant& val, int st_row) const {
     return -1;
   }
   else {
-    for(int i=rows()-st_row; i>=0; i--) {
+    for(int i=rows()+st_row; i>=0; i--) {
       if(GetVal(i) == val) return i;
     }
     return -1;
@@ -1461,7 +1461,7 @@ int DataTable::FindMultiValCol(int st_row, const Variant& val1, DataCol* col1,
     return -1;
   }
   else {
-    for(int i=rows-st_row; i>=0; i--) {
+    for(int i=rows+st_row; i>=0; i--) {
       if(col1 && col1->GetVal(i) != val1) continue;
       if(col2 && col2->GetVal(i) != val2) continue;
       if(col3 && col3->GetVal(i) != val3) continue;

@@ -1276,6 +1276,9 @@ void MainWindowViewer::MakeWinName_impl() {
   if (fname.empty()) fname = name.empty() ? "(Untitled)" : name;
   String nw_name = pathnm + " - " + fname + " [*]"; // prog_nm ;
   win_name = nw_name;
+  if(m_is_root) {
+    win_name = taMisc::app_name + " v" + taMisc::version + " (svn: " + taMisc::svn_rev + ")";
+  }
 }
 
 void MainWindowViewer::OnToolBarAdded(ToolBar* tb, bool post_constr) {
