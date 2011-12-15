@@ -13,7 +13,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-
 // ta_qtdata.cpp
 
 #include "ta_qtdata.h"
@@ -43,28 +42,31 @@
 #include "itextedit.h"
 #include "itreewidget.h"
 
-#include <qapplication.h>
-#include <qcolor.h> // needed for qbitmap
-#include <qcombobox.h>
+#include <QApplication>
+#include <QColor> // needed for qbitmap
+#include <QComboBox.h>
 #include <QDesktopWidget>
-//#include <qcursor.h>
-//#include <qbitmap.h>
-#include <qfont.h>
-#include <qframe.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qlineedit.h>
+#include <QFont>
+#include <QFrame>
+#include <QHeaderView>
+#include <QLabel>
+#include <QLayout>
+#include <QLineEdit>
 #include <QListWidget>
 #include <QMenu>
 #include <QMenuBar>
 #include <QPointer>
-#include <qpushbutton.h>
+#include <QPushButton>
+#include <QScrollBar>
+#include <QSortFilterProxyModel>
+#include <QSplitter>
 #include <QStackedLayout>
 #include <QStackedWidget>
-#include <qstring.h>
+#include <QStandardItemModel>
+#include <QString>
 #include <QTimer>
 #include <QToolButton>
-#include <qtooltip.h>
+#include <QToolTip>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QTreeWidgetItemIterator>
@@ -79,9 +81,6 @@
 #define POINTER_ALIGN_Y         .5
 
 using namespace Qt;
-
-class cssiArgDialog;
-
 
 //////////////////////////
 //    taiDataList       //
@@ -510,7 +509,6 @@ void taiCompData::ChildDataChanged(taiData* sender) {
   emit ChildDataChangedNotify(sender);
 }
 
-
 //////////////////////////////////
 //       iFieldEditDialog       //
 //////////////////////////////////
@@ -628,6 +626,449 @@ void iFieldEditDialog::btnRevert_clicked() {
 
 void iFieldEditDialog::repChanged() {
   setApplyEnabled(true);
+}
+
+//////////////////////////////////
+//        iRegexpDialog         //
+//////////////////////////////////
+
+// DPF TODO: refactor ctor!
+iRegexpDialog::iRegexpDialog(const String& desc, taiRegexpField* parent)
+  : inherited()
+  , field(parent)
+{
+  if (!field || !field->populator) {
+    return;
+  }
+
+  setModal(true);
+  resize(taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgHor));
+  setFont(taiM->dialogFont(taiM->ctrl_size));
+
+  // Break apart the full regexp into its "OR" components,
+  // which are separated by |.
+  QString field_re = field->rep()->text();
+  if (field_re.startsWith('(') && field_re.endsWith(')')) {
+    // Remove the parens.
+    field_re.chop(1);
+    field_re.remove(0,1);
+  }
+  QStringList regexp_strings = field_re.split("|", QString::SkipEmptyParts);
+
+  // Put the regexp parts into the list widget.
+  regexp_list = new QListWidget;
+  regexp_list->addItems(regexp_strings);
+  regexp_list->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  regexp_list->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  // Get the list of labels to filter.
+  QStringList labels = field->populator->getLabels();
+  QString separator = field->populator->getSeparator();
+
+  // Get the number of rows and columns.  Number of columns is based
+  // on how many sections exist in the first label, plus one for a
+  // hidden column for the original label.
+  enum ExtraColumns {
+    INDEX_COL,
+    LABEL_COL,
+    EXTRA_COLS
+  };
+  int rows = labels.size();
+  int num_parts = labels[0].split(separator).size();
+  int cols = num_parts + EXTRA_COLS;
+
+  // Determine how many characters in the string representation of rows,
+  // so we know how much padding to add.
+  int field_width = QString::number(rows).size();
+
+  QVector<QSet<QString> > part_strings(num_parts);
+
+  // Create table model
+  table_model = new QStandardItemModel(rows, cols, this);
+  QStandardItem *item = 0;
+  for (int row = 0; row < rows; ++row) {
+    // First column contains the label index.
+    const int base10 = 10;
+    item = new QStandardItem(QString("%1").arg(row, field_width, base10, QChar('0')));
+    table_model->setItem(row, INDEX_COL, item);
+    // Second column is hidden and contains the full label.
+    item = new QStandardItem(labels[row]);
+    table_model->setItem(row, LABEL_COL, item);
+    // Remaining columns contain the label parts.
+    QStringList parts = labels[row].split(separator);
+    for (int part = 0; part < parts.size(); ++part) {
+      int col = part + EXTRA_COLS;
+      if (col >= cols) break;
+      part_strings[part] << parts[part];
+      item = new QStandardItem(parts[part]);
+      table_model->setItem(row, col, item);
+    }
+  }
+
+  // Create a proxy model to filter
+  proxy_model = new QSortFilterProxyModel(this);
+  proxy_model->setSourceModel(table_model);
+  proxy_model->setFilterKeyColumn(LABEL_COL);
+
+  // Create layout
+  // vbox
+  //   instr (QLabel)
+  //   split
+  //     regexp_list
+  //     split_middle (QWidget)
+  //       split_middle_vbox
+  //         reg (QLineEdit)
+  //         hbox_combos
+  //           combo ...
+  //     tableview
+
+  QVBoxLayout *vbox = new QVBoxLayout(this);
+
+  QLabel *instr = new QLabel;
+  instr->setWordWrap(true);
+  instr->setText("Instructions");
+  vbox->addWidget(instr);
+
+  QSplitter *split = new QSplitter(Qt::Vertical);
+  vbox->addWidget(split);
+
+  // Top
+  QWidget *split_top = new QWidget;
+  split_top->setContentsMargins(0, 0, 0, 0);
+  split->addWidget(split_top);
+
+  QHBoxLayout *split_top_hbox = new QHBoxLayout(split_top);
+  split_top_hbox->setContentsMargins(0, 0, 0, 0);
+
+  QVBoxLayout *add_del_vbox = new QVBoxLayout;
+  add_del_vbox->setContentsMargins(0, 0, 0, 0);
+  split_top_hbox->addLayout(add_del_vbox);
+
+  int button_width = 25;
+  add_button = new QPushButton("+");
+  add_button->setMaximumWidth(button_width);
+  add_del_vbox->addWidget(add_button);
+
+  del_button = new QPushButton("-");
+  del_button->setMaximumWidth(button_width);
+  add_del_vbox->addWidget(del_button);
+
+  add_del_vbox->addStretch();
+
+  split_top_hbox->addWidget(regexp_list);
+
+  // Middle
+  QWidget *split_middle = new QWidget;
+  split_middle->setContentsMargins(0, 0, 0, 0);
+  split->addWidget(split_middle);
+
+  QVBoxLayout *split_middle_vbox = new QVBoxLayout(split_middle);
+  split_middle_vbox->setContentsMargins(0, 0, 0, 0);
+
+  regexp_lineedit = new QLineEdit;
+  split_middle_vbox->addWidget(regexp_lineedit);
+
+  QHBoxLayout *hbox_combos = new QHBoxLayout;
+  hbox_combos->setContentsMargins(0, 0, 0, 0);
+  hbox_combos->setSpacing(1);
+  split_middle_vbox->addLayout(hbox_combos);
+
+  // Create regexp parts
+  for (int part = 0; part < num_parts; ++part) {
+    QStringList strings = part_strings[part].toList();
+    strings.sort();
+
+    QComboBox *combo = new QComboBox;
+    combo->addItem("<match any>", ".*");
+    foreach (QString string, strings) {
+      // Set the string as DisplayRole and the RE-escaped string as UserRole.
+      combo->addItem(string, QRegExp::escape(string));
+    }
+    combo->setEditable(true);
+    combo->setInsertPolicy(QComboBox::NoInsert);
+    hbox_combos->addWidget(combo);
+
+    regexp_combos << combo;
+
+    // Update after the user chooses a combo-box item.
+    connect(combo, SIGNAL(activated(int)),
+            this, SLOT(RegexpPartChosen(int)));
+
+    // Update after the user manually enters text in the combo-box.
+    connect(combo->lineEdit(), SIGNAL(editingFinished()),
+            this, SLOT(RegexpPartEdited()));
+  }
+
+  // Bottom
+  QTableView *tableview = new QTableView;
+  tableview->setModel(proxy_model);
+  tableview->setColumnHidden(LABEL_COL, true);
+  tableview->setSortingEnabled(true);
+  tableview->sortByColumn(INDEX_COL, Qt::AscendingOrder);
+  tableview->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  tableview->setSelectionBehavior(QAbstractItemView::SelectRows);
+  tableview->setSelectionMode(QAbstractItemView::SingleSelection);
+  tableview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+  tableview->verticalHeader()->setVisible(false);
+  QHeaderView *header = tableview->horizontalHeader();
+  header->setHighlightSections(false);
+  header->setResizeMode(INDEX_COL, QHeaderView::ResizeToContents);
+  for (int col = EXTRA_COLS; col < cols; ++col) {
+    header->setResizeMode(col, QHeaderView::Stretch);
+  }
+  split->addWidget(tableview);
+
+  // Now adjust the regexp parts hbox to accomodate the index column and scrollbar
+  hbox_combos->insertSpacing(0, header->sectionSize(INDEX_COL) + 3);
+  hbox_combos->addSpacing(tableview->verticalScrollBar()->width() + 3);
+
+  connect(regexp_list, SIGNAL(itemSelectionChanged()),
+          this, SLOT(RegexpSelectionChanged()));
+
+  connect(add_button, SIGNAL(clicked()),
+          this, SLOT(AddRegexp()));
+
+  connect(del_button, SIGNAL(clicked()),
+          this, SLOT(DelRegexp()));
+
+  // Update after the regexp is edited using the single line-edit box.
+  connect(regexp_lineedit, SIGNAL(editingFinished()),
+          this, SLOT(RegexpLineEdited()));
+
+  // Do this at the bottom, since RegexpSelectionChanged() will be triggered.
+  if (regexp_list->count() == 0) {
+    AddRegexp();
+  }
+  else {
+    regexp_list->setCurrentRow(0);
+  }
+}
+
+// Handle the "Add" button push.
+void iRegexpDialog::AddRegexp()
+{
+  // Build a default regexp that will match anything between
+  // the separators, such as:
+  //   ".*\\..*\\..*\\..*\\..*"
+  QString separator = field->populator->getSeparator();
+  QString escaped_separator = QRegExp::escape(separator);
+  QString item(".*");
+  item.append(escaped_separator);
+  item = item.repeated(regexp_combos.size() - 1);
+  item.append(".*");
+
+  // Add a new regexp to the list and select it.
+  regexp_list->addItem(item);
+
+  // This will trigger RegexpSelectionChanged().
+  regexp_list->setCurrentRow(regexp_list->count() - 1,
+    QItemSelectionModel::ClearAndSelect);
+}
+
+// Handle the "Delete" button push.
+void iRegexpDialog::DelRegexp()
+{
+  // Get the list of regexp(s) to delete.
+  QList<QListWidgetItem *> selected_items = regexp_list->selectedItems();
+  foreach (QListWidgetItem *item, selected_items) {
+    // Deleting the items will remove them from the list.
+    // It will also trigger RegexpSelectionChanged().
+    delete item;
+  }
+}
+
+// This function is called when a combo-box item has been selected
+// to ensure the line-edit is kept in sync with the regexp-escaped
+// text.
+void iRegexpDialog::SelectCombo(QComboBox *combo, int index)
+{
+  // Ensure that the indicated item is actually selected.
+  // This isn's needed when the user has explicitly chosen an item
+  // from the combo-box (e.g., with the mouse), but is helpful when
+  // the combo-box text is being set programmatically.
+  combo->setCurrentIndex(index);
+
+  // Set the combo-box's line-edit to the regexp-escaped version
+  // of the selected string, which is stored in the UserRole
+  // (hence, itemData is called vs. itemText).
+  QVariant data = combo->itemData(index);
+  QString escaped_string = data.toString();
+  if (QLineEdit *line = combo->lineEdit()) {
+    line->setText(escaped_string);
+  }
+}
+
+// This function is called when the user chooses a combo-box item.
+void iRegexpDialog::RegexpPartChosen(int index)
+{
+  std::cout << "activated(" << index << ")" << std::endl;
+
+  // Get the combo-box that sent this signal.
+  if (QComboBox *combo = dynamic_cast<QComboBox *>(sender())) {
+    // Update its line-edit to reflect the escaped text.
+    SelectCombo(combo, index);
+  }
+
+  // Choosing a combo-box item changes a part of the regexp,
+  // so process that change.
+  RegexpPartEdited();
+}
+
+// This function is called when a part of the regexp has been edited.
+// This can occur by manual typing or by activating the combo-box.
+void iRegexpDialog::RegexpPartEdited()
+{
+  std::cout << "  --> RegexpPartEdited()" << std::endl;
+
+  QStringList regexp_parts;
+  foreach (QComboBox *combo, regexp_combos) {
+    // Get the string from the line-edit part of the combo-box.
+    // Don't call itemText() here because that gives the DisplayRole
+    // text, and we want the escaped text from the UserRole.
+    // The SelectCombo() function ensures the combo-box's line-edit
+    // is in sync with the UserRole text.
+    regexp_parts << combo->lineEdit()->text();
+  }
+
+  // Join the parts together into the full regexp.
+  QString separator = field->populator->getSeparator();
+  QString escaped_separator = QRegExp::escape(separator);
+  QString new_text = regexp_parts.join(escaped_separator);
+
+  // Check if the glued-together parts differ from the existing text.
+  if (new_text != regexp_lineedit->text()) {
+    // Update the single line-edit box and propagate the updates
+    // as if the user edited it manually.
+    regexp_lineedit->setText(new_text);
+    RegexpLineEdited();
+  }
+}
+
+// This function is called when the user edits the text of the regexp
+// using the single line-edit box.  It's also called when a part of the
+// regexp has changed that results in a change to the whole regexp.
+void iRegexpDialog::RegexpLineEdited()
+{
+  std::cout << "  --> RegexpLineEdited()" << std::endl;
+
+  // Get the selected item in the regexp list so its text can be updated.
+  // There should be exactly one item selected, but check just in case.
+  QList<QListWidgetItem *> selected_items = regexp_list->selectedItems();
+  if (selected_items.isEmpty()) {
+    // This should never happen.  No item was selected, but the update
+    // should go somewhere, so make a new item, select it, and quit.
+    regexp_list->addItem(regexp_lineedit->text());
+    regexp_list->setCurrentRow(regexp_list->count() - 1);
+    return;
+  }
+
+  // Set the line-edit text to the selected regular expression.
+  selected_items[0]->setText(regexp_lineedit->text());
+
+  // Call the function that handles when the user makes a new selection,
+  // just to make sure everything is in sync.
+  RegexpSelectionChanged();
+}
+
+// This function is called when the user selects a different regexp(s).
+// Multiple regexps may be selected, but editing is only enabled if
+// exactly one regexp is selected.  This function is also called to
+// keep everything in sync after the current regexp has been edited.
+void iRegexpDialog::RegexpSelectionChanged()
+{
+  std::cout << "  --> RegexpSelectionChanged()" << std::endl;
+
+  // Get a list of currently selected regexp(s).
+  QList<QListWidgetItem *> selected_items = regexp_list->selectedItems();
+
+  // Only enable the delete button if there is something selected to delete.
+  del_button->setEnabled(!selected_items.isEmpty());
+
+  // If one thing selected, enable the edit boxes and populate them according to the selection.
+  if (selected_items.size() == 1) {
+    EnableEditBoxes(selected_items[0]->text());
+  }
+  // Otherwise, disable them.
+  else {
+    regexp_lineedit->clear();
+    regexp_lineedit->setEnabled(false);
+    foreach (QComboBox *combo, regexp_combos) {
+      combo->lineEdit()->setText("");
+      combo->setEnabled(false);
+    }
+  }
+
+  ApplyFilters(selected_items);
+}
+
+void iRegexpDialog::EnableEditBoxes(QString regexp)
+{
+  // Set the single line-edit box to the full regexp and enable it.
+  regexp_lineedit->setText(regexp);
+  regexp_lineedit->setEnabled(true);
+
+  // Split the full regexp into parts.
+  QString separator = field->populator->getSeparator();
+  QString escaped_separator = QRegExp::escape(separator);
+  QStringList regexp_parts = regexp.split(escaped_separator);
+
+  // Iterate through the combo-boxes and regexp parts.
+  int part = 0;
+  foreach (QComboBox *combo, regexp_combos) {
+    // First, enable the combo-box.
+    combo->setEnabled(true);
+
+    // If there is a regexp part associated with this combo-box,
+    // then set it.
+    if (part < regexp_parts.size()) {
+      // Check if the regexp part occurs in the UserRole (regexp-escaped)
+      // string of any of the combo-box entries.  Or, if the regexp part
+      // is empty, then make it match anything (which is at index 0).
+      int idx = (regexp_parts[part] == "")
+                ? 0 : combo->findData(regexp_parts[part]);
+
+      // If a match was found, then select it.
+      if (idx >= 0) {
+        SelectCombo(combo, idx);
+      }
+      // Otherwise just set the line-edit widget's text to the regexp part.
+      else if (QLineEdit *line = combo->lineEdit()) {
+        line->setText(regexp_parts[part]);
+      }
+    }
+    // No regexp part for this combo-box, so just set it to match anything.
+    else {
+      SelectCombo(combo, 0);
+    }
+
+    // Move on to the next part
+    ++part;
+  }
+}
+
+void iRegexpDialog::ApplyFilters(QList<QListWidgetItem *> selected_items)
+{
+  // Combine all the selected regexp(s) together to use as a filter on the
+  // items in the table view.  If there is more than one item selected,
+  // they will be combined with alternation (parens|and|bars).
+  filter_regexp_string.clear();
+  foreach (QListWidgetItem *item, selected_items) {
+    // Separate regexps by bars.
+    if (!filter_regexp_string.isEmpty()) {
+      filter_regexp_string.append("|");
+    }
+    filter_regexp_string.append(item->text());
+  }
+
+  // Surround with parentheses if more than one alternative.
+  if (selected_items.size() > 1) {
+    filter_regexp_string.insert(0, "(");
+    filter_regexp_string.append(")");
+  }
+
+  // Build the regexp and apply it to the proxy model.
+  QRegExp regexp(filter_regexp_string, Qt::CaseInsensitive, QRegExp::RegExp);
+  proxy_model->setFilterRegExp(regexp);
 }
 
 /////////////////////////////////////////////////
@@ -895,13 +1336,15 @@ void taiFileDialogField::lookupKeyPressed() {
 //               taiRegexpField                //
 /////////////////////////////////////////////////
 
-// TODO: for now, just a copy&paste of taiField
-taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
-  : taiText(typ_, host_, par, gui_parent_, flags_, true,
+// DPF TODO: for now, just a copy&paste of taiField
+taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, RegexpPopulator *re_populator)
+  : taiText(typ_, host_, par, gui_parent_, flags_,
+            (re_populator != 0), // Add a "..." button if populator provided.
             "Edit this field using a Regular Expression dialog")
   , lookupfun_md(0)
   , lookupfun_base(0)
   , edit(0)
+  , populator(re_populator)
 {
   setMinCharWidth(40);
 }
@@ -912,31 +1355,28 @@ taiRegexpField::~taiRegexpField() {
 }
 
 void taiRegexpField::btnEdit_clicked(bool) {
-  std::cout << "Regular Expression dialog TBD" << std::endl;
-#if 0
   if (!edit) { // has to be modeless
-    String wintxt;
+//    String wintxt;
     String desc;
     //TODO: we could in theory trap the raw GetImage and derive the object parent
     // to provide additional information, such as the object name (if base)
-    if (mbr) {
-      wintxt = "Editing field: " + mbr->name;
-      desc = mbr->desc;
-    }
-    else {
-      wintxt = "Editing field";
-      //desc =
-    }
-    edit = new iFieldEditDialog(true, readOnly(), desc, this);
+//    if (mbr) {
+//      wintxt = "Editing field: " + mbr->name;
+//      desc = mbr->desc;
+//    }
+//    else {
+//      wintxt = "Editing field";
+//      //desc =
+//    }
+    edit = new iRegexpDialog(desc, this);
     // true = must always be modal -- otherwise crazy stuff can happen.  Brad was right..
-    edit->setText(rep()->text());
-    edit->setWindowTitle(wintxt);
-    QObject::connect(edit->txtText, SIGNAL(lookupKeyPressed()),
-                     this, SLOT(lookupKeyPressed_dialog()) );
+//    edit->setText(rep()->text());
+//    edit->setWindowTitle(wintxt);
+//    QObject::connect(edit->txtText, SIGNAL(lookupKeyPressed()),
+//                     this, SLOT(lookupKeyPressed_dialog()) );
   }
   edit->show();
   edit->raise();
-#endif
 }
 
 void taiRegexpField::lookupKeyPressed() {
@@ -1052,7 +1492,6 @@ void taiIncrField::this_SetActionsEnabled() {
   //TODO: UNDO/REDO
 }
 
-
 //////////////////////////////////
 //      taiToggle               //
 //////////////////////////////////
@@ -1086,7 +1525,6 @@ void taiToggle::GetImage(bool val) {
 bool taiToggle::GetValue() const {
   return rep()->isChecked();
 }
-
 
 //////////////////////////////////
 //      taiPlusToggle           //
@@ -1138,7 +1576,6 @@ void taiPlusToggle::Toggle_Callback() {
 void taiPlusToggle::DataChanged_impl(taiData* chld) {
   but_rep->setChecked(true);
 }
-
 
 //////////////////////////
 //     taiComboBox      //
@@ -1234,7 +1671,6 @@ void taiComboBox::SetEnumType(TypeDef* enum_typ, bool force) {
   }
 }
 
-
 //////////////////////////
 //     taiBitBox        //
 //////////////////////////
@@ -1259,7 +1695,6 @@ void iBitCheckBox::this_clicked(bool on)
 {
   emit clickedEx(this, on);
 }
-
 
 taiBitBox::taiBitBox(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 :taiData(typ_, host_, par, gui_parent_, flags_)
@@ -1363,7 +1798,6 @@ void taiBitBox::GetValue(int& val) const {
   val = m_val;
 }
 
-
 //////////////////////////////////
 //      taiDimEdit              //
 //////////////////////////////////
@@ -1402,7 +1836,6 @@ void taiDimEdit::GetValue(MatrixGeom* arr) const {
   }
 }
 
-
 //////////////////////////////////
 //      taiPolyData             //
 //////////////////////////////////
@@ -1425,7 +1858,6 @@ bool taiPolyData::ShowMemberStat(MemberDef* md, int show) {
   else
     return md->ShowMember((taMisc::ShowMembs)show);
 }
-
 
 taiPolyData::taiPolyData(TypeDef* typ_, IDataHost* host_, taiData* par,
                          QWidget* gui_parent_, int flags_)
@@ -1504,7 +1936,6 @@ void taiPolyData::GetValue_impl(void* base_) const {
   }
   taMisc::record_script = rec_scrpt;
 }
-
 
 //////////////////////////////////
 //  taiColor                    //
@@ -1651,7 +2082,6 @@ void taiVariantBase::Constr_impl(QWidget* gui_parent_, bool read_only_) {
   tiVal = MakeLabel("(TypeItem cannot be set)");
   stack->addWidget(tiVal);
 }
-
 
 /*
 bool taiVariantBase::ShowMember(MemberDef* md) {
@@ -1811,7 +2241,6 @@ void taiVariantBase::GetValue_Variant(Variant& var) const {
   return;
 }
 
-
 //////////////////////////////////
 //      taiVariant              //
 //////////////////////////////////
@@ -1824,9 +2253,6 @@ taiVariant::taiVariant(IDataHost* host_, taiData* par, QWidget* gui_parent_, int
 
 taiVariant::~taiVariant() {
 }
-
-
-
 
 //////////////////////////
 //      taiAction       //
@@ -1853,7 +2279,6 @@ taiAction::taiAction(const QString& label_, QObject* receiver, const char* membe
   setShortcut(accel);
   connect(action, receiver, member);
 }
-
 
 taiAction::taiAction(const Variant& usr_data_, const QString& label_, const QKeySequence& accel,
   const char* name_)
@@ -2335,9 +2760,9 @@ void taiActions::setLabel(const String& val) {
   }
 }
 
-//////////////////////////
-//      taiMenu //
-//////////////////////////
+/////////////////////////
+//       taiMenu       //
+/////////////////////////
 
 taiMenu::taiMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
                  QWidget* gui_parent_, int flags_, taiActions* par_menu_)
@@ -2376,9 +2801,9 @@ taiAction* taiMenu::insertItem(const char* val, const QObject *receiver, const c
   return mel;
 }
 
-//////////////////////////
-//  taiButtonMenu       //
-//////////////////////////
+///////////////////////////
+//     taiButtonMenu     //
+///////////////////////////
 
 taiButtonMenu::taiButtonMenu(int st, int ft, TypeDef* typ_, IDataHost* host_, taiData* par,
                              QWidget* gui_parent_, int flags_, taiActions* par_menu_)
@@ -2407,7 +2832,7 @@ void taiButtonMenu::Delete() {
   }
 
   inherited::Delete();
-  //WE ARE DELETE HERE
+  //WE ARE DELETED HERE
 }
 
 //////////////////////////
@@ -2583,11 +3008,9 @@ void taiEditButton::setRepLabel(const char* label) {
     rep()->setText(label);
 }
 
-
 //////////////////////////////////////////
 //              taiObjChooser           //
 //////////////////////////////////////////
-
 
 taiObjChooser* taiObjChooser::createInstance(taBase* parob, const char* captn, bool selonly, QWidget* par_window_) {
   if (par_window_ == NULL)
@@ -2930,7 +3353,6 @@ void taiObjChooser::AcceptEditor_impl(QLineEdit* e) {
       iDialog::accept();
   }
 }
-
 
 //////////////////////////////////
 //   taiItemChooser             //
@@ -3406,7 +3828,6 @@ void taiItemChooser::timFilter_timeout() {
   else SetFilter(text);
 }
 
-
 //////////////////////////////////
 //   taiItemPtrBase             //
 //////////////////////////////////
@@ -3582,7 +4003,6 @@ void taiItemPtrBase::UpdateImage(void* cur_sel) {
   rep()->setText(labelText());
 }
 
-
 //////////////////////////////////
 //   taiMemberDefButton         //
 //////////////////////////////////
@@ -3689,7 +4109,6 @@ bool taiMemberDefButton::ShowMember(MemberDef* mbr) {
   return (ShowItemFilter(NULL, mbr, mbr->name)); // && mbr->ShowMember());
 }
 
-
 const String taiMemberDefButton::viewText(int index) const {
   switch (index) {
   case 0: return "Members";
@@ -3697,7 +4116,6 @@ const String taiMemberDefButton::viewText(int index) const {
   default: return _nilString;
   }
 }
-
 
 //////////////////////////////////
 //   taiMethodDefButton         //
@@ -3866,7 +4284,6 @@ const String taiMethodDefButton::viewText(int index) const {
   }
 }
 
-
 //////////////////////////////////////////
 //   taiMemberMethodDefButton           //
 //////////////////////////////////////////
@@ -4010,7 +4427,6 @@ void taiMemberMethodDefButton::BuildChooser_3(taiItemChooser* ic) {
     item->setData(1, Qt::DisplayRole, mth->desc);
   }
 }
-
 
 int taiMemberMethodDefButton::columnCount(int view) const {
   return 2;                     // always 2
@@ -4251,7 +4667,6 @@ void taiEnumStaticButton::BuildChooser_4(taiItemChooser* ic) {
   }
 }
 
-
 int taiEnumStaticButton::columnCount(int view) const {
   return 2;                     // always 2
 }
@@ -4468,7 +4883,6 @@ const String taiTypeDefButton::viewText(int index) const {
   }
 }
 
-
 //////////////////////////////////
 //   taiEnumTypeDefButton               //
 //////////////////////////////////
@@ -4571,7 +4985,6 @@ const String taiEnumTypeDefButton::headerText(int index, int view) const {
   return _nilString; // shouldn't happen
 }
 
-
 //////////////////////////////////
 //   taiTokenPtrButton          //
 //////////////////////////////////
@@ -4615,7 +5028,6 @@ void taiTokenPtrButton::EditPanel() {
   }
   tabMisc::DelayedFunCall_gui(cur_base, "BrowserSelectMe");
 }
-
 
 bool taiTokenPtrButton::countTokensToN(int& cnt, TypeDef* td, int n, void*& last_itm) {
   if(td->tokens.size == 0 && td->tokens.sub_tokens == 0) return false;
@@ -4782,9 +5194,9 @@ const String taiTokenPtrButton::viewText(int index) const {
   }
 }
 
-//////////////////////////////////
-//   taiTokenPtrMultiTypeButton         //
-//////////////////////////////////
+////////////////////////////////////
+//   taiTokenPtrMultiTypeButton   //
+////////////////////////////////////
 
 taiTokenPtrMultiTypeButton::taiTokenPtrMultiTypeButton(TypeDef* typ_, IDataHost* host,
                                      taiData* par, QWidget* gui_parent_, int flags_,
@@ -4816,7 +5228,6 @@ void taiTokenPtrMultiTypeButton::EditPanel() {
     imw->EditItem(dl, true); // edit, but not in this tab
   }
 }
-
 
 void taiTokenPtrMultiTypeButton::BuildChooser(taiItemChooser* ic, int view) {
   if(cust_chooser)
@@ -5026,7 +5437,6 @@ void taiFileButton::Edit() {
   GetGetFile();
   taMisc::EditFile(gf->FileName());
 }
-
 
 taiElBase::taiElBase(taiActions* actions_, TypeDef* tp, IDataHost* host_, taiData* par,
                      QWidget* gui_parent_, int flags_)
@@ -5301,8 +5711,6 @@ void taiSubToken::GetMenuImpl(void* base, taiMenuAction* actn){
   }
 }
 
-
-
 //////////////////////////////////
 //   taiTypeInfoBase    //
 //////////////////////////////////
@@ -5334,7 +5742,6 @@ void taiTypeInfoBase::GetImage(const void* base, bool get_menu, void* cur_sel){
   if ((!cur_sel) || (!(ta_actions->GetImageByData(Variant(cur_sel)))))
     ta_actions->GetImageByIndex(0);
 }
-
 
 QWidget* taiTypeInfoBase::GetRep() {
   if (ta_actions) return ta_actions->GetRep();
@@ -5515,7 +5922,6 @@ bool taiTypeHier::AddType_Class(TypeDef* typ_) {
   // no nested typedefs TODO: find a better way to identify nested typedefs
   if (typ_->name == "inherited") return false;
 
-
   // don't clutter list with these..
   if((typ_->members.size==0) && (typ_->methods.size==0) && !(typ_ == &TA_taBase))
     return false;
@@ -5627,10 +6033,9 @@ void taiTypeHier::UpdateMenu(const taiMenuAction* acn) {
   GetMenu(acn);
 }
 
-
-///////////////////////////
+////////////////////////////
 //      taiMethodData     //
-///////////////////////////
+////////////////////////////
 
 void taiMethodData::ShowReturnVal(cssEl* rval, IDataHost* host,
   const String& meth_name)
@@ -5677,7 +6082,6 @@ void taiMethodData::AddToMenu(taiActions* mnu) {
   if (meth->HasOption("MENU_SEP_AFTER"))
     mnu->AddSep();
 }
-
 
 bool taiMethodData::CallFun_impl() {
   if ((meth->stubp == NULL) || (base == NULL))

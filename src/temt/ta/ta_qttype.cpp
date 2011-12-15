@@ -1911,9 +1911,20 @@ int taiRegexpDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-// TODO: for now, just a copy&paste of taiFileDialogMember
+// DPF TODO: for now, just a copy&paste of taiFileDialogMember
 taiData* taiRegexpDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
-  return new taiRegexpField(mbr->type, host_, par, gui_parent_, flags_);
+  // Get the RegexpPopulator instance that should be used for this field.
+  RegexpPopulator *populator = 0;
+  String pop_type = mbr->OptionAfter("TYPE_");
+  if (!pop_type.empty()) {
+    if (TypeDef *type = taMisc::types.FindName(pop_type)) {
+      if (void *pv_inst = type->GetInstance()) {
+        populator = reinterpret_cast<RegexpPopulator *>(pv_inst);
+      }
+    }
+  }
+
+  return new taiRegexpField(mbr->type, host_, par, gui_parent_, flags_, populator);
 }
 
 void taiRegexpDialogMember::GetImage_impl(taiData* dat, const void* base){

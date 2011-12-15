@@ -2140,7 +2140,7 @@ public:
   String_PArray arg_defs;       // argument default values
   String_PArray arg_vals;       // argument values (previous)
 
-  css_fun_stub_ptr stubp;       // css function stup pointer
+  css_fun_stub_ptr stubp;       // css function stub pointer
 
   taMisc::TypeInfoKind typeInfoKind() const {return taMisc::TIK_METHOD;}
 

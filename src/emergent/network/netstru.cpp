@@ -3610,7 +3610,7 @@ int Unit_Group::LesionCons(float p_lesion, bool permute) {
 int Unit_Group::LesionUnits(float p_lesion, bool permute) {
   int rval = 0;
   StructUpdate(true);
-  UnLesionUnits();		// always start unlesioned
+  UnLesionUnits();              // always start unlesioned
   if(permute) {
     rval = (int) (p_lesion * (float)leaves);
     if(rval == 0) return 0;
@@ -3633,7 +3633,7 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
     for(j=leaves-1; j>=0; j--) {
       if(Random::ZeroOne() <= p_lesion) {
         Unit* un = (Unit*)Leaf(j);
-	un->Lesion();
+        un->Lesion();
 //         un->DisConnectAll();
 //         RemoveLeafIdx(j);
         rval++;
@@ -3860,6 +3860,31 @@ void Projection_Group::DataChanged(int dcr, void* op1, void* op2) {
     if (net)
       net->RebuildAllViews();
   }
+}
+
+////////////////////////////////
+//  TalairachRegexpPopulator  //
+////////////////////////////////
+
+TalairachRegexpPopulator::TalairachRegexpPopulator()
+  : RegexpPopulator()
+  , labels()
+{
+}
+
+QStringList TalairachRegexpPopulator::getLabels() const
+{
+  if (labels.empty()) {
+    String atlasFilename = taMisc::app_dir + "/data/atlases/talairach.nii";
+    TalairachAtlas atlas(atlasFilename.toQString());
+    labels = atlas.labels();
+  }
+  return labels;
+}
+
+QString TalairachRegexpPopulator::getSeparator() const
+{
+  return ".";
 }
 
 ////////////////////////
@@ -4362,7 +4387,7 @@ void Layer::BuildUnits() {
         ug->EnforceType();
         FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
           u->BuildUnits();
-	}
+        }
         ug->StructUpdate(false);
       }
     }
@@ -5451,7 +5476,7 @@ bool Layer::DMem_DistributeUnits_impl(DMemShare& dms) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
       int cnt = 0;
       FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
-	if(u->lesioned()) continue;
+        if(u->lesioned()) continue;
         u->DMem_SetLocalProc(cnt % np);
         u->DMem_SetThisProc(this_proc);
         dms.Link(u);
@@ -8251,7 +8276,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
       float abs_max = 0.0f;
       int uidx = 0;
       FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-	if(u->lesioned()) continue;
+        if(u->lesioned()) continue;
         if(u->tmp_calc1 > 0.0f)
           u->wt_prjn /= u->tmp_calc1;
         abs_max = MAX(abs_max, fabsf(u->wt_prjn));
@@ -8273,7 +8298,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
           Unit_Group* ug = (Unit_Group*)lay->units.gp[gi];
           float gp_val = 0.0f;
           FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
-	    if(u->lesioned()) continue;
+            if(u->lesioned()) continue;
             if(u->wt_prjn > thr_eff) // only for those above threshold
               gp_val += u->wt_prjn;
           }
@@ -8287,14 +8312,14 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
 
           int uidx = 0;
           FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
-	    if(u->lesioned()) continue;
+            if(u->lesioned()) continue;
             topk_un_vec.FastEl_Flat(uidx) = u->wt_prjn;
             uidx++;
           }
 
           float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
           FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
-	    if(u->lesioned()) continue;
+            if(u->lesioned()) continue;
             float prjval = u->wt_prjn;
             u->wt_prjn /= abs_max;      // normalize --
             if((top_k_un > 0 && prjval < thr_eff) ||
@@ -8313,7 +8338,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
         float thr_eff = taMath_float::vec_kwta(&topk_un_vec, top_k_un, true); // descending
 
         FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-	  if(u->lesioned()) continue;
+          if(u->lesioned()) continue;
           float prjval = u->wt_prjn;
           u->wt_prjn /= abs_max;        // normalize
           if(top_k_un > 0 && prjval < thr_eff) {

@@ -28,6 +28,7 @@
 #include "ta_dmem.h"
 #include "ta_thread.h"
 #include "ta_datatable.h"
+#include "ta_qtdata.h"
 
 #include "emergent_base.h"
 #include "spec.h"
@@ -880,7 +881,7 @@ public: //
   // #MENU #MENU_ON_Structure #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on unit -- removes it from all processing operations
   virtual void  UnLesion();
   // #MENU #DYN1 #CAT_Structure un-set the lesion flag on unit -- restores it to engage in normal processing
-  virtual void	UpdtAfterNetModIfNecc();
+  virtual void  UpdtAfterNetModIfNecc();
   // #IGNORE call network UpdtAfterNetMod only if it is not otherwise being called at a higher level
 
   inline bool   lay_lesioned() const;
@@ -1383,7 +1384,7 @@ public:
   // #MENU #USE_RVAL #CAT_Structure turn on unit LESIONED flags with prob p_lesion (permute = fixed no. lesioned)
   virtual void  UnLesionUnits();
   // #MENU #USE_RVAL #CAT_Structure un-lesion units: turn off all unit LESIONED flags
-  virtual void	UpdtAfterNetModIfNecc();
+  virtual void  UpdtAfterNetModIfNecc();
   // #IGNORE call network UpdtAfterNetMod only if it is not otherwise being called at a higher level
 
   virtual bool  UnitValuesToArray(float_Array& ary, const String& variable);
@@ -1508,6 +1509,15 @@ private:
   void  Destroy()               { };
 };
 
+class EMERGENT_API TalairachRegexpPopulator : public RegexpPopulator {
+public:
+  TalairachRegexpPopulator();
+  override QStringList getLabels() const;
+  override QString getSeparator() const;
+private:
+  mutable QStringList labels;
+};
+
 class EMERGENT_API Layer : public taNBase {
   // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network ##HAS_CONDTREE layer containing units
 INHERITED(taNBase)
@@ -1576,7 +1586,7 @@ public:
   bool                  gp_unit_names_4d; // #CONDSHOW_ON_unit_groups if there are unit subgroups, create a 4 dimensional set of unit names which allows for distinct names for each unit in the layer -- otherwise a 2d set of names is created of size un_geom, all unit groups have the same repeated set of names
   String_Matrix         unit_names;     // #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
-  String                brain_area;     // #CAT_Structure #REGEXP_DIALOG Which brain area this layer's units should be mapped to in a brain view.  Must match a label from the atlas chosen for the network.  Layer will not render to brain view if LESIONED flag is checked.
+  String                brain_area;     // #CAT_Structure #REGEXP_DIALOG #TYPE_TalairachRegexpPopulator Which brain area this layer's units should be mapped to in a brain view.  Must match a label from the atlas chosen for the network.  Layer will not render to brain view if LESIONED flag is checked.
 
   int                   n_units;
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
@@ -1872,7 +1882,7 @@ public:
   // #MENU #MENU_ON_Structure #USE_RVAL #CAT_Structure turn on unit LESIONED flags with prob p_lesion (permute = fixed no. lesioned)
   virtual void  UnLesionUnits();
   // #MENU #USE_RVAL #CAT_Structure un-lesion units: turn off all unit LESIONED flags
-  virtual void	UpdtAfterNetModIfNecc();
+  virtual void  UpdtAfterNetModIfNecc();
   // #IGNORE call network UpdtAfterNetMod only if it is not otherwise being called at a higher level
 
   virtual void  Iconify();

@@ -106,11 +106,13 @@ class   QSize;                  // #IGNORE #HIDDEN
 class   QSizePolicy;            // #IGNORE #HIDDEN
 class   QShortcut;              // #IGNORE #HIDDEN
 class   QSlider;                // #IGNORE #HIDDEN
+class   QSortFilterProxyModel;  // #IGNORE #HIDDEN
 class   QSpacerItem;            // #IGNORE #HIDDEN
 class   QSpinBox;               // #IGNORE #HIDDEN
 class   QSplitter;              // #IGNORE #HIDDEN
 class   QStackedLayout;         // #IGNORE #HIDDEN
 class   QStackedWidget;         // #IGNORE #HIDDEN
+class   QStandardItemModel;     // #IGNORE #HIDDEN
 class   QStatusBar;             // #IGNORE #HIDDEN
 class   QTableView;             // #IGNORE #HIDDEN
 class   QTableWidget;           // #IGNORE #HIDDEN
