@@ -4396,16 +4396,21 @@ void Program::Init() {
       ret_val = RV_COMPILE_ERR;
   }
   if(ret_val == RV_OK) {
-    SetAllBreakpoints();          // reinstate all active breakpoints
-    bool did_struct_updt = false;
-    if(!HasProgFlag(OBJS_UPDT_GUI)) {
-      objs.StructUpdateEls(true);
-      did_struct_updt = true;
+    // check args and vars before running any code, to get NULL_CHECK etc
+    bool chkargs = args.CheckConfig(false);
+    bool chkvars = vars.CheckConfig(false);
+    if(chkargs && chkvars) {
+      SetAllBreakpoints();          // reinstate all active breakpoints
+      bool did_struct_updt = false;
+      if(!HasProgFlag(OBJS_UPDT_GUI)) {
+	objs.StructUpdateEls(true);
+	did_struct_updt = true;
+      }
+      script->SetDebug((int)HasProgFlag(TRACE));
+      script->Run();
+      if(did_struct_updt)
+	objs.StructUpdateEls(false);
     }
-    script->SetDebug((int)HasProgFlag(TRACE));
-    script->Run();
-    if(did_struct_updt)
-      objs.StructUpdateEls(false);
   }
 
   // get these here after all the sub-guys have been initialized -- should now be current

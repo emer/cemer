@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.2.6.0 rev5187
+// ta_Dump File v3.0 -- code v5.2.6.0 rev5191
 LeabraProject .projects["Project_0"] { 
   taBase_Group @.templates = [0] {
   };
@@ -1718,7 +1718,7 @@ LeabraProject .projects["Project_0"] {
 	    UserDataItem @["view_frame_selected"] { };
      };
 
-	  T3DataViewFrame_List @.frames = [3] {
+	  T3DataViewFrame_List @.frames = [4] {
 	    T3DataViewFrame @["Network_0"] { 
 	      T3DataView_List @.children = [1] {
 		NetView @["projects_Project_0_viewers_Browser2_frames_T3Frames_frames_Network_0_root_view_children_0"] { 
@@ -1767,6 +1767,26 @@ LeabraProject .projects["Project_0"] {
 		BrainView @["Network_0_View"] { 
 		  ScaleRange_List @.scale_ranges = [1] {
 		    ScaleRange @[0] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @["View_0"] { };
+		T3SavedView @["View_1"] { };
+		T3SavedView @["View_2"] { };
+		T3SavedView @["View_3"] { };
+		T3SavedView @["View_4"] { };
+		T3SavedView @["View_5"] { };
+	      };
+	    };
+	    T3DataViewFrame @["Inputs"] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @["Inputs_Grid"] { 
+		  T3DataView_List @.children = [3] {
+		    GridColView @["Name"] { };
+		    GridColView @["Input"] { };
+		    GridColView @["Output"] { };
 		  };
 		};
 	      };
@@ -1989,21 +2009,21 @@ LeabraProject .projects["Project_0"] {
 	    [2] ;;      };
       ar {
        name=;
-	    [5 5 6] 0;0;0;0;0;0;0;0;0;0;
+	    [5 5 6] 1;0;0;0;1;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;0;
+1;0;0;0;1;0;0;1;0;0;
+0;0;1;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;1;0;0;
 0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;1;0;0;0;1;0;0;
+0;1;0;0;0;1;0;0;0;0;
+1;0;0;0;0;0;1;0;0;0;
+0;0;1;0;0;0;0;0;1;0;
+0;0;0;0;1;1;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+1;0;0;0;1;0;0;0;0;0;
       };
      };
      float_Data @["Output"] {
@@ -2295,8 +2315,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [17] 0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;      };
+	    [0]       };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -2321,8 +2340,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [17] 0;1;2;3;4;5;6;7;8;9;
-10;11;12;13;14;15;16;      };
+	    [0]       };
      };
      float_Data @["avg_sse"] {
       name="avg_sse";
@@ -2337,8 +2355,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [17] 5;5;5;5;5;5;5;5;5;4.9944844;
-4.1387529;4.0593491;4.4000592;4.3369098;4.2820773;3.673209;5.0044594;      };
+	    [0]       };
      };
      float_Data @["cnt_err"] {
       name="cnt_err";
@@ -2353,8 +2370,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [17] 6;6;6;6;6;6;6;6;6;6;
-5;6;6;6;6;5;6;      };
+	    [0]       };
      };
      float_Data @["avg_ext_rew"] {
       name="avg_ext_rew";
@@ -2369,8 +2385,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [17] 0;0;0;0;0;0;0;0;0;0;
-0;0;0;0;0;0;0;      };
+	    [0]       };
      };
      float_Data @["avg_cycles"] {
       name="avg_cycles";
@@ -2385,8 +2400,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [17] 15;15;15;15;15;17.666666;23;26.833334;30.333334;32.666668;
-55.666668;47.333332;55.833332;55.833332;55.666668;60;55.666668;      };
+	    [0]       };
      };
      float_Data @["epoch_time_tot"] {
       name="epoch_time_tot";
@@ -2401,8 +2415,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [17] 0.18000001;0.20999999;0.2;0.19;0.2;0.20999999;0.19;0.2;0.2;0.19;
-0.22;0.20999999;0.23999999;0.23;0.25;0.22;0.23;      };
+	    [0]       };
      };
      float_Data @["epoch_time_usr"] {
       name="epoch_time_usr";
@@ -2417,8 +2430,7 @@ LeabraProject .projects["Project_0"] {
 	    [0]       };
       ar {
        name=;
-	    [17] 0.14;0.13;0.16;0.15000001;0.15000001;0.16;0.17;0.17;0.16;0.16;
-0.19;0.18000001;0.19;0.22;0.23;0.2;0.19;      };
+	    [0]       };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -4121,7 +4133,7 @@ LeabraProject .projects["Project_0"] {
      ProgVar @["epoch"] {
       name="epoch";
       var_type=T_Int;
-      int_val=17;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5141,7 +5153,7 @@ LeabraProject .projects["Project_0"] {
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=0;
+      int_val=1;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5799,7 +5811,7 @@ LeabraProject .projects["Project_0"] {
      ProgVar @["cycle"] {
       name="cycle";
       var_type=T_Int;
-      int_val=53;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10974,6 +10986,151 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0:
 	 pos {x=0: y=-1.275214: z=1.206237: };
 	 orient {x=-1: y=0: z=0: rot=5.26637: };
 	 focal_dist=1.99485;
+	};
+	T3SavedView @["View_1"] {
+	 name="View_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_2"] {
+	 name="View_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_3"] {
+	 name="View_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_4"] {
+	 name="View_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_5"] {
+	 name="View_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3DataViewFrame @["Inputs"] {
+       name="Inputs";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @["Inputs_Grid"] {
+	  name="Inputs_Grid";
+	  m_data=$.projects["Project_0"].data.gp["InputData"]["Inputs"]$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name="T3DataView_List_0";
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @["Name"] {
+	    name="Name";
+	    m_data=.projects["Project_0"].data.gp["InputData"]["Inputs"].data["Name"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Input"] {
+	    name="Input";
+	    m_data=.projects["Project_0"].data.gp["InputData"]["Inputs"].data["Input"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Output"] {
+	    name="Output";
+	    m_data=.projects["Project_0"].data.gp["InputData"]["Inputs"].data["Output"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=5;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=10;
+	  view_range {min=0: max=5: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=2: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_6";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["View_0"] {
+	 name="View_0";
+	 view_saved=1;
+	 pos {x=1.5325: y=0.5174999: z=1.443747: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.453747;
 	};
 	T3SavedView @["View_1"] {
 	 name="View_1";

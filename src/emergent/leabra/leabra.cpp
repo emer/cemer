@@ -2232,6 +2232,8 @@ void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, flo
   graph_data->ResetData();
   DataCol* nt = graph_data->FindMakeColName("Net", idx, VT_FLOAT);
   DataCol* vm = graph_data->FindMakeColName("Vm", idx, VT_FLOAT);
+  
+  incr = MAX(0.001f, incr);	// must be pos
 
   for(float x = min; x <= max; x += incr) {
     float y = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
@@ -2261,6 +2263,7 @@ void LeabraUnitSpec::GraphActFmVmFun(DataTable* graph_data, float min, float max
   LeabraUnit un;
   LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
 
+  incr = MAX(0.001f, incr);	// must be pos
   float x;
   for(x = min; x <= max; x += incr) {
     un.v_m = x;
@@ -2294,6 +2297,7 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
 
   LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
 
+  incr = MAX(0.001f, incr);	// must be pos
   float x;
   for(x = min; x <= max; x += incr) {
     float aval;

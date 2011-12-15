@@ -5739,13 +5739,16 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
       if (op_code & OP_APPEND) {
         if(proj) proj->undo_mgr.SaveUndo(tab, "AddRows", tab);
         tab->AddRows(sel.height());
-      } else if (op_code & OP_INSERT) {
+      }
+      else if (op_code & OP_INSERT) {
         if(proj) proj->undo_mgr.SaveUndo(tab, "Insertows", tab);
         tab->InsertRows(sel.row_fr, sel.height());
-      } else if (op_code & OP_DUPLICATE) {
+      }
+      else if (op_code & OP_DUPLICATE) {
         if(proj) proj->undo_mgr.SaveUndo(tab, "DuplicateRows", tab);
         tab->DuplicateRows(sel.row_fr, sel.height());
-      } else if (op_code & OP_DELETE) {
+      }
+      else if (op_code & OP_DELETE) {
         if(taMisc::delete_prompts || !tab->HasDataFlag(DataTable::SAVE_ROWS)) {
           if (taMisc::Choice("Are you sure you want to delete the selected rows?", "Yes", "Cancel") != 0) goto bail;
         }
@@ -5753,7 +5756,8 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
         tab->RemoveRows(sel.row_fr, sel.height());
       }
     }
-  } else if (op_code & OP_COL) {
+  }
+  else if (op_code & OP_COL) {
     // must have >=1 col selected to make sense
     if ((op_code & (OP_APPEND | OP_INSERT | OP_DELETE))) {
       if (sel.width() < 1) goto bail;

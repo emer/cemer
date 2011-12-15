@@ -1141,10 +1141,10 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
   if(!rval) return false;
   GetDest(dist_mat, src_data, "DistMatrix");
   dist_mat->StructUpdate(true);
+  dist_mat->Reset();	// get rid of any existing cols
   if(!name_col_nm.empty()) {
     DataCol* nmda = src_data->FindColName(name_col_nm, true); // errmsg
     if(nmda) {
-      dist_mat->Reset();	// nuke everything
       dist_mat->NewColString("Name");
       int n = dmat.dim(0);
       for(int i=0;i<n;i++) {
@@ -1280,11 +1280,11 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
   if(!rval) return false;
   GetDest(dist_mat, src_data_a, src_data_b->name + "_DistMatrix");
   dist_mat->StructUpdate(true);
+  dist_mat->Reset();	// nuke everything
   if(!name_col_nm_a.empty() && !name_col_nm_b.empty()) {
     DataCol* nmda_a = src_data_a->FindColName(name_col_nm_a, true); // errmsg
     DataCol* nmda_b = src_data_b->FindColName(name_col_nm_b, true); // errmsg
     if(nmda_a && nmda_b) {
-      dist_mat->Reset();	// nuke everything
       dist_mat->NewColString("Name");
       int col_n = dmat.dim(0);
       int row_n = dmat.dim(1);

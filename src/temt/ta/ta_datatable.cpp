@@ -416,6 +416,7 @@ int DataCol::displayWidth() const {
 }
 
 taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
+  static DataTable* last_dt = NULL;
   if (md->name == "ar") {
     DataTable* dt = dataTable();
     // if no save, don't need to check DataTable global
@@ -425,15 +426,31 @@ taBase::DumpQueryResult DataCol::Dump_QuerySaveMember(MemberDef* md) {
         if(tabMisc::cur_undo_mod_obj == dt || tabMisc::cur_undo_mod_obj == this) {
           if((dt->Cells() > taMisc::undo_data_max_cells) ||
              !dt->HasDataFlag(DataTable::SAVE_ROWS)) {
+// 	    if(last_dt != dt) {
+// 	      taMisc::DebugInfo("not undo saving directly affected datatable -- no save or too big:",
+// 				dt->GetPathNames());
+// 	    }
+// 	    last_dt = dt;
             return DQR_NO_SAVE; // too big or no save!
           }
           return DQR_SAVE;
         }
         if(!tabMisc::cur_undo_save_owner || !IsChildOf(tabMisc::cur_undo_save_owner)) {
           // no need to save b/c unaffected by changes elsewhere..
+// 	  if(last_dt != dt) {
+// 	    taMisc::DebugInfo("not undo saving datatable -- should be unaffected:",
+// 			      dt->GetPathNames(), "undo save owner:", 
+// 			      tabMisc::cur_undo_save_owner->GetPathNames());
+// 	  }
+// 	  last_dt = dt;
           return DQR_NO_SAVE;
         }
         if(dt->Cells() > taMisc::undo_data_max_cells) {
+// 	  if(last_dt != dt) {
+// 	    taMisc::DebugInfo("not undo saving datatable -- too big:",
+// 			      dt->GetPathNames());
+// 	  }
+// 	  last_dt = dt;
           return DQR_NO_SAVE;   // too big!
         }
       }

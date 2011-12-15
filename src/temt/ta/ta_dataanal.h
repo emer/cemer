@@ -143,11 +143,11 @@ public:
 			   taMath::DistMetric metric, bool norm=false, float tol=0.0f, 
 			   bool incl_scalars=false);
   // #CAT_Distance compute distance matrix for given matrix data column in src_data datatable. if data_col_nm is blank, all real-valued matrix (and scalars if if incl_scalars) columns are used, summing across.  dist_mat returns a square symmetric matrix with cells as the distance between each row and every other row of matrix data.  distance data is converted to float regardless of source type (float or double)
-  static bool	DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_data,
+  static bool	DistMatrixTable(DataTable* dist_mat_table, bool view, DataTable* src_data,
 				const String& data_col_nm, const String& name_col_nm,
 				taMath::DistMetric metric, bool norm=false, float tol=0.0f,
 				bool incl_scalars=false);
-  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance compute distance matrix table for given matrix data column in src_data datatable.  dist_mat returns a square symmetric matrix with cells as the distance between each row and every other row of matrix data.  if data_col_nm is blank, all real-valued matrix (and scalars if if incl_scalars) columns are used, summing across.  if name_col_nm is non-empty and valid, nxn scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data name + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
+  // #CAT_Distance #MENU_BUTTON #MENU_ON_Distance #NULL_OK_0 #NULL_TEXT_0_NewDataTable compute distance matrix table for given matrix data column in src_data datatable.  dist_mat returns a square symmetric matrix with cells as the distance between each row and every other row of matrix data.  if data_col_nm is blank, all real-valued matrix (and scalars if if incl_scalars) columns are used, summing across.  if name_col_nm is non-empty and valid, nxn scalar float rows and columns are made, with names from name_col_nm values from src_data table; otherwise a single matrix column is made, named by the src_data name + "_DistMatrix".  if view, then a grid view in a new frame is automatically created
 
   static bool	CrossDistMatrix(float_Matrix* dist_mat,
 				DataTable* src_data_a, const String& data_col_nm_a,
@@ -155,7 +155,7 @@ public:
 				taMath::DistMetric metric, bool norm=false, float tol=0.0f,
 				bool incl_scalars=false);
   // #CAT_Distance compute cross distance matrix between two different matrix data columns in src_data_a and src_data_b datatables. if data_col_nm's are both blank, all real-valued matrix (and scalars if if incl_scalars) columns are used, summing across (only cols at same col index that match exactly will be used). dist_mat returns a symmetric matrix with cells as the distance between each row in table a versus each row of table b.  distance data is converted to float regardless of source type (float or double)
-  static bool	CrossDistMatrixTable(DataTable* dist_mat, bool view,
+  static bool	CrossDistMatrixTable(DataTable* dist_mat_table, bool view,
 				     DataTable* src_data_a, const String& data_col_nm_a,
 				     const String& name_col_nm_a,
 				     DataTable* src_data_b, const String& data_col_nm_b,

@@ -662,7 +662,8 @@ void iProgramEditor::Apply_Async() {
 }
 
 void iProgramEditor::Help() {
-  base->Help();
+  if(base)
+    base->Help();
 }
 
 iTreeViewItem* iProgramEditor::AssertBrowserItem(taiDataLink* link)
