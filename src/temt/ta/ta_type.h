@@ -823,7 +823,7 @@ public:
   ////////////////////////////////////////////////////////
   //    Global State, Flags Etc
 
-  static TypeSpace      types;          // #READ_ONLY #NO_SAVE list of all the active types
+  static TypeSpace      types;          // #READ_ONLY #NO_SAVE #EXPERT list of all the active types
   static TypeSpace      aka_types;      // #READ_ONLY #NO_SAVE list of types that have AKA for other types that are no longer supported
   static TypeDef*       default_scope;  // #READ_ONLY #NO_SAVE type of object to use to determine if two objects are in the same scope
 
@@ -834,12 +834,12 @@ public:
   static signed char    quitting;       // #READ_ONLY #NO_SAVE #NO_SHOW true, via one of QuitFlag values, once we are quitting
   static bool           not_constr;     // #READ_ONLY #NO_SAVE #NO_SHOW true if ta types are not yet constructed (or are destructed)
 
-  static bool           use_gui;        // #READ_ONLY #NO_SAVE #NO_SHOW whether the user has specified to use the gui or not (default = true)
-  static bool           gui_active;     // #READ_ONLY #NO_SAVE #NO_SHOW if gui has actually been started up or not -- this is the one that should be checked for gui modality in all non-startup code
-  static bool           gui_no_win;     // #READ_ONLY #NO_SAVE #NO_SHOW an intermediate form of gui operation where the gui system is fully initialized, but no windows are created, and gui_active remains false -- this is useful for batch (background) jobs that need to do offscreen rendering or other gui-dependent functions
+  static bool           use_gui;        // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT  whether the user has specified to use the gui or not (default = true)
+  static bool           gui_active;     // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT if gui has actually been started up or not -- this is the one that should be checked for gui modality in all non-startup code
+  static bool           gui_no_win;     // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT an intermediate form of gui operation where the gui system is fully initialized, but no windows are created, and gui_active remains false -- this is useful for batch (background) jobs that need to do offscreen rendering or other gui-dependent functions
   static bool           in_dev_exe;     // #READ_ONLY #NO_SAVE #NO_SHOW are we running a development executable -- running out of the build directory of the source code -- do some things differently in this case (e.g., no plugins)
   static bool           use_plugins;    // #READ_ONLY #NO_SAVE #NO_SHOW whether to use plugins
-  static bool           server_active;  // #READ_ONLY #NO_SAVE #NO_SHOW if remote server has been started up or not
+  static bool           server_active;  // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT if remote server has been started up or not
   static ContextFlag    is_loading;     // #READ_ONLY #NO_SAVE #NO_SHOW true if currently loading an object
   static taVersion      loading_version;
   //  #READ_ONLY #NO_SAVE #EXPERT version number associated with file currently being loaded
@@ -859,9 +859,9 @@ public:
   static TypeDef*       plugin_loading; // #READ_ONLY #NO_SAVE #NO_SHOW the TypeDef of the plugin currently loading -- we stamp this into all formal classes
 
   static String         last_err_msg;
-  // #READ_ONLY #NO_SAVE #NO_SHOW last message from the taMisc::Error function
+  // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT last message from the taMisc::Error function
   static String         last_warn_msg;
-  // #READ_ONLY #NO_SAVE #NO_SHOW last message from the taMisc::Warning function
+  // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT last message from the taMisc::Warning function
 
   static String         last_check_msg; // #READ_ONLY #NO_SAVE #EDIT_DIALOG last error, or last batch of errors (if checking) by CheckConfig
   static bool           check_quiet;    // #IGNORE mode we are in; set by CheckConfigStart

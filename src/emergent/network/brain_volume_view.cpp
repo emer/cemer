@@ -100,6 +100,8 @@ float BrainVolumeView::GetUnitDisplayVal(const Unit* u)
   float val = bv->scale.zero;
   if(!u) return val;
   val = u->act;
+//   val = u->net;
+//   val = u->v_m;
   return val;
 }
 
@@ -232,7 +234,7 @@ void BrainVolumeView::RenderBrain()
   //if revert to CopyPolicy::Copy then do allocation out of loop and reuse
   //unsigned char* tex = new unsigned char[d1*d2*2];
   unsigned char* tex(0);
-  float transparency(bvs.SliceTransparency()/100.0f);
+  float transparency(bvs.SliceTransparencyXformed());
   for (int i=0; i<d3; i++) {
     tex = static_cast<unsigned char*>(malloc(d1*d2*2));
     brain_data_->sliceAsTexture((NiftiReader::AnatomicalPlane)bvs.ViewPlane(), 1+i, tex);
@@ -306,7 +308,7 @@ void BrainVolumeView::UpdateSlices()
   T3BrainNode& node = *(this->node_so()); // cache
 
   // now update slices
-  float transparency(bvs.SliceTransparency()/100.0f);
+  float transparency(bvs.SliceTransparencyXformed());
   for (int i=0; i<bvs.MaxSlices(); i++) {
     if ( ((bvs.SliceStart() - 1) <= i) && (i <= (bvs.SliceEnd() - 1)) ) {
       node.brain_tex_mat_array[i]->transparency = transparency;

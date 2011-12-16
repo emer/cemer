@@ -4057,21 +4057,30 @@ void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_item
   Dlg1.AddVBoxLayout("mainv", "", "main", "");
   curow = "instr";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
-  Dlg1.AddLabel("Instructions", "main", curow, "label=Enter strings to search and replace for\nin currently selected items\n(does not use regular expressions);");
+  Dlg1.AddLabel("Instructions", "main", curow,
+"label=Enter strings to search and replace for in currently selected items\n\
+member filter restricts replace to specific member field names\n\
+(search does not support regular expressions);");
   Dlg1.AddSpace(20, "mainv");
   curow = "srchrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
-  Dlg1.AddLabel("srchlbl", "main", curow, "label=Search for:    ;");
-  Dlg1.AddStringField(&sr_val, "srch", "main", curow, "tooltip=enter string value to search for;");
+  String sttip = "tooltip=enter string value to search for;";
+  Dlg1.AddLabel("srchlbl", "main", curow, "label=Search for:    ;"+sttip);
+  Dlg1.AddStringField(&sr_val, "srch", "main", curow, sttip);
   curow = "replrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
-  Dlg1.AddLabel("repllbl", "main", curow, "label=Replace with: ;");
-  Dlg1.AddStringField(&rp_val, "repl", "main", curow, "tooltip=enter string value to replace with;");
+  String rttip = "tooltip=enter string value to replace with;";
+  Dlg1.AddLabel("repllbl", "main", curow, "label=Replace with: ;"+rttip);
+  Dlg1.AddStringField(&rp_val, "repl", "main", curow, rttip);
   Dlg1.AddSpace(20, "mainv");
   curow = "mbfltrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
-  Dlg1.AddLabel("mbfltlbl", "main", curow, "label=Member filter: ;");
-  Dlg1.AddStringField(&mb_flt, "mbflt", "main", curow, "tooltip=enter string that the end value member where replacement actually occurs must contain in its member name\n -- this restricts the replacement to specific types of values (e.g., 'name' or 'lrate')\n instead of applying to everything (which is what happens when this is blank);");
+  String mttip = 
+"tooltip=The member name must contain the specified string (e.g. 'name' or 'lrate')\n\
+in order for the Replace operation to apply. If the member filter is left blank, \n\
+then the Replace operation applies to all members.;";
+  Dlg1.AddLabel("mbfltlbl", "main", curow, "label=Member filter: ;"+mttip);
+  Dlg1.AddStringField(&mb_flt, "mbflt", "main", curow, mttip);
   Dlg1.AddSpace(20, "mainv");
 
   int drval = Dlg1.PostDialog(true);

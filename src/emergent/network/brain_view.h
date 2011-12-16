@@ -66,6 +66,9 @@ public:
   int           NumSlices() const;
   int           MaxSlices() const;
 
+  float		SliceTransparencyXformed() const;
+  // transformed slice transparency for use in actual rendering	
+
   public slots:
   void          SetDataName(const QString& data_name);
   void          SetDimensions(const TDCoord& dimensions);

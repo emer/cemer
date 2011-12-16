@@ -948,6 +948,14 @@ int BrainViewState::SliceTransparency() const
   return slice_transparency_;
 }
 
+float BrainViewState::SliceTransparencyXformed() const
+{
+  float offset = 100.0f;
+  float logtr = taMath_float::log(offset + slice_transparency_);
+  float denom = taMath_float::log(offset + 100.0f);
+  return logtr / denom;
+}
+
 int BrainViewState::UnitValuesTransparency() const
 {
   return unit_val_transparency_;
