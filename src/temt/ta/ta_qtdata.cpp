@@ -44,7 +44,7 @@
 
 #include <QApplication>
 #include <QColor> // needed for qbitmap
-#include <QComboBox.h>
+#include <QComboBox>
 #include <QDesktopWidget>
 #include <QFont>
 #include <QFrame>
