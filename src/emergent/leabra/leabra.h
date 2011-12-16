@@ -242,6 +242,9 @@ class LEABRA_API XCalLearnSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
 
+  float		avg_l_mult;	// extent to which long-term average activation has a multiplicative relationship on the threshold, in addition to whatever thr_l_mix contribution it makes to threshold itself, in relation to avg_l_thr threshold -- should provide a form of weight normalization to prevent "hog" units: [1 + avg_l_mult * (avg_l - avg_l_thr)] std_thr
+  float		avg_l_thr;	// #CONDSHOW_OFF_avg_l_mult:0 threshold to compare avg_l with in multiplicative factor
+  bool		avg_l_pos;	// #CONDSHOW_OFF_avg_l_mult:0 only use positive values of avg_l - avg_l_thr -- only increase the threshold, never decrease it..
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.01 std] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
@@ -441,6 +444,9 @@ public:
   // CtLeabraXCAL code
 
   inline void 	C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
+				 float su_avg_s, float su_avg_m, float su_act_mult);
+  // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
+  inline void 	C_Compute_dWt_CtLeabraXCAL_trial_mult(LeabraCon* cn, LeabraUnit* ru,
 				 float su_avg_s, float su_avg_m, float su_act_mult);
   // #CAT_Learning compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
   virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su);
@@ -3457,16 +3463,39 @@ C_Compute_dWt_CtLeabraXCAL_trial(LeabraCon* cn, LeabraUnit* ru,
   cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
 }
 
+inline void LeabraConSpec::
+C_Compute_dWt_CtLeabraXCAL_trial_mult(LeabraCon* cn, LeabraUnit* ru,
+				      float su_avg_s, float su_avg_m, float su_act_mult) {
+  float srs = ru->avg_s * su_avg_s;
+  float srm = ru->avg_m * su_avg_m;
+  float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
+  float lthr = su_act_mult * ru->avg_l;
+  float effthr = xcal.thr_m_mix * srm + lthr;
+  float mlt = 1.0f + xcal.avg_l_mult * (ru->avg_l - xcal.avg_l_thr);
+  if(xcal.avg_l_pos && mlt < 1.0f) mlt = 1.0f;
+  effthr *= mlt;
+  cn->dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
+}
+
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su) {
   float su_avg_s = su->avg_s;
   float su_avg_m = su->avg_m;
 
   float su_act_mult = xcal.thr_l_mix * su->avg_m;
 
-  for(int i=0; i<cg->size; i++) {
-    LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
-    C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
-				     su_act_mult);
+  if(xcal.avg_l_mult > 0.0f) {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      C_Compute_dWt_CtLeabraXCAL_trial_mult((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
+					    su_act_mult);
+    }
+  }
+  else {
+    for(int i=0; i<cg->size; i++) {
+      LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      C_Compute_dWt_CtLeabraXCAL_trial((LeabraCon*)cg->OwnCn(i), ru, su_avg_s, su_avg_m,
+				       su_act_mult);
+    }
   }
 }
 
