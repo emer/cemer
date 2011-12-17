@@ -91,6 +91,7 @@ void WtScaleSpecInit::Initialize() {
 void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.25f;
+  dwt_norm = false;
 }
 
 void WtSigSpec::UpdateAfterEdit_impl() {
@@ -2097,6 +2098,16 @@ void LeabraUnitSpec::Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int 
 
   LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
   bspc->B_Compute_Leabra_dWt((LeabraCon*)u->bias.OwnCn(0), u, lay);
+}
+
+void LeabraUnitSpec::Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  LeabraLayer* rlay = u->own_lay();
+  if(rlay->lesioned()) return;
+  for(int g = 0; g < u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(!recv_gp->size) continue;
+    recv_gp->Compute_dWt_Norm(u);
+  }
 }
 
 void LeabraUnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
@@ -6307,6 +6318,18 @@ void LeabraNetwork::Compute_dWt_Nothing() {
   Compute_dWt_SRAvg();
   Compute_dWt_Layer_pre();
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_Nothing);
+  if(thread_flags & DWT)
+    threads.Run(&un_call, 0.6f);
+  else
+    threads.Run(&un_call, -1.0f); // -1 = always run localized
+}
+
+void LeabraNetwork::Compute_dWt_Norm() {
+  if(!dwt_norm_enabled) return;
+  if(learn_rule == LeabraNetwork::CTLEABRA_XCAL && epoch < ct_time.n_avg_only_epcs) {
+    return; // no learning while gathering data!
+  }
+  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_Norm);
   if(thread_flags & DWT)
     threads.Run(&un_call, 0.6f);
   else

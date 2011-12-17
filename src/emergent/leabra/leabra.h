@@ -184,6 +184,7 @@ INHERITED(SpecMemberBase)
 public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1:1.25 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.0 for XCAL
+  bool		dwt_norm;	// normalize weight changes -- this is somewhat computationally expensive but can make learning more robust -- dwt -= (act_p / sum act_p) (sum dwt) over projection
 
   static inline float	SigFun(float w, float gn, float of) {
     if(w <= 0.0f) return 0.0f;
@@ -495,6 +496,8 @@ public:
   inline void	Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit* su);
   // #CAT_Learning overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
+  virtual void 	Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru);
+  // #CAT_Learning compute dwt normalization
 
   /////////////////////////////////////
   // 	Bias Weights
@@ -593,6 +596,10 @@ public:
   void	Compute_dWt_CtLeabraXCalC(LeabraUnit* ru)
   { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraXCalC(this, ru); }
   // #CAT_Learning compute weight changes: CtLeabra XCalC version
+
+  void	Compute_dWt_Norm(LeabraUnit* ru)
+  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_Norm(this, ru); }
+  // #CAT_Learning compute dwt normalization
 
   void	Copy_(const LeabraRecvCons& cp);
   TA_BASEFUNS(LeabraRecvCons);
@@ -1278,9 +1285,11 @@ public:
   virtual void 	Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
   virtual void	Compute_dWt_SecondPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_TrialFinal compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
+  // #CAT_Learning compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   virtual void	Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_TrialFinal compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
+  // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
+  virtual void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+  // #CAT_Learning compute normalization of dwt values -- must be done as a separate stage after dwt
 
   override void	Compute_Weights(Unit* u, Network* net, int thread_no=-1);
 
@@ -1583,6 +1592,9 @@ public:
   void 	Compute_dWt_Nothing(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_Nothing(this, net, thread_no); }
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
+  void 	Compute_dWt_Norm(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_Norm(this, net, thread_no); }
+  // #CAT_Learning compute normalization of dwt values -- must be done as a separate stage after dwt
 
 
   ///////////////////////////////////////////////////////////////////////
@@ -2997,6 +3009,7 @@ public:
   int		mid_minus_cycle; // #CAT_Counter #DEF_-1:30 cycle number for computations that take place roughly mid-way through the minus phase -- used for PBWM algorithm -- effective min_cycles for minus phase will be this value + min_cycles -- set to -1 to disable
   int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_15:35 minimum number of cycles to settle for
   int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_35 minimum number of cycles to settle for in second phase
+  bool		dwt_norm_enabled; // #CAT_Learning enable dwt_norm computation -- this must be done as a separate step -- specs should set this flag appropriate according to LeabraConSpec::wt_sig.dwt_norm flag, but good to check here just in case..
 
   CtTrialTiming	 ct_time;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
   CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
@@ -3237,6 +3250,8 @@ public:
   // #CAT_Learning compute weight change after second plus phase has been encountered: standard layers do NOT do a weight change here -- only selected special ones
   virtual void	Compute_dWt_Nothing();
   // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
+  virtual void	Compute_dWt_Norm();
+  // #CAT_Learning compute normalization of weight changes -- must be done as a second pass after initial weight changes
 
   override void Compute_Weights_impl();
 
@@ -3616,6 +3631,27 @@ inline void LeabraConSpec::Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit
   case CTLEABRA_XCAL_C:
     Compute_Weights_CtLeabraXCAL(cg, su);
     break;
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+//     Compute dWt Norm: receiver based 
+
+inline void LeabraConSpec::Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru) {
+  if(!wt_sig.dwt_norm) return;
+  float sum_act_p = 0.0f;
+  float sum_dwt = 0.0f;
+  for(int i=0; i<cg->size; i++) {
+    LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+    sum_act_p += su->act_p;
+    sum_dwt += ((LeabraCon*)cg->PtrCn(i))->dwt;
+  }
+  if(sum_act_p == 0.0f || sum_dwt == 0.0f) return;
+  float apnorm = 1.0f / sum_act_p;
+  for(int i=0; i<cg->size; i++) {
+    LeabraUnit* su = (LeabraUnit*)cg->Un(i);
+    LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
+    cn->dwt -= su->act_p * apnorm * sum_dwt;
   }
 }
 
