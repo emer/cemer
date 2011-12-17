@@ -3009,7 +3009,7 @@ public:
   int		mid_minus_cycle; // #CAT_Counter #DEF_-1:30 cycle number for computations that take place roughly mid-way through the minus phase -- used for PBWM algorithm -- effective min_cycles for minus phase will be this value + min_cycles -- set to -1 to disable
   int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_15:35 minimum number of cycles to settle for
   int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_35 minimum number of cycles to settle for in second phase
-  bool		dwt_norm_enabled; // #CAT_Learning enable dwt_norm computation -- this must be done as a separate step -- specs should set this flag appropriate according to LeabraConSpec::wt_sig.dwt_norm flag, but good to check here just in case..
+  bool		dwt_norm_enabled; // #CAT_Learning enable dwt_norm computation -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.dwt_norm flag is on, but it does not turn it back off, so if this is not being used anymore, save time by turning this flag off
 
   CtTrialTiming	 ct_time;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
   CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
@@ -3639,19 +3639,16 @@ inline void LeabraConSpec::Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit
 
 inline void LeabraConSpec::Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru) {
   if(!wt_sig.dwt_norm) return;
-  float sum_act_p = 0.0f;
   float sum_dwt = 0.0f;
   for(int i=0; i<cg->size; i++) {
-    LeabraUnit* su = (LeabraUnit*)cg->Un(i);
-    sum_act_p += su->act_p;
-    sum_dwt += ((LeabraCon*)cg->PtrCn(i))->dwt;
-  }
-  if(sum_act_p == 0.0f || sum_dwt == 0.0f) return;
-  float apnorm = 1.0f / sum_act_p;
-  for(int i=0; i<cg->size; i++) {
-    LeabraUnit* su = (LeabraUnit*)cg->Un(i);
     LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
-    cn->dwt -= su->act_p * apnorm * sum_dwt;
+    sum_dwt += cn->dwt;
+  }
+  if(sum_dwt == 0.0f) return;
+  float dwnorm = sum_dwt / (float)cg->size;
+  for(int i=0; i<cg->size; i++) {
+    LeabraCon* cn = (LeabraCon*)cg->PtrCn(i);
+    cn->dwt -= dwnorm;
   }
 }
 

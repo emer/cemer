@@ -222,12 +222,21 @@ void LeabraConSpec::InitLinks() {
 void LeabraConSpec::UpdateAfterEdit_impl() {
   if(HasBaseFlag(BF_MISC2)) return; // flag used for marking UAE
   SetBaseFlag(BF_MISC2);              // now in it, mark..
+
   inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit_NoGui();
   lmix.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui(); // this calls owner
   rel_net_adapt.UpdateAfterEdit_NoGui();
   CreateWtSigFun();
+  LeabraNetwork* mynet = GET_MY_OWNER(LeabraNetwork);
+  if(mynet) {
+    SetLearnRule(mynet);                // get current learning rule, just in case..
+    if(wt_sig.dwt_norm && !mynet->dwt_norm_enabled) {
+      mynet->dwt_norm_enabled = true; // don't have a way of turning this off..
+    }
+  }
+
   ClearBaseFlag(BF_MISC2);      // done..
 }
 
@@ -5276,6 +5285,7 @@ void LeabraNetwork::Initialize() {
   mid_minus_cycle = -1;
   min_cycles = 15;
   min_cycles_phase2 = 35;
+  dwt_norm_enabled = false;
 
   thread_flags = TF_ALL;
 
@@ -6294,6 +6304,7 @@ void LeabraNetwork::Compute_dWt_FirstPlus() {
     threads.Run(&un_call, 0.6f);
   else
     threads.Run(&un_call, -1.0f); // -1 = always run localized
+  Compute_dWt_Norm();
 }
 
 void LeabraNetwork::Compute_dWt_SecondPlus() {
@@ -6308,6 +6319,7 @@ void LeabraNetwork::Compute_dWt_SecondPlus() {
     threads.Run(&un_call, 0.6f);
   else
     threads.Run(&un_call, -1.0f); // -1 = always run localized
+  Compute_dWt_Norm();
 }
 
 void LeabraNetwork::Compute_dWt_Nothing() {
@@ -6322,6 +6334,7 @@ void LeabraNetwork::Compute_dWt_Nothing() {
     threads.Run(&un_call, 0.6f);
   else
     threads.Run(&un_call, -1.0f); // -1 = always run localized
+  Compute_dWt_Norm();
 }
 
 void LeabraNetwork::Compute_dWt_Norm() {
