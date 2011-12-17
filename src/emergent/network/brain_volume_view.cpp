@@ -17,6 +17,7 @@
 #include "t3brain_node.h"
 #include "brain_volume_view.h"
 #include "nifti_reader.h"
+#include "ta_math.h"
 
 #include <Inventor/SoEventManager.h>
 #include <Inventor/SoPickedPoint.h>
@@ -41,7 +42,6 @@
 #include <Inventor/nodes/SoVertexProperty.h>
 #include <Inventor/nodes/SoNormal.h>
 #include <Inventor/nodes/SoShapeHints.h>
-#include <cmath>
 
 Network* BrainVolumeView::net() const
 {
@@ -62,6 +62,9 @@ void BrainVolumeView::Initialize()
 {
   data_base = &TA_Network;
   brain_data_ = NULL;
+  depth_map_.clear();
+  unit_map_.clear();
+  uvd_bases_map_.clear();
 }
 
 void BrainVolumeView::InitLinks()
@@ -79,7 +82,46 @@ void BrainVolumeView::Destroy()
   Reset();
 }
 
-void BrainVolumeView::AllocUnitViewData() {}
+void BrainVolumeView::AllocUnitViewData() 
+{
+  BrainView* bv = this->bv();
+  Network* net = this->net();
+  if (!net) return;
+  
+  // need to determine number of units that are mapped...
+  unsigned int n_units=0;
+  FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
+    if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
+    FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+      if (u->voxel_size == 0) continue;
+      if (u->lesioned()) continue;
+      n_units++;
+    }
+  }
+  if (n_units == 0) return;
+  
+  int mbs_sz = MAX(bv->membs.size, 1);
+  MatrixGeom nwgm1(2, n_units, mbs_sz);
+  if (uvd_bases.geom != nwgm1) {
+    uvd_bases.SetGeomN(nwgm1);
+  }
+  
+//  MatrixGeom nwgm2(3, unit_map_.size(), mbs_sz, bv->hist_max);
+//  bool reset_idx = bv->hist_reset_req; // if requested somewhere, reset us!
+//  if (uvd_hist.geom != nwgm2) {
+//    if (!uvd_hist.SetGeomN(nwgm2)) {
+//      taMisc::Warning("Forcing nv->hist_max to 1");
+//      bv->hist_max = 1;
+//      nwgm2.Set(2, bv->hist_max);
+//      uvd_hist.SetGeomN(nwgm2); // still might fail, but it's the best we can do.
+//    }
+//    reset_idx = true;
+//    bv->hist_reset_req = true;  // tell main netview history guy to reset and reset everyone
+//  }
+//  if (reset_idx) {
+//    uvd_hist_idx.Reset();
+//  }
+}
 
 void BrainVolumeView::BuildAll()
 {
@@ -94,25 +136,16 @@ void BrainVolumeView::InitDisplay()
   UpdateUnitViewBases(bv->unit_src);
 }
 
-float BrainVolumeView::GetUnitDisplayVal(const Unit* u)
+float BrainVolumeView::GetUnitDisplayVal(const Unit* u, void*& base)
 {
-  BrainView* bv = this->bv();
-  float val = bv->scale.zero;
-  if(!u) return val;
-  val = u->act;
-//   val = u->net;
-//   val = u->v_m;
-  return val;
-}
-
-float BrainVolumeView::GetUnitDisplayVal(const TwoDCoord& co, void*& base)
-{
+  
   BrainView* bv = this->bv();
   float val = bv->scale.zero;
   if(bv->unit_disp_idx < 0) return val;
-  base = uvd_bases.SafeEl(co.x, co.y, bv->unit_disp_idx);
+  
+  base = uvd_bases.SafeEl(uvd_bases_map_.value(u), bv->unit_disp_idx);
   if (!base) return val;
-
+  
   switch (bv->unit_md_flags) {
     case BrainView::MD_FLOAT:
       val = *((float*)base); break;
@@ -126,49 +159,43 @@ float BrainVolumeView::GetUnitDisplayVal(const TwoDCoord& co, void*& base)
   return val;
 }
 
-float BrainVolumeView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base)
-{
-  BrainView* bv = this->bv();
-  float val = bv->scale.zero;
-  base = uvd_bases.SafeEl(co.x, co.y, midx);
-  MemberDef* md = bv->membs.SafeEl(midx);
-  if(!base) {
-    return val;
-  }
-  if (md) {
-    if(md->type->InheritsFrom(&TA_float))
-      val = *((float*)base);
-    else if(md->type->InheritsFrom(&TA_double))
-      val = *((double*)base);
-    else if(md->type->InheritsFrom(&TA_int))
-      val = *((int*)base);
-  }
-  return val;
-}
+float BrainVolumeView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {}
+
+float BrainVolumeView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base) {}
 
 void BrainVolumeView::UpdateUnitViewBases(Unit* src_u)
 {
-//  BrainView* bv = this->bv();
-//  AllocUnitViewData();
-//  for(int midx=0;midx<bv->membs.size;midx++) {
-//    MemberDef* disp_md = bv->membs[midx];
-//    String nm = disp_md->name.before(".");
-//    if(nm.empty()) { // direct unit member
-//      UpdateUnitViewBase_Unit_impl(midx, disp_md);
-//    } else if ((nm=="s") || (nm == "r")) {
-//      UpdateUnitViewBase_Con_impl(midx, (nm=="s"), disp_md->name.after('.'), src_u);
-//    } else if (nm=="bias") {
-//      UpdateUnitViewBase_Bias_impl(midx, disp_md);
-//    } else { // sub-member of unit
-//      UpdateUnitViewBase_Sub_impl(midx, disp_md);
-//    }
-//  }
+  BrainView* bv = this->bv();
+  AllocUnitViewData();
+  
+  for(int midx=0;midx<bv->membs.size;midx++) {
+    MemberDef* disp_md = bv->membs[midx];
+    String nm = disp_md->name.before(".");
+    if(nm.empty()) { // direct unit member
+      UpdateUnitViewBase_Unit_impl(midx, disp_md);
+    } else if ((nm=="s") || (nm == "r")) {
+      UpdateUnitViewBase_Con_impl(midx, (nm=="s"), disp_md->name.after('.'), src_u);
+    } else if (nm=="bias") {
+      UpdateUnitViewBase_Bias_impl(midx, disp_md);
+    } else { // sub-member of unit
+      UpdateUnitViewBase_Sub_impl(midx, disp_md);
+    }
+  }
 }
 
 void BrainVolumeView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u) {}
 void BrainVolumeView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {}
-void BrainVolumeView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {}
 void BrainVolumeView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {}
+void BrainVolumeView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) 
+{
+  if (unit_map_.size() == 0) return; //we don't have a list of units yet
+  
+  QList<const Unit*> units = unit_map_.keys(); 
+  foreach (const Unit* u,units) {
+    uvd_bases.Set(disp_md->GetOff(u), uvd_bases_map_.value(u), midx);
+  }  
+}
+
 void BrainVolumeView::UpdateAutoScale(bool& updated) {}
 
 void BrainVolumeView::Render_pre()
@@ -368,19 +395,20 @@ void BrainVolumeView::CreateFaceSets()
   // clear the old maps
   depth_map_.clear();
   unit_map_.clear();
-
-  //  // need to iterate once to get number of mapped units so we
-  //  // can allocate number of vertices, etc.
+  uvd_bases_map_.clear();
+  
+  int i=0;
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-      //if (u->voxel == FloatTDCoord(-1,-1,-1)) continue;
+      if (u->voxel_size == 0) continue;
+      if (u->lesioned()) continue;
       FloatTDCoord talCoord(u->voxel);
       FloatTDCoord mniCoord(TalairachAtlas::Tal2Mni(talCoord));
       FloatTDCoord ijkCoord(brain_data_->XyzToIjk(mniCoord));
       if ( (view_plane == BrainViewState::AXIAL) || (view_plane == BrainViewState::SAGITTAL) ) {
         // reverse x coordinates...since we draw X in opposite direction in Inventor
-        ijkCoord.x = abs(ijkCoord.x - (dims.x - 1));
+        ijkCoord.x = taMath_float::fabs(ijkCoord.x - (dims.x - 1));
       }
       
       if (view_plane == BrainViewState::AXIAL) {
@@ -393,6 +421,8 @@ void BrainVolumeView::CreateFaceSets()
         depth_map_.insert((unsigned int)ijkCoord.y, u);
       }
       unit_map_.insert(u, ijkCoord);
+      uvd_bases_map_.insert(u,i); //map unit* to index, so we can index into uvd_bases
+      i++;
     }
   }
 

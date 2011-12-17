@@ -95,7 +95,7 @@ signals:
   void          StateChanged(int state);
 #endif
 
-private:
+public:
   bool          state_valid_;
   QString       data_name_;
   TDCoord       dimensions_;

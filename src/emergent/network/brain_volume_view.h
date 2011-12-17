@@ -36,7 +36,7 @@ public:
   override void BuildAll(); // creates fully populated subviews
   virtual void  InitDisplay();
   void          UpdateSlices(); // #IGNORE
-  float                 GetUnitDisplayVal(const Unit* u);
+  float                 GetUnitDisplayVal(const Unit* u, void*& base);
   float                 GetUnitDisplayVal(const TwoDCoord& co, void*& base);
   // get raw floating point value to display according to current nv settings, at given *logical* coordinate within the layer -- fills in base for this value as well (NULL if not set)
   float                 GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base);
@@ -62,7 +62,7 @@ protected:
   void          UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u);
   // for cons
   void          UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md);
-  // for bias vals
+  // for bias vals  
   override void         DoActionChildren_impl(DataViewAction acts);
   virtual void          Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   virtual void          Render_impl_blocks(); // optimized blocks
@@ -82,7 +82,8 @@ private:
   NiftiReader*                   brain_data_;// #IGNORE
 #ifndef __MAKETA__
   QMultiMap<unsigned int, Unit*> depth_map_; //#IGNORE
-  QMap<Unit*, FloatTDCoord>       unit_map_; //#IGNORE
+  QMap<const Unit*, FloatTDCoord>      unit_map_; //#IGNORE 
+  QMap<const Unit*, unsigned int>      uvd_bases_map_; //#IGNORE
 #endif
 };
 

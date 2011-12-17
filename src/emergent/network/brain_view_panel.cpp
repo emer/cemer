@@ -59,7 +59,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   }
   
   int font_spec = taiMisc::fonMedium;
-  req_full_render = false;
+  req_full_render = true;
   req_full_build = false;
 
   const int min_slider = 80;
@@ -145,12 +145,13 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   
   bvControls = new QHBoxLayout();  layViewParams->addLayout(bvControls);
   
+  const int unit_trans(60);
   label = taiM->NewLabel("Unit Values\nTransparency:", widg, font_spec);
   label->setToolTip("The transparency value of unit values."); 
   bvControls->addWidget(label);
   unit_val_tran_sbox_ = new QSpinBox(widg);
   unit_val_tran_sbox_->setRange(1, 100);
-  unit_val_tran_sbox_->setValue(98 );
+  unit_val_tran_sbox_->setValue(unit_trans);
   unit_val_tran_sbox_->setSuffix("%");
   connect(unit_val_tran_sbox_, SIGNAL(valueChanged(int)), bvs, SLOT(SetUnitValuesTransparency(int)) );
   connect(bvs, SIGNAL(UnitValuesTransparencyChanged(int)), unit_val_tran_sbox_, SLOT(setValue(int)) );
@@ -160,19 +161,20 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   unit_val_tran_slid_ =  new QSlider(Qt::Horizontal, widg);
   unit_val_tran_slid_->setTickPosition(QSlider::NoTicks);
   unit_val_tran_slid_->setRange(1,100);
-  unit_val_tran_slid_->setValue(98);
+  unit_val_tran_slid_->setValue(unit_trans);
   unit_val_tran_slid_->setMinimumWidth(min_slider);
   connect(unit_val_tran_slid_, SIGNAL(valueChanged(int)), bvs, SLOT(SetUnitValuesTransparency(int)) );
   connect(bvs, SIGNAL(UnitValuesTransparencyChanged(int)), unit_val_tran_slid_, SLOT(setValue(int)) );
   bvControls->addWidget(unit_val_tran_slid_);
   bvControls->addSpacing(taiM->hspc_c); 
   
+  const int slice_trans(90);
   label = taiM->NewLabel("Slice\nTransparency:", widg, font_spec);
   label->setToolTip("The transparency value of brain slices."); 
   bvControls->addWidget(label);
   slice_trans_sbox_ = new QSpinBox(widg);
   slice_trans_sbox_->setRange(1, 100);
-  slice_trans_sbox_->setValue(98 );
+  slice_trans_sbox_->setValue(slice_trans);
   slice_trans_sbox_->setSuffix("%");
   connect(slice_trans_sbox_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceTransparency(int)) );
   connect(bvs, SIGNAL(SliceTransparencyChanged(int)), slice_trans_sbox_, SLOT(setValue(int)) );
@@ -182,7 +184,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_tran_slid_ =  new QSlider(Qt::Horizontal, widg);
   slice_tran_slid_->setTickPosition(QSlider::NoTicks);
   slice_tran_slid_->setRange(1,100);
-  slice_tran_slid_->setValue(98);
+  slice_tran_slid_->setValue(slice_trans);
   slice_tran_slid_->setMinimumWidth(min_slider);
   connect(slice_tran_slid_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceTransparency(int)) );
   connect(bvs, SIGNAL(SliceTransparencyChanged(int)), slice_tran_slid_, SLOT(setValue(int)) );
@@ -192,14 +194,35 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
     // listen for BrainViewState state changed
   connect(bvs, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)) );
   
+  ////////////////////////////////////////////////////////////////////////////
+  layDispCheck = new QHBoxLayout();  layViewParams->addLayout(layDispCheck);
+  chkNetText = new QCheckBox("Net\nTxt", widg);
+  chkNetText->setToolTip("Turn on the network text display at the base of the network, showing the current state of various counters and stats");
+  connect(chkNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layDispCheck->addWidget(chkNetText);
+  layDispCheck->addSpacing(taiM->hsep_c);
 
+  chkAutoScale = new QCheckBox("Auto\nScale", widg);
+  chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
+  connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layDispCheck->addWidget(chkAutoScale);
+  layDispCheck->addSpacing(taiM->hsep_c);
+  layDispCheck->addStretch();
+  
   ////////////////////////////////////////////////////////////////////////////
   layDisplayValues = new QVBoxLayout();  layTopCtrls->addLayout(layDisplayValues); //gbDisplayValues);
   layDisplayValues->setSpacing(2);
   layDisplayValues->setMargin(0);
 
   layColorBar = new QHBoxLayout();  layDisplayValues->addLayout(layColorBar);
-
+  
+  butScaleDefault = new QPushButton("Defaults", widg);
+  butScaleDefault->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
+  butScaleDefault->setMaximumWidth(taiM->maxButtonWidth() / 2);
+  layColorBar->addWidget(butScaleDefault);
+  layColorBar->addSpacing(taiM->hsep_c); 
+  connect(butScaleDefault, SIGNAL(pressed()), this, SLOT(butScaleDefault_pressed()) );
+  
   cbar = new HCScaleBar(&(dv_->scale), ScaleBar::RANGE, true, true, widg);
   connect(cbar, SIGNAL(scaleValueChanged()), this, SLOT(Changed()) );
   layColorBar->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
@@ -213,9 +236,30 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
 
   ////////////////////////////////////////////////////////////////////////////
   setCentralWidget(widg);
-  layTopCtrls->addStretch();
-
-  //MakeButtons(layOuter);
+  tw = new QTabWidget(this);
+  ////////////////////////////////////////////////////////////////////////////
+  lvDisplayValues = new QTreeWidget();
+  tw->addTab(lvDisplayValues, "Unit Display Values");
+  lvDisplayValues->setRootIsDecorated(false); // makes it look like a list
+  QStringList hdr;
+  hdr << "Value" << "Description";
+  lvDisplayValues->setHeaderLabels(hdr);
+  lvDisplayValues->setSortingEnabled(false);
+  lvDisplayValues->setSelectionMode(QAbstractItemView::SingleSelection);
+  connect(lvDisplayValues, SIGNAL(itemSelectionChanged()), this, SLOT(lvDisplayValues_selectionChanged()) );
+  
+  layTopCtrls->addWidget(tw);
+  
+  ////////////////////////////////////////////////////////////////////////////
+  // Command Buttons
+//  widCmdButtons = new QWidget(widg);
+//  iFlowLayout* fl = new iFlowLayout(widCmdButtons);
+//  layOuter->addWidget(widCmdButtons);
+//  
+//  meth_but_mgr = new iMethodButtonMgr(widCmdButtons, fl, widCmdButtons); 
+//  meth_but_mgr->Constr(bv()->net());
+//  
+//  MakeButtons(layOuter);
 }
 
 BrainViewPanel::~BrainViewPanel() 
@@ -232,6 +276,7 @@ void BrainViewPanel::UpdatePanel_impl()
   ++updating;
   BrainView* bv = this->bv(); // cache
   if (!bv) return;
+
   if(req_full_build) {
     req_full_build = false;
     bv->Reset();
@@ -243,6 +288,18 @@ void BrainViewPanel::UpdatePanel_impl()
   }
   
   unit_val_tran_sbox_->setValue((int)(bv->view_params.unit_trans*100));
+  // update var selection
+  int i = 0;
+  QTreeWidgetItemIterator it(lvDisplayValues);
+  QTreeWidgetItem* item = NULL;
+  while (*it) {
+    item = *it;
+    bool is_selected = (bv->cur_unit_vals.FindEl(item->text(0)) >= 0);
+    item->setSelected(is_selected);
+    // if list is size 1 make sure that there is a scale_range entry for this one
+    ++it;
+    ++i;
+  }
   ColorScaleFromData();
   
   --updating;
@@ -276,20 +333,37 @@ void BrainViewPanel::GetValue_impl() {
   // this proved slow for some of the brain view controls,
   // so now we by default do NOT set that flag and let
   // UpdateFromViewState set it as necessary
-  //req_full_render = true; // everything requires a re-render
+  // req_full_render = true; // everything requires a re-render
   
   bv->view_params.unit_trans = ((float)(unit_val_tran_sbox_->value())/100.0f);
 
+  // net text requires rebuild since it is controlled in BV::Render
+  if (bv->net_text != chkNetText->isChecked()) {
+    req_full_render = true;
+  }
+  bv->net_text = chkNetText->isChecked();
+  
   if (false == req_full_render) {
     // just need update, not full rebuild/render
     bv->AsyncRenderUpdate();
   }
+  bv->SetScaleData(chkAutoScale->isChecked(), cbar->min(), cbar->max(), false);
 }
 
 void BrainViewPanel::CopyFrom_impl() 
 {
   BrainView* bv_; if (!(bv_ = bv())) return;
   bv_->CallFun("CopyFromView");
+}
+
+void BrainViewPanel::butScaleDefault_pressed() 
+{
+  if (updating) return;
+  BrainView* bv_;
+  if (!(bv_ = bv())) return;
+  
+  bv_->SetScaleDefault();
+  bv_->UpdateDisplay(true);
 }
 
 void BrainViewPanel::butSetColor_pressed() 
@@ -308,58 +382,59 @@ void BrainViewPanel::ColorScaleFromData()
 
   ++updating;
   cbar->UpdateScaleValues();
+  chkAutoScale->setChecked(bv_->scale.auto_scale); //note: raises signal on widget! (grr...)
   --updating;
 }
 
 void BrainViewPanel::GetVars() 
 {
-//  BrainView* bv_;
-//  if (!(bv_ = bv())) return;
-//
-//  lvDisplayValues->clear();
-//  if (bv_->membs.size == 0) return;
-//
-//  MemberDef* md;
-//  QTreeWidgetItem* lvi = NULL;
-//  for (int i=0; i < bv_->membs.size; i++) {
-//    md = bv_->membs[i];
-//    QStringList itm;
-//    itm << md->name << md->desc;
-//    lvi = new QTreeWidgetItem(lvDisplayValues, itm);
-//  }
-//  lvDisplayValues->resizeColumnToContents(0);
+  BrainView* bv_;
+  if (!(bv_ = bv())) return;
+
+  lvDisplayValues->clear();
+  if (bv_->membs.size == 0) return;
+
+  MemberDef* md;
+  QTreeWidgetItem* lvi = NULL;
+  for (int i=0; i < bv_->membs.size; i++) {
+    md = bv_->membs[i];
+    QStringList itm;
+    itm << md->name << md->desc;
+    lvi = new QTreeWidgetItem(lvDisplayValues, itm);
+  }
+  lvDisplayValues->resizeColumnToContents(0);
 }
 
 void BrainViewPanel::InitPanel() 
 {
-//  BrainView* bv_;
-//  if (!(bv_ = bv())) return;
-//  ++updating;
-//  // fill monitor values
-////  GetVars();
-//  --updating;
+  BrainView* bv_;
+  if (!(bv_ = bv())) return;
+  ++updating;
+  // fill monitor values
+  GetVars();
+  --updating;
 }
 
 void BrainViewPanel::lvDisplayValues_selectionChanged() 
 {
-//  if (updating) return;
-//  BrainView* bv_;
-//  if (!(bv_ = bv())) return;
-//  // redo the list each time, to guard against stale values
-//  bv_->cur_unit_vals.Reset(); 
-//  QList<QTreeWidgetItem*> items(lvDisplayValues->selectedItems());
-//  QTreeWidgetItem* item = NULL;
-//  for (int j = 0; j < items.size(); ++j) {
-//    item = items.at(j);
-//    bv_->cur_unit_vals.Add(item->text(0));
-//  }
-//  MemberDef* md = (MemberDef*)bv_->membs.FindName(bv_->cur_unit_vals.SafeEl(0));
-//  if (md) {
-//    bv_->setUnitDispMd(md); 
-//    bv_->UpdateViewerModeForMd(md);
-//  }
-//  ColorScaleFromData();
-//  bv_->UpdateDisplay(false);
+  if (updating) return;
+  BrainView* bv_;
+  if (!(bv_ = bv())) return;
+  // redo the list each time, to guard against stale values
+  bv_->cur_unit_vals.Reset(); 
+  QList<QTreeWidgetItem*> items(lvDisplayValues->selectedItems());
+  QTreeWidgetItem* item = NULL;
+  for (int j = 0; j < items.size(); ++j) {
+    item = items.at(j);
+    bv_->cur_unit_vals.Add(item->text(0));
+  }
+  MemberDef* md = (MemberDef*)bv_->membs.FindName(bv_->cur_unit_vals.SafeEl(0));
+  if (md) {
+    bv_->setUnitDispMd(md); 
+    bv_->UpdateViewerModeForMd(md);
+  }
+  ColorScaleFromData();
+  bv_->UpdateDisplay(false);
 }
 
 void BrainViewPanel::dynbuttonActivated(int but_no) 

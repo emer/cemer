@@ -31,6 +31,7 @@ public:
   QHBoxLayout*		layDispCheck;
   QCheckBox*		chkDisplay;
   // QCheckBox*		chkLayMove;
+  QCheckBox*		    chkNetText;
   //QLabel*		    lblTextRot;
   //taiField*		    fldTextRot;
   //QLabel*		    lblDispMode;
@@ -50,8 +51,8 @@ public:
 
   QVBoxLayout*		layDisplayValues;
   QHBoxLayout*		layColorScaleCtrls;
-  //QCheckBox*		chkAutoScale;       // autoscale ck_box
-  //QPushButton*		butScaleDefault;    // revert to default  
+  QCheckBox*		chkAutoScale;       // autoscale ck_box
+  QPushButton*		butScaleDefault;    // revert to default  
 
   QHBoxLayout*          layColorBar;
   //QLabel*           lblUnitSpacing;
@@ -106,7 +107,7 @@ signals:
 #endif
   
 protected slots:
-  //  void			butScaleDefault_pressed();
+  void			butScaleDefault_pressed();
   void 			butSetColor_pressed();
   void			lvDisplayValues_selectionChanged();
 

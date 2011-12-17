@@ -89,7 +89,7 @@ void BrainView::Initialize() {
   data_base = &TA_Network;
   bvp = NULL;
   display = true;
-  net_text = true;
+  net_text = false;
   lay_mv = false;
   net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
   net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
@@ -252,9 +252,13 @@ void BrainView::GetMembs() {
   membs.Reset();
   TypeDef* prv_td = NULL;
 
-  // first do the unit variables
+  // only get units that have been mapped to voxel coords...
   FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
+    if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+      if (u->voxel_size == 0) continue;
+      if (u->lesioned()) continue;
+      
       TypeDef* td = u->GetTypeDef();
       if(td == prv_td) continue; // don't re-scan!
       prv_td = td;
@@ -300,62 +304,62 @@ void BrainView::GetMembs() {
         }
       }
 
-      // then do bias weights
-      if(u->bias.size) {
-        TypeDef* td = u->bias.con_type;
-        for(int k=0; k<td->members.size; k++) {
-          MemberDef* smd = td->members.FastEl(k);
-          if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-            if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-                smd->HasOption("READ_ONLY")))
-              continue;
-            String nm = "bias." + smd->name;
-            if(membs.FindName(nm)==NULL) {
-              MemberDef* nmd = smd->Clone();
-              nmd->name = nm;
-              membs.Add(nmd);
-              nmd->idx = smd->idx;
-            }
-          }
-        }
-      }
+//      // then do bias weights
+//      if(u->bias.size) {
+//        TypeDef* td = u->bias.con_type;
+//        for(int k=0; k<td->members.size; k++) {
+//          MemberDef* smd = td->members.FastEl(k);
+//          if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
+//            if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
+//                smd->HasOption("READ_ONLY")))
+//              continue;
+//            String nm = "bias." + smd->name;
+//            if(membs.FindName(nm)==NULL) {
+//              MemberDef* nmd = smd->Clone();
+//              nmd->name = nm;
+//              membs.Add(nmd);
+//              nmd->idx = smd->idx;
+//            }
+//          }
+//        }
+//      }
     }
   }
 
   // then, only do the connections if any Unit guys, otherwise we are
   // not built yet, so we leave ourselves empty to signal that
-  if (membs.size > 0) {
-    FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
-      FOREACH_ELEM_IN_GROUP(Projection, prjn, lay->projections) {
-        TypeDef* td = prjn->con_type;
-        if(td == prv_td) continue; // don't re-scan!
-        prv_td = td;
-        int k;
-        for (k=0; k<td->members.size; k++) {
-          MemberDef* smd = td->members.FastEl(k);
-          if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-            if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-                smd->HasOption("READ_ONLY")))
-              continue;
-            String nm = "r." + smd->name;
-            if(membs.FindName(nm)==NULL) {
-              MemberDef* nmd = smd->Clone();
-              nmd->name = nm;
-              membs.Add(nmd);
-              nmd->idx = smd->idx;
-            }
-            nm = "s." + smd->name;
-            if(membs.FindName(nm)==NULL) {
-              MemberDef* nmd = smd->Clone();
-              nmd->name = nm;
-              membs.Add(nmd);
-              nmd->idx = smd->idx;
-            }
-          }
-        }
-      }
-    }
-  }
+//  if (membs.size > 0) {
+//    FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
+//      FOREACH_ELEM_IN_GROUP(Projection, prjn, lay->projections) {
+//        TypeDef* td = prjn->con_type;
+//        if(td == prv_td) continue; // don't re-scan!
+//        prv_td = td;
+//        int k;
+//        for (k=0; k<td->members.size; k++) {
+//          MemberDef* smd = td->members.FastEl(k);
+//          if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
+//            if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
+//                smd->HasOption("READ_ONLY")))
+//              continue;
+//            String nm = "r." + smd->name;
+//            if(membs.FindName(nm)==NULL) {
+//              MemberDef* nmd = smd->Clone();
+//              nmd->name = nm;
+//              membs.Add(nmd);
+//              nmd->idx = smd->idx;
+//            }
+//            nm = "s." + smd->name;
+//            if(membs.FindName(nm)==NULL) {
+//              MemberDef* nmd = smd->Clone();
+//              nmd->name = nm;
+//              membs.Add(nmd);
+//              nmd->idx = smd->idx;
+//            }
+//          }
+//        }
+//      }
+//    }
+//  }
 
   // remove any stale items from sel list, but only if we were built
   if (membs.size > 0) {
@@ -375,8 +379,9 @@ void BrainView::GetUnitColor(float val,  iColor& col, float& sc_val) {
 
 void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, Unit* u, float& val, T3Color& col, float& sc_val) {
   sc_val = scale.zero;
+  void* base = NULL;
   if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
-    val = bvv->GetUnitDisplayVal(u);
+    val = bvv->GetUnitDisplayVal(u, base  );
   if(!u) {
     col.setValue(.8f, .8f, .8f); // lt gray
     return;
@@ -387,17 +392,17 @@ void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, Unit* u, float& val, T3
 }
 
 void BrainView::GetUnitDisplayVals(BrainVolumeView* bvv, TwoDCoord& co, float& val, T3Color& col, float& sc_val) {
-  sc_val = scale.zero;
-  void* base = NULL;
-  if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
-    val = bvv->GetUnitDisplayVal(co, base);
-  if(!base) {
-    col.setValue(.8f, .8f, .8f); // lt gray
-    return;
-  }
-  iColor tc;
-  GetUnitColor(val, tc, sc_val);
-  col.setValue(tc.redf(), tc.greenf(), tc.bluef());
+//  sc_val = scale.zero;
+//  void* base = NULL;
+//  if(unit_disp_md && unit_md_flags != MD_UNKNOWN)
+//    val = bvv->GetUnitDisplayVal(co, base);
+//  if(!base) {
+//    col.setValue(.8f, .8f, .8f); // lt gray
+//    return;
+//  }
+//  iColor tc;
+//  GetUnitColor(val, tc, sc_val);
+//  col.setValue(tc.redf(), tc.greenf(), tc.bluef());
 }
 
 void BrainView::InitDisplay(bool init_panel) {
@@ -846,8 +851,8 @@ void BrainView::UpdateDisplay(bool update_panel) { // redoes everything
 
 void BrainView::UpdateUnitValues() { // *actually* only does unit value updating
   if(children.size == 0) return;
-  BrainVolumeView* lv = (BrainVolumeView*)children.FastEl(0);
-  lv->UpdateUnitValues();
+  BrainVolumeView* bvv = (BrainVolumeView*)children.FastEl(0);
+  bvv->UpdateUnitValues();
 }
 
 void BrainView::DataUpdateView_impl() {
@@ -896,7 +901,7 @@ BrainViewState::BrainViewState(QObject* parent) : QObject(parent)
   , num_slices_(182)
   , lock_num_slices_(false)
   , slice_spacing_(1)
-  , slice_transparency_(99)
+  , slice_transparency_(90)
   , last_state_change_(NONE)
 {
 }
