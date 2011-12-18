@@ -159,9 +159,13 @@ float BrainVolumeView::GetUnitDisplayVal(const Unit* u, void*& base)
   return val;
 }
 
-float BrainVolumeView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {}
+float BrainVolumeView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
+  return 0.0f;
+}
 
-float BrainVolumeView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base) {}
+float BrainVolumeView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base) {
+  return 0.0f;
+}
 
 void BrainVolumeView::UpdateUnitViewBases(Unit* src_u)
 {
