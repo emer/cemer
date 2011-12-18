@@ -6263,6 +6263,8 @@ void LeabraNetwork::Compute_XCalC_dWt() {
     else
       threads.Run(&un_call, -1.0f); // -1 = always run localized
 
+    Compute_dWt_Norm();
+
     lrn_trig.lrn_stats_n++;
     if(phase_no == 0) {
       lrn_trig.lrn_min_sum += 1.0f;
