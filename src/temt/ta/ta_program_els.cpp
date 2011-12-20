@@ -338,9 +338,9 @@ bool DoLoop::CvtFmCode(const String& code) {
 
 // todo: remove after a while (4.0.10)
 void ForLoop::SetProgExprFlags() {
-  init.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-  test.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-  iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  // init.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  // test.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
+  // iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
 
   init.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);// requires special parsing
   iter.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);

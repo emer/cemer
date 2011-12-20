@@ -792,9 +792,16 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
                 String(md->type->ptr), " var: ", var);
       return true; //no mon, but we did handle it
     }
-    // because we found the subobj, we deref the var and invoke ourself recursively
-    var = var.after('.');
-    return ScanObject_InObject(ths, var, name_obj);
+
+    if(membname == "bias" && md->type->InheritsFrom(&TA_RecvCons)) {
+      ScanObject_BiasCon((RecvCons*)ths, var.after('.'), name_obj);
+      return true;
+    }
+    else {
+      // because we found the subobj, we deref the var and invoke ourself recursively
+      var = var.after('.');
+      return ScanObject_InObject(ths, var, name_obj);
+    }
   }
   else {
     md = obj->FindMember(var);
@@ -865,7 +872,8 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
     for (int i = 0; i < lay->units.leaves; ++i) {
       ScanObject_InObject(lay->units.Leaf(i), var, NULL); // don't make a col
     }
-  } else if(geom.dims() == 2) {
+  }
+  else if(geom.dims() == 2) {
     TwoDCoord c;
     for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
       for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
@@ -874,7 +882,8 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
           ScanObject_InObject(u, var, NULL); // don't make a col
       }
     }
-  } else if(geom.dims() == 4) {
+  }
+  else if(geom.dims() == 4) {
     TwoDCoord gc;
     for (gc.y = 0; gc.y < lay->gp_geom.y; ++gc.y) {
       for (gc.x = 0; gc.x < lay->gp_geom.x; ++gc.x) {
@@ -1248,6 +1257,23 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
     int idx = upos.y * con_geom.x + upos.x;
     ptrs[idx] = cg->Cn(j);      // set the ptr
   }
+}
+
+void NetMonItem::ScanObject_BiasCon(RecvCons* cg, String var, taBase* name_obj) {
+  if(!cg || cg->size != 1) return;
+  MemberDef* con_md = cg->con_type->members.FindNameR(var);
+  if(!con_md) return;           // can't find that var!
+
+  if(name_obj) {
+    String valname = GetChanName(name_obj, val_specs.size);
+    ValType vt = ValTypeForType(con_md->type);
+    AddScalarChan(valname, vt);
+    if(agg.op != Aggregate::NONE) {
+      AddScalarChan_Agg(valname, vt); // add the agg guy just to keep it consistent
+    }
+  }
+  ptrs.Add(cg->Cn(0));
+  members.Link(con_md);
 }
 
 void NetMonItem::SetMonVals(taBase* obj, const String& var) {

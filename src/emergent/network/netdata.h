@@ -303,8 +303,8 @@ protected:
   
   bool 	ScanObject_InObject(taBase* obj, String var, taBase* name_obj);
   // if name_obj == NULL, don't make a column for this guy
-  bool ScanObject_InUserData(taBase* obj, String var,
-    taBase* name_obj); // called when an InObject var is "user_data.xxx[.yyy]"
+  bool ScanObject_InUserData(taBase* obj, String var, taBase* name_obj);
+  // called when an InObject var is "user_data.xxx[.yyy]"
   void	ScanObject_Network(Network* net, String var);
   void	ScanObject_Layer(Layer* lay, String var);
   void	ScanObject_LayerUnits(Layer* lay, String var);
@@ -322,6 +322,8 @@ protected:
 
   void	ScanObject_RecvCons(RecvCons* cg, String var);
   void	ScanObject_SendCons(SendCons* cg, String var);
+  void	ScanObject_BiasCon(RecvCons* cg, String var, taBase* name_obj);
+  // called for bias.x where bias is a RecvCons
 
 private:
   void	Initialize();
