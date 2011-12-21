@@ -1,0 +1,2403 @@
+// ta_Dump File v3.0 -- code v5.2.6.0 rev5209
+Program .projects[0].programs[2] { 
+  ProgObjList @.objs = [8] {
+    DataTable @[0] { 
+      DataTableCols @.data = [2] {
+	String_Data @[0] { };
+	float_Data @[1] { };
+      };
+    };
+    DataTable @[1] { 
+      DataTableCols @.data = [2] {
+	String_Data @[0] { };
+	float_Data @[1] { };
+      };
+    };
+    DataTable @[2] { 
+      DataTableCols @.data = [3] {
+	String_Data @[0] { };
+	float_Data @[1] { };
+	float_Data @[2] { };
+      };
+    };
+    DataTable @[3] { 
+      DataTableCols @.data = [3] {
+	String_Data @[0] { };
+	float_Data @[1] { };
+	float_Data @[2] { };
+      };
+    };
+    DataTable @[4] { 
+      DataTableCols @.data = [3] {
+	String_Data @[0] { };
+	float_Data @[1] { };
+	float_Data @[2] { };
+      };
+    };
+    DataTable @[5] { 
+      DataTableCols @.data = [3] {
+	String_Data @[0] { };
+	float_Data @[1] { };
+	float_Data @[2] { };
+      };
+    };
+    DataTable @[6] { 
+      DataTableCols @.data = [2] {
+	String_Data @[0] { };
+	float_Data @[1] { };
+      };
+    };
+    DataTable @[7] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @[0] { };
+	UserDataItem @[1] { };
+   };
+
+      DataTableCols @.data = [1] {
+	float_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @[0] { };
+     };
+};
+      };
+    };
+  };
+
+  ProgType_List @.types = [1] {
+    DynEnumType @[0] { 
+      DynEnumItem_List @.enums = [5] {
+	DynEnumItem @[0] { };
+	DynEnumItem @[1] { };
+	DynEnumItem @[2] { };
+	DynEnumItem @[3] { };
+	DynEnumItem @[4] { };
+      };
+    };
+  };
+
+  ProgVar_List @.args = [0] {
+  };
+
+  ProgVar_List @.vars = [20] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+    ProgVar @[4] { };
+    ProgVar @[5] { };
+    ProgVar @[6] { };
+    ProgVar @[7] { };
+    ProgVar @[8] { };
+    ProgVar @[9] { };
+    ProgVar @[10] { };
+    ProgVar @[11] { };
+    ProgVar @[12] { };
+    ProgVar @[13] { };
+    ProgVar @[14] { };
+    ProgVar @[15] { };
+    ProgVar @[16] { };
+    ProgVar @[17] { };
+    ProgVar @[18] { };
+    ProgVar @[19] { };
+  };
+
+  Function_List @.functions = [0] {
+  };
+
+  ProgEl_List @.init_code = [0] {
+  };
+
+  ProgEl_List @.prog_code = [2] {
+    LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+	ProgVar @[0] { };
+      };
+    };
+    Switch @[1] { 
+      ProgEl_List @.cases = [5] {
+	CaseBlock @[0] { 
+	  ProgEl_List @.prog_code = [3] {
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [1] {
+		ProgArg @[0] { };
+	      };
+	    };
+	    DataGenCall @[1] { 
+	      ProgArg_List @.meth_args = [7] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+		ProgArg @[3] { };
+		ProgArg @[4] { };
+		ProgArg @[5] { };
+		ProgArg @[6] { };
+	      };
+	    };
+	    DataCalcLoop @[2] { 
+	      DataOpList @.src_cols = [1] {
+		DataOpEl @[0] { };
+	      };
+
+	      DataOpList @.dest_cols = [0] {
+	      };
+
+	      ProgEl_List @.loop_code = [2] {
+		AssignExpr @[0] { };
+		DataCalcSetSrcRow @[1] { };
+	      };
+
+	      ProgVar_List @.src_col_vars = [1] {
+		ProgVar @[0] { };
+	      };
+
+	      ProgVar_List @.dest_col_vars = [0] {
+	      };
+	    };
+	  };
+	};
+	CaseBlock @[1] { 
+	  ProgEl_List @.prog_code = [3] {
+	    MethodCall @[0] { 
+	      ProgArg_List @.meth_args = [0] {
+	      };
+	    };
+	    ForLoop @[1] { 
+	      ProgEl_List @.loop_code = [6] {
+		MethodCall @[0] { 
+		  ProgArg_List @.meth_args = [1] {
+		    ProgArg @[0] { };
+		  };
+		};
+		MethodCall @[1] { 
+		  ProgArg_List @.meth_args = [3] {
+		    ProgArg @[0] { };
+		    ProgArg @[1] { };
+		    ProgArg @[2] { };
+		  };
+		};
+		DataProcCall @[2] { 
+		  ProgArg_List @.meth_args = [3] {
+		    ProgArg @[0] { };
+		    ProgArg @[1] { };
+		    ProgArg @[2] { };
+		  };
+		};
+		DataGenCall @[3] { 
+		  ProgArg_List @.meth_args = [9] {
+		    ProgArg @[0] { };
+		    ProgArg @[1] { };
+		    ProgArg @[2] { };
+		    ProgArg @[3] { };
+		    ProgArg @[4] { };
+		    ProgArg @[5] { };
+		    ProgArg @[6] { };
+		    ProgArg @[7] { };
+		    ProgArg @[8] { };
+		  };
+		};
+		DataCalcLoop @[4] { 
+		  DataOpList @.src_cols = [1] {
+		    DataOpEl @[0] { };
+		  };
+
+		  DataOpList @.dest_cols = [0] {
+		  };
+
+		  ProgEl_List @.loop_code = [2] {
+		    AssignExpr @[0] { };
+		    DataCalcSetSrcRow @[1] { };
+		  };
+
+		  ProgVar_List @.src_col_vars = [1] {
+		    ProgVar @[0] { };
+		  };
+
+		  ProgVar_List @.dest_col_vars = [0] {
+		  };
+		};
+		DataProcCall @[5] { 
+		  ProgArg_List @.meth_args = [2] {
+		    ProgArg @[0] { };
+		    ProgArg @[1] { };
+		  };
+		};
+	      };
+	    };
+	    DataAnalCall @[2] { 
+	      ProgArg_List @.meth_args = [9] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+		ProgArg @[2] { };
+		ProgArg @[3] { };
+		ProgArg @[4] { };
+		ProgArg @[5] { };
+		ProgArg @[6] { };
+		ProgArg @[7] { };
+		ProgArg @[8] { };
+	      };
+	    };
+	  };
+	};
+	CaseBlock @[2] { 
+	  ProgEl_List @.prog_code = [1] {
+	    DataCalcLoop @[0] { 
+	      DataOpList @.src_cols = [2] {
+		DataOpEl @[0] { };
+		DataOpEl @[1] { };
+	      };
+
+	      DataOpList @.dest_cols = [3] {
+		DataOpEl @[0] { };
+		DataOpEl @[1] { };
+		DataOpEl @[2] { };
+	      };
+
+	      ProgEl_List @.loop_code = [7] {
+		LocalVars @[0] { 
+		  ProgVar_List @.local_vars = [2] {
+		    ProgVar @[0] { };
+		    ProgVar @[1] { };
+		  };
+		};
+		DataCalcAddDestRow @[1] { };
+		AssignExpr @[2] { };
+		AssignExpr @[3] { };
+		AssignExpr @[4] { };
+		IfElse @[5] { 
+		  ProgEl_List @.true_code = [1] {
+		    MethodCall @[0] { 
+		      ProgArg_List @.meth_args = [2] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+		      };
+		    };
+		  };
+
+		  ProgEl_List @.false_code = [2] {
+		    MethodCall @[0] { 
+		      ProgArg_List @.meth_args = [2] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+		      };
+		    };
+		    MethodCall @[1] { 
+		      ProgArg_List @.meth_args = [1] {
+			ProgArg @[0] { };
+		      };
+		    };
+		  };
+		};
+		DataCalcSetDestRow @[6] { };
+	      };
+
+	      ProgVar_List @.src_col_vars = [2] {
+		ProgVar @[0] { };
+		ProgVar @[1] { };
+	      };
+
+	      ProgVar_List @.dest_col_vars = [3] {
+		ProgVar @[0] { };
+		ProgVar @[1] { };
+		ProgVar @[2] { };
+	      };
+	    };
+	  };
+	};
+	CaseBlock @[3] { 
+	  ProgEl_List @.prog_code = [5] {
+	    LocalVars @[0] { 
+	      ProgVar_List @.local_vars = [2] {
+		ProgVar @[0] { };
+		ProgVar @[1] { };
+	      };
+	    };
+	    AssignExpr @[1] { };
+	    MethodCall @[2] { 
+	      ProgArg_List @.meth_args = [1] {
+		ProgArg @[0] { };
+	      };
+	    };
+	    MethodCall @[3] { 
+	      ProgArg_List @.meth_args = [1] {
+		ProgArg @[0] { };
+	      };
+	    };
+	    ForLoop @[4] { 
+	      ProgEl_List @.loop_code = [4] {
+		MethodCall @[0] { 
+		  ProgArg_List @.meth_args = [1] {
+		    ProgArg @[0] { };
+		  };
+		};
+		MethodCall @[1] { 
+		  ProgArg_List @.meth_args = [2] {
+		    ProgArg @[0] { };
+		    ProgArg @[1] { };
+		  };
+		};
+		MethodCall @[2] { 
+		  ProgArg_List @.meth_args = [0] {
+		  };
+		};
+		ForLoop @[3] { 
+		  ProgEl_List @.loop_code = [1] {
+		    IfElse @[0] { 
+		      ProgEl_List @.true_code = [2] {
+			MethodCall @[0] { 
+			  ProgArg_List @.meth_args = [0] {
+			  };
+			};
+			MethodCall @[1] { 
+			  ProgArg_List @.meth_args = [3] {
+			    ProgArg @[0] { };
+			    ProgArg @[1] { };
+			    ProgArg @[2] { };
+			  };
+			};
+		      };
+
+		      ProgEl_List @.false_code = [2] {
+			MethodCall @[0] { 
+			  ProgArg_List @.meth_args = [0] {
+			  };
+			};
+			MethodCall @[1] { 
+			  ProgArg_List @.meth_args = [3] {
+			    ProgArg @[0] { };
+			    ProgArg @[1] { };
+			    ProgArg @[2] { };
+			  };
+			};
+		      };
+		    };
+		  };
+		};
+	      };
+	    };
+	  };
+	};
+	CaseBlock @[4] { 
+	  ProgEl_List @.prog_code = [0] {
+	  };
+	};
+      };
+    };
+  };
+};
+Program .projects[0].programs[2] {
+ name="ProtoExempGen";
+ short_nm="PrtGn";
+ tags="InputData, DataGen, Prototype, Exemplar, Category";
+ desc="generate prototype and exemplar input data patterns using random bit flipping with prescribed limits";
+ flags=0;
+ objs {
+  name="ProgObjList_15";
+  el_typ=DataTable;
+  el_def=0;
+  DataTable @[0] {
+   name="Prototypes";
+   desc=;
+   data {
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     name="Name";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [10] "Proto_0";"Proto_1";"Proto_2";"Proto_3";"Proto_4";"Proto_5";"Proto_6";"Proto_7";"Proto_8";"Proto_9";
+     };
+    };
+    float_Data @[1] {
+     name="Pattern";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+     ar {
+      name=;
+	  [10 10 10] 0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;0;0;0;1;0;0;
+1;0;0;0;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;1;0;0;0;0;1;0;0;1;
+0;0;0;0;0;1;0;0;0;0;
+0;0;1;0;0;0;0;0;1;0;
+0;1;0;0;0;0;1;0;0;0;
+1;0;1;0;0;1;1;1;1;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;1;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+1;0;0;1;0;0;0;0;1;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;1;0;1;1;0;0;0;1;
+0;0;0;1;1;1;0;0;0;1;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;1;0;0;0;0;
+0;0;1;0;0;0;1;0;1;0;
+0;0;1;0;1;0;0;0;0;0;
+1;1;0;0;0;0;0;0;0;1;
+0;0;1;0;0;1;1;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;1;1;0;0;1;0;
+0;0;0;0;0;0;0;0;0;0;
+0;1;0;0;0;1;0;0;0;1;
+1;1;0;0;0;0;0;0;0;1;
+1;1;1;0;0;0;0;0;1;1;
+0;0;0;1;1;1;0;1;1;1;
+0;0;1;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;0;1;
+0;0;1;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;0;0;
+0;0;1;0;0;0;0;0;0;1;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;1;0;1;0;0;0;0;1;1;
+0;0;0;0;0;0;0;0;0;1;
+0;1;0;0;1;1;0;1;0;1;
+0;0;0;0;0;0;0;0;0;0;
+1;0;0;0;1;0;0;0;0;0;
+0;0;0;0;1;0;0;0;1;0;
+1;0;0;0;1;0;1;0;0;0;
+0;0;1;0;0;0;1;0;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;1;1;0;1;1;1;1;0;
+0;0;1;1;1;0;0;0;0;0;
+1;0;0;0;1;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;1;1;0;1;
+0;1;0;0;0;0;0;0;0;0;
+0;1;0;0;1;0;0;0;0;0;
+0;0;0;0;1;1;0;0;0;0;
+0;0;0;0;0;0;1;0;0;0;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;0;0;0;1;
+1;0;0;0;1;0;1;1;0;0;
+0;0;0;0;1;1;0;1;0;0;
+0;1;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;1;0;
+0;0;0;1;0;0;0;0;0;1;
+0;0;0;1;0;0;1;0;1;1;
+0;0;0;0;0;0;0;1;0;1;
+0;0;1;0;0;1;1;1;0;1;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;1;0;0;1;0;0;
+0;0;0;0;1;0;0;0;0;0;
+1;0;1;0;0;0;0;0;0;0;
+0;0;1;0;0;0;1;0;0;0;
+0;0;0;0;1;1;0;0;0;0;
+0;0;1;0;1;0;0;0;0;0;
+0;0;1;0;0;0;0;0;1;0;
+0;0;0;0;0;0;1;0;0;1;
+0;1;0;1;1;0;0;0;0;0;
+1;0;0;0;0;1;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;1;1;1;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;1;0;0;0;
+1;0;0;0;0;1;0;0;1;0;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;1;0;0;0;1;0;
+0;0;0;0;0;1;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+1;0;0;0;0;0;0;1;0;0;
+0;0;0;0;0;0;0;0;0;1;
+0;0;1;0;0;1;0;1;1;1;
+0;0;0;0;0;1;0;1;1;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;1;1;0;0;0;0;1;0;
+1;0;0;0;0;1;0;0;0;0;
+0;0;0;1;1;1;0;0;0;0;
+     };
+    };
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[1] {
+   name="Exemplars";
+   desc=;
+   data {
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     name="Name";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[1] {
+     name="Pattern";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[2] {
+   name="CategInputDataAll";
+   desc="categorization task input data";
+   data {
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     name="Name";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[1] {
+     name="Input";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+    float_Data @[2] {
+     name="Output";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[3] {
+   name="CategInputDataTrain";
+   desc="categorization task input data";
+   data {
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     name="Name";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[1] {
+     name="Input";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+    float_Data @[2] {
+     name="Output";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[4] {
+   name="CategInputDataTest";
+   desc="categorization task input data";
+   data {
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     name="Name";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[1] {
+     name="Input";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+    float_Data @[2] {
+     name="Output";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[5] {
+   name="TmpInput";
+   desc="temporary input data";
+   data {
+    name="data";
+    el_typ=String_Data;
+    el_def=0;
+    String_Data @[0] {
+     name="Name";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[1] {
+     name="Input";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+    float_Data @[2] {
+     name="Output";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[6] {
+   name="TmpExemp";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColTp;
+    el_def=0;
+    String_Data @[0] {
+     name="Name";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+    };
+    float_Data @[1] {
+     name="Pattern";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 10;10;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+  DataTable @[7] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_23";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @[0] {
+     name="N_ROWS";
+     value 2 0=1;
+     val_type_fixed=0;
+    };
+    UserDataItem @[1] {
+     name="AUTO_SCALE";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="ExemplarDistMat";
+   desc="distance matrix for exemplars";
+   data {
+    name="data";
+    el_typ=float_Data;
+    el_def=0;
+    float_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_23";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="TOP_ZERO";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="Exemplars_DistMatrix";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 100;100;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [2] ;;     };
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+ };
+ types {
+  name="ProgType_List_0";
+  el_typ=DynEnumType;
+  el_def=0;
+  DynEnumType @[0] {
+   name="GenType";
+   desc="what to generate now";
+   enums {
+    name="DynEnumItem_List_0";
+    el_typ=DynEnumItem;
+    el_def=0;
+    DynEnumItem @[0] {
+     name="PROTOTYPES";
+     value=0;
+     desc="initial prototypes";
+    };
+    DynEnumItem @[1] {
+     name="EXEMPLARS";
+     value=1;
+     desc="generated from prototypes";
+    };
+    DynEnumItem @[2] {
+     name="CATEG_INPUT_DATA";
+     value=2;
+     desc="generate categorization task input data";
+    };
+    DynEnumItem @[3] {
+     name="TRAIN_TEST_SPLIT";
+     value=3;
+     desc="split input data into training vs. testing split";
+    };
+    DynEnumItem @[4] {
+     name="PARTIAL_PROBES";
+     value=4;
+     desc="partial input pattern probes";
+    };
+   };
+   bits=0;
+  };
+ };
+ args {
+  name="ProgVar_List_0";
+  el_typ=ProgVar;
+  el_def=0;
+ };
+ vars {
+  name="ProgVar_List_0";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="gen_type";
+   var_type=T_DynEnum;
+   dyn_enum_val {
+    enum_type=.projects[0].programs[2].types[0]$$;
+    value=3;
+   };
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="n_categs";
+   var_type=T_Int;
+   int_val=10;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="number of categories";
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="n_exemplars";
+   var_type=T_Int;
+   int_val=10;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="number of exemplars per category";
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="n_active";
+   var_type=T_Int;
+   int_val=20;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="default is 100 units in output layer, so this is percent activity";
+   init_from=NULL;
+  };
+  ProgVar @[4] {
+   name="proto_min_dist";
+   var_type=T_Int;
+   int_val=30;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="minimum hamming distance between prototypes -- 2x number of bits different (2 * n_active is max possible distance -- no ovlp)";
+   init_from=NULL;
+  };
+  ProgVar @[5] {
+   name="exemp_flip_off";
+   var_type=T_Int;
+   int_val=8;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="number of bits to flip off for exemplars";
+   init_from=NULL;
+  };
+  ProgVar @[6] {
+   name="exemp_flip_on";
+   var_type=T_Int;
+   int_val=8;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="number of bits to flip on for exemplars -- can be asymmetric to ";
+   init_from=NULL;
+  };
+  ProgVar @[7] {
+   name="exemp_min_dist";
+   var_type=T_Real;
+   real_val=10;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="minimum hamming distance for exemplars within same category";
+   init_from=NULL;
+  };
+  ProgVar @[8] {
+   name="exemp_max_dist";
+   var_type=T_Real;
+   real_val=40;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="maximum distance for exmplars within same category";
+   init_from=NULL;
+  };
+  ProgVar @[9] {
+   name="localist_categ";
+   var_type=T_Bool;
+   bool_val=1;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="generate a localist category output (single distinct unit for each category) -- otherwise use prototype distributed pattern";
+   init_from=NULL;
+  };
+  ProgVar @[10] {
+   name="n_test";
+   var_type=T_Int;
+   int_val=2;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="number of testing items per category -- remainder are used for training";
+   init_from=NULL;
+  };
+  ProgVar @[11] {
+   name="n_train";
+   var_type=T_Int;
+   int_val=8;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="number of training items = n_exemplars - n_test";
+   init_from=NULL;
+  };
+  ProgVar @[12] {
+   name="Prototypes";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[0]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[13] {
+   name="Exemplars";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[1]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[14] {
+   name="TmpExemp";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[6]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[15] {
+   name="ExemplarDistMat";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[7]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[16] {
+   name="CategInputDataAll";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[2]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[17] {
+   name="CategInputDataTrain";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[3]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[18] {
+   name="CategInputDataTest";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[4]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[19] {
+   name="TmpInput";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs[2].objs[5]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ functions {
+  name="Function_List_15";
+  el_typ=Function;
+  el_def=0;
+ };
+ init_code {
+  name="ProgEl_List_120";
+  el_typ=ProgCode;
+  el_def=0;
+ };
+ prog_code {
+  name="ProgEl_List_121";
+  el_typ=ProgCode;
+  el_def=0;
+  LocalVars @[0] {
+   desc=;
+   flags=0;
+   local_vars {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="i";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+  };
+  Switch @[1] {
+   desc=;
+   flags=0;
+   switch_var=.projects[0].programs[2].vars[0]$$;
+   cases {
+    name="ProgEl_List_125";
+    el_typ=CaseBlock;
+    el_def=0;
+    CaseBlock @[0] {
+     desc=;
+     flags=0;
+     prog_code {
+      name="ProgEl_List_125";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=.projects[0].programs[2].vars[12]$$;
+       method=DataTable::EnforceRows;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="n_rows";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="n_categs";
+	 };
+	};
+       };
+      };
+      DataGenCall @[1] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       object_type=taDataGen;
+       method=taDataGen::PermutedBinary_MinDist;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="data";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="Prototypes";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=const_taString_ref;
+	 type="const taString&";
+	 name="col_nm";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="\"Pattern\"";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=int;
+	 type="int";
+	 name="n_on";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="n_active";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=float;
+	 type="float";
+	 name="dist";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="proto_min_dist";
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=taMath::DistMetric;
+	 type="taMath::DistMetric";
+	 name="metric";
+	 required=0;
+	 def_val="taMath::HAMMING";
+	 expr {
+	  expr="taMath::HAMMING";
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=bool;
+	 type="bool";
+	 name="norm";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr="false";
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=float;
+	 type="float";
+	 name="tol";
+	 required=0;
+	 def_val="0.0f";
+	 expr {
+	  expr="0.0f";
+	 };
+	};
+       };
+      };
+      DataCalcLoop @[2] {
+       desc=;
+       flags=0;
+       src_data_var=$.projects[0].programs[2].vars[12]$;
+       dest_data_var=NULL;
+       src_cols {
+	name="src_cols";
+	el_typ=DataOpEl;
+	el_def=0;
+	DataOpEl @[0] {
+	 col_name="Name";
+	};
+       };
+       dest_cols {
+	name="dest_cols";
+	el_typ=DataOpEl;
+	el_def=0;
+       };
+       loop_code {
+	name="ProgEl_List_129";
+	el_typ=ProgCode;
+	el_def=0;
+	AssignExpr @[0] {
+	 desc=;
+	 flags=0;
+	 result_var=.projects[0].programs[2].prog_code[1].cases[0].prog_code[2].src_col_vars[0]$$;
+	 expr {
+	  expr="\"Proto_\" + src_row";
+	 };
+	};
+	DataCalcSetSrcRow @[1] {
+	 desc=;
+	 flags=0;
+	 src_data_var=$.projects[0].programs[2].vars[12]$;
+	 dest_data_var=NULL;
+	};
+       };
+       use_col_numbers=0;
+       src_col_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+	ProgVar @[0] {
+	 name="s_Name";
+	 var_type=T_String;
+	 string_val=;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+       };
+       dest_col_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+     };
+     case_val {
+      expr="PROTOTYPES";
+     };
+    };
+    CaseBlock @[1] {
+     desc=;
+     flags=0;
+     prog_code {
+      name="ProgEl_List_126";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=.projects[0].programs[2].vars[13]$$;
+       method=DataTable::RemoveAllRows;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+      };
+      ForLoop @[1] {
+       desc=;
+       flags=0;
+       loop_code {
+	name="ProgEl_List_128";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 obj=.projects[0].programs[2].vars[14]$$;
+	 method=DataTable::EnforceRows;
+	 meth_args {
+	  name="ProgArg_List_0";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="n_rows";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="1";
+	   };
+	  };
+	 };
+	};
+	MethodCall @[1] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 obj=$.projects[0].programs[2].vars[14]$;
+	 method=DataTable::CopyFromRow;
+	 meth_args {
+	  name="ProgArg_List_0";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="dest_row";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="0";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_DataTable_ref;
+	   type="const DataTable&";
+	   name="cp";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="Prototypes";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=int;
+	   type="int";
+	   name="src_row";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="i";
+	   };
+	  };
+	 };
+	};
+	DataProcCall @[2] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 object_type=taDataProc;
+	 method=taDataProc::ReplicateRows;
+	 meth_args {
+	  name="ProgArg_List_0";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=DataTable_ptr;
+	   type="DataTable*";
+	   name="dest";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="TmpExemp";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=DataTable_ptr;
+	   type="DataTable*";
+	   name="src";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="TmpExemp";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=int;
+	   type="int";
+	   name="n_repl";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="n_exemplars";
+	   };
+	  };
+	 };
+	};
+	DataGenCall @[3] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 object_type=taDataGen;
+	 method=taDataGen::FlipBits_MinMax;
+	 meth_args {
+	  name="ProgArg_List_0";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=DataTable_ptr;
+	   type="DataTable*";
+	   name="data";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="TmpExemp";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=const_taString_ref;
+	   type="const taString&";
+	   name="col_nm";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="\"Pattern\"";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=int;
+	   type="int";
+	   name="n_off";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="exemp_flip_off";
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=int;
+	   type="int";
+	   name="n_on";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="exemp_flip_on";
+	   };
+	  };
+	  ProgArg @[4] {
+	   arg_type=float;
+	   type="float";
+	   name="min_dist";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="exemp_min_dist";
+	   };
+	  };
+	  ProgArg @[5] {
+	   arg_type=float;
+	   type="float";
+	   name="max_dist";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="exemp_max_dist";
+	   };
+	  };
+	  ProgArg @[6] {
+	   arg_type=taMath::DistMetric;
+	   type="taMath::DistMetric";
+	   name="metric";
+	   required=0;
+	   def_val="taMath::HAMMING";
+	   expr {
+	    expr="taMath::HAMMING";
+	   };
+	  };
+	  ProgArg @[7] {
+	   arg_type=bool;
+	   type="bool";
+	   name="norm";
+	   required=0;
+	   def_val="false";
+	   expr {
+	    expr="false";
+	   };
+	  };
+	  ProgArg @[8] {
+	   arg_type=float;
+	   type="float";
+	   name="tol";
+	   required=0;
+	   def_val="0.0f";
+	   expr {
+	    expr="0.0f";
+	   };
+	  };
+	 };
+	};
+	DataCalcLoop @[4] {
+	 desc=;
+	 flags=0;
+	 src_data_var=$.projects[0].programs[2].vars[14]$;
+	 dest_data_var=NULL;
+	 src_cols {
+	  name="src_cols";
+	  el_typ=DataOpEl;
+	  el_def=0;
+	  DataOpEl @[0] {
+	   col_name="Name";
+	  };
+	 };
+	 dest_cols {
+	  name="dest_cols";
+	  el_typ=DataOpEl;
+	  el_def=0;
+	 };
+	 loop_code {
+	  name="ProgEl_List_130";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   desc=;
+	   flags=0;
+	   result_var=$.projects[0].programs[2].prog_code[1].cases[0].prog_code[2].src_col_vars[0]$;
+	   expr {
+	    expr="\"Cat_\" + i + \"_\" + src_row";
+	   };
+	  };
+	  DataCalcSetSrcRow @[1] {
+	   desc=;
+	   flags=0;
+	   src_data_var=$.projects[0].programs[2].vars[14]$;
+	   dest_data_var=NULL;
+	  };
+	 };
+	 use_col_numbers=0;
+	 src_col_vars {
+	  name="ProgVar_List_0";
+	  el_typ=ProgVar;
+	  el_def=0;
+	  ProgVar @[0] {
+	   name="s_Name";
+	   var_type=T_String;
+	   string_val=;
+	   objs_ptr=0;
+	   flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	   reference=0;
+	   desc=;
+	   init_from=NULL;
+	  };
+	 };
+	 dest_col_vars {
+	  name="ProgVar_List_0";
+	  el_typ=ProgVar;
+	  el_def=0;
+	 };
+	};
+	DataProcCall @[5] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 object_type=taDataProc;
+	 method=taDataProc::AppendRows;
+	 meth_args {
+	  name="ProgArg_List_0";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=DataTable_ptr;
+	   type="DataTable*";
+	   name="dest";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="Exemplars";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=DataTable_ptr;
+	   type="DataTable*";
+	   name="src";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="TmpExemp";
+	   };
+	  };
+	 };
+	};
+       };
+       init {
+	expr="i = 0";
+       };
+       test {
+	expr="i < n_categs";
+       };
+       iter {
+	expr="i++";
+       };
+      };
+      DataAnalCall @[2] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       object_type=taDataAnal;
+       method=taDataAnal::DistMatrixTable;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="dist_mat";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="ExemplarDistMat";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=bool;
+	 type="bool";
+	 name="view";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="true";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="src_data";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="Exemplars";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=const_taString_ref;
+	 type="const taString&";
+	 name="data_col_nm";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="\"Pattern\"";
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=const_taString_ref;
+	 type="const taString&";
+	 name="name_col_nm";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="\"\"";
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=taMath::DistMetric;
+	 type="taMath::DistMetric";
+	 name="metric";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="taMath::INNER_PROD";
+	 };
+	};
+	ProgArg @[6] {
+	 arg_type=bool;
+	 type="bool";
+	 name="norm";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr="true";
+	 };
+	};
+	ProgArg @[7] {
+	 arg_type=float;
+	 type="float";
+	 name="tol";
+	 required=0;
+	 def_val="0.0f";
+	 expr {
+	  expr="0.0f";
+	 };
+	};
+	ProgArg @[8] {
+	 arg_type=bool;
+	 type="bool";
+	 name="incl_scalars";
+	 required=0;
+	 def_val="false";
+	 expr {
+	  expr="false";
+	 };
+	};
+       };
+      };
+     };
+     case_val {
+      expr="EXEMPLARS";
+     };
+    };
+    CaseBlock @[2] {
+     desc=;
+     flags=0;
+     prog_code {
+      name="ProgEl_List_131";
+      el_typ=ProgCode;
+      el_def=0;
+      DataCalcLoop @[0] {
+       desc=;
+       flags=0;
+       src_data_var=$.projects[0].programs[2].vars[13]$;
+       dest_data_var=.projects[0].programs[2].vars[16]$$;
+       src_cols {
+	name="src_cols";
+	el_typ=DataOpEl;
+	el_def=0;
+	DataOpEl @[0] {
+	 col_name="Name";
+	};
+	DataOpEl @[1] {
+	 col_name="Pattern";
+	};
+       };
+       dest_cols {
+	name="dest_cols";
+	el_typ=DataOpEl;
+	el_def=0;
+	DataOpEl @[0] {
+	 col_name="Name";
+	};
+	DataOpEl @[1] {
+	 col_name="Input";
+	};
+	DataOpEl @[2] {
+	 col_name="Output";
+	};
+       };
+       loop_code {
+	name="ProgEl_List_133";
+	el_typ=ProgCode;
+	el_def=0;
+	LocalVars @[0] {
+	 desc=;
+	 flags=0;
+	 local_vars {
+	  name="ProgVar_List_0";
+	  el_typ=ProgVar;
+	  el_def=0;
+	  ProgVar @[0] {
+	   name="proto_mtx";
+	   var_type=T_Object;
+	   object_type=float_Matrix;
+	   object_val=NULL;
+	   objs_ptr=0;
+	   flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	   reference=0;
+	   desc=;
+	   init_from=NULL;
+	  };
+	  ProgVar @[1] {
+	   name="categ";
+	   var_type=T_Int;
+	   int_val=0;
+	   objs_ptr=0;
+	   flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	   reference=0;
+	   desc=;
+	   init_from=NULL;
+	  };
+	 };
+	};
+	DataCalcAddDestRow @[1] {
+	 desc=;
+	 flags=0;
+	 src_data_var=$.projects[0].programs[2].vars[13]$;
+	 dest_data_var=$.projects[0].programs[2].vars[16]$;
+	};
+	AssignExpr @[2] {
+	 desc=;
+	 flags=0;
+	 result_var=.projects[0].programs[2].prog_code[1].cases[2].prog_code[0].dest_col_vars[0]$$;
+	 expr {
+	  expr="s_Name";
+	 };
+	};
+	AssignExpr @[3] {
+	 desc=;
+	 flags=0;
+	 result_var=.projects[0].programs[2].prog_code[1].cases[2].prog_code[0].dest_col_vars[1]$$;
+	 expr {
+	  expr="s_Pattern";
+	 };
+	};
+	AssignExpr @[4] {
+	 desc="category number";
+	 flags=0;
+	 result_var=.projects[0].programs[2].prog_code[1].cases[2].prog_code[0].loop_code[0].local_vars[1]$$;
+	 expr {
+	  expr="src_row / n_exemplars";
+	 };
+	};
+	IfElse @[5] {
+	 desc=;
+	 flags=0;
+	 cond {
+	  expr="localist_categ";
+	 };
+	 show_false_code=1;
+	 true_code {
+	  name="ProgEl_List_135";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MethodCall @[0] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=.projects[0].programs[2].prog_code[1].cases[2].prog_code[0].dest_col_vars[2]$$;
+	   method=taMatrixT_float_::Set_Flat;
+	   meth_args {
+	    name="ProgArg_List_0";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=taMatrixT_float_::const_float_ref;
+	     type="const float&";
+	     name="item";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="1.0";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=int;
+	     type="int";
+	     name="idx";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="categ";
+	     };
+	    };
+	   };
+	  };
+	 };
+	 false_code {
+	  name="ProgEl_List_136";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MethodCall @[0] {
+	   desc=;
+	   flags=0;
+	   result_var=.projects[0].programs[2].prog_code[1].cases[2].prog_code[0].loop_code[0].local_vars[0]$$;
+	   obj=$.projects[0].programs[2].vars[12]$;
+	   method=DataTable::GetValAsMatrix;
+	   meth_args {
+	    name="ProgArg_List_0";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=Variant;
+	     type="Variant";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Pattern\"";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="categ";
+	     };
+	    };
+	   };
+	  };
+	  MethodCall @[1] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects[0].programs[2].prog_code[1].cases[2].prog_code[0].dest_col_vars[2]$;
+	   method=taBase::CopyFrom;
+	   meth_args {
+	    name="ProgArg_List_0";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=taBase_ptr;
+	     type="taBase*";
+	     name="cpy_from";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="proto_mtx";
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+	DataCalcSetDestRow @[6] {
+	 desc=;
+	 flags=0;
+	 src_data_var=$.projects[0].programs[2].vars[13]$;
+	 dest_data_var=$.projects[0].programs[2].vars[16]$;
+	};
+       };
+       use_col_numbers=0;
+       src_col_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+	ProgVar @[0] {
+	 name="s_Name";
+	 var_type=T_String;
+	 string_val=;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+	ProgVar @[1] {
+	 name="s_Pattern";
+	 var_type=T_Object;
+	 object_type=float_Matrix;
+	 object_val=NULL;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+       };
+       dest_col_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+	ProgVar @[0] {
+	 name="d_Name";
+	 var_type=T_String;
+	 string_val=;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+	ProgVar @[1] {
+	 name="d_Input";
+	 var_type=T_Object;
+	 object_type=float_Matrix;
+	 object_val=NULL;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+	ProgVar @[2] {
+	 name="d_Output";
+	 var_type=T_Object;
+	 object_type=float_Matrix;
+	 object_val=NULL;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+       };
+      };
+     };
+     case_val {
+      expr="CATEG_INPUT_DATA";
+     };
+    };
+    CaseBlock @[3] {
+     desc=;
+     flags=0;
+     prog_code {
+      name="ProgEl_List_132";
+      el_typ=ProgCode;
+      el_def=0;
+      LocalVars @[0] {
+       desc=;
+       flags=0;
+       local_vars {
+	name="ProgVar_List_0";
+	el_typ=ProgVar;
+	el_def=0;
+	ProgVar @[0] {
+	 name="split_idxs";
+	 var_type=T_Object;
+	 object_type=int_Array;
+	 object_val=NULL;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+	ProgVar @[1] {
+	 name="j";
+	 var_type=T_Int;
+	 int_val=0;
+	 objs_ptr=0;
+	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	 reference=0;
+	 desc=;
+	 init_from=NULL;
+	};
+       };
+      };
+      AssignExpr @[1] {
+       desc=;
+       flags=0;
+       result_var=.projects[0].programs[2].vars[11]$$;
+       expr {
+	expr="n_exemplars - n_test";
+       };
+      };
+      MethodCall @[2] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=.projects[0].programs[2].vars[17]$$;
+       method=DataTable::Copy_NoData;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_DataTable_ref;
+	 type="const DataTable&";
+	 name="cp";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="CategInputDataAll";
+	 };
+	};
+       };
+      };
+      MethodCall @[3] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       obj=.projects[0].programs[2].vars[18]$$;
+       method=DataTable::Copy_NoData;
+       meth_args {
+	name=;
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_DataTable_ref;
+	 type="const DataTable&";
+	 name="cp";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="CategInputDataAll";
+	 };
+	};
+       };
+      };
+      ForLoop @[4] {
+       desc=;
+       flags=0;
+       loop_code {
+	name="ProgEl_List_137";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 obj=.projects[0].programs[2].prog_code[1].cases[3].prog_code[0].local_vars[0]$$;
+	 method=taArray_base::SetSize;
+	 meth_args {
+	  name="ProgArg_List_0";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="sz";
+	   required=1;
+	   def_val=;
+	   expr {
+	    expr="n_exemplars";
+	   };
+	  };
+	 };
+	};
+	MethodCall @[1] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 obj=$.projects[0].programs[2].prog_code[1].cases[3].prog_code[0].local_vars[0]$;
+	 method=int_Array::FillSeq;
+	 meth_args {
+	  name=;
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=int;
+	   type="int";
+	   name="start";
+	   required=0;
+	   def_val="0";
+	   expr {
+	    expr="i * n_exemplars";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=int;
+	   type="int";
+	   name="inc";
+	   required=0;
+	   def_val="1";
+	   expr {
+	    expr="1";
+	   };
+	  };
+	 };
+	};
+	MethodCall @[2] {
+	 desc=;
+	 flags=0;
+	 result_var=NULL;
+	 obj=$.projects[0].programs[2].prog_code[1].cases[3].prog_code[0].local_vars[0]$;
+	 method=taArray_base::Permute;
+	 meth_args {
+	  name="ProgArg_List_0";
+	  el_typ=ProgArg;
+	  el_def=0;
+	 };
+	};
+	ForLoop @[3] {
+	 desc=;
+	 flags=0;
+	 loop_code {
+	  name="ProgEl_List_138";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  IfElse @[0] {
+	   desc=;
+	   flags=0;
+	   cond {
+	    expr="j<n_train";
+	   };
+	   show_false_code=1;
+	   true_code {
+	    name="ProgEl_List_139";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    MethodCall @[0] {
+	     desc=;
+	     flags=0;
+	     result_var=NULL;
+	     obj=$.projects[0].programs[2].vars[17]$;
+	     method=DataTable::AddBlankRow;
+	     meth_args {
+	      name="ProgArg_List_0";
+	      el_typ=ProgArg;
+	      el_def=0;
+	     };
+	    };
+	    MethodCall @[1] {
+	     desc=;
+	     flags=0;
+	     result_var=NULL;
+	     obj=$.projects[0].programs[2].vars[17]$;
+	     method=DataTable::CopyFromRow;
+	     meth_args {
+	      name="ProgArg_List_0";
+	      el_typ=ProgArg;
+	      el_def=0;
+	      ProgArg @[0] {
+	       arg_type=int;
+	       type="int";
+	       name="dest_row";
+	       required=1;
+	       def_val=;
+	       expr {
+		expr="-1";
+	       };
+	      };
+	      ProgArg @[1] {
+	       arg_type=const_DataTable_ref;
+	       type="const DataTable&";
+	       name="cp";
+	       required=1;
+	       def_val=;
+	       expr {
+		expr="CategInputDataAll";
+	       };
+	      };
+	      ProgArg @[2] {
+	       arg_type=int;
+	       type="int";
+	       name="src_row";
+	       required=1;
+	       def_val=;
+	       expr {
+		expr="split_idxs[j]";
+	       };
+	      };
+	     };
+	    };
+	   };
+	   false_code {
+	    name="ProgEl_List_140";
+	    el_typ=ProgCode;
+	    el_def=0;
+	    MethodCall @[0] {
+	     desc=;
+	     flags=0;
+	     result_var=NULL;
+	     obj=$.projects[0].programs[2].vars[18]$;
+	     method=DataTable::AddBlankRow;
+	     meth_args {
+	      name="ProgArg_List_0";
+	      el_typ=ProgArg;
+	      el_def=0;
+	     };
+	    };
+	    MethodCall @[1] {
+	     desc=;
+	     flags=0;
+	     result_var=NULL;
+	     obj=$.projects[0].programs[2].vars[18]$;
+	     method=DataTable::CopyFromRow;
+	     meth_args {
+	      name="ProgArg_List_0";
+	      el_typ=ProgArg;
+	      el_def=0;
+	      ProgArg @[0] {
+	       arg_type=int;
+	       type="int";
+	       name="dest_row";
+	       required=1;
+	       def_val=;
+	       expr {
+		expr="-1";
+	       };
+	      };
+	      ProgArg @[1] {
+	       arg_type=const_DataTable_ref;
+	       type="const DataTable&";
+	       name="cp";
+	       required=1;
+	       def_val=;
+	       expr {
+		expr="CategInputDataAll";
+	       };
+	      };
+	      ProgArg @[2] {
+	       arg_type=int;
+	       type="int";
+	       name="src_row";
+	       required=1;
+	       def_val=;
+	       expr {
+		expr="split_idxs[j]";
+	       };
+	      };
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="j=0";
+	 };
+	 test {
+	  expr="j<n_exemplars";
+	 };
+	 iter {
+	  expr="j++";
+	 };
+	};
+       };
+       init {
+	expr="i=0";
+       };
+       test {
+	expr="i<n_categs";
+       };
+       iter {
+	expr="i++";
+       };
+      };
+     };
+     case_val {
+      expr="TRAIN_TEST_SPLIT";
+     };
+    };
+    CaseBlock @[4] {
+     desc=;
+     flags=0;
+     prog_code {
+      name="ProgEl_List_127";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+     case_val {
+      expr="PARTIAL_PROBES";
+     };
+    };
+   };
+  };
+ };
+ step_prog=NULL;
+ step_n=1;
+};

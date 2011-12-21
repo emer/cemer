@@ -617,7 +617,6 @@ public:
   override String	GetToolbarName() const { return "math()"; }
 
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool		CvtFmCode(const String& code);
 
   TA_BASEFUNS_NOCOPY(MathCall);
 private:
@@ -632,7 +631,6 @@ public:
   override String	GetToolbarName() const { return "random()"; }
 
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool		CvtFmCode(const String& code);
 
   TA_BASEFUNS_NOCOPY(RandomCall);
 private:
@@ -647,7 +645,6 @@ public:
   override String	GetToolbarName() const { return "misc()"; }
 
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
-  override bool		CvtFmCode(const String& code);
 
   TA_BASEFUNS_NOCOPY(MiscCall);
 private:

@@ -1779,10 +1779,6 @@ bool MathCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   return false;
 }
 
-bool MathCall::CvtFmCode(const String& code) {
-  return inherited::CvtFmCode(code);
-}
-
 void RandomCall::Initialize() {
   min_type = &TA_Random;
   object_type = &TA_Random;
@@ -1802,10 +1798,6 @@ bool RandomCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   return false;
 }
 
-bool RandomCall::CvtFmCode(const String& code) {
-  return inherited::CvtFmCode(code);
-}
-
 void MiscCall::Initialize() {
   min_type = &TA_taMisc;
   object_type = &TA_taMisc;
@@ -1823,10 +1815,6 @@ bool MiscCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!td) return false;
   if(objnm == "taMisc") return true;
   return false;
-}
-
-bool MiscCall::CvtFmCode(const String& code) {
-  return inherited::CvtFmCode(code);
 }
 
 //////////////////////////

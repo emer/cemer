@@ -316,7 +316,7 @@ public:
   static bool	AppendRows(DataTable* dest, DataTable* src);
   // #CAT_Copy #MENU_BUTTON append rows of src to the end of dest (structure must be the same -- more efficient than CopyCommonColData when this is true)
   static bool	ReplicateRows(DataTable* dest, DataTable* src, int n_repl);
-  // #CAT_Copy #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable replicate each row of src n_repl times in dest -- dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData)
+  // #CAT_Copy #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable replicate each row of src n_repl times in dest -- dest is completely overwritten (if dest is NULL, a new one is created in proj.data.AnalysisData) -- dest can also be same as src
   static bool	ConcatRows(DataTable* dest, DataTable* src_a, DataTable* src_b, DataTable* src_c=NULL,
 			   DataTable* src_d=NULL, DataTable* src_e=NULL, DataTable* src_f=NULL);
   // #CAT_Copy #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable concatenate rows of data from all the source data tables into the destination, which is completely overwritten with the new data.  (if dest is NULL, a new one is created in proj.data.AnalysisData).  just a sequence of calls to CopyCommonColData
@@ -409,6 +409,7 @@ class TA_API DataProcCall : public StaticMethodCall {
 INHERITED(StaticMethodCall)
 public:
   override String	GetToolbarName() const { return "data proc()"; }
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
 
   TA_BASEFUNS_NOCOPY(DataProcCall);
 private:

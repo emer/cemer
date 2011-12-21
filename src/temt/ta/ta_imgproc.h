@@ -1622,6 +1622,7 @@ class TA_API ImageProcCall : public StaticMethodCall {
 INHERITED(StaticMethodCall)
 public:
   override String	GetToolbarName() const { return "img proc()"; }
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   TA_BASEFUNS_NOCOPY(ImageProcCall);
 private:
   void	Initialize();

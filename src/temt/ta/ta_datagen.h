@@ -185,7 +185,7 @@ public:
 			       float min_dist, float max_dist,
 			       taMath::DistMetric metric=taMath::HAMMING,
 			       bool norm=false, float tol=0.0f);
-  // #MENU_BUTTON flip bits, ensuring range within min and max distances (pat_no: -1 = all pats)
+  // #MENU_BUTTON #CAT_Random flip bits, ensuring range within min and max distances (pat_no: -1 = all pats)
 //   static bool  FlipBits_GpMinMax(int pat_no, int n_off, int n_on, float within_min_dist,
 // 				  float within_max_dist, float between_dist,
 // 				  taMath::DistMetric metric=taMath::HAMMING,
@@ -285,6 +285,8 @@ class TA_API DataGenCall : public StaticMethodCall {
 INHERITED(StaticMethodCall)
 public:
   override String	GetToolbarName() const { return "data gen()"; }
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+
   TA_BASEFUNS_NOCOPY(DataGenCall);
 private:
   void	Initialize();

@@ -3181,7 +3181,9 @@ bool StaticMethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const 
   TypeDef* td = taMisc::types.FindName(objnm);
   if(!td) return false; // todo: maybe trigger an err here??
   // don't compete with subclasses
-  if(objnm != "taMisc" && !objnm.contains("taMath") && objnm != "Random")
+  if(objnm != "taMisc" && !objnm.contains("taMath") && objnm != "Random"
+     && objnm != "taDataGen" && objnm != "taDataAnal" && objnm != "taDataProc"
+     && objnm != "taImageProc")
     return true;
   return false;
 }
