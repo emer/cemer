@@ -127,7 +127,7 @@ public:
   QPushButton*  btnApply; // writes it back to field
   QPushButton*  btnRevert; // gets back from field
 
-  bool          isReadOnly() {return m_read_only;}
+  bool          isReadOnly() { return m_read_only; }
   virtual void  setText(const QString& value);
 
   iFieldEditDialog(bool modal_, bool read_only, const String& desc, taiField* parent);
@@ -141,7 +141,7 @@ protected:
   taiField*     field;
   bool          m_read_only;
 
-  void          setApplyEnabled(bool val); // set apply/revert enabled or not
+  void          setApplyEnabled(bool enabled); // set apply/revert enabled or not
 
 protected slots:
   void          btnApply_clicked();
@@ -163,55 +163,81 @@ class TA_API iRegexpDialog : public iDialog {
   Q_OBJECT
   INHERITED(iDialog)
 public:
-  iTextEdit*    txtText;
-  QPushButton*  btnOk; // read/write only
-  QPushButton*  btnCancel; // or close, if read only
-  QPushButton*  btnApply; // writes it back to field
-  QPushButton*  btnRevert; // gets back from field
+  iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, bool read_only);
 
-//  bool          isReadOnly() {return m_read_only;}
-//  virtual void  setText(const QString& value);
-
-  iRegexpDialog(const String& desc, taiRegexpField* parent);
-//  ~iRegexpDialog();
+  bool          isReadOnly() { return m_read_only; }
 
 public slots:
-//  override void accept();
-//  override void reject();
-
-protected:
-  QStandardItemModel *table_model;
-  QSortFilterProxyModel *proxy_model;
-
-  QPushButton *add_button;
-  QPushButton *del_button;
-  QListWidget *regexp_list;
-  QLineEdit *regexp_lineedit;
-#ifndef __MAKETA__
-  QList<QComboBox *> regexp_combos;
-#endif
-  taiRegexpField* field;
-  QString full_regexp_string;
-  QString filter_regexp_string;
-
-//  void          setApplyEnabled(bool val); // set apply/revert enabled or not
+  override void accept();
 
 protected slots:
-  void AddRegexp();
-  void DelRegexp();
-  void SelectCombo(QComboBox *combo, int index);
-  void RegexpPartChosen(int index);
-  void RegexpPartEdited();
-  void RegexpLineEdited();
-  void RegexpSelectionChanged();
-  void EnableEditBoxes(QString regexp);
+  void          btnAdd_clicked();
+  void          btnDel_clicked();
+  void          btnApply_clicked();
+  void          btnReset_clicked();
+
+  void          RegexpPartChosen(int index);
+  void          RegexpPartEdited();
+  void          RegexpLineEdited();
+  void          RegexpSelectionChanged();
+
+private:
+  enum ExtraColumns {
+    INDEX_COL,          // One extra column for the label indices.
+    LABEL_COL,          // One extra column for the full labels (hidden).
+    NUM_EXTRA_COLS      // Number of extra columns.
+  };
+
+  // Helpers functions called by the ctor.
+  int           CreateTableModel(const RegexpPopulator *populator);
+  void          LayoutInstructions(QVBoxLayout *vbox, QString field_name);
+  void          LayoutRegexpList(QVBoxLayout *vbox);
+  QHBoxLayout * LayoutEditBoxes(QVBoxLayout *vbox, int num_parts);
+  void          LayoutTableView(QVBoxLayout *vbox, QHBoxLayout *hbox_combos, int num_parts);
+  void          LayoutButtons(QVBoxLayout *vbox);
+
+  // Keeps combo-box line-edit in sync with the selected entry.
+  void          SelectCombo(QComboBox *combo, int index);
+
+  // Helpers for RegexpSelectionChanged().
+  void          BuildCombos(QString regexp);
+  QStringList   GetComboChoices(QString regexp, int part);
+  void          EnableEditBoxes(QString regexp);
 #ifndef __MAKETA__
-  void ApplyFilters(QList<QListWidgetItem *> selected_items);
+  void          ApplyFilters(QList<QListWidgetItem *> selected_items);
 #endif
 
-//  void          btnApply_clicked();
-//  void          btnRevert_clicked();
-//  void          repChanged();
+  // Split up and join regexp alternatives.
+  QStringList   SplitRegexpAlternatives(QString regexp);
+#ifndef __MAKETA__
+  QString       JoinRegexpAlternatives(QList<QListWidgetItem *> items);
+#endif
+
+  // Split up and join regexp parts.
+  QStringList   SplitRegexp(const QString &regexp);
+  QString       JoinRegexp(const QStringList &regexp_parts);
+  QString       GetEscapedSeparator();
+
+  // Enable/disable the apply/reset buttons.
+  void          setApplyEnabled(bool enabled);
+
+// Data members
+protected:
+  static const QString DOT_STAR;
+
+  taiRegexpField*       m_field;
+  bool                  m_read_only;
+  QSortFilterProxyModel* m_proxy_model;
+  QListWidget*          m_regexp_list;
+  QLineEdit*            m_regexp_line_edit;
+#ifndef __MAKETA__
+  QList<QComboBox *>    m_regexp_combos;
+#endif
+
+  QPushButton*          btnAdd;
+  QPushButton*          btnDel;
+  QPushButton*          btnApply;
+  QPushButton*          btnReset;
 };
 
 class TA_API taiText : public taiData {
@@ -266,7 +292,7 @@ public:
   void*                 lookupfun_base; // for lookup function, base of owner
 
 protected:
-  iFieldEditDialog*     edit; // an edit dialog, if created
+  iFieldEditDialog*     edit_dialog;    // an edit dialog, if created
 };
 
 class TA_API taiFileDialogField : public taiText {
@@ -296,26 +322,19 @@ public:
   taBase*               base_obj;       // taBase object for saving/loading
 };
 
-// DPF TODO: for now, just a copy&paste of taiField
 class TA_API taiRegexpField : public taiText {
+  // A text field with a "..." button to bring up a context-specific regular expression editor.
   Q_OBJECT
   INHERITED(taiText)
-  friend class iRegexpDialog;
+  friend class iRegexpDialog; // DPF TODO: add API instead.
 public:
   taiRegexpField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags, RegexpPopulator *re_populator);
-  ~taiRegexpField();
 
 protected slots:
-  override void         btnEdit_clicked(bool);
-  override void         lookupKeyPressed();
-  void                  lookupKeyPressed_dialog();
-
-public:
-  MemberDef*            lookupfun_md;   // for lookup function, member def
-  void*                 lookupfun_base; // for lookup function, base of owner
+  override void         btnEdit_clicked(bool);  // "..." button
+  override void         lookupKeyPressed();     // Same as clicking the "..." button.
 
 protected:
-  iRegexpDialog*        edit; // an edit dialog, if created
   RegexpPopulator*      populator;
 };
 

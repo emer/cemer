@@ -46,6 +46,7 @@
 #include <QColor> // needed for qbitmap
 #include <QComboBox>
 #include <QDesktopWidget>
+#include <QDialogButtonBox>
 #include <QFont>
 #include <QFrame>
 #include <QHeaderView>
@@ -518,6 +519,9 @@ iFieldEditDialog::iFieldEditDialog(bool modal_, bool read_only_,
 :inherited()
 {
   field = parent;
+  // TODO: Why set modality here, vs. letting the caller decide?
+  //  * modal:    dialog->exec()
+  //  * modeless: dialog->show()/raise()/activateWindow()
   setModal(modal_);
   init(read_only_, desc);
 }
@@ -576,7 +580,7 @@ void iFieldEditDialog::init(bool read_only_, const String& desc) {
 
 iFieldEditDialog::~iFieldEditDialog() {
   if (field) {
-    field->edit = NULL;
+    field->edit_dialog = NULL;
     field = NULL;
   }
 }
@@ -585,7 +589,7 @@ void iFieldEditDialog::accept() {
   if (!m_read_only)
     btnApply_clicked();
   if (field)
-    field->edit = NULL;
+    field->edit_dialog = NULL;
 //   if (!isModal()) {
 //   deleteLater();
 //   }
@@ -595,15 +599,15 @@ void iFieldEditDialog::accept() {
 void iFieldEditDialog::reject() {
   if (!isModal()) {
     if (field)
-      field->edit = NULL;
+      field->edit_dialog = NULL;
     deleteLater();
   }
   inherited::reject();
 }
 
-void iFieldEditDialog::setApplyEnabled(bool val) {
-  if (btnApply) btnApply->setEnabled(val);
-  if (btnRevert) btnRevert->setEnabled(val);
+void iFieldEditDialog::setApplyEnabled(bool enabled) {
+  if (btnApply) btnApply->setEnabled(enabled);
+  if (btnRevert) btnRevert->setEnabled(enabled);
 }
 
 void iFieldEditDialog::setText(const QString& value) {
@@ -632,248 +636,386 @@ void iFieldEditDialog::repChanged() {
 //        iRegexpDialog         //
 //////////////////////////////////
 
-// DPF TODO: refactor ctor!
-iRegexpDialog::iRegexpDialog(const String& desc, taiRegexpField* parent)
+const QString iRegexpDialog::DOT_STAR(".*");
+
+iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, bool read_only)
   : inherited()
-  , field(parent)
+  , m_field(regexp_field)
+  , m_read_only(read_only)
+  , m_proxy_model(0)
+  , m_regexp_list(0)
+  , m_regexp_line_edit(0)
+  , m_regexp_combos()
+  , btnAdd(0)
+  , btnDel(0)
+  , btnApply(0)
+  , btnReset(0)
 {
-  if (!field || !field->populator) {
+  if (!m_field || !m_field->populator) {
+    // Shouldn't happen.
     return;
   }
 
-  setModal(true);
+  // Size the dialog.
   resize(taiM->dialogSize(taiMisc::dlgBig | taiMisc::dlgHor));
   setFont(taiM->dialogFont(taiM->ctrl_size));
 
-  // Break apart the full regexp into its "OR" components,
-  // which are separated by |.
-  QString field_re = field->rep()->text();
-  if (field_re.startsWith('(') && field_re.endsWith(')')) {
-    // Remove the parens.
-    field_re.chop(1);
-    field_re.remove(0,1);
+  // Create the table model (should be done before its view is created).
+  int num_parts = CreateTableModel(m_field->populator);
+
+  // Create layout
+  QVBoxLayout *vbox = new QVBoxLayout(this);
+  LayoutInstructions(vbox, field_name.toQString());
+  LayoutRegexpList(vbox);
+  QHBoxLayout *hbox_combos = LayoutEditBoxes(vbox, num_parts);
+  LayoutTableView(vbox, hbox_combos, num_parts);
+  LayoutButtons(vbox);
+
+  // "Reset" the form with the text from the field.  Do this at the bottom,
+  // since RegexpSelectionChanged() will be triggered.
+  btnReset_clicked();
+}
+
+void iRegexpDialog::LayoutInstructions(QVBoxLayout *vbox, QString field_name)
+{
+  // Dialog title.
+  QString title("Editing regular-expression field");
+  if (!field_name.isEmpty()) {
+    title.append(": ").append(field_name);
   }
-  QStringList regexp_strings = field_re.split("|", QString::SkipEmptyParts);
+  setWindowTitle(title);
 
-  // Put the regexp parts into the list widget.
-  regexp_list = new QListWidget;
-  regexp_list->addItems(regexp_strings);
-  regexp_list->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  regexp_list->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  // Instructions.
+  QLabel *instr = new QLabel;
+  instr->setWordWrap(true);
+  instr->setText(
+    "Instructions: Edit the list of regular expressions to be used "
+    "for this field.  The table is automatically filtered based on "
+    "the regular expression(s) that are selected in the list.  The "
+    "drop-down choices are filtered based on what choices are valid "
+    "given the other selections.  You may also type directly into "
+    "these fields."
+  );
+  vbox->addWidget(instr);
+}
 
+void iRegexpDialog::LayoutRegexpList(QVBoxLayout *vbox)
+{
+  // Add/delete buttons to the left, list of regexps to the right.
+  QHBoxLayout *list_hbox = new QHBoxLayout;
+  list_hbox->setContentsMargins(0, 0, 0, 0);
+  vbox->addLayout(list_hbox);
+
+  // Arrange buttons vertically.
+  QVBoxLayout *add_del_vbox = new QVBoxLayout;
+  add_del_vbox->setContentsMargins(0, 0, 0, 0);
+  list_hbox->addLayout(add_del_vbox);
+
+  int button_width = 25;
+  btnAdd = new QPushButton("+");
+  btnAdd->setMaximumWidth(button_width);
+  btnAdd->setEnabled(!isReadOnly());
+  add_del_vbox->addWidget(btnAdd);
+
+  btnDel = new QPushButton("-");
+  btnDel->setMaximumWidth(button_width);
+  btnDel->setEnabled(!isReadOnly());
+  add_del_vbox->addWidget(btnDel);
+
+  add_del_vbox->addStretch();
+
+  // Connect add/del button clicks to our SLOTs.
+  connect(btnAdd, SIGNAL(clicked()), this, SLOT(btnAdd_clicked()));
+  connect(btnDel, SIGNAL(clicked()), this, SLOT(btnDel_clicked()));
+
+  // Create a list widget to display the regexp parts.
+  // The list will be populated later.
+  m_regexp_list = new QListWidget;
+  m_regexp_list->setEditTriggers(QAbstractItemView::NoEditTriggers);
+  m_regexp_list->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  // We don't need a lot of room in the list widget, so size it based on
+  // how much size the buttons require.
+  m_regexp_list->setFixedHeight(add_del_vbox->minimumSize().height());
+
+  list_hbox->addWidget(m_regexp_list);
+
+  // Connect to the signal issued when the selection of regexp is changed.
+  connect(m_regexp_list, SIGNAL(itemSelectionChanged()),
+          this, SLOT(RegexpSelectionChanged()));
+}
+
+QHBoxLayout *iRegexpDialog::LayoutEditBoxes(QVBoxLayout *vbox, int num_parts)
+{
+  // Line-edit for the regexp.
+  m_regexp_line_edit = new QLineEdit;
+  vbox->addWidget(m_regexp_line_edit);
+
+  // Connect to the signal issued when the regexp is edited
+  // using the single line-edit box.
+  connect(m_regexp_line_edit, SIGNAL(editingFinished()),
+          this, SLOT(RegexpLineEdited()));
+
+  // Layout for the combo-boxes.
+  QHBoxLayout *hbox_combos = new QHBoxLayout;
+  hbox_combos->setContentsMargins(0, 0, 0, 0);
+  hbox_combos->setSpacing(1);
+  vbox->addLayout(hbox_combos);
+
+  // Create combo-boxes.
+  for (int part = 0; part < num_parts; ++part) {
+    // Create a combo-box.
+    QComboBox *combo = new QComboBox;
+    combo->setEditable(true);
+    combo->setInsertPolicy(QComboBox::NoInsert);
+
+    // Add the combo-box to the widget,
+    hbox_combos->addWidget(combo);
+    // and also to a list for future reference.
+    m_regexp_combos << combo;
+
+    // Connect to the signal issued after the user chooses a combo-box item.
+    connect(combo, SIGNAL(activated(int)),
+            this, SLOT(RegexpPartChosen(int)));
+
+    // Connect to the signal issued after the user manually enters text
+    // in the combo-box.
+    connect(combo->lineEdit(), SIGNAL(editingFinished()),
+            this, SLOT(RegexpPartEdited()));
+  }
+
+  // Return the combos hbox so padding can be added in the next step.
+  return hbox_combos;
+}
+
+void iRegexpDialog::LayoutTableView(
+  QVBoxLayout *vbox, QHBoxLayout *hbox_combos, int num_parts)
+{
+  // Table view.  Set the model early so columns actions are valid.
+  QTableView *tableview = new QTableView;
+  tableview->setModel(m_proxy_model);
+
+  // Hide the full label column, it's only used for the m_proxy_model filter.
+  tableview->setColumnHidden(LABEL_COL, true);
+
+  // Allow the user to click column headers to sort the column.
+  tableview->setSortingEnabled(true);
+
+  // By default, sort by the index column.
+  tableview->sortByColumn(INDEX_COL, Qt::AscendingOrder);
+
+  // Table data is read-only.
+  tableview->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+  // Select entire rows at a time (vs. cells).
+  tableview->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+  // Disallow complex selections.
+  tableview->setSelectionMode(QAbstractItemView::SingleSelection);
+
+  // Keep the scrollbar visible at all times since the combo-boxes are
+  // sized assuming it is present.  Hopefully this works on all platforms.
+  tableview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+  // Don't need to see the vertical headers since we have an index column.
+  tableview->verticalHeader()->setVisible(false);
+
+  // Add the table view with a stretch factor so it takes up any available
+  // vertical space.
+  vbox->addWidget(tableview, 1);
+
+  // Customize the header row.
+  QHeaderView *header = tableview->horizontalHeader();
+
+  // Don't highlight the header cells when a selection is made (looks dumb).
+  header->setHighlightSections(false);
+
+  // Resize the index column to fit the contents.
+  header->setResizeMode(INDEX_COL, QHeaderView::ResizeToContents);
+
+  // Resize other columns to take up all available space equally.
+  int num_cols = num_parts + NUM_EXTRA_COLS;
+  for (int col = NUM_EXTRA_COLS; col < num_cols; ++col) {
+    header->setResizeMode(col, QHeaderView::Stretch);
+  }
+
+  // Pad the combos hbox to accomodate the index column and scrollbar.
+  // This lines up the combo-boxes with their respective headers.
+  hbox_combos->insertSpacing(0, header->sectionSize(INDEX_COL) + 2);
+  hbox_combos->addSpacing(tableview->verticalScrollBar()->width() + 2);
+}
+
+void iRegexpDialog::LayoutButtons(QVBoxLayout *vbox)
+{
+  // Create a button box with OK, Cancel, Apply, Reset.
+  // Save pointers to the Apply/Reset buttons so they can be
+  // programmatically enabled/disabled.
+  QDialogButtonBox *button_box = new QDialogButtonBox;
+  vbox->addWidget(button_box);
+
+  // Create either a cancel or close button,
+  // depending on whether the dialog is read-only.
+  QDialogButtonBox::StandardButton cancel =
+    isReadOnly() ? QDialogButtonBox::Close : QDialogButtonBox::Cancel;
+  button_box->addButton(QDialogButtonBox::Ok);
+  button_box->addButton(cancel);
+  btnApply = button_box->addButton(QDialogButtonBox::Apply);
+  btnReset = button_box->addButton(QDialogButtonBox::Reset);
+
+  // Connect the button-box buttons to our SLOTs.
+  connect(button_box, SIGNAL(accepted()), this, SLOT(accept()));
+  connect(button_box, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(btnApply, SIGNAL(clicked()), this, SLOT(btnApply_clicked()));
+  connect(btnReset, SIGNAL(clicked()), this, SLOT(btnReset_clicked()));
+}
+
+int iRegexpDialog::CreateTableModel(const RegexpPopulator *populator)
+{
   // Get the list of labels to filter.
-  QStringList labels = field->populator->getLabels();
-  QString separator = field->populator->getSeparator();
+  QStringList labels = populator->getLabels();
+  QString separator = populator->getSeparator();
 
-  // Get the number of rows and columns.  Number of columns is based
-  // on how many sections exist in the first label, plus one for a
-  // hidden column for the original label.
-  enum ExtraColumns {
-    INDEX_COL,
-    LABEL_COL,
-    EXTRA_COLS
-  };
+  // Get the number of rows and columns.
   int rows = labels.size();
+
+  // If no rows, then no columns either.
+  if (rows == 0) {
+    return 0;
+  }
+
+  // Number of columns is based on how many sections exist in the
+  // first label, plus any extra columns.
   int num_parts = labels[0].split(separator).size();
-  int cols = num_parts + EXTRA_COLS;
-
-  // Determine how many characters in the string representation of rows,
-  // so we know how much padding to add.
-  int field_width = QString::number(rows).size();
-
-  QVector<QSet<QString> > part_strings(num_parts);
+  int cols = num_parts + NUM_EXTRA_COLS;
 
   // Create table model
-  table_model = new QStandardItemModel(rows, cols, this);
-  QStandardItem *item = 0;
+  QStandardItemModel *table_model = new QStandardItemModel(rows, cols, this);
+
+  // Determine how many characters in the string representation of
+  // the number of rows, so we know how much padding to add.
+  int field_width = QString::number(rows).size();
+
   for (int row = 0; row < rows; ++row) {
-    // First column contains the label index.
-    const int base10 = 10;
-    item = new QStandardItem(QString("%1").arg(row, field_width, base10, QChar('0')));
+    // First column contains the label index
+    // (base 10, padded with leading '0's).
+    QStandardItem *item = new QStandardItem(
+      QString("%1").arg(row, field_width, 10, QChar('0')));
     table_model->setItem(row, INDEX_COL, item);
+
     // Second column is hidden and contains the full label.
+    // The regexp filter is applied to this column below.
     item = new QStandardItem(labels[row]);
     table_model->setItem(row, LABEL_COL, item);
+
     // Remaining columns contain the label parts.
     QStringList parts = labels[row].split(separator);
     for (int part = 0; part < parts.size(); ++part) {
-      int col = part + EXTRA_COLS;
+      int col = part + NUM_EXTRA_COLS;
       if (col >= cols) break;
-      part_strings[part] << parts[part];
       item = new QStandardItem(parts[part]);
       table_model->setItem(row, col, item);
     }
   }
 
-  // Create a proxy model to filter
-  proxy_model = new QSortFilterProxyModel(this);
-  proxy_model->setSourceModel(table_model);
-  proxy_model->setFilterKeyColumn(LABEL_COL);
+  // Create a proxy model to filter the whole table.
+  m_proxy_model = new QSortFilterProxyModel(this);
+  m_proxy_model->setSourceModel(table_model);
+  m_proxy_model->setFilterKeyColumn(LABEL_COL);
 
-  // Create layout
-  // vbox
-  //   instr (QLabel)
-  //   split
-  //     regexp_list
-  //     split_middle (QWidget)
-  //       split_middle_vbox
-  //         reg (QLineEdit)
-  //         hbox_combos
-  //           combo ...
-  //     tableview
+  // Return the number of parts we detected; this determines how many
+  // combo-boxes are created.
+  return num_parts;
+}
 
-  QVBoxLayout *vbox = new QVBoxLayout(this);
-
-  QLabel *instr = new QLabel;
-  instr->setWordWrap(true);
-  instr->setText("Instructions");
-  vbox->addWidget(instr);
-
-  QSplitter *split = new QSplitter(Qt::Vertical);
-  vbox->addWidget(split);
-
-  // Top
-  QWidget *split_top = new QWidget;
-  split_top->setContentsMargins(0, 0, 0, 0);
-  split->addWidget(split_top);
-
-  QHBoxLayout *split_top_hbox = new QHBoxLayout(split_top);
-  split_top_hbox->setContentsMargins(0, 0, 0, 0);
-
-  QVBoxLayout *add_del_vbox = new QVBoxLayout;
-  add_del_vbox->setContentsMargins(0, 0, 0, 0);
-  split_top_hbox->addLayout(add_del_vbox);
-
-  int button_width = 25;
-  add_button = new QPushButton("+");
-  add_button->setMaximumWidth(button_width);
-  add_del_vbox->addWidget(add_button);
-
-  del_button = new QPushButton("-");
-  del_button->setMaximumWidth(button_width);
-  add_del_vbox->addWidget(del_button);
-
-  add_del_vbox->addStretch();
-
-  split_top_hbox->addWidget(regexp_list);
-
-  // Middle
-  QWidget *split_middle = new QWidget;
-  split_middle->setContentsMargins(0, 0, 0, 0);
-  split->addWidget(split_middle);
-
-  QVBoxLayout *split_middle_vbox = new QVBoxLayout(split_middle);
-  split_middle_vbox->setContentsMargins(0, 0, 0, 0);
-
-  regexp_lineedit = new QLineEdit;
-  split_middle_vbox->addWidget(regexp_lineedit);
-
-  QHBoxLayout *hbox_combos = new QHBoxLayout;
-  hbox_combos->setContentsMargins(0, 0, 0, 0);
-  hbox_combos->setSpacing(1);
-  split_middle_vbox->addLayout(hbox_combos);
-
-  // Create regexp parts
-  for (int part = 0; part < num_parts; ++part) {
-    QStringList strings = part_strings[part].toList();
-    strings.sort();
-
-    QComboBox *combo = new QComboBox;
-    combo->addItem("<match any>", ".*");
-    foreach (QString string, strings) {
-      // Set the string as DisplayRole and the RE-escaped string as UserRole.
-      combo->addItem(string, QRegExp::escape(string));
-    }
-    combo->setEditable(true);
-    combo->setInsertPolicy(QComboBox::NoInsert);
-    hbox_combos->addWidget(combo);
-
-    regexp_combos << combo;
-
-    // Update after the user chooses a combo-box item.
-    connect(combo, SIGNAL(activated(int)),
-            this, SLOT(RegexpPartChosen(int)));
-
-    // Update after the user manually enters text in the combo-box.
-    connect(combo->lineEdit(), SIGNAL(editingFinished()),
-            this, SLOT(RegexpPartEdited()));
+void iRegexpDialog::accept()
+{
+  if (!isReadOnly()) {
+    btnApply_clicked();
   }
 
-  // Bottom
-  QTableView *tableview = new QTableView;
-  tableview->setModel(proxy_model);
-  tableview->setColumnHidden(LABEL_COL, true);
-  tableview->setSortingEnabled(true);
-  tableview->sortByColumn(INDEX_COL, Qt::AscendingOrder);
-  tableview->setEditTriggers(QAbstractItemView::NoEditTriggers);
-  tableview->setSelectionBehavior(QAbstractItemView::SelectRows);
-  tableview->setSelectionMode(QAbstractItemView::SingleSelection);
-  tableview->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-  tableview->verticalHeader()->setVisible(false);
-  QHeaderView *header = tableview->horizontalHeader();
-  header->setHighlightSections(false);
-  header->setResizeMode(INDEX_COL, QHeaderView::ResizeToContents);
-  for (int col = EXTRA_COLS; col < cols; ++col) {
-    header->setResizeMode(col, QHeaderView::Stretch);
-  }
-  split->addWidget(tableview);
-
-  // Now adjust the regexp parts hbox to accomodate the index column and scrollbar
-  hbox_combos->insertSpacing(0, header->sectionSize(INDEX_COL) + 3);
-  hbox_combos->addSpacing(tableview->verticalScrollBar()->width() + 3);
-
-  connect(regexp_list, SIGNAL(itemSelectionChanged()),
-          this, SLOT(RegexpSelectionChanged()));
-
-  connect(add_button, SIGNAL(clicked()),
-          this, SLOT(AddRegexp()));
-
-  connect(del_button, SIGNAL(clicked()),
-          this, SLOT(DelRegexp()));
-
-  // Update after the regexp is edited using the single line-edit box.
-  connect(regexp_lineedit, SIGNAL(editingFinished()),
-          this, SLOT(RegexpLineEdited()));
-
-  // Do this at the bottom, since RegexpSelectionChanged() will be triggered.
-  if (regexp_list->count() == 0) {
-    AddRegexp();
-  }
-  else {
-    regexp_list->setCurrentRow(0);
-  }
+  inherited::accept();
 }
 
 // Handle the "Add" button push.
-void iRegexpDialog::AddRegexp()
+void iRegexpDialog::btnAdd_clicked()
 {
+  // Enable the apply and reset buttons.
+  setApplyEnabled(true);
+
   // Build a default regexp that will match anything between
   // the separators, such as:
   //   ".*\\..*\\..*\\..*\\..*"
-  QString separator = field->populator->getSeparator();
-  QString escaped_separator = QRegExp::escape(separator);
-  QString item(".*");
-  item.append(escaped_separator);
-  item = item.repeated(regexp_combos.size() - 1);
-  item.append(".*");
+  QStringList parts;
+  for (int i = 0; i < m_regexp_combos.size(); ++i) {
+    parts << DOT_STAR;
+  }
 
-  // Add a new regexp to the list and select it.
-  regexp_list->addItem(item);
+  // Add the new regexp to the list and select it.
+  m_regexp_list->addItem(JoinRegexp(parts));
 
   // This will trigger RegexpSelectionChanged().
-  regexp_list->setCurrentRow(regexp_list->count() - 1,
+  m_regexp_list->setCurrentRow(m_regexp_list->count() - 1,
     QItemSelectionModel::ClearAndSelect);
 }
 
 // Handle the "Delete" button push.
-void iRegexpDialog::DelRegexp()
+void iRegexpDialog::btnDel_clicked()
 {
+  // Enable the apply and reset buttons.
+  setApplyEnabled(true);
+
   // Get the list of regexp(s) to delete.
-  QList<QListWidgetItem *> selected_items = regexp_list->selectedItems();
+  QList<QListWidgetItem *> selected_items = m_regexp_list->selectedItems();
   foreach (QListWidgetItem *item, selected_items) {
     // Deleting the items will remove them from the list.
     // It will also trigger RegexpSelectionChanged().
     delete item;
+  }
+}
+
+void iRegexpDialog::btnApply_clicked()
+{
+  // Disable the apply and reset buttons.
+  setApplyEnabled(false);
+
+  // Combine all the regular expressions together.
+  QList<QListWidgetItem *> all_items;
+  for (int row = 0; row < m_regexp_list->count(); ++row) {
+    all_items << m_regexp_list->item(row);
+  }
+  QString full_regexp = JoinRegexpAlternatives(all_items);
+
+  // DPF TODO: move this block into taiField.
+  {
+    // Set the resulting regular expression in the field.
+    m_field->rep()->setText(full_regexp);
+
+    // DPF TODO: this causing problems?  test: change regexp, click Apply, then click either a combo or OK -> crash.
+    // Unless explicitly overridden, we always do an autoapply.
+    if (!(m_field->flags() & taiData::flgNoEditDialogAutoApply)) {
+      m_field->applyNow();
+    }
+  }
+}
+
+void iRegexpDialog::btnReset_clicked()
+{
+  // Disable the apply and reset buttons.
+  setApplyEnabled(false);
+
+  // Get all the "OR" alternatives of the regexp (separated by |s)
+  // and put them into the list.
+  QString full_regexp = m_field->rep()->text();
+  QStringList regexp_strings = SplitRegexpAlternatives(full_regexp);
+  m_regexp_list->clear();
+  m_regexp_list->addItems(regexp_strings);
+
+  // Do this at the bottom, since RegexpSelectionChanged() will be triggered.
+  if (m_regexp_list->count() == 0) {
+    btnAdd_clicked();
+  }
+  else {
+    m_regexp_list->setCurrentRow(0);
   }
 }
 
@@ -901,8 +1043,6 @@ void iRegexpDialog::SelectCombo(QComboBox *combo, int index)
 // This function is called when the user chooses a combo-box item.
 void iRegexpDialog::RegexpPartChosen(int index)
 {
-  std::cout << "activated(" << index << ")" << std::endl;
-
   // Get the combo-box that sent this signal.
   if (QComboBox *combo = dynamic_cast<QComboBox *>(sender())) {
     // Update its line-edit to reflect the escaped text.
@@ -918,10 +1058,8 @@ void iRegexpDialog::RegexpPartChosen(int index)
 // This can occur by manual typing or by activating the combo-box.
 void iRegexpDialog::RegexpPartEdited()
 {
-  std::cout << "  --> RegexpPartEdited()" << std::endl;
-
   QStringList regexp_parts;
-  foreach (QComboBox *combo, regexp_combos) {
+  foreach (QComboBox *combo, m_regexp_combos) {
     // Get the string from the line-edit part of the combo-box.
     // Don't call itemText() here because that gives the DisplayRole
     // text, and we want the escaped text from the UserRole.
@@ -931,15 +1069,13 @@ void iRegexpDialog::RegexpPartEdited()
   }
 
   // Join the parts together into the full regexp.
-  QString separator = field->populator->getSeparator();
-  QString escaped_separator = QRegExp::escape(separator);
-  QString new_text = regexp_parts.join(escaped_separator);
+  QString new_text = JoinRegexp(regexp_parts);
 
   // Check if the glued-together parts differ from the existing text.
-  if (new_text != regexp_lineedit->text()) {
+  if (new_text != m_regexp_line_edit->text()) {
     // Update the single line-edit box and propagate the updates
     // as if the user edited it manually.
-    regexp_lineedit->setText(new_text);
+    m_regexp_line_edit->setText(new_text);
     RegexpLineEdited();
   }
 }
@@ -949,21 +1085,22 @@ void iRegexpDialog::RegexpPartEdited()
 // regexp has changed that results in a change to the whole regexp.
 void iRegexpDialog::RegexpLineEdited()
 {
-  std::cout << "  --> RegexpLineEdited()" << std::endl;
+  // Enable the apply and reset buttons.
+  setApplyEnabled(true);
 
   // Get the selected item in the regexp list so its text can be updated.
   // There should be exactly one item selected, but check just in case.
-  QList<QListWidgetItem *> selected_items = regexp_list->selectedItems();
+  QList<QListWidgetItem *> selected_items = m_regexp_list->selectedItems();
   if (selected_items.isEmpty()) {
     // This should never happen.  No item was selected, but the update
     // should go somewhere, so make a new item, select it, and quit.
-    regexp_list->addItem(regexp_lineedit->text());
-    regexp_list->setCurrentRow(regexp_list->count() - 1);
+    m_regexp_list->addItem(m_regexp_line_edit->text());
+    m_regexp_list->setCurrentRow(m_regexp_list->count() - 1);
     return;
   }
 
   // Set the line-edit text to the selected regular expression.
-  selected_items[0]->setText(regexp_lineedit->text());
+  selected_items[0]->setText(m_regexp_line_edit->text());
 
   // Call the function that handles when the user makes a new selection,
   // just to make sure everything is in sync.
@@ -976,47 +1113,104 @@ void iRegexpDialog::RegexpLineEdited()
 // keep everything in sync after the current regexp has been edited.
 void iRegexpDialog::RegexpSelectionChanged()
 {
-  std::cout << "  --> RegexpSelectionChanged()" << std::endl;
-
   // Get a list of currently selected regexp(s).
-  QList<QListWidgetItem *> selected_items = regexp_list->selectedItems();
+  QList<QListWidgetItem *> selected_items = m_regexp_list->selectedItems();
 
   // Only enable the delete button if there is something selected to delete.
-  del_button->setEnabled(!selected_items.isEmpty());
+  btnDel->setEnabled(!isReadOnly() && !selected_items.isEmpty());
 
   // If one thing selected, enable the edit boxes and populate them according to the selection.
   if (selected_items.size() == 1) {
-    EnableEditBoxes(selected_items[0]->text());
+    QString regexp = selected_items[0]->text();
+    BuildCombos(regexp);
+    EnableEditBoxes(regexp);
   }
   // Otherwise, disable them.
   else {
-    regexp_lineedit->clear();
-    regexp_lineedit->setEnabled(false);
-    foreach (QComboBox *combo, regexp_combos) {
+    m_regexp_line_edit->clear();
+    m_regexp_line_edit->setEnabled(false);
+    foreach (QComboBox *combo, m_regexp_combos) {
       combo->lineEdit()->setText("");
       combo->setEnabled(false);
     }
   }
 
+  // Filter the table view based on the currently selected items.
   ApplyFilters(selected_items);
+}
+
+void iRegexpDialog::BuildCombos(QString regexp)
+{
+  // Loop over the combo boxes.
+  for (int part = 0; part < m_regexp_combos.size(); ++part) {
+    // Get filtered choices for this combo-box.
+    QStringList choices = GetComboChoices(regexp, part);
+
+    // Populate its values, starting with the wildcard.
+    QComboBox *combo = m_regexp_combos[part];
+    combo->clear();
+    combo->addItem("<match any>", DOT_STAR);
+    foreach (QString choice, choices) {
+      // Set the choice as DisplayRole and the regular-expression-escaped
+      // choice as UserRole.
+      combo->addItem(choice, QRegExp::escape(choice));
+    }
+  }
+}
+
+QStringList iRegexpDialog::GetComboChoices(QString regexp, int part)
+{
+  // Split the full regexp into parts.
+  QStringList regexp_parts = SplitRegexp(regexp);
+
+  // Filter each combo-box's choices as if that combo was currently wild.
+  if (part < regexp_parts.size()) {
+    // Adjust the current regexp part and join the parts back together.
+    regexp_parts[part] = DOT_STAR;
+    regexp = JoinRegexp(regexp_parts);
+  }
+
+  // Make a QRegExp object based on the resulting string.
+  const QRegExp temp_regexp(regexp);
+
+  // Check each label for a match.  Build up a set of choices for this
+  // combo box based on matching labels.
+  QStringList labels = m_field->populator->getLabels();
+  QString separator = m_field->populator->getSeparator();
+
+  QSet<QString> part_choices;
+  foreach (QString label, labels) {
+    // If current label matches,
+    if (label.contains(temp_regexp)) {
+      // Break it into parts.
+      QStringList parts = label.split(separator);
+      if (part < parts.size()) {
+        // Add the part as a choice.
+        part_choices << parts[part];
+      }
+    }
+  }
+
+  // Sort the choices for this combo-box.
+  QStringList strings = part_choices.toList();
+  strings.sort();
+  return strings;
 }
 
 void iRegexpDialog::EnableEditBoxes(QString regexp)
 {
   // Set the single line-edit box to the full regexp and enable it.
-  regexp_lineedit->setText(regexp);
-  regexp_lineedit->setEnabled(true);
+  m_regexp_line_edit->setText(regexp);
+  m_regexp_line_edit->setEnabled(!isReadOnly());
 
   // Split the full regexp into parts.
-  QString separator = field->populator->getSeparator();
-  QString escaped_separator = QRegExp::escape(separator);
-  QStringList regexp_parts = regexp.split(escaped_separator);
+  QStringList regexp_parts = SplitRegexp(regexp);
 
   // Iterate through the combo-boxes and regexp parts.
-  int part = 0;
-  foreach (QComboBox *combo, regexp_combos) {
+  for (int part = 0; part < m_regexp_combos.size(); ++part) {
     // First, enable the combo-box.
-    combo->setEnabled(true);
+    QComboBox *combo = m_regexp_combos[part];
+    combo->setEnabled(!isReadOnly());
 
     // If there is a regexp part associated with this combo-box,
     // then set it.
@@ -1040,35 +1234,72 @@ void iRegexpDialog::EnableEditBoxes(QString regexp)
     else {
       SelectCombo(combo, 0);
     }
-
-    // Move on to the next part
-    ++part;
   }
 }
 
 void iRegexpDialog::ApplyFilters(QList<QListWidgetItem *> selected_items)
 {
-  // Combine all the selected regexp(s) together to use as a filter on the
-  // items in the table view.  If there is more than one item selected,
-  // they will be combined with alternation (parens|and|bars).
-  filter_regexp_string.clear();
-  foreach (QListWidgetItem *item, selected_items) {
+  // Build the regexp and apply it to the proxy model.
+  const QRegExp regexp(JoinRegexpAlternatives(selected_items));
+  m_proxy_model->setFilterRegExp(regexp);
+}
+
+QStringList iRegexpDialog::SplitRegexpAlternatives(QString regexp)
+{
+  // Break apart the full regexp into its "OR" alternatives,
+  // which are separated by |.
+  if (regexp.startsWith('(') && regexp.endsWith(')')) {
+    // Remove the parens.
+    regexp.chop(1);
+    regexp.remove(0,1);
+  }
+  return regexp.split("|", QString::SkipEmptyParts);
+}
+
+QString iRegexpDialog::JoinRegexpAlternatives(QList<QListWidgetItem *> items)
+{
+  // Combine all the selected regexp(s) together.  If more than one item
+  // is selected, they will be combined with alternation (parens|and|bars).
+  QString full_regexp_string;
+  foreach (QListWidgetItem *item, items) {
     // Separate regexps by bars.
-    if (!filter_regexp_string.isEmpty()) {
-      filter_regexp_string.append("|");
+    if (!full_regexp_string.isEmpty()) {
+      full_regexp_string.append("|");
     }
-    filter_regexp_string.append(item->text());
+    full_regexp_string.append(item->text());
   }
 
   // Surround with parentheses if more than one alternative.
-  if (selected_items.size() > 1) {
-    filter_regexp_string.insert(0, "(");
-    filter_regexp_string.append(")");
+  if (items.size() > 1) {
+    full_regexp_string.insert(0, "(");
+    full_regexp_string.append(")");
   }
 
-  // Build the regexp and apply it to the proxy model.
-  QRegExp regexp(filter_regexp_string, Qt::CaseInsensitive, QRegExp::RegExp);
-  proxy_model->setFilterRegExp(regexp);
+  return full_regexp_string;
+}
+
+QStringList iRegexpDialog::SplitRegexp(const QString &regexp)
+{
+  return regexp.split(GetEscapedSeparator());
+}
+
+QString iRegexpDialog::JoinRegexp(const QStringList &regexp_parts)
+{
+  // Join the parts together into the full regexp.
+  return regexp_parts.join(GetEscapedSeparator());
+}
+
+QString iRegexpDialog::GetEscapedSeparator()
+{
+  QString separator = m_field->populator->getSeparator();
+  return QRegExp::escape(separator);
+}
+
+void iRegexpDialog::setApplyEnabled(bool enabled)
+{
+  // Enable/disable the apply/reset buttons.
+  btnApply->setEnabled(enabled);
+  btnReset->setEnabled(enabled);
 }
 
 /////////////////////////////////////////////////
@@ -1177,7 +1408,7 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
             "Edit this field in a multi-line dialog.")
   , lookupfun_md(0)
   , lookupfun_base(0)
-  , edit(0)
+  , edit_dialog(0)
 {
   // min width for some popular types
   if (typ) {
@@ -1191,12 +1422,12 @@ taiField::taiField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_p
 }
 
 taiField::~taiField() {
-  delete edit;
-  edit = NULL;
+  delete edit_dialog;
+  edit_dialog = 0;
 }
 
 void taiField::btnEdit_clicked(bool) {
-  if (!edit) { // has to be modeless
+  if (!edit_dialog) { // has to be modeless
     String wintxt;
     String desc;
     //TODO: we could in theory trap the raw GetImage and derive the object parent
@@ -1209,15 +1440,15 @@ void taiField::btnEdit_clicked(bool) {
       wintxt = "Editing field";
       //desc =
     }
-    edit = new iFieldEditDialog(true, readOnly(), desc, this);
+    edit_dialog = new iFieldEditDialog(true, readOnly(), desc, this);
     // true = must always be modal -- otherwise crazy stuff can happen.  Brad was right..
-    edit->setText(rep()->text());
-    edit->setWindowTitle(wintxt);
-    QObject::connect(edit->txtText, SIGNAL(lookupKeyPressed()),
+    edit_dialog->setText(rep()->text());
+    edit_dialog->setWindowTitle(wintxt);
+    QObject::connect(edit_dialog->txtText, SIGNAL(lookupKeyPressed()),
                      this, SLOT(lookupKeyPressed_dialog()) );
   }
-  edit->show();
-  edit->raise();
+  edit_dialog->show();
+  edit_dialog->raise();
 }
 
 void taiField::lookupKeyPressed() {
@@ -1238,23 +1469,23 @@ void taiField::lookupKeyPressed() {
 
 void taiField::lookupKeyPressed_dialog() {
   if(!lookupfun_md || !lookupfun_base) return;
-  if(!edit) return;
+  if(!edit_dialog) return;
 
-  QTextCursor cursor(edit->txtText->textCursor());
+  QTextCursor cursor(edit_dialog->txtText->textCursor());
 
   taBase* tab = (taBase*)lookupfun_base;
   int cur_pos = cursor.position();
   int new_pos = -1;
-  String rval = tab->StringFieldLookupFun(edit->txtText->toPlainText(), cur_pos,
+  String rval = tab->StringFieldLookupFun(edit_dialog->txtText->toPlainText(), cur_pos,
                                           lookupfun_md->name, new_pos);
   if(rval.nonempty()) {
-    edit->txtText->setPlainText(rval);
-    QTextCursor cur2(edit->txtText->textCursor());
+    edit_dialog->txtText->setPlainText(rval);
+    QTextCursor cur2(edit_dialog->txtText->textCursor());
     if(new_pos >= 0)
       cur2.setPosition(new_pos);
     else
       cur2.setPosition(cur_pos);
-    edit->txtText->setTextCursor(cur2);
+    edit_dialog->txtText->setTextCursor(cur2);
   }
 }
 
@@ -1336,85 +1567,23 @@ void taiFileDialogField::lookupKeyPressed() {
 //               taiRegexpField                //
 /////////////////////////////////////////////////
 
-// DPF TODO: for now, just a copy&paste of taiField
 taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, RegexpPopulator *re_populator)
   : taiText(typ_, host_, par, gui_parent_, flags_,
             (re_populator != 0), // Add a "..." button if populator provided.
             "Edit this field using a Regular Expression dialog")
-  , lookupfun_md(0)
-  , lookupfun_base(0)
-  , edit(0)
   , populator(re_populator)
 {
   setMinCharWidth(40);
 }
 
-taiRegexpField::~taiRegexpField() {
-  delete edit;
-  edit = NULL;
-}
-
 void taiRegexpField::btnEdit_clicked(bool) {
-  if (!edit) { // has to be modeless
-//    String wintxt;
-    String desc;
-    //TODO: we could in theory trap the raw GetImage and derive the object parent
-    // to provide additional information, such as the object name (if base)
-//    if (mbr) {
-//      wintxt = "Editing field: " + mbr->name;
-//      desc = mbr->desc;
-//    }
-//    else {
-//      wintxt = "Editing field";
-//      //desc =
-//    }
-    edit = new iRegexpDialog(desc, this);
-    // true = must always be modal -- otherwise crazy stuff can happen.  Brad was right..
-//    edit->setText(rep()->text());
-//    edit->setWindowTitle(wintxt);
-//    QObject::connect(edit->txtText, SIGNAL(lookupKeyPressed()),
-//                     this, SLOT(lookupKeyPressed_dialog()) );
-  }
-  edit->show();
-  edit->raise();
+  iRegexpDialog edit_dialog(this, mbr->name, readOnly());
+  edit_dialog.exec();
 }
 
 void taiRegexpField::lookupKeyPressed() {
-  if(!lookupfun_md || !lookupfun_base) return;
-  taBase* tab = (taBase*)lookupfun_base;
-  int cur_pos = rep()->cursorPosition();
-  int new_pos = -1;
-  String rval = tab->StringFieldLookupFun(rep()->text(), cur_pos,
-                                          lookupfun_md->name, new_pos);
-  if(rval.nonempty()) {
-    rep()->setText(rval);
-    if(new_pos >= 0)
-      rep()->setCursorPosition(new_pos); // go back to orig pos
-    else
-      rep()->setCursorPosition(cur_pos); // go back to orig pos
-  }
-}
-
-void taiRegexpField::lookupKeyPressed_dialog() {
-  if(!lookupfun_md || !lookupfun_base) return;
-  if(!edit) return;
-
-  QTextCursor cursor(edit->txtText->textCursor());
-
-  taBase* tab = (taBase*)lookupfun_base;
-  int cur_pos = cursor.position();
-  int new_pos = -1;
-  String rval = tab->StringFieldLookupFun(edit->txtText->toPlainText(), cur_pos,
-                                          lookupfun_md->name, new_pos);
-  if(rval.nonempty()) {
-    edit->txtText->setPlainText(rval);
-    QTextCursor cur2(edit->txtText->textCursor());
-    if(new_pos >= 0)
-      cur2.setPosition(new_pos);
-    else
-      cur2.setPosition(cur_pos);
-    edit->txtText->setTextCursor(cur2);
-  }
+  // Open the regexp editor if lookup key pressed.
+  btnEdit_clicked(true);
 }
 
 //////////////////////////////////

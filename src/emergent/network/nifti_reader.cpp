@@ -35,32 +35,24 @@ class TalairachAtlasPrivate
 {
 public:
   TalairachAtlasPrivate() : labels() {}
-  QSet<int> getMatchingLabelIdxs(const QString &regexp);
+  QSet<int> getMatchingLabelIdxs(const QString &regexp) const;
 
   QStringList labels;
 };
 
-QSet<int> TalairachAtlasPrivate::getMatchingLabelIdxs(const QString &regexpStr)
+QSet<int> TalairachAtlasPrivate::getMatchingLabelIdxs(const QString &regexpStr) const
 {
   // The set of label indices to return.
   QSet<int> matchingLabelIdxs;
 
-  // QStringList::indexOf looks for exact matches, so construct the regexp to
-  // explicitly allow partial matches.
-  QString partialRegexStr(regexpStr);
-  partialRegexStr.prepend(".*");
-  partialRegexStr.append(".*");
-  const QRegExp regexp(partialRegexStr);
+  // Turn the string into a regexp object.
+  const QRegExp regexp(regexpStr);
 
   // Check each label for a match.
-  int start = 0;
-  while (true) {
-    int index = labels.indexOf(regexp, start);
-    if (index < 0) {
-      break;
+  for (int idx = 0; idx < labels.size(); ++idx) {
+    if (labels[idx].contains(regexp)) {
+      matchingLabelIdxs << idx;
     }
-    matchingLabelIdxs << index;
-    start = index + 1;
   }
 
   return matchingLabelIdxs;

@@ -1911,7 +1911,6 @@ int taiRegexpDialogMember::BidForMember(MemberDef* md, TypeDef* td) {
   return 0;
 }
 
-// DPF TODO: for now, just a copy&paste of taiFileDialogMember
 taiData* taiRegexpDialogMember::GetDataRep_impl(IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_, MemberDef*) {
   // Get the RegexpPopulator instance that should be used for this field.
   RegexpPopulator *populator = 0;
