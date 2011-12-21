@@ -154,6 +154,7 @@ private:
 
 class TA_API RegexpPopulator { // ##INSTANCE #NO_INSTANCE
 public:
+  virtual QStringList getHeadings() const = 0;
   virtual QStringList getLabels() const = 0;
   virtual QString getSeparator() const = 0;
   virtual ~RegexpPopulator() { }

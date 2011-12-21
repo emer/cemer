@@ -1512,10 +1512,12 @@ private:
 class EMERGENT_API TalairachRegexpPopulator : public RegexpPopulator {
 public:
   TalairachRegexpPopulator();
+  override QStringList getHeadings() const;
   override QStringList getLabels() const;
   override QString getSeparator() const;
 private:
   mutable QStringList labels;
+  mutable QStringList headings;
 };
 
 class EMERGENT_API Layer : public taNBase {

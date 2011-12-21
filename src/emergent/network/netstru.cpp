@@ -3872,6 +3872,15 @@ TalairachRegexpPopulator::TalairachRegexpPopulator()
 {
 }
 
+QStringList TalairachRegexpPopulator::getHeadings() const
+{
+  if (headings.empty()) {
+    headings << "Hemisphere" << "Lobe" << "Gyrus" << "Tissue Type"
+      << "Cell Type";
+  }
+  return headings;
+}
+
 QStringList TalairachRegexpPopulator::getLabels() const
 {
   if (labels.empty()) {

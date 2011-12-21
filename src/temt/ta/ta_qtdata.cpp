@@ -872,20 +872,14 @@ void iRegexpDialog::LayoutButtons(QVBoxLayout *vbox)
 int iRegexpDialog::CreateTableModel(const RegexpPopulator *populator)
 {
   // Get the list of labels to filter.
+  QStringList headings = populator->getHeadings();
   QStringList labels = populator->getLabels();
   QString separator = populator->getSeparator();
 
-  // Get the number of rows and columns.
+  // Get the number of rows and columns.  Number of columns is based on
+  // how many headings exist, plus any extra columns.
   int rows = labels.size();
-
-  // If no rows, then no columns either.
-  if (rows == 0) {
-    return 0;
-  }
-
-  // Number of columns is based on how many sections exist in the
-  // first label, plus any extra columns.
-  int num_parts = labels[0].split(separator).size();
+  int num_parts = headings.size();
   int cols = num_parts + NUM_EXTRA_COLS;
 
   // Create table model
@@ -921,6 +915,15 @@ int iRegexpDialog::CreateTableModel(const RegexpPopulator *populator)
   m_proxy_model = new QSortFilterProxyModel(this);
   m_proxy_model->setSourceModel(table_model);
   m_proxy_model->setFilterKeyColumn(LABEL_COL);
+
+  // Set the header labels.
+  m_proxy_model->setHeaderData(
+    INDEX_COL, Qt::Horizontal, QString("Index"), Qt::DisplayRole);
+  for (int part = 0; part < num_parts; ++part) {
+    int col = part + NUM_EXTRA_COLS;
+    m_proxy_model->setHeaderData(
+      col, Qt::Horizontal, headings[part], Qt::DisplayRole);
+  }
 
   // Return the number of parts we detected; this determines how many
   // combo-boxes are created.
