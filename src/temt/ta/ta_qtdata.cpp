@@ -642,6 +642,7 @@ iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_n
   : inherited()
   , m_field(regexp_field)
   , m_read_only(read_only)
+  , m_apply_clicked(false)
   , m_proxy_model(0)
   , m_regexp_list(0)
   , m_regexp_line_edit(0)
@@ -988,17 +989,10 @@ void iRegexpDialog::btnApply_clicked()
   }
   QString full_regexp = JoinRegexpAlternatives(all_items);
 
-  // DPF TODO: move this block into taiField.
-  {
-    // Set the resulting regular expression in the field.
-    m_field->rep()->setText(full_regexp);
-
-    // DPF TODO: this causing problems?  test: change regexp, click Apply, then click either a combo or OK -> crash.
-    // Unless explicitly overridden, we always do an autoapply.
-    if (!(m_field->flags() & taiData::flgNoEditDialogAutoApply)) {
-      m_field->applyNow();
-    }
-  }
+  // Set the resulting regular expression in the field.  It will be
+  // applied later, when the dialog is closed.
+  m_field->rep()->setText(full_regexp);
+  m_apply_clicked = true;
 }
 
 void iRegexpDialog::btnReset_clicked()
@@ -1584,6 +1578,11 @@ taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QW
 void taiRegexpField::btnEdit_clicked(bool) {
   iRegexpDialog edit_dialog(this, mbr->name, readOnly());
   edit_dialog.exec();
+
+  // Unless explicitly overridden, do an autoapply.
+  if (edit_dialog.applyClicked() && !HasFlag(flgNoEditDialogAutoApply)) {
+    applyNow();
+  }
 }
 
 void taiRegexpField::lookupKeyPressed() {

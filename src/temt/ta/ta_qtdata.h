@@ -166,7 +166,8 @@ class TA_API iRegexpDialog : public iDialog {
 public:
   iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, bool read_only);
 
-  bool          isReadOnly() { return m_read_only; }
+  bool          isReadOnly()    { return m_read_only; }
+  bool          applyClicked()  { return m_apply_clicked; }
 
 public slots:
   override void accept();
@@ -228,6 +229,7 @@ protected:
 
   taiRegexpField*       m_field;
   bool                  m_read_only;
+  bool                  m_apply_clicked;
   QSortFilterProxyModel* m_proxy_model;
   QListWidget*          m_regexp_list;
   QLineEdit*            m_regexp_line_edit;
