@@ -6457,7 +6457,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
 }
 
 int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const String& mbr_filt,
-                                 void* base, void* par, MemberDef* memb_def,
+                                 void* base, void* par, TypeDef* par_typ, MemberDef* memb_def,
                                  StrContext sc)
 {
   int rval = 0;
@@ -6480,13 +6480,13 @@ int TypeDef::ReplaceValStr_class(const String& srch, const String& repl, const S
       bool condedit = md->GetCondOptTest("CONDEDIT", this, base);
       if(!condedit) continue;
     }
-    rval += md->type->ReplaceValStr(srch, repl, mbr_filt, md->GetOff(base), base, md, sc);
+    rval += md->type->ReplaceValStr(srch, repl, mbr_filt, md->GetOff(base), base, this, md, sc);
   }
   return rval;
 }
 
 int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-                           void* base, void* par, MemberDef* memb_def,
+                           void* base, void* par, TypeDef* par_typ, MemberDef* memb_def,
                            StrContext sc)
 {
   if(ptr == 0) {
@@ -6494,7 +6494,7 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
     if(DerivesFrom(TA_taBase)) {
       taBase* rbase = (taBase*)base;
       if(rbase)
-        return rbase->ReplaceValStr(srch, repl, mbr_filt, par, memb_def, sc);
+        return rbase->ReplaceValStr(srch, repl, mbr_filt, par, par_typ, memb_def, sc);
     }
     else
 #endif
@@ -6507,7 +6507,7 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
               )
          )
     {
-      return ReplaceValStr_class(srch, repl, mbr_filt, base, par, memb_def, sc);
+      return ReplaceValStr_class(srch, repl, mbr_filt, base, par, par_typ, memb_def, sc);
     }
   }
   // only apply filtering to the terminal leaves case here, not to higher level owners
@@ -6516,8 +6516,32 @@ int TypeDef::ReplaceValStr(const String& srch, const String& repl, const String&
   String str = GetValStr(base, par, memb_def, sc, false);
   // note: just using literal replace here, not regexp..
   if(!str.contains(srch)) return 0;
+  String orig = str;
   int rval = str.gsub(srch, repl);
   SetValStr(str, base, par, memb_def, sc, false);
+  String repl_info = String("orig val: ") + orig + " new val: " + str;
+#ifndef NO_TA_BASE
+  if(par_typ && par && par_typ->DerivesFrom(TA_taBase)) {
+    if(memb_def) {
+      taMisc::Info("Replaced string value in member:", memb_def->name, "of type:", name,
+		   "in", par_typ->name, "object:",((taBase*)par)->GetPathNames(),repl_info);
+    }
+    else {
+      taMisc::Info("Replaced string value in type:", name, "in", par_typ->name, "object:",
+		   ((taBase*)par)->GetPathNames(), repl_info);
+    }
+  }
+  else
+#endif
+    {
+    if(memb_def) {
+      taMisc::Info("Replaced string value in member:", memb_def->name, "of type:", name,
+		   repl_info);
+    }
+    else {
+      taMisc::Info("Replaced string value in type:", name, repl_info);
+    }
+  }
   return rval;
 }
 

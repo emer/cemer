@@ -1496,9 +1496,9 @@ bool taBase::SetValStr_ptr(const String& val, TypeDef* td, void* base, void* par
 }
 
 int taBase::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-			     void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
+			  void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
   TypeDef* td = GetTypeDef();
-  int rval = td->ReplaceValStr_class(srch, repl, mbr_filt, this, par, memb_def, sc);
+  int rval = td->ReplaceValStr_class(srch, repl, mbr_filt, this, par, par_typ, memb_def, sc);
   if(rval > 0)
     UpdateAfterEdit();
   return rval;
@@ -3960,12 +3960,12 @@ bool taList_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
 }
 
 int taList_impl::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-			       void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
-  int rval = inherited::ReplaceValStr(srch, repl, mbr_filt, par, memb_def, sc);
+	       void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
+  int rval = inherited::ReplaceValStr(srch, repl, mbr_filt, par, par_typ, memb_def, sc);
   for(int i=0; i<size; i++) {
     taBase* itm = (taBase*)el[i];
     if(itm && itm->GetOwner() == this) { // only owned is key for preventing recursion
-      rval += itm->ReplaceValStr(srch, repl, mbr_filt, par, memb_def, sc);
+      rval += itm->ReplaceValStr(srch, repl, mbr_filt, this, GetTypeDef(), memb_def, sc);
     }
   }
   if(rval > 0)
@@ -5174,13 +5174,17 @@ bool taArray_base::SetValStr(const String& val, void* par, MemberDef* memb_def,
 }
 
 int taArray_base::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-			       void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
+		void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
   int rval = 0;
+  String mypath = GetPathNames();
   for(int i=0; i<size; i++) {
     String str = El_GetStr_(FastEl_(i));
     if(!str.contains(srch)) continue;
+    String orig = str;
     rval += str.gsub(srch, repl);
     El_SetFmStr_(FastEl_(i), str);
+    taMisc::Info("Replaced string value in array object:",
+		 mypath,"orig val:", orig, "new val:", str);
   }	
   if(rval > 0)
     UpdateAfterEdit();

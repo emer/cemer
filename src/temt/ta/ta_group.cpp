@@ -333,9 +333,9 @@ bool taGroup_impl::SetValStr(const String& val, void* par, MemberDef* memb_def,
 }
 
 int taGroup_impl::ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-				void* par, MemberDef* memb_def, TypeDef::StrContext sc) {
-  int rval = inherited::ReplaceValStr(srch, repl, mbr_filt, par, memb_def, sc);
-  rval += gp.ReplaceValStr(srch, repl, mbr_filt, par, memb_def, sc);
+				void* par, TypeDef* par_typ, MemberDef* memb_def, TypeDef::StrContext sc) {
+  int rval = inherited::ReplaceValStr(srch, repl, mbr_filt, par, par_typ, memb_def, sc);
+  rval += gp.ReplaceValStr(srch, repl, mbr_filt, this, GetTypeDef(), memb_def, sc);
   return rval;
 }
 

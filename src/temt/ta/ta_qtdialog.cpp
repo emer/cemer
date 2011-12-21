@@ -2726,6 +2726,7 @@ void taiStringDataHost::Constr_Box() {
     vblDialog->addWidget(edit, 1);
   }
   edit->installEventFilter(this); // hopefully everyone below body will get it too!
+  edit->setFontPointSize(taMisc::font_size);
 }
 
 void taiStringDataHost::Constr_RegNotifies() {

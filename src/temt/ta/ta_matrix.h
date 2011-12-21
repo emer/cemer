@@ -638,7 +638,7 @@ public:
 			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			   bool force_inline = false);
   override int 	ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-			      void* par = NULL, MemberDef* md = NULL,
+			      void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
 			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
 
   void			SetDefaultName() { };
