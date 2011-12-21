@@ -1228,9 +1228,11 @@ void iRegexpDialog::EnableEditBoxes(QString regexp)
       if (idx >= 0) {
         SelectCombo(combo, idx);
       }
-      // Otherwise just set the line-edit widget's text to the regexp part.
-      else if (QLineEdit *line = combo->lineEdit()) {
-        line->setText(regexp_parts[part]);
+      // Otherwise add a <custom> choice to the combo, and select it.
+      else {
+        // Put it just below the <match any>.
+        combo->insertItem(1, "<custom>", regexp_parts[part]);
+        SelectCombo(combo, 1);
       }
     }
     // No regexp part for this combo-box, so just set it to match anything.
