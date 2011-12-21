@@ -638,9 +638,10 @@ void iFieldEditDialog::repChanged() {
 
 const QString iRegexpDialog::DOT_STAR(".*");
 
-iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, bool read_only)
+iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, RegexpPopulator *re_populator, bool read_only)
   : inherited()
   , m_field(regexp_field)
+  , m_populator(re_populator)
   , m_read_only(read_only)
   , m_apply_clicked(false)
   , m_proxy_model(0)
@@ -652,7 +653,7 @@ iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_n
   , btnApply(0)
   , btnReset(0)
 {
-  if (!m_field || !m_field->populator) {
+  if (!m_field || !m_populator) {
     // Shouldn't happen.
     return;
   }
@@ -662,7 +663,7 @@ iRegexpDialog::iRegexpDialog(taiRegexpField* regexp_field, const String& field_n
   setFont(taiM->dialogFont(taiM->ctrl_size));
 
   // Create the table model (should be done before its view is created).
-  int num_parts = CreateTableModel(m_field->populator);
+  int num_parts = CreateTableModel();
 
   // Create layout
   QVBoxLayout *vbox = new QVBoxLayout(this);
@@ -870,12 +871,12 @@ void iRegexpDialog::LayoutButtons(QVBoxLayout *vbox)
   connect(btnReset, SIGNAL(clicked()), this, SLOT(btnReset_clicked()));
 }
 
-int iRegexpDialog::CreateTableModel(const RegexpPopulator *populator)
+int iRegexpDialog::CreateTableModel()
 {
   // Get the list of labels to filter.
-  QStringList headings = populator->getHeadings();
-  QStringList labels = populator->getLabels();
-  QString separator = populator->getSeparator();
+  QStringList headings = m_populator->getHeadings();
+  QStringList labels = m_populator->getLabels();
+  QString separator = m_populator->getSeparator();
 
   // Get the number of rows and columns.  Number of columns is based on
   // how many headings exist, plus any extra columns.
@@ -1172,8 +1173,8 @@ QStringList iRegexpDialog::GetComboChoices(QString regexp, int part)
 
   // Check each label for a match.  Build up a set of choices for this
   // combo box based on matching labels.
-  QStringList labels = m_field->populator->getLabels();
-  QString separator = m_field->populator->getSeparator();
+  QStringList labels = m_populator->getLabels();
+  QString separator = m_populator->getSeparator();
 
   QSet<QString> part_choices;
   foreach (QString label, labels) {
@@ -1290,7 +1291,7 @@ QString iRegexpDialog::JoinRegexp(const QStringList &regexp_parts)
 
 QString iRegexpDialog::GetEscapedSeparator()
 {
-  QString separator = m_field->populator->getSeparator();
+  QString separator = m_populator->getSeparator();
   return QRegExp::escape(separator);
 }
 
@@ -1570,13 +1571,13 @@ taiRegexpField::taiRegexpField(TypeDef* typ_, IDataHost* host_, taiData* par, QW
   : taiText(typ_, host_, par, gui_parent_, flags_,
             (re_populator != 0), // Add a "..." button if populator provided.
             "Edit this field using a Regular Expression dialog")
-  , populator(re_populator)
+  , m_populator(re_populator)
 {
   setMinCharWidth(40);
 }
 
 void taiRegexpField::btnEdit_clicked(bool) {
-  iRegexpDialog edit_dialog(this, mbr->name, readOnly());
+  iRegexpDialog edit_dialog(this, mbr->name, m_populator, readOnly());
   edit_dialog.exec();
 
   // Unless explicitly overridden, do an autoapply.

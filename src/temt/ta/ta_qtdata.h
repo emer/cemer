@@ -164,7 +164,7 @@ class TA_API iRegexpDialog : public iDialog {
   Q_OBJECT
   INHERITED(iDialog)
 public:
-  iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, bool read_only);
+  iRegexpDialog(taiRegexpField* regexp_field, const String& field_name, RegexpPopulator *re_populator, bool read_only);
 
   bool          isReadOnly()    { return m_read_only; }
   bool          applyClicked()  { return m_apply_clicked; }
@@ -191,7 +191,7 @@ private:
   };
 
   // Helpers functions called by the ctor.
-  int           CreateTableModel(const RegexpPopulator *populator);
+  int           CreateTableModel();
   void          LayoutInstructions(QVBoxLayout *vbox, QString field_name);
   void          LayoutRegexpList(QVBoxLayout *vbox);
   QHBoxLayout * LayoutEditBoxes(QVBoxLayout *vbox, int num_parts);
@@ -224,10 +224,11 @@ private:
   void          setApplyEnabled(bool enabled);
 
 // Data members
-protected:
+private:
   static const QString DOT_STAR;
 
   taiRegexpField*       m_field;
+  RegexpPopulator*      m_populator;
   bool                  m_read_only;
   bool                  m_apply_clicked;
   QSortFilterProxyModel* m_proxy_model;
@@ -329,7 +330,6 @@ class TA_API taiRegexpField : public taiText {
   // A text field with a "..." button to bring up a context-specific regular expression editor.
   Q_OBJECT
   INHERITED(taiText)
-  friend class iRegexpDialog; // DPF TODO: add API instead.
 public:
   taiRegexpField(TypeDef* typ_, IDataHost* host, taiData* par, QWidget* gui_parent_, int flags, RegexpPopulator *re_populator);
 
@@ -337,8 +337,8 @@ protected slots:
   override void         btnEdit_clicked(bool);  // "..." button
   override void         lookupKeyPressed();     // Same as clicking the "..." button.
 
-protected:
-  RegexpPopulator*      populator;
+private:
+  RegexpPopulator*      m_populator;
 };
 
 // this is for integers -- includes up and down arrow buttons
