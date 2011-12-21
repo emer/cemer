@@ -4046,9 +4046,11 @@ void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_item
 
   bool rval = false;
 
-  String sr_val = srch;
-  String rp_val = repl;
-  String mb_flt;
+  static String sr_val;
+  if(srch.nonempty()) sr_val = srch;
+  static String rp_val;
+  if(repl.nonempty()) rp_val = repl;
+  static String mb_flt;
 
   Dlg1.Reset();
   Dlg1.prompt = "Search and Replace";
