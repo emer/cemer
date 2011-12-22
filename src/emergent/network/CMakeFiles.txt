@@ -48,7 +48,6 @@ set(network_HEADS
 # headers that need Qt moc run
 set(network_HEADS_MOC
     netstru_qtso.h
-    brain_view.h
     brain_view_panel.h
 )
 
