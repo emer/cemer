@@ -2003,6 +2003,13 @@ bool UnitSpec::Compute_PRerr(Unit* u, Network* net, float& true_pos, float& fals
   return has_targ;
 }
 
+/////// Voxel ///////
+
+void Voxel::Initialize()
+{
+  coord.x = coord.y = coord.z = -1.0;
+  size = 0.0;
+}
 
 /////// Unit ///////
 
@@ -2018,8 +2025,6 @@ void Unit::Initialize() {
   // recv, send, bias = ??
   n_recv_cons = 0;
   // pos = ??
-  voxel.x = voxel.y = voxel.z = -1.0;
-  voxel_size = 0.0;
   idx = -1;
   flat_idx = 0;
   m_unit_spec = NULL;
@@ -2035,7 +2040,7 @@ void Unit::InitLinks() {
   taBase::Own(send, this);
   taBase::Own(bias, this);
   taBase::Own(pos, this);
-  taBase::Own(voxel, this);
+  taBase::Own(voxels, this);
   BuildUnits();
 }
 
@@ -2051,8 +2056,7 @@ void Unit::CutLinks() {
 
 void Unit::Copy_(const Unit& cp) {
   pos = cp.pos;
-  voxel = cp.voxel;
-  voxel_size = cp.voxel_size;
+  voxels = cp.voxels;
   ext_flag = cp.ext_flag;
   targ = cp.targ;
   ext = cp.ext;

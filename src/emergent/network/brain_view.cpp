@@ -64,13 +64,13 @@ BrainView::hasViewProperties() const {
 BrainView* BrainView::New(Network* net, T3DataViewFrame*& fr) {
   NewNetViewHelper newNetView(fr, net, "network");
   if (!newNetView.isValid(true)) return NULL;
-  
+
   // set a black background color
   taColor c; c.Set(0.0f, 0.0f, 0.0f, 1.0f);
   fr->bg_color = c;
   c.Set(0.8f, 0.8f, 0.8f, 1.0f);
   fr->text_color = c;
-  
+
   // create BrainView
   BrainView* bv = new BrainView();
   bv->SetData(net);
@@ -256,9 +256,12 @@ void BrainView::GetMembs() {
   FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-      if (u->voxel_size == 0) continue;
+      if (u->voxels.size == 0) continue;
+      // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
+      Voxel *voxel = u->voxels.FastEl(0);
+      if (voxel->size == 0) continue;
       if (u->lesioned()) continue;
-      
+
       TypeDef* td = u->GetTypeDef();
       if(td == prv_td) continue; // don't re-scan!
       prv_td = td;
@@ -1148,7 +1151,7 @@ void  BrainViewState::SetUnitValuesTransparency(int transparency)
 {
   if ( transparency == unit_val_transparency_ )
     return;
-  
+
   unit_val_transparency_ = transparency;
   last_state_change_ |= MINOR;
   emit UnitValuesTransparencyChanged(unit_val_transparency_);

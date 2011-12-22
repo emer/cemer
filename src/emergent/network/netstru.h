@@ -795,6 +795,36 @@ private:
 
 SpecPtr_of(UnitSpec);
 
+/////// Voxel ///////
+
+class EMERGENT_API Voxel : public taOBase
+{
+  // #NO_TOKENS #NO_UPDATE_AFTER A single voxel.
+  INHERITED(taOBase)
+public:
+  FloatTDCoord  coord;  // #NO_SAVE Voxel coordinates.
+  float         size;   // #NO_SAVE Size of the voxel.
+  TA_BASEFUNS_SC(Voxel);
+private:
+  void  Initialize();
+  void  Destroy()               { };
+};
+
+class EMERGENT_API Voxel_List : public taList<Voxel>
+{
+  // #NO_TOKENS #NO_UPDATE_AFTER List of voxels and their sizes.
+  // Note: This wrapper class only exists because you can't put a
+  // taList<Voxel> member into the Unit class directly.
+  INHERITED(taList<Voxel>)
+public:
+  TA_BASEFUNS_SC(Voxel_List);
+private:
+  void  Initialize()            { SetBaseType(&TA_Voxel); }
+  void  Destroy()               { };
+};
+
+/////// Unit ///////
+
 class EMERGENT_API Unit: public taNBase {
   // ##NO_TOKENS ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit -- basic computational unit of a neural network (e.g., a neuron-like processing unit)
 INHERITED(taNBase)
@@ -845,10 +875,8 @@ public: //
   // #CAT_Structure #DMEM_SHARE_SET_0 #READ_ONLY #EXPERT total number of receiving connections
   TDCoord       pos;
   // #CAT_Structure display position in space relative to owning group or layer
-  FloatTDCoord  voxel;
-  // #CAT_Structure #NO_VIEW Position of this unit as a voxel in a brain view.
-  float         voxel_size;
-  // #CAT_Structure #NO_VIEW Size of the voxel in a brain view.
+  Voxel_List    voxels;
+  // #CAT_Structure #NO_SAVE #NO_VIEW Voxels assigned to this unit in a brain view.
   int           idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit within containing unit group
   int           flat_idx;

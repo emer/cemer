@@ -82,30 +82,34 @@ void BrainVolumeView::Destroy()
   Reset();
 }
 
-void BrainVolumeView::AllocUnitViewData() 
+void BrainVolumeView::AllocUnitViewData()
 {
   BrainView* bv = this->bv();
   Network* net = this->net();
   if (!net) return;
-  
+
   // need to determine number of units that are mapped...
   unsigned int n_units=0;
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-      if (u->voxel_size == 0) continue;
+      if (u->voxels.size == 0) continue;
+      // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
+      Voxel *voxel = u->voxels.FastEl(0);
+      if (voxel->size == 0) continue;
       if (u->lesioned()) continue;
+
       n_units++;
     }
   }
   if (n_units == 0) return;
-  
+
   int mbs_sz = MAX(bv->membs.size, 1);
   MatrixGeom nwgm1(2, n_units, mbs_sz);
   if (uvd_bases.geom != nwgm1) {
     uvd_bases.SetGeomN(nwgm1);
   }
-  
+
 //  MatrixGeom nwgm2(3, unit_map_.size(), mbs_sz, bv->hist_max);
 //  bool reset_idx = bv->hist_reset_req; // if requested somewhere, reset us!
 //  if (uvd_hist.geom != nwgm2) {
@@ -138,14 +142,14 @@ void BrainVolumeView::InitDisplay()
 
 float BrainVolumeView::GetUnitDisplayVal(const Unit* u, void*& base)
 {
-  
+
   BrainView* bv = this->bv();
   float val = bv->scale.zero;
   if(bv->unit_disp_idx < 0) return val;
-  
+
   base = uvd_bases.SafeEl(uvd_bases_map_.value(u), bv->unit_disp_idx);
   if (!base) return val;
-  
+
   switch (bv->unit_md_flags) {
     case BrainView::MD_FLOAT:
       val = *((float*)base); break;
@@ -171,7 +175,7 @@ void BrainVolumeView::UpdateUnitViewBases(Unit* src_u)
 {
   BrainView* bv = this->bv();
   AllocUnitViewData();
-  
+
   for(int midx=0;midx<bv->membs.size;midx++) {
     MemberDef* disp_md = bv->membs[midx];
     String nm = disp_md->name.before(".");
@@ -190,14 +194,14 @@ void BrainVolumeView::UpdateUnitViewBases(Unit* src_u)
 void BrainVolumeView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u) {}
 void BrainVolumeView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {}
 void BrainVolumeView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {}
-void BrainVolumeView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) 
+void BrainVolumeView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md)
 {
   if (unit_map_.size() == 0) return; //we don't have a list of units yet
-  
-  QList<const Unit*> units = unit_map_.keys(); 
+
+  QList<const Unit*> units = unit_map_.keys();
   foreach (const Unit* u,units) {
     uvd_bases.Set(disp_md->GetOff(u), uvd_bases_map_.value(u), midx);
-  }  
+  }
 }
 
 void BrainVolumeView::UpdateAutoScale(bool& updated) {}
@@ -225,7 +229,7 @@ void BrainVolumeView::RenderBrain()
 
   SoTransform* global_xform = new SoTransform;
   node.brain_group->addChild(global_xform);
-  global_xform->translation.setValue(SbVec3f(0.0,0.0,0.0)); 
+  global_xform->translation.setValue(SbVec3f(0.0,0.0,0.0));
   global_xform->scaleFactor.setValue(SbVec3f(0.0075,0.0075,0.0075)); //arbitrary scale seems to work
 
   // set the "origin"
@@ -248,8 +252,8 @@ void BrainVolumeView::RenderBrain()
     d1 = dims.x;
     d2 = dims.y;
     d3 = dims.z;
-    //this used to be offset by dims.y/2.0f, but not important now that we're 
-    //drawing everything from same coordinate transform space...so we make it 
+    //this used to be offset by dims.y/2.0f, but not important now that we're
+    //drawing everything from same coordinate transform space...so we make it
     //close/similar to same offset as with other viewplanes
     b0->translation.setValue(SbVec3f(0.0f, dims.z/2.0f, -dims.z/2.0f));
   }
@@ -278,7 +282,7 @@ void BrainVolumeView::RenderBrain()
     node.voxel_face_set_array[i] = new SoIndexedFaceSet;
     node.voxel_vrtx_prop_array[i] = new SoVertexProperty;
     node.voxel_face_set_array[i]->vertexProperty.setValue(node.voxel_vrtx_prop_array[i]);
-    
+
     SoSeparator* b = new SoSeparator;
     // shape hint needed for sorted blend rendering (when used)
     SoShapeHints* sh = new SoShapeHints;
@@ -298,16 +302,16 @@ void BrainVolumeView::RenderBrain()
     tcoords->point.set1Value(1, SbVec2f(0.0f, 0.0f));
     tcoords->point.set1Value(2, SbVec2f(1.0f, 0.0f));
     tcoords->point.set1Value(3, SbVec2f(1.0f, 1.0f));
-        
+
     SoCoordinate3* coords = new SoCoordinate3;
     coords->point.set1Value(0, SbVec3f(-d1/2.0f,  d2/2.0f, 0));
     coords->point.set1Value(1, SbVec3f(-d1/2.0f, -d2/2.0f, 0));
     coords->point.set1Value(2, SbVec3f( d1/2.0f, -d2/2.0f, 0));
     coords->point.set1Value(3, SbVec3f( d1/2.0f,  d2/2.0f, 0));
-    
+
     SoFaceSet* fs = new SoFaceSet;
     fs->numVertices.set1Value(0,4);
-    
+
     b->addChild(sh);
     b->addChild(node.brain_tex_mat_array[i]);
     b->addChild(texture);
@@ -400,21 +404,25 @@ void BrainVolumeView::CreateFaceSets()
   depth_map_.clear();
   unit_map_.clear();
   uvd_bases_map_.clear();
-  
+
   int i=0;
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-      if (u->voxel_size == 0) continue;
+      if (u->voxels.size == 0) continue;
+      // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
+      Voxel *voxel = u->voxels.FastEl(0);
+      if (voxel->size == 0) continue;
       if (u->lesioned()) continue;
-      FloatTDCoord talCoord(u->voxel);
+
+      FloatTDCoord talCoord(voxel->coord);
       FloatTDCoord mniCoord(TalairachAtlas::Tal2Mni(talCoord));
       FloatTDCoord ijkCoord(brain_data_->XyzToIjk(mniCoord));
       if ( (view_plane == BrainViewState::AXIAL) || (view_plane == BrainViewState::SAGITTAL) ) {
         // reverse x coordinates...since we draw X in opposite direction in Inventor
         ijkCoord.x = taMath_float::fabs(ijkCoord.x - (dims.x - 1));
       }
-      
+
       if (view_plane == BrainViewState::AXIAL) {
         depth_map_.insert((unsigned int)ijkCoord.z, u);
       }
@@ -467,7 +475,10 @@ void BrainVolumeView::CreateFaceSets()
       float ri      = unit_coord.x;
       float rj      = unit_coord.y;
       float rk      = unit_coord.z;
-      float extent  = u->voxel_size/2.0f; //half voxel size
+
+      // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
+      Voxel *voxel = u->voxels.FastEl(0);
+      float extent  = voxel->size/2.0f; //half voxel size
 
       //@TODO add voxel size in 3rd dimension...(by adding more faces at different depth levels)
       if ( view_plane == BrainViewState::AXIAL){

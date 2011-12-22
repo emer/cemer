@@ -50,7 +50,7 @@ NetworkVoxelMapper::AssignVoxels()
     return;
   }
 
-  network->StructUpdate(true);	// prevent any upddates during mapping
+  network->StructUpdate(true);  // prevent any upddates during mapping
 
   // Create a map of unit pointers.
   CreateUnitMap(network);
@@ -67,7 +67,7 @@ NetworkVoxelMapper::AssignVoxels()
     AssignVoxelsInArea(brain_area, voxels);
   }
 
-  network->StructUpdate(false);	// trigger update after mapping
+  network->StructUpdate(false); // trigger update after mapping
 }
 
 void
@@ -88,11 +88,11 @@ NetworkVoxelMapper::CreateUnitMap(Network *network)
 
       // If no brain_area was specified for this layer, warn the user,
       // but continue to add its units to the map so they can be set
-      // to zero voxel_size later.
+      // to zero size later.
       if (layer->brain_area.empty())
       {
-	// do not warn: mapping often called on nets with nothing set, and some
-	// you just don't want to map in any case.  it is easy to see if empty..
+        // do not warn: mapping often called on nets with nothing set, and some
+        // you just don't want to map in any case.  it is easy to see if empty..
 //         taMisc::Warning("No brain_area specified for layer", layer->name,
 //           "; units will not be rendered in BrainView.");
       }
@@ -105,7 +105,7 @@ NetworkVoxelMapper::CreateUnitMap(Network *network)
       for (int unit_idx = 0; unit_idx < num_units_in_layer; ++unit_idx)
       {
         Unit *unit = layer->UnitAccess(mode, unit_idx, 0);
-	if(unit->lesioned()) continue;
+        if(unit->lesioned()) continue;
         unit_map.insert(layer->brain_area.toQString(), unit);
       }
     }
@@ -155,7 +155,9 @@ NetworkVoxelMapper::AssignVoxelsInArea(const QString &brain_area, const QList<Fl
     // Not much can be done other than assigning each unit to render at 0.0 size.
     foreach(Unit *unit, units)
     {
-      unit->voxel_size = 0.0;
+      unit->voxels.SetSize(1);
+      Voxel *voxel = unit->voxels.FastEl(1);
+      voxel->size = 0.0;
     }
 
     return;
@@ -181,8 +183,14 @@ NetworkVoxelMapper::AssignVoxelsInArea(const QString &brain_area, const QList<Fl
   foreach(Unit *unit, units)
   {
     unsigned subvoxel_idx = subvoxel_idxs[idx++];
-    unit->voxel = GetCoord(subvoxel_idx, voxels, voxel_divisions);
-    unit->voxel_size = voxel_size;
+
+    // Make sure the unit has exactly one voxel (DPF TODO: more than 1).
+    unit->voxels.SetSize(1);
+
+    // Set that voxel's characteristics.
+    Voxel *voxel = unit->voxels.FastEl(0);
+    voxel->coord = GetCoord(subvoxel_idx, voxels, voxel_divisions);
+    voxel->size = voxel_size;
   }
 }
 
@@ -194,7 +202,8 @@ NetworkVoxelMapper::GetVoxelSize(unsigned num_units, unsigned num_voxels)
   // each unit will get rendered as a full-size voxel.
   if (num_voxels >= num_units)
   {
-    return 1.0;
+    // DPF TODO: allow mega-voxels or enforce a max size?
+    // return 1.0;
   }
 
   // Otherwise, if fewer voxels exist than units, then each unit
