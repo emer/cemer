@@ -26,96 +26,6 @@ class BrainViewPanel;
 class BrainVolumeView;
 class NiftiReader; // #IGNORE
 class TalairachAtlas; // #IGNORE
-class BrainViewState; // #IGNORE
-
-
-class NiftiReader;
-class EMERGENT_API BrainViewState: public QObject {
-  INHERITED(QObject)
-  Q_OBJECT
-
-public:
-  enum AnatomicalPlane
-  {
-    AXIAL     = 0x0000,
-    SAGITTAL  = 0x0001,
-    CORONAL   = 0x0002
-  };
-  enum StateChange
-  {
-    NONE      = 0x0000,
-    MINOR     = 0x0001,
-    MAJOR     = 0x0002
-  };
-
-  BrainViewState( QObject* parent=0 );
-  virtual ~BrainViewState();
-
-  bool          IsValid() const;
-
-  QString       DataName() const;
-  TDCoord       Dimensions() const;
-  AnatomicalPlane ViewPlane() const;
-  int           SliceStart() const;
-  int           SliceEnd() const;
-  bool          NumSlicesAreLocked() const;
-  int           SliceSpacing() const;
-  int           SliceTransparency() const;
-  int           UnitValuesTransparency() const;
-  int           NumSlicesValid() const;
-  int           NumSlices() const;
-  int           MaxSlices() const;
-
-  float		SliceTransparencyXformed() const;
-  // transformed slice transparency for use in actual rendering	
-
-  public slots:
-  void          SetDataName(const QString& data_name);
-  void          SetDimensions(const TDCoord& dimensions);
-  void          SetViewPlane( AnatomicalPlane plane );
-  void          SetViewPlane( int plane );
-  void          SetSliceStart(int start);
-  void          SetSliceEnd(int end);
-  void          SetLockSlices(int state);
-  void          SetSliceSpacing(int spacing);
-  void          SetSliceTransparency(int transparency);
-  void          SetUnitValuesTransparency(int transparency);
-
-#ifndef __MAKETA__
-signals:
-  void          DataNameChanged(const QString& name);
-  void          DimensionsChanged(const TDCoord& d);
-  void          ViewPlaneChanged(int plane);
-  void          NumSlicesChanged(int nSlices);
-  void          SliceStartChanged(int start);
-  void          SliceEndChanged(int end);
-  void          SliceSpacingChanged(int spacing);
-  void          SliceTransparencyChanged(int transparency);
-  void          UnitValuesTransparencyChanged(int transparency);
-  void          StateChanged(int state);
-#endif
-
-public:
-  bool          state_valid_;
-  QString       data_name_;
-  TDCoord       dimensions_;
-  AnatomicalPlane   view_plane_;
-  int           slice_start_;
-  int           slice_end_;
-  int           num_slices_;
-  bool          lock_num_slices_;
-  int           slice_spacing_;
-  int           slice_transparency_;
-  int           unit_val_transparency_;
-  int           last_state_change_;
-
-  bool          ValidSliceStart() const;
-  bool          ValidSliceEnd() const;
-  void          ValidateState();
-  void          EmitAndClearState();
-};
-
-
 
 class EMERGENT_API BrainView : public T3DataViewMain {
   // ##DUMP_LOAD_POST main view object for glass brain view
@@ -131,8 +41,23 @@ public:
     MD_INT          = 0x0002,
     MD_UNKNOWN          = 0x000F
   };
+  
+  enum AnatomicalPlane // the anatomical plane to display
+  {
+    AXIAL     = 0x0000,
+    SAGITTAL  = 0x0001,
+    CORONAL   = 0x0002
+  };
+  
+  enum StateChange // the type of view state change which determines whether full render is required
+  {
+    NONE      = 0x0000,
+    MINOR     = 0x0001,
+    MAJOR     = 0x0002
+  };
+  
 
-  BrainViewState      bv_state;
+//  BrainViewState      bv_state;
   void                AsyncRenderUpdate();
 
   static BrainView*     New(Network* net, T3DataViewFrame*& fr); // create a new instance and add to viewer
@@ -183,6 +108,56 @@ public:
   // *only* updates unit values -- display and structure must be the same as last time
   virtual void          UpdatePanel(); // updates nvp, esp. after UAE etc.
 
+  
+  ////////////////////////////////////////////////////////////////
+  // view state functions etc
+  bool          IsValid() const;
+  QString       DataName() const;
+  TDCoord       Dimensions() const;
+  AnatomicalPlane ViewPlane() const;
+  int           SliceStart() const;
+  int           SliceEnd() const;
+  bool          NumSlicesAreLocked() const;
+  int           SliceSpacing() const;
+  int           SliceTransparency() const;
+  int           UnitValuesTransparency() const;
+  int           NumSlicesValid() const;
+  int           NumSlices() const;
+  int           MaxSlices() const;
+  
+  float		SliceTransparencyXformed() const;
+  // transformed slice transparency for use in actual rendering	
+    
+  void          SetDataName(const QString& data_name);
+  void          SetDimensions(const TDCoord& dimensions);
+  void          SetViewPlane( AnatomicalPlane plane );
+  void          SetViewPlane( int plane );
+  void          SetSliceStart(int start);
+  void          SetSliceEnd(int end);
+  void          SetLockSlices(int state);
+  void          SetSliceSpacing(int spacing);
+  void          SetSliceTransparency(int transparency);
+  void          SetUnitValuesTransparency(int transparency);
+  
+  bool          state_valid_;
+  QString       data_name_;
+  TDCoord       dimensions_;
+  AnatomicalPlane   view_plane_;
+  int           slice_start_;
+  int           slice_end_;
+  int           num_slices_;
+  bool          lock_num_slices_;
+  int           slice_spacing_;
+  int           slice_transparency_;
+  int           unit_val_transparency_;
+  int           last_state_change_;
+  
+  bool          ValidSliceStart() const;
+  bool          ValidSliceEnd() const;
+  void          ValidateState();
+  void          EmitAndClearState();
+  void          EmitAll();
+  
   ////////////////////////////////////////////////////////////////
   // misc util functions etc
   virtual void          GetMembs();

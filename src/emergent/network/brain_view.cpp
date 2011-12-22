@@ -63,7 +63,7 @@ BrainView::hasViewProperties() const {
 
 BrainView* BrainView::New(Network* net, T3DataViewFrame*& fr) {
   NewNetViewHelper newNetView(fr, net, "network");
-  if (!newNetView.isValid(true)) return NULL;
+  if (!newNetView.isValid()) return NULL;
 
   // set a black background color
   taColor c; c.Set(0.0f, 0.0f, 0.0f, 1.0f);
@@ -90,7 +90,7 @@ void BrainView::Initialize() {
   bvp = NULL;
   display = true;
   net_text = false;
-  lay_mv = false;
+  lay_mv = true;
   net_text_xform.translate.SetXYZ(0.0f, 1.0f, -1.0f); // start at top back
   net_text_xform.rotate.SetXYZR(1.0f, 0.0f, 0.0f, 0.5f * taMath_float::pi); // start at right mid
   net_text_xform.scale = 0.7f;
@@ -100,18 +100,30 @@ void BrainView::Initialize() {
   unit_disp_md = NULL;
   unit_disp_idx = -1;
   n_counters = 0;
-
-  // this initialization is critical, though it fails the first pass
-  // upon opening Emergent since app_dir is not set on first pass
-  QString data_path(taMisc::app_dir.toQString());
-  data_path += "/data/standard/MNI152_T1_1mm_brain.nii";
-  bv_state.SetDataName(data_path);
-  if (false == bv_state.IsValid()) {
-    taMisc::Info("Failed to set path to brain data...", data_path.toStdString().c_str());
-  }
-
+  
   unit_sr = NULL;
   unit_md_flags = MD_UNKNOWN;
+  
+  state_valid_ = false;
+  data_name_ = "NULL";
+  dimensions_.SetXYZ(182,218,182);
+  view_plane_ = AXIAL;
+  slice_start_ = 1;
+  slice_end_ = 182;
+  num_slices_ = 182;
+  lock_num_slices_ = false;
+  slice_spacing_ = 1;
+  slice_transparency_ = 90;
+  last_state_change_ = NONE;
+  
+  QString data_path(taMisc::app_dir.toQString());
+  if (data_path.size() != 0) {
+    data_path += "/data/standard/MNI152_T1_1mm_brain.nii";
+    SetDataName(data_path);
+    if (false == IsValid()) {
+      taMisc::Info("Failed to set path to brain data...", data_path.toStdString().c_str());
+    }
+  }
 }
 
 void BrainView::Destroy() {
@@ -178,8 +190,8 @@ void BrainView::BuildAll() { // populates all T3 guys
     //TODO: choose correct brain data based on atlas name...
     data_path += "/data/standard/MNI152_T1_1mm_brain.nii";
   }
-  bv_state.SetDataName(data_path);
-  if (false == bv_state.IsValid()) {
+  SetDataName(data_path);
+  if (false == IsValid()) {
     taMisc::Error("Invalid brain view data");
     return;
   }
@@ -219,6 +231,7 @@ void BrainView::Dump_Load_post() {
   Reset();
   BuildAll();
   Render();
+  EmitAll(); //update panel widgets with our state
 }
 
 taBase::DumpQueryResult BrainView::Dump_QuerySaveMember(MemberDef* md) {
@@ -467,6 +480,7 @@ void BrainView::OnWindowBind_impl(iT3DataViewFrame* vw) {
     vw->RegisterPanel(bvp);
     vw->t3vs->Connect_SelectableHostNotifySignal(bvp,
       SLOT(viewWin_NotifySignal(ISelectableHost*, int)) );
+    EmitAll(); //update panel gui widgets
   }
 }
 
@@ -509,7 +523,7 @@ void BrainVolumeView_MouseCB(void* userData, SoEventCallback* ecb) {
           continue;
         }
       }
-      BrainVolumeView* act_ugv = static_cast<BrainVolumeView*>(((T3BrainNode*)pobj)->dataView());
+//      BrainVolumeView* act_ugv = static_cast<BrainVolumeView*>(((T3BrainNode*)pobj)->dataView());
 //       Layer* lay = act_ugv->layer(); //cache
 //       float disp_scale = lay->disp_scale;
 
@@ -891,72 +905,52 @@ void BrainView::AsyncRenderUpdate()
   bvv->UpdateSlices();
 }
 
-///////////////////////////////////////////////////////////////////////
-// BrainViewState
-///////////////////////////////////////////////////////////////////////
-BrainViewState::BrainViewState(QObject* parent) : QObject(parent)
-  , state_valid_(false)
-  , data_name_("NULL")
-  , dimensions_(182,218,182)
-  , view_plane_(AXIAL)
-  , slice_start_(1)
-  , slice_end_(182)
-  , num_slices_(182)
-  , lock_num_slices_(false)
-  , slice_spacing_(1)
-  , slice_transparency_(90)
-  , last_state_change_(NONE)
-{
-}
-BrainViewState::~BrainViewState()
-{
-}
-bool BrainViewState::IsValid() const
+bool BrainView::IsValid() const
 {
   return state_valid_;
 }
 
-QString BrainViewState::DataName() const
+QString BrainView::DataName() const
 {
   return data_name_;
 }
 
-TDCoord BrainViewState::Dimensions() const
+TDCoord BrainView::Dimensions() const
 {
   return dimensions_;
 }
 
-BrainViewState::AnatomicalPlane BrainViewState::ViewPlane() const
+BrainView::AnatomicalPlane BrainView::ViewPlane() const
 {
   return view_plane_;
 }
 
-int BrainViewState::SliceStart() const
+int BrainView::SliceStart() const
 {
   return slice_start_;
 }
 
-int BrainViewState::SliceEnd() const
+int BrainView::SliceEnd() const
 {
   return slice_end_;
 }
 
-bool BrainViewState::NumSlicesAreLocked() const
+bool BrainView::NumSlicesAreLocked() const
 {
   return lock_num_slices_;
 }
 
-int BrainViewState::SliceSpacing() const
+int BrainView::SliceSpacing() const
 {
   return slice_spacing_;
 }
 
-int BrainViewState::SliceTransparency() const
+int BrainView::SliceTransparency() const
 {
   return slice_transparency_;
 }
 
-float BrainViewState::SliceTransparencyXformed() const
+float BrainView::SliceTransparencyXformed() const
 {
   float offset = 100.0f;
   float logtr = taMath_float::log(offset + slice_transparency_);
@@ -964,22 +958,22 @@ float BrainViewState::SliceTransparencyXformed() const
   return logtr / denom;
 }
 
-int BrainViewState::UnitValuesTransparency() const
+int BrainView::UnitValuesTransparency() const
 {
   return unit_val_transparency_;
 }
 
-int BrainViewState::NumSlicesValid() const
+int BrainView::NumSlicesValid() const
 {
   return (MaxSlices() - slice_start_ + 1);
 }
 
-int BrainViewState::NumSlices() const
+int BrainView::NumSlices() const
 {
   return num_slices_;
 }
 
-int BrainViewState::MaxSlices() const
+int BrainView::MaxSlices() const
 {
   int mx(0);
   if (view_plane_ == AXIAL) {
@@ -991,15 +985,15 @@ int BrainViewState::MaxSlices() const
   else { //CORONAL
     mx = dimensions_.y;
   }
-
+  
   return mx;
 }
 
-void BrainViewState::SetDataName(const QString& data_name)
+void BrainView::SetDataName(const QString& data_name)
 {
   if (data_name_ == data_name)
     return;
-
+  
   // be sure we can read a valid data set before deleting
   // our existing data set
   QFile f(data_name);
@@ -1012,45 +1006,45 @@ void BrainViewState::SetDataName(const QString& data_name)
   }
   data_name_ = data_name;
   SetDimensions(tmp.xyzDimensions());
-
+  
   last_state_change_ |= MAJOR;
-  emit DataNameChanged(data_name);
+  if (bvp) bvp->EmitDataNameChanged(data_name);
   ValidateState();
   state_valid_ = true;
 }
 
-void BrainViewState::SetDimensions(const TDCoord& dimensions)
+void BrainView::SetDimensions(const TDCoord& dimensions)
 {
   if (dimensions_ == dimensions)
     return;
-
+  
   dimensions_ = dimensions;
   last_state_change_ |= MAJOR;
-  emit DimensionsChanged(dimensions);
+  if (bvp) bvp->EmitDimensionsChanged(dimensions);
   ValidateState();
 }
 
-void  BrainViewState::SetViewPlane( AnatomicalPlane plane )
+void  BrainView::SetViewPlane( AnatomicalPlane plane )
 {
   if ( plane == view_plane_)
     return;
-
+  
   view_plane_ = plane;
   last_state_change_ |= MAJOR;
-  emit ViewPlaneChanged(static_cast<int>(plane));
+  if (bvp) bvp->EmitViewPlaneChanged(static_cast<int>(plane));
   ValidateState();
 }
 
-void  BrainViewState::SetViewPlane( int plane )
+void  BrainView::SetViewPlane( int plane )
 {
   SetViewPlane(static_cast<AnatomicalPlane>(plane));
 }
 
-void  BrainViewState::SetSliceStart(int start)
+void  BrainView::SetSliceStart(int start)
 {
   if (start == slice_start_)
     return;
-
+  
   // if user has fixed the number of slices, we must update
   // sliceEnd if we change
   if (lock_num_slices_) {
@@ -1058,7 +1052,7 @@ void  BrainViewState::SetSliceStart(int start)
       slice_start_ = start;
       SetSliceEnd(slice_start_ + num_slices_);
       last_state_change_ |= MINOR;
-      emit SliceStartChanged(slice_start_);
+      if (bvp) bvp->EmitSliceStartChanged(slice_start_);
       ValidateState();
     }
   }
@@ -1071,17 +1065,17 @@ void  BrainViewState::SetSliceStart(int start)
         SetSliceEnd(slice_start_);
       }
       last_state_change_ |= MINOR;
-      emit SliceStartChanged(slice_start_);
+      if (bvp) bvp->EmitSliceStartChanged(slice_start_);
       ValidateState();
     }
   }
 }
 
-void  BrainViewState::SetSliceEnd(int end)
+void  BrainView::SetSliceEnd(int end)
 {
   if ( end == slice_end_ )
     return;
-
+  
   // if user has fixed the number of slices, we must update
   // sliceStart if we change
   if (lock_num_slices_) {
@@ -1089,7 +1083,7 @@ void  BrainViewState::SetSliceEnd(int end)
       slice_end_ = end;
       SetSliceStart(slice_end_ - num_slices_);
       last_state_change_ |= MINOR;
-      emit SliceEndChanged(slice_end_);
+      if (bvp) bvp->EmitSliceEndChanged(slice_end_);
       ValidateState();
     }
   }
@@ -1102,73 +1096,73 @@ void  BrainViewState::SetSliceEnd(int end)
         SetSliceStart(slice_end_);
       }
       last_state_change_ |= MINOR;
-      emit SliceEndChanged(slice_end_);
+      if (bvp) bvp->EmitSliceEndChanged(slice_end_);
       ValidateState();
     }
   }
 }
 
-void BrainViewState::SetLockSlices(int state)
+void BrainView::SetLockSlices(int state)
 {
   bool newState(false);
   if (static_cast<Qt::CheckState>(state) == Qt::Checked)
     newState = true;
   else
     newState = false;
-
+  
   if (newState == lock_num_slices_)
     return;
-
+  
   lock_num_slices_ = newState;
   num_slices_ = slice_end_ - slice_start_;
   last_state_change_ |= MINOR;
   EmitAndClearState();
 }
 
-void  BrainViewState::SetSliceSpacing(int spacing)
+void  BrainView::SetSliceSpacing(int spacing)
 {
   if ( spacing == slice_spacing_ )
     return;
-
+  
   slice_spacing_ = spacing;
   last_state_change_ |= MAJOR;
-  emit SliceSpacingChanged(slice_spacing_);
+  if (bvp) bvp->EmitSliceSpacingChanged(slice_spacing_);
   EmitAndClearState();
 }
 
-void  BrainViewState::SetSliceTransparency(int transparency)
+void  BrainView::SetSliceTransparency(int transparency)
 {
   if ( transparency == slice_transparency_ )
     return;
-
+  
   slice_transparency_ = transparency;
   last_state_change_ |= MINOR;
-  emit SliceTransparencyChanged(slice_transparency_);
+  if (bvp) bvp->EmitSliceTransparencyChanged(slice_transparency_);
   EmitAndClearState();
 }
 
-void  BrainViewState::SetUnitValuesTransparency(int transparency)
+void  BrainView::SetUnitValuesTransparency(int transparency)
 {
   if ( transparency == unit_val_transparency_ )
     return;
-
+  
   unit_val_transparency_ = transparency;
   last_state_change_ |= MINOR;
-  emit UnitValuesTransparencyChanged(unit_val_transparency_);
+  if (bvp) bvp->EmitUnitValuesTransparencyChanged(unit_val_transparency_);
   EmitAndClearState();
 }
 
-bool BrainViewState::ValidSliceStart() const
+bool BrainView::ValidSliceStart() const
 {
   return (slice_start_ <= MaxSlices()) ? true : false;
 }
 
-bool BrainViewState::ValidSliceEnd() const
+bool BrainView::ValidSliceEnd() const
 {
   return (slice_end_ <= MaxSlices()) ? true : false;
 }
 
-void BrainViewState::ValidateState()
+void BrainView::ValidateState()
 {
   // priority is:
   //    1. set Anatomical Plane (as it drives geometry limits)
@@ -1181,9 +1175,20 @@ void BrainViewState::ValidateState()
   EmitAndClearState();
 }
 
-void BrainViewState::EmitAndClearState()
+void BrainView::EmitAndClearState()
 {
   // BrainViewPanel listens...
-  emit StateChanged(last_state_change_);
+  if (bvp) bvp->EmitStateChanged(last_state_change_);
   last_state_change_ = NONE;
+}
+void BrainView::EmitAll()
+{
+  // this allows us to update BrainViewPanel with our state
+  if (bvp) {
+    bvp->EmitViewPlaneChanged(view_plane_);
+    bvp->EmitSliceStartChanged(slice_start_);
+    bvp->EmitSliceEndChanged(slice_end_);
+    bvp->EmitSliceTransparencyChanged(slice_transparency_);
+    bvp->EmitUnitValuesTransparencyChanged(unit_val_transparency_);
+  }
 }

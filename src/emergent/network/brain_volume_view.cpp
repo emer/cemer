@@ -63,7 +63,7 @@ void BrainVolumeView::Initialize()
   data_base = &TA_Network;
   brain_data_ = NULL;
   depth_map_.clear();
-  unit_map_.clear();
+  voxel_map_.clear();
   uvd_bases_map_.clear();
 }
 
@@ -88,24 +88,20 @@ void BrainVolumeView::AllocUnitViewData()
   Network* net = this->net();
   if (!net) return;
 
+  int i=0;
   // need to determine number of units that are mapped...
-  unsigned int n_units=0;
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
       if (u->voxels.size == 0) continue;
-      // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
-      Voxel *voxel = u->voxels.FastEl(0);
-      if (voxel->size == 0) continue;
       if (u->lesioned()) continue;
-
-      n_units++;
+      i++;
     }
   }
-  if (n_units == 0) return;
+  if (i == 0) return;
 
   int mbs_sz = MAX(bv->membs.size, 1);
-  MatrixGeom nwgm1(2, n_units, mbs_sz);
+  MatrixGeom nwgm1(2, i, mbs_sz);
   if (uvd_bases.geom != nwgm1) {
     uvd_bases.SetGeomN(nwgm1);
   }
@@ -163,14 +159,6 @@ float BrainVolumeView::GetUnitDisplayVal(const Unit* u, void*& base)
   return val;
 }
 
-float BrainVolumeView::GetUnitDisplayVal(const TwoDCoord& co, void*& base) {
-  return 0.0f;
-}
-
-float BrainVolumeView::GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base) {
-  return 0.0f;
-}
-
 void BrainVolumeView::UpdateUnitViewBases(Unit* src_u)
 {
   BrainView* bv = this->bv();
@@ -196,10 +184,9 @@ void BrainVolumeView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md)
 void BrainVolumeView::UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md) {}
 void BrainVolumeView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md)
 {
-  if (unit_map_.size() == 0) return; //we don't have a list of units yet
+  if (uvd_bases_map_.size() == 0) return; //we don't have a list of units yet
 
-  QList<const Unit*> units = unit_map_.keys();
-  foreach (const Unit* u,units) {
+  foreach (const Unit* u, uvd_bases_map_.keys()) {
     uvd_bases.Set(disp_md->GetOff(u), uvd_bases_map_.value(u), midx);
   }
 }
@@ -208,8 +195,7 @@ void BrainVolumeView::UpdateAutoScale(bool& updated) {}
 
 void BrainVolumeView::Render_pre()
 {
-  BrainViewState& bvs = this->bv()->bv_state;
-  brain_data_ = new NiftiReader(bvs.DataName());
+  brain_data_ = new NiftiReader(bv()->DataName());
   if (true == brain_data_->isValid()) {
     setNode(new T3BrainNode(this));
     RenderBrain();
@@ -219,43 +205,45 @@ void BrainVolumeView::Render_pre()
 
 void BrainVolumeView::RenderBrain()
 {
+  BrainView* bv = this->bv(); //cache
+  if(!bv) return;
+  
   //Creates the nodes that render the reference brain
-  BrainViewState& bvs = this->bv()->bv_state;
   if (NULL == this->node_so()) return;
   T3BrainNode& node = *(this->node_so());
 
+  // Get the dimensions of the brain
+  TDCoord dims(brain_data_->xyzDimensions());
+  float max_dim = taMath_float::max(dims.z, taMath_float::max(dims.x, dims.y));
+  
   SoSeparator* ss = node.shapeSeparator();
   node.brain_group = new SoSeparator();
 
   SoTransform* global_xform = new SoTransform;
   node.brain_group->addChild(global_xform);
   global_xform->translation.setValue(SbVec3f(0.0,0.0,0.0));
-  global_xform->scaleFactor.setValue(SbVec3f(0.0075,0.0075,0.0075)); //arbitrary scale seems to work
-
+  global_xform->scaleFactor.setValue(SbVec3f(1/max_dim, 1/max_dim, 1/max_dim)); //normalize by max brain dimension
+  
   // set the "origin"
-  TDCoord dims(brain_data_->xyzDimensions());
   SoTransform* b0 = new SoTransform;
   int d1(0),d2(0),d3(0);
-  if (bvs.ViewPlane() == BrainViewState::CORONAL){
+  if (bv->ViewPlane() == BrainView::CORONAL){
     d1 = dims.x;
     d2 = dims.z;
     d3 = dims.y;
-    b0->translation.setValue(SbVec3f(0.0, dims.z/2, -dims.y/2.0f));
+    b0->translation.setValue(SbVec3f(dims.x/2.0f, dims.z/2.0f, -dims.y));
   }
-  else if (bvs.ViewPlane() == BrainViewState::SAGITTAL){
+  else if (bv->ViewPlane() == BrainView::SAGITTAL){
     d1 = dims.y;
     d2 = dims.z;
     d3 = dims.x;
-    b0->translation.setValue(SbVec3f(0.0f, dims.z/2.0f, -dims.x/2.0f));
+    b0->translation.setValue(SbVec3f(dims.y/2.0f, dims.z/2.0f, -dims.x));
   }
-  else { //BrainViewState::AXIAL)
+  else { //BrainView::AXIAL)
     d1 = dims.x;
     d2 = dims.y;
     d3 = dims.z;
-    //this used to be offset by dims.y/2.0f, but not important now that we're
-    //drawing everything from same coordinate transform space...so we make it
-    //close/similar to same offset as with other viewplanes
-    b0->translation.setValue(SbVec3f(0.0f, dims.z/2.0f, -dims.z/2.0f));
+    b0->translation.setValue(SbVec3f(dims.x/2.0f, dims.y/2.0f, -dims.z));
   }
   node.brain_group->addChild(b0);
 
@@ -269,10 +257,10 @@ void BrainVolumeView::RenderBrain()
   //if revert to CopyPolicy::Copy then do allocation out of loop and reuse
   //unsigned char* tex = new unsigned char[d1*d2*2];
   unsigned char* tex(0);
-  float transparency(bvs.SliceTransparencyXformed());
+  float transparency(bv->SliceTransparencyXformed());
   for (int i=0; i<d3; i++) {
     tex = static_cast<unsigned char*>(malloc(d1*d2*2));
-    brain_data_->sliceAsTexture((NiftiReader::AnatomicalPlane)bvs.ViewPlane(), 1+i, tex);
+    brain_data_->sliceAsTexture((NiftiReader::AnatomicalPlane)bv->ViewPlane(), 1+i, tex);
 
     node.brain_tex_mat_array[i] = new SoMaterial;
     node.brain_tex_mat_array[i]->transparency = transparency;
@@ -327,7 +315,7 @@ void BrainVolumeView::RenderBrain()
 
     node.spacing_xform = new SoTransform;
     node.brain_group->addChild(node.spacing_xform);
-    node.spacing_xform->translation.setValue(SbVec3f(0.0,0.0,bvs.SliceSpacing()));
+    node.spacing_xform->translation.setValue(SbVec3f(0.0,0.0,bv->SliceSpacing()));
   }
   //if revert to CopyPolicy::Copy then delete allocated tex
   //delete [] tex;
@@ -337,15 +325,17 @@ void BrainVolumeView::RenderBrain()
 
 void BrainVolumeView::UpdateSlices()
 {
+  BrainView* bv = this->bv(); //cache
+  if(!bv) return;
+  
   // Hides slices not currently in stack defined by start,end
-  BrainViewState& bvs = bv()->bv_state;
   if (NULL == this->node_so()) return;
   T3BrainNode& node = *(this->node_so()); // cache
 
   // now update slices
-  float transparency(bvs.SliceTransparencyXformed());
-  for (int i=0; i<bvs.MaxSlices(); i++) {
-    if ( ((bvs.SliceStart() - 1) <= i) && (i <= (bvs.SliceEnd() - 1)) ) {
+  float transparency(bv->SliceTransparencyXformed());
+  for (int i=0; i<bv->MaxSlices(); i++) {
+    if ( ((bv->SliceStart() - 1) <= i) && (i <= (bv->SliceEnd() - 1)) ) {
       node.brain_tex_mat_array[i]->transparency = transparency;
     }
     else {
@@ -392,56 +382,62 @@ void BrainVolumeView::CreateFaceSets()
   Network* net = this->net(); //cache
   if (NULL == net) return;
   if (NULL == this->node_so()) return;
+  BrainView* bv = this->bv(); //cache
+  if(!bv) return;
   T3BrainNode& node = *(this->node_so());
-  BrainViewState& bvs = this->bv()->bv_state;
 
-  BrainViewState::AnatomicalPlane view_plane = bvs.ViewPlane();
-  FloatTDCoord dims(bvs.Dimensions());
+  BrainView::AnatomicalPlane view_plane = bv->ViewPlane();
+  FloatTDCoord dims(bv->Dimensions());
   FloatTDCoord halfDims;
   halfDims.SetXYZ(dims.x/2.0f, dims.y/2.0f, dims.z/2.0f);
 
   // clear the old maps
   depth_map_.clear();
-  unit_map_.clear();
+  voxel_map_.clear();
   uvd_bases_map_.clear();
 
+  
+  // create the maps
   int i=0;
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if (lay->lesioned() || lay->Iconified() || lay->brain_area.empty()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
+      if (u->lesioned()) continue;
       if (u->voxels.size == 0) continue;
       // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
-      Voxel *voxel = u->voxels.FastEl(0);
-      if (voxel->size == 0) continue;
-      if (u->lesioned()) continue;
-
-      FloatTDCoord talCoord(voxel->coord);
-      FloatTDCoord mniCoord(TalairachAtlas::Tal2Mni(talCoord));
-      FloatTDCoord ijkCoord(brain_data_->XyzToIjk(mniCoord));
-      if ( (view_plane == BrainViewState::AXIAL) || (view_plane == BrainViewState::SAGITTAL) ) {
-        // reverse x coordinates...since we draw X in opposite direction in Inventor
-        ijkCoord.x = taMath_float::fabs(ijkCoord.x - (dims.x - 1));
+      FOREACH_ELEM_IN_LIST(Voxel, v, u->voxels) {
+        if (v->size == 0) continue;
+      
+        FloatTDCoord talCoord(v->coord);
+        FloatTDCoord mniCoord(TalairachAtlas::Tal2Mni(talCoord));
+        FloatTDCoord ijkCoord(brain_data_->XyzToIjk(mniCoord));
+        if ( (view_plane == BrainView::AXIAL) || (view_plane == BrainView::SAGITTAL) ) {
+          // reverse x coordinates...since we draw X in opposite direction in Inventor
+          ijkCoord.x = taMath_float::fabs(ijkCoord.x - (dims.x - 1));
+        }
+        
+        if (view_plane == BrainView::AXIAL) {
+          depth_map_.insert((unsigned int)ijkCoord.z, v);
+        }
+        else if (view_plane == BrainView::SAGITTAL) {
+          depth_map_.insert((unsigned int)ijkCoord.x, v);
+        }
+        else { //CORONAL
+          depth_map_.insert((unsigned int)ijkCoord.y, v);
+        }
+        voxel_map_.insert(v, ijkCoord);
+        uvd_bases_map_.insert(u,i); //map unit* to index, so we can index into uvd_bases
+        i++;
       }
-
-      if (view_plane == BrainViewState::AXIAL) {
-        depth_map_.insert((unsigned int)ijkCoord.z, u);
-      }
-      else if (view_plane == BrainViewState::SAGITTAL) {
-        depth_map_.insert((unsigned int)ijkCoord.x, u);
-      }
-      else { //CORONAL
-        depth_map_.insert((unsigned int)ijkCoord.y, u);
-      }
-      unit_map_.insert(u, ijkCoord);
-      uvd_bases_map_.insert(u,i); //map unit* to index, so we can index into uvd_bases
-      i++;
     }
   }
-
-  FloatTDCoord unit_coord;
-  for (int s=0; s<bvs.MaxSlices(); s++) {
-    QList<Unit*> units = depth_map_.values(s);
-    if (0 == units.size()) continue;
+  
+  // iterate over all slices, and for each voxel at that slice depth, create face in face set
+  FloatTDCoord voxel_coord;
+  for (int s=0; s<bv->MaxSlices(); s++) {
+    QList<Voxel*> voxels = depth_map_.values(s);
+    if (0 == voxels.size()) continue;
+    
     SoIndexedFaceSet* ifs = node.voxel_face_set_array[s];
     SoVertexProperty* vtx_prop = node.voxel_vrtx_prop_array[s];
     if (!ifs || !vtx_prop) return; // something wrong..
@@ -461,33 +457,32 @@ void BrainVolumeView::CreateFaceSets()
     normal.finishEditing();
 
     int n_per_vtx = 4;
-    int tot_vtx = units.size() * n_per_vtx;
+    int tot_vtx = voxels.size() * n_per_vtx;
 
     vertex.setNum(tot_vtx);
-    color.setNum(units.size());
+    color.setNum(voxels.size());
     uint32_t* color_dat = color.startEditing();
     SbVec3f* vertex_dat = vertex.startEditing();
     int v_idx = 0;
     int c_idx = 0;
 
-    foreach (Unit* u, units) {
-      unit_coord = unit_map_.value(u);
-      float ri      = unit_coord.x;
-      float rj      = unit_coord.y;
-      float rk      = unit_coord.z;
+    // for each voxel at current slice depth, create face vertices in face set
+    foreach (Voxel* v, voxels) {
+      voxel_coord = voxel_map_.value(v);
+      float ri      = voxel_coord.x;
+      float rj      = voxel_coord.y;
+      float rk      = voxel_coord.z;
 
-      // TODO: for now, assumes only one voxel per unit.  Update to handle multiple.
-      Voxel *voxel = u->voxels.FastEl(0);
-      float extent  = voxel->size/2.0f; //half voxel size
+      float extent  = v->size/2.0f; //half voxel size
 
       //@TODO add voxel size in 3rd dimension...(by adding more faces at different depth levels)
-      if ( view_plane == BrainViewState::AXIAL){
+      if ( view_plane == BrainView::AXIAL){
         vertex_dat[v_idx++].setValue(ri-extent-halfDims.x, rj-extent-halfDims.y, rk-s); // 00_0 = 0
         vertex_dat[v_idx++].setValue(ri+extent-halfDims.x, rj-extent-halfDims.y, rk-s );// 10_0 = 0
         vertex_dat[v_idx++].setValue(ri+extent-halfDims.x, rj+extent-halfDims.y, rk-s); // 11_0 = 0
         vertex_dat[v_idx++].setValue(ri-extent-halfDims.x, rj+extent-halfDims.y, rk-s); // 01_0 = 0
       }
-      else if ( view_plane == BrainViewState::SAGITTAL ){
+      else if ( view_plane == BrainView::SAGITTAL ){
         vertex_dat[v_idx++].setValue(rj-extent-halfDims.y, rk-extent-halfDims.z, ri-s); // 00_0 = 0
         vertex_dat[v_idx++].setValue(rj+extent-halfDims.y, rk-extent-halfDims.z, ri-s); // 10_0 = 0
         vertex_dat[v_idx++].setValue(rj+extent-halfDims.y, rk+extent-halfDims.z, ri-s); // 11_0 = 0
@@ -504,15 +499,16 @@ void BrainVolumeView::CreateFaceSets()
     vertex.finishEditing();
     color.finishEditing();
 
+    // for each voxel at current slice depth, create indices in face set
     SoMFInt32& coords = ifs->coordIndex;
     SoMFInt32& norms = ifs->normalIndex;
     SoMFInt32& mats = ifs->materialIndex;
     int nc_per_idx = 5;          // number of coords per index
     int nn_per_idx = 1;          // number of norms per index
     int nm_per_idx = 1;           // number of mats per index
-    coords.setNum(units.size() * nc_per_idx);
-    norms.setNum(units.size() * nn_per_idx);
-    mats.setNum(units.size() * nm_per_idx);
+    coords.setNum(voxels.size() * nc_per_idx);
+    norms.setNum(voxels.size() * nn_per_idx);
+    mats.setNum(voxels.size() * nm_per_idx);
 
     int32_t* coords_dat = coords.startEditing();
     int32_t* norms_dat  = norms.startEditing();
@@ -522,7 +518,7 @@ void BrainVolumeView::CreateFaceSets()
     int nidx = 0;
     int midx = 0;
     int uidx = 0;
-    foreach (Unit* u, units) {
+    foreach (Voxel* v, voxels) {
       int c00_0 = uidx * n_per_vtx;
       int c10_0 = c00_0 + 1;
       int c01_0 = c00_0 + 2;
@@ -546,18 +542,21 @@ void BrainVolumeView::CreateFaceSets()
 
 void BrainVolumeView::UpdateUnitValues_blocks()
 {
-  // Update voxel face colors with Unit values
   BrainView* bv = this->bv(); //cache
   Network* net = this->net(); //cache
   if (NULL == net) return;
   if (NULL == this->node_so()) return;
   T3BrainNode& node = *(this->node_so());
-  BrainViewState& bvs = this->bv()->bv_state;
 
-  BrainViewState::AnatomicalPlane view_plane = bvs.ViewPlane();
+  BrainView::AnatomicalPlane view_plane = bv->ViewPlane();
 
-  FloatTDCoord unit_coord;
-  for (int s=0; s<bvs.MaxSlices(); s++) {
+  // iterate over all slices, and for each voxel at that slice depth, 
+  // determine the face color/transparency from unit value
+  FloatTDCoord voxel_coord;
+  for (int s=0; s<bv->MaxSlices(); s++) {
+    QList<Voxel*> voxels = depth_map_.values(s);
+    if (0 == voxels.size()) continue;
+    
     SoVertexProperty* vp  = node.voxel_vrtx_prop_array[s];
     SoMFUInt32& color = vp->orderedRGBA;
 
@@ -565,29 +564,28 @@ void BrainVolumeView::UpdateUnitValues_blocks()
     float val, sc_val,alpha,trans = bv->view_params.unit_trans;
     int idx(0);
     T3Color col;
-    Unit* u(0);
+    Voxel* v(0);
 
     uint32_t* color_dat = color.startEditing();
-    QList<Unit*> units = depth_map_.values(s);
-    if (0 == units.size()) continue;
-
-    foreach (u,units) {
-      unit_coord = unit_map_.value(u);
-      if ( view_plane == BrainViewState::AXIAL) {
-        if ( (unit_coord.z > bvs.SliceEnd()) || (unit_coord.z < bvs.SliceStart()) ) {
+   
+    foreach (v,voxels) {
+      voxel_coord = voxel_map_.value(v);
+      if ( view_plane == BrainView::AXIAL) {
+        if ( (voxel_coord.z > bv->SliceEnd()) || (voxel_coord.z < bv->SliceStart()) ) {
           makeTransparent = true;
         }
       }
-      else if ( view_plane == BrainViewState::SAGITTAL ) {
-        if ( (unit_coord.x > bvs.SliceEnd()) || (unit_coord.x < bvs.SliceStart()) ) {
+      else if ( view_plane == BrainView::SAGITTAL ) {
+        if ( (voxel_coord.x > bv->SliceEnd()) || (voxel_coord.x < bv->SliceStart()) ) {
           makeTransparent = true;
         }
       }
       else { //CORONAL
-        if ( (unit_coord.y > bvs.SliceEnd()) || (unit_coord.y < bvs.SliceStart()) ) {
+        if ( (voxel_coord.y > bv->SliceEnd()) || (voxel_coord.y < bv->SliceStart()) ) {
           makeTransparent = true;
         }
       }
+      Unit* u = (Unit*)((taOBase*)v->owner)->owner;
       bv->GetUnitDisplayVals(this, u, val, col, sc_val);
 
       if (true == makeTransparent) {

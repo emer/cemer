@@ -1,4 +1,4 @@
-    // Copyright, 1995-2011, Regents of the University of Colorado,
+//    // Copyright, 1995-2011, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
 // This file is part of The Emergent Toolkit
@@ -51,11 +51,10 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   : inherited(dv_)
 {
  
-  BrainViewState* bvs(&(dv_->bv_state));
   // set a safe default if no BrainViewState yet...
   int max_slices(1);
-  if (NULL != bvs) {
-    max_slices = bvs->MaxSlices();
+  if (NULL != dv_) {
+    max_slices = dv_->MaxSlices();
   }
   
   int font_spec = taiMisc::fonMedium;
@@ -88,8 +87,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   view_plane_comb_->addItem("AXIAL");
   view_plane_comb_->addItem("SAGITTAL");
   view_plane_comb_->addItem("CORONAL");
-  connect(view_plane_comb_, SIGNAL(currentIndexChanged(int)), bvs, SLOT(SetViewPlane(int)) );
-  connect(bvs, SIGNAL(ViewPlaneChanged(int)), view_plane_comb_, SLOT(setCurrentIndex(int)) );
+  connect(view_plane_comb_, SIGNAL(currentIndexChanged(int)), this, SLOT(SetViewPlane(int)) );
+  connect(this, SIGNAL(ViewPlaneChanged(int)), view_plane_comb_, SLOT(setCurrentIndex(int)) );
   bvControls->addWidget(view_plane_comb_);
   bvControls->addSpacing(taiM->hspc_c); 
   
@@ -99,8 +98,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_strt_sbox_ = new QSpinBox(widg);
   slice_strt_sbox_->setRange(1,max_slices);
   slice_strt_sbox_->setValue(1);
-  connect(slice_strt_sbox_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceStart(int)) );
-  connect(bvs, SIGNAL(SliceStartChanged(int)), slice_strt_sbox_, SLOT(setValue(int)) );
+  connect(slice_strt_sbox_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceStart(int)) );
+  connect(this, SIGNAL(SliceStartChanged(int)), slice_strt_sbox_, SLOT(setValue(int)) );
   bvControls->addWidget(slice_strt_sbox_);
   bvControls->addSpacing(taiM->hsep_c);
   
@@ -108,8 +107,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_strt_slid_->setRange(1, max_slices);
   slice_strt_slid_->setValue(1);
   slice_strt_slid_->setMinimumWidth(min_slider);
-  connect(slice_strt_slid_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceStart(int)) );
-  connect(bvs, SIGNAL(SliceStartChanged(int)), slice_strt_slid_, SLOT(setValue(int)) );
+  connect(slice_strt_slid_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceStart(int)) );
+  connect(this, SIGNAL(SliceStartChanged(int)), slice_strt_slid_, SLOT(setValue(int)) );
   bvControls->addWidget(slice_strt_slid_);
   bvControls->addSpacing(taiM->hspc_c);  
   
@@ -118,7 +117,7 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   bvControls->addWidget(label);
   lock_slices_chbox_ = new QCheckBox(widg);
   lock_slices_chbox_->setCheckState(Qt::Unchecked);
-  connect(lock_slices_chbox_, SIGNAL(stateChanged(int)), bvs, SLOT(SetLockSlices(int)) );
+  connect(lock_slices_chbox_, SIGNAL(stateChanged(int)), this, SLOT(SetLockSlices(int)) );
   bvControls->addWidget(lock_slices_chbox_);  
   bvControls->addSpacing(taiM->hspc_c); 
   
@@ -128,8 +127,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_end_sbox_ = new QSpinBox(widg);
   slice_end_sbox_->setRange(1, max_slices);
   slice_end_sbox_->setValue(max_slices);
-  connect(bvs, SIGNAL(SliceEndChanged(int)), slice_end_sbox_, SLOT(setValue(int)) );
-  connect(slice_end_sbox_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceEnd(int)) );
+  connect(this, SIGNAL(SliceEndChanged(int)), slice_end_sbox_, SLOT(setValue(int)) );
+  connect(slice_end_sbox_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceEnd(int)) );
   bvControls->addWidget(slice_end_sbox_);  
   bvControls->addSpacing(taiM->hsep_c); 
   
@@ -138,8 +137,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_end_slid_->setRange(1, max_slices);
   slice_end_slid_->setValue(max_slices);
   slice_end_slid_->setMinimumWidth(min_slider);
-  connect(bvs, SIGNAL(SliceEndChanged(int)), slice_end_slid_, SLOT(setValue(int)) );
-  connect(slice_end_slid_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceEnd(int)) );
+  connect(this, SIGNAL(SliceEndChanged(int)), slice_end_slid_, SLOT(setValue(int)) );
+  connect(slice_end_slid_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceEnd(int)) );
   bvControls->addWidget(slice_end_slid_);
   bvControls->addStretch();	// need final stretch to prevent full stretching
   
@@ -153,8 +152,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   unit_val_tran_sbox_->setRange(1, 100);
   unit_val_tran_sbox_->setValue(unit_trans);
   unit_val_tran_sbox_->setSuffix("%");
-  connect(unit_val_tran_sbox_, SIGNAL(valueChanged(int)), bvs, SLOT(SetUnitValuesTransparency(int)) );
-  connect(bvs, SIGNAL(UnitValuesTransparencyChanged(int)), unit_val_tran_sbox_, SLOT(setValue(int)) );
+  connect(unit_val_tran_sbox_, SIGNAL(valueChanged(int)), this, SLOT(SetUnitValuesTransparency(int)) );
+  connect(this, SIGNAL(UnitValuesTransparencyChanged(int)), unit_val_tran_sbox_, SLOT(setValue(int)) );
   bvControls->addWidget(unit_val_tran_sbox_);  
   bvControls->addSpacing(taiM->hsep_c); 
   
@@ -163,8 +162,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   unit_val_tran_slid_->setRange(1,100);
   unit_val_tran_slid_->setValue(unit_trans);
   unit_val_tran_slid_->setMinimumWidth(min_slider);
-  connect(unit_val_tran_slid_, SIGNAL(valueChanged(int)), bvs, SLOT(SetUnitValuesTransparency(int)) );
-  connect(bvs, SIGNAL(UnitValuesTransparencyChanged(int)), unit_val_tran_slid_, SLOT(setValue(int)) );
+  connect(unit_val_tran_slid_, SIGNAL(valueChanged(int)), this, SLOT(SetUnitValuesTransparency(int)) );
+  connect(this, SIGNAL(UnitValuesTransparencyChanged(int)), unit_val_tran_slid_, SLOT(setValue(int)) );
   bvControls->addWidget(unit_val_tran_slid_);
   bvControls->addSpacing(taiM->hspc_c); 
   
@@ -176,8 +175,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_trans_sbox_->setRange(1, 100);
   slice_trans_sbox_->setValue(slice_trans);
   slice_trans_sbox_->setSuffix("%");
-  connect(slice_trans_sbox_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceTransparency(int)) );
-  connect(bvs, SIGNAL(SliceTransparencyChanged(int)), slice_trans_sbox_, SLOT(setValue(int)) );
+  connect(slice_trans_sbox_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceTransparency(int)) );
+  connect(this, SIGNAL(SliceTransparencyChanged(int)), slice_trans_sbox_, SLOT(setValue(int)) );
   bvControls->addWidget(slice_trans_sbox_);  
   bvControls->addSpacing(taiM->hsep_c); 
   
@@ -186,13 +185,13 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   slice_tran_slid_->setRange(1,100);
   slice_tran_slid_->setValue(slice_trans);
   slice_tran_slid_->setMinimumWidth(min_slider);
-  connect(slice_tran_slid_, SIGNAL(valueChanged(int)), bvs, SLOT(SetSliceTransparency(int)) );
-  connect(bvs, SIGNAL(SliceTransparencyChanged(int)), slice_tran_slid_, SLOT(setValue(int)) );
+  connect(slice_tran_slid_, SIGNAL(valueChanged(int)), this, SLOT(SetSliceTransparency(int)) );
+  connect(this, SIGNAL(SliceTransparencyChanged(int)), slice_tran_slid_, SLOT(setValue(int)) );
   bvControls->addWidget(slice_tran_slid_);
   bvControls->addStretch(); 
    
     // listen for BrainViewState state changed
-  connect(bvs, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)) );
+  connect(this, SIGNAL(StateChanged(int)), this, SLOT(UpdateViewFromState(int)) );
   
   ////////////////////////////////////////////////////////////////////////////
   layDispCheck = new QHBoxLayout();  layViewParams->addLayout(layDispCheck);
@@ -202,6 +201,12 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   layDispCheck->addWidget(chkNetText);
   layDispCheck->addSpacing(taiM->hsep_c);
 
+  chkLayMove = new QCheckBox("Lay\nMv", widg);
+  chkLayMove->setToolTip("Turn on the layer moving controls when in the manipulation mode (red arrow) of viewer -- these can sometimes interfere with viewing weights, so you can turn them off here (but then you won't be able to move layers around in the GUI)");
+  connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layDispCheck->addWidget(chkLayMove);
+  layDispCheck->addSpacing(taiM->hsep_c);
+  
   chkAutoScale = new QCheckBox("Auto\nScale", widg);
   chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
@@ -288,6 +293,8 @@ void BrainViewPanel::UpdatePanel_impl()
   }
   
   unit_val_tran_sbox_->setValue((int)(bv->view_params.unit_trans*100));
+  chkLayMove->setChecked(bv->lay_mv);
+
   // update var selection
   int i = 0;
   QTreeWidgetItemIterator it(lvDisplayValues);
@@ -311,7 +318,7 @@ void BrainViewPanel::UpdateViewFromState(int state)
   // is required and make call to apply the GUI change
 
   if (req_full_render == true) return; // already have an update to do
-  if (state & BrainViewState::MAJOR) {
+  if (state & BrainView::MAJOR) {
     req_full_render = true;
   }
   else {
@@ -319,6 +326,86 @@ void BrainViewPanel::UpdateViewFromState(int state)
   }
   Apply_Async();
 }
+
+//////////////////////////////////////////////////////////////////
+void BrainViewPanel::SetDataName(const QString& data_name)
+{
+  bv()->SetDataName(data_name);
+}
+void BrainViewPanel::SetDimensions(const TDCoord& dimensions)
+{
+  bv()->SetDimensions(dimensions);
+}
+void BrainViewPanel::SetViewPlane( int plane )
+{
+  bv()->SetViewPlane(plane);
+}
+void BrainViewPanel::SetSliceStart(int start)
+{
+  bv()->SetSliceStart(start);
+}
+void BrainViewPanel::SetSliceEnd(int end)
+{
+  bv()->SetSliceEnd(end);
+}
+void BrainViewPanel::SetLockSlices(int state)
+{
+  bv()->SetLockSlices(state);
+}
+void BrainViewPanel::SetSliceSpacing(int spacing)
+{
+  bv()->SetSliceSpacing(spacing);
+}
+void BrainViewPanel::SetSliceTransparency(int transparency)
+{
+  bv()->SetSliceTransparency(transparency);
+}
+void BrainViewPanel::SetUnitValuesTransparency(int transparency)
+{
+  bv()->SetUnitValuesTransparency(transparency);
+}
+
+void BrainViewPanel::EmitDataNameChanged(const QString& name)
+{
+  emit DataNameChanged(name);
+}
+void BrainViewPanel::EmitDimensionsChanged(const TDCoord& d)
+{
+  emit DimensionsChanged(d);
+}
+void BrainViewPanel::EmitViewPlaneChanged(int plane)
+{
+  emit ViewPlaneChanged(plane);
+}
+void BrainViewPanel::EmitNumSlicesChanged(int nSlices)
+{
+  emit NumSlicesChanged(nSlices);
+}
+void BrainViewPanel::EmitSliceStartChanged(int start)
+{
+  emit SliceStartChanged(start);
+}
+void BrainViewPanel::EmitSliceEndChanged(int end)
+{
+  emit SliceEndChanged(end);
+}
+void BrainViewPanel::EmitSliceSpacingChanged(int spacing)
+{
+  emit SliceSpacingChanged(spacing);
+}
+void BrainViewPanel::EmitSliceTransparencyChanged(int transparency)
+{
+  emit SliceTransparencyChanged(transparency);
+}
+void BrainViewPanel::EmitUnitValuesTransparencyChanged(int transparency)
+{
+  emit UnitValuesTransparencyChanged(transparency);
+}
+void BrainViewPanel::EmitStateChanged(int state)
+{
+  emit StateChanged(state);
+}
+
 
 void BrainViewPanel::GetValue_impl() {
   inherited::GetValue_impl();
@@ -342,7 +429,8 @@ void BrainViewPanel::GetValue_impl() {
     req_full_render = true;
   }
   bv->net_text = chkNetText->isChecked();
-  
+  bv->lay_mv = chkLayMove->isChecked();
+
   if (false == req_full_render) {
     // just need update, not full rebuild/render
     bv->AsyncRenderUpdate();
@@ -468,13 +556,15 @@ void BrainViewPanel::viewWin_NotifySignal(ISelectableHost* src, int op)
 
 void BrainViewPanel::UpdateWidgetLimits() 
 {
-  BrainViewState& bvs = bv()->bv_state;
-  int max_slices(bvs.MaxSlices());
-  int num_slices(bvs.NumSlices());
+  BrainView* bv_;
+  if (!(bv_ = bv())) return;
+  
+  int max_slices(bv_->MaxSlices());
+  int num_slices(bv_->NumSlices());
   
   // if user wants number of slices to remain fixed
   // we need to be sure limits are adjusted appropriately
-  if (bvs.NumSlicesAreLocked()) { 
+  if (bv_->NumSlicesAreLocked()) { 
     slice_strt_sbox_->setRange(1, max_slices - num_slices);
     slice_strt_slid_->setRange(1, max_slices - num_slices);
     slice_end_sbox_->setRange(num_slices + 1, max_slices);

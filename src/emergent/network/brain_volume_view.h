@@ -19,6 +19,7 @@
 #include "netstru_qtso.h" // overkill #include
 class T3BrainNode;
 class BrainView;
+class Voxel;
 
 class EMERGENT_API BrainVolumeView: public T3DataViewPar {
   // does all the rendering of unit values, either direct optimized 3D_BLOCK rendering or managing -- there is ONLY ONE of these objects per layer, and it manages all the units regardless of whether there are sub unit groups
@@ -37,9 +38,6 @@ public:
   virtual void  InitDisplay();
   void          UpdateSlices(); // #IGNORE
   float                 GetUnitDisplayVal(const Unit* u, void*& base);
-  float                 GetUnitDisplayVal(const TwoDCoord& co, void*& base);
-  // get raw floating point value to display according to current nv settings, at given *logical* coordinate within the layer -- fills in base for this value as well (NULL if not set)
-  float                 GetUnitDisplayVal_Idx(const TwoDCoord& co, int midx, void*& base);
   // get raw floating point value to display at given member index (< membs.size), at given *logical* coordinate -- fills in base for this value as well (NULL if not set)
   void                  UpdateUnitViewBases(Unit* src_u);
   // update base void* for all current nv->membs, src_u only used for s./r. values
@@ -50,7 +48,6 @@ public:
   virtual void          UpdateAutoScale(bool& updated);
   // update autoscale values
 
-  Layer*            layer() const {return (Layer*)data();}
   override void         InitLinks();
   override void         CutLinks();
   T3_DATAVIEWFUNS(BrainVolumeView, T3DataViewPar)
@@ -81,9 +78,9 @@ private:
 
   NiftiReader*                   brain_data_;// #IGNORE
 #ifndef __MAKETA__
-  QMultiMap<unsigned int, Unit*> depth_map_; //#IGNORE
-  QMap<const Unit*, FloatTDCoord>      unit_map_; //#IGNORE 
-  QMap<const Unit*, unsigned int>      uvd_bases_map_; //#IGNORE
+  QMultiMap<unsigned int, Voxel*>   depth_map_; //#IGNORE
+  QMap<const Voxel*, FloatTDCoord>  voxel_map_; //#IGNORE 
+  QMap<const Unit*, unsigned int>   uvd_bases_map_; //#IGNORE
 #endif
 };
 

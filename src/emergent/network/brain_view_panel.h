@@ -30,7 +30,7 @@ public:
   QVBoxLayout*		layViewParams;
   QHBoxLayout*		layDispCheck;
   QCheckBox*		chkDisplay;
-  // QCheckBox*		chkLayMove;
+  QCheckBox*		chkLayMove;
   QCheckBox*		    chkNetText;
   //QLabel*		    lblTextRot;
   //taiField*		    fldTextRot;
@@ -92,18 +92,49 @@ public slots:
   void                  viewWin_NotifySignal(ISelectableHost* src, int op); // forwarded to netview
   void                  dynbuttonActivated(int but_no); // for hot member buttons
   void          UpdateViewFromState(int state);
+  
+  void          SetDataName(const QString& data_name);
+  void          SetDimensions(const TDCoord& dimensions);
+  void          SetViewPlane( int plane );
+  void          SetSliceStart(int start);
+  void          SetSliceEnd(int end);
+  void          SetLockSlices(int state);
+  void          SetSliceSpacing(int spacing);
+  void          SetSliceTransparency(int transparency);
+  void          SetUnitValuesTransparency(int transparency);
+  
+  void          EmitDataNameChanged(const QString& name);
+  void          EmitDimensionsChanged(const TDCoord& d);
+  void          EmitViewPlaneChanged(int plane);
+  void          EmitNumSlicesChanged(int nSlices);
+  void          EmitSliceStartChanged(int start);
+  void          EmitSliceEndChanged(int end);
+  void          EmitSliceSpacingChanged(int spacing);
+  void          EmitSliceTransparencyChanged(int transparency);
+  void          EmitUnitValuesTransparencyChanged(int transparency);
+  void          EmitStateChanged(int state);  
 
 #ifndef __MAKETA__
 signals:
-  void          nameChanged(const QString& name);
-  void          dimensionsChanged(TDCoord& d);
-  void          viewPlaneChanged(int p);
-  void          numSlicesChanged(int nSlices);
-  void          sliceStartChanged(int start);
-  void          sliceEndChanged(int end);
-  void          sliceSpacingChanged(int spacing);
-  void          sliceTransparencyChanged(int pctTrans);
-  void          actsTransparencyChanged(int pctTrans);
+//  void          nameChanged(const QString& name);
+//  void          dimensionsChanged(TDCoord& d);
+//  void          viewPlaneChanged(int p);
+//  void          numSlicesChanged(int nSlices);
+//  void          sliceStartChanged(int start);
+//  void          sliceEndChanged(int end);
+//  void          sliceSpacingChanged(int spacing);
+//  void          sliceTransparencyChanged(int pctTrans);
+//  void          actsTransparencyChanged(int pctTrans);
+  void          DataNameChanged(const QString& name);
+  void          DimensionsChanged(const TDCoord& d);
+  void          ViewPlaneChanged(int plane);
+  void          NumSlicesChanged(int nSlices);
+  void          SliceStartChanged(int start);
+  void          SliceEndChanged(int end);
+  void          SliceSpacingChanged(int spacing);
+  void          SliceTransparencyChanged(int transparency);
+  void          UnitValuesTransparencyChanged(int transparency);
+  void          StateChanged(int state); 
 #endif
   
 protected slots:
