@@ -156,7 +156,7 @@ NetworkVoxelMapper::AssignVoxelsInArea(const QString &brain_area, const QList<Fl
     foreach(Unit *unit, units)
     {
       unit->voxels.SetSize(1);
-      Voxel *voxel = unit->voxels.FastEl(1);
+      Voxel *voxel = unit->voxels.FastEl(0);
       voxel->size = 0.0;
     }
 
