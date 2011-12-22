@@ -133,7 +133,7 @@ public:
 					      float PRE_thr = 0.1
 					      );
 
-  // #Cat_Stats #MENU_BUTTON #MENU_ON_Stats #NULL_OK_1 #NULL_TEXT_1_NewDataTable #TYPE_1_DataTable #NULL_TEXT_0_SelectSourceTable
+  // #Cat_Stats MENU_BUTTON MENU_ON_Stats #NULL_OK_1 #NULL_TEXT_1_NewDataTable #TYPE_1_DataTable #NULL_TEXT_0_SelectSourceTable #EXPERT this is not yet functional -- do not use at this point
   
   ///////////////////////////////////////////////////////////////////
   // distance matricies

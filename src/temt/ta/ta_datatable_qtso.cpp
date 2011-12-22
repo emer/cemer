@@ -476,7 +476,6 @@ void DataColView::Hide() {
 void DataTableView::Initialize() {
   data_base = &TA_DataTable;
   view_rows = 3; //note: set by actual class based on screen
-//obs  view_shift = .2f;
   view_range.min = 0;
   view_range.max = -1;
   display_on = true;
@@ -3286,12 +3285,6 @@ void GraphTableView::Initialize() {
   plot_8.color.name = "chartreuse";
   plot_8.point_style = GraphPlotView::MINUS;
   plot_8.color.UpdateAfterEdit_NoGui();
-  // todo: following obsolete: nuke
-  alt_y_1 = false;
-  alt_y_2 = false;
-  alt_y_3 = false;
-  alt_y_4 = false;
-  alt_y_5 = false;
 
   graph_type = XY;
   plot_style = LINE;
@@ -3479,14 +3472,6 @@ void GraphTableView::CopyFromView(GraphTableView* cp) {
 
 void GraphTableView::UpdateAfterEdit_impl(){
   inherited::UpdateAfterEdit_impl();
-
-  // capture saved alt_y vals and reset in favor of new ones on the plot_x guys
-  // todo: obsolete stuff should be removed after some point
-  if(alt_y_1) { plot_1.alt_y = true; alt_y_1 = false; }
-  if(alt_y_2) { plot_2.alt_y = true; alt_y_1 = false; }
-  if(alt_y_3) { plot_3.alt_y = true; alt_y_1 = false; }
-  if(alt_y_4) { plot_4.alt_y = true; alt_y_1 = false; }
-  if(alt_y_5) { plot_5.alt_y = true; alt_y_1 = false; }
 
   if(taMisc::is_loading) return;
 
@@ -3845,22 +3830,8 @@ void GraphTableView::DataUpdateView_impl() {
 
   MakeViewRangeValid();
   ComputeAxisRanges();
-
-  RenderAxes();
-
-  if(do_matrix_plot && mainy && mainy->GetDAPtr()->is_matrix) {
-    if(matrix_mode == SEP_GRAPHS)
-      RenderGraph_Matrix_Sep();
-    else
-      RenderGraph_Matrix_Zi();
-  }
-  else {
-    RenderLegend();
-    if(graph_type == BAR)
-      RenderGraph_Bar();
-    else
-      RenderGraph_XY();
-  }
+  SetScrollBars();
+  RenderGraph();
 }
 
 void GraphTableView::ComputeAxisRanges() {
@@ -4363,6 +4334,10 @@ void GraphTableView::RenderGraph_XY() {
   if(!da_1) return;
 
   SoSeparator* graphs = node_so->graphs();
+  graphs->removeAllChildren();	// this is the "nuclear option" that ensures full redraw
+  // the code below also allows re-use, but this does NOT speed up rendering appreciably
+  // and appears to be introducing some artifacts..
+
   SoSeparator* gr1 = NULL;
   if(graphs->getNumChildren() == 1) {
     gr1 = (SoSeparator*)graphs->getChild(0);
@@ -4415,7 +4390,7 @@ void GraphTableView::RenderGraph_XY() {
       ln->clear();
     }
     else {
-      T3GraphLine* ln = new T3GraphLine(pl, label_font_size);
+      ln = new T3GraphLine(pl, label_font_size);
       gr1->addChild(ln);
     }
     if(pl->isString()) {
@@ -5356,7 +5331,7 @@ iGraphTableView_Panel::iGraphTableView_Panel(GraphTableView* tlv)
     layYAxis[i]->addWidget(oncYAxis[i]);
     layYAxis[i]->addSpacing(taiM->hsep_c);
 
-    chkYAltY[i] =  new QCheckBox("Alt\nY", widg); chkYAltY[i]->setObjectName("chkYAltY");
+    chkYAltY[i] =  new QCheckBox("Alt\nY", widg); 
     chkYAltY[i]->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
     connect(chkYAltY[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
     layYAxis[i]->addWidget(chkYAltY[i]);

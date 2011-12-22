@@ -828,6 +828,12 @@ double taMath_double::gauss_dev() {
   misc statistical
 ***********************************/
 
+double taMath_double::dprime(double mean_signal, double stdev_signal,
+			     double mean_noise, double stdev_noise) {
+  double avg_stdev = sqrt(0.5 * stdev_signal * stdev_signal + stdev_noise * stdev_noise);
+  return (mean_signal - mean_noise) / avg_stdev;
+}
+
 double taMath_double::chisq_p(double X, double v) {
   return gamma_p(0.5 * v, 0.5 * X * X);
 }
@@ -1615,6 +1621,16 @@ String taMath_double::vec_stats(const double_Matrix* vec) {
   rval += "stdev=" + String(vec_std_dev(vec, mean, true)) + "; ";
   rval += "sem=" + String(vec_sem(vec, mean, true)) + ";";
   return rval;
+}
+
+double taMath_double::vec_dprime(const double_Matrix* signal_vec,
+				 const double_Matrix* noise_vec) {
+  if(!vec_check_type(signal_vec) || !vec_check_type(noise_vec)) return 0.0f;
+  double mean_signal = vec_mean(signal_vec);
+  double stdev_signal = vec_std_dev(signal_vec, mean_signal, true);
+  double mean_noise = vec_mean(noise_vec);
+  double stdev_noise = vec_std_dev(noise_vec, mean_noise, true);
+  return dprime(mean_signal, stdev_signal, mean_noise, stdev_noise);
 }
 
 bool taMath_double::vec_regress_lin(const double_Matrix* x_vec, const double_Matrix* y_vec,
@@ -3794,6 +3810,12 @@ float taMath_float::gauss_dev() {
   misc statistical
 ***********************************/
 
+float taMath_float::dprime(float mean_signal, float stdev_signal,
+			     float mean_noise, float stdev_noise) {
+  float avg_stdev = sqrt(0.5 * stdev_signal * stdev_signal + stdev_noise * stdev_noise);
+  return (mean_signal - mean_noise) / avg_stdev;
+}
+
 float taMath_float::chisq_p(float X, float v) {
   return gamma_p(0.5 * v, 0.5 * X * X);
 }
@@ -4502,6 +4524,16 @@ String taMath_float::vec_stats(const float_Matrix* vec) {
   rval += "stdev=" + String(vec_std_dev(vec, mean, true)) + "; ";
   rval += "sem=" + String(vec_sem(vec, mean, true)) + ";";
   return rval;
+}
+
+float taMath_float::vec_dprime(const float_Matrix* signal_vec,
+				 const float_Matrix* noise_vec) {
+  if(!vec_check_type(signal_vec) || !vec_check_type(noise_vec)) return 0.0f;
+  float mean_signal = vec_mean(signal_vec);
+  float stdev_signal = vec_std_dev(signal_vec, mean_signal, true);
+  float mean_noise = vec_mean(noise_vec);
+  float stdev_noise = vec_std_dev(noise_vec, mean_noise, true);
+  return dprime(mean_signal, stdev_signal, mean_noise, stdev_noise);
 }
 
 bool taMath_float::vec_regress_lin(const float_Matrix* x_vec, const float_Matrix* y_vec,

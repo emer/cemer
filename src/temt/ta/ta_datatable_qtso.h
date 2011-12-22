@@ -871,11 +871,6 @@ public:
   GraphPlotView         plot_6;         // fifth column of data to plot (optional)
   GraphPlotView         plot_7;         // fifth column of data to plot (optional)
   GraphPlotView         plot_8;         // fifth column of data to plot (optional)
-  bool                  alt_y_1;        // #HIDDEN #READ_ONLY deprecated! plot 1 values on alt Y axis (else plot_1 axis)
-  bool                  alt_y_2;        // #HIDDEN #READ_ONLY deprecated! plot 2 values on alt Y axis (else plot_1 axis)
-  bool                  alt_y_3;        // #HIDDEN #READ_ONLY deprecated! plot 3 values on alt Y axis (else plot_1 axis)
-  bool                  alt_y_4;        // #HIDDEN #READ_ONLY deprecated! plot 4 values on alt Y axis (else plot_1 axis)
-  bool                  alt_y_5;        // #HIDDEN #READ_ONLY deprecated! plot 5 values on alt Y axis (else plot_1 axis)
 
   GraphPlotView         err_1;          // data for error bars for plot_1 values
   GraphPlotView         err_2;          // data for error bars for plot_2 values

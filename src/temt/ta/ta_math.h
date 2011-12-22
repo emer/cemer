@@ -475,6 +475,10 @@ public:
   static double erfc(double x);
   // #CAT_Probability complement of the error function (1.0 - erf(x)) */
 
+  static double dprime(double mean_signal, double stdev_signal,
+		       double mean_noise, double stdev_noise);
+  // #CAT_Probability d' signal detection sensitivity measure (actually d_a for unequal variances) -- = (mean_signal - mean_noise) / sqrt(0.5 * (stdev_signal^2 + stdev_noise^2)) -- difference in means divided by the average standard deviations
+
   static double chisq_p(double X, double v);
   // #CAT_Probability P(X^2 | v)
   static double chisq_q(double X, double v);
@@ -618,6 +622,10 @@ public:
                            taMatrix* dest_mat, const int& dim = 0);
   // #CAT_Statistics Concatenate a and b into dest. If dim = 0 (default) concatenate the columns. If dim = 1 concatenate the rows.
 
+
+  static double  vec_dprime(const double_Matrix* signal_vec,
+			    const double_Matrix* noise_vec);
+  // #CAT_Statistics computes the d-prime (d') statistic from signal and noise vectors -- just computes the mean and standard deviation of each vector and then computes d' from there using standard formula (see plain dprime function)
 
   static bool   vec_regress_lin(const double_Matrix* x_vec, const double_Matrix* y_vec,
                                 double& b, double& m, double& cov00, double& cov01,
@@ -1078,6 +1086,10 @@ public:
   static float erfc(float x);
   // #CAT_Probability complement of the error function (1.0 - erf(x)) */
 
+  static float dprime(float mean_signal, float stdev_signal,
+		       float mean_noise, float stdev_noise);
+  // #CAT_Probability d' signal detection sensitivity measure (actually d_a for unequal variances) -- = (mean_signal - mean_noise) / sqrt(0.5 * (stdev_signal^2 + stdev_noise^2)) -- difference in means divided by the average standard deviations
+
   static float chisq_p(float X, float v);
   // #CAT_Probability P(X^2 | v)
   static float chisq_q(float X, float v);
@@ -1211,6 +1223,10 @@ public:
 
   static void   vec_sort(float_Matrix* vec, bool descending = false);
   // #CAT_Statistics sort the given vector values in numerical order (in place)
+
+  static float  vec_dprime(const float_Matrix* signal_vec,
+			    const float_Matrix* noise_vec);
+  // #CAT_Statistics computes the d-prime (d') statistic from signal and noise vectors -- just computes the mean and standard deviation of each vector and then computes d' from there using standard formula (see plain dprime function)
 
   static bool   vec_regress_lin(const float_Matrix* x_vec, const float_Matrix* y_vec,
                                 float& b, float& m, float& cov00, float& cov01,
