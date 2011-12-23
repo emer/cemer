@@ -115,6 +115,7 @@ void BrainView::Initialize() {
   slice_spacing_ = 1;
   slice_transparency_ = 90;
   last_state_change_ = NONE;
+  view_params.unit_trans = .9;	// with high-fill pct, unit trans should be much higher
   
   QString data_path(taMisc::app_dir.toQString());
   if (data_path.size() != 0) {
@@ -205,7 +206,7 @@ void BrainView::BuildAll() { // populates all T3 guys
 void BrainView::UpdateName() {
   if (net()) {
     if (!name.contains(net()->name))
-      SetName(net()->name + "_View");
+      SetName(net()->name + "_BrainView");
   }
   else {
     if (name.empty())
