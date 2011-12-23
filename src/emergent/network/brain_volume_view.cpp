@@ -427,8 +427,8 @@ void BrainVolumeView::CreateFaceSets()
         }
         voxel_map_.insert(v, ijkCoord);
         uvd_bases_map_.insert(u,i); //map unit* to index, so we can index into uvd_bases
-        i++;
       }
+      i++;
     }
   }
   
