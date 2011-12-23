@@ -1,0 +1,842 @@
+// ta_Dump File v3.0 -- code v5.2.6.0 rev5219
+Program .projects[0].programs.gp[3][0] { 
+  ProgObjList @.objs = [1] {
+    DataTable @[0] { 
+      DataTableCols @.data = [1] {
+	int_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+	    UserDataItem @[0] { };
+     };
+};
+      };
+    };
+  };
+
+  ProgType_List @.types = [0] {
+  };
+
+  ProgVar_List @.args = [3] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+  };
+
+  ProgVar_List @.vars = [4] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+    ProgVar @[2] { };
+    ProgVar @[3] { };
+  };
+
+  Function_List @.functions = [3] {
+    Function @[0] { 
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgEl_List @.fun_code = [2] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [0] {
+	  };
+	};
+	IfElse @[1] { 
+	  ProgEl_List @.true_code = [1] {
+	    AssignExpr @[0] { };
+	  };
+
+	  ProgEl_List @.false_code = [2] {
+	    AssignExpr @[0] { };
+	    WhileLoop @[1] { 
+	      ProgEl_List @.loop_code = [1] {
+		VarIncr @[0] { };
+	      };
+	    };
+	  };
+	};
+      };
+    };
+    Function @[1] { 
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgEl_List @.fun_code = [3] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [0] {
+	  };
+	};
+	AssignExpr @[1] { };
+	IfElse @[2] { 
+	  ProgEl_List @.true_code = [1] {
+	    DataProcCall @[0] { 
+	      ProgArg_List @.meth_args = [2] {
+		ProgArg @[0] { };
+		ProgArg @[1] { };
+	      };
+	    };
+	  };
+
+	  ProgEl_List @.false_code = [0] {
+	  };
+	};
+      };
+    };
+    Function @[2] { 
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgEl_List @.fun_code = [5] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [0] {
+	  };
+	};
+	FunctionCall @[1] { 
+	  ProgArg_List @.fun_args = [0] {
+	  };
+	};
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[3] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	FunctionCall @[4] { 
+	  ProgArg_List @.fun_args = [0] {
+	  };
+	};
+      };
+    };
+  };
+
+  ProgEl_List @.init_code = [2] {
+    FunctionCall @[0] { 
+      ProgArg_List @.fun_args = [0] {
+      };
+    };
+    AssignExpr @[1] { };
+  };
+
+  ProgEl_List @.prog_code = [6] {
+    FunctionCall @[0] { 
+      ProgArg_List @.fun_args = [0] {
+      };
+    };
+    IfElse @[1] { 
+      ProgEl_List @.true_code = [1] {
+	FunctionCall @[0] { 
+	  ProgArg_List @.fun_args = [0] {
+	  };
+	};
+      };
+
+      ProgEl_List @.false_code = [0] {
+      };
+    };
+    IfElse @[2] { 
+      ProgEl_List @.true_code = [1] {
+	FunctionCall @[0] { 
+	  ProgArg_List @.fun_args = [0] {
+	  };
+	};
+      };
+
+      ProgEl_List @.false_code = [1] {
+	VarIncr @[0] { };
+      };
+    };
+    IfElse @[3] { 
+      ProgEl_List @.true_code = [1] {
+	MethodCall @[0] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+      };
+
+      ProgEl_List @.false_code = [1] {
+	AssignExpr @[0] { };
+      };
+    };
+    IfElse @[4] { 
+      ProgEl_List @.true_code = [2] {
+	AssignExpr @[0] { };
+	IfElse @[1] { 
+	  ProgEl_List @.true_code = [1] {
+	    RandomCall @[0] { 
+	      ProgArg_List @.meth_args = [1] {
+		ProgArg @[0] { };
+	      };
+	    };
+	  };
+
+	  ProgEl_List @.false_code = [0] {
+	  };
+	};
+      };
+
+      ProgEl_List @.false_code = [0] {
+      };
+    };
+    MethodCall @[5] { 
+      ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+      };
+    };
+  };
+};
+Program .projects[0].programs.gp[3][0] {
+ name="ChooseNextEvent";
+ short_nm="ChNxEvt";
+ tags="InputData, Permuted, FlexProgs, ApplyInput";
+ desc="choose next event in input data in either sequential or permuted order according to its own internal counter-- starts over (re-permutes) when the end is reached -- is automatically dmem compatible for allocating different events to different processors";
+ flags=NO_STOP_STEP;
+ objs {
+  name=;
+  el_typ=DataTable;
+  el_def=0;
+  DataTable @[0] {
+   name="PermIdxTable";
+   desc=;
+   data {
+    name="data";
+    el_typ=DataColTp;
+    el_def=0;
+    int_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_455";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="Index";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+	  [0]      };
+     ar {
+      name=;
+	  [6] 0;1;2;3;4;5;     };
+    };
+   };
+   data_flags=SAVE_ROWS|AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+  };
+ };
+ types {
+  name=;
+  el_typ=ProgType;
+  el_def=0;
+ };
+ args {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL;
+   reference=0;
+   desc="Network to which to apply inputs";
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="input datatable containing input/output patterns";
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="permuted";
+   var_type=T_Bool;
+   bool_val=0;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="present events in permuted order (otherwise use sequential order)";
+   init_from=NULL;
+  };
+ };
+ vars {
+  name=;
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="cur_idx";
+   var_type=T_Int;
+   int_val=-1;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="current index into permuted table ";
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="input_idx";
+   var_type=T_Int;
+   int_val=1;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="dmem_rows";
+   var_type=T_Int;
+   int_val=6;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="PermIdxTable";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].programs.gp[3][0].objs[0]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ functions {
+  name=;
+  el_typ=Function;
+  el_def=0;
+  Function @[0] {
+   desc="compute target number of rows, based on current dmem settings";
+   flags=0;
+   name="ComputeDmemRows";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="ProgEl_List_1374";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    IfElse @[1] {
+     desc=;
+     flags=0;
+     cond {
+      expr="taMisc::dmem_nprocs <= 1";
+     };
+     show_false_code=1;
+     true_code {
+      name="ProgEl_List_1376";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       desc=;
+       flags=0;
+       result_var=.projects[0].programs.gp[3][0].vars[2]$$;
+       expr {
+	expr="input_data.rows";
+       };
+      };
+     };
+     false_code {
+      name="ProgEl_List_1377";
+      el_typ=ProgCode;
+      el_def=0;
+      AssignExpr @[0] {
+       desc=;
+       flags=0;
+       result_var=$.projects[0].programs.gp[3][0].vars[2]$;
+       expr {
+	expr="input_data.rows / taMisc::dmem_nprocs";
+       };
+      };
+      WhileLoop @[1] {
+       desc="ensure that we cover all the input data";
+       flags=0;
+       loop_code {
+	name="ProgEl_List_1382";
+	el_typ=ProgCode;
+	el_def=0;
+	VarIncr @[0] {
+	 desc=;
+	 flags=0;
+	 var=$.projects[0].programs.gp[3][0].vars[2]$;
+	 expr {
+	  expr="1";
+	 };
+	};
+       };
+       test {
+	expr="dmem_rows * taMisc::dmem_nprocs < input_data.rows";
+       };
+      };
+     };
+    };
+   };
+  };
+  Function @[1] {
+   desc=;
+   flags=0;
+   name="PermuteIndexes";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="ProgEl_List_1375";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    AssignExpr @[1] {
+     desc=;
+     flags=0;
+     result_var=.projects[0].programs.gp[3][0].vars[0]$$;
+     expr {
+      expr="0";
+     };
+    };
+    IfElse @[2] {
+     desc=;
+     flags=0;
+     cond {
+      expr="permuted";
+     };
+     show_false_code=1;
+     true_code {
+      name="ProgEl_List_205";
+      el_typ=ProgCode;
+      el_def=0;
+      DataProcCall @[0] {
+       desc=;
+       flags=0;
+       result_var=NULL;
+       object_type=taDataProc;
+       method=taDataProc::Permute;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="dest";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="PermIdxTable";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=DataTable_ptr;
+	 type="DataTable*";
+	 name="src";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="PermIdxTable";
+	 };
+	};
+       };
+      };
+     };
+     false_code {
+      name="ProgEl_List_206";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+    };
+   };
+  };
+  Function @[2] {
+   desc="initialize indexes from current input data table";
+   flags=0;
+   name="InitIndexes";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   fun_code {
+    name="ProgEl_List_1370";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    FunctionCall @[1] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     fun=.projects[0].programs.gp[3][0].functions[0]$$;
+     fun_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=.projects[0].programs.gp[3][0].vars[3]$$;
+     method=DataTable::EnforceRows;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=1;
+       def_val=;
+       expr {
+	expr="dmem_rows";
+       };
+      };
+     };
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects[0].programs.gp[3][0].vars[3]$;
+     method=DataTable::InitValsToRowNo;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="0";
+       };
+      };
+     };
+    };
+    FunctionCall @[4] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     fun=.projects[0].programs.gp[3][0].functions[1]$$;
+     fun_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+  };
+ };
+ init_code {
+  name=;
+  el_typ=ProgCode;
+  el_def=0;
+  FunctionCall @[0] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   fun=.projects[0].programs.gp[3][0].functions[2]$$;
+   fun_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  AssignExpr @[1] {
+   desc="start off at -1 so it increments to 0 at first time through";
+   flags=0;
+   result_var=$.projects[0].programs.gp[3][0].vars[0]$;
+   expr {
+    expr="-1";
+   };
+  };
+ };
+ prog_code {
+  name=;
+  el_typ=ProgCode;
+  el_def=0;
+  FunctionCall @[0] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   fun=$.projects[0].programs.gp[3][0].functions[0]$;
+   fun_args {
+    name="ProgArg_List_0";
+    el_typ=ProgArg;
+    el_def=0;
+   };
+  };
+  IfElse @[1] {
+   desc=;
+   flags=0;
+   cond {
+    expr="dmem_rows != PermIdxTable.rows";
+   };
+   show_false_code=0;
+   true_code {
+    name="ProgEl_List_1372";
+    el_typ=ProgCode;
+    el_def=0;
+    FunctionCall @[0] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     fun=$.projects[0].programs.gp[3][0].functions[2]$;
+     fun_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+   false_code {
+    name="ProgEl_List_1373";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+  };
+  IfElse @[2] {
+   desc=;
+   flags=0;
+   cond {
+    expr="cur_idx == PermIdxTable.rows -1";
+   };
+   show_false_code=1;
+   true_code {
+    name="ProgEl_List_1374";
+    el_typ=ProgCode;
+    el_def=0;
+    FunctionCall @[0] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     fun=$.projects[0].programs.gp[3][0].functions[1]$;
+     fun_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+   };
+   false_code {
+    name="ProgEl_List_1375";
+    el_typ=ProgCode;
+    el_def=0;
+    VarIncr @[0] {
+     desc=;
+     flags=0;
+     var=$.projects[0].programs.gp[3][0].vars[0]$;
+     expr {
+      expr="1";
+     };
+    };
+   };
+  };
+  IfElse @[3] {
+   desc=;
+   flags=0;
+   cond {
+    expr="permuted";
+   };
+   show_false_code=1;
+   true_code {
+    name="ProgEl_List_207";
+    el_typ=ProgCode;
+    el_def=0;
+    MethodCall @[0] {
+     desc=;
+     flags=0;
+     result_var=.projects[0].programs.gp[3][0].vars[1]$$;
+     obj=$.projects[0].programs.gp[3][0].vars[3]$;
+     method=DataTable::GetVal;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=Variant;
+       type="Variant";
+       name="col";
+       required=1;
+       def_val=;
+       expr {
+	expr="0";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int;
+       type="int";
+       name="row";
+       required=1;
+       def_val=;
+       expr {
+	expr="cur_idx";
+       };
+      };
+     };
+    };
+   };
+   false_code {
+    name="ProgEl_List_208";
+    el_typ=ProgCode;
+    el_def=0;
+    AssignExpr @[0] {
+     desc=;
+     flags=0;
+     result_var=$.projects[0].programs.gp[3][0].vars[1]$;
+     expr {
+      expr="cur_idx";
+     };
+    };
+   };
+  };
+  IfElse @[4] {
+   desc=;
+   flags=0;
+   cond {
+    expr="taMisc::dmem_nprocs > 1";
+   };
+   show_false_code=0;
+   true_code {
+    name="ProgEl_List_1378";
+    el_typ=ProgCode;
+    el_def=0;
+    AssignExpr @[0] {
+     desc="for dmem, transform from virtual idx counter into actual row, unique to this processor";
+     flags=0;
+     result_var=$.projects[0].programs.gp[3][0].vars[1]$;
+     expr {
+      expr="taMisc::dmem_proc + taMisc::dmem_nprocs * input_idx";
+     };
+    };
+    IfElse @[1] {
+     desc="choose at random if above actual input data";
+     flags=0;
+     cond {
+      expr="input_idx > input_data.rows";
+     };
+     show_false_code=0;
+     true_code {
+      name="ProgEl_List_1381";
+      el_typ=ProgCode;
+      el_def=0;
+      RandomCall @[0] {
+       desc=;
+       flags=0;
+       result_var=$.projects[0].programs.gp[3][0].vars[1]$;
+       object_type=Random;
+       method=Random::IntZeroN;
+       meth_args {
+	name="ProgArg_List_0";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=int;
+	 type="int";
+	 name="n";
+	 required=1;
+	 def_val=;
+	 expr {
+	  expr="input_data.rows";
+	 };
+	};
+       };
+      };
+     };
+     false_code {
+      name="ProgEl_List_1382";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+    };
+   };
+   false_code {
+    name="ProgEl_List_1379";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+  };
+  MethodCall @[5] {
+   desc=;
+   flags=0;
+   result_var=NULL;
+   obj=.projects[0].programs.gp[3][0].args[1]$$;
+   method=DataBlock_Idx::ReadItem;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=int;
+     type="int";
+     name="idx";
+     required=1;
+     def_val=;
+     expr {
+      expr="input_idx";
+     };
+    };
+   };
+  };
+ };
+ step_prog=NULL;
+ step_n=1;
+};

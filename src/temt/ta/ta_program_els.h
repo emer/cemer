@@ -126,6 +126,7 @@ public:
   
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override String	GetDisplayName() const;
   override String	GetToolbarName() const { return "while"; }
@@ -149,6 +150,7 @@ public:
   
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override String	GetDisplayName() const;
   override String	GetToolbarName() const { return "do"; }
@@ -180,6 +182,7 @@ public:
 
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override String	GetDisplayName() const;
   override void		SetProgExprFlags();
@@ -213,6 +216,7 @@ public:
 
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
@@ -236,6 +240,7 @@ public:
 
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
@@ -259,6 +264,7 @@ public:
 
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
@@ -285,6 +291,7 @@ public:
 
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }
@@ -345,6 +352,7 @@ public:
 
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override String	GetDisplayName() const;
   override String	GetToolbarName() const { return "case"; }
@@ -377,6 +385,7 @@ public:
 
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override ProgVar*	FindVarName(const String& var_nm) const;
   override String	GetDisplayName() const;
@@ -711,6 +720,7 @@ INHERITED(ProgEl)
 public:
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override String	GetDisplayName() const;
   override String	GetTypeDecoKey() const { return "Comment"; }
@@ -757,6 +767,7 @@ public:
   
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
 
   override String	GetDisplayName() const;
   override String 	GetTypeDecoKey() const { return "ProgCtrl"; }

@@ -1184,7 +1184,10 @@ bool VarIncr::CvtFmCode(const String& code) {
   if(rhs.endsWith(';')) rhs = rhs.before(';',-1);
   
   var = FindVarNameInScope(lhs, true); // option to make
-  expr.SetExpr("-" + rhs);
+  if(neg)
+    expr.SetExpr("-" + rhs);
+  else
+    expr.SetExpr(rhs);
   
   return true;
 }

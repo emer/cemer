@@ -3012,24 +3012,33 @@ ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
     return NULL;
   ProgEl* cvt = candidates[0];
   if(candidates.size > 1) {
+    int ctrl_n = 0;
     for(int i=candidates.size-1; i>= 0; i--) {
       ProgEl* pel = candidates[i];
-      if(pel->InheritsFrom(&TA_AssignExpr)) // assign only matches if it is the only one..
+      if(pel->InheritsFrom(&TA_AssignExpr)) { // assign only matches if it is the only one..
         candidates.RemoveIdx(i);
+	continue;
+      }
+      if(pel->IsCtrlProgEl()) {
+	cvt = pel;		// take precidence
+	ctrl_n++;
+      }
     }
-    cvt = candidates[0];
-    if(candidates.size > 1) {
-      int chs = taMisc::Choice("Multiple program elements match code string:\n" + code_str
-                               + "\nPlease choose correct one.",
-                               "Cancel",
-                       candidates[0]->GetToolbarName(),
-                       candidates[1]->GetToolbarName(),
-                       (candidates.size > 2 ? candidates[2]->GetToolbarName() : _nilString),
-                       (candidates.size > 3 ? candidates[3]->GetToolbarName() : _nilString),
-                       (candidates.size > 4 ? candidates[4]->GetToolbarName() : _nilString)
-                               );
-      if(chs == 0) return NULL;
-      cvt = candidates[chs-1];
+    if(ctrl_n != 1) {		// still need to pick -- ctrl_n should never be > 1 but who knows
+      cvt = candidates[0];
+      if(candidates.size > 1) {
+	int chs = taMisc::Choice("Multiple program elements match code string:\n" + code_str
+				 + "\nPlease choose correct one.",
+				 "Cancel",
+				 candidates[0]->GetToolbarName(),
+				 candidates[1]->GetToolbarName(),
+				 (candidates.size > 2 ? candidates[2]->GetToolbarName() : _nilString),
+				 (candidates.size > 3 ? candidates[3]->GetToolbarName() : _nilString),
+				 (candidates.size > 4 ? candidates[4]->GetToolbarName() : _nilString)
+				 );
+	if(chs == 0) return NULL;
+	cvt = candidates[chs-1];
+      }
     }
   }
 

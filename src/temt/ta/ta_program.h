@@ -891,6 +891,8 @@ public:
   // can this program element type be converted from given code (ProgCode) text string -- code has had whitespace trimmed at start -- scope_el provides scope information for relevant variables etc where this new prog el would be created -- use FindVarNameInScope etc on that obj
   virtual  bool         CvtFmCode(const String& code);
   // go ahead and convert the code (ProgCode) text string into this program element type  -- code has had whitespace trimmed at start
+  virtual  bool		IsCtrlProgEl() 	{ return false; }
+  // set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status
 
   override bool         BrowserSelectMe();
   override bool         BrowserExpandAll();
