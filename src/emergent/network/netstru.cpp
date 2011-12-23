@@ -3959,7 +3959,7 @@ void Layer::Initialize() {
   gp_unit_names_4d = false;
   // unit_names = ??
   brain_area = "";
-  voxel_fill_pct = 0.1f;
+  voxel_fill_pct = 1.0f;
   n_units = 0;                  // note: v3compat obs
 }
 

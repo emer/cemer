@@ -201,8 +201,8 @@ BrainViewPanel::BrainViewPanel(BrainView* dv_)
   layDispCheck->addWidget(chkNetText);
   layDispCheck->addSpacing(taiM->hsep_c);
 
-  chkLayMove = new QCheckBox("Lay\nMv", widg);
-  chkLayMove->setToolTip("Turn on the layer moving controls when in the manipulation mode (red arrow) of viewer -- these can sometimes interfere with viewing weights, so you can turn them off here (but then you won't be able to move layers around in the GUI)");
+  chkLayMove = new QCheckBox("Manip", widg);
+  chkLayMove->setToolTip("Turn on the manipulation (moving, scaling, rotating the brain view) controls when in the manipulation mode (red arrow) of viewer");
   connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkLayMove);
   layDispCheck->addSpacing(taiM->hsep_c);
