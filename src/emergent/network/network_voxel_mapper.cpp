@@ -15,50 +15,94 @@
 
 #include "network_voxel_mapper.h"
 
+#include <algorithm>
 #include <cassert>
-#include "netstru.h" // Network, Unit
+#include "netstru.h" // Network, Layer, Unit
 #include "ta_type.h" // taMisc::Warning()
 
 namespace { // anonymous
-  double
-  CubeRoot(double val)
-  {
-    return std::pow(val, 1.0/3.0);
-  }
-
-  QString GetAtlasFilename() {
-    // For now, only read from the Talairach atlas.
-    String talairachFilename = taMisc::app_dir + "/data/atlases/talairach.nii";
-    return talairachFilename.toQString();
-  }
+  // Set to 0 to turn off debug output.
+  // Set to 1 to enable debug output and test brain areas.
+  // Set to 2 to see all assigned voxels too.
+  const int DEBUG_LEVEL = 0;
 }
 
-NetworkVoxelMapper::NetworkVoxelMapper(Network *network)
-  : unit_map()
-  , network(network)
-  , atlas(GetAtlasFilename())
+///////////////////////////////////////
+//   NetworkVoxelMapper::LayerInfo   //
+///////////////////////////////////////
+
+class NetworkVoxelMapper::LayerInfo
 {
+public:
+  LayerInfo(Layer *layer);
+  Unit *GetUnit(unsigned idx) const;
+
+  const Layer *lay;
+  const unsigned num_units;
+
+  double adjusted_fill_pct;
+  unsigned num_subvoxels;
+};
+
+NetworkVoxelMapper::LayerInfo::LayerInfo(Layer *layer)
+  : lay(layer)
+  , num_units(layer->UnitAccess_NUnits(Layer::ACC_LAY))
+  , adjusted_fill_pct(0.0)
+  , num_subvoxels(0)
+{
+}
+
+Unit *
+NetworkVoxelMapper::LayerInfo::GetUnit(unsigned idx) const
+{
+  assert(idx < num_units);
+  Unit *unit = lay->UnitAccess(Layer::ACC_LAY, idx, 0);
+  // May be null, if Layer was just created and Network not rebuilt.
+  return unit;
+}
+
+///////////////////////////////////////
+//        NetworkVoxelMapper         //
+///////////////////////////////////////
+
+NetworkVoxelMapper::NetworkVoxelMapper(Network *network)
+  : m_layer_map()
+  , m_network(network)
+  , m_atlas(GetAtlasFilename())
+  , m_layer_info()
+{
+}
+
+QString
+NetworkVoxelMapper::GetAtlasFilename()
+{
+  // For now, only read from the Talairach atlas.
+  String talairachFilename = taMisc::app_dir + "/data/atlases/talairach.nii";
+  return talairachFilename.toQString();
+}
+
+NetworkVoxelMapper::~NetworkVoxelMapper()
+{
+  ClearLayerInfos();
 }
 
 void
 NetworkVoxelMapper::AssignVoxels()
 {
-  if (network->atlas_name.empty())
-  {
+  if (m_network->atlas_name.empty()) {
     taMisc::Warning("No atlas_name specified in network;",
       "cannot map units to voxel coordinates.");
     return;
   }
 
-  network->StructUpdate(true);  // prevent any upddates during mapping
+  m_network->StructUpdate(true);  // prevent any upddates during mapping
 
-  // Create a map of unit pointers.
-  CreateUnitMap(network);
+  // Create a map of layer pointers.
+  CreateLayerMap();
 
   // Iterate through brain areas.
-  QList<QString> brain_areas = unit_map.uniqueKeys();
-  foreach(const QString &brain_area, brain_areas)
-  {
+  QList<QString> brain_areas = m_layer_map.uniqueKeys();
+  foreach(const QString &brain_area, brain_areas) {
     // Get the collection of voxel coordinates associated with that
     // brain area.
     QList<FloatTDCoord> voxels = GetVoxelsInArea(brain_area);
@@ -67,47 +111,29 @@ NetworkVoxelMapper::AssignVoxels()
     AssignVoxelsInArea(brain_area, voxels);
   }
 
-  network->StructUpdate(false); // trigger update after mapping
+  m_network->StructUpdate(false); // trigger update after mapping
 }
 
 void
-NetworkVoxelMapper::CreateUnitMap(Network *network)
+NetworkVoxelMapper::CreateLayerMap()
 {
-  // Walk network layers and map unit pointers to brain areas.
-  for (int lay_idx = 0; lay_idx < network->layers.leaves; ++lay_idx)
-  {
-    if (Layer *layer = network->layers.Leaf(lay_idx))
-    {
-      // TBD: check if the layer is lesioned?  Or just assign
-      // coordinates to any layer that has a brain area associated?
-      // If no brain area is associated, still need to assign coords?
-      // Could assign size <= 0.0 to indicate not to render.
-      //if (layer->HasLayerFlag(Layer::LESIONED))
-      if(layer->lesioned() || layer->Iconified()) continue;
-      // always ignore lesioned and iconified layers
+  // Walk network layers and map brain areas to layer pointers.
+  for (int lay_idx = 0; lay_idx < m_network->layers.leaves; ++lay_idx) {
+    if (Layer *layer = m_network->layers.Leaf(lay_idx)) {
+      // Ignore lesioned and iconified layers.
+      if (layer->lesioned() || layer->Iconified()) continue;
 
       // If no brain_area was specified for this layer, warn the user,
       // but continue to add its units to the map so they can be set
       // to zero size later.
-      if (layer->brain_area.empty())
-      {
+      if (layer->brain_area.empty()) {
         // do not warn: mapping often called on nets with nothing set, and some
         // you just don't want to map in any case.  it is easy to see if empty..
-//         taMisc::Warning("No brain_area specified for layer", layer->name,
-//           "; units will not be rendered in BrainView.");
+        //taMisc::Warning("No brain_area specified for layer", layer->name,
+        //  "; units will not be rendered in BrainView.");
       }
 
-      // Get the number of units in this layer.
-      Layer::AccessMode mode = Layer::ACC_LAY;
-      int num_units_in_layer = layer->UnitAccess_NUnits(mode);
-
-      // Iterate through units.
-      for (int unit_idx = 0; unit_idx < num_units_in_layer; ++unit_idx)
-      {
-        Unit *unit = layer->UnitAccess(mode, unit_idx, 0);
-        if(unit->lesioned()) continue;
-        unit_map.insert(layer->brain_area.toQString(), unit);
-      }
+      m_layer_map.insert(layer->brain_area.toQString(), layer);
     }
   }
 }
@@ -115,152 +141,359 @@ NetworkVoxelMapper::CreateUnitMap(Network *network)
 // Get the collection of voxels associated with the given brain area,
 // in an atlas-specific manner.
 QList<FloatTDCoord>
-NetworkVoxelMapper::GetVoxelsInArea(const QString &brain_area)
+NetworkVoxelMapper::GetVoxelsInArea(QString brain_area)
 {
   QList<FloatTDCoord> voxels;
+
+  if (DEBUG_LEVEL > 0) {
+    // Some test brain areas.
+    if (brain_area == "TEST0") {
+      for (int x = -2; x < 0; ++x) {
+        for (int y = -2; y < 0; ++y) {
+          for (int z = 70; z < 71; ++z) {
+            voxels << FloatTDCoord(x, y, z);
+          }
+        }
+      }
+      return voxels;
+    }
+    if (brain_area == "TEST1") {
+      for (int x = 0; x < 20; ++x) {
+        for (int y = 0; y < 20; ++y) {
+          for (int z = 50; z < 51; ++z) {
+            voxels << FloatTDCoord(x, y, z);
+          }
+        }
+      }
+      return voxels;
+    }
+    if (brain_area == "TEST2") {
+      for (int x = -40; x < 0; x += 4) {
+        for (int y = 0; y < 40; y += 4) {
+          for (int z = 0; z < 40; z += 10) {
+            voxels << FloatTDCoord(x, y, z);
+          }
+        }
+      }
+      return voxels;
+    }
+  }
 
   // Return no voxels if no brain area was specified.
   if (!brain_area.isEmpty()) {
     // Get the list of voxels, first by their i,j,k indices, then convert
     // to x,y,z coordinates.
-    QList<TDCoord> voxelIdxs = atlas.GetVoxelsInArea(brain_area);
-    voxels = atlas.GetVoxelCoords(voxelIdxs);
+    QList<TDCoord> voxelIdxs = m_atlas.GetVoxelsInArea(brain_area);
+    voxels = m_atlas.GetVoxelCoords(voxelIdxs);
   }
 
   return voxels;
 }
 
 void
-NetworkVoxelMapper::AssignVoxelsInArea(const QString &brain_area, const QList<FloatTDCoord> &voxels)
+NetworkVoxelMapper::AssignVoxelsInArea(QString brain_area, QList<FloatTDCoord> voxels)
 {
-  // Get the list of units that need voxel assignments for this brain area.
-  QList<Unit *> units = unit_map.values(brain_area);
+  // Each unit's voxels' coordinates and sizes will be based on:
+  // * the layer's percent-fill parameter (voxel_fill_pct)
+  // * how many layers map to the same brain area
+  // * the number of units vs. voxels per brain area
 
-  // Each unit's voxel coordinate and size will be based on the number of
-  // units vs. voxels per brain area.
-  unsigned num_units = unit_map.count(brain_area);
-  unsigned num_voxels = voxels.count();
+  // Get the list of layers that need voxel assignments for this brain area.
+  QList<Layer *> layers = m_layer_map.values(brain_area);
 
-  // Check if any voxels were found for this brain area.
-  if (num_voxels == 0)
-  {
-    if (!brain_area.isEmpty())
-    {
-      // Already warned about empty brain_area fields in CreateUnitMap().
-      // This warning is to catch typos.
-      taMisc::Warning("No voxels were found for brain area",
-        brain_area.toLatin1(), "in atlas", network->atlas_name);
-    }
-
-    // Not much can be done other than assigning each unit to render at 0.0 size.
-    foreach(Unit *unit, units)
-    {
-      unit->voxels.SetSize(1);
-      Voxel *voxel = unit->voxels.FastEl(0);
-      voxel->size = 0.0;
-    }
-
+  // Get the pool of voxels to use for this brain area.
+  unsigned num_voxels = voxels.size();
+  if (HandleEmptyBrainArea(num_voxels, brain_area, layers)) {
     return;
   }
 
-  // Get the size to render each unit in the brain view.
-  double voxel_size = GetVoxelSize(num_units, num_voxels);
+  // Make a list of LayerInfos to collect data as we calculate it for
+  // the current set of layers.
+  MakeLayerInfos(layers);
+
+  // Determine how much coverage of the brain area is requested by the layers.
+  double total_pct = ComputeLayerPercentages();
+
+  // Take care of any layers that have their percent fill parameter set to 0.
+  RemoveZeroFillLayers();
 
   // Get the number of subdivisions each voxel needs along each dimension
-  // in order to accomodate the number of units.  This isn't necessarily
-  // related to voxel_size.
-  unsigned voxel_divisions = GetVoxelDivisions(num_units, num_voxels);
+  // in order to accomodate the number of units in each layer.
+  // IOW, a voxel will be divided into 1, 8, 27, or 64, sub-voxels.
+  // (This may result in many more sub-voxels than units in some cases.)
+  unsigned num_subvoxels = 0; // out param.
+  unsigned voxel_divisions = GetVoxelDivisions(num_voxels, num_subvoxels);
+  unsigned needed_subvoxels = GetNeededSubvoxelCount(num_subvoxels);
 
-  // Calculate the total number of subvoxels after division, and get a list
-  // of indices for which subvoxels will be assigned to units.
-  unsigned num_subvoxels =
-    num_voxels * voxel_divisions * voxel_divisions * voxel_divisions;
-  QList<unsigned> subvoxel_idxs = GetSubvoxelIndexes(num_units, num_subvoxels);
+  if (DEBUG_LEVEL > 0) {
+    std::cout
+      << "Area: " << brain_area.toStdString()
+      << "\n  num_voxels: " << num_voxels
+      << "\n  voxel_divisions: " << voxel_divisions
+      << "\n  num_subvoxels: " << num_subvoxels
+      << "\n  total_pct: " << total_pct
+      << "\n  needed_subvoxels: " << needed_subvoxels
+      << std::endl;
+  }
 
-  // Assign coordinates to each unit.
-  assert(subvoxel_idxs.size() == units.size());
+  // Get a list of subvoxel indices to be assigned to units.  This produces
+  // a well-distributed list of subvoxels for *all* layers to share.
+  QList<unsigned> subvoxel_idxs =
+    GetSubvoxelIndexes(needed_subvoxels, num_subvoxels);
+
+  AssignVoxelsToLayers(voxels, subvoxel_idxs, voxel_divisions);
+}
+
+void
+NetworkVoxelMapper::AssignVoxelsToLayers(
+  QList<FloatTDCoord> voxels,
+  QList<unsigned> subvoxel_idxs,
+  unsigned voxel_divisions)
+{
+  // Determine the size to render the (sub)voxel cubes in mm per edge.
+  double voxel_size = 1.0 / voxel_divisions;
+
+  // Assign voxels to each unit.
+  // Initialize "idx" outside the main loop since it indexes into the
+  // subvoxel_idxs list -- i.e., use each subvoxel exactly once.
   unsigned idx = 0;
-  foreach(Unit *unit, units)
-  {
-    unsigned subvoxel_idx = subvoxel_idxs[idx++];
+  foreach(LayerInfo *li, m_layer_info) {
+    if (DEBUG_LEVEL > 0) {
+      std::cout << "\n  li->num_subvoxels: " << li->num_subvoxels
+                << "\n  li->num_units: " << li->num_units << std::endl;
+    }
 
-    // Make sure the unit has exactly one voxel (DPF TODO: more than 1).
-    unit->voxels.SetSize(1);
+    // The current layer has some number of units and some number of
+    // subvoxels to be assigned to it.  Use Bresenham's algo again to
+    // determine which subvoxels go for each unit.
+    assert(li->num_subvoxels >= li->num_units);
 
-    // Set that voxel's characteristics.
-    Voxel *voxel = unit->voxels.FastEl(0);
-    voxel->coord = GetCoord(subvoxel_idx, voxels, voxel_divisions);
-    voxel->size = voxel_size;
+    // Initialize D differently here, since we want all units to get
+    // an approximately equal number of voxels, vs. having half-filled
+    // units at the front and back.
+    int dx = 2 * li->num_subvoxels;
+    int dy = 2 * li->num_units;
+    int D = dy - dx + 1;
+
+    // Point at the first unit in the layer to start with, then when
+    // the algo "bumps" the Y dimension, move on to the next unit.
+    unsigned unit_idx = 0;
+    Unit *unit = li->GetUnit(unit_idx);
+    unit->voxels.Reset();
+
+    // Repeat until all subvoxels for this layer have been assigned.
+    for (unsigned count = 0; count < li->num_subvoxels; ++count) {
+      // Get the next subvoxel index.
+      unsigned subvoxel_idx = subvoxel_idxs[idx++];
+
+      // Make the voxel.
+      Voxel *voxel = new Voxel;
+      voxel->coord = GetCoord(subvoxel_idx, voxels, voxel_divisions);
+      voxel->size = unit->lesioned() ? 0.0 : voxel_size;
+
+      // Add it to this unit's voxel list.
+      unit->voxels.Add(voxel);
+
+      if (DEBUG_LEVEL > 1) {
+        std::cout << "  Added voxel to unit " << li->lay->name.chars()
+          << "(" << unit_idx << "): vox# " << count << ": " << *voxel
+          << std::endl;
+      }
+
+      if (D > 0) {
+        D -= dx;
+
+        // Move to next unit.  Do a bounds check before updating the pointer.
+        if (++unit_idx >= li->num_units) {
+          // This normally happens before the loop exits properly, but check
+          // for the (hopefully impossible) case where the algorithm doesn't
+          // get to assign all voxels to units.
+          if (count + 1 != li->num_subvoxels) {
+            std::ostringstream os;
+            os << "AssignVoxelsToLayers: algo terminated prematurely ("
+               << count << " / " << li->num_subvoxels
+               << ") with " << li->num_units << " units."
+               << std::endl;
+            taMisc::Warning(os.str().c_str());
+          }
+          break;
+        }
+
+        // Update the pointer and reset the new unit's voxel list.
+        unit = li->GetUnit(unit_idx);
+        unit->voxels.Reset();
+      }
+
+      D += dy;
+    }
   }
 }
 
-// Determine the size in mm per edge of the (sub)voxel cube.
-double
-NetworkVoxelMapper::GetVoxelSize(unsigned num_units, unsigned num_voxels)
+bool
+NetworkVoxelMapper::HandleEmptyBrainArea(
+  unsigned num_voxels, QString brain_area, QList<Layer *> layers)
 {
-  // As long as there are at least as many voxels as units for a brain area,
-  // each unit will get rendered as a full-size voxel.
-  if (num_voxels >= num_units)
-  {
-    // DPF TODO: allow mega-voxels or enforce a max size?
-    // return 1.0;
+  bool brain_area_is_empty = false;
+
+  // If no voxels exist for this brain area, or no brain area label was
+  // specified, then wipe out all voxel assignments.
+  if (num_voxels == 0 || brain_area.isEmpty()) {
+    brain_area_is_empty = true;
+
+    // If there *is* text in the brain area, warn the user, since it's
+    // possible there is a typo in the regexp (or wrong atlas used, etc.).
+    if (!brain_area.isEmpty()) {
+      taMisc::Warning("No voxels were found for brain area",
+        brain_area.toLatin1(), "in atlas", m_network->atlas_name);
+    }
+
+    // Clear all voxel assignments for units in these layers.
+    foreach(Layer *layer, layers) {
+      LayerInfo li(layer);
+      ClearVoxelAssignmentForLayer(&li);
+    }
   }
 
-  // Otherwise, if fewer voxels exist than units, then each unit
-  // should be rendered in a scaled-down manner.
-  double ratio = static_cast<double>(num_voxels) / num_units;
+  return brain_area_is_empty;
+}
 
-  // Take the cube root to get the voxel edge-length.
-  return CubeRoot(ratio);
+void
+NetworkVoxelMapper::ClearVoxelAssignmentForLayer(LayerInfo *li)
+{
+  // Iterate through units.
+  for (unsigned idx = 0; idx < li->num_units; ++idx) {
+    // Reset each unit's voxel list.
+    if (Unit *unit = li->GetUnit(idx)) {
+      unit->voxels.Reset();
+    }
+  }
+}
+
+void
+NetworkVoxelMapper::MakeLayerInfos(QList<Layer *> layers)
+{
+  ClearLayerInfos();
+  foreach(Layer *layer, layers) {
+    m_layer_info << new LayerInfo(layer);
+  }
+}
+
+void
+NetworkVoxelMapper::ClearLayerInfos()
+{
+  while (!m_layer_info.isEmpty()) {
+    delete m_layer_info.takeFirst();
+  }
+}
+
+double
+NetworkVoxelMapper::ComputeLayerPercentages()
+{
+  double total_pct = 0.0;
+  foreach(LayerInfo *li, m_layer_info) {
+    // Clip percentages to fit within the 0.0 to 1.0 range.
+    double pct = li->lay->voxel_fill_pct;
+    pct = std::max(pct, 0.0);
+    pct = std::min(pct, 1.0);
+
+    // Save the adjusted percent value, which will be normalized if needed.
+    li->adjusted_fill_pct = pct;
+
+    // Calculate the total of all percentages.
+    total_pct += pct;
+  }
+
+  // If more than 100% coverage requested, scale back each layer's request.
+  if (total_pct >= 1.0) {
+    foreach(LayerInfo *li, m_layer_info) {
+      li->adjusted_fill_pct /= total_pct;
+    }
+    total_pct = 1.0;
+  }
+
+  return total_pct;
+}
+
+void
+NetworkVoxelMapper::RemoveZeroFillLayers()
+{
+  const double EPSILON = 0.00001;
+
+  QMutableListIterator<LayerInfo *> iter(m_layer_info);
+  while (iter.hasNext()) {
+    LayerInfo *li = iter.next();
+    if (li->adjusted_fill_pct < EPSILON) {
+      ClearVoxelAssignmentForLayer(li);
+      iter.remove();
+      delete li;
+    }
+  }
 }
 
 unsigned
-NetworkVoxelMapper::GetVoxelDivisions(unsigned num_units, unsigned num_voxels)
+NetworkVoxelMapper::GetVoxelDivisions(
+  unsigned num_voxels, unsigned &num_subvoxels)
 {
-  // If there are at least as many voxels as units, then there is no need
-  // to divide voxels up.
-  if (num_voxels >= num_units)
-  {
-    return 1;
+  // As a default, assume no voxel splitting is needed.
+  unsigned divs = 1;
+  num_subvoxels = num_voxels;
+
+  // Check each layer to see if it will have enough (sub)voxels for its units.
+  foreach(LayerInfo *li, m_layer_info) {
+    // Compute the number of subvoxels that will be assigned to this layer,
+    // and compare that against the number of units (including lesioned ones).
+    // Lesioned units still get assigned voxel coords, but since they
+    // won't be drawn, "holes" will appear in the brain view.
+    while (li->adjusted_fill_pct * num_subvoxels < li->num_units) {
+      ++divs;
+      num_subvoxels = num_voxels * divs * divs * divs;
+    }
   }
 
-  // Otherwise, divide a voxel along each dimension into sub-voxels
-  // (for example, into 8, 27, or 64 cubes).  This may result in many
-  // more sub-voxels than units.
-  unsigned voxel_divisions = static_cast<unsigned>(
-    CubeRoot(static_cast<double>(num_units) / num_voxels));
+  return divs;
+}
 
-  // Account for off-by-one type errors due to rounding in
-  // floating point math.
-  while (voxel_divisions * voxel_divisions * voxel_divisions * num_voxels < num_units)
-  {
-    ++voxel_divisions;
+unsigned
+NetworkVoxelMapper::GetNeededSubvoxelCount(unsigned num_subvoxels)
+{
+  // Now that we know how many subdivisions there are, determine how many
+  // subvoxels each layer will be assigned, and tally them all up.
+  unsigned needed_subvoxels = 0;
+  foreach(LayerInfo *li, m_layer_info) {
+    // This is guaranteed to be >= the number of units in the layer.
+    li->num_subvoxels = static_cast<unsigned>(
+      li->adjusted_fill_pct * num_subvoxels);
+
+    // Tally.
+    needed_subvoxels += li->num_subvoxels;
   }
 
-  return voxel_divisions;
+  return needed_subvoxels;
 }
 
 QList<unsigned>
-NetworkVoxelMapper::GetSubvoxelIndexes(unsigned num_units, unsigned num_subvoxels)
+NetworkVoxelMapper::GetSubvoxelIndexes(
+  unsigned needed_subvoxels, unsigned num_subvoxels)
 {
+  // Choose evenly distributed indices for needed_subvoxels
+  // out of num_subvoxels.
   QList<unsigned> subvoxel_idxs;
 
   // Use Bresenham line algo to determine which subvoxels to use.
-  assert(num_subvoxels >= num_units);
+  assert(num_subvoxels >= needed_subvoxels);
   int dx = 2 * num_subvoxels;
-  int dy = 2 * num_units;
+  int dy = 2 * needed_subvoxels;
   int D = dy - num_subvoxels;
 
-  for (unsigned idx = 0; idx < num_subvoxels; ++idx)
-  {
-    if (D > 0)
-    {
+  for (unsigned idx = 0; idx < num_subvoxels; ++idx) {
+    if (D > 0) {
       subvoxel_idxs << idx;
       D -= dx;
     }
     D += dy;
   }
 
+  assert(subvoxel_idxs.size() == needed_subvoxels);
   return subvoxel_idxs;
 }
 

@@ -20,29 +20,45 @@
 #include <QMultiHash>
 #include <QString>
 
-#include "nifti_reader.h"
+#include "nifti_reader.h" // TalairachAtlas
 #include "ta_geometry.h" // FloatTDCoord
 class Network;
+class Layer;
 class Unit;
 
 class NetworkVoxelMapper
 {
 public:
   NetworkVoxelMapper(Network *network);
+  ~NetworkVoxelMapper();
   void AssignVoxels();
 
 private:
-  void CreateUnitMap(Network *network);
-  QList<FloatTDCoord> GetVoxelsInArea(const QString &brain_area);
-  void AssignVoxelsInArea(const QString &brain_area, const QList<FloatTDCoord> &voxels);
-  double GetVoxelSize(unsigned num_units, unsigned num_voxels);
-  unsigned GetVoxelDivisions(unsigned num_units, unsigned num_voxels);
+  class LayerInfo;
+
+  static QString GetAtlasFilename();
+  void CreateLayerMap();
+  QList<FloatTDCoord> GetVoxelsInArea(QString brain_area);
+  void AssignVoxelsInArea(QString brain_area, QList<FloatTDCoord> voxels);
+  void AssignVoxelsToLayers(QList<FloatTDCoord> voxels, QList<unsigned> subvoxel_idxs, unsigned voxel_divisions);
+  bool HandleEmptyBrainArea(unsigned num_voxels, QString brain_area, QList<Layer *> layers);
+  void ClearVoxelAssignmentForLayer(LayerInfo *li);
+  void MakeLayerInfos(QList<Layer *> layers);
+  void ClearLayerInfos();
+  double ComputeLayerPercentages();
+  void RemoveZeroFillLayers();
+  unsigned GetVoxelDivisions(unsigned num_voxels, unsigned &num_subvoxels);
+  unsigned GetNeededSubvoxelCount(unsigned num_subvoxels);
   QList<unsigned> GetSubvoxelIndexes(unsigned num_units, unsigned num_subvoxels);
   FloatTDCoord GetCoord(unsigned subvoxel_idx, const QList<FloatTDCoord> &voxels, unsigned voxel_divisions);
 
-  QMultiHash<QString, Unit *> unit_map;
-  Network *network;
-  TalairachAtlas atlas;
+private:
+  QMultiHash<QString, Layer *> m_layer_map;
+  Network *m_network;
+  TalairachAtlas m_atlas;
+
+  // Info on layers for the current iteration of AssignVoxelsInArea().
+  QList<LayerInfo *> m_layer_info;
 };
 
 #endif // NETWORK_VOXEL_MAPPER_H

@@ -2011,6 +2011,12 @@ void Voxel::Initialize()
   size = 0.0;
 }
 
+std::ostream & operator<<(std::ostream &os, const Voxel &voxel)
+{
+  return os << "(" << voxel.coord.x << "," << voxel.coord.y
+            << "," << voxel.coord.z << ")@" << voxel.size;
+}
+
 /////// Unit ///////
 
 void Unit::Initialize() {
@@ -3953,6 +3959,7 @@ void Layer::Initialize() {
   gp_unit_names_4d = false;
   // unit_names = ??
   brain_area = "";
+  voxel_fill_pct = 0.1f;
   n_units = 0;                  // note: v3compat obs
 }
 

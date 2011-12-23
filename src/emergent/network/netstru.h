@@ -810,6 +810,8 @@ private:
   void  Destroy()               { };
 };
 
+std::ostream & operator<<(std::ostream &os, const Voxel &voxel);
+
 class EMERGENT_API Voxel_List : public taList<Voxel>
 {
   // #NO_TOKENS #NO_UPDATE_AFTER List of voxels and their sizes.
@@ -1617,6 +1619,7 @@ public:
   String_Matrix         unit_names;     // #SHOW_TREE set unit names from corresponding items in this matrix (dims=2 for no group layer or to just label main group, dims=4 for grouped layers, dims=0 to disable)
 
   String                brain_area;     // #CAT_Structure #REGEXP_DIALOG #TYPE_TalairachRegexpPopulator Which brain area this layer's units should be mapped to in a brain view.  Must match a label from the atlas chosen for the network.  Layer will not render to brain view if LESIONED flag is checked.
+  float                 voxel_fill_pct; // #CAT_Structure #MIN_0 #MAX_1 Percent of brain_area voxels to be filled by units in this layer.
 
   int                   n_units;
   // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
