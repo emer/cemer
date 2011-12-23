@@ -905,7 +905,7 @@ public:
     return rval;
   }
   // #CAT_Columns get col data for given column 
-  virtual taMatrix*	GetColMatrix(int col) const
+  virtual taMatrix*	GetColMatrix(Variant col) const
   { DataCol* da = GetColData(col); if (da) return da->AR(); else return NULL; }
   // #CAT_Columns get matrix for given column -- WARNING: this is NOT row-number safe 
 

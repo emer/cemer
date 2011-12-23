@@ -946,6 +946,7 @@ GridTableView* GridTableView::New(DataTable* dt, T3DataViewFrame*& fr) {
   vw->setDataTable(dt);
   // make sure we get it all setup!
   vw->BuildAll();
+  vw->GetScaleRange();
 
   new_net_view.showFrame();
   return vw;
