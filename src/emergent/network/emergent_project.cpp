@@ -979,27 +979,29 @@ void EmergentRoot::About() {
   info += "Emergent Info\n";
   info += "This is the Emergent software package, version: ";
   info += version;
-  info += " (" + taMisc::svn_rev + ")";
-  info += "\n\n";
-  info += "WWW Page: http://grey.colorado.edu/emergent\n";
-  info += "\n\n";
-
-  info += "Copyright (c) 1995-2011, Regents of the University of Colorado,\n\
-Carnegie Mellon University, Princeton University.\n\
- \n\
-Emergent is free software; you can redistribute it and/or modify\n\
-it under the terms of the GNU General Public License as published by\n\
-the Free Software Foundation; either version 2 of the License, or\n\
-(at your option) any later version.\n\
- \n\
-Emergent is distributed in the hope that it will be useful,\n\
-but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
-GNU General Public License for more details.\n\
- \n\
-Note that the taString class was derived from the GNU String class\n\
-Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and\n\
-is covered by the GNU General Public License, see ta_string.h\n";
+  info += " (" + taMisc::svn_rev + ")\n";
+  info += "http://grey.colorado.edu/emergent\n";
+  info += "\n";
+  info +=
+    "Copyright (c) 1995-2011, Regents of the University of Colorado, "
+    "Carnegie Mellon University, Princeton University.\n"
+    "\n"
+    "Emergent is free software; you can redistribute it and/or modify "
+    "it under the terms of the GNU General Public License as published by "
+    "the Free Software Foundation; either version 2 of the License, or "
+    "(at your option) any later version.\n"
+    "\n"
+    "Emergent is distributed in the hope that it will be useful, "
+    "but WITHOUT ANY WARRANTY; without even the implied warranty of "
+    "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+    "GNU General Public License for more details.\n"
+    "\n"
+    "Note that the taString class was derived from the GNU String class "
+    "Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and "
+    "is covered by the GNU General Public License, see ta_string.h\n"
+    "\n"
+    "The talairach.nii file is from the Talairach Daemon software. "
+    "For more information, see http://www.talairach.org\n";
 
   if(cssMisc::init_interactive)
     taMisc::Choice(info, "Ok");
