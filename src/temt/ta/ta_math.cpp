@@ -831,6 +831,7 @@ double taMath_double::gauss_dev() {
 double taMath_double::dprime(double mean_signal, double stdev_signal,
 			     double mean_noise, double stdev_noise) {
   double avg_stdev = sqrt(0.5 * stdev_signal * stdev_signal + stdev_noise * stdev_noise);
+  if(avg_stdev = 0.0) return 0.0;
   return (mean_signal - mean_noise) / avg_stdev;
 }
 
@@ -3813,6 +3814,7 @@ float taMath_float::gauss_dev() {
 float taMath_float::dprime(float mean_signal, float stdev_signal,
 			     float mean_noise, float stdev_noise) {
   float avg_stdev = sqrt(0.5 * stdev_signal * stdev_signal + stdev_noise * stdev_noise);
+  if(avg_stdev = 0.0) return 0.0;
   return (mean_signal - mean_noise) / avg_stdev;
 }
 
