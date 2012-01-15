@@ -582,6 +582,19 @@ ostream& DynEnumType::OutputType(ostream& strm) const {
   return strm;
 }
 
+bool DynEnumType::EnumsFromDataTable(DataTable* dt, Variant col) {
+  if(TestError(!dt, "EnumsFromDataTable", "data table is null")) return false;
+  DataCol* da = dt->GetColData(col);
+  if(!da) return false;
+  enums.StructUpdate(true);
+  enums.Reset();
+  for(int i=0; i<dt->rows; i++) {
+    String val = da->GetValAsString(i);
+    AddEnum(val, i);
+  }
+  enums.StructUpdate(false);
+}
+
 void DynEnumType::DataChanged(int dcr, void* op1, void* op2) {
   // dynenum is programmed to send us notifies, we trap those and
   // turn them into changes of us, to force gui to update (esp enum list)
