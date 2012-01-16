@@ -1505,10 +1505,11 @@ public:
 
     for(int i=0; i<cg->size; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i);
+      LeabraUnitSpec* rus = (LeabraUnitSpec*)ru->GetUnitSpec();
 
       // note: with switch to sender-based, this is very expensive -- fortunately it doesn't
       // really work so we don't care.. :) -- also, not supporting act.gelin at all here
-      float ru_act_nonoise = ru->Compute_ActValFmVmVal_rate(ru->v_m - ru->noise, ru->net, 0.0f);
+      float ru_act_nonoise = ru->Compute_ActValFmVmVal_rate((ru->v_m - ru->noise) - rus->act.thr);
       float dav = ru->dav * da_noise.da_noise;
 
       LeabraCon* cn = (LeabraCon*)cg->OwnCn(i);

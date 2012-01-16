@@ -534,6 +534,7 @@ void ActFunSpec::Defaults_init() {
     }
   }
   vm_mod_max = 0.95f;
+  vm_gain = 0.0f;		// todo: change if works
   if(gelin) {
     thr = .5f;
     gain = 80.0f;
@@ -681,9 +682,9 @@ void LeabraDtSpec::Initialize() {
 
 void LeabraDtSpec::Defaults_init() {
   integ = 1.0f;
-  vm = 0.3f;                    // best for gelin
+  vm = 0.3f;                    // best for gelin -- todo: may need to change
   net = 0.7f;
-  d_vm_max = 100.0f;
+  d_vm_max = 100.0f;		// todo: may need to change
   midpoint = false;
   vm_eq_dt = 1.0f;
   integ_time = 1.0f / integ;
@@ -812,6 +813,11 @@ void LeabraUnitSpec::Initialize() {
     nxx1_fun.x_range.max = 1.0f;
     nxx1_fun.res = .001f;
     nxx1_fun.UpdateAfterEdit_NoGui();
+
+    vm_nlinear_fun.x_range.min = -.03f;
+    vm_nlinear_fun.x_range.max = .20f;
+    vm_nlinear_fun.res = .001f;
+    vm_nlinear_fun.UpdateAfterEdit_NoGui();
   }
   else {
     nxx1_fun.x_range.min = -.03f;
@@ -933,6 +939,10 @@ void LeabraUnitSpec::CreateNXX1Fun() {
     nxx1_fun.x_range.max = 1.0f;
     nxx1_fun.res = .001f;       // needs same fine res to get the noise transitions
     nxx1_fun.UpdateAfterEdit_NoGui();
+
+    vm_nlinear_fun.x_range.max = .20f;
+    vm_nlinear_fun.res = .001f;
+    vm_nlinear_fun.UpdateAfterEdit_NoGui();
   }
   else {
     nxx1_fun.x_range.max = .20f;
@@ -942,6 +952,7 @@ void LeabraUnitSpec::CreateNXX1Fun() {
   float ns_rng = 3.0f * act.nvar;       // range factor based on noise level -- 3 sd
   ns_rng = MAX(ns_rng, nxx1_fun.res);
   nxx1_fun.x_range.min = -ns_rng;
+  vm_nlinear_fun.x_range.min = -ns_rng;
 
   noise_conv.x_range.min = -ns_rng;
   noise_conv.x_range.max = ns_rng;
@@ -992,6 +1003,25 @@ void LeabraUnitSpec::CreateNXX1Fun() {
   }
 
   nxx1_fun.Convolve(fun, noise_conv); // does alloc
+
+  if(act.gelin && act.vm_gain > 0.0f) {
+    FunLookup vmfun;
+    vmfun.x_range.min = vm_nlinear_fun.x_range.min + noise_conv.x_range.min;
+    vmfun.x_range.max = vm_nlinear_fun.x_range.max + noise_conv.x_range.max;
+    vmfun.res = vm_nlinear_fun.res;
+    vmfun.UpdateAfterEdit_NoGui();
+    vmfun.AllocForRange();
+
+    for(i=0; i<vmfun.size; i++) {
+      float x = vmfun.Xval(i);
+      float val = 0.0f;
+      if(x > 0.0f)
+        val = (act.vm_gain * x) / ((act.vm_gain * x) + 1.0f);
+      vmfun[i] = val;
+    }
+
+    vm_nlinear_fun.Convolve(vmfun, noise_conv); // does alloc
+  }
 }
 
 void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
@@ -1609,14 +1639,7 @@ void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
-float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float vm_val, float g_e_val, float g_e_thr) {
-  float val_sub_thr;
-  if(act.gelin) {
-    val_sub_thr = g_e_val - g_e_thr;
-  }
-  else {
-    val_sub_thr = vm_val - act.thr; // thresholded vm
-  }
+float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float val_sub_thr) {
   float new_act = 0.0f;
   switch(act_fun) {
   case NOISY_XX1: {
@@ -1668,18 +1691,36 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   float new_act;
   if(act.gelin) {
     float g_e_val = u->net;
-    float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
-    if(vm_eq > 0.0f) {
-      float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
-      if(vmrat > 1.0f) vmrat = 1.0f;
-      else if(vmrat < 0.0f) vmrat = 0.0f;
-      g_e_val *= vmrat;
+    if(act.vm_gain > 0.0f) {
+      float vm_act = 0.0f;
+      float vm_sub_thr = u->v_m - act.thr;
+      if(vm_sub_thr <= vm_nlinear_fun.x_range.min)
+	vm_act = 0.0f;
+      else if(vm_sub_thr >= vm_nlinear_fun.x_range.max) {
+	vm_act = vm_sub_thr * act.vm_gain;
+      }
+      else {
+	vm_act = vm_nlinear_fun.Eval(vm_sub_thr);
+      }
+      if(vm_act > 1.0f) vm_act = 1.0f;
+      float g_e_thr = Compute_EThresh(u);
+      float g_e_act = Compute_ActValFmVmVal_rate(g_e_val - g_e_thr);
+      new_act = MIN(vm_act, g_e_act); // min avoids all problems with mult!
     }
-    float g_e_thr = Compute_EThresh(u);
-    new_act = Compute_ActValFmVmVal_rate(u->v_m, g_e_val, g_e_thr);
+    else {
+      float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
+      if(vm_eq > 0.0f) {
+	float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
+	if(vmrat > 1.0f) vmrat = 1.0f;
+	else if(vmrat < 0.0f) vmrat = 0.0f;
+	g_e_val *= vmrat;
+      }
+      float g_e_thr = Compute_EThresh(u);
+      new_act = Compute_ActValFmVmVal_rate(g_e_val - g_e_thr);
+    }
   }
   else {
-    new_act = Compute_ActValFmVmVal_rate(u->v_m, 0.0f, 0.0f);
+    new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
   }
   if(depress.on) {                   // synaptic depression
     u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
@@ -2322,12 +2363,12 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   for(x = min; x <= max; x += incr) {
     float aval;
     if(act.gelin) {
-      aval = Compute_ActValFmVmVal_rate(0.0f, x, g_e_thr);
+      aval = Compute_ActValFmVmVal_rate(x - g_e_thr);
     }
     else {
       float v_m = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
         ((g_bar.e * x) + (g_bar.i * g_i) + g_bar.l);
-      aval = Compute_ActValFmVmVal_rate(v_m, 0.0f, 0.0f);
+      aval = Compute_ActValFmVmVal_rate(v_m - act.thr);
     }
     float ln = x - g_e_thr;
     if(ln < 0.0f) ln = 0.0f;
