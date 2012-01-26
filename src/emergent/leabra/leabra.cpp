@@ -534,7 +534,7 @@ void ActFunSpec::Defaults_init() {
     }
   }
   vm_mod_max = 0.95f;
-  vm_gain = 0.0f;		// todo: change if works
+  old_gelin = true;		// todo: fix!
   if(gelin) {
     thr = .5f;
     gain = 80.0f;
@@ -813,11 +813,6 @@ void LeabraUnitSpec::Initialize() {
     nxx1_fun.x_range.max = 1.0f;
     nxx1_fun.res = .001f;
     nxx1_fun.UpdateAfterEdit_NoGui();
-
-    vm_nlinear_fun.x_range.min = -.03f;
-    vm_nlinear_fun.x_range.max = .20f;
-    vm_nlinear_fun.res = .001f;
-    vm_nlinear_fun.UpdateAfterEdit_NoGui();
   }
   else {
     nxx1_fun.x_range.min = -.03f;
@@ -939,10 +934,6 @@ void LeabraUnitSpec::CreateNXX1Fun() {
     nxx1_fun.x_range.max = 1.0f;
     nxx1_fun.res = .001f;       // needs same fine res to get the noise transitions
     nxx1_fun.UpdateAfterEdit_NoGui();
-
-    vm_nlinear_fun.x_range.max = .20f;
-    vm_nlinear_fun.res = .001f;
-    vm_nlinear_fun.UpdateAfterEdit_NoGui();
   }
   else {
     nxx1_fun.x_range.max = .20f;
@@ -952,7 +943,6 @@ void LeabraUnitSpec::CreateNXX1Fun() {
   float ns_rng = 3.0f * act.nvar;       // range factor based on noise level -- 3 sd
   ns_rng = MAX(ns_rng, nxx1_fun.res);
   nxx1_fun.x_range.min = -ns_rng;
-  vm_nlinear_fun.x_range.min = -ns_rng;
 
   noise_conv.x_range.min = -ns_rng;
   noise_conv.x_range.max = ns_rng;
@@ -1003,25 +993,6 @@ void LeabraUnitSpec::CreateNXX1Fun() {
   }
 
   nxx1_fun.Convolve(fun, noise_conv); // does alloc
-
-  if(act.gelin && act.vm_gain > 0.0f) {
-    FunLookup vmfun;
-    vmfun.x_range.min = vm_nlinear_fun.x_range.min + noise_conv.x_range.min;
-    vmfun.x_range.max = vm_nlinear_fun.x_range.max + noise_conv.x_range.max;
-    vmfun.res = vm_nlinear_fun.res;
-    vmfun.UpdateAfterEdit_NoGui();
-    vmfun.AllocForRange();
-
-    for(i=0; i<vmfun.size; i++) {
-      float x = vmfun.Xval(i);
-      float val = 0.0f;
-      if(x > 0.0f)
-        val = (act.vm_gain * x) / ((act.vm_gain * x) + 1.0f);
-      vmfun[i] = val;
-    }
-
-    vm_nlinear_fun.Convolve(vmfun, noise_conv); // does alloc
-  }
 }
 
 void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
@@ -1690,24 +1661,8 @@ float LeabraUnitSpec::Compute_ActValFmVmVal_rate(float val_sub_thr) {
 void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   float new_act;
   if(act.gelin) {
-    float g_e_val = u->net;
-    if(act.vm_gain > 0.0f) {
-      float vm_act = 0.0f;
-      float vm_sub_thr = u->v_m - act.thr;
-      if(vm_sub_thr <= vm_nlinear_fun.x_range.min)
-	vm_act = 0.0f;
-      else if(vm_sub_thr >= vm_nlinear_fun.x_range.max) {
-	vm_act = vm_sub_thr * act.vm_gain;
-      }
-      else {
-	vm_act = vm_nlinear_fun.Eval(vm_sub_thr);
-      }
-      if(vm_act > 1.0f) vm_act = 1.0f;
-      float g_e_thr = Compute_EThresh(u);
-      float g_e_act = Compute_ActValFmVmVal_rate(g_e_val - g_e_thr);
-      new_act = MIN(vm_act, g_e_act); // min avoids all problems with mult!
-    }
-    else {
+    if(act.old_gelin) {
+      float g_e_val = u->net;
       float vm_eq = act.vm_mod_max * (Compute_EqVm(u) - v_m_init.mean); // relative to starting!
       if(vm_eq > 0.0f) {
 	float vmrat = (u->v_m - v_m_init.mean) / vm_eq;
@@ -1717,6 +1672,16 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
       }
       float g_e_thr = Compute_EThresh(u);
       new_act = Compute_ActValFmVmVal_rate(g_e_val - g_e_thr);
+    }
+    else {			// new gelin
+      if(u->v_m <= act.thr) {
+	new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
+      }
+      else {
+	float g_e_thr = Compute_EThresh(u);
+	new_act = Compute_ActValFmVmVal_rate(u->net - g_e_thr);
+      }
+      new_act = u->act_nd + dt.vm * (new_act - u->act_nd); // time integral with dt.vm -- use nd to avoid synd problems
     }
   }
   else {

@@ -703,8 +703,8 @@ public:
     ALL,			// include all currents INCLUDING bias weights
   };
 
-  bool		gelin;		// #DEF_true IMPORTANT: Use BioParams button with all default settings if turning this on in an old project to set other important params to match.  Computes rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing from the v_m - thr value -- when gelin is used, the progression of the membrane potential (v_m) toward its equilibrium state is used to make the g_e value unfold over time, which is essential for graded dynamics, so dt.vm is still relevant -- also, other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr)
-  float		vm_gain;	// #CONDSHOW_ON_gelin #DEF_0;600 gain for function based on vm -- resulting activation is MIN of vm and gelin value -- this is a new mechanism that replaces the progression toward equilibrium mechanism -- only used when vm_gain > 0
+  bool		gelin;		// #DEF_true IMPORTANT: Use BioParams button with all default settings if turning this on in an old project to set other important params to match.  Computes rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing from the v_m - thr value.  other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr).  the activation dynamics update over time using the dt.vm time constant, only after v_m itself is over threshold -- if v_m is under threshold, driving act is zero
+  bool		old_gelin;	// #CONDSHOW_ON_gelin use the original version of gelin where the progression of the membrane potential (v_m) toward its equilibrium state is used to make the g_e value unfold over time, so dt.vm is still relevant
   float		thr;		// #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button -- use this for gelin)
   float		gain;		// #DEF_80;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 80 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network
   float		nvar;		// #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
@@ -1112,7 +1112,6 @@ public:
   Schedule	noise_sched;	// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation schedule of noise variance -- time scale depends on noise_adapt parameter (cycles, epochs, etc)
 
   FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
-  FunLookup	vm_nlinear_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and linear function as lookup table, using vm_gain -- for gelin only
   FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
 
   ///////////////////////////////////////////////////////////////////////
