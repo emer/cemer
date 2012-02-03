@@ -2170,7 +2170,9 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
   return true;
 }
 
-bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig, int_Matrix* bubble_coords) {
+bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig, bool fix_contrast, int_Matrix* bubble_coords) {
+
+  float old_contrast;
 
   // floor value for mask
   float floor_thr=pow(10.0f, -8.0f);
@@ -2189,7 +2191,9 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
       mask_tmp.FastEl(xi, yi) = 0.0f;
     }
   }
-  if(bubble_coords != NULL) {
+ 
+ // for saving bubble coordinates
+ if(bubble_coords != NULL) {
         bubble_coords->SetGeom(2, 2, n_bubbles);
   }
 
@@ -2204,6 +2208,11 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
       ndgridy.FastEl(xi, yi) = (float)yi;
     }
   }
+  
+  // save old contrast
+  if(fix_contrast) {
+	  old_contrast = taMath_float::vec_std_dev(&img);
+  }
 
   // apply bubbles to the mask
   for(int bubble=0; bubble < n_bubbles; bubble++) {
@@ -2213,8 +2222,8 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
 
    // save the bubble coords
    if(bubble_coords != NULL) {
-                bubble_coords->FastEl(0, bubble) = xc;
-                bubble_coords->FastEl(1, bubble) = yc;
+     bubble_coords->FastEl(0, bubble) = xc;
+     bubble_coords->FastEl(1, bubble) = yc;
    }
 
     for(int yi=0; yi< img_size.y; yi++) {
@@ -2252,6 +2261,13 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
           img_iv = mask_iv*img_iv + (1.0f-mask_iv)*clr;
         }
   }
+  
+  // if fix_contrast, calculate new contrast and change
+  if(fix_contrast) {
+	  float new_contrast = taMath_float::vec_std_dev(&img);
+	  AdjustContrast(img, old_contrast/new_contrast);
+  }
+  
   return true;
 }
 
@@ -2273,16 +2289,16 @@ bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast) {
   }
 
   else {
-  // just use first dim for gray
-  float clr = 0.0f;
-  clr = brd_clr[0];
-  for(int yi=0; yi< img_size.y; yi++) {
-      for(int xi=0; xi< img_size.x; xi++) {
-                  float& iv = img.FastEl(xi, yi);
-                  float nw_iv = ((iv-clr)*new_contrast)+clr;
-                  iv = nw_iv;
-          }
-    }
+      // just use first dim for gray
+  	  float clr = 0.0f;
+  	  clr = brd_clr[0];
+  	  for(int yi=0; yi< img_size.y; yi++) {
+      	  for(int xi=0; xi< img_size.x; xi++) {
+          	  float& iv = img.FastEl(xi, yi);
+          	  float nw_iv = ((iv-clr)*new_contrast)+clr;
+          	  iv = nw_iv;
+      	  }
+  	  }
   }
   return true;
 }
