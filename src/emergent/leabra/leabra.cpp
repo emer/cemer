@@ -534,10 +534,10 @@ void ActFunSpec::Defaults_init() {
     }
   }
   vm_mod_max = 0.95f;
-  old_gelin = true;		// todo: fix!
+  old_gelin = false;
   if(gelin) {
     thr = .5f;
-    gain = 80.0f;
+    gain = 100.0f;
     nvar = .005f;
   }
   else {
