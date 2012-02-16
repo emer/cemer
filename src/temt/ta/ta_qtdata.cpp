@@ -844,7 +844,7 @@ void iRegexpDialog::LayoutTableView(
   // Pad the combos hbox to accomodate the index column and scrollbar.
   // This lines up the combo-boxes with their respective headers.
   hbox_combos->insertSpacing(0, header->sectionSize(INDEX_COL) + 2);
-  hbox_combos->addSpacing(tableview->verticalScrollBar()->width() + 2);
+  hbox_combos->addSpacing(tableview->verticalScrollBar()->sizeHint().width() + 2);
 }
 
 void iRegexpDialog::LayoutButtons(QVBoxLayout *vbox)
