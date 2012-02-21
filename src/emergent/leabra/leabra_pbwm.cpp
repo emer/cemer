@@ -1295,6 +1295,11 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     net->phase_order = LeabraNetwork::MINUS_PLUS;
   }
 
+  if(lay->CheckError(net->no_plus_test, quiet, rval,
+                "requires LeabraNetwork no_plus_test = false, I just set it for you")) {
+    net->no_plus_test = false;
+  }
+
   if(lay->CheckError(net->mid_minus_cycle < 5, quiet, rval,
                 "requires LeabraNetwork min_minus_cycle > 0, I just set it to 20 for you")) {
     net->mid_minus_cycle = 25;
