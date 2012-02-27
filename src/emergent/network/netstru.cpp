@@ -1923,11 +1923,21 @@ void UnitSpec::Send_Netin(Unit* u, Network* net, int thread_no) {
   // here if the sending unit's activation (i.e., this one) is above some threshold
   // so you don't send if it isn't above that threshold..  this isn't implemented here though.
   if(thread_no < 0) thread_no = 0; // use 0 thread in tmp matrix in this case
-  for(int g = 0; g < u->send.size; g++) {
-    SendCons* send_gp = u->send.FastEl(g);
-    Layer* tol = send_gp->prjn->layer;
-    if(tol->lesioned() || !send_gp->size) continue;
-    send_gp->Send_Netin(net, thread_no, u);
+  if(net->NetinPerPrjn()) {
+    for(int g = 0; g < u->send.size; g++) {
+      SendCons* send_gp = u->send.FastEl(g);
+      Layer* tol = send_gp->prjn->layer;
+      if(tol->lesioned() || !send_gp->size) continue;
+      send_gp->Send_Netin_PerPrjn(net, thread_no, u);
+    }
+  }
+  else {
+    for(int g = 0; g < u->send.size; g++) {
+      SendCons* send_gp = u->send.FastEl(g);
+      Layer* tol = send_gp->prjn->layer;
+      if(tol->lesioned() || !send_gp->size) continue;
+      send_gp->Send_Netin(net, thread_no, u);
+    }
   }
 }
 
@@ -6228,6 +6238,7 @@ void Network::Initialize() {
 
   n_units = 0;
   n_cons = 0;
+  max_prjns = 1;
   max_disp_size.x = 1;
   max_disp_size.y = 1;
   max_disp_size.z = 1;
@@ -6562,7 +6573,12 @@ void Network::BuildUnits_Threads() {
   }
   // temporary storage for sender-based netinput computation
   if(units_flat.size > 0 && threads.n_threads > 0) {
-    send_netin_tmp.SetGeom(2, units_flat.size, threads.n_threads);
+    if(NetinPerPrjn()) {
+      send_netin_tmp.SetGeom(3, units_flat.size, max_prjns, threads.n_threads);
+    }
+    else {
+      send_netin_tmp.SetGeom(2, units_flat.size, threads.n_threads);
+    }
     send_netin_tmp.InitVals(0.0f);
   }
 }
@@ -6603,9 +6619,11 @@ void Network::Connect() {
 void Network::CountRecvCons() {
   n_units = 0;
   n_cons = 0;
+  max_prjns = 1;
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     n_cons += l->CountRecvCons();
     n_units += l->units.leaves;
+    max_prjns = MAX(l->projections.size, max_prjns);
   }
 }
 
@@ -6941,21 +6959,47 @@ void Network::Send_Netin() {
   // now need to roll up the netinput into unit vals
   const int nu = units_flat.size;
   const int nt = threads.tasks.size;
-  if(threads.using_threads) {
-    for(int i=1;i<nu;i++) {     // 0 = dummy idx
-      Unit* un = units_flat[i];
-      float nw_nt = 0.0f;
-      for(int j=0;j<nt;j++) {
-        nw_nt += send_netin_tmp.FastEl(i, j);
+  if(NetinPerPrjn()) {
+    if(threads.using_threads) {
+      for(int i=1;i<nu;i++) {     // 0 = dummy idx
+	Unit* un = units_flat[i];
+	float nw_nt = 0.0f;
+	for(int p=0;p<un->recv.size;p++) {
+	  for(int j=0;j<nt;j++) {
+	    nw_nt += send_netin_tmp.FastEl(i, p, j);
+	  }
+	}
+	un->Compute_SentNetin(this, nw_nt);
       }
-      un->Compute_SentNetin(this, nw_nt);
+    }
+    else {
+      for(int i=1;i<nu;i++) {     // 0 = dummy idx
+	Unit* un = units_flat[i];
+	float nw_nt = 0.0f;
+	for(int p=0;p<un->recv.size;p++) {
+	  nw_nt += send_netin_tmp.FastEl(i, p, 0); // use 0 thread
+	}
+	un->Compute_SentNetin(this, nw_nt);
+      }
     }
   }
   else {
-    for(int i=1;i<nu;i++) {     // 0 = dummy idx
-      Unit* un = units_flat[i];
-      float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
-      un->Compute_SentNetin(this, nw_nt);
+    if(threads.using_threads) {
+      for(int i=1;i<nu;i++) {     // 0 = dummy idx
+	Unit* un = units_flat[i];
+	float nw_nt = 0.0f;
+	for(int j=0;j<nt;j++) {
+	  nw_nt += send_netin_tmp.FastEl(i, j);
+	}
+	un->Compute_SentNetin(this, nw_nt);
+      }
+    }
+    else {
+      for(int i=1;i<nu;i++) {     // 0 = dummy idx
+	Unit* un = units_flat[i];
+	float nw_nt = send_netin_tmp.FastEl(i, 0); // use 0 thread
+	un->Compute_SentNetin(this, nw_nt);
+      }
     }
   }
   send_netin_tmp.InitVals(0.0f); // reset for next time around

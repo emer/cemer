@@ -258,6 +258,8 @@ public:
                                      float su_act);
   inline virtual void   Send_Netin(SendCons* cg, Network* net, int thread_no, Unit* su);
   // #CAT_Activation sender-based net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
+  inline virtual void   Send_Netin_PerPrjn(SendCons* cg, Network* net, int thread_no, Unit* su);
+  // #CAT_Activation sender-based net input, keeping projections separate, for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
 
   inline float          C_Compute_Dist(Connection* cn, Unit* ru, Unit* su);
   inline virtual float  Compute_Dist(RecvCons* cg, Unit* ru);
@@ -540,11 +542,6 @@ class EMERGENT_API RecvCons : public BaseCons {
   // receiving connections base class -- one projection's worth of receiving connections
 INHERITED(BaseCons)
 public:
-  // following is for backward compatibility with 4.0.x -- todo remove at some point?
-#ifdef __MAKETA__
-  int           other_idx;      // #AKA_send_idx #CAT_Structure #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
-#endif
-
   inline int            send_idx() { return other_idx; }
   // #READ_ONLY index into sending unit's send. list of SendCons
 
@@ -634,10 +631,6 @@ class EMERGENT_API SendCons : public BaseCons {
   // sending connections base class -- one projection's worth of sending connections
 INHERITED(BaseCons)
 public:
-  // following is for backward compatibility with 4.0.x -- todo remove at some point?
-#ifdef __MAKETA__
-  int           other_idx;      // #AKA_recv_idx #CAT_Structure #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
-#endif
 
   inline int            recv_idx() { return other_idx; }
   // #READ_ONLY index into recv unit's recv. list of RecvCons
@@ -652,6 +645,9 @@ public:
   void  Send_Netin(Network* net, int thread_no, Unit* su)
   { GetConSpec()->Send_Netin(this, net, thread_no, su); }
   // #CAT_Activation sender-based net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
+  void  Send_Netin_PerPrjn(Network* net, int thread_no, Unit* su)
+  { GetConSpec()->Send_Netin_PerPrjn(this, net, thread_no, su); }
+  // #CAT_Activation sender-based net input keeping prjns separate, for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_SentNetin function on units
 
   TA_BASEFUNS_NOCOPY(SendCons);
 protected:
@@ -2324,6 +2320,7 @@ public:
     SAVE_UNITS          = 0x0001, // save units with the project or other saves (specificaly saving just the network always saves the units)
     SAVE_UNITS_FORCE    = 0x0002, // #NO_SHOW internal flag that forces the saving of units in cases where it is important to do so (e.g., saving just the network, or for a crash recover file)
     MANUAL_POS          = 0x0004, // disables the automatic cleanup/positioning of layers
+    NETIN_PER_PRJN	= 0x0008, // compute netinput per projection instead of a single aggregate value across all inputs (which is the default)
   };
 
   enum NetTextLoc {
@@ -2403,6 +2400,7 @@ public:
 
   int           n_units;        // #READ_ONLY #EXPERT #CAT_Structure total number of units in the network
   int           n_cons;         // #READ_ONLY #EXPERT #CAT_Structure total number of connections in the network
+  int           max_prjns;      // #READ_ONLY #EXPERT #CAT_Structure maximum number of prjns per any given layer or unit in the network
   PosTDCoord    max_disp_size;  // #AKA_max_size #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
 
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
@@ -2518,6 +2516,8 @@ public:
   // #CAT_Activation Compute NetInput: weighted activation from other units
   virtual void  Send_Netin();
   // #CAT_Activation sender-based computation of net input: weighted activation from other units
+    inline bool NetinPerPrjn() { return HasNetFlag(NETIN_PER_PRJN); }
+    // #CAT_Activation is this network configured to compute net input on a per-prjn basis?
   virtual void  Compute_Act();
   // #CAT_Activation Compute Activation based on net input
   virtual void  Compute_NetinAct();
@@ -2876,6 +2876,13 @@ inline void ConSpec::C_Send_Netin(Connection* cn, float* send_netin_vec, Unit* r
 inline void ConSpec::Send_Netin(SendCons* cg, Network* net, int thread_no, Unit* su) {
   const float su_act = su->act;
   float* send_netin_vec = net->send_netin_tmp.el + net->send_netin_tmp.FastElIndex(0, thread_no);
+  CON_GROUP_LOOP(cg, C_Send_Netin(cg->OwnCn(i), send_netin_vec, cg->Un(i), su_act));
+}
+
+inline void ConSpec::Send_Netin_PerPrjn(SendCons* cg, Network* net, int thread_no, Unit* su) {
+  const float su_act = su->act;
+  float* send_netin_vec = net->send_netin_tmp.el +
+    net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
   CON_GROUP_LOOP(cg, C_Send_Netin(cg->OwnCn(i), send_netin_vec, cg->Un(i), su_act));
 }
 

@@ -592,6 +592,7 @@ INHERITED(RecvCons)
 public:
   float		scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin -- copied to send cons group where it is actually used, but it is computed here
   float		net;		// #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
+  float		net_delta;	// #NO_SAVE #CAT_Activation delta netinput to this con_group -- only used for NETIN_PER_PRJN
 
   void	Compute_dWt_CtLeabraXCalC(LeabraUnit* ru)
   { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraXCalC(this, ru); }
@@ -3326,50 +3327,58 @@ private:
 
 
 inline void LeabraConSpec::C_Send_NetinDelta_Thrd(Connection* cn, float* send_netin_vec,
-					     LeabraUnit* ru, float su_act_delta_eff) {
+				     LeabraUnit* ru, const float su_act_delta_eff) {
   send_netin_vec[ru->flat_idx] += cn->wt * su_act_delta_eff;
 }
 
 inline void LeabraConSpec::C_Send_NetinDelta_NoThrd(Connection* cn, LeabraUnit* ru,
-						   float su_act_delta_eff) {
+					   const float su_act_delta_eff) {
   ru->net_delta += cn->wt * su_act_delta_eff;
 }
 
 inline void LeabraConSpec::C_Send_InhibDelta_Thrd(Connection* cn, float* send_inhib_vec,
-						 LeabraUnit* ru, float su_act_delta_eff) {
+					 LeabraUnit* ru, const float su_act_delta_eff) {
   send_inhib_vec[ru->flat_idx] += cn->wt * su_act_delta_eff;
 }
 
 inline void LeabraConSpec::C_Send_InhibDelta_NoThrd(Connection* cn, LeabraUnit* ru,
-						   float su_act_delta_eff) {
+						   const float su_act_delta_eff) {
   ru->g_i_delta += cn->wt * su_act_delta_eff;
 }
 
 inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
 					   int thread_no, float su_act_delta) {
-  float su_act_delta_eff = cg->scale_eff * su_act_delta;
-  if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
-    if(thread_no < 0) {
-      CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd(cg->OwnCn(i), (LeabraUnit*)cg->Un(i),
-						 su_act_delta_eff));
-    }
-    else {
-      float* send_inhib_vec = net->send_inhib_tmp.el
-	+ net->send_inhib_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_InhibDelta_Thrd(cg->OwnCn(i), send_inhib_vec,
-					(LeabraUnit*)cg->Un(i), su_act_delta_eff));
-    }
+  const float su_act_delta_eff = cg->scale_eff * su_act_delta;
+  if(net->NetinPerPrjn()) {
+    float* send_netin_vec = net->send_netin_tmp.el
+      + net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
+    CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec,
+					      (LeabraUnit*)cg->Un(i), su_act_delta_eff));
   }
   else {
-    if(thread_no < 0) {
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThrd(cg->OwnCn(i), (LeabraUnit*)cg->Un(i),
-						 su_act_delta_eff));
+    if(inhib && net->inhib_cons_used) { // both must agree that inhib is ok
+      if(thread_no < 0) {
+	CON_GROUP_LOOP(cg, C_Send_InhibDelta_NoThrd(cg->OwnCn(i), (LeabraUnit*)cg->Un(i),
+						    su_act_delta_eff));
+      }
+      else {
+	float* send_inhib_vec = net->send_inhib_tmp.el
+	  + net->send_inhib_tmp.FastElIndex(0, thread_no);
+	CON_GROUP_LOOP(cg, C_Send_InhibDelta_Thrd(cg->OwnCn(i), send_inhib_vec,
+						  (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
     }
     else {
-      float* send_netin_vec = net->send_netin_tmp.el
-	+ net->send_netin_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec,
-					       (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      if(thread_no < 0) {
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThrd(cg->OwnCn(i), (LeabraUnit*)cg->Un(i),
+						    su_act_delta_eff));
+      }
+      else {
+	float* send_netin_vec = net->send_netin_tmp.el
+	  + net->send_netin_tmp.FastElIndex(0, thread_no);
+	CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thrd(cg->OwnCn(i), send_netin_vec,
+				  (LeabraUnit*)cg->Un(i), su_act_delta_eff));
+      }
     }
   }
 }

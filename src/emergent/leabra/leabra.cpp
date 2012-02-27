@@ -469,12 +469,14 @@ void LeabraRecvCons::Initialize() {
   ClearBaseFlag(OWN_CONS);      // recv does NOT own!
   SetConType(&TA_LeabraCon);
   scale_eff = 0.0f;
-  net = 0.0;
+  net = 0.0f;
+  net_delta = 0.0f;
 }
 
 void LeabraRecvCons::Copy_(const LeabraRecvCons& cp) {
   scale_eff = cp.scale_eff;
   net = cp.net;
+  net_delta = cp.net_delta;
 }
 
 void LeabraSendCons::Initialize() {
@@ -1331,8 +1333,12 @@ void LeabraUnitSpec::TargExtToComp(LeabraUnit* u, LeabraNetwork*) {
 //      Cycle Step 1: netinput
 
 void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  if(thread_no < 0)
+  int thno_arg = thread_no;
+  if(thread_no < 0) {
     net->send_pct_tot++;        // only safe for non-thread case
+    if(net->NetinPerPrjn())
+      thno_arg = 0;		// pass 0 as arg -- need to store in tmp vec
+  }
   float act_ts = u->act;
   if(syn_delay.on) {
     act_ts = u->act_buf.CircSafeEl(0); // get first logical element..
@@ -1347,7 +1353,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
         LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
         LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
         if(tol->lesioned() || tol->hard_clamped || !send_gp->size)      continue;
-        send_gp->Send_NetinDelta(net, thread_no, act_delta);
+        send_gp->Send_NetinDelta(net, thno_arg, act_delta);
       }
       u->act_sent = act_ts;     // cache the last sent value
     }
@@ -1360,7 +1366,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->lesioned() || tol->hard_clamped || !send_gp->size)        continue;
-      send_gp->Send_NetinDelta(net, thread_no, act_delta);
+      send_gp->Send_NetinDelta(net, thno_arg, act_delta);
     }
     u->act_sent = 0.0f;         // now it effectively sent a 0..
   }
@@ -5522,7 +5528,8 @@ void LeabraNetwork::BuildUnits_Threads() {
   inherited::BuildUnits_Threads();
   // temporary storage for sender-based netinput computation
   CheckInhibCons();
-  if(inhib_cons_used && units_flat.size > 0 && threads.n_threads > 0) {
+  if(inhib_cons_used && (units_flat.size > 0) &&
+     (threads.n_threads > 0) && !NetinPerPrjn()) {
     send_inhib_tmp.SetGeom(2, units_flat.size, threads.n_threads);
     send_inhib_tmp.InitVals(0.0f);
   }
@@ -5825,33 +5832,60 @@ void LeabraNetwork::Send_Netin() {
 
   // now need to roll up the netinput into unit vals
   const int nu = units_flat.size;
-  const int nt = threads.tasks.size;
-  if(threads.using_threads) {
-    if(inhib_cons_used) {
-      for(int i=1;i<nu;i++) {   // 0 = dummy idx
-        LeabraUnit* un = (LeabraUnit*)units_flat[i];
-        float nw_nt = 0.0f;
-        float nw_inhb = 0.0f;
-        for(int j=0;j<nt;j++) {
-          nw_nt += send_netin_tmp.FastEl(i, j);
-          nw_inhb += send_inhib_tmp.FastEl(i, j);
-        }
-        un->net_delta = nw_nt;
-        un->g_i_delta = nw_inhb;
+  int nt = threads.tasks.size;
+  if(NetinPerPrjn()) {
+    if(!threads.using_threads)
+      nt = 1;
+    for(int i=1;i<nu;i++) {   // 0 = dummy idx
+      LeabraUnit* un = (LeabraUnit*)units_flat[i];
+      float nw_nt = 0.0f;
+      float nw_inhb = 0.0f;
+      for(int p=0;p<un->recv.size;p++) {
+	float p_nw_nt = 0.0f;
+	for(int j=0;j<nt;j++) {
+	  p_nw_nt += send_netin_tmp.FastEl(i, p, j);
+	}
+	LeabraRecvCons* cg = (LeabraRecvCons*)un->recv.FastEl(p);
+	cg->net_delta = p_nw_nt;
+	LeabraConSpec* cs = (LeabraConSpec*)cg->GetConSpec();
+	if(cs->inhib)
+	  nw_inhb += p_nw_nt;
+	else
+	  nw_nt += p_nw_nt;
       }
-      send_inhib_tmp.InitVals(0.0f); // reset for next time around
-    }
-    else {
-      for(int i=1;i<nu;i++) {   // 0 = dummy idx
-        LeabraUnit* un = (LeabraUnit*)units_flat[i];
-        float nw_nt = 0.0f;
-        for(int j=0;j<nt;j++) {
-          nw_nt += send_netin_tmp.FastEl(i, j);
-        }
-        un->net_delta = nw_nt;
-      }
+      un->net_delta = nw_nt;
+      un->g_i_delta = nw_inhb;
     }
     send_netin_tmp.InitVals(0.0f); // reset for next time around
+  }
+  else {
+    if(threads.using_threads) {	// if not used, goes directly into unit vals
+      if(inhib_cons_used) {
+	for(int i=1;i<nu;i++) {   // 0 = dummy idx
+	  LeabraUnit* un = (LeabraUnit*)units_flat[i];
+	  float nw_nt = 0.0f;
+	  float nw_inhb = 0.0f;
+	  for(int j=0;j<nt;j++) {
+	    nw_nt += send_netin_tmp.FastEl(i, j);
+	    nw_inhb += send_inhib_tmp.FastEl(i, j);
+	  }
+	  un->net_delta = nw_nt;
+	  un->g_i_delta = nw_inhb;
+	}
+	send_inhib_tmp.InitVals(0.0f); // reset for next time around
+      }
+      else {
+	for(int i=1;i<nu;i++) {   // 0 = dummy idx
+	  LeabraUnit* un = (LeabraUnit*)units_flat[i];
+	  float nw_nt = 0.0f;
+	  for(int j=0;j<nt;j++) {
+	    nw_nt += send_netin_tmp.FastEl(i, j);
+	  }
+	  un->net_delta = nw_nt;
+	}
+      }
+      send_netin_tmp.InitVals(0.0f); // reset for next time around
+    }
   }
 
 #ifdef DMEM_COMPILE
