@@ -471,12 +471,14 @@ void LeabraRecvCons::Initialize() {
   scale_eff = 0.0f;
   net = 0.0f;
   net_delta = 0.0f;
+  net_raw = 0.0f;
 }
 
 void LeabraRecvCons::Copy_(const LeabraRecvCons& cp) {
   scale_eff = cp.scale_eff;
   net = cp.net;
   net_delta = cp.net_delta;
+  net_raw = cp.net_raw;
 }
 
 void LeabraSendCons::Initialize() {
@@ -1022,13 +1024,36 @@ void LeabraUnitSpec::Init_ActAvg(LeabraUnit* u, LeabraNetwork* net) {
   u->avg_l = act.avg_init;
 }
 
+void LeabraUnitSpec::Init_Netins(LeabraUnit* u, LeabraNetwork*) {
+  // too drastic
+  // u->net_scale = 0.0f;
+  // u->bias_scale = 0.0f;
+  u->act_sent = 0.0f;
+  u->net_raw = 0.0f;
+  u->net_delta = 0.0f;
+  u->g_i_raw = 0.0f;
+  u->g_i_delta = 0.0f;
+
+  u->net = 0.0f;
+  u->gc.i = 0.0f;
+
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    recv_gp->net = 0.0f;
+    recv_gp->net_raw = 0.0f;
+    recv_gp->net_delta = 0.0f;
+  }
+}
+
 void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   inherited::Init_Acts(u, net);
   LeabraUnit* lu = (LeabraUnit*)u;
-  lu->net_scale = 0.0f;
-  lu->bias_scale = 0.0f;
+
+  Init_Netins(lu, (LeabraNetwork*)net);
+
   lu->prv_net = 0.0f;
   lu->prv_g_i = 0.0f;
+
   if(hyst.init) {
     lu->vcb.hyst = lu->vcb.g_h = 0.0f;
     lu->vcb.hyst_on = false;
@@ -1059,22 +1084,19 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->noise = 0.0f;
   lu->maint_h = 0.0f;
 
-  lu->act_sent = 0.0f;
-  lu->net_raw = 0.0f;
-  lu->net_delta = 0.0f;
-  lu->g_i_raw = 0.0f;
-  lu->g_i_delta = 0.0f;
-
   lu->i_thr = 0.0f;
   if(depress.on)
     lu->spk_amp = depress.max_amp;
   lu->spk_t = -1;
   lu->act_buf.Reset();
-  lu->spike_buf.Reset();
+  lu->spike_e_buf.Reset();
+  lu->spike_i_buf.Reset();
 }
 
 
-void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork*, float decay) {
+void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) {
+  Init_Netins(u, net);
+
   u->v_m -= decay * (u->v_m - v_m_init.mean);
   u->vm_dend -= decay * u->vm_dend;
   u->adapt -= decay * u->adapt;
@@ -1094,20 +1116,12 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork*, float decay) {
   if(depress.on)
     u->spk_amp += (depress.max_amp - u->spk_amp) * decay;
 
-  // reset the rest of this stuff just for clarity and accurate computation
-  u->act_sent = 0.0f;
-  u->net_raw = 0.0f;
-  u->net_delta = 0.0f;
-  u->g_i_raw = 0.0f;
-  u->g_i_delta = 0.0f;
-
-  u->net = 0.0f;
-  u->net_scale = u->bias_scale = 0.0f;
   u->da = u->I_net = 0.0f;
 
   if(decay == 1.0f) {
     u->act_buf.Reset();
-    u->spike_buf.Reset();
+    u->spike_e_buf.Reset();
+    u->spike_i_buf.Reset();
   }
 }
 ///////////////////////////////////////////////////////////////////////
@@ -1372,14 +1386,68 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
   }
 }
 
+void LeabraUnitSpec::Send_NetinDelta_Post(LeabraUnit* u, LeabraNetwork* net) {
+  int nt = net->threads.tasks.size;
+  float nw_nt = 0.0f;
+  if(net->NetinPerPrjn()) {	// always uses netin_tmp -- this is where inhib goes
+    float nw_inhb = 0.0f;
+    if(!net->threads.using_threads)
+      nt = 1;
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      float g_nw_nt = 0.0f;
+      for(int j=0;j<nt;j++) {
+	g_nw_nt += net->send_netin_tmp.FastEl(u->flat_idx, g, j);
+      }
+      recv_gp->net_delta = g_nw_nt;
+      LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+      // todo: incorporate finer-grained inhib here..
+      if(cs->inhib)
+	nw_inhb += g_nw_nt;
+      else
+	nw_nt += g_nw_nt;
+    }
+    u->net_delta = nw_nt;
+    u->g_i_delta = nw_inhb;
+  }
+  else {
+    if(net->threads.using_threads) {	// if not used, goes directly into unit vals
+      for(int j=0;j<nt;j++) {
+	nw_nt += net->send_netin_tmp.FastEl(u->flat_idx, j);
+      }
+      u->net_delta = nw_nt;
+    }
+  }
+}
+
 void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   LeabraLayer* lay = u->own_lay();
   if(lay->hard_clamped) return;
 
+  if(net->NetinPerPrjn()) {
+    for(int g=0; g<u->recv.size; g++) {
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      recv_gp->net_raw += recv_gp->net_delta;
+      recv_gp->net_delta = 0.0f; // clear for next use
+
+      // todo: not clear if we need this at this point..
+      // float dnet = dt.net * (tot_net - u->prv_net);
+      // u->net = u->prv_net + dnet;
+      // u->prv_net = u->net;
+      // u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
+    }
+  }
+
   if(net->inhib_cons_used) {
     u->g_i_raw += u->g_i_delta;
-    u->gc.i = u->prv_g_i + dt.net * (u->g_i_raw - u->prv_g_i);
-    u->prv_g_i = u->gc.i;
+    if(act_fun == SPIKE) {
+      u->gc.i = MAX(u->g_i_raw, 0.0f);
+      Compute_NetinInteg_Spike_i(u, net);
+    }
+    else {
+      u->gc.i = u->prv_g_i + dt.net * (u->g_i_raw - u->prv_g_i);
+      u->prv_g_i = u->gc.i;
+    }
   }
 
   u->net_raw += u->net_delta;
@@ -1395,7 +1463,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   if(act_fun == SPIKE) {
     // todo: need a mech for inhib spiking
     u->net = MAX(tot_net, 0.0f); // store directly for integration
-    Compute_NetinInteg_Spike(u,net);
+    Compute_NetinInteg_Spike_e(u, net);
   }
   else {
     float dnet = dt.net * (tot_net - u->prv_net);
@@ -1411,15 +1479,15 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   u->i_thr = Compute_IThresh(u, net);
 }
 
-void LeabraUnitSpec::Compute_NetinInteg_Spike(LeabraUnit* u, LeabraNetwork* net) {
+void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* net) {
   // netin gets added at the end of the spike_buf -- 0 time is the end
-  u->spike_buf.CircAddLimit(u->net, spike.window); // add current net to buffer
-  int mx = MAX(spike.window, u->spike_buf.length);
+  u->spike_e_buf.CircAddLimit(u->net, spike.window); // add current net to buffer
+  int mx = MAX(spike.window, u->spike_e_buf.length);
   float sum = 0.0f;
   if(spike.rise == 0.0f && spike.decay > 0.0f) {
     // optimized fast recursive exp decay: note: does NOT use dt.net
     for(int t=0;t<mx;t++) {
-      sum += u->spike_buf.CircSafeEl(t);
+      sum += u->spike_e_buf.CircSafeEl(t);
     }
     sum /= (float)spike.window; // normalize over window
     float dnet = spike.gg_decay * sum - (u->prv_net * spike.oneo_decay);
@@ -1428,7 +1496,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike(LeabraUnit* u, LeabraNetwork* net)
   }
   else {
     for(int t=0;t<mx;t++) {
-      float spkin = u->spike_buf.CircSafeEl(t);
+      float spkin = u->spike_e_buf.CircSafeEl(t);
       if(spkin > 0.0f) {
         sum += spkin * spike.ComputeAlpha(mx-t-1);
       }
@@ -1438,6 +1506,36 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike(LeabraUnit* u, LeabraNetwork* net)
     float dnet =  dt.net * (u->net - u->prv_net);
     u->net = u->prv_net + dnet;
     u->prv_net = u->net;
+  }
+}
+
+void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* net) {
+  // netin gets added at the end of the spike_i_buf -- 0 time is the end
+  u->spike_i_buf.CircAddLimit(u->gc.i, spike.window); // add current net to buffer
+  int mx = MAX(spike.window, u->spike_i_buf.length);
+  float sum = 0.0f;
+  if(spike.rise == 0.0f && spike.decay > 0.0f) {
+    // optimized fast recursive exp decay: note: does NOT use dt.net
+    for(int t=0;t<mx;t++) {
+      sum += u->spike_i_buf.CircSafeEl(t);
+    }
+    sum /= (float)spike.window; // normalize over window
+    float dnet = spike.gg_decay * sum - (u->prv_g_i * spike.oneo_decay);
+    u->gc.i = u->prv_g_i + dnet;
+    u->prv_g_i = u->gc.i;
+  }
+  else {
+    for(int t=0;t<mx;t++) {
+      float spkin = u->spike_i_buf.CircSafeEl(t);
+      if(spkin > 0.0f) {
+        sum += spkin * spike.ComputeAlpha(mx-t-1);
+      }
+    }
+    u->gc.i = sum;
+    // from compute_netinavg
+    float dnet =  dt.net * (u->gc.i - u->prv_g_i);
+    u->gc.i = u->prv_g_i + dnet;
+    u->prv_g_i = u->gc.i;
   }
 }
 
@@ -2551,7 +2649,8 @@ void LeabraUnit::InitLinks() {
   taBase::Own(vcb, this);
   taBase::Own(gc, this);
   taBase::Own(act_buf, this);
-  taBase::Own(spike_buf, this);
+  taBase::Own(spike_e_buf, this);
+  taBase::Own(spike_i_buf, this);
   GetInSubGp();
 }
 
@@ -2602,7 +2701,8 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   misc_2 = cp.misc_2;
   spk_t = cp.spk_t;
   act_buf = cp.act_buf;
-  spike_buf = cp.spike_buf;
+  spike_e_buf = cp.spike_e_buf;
+  spike_i_buf = cp.spike_i_buf;
 }
 
 LeabraInhib* LeabraUnit::own_thr() const {
@@ -5387,7 +5487,6 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
 
 void LeabraNetwork::Init_Acts() {
   inherited::Init_Acts();
-  send_inhib_tmp.InitVals(0.0f);
 }
 
 void LeabraNetwork::Init_Counters() {
@@ -5525,14 +5624,11 @@ void LeabraNetwork::CheckInhibCons() {
 }
 
 void LeabraNetwork::BuildUnits_Threads() {
-  inherited::BuildUnits_Threads();
-  // temporary storage for sender-based netinput computation
   CheckInhibCons();
-  if(inhib_cons_used && (units_flat.size > 0) &&
-     (threads.n_threads > 0) && !NetinPerPrjn()) {
-    send_inhib_tmp.SetGeom(2, units_flat.size, threads.n_threads);
-    send_inhib_tmp.InitVals(0.0f);
+  if(inhib_cons_used) {
+    SetNetFlag(NETIN_PER_PRJN);	// inhib cons use per-prjn inhibition
   }
+  inherited::BuildUnits_Threads();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -5832,60 +5928,13 @@ void LeabraNetwork::Send_Netin() {
 
   // now need to roll up the netinput into unit vals
   const int nu = units_flat.size;
-  int nt = threads.tasks.size;
-  if(NetinPerPrjn()) {
-    if(!threads.using_threads)
-      nt = 1;
-    for(int i=1;i<nu;i++) {   // 0 = dummy idx
-      LeabraUnit* un = (LeabraUnit*)units_flat[i];
-      float nw_nt = 0.0f;
-      float nw_inhb = 0.0f;
-      for(int p=0;p<un->recv.size;p++) {
-	float p_nw_nt = 0.0f;
-	for(int j=0;j<nt;j++) {
-	  p_nw_nt += send_netin_tmp.FastEl(i, p, j);
-	}
-	LeabraRecvCons* cg = (LeabraRecvCons*)un->recv.FastEl(p);
-	cg->net_delta = p_nw_nt;
-	LeabraConSpec* cs = (LeabraConSpec*)cg->GetConSpec();
-	if(cs->inhib)
-	  nw_inhb += p_nw_nt;
-	else
-	  nw_nt += p_nw_nt;
-      }
-      un->net_delta = nw_nt;
-      un->g_i_delta = nw_inhb;
-    }
-    send_netin_tmp.InitVals(0.0f); // reset for next time around
+  for(int i=1;i<nu;i++) {   // 0 = dummy idx
+    LeabraUnit* u = (LeabraUnit*)units_flat[i];
+    u->Send_NetinDelta_Post(this);
   }
-  else {
-    if(threads.using_threads) {	// if not used, goes directly into unit vals
-      if(inhib_cons_used) {
-	for(int i=1;i<nu;i++) {   // 0 = dummy idx
-	  LeabraUnit* un = (LeabraUnit*)units_flat[i];
-	  float nw_nt = 0.0f;
-	  float nw_inhb = 0.0f;
-	  for(int j=0;j<nt;j++) {
-	    nw_nt += send_netin_tmp.FastEl(i, j);
-	    nw_inhb += send_inhib_tmp.FastEl(i, j);
-	  }
-	  un->net_delta = nw_nt;
-	  un->g_i_delta = nw_inhb;
-	}
-	send_inhib_tmp.InitVals(0.0f); // reset for next time around
-      }
-      else {
-	for(int i=1;i<nu;i++) {   // 0 = dummy idx
-	  LeabraUnit* un = (LeabraUnit*)units_flat[i];
-	  float nw_nt = 0.0f;
-	  for(int j=0;j<nt;j++) {
-	    nw_nt += send_netin_tmp.FastEl(i, j);
-	  }
-	  un->net_delta = nw_nt;
-	}
-      }
-      send_netin_tmp.InitVals(0.0f); // reset for next time around
-    }
+
+  if(NetinPerPrjn() || threads.using_threads) {
+    send_netin_tmp.InitVals(0.0f); // reset for next time around
   }
 
 #ifdef DMEM_COMPILE

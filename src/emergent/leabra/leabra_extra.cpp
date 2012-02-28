@@ -3750,8 +3750,14 @@ void LeabraExtOnlyUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net
 
   if(net->inhib_cons_used) {
     u->g_i_raw += u->g_i_delta;
-    u->gc.i = u->prv_g_i + dt.net * (u->g_i_raw - u->prv_g_i);
-    u->prv_g_i = u->gc.i;
+    if(act_fun == SPIKE) {
+      u->gc.i = MAX(u->g_i_raw, 0.0f);
+      Compute_NetinInteg_Spike_i(u, net);
+    }
+    else {
+      u->gc.i = u->prv_g_i + dt.net * (u->g_i_raw - u->prv_g_i);
+      u->prv_g_i = u->gc.i;
+    }
   }
 
   u->net_raw += u->net_delta;
@@ -3786,7 +3792,7 @@ void LeabraExtOnlyUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net
   if(act_fun == SPIKE) {
     // todo: need a mech for inhib spiking
     u->net = MAX(tot_net, 0.0f); // store directly for integration
-    Compute_NetinInteg_Spike(u,net);
+    Compute_NetinInteg_Spike_e(u,net);
   }
   else {
     float dnet = dt.net * (tot_net - u->prv_net);
