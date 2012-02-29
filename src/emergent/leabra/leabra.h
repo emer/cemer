@@ -1128,6 +1128,11 @@ public:
   virtual void	DecayState(LeabraUnit* u, LeabraNetwork* net, float decay);
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
 
+  virtual void	Init_SpikeBuff(LeabraUnit* u);
+  // #CAT_Activation initialize spike buffers based on whether they are needed
+  virtual void	Init_ActBuff(LeabraUnit* u);
+  // #CAT_Activation initialize activation buffer based on whether they are needed
+
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
 
@@ -1434,12 +1439,12 @@ public:
   float		misc_1;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   float		misc_2;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int		spk_t;		// #NO_SAVE #CAT_Activation time in ct_cycle units when spiking last occurred (-1 for not yet)
-  float_CircBuffer act_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of activation states for synaptic delay computation
-  float_CircBuffer spike_e_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of excitatory net input from spikes for synaptic integration over discrete spikes
-  float_CircBuffer spike_i_buf; // #NO_VIEW #NO_SAVE #CAT_Activation buffer of inhibitory net input from spikes for synaptic integration over discrete spikes
+  float_CircBuffer* act_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of activation states for synaptic delay computation
+  float_CircBuffer* spike_e_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of excitatory net input from spikes for synaptic integration over discrete spikes
+  float_CircBuffer* spike_i_buf; // #NO_VIEW #NO_SAVE #CAT_Activation buffer of inhibitory net input from spikes for synaptic integration over discrete spikes
 
   inline void	AddToActBuf(SynDelaySpec& sds) {
-    if(sds.on) act_buf.CircAddLimit(act, sds.delay);
+    if(sds.on) act_buf->CircAddLimit(act, sds.delay);
   }
   // add current activation to act buf if synaptic delay is on
 
@@ -1620,13 +1625,15 @@ public:
   //	Misc Housekeeping, non Compute functions
 
   void	GetInSubGp();
+  override bool	BuildUnits();
 
   void	InitLinks();
+  void	CutLinks();
   void	Copy_(const LeabraUnit& cp);
   TA_BASEFUNS(LeabraUnit);
 private:
   void 	Initialize();
-  void	Destroy()		{ };
+  void	Destroy()		{ CutLinks(); }
 };
 
 #ifndef __MAKETA__

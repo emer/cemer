@@ -1088,9 +1088,17 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   if(depress.on)
     lu->spk_amp = depress.max_amp;
   lu->spk_t = -1;
-  lu->act_buf.Reset();
-  lu->spike_e_buf.Reset();
-  lu->spike_i_buf.Reset();
+
+  Init_SpikeBuff(lu);
+  if(act_fun == SPIKE) {
+    lu->spike_e_buf->Reset();
+    lu->spike_i_buf->Reset();
+  }
+
+  Init_ActBuff(lu);
+  if(syn_delay.on) {
+    lu->act_buf->Reset();
+  }
 }
 
 
@@ -1119,11 +1127,57 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
   u->da = u->I_net = 0.0f;
 
   if(decay == 1.0f) {
-    u->act_buf.Reset();
-    u->spike_e_buf.Reset();
-    u->spike_i_buf.Reset();
+    Init_SpikeBuff(u);
+    if(act_fun == SPIKE) {
+      u->spike_e_buf->Reset();
+      u->spike_i_buf->Reset();
+    }
+
+    Init_ActBuff(u);
+    if(syn_delay.on) {
+      u->act_buf->Reset();
+    }
   }
 }
+
+void LeabraUnitSpec::Init_SpikeBuff(LeabraUnit* u) {
+  if(act_fun == SPIKE) {
+    if(!u->spike_e_buf) {
+      u->spike_e_buf = new float_CircBuffer;
+      taBase::Own(u->spike_e_buf, u);
+    }
+    if(!u->spike_i_buf) {
+      u->spike_i_buf = new float_CircBuffer;
+      taBase::Own(u->spike_i_buf, u);
+    }
+  }
+  else {
+    if(u->spike_e_buf) {
+      taBase::unRefDone(u->spike_e_buf);
+      u->spike_e_buf = NULL;
+    }
+    if(u->spike_i_buf) {
+      taBase::unRefDone(u->spike_i_buf);
+      u->spike_i_buf = NULL;
+    }
+  }
+}
+
+void LeabraUnitSpec::Init_ActBuff(LeabraUnit* u) {
+  if(syn_delay.on) {
+    if(!u->act_buf) {
+      u->act_buf = new float_CircBuffer;
+      taBase::Own(u->act_buf, u);
+    }
+  }
+  else {
+    if(u->act_buf) {
+      taBase::unRefDone(u->act_buf);
+      u->act_buf = NULL;
+    }
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit functions
 
@@ -1307,6 +1361,8 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnit* u, LeabraNetwork*) {
   else
     u->v_m = act.thr + u->act_eq / act.gain;
   u->da = u->I_net = 0.0f;
+
+  if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
   u->AddToActBuf(syn_delay);
 }
 
@@ -1323,6 +1379,8 @@ void LeabraUnitSpec::Compute_HardClampNoClip(LeabraUnit* u, LeabraNetwork*) {
   else
     u->v_m = act.thr + u->act_eq / act.gain;
   u->da = u->I_net = 0.0f;
+
+  if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
   u->AddToActBuf(syn_delay);
 }
 
@@ -1355,7 +1413,9 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
   }
   float act_ts = u->act;
   if(syn_delay.on) {
-    act_ts = u->act_buf.CircSafeEl(0); // get first logical element..
+    if(!u->act_buf)
+      Init_ActBuff(u);
+    act_ts = u->act_buf->CircSafeEl(0); // get first logical element..
   }
 
   if(act_ts > opt_thresh.send) {
@@ -1481,13 +1541,14 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 
 void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* net) {
   // netin gets added at the end of the spike_buf -- 0 time is the end
-  u->spike_e_buf.CircAddLimit(u->net, spike.window); // add current net to buffer
-  int mx = MAX(spike.window, u->spike_e_buf.length);
+  Init_SpikeBuff(u);
+  u->spike_e_buf->CircAddLimit(u->net, spike.window); // add current net to buffer
+  int mx = MAX(spike.window, u->spike_e_buf->length);
   float sum = 0.0f;
   if(spike.rise == 0.0f && spike.decay > 0.0f) {
     // optimized fast recursive exp decay: note: does NOT use dt.net
     for(int t=0;t<mx;t++) {
-      sum += u->spike_e_buf.CircSafeEl(t);
+      sum += u->spike_e_buf->CircSafeEl(t);
     }
     sum /= (float)spike.window; // normalize over window
     float dnet = spike.gg_decay * sum - (u->prv_net * spike.oneo_decay);
@@ -1496,7 +1557,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* ne
   }
   else {
     for(int t=0;t<mx;t++) {
-      float spkin = u->spike_e_buf.CircSafeEl(t);
+      float spkin = u->spike_e_buf->CircSafeEl(t);
       if(spkin > 0.0f) {
         sum += spkin * spike.ComputeAlpha(mx-t-1);
       }
@@ -1511,13 +1572,14 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* ne
 
 void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* net) {
   // netin gets added at the end of the spike_i_buf -- 0 time is the end
-  u->spike_i_buf.CircAddLimit(u->gc.i, spike.window); // add current net to buffer
-  int mx = MAX(spike.window, u->spike_i_buf.length);
+  Init_SpikeBuff(u);
+  u->spike_i_buf->CircAddLimit(u->gc.i, spike.window); // add current net to buffer
+  int mx = MAX(spike.window, u->spike_i_buf->length);
   float sum = 0.0f;
   if(spike.rise == 0.0f && spike.decay > 0.0f) {
     // optimized fast recursive exp decay: note: does NOT use dt.net
     for(int t=0;t<mx;t++) {
-      sum += u->spike_i_buf.CircSafeEl(t);
+      sum += u->spike_i_buf->CircSafeEl(t);
     }
     sum /= (float)spike.window; // normalize over window
     float dnet = spike.gg_decay * sum - (u->prv_g_i * spike.oneo_decay);
@@ -1526,7 +1588,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* ne
   }
   else {
     for(int t=0;t<mx;t++) {
-      float spkin = u->spike_i_buf.CircSafeEl(t);
+      float spkin = u->spike_i_buf->CircSafeEl(t);
       if(spkin > 0.0f) {
         sum += spkin * spike.ComputeAlpha(mx-t-1);
       }
@@ -1566,6 +1628,8 @@ void LeabraUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   LeabraUnit* lu = (LeabraUnit*)u;
   LeabraNetwork* lnet = (LeabraNetwork*)net;
   LeabraLayer* lay = lu->own_lay();
+
+  if(syn_delay.on && !lu->act_buf) Init_ActBuff(lu);
 
   if((lnet->cycle >= 0) && lay->hard_clamped) {
     if(lay->hard_clamped && act_fun == SPIKE) {
@@ -2642,16 +2706,45 @@ void LeabraUnit::Initialize() {
   misc_1 = 0.0f;
   misc_2 = 0.0f;
   spk_t = -1;
+
+  act_buf = NULL;
+  spike_e_buf = NULL;
+  spike_i_buf = NULL;
 }
 
 void LeabraUnit::InitLinks() {
   inherited::InitLinks();
   taBase::Own(vcb, this);
   taBase::Own(gc, this);
-  taBase::Own(act_buf, this);
-  taBase::Own(spike_e_buf, this);
-  taBase::Own(spike_i_buf, this);
   GetInSubGp();
+}
+
+void LeabraUnit::CutLinks() {
+  if(spike_e_buf) {
+    taBase::unRefDone(spike_e_buf);
+    spike_e_buf = NULL;
+  }
+  if(spike_i_buf) {
+    taBase::unRefDone(spike_i_buf);
+    spike_i_buf = NULL;
+  }
+  if(act_buf) {
+    taBase::unRefDone(act_buf);
+    act_buf = NULL;
+  }
+
+  inherited::CutLinks();
+}
+
+bool LeabraUnit::BuildUnits() {
+  bool rval = inherited::BuildUnits();
+  if(!rval) return false;
+  LeabraUnitSpec* us = (LeabraUnitSpec*)GetUnitSpec();
+  if(us) {
+    us->Init_SpikeBuff(this);
+    us->Init_ActBuff(this);
+  }
+  return rval;
 }
 
 void LeabraUnit::GetInSubGp() {
@@ -2700,9 +2793,6 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   misc_1 = cp.misc_1;
   misc_2 = cp.misc_2;
   spk_t = cp.spk_t;
-  act_buf = cp.act_buf;
-  spike_e_buf = cp.spike_e_buf;
-  spike_i_buf = cp.spike_i_buf;
 }
 
 LeabraInhib* LeabraUnit::own_thr() const {
