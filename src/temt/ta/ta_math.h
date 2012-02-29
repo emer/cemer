@@ -478,6 +478,9 @@ public:
   static double dprime(double mean_signal, double stdev_signal,
 		       double mean_noise, double stdev_noise);
   // #CAT_Probability d' signal detection sensitivity measure (actually d_a for unequal variances) -- = (mean_signal - mean_noise) / sqrt(0.5 * (stdev_signal^2 + stdev_noise^2)) -- difference in means divided by the average standard deviations
+  static double hits_fa(double dprime, double& hits, double& false_alarms, 
+		       double crit_z=0.5);
+  // #CAT_Probability returns hits and false alarms (reference args), and overall percent correct (return value: hits + correct rejections / 2) associated with a given dprime level and z-normalized criterion (0.5 = half way between the means, 0 = right at the noise mean, 1 = right at the signal mean) -- results are just the area under the normal curve relative to the criterion
 
   static double chisq_p(double X, double v);
   // #CAT_Probability P(X^2 | v)
@@ -1089,6 +1092,9 @@ public:
   static float dprime(float mean_signal, float stdev_signal,
 		       float mean_noise, float stdev_noise);
   // #CAT_Probability d' signal detection sensitivity measure (actually d_a for unequal variances) -- = (mean_signal - mean_noise) / sqrt(0.5 * (stdev_signal^2 + stdev_noise^2)) -- difference in means divided by the average standard deviations
+  static float hits_fa(float dprime, float& hits, float& false_alarms, 
+		       float crit_z=0.5);
+  // #CAT_Probability returns hits and false alarms (reference args), and overall percent correct (return value: hits + correct rejections / 2) associated with a given dprime level and z-normalized criterion (0.5 = half way between the means, 0 = right at the noise mean, 1 = right at the signal mean) -- results are just the area under the normal curve relative to the criterion
 
   static float chisq_p(float X, float v);
   // #CAT_Probability P(X^2 | v)

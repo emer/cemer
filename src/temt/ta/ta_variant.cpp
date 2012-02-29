@@ -20,6 +20,7 @@
 #include "ta_type.h"
 #ifndef NO_TA_BASE
 #include "ta_matrix.h"
+#include "ta_project.h"
 #endif
 
 #ifdef TA_USE_QT
@@ -1675,8 +1676,28 @@ void Variant::setTypeItem(TypeItem* val) {
 }
 
 void Variant::setString(const String& val, bool null) {
-  if (m_type == T_String)
+  if (m_type == T_String) {
     getString() = val;
+  }
+#ifndef NO_TA_BASE
+  if(val.contains(":.")) {
+    String path = val.after(":");
+    MemberDef* md = NULL;
+    taBase* bs = tabMisc::root->FindFromPath(path, md);
+    if(!bs) {
+      taMisc::Warning("*** Invalid Path in Variant::setString:",path);
+      releaseType();
+      new(&d.str)String(val);
+      m_type = T_String;
+    }
+    else {
+      if(bs->InheritsFrom(TA_taMatrix))
+	setMatrix((taMatrix*)bs);
+      else
+	setBase(bs);
+    }
+  }
+#endif
   else {
     releaseType();
     new(&d.str)String(val);
@@ -2148,8 +2169,22 @@ void Variant::updateFromString(const String& val) {
  // TODO: should look up from path
   case T_Base:
   case T_Matrix: {
-    warn("updateFromString() setting T_Base");
+    if(val.contains(":.")) {
+      String path = val.after(":");
+      MemberDef* md = NULL;
+      taBase* bs = tabMisc::root->FindFromPath(path, md);
+      if(!bs) {
+	taMisc::Warning("*** Invalid Path in Variant::updateFromString:",path);
+      }
+      else {
+	if(bs->InheritsFrom(TA_taMatrix))
+	  setMatrix((taMatrix*)bs);
+	else
+	  setBase(bs);
+      }
+    }
   }
+    break;
 #endif
   case T_TypeItem: {
     TypeDef* typ;

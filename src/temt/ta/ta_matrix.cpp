@@ -1772,12 +1772,15 @@ int Variant_Matrix::Dump_Load_Item(istream& strm, int idx) {
 //TODO: maybe we should issue a warning???
 //    break;
   
-//  case Variant::T_Base: 
-//  case Variant::T_Matrix:
-//TODO: what is the meaning of streaming a taBase????
-// should it be the path??? what if unowned???
-//    break;
-  
+  case Variant::T_Base: 
+  case Variant::T_Matrix:
+    //note: an empty string was not written
+    c = taMisc::skip_till_start_quote_or_semi(strm);
+    if (c == '\"') {
+      c = taMisc::read_till_end_quote_semi(strm);
+      val.updateFromString(taMisc::LexBuf);
+    }
+    break;
   default: 
     c = taMisc::read_till_semi(strm);
     break;
@@ -1817,8 +1820,9 @@ void Variant_Matrix::Dump_Save_Item(ostream& strm, int idx) {
   
   case Variant::T_Base: 
   case Variant::T_Matrix:
-//TODO: what is the meaning of streaming a taBase????
-// should it be the path??? what if unowned???
+    strm << ' ';
+    //note: doesn't write empty strings
+    taMisc::write_quoted_string(strm, val.toString());
     break;
   
   default: 

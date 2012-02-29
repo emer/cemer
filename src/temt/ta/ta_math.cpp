@@ -835,6 +835,16 @@ double taMath_double::dprime(double mean_signal, double stdev_signal,
   return (mean_signal - mean_noise) / avg_stdev;
 }
 
+double taMath_double::hits_fa(double dprime, double& hits, double& false_alarms, double crit_z) {
+  dprime = fabs(dprime);	// keep it positive
+  if(crit_z < 0.0) crit_z = 0.0;
+  if(crit_z > 1.0) crit_z = 1.0;
+  hits = gauss_cum(crit_z * dprime);
+  false_alarms = gauss_cum(-(1.0 - crit_z)*dprime);
+  double pct_correct = (hits + (1.0 - false_alarms)) / 2.0;
+  return pct_correct;
+}
+
 double taMath_double::chisq_p(double X, double v) {
   return gamma_p(0.5 * v, 0.5 * X * X);
 }
@@ -3816,6 +3826,16 @@ float taMath_float::dprime(float mean_signal, float stdev_signal,
   float avg_stdev = sqrt(0.5 * stdev_signal * stdev_signal + stdev_noise * stdev_noise);
   if(avg_stdev == 0.0) return 0.0;
   return (mean_signal - mean_noise) / avg_stdev;
+}
+
+float taMath_float::hits_fa(float dprime, float& hits, float& false_alarms, float crit_z) {
+  dprime = fabs(dprime);	// keep it positive
+  if(crit_z < 0.0) crit_z = 0.0;
+  if(crit_z > 1.0) crit_z = 1.0;
+  hits = gauss_cum(crit_z * dprime);
+  false_alarms = gauss_cum(-(1.0 - crit_z)*dprime);
+  float pct_correct = (hits + (1.0 - false_alarms)) / 2.0;
+  return pct_correct;
 }
 
 float taMath_float::chisq_p(float X, float v) {
