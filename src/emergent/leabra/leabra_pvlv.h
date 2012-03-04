@@ -433,13 +433,16 @@ INHERITED(PVLVLayerSpec)
 public:
   NVSpec        nv;     // novelty value specs
 
+  virtual float Compute_NVDa_raw(LeabraLayer* lay, LeabraNetwork* net);
+  // compute raw novelty value da value -- no gain factor
   virtual float Compute_NVDa(LeabraLayer* lay, LeabraNetwork* net);
-  // compute novelty value da value
+  // compute novelty value da value -- with gain factor applied
   virtual void  Compute_NVPlusPhaseDwt(LeabraLayer* lay, LeabraNetwork* net);
   // compute plus phase activations as train target value and change weights
   virtual void  Update_NVPrior(LeabraLayer* lay, LeabraNetwork* net);
   // update the prior Nv value, stored in nv unit misc_1 values
 
+  override void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net);
   override void PostSettle(LeabraLayer* lay, LeabraNetwork* net);
   override bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) { return false; }
   override void Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net);
@@ -517,5 +520,36 @@ private:
   void  Destroy()               { };
   void  Defaults_init() { Initialize(); }
 };
+
+class LEABRA_API PVLVTonicDaLayerSpec : public PVLVLayerSpec {
+  // display of tonic dopamine level -- just clamps the current value which is always stored in network->pvlv_tonic_da and is the definitive value (which can be manipulated by other layers) that is just reflected in this layer -- does not do any actual computation
+INHERITED(PVLVLayerSpec)
+public:
+  virtual void  Clamp_Da(LeabraLayer* lay, LeabraNetwork* net);
+  // clamp the current Da value on the layer activations
+
+  override void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
+  override void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) { };
+  override void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) { };
+  override void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
+
+  // never learn
+  override bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  { return false; }
+  override bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_SecondPlus_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+  override bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) { return false; }
+
+  void	HelpConfig();	// #BUTTON get help message for configuring this spec
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+
+  TA_SIMPLE_BASEFUNS(PVLVTonicDaLayerSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void  Initialize();
+  void  Destroy()               { };
+  void  Defaults_init()         { };
+};
+
 
 #endif // leabra_pvlv_h

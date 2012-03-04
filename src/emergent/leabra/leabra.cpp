@@ -531,14 +531,20 @@ void ActFunSpec::Initialize() {
 
 void ActFunSpec::Defaults_init() {
   gelin = true;
+  vm_mod_max = 0.95f;
+  old_gelin = false;
   if(taMisc::is_loading) {
     taVersion v511(5, 1, 1);
     if(taMisc::loading_version < v511) { // default prior to 511 is non-gelin
       gelin = false;
     }
+    else {
+      taVersion v531(5, 3, 1);
+      if(taMisc::loading_version < v531) { // default prior to 531 is old-gelin
+	old_gelin = true;
+      }
+    }
   }
-  vm_mod_max = 0.95f;
-  old_gelin = false;
   if(gelin) {
     thr = .5f;
     gain = 100.0f;
@@ -2042,6 +2048,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     if(no_plus_testing) {
       u->act_m = u->act_p = u->act_nd;
       u->act_dif = 0.0f;
+      u->act_dif2 = 0.0f;
       Compute_ActTimeAvg(u, net);
     }
     else {
@@ -2050,6 +2057,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
       else {
         u->act_p = u->act_nd;
         u->act_dif = u->act_p - u->act_m;
+	u->act_dif2 = u->act_p - u->act_m2;
         Compute_DaMod_PlusPost(u, net);
         Compute_ActTimeAvg(u, net);
       }
@@ -2059,12 +2067,14 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     if(no_plus_testing) {
       u->act_m = u->act_p = u->act_nd;
       u->act_dif = 0.0f;
+      u->act_dif2 = 0.0f;
       Compute_ActTimeAvg(u, net);
     }
     else {
       if(net->phase == LeabraNetwork::MINUS_PHASE) {
         u->act_m = u->act_nd;
         u->act_dif = u->act_p - u->act_m;
+	u->act_dif2 = u->act_p - u->act_m2;
       }
       else {
         u->act_p = u->act_nd;
@@ -2075,6 +2085,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   case LeabraNetwork::PLUS_ONLY:
     u->act_m = u->act_p = u->act_nd;
     u->act_dif = 0.0f;
+    u->act_dif2 = 0.0f;
     Compute_ActTimeAvg(u, net);
     break;
   case LeabraNetwork::MINUS_PLUS_NOTHING:
@@ -2106,6 +2117,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     else {
       u->act_m = u->act_nd;
       u->act_dif = u->act_p - u->act_m;
+      u->act_dif2 = u->act_p - u->act_m2;
     }
     break;
   case LeabraNetwork::MINUS_PLUS_PLUS:
@@ -5516,6 +5528,8 @@ void LeabraNetwork::Initialize() {
   pvlv_pvr = 0.0f;
   pvlv_lve = 0.0f;
   pvlv_lvi = 0.0f;
+  pvlv_nv = 0.0f;
+  pvlv_tonic_da = 0.0f;
   pv_detected = false;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;
@@ -5612,6 +5626,8 @@ void LeabraNetwork::Init_Stats() {
   pvlv_pvr = 0.0f;
   pvlv_lve = 0.0f;
   pvlv_lvi = 0.0f;
+  pvlv_nv = 0.0f;
+  pvlv_tonic_da = 0.0f;
   pv_detected = false;
   avg_ext_rew_sum = 0.0f;
   avg_ext_rew_n = 0;

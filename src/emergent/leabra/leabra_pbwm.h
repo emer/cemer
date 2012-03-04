@@ -420,6 +420,7 @@ INHERITED(SpecMemberBase)
 public:
   float		da_gain;	// #DEF_0:2 #MIN_0 overall gain for da modulation of matrix units for the purposes of learning (ONLY) -- bias da is set directly by gate_bias params -- also, this value is in addition to other "upstream" gain parameters, such as vta.da.gain -- it is recommended that you leave those upstream parameters at 1.0 and adjust this parameter, as it also modulates rnd_go.nogo.da which is appropriate
   float		bias_gain;	// #DEF_0.1 overall gain factor for the gating biases as they are translated into multipliers on the net input values of Go vs. NoGo units -- allows the bias values to be expressed in standardized relative units and then overall impact can be dialed with this setting
+  float		nv_gain;	// gain on the NV (novelty value) contribution to performance bias values -- increased Go bias with increased NV -- this is completely independent of the NV layer spec gain parameter, which enters into the learning da value -- can separately include nv as a bias and learning factor
   float		bias_pos_gain;	// #DEF_0 extra multiplicative gain for positive bias terms -- it is in general not great to increase netinput levels on units beyond their natural values, so setting this to zero (default) puts all the bias work on decreasing the relative netinputs for the non-favored population (biologically can be going into a down state)
   bool		mnt_only;	// set to true if there is only a MAINT matrix layer -- affects the way that rnd go is computed -- should also have PFCLayerSpec.gate.max_maint = 0
 
@@ -432,17 +433,23 @@ private:
   void	Defaults_init() { };
 };
 
-class LEABRA_API MatrixRndGoSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra misc random go specifications -- when stripe has not fired for a long time, encourage some Go firing to get back into the game..
+class LEABRA_API MatrixTonicDaSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how to adapt tonic dopamine in response to errors and overall nogo firing -- increases in tonic da facilitate Go firing globally
 INHERITED(SpecMemberBase)
 public:
-  int		nogo_thr;	// #DEF_20 threshold of number of nogo firing in a row that will trigger NoGo random go firing
-  bool		rng_eq_thr;	// #DEF_true set the nogo_rng value to be the same as nogo_thr -- this generally makes sense and is characteristic of the Poisson distribution, and reduces the number of parameters to confront..
-  int		nogo_rng;	// #CONDEDIT_OFF_rng_eq_thr #DEF_20 #MIN_1 range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
-  float		nogo_da;	// #DEF_10 #MIN_0 strength of DA for driving learning of random Go units -- does not affect performance, only learning
-  float		nogo_noise;	// #DEF_0;0.02 #MIN_0 use .02 when using -- noise value to apply to a randomly selected subset of k Go units to get them activated during a random Go event
+  float		err_nogo_inc;	// how much to increase tonic da when an error occurs (pv detected, and da < 0), and all of the stripes fired nogo
+  float		err_go_inc;	// how much to increase tonic da when an error occurs (pv detected, and da < 0), and at least one of the stripes has fired go -- should be lower than err_nogo_inc in general
+  float		noerr_nogo_inc;	// #DEF_0:0.1 how much to increase tonic da when NO error occurs (no pv detected), and all of the stripes fired nogo -- typically 0 (so only err_nogo_inc is used) but if the network is getting stuck not doing anything useful at all, then this can help get unstuck
+  float		decay;		// rate of decay in tonic da per primary value feedback trial, in the absence of increases per above parameters
 
-  TA_SIMPLE_BASEFUNS(MatrixRndGoSpec);
+  bool		old_rnd_go;	// #DEF_false use old nogo mechanism -- deprecated
+  int		nogo_thr;	// #DEF_20 #CONDSHOW_ON_old_rnd_go threshold of number of nogo firing in a row that will trigger NoGo random go firing
+  bool		rng_eq_thr;	// #DEF_true #CONDSHOW_ON_old_rnd_go set the nogo_rng value to be the same as nogo_thr -- this generally makes sense and is characteristic of the Poisson distribution, and reduces the number of parameters to confront..
+  int		nogo_rng;	// #CONDSHOW_ON_old_rnd_go #DEF_20 #MIN_1 range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
+  float		nogo_da;	// #DEF_10 #CONDSHOW_ON_old_rnd_go #MIN_0 strength of DA for driving learning of random Go units -- does not affect performance, only learning
+  float		nogo_noise;	// #DEF_0;0.02 #CONDSHOW_ON_old_rnd_go #MIN_0 use .02 when using -- noise value to apply to a randomly selected subset of k Go units to get them activated during a random Go event
+
+  TA_SIMPLE_BASEFUNS(MatrixTonicDaSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -489,7 +496,7 @@ public:
   MatrixGateBiasFunSpec	out_rew_go_fun; // gating bias function for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias (favors Go over NoGo) to encourage the output gating units to respond -- is (typically increasing) function of duration information has been maintained
   MatrixGateBiasFunSpec	mnt_mnt_nogo_fun; // gating bias function for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) -- is (typically decreasing) function of maintenance duration -- if starts high ends low, this causes stripe to try to maintain (NoGo) strongly initially, and then be more labile for updating after that
   MatrixGateBiasFunSpec	mnt_empty_go_fun; // gating bias function for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias (favors Go over NoGo) -- provides a bias for encoding and maintaining new information -- is (typically increasing) function of time being empty, causing stripe to be more likely to maintain the longer it sits empty -- thus serves as a more graded, subtle version of rnd_go.
-  MatrixRndGoSpec	rnd_go;		// matrix random Go firing for nogo firing stripes case
+  MatrixTonicDaSpec	tonic_da;	// #AKA_rnd_go how to adapt tonic dopamine in response to errors and overall nogo firing -- increases in tonic da facilitate Go firing globally
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 
   override void Compute_NetinStats_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
@@ -507,7 +514,12 @@ public:
 				 LeabraNetwork* net, float bias_dav);
   // apply multiplicative bias to netinputs of units
   virtual void 	Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net);
-  // compute u->dav learning dopamine value based on raw dav and gating state, etc -- this dav is then directly used in conspec leraning rule
+  // compute u->dav learning dopamine value based on raw dav and gating state, etc -- this dav is then directly used in conspec learning rule
+  virtual void 	Compute_NGo(LeabraLayer* lay, LeabraNetwork* net,
+			    int& n_mnt_go, int& n_out_go);
+  // compute number of maintenance and output go firing stripes
+  virtual void 	Compute_TonicDa(LeabraLayer* lay, LeabraNetwork* net);
+  // update tonic da value based on tonic_da parameters (errors, all nogo, etc)
 
   virtual void Compute_RndGoNoise_ugp(LeabraLayer* lay,
 				      Layer::AccessMode acc_md, int gpidx,
@@ -632,6 +644,11 @@ public:
   virtual void	GetSNrThalLayers(LeabraLayer* lay, LeabraLayer*& snrthal_mnt, LeabraLayer*& snrthal_out);
   // find maintenance (required) and output (optional) snrthal input layers
 
+  virtual void Clear_Maint(LeabraLayer* lay, LeabraNetwork* net, int stripe_no=-1);
+  // clear maintenance currents on given stripe or all stripes if stripe_no < 0 -- for program-based control over clearing
+  virtual void Compute_MaintUpdt(LeabraLayer* lay, LeabraNetwork* net,
+				 MaintUpdtAct updt_act, int stripe_no=-1);
+  // perform given action (STORE, CLEAR, UPDT) on given stripe or all stripes if stripe_no < 0 -- for program-based control over pfc functionality
   virtual void 	Compute_TrialInitGates(LeabraLayer* lay, LeabraNetwork* net);
   // clear various gating signals at the start of the trial
     virtual void Compute_MaintUpdt_ugp(LeabraLayer* lay,

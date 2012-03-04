@@ -538,7 +538,7 @@ taBase* DynEnumType::FindTypeName(const String& nm) const {
 }
 
 String DynEnumType::GetDisplayName() const {
-  return "enum " + name + " (" + String(enums.size) + " items)";
+  return name + " (enum: " + String(enums.size) + " items)";
 }
 
 void DynEnumType::GenCssPre_impl(Program* prog) {
@@ -593,6 +593,7 @@ bool DynEnumType::EnumsFromDataTable(DataTable* dt, Variant col) {
     AddEnum(val, i);
   }
   enums.StructUpdate(false);
+  return true;
 }
 
 void DynEnumType::DataChanged(int dcr, void* op1, void* op2) {
@@ -3920,11 +3921,12 @@ const String Function::GenListing_children(int indent_level) {
 String Function::GetDisplayName() const {
   ProgVar rvt; rvt.var_type = return_type;  rvt.object_type = object_type;
   String rval;
-  rval += rvt.GenCssType() + " " + name + "(";
+  rval += name + "(";
   if(args.size > 0) {
     rval += args.GenCss_FuncArgs();
   }
   rval += ")";
+  rval += " returns: " + rvt.GenCssType();
   return rval;
 }
 

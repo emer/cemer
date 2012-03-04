@@ -3069,6 +3069,8 @@ public:
   float		pvlv_pvr;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV primary reward availability prediction value PVr for the current trial -- updated on a cycle-by-cycle basis
   float		pvlv_lve;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV learned reward prediction value LVe (excitatory, rapidly adapting) for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
   float		pvlv_lvi;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV learned reward prediction value LVi (inhibitory, slowly adapting) for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
+  float		pvlv_nv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV novelty value for the current trial -- updated on a cycle-by-cycle basis
+  float		pvlv_tonic_da;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV tonic dopamine level for the current trial -- updated on a cycle-by-cycle basis
   bool		pv_detected;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV detected a situation where primary reward value is expected to be available, based on learned encoding of similar such situations in the past -- computed by the PVrLayerSpec continuously in the minus phase
   float		avg_ext_rew_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average external reward value in this epoch
   int		avg_ext_rew_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average external reward value computation for this epoch

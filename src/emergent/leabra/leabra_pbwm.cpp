@@ -678,11 +678,18 @@ void MatrixGateBiasFunSpec::UpdateAfterEdit_impl() {
 void MatrixMiscSpec::Initialize() {
   da_gain = 0.1f;
   bias_gain = .1f;
+  nv_gain = 0.0f;		// todo: add new default
   bias_pos_gain = 0.0f;
   mnt_only = false;
 }
 
-void MatrixRndGoSpec::Initialize() {
+void MatrixTonicDaSpec::Initialize() {
+  err_nogo_inc = 0.05f;
+  err_go_inc = 0.01f;
+  noerr_nogo_inc = 0.0f;
+  decay = 0.001f;
+
+  old_rnd_go = false;
   nogo_thr = 20;
   rng_eq_thr = true;
   nogo_rng = nogo_thr;
@@ -690,7 +697,7 @@ void MatrixRndGoSpec::Initialize() {
   nogo_noise = 0.02f;
 }
 
-void MatrixRndGoSpec::UpdateAfterEdit_impl() {
+void MatrixTonicDaSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(rng_eq_thr)
     nogo_rng = nogo_thr;
@@ -761,7 +768,7 @@ void MatrixLayerSpec::Defaults_init() {
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   gate_bias.UpdateAfterEdit_NoGui();
-  rnd_go.UpdateAfterEdit_NoGui();
+  tonic_da.UpdateAfterEdit_NoGui();
 }
 
 void MatrixLayerSpec::HelpConfig() {
@@ -917,7 +924,8 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
   LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
   PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
-  float tonic_da = dals->da.tonic_da;
+  float ton_da = dals->da.tonic_da + net->pvlv_tonic_da;
+  float nv_da = matrix.nv_gain * net->pvlv_nv; // add in nv bias at the end
   int pfc_mnt_cnt = mgpd->mnt_count; // is pfc maintaining or not?
   bool pfc_is_mnt = pfc_mnt_cnt > 0;
   int rnd_go_thr = mgpd->rnd_go_thr; // random go threshold for this time
@@ -935,7 +943,7 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
           bias_dav = out_rew_go_fun.GetBias(pfc_mnt_cnt);
         else
           bias_dav = gate_bias.out_rew_go;
-        if(!nogo_rnd_go && pfc_mnt_cnt > rnd_go_thr) { // no rnd go yet, but over thresh
+        if(tonic_da.old_rnd_go && !nogo_rnd_go && pfc_mnt_cnt > rnd_go_thr) { // no rnd go yet, but over thresh
           mgpd->gate_state = PFCGateSpec::NOGO_RND_GO;
           Compute_RndGoNoise_ugp(lay, acc_md, gpidx, net);
         }
@@ -969,7 +977,7 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
           bias_dav = mnt_empty_go_fun.GetBias(-pfc_mnt_cnt); // negative count for amount of time empty
         else
           bias_dav = gate_bias.mnt_empty_go;
-        if(!nogo_rnd_go && pfc_mnt_cnt < -rnd_go_thr) { // no rnd go yet, but over thresh
+        if(tonic_da.old_rnd_go && !nogo_rnd_go && pfc_mnt_cnt < -rnd_go_thr) { // no rnd go yet, but over thresh
           mgpd->gate_state = PFCGateSpec::NOGO_RND_GO;
           Compute_RndGoNoise_ugp(lay, acc_md, gpidx, net);
         }
@@ -977,7 +985,7 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
     }
   }
 
-  float tot_dav = bias_dav + tonic_da;
+  float tot_dav = bias_dav + ton_da + nv_da;
   return tot_dav;
 }
 
@@ -1009,6 +1017,7 @@ void MatrixLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no == 1) {
     // end of plus -- compute da value used for learning
     Compute_LearnDaVal(lay, net);
+    Compute_TonicDa(lay, net);
   }
 }
 
@@ -1020,16 +1029,18 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   int n_go = 0;
   float nogo_da_sub = 0.0f;
 
-  // subtract the average -- this turns out to be important for preventing global
-  // drift in weights upward when lots of rnd go is going on (e.g., loop model)
-  for(int gi=0; gi<lay->gp_geom.n; gi++) {
-    PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
-    if(mgpd->gate_state == PFCGateSpec::NOGO_RND_GO) n_rnd_go++;
-    else if(mgpd->gate_sig == PFCGateSpec::GATE_MNT_GO) n_go++;
-  }
-  if(n_rnd_go > 0) {
-    nogo_da_sub = rnd_go.nogo_da / (float)(lay->gp_geom.n - n_rnd_go);
-    // how much to subtract from other units if one guy gets a random go
+  if(tonic_da.old_rnd_go) {
+    // subtract the average -- this turns out to be important for preventing global
+    // drift in weights upward when lots of rnd go is going on (e.g., loop model)
+    for(int gi=0; gi<lay->gp_geom.n; gi++) {
+      PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+      if(mgpd->gate_state == PFCGateSpec::NOGO_RND_GO) n_rnd_go++;
+      else if(mgpd->gate_sig == PFCGateSpec::GATE_MNT_GO) n_go++;
+    }
+    if(n_rnd_go > 0) {
+      nogo_da_sub = tonic_da.nogo_da / (float)(lay->gp_geom.n - n_rnd_go);
+      // how much to subtract from other units if one guy gets a random go
+    }
   }
 
   int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
@@ -1082,7 +1093,7 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
       }
 
       if(nogo_rnd_go) {
-        lrn_dav += rnd_go.nogo_da; // output gating also gets this too
+        lrn_dav += tonic_da.nogo_da; // output gating also gets this too
       }
       else {
         lrn_dav -= nogo_da_sub; // subtract from others -- keep it normalized -- val is 0 if none
@@ -1098,13 +1109,57 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
+
+void MatrixLayerSpec::Compute_NGo(LeabraLayer* lay, LeabraNetwork* net,
+				      int& n_mnt_go, int& n_out_go) {
+  n_mnt_go = 0;
+  n_out_go = 0;
+  for(int gi=0; gi<lay->gp_geom.n; gi++) {
+    PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+    if(mgpd->gate_sig == PFCGateSpec::GATE_MNT_GO) n_mnt_go++;
+    if(mgpd->gate_sig == PFCGateSpec::GATE_OUT_GO) n_out_go++;
+  }
+}
+
+void MatrixLayerSpec::Compute_TonicDa(LeabraLayer* lay, LeabraNetwork* net) {
+  if(tonic_da.old_rnd_go) return; // do not use if using old setup..
+  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
+  if(!er_avail && (tonic_da.noerr_nogo_inc == 0.0f)) return;	// only on pv trials
+
+  if(!er_avail && (tonic_da.noerr_nogo_inc > 0.0f)) {
+    int n_mnt_go = 0; int n_out_go = 0;
+    Compute_NGo(lay, net, n_mnt_go, n_out_go);
+    if(n_mnt_go + n_out_go == 0) {
+      net->pvlv_tonic_da += tonic_da.noerr_nogo_inc;
+    }
+  }
+  else {
+    if(net->ext_rew >= 0.5f) {	// todo: this is not the right way to do this!!!
+      // no error -- got something positive -- decay tonic da
+      net->pvlv_tonic_da -= tonic_da.decay * net->pvlv_tonic_da;
+    }
+    else {
+      // error -- increase tonic da
+      int n_mnt_go = 0; int n_out_go = 0;
+      Compute_NGo(lay, net, n_mnt_go, n_out_go);
+      if(n_mnt_go + n_out_go == 0) {
+	net->pvlv_tonic_da += tonic_da.err_nogo_inc;
+      }
+      else {
+	net->pvlv_tonic_da += tonic_da.err_go_inc;
+      }
+    }
+  }
+}
+
+
 void MatrixLayerSpec::Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork*) {
   for(int gi=0; gi<lay->gp_geom.n; gi++) {
     PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
     if((mgpd->gate_state == PFCGateSpec::NOGO_RND_GO) || mgpd->rnd_go_thr == 0) {
       mgpd->gate_state = PFCGateSpec::INIT_STATE;
       // new treshold for when to fire rnd go next!
-      mgpd->rnd_go_thr = rnd_go.nogo_thr + Random::IntZeroN(rnd_go.nogo_rng);
+      mgpd->rnd_go_thr = tonic_da.nogo_thr + Random::IntZeroN(tonic_da.nogo_rng);
     }
   }
 }
@@ -1112,7 +1167,7 @@ void MatrixLayerSpec::Compute_ClearRndGo(LeabraLayer* lay, LeabraNetwork*) {
 void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay,
                                              Layer::AccessMode acc_md, int gpidx,
                                              LeabraNetwork* net) {
-  if(rnd_go.nogo_noise == 0.0f) return;
+  if(tonic_da.nogo_noise == 0.0f) return;
   int nunits = lay->UnitAccess_NUnits(acc_md);
   PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
 
@@ -1126,7 +1181,7 @@ void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay,
   for(i=0; i<mgpd->kwta.k; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, lay->unit_idxs[i], gpidx);
     if(u->lesioned()) continue;
-    u->noise = rnd_go.nogo_noise;
+    u->noise = tonic_da.nogo_noise;
   }
 
   // Set the remainder of the "go" units to have no noise.
@@ -1145,7 +1200,7 @@ void MatrixLayerSpec::Compute_RndGoNoise_ugp(LeabraLayer* lay,
 }
 
 void MatrixLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no == 0) {
+  if(tonic_da.old_rnd_go && (net->phase_no == 0)) {
     Compute_ClearRndGo(lay, net);
   }
 
@@ -1394,6 +1449,24 @@ void PFCLayerSpec::Compute_MidMinusAct_ugp(LeabraLayer* lay,
     u->act_m2 = u->act_eq;
   }
 }
+
+void PFCLayerSpec::Clear_Maint(LeabraLayer* lay, LeabraNetwork* net, int stripe_no) {
+  Compute_MaintUpdt(lay, net, CLEAR, stripe_no);
+}
+
+void PFCLayerSpec::Compute_MaintUpdt(LeabraLayer* lay, LeabraNetwork* net,
+				     MaintUpdtAct updt_act, int stripe_no) {
+  Layer::AccessMode acc_md = Layer::ACC_GP;
+  if(stripe_no < 0) {
+    for(int gpidx=0; gpidx<lay->gp_geom.n; gpidx++) {
+      Compute_MaintUpdt_ugp(lay, acc_md, gpidx, updt_act, net);
+    }
+  }
+  else if(stripe_no < lay->gp_geom.n) {
+    Compute_MaintUpdt_ugp(lay, acc_md, stripe_no, updt_act, net);
+  }
+}
+
 
 void PFCLayerSpec::Compute_MaintUpdt_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
                                          MaintUpdtAct updt_act, LeabraNetwork* net) {
