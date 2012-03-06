@@ -1,5 +1,7 @@
 #!/bin/bash
 echo Command line: ./configure $@
+# save config command to log
+echo Command line: ./configure $@ > config.log
 # NOTE: this is a simple script wrapper around the cmake command line tools, for
 # those used to the autotools configure script conventions
 # also, cmake has rather lame command-line args so this is generally quite useful
@@ -10,6 +12,7 @@ echo "args are:"
 echo "  --enable-debug (or --debug)  enable debug, non-optimized build"
 echo "  --enable-release (or --release)  enable release, maximum optimized build (-O3 on gcc)"
 echo "  --prefix=<path>              set the install prefix to path"
+echo "  --suffix=<name>              add an extra custom suffix on the end of build files"
 echo "  --enable-mpi (or --mpi)      enable MPI distributed memory parallel build"
 echo "  --clean                      clean existing cmake cache etc first: start fresh"
 echo "  --build-dir=<name>           provide a custom build directory name (else auto)."
@@ -24,21 +27,27 @@ echo " "
 
 cmake_cmd="cmake ../"
 build_dir="build"
+extra_suffix=""
 
 while [ $# -gt 0 ]
 do
   preq=${1%=*}			# get part before =
   case $preq
   in
+    --suffix | -suffix | suffix)
+      extra_suffix=${1##*=}		# get part after =
+      cmake_cmd="$cmake_cmd -DEXTRA_SUFFIX=$extra_suffix"
+      build_dir="${build_dir}${extra_suffix}"
+      shift 1
+    ;;
     --debug | --enable-debug | debug | enable-debug | -debug | -enable-debug | d | -d)
       debug=true
       cmake_cmd="$cmake_cmd -DCMAKE_BUILD_TYPE=Debug"
-      build_dir="build_dbg"
+      build_dir="${build_dir}_dbg"
       shift 1
     ;;
     --release | --enable-release | release | enable-release | -release | -enable-release | r | -r)
       cmake_cmd="$cmake_cmd -DCMAKE_BUILD_TYPE=Release"
-      build_dir="build"
       shift 1
     ;;
     --prefix | -prefix | prefix | p | -p)
@@ -116,6 +125,7 @@ echo "####################################################"
 echo "configure script settings:"
 echo "  debug:        $debug"
 echo "  prefix:       $prefix"
+echo "  suffix:       $extra_suffix"
 echo "  mpi:          $mpi"
 echo "  clean:        $clean"
 echo "  build-dir:    $build_dir"
