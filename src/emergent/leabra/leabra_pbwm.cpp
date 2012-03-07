@@ -684,10 +684,11 @@ void MatrixMiscSpec::Initialize() {
 }
 
 void MatrixTonicDaSpec::Initialize() {
-  err_nogo_inc = 0.001f;
-  noerr_nogo_inc = 0.001f;
-  err_go_inc = 0.0f;
+  out_err_nogo_inc = 0.001f;
+  mnt_nogo_inc = 0.001f;
+  out_err_go_inc = 0.0f;
   decay = 0.001f;
+  max_da = 0.5f;
 
   old_rnd_go = false;
   nogo_thr = 20;
@@ -1138,26 +1139,26 @@ void MatrixLayerSpec::Compute_TonicDa(LeabraLayer* lay, LeabraNetwork* net) {
   }
 
   bool did_inc = false;
-  if(all_nogo) {
-    if(did_err) {
-      if(tonic_da.err_nogo_inc > 0.0f) {
-	net->pvlv_tonic_da += tonic_da.err_nogo_inc;
-	did_inc = true;
+  if(bg_type == OUTPUT) {
+    if(did_err) {		// only cares about err trials
+      if(all_nogo) {
+	if(tonic_da.out_err_nogo_inc > 0.0f) {
+	  net->pvlv_tonic_da += tonic_da.out_err_nogo_inc;
+	  did_inc = true;
+	}
       }
-    }
-    else {
-      if(tonic_da.noerr_nogo_inc > 0.0f) {
-	net->pvlv_tonic_da += tonic_da.noerr_nogo_inc;
-	did_inc = true;
+      else {
+	if(tonic_da.out_err_go_inc > 0.0f) {
+	  net->pvlv_tonic_da += tonic_da.out_err_go_inc;
+	  did_inc = true;
+	}
       }
     }
   }
-  else {
-    if(did_err) {
-      if(tonic_da.err_go_inc > 0.0f) {
-	net->pvlv_tonic_da += tonic_da.err_go_inc;
-	did_inc = true;
-      }
+  else {			// MAINT
+    if(!er_avail && all_nogo && tonic_da.mnt_nogo_inc > 0.0f) {
+      net->pvlv_tonic_da += tonic_da.mnt_nogo_inc;
+      did_inc = true;
     }
   }
 

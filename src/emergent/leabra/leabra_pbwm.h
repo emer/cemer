@@ -437,9 +437,9 @@ class LEABRA_API MatrixTonicDaSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how to adapt tonic dopamine in response to errors and overall nogo firing -- increases in tonic da facilitate Go firing globally
 INHERITED(SpecMemberBase)
 public:
-  float		err_nogo_inc;	// how much to increase tonic da when an error occurs (pv detected, and da < 0), and all of the stripes fired nogo
-  float		noerr_nogo_inc;	// how much to increase tonic da when NO error occurs (no pv detected), and all of the stripes fired nogo -- typically smaller than err_nogo_inc
-  float		err_go_inc;	// #DEF_0 how much to increase tonic da when an error occurs (pv detected, and da < 0), and at least one of the stripes has fired go -- should be lower than err_nogo_inc in general
+  float		out_err_nogo_inc; // for OUTPUT stripes: how much to increase tonic da when an error occurs on a reward trial, and all of the stripes fired nogo
+  float		mnt_nogo_inc;	// for MAINT stripes: how much to increase tonic da on norew trials and all of the stripes fired nogo
+  float		out_err_go_inc;	// #DEF_0 for OUTPUT stripes: how much to increase tonic da when an error occurs on a reward trial, and at least one of the stripes has fired go 
   float		decay;		// rate of decay in tonic da per primary value feedback trial, in the absence of increases per above parameters
   float		max_da;		// maximum tonic da value
 
