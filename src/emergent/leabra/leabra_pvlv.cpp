@@ -1067,7 +1067,7 @@ void PVLVTonicDaLayerSpec::Initialize() {
   decay.clamp_phase2 = false;
   SetUnique("kwta", true);
   kwta.k_from = KWTASpec::USE_K;
-  kwta.k = 1;
+  kwta.k = 3;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
   SetUnique("inhib", true);
@@ -1077,6 +1077,13 @@ void PVLVTonicDaLayerSpec::Initialize() {
   ct_inhib_mod.use_sin = true;
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
+  SetUnique("scalar", true);
+  scalar.rep == ScalarValSpec::GAUSSIAN;
+  scalar.un_width = 0.2;
+  scalar.norm_width = true;
+  SetUnique("unit_range", true);
+  unit_range.min = -0.2f;
+  unit_range.max = 1.2f;
 }
 
 void PVLVTonicDaLayerSpec::HelpConfig() {

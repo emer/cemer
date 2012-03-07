@@ -684,9 +684,9 @@ void MatrixMiscSpec::Initialize() {
 }
 
 void MatrixTonicDaSpec::Initialize() {
-  err_nogo_inc = 0.05f;
-  err_go_inc = 0.01f;
-  noerr_nogo_inc = 0.0f;
+  err_nogo_inc = 0.001f;
+  noerr_nogo_inc = 0.001f;
+  err_go_inc = 0.0f;
   decay = 0.001f;
 
   old_rnd_go = false;
@@ -1123,33 +1123,50 @@ void MatrixLayerSpec::Compute_NGo(LeabraLayer* lay, LeabraNetwork* net,
 
 void MatrixLayerSpec::Compute_TonicDa(LeabraLayer* lay, LeabraNetwork* net) {
   if(tonic_da.old_rnd_go) return; // do not use if using old setup..
-  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
-  if(!er_avail && (tonic_da.noerr_nogo_inc == 0.0f)) return;	// only on pv trials
 
-  if(!er_avail && (tonic_da.noerr_nogo_inc > 0.0f)) {
-    int n_mnt_go = 0; int n_out_go = 0;
-    Compute_NGo(lay, net, n_mnt_go, n_out_go);
-    if(n_mnt_go + n_out_go == 0) {
-      net->pvlv_tonic_da += tonic_da.noerr_nogo_inc;
+  bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
+  bool did_err = false;
+  if(er_avail && (net->ext_rew < 0.5f)) { // todo: this is not the right way to do this!!!
+    did_err = true;
+  }
+  
+  bool all_nogo = false;
+  int n_mnt_go = 0; int n_out_go = 0;
+  Compute_NGo(lay, net, n_mnt_go, n_out_go);
+  if(n_mnt_go + n_out_go == 0) { // all nogo
+    all_nogo = true;
+  }
+
+  bool did_inc = false;
+  if(all_nogo) {
+    if(did_err) {
+      if(tonic_da.err_nogo_inc > 0.0f) {
+	net->pvlv_tonic_da += tonic_da.err_nogo_inc;
+	did_inc = true;
+      }
+    }
+    else {
+      if(tonic_da.noerr_nogo_inc > 0.0f) {
+	net->pvlv_tonic_da += tonic_da.noerr_nogo_inc;
+	did_inc = true;
+      }
     }
   }
   else {
-    if(net->ext_rew >= 0.5f) {	// todo: this is not the right way to do this!!!
-      // no error -- got something positive -- decay tonic da
-      net->pvlv_tonic_da -= tonic_da.decay * net->pvlv_tonic_da;
-      net->pvlv_tonic_da = MAX(net->pvlv_tonic_da, 0.0f);
-    }
-    else {
-      // error -- increase tonic da
-      int n_mnt_go = 0; int n_out_go = 0;
-      Compute_NGo(lay, net, n_mnt_go, n_out_go);
-      if(n_mnt_go + n_out_go == 0) {
-	net->pvlv_tonic_da += tonic_da.err_nogo_inc;
-      }
-      else {
+    if(did_err) {
+      if(tonic_da.err_go_inc > 0.0f) {
 	net->pvlv_tonic_da += tonic_da.err_go_inc;
+	did_inc = true;
       }
     }
+  }
+
+  if(did_inc) {
+    net->pvlv_tonic_da = MIN(tonic_da.max_da, net->pvlv_tonic_da);
+  }
+  else {			// always decay if not increasing -- rapid dynamics..
+    net->pvlv_tonic_da -= tonic_da.decay * net->pvlv_tonic_da;
+    net->pvlv_tonic_da = MAX(net->pvlv_tonic_da, 0.0f);
   }
 }
 

@@ -438,9 +438,10 @@ class LEABRA_API MatrixTonicDaSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		err_nogo_inc;	// how much to increase tonic da when an error occurs (pv detected, and da < 0), and all of the stripes fired nogo
-  float		err_go_inc;	// how much to increase tonic da when an error occurs (pv detected, and da < 0), and at least one of the stripes has fired go -- should be lower than err_nogo_inc in general
-  float		noerr_nogo_inc;	// #DEF_0:0.1 how much to increase tonic da when NO error occurs (no pv detected), and all of the stripes fired nogo -- typically 0 (so only err_nogo_inc is used) but if the network is getting stuck not doing anything useful at all, then this can help get unstuck
+  float		noerr_nogo_inc;	// how much to increase tonic da when NO error occurs (no pv detected), and all of the stripes fired nogo -- typically smaller than err_nogo_inc
+  float		err_go_inc;	// #DEF_0 how much to increase tonic da when an error occurs (pv detected, and da < 0), and at least one of the stripes has fired go -- should be lower than err_nogo_inc in general
   float		decay;		// rate of decay in tonic da per primary value feedback trial, in the absence of increases per above parameters
+  float		max_da;		// maximum tonic da value
 
   bool		old_rnd_go;	// #DEF_false use old nogo mechanism -- deprecated
   int		nogo_thr;	// #DEF_20 #CONDSHOW_ON_old_rnd_go threshold of number of nogo firing in a row that will trigger NoGo random go firing
