@@ -890,6 +890,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
 void MatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Init_Weights(lay, net);
+  lay->SetUserData("tonic_da", 0.0f); // store tonic da per layer
   LabelUnits(lay);
 }
 
@@ -925,7 +926,9 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
   LeabraLayer* da_lay = FindLayerFmSpec(lay, da_prjn_idx, &TA_PVLVDaLayerSpec);
   PVLVDaLayerSpec* dals = (PVLVDaLayerSpec*)da_lay->spec.SPtr();
   PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
-  float ton_da = dals->da.tonic_da + net->pvlv_tonic_da;
+
+  float lay_ton_da = lay->GetUserDataAsFloat("tonic_da"); 
+  float ton_da = dals->da.tonic_da + net->pvlv_tonic_da + lay_ton_da;
   float nv_da = matrix.nv_gain * net->pvlv_nv; // add in nv bias at the end
   int pfc_mnt_cnt = mgpd->mnt_count; // is pfc maintaining or not?
   bool pfc_is_mnt = pfc_mnt_cnt > 0;
@@ -1125,6 +1128,9 @@ void MatrixLayerSpec::Compute_NGo(LeabraLayer* lay, LeabraNetwork* net,
 void MatrixLayerSpec::Compute_TonicDa(LeabraLayer* lay, LeabraNetwork* net) {
   if(tonic_da.old_rnd_go) return; // do not use if using old setup..
 
+  // stored layer-specific
+  float lay_ton_da = lay->GetUserDataAsFloat("tonic_da"); 
+
   bool er_avail = net->ext_rew_avail || net->pv_detected; // either is good
   bool did_err = false;
   if(er_avail && (net->ext_rew < 0.5f)) { // todo: this is not the right way to do this!!!
@@ -1143,13 +1149,13 @@ void MatrixLayerSpec::Compute_TonicDa(LeabraLayer* lay, LeabraNetwork* net) {
     if(did_err) {		// only cares about err trials
       if(all_nogo) {
 	if(tonic_da.out_err_nogo_inc > 0.0f) {
-	  net->pvlv_tonic_da += tonic_da.out_err_nogo_inc;
+	  lay_ton_da += tonic_da.out_err_nogo_inc;
 	  did_inc = true;
 	}
       }
       else {
 	if(tonic_da.out_err_go_inc > 0.0f) {
-	  net->pvlv_tonic_da += tonic_da.out_err_go_inc;
+	  lay_ton_da += tonic_da.out_err_go_inc;
 	  did_inc = true;
 	}
       }
@@ -1157,18 +1163,20 @@ void MatrixLayerSpec::Compute_TonicDa(LeabraLayer* lay, LeabraNetwork* net) {
   }
   else {			// MAINT
     if(!er_avail && all_nogo && tonic_da.mnt_nogo_inc > 0.0f) {
-      net->pvlv_tonic_da += tonic_da.mnt_nogo_inc;
+      lay_ton_da += tonic_da.mnt_nogo_inc;
       did_inc = true;
     }
   }
 
   if(did_inc) {
-    net->pvlv_tonic_da = MIN(tonic_da.max_da, net->pvlv_tonic_da);
+    lay_ton_da = MIN(tonic_da.max_da, lay_ton_da);
   }
   else {			// always decay if not increasing -- rapid dynamics..
-    net->pvlv_tonic_da -= tonic_da.decay * net->pvlv_tonic_da;
-    net->pvlv_tonic_da = MAX(net->pvlv_tonic_da, 0.0f);
+    lay_ton_da -= tonic_da.decay * lay_ton_da;
+    lay_ton_da = MAX(lay_ton_da, 0.0f);
   }
+
+  lay->SetUserData("tonic_da", lay_ton_da); // store tonic da per layer
 }
 
 
