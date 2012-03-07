@@ -1137,6 +1137,7 @@ void MatrixLayerSpec::Compute_TonicDa(LeabraLayer* lay, LeabraNetwork* net) {
     if(net->ext_rew >= 0.5f) {	// todo: this is not the right way to do this!!!
       // no error -- got something positive -- decay tonic da
       net->pvlv_tonic_da -= tonic_da.decay * net->pvlv_tonic_da;
+      net->pvlv_tonic_da = MAX(net->pvlv_tonic_da, 0.0f);
     }
     else {
       // error -- increase tonic da
