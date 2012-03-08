@@ -1012,6 +1012,7 @@ void PVLVDaLayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
     net_da = da.da_gain * lv_da;
   }
 
+  net->pvlv_dav = net_da;
   lay->dav = net_da;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;

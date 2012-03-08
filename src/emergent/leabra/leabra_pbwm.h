@@ -433,6 +433,27 @@ private:
   void	Defaults_init() { };
 };
 
+class LEABRA_API MatrixRndGoSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how to adapt tonic dopamine in response to errors and overall nogo firing -- increases in tonic da facilitate Go firing globally
+INHERITED(SpecMemberBase)
+public:
+  bool		on;		// use random go firing 
+  int		nogo_thr;	// #DEF_20 #CONDSHOW_ON_on threshold of number of nogo firing in a row that will trigger NoGo random go firing.  for maintenance gating, either maint or empty nogo counts.  for output gating, only maint nogo counts
+  bool		rng_eq_thr;	// #DEF_true #CONDSHOW_ON_on set the nogo_rng value to be the same as nogo_thr -- this generally makes sense and is characteristic of the Poisson distribution, and reduces the number of parameters to confront..
+  int		nogo_rng;	// #DEF_20 #MIN_1 #CONDSHOW_ON_on range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
+  float		nogo_da;	// #DEF_10 #MIN_0 #CONDSHOW_ON_on strength of DA for driving learning of random Go units -- does not affect performance, only learning
+  float		nogo_noise;	// #DEF_0;0.02 #MIN_0 #CONDSHOW_ON_on use .02 when using (recommended) -- noise value to apply to a randomly selected subset of k Go units to get them activated during a random Go event
+
+  TA_SIMPLE_BASEFUNS(MatrixRndGoSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
+};
+
 class LEABRA_API MatrixTonicDaSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how to adapt tonic dopamine in response to errors and overall nogo firing -- increases in tonic da facilitate Go firing globally
 INHERITED(SpecMemberBase)
@@ -442,19 +463,11 @@ public:
   float		out_err_go_inc;	// #DEF_0 for OUTPUT stripes: how much to increase tonic da when an error occurs on a reward trial, and at least one of the stripes has fired go 
   float		decay;		// rate of decay in tonic da per primary value feedback trial, in the absence of increases per above parameters
   float		max_da;		// maximum tonic da value
-  int		nogo_thr;	// #DEF_20 per-stripe threshold of number of trials of nogo firing in a row, above which a stripe-specific tonic dopamine level will start to increase, promoting go firing in that stripe and keeping it in the game.  for maintenance gating, either maint or empty nogo counts.  for output gating, only maint nogo counts
-  float		nogo_thr_inc; 	// how much to increase the stripe-specific tonic da per trial when nogo_thr has been exceeded in a given stripe
-
-  bool		old_rnd_go;	// #DEF_false use old nogo mechanism -- deprecated
-  bool		rng_eq_thr;	// #DEF_true #CONDSHOW_ON_old_rnd_go set the nogo_rng value to be the same as nogo_thr -- this generally makes sense and is characteristic of the Poisson distribution, and reduces the number of parameters to confront..
-  int		nogo_rng;	// #CONDSHOW_ON_old_rnd_go #DEF_20 #MIN_1 range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
-  float		nogo_da;	// #DEF_10 #CONDSHOW_ON_old_rnd_go #MIN_0 strength of DA for driving learning of random Go units -- does not affect performance, only learning
-  float		nogo_noise;	// #DEF_0;0.02 #CONDSHOW_ON_old_rnd_go #MIN_0 use .02 when using -- noise value to apply to a randomly selected subset of k Go units to get them activated during a random Go event
+  float		nogo_thr_inc; 	// how much to increase the stripe-specific tonic da per trial when rnd_go.nogo_thr has been exceeded in a given stripe
 
   TA_SIMPLE_BASEFUNS(MatrixTonicDaSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -498,7 +511,8 @@ public:
   MatrixGateBiasFunSpec	out_rew_go_fun; // gating bias function for OUTPUT stripes with active maintenance on reward trials (e.g., recall/output trials -- signalled by PVr), amount Go bias (favors Go over NoGo) to encourage the output gating units to respond -- is (typically increasing) function of duration information has been maintained
   MatrixGateBiasFunSpec	mnt_mnt_nogo_fun; // gating bias function for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) -- is (typically decreasing) function of maintenance duration -- if starts high ends low, this causes stripe to try to maintain (NoGo) strongly initially, and then be more labile for updating after that
   MatrixGateBiasFunSpec	mnt_empty_go_fun; // gating bias function for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias (favors Go over NoGo) -- provides a bias for encoding and maintaining new information -- is (typically increasing) function of time being empty, causing stripe to be more likely to maintain the longer it sits empty -- thus serves as a more graded, subtle version of rnd_go.
-  MatrixTonicDaSpec	tonic_da;	// #AKA_rnd_go how to adapt tonic dopamine in response to errors and overall nogo firing -- increases in tonic da facilitate Go firing globally
+  MatrixRndGoSpec	rnd_go;		// matrix random Go firing for stripes that are not actively gating over a contiguous sequence of trials -- drives a large sudden learning dopamine burst that gets a stripe kickstarted back into the game
+  MatrixTonicDaSpec	tonic_da;	// how to adapt tonic dopamine in response to errors and overall nogo firing -- increases in tonic da facilitate Go firing globally
   MatrixGoNogoGainSpec  go_nogo_gain;	// separate Go and NoGo DA gain parameters for matrix units -- mainly for simulating various drug effects, etc
 
   override void Compute_NetinStats_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
