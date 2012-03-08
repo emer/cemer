@@ -28,6 +28,7 @@ void PBWMUnGpData::Initialize() {
   rnd_go_thr = 0;
   cur_go_act = 0.0f;
   out_go_act = 0.0f;
+  tonic_da = 0.0f;
 }
 
 void PBWMUnGpData::Copy_(const PBWMUnGpData& cp) {
@@ -37,6 +38,7 @@ void PBWMUnGpData::Copy_(const PBWMUnGpData& cp) {
   rnd_go_thr = cp.rnd_go_thr;
   cur_go_act = cp.cur_go_act;
   out_go_act = cp.out_go_act;
+  tonic_da = cp.tonic_da;
 }
 
 void PBWMUnGpData::Init_State() {
@@ -47,6 +49,7 @@ void PBWMUnGpData::Init_State() {
   rnd_go_thr = 0;
   cur_go_act = 0.0f;
   out_go_act = 0.0f;
+  tonic_da = 0.0f;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -689,9 +692,10 @@ void MatrixTonicDaSpec::Initialize() {
   out_err_go_inc = 0.0f;
   decay = 0.001f;
   max_da = 0.5f;
+  nogo_thr = 20;
+  nogo_thr_inc = 1.0f;
 
   old_rnd_go = false;
-  nogo_thr = 20;
   rng_eq_thr = true;
   nogo_rng = nogo_thr;
   nogo_da = 10.0f;
@@ -928,7 +932,7 @@ float MatrixLayerSpec::Compute_BiasDaMod(LeabraLayer* lay,
   PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gpidx);
 
   float lay_ton_da = lay->GetUserDataAsFloat("tonic_da"); 
-  float ton_da = dals->da.tonic_da + net->pvlv_tonic_da + lay_ton_da;
+  float ton_da = dals->da.tonic_da + net->pvlv_tonic_da + lay_ton_da + mgpd->tonic_da;
   float nv_da = matrix.nv_gain * net->pvlv_nv; // add in nv bias at the end
   int pfc_mnt_cnt = mgpd->mnt_count; // is pfc maintaining or not?
   bool pfc_is_mnt = pfc_mnt_cnt > 0;
@@ -1159,12 +1163,35 @@ void MatrixLayerSpec::Compute_TonicDa(LeabraLayer* lay, LeabraNetwork* net) {
 	  did_inc = true;
 	}
       }
+      // stripe specific nogo threshold
+      for(int gi=0; gi<lay->gp_geom.n; gi++) {
+	PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+	if(mgpd->mnt_count > tonic_da.nogo_thr) { // mnt_count pos = over maintaining, clear
+	  mgpd->tonic_da += tonic_da.nogo_thr_inc;
+	  mgpd->tonic_da = MIN(mgpd->tonic_da, tonic_da.max_da);
+	}
+	else {
+	  mgpd->tonic_da = 0.0f;
+	}
+      }
     }
   }
   else {			// MAINT
     if(!er_avail && all_nogo && tonic_da.mnt_nogo_inc > 0.0f) {
       lay_ton_da += tonic_da.mnt_nogo_inc;
       did_inc = true;
+    }
+
+    // stripe specific nogo threshold
+    for(int gi=0; gi<lay->gp_geom.n; gi++) {
+      PBWMUnGpData* mgpd = (PBWMUnGpData*)lay->ungp_data.FastEl(gi);
+      if(ABS(mgpd->mnt_count) > tonic_da.nogo_thr) { // mnt_count neg = not maintaining
+	mgpd->tonic_da += tonic_da.nogo_thr_inc;
+	mgpd->tonic_da = MIN(mgpd->tonic_da, tonic_da.max_da);
+      }
+      else {
+	mgpd->tonic_da = 0.0f;
+      }
     }
   }
 

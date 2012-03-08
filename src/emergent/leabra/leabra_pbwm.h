@@ -442,9 +442,10 @@ public:
   float		out_err_go_inc;	// #DEF_0 for OUTPUT stripes: how much to increase tonic da when an error occurs on a reward trial, and at least one of the stripes has fired go 
   float		decay;		// rate of decay in tonic da per primary value feedback trial, in the absence of increases per above parameters
   float		max_da;		// maximum tonic da value
+  int		nogo_thr;	// #DEF_20 per-stripe threshold of number of trials of nogo firing in a row, above which a stripe-specific tonic dopamine level will start to increase, promoting go firing in that stripe and keeping it in the game.  for maintenance gating, either maint or empty nogo counts.  for output gating, only maint nogo counts
+  float		nogo_thr_inc; 	// how much to increase the stripe-specific tonic da per trial when nogo_thr has been exceeded in a given stripe
 
   bool		old_rnd_go;	// #DEF_false use old nogo mechanism -- deprecated
-  int		nogo_thr;	// #DEF_20 #CONDSHOW_ON_old_rnd_go threshold of number of nogo firing in a row that will trigger NoGo random go firing
   bool		rng_eq_thr;	// #DEF_true #CONDSHOW_ON_old_rnd_go set the nogo_rng value to be the same as nogo_thr -- this generally makes sense and is characteristic of the Poisson distribution, and reduces the number of parameters to confront..
   int		nogo_rng;	// #CONDSHOW_ON_old_rnd_go #DEF_20 #MIN_1 range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
   float		nogo_da;	// #DEF_10 #CONDSHOW_ON_old_rnd_go #MIN_0 strength of DA for driving learning of random Go units -- does not affect performance, only learning
@@ -620,6 +621,7 @@ public:
   float		cur_go_act;	// #CAT_Activation current Go activation value (mnt or out) -- used by units to boost netin -- already multiplied by gate.mnt/out_go_netin (was misc_float)
   float		out_go_act;	// #CAT_Activation current output gating Go activation value for graded Go -- just multiply directly by this number (was misc_float1)
   int		rnd_go_thr;	// #CAT_Activation current random go threshold for this stripe -- thresholds have a random interval element within bounds
+  float		tonic_da;	// #CAT_Activation stripe-specific tonic dopamine level
 
   override void	Init_State();
 
