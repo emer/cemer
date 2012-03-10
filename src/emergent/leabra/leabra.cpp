@@ -174,6 +174,8 @@ void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
   learn_rule = LEABRA_CHL;
   inhib = false;
+  
+  learn = true;
 
   wt_sig_fun.x_range.min = 0.0f;
   wt_sig_fun.x_range.max = 1.0f;
