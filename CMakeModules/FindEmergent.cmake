@@ -43,6 +43,8 @@ else (WIN32)
     /opt/local/lib
     /opt/lib
   )
+  # add this nonsense define so that you can tell if compiling code under emergent
+  add_definitions(-DEMERGENT_DLL)
 endif (WIN32)
 
 # handle the QUIETLY and REQUIRED arguments and set x_FOUND to TRUE if 
