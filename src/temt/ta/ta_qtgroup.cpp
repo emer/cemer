@@ -1415,11 +1415,9 @@ void DocEditDataHost::Constr_Box() {
   taDoc* doc_ = doc();
   tedHtml = new iTextEdit;
   tedHtml->setAcceptRichText(false); // is the raw html as text
+  connect(tedHtml, SIGNAL(textChanged()), this, SLOT(Changed()) );
   if (read_only || (doc_ && doc_->web_doc)) {
     tedHtml->setReadOnly(true);
-  } else { // r/w
-    connect(tedHtml, SIGNAL(textChanged()), 
-	    this, SLOT(Changed()) );
   }
   vblDialog->addWidget(tedHtml, 1); // gets all the space
   tedHtml->installEventFilter(this); // this does the Ctrl+Enter = Apply stuff..
@@ -1435,6 +1433,13 @@ void DocEditDataHost::GetImage_Membs() {
   taDoc* doc = this->doc();
   if (!doc) return; // ex. for zombies
   
+  if(read_only || doc->web_doc) {
+    tedHtml->setReadOnly(true);
+  }
+  else {
+    tedHtml->setReadOnly(false);
+  }
+
   QString text = doc->text; 
   // to avoid the guy always jumping to the top after edit
   // we compare, and don't update if the same

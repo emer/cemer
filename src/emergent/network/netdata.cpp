@@ -43,6 +43,15 @@ void LayerDataEl::UpdateAfterEdit_impl() {
     taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
   }
   if(!data) {
+    LayerWriter* lw = GET_MY_OWNER(LayerWriter);
+    if(lw && lw->data) {
+      data = lw->data;
+    }
+  }
+  if(data && data->InheritsFrom(&TA_DataTable)) {
+    taBase::SetPointer((taBase**)&data_cols, &((DataTable*)data.ptr())->data);
+  }
+  else {
     taBase::SetPointer((taBase**)&data_cols, NULL);
   }
   if(layer) {

@@ -397,7 +397,7 @@ void cssTA_Base::Constr() {
     }
     taBase::Ref(nw);
     ptr = (void*)nw;
-    flags = (PtrFlags)(flags | OWN_OBJ);
+    SetPtrFlag(OWN_OBJ);
   }
   else {
     taBase* ths = GetTAPtr();
@@ -446,11 +446,11 @@ cssTA_Base::cssTA_Base(const cssTA_Base& cp, const String& nm) {
 }
 
 cssTA_Base::~cssTA_Base() {
-  if((ptr_cnt == 0) && ptr && (flags & OWN_OBJ)) {
+  if((ptr_cnt == 0) && ptr && HasPtrFlag(OWN_OBJ)) {
     taBase* ths = (taBase*)ptr;
     taBase::UnRef(ths);
     ptr = NULL;
-    flags = (PtrFlags)(flags & ~OWN_OBJ);
+    ClearPtrFlag(OWN_OBJ);
   }
   if(ptr_cnt == 1 && ptr) {
     taBase::DelPointer((taBase**)&ptr);
@@ -1521,4 +1521,52 @@ void cssMethodDef::operator=(const cssEl& s) {
     }
   }
   cssTA::operator=(s);
+}
+
+
+////////////////////////////////////////////////////////////////////////
+// 		cssTA_Matrix
+////////////////////////////////////////////////////////////////////////
+
+bool cssTA_Matrix::IsMatrix(const cssEl& s) {
+  if(s.GetType() != T_TA) return false;
+  cssTA* sp = (cssTA*)s.GetNonRefObj();
+  TypeDef* sp_typ = sp->GetNonRefTypeDef();
+  if(sp_typ->InheritsFrom(&TA_taMatrix)) {
+    return (bool)sp->GetVoidPtr(); // only valid ones with real pointers
+  }
+  return false;
+}
+
+taMatrix* cssTA_Matrix::MatrixPtr(const cssEl& s) {
+  return ((cssTA_Matrix*)s.GetNonRefObj())->GetMatrixPtr();  
+}
+
+cssTA_Matrix::cssTA_Matrix(taMatrix* mtx)
+  : cssTA_Base(mtx, 0, mtx->GetTypeDef()) {
+  SetPtrFlag(OWN_OBJ);
+  taBase::Ref(mtx);
+}
+
+cssTA_Matrix::~cssTA_Matrix() {
+}
+
+cssEl* cssTA_Matrix::operator+(cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths + *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths + ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
 }

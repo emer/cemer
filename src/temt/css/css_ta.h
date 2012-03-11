@@ -134,7 +134,7 @@ public:
   void		Copy(const cssTA_Base& cp);
   void		CopyType(const cssTA_Base& cp);
 
-  cssTA_Base() 						: cssTA()	    { Constr();}
+  cssTA_Base() : cssTA()	    { Constr();}
   cssTA_Base(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
 	     bool ro=false) : cssTA(it,pc,td,nm,cls_par,ro)	{ Constr(); }
   cssTA_Base(const cssTA_Base& cp);
@@ -431,6 +431,60 @@ public:
   void operator=(const String& s);
   void operator=(const cssEl& s);
   USING(cssTA::operator=)
+};
+
+
+class CSS_API cssTA_Matrix : public cssTA_Base {
+  // a matrix ta base object -- handles all the matrix math magically..
+INHERITED(cssTA_Base)
+public:
+  static bool IsMatrix(const cssEl& s);
+  // check to see if the given item is also a cssTA_Matrix object -- must have valid ta base object pointer too
+  static taMatrix* MatrixPtr(const cssEl& s);
+  // return the matrix object from a given element known to be a matrix
+  taMatrix* 	GetMatrixPtr() 	{ return (taMatrix*)GetTAPtr(); }
+  // return matrix pointer for this object
+
+  cssTA_Matrix() : cssTA_Base()	    { }
+  cssTA_Matrix(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
+	       bool ro=false) : cssTA_Base(it,pc,td,nm,cls_par,ro) { };
+  cssTA_Matrix(taMatrix* mtx);
+  // this treats mtx arg as an OWN_OBJ and ref's it
+  cssTA_Matrix(const cssTA_Matrix& cp) : cssTA_Base(cp) { };
+  cssTA_Matrix(const cssTA_Base& cp, const String& nm) : cssTA_Base(cp, nm) { };
+  ~cssTA_Matrix();
+
+  cssCloneOnly(cssTA_Matrix);
+  cssEl*	MakeToken_stub(int, cssEl *arg[])
+  { return new cssTA_Matrix((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
+
+  // void UpdateAfterEdit();
+
+  USING(cssTA_Base::operator=)
+
+  // cssEl* operator[](Variant) const;
+
+  cssEl* operator+(cssEl& t);
+  // cssEl* operator-(cssEl& t);
+  // cssEl* operator*(cssEl& t);
+  // cssEl* operator/(cssEl& t);
+  // cssEl* operator%(cssEl& t);
+
+  // cssEl* operator-();
+
+  // void operator+=(cssEl& t);
+  // void operator-=(cssEl& t);
+  // void operator*=(cssEl& t);
+  // void operator/=(cssEl& t);
+  // void operator%=(cssEl& t);
+
+  // bool operator< (cssEl& s) 	{ return (val < (Int)s); }
+  // bool operator> (cssEl& s) 	{ return (val > (Int)s); }
+  // bool operator<=(cssEl& s) 	{ return (val <= (Int)s); }
+  // bool operator>=(cssEl& s) 	{ return (val >= (Int)s); }
+  // bool operator==(cssEl& s) 	{ return (val == (Int)s); }
+  // bool operator!=(cssEl& s) 	{ return (val != (Int)s); }
+
 };
 
 

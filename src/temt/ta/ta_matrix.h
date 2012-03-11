@@ -689,6 +689,14 @@ public:
   // #IGNORE
  
   MatrixTableModel*	GetTableModel(); // gets the table model, making if needed
+
+public:
+  ///////////////////////////////////////////////////////////////////
+  // common operators
+
+  virtual taMatrix* operator+(const taMatrix& t);
+  virtual taMatrix* operator+(const Variant& t);
+
 protected:
   override void		UpdateAfterEdit_impl(); 
   override void		BatchUpdate(bool begin, bool struc);

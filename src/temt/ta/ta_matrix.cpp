@@ -1577,6 +1577,63 @@ void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op,
   }
 }
 
+/////////////////////////////////////////////////////////
+//		Operators
+
+taMatrix* taMatrix::operator+(const taMatrix& t) {
+  if(geom != t.geom) return NULL;
+  if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
+    float_Matrix* rval = new float_Matrix(this->geom);
+    for(int i=0;i<size;i++) {
+	rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) + ((float_Matrix*)&t)->FastEl_Flat(i);
+    }
+    return rval;
+  }
+  else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
+    double_Matrix* rval = new double_Matrix(this->geom);
+    for(int i=0;i<size;i++) {
+	rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) + ((double_Matrix*)&t)->FastEl_Flat(i);
+    }
+    return rval;
+  }
+  else {			// use variants -- no need to optimize
+    taMatrix* rval = (taMatrix*)MakeToken();
+    rval->SetGeomN(geom);
+    for(int i=0;i<rval->size;i++) {
+      rval->SetFmVar_Flat(FastElAsVar_Flat(i) + t.FastElAsVar_Flat(i), i);
+    }
+    return rval;
+  }
+  return NULL;
+}
+
+taMatrix* taMatrix::operator+(const Variant& t) {
+  if(GetDataValType() == VT_FLOAT) {
+    float_Matrix* rval = new float_Matrix(this->geom);
+    float vt = t.toFloat();
+    for(int i=0;i<size;i++) {
+	rval->FastEl_Flat(i) = ((float_Matrix*)this)->FastEl_Flat(i) + vt;
+    }
+    return rval;
+  }
+  else if(GetDataValType() == VT_DOUBLE) {
+    double_Matrix* rval = new double_Matrix(this->geom);
+    double vt = t.toDouble();
+    for(int i=0;i<size;i++) {
+	rval->FastEl_Flat(i) = ((double_Matrix*)this)->FastEl_Flat(i) + vt;
+    }
+    return rval;
+  }
+  else {			// use variants -- no need to optimize
+    taMatrix* rval = (taMatrix*)MakeToken();
+    rval->SetGeomN(geom);
+    for(int i=0;i<size;i++) {
+      rval->SetFmVar_Flat(FastElAsVar_Flat(i) + t, i);
+    }
+    return rval;
+  }
+  return NULL;
+}
 
 //////////////////////////
 //   String_Matrix	//

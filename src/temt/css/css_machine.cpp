@@ -847,6 +847,8 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* m
     if(nptd->DerivesFrom(&TA_ios) || nptd->DerivesFrom(&TA_istream)
        || nptd->DerivesFrom(&TA_ostream) || nptd->DerivesFrom(&TA_iostream))
       return new cssIOS(itm, new_ptr, nptd, nm, class_parent, ro);
+    else if(nptd->DerivesFrom(TA_taMatrix))
+      return new cssTA_Matrix(itm, new_ptr, nptd, nm, class_parent, ro);
     else if(nptd->DerivesFrom(TA_taBase))
       return new cssTA_Base(itm, new_ptr, nptd, nm, class_parent, ro);
     else
@@ -1957,7 +1959,7 @@ cssCPtr::cssCPtr(void* it, int pc, const String& nm, cssEl* cp, bool ro) {
   ptr = it;
   ptr_cnt = pc;
   if(cp) SetClassParent(cp);
-  if(ro) flags = (PtrFlags)(flags | READ_ONLY);
+  if(ro) SetPtrFlag(READ_ONLY);
 }
 cssCPtr::cssCPtr(const cssCPtr& cp) {
   Constr(); Copy(cp); name = cp.name;

@@ -1119,6 +1119,19 @@ public:
 
   cssCPtr_CloneFuns(cssCPtr, (void*)NULL);
 
+  inline void           SetPtrFlag(PtrFlags flg)   { flags = (PtrFlags)(flags | flg); }
+  // set flag state on
+  inline void           ClearPtrFlag(PtrFlags flg) { flags = (PtrFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool           HasPtrFlag(PtrFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void           SetPtrFlagState(PtrFlags flg, bool on)
+  { if(on) SetPtrFlag(flg); else ClearPtrFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           TogglePtrFlag(PtrFlags flg)
+  { SetPtrFlagState(flg, !HasPtrFlag(flg)); }
+  // toggle program flag
+
   virtual void	SetClassParent(cssEl* cp);
   virtual void	UpdateClassParent();
   // call updateafteredit on class parent (only if 

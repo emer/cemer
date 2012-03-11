@@ -2132,13 +2132,19 @@ static void Install_Types() {
       // (use the subclass instead)
       if(tmp->InheritsFormal(TA_templ_inst)) {
 	if((tmp->children.size != 1) || (tmp->children.FastEl(0)->parents.size > 1)) {
-	  if(tmp->InheritsFrom(TA_taBase)) {
+	  if(tmp->InheritsFrom(TA_taMatrix)) {
+	    taBase* inst = (taBase*)tmp->GetInstance();
+	    if(inst) taBase::Ref(inst); // ref it!
+	    cssMisc::TypesSpace.Push(new cssTA_Matrix(inst, 1, tmp, tmp->name));
+	  }
+	  else if(tmp->InheritsFrom(TA_taBase)) {
 	    taBase* inst = (taBase*)tmp->GetInstance();
 	    if(inst) taBase::Ref(inst); // ref it!
 	    cssTA_Base_inst_nm(cssMisc::TypesSpace, inst, 1, tmp, tmp->name);
 	  }
-	  else
+	  else {
 	    cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
+	  }
 	}
       }
       else if(!((tmp->members.size==0) && (tmp->methods.size==0)) &&
@@ -2147,13 +2153,19 @@ static void Install_Types() {
 	      (tmp->name != "sstream") && (tmp->name != "Variant") &&
 	      (tmp->name != "taBase"))
       {
-	if(tmp->InheritsFrom(TA_taBase)) {
+	if(tmp->InheritsFrom(TA_taMatrix)) {
+	  taBase* inst = (taBase*)tmp->GetInstance();
+	  if(inst) taBase::Ref(inst); // ref it!
+	  cssMisc::TypesSpace.Push(new cssTA_Matrix(inst, 1, tmp, tmp->name));
+	}
+	else if(tmp->InheritsFrom(TA_taBase)) {
 	  taBase* inst = (taBase*)tmp->GetInstance();
 	  if(inst) taBase::Ref(inst); // ref it!
 	  cssTA_Base_inst_nm(cssMisc::TypesSpace, inst, 1, tmp, tmp->name);
 	}
-	else
+	else {
 	  cssTA_inst_nm(cssMisc::TypesSpace, tmp->GetInstance(), 1, tmp, tmp->name);
+	}
       }
     }
     else if(tmp->InheritsFormal(TA_enum)) {
