@@ -298,7 +298,9 @@ void BrainVolumeView::RenderBrain()
     coords->point.set1Value(3, SbVec3f( d1/2.0f,  d2/2.0f, 0));
 
     SoFaceSet* fs = new SoFaceSet;
-    fs->numVertices.set1Value(0,4);
+    // THE FOLLOWING CAUSES CRASH ON CENTOS5 UNDER VBOX AND SOME 
+    // REMOTE INSTANCES (WINXP) BUT I CAN'T EXPLAIN WHY...
+    //fs->numVertices.set1Value(0,4);
 
     b->addChild(sh);
     b->addChild(node.brain_tex_mat_array[i]);
