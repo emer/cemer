@@ -2185,6 +2185,15 @@ class taBase_List;
 #define IF_ENUM_STRING(enm_var, enm_val) \
 ((enm_var == enm_val) ? #enm_val : "")
 
+// Order of includes problem -- the Windows header file "WinUser.h" defines this
+// as a macro.  If some file indirectly includes that file and then this file,
+// it causes a compilation error on Windows.
+// See also the comment in src/emergent/network/netdata.h
+#ifdef SC_DEFAULT
+  //#define SC_DEFAULT // uncomment to see previous macro definition
+  #pragma message("Warning: undefining SC_DEFAULT macro")
+  #undef SC_DEFAULT
+#endif
 
 class TA_API TypeDef : public TypeItem {// defines a type itself
 INHERITED(TypeItem)
@@ -2523,7 +2532,7 @@ public:
   // gets an HTML representation of a sub type (typdef or enum) -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
 
   String        GetHTMLMembMeth(String_PArray& memb_idx, String_PArray& meth_idx,
-		const String& label_prefix, const String& link_prefix, bool gendoc=false) const;
+                const String& label_prefix, const String& link_prefix, bool gendoc=false) const;
   // render the members and methods for given lists of items -- can pre-filter the lists and render them separately (e.g., to separate regular from EXPERT items)
 
   void          GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
