@@ -827,6 +827,16 @@ void cssEl::operator=(const Variant& val) {
   }
 }
 
+cssEl* cssEl::GetElFromVar(Variant var, const String& nm, MemberDef* md,
+                          cssEl* class_parent) {
+  TypeDef* td;
+  void* itm_ptr;
+  var.GetRepInfo(td, itm_ptr);
+  void* itm = *((void**)itm_ptr); // just get the item, not the pointer to the item
+  TypeDef* nptd = td->GetNonPtrType(); // we just want the guy itself
+  return GetElFromTA(nptd, itm, nm, md, class_parent);
+}
+
 cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* md,
                           cssEl* class_parent) {
   TypeDef* nptd = td->GetNonPtrType(); // always create one of these
@@ -899,25 +909,48 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* m
   }
 }
 
-cssEl* cssEl::GetVariantEl_impl(const Variant& val, Variant idx) const {
+cssEl* cssEl::TAElem(taBase* ths, Variant i) const {
+  Variant rval = ths->Elem(i);
+  if(rval.isNull()) {
+    cssMisc::Error(prog, "Element access failed for container object:", ths->GetName(),
+		   "type:", ths->GetTypeDef()->name);
+    return &cssMisc::Void;
+  }
+  String elno = i.toString();
+  String nm = ths->GetName() + String("[") + elno + "]";
+  return GetElFromVar(rval, nm, (MemberDef*)NULL, (cssEl*)this);
+}
+
+cssEl* cssEl::VarElem(const Variant& val, Variant idx) const {
   switch (val.type()) {
   case Variant::T_String: {
-    //TODO: maybe this should be Char???
-    String nw_val = val.toString().elem(idx.toInt());
+    String nw_val = val.toString()[idx]; // use string code
     return new cssString(nw_val);
-    } break;
+    break;
+  } 
   case Variant::T_Matrix: {
     if (val.isNull()) {
       NopErr("[] on Variant Matrix that is null");
       break;
     }
     taMatrix* mat = val.toMatrix();
-    Variant var(mat->SafeElAsVar_Flat(idx.toInt()));
-    return new cssVariant(var);
+    if(mat)
+      return TAElem(mat, idx);
+    break;
+  }
+  case Variant::T_Base: {
+    if (val.isNull()) {
+      NopErr("[] on Variant taBase that is null");
+      break;
     }
+    taBase* tab = val.toBase();
+    if(tab)
+      return TAElem(tab, idx);
+    break;
+  }
   default:
-    // todo: pass on to tabase
     NopErr("[] on Variant that is not a String or Matrix");
+    break;
   }
   return &cssMisc::Void;
 }
@@ -1319,6 +1352,7 @@ cssEl::RunStat cssElInCFun::Do(cssProg* prg) {
 #endif
   int act_argc;
   BindArgs(args, act_argc);
+  if(act_argc < 0) return cssEl::ExecError;
 
   cssEl* tmp = (*funp)(act_argc, args);
   prog = prg;                   // restore if recursive

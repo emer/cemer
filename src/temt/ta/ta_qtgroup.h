@@ -107,7 +107,7 @@ public:
 protected:
   const String          labelNameNonNull() const;
 
-  virtual int           BuildChooser_0(taiItemChooser* ic, TABLPtr top_lst,
+  virtual int           BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst,
                                        QTreeWidgetItem* top_item);
   // we use this recursively, and also in gpi guy
 };
@@ -116,12 +116,12 @@ class TA_API taiListElsButton : public taiListElsButtonBase {
   // for items in a list
   INHERITED(taiListElsButtonBase)
 public:
-  TABLPtr               list;
+  taList_impl*               list;
 
   override const String titleText();
 
   USING(inherited::GetImage)
-  void                  GetImage(TABLPtr base_lst, taBase* it);
+  void                  GetImage(taList_impl* base_lst, taBase* it);
 
   void                  BuildChooser(taiItemChooser* ic, int view = 0); // override
 
@@ -157,19 +157,19 @@ class TA_API gpiListEls : public taiElBase {
   Q_OBJECT
 public:
   bool          over_max;       // if over max_menu
-  TABLPtr       ths;
+  taList_impl*       ths;
 
   void          GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
   override void  GetMenu(taiActions* menu, taiMenuAction* actn = NULL); // variant provided for MenuGroup_impl in winbase
   virtual void  UpdateMenu(taiMenuAction* actn = NULL);
 
   QWidget*      GetRep();
-  void          GetImage(TABLPtr base_lst, taBase* it);
+  void          GetImage(taList_impl* base_lst, taBase* it);
   taBase*               GetValue();
 
-  gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* tp, IDataHost* host_, taiData* par,
+  gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* tp, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
-  gpiListEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp, IDataHost* host_, taiData* par,
+  gpiListEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // flags include: flgNullOk, flgNoList, flgEditOk
 
 public slots:
@@ -177,16 +177,16 @@ public slots:
   virtual void  Choose();       // chooser callback
 
 protected:
-  virtual void  GetMenu_impl(TABLPtr lst, taiActions* menu, taiMenuAction* actn = NULL);
+  virtual void  GetMenu_impl(taList_impl* lst, taiActions* menu, taiMenuAction* actn = NULL);
 };
 
 class TA_API gpiGroupEls : public gpiListEls {
   // menu of elements in the group
   Q_OBJECT
 public:
-  gpiGroupEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* tp, IDataHost* host_, taiData* par,
+  gpiGroupEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* tp, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags = 0); // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
-  gpiGroupEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp = NULL, IDataHost* host_ = NULL, taiData* par = NULL,
+  gpiGroupEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp = NULL, IDataHost* host_ = NULL, taiData* par = NULL,
       QWidget* gui_parent_ = NULL, int flags = 0); // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
 
 //  void                GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
@@ -195,35 +195,35 @@ public slots:
   virtual void  ChooseGp();     // chooser callback
 
 protected:
-  override void         GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* actn = NULL);
+  override void         GetMenu_impl(taList_impl* cur_lst, taiActions* menu, taiMenuAction* actn = NULL);
 };
 
 class TA_API gpiSubGroups : public taiElBase {
   // menu of sub-groups within a group
   Q_OBJECT
 public:
-  TAGPtr        ths;
+  taGroup_impl*        ths;
   bool          over_max;       // if over max_menu
-//  TAGPtr      chs_obj;        // object chosen by the chooser
+//  taGroup_impl*      chs_obj;        // object chosen by the chooser
 
   void          GetMenu(taiMenuAction* actn = NULL) {GetMenu(ta_actions, actn);}
   override void GetMenu(taiActions* menu, taiMenuAction* actn = NULL);
   virtual void  UpdateMenu(taiMenuAction* actn = NULL);
 
   QWidget*      GetRep();
-  void          GetImage(TAGPtr base_gp, TAGPtr gp);
-  TAGPtr        GetValue();
+  void          GetImage(taGroup_impl* base_gp, taGroup_impl* gp);
+  taGroup_impl*        GetValue();
 
-  gpiSubGroups(taiActions::RepType rt, int ft, TAGPtr gp, TypeDef* typ_, IDataHost* host_, taiData* par,
+  gpiSubGroups(taiActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_ = 0); // uses flags: flgNullOk, flgEditOk
-  gpiSubGroups(taiMenu* existing_menu, TAGPtr gp, TypeDef* typ_ = NULL, IDataHost* host_ = NULL, taiData* par = NULL,
+  gpiSubGroups(taiMenu* existing_menu, taGroup_impl* gp, TypeDef* typ_ = NULL, IDataHost* host_ = NULL, taiData* par = NULL,
       QWidget* gui_parent_ = NULL, int flags_ = 0); // uses flags: flgNullOk, flgEditOk
 public slots:
   virtual void  Edit();         // edit callback
   virtual void  Choose();       // chooser callback
 
 protected:
-  virtual void  GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn = NULL);
+  virtual void  GetMenu_impl(taGroup_impl* gp, taiActions* menu, taiMenuAction* actn = NULL);
 };
 
 // TypeHier provides the guts, we just replace the NULL default with "Group"
@@ -306,7 +306,7 @@ class TA_API gpiListDataHost : public gpiMultiEditDataHost {
 INHERITED(gpiMultiEditDataHost)
 public:
   gpiList_ElDataList    lst_data_el;    // list of data elements
-  TABLPtr               cur_lst;
+  taList_impl*               cur_lst;
 //  MemberSpace         lst_membs;      // list of members
   String_PArray         lst_membs; // list of members, by name
   int                   num_lst_fields; // number of editble list memberdefs with fields
@@ -356,7 +356,7 @@ class TA_API gpiCompactListDataHost : public gpiMultiEditDataHost {
   // ##NO_TOKENS ##NO_CSS ##NO_MEMBERS compact vertical list for when the els have an inline rep
 INHERITED(gpiMultiEditDataHost)
 public:
-  TABLPtr               cur_lst;
+  taList_impl*               cur_lst;
   gpiCompactList_ElDataList     lst_data_el;    // list of (inline) data elements
 
   gpiCompactListDataHost(void* base, TypeDef* typ_, bool read_only_ = false,
@@ -518,7 +518,7 @@ public:
                       QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
 protected:
   override void         BuildCategories_impl();
-  override int          BuildChooser_0(taiItemChooser* ic, TABLPtr top_lst,
+  override int          BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst,
                                        QTreeWidgetItem* top_item);
 };
 

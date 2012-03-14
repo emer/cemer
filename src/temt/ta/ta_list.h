@@ -266,7 +266,6 @@ public:
   //    functions that return the type          //
   ////////////////////////////////////////////////
 
-  void*         GetTA_Element_(Variant i, TypeDef*& eltd) const; // #IGNORE
   virtual TypeDef*      El_GetType_(void*) const {return GetElType();}
     // #IGNORE should usually override to provide per-item typing where applicable
   void*         SafeEl_(int i) const

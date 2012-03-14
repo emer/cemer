@@ -2125,9 +2125,9 @@ void taiProgLibElArgType::GetImage_impl(taiData* dat, const void* base) {
   }
   MemberDef* from_md = GetFromMd();
   if (from_md == NULL)	return;
-  TABLPtr lst = GetList(from_md, base);
+  taList_impl* lst = GetList(from_md, base);
   taiProgLibElsButton* els = (taiProgLibElsButton*)dat;
-  els->GetImage((TABLPtr)lst, *((taBase**)arg_base));
+  els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
 }
 
 void taiProgLibElArgType::GetValue_impl(taiData* dat, void*) {

@@ -76,12 +76,13 @@ String cssTA::PrintFStr() const {
 
 void cssTA::TypeInfo(ostream& fh) const {
   for(int i=1;i<ptr_cnt;i++) fh << "*"; // ptr cnt
-  type_def->OutputType(fh);
+  if(type_def)
+    type_def->OutputType(fh);
 }
 
 void cssTA::Print(ostream& fh) const {
   void* pt = GetVoidPtr();
-  if(pt)
+  if(pt && type_def)
     type_def->Output(fh, pt);
   else
     fh << PrintStr();
@@ -89,21 +90,22 @@ void cssTA::Print(ostream& fh) const {
 
 void cssTA::PrintR(ostream& fh) const {
   void* pt = GetVoidPtr();
-  if(pt)
+  if(pt && type_def)
     type_def->OutputR(fh, pt);
   else
     fh << PrintStr();
 }
 
 void cssTA::InheritInfo(ostream& fh) const {
-  type_def->OutputInherit(fh);
+  if(type_def)
+    type_def->OutputInherit(fh);
 }
 
 #ifdef TA_GUI
 int cssTA::Edit(bool wait) {
   //WARNING: does not respect wait
   void* pt = GetVoidPtr();
-  if(!pt)
+  if(!pt || !type_def)
     return false;
   taiEdit* gc = type_def->ie;
   if (gc) {
@@ -115,23 +117,25 @@ int cssTA::Edit(bool wait) {
 
 void cssTA::Save(ostream& fh) {
   void* pt = GetVoidPtr();
-  if(pt) {
+  if(pt && type_def) {
     type_def->Dump_Save(fh, pt);
   }
 }
 void cssTA::Load(istream& fh) {
   void* pt = GetVoidPtr();
-  if(pt) {
+  if(pt && type_def) {
     type_def->Dump_Load(fh, pt);
   }
 }
 
 cssEl* cssTA::GetToken(int idx) const {
+  if(!type_def)	return &cssMisc::Void;
   void* rval = type_def->tokens[idx];
   return new cssTA(rval, 1, type_def);
 }
 
 void cssTA::TokenInfo(ostream& fh) const {
+  if(!type_def)	return;
   type_def->tokens.List(fh);
 }
 
@@ -150,12 +154,12 @@ cssTA::operator void*() const {
 void* cssTA::GetVoidPtrOfType(TypeDef* td) const {
   void* bptr = GetVoidPtr();
   if(!bptr) {
-    cssMisc::Error(prog, "Null pointer for conversion to:",td->name,"from:",type_def->name);
+    cssMisc::Error(prog, "Null pointer for conversion to:",td->name,"from:",GetTypeName());
     return NULL;
   }
   void* rval = type_def->GetParAddr(td, bptr);
   if(!rval) {
-    cssMisc::Error(prog, "Conversion to:",td->name,"is not a base type for:",type_def->name);
+    cssMisc::Error(prog, "Conversion to:",td->name,"is not a base type for:",GetTypeName());
   }
   return rval;
 }
@@ -163,20 +167,20 @@ void* cssTA::GetVoidPtrOfType(TypeDef* td) const {
 void* cssTA::GetVoidPtrOfType(const String& td) const {
   void* bptr = GetVoidPtr();
   if(!bptr) {
-    cssMisc::Error(prog, "Null pointer for conversion to:",td,"from:",type_def->name);
+    cssMisc::Error(prog, "Null pointer for conversion to:",td,"from:",GetTypeName());
     return NULL;
   }
   void* rval = type_def->GetParAddr(td, bptr);
   if(!rval) {
-    cssMisc::Error(prog, "Conversion to:",td,"is not a base type for:",type_def->name);
+    cssMisc::Error(prog, "Conversion to:",td,"is not a base type for:",GetTypeName());
   }
   return rval;
 }
 
 Variant cssTA::GetVar() const {
   // if it is a ptr to a TypeItem guy, we can provide a TypeItem guy
-  if (ptr && type_def->DerivesFrom(&TA_TypeItem)) {
-    if (ptr_cnt == 1)
+  if (ptr && type_def && type_def->DerivesFrom(&TA_TypeItem)) {
+    if (ptr_cnt <= 1)
       return Variant((TypeItem*)ptr);
   }
   // could do getstr -- getting ptr is better.
@@ -185,7 +189,7 @@ Variant cssTA::GetVar() const {
 
 String cssTA::GetStr() const {
   String rval;
-  if(ptr) {
+  if(ptr && type_def) {
     if(ptr_cnt <= 1) {
       rval = type_def->GetValStr(ptr);
     }
@@ -203,24 +207,24 @@ String cssTA::GetStr() const {
     }
     return rval;
   }
-  return type_def->name;
+  return GetTypeName();
 }
 
 bool cssTA::AssignCheckSource(const cssEl& s) {
   if(s.GetType() != T_TA) {
-    cssMisc::Error(prog, "Failed to assign TA C pointer of type:", type_def->name,
+    cssMisc::Error(prog, "Failed to assign TA C pointer of type:", GetTypeName(),
 		   "source is non-TA object of type:", s.GetTypeName());
     return false;
   }
   cssTA* sp = (cssTA*)s.GetNonRefObj();
   TypeDef* sp_typ = sp->GetNonRefTypeDef();
   if(!sp_typ) {
-    cssMisc::Error(prog, "Failed to assign TA C pointer of type:", type_def->name,
+    cssMisc::Error(prog, "Failed to assign TA C pointer of type:", GetTypeName(),
 		   "source object type info is NULL");
     return false;
   }
   if(type_def && !(sp_typ->InheritsFrom(type_def) || type_def->InheritsFrom(sp_typ))) {
-    cssMisc::Error(prog, "Failed to assign TA C pointer of type:", type_def->name,
+    cssMisc::Error(prog, "Failed to assign TA C pointer of type:", GetTypeName(),
 		   "source object type is incompatible:", sp_typ->name);
     return false;
   }
@@ -229,18 +233,18 @@ bool cssTA::AssignCheckSource(const cssEl& s) {
 
 bool cssTA::AssignObjCheck(const cssEl& s) {
   if(!ptr) {
-    cssMisc::Error(prog, "Failed to copy to taBase C object of type:", type_def->name,
+    cssMisc::Error(prog, "Failed to copy to taBase C object of type:", GetTypeName(),
 		   "our object is NULL");
     return false;
   }
   cssTA* sp = (cssTA*)s.GetNonRefObj();
   if(sp->GetNonRefPtrCnt() > 0) {
-    cssMisc::Error(prog, "Failed to copy to taBase C object of type:", type_def->name,
+    cssMisc::Error(prog, "Failed to copy to taBase C object of type:", GetTypeName(),
 		   "we are an object and source is a pointer");
     return false;
   }
   if(!sp->GetNonRefPtr()) {
-    cssMisc::Error(prog, "Failed to copy to taBase C object of type:", type_def->name,
+    cssMisc::Error(prog, "Failed to copy to taBase C object of type:", GetTypeName(),
 		   "source is NULL");
     return false;
   }
@@ -257,7 +261,7 @@ void cssTA::PtrAssignPtr(const cssEl& s) {
       if(fun)
 	*((ta_void_fun*)ptr) = fun->addr;
       else {
-	cssMisc::Error(prog, "Failed to assign TA void* member fun of type:", type_def->name,
+	cssMisc::Error(prog, "Failed to assign TA void* member fun of type:", GetTypeName(),
 		       "Source is an unregistered member function named:", mbf.name,
 		       "add #REG_FUN to function");
       }
@@ -291,7 +295,7 @@ void cssTA::PtrAssignPtr(const cssEl& s) {
     }
   }
   else {
-    cssMisc::Error(prog, "Failed to assign TA pointer of type:", type_def->name,
+    cssMisc::Error(prog, "Failed to assign TA pointer of type:", GetTypeName(),
 		   "pointer mismatch.  our ptr_cnt == ", String(ptr_cnt),
 		   "source ptr_cnt == ", String(sp_ptr_cnt));
   }
@@ -310,7 +314,7 @@ void cssTA::operator=(const String& s) {
     }
   }
   else {
-    cssMisc::Error(prog, "Failed to assign cssTA pointer of type:", type_def->name,
+    cssMisc::Error(prog, "Failed to assign cssTA pointer of type:", GetTypeName(),
 		   "no non-taBase support for pointer assignment from strings");
   }
 }
@@ -332,24 +336,6 @@ void cssTA::operator=(const cssEl& s) {
   cssTA* sp = (cssTA*)s.GetNonRefObj();
   // use typedef generic copy routine!
   type_def->CopyFromSameType(ptr, sp->GetNonRefPtr());
-}
-
-cssEl* cssTA::GetElement_impl(taBase* ths, Variant i) const {
-  TypeDef* eltd;
-  void* el = ths->GetTA_Element(i, eltd);
-  if(!eltd) {
-    cssMisc::Error(prog, "This is not an array:", ths->GetName(),
-		    "type:", ths->GetTypeDef()->name);
-    return &cssMisc::Void;
-  }
-  String elno = i.toString();
-  if(!el) {
-    cssMisc::Error(prog, "Index out of range:", elno, "for", ths->GetName(),
-		    "type:", ths->GetTypeDef()->name);
-    return &cssMisc::Void;
-  }
-  String nm = ths->GetName() + String("[") + elno + "]";
-  return GetElFromTA(eltd, el, nm, (MemberDef*)NULL, (cssEl*)this);
 }
 
 int cssTA::GetMemberNo(const String& memb) const {
@@ -392,7 +378,7 @@ void cssTA_Base::Constr() {
     }
     taBase* nw = taBase::MakeToken(type_def);
     if(!nw) {
-      cssMisc::Error(prog, "Can't create new taBase object -- probably instance is NULL -- turn on instance generation for type:", type_def->name);
+      cssMisc::Error(prog, "Can't create new taBase object -- probably instance is NULL -- turn on instance generation for type:", GetTypeName());
       return;
     }
     taBase::Ref(nw);
@@ -402,7 +388,7 @@ void cssTA_Base::Constr() {
   else {
     taBase* ths = GetTAPtr();
     if(ths) {
-      if(ptr_cnt == 1)
+      if(ptr_cnt <= 1)
 	taBase::Ref(ths);		// always ref ptrs!
       type_def = ths->GetTypeDef();	// just to be sure
     }
@@ -452,7 +438,7 @@ cssTA_Base::~cssTA_Base() {
     ptr = NULL;
     ClearPtrFlag(OWN_OBJ);
   }
-  if(ptr_cnt == 1 && ptr) {
+  else if(ptr_cnt <= 1 && ptr) {
     taBase::DelPointer((taBase**)&ptr);
   }
 }
@@ -559,7 +545,7 @@ void cssTA_Base::PtrAssignPtr(const cssEl& s) {
     }
   }
   else {
-    cssMisc::Error(prog, "Failed to assign TA pointer of type:", type_def->name,
+    cssMisc::Error(prog, "Failed to assign TA pointer of type:", GetTypeName(),
 		   "pointer mismatch.  our ptr_cnt == ", String(ptr_cnt),
 		   "source ptr_cnt == ", String(sp_ptr_cnt));
   }
@@ -720,7 +706,7 @@ void cssTA_Base::operator=(const cssEl& s) {
 cssEl* cssTA_Base::operator[](Variant i) const {
   taBase* ths = GetTAPtr();
   if(ths)
-    return GetElement_impl(ths, i);
+    return TAElem(ths, i);
   cssMisc::Error(prog, "operator[]: NULL pointer");
   return &cssMisc::Void;
 }
@@ -735,7 +721,7 @@ cssEl* cssTA_Base::GetMemberFmName(const String& memb) const {
   MemberDef* md;
   void* mbr = ths->FindMembeR(memb, md);
   if(!mbr) {
-    cssMisc::Error(prog, "MembeR not found:", memb, "in class of type:", (char*)type_def->name);
+    cssMisc::Error(prog, "MembeR not found:", memb, "in class of type:", (char*)GetTypeName());
     return &cssMisc::Void;
   }
   String mbnm;
@@ -751,7 +737,7 @@ cssEl* cssTA_Base::GetMemberFmName(const String& memb) const {
 cssEl* cssTA_Base::NewOpr() {
   taBase* nw = taBase::MakeToken(type_def);
   if(!nw) {
-    cssMisc::Error(prog, "New token of type:", type_def->name, "could not be made");
+    cssMisc::Error(prog, "New token of type:", GetTypeName(), "could not be made");
     return &cssMisc::Void;
   }
 //NO!  taBase::Ref(nw);			// refer to this
@@ -972,7 +958,7 @@ void cssSmartRef::UpdateAfterEdit() {
 cssEl* cssSmartRef::operator[](Variant i) const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
-    return GetElement_impl(sr->ptr(), i);
+    return TAElem(sr->ptr(), i);
   return cssTA::operator[](i);
 }
 
@@ -1261,7 +1247,7 @@ void cssIOS::PtrAssignPtr(const cssEl& s) {
       if(!st->type_def->InheritsFrom(type_def)) {
 	// source must be my type or greater
 	cssMisc::Error(prog, "Attempt to assign incompatible ios pointers:",
-		       type_def->name, "!=", st->type_def->name);
+		       GetTypeName(), "!=", st->GetTypeName());
 	return;
       }
       // assignment amongst iostream types..
@@ -1336,14 +1322,6 @@ cssLeafItr::~cssLeafItr() {
 // 		cssTypeDef
 ////////////////////////////////////////////////////////////////////////
 
-const char* cssTypeDef::GetTypeName() const {
-//   void* pt = GetVoidPtr();
-//   if(pt)
-//     return ((TypeDef*)pt)->name;
-  // just use default typedef name
-  return cssTA::GetTypeName();
-}
-
 void cssTypeDef::Print(ostream& fh) const {
   fh << PrintStr();
 }
@@ -1387,7 +1365,7 @@ String cssTypeDef::GetStr() const {
     return ((TypeDef*)ptr)->name;
   else if((ptr_cnt == 2) && *((TypeDef**)ptr))
     return (*((TypeDef**)ptr))->name;
-  return type_def->name;
+  return GetTypeName();
 }
 
 void cssTypeDef::operator=(const String& s) {

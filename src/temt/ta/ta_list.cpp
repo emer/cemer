@@ -153,30 +153,6 @@ String taPtrList_impl::El_GetHashString_(void* it) const {
   return (hash_table->key_type == taHashTable::KT_NAME) ? El_GetName_(it) : _nilString;
 }
 
-void* taPtrList_impl::GetTA_Element_(Variant i, TypeDef*& eltd) const {
-  void* rval = 0;
-  if (i.isStringType()) {
-    // lookup by name if string
-    rval = FindName_(i.toString());
-  }
-
-  if (!rval) {
-    // string could be number in disguise -- try that next
-    rval = SafeEl_(i.toInt());
-  }
-
-  if (rval) {
-    eltd = El_GetType_(rval);
-  }
-  else {
-    eltd = 0;
-    taMisc::Error("taPtrList_impl: Attempt to access list element with index/name:", i.toString(),
-                  "which is out of range or not found -- list size:", String(size));
-  }
-
-  return rval;
-}
-
 int taPtrList_impl::FindEl_(const void* it) const {
   if (hash_table && (hash_table->key_type == taHashTable::KT_PTR))
     return hash_table->FindHashValPtr(it);

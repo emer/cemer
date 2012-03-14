@@ -205,7 +205,9 @@ public:
   inline bool	InRange(int idx) const {return ((idx >= 0) && (idx < n_dims));}
   // #CAT_Access is the given dimension index value within range of dimensions in this geom
   inline int	dim(int i) const { if (InRange(i)) return el[i]; else return 0; }
-  // #CAT_Access return value along given dimension
+  // #CAT_Access return geometry size along given dimension
+  inline int	size(int i) const { return dim(i); }
+  // #CAT_Access return geometry size along given dimension
   int 		Product() const; 
   // #CAT_Access returns product of all dimension values (i.e., total size of geometry)
   inline int 	IndexFmDimsN(const MatrixGeom& dims) const
@@ -384,8 +386,8 @@ public:
   // #CAT_Access type of data, ex TA_int, TA_float, etc.
   virtual ValType	GetDataValType() const = 0;
   // #CAT_Access val_type of data
-  void*   		GetTA_Element(Variant i, TypeDef*& eltd)
-  { eltd = GetDataTypeDef(); int dx = i.toInt(); if(InRange_Flat(dx)) return (void*)FastEl_Flat_(dx); return NULL; }
+  // void*   		GetTA_Element(Variant i, TypeDef*& eltd)
+  // { eltd = GetDataTypeDef(); int dx = i.toInt(); if(InRange_Flat(dx)) return (void*)FastEl_Flat_(dx); return NULL; }
 
   ///////////////////////////////////////
   // String

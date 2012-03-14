@@ -3216,7 +3216,7 @@ taiObjChooser::taiObjChooser(taBase* parob, const char* captn, bool selonly, QWi
   init(captn, selonly, par_window_);
 
   if(parob->InheritsFrom(&TA_taList_impl))
-    lst_par_obj = (TABLPtr)parob;
+    lst_par_obj = (taList_impl*)parob;
   else
     reg_par_obj = parob;
 
@@ -3488,7 +3488,7 @@ void taiObjChooser::DescendBrowser() {
   editor->setText((const char*)nw_txt);
 
   if(msel_obj->InheritsFrom(&TA_taList_impl)) {
-    lst_par_obj = (TABLPtr)msel_obj;
+    lst_par_obj = (taList_impl*)msel_obj;
     reg_par_obj = NULL;
   }
   else {

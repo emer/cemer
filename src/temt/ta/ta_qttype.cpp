@@ -2799,7 +2799,7 @@ void gpiDefaultEl::GetImage_impl(taiData* dat, const void* base) {
   taList_impl* tl = (taList_impl*)base;
   taBase* tmp_ptr = tl->DefaultEl_();
   gpiListEls* rval = (gpiListEls*)dat;
-  rval->GetImage((TAGPtr)base, tmp_ptr);
+  rval->GetImage((taGroup_impl*)base, tmp_ptr);
   GetOrigVal(dat, base);
 }
 
@@ -2921,11 +2921,11 @@ void gpiFromGpTokenPtrMember::GetImage_impl(taiData* dat, const void* base) {
 
   if (mbr->type->DerivesFrom(TA_taGroup_impl)) {
     gpiSubGroups* rval = (gpiSubGroups*)dat;
-    TAGPtr lst = (TAGPtr)GetList(from_md, base);
-    rval->GetImage(lst, (TAGPtr)tok_ptr);
+    taGroup_impl* lst = (taGroup_impl*)GetList(from_md, base);
+    rval->GetImage(lst, (taGroup_impl*)tok_ptr);
   } else {
     gpiListEls* rval = (gpiListEls*)dat;
-    TABLPtr lst = GetList(from_md, base);
+    taList_impl* lst = GetList(from_md, base);
     rval->GetImage(lst, tok_ptr);
   }
   GetOrigVal(dat, base);
@@ -2968,15 +2968,15 @@ MemberDef* gpiFromGpTokenPtrMember::GetFromMd() {
   return from_md;
 }
 
-TABLPtr gpiFromGpTokenPtrMember::GetList(MemberDef* from_md, const void* base) {
+taList_impl* gpiFromGpTokenPtrMember::GetList(MemberDef* from_md, const void* base) {
   if (from_md == NULL)
     return NULL;
   if(from_md->type->InheritsFrom(&TA_taSmartRef))
-    return (TABLPtr)((taSmartRef*)from_md->GetOff(base))->ptr();
+    return (taList_impl*)((taSmartRef*)from_md->GetOff(base))->ptr();
   else if(from_md->type->ptr == 1)
-    return *((TABLPtr*)from_md->GetOff(base));
+    return *((taList_impl**)from_md->GetOff(base));
   else
-    return (TABLPtr)from_md->GetOff(base);
+    return (taList_impl*)from_md->GetOff(base);
 }
 
 //////////////////////////////////
@@ -2991,7 +2991,7 @@ int gpiTAPtrArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeD
 }
 
 cssEl* gpiTAPtrArgType::GetElFromArg(const char* nm, void* base) {
-  TABLPtr lst = (TABLPtr)base;
+  taList_impl* lst = (taList_impl*)base;
   if ((lst != NULL) &&
      (arg_typ->DerivesFrom(lst->el_base) || lst->el_base->DerivesFrom(arg_typ->GetNonPtrType()))) {
     String ptrnm = lst->el_base->name + "_ptr";
@@ -3014,7 +3014,7 @@ int gpiInObjArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, TypeD
 }
 
 cssEl* gpiInObjArgType::GetElFromArg(const char* nm, void* base) {
-  TABLPtr lst = (TABLPtr)base;
+  taList_impl* lst = (taList_impl*)base;
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   if (lst != NULL)
     arg_val = new cssTA_Base(lst->DefaultEl_(), 1, npt, nm);
@@ -3052,7 +3052,7 @@ void gpiInObjArgType::GetImage_impl(taiData* dat, const void* base) {
     els->GetImage((taGroup_impl*)base, *((taBase**)arg_base));
   } else {
     taiListElsButton* els = (taiListElsButton*)dat;
-    els->GetImage((TABLPtr)base, *((taBase**)arg_base));
+    els->GetImage((taList_impl*)base, *((taBase**)arg_base));
   }
 }
 
@@ -3081,7 +3081,7 @@ int gpiFromGpArgType::BidForArgType(int aidx, TypeDef* argt, MethodDef* md, Type
 cssEl* gpiFromGpArgType::GetElFromArg(const char* nm, void* base) {
   MemberDef* from_md = GetFromMd();
   if(from_md == NULL)   return NULL;
-  TABLPtr lst = GetList(from_md, base);
+  taList_impl* lst = GetList(from_md, base);
   TypeDef* npt = arg_typ->GetNonRefType()->GetNonConstType()->GetNonPtrType();
   if (lst != NULL)
     arg_val = new cssTA_Base(lst->DefaultEl_(), 1, npt, nm);
@@ -3122,13 +3122,13 @@ void gpiFromGpArgType::GetImage_impl(taiData* dat, const void* base) {
   }
   MemberDef* from_md = GetFromMd();
   if (from_md == NULL)  return;
-  TABLPtr lst = GetList(from_md, base);
+  taList_impl* lst = GetList(from_md, base);
   if (typ->InheritsFrom(TA_taGroup_impl)) {
     taiGroupElsButton* els = (taiGroupElsButton*)dat;
     els->GetImage((taGroup_impl*)lst, *((taBase**)arg_base));
   } else {
     taiListElsButton* els = (taiListElsButton*)dat;
-    els->GetImage((TABLPtr)lst, *((taBase**)arg_base));
+    els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
   }
 }
 
@@ -3149,15 +3149,15 @@ MemberDef* gpiFromGpArgType::GetFromMd() {
   return from_md;
 }
 
-TABLPtr gpiFromGpArgType::GetList(MemberDef* from_md, const void* base) {
+taList_impl* gpiFromGpArgType::GetList(MemberDef* from_md, const void* base) {
   if (from_md == NULL)
     return NULL;
   if(from_md->type->InheritsFrom(&TA_taSmartRef))
-    return (TABLPtr)((taSmartRef*)from_md->GetOff(base))->ptr();
+    return (taList_impl*)((taSmartRef*)from_md->GetOff(base))->ptr();
   else if(from_md->type->ptr == 1)
-    return *((TABLPtr*)from_md->GetOff(base));
+    return *((taList_impl**)from_md->GetOff(base));
   else
-    return (TABLPtr)from_md->GetOff(base);
+    return (taList_impl*)from_md->GetOff(base);
 }
 
 //////////////////////////////////

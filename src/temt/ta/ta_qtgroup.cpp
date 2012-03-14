@@ -57,7 +57,7 @@ gpiListEditButton::gpiListEditButton
 }
 
 void gpiListEditButton::SetLabel() {
-  TABLPtr lst = (TABLPtr)cur_base;
+  taList_impl* lst = (taList_impl*)cur_base;
   if(lst == NULL) {
     taiEditButton::SetLabel();
     return;
@@ -75,7 +75,7 @@ gpiGroupEditButton::gpiGroupEditButton
 }
 
 void gpiGroupEditButton::SetLabel() {
-  TAGPtr gp = (TAGPtr)cur_base;
+  taGroup_impl* gp = (taGroup_impl*)cur_base;
   if (gp == NULL) {
     taiEditButton::SetLabel();
     return;
@@ -99,7 +99,7 @@ gpiSubEditButton::gpiSubEditButton
 }
 
 void gpiSubEditButton::SetLabel() {
-  TAGPtr gp = (TAGPtr)cur_base;
+  taGroup_impl* gp = (taGroup_impl*)cur_base;
   if(gp == NULL) {
     setRepLabel(label);
     return;
@@ -388,7 +388,7 @@ void taiGroupElsButton::GetImage(taGroup_impl* base_grp, taBase* it) {
 //////////////////////////
 
 
-gpiListEls::gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* typ_, IDataHost* host_,
+gpiListEls::gpiListEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IDataHost* host_,
 	taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
@@ -399,7 +399,7 @@ gpiListEls::gpiListEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* typ
   over_max = false;
 }
 
-gpiListEls::gpiListEls(taiMenu* existing_menu, TABLPtr lst, TypeDef* typ_,
+gpiListEls::gpiListEls(taiMenu* existing_menu, taList_impl* lst, TypeDef* typ_,
 	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_) {
   ths = lst;
@@ -410,7 +410,7 @@ QWidget* gpiListEls::GetRep() {
   return ta_actions->GetRep();
 }
 
-void gpiListEls::GetImage(TABLPtr base_lst, taBase* it) {
+void gpiListEls::GetImage(taList_impl* base_lst, taBase* it) {
   if (ths != base_lst) {
     ths = base_lst;
   }
@@ -445,12 +445,12 @@ void gpiListEls::Edit() {
 }
 
 void gpiListEls::Choose() {
-  TABLPtr chs_root = ths;
+  taList_impl* chs_root = ths;
   // this is not a good idea: it makes the prior selection the root, so you can't actuall
   // choose anything!
 //   if((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "<Over max, select>") &&
 //      (ta_actions->cur_sel->usr_data != NULL))
-//     chs_root = (TABLPtr)ta_actions->cur_sel->usr_data;
+//     chs_root = (taList_impl*)ta_actions->cur_sel->usr_data;
 
   taiObjChooser* chs = taiObjChooser::createInstance(chs_root, "List/Group Objects", true);
   //if ((chs_obj != NULL) && !chs_obj->GetName().empty())
@@ -493,7 +493,7 @@ void gpiListEls::UpdateMenu(taiMenuAction* actn) {
   GetMenu(ta_actions, actn);
 }
 
-void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* actn) {
+void gpiListEls::GetMenu_impl(taList_impl* cur_lst, taiActions* menu, taiMenuAction* actn) {
   if (cur_lst == NULL)	return;
   if (cur_lst->size >= taMisc::max_menu) 
   {
@@ -523,25 +523,25 @@ void gpiListEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* 
 // 	gpiGroupEls	//
 //////////////////////////
 
-gpiGroupEls::gpiGroupEls(taiActions::RepType rt, int ft, TABLPtr lst, TypeDef* typ_, IDataHost* host_, 
+gpiGroupEls::gpiGroupEls(taiActions::RepType rt, int ft, taList_impl* lst, TypeDef* typ_, IDataHost* host_, 
   taiData* par, QWidget* gui_parent_, int flags_)
 : gpiListEls(rt,ft,lst, typ_, host_,par, gui_parent_, flags_)
 {
 }
 
-gpiGroupEls::gpiGroupEls(taiMenu* existing_menu, TABLPtr gp, TypeDef* tp, IDataHost* host_, taiData* par,
+gpiGroupEls::gpiGroupEls(taiMenu* existing_menu, taList_impl* gp, TypeDef* tp, IDataHost* host_, taiData* par,
       QWidget* gui_parent_, int flags_) // uses flags: flgNullOk, flgNoGroup (aka flgNoList), flgNoInGroup, flgEditOk
 : gpiListEls(existing_menu, gp, tp, host_,par, gui_parent_, flags_)
 {
 }
 
 void gpiGroupEls::ChooseGp() {
-  TABLPtr chs_root = &(((TAGPtr)ths)->gp);
+  taList_impl* chs_root = &(((taGroup_impl*)ths)->gp);
   // this is not a good idea: it makes the prior selection the root, so you can't actuall
   // choose anything!
 //   if((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "gp.<Over max, select...>") &&
 //      (ta_actions->cur_sel->usr_data != NULL))
-//     chs_root = (TABLPtr)ta_actions->cur_sel->usr_data;
+//     chs_root = (taList_impl*)ta_actions->cur_sel->usr_data;
 
   taiObjChooser* chs = taiObjChooser::createInstance(chs_root, "SubGroups", true);
   bool rval = chs->Choose();
@@ -558,9 +558,9 @@ void gpiGroupEls::ChooseGp() {
   delete chs;
 }
 
-void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction* actn) {
+void gpiGroupEls::GetMenu_impl(taList_impl* cur_lst, taiActions* menu, taiMenuAction* actn) {
   if (cur_lst == NULL) return;
-  TAGPtr cur_gp = (TAGPtr)cur_lst;
+  taGroup_impl* cur_gp = (taGroup_impl*)cur_lst;
   if (cur_gp->size >= taMisc::max_menu) {
     taiAction* mnel = menu->AddItem
       ("<Over max, select...>", taiMenu::normal,
@@ -585,7 +585,7 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction*
 	for (int fm = 0; fm < ttd->members.size; ++fm) {
 	  MemberDef* md = ttd->members[fm];
 	  if (md->HasOption("IN_GPMENU")) {
-	    TAGPtr tmp_grp = (TAGPtr)md->GetOff(tmp);
+	    taGroup_impl* tmp_grp = (taGroup_impl*)md->GetOff(tmp);
 	    if (tmp_grp->leaves == 0)
 	      continue;
 
@@ -616,7 +616,7 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction*
     }
   } else {
     for (int i = 0; i < cur_gp->gp.size; ++i) {
-      TAGPtr tmp_grp = (TAGPtr)cur_gp->FastGp_(i);
+      taGroup_impl* tmp_grp = (taGroup_impl*)cur_gp->FastGp_(i);
       String nm = tmp_grp->GetName();
       if (nm == "")
 	nm = "Group [" + String(i) + "]";
@@ -638,7 +638,7 @@ void gpiGroupEls::GetMenu_impl(TABLPtr cur_lst, taiActions* menu, taiMenuAction*
 //////////////////////////
 
 
-gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, TAGPtr gp, TypeDef* typ_, IDataHost* host_, 
+gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, taGroup_impl* gp, TypeDef* typ_, IDataHost* host_, 
   taiData* par,	QWidget* gui_parent_, int flags_)
 : taiElBase(NULL, typ_, host_, par, gui_parent_, flags_)
 {
@@ -649,7 +649,7 @@ gpiSubGroups::gpiSubGroups(taiActions::RepType rt, int ft, TAGPtr gp, TypeDef* t
   over_max = false;
 }
 
-gpiSubGroups::gpiSubGroups(taiMenu* existing_menu, TAGPtr gp, TypeDef* typ_,
+gpiSubGroups::gpiSubGroups(taiMenu* existing_menu, taGroup_impl* gp, TypeDef* typ_,
 	IDataHost* host_, taiData* par, QWidget* gui_parent_, int flags_)
 : taiElBase(existing_menu, typ_, host_, par, gui_parent_, flags_)
 {
@@ -662,7 +662,7 @@ QWidget* gpiSubGroups::GetRep() {
   return ta_actions->GetRep();
 }
 
-void gpiSubGroups::GetImage(TAGPtr base_gp, TAGPtr gp) {
+void gpiSubGroups::GetImage(taGroup_impl* base_gp, taGroup_impl* gp) {
   if (ths != base_gp) {
     ths = base_gp;
     GetMenu(ta_actions, NULL);
@@ -671,21 +671,21 @@ void gpiSubGroups::GetImage(TAGPtr base_gp, TAGPtr gp) {
   setCur_obj(gp, false);
 }
 
-TAGPtr gpiSubGroups::GetValue() {
+taGroup_impl* gpiSubGroups::GetValue() {
   taiAction* cur = ta_actions->curSel();
   if (over_max) {
     if((cur == NULL) || (cur->text() == "<Over max, select...>"))
-      return (TAGPtr)cur_obj;
+      return (taGroup_impl*)cur_obj;
     else
-      return (TAGPtr)cur->usr_data.toPtr();
+      return (taGroup_impl*)cur->usr_data.toPtr();
   }
   if (cur != NULL)
-    return (TAGPtr)cur->usr_data.toPtr();
+    return (taGroup_impl*)cur->usr_data.toPtr();
   return NULL;
 }
 
 void gpiSubGroups::Edit() {
-  TAGPtr cur_base = GetValue();
+  taGroup_impl* cur_base = GetValue();
   if (cur_base != NULL) {
 /*TODO obs    if (host != NULL)
       cur_base->Edit(host->modal);
@@ -695,12 +695,12 @@ void gpiSubGroups::Edit() {
 }
 
 void gpiSubGroups::Choose() {
-  TABLPtr chs_root = ths;
+  taList_impl* chs_root = ths;
   // this is not a good idea: it makes the prior selection the root, so you can't actuall
   // choose anything!
 //   if((ta_actions->cur_sel != NULL) && (ta_actions->cur_sel->label == "<Over max, select>") &&
 //      (ta_actions->cur_sel->usr_data != NULL))
-//     chs_root = (TABLPtr)ta_actions->cur_sel->usr_data;
+//     chs_root = (taList_impl*)ta_actions->cur_sel->usr_data;
 
   taiObjChooser* chs = taiObjChooser::createInstance(chs_root, "SubGroups", true);
   bool rval = chs->Choose();
@@ -740,7 +740,7 @@ void gpiSubGroups::UpdateMenu(taiMenuAction* actn) {
   GetMenu(actn);
 }
 
-void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn) {
+void gpiSubGroups::GetMenu_impl(taGroup_impl* gp, taiActions* menu, taiMenuAction* actn) {
   if (gp == NULL) return;
   if (gp->gp.size >= taMisc::max_menu) {
     taiAction* mnel = menu->AddItem
@@ -765,7 +765,7 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn
       for (int fm = 0; fm < ttd->members.size; ++fm) {
 	MemberDef* md = ttd->members[fm];
 	if (md->HasOption("IN_GPMENU")) {
-	  TAGPtr tmp_grp = (TAGPtr)md->GetOff(tmp);
+	  taGroup_impl* tmp_grp = (taGroup_impl*)md->GetOff(tmp);
 	  if (tmp_grp->leaves == 0)
 	    continue;
 	  if (!added_sub) {
@@ -783,7 +783,7 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn
     }
   }
   for (int i = 0; i < gp->gp.size; ++i) {
-    TAGPtr tmp_grp = (TAGPtr)gp->FastGp_(i);
+    taGroup_impl* tmp_grp = (taGroup_impl*)gp->FastGp_(i);
     String nm;
     if (tmp_grp->GetName() == "")
       nm = "Group [" + String(i) + "]";
@@ -801,7 +801,7 @@ void gpiSubGroups::GetMenu_impl(TAGPtr gp, taiActions* menu, taiMenuAction* actn
 	  for (int fm = 0; fm < ttd->members.size; ++fm) {
 	    MemberDef* md = ttd->members[fm];
 	    if (md->HasOption("IN_GPMENU")) {
-	      TAGPtr sbgrp = (TAGPtr)md->GetOff(tmp);
+	      taGroup_impl* sbgrp = (taGroup_impl*)md->GetOff(tmp);
 	      if(sbgrp->leaves == 0)
 		continue;
 	      has_sub_stuff = true;
@@ -949,7 +949,7 @@ gpiListDataHost::gpiListDataHost(void* base, TypeDef* typ_, bool read_only_,
   	bool modal_, QObject* parent)
 : gpiMultiEditDataHost(base, typ_, read_only_, modal_, parent)
 {
-  cur_lst = (TABLPtr)root;
+  cur_lst = (taList_impl*)root;
   num_lst_fields = 0;
 }
 
@@ -1129,7 +1129,7 @@ gpiCompactListDataHost::gpiCompactListDataHost(void* base, TypeDef* typ_, bool r
 : gpiMultiEditDataHost(base, typ_, read_only_, modal_, parent)
 {
   header_row = false; 
-  cur_lst = (TABLPtr)root;
+  cur_lst = (taList_impl*)root;
 }
 
 gpiCompactListDataHost::~gpiCompactListDataHost() {
@@ -1738,9 +1738,9 @@ void taiProjTemplateElArgType::GetImage_impl(taiData* dat, const void* base) {
   }
   MemberDef* from_md = GetFromMd();
   if (from_md == NULL)	return;
-  TABLPtr lst = GetList(from_md, base);
+  taList_impl* lst = GetList(from_md, base);
   taiProjTemplateElsButton* els = (taiProjTemplateElsButton*)dat;
-  els->GetImage((TABLPtr)lst, *((taBase**)arg_base));
+  els->GetImage((taList_impl*)lst, *((taBase**)arg_base));
 }
 
 void taiProjTemplateElArgType::GetValue_impl(taiData* dat, void*) {

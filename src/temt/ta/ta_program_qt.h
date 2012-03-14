@@ -428,7 +428,7 @@ public:
                       QWidget* gui_parent_, int flags_ = 0); //note: typ is type of list
 protected:
   override void         BuildCategories_impl();
-  override int          BuildChooser_0(taiItemChooser* ic, TABLPtr top_lst,
+  override int          BuildChooser_0(taiItemChooser* ic, taList_impl* top_lst,
                                        QTreeWidgetItem* top_item);
 };
 

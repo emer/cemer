@@ -46,7 +46,7 @@ int yylex();
 %}
 
 /* fifteen expected shift-reduce conflicts.. */
-%expect 15
+%expect 16
 
 %union {
   cssElPlusIVal el_ival;
@@ -112,8 +112,10 @@ int yylex();
 %type 	<el>	fundname methdname
 
 /* expr elements */
-%type   <ival>	comb_expr exprlist exprlsel cmd_exprlist cmd_exprlsel argstop memb_expr
-%type	<ival>	normfuncall
+%type   <ival>	comb_expr exprlist exprlsel
+%type	<ival>	matrixarray matexprlist matexprlsel matsemicolon matcolon
+%type   <ival>  cmd_exprlist cmd_exprlsel argstop memb_expr
+%type	<ival>	normfuncall startmatrix
 %type   <el_ival> normfun membfun
 %type	<el>    primitive type type_el typeonly typeorscp scopetype
 %type	<el>    anycmd
@@ -292,18 +294,22 @@ vardefin: type name '=' argstop expr end 	{
 	    }
 	    cssEl::Done(tmp); }
 
-        | undefname '=' argstop expr end term {	/* no type information, get from last expr */
-	    cssMisc::cur_top->Prog()->UnCode();	/* undo the end jump coding */
+        | undefname '=' argstop expr end {	/* no type information, get from last expr */
+	    cssProg* prg = cssMisc::cur_top->Prog();
+	    prg->UnCode();	/* undo the end jump coding */
 	    css_progdx actln = $5-2;
-	    if(cssMisc::cur_top->Prog()->insts[actln]->IsJump()) { /* if jmp, get before */
+	    if(prg->insts[actln]->IsJump()) { /* if jmp, get before */
 	      actln = $3+1;	/* go for the first thing if the last is no good */
 	    }
-	    cssEl* extyp = cssMisc::cur_top->Prog()->insts[actln]->inst.El();
- 	    extyp->MakeToken(cssMisc::cur_top->Prog());
-	    cssRef* tmp = (cssRef*)cssMisc::cur_top->Prog()->Stack()->Pop();
+	    cssEl* extyp = prg->insts[actln]->inst.El();
+	    if(extyp->GetType() == cssEl::T_ElCFun && extyp->name == "make_matrix") {
+	      extyp = cssBI::matrix_inst;
+	    }
+	    extyp->MakeToken(prg);
+	    cssRef* tmp = (cssRef*)prg->Stack()->Pop();
 	    $$ = Code3(tmp->ptr, cssBI::init_asgn, cssBI::pop);
 	    if(!cssMisc::cur_top->AmCmdProg()) {
-	      cssMisc::Warning(cssMisc::cur_top->Prog(),
+	      cssMisc::Warning(prg,
 			       "Warning: created implicit variable:",
 			       tmp->ptr.El()->name,
 			       "of type: ", extyp->GetTypeName()); }
@@ -1270,7 +1276,9 @@ comb_expr:
 	| '-' expr %prec CSS_UNARYMINUS	{ $$ = $2; Code1(cssBI::neg); }
 	| CSS_NOT expr			{ $$ = $2; Code1(cssBI::lnot); }
 	| '~' expr %prec CSS_BITNEG	{ $$ = $2; Code1(cssBI::bitneg); }
-	| expr '[' expr ']'		{ Code1(cssBI::de_array); }
+        | matrixarray			{ $$ = $1; }
+        | expr matrixarray 		{ $$ = $1; Code1(cssBI::de_array); }
+	/* | expr '[' expr ']'		{ Code1(cssBI::de_array); } */
         | '(' type ')' expr %prec CSS_UNARY {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if($2.El()->tmp_str == "const") {
@@ -1295,6 +1303,38 @@ primitive:
         ;
 
 anycmd:   CSS_COMMAND
+        ;
+
+matrixarray: startmatrix matexprlist ']'  { $$ = $2; Code1(cssBI::make_matrix);
+	    int act_args = $2;
+	    if(act_args > cssElFun::ArgMax) {
+	      cssMisc::Warning(cssMisc::cur_top->Prog(), "Too many initializer values for matrix, should have at most:", String(cssElFun::ArgMax), "got:",String(act_args)); }
+	  }
+        ;
+
+
+startmatrix: '['			{ $$ = Code1(cssMisc::VoidElPtr); /* an arg stop */ }
+        ;
+
+matcolon: ':'				{ $$ = Code1(cssBI::colon_mark); }
+        ;
+
+matexprlsel: expr
+        | CSS_PTRTYPE			{ $$ = Code1($1); }/* allow ta_types */
+        | matcolon 			{ $$ = $1; Code1(cssBI::colon_end_mark); }
+        | expr matcolon 		{ $$ = $1; Code1(cssBI::colon_end_mark); }
+        | matcolon expr 		{ $$ = $1; Code1(cssBI::colon_end_mark); }
+        | expr matcolon expr 		{ $$ = $1; Code1(cssBI::colon_end_mark); }
+        | expr matcolon expr matcolon	{ $$ = $1; Code1(cssBI::colon_end_mark); }
+        | expr matcolon expr matcolon expr { $$ = $1; Code1(cssBI::colon_end_mark); }
+        ;
+
+matsemicolon: ';'			{ $$ = Code1(cssBI::semicolon_mark); }
+        ;
+
+matexprlist: matexprlsel		{ $$ = 1; } /* the argstop points to where the arguments stop on the stack (begin) */
+        | matexprlist ',' matexprlsel { $$ = $1 + 1; }
+        | matexprlist matsemicolon matexprlsel { $$ = $1 + 2; }
         ;
 
 normfuncall:

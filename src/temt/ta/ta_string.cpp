@@ -46,6 +46,64 @@ using namespace std;
 //      misc funcs      //
 //////////////////////////
 
+
+#ifndef NO_TA_BASE
+#include "ta_variant.h"
+#include "ta_matrix.h"
+
+String  String::operator [] (Variant i) const {
+  String rval;
+  if(i.isNumeric()) {
+    rval = elem(i.toInt());
+  }
+  else if(i.isMatrixType()) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(i.toMatrix());
+    if(!cmat) {
+      error("operator[], index matrix is NULL or not an int_Matrix");
+      return rval;
+    }
+    if(cmat->size <= 0) return rval;
+    if(cmat->dims() == 2 && cmat->dim(0) == 3 && cmat->dim(1) == 1) {
+      // mode = IDX_SLICE;
+      int start = cmat->FastEl_Flat(0);
+      int end = cmat->FastEl_Flat(1);
+      int step = cmat->FastEl_Flat(2);
+      if(step == 0) step = 1;
+      if(start < 0) start += length();
+      if(end < 0) end += (length()+1); // needs the +1 to allow -1 to be the end and do <
+      if(start > length()-1) start = length()-1; // keep in bounds
+      if(start < 0) start = 0;
+      if(end > length()) end = length();
+      if(end < 0) end = 0;
+      if(end < start) {
+	error("operator[] IDX_SLICE, slice end is before start. start: "+
+	      String(start) + " end: " + String(end) + " step: " + String(step));
+	return rval;
+      }
+      if(step > 0) {
+	for(int i = start; i < end; i += step) {
+	  rval += elem(i);
+	}
+      }
+      else {
+	for(int i = end-1; i >= start; i += step) {
+	  rval += elem(i);
+	}
+      }
+    }
+    else {			// just a bunch of coords
+      for(int i=0; i< cmat->size; i++) {
+	int idx = cmat->FastEl_Flat(i);
+	if(idx >= 0 && idx < length())
+	  rval += elem(idx);
+      }
+    }
+  }
+  return rval;
+}
+
+#endif
+
 // capitalize a string, in-place
 void _capitalize(char* p, int n) {
   char* e = &(p[n]);

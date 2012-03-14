@@ -1242,15 +1242,9 @@ taiDataLink* tabODataLink::GetListChild(int itm_idx) {
   if (!list()) return inherited::GetListChild(itm_idx);
   if ((itm_idx < 0) || (itm_idx >= list()->size))
     return NULL;
-  TypeDef* typ;
-  void* el = list()->GetTA_Element(itm_idx, typ); // gets the item, and its TypeDef
-  if (typ == NULL) return NULL; 
-  // if we get a taBase item, the type might only be the base type, not the derived type of the item
-  // so we cast the item, and then grab the exact type right from the item
-  if (typ->InheritsFrom(&TA_taBase)) {
-      typ = ((taBase*)el)->GetTypeDef();
-  }
-  // get the link
+  taBase* el = (taBase*)list()->SafeEl_(itm_idx);
+  if (!el) return NULL; 
+  TypeDef* typ = el->GetTypeDef();
   taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
   return dl;
 }
@@ -8926,14 +8920,9 @@ void tabParTreeDataNode::UpdateListNames() {
   taList_impl* list = this->list(); //cache
   for (int i = 0; i < list->size; ++i) {
     // the subgroups are themselves taGroup items
-    TypeDef* typ;
-    void* el = list->GetTA_Element(i, typ); // gets the item, and its TypeDef
-    if (!typ) continue; //TODO: maybe we should put a marker item in list???
-    // if we get a taBase item, the type might only be the base type, not the derived type of the item
-    // so we cast the item, and then grab the exact type right from the item
-    if (typ->InheritsFrom(&TA_taBase)) {
-        typ = ((taBase*)el)->GetTypeDef();
-    }
+    taBase* el = (taBase*)list->FastEl_(i);
+    if(!el) continue;
+    TypeDef* typ = el->GetTypeDef();
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (!dl) continue; // shouldn't happen unless null...
 
@@ -9050,14 +9039,9 @@ void tabGroupTreeDataNode::CreateChildren_impl() {
   String tree_nm;
   for (int i = 0; i < tadata()->gp.size; ++i) {
     // the subgroups are themselves taGroup items
-    TypeDef* typ;
-    void* el = tadata()->gp.GetTA_Element(i, typ); // gets the item, and its TypeDef
-    if (!typ) continue; //TODO: maybe we should put a marker item in list???
-    // if we get a taBase item, the type might only be the base type, not the derived type of the item
-    // so we cast the item, and then grab the exact type right from the item
-    if (typ->InheritsFrom(&TA_taBase)) {
-        typ = ((taBase*)el)->GetTypeDef();
-    }
+    taBase* el = tadata()->gp.FastEl(i);
+    if (!el) continue;
+    TypeDef* typ = el->GetTypeDef();
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (!dl) continue; // shouldn't happen unless null...
 
@@ -9181,14 +9165,9 @@ void tabGroupTreeDataNode::UpdateGroupNames() {
   String tree_nm;
   for (int i = 0; i < tadata()->gp.size; ++i) {
     // the subgroups are themselves taGroup items
-    TypeDef* typ;
-    void* el = tadata()->gp.GetTA_Element(i, typ); // gets the item, and its TypeDef
-    if (!typ) continue; //TODO: maybe we should put a marker item in list???
-    // if we get a taBase item, the type might only be the base type, not the derived type of the item
-    // so we cast the item, and then grab the exact type right from the item
-    if (typ->InheritsFrom(&TA_taBase)) {
-        typ = ((taBase*)el)->GetTypeDef();
-    }
+    taBase* el = tadata()->gp.FastEl(i);
+    if (!el) continue;
+    TypeDef* typ = el->GetTypeDef();
     taiDataLink* dl = taiViewType::StatGetDataLink(el, typ);
     if (!dl) continue; // shouldn't happen unless null...
 

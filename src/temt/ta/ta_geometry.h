@@ -747,14 +747,14 @@ public:
   ValIdx(float v, int i) 		{ SetValIdx(v, i); }
   ValIdx(const String& str) 		{ val = (float)str; }
   ~ValIdx() 				{ };
-  taBase* Clone() 			{ return new ValIdx(*this); }
+  taBase* Clone() const			{ return new ValIdx(*this); }
   void  UnSafeCopy(const taBase* cp) {
     if(cp->InheritsFrom(&TA_ValIdx)) Copy(*((ValIdx*)cp));
     if(InheritsFrom(cp->GetTypeDef())) cp->CastCopyTo(this);
   }
   void  CastCopyTo(taBase* cp) const 	{ ValIdx& rf = *((ValIdx*)cp); rf.Copy(*this); }
-  taBase* MakeToken()			{ return (taBase*)(new ValIdx); }
-  taBase* MakeTokenAry(int no)		{ return (taBase*)(new ValIdx[no]); }
+  taBase* MakeToken() const		{ return (taBase*)(new ValIdx); }
+  taBase* MakeTokenAry(int no) const	{ return (taBase*)(new ValIdx[no]); }
   TypeDef* GetTypeDef() const 		{ return &TA_ValIdx; }
   static TypeDef* StatTypeDef(int) 	{ return &TA_ValIdx; }
 
@@ -841,8 +841,9 @@ public:
   String	El_GetStr_(const void* it) const { return (String)((ValIdx*)it); } // #IGNORE
   void		El_SetFmStr_(void* it, const String& val)
   { ((ValIdx*)it)->val = (float)val; } // #IGNORE
-  virtual void*		GetTA_Element(Variant i, TypeDef*& eltd)
-  { eltd = &TA_ValIdx; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
+  // virtual void*		GetTA_Element(Variant i, TypeDef*& eltd)
+  // { eltd = &TA_ValIdx; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return 
+										 // NULL; }
   TA_BASEFUNS_NOCOPY(ValIdx_Array);
   TA_ARRAY_FUNS(ValIdx_Array,ValIdx);
 private:

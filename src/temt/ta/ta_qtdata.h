@@ -1011,7 +1011,7 @@ public:
   bool                  select_only;    // if true, only for selecting objects from current parent object
   String                caption;        // current caption at top of chooser
   String                path_str;       // current path string
-  TABLPtr               lst_par_obj;    // parent object that is a list object
+  taList_impl*          lst_par_obj;    // parent object that is a list object
   taBase*               reg_par_obj;    // parent object that is *not* a list object
   TypeDef*              typ_par_obj;    // parent object that is a typedef (get tokens)
   taBase*               scope_ref;      // reference object for scoping

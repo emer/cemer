@@ -97,6 +97,7 @@ cssElCFun*	cssBI::neg=NULL;
 cssElCFun*	cssBI::addr_of=NULL;
 cssElCFun*	cssBI::de_ptr=NULL;
 cssElCFun*	cssBI::de_array=NULL;
+cssElCFun*	cssBI::make_matrix=NULL;
 cssElCFun*	cssBI::points_at=NULL;
 cssElCFun*	cssBI::member_fun=NULL;
 cssElCFun*	cssBI::member_call=NULL;
@@ -115,8 +116,6 @@ cssElCFun*	cssBI::fun_done=NULL; // swaps args
 cssElCFun*	cssBI::array_alloc=NULL;
 cssElCFun*	cssBI::sstream_rewind=NULL;
 
-cssInt*		cssBI::true_int=NULL;
-cssInt*		cssBI::false_int=NULL;
 cssElCFun*	cssBI::gt=NULL;
 cssElCFun*	cssBI::lt=NULL;
 cssElCFun*	cssBI::eq=NULL;
@@ -129,7 +128,14 @@ cssElCFun*	cssBI::lnot=NULL;
 cssElCFun*	cssBI::bitneg=NULL;
 cssElCFun*	cssBI::power=NULL;
 
+cssInt*		cssBI::true_int=NULL;
+cssInt*		cssBI::false_int=NULL;
+cssConstBool*	cssBI::semicolon_mark=NULL;
+cssConstBool*	cssBI::colon_mark=NULL;
+cssConstBool*	cssBI::colon_end_mark=NULL;
+
 cssTA_Base*	cssBI::root;		// root script element
+cssTA_Matrix*	cssBI::matrix_inst;
 
 
 //////////////////////////////////
@@ -295,9 +301,172 @@ static cssEl* cssElCFun_addr_of_stub(int, cssEl* arg[]) {
 static cssEl* cssElCFun_de_ptr_stub(int, cssEl* arg[]) {
   return *(*arg[1]);		// calls operator* on object
 }
+
 static cssEl* cssElCFun_de_array_stub(int, cssEl* arg[]) {
   return (*arg[1])[*arg[2]];
 }
+
+static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
+  cssProg* cp = arg[0]->prog;
+  if(na == 0) {			// null = empty int matrix -- for coords
+    return new cssTA_Matrix(new int_Matrix);
+  }
+
+  // first see what we've got and do some basic optimizations
+  int n_int = 0;
+  int n_real = 0;
+  int n_string = 0;
+  int n_matrix = 0;
+  int n_semicolons = 0;
+  int sc_ctr = 0;	// count up since semicolon
+  int sc_geom = 0;	// semicolon geometry -- number of items per ;
+  int n_colons = 0;
+  int n_colon_ends = 0;
+  for(int i=1; i<=na; i++) {
+    if(arg[i] == cssBI::semicolon_mark) {
+      if(sc_geom > 0 && sc_geom != sc_ctr) {
+	cssMisc::Error(cp, "make_matrix: Error in constructing matrix -- number of elements per semicolon is variable -- must be constant!");
+	return &cssMisc::Void;
+      }
+      sc_geom = sc_ctr;
+      sc_ctr = 0;
+      n_semicolons++;
+      continue;
+    }
+    sc_ctr++;
+    if(arg[i] == cssBI::colon_mark) {
+      n_colons++;	
+    }
+    else if(arg[i] == cssBI::colon_end_mark) {
+      n_colon_ends++;	
+    }
+    else if(arg[i]->GetType() == cssEl::T_Int) n_int++;
+    else if(arg[i]->GetType() == cssEl::T_Real) n_real++;
+    else if(arg[i]->GetType() == cssEl::T_String) n_string++;
+    else if(arg[i]->IsTaMatrix()) n_matrix++;
+    else if(arg[i] == cssBI::colon_mark) n_colons++;
+  }
+
+  taMatrix* rmat = NULL;	// return matrix
+  int eff_na = na - n_semicolons - n_colons - n_colon_ends;
+
+  MatrixGeom mg;
+  if(n_colon_ends > 0) {
+    mg.SetGeom(2, 3, n_colon_ends);	// always 2d with 3 inner = start:end:step and outer = number
+  }
+  else {
+    if(sc_geom > 0) {
+      int md = eff_na / sc_geom;	// could double-check divisibilty but not critical
+      mg.SetGeom(2, sc_geom, md);
+    }
+    else {
+      mg.SetGeom(1, eff_na);
+    }
+  }
+
+  if(n_colon_ends > 0) {
+    int_Matrix* imat = new int_Matrix(mg);
+    int ses[3] = {0,-1,1};
+    int ses_dx = 0;		// 0 = start, 1 = end, 2 = step
+    int dim = 0;
+    for(int i=1; i<=na; i++) {
+      if(arg[i] == cssBI::colon_end_mark) {
+	for(int j=0; j<3; j++)
+	  imat->FastEl(j,dim) = ses[j];
+	ses[0] = 0; ses[1] = -1; ses[2] = 1; ses_dx = 0;
+	dim++;
+	continue;
+      }
+      if(arg[i] == cssBI::colon_mark) {
+	ses_dx++;
+      }
+      else {
+	ses[ses_dx] = (int)*(arg[i]);
+      }
+    }
+    rmat = imat;
+  }
+  else if(n_int == eff_na) {	// complete int array
+    int_Matrix* imat = new int_Matrix(mg);
+    int c=0;
+    for(int i=1; i<=na; i++) {
+      if(arg[i] == cssBI::semicolon_mark) continue;
+      imat->FastEl_Flat(c++) = (int)*arg[i];
+    }
+    rmat = imat;
+  }
+  else if(n_real == eff_na) {	// complete real array
+    double_Matrix* imat = new double_Matrix(mg);
+    int c=0;
+    for(int i=1; i<=na; i++) {
+      if(arg[i] == cssBI::semicolon_mark) continue;
+      imat->FastEl_Flat(c++) = (double)*arg[i];
+    }
+    rmat = imat;
+  }
+  else if(n_string == eff_na) {	// complete string array
+    String_Matrix* imat = new String_Matrix(mg);
+    int c=0;
+    for(int i=1; i<=na; i++) {
+      if(arg[i] == cssBI::semicolon_mark) continue;
+      imat->FastEl_Flat(c++) = arg[i]->GetStr();
+    }
+    rmat = imat;
+  }
+  else if(n_matrix == 0) {	// variant array
+    Variant_Matrix* imat = new Variant_Matrix(mg);
+    int c=0;
+    for(int i=1; i<=na; i++) {
+      if(arg[i] == cssBI::semicolon_mark) continue;
+      imat->FastEl_Flat(c++) = arg[i]->GetVar();
+    }
+    rmat = imat;
+  }
+  else if(n_matrix == eff_na) {	// complete sub-arrays -- ignores ;'s
+    TypeDef* td = NULL;
+    for(int i=1; i<=na; i++) {
+      if(arg[i] == cssBI::semicolon_mark) continue;
+      taMatrix* mat = ((cssTA_Matrix*)arg[i])->GetMatrixPtr();
+      if(!mat) {
+	cssMisc::Error(cp, "make_matrix: Error in constructing matrix from sub-matricies: sub matrix is null!");
+	return &cssMisc::Void;
+      }
+      if(i == 1) {
+	td = mat->GetTypeDef();
+	mg = mat->geom;
+      }
+      else {
+	if(mg != mat->geom) {
+	  cssMisc::Error(cp, "make_matrix: Error in constructing matrix from sub-matricies: sub matrix at position:", String(i-1), "has a different geometry:",
+			 mat->geom.GeomToString(), "than previous submatricies in list:", 	mg.GeomToString());
+	  return &cssMisc::Void;
+	}
+	if(td != mat->GetTypeDef()) {
+	  // todo: alternatively make variant matrix anyway
+	  cssMisc::Error(cp, "make_matrix: Error in constructing matrix from sub-matricies: sub matrix at position:", String(i-1), "has a different type:",
+			 mat->GetTypeDef()->name,
+			 "than previous submatricies in the list:",
+			 td->name,
+			 "-- all must be same data type");
+	  return &cssMisc::Void;
+	}
+      }
+    }
+    mg.AddDim(na);		// add another dimension with number of items
+    taMatrix* tmat = ((cssTA_Matrix*)arg[1])->GetMatrixPtr();
+    rmat = (taMatrix*)tmat->MakeToken();
+    rmat->SetGeomN(mg);
+    int c=0;
+    for(int i=1; i<=na; i++) {
+      if(arg[i] == cssBI::semicolon_mark) continue;
+      taMatrix* mat = ((cssTA_Matrix*)arg[i])->GetMatrixPtr();
+      rmat->CopyFrame(*mat, c++);
+    }
+  }
+
+  return new cssTA_Matrix(rmat);
+}
+
 static cssEl* cssElCFun_points_at_stub(int, cssEl* arg[]) {
   if(arg[2]->GetType() == cssEl::T_String)
     return (arg[1])->GetMemberFmName(arg[2]->GetStr());
@@ -446,7 +615,7 @@ static cssEl* cssElCFun_lshift_stub(int, cssEl* arg[]) {
 	  return arg[1];
 	}
 	if(arg[2]->name == "ends") {
-	  *strm << ends;	  return arg[1];
+	  *strm << ends;  return arg[1];
 	}
 	if(arg[2]->name == "dec") {
 	  *strm << dec;	  return arg[1];
@@ -688,6 +857,7 @@ static void Install_Internals() {
   cssElInCFun_inst_ptr(cssMisc::Internal, addr_of, 1, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, de_ptr, 1, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, de_array, 2, CSS_FUN);
+  cssElCFun_inst_ptr(cssMisc::Internal, make_matrix, cssEl::VarArg, CSS_FUN, " ");
   cssElInCFun_inst_ptr(cssMisc::Internal, points_at, 2, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, scoper, 2, CSS_FUN);
   cssElInCFun_inst_ptr(cssMisc::Internal, member_fun, 2, CSS_FUN);
@@ -2035,6 +2205,17 @@ static void Install_MiscFun() {
   cssMisc::Internal.Push(cssBI::false_int);
   cssConstInt_inst(cssMisc::Constants, 0, NULL);
   cssMisc::Constants.Push(new cssVariant(_nilVariant, "_nilVariant"));
+
+  // matrix parsing magic foo
+  cssBI::semicolon_mark = new cssConstBool(false, "semicolon_mark");
+  cssBI::colon_mark = new cssConstBool(false, "colon_mark");
+  cssBI::colon_end_mark = new cssConstBool(false, "colon_end_mark");
+  cssBI::matrix_inst = new cssTA_Matrix;
+  cssBI::matrix_inst->type_def = &TA_taMatrix; // base type..
+  cssMisc::Internal.Push(cssBI::semicolon_mark);
+  cssMisc::Internal.Push(cssBI::colon_mark);
+  cssMisc::Internal.Push(cssBI::colon_end_mark);
+  cssMisc::Internal.Push(cssBI::matrix_inst);
 
   // taBase enums that should be generally accessible to all objs..
   cssEnum_inst_nm(cssMisc::Enums, taBase::VT_STRING, "VT_STRING");

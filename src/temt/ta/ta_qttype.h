@@ -869,7 +869,7 @@ public:
   override void GetMbrValue(taiData* dat, void* base, bool& first_diff);
 
   virtual MemberDef*    GetFromMd();
-  virtual TABLPtr       GetList(MemberDef* from_md, const void* base);
+  virtual taList_impl*       GetList(MemberDef* from_md, const void* base);
 
 private:
   void          Initialize() {}
@@ -919,7 +919,7 @@ public:
   void          GetValue_impl(taiData* dat, void* base);
 
   virtual MemberDef*    GetFromMd();
-  virtual TABLPtr       GetList(MemberDef* from_md, const void* base);
+  virtual taList_impl*       GetList(MemberDef* from_md, const void* base);
 
 private:
   void          Initialize() {}

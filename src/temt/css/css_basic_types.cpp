@@ -59,7 +59,7 @@ void cssString::InheritInfo(ostream& fh) const {
 }
 
 cssEl* cssString::operator[](Variant idx) const {
-  String nw_val = val.elem(idx.toInt());
+  String nw_val = val[idx];	// use string code
   return new cssString(nw_val);
 }
 
@@ -407,7 +407,7 @@ cssEl* cssVariant::GetScoped(const String& memb) const {
 }
 
 cssEl* cssVariant::operator[](Variant idx) const {
-  return GetVariantEl_impl(val, idx.toInt());
+  return VarElem(val, idx);
 }
 
 
@@ -568,6 +568,24 @@ cssEl* cssPtr::GetMethodFmNo(int memb) const {
     }
   }
   return ptr.El()->GetMethodFmNo(memb);
+}
+
+cssEl* cssPtr::operator[](Variant i) const {
+  cssElPtr tmp = GetOprPtr();
+  if(i.isNumeric()) {
+    tmp += i.toInt(); 
+  }
+  else if(i.isMatrixType()) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(i.toMatrix());
+    if(!cmat) {
+      cssMisc::Error(prog, "cssPtr::operator[]",
+		     "index matrix is NULL or not an int_Matrix");
+      return &cssMisc::Void;
+    }
+    if(cmat->size <= 0) return &cssMisc::Void;
+    tmp += cmat->FastEl_Flat(0); // just get first element -- all that is supported
+  }
+  return tmp.El();
 }
 
 //////////////////////////

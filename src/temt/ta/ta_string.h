@@ -53,8 +53,9 @@
 
 #include "ta_atomic.h"
 
+class TA_API Variant;
 class TA_API taStrRep;
-class TA_API String;
+class TA_API String; //
 
 /* taStrRep - internal String representation
 
@@ -386,6 +387,10 @@ public:
   String                operator () (int pos, int len) const; // synonym for at
   char                  operator [] (int i) const;
   char&                 operator [] (int i); // writable -- NOTE: every use calls makeUnique
+#ifndef NO_TA_BASE
+  String                operator [] (Variant i) const;
+  // supports slices and lists of coordinates in addition to just an int index
+#endif
 
   char                  elem(int i) const;
   // #CAT_Access get the character at index i

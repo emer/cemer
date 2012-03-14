@@ -1642,6 +1642,12 @@ void Variant::setPtr(void* val) {
 
 #ifndef NO_TA_BASE
 void Variant::setBase(taBase* cp) {
+  // note: this is safer but also incurs significant overhead -- better to just have
+  // specific sources where ambiguity could arise eal with this..
+  // if(cp && cp->InheritsFrom(&TA_taMatrix)) {
+  //   setMatrix((taMatrix*)cp);
+  //   return;
+  // }
   if (m_type == T_Base)
     taBase::SetPointer(&d.tab, cp);
   else {

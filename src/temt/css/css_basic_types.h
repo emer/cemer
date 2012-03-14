@@ -846,8 +846,7 @@ public:
   cssEl* operator*(cssEl&)	{ NopErr("*"); return &cssMisc::Void; }
 
   cssEl* operator*()	     	{ return GetOprPtr().El(); } // unary de-ptr
-  cssEl* operator[](Variant i) const
-  { cssElPtr tmp = GetOprPtr(); tmp += i.toInt(); return tmp.El(); };
+  cssEl* operator[](Variant i) const;
 
   void operator+=(cssEl& t)
   { cssElPtr r = GetOprPtr(); r += (Int)t; SetPtr(r); }

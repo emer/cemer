@@ -426,8 +426,9 @@ public:
   virtual bool		IsStringType() const   	{ return false; }
     // true for string-ish types, including cssString, cssChar, and a Variant of those types
   virtual bool		IsNumericTypeStrict() const   { return false; }
-    // true for number types, including cssReal, cssInt, cssChar,  a Variant of those types
-    // NOTE: Char is true for both, so know your context before assuming...
+  // true for number types, including cssReal, cssInt, cssChar,  a Variant of those types
+  // NOTE: Char is true for both, so know your context before assuming...
+  virtual bool		IsTaMatrix() const	{ return false; }
   virtual bool		HasSubProg() const	{ return false; }
   // does this object have a sub-program that gets put on the stack and run (e.g., code block, script fun)
   virtual cssProg*	GetSubProg() const	{ return NULL; }
@@ -634,6 +635,9 @@ public:
   static cssEl* GetElFromTA(TypeDef* td, void* itm, const String& nm, 
 			    MemberDef* md = NULL, cssEl* class_parent = NULL);
   // Call this function to get an appropriate cssEl object based on typedef information
+  static cssEl* GetElFromVar(Variant var, const String& nm, 
+			    MemberDef* md = NULL, cssEl* class_parent = NULL);
+  // Call this function to get an appropriate cssEl object based on variant
 
   virtual bool	MembersDynamic()	{ return false; }
   // are members always dynamically looked up?  if so, don't issue warnings about this
@@ -691,7 +695,8 @@ protected:
 
   cssEl* GetScoped_impl(TypeDef* typ, void* base, const String& nm) const;
 
-  cssEl* GetVariantEl_impl(const Variant& val, Variant idx) const; // helper for operator[]
+  cssEl* TAElem(taBase* ths, Variant idx) const; // taBase->Elem(idx)
+  cssEl* VarElem(const Variant& val, Variant idx) const; // Variant[] helper
 };
 
 #ifndef DEBUG

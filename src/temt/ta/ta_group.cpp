@@ -39,12 +39,12 @@ void taSubGroup::DataChanged(int dcr, void* op1, void* op2) {
   if (owner == NULL) return;
   // send LIST events to the owning group as a GROUP_ITEM event
   if ((dcr >= DCR_LIST_ITEM_TO_GROUP_MIN) && (dcr <= DCR_LIST_ITEM_TO_GROUP_MAX))
-    ((TAGPtr)owner)->DataChanged(dcr + DCR_ListItem_Group_Offset, op1, op2);
+    ((taGroup_impl*)owner)->DataChanged(dcr + DCR_ListItem_Group_Offset, op1, op2);
 }
 
 bool taSubGroup::Transfer(taBase* it) {
   // need to leaf count on parent group
-  TAGPtr myown = (TAGPtr)owner;
+  taGroup_impl* myown = (taGroup_impl*)owner;
   taGroup_impl* git = (taGroup_impl*)it;
   if((git->super_gp == myown) || (git->super_gp == NULL))
     return false;
@@ -407,7 +407,7 @@ int taGroup_impl::FindLeafEl(taBase* it) const {
 
   int new_idx = size;
   int i;
-  TAGPtr sbg;
+  taGroup_impl* sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     idx = sbg->FindLeafEl(it);
@@ -425,7 +425,7 @@ int taGroup_impl::FindLeafNameIdx(const String& nm) const {
 
   int new_idx = size;
   int i;
-  TAGPtr sbg;
+  taGroup_impl* sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     idx = sbg->FindLeafNameIdx(nm);
@@ -450,7 +450,7 @@ int taGroup_impl::FindLeafNameContainsIdx(const String& nm) const {
 
   int new_idx = size;
   int i;
-  TAGPtr sbg;
+  taGroup_impl* sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     idx = sbg->FindLeafNameContainsIdx(nm);
@@ -475,7 +475,7 @@ int taGroup_impl::FindLeafNameTypeIdx(const String& nm) const {
 
   int new_idx = size;
   int i;
-  TAGPtr sbg;
+  taGroup_impl* sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     idx = sbg->FindLeafNameTypeIdx(nm);
@@ -500,7 +500,7 @@ int taGroup_impl::FindLeafTypeIdx(TypeDef* it) const {
 
   int new_idx = size;
   int i;
-  TAGPtr sbg;
+  taGroup_impl* sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     idx = sbg->FindLeafTypeIdx(it);
@@ -518,8 +518,8 @@ taBase* taGroup_impl::FindLeafType_(TypeDef* it) const {
   return NULL;
 }
 
-TAGPtr taGroup_impl::FindMakeGpName(const String& nm, TypeDef* typ, bool& nw_item) {
-  TAGPtr rval = gp.FindName(nm);
+taGroup_impl* taGroup_impl::FindMakeGpName(const String& nm, TypeDef* typ, bool& nw_item) {
+  taGroup_impl* rval = gp.FindName(nm);
   if (rval) {
     nw_item = false;
     return rval;
@@ -576,7 +576,7 @@ void* taGroup_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   }
 
   // for groups, then just try the subgroups -- this will be a tiny bit redundant, but ok..
-  TAGPtr sbg;
+  taGroup_impl* sbg;
   for(int i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     rval = sbg->FindMembeR(nm, ret_md);
@@ -587,13 +587,13 @@ void* taGroup_impl::FindMembeR(const String& nm, MemberDef*& ret_md) const {
   return NULL;
 }
 
-TAGPtr taGroup_impl::GetSuperGp_() {
+taGroup_impl* taGroup_impl::GetSuperGp_() {
   if(owner == NULL)
     return NULL;
   if(owner->InheritsFrom(TA_taList)) {
     taBase* ownr = owner->GetOwner();
     if((ownr != NULL) && (ownr->InheritsFrom(TA_taGroup_impl)))
-      return (TAGPtr)ownr;
+      return (taGroup_impl*)ownr;
   }
   return NULL;
 }
@@ -605,7 +605,7 @@ taBase* taGroup_impl::Leaf_(int idx) const {
     return (taBase*)el[idx];
 
   int nw_idx = (int)idx - size;
-  TAGPtr sbg;
+  taGroup_impl* sbg;
   for(int i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     if(sbg->leaves && (sbg->leaves > nw_idx))
@@ -615,15 +615,15 @@ taBase* taGroup_impl::Leaf_(int idx) const {
   return NULL;
 }
 
-TAGPtr taGroup_impl::LeafGp_(int leaf_idx) const {
+taGroup_impl* taGroup_impl::LeafGp_(int leaf_idx) const {
   if(leaf_idx >= leaves)
     return NULL;
   if(size && (leaf_idx < size))
-    return (TAGPtr)this;
+    return (taGroup_impl*)this;
 
   int nw_idx = (int)leaf_idx - size;
   int i;
-  TAGPtr sbg;
+  taGroup_impl* sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     if(sbg->leaves && (sbg->leaves > nw_idx))
@@ -668,7 +668,7 @@ cont:
       goto err;
   } else goto err; // not a group type, so can't be right
 
-  rval = (TAGPtr)gp.New(no, typ, name_);
+  rval = (taGroup_impl*)gp.New(no, typ, name_);
 //  UpdateAfterEdit();
   return rval;
 
@@ -686,18 +686,18 @@ taBase* taGroup_impl::NewEl_(int no, TypeDef* typ) {
   return rval;
 }
 
-TAGPtr taGroup_impl::NewGp_(int no, TypeDef* typ, const String& name_) {
+taGroup_impl* taGroup_impl::NewGp_(int no, TypeDef* typ, const String& name_) {
   if (typ == NULL)
     typ = GetTypeDef(); // always create one of yourself..
 
   // note: following will spit it out if it isn't a taGroup_impl of right type
-  TAGPtr rval = (TAGPtr)gp.New(no, typ, name_);
+  taGroup_impl* rval = (taGroup_impl*)gp.New(no, typ, name_);
 //  UpdateAfterEdit();
   return rval;
 }
 
-TAGPtr taGroup_impl::NewGp_gui(int no, TypeDef* typ, const String& name_) {
-  TAGPtr rval = NewGp_(no, typ, name_);
+taGroup_impl* taGroup_impl::NewGp_gui(int no, TypeDef* typ, const String& name_) {
+  taGroup_impl* rval = NewGp_(no, typ, name_);
   if (rval) {
     if (taMisc::gui_active && !taMisc::no_auto_expand) {
       if(!HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL"))
@@ -750,7 +750,7 @@ bool taGroup_impl::RemoveLeafIdx(int idx) {
 
   int nw_idx = (int)idx - size;
   int i;
-  TAGPtr sbg;
+  taGroup_impl* sbg;
   for(i=0; i<gp.size; i++) {
     sbg = FastGp_(i);
     if(sbg->leaves && (sbg->leaves > nw_idx))
@@ -784,8 +784,8 @@ int taGroup_impl::ReplaceType(TypeDef* old_type, TypeDef* new_type) {
   return nchanged;
 }
 
-TAGPtr taGroup_impl::SafeLeafGp_(int gp_idx) const {
-  if (gp_idx == 0) return const_cast<TAGPtr>(this);
+taGroup_impl* taGroup_impl::SafeLeafGp_(int gp_idx) const {
+  if (gp_idx == 0) return const_cast<taGroup_impl*>(this);
   if (!leaf_gp) InitLeafGp();
   return leaf_gp->SafeEl(gp_idx);
 }

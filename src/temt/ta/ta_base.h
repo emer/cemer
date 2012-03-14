@@ -41,6 +41,7 @@ class taiMimeSource; //
 
 // forwards
 class taBase;
+class taBaseItr;
 class taSmartRef;
 class taSmartPtr;
 class taOBase;
@@ -150,14 +151,14 @@ public: \
 
 // common defs used to make instances: Cloning and Tokens
 #define TA_BASEFUNS_INST_(y) \
-  taBase* Clone() { return new y(*this); }  \
-  taBase* MakeToken(){ return (taBase*)(new y); } \
-  taBase* MakeTokenAry(int n){ return (taBase*)(new y[n]); }
+  taBase* Clone() const { return new y(*this); }  \
+  taBase* MakeToken() const { return (taBase*)(new y); } \
+  taBase* MakeTokenAry(int n) const { return (taBase*)(new y[n]); }
 
 #define TA_TMPLT_BASEFUNS_INST_(y,T) \
-  taBase* Clone() { return new y<T>(*this); } \
-  taBase* MakeToken(){ return (taBase*)(new y<T>); }  \
-  taBase* MakeTokenAry(int n){ return (taBase*)(new y<T>[n]); }
+  taBase* Clone() const { return new y<T>(*this); } \
+  taBase* MakeToken() const { return (taBase*)(new y<T>); }  \
+  taBase* MakeTokenAry(int n) const { return (taBase*)(new y<T>[n]); }
 
 // ctors -- one size fits all (where used) thanks to Initialize__
 
@@ -377,6 +378,13 @@ public: \
   SmartPtr_Of(y) \
   SmartRef_Of(y, TA_ ## y);
 
+// generic iterator over items in taBase containers
+#define TA_FOREACH(ELEM_VAR_NAME, LIST)		               \
+  if(taBaseItr* FOREACH_itr = NULL) { } else                   \
+    for(Variant ELEM_VAR_NAME = (LIST).IterBegin(FOREACH_itr); \
+        (bool)FOREACH_itr;                                     \
+        ELEM_VAR_NAME = (LIST).IterNext(FOREACH_itr)) 
+
 /* Clipboard (Edit) operation summary
 
    Clipboard operations are of two basic types:
@@ -427,6 +435,18 @@ public:
     VT_BYTE,            // #LABEL_byte an unsigned 8-bit integer; used mostly for image components (rgb)
     VT_VARIANT,         // #LABEL_Variant a Variant, which can hold scalars, strings, matrices, and objects
     VT_VOIDPTR,         // #LABEL_void* a generic pointer (void*)
+  };
+
+  enum IndexMode {		// what kind of index is specified in the Elem access function
+    IDX_UNK,			// unknown -- use the argument to figure it out based on the specs for each index type (string defaults to IDX_NAME, IDX_SLICE favored over IDX_COORDS where ambiguous)
+    IDX_IDX,			// single scalar numerical index (flat index) -- negative numbers count from the back of the list, initial index is 0 -- ignores any existing view filtering on container and uses original dimensions
+    IDX_NAME,			// single string value -- find element object by name or string value (if applicable) -- returns single value of first match or NULL if none -- obeys any existing view filtering on container
+    IDX_NAMES,			// String_Matrix -- find element objects by name or string value (if applicable) -- returns container of items that match any of the names in the matrix (empty if none) -- obeys any existing view filtering on container
+    IDX_CONTAINS,		// single string value -- find element objects by name or string value for items that contain given string (if applicable) -- returns container of items that matched (empty if none) -- obeys any existing view filtering on container
+    IDX_COORD, 			// 1D int_Matrix with size = number of dims in container -- get item from an explicit coordinate along each dimension, any of which can be negative to get from the end (for multidimensional containers) -- returns a single item -- ignores any existing view filtering on container and uses original dimensions
+    IDX_COORDS,			// 1D or 2D int_Matrix with first (inner) dim = number of dims in container specifying coordinates of items in container (if container is 1D then int_Matrix can be 1D), second (outer) dim of arbitrary size (< size of container) to hold any number of elements to select -- returns container of items (could be the original container with a selector filter set to access only these items, depending on the container type) -- ignores any existing view filtering on container and uses original dimensions
+    IDX_SLICE, 			// 2D int_Matrix with first (inner) dim of size 3 = start:stop:skip slice ranges for each dimension (any of which can be negative = start from end or iterate backward), outer dim = number of dims of container (one slice spec per dimension) -- ignores any existing view filtering on container and uses original dimensions
+    IDX_MASK,		       	// byte_Matrix with same shape as container = bool mask of items to include (0 = don't include, 1 = include) -- any existing mask is logical AND'd to produce intersection
   };
 
   enum BaseFlags { // #BITS control flags
@@ -537,9 +557,9 @@ protected:  // Impl
   // actual constructors/destructors and related: defined in TA_BASEFUNS for derived classes
 public:
   static  TypeDef*      StatTypeDef(int);       // #IGNORE
-  static taBase*                MakeToken(TypeDef* td);
+  static taBase*        MakeToken(TypeDef* td);
   // #IGNORE static version to make a token of the given type
-  static taBase*                MakeTokenAry(TypeDef* td, int no);
+  static taBase*        MakeTokenAry(TypeDef* td, int no);
   // #IGNORE static version to make an array of tokens of the given type
 
 #ifdef __MAKETA__
@@ -549,11 +569,11 @@ public:
   explicit taBase(bool=false)   { Register(); Initialize(); }
   taBase(const taBase& cp, bool=false)  { Register(); Initialize(); Copy_impl(cp); }
 #endif
-  virtual ~taBase()             { Destroy(); } //
+  virtual ~taBase()     { Destroy(); } //
 
-  virtual taBase*               Clone()                 { return new taBase(*this); } // #IGNORE
-  virtual taBase*       MakeToken()             { return new taBase; }  // #IGNORE
-  virtual taBase*       MakeTokenAry(int no)    { return new taBase[no]; } // #IGNORE
+  virtual taBase*       Clone() const           { return new taBase(*this); } // #IGNORE
+  virtual taBase*       MakeToken() const       { return new taBase; }  // #IGNORE
+  virtual taBase*       MakeTokenAry(int no) const { return new taBase[no]; } // #IGNORE
 //  taBase&             operator=(const taBase& cp) { Copy(cp); return *this;}
   virtual TypeDef*      GetTypeDef() const;     // #IGNORE
   taBase*               New(int n_objs=1, TypeDef* type=NULL,
@@ -635,8 +655,33 @@ public:
   virtual String        GetStateDecoKey() const;
   // #IGNORE lookup key for visual decoration of an item reflecting current state information, used for backgroundt colors in the gui browser, for example
 
-  virtual void*         GetTA_Element(Variant idx, TypeDef*& eltd)
-  { eltd = NULL; return NULL; } // #IGNORE a bracket operator (e.g., owner[i])
+  //////////////////////////////////////////////////////////////
+  //  	Container element access
+
+  virtual Variant	Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  { return _nilVariant; }
+  // #CAT_Access get element(s) from container -- return can be a single item or a Matrix of multiple items, depending on the index -- see IndexMode for all the possible indexing modes and associated return values (some of which are not applicable to some containers, as documented for that container)
+    virtual IndexMode	IndexModeDecode(Variant idx, int cont_dims) const;
+    // #CAT_Access #EXPERT decode index mode from variant index, and number of dimensions in the container object
+    virtual bool	IndexModeValidate(Variant idx, IndexMode md, int cont_dims) const;
+    // #CAT_Access #EXPERT validate that the index is of an appopriate configuration for given index mode -- issues appropriate error messages if not good
+  virtual Variant	IterBegin(taBaseItr*& itr) const
+  { itr = NULL; return _nilVariant; }
+  // #CAT_Access get iterator for this container and start it at the first item for iterating through items in this container: e.g., taBaseItr* itr; for(Variant itm = cont.IterBegin(itr); (bool)itr; itm = cont.IterNext(itr)) { ... } -- see also TA_FOREACH macro
+  virtual Variant	IterNext(taBaseItr*& itr) const   { return _nilVariant; }
+  // #CAT_Access iterate to next item in container using given iterator -- when the end is reached, the iterator pointer is automatically deleted and the pointer is set to NULL (and returns _nilVariant) -- use itr as test to see if there is a next item -- see IterBegin() for more docs
+    virtual bool	IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const;
+    // #CAT_Access #EXPERT validate view matrix and mode for suitability as iterators -- only IDX_COORDS or IDX_MASK are supported for iteration view modes
+    virtual Variant	IterFirst(taBaseItr*& itr) const
+    { itr = NULL; return _nilVariant; }
+    // #CAT_Access #EXPERT get first item in list -- called by IterBegin
+    virtual Variant	IterElem(taBaseItr* itr) const   { return _nilVariant; }
+    // #CAT_Access #EXPERT access current item according to iterator -- this is used by IterBegin and IterNext, and not typically required for end users
+    virtual taBaseItr* 	Iter() const	{ return NULL; }
+    // #CAT_Access #EXPERT create a new iterator of appropriate type for this container -- automatically starts at the first object -- typically not used by end users
+    virtual void 	DelIter(taBaseItr*& itr) const;
+    // #CAT_Access #EXPERT delete iterator -- all done -- set pointer to null
+
   virtual taList_impl*  children_() {return NULL;}
   // #IGNORE for lists, and for taOBase w/ default children
   const taList_impl*    children_() const
@@ -1772,12 +1817,31 @@ private:
   void Initialize();
 };
 
-class taList_impl;
-typedef taList_impl* TABLPtr; // this comment needed for maketa parser
-
-
 ////////////////////////////////////////////////////////////////////////
 //              taList_impl -- base ta list impl
+
+class TA_API taBaseItr : public taBase {
+  // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP base class for iterators over containers
+INHERITED(taBase)
+public:
+  TA_BASEFUNS_LITE_NOCOPY(taBaseItr);
+private:
+  inline void 	Initialize() 		{ };
+  inline void 	Destroy()		{ };
+};
+
+class TA_API taListItr : public taBaseItr {
+  // iterator for list objects
+INHERITED(taBaseItr)
+public:
+  int		count; 		// count number of iterations through foreach -- always goes 0..end sequentially
+  int		el_idx;		// absolute index of current item in container
+  TA_BASEFUNS_LITE(taListItr);
+private:
+  inline void 	Copy_(const taListItr& cp) { count = cp.count; el_idx = cp.el_idx; }
+  inline void 	Initialize() 		{ count = 0; el_idx = 0; }
+  inline void 	Destroy()		{ };
+};
 
 class TA_API taList_impl : public taNBase, public taPtrList_ta_base {
   // #INSTANCE #NO_TOKENS #STEM_BASE ##MEMB_HIDDEN_EDIT ##HIDDEN_INLINE implementation for a taBase list class
@@ -1791,15 +1855,37 @@ public:
   TypeDef*      el_base;        // #EXPERT #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE #CAT_taList Base type for objects in group
   TypeDef*      el_typ;         // #TYPE_ON_el_base #NO_SHOW_TREE #CAT_taList Default type for objects in group
   int           el_def;         // #EXPERT #CAT_taList Index of default element in group
+  taBaseRef	el_view;	// #EXPERT #NO_SAVE #CAT_taList matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
+  IndexMode	el_view_mode;	// #EXPERT #NO_SAVE #CAT_taList what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
 
+  inline taMatrix* 	ElView() const	{ return (taMatrix*)el_view.ptr(); }
+  // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
   override TypeDef*     GetElType() const {return el_typ;}
   // #IGNORE Default type for objects in group
-  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-    { return taPtrList_ta_base::GetTA_Element_(i, eltd); }
   override TypeDef*     El_GetType_(void* it) const
-    {return ((taBase*)it)->GetTypeDef();} // #IGNORE
+  { return ((taBase*)it)->GetTypeDef(); } // #IGNORE
   override taList_impl* children_() {return this;}
 
+  virtual Variant	VarEl(int idx) const;
+  // #CAT_Access get element at index as a Variant -- does safe range checking -- if index is negative, access is from the back of the list (-1 = last item, -2 = second to last, etc)
+
+  override Variant	Elem(Variant idx, IndexMode mode = IDX_UNK) const;
+  override Variant	IterBegin(taBaseItr*& itr) const;
+  override Variant	IterFirst(taBaseItr*& itr) const;
+  override Variant	IterNext(taBaseItr*& itr) const;
+  override Variant	IterElem(taBaseItr* itr) const;
+  override taBaseItr* 	Iter() const;
+  override bool 	IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const;
+  virtual bool		SetElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
+  // #CAT_Access #EXPERT set el view to given new case -- just sets the members
+  virtual taList_impl* 	NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS) const;
+  // #CAT_Access #EXPERT make a new view of this list -- returns a new pointer list with view set
+  inline int		IterCount(taBaseItr* itr) const
+  { return ((taListItr*)itr)->count; }
+  // #CAT_Access return count (number of steps in iteration) from iterator
+  inline int		IterElIdx(taBaseItr* itr) const
+  { return ((taListItr*)itr)->el_idx; }
+  // #CAT_Access return el_idx (index of current list item) from iterator
 
   override String       GetPath_Long(taBase* ta=NULL, taBase* par_stop = NULL) const;
   override String       GetPath(taBase* ta=NULL, taBase* par_stop = NULL) const;
@@ -1815,7 +1901,9 @@ public:
 
   override taBase* CopyChildBefore(taBase* src, taBase* child_pos);
 
-  ostream&      OutputR(ostream& strm, int indent = 0) const;
+  override ostream&     OutputR(ostream& strm, int indent = 0) const;
+  override ostream&     Output(ostream& strm, int indent = 0) const;
+  override void		List(ostream& strm) const;
 
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
@@ -1856,7 +1944,7 @@ public:
   override int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
   override int  UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
 
-  taBase*               DefaultEl_() const      { return (taBase*)SafeEl_(el_def); } // #IGNORE
+  taBase*       DefaultEl_() const      { return (taBase*)SafeEl_(el_def); } // #IGNORE
 
   virtual int   SetDefaultElType(TypeDef* it);
   // #CAT_Access set the default element to be item with given type
@@ -1933,17 +2021,14 @@ protected:
   String        El_GetName_(void* it) const { return ((taBase*)it)->GetName(); }
   void          El_SetName_(void* it, const String& nm)  {((taBase*)it)->SetName(nm);}
   TALPtr        El_GetOwnerList_(void* it) const
-  { return dynamic_cast<TABLPtr>(((taBase*)it)->GetOwner()); }
+  { return dynamic_cast<taList_impl*>(((taBase*)it)->GetOwner()); }
   void*         El_GetOwnerObj_(void* it) const { return ((taBase*)it)->GetOwner(); }
   void*         El_SetOwner_(void* it)  { ((taBase*)it)->SetOwner(this); return it; }
   bool          El_FindCheck_(void* it, const String& nm) const
-  {
-    if (((taBase*)it)->FindCheck(nm)) {
+  {  if (((taBase*)it)->FindCheck(nm)) {
       TALPtr own = El_GetOwnerList_(it);
-      return ((!own) || (own == (TALPtr)this));
-    }
-    return false;
-  }
+      return ((!own) || (own == (TALPtr)this));  }
+    return false; }
 
   void*         El_Ref_(void* it)       { taBase::Ref((taBase*)it); return it; }
   void*         El_unRef_(void* it)     { taBase::unRef((taBase*)it); return it; }
@@ -2123,11 +2208,11 @@ public:
   #endif // __MAKETA__
 
   T*            SafeEl(int idx) const           { return (T*)SafeEl_(idx); }
-  // #CAT_Access get element at index
+  // #CAT_Access get element at index -- does safe range checking -- if index is negative, access is from the back of the list (-1 = last item, -2 = second to last, etc)
   T*            PosSafeEl(int idx) const        { return (T*)PosSafeEl_(idx); }
   // #IGNORE positive only, internal use
   T*            FastEl(int i) const             { return (T*)el[i]; }
-  // #CAT_Access fast element (no range checking)
+  // #CAT_Access fast element (no range checking) -- if index is negative, access is from the back of the list (-1 = last item, -2 = second to last, etc)
   T*            operator[](int i) const { return (T*)el[i]; }
 
   T*            DefaultEl() const               { return (T*)DefaultEl_(); }
@@ -2422,6 +2507,20 @@ class TA_API taArray_base : public taOBase, public taArray_impl {
   // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER ##CAT_Data base for arrays (from taBase)
 INHERITED(taOBase)
 public:
+  Variant	FastElAsVar(int idx) const { return El_GetVar_(FastEl_(idx)); }
+  // #CAT_Access get element without range checking as a variant
+  Variant	SafeElAsVar(int idx) const { return El_GetVar_(SafeEl_(idx)); }
+  // #CAT_Access get element with safe range checking as a variant
+
+  // override Variant	Elem(Variant idx, IndexMode mode = IDX_UNK) const;
+  // override Variant	IterBegin(taBaseItr*& itr) const;
+  // override Variant	IterNext(taBaseItr*& itr) const;
+  // override Variant	IterElem(taBaseItr* itr) const;
+  // override taBaseItr* 	Iter() const;
+  // override bool 	IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const;
+  // virtual taArray_base* NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
+  // // #CAT_Access make a new view of this array -- always does a full data copy using view
+
   ostream&      Output(ostream& strm, int indent = 0) const;
   ostream&      OutputR(ostream& strm, int indent = 0) const
   { return Output(strm, indent); }
@@ -2443,6 +2542,11 @@ public:
 
   void  CutLinks();
   TA_ABSTRACT_BASEFUNS(taArray_base);
+
+protected:
+  virtual Variant	El_GetVar_(const void* itm) const { return _nilVariant; }
+  // #IGNORE convert item to Variant
+
 private:
   void  Copy_(const taArray_base& cp) {taArray_impl::Copy_Duplicate(cp);}
     //WARNING: Copy_Duplicate is not a true copy, but we retain the behavior for compatibility
@@ -2550,8 +2654,6 @@ public:
   virtual void  FillSeq(int start=0, int inc=1);
   // fill array with sequential values starting at start, incrementing by inc
 
-  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-  { eltd = &TA_int; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   NOCOPY(int_Array)
   void Initialize()     {err = 0; };
   void Destroy()        { }; //
@@ -2565,6 +2667,8 @@ public:
   TA_BASEFUNS(int_Array);
   TA_ARRAY_FUNS(int_Array, int)
 protected:
+  override Variant	El_GetVar_(const void* itm) const
+    { return (Variant)(*(int*)itm); }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((int*)a) > *((int*)b)) rval=1; else if(*((int*)a) == *((int*)b)) rval=0; return rval; }
   bool          El_Equal_(const void* a, const void* b) const
@@ -2581,11 +2685,11 @@ class TA_API float_Array : public taArray<float> {
 INHERITED(taArray<float>)
 public:
   STATIC_CONST float blank; // #HIDDEN #READ_ONLY
-  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-  { eltd = &TA_float; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(float_Array);
   TA_ARRAY_FUNS(float_Array, float)
 protected:
+  override Variant	El_GetVar_(const void* itm) const
+    { return (Variant)(*(float*)itm); }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((float*)a) > *((float*)b)) rval=1; else if(*((float*)a) == *((float*)b)) rval=0; return rval; }
   bool          El_Equal_(const void* a, const void* b) const
@@ -2604,11 +2708,11 @@ class TA_API double_Array : public taArray<double> {
 INHERITED(taArray<double>)
 public:
   STATIC_CONST double blank; // #HIDDEN #READ_ONLY
-  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-  { eltd = &TA_double; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(double_Array);
   TA_ARRAY_FUNS(double_Array, double)
 protected:
+  override Variant	El_GetVar_(const void* itm) const
+    { return (Variant)(*(double*)itm); }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((double*)a) > *((double*)b)) rval=1; else if(*((double*)a) == *((double*)b)) rval=0; return rval; }
   bool          El_Equal_(const void* a, const void* b) const
@@ -2627,11 +2731,11 @@ class TA_API char_Array : public taArray<char> {
 INHERITED(taArray<char>)
 public:
   STATIC_CONST char blank; // #HIDDEN #READ_ONLY
-  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-  { eltd = &TA_char; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS(char_Array);
   TA_ARRAY_FUNS(char_Array, char)
 protected:
+  override Variant	El_GetVar_(const void* itm) const
+    { return (Variant)(*(char*)itm); }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((char*)a) > *((char*)b)) rval=1; else if(*((char*)a) == *((char*)b)) rval=0; return rval; }
   bool          El_Equal_(const void* a, const void* b) const
@@ -2652,8 +2756,6 @@ class TA_API String_Array : public taArray<String> {
 INHERITED(taArray<String>)
 public:
   STATIC_CONST String blank; // #HIDDEN #READ_ONLY
-  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-  { eltd = &TA_taString; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
 #ifdef TA_USE_QT
   void                  ToQStringList(QStringList& sl); // #IGNORE fills a QStringList
 #endif
@@ -2666,6 +2768,8 @@ public:
   TA_BASEFUNS(String_Array);
   TA_ARRAY_FUNS(String_Array, String)
 protected:
+  override Variant	El_GetVar_(const void* itm) const
+    { return (Variant)(*(String*)itm); }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((String*)a) > *((String*)b)) rval=1; else if(*((String*)a) == *((String*)b)) rval=0; return rval; }
   bool          El_Equal_(const void* a, const void* b) const
@@ -2711,11 +2815,11 @@ class TA_API Variant_Array : public taArray<Variant> {
 INHERITED(taArray<Variant>)
 public:
   STATIC_CONST Variant blank; // #HIDDEN #READ_ONLY
-  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-  { eltd = &TA_Variant; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(Variant_Array);
   TA_ARRAY_FUNS(Variant_Array, Variant)
 protected:
+  override Variant	El_GetVar_(const void* itm) const
+    { return (*(Variant*)itm); }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(*((Variant*)a) > *((Variant*)b)) rval=1; else if(*((Variant*)a) == *((Variant*)b)) rval=0; return rval; }
   bool          El_Equal_(const void* a, const void* b) const
@@ -2736,11 +2840,11 @@ INHERITED(taArray<voidptr>)
 public:
   STATIC_CONST voidptr blank; // #HIDDEN #READ_ONLY
 
-  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-  { eltd = &TA_voidptr; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(voidptr_Array);
   TA_ARRAY_FUNS(voidptr_Array, voidptr)
 protected:
+  override Variant	El_GetVar_(const void* itm) const
+    { return (Variant)(*(voidptr*)itm); }
   bool          El_Equal_(const void* a, const void* b) const
     { return (*((voidptr*)a) == *((voidptr*)b)); }
 private:
@@ -2770,11 +2874,11 @@ public:
   // get all values having given name (converts to strings)
   bool          SetVal(const String& nm, const Variant& vl);
   // set value by name; if name already on list, it is updated (rval = true); else new item added
-  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-  { eltd = &TA_NameVar; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return NULL; }
   TA_BASEFUNS_NOCOPY(NameVar_Array);
   TA_ARRAY_FUNS(NameVar_Array, NameVar)
 protected:
+  override Variant	El_GetVar_(const void* itm) const
+    { return (Variant)((NameVar*)itm)->value; }
   int           El_Compare_(const void* a, const void* b) const
   { int rval=-1; if(((NameVar*)a)->value > ((NameVar*)b)->value) rval=1; else if(((NameVar*)a)->value == ((NameVar*)b)->value) rval=0; return rval; }
   bool          El_Equal_(const void* a, const void* b) const

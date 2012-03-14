@@ -402,8 +402,8 @@ public:
   static const KeyString key_val_type; // "val_type"
   override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
   override String	GetDisplayName() const; // #IGNORE we strip out the format characters
-  override void*	GetTA_Element(Variant i, TypeDef*& eltd)
-  { return AR()->GetTA_Element(i, eltd); }
+  // override void*	GetTA_Element(Variant i, TypeDef*& eltd)
+  // { return AR()->GetTA_Element(i, eltd); }
   
   DataTable*		dataTable();
   // root data table this col belongs to
@@ -828,8 +828,8 @@ public:
   int			Cells() const { return CellsPerRow() * rows; }
   // #CAT_Columns compute the total number of cells used in the entire data table (CellsPerRow() * rows)
   override taList_impl* children_() {return &data;}
-  override void*	GetTA_Element(Variant i, TypeDef*& eltd)
-  { return data.GetTA_Element(i, eltd); }
+  // override void*	GetTA_Element(Variant i, TypeDef*& eltd)
+  // { return data.GetTA_Element(i, eltd); }
 
   virtual DataCol* 	NewCol(DataCol::ValType val_type, 
 			       const String& col_nm);

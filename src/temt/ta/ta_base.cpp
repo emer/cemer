@@ -746,6 +746,219 @@ String taBase::GetStateDecoKey() const {
   return "SpecialState" + String(spec_st);
 }
 
+taBase::IndexMode taBase::IndexModeDecode(Variant idx, int cont_dims) const {
+  IndexMode mode = IDX_UNK;
+  if(idx.isStringType()) {
+    mode = IDX_NAME;
+  }
+  else if(idx.isNumericStrict()) {
+    mode = IDX_IDX;
+  }
+  else if(idx.isMatrixType()) {
+    taMatrix* mat = idx.toMatrix();
+    if(TestError(!mat, "IndexModeDecode", "matrix index is NULL"))
+      return IDX_UNK;
+    if(mat->InheritsFrom(&TA_String_Matrix)) {
+      mode = IDX_NAMES;
+    }
+    else if(mat->InheritsFrom(&TA_byte_Matrix)) {
+      mode = IDX_MASK;
+    }
+    else if(mat->InheritsFrom(&TA_int_Matrix)) {
+      if(cont_dims == 1) {
+	if(mat->dims() == 1 || (mat->dims() == 2 && mat->dim(0) == 1)) {
+	  mode = IDX_COORDS;
+	}
+	else if(mat->dims() == 2 && mat->dim(0) == 3 && mat->dim(1) == 1) {
+	  mode = IDX_SLICE;
+	}
+      }
+      else {
+	if(mat->dims() == 1 &&
+	   (mat->dim(0) >= 1 && mat->dim(0) <= cont_dims)) { // can have <= full number of dims
+	  mode = IDX_COORD;
+	}
+	else if(mat->dims() == 2 && mat->dim(0) == 3 &&
+		(mat->dim(1) >= 1 && mat->dim(1) <= cont_dims)) {
+	  mode = IDX_SLICE;
+	}
+	else if(mat->dims() == 2 && mat->dim(0) == cont_dims) {
+	  mode = IDX_COORDS;
+	}
+      }
+    }
+    else {
+      taMisc::Error("IndexModeDecode -- matrix index must be either an int or byte matrix -- matrix of type:", mat->GetTypeDef()->name, "not supported");
+    }
+  }
+  return mode;
+}
+
+bool taBase::IndexModeValidate(Variant idx, IndexMode mode, int cont_dims) const {
+  switch(mode) {
+  case IDX_IDX: {
+    if(TestError(!idx.isNumeric(), "IndexModeValidate::IDX_IDX",
+		 "index is not numeric type:",
+		 idx.getTypeAsString()))
+      return false;
+    return true;
+    break;
+  }
+  case IDX_NAME:
+  case IDX_CONTAINS: {
+    if(TestError(!idx.isStringType(), "IndexModeValidate::IDX_NAME/CONTAINS",
+		 "index is not String type:",
+		 idx.getTypeAsString()))
+      return false;
+    const String& nm = idx.toString();
+    if(TestError(nm.empty(), "IndexModeValidate::IDX_NAME/CONTAINS",
+		 "index string is empty"))
+      return false;
+    return true;
+    break;
+  }
+  case IDX_NAMES: {
+    if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_NAMES",
+		 "index is not taMatrix type:",
+		 idx.getTypeAsString()))
+      return false;
+    String_Matrix* cmat = dynamic_cast<String_Matrix*>(idx.toMatrix());
+    if(TestError(!cmat, "IndexModeValidate::IDX_NAMES",
+		 "index matrix is NULL or not a String_Matrix"))
+      return false;
+    return true;
+    break;
+  }
+  case IDX_COORD: {
+    if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_COORD",
+		 "index is not taMatrix type:",
+		 idx.getTypeAsString()))
+      return false;
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
+    if(TestError(!cmat, "IndexModeValidate::IDX_COORD",
+		 "index matrix is NULL or not an int_Matrix"))
+      return false;
+    if(TestError(cmat->dims() != 1, "IndexModeValidate::IDX_COORD",
+		 "index matrix does not have dims = 1"))
+      return false;
+    if(TestError(cmat->dim(0) < cont_dims, "IndexModeValidate::IDX_COORD",
+		 "index matrix dim(0):", String(cmat->dim(0)),
+		 "is not size of container coordinates:", String(cont_dims)))
+      return false;
+    return true;
+    break;
+  }
+  case IDX_COORDS: {
+    if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_COORDS",
+		 "index is not taMatrix type:",
+		 idx.getTypeAsString()))
+      return false;
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
+    if(TestError(!cmat, "IndexModeValidate::IDX_COORDS",
+		 "index matrix is NULL or not an int_Matrix"))
+      return false;
+    if(cont_dims == 1 && cmat->dims() == 1) {
+      // empty is ok..
+      // if(TestError(cmat->size == 0, "IndexModeValidate::IDX_COORDS",
+      // 		   "index matrix is empty -- no coordinates"))
+      // 	return false;
+    }
+    else {
+      if(TestError(cmat->dims() != 2, "IndexModeValidate::IDX_COORDS",
+		   "index matrix does not have dims = 2"))
+	return false;
+      if(TestError(cmat->dim(0) < cont_dims, "IndexModeValidate::IDX_COORDS",
+		   "index matrix dim(0):", String(cmat->dim(0)),
+		   "is not size of container coordinates:", String(cont_dims)))
+	return false;
+    }
+    return true;
+    break;
+  }
+  case IDX_SLICE: {
+    if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_SLICE",
+		 "index is not taMatrix type:",
+		 idx.getTypeAsString()))
+      return false;
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
+    if(TestError(!cmat, "IndexModeValidate::IDX_SLICE",
+		 "index matrix is NULL or not an int_Matrix"))
+      return false;
+    if(TestError(cmat->dims() != 2, "IndexModeValidate::IDX_SLICE",
+		 "index matrix does not have dims = 2"))
+	return false;
+    if(TestError(cmat->dim(0) != 3, "IndexModeValidate::IDX_SLICE",
+		 "index matrix dim(0):", String(cmat->dim(0)), "is not = 3"))
+      return false;
+    if(TestError(cmat->dim(1) != cont_dims, "IndexModeValidate::IDX_SLICE",
+		 "index matrix dim(1):", String(cmat->dim(1)),
+		 "is not size of container coordinates:", String(cont_dims)))
+      return false;
+    return true;
+    break;
+  }
+  case IDX_MASK: {
+    if(TestError(!idx.isMatrixType(), "IndexModeValidate::IDX_MASK",
+		 "index is not taMatrix type:",
+		 idx.getTypeAsString()))
+      return false;
+    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(idx.toMatrix());
+    if(TestError(!cmat, "IndexModeValidate::IDX_MASK",
+		 "index matrix is NULL or not a byte_Matrix"))
+      return false;
+    if(TestError(cmat->dims() != cont_dims, "IndexModeValidate::IDX_MASK",
+		 "index matrix dims:", String(cmat->dims()),
+		 "is not size of container coordinates:", String(cont_dims)))
+      return false;
+    // todo: needs further checks on cont dims
+    return true;
+    break;
+  }
+  }
+  return false;
+}
+
+bool taBase::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
+  if(!vmat) return true;
+  if(mode == IDX_COORDS) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(vmat);
+    if(TestError(!cmat, "IterValidate::IDX_COORDS",
+		 "index matrix is NULL or not an int_Matrix"))
+      return false;
+    if(cont_dims == 1 && cmat->dims() == 1) {
+    }
+    else {
+      if(TestError(cmat->dims() != 2, "IterValidate::IDX_COORDS",
+		   "index matrix does not have dims = 2"))
+	return false;
+      if(TestError(cmat->dim(0) < cont_dims, "IterValidate::IDX_COORDS",
+		   "index matrix dim(0):", String(cmat->dim(0)),
+		   "is not size of container coordinates:", String(cont_dims)))
+	return false;
+    }
+  }
+  else if(mode == IDX_MASK) {
+    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(vmat);
+    if(TestError(!cmat, "IterValidate::IDX_MASK",
+		 "index matrix is NULL or not a byte_Matrix"))
+      return false;
+    if(TestError(cmat->dims() != cont_dims, "IterValidate::IDX_MASK",
+		 "index matrix dims:", String(cmat->dims()),
+		 "is not size of container coordinates:", String(cont_dims)))
+      return false;
+  }
+  else {
+    TestError(true, "IterValidate", "view mode must be either IDX_COORDS or IDX_MASK");
+    return false;
+  }
+  return true;
+}
+
+void taBase::DelIter(taBaseItr*& itr) const {
+  if(!itr) return;
+  taBase::unRefDone(itr);
+  itr = NULL;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 //      Paths in the structural hierarchy
@@ -3799,6 +4012,261 @@ void taList_impl::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   }
 }
 
+Variant taList_impl::VarEl(int idx) const {
+  taBase* tab = (taBase*)SafeEl_(idx);
+  if(tab && tab->InheritsFrom(&TA_taMatrix))
+    return (Variant)((taMatrix*)tab);
+  return (Variant)tab;
+}
+
+bool taList_impl::SetElView(taMatrix* view_mat, IndexMode md) {
+  if(!IterValidate(view_mat, md, 1)) return false;
+  el_view = view_mat;
+  el_view_mode = md;
+  return true;
+}
+
+taList_impl* taList_impl::NewElView(taMatrix* view_mat, IndexMode md) const {
+  if(!IterValidate(view_mat, md, 1)) return NULL;
+  taList_impl* rval = (taList_impl*)MakeToken(); // make a token of me
+  rval->Borrow(*this);	       // make links to all my guys
+  rval->SetElView(view_mat, IDX_COORDS);
+  return rval;
+}
+
+// todo: should use iterator on the matrix guy itself too, so that the indicies can be 
+// from a filtered matrix..
+
+Variant taList_impl::Elem(Variant idx, IndexMode mode) const {
+  if(mode == IDX_UNK) {
+    mode = IndexModeDecode(idx, 1);
+    if(mode == IDX_UNK) return _nilVariant;
+  }
+  if(!IndexModeValidate(idx, mode, 1))
+    return _nilVariant;
+  switch(mode) {
+  case IDX_IDX: {
+    return VarEl(idx.toInt());
+    break;
+  }
+  case IDX_NAME: {
+    const String& nm = idx.toString();
+    int_Matrix* imat = new int_Matrix(1,0);
+    TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+      taBase* itm = vitm.toBase();
+      if(itm && itm->GetName() == nm) {
+	return vitm;
+      }
+    }
+    return _nilVariant;
+    break;
+  }
+  case IDX_NAMES: {
+    String_Matrix* cmat = dynamic_cast<String_Matrix*>(idx.toMatrix());
+    int_Matrix* imat = new int_Matrix(1,0);
+    TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+      taBase* itm = vitm.toBase();
+      if(itm) {
+	for(int j = 0; j < cmat->size; j++) {
+	  const String nm = cmat->FastEl_Flat(j);
+	  if(itm->GetName() == nm) {
+	    imat->Add(IterElIdx(FOREACH_itr)); // add absolute index of item
+	  }
+	}
+      }
+    }
+    if(imat->size == 1)
+      return VarEl(imat->FastEl_Flat(0));
+    taList_impl* nwvw = NewElView(imat, IDX_COORDS);
+    return (Variant)nwvw;
+    break;
+  }
+  case IDX_CONTAINS: {
+    const String& nm = idx.toString();
+    int_Matrix* imat = new int_Matrix(1,0);
+    TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+      taBase* itm = vitm.toBase();
+      if(itm && itm->GetName().contains(nm)) {
+	imat->Add(IterElIdx(FOREACH_itr)); // add absolute index of item
+      }
+    }
+    if(imat->size == 1)
+      return VarEl(imat->FastEl_Flat(0));
+    taList_impl* nwvw = NewElView(imat, IDX_COORDS);
+    return (Variant)nwvw;
+    break;
+  }
+  case IDX_COORD: {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
+    return VarEl(cmat->FastEl_Flat(0));
+    break;
+  }
+  case IDX_COORDS: {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
+    if(cmat->size == 1)
+      return VarEl(cmat->FastEl_Flat(0));
+    taList_impl* nwvw = NewElView(cmat, IDX_COORDS);
+    return (Variant)nwvw;
+    break;
+  }
+  case IDX_SLICE: {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(idx.toMatrix());
+    int start = cmat->FastEl_Flat(0);
+    int end = cmat->FastEl_Flat(1);
+    int step = cmat->FastEl_Flat(2);
+    if(step == 0) step = 1;
+    if(start < 0) start += size;
+    if(end < 0) end += (size+1); // needs the +1 to allow -1 to be the end and do <
+    if(start > size-1) start = size-1; // keep in bounds
+    if(end > size) end = size;
+    if(TestError(end < start, "Elem::IDX_SLICE",
+		 "slice end is before start.  start:", String(start),
+		 "end:", String(end), "step:", String(step)))
+      return _nilVariant;
+    int_Matrix* imat = new int_Matrix(1,0);
+    if(step > 0) {
+      for(int i = start; i < end; i += step) {
+	imat->Add(i);
+      }
+    }
+    else {
+      for(int i = end-1; i >= start; i += step) {
+	imat->Add(i);
+      }
+    }
+    taList_impl* nwvw = NewElView(imat, IDX_COORDS);
+    return (Variant)nwvw;
+    break;
+  }
+  case IDX_MASK: {
+    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(idx.toMatrix());
+    if(TestError(cmat->dim(0) != size, "Elem::IDX_MASK",
+		 "index matrix dim(0):", String(cmat->dim(0)),
+		 "is not size of list:", String(size)))
+      return false;
+    if(el_view && el_view_mode == IDX_MASK) {
+      // todo: must and this list with any existing -- needs elem-wise operator!
+      // *cmat &&= *ElView();
+    }
+    taList_impl* nwvw = NewElView(cmat, IDX_MASK);
+    return (Variant)nwvw;
+    break;
+  }
+  }
+  return _nilVariant;
+}
+
+taBaseItr* taList_impl::Iter() const {
+  taListItr* rval = new taListItr;
+  taBase::Ref(rval);
+  return rval;
+}
+
+Variant	taList_impl::IterElem(taBaseItr* itr) const {
+  if(!itr) return _nilVariant;
+  return VarEl(IterElIdx(itr));
+}
+
+bool taList_impl::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
+  bool rval = inherited::IterValidate(vmat, mode, cont_dims);
+  if(!rval) return false;
+  if(!vmat) return true;
+  if(el_view_mode == IDX_MASK) {
+    if(TestError(ElView()->size != size, "IterValidate::IDX_MASK",
+		 "el_view size:", String(ElView()->size), "not equal to size of list:",
+		 String(size)))
+      return false;
+  }
+  return true;
+}
+
+Variant	taList_impl::IterFirst(taBaseItr*& it) const {
+  if(!it) return _nilVariant;
+  taListItr*& itr = (taListItr*&)it;
+  itr->count = 0;
+  itr->el_idx = 0;		// just to be sure
+  if(!el_view) {
+    Variant rval = IterElem(itr);	// just first guy
+    if(rval.isNull())
+      DelIter(it);
+    return rval;
+  }
+  if(!IterValidate(ElView(), el_view_mode, 1)) {
+    DelIter(it);
+    return _nilVariant;
+  }
+  if(el_view_mode == IDX_COORDS) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    if(cmat->size == 0) {
+      DelIter(it);
+      return _nilVariant;
+    }
+    itr->el_idx = cmat->FastEl_Flat(0); // first guy
+    Variant rval = IterElem(itr);
+    if(rval.isNull())
+      DelIter(it);
+    return rval;
+  }
+  else if(el_view_mode == IDX_MASK) {
+    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
+    for(int i=0; i<size; i++) {
+      if(cmat->FastEl_Flat(i)) {
+	itr->el_idx = i;
+	Variant rval = IterElem(itr);
+	if(rval.isNull())
+	  DelIter(it);
+	return rval;
+      }
+    }
+  }
+  DelIter(it);
+  return _nilVariant;
+}
+
+Variant	taList_impl::IterNext(taBaseItr*& it) const {
+  if(!it) return _nilVariant;
+  taListItr*& itr = (taListItr*&)it;
+  itr->count++;
+  if(!el_view) {
+    itr->el_idx++;
+    Variant rval = IterElem(itr);
+    if(rval.isNull())
+      DelIter(it);
+    return rval;
+  }
+  if(el_view_mode == IDX_COORDS) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    if(cmat->size <= itr->count) {
+      DelIter(it);
+      return _nilVariant;
+    }
+    itr->el_idx = cmat->FastEl_Flat(itr->count); // next guy
+    Variant rval = IterElem(itr);
+    if(rval.isNull())
+      DelIter(it);
+    return rval;
+  }
+  else if(el_view_mode == IDX_MASK) {
+    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
+    for(int i=itr->el_idx+1; i<size; i++) { // search for next
+      if(cmat->FastEl_Flat(i)) { // true
+	itr->el_idx = i;
+	Variant rval = IterElem(itr);
+	if(rval.isNull())
+	  DelIter(it);
+	return rval;
+      }
+    }
+  }
+  DelIter(it);
+  return _nilVariant;
+}
+
+Variant	taList_impl::IterBegin(taBaseItr*& itr) const {
+  itr = Iter();
+  return IterFirst(itr);
+}
+
 String taList_impl::ChildGetColText(void* child, TypeDef* typ, const KeyString& key,
   int itm_idx) const
 {
@@ -4573,6 +5041,40 @@ taBase* taList_impl::New_gui(int no, TypeDef* typ, const String& name_) {
   return rval;
 }
 
+void taList_impl::List(ostream& strm) const {
+  int i;
+  strm << "\nElements of List: " << GetDisplayName() << " (" << size << ")\n";
+  int names_width = 0;
+  TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+    taBase* itm = vitm.toBase();
+    if(itm) {
+      names_width = MAX(names_width, itm->GetName().length());
+    }
+  }
+  int tabs = (names_width / 8) + 1;
+  int prln = taMisc::display_width / (tabs * 8);  if(prln <= 0) prln = 1;
+  TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+    taBase* itm = vitm.toBase();
+    if(itm) {
+      Indenter(strm, itm->GetName(), IterCount(FOREACH_itr), prln, tabs);
+    }
+    else {
+      Indenter(strm, "NULL", IterCount(FOREACH_itr), prln, tabs);
+    }
+  }
+  strm << "\n";
+  strm.flush();
+}
+
+ostream& taList_impl::Output(ostream& strm, int indent) const {
+  if(el_view) {			// if filtering, then show the list
+    List(strm);
+  }
+  else {
+    inherited::Output(strm, indent);
+  }
+  return strm;
+}
 
 ostream& taList_impl::OutputR(ostream& strm, int indent) const {
   taMisc::indent(strm, indent) << name << "[" << size << "] = {\n";
@@ -4584,9 +5086,11 @@ ostream& taList_impl::OutputR(ostream& strm, int indent) const {
       md->Output(strm, (void*)this, indent+1);
   }
 
-  for(i=0; i<size; i++) {
-    if(el[i] == NULL) continue;
-    ((taBase*)el[i])->OutputR(strm, indent+1);
+  TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+    taBase* itm = vitm.toBase();
+    if(itm) {
+      itm->OutputR(strm, indent+1);
+    }
     taMisc::FlushConsole();
   }
 
@@ -5142,6 +5646,9 @@ void taArray_base::CutLinks() {
   owner = NULL;
   taOBase::CutLinks();
 }
+
+// todo: copy all the list elem stuff here
+
 
 ostream& taArray_base::Output(ostream& strm, int indent) const {
   taMisc::indent(strm, indent);

@@ -30,7 +30,7 @@ public:
   TypeDef*	type_def;	// TypeDef Info
 
   uint		GetSize() const		{ return sizeof(*this); }
-  const char*	GetTypeName() const	{ return type_def->name; }
+  const char*	GetTypeName() const	{ if(type_def) return type_def->name; return "ta"; }
   cssEl*	GetTypeObject() const;
   cssTypes	GetType() const		{ return T_TA; }
   cssTypes	GetPtrType() const	{ return T_TA; }
@@ -100,8 +100,6 @@ public:
   virtual bool AssignObjCheck(const cssEl& s);
   // do basic checks on us and source for object assign (ptr_cnt = 0)
 
-  virtual cssEl*	GetElement_impl(taBase* ths, Variant i) const;
-
   int	 GetMemberNo(const String& memb) const;
   cssEl* GetMemberFmName(const String& memb) const;
   cssEl* GetMemberFmNo(int memb) const;
@@ -169,7 +167,7 @@ public:
 
   void UpdateAfterEdit();
 
-  cssEl* operator[](Variant) const;
+  cssEl* operator[](Variant idx) const;
   cssEl* GetMemberFmName(const String& memb) const; // use recursive path!
   cssEl* NewOpr();		// only ta_base get a new operator..
   void 	 DelOpr();		// and a del operator
@@ -230,7 +228,7 @@ public:
   void PtrAssignPtr(const cssEl& s);
   void UpdateAfterEdit();
 
-  cssEl* operator[](Variant) const;
+  cssEl* operator[](Variant idx) const;
   bool	MembersDynamic()	{ return true; }
   int	 GetMemberNo(const String& memb) const { return -1; } // never static lookup
   cssEl* GetMemberFmName(const String& memb) const;
@@ -372,7 +370,6 @@ public:
   void 		Print(ostream& fh = cout) const;
   void 		PrintR(ostream& fh = cout) const;	// recursive
 
-  const char*	GetTypeName() const;
   void 		TypeInfo(ostream& fh = cout) const;
   void		InheritInfo(ostream& fh = cout) const;
 
@@ -442,8 +439,10 @@ public:
   // check to see if the given item is also a cssTA_Matrix object -- must have valid ta base object pointer too
   static taMatrix* MatrixPtr(const cssEl& s);
   // return the matrix object from a given element known to be a matrix
-  taMatrix* 	GetMatrixPtr() 	{ return (taMatrix*)GetTAPtr(); }
+  taMatrix* 	GetMatrixPtr() 	const { return (taMatrix*)GetTAPtr(); }
   // return matrix pointer for this object
+
+  override bool	IsTaMatrix() const { return true; }
 
   cssTA_Matrix() : cssTA_Base()	    { }
   cssTA_Matrix(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
@@ -458,11 +457,11 @@ public:
   cssEl*	MakeToken_stub(int, cssEl *arg[])
   { return new cssTA_Matrix((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
+  Variant GetVar() const 	{ return Variant(GetMatrixPtr()); }
+
   // void UpdateAfterEdit();
 
   USING(cssTA_Base::operator=)
-
-  // cssEl* operator[](Variant) const;
 
   cssEl* operator+(cssEl& t);
   // cssEl* operator-(cssEl& t);

@@ -24,7 +24,6 @@
 #endif
 
 class   TA_API taGroup_impl;
-typedef taGroup_impl*   TAGPtr;
 
 typedef taList<taGroup_impl> TALOG; // list of groups (LOG)
 
@@ -44,7 +43,7 @@ private:
 
 class   TA_API taLeafItr {              // contains the indicies for iterating over leafs
 public:
-  TAGPtr        cgp;            // pointer to current group
+  taGroup_impl*        cgp;            // pointer to current group
   int           g;              // index of current group
   int           i;              // index of current leaf element
 };
@@ -89,14 +88,14 @@ class TA_API taGroup_impl : public taList_impl {
 INHERITED(taList_impl)
 public:
   static bool    def_nw_item; // #IGNORE default
-  virtual TAGPtr GetSuperGp_();                 // #IGNORE Parent super-group, or NULL
+  virtual taGroup_impl* GetSuperGp_();                 // #IGNORE Parent super-group, or NULL
   virtual void   UpdateLeafCount_(int no);      // #IGNORE updates the leaves count
 
 public:
   int           leaves;         // #READ_ONLY #NO_SAVE #CAT_taList total number of leaves
   taSubGroup    gp;             // #NO_SHOW #NO_FIND #NO_SAVE #CAT_taList sub-groups within this one
-  TAGPtr        super_gp;       // #READ_ONLY #NO_SHOW #NO_SAVE #NO_SET_POINTER #CAT_taList super-group above this
-  TAGPtr        root_gp;        // #READ_ONLY #NO_SHOW #NO_SAVE #NO_SET_POINTER #CAT_taList the root group, 'this' for root group itself; never NULL
+  taGroup_impl*        super_gp;       // #READ_ONLY #NO_SHOW #NO_SAVE #NO_SET_POINTER #CAT_taList super-group above this
+  taGroup_impl*        root_gp;        // #READ_ONLY #NO_SHOW #NO_SAVE #NO_SET_POINTER #CAT_taList the root group, 'this' for root group itself; never NULL
 
   bool          IsEmpty() const { return (leaves == 0) ? true : false; }
   bool          IsRoot() const  { return (root_gp == this); } // 'true' if this is the root
@@ -150,42 +149,42 @@ public:
 
 #ifndef __MAKETA__
 
-  TAGPtr Gp_(int i) const { // #IGNORE
+  taGroup_impl* Gp_(int i) const { // #IGNORE
     return gp.SafeEl(i);
   }
 
-  TAGPtr FastGp_(int i) const { // #IGNORE
+  taGroup_impl* FastGp_(int i) const { // #IGNORE
     return gp.FastEl(i);
   }
 
   virtual taBase* Leaf_(int idx) const; // #IGNORE DFS through all subroups for leaf i
 
-  TAGPtr FastLeafGp_(int gp_idx) const { // #IGNORE the flat leaf group, note: 0 is "this"
+  taGroup_impl* FastLeafGp_(int gp_idx) const { // #IGNORE the flat leaf group, note: 0 is "this"
     if (gp_idx == 0)
-      return const_cast<TAGPtr>(this);
+      return const_cast<taGroup_impl*>(this);
     if (!leaf_gp)
       InitLeafGp();
-    return (TAGPtr)leaf_gp->el[gp_idx];
+    return (taGroup_impl*)leaf_gp->el[gp_idx];
   }
 
-  TAGPtr SafeLeafGp_(int gp_idx) const; // #IGNORE the flat leaf group, note: 0 is "this"
+  taGroup_impl* SafeLeafGp_(int gp_idx) const; // #IGNORE the flat leaf group, note: 0 is "this"
 
   // iterator-like functions
-  TAGPtr FirstGp_(int& g) const { // #IGNORE first sub-gp
+  taGroup_impl* FirstGp_(int& g) const { // #IGNORE first sub-gp
     g = 0;
     if (leaf_gp == NULL)
       InitLeafGp();
     return leaf_gp->SafeEl(0);
   }
 
-  TAGPtr LastGp_(int& g) const { // #IGNORE last sub-gp (for rev iter)
+  taGroup_impl* LastGp_(int& g) const { // #IGNORE last sub-gp (for rev iter)
     if (leaf_gp == NULL)
       InitLeafGp();
     g = leaf_gp->size - 1;
     return leaf_gp->Peek();
   }
 
-  TAGPtr NextGp_(int& g) const { // #IGNORE next sub-gp
+  taGroup_impl* NextGp_(int& g) const { // #IGNORE next sub-gp
     return leaf_gp->SafeEl(++g);
   }
 
@@ -254,11 +253,11 @@ public:
 
 #endif
 
-  virtual TAGPtr  NewGp_(int no, TypeDef* typ=NULL, const String& name_ = "");
+  virtual taGroup_impl*  NewGp_(int no, TypeDef* typ=NULL, const String& name_ = "");
     // #IGNORE create sub groups
   virtual taBase* NewEl_(int no, TypeDef* typ=NULL);    // #IGNORE create items
 
-  TAGPtr                NewGp_gui(int n_gps=1, TypeDef* typ=NULL,
+  taGroup_impl*                NewGp_gui(int n_gps=1, TypeDef* typ=NULL,
     const String& name="");
   // #BUTTON #MENU #MENU_ON_Object #MENU_CONTEXT #TYPE_this #NULL_OK_typ #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL #CAT_Modify Create and add n_gps new sub group(s) of given type (typ=NULL: same type as this group)
 
@@ -276,7 +275,7 @@ public:
   virtual int   FindLeafNameTypeIdx(const String& item_nm) const;
   // #CAT_Access Find anywhere in full group and subgroups element with given object name or type name (item_nm)
 
-  virtual TAGPtr FindMakeGpName(const String& gp_nm, TypeDef* typ=NULL,
+  virtual taGroup_impl* FindMakeGpName(const String& gp_nm, TypeDef* typ=NULL,
     bool& nw_item=def_nw_item);
   // #IGNORE find subgroup of given name; if it doesn't exist, then make it (using type if specified, else default type for subgroup)
 
@@ -302,7 +301,7 @@ public:
 
   virtual bool  RemoveGpIdx(int idx)                    { return gp.RemoveIdx(idx); }
   // #CAT_Modify remove group at given index
-  virtual bool  RemoveGpEl(TAGPtr group)                { return gp.RemoveEl(group); }
+  virtual bool  RemoveGpEl(taGroup_impl* group)                { return gp.RemoveEl(group); }
   // #MENU #FROM_GROUP_gp #MENU_ON_Edit #CAT_Modify remove given group
   virtual TALOG* EditSubGps()                           { return &gp; }
   // #MENU #USE_RVAL #CAT_Access edit the list of sub-groups (e.g., so you can move around subgroups)
@@ -351,7 +350,7 @@ protected:
   override void         ItemRemoved_(); // update the leaf counts (supercursively)
   override taBase*      New_impl(int n_objs, TypeDef* typ, const String& name_);
 
-  virtual TAGPtr LeafGp_(int leaf_idx) const; // #IGNORE the leaf group containing leaf item -- **NONSTANDARD FUNCTION** put here to try to flush out any use
+  virtual taGroup_impl* LeafGp_(int leaf_idx) const; // #IGNORE the leaf group containing leaf item -- **NONSTANDARD FUNCTION** put here to try to flush out any use
 #ifdef TA_GUI
 protected: // clip functions
   override void ChildQueryEditActions_impl(const MemberDef* md,

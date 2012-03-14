@@ -22,6 +22,7 @@
 // builtin function exports
 
 class cssTA_Base;
+class cssTA_Matrix;
 
 class CSS_API cssBI { // built-in functions for css
 public:
@@ -56,6 +57,7 @@ public:
   static cssElCFun*	addr_of;
   static cssElCFun*	de_ptr;
   static cssElCFun*	de_array;
+  static cssElCFun*	make_matrix;
   static cssElCFun*	points_at;
   static cssElCFun*	member_fun;
   static cssElCFun*	member_call;
@@ -76,8 +78,6 @@ public:
   static cssElCFun*	array_alloc;
   static cssElCFun*	sstream_rewind;
 
-  static cssInt*	true_int;
-  static cssInt*	false_int;
   static cssElCFun*	gt;
   static cssElCFun*	lt;
   static cssElCFun*	eq;
@@ -90,7 +90,14 @@ public:
   static cssElCFun*	bitneg;
   static cssElCFun*	power;
 
+  static cssInt*	true_int;
+  static cssInt*	false_int;
+  static cssConstBool*	semicolon_mark;
+  static cssConstBool*	colon_mark;
+  static cssConstBool*	colon_end_mark;
+
   static cssTA_Base*	root;		// root script element
+  static cssTA_Matrix*  matrix_inst;	// instance of matrix for making tokens
 };
 
 #endif // css_builtin_h

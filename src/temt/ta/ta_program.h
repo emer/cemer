@@ -301,8 +301,8 @@ public:
   // #BUTTON initialize enum values from values in given data table column (can be number or name) -- WARNING: replaces any existing enums.  handy for providing chooser access to column values
 
   override taList_impl* children_() {return &enums;}
-  override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-  { return enums.GetTA_Element(i, eltd); }
+  // override void*        GetTA_Element(Variant i, TypeDef*& eltd)
+  // { return enums.GetTA_Element(i, eltd); }
 
   override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 

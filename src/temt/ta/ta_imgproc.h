@@ -1560,8 +1560,8 @@ public:
   // todo: need a checkconfig here..
 
   override taList_impl*	children_() {return &regions;}	
-  override void*	GetTA_Element(Variant i, TypeDef*& eltd)
-  { return regions.GetTA_Element(i, eltd); }
+  // override void*	GetTA_Element(Variant i, TypeDef*& eltd)
+  // { return regions.GetTA_Element(i, eltd); }
 
   void 	Initialize();
   void	Destroy() { };

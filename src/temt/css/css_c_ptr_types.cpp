@@ -670,7 +670,7 @@ void cssCPtr_String::operator+=(cssEl& t)	{
 cssEl* cssCPtr_String::operator[](Variant idx) const {
   if(ptr_cnt > 0) { NopErr("[]"); return &cssMisc::Void; }
   String& val = GetStringRef("[]");
-  String nw_val = val.elem(idx.toInt());
+  String nw_val = val[idx];	// use string code
   return new cssString(nw_val);
 }
 
@@ -897,7 +897,7 @@ void cssCPtr_Variant::operator/=(cssEl& t)	{
 cssEl* cssCPtr_Variant::operator[](Variant idx) const {
   if(ptr_cnt > 0) { NopErr("[]"); return &cssMisc::Void; }
   Variant& val = GetVarRef("[]");
-  return GetVariantEl_impl(val, idx);
+  return VarElem(val, idx);
 }
 
 cssEl* cssCPtr_Variant::GetMemberFmNo(int memb) const {
