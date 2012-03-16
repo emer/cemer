@@ -48,6 +48,7 @@ public:
   inline void 	SetXY(float xx, float yy) { x = (int)xx; y = (int)yy; }
   inline void 	GetXY(float& xx, float& yy) { xx = (float)x; yy = (float)y; }
   virtual void	CopyToMatrixGeom(MatrixGeom& geom);
+  virtual void	CopyToMatrixIndex(MatrixIndex& idx);
 
 
   TwoDCoord(int xx) 			{ SetXY(xx, xx); }
@@ -287,6 +288,7 @@ public:
     xx = (float)x; yy = (float)y; zz = (float)z;
   }
   override void	CopyToMatrixGeom(MatrixGeom& geom);
+  override void	CopyToMatrixIndex(MatrixIndex& idx);
 
   TDCoord(int xx) 			{ SetXYZ(xx, xx, xx); }
   TDCoord(int xx, int yy, int zz) 	{ SetXYZ(xx, yy, zz); }
@@ -838,14 +840,15 @@ class TA_API ValIdx_Array : public taArray<ValIdx> {
 INHERITED(taArray<ValIdx>)
 public:
   STATIC_CONST ValIdx blank; // #HIDDEN #READ_ONLY 
-  String	El_GetStr_(const void* it) const { return (String)((ValIdx*)it); } // #IGNORE
-  void		El_SetFmStr_(void* it, const String& val)
-  { ((ValIdx*)it)->val = (float)val; } // #IGNORE
-  // virtual void*		GetTA_Element(Variant i, TypeDef*& eltd)
-  // { eltd = &TA_ValIdx; int dx = i.toInt(); if(InRange(dx)) return FastEl_(dx); return 
 										 // NULL; }
   TA_BASEFUNS_NOCOPY(ValIdx_Array);
   TA_ARRAY_FUNS(ValIdx_Array,ValIdx);
+protected:
+  override Variant      El_GetVar_(const void* itm) const
+  { return (Variant)(((ValIdx*)itm)->val); }
+  String	El_GetStr_(const void* it) const { return (String)((ValIdx*)it); } // #IGNORE
+  void		El_SetFmStr_(void* it, const String& val)
+  { ((ValIdx*)it)->val = (float)val; } // #IGNORE
 private:
   void Initialize()	{ };
   void Destroy()	{ };

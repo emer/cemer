@@ -1509,8 +1509,8 @@ public:
   taList<RndSeed>       seeds;  // the list of random seeds
 
   override taList_impl* children_() {return &seeds;}
-  // override void*        GetTA_Element(Variant i, TypeDef*& eltd)
-  // { return seeds.GetTA_Element(i, eltd); }
+  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  { return seeds.Elem(idx, mode); }
 
   virtual void   MakeSeeds(int n_seeds);
   // #BUTTON make set of random seed holder objects of given size

@@ -412,37 +412,54 @@ int yylex()
       if(nxt == '=')	return CSS_LE;
       if(nxt != '<')	{ cssMisc::cur_top->unGetc(); return CSS_LT; }
       return follow('=', CSS_ASGN_LSHIFT, CSS_LSHIFT);
+      break;
     }
     case '>': {
       nxt = cssMisc::cur_top->Getc();
       if(nxt == '=')	return CSS_GE;
       if(nxt != '>')	{ cssMisc::cur_top->unGetc(); return CSS_GT; }
       return follow('=', CSS_ASGN_RSHIFT, CSS_RSHIFT);
+      break;
     }
     case '=':
       return follow('=', CSS_EQ, '=');
+      break;
     case '!':
       return follow('=', CSS_NE, CSS_NOT);
+      break;
     case '&':
       return follow2('=', CSS_ASGN_AND, '&', CSS_AND, '&');
+      break;
     case '^':
       return follow('=', CSS_ASGN_XOR, '^');
+      break;
     case '|':
       return follow2('=', CSS_ASGN_OR, '|', CSS_OR, '|');
+      break;
     case '+':
       return follow2('=', CSS_ASGN_ADD, '+', CSS_PLUSPLUS, '+');
+      break;
     case '-':
       return follow3('=', CSS_ASGN_SUB, '-', CSS_MINMIN, '>', CSS_POINTSAT, '-');
+      break;
     case '*':
       return follow('=', CSS_ASGN_MULT, '*');
+      break;
     case '/':
       return follow('=', CSS_ASGN_DIV, '/');
-    case ':':
-      return follow(':', CSS_SCOPER, ':');
+      break;
+    case ':': 
+      if(!cssMisc::parsing_matrix)
+	return follow(':', CSS_SCOPER, ':');
+      else
+	return ':';
+      break;
     case '\n':
       return '\n';
+      break;
     default:
       return c;
+      break;
     }
   } while(1);
 

@@ -402,16 +402,16 @@ public:
   static const KeyString key_val_type; // "val_type"
   override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
   override String	GetDisplayName() const; // #IGNORE we strip out the format characters
-  // override void*	GetTA_Element(Variant i, TypeDef*& eltd)
-  // { return AR()->GetTA_Element(i, eltd); }
+  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  { return AR()->Elem(idx, mode); }
   
   DataTable*		dataTable();
   // root data table this col belongs to
 
-  String		EncodeHeaderName(const MatrixGeom& dims) const;
+  String		EncodeHeaderName(const MatrixIndex& dims) const;
   // encode header information for saving to text files
   static void 		DecodeHeaderName(String nm, String& base_nm, int& val_typ,
-    MatrixGeom& mat_idx, MatrixGeom& mat_geom);
+    MatrixIndex& mat_idx, MatrixGeom& mat_geom);
   // decode header information for loading from text files 
 
   override DumpQueryResult Dump_QuerySaveMember(MemberDef* md); 
@@ -828,8 +828,8 @@ public:
   int			Cells() const { return CellsPerRow() * rows; }
   // #CAT_Columns compute the total number of cells used in the entire data table (CellsPerRow() * rows)
   override taList_impl* children_() {return &data;}
-  // override void*	GetTA_Element(Variant i, TypeDef*& eltd)
-  // { return data.GetTA_Element(i, eltd); }
+  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  { return data.Elem(idx, mode); }
 
   virtual DataCol* 	NewCol(DataCol::ValType val_type, 
 			       const String& col_nm);
@@ -841,11 +841,11 @@ public:
     int dims = 1, int d0=0, int d1=0, int d2=0, int d3=0, int d4=0, int d5=0, int d6=0);
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   virtual DataCol* 	NewColMatrixN(DataCol::ValType val_type, 
-				      const String& col_nm,  const MatrixGeom& cell_geom,
+			      const String& col_nm,  const MatrixGeom& cell_geom,
 				      int& col_idx);
   // #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   virtual DataCol* 	NewColMatrixN_gui(DataCol::ValType val_type, 
-					  const String& col_nm,  const MatrixGeom& cell_geom);
+			  const String& col_nm,  const MatrixGeom& cell_geom);
   // #BUTTON #MENU #LABEL_NewColMatrix #CAT_Columns create new matrix column of data of specified type, with specified cell geom
   DataCol*      NewColFmMatrix(taMatrix* mat, const String& col_nm);
   // #CAT_Columns Create a new matrix column in table from mat. Creates a row if there aren't any and copies mat into the first cell of the new column.

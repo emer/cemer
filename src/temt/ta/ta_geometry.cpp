@@ -34,8 +34,15 @@ TwoDCoord& TwoDCoord::operator=(const FloatTwoDCoord& cp) {
 void TwoDCoord::CopyToMatrixGeom(MatrixGeom& geom) {
 // NOTE: TDCoord just replaces this whole routine, for simplicity
   geom.SetDims(2);
-  geom.FastEl(0) = x;
-  geom.FastEl(1) = y;
+  geom.Set(0, x);
+  geom.Set(1, y);
+}
+
+void TwoDCoord::CopyToMatrixIndex(MatrixIndex& idx) {
+// NOTE: TDCoord just replaces this whole routine, for simplicity
+  idx.SetDims(2);
+  idx.Set(0, x);
+  idx.Set(1, y);
 }
 
 bool TwoDCoord::FitN(int n) {
@@ -133,11 +140,17 @@ TDCoord& TDCoord::operator=(const FloatTDCoord& cp) {
 }
 
 void TDCoord::CopyToMatrixGeom(MatrixGeom& geom) {
-// NOTE: TDCoord just replaces this whole routine, for simplicity
   geom.SetDims(3);
-  geom.FastEl(0) = x;
-  geom.FastEl(1) = y;
-  geom.FastEl(2) = z;
+  geom.Set(0, x);
+  geom.Set(1, y);
+  geom.Set(2, z);
+}
+
+void TDCoord::CopyToMatrixIndex(MatrixIndex& idx) {
+  idx.SetDims(3);
+  idx.Set(0, x);
+  idx.Set(1, y);
+  idx.Set(2, z);
 }
 
 bool TDCoord::FitNinXY(int n) {

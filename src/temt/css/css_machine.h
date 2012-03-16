@@ -161,6 +161,7 @@ public:
   static cssSpace	default_args;	// space that holds current default arg vals
   static bool           parsing_membdefn;       // true if parsing membdefn
   static bool           parsing_args;   // true if parsing arguments to functions
+  static bool           parsing_matrix;   // true if parsing matrix expression
 
   static cssProgSpace* 	Top;		// top level space
   static cssProgSpace*	cur_top;	// current top-level (set for parsing, running)

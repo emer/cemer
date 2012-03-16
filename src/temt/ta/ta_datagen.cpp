@@ -202,7 +202,7 @@ bool taDataGen::CrossLists(DataTable* dest, const DataTable* data_list_1,
 
   int max_n = mg.Product();
 
-  MatrixGeom rows;
+  MatrixIndex rows;
   for(int ri=0; ri<max_n; ri++) {
     mg.DimsFmIndex(ri, rows);   // get dim vals from overall index
     dest->AddBlankRow();
@@ -1258,14 +1258,14 @@ bool taDataGen::GenRndFeatPats(DataTable* dest, const String& dest_col, int n_pa
 
   int n_feats = dcol->cell_size() / feat_sz; // how many features per pattern
 
-  MatrixGeom dpt;
+  MatrixIndex dpt;
   int dms,d0,d1,d2,d3,d4,d5,d6;
 
   for(int pat=0;pat<n_pats;pat++) {
     for(int i=0;i<n_feats;i++) {
       int dest_idx = feat_sz * i;
       dcol->cell_geom.DimsFmIndex(dest_idx, dpt);
-      dpt.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
+      dpt.GetIndexes(dms,d0,d1,d2,d3,d4,d5,d6);
       taMatrixPtr rnd_pat; rnd_pat = GetRndFeatPat(feat_vocab, feat_col_nm);
       taMatrixPtr dst_pat; dst_pat = dcol->GetValAsMatrix(pat);
       dst_pat->WriteFmSubMatrix(rnd_pat, taMatrix::COPY, d0,d1,d2,d3,d4,d5,d6);
@@ -1327,7 +1327,7 @@ bool taDataGen::GenItemsFmProtos(DataTable* items, const String& dest_col,
   }
   dcol = items->FindColName(dest_col, true); // get it for items now
 
-  MatrixGeom dpt;
+  MatrixIndex dpt;
   int dms,d0,d1,d2,d3,d4,d5,d6;
 
   int_Array flip_list;
@@ -1339,7 +1339,7 @@ bool taDataGen::GenItemsFmProtos(DataTable* items, const String& dest_col,
     for (int i=0; i<flip_n; i++) {
       int dest_idx = feat_sz * flip_list[i]; // permute indirection
       dcol->cell_geom.DimsFmIndex(dest_idx, dpt);
-      dpt.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
+      dpt.GetIndexes(dms,d0,d1,d2,d3,d4,d5,d6);
       taMatrixPtr rnd_pat; rnd_pat = GetRndFeatPat(feat_vocab, feat_col_nm);
       taMatrixPtr dst_pat; dst_pat = dcol->GetValAsMatrix(pat);
       dst_pat->WriteFmSubMatrix(rnd_pat, taMatrix::COPY, d0,d1,d2,d3,d4,d5,d6);
@@ -1389,14 +1389,14 @@ bool taDataGen::GenNamedFeatPats(DataTable* dest, const String& dest_col,
 
   int ft_max = MIN(n_feats, n_names); // only go as high as have names
 
-  MatrixGeom dpt;
+  MatrixIndex dpt;
   int dms,d0,d1,d2,d3,d4,d5,d6;
 
   for(int pat=0;pat<dest->rows;pat++) {
     for(int i=0;i<ft_max;i++) {
       int dest_idx = feat_sz * i;
       dcol->cell_geom.DimsFmIndex(dest_idx, dpt);
-      dpt.GetGeom(dms,d0,d1,d2,d3,d4,d5,d6);
+      dpt.GetIndexes(dms,d0,d1,d2,d3,d4,d5,d6);
       String cur_nm = nmcol->GetValAsStringM(pat, i);
       taMatrixPtr nm_pat; nm_pat = GetFeatPatName(feat_vocab, feat_col_nm, cur_nm,
                                                   feat_name_col_nm);

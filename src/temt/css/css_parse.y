@@ -1307,13 +1307,15 @@ anycmd:   CSS_COMMAND
 
 matrixarray: startmatrix matexprlist ']'  { $$ = $2; Code1(cssBI::make_matrix);
 	    int act_args = $2;
+	    cssMisc::parsing_matrix = false;
 	    if(act_args > cssElFun::ArgMax) {
 	      cssMisc::Warning(cssMisc::cur_top->Prog(), "Too many initializer values for matrix, should have at most:", String(cssElFun::ArgMax), "got:",String(act_args)); }
 	  }
         ;
 
 
-startmatrix: '['			{ $$ = Code1(cssMisc::VoidElPtr); /* an arg stop */ }
+startmatrix: '['			{ $$ = Code1(cssMisc::VoidElPtr); /* an arg stop */
+	    cssMisc::parsing_matrix = true; }
         ;
 
 matcolon: ':'				{ $$ = Code1(cssBI::colon_mark); }
@@ -1324,9 +1326,12 @@ matexprlsel: expr
         | matcolon 			{ $$ = $1; Code1(cssBI::colon_end_mark); }
         | expr matcolon 		{ $$ = $1; Code1(cssBI::colon_end_mark); }
         | matcolon expr 		{ $$ = $1; Code1(cssBI::colon_end_mark); }
+        | matcolon matcolon expr        { $$ = $1; Code1(cssBI::colon_end_mark); }
         | expr matcolon expr 		{ $$ = $1; Code1(cssBI::colon_end_mark); }
         | expr matcolon expr matcolon	{ $$ = $1; Code1(cssBI::colon_end_mark); }
         | expr matcolon expr matcolon expr { $$ = $1; Code1(cssBI::colon_end_mark); }
+        | expr matcolon matcolon expr   { $$ = $1; Code1(cssBI::colon_end_mark); }
+        | expr matcolon matcolon        { $$ = $1; Code1(cssBI::colon_end_mark); }
         ;
 
 matsemicolon: ';'			{ $$ = Code1(cssBI::semicolon_mark); }

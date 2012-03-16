@@ -450,13 +450,13 @@ public:
   enum IndexMode {              // what kind of index is specified in the Elem access function
     IDX_UNK,                    // unknown -- use the argument to figure it out based on the specs for each index type (string defaults to IDX_NAME, IDX_SLICE favored over IDX_COORDS where ambiguous)
     IDX_IDX,                    // single scalar numerical index (flat index) -- negative numbers count from the back of the list, initial index is 0 -- ignores any existing view filtering on container and uses original dimensions
-    IDX_NAME,                   // single string value -- find element object by name or string value (if applicable) -- returns single value of first match or NULL if none -- obeys any existing view filtering on container
-    IDX_NAMES,                  // String_Matrix -- find element objects by name or string value (if applicable) -- returns container of items that match any of the names in the matrix (empty if none) -- obeys any existing view filtering on container
-    IDX_CONTAINS,               // single string value -- find element objects by name or string value for items that contain given string (if applicable) -- returns container of items that matched (empty if none) -- obeys any existing view filtering on container
+    IDX_NAME,                   // single string value -- find element object by name or string value (if applicable) -- simple wildcard expressions are supported (*, ? [..]) -- returns single value of first match or NULL if none -- obeys any existing view filtering on container
+    IDX_NAMES,                  // String_Matrix -- find element objects by name or string value (if applicable) -- simple wildcard expressions are supported (*, ? [..]) -- returns container of items that match any of the names in the matrix (empty if none) -- obeys any existing view filtering on container
     IDX_COORD,                  // 1D int_Matrix with size = number of dims in container -- get item from an explicit coordinate along each dimension, any of which can be negative to get from the end (for multidimensional containers) -- returns a single item -- ignores any existing view filtering on container and uses original dimensions
     IDX_COORDS,                 // 1D or 2D int_Matrix with first (inner) dim = number of dims in container specifying coordinates of items in container (if container is 1D then int_Matrix can be 1D), second (outer) dim of arbitrary size (< size of container) to hold any number of elements to select -- returns container of items (could be the original container with a selector filter set to access only these items, depending on the container type) -- ignores any existing view filtering on container and uses original dimensions
-    IDX_SLICE,                  // 2D int_Matrix with first (inner) dim of size 3 = start:stop:skip slice ranges for each dimension (any of which can be negative = start from end or iterate backward), outer dim = number of dims of container (one slice spec per dimension) -- ignores any existing view filtering on container and uses original dimensions
+    IDX_SLICE,                  // 2D slice_Matrix or int_Matrix with first (inner) dim of size 3 = start:stop:skip slice ranges for each dimension (any of which can be negative = start from end or iterate backward), outer dim = number of dims of container (one slice spec per dimension) -- ignores any existing view filtering on container and uses original dimensions
     IDX_MASK,                   // byte_Matrix with same shape as container = bool mask of items to include (0 = don't include, 1 = include) -- any existing mask is logical AND'd to produce intersection
+    IDX_MISC,                  // miscellaneous case-specific indexing format, typically taking a Variant_Matrix and doing things like typedef matching or other specific cases
   };
 
   enum BaseFlags { // #BITS control flags
@@ -681,16 +681,18 @@ public:
   virtual Variant       IterNext(taBaseItr*& itr) const   { return _nilVariant; }
   // #CAT_Access iterate to next item in container using given iterator -- when the end is reached, the iterator pointer is automatically deleted and the pointer is set to NULL (and returns _nilVariant) -- use itr as test to see if there is a next item -- see IterBegin() for more docs
     virtual bool        IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const;
-    // #CAT_Access #EXPERT validate view matrix and mode for suitability as iterators -- only IDX_COORDS or IDX_MASK are supported for iteration view modes
+    // #IGNORE validate view matrix and mode for suitability as iterators -- only IDX_COORDS or IDX_MASK are supported for iteration view modes
     virtual Variant     IterFirst(taBaseItr*& itr) const
     { itr = NULL; return _nilVariant; }
-    // #CAT_Access #EXPERT get first item in list -- called by IterBegin
+    // #IGNORE get first item in list -- called by IterBegin
     virtual Variant     IterElem(taBaseItr* itr) const   { return _nilVariant; }
-    // #CAT_Access #EXPERT access current item according to iterator -- this is used by IterBegin and IterNext, and not typically required for end users
+    // #IGNORE access current item according to iterator -- this is used by IterBegin and IterNext, and not typically required for end users
     virtual taBaseItr*  Iter() const    { return NULL; }
-    // #CAT_Access #EXPERT create a new iterator of appropriate type for this container -- automatically starts at the first object -- typically not used by end users
+    // #IGNORE create a new iterator of appropriate type for this container -- automatically starts at the first object -- typically not used by end users
     virtual void        DelIter(taBaseItr*& itr) const;
-    // #CAT_Access #EXPERT delete iterator -- all done -- set pointer to null
+    // #IGNORE delete iterator -- all done -- set pointer to null
+    virtual bool        FixSliceValsFromSize(int& start, int& end, int size) const;
+    // #IGNORE fix the start and end slice values based on actual size -- returns false if values are invalid after all that
 
   virtual taList_impl*  children_() {return NULL;}
   // #IGNORE for lists, and for taOBase w/ default children
@@ -1834,21 +1836,12 @@ class TA_API taBaseItr : public taBase {
   // #STEM_BASE ##NO_TOKENS #NO_UPDATE_AFTER ##INLINE ##INLINE_DUMP base class for iterators over containers
 INHERITED(taBase)
 public:
-  TA_BASEFUNS_LITE_NOCOPY(taBaseItr);
-private:
-  inline void   Initialize()            { };
-  inline void   Destroy()               { };
-};
-
-class TA_API taListItr : public taBaseItr {
-  // iterator for list objects
-INHERITED(taBaseItr)
-public:
   int           count;          // count number of iterations through foreach -- always goes 0..end sequentially
   int           el_idx;         // absolute index of current item in container
-  TA_BASEFUNS_LITE(taListItr);
+
+  TA_BASEFUNS_LITE(taBaseItr);
 private:
-  inline void   Copy_(const taListItr& cp) { count = cp.count; el_idx = cp.el_idx; }
+  inline void   Copy_(const taBaseItr& cp) { count = cp.count; el_idx = cp.el_idx; }
   inline void   Initialize()            { count = 0; el_idx = 0; }
   inline void   Destroy()               { };
 };
@@ -1868,16 +1861,22 @@ public:
   taBaseRef     el_view;        // #EXPERT #NO_SAVE #CAT_taList matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
   IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taList what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
 
-  inline taMatrix*      ElView() const  { return (taMatrix*)el_view.ptr(); }
-  // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
   override TypeDef*     GetElType() const {return el_typ;}
   // #IGNORE Default type for objects in group
   override TypeDef*     El_GetType_(void* it) const
   { return ((taBase*)it)->GetTypeDef(); } // #IGNORE
   override taList_impl* children_() {return this;}
 
+  inline taMatrix*      ElView() const  { return (taMatrix*)el_view.ptr(); }
+  // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
   virtual Variant       VarEl(int idx) const;
-  // #CAT_Access get element at index as a Variant -- does safe range checking -- if index is negative, access is from the back of the list (-1 = last item, -2 = second to last, etc)
+  // #CAT_Access #EXPERT get element at index as a Variant -- does safe range checking -- if index is negative, access is from the back of the list (-1 = last item, -2 = second to last, etc) - this uses LeafElem interface and is thus fully generic
+  virtual taBase*	LeafElem(int leaf_idx) const { return (taBase*)SafeEl_(leaf_idx); }
+  // #CAT_Access #EXPERT return a terminal (leaf) element of the list -- this is interface used for iteration and elem generic accessor functionality
+  virtual int		Leaves() const { return size; }
+  // #CAT_Access #EXPERT number of terminal (leaf) elements in the list -- this is interface used for iteration and elem generic accessor functionality
+  virtual void		LinkCopyLeaves(const taList_impl& cp);
+  // #CAT_ObjectMgmt #EXPERT create links in this list to all terminal leaf items in source list (i.e., Borrow) -- this is used for creating shallow container copies with different views -- does NOT copy full hierarchical substructure or anything -- just links leaves for accessor routines
 
   override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const;
   override Variant      IterBegin(taBaseItr*& itr) const;
@@ -1890,12 +1889,6 @@ public:
   // #CAT_Access #EXPERT set el view to given new case -- just sets the members
   virtual taList_impl*  NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS) const;
   // #CAT_Access #EXPERT make a new view of this list -- returns a new pointer list with view set
-  inline int            IterCount(taBaseItr* itr) const
-  { return ((taListItr*)itr)->count; }
-  // #CAT_Access return count (number of steps in iteration) from iterator
-  inline int            IterElIdx(taBaseItr* itr) const
-  { return ((taListItr*)itr)->el_idx; }
-  // #CAT_Access return el_idx (index of current list item) from iterator
 
   override String       GetPath_Long(taBase* ta=NULL, taBase* par_stop = NULL) const;
   override String       GetPath(taBase* ta=NULL, taBase* par_stop = NULL) const;
@@ -2517,22 +2510,31 @@ class TA_API taArray_base : public taOBase, public taArray_impl {
   // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER ##CAT_Data base for arrays (from taBase)
 INHERITED(taOBase)
 public:
+  taBaseRef     el_view;        // #EXPERT #NO_SAVE #CAT_taArray matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
+  IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taArray what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
+
   Variant       FastElAsVar(int idx) const { return El_GetVar_(FastEl_(idx)); }
   // #CAT_Access get element without range checking as a variant
   Variant       SafeElAsVar(int idx) const { return El_GetVar_(SafeEl_(idx)); }
   // #CAT_Access get element with safe range checking as a variant
 
-  // override Variant   Elem(Variant idx, IndexMode mode = IDX_UNK) const;
-  // override Variant   IterBegin(taBaseItr*& itr) const;
-  // override Variant   IterNext(taBaseItr*& itr) const;
-  // override Variant   IterElem(taBaseItr* itr) const;
-  // override taBaseItr*        Iter() const;
-  // override bool      IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const;
-  // virtual taArray_base* NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
-  // // #CAT_Access make a new view of this array -- always does a full data copy using view
+  inline taMatrix*      ElView() const  { return (taMatrix*)el_view.ptr(); }
+  // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
+  override Variant   	Elem(Variant idx, IndexMode mode = IDX_UNK) const;
+  override Variant   	IterBegin(taBaseItr*& itr) const;
+  override Variant      IterFirst(taBaseItr*& itr) const;
+  override Variant   	IterNext(taBaseItr*& itr) const;
+  override Variant   	IterElem(taBaseItr* itr) const;
+  override taBaseItr*   Iter() const;
+  override bool      	IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const;
+  virtual bool          SetElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
+  // #CAT_Access #EXPERT set el view to given new case -- just sets the members
+  virtual taArray_base* NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS) const;
+  // #CAT_Access make a new view of this array -- always does a full data copy using view
 
-  ostream&      Output(ostream& strm, int indent = 0) const;
-  ostream&      OutputR(ostream& strm, int indent = 0) const
+  override void	     	List(ostream& strm) const;
+  override ostream&     Output(ostream& strm, int indent = 0) const;
+  override ostream&     OutputR(ostream& strm, int indent = 0) const
   { return Output(strm, indent); }
 
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
@@ -2560,7 +2562,7 @@ protected:
 private:
   void  Copy_(const taArray_base& cp) {taArray_impl::Copy_Duplicate(cp);}
     //WARNING: Copy_Duplicate is not a true copy, but we retain the behavior for compatibility
-  void  Initialize()    { }
+  void  Initialize();
   void  Destroy()       { CutLinks(); }
 };
 

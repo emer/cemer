@@ -185,7 +185,7 @@ QVariant MatrixTableModel::headerData(int section,
     };
     // use same formula as matIndex()
     int row_flat_idx =  m_mat->geom.IndexFmDims2D(0, section, pat_4d, matView());
-    MatrixGeom coords;
+    MatrixIndex coords;
     m_mat->geom.DimsFmIndex(row_flat_idx, coords);
     if (m_mat->dims() == 2) {
       if(m_dim_names) {

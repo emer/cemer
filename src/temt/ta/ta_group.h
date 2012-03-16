@@ -99,49 +99,6 @@ public:
 
   bool          IsEmpty() const { return (leaves == 0) ? true : false; }
   bool          IsRoot() const  { return (root_gp == this); } // 'true' if this is the root
-  override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-
-  void*         FindMembeR(const String& nm, MemberDef*& ret_md) const;
-
-  // IO routines
-  ostream&      OutputR(ostream& strm, int indent = 0) const;
-
-  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
-                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                            bool force_inline = false) const;
-  override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
-                           TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
-                           bool force_inline = false);
-  override int 	ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-			      void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
-			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
-
-  override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
-                                       MemberDef* memb_def=NULL, const void* par=NULL,
-                                       TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
-
-  override void Dump_Save_GetPluginDeps(); // note: in ta_dump.cpp
-  override int  Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0);
-  override int  Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
-  override int  Dump_Save_PathR_impl(ostream& strm, taBase* par=NULL, int indent=0);
-
-  override void Search_impl(const String& srch, taBase_PtrList& items,
-                            taBase_PtrList* owners = NULL,
-                            bool contains = true, bool case_sensitive = false,
-                            bool obj_name = true, bool obj_type = true,
-                            bool obj_desc = true, bool obj_val = true,
-                            bool mbr_name = true, bool type_desc = false);
-  override void CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
-                                 voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
-                                 taBase* cp_base,
-                                 int show_forbidden = taMisc::USE_SHOW_GUI_DEF,
-                                 int show_allowed = taMisc::SHOW_CHECK_MASK,
-                                 bool no_ptrs = true);
-  override int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
-  override int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
-  override int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
-  override int  UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
-  override int  SelectForEditSearch(const String& memb_contains, SelectEdit*& editor); //
 
   ////////////////////////////////////////////////
   //    functions that return the type          //
@@ -253,12 +210,15 @@ public:
 
 #endif
 
+  override taBase* LeafElem(int leaf_idx) const { return Leaf_(leaf_idx); }
+  override int	   Leaves() const 		{ return leaves; }
+
   virtual taGroup_impl*  NewGp_(int no, TypeDef* typ=NULL, const String& name_ = "");
     // #IGNORE create sub groups
   virtual taBase* NewEl_(int no, TypeDef* typ=NULL);    // #IGNORE create items
 
-  taGroup_impl*                NewGp_gui(int n_gps=1, TypeDef* typ=NULL,
-    const String& name="");
+  taGroup_impl*          NewGp_gui(int n_gps=1, TypeDef* typ=NULL,
+				   const String& name="");
   // #BUTTON #MENU #MENU_ON_Object #MENU_CONTEXT #TYPE_this #NULL_OK_typ #NULL_TEXT_SameType #LABEL_NewGroup #NO_SAVE_ARG_VAL #CAT_Modify Create and add n_gps new sub group(s) of given type (typ=NULL: same type as this group)
 
   virtual taBase* FindLeafName_(const String& it) const;        // #IGNORE
@@ -287,8 +247,6 @@ public:
   // #CAT_Access Initialize the leaf group iter list, always ok to call
   virtual void  InitLeafGp_impl(TALOG* lg) const; // #IGNORE impl of init leaf gp
   virtual void  AddOnly_(void* it);             // #IGNORE update leaf count
-//  virtual bool        Remove(const char* item_nm)     { return taList_impl::Remove(item_nm); }
-//  virtual bool        Remove(taBase* item)            { return taList_impl::Remove(item); }
 
   virtual bool  RemoveLeafEl(taBase* item);
   // #CAT_Modify remove given leaf element
@@ -299,11 +257,14 @@ public:
   virtual void  RemoveAll();
   // #CAT_Modify Remove all elements of the group
 
-  virtual bool  RemoveGpIdx(int idx)                    { return gp.RemoveIdx(idx); }
+  virtual bool  RemoveGpIdx(int idx)
+  { return gp.RemoveIdx(idx); }
   // #CAT_Modify remove group at given index
-  virtual bool  RemoveGpEl(taGroup_impl* group)                { return gp.RemoveEl(group); }
+  virtual bool  RemoveGpEl(taGroup_impl* group)
+  { return gp.RemoveEl(group); }
   // #MENU #FROM_GROUP_gp #MENU_ON_Edit #CAT_Modify remove given group
-  virtual TALOG* EditSubGps()                           { return &gp; }
+  virtual TALOG* EditSubGps()
+  { return &gp; }
   // #MENU #USE_RVAL #CAT_Access edit the list of sub-groups (e.g., so you can move around subgroups)
 
   virtual void  EnforceLeaves(int sz);
@@ -311,29 +272,75 @@ public:
   void  EnforceSameStru(const taGroup_impl& cp);
   // #CAT_Modify enforce this group to have same structure as cp
 
-  int   ReplaceType(TypeDef* old_type, TypeDef* new_type);
+  override int   ReplaceType(TypeDef* old_type, TypeDef* new_type);
 
-  virtual int   FindLeafEl(taBase* item) const;  // find given leaf element (-1 = not here)
+  virtual int   FindLeafEl(taBase* item) const;
   // #CAT_Access find given leaf element -1 = not here.
 
+  override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+
+  override void*         FindMembeR(const String& nm, MemberDef*& ret_md) const;
+
+  // IO routines
+  override ostream&	OutputR(ostream& strm, int indent = 0) const;
+
+  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
+                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+                            bool force_inline = false) const;
+  override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+                           TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+                           bool force_inline = false);
+  override int 	ReplaceValStr(const String& srch, const String& repl,
+			      const String& mbr_filt,
+			      void* par = NULL, TypeDef* par_typ=NULL,
+			      MemberDef* md = NULL,
+			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
+
+  override taObjDiffRec* GetObjDiffVal(taObjDiff_List& odl, int nest_lev,
+                              MemberDef* memb_def=NULL, const void* par=NULL,
+                              TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const;
+
+  override void Dump_Save_GetPluginDeps(); // note: in ta_dump.cpp
+  override int  Dump_SaveR(ostream& strm, taBase* par=NULL, int indent=0);
+  override int  Dump_Save_PathR(ostream& strm, taBase* par=NULL, int indent=0);
+  override int  Dump_Save_PathR_impl(ostream& strm, taBase* par=NULL, int indent=0);
+
+  override void Search_impl(const String& srch, taBase_PtrList& items,
+                            taBase_PtrList* owners = NULL,
+                            bool contains = true, bool case_sensitive = false,
+                            bool obj_name = true, bool obj_type = true,
+                            bool obj_desc = true, bool obj_val = true,
+                            bool mbr_name = true, bool type_desc = false);
+  override void CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
+                                 voidptr_PArray& trg_bases, voidptr_PArray& src_bases,
+                                 taBase* cp_base,
+                                 int show_forbidden = taMisc::USE_SHOW_GUI_DEF,
+                                 int show_allowed = taMisc::SHOW_CHECK_MASK,
+                                 bool no_ptrs = true);
+  override int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par);
+  override int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par);
+  override int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr);
+  override int  UpdatePointersToMyKids_impl(taBase* scope_obj, taBase* new_ptr);
+  override int  SelectForEditSearch(const String& memb_contains, SelectEdit*& editor); //
+
   override bool         ChildCanDuplicate(const taBase* chld,
-    bool quiet = true) const;
+					  bool quiet = true) const;
   override taBase*      ChildDuplicate(const taBase* chld);
 
-  void  Duplicate(const taGroup_impl& cp);
-  void  DupeUniqNameOld(const taGroup_impl& cp);
-  void  DupeUniqNameNew(const taGroup_impl& cp);
+  override void  Duplicate(const taGroup_impl& cp);
+  override void  DupeUniqNameOld(const taGroup_impl& cp);
+  override void  DupeUniqNameNew(const taGroup_impl& cp);
 
-  void  Borrow(const taGroup_impl& cp);
-  void  BorrowUnique(const taGroup_impl& cp);
-  void  BorrowUniqNameOld(const taGroup_impl& cp);
-  void  BorrowUniqNameNew(const taGroup_impl& cp);
+  override void  Borrow(const taGroup_impl& cp);
+  override void  BorrowUnique(const taGroup_impl& cp);
+  override void  BorrowUniqNameOld(const taGroup_impl& cp);
+  override void  BorrowUniqNameNew(const taGroup_impl& cp);
 
-  void  Copy_Common(const taGroup_impl& cp);
-  void  Copy_Duplicate(const taGroup_impl& cp);
-  void  Copy_Borrow(const taGroup_impl& cp);
+  override void  Copy_Common(const taGroup_impl& cp);
+  override void  Copy_Duplicate(const taGroup_impl& cp);
+  override void  Copy_Borrow(const taGroup_impl& cp);
 
-  virtual void  List(ostream& strm=cout) const; // Display list of elements in the group
+  override void  List(ostream& strm=cout) const; // Display list of elements in the group
 
   void  InitLinks();            // inherit the el_typ from parent group..
   void  CutLinks();

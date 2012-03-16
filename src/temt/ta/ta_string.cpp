@@ -799,6 +799,21 @@ void String::error(const char* msg) const {
   cerr << "String:" <<  msg << "\n";
 }
 
+#ifdef TA_USE_QT
+#include <QRegExp>
+
+bool String::matches_wildcard(const String& wild) const {
+  QRegExp re(wild, Qt::CaseSensitive, QRegExp::WildcardUnix);
+  return re.exactMatch(*this);
+}
+
+bool String::matches_regexp(const String& wild) const {
+  QRegExp re(wild, Qt::CaseSensitive, QRegExp::RegExp);
+  return re.exactMatch(*this);
+}
+
+#endif
+
 bool String::endsWith(char c) const {
   return matches(c, length() - 1);
 }

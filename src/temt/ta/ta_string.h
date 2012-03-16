@@ -32,7 +32,7 @@
 // - strings can be of any length (memory permitting, of course)
 // - strings use reference counting to instance data -- simple string copies are just pointer ops
 // - constructors and conversion operators to/from ints, floats, and doubles
-// - removal of the regexp versions of functions
+// - replacement of the regexp functionality with qt regexp
 // - reordering and commenting of overloaded functions so that the
 //      const char* version is always the last one, so that it will
 //      be the one scanned by TA
@@ -365,6 +365,13 @@ public:
   bool                  matches(const char* t, int pos = 0) const;
   bool                  matches(const String& y, int pos = 0) const;
   // #CAT_Find return 'true' if target appears at position pos in String
+
+#ifdef TA_USE_QT
+  bool			matches_wildcard(const String& wild) const;
+  // #CAT_Find return 'true' if target wildcard string matches this string -- ? matches any single character, * matches a string of characters, and [...] matches any set of characters within the brackets
+  bool			matches_regexp(const String& regexp) const;
+  // #CAT_Find return 'true' if target regular expression string matches this string -- . matches any single character, .* matches a string of characters, [...] matches any set of characters within the brackets, c{1,5} matches 1-5 repeats of given character, ^ anchors to start of string, $ to end, \\d = digit, \\D = non-digit, \\s = whitespace, \\S = non-whitespace, \\w = word (letter or number) \\W = not
+#endif
 
   bool                  endsWith(char c) const;
   bool                  endsWith(const char* t) const;

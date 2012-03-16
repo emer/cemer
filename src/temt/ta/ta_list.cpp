@@ -784,16 +784,14 @@ void taPtrList_impl::DupeUniqNameOld(const taPtrList_impl& cp) {
 
 void taPtrList_impl::Borrow(const taPtrList_impl& cp) {
   if(!Alloc(size + cp.size)) return;
-  int i;
-  for(i=0; i < cp.size; i++)
+  for(int i=0; i < cp.size; i++)
     Link_(cp.el[i]);
 }
 void taPtrList_impl::BorrowUnique(const taPtrList_impl& cp) {
   if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
   scratch_list.Stealth_Borrow(*this);   // get this into scratch for find
-  int i;
-  for(i=0; i < cp.size; i++) {
+  for(int i=0; i < cp.size; i++) {
     void* it = cp.el[i];
     if(scratch_list.FindEl_(it) < 0)
       Link_(it);
@@ -804,8 +802,7 @@ void taPtrList_impl::BorrowUniqNameNew(const taPtrList_impl& cp) {
   if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
   scratch_list.Borrow(*this);   // get this into scratch for find (using replace..)
-  int i;
-  for(i=0; i < cp.size; i++) {
+  for(int i=0; i < cp.size; i++) {
     void* it = cp.el[i];
     int idx;
     if((idx=Scratch_Find_(El_GetName_(it))) >= 0)
@@ -819,8 +816,7 @@ void taPtrList_impl::BorrowUniqNameOld(const taPtrList_impl& cp) {
   if(!Alloc(size + cp.size)) return;
   scratch_list.size = 0;
   scratch_list.Stealth_Borrow(*this);   // get this into scratch for find
-  int i;
-  for(i=0; i < cp.size; i++) {
+  for(int i=0; i < cp.size; i++) {
     void* it = cp.el[i];
     if(Scratch_Find_(El_GetName_(it)) < 0)
       Link_(it);
@@ -830,11 +826,9 @@ void taPtrList_impl::BorrowUniqNameOld(const taPtrList_impl& cp) {
 
 void taPtrList_impl::Copy_Common(const taPtrList_impl& cp) {
   int mx_idx = MIN(size,cp.size);
-  int i;
-  void* it;
-  for(i=0; i < mx_idx; i++) {
+  for(int i=0; i < mx_idx; i++) {
     if(cp.el[i] == NULL) continue;
-    it = el[i];
+    void* it = el[i];
     ++taMisc::is_duplicating;
     El_CopyN_(it, cp.el[i]); //+name
     --taMisc::is_duplicating;
@@ -873,8 +867,7 @@ void taPtrList_impl::Copy_Duplicate_impl(const taPtrList_impl& cp) {
 
 void taPtrList_impl::Copy_Borrow(const taPtrList_impl& cp) {
   Copy_Common(cp);
-  int i;
-  for(i=size; i < cp.size; i++)
+  for(int i=size; i < cp.size; i++)
     Link_(cp.el[i]);
 }
 

@@ -164,6 +164,7 @@ int             cssMisc::anon_type_cnt = 0;
 cssSpace        cssMisc::default_args("Default Args");
 bool            cssMisc::parsing_membdefn = false;
 bool            cssMisc::parsing_args = false;
+bool            cssMisc::parsing_matrix = false;
 
 cssProgSpace*   cssMisc::Top = NULL;
 cssProgSpace*   cssMisc::cur_top = NULL;
@@ -809,32 +810,84 @@ void cssEl::operator=(const Variant& val) {
   case Variant::T_Bool: // note: because a cssBool derives from cssInt
   case Variant::T_Char: // note: because a cssChar derives from cssInt
   case Variant::T_Int:
-    operator=(val.toInt()); break;
+    operator=(val.toInt());
+    break;
   case Variant::T_UInt:
   case Variant::T_Int64:
   case Variant::T_UInt64:
-    operator=(val.toInt64()); break;
+    operator=(val.toInt64());
+    break;
   case Variant::T_Double:
-    operator=(val.toDouble()); break;
+    operator=(val.toDouble());
+    break;
   case Variant::T_String:
-    operator=(val.toString()); break;
+    operator=(val.toString());
+    break;
   case Variant::T_Ptr:
-    operator=(val.toPtr()); break;
+    operator=(val.toPtr());
+    break;
   case Variant::T_Base:
   case Variant::T_Matrix:
-    operator=(val.toBase()); break;
+    operator=(val.toBase());
+    break;
   default: return ;
   }
 }
 
 cssEl* cssEl::GetElFromVar(Variant var, const String& nm, MemberDef* md,
                           cssEl* class_parent) {
+  bool ro = md && md->HasOption("READ_ONLY");
   TypeDef* td;
   void* itm_ptr;
   var.GetRepInfo(td, itm_ptr);
-  void* itm = *((void**)itm_ptr); // just get the item, not the pointer to the item
-  TypeDef* nptd = td->GetNonPtrType(); // we just want the guy itself
-  return GetElFromTA(nptd, itm, nm, md, class_parent);
+  TypeDef* nptd = td->GetNonPtrType();
+  switch (var.type()) {
+  case Variant::T_Invalid:
+    return &cssMisc::Void;
+    break;
+  case Variant::T_Bool: // note: because a cssBool derives from cssInt
+    return new cssBool(var.toBool(), nm);
+    break;
+  case Variant::T_Char:
+    return new cssChar(var.toChar(), nm);
+    break;
+  case Variant::T_Int:
+    return new cssInt(var.toInt(), nm);
+    break;
+  case Variant::T_UInt:
+  case Variant::T_Int64:
+  case Variant::T_UInt64:
+    return new cssInt64(var.toInt64(), nm);
+    break;
+  case Variant::T_Double:
+    return new cssReal(var.toDouble(), nm);
+    break;
+  case Variant::T_String:
+    return new cssString(var.toString(), nm);
+    break;
+  case Variant::T_Ptr:
+    return &cssMisc::Void;
+    break;
+  case Variant::T_Base:
+    return new cssTA_Base(var.toBase(), td->ptr, td, nm, class_parent, ro);
+    break;
+  case Variant::T_Matrix:
+    return new cssTA_Matrix(var.toMatrix(), td->ptr, td, nm, class_parent, ro);
+    break;
+  case Variant::T_TypeItem: {
+    if(nptd == &TA_TypeDef)
+      return new cssTypeDef(var.toTypeItem(), td->ptr, td, nm, class_parent, ro);
+    else if(nptd == &TA_MemberDef)
+      return new cssMemberDef(var.toTypeItem(), td->ptr, td, nm, class_parent, ro);
+    else if(nptd == &TA_MethodDef)
+      return new cssMethodDef(var.toTypeItem(), td->ptr, td, nm, class_parent, ro);
+    break;
+  }
+  default:
+    return &cssMisc::Void;
+    break;
+  }
+  return &cssMisc::Void;
 }
 
 cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* md,
@@ -4375,6 +4428,7 @@ void cssProgSpace::ResetParseFlags() {
   cssMisc::CodeTop();
   cssMisc::ConstExprTop->Reset();
   cssMisc::parsing_args = false;
+  cssMisc::parsing_matrix = false;
   cssMisc::parsing_membdefn = false;
   cssMisc::cur_scope = NULL;
 }

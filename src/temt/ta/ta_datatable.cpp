@@ -643,7 +643,7 @@ bool DataCol::GetMinMaxScale(MinMax& mm) {
 }
 
 
-String DataCol::EncodeHeaderName(const MatrixGeom& dims) const {
+String DataCol::EncodeHeaderName(const MatrixIndex& dims) const {
   String typ_info;
   switch (valType()) {
   case VT_STRING:       typ_info = "$"; break;
@@ -655,16 +655,16 @@ String DataCol::EncodeHeaderName(const MatrixGeom& dims) const {
   }
   String mat_info;
   if(is_matrix) {               // specify which cell in matrix this is [dims:d0,d1,d2..]
-    mat_info = dims.GeomToString("[", "]");
+    mat_info = dims.ToString("[", "]");
     if(cell_geom.IndexFmDimsN(dims) == 0) { // first guy
-      mat_info += cell_geom.GeomToString("<", ">");
+      mat_info += cell_geom.ToString("<", ">");
     }
   }
   return typ_info + name + mat_info; // e.g., $StringVecCol[2:2,3]
 }
 
 void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
-  MatrixGeom& mat_idx, MatrixGeom& mat_geom)
+  MatrixIndex& mat_idx, MatrixGeom& mat_geom)
 {
   base_nm = nm;
   vt = -1; // unknown
@@ -698,9 +698,9 @@ void DataCol::DecodeHeaderName(String nm, String& base_nm, int& vt,
   if(nm.contains('[')) {
     String mat_info = nm;
     nm = nm.before('[');
-    mat_idx.GeomFromString(mat_info, "[", "]");
+    mat_idx.FromString(mat_info, "[", "]");
     if(mat_info.contains('<')) {
-      mat_geom.GeomFromString(mat_info, "<", ">");
+      mat_geom.FromString(mat_info, "<", ">");
     }
   }
   base_nm = nm;
@@ -2714,7 +2714,7 @@ void DataTable::SaveHeader_strm_impl(ostream& strm, Delimiters delim,
   if (col_to < 0) col_to = data.size + col_to;
   if ((col_to < 0) || (col_to >= data.size))
     col_to = data.size - 1;
-  MatrixGeom dims;
+  MatrixIndex dims;
   for(int i=0;i<data.size;i++) {
     DataCol* da = data.FastEl(i);
     if(!da->saveToDataFile()) continue;
@@ -2992,7 +2992,7 @@ int DataTable::LoadHeader_impl(istream& strm, Delimiters delim, bool native, boo
     DataCol* da = NULL;
     // Load vs. Import decoding is sufficiently different we use two subroutines below
     if (native) {
-      MatrixGeom mat_idx;
+      MatrixIndex mat_idx;
       MatrixGeom mat_geom;
       // val_typ =-1 means type not explicitly supplied -- we'll use existing if name found
       // for import cols, if nm is like <Name>_<int> and Name is a mat col, then assumed to

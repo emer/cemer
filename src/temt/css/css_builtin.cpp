@@ -365,7 +365,8 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
   }
 
   if(n_colon_ends > 0) {
-    int_Matrix* imat = new int_Matrix(mg);
+    slice_Matrix* imat = new slice_Matrix;
+    imat->SetGeomN(mg);
     int ses[3] = {0,-1,1};
     int ses_dx = 0;		// 0 = start, 1 = end, 2 = step
     int dim = 0;
@@ -418,7 +419,19 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     int c=0;
     for(int i=1; i<=na; i++) {
       if(arg[i] == cssBI::semicolon_mark) continue;
-      imat->FastEl_Flat(c++) = arg[i]->GetVar();
+      // check for type name and intercept as typedef
+      if(arg[i]->name.nonempty()) {
+	TypeDef* td = taMisc::types.FindName(arg[i]->name);
+	if(td) {
+	  imat->FastEl_Flat(c++) = (Variant)td;
+	}
+	else {
+	  imat->FastEl_Flat(c++) = arg[i]->GetVar();
+	}
+      }
+      else {
+	imat->FastEl_Flat(c++) = arg[i]->GetVar();
+      }
     }
     rmat = imat;
   }
@@ -438,7 +451,8 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
       else {
 	if(mg != mat->geom) {
 	  cssMisc::Error(cp, "make_matrix: Error in constructing matrix from sub-matricies: sub matrix at position:", String(i-1), "has a different geometry:",
-			 mat->geom.GeomToString(), "than previous submatricies in list:", 	mg.GeomToString());
+	   mat->geom.ToString(),
+	   "than previous submatricies in list:", mg.ToString());
 	  return &cssMisc::Void;
 	}
 	if(td != mat->GetTypeDef()) {

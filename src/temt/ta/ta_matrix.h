@@ -38,6 +38,7 @@ class MatrixTableModel; //
 
 // forwards this file
 class taMatrix_PList;
+class int_Matrix;
 class byte_Matrix; //
 class voidptr_Matrix; //
 class float_Matrix; //
@@ -75,7 +76,7 @@ class float_Matrix; //
      Xxx(d0, d1, d2, d3, d4, d5, d6) this is the most common way to access the data --
        d's higher than the actual dimension of the matrix are ignored
        
-     XxxN(const MatrixGeom&) -- for any dimensionality -- it is unspecified whether
+     XxxN(const MatrixIndex&) -- for any dimensionality -- it is unspecified whether
        the dims may be higher, but there must be at least the correct amount
        
      Xxx_Flat(int idx) -- treats the elements as a flat 1-d array -- storage is
@@ -186,8 +187,99 @@ public:
 
 
 ///////////////////////////////////
-// 	Matrix Geometry
+// 	Matrix Index and Geometry
 ///////////////////////////////////
+
+class TA_API MatrixIndex: public taBase  { 
+  // matrix index set -- holds dims() dimensions worth of integers, which are a multidimensional index into a particular matrix location
+INHERITED(taBase)
+friend class taMatrix;
+friend class MatrixGeom;
+friend class DataCol;
+public:
+  int		n_dims; // #READ_ONLY #SHOW number of dimensions represented in this index -- must be <= TA_MATRIX_DIMS_MAX (8)
+
+  ///////////////////////////////////////////////////////
+  //	Access 
+
+  inline int	dims() const { return n_dims;}
+  // #CAT_Access number of dimensions represented in this geom
+  inline bool	InRange(int idx) const { return ((idx >= 0) && (idx < n_dims)); }
+  // #CAT_Access is the given dimension index value within range of dimensions in this geom
+  inline int	SafeEl(int i) const { if (InRange(i)) return el[i]; else return 0; }
+  // #CAT_Access return index along given dimension, safe access
+  inline int	dim(int i) const { return SafeEl(i); }
+  // #CAT_Access return index along given dimension
+
+  ///////////////////////////////////////////////////////
+  //	Modify and misc operations
+
+  bool		SetDims(int dms);
+  // #CAT_Modify sets number of dimensions, zeroing orphaned or new dims (true if changed size; false if not)
+  void		AddDim(int value);
+  // #CAT_Modify safely add a new dimension with given value
+  void		Set(int i, int value) { if (InRange(i)) el[i] = value; }
+  // #CAT_Modify safely set a dimension to given value
+  void		SetIndexes(int dims, int d0, int d1=0, int d2=0,
+			int d3=0, int d4=0, int d5=0, int d6=0);
+  // #CAT_Modify initialize all indicies all at once
+  void		GetIndexes(int& dims, int& d0, int& d1, int& d2,
+			   int& d3, int& d4, int& d5, int& d6);
+  // #CAT_Access get all indicies to individual ints
+  inline void	Reset() { SetDims(0); }
+  // #CAT_Modify set number of dimensions to 0, and clear all dims
+  void		AddFmIndex(const MatrixIndex& ad);
+  // #CAT_Modify add given geometry values to ours -- useful for adding offsets to indicies, for example
+  inline MatrixIndex& 	operator += (const MatrixIndex& ad)  { AddFmIndex(ad); return *this;}
+
+  bool		Equal(const MatrixIndex& other) const;
+  // #CAT_Access are two indexes equal to each other?
+  
+  ///////////////////////////////////////////////////////
+  //	Input/Output/String
+
+  String	ToString(const char* ldelim = "[", const char* rdelim = "]") const;
+  // #CAT_File returns human-friendly text in form: "[dims:{dim}{,dim}]"
+  void		FromString(const String& str, const char* ldelim = "[",
+			       const char* rdelim = "]");
+  // #CAT_File reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"
+  override String GetValStr(void* par = NULL, MemberDef* md = NULL,
+			    TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			    bool force_inline = false) const;
+  override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
+			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
+			   bool force_inline = false);
+  override int	Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
+  override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
+
+  void		Copy_(const MatrixIndex& cp);
+
+  explicit 	MatrixIndex(int init_size);
+  MatrixIndex(int dims, int d0, int d1=0, int d2=0, int d3=0,
+	     int d4=0, int d5=0, int d6=0);
+  TA_BASEFUNS_LITE(MatrixIndex); //
+
+public: // functions for internal/trusted use only
+  inline int	FastEl(int i) const { return el[i]; } // #IGNORE
+  inline int	operator [](int i) const { return el[i]; }  // #IGNORE 
+  inline int&	FastEl(int i) { return el[i]; } // #IGNORE
+  inline int&	operator [](int i) { return el[i]; }  // #IGNORE 
+
+protected:
+  override String        GetStringRep_impl() const { return ToString(); }
+
+  int		el[TA_MATRIX_DIMS_MAX];
+
+private:
+  void		Initialize();
+  void		Destroy();
+};
+
+inline bool operator ==(const MatrixIndex& a, const MatrixIndex& b)
+{ return a.Equal(b); }
+inline bool operator !=(const MatrixIndex& a, const MatrixIndex& b)
+{ return !a.Equal(b); }
+
 
 class TA_API MatrixGeom: public taBase  { 
   // matrix geometry and index set -- holds dims() dimensions worth of integers, which are either the geometry of a matrix or a multidimensional index into a particular matrix location
@@ -204,13 +296,15 @@ public:
   // #CAT_Access number of dimensions represented in this geom
   inline bool	InRange(int idx) const {return ((idx >= 0) && (idx < n_dims));}
   // #CAT_Access is the given dimension index value within range of dimensions in this geom
-  inline int	dim(int i) const { if (InRange(i)) return el[i]; else return 0; }
+  inline int	SafeEl(int i) const { if (InRange(i)) return el[i]; else return 0; }
   // #CAT_Access return geometry size along given dimension
-  inline int	size(int i) const { return dim(i); }
+  inline int	dim(int i) const { return SafeEl(i); }
+  // #CAT_Access return geometry size along given dimension
+  inline int	size(int i) const { return SafeEl(i); }
   // #CAT_Access return geometry size along given dimension
   int 		Product() const; 
   // #CAT_Access returns product of all dimension values (i.e., total size of geometry)
-  inline int 	IndexFmDimsN(const MatrixGeom& dims) const
+  inline int 	IndexFmDimsN(const MatrixIndex& dims) const
   { return IndexFmDims_(dims.el); }
   // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object
   inline int	IndexFmDims(int d0, int d1=0, int d2=0,
@@ -219,19 +313,17 @@ public:
     d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0; return IndexFmDims_(d); } 
 
   // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object
-  void 		DimsFmIndex(int idx, MatrixGeom& dims) const;
+  void 		DimsFmIndex(int idx, MatrixIndex& dims) const;
   // #CAT_Access get dimension values from index, based on geometry represented by 'this' geom object
-  int		SafeEl(int i) const;
 
   ///////////////////////////////////////////////////////
   //	Modify and misc operations
 
   bool		SetDims(int dms);
   // #CAT_Modify sets number of dimensions, zeroing orphaned or new dims (true if changed size; false if not)
-  inline void	AddDim(int value)
-  { if (n_dims >= TA_MATRIX_DIMS_MAX) return; el[n_dims++] = value; }
+  void		AddDim(int value);
   // #CAT_Modify safely add a new dimension with given value
-  inline void	Set(int i, int value) { if (InRange(i)) el[i] = value; }
+  void		Set(int i, int value);
   // #CAT_Modify safely set a dimension to given value
   void		SetGeom(int dims, int d0, int d1=0, int d2=0,
 			int d3=0, int d4=0, int d5=0, int d6=0);
@@ -242,7 +334,7 @@ public:
   inline void	Reset() { SetDims(0); }
   // #CAT_Modify set number of dimensions to 0, and clear all dims
   void		AddFmGeom(const MatrixGeom& ad);
-  // #CAT_Modify add given geometry values to ours -- useful for adding offsets to indicies, for example
+  // #CAT_Modify add given geometry values to ours
   inline MatrixGeom& 	operator += (const MatrixGeom& ad)  { AddFmGeom(ad); return *this;}
 
   bool		Equal(const MatrixGeom& other) const;
@@ -270,9 +362,10 @@ public:
   ///////////////////////////////////////////////////////
   //	Input/Output/String
 
-  String	GeomToString(const char* ldelim = "[", const char* rdelim = "]") const;
+  String	ToString(const char* ldelim = "[", const char* rdelim = "]") const;
   // #CAT_File returns human-friendly text in form: "[dims:{dim}{,dim}]"
-  void		GeomFromString(const String& str, const char* ldelim = "[", const char* rdelim = "]");
+  void		FromString(const String& str, const char* ldelim = "[",
+			       const char* rdelim = "]");
   // #CAT_File reads geometry from string (consuming text) in form: "[dims:{dim}{,dim}]"
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
 			    TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
@@ -284,21 +377,22 @@ public:
   override int	Dump_Load_Value(istream& strm, taBase* par=NULL);
   void		Copy_(const MatrixGeom& cp);
   explicit 	MatrixGeom(int init_size);
+
   MatrixGeom(int dims, int d0, int d1=0, int d2=0, int d3=0,
 	     int d4=0, int d5=0, int d6=0);
   TA_BASEFUNS_LITE(MatrixGeom); //
 
 public: // functions for internal/trusted use only
-  inline int	FastEl(int i) const {return el[i];} // #IGNORE
-  inline int&	FastEl(int i) {return el[i];} // #IGNORE
-    
-  inline int&	operator [](int i) {return el[i];}  // #IGNORE 
+  inline int	FastEl(int i) const { return el[i]; } // #IGNORE
+  inline int	operator [](int i) const { return el[i]; }  // #IGNORE 
 
 protected:
-  static MatrixGeom	td; // temp
-  int		el[TA_MATRIX_DIMS_MAX];
+  override void		UpdateAfterEdit_impl(); 
+  override String       GetStringRep_impl() const { return ToString(); }
 
-  inline int	operator [](int i) const {return el[i];}  
+  int		el[TA_MATRIX_DIMS_MAX];
+  int		elprod[TA_MATRIX_DIMS_MAX]; // products of el's -- updated by UAE -- must be called!
+
   int 		IndexFmDims_(const int* d) const;
   // get index from dimension values, based on geometry
   
@@ -341,6 +435,9 @@ public:
      MIN,			// dest = MIN(dest, source)
    };
 
+  taBaseRef     el_view;        // #EXPERT #NO_SAVE #CAT_taArray matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
+  IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taArray what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
+
   ///////////////////////////////////////////////////////////////////
   // IMatrix i/f  
 
@@ -371,13 +468,13 @@ public:
   inline int		FastElIndex2D(int d0, int d1=0) const
   { return (d1 * geom[0]) + d0; }
   // #CAT_Access NO bounds check and return index as if the mat was only 2d -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
-  inline int		FastElIndexN(const MatrixGeom& indices) const
+  inline int		FastElIndexN(const MatrixIndex& indices) const
   { return geom.IndexFmDimsN(indices); }
   // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
   int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0,
     int d4=0, int d5=0, int d6=0) const; 
   // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
-  int			SafeElIndexN(const MatrixGeom& indices) const; 
+  int			SafeElIndexN(const MatrixIndex& indices) const; 
   // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
   int			FrameStartIdx(int fm) const { return fm * frameSize(); }
   // #CAT_Access returns the flat base index of the specified frame
@@ -386,8 +483,25 @@ public:
   // #CAT_Access type of data, ex TA_int, TA_float, etc.
   virtual ValType	GetDataValType() const = 0;
   // #CAT_Access val_type of data
-  // void*   		GetTA_Element(Variant i, TypeDef*& eltd)
-  // { eltd = GetDataTypeDef(); int dx = i.toInt(); if(InRange_Flat(dx)) return (void*)FastEl_Flat_(dx); return NULL; }
+
+  ///////////////////////////////////////
+  // Standard Elem and iterator interface
+
+  inline taMatrix*      ElView() const  { return (taMatrix*)el_view.ptr(); }
+  // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
+  override Variant   	Elem(Variant idx, IndexMode mode = IDX_UNK) const;
+  override Variant   	IterBegin(taBaseItr*& itr) const;
+  override Variant      IterFirst(taBaseItr*& itr) const;
+  override Variant   	IterNext(taBaseItr*& itr) const;
+  override Variant   	IterElem(taBaseItr* itr) const;
+  override taBaseItr*   Iter() const;
+  override bool      	IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const;
+  virtual bool          SetElView(taMatrix* view_mat, IndexMode md = IDX_COORDS);
+  // #CAT_Access #EXPERT set el view to given new case -- just sets the members
+  virtual taMatrix* 	NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS) const;
+  // #CAT_Access #EXPERT make a new view of this array -- points to items in original
+  virtual Variant	ElemFmCoord(int_Matrix* cmat) const;
+  // #CAT_Access return element(s) from coordinate matrix that specifies one coordinate -- if full set of coords are specified, then it returns a single element, otherwise it returns a slice of the matrix corresponding to the subset of coordinates present
 
   ///////////////////////////////////////
   // String
@@ -396,7 +510,7 @@ public:
     int d4=0, int d5=0, int d6=0) const
   { return SafeElAsStr_Flat(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)); }
   // #CAT_Access (safely) returns the element as a string
-  const String		SafeElAsStrN(const MatrixGeom& indices) const
+  const String		SafeElAsStrN(const MatrixIndex& indices) const
   { return SafeElAsStr_Flat(SafeElIndexN(indices)); }  
   // #CAT_Access (safely) returns the element as a string
   const String		SafeElAsStr_Flat(int idx) const	
@@ -426,7 +540,7 @@ public:
     int d4=0, int d5=0, int d6=0) const
   { return SafeElAsVar_Flat(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)); } 
   // #CAT_Access (safely) returns the element as a variant
-  const Variant		SafeElAsVarN(const MatrixGeom& indices) const	
+  const Variant		SafeElAsVarN(const MatrixIndex& indices) const	
   { return SafeElAsVar_Flat(SafeElIndexN(indices)); }   
   // #CAT_Access (safely) returns the element as a variant
   const Variant		SafeElAsVar_Flat(int idx) const	
@@ -445,7 +559,7 @@ public:
   { int idx; if ((idx = SafeElIndex(d0, d1, d2, d3, d4, d5, d6)) >= 0)
 	       El_SetFmVar_(FastEl_Flat_(idx), var); } 
   // #CAT_Modify (safely) sets the element as a variant
-  void		SetFmVarN(const Variant& var, const MatrixGeom& indices) 	
+  void		SetFmVarN(const Variant& var, const MatrixIndex& indices) 	
   { int idx; if ((idx = SafeElIndexN(indices)) >= 0)
 	       El_SetFmVar_(FastEl_Flat_(idx), var); } 
   // #CAT_Modify (safely) sets the element as a variant
@@ -489,7 +603,7 @@ public:
   bool			InRange(int d0, int d1=0, int d2=0, int d3=0,
     int d4=0, int d5=0, int d6=0) const; 
   // #CAT_Access true if indices in range; ignores irrelevant dims
-  bool			InRangeN(const MatrixGeom& indices) const;  
+  bool			InRangeN(const MatrixIndex& indices) const;  
   // #CAT_Access true if indices in range; MAY ignore under-supplied dims
   inline bool		InRange_Flat(int idx) const {return ((idx >= 0) && (idx < size));}
   // #CAT_Access checks if in actual range
@@ -502,7 +616,7 @@ public:
     int d4=0, int d5=0, int d6=0) const
   { return SafeElAsFloat_Flat(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)); } 
   // #CAT_Access (safely) returns the element as a float
-  float		SafeElAsFloatN(const MatrixGeom& indices) const	
+  float		SafeElAsFloatN(const MatrixIndex& indices) const	
   { return SafeElAsFloat_Flat(SafeElIndexN(indices)); }   
   // #CAT_Access (safely) returns the element as a float
   float		SafeElAsFloat_Flat(int idx) const	
@@ -513,7 +627,7 @@ public:
     int d4=0, int d5=0, int d6=0) const
   { return El_GetFloat_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4, d5, d6))); }
   // #CAT_Access get element as float without range checking 
-  float		FastElAsFloatN(const MatrixGeom& indices) const	
+  float		FastElAsFloatN(const MatrixIndex& indices) const	
   { return El_GetFloat_(FastEl_Flat_(FastElIndexN(indices))); }   
   // #CAT_Access get element as float without range checking 
   float		FastElAsFloat_Flat(int idx) const 
@@ -527,7 +641,7 @@ public:
     int d4=0, int d5=0, int d6=0) const
   { return SafeElAsDouble_Flat(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)); } 
   // #CAT_Access (safely) returns the element as a double
-  double	SafeElAsDoubleN(const MatrixGeom& indices) const	
+  double	SafeElAsDoubleN(const MatrixIndex& indices) const	
   { return SafeElAsDouble_Flat(SafeElIndexN(indices)); }   
   // #CAT_Access (safely) returns the element as a double
   double	SafeElAsDouble_Flat(int idx) const	
@@ -538,7 +652,7 @@ public:
     int d4=0, int d5=0, int d6=0) const
   { return El_GetDouble_(FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4, d5, d6))); }
   // #CAT_Access get element as double without range checking 
-  double	FastElAsDoubleN(const MatrixGeom& indices) const	
+  double	FastElAsDoubleN(const MatrixIndex& indices) const	
   { return El_GetDouble_(FastEl_Flat_(FastElIndexN(indices))); }   
   // #CAT_Access get element as double without range checking 
   double	FastElAsDouble_Flat(int idx) const 
@@ -608,7 +722,7 @@ public:
   // 4. you may only request "proper slices", i.e., full dimensional subsets
   // 5. if parent is redimensioned, all slices are collapsed to [0]
   
-  virtual taMatrix*	GetSlice_(const MatrixGeom& base, 
+  virtual taMatrix*	GetSlice_(const MatrixIndex& base, 
     int slice_frame_dims = -1, int num_slice_frames = 1);
   // #CAT_Access return a slice, sfd=-1 indicates a frame size slice; base should be a subframe boundary
   virtual taMatrix*	GetFrameSlice_(int frame);
@@ -652,6 +766,7 @@ public:
   int			Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
   int			Dump_Load_Value(istream& strm, taBase* par=NULL);
   void 			DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  void			CutLinks();
   TA_ABSTRACT_BASEFUNS(taMatrix) //
 
 public:
@@ -668,7 +783,7 @@ public:
     int d4=0, int d5=0, int d6=0) const 
   { return FastEl_Flat_(FastElIndex(d0, d1, d2, d3, d4, d5, d6)); } 
   // #IGNORE the raw element in index space -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
-  const void*		FastElN_(const MatrixGeom& indices) const 
+  const void*		FastElN_(const MatrixIndex& indices) const 
   { return FastEl_Flat_(FastElIndexN(indices));} 
   // #IGNORE 
   
@@ -702,6 +817,8 @@ public:
 protected:
   override void		UpdateAfterEdit_impl(); 
   override void		BatchUpdate(bool begin, bool struc);
+  override String       GetStringRep_impl() const;
+
   static void		SliceInitialize(taMatrix* par_slice, taMatrix* child_slice); 
    // called after slice created -- static for consistency
   static void		SliceDestroying(taMatrix* par_slice, taMatrix* child_slice); 
@@ -829,7 +946,7 @@ public:
   const T&		FastEl(int d0, int d1=0, int d2=0, int d3=0,
     int d4=0, int d5=0, int d6=0) const
   { return el[FastElIndex(d0, d1, d2, d3, d4, d5, d6)]; }
-  const T&		FastElN(const MatrixGeom& indices) const
+  const T&		FastElN(const MatrixIndex& indices) const
   { return el[FastElIndexN(indices)]; } 
   const T&		FastEl_Flat(int idx) const { return el[idx]; }
   
@@ -837,7 +954,7 @@ public:
     int d4=0, int d5=0, int d6=0)
   { return el[FastElIndex(d0, d1, d2, d3, d4, d5, d6)]; }
   // #CAT_Access get element without range checking
-  T&			FastElN(const MatrixGeom& indices)
+  T&			FastElN(const MatrixIndex& indices)
   { return el[FastElIndexN(indices)]; }
   // #CAT_Access get element without range checking
   T&			FastEl_Flat(int idx) { return el[idx]; }
@@ -847,7 +964,7 @@ public:
     int d4=0, int d5=0, int d6=0) const 	
   { return *((T*)(SafeEl_(SafeElIndex(d0, d1, d2, d3, d4, d5, d6)))); } 
   // #CAT_Access (safely) access the element for reading
-  const T&		SafeElN(const MatrixGeom& indices) const  
+  const T&		SafeElN(const MatrixIndex& indices) const  
   { return *((T*)(SafeEl_(SafeElIndexN(indices)))); }  
   // #CAT_Access (safely) access the element for reading
   const T&		SafeEl_Flat(int idx) const
@@ -859,7 +976,7 @@ public:
   { int idx = SafeElIndex(d0, d1, d2, d3, d4, d5, d6); 
     if (InRange_Flat(idx)) el[idx] = item; }
   // #CAT_Modify safely assign values to items in the matrix
-  void			SetN(const T& item, const MatrixGeom& indices) 	
+  void			SetN(const T& item, const MatrixIndex& indices) 	
   {  int idx = SafeElIndexN(indices); 
     if (InRange_Flat(idx)) el[idx] = item; }
   // #CAT_Modify safely assign values to items in the matrix
@@ -936,7 +1053,7 @@ private:
 */
 
 #define TA_MATRIX_FUNS(y,T) \
-  y* GetSlice(const MatrixGeom& base, int sfd = -1, int nsf = 1) \
+  y* GetSlice(const MatrixIndex& base, int sfd = -1, int nsf = 1) \
    {return (y*)GetSlice_(base, sfd, nsf);} \
   y* GetFrameSlice(int frame) {return (y*) GetFrameSlice_(frame);} \
   y* GetFrameRangeSlice(int frame, int n_frames) {return (y*) GetFrameRangeSlice_(frame, n_frames);} \
@@ -1141,6 +1258,17 @@ private:
   void		Destroy() {} //
 };
 TA_SMART_PTRS(int_Matrix);
+
+
+class TA_API slice_Matrix: public int_Matrix {
+  // #INSTANCE an int matrix that is used to hold slicing information for indexing -- type is just a marker to unambiguously indicate this form of indexing
+INHERITED(int_Matrix)
+public:
+  TA_BASEFUNS_NOCOPY(slice_Matrix);
+private:
+  void		Initialize() {}
+  void		Destroy() {}
+};
 
 
 ///////////////////////////////////
