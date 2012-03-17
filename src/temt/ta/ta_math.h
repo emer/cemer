@@ -1509,7 +1509,7 @@ public:
   taList<RndSeed>       seeds;  // the list of random seeds
 
   override taList_impl* children_() {return &seeds;}
-  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return seeds.Elem(idx, mode); }
 
   virtual void   MakeSeeds(int n_seeds);

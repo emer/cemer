@@ -746,7 +746,7 @@ String taBase::GetStateDecoKey() const {
   return "SpecialState" + String(spec_st);
 }
 
-taBase::IndexMode taBase::IndexModeDecode(Variant idx, int cont_dims) const {
+taBase::IndexMode taBase::IndexModeDecode(const Variant& idx, int cont_dims) const {
   IndexMode mode = IDX_UNK;
   if(idx.isStringType()) {
     mode = IDX_NAME;
@@ -797,7 +797,7 @@ taBase::IndexMode taBase::IndexModeDecode(Variant idx, int cont_dims) const {
   return mode;
 }
 
-bool taBase::IndexModeValidate(Variant idx, IndexMode mode, int cont_dims) const {
+bool taBase::IndexModeValidate(const Variant& idx, IndexMode mode, int cont_dims) const {
   switch(mode) {
   case IDX_IDX: {
     if(TestError(!idx.isNumeric(), "IndexModeValidate::IDX_IDX",
@@ -4065,7 +4065,7 @@ taList_impl* taList_impl::NewElView(taMatrix* view_mat, IndexMode md) const {
   return rval;
 }
 
-Variant taList_impl::Elem(Variant idx, IndexMode mode) const {
+Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
   if(mode == IDX_UNK) {
     mode = IndexModeDecode(idx, 1);
     if(mode == IDX_UNK) return _nilVariant;
@@ -5722,7 +5722,7 @@ taArray_base* taArray_base::NewElView(taMatrix* view_mat, IndexMode md) const {
   return rval;
 }
 
-Variant taArray_base::Elem(Variant idx, IndexMode mode) const {
+Variant taArray_base::Elem(const Variant& idx, IndexMode mode) const {
   if(mode == IDX_UNK) {
     mode = IndexModeDecode(idx, 1);
     if(mode == IDX_UNK) return _nilVariant;

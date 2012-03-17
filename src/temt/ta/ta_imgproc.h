@@ -1560,7 +1560,7 @@ public:
   // todo: need a checkconfig here..
 
   override taList_impl*	children_() {return &regions;}	
-  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return regions.Elem(idx, mode); }
 
   void 	Initialize();

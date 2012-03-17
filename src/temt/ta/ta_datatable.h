@@ -402,7 +402,7 @@ public:
   static const KeyString key_val_type; // "val_type"
   override String 	GetColText(const KeyString& key, int itm_idx = -1) const;
   override String	GetDisplayName() const; // #IGNORE we strip out the format characters
-  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return AR()->Elem(idx, mode); }
   
   DataTable*		dataTable();
@@ -828,7 +828,7 @@ public:
   int			Cells() const { return CellsPerRow() * rows; }
   // #CAT_Columns compute the total number of cells used in the entire data table (CellsPerRow() * rows)
   override taList_impl* children_() {return &data;}
-  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return data.Elem(idx, mode); }
 
   virtual DataCol* 	NewCol(DataCol::ValType val_type, 

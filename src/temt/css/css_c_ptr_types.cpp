@@ -667,7 +667,7 @@ void cssCPtr_String::operator+=(cssEl& t)	{
   if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
-cssEl* cssCPtr_String::operator[](Variant idx) const {
+cssEl* cssCPtr_String::operator[](const Variant& idx) const {
   if(ptr_cnt > 0) { NopErr("[]"); return &cssMisc::Void; }
   String& val = GetStringRef("[]");
   String nw_val = val[idx];	// use string code
@@ -894,7 +894,7 @@ void cssCPtr_Variant::operator/=(cssEl& t)	{
   if(class_parent)	class_parent->UpdateAfterEdit();
 }
 
-cssEl* cssCPtr_Variant::operator[](Variant idx) const {
+cssEl* cssCPtr_Variant::operator[](const Variant& idx) const {
   if(ptr_cnt > 0) { NopErr("[]"); return &cssMisc::Void; }
   Variant& val = GetVarRef("[]");
   return VarElem(val, idx);

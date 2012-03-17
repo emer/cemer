@@ -668,12 +668,12 @@ public:
   //////////////////////////////////////////////////////////////
   //    Container element access
 
-  virtual Variant       Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  virtual Variant       Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return _nilVariant; }
   // #CAT_Access get element(s) from container -- return can be a single item or a Matrix of multiple items, depending on the index -- see IndexMode for all the possible indexing modes and associated return values (some of which are not applicable to some containers, as documented for that container)
-    virtual IndexMode   IndexModeDecode(Variant idx, int cont_dims) const;
+    virtual IndexMode   IndexModeDecode(const Variant& idx, int cont_dims) const;
     // #CAT_Access #EXPERT decode index mode from variant index, and number of dimensions in the container object
-    virtual bool        IndexModeValidate(Variant idx, IndexMode md, int cont_dims) const;
+    virtual bool        IndexModeValidate(const Variant& idx, IndexMode md, int cont_dims) const;
     // #CAT_Access #EXPERT validate that the index is of an appopriate configuration for given index mode -- issues appropriate error messages if not good
   virtual Variant       IterBegin(taBaseItr*& itr) const
   { itr = NULL; return _nilVariant; }
@@ -1878,7 +1878,7 @@ public:
   virtual void		LinkCopyLeaves(const taList_impl& cp);
   // #CAT_ObjectMgmt #EXPERT create links in this list to all terminal leaf items in source list (i.e., Borrow) -- this is used for creating shallow container copies with different views -- does NOT copy full hierarchical substructure or anything -- just links leaves for accessor routines
 
-  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const;
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const;
   override Variant      IterBegin(taBaseItr*& itr) const;
   override Variant      IterFirst(taBaseItr*& itr) const;
   override Variant      IterNext(taBaseItr*& itr) const;
@@ -2520,7 +2520,7 @@ public:
 
   inline taMatrix*      ElView() const  { return (taMatrix*)el_view.ptr(); }
   // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
-  override Variant   	Elem(Variant idx, IndexMode mode = IDX_UNK) const;
+  override Variant   	Elem(const Variant& idx, IndexMode mode = IDX_UNK) const;
   override Variant   	IterBegin(taBaseItr*& itr) const;
   override Variant      IterFirst(taBaseItr*& itr) const;
   override Variant   	IterNext(taBaseItr*& itr) const;

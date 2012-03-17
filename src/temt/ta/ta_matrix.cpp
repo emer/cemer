@@ -811,7 +811,7 @@ Variant taMatrix::ElemFmCoord(int_Matrix* cmat) const {
   return SafeElAsVarN(idx);
 }
 
-Variant taMatrix::Elem(Variant idx, IndexMode mode) const {
+Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
   const int dm = dims();
   if(mode == IDX_UNK) {
     mode = IndexModeDecode(idx, dm);

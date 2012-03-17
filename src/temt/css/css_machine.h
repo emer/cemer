@@ -631,12 +631,13 @@ public:
   virtual cssEl* operator-()       { NopErr("-"); return &cssMisc::Void; } // unary minus
   virtual cssEl* operator*()	   { NopErr("*"); return &cssMisc::Void; } // unary de-ptr
   virtual cssEl* operator~()	   { NopErr("~"); return &cssMisc::Void; } // unary bitwise negation
-  virtual cssEl* operator[](Variant) const { NopErr("[]"); return &cssMisc::Void; }
+  virtual cssEl* operator[](const Variant& idx) const
+  { NopErr("[]"); return &cssMisc::Void; }
 
   static cssEl* GetElFromTA(TypeDef* td, void* itm, const String& nm, 
 			    MemberDef* md = NULL, cssEl* class_parent = NULL);
   // Call this function to get an appropriate cssEl object based on typedef information
-  static cssEl* GetElFromVar(Variant var, const String& nm, 
+  static cssEl* GetElFromVar(const Variant& var, const String& nm, 
 			    MemberDef* md = NULL, cssEl* class_parent = NULL);
   // Call this function to get an appropriate cssEl object based on variant
 
@@ -696,8 +697,8 @@ protected:
 
   cssEl* GetScoped_impl(TypeDef* typ, void* base, const String& nm) const;
 
-  cssEl* TAElem(taBase* ths, Variant idx) const; // taBase->Elem(idx)
-  cssEl* VarElem(const Variant& val, Variant idx) const; // Variant[] helper
+  cssEl* TAElem(taBase* ths, const Variant& idx) const; // taBase->Elem(idx)
+  cssEl* VarElem(const Variant& val, const Variant& idx) const; // Variant[] helper
 };
 
 #ifndef DEBUG

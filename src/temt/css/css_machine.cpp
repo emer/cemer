@@ -834,7 +834,7 @@ void cssEl::operator=(const Variant& val) {
   }
 }
 
-cssEl* cssEl::GetElFromVar(Variant var, const String& nm, MemberDef* md,
+cssEl* cssEl::GetElFromVar(const Variant& var, const String& nm, MemberDef* md,
                           cssEl* class_parent) {
   bool ro = md && md->HasOption("READ_ONLY");
   TypeDef* td;
@@ -962,7 +962,7 @@ cssEl* cssEl::GetElFromTA(TypeDef* td, void* itm, const String& nm, MemberDef* m
   }
 }
 
-cssEl* cssEl::TAElem(taBase* ths, Variant i) const {
+cssEl* cssEl::TAElem(taBase* ths, const Variant& i) const {
   Variant rval = ths->Elem(i);
   if(rval.isNull()) {
     cssMisc::Error(prog, "Element access failed for container object:", ths->GetName(),
@@ -974,7 +974,7 @@ cssEl* cssEl::TAElem(taBase* ths, Variant i) const {
   return GetElFromVar(rval, nm, (MemberDef*)NULL, (cssEl*)this);
 }
 
-cssEl* cssEl::VarElem(const Variant& val, Variant idx) const {
+cssEl* cssEl::VarElem(const Variant& val, const Variant& idx) const {
   switch (val.type()) {
   case Variant::T_String: {
     String nw_val = val.toString()[idx]; // use string code

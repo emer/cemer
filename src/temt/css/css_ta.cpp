@@ -383,12 +383,12 @@ void cssTA_Base::Constr() {
     }
     taBase::Ref(nw);
     ptr = (void*)nw;
-    SetPtrFlag(OWN_OBJ);	// note: doesn't actually seem to do anything, given that we ref/unref the ptr_cnt <= 1 now anyway..
+    SetPtrFlag(OWN_OBJ);
   }
   else {
     taBase* ths = GetTAPtr();
     if(ths) {
-      if(ptr_cnt <= 1)
+      if(ptr_cnt <= 1)		    // note: can set to ptr_cnt <= 1 to ref everything
 	taBase::Ref(ths);		// always ref ptrs!
       type_def = ths->GetTypeDef();	// just to be sure
     }
@@ -438,7 +438,7 @@ cssTA_Base::~cssTA_Base() {
     ptr = NULL;
     ClearPtrFlag(OWN_OBJ);
   }
-  else if(ptr_cnt <= 1 && ptr) {
+  else if(ptr_cnt <= 1 && ptr) { // note: can set to ptr_cnt <= 1 to ref everything..
     taBase::DelPointer((taBase**)&ptr);
   }
 }
@@ -703,7 +703,7 @@ void cssTA_Base::operator=(const cssEl& s) {
   UpdateClassParent();
 }
 
-cssEl* cssTA_Base::operator[](Variant i) const {
+cssEl* cssTA_Base::operator[](const Variant& i) const {
   taBase* ths = GetTAPtr();
   if(ths)
     return TAElem(ths, i);
@@ -955,7 +955,7 @@ void cssSmartRef::UpdateAfterEdit() {
   // nothing left to do: not avail: sr->UpdateAfterEdit();
 }
 
-cssEl* cssSmartRef::operator[](Variant i) const {
+cssEl* cssSmartRef::operator[](const Variant& i) const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
   if(sr->ptr())
     return TAElem(sr->ptr(), i);
@@ -1523,7 +1523,14 @@ taMatrix* cssTA_Matrix::MatrixPtr(const cssEl& s) {
 cssTA_Matrix::cssTA_Matrix(taMatrix* mtx)
   : cssTA_Base(mtx, 0, mtx->GetTypeDef()) {
   SetPtrFlag(OWN_OBJ);		// mark us as owner
-  // taBase::Ref(mtx); // already gets ref'd in tabase constr
+  // if(taBase::GetRefn(mtx) == 0) {
+  //   taMisc::Info("ref!");
+  //   taBase::Ref(mtx);
+  // }
+  // note: if set ptr_cnt <= 1 ref'ing in TA_Base, then off
+  // and ptr_cnt <= 1 is necessary for temp arrays to work properly it seems
+  // but they cause some crashing at exit due to other 0 guys that are not properly
+  // ref'd in the software -- can just go thru and fix all those however..
 }
 
 cssTA_Matrix::~cssTA_Matrix() {

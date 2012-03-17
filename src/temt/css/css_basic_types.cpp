@@ -58,7 +58,7 @@ void cssString::InheritInfo(ostream& fh) const {
   TA_taString.OutputInherit(fh) << "\n";
 }
 
-cssEl* cssString::operator[](Variant idx) const {
+cssEl* cssString::operator[](const Variant& idx) const {
   String nw_val = val[idx];	// use string code
   return new cssString(nw_val);
 }
@@ -406,7 +406,7 @@ cssEl* cssVariant::GetScoped(const String& memb) const {
   return GetScoped_impl(&TA_Variant, &val_r, memb);
 }
 
-cssEl* cssVariant::operator[](Variant idx) const {
+cssEl* cssVariant::operator[](const Variant& idx) const {
   return VarElem(val, idx);
 }
 
@@ -570,7 +570,7 @@ cssEl* cssPtr::GetMethodFmNo(int memb) const {
   return ptr.El()->GetMethodFmNo(memb);
 }
 
-cssEl* cssPtr::operator[](Variant i) const {
+cssEl* cssPtr::operator[](const Variant& i) const {
   cssElPtr tmp = GetOprPtr();
   if(i.isNumeric()) {
     tmp += i.toInt(); 

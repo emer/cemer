@@ -301,7 +301,7 @@ public:
   // #BUTTON initialize enum values from values in given data table column (can be number or name) -- WARNING: replaces any existing enums.  handy for providing chooser access to column values
 
   override taList_impl* children_() {return &enums;}
-  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return enums.Elem(idx, mode); }
 
   override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
@@ -1269,8 +1269,6 @@ public:
   };
 
   static ProgLib*       prog_lib; // #NO_SHOW_TREE #NO_SAVE library of available programs
-  static String_Array   forbidden_names;
-  // #NO_SAVE #READ_ONLY #HIDDEN names that should not be used for variables and other such things because they are already in use
 
   Program_Group*        prog_gp;
   // #NO_SHOW #READ_ONLY #NO_SAVE #NO_SET_POINTER our owning program group -- needed for control panel stuff
@@ -1562,6 +1560,9 @@ public: // ScriptBase i/f
   // #IGNORE
 
 protected:
+  static String_Array   forbidden_names;
+  // #NO_SAVE #READ_ONLY #HIDDEN names that should not be used for variables and other such things because they are already in use
+
   String                m_scriptCache; // cache of script, managed by implementation
   String                m_listingCache; // cache of listing, managed by implementation
   bool                  m_checked; // flag to help us avoid doing CheckConfig twice

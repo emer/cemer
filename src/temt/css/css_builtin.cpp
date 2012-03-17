@@ -344,10 +344,9 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     else if(arg[i]->GetType() == cssEl::T_Real) n_real++;
     else if(arg[i]->GetType() == cssEl::T_String) n_string++;
     else if(arg[i]->IsTaMatrix()) n_matrix++;
-    else if(arg[i] == cssBI::colon_mark) n_colons++;
   }
 
-  taMatrix* rmat = NULL;	// return matrix
+  cssTA_Matrix* rval = NULL;
   int mat_dims = n_semicolons + n_commas+1;
   int eff_na = na - n_semicolons - n_colons - n_commas;
 
@@ -367,6 +366,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
 
   if(n_colons > 0) {
     slice_Matrix* imat = new slice_Matrix;
+    rval = new cssTA_Matrix(imat);
     imat->SetGeomN(mg);
     int ses[3] = {0,-1,1};
     int ses_dx = 0;		// 0 = start, 1 = end, 2 = step
@@ -391,37 +391,37 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
 	ses[ses_dx] = (int)*(arg[i]);
       }
     }
-    rmat = imat;
+  }
+  else if(n_real > 0 && n_real + n_int == eff_na) {	// any real promotes all to real
+    double_Matrix* imat = new double_Matrix(mg);
+    rval = new cssTA_Matrix(imat);
+    int c=0;
+    for(int i=1; i<=na; i++) {
+      if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
+      imat->Set_Flat((double)*arg[i], c++);
+    }
   }
   else if(n_int == eff_na) {	// complete int array
     int_Matrix* imat = new int_Matrix(mg);
+    rval = new cssTA_Matrix(imat);
     int c=0;
     for(int i=1; i<=na; i++) {
       if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
-      imat->FastEl_Flat(c++) = (int)*arg[i];
+      imat->Set_Flat((int)*arg[i], c++);
     }
-    rmat = imat;
-  }
-  else if(n_real == eff_na) {	// complete real array
-    double_Matrix* imat = new double_Matrix(mg);
-    int c=0;
-    for(int i=1; i<=na; i++) {
-      if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
-      imat->FastEl_Flat(c++) = (double)*arg[i];
-    }
-    rmat = imat;
   }
   else if(n_string == eff_na) {	// complete string array
     String_Matrix* imat = new String_Matrix(mg);
+    rval = new cssTA_Matrix(imat);
     int c=0;
     for(int i=1; i<=na; i++) {
       if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
-      imat->FastEl_Flat(c++) = arg[i]->GetStr();
+      imat->Set_Flat(arg[i]->GetStr(), c++);
     }
-    rmat = imat;
   }
   else if(n_matrix == 0) {	// variant array
     Variant_Matrix* imat = new Variant_Matrix(mg);
+    rval = new cssTA_Matrix(imat);
     int c=0;
     for(int i=1; i<=na; i++) {
       if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
@@ -429,17 +429,16 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
       if(arg[i]->name.nonempty()) {
 	TypeDef* td = taMisc::types.FindName(arg[i]->name);
 	if(td) {
-	  imat->FastEl_Flat(c++) = (Variant)td;
+	  imat->Set_Flat((Variant)td, c++);
 	}
 	else {
-	  imat->FastEl_Flat(c++) = arg[i]->GetVar();
+	  imat->Set_Flat(arg[i]->GetVar(), c++);
 	}
       }
       else {
-	imat->FastEl_Flat(c++) = arg[i]->GetVar();
+	imat->Set_Flat(arg[i]->GetVar(), c++);
       }
     }
-    rmat = imat;
   }
   else if(n_matrix == eff_na) {	// complete sub-arrays -- ignores ;'s
     TypeDef* td = NULL;
@@ -474,7 +473,8 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     }
     mg.AddDim(mat_dims);	// add another dimension with number of items
     taMatrix* tmat = ((cssTA_Matrix*)arg[1])->GetMatrixPtr();
-    rmat = (taMatrix*)tmat->MakeToken();
+    taMatrix* rmat = (taMatrix*)tmat->MakeToken();
+    rval = new cssTA_Matrix(rmat);
     rmat->SetGeomN(mg);
     int c=0;
     for(int i=1; i<=na; i++) {
@@ -484,7 +484,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     }
   }
 
-  return new cssTA_Matrix(rmat);
+  return rval;
 }
 
 static cssEl* cssElCFun_points_at_stub(int, cssEl* arg[]) {

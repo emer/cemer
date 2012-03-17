@@ -106,7 +106,7 @@ public:
   // #CAT_DataOp #BUTTON add all columns from given data table
 
   override taList_impl*	children_() {return &ops;}	
-  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return ops.Elem(idx, mode); }
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   TA_SIMPLE_BASEFUNS(DataOpBaseSpec);
@@ -692,7 +692,7 @@ public:
   override void	UpdateSpecDataTable();
 
   override taList_impl*	children_() {return &select_spec; }	
-  override Variant      Elem(Variant idx, IndexMode mode = IDX_UNK) const
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return select_spec.Elem(idx, mode); }
   override String GetDisplayName() const;
   override String	GetToolbarName() const { return "sel cols"; }

@@ -4225,6 +4225,7 @@ void Program::InitLinks() {
   taBase::Own(sub_progs_all, this);
   taBase::Own(sub_progs_step, this);
   taBase::Own(step_prog, this);
+  taBase::Own(script_list, this);
 
   taBase::Own(load_code, this); // todo: obsolete, remove
 
@@ -4245,6 +4246,7 @@ void Program::InitLinks() {
 void Program::CutLinks() {
   if(script) {                  // clear first, before trashing anything!
     ExitShellScript();
+    script_list.Reset();
     script->ClearAll();
     script->prog_vars.Reset();
     delete script;
@@ -5519,6 +5521,7 @@ void Program::ViewListing_Editor() {
 
 void Program::InitForbiddenNames() {
   if(forbidden_names.size > 0) return;
+  taBase::Ref(forbidden_names);	// otherwise it gets nuked improperly on shutdown, from install-this
   forbidden_names.Add("run_state");
   forbidden_names.Add("ret_val");
   forbidden_names.Add("this");

@@ -504,7 +504,7 @@ public:
 
   inline taMatrix*      ElView() const  { return (taMatrix*)el_view.ptr(); }
   // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
-  override Variant   	Elem(Variant idx, IndexMode mode = IDX_UNK) const;
+  override Variant   	Elem(const Variant& idx, IndexMode mode = IDX_UNK) const;
   override Variant   	IterBegin(taBaseItr*& itr) const;
   override Variant      IterFirst(taBaseItr*& itr) const;
   override Variant   	IterNext(taBaseItr*& itr) const;
@@ -1003,7 +1003,6 @@ public:
   void			Add(const T& item) {Add_(&item);}
   // #CAT_Modify only valid when dims=1
 
-  void	CutLinks() 	{SetArray_(NULL); taMatrix::CutLinks();}
   TA_TMPLT_ABSTRACT_BASEFUNS(taMatrixT, T)
 public:
   override void*	FastEl_Flat_(int idx)	{ return &(el[idx]); } 
@@ -1050,7 +1049,7 @@ protected:
 private: 
   TMPLT_NOCOPY(taMatrixT, T)
   void			Initialize()	{el = NULL;}
-  void			Destroy() { CutLinks();}
+  void			Destroy() { }
 };
 
 /* XxxData
@@ -1076,9 +1075,11 @@ private:
     {SetGeom(dims_, d0,d1,d2,d3,d4,d5,d6);} \
   explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
   y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
+  void CutLinks() { SetArray_(NULL); taMatrix::CutLinks(); } \
   TA_BASEFUNS(y) \
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
+
 
 #define MAT_COPY_SAME_SLOW(y,T) \
   void	Copy_(const y& cp) { SetGeomN(cp.geom); \
@@ -1143,7 +1144,7 @@ protected:
 
 private:
   void		Initialize() {}
-  void		Destroy() {}
+  void		Destroy() { CutLinks(); }
 };
 TA_SMART_PTRS(String_Matrix);
 
@@ -1183,7 +1184,7 @@ protected:
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(float)); }; 
 private:
   void		Initialize() {}
-  void		Destroy() {}
+  void		Destroy() { CutLinks(); }
 };
 TA_SMART_PTRS(float_Matrix);
 
@@ -1230,7 +1231,7 @@ protected:
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(double)); }; 
 private:
   void		Initialize() {}
-  void		Destroy() {}
+  void		Destroy() { CutLinks(); }
 };
 TA_SMART_PTRS(double_Matrix);
 
@@ -1270,7 +1271,7 @@ protected:
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(int)); }; 
 private:
   void		Initialize() {}
-  void		Destroy() {} //
+  void		Destroy() { CutLinks(); }
 };
 TA_SMART_PTRS(int_Matrix);
 
@@ -1317,7 +1318,7 @@ protected:
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(byte)); }; 
 private:
   void		Initialize() {}
-  void		Destroy() {} //
+  void		Destroy()  { CutLinks(); }
 };
 TA_SMART_PTRS(byte_Matrix);
 
@@ -1350,7 +1351,7 @@ protected:
 
 private:
   void		Initialize() {}
-  void		Destroy() {}
+  void		Destroy() { CutLinks(); }
 };
 TA_SMART_PTRS(Variant_Matrix);
 
@@ -1385,7 +1386,7 @@ protected:
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(rgb_t)); }; 
 private:
   void		Initialize() {}
-  void		Destroy() {} //
+  void		Destroy() { CutLinks(); }
 };
 TA_SMART_PTRS(rgb_Matrix);
 
@@ -1420,7 +1421,7 @@ protected:
   { strm.read((char*)&(FastEl_Flat(idx)), sizeof(void*)); }; 
 private:
   void		Initialize() {}
-  void		Destroy() {} //
+  void		Destroy() { CutLinks(); }
 };
 TA_SMART_PTRS(voidptr_Matrix);
 

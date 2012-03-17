@@ -167,7 +167,7 @@ public:
 
   void UpdateAfterEdit();
 
-  cssEl* operator[](Variant idx) const;
+  cssEl* operator[](const Variant& idx) const;
   cssEl* GetMemberFmName(const String& memb) const; // use recursive path!
   cssEl* NewOpr();		// only ta_base get a new operator..
   void 	 DelOpr();		// and a del operator
@@ -228,7 +228,7 @@ public:
   void PtrAssignPtr(const cssEl& s);
   void UpdateAfterEdit();
 
-  cssEl* operator[](Variant idx) const;
+  cssEl* operator[](const Variant& idx) const;
   bool	MembersDynamic()	{ return true; }
   int	 GetMemberNo(const String& memb) const { return -1; } // never static lookup
   cssEl* GetMemberFmName(const String& memb) const;
