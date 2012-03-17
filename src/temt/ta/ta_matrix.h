@@ -266,7 +266,7 @@ public: // functions for internal/trusted use only
   inline int&	operator [](int i) { return el[i]; }  // #IGNORE 
 
 protected:
-  override String        GetStringRep_impl() const { return ToString(); }
+  override String        GetStringRep_impl() const;
 
   int		el[TA_MATRIX_DIMS_MAX];
 
@@ -313,6 +313,14 @@ public:
     d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0; return IndexFmDims_(d); } 
 
   // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object
+  int 	SafeIndexFmDimsN(const MatrixIndex& dims) const;
+  // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object -- negative indexes count from end of each dimension, and if any are out of range for dimension, then overall return is -1 (safe range checking)
+  inline int	SafeIndexFmDims(int d0, int d1=0, int d2=0,
+			    int d3=0, int d4=0, int d5=0, int d6=0) const 
+  { int d[TA_MATRIX_DIMS_MAX]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3;
+    d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0; return SafeIndexFmDims_(d); } 
+
+  // #CAT_Access get index from dimension values, based on geometry represented by 'this' geom object -- negative indexes count from end of each dimension, and if any are out of range for dimension, then overall return is -1 (safe range checking)
   void 		DimsFmIndex(int idx, MatrixIndex& dims) const;
   // #CAT_Access get dimension values from index, based on geometry represented by 'this' geom object
 
@@ -388,13 +396,18 @@ public: // functions for internal/trusted use only
 
 protected:
   override void		UpdateAfterEdit_impl(); 
-  override String       GetStringRep_impl() const { return ToString(); }
+  override String       GetStringRep_impl() const;
 
   int		el[TA_MATRIX_DIMS_MAX];
   int		elprod[TA_MATRIX_DIMS_MAX]; // products of el's -- updated by UAE -- must be called!
 
+  inline int 	SafeIndex_(int d, const int dim) const 
+  { if(d < 0) d += dim; if(d<0 || d>dim+1) d = -1; return d; }
+  // wrap negative values and do range checking
   int 		IndexFmDims_(const int* d) const;
   // get index from dimension values, based on geometry
+  int 		SafeIndexFmDims_(const int* d) const;
+  // get index from dimension values, based on geometry -- applies negaitve idx as counting back from end, and safe range checking for each dimension (returns -1 overall if any is out of range)
   
 private:
   void		Initialize();
@@ -471,10 +484,12 @@ public:
   inline int		FastElIndexN(const MatrixIndex& indices) const
   { return geom.IndexFmDimsN(indices); }
   // #CAT_Access NO bounds check and return flat index -- YOU MUST ABSOLUTELY BE USING DIM-SAFE CODE
-  int			SafeElIndex(int d0, int d1=0, int d2=0, int d3=0,
-    int d4=0, int d5=0, int d6=0) const; 
+  inline int		SafeElIndex(int d0, int d1=0, int d2=0, int d3=0,
+				    int d4=0, int d5=0, int d6=0) const
+  { return geom.SafeIndexFmDims(d0, d1, d2, d3, d4, d5, d6); }
   // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
-  int			SafeElIndexN(const MatrixIndex& indices) const; 
+  inline int		SafeElIndexN(const MatrixIndex& indices) const
+  { return geom.SafeIndexFmDimsN(indices); }
   // #CAT_Access check bounds and return flat index, -1 if any dim out of bounds
   int			FrameStartIdx(int fm) const { return fm * frameSize(); }
   // #CAT_Access returns the flat base index of the specified frame

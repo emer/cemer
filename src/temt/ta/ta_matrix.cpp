@@ -154,6 +154,16 @@ String MatrixIndex::ToString(const char* ldelim, const char* rdelim) const {
   return rval;
 }
 
+String MatrixIndex::GetStringRep_impl() const {
+  String rval('[');
+  int i;
+  for (i = 0; i < n_dims-1; ++i) {
+    rval += String(el[i]) + ",";
+  }
+  rval += String(el[i]) + ']';
+  return rval;
+}
+
 void MatrixIndex::FromString(const String& str_, const char* ldelim, const char* rdelim) {
   String str = str_.after(ldelim);
   String ds = str.before(':');
@@ -307,10 +317,34 @@ void MatrixGeom::DimsFmIndex(int idx, MatrixIndex& d) const {
   d[0] = dx;
 }
 
+int MatrixGeom::SafeIndexFmDimsN(const MatrixIndex& indicies) const {
+  if(TestError((indicies.dims() < 1), "SafeIndexFmDimsN",
+	       "at least 1 index must be specified"))
+    return -1;
+  if(TestError((indicies.dims() > dims()), "SafeIndexFmDimsN",
+	       "too many indices for matrix"))
+    return -1;
+  return SafeIndexFmDims_(indicies.el);
+}
+
 int MatrixGeom::IndexFmDims_(const int* d) const {
   int rval = d[0];
   for(int i=1; i<n_dims; i++) {
     rval += d[i] * elprod[i-1];
+  }
+  return rval;
+}
+
+int MatrixGeom::SafeIndexFmDims_(const int* d) const {
+  if(TestError((dims() < 1), "SafeIndexFmDims",
+	       "matrix geometry has not been initialized"))
+    return -1;
+  int rval = SafeIndex_(d[0], el[0]);
+  if(rval < 0) return rval;
+  for(int i=1; i<n_dims; i++) {
+    int si = SafeIndex_(d[i], el[i]);
+    if(si < 0) return si;
+    rval += si * elprod[i-1];
   }
   return rval;
 }
@@ -490,6 +524,16 @@ String MatrixGeom::ToString(const char* ldelim, const char* rdelim) const {
   return rval;
 }
 
+String MatrixGeom::GetStringRep_impl() const {
+  String rval('[');
+  int i;
+  for (i = 0; i < n_dims-1; ++i) {
+    rval += String(el[i]) + ",";
+  }
+  rval += String(el[i]) + ']';
+  return rval;
+}
+
 void MatrixGeom::FromString(const String& str_, const char* ldelim, const char* rdelim) {
   String str = str_.after(ldelim);
   String ds = str.before(':');
@@ -665,7 +709,65 @@ void taMatrix::BatchUpdate(bool begin, bool struc) {
 }
 
 String taMatrix::GetStringRep_impl() const {
-  return GetValStr();
+  String rval;
+  const int dm = dims();
+  taMatrix* elv = ElView();
+  MatrixIndex idx(dm);
+  MatrixIndex lstidx(dm,0,0,0,0,0,0,0);
+  for(int d=0; d<dm; d++) {
+    rval += "[";
+  }
+  rval += " ";
+  if(!elv || el_view_mode == IDX_MASK) {
+    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(elv);
+    for(int i=0; i<size; i++) {
+      geom.DimsFmIndex(i, idx);
+      int sc = 0;
+      for(int d=0; d<dm; d++) {
+	if(idx[d] == 0 && idx[d] != lstidx[d]) {
+	  sc++;
+	  if(sc == 1) rval += " ";
+	  rval += "]";		// end previous
+	  if(d > 0 && d % 2 == 0) {
+	    rval += "\n ";
+	  }
+	}
+      }
+      for(int s=0; s<sc; s++) {
+	rval += "[";		// start new
+	if(s == sc-1) rval += " ";
+      }
+      if(sc == 0 && i > 0) {
+	rval += ", ";
+      }
+      if(cmat && !((bool)cmat->SafeEl_Flat(i))) {
+	rval += ". ";		// filtered
+      }
+      else {
+	rval += FastElAsStr_Flat(i);
+      }
+      lstidx = idx;		// update
+    }
+    rval += " ";
+    for(int d=0; d<dm; d++) {
+      rval += "]";
+    }
+  }
+  else {			// coords!
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    int nc = cmat->dim(1);
+    rval = "[ ";
+    for(int i=0; i<nc; i++) {
+      for(int d=0;d<dm;d++) {
+	idx.Set(d, cmat->FastEl(d, i));	// outer index is count index
+      }
+      rval += GetStringRep(idx) + ": " + SafeElAsStrN(idx);
+      if(i < nc-1)
+	rval += ", ";
+    }
+    rval += " ]";
+  }
+  return rval;
 }
 
 //////////////////////////////////////////////
@@ -1525,27 +1627,28 @@ bool taMatrix::InRangeN(const MatrixIndex& indices) const {
 }
  
 void taMatrix::List(ostream& strm) const {
-  strm << "["; 
-  for (int d = 0; d < dims(); ++d) {
-    if (d > 0) strm << ",";
-    strm << dim(d);
-  }
-  strm << "] {";
-  int i;
-  for(i=0;i<size;i++) {
-    strm << " " << El_GetStr_(FastEl_Flat_(i)) << ",";
-    if((i+1) % 8 == 0) {
-      strm << endl;
-      taMisc::FlushConsole();
-    }
-  }
-  strm << "}";
+  // strm << "["; 
+  // for (int d = 0; d < dims(); ++d) {
+  //   if (d > 0) strm << ",";
+  //   strm << dim(d);
+  // }
+  // strm << "] {";
+  // int i;
+  // for(i=0;i<size;i++) {
+  //   strm << " " << El_GetStr_(FastEl_Flat_(i)) << ",";
+  //   if((i+1) % 8 == 0) {
+  //     strm << endl;
+  //     taMisc::FlushConsole();
+  //   }
+  // }
+  // strm << "}";
+  strm << GetStringRep_impl() << endl;
+  taMisc::FlushConsole();
 }
 
 ostream& taMatrix::Output(ostream& strm, int indent) const {
   taMisc::indent(strm, indent);
   List(strm);
-  strm << ";\n";
   return strm;
 }
 
@@ -1627,75 +1730,7 @@ void taMatrix::Reset() {
   UpdateSlices_Collapse();
 }
 
-int taMatrix::SafeElIndex(int d0, int d1, int d2, int d3, int d4, int d5, int d6) const {
-  // todo: write as a for loop!
-  int rval = -1;
-  switch (geom.dims()) {
-  case 0: 
-    if(TestError(true, "SafeElIndex", "matrix geometry has not been initialized")) return -1;
-    break;
-  case 1: //note: no extra dim check needed because size is dim
-    rval = d0;
-    break;
-  case 2: 
-    if (((d0 >= 0) && (d0 < geom[0]))
-      && ((d1 >= 0) && (d1 < geom[1]))
-    ) rval = (d1 * geom[0]) + d0;
-    break;
-  case 3: 
-    if (((d0 >= 0) && (d0 < geom[0]))
-      && ((d1 >= 0) && (d1 < geom[1]))
-      && ((d2 >= 0) && (d2 < geom[2]))
-    ) rval = (((d2 * geom[1]) + d1) * geom[0]) + d0;
-    break;
-  case 4:
-    if (((d0 >= 0) && (d0 < geom[0]))
-      && ((d1 >= 0) && (d1 < geom[1]))
-      && ((d2 >= 0) && (d2 < geom[2]))
-      && ((d3 >= 0) && (d3 < geom[3]))
-    ) rval = ( ( (((d3 * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
-    break;
-  case 5: 
-    if (((d0 >= 0) && (d0 < geom[0]))
-      && ((d1 >= 0) && (d1 < geom[1]))
-      && ((d2 >= 0) && (d2 < geom[2]))
-      && ((d3 >= 0) && (d3 < geom[3]))
-      && ((d4 >= 0) && (d4 < geom[4]))
-    ) rval = (((((((d4 * geom[3]) + d3) * geom[2]) + d2) * geom[1]) + d1) * geom[0]) + d0;
-    break;
-  default: break;
-  }
-  if(TestError((rval < 0) || (rval >= size), "SafeElIndex", "matrix indicies out of range")) {
-    rval = -1;
-  }
-  return rval;
-}
- 
-int taMatrix::SafeElIndexN(const MatrixIndex& indices) const {
-  if(TestError((geom.dims() < 1), "SafeElIndexN", "matrix geometry has not been initialized"))
-    return -1;
-  if(TestError((indices.dims() < 1), "SafeElIndexN", "at least 1 index must be specified"))
-    return -1;
-  if(TestError((indices.dims() > geom.dims()), "SafeElIndexN", "too many indices for matrix"))
-    return -1;
-  int d0 = indices[0];
-  if(TestError(((d0 < 0) || (d0 >= geom[0])), "SafeElIndexN", "matrix index 0 out of bounds:"))
-    return -1;
-  
-  int rval = 0;
-  for (int i = indices.dims() - 1 ; i > 0; --i) {
-    int di = indices[i];
-    if(TestError(((di < 0) || (di >= geom[i])),
-		 "SafeElIndexN", "matrix index n out of bounds")) return -1;
-    rval += di;
-    rval *= geom[i-1];
-  }
-  rval += d0;
-  if(TestError((rval >= size), "SafeElIndexN", "matrix element is out of bounds"))
-    return -1;
-  return rval;
-}
- 
+
 void taMatrix::SetFixedData_(void* el_, const MatrixGeom& geom_,
     fixed_dealloc_fun fixed_dealloc_) 
 {

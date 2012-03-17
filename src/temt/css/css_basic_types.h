@@ -430,6 +430,7 @@ public:
   { return new cssReal((Real)x ((double)*(arg[1]), (double)*(arg[2]), (double)*(arg[3]), (double)*(arg[4]))); }
 
 #define cssRealFun_inst(l,x,n,hst) l .Push(new cssElCFun(n, cssRealFun_ ## x ## _stub, #x, CSS_FUN, hst))
+#define cssRealFun_inst_mtx(l,x,n,hst,mtxarg) l .Push(new cssElCFun(n, cssRealFun_ ## x ## _stub, #x, CSS_FUN, hst, cssElFun::FUN_ITR_MATRIX, mtxarg))
 
 
 class CSS_API cssConstReal : public cssReal {

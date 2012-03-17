@@ -132,7 +132,7 @@ cssInt*		cssBI::true_int=NULL;
 cssInt*		cssBI::false_int=NULL;
 cssConstBool*	cssBI::semicolon_mark=NULL;
 cssConstBool*	cssBI::colon_mark=NULL;
-cssConstBool*	cssBI::colon_end_mark=NULL;
+cssConstBool*	cssBI::comma_mark=NULL;
 
 cssTA_Base*	cssBI::root;		// root script element
 cssTA_Matrix*	cssBI::matrix_inst;
@@ -321,24 +321,24 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
   int sc_ctr = 0;	// count up since semicolon
   int sc_geom = 0;	// semicolon geometry -- number of items per ;
   int n_colons = 0;
-  int n_colon_ends = 0;
+  int n_commas = 0;
   for(int i=1; i<=na; i++) {
     if(arg[i] == cssBI::semicolon_mark) {
-      if(sc_geom > 0 && sc_geom != sc_ctr) {
+      if(sc_geom > 0 && sc_geom != sc_ctr+1) {
 	cssMisc::Error(cp, "make_matrix: Error in constructing matrix -- number of elements per semicolon is variable -- must be constant!");
 	return &cssMisc::Void;
       }
-      sc_geom = sc_ctr;
+      sc_geom = sc_ctr+1;	// include the ; itself
       sc_ctr = 0;
       n_semicolons++;
       continue;
     }
-    sc_ctr++;
-    if(arg[i] == cssBI::colon_mark) {
-      n_colons++;	
+    if(arg[i] == cssBI::comma_mark) {
+      sc_ctr++;
+      n_commas++;	
     }
-    else if(arg[i] == cssBI::colon_end_mark) {
-      n_colon_ends++;	
+    else if(arg[i] == cssBI::colon_mark) {
+      n_colons++;	
     }
     else if(arg[i]->GetType() == cssEl::T_Int) n_int++;
     else if(arg[i]->GetType() == cssEl::T_Real) n_real++;
@@ -348,38 +348,44 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
   }
 
   taMatrix* rmat = NULL;	// return matrix
-  int eff_na = na - n_semicolons - n_colons - n_colon_ends;
+  int mat_dims = n_semicolons + n_commas+1;
+  int eff_na = na - n_semicolons - n_colons - n_commas;
 
   MatrixGeom mg;
-  if(n_colon_ends > 0) {
-    mg.SetGeom(2, 3, n_colon_ends);	// always 2d with 3 inner = start:end:step and outer = number
+  if(n_colons > 0) {
+    mg.SetGeom(2, 3, mat_dims);	// always 2d with 3 inner = start:end:step and outer = number of any kind of spec
   }
   else {
     if(sc_geom > 0) {
-      int md = eff_na / sc_geom;	// could double-check divisibilty but not critical
+      int md = mat_dims / sc_geom;	// could double-check divisibilty but not critical
       mg.SetGeom(2, sc_geom, md);
     }
     else {
-      mg.SetGeom(1, eff_na);
+      mg.SetGeom(1, mat_dims);
     }
   }
 
-  if(n_colon_ends > 0) {
+  if(n_colons > 0) {
     slice_Matrix* imat = new slice_Matrix;
     imat->SetGeomN(mg);
     int ses[3] = {0,-1,1};
     int ses_dx = 0;		// 0 = start, 1 = end, 2 = step
     int dim = 0;
-    for(int i=1; i<=na; i++) {
-      if(arg[i] == cssBI::colon_end_mark) {
+    int n_cols = 0;
+    for(int i=1; i<=na+1; i++) {
+      if(i==na+1 || arg[i] == cssBI::comma_mark) {
+	if(n_cols == 0) {
+	  ses[1] = ses[0] + 1;	// just make it end one later
+	}
 	for(int j=0; j<3; j++)
 	  imat->FastEl(j,dim) = ses[j];
+	if(i==na+1) break;	// all done
 	ses[0] = 0; ses[1] = -1; ses[2] = 1; ses_dx = 0;
-	dim++;
+	dim++; n_cols = 0;
 	continue;
       }
       if(arg[i] == cssBI::colon_mark) {
-	ses_dx++;
+	ses_dx++; n_cols++;
       }
       else {
 	ses[ses_dx] = (int)*(arg[i]);
@@ -391,7 +397,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     int_Matrix* imat = new int_Matrix(mg);
     int c=0;
     for(int i=1; i<=na; i++) {
-      if(arg[i] == cssBI::semicolon_mark) continue;
+      if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
       imat->FastEl_Flat(c++) = (int)*arg[i];
     }
     rmat = imat;
@@ -400,7 +406,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     double_Matrix* imat = new double_Matrix(mg);
     int c=0;
     for(int i=1; i<=na; i++) {
-      if(arg[i] == cssBI::semicolon_mark) continue;
+      if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
       imat->FastEl_Flat(c++) = (double)*arg[i];
     }
     rmat = imat;
@@ -409,7 +415,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     String_Matrix* imat = new String_Matrix(mg);
     int c=0;
     for(int i=1; i<=na; i++) {
-      if(arg[i] == cssBI::semicolon_mark) continue;
+      if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
       imat->FastEl_Flat(c++) = arg[i]->GetStr();
     }
     rmat = imat;
@@ -418,7 +424,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     Variant_Matrix* imat = new Variant_Matrix(mg);
     int c=0;
     for(int i=1; i<=na; i++) {
-      if(arg[i] == cssBI::semicolon_mark) continue;
+      if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
       // check for type name and intercept as typedef
       if(arg[i]->name.nonempty()) {
 	TypeDef* td = taMisc::types.FindName(arg[i]->name);
@@ -438,7 +444,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
   else if(n_matrix == eff_na) {	// complete sub-arrays -- ignores ;'s
     TypeDef* td = NULL;
     for(int i=1; i<=na; i++) {
-      if(arg[i] == cssBI::semicolon_mark) continue;
+      if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
       taMatrix* mat = ((cssTA_Matrix*)arg[i])->GetMatrixPtr();
       if(!mat) {
 	cssMisc::Error(cp, "make_matrix: Error in constructing matrix from sub-matricies: sub matrix is null!");
@@ -466,13 +472,13 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
 	}
       }
     }
-    mg.AddDim(na);		// add another dimension with number of items
+    mg.AddDim(mat_dims);	// add another dimension with number of items
     taMatrix* tmat = ((cssTA_Matrix*)arg[1])->GetMatrixPtr();
     rmat = (taMatrix*)tmat->MakeToken();
     rmat->SetGeomN(mg);
     int c=0;
     for(int i=1; i<=na; i++) {
-      if(arg[i] == cssBI::semicolon_mark) continue;
+      if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
       taMatrix* mat = ((cssTA_Matrix*)arg[i])->GetMatrixPtr();
       rmat->CopyFrame(*mat, c++);
     }
@@ -1496,41 +1502,41 @@ static void Install_Math() {
 "(Real x, y) Returns x to the y power.  This can also be expressed in CSS as x ^ y."));
 
   // parsed internal real functions
-  cssRealFun_inst(cssMisc::Functions, acos, 1,
+  cssRealFun_inst_mtx(cssMisc::Functions, acos, 1,
 "(Real X) The arc-cosine (inverse cosine) -- takes an X coordinate and returns\
- the angle (in radians) such that cos(angle)=X.");
-  cssRealFun_inst(cssMisc::Functions, asin, 1,
+ the angle (in radians) such that cos(angle)=X.", 1);
+  cssRealFun_inst_mtx(cssMisc::Functions, asin, 1,
 "(Real Y) The arc-sine (inverse sine) -- takes a Y coordinate and returns the\
- angle (in radians) such that sin(angle)=Y.");
-  cssRealFun_inst(cssMisc::Functions, atan, 1,
+ angle (in radians) such that sin(angle)=Y.", 1);
+  cssRealFun_inst_mtx(cssMisc::Functions, atan, 1,
 "(Real Y/X) The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle\
- (in radians) such that tan(angle)=Y/X.");
+ (in radians) such that tan(angle)=Y/X.", 1);
   cssRealFun_inst(cssMisc::Functions, atan2, 2,
 "(Real Y, Real X) The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle\
  (in radians) such that tan(angle)=Y/X."); // "
-  cssRealFun_inst(cssMisc::Functions, ceil, 1,
-"(Real x) Rounds up the value to the next-highest integral value.");
-  cssRealFun_inst(cssMisc::Functions, cos, 1,
+  cssRealFun_inst_mtx(cssMisc::Functions, ceil, 1,
+   "(Real x) Rounds up the value to the next-highest integral value.",1);
+  cssRealFun_inst_mtx(cssMisc::Functions, cos, 1,
 "(Real x) The cosine of angle x (given in radians).  Use cos(x / DEG) if x\
- is in degrees.");
-  cssRealFun_inst(cssMisc::Functions, cosh, 1,
-"(Real x) The hyperbolic cosine of angle x.");
+ is in degrees.", 1);
+  cssRealFun_inst_mtx(cssMisc::Functions, cosh, 1,
+"(Real x) The hyperbolic cosine of angle x.",1);
   cssRealFun_inst(cssMisc::Functions, drand48, 0,
 "Returns a uniformly-distributed random number between 0 and 1 (actually uses MT -- Mersenne Twister).");
   cssElCFun_inst(cssMisc::Functions, lrand48, 0, CSS_FUN,
 "Returns a uniformly-distributed random number on the range of the integers (actually uses MT -- Mersenne Twister).");
-  cssRealFun_inst(cssMisc::Functions, exp, 1,
-"(Real x) The natural exponential (e to the power x).");
-  cssRealFun_inst(cssMisc::Functions, fabs, 1,
-"(Real x) The absolute value of x.");
-  cssRealFun_inst(cssMisc::Functions, floor, 1,
-"(Real x) Rounds the value down to the next lowest integral value.");
+  cssRealFun_inst_mtx(cssMisc::Functions, exp, 1,
+ "(Real x) The natural exponential (e to the power x).", 1);
+  cssRealFun_inst_mtx(cssMisc::Functions, fabs, 1,
+ "(Real x) The absolute value of x.",1);
+  cssRealFun_inst_mtx(cssMisc::Functions, floor, 1,
+"(Real x) Rounds the value down to the next lowest integral value.",1);
   cssRealFun_inst(cssMisc::Functions, fmod, 2,
 "(Real x, Real y) Returns the value of x modulo y (i.e., x % y) for floating-point values.");
-  cssRealFun_inst(cssMisc::Functions, log, 1,
-"(Real x) The natural logarithm of x.");
-  cssRealFun_inst(cssMisc::Functions, log10, 1,
-"(Real x) The logarithm base 10 of x.");
+  cssRealFun_inst_mtx(cssMisc::Functions, log, 1,
+"(Real x) The natural logarithm of x.",1);
+  cssRealFun_inst_mtx(cssMisc::Functions, log10, 1,
+"(Real x) The logarithm base 10 of x.",1);
   cssElCFun_inst(cssMisc::Functions, max, 2, CSS_FUN,
 "(x,y) Works like the commonly-used #define macro that gives the maximum\
  of the two given arguments.  The return type is that of the\
@@ -1550,26 +1556,26 @@ static void Install_Math() {
  number given the limitations of the standard random generators.");
   cssElCFun_inst(cssMisc::Functions, srand48, 1, CSS_FUN,
 "(Int x) Provides a new random seed for the random number generator based on the argument.");
-  cssRealFun_inst(cssMisc::Functions, sin, 1,
-"(Real x) The sine of angle x (given in radians).  Use sin(x / DEG) if x is in degrees.");
-  cssRealFun_inst(cssMisc::Functions, sinh, 1,
-"(Real x) The hyperbolic sine of x.");
-  cssRealFun_inst(cssMisc::Functions, sqrt, 1,
-"(Real x) The square-root of x.");
-  cssRealFun_inst(cssMisc::Functions, tan, 1,
-"(Real x) The tangent of angle x (given in radians).  Use tan(x / DEG) if x is in degrees.");
-  cssRealFun_inst(cssMisc::Functions, tanh, 1,
-"(Real x) The hyperbolic tangent of x.");
+  cssRealFun_inst_mtx(cssMisc::Functions, sin, 1,
+"(Real x) The sine of angle x (given in radians).  Use sin(x / DEG) if x is in degrees.",1);
+  cssRealFun_inst_mtx(cssMisc::Functions, sinh, 1,
+"(Real x) The hyperbolic sine of x.",1);
+  cssRealFun_inst_mtx(cssMisc::Functions, sqrt, 1,
+"(Real x) The square-root of x.",1);
+  cssRealFun_inst_mtx(cssMisc::Functions, tan, 1,
+"(Real x) The tangent of angle x (given in radians).  Use tan(x / DEG) if x is in degrees.",1);
+  cssRealFun_inst_mtx(cssMisc::Functions, tanh, 1,
+"(Real x) The hyperbolic tangent of x.",1);
 
 // MSVC does not include these
 // hp does not include these unless you have _INCLUDE_HPUX_SOURCE...
 #if (!(defined(TA_OS_WIN) || defined(HP800)) )
-  cssRealFun_inst(cssMisc::Functions, acosh, 1,
-"(Real x) The hyperbolic arc-cosine.");
-  cssRealFun_inst(cssMisc::Functions, asinh, 1,
-"(Real x) The hyperbolic arc-sine.");
-  cssRealFun_inst(cssMisc::Functions, atanh, 1,
-"(Real x) The hyperbolic arc-tangent.");
+  cssRealFun_inst_mtx(cssMisc::Functions, acosh, 1,
+"(Real x) The hyperbolic arc-cosine.",1);
+  cssRealFun_inst_mtx(cssMisc::Functions, asinh, 1,
+"(Real x) The hyperbolic arc-sine.",1);
+  cssRealFun_inst_mtx(cssMisc::Functions, atanh, 1,
+"(Real x) The hyperbolic arc-tangent.",1);
 #endif // HP800
 
   cssConstReal_inst_nm(cssMisc::Constants, 3.14159265358979323846,  "PI"   );
@@ -2223,12 +2229,12 @@ static void Install_MiscFun() {
   // matrix parsing magic foo
   cssBI::semicolon_mark = new cssConstBool(false, "semicolon_mark");
   cssBI::colon_mark = new cssConstBool(false, "colon_mark");
-  cssBI::colon_end_mark = new cssConstBool(false, "colon_end_mark");
+  cssBI::comma_mark = new cssConstBool(false, "comma_mark");
   cssBI::matrix_inst = new cssTA_Matrix;
   cssBI::matrix_inst->type_def = &TA_taMatrix; // base type..
   cssMisc::Internal.Push(cssBI::semicolon_mark);
   cssMisc::Internal.Push(cssBI::colon_mark);
-  cssMisc::Internal.Push(cssBI::colon_end_mark);
+  cssMisc::Internal.Push(cssBI::comma_mark);
   cssMisc::Internal.Push(cssBI::matrix_inst);
 
   // taBase enums that should be generally accessible to all objs..

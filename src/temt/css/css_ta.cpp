@@ -383,7 +383,7 @@ void cssTA_Base::Constr() {
     }
     taBase::Ref(nw);
     ptr = (void*)nw;
-    SetPtrFlag(OWN_OBJ);
+    SetPtrFlag(OWN_OBJ);	// note: doesn't actually seem to do anything, given that we ref/unref the ptr_cnt <= 1 now anyway..
   }
   else {
     taBase* ths = GetTAPtr();
@@ -1522,8 +1522,8 @@ taMatrix* cssTA_Matrix::MatrixPtr(const cssEl& s) {
 
 cssTA_Matrix::cssTA_Matrix(taMatrix* mtx)
   : cssTA_Base(mtx, 0, mtx->GetTypeDef()) {
-  SetPtrFlag(OWN_OBJ);
-  taBase::Ref(mtx);
+  SetPtrFlag(OWN_OBJ);		// mark us as owner
+  // taBase::Ref(mtx); // already gets ref'd in tabase constr
 }
 
 cssTA_Matrix::~cssTA_Matrix() {

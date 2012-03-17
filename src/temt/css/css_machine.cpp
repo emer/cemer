@@ -1277,6 +1277,8 @@ void cssElFun::GetArgDefs() {
 
 void cssElCFun::Constr() {
   parse = CSS_FUN;
+  itr_arg = -1;
+  flags = NO_FUN_FLAGS;
 }
 
 void cssElCFun::Copy(const cssElCFun& cp) {
@@ -1295,15 +1297,19 @@ cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[])) {
 cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm) {
   Constr(); name = nm;  argc = ac;  funp = fp;
 }
-cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, int pt, const String& hstr) {
+cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, int pt, const String& hstr, int flgs, int itrarg) {
   Constr(); name = nm;  argc = ac;  funp = fp;  parse = pt;
   if(hstr.nonempty()) help_str = hstr;
+  flags = (FunFlags)flgs;
+  itr_arg = itrarg;
 }
 cssElCFun::cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]),
-                         const String& nm, cssEl* rtype, const String& hstr) {
+      const String& nm, cssEl* rtype, const String& hstr, int flgs, int itrarg) {
   Constr(); name = nm;  argc = ac;  funp = fp;  parse = CSS_FUN;
   SetRetvType(rtype);
   if(hstr.nonempty()) help_str = hstr;
+  flags = (FunFlags)flgs;
+  itr_arg = itrarg;
 }
 cssElCFun::cssElCFun(const cssElCFun& cp) {
   Constr(); Copy(cp); name = cp.name;
@@ -1326,7 +1332,8 @@ cssEl::RunStat cssElCFun::Do(cssProg* prg) {
   BindArgs(args, act_argc);
   if(act_argc < 0) return cssEl::ExecError;
 
-  cssEl* tmp = (*funp)(act_argc, args);
+  cssEl* tmp = CallFun(act_argc, args);
+
   prog = prg;                   // restore if recursive
   if(!prog->top->external_stop && (tmp) && (tmp != &cssMisc::Void)) {
     tmp->prog = prog;
@@ -1335,6 +1342,68 @@ cssEl::RunStat cssElCFun::Do(cssProg* prg) {
   DoneArgs(args, act_argc);
 
   return dostat;
+}
+
+cssEl* cssElCFun::CallFun(int act_argc, cssEl* args[]) { 
+  if(HasFunFlag(FUN_ITR_MATRIX) && args[itr_arg]->IsTaMatrix()) {
+    return CallFunMatrixArgs(act_argc, args);
+  }
+  else if(HasFunFlag(FUN_ITR_LIST)) {
+    return CallFunListArgs(act_argc, args);
+  }
+  cssEl* tmp = (*funp)(act_argc, args);
+  return tmp;
+}
+
+cssEl* cssElCFun::CallFunMatrixArgs(int act_argc, cssEl* args[]) { 
+  cssEl* matarg = args[itr_arg];
+  cssEl* rval = NULL;
+  taMatrix* mat = ((cssTA_Matrix*)matarg)->GetMatrixPtr();
+  if(!mat) {
+    cssMisc::Error(prog, "CallFunMatrixArgs: argument is NULL matrix");
+    return &cssMisc::Void;
+  }
+  const String nm = "tmparg";
+  taMatrix* rmat = (taMatrix*)mat->Clone();
+  TA_FOREACH(mitm, *mat) { // use iterator on matrix so it can be filtered too
+    cssEl* tmparg = GetElFromVar(mitm, nm);
+    cssEl::Ref(tmparg);
+    args[itr_arg] = tmparg;
+    rval = (*funp)(act_argc, args);
+    cssEl::Ref(rval);
+    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr->el_idx); // store rval in matrix
+    cssEl::unRefDone(tmparg);
+    cssEl::unRefDone(rval);
+  }
+  args[itr_arg] = matarg;	// restore original arg
+  return new cssTA_Matrix(rmat);
+}
+
+cssEl* cssElCFun::CallFunListArgs(int act_argc, cssEl* args[]) { 
+  // todo: rewrite
+  // cssEl* matarg = args[itr_arg];
+  // cssEl* rval = NULL;
+  // taMatrix* mat = ((cssTA_Matrix*)matarg)->GetMatrixPtr();
+  // if(!mat) {
+  //   cssMisc::Error(prog, "CallFunMatrixArgs: argument is NULL matrix");
+  //   return &cssMisc::Void;
+  // }
+  // const String nm = "tmparg";
+  // TA_FOREACH(mitm, *mat) { // use iterator on matrix so it can be filtered too
+  //   cssEl* tmparg = GetElFromVar(mitm, nm);
+  //   cssEl::Ref(tmparg);
+  //   args[itr_arg] = tmparg;
+  //   if(rval) cssEl::unRefDone(rval);
+  //   rval = (*funp)(act_argc, args);
+  //   cssEl::Ref(rval);
+  //   cssEl::unRefDone(tmparg);
+  // }
+  // if(!rval) {
+  //   return &cssMisc::Void;
+  // }
+  // cssEl::unRef(rval);		// get rid of extra ref -- will get ref'd upon return
+  // return rval;
+  return &cssMisc::Void;
 }
 
 //////////////////////////////////////////

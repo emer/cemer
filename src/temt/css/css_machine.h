@@ -792,6 +792,12 @@ public:
 class CSS_API cssElFun : public cssEl {
   // basic things for function-type objects (this is a base type for other classes)
 public:
+  enum FunFlags {
+    NO_FUN_FLAGS = 0x0000,	// no flags set
+    FUN_ITR_MATRIX = 0x0001,	// iterate over itr_arg_no if given arg happens to be a matrix (or array) type -- iterating over matrix elements
+    FUN_ITR_LIST = 0x0002,	// iterate over itr_arg_no if given arg happens to be a taList_impl type -- iterating over taBase objects
+  };
+
   static const int ArgMax = 32; // maximum number of arguments
   cssSpace	arg_defs;	// default values for arguments
   String_Array	arg_vals;	// current arg values (as strings), for gui stuff
@@ -799,6 +805,8 @@ public:
   int		argc;		// number of args desired
   RunStat	dostat;		// return status value for do
   cssEl*	retv_type;	// return value type
+  FunFlags	flags;		// flags for controlling function behavior
+  int		itr_arg;	// arg number to do container iteration over, if flag is set
 
   void		SetRetvType(cssEl* rvt) { cssEl::SetRefPointer(&retv_type, rvt); }
 
@@ -814,6 +822,19 @@ public:
   void		Copy(const cssElFun& cp);
   void		CopyType(const cssElFun& cp) { Copy(cp); }
   USING(cssEl::operator=)
+
+  inline void           SetFunFlag(FunFlags flg)   { flags = (FunFlags)(flags | flg); }
+  // set flag state on
+  inline void           ClearFunFlag(FunFlags flg) { flags = (FunFlags)(flags & ~flg); }
+  // clear flag state (set off)
+  inline bool           HasFunFlag(FunFlags flg) const { return (flags & flg); }
+  // check if flag is set
+  inline void           SetFunFlagState(FunFlags flg, bool on)
+  { if(on) SetFunFlag(flg); else ClearFunFlag(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           ToggleFunFlag(FunFlags flg)
+  { SetFunFlagState(flg, !HasFunFlag(flg)); }
+  // toggle flag
 
   cssElFun();
   ~cssElFun();
@@ -843,8 +864,10 @@ public:
   cssElCFun();
   cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]));
   cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm);
-  cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, int pt, const String& hstr=NULL);
-  cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, cssEl* rtype, const String& hstr=NULL);
+  cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, int pt,
+	    const String& hstr=NULL, int flgs=0, int itrarg=-1);
+  cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm,
+	    cssEl* rtype, const String& hstr=NULL, int flgs=0, int itrarg=-1);
   cssElCFun(const cssElCFun& cp);
   cssElCFun(const cssElCFun& cp, const String& nm);
   ~cssElCFun();
@@ -854,6 +877,13 @@ public:
   // return retv_type token, else cssInt
   String GetStr() const	{ return name; } // types can give strings...
   Variant GetVar() const { return name; }
+
+  cssEl* CallFun(int act_argc, cssEl* args[]);
+  // call funp, return rval
+  cssEl* CallFunMatrixArgs(int act_argc, cssEl* args[]);
+  // call funp for FUN_ITR_MATRIX case
+  cssEl* CallFunListArgs(int act_argc, cssEl* args[]);
+  // call funp for FUN_ITR_LIST case
 };
 
 // pt can be either the parsetype or the retv_type
@@ -1136,7 +1166,7 @@ public:
   // set flag state according to on bool (if true, set flag, if false, clear it)
   inline void           TogglePtrFlag(PtrFlags flg)
   { SetPtrFlagState(flg, !HasPtrFlag(flg)); }
-  // toggle program flag
+  // toggle flag
 
   virtual void	SetClassParent(cssEl* cp);
   virtual void	UpdateClassParent();

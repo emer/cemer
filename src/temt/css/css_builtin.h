@@ -94,7 +94,7 @@ public:
   static cssInt*	false_int;
   static cssConstBool*	semicolon_mark;
   static cssConstBool*	colon_mark;
-  static cssConstBool*	colon_end_mark;
+  static cssConstBool*	comma_mark;
 
   static cssTA_Base*	root;		// root script element
   static cssTA_Matrix*  matrix_inst;	// instance of matrix for making tokens

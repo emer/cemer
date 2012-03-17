@@ -113,7 +113,7 @@ int yylex();
 
 /* expr elements */
 %type   <ival>	comb_expr exprlist exprlsel
-%type	<ival>	matrixarray matexprlist matexprlsel matsemicolon matcolon
+%type	<ival>	matrixarray matexprlist matexprlsel matsemicolon matcolon matcomma
 %type   <ival>  cmd_exprlist cmd_exprlsel argstop memb_expr
 %type	<ival>	normfuncall startmatrix
 %type   <el_ival> normfun membfun
@@ -1318,27 +1318,31 @@ startmatrix: '['			{ $$ = Code1(cssMisc::VoidElPtr); /* an arg stop */
 	    cssMisc::parsing_matrix = true; }
         ;
 
-matcolon: ':'				{ $$ = Code1(cssBI::colon_mark); }
+matcolon: ':'				{ $$ = Code1(cssMisc::Internal.FindName("colon_mark")); }
         ;
+
+matcomma: ','				{ $$ = Code1(cssMisc::Internal.FindName("comma_mark")); }
+        ;
+
+matsemicolon: ';'			{ $$ = Code1(cssMisc::Internal.FindName("semicolon_mark")); }
+        ;
+
 
 matexprlsel: expr
         | CSS_PTRTYPE			{ $$ = Code1($1); }/* allow ta_types */
-        | matcolon 			{ $$ = $1; Code1(cssBI::colon_end_mark); }
-        | expr matcolon 		{ $$ = $1; Code1(cssBI::colon_end_mark); }
-        | matcolon expr 		{ $$ = $1; Code1(cssBI::colon_end_mark); }
-        | matcolon matcolon expr        { $$ = $1; Code1(cssBI::colon_end_mark); }
-        | expr matcolon expr 		{ $$ = $1; Code1(cssBI::colon_end_mark); }
-        | expr matcolon expr matcolon	{ $$ = $1; Code1(cssBI::colon_end_mark); }
-        | expr matcolon expr matcolon expr { $$ = $1; Code1(cssBI::colon_end_mark); }
-        | expr matcolon matcolon expr   { $$ = $1; Code1(cssBI::colon_end_mark); }
-        | expr matcolon matcolon        { $$ = $1; Code1(cssBI::colon_end_mark); }
-        ;
-
-matsemicolon: ';'			{ $$ = Code1(cssBI::semicolon_mark); }
+        | matcolon 			{ $$ = $1; }
+        | expr matcolon 		{ $$ = $1; }
+        | matcolon expr 		{ $$ = $1; }
+        | matcolon matcolon expr        { $$ = $1; }
+        | expr matcolon expr 		{ $$ = $1; }
+        | expr matcolon expr matcolon	{ $$ = $1; }
+        | expr matcolon expr matcolon expr { $$ = $1; }
+        | expr matcolon matcolon expr   { $$ = $1; }
+        | expr matcolon matcolon        { $$ = $1; }
         ;
 
 matexprlist: matexprlsel		{ $$ = 1; } /* the argstop points to where the arguments stop on the stack (begin) */
-        | matexprlist ',' matexprlsel { $$ = $1 + 1; }
+        | matexprlist matcomma matexprlsel { $$ = $1 + 1; }
         | matexprlist matsemicolon matexprlsel { $$ = $1 + 2; }
         ;
 
