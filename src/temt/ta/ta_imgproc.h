@@ -83,9 +83,9 @@ public:
   bool	ImageFromMatrix_rgb(const float_Matrix& rgb_data);
   // #CAT_Data convert from RGB Matrix floating point image data to this image -- img_data is 3 dimensional with 3rd dim = r,g,b: note that this uses standard matrix convention where 0,0 = bottom left of image, not top left..
 
-  virtual bool	ImageToDataCell(DataTable* dt, Variant col, int row);
+  virtual bool	ImageToDataCell(DataTable* dt, const Variant& col, int row);
   // #BUTTON #CAT_Data set image to datatable cell indexed by col (name or number) and row -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
-  virtual bool	ImageFromDataCell(DataTable* dt, Variant col, int row);
+  virtual bool	ImageFromDataCell(DataTable* dt, const Variant& col, int row);
   // #BUTTON #CAT_Data set image from data in datatable cell indexed by col (name or number) and row -- uses cell dimensionality and type -- only amount that fits in cell is copied. row = -1 = last row
   virtual bool	ConfigDataColName(DataTable* dt, const String& col_nm, ValType val_type, 
 				  bool rgb = true);

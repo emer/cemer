@@ -1828,11 +1828,11 @@ public:
   }
   // #CAT_TwoD get a two-d value encoded in the twod_vals data 
 
-  inline void	SetTwoDVal(Variant val, TwoDXY xy, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+  inline void	SetTwoDVal(const Variant& val, TwoDXY xy, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
     twod_vals.SetFmVar(val, xy, val_typ, val_no, gp_x, gp_y);
   }
   // #CAT_TwoD set a two-d value encoded in the twod_vals data 
-  inline void	SetTwoDVals(Variant x_val, Variant y_val, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+  inline void	SetTwoDVals(const Variant& x_val, const Variant& y_val, TwoDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
     twod_vals.SetFmVar(x_val, TWOD_X, val_typ, val_no, gp_x, gp_y);
     twod_vals.SetFmVar(y_val, TWOD_Y, val_typ, val_no, gp_x, gp_y);
   }
@@ -2086,11 +2086,11 @@ public:
     w_val = fourd_vals.SafeElAsFloat(FOURD_W, val_typ, val_no, gp_x, gp_y);
   }
 
-  inline void	SetFourDVal(Variant val, FourDXYZW xyzw, FourDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
+  inline void	SetFourDVal(const Variant& val, FourDXYZW xyzw, FourDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
     fourd_vals.SetFmVar(val, xyzw, val_typ, val_no, gp_x, gp_y);
   }
   // #CAT_FourD set a four-d value encoded in the fourd_vals data 
-  inline void	SetFourDVals(Variant x_val, Variant y_val, Variant z_val, Variant w_val,
+  inline void	SetFourDVals(const Variant& x_val, const Variant& y_val, const Variant& z_val, const Variant& w_val,
 			     FourDValTypes val_typ, int val_no, int gp_x=0, int gp_y=0) {
     fourd_vals.SetFmVar(x_val, FOURD_X, val_typ, val_no, gp_x, gp_y);
     fourd_vals.SetFmVar(y_val, FOURD_X, val_typ, val_no, gp_x, gp_y);

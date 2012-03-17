@@ -395,7 +395,7 @@ public:
   char                  operator [] (int i) const;
   char&                 operator [] (int i); // writable -- NOTE: every use calls makeUnique
 #ifndef NO_TA_BASE
-  String                operator [] (Variant i) const;
+  String                operator [] (const Variant& i) const;
   // supports slices and lists of coordinates in addition to just an int index
 #endif
 

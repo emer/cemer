@@ -354,7 +354,7 @@ public:
   // #IGNORE helper function to do grouping when there are GROUP items, as spec'd in sort_spec
 
   static bool	TransposeColsToRows(DataTable* dest, DataTable* src,
-				    Variant data_col_st, int n_cols=-1, Variant col_names_col=-1);
+	    const Variant& data_col_st, int n_cols=-1, const Variant& col_names_col=-1);
   // #NULL_OK_0 #NULL_TEXT_0_NewDataTable #CAT_Order #MENU_BUTTON transpose column(s) of data from the source table into row(s) of data in the destination data table -- data_col_st indicates the starting column (specify either name or index), n_cols = number of columns after that (-1 = all columns), col_names_col specifies the column in the source table that contains names for the resulting columns in the destination table (-1 or empty string = no specified names -- call them row_0, etc)
 
   static bool	TransposeRowsToCols(DataTable* dest, DataTable* src, int st_row=0, int n_rows=-1,

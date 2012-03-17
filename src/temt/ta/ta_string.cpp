@@ -51,7 +51,7 @@ using namespace std;
 #include "ta_variant.h"
 #include "ta_matrix.h"
 
-String  String::operator [] (Variant i) const {
+String  String::operator [] (const Variant& i) const {
   String rval;
   if(i.isNumeric()) {
     rval = elem(i.toInt());

@@ -1523,14 +1523,12 @@ taMatrix* cssTA_Matrix::MatrixPtr(const cssEl& s) {
 cssTA_Matrix::cssTA_Matrix(taMatrix* mtx)
   : cssTA_Base(mtx, 0, mtx->GetTypeDef()) {
   SetPtrFlag(OWN_OBJ);		// mark us as owner
-  // if(taBase::GetRefn(mtx) == 0) {
-  //   taMisc::Info("ref!");
-  //   taBase::Ref(mtx);
-  // }
+  // taBase::Ref(mtx);
   // note: if set ptr_cnt <= 1 ref'ing in TA_Base, then off
-  // and ptr_cnt <= 1 is necessary for temp arrays to work properly it seems
-  // but they cause some crashing at exit due to other 0 guys that are not properly
-  // ref'd in the software -- can just go thru and fix all those however..
+  // ptr_cnt <= 1 can cause crashing at exit due to other 0 ptr guys that
+  // are not properly  ref'd in the software -- can just go thru and fix
+  // all those however.. -- safer in general to have the ptr_cnt = 0 do the
+  // ref..
 }
 
 cssTA_Matrix::~cssTA_Matrix() {

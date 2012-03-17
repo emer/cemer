@@ -1066,7 +1066,7 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 }
 
 bool taDataProc::TransposeColsToRows(DataTable* dest, DataTable* src,
-				     Variant data_col_st, int n_cols, Variant col_names_col) {
+	     const Variant& data_col_st, int n_cols, const Variant& col_names_col) {
   bool in_place_req = false;
   GetDest(dest, src, "TransposeColsToRows", in_place_req);
   if(in_place_req) {

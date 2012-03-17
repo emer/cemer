@@ -179,7 +179,7 @@ bool taImage::ImageFromMatrix_rgb(const float_Matrix& rgb_data) {
   return true;
 }
 
-bool taImage::ImageToDataCell(DataTable* dt, Variant col, int row) {
+bool taImage::ImageToDataCell(DataTable* dt, const Variant& col, int row) {
   if(TestError(q_img.isNull(), "ImageToDataCell", "Null image")) return false;
   if(TestError(!dt, "ImageToDataCell", "Null data table")) return false;
 
@@ -241,7 +241,7 @@ bool taImage::ImageToDataCell(DataTable* dt, Variant col, int row) {
   return rval;
 }
 
-bool taImage::ImageFromDataCell(DataTable* dt, Variant col, int row) {
+bool taImage::ImageFromDataCell(DataTable* dt, const Variant& col, int row) {
   if(TestError(!dt, "ImageToDataCell", "Null data table")) return false;
 
   int ht = q_img.height();

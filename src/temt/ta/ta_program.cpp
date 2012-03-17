@@ -582,7 +582,7 @@ ostream& DynEnumType::OutputType(ostream& strm) const {
   return strm;
 }
 
-bool DynEnumType::EnumsFromDataTable(DataTable* dt, Variant col) {
+bool DynEnumType::EnumsFromDataTable(DataTable* dt, const Variant& col) {
   if(TestError(!dt, "EnumsFromDataTable", "data table is null")) return false;
   DataCol* da = dt->GetColData(col);
   if(!da) return false;
