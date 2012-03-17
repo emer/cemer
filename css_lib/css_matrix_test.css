@@ -1,0 +1,20 @@
+// load "../css_lib/css_matrix_test.css"
+
+a = [1.0, 2.0, 3.0; 4.0, 5.0, 6.0];
+printf("a:\n", a);
+b = [a, a];
+printf("b:\n", b);
+c = [1, 2, 3; 4, 5, 6; 7, 8, 9];
+printf("c:\n", c);
+d = [c, c];
+printf("d:\n", d);
+e = [c, c, c];
+printf("e:\n", e);
+printf("e[:,0,0]\n", e[:,0,0]);
+printf("e[0,:,0]\n", e[0,:,0]);
+printf("e[0,0,:]\n", e[0,0,:]);
+f = [e, e];
+printf("f:\n", f);
+
+printf("cos(a):\n", cos(a));
+printf("cos(a[0,:]):\n", cos(a[0,:]));
