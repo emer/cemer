@@ -952,7 +952,12 @@ bool taBase::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
 		 "index matrix dims:", String(cmat->dims()),
 		 "is not size of container coordinates:", String(cont_dims)))
       return false;
-    // todo: subclasses should check actual geometry
+    if(ElViewMode() == IDX_MASK) {
+      if(TestError(cmat->size != ElemCount(), "IterValidate::IDX_MASK",
+		   "el_view size:", String(cmat->size), "not equal to size of list:",
+		   String(ElemCount())))
+	return false;
+    }
   }
   else {
     TestError(true, "IterValidate", "view mode must be either IDX_COORDS or IDX_MASK");
@@ -965,6 +970,87 @@ void taBase::DelIter(taBaseItr*& itr) const {
   if(!itr) return;
   taBase::unRefDone(itr);
   itr = NULL;
+}
+
+int taBase::IterNextIndex(taBaseItr*& itr) const {
+  if(IterNext_impl(itr))
+    return itr->el_idx;
+  DelIter(itr);
+  return -1;
+}
+
+int taBase::IterFirstIndex(taBaseItr*& itr) const {
+  if(IterFirst_impl(itr))
+    return itr->el_idx;
+  DelIter(itr);
+  return -1;
+}
+
+bool taBase::IterFirst_impl(taBaseItr*& itr) const {
+  if(!itr) return false;
+  itr->count = 0;
+  itr->el_idx = 0;		// just to be sure
+  if(!ElView()) {
+    if(ElemCount() > 0) return true;
+    return false;
+  }
+  if(!IterValidate(ElView(), ElViewMode(), 1)) {
+    return false;
+  }
+  if(ElViewMode() == IDX_COORDS) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    if(cmat->size == 0) {
+      return false;
+    }
+    itr->el_idx = cmat->FastEl_Flat(0); // first guy
+    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+      return false;
+    }
+    return true;
+  }
+  else if(ElViewMode() == IDX_MASK) {
+    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
+    for(int i=0; i<ElemCount(); i++) {
+      if(cmat->FastEl_Flat(i)) {
+	itr->el_idx = i;
+	return true;		// byte_matrix guaranteed to be same size as list
+      }
+    }
+  }
+  return false;
+}
+
+bool taBase::IterNext_impl(taBaseItr*& itr) const {
+  if(!itr) return false;
+  itr->count++;
+  if(!ElView()) {
+    itr->el_idx++;
+    if(itr->el_idx >= ElemCount()) {
+      return false;
+    }
+    return true;
+  }
+  if(ElViewMode() == IDX_COORDS) {
+    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
+    if(cmat->size <= itr->count) {
+      return false;
+    }
+    itr->el_idx = cmat->FastEl_Flat(itr->count); // next guy
+    if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
+      return false;
+    }
+    return true;
+  }
+  else if(ElViewMode() == IDX_MASK) {
+    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
+    for(int i=itr->el_idx+1; i<ElemCount(); i++) { // search for next
+      if(cmat->FastEl_Flat(i)) { // true
+	itr->el_idx = i;     // byte_matrix guaranteed to be same size as list
+	return true;
+      }
+    }
+  }
+  return false;
 }
 
 bool taBase::FixSliceValsFromSize(int& start, int& end, int sz) const {
@@ -4036,7 +4122,7 @@ void taList_impl::ChildUpdateAfterEdit(taBase* child, bool& handled) {
 }
 
 Variant taList_impl::VarEl(int idx) const {
-  taBase* tab = LeafElem(idx);
+  taBase* tab = ElemLeaf(idx);
   if(tab && tab->InheritsFrom(&TA_taMatrix))
     return (Variant)((taMatrix*)tab);
   return (Variant)tab;
@@ -4044,10 +4130,10 @@ Variant taList_impl::VarEl(int idx) const {
 
 void taList_impl::LinkCopyLeaves(const taList_impl& cp) {
   Reset();
-  if(!Alloc(cp.Leaves())) return;
+  if(!Alloc(cp.ElemCount())) return;
   // just want to make everything flat and remove all substructure, so we do that..
-  for(int i=0; i < cp.Leaves(); i++)
-    Link_(cp.LeafElem(i));
+  for(int i=0; i < cp.ElemCount(); i++)
+    Link_(cp.ElemLeaf(i));
 }
 
 bool taList_impl::SetElView(taMatrix* view_mat, IndexMode md) {
@@ -4125,8 +4211,8 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
     int_Matrix* imat = new int_Matrix(1,0);
     TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
       int el_idx = mitm.toInt();
-      if(el_idx < 0) el_idx += Leaves();
-      if(el_idx < 0 || el_idx >= Leaves()) continue; // skip out of range at this point
+      if(el_idx < 0) el_idx += ElemCount();
+      if(el_idx < 0 || el_idx >= ElemCount()) continue; // skip out of range at this point
       imat->Add(el_idx);
     }
     taList_impl* nwvw = NewElView(imat, IDX_COORDS);
@@ -4139,7 +4225,7 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
     int end = cmat->FastEl_Flat(1);
     int step = cmat->FastEl_Flat(2);
     if(step == 0) step = 1;
-    if(!FixSliceValsFromSize(start, end, Leaves()))
+    if(!FixSliceValsFromSize(start, end, ElemCount()))
       return _nilVariant;
     int_Matrix* imat = new int_Matrix(1,0);
     if(step > 0) {
@@ -4158,9 +4244,9 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
   }
   case IDX_MASK: {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(idx.toMatrix());
-    if(TestError(cmat->dim(0) != Leaves(), "Elem::IDX_MASK",
+    if(TestError(cmat->dim(0) != ElemCount(), "Elem::IDX_MASK",
 		 "index matrix dim(0):", String(cmat->dim(0)),
-		 "is not size of list:", String(Leaves())))
+		 "is not size of list:", String(ElemCount())))
       return false;
     if(el_view && el_view_mode == IDX_MASK) {
       // todo: must and this list with any existing -- needs elem-wise operator!
@@ -4195,8 +4281,8 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
 	  }
 	  else if(mitm.isNumeric()) {
 	    int el_idx = mitm.toInt();
-	    if(el_idx < 0) el_idx += Leaves();
-	    if(el_idx < 0 || el_idx >= Leaves()) continue; // skip out of range at this point
+	    if(el_idx < 0) el_idx += ElemCount();
+	    if(el_idx < 0 || el_idx >= ElemCount()) continue; // skip out of range at this point
 	    imat->Add(el_idx); // add absolute index of item
 	  }
 	}
@@ -4221,104 +4307,6 @@ taBaseItr* taList_impl::Iter() const {
 Variant	taList_impl::IterElem(taBaseItr* itr) const {
   if(!itr) return _nilVariant;
   return VarEl(itr->el_idx);
-}
-
-bool taList_impl::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
-  bool rval = inherited::IterValidate(vmat, mode, cont_dims);
-  if(!rval) return false;
-  if(!vmat) return true;
-  if(el_view_mode == IDX_MASK) {
-    if(TestError(ElView()->size != Leaves(), "IterValidate::IDX_MASK",
-		 "el_view size:", String(ElView()->size), "not equal to size of list:",
-		 String(Leaves())))
-      return false;
-  }
-  return true;
-}
-
-Variant	taList_impl::IterFirst(taBaseItr*& itr) const {
-  if(!itr) return _nilVariant;
-  itr->count = 0;
-  itr->el_idx = 0;		// just to be sure
-  if(!el_view) {
-    Variant rval = IterElem(itr);	// just first guy
-    if(rval.isNull())
-      DelIter(itr);
-    return rval;
-  }
-  if(!IterValidate(ElView(), el_view_mode, 1)) {
-    DelIter(itr);
-    return _nilVariant;
-  }
-  if(el_view_mode == IDX_COORDS) {
-    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size == 0) {
-      DelIter(itr);
-      return _nilVariant;
-    }
-    itr->el_idx = cmat->FastEl_Flat(0); // first guy
-    Variant rval = IterElem(itr);
-    if(rval.isNull())
-      DelIter(itr);
-    return rval;
-  }
-  else if(el_view_mode == IDX_MASK) {
-    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
-    for(int i=0; i<Leaves(); i++) {
-      if(cmat->FastEl_Flat(i)) {
-	itr->el_idx = i;
-	Variant rval = IterElem(itr);
-	if(rval.isNull())
-	  DelIter(itr);
-	return rval;
-      }
-    }
-  }
-  DelIter(itr);
-  return _nilVariant;
-}
-
-Variant	taList_impl::IterNext(taBaseItr*& itr) const {
-  if(!itr) return _nilVariant;
-  itr->count++;
-  if(!el_view) {
-    itr->el_idx++;
-    Variant rval = IterElem(itr);
-    if(rval.isNull())
-      DelIter(itr);
-    return rval;
-  }
-  if(el_view_mode == IDX_COORDS) {
-    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size <= itr->count) {
-      DelIter(itr);
-      return _nilVariant;
-    }
-    itr->el_idx = cmat->FastEl_Flat(itr->count); // next guy
-    Variant rval = IterElem(itr);
-    if(rval.isNull())
-      DelIter(itr);
-    return rval;
-  }
-  else if(el_view_mode == IDX_MASK) {
-    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
-    for(int i=itr->el_idx+1; i<Leaves(); i++) { // search for next
-      if(cmat->FastEl_Flat(i)) { // true
-	itr->el_idx = i;
-	Variant rval = IterElem(itr);
-	if(rval.isNull())
-	  DelIter(itr);
-	return rval;
-      }
-    }
-  }
-  DelIter(itr);
-  return _nilVariant;
-}
-
-Variant	taList_impl::IterBegin(taBaseItr*& itr) const {
-  itr = Iter();
-  return IterFirst(itr);
 }
 
 String taList_impl::ChildGetColText(void* child, TypeDef* typ, const KeyString& key,
@@ -5811,104 +5799,6 @@ taBaseItr* taArray_base::Iter() const {
 Variant	taArray_base::IterElem(taBaseItr* itr) const {
   if(!itr) return _nilVariant;
   return SafeElAsVar(itr->el_idx);
-}
-
-bool taArray_base::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
-  bool rval = inherited::IterValidate(vmat, mode, cont_dims);
-  if(!rval) return false;
-  if(!vmat) return true;
-  if(el_view_mode == IDX_MASK) {
-    if(TestError(ElView()->size != size, "IterValidate::IDX_MASK",
-		 "el_view size:", String(ElView()->size), "not equal to size of list:",
-		 String(size)))
-      return false;
-  }
-  return true;
-}
-
-Variant	taArray_base::IterFirst(taBaseItr*& itr) const {
-  if(!itr) return _nilVariant;
-  itr->count = 0;
-  itr->el_idx = 0;		// just to be sure
-  if(!el_view) {
-    Variant rval = IterElem(itr);	// just first guy
-    if(rval.isNull())
-      DelIter(itr);
-    return rval;
-  }
-  if(!IterValidate(ElView(), el_view_mode, 1)) {
-    DelIter(itr);
-    return _nilVariant;
-  }
-  if(el_view_mode == IDX_COORDS) {
-    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size == 0) {
-      DelIter(itr);
-      return _nilVariant;
-    }
-    itr->el_idx = cmat->FastEl_Flat(0); // first guy
-    Variant rval = IterElem(itr);
-    if(rval.isNull())
-      DelIter(itr);
-    return rval;
-  }
-  else if(el_view_mode == IDX_MASK) {
-    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
-    for(int i=0; i<size; i++) {
-      if(cmat->FastEl_Flat(i)) {
-	itr->el_idx = i;
-	Variant rval = IterElem(itr);
-	if(rval.isNull())
-	  DelIter(itr);
-	return rval;
-      }
-    }
-  }
-  DelIter(itr);
-  return _nilVariant;
-}
-
-Variant	taArray_base::IterNext(taBaseItr*& itr) const {
-  if(!itr) return _nilVariant;
-  itr->count++;
-  if(!el_view) {
-    itr->el_idx++;
-    Variant rval = IterElem(itr);
-    if(rval.isNull())
-      DelIter(itr);
-    return rval;
-  }
-  if(el_view_mode == IDX_COORDS) {
-    int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
-    if(cmat->size <= itr->count) {
-      DelIter(itr);
-      return _nilVariant;
-    }
-    itr->el_idx = cmat->FastEl_Flat(itr->count); // next guy
-    Variant rval = IterElem(itr);
-    if(rval.isNull())
-      DelIter(itr);
-    return rval;
-  }
-  else if(el_view_mode == IDX_MASK) {
-    byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
-    for(int i=itr->el_idx+1; i<size; i++) { // search for next
-      if(cmat->FastEl_Flat(i)) { // true
-	itr->el_idx = i;
-	Variant rval = IterElem(itr);
-	if(rval.isNull())
-	  DelIter(itr);
-	return rval;
-      }
-    }
-  }
-  DelIter(itr);
-  return _nilVariant;
-}
-
-Variant	taArray_base::IterBegin(taBaseItr*& itr) const {
-  itr = Iter();
-  return IterFirst(itr);
 }
 
 void taArray_base::List(ostream& strm) const {

@@ -2359,6 +2359,50 @@ QVariant Variant::toQVariant() const {
 }
 #endif
 
+Variant operator+(const Variant& a, const Variant& b) {
+  if(a.isNumericStrict()) {
+    return (Variant)(a.toDouble() + b.toDouble());
+  }
+  else if(a.isStringType()) {
+    return (Variant)(a.toString() + b.toString());
+  }
+  taMisc::Error("operator + not supported for non-numeric, non-string types");
+  return _nilVariant;
+}
+
+Variant operator-(const Variant& a, const Variant& b) {
+  if(a.isNumericStrict()) {
+    return (Variant)(a.toDouble() - b.toDouble());
+  }
+  taMisc::Error("operator - not supported for non-numeric types");
+  return _nilVariant;
+}
+
+Variant operator*(const Variant& a, const Variant& b) {
+  if(a.isNumericStrict()) {
+    return (Variant)(a.toDouble() * b.toDouble());
+  }
+  taMisc::Error("operator * not supported for non-numeric types");
+  return _nilVariant;
+}
+
+Variant operator/(const Variant& a, const Variant& b) {
+  if(a.isNumericStrict()) {
+    return (Variant)(a.toDouble() / b.toDouble());
+  }
+  taMisc::Error("operator / not supported for non-numeric types");
+  return _nilVariant;
+}
+
+Variant operator%(const Variant& a, const Variant& b) {
+  if(a.isNumericStrict()) {
+    return (Variant)(a.toInt() % b.toInt()); // not sure this makes sense
+  }
+  taMisc::Error("operator % not supported for non-numeric types");
+  return _nilVariant;
+}
+
+
 //////////////////////////////////
 //  NameVar                     //
 //////////////////////////////////

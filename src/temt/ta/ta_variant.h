@@ -474,6 +474,7 @@ inline Variant operator+(ta_uint64_t a, const Variant& b) {Variant r(a); r += b;
 inline Variant operator+(double a, const Variant& b) {Variant r(a); r += b; return r;}
 inline Variant operator+(char a, const Variant& b) {Variant r(a); r += b; return r;}
 inline Variant operator+(const String a, const Variant& b) {Variant r(a); r += b; return r;}
+Variant operator+(const Variant& a, const Variant& b);
 
 inline Variant operator-(const Variant& a, int b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(const Variant& a, uint b) {Variant r(a); r -= b; return r;}
@@ -487,6 +488,7 @@ inline Variant operator-(ta_int64_t a, const Variant& b) {Variant r(a); r -= b; 
 inline Variant operator-(ta_uint64_t a, const Variant& b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(double a, const Variant& b) {Variant r(a); r -= b; return r;}
 inline Variant operator-(char a, const Variant& b) {Variant r(a); r -= b; return r;}
+Variant operator-(const Variant& a, const Variant& b);
 
 inline Variant operator*(const Variant& a, int b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(const Variant& a, uint b) {Variant r(a); r *= b; return r;}
@@ -500,6 +502,7 @@ inline Variant operator*(ta_int64_t a, const Variant& b) {Variant r(a); r *= b; 
 inline Variant operator*(ta_uint64_t a, const Variant& b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(double a, const Variant& b) {Variant r(a); r *= b; return r;}
 inline Variant operator*(char a, const Variant& b) {Variant r(a); r *= b; return r;}
+Variant operator*(const Variant& a, const Variant& b);
 
 inline Variant operator/(const Variant& a, int b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(const Variant& a, uint b) {Variant r(a); r /= b; return r;}
@@ -513,6 +516,7 @@ inline Variant operator/(ta_int64_t a, const Variant& b) {Variant r(a); r /= b; 
 inline Variant operator/(ta_uint64_t a, const Variant& b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(double a, const Variant& b) {Variant r(a); r /= b; return r;}
 inline Variant operator/(char a, const Variant& b) {Variant r(a); r /= b; return r;}
+Variant operator/(const Variant& a, const Variant& b);
 
 inline Variant operator%(const Variant& a, int b) {Variant r(a); r %= b; return r;}
 inline Variant operator%(const Variant& a, uint b) {Variant r(a); r %= b; return r;}
@@ -524,6 +528,7 @@ inline Variant operator%(uint a, const Variant& b) {Variant r(a); r %= b; return
 inline Variant operator%(ta_int64_t a, const Variant& b) {Variant r(a); r %= b; return r;}
 inline Variant operator%(ta_uint64_t a, const Variant& b) {Variant r(a); r %= b; return r;}
 inline Variant operator%(char a, const Variant& b) {Variant r(a); r %= b; return r;}
+Variant operator%(const Variant& a, const Variant& b);
 
 inline Variant operator<<(const Variant& a, int b) {Variant r(a); r <<= b; return r;}
 inline Variant operator<<(const Variant& a, uint b) {Variant r(a); r <<= b; return r;}

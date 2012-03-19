@@ -464,26 +464,26 @@ public:
   USING(cssTA_Base::operator=)
 
   cssEl* operator+(cssEl& t);
-  // cssEl* operator-(cssEl& t);
-  // cssEl* operator*(cssEl& t);
-  // cssEl* operator/(cssEl& t);
-  // cssEl* operator%(cssEl& t);
+  cssEl* operator-(cssEl& t);
+  cssEl* operator*(cssEl& t);
+  cssEl* operator/(cssEl& t);
+  cssEl* operator%(cssEl& t);
 
-  // cssEl* operator-();
+  cssEl* operator-()		{ return cssTA_Base::operator-(); }
+  cssEl* operator*()		{ return cssTA_Base::operator*(); }
 
-  // void operator+=(cssEl& t);
-  // void operator-=(cssEl& t);
-  // void operator*=(cssEl& t);
-  // void operator/=(cssEl& t);
-  // void operator%=(cssEl& t);
+  void operator+=(cssEl& t);
+  void operator-=(cssEl& t);
+  void operator*=(cssEl& t);
+  void operator/=(cssEl& t);
+  void operator%=(cssEl& t);
 
-  // bool operator< (cssEl& s) 	{ return (val < (Int)s); }
-  // bool operator> (cssEl& s) 	{ return (val > (Int)s); }
-  // bool operator<=(cssEl& s) 	{ return (val <= (Int)s); }
-  // bool operator>=(cssEl& s) 	{ return (val >= (Int)s); }
-  // bool operator==(cssEl& s) 	{ return (val == (Int)s); }
-  // bool operator!=(cssEl& s) 	{ return (val != (Int)s); }
-
+  cssEl* operator< (cssEl& s);
+  cssEl* operator> (cssEl& s);
+  cssEl* operator<=(cssEl& s);
+  cssEl* operator>=(cssEl& s);
+  cssEl* operator==(cssEl& s);
+  cssEl* operator!=(cssEl& s);
 };
 
 

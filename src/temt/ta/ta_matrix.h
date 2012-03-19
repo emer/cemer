@@ -502,12 +502,12 @@ public:
   ///////////////////////////////////////
   // Standard Elem and iterator interface
 
-  inline taMatrix*      ElView() const  { return (taMatrix*)el_view.ptr(); }
-  // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
+  override taMatrix*    ElView() const  { return (taMatrix*)el_view.ptr(); }
+  override IndexMode    ElViewMode() const  { return el_view_mode; }
+  override int		ElemCount() const { return size; }
   override Variant   	Elem(const Variant& idx, IndexMode mode = IDX_UNK) const;
-  override Variant   	IterBegin(taBaseItr*& itr) const;
-  override Variant      IterFirst(taBaseItr*& itr) const;
-  override Variant   	IterNext(taBaseItr*& itr) const;
+  override bool      	IterFirst_impl(taBaseItr*& itr) const;
+  override bool		IterNext_impl(taBaseItr*& itr) const;
   override Variant   	IterElem(taBaseItr* itr) const;
   override taBaseItr*   Iter() const;
   override bool      	IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const;
@@ -828,6 +828,53 @@ public:
 
   virtual taMatrix* operator+(const taMatrix& t);
   virtual taMatrix* operator+(const Variant& t);
+
+  virtual taMatrix* operator-(const taMatrix& t);
+  virtual taMatrix* operator-(const Variant& t);
+
+  virtual taMatrix* operator*(const taMatrix& t);
+  virtual taMatrix* operator*(const Variant& t);
+
+  virtual taMatrix* operator/(const taMatrix& t);
+  virtual taMatrix* operator/(const Variant& t);
+
+  virtual taMatrix* operator%(const taMatrix& t);
+  virtual taMatrix* operator%(const Variant& t);
+
+  virtual void 	    operator+=(const taMatrix& t);
+  virtual void	    operator+=(const Variant& t);
+
+  virtual void 	    operator-=(const taMatrix& t);
+  virtual void	    operator-=(const Variant& t);
+
+  virtual void 	    operator*=(const taMatrix& t);
+  virtual void	    operator*=(const Variant& t);
+
+  virtual void 	    operator/=(const taMatrix& t);
+  virtual void	    operator/=(const Variant& t);
+
+  virtual void 	    operator%=(const taMatrix& t);
+  virtual void	    operator%=(const Variant& t);
+
+  // boolean operators return a byte_Matrix
+
+  virtual taMatrix* operator<(const taMatrix& t);
+  virtual taMatrix* operator<(const Variant& t);
+
+  virtual taMatrix* operator>(const taMatrix& t);
+  virtual taMatrix* operator>(const Variant& t);
+
+  virtual taMatrix* operator<=(const taMatrix& t);
+  virtual taMatrix* operator<=(const Variant& t);
+
+  virtual taMatrix* operator>=(const taMatrix& t);
+  virtual taMatrix* operator>=(const Variant& t);
+
+  virtual taMatrix* operator==(const taMatrix& t);
+  virtual taMatrix* operator==(const Variant& t);
+
+  virtual taMatrix* operator!=(const taMatrix& t);
+  virtual taMatrix* operator!=(const Variant& t);
 
 protected:
   override void		UpdateAfterEdit_impl(); 

@@ -210,8 +210,8 @@ public:
 
 #endif
 
-  override taBase* LeafElem(int leaf_idx) const { return Leaf_(leaf_idx); }
-  override int	   Leaves() const 		{ return leaves; }
+  override taBase* ElemLeaf(int leaf_idx) const { return Leaf_(leaf_idx); }
+  override int	   ElemCount() const 		{ return leaves; }
 
   virtual taGroup_impl*  NewGp_(int no, TypeDef* typ=NULL, const String& name_ = "");
     // #IGNORE create sub groups

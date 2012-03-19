@@ -145,12 +145,12 @@ public:
   void operator^=(cssEl& t) 	{ val ^= (Int)t; }
   void operator|=(cssEl& t) 	{ val |= (Int)t; }
 
-  bool operator< (cssEl& s) 	{ return (val < (Int)s); }
-  bool operator> (cssEl& s) 	{ return (val > (Int)s); }
-  bool operator<=(cssEl& s) 	{ return (val <= (Int)s); }
-  bool operator>=(cssEl& s) 	{ return (val >= (Int)s); }
-  bool operator==(cssEl& s) 	{ return (val == (Int)s); }
-  bool operator!=(cssEl& s) 	{ return (val != (Int)s); }
+  cssEl* operator< (cssEl& s) 	{ return new cssBool(val < (Int)s); }
+  cssEl* operator> (cssEl& s) 	{ return new cssBool(val > (Int)s); }
+  cssEl* operator<=(cssEl& s) 	{ return new cssBool(val <= (Int)s); }
+  cssEl* operator>=(cssEl& s) 	{ return new cssBool(val >= (Int)s); }
+  cssEl* operator==(cssEl& s) 	{ return new cssBool(val == (Int)s); }
+  cssEl* operator!=(cssEl& s) 	{ return new cssBool(val != (Int)s); }
 };
 
 #define cssInt_inst(l,n,x)          l .Push(new cssInt((int) n,(const char *) #x))
@@ -290,12 +290,12 @@ public:
   void operator^=(cssEl& t) 	{ val ^= (ta_int64_t)t; }
   void operator|=(cssEl& t) 	{ val |= (ta_int64_t)t; }
 
-  bool operator< (cssEl& s) 	{ return (val < (ta_int64_t)s); }
-  bool operator> (cssEl& s) 	{ return (val > (ta_int64_t)s); }
-  bool operator<=(cssEl& s) 	{ return (val <= (ta_int64_t)s); }
-  bool operator>=(cssEl& s) 	{ return (val >= (ta_int64_t)s); }
-  bool operator==(cssEl& s) 	{ return (val == (ta_int64_t)s); }
-  bool operator!=(cssEl& s) 	{ return (val != (ta_int64_t)s); }
+  cssEl* operator< (cssEl& s) 	{ return new cssBool(val < (ta_int64_t)s); }
+  cssEl* operator> (cssEl& s) 	{ return new cssBool(val > (ta_int64_t)s); }
+  cssEl* operator<=(cssEl& s) 	{ return new cssBool(val <= (ta_int64_t)s); }
+  cssEl* operator>=(cssEl& s) 	{ return new cssBool(val >= (ta_int64_t)s); }
+  cssEl* operator==(cssEl& s) 	{ return new cssBool(val == (ta_int64_t)s); }
+  cssEl* operator!=(cssEl& s) 	{ return new cssBool(val != (ta_int64_t)s); }
 };
 
 #define cssInt64_inst(l,n,x)          l .Push(new cssInt64((ta_int64_t) n,(const char *) #x))
@@ -404,12 +404,12 @@ public:
   void operator*=(cssEl& t) 	{ val *= (Real)t; }
   void operator/=(cssEl& t) 	{ val /= (Real)t; }
 
-  bool operator< (cssEl& s) { return (val < (Real)s); }
-  bool operator> (cssEl& s) { return (val > (Real)s); }
-  bool operator<=(cssEl& s) { return (val <= (Real)s); }
-  bool operator>=(cssEl& s) { return (val >= (Real)s); }
-  bool operator==(cssEl& s) { return (val == (Real)s); }
-  bool operator!=(cssEl& s) { return (val != (Real)s); }
+  cssEl* operator< (cssEl& s) { return new cssBool(val < (Real)s); }
+  cssEl* operator> (cssEl& s) { return new cssBool(val > (Real)s); }
+  cssEl* operator<=(cssEl& s) { return new cssBool(val <= (Real)s); }
+  cssEl* operator>=(cssEl& s) { return new cssBool(val >= (Real)s); }
+  cssEl* operator==(cssEl& s) { return new cssBool(val == (Real)s); }
+  cssEl* operator!=(cssEl& s) { return new cssBool(val != (Real)s); }
 };
 
 #define cssReal_inst(l,n,x)		l .Push(new cssReal(n, #x))
@@ -542,12 +542,12 @@ public:
 
   void operator+=(cssEl& t) 	{ val += t.GetStr(); }
 
-  bool operator< (cssEl& s) { return (val < s.GetStr()); }
-  bool operator> (cssEl& s) { return (val > s.GetStr()); }
-  bool operator<=(cssEl& s) { return (val <= s.GetStr()); }
-  bool operator>=(cssEl& s) { return (val >= s.GetStr()); }
-  bool operator==(cssEl& s) { return (val == s.GetStr()); }
-  bool operator!=(cssEl& s) { return (val != s.GetStr()); }
+  cssEl* operator< (cssEl& s) { return new cssBool(val < s.GetStr()); }
+  cssEl* operator> (cssEl& s) { return new cssBool(val > s.GetStr()); }
+  cssEl* operator<=(cssEl& s) { return new cssBool(val <= s.GetStr()); }
+  cssEl* operator>=(cssEl& s) { return new cssBool(val >= s.GetStr()); }
+  cssEl* operator==(cssEl& s) { return new cssBool(val == s.GetStr()); }
+  cssEl* operator!=(cssEl& s) { return new cssBool(val != s.GetStr()); }
 
   // these use the TA info to perform actions
   cssEl* operator[](const Variant& idx) const;
@@ -562,66 +562,6 @@ public:
 #define cssString_inst_ptr(l,n,x)	l .Push(cssBI::x = new cssString(n, #x))
 #define cssString_inst_ptr_nm(l,n,x,s)	l .Push(cssBI::x = new cssString(n, s))
 
-
-class CSS_API cssBool : public cssEl {
-  // a boolean value
-public:
-  bool		val;
-
-  int		GetParse() const	{ return CSS_VAR; }
-  uint		GetSize() const		{ return sizeof(*this); }
-  cssTypes 	GetType() const		{ return T_Bool; }
-  const char*	GetTypeName() const	{ return "(Bool)"; }
-
-  String 	PrintStr() const
-  { return String(GetTypeName())+" " + name + " = " + GetStr(); }
-  String	PrintFStr() const { return GetStr(); }
-
-  // constructors
-  void 		Constr()			{ val = false; }
-  void		Copy(const cssBool& cp)		{ cssEl::Copy(cp); val = cp.val; }
-
-  cssBool()					{ Constr(); }
-  cssBool(bool vl)				{ Constr(); val = vl; }
-  cssBool(bool vl, const String& nm) 		{ Constr(); name = nm;  val = vl; }
-  cssBool(const cssBool& cp)			{ Copy(cp); name = cp.name; }
-  cssBool(const cssBool& cp, const String& nm)  { Copy(cp); name = nm; }
-
-  cssCloneFuns(cssBool, false);
-
-  // converters
-  String GetStr() const;
-  Variant GetVar() const 	{ return Variant(val); }
-  operator Real() const	 	{ return (Real)val; }
-  operator Int() const	 	{ return val; }
-  operator bool() const	 	{ return val; }
-
-  void operator=(Real cp) 		{ val = (bool)cp; }
-  void operator=(Int cp)		{ val = (bool)cp; }
-  void operator=(const String& cp);
-
-  void operator=(void*)	 	{ CvtErr("(void*)"); }
-  void operator=(void**)	{ CvtErr("(void**)"); }
-  USING(cssEl::operator=)
-
-  // operators
-  void operator=(const cssEl& s);
-
-  cssEl* operator&(cssEl &t)
-  { cssBool *r = new cssBool(val); r->val &= (bool)t; return r; }
-  cssEl* operator^(cssEl &t)
-  { cssBool *r = new cssBool(val); r->val ^= (bool)t; return r; }
-  cssEl* operator|(cssEl &t)
-  { cssBool *r = new cssBool(val); r->val |= (bool)t; return r; }
-
-  // operators
-  void operator&=(cssEl& t) { val &= (bool)t; }
-  void operator^=(cssEl& t) { val ^= (bool)t; }
-  void operator|=(cssEl& t) { val |= (bool)t; }
-
-  bool operator==(cssEl& s) 	{ return (val == (bool)s); }
-  bool operator!=(cssEl& s) 	{ return (val != (bool)s); }
-};
 
 class CSS_API cssConstBool : public cssBool {
   // a constant boolean value -- cannot be changed through std operators -- must assign directly to value in initialization
@@ -719,17 +659,17 @@ public:
   cssEl* operator-();
   cssEl* operator~();
 
-  void operator+=(cssEl& t);
-  void operator-=(cssEl& t);
-  void operator*=(cssEl& t);
-  void operator/=(cssEl& t);
+  void operator+=(cssEl& s)	{ val += s.GetVar(); }
+  void operator-=(cssEl& s)	{ val -= s.GetVar(); }
+  void operator*=(cssEl& s)	{ val *= s.GetVar(); }
+  void operator/=(cssEl& s)	{ val /= s.GetVar(); }
 
-  bool operator< (cssEl& s);
-  bool operator> (cssEl& s);
-  bool operator<=(cssEl& s);
-  bool operator>=(cssEl& s);
-  bool operator==(cssEl& s);
-  bool operator!=(cssEl& s);
+  cssEl* operator< (cssEl& s)  { return new cssBool(val < s.GetVar()); } 
+  cssEl* operator> (cssEl& s)  { return new cssBool(val > s.GetVar()); } 
+  cssEl* operator<=(cssEl& s)  { return new cssBool(val <= s.GetVar()); }
+  cssEl* operator>=(cssEl& s)  { return new cssBool(val >= s.GetVar()); }
+  cssEl* operator==(cssEl& s)  { return new cssBool(val == s.GetVar()); }
+  cssEl* operator!=(cssEl& s)  { return new cssBool(val != s.GetVar()); }
   
   // these delegate to the string, base or variant
   cssEl* operator[](const Variant& idx) const; // only valid for Matrixes, gets flat el
@@ -854,12 +794,12 @@ public:
   void operator-=(cssEl& t)
   { cssElPtr r = GetOprPtr(); r -= (Int)t; SetPtr(r); }
 
-  bool operator< (cssEl& s) { return (GetIntVal() < (Int)s); }
-  bool operator> (cssEl& s) { return (GetIntVal() > (Int)s); }
-  bool operator<=(cssEl& s) { return (GetIntVal() <= (Int)s); }
-  bool operator>=(cssEl& s) { return (GetIntVal() >= (Int)s); }
-  bool operator==(cssEl& s) { return (GetIntVal() == (Int)s); }
-  bool operator!=(cssEl& s) { return (GetIntVal() != (Int)s); }
+  cssEl* operator< (cssEl& s) { return new cssBool(GetIntVal() < (Int)s); }
+  cssEl* operator> (cssEl& s) { return new cssBool(GetIntVal() > (Int)s); }
+  cssEl* operator<=(cssEl& s) { return new cssBool(GetIntVal() <= (Int)s); }
+  cssEl* operator>=(cssEl& s) { return new cssBool(GetIntVal() >= (Int)s); }
+  cssEl* operator==(cssEl& s) { return new cssBool(GetIntVal() == (Int)s); }
+  cssEl* operator!=(cssEl& s) { return new cssBool(GetIntVal() != (Int)s); }
 };
 
 class CSS_API cssArray : public cssPtr {
@@ -975,12 +915,12 @@ public:
   { NopErr("[]"); return &cssMisc::Void; }
   void operator+=(cssEl&)       { NopErr("+="); }
   void operator-=(cssEl&)       { NopErr("-="); }
-  bool operator< (cssEl&)       { NopErr("<"); return false; }
-  bool operator> (cssEl&)       { NopErr(">"); return false; }
-  bool operator<=(cssEl&)       { NopErr("<="); return false; }
-  bool operator>=(cssEl&)       { NopErr(">="); return false; }
-  bool operator==(cssEl&)       { NopErr("=="); return false; }
-  bool operator!=(cssEl&)       { NopErr("!="); return false; }
+  cssEl* operator< (cssEl&)       { NopErr("<"); return &cssMisc::Void; }
+  cssEl* operator> (cssEl&)       { NopErr(">"); return &cssMisc::Void; }
+  cssEl* operator<=(cssEl&)       { NopErr("<="); return &cssMisc::Void; }
+  cssEl* operator>=(cssEl&)       { NopErr(">="); return &cssMisc::Void; }
+  cssEl* operator==(cssEl&)       { NopErr("=="); return &cssMisc::Void; }
+  cssEl* operator!=(cssEl&)       { NopErr("!="); return &cssMisc::Void; }
 
   void operator=(const cssElPtr&)       { NopErr("="); }
   void operator=(cssEl*)                { NopErr("="); }
@@ -1133,12 +1073,12 @@ public:
   cssEl* NewOpr()   				{ return ptr.El()->NewOpr(); }
   void	 DelOpr() 				{ ptr.El()->DelOpr(); }
 
-  bool operator< (cssEl& s) 	{ return ptr.El()->operator<(s); }
-  bool operator> (cssEl& s) 	{ return ptr.El()->operator>(s); }
-  bool operator<=(cssEl& s) 	{ return ptr.El()->operator<=(s); }
-  bool operator>=(cssEl& s) 	{ return ptr.El()->operator>=(s); }
-  bool operator==(cssEl& s) 	{ return ptr.El()->operator==(s); }
-  bool operator!=(cssEl& s) 	{ return ptr.El()->operator!=(s); }
+  cssEl* operator< (cssEl& s) 	{ return ptr.El()->operator<(s); }
+  cssEl* operator> (cssEl& s) 	{ return ptr.El()->operator>(s); }
+  cssEl* operator<=(cssEl& s) 	{ return ptr.El()->operator<=(s); }
+  cssEl* operator>=(cssEl& s) 	{ return ptr.El()->operator>=(s); }
+  cssEl* operator==(cssEl& s) 	{ return ptr.El()->operator==(s); }
+  cssEl* operator!=(cssEl& s) 	{ return ptr.El()->operator!=(s); }
 
   void operator+=(cssEl& s) 	{ ptr.El()->operator+=(s); }
   void operator-=(cssEl& s) 	{ ptr.El()->operator-=(s); }
@@ -1239,8 +1179,8 @@ public:
   // operators
   void operator=(const cssEl& s);
 
-  bool operator==(cssEl& s);
-  bool operator!=(cssEl& s);
+  cssEl* operator==(cssEl& s);
+  cssEl* operator!=(cssEl& s);
 };
 
 #define cssEnum_inst_nm(l,n,s)		l .Push(new cssEnum(n, s))

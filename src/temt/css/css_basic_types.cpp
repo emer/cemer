@@ -328,18 +328,6 @@ cssEl* cssVariant::operator~() {
   return r; 
 }
 
-void cssVariant::operator+=(cssEl& s) 	{ val += s.GetVar(); }
-void cssVariant::operator-=(cssEl& s) 	{ val -= s.GetVar(); }
-void cssVariant::operator*=(cssEl& s) 	{ val *= s.GetVar(); }
-void cssVariant::operator/=(cssEl& s) 	{ val /= s.GetVar(); }
-
-bool cssVariant::operator< (cssEl& s) { return (val < s.GetVar()); }
-bool cssVariant::operator> (cssEl& s) { return (val > s.GetVar()); }
-bool cssVariant::operator<=(cssEl& s) { return (val <= s.GetVar()); }
-bool cssVariant::operator>=(cssEl& s) { return (val >= s.GetVar()); }
-bool cssVariant::operator==(cssEl& s) { return (val == s.GetVar()); }
-bool cssVariant::operator!=(cssEl& s) { return (val != s.GetVar()); }
-
 //note: TypeItem guys don't get css info, so we don't handle those as Variants below...
 cssEl* cssVariant::GetMemberFmNo(int memb) const {
   TypeDef* typ = NULL;  void* base = NULL;
@@ -1105,20 +1093,20 @@ void cssEnum::operator=(const cssEl& s) {
     val = (Int)s;
 }
 
-bool cssEnum::operator==(cssEl& s) {
+cssEl* cssEnum::operator==(cssEl& s) {
   cssElPtr val_ptr = type_def->enums->FindName(s.GetStr());
   if(val_ptr == 0)
-    return (val == (Int)s);
+    return new cssBool(val == (Int)s);
   else
-    return (val == ((cssEnum*)val_ptr.El())->val);
+    return new cssBool(val == ((cssEnum*)val_ptr.El())->val);
 }
 
-bool cssEnum::operator!=(cssEl& s) {
+cssEl* cssEnum::operator!=(cssEl& s) {
   cssElPtr val_ptr = type_def->enums->FindName(s.GetStr());
   if(val_ptr == 0)
-    return (val != (Int)s);
+    return new cssBool(val != (Int)s);
   else
-    return (val != ((cssEnum*)val_ptr.El())->val);
+    return new cssBool(val != ((cssEnum*)val_ptr.El())->val);
 }
 
 

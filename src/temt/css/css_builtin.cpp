@@ -783,32 +783,31 @@ static cssEl* cssElCFun_continue_stub(int, cssEl* arg[]) {
 }
 
 static cssEl* cssElCFun_gt_stub(int, cssEl* arg[]) {
-  return new cssBool((*(arg[1]) > *(arg[2])));
+  return (*(arg[1]) > *(arg[2]));
 }
 static cssEl* cssElCFun_lt_stub(int, cssEl* arg[]) {
-  return new cssBool((*(arg[1]) < *(arg[2])));
+  return (*(arg[1]) < *(arg[2]));
 }
 static cssEl* cssElCFun_eq_stub(int, cssEl* arg[]) {
-  return new cssBool((*(arg[1]) == *(arg[2])));
+  return (*(arg[1]) == *(arg[2]));
 }
 static cssEl* cssElCFun_ge_stub(int, cssEl* arg[]) {
-  return new cssBool((*(arg[1]) >= *(arg[2])));
+  return (*(arg[1]) >= *(arg[2]));
 }
 static cssEl* cssElCFun_le_stub(int, cssEl* arg[]) {
-  return new cssBool((*(arg[1]) <= *(arg[2])));
+  return (*(arg[1]) <= *(arg[2]));
 }
 static cssEl* cssElCFun_ne_stub(int, cssEl* arg[]) {
-  return new cssBool((*(arg[1]) != *(arg[2])));
+  return (*(arg[1]) != *(arg[2]));
 }
 static cssEl* cssElCFun_land_stub(int, cssEl* arg[]) {
-  return new cssBool((*(arg[1]) && *(arg[2])));
+  return (*(arg[1]) && *(arg[2]));
 }
 static cssEl* cssElCFun_lor_stub(int, cssEl* arg[]) {
-
-  return new cssBool((*(arg[1]) || *(arg[2])));
+  return (*(arg[1]) || *(arg[2]));
 }
 static cssEl* cssElCFun_lnot_stub(int, cssEl* arg[]) {
-  return new cssBool(!(*(arg[1])));
+  return !(*(arg[1]));
 }
 
 static cssEl* cssElCFun_push_root_stub(int, cssEl**) {

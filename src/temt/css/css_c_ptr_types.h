@@ -98,12 +98,12 @@ public:
   void operator^=(cssEl& t);
   void operator|=(cssEl& t);
 
-  bool operator< (cssEl& s) 	{ return (GetIntRef("<") < (Int)s); }
-  bool operator> (cssEl& s) 	{ return (GetIntRef(">") > (Int)s); }
-  bool operator<=(cssEl& s) 	{ return (GetIntRef("<=") <= (Int)s); }
-  bool operator>=(cssEl& s) 	{ return (GetIntRef(">=") >= (Int)s); }
-  bool operator==(cssEl& s) 	{ if(ptr_cnt == 0) return (GetIntRef("==") == (Int)s); return cssCPtr::operator==(s); }
-  bool operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return (GetIntRef("!=") != (Int)s); return cssCPtr::operator!=(s); }
+  cssEl* operator< (cssEl& s) 	{ return new cssBool(GetIntRef("<") < (Int)s); }
+  cssEl* operator> (cssEl& s) 	{ return new cssBool(GetIntRef(">") > (Int)s); }
+  cssEl* operator<=(cssEl& s) 	{ return new cssBool(GetIntRef("<=") <= (Int)s); }
+  cssEl* operator>=(cssEl& s) 	{ return new cssBool(GetIntRef(">=") >= (Int)s); }
+  cssEl* operator==(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetIntRef("==") == (Int)s); return cssCPtr::operator==(s); }
+  cssEl* operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetIntRef("!=") != (Int)s); return cssCPtr::operator!=(s); }
 };
 
 #define cssCPtr_int_inst(l,n)		l .Push(new cssCPtr_int(&n,1,#n))
@@ -158,8 +158,8 @@ public:
   void operator^=(cssEl& t);
   void operator|=(cssEl& t);
 
-  bool operator==(cssEl& s) 	{ if(ptr_cnt == 0) return (GetBoolRef("==") == (bool)s); return cssCPtr::operator==(s); }
-  bool operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return (GetBoolRef("!=") != (bool)s); return cssCPtr::operator!=(s); }
+  cssEl* operator==(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetBoolRef("==") == (bool)s); return cssCPtr::operator==(s); }
+  cssEl* operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetBoolRef("!=") != (bool)s); return cssCPtr::operator!=(s); }
 };
 
 class CSS_API cssCPtr_short : public cssCPtr {
@@ -237,12 +237,12 @@ public:
   void operator^=(cssEl& t);
   void operator|=(cssEl& t);
 
-  bool operator< (cssEl& s) 	{ return (GetShortRef("<") < (short)s); }
-  bool operator> (cssEl& s) 	{ return (GetShortRef(">") > (short)s); }
-  bool operator<=(cssEl& s) 	{ return (GetShortRef("<=") <= (short)s); }
-  bool operator>=(cssEl& s) 	{ return (GetShortRef(">=") >= (short)s); }
-  bool operator==(cssEl& s) 	{ if(ptr_cnt == 0) return (GetShortRef("==") == (short)s); return cssCPtr::operator==(s); }
-  bool operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return (GetShortRef("!=") != (short)s); return cssCPtr::operator!=(s); }
+  cssEl* operator< (cssEl& s) 	{ return new cssBool(GetShortRef("<") < (short)s); }
+  cssEl* operator> (cssEl& s) 	{ return new cssBool(GetShortRef(">") > (short)s); }
+  cssEl* operator<=(cssEl& s) 	{ return new cssBool(GetShortRef("<=") <= (short)s); }
+  cssEl* operator>=(cssEl& s) 	{ return new cssBool(GetShortRef(">=") >= (short)s); }
+  cssEl* operator==(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetShortRef("==") == (short)s); return cssCPtr::operator==(s); }
+  cssEl* operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetShortRef("!=") != (short)s); return cssCPtr::operator!=(s); }
 };
 
 class CSS_API cssCPtr_long : public cssCPtr {
@@ -320,12 +320,12 @@ public:
   void operator^=(cssEl& t);
   void operator|=(cssEl& t);
 
-  bool operator< (cssEl& s) 	{ return (GetLongRef("<") < (long)s); }
-  bool operator> (cssEl& s) 	{ return (GetLongRef(">") > (long)s); }
-  bool operator<=(cssEl& s) 	{ return (GetLongRef("<=") <= (long)s); }
-  bool operator>=(cssEl& s) 	{ return (GetLongRef(">=") >= (long)s); }
-  bool operator==(cssEl& s) 	{ if(ptr_cnt == 0) return (GetLongRef("==") == (long)s); return cssCPtr::operator==(s); }
-  bool operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return (GetLongRef("!=") != (long)s); return cssCPtr::operator!=(s); }
+  cssEl* operator< (cssEl& s) 	{ return new cssBool(GetLongRef("<") < (long)s); }
+  cssEl* operator> (cssEl& s) 	{ return new cssBool(GetLongRef(">") > (long)s); }
+  cssEl* operator<=(cssEl& s) 	{ return new cssBool(GetLongRef("<=") <= (long)s); }
+  cssEl* operator>=(cssEl& s) 	{ return new cssBool(GetLongRef(">=") >= (long)s); }
+  cssEl* operator==(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetLongRef("==") == (long)s); return cssCPtr::operator==(s); }
+  cssEl* operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetLongRef("!=") != (long)s); return cssCPtr::operator!=(s); }
 };
 
 class CSS_API cssCPtr_long_long : public cssCPtr {
@@ -399,12 +399,12 @@ public:
   void operator^=(cssEl& t);
   void operator|=(cssEl& t);
 
-  bool operator< (cssEl& s) 	{ return (GetLongLongRef("<") < (int64_t)s); }
-  bool operator> (cssEl& s) 	{ return (GetLongLongRef(">") > (int64_t)s); }
-  bool operator<=(cssEl& s) 	{ return (GetLongLongRef("<=") <= (int64_t)s); }
-  bool operator>=(cssEl& s) 	{ return (GetLongLongRef(">=") >= (int64_t)s); }
-  bool operator==(cssEl& s) 	{ if(ptr_cnt == 0) return (GetLongLongRef("==") == (int64_t)s); return cssCPtr::operator==(s); }
-  bool operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return (GetLongLongRef("!=") != (int64_t)s); return cssCPtr::operator!=(s); }
+  cssEl* operator< (cssEl& s) 	{ return new cssBool(GetLongLongRef("<") < (int64_t)s); }
+  cssEl* operator> (cssEl& s) 	{ return new cssBool(GetLongLongRef(">") > (int64_t)s); }
+  cssEl* operator<=(cssEl& s) 	{ return new cssBool(GetLongLongRef("<=") <= (int64_t)s); }
+  cssEl* operator>=(cssEl& s) 	{ return new cssBool(GetLongLongRef(">=") >= (int64_t)s); }
+  cssEl* operator==(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetLongLongRef("==") == (int64_t)s); return cssCPtr::operator==(s); }
+  cssEl* operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetLongLongRef("!=") != (int64_t)s); return cssCPtr::operator!=(s); }
 };
 
 class CSS_API cssCPtr_char : public cssCPtr {
@@ -482,12 +482,12 @@ public:
   void operator^=(cssEl& t);
   void operator|=(cssEl& t);
 
-  bool operator< (cssEl& s) 	{ return (GetCharRef("<") < (char)s); }
-  bool operator> (cssEl& s) 	{ return (GetCharRef(">") > (char)s); }
-  bool operator<=(cssEl& s) 	{ return (GetCharRef("<=") <= (char)s); }
-  bool operator>=(cssEl& s) 	{ return (GetCharRef(">=") >= (char)s); }
-  bool operator==(cssEl& s) 	{ if(ptr_cnt == 0) return (GetCharRef("==") == (char)s); return cssCPtr::operator==(s); }
-  bool operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return (GetCharRef("!=") != (char)s); return cssCPtr::operator!=(s); }
+  cssEl* operator< (cssEl& s) 	{ return new cssBool(GetCharRef("<") < (char)s); }
+  cssEl* operator> (cssEl& s) 	{ return new cssBool(GetCharRef(">") > (char)s); }
+  cssEl* operator<=(cssEl& s) 	{ return new cssBool(GetCharRef("<=") <= (char)s); }
+  cssEl* operator>=(cssEl& s) 	{ return new cssBool(GetCharRef(">=") >= (char)s); }
+  cssEl* operator==(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetCharRef("==") == (char)s); return cssCPtr::operator==(s); }
+  cssEl* operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetCharRef("!=") != (char)s); return cssCPtr::operator!=(s); }
 };
 
 class CSS_API cssCPtr_enum : public cssCPtr_int {
@@ -528,8 +528,8 @@ public:
 
   // operators
   void operator=(const cssEl& t);
-  bool operator==(cssEl& s);
-  bool operator!=(cssEl& s);
+  cssEl* operator==(cssEl& s);
+  cssEl* operator!=(cssEl& s);
 };
 
 class CSS_API cssCPtr_double : public cssCPtr {
@@ -590,12 +590,12 @@ public:
   void operator*=(cssEl& t);
   void operator/=(cssEl& t);
 
-  bool operator< (cssEl& s) 	{ return (GetDoubleRef("<") < (Real)s); }
-  bool operator> (cssEl& s) 	{ return (GetDoubleRef(">") > (Real)s); }
-  bool operator<=(cssEl& s) 	{ return (GetDoubleRef("<=") <= (Real)s); }
-  bool operator>=(cssEl& s) 	{ return (GetDoubleRef(">=") >= (Real)s); }
-  bool operator==(cssEl& s) 	{ if(ptr_cnt == 0) return (GetDoubleRef("==") == (Real)s); return cssCPtr::operator==(s); }
-  bool operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return (GetDoubleRef("!=") != (Real)s); return cssCPtr::operator!=(s); }
+  cssEl* operator< (cssEl& s) 	{ return new cssBool(GetDoubleRef("<") < (Real)s); }
+  cssEl* operator> (cssEl& s) 	{ return new cssBool(GetDoubleRef(">") > (Real)s); }
+  cssEl* operator<=(cssEl& s) 	{ return new cssBool(GetDoubleRef("<=") <= (Real)s); }
+  cssEl* operator>=(cssEl& s) 	{ return new cssBool(GetDoubleRef(">=") >= (Real)s); }
+  cssEl* operator==(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetDoubleRef("==") == (Real)s); return cssCPtr::operator==(s); }
+  cssEl* operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetDoubleRef("!=") != (Real)s); return cssCPtr::operator!=(s); }
 };
 
 class CSS_API cssCPtr_float : public cssCPtr {
@@ -656,12 +656,12 @@ public:
   void operator*=(cssEl& t);
   void operator/=(cssEl& t);
 
-  bool operator< (cssEl& s) 	{ return (GetFloatRef("<") < (Real)s); }
-  bool operator> (cssEl& s) 	{ return (GetFloatRef(">") > (Real)s); }
-  bool operator<=(cssEl& s) 	{ return (GetFloatRef("<=") <= (Real)s); }
-  bool operator>=(cssEl& s) 	{ return (GetFloatRef(">=") >= (Real)s); }
-  bool operator==(cssEl& s) 	{ if(ptr_cnt == 0) return (GetFloatRef("==") == (Real)s);  return cssCPtr::operator==(s); }
-  bool operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return (GetFloatRef("!=") != (Real)s); return cssCPtr::operator!=(s); }
+  cssEl* operator< (cssEl& s) 	{ return new cssBool(GetFloatRef("<") < (Real)s); }
+  cssEl* operator> (cssEl& s) 	{ return new cssBool(GetFloatRef(">") > (Real)s); }
+  cssEl* operator<=(cssEl& s) 	{ return new cssBool(GetFloatRef("<=") <= (Real)s); }
+  cssEl* operator>=(cssEl& s) 	{ return new cssBool(GetFloatRef(">=") >= (Real)s); }
+  cssEl* operator==(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetFloatRef("==") == (Real)s);  return cssCPtr::operator==(s); }
+  cssEl* operator!=(cssEl& s) 	{ if(ptr_cnt == 0) return new cssBool(GetFloatRef("!=") != (Real)s); return cssCPtr::operator!=(s); }
 };
 
 class CSS_API cssCPtr_String : public cssCPtr {
@@ -717,12 +717,12 @@ public:
 
   void operator+=(cssEl& t);
 
-  bool operator< (cssEl& s) { return (GetStringRef("<") < s.GetStr()); }
-  bool operator> (cssEl& s) { return (GetStringRef(">") > s.GetStr()); }
-  bool operator<=(cssEl& s) { return (GetStringRef("<=") <= s.GetStr()); }
-  bool operator>=(cssEl& s) { return (GetStringRef(">=") >= s.GetStr()); }
-  bool operator==(cssEl& s) { if(ptr_cnt == 0) return (GetStringRef("==") == s.GetStr()); return cssCPtr::operator==(s); }
-  bool operator!=(cssEl& s) { if(ptr_cnt == 0) return (GetStringRef("!=") != s.GetStr()); return cssCPtr::operator!=(s); }
+  cssEl* operator< (cssEl& s) { return new cssBool(GetStringRef("<") < s.GetStr()); }
+  cssEl* operator> (cssEl& s) { return new cssBool(GetStringRef(">") > s.GetStr()); }
+  cssEl* operator<=(cssEl& s) { return new cssBool(GetStringRef("<=") <= s.GetStr()); }
+  cssEl* operator>=(cssEl& s) { return new cssBool(GetStringRef(">=") >= s.GetStr()); }
+  cssEl* operator==(cssEl& s) { if(ptr_cnt == 0) return new cssBool(GetStringRef("==") == s.GetStr()); return cssCPtr::operator==(s); }
+  cssEl* operator!=(cssEl& s) { if(ptr_cnt == 0) return new cssBool(GetStringRef("!=") != s.GetStr()); return cssCPtr::operator!=(s); }
 
   // these use the TA info to perform actions
   cssEl* operator[](const Variant& idx) const;
@@ -793,12 +793,12 @@ public:
   void operator*=(cssEl& t);
   void operator/=(cssEl& t);
 
-  bool operator< (cssEl& s) { return (GetVarRef("<") < s.GetVar()); }
-  bool operator> (cssEl& s) { return (GetVarRef(">") > s.GetVar()); }
-  bool operator<=(cssEl& s) { return (GetVarRef("<=") <= s.GetVar()); }
-  bool operator>=(cssEl& s) { return (GetVarRef(">=") >= s.GetVar()); }
-  bool operator==(cssEl& s) { if(ptr_cnt == 0) return (GetVarRef("==") == s.GetVar()); return cssCPtr::operator==(s); }
-  bool operator!=(cssEl& s) { if(ptr_cnt == 0) return (GetVarRef("!=") != s.GetVar()); return cssCPtr::operator!=(s); }
+  cssEl* operator< (cssEl& s) { return new cssBool(GetVarRef("<") < s.GetVar()); }
+  cssEl* operator> (cssEl& s) { return new cssBool(GetVarRef(">") > s.GetVar()); }
+  cssEl* operator<=(cssEl& s) { return new cssBool(GetVarRef("<=") <= s.GetVar()); }
+  cssEl* operator>=(cssEl& s) { return new cssBool(GetVarRef(">=") >= s.GetVar()); }
+  cssEl* operator==(cssEl& s) { if(ptr_cnt == 0) return new cssBool(GetVarRef("==") == s.GetVar()); return cssCPtr::operator==(s); }
+  cssEl* operator!=(cssEl& s) { if(ptr_cnt == 0) return new cssBool(GetVarRef("!=") != s.GetVar()); return cssCPtr::operator!=(s); }
 
   // these use the TA info to perform actions
   cssEl* operator[](const Variant& idx) const;
@@ -874,12 +874,12 @@ public:
   cssEl* operator~()
   { cssInt *r = new cssInt(GetEnumRef("~").NumVal()); r->val = ~r->val; return r; }
 
-  bool operator< (cssEl& s) 	{ return (GetEnumRef("<").NumVal() < (Int)s); }
-  bool operator> (cssEl& s) 	{ return (GetEnumRef(">").NumVal() > (Int)s); }
-  bool operator<=(cssEl& s) 	{ return (GetEnumRef("<=").NumVal() <= (Int)s); }
-  bool operator>=(cssEl& s) 	{ return (GetEnumRef(">=").NumVal() >= (Int)s); }
-  bool operator==(cssEl& s);
-  bool operator!=(cssEl& s);
+  cssEl* operator< (cssEl& s) 	{ return new cssBool(GetEnumRef("<").NumVal() < (Int)s); }
+  cssEl* operator> (cssEl& s) 	{ return new cssBool(GetEnumRef(">").NumVal() > (Int)s); }
+  cssEl* operator<=(cssEl& s) 	{ return new cssBool(GetEnumRef("<=").NumVal() <= (Int)s); }
+  cssEl* operator>=(cssEl& s) 	{ return new cssBool(GetEnumRef(">=").NumVal() >= (Int)s); }
+  cssEl* operator==(cssEl& s);
+  cssEl* operator!=(cssEl& s);
 
   void operator+=(cssEl& t);
   void operator-=(cssEl& t);

@@ -789,6 +789,10 @@ cssEl* cssEl::NewOpr() {        // just make an object..
   return new cssPtr(ptr);       // make it a pointer to the item..
 }
 
+cssEl* cssEl::operator! () 	   { return new cssBool(!(bool)*this); }
+cssEl* cssEl::operator&&(cssEl& s) { return new cssBool((bool)*this && (bool)s); }
+cssEl* cssEl::operator||(cssEl& s) { return new cssBool((bool)*this || (bool)s); }
+
 void cssEl::Save(ostream& strm) {
   strm << GetStr();
 }
@@ -2246,26 +2250,26 @@ void cssCPtr::UpdateAfterEdit() {
   UpdateClassParent();
 }
 
-bool cssCPtr::operator==(cssEl& s) {
+cssEl* cssCPtr::operator==(cssEl& s) {
   if(s.GetType() == T_C_Ptr) {
     cssCPtr* pt = (cssCPtr*)s.GetNonRefObj();
     if(SamePtrLevel(pt))
-      return ptr == pt->ptr;
+      return new cssBool(ptr == pt->ptr);
     else
-      return false;
+      return new cssBool(false);
   }
-  return ((Int)(long)(ptr) == (Int)s);
+  return new cssBool((Int)(long)(ptr) == (Int)s);
 }
 
-bool cssCPtr::operator!=(cssEl& s) {
+cssEl* cssCPtr::operator!=(cssEl& s) {
   if(s.GetType() == T_C_Ptr) {
     cssCPtr* pt = (cssCPtr*)s.GetNonRefObj();
     if(SamePtrLevel(pt))
-      return ptr != pt->ptr;
+      return new cssBool(ptr != pt->ptr);
     else
-      return false;
+      return new cssBool(false);
   }
-  return ((Int)(long)(ptr) != (Int)s);
+  return new cssBool((Int)(long)(ptr) != (Int)s);
 }
 
 

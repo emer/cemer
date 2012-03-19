@@ -661,17 +661,17 @@ public:
   virtual cssEl* NewOpr();
   virtual void 	 DelOpr()	{ NopErr("delete"); } // delete operator
 
-  // these generally should not be overwritten:
-  bool operator! () 	    { return !(bool)*this; }
-  bool operator&&(cssEl& s) { return (bool)*this && (bool)s; }
-  bool operator||(cssEl& s) { return (bool)*this || (bool)s; }
+  // the following 3 should be fine for any scalar value type
+  virtual cssEl* operator! ();
+  virtual cssEl* operator&&(cssEl& s);
+  virtual cssEl* operator||(cssEl& s);
 
-  virtual bool operator< (cssEl&) { NopErr("<"); return 0; }
-  virtual bool operator> (cssEl&) { NopErr(">"); return 0; }
-  virtual bool operator<=(cssEl&) { NopErr("<="); return 0; }
-  virtual bool operator>=(cssEl&) { NopErr(">="); return 0; }
-  virtual bool operator==(cssEl&) { NopErr("=="); return 0; }
-  virtual bool operator!=(cssEl&) { NopErr("!="); return 0; }
+  virtual cssEl* operator< (cssEl&) { NopErr("<"); return &cssMisc::Void; }
+  virtual cssEl* operator> (cssEl&) { NopErr(">"); return &cssMisc::Void; }
+  virtual cssEl* operator<=(cssEl&) { NopErr("<="); return &cssMisc::Void; }
+  virtual cssEl* operator>=(cssEl&) { NopErr(">="); return &cssMisc::Void; }
+  virtual cssEl* operator==(cssEl&) { NopErr("=="); return &cssMisc::Void; }
+  virtual cssEl* operator!=(cssEl&) { NopErr("!="); return &cssMisc::Void; }
 
   virtual void operator+=(cssEl&) { NopErr("+="); }
   virtual void operator-=(cssEl&) { NopErr("-="); }
@@ -1214,14 +1214,74 @@ public:
 
   virtual bool 	SamePtrLevel(cssCPtr* s); // if this and s have diff cnt, emit warning
 
-  bool operator==(cssEl& s);	// these two check for sameptrlevel
-  bool operator!=(cssEl& s);
+  cssEl* operator==(cssEl& s);	// these two check for sameptrlevel
+  cssEl* operator!=(cssEl& s);
 };
 
 #define cssCPtr_inst(l,n)		l .Push(new cssCPtr(& n,1,#n))
 #define cssCPtr_inst_nm(l,n,c,s)	l .Push(new cssCPtr(n,c, s))
 #define cssCPtr_inst_ptr(l,n,x)	l .Push(cssBI::x = new cssCPtr(& n,1,#x))
 #define cssCPtr_inst_ptr_nm(l,n,c,x,s) l .Push(cssBI::x = new cssCPtr(n,c,s))
+
+class CSS_API cssBool : public cssEl {
+  // a boolean value
+public:
+  bool		val;
+
+  int		GetParse() const	{ return CSS_VAR; }
+  uint		GetSize() const		{ return sizeof(*this); }
+  cssTypes 	GetType() const		{ return T_Bool; }
+  const char*	GetTypeName() const	{ return "(Bool)"; }
+
+  String 	PrintStr() const
+  { return String(GetTypeName())+" " + name + " = " + GetStr(); }
+  String	PrintFStr() const { return GetStr(); }
+
+  // constructors
+  void 		Constr()			{ val = false; }
+  void		Copy(const cssBool& cp)		{ cssEl::Copy(cp); val = cp.val; }
+
+  cssBool()					{ Constr(); }
+  cssBool(bool vl)				{ Constr(); val = vl; }
+  cssBool(bool vl, const String& nm) 		{ Constr(); name = nm;  val = vl; }
+  cssBool(const cssBool& cp)			{ Copy(cp); name = cp.name; }
+  cssBool(const cssBool& cp, const String& nm)  { Copy(cp); name = nm; }
+
+  cssCloneFuns(cssBool, false);
+
+  // converters
+  String GetStr() const;
+  Variant GetVar() const 	{ return Variant(val); }
+  operator Real() const	 	{ return (Real)val; }
+  operator Int() const	 	{ return val; }
+  operator bool() const	 	{ return val; }
+
+  void operator=(Real cp) 		{ val = (bool)cp; }
+  void operator=(Int cp)		{ val = (bool)cp; }
+  void operator=(const String& cp);
+
+  void operator=(void*)	 	{ CvtErr("(void*)"); }
+  void operator=(void**)	{ CvtErr("(void**)"); }
+  USING(cssEl::operator=)
+
+  // operators
+  void operator=(const cssEl& s);
+
+  cssEl* operator&(cssEl &t)
+  { cssBool *r = new cssBool(val); r->val &= (bool)t; return r; }
+  cssEl* operator^(cssEl &t)
+  { cssBool *r = new cssBool(val); r->val ^= (bool)t; return r; }
+  cssEl* operator|(cssEl &t)
+  { cssBool *r = new cssBool(val); r->val |= (bool)t; return r; }
+
+  // operators
+  void operator&=(cssEl& t) { val &= (bool)t; }
+  void operator^=(cssEl& t) { val ^= (bool)t; }
+  void operator|=(cssEl& t) { val |= (bool)t; }
+
+  cssEl* operator==(cssEl& s) 	{ return new cssBool(val == (bool)s); }
+  cssEl* operator!=(cssEl& s) 	{ return new cssBool(val != (bool)s); }
+};
 
 
 // lexer & preprocessor stuff (#define, etc)

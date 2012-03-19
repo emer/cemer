@@ -1553,3 +1553,289 @@ cssEl* cssTA_Matrix::operator+(cssEl& t) {
   }
   return &cssMisc::Void;
 }
+
+cssEl* cssTA_Matrix::operator-(cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths - *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths - ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator*(cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths * *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths * ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator/(cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths / *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths / ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator%(cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths % *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths % ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+void cssTA_Matrix::operator+=(cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      *ths += *oth; // use matrix routine for this operator
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      *ths += ovar; // use matrix routine for this operator
+    }
+  }
+}
+
+void cssTA_Matrix::operator-=(cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      *ths -= *oth; // use matrix routine for this operator
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      *ths -= ovar; // use matrix routine for this operator
+    }
+  }
+}
+
+void cssTA_Matrix::operator*=(cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      *ths *= *oth; // use matrix routine for this operator
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      *ths *= ovar; // use matrix routine for this operator
+    }
+  }
+}
+
+void cssTA_Matrix::operator/=(cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      *ths /= *oth; // use matrix routine for this operator
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      *ths /= ovar; // use matrix routine for this operator
+    }
+  }
+}
+
+void cssTA_Matrix::operator%=(cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      *ths %= *oth; // use matrix routine for this operator
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      *ths %= ovar; // use matrix routine for this operator
+    }
+  }
+}
+
+cssEl* cssTA_Matrix::operator< (cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths < *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths < ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator> (cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths > *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths > ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator<= (cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths <= *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths <= ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator>= (cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths >= *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths >= ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator== (cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths == *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths == ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator!= (cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths != *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths != ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+

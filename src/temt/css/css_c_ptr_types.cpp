@@ -525,19 +525,19 @@ void cssCPtr_enum::operator=(const cssEl& t) {
   UpdateClassParent();
 }
 
-bool cssCPtr_enum::operator==(cssEl& t) {
+cssEl* cssCPtr_enum::operator==(cssEl& t) {
   if(ptr_cnt > 0) return cssCPtr::operator==(t);
   if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
-    return GetStr() == t.GetStr();
+    return new cssBool(GetStr() == t.GetStr());
   }
-  return GetIntRef("==") == (Int)t;
+  return new cssBool(GetIntRef("==") == (Int)t);
 }
-bool cssCPtr_enum::operator!=(cssEl& t) {
+cssEl* cssCPtr_enum::operator!=(cssEl& t) {
   if(ptr_cnt > 0) return cssCPtr::operator!=(t);
   if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
-    return GetStr() != t.GetStr();
+    return new cssBool(GetStr() != t.GetStr());
   }
-  return GetIntRef("!=") != (Int)t;
+  return new cssBool(GetIntRef("!=") != (Int)t);
 }
 
 
@@ -1019,19 +1019,19 @@ void cssCPtr_DynEnum::operator=(const cssEl& t) {
     GetEnumRef("=").SetNumVal((Int)t);
   UpdateClassParent();
 }
-bool cssCPtr_DynEnum::operator==(cssEl& t) {
+cssEl* cssCPtr_DynEnum::operator==(cssEl& t) {
   if(ptr_cnt > 0) return cssCPtr::operator==(t);
   if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
-    return GetEnumRef().NameVal() == t.GetStr();
+    return new cssBool(GetEnumRef().NameVal() == t.GetStr());
   }
-  return GetEnumRef().NumVal() == (Int)t;
+  return new cssBool(GetEnumRef().NumVal() == (Int)t);
 }
-bool cssCPtr_DynEnum::operator!=(cssEl& t) {
+cssEl* cssCPtr_DynEnum::operator!=(cssEl& t) {
   if(ptr_cnt > 0) return cssCPtr::operator!=(t);
   if((t.GetType() == T_String) || (t.GetPtrType() == T_String)) {
-    return GetEnumRef().NameVal() != t.GetStr();
+    return new cssBool(GetEnumRef().NameVal() != t.GetStr());
   }
-  return GetEnumRef().NumVal() != (Int)t;
+  return new cssBool(GetEnumRef().NumVal() != (Int)t);
 }
 
 void cssCPtr_DynEnum::operator+=(cssEl& t)	{
