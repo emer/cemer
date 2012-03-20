@@ -1532,9 +1532,11 @@ public:
     {set(src.m_ptr); return m_ptr;}
   inline taBase*        operator=(taBase* src) {set(src); return m_ptr;}
 
+  inline void           CutLinks() {set(NULL);}
+
   taSmartPtr(taBase* val) {m_ptr = NULL; set(val);}
   taSmartPtr() {m_ptr = NULL;}
-  ~taSmartPtr() {set(NULL);} //note: DO NOT change to be virtual!
+  ~taSmartPtr() {CutLinks();} //note: DO NOT change to be virtual!
 protected:
   mutable taBase*       m_ptr;
 private:
@@ -1670,6 +1672,7 @@ private:
 #define SmartRef_Of(T,td)  typedef taSmartRefT<T> T ## Ref
 
 SmartRef_Of(taBase,);           // basic ref if you don't know the type
+SmartPtr_Of(taBase);            // basic ptr if you don't know the type
 
 
 class TA_API taOBase : public taBase {
@@ -1884,7 +1887,7 @@ public:
   TypeDef*      el_base;        // #EXPERT #NO_SHOW_TREE #READ_ONLY_GUI #NO_SAVE #CAT_taList Base type for objects in group
   TypeDef*      el_typ;         // #TYPE_ON_el_base #NO_SHOW_TREE #CAT_taList Default type for objects in group
   int           el_def;         // #EXPERT #CAT_taList Index of default element in group
-  taBaseRef     el_view;        // #EXPERT #NO_SAVE #CAT_taList matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
+  taBasePtr     el_view;        // #EXPERT #NO_SAVE #CAT_taList matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
   IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taList what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
 
   override TypeDef*     GetElType() const {return el_typ;}
@@ -2531,7 +2534,7 @@ class TA_API taArray_base : public taOBase, public taArray_impl {
   // #VIRT_BASE #NO_TOKENS #NO_UPDATE_AFTER ##CAT_Data base for arrays (from taBase)
 INHERITED(taOBase)
 public:
-  taBaseRef     el_view;        // #EXPERT #NO_SAVE #CAT_taArray matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
+  taBasePtr     el_view;        // #EXPERT #NO_SAVE #CAT_taArray matrix with indicies providing view into items in this list, if set -- determines the items and the order in which they are presented for the iteration operations -- otherwise ignored in other contexts
   IndexMode     el_view_mode;   // #EXPERT #NO_SAVE #CAT_taArray what kind of information is present in el_view to determine view mode -- only valid cases are IDX_COORDS and IDX_MASK
 
   Variant       FastElAsVar(int idx) const { return El_GetVar_(FastEl_(idx)); }

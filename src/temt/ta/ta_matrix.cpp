@@ -696,12 +696,14 @@ void taMatrix::Destroy() {
 void taMatrix::InitLinks() {
   inherited::CutLinks();
   taBase::Own(geom, this);
+  taBase::Own(el_view, this);
 }
 
 void taMatrix::CutLinks() {
   el_view.CutLinks();
   el_view_mode = IDX_UNK;
   geom.CutLinks();
+  el_view.CutLinks();
   inherited::CutLinks();
 }
 
