@@ -994,9 +994,6 @@ bool taBase::IterFirst_impl(taBaseItr*& itr) const {
     if(ElemCount() > 0) return true;
     return false;
   }
-  if(!IterValidate(ElView(), ElViewMode(), 1)) {
-    return false;
-  }
   if(ElViewMode() == IDX_COORDS) {
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     if(cmat->size == 0) {

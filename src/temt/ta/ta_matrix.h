@@ -769,19 +769,20 @@ public:
 			   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
 			   bool force_inline = false);
   override int 	ReplaceValStr(const String& srch, const String& repl, const String& mbr_filt,
-			      void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
-			      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
+	      void* par = NULL, TypeDef* par_typ=NULL, MemberDef* md = NULL,
+	      TypeDef::StrContext sc = TypeDef::SC_DEFAULT);
 
-  void			SetDefaultName() { };
-  taBase* 		GetOwner() const;
+  override void		SetDefaultName() { };
+  override taBase* 	GetOwner() const;
   USING(inherited::GetOwner) 
-  ostream& 		Output(ostream& strm, int indent = 0) const;
-  ostream& 		OutputR(ostream& strm, int indent = 0) const
+  override ostream& 	Output(ostream& strm, int indent = 0) const;
+  override ostream& 	OutputR(ostream& strm, int indent = 0) const
     { return Output(strm, indent); }
-  int			Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
-  int			Dump_Load_Value(istream& strm, taBase* par=NULL);
-  void 			DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
-  void			CutLinks();
+  override int		Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
+  override int		Dump_Load_Value(istream& strm, taBase* par=NULL);
+  override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void		InitLinks();
+  override void		CutLinks();
   TA_ABSTRACT_BASEFUNS(taMatrix) //
 
 public:

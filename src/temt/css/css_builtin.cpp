@@ -441,6 +441,11 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     }
   }
   else if(n_matrix == eff_na) {	// complete sub-arrays -- ignores ;'s
+    // special case of just one matrix: just return it directly --
+    // otherwise adds unnec extra dimension
+    if(eff_na == 1) {
+      return arg[1];
+    }
     TypeDef* td = NULL;
     for(int i=1; i<=na; i++) {
       if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;

@@ -388,7 +388,7 @@ void cssTA_Base::Constr() {
   else {
     taBase* ths = GetTAPtr();
     if(ths) {
-      if(ptr_cnt <= 1)		    // note: can set to ptr_cnt <= 1 to ref everything
+      if(ptr_cnt == 1)		    // note: can set to ptr_cnt <= 1 to ref everything
 	taBase::Ref(ths);		// always ref ptrs!
       type_def = ths->GetTypeDef();	// just to be sure
     }
@@ -438,7 +438,7 @@ cssTA_Base::~cssTA_Base() {
     ptr = NULL;
     ClearPtrFlag(OWN_OBJ);
   }
-  else if(ptr_cnt <= 1 && ptr) { // note: can set to ptr_cnt <= 1 to ref everything..
+  else if(ptr_cnt == 1 && ptr) { // note: can set to ptr_cnt <= 1 to ref everything..
     taBase::DelPointer((taBase**)&ptr);
   }
 }
@@ -1523,12 +1523,19 @@ taMatrix* cssTA_Matrix::MatrixPtr(const cssEl& s) {
 cssTA_Matrix::cssTA_Matrix(taMatrix* mtx)
   : cssTA_Base(mtx, 0, mtx->GetTypeDef()) {
   SetPtrFlag(OWN_OBJ);		// mark us as owner
-  // taBase::Ref(mtx);
+  taBase::Ref(mtx);
   // note: if set ptr_cnt <= 1 ref'ing in TA_Base, then off
   // ptr_cnt <= 1 can cause crashing at exit due to other 0 ptr guys that
   // are not properly  ref'd in the software -- can just go thru and fix
   // all those however.. -- safer in general to have the ptr_cnt = 0 do the
   // ref..
+
+  // actually, there is a problem where temp Matrix objs don't get Own'd and 
+  // InitLinks is only called on ownership, so then their members don't get
+  // ref'd, and then this 0 ref/deref guy nukes them..
+
+  // best soln is to have temp guys be owned, but this can be tricky as to 
+  // how to uniquely trigger it..
 }
 
 cssTA_Matrix::~cssTA_Matrix() {

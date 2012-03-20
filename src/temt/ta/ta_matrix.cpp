@@ -693,9 +693,15 @@ void taMatrix::Destroy() {
   }
 }
 
+void taMatrix::InitLinks() {
+  inherited::CutLinks();
+  taBase::Own(geom, this);
+}
+
 void taMatrix::CutLinks() {
   el_view.CutLinks();
   el_view_mode = IDX_UNK;
+  geom.CutLinks();
   inherited::CutLinks();
 }
 
@@ -774,14 +780,16 @@ String taMatrix::GetStringRep_impl() const {
 // 	std accessor interface
 
 bool taMatrix::SetElView(taMatrix* view_mat, IndexMode md) {
-  if(!IterValidate(view_mat, md, 1)) return false;
+  int dm = dims();
+  if(!IterValidate(view_mat, md, dm)) return false;
   el_view = view_mat;
   el_view_mode = md;
   return true;
 }
 
 taMatrix* taMatrix::NewElView(taMatrix* view_mat, IndexMode md) const {
-  if(!IterValidate(view_mat, md, 1)) return NULL;
+  int dm = dims();
+  if(!IterValidate(view_mat, md, dm)) return NULL;
   taMatrix* rval = (taMatrix*)MakeToken(); // make a token of me
   void* base_el = const_cast<void*>(FastEl_Flat_(0));
   rval->SetFixedData_(base_el, geom);	   // identical geom, same data
@@ -970,7 +978,7 @@ bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
   else if(el_view_mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=0; i<ElemCount(); i++) {
-      if(cmat->FastEl_Flat(i)) {
+      if(cmat->FastEl_Flat(i) != 0) {
 	itr->el_idx = i;
 	return true;
       }
@@ -1008,7 +1016,7 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
   else if(el_view_mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(ElView());
     for(int i=itr->el_idx+1; i<ElemCount(); i++) { // search for next
-      if(cmat->FastEl_Flat(i)) { // true
+      if(cmat->FastEl_Flat(i) != 0) { // true
 	itr->el_idx = i;
 	return true;
       }
