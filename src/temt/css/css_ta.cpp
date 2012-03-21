@@ -703,6 +703,35 @@ void cssTA_Base::operator=(const cssEl& s) {
   UpdateClassParent();
 }
 
+void cssTA_Base::InitAssign(const cssEl& s) {
+  if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
+    *this = s.GetStr();	// use string converter
+    UpdateClassParent();
+    return;
+  }
+  // if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(s);
+    taBase* ths = GetTAPtr();
+    if(ths)
+      type_def = ths->GetTypeDef();	// just to be sure
+    return;
+  }
+
+  // ptr_cnt == 0 -- initialize us from that guy
+  if(!AssignCheckSource(s)) return; // not a good source
+  // here we change our type to be that of the other object
+  cssTA* sp = (cssTA*)s.GetNonRefObj();
+  taBase* obj = (taBase*)ptr;
+
+  taBase* nw = obj->Clone();
+  taBase::SetPointer((taBase**)&ptr, nw); // always use set pointer for ta base!
+  // this will auto-free any existing ptr
+  if(ptr)
+    type_def = ((taBase*)ptr)->GetTypeDef();
+  UpdateClassParent();
+}
+
 cssEl* cssTA_Base::operator[](const Variant& i) const {
   taBase* ths = GetTAPtr();
   if(ths)
@@ -1539,6 +1568,47 @@ cssTA_Matrix::cssTA_Matrix(taMatrix* mtx)
 }
 
 cssTA_Matrix::~cssTA_Matrix() {
+}
+
+bool cssTA_Matrix::AssignCheckSource(const cssEl& s) {
+  if(s.GetType() != T_TA) {
+    // cssMisc::Error(prog, "Failed to assign TA C pointer of type:", GetTypeName(),
+    // 		   "source is non-TA object of type:", s.GetTypeName());
+    // return false;
+    return true;		// use variant
+  }
+  if(IsMatrix(s)) return true;
+  return false;
+}
+
+void cssTA_Matrix::operator=(const cssEl& s) {
+  if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
+    *this = s.GetStr();	// use string converter
+    UpdateClassParent();
+    return;
+  }
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {
+    PtrAssignPtr(s);
+    taBase* ths = GetTAPtr();
+    if(ths)
+      type_def = ths->GetTypeDef();	// just to be sure
+    return;
+  }
+  taMatrix* ths = GetMatrixPtr();
+  if(IsMatrix(s)) {
+    taMatrix* oth = MatrixPtr(s);
+    if(oth) {
+      ths->Copy(*oth); // use generic copy matrix routine for this operator -- does the right thing..
+    }
+  }
+  else {
+    Variant ovar = s.GetVar();
+    if(!ovar.isInvalid()) {
+      *ths = ovar; // use matrix routine for this operator
+    }
+  }
+  UpdateClassParent();
 }
 
 cssEl* cssTA_Matrix::operator+(cssEl& t) {

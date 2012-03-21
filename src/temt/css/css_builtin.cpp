@@ -172,7 +172,7 @@ static cssEl* cssElCFun_asgn_div_stub(int, cssEl* arg[]) {
       return arg[1];
     }
   }
-  else {
+  else if(!arg[2]->IsTaMatrix()) { // let ta matrix guys do their own thing
     if((int)*(arg[2]) == 0) {
       cssProg* cp = arg[0]->prog;
       cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
@@ -772,7 +772,7 @@ static cssEl* cssElCFun_return_stub(int na, cssEl* arg[]) {
       cssEl* rval = sf->argv[0].El();
       if(rval == &cssMisc::Void)
 	cssMisc::Error(cp, "Attempt to return a value in a void function");
-      rval->InitAssign(*(arg[1])); // use initassign!
+      rval->ArgCopy(*(arg[1]));	// set ref
     }
   }
   ((cssElFun*)arg[0])->dostat = cssEl::Returning;

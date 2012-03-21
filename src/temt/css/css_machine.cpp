@@ -739,7 +739,7 @@ cssEl::RunStat cssEl::MakeToken(cssProg* prg) {
   cssEl* tmp;
   if((tmp = MakeToken_stub(act_argc, args)) != 0) {
     if(prg == cssMisc::ConstExpr)
-      prg->Stack()->Push(new cssRef(prg->Autos(0)->Push(tmp)));
+      prg->Stack()->Push(new cssRef(prg->Autos(0)->PushSetAddr(tmp)));
     else if(tmp_str == "extern")
       prg->Stack()->Push(new cssRef(cssMisc::Externs.PushUniqNameOld(tmp)));
     else if(tmp_str == "static")
@@ -1785,7 +1785,7 @@ cssEl::RunStat cssScriptFun::Do(cssProg* prg) {
   prg->top->AddProg(fun);       // push new state (not Shove, needed to add frame before)
 
   for(int i=1; i <= act_argc; i++) { // copy into args for current space
-    (argv[i].El())->InitAssign(*args[i]);
+    (argv[i].El())->ArgCopy(*args[i]);
   }
   return cssEl::NewProgShoved;  // new program shoved onto stack
 }
@@ -2000,7 +2000,7 @@ cssEl::RunStat cssMbrScriptFun::Do(cssProg* prg) {
 
   int i;
   for(i=2; i <= act_argc; i++) {        // copy into args for current space
-    (argv[i].El())->InitAssign(*args[i]);
+    (argv[i].El())->ArgCopy(*args[i]);
   }
 
   // only set new cur_this after copying the args..
@@ -2460,10 +2460,29 @@ cssElPtr& cssSpace::PushUniqNameOld(cssEl* it) {
   return el_retv;
 }
 
+cssElPtr& cssSpace::PushSetAddr(cssEl* it) {
+  cssElPtr& rval = Push(it);
+  it->SetAddr(rval);
+  return rval;
+}
+
+cssElPtr& cssSpace::PushUniqNameOldSetAddr(cssEl* it) {
+  cssElPtr& rval = PushUniqNameOld(it);
+  it->SetAddr(rval);
+  return rval;
+}
+
 bool cssSpace::Replace(cssEl* old, cssEl* nw) {
   int idx = GetIndex(old);
   if(idx < 0)
     return false;
+  return ReplaceIdx(idx, nw);
+}
+
+bool cssSpace::ReplaceIdx(int idx, cssEl* nw) {
+  if(idx < 0)
+    return false;
+  cssEl* old = els[idx];
   cssEl::unRefDone(old);
   els[idx] = nw;
   cssEl::Ref(nw);
@@ -3199,7 +3218,7 @@ int cssProg::AddCode(cssInst* it) {
 cssElPtr& cssProg::AddAuto(cssEl* it) {
   el_retv = Autos(0)->FindName(it->name);
   if(it->name.empty() || (el_retv == 0))
-    el_retv = Autos(0)->Push(it);
+    el_retv = Autos(0)->PushSetAddr(it);
   else {
     cssMisc::Warning(this, "Warning: attempt to redefine variable in same scope:",it->name);
     cssEl::Done(it);
@@ -4138,7 +4157,7 @@ cssElPtr& cssProgSpace::AddVar(cssEl* it) {
   if(size > 1) return Prog()->AddAuto(it);
   cssElPtr& anel_retv = statics.FindName(it->name);
   if(it->name.empty() || (anel_retv == 0))
-    return statics.Push(it);
+    return statics.PushSetAddr(it);
   else {
     cssMisc::Warning(Prog(), "Warning: attempt to redefine variable in same scope:",it->name);
     cssEl::Done(it);
@@ -4146,8 +4165,8 @@ cssElPtr& cssProgSpace::AddVar(cssEl* it) {
   return anel_retv;
 }
 cssElPtr& cssProgSpace::AddStatic(cssEl* it) {
-  if(size > 1) return Prog()->statics.Push(it);
-  return statics.Push(it);
+  if(size > 1) return Prog()->statics.PushSetAddr(it);
+  return statics.PushSetAddr(it);
 }
 
 cssElPtr& cssProgSpace::AddStaticVar(cssEl* it) {

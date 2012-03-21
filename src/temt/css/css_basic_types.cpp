@@ -913,7 +913,7 @@ void cssRef::operator=(const cssEl& cp) {
   }
 }
 
-void cssRef::InitAssign(const cssEl& cp) {
+void cssRef::ArgCopy(const cssEl& cp) {
   if(cp.IsRef()) {
     cssRef* tmp = (cssRef*)&cp;
     ptr = tmp->ptr;

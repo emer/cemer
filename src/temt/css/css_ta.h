@@ -158,8 +158,10 @@ public:
   void operator=(taBase**);
   void operator=(void* cp);	// these are very bad because of the ref counting but we just have to assume the pointer is a taBase*!
   void operator=(void** cp);
-  USING(cssTA::operator=)
+  USING(cssTA::operator=);
 
+  void InitAssign(const cssEl& s);
+  
   void PtrAssignPtr(const cssEl& s);
   override bool PtrAssignPtrPtr(void* new_ptr_val);
   // use SetPointer..
@@ -461,6 +463,9 @@ public:
 
   // void UpdateAfterEdit();
 
+  override bool AssignCheckSource(const cssEl& s);
+
+  void operator=(const cssEl& s);
   USING(cssTA_Base::operator=)
 
   cssEl* operator+(cssEl& t);

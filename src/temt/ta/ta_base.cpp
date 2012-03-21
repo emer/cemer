@@ -2043,11 +2043,13 @@ bool taBase::CanDoCopy_impl(const taBase* cp, bool quiet, bool copy) {
     // we will be doing the copy
     CanCopy_impl(cp, quiet, ok, true);
     if (ok && copy) UnSafeCopy(cp);
-  } else if (InheritsFrom(cp->GetTypeDef())) {
+  }
+  else if (InheritsFrom(cp->GetTypeDef())) {
     // other guy will be doing it
     cp->CanCopy_impl(this, quiet, ok, true);
     if (ok && copy) UnSafeCopy(cp);
-  } else { // custom
+  }
+  else { // custom
     bool to_cp = false; // rare case where src will copy
     bool allowed = false;
     bool forbidden = false;

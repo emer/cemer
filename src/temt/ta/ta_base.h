@@ -104,6 +104,41 @@ protected:
   static bool           DoAutoSave();
 };
 
+//////////////////////////////////////////////////////////////////////////////////
+// Copy logic (this is complicated for dealing with constructors and = assignment
+//
+// void Copy_(const type& cp)   non-virtual private method that only copies data
+//				for THIS type does NOT call parent, nor copy parent data
+// void Copy__(const type& cp)  simple COPYING flag wrapper around Copy_
+// copy constructor	        calls Copy__ to just copy stuff for this type
+// void Copy_impl(const type& cp) non-virtual protected method defined in BASEFUNS
+//				that calls parent copy_impl, and then this copy -- this
+//				is the master copy function for assignment =
+// void	Copy(const type& cp) 	public interface to call Copy_impl for a given guy
+//
+// then there is, very confusingly, an entirely separate set of copy mechanisms that
+// use the TA system to do more flexible copying using generic taBase* objects 
+// these all take pointer args * instead of reference args
+// 
+// void UnSafeCopy(const taBase* cp) virtual protected defined in BASEFUNS,
+//				calls Copy_impl if source inherits from us, and 
+//				CastCopyTo if we inherit from source, so we get
+//				common elements of subclass copied
+// void CastCopyTo(taBase* cp)	virtual protected defined in BASEFUNS,
+//				casts source to our type, and calls Copy_impl on
+//				that guy from us
+// bool	Copy(const taBase* cp)	virtual public function that is master interface
+//				to this generic interface
+// bool CanDoCopy_impl		master routine called by Copy that checks if it is
+//				OK to copy (Can = CanCopy_impl), and if it is ok, then it
+//				actually does the copy (Do = UnSafeCopy) -- this provides
+//				the high level of safe checking and flexibility
+// CopyFromCustom_impl		for special cases where objects of divergent inheritence
+//				branches can still copy -- example is Matrix objects
+//				that can still copy from different types using Variant
+//				conversion interface (e.g. float from string etc)
+
+
 // common defs used by ALL taBase types: Type and Copy guys
 #define TA_BASEFUNS_MAIN_(y) \
 private: \
@@ -214,6 +249,13 @@ public: \
   TA_TMPLT_BASEFUNS_MAIN_(y,T) \
   TA_TMPLT_BASEFUNS_INST_(y,T)
 
+// dummy, for when nothing to copy in this class
+#define NOCOPY(y) \
+  void Copy_(const y& cp){}
+
+#define TMPLT_NOCOPY(y,T) \
+  void Copy_(const y<T>& cp){}
+
 // this is the typical guy to use for most classes, esp if they keep Tokens
 // the 2 versions bake in the inherited guy, so you don't need to do that
 // the ncopy version includes a dummy Copy_ func (typical for template instances)
@@ -308,13 +350,6 @@ public: \
 // for when you need to give it a diff name
 #define SIMPLE_COPY_EX(T,NAME) \
   void NAME(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); }
-
-// dummy, for when nothing to copy in this class
-#define NOCOPY(y) \
-  void Copy_(const y& cp){}
-
-#define TMPLT_NOCOPY(y,T) \
-  void Copy_(const y<T>& cp){}
 
 // this calls UpdatePointers_NewPar based on a major scoping owning parent, only if that
 // parent is not already copying, and the parent is different than the copy parent
@@ -1124,9 +1159,6 @@ public:
     {if (CanCopy(cp, quiet)) return; ok = false;}
     // #IGNORE convenience, for nested calls
 
-//  void                        Copy(const taBase& cp) {
-//    if (CanCopy(&cp)) Copy_impl(cp);}
-  // #IGNORE the copy (=) operator FOR JUST THIS CLASS -- CALL PARENT Copy() for its functions; note: base version is so trivial, we don't do any of the stuff in BASEFUNS macro, but you should imagine it does
   virtual bool          Copy(const taBase* cp);
   // #IGNORE this is a generic copy, that enables common-subclass copying, or even copying from disparate clases that might have a sensible copy semantic
   virtual void          CopyFromSameType(void* src_base)
@@ -1171,9 +1203,6 @@ protected: // impl
   virtual void          CanCopyCustom_impl(bool to, const taBase* cp,
     bool quiet, bool& allowed, bool& forbidden) const {}
     // we need an allowed/forbidden paradigm here, so we can always call inherited -- only issue msg on forbidden; caller will supply msg if not allowed -- this routine is called for self (to=0), and we also call the proposed buddy (to=1) -- either one can forbid; us forbidding trumps cp allowing; since cp-controlled is so unusual, it is given priority
-  bool                  CanCopy_ctor(const taBase* cpy_from) const
-    {bool ok = true; CanCopy_impl(cpy_from, true, ok, false); return ok;}
-    // this is the guy used in the Copy ctor to guard the Copy_ for that level
 
   ///////////////////////////////////////////////////////////////////////////
   //    Type information

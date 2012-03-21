@@ -316,16 +316,16 @@ public:
 
 // macros for defining the cloning functions
 #define cssCloneFuns(x, init) \
-  cssEl* 	Clone()		{ return new x (*this); }	      \
-  cssEl* 	AnonClone()  	{ return new x (*this, _nilString); }	      \
-  cssEl* 	BlankClone() 	{ x* rval = new x; rval->CopyType(*this); return rval; } \
+  cssEl* 	Clone()	const	  { return new x (*this); }	      \
+  cssEl* 	AnonClone() const { return new x (*this, _nilString); }	      \
+  cssEl* 	BlankClone() const { x* rval = new x; rval->CopyType(*this); return rval; } \
   cssEl*	MakeToken_stub(int, cssEl* arg[])		      \
   { return new x ( init , arg[1]->GetStr()); }		      \
 
 #define cssCloneOnly(x) \
-  cssEl* 	Clone()		{ return new x (*this); }	      \
-  cssEl* 	AnonClone() 	{ return new x (*this, _nilString); }	      \
-  cssEl* 	BlankClone() 	{ x* rval = new x(); rval->CopyType(*this); return rval; } \
+  cssEl* 	Clone()	const	{ return new x (*this); }	      \
+  cssEl* 	AnonClone() const { return new x (*this, _nilString); }	      \
+  cssEl* 	BlankClone() const { x* rval = new x(); rval->CopyType(*this); return rval; } \
 
 
 class CSS_API cssEl {
@@ -494,9 +494,9 @@ public:
   void   		CopyType(const cssEl& cp) { };
   // only copies type-level information, not value-level information (for els that carry type information around)
 
-  virtual cssEl* 	Clone() 			{ return new cssEl(*this); }
-  virtual cssEl* 	AnonClone() 			{ return new cssEl(*this, _nilString); }
-  virtual cssEl* 	BlankClone() 			{ return new cssEl; }
+  virtual cssEl* 	Clone() const			{ return new cssEl(*this); }
+  virtual cssEl* 	AnonClone() const		{ return new cssEl(*this, _nilString); }
+  virtual cssEl* 	BlankClone() const		{ return new cssEl; }
 
   virtual cssEl*	MakeToken_stub(int, cssEl**) 	{ return &cssMisc::Void; }
   virtual cssEl*	MakePtrType(int ptrs);
@@ -550,7 +550,7 @@ public:
 
   // pointer types
   virtual void* GetVoidPtrOfType(TypeDef* td) const 	{ CvtErr(td->name); return NULL; }
-  virtual void* GetVoidPtrOfType(const String& td) const 	{ CvtErr(td); return NULL; }
+  virtual void* GetVoidPtrOfType(const String& td) const { CvtErr(td); return NULL; }
   // these are type-safe ways to convert a cssEl into a ptr to object of given type
 
   virtual operator void*() const		{ CvtErr("(void*)"); return NULL; }
@@ -597,7 +597,7 @@ public:
   virtual void operator=(Real)	 		{ NopErr("=(Real)"); }
   virtual void operator=(Int)			{ NopErr("=(Int)"); }
   virtual void operator=(ta_int64_t cp)		{ operator=((Int)cp); }
-  virtual void operator=(ta_uint64_t cp)		{ operator=((Int)cp); }
+  virtual void operator=(ta_uint64_t cp)	{ operator=((Int)cp); }
   virtual void operator=(const String&)	 	{ NopErr("=(String)"); }
   virtual void operator=(const Variant& val); 
   // usually not overridden, just dispatches according to type
@@ -610,8 +610,13 @@ public:
   virtual void operator=(const cssEl&) 		{ NopErr("="); }
 
   // operators
-  virtual void CastFm(const cssEl& cp)	{ operator=(cp); } // default cast is a copy
-  virtual void InitAssign(const cssEl& cp) { operator=(cp); } // default initial assign is cpy
+  virtual void CastFm(const cssEl& cp)	{ operator=(cp); }
+  // cast from other object -- default is just copy
+  virtual void ArgCopy(const cssEl& cp) { operator=(cp); }
+  // copy args and return values -- only diff is for cssRef which sets ref pointer instead of calling copy on the ref'd object
+  virtual void InitAssign(const cssEl& cp) { ArgCopy(cp); }
+  // initial assignment of value -- should alter type of object to fit source
+
   virtual void AssignFromType(TypeDef* td, void*)	{ CvtErr(td->name); }
   virtual void AssignFromType(const String& td, void*)	{ CvtErr(td); }
   // type-safe way to assign a void ptr of given type to a cssEl
@@ -767,6 +772,8 @@ public:
   cssElPtr&	Push(cssEl* it);
   cssElPtr&	PushUniqNameNew(cssEl* it);
   cssElPtr&	PushUniqNameOld(cssEl* it);
+  cssElPtr&	PushSetAddr(cssEl* it); // set addr on el when pushing
+  cssElPtr&	PushUniqNameOldSetAddr(cssEl* it); // set addr on el when pushing
   cssEl*	Pop()
   { if(size == 0) return &cssMisc::Void; cssEl* rval = els[--size]; cssEl::unRef(rval);
     return rval; }
@@ -778,7 +785,8 @@ public:
   { cssEl* rval = Pop(); if(rval != &cssMisc::Void) cssEl::Done(rval); }
   // pop and delete (done) item
   bool		Remove(cssEl* it); 	// not a good idea, because ptrs are index based
-  bool		Replace(cssEl* old, cssEl* nw); // replace at index with it
+  bool		ReplaceIdx(int idx, cssEl* nw); // replace at index with new
+  bool		Replace(cssEl* old, cssEl* nw); // replace at index with new
   cssEl*	Peek() const
   { cssEl* rval=&cssMisc::Void; if(size > 0) rval = els[size-1]; return rval; }
 
@@ -1114,9 +1122,9 @@ public:
 };
 
 #define cssCPtr_CloneFuns(x, init) \
-  cssEl* 	Clone()		{ return new x (*this); }	      \
-  cssEl* 	AnonClone() 	{ return new x (*this, _nilString); }	      \
-  cssEl* 	BlankClone() 	{ x* rval = new x; rval->CopyType(*this); return rval; } \
+  cssEl* 	Clone()	const	  { return new x (*this); }	      \
+  cssEl* 	AnonClone() const { return new x (*this, _nilString); }	      \
+  cssEl* 	BlankClone() const { x* rval = new x; rval->CopyType(*this); return rval; } \
   cssEl*	MakeToken_stub(int, cssEl* arg[])		      \
     { return new x ( init, ptr_cnt, arg[1]->GetStr()); }	      \
 

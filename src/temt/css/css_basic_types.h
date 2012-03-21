@@ -1043,8 +1043,8 @@ public:
 
   // operators
   void operator=(const cssEl& cp);
-  void CastFm(const cssEl& cp)	{ InitAssign(cp); }
-  void InitAssign(const cssEl& cp);
+  void CastFm(const cssEl& cp)	{ ArgCopy(cp); }
+  void ArgCopy(const cssEl& cp);
   void UpdateAfterEdit()	{ ptr.El()->UpdateAfterEdit(); }
 
   cssEl* operator+(cssEl& s) 	{ return ptr.El()->operator+(s); }

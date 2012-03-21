@@ -749,7 +749,7 @@ String taMatrix::GetStringRep_impl() const {
 	rval += ", ";
       }
       if(cmat && !((bool)cmat->SafeEl_Flat(i))) {
-	rval += ". ";		// filtered
+	rval += "- ";		// filtered
       }
       else {
 	rval += FastElAsStr_Flat(i);
@@ -2014,6 +2014,52 @@ void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op,
 
 /////////////////////////////////////////////////////////
 //		Operators
+
+//////////// op =
+// taMatrix* taMatrix::operator=(const taMatrix& t) {
+//   if(TestError(geom != t.geom, "=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+//     return NULL;
+//   if(GetDataValType() == VT_FLOAT && GetDataValType() == t.GetDataValType()) {
+//     TA_FOREACH_INDEX(i, *this) {
+//       ((float_Matrix*)this)->FastEl_Flat(i) = ((float_Matrix*)&t)->FastEl_Flat(i);
+//     }
+//   }
+//   else if(GetDataValType() == VT_DOUBLE && GetDataValType() == t.GetDataValType()) {
+//     TA_FOREACH_INDEX(i, *this) {
+//       ((double_Matrix*)this)->FastEl_Flat(i) = ((double_Matrix*)&t)->FastEl_Flat(i);
+//     }
+//   }
+//   else {			// use variants -- no need to optimize
+//     TA_FOREACH_INDEX(i, *this) {
+//       SetFmVar_Flat(t.FastElAsVar_Flat(i), i);
+//     }
+//   }
+//   return this;
+// }
+
+taMatrix* taMatrix::operator=(const Variant& t) {
+  if(t.isMatrixType()) {
+    return operator=(t.toMatrix());
+  }
+  if(GetDataValType() == VT_FLOAT) {
+    float vt = t.toFloat();
+    TA_FOREACH_INDEX(i, *this) {
+      ((float_Matrix*)this)->FastEl_Flat(i) = vt;
+    }
+  }
+  else if(GetDataValType() == VT_DOUBLE) {
+    double vt = t.toDouble();
+    TA_FOREACH_INDEX(i, *this) {
+      ((double_Matrix*)this)->FastEl_Flat(i) = vt;
+    }
+  }
+  else {			// use variants -- no need to optimize
+    TA_FOREACH_INDEX(i, *this) {
+      SetFmVar_Flat(t, i);
+    }
+  }
+  return this;
+}
 
 //////////// op +
 taMatrix* taMatrix::operator+(const taMatrix& t) {

@@ -783,7 +783,7 @@ public:
   override void 	DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
   override void		InitLinks();
   override void		CutLinks();
-  TA_ABSTRACT_BASEFUNS(taMatrix) //
+  TA_ABSTRACT_BASEFUNS(taMatrix);
 
 public:
   ///////////////////////////////////////////////////////////////////
@@ -826,6 +826,8 @@ public:
 public:
   ///////////////////////////////////////////////////////////////////
   // common operators
+
+  virtual taMatrix* operator=(const Variant& t);
 
   virtual taMatrix* operator+(const taMatrix& t);
   virtual taMatrix* operator+(const Variant& t);
@@ -1051,6 +1053,7 @@ public:
   void			Add(const T& item) {Add_(&item);}
   // #CAT_Modify only valid when dims=1
 
+  USING(taMatrix::operator=)
   TA_TMPLT_ABSTRACT_BASEFUNS(taMatrixT, T)
 public:
   override void*	FastEl_Flat_(int idx)	{ return &(el[idx]); } 
@@ -1124,6 +1127,7 @@ private:
   explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
   y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
   void CutLinks() { SetArray_(NULL); taMatrix::CutLinks(); } \
+  USING(taMatrix::operator=) \
   TA_BASEFUNS(y) \
 protected: \
   override const void*	El_GetBlank_() const	{ return (const void*)&blank; }
@@ -1328,6 +1332,7 @@ class TA_API slice_Matrix: public int_Matrix {
   // #INSTANCE an int matrix that is used to hold slicing information for indexing -- type is just a marker to unambiguously indicate this form of indexing
 INHERITED(int_Matrix)
 public:
+  USING(taMatrix::operator=)
   TA_BASEFUNS_NOCOPY(slice_Matrix);
 private:
   void		Initialize() {}
