@@ -390,7 +390,8 @@ public: // following primarily for TypeDef usage, streaming, etc.
   void			Dump_Save_Type(ostream& strm) const; // dumps type and null 
   bool			Dump_Load_Type(istream& strm, int& last_char); 
     // loads type and null, using taMisc:: strm routines; calls ForceType; returns 'true' if type loaded 
-
+  void			warn(const char* msg) const; // emit warning message
+  void			error(const char* msg) const; // emit error message
 protected:
 #ifdef __MAKETA__
   unsigned char d[12];
@@ -433,7 +434,6 @@ protected:
   taMatrix*		getMatrix() { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
   taMatrix*		getMatrix() const { return (taMatrix*)(d.tab);} // #IGNORE only if m_type=T_Matrix
 #endif
-  void			warn(const char* msg) const; // maybe output warning of invalid operation
 };
 
 // empty invalid variant

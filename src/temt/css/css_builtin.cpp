@@ -172,7 +172,7 @@ static cssEl* cssElCFun_asgn_div_stub(int, cssEl* arg[]) {
       return arg[1];
     }
   }
-  else if(!arg[2]->IsTaMatrix()) { // let ta matrix guys do their own thing
+  else if(!(arg[2]->IsTaMatrix())) { // let ta matrix guys do their own thing
     if((int)*(arg[2]) == 0) {
       cssProg* cp = arg[0]->prog;
       cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");
@@ -596,7 +596,7 @@ static cssEl* cssElCFun_div_stub(int, cssEl* arg[]) {
       return arg[2];
     }
   }
-  else {
+  else if(!(arg[2]->IsTaMatrix())) { // let ta matrix guys do their own thing
     if((int)*(arg[2]) == 0) {
       cssProg* cp = arg[0]->prog;
       cssMisc::Warning(cp, "Floating Point Exception: Division by Zero");

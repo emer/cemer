@@ -1,14 +1,17 @@
 
 // reference variables..
 
-int bogus(int& fine, String& see, ostream& fh) {
+int bogus(int& fine, String& see, ostream& fh, int_Matrix& mtx) {
   fine = 20;
   see += "alkdsjf kllks";
-  fh << see << " " << fine << "\n";
+  mtx = [1,2,3];
+  fh << see << " " << fine << " " << mtx << "\n";
   fh.put('-');
 }
 
 int bb = 10;
 String sm = "abbal";
-bogus(bb, sm, cout);
-cout << sm << " " << bb << "\n";
+int_Matrix mmm = [10,20,30];
+cout << "before: " << sm << " " << bb << " " << mmm << "\n";
+bogus(bb, sm, cout, mmm);
+cout << "after: " << sm << " " << bb << " " << mmm << "\n";

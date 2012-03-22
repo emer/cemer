@@ -556,7 +556,7 @@ bool Variant::isNumeric() const {
       m_is_numeric_valid = true;
 #else
       // note: should reallysupport, but not needed for maketa
-      warn("isNumeric() routine without Qt");
+      error("isNumeric() routine without Qt");
 #endif
     }
     return 0 != m_is_numeric;
@@ -588,7 +588,9 @@ Variant& Variant::operator+=(char rhs) {
   case T_Double: d.d += rhs; break;
   case T_Char: d.c += rhs; break;
   case T_String: setString(getString() + rhs); break;
-  default: break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
@@ -601,7 +603,9 @@ Variant& Variant::operator+=(int rhs) {
   case T_UInt64: d.u64 += rhs; break;
   case T_Double: d.d += rhs; break;
   case T_Char: setInt(d.c + rhs); break;
-  default: break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
@@ -614,7 +618,9 @@ Variant& Variant::operator+=(uint rhs) {
   case T_UInt64: d.u64 += rhs; break;
   case T_Double: d.d += rhs; break;
   case T_Char: setUInt(d.c + rhs); break;
-  default: break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
@@ -627,7 +633,9 @@ Variant& Variant::operator+=(ta_int64_t rhs) {
   case T_UInt64: d.u64 += rhs; break;
   case T_Double: d.d += rhs; break;
   case T_Char: setInt64(d.c + rhs); break;
-  default: break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
@@ -640,7 +648,9 @@ Variant& Variant::operator+=(ta_uint64_t rhs) {
   case T_UInt64: d.u64 += rhs; break;
   case T_Double: d.d += rhs; break;
   case T_Char: setUInt64(d.c + rhs); break;
-  default: break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
@@ -653,7 +663,9 @@ Variant& Variant::operator+=(double rhs) {
   case T_UInt64: setDouble(d.u64 + rhs); break;
   case T_Double: setDouble(d.d + rhs); break;
   case T_Char: setDouble(d.c + rhs); break;
-  default: break;
+  default:
+    error("operator += not defined");
+    break;
   }
   return *this;
 }
@@ -667,7 +679,9 @@ Variant& Variant::operator+=(const Variant& rhs) {
   case T_Double: return operator+=(rhs.d.d);
   case T_Char: return operator+=(rhs.d.c);
   case T_String: return operator+=(rhs.getString());
-  default: break;
+  default:
+    rhs.error("operator += not defined");
+    break;
   }
   return *this;
 }
@@ -680,7 +694,9 @@ Variant& Variant::operator-=(char rhs) {
   case T_UInt64: d.u64 -= rhs; break;
   case T_Double: d.d -= rhs; break;
   case T_Char: d.c -= rhs; break;
-  default: break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
@@ -693,7 +709,9 @@ Variant& Variant::operator-=(int rhs) {
   case T_UInt64: d.u64 -= rhs; break;
   case T_Double: d.d -= rhs; break;
   case T_Char: setInt(d.c - rhs); break;
-  default: break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
@@ -706,7 +724,9 @@ Variant& Variant::operator-=(uint rhs) {
   case T_UInt64: d.u64 -= rhs; break;
   case T_Double: d.d -= rhs; break;
   case T_Char: setUInt(d.c - rhs); break;
-  default: break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
@@ -719,7 +739,9 @@ Variant& Variant::operator-=(ta_int64_t rhs) {
   case T_UInt64: d.u64 -= rhs; break;
   case T_Double: d.d -= rhs; break;
   case T_Char: setInt64(d.c - rhs); break;
-  default: break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
@@ -732,7 +754,9 @@ Variant& Variant::operator-=(ta_uint64_t rhs) {
   case T_UInt64: d.u64 -= rhs; break;
   case T_Double: d.d -= rhs; break;
   case T_Char: setUInt64(d.c - rhs); break;
-  default: break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
@@ -745,7 +769,9 @@ Variant& Variant::operator-=(double rhs) {
   case T_UInt64: setDouble(d.u64 - rhs); break;
   case T_Double: setDouble(d.d - rhs); break;
   case T_Char: setDouble(d.c - rhs); break;
-  default: break;
+  default:
+    error("operator -= not defined");
+    break;
   }
   return *this;
 }
@@ -758,7 +784,9 @@ Variant& Variant::operator-=(const Variant& rhs) {
   case T_UInt64: return operator-=(rhs.d.u64);
   case T_Double: return operator-=(rhs.d.d);
   case T_Char: return operator-=(rhs.d.c);
-  default: break;
+  default:
+    rhs.error("operator -= not defined");
+    break;
   }
   return *this;
 }
@@ -771,7 +799,9 @@ Variant& Variant::operator*=(char rhs) {
   case T_UInt64: d.u64 *= rhs; break;
   case T_Double: d.d *= rhs; break;
   case T_Char: d.c *= rhs; break;
-  default: break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
@@ -784,7 +814,9 @@ Variant& Variant::operator*=(int rhs) {
   case T_UInt64: d.u64 *= rhs; break;
   case T_Double: d.d *= rhs; break;
   case T_Char: setInt(d.c * rhs); break;
-  default: break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
@@ -797,7 +829,9 @@ Variant& Variant::operator*=(uint rhs) {
   case T_UInt64: d.u64 *= rhs; break;
   case T_Double: d.d *= rhs; break;
   case T_Char: setUInt(d.c * rhs); break;
-  default: break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
@@ -810,7 +844,9 @@ Variant& Variant::operator*=(ta_int64_t rhs) {
   case T_UInt64: d.u64 *= rhs; break;
   case T_Double: d.d *= rhs; break;
   case T_Char: setInt64(d.c * rhs); break;
-  default: break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
@@ -823,7 +859,9 @@ Variant& Variant::operator*=(ta_uint64_t rhs) {
   case T_UInt64: d.u64 *= rhs; break;
   case T_Double: d.d *= rhs; break;
   case T_Char: setUInt64(d.c * rhs); break;
-  default: break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
@@ -836,7 +874,9 @@ Variant& Variant::operator*=(double rhs) {
   case T_UInt64: setDouble(d.u64 * rhs); break;
   case T_Double: setDouble(d.d * rhs); break;
   case T_Char: setDouble(d.c * rhs); break;
-  default: break;
+  default:
+    error("operator *= not defined");
+    break;
   }
   return *this;
 }
@@ -849,12 +889,17 @@ Variant& Variant::operator*=(const Variant& rhs) {
   case T_UInt64: return operator*=(rhs.d.u64);
   case T_Double: return operator*=(rhs.d.d);
   case T_Char: return operator*=(rhs.d.c);
-  default: break;
+  default:
+    rhs.error("operator *= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator/=(char rhs) {
+  if(rhs == 0) {
+    error("operator /= Floating Point Exception: Division by Zero");
+    return *this; }
   switch (m_type) {
   case T_Int: d.i /= rhs; break;
   case T_UInt: d.u /= rhs; break;
@@ -862,12 +907,17 @@ Variant& Variant::operator/=(char rhs) {
   case T_UInt64: d.u64 /= rhs; break;
   case T_Double: d.d /= rhs; break;
   case T_Char: d.c /= rhs; break;
-  default: break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator/=(int rhs) {
+  if(rhs == 0) {
+    error("operator /= Floating Point Exception: Division by Zero");
+    return *this; }
   switch (m_type) {
   case T_Int: d.i /= rhs; break;
   case T_UInt: d.u /= rhs; break;
@@ -875,12 +925,17 @@ Variant& Variant::operator/=(int rhs) {
   case T_UInt64: d.u64 /= rhs; break;
   case T_Double: d.d /= rhs; break;
   case T_Char: setInt(d.c / rhs); break;
-  default: break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator/=(uint rhs) {
+  if(rhs == 0) {
+    error("operator /= Floating Point Exception: Division by Zero");
+    return *this; }
   switch (m_type) {
   case T_Int: setUInt(d.i / rhs); break;
   case T_UInt: d.u /= rhs; break;
@@ -888,12 +943,17 @@ Variant& Variant::operator/=(uint rhs) {
   case T_UInt64: d.u64 /= rhs; break;
   case T_Double: d.d /= rhs; break;
   case T_Char: setUInt(d.c / rhs); break;
-  default: break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator/=(ta_int64_t rhs) {
+  if(rhs == 0) {
+    error("operator /= Floating Point Exception: Division by Zero");
+    return *this; }
   switch (m_type) {
   case T_Int: setInt64(d.i / rhs); break;
   case T_UInt: setInt64(d.u / rhs); break;
@@ -901,12 +961,17 @@ Variant& Variant::operator/=(ta_int64_t rhs) {
   case T_UInt64: d.u64 /= rhs; break;
   case T_Double: d.d /= rhs; break;
   case T_Char: setInt64(d.c / rhs); break;
-  default: break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator/=(ta_uint64_t rhs) {
+  if(rhs == 0) {
+    error("operator /= Floating Point Exception: Division by Zero");
+    return *this; }
   switch (m_type) {
   case T_Int: setUInt64(d.i / rhs); break;
   case T_UInt: setUInt64(d.u / rhs); break;
@@ -914,12 +979,17 @@ Variant& Variant::operator/=(ta_uint64_t rhs) {
   case T_UInt64: d.u64 /= rhs; break;
   case T_Double: d.d /= rhs; break;
   case T_Char: setUInt64(d.c / rhs); break;
-  default: break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator/=(double rhs) {
+  if(rhs == 0.0) {
+    error("operator /= Floating Point Exception: Division by Zero");
+    return *this; }
   switch (m_type) {
   case T_Int: setDouble(d.i / rhs); break;
   case T_UInt: setDouble(d.u / rhs); break;
@@ -927,7 +997,9 @@ Variant& Variant::operator/=(double rhs) {
   case T_UInt64: setDouble(d.u64 / rhs); break;
   case T_Double: setDouble(d.d / rhs); break;
   case T_Char: setDouble(d.c / rhs); break;
-  default: break;
+  default:
+    error("operator /= / not defined");
+    break;
   }
   return *this;
 }
@@ -940,67 +1012,94 @@ Variant& Variant::operator/=(const Variant& rhs) {
   case T_UInt64: return operator/=(rhs.d.u64);
   case T_Double: return operator/=(rhs.d.d);
   case T_Char: return operator/=(rhs.d.c);
-  default: break;
+  default: 
+    rhs.error("operator /= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator%=(char rhs) {
+  if(rhs == 0) {
+    error("operator %= Floating Point Exception: Division by Zero");
+    return *this; }
   switch (m_type) {
   case T_Int: d.i %= rhs; break;
   case T_UInt: d.u %= rhs; break;
   case T_Int64: d.i64 %= rhs; break;
   case T_UInt64: d.u64 %= rhs; break;
   case T_Char: d.c %= rhs; break;
-  default: break;
+  default:
+    error("operator %= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator%=(int rhs) {
+  if(rhs == 0) {
+    error("operator %= Floating Point Exception: Division by Zero");
+    return *this; }
   switch (m_type) {
   case T_Int: d.i %= rhs; break;
   case T_UInt: d.u %= rhs; break;
   case T_Int64: d.i64 %= rhs; break;
   case T_UInt64: d.u64 %= rhs; break;
   case T_Char: setInt(d.c % rhs); break;
-  default: break;
+  default:
+    error("operator %= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator%=(uint rhs) {
+  if(rhs == 0) {
+    error("operator %= Floating Point Exception: Division by Zero");
+    return *this; }
   switch (m_type) {
   case T_Int: setUInt(d.i % rhs); break;
   case T_UInt: d.u %= rhs; break;
   case T_Int64: d.i64 %= rhs; break;
   case T_UInt64: d.u64 %= rhs; break;
   case T_Char: setUInt(d.c % rhs); break;
-  default: break;
+  default:
+    error("operator %= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator%=(ta_int64_t rhs) {
+  if(rhs == 0) {
+    error("operator %= Floating Point Exception: Division by Zero");
+    return *this; }
   switch (m_type) {
   case T_Int: setInt64(d.i % rhs); break;
   case T_UInt: setInt64(d.u % rhs); break;
   case T_Int64: d.i64 %= rhs; break;
   case T_UInt64: d.u64 %= rhs; break;
   case T_Char: setInt64(d.c % rhs); break;
-  default: break;
+  default:
+    error("operator %= not defined");
+    break;
   }
   return *this;
 }
 
 Variant& Variant::operator%=(ta_uint64_t rhs) {
+  if(rhs == 0) {
+    error("operator %= Floating Point Exception: Division by Zero");
+    return *this; } 
   switch (m_type) {
   case T_Int: setUInt64(d.i % rhs); break;
   case T_UInt: setUInt64(d.u % rhs); break;
   case T_Int64: setUInt64(d.i64 % rhs); break;
   case T_UInt64: d.u64 %= rhs; break;
   case T_Char: setUInt64(d.c % rhs); break;
-  default: break;
+  default:
+    error("operator %= not defined");
+    break;
   }
   return *this;
 }
@@ -1012,7 +1111,9 @@ Variant& Variant::operator%=(const Variant& rhs) {
   case T_Int64: return operator%=(rhs.d.i64);
   case T_UInt64: return operator%=(rhs.d.u64);
   case T_Char: return operator%=(rhs.d.c);
-  default: break;
+  default:
+    rhs.error("operator %= not defined");
+    break;
   }
   return *this;
 }
@@ -1023,7 +1124,9 @@ Variant& Variant::operator<<=(char rhs) {
   case T_Int64: d.i64 <<= rhs; break;
   case T_UInt64: d.u64 <<= rhs; break;
   case T_Char: d.c <<= rhs; break;
-  default: break;
+  default:
+    error("operator << not defined");
+    break;
   }
   return *this;
 }
@@ -1035,7 +1138,9 @@ Variant& Variant::operator<<=(int rhs) {
   case T_Int64: d.i64 <<= rhs; break;
   case T_UInt64: d.u64 <<= rhs; break;
   case T_Char: setInt(d.c << rhs); break;
-  default: break;
+  default:
+    error("operator << not defined");
+    break;
   }
   return *this;
 }
@@ -1047,7 +1152,9 @@ Variant& Variant::operator<<=(uint rhs) {
   case T_Int64: d.i64 <<= rhs; break;
   case T_UInt64: d.u64 <<= rhs; break;
   case T_Char: setUInt(d.c << rhs); break;
-  default: break;
+  default:
+    error("operator <<= not defined");
+    break;
   }
   return *this;
 }
@@ -1059,7 +1166,9 @@ Variant& Variant::operator<<=(ta_int64_t rhs) {
   case T_Int64: d.i64 <<= rhs; break;
   case T_UInt64: d.u64 <<= rhs; break;
   case T_Char: setInt64(d.c << rhs); break;
-  default: break;
+  default:
+    error("operator <<= not defined");
+    break;
   }
   return *this;
 }
@@ -1071,7 +1180,9 @@ Variant& Variant::operator<<=(ta_uint64_t rhs) {
   case T_Int64: setUInt64(d.i64 << rhs); break;
   case T_UInt64: d.u64 <<= rhs; break;
   case T_Char: setUInt64(d.c << rhs); break;
-  default: break;
+  default:
+    error("operator <<= not defined");
+    break;
   }
   return *this;
 }
@@ -1083,7 +1194,9 @@ Variant& Variant::operator<<=(const Variant& rhs) {
   case T_Int64: return operator<<=(rhs.d.i64);
   case T_UInt64: return operator<<=(rhs.d.u64);
   case T_Char: return operator<<=(rhs.d.c);
-  default: break;
+  default:
+    rhs.error("operator <<= not defined");
+    break;
   }
   return *this;
 }
@@ -1095,7 +1208,9 @@ Variant& Variant::operator>>=(char rhs) {
   case T_Int64: d.i64 >>= rhs; break;
   case T_UInt64: d.u64 >>= rhs; break;
   case T_Char: d.c >>= rhs; break;
-  default: break;
+  default:
+    error("operator >>= not defined");
+    break;
   }
   return *this;
 }
@@ -1107,7 +1222,9 @@ Variant& Variant::operator>>=(int rhs) {
   case T_Int64: d.i64 >>= rhs; break;
   case T_UInt64: d.u64 >>= rhs; break;
   case T_Char: setInt(d.c >> rhs); break;
-  default: break;
+  default:
+    error("operator >>= not defined");
+    break;
   }
   return *this;
 }
@@ -1119,7 +1236,9 @@ Variant& Variant::operator>>=(uint rhs) {
   case T_Int64: d.i64 >>= rhs; break;
   case T_UInt64: d.u64 >>= rhs; break;
   case T_Char: setUInt(d.c >> rhs); break;
-  default: break;
+  default:
+    error("operator >>= not defined");
+    break;
   }
   return *this;
 }
@@ -1131,7 +1250,9 @@ Variant& Variant::operator>>=(ta_int64_t rhs) {
   case T_Int64: d.i64 >>= rhs; break;
   case T_UInt64: d.u64 >>= rhs; break;
   case T_Char: setInt64(d.c >> rhs); break;
-  default: break;
+  default:
+    error("operator >>= not defined");
+    break;
   }
   return *this;
 }
@@ -1143,7 +1264,9 @@ Variant& Variant::operator>>=(ta_uint64_t rhs) {
   case T_Int64: setUInt64(d.i64 >> rhs); break;
   case T_UInt64: d.u64 >>= rhs; break;
   case T_Char: setUInt64(d.c >> rhs); break;
-  default: break;
+  default:
+    error("operator >>= not defined");
+    break;
   }
   return *this;
 }
@@ -1155,7 +1278,9 @@ Variant& Variant::operator>>=(const Variant& rhs) {
   case T_Int64: return operator>>=(rhs.d.i64);
   case T_UInt64: return operator>>=(rhs.d.u64);
   case T_Char: return operator>>=(rhs.d.c);
-  default: break;
+  default:
+    rhs.error("operator %= not defined");
+    break;
   }
   return *this;
 }
@@ -1167,7 +1292,9 @@ Variant& Variant::operator&=(char rhs) {
   case T_Int64: d.i64 &= rhs; break;
   case T_UInt64: d.u64 &= rhs; break;
   case T_Char: d.c &= rhs; break;
-  default: break;
+  default:
+    error("operator &= not defined");
+    break;
   }
   return *this;
 }
@@ -1179,7 +1306,9 @@ Variant& Variant::operator&=(int rhs) {
   case T_Int64: d.i64 &= rhs; break;
   case T_UInt64: d.u64 &= rhs; break;
   case T_Char: setInt(d.c & rhs); break;
-  default: break;
+  default:
+    error("operator &= not defined");
+    break;
   }
   return *this;
 }
@@ -1191,7 +1320,9 @@ Variant& Variant::operator&=(uint rhs) {
   case T_Int64: d.i64 &= rhs; break;
   case T_UInt64: d.u64 &= rhs; break;
   case T_Char: setUInt(d.c & rhs); break;
-  default: break;
+  default:
+    error("operator &= not defined");
+    break;
   }
   return *this;
 }
@@ -1203,7 +1334,9 @@ Variant& Variant::operator&=(ta_int64_t rhs) {
   case T_Int64: d.i64 &= rhs; break;
   case T_UInt64: d.u64 &= rhs; break;
   case T_Char: setInt64(d.c & rhs); break;
-  default: break;
+  default:
+    error("operator &= not defined");
+    break;
   }
   return *this;
 }
@@ -1215,7 +1348,9 @@ Variant& Variant::operator&=(ta_uint64_t rhs) {
   case T_Int64: setUInt64(d.i64 & rhs); break;
   case T_UInt64: d.u64 &= rhs; break;
   case T_Char: setUInt64(d.c & rhs); break;
-  default: break;
+  default:
+    error("operator &= not defined");
+    break;
   }
   return *this;
 }
@@ -1227,7 +1362,9 @@ Variant& Variant::operator&=(const Variant& rhs) {
   case T_Int64: return operator&=(rhs.d.i64);
   case T_UInt64: return operator&=(rhs.d.u64);
   case T_Char: return operator&=(rhs.d.c);
-  default: break;
+  default:
+    rhs.error("operator %= not defined");
+    break;
   }
   return *this;
 }
@@ -1239,7 +1376,9 @@ Variant& Variant::operator|=(char rhs) {
   case T_Int64: d.i64 |= rhs; break;
   case T_UInt64: d.u64 |= rhs; break;
   case T_Char: d.c |= rhs; break;
-  default: break;
+  default:
+    error("operator |= not defined");
+    break;
   }
   return *this;
 }
@@ -1251,7 +1390,9 @@ Variant& Variant::operator|=(int rhs) {
   case T_Int64: d.i64 |= rhs; break;
   case T_UInt64: d.u64 |= rhs; break;
   case T_Char: setInt(d.c | rhs); break;
-  default: break;
+  default:
+    error("operator |= not defined");
+    break;
   }
   return *this;
 }
@@ -1263,7 +1404,9 @@ Variant& Variant::operator|=(uint rhs) {
   case T_Int64: d.i64 |= rhs; break;
   case T_UInt64: d.u64 |= rhs; break;
   case T_Char: setUInt(d.c | rhs); break;
-  default: break;
+  default:
+    error("operator |= not defined");
+    break;
   }
   return *this;
 }
@@ -1275,7 +1418,9 @@ Variant& Variant::operator|=(ta_int64_t rhs) {
   case T_Int64: d.i64 |= rhs; break;
   case T_UInt64: d.u64 |= rhs; break;
   case T_Char: setInt64(d.c | rhs); break;
-  default: break;
+  default:
+    error("operator |= not defined");
+    break;
   }
   return *this;
 }
@@ -1287,7 +1432,9 @@ Variant& Variant::operator|=(ta_uint64_t rhs) {
   case T_Int64: setUInt64(d.i64 | rhs); break;
   case T_UInt64: d.u64 |= rhs; break;
   case T_Char: setUInt64(d.c | rhs); break;
-  default: break;
+  default:
+    error("operator |= not defined");
+    break;
   }
   return *this;
 }
@@ -1299,7 +1446,9 @@ Variant& Variant::operator|=(const Variant& rhs) {
   case T_Int64: return operator|=(rhs.d.i64);
   case T_UInt64: return operator|=(rhs.d.u64);
   case T_Char: return operator|=(rhs.d.c);
-  default: break;
+  default:
+    rhs.error("operator |= not defined");
+    break;
   }
   return *this;
 }
@@ -1311,7 +1460,9 @@ Variant& Variant::operator^=(char rhs) {
   case T_Int64: d.i64 ^= rhs; break;
   case T_UInt64: d.u64 ^= rhs; break;
   case T_Char: d.c ^= rhs; break;
-  default: break;
+  default:
+    error("operator ^= not defined");
+    break;
   }
   return *this;
 }
@@ -1323,7 +1474,9 @@ Variant& Variant::operator^=(int rhs) {
   case T_Int64: d.i64 ^= rhs; break;
   case T_UInt64: d.u64 ^= rhs; break;
   case T_Char: setInt(d.c ^ rhs); break;
-  default: break;
+  default:
+    error("operator ^= not defined");
+    break;
   }
   return *this;
 }
@@ -1335,7 +1488,9 @@ Variant& Variant::operator^=(uint rhs) {
   case T_Int64: d.i64 ^= rhs; break;
   case T_UInt64: d.u64 ^= rhs; break;
   case T_Char: setUInt(d.c ^ rhs); break;
-  default: break;
+  default:
+    error("operator ^= not defined");
+    break;
   }
   return *this;
 }
@@ -1347,7 +1502,9 @@ Variant& Variant::operator^=(ta_int64_t rhs) {
   case T_Int64: d.i64 ^= rhs; break;
   case T_UInt64: d.u64 ^= rhs; break;
   case T_Char: setInt64(d.c ^ rhs); break;
-  default: break;
+  default:
+    error("operator ^= not defined");
+    break;
   }
   return *this;
 }
@@ -1359,7 +1516,9 @@ Variant& Variant::operator^=(ta_uint64_t rhs) {
   case T_Int64: setUInt64(d.i64 ^ rhs); break;
   case T_UInt64: d.u64 ^= rhs; break;
   case T_Char: setUInt64(d.c ^ rhs); break;
-  default: break;
+  default:
+    error("operator ^= not defined");
+    break;
   }
   return *this;
 }
@@ -1371,7 +1530,9 @@ Variant& Variant::operator^=(const Variant& rhs) {
   case T_Int64: return operator^=(rhs.d.i64);
   case T_UInt64: return operator^=(rhs.d.u64);
   case T_Char: return operator^=(rhs.d.c);
-  default: break;
+  default:
+    rhs.error("operator ^= not defined");
+    break;
   }
   return *this;
 }
@@ -1384,7 +1545,9 @@ Variant& Variant::operator++() {
   case T_UInt64: ++(d.u64); break;
   case T_Double: d.d += 1.0; break;
   case T_Char: ++(d.c); break;
-  default: break;
+  default:
+    error("operator ++ not defined");
+    break;
   }
   return *this;
 }
@@ -1403,7 +1566,9 @@ Variant& Variant::operator--() {
   case T_UInt64: --(d.u64); break;
   case T_Double: d.d -= 1.0; break;
   case T_Char: --(d.c); break;
-  default: warn("-- operator"); break;
+  default:
+    error("operator -- not defined");
+    break;
   }
   return *this;
 }
@@ -1424,7 +1589,9 @@ Variant& Variant::operator-() {
   case T_UInt64: d.u64 = (ta_uint64_t)-((ta_int64_t)d.u64); break; // forces unsigned
   case T_Double: d.d = -d.d; break;
   case T_Char: d.c = -d.c; break;
-  default: warn("unary - operator"); break ;
+  default:
+    error("unary operator - not defined");
+    break;
   }
   return *this;
 }
@@ -1438,7 +1605,8 @@ Variant& Variant::operator~() {
   case T_Int64: d.i64 = ~d.i64; break;
   case T_UInt64: d.u64 = ~d.u64; break;
   case T_Char: d.c = ~d.c; break;
-  default: warn("~ operator"); break ;
+  default:
+    error("unary operator ~ not defined");
   }
   return *this;
 }
@@ -1812,7 +1980,7 @@ const String Variant::toCssLiteral() const {
     if (isNull()) {
       rval += "NULL";
     } else {
-      warn("toCssLiteral() on a non-null raw pointer");
+      error("toCssLiteral() on a non-null raw pointer");
       // todo, maybe should emit code breaking literal
     }  break;
 #ifndef NO_TA_BASE
@@ -2169,7 +2337,7 @@ void Variant::updateFromString(const String& val) {
   case T_String: getString() = val; break;
   case T_Ptr:
     if ((val == "NULL") || (val == "(NULL)")) d.ptr = NULL;
-    else warn("updateFromString() setting ptr to other than NULL");
+    else error("updateFromString() setting ptr to other than NULL");
     break;
 #ifndef NO_TA_BASE
  // TODO: should look up from path
@@ -2203,7 +2371,11 @@ void Variant::updateFromString(const String& val) {
 }
 
 void Variant::warn(const char* msg) const {
-  cerr << "** Warning: operation not supported on Variant type " << type() << ": " << msg << "\n";
+  taMisc::Warning("Variant type", getTypeAsString(), ":", msg);
+}
+
+void Variant::error(const char* msg) const {
+  taMisc::Error("Variant type", getTypeAsString(), ":", msg);
 }
 
 #ifndef NO_TA_BASE

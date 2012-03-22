@@ -769,7 +769,10 @@ taBase::IndexMode taBase::IndexModeDecode(const Variant& idx, int cont_dims) con
     }
     else if(mat->InheritsFrom(&TA_int_Matrix)) {
       if(cont_dims == 1) {
-	if(mat->dims() == 1 || (mat->dims() == 2 && mat->dim(0) == 1)) {
+	if(mat->dims() == 1 && mat->dim(0) == 1) {
+	  mode = IDX_COORD;
+	}
+	else if(mat->dims() == 1 || (mat->dims() == 2 && mat->dim(0) == 1)) {
 	  mode = IDX_COORDS;
 	}
 	else if(mat->dims() == 2 && mat->dim(0) == 3 && mat->dim(1) == 1) {
@@ -4248,8 +4251,11 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
 		 "is not size of list:", String(ElemCount())))
       return false;
     if(el_view && el_view_mode == IDX_MASK) {
-      // todo: must and this list with any existing -- needs elem-wise operator!
-      // *cmat &&= *ElView();
+      // take intersection of the existing mask
+      byte_Matrix* am = (byte_Matrix*)(*cmat && *ElView());
+      taBase::Ref(am);
+      cmat->Copy(am);
+      taBase::UnRef(am);
     }
     taList_impl* nwvw = NewElView(cmat, IDX_MASK);
     return (Variant)nwvw;
@@ -5778,8 +5784,11 @@ Variant taArray_base::Elem(const Variant& idx, IndexMode mode) const {
 		 "is not size of list:", String(size)))
       return false;
     if(el_view && el_view_mode == IDX_MASK) {
-      // todo: must and this list with any existing -- needs elem-wise operator!
-      // *cmat &&= *ElView();
+      // take intersection of the existing mask
+      byte_Matrix* am = (byte_Matrix*)(*cmat && *ElView());
+      taBase::Ref(am);
+      cmat->Copy(am);
+      taBase::UnRef(am);
     }
     taArray_base* nwvw = NewElView(cmat, IDX_MASK);
     return (Variant)nwvw;

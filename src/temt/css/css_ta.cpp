@@ -710,25 +710,29 @@ void cssTA_Base::InitAssign(const cssEl& s) {
     return;
   }
   // if(!ROCheck()) return;
+  taBase* ths = GetTAPtr();
   if(ptr_cnt > 0) {
     PtrAssignPtr(s);
-    taBase* ths = GetTAPtr();
     if(ths)
       type_def = ths->GetTypeDef();	// just to be sure
     return;
   }
 
   // ptr_cnt == 0 -- initialize us from that guy
-  if(!AssignCheckSource(s)) return; // not a good source
-  // here we change our type to be that of the other object
-  cssTA* sp = (cssTA*)s.GetNonRefObj();
-  taBase* obj = (taBase*)ptr;
-
-  taBase* nw = obj->Clone();
-  taBase::SetPointer((taBase**)&ptr, nw); // always use set pointer for ta base!
-  // this will auto-free any existing ptr
-  if(ptr)
-    type_def = ((taBase*)ptr)->GetTypeDef();
+  if(!cssTA_Base::AssignCheckSource(s)) return; // not a good source -- use our version which is most strict, not any derived version that might be looser (e.g., Matrix)
+  // here we change our type to be that of the other object if necc
+  cssTA_Base* sp = (cssTA_Base*)s.GetNonRefObj();
+  taBase* obj = sp->GetTAPtr();
+  if(obj->GetTypeDef() == ths->GetTypeDef()) {
+    ths->Copy(obj);		// just copy if same types
+  }
+  else {			// otherwise change to new type
+    taBase* nw = obj->Clone();
+    taBase::SetPointer((taBase**)&ptr, nw); // always use set pointer for ta base!
+    // this will auto-free any existing ptr
+    if(ptr)
+      type_def = ((taBase*)ptr)->GetTypeDef();
+  }
   UpdateClassParent();
 }
 
@@ -1570,6 +1574,81 @@ cssTA_Matrix::cssTA_Matrix(taMatrix* mtx)
 cssTA_Matrix::~cssTA_Matrix() {
 }
 
+String cssTA_Matrix::GetStr() const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) 
+    return "NULL";
+  if(ptr_cnt == 1) {
+    // if we are a pointer to a tabase, get the path -- otherwise for #INLINE
+    // it can return the actual inline rep and this is bad for css arg types!
+    if(ths && ths->owner) {
+      return ths->GetPath();
+    }
+  }
+
+  String rval;
+  TA_FOREACH(vitm, *ths) {
+    if(FOREACH_itr->count == 0) {
+      rval = vitm.toString();
+    }
+    else {
+      return taBase::GetStringRep(ths);
+    }
+  }
+  return rval;
+}
+
+cssTA_Matrix::operator Real() const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) 
+    return 0.0;
+  double rval = 0.0;
+  TA_FOREACH(vitm, *ths) {
+    if(FOREACH_itr->count == 0) {
+      rval = vitm.toDouble();
+    }
+    else {
+      cssMisc::Error(prog, "cannot convert matrix to single scalar value");
+      return 0.0;
+    }
+  }
+  return rval;
+}
+
+cssTA_Matrix::operator Int() const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) 
+    return 0;
+  int rval = 0;
+  TA_FOREACH(vitm, *ths) {
+    if(FOREACH_itr->count == 0) {
+      rval = vitm.toInt();
+    }
+    else {
+      cssMisc::Error(prog, "cannot convert matrix to single scalar value");
+      return 0;
+    }
+  }
+  return rval;
+}
+
+cssTA_Matrix::operator bool() const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) 
+    return 0;
+  bool rval = 0;
+  TA_FOREACH(vitm, *ths) {
+    if(FOREACH_itr->count == 0) {
+      rval = vitm.toBool();
+    }
+    else {
+      cssMisc::Error(prog, "cannot convert matrix to single scalar value");
+      return 0;
+    }
+  }
+  return rval;
+}
+
 bool cssTA_Matrix::AssignCheckSource(const cssEl& s) {
   if(s.GetType() != T_TA) {
     // cssMisc::Error(prog, "Failed to assign TA C pointer of type:", GetTypeName(),
@@ -1588,18 +1667,26 @@ void cssTA_Matrix::operator=(const cssEl& s) {
     return;
   }
   if(!ROCheck()) return;
+  taMatrix* ths = GetMatrixPtr();
   if(ptr_cnt > 0) {
-    PtrAssignPtr(s);
-    taBase* ths = GetTAPtr();
-    if(ths)
-      type_def = ths->GetTypeDef();	// just to be sure
+    if(IsMatrix(s)) {
+      PtrAssignPtr(s);
+      taBase* nwths = GetTAPtr();
+      if(nwths)
+	type_def = nwths->GetTypeDef();	// just to be sure
+    }
+    else {
+      Variant ovar = s.GetVar();
+      if(!ovar.isInvalid()) {
+	*ths = ovar; // use matrix routine for this operator
+      }
+    }
     return;
   }
-  taMatrix* ths = GetMatrixPtr();
   if(IsMatrix(s)) {
     taMatrix* oth = MatrixPtr(s);
     if(oth) {
-      ths->Copy(*oth); // use generic copy matrix routine for this operator -- does the right thing..
+      ths->Copy(oth); // use generic copy matrix routine for this operator -- does the right thing..
     }
   }
   else {
@@ -1648,6 +1735,14 @@ cssEl* cssTA_Matrix::operator-(cssEl& t) {
       if(rval) return new cssTA_Matrix(rval);
     }
   }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator-() {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  taMatrix* rval = -*ths; // use matrix routine for this operator
+  if(rval) return new cssTA_Matrix(rval);
   return &cssMisc::Void;
 }
 
@@ -1910,6 +2005,46 @@ cssEl* cssTA_Matrix::operator!= (cssEl& t) {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
       taMatrix* rval = *ths != ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator&& (cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths && *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths && ovar; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator|| (cssEl& t) {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  if(IsMatrix(t)) {
+    taMatrix* oth = MatrixPtr(t);
+    if(oth) {
+      taMatrix* rval = *ths || *oth; // use matrix routine for this operator
+      if(rval) return new cssTA_Matrix(rval);
+    }
+  }
+  else {
+    Variant ovar = t.GetVar();
+    if(!ovar.isInvalid()) {
+      taMatrix* rval = *ths || ovar; // use matrix routine for this operator
       if(rval) return new cssTA_Matrix(rval);
     }
   }

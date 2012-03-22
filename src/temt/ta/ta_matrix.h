@@ -859,6 +859,8 @@ public:
   virtual void 	    operator%=(const taMatrix& t);
   virtual void	    operator%=(const Variant& t);
 
+  virtual taMatrix* operator-();
+
   // boolean operators return a byte_Matrix
 
   virtual taMatrix* operator<(const taMatrix& t);
@@ -878,6 +880,14 @@ public:
 
   virtual taMatrix* operator!=(const taMatrix& t);
   virtual taMatrix* operator!=(const Variant& t);
+
+  virtual taMatrix* operator&&(const taMatrix& t);
+  virtual taMatrix* operator&&(const Variant& t);
+
+  virtual taMatrix* operator||(const taMatrix& t);
+  virtual taMatrix* operator||(const Variant& t);
+
+  virtual taMatrix* operator!();
 
 protected:
   override void		UpdateAfterEdit_impl(); 

@@ -116,7 +116,7 @@ protected:
 //				is the master copy function for assignment =
 // void	Copy(const type& cp) 	public interface to call Copy_impl for a given guy
 //
-// then there is, very confusingly, an entirely separate set of copy mechanisms that
+// then there is, confusingly, an entirely separate set of copy mechanisms that
 // use the TA system to do more flexible copying using generic taBase* objects 
 // these all take pointer args * instead of reference args
 // 
@@ -137,6 +137,10 @@ protected:
 //				branches can still copy -- example is Matrix objects
 //				that can still copy from different types using Variant
 //				conversion interface (e.g. float from string etc)
+//
+// The bottom line is: define Copy_ in each class to copy just that class's members
+// and use ->Copy(cp) to copy a generic taBase* guy -- only use = when the types are
+// known and correct
 
 
 // common defs used by ALL taBase types: Type and Copy guys

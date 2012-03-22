@@ -460,10 +460,15 @@ public:
   { return new cssTA_Matrix((void*)NULL, ptr_cnt, type_def, arg[1]->GetStr()); }
 
   Variant GetVar() const 	{ return Variant(GetMatrixPtr()); }
+  String GetStr() const;
 
   // void UpdateAfterEdit();
 
   override bool AssignCheckSource(const cssEl& s);
+
+  operator Real() const;
+  operator Int() const;
+  operator bool() const;
 
   void operator=(const cssEl& s);
   USING(cssTA_Base::operator=)
@@ -474,7 +479,7 @@ public:
   cssEl* operator/(cssEl& t);
   cssEl* operator%(cssEl& t);
 
-  cssEl* operator-()		{ return cssTA_Base::operator-(); }
+  cssEl* operator-();
   cssEl* operator*()		{ return cssTA_Base::operator*(); }
 
   void operator+=(cssEl& t);
@@ -489,6 +494,9 @@ public:
   cssEl* operator>=(cssEl& s);
   cssEl* operator==(cssEl& s);
   cssEl* operator!=(cssEl& s);
+
+  cssEl* operator&&(cssEl& s);
+  cssEl* operator||(cssEl& s);
 };
 
 
