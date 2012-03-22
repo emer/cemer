@@ -1,0 +1,14 @@
+
+// factorial: note the recursion
+
+float fac(float fclm) {
+  float rv;
+  if(fclm <= 0) {
+    return 1;
+  }
+  else {
+    return fclm * fac(fclm - 1);
+  }
+}
+
+fac(1000);

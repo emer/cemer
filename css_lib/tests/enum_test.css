@@ -1,0 +1,52 @@
+// test of enumerated types
+
+enum bogus_enum {
+  FIRST_VAL,
+  SECOND_VAL,
+  THIRD_VAL = 20,
+  FOURTH_VAL,
+  FIFTH_VAL = 100,
+};
+
+enum {				// anonymous
+  L_VAL,
+  R_VAL,
+};
+
+class happy {
+public:
+  enum momo {
+    M_1,
+    M_2,
+    M_3
+  };
+
+  momo 	item;
+  Random::Type rt;
+
+  String memfun(String& arg);
+};
+
+String happy::memfun(String& arg) {
+  item = arg;
+  cout << (String)item << " = " << arg << " = " << item << "\n";
+  rt = "GAMMA";
+  cerr << rt << endl;
+}
+
+void Main() {
+  bogus_enum be_val;
+  be_val = FIFTH_VAL;
+  cout << "be_val = FIFTH_VAL " << be_val << " = " << (String)be_val << "\n";
+  be_val = SECOND_VAL;
+  cout << "be_val = SECOND_VAL " << be_val << " = " << (String)be_val << "\n";
+  be_val = 55;
+  cout << "be_val = 55 " << be_val << " = " << (String)be_val << "\n";
+
+  happy hap;
+  hap.memfun("M_1");
+  hap.memfun("2");
+  hap.memfun("7");
+}
+
+Main();

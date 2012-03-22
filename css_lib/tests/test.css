@@ -1,0 +1,16 @@
+int ab = 1;
+int ba = 2;
+
+/* this is a test function loop */
+while(ab < 4) {	ba = ba * ab;
+		ab += 1;		// this is commentation
+		printf("\n ab:\t",ab,"\tba:\t",ba,"\n");
+}
+/* the multiple lines
+of inquiry begged completion */
+
+if(ab == 4) printf(ab,"\n");		// as is this
+
+if(ab == ba) printf(ba,"\n"); else printf(1000,"\n");
+
+

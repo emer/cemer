@@ -1,0 +1,79 @@
+// this is a test/demo of the new "builtin" string and stream class functions
+
+void Strings() {
+  str = "This is a Test string to play with";
+  nl = "\n";
+  cout << str << nl;
+  cout << "is play in there? " << str.contains("play") << nl;
+  cout << "is Play in there? " << str.contains("Play") << nl;
+  cout << "how many i's? " << str.freq("i") << nl;
+  cout << "after to: " << str.after("to") << nl;
+  cout << "before _last_ to: " << str.before("to", -1) << nl;
+  str.reverse(); cout << "is it a palindrome? " << str << nl;
+  str.reverse(); str.capitalize(); cout << "now that's official: " << str << nl;
+  str.downcase(); cout << "not so important: " << str << nl;
+  str.upcase(); cout << "a bit much: " << str << nl;
+  cout << "how many bytes alloc? " << str.allocation() << nl;
+  cout << "how many bytes long? " << str.length() << nl;
+  str.alloc(127); cout << "now how much alloc? " << str.allocation() << nl;
+}
+
+void Streams() {
+  nl = "\n";
+  fstream strm;
+  strm.open("strm.tst.fl", ios::out); // how do you like that!
+  strm << "this is some junk\n" << exp(cos(PI)) << " pi, pretty nice "
+       << nl << 0x22 << " is hex and " << 022 << " is octal\n";
+  cout << "Stream at position: " << strm.tellp() << nl;
+  cout << "stream is open? " << strm.good() << nl;
+  strm.flush();
+  strm.close();
+
+  system("cat strm.tst.fl");
+  cout << "stream is open? " << strm.good() << nl;
+  strm.open("strm.tst.fl", ios::in);
+  String tmp;
+  strm >> tmp;
+  cout << "Got this from file: " << tmp << nl;
+  tmp.alloc(1023);		// make room
+  strm.getline(tmp, 1023);	// default terminator is \n, but you can give it one..
+  cout << "Got this from file: " << tmp << nl;
+  double mypie;
+  strm >> mypie;
+  cout << "real from file: " << mypie << nl;
+  strm.getline(tmp, 1023);
+  int myint;
+  strm >> myint;
+  cout << "int from file: " << myint << nl;
+  String scan;
+  while(scan != "and")	strm >> scan;
+  strm >> myint;
+  cout << "int from file: " << myint << nl;
+  cout << "Stream at position: " << strm.tellg() << nl;
+  strm.putback('a');
+  cout << "putback: stream at position: " << strm.tellg() << nl;
+  strm.close();
+
+  system("rm strm.tst.fl");
+}
+
+void OldFILE() {
+  FILE fh = fopen("oldfile.tst.fl", "w"); // you have to init_assign an fh..
+
+  fprintf(fh, "hey, this is pretty groovy\n", exp(cos(PI)), "\n");
+
+  fclose(fh);
+  
+  system("cat oldfile.tst.fl");
+
+  fprintf(stdout, "Sorry, no formatting or input is provided for old FILE\n");
+
+  system("rm oldfile.tst.fl");
+}
+
+cout << "\nString Tests:\n\n";
+Strings();
+cout << "\n\nStream Tests:\n\n";
+Streams();
+cout << "\n\nOldFILE Tests:\n\n";
+OldFILE();

@@ -1,0 +1,39 @@
+
+int funone(int ara, float arb);			// pre-declare
+
+void funtwo () {
+  int baba;
+  
+  for(baba=1; baba < 4; baba++)
+    printf("baba\t",baba,"\n");
+
+  funone(baba, 20);
+  return;
+}
+
+
+int funone (int ara, float arb) {
+  int auta = 1;
+  int autb = 2;
+  
+  while (auta < 4) {
+    auta += 1;
+    ara = ara + 50;
+    printf("ara: ",ara,"\tauta:\t",auta);
+    arb = arb * PI;
+    printf("\tarb\t",arb,"\n");
+  }
+  autb = ara + arb;
+  printf("autb:", autb, "\n");
+  return ara;
+}
+
+funone(20, 2.215);
+
+funone(102, 4029.2010);
+
+funone(PI, 1);
+
+funone("201", "101.21");
+
+funtwo();

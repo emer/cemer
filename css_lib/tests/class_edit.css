@@ -1,0 +1,27 @@
+
+class InlineCls {
+  // #INLINE a small class to go inline
+public:
+  enum Options {
+    OPT_1,
+    OPT_2,
+  };
+  String	nm;
+  int		val;
+  Options	opt;
+  String	other_stuff;	// #HIDDEN_INLINE
+};
+
+class RegCls {
+  // a regular class
+public:
+  String	name;		// name of object
+  int		a_value;	// a value 
+  InlineCls	inln;		// inline test 1
+  InlineCls	in2;		// inline test 2: same thing..
+};
+
+RegCls reg_cls;
+EditObj(reg_cls);
+
+  

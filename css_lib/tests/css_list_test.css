@@ -1,0 +1,41 @@
+// tests the css_list.css code
+
+// comment this out to not force new parse of list object
+#ifdef List_def
+#undef List_def
+#endif
+
+#include "css_list.css"
+
+class Foo {
+  // simple test class for list
+public:
+  String 	name;
+  int		ary[3];
+  
+  Foo();
+  
+  void		PrintMe();	// #BUTTON
+};
+
+Foo::Foo() {
+  name = "constructed";
+  ary[1] = 5;
+}
+  
+void Foo::PrintMe() {
+  cout << name << "\n";
+  cout << ary << "\n";
+}
+
+List lst;
+
+Foo foo_ary[10];
+int i;
+for(i=0; i<10; i++) {
+  lst.Add(&foo_ary[i]);
+  lst.El(i).name = "item_" + i;
+}
+
+lst.Print();
+lst.Edit();

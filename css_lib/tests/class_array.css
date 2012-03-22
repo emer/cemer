@@ -1,0 +1,125 @@
+int __IntArrayId = 0;
+
+class IntArray {
+   int id;
+   int vec[10];
+   IntArray();
+   ~IntArray();
+};
+
+IntArray::IntArray() {
+   id = ++__IntArrayId;
+   cout << "IntArray(" << id << ")\n";
+}
+
+IntArray::~IntArray() {
+   cout << "~IntArray(" << id << ")\n";
+   id = -id;
+}
+
+int __IntMatrixId = 0;
+class IntMatrix {
+   int id;
+   int vec[2][3];
+   IntMatrix();
+   ~IntMatrix();
+};
+
+IntMatrix::IntMatrix() {
+   id = ++__IntMatrixId;
+   cout << "IntMatrix(" << id << ")\n";
+}
+
+IntMatrix::~IntMatrix() {
+   cout << "~IntMatrix(" << id << ")\n";
+   id = -id;
+}
+
+int __StringArrayId = 0;
+class StringArray {
+   int id;
+   String vec[10];
+   StringArray();
+   ~StringArray();
+};
+
+StringArray::StringArray() {
+   id = ++__StringArrayId;
+   cout << "StringArray(" << id << ")\n";
+}
+
+StringArray::~StringArray() {
+   cout << "~StringArray(" << id << ")\n";
+   id = -id;
+}
+
+int __FooId = 0;
+class Foo {
+   int id;
+   IntArray ints;
+   Foo();
+   ~Foo();
+};
+
+Foo::Foo() {
+   id = ++__FooId;
+   cout << "Foo(" << id << ")\n";
+}
+
+Foo::~Foo() {
+   cout << "~Foo(" << id << ")\n";
+   id = -id;
+}
+
+int __BarId = 0;
+class Bar {
+   int id;
+   IntArray ints[3];
+   Bar();
+   ~Bar();
+};
+
+Bar::Bar() {
+   id = ++__BarId;
+   cout << "Bar(" << id << ")\n";
+}
+
+Bar::~Bar() {
+   cout << "~Bar(" << id << ")\n";
+   id = -id;
+}
+
+int __BazId = 0;
+class Baz {
+   int id;
+   Foo foo;
+   Bar bar;
+   IntArray* ip;
+   StringArray* sp;
+   IntMatrix* mp;
+   Foo* fp;
+   Bar* bp;
+   Baz();
+   ~Baz();
+};
+
+Baz::Baz() {
+   id = ++__BazId;
+   ip = new IntArray;
+   sp = new StringArray[2];
+   mp = new IntMatrix;
+   fp = &foo;
+   bp = &bar;
+   cout << "Baz(" << id << ")\n";
+} 
+
+Baz::~Baz() {
+   cout << "~Baz(" << id << ")\n";
+   id = -id;
+}
+
+cout << "creating the baz\n";
+Baz* baz = new Baz;
+cout << "deleting the baz\n";
+baz = NULL;
+

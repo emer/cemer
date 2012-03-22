@@ -1,0 +1,13 @@
+// testing standard io
+
+void stdiotst(String fname) {
+  FILE* fh;
+  
+  fh = fopen(fname, "w");
+  
+  fprintf(fh, "this is a test\n");
+  
+  fclose(fh);
+  
+  system("cat "+ fname);
+}

@@ -1,0 +1,30 @@
+void ptrtst() {
+  // pointers and arrays
+  int ab = 1;
+  int* pp;
+  
+  pp = &ab;
+  float* p2;
+  
+  //  p2 = pp;			// its ok. NOT any more!
+  
+  //pp++;				// cant do this!
+  
+  int ary[20];			// an array!
+  
+  int i;
+  for(i=0; i < 20; i++) {
+    ary[i] = i;
+  }
+  
+  for(i=0, pp = ary; i < 20; i++, pp++) {
+    printf(*pp, "\n");
+  }
+  
+  // built in safety
+  for(i=0, pp = ary; i < 25; i++, pp++) {
+    printf(*pp, "\n");
+  }
+}
+
+

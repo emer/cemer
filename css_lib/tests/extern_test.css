@@ -1,0 +1,63 @@
+// test the proper treatment of local (static) top-level variables
+// in an extern function and member function defn
+
+extern String 	ext_fun(String arg);
+String		non_ext_fun(String arg);
+
+String stat_var = " (implicit) static ";
+
+static String ex_stat_var = " (explicit) static var ";
+
+extern String ext_var = " extern variable ";
+
+String ext_fun(String arg) {
+  static String local_stat;
+  String rval;
+  rval = arg;
+  rval += stat_var;		// this should trigger warning
+  rval += ex_stat_var;		// this should trigger warning
+  rval += non_ext_fun(arg);	// this should trigger warning
+  rval += local_stat;		// this is ok
+  rval += ext_var;		// this is ok
+  local_stat = rval;
+  return rval;
+}
+
+String non_ext_fun(String arg) {
+  static String local_stat;
+  String rval;
+  rval = arg;
+  rval += stat_var;		// this is ok
+  rval += ex_stat_var;		// this is ok
+//  rval += ext_fun(arg);		// this is ok
+  rval += local_stat;		// this is ok
+  rval += ext_var;		// this is ok
+  local_stat = rval;
+  return rval;
+}
+
+class Foo {
+public:
+  String 	mbr_str;
+  
+  String	mbr_fun(String arg);
+};
+
+String Foo::mbr_fun(String arg) {
+  String rval;
+  rval = arg;
+  rval += stat_var;		// this should trigger warning
+  rval += ex_stat_var;		// this should trigger warning
+  rval += non_ext_fun(arg);	// this should trigger warning
+  rval += mbr_str;		// this is ok
+  rval += ext_var;		// this is ok
+  mbr_str = rval;
+  return rval;
+}
+
+Foo foo;
+cout << ext_fun("ext_fun:") << "\n";
+cout << non_ext_fun("non_ext_fun:") << "\n";
+cout << foo.mbr_fun("foo.mbr_fun:") << "\n";
+
+

@@ -1,0 +1,58 @@
+
+String exec_fun; // = s_args[0];	// this is the function to execute if in a
+				// run-only script (non-interactive)
+class Foo {
+  // class comment
+public:
+  int		mbr1;			// mbr1 cmnt
+  String	mbr2;			// mbr2 cmnt
+  float		mbr3;
+  int		mbr4;
+  // #HIDDEN cmnt for mbr 4
+
+  Foo();			// foo constructor
+  ~Foo();
+  String	fun1();		// fun1 cmnt
+  int		fun2();
+  String	fun3();		// #BUTTON fun3 cmnt
+};
+
+Foo::Foo() {
+  cerr << "in Foo ctor\n";
+}
+
+Foo::~Foo() {
+  cerr << "in Foo dtor\n";
+}
+
+String Foo::fun1() {
+  return mbr2 = "fun1";
+}
+
+int Foo::fun2() {
+  mbr4 += 2;
+  return mbr1 = 42;
+}
+
+String Foo::fun3() {
+  return mbr2 = "fun3";
+}
+
+void Main(Foo& fo) {
+  switch(exec_fun) {
+  case "fun1":
+    cout << fo.fun1() << "\n";
+    break;
+  case "fun2":
+    cout << fo.fun2() << "\n";
+    break;
+  default:
+    cerr << "Action: " << exec_fun << " not recognized\n";
+  }
+}
+
+Foo foo;
+if(exec_fun.empty() || (exec_fun == "edit"))
+  EditObj(foo);
+else
+  Main(foo);

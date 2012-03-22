@@ -1,0 +1,14 @@
+
+// reference variables..
+
+int bogus(int& fine, String& see, ostream& fh) {
+  fine = 20;
+  see += "alkdsjf kllks";
+  fh << see << " " << fine << "\n";
+  fh.put('-');
+}
+
+int bb = 10;
+String sm = "abbal";
+bogus(bb, sm, cout);
+cout << sm << " " << bb << "\n";

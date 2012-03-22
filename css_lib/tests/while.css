@@ -1,0 +1,24 @@
+
+int fib(int lim) {
+  int b = 1;
+  
+  while(b < lim) {
+    printf("\t1: ",b,"\n");
+    b += 1;
+    if(b < 5) {
+      printf("conting\n");
+      continue; 
+    }
+    if(b > 8) {
+      printf("breaking\n");
+      return 1;
+    }
+    printf("\t2: ",b,"\n");
+  }
+  printf("\n");
+  return 0;
+}
+
+printf(fib(10), "\n");
+printf(fib(5), "\n");
+

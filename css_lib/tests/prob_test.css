@@ -1,0 +1,115 @@
+// test an idea about probability of P(A&B&C) if B and C are independent
+
+real Sample(ostream& strm, int n_samp, real p_A, real p_B, real p_C, real p_A_B, real p_A_C) {
+  real obs_A = 0;
+  real obs_B = 0;
+  real obs_C = 0;
+  real obs_A_B = 0;
+  real obs_A_C = 0;
+  real obs_B_C = 0;
+  real obs_A_B_C = 0;
+
+  int i;
+  for(i=0; i<n_samp; i++) {
+    int is_A = 0;
+    int is_B = 0;
+    int is_C = 0;
+    if(drand48() < p_B)
+      is_B = 1;
+    if(drand48() < p_C)
+      is_C = 1; 
+    
+    if(is_B) {
+      obs_B += 1.0;
+      if(drand48() < p_A_B)
+	is_A = 1;
+    }
+
+    if(is_C) {
+      obs_C += 1.0;
+      if(drand48() < p_A_C)
+	is_A = 1;
+    }
+
+    if(!is_A) {
+      if(drand48() < p_A)
+	is_A = 1;
+    }
+
+    if(is_A) {
+      obs_A += 1.0;
+      if(is_B)
+	obs_A_B += 1.0;
+      if(is_C)
+	obs_A_C += 1.0;
+      if(is_B && is_C)
+	obs_A_B_C += 1.0;
+    }
+
+    if(is_B && is_C)
+      obs_B_C += 1.0;
+  }
+  
+  real n = n_samp;
+
+  obs_A /= n;
+  obs_B /= n;
+  obs_C /= n;
+  obs_A_B /= n;
+  obs_A_C /= n;
+  obs_A_B_C /= n;
+  obs_B_C /= n;
+
+  real pred_A_B_C = obs_A * obs_B * obs_C; // predicted value
+  real diff = pred_A_B_C - obs_A_B_C;
+
+  strm <<               obs_A          
+       << "\t" <<	obs_B         
+       << "\t" <<	obs_C
+       << "\t" <<	obs_A_B      
+       << "\t" <<	obs_A_C     
+       << "\t" <<       obs_B_C
+       << "\t" <<       obs_A_B_C 
+       << "\t" <<  	pred_A_B_C
+       << "\t" <<	diff << "\n";
+
+  return diff;
+}
+
+void Scan(int n_samp, real inc) {
+  real p_A;
+  real p_B;
+  real p_C;
+  real p_A_B;
+  real p_A_C;
+
+  real avg_err = 0;
+  int n_avg = 0;
+
+  fstream strm;
+  strm.open("prob_test.out", ios::out);
+  
+  strm << "obs_A:\t" 
+       << "\tobs_B:"
+       << "\tobs_C:"
+       << "\tobs_A_B:"
+       << "\tobs_A_C:"
+       << "\tobs_B_C:"
+       << "\tobs_A_B_C:"
+       << "\tpred_A_B_C:"
+       << "\tdiff\n";
+  
+  for(p_A = .1; p_A <= .9; p_A += inc)
+    for(p_B = .1; p_B <= .9; p_B += inc)
+      for(p_C = .1; p_C <= .9; p_C += inc)
+	for(p_A_B = .1; p_A_B <= .9; p_A_B += inc)
+	  for(p_A_C = .1; p_A_C <= .9; p_A_C += inc) {
+	    avg_err += Sample(strm, n_samp, p_A, p_B, p_C, p_A_B, p_A_C);
+	    n_avg++;
+	  }
+  
+  strm << "\n\naverage error: " << avg_err / (real)n_avg << "\n";
+  strm.close();
+}
+
+Scan(1000, .4);

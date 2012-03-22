@@ -1,0 +1,8 @@
+// test of the include functionality
+
+#include "tests/math.css"
+
+mathtst(20);
+mathtst(1.5);
+
+

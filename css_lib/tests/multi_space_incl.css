@@ -1,0 +1,43 @@
+// defines a common set of classes to be used across multiple spaces
+
+#ifndef Foo_def
+#define Foo_def
+
+class Foo {
+public:
+  int 	x;
+  float	ary[5];
+  
+  Foo();
+  ~Foo();
+  
+  float	fac(float arg=10.0);
+  float	printer(ostream& ostr);
+};
+
+Foo::Foo() {
+  x = 42;
+  ary[3] = cos(1.5);
+  cout << "In foo constr\n";
+}
+
+Foo::~Foo() {
+  cout << "In foo dtor\n";
+}
+
+float Foo::fac(float fclm) {
+  if(fclm <= 0)
+    return 1;
+  else
+    return fclm * fac(fclm - 1);
+}
+
+float Foo::printer(ostream& ostr) {
+  ostr << x << "\n" << ary << "\n";
+  float rval;
+  int i;
+  for(i=0;i<5; i++) { rval += ary[i]; }
+  return rval;
+}
+  
+#endif

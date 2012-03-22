@@ -1,0 +1,8 @@
+debug 2;
+
+int ab= 1;
+
+if(ab == 1)
+     printf("faxe\n");
+printf("noxe\n");
+     

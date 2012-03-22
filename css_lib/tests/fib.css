@@ -1,0 +1,17 @@
+
+int fib(int lim) {
+  int a = 0;
+  int b = 1;
+  int c = 0;
+  
+  while(b < lim) {
+    printf("\t",b);
+    c = b;
+    b += a;
+    a = c;
+  }
+  printf("\n");
+}
+
+printf(fib(1000),"\n");
+

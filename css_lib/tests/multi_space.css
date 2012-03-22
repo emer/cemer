@@ -1,0 +1,21 @@
+// does different things with common class, load into top-level shell
+
+#include "multi_space_incl.css"
+
+class Ofoo1 : public Foo {
+public:
+  int 	y;
+  
+  float	xxx(float parm);
+};
+
+float Ofoo1::xxx(float parm) {
+  y = fac(parm);
+  cout << y << "\n";
+  return y;
+}
+
+Ofoo1 foo;
+cout << foo.xxx(10) << "\n";
+cout << foo.printer(cout) << "\n";
+

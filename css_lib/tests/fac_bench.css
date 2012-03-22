@@ -1,0 +1,22 @@
+
+// factorial: note the recursion
+
+float fac(float fclm) {
+  float rv;
+  if(fclm <= 0) {
+    return 1;
+  }
+  else {
+    return fclm * fac(fclm - 1);
+  }
+}
+
+void Main() {
+  int repis = argv[1];
+  cerr << "running fac(100) " << repis << " times\n";
+  int i;
+  for(i=0; i<repis; i++)
+    fac(100);
+}
+
+Main();

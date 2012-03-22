@@ -1,0 +1,68 @@
+
+class A {
+  enum ClsE {
+    GOOD,
+    BAD,
+  };
+
+  int		mb1;
+  String	mb2;
+  float		mb3;
+  ClsE		mb4;
+  int		mb5[10];
+  int		mb6[2][2];
+};
+
+class B {
+  int		mb1;
+  A		mb2[3];
+};
+
+void DoA() {
+  fstream strm;
+  strm.open("xxx", ios::out);
+  A as;
+  as.mb1 = 22;
+  as.mb2 = "slkdjf";
+  as.mb3 = 33.22;
+  as.mb4 = A::BAD;
+  as.mb6[1][1] = 77;
+  int i;
+  for(i=0;i<10;i++) as.mb5[i] = i;
+  as.Save(strm);
+  strm.close();
+  
+  system("more xxx");
+
+  A al;
+  strm.open("xxx", ios::in);
+  al.Load(strm);
+  strm.close();
+
+  al.Save(cout);
+}
+
+void DoB() {
+  fstream strm;
+  strm.open("xxx", ios::out);
+  B as;
+  as.mb1 = 22;
+  as.mb2[1].mb1 = 1;
+  as.mb2[1].mb2 = "slkdjf";
+  as.mb2[1].mb3 = 33.22;
+  as.mb2[1].mb4 = A::BAD;
+  as.Save(strm);
+  strm.close();
+  
+  system("more xxx");
+
+  B al;
+  strm.open("xxx", ios::in);
+  al.Load(strm);
+  strm.close();
+
+  al.Save(cout);
+}
+
+DoA();
+DoB();

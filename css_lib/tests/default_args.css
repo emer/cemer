@@ -1,0 +1,17 @@
+// a test of default args
+
+String avs[3];
+avs = {"25", "addd", "lskd"};
+
+float fun1(int arg1, String arg2="33", int arg3=22) {
+  cout << arg1 << "\t" << arg2 << "\t" << arg3 << "\n";
+  return PI;
+}
+
+fun1(avs[0],avs[1]);
+
+void fun2(String fname, int word_no, int word_type = -1) {
+  cout << fname << "\t" << word_no << "\t" << word_type << "\n";
+}
+
+fun2(avs[2],avs[0]);

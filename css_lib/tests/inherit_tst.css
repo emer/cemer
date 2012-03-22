@@ -1,0 +1,14 @@
+
+
+class base {
+public:
+  int 	mbr_1;
+
+  int	fun1(int arg1, float arg2);
+};
+
+
+class deriv : public base {
+public:
+};
+

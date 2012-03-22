@@ -1,0 +1,35 @@
+
+#define bogus
+
+#ifdef bogus
+int i;
+int j;
+Real s;
+#else
+#ifdef __CSS__
+int p;
+int q;
+#ifdef _UNIX_IOS_
+int r;
+#endif
+#endif
+#endif
+
+#ifndef bogus
+// this is not to be here
+// if not css..
+#endif
+
+#ifdef __CSS__
+// you should see this
+int cs;
+String ss;
+#else
+// not this
+int ss;
+String c++;
+#endif
+
+
+
+

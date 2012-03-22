@@ -1,0 +1,72 @@
+
+void funit(int xx) {
+  int ab= 1;
+  
+  if(ab == 2) {
+    printf("hayy\n");
+    int bb = 2;
+    bb = ab * 10;
+  }
+  else {
+    printf("mondo\n");
+    int bc = 2;
+    bc = ab * 20;
+  }
+
+  ab = 1;  xx = 20;  int ff = -1;
+
+  if(ab > 1)
+    printf("happy\n");
+  else
+    printf("slappy\n");
+
+  if(ab > 0)	printf("dopey\n");
+  else		printf("slopey\n");
+      
+  if(ab < 10)
+    printf("gt 10\n");
+  ab = 2;
+//  else				// this is an intentional test of the parser
+//    printf("fava\n");
+
+  if(ab == 3)
+    printf("faxe\n");
+  if(ab == 2)
+    printf("noxe\n");
+
+  for(ab = 0; ab <= 5; ab++) {
+    cout << "t: " << ab << "\t";
+    
+    if(ab == 1)
+      cout << 1;
+    else if(ab == 2)
+      cout << 2;
+    else if(ab == 3)
+      cout << 3;
+    else if(ab == 4)
+      cout << 4;
+    else
+      cout << 5;
+    
+    cout << "\tnext:\t";
+    
+    if(ab == 1)
+      cout << 1;
+    else if(ab == 2) {
+      cout << 2;
+    }
+    else if(ab == 3)
+      cout << 3;
+    else if(ab == 4) {
+      cout << 4;
+    }
+    else {
+      cout << 5;
+    }
+    
+    cout << "\n";
+  }
+}
+
+
+funit(10);

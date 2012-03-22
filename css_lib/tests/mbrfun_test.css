@@ -1,0 +1,125 @@
+// test of class member functions
+
+class tstcls {
+  // this is a silly little class..
+public:
+  enum my_enum {
+    ONE_VALUE,
+    TWO_VALUE,
+    WOMBAT = 55,
+  };
+    
+  int	mbr_1;			// comments here
+  real	mbr_2;			// and here
+  float_Array* ary;
+  bool	bool_val;		// a boolean value
+  my_enum tst_enum;		// an enum value
+  
+  int	fun1(int arg1, float arg2=3.14, bool arg3=false); // #BUTTON #ARGC_2 parse this, batman
+  float	fac(float fclm, float arg2);
+  // #BUTTON #USE_RVAL #MENU_SEP_BEFORE holy stone rider..
+  int 	calls_fun1();		// #MENU_ON_Edit #REVERT_AFTER m-gosh!
+  void	bogus();		// #HIDDEN
+  void	do_something();		// #BUTTON fun for me!
+
+  tstcls();			// constructor
+  ~tstcls();			// destructor
+};
+
+tstcls::tstcls() {
+  cerr << "in tstcls ctor:\n";
+  mbr_1 = 70;
+  mbr_2 = 3.111;
+  ary = new float_Array;
+}
+
+tstcls::~tstcls() {
+  cerr << "in tstcls dtor:\n";
+  delete ary;
+}
+
+void tstcls::bogus() {
+  cerr << "bogus\n";
+}
+
+int tstcls::fun1(int arg1, float arg2, bool arg3) {
+  cout << "arg: " << arg1 << "\t" << arg2 << "\t" << arg3 << "\n";
+  if(arg1 < 5) {
+    cout << "branch 1\n";
+    cout << "mbr 1: " << mbr_1 << "\n" << "mbr 2: " << mbr_2 << "\n";
+  }
+  else {
+    cout << "branch 2\n";
+    cout << "mbr 1: " << mbr_1 << "\n" << "mbr 2: " << mbr_2 << "\n";
+  }
+}
+
+float tstcls::fac(float fclm, float arg2) {
+  float rv;
+  if(fclm <= 0) {
+    return 1;
+  }
+  else {
+    return fclm * fac(fclm - 1, arg2);
+  }
+}
+
+int tstcls::calls_fun1() {
+  cout << "in calls_fun1\n";
+  fun1(mbr_1, mbr_2, 20);
+  mbr_1 += mbr_1;
+  mbr_2 += mbr_2;
+  fun1(mbr_1, mbr_2);
+  fun1(mbr_1);
+}
+
+class nxtcls : public tstcls {
+public:
+  int	fun1(int arg1, float arg2, bool arg3);	// overloading...
+  void	testfun(float fclm);
+
+  nxtcls();
+  ~nxtcls();
+};
+
+nxtcls::nxtcls() {
+  cerr << "in nxtcls ctor:\n";
+}
+
+nxtcls::~nxtcls() {
+  cerr << "in nxtcls dtor:\n";
+}
+
+int nxtcls::fun1(int arg1, float arg2, bool arg3) {
+  cout << "calling old fun:\n";
+  tstcls::fun1(arg1, mbr_1, mbr_2);
+  cout << "new function\n";
+  cout << "mbr 1: " << mbr_1 << "\n" << "mbr 2: " << mbr_2 << "\n";
+  mbr_1 += arg1;
+  mbr_2 += arg1;
+}
+
+void nxtcls::testfun(float fclm) {
+  fun1(fclm, 20, 55);
+//   fac(fclm);
+  cout << "done testing\n";
+}
+
+void testing_fun() {
+  tstcls mycl;
+
+  // mycl->fun1(10);
+  // printf(mycl->fac(50), "\n");
+
+  nxtcls mycl2;
+
+  // mycl2->testfun(10);
+
+  mycl2->calls_fun1();
+}
+
+tstcls xxx;
+// EditObj(xxx);
+xxx.calls_fun1();
+
+testing_fun();

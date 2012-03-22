@@ -1,0 +1,11 @@
+// test the static variable functionality
+
+int static_test(int val) {
+  static int statval;
+  statval += val;
+  return statval;
+}
+
+cout << static_test(1) << "\n";
+cout << static_test(1) << "\n";
+cout << static_test(10) << "\n";

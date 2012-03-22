@@ -1,0 +1,58 @@
+// structures
+
+class mycl {
+  int 	 mb1;
+  double mb2;
+  string mb3;
+};
+
+class subcl;
+
+class boslaf {
+  subcl slk;
+};
+
+class subcl : mycl {
+  int	more_membs;
+};
+
+class othcl {
+  double	amemb;
+  string	bmemb;
+};
+
+class micl : subcl, othcl {
+  fstream	file;
+};
+
+
+void cltest(micl* acl) {
+  acl->mb1 += 20;
+  printf(*acl, "\n");
+}
+
+void cltest2(micl& acl) {
+  acl.bmemb = "happy";
+  printf(acl, "\n");
+}
+
+
+void clmain() {
+  micl var1;
+  subcl var2;
+
+  var1.mb1 = 10;
+  var1.mb2 = PI;
+  var1.mb3 = "avar1";
+  var1.more_membs = 4;
+
+  var2.more_membs = 5;
+
+  cltest(&var1);
+  cltest2(var1);
+
+  printf(var1, "\n");
+}
+
+clmain();
+

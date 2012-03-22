@@ -1,0 +1,5 @@
+css/tests:
+
+This directory contains a bunch of css code that was used in the development
+of the script language.  It illustrates some of the things you can do with
+CSS, but is not particularly well written or documented or sensible..

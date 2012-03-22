@@ -1,0 +1,39 @@
+// arrays, class pointers etc
+
+class Foo {
+  int x;
+  Foo* next;
+  Foo* foo_list;
+  float	flt_ary[3];
+
+  Foo();
+  ~Foo();
+
+  void MakeList(int size);
+};
+
+Foo::Foo() {
+  cout << "in Foo ctor\n";
+  x = 42;
+}
+
+Foo::~Foo() {
+  cout << "in Foo dtor\n";
+  if(foo_list != NULL)
+    delete foo_list;
+}
+
+void Foo::MakeList(int size) {
+  if(foo_list != NULL)
+    delete foo_list;
+  foo_list = new Foo[size];
+}
+
+void Main() {
+  Foo foo;
+  
+  foo.MakeList(5);
+  cout << foo << "\n";
+}
+
+Main();

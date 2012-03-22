@@ -1,0 +1,17 @@
+
+const int ary_cnt = 5;
+
+const float cf = exp(2.7) + cos(PI);
+
+const String one_str = "This is a constant string";
+const String nthr_str = one_str.after("is a"); // lots of nifty stuff is legal,
+					       // as long as it involves const vals
+
+int nc_ary_cnt = 7;
+
+class A {
+public:
+  int 	ary[ary_cnt];		// this is legal because ary_cnt is const
+  int 	nc_ary[nc_ary_cnt];	// this is *not* legal because ary_cnt is not const
+};
+

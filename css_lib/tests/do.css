@@ -1,0 +1,30 @@
+
+int fib(int lim) {
+  int bb = 1;
+  
+  do {
+    printf("\t1: ",bb,"\n");
+    bb += 1;
+    if(bb < 5) {
+      printf("conting\n");
+      continue;
+    }
+    if(bb > 8) {
+      printf("breaking\n");
+      break;
+    }
+    int b2 = 1;
+    do {
+      b2++;
+      printf("b2 loop: ",b2,"\n");
+    } while (b2 < 3);
+    printf("\t2: ",bb,"\n");
+  } while(bb < lim);
+
+  printf("\n");
+  return bb;
+}
+
+printf(fib(10), "\n");
+printf(fib(5), "\n");
+

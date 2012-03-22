@@ -1,0 +1,18 @@
+// testing standard io
+
+void streamtst(String fname) {
+  fstream fh;
+  
+  fh = fopen(fname, "w");
+  
+  fh << "this is a test" << " of some " << 10 << " pi " << PI << "\n";
+  fclose(fh);
+  system("cat "+ fname);
+
+  String resp;
+  do {
+    cout << "\n\n>>Did You See The Right Results? (y/n) ";
+    cin >> resp;
+  }
+  while((resp != "y") && (resp != "Y"));
+}

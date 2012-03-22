@@ -1,0 +1,188 @@
+// comprehensive css class test
+
+const int ary_size = 3;
+
+class B;
+
+class A {
+  enum ObjStatus {
+    DESTRUCTED,			// object is destructed
+    CONSTRUCTED,		// object is constructed
+    VIRFUN_CALLED,		// virtual function called last
+    NVIRFUN_CALLED		// non-virtual function called last
+  };
+
+  String 	val;		// string value
+  int		ary[ary_size];	// array of integers
+  ObjStatus	sar[ary_size];	// array of enums!
+  B*		bptr;		// pointer to an as-yet undeclared object
+  ObjStatus	obj_stat;	// enum defined in the class
+
+  float			fac(float fclm);	// #USE_RVAL factorial (recursive)
+  virtual String& 	virfun(String& arg); 	// #USE_RVAL virtual function
+  String&		nvirfun(String& arg); 	// non-virtual function
+  String&		call_virfun(String& arg);	// call the virtual
+  String&		call_nvirfun(String& arg);	// call the non-virtual
+
+  String		report_status(); // report status
+  String		set_status(ObjStatus stat); // #USE_RVAL set new status
+  ObjStatus&		cur_status(); // #USE_RVAL just return current status
+
+  String		multi_args(String& a1, String& a2, int a3, int a4=4, int a5=5);
+  
+  A();
+  ~A();
+};
+
+class B : A {
+  A 		cls[ary_size];		// how about a class member?
+
+  String&	virfun(String& arg);
+  String&	nvirfun(String& arg);
+
+  B();
+  ~B();
+};
+
+class C {
+  int	mbr;
+};
+
+A::A() {
+  val = "A:: constructed";
+  obj_stat = CONSTRUCTED;
+  cout << val << "\n";
+}
+
+A::~A() {
+  val = "A:: destructed";
+  obj_stat = A::DESTRUCTED;
+  cout << val << "\n";
+}
+
+A::ObjStatus& A::cur_status() {
+  return obj_stat;
+}
+
+String A::set_status(ObjStatus stat) {
+  obj_stat = stat;
+  return report_status();
+}
+
+String A::report_status() {
+  String rval = "Status: ";
+  switch(obj_stat) {
+  case DESTRUCTED:
+    rval += "object destructed";
+    break;
+  case CONSTRUCTED:
+    rval += "object constructed";
+    break;
+  case VIRFUN_CALLED:
+    rval += "virtual function called";
+    break;
+  case NVIRFUN_CALLED:
+    rval += "non virtual function called";
+    break;
+  }
+  return rval;
+}
+
+String A::multi_args(String& a1, String& a2, int a3, int a4, int a5) {
+  val = a1 + a2 + a3 + a4 + a5;
+  ary[0] = a3; ary[1] = a4; ary[2] = a5;
+  return val;
+}
+
+float A::fac(float fclm) {
+  if(fclm <= 0) {
+    return 1;
+  }
+  else {
+    return fclm * fac(fclm - 1);
+  }
+}
+
+String& A::virfun(String& arg) {
+  val = "virtual A::" + arg;
+  obj_stat = VIRFUN_CALLED;
+  return val;
+}
+
+String& A::nvirfun(String& arg) {
+  val = "non-virtual A::" + arg;
+  obj_stat = NVIRFUN_CALLED;
+  return val;
+}
+
+String& A::call_virfun(String& arg) {
+  return virfun(arg);
+}
+
+String& A::call_nvirfun(String& arg) {
+  return nvirfun(arg);
+}
+
+B::B() {
+  val = "B: constructed";
+  cout << val << "\n";
+}
+
+B::~B() {
+  val = "B:: destructed";
+  cout << val << "\n";
+}
+
+String& B::virfun(String& arg) {
+  val = "virtual B::" + arg;
+  obj_stat = VIRFUN_CALLED;
+  return val;
+}
+
+String& B::nvirfun(String& arg) {
+  val = "non-virtual B::" + arg;
+  obj_stat = NVIRFUN_CALLED;
+  return val;
+}
+
+void Main() {
+  A a;
+  B b;
+
+  cout << "a.fac(10): " << a.fac(10) << "\n";
+  cout << "b.fac(10): " << b.fac(10) << "\n";
+
+  cout << "a.virfun(\"a.virfun\"): " << a.virfun("a.virfun") << "\n";
+  cout << "a.nvirfun(\"a.nvirfun\"): " << a.nvirfun("a.nvirfun") << "\n";
+
+  cout << "a.call_virfun(\"a.call_virfun\"): " << a.call_virfun("a.virfun") << "\n";
+  cout << "a.call_nvirfun(\"a.call_nvirfun\"): " << a.call_nvirfun("a.nvirfun") << "\n";
+
+  cout << "b.virfun(\"b.virfun\"): " << b.virfun("b.virfun") << "\n";
+  cout << "b.nvirfun(\"b.nvirfun\"): " << b.nvirfun("b.nvirfun") << "\n";
+
+  cout << "b.call_virfun(\"b.call_virfun\"): " << b.call_virfun("b.virfun") << "\n";
+  cout << "b.call_nvirfun(\"b.call_nvirfun\"): " << b.call_nvirfun("b.nvirfun") << "\n";
+
+
+  A* aptr = &a;
+  cout << "*** aptr = &a\n";
+  cout << "aptr.virfun(\"aptr.virfun\"): " << aptr.virfun("aptr.virfun") << "\n";
+  cout << "aptr.nvirfun(\"aptr.nvirfun\"): " << aptr.nvirfun("aptr.nvirfun") << "\n";
+
+  cout << "aptr.call_virfun(\"aptr.call_virfun\"): " << aptr.call_virfun("aptr.virfun") << "\n";
+  cout << "aptr.call_nvirfun(\"aptr.call_nvirfun\"): " << aptr.call_nvirfun("aptr.nvirfun") << "\n";
+
+  aptr = &b;
+  cout << "*** aptr = &b\n";
+  cout << "aptr.virfun(\"aptr.virfun\"): " << aptr.virfun("aptr.virfun") << "\n";
+  cout << "aptr.nvirfun(\"aptr.nvirfun\"): " << aptr.nvirfun("aptr.nvirfun") << "\n";
+
+  cout << "aptr.call_virfun(\"aptr.call_virfun\"): " << aptr.call_virfun("aptr.virfun") << "\n";
+  cout << "aptr.call_nvirfun(\"aptr.call_nvirfun\"): " << aptr.call_nvirfun("aptr.nvirfun") << "\n";
+
+  cout << a->report_status() << "\n";
+}
+
+Main();
+

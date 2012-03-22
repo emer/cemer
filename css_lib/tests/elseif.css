@@ -1,0 +1,36 @@
+// test of else if construction that seems to be failing...
+// all fixed..
+
+void bogus(int val) {
+  int val=0;
+  for(val=0; val<8; val++) {
+    // here, else ptr is -1, and it stops.
+    if(val == 0)
+      cout << "*0 = " << val << "\n";
+
+    // here, end ptr is to next if
+    if(val == 0) 
+      cout << "**0 = " << val << "\n";
+    else
+      cout << "over 0\n";
+
+    if(val == 0) 
+      cout << "0 = " << val << "\n";
+    else if(val == 1)
+      cout << "1 = " << val << "\n";
+    else if(val == 2)
+      cout << "2 = " << val << "\n";
+    else if(val == 3)
+      cout << "3 = " << val << "\n";
+    else if(val == 4)
+      cout << "4 = " << val << "\n";
+    else if(val == 5)
+      cout << "5 = " << val << "\n";
+    else if(val == 6)
+      cout << "6 = " << val << "\n";
+// if this else is not here, it doesn't terminate the ifs properly..
+    else
+      cout << "over 6\n";
+    cout << "-- end-of-ifs --\n";
+  }
+}

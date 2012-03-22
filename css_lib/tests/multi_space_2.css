@@ -1,0 +1,20 @@
+// does different things with common class, load into a SubShell
+
+#include "multi_space_incl"
+
+class Ofoo2 : public Foo {
+public:
+  float	z;
+  
+  float	xxx(float parm);
+};
+
+float Ofoo2::xxx(float parm) {
+  z = cos(fac(parm));
+  cout << z << "\n";
+  return z;
+}
+
+Ofoo2 foo;
+cout << foo.xxx(10) << "\n";
+cout << foo.printer(cout) << "\n";

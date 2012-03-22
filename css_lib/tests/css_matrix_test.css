@@ -18,3 +18,7 @@ printf("f:\n", f);
 
 printf("cos(a):\n", cos(a));
 printf("cos(a[0,:]):\n", cos(a[0,:]));
+
+String_Matrix sa;
+sa = a;
+printf("sa: ", sa);

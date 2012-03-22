@@ -1,0 +1,32 @@
+
+// test out for function
+
+int boffo(int lim, float chs) {
+  int i;
+  float af;
+
+  for(i=1; i < lim; i++) printf(i,"\n");
+  printf("\n nuff\n");
+  i=1;
+  while(i<lim)	printf(i+=1,"\t");
+  printf("\n nuff2\n");
+  for(i=1, af=chs; i < lim; i++, af *= af) {
+    if(i > 10)
+      break;
+    if(i < 5)
+      continue;
+    printf(i,"\t",af,"\n");
+  }
+  return i;
+}
+
+printf("bof: ",boffo(8, 3.14),"\n");
+
+printf("bof: ",boffo(12, 3.14),"\n");
+
+// test these operators
+int mm = 1;
+String tab = "\t";
+printf(mm++,tab,++mm,tab,mm--,tab,--mm);
+
+

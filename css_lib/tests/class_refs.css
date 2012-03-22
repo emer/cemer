@@ -1,0 +1,31 @@
+class foo {
+  int a;
+public:
+  void set();
+};
+
+void foo::set() {
+  a=4;
+}
+
+foo& bar() {
+  static foo x;
+  x.a=4;
+  return x;
+}
+
+void fu(foo& f) {
+  f.set();
+}
+
+foo obj;
+foo& ref = obj;
+
+int i;
+int& ri = i;
+ri = 4;
+
+int& goff() {
+  return 20;
+}
+

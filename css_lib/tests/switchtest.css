@@ -1,0 +1,80 @@
+// test the switch, case default thingie
+
+String switch_test(int val) {
+  String rval;
+  switch (val) {
+  case 1:
+    rval = "val = 1";
+    break;
+  case 2:
+    rval = "val = 2";
+    break;
+  case 3:
+    rval = "val = 3";
+  case 4:
+    rval += " or val = 4";
+  case 5:
+    rval += " or val = 5";
+  default:
+    rval += " or val > 5";
+  }
+  return rval;
+}
+
+String real_switch(real val) {
+  String rval;
+  switch (val) {
+  case 1.12:
+    rval = "val = 1.12";
+    break;
+  case 2.25:
+    rval = "val = 2.25";
+    break;
+  case 3.14:
+    rval = "val = 3.14";
+  case 4.111:
+    rval += " or val = 4.111";
+  case 5.7:
+    rval += " or val = 5.7";
+  default:
+    rval += " or val is something else";
+  }
+  return rval;
+}
+
+String string_switch(String val) {
+  String rval;
+  switch (val) {
+  case "bogus":
+    rval = "val = bogus";
+    break;
+  case "smogus":
+    rval = "val = smogus";
+    break;
+  case "xyz":
+    rval = "val = xyz";
+  case "pdq":
+    rval += " or val = pdq";
+  default:
+    rval += " or val is something else";
+  }
+  return rval;
+}
+
+void test() {
+  cout << "switch_test(1) " << switch_test(1) << "\n";
+  cout << "switch_test(2) " << switch_test(2) << "\n";
+  cout << "switch_test(3) " << switch_test(3) << "\n";
+  cout << "switch_test(4) " << switch_test(4) << "\n";
+  cout << "switch_test(5) " << switch_test(5) << "\n";
+  cout << "switch_test(7) " << switch_test(7) << "\n";
+
+  cout << "string_switch(\"bogus\")    " << string_switch("bogus") 	<< "\n";
+  cout << "string_switch(\"smogus\")   " << string_switch("smogus") 	<< "\n";
+  cout << "string_switch(\"xyz\")      " << string_switch("xyz") 	<< "\n";
+  cout << "string_switch(\"pdq\")      " << string_switch("pdq") 	<< "\n";
+  cout << "string_switch(\"something\")" << string_switch("something") 	<< "\n";
+}
+
+test();
+  

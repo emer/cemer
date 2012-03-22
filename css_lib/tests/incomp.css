@@ -1,0 +1,10 @@
+// reveals a bug with incomplete stuff
+
+int bogsu(int sls) {
+  int slkd;
+  
+  if(slkd == 10) {
+    slkd = slkk			// give an error
+  }
+}
+

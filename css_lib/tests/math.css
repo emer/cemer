@@ -1,0 +1,47 @@
+// test out the maths
+
+Void mathtst(float val) {
+  int tmp = val;
+  String nl = "\n";
+
+  printf("val: ", val, "\tint: ", tmp, nl);
+
+  printf("acos  ", acos(val), nl);
+  printf("asin  ", asin(val), nl);
+  printf("atan  ", atan(val), nl);
+  printf("atan2 ", atan2(val,val), nl);
+  printf("ceil  ", ceil(val), nl);
+  printf("cos   ", cos(val), nl);
+  printf("cosh  ", cosh(val), nl);
+  printf("exp   ", exp(val), nl);
+  printf("fabs  ", fabs(val), nl);
+  printf("floor ", floor(val), nl);
+  printf("fmod  ", fmod(val,val), nl);
+  printf("log   ", log(val), nl);
+  printf("log10 ", log10(val), nl);
+  printf("pow   ", pow(val,val), nl);
+  printf("sin   ", sin(val), nl);
+  printf("sinh  ", sinh(val), nl);
+  printf("sqrt  ", sqrt(val), nl);
+  printf("tan   ", tan(val), nl);
+  printf("tanh  ", tanh(val), nl);
+// these are not avial on all platforms..
+//  printf("acosh ", acosh(val), nl);
+//  printf("asinh ", asinh(val), nl);
+//  printf("atanh ", atanh(val), nl);
+
+  printf("float ops\n");
+  printf(" + ", val + val, nl);
+  printf(" - ", val - val, nl);
+  printf(" * ", val * val, nl);
+  printf(" / ", val / val, nl);
+  printf(" ^ ", val ^ val, nl);
+  
+  printf("int ops\n");
+  printf(" + ", tmp + tmp, nl);
+  printf(" - ", tmp - tmp, nl);
+  printf(" * ", tmp * tmp, nl);
+  printf(" / ", tmp / tmp, nl);
+}  
+
+mathtst(PI);

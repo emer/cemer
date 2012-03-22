@@ -1,0 +1,11 @@
+
+int funone (int ara, float arb) {
+  int autb;
+  
+  autb = ara + arb;
+  printf("autb: ", autb, "\n");
+  return autb;
+}
+
+printf(funone(100, 200), "\n");
+

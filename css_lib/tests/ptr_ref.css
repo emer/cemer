@@ -1,0 +1,8 @@
+
+int fun(taNBase*& cn) {
+  cn = new taNBase;
+  return 1;
+}
+
+taNBase* mycn;
+int val = fun(mycn);

@@ -1,0 +1,20 @@
+// multi-dim arrays
+
+int bogus[10];
+
+real flog[5][6][7];
+
+int i;
+for(i=0; i< 5; i++) {
+  int j;
+  for(j=0; j<6; j++) {
+    int k;
+    for(k=0; k<7; k++) {
+      flog[i][j][k] = i+j+k;
+    }
+  }
+}
+
+float get_flog(real* flog_ptr, int i, int j, int k) {
+  return flog_ptr[i][j][k];
+}

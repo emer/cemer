@@ -1,0 +1,7 @@
+// test ref args
+
+float& ref = 1.0;
+
+void bogus(float& arg1) {
+  cout << arg1 << "\n";
+}
