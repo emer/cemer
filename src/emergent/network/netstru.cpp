@@ -3845,7 +3845,7 @@ Unit* Unit_Group::MostActiveUnit(int& idx) {
 }
 
 bool Unit_Group::Dump_QuerySaveChildren() {
-  if (!own_lay) return false; // huh? should always be valid...
+  if (!own_lay || !own_lay->own_net) return false; // huh? should always be valid...
   // always save if forced
   if (own_lay->own_net->HasNetFlag(Network::SAVE_UNITS_FORCE)) {
     return true;
