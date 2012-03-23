@@ -1079,7 +1079,7 @@ void PVLVTonicDaLayerSpec::Initialize() {
   ct_inhib_mod.burst_i = 0.0f;
   ct_inhib_mod.trough_i = 0.0f;
   SetUnique("scalar", true);
-  scalar.rep == ScalarValSpec::GAUSSIAN;
+  scalar.rep = ScalarValSpec::GAUSSIAN;
   scalar.un_width = 0.2;
   scalar.norm_width = true;
   SetUnique("unit_range", true);
