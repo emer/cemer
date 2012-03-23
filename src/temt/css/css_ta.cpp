@@ -738,10 +738,31 @@ void cssTA_Base::InitAssign(const cssEl& s) {
 
 cssEl* cssTA_Base::operator[](const Variant& i) const {
   taBase* ths = GetTAPtr();
-  if(ths)
+  if(!ths) {
+    cssMisc::Error(prog, "operator[]: NULL pointer");
+    return &cssMisc::Void;
+  }
+  if(ths->InheritsFrom(&TA_DataTableCols)) {
+    if(ths->ElView() && ths->ElView()->size > 1 && ths->ElViewMode() == taBase::IDX_COORDS
+       && i.isMatrixType()) {
+      // multiple columns -- create a mega return value from iterating
+      Variant_Matrix* vmat = new Variant_Matrix(1,ths->ElView()->size);
+      TA_FOREACH(dcolv, *ths) {
+	taBase* dcol = dcolv.toBase();
+	if(dcol) {
+	  Variant rval = dcol->Elem(i);
+	  vmat->SetFmVar_Flat(rval, FOREACH_itr->count);
+	}
+      }
+      return new cssTA_Matrix(vmat);
+    }
+    else {
+      return TAElem(ths, i);
+    }
+  }
+  else {
     return TAElem(ths, i);
-  cssMisc::Error(prog, "operator[]: NULL pointer");
-  return &cssMisc::Void;
+  }
 }
 
 cssEl* cssTA_Base::GetMemberFmName(const String& memb) const {
@@ -1596,6 +1617,15 @@ String cssTA_Matrix::GetStr() const {
     }
   }
   return rval;
+}
+
+cssEl* cssTA_Matrix::operator[](const Variant& i) const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) {
+    cssMisc::Error(prog, "operator[]: NULL pointer");
+    return &cssMisc::Void;
+  }
+  return TAElem(ths, i);
 }
 
 cssTA_Matrix::operator Real() const {

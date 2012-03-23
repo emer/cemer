@@ -464,6 +464,8 @@ public:
 
   // void UpdateAfterEdit();
 
+  cssEl* operator[](const Variant& idx) const;
+
   override bool AssignCheckSource(const cssEl& s);
 
   operator Real() const;

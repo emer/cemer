@@ -1447,34 +1447,11 @@ static void Install_Commands() {
 //    Math Functions	//
 //////////////////////////
 
-static cssEl* cssElCFun_max_stub(int, cssEl* arg[]) {
-  return (*(arg[1]) > *(arg[2])) ? arg[1] : arg[2];
-}
-static cssEl* cssElCFun_min_stub(int, cssEl* arg[]) {
-  return (*(arg[1]) < *(arg[2])) ? arg[1] : arg[2];
-}
-
-static cssRealFun_stub1(acos);
-static cssRealFun_stub1(asin);
-static cssRealFun_stub1(atan);
-static cssRealFun_stub2(atan2);
-static cssRealFun_stub1(ceil);
-static cssRealFun_stub1(cos);
-static cssRealFun_stub1(cosh);
 static cssEl* cssRealFun_drand48_stub(int, cssEl**) {
   return new cssReal((Real)MTRnd::genrand_res53());
 }
 static cssEl* cssElCFun_lrand48_stub(int, cssEl**) {
   return new cssInt((int)MTRnd::genrand_int32());
-}
-static cssRealFun_stub1(exp);
-static cssRealFun_stub1(fabs);
-static cssRealFun_stub1(floor);
-static cssRealFun_stub2(fmod);
-static cssRealFun_stub1(log);
-static cssRealFun_stub1(log10);
-static cssEl* cssRealFun_pow_stub(int, cssEl* arg[]) {
-  return new cssReal((Real)pow((Real)*(arg[1]), (Real)*(arg[2])));
 }
 static cssEl* cssElCFun_random_stub(int, cssEl**) {
   return new cssInt((int)MTRnd::genrand_int31());
@@ -1484,103 +1461,147 @@ static cssEl* cssElCFun_srand48_stub(int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
-static cssRealFun_stub1(sin);
-static cssRealFun_stub1(sinh);
-static cssRealFun_stub1(sqrt);
-static cssRealFun_stub1(tan);
-static cssRealFun_stub1(tanh);
-#if (!defined(TA_OS_WIN))
-static cssRealFun_stub1(acosh);
-static cssRealFun_stub1(asinh);
-static cssRealFun_stub1(atanh);
-#endif
-
-
 //////////////////////////////////
 //	Install_Math		//
 //////////////////////////////////
 
 static void Install_Math() {
   // global real functions
-  cssMisc::Functions.Push(cssBI::power = new cssElCFun(2, cssRealFun_pow_stub, "pow", CSS_FUN,
-"(Real x, y) Returns x to the y power.  This can also be expressed in CSS as x ^ y."));
 
-  // parsed internal real functions
-  cssRealFun_inst_mtx(cssMisc::Functions, acos, 1,
-"(Real X) The arc-cosine (inverse cosine) -- takes an X coordinate and returns\
- the angle (in radians) such that cos(angle)=X.", 1);
-  cssRealFun_inst_mtx(cssMisc::Functions, asin, 1,
-"(Real Y) The arc-sine (inverse sine) -- takes a Y coordinate and returns the\
- angle (in radians) such that sin(angle)=Y.", 1);
-  cssRealFun_inst_mtx(cssMisc::Functions, atan, 1,
-"(Real Y/X) The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle\
- (in radians) such that tan(angle)=Y/X.", 1);
-  cssRealFun_inst(cssMisc::Functions, atan2, 2,
-"(Real Y, Real X) The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle\
- (in radians) such that tan(angle)=Y/X."); // "
-  cssRealFun_inst_mtx(cssMisc::Functions, ceil, 1,
-   "(Real x) Rounds up the value to the next-highest integral value.",1);
-  cssRealFun_inst_mtx(cssMisc::Functions, cos, 1,
-"(Real x) The cosine of angle x (given in radians).  Use cos(x / DEG) if x\
- is in degrees.", 1);
-  cssRealFun_inst_mtx(cssMisc::Functions, cosh, 1,
-"(Real x) The hyperbolic cosine of angle x.",1);
+  TypeDef* mathtd = &TA_taMath_double;
+  taMath_double* mdobj = (taMath_double*)mathtd->GetInstance();
+
+  for(int i=0; i< mathtd->methods.size; i++) {
+    MethodDef* md = mathtd->methods[i];
+    if(!md->is_static) continue;
+    if(md->HasOption("NO_CSS_MATH")) continue; // skip entirely
+    if(md->fun_argc == 1) {
+      if((md->arg_types[0] == &TA_double) && md->type && md->type == &TA_double) {
+	// simple single arg double function -- use matrix encoding by default
+	if(md->HasOption("NO_CSS_MATRIX")) {
+	  cssMisc::Functions.Push
+	    (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+			    cssElFun::MBR_NO_THIS));
+	}
+	else {
+	  cssMisc::Functions.Push
+	    (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+			    cssElFun::FUN_ITR_MATRIX | cssElFun::MBR_NO_THIS, 
+			    md->fun_argc+1)); // arg will be shifted over for 'this'
+	}
+      }
+      else {
+	if(md->HasOption("CSS_MATRIX")) {
+	  cssMisc::Functions.Push
+	    (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+			    cssElFun::FUN_ITR_MATRIX | cssElFun::MBR_NO_THIS, 
+			    md->fun_argc+1)); // arg will be shifted over for 'this'
+	}
+	else {
+	    cssMisc::Functions.Push
+	      (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+			      cssElFun::MBR_NO_THIS));
+	}
+      }
+    }
+    else {
+      String mtxargs = md->OptionAfter("CSS_MATRIX_ARG_");
+      int mtxarg = (int)mtxargs;
+      if(mtxargs.nonempty() && mtxarg > 0) {
+	cssMisc::Functions.Push
+	  (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+			  cssElFun::FUN_ITR_MATRIX | cssElFun::MBR_NO_THIS, mtxarg+1));
+	// arg wil be shifted over for 'this'
+	
+      }
+      else {
+	cssMisc::Functions.Push
+	  (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+			  cssElFun::MBR_NO_THIS));
+      }
+    }
+  }
+
   cssRealFun_inst(cssMisc::Functions, drand48, 0,
 "Returns a uniformly-distributed random number between 0 and 1 (actually uses MT -- Mersenne Twister).");
   cssElCFun_inst(cssMisc::Functions, lrand48, 0, CSS_FUN,
 "Returns a uniformly-distributed random number on the range of the integers (actually uses MT -- Mersenne Twister).");
-  cssRealFun_inst_mtx(cssMisc::Functions, exp, 1,
- "(Real x) The natural exponential (e to the power x).", 1);
-  cssRealFun_inst_mtx(cssMisc::Functions, fabs, 1,
- "(Real x) The absolute value of x.",1);
-  cssRealFun_inst_mtx(cssMisc::Functions, floor, 1,
-"(Real x) Rounds the value down to the next lowest integral value.",1);
-  cssRealFun_inst(cssMisc::Functions, fmod, 2,
-"(Real x, Real y) Returns the value of x modulo y (i.e., x % y) for floating-point values.");
-  cssRealFun_inst_mtx(cssMisc::Functions, log, 1,
-"(Real x) The natural logarithm of x.",1);
-  cssRealFun_inst_mtx(cssMisc::Functions, log10, 1,
-"(Real x) The logarithm base 10 of x.",1);
-  cssElCFun_inst(cssMisc::Functions, max, 2, CSS_FUN,
-"(x,y) Works like the commonly-used #define macro that gives the maximum\
- of the two given arguments.  The return type is that of the\
- maximum-valued argument.");
-  cssElCFun_inst(cssMisc::Functions, min, 2, CSS_FUN,
-"(x,y) Just like MAX, except it returns the minimum of the two given\
- arguments.");
-  cssElCFun_inst_nm(cssMisc::Functions, max, 2, "MAX", CSS_FUN,
-"(x,y) Works like the commonly-used #define macro that gives the maximum\
- of the two given arguments.  The return type is that of the\
- maximum-valued argument.");
-  cssElCFun_inst_nm(cssMisc::Functions, min, 2, "MIN", CSS_FUN,
-"(x,y) Just like MAX, except it returns the minimum of the two given arguments.");
   cssElCFun_inst(cssMisc::Functions, random, 0, CSS_FUN,
 "Returns a uniformly-distributed random number on the range of the\
  integers.  CSS actually uses the MT (Mersenne Twister) function to generate the\
  number given the limitations of the standard random generators.");
   cssElCFun_inst(cssMisc::Functions, srand48, 1, CSS_FUN,
 "(Int x) Provides a new random seed for the random number generator based on the argument.");
-  cssRealFun_inst_mtx(cssMisc::Functions, sin, 1,
-"(Real x) The sine of angle x (given in radians).  Use sin(x / DEG) if x is in degrees.",1);
-  cssRealFun_inst_mtx(cssMisc::Functions, sinh, 1,
-"(Real x) The hyperbolic sine of x.",1);
-  cssRealFun_inst_mtx(cssMisc::Functions, sqrt, 1,
-"(Real x) The square-root of x.",1);
-  cssRealFun_inst_mtx(cssMisc::Functions, tan, 1,
-"(Real x) The tangent of angle x (given in radians).  Use tan(x / DEG) if x is in degrees.",1);
-  cssRealFun_inst_mtx(cssMisc::Functions, tanh, 1,
-"(Real x) The hyperbolic tangent of x.",1);
 
-// MSVC does not include these
-// hp does not include these unless you have _INCLUDE_HPUX_SOURCE...
-#if (!(defined(TA_OS_WIN) || defined(HP800)) )
-  cssRealFun_inst_mtx(cssMisc::Functions, acosh, 1,
-"(Real x) The hyperbolic arc-cosine.",1);
-  cssRealFun_inst_mtx(cssMisc::Functions, asinh, 1,
-"(Real x) The hyperbolic arc-sine.",1);
-  cssRealFun_inst_mtx(cssMisc::Functions, atanh, 1,
-"(Real x) The hyperbolic arc-tangent.",1);
-#endif // HP800
+//   cssMisc::Functions.Push(cssBI::power = new cssElCFun(2, cssRealFun_pow_stub, "pow", CSS_FUN,
+// "(Real x, y) Returns x to the y power.  This can also be expressed in CSS as x ^ y."));
+
+  // parsed internal real functions
+//   cssRealFun_inst_mtx(cssMisc::Functions, acos, 1,
+// "(Real X) The arc-cosine (inverse cosine) -- takes an X coordinate and returns\
+//  the angle (in radians) such that cos(angle)=X.", 1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, asin, 1,
+// "(Real Y) The arc-sine (inverse sine) -- takes a Y coordinate and returns the\
+//  angle (in radians) such that sin(angle)=Y.", 1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, atan, 1,
+// "(Real Y/X) The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle\
+//  (in radians) such that tan(angle)=Y/X.", 1);
+//   cssRealFun_inst(cssMisc::Functions, atan2, 2,
+// "(Real Y, Real X) The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle\
+//  (in radians) such that tan(angle)=Y/X."); // "
+//   cssRealFun_inst_mtx(cssMisc::Functions, ceil, 1,
+//    "(Real x) Rounds up the value to the next-highest integral value.",1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, cos, 1,
+// "(Real x) The cosine of angle x (given in radians).  Use cos(x / DEG) if x\
+//  is in degrees.", 1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, cosh, 1,
+// "(Real x) The hyperbolic cosine of angle x.",1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, exp, 1,
+//  "(Real x) The natural exponential (e to the power x).", 1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, fabs, 1,
+//  "(Real x) The absolute value of x.",1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, floor, 1,
+// "(Real x) Rounds the value down to the next lowest integral value.",1);
+//   cssRealFun_inst(cssMisc::Functions, fmod, 2,
+// "(Real x, Real y) Returns the value of x modulo y (i.e., x % y) for floating-point values.");
+//   cssRealFun_inst_mtx(cssMisc::Functions, log, 1,
+// "(Real x) The natural logarithm of x.",1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, log10, 1,
+// "(Real x) The logarithm base 10 of x.",1);
+//   cssElCFun_inst(cssMisc::Functions, max, 2, CSS_FUN,
+// "(x,y) Works like the commonly-used #define macro that gives the maximum\
+//  of the two given arguments.  The return type is that of the\
+//  maximum-valued argument.");
+//   cssElCFun_inst(cssMisc::Functions, min, 2, CSS_FUN,
+// "(x,y) Just like MAX, except it returns the minimum of the two given\
+//  arguments.");
+//   cssElCFun_inst_nm(cssMisc::Functions, max, 2, "MAX", CSS_FUN,
+// "(x,y) Works like the commonly-used #define macro that gives the maximum\
+//  of the two given arguments.  The return type is that of the\
+//  maximum-valued argument.");
+//   cssElCFun_inst_nm(cssMisc::Functions, min, 2, "MIN", CSS_FUN,
+// "(x,y) Just like MAX, except it returns the minimum of the two given arguments.");
+//   cssRealFun_inst_mtx(cssMisc::Functions, sin, 1,
+// "(Real x) The sine of angle x (given in radians).  Use sin(x / DEG) if x is in degrees.",1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, sinh, 1,
+// "(Real x) The hyperbolic sine of x.",1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, sqrt, 1,
+// "(Real x) The square-root of x.",1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, tan, 1,
+// "(Real x) The tangent of angle x (given in radians).  Use tan(x / DEG) if x is in degrees.",1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, tanh, 1,
+// "(Real x) The hyperbolic tangent of x.",1);
+
+// // MSVC does not include these
+// // hp does not include these unless you have _INCLUDE_HPUX_SOURCE...
+// #if (!(defined(TA_OS_WIN) || defined(HP800)) )
+//   cssRealFun_inst_mtx(cssMisc::Functions, acosh, 1,
+// "(Real x) The hyperbolic arc-cosine.",1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, asinh, 1,
+// "(Real x) The hyperbolic arc-sine.",1);
+//   cssRealFun_inst_mtx(cssMisc::Functions, atanh, 1,
+// "(Real x) The hyperbolic arc-tangent.",1);
+// #endif // HP800
 
   cssConstReal_inst_nm(cssMisc::Constants, 3.14159265358979323846,  "PI"   );
 //   cssConstReal_inst(cssMisc::Constants, 2.71828182845904523536,  E     );

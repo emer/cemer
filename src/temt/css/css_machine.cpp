@@ -1497,11 +1497,15 @@ cssEl::RunStat cssElInCFun::Do(cssProg* prg) {
 //////////////////////////////////////////
 
 void cssMbrCFun::Constr() {
+  itr_arg = -1;
+  flags = NO_FUN_FLAGS;
+  methdef = NULL;
 }
 
 void cssMbrCFun::Copy(const cssMbrCFun& cp) {
   cssElFun::Copy(cp);
   funp = cp.funp; ths = cp.ths;
+  methdef = cp.methdef;
 }
 cssMbrCFun::cssMbrCFun() {
   Constr(); funp = NULL; argc = 0;
@@ -1509,10 +1513,23 @@ cssMbrCFun::cssMbrCFun() {
 cssMbrCFun::cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**)) {
   Constr(); argc = ac;  ths = th; funp = fp;
 }
-cssMbrCFun::cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**), const String& nm)
+cssMbrCFun::cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**),
+		       const String& nm)
 {
-  Constr(); name = nm;  argc = ac;  ths = th; funp = fp;
+  Constr();
+  name = nm;  argc = ac;  ths = th; funp = fp;
 }
+
+cssMbrCFun::cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl* args[]),
+		       const String& nm, MethodDef* md,
+		       int flgs, int itrarg) {
+  Constr();
+  name = nm;  argc = ac;  ths = th; funp = fp;
+  methdef = md;
+  flags = (FunFlags)flgs;
+  itr_arg = itrarg;
+}
+
 cssMbrCFun::cssMbrCFun(const cssMbrCFun& cp) {
   Constr(); Copy(cp); name = cp.name;
 }
@@ -1539,7 +1556,20 @@ cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
     cssMisc::Error(prog, "Null 'this' object for member function call:", name);
     return cssEl::ExecError;
   }
-  cssEl* tmp = (*funp)(ths, act_argc, args);
+  if(HasFunFlag(MBR_NO_THIS)) {	// shift over to fake the this
+    if(argc > 0 && act_argc != argc) {	// these guys have stricter arg requirements
+      cssMisc::Error(prog, "incorrect number of arguments for member function call:",
+		     name, "requires:", String(argc), "got:", String(act_argc));
+      return cssEl::ExecError;
+    }
+    // fake a this
+    for(int i=act_argc; i>=1; i--) {
+      args[i+1] = args[i];
+    }
+    args[1] = &cssMisc::Void;
+    act_argc++;
+  }
+  cssEl* tmp = CallFun(act_argc, args);
   prog = prg;                   // restore if recursive
   tmp->prog = prog;
   if(!prog->top->external_stop && (tmp)) {
@@ -1547,6 +1577,68 @@ cssEl::RunStat cssMbrCFun::Do(cssProg* prg) {
   }
   DoneArgs(args, act_argc);
   return dostat;
+}
+
+cssEl* cssMbrCFun::CallFun(int act_argc, cssEl* args[]) { 
+  if(HasFunFlag(FUN_ITR_MATRIX) && args[itr_arg]->IsTaMatrix()) {
+    return CallFunMatrixArgs(act_argc, args);
+  }
+  else if(HasFunFlag(FUN_ITR_LIST)) {
+    return CallFunListArgs(act_argc, args);
+  }
+  cssEl* tmp = (*funp)(ths, act_argc, args);
+  return tmp;
+}
+
+cssEl* cssMbrCFun::CallFunMatrixArgs(int act_argc, cssEl* args[]) { 
+  cssEl* matarg = args[itr_arg];
+  cssEl* rval = NULL;
+  taMatrix* mat = ((cssTA_Matrix*)matarg)->GetMatrixPtr();
+  if(!mat) {
+    cssMisc::Error(prog, "CallFunMatrixArgs: argument is NULL matrix");
+    return &cssMisc::Void;
+  }
+  const String nm = "tmparg";
+  taMatrix* rmat = (taMatrix*)mat->Clone();
+  TA_FOREACH(mitm, *mat) { // use iterator on matrix so it can be filtered too
+    cssEl* tmparg = GetElFromVar(mitm, nm);
+    cssEl::Ref(tmparg);
+    args[itr_arg] = tmparg;
+    rval = (*funp)(ths, act_argc, args);
+    cssEl::Ref(rval);
+    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr->el_idx); // store rval in matrix
+    cssEl::unRefDone(tmparg);
+    cssEl::unRefDone(rval);
+  }
+  args[itr_arg] = matarg;	// restore original arg
+  return new cssTA_Matrix(rmat);
+}
+
+cssEl* cssMbrCFun::CallFunListArgs(int act_argc, cssEl* args[]) { 
+  // todo: rewrite
+  // cssEl* matarg = args[itr_arg];
+  // cssEl* rval = NULL;
+  // taMatrix* mat = ((cssTA_Matrix*)matarg)->GetMatrixPtr();
+  // if(!mat) {
+  //   cssMisc::Error(prog, "CallFunMatrixArgs: argument is NULL matrix");
+  //   return &cssMisc::Void;
+  // }
+  // const String nm = "tmparg";
+  // TA_FOREACH(mitm, *mat) { // use iterator on matrix so it can be filtered too
+  //   cssEl* tmparg = GetElFromVar(mitm, nm);
+  //   cssEl::Ref(tmparg);
+  //   args[itr_arg] = tmparg;
+  //   if(rval) cssEl::unRefDone(rval);
+  //   rval = (*funp)(act_argc, args);
+  //   cssEl::Ref(rval);
+  //   cssEl::unRefDone(tmparg);
+  // }
+  // if(!rval) {
+  //   return &cssMisc::Void;
+  // }
+  // cssEl::unRef(rval);		// get rid of extra ref -- will get ref'd upon return
+  // return rval;
+  return &cssMisc::Void;
 }
 
 //////////////////////////////////////////////////
@@ -5063,20 +5155,33 @@ void cssProgSpace::Help(cssEl* help_on) {
 
   if(help_on) {
     ostream& fh = *cmd_shell->fout;
+    String helpstr;
     if(help_on->GetType() == cssEl::T_ElCFun) {
       cssElCFun* fun = (cssElCFun*)help_on;
       fh << "\nHelp for function: " << fun->name << "\n" << fun->name << " ";
-      String str = fun->help_str;
+      helpstr= fun->help_str;
+    }
+    else if(help_on->GetType() == cssEl::T_MbrCFun) {
+      cssMbrCFun* fun = (cssMbrCFun*)help_on;
+      if(fun->methdef) {
+	fh << "\nHelp for function: " << fun->methdef->prototype() << endl;
+	helpstr = fun->methdef->desc;
+      }
+      else {
+	fh << "\nHelp for function: " << fun->name << "\n" << fun->name << " " << endl;
+      }
+    }
+    if(helpstr.nonempty()) { // todo: absurd to have this paging code in here like this..
       int wdth = 0;
-      while(!str.empty()) {
+      while(!helpstr.empty()) {
         String wrd;
-        if(str.contains(' ')) {
-          wrd = str.before(' ');
-          str = str.after(' ');
+        if(helpstr.contains(' ')) {
+          wrd = helpstr.before(' ');
+          helpstr = helpstr.after(' ');
         }
         else {
-          wrd = str;
-          str = "";
+          wrd = helpstr;
+          helpstr = "";
         }
         if(wdth + (int)wrd.length() > taMisc::display_width) {
           fh << "\n";

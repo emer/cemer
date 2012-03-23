@@ -805,6 +805,7 @@ public:
     NO_FUN_FLAGS = 0x0000,	// no flags set
     FUN_ITR_MATRIX = 0x0001,	// iterate over itr_arg_no if given arg happens to be a matrix (or array) type -- iterating over matrix elements
     FUN_ITR_LIST = 0x0002,	// iterate over itr_arg_no if given arg happens to be a taList_impl type -- iterating over taBase objects
+    MBR_NO_THIS = 0x0004,	// member function with no this pointer
   };
 
   static const int ArgMax = 32; // maximum number of arguments
@@ -933,6 +934,7 @@ class CSS_API cssMbrCFun : public cssElFun {
 public:
   cssEl*	(*funp)(void* ths, int na, cssEl* args[]); // function pointer
   void* 	ths;					   // type instance
+  MethodDef*	methdef;			// member def for this fun
 
   cssTypes 	GetType() const		{ return T_MbrCFun; }
   const char*	GetTypeName() const	{ return "(MbrCFun)"; }
@@ -949,11 +951,20 @@ public:
   cssMbrCFun();
   cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**));
   cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl**), const String& nm);
+  cssMbrCFun(int ac, void* th, cssEl* (*fp)(void*, int, cssEl* args[]), const String& nm,
+	     MethodDef* md, int flgs=0, int itrarg=-1);
   cssMbrCFun(const cssMbrCFun& cp);
   cssMbrCFun(const cssMbrCFun& cp, const String& nm);
   ~cssMbrCFun();
 
   cssCloneOnly(cssMbrCFun);
+
+  cssEl* CallFun(int act_argc, cssEl* args[]);
+  // call funp, return rval
+  cssEl* CallFunMatrixArgs(int act_argc, cssEl* args[]);
+  // call funp for FUN_ITR_MATRIX case
+  cssEl* CallFunListArgs(int act_argc, cssEl* args[]);
+  // call funp for FUN_ITR_LIST case
 
   cssEl*	MakeToken_stub(int na, cssEl* arg[]);
 };

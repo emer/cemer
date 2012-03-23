@@ -285,13 +285,13 @@ public:
   // Arithmetic: basic arithmetic
 
   static double  add(double x, double y) { return x + y; }
-  // #CAT_Arithmetic add
+  // #CAT_Arithmetic #NO_CSS_MATH add
   static double  sub(double x, double y) { return x - y; }
-  // #CAT_Arithmetic subtract
+  // #CAT_Arithmetic #NO_CSS_MATH subtract
   static double  mult(double x, double y) { return x * y; }
-  // #CAT_Arithmetic multiply
+  // #CAT_Arithmetic #NO_CSS_MATH multiply
   static double  div(double x, double y) { return x / y; }
-  // #CAT_Arithmetic divide
+  // #CAT_Arithmetic #NO_CSS_MATH divide
 
   static double  fabs(double x) { return std::fabs(x); }
   // #CAT_Arithmetic absolute value
@@ -508,12 +508,12 @@ public:
   // arithmetic ops
 
   static void   vec_fm_ints(double_Matrix* double_mat, const int_Matrix* int_mat);
-  // initialize given double matrix (which is completely overwritten) from integer matrix data
+  // #NO_CSS_MATH initialize given double matrix (which is completely overwritten) from integer matrix data
   static void   vec_to_ints(int_Matrix* int_mat, const double_Matrix* double_mat);
-  // copy double matrix data back to integer matrix
+  // #NO_CSS_MATH copy double matrix data back to integer matrix
 
   static bool   vec_check_type(const double_Matrix* a);
-  // check that matrix is actually a double type -- issues Error if not and returns false
+  // #NO_CSS_MATH check that matrix is actually a double type -- issues Error if not and returns false
   static bool   vec_check_same_size(const double_Matrix* a, const double_Matrix* b, bool quiet = false);
   // check that both vectors are the same size, and issue warning if not (unless quiet)
 

@@ -73,6 +73,7 @@ public:
   static cssElCFun*	push_root;	// pushes a root value on stack
   static cssElCFun*	push_next; 	// pushes next program item on stack
   static cssElCFun*	push_cur_this;	// push current this pointer on stack
+  static cssElCFun*	push_dummy_this; // push a dummy this pointer on stack
   static cssElCFun*	arg_swap;	// flips the args on the stack
   static cssElCFun*	fun_done;	// call the FunDone function on obj before me (function cleanup)
   static cssElCFun*	array_alloc;
