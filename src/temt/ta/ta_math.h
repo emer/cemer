@@ -746,19 +746,25 @@ public:
   // #IGNORE helper function to get a gsl-formatted vector from a one-dimensional ta matrix (vector)
 #endif
 
+  static int_Matrix* rc(int_Matrix* cr);
+  // #CAT_Matrix translate natural column, row indicies into row, column order, which is conventionally used for matrix math -- any higher dims are maintained as-is
+
   static bool mat_col(double_Matrix* col, const double_Matrix* mat, int col_no);
   // #CAT_Matrix get indicated column number from two-d matrix
   static bool mat_row(double_Matrix* row, const double_Matrix* mat, int row_no);
   // #CAT_Matrix get indicated row number from two-d matrix
 
   static bool mat_add(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Matrix add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions
+  // #CAT_Matrix add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the + operator
   static bool mat_sub(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Matrix subtract the elements of matrix b to the elements of matrix a: a(i,j) -= b(i,j); the two matricies must have the same dimensions
+  // #CAT_Matrix subtract the elements of matrix b to the elements of matrix a: a(i,j) -= b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the - operator
   static bool mat_mult_els(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Matrix multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions
+  // #CAT_Matrix multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the * operator
   static bool mat_div_els(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions
+  // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the / operator
+
+  static bool mat_mult(double_Matrix* c, const double_Matrix* a, const double_Matrix* b);
+  // #CAT_Matrix matrix multiplication -- c = a * b -- number of columns of a must be same as number of rows of b, and vice-versa
 
   static bool mat_eigen_owrite(double_Matrix* A, double_Matrix* eigen_vals, double_Matrix* eigen_vecs);
   // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a square symmetric n x n matrix. the matrix is overwritten by the operation.  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already. eigens are sorted from highest to lowest by magnitude (absolute value)

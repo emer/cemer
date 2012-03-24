@@ -724,9 +724,11 @@ public:
     virtual taMatrix*     ElView() const  { return NULL; }
     // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
     virtual IndexMode     ElViewMode() const  { return IDX_UNK; }
-    // #CAT_Access #EXPERT View mode for view of list -- specifies what kind of view data there is, for display and other kinds of functions
+    // #CAT_Access #EXPERT View mode for view of list -- specifies what kind of view data there is, for display and other kinds of functions -- only valid cases are IDX_COORDS or IDX_MASK, or IDX_UNK if no view specified
     virtual int		  ElemCount() const  { return -1; }
     // #CAT_Access #EXPERT number of elements in the container -- used for iteration control
+  virtual int	        IterCount() const; 
+  // #CAT_Access how many items will be iterated over if we iterate through this container -- this is fast for no view and IDX_COORDS views and slow (requiring summing over mask) for IDX_MASK views
   virtual Variant       IterBegin(taBaseItr*& itr) const
   { itr = Iter(); if(!itr) return _nilVariant; return IterFirst(itr); }
   // #CAT_Access get iterator for this container and start it at the first item for iterating through items in this container -- if no valid first item, iterator is deleted: e.g., taBaseItr* itr; for(Variant itm = cont.IterBegin(itr); (bool)itr; itm = cont.IterNext(itr)) { ... } -- see also TA_FOREACH macro
@@ -1149,6 +1151,17 @@ public:
 
   virtual void          CallFun(const String& fun_name);
   // #CAT_ObjectMgmt call function (method) of given name on this object, prompting for args using gui interface
+  static  void		CallObjFun(taBase* obj, const String& fun_name);
+  // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 call function (method) of given name on given object, prompting for args using gui interface
+  static  void		CallObjFunArgs(taBase* obj, const String& fun_name, 
+				       int argc, cssEl* arg[]);
+  // #IGNORE call function (method) of given name on given object, using given args
+  static  void		SetMemberStr(taBase* obj, const String& memb_name,
+				     const String& str);
+  // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on string value
+  static  void		SetMemberVar(taBase* obj, const String& memb_name,
+				     const Variant& val);
+  // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on variant
 
   virtual Variant       GetGuiArgVal(const String& fun_name, int arg_idx);
   // #IGNORE overload this to get default initial arg values for given function and arg index -- function must be marked with ARG_VAL_FM_FUN[_n] comment directive, and _nilVariant rval will be ignored (NOTE: definitely call inherited:: because this is used for ChangeMyType!

@@ -136,11 +136,53 @@ void MatrixIndex::GetIndexes(int& dms, int& d0, int& d1, int& d2, int& d3, int& 
   if(dms >= 7) d6 = dim(6); else d6 = 0;
 }
 
-void MatrixIndex::AddFmIndex(const MatrixIndex& ad) {
+MatrixIndex* MatrixIndex::operator+=(const MatrixIndex& ad) {
   int mxd = MIN(n_dims, ad.n_dims);
   for(int i=0; i<mxd; i++) {
     FastEl(i) += ad.FastEl(i);
   }
+  return this;
+}
+
+MatrixIndex* MatrixIndex::operator-=(const MatrixIndex& ad) {
+  int mxd = MIN(n_dims, ad.n_dims);
+  for(int i=0; i<mxd; i++) {
+    FastEl(i) -= ad.FastEl(i);
+  }
+  return this;
+}
+
+MatrixIndex* MatrixIndex::operator*=(const MatrixIndex& ad) {
+  int mxd = MIN(n_dims, ad.n_dims);
+  for(int i=0; i<mxd; i++) {
+    FastEl(i) *= ad.FastEl(i);
+  }
+  return this;
+}
+
+MatrixIndex* MatrixIndex::operator/=(const MatrixIndex& ad) {
+  int mxd = MIN(n_dims, ad.n_dims);
+  for(int i=0; i<mxd; i++) {
+    FastEl(i) /= ad.FastEl(i);
+  }
+  return this;
+}
+
+MatrixIndex::operator int_Matrix*() const {
+  int_Matrix* r = new int_Matrix(1,n_dims);
+  for(int i=0; i<n_dims; i++) {
+    r->FastEl_Flat(i) = FastEl(i);
+  }
+  return r;
+}
+
+MatrixIndex* MatrixIndex::operator=(const taMatrix* cp) {
+  if(!cp) return this;
+  n_dims = MIN(TA_MATRIX_DIMS_MAX, cp->size);
+  for(int i=0; i<n_dims; i++) {
+    FastEl(i) = cp->FastElAsVar_Flat(i).toInt();
+  }
+  return this;
 }
 
 String MatrixIndex::ToString(const char* ldelim, const char* rdelim) const {
@@ -372,6 +414,55 @@ int MatrixGeom::IndexFmDims2D(int col, int row, bool pat_4d,
   return -1; // compiler food, never executes
 }
 
+MatrixGeom* MatrixGeom::operator+=(const MatrixGeom& ad) {
+  int mxd = MIN(n_dims, ad.n_dims);
+  for(int i=0; i<mxd; i++) {
+    Set(i, FastEl(i) + ad.FastEl(i));
+  }
+  return this;
+}
+
+MatrixGeom* MatrixGeom::operator-=(const MatrixGeom& ad) {
+  int mxd = MIN(n_dims, ad.n_dims);
+  for(int i=0; i<mxd; i++) {
+    Set(i, FastEl(i) - ad.FastEl(i));
+  }
+  return this;
+}
+
+MatrixGeom* MatrixGeom::operator*=(const MatrixGeom& ad) {
+  int mxd = MIN(n_dims, ad.n_dims);
+  for(int i=0; i<mxd; i++) {
+    Set(i, FastEl(i) * ad.FastEl(i));
+  }
+  return this;
+}
+
+MatrixGeom* MatrixGeom::operator/=(const MatrixGeom& ad) {
+  int mxd = MIN(n_dims, ad.n_dims);
+  for(int i=0; i<mxd; i++) {
+    Set(i, FastEl(i) / ad.FastEl(i));
+  }
+  return this;
+}
+
+MatrixGeom::operator int_Matrix*() const {
+  int_Matrix* r = new int_Matrix(1,n_dims);
+  for(int i=0; i<n_dims; i++) {
+    r->FastEl_Flat(i) = FastEl(i);
+  }
+  return r;
+}
+
+MatrixGeom* MatrixGeom::operator=(const taMatrix* cp) {
+  if(!cp) return this;
+  n_dims = MIN(TA_MATRIX_DIMS_MAX, cp->size);
+  for(int i=0; i<n_dims; i++) {
+    Set(i, cp->FastElAsVar_Flat(i).toInt());
+  }
+  return this;
+}
+
 bool MatrixGeom::Equal(const MatrixGeom& other) const {
   if (n_dims != other.n_dims) return false;
   for (int i = 0; i < n_dims; ++i) {
@@ -418,14 +509,6 @@ void MatrixGeom::GetGeom(int& dms, int& d0, int& d1, int& d2, int& d3, int& d4,
   if(dms >= 5) d4 = dim(4); else d4 = 0;
   if(dms >= 6) d5 = dim(5); else d5 = 0;
   if(dms >= 7) d6 = dim(6); else d6 = 0;
-}
-
-void MatrixGeom::AddFmGeom(const MatrixGeom& ad) {
-  int mxd = MIN(n_dims, ad.n_dims);
-  for(int i=0; i<mxd; i++) {
-    Set(i, FastEl(i) + ad.FastEl(i));
-  }
-  UpdateAfterEdit_impl();
 }
 
 void MatrixGeom::Get2DGeom(int& x, int& y) const {
@@ -694,7 +777,7 @@ void taMatrix::Destroy() {
 }
 
 void taMatrix::InitLinks() {
-  inherited::CutLinks();
+  inherited::InitLinks();
   taBase::Own(geom, this);
   taBase::Own(el_view, this);
 }
@@ -1939,7 +2022,7 @@ void taMatrix::WriteFmSubMatrix(const taMatrix* src, RenderOp render_op,
   for(int i=0;i<src->size;i++) {
     src->geom.DimsFmIndex(i, srcp);
     MatrixIndex trgp(off);
-    trgp.AddFmIndex(srcp);
+    trgp += srcp;
     Variant sval = src->FastElAsVar_Flat(i);
     Variant dval = SafeElAsVarN(trgp);
     dval = RenderValue(dval, sval, render_op);
@@ -1956,7 +2039,7 @@ void taMatrix::ReadToSubMatrix(taMatrix* dest, RenderOp render_op,
   for(int i=0;i<dest->size;i++) {
     dest->geom.DimsFmIndex(i, srcp);
     MatrixIndex trgp(off);
-    trgp.AddFmIndex(srcp);
+    trgp += srcp;
     Variant sval = SafeElAsVarN(trgp);
     if(!sval.isInvalid()) {
       Variant dval = dest->FastElAsVar_Flat(i);
@@ -1988,7 +2071,7 @@ void taMatrix::WriteFmSubMatrixFrames(taMatrix* src, RenderOp render_op,
     for(int i=0;i<sfr->size;i++) {
       sfr->geom.DimsFmIndex(i, srcp);
       MatrixIndex trgp(off);
-      trgp.AddFmIndex(srcp);
+      trgp += srcp;
       Variant sval = sfr->FastElAsVar_Flat(i);
       Variant dval = dfr->SafeElAsVarN(trgp);
       dval = RenderValue(dval, sval, render_op);
@@ -2011,7 +2094,7 @@ void taMatrix::ReadToSubMatrixFrames(taMatrix* dest, RenderOp render_op,
     for(int i=0;i<dfr->size;i++) {
       dfr->geom.DimsFmIndex(i, srcp);
       MatrixIndex trgp(off);
-      trgp.AddFmIndex(srcp);
+      trgp += srcp;
       Variant sval = sfr->SafeElAsVarN(trgp);
       if(!sval.isInvalid()) {
 	Variant dval = dfr->FastElAsVar_Flat(i);

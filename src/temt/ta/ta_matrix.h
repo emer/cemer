@@ -239,11 +239,34 @@ public:
   // #CAT_Access get all indicies to individual ints
   inline void   Reset() { SetDims(0); }
   // #CAT_Modify set number of dimensions to 0, and clear all dims
-  void          AddFmIndex(const MatrixIndex& ad);
-  // #CAT_Modify add given geometry values to ours -- useful for adding offsets to indicies, for example
-  inline MatrixIndex&   operator += (const MatrixIndex& ad)  { AddFmIndex(ad); return *this;}
 
-  bool          Equal(const MatrixIndex& other) const;
+  //////////////////////////////////////////////////////
+  //   operators
+  MatrixIndex* 	operator+=(const MatrixIndex& ad);
+  MatrixIndex* 	operator-=(const MatrixIndex& ad);
+  MatrixIndex* 	operator*=(const MatrixIndex& ad);
+  MatrixIndex* 	operator/=(const MatrixIndex& ad);
+
+  MatrixIndex* 	operator+(const MatrixIndex& ad) const
+    { MatrixIndex* r = new MatrixIndex(this); *r += ad; return r; }
+  MatrixIndex* 	operator-(const MatrixIndex& ad) const
+    { MatrixIndex* r = new MatrixIndex(this); *r -= ad; return r; }
+  MatrixIndex* 	operator*(const MatrixIndex& ad) const
+  { MatrixIndex* r = new MatrixIndex(this); *r *= ad; return r; }
+  MatrixIndex* 	operator/(const MatrixIndex& ad) const
+    { MatrixIndex* r = new MatrixIndex(this); *r /= ad; return r; }
+
+  bool operator==(const MatrixIndex& other) const
+  { return Equal(other); }
+  bool operator!=(const MatrixIndex& other) const
+  { return !Equal(other); }
+    
+  operator int_Matrix*() const;
+  // convert indicies to equivalent int matrix
+  MatrixIndex* operator=(const taMatrix* cp);
+  // initialize from a matrix (converts matrix values to ints)
+  
+  bool		Equal(const MatrixIndex& other) const;
   // #CAT_Access are two indexes equal to each other?
 
   ///////////////////////////////////////////////////////
@@ -285,12 +308,6 @@ private:
   void          Initialize();
   void          Destroy();
 };
-
-inline bool operator ==(const MatrixIndex& a, const MatrixIndex& b)
-{ return a.Equal(b); }
-inline bool operator !=(const MatrixIndex& a, const MatrixIndex& b)
-{ return !a.Equal(b); }
-
 
 class TA_API MatrixGeom: public taBase  {
   // matrix geometry and index set -- holds dims() dimensions worth of integers, which are either the geometry of a matrix or a multidimensional index into a particular matrix location
@@ -352,10 +369,33 @@ public:
   // #CAT_Access get all geometry information to individual ints
   inline void   Reset() { SetDims(0); }
   // #CAT_Modify set number of dimensions to 0, and clear all dims
-  void          AddFmGeom(const MatrixGeom& ad);
-  // #CAT_Modify add given geometry values to ours
-  inline MatrixGeom&    operator += (const MatrixGeom& ad)  { AddFmGeom(ad); return *this;}
 
+  //////////////////////////////////////////////////////
+  //   operators
+  MatrixGeom* 	operator+=(const MatrixGeom& ad);
+  MatrixGeom* 	operator-=(const MatrixGeom& ad);
+  MatrixGeom* 	operator*=(const MatrixGeom& ad);
+  MatrixGeom* 	operator/=(const MatrixGeom& ad);
+
+  MatrixGeom* 	operator+(const MatrixGeom& ad) const
+    { MatrixGeom* r = new MatrixGeom(this); *r += ad; return r; }
+  MatrixGeom* 	operator-(const MatrixGeom& ad) const
+    { MatrixGeom* r = new MatrixGeom(this); *r -= ad; return r; }
+  MatrixGeom* 	operator*(const MatrixGeom& ad) const
+  { MatrixGeom* r = new MatrixGeom(this); *r *= ad; return r; }
+  MatrixGeom* 	operator/(const MatrixGeom& ad) const
+    { MatrixGeom* r = new MatrixGeom(this); *r /= ad; return r; }
+
+  bool operator==(const MatrixGeom& other) const
+  { return Equal(other); }
+  bool operator!=(const MatrixGeom& other) const
+  { return !Equal(other); }
+    
+  operator int_Matrix*() const;
+  // convert indicies to equivalent int matrix
+  MatrixGeom* operator=(const taMatrix* cp);
+  // initialize from a matrix (converts matrix values to ints)
+  
   bool          Equal(const MatrixGeom& other) const;
   // #CAT_Access are two geometries equal to each other?
 
@@ -425,12 +465,6 @@ private:
   void          Destroy();
 };
 
-inline bool operator ==(const MatrixGeom& a, const MatrixGeom& b)
-  {return a.Equal(b);}
-inline bool operator !=(const MatrixGeom& a, const MatrixGeom& b)
-  {return !a.Equal(b);}
-
-
 ///////////////////////////////////
 //      Base taMatrix
 ///////////////////////////////////
@@ -477,6 +511,8 @@ public:
   // #CAT_Access the number of dimensions
   inline int            dim(int d) const {return geom.dim(d);}
   // #CAT_Access the value of dimenion d
+  inline int_Matrix*	Shape() const { return (int_Matrix*)geom; }
+  // #CAT_Access the shape of the matrix -- returns an int matrix with values for the size of each dimension
   int                   frames() const;
   // #CAT_Access number of frames currently in use (value of highest dimension)
   int                   frameSize() const;
@@ -737,8 +773,12 @@ public:
   { int d[TA_MATRIX_DIMS_MAX]; d[0]=d0; d[1]=d1; d[2]=d2; d[3]=d3;
     d[4]=d4; d[5]=d5; d[6]=d6; d[7]=0; return SetGeom_(size, d);}
   // #CAT_Modify set geom for matrix -- if matches current size, it is non-destructive
-  bool                  SetGeomN(const MatrixGeom& geom_) { return SetGeom_(geom_.dims(), geom_.el); }
+  bool                  SetGeomN(const MatrixGeom& geom_)
+  { return SetGeom_(geom_.dims(), geom_.el); }
   // #MENU #MENU_CONTEXT #MENU_ON_Matrix #MENU_SEP_BEFORE #CAT_Modify #INIT_ARGVAL_ON_geom set geom for any sized matrix -- if matches current size, it is non-destructive
+  bool			SetShape(const taMatrix* mat_shape)
+  { MatrixGeom gm; gm = mat_shape; return SetGeomN(gm); }
+  // #CAT_Modify set geometry (shape) based on given matrix shape specification
 
   // Slicing -- NOTES:
   // 1. slices are updated if parent allocation changes -- this could collapse slice to [0]

@@ -32,7 +32,7 @@
 # include <gsl/gsl_fft_real.h>
 # include <gsl/gsl_fft_halfcomplex.h>
 # include <gsl/gsl_multifit.h>
-# include  <gsl/gsl_sf.h>
+# include <gsl/gsl_sf.h>
 # include <gsl/gsl_cdf.h>
 #endif
 
@@ -2327,6 +2327,17 @@ bool taMath_double::vec_kern2d_gauss(double_Matrix* kernel, int sz_x, int sz_y,
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix operations
 
+int_Matrix* taMath_double::rc(int_Matrix* cr) {
+  if(!cr || cr->size < 2) {
+    taMisc::Error("taMath_double::rc -- input matrix NULL or does not have at least 2 indicies");
+    return NULL;
+  }
+  int_Matrix* rval = (int_Matrix*)cr->Clone();
+  rval->FastEl_Flat(0) = cr->FastEl_Flat(1); // swap'em
+  rval->FastEl_Flat(1) = cr->FastEl_Flat(0);
+  return rval;
+}
+
 bool taMath_double::mat_col(double_Matrix* col, const double_Matrix* mat, int col_no) {
   if(!vec_check_type(col) || !vec_check_type(mat)) return false;
   if(mat->dims() != 2) return false;
@@ -2403,6 +2414,19 @@ bool taMath_double::mat_div_els(double_Matrix* a, const double_Matrix* b) {
   gsl_matrix g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
   gsl_matrix g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   return gsl_matrix_div_elements(&g_a, &g_b);
+}
+
+bool taMath_double::mat_mult(double_Matrix* c, const double_Matrix* a, const double_Matrix* b) {
+  gsl_matrix g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
+  gsl_matrix g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
+  if(!vec_check_type(c)) return false;
+  // ensure return matrix is correct size
+  if(c->dim(0) != b->dim(0) || c->dim(1) != a->dim(1)) {
+    c->SetGeom(2, b->dim(0), a->dim(1));
+  }
+  gsl_matrix g_c;  if(!mat_get_gsl_fm_ta(&g_c, c)) return false;
+  int rval = gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, &g_a, &g_b, 0.0, &g_c);
+  return true;			// todo: decode rvals
 }
 
 bool taMath_double::mat_eigen_owrite(double_Matrix* a, double_Matrix* eigen_vals,

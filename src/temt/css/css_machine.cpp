@@ -1092,6 +1092,18 @@ cssEl* cssEl::GetMethodFmName_impl(TypeDef* typ, void* base, const String& meth)
 
 cssEl* cssEl::GetMethodEl_impl(TypeDef* typ, void* base, MethodDef* md) const {
   if(md->stubp) {
+    if(md->is_static) {
+      String lstexps = md->OptionAfter("CSS_LIST_EXPAND_");
+      if(lstexps.nonempty()) {
+	int lstexp = (int)lstexps;
+	if(md->fun_argd >= 0)
+	  return new cssMbrCFun(VarArg, base, md->stubp, md->name, md, 
+				cssElFun::FUN_ITR_LIST, lstexp+1);
+	else
+	  return new cssMbrCFun(md->fun_argc+1, base, md->stubp, md->name, md,
+				cssElFun::FUN_ITR_LIST, lstexp+1);
+      }
+    }
     if(md->fun_argd >= 0)
       return new cssMbrCFun(VarArg, base, md->stubp, md->name);
     else
@@ -1384,30 +1396,33 @@ cssEl* cssElCFun::CallFunMatrixArgs(int act_argc, cssEl* args[]) {
 }
 
 cssEl* cssElCFun::CallFunListArgs(int act_argc, cssEl* args[]) { 
-  // todo: rewrite
-  // cssEl* matarg = args[itr_arg];
-  // cssEl* rval = NULL;
-  // taMatrix* mat = ((cssTA_Matrix*)matarg)->GetMatrixPtr();
-  // if(!mat) {
-  //   cssMisc::Error(prog, "CallFunMatrixArgs: argument is NULL matrix");
-  //   return &cssMisc::Void;
-  // }
-  // const String nm = "tmparg";
-  // TA_FOREACH(mitm, *mat) { // use iterator on matrix so it can be filtered too
-  //   cssEl* tmparg = GetElFromVar(mitm, nm);
-  //   cssEl::Ref(tmparg);
-  //   args[itr_arg] = tmparg;
-  //   if(rval) cssEl::unRefDone(rval);
-  //   rval = (*funp)(act_argc, args);
-  //   cssEl::Ref(rval);
-  //   cssEl::unRefDone(tmparg);
-  // }
-  // if(!rval) {
-  //   return &cssMisc::Void;
-  // }
-  // cssEl::unRef(rval);		// get rid of extra ref -- will get ref'd upon return
-  // return rval;
-  return &cssMisc::Void;
+  cssEl* matarg = args[itr_arg];
+  cssEl* rval = NULL;
+  taBase* bs = ((cssTA_Base*)bs)->GetTAPtr();
+  if(!bs) {
+    cssMisc::Error(prog, "CallFunListArgs: argument is NULL object");
+    return &cssMisc::Void;
+  }
+  int ic = bs->IterCount();
+  if(ic <= 0) {
+    // just run on guy itself
+    cssEl* tmp = (*funp)(act_argc, args);
+    return tmp;
+  }
+  const String nm = "tmparg";
+  Variant_Matrix* rmat = new Variant_Matrix(1,ic);
+  TA_FOREACH(mitm, *bs) { // use iterator on guy so it can be filtered too
+    cssEl* tmparg = GetElFromVar(mitm, nm);
+    cssEl::Ref(tmparg);
+    args[itr_arg] = tmparg;
+    rval = (*funp)(act_argc, args);
+    cssEl::Ref(rval);
+    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr->count); // store rval in matrix
+    cssEl::unRefDone(tmparg);
+    cssEl::unRefDone(rval);
+  }
+  args[itr_arg] = matarg;	// restore original arg
+  return new cssTA_Matrix(rmat);
 }
 
 //////////////////////////////////////////
@@ -1615,30 +1630,33 @@ cssEl* cssMbrCFun::CallFunMatrixArgs(int act_argc, cssEl* args[]) {
 }
 
 cssEl* cssMbrCFun::CallFunListArgs(int act_argc, cssEl* args[]) { 
-  // todo: rewrite
-  // cssEl* matarg = args[itr_arg];
-  // cssEl* rval = NULL;
-  // taMatrix* mat = ((cssTA_Matrix*)matarg)->GetMatrixPtr();
-  // if(!mat) {
-  //   cssMisc::Error(prog, "CallFunMatrixArgs: argument is NULL matrix");
-  //   return &cssMisc::Void;
-  // }
-  // const String nm = "tmparg";
-  // TA_FOREACH(mitm, *mat) { // use iterator on matrix so it can be filtered too
-  //   cssEl* tmparg = GetElFromVar(mitm, nm);
-  //   cssEl::Ref(tmparg);
-  //   args[itr_arg] = tmparg;
-  //   if(rval) cssEl::unRefDone(rval);
-  //   rval = (*funp)(act_argc, args);
-  //   cssEl::Ref(rval);
-  //   cssEl::unRefDone(tmparg);
-  // }
-  // if(!rval) {
-  //   return &cssMisc::Void;
-  // }
-  // cssEl::unRef(rval);		// get rid of extra ref -- will get ref'd upon return
-  // return rval;
-  return &cssMisc::Void;
+  cssEl* matarg = args[itr_arg];
+  cssEl* rval = NULL;
+  taBase* bs = ((cssTA_Base*)bs)->GetTAPtr();
+  if(!bs) {
+    cssMisc::Error(prog, "CallFunListArgs: argument is NULL object");
+    return &cssMisc::Void;
+  }
+  int ic = bs->IterCount();
+  if(ic <= 0) {
+    // just run on guy itself
+    cssEl* tmp = (*funp)(ths, act_argc, args);
+    return tmp;
+  }
+  const String nm = "tmparg";
+  Variant_Matrix* rmat = new Variant_Matrix(1,ic);
+  TA_FOREACH(mitm, *bs) { // use iterator on guy so it can be filtered too
+    cssEl* tmparg = GetElFromVar(mitm, nm);
+    cssEl::Ref(tmparg);
+    args[itr_arg] = tmparg;
+    rval = (*funp)(ths, act_argc, args);
+    cssEl::Ref(rval);
+    rmat->SetFmVar_Flat(rval->GetVar(), FOREACH_itr->count); // store rval in matrix
+    cssEl::unRefDone(tmparg);
+    cssEl::unRefDone(rval);
+  }
+  args[itr_arg] = matarg;	// restore original arg
+  return new cssTA_Matrix(rmat);
 }
 
 //////////////////////////////////////////////////

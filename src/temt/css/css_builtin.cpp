@@ -1461,6 +1461,13 @@ static cssEl* cssElCFun_srand48_stub(int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
+static cssEl* cssElCFun_max_stub(int, cssEl* arg[]) {
+  return (*(arg[1]) > *(arg[2])) ? arg[1] : arg[2];
+}
+static cssEl* cssElCFun_min_stub(int, cssEl* arg[]) {
+  return (*(arg[1]) < *(arg[2])) ? arg[1] : arg[2];
+}
+
 //////////////////////////////////
 //	Install_Math		//
 //////////////////////////////////
@@ -1536,72 +1543,12 @@ static void Install_Math() {
 //   cssMisc::Functions.Push(cssBI::power = new cssElCFun(2, cssRealFun_pow_stub, "pow", CSS_FUN,
 // "(Real x, y) Returns x to the y power.  This can also be expressed in CSS as x ^ y."));
 
-  // parsed internal real functions
-//   cssRealFun_inst_mtx(cssMisc::Functions, acos, 1,
-// "(Real X) The arc-cosine (inverse cosine) -- takes an X coordinate and returns\
-//  the angle (in radians) such that cos(angle)=X.", 1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, asin, 1,
-// "(Real Y) The arc-sine (inverse sine) -- takes a Y coordinate and returns the\
-//  angle (in radians) such that sin(angle)=Y.", 1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, atan, 1,
-// "(Real Y/X) The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle\
-//  (in radians) such that tan(angle)=Y/X.", 1);
-//   cssRealFun_inst(cssMisc::Functions, atan2, 2,
-// "(Real Y, Real X) The arc-tangent (inverse tangent) -- takes a Y/X slope and returns angle\
-//  (in radians) such that tan(angle)=Y/X."); // "
-//   cssRealFun_inst_mtx(cssMisc::Functions, ceil, 1,
-//    "(Real x) Rounds up the value to the next-highest integral value.",1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, cos, 1,
-// "(Real x) The cosine of angle x (given in radians).  Use cos(x / DEG) if x\
-//  is in degrees.", 1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, cosh, 1,
-// "(Real x) The hyperbolic cosine of angle x.",1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, exp, 1,
-//  "(Real x) The natural exponential (e to the power x).", 1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, fabs, 1,
-//  "(Real x) The absolute value of x.",1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, floor, 1,
-// "(Real x) Rounds the value down to the next lowest integral value.",1);
-//   cssRealFun_inst(cssMisc::Functions, fmod, 2,
-// "(Real x, Real y) Returns the value of x modulo y (i.e., x % y) for floating-point values.");
-//   cssRealFun_inst_mtx(cssMisc::Functions, log, 1,
-// "(Real x) The natural logarithm of x.",1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, log10, 1,
-// "(Real x) The logarithm base 10 of x.",1);
-//   cssElCFun_inst(cssMisc::Functions, max, 2, CSS_FUN,
-// "(x,y) Works like the commonly-used #define macro that gives the maximum\
-//  of the two given arguments.  The return type is that of the\
-//  maximum-valued argument.");
-//   cssElCFun_inst(cssMisc::Functions, min, 2, CSS_FUN,
-// "(x,y) Just like MAX, except it returns the minimum of the two given\
-//  arguments.");
-//   cssElCFun_inst_nm(cssMisc::Functions, max, 2, "MAX", CSS_FUN,
-// "(x,y) Works like the commonly-used #define macro that gives the maximum\
-//  of the two given arguments.  The return type is that of the\
-//  maximum-valued argument.");
-//   cssElCFun_inst_nm(cssMisc::Functions, min, 2, "MIN", CSS_FUN,
-// "(x,y) Just like MAX, except it returns the minimum of the two given arguments.");
-//   cssRealFun_inst_mtx(cssMisc::Functions, sin, 1,
-// "(Real x) The sine of angle x (given in radians).  Use sin(x / DEG) if x is in degrees.",1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, sinh, 1,
-// "(Real x) The hyperbolic sine of x.",1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, sqrt, 1,
-// "(Real x) The square-root of x.",1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, tan, 1,
-// "(Real x) The tangent of angle x (given in radians).  Use tan(x / DEG) if x is in degrees.",1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, tanh, 1,
-// "(Real x) The hyperbolic tangent of x.",1);
-
-// // MSVC does not include these
-// // hp does not include these unless you have _INCLUDE_HPUX_SOURCE...
-// #if (!(defined(TA_OS_WIN) || defined(HP800)) )
-//   cssRealFun_inst_mtx(cssMisc::Functions, acosh, 1,
-// "(Real x) The hyperbolic arc-cosine.",1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, asinh, 1,
-// "(Real x) The hyperbolic arc-sine.",1);
-//   cssRealFun_inst_mtx(cssMisc::Functions, atanh, 1,
-// "(Real x) The hyperbolic arc-tangent.",1);
-// #endif // HP800
+  cssElCFun_inst_nm(cssMisc::Functions, max, 2, "MAX", CSS_FUN,
+		    "(x,y) Works like the commonly-used #define macro that gives the maximum\
+ of the two given arguments.  The return type is that of the\
+ maximum-valued argument.");
+  cssElCFun_inst_nm(cssMisc::Functions, min, 2, "MIN", CSS_FUN,
+		    "(x,y) Just like MAX, except it returns the minimum of the two given arguments.");
 
   cssConstReal_inst_nm(cssMisc::Constants, 3.14159265358979323846,  "PI"   );
 //   cssConstReal_inst(cssMisc::Constants, 2.71828182845904523536,  E     );

@@ -26,6 +26,7 @@
 #include "ta_project.h" // for taRootBase, Doclinks
 #include "ta_TA_type.h"
 #include "ta_seledit.h"
+#include "css_machine.h"
 
 #ifdef TA_USE_QT
 # include <QStringList>
@@ -925,6 +926,24 @@ bool taBase::IndexModeValidate(const Variant& idx, IndexMode mode, int cont_dims
   }
   }
   return false;
+}
+
+int taBase::IterCount() const {
+  if(!ElView()) return ElemCount();
+  IndexMode vmd = ElViewMode();
+  if(vmd == IDX_COORDS) {
+    return ElView()->frames();	// outer dim value
+  }
+  else if(vmd == IDX_MASK) {
+    byte_Matrix* bmat = (byte_Matrix*)ElView();
+    int mx = MIN(bmat->size, ElemCount());
+    int sum = 0;
+    for(int i=0; i<mx; i++) {
+      if(bmat->FastEl_Flat(i) > 0) sum++; 
+    }
+    return sum;
+  }
+  return 0;			// nothing else supported by this base guy
 }
 
 bool taBase::IterValidate(taMatrix* vmat, IndexMode mode, int cont_dims) const {
@@ -2770,7 +2789,54 @@ void taBase::CallFun(const String& fun_name) {
   if(md != NULL)
     md->CallFun((void*)this);
   else
-    TestWarning(true, "CallFun", "function:", fun_name, "not found on object");
+    TestError(true, "CallFun", "function:", fun_name, "not found on object");
+}
+
+void taBase::CallObjFun(taBase* obj, const String& fun_name) {
+  if(!obj) return;
+  obj->CallFun(fun_name);
+}
+
+void taBase::CallObjFunArgs(taBase* obj, const String& fun_name, int argc, cssEl* arg[]) {
+  if(!obj) return;
+  MethodDef* md = obj->GetTypeDef()->methods.FindName(fun_name);
+  if(!md || !md->stubp) {
+    taMisc::Error("CallObjFunArgs", "function:", fun_name,
+		  "not found or stub function is NULL on object of type:",
+		  obj->GetTypeDef()->name);
+    return;
+  }
+  ++taMisc::in_gui_call;
+  cssEl* rval = (*(md->stubp))(obj, argc, arg);
+  if(rval) {
+    cssEl::Ref(rval);
+    cssEl::unRefDone(rval);
+  }
+  --taMisc::in_gui_call;
+}
+
+void taBase::SetMemberStr(taBase* obj, const String& memb_name, const String& str) {
+  if(!obj) return;
+  MemberDef* md = obj->GetTypeDef()->members.FindName(memb_name);
+  if(!md) {
+    taMisc::Error("SetMemberStr", "member:", memb_name,
+		  "not found in object of type:",
+		  obj->GetTypeDef()->name);
+    return;
+  }
+  md->type->SetValStr(str, md->GetOff(obj), NULL, md);
+}
+
+void taBase::SetMemberVar(taBase* obj, const String& memb_name, const Variant& val) {
+  if(!obj) return;
+  MemberDef* md = obj->GetTypeDef()->members.FindName(memb_name);
+  if(!md) {
+    taMisc::Error("SetMemberVar", "member:", memb_name,
+		  "not found in object of type:",
+		  obj->GetTypeDef()->name);
+    return;
+  }
+  md->SetValVar(val, obj);
 }
 
 Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {

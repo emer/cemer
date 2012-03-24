@@ -743,10 +743,10 @@ cssEl* cssTA_Base::operator[](const Variant& i) const {
     return &cssMisc::Void;
   }
   if(ths->InheritsFrom(&TA_DataTableCols)) {
-    if(ths->ElView() && ths->ElView()->size > 1 && ths->ElViewMode() == taBase::IDX_COORDS
-       && i.isMatrixType()) {
+    if(ths->ElView() && ths->ElView()->size > 1 && i.isMatrixType()) {
+      int ic = ths->IterCount(); // how many we'll iterate over
       // multiple columns -- create a mega return value from iterating
-      Variant_Matrix* vmat = new Variant_Matrix(1,ths->ElView()->size);
+      Variant_Matrix* vmat = new Variant_Matrix(1,ic);
       TA_FOREACH(dcolv, *ths) {
 	taBase* dcol = dcolv.toBase();
 	if(dcol) {
