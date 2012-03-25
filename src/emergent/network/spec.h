@@ -120,6 +120,8 @@ public:
   // #NO_INHERIT #IN_GPMENU #DIFF_LAST sub-specs descending from this one and inheriting values
   
   override taList_impl*	children_() {return &children;}	
+  override Variant      Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
+  { return children.Elem(idx, mode); }
 
   bool			SpecInheritsFrom(BaseSpec* spec) const;
     // returns true if this spec is the spec, or is one of its children

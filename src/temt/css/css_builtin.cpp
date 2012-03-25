@@ -2286,7 +2286,7 @@ static void Install_Types() {
 
   // ta types
   cssTA_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_void, "TA");
-  cssTA_Base_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_taBase, "taBase");
+  // cssTA_Base_inst_nm (cssMisc::TypesSpace, NULL, 1, &TA_taBase, "taBase");
   cssMisc::TypesSpace.Push(new cssFStream("fstream"));
   cssMisc::TypesSpace.Push(new cssSStream("sstream"));
   cssMisc::TypesSpace.Push(new cssIOS(NULL, 2, &TA_fstream, "FILE"));
@@ -2323,8 +2323,7 @@ static void Install_Types() {
       else if(!((tmp->members.size==0) && (tmp->methods.size==0)) &&
 	      (tmp->name != "fstream") && (tmp->name != "class") &&
 	      (tmp->name != "taString") && (tmp->name != "taLeafItr") &&
-	      (tmp->name != "sstream") && (tmp->name != "Variant") &&
-	      (tmp->name != "taBase"))
+	      (tmp->name != "sstream") && (tmp->name != "Variant"))
       {
 	if(tmp->InheritsFrom(TA_taMatrix)) {
 	  taBase* inst = (taBase*)tmp->GetInstance();

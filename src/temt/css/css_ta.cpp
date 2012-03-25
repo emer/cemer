@@ -1679,6 +1679,72 @@ cssTA_Matrix::operator bool() const {
   return rval;
 }
 
+cssTA_Matrix::operator int_Matrix*() const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) 
+    return NULL;
+  if(ths->InheritsFrom(&TA_int_Matrix))
+    return (int_Matrix*)ths;
+  int_Matrix* rval = new int_Matrix;
+  rval->Copy(ths);		// use generic variant-based copy
+  return rval;
+}
+
+cssTA_Matrix::operator byte_Matrix*() const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) 
+    return NULL;
+  if(ths->InheritsFrom(&TA_byte_Matrix))
+    return (byte_Matrix*)ths;
+  byte_Matrix* rval = new byte_Matrix;
+  rval->Copy(ths);		// use generic variant-based copy
+  return rval;
+}
+
+cssTA_Matrix::operator float_Matrix*() const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) 
+    return NULL;
+  if(ths->InheritsFrom(&TA_float_Matrix))
+    return (float_Matrix*)ths;
+  float_Matrix* rval = new float_Matrix;
+  rval->Copy(ths);		// use generic variant-based copy
+  return rval;
+}
+
+cssTA_Matrix::operator double_Matrix*() const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) 
+    return NULL;
+  if(ths->InheritsFrom(&TA_double_Matrix))
+    return (double_Matrix*)ths;
+  double_Matrix* rval = new double_Matrix;
+  rval->Copy(ths);		// use generic variant-based copy
+  return rval;
+}
+
+cssTA_Matrix::operator String_Matrix*() const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) 
+    return NULL;
+  if(ths->InheritsFrom(&TA_String_Matrix))
+    return (String_Matrix*)ths;
+  String_Matrix* rval = new String_Matrix;
+  rval->Copy(ths);		// use generic variant-based copy
+  return rval;
+}
+
+cssTA_Matrix::operator Variant_Matrix*() const {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) 
+    return NULL;
+  if(ths->InheritsFrom(&TA_Variant_Matrix))
+    return (Variant_Matrix*)ths;
+  Variant_Matrix* rval = new Variant_Matrix;
+  rval->Copy(ths);		// use generic variant-based copy
+  return rval;
+}
+
 bool cssTA_Matrix::AssignCheckSource(const cssEl& s) {
   if(s.GetType() != T_TA) {
     // cssMisc::Error(prog, "Failed to assign TA C pointer of type:", GetTypeName(),

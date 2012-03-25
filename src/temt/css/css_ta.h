@@ -472,6 +472,15 @@ public:
   operator Int() const;
   operator bool() const;
 
+#ifndef NO_TA_BASE
+  operator int_Matrix*() const;
+  operator byte_Matrix*() const;
+  operator float_Matrix*() const;
+  operator double_Matrix*() const;
+  operator String_Matrix*() const;
+  operator Variant_Matrix*() const;
+#endif
+
   void operator=(const cssEl& s);
   USING(cssTA_Base::operator=)
 

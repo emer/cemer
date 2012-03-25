@@ -48,6 +48,15 @@ typedef int css_progdx;		// program index type
 
 typedef cssEl* (*css_fun_stub_ptr)(void*, int, cssEl**);
 
+#ifndef NO_TA_BASE
+class int_Matrix;
+class byte_Matrix;
+class float_Matrix;
+class double_Matrix;
+class String_Matrix;
+class Variant_Matrix;
+#endif
+
 // forwards
 class cssElPtr;
 class cssEl;
@@ -592,6 +601,15 @@ public:
   virtual operator TypeDef*() const	{ CvtErr("(TypeDef*)"); return NULL; }
   virtual operator MemberDef*() const	{ CvtErr("(MemberDef*)"); return NULL; }
   virtual operator MethodDef*() const	{ CvtErr("(MethodDef*)"); return NULL; }
+
+#ifndef NO_TA_BASE
+  virtual operator int_Matrix*() const	{ CvtErr("(int_Matrix*)"); return NULL; }
+  virtual operator byte_Matrix*() const	{ CvtErr("(byte_Matrix*)"); return NULL; }
+  virtual operator float_Matrix*() const { CvtErr("(float_Matrix*)"); return NULL; }
+  virtual operator double_Matrix*() const { CvtErr("(double_Matrix*)"); return NULL; }
+  virtual operator String_Matrix*() const { CvtErr("(String_Matrix*)"); return NULL; }
+  virtual operator Variant_Matrix*() const { CvtErr("(Variant_Matrix*)"); return NULL; }
+#endif
 
   // assign from types
   virtual void operator=(Real)	 		{ NopErr("=(Real)"); }
