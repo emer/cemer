@@ -1688,9 +1688,14 @@ void MemberMethodCall::GenCssBody_impl(Program* prog) {
     rval += path;
   else
     rval += "->" + path;
-  rval += ", \"" + method->name + "\", ";
-  String targs = meth_args.GenCssArgs();
-  rval += targs.after('(');
+  rval += ", \"" + method->name + "\"";
+  if(meth_args.size > 0) {
+    String targs = meth_args.GenCssArgs();
+    rval += ", " + targs.after('(');
+  }
+  else {
+    rval += ")";
+  }
   rval += ";";
 
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
