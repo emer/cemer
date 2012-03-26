@@ -991,6 +991,8 @@ void cssSmartRef::operator=(const String& s) {
 }
 
 void cssSmartRef::operator=(const cssEl& s) {
+  // taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  // if(sr->ptr() && sr->ptr()->InheritsFrom(&TA_taMatrix))
   PtrAssignPtr(s);		// this is the only copy op supported..
 }
 
@@ -1677,6 +1679,53 @@ cssTA_Matrix::operator bool() const {
     }
   }
   return rval;
+}
+
+void* cssTA_Matrix::GetVoidPtrOfType(TypeDef* td) const {
+  void* bptr = GetVoidPtr();
+  if(!bptr) {
+    cssMisc::Error(prog, "Null pointer for conversion to:",td->name,"from:",GetTypeName());
+    return NULL;
+  }
+  if(ptr_cnt == 1 && td->DerivesFrom(&TA_taMatrix)) {
+    if(td->DerivesFrom(&TA_int_Matrix)) {
+      return (int_Matrix*)*this;
+    }
+    else if(td->DerivesFrom(&TA_byte_Matrix)) {
+      return (byte_Matrix*)*this;
+    }
+    else if(td->DerivesFrom(&TA_float_Matrix)) {
+      return (float_Matrix*)*this;
+    }
+    else if(td->DerivesFrom(&TA_double_Matrix)) {
+      return (double_Matrix*)*this;
+    }
+    else if(td->DerivesFrom(&TA_String_Matrix)) {
+      return (String_Matrix*)*this;
+    }
+    else if(td->DerivesFrom(&TA_Variant_Matrix)) {
+      return (Variant_Matrix*)*this;
+    }
+  }
+  void* rval = type_def->GetParAddr(td, bptr);
+  if(!rval) {
+    cssMisc::Error(prog, "Conversion to:",td->name,"is not a base type for:",GetTypeName());
+  }
+  return rval;
+}
+
+void* cssTA_Matrix::GetVoidPtrOfType(const String& std) const {
+  void* bptr = GetVoidPtr();
+  if(!bptr) {
+    cssMisc::Error(prog, "Null pointer for conversion to:",std,"from:",GetTypeName());
+    return NULL;
+  }
+  TypeDef* td = taMisc::types.FindName(std);
+  if(!td) {
+    cssMisc::Error(prog, "GetVoidPtrOfType: Type name:",std,"not found in list of types");
+    return NULL;
+  }
+  return GetVoidPtrOfType(td);
 }
 
 cssTA_Matrix::operator int_Matrix*() const {

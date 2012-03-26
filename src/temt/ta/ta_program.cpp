@@ -1320,18 +1320,29 @@ cssEl* ProgVar::NewCssEl() {
   switch(var_type) {
   case T_Int:
     return new cssCPtr_int(&int_val, 0, name);
+    break;
   case T_Real:
     return new cssCPtr_double(&real_val, 0, name);
+    break;
   case T_String:
     return new cssCPtr_String(&string_val, 0, name);
+    break;
   case T_Bool:
     return new cssCPtr_bool(&bool_val, 0, name);
-  case T_Object:
+    break;
+  case T_Object: {
+    // if(object_type && object_type->InheritsFrom(&TA_taMatrix)) {
+    //   return new cssTA_Matrix(object_val.ptr(), 1, object_type, name);
+    // }
     return new cssSmartRef(&object_val, 0, &TA_taBaseRef, name);
+    break;
+  }
   case T_HardEnum:
     return new cssCPtr_enum(&int_val, 0, name, hard_enum_type);
+    break;
   case T_DynEnum:
     return new cssCPtr_DynEnum(&dyn_enum_val, 0, name);
+    break;
   }
   return &cssMisc::Void;
 }

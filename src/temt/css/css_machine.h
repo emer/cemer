@@ -602,15 +602,6 @@ public:
   virtual operator MemberDef*() const	{ CvtErr("(MemberDef*)"); return NULL; }
   virtual operator MethodDef*() const	{ CvtErr("(MethodDef*)"); return NULL; }
 
-#ifndef NO_TA_BASE
-  virtual operator int_Matrix*() const	{ CvtErr("(int_Matrix*)"); return NULL; }
-  virtual operator byte_Matrix*() const	{ CvtErr("(byte_Matrix*)"); return NULL; }
-  virtual operator float_Matrix*() const { CvtErr("(float_Matrix*)"); return NULL; }
-  virtual operator double_Matrix*() const { CvtErr("(double_Matrix*)"); return NULL; }
-  virtual operator String_Matrix*() const { CvtErr("(String_Matrix*)"); return NULL; }
-  virtual operator Variant_Matrix*() const { CvtErr("(Variant_Matrix*)"); return NULL; }
-#endif
-
   // assign from types
   virtual void operator=(Real)	 		{ NopErr("=(Real)"); }
   virtual void operator=(Int)			{ NopErr("=(Int)"); }
@@ -919,6 +910,7 @@ public:
 #define cssElCFun_inst_nm(l,x,n,s,pt,hl) l .Push(new cssElCFun(n, cssElCFun_ ## x ## _stub, s, pt, hl))
 #define cssElCFun_inst_ptr(l,x,n,pt,hl)	l .Push(cssBI::x = new cssElCFun(n, cssElCFun_ ## x ## _stub, #x, pt, hl))
 #define cssElCFun_inst_ptr_nm(l,x,n,s,pt,hl) l .Push(cssBI::x = new cssElCFun(n, cssElCFun_ ## x ## _stub, s, pt, hl))
+#define cssElCFun_inst_flg(l,x,n,pt,hl,flg,ita)	l .Push(new cssElCFun(n, cssElCFun_ ## x ## _stub, #x, pt, hl, flg, ita))
 
 class CSS_API cssElInCFun : public cssElCFun {
   // a simple internal C function (having fixed number of parameters)

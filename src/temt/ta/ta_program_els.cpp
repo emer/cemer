@@ -1302,7 +1302,8 @@ bool MethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
     objnm = mthobj.before('.');
   else 
     objnm = mthobj.before("->");
-  if(objnm.nonempty()) return true; // syntax above should be enough to rule in..
+  if(objnm.nonempty() && !objnm.contains('[')) return true;
+  // syntax above should be enough to rule in -- no [ ] paths either tho -- nowhere to put
   return false;
 }
 
@@ -1384,7 +1385,7 @@ void MemberProgEl::UpdateAfterEdit_impl() {
       path += ".";
     member_lookup = NULL;
   }
-
+  path = trim(path);					   // keep it clean
   GetTypeFromPath();
 }
 
@@ -1472,17 +1473,33 @@ void MemberAssign::GenCssBody_impl(Program* prog) {
     return;
   }
 
-  String opath = obj->name + "->" + path;
-  prog->AddLine(this, opath + " = " + expr.GetFullExpr() + ";", ProgLine::MAIN_LINE);
+  String path_term = path;
+  String path_pre = path;
+  if(path_term.contains('.')) {
+    path_term = path_term.after('.', -1);
+    path_pre = path.before('.', -1);
+  }
+  String opath;
+  if(path_term != path) {
+    if(path_pre.startsWith('['))
+      opath = obj->name + path_pre;
+    else
+      opath = obj->name + "->" + path_pre;
+  }
+  else {
+    opath = obj->name;
+  }
+  String fpath = opath + "->" + path_term;
+  prog->AddLine(this, "set(" + opath + ", \"" + path_term + "\", " + expr.GetFullExpr() + ");", ProgLine::MAIN_LINE);
   if (update_after) {
     prog->AddLine(this, obj->name + "->UpdateAfterEdit();");
-    if(path.contains('.')) {
+    if(path_term != path) {
       // also do uae on immediate owner!
-      prog->AddLine(this, obj->name + "->" + path.before('.',-1) + "->UpdateAfterEdit();");
+      prog->AddLine(this, opath + "->UpdateAfterEdit();");
     }
   }
-  prog->AddVerboseLine(this, true, "\"prev value:\", String(" + opath + ")"); // moved above
-  prog->AddVerboseLine(this, false, "\"new  value:\", String(" + opath + ")"); // after
+  prog->AddVerboseLine(this, true, "\"prev value:\", String(" + fpath + ")"); // moved above
+  prog->AddVerboseLine(this, false, "\"new  value:\", String(" + fpath + ")"); // after
 }
 
 String MemberAssign::GetDisplayName() const {
@@ -1490,7 +1507,12 @@ String MemberAssign::GetDisplayName() const {
     return "(object or path not selected)";
   
   String rval;
-  rval = obj->name + "->" + path + " = ";
+  rval = obj->name;
+  if(path.startsWith('['))
+    rval += path;
+  else
+    rval += "->" + path;
+  rval += " = ";
   rval += expr.GetFullExpr();
   return rval;
 }
@@ -1514,6 +1536,13 @@ bool MemberAssign::CvtFmCode(const String& code) {
   else {
     objnm = lhs.before("->");
     pathnm = lhs.after("->");
+  }
+  if(objnm.contains('[')) {
+    if(pathnm.nonempty())
+      pathnm = objnm.from('[') + "." + pathnm;
+    else 
+      pathnm = objnm.from('[');
+    objnm = objnm.before('[');
   }
   ProgVar* pv = FindVarNameInScope(objnm, true); // true = give option to make one
   if(!pv) return false;
@@ -1654,9 +1683,14 @@ void MemberMethodCall::GenCssBody_impl(Program* prog) {
   String rval;
   if(result_var)
     rval += result_var->name + " = ";
-  rval += obj->name + "->" + path + "->";
-  rval += method->name;
-  rval += meth_args.GenCssArgs();
+  rval += "call(" + obj->name;
+  if(path.startsWith('['))
+    rval += path;
+  else
+    rval += "->" + path;
+  rval += ", \"" + method->name + "\", ";
+  String targs = meth_args.GenCssArgs();
+  rval += targs.after('(');
   rval += ";";
 
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
@@ -1670,9 +1704,12 @@ String MemberMethodCall::GetDisplayName() const {
   String rval;
   if(result_var)
     rval += result_var->name + "=";
-  rval += obj->name + "->" + path + "->";
-  rval += method->name;
-  rval += "(";
+  rval += obj->name;
+  if(path.startsWith('['))
+    rval += path;
+  else
+    rval += "->" + path;
+  rval += "->" + method->name + "(";
   for(int i=0;i<meth_args.size;i++) {
     ProgArg* pa = meth_args[i];
     if (i > 0)
@@ -1686,7 +1723,11 @@ String MemberMethodCall::GetDisplayName() const {
 bool MemberMethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(!code.contains('(')) return false;
   String lhs = code.before('(');
-  if((lhs.freq('.') + lhs.freq("->")) <= 1) return false; // need at least 2!
+  int mbfreq = lhs.freq('.') + lhs.freq("->");
+  if(mbfreq <= 1) {
+    if(!(mbfreq == 1 && lhs.contains('[') && lhs.contains(']')))
+      return false;
+  }
   String mthobj = lhs;
   if(lhs.contains('='))
     mthobj = trim(lhs.after('='));
@@ -1716,6 +1757,13 @@ bool MemberMethodCall::CvtFmCode(const String& code) {
   else {
     objnm = mthobj.before("->");
     pathnm = mthobj.after("->");
+  }
+  if(objnm.contains('[')) {
+    if(pathnm.nonempty())
+      pathnm = objnm.from('[') + "." + pathnm;
+    else 
+      pathnm = objnm.from('[');
+    objnm = objnm.before('[');
   }
   ProgVar* pv = FindVarNameInScope(objnm, true); // true = give option to make one
   if(!pv) return false;

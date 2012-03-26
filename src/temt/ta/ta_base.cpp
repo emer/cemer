@@ -2798,25 +2798,6 @@ void taBase::CallObjFun(taBase* obj, const String& fun_name) {
   obj->UpdateAfterEdit();	// this is a program-level function so make it safe
 }
 
-void taBase::CallObjFunArgs(taBase* obj, const String& fun_name, int argc, cssEl* arg[]) {
-  if(!obj) return;
-  MethodDef* md = obj->GetTypeDef()->methods.FindName(fun_name);
-  if(!md || !md->stubp) {
-    taMisc::Error("CallObjFunArgs", "function:", fun_name,
-		  "not found or stub function is NULL on object of type:",
-		  obj->GetTypeDef()->name);
-    return;
-  }
-  ++taMisc::in_gui_call;
-  cssEl* rval = (*(md->stubp))(obj, argc, arg);
-  obj->UpdateAfterEdit();	// this is a program-level function so make it safe
-  if(rval) {
-    cssEl::Ref(rval);
-    cssEl::unRefDone(rval);
-  }
-  --taMisc::in_gui_call;
-}
-
 void taBase::SetMemberStr(taBase* obj, const String& memb_name, const String& str) {
   if(!obj) return;
   MemberDef* md = obj->GetTypeDef()->members.FindName(memb_name);
@@ -2827,7 +2808,6 @@ void taBase::SetMemberStr(taBase* obj, const String& memb_name, const String& st
     return;
   }
   md->type->SetValStr(str, md->GetOff(obj), NULL, md);
-  obj->UpdateAfterEdit();	// this is a program-level function so make it safe
 }
 
 void taBase::SetMemberVar(taBase* obj, const String& memb_name, const Variant& val) {
@@ -2840,7 +2820,6 @@ void taBase::SetMemberVar(taBase* obj, const String& memb_name, const Variant& v
     return;
   }
   md->SetValVar(val, obj);
-  obj->UpdateAfterEdit();	// this is a program-level function so make it safe
 }
 
 Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {

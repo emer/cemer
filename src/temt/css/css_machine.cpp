@@ -1040,7 +1040,7 @@ cssEl* cssEl::GetMemberFmName_impl(TypeDef* typ, void* base, const String& memb)
 //   void* mbr = NULL;
 //   MemberDef* md = typ->members.FindNameAddrR(memb, base, mbr);       // skips paths!
   if(!md) {
-    cssMisc::Error(prog, "MembeR not found:", String(memb), "in class of type: ", typ->name);
+    cssMisc::Error(prog, "Member not found:", String(memb), "in class of type: ", typ->name);
     return &cssMisc::Void;
   }
   return GetMemberEl_impl(typ, base, md); // for just 1st order search

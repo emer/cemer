@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.3.2.0 rev5289
+// ta_Dump File v3.0 -- code v5.3.3.0 rev5308
 LeabraProject .projects["LeabraProject_0"] { 
  UserDataItem_List @*(.user_data_) {
     UserData_DocLink @["DocLink"] { };
@@ -214,7 +214,7 @@ LeabraProject .projects["LeabraProject_0"] {
 };
   };
 
-  Program_Group @.programs = [3] {
+  Program_Group @.programs = [5] {
     Program @["LeabraStartup"] { 
       ProgObjList @.objs = [0] {
       };
@@ -533,6 +533,102 @@ LeabraProject .projects["LeabraProject_0"] {
 	    ProgArg @[2] { };
 	  };
 	};
+      };
+    };
+    Program @["MemberTest"] { 
+      ProgObjList @.objs = [0] {
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgVar_List @.vars = [2] {
+	ProgVar @["BottomUpCons"] { };
+	ProgVar @["MultiHiddenNet"] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [8] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [0] {
+	  };
+	};
+	MemberAssign @[1] { };
+	MemberAssign @[2] { };
+	MemberAssign @[3] { };
+	MemberAssign @[4] { };
+	MethodCall @[5] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	MemberMethodCall @[6] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	MemberMethodCall @[7] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+      };
+    };
+    Program @["MatrixTest"] { 
+      ProgObjList @.objs = [2] {
+	double_Matrix @["tst_dbl"] { };
+	float_Matrix @["tst_flt"] { };
+      };
+
+      ProgType_List @.types = [0] {
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgVar_List @.vars = [2] {
+	ProgVar @["tst_dbl"] { };
+	ProgVar @["tst_flt"] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [5] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [0] {
+	  };
+	};
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[3] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	VarIncr @[4] { };
       };
     };
     Program_Group @.gp["LeabraAll_Std"] = [10] { 
@@ -1963,7 +2059,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 			 <li id=\"ca-delete\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/ccnlab/index.php/Special:MovePage/CtLeabra_XCAL_Params\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=eb054fcb616dbe060fe49f00f03f2b8f%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=58ee643513156de19109de2378e3c9de%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -2695,7 +2791,7 @@ Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key ccnlab:pcache:idhash:3337-0!*!0!!en!*!* and timestamp 20120314034739 -->
+<!-- Saved in parser cache with key ccnlab:pcache:idhash:3337-0!*!0!!en!*!* and timestamp 20120326045037 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;oldid=1656717\">http://grey.colorado.edu/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;oldid=1656717</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -2731,7 +2827,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 15 June 2010, at 09:46.</span>
-			<span id=\"f-viewcount\">This page has been accessed 711 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 801 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -2745,9 +2841,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 <script>if(window.mw){
 	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":\"1\",\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"30\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 	\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"nickname\":\"\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"\"});;},{\"all\":
-	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"14ae2e6947e5083e8f2c463392a85ec6+\\\\\",\"watchToken\":\"623fee83a2d1defd1729fe4e77aed142+\\\\\"});;},{},{});
+	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"7caf78049d6a337bd91a39fc10552463+\\\\\",\"watchToken\":\"1a1c0000f109ced29bde20e43072ddcd+\\\\\"});;},{},{});
 	
-	/* cache key: ccnlab:resourceloader:filter:minify-js:5:6e67569bb5933912ec445671f9d77429 */
+	/* cache key: ccnlab:resourceloader:filter:minify-js:5:76b6dfe4c50b980690832782aa415ce9 */
 }
 </script>
 
@@ -2777,7 +2873,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.251 secs. -->
+<!-- Served in 0.259 secs. -->
 
 
 
@@ -6525,8 +6621,8 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
        };
       };
       ProgArg @[1] {
-       arg_type=Variant;
-       type="Variant";
+       arg_type=const_Variant_ref;
+       type="const Variant&";
        name="col";
        required=1;
        def_val=;
@@ -6567,8 +6663,8 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
        };
       };
       ProgArg @[1] {
-       arg_type=Variant;
-       type="Variant";
+       arg_type=const_Variant_ref;
+       type="const Variant&";
        name="col";
        required=1;
        def_val=;
@@ -6586,6 +6682,376 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	expr="1";
        };
       };
+     };
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["MemberTest"] {
+   name="MemberTest";
+   short_nm="MmbTst";
+   tags=;
+   desc=;
+   flags=0;
+   objs {
+    name="ProgObjList_14";
+    el_typ=taNBase;
+    el_def=0;
+   };
+   types {
+    name="ProgType_List_0";
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["BottomUpCons"] {
+     name="BottomUpCons";
+     var_type=T_Object;
+     object_type=LeabraConSpec;
+     object_val=$.projects["LeabraProject_0"].networks["MultiHiddenNet"].specs["BottomUpCons"]$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["MultiHiddenNet"] {
+     name="MultiHiddenNet";
+     var_type=T_Object;
+     object_type=LeabraNetwork;
+     object_val=$.projects["LeabraProject_0"].networks["MultiHiddenNet"]$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="Function_List_14";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="ProgEl_List_116";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="ProgEl_List_117";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    MemberAssign @[1] {
+     desc=;
+     flags=0;
+     obj=.projects["LeabraProject_0"].programs["MemberTest"].vars["BottomUpCons"]$$;
+     path="learn";
+     expr {
+      expr="true";
+     };
+     update_after=1;
+    };
+    MemberAssign @[2] {
+     desc=;
+     flags=0;
+     obj=$.projects["LeabraProject_0"].programs["MemberTest"].vars["BottomUpCons"]$;
+     path="children[:].learn";
+     expr {
+      expr="false";
+     };
+     update_after=0;
+    };
+    MemberAssign @[3] {
+     desc=;
+     flags=0;
+     obj=$.projects["LeabraProject_0"].programs["MemberTest"].vars["BottomUpCons"]$;
+     path="[:].learn";
+     expr {
+      expr="true";
+     };
+     update_after=0;
+    };
+    MemberAssign @[4] {
+     desc=;
+     flags=0;
+     obj=.projects["LeabraProject_0"].programs["MemberTest"].vars["MultiHiddenNet"]$$;
+     path="specs[ConSpec].learn";
+     expr {
+      expr="false || !true || 5 != 7";
+     };
+     update_after=0;
+    };
+    MethodCall @[5] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["LeabraProject_0"].programs["MemberTest"].vars["BottomUpCons"]$;
+     method=BaseSpec::SetUnique;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_char_ptr;
+       type="const char*";
+       name="memb_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"learn\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="on";
+       required=1;
+       def_val=;
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    MemberMethodCall @[6] {
+     desc=;
+     flags=0;
+     obj=$.projects["LeabraProject_0"].programs["MemberTest"].vars["BottomUpCons"]$;
+     path="children[:]";
+     result_var=NULL;
+     method=BaseSpec::SetUnique;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_char_ptr;
+       type="const char*";
+       name="memb_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"learn\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="on";
+       required=1;
+       def_val=;
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    MemberMethodCall @[7] {
+     desc=;
+     flags=0;
+     obj=$.projects["LeabraProject_0"].programs["MemberTest"].vars["BottomUpCons"]$;
+     path="[ConSpec][\"T*\"]";
+     result_var=NULL;
+     method=BaseSpec::SetUnique;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_char_ptr;
+       type="const char*";
+       name="memb_nm";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"learn\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=bool;
+       type="bool";
+       name="on";
+       required=1;
+       def_val=;
+       expr {
+	expr="false";
+       };
+      };
+     };
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["MatrixTest"] {
+   name="MatrixTest";
+   short_nm="Prg15";
+   tags=;
+   desc=;
+   flags=0;
+   objs {
+    name="ProgObjList_15";
+    el_typ=double_Matrix;
+    el_def=0;
+    double_Matrix @["tst_dbl"] {
+     name="tst_dbl";
+	[5 5] 0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;    };
+    float_Matrix @["tst_flt"] {
+     name="tst_flt";
+	[3 3] 0;0;0;0;0;0;0;0;0;    };
+   };
+   types {
+    name="ProgType_List_0";
+    el_typ=ProgType;
+    el_def=0;
+   };
+   args {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["tst_dbl"] {
+     name="tst_dbl";
+     var_type=T_Object;
+     object_type=double_Matrix;
+     object_val=.projects["LeabraProject_0"].programs["MatrixTest"].objs["tst_dbl"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["tst_flt"] {
+     name="tst_flt";
+     var_type=T_Object;
+     object_type=float_Matrix;
+     object_val=.projects["LeabraProject_0"].programs["MatrixTest"].objs["tst_flt"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="Function_List_15";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="ProgEl_List_120";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="ProgEl_List_121";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=.projects["LeabraProject_0"].programs["MatrixTest"].vars["tst_dbl"]$$;
+     method=taMatrix::SetShape;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taMatrix_ptr;
+       type="const taMatrix*";
+       name="mat_shape";
+       required=1;
+       def_val=;
+       expr {
+	expr="[5,5]";
+       };
+      };
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=.projects["LeabraProject_0"].programs["MatrixTest"].vars["tst_flt"]$$;
+     method=taMatrix::SetShape;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taMatrix_ptr;
+       type="const taMatrix*";
+       name="mat_shape";
+       required=1;
+       def_val=;
+       expr {
+	expr="[3,3]";
+       };
+      };
+     };
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["LeabraProject_0"].programs["MatrixTest"].vars["tst_flt"]$;
+     method=taBase::CopyFrom;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=taBase_ptr;
+       type="taBase*";
+       name="cpy_from";
+       required=1;
+       def_val=;
+       expr {
+	expr="[[1,3,5]; [2,2,2]; [5,4,9]]";
+       };
+      };
+     };
+    };
+    VarIncr @[4] {
+     desc=;
+     flags=0;
+     var=$.projects["LeabraProject_0"].programs["MatrixTest"].vars["tst_flt"]$;
+     expr {
+      expr="[[1,3,5]; [2,2,2]; [5,4,9]]";
      };
     };
    };
@@ -13927,7 +14393,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
     LeabraConSpec @["BottomUpCons"] {
      name="BottomUpCons";
      desc=;
-     unique{      };
+     unique{ learn;     };
      children {
       name=;
       el_typ=LeabraConSpec;
@@ -13935,7 +14401,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraBiasSpec @["LeabraBiasSpec_0"] {
        name="LeabraBiasSpec_0";
        desc=;
-       unique{ rnd;wt_limits;wt_scale;wt_scale_init;       };
+       unique{ rnd;wt_limits;wt_scale;wt_scale_init;learn;       };
        children {
 	name=;
 	el_typ=LeabraBiasSpec;

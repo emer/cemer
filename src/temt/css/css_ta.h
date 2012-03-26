@@ -468,9 +468,9 @@ public:
 
   override bool AssignCheckSource(const cssEl& s);
 
-  operator Real() const;
-  operator Int() const;
-  operator bool() const;
+  void* 	GetVoidPtrOfType(TypeDef* td) const;
+  void* 	GetVoidPtrOfType(const String& td) const;
+  // these are type-safe ways to convert a cssEl into a ptr to object of given type
 
 #ifndef NO_TA_BASE
   operator int_Matrix*() const;
@@ -480,6 +480,10 @@ public:
   operator String_Matrix*() const;
   operator Variant_Matrix*() const;
 #endif
+
+  operator Real() const;
+  operator Int() const;
+  operator bool() const;
 
   void operator=(const cssEl& s);
   USING(cssTA_Base::operator=)

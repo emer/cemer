@@ -2307,6 +2307,8 @@ public:
   // gets base type (not const) parent of this type
   TypeDef*              GetNonConstNonRefType() const;
   // gets base type (not const or ref) parent of this type
+  TypeDef*		GetClassType() const;
+  // gets a parent type that is a basic class object (i.e., InheritsFormal from TA_class) -- this is the best way to cut through all the type qualifiers and just find out what kind of object you've got (preferred over GetNonConstNonRefType for class objects) -- returns NULL if this does NOT so inherit
   TypeDef*              GetTemplType() const;
   // gets base template parent of this type
   TypeDef*              GetTemplInstType() const;
@@ -2353,7 +2355,7 @@ public:
   bool                  DerivesFrom(const TypeDef& it) const
   { return DerivesFrom((TypeDef*)&it); }
 
-  // inheritance from a formal class (e.g. const, static, class)
+  // inheritance from a formal class (e.g. const, static, class) -- NOTE: these are NOT inherited from parent types, so only an actual class object InheritsFormal(&TA_class) 
   bool                  InheritsFormal(TypeDef* it) const
   { if((ptr == 0) && (par_formal.FindEl(it)>=0)) return true; return false; }
   bool                  InheritsFormal(const TypeDef& it) const

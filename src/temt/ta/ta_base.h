@@ -1153,9 +1153,6 @@ public:
   // #CAT_ObjectMgmt call function (method) of given name on this object, prompting for args using gui interface
   static  void		CallObjFun(taBase* obj, const String& fun_name);
   // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 call function (method) of given name on given object, prompting for args using gui interface
-  static  void		CallObjFunArgs(taBase* obj, const String& fun_name, 
-				       int argc, cssEl* arg[]);
-  // #IGNORE call function (method) of given name on given object, using given args
   static  void		SetMemberStr(taBase* obj, const String& memb_name,
 				     const String& str);
   // #CAT_ObjectMgmt #CSS_LIST_EXPAND_1 set member value based on string value

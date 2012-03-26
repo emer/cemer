@@ -33,7 +33,7 @@
 #include "css_qt.h"
 #include "css_qtdialog.h"
 #include "css_machine.h"
-#include "css_basic_types.h"
+#include "css_ta.h"
 
 #include "icolor.h"
 #include "inetworkaccessmanager.h"
@@ -2464,7 +2464,7 @@ void ISelectableHost::DoDynAction(int idx) {
       cssEl** param = (cssEl**)calloc(3 + prompt_argc, sizeof(cssEl*));
       param[0] = &cssMisc::Void; // method*
       param[1] = &cssMisc::Void; // this*
-      param[2] = new cssCPtr();
+      param[2] = new cssTA_Base();
       for (i = 2; i <= prompt_argc; ++i)
         param[1+i] = prompt_params[i]; 
         
@@ -2530,7 +2530,7 @@ void ISelectableHost::DoDynAction(int idx) {
 	    ctxt_ms->setIndex(j);
 	    taBase* obj = ctxt_ms->tabObject();
 	    if (!obj) continue;
-	    *param[2] = (void*)obj;
+	    *param[2] = obj;
 	    rval = (*(meth->stubp))(base, 1 + prompt_argc, param); 
 	    if (link->isBase())
 	      ((taBase*)base)->UpdateAfterEdit();

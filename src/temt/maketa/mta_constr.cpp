@@ -618,6 +618,13 @@ void MethodDef_AssgnTempArgVars(TypeDef* ownr, MethodDef* md, ostream& strm, int
 }
 
 String MethodDef_GetCSSType(TypeDef* td) {
+//NOTE: changed 4/13/06 BA
+/*was  if(td->DerivesFrom(TA_int) || td->DerivesFrom(TA_short) ||
+     td->DerivesFrom(TA_long) || td->DerivesFrom(TA_char) ||
+     td->DerivesFormal(TA_enum) || td->DerivesFrom(TA_signed) ||
+     td->DerivesFrom(TA_unsigned) || td->DerivesFrom(TA_bool))
+    return String("(Int)"); */
+
   if (td->DerivesFrom(TA_int) || td->DerivesFrom(TA_short) ||
       td->DerivesFrom(TA_unsigned_short) ||
      td->DerivesFrom(TA_unsigned_int) || td->DerivesFormal(TA_unsigned_long) ||
@@ -647,6 +654,9 @@ String MethodDef_GetCSSType(TypeDef* td) {
 
 void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
   int args_idx = j + stub_arg_off;
+
+  TypeDef* class_typ = argt->GetClassType();
+
   if(argt->ref) {
     if(!argt->InheritsFrom(TA_const)) { // non-const reference arg!
       strm << "refarg_" << args_idx;
@@ -697,20 +707,7 @@ void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
     else
       strm << "(" << argt->Get_C_Name() << ")" << "*arg[" << args_idx << "]";
   }
-  else if(argt->ptr == 1 &&
-	  (argt->DerivesFromName("int_Matrix") || 
-	   argt->DerivesFromName("byte_Matrix") ||
-	   argt->DerivesFromName("float_Matrix") ||
-	   argt->DerivesFromName("double_Matrix") ||
-	   argt->DerivesFromName("String_Matrix") ||
-	   argt->DerivesFromName("Variant_Matrix"))) {
-    strm << "(" << argt->Get_C_Name() << ")" << "*arg[" << args_idx << "]";
-  }
-  else if(argt->ptr == 1 && argt->DerivesFromName("taBase")) {
-    strm << "(" << argt->Get_C_Name() << ")(taBase";
-    strm << argt->GetPtrString() << ")" << "*arg[" << args_idx << "]";
-  }
-  else if(argt->InheritsFormal(TA_class)) {
+  else if(argt->InheritsFormal(TA_class)) { // inherits = ptr = 0
     strm << "*(" << argt->Get_C_Name() << "*)arg[" << args_idx << "]"
 	 << "->GetVoidPtrOfType(&TA_" << argt->name << ")";
   }
@@ -721,11 +718,12 @@ void MethodDef_GenArgCast(MethodDef* md, TypeDef* argt, int j, ostream& strm) {
     strm << "(" << argt->Get_C_Name() << ")"; // always cast the args
     strm << "(int)*arg[" << args_idx << "]";		    // use int conversion
   }
-  else if((argt->ptr == 1) && argt->DerivesFormal(TA_class)) {
+  else if(class_typ) {		// is some kind of class object -- just cast away!
     strm << "(" << argt->Get_C_Name() << ")arg[" << args_idx << "]"
-	 << "->GetVoidPtrOfType(&TA_" << argt->name << ")";
+	 << "->GetVoidPtrOfType(&TA_" << class_typ->name << ")";
   }
   else if(argt->ptr > 0) {
+    // this is extremely dangerous, but hopefully will just fail
     strm << "(" << argt->Get_C_Name() << ")(void";
     strm << argt->GetPtrString() << ")";
     strm << "*arg[" << args_idx << "]";
@@ -827,8 +825,7 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
     MethodDef_GenArgs(md, strm, act_argc);
     if (has_rval) strm << ")";
     strm << ");";
-  }
-  else { // ptr > 0, therefore, ptr of some kind
+  } else { // ptr > 0, therefore, ptr of some kind
     bool include_td = false;
     // TODO: wrapping unsigned types with a signed wrapper as we do will
     // give wrong behavior when the value is > MAX_xxx (i.e. looks -ve to int type

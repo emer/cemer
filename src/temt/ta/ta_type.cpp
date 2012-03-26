@@ -5131,9 +5131,9 @@ bool TypeDef::CheckList(const String_PArray& lst) const {
 
 
 TypeDef* TypeDef::GetNonPtrType() const {
-  if(ptr == 0)    return (TypeDef*)this;
+  if(ptr == 0)    return const_cast<TypeDef*>(this);
 
-  TypeDef* rval = (TypeDef*)this;
+  TypeDef* rval = const_cast<TypeDef*>(this);
   while((rval = rval->GetParent()) != NULL) {
     if(rval->ptr == 0)
       return rval;
@@ -5142,9 +5142,9 @@ TypeDef* TypeDef::GetNonPtrType() const {
 }
 
 TypeDef* TypeDef::GetNonRefType() const {
-  if(!ref)    return (TypeDef*)this;
+  if(!ref)    return const_cast<TypeDef*>(this);
 
-  TypeDef* rval = (TypeDef*)this;
+  TypeDef* rval = const_cast<TypeDef*>(this);
   while((rval = rval->GetParent()) != NULL) {
     if(!rval->ref)
       return rval;
@@ -5153,9 +5153,9 @@ TypeDef* TypeDef::GetNonRefType() const {
 }
 
 TypeDef* TypeDef::GetTemplType() const {
-  if(InheritsFormal(TA_template)) return (TypeDef*)this;
+  if(InheritsFormal(TA_template)) return const_cast<TypeDef*>(this);
 
-  TypeDef* rval = (TypeDef*)this;
+  TypeDef* rval = const_cast<TypeDef*>(this);
   while((rval = rval->GetParent()) != NULL) {
     if(rval->InheritsFormal(TA_template))
       return rval;
@@ -5164,9 +5164,9 @@ TypeDef* TypeDef::GetTemplType() const {
 }
 
 TypeDef* TypeDef::GetTemplInstType() const {
-  if(InheritsFormal(TA_templ_inst)) return (TypeDef*)this;
+  if(InheritsFormal(TA_templ_inst)) return const_cast<TypeDef*>(this);
 
-  TypeDef* rval = (TypeDef*)this;
+  TypeDef* rval = const_cast<TypeDef*>(this);
   while((rval = rval->GetParent()) != NULL) {
     if(rval->InheritsFormal(TA_templ_inst))
       return rval;
@@ -5175,9 +5175,9 @@ TypeDef* TypeDef::GetTemplInstType() const {
 }
 
 TypeDef* TypeDef::GetNonConstType() const {
-  if(!DerivesFrom(TA_const))    return (TypeDef*)this;
+  if(!DerivesFrom(TA_const))    return const_cast<TypeDef*>(this);
 
-  TypeDef* rval = (TypeDef*)this;
+  TypeDef* rval = const_cast<TypeDef*>(this);
   while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
     if(!rval->DerivesFrom(TA_const))
       return rval;
@@ -5186,11 +5186,22 @@ TypeDef* TypeDef::GetNonConstType() const {
 }
 
 TypeDef* TypeDef::GetNonConstNonRefType() const {
-  if(!(DerivesFrom(TA_const) || ref))  return (TypeDef*)this;
+  if(!(DerivesFrom(TA_const) || ref))  return const_cast<TypeDef*>(this);
 
-  TypeDef* rval = (TypeDef*)this;
+  TypeDef* rval = const_cast<TypeDef*>(this);
   while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
     if (!(rval->DerivesFrom(TA_const) || rval->ref))
+      return rval;
+  }
+  return NULL;
+}
+
+TypeDef* TypeDef::GetClassType() const {
+  if(InheritsFormal(&TA_class)) return const_cast<TypeDef*>(this);
+    
+  TypeDef* rval = const_cast<TypeDef*>(this);
+  while((rval = rval->parents.Peek()) != NULL) { // use the last parent, not the 1st
+    if(rval->InheritsFormal(&TA_class))
       return rval;
   }
   return NULL;
@@ -5483,7 +5494,7 @@ TypeDef* TypeDef::GetPtrType() const {
     rval = new TypeDef(name + "_ptr", internal, ptr + 1, 0, 0, 0);
     taMisc::types.Add(rval);
     // unconstify us, this is an internal operation, still considered "const" access
-    rval->AddParent((TypeDef*)this);
+    rval->AddParent(const_cast<TypeDef*>(this));
   }
   return rval;
 }
@@ -5688,7 +5699,7 @@ String TypeDef::GetEnumPrefix() const {
 int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
   int rval = tokens.FindEl(addr);
   if(rval >= 0) {
-    aptr = (TypeDef*)this;
+    aptr = const_cast<TypeDef*>(this);
     return rval;
   }
 
@@ -5705,7 +5716,7 @@ int TypeDef::FindTokenR(void* addr, TypeDef*& aptr) const {
 int TypeDef::FindTokenR(const char* nm, TypeDef*& aptr) const {
   int rval = tokens.FindNameIdx(nm);
   if(rval >= 0) {
-    aptr = (TypeDef*)this;
+    aptr = const_cast<TypeDef*>(this);
     return rval;
   }
 
@@ -7486,7 +7497,7 @@ ostream& TypeDef::OutputR(ostream& strm, void* base, int indent) const {
 
 String TypeDef::GetHTMLLink(bool gendoc) const {
   STRING_BUF(rval, 32); // extends if needed
-  TypeDef* npt = (TypeDef*)this;
+  TypeDef* npt = const_cast<TypeDef*>(this);
   if(npt->ptr > 0)
     npt = npt->GetNonPtrType();
   if(npt && npt->ref)
@@ -7877,7 +7888,7 @@ void TypeDef::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, const void* base,
   }
 #endif
   // always just add a record for this guy
-  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, (TypeDef*)this, memb_def, (void*)base,
+  taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, const_cast<TypeDef*>(this), memb_def, (void*)base,
                                        (void*)par, par_typ, par_od);
   odl.Add(odr);
 //   if(ptr > 0) {
@@ -7909,11 +7920,11 @@ void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void*
     }
     if(!md->GetCondOptTest("CONDSHOW", this, base))
       continue;
-    md->type->GetObjDiffVal(odl, nest_lev+1, md->GetOff(base), md, base, (TypeDef*)this, par_od);
+    md->type->GetObjDiffVal(odl, nest_lev+1, md->GetOff(base), md, base, const_cast<TypeDef*>(this), par_od);
   }
   if(last_md) {
     last_md->type->GetObjDiffVal(odl, nest_lev+1, last_md->GetOff(base), last_md, base,
-                                 (TypeDef*)this, par_od);
+                                 const_cast<TypeDef*>(this), par_od);
   }
 }
 

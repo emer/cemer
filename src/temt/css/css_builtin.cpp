@@ -105,8 +105,8 @@ cssElCFun*	cssBI::scoper=NULL;
 cssElCFun*	cssBI::pop=NULL;
 cssElCFun*	cssBI::cast=NULL;
 cssElCFun*	cssBI::cond=NULL;
-cssElCFun*	cssBI::doloop=NULL;
 cssElCFun*	cssBI::switch_jump=NULL;
+cssElCFun*	cssBI::doloop=NULL;
 
 cssElCFun*	cssBI::push_root=NULL;	// pushes a root value on stack
 cssElCFun*	cssBI::push_next=NULL; // pushes next program item on stack
@@ -564,6 +564,60 @@ static cssEl* cssElCFun_member_call_stub(int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
+static cssEl* cssElCFun_call_stub(int na, cssEl* arg[]) {
+  cssProg* cp = arg[0]->prog;
+  if(na < 2) {
+    cssMisc::Error(cp, "call: at least 2 arguments are required: object and method name");
+    return &cssMisc::Void;
+  }
+  taBase* obj = (taBase*)arg[1]->GetVoidPtrOfType(&TA_taBase);
+  if(!obj) {
+    cssMisc::Error(cp, "call: object argument is NULL");
+    return &cssMisc::Void;
+  }
+  String fun_name = arg[2]->GetStr();
+  cssEl** param = (cssEl**)calloc(na, sizeof(cssEl*));
+  param[0] = &cssMisc::Void; // method*
+  param[1] = &cssMisc::Void; // this*
+  for(int i = 3; i<= na; i++) {
+    param[i-1] = arg[i];
+  }
+
+  MethodDef* md = obj->GetTypeDef()->methods.FindName(fun_name);
+  if(!md || !md->stubp) {
+    cssMisc::Error(cp, "call: function:", fun_name,
+		   "not found or stub function is NULL on object of type:",
+		   obj->GetTypeDef()->name);
+    return &cssMisc::Void;
+  }
+
+  if(md->fun_argd < 0) {	// with default args it does right thing
+    if(na-2 != md->fun_argc) {
+      cssMisc::Error(cp, "call: incorrect number of arguments provided to function:", 
+		     fun_name,
+		     "should have:", String(md->fun_argc), "received:", String(na-2));
+      return &cssMisc::Void;
+    }
+  }
+
+  cssEl* rval = (*(md->stubp))(obj, na-1, param);
+  free(param);
+  return rval;
+}
+
+static cssEl* cssElCFun_set_stub(int na, cssEl* arg[]) {
+  cssProg* cp = arg[0]->prog;
+  taBase* obj = (taBase*)arg[1]->GetVoidPtrOfType(&TA_taBase);
+  if(!obj) {
+    cssMisc::Error(cp, "call: object argument is NULL");
+    return &cssMisc::Void;
+  }
+  String memb_name = arg[2]->GetStr();
+  Variant val = arg[3]->GetVar();
+  taBase::SetMemberVar(obj, memb_name, val);
+  return arg[1];		// return val is always obj itself
+}
+
 // arg[1]..[na-1] = sizes,   arg[na] = array
 static cssEl* cssElCFun_array_alloc_stub(int na, cssEl* arg[]) {
   cssInt* rval = new cssInt();
@@ -913,6 +967,15 @@ static void Install_Internals() {
   cssElCFun_inst_nm     (cssMisc::Parse, new_opr, cssEl::VarArg, "new", CSS_NEW, " ");
   cssElCFun_inst_nm     (cssMisc::Parse, del_opr, 1, "delete", CSS_DELETE, " ");
   cssElInCFun_inst_ptr	(cssMisc::Parse, constr, 1, CSS_FUN);
+
+  cssElCFun_inst_nm     (cssMisc::Parse, new_opr, cssEl::VarArg, "new", CSS_NEW, " ");
+
+  cssElCFun_inst_flg(cssMisc::Functions, call, cssEl::VarArg, CSS_FUN,
+		     "call(obj, \"meth_name\", [args]): call the given method on given object(s), with given arguments to that function -- advantage over a direct method call is that it works even if obj is a list of objects, in which case it calls method on each in turn, and return value is a Variant_Matrix of all the return values.",
+		     cssElFun::FUN_ITR_LIST, 1);
+  cssElCFun_inst_flg(cssMisc::Functions, set, 3, CSS_FUN,
+		     "set(obj, \"member_name\", value): set the given member on given object(s), with given value (can be any kind of expression resulting in value) -- advantage over a directly setting the member is that it works even if obj is a list of objects, in which case it sets member value on each in turn.",
+		     cssElFun::FUN_ITR_LIST, 1);
 
   cssElInCFun_inst_ptr	(cssMisc::Internal, doloop, cssEl::NoArg, CSS_FUN);
 
