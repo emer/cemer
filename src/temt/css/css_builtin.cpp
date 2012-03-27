@@ -1538,24 +1538,27 @@ static cssEl* cssElCFun_min_stub(int, cssEl* arg[]) {
 static void Install_Math() {
   // global real functions
 
-  TypeDef* mathtd = &TA_taMath_double;
-  taMath_double* mdobj = (taMath_double*)mathtd->GetInstance();
+  TypeDef* mathtd = &TA_cssMath;
+  cssMath* mdobj = (cssMath*)mathtd->GetInstance();
 
   for(int i=0; i< mathtd->methods.size; i++) {
     MethodDef* md = mathtd->methods[i];
     if(!md->is_static) continue;
     if(md->HasOption("NO_CSS_MATH")) continue; // skip entirely
+    String labl = md->OptionAfter("LABEL_");
+    if(labl.empty())
+      labl = md->name;
     if(md->fun_argc == 1) {
       if((md->arg_types[0] == &TA_double) && md->type && md->type == &TA_double) {
 	// simple single arg double function -- use matrix encoding by default
 	if(md->HasOption("NO_CSS_MATRIX")) {
 	  cssMisc::Functions.Push
-	    (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+	    (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, labl, md,
 			    cssElFun::MBR_NO_THIS));
 	}
 	else {
 	  cssMisc::Functions.Push
-	    (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+	    (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, labl, md,
 			    cssElFun::FUN_ITR_MATRIX | cssElFun::MBR_NO_THIS, 
 			    md->fun_argc+1)); // arg will be shifted over for 'this'
 	}
@@ -1563,13 +1566,13 @@ static void Install_Math() {
       else {
 	if(md->HasOption("CSS_MATRIX")) {
 	  cssMisc::Functions.Push
-	    (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+	    (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, labl, md,
 			    cssElFun::FUN_ITR_MATRIX | cssElFun::MBR_NO_THIS, 
 			    md->fun_argc+1)); // arg will be shifted over for 'this'
 	}
 	else {
 	    cssMisc::Functions.Push
-	      (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+	      (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, labl, md,
 			      cssElFun::MBR_NO_THIS));
 	}
       }
@@ -1579,14 +1582,14 @@ static void Install_Math() {
       int mtxarg = (int)mtxargs;
       if(mtxargs.nonempty() && mtxarg > 0) {
 	cssMisc::Functions.Push
-	  (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+	  (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, labl, md,
 			  cssElFun::FUN_ITR_MATRIX | cssElFun::MBR_NO_THIS, mtxarg+1));
 	// arg wil be shifted over for 'this'
 	
       }
       else {
 	cssMisc::Functions.Push
-	  (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, md->name, md,
+	  (new cssMbrCFun(md->fun_argc, mdobj, md->stubp, labl, md,
 			  cssElFun::MBR_NO_THIS));
       }
     }

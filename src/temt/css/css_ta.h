@@ -23,6 +23,13 @@
 #include "css_basic_types.h"
 #include "ta_type.h"
 
+///////////////////////////////////////////////////////////////////////
+//		Assignment semantics
+//
+// ArgCopy (InitAssign): initialize pointer if ptr_cnt > 0, else copy contents
+// operator= : copy contents except ptr_cnt = 2 (ptr ptr)
+// 
+
 class CSS_API cssTA : public cssCPtr {
   // a pointer that has a TA TypeDef associated with it: uses type info to perform ops 
   // NOTE: specialized versions exist for specific types: those must be used (e.g., taBase, etc)
@@ -91,14 +98,18 @@ public:
   void operator=(const String& s);
   void operator=(void* cp)	{ ptr = cp; ptr_cnt = 1; }
   void operator=(void** cp)	{ ptr = (void*)cp; ptr_cnt = 2; }
-  USING(cssCPtr::operator=)
+  USING(cssCPtr::operator=);
+
+  void 	ArgCopy(const cssEl& s);
 
   // copying: uses typedef auto copy function for ptr_cnt = 0
   void operator=(const cssEl& s);
   void PtrAssignPtr(const cssEl& s);
+  // for ArgCopy and ptr_cnt >= 2 -- assign our pointer
   override bool AssignCheckSource(const cssEl& s);
+  // make sure source is typedef compatible
   virtual bool AssignObjCheck(const cssEl& s);
-  // do basic checks on us and source for object assign (ptr_cnt = 0)
+  // do basic checks on us and source for Copy value assignment
 
   int	 GetMemberNo(const String& memb) const;
   cssEl* GetMemberFmName(const String& memb) const;
@@ -160,7 +171,8 @@ public:
   void operator=(void** cp);
   USING(cssTA::operator=);
 
-  void InitAssign(const cssEl& s);
+  void 	ArgCopy(const cssEl& s); // init pointers for ptr_cnt > 0
+  void 	InitAssign(const cssEl& s); // reset our object type to match source!
   
   void PtrAssignPtr(const cssEl& s);
   override bool PtrAssignPtrPtr(void* new_ptr_val);
@@ -186,59 +198,122 @@ public:
 class CSS_API cssSmartRef : public cssTA {
   // a taSmartRef object (ptr_cnt = 0)
 public:
+  cssTA_Base*	cssref;		// css item representing the object being pointed to
+
+  inline taSmartRef* GetSmartRef() const { if(ptr) return (taSmartRef*)ptr; return NULL; }
+  inline taBase* GetSmartRefPtr() const  { taSmartRef* rf = GetSmartRef(); if(rf) return rf->ptr(); return NULL; }
+
   void 		Print(ostream& fh = cout) const;
   void 		PrintR(ostream& fh = cout) const;	// recursive
 
-  TypeDef* 	GetNonRefTypeDef() const;
-  int 		GetNonRefPtrCnt() const;
-  void* 	GetNonRefPtr() const;
+  cssTypes 	GetType() const		{ return cssref->GetType(); }
+  cssTypes	GetPtrType() const	{ return cssref->GetPtrType(); }
+  const char*	GetTypeName() const	{ return cssref->GetTypeName(); }
+  cssEl*	GetTypeObject() const	{ return cssref->GetTypeObject(); }
+  TypeDef* 	GetNonRefTypeDef() const { return cssref->GetNonRefTypeDef(); }
+  int 		GetNonRefPtrCnt() const  { return cssref->GetNonRefPtrCnt(); }
+  void* 	GetNonRefPtr() const     { return cssref->GetNonRefPtr(); }
 
-  const char*	GetTypeName() const;
-  void 		TypeInfo(ostream& fh = cout) const;
-  void		InheritInfo(ostream& fh = cout) const;
-  void		TokenInfo(ostream& fh = cout) const;
-  cssEl*	GetToken(int idx) const;
+  cssEl*	GetActualObj() const	{ return cssref->GetActualObj(); }
+  cssEl*	GetNonRefObj() const	{ return cssref; }
+
+  void 		TypeInfo(ostream& fh = cout) const { cssref->TypeInfo(fh); }
+  void		InheritInfo(ostream& fh = cout) const { cssref->InheritInfo(fh); }
+  void		TokenInfo(ostream& fh = cout) const { cssref->TokenInfo(fh); }
+  cssEl*	GetToken(int idx) const		   { return cssref->GetToken(idx); }
+
+  void		UpdateCssRef();	// update the cssref object based on current ptr()
 
   // constructors
-  cssSmartRef() : cssTA() { };
-  cssSmartRef(void* it, int pc, TypeDef* td, const String& nm = _nilString, cssEl* cls_par=NULL,
-	      bool ro = false) : cssTA(it, pc, td, nm, cls_par, ro) { };
-  cssSmartRef(const cssSmartRef& cp) : cssTA(cp) { };
-  cssSmartRef(const cssSmartRef& cp, const String& nm) : cssTA(cp, nm) { };
+  cssSmartRef() : cssTA() { cssref = NULL; UpdateCssRef(); }
+  cssSmartRef(void* it, int pc, TypeDef* td, const String& nm = _nilString,
+	      cssEl* cls_par=NULL,  bool ro = false)
+    : cssTA(it, pc, td, nm, cls_par, ro) { cssref = NULL; UpdateCssRef(); }
+  cssSmartRef(const cssSmartRef& cp) : cssTA(cp)
+  { cssref = NULL; UpdateCssRef(); }
+  cssSmartRef(const cssSmartRef& cp, const String& nm) : cssTA(cp, nm)
+    { cssref = NULL; UpdateCssRef(); }
   cssCloneOnly(cssSmartRef);
   cssEl*	MakeToken_stub(int, cssEl *arg[])
   { return new cssSmartRef((void*)NULL, ptr_cnt, type_def, (const String&)*(arg[1])); }
+  ~cssSmartRef();
 
   // converters
+  String GetStr() const 	{ return cssref->GetStr(); }
+  Variant GetVar() const 	{ return cssref->GetVar(); }
+  operator Real() const	 	{ return (Real)*(cssref); }
+  operator Int() const	 	{ return (Int)*(cssref); }
+  operator void*() const	{ return (void*)*(cssref); }
+  operator void**() const	{ return (void**)*(cssref); }
+
+  operator bool() const		{ return (bool)*(cssref); }
+  operator taBase*() const	{ return (taBase*)*(cssref); }
+
   void* 	GetVoidPtrOfType(TypeDef* td) const;
   void* 	GetVoidPtrOfType(const String& td) const;
-  // these are type-safe ways to convert a cssEl into a ptr to object of given type
-
-  Variant GetVar() const;
-  String GetStr() const;
-  operator void*() const;
-  operator bool() const;
-  operator taBase*() const;
-
-  void operator=(const String& s);
-  void operator=(const cssEl& s);
-  void operator=(taBase*);
-  void operator=(taBase**);
-  USING(cssTA::operator=)
 
   // operators
-  void PtrAssignPtr(const cssEl& s);
-  void UpdateAfterEdit();
+  void operator=(const String& s)	{ cssref->operator=(s); }
+  void operator=(const cssEl& s);
+  void operator=(taBase*);
+  void operator=(taBase** s)		{ cssref->operator=(s); }
+  USING(cssTA::operator=)
 
-  cssEl* operator[](const Variant& idx) const;
+  void CastFm(const cssEl& cp)	{ ArgCopy(cp); }
+  void ArgCopy(const cssEl& cp);
+
+  void PtrAssignPtr(const cssEl& s);
+
+  void UpdateAfterEdit()	{ cssref->UpdateAfterEdit(); }
+
   bool	MembersDynamic()	{ return true; }
   int	 GetMemberNo(const String& memb) const { return -1; } // never static lookup
-  cssEl* GetMemberFmName(const String& memb) const;
-  cssEl* GetMemberFmNo(int memb) const;
+  cssEl* GetMemberFmNo(int s) const  		{ return cssref->GetMemberFmNo(s); }
+  cssEl* GetMemberFmName(const String& s) const { return cssref->GetMemberFmName(s); }
   int	 GetMethodNo(const String& memb) const { return -1; }
-  cssEl* GetMethodFmName(const String& memb) const;
-  cssEl* GetMethodFmNo(int memb) const;
-  cssEl* GetScoped(const String&) const;
+  cssEl* GetMethodFmNo(int s) const		{ return cssref->GetMethodFmNo(s); }
+  cssEl* GetMethodFmName(const String& s) const	{ return cssref->GetMethodFmName(s); }
+  cssEl* GetScoped(const String& s) const  	{ return cssref->GetScoped(s); }
+  cssEl* NewOpr()   				{ return cssref->NewOpr(); }
+  void	 DelOpr() 				{ cssref->DelOpr(); }
+
+  cssEl* operator+(cssEl& s) 	{ return cssref->operator+(s); }
+  cssEl* operator-(cssEl& s) 	{ return cssref->operator-(s); }
+  cssEl* operator*(cssEl& s) 	{ return cssref->operator*(s); }
+  cssEl* operator/(cssEl& s) 	{ return cssref->operator/(s); }
+  cssEl* operator%(cssEl& s) 	{ return cssref->operator%(s); }
+  cssEl* operator<<(cssEl& s)	{ return cssref->operator<<(s); }
+  cssEl* operator>>(cssEl& s)	{ return cssref->operator>>(s); }
+  cssEl* operator&(cssEl& s)	{ return cssref->operator&(s); }
+  cssEl* operator^(cssEl& s)	{ return cssref->operator^(s); }
+  cssEl* operator|(cssEl& s)	{ return cssref->operator|(s); }
+  cssEl* operator-()       	{ return cssref->operator-(); }
+  cssEl* operator~()       	{ return cssref->operator~(); }
+  cssEl* operator*()	   	{ return cssref->operator*(); }
+  cssEl* operator[](const Variant& idx) const	{ return cssref->operator[](idx); }
+
+  cssEl* operator! ()		{ return cssref->operator!(); }
+  cssEl* operator&&(cssEl& s)	{ return cssref->operator&&(s); }
+  cssEl* operator||(cssEl& s)	{ return cssref->operator||(s); }
+
+  cssEl* operator< (cssEl& s) 	{ return cssref->operator<(s); }
+  cssEl* operator> (cssEl& s) 	{ return cssref->operator>(s); }
+  cssEl* operator<=(cssEl& s) 	{ return cssref->operator<=(s); }
+  cssEl* operator>=(cssEl& s) 	{ return cssref->operator>=(s); }
+  cssEl* operator==(cssEl& s) 	{ return cssref->operator==(s); }
+  cssEl* operator!=(cssEl& s) 	{ return cssref->operator!=(s); }
+
+  void operator+=(cssEl& s) 	{ cssref->operator+=(s); }
+  void operator-=(cssEl& s) 	{ cssref->operator-=(s); }
+  void operator*=(cssEl& s) 	{ cssref->operator*=(s); }
+  void operator/=(cssEl& s) 	{ cssref->operator/=(s); }
+  void operator%=(cssEl& s) 	{ cssref->operator%=(s); }
+  void operator<<=(cssEl& s) 	{ cssref->operator<<=(s); }
+  void operator>>=(cssEl& s) 	{ cssref->operator>>=(s); }
+  void operator&=(cssEl& s) 	{ cssref->operator&=(s); }
+  void operator^=(cssEl& s) 	{ cssref->operator^=(s); }
+  void operator|=(cssEl& s) 	{ cssref->operator|=(s); }
+
 };
 
 class CSS_API cssIOS : public cssTA {
@@ -503,15 +578,16 @@ public:
   void operator/=(cssEl& t);
   void operator%=(cssEl& t);
 
+  cssEl* operator! ();
+  cssEl* operator&&(cssEl& s);
+  cssEl* operator||(cssEl& s);
+
   cssEl* operator< (cssEl& s);
   cssEl* operator> (cssEl& s);
   cssEl* operator<=(cssEl& s);
   cssEl* operator>=(cssEl& s);
   cssEl* operator==(cssEl& s);
   cssEl* operator!=(cssEl& s);
-
-  cssEl* operator&&(cssEl& s);
-  cssEl* operator||(cssEl& s);
 };
 
 

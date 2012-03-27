@@ -2327,17 +2327,6 @@ bool taMath_double::vec_kern2d_gauss(double_Matrix* kernel, int sz_x, int sz_y,
 /////////////////////////////////////////////////////////////////////////////////
 // Matrix operations
 
-int_Matrix* taMath_double::rc(int_Matrix* cr) {
-  if(!cr || cr->size < 2) {
-    taMisc::Error("taMath_double::rc -- input matrix NULL or does not have at least 2 indicies");
-    return NULL;
-  }
-  int_Matrix* rval = (int_Matrix*)cr->Clone();
-  rval->FastEl_Flat(0) = cr->FastEl_Flat(1); // swap'em
-  rval->FastEl_Flat(1) = cr->FastEl_Flat(0);
-  return rval;
-}
-
 bool taMath_double::mat_col(double_Matrix* col, const double_Matrix* mat, int col_no) {
   if(!vec_check_type(col) || !vec_check_type(mat)) return false;
   if(mat->dims() != 2) return false;
@@ -2421,7 +2410,7 @@ bool taMath_double::mat_mult(double_Matrix* c, const double_Matrix* a, const dou
   gsl_matrix g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   if(!vec_check_type(c)) return false;
   // ensure return matrix is correct size
-  if(c->dim(0) != b->dim(0) || c->dim(1) != a->dim(1)) {
+  if(c->dims() != 2 || c->dim(0) != b->dim(0) || c->dim(1) != a->dim(1)) {
     c->SetGeom(2, b->dim(0), a->dim(1));
   }
   gsl_matrix g_c;  if(!mat_get_gsl_fm_ta(&g_c, c)) return false;
@@ -6190,3 +6179,196 @@ void Random::Copy_(const Random& cp){
   par = cp.par;
 }
 
+/////////////////////////////////////////////////////////
+//  	cssMath functions
+
+int_Matrix* cssMath::rc(const int_Matrix* cr) {
+  if(!cr || cr->size < 2) {
+    taMisc::Error("rc -- input matrix NULL or does not have at least 2 indicies");
+    return NULL;
+  }
+  int_Matrix* rval = (int_Matrix*)cr->Clone();
+  rval->FastEl_Flat(0) = cr->FastEl_Flat(1); // swap'em
+  rval->FastEl_Flat(1) = cr->FastEl_Flat(0);
+  return rval;
+}
+
+int cssMath::ndims(const taMatrix* cr) {
+  if(!cr) {
+    taMisc::Error("ndims -- input matrix NULL");
+    return NULL;
+  }
+  return cr->dims();
+}
+
+int_Matrix* cssMath::shape(const taMatrix* cr) {
+  if(!cr) {
+    taMisc::Error("shape -- input matrix NULL");
+    return NULL;
+  }
+  return cr->Shape();
+}
+
+double_Matrix* cssMath::zeros(const int_Matrix* shape) {
+  if(!shape || shape->size < 1) {
+    taMisc::Error("zeros -- shape matrix NULL or does not have at least 1 entry");
+    return NULL;
+  }
+  double_Matrix* rval = new double_Matrix;
+  rval->SetShape(shape);	// automatically zeros
+  return rval;
+}
+
+double_Matrix* cssMath::ones(const int_Matrix* shape) {
+  if(!shape || shape->size < 1) {
+    taMisc::Error("ones -- shape matrix NULL or does not have at least 1 entry");
+    return NULL;
+  }
+  double_Matrix* rval = new double_Matrix;
+  rval->SetShape(shape);	// automatically zeros
+  rval->InitVals(1.0);
+  return rval;
+}
+
+double_Matrix* cssMath::eye(int size) {
+  if(size < 1) {
+    taMisc::Error("eye -- size must be >= 1");
+    return NULL;
+  }
+  double_Matrix* rval = new double_Matrix;
+  rval->SetGeom(2, size, size);
+  for(int i=0;i<size; i++) {
+    rval->FastEl(i,i) = 1.0;
+  }
+  return rval;
+}
+
+double_Matrix* cssMath::rand(const int_Matrix* shape) {
+  if(!shape || shape->size < 1) {
+    taMisc::Error("rand -- shape matrix NULL or does not have at least 1 entry");
+    return NULL;
+  }
+  double_Matrix* rval = new double_Matrix;
+  rval->SetShape(shape);	// automatically zeros
+  for(int i=0;i<rval->size;i++) {
+    rval->FastEl_Flat(i) = Random::ZeroOne();
+  }
+  return rval;
+}
+
+double_Matrix* cssMath::diag(const double_Matrix* mat, int mat_zero) {
+  if(!vec_check_type(mat)) return NULL;
+  if(mat_zero == 0) {
+    double_Matrix* rval = new double_Matrix;
+    rval->SetGeom(2, mat->size, mat->size);
+    for(int i=0;i<mat->size; i++) {
+      rval->FastEl(i,i) = mat->FastEl_Flat(i);
+    }
+    return rval;
+  }
+  else {
+    if(mat->dim(0) != mat->dim(1)) {
+      taMisc::Error("diag -- input matrix is not a square matrix");
+      return NULL;
+    }
+    double_Matrix* rval = new double_Matrix;
+    int sz = mat->dim(0);
+    rval->SetGeom(1, sz);
+    for(int i=0;i<sz; i++) {
+      rval->FastEl_Flat(i) = mat->FastEl(i,i);
+    }
+    return rval;
+  }
+}
+
+double_Matrix* cssMath::linspace(double start, double end, int n_vals) {
+  if(n_vals <= 2) n_vals = 2;
+  if(end <= start) {
+    taMisc::Error("linspace -- end must be > start");
+    return NULL;
+  }
+  double_Matrix* rval = new double_Matrix;
+  rval->SetGeom(1, n_vals);
+  double incr = (end - start) / (n_vals-1);
+  for(int i=0;i<n_vals; i++) {
+    rval->FastEl_Flat(i) = start + (double)i * incr;
+  }
+  return rval;
+}
+
+double_Matrix* cssMath::meshgrid(const slice_Matrix* dims) {
+  if(!dims || dims->dims() != 2 || dims->dim(0) != 3) {
+    taMisc::Error("meshgrid -- dims matrix NULL or is not properly configured slice matrix with 2 dimensions, inner = 3 (start, stop, end) and outer = number of dimensions");
+    return NULL;
+  }
+  int_Matrix fixsmat(*dims);
+  int dm = dims->dim(1);
+  MatrixGeom sliceg(dm);		// slice geometry
+  for(int i=0; i < dm; i++) {
+    int start = dims->FastEl(0,i);
+    int end = dims->FastEl(1,i);
+    int step = dims->FastEl(2,i);
+    if(end <= start) end = start + 100;
+    if(step == 0) step = 1;
+    int my_n = (end-start) / ABS(step); // number of guys in my slice
+    sliceg.Set(i, my_n);
+    fixsmat.FastEl(0,i) = start; 
+    fixsmat.FastEl(1,i) = end; 
+    fixsmat.FastEl(2,i) = step;
+  }
+  int tot_n = sliceg.Product();
+  sliceg.AddDim(dm);		// one more outer dim to hold each coord set
+  double_Matrix* rval = new double_Matrix(sliceg);
+
+  MatrixIndex sidx;				   // slice idx
+  for(int i=0;i<tot_n; i++) {
+    sliceg.DimsFmIndex(i, sidx); // get index into slice vals
+    for(int d=0; d<dm; d++) {
+      int start = fixsmat.FastEl(0,d);
+      int end = fixsmat.FastEl(1,d);
+      int step = fixsmat.FastEl(2,d);
+      int sc;
+      if(step > 0) {
+	sc = start + step * sidx[d];
+      }
+      else {
+	sc = end-1 + step * sidx[d];
+      }
+      sidx[dm] = d;
+      rval->FastElN(sidx) = (double)sc;
+    }
+  }
+  return rval;
+}
+
+double_Matrix* cssMath::mat_mult_css(const double_Matrix* a, const double_Matrix* b) {
+  double_Matrix* rval = new double_Matrix;
+  mat_mult(rval, a, b);
+  return rval;
+}
+
+int_Matrix* cssMath::find(const byte_Matrix* mat) {
+  if(!mat) {
+    taMisc::Error("find -- matrix is NULL");
+    return NULL;
+  }
+  
+  int n_nonz = 0;
+  for(int i=0;i<mat->size;i++) {
+    if(mat->FastEl_Flat(i) != 0) n_nonz++;
+  }
+
+  int dm = mat->dims();
+  MatrixIndex sidx;				   // slice idx
+  int_Matrix* rval = new int_Matrix(2, dm, n_nonz);
+  int cnt = 0;
+  for(int i=0;i<mat->size;i++) {
+    if(mat->FastEl_Flat(i) == 0) continue;
+    mat->geom.DimsFmIndex(i, sidx);
+    for(int d=0; d<dm; d++) {
+      rval->FastEl(d,cnt) = sidx[d];
+    }
+    cnt++;
+  }
+  return rval;
+}

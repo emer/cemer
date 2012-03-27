@@ -1073,6 +1073,10 @@ public:
   cssEl* NewOpr()   				{ return ptr.El()->NewOpr(); }
   void	 DelOpr() 				{ ptr.El()->DelOpr(); }
 
+  cssEl* operator! ()		{ return ptr.El()->operator!(); }
+  cssEl* operator&&(cssEl& s)	{ return ptr.El()->operator&&(s); }
+  cssEl* operator||(cssEl& s)	{ return ptr.El()->operator||(s); }
+
   cssEl* operator< (cssEl& s) 	{ return ptr.El()->operator<(s); }
   cssEl* operator> (cssEl& s) 	{ return ptr.El()->operator>(s); }
   cssEl* operator<=(cssEl& s) 	{ return ptr.El()->operator<=(s); }

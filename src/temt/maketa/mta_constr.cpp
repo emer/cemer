@@ -858,8 +858,14 @@ void MethodDef_GenFunCall(TypeDef* ownr, MethodDef* md, ostream& strm, int act_a
     else if(md->type->DerivesFrom(TA_Variant))
       cmd = "cssCPtr_Variant(";
     else if(md->type->DerivesFrom(TA_taBase)) {
-      cmd = "cssTA_Base(";
+      TypeDef* cltp = md->type->GetClassType();
       include_td = true;
+      if(cltp->name.endsWith("_Matrix")) { // apparently inherits not working here
+	cmd = "cssTA_Matrix(";
+      }
+      else {
+	cmd = "cssTA_Base(";
+      }
     }
     else if(md->type->DerivesFrom(TA_TypeDef)) {
       cmd = "cssTypeDef(";

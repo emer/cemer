@@ -1103,6 +1103,16 @@ cssEl* cssEl::GetMethodEl_impl(TypeDef* typ, void* base, MethodDef* md) const {
 	  return new cssMbrCFun(md->fun_argc+1, base, md->stubp, md->name, NULL,
 				cssElFun::FUN_ITR_LIST, lstexp+1);
       }
+      lstexps = md->OptionAfter("CSS_MATRIX_ARG_");
+      if(lstexps.nonempty()) {
+	int lstexp = (int)lstexps;
+	if(md->fun_argd >= 0)
+	  return new cssMbrCFun(VarArg, base, md->stubp, md->name, NULL, 
+				cssElFun::FUN_ITR_MATRIX, lstexp+1);
+	else
+	  return new cssMbrCFun(md->fun_argc+1, base, md->stubp, md->name, NULL,
+				cssElFun::FUN_ITR_MATRIX, lstexp+1);
+      }
     }
     if(md->fun_argd >= 0)
       return new cssMbrCFun(VarArg, base, md->stubp, md->name);

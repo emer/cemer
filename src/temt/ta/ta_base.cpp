@@ -2119,11 +2119,13 @@ bool taBase::Copy(const taBase* cp) {
   return CanDoCopy_impl(cp, false, true);
 }
 
-bool taBase::CopyFrom(taBase* cpy_from) {
-// this one is easy, since it is really just the same as Copy, but with warnings
-  if (!CanCopy(cpy_from, false)) return false;
-  UnSafeCopy(cpy_from);
-  return true;
+bool taBase::CopyFrom(taBase* cp) {
+  // copyfrom is used widely but really Copy has the best semantics and is the one and only
+  return CanDoCopy_impl(cp, false, true);
+  // // this one is easy, since it is really just the same as Copy, but with warnings
+  // if (!CanCopy(cpy_from, false)) return false;
+  // UnSafeCopy(cpy_from);
+  // return true;
 }
 
 bool taBase::CopyTo(taBase* cpy_to) {

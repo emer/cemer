@@ -238,12 +238,12 @@ bool cssTA::AssignObjCheck(const cssEl& s) {
     return false;
   }
   cssTA* sp = (cssTA*)s.GetNonRefObj();
-  if(sp->GetNonRefPtrCnt() > 0) {
-    cssMisc::Error(prog, "Failed to copy to taBase C object of type:", GetTypeName(),
-		   "we are an object and source is a pointer");
-    return false;
-  }
-  if(!sp->GetNonRefPtr()) {
+  // if(sp->GetNonRefPtrCnt() > 0) {
+  //   cssMisc::Error(prog, "Failed to copy to taBase C object of type:", GetTypeName(),
+  // 		   "we are an object and source is a pointer");
+  //   return false;
+  // }
+  if(!sp->GetVoidPtr()) {
     cssMisc::Error(prog, "Failed to copy to taBase C object of type:", GetTypeName(),
 		   "source is NULL");
     return false;
@@ -326,7 +326,7 @@ void cssTA::operator=(const cssEl& s) {
     return;
   }
   if(!ROCheck()) return;
-  if(ptr_cnt > 0) {
+  if(ptr_cnt > 1) {		// only for ptr-ptr
     PtrAssignPtr(s);
     return;
   }
@@ -335,7 +335,26 @@ void cssTA::operator=(const cssEl& s) {
   if(!AssignObjCheck(s)) return; // not a good source for obj
   cssTA* sp = (cssTA*)s.GetNonRefObj();
   // use typedef generic copy routine!
-  type_def->CopyFromSameType(ptr, sp->GetNonRefPtr());
+  type_def->CopyFromSameType(ptr, sp->GetVoidPtr());
+}
+
+void cssTA::ArgCopy(const cssEl& s) {
+  if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
+    *this = s.GetStr();	// use string converter
+    UpdateClassParent();
+    return;
+  }
+  if(!ROCheck()) return;
+  if(ptr_cnt > 0) {		// assign pointers in this case
+    PtrAssignPtr(s);
+    return;
+  }
+
+  if(!AssignCheckSource(s)) return; // not a good source
+  if(!AssignObjCheck(s)) return; // not a good source for obj
+  cssTA* sp = (cssTA*)s.GetNonRefObj();
+  // use typedef generic copy routine!
+  type_def->CopyFromSameType(ptr, sp->GetVoidPtr());
 }
 
 int cssTA::GetMemberNo(const String& memb) const {
@@ -404,7 +423,7 @@ void cssTA_Base::Copy(const cssTA_Base& cp) {
   if(ptr_cnt == 0 && ptr && cp.ptr) {
     taBase* obj = (taBase*)ptr;
     taBase* oth = (taBase*)cp.ptr;
-    obj->UnSafeCopy(oth);
+    obj->Copy(oth);
   }
 }
 
@@ -417,7 +436,7 @@ void cssTA_Base::CopyType(const cssTA_Base& cp) {
   if(ptr_cnt == 0 && ptr && cp.ptr) {
     taBase* obj = (taBase*)ptr;
     taBase* oth = (taBase*)cp.ptr;
-    obj->UnSafeCopy(oth);
+    obj->Copy(oth);
   }
 }
 
@@ -563,8 +582,6 @@ bool cssTA_Base::PtrAssignPtrPtr(void* new_ptr_val) {
 }
 
 void cssTA_Base::PtrAssignNull() {
-// NOTE: BA 2008-09-11 added this as needed fix, so am calling base
-// only for cases I don't understand -- this may still need work...
   if(ptr_cnt == 1)
     taBase::DelPointer((taBase**)&ptr);
   else
@@ -588,7 +605,7 @@ void cssTA_Base::operator=(void** cp) {
 }
 
 void cssTA_Base::operator=(taBase* cp) {
-  if((ptr_cnt == 0) && ptr) {
+  if((ptr_cnt <= 1) && ptr) {	// value copy..
     if(!ptr) {
       cssMisc::Error(prog,  "Failed to assign taBase object of type:", GetTypeName(),
 		     "our ptr is NULL");
@@ -600,14 +617,8 @@ void cssTA_Base::operator=(taBase* cp) {
       return;
     }
     taBase* obj = (taBase*)ptr;
-    obj->UnSafeCopy(cp);
+    obj->Copy(cp);
     UpdateClassParent();
-  }
-  if(ptr_cnt == 1) {
-    taBase::SetPointer((taBase**)&ptr, cp); // always use set pointer for ta base!
-//     ptr = cp;
-    if(ptr)
-      type_def = ((taBase*)ptr)->GetTypeDef();
   }
   else if(ptr_cnt == 2) {
     PtrAssignPtrPtr(cp);
@@ -619,7 +630,7 @@ void cssTA_Base::operator=(taBase** cp) {
     cssMisc::Error(prog, "Failed to assign from taBase** -- pointer is NULL");
     return;
   }
-  if((ptr_cnt == 0) && ptr) {
+  if((ptr_cnt <= 1) && ptr) {
     if(!ptr) {
       cssMisc::Error(prog,  "Failed to assign taBase object of type:", GetTypeName(),
 		     "our ptr is NULL");
@@ -631,14 +642,8 @@ void cssTA_Base::operator=(taBase** cp) {
       return;
     }
     taBase* obj = (taBase*)ptr;
-    obj->UnSafeCopy(*cp);
+    obj->Copy(*cp);
     UpdateClassParent();
-  }
-  if(ptr_cnt == 1) {
-    taBase::SetPointer((taBase**)&ptr, *cp); // always use set pointer!
-    //    ptr = *cp;
-    if(ptr)
-      type_def = ((taBase*)ptr)->GetTypeDef();
   }
   else if(ptr_cnt == 2) {
     ptr = cp;
@@ -647,8 +652,8 @@ void cssTA_Base::operator=(taBase** cp) {
 
 void cssTA_Base::operator=(const String& s) {
   if(!ROCheck()) return;
-  if(ptr_cnt == 0) {
-    //    cssTA::operator=(s);		// just do same thing
+  if(ptr_cnt <= 1 && !((s.startsWith('.') || s.startsWith("root.")))) {
+    // not a path, use value assign
     if(ptr) {
       taBase* obj = (taBase*)ptr;
       obj->SetValStr(s, NULL, NULL, TypeDef::SC_DEFAULT, true);
@@ -686,20 +691,44 @@ void cssTA_Base::operator=(const cssEl& s) {
     return;
   }
   if(!ROCheck()) return;
-  if(ptr_cnt > 0) {
+  if(ptr_cnt > 1) {		// only for ptr-ptr do we do ptr copy
     PtrAssignPtr(s);
     taBase* ths = GetTAPtr();
     if(ths)
       type_def = ths->GetTypeDef();	// just to be sure
     return;
   }
-  // basic ptr_cnt == 0 copy:
+  // copy by value is default!
   if(!AssignCheckSource(s)) return; // not a good source
   if(!AssignObjCheck(s)) return; // not a good source for obj
 
   cssTA* sp = (cssTA*)s.GetNonRefObj();
   taBase* obj = (taBase*)ptr;
-  obj->UnSafeCopy((taBase*)sp->GetNonRefPtr());
+  obj->Copy((taBase*)sp->GetVoidPtr());
+  UpdateClassParent();
+}
+
+void cssTA_Base::ArgCopy(const cssEl& s) {
+  if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
+    *this = s.GetStr();	// use string converter
+    UpdateClassParent();
+    return;
+  }
+  // if(!ROCheck()) return;
+  taBase* ths = GetTAPtr();
+  if(ptr_cnt > 0) {		// all ptrs get init here!
+    PtrAssignPtr(s);
+    if(ths)
+      type_def = ths->GetTypeDef();	// just to be sure
+    return;
+  }
+
+  // ptr_cnt == 0 -- initialize us from that guy
+  if(!cssTA_Base::AssignCheckSource(s)) return; // not a good source -- use our version  
+  if(!AssignObjCheck(s)) return; // not a good source for obj
+  cssTA* sp = (cssTA*)s.GetNonRefObj();
+  taBase* obj = (taBase*)ptr;
+  obj->Copy((taBase*)sp->GetVoidPtr());
   UpdateClassParent();
 }
 
@@ -711,7 +740,7 @@ void cssTA_Base::InitAssign(const cssEl& s) {
   }
   // if(!ROCheck()) return;
   taBase* ths = GetTAPtr();
-  if(ptr_cnt > 0) {
+  if(ptr_cnt > 0) {		// all ptrs get init here!
     PtrAssignPtr(s);
     if(ths)
       type_def = ths->GetTypeDef();	// just to be sure
@@ -794,8 +823,6 @@ cssEl* cssTA_Base::NewOpr() {
     cssMisc::Error(prog, "New token of type:", GetTypeName(), "could not be made");
     return &cssMisc::Void;
   }
-//NO!  taBase::Ref(nw);			// refer to this
-//BA 20080911 the call below also does its own Ref so we end up double-refing it!
   return new cssTA_Base((void*)nw, 1, type_def); // this guy points to it..
 }
 
@@ -805,8 +832,7 @@ void cssTA_Base::DelOpr() {
     cssMisc::Error(prog, "delete: NULL pointer");
     return;
   }
-  taBase::UnRef(ths);
-  ptr = NULL;			// no longer point to this..
+  taBase::DelPointer((taBase**)&ptr);
 }
 
 void cssTA_Base::InstallThis(cssProgSpace* ps) {
@@ -832,31 +858,49 @@ void cssTA_Base::InstallThis(cssProgSpace* ps) {
 // 		cssSmartRef
 ////////////////////////////////////////////////////////////////////////
 
-TypeDef* cssSmartRef::GetNonRefTypeDef() const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr || !sr->ptr()) return type_def;
-  return sr->ptr()->GetTypeDef();
-}
-
-int cssSmartRef::GetNonRefPtrCnt() const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr || !sr->ptr()) return 0;
-  return 1;			// we're basically a pointer to a ta base, not guy itself?
-}
-
-void* cssSmartRef::GetNonRefPtr() const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr || !sr->ptr()) return ptr;
-  return (void*)sr->ptr();
-}
-
-const char* cssSmartRef::GetTypeName() const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return "taSmartRef";
-  if(sr->ptr()) {
-    return sr->ptr()->GetTypeDef()->name;
+cssSmartRef::~cssSmartRef() {
+  if(cssref) {
+    cssEl::Done(cssref);
+    cssref = NULL;
   }
-  return cssTA::GetTypeName();
+}
+
+void cssSmartRef::UpdateCssRef() {
+  taSmartRef* sr = GetSmartRef();
+  taBase* srp = GetSmartRefPtr();
+  if(cssref && srp && cssref->ptr == srp && 
+     (cssref->GetNonRefTypeDef() == srp->GetTypeDef())) {
+    return;			// all set!
+  }
+  if(!sr || !srp) {
+    if(!cssref) {
+      cssref = new cssTA_Base(NULL, 1, &TA_taBase); // null guy
+      cssEl::Ref(cssref);
+    }
+    else if(cssref->ptr) {	// pointing to outdated
+      *cssref = (taBase*)NULL;
+    }
+    return;
+  }
+  // matrix is only special case guy at this point
+  if(srp->InheritsFrom(&TA_taMatrix)) {
+    if(!cssref || !cssref->IsTaMatrix()) {
+      if(cssref) cssEl::Done(cssref);
+      cssref = new cssTA_Matrix(srp, 1, srp->GetTypeDef());
+      cssEl::Ref(cssref);
+      return;
+    }
+  }
+  else {
+    if(!cssref || cssref->IsTaMatrix()) {	// not a matrix anymore
+      if(cssref) cssEl::Done(cssref);
+      cssref = new cssTA_Base(srp, 1, srp->GetTypeDef());
+      cssEl::Ref(cssref);
+      return;
+    }
+  }
+  cssref->type_def = srp->GetTypeDef(); // always set
+  *cssref = srp;
 }
 
 void cssSmartRef::Print(ostream& fh) const {
@@ -874,183 +918,53 @@ void cssSmartRef::PrintR(ostream& fh) const {
   }    
 }
 
-void cssSmartRef::TypeInfo(ostream& fh) const {
-  for(int i=1;i<ptr_cnt;i++) fh << "*"; // ptr cnt
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) { fh << "NULL cssSmartRef"; return; }
-  if(sr->ptr()) {
-    sr->ptr()->GetTypeDef()->OutputType(fh);
-    return;
-  }
-  cssTA::TypeInfo(fh);
-}
-
-void cssSmartRef::InheritInfo(ostream& fh) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) { fh << "NULL cssSmartRef"; return; }
-  if(sr->ptr()) {
-    sr->ptr()->GetTypeDef()->OutputInherit(fh);
-    return;
-  }
-  cssTA::InheritInfo(fh);
-}
-
-cssEl* cssSmartRef::GetToken(int idx) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return &cssMisc::Void;
-  if(sr->ptr()) {
-    void* rval = sr->ptr()->GetTypeDef()->tokens[idx];
-    return new cssTA(rval, 1, sr->ptr()->GetTypeDef());
-  }
-  return cssTA::GetToken(idx);
-}
-
-void cssSmartRef::TokenInfo(ostream& fh) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return;
-  if(sr->ptr()) {
-    sr->ptr()->GetTypeDef()->tokens.List(fh);
-  }
-  cssTA::TokenInfo(fh);
-}
-
-cssSmartRef::operator void*() const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return NULL;
-  return sr->ptr();
-}
-
-cssSmartRef::operator bool() const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return false;
-  return (bool)sr->ptr();
-}
-
 void* cssSmartRef::GetVoidPtrOfType(TypeDef* td) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return NULL;
-  if(sr->ptr()) {
-    return sr->ptr()->GetTypeDef()->GetParAddr(td, sr->ptr());
-  }
-  return cssTA::GetVoidPtrOfType(td);
+  if(td->InheritsFrom(&TA_taSmartRef)) return cssTA::GetVoidPtrOfType(td);
+  return cssref->GetVoidPtrOfType(td);
 }
 
 void* cssSmartRef::GetVoidPtrOfType(const String& td) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return NULL;
-  if(sr->ptr()) {
-    return sr->ptr()->GetTypeDef()->GetParAddr(td, sr->ptr());
-  }
-  return cssTA::GetVoidPtrOfType(td);
+  if(td == "taSmartRef") return cssTA::GetVoidPtrOfType(td);
+  return cssref->GetVoidPtrOfType(td);
 }  
 
-Variant cssSmartRef::GetVar() const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return _nilVariant;
-  if(sr->ptr()) {
-    return Variant(sr->ptr());
-  }
-  return cssTA::GetVar();
-}
-
-String cssSmartRef::GetStr() const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return "NULL";
-  if(sr->ptr()) {
-    return sr->ptr()->GetTypeDef()->GetValStr(sr->ptr());
-  }
-  return cssTA::GetStr();
-}
-
-cssSmartRef::operator taBase*() const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(sr && sr->ptr()) {
-    return sr->ptr();
-  }
-  return NULL;
-}
-
-void cssSmartRef::operator=(taBase* cp) {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return;
-  sr->set(cp);
-}
-
-void cssSmartRef::operator=(taBase** cp) {
-  if(!cp) {
-    cssMisc::Error(prog, "Failed to assign from taBase** -- pointer is NULL");
+void cssSmartRef::operator=(taBase* s) {
+  taSmartRef* sr = GetSmartRef();
+  if(!sr || !cssref) {			// we don't exist, set us??
+    cssTA::operator=(s);
+    UpdateCssRef();
     return;
   }
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) return;
-  sr->set(*cp);
-}
-
-void cssSmartRef::operator=(const String& s) {
-  type_def->SetValStr(s, GetVoidPtr());	// treats string as a path to object..
+  cssref->operator=(s);		// use the ref!
 }
 
 void cssSmartRef::operator=(const cssEl& s) {
-  // taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  // if(sr->ptr() && sr->ptr()->InheritsFrom(&TA_taMatrix))
-  PtrAssignPtr(s);		// this is the only copy op supported..
+  taSmartRef* sr = GetSmartRef();
+  if(!sr || !cssref) {			// we don't exist, set us??
+    cssTA::operator=(s);
+    UpdateCssRef();
+    return;
+  }
+  cssref->operator=(s);		// use the ref!
+}
+
+void cssSmartRef::ArgCopy(const cssEl& s) {
+  // todo: maybe do something more initializiation-y here???
+  taSmartRef* sr = GetSmartRef();
+  if(!sr || !cssref) {			// we don't exist, set us??
+    cssTA::operator=(s);
+    UpdateCssRef();
+    return;
+  }
+  cssref->operator=(s);		// use the ref!
 }
 
 void cssSmartRef::PtrAssignPtr(const cssEl& s) {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  // todo: do more stuff as in prior case!?
+  taSmartRef* sr = GetSmartRef();
   if(!sr) return;
   sr->set((taBase*)s);	// set as a taptr
-}
-
-void cssSmartRef::UpdateAfterEdit() {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(cssMisc::call_update_after_edit && sr->ptr()) {
-    sr->ptr()->UpdateAfterEdit();
-    return;
-  }
-  // nothing left to do: not avail: sr->UpdateAfterEdit();
-}
-
-cssEl* cssSmartRef::operator[](const Variant& i) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(sr->ptr())
-    return TAElem(sr->ptr(), i);
-  return cssTA::operator[](i);
-}
-
-cssEl* cssSmartRef::GetMemberFmName(const String& memb) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(sr->ptr())
-    return GetMemberFmName_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
-  return cssTA::GetMemberFmName(memb);
-}
-
-cssEl* cssSmartRef::GetMemberFmNo(int memb) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(sr->ptr())
-    return GetMemberFmNo_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
-  return cssTA::GetMemberFmNo(memb);
-}
-
-cssEl* cssSmartRef::GetMethodFmName(const String& memb) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(sr->ptr())
-    return GetMethodFmName_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
-  return cssTA::GetMethodFmName(memb);
-}
-
-cssEl* cssSmartRef::GetMethodFmNo(int memb) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(sr->ptr())
-    return GetMethodFmNo_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
-  return cssTA::GetMethodFmNo(memb);
-}
-
-cssEl* cssSmartRef::GetScoped(const String& memb) const {
-  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(sr->ptr())
-    return GetScoped_impl(sr->ptr()->GetTypeDef(), sr->ptr(), memb);
-  return cssTA::GetScoped(memb);
+  UpdateCssRef();
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1813,7 +1727,7 @@ void cssTA_Matrix::operator=(const cssEl& s) {
   }
   if(!ROCheck()) return;
   taMatrix* ths = GetMatrixPtr();
-  if(ptr_cnt > 0) {
+  if(ptr_cnt > 1) {		// only for ptr-ptr do we do ptr copy
     if(IsMatrix(s)) {
       PtrAssignPtr(s);
       taBase* nwths = GetTAPtr();
@@ -1828,7 +1742,7 @@ void cssTA_Matrix::operator=(const cssEl& s) {
     }
     return;
   }
-  if(IsMatrix(s)) {
+  if(IsMatrix(s)) {		// copy by value
     taMatrix* oth = MatrixPtr(s);
     if(oth) {
       ths->Copy(oth); // use generic copy matrix routine for this operator -- does the right thing..
@@ -2193,6 +2107,14 @@ cssEl* cssTA_Matrix::operator|| (cssEl& t) {
       if(rval) return new cssTA_Matrix(rval);
     }
   }
+  return &cssMisc::Void;
+}
+
+cssEl* cssTA_Matrix::operator! () {
+  taMatrix* ths = GetMatrixPtr();
+  if(!ths) return &cssMisc::Void;
+  taMatrix* rval = !*ths; // use matrix routine for this operator
+  if(rval) return new cssTA_Matrix(rval);
   return &cssMisc::Void;
 }
 

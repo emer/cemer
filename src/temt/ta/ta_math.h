@@ -746,25 +746,22 @@ public:
   // #IGNORE helper function to get a gsl-formatted vector from a one-dimensional ta matrix (vector)
 #endif
 
-  static int_Matrix* rc(int_Matrix* cr);
-  // #CAT_Matrix translate natural column, row indicies into row, column order, which is conventionally used for matrix math -- any higher dims are maintained as-is
-
   static bool mat_col(double_Matrix* col, const double_Matrix* mat, int col_no);
-  // #CAT_Matrix get indicated column number from two-d matrix
+  // #CAT_Matrix #NO_CSS_MATH get indicated column number (from two-d matrix
   static bool mat_row(double_Matrix* row, const double_Matrix* mat, int row_no);
-  // #CAT_Matrix get indicated row number from two-d matrix
+  // #CAT_Matrix #NO_CSS_MATH get indicated row number from two-d matrix
 
   static bool mat_add(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Matrix add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the + operator
+  // #CAT_Matrix #NO_CSS_MATH add the elements of matrix b to the elements of matrix a: a(i,j) += b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the + operator
   static bool mat_sub(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Matrix subtract the elements of matrix b to the elements of matrix a: a(i,j) -= b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the - operator
+  // #CAT_Matrix #NO_CSS_MATH subtract the elements of matrix b to the elements of matrix a: a(i,j) -= b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the - operator
   static bool mat_mult_els(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Matrix multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the * operator
+  // #CAT_Matrix #NO_CSS_MATH multiply the elements of matrix b with the elements of matrix a: a(i,j) *= b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the * operator
   static bool mat_div_els(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the / operator
+  // #CAT_Matrix #NO_CSS_MATH divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the / operator
 
   static bool mat_mult(double_Matrix* c, const double_Matrix* a, const double_Matrix* b);
-  // #CAT_Matrix matrix multiplication -- c = a * b -- number of columns of a must be same as number of rows of b, and vice-versa
+  // #CAT_Matrix #NO_CSS_MATH matrix multiplication (not element-wise -- see mat_mult_els) -- c = a * b -- number of columns of a must be same as number of rows of b, and vice-versa
 
   static bool mat_eigen_owrite(double_Matrix* A, double_Matrix* eigen_vals, double_Matrix* eigen_vecs);
   // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a square symmetric n x n matrix. the matrix is overwritten by the operation.  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already. eigens are sorted from highest to lowest by magnitude (absolute value)
@@ -783,12 +780,12 @@ public:
                       int y_component = 1);
   // perform multidimensional scaling of matrix A (must be square symmetric matrix, e.g., a distance matrix), returning two-dimensional coordinates that best capture the distance relationships among the items (rows, columns) in x,y coordinates using specified components -- first copies the matrix A so it is not overwritten
   static bool mat_transpose(double_Matrix* dest, double_Matrix* src);
-  // #CAT_Matrix transpose a 2d matrix
+  // #CAT_Matrix #NO_CSS_MATH transpose a 2d matrix
    static bool mat_slice(double_Matrix* dest, double_Matrix* src, int d0_start = 0, int d0_end = -1, int d1_start = 0, int d1_end = -1);
-  // #CAT_Matrix See http://en.wikipedia.org/wiki/Array_slicing. Copies a 2d slice out of the first 2 dimensions of src into dest. If d0_end or d1_end are -1 (default) they will be set to the size of that dimension. See also taDataProc::Slice2D.
+  // #CAT_Matrix #NO_CSS_MATH See http://en.wikipedia.org/wiki/Array_slicing. Copies a 2d slice out of the first 2 dimensions of src into dest. If d0_end or d1_end are -1 (default) they will be set to the size of that dimension. See also taDataProc::Slice2D.
   static bool mat_trim(double_Matrix* dest, double_Matrix* src, Relation& thresh, int intol_within = 0, int intol_between = 0,
                        bool left = true, bool right = true, bool top = true, bool bottom = true);
-  // #CAT_Matrix Trim all consecutive rows/columns starting from top, bottom, left and/or right that satisfy thresh. The intolerance params control how greedy the threshold operation is. intol_within controls how many values in this row/col that don't satisfy thresh can be found and the row/col will still be trimmed. intol_between controls how many consecutive rows/cols that don't satisfy thresh can be found, followed by a row/col that DOES satisfy thresh, that will still be trimmed. Returns false if the entire matrix matches so be sure to check the return value.
+  // #CAT_Matrix #NO_CSS_MATH Trim all consecutive rows/columns starting from top, bottom, left and/or right that satisfy thresh. The intolerance params control how greedy the threshold operation is. intol_within controls how many values in this row/col that don't satisfy thresh can be found and the row/col will still be trimmed. intol_between controls how many consecutive rows/cols that don't satisfy thresh can be found, followed by a row/col that DOES satisfy thresh, that will still be trimmed. Returns false if the entire matrix matches so be sure to check the return value.
 
   /////////////////////////////////////////////////////////////////////////////////
   // higher-dimensional matrix frame-based operations (matrix = collection of matricies)
@@ -1622,5 +1619,49 @@ public:
 };
 
 
+class cssMath : public taMath_double {
+  // css specific math operations, including all of taMath_double -- this is parsed to provide css math functionality
+INHERITED(taMath_double)
+public:
+  // extra functions that return matrix objects (standard for taMath is to always pass matrix objects as args, which avoids all the associated memory management issues)
+
+  static int_Matrix* rc(const int_Matrix* cr);
+  // #CAT_Matrix translate natural column, row indicies into row, column order, which is conventionally used for matrix math -- any higher dims are maintained as-is
+  static int ndims(const taMatrix* mat);
+  // #CAT_Matrix returns number of dimensions of given matrix
+  static int ndim(const taMatrix* mat) { return ndims(mat); }
+  // #CAT_Matrix returns number of dimensions of given matrix
+  static int_Matrix* shape(const taMatrix* mat);
+  // #CAT_Matrix returns shape (geometry, size along each dimension) of the matrix
+  static double_Matrix* zeros(const int_Matrix* shape);
+  // #CAT_Matrix returns a matrix of geometry (shape) given by shape argument (containing x,y,z,... dimension sizes) of floating point numbers all initialized to 0
+  static double_Matrix* ones(const int_Matrix* shape);
+  // #CAT_Matrix returns a matrix of geometry (shape) given by shape argument (containing x,y,z,... dimension sizes) of floating point numbers all initialized to 1
+  static double_Matrix* eye(int size);
+  // #CAT_Matrix returns a square 2D matrix of given size of floating point numbers, initialized to the identity matrix (1s along the diagonal, 0's elsewhere)
+  static double_Matrix* rand(const int_Matrix* shape);
+  // #CAT_Matrix returns a matrix of geometry (shape) given by shape argument (containing x,y,z,... dimension sizes) of floating point numbers all initialized to uniform random numbers between 0 and 1, exclusive of 1
+  static double_Matrix* diag(const double_Matrix* mat, int mat_zero=-1);
+  // #CAT_Matrix if mat_zero == 0, then returns a 2D square diagonal matrix whose diagonal elements are all the elements of the given matrix (treated like a simple vector of numbers), otherwise returns a 1D matrix (vector) containing the diagonal elements of given matrix
+  static double_Matrix* linspace(double start, double end, int n_vals);
+  // #CAT_Matrix returns a 1D matrix (vector) containing n_vals linearly spaced values between start and end
+  static double_Matrix* meshgrid(const slice_Matrix* dims);
+  // #CAT_Matrix returns an n-dimensional matrix from slice inputs that specify start, end, and increment spacing for values along each dimension -- defaults for unspecified slice values are start=0:end=start+100:step=1
+  static double_Matrix* mat_mult_css(const double_Matrix* a, const double_Matrix* b);
+  // #CAT_Matrix #LABEL_mat_mult matrix multiplication (not element-wise -- see mat_mult_els) -- c = a * b -- number of columns of a must be same as number of rows of b, and vice-versa
+  static double_Matrix* dot(const double_Matrix* a, const double_Matrix* b)
+  { return mat_mult_css(a, b); }
+  // #CAT_Matrix matrix multiplication (not element-wise -- see mat_mult_els) -- c = a * b -- number of columns of a must be same as number of rows of b, and vice-versa
+  static int_Matrix* find(const byte_Matrix* mat);
+  // #CAT_Matrix (synonym for nonzero) returns a 1D matrix of coordinates into given matrix mat for all values that are non-zero -- the resulting coordinates can be used as a more efficient view onto a matrix of the same shape (the original matrix can also be used directly as a mask view, but it is less efficient, especially as the number of non-zero values is relatively small
+  static int_Matrix* nonzero(const byte_Matrix* mat) { return find(mat); }
+  // #CAT_Matrix (synonym for find) returns a 1D matrix of coordinates into given matrix mat for all values that are non-zero -- the resulting coordinates can be used as a more efficient view onto a matrix of the same shape (the original matrix can also be used directly as a mask view, but it is less efficient, especially as the number of non-zero values is relatively small
+  
+
+  TA_ABSTRACT_BASEFUNS_NOCOPY(cssMath);
+private:
+  void Initialize() { };
+  void Destroy() { };
+};
 
 #endif // TA_MATH_H
