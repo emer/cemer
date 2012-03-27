@@ -302,9 +302,9 @@ public:
 //   // #CAT_Arithmetic return next largest distinct floating point number after x in direction of y
 
   static double  min(double x, double y) { return (x < y) ? x : y; }
-  // #CAT_Arithmetic minimum of x and y
+  // #CAT_Arithmetic #NO_CSS_MATH minimum of x and y
   static double  max(double x, double y) { return (x > y) ? x : y; }
-  // #CAT_Arithmetic maximum of x and y
+  // #CAT_Arithmetic #NO_CSS_MATH maximum of x and y
 
   static double ceil(double x) { return std::ceil(x); }
   // #CAT_Arithmetic ceiling of x: next largest integer value from x
@@ -316,9 +316,9 @@ public:
   // #CAT_Arithmetic round value to an integer using current rounding direction
 
   static double fmod(double x, double y) { return std::fmod(x, y); }
-  // #CAT_Arithmetic floating-point modulus function: remainder of x / y
+  // #CAT_Arithmetic #CSS_MATRIX_ARG_1 floating-point modulus function: remainder of x / y
   static double quantize(double x, double grid) { return floor(x / grid) * grid; }
-  // #CAT_Arithmetic quantize the value of x to be an integer multiple of grid size value
+  // #CAT_Arithmetic #CSS_MATRIX_ARG_1 quantize the value of x to be an integer multiple of grid size value
 
   /////////////////////////////////////////////////////////////////////////////////
   // ExpLog: exponential and logarithmic functions
@@ -327,7 +327,7 @@ public:
   // #CAT_Trigonometry #READ_ONLY e: the natural exponential number
 
   static double pow(double x, double p) { return std::pow(x, p); }
-  // #CAT_ExpLog x to the power p (x^p)
+  // #CAT_ExpLog #CSS_MATRIX_ARG_1 x to the power p (x^p)
   static double sqrt(double x) { return std::sqrt(x); }
   // #CAT_ExpLog square root of x (i.e., x^1/2)
   static double exp(double x) { return std::exp(x); }
@@ -344,10 +344,10 @@ public:
   // #CAT_ExpLog The logarithm of x, base 2
   static double logistic(double x, double gain=1.0, double off=0.0)
   { return 1.0 / (1.0 + exp(-gain*(x-off))); }
-  // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off)))
+  // #CAT_ExpLog #CSS_MATRIX_ARG_1 logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off)))
   static double logistic_fast(double x, double gain=1.0, double off=0.0)
   { return 1.0 / (1.0 + exp_fast(-gain*(x-off))); }
-  // #CAT_ExpLog logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off))) -- using exp_fast function
+  // #CAT_ExpLog #CSS_MATRIX_ARG_1 logistic (sigmoid) function of x: 1/(1 + e^(-gain*(x-off))) -- using exp_fast function
 
   /////////////////////////////////////////////////////////////////////////////////
   // Trigonometry
@@ -1625,14 +1625,14 @@ INHERITED(taMath_double)
 public:
   // extra functions that return matrix objects (standard for taMath is to always pass matrix objects as args, which avoids all the associated memory management issues)
 
-  static int_Matrix* rc(const int_Matrix* cr);
-  // #CAT_Matrix translate natural column, row indicies into row, column order, which is conventionally used for matrix math -- any higher dims are maintained as-is
   static int ndims(const taMatrix* mat);
   // #CAT_Matrix returns number of dimensions of given matrix
   static int ndim(const taMatrix* mat) { return ndims(mat); }
   // #CAT_Matrix returns number of dimensions of given matrix
   static int_Matrix* shape(const taMatrix* mat);
   // #CAT_Matrix returns shape (geometry, size along each dimension) of the matrix
+  static taMatrix* flatten(const taMatrix* mat);
+  // #CAT_Matrix returns elements of matrix, filtered according to current view, as a 1D vector list of values
   static double_Matrix* zeros(const int_Matrix* shape);
   // #CAT_Matrix returns a matrix of geometry (shape) given by shape argument (containing x,y,z,... dimension sizes) of floating point numbers all initialized to 0
   static double_Matrix* ones(const int_Matrix* shape);

@@ -1384,7 +1384,7 @@ cssEl* cssElCFun::CallFun(int act_argc, cssEl* args[]) {
 cssEl* cssElCFun::CallFunMatrixArgs(int act_argc, cssEl* args[]) { 
   cssEl* matarg = args[itr_arg];
   cssEl* rval = NULL;
-  taMatrix* mat = ((cssTA_Matrix*)matarg)->GetMatrixPtr();
+  taMatrix* mat = ((cssTA_Matrix*)matarg->GetNonRefObj())->GetMatrixPtr();
   if(!mat) {
     cssMisc::Error(prog, "CallFunMatrixArgs: argument is NULL matrix");
     return &cssMisc::Void;
@@ -1618,7 +1618,7 @@ cssEl* cssMbrCFun::CallFun(int act_argc, cssEl* args[]) {
 cssEl* cssMbrCFun::CallFunMatrixArgs(int act_argc, cssEl* args[]) { 
   cssEl* matarg = args[itr_arg];
   cssEl* rval = NULL;
-  taMatrix* mat = ((cssTA_Matrix*)matarg)->GetMatrixPtr();
+  taMatrix* mat = ((cssTA_Matrix*)matarg->GetNonRefObj())->GetMatrixPtr();
   if(!mat) {
     cssMisc::Error(prog, "CallFunMatrixArgs: argument is NULL matrix");
     return &cssMisc::Void;

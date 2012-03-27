@@ -939,6 +939,7 @@ public:
   cssTypes	GetPtrType() const	{ return ptr.El()->GetPtrType(); }
   const char*	GetTypeName() const	{ return ptr.El()->GetTypeName(); }
   cssEl*	GetTypeObject() const	{ return ptr.El()->GetTypeObject(); }
+  bool		IsTaMatrix() const	{ return ptr.El()->IsTaMatrix(); }
   int		IsRef()	const		{ return true; }
   bool		IsStringType() const   	{ return ptr.El()->IsStringType(); }
   bool		IsNumericTypeStrict() const { return ptr.El()->IsNumericTypeStrict(); }

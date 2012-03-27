@@ -206,6 +206,7 @@ public:
   void 		Print(ostream& fh = cout) const;
   void 		PrintR(ostream& fh = cout) const;	// recursive
 
+  bool		IsTaMatrix() const	{ return cssref->IsTaMatrix(); }
   cssTypes 	GetType() const		{ return cssref->GetType(); }
   cssTypes	GetPtrType() const	{ return cssref->GetPtrType(); }
   const char*	GetTypeName() const	{ return cssref->GetTypeName(); }
@@ -266,7 +267,7 @@ public:
 
   void UpdateAfterEdit()	{ cssref->UpdateAfterEdit(); }
 
-  bool	MembersDynamic()	{ return true; }
+  bool	 MembersDynamic()	{ return true; }
   int	 GetMemberNo(const String& memb) const { return -1; } // never static lookup
   cssEl* GetMemberFmNo(int s) const  		{ return cssref->GetMemberFmNo(s); }
   cssEl* GetMemberFmName(const String& s) const { return cssref->GetMemberFmName(s); }
@@ -568,6 +569,7 @@ public:
   cssEl* operator*(cssEl& t);
   cssEl* operator/(cssEl& t);
   cssEl* operator%(cssEl& t);
+  cssEl* operator^(cssEl& s);
 
   cssEl* operator-();
   cssEl* operator*()		{ return cssTA_Base::operator*(); }

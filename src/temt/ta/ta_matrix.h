@@ -50,6 +50,7 @@ class MatrixTableModel; //
 // forwards this file
 class taMatrix_PList;
 class int_Matrix;
+class slice_Matrix;
 class byte_Matrix; //
 class voidptr_Matrix; //
 class float_Matrix; //
@@ -880,20 +881,39 @@ public:
 
   virtual taMatrix* operator=(const Variant& t);
 
-  virtual taMatrix* operator+(const taMatrix& t);
-  virtual taMatrix* operator+(const Variant& t);
+  virtual taMatrix* operator+(const taMatrix& t) const;
+  virtual taMatrix* operator+(const Variant& t) const;
 
-  virtual taMatrix* operator-(const taMatrix& t);
-  virtual taMatrix* operator-(const Variant& t);
+  virtual taMatrix* operator-(const taMatrix& t) const;
+  virtual taMatrix* operator-(const Variant& t) const;
 
-  virtual taMatrix* operator*(const taMatrix& t);
-  virtual taMatrix* operator*(const Variant& t);
+  virtual taMatrix* operator*(const taMatrix& t) const;
+  virtual taMatrix* operator*(const Variant& t) const;
 
-  virtual taMatrix* operator/(const taMatrix& t);
-  virtual taMatrix* operator/(const Variant& t);
+  virtual taMatrix* operator/(const taMatrix& t) const;
+  virtual taMatrix* operator/(const Variant& t) const;
 
-  virtual taMatrix* operator%(const taMatrix& t);
-  virtual taMatrix* operator%(const Variant& t);
+  virtual taMatrix* operator%(const taMatrix& t) const;
+  virtual taMatrix* operator%(const Variant& t) const;
+
+  virtual taMatrix* operator^(const taMatrix& t) const;
+  virtual taMatrix* operator^(const Variant& t) const;
+
+  virtual taMatrix* operator-() const;
+
+  virtual taMatrix* Max(const taMatrix& t) const;
+  // returns new matrix which is max of elements in two matricies
+  virtual taMatrix* Max(const Variant& t) const;
+  // returns new matrix which is max of elements and given value
+  virtual Variant   Max() const;
+  // returns maximum value in matrix
+
+  virtual taMatrix* Min(const taMatrix& t) const;
+  // returns new matrix which is min of elements in two matricies
+  virtual taMatrix* Min(const Variant& t) const;
+  // returns new matrix which is min of elements and given value
+  virtual Variant   Min() const;
+  // returns minimum value in matrix
 
   virtual void      operator+=(const taMatrix& t);
   virtual void      operator+=(const Variant& t);
@@ -910,35 +930,41 @@ public:
   virtual void      operator%=(const taMatrix& t);
   virtual void      operator%=(const Variant& t);
 
-  virtual taMatrix* operator-();
-
   // boolean operators return a byte_Matrix
 
-  virtual taMatrix* operator<(const taMatrix& t);
-  virtual taMatrix* operator<(const Variant& t);
+  virtual taMatrix* operator<(const taMatrix& t) const;
+  virtual taMatrix* operator<(const Variant& t) const;
 
-  virtual taMatrix* operator>(const taMatrix& t);
-  virtual taMatrix* operator>(const Variant& t);
+  virtual taMatrix* operator>(const taMatrix& t) const;
+  virtual taMatrix* operator>(const Variant& t) const;
 
-  virtual taMatrix* operator<=(const taMatrix& t);
-  virtual taMatrix* operator<=(const Variant& t);
+  virtual taMatrix* operator<=(const taMatrix& t) const;
+  virtual taMatrix* operator<=(const Variant& t) const;
 
-  virtual taMatrix* operator>=(const taMatrix& t);
-  virtual taMatrix* operator>=(const Variant& t);
+  virtual taMatrix* operator>=(const taMatrix& t) const;
+  virtual taMatrix* operator>=(const Variant& t) const;
 
-  virtual taMatrix* operator==(const taMatrix& t);
-  virtual taMatrix* operator==(const Variant& t);
+  virtual taMatrix* operator==(const taMatrix& t) const;
+  virtual taMatrix* operator==(const Variant& t) const;
 
-  virtual taMatrix* operator!=(const taMatrix& t);
-  virtual taMatrix* operator!=(const Variant& t);
+  virtual taMatrix* operator!=(const taMatrix& t) const;
+  virtual taMatrix* operator!=(const Variant& t) const;
 
-  virtual taMatrix* operator&&(const taMatrix& t);
-  virtual taMatrix* operator&&(const Variant& t);
+  virtual taMatrix* operator&&(const taMatrix& t) const;
+  virtual taMatrix* operator&&(const Variant& t) const;
 
-  virtual taMatrix* operator||(const taMatrix& t);
-  virtual taMatrix* operator||(const Variant& t);
+  virtual taMatrix* operator||(const taMatrix& t) const;
+  virtual taMatrix* operator||(const Variant& t) const;
 
-  virtual taMatrix* operator!();
+  virtual taMatrix* operator!() const;
+
+  virtual taMatrix* Flatten() const;
+  // #CAT_Create returns a flat, 1D list of values in the matrix, subject to filtering by the current view -- this is how to finally extract a subset of values from a view, instead of just continuing to filter the original items
+  virtual int_Matrix* Find() const;
+  // #CAT_Matrix (synonym for nonzero) returns a 1D matrix of coordinates into given matrix for all values that are non-zero -- the resulting coordinates can be used as a more efficient view onto a matrix of the same shape (the original matrix can also be used directly as a mask view, but it is less efficient, especially as the number of non-zero values is relatively small
+  inline int_Matrix* NonZero() const { return Find(); }
+  // #CAT_Matrix (synonym for find) returns a 1D matrix of coordinates into given matrix for all values that are non-zero -- the resulting coordinates can be used as a more efficient view onto a matrix of the same shape (the original matrix can also be used directly as a mask view, but it is less efficient, especially as the number of non-zero values is relatively small
+
 
 protected:
   override void         UpdateAfterEdit_impl();

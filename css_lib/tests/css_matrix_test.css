@@ -1,24 +1,52 @@
-// load "../css_lib/css_matrix_test.css"
+// test of special css matrix functionality -- see 'Matrix css' wiki page
+// to load from dev build:
+// load "../css_lib/tests/css_matrix_test.css"
 
-a = [1.0, 2.0, 3.0; 4.0, 5.0, 6.0];
+a = [1., 2., 3.; 4., 5., 6.];
 printf("a:\n", a);
-b = [a, a];
+
+// standard functions per the table in Matrix css page
+printf("ndims(a):\n", ndims(a));
+printf("shape(a):\n", shape(a));
+printf("a[1,0]:\n", a[1,0]);
+printf("a[:,0]:\n", a[:,0]);
+printf("a[0:2:1,:]:\n", a[0:2:1,:]);
+
+b = [1., 2., 3.; 4., 5., 6.];
+b = 3;
+printf("a=3:\n", b);
+
+b = [10,20,30];
+
+printf("a = [10,20,30]:\n", b);
+
+printf("[a,a; a,a]:\n", [a,a; a,a]);
+
+printf("a+a:\n", a+a);
+
+b = [1., 2.; 3., 4.; 5., 6.];
 printf("b:\n", b);
-c = [1, 2, 3; 4, 5, 6; 7, 8, 9];
-printf("c:\n", c);
-d = [c, c];
-printf("d:\n", d);
-e = [c, c, c];
-printf("e:\n", e);
-printf("e[:,0,0]\n", e[:,0,0]);
-printf("e[0,:,0]\n", e[0,:,0]);
-printf("e[0,0,:]\n", e[0,0,:]);
-f = [e, e];
-printf("f:\n", f);
+
+printf("mat_mult(a,b):\n", mat_mult(a,b));
+
+printf("max(a):\n", max(a), "\n");
+printf("max(a,2):\n", max(a,2));
 
 printf("cos(a):\n", cos(a));
-printf("cos(a[0,:]):\n", cos(a[0,:]));
+printf("pow(a,3):\n", pow(a,3));
+printf("a^3:\n", a^3);
 
-String_Matrix sa;
-sa = a;
-printf("sa: ", sa);
+printf("a>3:\n", a>3);
+printf("a[a>3]:\n", a[a>3]);
+printf("find(a>3):\n", find(a>3));
+printf("flatten(a[a>3]):\n", flatten(a[a>3]));
+
+printf("zeros([4,3]):\n", zeros([4,3]));
+printf("eye(3):\n", eye(3));
+printf("diag(a,0):\n", diag(a,0));
+printf("diag(diag(a,0),1):\n", diag(diag(a,0),1));
+printf("rand([4,3]):\n", rand([4,3]));
+
+printf("linspace(1,3,3):\n", linspace(1,3,3));
+printf("meshgrid([0:3, 0:2]):\n", meshgrid([0:3, 0:2]));
+

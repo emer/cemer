@@ -449,7 +449,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     TypeDef* td = NULL;
     for(int i=1; i<=na; i++) {
       if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
-      taMatrix* mat = ((cssTA_Matrix*)arg[i])->GetMatrixPtr();
+      taMatrix* mat = ((cssTA_Matrix*)arg[i]->GetNonRefObj())->GetMatrixPtr();
       if(!mat) {
 	cssMisc::Error(cp, "make_matrix: Error in constructing matrix from sub-matricies: sub matrix is null!");
 	return &cssMisc::Void;
@@ -477,14 +477,14 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
       }
     }
     mg.AddDim(mat_dims);	// add another dimension with number of items
-    taMatrix* tmat = ((cssTA_Matrix*)arg[1])->GetMatrixPtr();
+    taMatrix* tmat = ((cssTA_Matrix*)arg[1]->GetNonRefObj())->GetMatrixPtr();
     taMatrix* rmat = (taMatrix*)tmat->MakeToken();
     rval = new cssTA_Matrix(rmat);
     rmat->SetGeomN(mg);
     int c=0;
     for(int i=1; i<=na; i++) {
       if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
-      taMatrix* mat = ((cssTA_Matrix*)arg[i])->GetMatrixPtr();
+      taMatrix* mat = ((cssTA_Matrix*)arg[i]->GetNonRefObj())->GetMatrixPtr();
       rmat->CopyFrame(*mat, c++);
     }
   }
@@ -1524,11 +1524,90 @@ static cssEl* cssElCFun_srand48_stub(int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
-static cssEl* cssElCFun_max_stub(int, cssEl* arg[]) {
-  return (*(arg[1]) > *(arg[2])) ? arg[1] : arg[2];
+static cssEl* cssElCFun_max_stub(int na, cssEl* arg[]) {
+  if(arg[1]->IsTaMatrix()) {
+    taMatrix* mat1 = cssTA_Matrix::MatrixPtr(*arg[1]);
+    if(!mat1) {
+      cssMisc::Error(arg[0]->prog, "max: first matrix arg is NULL");
+      return &cssMisc::Void;
+    }
+    if(na == 1) {
+      return cssEl::GetElFromVar(mat1->Max(), _nilString);
+    }
+    if(arg[2]->IsTaMatrix()) {
+      taMatrix* mat2 = cssTA_Matrix::MatrixPtr(*arg[2]);
+      if(!mat2) {
+	cssMisc::Error(arg[0]->prog, "max: second matrix arg is NULL");
+	return &cssMisc::Void;
+      }
+      return new cssTA_Matrix(mat1->Max(*mat2));
+    }
+    else {
+      return new cssTA_Matrix(mat1->Max(arg[2]->GetVar()));
+    }
+  }
+  else {
+    if(na != 2) {
+      cssMisc::Error(arg[0]->prog, "max: requires 2 arguments");
+      return &cssMisc::Void;
+    }
+    return (*(arg[1]) > *(arg[2])) ? arg[1] : arg[2];
+  }
 }
-static cssEl* cssElCFun_min_stub(int, cssEl* arg[]) {
-  return (*(arg[1]) < *(arg[2])) ? arg[1] : arg[2];
+
+static cssEl* cssElCFun_min_stub(int na, cssEl* arg[]) {
+  if(arg[1]->IsTaMatrix()) {
+    taMatrix* mat1 = cssTA_Matrix::MatrixPtr(*arg[1]);
+    if(!mat1) {
+      cssMisc::Error(arg[0]->prog, "min: first matrix arg is NULL");
+      return &cssMisc::Void;
+    }
+    if(na == 1) {
+      return cssEl::GetElFromVar(mat1->Min(), _nilString);
+    }
+    if(arg[2]->IsTaMatrix()) {
+      taMatrix* mat2 = cssTA_Matrix::MatrixPtr(*arg[2]);
+      if(!mat2) {
+	cssMisc::Error(arg[0]->prog, "min: second matrix arg is NULL");
+	return &cssMisc::Void;
+      }
+      return new cssTA_Matrix(mat1->Min(*mat2));
+    }
+    else {
+      return new cssTA_Matrix(mat1->Min(arg[2]->GetVar()));
+    }
+  }
+  else {
+    if(na != 2) {
+      cssMisc::Error(arg[0]->prog, "min: requires 2 arguments");
+      return &cssMisc::Void;
+    }
+    return (*(arg[1]) < *(arg[2])) ? arg[1] : arg[2];
+  }
+}
+
+static cssEl* cssElCFun_rc_stub(int na, cssEl* arg[]) {
+  if(na == 1 && arg[1]->IsTaMatrix()) {
+    taMatrix* cr = cssTA_Matrix::MatrixPtr(*arg[1]);
+    if(!cr || cr->size < 2) {
+      cssMisc::Error(arg[0]->prog, "rc: input matrix NULL or does not have at least 2 indicies");
+      return &cssMisc::Void;
+    }
+    int_Matrix* rval = (int_Matrix*)cr->Clone();
+    rval->FastEl_Flat(0) = cr->FastElAsVar_Flat(1).toInt(); // swap'em
+    rval->FastEl_Flat(1) = cr->FastElAsVar_Flat(0).toInt();
+    return new cssTA_Matrix(rval);
+  }
+  else if(na == 1) {
+    cssMisc::Error(arg[0]->prog, "rc: single argument must be a matrix");
+    return &cssMisc::Void;
+  }
+  int_Matrix* rval = new int_Matrix(1, na);
+  rval->FastEl_Flat(0) = (int)*arg[2];
+  rval->FastEl_Flat(1) = (int)*arg[1];
+  for(int i=2;i<na; i++) 
+    rval->FastEl_Flat(i) = (int)*arg[i+1];
+  return new cssTA_Matrix(rval);
 }
 
 //////////////////////////////////
@@ -1609,12 +1688,16 @@ static void Install_Math() {
 //   cssMisc::Functions.Push(cssBI::power = new cssElCFun(2, cssRealFun_pow_stub, "pow", CSS_FUN,
 // "(Real x, y) Returns x to the y power.  This can also be expressed in CSS as x ^ y."));
 
-  cssElCFun_inst_nm(cssMisc::Functions, max, 2, "MAX", CSS_FUN,
-		    "(x,y) Works like the commonly-used #define macro that gives the maximum\
- of the two given arguments.  The return type is that of the\
- maximum-valued argument.");
-  cssElCFun_inst_nm(cssMisc::Functions, min, 2, "MIN", CSS_FUN,
-		    "(x,y) Just like MAX, except it returns the minimum of the two given arguments.");
+  cssElCFun_inst_nm(cssMisc::Functions, max, cssEl::VarArg, "max", CSS_FUN,
+		    "(x[,y]) Returns the maximum value -- if one arg that is a matrix, returns maximum value in matrix.  if 1 matrix and a scalar, or 2 matricies, returns matrix with element-wise max.  if 2 scalars, returns max of the two values.");
+  cssElCFun_inst_nm(cssMisc::Functions, min, cssEl::VarArg, "min", CSS_FUN,
+		    "(x,y) Returns the minimum value -- if one arg that is a matrix, returns minimum value in matrix.  if 1 matrix and a scalar, or 2 matricies, returns matrix with element-wise min.  if 2 scalars, returns min of the two values.");
+  cssElCFun_inst_nm(cssMisc::Functions, max, cssEl::VarArg, "MAX", CSS_FUN,
+		    "(x[,y]) Returns the maximum value -- if one arg that is a matrix, returns maximum value in matrix.  if 1 matrix and a scalar, or 2 matricies, returns matrix with element-wise max.  if 2 scalars, returns max of the two values.");
+  cssElCFun_inst_nm(cssMisc::Functions, min, cssEl::VarArg, "MIN", CSS_FUN,
+		    "(x,y) Returns the minimum value -- if one arg that is a matrix, returns minimum value in matrix.  if 1 matrix and a scalar, or 2 matricies, returns matrix with element-wise min.  if 2 scalars, returns min of the two values.");
+  cssElCFun_inst_nm(cssMisc::Functions, rc, cssEl::VarArg, "rc", CSS_FUN,
+		    "(r,c,..|[r,c,..]) Returns indexes with row and column inputs switched -- c,r -- converts from mathematical matrix standard of r,c to natural Matrix access standard of c,r (x,y).");
 
   cssConstReal_inst_nm(cssMisc::Constants, 3.14159265358979323846,  "PI"   );
 //   cssConstReal_inst(cssMisc::Constants, 2.71828182845904523536,  E     );

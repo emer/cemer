@@ -6182,17 +6182,6 @@ void Random::Copy_(const Random& cp){
 /////////////////////////////////////////////////////////
 //  	cssMath functions
 
-int_Matrix* cssMath::rc(const int_Matrix* cr) {
-  if(!cr || cr->size < 2) {
-    taMisc::Error("rc -- input matrix NULL or does not have at least 2 indicies");
-    return NULL;
-  }
-  int_Matrix* rval = (int_Matrix*)cr->Clone();
-  rval->FastEl_Flat(0) = cr->FastEl_Flat(1); // swap'em
-  rval->FastEl_Flat(1) = cr->FastEl_Flat(0);
-  return rval;
-}
-
 int cssMath::ndims(const taMatrix* cr) {
   if(!cr) {
     taMisc::Error("ndims -- input matrix NULL");
@@ -6207,6 +6196,14 @@ int_Matrix* cssMath::shape(const taMatrix* cr) {
     return NULL;
   }
   return cr->Shape();
+}
+
+taMatrix* cssMath::flatten(const taMatrix* mat) {
+  if(!mat) {
+    taMisc::Error("flatten -- matrix is NULL");
+    return NULL;
+  }
+  return mat->Flatten();
 }
 
 double_Matrix* cssMath::zeros(const int_Matrix* shape) {
@@ -6352,23 +6349,5 @@ int_Matrix* cssMath::find(const byte_Matrix* mat) {
     taMisc::Error("find -- matrix is NULL");
     return NULL;
   }
-  
-  int n_nonz = 0;
-  for(int i=0;i<mat->size;i++) {
-    if(mat->FastEl_Flat(i) != 0) n_nonz++;
-  }
-
-  int dm = mat->dims();
-  MatrixIndex sidx;				   // slice idx
-  int_Matrix* rval = new int_Matrix(2, dm, n_nonz);
-  int cnt = 0;
-  for(int i=0;i<mat->size;i++) {
-    if(mat->FastEl_Flat(i) == 0) continue;
-    mat->geom.DimsFmIndex(i, sidx);
-    for(int d=0; d<dm; d++) {
-      rval->FastEl(d,cnt) = sidx[d];
-    }
-    cnt++;
-  }
-  return rval;
+  return mat->Find();
 }
