@@ -2170,10 +2170,7 @@ bool taImageProc::BlobBlurOcclude(float_Matrix& img, float pct_occlude,
   return true;
 }
 
-bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig, bool fix_contrast, int_Matrix* bubble_coords) {
-
-  float old_contrast;
-
+bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig, float_Matrix* foreground, int_Matrix* bubble_coords) {
   // floor value for mask
   float floor_thr=pow(10.0f, -8.0f);
 
@@ -2207,11 +2204,6 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
       ndgridx.FastEl(xi, yi) = (float)xi;
       ndgridy.FastEl(xi, yi) = (float)yi;
     }
-  }
-  
-  // save old contrast
-  if(fix_contrast) {
-	  old_contrast = taMath_float::vec_std_dev(&img);
   }
 
   // apply bubbles to the mask
@@ -2250,22 +2242,28 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
   // floor anything in mask below floor thresh
   taMath_float::vec_threshold_low(&mask, floor_thr, 0.0f);
 
-  // combine the image and background using the mask as a weighting matrix
-  float brd_clr[3];
-  GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
-  float clr = brd_clr[0];   // just use first dim for gray
+  // combine the image and foreground using the mask as a weighting matrix  
+  // if foreground is null, just use a blank image with border color
+  float_Matrix fg;
+  if(foreground == NULL) {
+    float brd_clr[3];
+    GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2]);
+	fg.SetGeom(2, img_size.x, img_size.y);
+	  for(int yi=0; yi< img_size.y; yi++) {
+   		 for(int xi=0; xi< img_size.x; xi++) {
+		      fg.FastEl(xi, yi) = brd_clr[0];
+    	 }
+      }
+  }
   for(int yi=0; yi< img_size.y; yi++) {
         for(int xi=0; xi< img_size.x; xi++) {
           float &img_iv = img.FastEl(xi, yi);
           float mask_iv = mask.FastEl(xi, yi);
-          img_iv = mask_iv*img_iv + (1.0f-mask_iv)*clr;
+          float foreground_iv;
+          if(foreground == NULL) {  foreground_iv = fg.FastEl(xi, yi); }
+          else { foreground_iv = foreground->FastEl(xi, yi); }
+          img_iv = mask_iv*img_iv + (1.0f-mask_iv)*foreground_iv;
         }
-  }
-  
-  // if fix_contrast, calculate new contrast and change
-  if(fix_contrast) {
-	  float new_contrast = taMath_float::vec_std_dev(&img);
-	  AdjustContrast(img, old_contrast/new_contrast);
   }
   
   return true;
