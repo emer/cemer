@@ -262,7 +262,7 @@ public:
   void operator=(const String& s)	{ cssref->operator=(s); }
   void operator=(const cssEl& s);
   void operator=(taBase*);
-  void operator=(taBase** s)		{ cssref->operator=(s); }
+  void operator=(taBase**);
   USING(cssTA::operator=)
 
   void CastFm(const cssEl& cp)	{ ArgCopy(cp); }

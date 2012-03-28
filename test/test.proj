@@ -598,16 +598,27 @@ LeabraProject .projects["LeabraProject_0"] {
 	float_Matrix @["tst_flt"] { };
       };
 
-      ProgType_List @.types = [0] {
+      ProgType_List @.types = [1] {
+	DynEnumType @["DebugLevels"] { 
+	  DynEnumItem_List @.enums = [3] {
+	    DynEnumItem @["LEVEL1"] { };
+	    DynEnumItem @["LEVEL2"] { };
+	    DynEnumItem @["LEVEL3"] { };
+	  };
+	};
       };
 
       ProgVar_List @.args = [0] {
       };
 
-      ProgVar_List @.vars = [3] {
+      ProgVar_List @.vars = [7] {
 	ProgVar @["tst_dbl"] { };
 	ProgVar @["tst_flt"] { };
 	ProgVar @["index"] { };
+	ProgVar @["debug_level"] { };
+	ProgVar @["level1_mask"] { };
+	ProgVar @["level2_mask"] { };
+	ProgVar @["level3_mask"] { };
       };
 
       Function_List @.functions = [0] {
@@ -616,7 +627,7 @@ LeabraProject .projects["LeabraProject_0"] {
       ProgEl_List @.init_code = [0] {
       };
 
-      ProgEl_List @.prog_code = [11] {
+      ProgEl_List @.prog_code = [13] {
 	LocalVars @[0] { 
 	  ProgVar_List @.local_vars = [1] {
 	    ProgVar @["sum"] { };
@@ -638,16 +649,18 @@ LeabraProject .projects["LeabraProject_0"] {
 	  };
 	};
 	AssignExpr @[4] { };
-	MethodCall @[5] { 
+	AssignExpr @[5] { };
+	MethodCall @[6] { 
 	  ProgArg_List @.meth_args = [1] {
 	    ProgArg @[0] { };
 	  };
 	};
-	VarIncr @[6] { };
-	AssignExpr @[7] { };
-	PrintVar @[8] { };
-	ProgCode @[9] { };
-	UserScript @[10] { };
+	VarIncr @[7] { };
+	AssignExpr @[8] { };
+	PrintVar @[9] { };
+	PrintVar @[10] { };
+	PrintVar @[11] { };
+	UserScript @[12] { };
       };
     };
     Program_Group @.gp["LeabraAll_Std"] = [10] { 
@@ -2078,7 +2091,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 			 <li id=\"ca-delete\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/ccnlab/index.php/Special:MovePage/CtLeabra_XCAL_Params\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=0c562748ba959f3c45e07d1fa04d9ea5%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=2a14fac54cc49f78ceacf7f3b800170d%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -2846,7 +2859,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 15 June 2010, at 09:46.</span>
-			<span id=\"f-viewcount\">This page has been accessed 811 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 814 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -2860,9 +2873,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 <script>if(window.mw){
 	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":\"1\",\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"30\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 	\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"nickname\":\"\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"\"});;},{\"all\":
-	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"8b484837dcd310c5987bee5f5dee8e3c+\\\\\",\"watchToken\":\"49188ad8ab29448cee2b3ce7b59e1036+\\\\\"});;},{},{});
+	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"2c0c3beda53d5ac92fe7ccab5267720e+\\\\\",\"watchToken\":\"539386b8bf9319d04c6181ddfe10aa0e+\\\\\"});;},{},{});
 	
-	/* cache key: ccnlab:resourceloader:filter:minify-js:5:56c5ccb62995954c4fe2bc13ffa75761 */
+	/* cache key: ccnlab:resourceloader:filter:minify-js:5:073d48fb7802ad2b03688456712a5d5d */
 }
 </script>
 
@@ -2892,7 +2905,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.279 secs. -->
+<!-- Served in 0.263 secs. -->
 
 
 
@@ -6154,6 +6167,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+     nogui=0;
     };
     Comment @[72] {
      desc="== Save trial log -- OFF by default ==";
@@ -6263,6 +6279,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+     nogui=0;
     };
     OtherProgramVar @[76] {
      desc="propagate the tag";
@@ -6959,6 +6978,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+     nogui=0;
     };
    };
    step_prog=NULL;
@@ -6985,8 +7007,33 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
    };
    types {
     name="ProgType_List_0";
-    el_typ=ProgType;
+    el_typ=DynEnumType;
     el_def=0;
+    DynEnumType @["DebugLevels"] {
+     name="DebugLevels";
+     desc=;
+     enums {
+      name="DynEnumItem_List_0";
+      el_typ=DynEnumItem;
+      el_def=0;
+      DynEnumItem @["LEVEL1"] {
+       name="LEVEL1";
+       value=1;
+       desc=;
+      };
+      DynEnumItem @["LEVEL2"] {
+       name="LEVEL2";
+       value=2;
+       desc=;
+      };
+      DynEnumItem @["LEVEL3"] {
+       name="LEVEL3";
+       value=4;
+       desc=;
+      };
+     };
+     bits=1;
+    };
    };
    args {
     name="ProgVar_List_0";
@@ -7025,6 +7072,58 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      int_val=0;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["debug_level"] {
+     name="debug_level";
+     var_type=T_DynEnum;
+     dyn_enum_val {
+      enum_type=.projects["LeabraProject_0"].programs["MatrixTest"].types["DebugLevels"]$$;
+      value=4;
+     };
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["level1_mask"] {
+     name="level1_mask";
+     var_type=T_DynEnum;
+     dyn_enum_val {
+      enum_type=$.projects["LeabraProject_0"].programs["MatrixTest"].types["DebugLevels"]$;
+      value=1;
+     };
+     objs_ptr=0;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["level2_mask"] {
+     name="level2_mask";
+     var_type=T_DynEnum;
+     dyn_enum_val {
+      enum_type=$.projects["LeabraProject_0"].programs["MatrixTest"].types["DebugLevels"]$;
+      value=2;
+     };
+     objs_ptr=0;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["level3_mask"] {
+     name="level3_mask";
+     var_type=T_DynEnum;
+     dyn_enum_val {
+      enum_type=$.projects["LeabraProject_0"].programs["MatrixTest"].types["DebugLevels"]$;
+      value=4;
+     };
+     objs_ptr=0;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -7131,15 +7230,23 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
     };
     AssignExpr @[4] {
      desc=;
-     flags=OFF;
+     flags=0;
+     result_var=$.projects["LeabraProject_0"].programs["MatrixTest"].vars["tst_flt"]$;
+     expr {
+      expr="zeros([3,3])";
+     };
+    };
+    AssignExpr @[5] {
+     desc=;
+     flags=0;
      result_var=$.projects["LeabraProject_0"].programs["MatrixTest"].vars["tst_flt"]$;
      expr {
       expr="[[1,3,5]; [2,2,2]; [5,4,9]]";
      };
     };
-    MethodCall @[5] {
+    MethodCall @[6] {
      desc=;
-     flags=0;
+     flags=OFF;
      result_var=NULL;
      obj=$.projects["LeabraProject_0"].programs["MatrixTest"].vars["tst_flt"]$;
      method=taBase::CopyFrom;
@@ -7159,7 +7266,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       };
      };
     };
-    VarIncr @[6] {
+    VarIncr @[7] {
      desc=;
      flags=OFF;
      var=$.projects["LeabraProject_0"].programs["MatrixTest"].vars["tst_flt"]$;
@@ -7167,7 +7274,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       expr="[[1,3,5]; [2,2,2]; [5,4,9]]";
      };
     };
-    AssignExpr @[7] {
+    AssignExpr @[8] {
      desc=;
      flags=0;
      result_var=.projects["LeabraProject_0"].programs["MatrixTest"].prog_code[0].local_vars["sum"]$$;
@@ -7175,25 +7282,49 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       expr="vec_sum(tst_flt)";
      };
     };
-    PrintVar @[8] {
+    PrintVar @[9] {
      desc=;
      flags=0;
-     message=;
+     message="level1";
      print_var=$.projects["LeabraProject_0"].programs["MatrixTest"].prog_code[0].local_vars["sum"]$;
      print_var2=NULL;
      print_var3=NULL;
      print_var4=NULL;
      print_var5=NULL;
      print_var6=NULL;
+     my_mask=.projects["LeabraProject_0"].programs["MatrixTest"].vars["level1_mask"]$$;
+     debug_level=.projects["LeabraProject_0"].programs["MatrixTest"].vars["debug_level"]$$;
+     nogui=0;
     };
-    ProgCode @[9] {
+    PrintVar @[10] {
      desc=;
      flags=0;
-     code {
-      expr=;
-     };
+     message="level2";
+     print_var=$.projects["LeabraProject_0"].programs["MatrixTest"].prog_code[0].local_vars["sum"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=.projects["LeabraProject_0"].programs["MatrixTest"].vars["level2_mask"]$$;
+     debug_level=$.projects["LeabraProject_0"].programs["MatrixTest"].vars["debug_level"]$;
+     nogui=0;
     };
-    UserScript @[10] {
+    PrintVar @[11] {
+     desc=;
+     flags=0;
+     message="level3";
+     print_var=$.projects["LeabraProject_0"].programs["MatrixTest"].prog_code[0].local_vars["sum"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=.projects["LeabraProject_0"].programs["MatrixTest"].vars["level3_mask"]$$;
+     debug_level=$.projects["LeabraProject_0"].programs["MatrixTest"].vars["debug_level"]$;
+     nogui=0;
+    };
+    UserScript @[12] {
      desc=;
      flags=0;
      script {

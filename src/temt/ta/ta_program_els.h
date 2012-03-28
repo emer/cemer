@@ -672,6 +672,9 @@ public:
   ProgVarRef		print_var4; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		print_var5; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		print_var6; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
+  ProgVarRef		my_mask; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set for when to actually print this information, in comparison to the current debug_level variable -- if any flags match, then it will be printed
+  ProgVarRef		debug_level; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set, indicating the current desired debugging level 
+  bool			nogui;		// #DEF_false print information when running in nogui mode -- typically not as useful, so default is not to
   
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);
@@ -696,6 +699,9 @@ INHERITED(ProgEl)
 public:
   ProgExpr		expr;
   // print out (to console) this expression -- it just does 'cerr << expr << endl;' so you can put multiple << segments in the expression to print out multiple things -- you DO need to include quotes around strings!
+  ProgVarRef		my_mask; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set for when to actually print this information, in comparison to the current debug_level variable -- if any flags match, then it will be printed
+  ProgVarRef		debug_level; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set, indicating the current desired debugging level 
+  bool			nogui;		// #DEF_false print information when running in nogui mode -- typically not as useful, so default is not to
   
   override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
   override bool		CvtFmCode(const String& code);

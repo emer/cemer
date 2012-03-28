@@ -1896,6 +1896,7 @@ bool MiscCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 //////////////////////////
 
 void PrintVar::Initialize() {
+  nogui = false;
 }
 
 void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -1906,6 +1907,9 @@ void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
 void PrintVar::GenCssBody_impl(Program* prog) {
   if(message.empty() && !print_var && !print_var2 && !print_var3 && !print_var4 && !print_var5 && !print_var6)
     return;
+  if(!nogui && !taMisc::gui_active) // don't generate anything
+    return;
+
   String rval = "cerr ";
   if(message.nonempty()) 
     rval += "<< \"" + message + "\"";
@@ -1922,8 +1926,19 @@ void PrintVar::GenCssBody_impl(Program* prog) {
   if((bool)print_var6)
     rval += "<< \"  " + print_var6->name + " = \" << " + print_var6->name;
   rval += " << endl;";
-  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
-  prog->AddVerboseLine(this);
+
+  if(my_mask && debug_level) {
+    prog->AddLine(this, "if(" + my_mask->name + " & " + debug_level->name + ") {");
+    prog->IncIndent();
+    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
+    prog->DecIndent();
+    prog->AddLine(this, "}");
+  }
+  else {
+    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
+  }
 }
 
 String PrintVar::GetDisplayName() const {
@@ -2010,6 +2025,7 @@ bool PrintVar::CvtFmCode(const String& code) {
 //////////////////////////
 
 void PrintExpr::Initialize() {
+  nogui = false;
 }
 
 void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -2018,10 +2034,23 @@ void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void PrintExpr::GenCssBody_impl(Program* prog) {
+  if(!nogui && !taMisc::gui_active) // don't generate anything
+    return;
   expr.ParseExpr();		// re-parse just to be sure!
-  prog->AddLine(this, String("cerr << ") + expr.GetFullExpr() + " << endl;",
-		ProgLine::MAIN_LINE);
-  prog->AddVerboseLine(this);
+  String rval = String("cerr << ") + expr.GetFullExpr() + " << endl;";
+
+  if(my_mask && debug_level) {
+    prog->AddLine(this, "if(" + my_mask->name + " & " + debug_level->name + ") {");
+    prog->IncIndent();
+    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
+    prog->DecIndent();
+    prog->AddLine(this, "}");
+  }
+  else {
+    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
+  }
 }
 
 String PrintExpr::GetDisplayName() const {

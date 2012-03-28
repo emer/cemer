@@ -940,37 +940,43 @@ void* cssSmartRef::GetVoidPtrOfType(const String& td) const {
 
 void cssSmartRef::operator=(taBase* s) {
   taSmartRef* sr = GetSmartRef();
-  if(!sr || !cssref) {			// we don't exist, set us??
-    cssTA::operator=(s);
-    UpdateCssRef();
+  if(!sr) return;		// nothing to do
+  sr->set(s);			// for direct tabase init, always set pointer
+  UpdateCssRef();
+}
+
+void cssSmartRef::operator=(taBase** cp) {
+  if(!cp) {
+    cssMisc::Error(prog, "Failed to assign from taBase** -- pointer is NULL");
     return;
   }
-  cssref->operator=(s);		// use the ref!
+  taSmartRef* sr = GetSmartRef();
+  if(!sr) return;
+  sr->set(*cp);
+  UpdateCssRef();
 }
 
 void cssSmartRef::operator=(const cssEl& s) {
   taSmartRef* sr = GetSmartRef();
-  if(!sr || !cssref) {			// we don't exist, set us??
-    cssTA::operator=(s);
-    UpdateCssRef();
-    return;
+  if(!sr) return;
+  if(cssref && cssref->IsTaMatrix()) { // matrix has value semantics
+    if(sr->ptr()) {
+      cssref->operator=(s);		// use the ref -- will use value semantic copy
+    }
+    else {
+      PtrAssignPtr(s);		// set our pointer
+    }
   }
-  cssref->operator=(s);		// use the ref!
+  else {
+    PtrAssignPtr(s);		// just update the ref pointer for all other cases -- no value copy semantics
+  }
 }
 
 void cssSmartRef::ArgCopy(const cssEl& s) {
-  // todo: maybe do something more initializiation-y here???
-  taSmartRef* sr = GetSmartRef();
-  if(!sr || !cssref) {			// we don't exist, set us??
-    cssTA::operator=(s);
-    UpdateCssRef();
-    return;
-  }
-  cssref->operator=(s);		// use the ref!
+  PtrAssignPtr(s);		// always just set pointer in all cases
 }
 
 void cssSmartRef::PtrAssignPtr(const cssEl& s) {
-  // todo: do more stuff as in prior case!?
   taSmartRef* sr = GetSmartRef();
   if(!sr) return;
   sr->set((taBase*)s);	// set as a taptr
