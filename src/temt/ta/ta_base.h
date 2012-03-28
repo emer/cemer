@@ -725,7 +725,7 @@ public:
     // #CAT_Access #EXPERT View of list -- matrix that specifies a subset of items to view, for display and other kinds of functions
     virtual IndexMode     ElViewMode() const  { return IDX_UNK; }
     // #CAT_Access #EXPERT View mode for view of list -- specifies what kind of view data there is, for display and other kinds of functions -- only valid cases are IDX_COORDS or IDX_MASK, or IDX_UNK if no view specified
-    virtual int		  ElemCount() const  { return -1; }
+    virtual int		  ElemCount() const  { return 0; }
     // #CAT_Access #EXPERT number of elements in the container -- used for iteration control
   virtual int	        IterCount() const; 
   // #CAT_Access how many items will be iterated over if we iterate through this container -- this is fast for no view and IDX_COORDS views and slow (requiring summing over mask) for IDX_MASK views

@@ -1414,7 +1414,7 @@ cssEl* cssElCFun::CallFunListArgs(int act_argc, cssEl* args[]) {
     return &cssMisc::Void;
   }
   int ic = bs->IterCount();
-  if(ic <= 0) {
+  if(ic <= 0 || ic > 100000) {	// todo: have a settings cutoff here
     // just run on guy itself
     cssEl* tmp = (*funp)(act_argc, args);
     return tmp;
@@ -1648,7 +1648,7 @@ cssEl* cssMbrCFun::CallFunListArgs(int act_argc, cssEl* args[]) {
     return &cssMisc::Void;
   }
   int ic = bs->IterCount();
-  if(ic <= 0) {
+  if(ic <= 0 || ic > 100000) {	// todo: have a settings cutoff here
     // just run on guy itself
     cssEl* tmp = (*funp)(ths, act_argc, args);
     return tmp;

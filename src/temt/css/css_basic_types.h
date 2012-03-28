@@ -55,7 +55,14 @@ public:
   operator Int() const	 	{ return val; }
   operator bool() const	 	{ return val; }
 
-  void* 	NullPtrCvt(const String& typ_nm)	const { if(val != 0) CvtErr(typ_nm); return NULL; }
+  // allow NULL, which is an int, to convert to a NULL of any type..
+  override void* GetVoidPtrOfType(TypeDef* td) const
+  { if(val!=0) CvtErr(td->name); return NULL; }
+  override void* GetVoidPtrOfType(const String& td) const
+  { if(val!=0) CvtErr(td); return NULL; }
+
+  void* 	NullPtrCvt(const String& typ_nm) const
+  { if(val!=0) CvtErr(typ_nm); return NULL; }
 
   operator void*() const	{ return NullPtrCvt("(void*)"); }
   operator void**() const	{ return (void**)NullPtrCvt("(void**)"); }

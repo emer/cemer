@@ -326,7 +326,7 @@ void cssTA::operator=(const cssEl& s) {
     return;
   }
   if(!ROCheck()) return;
-  if(ptr_cnt > 1) {		// only for ptr-ptr
+  if(ptr_cnt > 0) {		// assume mostly reference/pointer semantics
     PtrAssignPtr(s);
     return;
   }
@@ -605,7 +605,7 @@ void cssTA_Base::operator=(void** cp) {
 }
 
 void cssTA_Base::operator=(taBase* cp) {
-  if((ptr_cnt <= 1) && ptr) {	// value copy..
+  if((ptr_cnt == 0) && ptr) {	// value copy..
     if(!ptr) {
       cssMisc::Error(prog,  "Failed to assign taBase object of type:", GetTypeName(),
 		     "our ptr is NULL");
@@ -620,6 +620,11 @@ void cssTA_Base::operator=(taBase* cp) {
     obj->Copy(cp);
     UpdateClassParent();
   }
+  if(ptr_cnt == 1) {
+    taBase::SetPointer((taBase**)&ptr, cp); // always use set pointer for ta base!
+    if(ptr)
+      type_def = ((taBase*)ptr)->GetTypeDef();
+  }
   else if(ptr_cnt == 2) {
     PtrAssignPtrPtr(cp);
   }
@@ -630,7 +635,7 @@ void cssTA_Base::operator=(taBase** cp) {
     cssMisc::Error(prog, "Failed to assign from taBase** -- pointer is NULL");
     return;
   }
-  if((ptr_cnt <= 1) && ptr) {
+  if((ptr_cnt == 0) && ptr) {
     if(!ptr) {
       cssMisc::Error(prog,  "Failed to assign taBase object of type:", GetTypeName(),
 		     "our ptr is NULL");
@@ -644,6 +649,11 @@ void cssTA_Base::operator=(taBase** cp) {
     taBase* obj = (taBase*)ptr;
     obj->Copy(*cp);
     UpdateClassParent();
+  }
+  if(ptr_cnt == 1) {
+    taBase::SetPointer((taBase**)&ptr, *cp); // always use set pointer!
+    if(ptr)
+      type_def = ((taBase*)ptr)->GetTypeDef();
   }
   else if(ptr_cnt == 2) {
     ptr = cp;
@@ -691,7 +701,7 @@ void cssTA_Base::operator=(const cssEl& s) {
     return;
   }
   if(!ROCheck()) return;
-  if(ptr_cnt > 1) {		// only for ptr-ptr do we do ptr copy
+  if(ptr_cnt > 0) {		// assume reference/ptr semantics
     PtrAssignPtr(s);
     taBase* ths = GetTAPtr();
     if(ths)
@@ -1727,18 +1737,12 @@ void cssTA_Matrix::operator=(const cssEl& s) {
   }
   if(!ROCheck()) return;
   taMatrix* ths = GetMatrixPtr();
-  if(ptr_cnt > 1) {		// only for ptr-ptr do we do ptr copy
+  if(!ths || ptr_cnt > 1) {	// if our ptr is null, we need to set it, otherwise use value copy -- only reset pointer if ptr ptr
     if(IsMatrix(s)) {
       PtrAssignPtr(s);
       taBase* nwths = GetTAPtr();
       if(nwths)
 	type_def = nwths->GetTypeDef();	// just to be sure
-    }
-    else {
-      Variant ovar = s.GetVar();
-      if(!ovar.isInvalid()) {
-	*ths = ovar; // use matrix routine for this operator
-      }
     }
     return;
   }

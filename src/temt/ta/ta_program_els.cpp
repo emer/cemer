@@ -1489,8 +1489,16 @@ void MemberAssign::GenCssBody_impl(Program* prog) {
   else {
     opath = obj->name;
   }
+  opath = trim(opath);
   String fpath = opath + "->" + path_term;
-  prog->AddLine(this, "set(" + opath + ", \"" + path_term + "\", " + expr.GetFullExpr() + ");", ProgLine::MAIN_LINE);
+  String rval;
+  if(opath.endsWith(']')) {	// itr expression
+    rval = "set(" + opath + ", \"" + path_term + "\", " + expr.GetFullExpr() + ");";
+  }
+  else {
+    rval = fpath + " = " + expr.GetFullExpr() + ";";
+  }
+  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   if (update_after) {
     prog->AddLine(this, obj->name + "->UpdateAfterEdit();");
     if(path_term != path) {
@@ -1679,24 +1687,34 @@ void MemberMethodCall::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, "// WARNING: MemberMethodCall not generated here -- obj or method not specified");
     return;
   }
-  
+
   String rval;
   if(result_var)
     rval += result_var->name + " = ";
-  rval += "call(" + obj->name;
-  if(path.startsWith('['))
-    rval += path;
-  else
-    rval += "->" + path;
-  rval += ", \"" + method->name + "\"";
-  if(meth_args.size > 0) {
-    String targs = meth_args.GenCssArgs();
-    rval += ", " + targs.after('(');
+
+  if(path.endsWith(']')) {    // is using list comprehension access of some sort
+    // use call to iterate over elements on the list
+    rval += "call(" + obj->name;
+    if(path.startsWith('['))
+      rval += path;
+    else
+      rval += "->" + path;
+    rval += ", \"" + method->name + "\"";
+    if(meth_args.size > 0) {
+      String targs = meth_args.GenCssArgs();
+      rval += ", " + targs.after('(');
+    }
+    else {
+      rval += ")";
+    }
+    rval += ";";
   }
   else {
-    rval += ")";
+    rval += obj->name + "->" + path + "->";
+    rval += method->name;
+    rval += meth_args.GenCssArgs();
+    rval += ";";
   }
-  rval += ";";
 
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);

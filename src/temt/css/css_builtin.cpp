@@ -323,7 +323,8 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
   int n_colons = 0;
   int n_commas = 0;
   for(int i=1; i<=na; i++) {
-    if(arg[i] == cssBI::semicolon_mark) {
+    cssEl* aobj = arg[i]->GetActualObj();
+    if(aobj == cssBI::semicolon_mark) {
       if(sc_geom > 0 && sc_geom != sc_ctr+1) {
 	cssMisc::Error(cp, "make_matrix: Error in constructing matrix -- number of elements per semicolon is variable -- must be constant!");
 	return &cssMisc::Void;
@@ -333,17 +334,17 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
       n_semicolons++;
       continue;
     }
-    if(arg[i] == cssBI::comma_mark) {
+    if(aobj == cssBI::comma_mark) {
       sc_ctr++;
       n_commas++;	
     }
-    else if(arg[i] == cssBI::colon_mark) {
+    else if(aobj == cssBI::colon_mark) {
       n_colons++;	
     }
-    else if(arg[i]->GetType() == cssEl::T_Int) n_int++;
-    else if(arg[i]->GetType() == cssEl::T_Real) n_real++;
-    else if(arg[i]->GetType() == cssEl::T_String) n_string++;
-    else if(arg[i]->IsTaMatrix()) n_matrix++;
+    else if(aobj->GetPtrType() == cssEl::T_Int) n_int++;
+    else if(aobj->GetPtrType() == cssEl::T_Real) n_real++;
+    else if(aobj->GetPtrType() == cssEl::T_String) n_string++;
+    else if(aobj->IsTaMatrix()) n_matrix++;
   }
 
   cssTA_Matrix* rval = NULL;

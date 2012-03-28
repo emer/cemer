@@ -27,8 +27,13 @@
 //		Assignment semantics
 //
 // ArgCopy (InitAssign): initialize pointer if ptr_cnt > 0, else copy contents
-// operator= : copy contents except ptr_cnt = 2 (ptr ptr)
-// 
+// for most taBase, we assume more "structure" / reference semantics and that
+// assignment in context of css is typically for pointer assignment, so 
+// operator= : pointer assign except for ptr_cnt == 0
+//
+// however, for taMatrix, which have more "value" semantics like an int or float
+// we override to use contents copy except for ptr_cnt == 2 (ptr ptr)
+//
 
 class CSS_API cssTA : public cssCPtr {
   // a pointer that has a TA TypeDef associated with it: uses type info to perform ops 
