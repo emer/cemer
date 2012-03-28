@@ -803,7 +803,12 @@ void String::error(const char* msg) const {
 #include <QRegExp>
 
 bool String::matches_wildcard(const String& wild) const {
+#if (QT_VERSION >= 0x040600)
   QRegExp re(wild, Qt::CaseSensitive, QRegExp::WildcardUnix);
+#else
+  QRegExp re(wild, Qt::CaseSensitive, QRegExp::Wildcard);
+#endif
+
   return re.exactMatch(*this);
 }
 
