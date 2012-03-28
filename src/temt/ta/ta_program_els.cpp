@@ -1899,6 +1899,15 @@ void PrintVar::Initialize() {
   nogui = false;
 }
 
+void PrintVar::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  Program* my_prog = program();
+  if(!my_prog) return;
+  if(!debug_level) {
+    debug_level = my_prog->vars.FindName("debug_level"); 
+  }
+}
+
 void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   //  CheckError(!print_var, quiet, rval, "print_var is NULL");
@@ -1957,6 +1966,10 @@ String PrintVar::GetDisplayName() const {
     rval += " " + print_var5->name;
   if((bool)print_var6)
     rval += " " + print_var6->name;
+
+  if(debug_level && my_mask) {
+    rval += " (dbg mask: " + my_mask->name + ")";
+  }
   return rval;
 }
 
@@ -2028,6 +2041,15 @@ void PrintExpr::Initialize() {
   nogui = false;
 }
 
+void PrintExpr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  Program* my_prog = program();
+  if(!my_prog) return;
+  if(!debug_level) {
+    debug_level = my_prog->vars.FindName("debug_level"); 
+  }
+}
+
 void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   expr.CheckConfig(quiet, rval);
@@ -2056,6 +2078,9 @@ void PrintExpr::GenCssBody_impl(Program* prog) {
 String PrintExpr::GetDisplayName() const {
   String rval;
   rval += "Print: " + expr.GetFullExpr();
+  if(debug_level && my_mask) {
+    rval += " (dbg mask: " + my_mask->name + ")";
+  }
   return rval;
 }
 
