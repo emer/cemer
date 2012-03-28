@@ -91,7 +91,7 @@ void WtScaleSpecInit::Initialize() {
 void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.25f;
-  dwt_norm = false;
+  dwt_norm = true;
 }
 
 void WtSigSpec::UpdateAfterEdit_impl() {
@@ -266,6 +266,7 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
       if(lrate == 0.01f)
         lrate = 0.02f;          // also important
     }
+    wt_sig.dwt_norm = true;	// definitely default for xcal
   }
   else {
     if(wt_sig.off == 1.0f)

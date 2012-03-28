@@ -184,7 +184,7 @@ INHERITED(SpecMemberBase)
 public:
   float		gain;		// #DEF_1;6 #MIN_0 gain (contrast, sharpness) of the weight contrast function (1 = linear)
   float		off;		// #DEF_1:1.25 #MIN_0 offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.0 for XCAL
-  bool		dwt_norm;	// normalize weight changes -- this is somewhat computationally expensive but can make learning more robust -- dwt -= (act_p / sum act_p) (sum dwt) over projection
+  bool		dwt_norm;	// #DEF_true normalize weight changes -- this adds a small amount of computational cost but generally makes learning more robust -- dwt -= (act_p / sum act_p) (sum dwt) over projection
 
   static inline float	SigFun(float w, float gn, float of) {
     if(w <= 0.0f) return 0.0f;
