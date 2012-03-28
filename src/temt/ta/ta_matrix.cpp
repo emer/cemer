@@ -3432,6 +3432,47 @@ taMatrix* taMatrix::Flatten() const {
     }
     return rval;
   }
+  else if(GetDataValType() == VT_VARIANT) {
+    // first go through and flatten any sub-matricies!
+    taMatrix* tmp_mat = (taMatrix*)Clone(); // we store modified vals in here
+    taBase::Ref(tmp_mat);
+    int nc = 0;			// new count with flattend submatricies
+    TA_FOREACH_INDEX(i, *this) {
+      Variant var = tmp_mat->FastElAsVar_Flat(i);
+      if(var.isMatrixType()) {
+	taMatrix* smat = var.toMatrix();
+	if(smat->ElView()) {	// it is a view
+	  taMatrix* flmat = smat->Flatten(); // flatten it!
+	  nc += flmat->size;
+	  tmp_mat->SetFmVar_Flat((Variant)flmat, i); // replace
+	}
+	else {
+	  nc += smat->size;	// keep
+	}
+      }
+      else {
+	nc++;			// just another item
+      }
+    }
+
+    taMatrix* rval = (taMatrix*)MakeToken();
+    rval->SetGeom(1, nc);
+    TA_FOREACH_INDEX(i, *this) {
+      Variant var = tmp_mat->FastElAsVar_Flat(i);
+      if(var.isMatrixType()) {
+	taMatrix* smat = var.toMatrix(); // we know it is already flat
+	for(int j=0; j < smat->size; j++) {
+	  Variant fitm = smat->FastElAsVar_Flat(j);
+	  rval->SetFmVar_Flat(fitm, cnt++);
+	}
+      }
+      else {
+	rval->SetFmVar_Flat(var, cnt++);
+      }
+    }
+    taBase::UnRef(tmp_mat);
+    return rval;
+  }
   else {			// use variants -- no need to optimize
     taMatrix* rval = (taMatrix*)MakeToken();
     rval->SetGeom(1, ic);

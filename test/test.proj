@@ -59,7 +59,7 @@ LeabraProject .projects["LeabraProject_0"] {
 
   DataTable_Group @.data = [0] {
     DataTable_Group @.gp["InputData"] = [1] { 
-      DataTable @["random_5x5_25"] { 
+      DataTable @["StdInputData"] { 
 	DataTableCols @.data = [3] {
 	  String_Data @["Name"] { };
 	  float_Data @["Input"] { };
@@ -2091,7 +2091,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 			 <li id=\"ca-delete\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/ccnlab/index.php/Special:MovePage/CtLeabra_XCAL_Params\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=2a14fac54cc49f78ceacf7f3b800170d%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=f4596872bd66e9d35d8a2c5ae73acbea%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -2859,7 +2859,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 15 June 2010, at 09:46.</span>
-			<span id=\"f-viewcount\">This page has been accessed 814 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 816 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -2873,9 +2873,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 <script>if(window.mw){
 	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":\"1\",\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"30\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 	\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"nickname\":\"\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"\"});;},{\"all\":
-	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"2c0c3beda53d5ac92fe7ccab5267720e+\\\\\",\"watchToken\":\"539386b8bf9319d04c6181ddfe10aa0e+\\\\\"});;},{},{});
+	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"b7cfb65f7569e0bb009b1d0b1782b307+\\\\\",\"watchToken\":\"343dfcc3b2b34bc22e07cc11b0b6c479+\\\\\"});;},{},{});
 	
-	/* cache key: ccnlab:resourceloader:filter:minify-js:5:073d48fb7802ad2b03688456712a5d5d */
+	/* cache key: ccnlab:resourceloader:filter:minify-js:5:994838ee5d629d74c3ed7d244f0b55bf */
 }
 </script>
 
@@ -2905,7 +2905,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.263 secs. -->
+<!-- Served in 0.276 secs. -->
 
 
 
@@ -3187,7 +3187,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
     };
     EditMbrItem @[16] {
      label="BottomUpCons wt sig";
-     desc=" sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative<br>  gain: [Default: 1;6]  gain (contrast, sharpness) of the weight contrast function (1 = linear)<br>  off: [Default: 1:1.25]  offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.0 for XCAL<br>  dwt norm:  normalize weight changes -- this is somewhat computationally expensive but can make learning more robust -- dwt -= (act_p / sum act_p) (sum dwt) over projection";
+     desc=" sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative<br>  gain: [Default: 1;6]  gain (contrast, sharpness) of the weight contrast function (1 = linear)<br>  off: [Default: 1:1.25]  offset of the function (1=centered at .5, >1=higher, <1=lower) -- 1.25 is standard for Leabra CHL, 1.0 for XCAL<br>  dwt norm: [Default: true]  normalize weight changes -- this adds a small amount of computational cost but generally makes learning more robust -- dwt -= (act_p / sum act_p) (sum dwt) over projection";
      cust_desc=0;
      base=$.projects["LeabraProject_0"].networks["MultiHiddenNet"].specs["BottomUpCons"]$;
      mbr=LeabraConSpec::wt_sig;
@@ -3335,8 +3335,8 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
    name="InputData";
    el_typ=DataTable;
    el_def=0;
-   DataTable @["random_5x5_25"] {
-    name="random_5x5_25";
+   DataTable @["StdInputData"] {
+    name="StdInputData";
     desc=;
     data {
      name="data";
@@ -4945,7 +4945,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      name="input_data";
      var_type=T_Object;
      object_type=DataTable;
-     object_val=.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"]$$;
+     object_val=.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"]$$;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
@@ -5180,6 +5180,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      expr {
       expr="\"Loaded project: \" << .projects[0].file_name";
      };
+     my_mask=NULL;
+     debug_level=NULL;
+     nogui=0;
     };
     MethodCall @[3] {
      desc="initialize process hierarchy prior to setting variables, etc";
@@ -6299,6 +6302,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      expr {
       expr="\"Running: \" << batch.name";
      };
+     my_mask=NULL;
+     debug_level=NULL;
+     nogui=0;
     };
     ProgramCall @[78] {
      desc=;
@@ -7376,7 +7382,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"]$;
+      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7792,7 +7798,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"]$;
+      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8154,6 +8160,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
+	my_mask=NULL;
+	debug_level=NULL;
+	nogui=0;
        };
       };
      };
@@ -8258,6 +8267,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
+	my_mask=NULL;
+	debug_level=NULL;
+	nogui=0;
        };
       };
       false_code {
@@ -8513,7 +8525,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"]$;
+      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8919,7 +8931,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"]$;
+      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9215,7 +9227,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"]$;
+      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9613,7 +9625,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
      el_def=0;
      LayerWriter @["LayerWriter_0"] {
       name="LayerWriter_0";
-      data=$.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"]$;
+      data=$.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"]$;
       network=$.projects["LeabraProject_0"].networks["MultiHiddenNet"]$;
       layer_data {
        name=;
@@ -9679,7 +9691,7 @@ presented in the minus phase -- if this is not the case (values are computed on 
       name="input_data";
       var_type=T_Object;
       object_type=DataTable;
-      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"]$;
+      object_val=$.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -12490,7 +12502,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 el_def=0;
 	 GridTableView @["projects_LeabraProject_0_viewers_DefaultProjectBrowser_frames_DefaultViewer_frames_SimpleLines5x5_root_view_children_0"] {
 	  name="projects_LeabraProject_0_viewers_DefaultProjectBrowser_frames_DefaultViewer_frames_SimpleLines5x5_root_view_children_0";
-	  m_data=$.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"]$;
+	  m_data=$.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"]$;
 FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name=;
@@ -12498,7 +12510,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   el_def=0;
 	   GridColView @["Name"] {
 	    name="Name";
-	    m_data=.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"].data["Name"]$$;
+	    m_data=.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"].data["Name"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=16;
@@ -12509,7 +12521,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	   GridColView @["Input"] {
 	    name="Input";
-	    m_data=.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"].data["Input"]$$;
+	    m_data=.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"].data["Input"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
@@ -12520,7 +12532,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	   };
 	   GridColView @["Output"] {
 	    name="Output";
-	    m_data=.projects["LeabraProject_0"].data.gp["InputData"]["random_5x5_25"].data["Output"]$$;
+	    m_data=.projects["LeabraProject_0"].data.gp["InputData"]["StdInputData"].data["Output"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    text_width=5;
