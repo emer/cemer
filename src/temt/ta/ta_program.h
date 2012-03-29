@@ -409,6 +409,7 @@ public:
   bool          reference;      // #CONDSHOW_ON_flags:FUN_ARG make this a reference variable (only for function arguments) which allows the function to modify the argument value, making it in effect a return value from the function when you need multiple return values
   String        desc;           // #EDIT_DIALOG Description of what this variable is for
   ProgramRef    init_from;      // #CONDSHOW_OFF_flags:LOCAL_VAR initialize this variable from one with the same name in another program -- value is initialized at the start of the Init and Run functions -- useful to maintain a set of global parameter variables that are used in various sub programs
+  int		css_idx; 	// #IGNORE index within script->prog_vars for this variable, valid once it has been created -- used for updating prog var when gui value changes
 
   cssEl*        parse_css_el;   // #IGNORE css el for parsing
 
@@ -484,6 +485,8 @@ public:
   // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
   virtual bool          UpdateUsedFlag();
   // #IGNORE update the USED flag based on datalink refs
+  virtual bool		UpdateCssObjVal();
+  // #IGNORE update cssSmartRef if we are a non-local object pointer
 
   virtual ProgVar*      GetInitFromVar(bool warn = true);
   // get the program variable to initialize from in the init_from program -- warn = emit a warning if the variable is not found

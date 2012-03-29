@@ -702,6 +702,7 @@ void ProgVar::Initialize() {
   flags = (VarFlags)(CTRL_PANEL | NULL_CHECK | EDIT_VAL | SAVE_VAL);
   reference = false;
   parse_css_el = NULL;
+  css_idx = -1;
 }
 
 void ProgVar::Destroy() {
@@ -860,7 +861,34 @@ void ProgVar::UpdateAfterEdit_impl() {
   GetInitFromVar(true);         // warn
   TestError(HasVarFlag(LOCAL_VAR) && var_type == T_HardEnum, "UpdateAfterEdit",
               "Hard-coded (C++) enum's are not supported for local variables -- please use an int or String variable instead.");
+
+  UpdateCssObjVal();
 }
+
+bool ProgVar::UpdateCssObjVal() {
+  if(var_type != T_Object || HasVarFlag(LOCAL_VAR) || css_idx < 0)
+    return false;
+
+  Program* myprg = (Program*)GetOwner(&TA_Program);
+  if(!myprg || !myprg->script || myprg->script->prog_vars.size <= css_idx) {
+    css_idx = -1;
+    return false;
+  }
+
+  cssEl* cssvar = myprg->script->prog_vars[css_idx];
+  if(cssvar->GetType() != cssEl::T_TA) {
+    css_idx = -1;
+    return false;
+  }
+  cssSmartRef* sr = (cssSmartRef*)cssvar;
+  if(sr->ptr != &object_val) {
+    css_idx = -1;
+    return false;
+  }
+  sr->UpdateCssRef();		// finally got our guy -- update it
+  return true;
+}
+
 
 ProgVar* ProgVar::GetInitFromVar(bool warn) {
   if(!(bool)init_from) return NULL;
@@ -1046,6 +1074,7 @@ void ProgVar::SetVar(const Variant& value) {
     break;
   case T_Object:
     object_val = value.toBase();
+    UpdateCssObjVal();		// need to update our css object!
     break;
   case T_HardEnum:
     int_val = value.toInt();
@@ -1330,13 +1359,9 @@ cssEl* ProgVar::NewCssEl() {
   case T_Bool:
     return new cssCPtr_bool(&bool_val, 0, name);
     break;
-  case T_Object: {
-    // if(object_type && object_type->InheritsFrom(&TA_taMatrix)) {
-    //   return new cssTA_Matrix(object_val.ptr(), 1, object_type, name);
-    // }
+  case T_Object:
     return new cssSmartRef(&object_val, 0, &TA_taBaseRef, name);
     break;
-  }
   case T_HardEnum:
     return new cssCPtr_enum(&int_val, 0, name, hard_enum_type);
     break;
@@ -5357,11 +5382,13 @@ void  Program::UpdateProgVars() {
     ProgVar* sv = args.FastEl(i);
     cssEl* el = sv->NewCssEl();
     script->prog_vars.Push(el);
+    sv->css_idx = script->prog_vars.size-1; // record location
   }
   for (int i = 0; i < vars.size; ++i) {
     ProgVar* sv = vars.FastEl(i);
     cssEl* el = sv->NewCssEl();
     script->prog_vars.Push(el); //refs
+    sv->css_idx = script->prog_vars.size-1; // record location
   }
 }
 

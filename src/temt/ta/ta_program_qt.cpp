@@ -1706,6 +1706,7 @@ void iProgramCtrlDataHost::GetValue_Membs_def() {
       else {
         md->im->GetMbrValue(mb_dat, (void*)pv, first_diff);
       }
+      pv->UpdateAfterEdit();
       if(!first_diff) {		// always reset!
         taiMember::EndScript((void*)pv);
         first_diff = true;
