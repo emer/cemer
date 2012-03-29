@@ -146,8 +146,9 @@ test -x "$XTERM" && $XTERM -si -geometry 160x50 -T "emergent build progress (saf
 ./ubuntu-motu-emergent $REV $TAG 2>&1 > $OUTPUT
 
 # .. in a symlinked directory doesn't work as expected, so .deb files end up in ~/ rather than in /tmp/.
+# Tilde (~) doesn't expand inside quotes, so use ${HOME}
 # Put them back where the script is expecting them.
-TEMP_FILES="~/emergent*.deb ~/libquarter*.deb ~/emergent_*.build ~/emergent_*.changes ~/libquarter_*.build ~/libquarter_*.changes"
+TEMP_FILES="${HOME}/emergent*.deb ${HOME}/libquarter*.deb ${HOME}/emergent_*.build ${HOME}/emergent_*.changes ${HOME}/libquarter_*.build ${HOME}/libquarter_*.changes"
 mv ${TEMP_FILES} /tmp 2> /dev/null || echo "Files moved to /tmp: ${TEMP_FILES}"
 
 DEBS="/tmp/emergent*.deb"
