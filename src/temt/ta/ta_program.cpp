@@ -1427,8 +1427,9 @@ void ProgVar_List::AddVarTo(taNBase* src) {
   it->SetObject(src);
   it->SetName(src->GetName());
   it->UpdateAfterEdit();
-  if(taMisc::gui_active)
+  if(taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(it, "BrowserSelectMe");
+  }
 }
 
 void ProgVar_List::CreateDataColVars(DataTable* src) {
@@ -3355,7 +3356,7 @@ void ProgramCallBase::UpdateArgs() {
     pa->expr.SetExpr(pa->name); // we found var of same name; set as arg value
     pa->DataChanged(DCR_ITEM_UPDATED);
   }
-  if(any_changes && taMisc::gui_active) {
+  if(!taMisc::is_loading && any_changes && taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
   }
 }
@@ -4925,6 +4926,14 @@ ProgVar* Program::FindVarName(const String& var_nm) const {
   sv = vars.FindName(var_nm);
   if(sv) return sv;
   return prog_code.FindVarName(var_nm);
+}
+
+void Program::AddVarTo(taNBase* src) {
+  vars.AddVarTo(src);
+}
+
+void Program::AddArgTo(taNBase* src) {
+  args.AddVarTo(src);
 }
 
 taBase* Program::FindTypeName(const String& nm) const {

@@ -392,7 +392,7 @@ public:
     LOCAL_VAR           = 0x0040, // #NO_SHOW this is a local variable which does not set or update values!
     FUN_ARG             = 0x0080, // #NO_SHOW this is a function argument variable
     USED                = 0x0100, // #NO_SHOW whether this variable is currently being used in the program (set automatically)
-    EDIT_VAL            = 0x0100, // #NO_SHOW allow value to be edited -- only if !LOCAL_VAR && !init_from
+    EDIT_VAL            = 0x0200, // #NO_SHOW allow value to be edited -- only if !LOCAL_VAR && !init_from
   };
 
   VarType       var_type;       // type of variable -- determines which xxx_val(s) is/are used
@@ -1437,6 +1437,10 @@ public:
   // EXPERT #CAT_Variables true if has a var/arg called var_nm (only top-level variables in vars or args) -- can be called from within a running program
   static bool           IsForbiddenName(const String& chk_nm, bool warn=true);
   // #CAT_Code check given name against list of forbidden names -- variables and other objects should check and if forbidden, add an extra character or something
+  virtual void  	AddVarTo(taNBase* src);
+  // #DROPN add a variable in the global vars list to the given object
+  virtual void  	AddArgTo(taNBase* src);
+  // #DROPN add an argument in the global args list to the given object
 
   virtual void          Reset();
   // #MENU #MENU_ON_Object #MENU_CONTEXT #MENU_SEP_BEFORE #CONFIRM #CAT_Code reset (remove) all program elements -- typically in preparation for loading a new program over this one

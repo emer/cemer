@@ -56,6 +56,19 @@ void tac_AddEnum(TypeDef& tp, const char* name, const char* desc,
     enm->enum_vals.Add(dt->name, dt->desc, dt->opts, dt->val);
     dt++;
   }
+#ifdef DEBUG
+  for(int i=1; i<enm->enum_vals.size; i++) {
+    EnumDef* ed = enm->enum_vals.FastEl(i);
+    for(int j=0; i<i; j++) {
+      EnumDef* edo = enm->enum_vals.FastEl(j);
+      if(ed->enum_no == edo->enum_no) {
+	taMisc::Warning("two enums have the same value", ed->name, edo->name,
+			"in type:", tp.name);
+      }
+    }
+  }
+#endif
+    
   tp.sub_types.Add(enm);
 }
 

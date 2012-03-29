@@ -391,14 +391,24 @@ void taBase::Ref(taBase& it) {
   Ref(&it);
 }
 void taBase::Ref(taBase* it) {
+  // convenient for tracking specific leaks:
+  // if(it->InheritsFrom(&TA_DataTable)) {
+  //   taMisc::Info("dt ref:", String((int64_t)(void*)it), it->GetName());
+  // }
   it->refn.ref();
 }
 
 void taBase::unRef(taBase* it) {
   if (it->refn <= 0) {
     cerr << "WARNING: taBase::unRef: taBase refn < 0 for item\n";
-  } else
+  }
+  else {
+    // convenient for tracking specific leaks:
+    // if(it->InheritsFrom(&TA_DataTable)) {
+    //   taMisc::Info("dt unref:", String((int64_t)(void*)it), it->GetName());
+    // }
     it->refn.deref();
+  }
 }
 
 void taBase::Done(taBase* it) {

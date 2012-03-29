@@ -870,7 +870,7 @@ void cssTA_Base::InstallThis(cssProgSpace* ps) {
 
 cssSmartRef::~cssSmartRef() {
   if(cssref) {
-    cssEl::Done(cssref);
+    cssEl::unRefDone(cssref);
     cssref = NULL;
   }
 }
@@ -895,7 +895,7 @@ void cssSmartRef::UpdateCssRef() {
   // matrix is only special case guy at this point
   if(srp->InheritsFrom(&TA_taMatrix)) {
     if(!cssref || !cssref->IsTaMatrix()) {
-      if(cssref) cssEl::Done(cssref);
+      if(cssref) cssEl::unRefDone(cssref);
       cssref = new cssTA_Matrix(srp, 1, srp->GetTypeDef());
       cssEl::Ref(cssref);
       return;
@@ -903,7 +903,7 @@ void cssSmartRef::UpdateCssRef() {
   }
   else {
     if(!cssref || cssref->IsTaMatrix()) {	// not a matrix anymore
-      if(cssref) cssEl::Done(cssref);
+      if(cssref) cssEl::unRefDone(cssref);
       cssref = new cssTA_Base(srp, 1, srp->GetTypeDef());
       cssEl::Ref(cssref);
       return;
