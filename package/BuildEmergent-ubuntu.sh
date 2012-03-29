@@ -147,7 +147,8 @@ test -x "$XTERM" && $XTERM -si -geometry 160x50 -T "emergent build progress (saf
 
 # .. in a symlinked directory doesn't work as expected, so .deb files end up in ~/ rather than in /tmp/.
 # Put them back where the script is expecting them.
-mv ~/emergent*.deb ~/libquarter*.deb ~/emergent_*.build ~/emergent_*.changes ~/libquarter_*.build ~/libquarter_*.changes /tmp
+TEMP_FILES="~/emergent*.deb ~/libquarter*.deb ~/emergent_*.build ~/emergent_*.changes ~/libquarter_*.build ~/libquarter_*.changes"
+mv ${TEMP_FILES} /tmp > /dev/null || echo "Files moved to /tmp: ${TEMP_FILES}"
 
 DEBS="/tmp/emergent*.deb"
 if [ "$BUILD_QUARTER" == "y" ]; then
