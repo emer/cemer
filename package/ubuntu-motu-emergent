@@ -20,24 +20,27 @@ DEBEMAIL='brian.mingus@colorado.edu'
 DEBFULLNAME='Brian Mingus'
 REPONAME=`lsb_release -cs` # e.g., "maverick"
 
-EMERGENT_TMP_DIR=emergent_TMP
-cd /tmp && rm -rf emergent_*
-svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} ${EMERGENT_TMP_DIR}
+# Check out the code into ~/emergent, determine the version, and create a symlink in /tmp
+EMERGENT_SRC_DIR=~/emergent
+svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} ${EMERGENT_SRC_DIR}
 # config.h is a generated file, so can't do this:
-#EMERGENT_VERSION=`sed -n '/VERSION/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/config.h`
-EMERGENT_VERSION_MAJOR=`sed -n '/set(EMERGENT_VERSION_MAJOR/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/CMakeLists.txt`
-EMERGENT_VERSION_MINOR=`sed -n '/set(EMERGENT_VERSION_MINOR/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/CMakeLists.txt`
-EMERGENT_VERSION_PATCH=`sed -n '/set(EMERGENT_VERSION_PATCH/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_TMP_DIR}/CMakeLists.txt`
+#EMERGENT_VERSION=`sed -n '/VERSION/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_SRC_DIR}/config.h`
+EMERGENT_VERSION_MAJOR=`sed -n '/set(EMERGENT_VERSION_MAJOR/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_SRC_DIR}/CMakeLists.txt`
+EMERGENT_VERSION_MINOR=`sed -n '/set(EMERGENT_VERSION_MINOR/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_SRC_DIR}/CMakeLists.txt`
+EMERGENT_VERSION_PATCH=`sed -n '/set(EMERGENT_VERSION_PATCH/s/.*"\(.*\)".*/\1/p' < ${EMERGENT_SRC_DIR}/CMakeLists.txt`
 EMERGENT_VERSION="${EMERGENT_VERSION_MAJOR}.${EMERGENT_VERSION_MINOR}.${EMERGENT_VERSION_PATCH}"
 EMERGENT_BLD_DIR=emergent-${EMERGENT_VERSION}
+cd /tmp
+rm -rf emergent_*
 rm -rf ${EMERGENT_BLD_DIR}
-mv ${EMERGENT_TMP_DIR} ${EMERGENT_BLD_DIR}
+ln -s ${EMERGENT_SRC_DIR} ${EMERGENT_BLD_DIR}
 echo "Building emergent version ${EMERGENT_VERSION}"
 # wget ftp://grey.colorado.edu/pub/emergent/emergent-5.tar.gz
 # tar -xzf emergent-5.tar.gz
 # mv emergent ${EMERGENT_BLD_DIR}
 tar -czf emergent_${EMERGENT_VERSION}.orig.tar.gz ${EMERGENT_BLD_DIR}
 cd ${EMERGENT_BLD_DIR}
+rm -rf debian
 mkdir -p debian
 
 #################################################
@@ -157,8 +160,9 @@ build-stamp:
 override_dh_auto_test:
 
 clean:
-	rm -f CMakeFiles/CMakeDetermineCompilerABI_C.bin CMakeDetermineCompilerABI_CXX.bin CompilerIdC/a.out CompilerIdCXX/a.out CMakeCache.txt
-	dh clean
+	# DPF commenting these out so we can do incremental builds.
+	#rm -f CMakeFiles/CMakeDetermineCompilerABI_C.bin CMakeDetermineCompilerABI_CXX.bin CompilerIdC/a.out CompilerIdCXX/a.out CMakeCache.txt
+	#dh clean
 
 install: build install-stamp
 install-stamp:
