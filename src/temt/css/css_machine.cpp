@@ -266,6 +266,9 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
   cssMisc::last_err_msg += "\n" + GetSourceLoc(prog); // uses cur_top if prog = NULL
   taMisc::LogEvent("css Error: " + cssMisc::last_err_msg);
 
+  if(taMisc::ErrorCancelCheck()) // just done
+    return;
+
   if(taMisc::dmem_proc == 0) {
     ostream* fh = &cerr;
     if(top->cmd_shell)
@@ -295,6 +298,9 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
     cssMisc::last_warn_msg += "\n" + GetSourceLoc(prog);
   }
   taMisc::LogEvent("css Warning: " + cssMisc::last_err_msg);
+
+  if(taMisc::ErrorCancelCheck()) // just done
+    return;
 
   if(taMisc::dmem_proc == 0) {
     ostream* fh = &cerr;
@@ -326,11 +332,17 @@ void cssMisc::SyntaxError(const char* er) {
   }
 
   taMisc::LogEvent("css" + msg);
-  ostream* fh = &cerr;
-  if(cssMisc::cur_top->cmd_shell != NULL)
-    fh = cssMisc::cur_top->cmd_shell->ferr;
-  *fh << msg;
-  taMisc::FlushConsole();
+
+  if(taMisc::ErrorCancelCheck()) // just done
+    return;
+
+  if(taMisc::dmem_proc == 0) {
+    ostream* fh = &cerr;
+    if(cssMisc::cur_top->cmd_shell != NULL)
+      fh = cssMisc::cur_top->cmd_shell->ferr;
+    *fh << msg;
+    taMisc::FlushConsole();
+  }
   if(cssMisc::cur_top->own_program) {
     cssMisc::cur_top->own_program->CssError(cssMisc::cur_top->tok_src_ln, false, msg);
   }

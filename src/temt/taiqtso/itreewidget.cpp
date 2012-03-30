@@ -20,6 +20,7 @@
 #include <QMap>
 #include <QModelIndex>
 #include <QScrollBar>
+#include <QPalette>
 
 #include <iostream>
 using namespace std;
@@ -70,6 +71,12 @@ void  iTreeWidget::init() {
     this,  SLOT(this_itemCollapsed(QTreeWidgetItem*)) );
   // default is to do auto-open
 //buggy!!!  setAutoExpandDelay(500);
+
+  // make active same as inactive
+  QPalette p = palette();
+  p.setColor(QPalette::Inactive, QPalette::Highlight, p.color(QPalette::Active, QPalette::Highlight));
+  p.setColor(QPalette::Inactive, QPalette::HighlightedText, p.color(QPalette::Active, QPalette::HighlightedText));
+  setPalette(p);
 }
 
 bool iTreeWidget::allColumnsShowFocus() const {

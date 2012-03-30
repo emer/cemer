@@ -4229,6 +4229,7 @@ ProgramRef Program::cur_step_prog;
 int Program::cur_step_n = 1;
 int Program::cur_step_cnt = 0;
 Program::RunState Program::global_run_state = Program::NOT_INIT;
+int64_t Program::global_init_timestamp = 0;
 
 void Program::Initialize() {
   run_state = NOT_INIT;
@@ -4240,6 +4241,7 @@ void Program::Initialize() {
   prog_gp = NULL;
   m_checked = false;
   step_n = 1;
+  last_init_timestamp = 1;	// not same as global init..
   if(!prog_lib)
     prog_lib = &Program_Group::prog_lib;
 }
@@ -4427,6 +4429,9 @@ int Program::Call(Program* caller) {
 }
 
 int Program::CallInit(Program* caller) {
+  if(last_init_timestamp == global_init_timestamp)
+    return ret_val;		// already done it!
+  last_init_timestamp = global_init_timestamp;
   run_state = INIT;    // this is redundant if called from an existing INIT but otherwise needed
   Run_impl();
   CheckConfig(false);   // check after running!  see below
@@ -4449,6 +4454,11 @@ void Program::Init() {
   }
   taMisc::Busy();
   SetRunState(INIT);
+
+  // record new timestamp for this init session -- CallInit will check and not re-run
+  QDateTime tm = QDateTime::currentDateTime();
+  global_init_timestamp = tm.toTime_t();
+  
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
   // first run the Init code, THEN do the check.  this prevents a catch-22
   // with Init code that is designed to configure things so there won't be
@@ -4835,7 +4845,8 @@ void Program::CssError(int src_ln_no, bool running, const String& err_msg) {
   pl->SetError();
   // css does not otherwise pull up an error dialog, so we can..
   if (taMisc::gui_active) {
-    taMisc::Choice(err_msg, "Ok");
+    bool cancel = taiChoiceDialog::ErrorDialog(NULL, err_msg);
+    taMisc::ErrorCancelSet(cancel);
   }
 }
 

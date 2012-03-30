@@ -858,6 +858,11 @@ public:
   static ContextFlag    no_auto_expand; // #READ_ONLY #NO_SAVE #NO_SHOW true to suppress auto-expanding (esp during code that makes a lot of objs)
   static TypeDef*       plugin_loading; // #READ_ONLY #NO_SAVE #NO_SHOW the TypeDef of the plugin currently loading -- we stamp this into all formal classes
 
+  static bool		err_cancel;     // #READ_ONLY #NO_SAVE #NO_SHOW true if currently canceling error messages
+  static int64_t	err_cancel_time; // #READ_ONLY #NO_SAVE #NO_SHOW time point at which error cancel was last activated (internal seconds since jan 1 1970 time units)
+  static int		err_cancel_time_thr; // #NO_SAVE #NO_SHOW threshold for how long to wait in seconds between error events to consider it part of the same sequence of errors, and thus reset the err_waitproc_cnt back to 0
+  static int		err_waitproc_cnt; // #READ_ONLY #NO_SAVE #NO_SHOW count of number of times through the waitproc during err_cancel -- if enough times through, then we lift the err cancel (see err_waitproc_thr)
+  static int		err_waitproc_thr; // #NO_SAVE #NO_SHOW threshold number of times through the waitproc to lift an err cancel 
   static String         last_err_msg;
   // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT last message from the taMisc::Error function
   static String         last_warn_msg;
@@ -895,6 +900,11 @@ public:
 
   /////////////////////////////////////////////////
   //    Errors, Warnings, Simple Dialogs
+
+  static bool	ErrorCancelCheck();
+  // #CAT_Dialog check if error messages have been canceled by the user
+  static bool	ErrorCancelSet(bool on = true);
+  // #CAT_Dialog turn on (or off) canceling of errors 
 
   static String SuperCat(const char* a, const char* b, const char* c,
                       const char* d, const char* e, const char* f,

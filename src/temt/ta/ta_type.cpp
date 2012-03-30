@@ -36,6 +36,7 @@
 # include <QFileInfo>
 # include <QCoreApplication>
 # include <QTimer>
+# include <QDateTime>
 # include <QNetworkInterface>
 # include <QNetworkAddressEntry>
 # include <QHostAddress>
@@ -330,6 +331,13 @@ int taiMiscCore::RunPending() {
 }
 
 void taiMiscCore::WaitProc() {
+  if(!taMisc::do_wait_proc && taMisc::err_cancel) { // only count if not calling back
+    taMisc::err_waitproc_cnt++;
+    if(taMisc::err_waitproc_cnt > taMisc::err_waitproc_thr) { // over threshold, cancel cancel
+      taMisc::err_cancel = false;
+      taMisc::err_waitproc_cnt = 0;
+    }
+  }
   if(!taMisc::do_wait_proc) return;
   taMisc::do_wait_proc = false; // reset at the START so other waitproc guys can get on the list from within the current waitproc
   tabMisc::WaitProc();
@@ -738,6 +746,12 @@ ContextFlag     taMisc::in_shutdown;
 ContextFlag     taMisc::no_auto_expand;
 TypeDef*        taMisc::plugin_loading;
 
+bool	taMisc::err_cancel = false;
+int64_t	taMisc::err_cancel_time = 0;
+int	taMisc::err_cancel_time_thr = 2;
+int	taMisc::err_waitproc_cnt = 0;
+int	taMisc::err_waitproc_thr = 100;
+
 String  taMisc::last_err_msg;
 String  taMisc::last_warn_msg;
 
@@ -825,6 +839,41 @@ void taMisc::UpdateAfterEdit() {
 
 /////////////////////////////////////////////////
 //      Errors, Warnings, Simple Dialogs
+
+bool taMisc::ErrorCancelCheck() {
+#ifndef NO_TA_BASE
+  if(taMisc::err_cancel) {
+    QDateTime tm = QDateTime::currentDateTime();
+    QDateTime st;
+    st.setTime_t(err_cancel_time);
+    if(st.secsTo(tm) < err_cancel_time_thr) {
+      cerr << "+";
+      err_waitproc_cnt = 0;	// reset counter and start counting again
+    }
+    else {
+      cerr << ".";
+    }
+    err_cancel_time = tm.toTime_t();
+  }
+#endif
+  return taMisc::err_cancel;
+}
+
+bool taMisc::ErrorCancelSet(bool on) {
+  if(on) {
+    taMisc::err_cancel = true;
+#ifndef NO_TA_BASE
+    QDateTime tm = QDateTime::currentDateTime();
+    err_cancel_time = tm.toTime_t();
+#endif
+    cerr << "Cancelling remaining error messages in this batch" << endl;
+  }
+  else {
+    taMisc::err_cancel = false;
+    taMisc::err_waitproc_cnt = 0;
+  }
+  return taMisc::err_cancel;
+}
 
 int taMisc::CheckClearErrCnt() {
   int rval = err_cnt;

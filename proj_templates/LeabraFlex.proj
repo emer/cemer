@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.3.2.0 rev5285
+// ta_Dump File v3.0 -- code v5.3.4.0 rev5331
 LeabraProject .projects["LeabraFlex"] { 
   taBase_Group @.templates = [0] {
   };
@@ -2532,7 +2532,7 @@ LeabraProject .projects["LeabraFlex"] {
 			 <li id=\"ca-delete\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/emergent/index.php/Special:MovePage/LeabraFlexProgs\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=unwatch&amp;token=802ea239992b303cc530d1fb4824cb50%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=unwatch&amp;token=8f6644550f7b15c2ccc1e936a15ed6e8%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -2606,7 +2606,7 @@ Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20120309031756 -->
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20120329204535 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">http://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -2642,7 +2642,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 23 December 2011, at 00:39.</span>
-			<span id=\"f-viewcount\">This page has been accessed 996 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 1,130 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -2656,9 +2656,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 <script>if(window.mw){
 	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"45\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",
 	\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-420|America/Denver\",\"watchlisttoken\":\"\"});;},{\"all\":
-	\"a{text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: pdpwiki:resourceloader:filter:minify-css:5:12b7b22eb761f082b1e2a49715a0bafe */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"28b447d15edb42430a8eba0ae40630e7+\\\\\",\"watchToken\":\"47621a306c0bfee3d3b0bed69a70f130+\\\\\"});;},{},{});
+	\"a{text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: pdpwiki:resourceloader:filter:minify-css:5:12b7b22eb761f082b1e2a49715a0bafe */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"fd6a1725f9ec1fdf954a009e95756979+\\\\\",\"watchToken\":\"82586d5c99f458dede53ec62a670cc8d+\\\\\"});;},{},{});
 	
-	/* cache key: pdpwiki:resourceloader:filter:minify-js:5:76ce34e36e0c6146bc11783545ef1a46 */
+	/* cache key: pdpwiki:resourceloader:filter:minify-js:5:458acc3b21b066a10a986d75393d263e */
 }
 </script>
 
@@ -2685,7 +2685,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=Lea
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.202 secs. -->
+<!-- Served in 0.218 secs. -->
 
 
 
@@ -3921,6 +3921,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        expr {
 	expr="\"layer: \" << lay->name << \" changed to: \" << n_units << \" units, actually: \" << lay->un_geom.n";
        };
+       my_mask=NULL;
+       debug_level=NULL;
+       nogui=0;
       };
       ReturnExpr @[3] {
        desc=;
@@ -3958,6 +3961,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      expr {
       expr="\"Loaded project: \" << .projects[0].file_name";
      };
+     my_mask=NULL;
+     debug_level=NULL;
+     nogui=0;
     };
     Comment @[3] {
      desc="= Std variables in startup program itself =";
@@ -4675,6 +4681,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      expr {
       expr="\"Running: \" << batch.name";
      };
+     my_mask=NULL;
+     debug_level=NULL;
+     nogui=0;
     };
     ProgramCall @[40] {
      desc=;
@@ -5399,6 +5408,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	expr {
 	 expr="network.name << \" Weights Initialized\"";
 	};
+	my_mask=NULL;
+	debug_level=NULL;
+	nogui=0;
        };
       };
      };
@@ -5586,7 +5598,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["ConfigData"]["ConfigTable"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -5886,7 +5898,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        var_type=T_String;
        string_val="basic_train";
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
        reference=0;
        desc="configuration to use -- lookup in Config table";
        init_from=NULL;
@@ -5901,7 +5913,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        var_type=T_Int;
        int_val=50;
        objs_ptr=0;
-       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
        init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
@@ -5911,7 +5923,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        var_type=T_Int;
        int_val=200;
        objs_ptr=0;
-       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
        reference=0;
        desc=;
        init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
@@ -6703,7 +6715,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc="Network to which to apply inputs";
       init_from=NULL;
@@ -7012,8 +7024,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
-	  arg_type=Variant;
-	  type="Variant";
+	  arg_type=const_Variant_ref;
+	  type="const Variant&";
 	  name="col";
 	  required=1;
 	  def_val=;
@@ -7164,8 +7176,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
-	  arg_type=Variant;
-	  type="Variant";
+	  arg_type=const_Variant_ref;
+	  type="const Variant&";
 	  name="col";
 	  required=1;
 	  def_val=;
@@ -7674,7 +7686,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
       reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
       init_from=NULL;
@@ -8663,6 +8675,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       expr {
        expr="\"Cons: \" << network.n_cons << \" Units: \" << network.n_units";
       };
+      my_mask=NULL;
+      debug_level=NULL;
+      nogui=0;
      };
     };
     step_prog=NULL;
@@ -9112,7 +9127,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
@@ -9122,7 +9137,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
@@ -9132,7 +9147,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Int;
       int_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
@@ -9142,7 +9157,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Int;
       int_val=50;
       objs_ptr=0;
-      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc="fm enviro";
       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
@@ -9235,6 +9250,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       expr {
        expr="network.name << \" Weights Initialized\"";
       };
+      my_mask=NULL;
+      debug_level=NULL;
+      nogui=0;
      };
      IfElse @[4] {
       desc="Load  weights if file is specified";
@@ -9289,6 +9307,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	print_var4=NULL;
 	print_var5=NULL;
 	print_var6=NULL;
+	my_mask=NULL;
+	debug_level=NULL;
+	nogui=0;
        };
        MemberAssign @[2] {
 	desc=;
@@ -9435,7 +9456,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Bool;
       bool_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc=;
       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
@@ -9736,7 +9757,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Int;
       int_val=200;
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
       reference=0;
       desc=;
       init_from=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["StdGlobalsInit"]$;
@@ -13286,7 +13307,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      bias_spec {type=LeabraBiasSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {gelin=1: old_gelin=0: thr=0.5: gain=80: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: vm_mod_max=0.95: };
+     act {gelin=1: old_gelin=0: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: vm_mod_max=0.95: };
      spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
      spike_misc {
       exp_slope=0.02;
@@ -13303,10 +13324,10 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
-     v_m_init {name="RandomSpec_6": type=UNIFORM: mean=0.300000011920929: var=0: par=1: };
+     v_m_init {name="RandomSpec_6": type=UNIFORM: mean=0.3: var=0: par=1: };
      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
      act_avg {l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
-     g_bar {e=0.9999999: l=0.1: i=0.9999999: h=0.01: a=0.03: };
+     g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
@@ -13317,11 +13338,11 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      adapt {
       on=0;
-      dt=0.006944444;
+      dt=0.00694444;
       vm_gain=0.04;
-      spike_gain=0.008049999;
+      spike_gain=0.00805;
       interval=10;
-      dt_time=144;
+      dt_time=144.0001;
      };
      depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
      syn_delay {
@@ -13330,7 +13351,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      };
      da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
      noise_type=NO_NOISE;
-     noise {name="RandomSpec_7": type=GAUSSIAN: mean=0: var=0.001000000047497451: par=1: };
+     noise {name="RandomSpec_7": type=GAUSSIAN: mean=0: var=0.001: par=1: };
      noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
      noise_sched {
       name=;
@@ -13421,6 +13442,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        inhib=0;
        wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
        wt_scale_init {init=0: abs=1: rel=1: };
+       learn=1;
        lrate=0.01;
        cur_lrate=0.01;
        lrs_value=EPOCH;
@@ -13473,7 +13495,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
 	 step=1;
 	};
        };
-       wt_sig {gain=6: off=1.25: dwt_norm=0: };
+       wt_sig {gain=6: off=1.25: dwt_norm=1: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
@@ -13496,6 +13518,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      inhib=0;
      wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
      wt_scale_init {init=0: abs=1: rel=1: };
+     learn=1;
      lrate=0.01;
      cur_lrate=0.01;
      lrs_value=EPOCH;
@@ -13548,7 +13571,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        step=1;
       };
      };
-     wt_sig {gain=6: off=1.25: dwt_norm=0: };
+     wt_sig {gain=6: off=1.25: dwt_norm=1: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
@@ -13895,7 +13918,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
    mid_minus_cycle=-1;
    min_cycles=15;
    min_cycles_phase2=35;
-   dwt_norm_enabled=0;
+   dwt_norm_enabled=1;
    ct_time {
     minus=50;
     plus=20;

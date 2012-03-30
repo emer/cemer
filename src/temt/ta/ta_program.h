@@ -1294,6 +1294,8 @@ public:
   // #READ_ONLY #NO_SAVE current step count -- incremented until cur_step_n is reached
   static RunState       global_run_state;
   // #READ_ONLY #NO_SAVE global run state -- set by the last program to run in gui mode (from the Run, Init, Step buttons) -- used primarily to prevent multiple programs from running at the same time
+  static int64_t	global_init_timestamp;
+  // #READ_ONLY #NO_SAVE first program to call Init sets this timestamp, and others compare to it and don't run in CallInit multiple times if their timestamp matches this one
 
   String                short_nm;
   // short name for this program -- as brief as possible -- used for Step display info
@@ -1575,6 +1577,7 @@ protected:
   bool                  m_checked; // flag to help us avoid doing CheckConfig twice
   int                   cur_indent;
   // current indent level -- used in adding code
+  int64_t		last_init_timestamp;
 
   override void         UpdateAfterEdit_impl();
   override bool         CheckConfig_impl(bool quiet);

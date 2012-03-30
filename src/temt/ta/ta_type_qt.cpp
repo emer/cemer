@@ -39,8 +39,6 @@
 
 #include "css_machine.h"	// for setting error code in taMisc::Error
 
-#include <QTime>
-
 void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   const char* e, const char* f, const char* g, const char* h, const char* i)
 {
@@ -51,19 +49,10 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
 #endif
   taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
   String fmsg = "***ERROR: " + taMisc::last_err_msg;
+  taMisc::LogEvent(fmsg);
 #if !defined(NO_TA_BASE)
-  static bool cancel_mode = false;
-  static QTime prv_time;
-  if(cancel_mode) {
-    QTime cur_time = QTime::currentTime();
-    if(prv_time.secsTo(cur_time) > 60) {
-      cancel_mode = false;
-    }
-    else {
-      taMisc::LogEvent(fmsg);
-      cerr << ".";
-      return;			// cancel!
-    }
+  if(taMisc::ErrorCancelCheck()) {
+    return;			// cancel!
   }
 #endif
   // we always output to console
@@ -73,7 +62,6 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
     taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
   }
 #endif
-  taMisc::LogEvent(fmsg);
   cerr << fmsg << endl;
   FlushConsole();
 #if !defined(NO_TA_BASE) 
@@ -88,11 +76,7 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   }
   if (taMisc::gui_active) {
     bool cancel = taiChoiceDialog::ErrorDialog(NULL, taMisc::last_err_msg);
-    if(cancel) {
-      cancel_mode = true;
-      prv_time = QTime::currentTime();
-      cerr << "Cancelling all error messages for the next minute!" << endl;
-    }
+    taMisc::ErrorCancelSet(cancel);
   }
 #endif
 }
