@@ -8,8 +8,8 @@ if ! grep -q "$RUN_ON" /etc/hostname; then
   exit
 fi
 if [ "`id -u`" != "0" ]; then
-  echo "ERROR: This script should be run as root.  Try this:"
-  echo "  sudo $0"
+  echo "Running script as root..."
+  sudo $0
   exit
 fi
 
