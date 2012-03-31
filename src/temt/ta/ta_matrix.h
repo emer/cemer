@@ -550,6 +550,7 @@ public:
   ///////////////////////////////////////
   // Standard Elem and iterator interface
 
+  override bool		IsContainer()	{ return true; }
   override taMatrix*    ElView() const  { return (taMatrix*)el_view.ptr(); }
   override IndexMode    ElViewMode() const  { return el_view_mode; }
   override int          ElemCount() const { return size; }

@@ -107,6 +107,7 @@ cssElCFun*	cssBI::cast=NULL;
 cssElCFun*	cssBI::cond=NULL;
 cssElCFun*	cssBI::switch_jump=NULL;
 cssElCFun*	cssBI::doloop=NULL;
+cssElCFun*	cssBI::foreach_cond=NULL;
 
 cssElCFun*	cssBI::push_root=NULL;	// pushes a root value on stack
 cssElCFun*	cssBI::push_next=NULL; // pushes next program item on stack
@@ -815,6 +816,51 @@ static cssEl* cssElCFun_doloop_stub(int, cssEl* arg[]) {
   return &cssMisc::Void;
 }
 
+static cssEl* cssElCFun_foreach_cond_stub(int, cssEl* arg[]) {
+  cssProg* cp = arg[0]->prog;
+  taBase* list = (taBase*)arg[1]->GetVoidPtrOfType(&TA_taBase);
+  cssEl* itre = arg[2];
+  if(itre->GetType() != cssEl::T_TA) {
+    cssMisc::Error(cp, "foreach cond: iterator is not a taBase*");
+  }
+  cssTA_Base* itrc = (cssTA_Base*)itre;
+  cssEl* var = arg[3];
+  taBaseItr* FOREACH_itr = NULL;
+  Variant val;
+  if(!itrc->ptr) {
+    if(!list->IsContainer()) {	// we got one single item
+      val = list;		// it is the value
+      FOREACH_itr = new taBaseItr; // create a tmp dummy!
+      *itrc = FOREACH_itr;		// set pointer
+    }
+    else {
+      val = list->IterBegin(FOREACH_itr); // variant assign
+      if(FOREACH_itr) {
+	*itrc = FOREACH_itr;		// set pointer
+      }
+    }
+  }
+  else {
+    FOREACH_itr = (taBaseItr*)itrc->GetVoidPtrOfType(&TA_taBaseItr);
+    if(!list->IsContainer()) {	// we got one single item
+      FOREACH_itr = NULL;	// we're done!
+    }
+    else {
+      val = list->IterNext(FOREACH_itr); // variant assign
+    }
+    if(!FOREACH_itr) {
+      *itrc = FOREACH_itr;		// set pointer NULL -- this free's tmp for non-container too
+    }
+  }
+  if((bool)FOREACH_itr) {
+    *var = val;
+    return cssBI::true_int;	// more to go
+  }
+  else {
+    return cssBI::false_int;	// no more to go
+  }
+}
+
 static cssEl* cssElCFun_return_stub(int na, cssEl* arg[]) {
   if(na > 0) {
     cssProg* cp = arg[0]->prog;
@@ -979,6 +1025,7 @@ static void Install_Internals() {
 		     cssElFun::FUN_ITR_LIST, 1);
 
   cssElInCFun_inst_ptr	(cssMisc::Internal, doloop, cssEl::NoArg, CSS_FUN);
+  cssElInCFun_inst_ptr	(cssMisc::Internal, foreach_cond, 3, CSS_FUN);
 
   // stuff just for parsing
   cssElCFun_inst_nm	(cssMisc::Parse, nop,   cssEl::NoArg, "switch", CSS_SWITCH, " ");
@@ -987,6 +1034,8 @@ static void Install_Internals() {
   cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "while", CSS_WHILE, " ");
   cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "do", CSS_DO, " ");
   cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "for", CSS_FOR, " ");
+  cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "foreach", CSS_FOREACH, " ");
+  cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "in", CSS_IN, " ");
 
   cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "class", CSS_CLASS, " ");
   cssElCFun_inst_nm	(cssMisc::Parse, nop, 	cssEl::NoArg, "struct", CSS_CLASS, " ");

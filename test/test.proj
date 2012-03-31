@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.3.3.0 rev5323
+// ta_Dump File v3.0 -- code v5.3.4.0 rev5331
 LeabraProject .projects["LeabraProject_0"] { 
  UserDataItem_List @*(.user_data_) {
     UserData_DocLink @["DocLink"] { };
@@ -591,10 +591,11 @@ LeabraProject .projects["LeabraProject_0"] {
       ProgEl_List @.init_code = [0] {
       };
 
-      ProgEl_List @.prog_code = [10] {
+      ProgEl_List @.prog_code = [11] {
 	LocalVars @[0] { 
-	  ProgVar_List @.local_vars = [1] {
+	  ProgVar_List @.local_vars = [2] {
 	    ProgVar @["tmp_var"] { };
+	    ProgVar @["sp"] { };
 	  };
 	};
 	MemberAssign @[1] { };
@@ -625,6 +626,12 @@ LeabraProject .projects["LeabraProject_0"] {
 	  };
 	};
 	PrintVar @[9] { };
+	ForeachLoop @[10] { 
+	  ProgEl_List @.loop_code = [2] {
+	    PrintExpr @[0] { };
+	    MemberAssign @[1] { };
+	  };
+	};
       };
     };
     Program @["MatrixTest"] { 
@@ -2153,7 +2160,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 			 <li id=\"ca-delete\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/ccnlab/index.php/Special:MovePage/CtLeabra_XCAL_Params\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=b7c552319f4152640ba8ff60f0edae8d%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=6d1332b0102585aed563b9f10bc61abe%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -2885,7 +2892,7 @@ Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key ccnlab:pcache:idhash:3337-0!*!0!!en!*!* and timestamp 20120329181153 -->
+<!-- Saved in parser cache with key ccnlab:pcache:idhash:3337-0!*!0!!en!*!* and timestamp 20120331041736 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;oldid=1656717\">http://grey.colorado.edu/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;oldid=1656717</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -2921,7 +2928,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 15 June 2010, at 09:46.</span>
-			<span id=\"f-viewcount\">This page has been accessed 821 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 845 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -2935,9 +2942,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 <script>if(window.mw){
 	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":\"1\",\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"30\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 	\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"nickname\":\"\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"\"});;},{\"all\":
-	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"f7a703f872ebcd0da17e4b77eafc4847+\\\\\",\"watchToken\":\"159a3ef486f8a4de3819d54160e5f972+\\\\\"});;},{},{});
+	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"aa0f9c39b1ff45689f54e66cbd281867+\\\\\",\"watchToken\":\"752dfd48d6af38f1c40713ff5ce4b26d+\\\\\"});;},{},{});
 	
-	/* cache key: ccnlab:resourceloader:filter:minify-js:5:b71ef55dc18d77aa71361c87a0a9178b */
+	/* cache key: ccnlab:resourceloader:filter:minify-js:5:1d05ab9eb6cb072442d7374685ac6e0e */
 }
 </script>
 
@@ -2967,7 +2974,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.593 secs. -->
+<!-- Served in 0.281 secs. -->
 
 
 
@@ -7793,6 +7800,17 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
        desc=;
        init_from=NULL;
       };
+      ProgVar @["sp"] {
+       name="sp";
+       var_type=T_Object;
+       object_type=BaseSpec;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
      };
     };
     MemberAssign @[1] {
@@ -7823,7 +7841,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      expr {
       expr="true";
      };
-     update_after=0;
+     update_after=1;
     };
     MemberAssign @[4] {
      desc=;
@@ -7969,6 +7987,39 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      my_mask=NULL;
      debug_level=NULL;
      nogui=0;
+    };
+    ForeachLoop @[10] {
+     desc=;
+     flags=0;
+     loop_code {
+      name="ProgEl_List_130";
+      el_typ=ProgCode;
+      el_def=0;
+      PrintExpr @[0] {
+       desc=;
+       flags=0;
+       expr {
+	expr="sp.name";
+       };
+       my_mask=NULL;
+       debug_level=NULL;
+       nogui=0;
+      };
+      MemberAssign @[1] {
+       desc=;
+       flags=0;
+       obj=.projects["LeabraProject_0"].programs["MemberTest"].prog_code[0].local_vars["sp"]$$;
+       path="[:].learn";
+       expr {
+	expr="false";
+       };
+       update_after=1;
+      };
+     };
+     el_var=$.projects["LeabraProject_0"].programs["MemberTest"].prog_code[0].local_vars["sp"]$;
+     in {
+      expr="MultiHiddenNet.specs[LeabraConSpec]";
+     };
     };
    };
    step_prog=NULL;
@@ -15748,7 +15799,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        inhib=0;
        wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
        wt_scale_init {init=0: abs=1: rel=1: };
-       learn=1;
+       learn=0;
        lrate=0.02;
        cur_lrate=0.02;
        lrs_value=EPOCH;

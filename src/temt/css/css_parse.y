@@ -71,6 +71,7 @@ int yylex();
 %token 	<el>	CSS_WHILE CSS_DO CSS_IF CSS_ELSE
 %token  <el>	CSS_SWITCH CSS_CASE CSS_DEFAULT
 %token	<el>	CSS_RETURN CSS_BREAK CSS_CONTINUE CSS_FOR
+%token  <el>    CSS_FOREACH CSS_IN
 %token	<el>	CSS_NEW CSS_DELETE
 
 /* commands */
@@ -100,6 +101,7 @@ int yylex();
 /* stmt elements */
 %type	<ival>  miscstmt miscbrastmt ifstmt elsestmt elseifstmt noelsestmt popelse do doloop
 %type 	<ival>	forloop whiloop for_cond for_cond_sc for_incr for_incr_sc for_end_paren
+%type 	<ival>	foreachloop foreach foreach_in foreach_in_expr foreach_end_paren
 %type   <ival>  cond for while if else bra cond_paren cond_end_paren mbr_bra ket
 %type	<ival>	switchblock caseitem switch
 %type	<ival>  stmtlist stmtel
@@ -110,6 +112,7 @@ int yylex();
 %type	<ival>	arraydims arraydim
 %type	<ival>  tynames tyname
 %type 	<el>	fundname methdname
+%type	<el>	tynamel foreach_var
 
 /* expr elements */
 %type   <ival>	comb_expr exprlist exprlsel
@@ -850,6 +853,15 @@ tyname:	  name 				{
 	    cssEl::Done(tmp); }
         ;
 
+tynamel:  name 				{
+            (cssMisc::cur_type.El())->MakeToken(cssMisc::cur_top->Prog());
+	    cssRef* tmp = (cssRef*)cssMisc::cur_top->Prog()->Stack()->Pop();
+	    $$ = tmp->ptr;
+	    if(tmp->ptr.El()->GetType() == cssEl::T_Class) {
+	      Code2(tmp->ptr, cssBI::constr); }
+	    cssEl::Done(tmp); }
+        ;
+
 type:	  type_el		{ $1.El()->tmp_str = ""; }
         | CSS_EXTERN type_el	{ $2.El()->tmp_str = "extern"; $$ = $2; }
         | CSS_STATIC type_el	{ $2.El()->tmp_str = "static"; $$ = $2; }
@@ -912,6 +924,7 @@ miscbrastmt: miscstmt
 
 miscstmt: expr term			{ Code1(cssBI::pop); }
         | forloop
+        | foreachloop
         | whiloop
 	| doloop	
         | CSS_RETURN argstop term	{ Code1($1); $$ = $2; }
@@ -1008,10 +1021,7 @@ forloop: for '(' for_cond for_incr for_end_paren stmt {
 	   
 	   cssMisc::cur_top->Pop(); /* pop the whole for loop! */
 	   $$ = $1; }
-        
         ;
-
-/* todo: manage missing things in these sub-cases, not above */
 
 for:   	  CSS_FOR		{ /* for loop contained within own block */
             cssCodeBlock* blk = new cssCodeBlock(cssForLoop_Name, cssMisc::cur_top->Prog());
@@ -1052,6 +1062,84 @@ for_end_paren: ')' {
 	      blk->loop_type = cssCodeBlock::FOR;
 	      cssMisc::cur_top->AddStatic(blk);
 	      $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
+        ;
+
+foreachloop: foreach '(' foreach_var foreach_in_expr foreach_end_paren stmt {
+	   cssProg* cp = cssMisc::cur_top->Prog();
+	   if(cp->owner_blk == NULL) {
+	     yyerror("foreach loop current prog should have owner_blk, doesnt!");
+	   }
+	   cssMisc::cur_top->Pop(); /* pop the for_incr block */
+	   Code1(cssBI::pop);	/* and code for getting rid of cond val */
+	   /* swap the order of these: $5 = foreach_end_paren = stmt block, $4 = foreach_in = in block */
+	   cp = cssMisc::cur_top->Prog(); /* current guy */
+	   cssInst* foreach_in = cp->insts[$4];
+	   cssInst* foreach_loop_stmt = cp->insts[$5];
+	   /* swap */
+	   cp->insts[$4] = foreach_loop_stmt;
+	   cp->insts[$5] = foreach_in;
+	   /* check if stmt is a new block: if so, then don't pop this guy */
+	   cssMisc::cur_top->Pop(); /* pop the whole for loop! */
+	   $$ = $1; }
+        ;
+
+foreach:    CSS_FOREACH		{ /* foreach loop contained within own block */
+            cssCodeBlock* blk = new cssCodeBlock(cssForeachLoop_Name, cssMisc::cur_top->Prog());
+	    cssMisc::cur_top->AddStatic(blk);
+	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code);
+	    // create the iterator and add it
+	    cssTA_Base* itr = new cssTA_Base(NULL, 1, &TA_taBaseItr, "FOREACH_itr");
+	    cssMisc::cur_foreach_itr = cssMisc::cur_top->AddVar(itr);
+	    }
+        ;
+
+foreach_var: type tynamel end {
+  	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
+	    if($1.El()->tmp_str == "const") {
+	      yyerror("const type not accepted in this context");
+	      return cssProg::YY_Err; }
+	    cssMisc::cur_top->Prog()->insts[$3-1]->SetJump($3);
+	    $$ = $2;  cssMisc::cur_foreach_var = $2;
+	    }
+          | CSS_VAR {
+	      cssMisc::cur_foreach_var = $1;
+	    }
+          | CSS_PTR {
+	      cssMisc::cur_foreach_var = $1;
+	    }
+       ;
+
+foreach_in: CSS_IN		{
+            cssCodeBlock* blk = new cssCodeBlock(cssCondBlock_Name, cssMisc::cur_top->Prog());
+	    blk->action = cssCodeBlock::PUSH_RVAL; /* start conditional */
+	    cssMisc::cur_top->AddStatic(blk);
+	    $$ = Code1(blk); cssMisc::cur_top->Push(blk->code); }
+        ;
+
+foreach_in_expr: foreach_in expr {
+            /* code the cond opr */
+            Code3(cssMisc::cur_foreach_itr, cssMisc::cur_foreach_var, cssBI::foreach_cond);
+            cssMisc::cur_top->Pop(); /* get rid of cond, push incr */
+	    cssMisc::cur_top->ResetParseFlags();
+	    /* incr is just an empty shell for IF_TRUE case */
+	    cssCodeBlock* incblk = new cssCodeBlock(cssForeachIncr_Name, cssMisc::cur_top->Prog());
+	    incblk->action = cssCodeBlock::IF_TRUE; /* start block of if-true */
+	    incblk->loop_back = 3; /* go back 3 to the cond */
+	    cssMisc::cur_top->AddStatic(incblk);
+	    $$ = Code1(incblk); cssMisc::cur_top->Push(incblk->code);
+	    }
+        ;
+
+foreach_end_paren: ')' {
+              cssMisc::cur_top->Pop(); /* get rid of incr */
+	      cssCodeBlock* blk = new cssCodeBlock(cssForeachLoopStmt_Name, cssMisc::cur_top->Prog());
+  	      blk->action = cssCodeBlock::IF_TRUE; /* start block of if-true */
+	      blk->loop_type = cssCodeBlock::FOREACH;
+	      cssMisc::cur_top->AddStatic(blk);
+	      $$ = Code1(blk); cssMisc::cur_top->Push(blk->code);
+	      cssMisc::cur_foreach_var.Reset();
+	      cssMisc::cur_foreach_itr.Reset();
+	    }
         ;
 
 

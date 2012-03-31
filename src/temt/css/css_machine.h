@@ -164,6 +164,8 @@ public:
   static cssElPtr  	cur_type;	// current type
   static cssClassType* 	cur_class; 	// current class
   static cssEl* 	cur_scope; 	// current class scope from most recent ::
+  static cssElPtr	cur_foreach_itr; // current foreach iterator
+  static cssElPtr	cur_foreach_var; // current foreach variable
   static cssMbrScriptFun* cur_method;	// current class method
   static cssEnumType* 	cur_enum; 	// current enum type
   static int		anon_type_cnt; 	// anonymous type counter
@@ -1005,6 +1007,12 @@ public:
 #define cssSwitchJump_Name "_switch_jump"
 // switch default case name
 #define cssSwitchDefault_Name "_switch_default"
+// foreach loop
+#define cssForeachLoop_Name "_foreach_loop"
+// foreach loop stmts
+#define cssForeachLoopStmt_Name "_foreach_loop_stmt"
+// foreach incr
+#define cssForeachIncr_Name "_foreach_incr"
 
 class CSS_API cssCodeBlock : public cssElFun {
   // a block of code between { }
@@ -1021,6 +1029,7 @@ public:
     WHILE,
     DO,
     FOR,
+    FOREACH,
     SWITCH,			// not a loop technically, but processes break
   };
 

@@ -518,8 +518,9 @@ void T3LayerNode::render() {
   txfm_shape()->translation.setValue(xfrac, 0.0f, -yfrac);
 
   if(show_drag_) {
-    float len = .08f;	// bar_len
+    float len = .05f;	// bar_len
     len = MIN(len, .5f * fx);
+    len = MAX(.02f, len);	// keep it above a small min
 
     float wd = .1f * len;	// bar_width
     float cr = .2f * len;	// cone radius
@@ -655,7 +656,7 @@ T3LayerGroupNode::T3LayerGroupNode(T3DataView* dataView_, bool show_draggers, bo
   hide_lines_ = hide_lines;
 
   if(show_drag_) {
-    const float len = .08f;	// bar_len
+    const float len = .05f;	// bar_len
     const float wd = .1f * len;	// bar_width
     const float cr = .2f * len;	// cone radius
     const float ch = .4f * len;	// cone height

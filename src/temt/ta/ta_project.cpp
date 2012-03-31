@@ -687,6 +687,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 }
 
 void taUndoMgr::PurgeUnusedSrcs() {
+  if(undo_srcs.length <= 0) return; // nothing to do
   bool did_purge = false;
   int n_purges = 0;
   do {

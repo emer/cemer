@@ -714,6 +714,8 @@ public:
   //////////////////////////////////////////////////////////////
   //    Container element access
 
+  virtual bool		IsContainer()	{ return false; }
+  // #CAT_Access is this item a container object or not?
   virtual Variant       Elem(const Variant& idx, IndexMode mode = IDX_UNK) const
   { return _nilVariant; }
   // #CAT_Access get element(s) from container -- return can be a single item or a Matrix of multiple items, depending on the index -- see IndexMode for all the possible indexing modes and associated return values (some of which are not applicable to some containers, as documented for that container)
@@ -1946,6 +1948,7 @@ public:
   virtual void		LinkCopyLeaves(const taList_impl& cp);
   // #CAT_ObjectMgmt #EXPERT create links in this list to all terminal leaf items in source list (i.e., Borrow) -- this is used for creating shallow container copies with different views -- does NOT copy full hierarchical substructure or anything -- just links leaves for accessor routines
 
+  override bool		IsContainer()	{ return true; }
   override taMatrix*    ElView() const  { return (taMatrix*)el_view.ptr(); }
   override IndexMode    ElViewMode() const  { return el_view_mode; }
   override int		ElemCount() const { return size; }
@@ -2585,6 +2588,7 @@ public:
   Variant       SafeElAsVar(int idx) const { return El_GetVar_(SafeEl_(idx)); }
   // #CAT_Access get element with safe range checking as a variant
 
+  override bool		IsContainer()	{ return true; }
   override taMatrix*    ElView() const  { return (taMatrix*)el_view.ptr(); }
   override IndexMode    ElViewMode() const  { return el_view_mode; }
   override int		ElemCount() const { return size; }

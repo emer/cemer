@@ -158,6 +158,8 @@ cssProg*        cssMisc::CallFunProg = NULL;
 cssElPtr        cssMisc::cur_type;
 cssClassType*   cssMisc::cur_class = NULL;
 cssEl*          cssMisc::cur_scope = NULL;
+cssElPtr        cssMisc::cur_foreach_itr;
+cssElPtr        cssMisc::cur_foreach_var;
 cssMbrScriptFun* cssMisc::cur_method = NULL;
 cssEnumType*    cssMisc::cur_enum = NULL;
 int             cssMisc::anon_type_cnt = 0;
@@ -3468,8 +3470,16 @@ cssElPtr& cssProg::FindAutoName(const String& nm) {     // lookup by name
 }
 
 int cssProg::OptimizeCode() {
+  // also update source lines -- which are not correct!
+  if(size > 0) {
+    first_src_ln = insts[0]->line;
+    last_src_ln = insts[0]->line;
+  }
+  int last_src = -1;
   int nopt = 0;
   for(int i=0; i < size; i++) {
+    if(insts[i]->line < first_src_ln) first_src_ln = insts[i]->line;
+    if(insts[i]->line > last_src_ln) last_src_ln = insts[i]->line;
     cssEl* el = insts[i]->inst.El();
     if(el->GetType() == cssEl::T_CodeBlock) {
       cssCodeBlock* cb = (cssCodeBlock*)el;
@@ -4782,6 +4792,10 @@ bool cssProgSpace::ContinueLoop() {
       Prog()->SetPC(Prog()->size);
       return true;
     }
+    if(blk->loop_type == cssCodeBlock::FOREACH) {
+      Prog()->SetPC(Prog()->size);
+      return true;
+    }
   }
   return false;
 }
@@ -4810,6 +4824,11 @@ bool cssProgSpace::BreakLoop() {
       return true;
     }
     if(blk->loop_type == cssCodeBlock::FOR) {
+      Pull();
+      Pull();                   // pull all the way out of entire for loop
+      return true;
+    }
+    if(blk->loop_type == cssCodeBlock::FOREACH) {
       Pull();
       Pull();                   // pull all the way out of entire for loop
       return true;

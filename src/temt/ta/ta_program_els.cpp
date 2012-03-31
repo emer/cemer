@@ -336,12 +336,7 @@ bool DoLoop::CvtFmCode(const String& code) {
 //  ForLoop		//
 //////////////////////////
 
-// todo: remove after a while (4.0.10)
 void ForLoop::SetProgExprFlags() {
-  // init.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-  // test.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-  // iter.SetExprFlag(ProgExpr::NO_VAR_ERRS); // don't report bad variable errors
-
   init.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);// requires special parsing
   iter.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);
 }
@@ -522,6 +517,91 @@ bool ForLoop::CvtFmCode(const String& code) {
   test.SetExpr(rest.before(';'));
   iter.SetExpr(rest.after(';'));
   UpdateAfterEdit_impl();	// make local var
+  return true;
+}
+
+//////////////////////////
+//  ForeachLoop		//
+//////////////////////////
+
+void ForeachLoop::SetProgExprFlags() {
+  // in.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);// requires special parsing
+  // iter.SetExprFlag(ProgExpr::FOR_LOOP_EXPR);
+}
+
+void ForeachLoop::Initialize() {
+  SetProgExprFlags();
+}
+
+void ForeachLoop::UpdateAfterEdit_impl() {
+  SetProgExprFlags();
+  inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) return;
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg || isDestroying()) return;
+  bool clashes = ParentForeachLoopVarClashes();
+  if(clashes) {
+    taMisc::Warning("foreach variable is same as one used in outer loop, which is usually not a good idea.  variable name is:",
+		    el_var->name);
+  }
+}
+
+bool ForeachLoop::ParentForeachLoopVarClashes() {
+  if(!el_var) return false;
+  ForeachLoop* outer_loop = GET_MY_OWNER(ForeachLoop);
+  while (outer_loop) {
+    if(outer_loop->el_var && outer_loop->el_var->name == el_var->name) {
+      return true;
+    }
+    outer_loop = (ForeachLoop*)outer_loop->GetOwner(&TA_ForeachLoop);
+  }
+  return false;
+}
+
+void ForeachLoop::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  CheckError(!el_var, quiet, rval, "el_var variable is not set");
+  CheckError(in.expr.empty(), quiet, rval, "in expression is empty");
+  CheckError(ParentForeachLoopVarClashes(), quiet, rval, "parent foreach variable is the same, which is usually not a good idea");
+}
+
+void ForeachLoop::GenCssPre_impl(Program* prog) {
+  in.ParseExpr();		// re-parse just to be sure!
+  String full_expr = el_var->name + " in " + in.GetFullExpr();
+  prog->AddLine(this, String("foreach(") + full_expr + ") {", ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this, true, "\"before entering loop\""); // move to start
+  prog->IncIndent();
+  prog->AddVerboseLine(this, false, "\"starting in loop\""); // don't move to out
+}
+
+void ForeachLoop::GenCssPost_impl(Program* prog) {
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+}
+
+String ForeachLoop::GetDisplayName() const {
+  String elnm = "<el_var not set>";
+  if(el_var)
+    elnm = el_var->name;
+  return "foreach(" + elnm + " in " + in.expr + ")";
+}
+
+bool ForeachLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(code.startsWith("foreach(") || code.startsWith("foreach (")) return true;
+  return false;
+}
+
+bool ForeachLoop::CvtFmCode(const String& code) {
+  String cd = trim(code.after("foreach"));
+  if(cd.startsWith('(')) {
+    cd = cd.after('(');
+    if(cd.endsWith(')'))
+      cd = cd.before(')', -1);
+  }
+  String inexpr = trim(cd.after("in"));
+  in.SetExpr(inexpr);
+  String varexpr = trim(cd.before("in"));
+  el_var = FindVarNameInScope(varexpr, true); // option to make
   return true;
 }
 
@@ -1502,8 +1582,13 @@ void MemberAssign::GenCssBody_impl(Program* prog) {
   if (update_after) {
     prog->AddLine(this, obj->name + "->UpdateAfterEdit();");
     if(path_term != path) {
-      // also do uae on immediate owner!
-      prog->AddLine(this, opath + "->UpdateAfterEdit();");
+	// also do uae on immediate owner!
+      if(opath.endsWith(']')) {	// itr expression -- need to use call
+	prog->AddLine(this, "call(" + opath + ", \"UpdateAfterEdit\");");
+      }
+      else {
+	prog->AddLine(this, opath + "->UpdateAfterEdit();");
+      }
     }
   }
   prog->AddVerboseLine(this, true, "\"prev value:\", String(" + fpath + ")"); // moved above
@@ -2091,7 +2176,7 @@ bool PrintExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("print ")) exprstr = trim(code.after("print "));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
-  if(exprstr.freq('"') > 2) return true; // not a var guy
+  if(exprstr.freq('"') >= 2) return true; // not a var guy
   return false;
 }
 

@@ -208,6 +208,33 @@ private:
   void	Destroy()	{}
 };
 
+class TA_API ForeachLoop: public Loop { 
+  // iterate over each item in a container object (List, Group, Matrix), performing loop_code on each element, which is encoded in the el_var -- in expression can be any kind of selection over items 
+INHERITED(Loop)
+public:
+  ProgVarRef	    	el_var; // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser variable that will represent each element in the list of items
+  ProgExprBase	    	in; 	// expression for container list of items to iterate over -- typically a [ ] selection over items in a List, Group, or Matrix
+
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  override bool		CvtFmCode(const String& code);
+  override bool		IsCtrlProgEl() 	{ return true; }
+
+  override String	GetDisplayName() const;
+  override void		SetProgExprFlags();
+  override String	GetToolbarName() const { return "foreach"; }
+
+  PROGEL_SIMPLE_BASEFUNS(ForeachLoop);
+protected:
+  override void	UpdateAfterEdit_impl();
+  bool		ParentForeachLoopVarClashes(); // true if a parent For loop is also using the loop_var
+  override void	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void		GenCssPre_impl(Program* prog); 
+  override void		GenCssPost_impl(Program* prog); 
+private:
+  void	Initialize();
+  void	Destroy()	{}
+};
+
 class TA_API IfContinue: public ProgEl { 
   // if condition is true, continue looping (skip any following code and loop back to top of loop) (can leave condition empty to just insert an unconditional continue)
 INHERITED(ProgEl)

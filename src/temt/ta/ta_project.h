@@ -229,7 +229,8 @@ public:
   //	Special Modify Routines
 
   void		CircShiftLeft(int nshift)
-  { st_idx = CircIdx(nshift); length -= nshift; }
+  { nshift = MIN(length, nshift);
+    if(nshift > 0) { st_idx = CircIdx(nshift); length -= nshift; } }
   // #CAT_CircModify shift the buffer to the left -- shift the first elements off the start of the list, making room at the end for more elements (decreasing length)
 
   void		CircAddExpand(taUndoDiffSrc* item) {
@@ -310,7 +311,8 @@ public:
   //	Special Modify Routines
 
   void		CircShiftLeft(int nshift)
-  { st_idx = CircIdx(nshift); length -= nshift; }
+  { nshift = MIN(length, nshift);
+    if(nshift > 0) { st_idx = CircIdx(nshift); length -= nshift; } }
   // #CAT_CircModify shift the buffer to the left -- shift the first elements off the start of the list, making room at the end for more elements (decreasing length)
 
   void		CircAddExpand(taUndoRec* item) {

@@ -69,6 +69,7 @@ public:
   static cssElCFun*	cond;
   static cssElCFun*	switch_jump;
   static cssElCFun*	doloop;
+  static cssElCFun*	foreach_cond;
 
   static cssElCFun*	push_root;	// pushes a root value on stack
   static cssElCFun*	push_next; 	// pushes next program item on stack

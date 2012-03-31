@@ -1303,6 +1303,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   int sec = tb->AssertSection("Ctrl"); //note: need to keep it short
 
   ptbp_add_widget(tb, sec, &TA_ForLoop);
+  ptbp_add_widget(tb, sec, &TA_ForeachLoop);
   ptbp_add_widget(tb, sec, &TA_DoLoop);
   ptbp_add_widget(tb, sec, &TA_WhileLoop);
   

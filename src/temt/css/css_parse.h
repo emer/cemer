@@ -70,47 +70,49 @@
      CSS_BREAK = 286,
      CSS_CONTINUE = 287,
      CSS_FOR = 288,
-     CSS_NEW = 289,
-     CSS_DELETE = 290,
-     CSS_COMMAND = 291,
-     CSS_ALIAS = 292,
-     CSS_HELP = 293,
-     CSS_EXTERN = 294,
-     CSS_STATIC = 295,
-     CSS_CONST = 296,
-     CSS_PRIVATE = 297,
-     CSS_PUBLIC = 298,
-     CSS_PROTECTED = 299,
-     CSS_VIRTUAL = 300,
-     CSS_INLINE = 301,
-     CSS_ASGN_OR = 302,
-     CSS_ASGN_XOR = 303,
-     CSS_ASGN_AND = 304,
-     CSS_ASGN_RSHIFT = 305,
-     CSS_ASGN_LSHIFT = 306,
-     CSS_ASGN_MOD = 307,
-     CSS_ASGN_DIV = 308,
-     CSS_ASGN_MULT = 309,
-     CSS_ASGN_SUB = 310,
-     CSS_ASGN_ADD = 311,
-     CSS_OR = 312,
-     CSS_AND = 313,
-     CSS_NE = 314,
-     CSS_EQ = 315,
-     CSS_LE = 316,
-     CSS_LT = 317,
-     CSS_GE = 318,
-     CSS_GT = 319,
-     CSS_RSHIFT = 320,
-     CSS_LSHIFT = 321,
-     CSS_MINMIN = 322,
-     CSS_PLUSPLUS = 323,
-     CSS_UNARY = 324,
-     CSS_BITNEG = 325,
-     CSS_NOT = 326,
-     CSS_UNARYMINUS = 327,
-     CSS_SCOPER = 328,
-     CSS_POINTSAT = 329
+     CSS_FOREACH = 289,
+     CSS_IN = 290,
+     CSS_NEW = 291,
+     CSS_DELETE = 292,
+     CSS_COMMAND = 293,
+     CSS_ALIAS = 294,
+     CSS_HELP = 295,
+     CSS_EXTERN = 296,
+     CSS_STATIC = 297,
+     CSS_CONST = 298,
+     CSS_PRIVATE = 299,
+     CSS_PUBLIC = 300,
+     CSS_PROTECTED = 301,
+     CSS_VIRTUAL = 302,
+     CSS_INLINE = 303,
+     CSS_ASGN_OR = 304,
+     CSS_ASGN_XOR = 305,
+     CSS_ASGN_AND = 306,
+     CSS_ASGN_RSHIFT = 307,
+     CSS_ASGN_LSHIFT = 308,
+     CSS_ASGN_MOD = 309,
+     CSS_ASGN_DIV = 310,
+     CSS_ASGN_MULT = 311,
+     CSS_ASGN_SUB = 312,
+     CSS_ASGN_ADD = 313,
+     CSS_OR = 314,
+     CSS_AND = 315,
+     CSS_NE = 316,
+     CSS_EQ = 317,
+     CSS_LE = 318,
+     CSS_LT = 319,
+     CSS_GE = 320,
+     CSS_GT = 321,
+     CSS_RSHIFT = 322,
+     CSS_LSHIFT = 323,
+     CSS_MINMIN = 324,
+     CSS_PLUSPLUS = 325,
+     CSS_UNARY = 326,
+     CSS_BITNEG = 327,
+     CSS_NOT = 328,
+     CSS_UNARYMINUS = 329,
+     CSS_SCOPER = 330,
+     CSS_POINTSAT = 331
    };
 #endif
 /* Tokens.  */
@@ -145,47 +147,49 @@
 #define CSS_BREAK 286
 #define CSS_CONTINUE 287
 #define CSS_FOR 288
-#define CSS_NEW 289
-#define CSS_DELETE 290
-#define CSS_COMMAND 291
-#define CSS_ALIAS 292
-#define CSS_HELP 293
-#define CSS_EXTERN 294
-#define CSS_STATIC 295
-#define CSS_CONST 296
-#define CSS_PRIVATE 297
-#define CSS_PUBLIC 298
-#define CSS_PROTECTED 299
-#define CSS_VIRTUAL 300
-#define CSS_INLINE 301
-#define CSS_ASGN_OR 302
-#define CSS_ASGN_XOR 303
-#define CSS_ASGN_AND 304
-#define CSS_ASGN_RSHIFT 305
-#define CSS_ASGN_LSHIFT 306
-#define CSS_ASGN_MOD 307
-#define CSS_ASGN_DIV 308
-#define CSS_ASGN_MULT 309
-#define CSS_ASGN_SUB 310
-#define CSS_ASGN_ADD 311
-#define CSS_OR 312
-#define CSS_AND 313
-#define CSS_NE 314
-#define CSS_EQ 315
-#define CSS_LE 316
-#define CSS_LT 317
-#define CSS_GE 318
-#define CSS_GT 319
-#define CSS_RSHIFT 320
-#define CSS_LSHIFT 321
-#define CSS_MINMIN 322
-#define CSS_PLUSPLUS 323
-#define CSS_UNARY 324
-#define CSS_BITNEG 325
-#define CSS_NOT 326
-#define CSS_UNARYMINUS 327
-#define CSS_SCOPER 328
-#define CSS_POINTSAT 329
+#define CSS_FOREACH 289
+#define CSS_IN 290
+#define CSS_NEW 291
+#define CSS_DELETE 292
+#define CSS_COMMAND 293
+#define CSS_ALIAS 294
+#define CSS_HELP 295
+#define CSS_EXTERN 296
+#define CSS_STATIC 297
+#define CSS_CONST 298
+#define CSS_PRIVATE 299
+#define CSS_PUBLIC 300
+#define CSS_PROTECTED 301
+#define CSS_VIRTUAL 302
+#define CSS_INLINE 303
+#define CSS_ASGN_OR 304
+#define CSS_ASGN_XOR 305
+#define CSS_ASGN_AND 306
+#define CSS_ASGN_RSHIFT 307
+#define CSS_ASGN_LSHIFT 308
+#define CSS_ASGN_MOD 309
+#define CSS_ASGN_DIV 310
+#define CSS_ASGN_MULT 311
+#define CSS_ASGN_SUB 312
+#define CSS_ASGN_ADD 313
+#define CSS_OR 314
+#define CSS_AND 315
+#define CSS_NE 316
+#define CSS_EQ 317
+#define CSS_LE 318
+#define CSS_LT 319
+#define CSS_GE 320
+#define CSS_GT 321
+#define CSS_RSHIFT 322
+#define CSS_LSHIFT 323
+#define CSS_MINMIN 324
+#define CSS_PLUSPLUS 325
+#define CSS_UNARY 326
+#define CSS_BITNEG 327
+#define CSS_NOT 328
+#define CSS_UNARYMINUS 329
+#define CSS_SCOPER 330
+#define CSS_POINTSAT 331
 
 
 
@@ -200,7 +204,7 @@ typedef struct YYSTYPE
   char*        	nm;
 }
 /* Line 1529 of yacc.c.  */
-#line 204 "y.tab.h"
+#line 208 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
