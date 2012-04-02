@@ -1636,6 +1636,20 @@ static cssEl* cssElCFun_min_stub(int na, cssEl* arg[]) {
   }
 }
 
+static cssEl* cssElCFun_abs_stub(int na, cssEl* arg[]) {
+  if(arg[1]->IsTaMatrix()) {
+    taMatrix* mat1 = cssTA_Matrix::MatrixPtr(*arg[1]);
+    if(!mat1) {
+      cssMisc::Error(arg[0]->prog, "min: first matrix arg is NULL");
+      return &cssMisc::Void;
+    }
+    return new cssTA_Matrix(mat1->Abs());
+  }
+  else {
+    return (*(arg[1]) < *cssBI::false_int) ? -(*arg[1]) : arg[1];
+  }
+}
+
 static cssEl* cssElCFun_rc_stub(int na, cssEl* arg[]) {
   if(na == 1 && arg[1]->IsTaMatrix()) {
     taMatrix* cr = cssTA_Matrix::MatrixPtr(*arg[1]);
@@ -1746,6 +1760,10 @@ static void Install_Math() {
 		    "(x[,y]) Returns the maximum value -- if one arg that is a matrix, returns maximum value in matrix.  if 1 matrix and a scalar, or 2 matricies, returns matrix with element-wise max.  if 2 scalars, returns max of the two values.");
   cssElCFun_inst_nm(cssMisc::Functions, min, cssEl::VarArg, "MIN", CSS_FUN,
 		    "(x,y) Returns the minimum value -- if one arg that is a matrix, returns minimum value in matrix.  if 1 matrix and a scalar, or 2 matricies, returns matrix with element-wise min.  if 2 scalars, returns min of the two values.");
+  cssElCFun_inst_nm(cssMisc::Functions, abs, 1, "abs", CSS_FUN,
+		    "(x) Returns the absolute value -- works for scalars and matrix objects (where it returns element-wise abs) -- for complex numbers, it computes the magnitude of the complex numbers (sqrt(r^2 + i^2)).");
+  cssElCFun_inst_nm(cssMisc::Functions, abs, 1, "ABS", CSS_FUN,
+		    "(x) Returns the absolute value -- works for scalars and matrix objects (where it returns element-wise abs) -- for complex numbers, it computes the magnitude of the complex numbers (sqrt(r^2 + i^2)).");
   cssElCFun_inst_nm(cssMisc::Functions, rc, cssEl::VarArg, "rc", CSS_FUN,
 		    "(r,c,..|[r,c,..]) Returns indexes with row and column inputs switched -- c,r -- converts from mathematical matrix standard of r,c to natural Matrix access standard of c,r (x,y).");
 
@@ -2455,7 +2473,7 @@ static void Install_Types() {
   cssMisc::TypesSpace.Push(new cssBool(false, "bool"));
   cssMisc::TypesSpace.Push(new cssBool(false, "Bool"));
   cssReal_inst_nm(cssMisc::TypesSpace, 0.0, "Real");
-  cssReal_inst_nm(cssMisc::TypesSpace, 0.0, "real");
+  //  cssReal_inst_nm(cssMisc::TypesSpace, 0.0, "real");
   cssReal_inst_nm(cssMisc::TypesSpace, 0.0, "float");
   cssReal_inst_nm(cssMisc::TypesSpace, 0.0, "double");
   cssString_inst_nm(cssMisc::TypesSpace, "", "String");

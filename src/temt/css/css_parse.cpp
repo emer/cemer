@@ -725,36 +725,36 @@ static const yytype_uint16 yyrline[] =
      173,   176,   177,   180,   181,   182,   183,   184,   189,   195,
      197,   198,   201,   204,   205,   208,   211,   215,   226,   228,
      232,   234,   236,   240,   244,   248,   252,   258,   259,   260,
-     264,   265,   266,   267,   268,   269,   272,   282,   300,   324,
-     340,   341,   345,   348,   356,   364,   372,   382,   383,   386,
-     387,   388,   391,   409,   430,   434,   438,   444,   445,   448,
-     455,   477,   483,   491,   492,   495,   505,   506,   509,   510,
-     513,   514,   515,   518,   519,   522,   523,   524,   525,   526,
-     527,   528,   531,   543,   559,   567,   568,   572,   576,   582,
-     598,   615,   635,   656,   657,   658,   661,   667,   679,   687,
-     705,   718,   731,   757,   778,   800,   801,   802,   803,   806,
-     807,   810,   811,   814,   821,   829,   839,   840,   847,   856,
-     865,   866,   867,   868,   870,   871,   872,   873,   876,   877,
-     879,   881,   886,   887,   888,   899,   904,   908,   909,   912,
-     913,   916,   917,   918,   921,   922,   925,   926,   927,   928,
-     929,   930,   931,   932,   933,   934,   935,   938,   947,   959,
-     960,   961,   962,   966,   983,   991,  1006,  1026,  1033,  1034,
-    1037,  1044,  1045,  1048,  1058,  1067,  1086,  1096,  1104,  1107,
-    1112,  1119,  1133,  1146,  1149,  1158,  1181,  1195,  1198,  1203,
-    1207,  1213,  1214,  1215,  1218,  1223,  1225,  1229,  1234,  1238,
-    1256,  1263,  1270,  1274,  1280,  1283,  1306,  1307,  1311,  1312,
-    1313,  1323,  1324,  1325,  1326,  1327,  1328,  1329,  1330,  1331,
-    1332,  1333,  1334,  1335,  1337,  1338,  1339,  1340,  1341,  1342,
-    1343,  1344,  1345,  1346,  1347,  1348,  1349,  1350,  1351,  1352,
-    1353,  1354,  1355,  1356,  1357,  1358,  1359,  1360,  1361,  1362,
-    1363,  1364,  1365,  1366,  1367,  1368,  1370,  1376,  1382,  1383,
-    1387,  1388,  1389,  1390,  1393,  1396,  1405,  1409,  1412,  1415,
-    1419,  1420,  1421,  1422,  1423,  1424,  1425,  1426,  1427,  1428,
-    1429,  1432,  1433,  1434,  1438,  1439,  1440,  1455,  1471,  1472,
-    1480,  1481,  1487,  1492,  1509,  1511,  1529,  1553,  1557,  1559,
-    1561,  1563,  1567,  1571,  1577,  1579,  1583,  1587,  1591,  1592,
-    1593,  1594,  1595,  1596,  1599,  1600,  1603,  1604,  1607,  1608,
-    1611,  1612,  1613,  1616,  1619,  1622,  1623,  1624,  1627,  1630
+     264,   265,   266,   267,   268,   269,   272,   282,   300,   333,
+     349,   350,   354,   357,   365,   373,   381,   391,   392,   395,
+     396,   397,   400,   418,   439,   443,   447,   453,   454,   457,
+     464,   486,   492,   500,   501,   504,   514,   515,   518,   519,
+     522,   523,   524,   527,   528,   531,   532,   533,   534,   535,
+     536,   537,   540,   552,   568,   576,   577,   581,   585,   591,
+     607,   624,   644,   665,   666,   667,   670,   676,   688,   696,
+     714,   727,   740,   766,   787,   809,   810,   811,   812,   815,
+     816,   819,   820,   823,   830,   838,   848,   849,   856,   865,
+     874,   875,   876,   877,   879,   880,   881,   882,   885,   886,
+     888,   890,   895,   896,   897,   908,   913,   917,   918,   921,
+     922,   925,   926,   927,   930,   931,   934,   935,   936,   937,
+     938,   939,   940,   941,   942,   943,   944,   947,   956,   968,
+     969,   970,   971,   975,   992,  1000,  1015,  1035,  1042,  1043,
+    1046,  1053,  1054,  1057,  1067,  1076,  1095,  1105,  1113,  1116,
+    1121,  1128,  1142,  1155,  1158,  1167,  1190,  1204,  1207,  1212,
+    1216,  1222,  1223,  1224,  1227,  1232,  1234,  1238,  1243,  1247,
+    1265,  1272,  1279,  1283,  1289,  1292,  1315,  1316,  1320,  1321,
+    1322,  1332,  1333,  1334,  1335,  1336,  1337,  1338,  1339,  1340,
+    1341,  1342,  1343,  1344,  1346,  1347,  1348,  1349,  1350,  1351,
+    1352,  1353,  1354,  1355,  1356,  1357,  1358,  1359,  1360,  1361,
+    1362,  1363,  1364,  1365,  1366,  1367,  1368,  1369,  1370,  1371,
+    1372,  1373,  1374,  1375,  1376,  1377,  1379,  1385,  1391,  1392,
+    1396,  1397,  1398,  1399,  1402,  1405,  1414,  1418,  1421,  1424,
+    1428,  1429,  1430,  1431,  1432,  1433,  1434,  1435,  1436,  1437,
+    1438,  1441,  1442,  1443,  1447,  1448,  1449,  1464,  1480,  1481,
+    1489,  1490,  1496,  1501,  1518,  1520,  1538,  1562,  1566,  1568,
+    1570,  1572,  1576,  1580,  1586,  1588,  1592,  1596,  1600,  1601,
+    1602,  1603,  1604,  1605,  1608,  1609,  1612,  1613,  1616,  1617,
+    1620,  1621,  1622,  1625,  1628,  1631,  1632,  1633,  1636,  1639
 };
 #endif
 
@@ -2668,6 +2668,15 @@ yyreduce:
 	    if(extyp->GetType() == cssEl::T_ElCFun && extyp->name == "make_matrix") {
 	      extyp = cssBI::matrix_inst;
 	    }
+	    else if(extyp->GetType() == cssEl::T_MbrCFun) {
+	      if(((cssMbrCFun*)extyp)->methdef) {
+		/* todo: could have a much more comprehensive system here */
+		MethodDef* md = ((cssMbrCFun*)extyp)->methdef;
+		if(md->type->InheritsFrom(&TA_taMatrix)) {
+		  extyp = cssBI::matrix_inst;
+		}
+	      }
+	    }
 	    extyp->MakeToken(prg);
 	    cssRef* tmp = (cssRef*)prg->Stack()->Pop();
 	    (yyval.ival) = Code3(tmp->ptr, cssBI::init_asgn, cssBI::pop);
@@ -2680,7 +2689,7 @@ yyreduce:
     break;
 
   case 49:
-#line 324 "css_parse.y"
+#line 333 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (6)].el).El()->tmp_str == "const") {
@@ -2697,22 +2706,22 @@ yyreduce:
     break;
 
   case 50:
-#line 340 "css_parse.y"
+#line 349 "css_parse.y"
     { (yyval.ival) = 1; }
     break;
 
   case 51:
-#line 341 "css_parse.y"
+#line 350 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (2)].ival) + 1; }
     break;
 
   case 52:
-#line 345 "css_parse.y"
+#line 354 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (3)].ival); }
     break;
 
   case 53:
-#line 348 "css_parse.y"
+#line 357 "css_parse.y"
     {
             cssMisc::cur_top->Prog()->insts[(yyvsp[(5) - (6)].ival)-1]->SetJump((yyvsp[(5) - (6)].ival)); (yyval.ival) = (yyvsp[(5) - (6)].ival)-1;
 	    if(cssMisc::cur_enum->name.before(5) == "enum_") /* don't keep anon enums around */
@@ -2722,7 +2731,7 @@ yyreduce:
     break;
 
   case 54:
-#line 356 "css_parse.y"
+#line 365 "css_parse.y"
     {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
             cssMisc::cur_enum = new cssEnumType((const char*)*nm);
@@ -2734,7 +2743,7 @@ yyreduce:
     break;
 
   case 55:
-#line 364 "css_parse.y"
+#line 373 "css_parse.y"
     { /* redefining */
 	    if((yyvsp[(2) - (2)].el).El()->GetType() != cssEl::T_EnumType) {
 	      yyerror("Attempt to redefine non-enum type as an enum");
@@ -2746,7 +2755,7 @@ yyreduce:
     break;
 
   case 56:
-#line 372 "css_parse.y"
+#line 381 "css_parse.y"
     { /* anonymous  */
 	    String nm = "anonenum_"; nm += String(cssMisc::anon_type_cnt++); nm += "_";
             cssMisc::cur_enum = new cssEnumType((const char*)nm);
@@ -2758,12 +2767,12 @@ yyreduce:
     break;
 
   case 61:
-#line 388 "css_parse.y"
+#line 397 "css_parse.y"
     { (yyval.el) = cssMisc::VoidElPtr; }
     break;
 
   case 62:
-#line 391 "css_parse.y"
+#line 400 "css_parse.y"
     {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    cssSpace* en_own;
@@ -2785,7 +2794,7 @@ yyreduce:
     break;
 
   case 63:
-#line 409 "css_parse.y"
+#line 418 "css_parse.y"
     {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    cssSpace* en_own;
@@ -2807,7 +2816,7 @@ yyreduce:
     break;
 
   case 64:
-#line 430 "css_parse.y"
+#line 439 "css_parse.y"
     {
             cssMisc::cur_top->Prog()->insts[(yyvsp[(7) - (8)].ival)-1]->SetJump((yyvsp[(7) - (8)].ival)); (yyval.ival) = (yyvsp[(7) - (8)].ival)-1;
             cssMisc::cur_class->GetComments(cssMisc::cur_class, (yyvsp[(4) - (8)].el));
@@ -2815,7 +2824,7 @@ yyreduce:
     break;
 
   case 65:
-#line 434 "css_parse.y"
+#line 443 "css_parse.y"
     {
             cssMisc::cur_top->Prog()->insts[(yyvsp[(6) - (7)].ival)-1]->SetJump((yyvsp[(6) - (7)].ival)); (yyval.ival) = (yyvsp[(6) - (7)].ival)-1;
             cssMisc::cur_class->GetComments(cssMisc::cur_class, (yyvsp[(4) - (7)].el));
@@ -2823,14 +2832,14 @@ yyreduce:
     break;
 
   case 66:
-#line 438 "css_parse.y"
+#line 447 "css_parse.y"
     {
             cssMisc::cur_top->Prog()->insts[(yyvsp[(3) - (4)].ival)-1]->SetJump((yyvsp[(3) - (4)].ival)); (yyval.ival) = (yyvsp[(3) - (4)].ival)-1;
             cssMisc::cur_class = NULL; cssMisc::cur_method = NULL; }
     break;
 
   case 69:
-#line 448 "css_parse.y"
+#line 457 "css_parse.y"
     {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
 	    cssMisc::cur_class = new cssClassType((const char*)*nm);
@@ -2841,7 +2850,7 @@ yyreduce:
     break;
 
   case 70:
-#line 455 "css_parse.y"
+#line 464 "css_parse.y"
     { /* redefining */
 	    if((yyvsp[(1) - (1)].el).El()->GetType() != cssEl::T_ClassType) {
 	      yyerror("Attempt to redefine non-class type as a class");
@@ -2865,7 +2874,7 @@ yyreduce:
     break;
 
   case 71:
-#line 477 "css_parse.y"
+#line 486 "css_parse.y"
     {
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
             cssMisc::cur_class = new cssClassType((const char*)*nm);
@@ -2875,7 +2884,7 @@ yyreduce:
     break;
 
   case 72:
-#line 483 "css_parse.y"
+#line 492 "css_parse.y"
     {
             if((yyvsp[(1) - (1)].el).El()->GetType() != cssEl::T_ClassType) {
               yyerror("Attempt to redefine non-class type as a class");
@@ -2885,7 +2894,7 @@ yyreduce:
     break;
 
   case 75:
-#line 495 "css_parse.y"
+#line 504 "css_parse.y"
     {
             if((yyvsp[(1) - (1)].el).El()->GetType() != cssEl::T_ClassType) {
 	      yyerror("Cannot inherit from non-class type");
@@ -2897,27 +2906,27 @@ yyreduce:
     break;
 
   case 77:
-#line 506 "css_parse.y"
+#line 515 "css_parse.y"
     { (yyval.el) = (yyvsp[(2) - (2)].el); }
     break;
 
   case 86:
-#line 523 "css_parse.y"
+#line 532 "css_parse.y"
     { (yyval.el) = cssMisc::VoidElPtr; }
     break;
 
   case 87:
-#line 524 "css_parse.y"
+#line 533 "css_parse.y"
     { (yyval.el) = cssMisc::VoidElPtr; }
     break;
 
   case 91:
-#line 528 "css_parse.y"
+#line 537 "css_parse.y"
     { (yyval.el) = cssMisc::VoidElPtr; }
     break;
 
   case 92:
-#line 531 "css_parse.y"
+#line 540 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (4)].el).El()->tmp_str == "const") {
@@ -2933,7 +2942,7 @@ yyreduce:
     break;
 
   case 93:
-#line 543 "css_parse.y"
+#line 552 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (6)].el).El()->tmp_str == "const") {
@@ -2951,7 +2960,7 @@ yyreduce:
     break;
 
   case 94:
-#line 559 "css_parse.y"
+#line 568 "css_parse.y"
     {
             /* swap places with void marker */
             cssString* nm = (cssString*)cssMisc::cur_top->Prog()->Stack()->Pop();
@@ -2960,23 +2969,23 @@ yyreduce:
     break;
 
   case 95:
-#line 567 "css_parse.y"
+#line 576 "css_parse.y"
     { (yyval.ival) = 1; }
     break;
 
   case 96:
-#line 568 "css_parse.y"
+#line 577 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (2)].ival) + 1; }
     break;
 
   case 97:
-#line 572 "css_parse.y"
+#line 581 "css_parse.y"
     {
             cssMisc::cur_top->Prog()->Stack()->Push(new cssInt((int)*(yyvsp[(2) - (3)].el).El())); }
     break;
 
   case 98:
-#line 576 "css_parse.y"
+#line 585 "css_parse.y"
     {       /* pre-declare function */
 	    cssMbrScriptFun* fun = (cssMbrScriptFun*)(yyvsp[(1) - (4)].el).El();
             cssMisc::cur_class->GetComments(fun, (yyvsp[(4) - (4)].el));
@@ -2986,7 +2995,7 @@ yyreduce:
     break;
 
   case 99:
-#line 582 "css_parse.y"
+#line 591 "css_parse.y"
     {       /* constructor */
 	    if((yyvsp[(1) - (4)].el).El() != cssMisc::cur_class) {
 	      yyerror("constructor-like method does not match current class type");
@@ -3006,7 +3015,7 @@ yyreduce:
     break;
 
   case 100:
-#line 598 "css_parse.y"
+#line 607 "css_parse.y"
     {       /* destructor */
 	    if((yyvsp[(2) - (5)].el).El() != cssMisc::cur_class) {
 	      yyerror("destructor-like method does not match current class type");
@@ -3027,7 +3036,7 @@ yyreduce:
     break;
 
   case 101:
-#line 615 "css_parse.y"
+#line 624 "css_parse.y"
     {       /* destructor */
 	    if((yyvsp[(3) - (6)].el).El() != cssMisc::cur_class) {
 	      yyerror("destructor-like method does not match current class type");
@@ -3049,7 +3058,7 @@ yyreduce:
     break;
 
   case 102:
-#line 635 "css_parse.y"
+#line 644 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (2)].el).El()->tmp_str == "const") {
@@ -3072,22 +3081,22 @@ yyreduce:
     break;
 
   case 103:
-#line 656 "css_parse.y"
+#line 665 "css_parse.y"
     { (yyval.el).Reset(); }
     break;
 
   case 104:
-#line 657 "css_parse.y"
+#line 666 "css_parse.y"
     { (yyval.el) = (yyvsp[(1) - (1)].el); }
     break;
 
   case 105:
-#line 658 "css_parse.y"
+#line 667 "css_parse.y"
     { (yyval.el) = (yyvsp[(1) - (2)].el); }
     break;
 
   case 106:
-#line 661 "css_parse.y"
+#line 670 "css_parse.y"
     {	/* pre-declare function */
             cssMisc::cur_top->Prog()->insts[(yyvsp[(3) - (4)].ival)-1]->SetJump((yyvsp[(3) - (4)].ival));	(yyval.ival) = (yyvsp[(3) - (4)].ival)-1;
 	    cssScriptFun* fun = (cssScriptFun*)(yyvsp[(1) - (4)].el).El();
@@ -3095,7 +3104,7 @@ yyreduce:
     break;
 
   case 107:
-#line 667 "css_parse.y"
+#line 676 "css_parse.y"
     {
 	    cssScriptFun* fun = (cssScriptFun*)(yyvsp[(1) - (4)].el).El();
 	    cssMisc::cur_top->Prog()->insts[(yyvsp[(3) - (4)].ival)-1]->SetJump((yyvsp[(4) - (4)].ival)+1); (yyval.ival) = (yyvsp[(3) - (4)].ival)-1;
@@ -3109,7 +3118,7 @@ yyreduce:
     break;
 
   case 108:
-#line 679 "css_parse.y"
+#line 688 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (4)].el).El()->tmp_str == "const") {
@@ -3119,7 +3128,7 @@ yyreduce:
     break;
 
   case 109:
-#line 687 "css_parse.y"
+#line 696 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (5)].el).El()->tmp_str == "const") {
@@ -3139,7 +3148,7 @@ yyreduce:
     break;
 
   case 110:
-#line 705 "css_parse.y"
+#line 714 "css_parse.y"
     {
 	    cssMbrScriptFun* fun = (cssMbrScriptFun*)(yyvsp[(1) - (4)].el).El();
 	    cssClassType* cls = cssMisc::cur_class;
@@ -3154,7 +3163,7 @@ yyreduce:
     break;
 
   case 111:
-#line 718 "css_parse.y"
+#line 727 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (2)].el).El()->tmp_str == "const") {
@@ -3169,7 +3178,7 @@ yyreduce:
     break;
 
   case 112:
-#line 731 "css_parse.y"
+#line 740 "css_parse.y"
     {
             cssMisc::cur_scope = NULL;
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
@@ -3197,7 +3206,7 @@ yyreduce:
     break;
 
   case 113:
-#line 757 "css_parse.y"
+#line 766 "css_parse.y"
     {
             cssMisc::cur_scope = NULL;
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
@@ -3220,7 +3229,7 @@ yyreduce:
     break;
 
   case 114:
-#line 778 "css_parse.y"
+#line 787 "css_parse.y"
     {
             cssMisc::cur_scope = NULL;
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
@@ -3244,49 +3253,49 @@ yyreduce:
     break;
 
   case 115:
-#line 800 "css_parse.y"
+#line 809 "css_parse.y"
     { (yyval.ival) = 0; }
     break;
 
   case 116:
-#line 801 "css_parse.y"
+#line 810 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (3)].ival); }
     break;
 
   case 117:
-#line 802 "css_parse.y"
+#line 811 "css_parse.y"
     { (yyval.ival) = 0; }
     break;
 
   case 118:
-#line 803 "css_parse.y"
+#line 812 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (4)].ival); }
     break;
 
   case 119:
-#line 806 "css_parse.y"
+#line 815 "css_parse.y"
     { (yyval.ival) = 1; }
     break;
 
   case 120:
-#line 807 "css_parse.y"
+#line 816 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].ival) + 1; }
     break;
 
   case 121:
-#line 810 "css_parse.y"
+#line 819 "css_parse.y"
     { cssMisc::parsing_args = false; }
     break;
 
   case 122:
-#line 811 "css_parse.y"
+#line 820 "css_parse.y"
     {
 	    cssMisc::parsing_args = false;
 	    cssMisc::default_args.Push((yyvsp[(3) - (3)].el).El()); }
     break;
 
   case 123:
-#line 814 "css_parse.y"
+#line 823 "css_parse.y"
     {
             cssEl* itm = (yyvsp[(3) - (4)].el).El()->GetScoped((yyvsp[(4) - (4)].nm));
 	    cssMisc::parsing_args = false;
@@ -3294,7 +3303,7 @@ yyreduce:
     break;
 
   case 124:
-#line 821 "css_parse.y"
+#line 830 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (2)].el).El()->tmp_str == "const") {
@@ -3306,7 +3315,7 @@ yyreduce:
     break;
 
   case 125:
-#line 829 "css_parse.y"
+#line 838 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (2)].el).El()->tmp_str == "const") {
@@ -3318,7 +3327,7 @@ yyreduce:
     break;
 
   case 127:
-#line 840 "css_parse.y"
+#line 849 "css_parse.y"
     {
 	    if(((yyvsp[(1) - (3)].ival) < 0) && ((yyvsp[(3) - (3)].ival) < 0)) (yyval.ival) = -1;
 	    else if(((yyvsp[(1) - (3)].ival) >= 0) && ((yyvsp[(3) - (3)].ival) < 0)) (yyval.ival) = (yyvsp[(1) - (3)].ival);
@@ -3327,7 +3336,7 @@ yyreduce:
     break;
 
   case 128:
-#line 847 "css_parse.y"
+#line 856 "css_parse.y"
     {
             (cssMisc::cur_type.El())->MakeToken(cssMisc::cur_top->Prog());
 	    cssRef* tmp = (cssRef*)cssMisc::cur_top->Prog()->Stack()->Pop();
@@ -3338,7 +3347,7 @@ yyreduce:
     break;
 
   case 129:
-#line 856 "css_parse.y"
+#line 865 "css_parse.y"
     {
             (cssMisc::cur_type.El())->MakeToken(cssMisc::cur_top->Prog());
 	    cssRef* tmp = (cssRef*)cssMisc::cur_top->Prog()->Stack()->Pop();
@@ -3349,72 +3358,72 @@ yyreduce:
     break;
 
   case 130:
-#line 865 "css_parse.y"
+#line 874 "css_parse.y"
     { (yyvsp[(1) - (1)].el).El()->tmp_str = ""; }
     break;
 
   case 131:
-#line 866 "css_parse.y"
+#line 875 "css_parse.y"
     { (yyvsp[(2) - (2)].el).El()->tmp_str = "extern"; (yyval.el) = (yyvsp[(2) - (2)].el); }
     break;
 
   case 132:
-#line 867 "css_parse.y"
+#line 876 "css_parse.y"
     { (yyvsp[(2) - (2)].el).El()->tmp_str = "static"; (yyval.el) = (yyvsp[(2) - (2)].el); }
     break;
 
   case 133:
-#line 868 "css_parse.y"
+#line 877 "css_parse.y"
     { /* use const expr prog to code stuff */
 	  (yyvsp[(2) - (2)].el).El()->tmp_str = "const"; (yyval.el) = (yyvsp[(2) - (2)].el); cssMisc::CodeConstExpr(); }
     break;
 
   case 134:
-#line 870 "css_parse.y"
+#line 879 "css_parse.y"
     { (yyvsp[(2) - (2)].el).El()->tmp_str = "virtual"; (yyval.el) = (yyvsp[(2) - (2)].el); }
     break;
 
   case 135:
-#line 871 "css_parse.y"
+#line 880 "css_parse.y"
     { (yyvsp[(2) - (2)].el).El()->tmp_str = ""; (yyval.el) = (yyvsp[(2) - (2)].el); }
     break;
 
   case 136:
-#line 872 "css_parse.y"
+#line 881 "css_parse.y"
     { (yyvsp[(3) - (3)].el).El()->tmp_str = "virtual"; (yyval.el) = (yyvsp[(3) - (3)].el); }
     break;
 
   case 137:
-#line 873 "css_parse.y"
+#line 882 "css_parse.y"
     { (yyvsp[(3) - (3)].el).El()->tmp_str = "virtual"; (yyval.el) = (yyvsp[(3) - (3)].el); }
     break;
 
   case 138:
-#line 876 "css_parse.y"
+#line 885 "css_parse.y"
     { (yyval.el) = (yyvsp[(1) - (1)].el); cssMisc::cur_type = (yyval.el); }
     break;
 
   case 139:
-#line 877 "css_parse.y"
+#line 886 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->GetPtrType((yyvsp[(1) - (2)].el).El(), (yyvsp[(2) - (2)].ival)); cssMisc::cur_type = (yyval.el); }
     break;
 
   case 140:
-#line 879 "css_parse.y"
+#line 888 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->GetRefType((yyvsp[(1) - (2)].el).El()); cssMisc::cur_type = (yyval.el); }
     break;
 
   case 141:
-#line 881 "css_parse.y"
+#line 890 "css_parse.y"
     {
 	    cssElPtr pt = cssMisc::cur_top->GetPtrType((yyvsp[(1) - (3)].el).El(), (yyvsp[(2) - (3)].ival));
             (yyval.el) = cssMisc::cur_top->GetRefType(pt.El()); cssMisc::cur_type = (yyval.el); }
     break;
 
   case 144:
-#line 888 "css_parse.y"
+#line 897 "css_parse.y"
     {
           cssEl* itm;
           if((yyvsp[(1) - (2)].el).El()->GetParse() != CSS_PTR)
@@ -3427,7 +3436,7 @@ yyreduce:
     break;
 
   case 145:
-#line 899 "css_parse.y"
+#line 908 "css_parse.y"
     {
           if(((yyvsp[(1) - (2)].el).El()->GetType() != cssEl::T_ClassType) && ((yyvsp[(1) - (2)].el).El()->GetType() != cssEl::T_EnumType)) {
 	     yyerror("scoping of non-class or enum type");
@@ -3436,53 +3445,53 @@ yyreduce:
     break;
 
   case 146:
-#line 904 "css_parse.y"
+#line 913 "css_parse.y"
     {
            cssMisc::cur_scope = (yyvsp[(1) - (2)].el).El(); }
     break;
 
   case 149:
-#line 912 "css_parse.y"
+#line 921 "css_parse.y"
     { (yyval.ival) = 1; }
     break;
 
   case 150:
-#line 913 "css_parse.y"
+#line 922 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (2)].ival) + 1; }
     break;
 
   case 153:
-#line 918 "css_parse.y"
+#line 927 "css_parse.y"
     { cssMisc::cur_top->Prog()->lastif = -1; }
     break;
 
   case 156:
-#line 925 "css_parse.y"
+#line 934 "css_parse.y"
     { Code1(cssBI::pop); }
     break;
 
   case 161:
-#line 930 "css_parse.y"
+#line 939 "css_parse.y"
     { Code1((yyvsp[(1) - (3)].el)); (yyval.ival) = (yyvsp[(2) - (3)].ival); }
     break;
 
   case 162:
-#line 931 "css_parse.y"
+#line 940 "css_parse.y"
     { Code1((yyvsp[(1) - (4)].el)); (yyval.ival) = (yyvsp[(2) - (4)].ival); }
     break;
 
   case 163:
-#line 932 "css_parse.y"
+#line 941 "css_parse.y"
     { (yyval.ival) = Code1((yyvsp[(1) - (2)].el)); }
     break;
 
   case 164:
-#line 933 "css_parse.y"
+#line 942 "css_parse.y"
     { (yyval.ival) = Code1((yyvsp[(1) - (2)].el)); }
     break;
 
   case 167:
-#line 938 "css_parse.y"
+#line 947 "css_parse.y"
     {
 	    (yyval.ival) = cssMisc::cur_top->Prog()->size; // next instr is 'it'
   	    if(cssMisc::cur_top->Prog()->name != cssSwitchBlock_Name) {
@@ -3495,7 +3504,7 @@ yyreduce:
     break;
 
   case 168:
-#line 947 "css_parse.y"
+#line 956 "css_parse.y"
     {
 	    (yyval.ival) = cssMisc::cur_top->Prog()->size; // next instr is 'it'
   	    if(cssMisc::cur_top->Prog()->name != cssSwitchBlock_Name) {
@@ -3508,7 +3517,7 @@ yyreduce:
     break;
 
   case 173:
-#line 966 "css_parse.y"
+#line 975 "css_parse.y"
     {
             (yyval.ival) = (yyvsp[(1) - (6)].ival);
 	    /* value to switch on is already on stack */
@@ -3527,7 +3536,7 @@ yyreduce:
     break;
 
   case 174:
-#line 983 "css_parse.y"
+#line 992 "css_parse.y"
     { 
             cssCodeBlock* blk = new cssCodeBlock(cssSwitchBlock_Name, cssMisc::cur_top->Prog());
 	    blk->loop_type = cssCodeBlock::SWITCH;
@@ -3536,7 +3545,7 @@ yyreduce:
     break;
 
   case 175:
-#line 991 "css_parse.y"
+#line 1000 "css_parse.y"
     {
 	   cssProg* cp = cssMisc::cur_top->Prog();
 	   if(cp->owner_blk == NULL) {
@@ -3555,7 +3564,7 @@ yyreduce:
     break;
 
   case 176:
-#line 1006 "css_parse.y"
+#line 1015 "css_parse.y"
     {
 	   cssProg* cp = cssMisc::cur_top->Prog();
 	   if(cp->owner_blk == NULL) {
@@ -3577,7 +3586,7 @@ yyreduce:
     break;
 
   case 177:
-#line 1026 "css_parse.y"
+#line 1035 "css_parse.y"
     { /* for loop contained within own block */
             cssCodeBlock* blk = new cssCodeBlock(cssForLoop_Name, cssMisc::cur_top->Prog());
 	    cssMisc::cur_top->AddStatic(blk);
@@ -3585,7 +3594,7 @@ yyreduce:
     break;
 
   case 180:
-#line 1037 "css_parse.y"
+#line 1046 "css_parse.y"
     {
             cssCodeBlock* blk = new cssCodeBlock(cssCondBlock_Name, cssMisc::cur_top->Prog());
 	    blk->action = cssCodeBlock::PUSH_RVAL; /* start conditional */
@@ -3594,7 +3603,7 @@ yyreduce:
     break;
 
   case 183:
-#line 1048 "css_parse.y"
+#line 1057 "css_parse.y"
     {
               cssMisc::cur_top->Pop(); /* get rid of cond, push incr */
 	      cssMisc::cur_top->ResetParseFlags();
@@ -3606,7 +3615,7 @@ yyreduce:
     break;
 
   case 184:
-#line 1058 "css_parse.y"
+#line 1067 "css_parse.y"
     {
               cssMisc::cur_top->Pop(); /* get rid of incr */
 	      cssCodeBlock* blk = new cssCodeBlock(cssForLoopStmt_Name, cssMisc::cur_top->Prog());
@@ -3617,7 +3626,7 @@ yyreduce:
     break;
 
   case 185:
-#line 1067 "css_parse.y"
+#line 1076 "css_parse.y"
     {
 	   cssProg* cp = cssMisc::cur_top->Prog();
 	   if(cp->owner_blk == NULL) {
@@ -3638,7 +3647,7 @@ yyreduce:
     break;
 
   case 186:
-#line 1086 "css_parse.y"
+#line 1095 "css_parse.y"
     { /* foreach loop contained within own block */
             cssCodeBlock* blk = new cssCodeBlock(cssForeachLoop_Name, cssMisc::cur_top->Prog());
 	    cssMisc::cur_top->AddStatic(blk);
@@ -3650,7 +3659,7 @@ yyreduce:
     break;
 
   case 187:
-#line 1096 "css_parse.y"
+#line 1105 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (3)].el).El()->tmp_str == "const") {
@@ -3662,21 +3671,21 @@ yyreduce:
     break;
 
   case 188:
-#line 1104 "css_parse.y"
+#line 1113 "css_parse.y"
     {
 	      cssMisc::cur_foreach_var = (yyvsp[(1) - (1)].el);
 	    }
     break;
 
   case 189:
-#line 1107 "css_parse.y"
+#line 1116 "css_parse.y"
     {
 	      cssMisc::cur_foreach_var = (yyvsp[(1) - (1)].el);
 	    }
     break;
 
   case 190:
-#line 1112 "css_parse.y"
+#line 1121 "css_parse.y"
     {
             cssCodeBlock* blk = new cssCodeBlock(cssCondBlock_Name, cssMisc::cur_top->Prog());
 	    blk->action = cssCodeBlock::PUSH_RVAL; /* start conditional */
@@ -3685,7 +3694,7 @@ yyreduce:
     break;
 
   case 191:
-#line 1119 "css_parse.y"
+#line 1128 "css_parse.y"
     {
             /* code the cond opr */
             Code3(cssMisc::cur_foreach_itr, cssMisc::cur_foreach_var, cssBI::foreach_cond);
@@ -3701,7 +3710,7 @@ yyreduce:
     break;
 
   case 192:
-#line 1133 "css_parse.y"
+#line 1142 "css_parse.y"
     {
               cssMisc::cur_top->Pop(); /* get rid of incr */
 	      cssCodeBlock* blk = new cssCodeBlock(cssForeachLoopStmt_Name, cssMisc::cur_top->Prog());
@@ -3715,7 +3724,7 @@ yyreduce:
     break;
 
   case 194:
-#line 1149 "css_parse.y"
+#line 1158 "css_parse.y"
     { 
             cssCodeBlock* blk = new cssCodeBlock(cssDoLoop_Name, cssMisc::cur_top->Prog());
 	    blk->loop_type = cssCodeBlock::DO;
@@ -3724,7 +3733,7 @@ yyreduce:
     break;
 
   case 195:
-#line 1158 "css_parse.y"
+#line 1167 "css_parse.y"
     {
             cssProg* prv_prg = cssMisc::cur_top->PrvProg();
 	    if((prv_prg != NULL) && (prv_prg->owner_blk != NULL)
@@ -3751,7 +3760,7 @@ yyreduce:
     break;
 
   case 196:
-#line 1181 "css_parse.y"
+#line 1190 "css_parse.y"
     {
 	  cssProg* cp = cssMisc::cur_top->Prog();
 	  if(cp->owner_blk == NULL) {
@@ -3767,19 +3776,19 @@ yyreduce:
     break;
 
   case 197:
-#line 1195 "css_parse.y"
+#line 1204 "css_parse.y"
     { }
     break;
 
   case 198:
-#line 1198 "css_parse.y"
+#line 1207 "css_parse.y"
     {
           cssMisc::cur_top->Pop(); /* pop the if_true block */
           (yyval.ival) = (yyvsp[(2) - (3)].ival); }
     break;
 
   case 199:
-#line 1203 "css_parse.y"
+#line 1212 "css_parse.y"
     {
           cssMisc::cur_top->Pop(); /* pop the if_true block */
           cssMisc::cur_top->Prog()->lastelseif = false; /* use this flag! */
@@ -3787,7 +3796,7 @@ yyreduce:
     break;
 
   case 200:
-#line 1207 "css_parse.y"
+#line 1216 "css_parse.y"
     {
           cssMisc::cur_top->Pop(); /* pop the if_true block */
           cssMisc::cur_top->Prog()->lastelseif = true; /* be on guard for another else! */
@@ -3795,7 +3804,7 @@ yyreduce:
     break;
 
   case 204:
-#line 1218 "css_parse.y"
+#line 1227 "css_parse.y"
     {
             cssMisc::cur_top->Pop(); /* pop the if_false block */
 	    /* now check for other else blocks that need popping! */
@@ -3804,32 +3813,32 @@ yyreduce:
     break;
 
   case 205:
-#line 1223 "css_parse.y"
+#line 1232 "css_parse.y"
     {
 	  (yyval.ival) = (yyvsp[(1) - (4)].ival);  }
     break;
 
   case 206:
-#line 1225 "css_parse.y"
+#line 1234 "css_parse.y"
     { /* do not pop if going into another else */
 	  (yyval.ival) = (yyvsp[(1) - (3)].ival);  }
     break;
 
   case 207:
-#line 1229 "css_parse.y"
+#line 1238 "css_parse.y"
     {
 	  if(!cssMisc::cur_top->Prog()->lastelseif) {
 	    cssMisc::cur_top->PopElseBlocks(); } }
     break;
 
   case 208:
-#line 1234 "css_parse.y"
+#line 1243 "css_parse.y"
     {
           cssMisc::cur_top->Prog()->lastif = cssMisc::cur_top->Prog()->size; }
     break;
 
   case 209:
-#line 1238 "css_parse.y"
+#line 1247 "css_parse.y"
     {
   	    css_progdx tmp = cssMisc::cur_top->Prog()->lastif;
   	    if(tmp < 0) {
@@ -3849,7 +3858,7 @@ yyreduce:
     break;
 
   case 210:
-#line 1256 "css_parse.y"
+#line 1265 "css_parse.y"
     { 
             cssCodeBlock* blk = new cssCodeBlock(cssIfTrueBlock_Name, cssMisc::cur_top->Prog());
 	    blk->action = cssCodeBlock::IF_TRUE; /* start block of if-true */
@@ -3858,7 +3867,7 @@ yyreduce:
     break;
 
   case 211:
-#line 1263 "css_parse.y"
+#line 1272 "css_parse.y"
     {
             cssCodeBlock* blk = new cssCodeBlock(cssCondBlock_Name, cssMisc::cur_top->Prog());
 	    blk->action = cssCodeBlock::PUSH_RVAL; /* start conditional */
@@ -3867,13 +3876,13 @@ yyreduce:
     break;
 
   case 212:
-#line 1270 "css_parse.y"
+#line 1279 "css_parse.y"
     {
             cssMisc::cur_top->Pop(); }
     break;
 
   case 213:
-#line 1274 "css_parse.y"
+#line 1283 "css_parse.y"
     {
             cssCodeBlock* blk = new cssCodeBlock(cssBlock_Name, cssMisc::cur_top->Prog());
 	    cssMisc::cur_top->AddStatic(blk);
@@ -3881,12 +3890,12 @@ yyreduce:
     break;
 
   case 214:
-#line 1280 "css_parse.y"
+#line 1289 "css_parse.y"
     {  }
     break;
 
   case 215:
-#line 1283 "css_parse.y"
+#line 1292 "css_parse.y"
     {
 	    cssScriptFun* sfun = cssMisc::cur_top->Prog()->owner_fun;
 	    if((sfun != NULL) && (sfun->GetType() == cssEl::T_MbrScriptFun)) {
@@ -3911,17 +3920,17 @@ yyreduce:
     break;
 
   case 216:
-#line 1306 "css_parse.y"
+#line 1315 "css_parse.y"
     { (yyval.ival) = Code1((yyvsp[(1) - (1)].el)); }
     break;
 
   case 219:
-#line 1312 "css_parse.y"
+#line 1321 "css_parse.y"
     { Code1(cssBI::asgn); }
     break;
 
   case 220:
-#line 1313 "css_parse.y"
+#line 1322 "css_parse.y"
     {
 	    int c; String inp;
 	    while(((c = cssMisc::cur_top->Getc()) != '}') && (c != EOF)) inp += (char)c;
@@ -3935,233 +3944,233 @@ yyreduce:
     break;
 
   case 221:
-#line 1323 "css_parse.y"
+#line 1332 "css_parse.y"
     { Code1(cssBI::asgn_add); }
     break;
 
   case 222:
-#line 1324 "css_parse.y"
+#line 1333 "css_parse.y"
     { Code1(cssBI::asgn_sub); }
     break;
 
   case 223:
-#line 1325 "css_parse.y"
+#line 1334 "css_parse.y"
     { Code1(cssBI::asgn_mult); }
     break;
 
   case 224:
-#line 1326 "css_parse.y"
+#line 1335 "css_parse.y"
     { Code1(cssBI::asgn_div); }
     break;
 
   case 225:
-#line 1327 "css_parse.y"
+#line 1336 "css_parse.y"
     { Code1(cssBI::asgn_mod); }
     break;
 
   case 226:
-#line 1328 "css_parse.y"
+#line 1337 "css_parse.y"
     { Code1(cssBI::asgn_lshift); }
     break;
 
   case 227:
-#line 1329 "css_parse.y"
+#line 1338 "css_parse.y"
     { Code1(cssBI::asgn_rshift); }
     break;
 
   case 228:
-#line 1330 "css_parse.y"
+#line 1339 "css_parse.y"
     { Code1(cssBI::asgn_and); }
     break;
 
   case 229:
-#line 1331 "css_parse.y"
+#line 1340 "css_parse.y"
     { Code1(cssBI::asgn_xor); }
     break;
 
   case 230:
-#line 1332 "css_parse.y"
+#line 1341 "css_parse.y"
     { Code1(cssBI::asgn_or); }
     break;
 
   case 231:
-#line 1333 "css_parse.y"
+#line 1342 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (3)].ival); Code2((yyvsp[(3) - (3)].el),(yyvsp[(1) - (3)].el)); }
     break;
 
   case 232:
-#line 1334 "css_parse.y"
+#line 1343 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (5)].ival); Code2((yyvsp[(3) - (5)].el),(yyvsp[(1) - (5)].el)); }
     break;
 
   case 233:
-#line 1335 "css_parse.y"
+#line 1344 "css_parse.y"
     {
 	  (yyval.ival) = (yyvsp[(2) - (4)].ival); Code2((yyvsp[(3) - (4)].el),(yyvsp[(1) - (4)].el)); }
     break;
 
   case 234:
-#line 1337 "css_parse.y"
+#line 1346 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (3)].ival); Code1((yyvsp[(1) - (3)].el)); }
     break;
 
   case 235:
-#line 1338 "css_parse.y"
+#line 1347 "css_parse.y"
     { (yyval.ival) = (yyvsp[(4) - (5)].ival); Code1((yyvsp[(1) - (5)].el)); }
     break;
 
   case 236:
-#line 1339 "css_parse.y"
+#line 1348 "css_parse.y"
     { Code1(cssBI::lor); }
     break;
 
   case 237:
-#line 1340 "css_parse.y"
+#line 1349 "css_parse.y"
     { Code1(cssBI::land); }
     break;
 
   case 238:
-#line 1341 "css_parse.y"
+#line 1350 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (2)].ival); Code1(cssBI::addr_of); }
     break;
 
   case 239:
-#line 1342 "css_parse.y"
+#line 1351 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (2)].ival); Code1(cssBI::de_ptr); }
     break;
 
   case 240:
-#line 1343 "css_parse.y"
+#line 1352 "css_parse.y"
     { Code1(cssBI::gt); }
     break;
 
   case 241:
-#line 1344 "css_parse.y"
+#line 1353 "css_parse.y"
     { Code1(cssBI::ge); }
     break;
 
   case 242:
-#line 1345 "css_parse.y"
+#line 1354 "css_parse.y"
     { Code1(cssBI::lt); }
     break;
 
   case 243:
-#line 1346 "css_parse.y"
+#line 1355 "css_parse.y"
     { Code1(cssBI::le); }
     break;
 
   case 244:
-#line 1347 "css_parse.y"
+#line 1356 "css_parse.y"
     { Code1(cssBI::eq); }
     break;
 
   case 245:
-#line 1348 "css_parse.y"
+#line 1357 "css_parse.y"
     { Code1(cssBI::ne); }
     break;
 
   case 246:
-#line 1349 "css_parse.y"
+#line 1358 "css_parse.y"
     { Code1(cssBI::cond); }
     break;
 
   case 247:
-#line 1350 "css_parse.y"
+#line 1359 "css_parse.y"
     { Code1(cssBI::add); }
     break;
 
   case 248:
-#line 1351 "css_parse.y"
+#line 1360 "css_parse.y"
     { Code1(cssBI::sub); }
     break;
 
   case 249:
-#line 1352 "css_parse.y"
+#line 1361 "css_parse.y"
     { Code1(cssBI::mul); }
     break;
 
   case 250:
-#line 1353 "css_parse.y"
+#line 1362 "css_parse.y"
     { Code1(cssBI::div); }
     break;
 
   case 251:
-#line 1354 "css_parse.y"
+#line 1363 "css_parse.y"
     { Code1(cssBI::modulo); }
     break;
 
   case 252:
-#line 1355 "css_parse.y"
+#line 1364 "css_parse.y"
     { Code1(cssBI::lshift); }
     break;
 
   case 253:
-#line 1356 "css_parse.y"
+#line 1365 "css_parse.y"
     { Code1(cssBI::rshift); }
     break;
 
   case 254:
-#line 1357 "css_parse.y"
+#line 1366 "css_parse.y"
     { Code1(cssBI::bit_and); }
     break;
 
   case 255:
-#line 1358 "css_parse.y"
+#line 1367 "css_parse.y"
     { Code1(cssBI::bit_xor); }
     break;
 
   case 256:
-#line 1359 "css_parse.y"
+#line 1368 "css_parse.y"
     { Code1(cssBI::bit_or); }
     break;
 
   case 257:
-#line 1360 "css_parse.y"
+#line 1369 "css_parse.y"
     { Code1(cssBI::asgn_post_pp); }
     break;
 
   case 258:
-#line 1361 "css_parse.y"
+#line 1370 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (2)].ival); Code1(cssBI::asgn_pre_pp); }
     break;
 
   case 259:
-#line 1362 "css_parse.y"
+#line 1371 "css_parse.y"
     { Code1(cssBI::asgn_post_mm); }
     break;
 
   case 260:
-#line 1363 "css_parse.y"
+#line 1372 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (2)].ival); Code1(cssBI::asgn_pre_mm); }
     break;
 
   case 261:
-#line 1364 "css_parse.y"
+#line 1373 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (2)].ival); Code1(cssBI::neg); }
     break;
 
   case 262:
-#line 1365 "css_parse.y"
+#line 1374 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (2)].ival); Code1(cssBI::lnot); }
     break;
 
   case 263:
-#line 1366 "css_parse.y"
+#line 1375 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (2)].ival); Code1(cssBI::bitneg); }
     break;
 
   case 264:
-#line 1367 "css_parse.y"
+#line 1376 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (1)].ival); }
     break;
 
   case 265:
-#line 1368 "css_parse.y"
+#line 1377 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (2)].ival); Code1(cssBI::de_array); }
     break;
 
   case 266:
-#line 1370 "css_parse.y"
+#line 1379 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(2) - (4)].el).El()->tmp_str == "const") {
@@ -4171,7 +4180,7 @@ yyreduce:
     break;
 
   case 267:
-#line 1376 "css_parse.y"
+#line 1385 "css_parse.y"
     {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if((yyvsp[(1) - (4)].el).El()->tmp_str == "const") {
@@ -4181,12 +4190,12 @@ yyreduce:
     break;
 
   case 269:
-#line 1383 "css_parse.y"
+#line 1392 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (3)].ival); }
     break;
 
   case 275:
-#line 1396 "css_parse.y"
+#line 1405 "css_parse.y"
     { (yyval.ival) = (yyvsp[(2) - (3)].ival); Code1(cssBI::make_matrix);
 	    int act_args = (yyvsp[(2) - (3)].ival);
 	    cssMisc::parsing_matrix = false;
@@ -4196,103 +4205,103 @@ yyreduce:
     break;
 
   case 276:
-#line 1405 "css_parse.y"
+#line 1414 "css_parse.y"
     { (yyval.ival) = Code1(cssMisc::VoidElPtr); /* an arg stop */
 	    cssMisc::parsing_matrix = true; }
     break;
 
   case 277:
-#line 1409 "css_parse.y"
+#line 1418 "css_parse.y"
     { (yyval.ival) = Code1(cssMisc::Internal.FindName("colon_mark")); }
     break;
 
   case 278:
-#line 1412 "css_parse.y"
+#line 1421 "css_parse.y"
     { (yyval.ival) = Code1(cssMisc::Internal.FindName("comma_mark")); }
     break;
 
   case 279:
-#line 1415 "css_parse.y"
+#line 1424 "css_parse.y"
     { (yyval.ival) = Code1(cssMisc::Internal.FindName("semicolon_mark")); }
     break;
 
   case 281:
-#line 1420 "css_parse.y"
+#line 1429 "css_parse.y"
     { (yyval.ival) = Code1((yyvsp[(1) - (1)].el)); }
     break;
 
   case 282:
-#line 1421 "css_parse.y"
+#line 1430 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (1)].ival); }
     break;
 
   case 283:
-#line 1422 "css_parse.y"
+#line 1431 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (2)].ival); }
     break;
 
   case 284:
-#line 1423 "css_parse.y"
+#line 1432 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (2)].ival); }
     break;
 
   case 285:
-#line 1424 "css_parse.y"
+#line 1433 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].ival); }
     break;
 
   case 286:
-#line 1425 "css_parse.y"
+#line 1434 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].ival); }
     break;
 
   case 287:
-#line 1426 "css_parse.y"
+#line 1435 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (4)].ival); }
     break;
 
   case 288:
-#line 1427 "css_parse.y"
+#line 1436 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (5)].ival); }
     break;
 
   case 289:
-#line 1428 "css_parse.y"
+#line 1437 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (4)].ival); }
     break;
 
   case 290:
-#line 1429 "css_parse.y"
+#line 1438 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].ival); }
     break;
 
   case 291:
-#line 1432 "css_parse.y"
+#line 1441 "css_parse.y"
     { (yyval.ival) = 1; }
     break;
 
   case 292:
-#line 1433 "css_parse.y"
+#line 1442 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].ival) + 1; }
     break;
 
   case 293:
-#line 1434 "css_parse.y"
+#line 1443 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].ival) + 2; }
     break;
 
   case 294:
-#line 1438 "css_parse.y"
+#line 1447 "css_parse.y"
     { (yyval.ival) = Code2(cssBI::push_next, (yyvsp[(1) - (1)].el)); }
     break;
 
   case 295:
-#line 1439 "css_parse.y"
+#line 1448 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (2)].el_ival).ival; Code1((yyvsp[(1) - (2)].el_ival).el); }
     break;
 
   case 296:
-#line 1440 "css_parse.y"
+#line 1449 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].el_ival).ival; Code1((yyvsp[(1) - (3)].el_ival).el);
 	  if(((yyvsp[(1) - (3)].el_ival).el.El()->GetType() == cssEl::T_ElCFun) ||
 	     /*	     ($1.el.El()->GetType() == cssEl::T_MbrCFun) || */
@@ -4309,7 +4318,7 @@ yyreduce:
     break;
 
   case 297:
-#line 1455 "css_parse.y"
+#line 1464 "css_parse.y"
     {
             (yyval.el_ival).ival = Code1(cssMisc::VoidElPtr); /* an arg stop */
 	    (yyval.el_ival).el = (yyvsp[(1) - (2)].el);	/* save this pointer for later.. */
@@ -4326,12 +4335,12 @@ yyreduce:
     break;
 
   case 298:
-#line 1471 "css_parse.y"
+#line 1480 "css_parse.y"
     { Code2((yyvsp[(3) - (3)].el), cssBI::points_at);}
     break;
 
   case 299:
-#line 1472 "css_parse.y"
+#line 1481 "css_parse.y"
     {
 	    int mbno = (yyvsp[(1) - (3)].el).El()->GetMemberNo((const char*)*((yyvsp[(3) - (3)].el).El()));
 	    if(mbno < 0) { (yyval.ival) = Code3((yyvsp[(1) - (3)].el), (yyvsp[(3) - (3)].el), cssBI::points_at); }
@@ -4340,12 +4349,12 @@ yyreduce:
     break;
 
   case 300:
-#line 1480 "css_parse.y"
+#line 1489 "css_parse.y"
     { (yyval.ival) = Code3(cssBI::push_root, (yyvsp[(2) - (2)].el), cssBI::points_at); }
     break;
 
   case 301:
-#line 1481 "css_parse.y"
+#line 1490 "css_parse.y"
     {
 	  cssMisc::cur_scope = NULL;
 	    cssEl* scp = (yyvsp[(1) - (2)].el).El()->GetScoped((const char*)*((yyvsp[(2) - (2)].el).El()));
@@ -4354,7 +4363,7 @@ yyreduce:
     break;
 
   case 302:
-#line 1487 "css_parse.y"
+#line 1496 "css_parse.y"
     {
 	  /* argstop is put in by member_fun; member_fun skips over end jump, 
 	     uses it to find member_call*/
@@ -4363,7 +4372,7 @@ yyreduce:
     break;
 
   case 303:
-#line 1492 "css_parse.y"
+#line 1501 "css_parse.y"
     {
 	  (yyval.ival) = (yyvsp[(1) - (4)].el_ival).ival;
 	  cssMisc::cur_top->Prog()->insts[(yyvsp[(2) - (4)].ival)-1]->SetJump(Code1(cssBI::member_call));
@@ -4382,13 +4391,13 @@ yyreduce:
     break;
 
   case 304:
-#line 1509 "css_parse.y"
+#line 1518 "css_parse.y"
     { Code2((yyvsp[(3) - (4)].el), cssBI::member_fun);
                                                   (yyval.el_ival).ival = (yyvsp[(1) - (4)].ival); (yyval.el_ival).el.Reset(); }
     break;
 
   case 305:
-#line 1511 "css_parse.y"
+#line 1520 "css_parse.y"
     { (yyval.el_ival).el.Reset();
 	    int mbno = (yyvsp[(1) - (4)].el).El()->GetMethodNo((const char*)*((yyvsp[(3) - (4)].el).El()));
 	    if(mbno < 0) { /* don't complain for pointers and references */
@@ -4410,7 +4419,7 @@ yyreduce:
     break;
 
   case 306:
-#line 1529 "css_parse.y"
+#line 1538 "css_parse.y"
     {
 	    cssMisc::cur_scope = NULL; (yyval.el_ival).el.Reset();
 	    int mbno = (yyvsp[(1) - (3)].el).El()->GetMethodNo((const char*)*((yyvsp[(2) - (3)].el).El()));
@@ -4433,31 +4442,31 @@ yyreduce:
     break;
 
   case 307:
-#line 1553 "css_parse.y"
+#line 1562 "css_parse.y"
     {
             (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].nm))); }
     break;
 
   case 308:
-#line 1557 "css_parse.y"
+#line 1566 "css_parse.y"
     {
             (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].nm))); }
     break;
 
   case 309:
-#line 1559 "css_parse.y"
+#line 1568 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName())); }
     break;
 
   case 310:
-#line 1561 "css_parse.y"
+#line 1570 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName())); }
     break;
 
   case 311:
-#line 1563 "css_parse.y"
+#line 1572 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName()));
 	    if(cssMisc::cur_top->debug >= 1)
@@ -4465,7 +4474,7 @@ yyreduce:
     break;
 
   case 312:
-#line 1567 "css_parse.y"
+#line 1576 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName()));
 	    if(cssMisc::cur_top->debug >= 1)
@@ -4473,7 +4482,7 @@ yyreduce:
     break;
 
   case 313:
-#line 1571 "css_parse.y"
+#line 1580 "css_parse.y"
     {
 	    (yyval.el) = cssMisc::cur_top->Prog()->Stack()->Push(new cssString((yyvsp[(1) - (1)].el).El()->GetName()));
 	    if(cssMisc::cur_top->debug >= 1)
@@ -4481,19 +4490,19 @@ yyreduce:
     break;
 
   case 314:
-#line 1577 "css_parse.y"
+#line 1586 "css_parse.y"
     { /* these are treated identically in parsing */
            cssMisc::cur_top->parse_path_expr = true; }
     break;
 
   case 315:
-#line 1579 "css_parse.y"
+#line 1588 "css_parse.y"
     {
            cssMisc::cur_top->parse_path_expr = true; }
     break;
 
   case 316:
-#line 1583 "css_parse.y"
+#line 1592 "css_parse.y"
     {
    	   String tmpstr = String((yyvsp[(1) - (1)].nm));
            (yyval.el) = cssMisc::cur_top->AddLiteral(tmpstr);
@@ -4501,71 +4510,71 @@ yyreduce:
     break;
 
   case 317:
-#line 1587 "css_parse.y"
+#line 1596 "css_parse.y"
     {
            cssMisc::cur_top->parse_path_expr = false; }
     break;
 
   case 324:
-#line 1599 "css_parse.y"
+#line 1608 "css_parse.y"
     { (yyval.ival) = 1; }
     break;
 
   case 325:
-#line 1600 "css_parse.y"
+#line 1609 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].ival) + 1; }
     break;
 
   case 327:
-#line 1604 "css_parse.y"
+#line 1613 "css_parse.y"
     { (yyval.ival) = Code1((yyvsp[(1) - (1)].el)); }
     break;
 
   case 328:
-#line 1607 "css_parse.y"
+#line 1616 "css_parse.y"
     { (yyval.ival) = 1; }
     break;
 
   case 329:
-#line 1608 "css_parse.y"
+#line 1617 "css_parse.y"
     { (yyval.ival) = (yyvsp[(1) - (3)].ival) + 1; }
     break;
 
   case 331:
-#line 1612 "css_parse.y"
+#line 1621 "css_parse.y"
     { (yyval.ival) = Code1((yyvsp[(1) - (1)].el)); }
     break;
 
   case 332:
-#line 1613 "css_parse.y"
+#line 1622 "css_parse.y"
     { 
 	  String tmpstr = String((yyvsp[(1) - (1)].nm));
 	  (yyval.ival) = Code1(cssMisc::cur_top->AddLiteral(tmpstr)); }
     break;
 
   case 333:
-#line 1616 "css_parse.y"
+#line 1625 "css_parse.y"
     { (yyval.ival) = Code1((yyvsp[(1) - (1)].el)); }
     break;
 
   case 334:
-#line 1619 "css_parse.y"
+#line 1628 "css_parse.y"
     { (yyval.ival) = Code1(cssMisc::VoidElPtr); }
     break;
 
   case 338:
-#line 1627 "css_parse.y"
+#line 1636 "css_parse.y"
     { Code1(cssBI::pop); }
     break;
 
   case 339:
-#line 1630 "css_parse.y"
+#line 1639 "css_parse.y"
     { Code1(cssInst::Stop); (yyval.ival) = cssMisc::cur_top->Prog()->size; }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 4569 "y.tab.c"
+#line 4578 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -4779,7 +4788,7 @@ yyreturn:
 }
 
 
-#line 1634 "css_parse.y"
+#line 1643 "css_parse.y"
 
 
 	/* end of grammar */

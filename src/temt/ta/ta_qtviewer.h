@@ -2514,6 +2514,7 @@ public:
     SO_MEMB_VAL		= 0x0010, // #LABEL_member_value searches in the values of members, especially strings
     SO_ALL_MEMBS	= 0x0020, // #LABEL_all_members searches in all members, otherwise excludes the members that are not typicaly shown according to current settings
     SO_TYPE_DESC	= 0x0040, // #LABEL_type_desc searches in the type description information, including the description of the type of the object, and the description of the member (all of this information is hard-coded into the program)
+    SO_MATCH_CASE	= 0x0080, // #LABEL_match_case match the case of the search string -- default is to ignore case
 #ifndef __MAKETA__
     SO_DEF_OPTIONS	= SO_OBJ_NAME | SO_OBJ_TYPE | SO_OBJ_DESC | SO_MEMB_NAME | SO_MEMB_VAL
 #endif

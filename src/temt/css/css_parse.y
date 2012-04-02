@@ -308,6 +308,15 @@ vardefin: type name '=' argstop expr end 	{
 	    if(extyp->GetType() == cssEl::T_ElCFun && extyp->name == "make_matrix") {
 	      extyp = cssBI::matrix_inst;
 	    }
+	    else if(extyp->GetType() == cssEl::T_MbrCFun) {
+	      if(((cssMbrCFun*)extyp)->methdef) {
+		/* todo: could have a much more comprehensive system here */
+		MethodDef* md = ((cssMbrCFun*)extyp)->methdef;
+		if(md->type->InheritsFrom(&TA_taMatrix)) {
+		  extyp = cssBI::matrix_inst;
+		}
+	      }
+	    }
 	    extyp->MakeToken(prg);
 	    cssRef* tmp = (cssRef*)prg->Stack()->Pop();
 	    $$ = Code3(tmp->ptr, cssBI::init_asgn, cssBI::pop);

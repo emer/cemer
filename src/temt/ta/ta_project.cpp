@@ -2085,7 +2085,7 @@ void taProject::UpdateChangeLog() {
     String nw_txt = "\n<li>" + tstamp
       + " version: " + vers + " user: " + user + " file_name: <code>" + cur_fname
       + "</code> " + prv_fname + "<br>\n";
-    if(!last_change_desc.empty()) nw_txt += "  " + last_change_desc + "\n";
+    if(!last_change_desc.empty()) nw_txt += last_change_desc + "\n";
 
     taDoc* doc = docs.FindName("ChangeLog");
     if(!doc) {
@@ -2096,9 +2096,9 @@ void taProject::UpdateChangeLog() {
       doc->text += "</ul>\n</body>\n</html>\n";
     }
     else {
-      String hdr = doc->text.through("<ul>\n");
-      String trl = doc->text.after("<ul>\n");
-      doc->text = hdr + nw_txt + trl;
+      String hdr = trim(doc->text.through("<ul>"));
+      String trl = trim(doc->text.after("<ul>"));
+      doc->text = hdr + "\n\n" + nw_txt + trl;
     }
     doc->UpdateText();
     doc->DataChanged(DCR_ITEM_UPDATED);

@@ -955,10 +955,19 @@ int tabDataLink::checkConfigFlags() const {
   return (data()->baseFlags() & taBase::INVALID_MASK);
 }
 
-bool IsHit(const String_PArray& targs, const String_PArray& kicks, String& p) {
-  for (int i = 0; i < kicks.size; ++i) {
-    if (p.contains_ci(kicks[i])) return false;
+static bool IsHit(const String_PArray& targs, const String_PArray& kicks, String& p,
+		  bool ci) {
+  if(ci) {
+    for (int i = 0; i < kicks.size; ++i) {
+      if (p.contains_ci(kicks[i])) return false;
+    }
   }
+  else {
+    for (int i = 0; i < kicks.size; ++i) {
+      if (p.contains(kicks[i])) return false;
+    }
+  }
+
   String targ;
   String px = p; 
   // px: highlighted version; we progressively put in placeholders for the
@@ -968,10 +977,17 @@ bool IsHit(const String_PArray& targs, const String_PArray& kicks, String& p) {
   bool rval = false;
   for (int i = 0; i < targs.size; ++i) {
     targ = targs[i];
-    int pos = p.index_ci(targ);
+    int pos;
+    if(ci)
+      pos = p.index_ci(targ);
+    else
+      pos = p.index(targ);
     if (pos >= 0) {
       rval = true;
-      pos = px.index_ci(targ);
+      if(ci)
+	pos = px.index_ci(targ);
+      else
+	pos = px.index(targ);
       if (pos >= 0) { // can still highlight in already highlighted version
         px = px.left(pos) + "~~~~" +
           px.at(pos, targ.length()) + "```" +
@@ -987,8 +1003,7 @@ bool IsHit(const String_PArray& targs, const String_PArray& kicks, String& p) {
   return rval;
 }
 
-void AddHit(int item_type, const String& probedx, String& hits) 
-{
+static void AddHit(int item_type, const String& probedx, String& hits) {
   if (hits.nonempty()) hits += "<br>";
   switch (item_type) {
   case iSearchDialog::SO_OBJ_NAME: hits += "name:"; break;
@@ -1008,12 +1023,15 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   String probed;
   String hits; // cumulative hits guy
   int n = 0; // hits counter, to know to call Add
+  bool ci = true;		// case independent
+  if(sd->options() & iSearchDialog::SO_MATCH_CASE)
+    ci = false;
   
   // NAME
   int item_type = iSearchDialog::SO_OBJ_NAME;
   if (sd->options() & item_type) {
     probed = tab->GetName();
-    if (IsHit(targs, kicks, probed)) 
+    if (IsHit(targs, kicks, probed, ci)) 
       {++n; AddHit(item_type, probed, hits);}
   }
   
@@ -1021,13 +1039,13 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   item_type = iSearchDialog::SO_OBJ_TYPE;
   if (sd->options() & item_type) {
     probed = tab->GetTypeDef()->name;
-    if (IsHit(targs, kicks, probed)) {
+    if (IsHit(targs, kicks, probed, ci)) {
       ++n; AddHit(item_type, probed, hits);
     }
     else {
       if(sd->options() & iSearchDialog::SO_TYPE_DESC) {
 	probed = tab->GetTypeDef()->desc;
-	if (IsHit(targs, kicks, probed)) {
+	if (IsHit(targs, kicks, probed, ci)) {
 	  ++n; AddHit(item_type, probed, hits);
 	}
       }
@@ -1038,12 +1056,12 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
   item_type = iSearchDialog::SO_OBJ_DESC;
   if (sd->options() & item_type) {
     probed = tab->GetColText(taBase::key_desc);
-    if (IsHit(targs, kicks, probed)) {
+    if (IsHit(targs, kicks, probed, ci)) {
       ++n; AddHit(item_type, probed, hits);
     }
     else {
       probed = tab->GetDisplayName(); // include display name
-      if (IsHit(targs, kicks, probed)) {
+      if (IsHit(targs, kicks, probed, ci)) {
 	++n; AddHit(item_type, probed, hits);
       }
     }
@@ -1057,13 +1075,13 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
       MemberDef* md = td->members[m];
       if (!(sd->options() & iSearchDialog::SO_ALL_MEMBS) && !md->ShowMember()) continue;
       probed = md->name;
-      if (IsHit(targs, kicks, probed)) {
+      if (IsHit(targs, kicks, probed, ci)) {
 	++n; AddHit(item_type, probed, hits);
       }
       else {
 	if(sd->options() & iSearchDialog::SO_TYPE_DESC) {
 	  probed = md->desc;
-	  if (IsHit(targs, kicks, probed)) {
+	  if (IsHit(targs, kicks, probed, ci)) {
 	    ++n; AddHit(item_type, probed, hits);
 	  }
 	}
@@ -1098,13 +1116,13 @@ void tabDataLink::SearchStat(taBase* tab, iSearchDialog* sd, int level) {
         } 
         // have to force getting an inline value, since default is often the path
 		probed = md->type->GetValStr(md->GetOff(tab), tab, md, (TypeDef::StrContext)0, true); // force_inline
-        if (IsHit(targs, kicks, probed)) 
+		if (IsHit(targs, kicks, probed, ci)) 
           {++n; AddHit(item_type, probed, hits);}
       }
       else if(md->type->ptr == 1) {
 	// if a pointer, treat it as a value and go for it!
 		  probed = md->type->GetValStr(md->GetOff(tab), tab, md, (TypeDef::StrContext)0, true); // force_inline
-        if (IsHit(targs, kicks, probed)) 
+		  if (IsHit(targs, kicks, probed, ci)) 
           {++n; AddHit(item_type, probed, hits);}
       }
     }

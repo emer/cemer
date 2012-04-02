@@ -1712,22 +1712,7 @@ bool taMatrix::InRangeN(const MatrixIndex& indices) const {
 }
  
 void taMatrix::List(ostream& strm) const {
-  // strm << "["; 
-  // for (int d = 0; d < dims(); ++d) {
-  //   if (d > 0) strm << ",";
-  //   strm << dim(d);
-  // }
-  // strm << "] {";
-  // int i;
-  // for(i=0;i<size;i++) {
-  //   strm << " " << El_GetStr_(FastEl_Flat_(i)) << ",";
-  //   if((i+1) % 8 == 0) {
-  //     strm << endl;
-  //     taMisc::FlushConsole();
-  //   }
-  // }
-  // strm << "}";
-  strm << GetStringRep_impl() << endl;
+  strm << GetStringRep_impl();
   taMisc::FlushConsole();
 }
 
@@ -2752,6 +2737,40 @@ Variant taMatrix::Min() const {
   return _nilVariant;
 }
 
+//////////// op abs
+taMatrix* taMatrix::Abs() const {
+  if(GetDataValType() == VT_FLOAT) {
+    float_Matrix* rval = new float_Matrix(this->geom);
+    TA_FOREACH_INDEX(i, *this) {
+      rval->FastEl_Flat(i) = fabsf(((float_Matrix*)this)->FastEl_Flat(i));
+    }
+    return rval;
+  }
+  else if(GetDataValType() == VT_DOUBLE) {
+    double_Matrix* rval = new double_Matrix(this->geom);
+    TA_FOREACH_INDEX(i, *this) {
+      rval->FastEl_Flat(i) = fabs(((double_Matrix*)this)->FastEl_Flat(i));
+    }
+    return rval;
+  }
+  else if(GetDataValType() == VT_INT) {
+    int_Matrix* rval = new int_Matrix(this->geom);
+    TA_FOREACH_INDEX(i, *this) {
+      rval->FastEl_Flat(i) = ABS(((int_Matrix*)this)->FastEl_Flat(i));
+    }
+    return rval;
+  }
+  else {			// use variants -- no need to optimize
+    taMatrix* rval = (taMatrix*)MakeToken();
+    rval->SetGeomN(geom);
+    TA_FOREACH_INDEX(i, *this) {
+      rval->SetFmVar_Flat(ABS(FastElAsVar_Flat(i).toInt()), i);
+    }
+    return rval;
+  }
+  return NULL;
+}
+
 //////////// op +=
 void taMatrix::operator+=(const taMatrix& t) {
   if(TestError(geom != t.geom, "+=", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
@@ -3613,9 +3632,323 @@ bool double_Matrix::StrValIsValid(const String& str, String* err_msg) const {
   return rval;
 }
 
+//////////////////////////
+//   complex_Matrix	//
+//////////////////////////
+
+bool complex_Matrix::CheckComplexGeom(const MatrixGeom& gm, bool err) {
+  if(gm.dims() < 2 || gm.dim(0) != 2) {
+    if(!err) return false;
+    taMisc::Error("CheckComplexGeom: geometry is not correct for representing complex numbers -- inner-most dimension must be size 2, and there must be 2 or more dimensions",
+		  GetStringRep(gm));
+    return false;
+  }
+  return true;
+}
+
+MatrixGeom complex_Matrix::NonComplexGeom(const MatrixGeom& gm) {
+  MatrixGeom ngm;
+  if(!CheckComplexGeom(gm)) return ngm;
+  ngm.SetDims(gm.dims() - 1); // reduce 1 dim
+  for (int i = 1; i < gm.dims(); ++i) {
+    ngm.Set(i-1, gm.dim(i));
+  }
+  return ngm;	 
+}
+
+MatrixGeom complex_Matrix::ComplexGeom(const MatrixGeom& gm) {
+  MatrixGeom ngm;
+  ngm.SetDims(gm.dims() + 1); // add 1 dim
+  ngm.Set(0,2);		      // inner = 2
+  for (int i = 0; i < gm.dims(); ++i) {
+    ngm.Set(i+1, gm.dim(i));
+  }
+  return ngm;	 
+}
+
+double_Matrix* complex_Matrix::SqMag() const {
+  if(!CheckComplexGeom(geom)) return NULL;
+  double_Matrix* rval = new double_Matrix(NonComplexGeom(geom));
+  for(int i=0; i< rval->size; ++i) {
+    double r = FastEl_Flat(2*i);
+    double j = FastEl_Flat(2*i+1);
+    rval->FastEl_Flat(i) = r*r + j*j;
+  }
+  return rval;
+}
+
+double_Matrix* complex_Matrix::Mag() const {
+  if(!CheckComplexGeom(geom)) return NULL;
+  double_Matrix* rval = new double_Matrix(NonComplexGeom(geom));
+  for(int i=0; i < rval->size; ++i) {
+    double r = FastEl_Flat(2*i);
+    double j = FastEl_Flat(2*i+1);
+    rval->FastEl_Flat(i) = sqrt(r*r + j*j);
+  }
+  return rval;
+}
+
+double_Matrix* complex_Matrix::Angle() const {
+  if(!CheckComplexGeom(geom)) return NULL;
+  double_Matrix* rval = new double_Matrix(NonComplexGeom(geom));
+  for(int i=0; i < rval->size; ++i) {
+    double r = FastEl_Flat(2*i);
+    double j = FastEl_Flat(2*i+1);
+    rval->FastEl_Flat(i) = atan2(j, r);
+  }
+  return rval;
+}
+
+double_Matrix* complex_Matrix::Real() const {
+  if(!CheckComplexGeom(geom)) return NULL;
+  double_Matrix* rval = new double_Matrix(NonComplexGeom(geom));
+  for(int i=0; i < rval->size; ++i) {
+    double r = FastEl_Flat(2*i);
+    rval->FastEl_Flat(i) = r;
+  }
+  return rval;
+}
+
+double_Matrix* complex_Matrix::Imag() const {
+  if(!CheckComplexGeom(geom)) return NULL;
+  double_Matrix* rval = new double_Matrix(NonComplexGeom(geom));
+  for(int i=0; i < rval->size; ++i) {
+    double j = FastEl_Flat(2*i+1);
+    rval->FastEl_Flat(i) = j;
+  }
+  return rval;
+}
+
+complex_Matrix* complex_Matrix::Conj() const {
+  if(!CheckComplexGeom(geom)) return NULL;
+  complex_Matrix* rval = new complex_Matrix(this->geom);
+  for(int i=0; i < size; i+=2) {
+    double tr = FastEl_Flat(i);
+    double tj = FastEl_Flat(i+1);
+    rval->FastEl_Flat(i) = tr;
+    rval->FastEl_Flat(i+1) = -tj;
+  }
+  return rval;
+}
+
+void complex_Matrix::SetReal(const double_Matrix& reals, bool copy_geom) {
+  MatrixGeom cgm = ComplexGeom(reals.geom);
+  if(copy_geom) {
+    SetGeomN(cgm);
+  }
+  else {
+    if(!CheckComplexGeom(geom)) return;
+    if(TestError(cgm != geom, "SetReal", "input matrix does not have same geometry as 	destination matrix",GetStringRep(reals.geom)))
+      return;
+  }
+  for(int i=0; i < reals.size; ++i) {
+    FastEl_Flat(2*i) = reals.FastEl_Flat(i);
+  }
+}
+
+void complex_Matrix::SetImag(const double_Matrix& imags, bool copy_geom) {
+  MatrixGeom cgm = ComplexGeom(imags.geom);
+  if(copy_geom) {
+    SetGeomN(cgm);
+  }
+  else {
+    if(!CheckComplexGeom(geom)) return;
+    if(TestError(cgm != geom, "SetImag", "input matrix does not have same geometry as 	destination matrix",GetStringRep(imags.geom)))
+      return;
+  }
+  for(int i=0; i < imags.size; ++i) {
+    FastEl_Flat(2*i+1) = imags.FastEl_Flat(i);
+  }
+}
+
+void complex_Matrix::Complex(const double_Matrix& reals, const double_Matrix& imags,
+			     bool copy_geom) {
+  if(TestError(reals.geom != imags.geom, "Complex", "input reals and imags matricies do not have same geometry.  reals:",GetStringRep(reals.geom), "imags:", GetStringRep(imags.geom)))
+    return;
+  MatrixGeom cgm = ComplexGeom(reals.geom);
+  if(copy_geom) {
+    SetGeomN(cgm);
+  }
+  else {
+    if(!CheckComplexGeom(geom)) return;
+    if(TestError(cgm != geom, "Complex", "input matrices do not have same geometry as 	destination matrix",GetStringRep(reals.geom)))
+      return;
+  }
+  for(int i=0; i < reals.size; ++i) {
+    FastEl_Flat(2*i) = reals.FastEl_Flat(i);
+    FastEl_Flat(2*i+1) = imags.FastEl_Flat(i);
+  }
+}
+
+void complex_Matrix::Expi(const double_Matrix& angles, bool copy_geom) {
+  MatrixGeom cgm = ComplexGeom(angles.geom);
+  if(copy_geom) {
+    SetGeomN(cgm);
+  }
+  else {
+    if(!CheckComplexGeom(geom)) return;
+    if(TestError(cgm != geom, "Expi", "input matrix does not have same geometry as 	destination matrix",GetStringRep(angles.geom)))
+      return;
+  }
+  for(int i=0; i < angles.size; ++i) {
+    FastEl_Flat(2*i) = cos(angles.FastEl_Flat(i));
+    FastEl_Flat(2*i+1) = sin(angles.FastEl_Flat(i));
+  }
+}
+
+
+//////////// op *
+taMatrix* complex_Matrix::operator*(const taMatrix& t) const {
+  if(TestError(geom != t.geom, "*", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+    return NULL;
+  if(t.GetDataValType() == VT_DOUBLE) {
+    complex_Matrix* rval = new complex_Matrix(this->geom);
+    for(int i=0; i < size; i+=2) {
+      double tr = FastEl_Flat(i);
+      double tj = FastEl_Flat(i+1);
+      double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+      double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
+      double nr = tr * orr - tj * oj;
+      double nj = tr * oj + tj * orr;
+      rval->FastEl_Flat(i) = nr;
+      rval->FastEl_Flat(i+1) = nj;
+    }
+    return rval;
+  }
+  else {			// use variants -- no need to optimize
+    complex_Matrix* rval = new complex_Matrix(this->geom);
+    for(int i=0; i < size; i+=2) {
+      double tr = FastEl_Flat(i);
+      double tj = FastEl_Flat(i+1);
+      double orr = t.FastElAsVar_Flat(i).toDouble();
+      double oj = t.FastElAsVar_Flat(i+1).toDouble();
+      double nr = tr * orr - tj * oj;
+      double nj = tr * oj + tj * orr;
+      rval->FastEl_Flat(i) = nr;
+      rval->FastEl_Flat(i+1) = nj;
+    }
+    return rval;
+  }
+  return NULL;
+}
+
+//////////// op /
+taMatrix* complex_Matrix::operator/(const taMatrix& t) const {
+  if(TestError(geom != t.geom, "/", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+    return NULL;
+  if(t.GetDataValType() == VT_DOUBLE) {
+    complex_Matrix* rval = new complex_Matrix(this->geom);
+    for(int i=0; i < size; i+=2) {
+      double tr = FastEl_Flat(i);
+      double tj = FastEl_Flat(i+1);
+      double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+      double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
+      double n = orr*orr + oj*oj;
+      double nr = 0.0f;
+      double nj = 0.0f;
+      if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+	nr = (tr * orr + tj * oj) / n;
+	nj = (tj * orr - tr * oj) / n;
+      }
+      rval->FastEl_Flat(i) = nr;
+      rval->FastEl_Flat(i+1) = nj;
+    }
+    return rval;
+  }
+  else {			// use variants -- no need to optimize
+    complex_Matrix* rval = new complex_Matrix(this->geom);
+    for(int i=0; i < size; i+=2) {
+      double tr = FastEl_Flat(i);
+      double tj = FastEl_Flat(i+1);
+      double orr = t.FastElAsVar_Flat(i).toDouble();
+      double oj = t.FastElAsVar_Flat(i+1).toDouble();
+      double n = orr*orr + oj*oj;
+      double nr = 0.0f;
+      double nj = 0.0f;
+      if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+	nr = (tr * orr + tj * oj) / n;
+	nj = (tj * orr - tr * oj) / n;
+      }
+      rval->FastEl_Flat(i) = nr;
+      rval->FastEl_Flat(i+1) = nj;
+    }
+    return rval;
+  }
+  return NULL;
+}
+
+//////////// op *=
+void complex_Matrix::operator*=(const taMatrix& t) {
+  if(TestError(geom != t.geom, "*", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+    return;
+  if(t.GetDataValType() == VT_DOUBLE) {
+    for(int i=0; i < size; i+=2) {
+      double tr = FastEl_Flat(i);
+      double tj = FastEl_Flat(i+1);
+      double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+      double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
+      double nr = tr * orr - tj * oj;
+      double nj = tr * oj + tj * orr;
+      FastEl_Flat(i) = nr;
+      FastEl_Flat(i+1) = nj;
+    }
+  }
+  else {			// use variants -- no need to optimize
+    for(int i=0; i < size; i+=2) {
+      double tr = FastEl_Flat(i);
+      double tj = FastEl_Flat(i+1);
+      double orr = t.FastElAsVar_Flat(i).toDouble();
+      double oj = t.FastElAsVar_Flat(i+1).toDouble();
+      double nr = tr * orr - tj * oj;
+      double nj = tr * oj + tj * orr;
+      FastEl_Flat(i) = nr;
+      FastEl_Flat(i+1) = nj;
+    }
+  }
+}
+
+//////////// op /
+void complex_Matrix::operator/=(const taMatrix& t) {
+  if(TestError(geom != t.geom, "/", "the geometry of the two matricies is not equal -- must be for element-wise operation"))
+    return;
+  if(t.GetDataValType() == VT_DOUBLE) {
+    for(int i=0; i < size; i+=2) {
+      double tr = FastEl_Flat(i);
+      double tj = FastEl_Flat(i+1);
+      double orr = ((double_Matrix*)&t)->FastEl_Flat(i);
+      double oj = ((double_Matrix*)&t)->FastEl_Flat(i+1);
+      double n = orr*orr + oj*oj;
+      double nr = 0.0f;
+      double nj = 0.0f;
+      if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+	nr = (tr * orr + tj * oj) / n;
+	nj = (tj * orr - tr * oj) / n;
+      }
+      FastEl_Flat(i) = nr;
+      FastEl_Flat(i+1) = nj;
+    }
+  }
+  else {			// use variants -- no need to optimize
+    for(int i=0; i < size; i+=2) {
+      double tr = FastEl_Flat(i);
+      double tj = FastEl_Flat(i+1);
+      double orr = t.FastElAsVar_Flat(i).toDouble();
+      double oj = t.FastElAsVar_Flat(i+1).toDouble();
+      double n = orr*orr + oj*oj;
+      double nr = 0.0f;
+      double nj = 0.0f;
+      if(!TestError(n == 0.0, "/", "Floating Point Exception: Division by Zero")) {
+	nr = (tr * orr + tj * oj) / n;
+	nj = (tj * orr - tr * oj) / n;
+      }
+      FastEl_Flat(i) = nr;
+      FastEl_Flat(i+1) = nj;
+    }
+  }
+}
 
 //////////////////////////
-//   int_Matrix	//
+//   int_Matrix		//
 //////////////////////////
 
 bool int_Matrix::StrValIsValid(const String& str, String* err_msg) const {

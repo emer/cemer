@@ -2258,7 +2258,7 @@ bool ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
 }
 
 bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
-//NOTE: safe to call during loading
+  //NOTE: safe to call during loading
   bool any_changes = false;
   int i;  int ti;
   ProgArg* pa;
@@ -2267,8 +2267,9 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
     pa = FastEl(i);
     int ti = md->arg_names.FindEl(pa->name);
     if (ti >= 0) {
-      any_changes |= pa->UpdateFromType(md->arg_types[ti]);
-    } else {
+      pa->UpdateFromType(md->arg_types[ti]);
+    }
+    else {
       RemoveIdx(i);
       any_changes = true;
     }
@@ -3356,7 +3357,7 @@ void ProgramCallBase::UpdateArgs() {
     pa->expr.SetExpr(pa->name); // we found var of same name; set as arg value
     pa->DataChanged(DCR_ITEM_UPDATED);
   }
-  if(!taMisc::is_loading && any_changes && taMisc::gui_active) {
+  if(any_changes && taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
   }
 }
