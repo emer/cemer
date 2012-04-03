@@ -277,7 +277,6 @@ public:
 
   cssEl* El() const;		// gets the el
   String PrintStr() const;
-  void 	Print(ostream& fh) const;
 
   bool	IsNull() const	{
     bool nul = false; if(ptr_type == DIRECT) nul = !(bool)ptr;
@@ -465,7 +464,7 @@ public:
   virtual String& 	PrintType(String& fh) const
   { fh << GetTypeName() << " " << name; return fh; }
   virtual String&	PrintInherit(String& fh) const
-  { PrintType(fh); }
+  { return PrintType(fh); }
 
   // saving and loading objects to/from files (special format)
   virtual void		Save(ostream& strm = cout);
@@ -473,7 +472,7 @@ public:
 
   // token information about a certain type
   virtual String&	PrintTokens(String& strm) const	{ return strm; }
-  // show tokens of arg type
+  // print tokens of arg type
   virtual cssEl*	GetToken(int) const		{ return (cssEl*)this; }
 
   virtual cssEl::RunStat 	Do(cssProg* prg);  // run this object
@@ -733,13 +732,6 @@ public:
   int 		size;			// number of actual elements
   cssEl**	els;			// the elements themselves
 
-  static ostream& fancy_list(ostream& fh, const String& itm, int no, int prln,
-			     int tabs, int indent = 0);
-  static pager_ostream& fancy_list(pager_ostream& fh, const String& itm, int no, int prln,
-			     int tabs, int indent = 0);
-  static String& fancy_list(String& fh, const String& itm, int no, int prln,
-			    int tabs, int indent = 0);
-
   void 		Constr();
   cssSpace()				{ alloc_size = 2;  Constr(); }
   cssSpace(const String& nm)		{ alloc_size = 2;  name = nm;  Constr(); }
@@ -761,13 +753,16 @@ public:
   int		GetIndex(cssEl* it);	// find it, return index
   int		IndexOfName(const String& nm) const; // return index of name, -1 if not found
 
-  void 		List(ostream& fh = cout, int indent = 0, int per_line = -1) const;	// (elaborate print format)
-  void 		List(pager_ostream& fh, int indent = 0, int per_line = -1) const;	// (elaborate print format)
-  void 		NameList(ostream& fh = cout, int indent = 0, int per_line = -1) const;   // just the names
-  void 		NameList(pager_ostream& fh, int indent = 0, int per_line = -1) const;   // just the names
-  void		ValList(ostream& fh = cout, int indent = 0, int per_line = -1) const;    // just the values (printf format)
-  void		TypeNameList(ostream& fh = cout, int indent = 0) const; // "fancy" type/name output
-  void		TypeNameValList(ostream& fh = cout, int indent = 0) const; // "fancy" type/name/val output
+  String&	Print(String& fh, int indent = 0, int per_line = -1) const;
+  // elaborate print format
+  String& 	PrintNames(String& fh, int indent = 0, int per_line = -1) const;
+  // just the names
+  String& 	PrintVals(String& fh, int indent = 0, int per_line = -1) const;
+  // just the values (printf format)
+  String&	PrintTypeNames(String& fh, int indent = 0) const;
+  // type/name output -- always one per line
+  String&	PrintTypeNameVals(String& fh, int indent = 0) const;
+  // type/name/val output -- always one per line
   String	PrintStr(int indent = 0, int per_line = -1) const;
   String	PrintFStr(int indent = 0, int per_line = -1) const;
 
@@ -1367,8 +1362,8 @@ public:
   cssElPtr	inst;			// instruction this points to
 
   virtual String	PrintStr() const;
-  virtual void 		ListSrc(pager_ostream& fh, int indent = 0) const; // source code
-  virtual void		ListMachine(pager_ostream& fh, int indent = 0) const; // machine impl
+  virtual String&	PrintSrc(String& fh, int indent = 0) const; // source code
+  virtual String&	PrintMachine(String& fh, int indent = 0) const; // machine impl
 
   virtual cssEl::RunStat Do();
   virtual void 		SetJump(css_progdx it) 	{ };
@@ -1394,7 +1389,7 @@ public:
   css_progdx    jumpto;			// idx to jump to
 
   override String	PrintStr() const;
-  override void		ListMachine(pager_ostream& fh, int = 0) const;
+  override String&	PrintMachine(String& fh, int = 0) const;
   override cssEl::RunStat 	Do();
   override void 	SetJump(css_progdx it) 		{ jumpto = it; }
   override css_progdx	GetJump()			{ return jumpto; }
@@ -1572,9 +1567,9 @@ public:
   int		CurSrcLn() const	{ return GetSrcLn(PC()); }
   int		FindSrcLn(int ln) const;	// find first program inst idx for overall source line ln
 
-  void 		ListSrc() const; // list source code for prog (esp for functions)
-  void 		ListMachine(pager_ostream& fh, int indent = 0, int stinst = -1) const; // machine impl
-  void		ListLocals(pager_ostream& fh, int frdx = -1, int indent = 0);
+  String&	ListSrc(String& fh) const; // list source code for prog (esp for functions)
+  String&	ListMachine(String& fh, int indent = 0, int stinst = -1) const; // machine impl
+  String&	PrintLocals(String& fh, int frdx = -1, int indent = 0);
 
   // coding
   int 		AddCode(cssInst* it);
@@ -1618,14 +1613,14 @@ public:
   bool		DelAllBreaks();
   bool		IsBreak(css_progdx pcval);
   bool		IsBreak()		{ return IsBreak(PC()); }
-  void		ShowBreaks(ostream& fh = cout);
+  String&	PrintBreaks(String& fh);
 
   // watchpoints
   bool 		SetWatch(cssEl* watch);
   bool 		DelWatch(cssEl* watch);
   bool 		DelWatchIdx(int idx);
   bool 		CheckWatch();
-  void		ShowWatchpoints(ostream& fh = cout);
+  String&	PrintWatchpoints(String& fh);
 
 };
 
@@ -1761,9 +1756,9 @@ public:
   String	CurFullRunSrc() const;	// current full running PC() source
   int		CurRunSrcLn() const;	// current running source line number
   String	GetSrcListFnm(int i) const; // list fnm -- empty = name
-  void 		ListSrc_impl(pager_ostream& fh, int stln = -1) const;
+  String&	ListSrc_impl(String& fh, int stln = -1) const;
   // implementation of list source
-  void 		ListMachine_impl(pager_ostream& fh, int ln) const;
+  String& 	ListMachine_impl(String& fh, int ln) const;
   // list underlying machine code for given source code line
 
   // internal coding, variables
@@ -1831,37 +1826,41 @@ public:
   int		ListDebug() const
   { int rval=debug; if(debug >= 2) rval=2; return rval; }
   void		SetDebug(int dblev);
-  void		Status();
-  void		BackTrace(int levels_back=-1);
 
-  void 		ListSrc(int stln = -1);	// list source code
-  void 		ListFun(const String& fun_nm);	// list a function of given name
-  void		ListConstants();
-  void		ListDefines();
-  void		ListEnums();
-  void		ListFunctions();
-  void		ListGlobals();
-  void		ListLocals(int levels_back=0);
-  void		ListObjHards();
-  void		ListSettings();
-  void		ListTypes();
+  bool		DisplayOutput(const String& out_str, bool pager = true);
+  // display results of some command using cmd shell or other appropriate mechanism
 
-  void		Info(const String& inf_type = "", cssEl* arg = NULL);
-  void		Info_Generic();
-  void		Help(cssEl* on_el = NULL);
-  void		Help_Generic();
+  String& 	ListSrc(String& fh, int stln = -1);	// list source code
+  String&	ListFun(String& fh, const String& fun_nm);
+  // list a function of given name
+  String&	PrintConstants(String& fh);
+  String&	PrintDefines(String& fh);
+  String&	PrintEnums(String& fh);
+  String&	PrintFunctions(String& fh);
+  String&	PrintGlobals(String& fh);
+  String&	PrintLocals(String& fh, int levels_back=0);
+  String&	PrintObjHards(String& fh);
+  String&	PrintSettings(String& fh);
+  String&	PrintTypes(String& fh);
+  String&	Status(String& fh);
+  String&	BackTrace(String& fh, int levels_back=-1);
+
+  String&	Info(String& fh, const String& inf_type = "", cssEl* arg = NULL);
+  String&	Info_Generic(String& fh);
+  String&	Help(String& fh, cssEl* on_el = NULL);
+  String&	Help_Generic(String& fh);
 
   // breakpoints
   bool 		SetBreak(int srcln);
   bool		DelBreak(int srcln);
   bool		DelAllBreaks();
-  void		ShowBreaks();
+  String&	PrintBreaks(String& fh);
 
   bool 		SetWatch(cssEl* watch);
   bool		DelWatch(cssEl* watch);
   bool		DelWatchIdx(int idx);
   bool		DelAllWatches();
-  void		ShowWatchpoints();
+  String&	PrintWatchpoints(String& fh);
 
 protected:
   int 		ReadLn(istream* fh);	// used in Getc -- read the line in from filein

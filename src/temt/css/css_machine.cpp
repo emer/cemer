@@ -507,10 +507,6 @@ String cssElPtr::PrintStr() const {
   return rval;
 }
 
-void cssElPtr::Print(ostream& fh) const {
-  fh << PrintStr() << "\t";
-}
-
 void cssElPtr::operator+=(int indx) {
   if((ptr_type != SPACE) || IsNull()) {
     cssMisc::Warning(NULL, "Cannot modify a NULL or non-array pointer value");
@@ -2688,191 +2684,104 @@ int cssSpace::GetIndex(cssEl* it) {
   return -1;
 }
 
-ostream& cssSpace::fancy_list(ostream& fh, const String& itm, int no, int prln, int tabs, int indent) {
-  fh << itm << " ";
-  if((no+1) % prln == 0) {
-    fh << "\n";
-    taMisc::FlushConsole();
-    fh << cssMisc::Indent(indent);
-    return fh;
-  }
-  int len = itm.length() + 1;
-  int spc_ln = tabs * 8 - len;
-  spc_ln = MAX(1, spc_ln);
-  fh << String(spc_ln , 0, ' ');
-  return fh;
-}
-pager_ostream& cssSpace::fancy_list(pager_ostream& fh, const String& itm, int no, int prln, int tabs, int indent) {
-  fh << itm << " ";
-  if((no+1) % prln == 0) {
-    fh << "\n";
-    taMisc::FlushConsole();
-    fh << cssMisc::Indent(indent);
-    return fh;
-  }
-  int len = itm.length() + 1;
-  int spc_ln = tabs * 8 - len;
-  spc_ln = MAX(1, spc_ln);
-  fh << String(spc_ln , 0, ' ');
-  return fh;
-}
-String& cssSpace::fancy_list(String& fh, const String& itm, int no, int prln, int tabs, int indent) {
-  fh += itm + " ";
-  if((no+1) % prln == 0) {
-    fh += "\n";
-    fh += cssMisc::Indent(indent);
-    return fh;
-  }
-  int len = itm.length() + 1;
-  int spc_ln = tabs * 8 - len;
-  spc_ln = MAX(1, spc_ln);
-  fh += String(spc_ln , 0, ' ');
+String& cssSpace::Print(String& fh, int indent, int per_line) const {
+  taMisc::IndentString(fh, indent);
+  fh << "Elements of Space: " << name << " [" << size << "]\n";
+  fh << PrintStr(indent, per_line);
   return fh;
 }
 
-void cssSpace::List(ostream& fh, int indent, int per_line) const {
-  fh << cssMisc::Indent(indent) << "Elements of Space: " << name << " (" << size << ")\n";
-  fh << PrintStr(indent, per_line) << "\n";
-  fh.flush();
+String& cssSpace::PrintVals(String& fh, int indent, int per_line) const {
+  taMisc::IndentString(fh, indent);
+  fh << "Element Values of Space: " << name << " [" << size << "]\n";
+  fh << PrintFStr(indent, per_line);
+  return fh;
 }
-void cssSpace::List(pager_ostream& fh, int indent, int per_line) const {
-  fh << cssMisc::Indent(indent) << "Elements of Space: " << name << " (" << size << ")\n";
-  fh << PrintStr(indent, per_line) << "\n";
-}
-void cssSpace::ValList(ostream& fh, int indent, int per_line) const {
-  fh << cssMisc::Indent(indent) << "Element Values of Space: " << name << " (" << size << ")\n";
-  fh << PrintFStr(indent, per_line) << "\n";
-  fh.flush();
-}
-void cssSpace::NameList(pager_ostream& fh, int indent, int per_line) const {
-  fh << "Element Names of Space: " << name << " (" << size << ")\n";
-  int tabs = 0;
-  int prln = 1;
-  if(per_line < 1) {
-    int names_width = 0;
-    for(int i=0; i<size; i++) {
-      names_width = MAX(names_width, (int)els[i]->name.length());
-    }
-    tabs = (names_width / 8) + 1;
-    prln = taMisc::display_width / (tabs * 8);
-    if(prln <= 0) prln = 1;
-  }
-//   String fl = cssMisc::Indent(indent);
-  fh << cssMisc::Indent(indent);
+
+String& cssSpace::PrintNames(String& fh, int indent, int per_line) const {
+  taMisc::IndentString(fh, indent);
+  fh << "Element Names of Space: " << name << " [" << size << "]\n";
+  String_PArray nms;
+  nms.Alloc(size);
   for(int i=0; i<size; i++) {
-    cssSpace::fancy_list(fh, els[i]->name, i, prln, tabs, indent);
+    String tmp = els[i]->name;
+    nms.Add(tmp);
   }
-//   fh << fl;
-  fh << "\n";
-}
-void cssSpace::NameList(ostream& fh, int indent, int per_line) const {
-  pager_ostream pgos;
-  pgos.fout = &fh; pgos.no_page = true;
-  NameList(pgos, indent, per_line);
+  taMisc::FancyPrintList(fh, nms, 1); // indent
+  return fh;
 }
 
-void cssSpace::TypeNameList(ostream& fh, int indent) const {
-  fh << cssMisc::Indent(indent);
-  int i;
-  for(i=0; i<size; i++) {
+String& cssSpace::PrintTypeNames(String& fh, int indent) const {
+  String_PArray col1;
+  String_PArray col2;
+  col1.Alloc(size);
+  col2.Alloc(size);
+  for(int i=0; i<size; i++) {
     cssEl* mbr = els[i];
-    String tmp = mbr->GetTypeName();
-    if(tmp.contains(')')) {
-      tmp = tmp.before(')');
-      tmp = tmp.after('(');
+    String c1 = mbr->GetTypeName();
+    if(c1.contains(')')) {
+      c1 = c1.before(')');
+      c1 = c1.after('(');
     }
-    tmp = String("  ") + tmp;
-    fh << tmp;
-    if(tmp.length() >= 24)
-      fh << " ";
-    else if(tmp.length() >= 16)
-      fh << "\t";
-    else if(tmp.length() >= 8)
-      fh << "\t\t";
-    else
-      fh << "\t\t\t";
-    fh << mbr->name;
+    col1.Add(c1);
+    String c2;
+    c2 << mbr->name;
     if (mbr->GetType() == cssEl::T_Array) {
       cssArray* ar = (cssArray*) mbr->GetNonRefObj();
-      fh << '[' << ar->items->size << ']';
+      c2 << '[' << ar->items->size << ']';
     }
     else if (mbr->GetType() == cssEl::T_ArrayType) {
       cssArrayType* ar = (cssArrayType*) mbr->GetNonRefObj();
-      fh << '[' << ar->size << ']';
+      c2 << '[' << ar->size << ']';
     }
-    fh << "\n";
-    taMisc::FlushConsole();
-    fh << cssMisc::Indent(indent);
+    col2.Add(c2);
   }
+  taMisc::FancyPrintTwoCol(fh, col1, col2, indent);
+  return fh;
 }
 
-void cssSpace::TypeNameValList(ostream& fh, int indent) const {
-  fh << cssMisc::Indent(indent);
-  int i;
-  cssEl* mbr;
-  String tmp;
-  for(i=0; i<size; i++) {
-    mbr = els[i];
-    tmp = mbr->GetTypeName();
-    if(tmp.contains(')')) {
-      tmp = tmp.before(')');
-      tmp = tmp.after('(');
+String& cssSpace::PrintTypeNameVals(String& fh, int indent) const {
+  String_PArray col1;
+  String_PArray col2;
+  col1.Alloc(size);
+  col2.Alloc(size);
+  for(int i=0; i<size; i++) {
+    cssEl* mbr = els[i];
+    String c1 = mbr->GetTypeName();
+    if(c1.contains(')')) {
+      c1 = c1.before(')');
+      c1 = c1.after('(');
     }
-    tmp = String("  ") + tmp;
-    fh << tmp;
-    if(tmp.length() >= 24)
-      fh << " ";
-    else if(tmp.length() >= 16)
-      fh << "\t";
-    else if(tmp.length() >= 8)
-      fh << "\t\t";
-    else
-      fh << "\t\t\t";
-    fh << mbr->name << " = " << mbr->PrintFStr() << "\n";
-    taMisc::FlushConsole();
-    fh << cssMisc::Indent(indent);
+    col1.Add(c1);
+    String c2;
+    c2 << mbr->name << " = " << mbr->PrintFStr();
+    col2.Add(c2);
   }
+  taMisc::FancyPrintTwoCol(fh, col1, col2, indent);
+  return fh;
 }
 
 String cssSpace::PrintStr(int indent, int per_line) const {
-  int tabs = 0;
-  int prln = 1;
-  if(per_line < 1) {
-    int vars_width = 0;
-    for(int i=0; i<size; i++) {
-      String tmp = els[i]->PrintStr();
-      vars_width = MAX(vars_width, (int)tmp.length());
-    }
-    tabs = (vars_width / 8) + 1;
-    prln = taMisc::display_width / (tabs * 8) - indent;
-    if(prln <= 0) prln = 1;
-  }
-  String rval = cssMisc::Indent(indent);
+  String rval;
+  String_PArray nms;
+  nms.Alloc(size);
   for(int i=0; i<size; i++) {
     String tmp = els[i]->PrintStr();
-    cssSpace::fancy_list(rval, tmp, i, prln, tabs, indent);
+    nms.Add(tmp);
   }
+  taMisc::FancyPrintList(rval, nms, 1); // indent
   return rval;
 }
 
 String cssSpace::PrintFStr(int indent, int per_line) const {
-  int tabs = 0;
-  int prln = 1;
-  if(per_line < 1) {
-    int vals_width = 0;
-    for(int i=0; i<size; i++) {
-      String tmp = els[i]->PrintFStr();
-      vals_width = MAX(vals_width, (int)tmp.length());
-    }
-    tabs = (vals_width / 8) + 1;
-    prln = taMisc::display_width / (tabs * 8);
-    if(prln <= 0) prln = 1;
-  }
-  String rval = cssMisc::Indent(indent);
+  String rval;
+  String_PArray nms;
+  nms.Alloc(size);
   for(int i=0; i<size; i++) {
     String tmp = els[i]->PrintFStr();
-    cssSpace::fancy_list(rval, tmp, i, prln, tabs, indent);
+    nms.Add(tmp);
   }
+  taMisc::FancyPrintList(rval, nms, 1); // indent
   return rval;
 }
 
@@ -2920,38 +2829,20 @@ void cssSpace::Sort() {
 //      cssInst: Instructions   //
 //////////////////////////////////
 
-// class CSS_API cssListEl {
-// public:
-//   css_progdx    stpc;                // starting pc for this line
-//   int                ln;             // line no in source code
-//   String     src;            // source code for line, specifically for this code element
-//   String     full_src;       // full source code
-
-//   void               Copy(const cssListEl& cp)
-//   { stpc = cp.stpc; ln = cp.ln; src = cp.src; full_src = cp.full_src; }
-
-//   cssListEl()                        { stpc = 0;   ln = 0; }
-//   cssListEl(css_progdx pc, int l, const String& cd)
-//   { stpc = pc;  ln = l;  src = cd;  }
-//   cssListEl(const cssListEl& cp)     { Copy(cp); }
-
-//   cssListEl*         Clone() { return new cssListEl(*this); }
-// };
-
-
 String cssInst::PrintStr() const {
   return prog->top->GetSrcLn(line);
 }
 
-void cssInst::ListSrc(pager_ostream& fh, int indent) const {
+String& cssInst::PrintSrc(String& fh, int indent) const {
   fh << PrintStr();
-  taMisc::FlushConsole();
+  return fh;
 }
 
-void cssInst::ListMachine(pager_ostream& fh, int indent) const {
-  fh << cssMisc::Indent(indent) << taMisc::LeadingZeros(idx,5) << "  "
+String& cssInst::PrintMachine(String& fh, int indent) const {
+  taMisc::IndentString(fh, indent);
+  fh << taMisc::LeadingZeros(idx,5) << "  "
      << inst.PrintStr() << "   " << inst.El()->PrintStr() << "\n";
-  taMisc::FlushConsole();
+  return fh;
 }
 
 void cssInst::Constr() {
@@ -3068,10 +2959,11 @@ String cssIJump::PrintStr() const {
   return cssInst::PrintStr() + " // Jump-> " + String(jumpto);
 }
 
-void cssIJump::ListMachine(pager_ostream& fh, int indent) const {
-  fh << cssMisc::Indent(indent) << taMisc::LeadingZeros(idx,5) << "  Jump-> "
+String& cssIJump::PrintMachine(String& fh, int indent) const {
+  taMisc::IndentString(fh, indent);
+  fh << taMisc::LeadingZeros(idx,5) << "  Jump-> "
      << taMisc::LeadingZeros(jumpto,5) << "\n";
-  taMisc::FlushConsole();
+  return fh;
 }
 
 cssEl::RunStat cssIJump::Do() {
@@ -3284,34 +3176,31 @@ int cssProg::FindSrcLn(int ln) const {
   return -1;
 }
 
-void cssProg::ListSrc() const {
-  if(!top->HaveCmdShell()) return;
-  pager_ostream& fh = top->cmd_shell->pgout;
-  fh.start();
+String& cssProg::ListSrc(String& fh) const {
   for(int ln = first_src_ln; ln <= last_src_ln; ln++) {
     fh << top->GetSrcLn(ln);
-    taMisc::FlushConsole();
     if(top->ListDebug() >= 2) {
       ListMachine(fh, 1, ln);
     }
   }
+  return fh;
 }
 
-
-void cssProg::ListMachine(pager_ostream& fh, int indent, int ln) const {
+String& cssProg::ListMachine(String& fh, int indent, int ln) const {
   int stpc = FindSrcLn(ln);
-  if(stpc < 0) return;
+  if(stpc < 0) return fh;
   for(int i=stpc; i < size; i++) {
     if(insts[i]->line == ln)
-      insts[i]->ListMachine(fh, indent);
+      insts[i]->PrintMachine(fh, indent);
     cssEl* el = insts[i]->inst.El();
     if(el->GetType() == cssEl::T_CodeBlock) {
       el->GetSubProg()->ListMachine(fh, indent + 1, ln);
     }
   }
+  return fh;
 }
 
-void cssProg::ListLocals(pager_ostream& fh, int frdx, int indent) {
+String& cssProg::PrintLocals(String& fh, int frdx, int indent) {
   if(frdx < 0)
     frdx = fr_size-1;
 
@@ -3323,19 +3212,22 @@ void cssProg::ListLocals(pager_ostream& fh, int frdx, int indent) {
       nm += " (" + name + ")";
   }
 
-  fh << cssMisc::Indent(indent) << "Local Variables For Program: "
+  taMisc::IndentString(fh, indent);
+  fh << "Local Variables For Program: "
      << nm << " (frame = " << frdx  << ")\n";
   int curpc = PC(frdx);
   cssInst* inst = Inst(curpc);
   if(inst) {
-    fh << cssMisc::Indent(indent + 1) << inst->PrintStr() << "\n";
+    taMisc::IndentString(fh, indent+1);
+    fh << inst->PrintStr() << "\n";
   }
   if(Autos(frdx))
-     Autos(frdx)->List(fh, indent+1, 1);
-  statics.List(fh, indent+1, 1);
-  Stack(frdx)->List(fh, indent+1, 1);
+     Autos(frdx)->Print(fh, indent+1, 1);
+  statics.Print(fh, indent+1, 1);
+  Stack(frdx)->Print(fh, indent+1, 1);
   if(top->debug >= 1)
-    literals.List(fh, indent+1, 1);
+    literals.Print(fh, indent+1, 1);
+  return fh;
 }
 
 //////////////////////////////////////////
@@ -3516,31 +3408,29 @@ cssProg* cssProg::SetSrcPC(int srcln) {
 
 void cssProg::RunDebugInfo(cssInst* nxt) {
   static int last_src_ln = -1;
-  if(top->cmd_shell) {
-    pager_ostream& fh = top->cmd_shell->pgout;
-    if(top->debug <= 1) {
-      if(nxt->line != last_src_ln) {
-        String msg = top->name + ": \t" + nxt->PrintStr();
-        taMisc::LogEvent(msg);
-        fh << msg;
-        last_src_ln = nxt->line;
-      }
-    }
-    else {
-      nxt->ListSrc(fh);
-      nxt->ListMachine(fh, top->size-1); // indent
-      if(top->debug >= 3) {
-        Stack()->List(fh, top->size); // indent
-      }
-    }
-  }
-  else {
-    // not in shell only get basic trace debug
+  String fh;
+  if(top->debug <= 1) {
     if(nxt->line != last_src_ln) {
       String msg = top->name + ": \t" + nxt->PrintStr();
       taMisc::LogEvent(msg);
-      cout << msg;
+      fh << msg;
       last_src_ln = nxt->line;
+    }
+  }
+  else {
+    nxt->PrintSrc(fh);
+    nxt->PrintMachine(fh, top->size-1); // indent
+    if(top->debug >= 3) {
+      Stack()->Print(fh, top->size); // indent
+    }
+  }
+
+  if(fh.nonempty()) {
+    if(top->cmd_shell) {
+      top->cmd_shell->pgout << fh;
+    }
+    else {
+      cout << fh;		// just send to cout
     }
   }
   taMisc::FlushConsole();
@@ -3554,12 +3444,16 @@ bool cssProg::IsBreak(css_progdx pcval) {
       top->last_bp_pc = -1;
       return false;             // don't break again!
     }
+    String fh;
+    fh << "\nStopped on breakpoint: " << idx << " pc: " << pcval << " in prog: "
+       << name << " of: " << top->name << "\n";
+    cssInst* nxt = insts[Frame()->pc];
+    nxt->PrintSrc(fh);
     if(top->cmd_shell) {
-      pager_ostream& fh = top->cmd_shell->pgout;
-      fh << "\nStopped on breakpoint: " << idx << " pc: " << pcval << " in prog: "
-         << name << " of: " << top->name << "\n";
-      cssInst* nxt = insts[Frame()->pc];
-      nxt->ListSrc(fh);
+      top->cmd_shell->pgout << fh;
+    }
+    else {
+      cout << fh;		// todo: could send to Info etc.
     }
     return true;
   }
@@ -3571,12 +3465,16 @@ bool cssProg::CheckWatch() {
     cssWatchPoint* wp = top->watchpoints[i];
     wp->GetAsCurVal();
     if(wp->prv_val != wp->cur_val) {
+      String fh;
+      fh << "\nStopped on watchpoint: " << i << " " << wp->GetStr() << " in prog: "
+	 << name << " of: " << top->name << "\n";
+      cssInst* nxt = insts[Frame()->pc-1];
+      nxt->PrintSrc(fh);
       if(top->cmd_shell) {
-        pager_ostream& fh = top->cmd_shell->pgout;
-        fh << "\nStopped on watchpoint: " << i << " " << wp->GetStr() << " in prog: "
-           << name << " of: " << top->name << "\n";
-        cssInst* nxt = insts[Frame()->pc-1];
-        nxt->ListSrc(fh);
+        top->cmd_shell->pgout << fh;
+      }
+      else {
+	cout << fh;
       }
       wp->GetAsPrvVal();
       return true;
@@ -3753,21 +3651,22 @@ bool cssProg::SetBreak(int srcln) {
   return true;
 }
 
-void cssProg::ShowBreaks(ostream& fh) {
+String& cssProg::PrintBreaks(String& fh) {
   if(breaks.size > 0) {
-    fh << "prog: " << name << endl;
+    fh << "prog: " << name << "\n";
     for(int i=0; i<breaks.size; i++) {
       int ln_no = insts[breaks[i]]->line;
       fh << "breakpoint: " << i << "\t pc: " << breaks[i] << " \t"
-         << top->GetSrcLn(ln_no) << endl;
+         << top->GetSrcLn(ln_no) << "\n";
     }
   }
   for(int i=0; i < size; i++) {
     cssEl* tmp = insts[i]->inst.El();
     if(tmp->GetType() == cssEl::T_CodeBlock) {
-      tmp->GetSubProg()->ShowBreaks(fh);
+      tmp->GetSubProg()->PrintBreaks(fh);
     }
   }
+  return fh;
 }
 
 bool cssProg::DelBreak(int srcln) {
@@ -3833,8 +3732,9 @@ bool cssProg::DelWatchIdx(int idx) {
   return top->DelWatchIdx(idx);
 }
 
-void cssProg::ShowWatchpoints(ostream& fh) {
-  top->ShowWatchpoints();
+String& cssProg::PrintWatchpoints(String& fh) {
+  top->PrintWatchpoints(fh);
+  return fh;
 }
 
 //////////////////////////////////////////////////
@@ -4218,7 +4118,7 @@ String cssProgSpace::GetSrcListFnm(int i) const {
   return rval;
 }
 
-void cssProgSpace::ListMachine_impl(pager_ostream& fh, int ln) const {
+String& cssProgSpace::ListMachine_impl(String& fh, int ln) const {
   for(int i=0;i<types.size;i++) {
     cssEl* el = types[i];
     if(el->GetType() == cssEl::T_ClassType) {
@@ -4237,9 +4137,10 @@ void cssProgSpace::ListMachine_impl(pager_ostream& fh, int ln) const {
     }
   }
   Prog(0)->ListMachine(fh, 1, ln);
+  return fh;
 }
 
-void cssProgSpace::ListSrc_impl(pager_ostream& fh, int stln) const {
+String& cssProgSpace::ListSrc_impl(String& fh, int stln) const {
   int st = 1;
   if(stln >= 0)
     st = stln;
@@ -4253,7 +4154,6 @@ void cssProgSpace::ListSrc_impl(pager_ostream& fh, int stln) const {
       fh << "file: " << curf << "\n";
     }
     fh << GetSrcLn(ln);
-    taMisc::FlushConsole();
     if(ListDebug() >= 2) {
       ListMachine_impl(fh, ln);
     }
@@ -4262,6 +4162,7 @@ void cssProgSpace::ListSrc_impl(pager_ostream& fh, int stln) const {
     ((cssProgSpace*)this)->list_ln = 0;
   else
     ((cssProgSpace*)this)->list_ln = ln;
+  return fh;
 }
 
 //////////////////////////////////////////////////
@@ -4857,12 +4758,6 @@ cssEl* cssProgSpace::Cont() {
   state |= cssProg::State_Run;
   external_stop = false;
 
-//   if(Prog()->PC() < Prog()->size) {
-//     cssInst* nxt = Prog()->insts[Prog()->PC()];
-//     cerr << name << " starting at: " << Prog()->name << " pc: " << Prog()->PC()
-//       << " nxt: " << nxt->inst.El()->name << endl;
-//   }
-
   cssEl* rval;
   do {
     run_stat = cssEl::Running;
@@ -4986,11 +4881,16 @@ void cssProgSpace::SetDebug(int dblev) {
   yydebug = (dblev > 3);
 }
 
-void cssProgSpace::ListFun(const String& fnm) {
-  if(!HaveCmdShell()) return;
-  pager_ostream& fh = cmd_shell->pgout;
-  fh.start();
+bool cssProgSpace::DisplayOutput(const String& out_str, bool pager) {
+  if(HaveCmdShell()) {
+    return taMisc::StreamString(out_str, *cmd_shell->fout, pager, *cmd_shell->fin);
+  }
+  else {
+    return taMisc::StreamString(out_str, cout, pager, cin);
+  }
+}
 
+String& cssProgSpace::ListFun(String& fh, const String& fnm) {
   bool got_one = false;
   String clnm;
   String funm = fnm;
@@ -5010,7 +4910,7 @@ void cssProgSpace::ListFun(const String& fnm) {
         fh << "\nListing of Method: " << cl->name << "::" << meth->name << "\n";
         cssProg* fun = meth->GetSubProg();
         if(fun)
-          fun->ListSrc();
+          fun->ListSrc(fh);
         got_one = true;
       }
     }
@@ -5021,19 +4921,17 @@ void cssProgSpace::ListFun(const String& fnm) {
     if(el->name == funm) {
       if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
         fh << "\nListing of Function: " << el->name << "\n";
-        el->GetSubProg()->ListSrc();
+        el->GetSubProg()->ListSrc(fh);
         got_one = true;
       }
     }
   }
   if(!got_one)
     cssMisc::Warning(Prog(), "Function", fnm, "not found!");
+  return fh;
 }
 
-void cssProgSpace::ListSrc(int stln) {
-  if(!HaveCmdShell()) return;
-  pager_ostream& fh = cmd_shell->pgout;
-  fh.start();
+String& cssProgSpace::ListSrc(String& fh, int stln) {
   if(stln < 0) {
     if(size > 1)        // prog currently running; start list from there
       stln = Prog()->CurSrcLn();
@@ -5043,117 +4941,105 @@ void cssProgSpace::ListSrc(int stln) {
   fh << "\nListing of Program: " << name << "\n";
   ListSrc_impl(fh, stln);
   fh << "\n";
+  return fh;
 }
 
-void cssProgSpace::ListConstants() {
-  if(!HaveCmdShell()) return;
-  cssMisc::Constants.List(cmd_shell->pgout);
+String& cssProgSpace::PrintConstants(String& fh) {
+  cssMisc::Constants.Print(fh);
+  return fh;
 }
 
-void cssProgSpace::ListDefines() {
-  if(!HaveCmdShell()) return;
-  cssMisc::Defines.NameList(cmd_shell->pgout);
+String& cssProgSpace::PrintDefines(String& fh) {
+  cssMisc::Defines.PrintNames(fh);
+  return fh;
 }
 
-void cssProgSpace::ListEnums() {
-  if(!HaveCmdShell()) return;
-  cmd_shell->pgout << "\nEnumerated types in local program space\n";
-  enums.NameList(cmd_shell->pgout);
-  cmd_shell->pgout << "\nEnumerated types in global name space\n";
-  cssMisc::Enums.NameList(cmd_shell->pgout);
+String& cssProgSpace::PrintEnums(String& fh) {
+  fh << "\nEnumerated types in local program space\n";
+  enums.PrintNames(fh);
+  fh << "\nEnumerated types in global name space\n";
+  cssMisc::Enums.PrintNames(fh);
+  return fh;
 }
 
-void cssProgSpace::ListFunctions() {
-  if(!HaveCmdShell()) return;
-  cmd_shell->pgout << "\nGlobal builtin functions\n";
-  cssMisc::Functions.NameList(cmd_shell->pgout, 1);
-  cssMisc::HardFuns.NameList(cmd_shell->pgout, 1);
-  cmd_shell->pgout << "\nHard-coded functions from parent object\n";
-  hard_funs.NameList(cmd_shell->pgout, 1);
+String& cssProgSpace::PrintFunctions(String& fh) {
+  fh << "\nGlobal builtin functions\n";
+  cssMisc::Functions.PrintNames(fh, 1);
+  cssMisc::HardFuns.PrintNames(fh, 1);
+  fh << "\nHard-coded functions from parent object\n";
+  hard_funs.PrintNames(fh, 1);
 
-  cmd_shell->pgout << "\nCss-coded functions\n";
+  fh << "\nCss-coded functions\n";
   for(int i=0;i<statics.size;i++) {
     cssEl* el = statics[i];
     if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
-      cmd_shell->pgout << el->PrintStr() << "\n";
+      fh << el->PrintStr() << "\n";
     }
   }
+  return fh;
 }
 
-void cssProgSpace::ListGlobals() {
-  if(!HaveCmdShell()) return;
-  pager_ostream& fh = cmd_shell->pgout;
-
+String& cssProgSpace::PrintGlobals(String& fh) {
   fh << "Global vars:\n";
-  cssMisc::HardVars.List(fh);
+  cssMisc::HardVars.Print(fh);
   fh << "\n";
-  cssMisc::Externs.List(fh);
+  cssMisc::Externs.Print(fh);
   fh << "\n";
-  hard_vars.List(fh);
+  hard_vars.Print(fh);
   fh << "\n";
-  prog_vars.List(fh);
+  prog_vars.Print(fh);
   fh << "\n";
+  return fh;
 }
 
-void cssProgSpace::ListLocals(int levels_back) {
-  if(!HaveCmdShell()) return;
-  pager_ostream& fh = cmd_shell->pgout;
-
+String& cssProgSpace::PrintLocals(String& fh, int levels_back) {
   if(levels_back < 0) levels_back = 0;
   int lev = size - 1 - levels_back;
   if(lev < 0) lev = 0;
 
   fh << "Local vars for stack frame: " << levels_back << " (levels from top: " << lev << ")\n";
-  Prog(lev)->ListLocals(fh, -1, 0);
+  Prog(lev)->PrintLocals(fh, -1, 0);
   if(lev == 0)
-    statics.List(fh, 0, 1);
+    statics.Print(fh, 0, 1);
+  return fh;
 }
 
-void cssProgSpace::ListObjHards() {
-  if(!HaveCmdShell()) return;
-  pager_ostream& fh = cmd_shell->pgout;
-
+String& cssProgSpace::PrintObjHards(String& fh) {
   fh << "Containing object (Script or Program) vars (in reverse search order):\n";
-  hard_vars.List(fh);
+  hard_vars.Print(fh);
   fh << "\n";
-  hard_funs.List(fh);
+  hard_funs.Print(fh);
   fh << "\n";
-  prog_vars.List(fh);
+  prog_vars.Print(fh);
   fh << "\n";
+  return fh;
 }
 
-void cssProgSpace::ListSettings() {
-  if(!HaveCmdShell()) return;
-  ostream& fh = *cmd_shell->fout;
-
+String& cssProgSpace::PrintSettings(String& fh) {
   fh << "Include Paths:\n";
-  taMisc::css_include_paths.List(fh);
+  taMisc::css_include_paths.Print(fh);
   fh << "\n";
   for(int i=1; i<cssMisc::Settings.size; i++) {
-    cssMisc::Settings.FastEl(i)->Print(fh);
+    fh << cssMisc::Settings.FastEl(i)->PrintStr();
     fh << "\n";
   }
+  return fh;
 }
 
-void cssProgSpace::ListTypes() {
-  if(!HaveCmdShell()) return;
-  pager_ostream& fh = cmd_shell->pgout;
-  fh.start();
+String& cssProgSpace::PrintTypes(String& fh) {
   fh << "Global types: " << "\n";
-  cssMisc::TypesSpace.NameList(fh);
+  cssMisc::TypesSpace.PrintNames(fh);
   fh << "\n==========================\n";
   fh << "Types local to current top-level program space (" << name << "):" << "\n";
-  cmd_shell->src_prog->types.NameList(fh);
+  cmd_shell->src_prog->types.PrintNames(fh);
+  return fh;
 }
 
 static const char* rs_vals[] = {"Waiting", "Running", "Stopping", "NewProgShoved",
                            "Returning", "Breaking", "Continuing", "BreakPoint",
                            "ExecError", "Bailing"};
 
-void cssProgSpace::Status() {
-  if(!HaveCmdShell()) return;
-  ostream& fh = *cmd_shell->fout;
-
+String& cssProgSpace::Status(String& fh) {
   fh << "\n\tStatus of Program: " << name << "\n";
 
   fh << "curnt:\t" << Prog()->name << "\tsrc_ln:\t" << Prog()->CurSrcLn()
@@ -5165,18 +5051,15 @@ void cssProgSpace::Status() {
   int rstat = (state & cssProg::State_Run) ? 1 : 0;
   int nobreak = (Prog()->state & cssProg::State_NoBreak) ? 1 : 0;
   fh << "State: run:\t" << rstat
-     << "\tnobrk: " << nobreak << endl;
+     << "\tnobrk: " << nobreak << "\n";
 
   fh << "run status:\t" << rs_vals[run_stat] << "\n";
 
   fh << "external_stop:\t" << external_stop << "\n";
-
-  cmd_shell->fout->flush();
+  return fh;
 }
 
-void cssProgSpace::BackTrace(int levels_back) {
-  if(!HaveCmdShell()) return;
-  pager_ostream& fh = cmd_shell->pgout;
+String& cssProgSpace::BackTrace(String& fh, int levels_back) {
   fh << "\nBackTrace of Program: " << name << "\n";
 
   if(levels_back < 0) levels_back = size - 1;
@@ -5201,19 +5084,16 @@ void cssProgSpace::BackTrace(int levels_back) {
     }
     if(debug >= 2) {
       int fr = Prog_Fr(i);
-      cp->Stack(fr)->List(fh, 2, 1);
+      cp->Stack(fr)->Print(fh, 2, 1);
       if(cp->Autos(fr))
-        cp->Autos(fr)->List(fh, 2, 1);
+        cp->Autos(fr)->Print(fh, 2, 1);
     }
   }
+  return fh;
 }
 
-void cssProgSpace::Help(cssEl* help_on) {
-  if(!HaveCmdShell()) return;
-  cmd_shell->pgout.start();
-
+String& cssProgSpace::Help(String& fh, cssEl* help_on) {
   if(help_on) {
-    ostream& fh = *cmd_shell->fout;
     String helpstr;
     if(help_on->GetType() == cssEl::T_ElCFun) {
       cssElCFun* fun = (cssElCFun*)help_on;
@@ -5223,11 +5103,11 @@ void cssProgSpace::Help(cssEl* help_on) {
     else if(help_on->GetType() == cssEl::T_MbrCFun) {
       cssMbrCFun* fun = (cssMbrCFun*)help_on;
       if(fun->methdef) {
-	fh << "\nHelp for function: " << fun->methdef->prototype() << endl;
+	fh << "\nHelp for function: " << fun->methdef->prototype() << "\n";
 	helpstr = fun->methdef->desc;
       }
       else {
-	fh << "\nHelp for function: " << fun->name << "\n" << fun->name << " " << endl;
+	fh << "\nHelp for function: " << fun->name << "\n" << fun->name << " " << "\n";
       }
     }
     if(helpstr.nonempty()) { // todo: absurd to have this paging code in here like this..
@@ -5252,22 +5132,23 @@ void cssProgSpace::Help(cssEl* help_on) {
       fh << "\n";
     }
     else {
-      help_on->TypeInfo(fh);
+      help_on->PrintType(fh);
       fh << "\n";
     }
   }
   else {
-    Help_Generic();
+    Help_Generic(fh);
   }
+  return fh;
 }
 
-void cssProgSpace::Help_Generic() {
-  cmd_shell->pgout << "\nC^c syntax is a subset of C++, with standard C math and stdio functions.\n\
+String& cssProgSpace::Help_Generic(String& fh) {
+  fh << "\nC^c syntax is a subset of C++, with standard C math and stdio functions.\n\
  Except: The (f)printf functions take arguments which print themselves\n\
  \tprintf(\"varname:\\t\",avar,\"\\tvar2:\\t\",var2,\"\\n\"\n\
  and a special String type is available for strings (ala C++)\n";
 
-  cmd_shell->pgout << "\nArguments interpreted by C^c are:\n\
+  fh << "\nArguments interpreted by C^c are:\n\
  [-f|-file] <file>\tcompile and execute given file upon startup, exit (unless -i)\n\
  [-e|-exec] <code>\tcompile and execute given code upon startup, exit (unless -i)\n\
  [-i|-interactive]\tif using -f or -e, go into interactive (prompt) mode after\n\
@@ -5276,98 +5157,99 @@ void cssProgSpace::Help_Generic() {
  Any other arguments can be accessed by user script programs by the global\n\
  variables argv (an array of strings) and argc (an int)\n";
 
-  cmd_shell->pgout << "\nDo help <expr> to obtain more detailed help on functions, objects, etc.\n";
+  fh << "\nDo help <expr> to obtain more detailed help on functions, objects, etc.\n";
 
-  cmd_shell->pgout << "\nThe following debugging & control commands are available\n";
-  cssMisc::Commands.NameList(cmd_shell->pgout, 1);
-  Info_Generic();
+  fh << "\nThe following debugging & control commands are available\n";
+  cssMisc::Commands.PrintNames(fh, 1);
+  Info_Generic(fh);
+  return fh;
 }
 
-void cssProgSpace::Info(const String& inf_type, cssEl* arg) {
-  cmd_shell->pgout.start();
+String& cssProgSpace::Info(String& fh, const String& inf_type, cssEl* arg) {
   String it = inf_type;
   it.downcase();
   if(it.empty()) {
-    Info_Generic();
-    return;
+    Info_Generic(fh);
+    return fh;
   }
   if(it.startsWith("b")) {
-    ShowBreaks();
+    PrintBreaks(fh);
   }
   else if(it.startsWith("c")) {
-    ListConstants();
+    PrintConstants(fh);
   }
   else if(it.startsWith("d")) {
-    ListDefines();
+    PrintDefines(fh);
   }
   else if(it.startsWith("e")) {
-    ListEnums();
+    PrintEnums(fh);
   }
   else if(it.startsWith("fr")) {
-    ListLocals(0);              // todo: what else?
+    PrintLocals(fh, 0);              // todo: what else?
   }
   else if(it.startsWith("fu")) {
-    ListFunctions();
+    PrintFunctions(fh);
   }
   else if(it.startsWith("g")) {
-    ListGlobals();
+    PrintGlobals(fh);
   }
   else if(it.startsWith("i")) {
     if(arg) {
-      arg->InheritInfo(*cmd_shell->fout); *cmd_shell->fout << endl;
+      arg->PrintInherit(fh);
     }
   }
   else if(it.startsWith("l")) {
     if(arg)
-      ListLocals((int)*arg);
+      PrintLocals(fh, (int)*arg);
     else
-      ListLocals();
+      PrintLocals(fh);
   }
   else if(it.startsWith("m")) {
-    taMisc::MallocInfo(*cmd_shell->fout);
+    taMisc::MallocInfo(fh);
   }
   else if(it.startsWith("o")) {
-    ListObjHards();
+    PrintObjHards(fh);
   }
   else if(it.startsWith("se")) {
-    ListSettings();
+    PrintSettings(fh);
   }
   else if(it == "status") {
-    Status();
+    Status(fh);
   }
   else if(it == "stack") {
     if(arg)
-      BackTrace((int)*arg);
+      BackTrace(fh, (int)*arg);
     else
-      BackTrace();
+      BackTrace(fh);
   }
   else if(it.startsWith("to")) {
     if(arg) {
-      arg->TokenInfo(*cmd_shell->fout); *cmd_shell->fout << endl;
+      arg->PrintTokens(fh);
     }
   }
   else if(it.startsWith("ty")) {
     if(arg) {
-      arg->TypeInfo(*cmd_shell->fout); *cmd_shell->fout << endl;
+      arg->PrintType(fh);
     }
     else {
-      ListTypes();
+      PrintTypes(fh);
     }
   }
   else if(it.startsWith("v")) {
-    ListGlobals();
-    ListLocals(0);
+    PrintGlobals(fh);
+    PrintLocals(fh, 0);
   }
   if(it.startsWith("w")) {
-    ShowWatchpoints();
+    PrintWatchpoints(fh);
   }
+  return fh;
 }
 
-void cssProgSpace::Info_Generic() {
-  cmd_shell->pgout << "\nThe following types of detailed info are available:\n\
+String& cssProgSpace::Info_Generic(String& fh) {
+  fh << "\nThe following types of detailed info are available:\n\
   (only unique letters required to be specified)\n";
 
-  cmd_shell->pgout << "\
+  fh << "\
   args           Argument variables for current stack frame\n\
   breakpoints    Current breakpoints\n\
   constants      List of defined constants\n\
@@ -5388,8 +5270,8 @@ void cssProgSpace::Info_Generic() {
   types, [<typ>] List of all types (or type information for given type of object)\n\
   variables      List all variables\n\
   watchpoints    List all watchpoints\n";
+  return fh;
 }
-
 
 //////////////////////////////////////////////////
 //      cssProgSpace:    Breakpoints            //
@@ -5425,26 +5307,25 @@ bool cssProgSpace::SetBreak(int srcln) {
   return false;
 }
 
-void cssProgSpace::ShowBreaks() {
-  if(!HaveCmdShell()) return;
-
+String& cssProgSpace::PrintBreaks(String& fh) {
   for(int i=0;i<types.size;i++) {
     cssEl* el = types[i];
     if(el->GetType() == cssEl::T_ClassType) {
       cssClassType* cl = (cssClassType*)el->GetNonRefObj();
       for(int j=0;j<cl->methods->size;j++) {
         cssProg* fun = cl->methods->FastEl(j)->GetSubProg();
-        if(fun) fun->ShowBreaks();
+        if(fun) fun->PrintBreaks(fh);
       }
     }
   }
   for(int i=0;i<statics.size;i++) {
     cssEl* el = statics[i];
     if(el->HasSubProg() && (el->GetType() != cssEl::T_CodeBlock)) {
-      el->GetSubProg()->ShowBreaks(*cmd_shell->fout);
+      el->GetSubProg()->PrintBreaks(fh);
     }
   }
-  Prog(0)->ShowBreaks(*cmd_shell->fout);
+  Prog(0)->PrintBreaks(fh);
+  return fh;
 }
 
 bool cssProgSpace::DelBreak(int srcln) {
@@ -5513,15 +5394,14 @@ bool cssProgSpace::SetWatch(cssEl* watch) {
   return true;
 }
 
-void cssProgSpace::ShowWatchpoints() {
-  if(!HaveCmdShell()) return;
-  if(watchpoints.size == 0) return;
-  ostream& fh = *cmd_shell->fout;
-  fh << "Watchpoints for prog: " << name << endl;
+String& cssProgSpace::PrintWatchpoints(String& fh) {
+  if(watchpoints.size == 0) return fh;
+  fh << "Watchpoints for prog: " << name << "\n";
   for(int i=0; i<watchpoints.size; i++) {
     cssWatchPoint* wp = watchpoints[i];
-    fh << "watch point: " << i  << "\t" << wp->GetStr() << endl;
+    fh << "watch point: " << i  << "\t" << wp->GetStr() << "\n";
   }
+  return fh;
 }
 
 bool cssProgSpace::DelWatch(cssEl* watch) {
@@ -5640,7 +5520,9 @@ void cssCmdShell::AcceptNewLine_Qt(QString ln, bool eof) {
 void cssCmdShell::AcceptNewLine(const String& ln, bool eof) {
   cmd_prog->CompileCode(ln);
   if(cmd_prog->debug >= 2) {
-    cmd_prog->ListSrc(0);
+    String fh;
+    cmd_prog->ListSrc(fh, 0);
+    cmd_prog->DisplayOutput(fh);
   }
   bool run_cmd = true;
   if(cmd_prog->parse_depth > 0) { // user entered a { so don't run yet

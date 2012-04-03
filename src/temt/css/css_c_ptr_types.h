@@ -744,8 +744,8 @@ public:
   const char*	GetTypeName() const  	{ return "(c_Variant)"; }
   String	PrintStr() const;
 
-  void 		TypeInfo(ostream& fh = cout) const;
-  void		InheritInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
+  String&	PrintInherit(String& fh) const;
 
   // constructors
   cssCPtr_Variant() 				: cssCPtr(){};
@@ -819,7 +819,7 @@ public:
 
   DynEnum&	GetEnumRef(const char* opr="") const;
 
-  void 		TypeInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
   cssTypes	GetPtrType() const	{ return T_DynEnum; }
   uint		GetSize() const 	{ return sizeof(DynEnum); } // use for ptrs
   const char*	GetTypeName() const 	{ return "(c_DynEnum)"; }

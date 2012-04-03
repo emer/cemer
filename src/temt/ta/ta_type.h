@@ -673,6 +673,7 @@ public:
   static int            display_width;  // #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places
   static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big
   static int            indent_spc;  	// #SAVE #EXPERT #MIN_1 #MAX_8 #DEF_2 #CAT_GUI how many spaces to use per indent level
+  static int            display_height;  // #SAVE #HIDDEN #CAT_GUI height of console display (in rows) -- set automatically by gui console -- used for paging
 
   static bool           emacs_mode;     // #SAVE #CAT_GUI use full emacs key bindings -- all non-conflicting emacs keys are available regardless, but with this turned on, Ctrl+V is page down instead of Paste -- use Ctrl+Y (emacs yank) for paste instead -- on a Mac, Command+V is usually paste, so Ctrl+V can be used for page down without conflict, so this setting defaults to ON for macs
   static int            undo_depth;     // #SAVE #CAT_GUI how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
@@ -998,7 +999,7 @@ public:
   static void   CheckConfigEnd(bool ok = true);
   // #CAT_GlobalState ending checkconfig, last exit handles display etc.
 
-  static void   MallocInfo(ostream& strm);
+  static String& MallocInfo(String& strm);
   // #CAT_GlobalState generate malloc memory statistic information to given stream
   static String& PrintAllTokens(String& strm);
   // #CAT_GlobalState generate a list and count of all types that keep tokens, with a count of tokens
@@ -1115,11 +1116,14 @@ public:
   { return strm << "\n" << String(MAX(indent,0) * indent_spc, 0, ' '); }
   // #CAT_Utility add carriage return (newline) and indent to a string, using default indent spacing 
   static String& FancyPrintList(String& strm, const String_PArray& strs,
-				int indent=0, int max_col_width=20);
-  // #CAT_Utility generate a print string from an array of strings, where all the items are lined up in columns based on the maximum width of items in the array -- if an item exceeds the max_col_width it gets multiple columns as needed -- keeps things overall more compact if there are a few outliers with very long names
+				int indent=0, int max_col_width=20, int n_per_line = -1);
+  // #CAT_Utility generate a print string from an array of strings, where all the items are lined up in columns based on the maximum width of items in the array -- if an item exceeds the max_col_width it gets multiple columns as needed -- keeps things overall more compact if there are a few outliers with very long names -- can specify per line or if -1 it is auto-computed
   static String& FancyPrintTwoCol(String& strm, const String_PArray& col1_strs,
 				  const String_PArray& col2_strs, int indent=0);
   // #CAT_Utility generate a print string from two columns of strings (must be equal in size), where the 2nd column items are all aligned with proper spacing after the first column items, based on the maximum width of items in the first columnn
+  static bool	StreamString(const String& str, ostream& strm, bool page = true,
+			     istream& page_ctrl_in = cin);
+  // #CAT_Utility stream given string one line at a time to output stream, calling FlushConsole, and optionaly using paging control to output only one page at a time, with input provided by the input stream
 
   /////////////////////////////////////////////////
   //    File Paths etc

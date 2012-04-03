@@ -587,6 +587,7 @@ taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 int     taMisc::display_width = 80;
 int     taMisc::max_display_width = 132;
 int     taMisc::indent_spc = 2;
+int     taMisc::display_height = 12;
 #ifdef TA_OS_MAC
 bool    taMisc::emacs_mode = true;
 #else
@@ -1227,11 +1228,12 @@ void taMisc::CheckConfigEnd(bool ok) {
 
 #if 1
 // don't other with mallinfo for
-void taMisc::MallocInfo(ostream& strm) {
+String& taMisc::MallocInfo(String& strm) {
   strm << "Sorry memory usage statistics not available for this machine\n";
+  return strm;
 }
 #else
-void taMisc::MallocInfo(ostream& strm) {
+String& taMisc::MallocInfo(String& strm) {
   static struct mallinfo prv_mi;
 #if defined(SUN4) && !defined(__CLCC__)
   struct mallinfo mi = mallinfo(0);
@@ -1260,6 +1262,7 @@ void taMisc::MallocInfo(ostream& strm) {
 "keepcost       space penalty if keep option    "
 <<      mi.keepcost << "\t(" << mi.keepcost - prv_mi.keepcost << ")\n";
   prv_mi = mi;
+  return strm;
 }
 #endif
 
@@ -1862,7 +1865,7 @@ String taMisc::StringCVar(const String& str) {
 }
 
 String& taMisc::FancyPrintList(String& strm, const String_PArray& strs, 
-			       int indent, int max_col_width) {
+			       int indent, int max_col_width, int n_per_line) {
   int max_wd = 0;
   for(int i=0; i<strs.size; i++) {
     max_wd = MAX(max_wd, strs[i].length());
@@ -1873,22 +1876,30 @@ String& taMisc::FancyPrintList(String& strm, const String_PArray& strs,
   int max_wd_sp = max_wd + taMisc::indent_spc;	// include spacing per item
 
   int isp = taMisc::indent_spc*indent;
-  int prln = (taMisc::display_width - isp) / max_wd_sp; // n per line
-  if(prln <= 0) prln = 1;
+  if(n_per_line < 0) {
+    n_per_line = (taMisc::display_width - isp) / max_wd_sp; // n per line
+    if(n_per_line <= 0) n_per_line = 1;
+  }
 
   IndentString(strm, indent); // start indented
   int cur_wd = isp;
+  int prln = 0;
   for(int i=0; i<strs.size; i++) {
     String& it = strs[i];
     int sln = it.length();
-    if(MAX(sln,max_wd_sp) + cur_wd > taMisc::display_width) { // cr if we're going over
+    if(MAX(sln,max_wd_sp) + cur_wd > taMisc::display_width || prln >= n_per_line) {
+      // cr if we're going over
+      prln = 0;
       CrIndentString(strm, indent);
       cur_wd = isp;
     }
     strm << it;
-    int trg_wd_sp = (int(sln / max_wd_sp)+1) * max_wd_sp;
-    while(sln < trg_wd_sp) { strm << ' '; ++sln; }
-    cur_wd += trg_wd_sp;
+    prln++;
+    if(prln < n_per_line) {
+      int trg_wd_sp = (int(sln / max_wd_sp)+1) * max_wd_sp;
+      while(sln < trg_wd_sp) { strm << ' '; ++sln; }
+      cur_wd += trg_wd_sp;
+    }
   }
   strm << "\n";			// always terminate list
   return strm;
@@ -1915,6 +1926,74 @@ String& taMisc::FancyPrintTwoCol(String& strm, const String_PArray& col1_strs,
     strm << "\n";
   }
   return strm;
+}
+
+bool taMisc::StreamString(const String& str, ostream& strm, bool page,
+			  istream& page_ctrl_in) {
+  page = false;			// not currently supported!!!
+  int pageln = 0;
+  String rmdr = str;
+  do {
+    String curln;
+    if(rmdr.contains("\n")) {
+      curln = rmdr.before("\n");
+      rmdr = rmdr.after("\n");
+    }
+    else {
+      curln = rmdr;
+      rmdr = _nilString;
+    }
+    if(curln.length() > taMisc::display_width) {
+      String longln = curln;
+      do {
+	String curpt = longln.before(taMisc::display_width-2);
+	longln = longln.from(taMisc::display_width-2);
+	strm << curpt;
+	if(longln.nonempty())
+	  strm << "->" << endl;
+	taMisc::FlushConsole();
+	if(page) {
+	  pageln++;
+	  if(pageln >= taMisc::display_height-1) {
+	    strm << "---Press Return for More, q=quit, c=continue without paging ---"
+	       << endl;
+	    taMisc::FlushConsole();
+	    int resp = page_ctrl_in.get();
+	    if(resp == 'q' || resp == 'Q') {
+	      return false;
+	    }
+	    if(resp == 'c' || resp == 'C') {
+	      page = false;
+	    }
+	    pageln = 0;		// start over
+	  }
+	}
+	if(longln.nonempty())
+	  strm << "->";		// start of next wrapped line
+      } while(longln.nonempty());
+    }
+    else {
+      strm << curln << endl;
+      taMisc::FlushConsole();
+      if(page) {
+	pageln++;
+	if(pageln >= taMisc::display_height-1) {
+	  strm << "---Press Return for More, q=quit, c=continue without paging ---"
+	       << endl;
+	  taMisc::FlushConsole();
+	  int resp = page_ctrl_in.get();
+	  if(resp == 'q' || resp == 'Q') {
+	    return false;
+	  }
+	  if(resp == 'c' || resp == 'C') {
+	    page = false;
+	  }
+	  pageln = 0;		// start over
+	}
+      }
+    }
+  } while(rmdr.nonempty());
+  return true;
 }
 
 /////////////////////////////////////////////////

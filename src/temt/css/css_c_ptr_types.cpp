@@ -815,46 +815,48 @@ String cssCPtr_Variant::PrintStr() const {
   return rval;
 }
 
-void cssCPtr_Variant::TypeInfo(ostream& fh) const {
+String& cssCPtr_Variant::PrintType(String& fh) const {
   TypeDef* typ = NULL;  void* base = NULL;
   if(GetVoidPtr()) {
     Variant& val_r = *((Variant*)GetVoidPtr());
     val_r.GetRepInfo(typ, base);
     fh << GetTypeName() << " (" << val_r.getTypeAsString() << ") " << name << ": ";
     if(val_r.type() == Variant::T_String) {
-      typ->OutputType(fh);
+      typ->PrintType(fh);
     }
     else if(val_r.isBaseType()) {
-      typ->GetNonPtrType()->OutputType(fh);
+      typ->GetNonPtrType()->PrintType(fh);
     }
     else {
-      TA_Variant.OutputType(fh);
+      TA_Variant.PrintType(fh);
     }
   }
   else {
     fh << GetTypeName() << " " << name << ": ";
-    TA_Variant.OutputType(fh);
+    TA_Variant.PrintType(fh);
   }
+  return fh;
 }
 
-void cssCPtr_Variant::InheritInfo(ostream& fh) const {
+String& cssCPtr_Variant::PrintInherit(String& fh) const {
   TypeDef* typ = NULL;  void* base = NULL;
   if(GetVoidPtr()) {
     Variant& val_r = *((Variant*)GetVoidPtr());
     val_r.GetRepInfo(typ, base);
     if(val_r.type() == Variant::T_String) {
-      typ->OutputInherit(fh);
+      typ->PrintInherit(fh);
     }
     else if(val_r.isBaseType()) {
-      typ->GetNonPtrType()->OutputInherit(fh);
+      typ->GetNonPtrType()->PrintInherit(fh);
     }
     else {
-      TA_Variant.OutputInherit(fh);
+      TA_Variant.PrintInherit(fh);
     }
   }
   else {
-    TA_Variant.OutputInherit(fh);
+    TA_Variant.PrintInherit(fh);
   }
+  return fh;
 }
 
 void cssCPtr_Variant::operator=(const cssEl& t) {
@@ -991,7 +993,7 @@ DynEnum& cssCPtr_DynEnum::GetEnumRef(const char* opr) const {
   return null_enum;
 }
 
-void cssCPtr_DynEnum::TypeInfo(ostream& fh) const {
+String& cssCPtr_DynEnum::PrintType(String& fh) const {
   fh << GetTypeName() << name << ": ";
   if(GetVoidPtr() == NULL) {
     fh << "NULL";
@@ -1000,8 +1002,9 @@ void cssCPtr_DynEnum::TypeInfo(ostream& fh) const {
     fh << "\n";
     DynEnum& enm = GetEnumRef();
     if(enm.enum_type)
-      enm.enum_type->OutputType(fh);
+      enm.enum_type->PrintType(fh);
   }
+  return fh;
 }
 
 void cssCPtr_DynEnum::operator=(const String& cp) {

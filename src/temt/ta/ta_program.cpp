@@ -132,7 +132,6 @@ void ProgLine_List::FullListing(String& script_code) {
   for(int i=1; i<size; i++) {
     ProgLine* pl = FastEl(i);
     const String ci = pl->CodeIndented();
-//     taMisc::Info(String(i), ":\t", String(pl->indent), ":\t", ci);
     script_code.cat(ci).cat('\n');
   }
 }
@@ -5146,7 +5145,9 @@ void Program::SetAllBreakpoints() {
   }
   if(nbp > 0) {
     CmdShell();
-    script->ShowBreaks();
+    String fh;
+    script->PrintBreaks(fh);
+    script->DisplayOutput(fh);
   }
 }
 
@@ -5164,7 +5165,9 @@ bool Program::ToggleBreakpoint(ProgEl* pel) {
     CmdShell();                 // should be using cmd shell if setting breakpoints
     script->SetBreak(start_ln);
     DebugInfo("setting breakpoint to line:", String(start_ln), pl->code);
-    script->ShowBreaks();               // debugging help output
+    String fh;
+    script->PrintBreaks(fh);               // debugging help output
+    script->DisplayOutput(fh);
   }
   return true;
 }

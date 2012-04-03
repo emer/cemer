@@ -51,11 +51,11 @@ void cssChar::operator=(const cssEl& t) {
 //////////////////////////
 
 String& cssString::PrintType(String& fh) const {
-  return TA_taString.OutputType(fh);
+  return TA_taString.PrintType(fh);
 }
 
 String& cssString::PrintInherit(String& fh) const {
-  return TA_taString.OutputInherit(fh);
+  return TA_taString.PrintInherit(fh);
 }
 
 cssEl* cssString::operator[](const Variant& idx) const {
@@ -983,8 +983,7 @@ void cssEnumType::SetTypeName(const String& nm) {
 
 String& cssEnumType::PrintType(String& fh) const {
   fh << "enum " << name << " {\n";
-  // todo: fix:
-  // enums->TypeNameValList(fh);
+  enums->PrintTypeNameVals(fh,1); // indent 1
   fh << "}\n";
   return fh;
 }
@@ -1496,78 +1495,67 @@ String& cssClassType::PrintType(String& fh) const {
   fh << " {\n  // " << desc << "\n";
   if(types->size > 0) {
     fh << "\n  // types\n";
-    types->TypeNameValList(fh);
+    types->PrintTypeNameVals(fh,1); // indent
   }
   fh << "\n  // members\n";
-  // todo: use TwoCol 
-  int i;
-  for(i=0; i<members->size; i++) {
+  String_PArray col1;
+  String_PArray col2;
+  for(int i=0; i<members->size; i++) {
     cssClassMember* mbr = (cssClassMember*)members->FastEl(i);
-    String tmp = mbr->mbr_type->GetTypeName();
-    if(tmp.contains(')')) {
-      tmp = tmp.before(')');
-      tmp = tmp.after('(');
+    String c1 = mbr->mbr_type->GetTypeName();
+    if(c1.contains(')')) {
+      c1 = c1.before(')');
+      c1 = c1.after('(');
     }
-    tmp = String("  ") + tmp;
-    fh << tmp;
-    if(tmp.length() >= 24)
-      fh << " ";
-    else if(tmp.length() >= 16)
-      fh << "\t";
-    else if(tmp.length() >= 8)
-      fh << "\t\t";
-    else
-      fh << "\t\t\t";
-    fh << mbr->name;
+    col1.Add(c1);
+    String c2;
+    c2 << mbr->name;
     if (mbr->mbr_type->GetType() == cssEl::T_Array) {
       cssArray* ar = (cssArray*) mbr->mbr_type->GetNonRefObj();
-      fh << '[' << ar->items->size << ']';
+      c2 << '[' << ar->items->size << ']';
     }
     else if (mbr->mbr_type->GetType() == cssEl::T_ArrayType) {
       cssArrayType* ar = (cssArrayType*) mbr->mbr_type->GetNonRefObj();
-      fh << '[' << ar->size << ']';
+      c2 << '[' << ar->size << ']';
     }
     if(!member_desc[i].empty())
-      fh << "\t// " << member_desc[i];
-    fh << "\n";
+      c2 << "\t// " << member_desc[i];
+    col2.Add(c2);
   }
+  taMisc::FancyPrintTwoCol(fh, col1, col2, 1); // indent
+  col1.Reset();
+  col2.Reset();
   fh << "\n  // methods\n";
-  for(i=0; i<methods->size; i++) {
+  for(int i=0; i<methods->size; i++) {
+    String c1;  String c2;
     if(methods->FastEl(i)->GetType() != T_MbrScriptFun) {
-      fh << "  builtin:\t\t" << methods->FastEl(i)->PrintStr() << "\n";
+      c1 << "builtin:";
+      c2 << methods->FastEl(i)->PrintStr();
+      col1.Add(c1); col2.Add(c2);
       continue;
     }
     cssMbrScriptFun* meth = (cssMbrScriptFun*)methods->FastEl(i);
     if((cssMisc::cur_top->debug == 0) && meth->is_tor)
       continue;
-    String tmp = String(meth->argv[0].El()->GetTypeName());
-    tmp = tmp.before(')');
-    tmp = tmp.after('(');
-    tmp = String("  ") + tmp;
-    fh << tmp;
-    if(tmp.length() >= 24)
-      fh << " ";
-    else if(tmp.length() >= 16)
-      fh << "\t";
-    else if(tmp.length() >= 8)
-      fh << "\t\t";
-    else
-      fh << "\t\t\t";
-    fh << meth->name << "(";
-    int j;
-    for(j=2; j<=meth->argc; j++) {
-      fh << meth->argv[j].El()->GetTypeName() << " " << meth->argv[j].El()->name;
+    c1 = String(meth->argv[0].El()->GetTypeName());
+    c1 = c1.before(')');
+    c1 = c1.after('(');
+    col1.Add(c1);
+    c2 << meth->name << "(";
+    for(int j=2; j<=meth->argc; j++) {
+      c2 << meth->argv[j].El()->GetTypeName() << " " << meth->argv[j].El()->name;
       if(j >= meth->def_start) {
-	fh << " = " << meth->arg_defs.El((j-meth->def_start))->PrintFStr();
+	c2 << " = " << meth->arg_defs.El((j-meth->def_start))->PrintFStr();
       }
       if(j < meth->argc)
-	fh << ", ";
+	c2 << ", ";
     }
-    fh << ")\t// " << meth->desc;
+    c2 << ")\t// " << meth->desc;
     if(prog && prog->top->debug > 0)
-      fh << " top: " << meth->fun->top->name;
-    fh << "\n";
+      c2 << " top: " << meth->fun->top->name;
+    col2.Add(c2);
   }
+  taMisc::FancyPrintTwoCol(fh, col1, col2, 1); // indent
   fh << "}\n";
   return fh;
 }

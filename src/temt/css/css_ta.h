@@ -56,21 +56,18 @@ public:
 
   String	PrintStr() const;
   String	PrintFStr() const;
-  void 		PrintF(ostream& fh = cout) const 	{ Print(fh); }
 
-  void 		Print(ostream& fh = cout) const;
-  void 		PrintR(ostream& fh = cout) const;	// recursive
 #ifdef TA_GUI
   int		Edit(bool wait = false);
 #endif
 
-  void 		TypeInfo(ostream& fh = cout) const;
-  void		InheritInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
+  String&	PrintInherit(String& fh) const;
 
   void		Save(ostream& fh = cout);
   void		Load(istream& fh = cin);
 
-  void		TokenInfo(ostream& fh = cout) const;
+  String&	PrintTokens(String& fh) const;
   cssEl*	GetToken(int idx) const;
 
   // constructors
@@ -134,11 +131,10 @@ class CSS_API cssTA_Base : public cssTA {
   // specifically for taBase types -- calls the overloaded versions of TypeDef functions
 INHERITED(cssTA)
 public:
-  void 		Print(ostream& fh = cout) const;
-  void 		PrintR(ostream& fh = cout) const;		// recursive
+  String	PrintStr() const;
 
-  void 		TypeInfo(ostream& fh = cout) const;
-  void		InheritInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
+  String&	PrintInherit(String& fh) const;
 
   void		Save(ostream& fh = cout);
   void		Load(istream& fh = cin);
@@ -208,8 +204,8 @@ public:
   inline taSmartRef* GetSmartRef() const { if(ptr) return (taSmartRef*)ptr; return NULL; }
   inline taBase* GetSmartRefPtr() const  { taSmartRef* rf = GetSmartRef(); if(rf) return rf->ptr(); return NULL; }
 
-  void 		Print(ostream& fh = cout) const;
-  void 		PrintR(ostream& fh = cout) const;	// recursive
+  String	PrintStr() const;
+  String	PrintFStr() const;
 
   bool		IsTaMatrix() const	{ return cssref->IsTaMatrix(); }
   cssTypes 	GetType() const		{ return cssref->GetType(); }
@@ -223,10 +219,10 @@ public:
   cssEl*	GetActualObj() const	{ return cssref->GetActualObj(); }
   cssEl*	GetNonRefObj() const	{ return cssref; }
 
-  void 		TypeInfo(ostream& fh = cout) const { cssref->TypeInfo(fh); }
-  void		InheritInfo(ostream& fh = cout) const { cssref->InheritInfo(fh); }
-  void		TokenInfo(ostream& fh = cout) const { cssref->TokenInfo(fh); }
-  cssEl*	GetToken(int idx) const		   { return cssref->GetToken(idx); }
+  String&	PrintType(String& fh) const;
+  String&	PrintInherit(String& fh) const;
+  String&	PrintTokens(String& fh) const { return cssref->PrintTokens(fh); }
+  cssEl*	GetToken(int idx) const	      { return cssref->GetToken(idx); }
 
   void		UpdateCssRef();	// update the cssref object based on current ptr()
 
@@ -450,11 +446,10 @@ public:
 class CSS_API cssTypeDef : public cssTA {
   // a pointer to a TypeDef (any number of ptr_cnt)
 public:
-  void 		Print(ostream& fh = cout) const;
-  void 		PrintR(ostream& fh = cout) const;	// recursive
-
-  void 		TypeInfo(ostream& fh = cout) const;
-  void		InheritInfo(ostream& fh = cout) const;
+  String	PrintStr() const;
+  String	PrintFStr() const;
+  String&	PrintType(String& fh) const;
+  String&	PrintInherit(String& fh) const;
 
   // constructors
   cssTypeDef() : cssTA() { };

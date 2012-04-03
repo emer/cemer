@@ -61,7 +61,12 @@ cssEl* cssTA::GetTypeObject() const {
 }
 
 String cssTA::PrintStr() const {
-  return String("(") + GetTypeName() + ") " + name + " = " + PrintFStr();
+  void* pt = GetVoidPtr();
+  String fh;
+  if(pt && type_def)
+    return type_def->Print(fh, pt);
+  else
+    return String("(") + GetTypeName() + ") " + name + " = " + PrintFStr();
 }
 
 String cssTA::PrintFStr() const {
@@ -74,31 +79,19 @@ String cssTA::PrintFStr() const {
   return rval;
 }
 
-void cssTA::TypeInfo(ostream& fh) const {
+String& cssTA::PrintType(String& fh) const {
   for(int i=1;i<ptr_cnt;i++) fh << "*"; // ptr cnt
   if(type_def)
-    type_def->OutputType(fh);
-}
-
-void cssTA::Print(ostream& fh) const {
-  void* pt = GetVoidPtr();
-  if(pt && type_def)
-    type_def->Output(fh, pt);
+    type_def->PrintType(fh);
   else
-    fh << PrintStr();
+    fh << "ta NULL type";
+  return fh;
 }
 
-void cssTA::PrintR(ostream& fh) const {
-  void* pt = GetVoidPtr();
-  if(pt && type_def)
-    type_def->OutputR(fh, pt);
-  else
-    fh << PrintStr();
-}
-
-void cssTA::InheritInfo(ostream& fh) const {
+String& cssTA::PrintInherit(String& fh) const {
   if(type_def)
-    type_def->OutputInherit(fh);
+    type_def->PrintInherit(fh);
+  return fh;
 }
 
 #ifdef TA_GUI
@@ -134,9 +127,11 @@ cssEl* cssTA::GetToken(int idx) const {
   return new cssTA(rval, 1, type_def);
 }
 
-void cssTA::TokenInfo(ostream& fh) const {
-  if(!type_def)	return;
-  type_def->tokens.List(fh);
+String& cssTA::PrintTokens(String& fh) const {
+  if(type_def) {
+    type_def->PrintTokens(fh);
+  }
+  return fh;
 }
 
 ///////////////////////////////
@@ -191,7 +186,8 @@ String cssTA::GetStr() const {
   String rval;
   if(ptr && type_def) {
     if(ptr_cnt <= 1) {
-      rval = type_def->GetValStr(ptr);
+      rval = type_def->GetValStr(ptr, NULL, NULL, TypeDef::SC_DEFAULT, true);
+      // force inline
     }
     else if(ptr_cnt == 2) {
       // need the correct typedef here, either find it or make it..
@@ -207,7 +203,7 @@ String cssTA::GetStr() const {
     }
     return rval;
   }
-  return GetTypeName();
+  return String("NULL ptr of type: ") + GetTypeName();		// fallback
 }
 
 bool cssTA::AssignCheckSource(const cssEl& s) {
@@ -462,39 +458,34 @@ cssTA_Base::~cssTA_Base() {
   }
 }
 
-void cssTA_Base::TypeInfo(ostream& fh) const {
+String cssTA_Base::PrintStr() const {
+  taBase* ths = GetTAPtr();
+  String fh;
+  if(ths)
+    ths->Print(fh);
+  else {
+    fh = cssTA::PrintStr();
+  }
+  return fh;
+}
+
+String& cssTA_Base::PrintType(String& fh) const {
   for(int i=1;i<ptr_cnt;i++) fh << "*"; // ptr cnt
   taBase* ths = GetTAPtr();
   if(ths)
-    ths->OutputType(fh);
+    ths->PrintType(fh);
   else
-    type_def->OutputType(fh);
+    cssTA::PrintType(fh);
+  return fh;
 }
 
-void cssTA_Base::Print(ostream& fh) const {
+String& cssTA_Base::PrintInherit(String& fh) const {
   taBase* ths = GetTAPtr();
   if(ths)
-    ths->Output(fh) << "\n";
-  else {
-    fh << PrintStr();
-  }
-}
-
-void cssTA_Base::PrintR(ostream& fh) const {
-  taBase* ths = GetTAPtr();
-  if(ths)
-    ths->OutputR(fh) << "\n";
-  else {
-    fh << PrintStr();
-  }
-}
-
-void cssTA_Base::InheritInfo(ostream& fh) const {
-  taBase* ths = GetTAPtr();
-  if(ths)
-    ths->OutputInherit(fh) << "\n";
+    ths->PrintInherit(fh);
   else
-    type_def->OutputInherit(fh) << "\n";
+    cssTA::PrintInherit(fh);
+  return fh;
 }
 
 void cssTA_Base::Save(ostream& fh) {
@@ -518,10 +509,10 @@ String cssTA_Base::GetStr() const {
     // if we are a pointer to a tabase, get the path -- otherwise for #INLINE
     // it can return the actual inline rep and this is bad for css arg types!
     taBase* ths = GetTAPtr();
-    if(ths)
-      return ths->GetPath();
-    else
-      return "NULL";
+    if(ths && ths->GetOwner())
+      return ths->GetPathNames();
+    else if(ths)
+      return ths->GetValStr(NULL, NULL, TypeDef::SC_DEFAULT, true); // force_inline
   }
   else if(ptr_cnt == 0) {
     if(ptr) {
@@ -913,19 +904,28 @@ void cssSmartRef::UpdateCssRef() {
   *cssref = srp;
 }
 
-void cssSmartRef::Print(ostream& fh) const {
-  fh << PrintStr();
+String cssSmartRef::PrintStr() const {
+  taSmartRef* sr = (taSmartRef*)GetVoidPtr();
+  if(!sr) { return "NULL cssSmartRef"; }
+  return cssref->PrintStr();
 }
 
-void cssSmartRef::PrintR(ostream& fh) const {
+String cssSmartRef::PrintFStr() const {
   taSmartRef* sr = (taSmartRef*)GetVoidPtr();
-  if(!sr) { fh << "NULL cssSmartRef"; return; }
-  if(sr->ptr()) {
-    sr->ptr()->GetTypeDef()->OutputR(fh, sr->ptr());
-  }
-  else {
-    fh << PrintStr();
-  }    
+  if(!sr) { return "NULL cssSmartRef"; }
+  return cssref->PrintFStr();
+}
+
+String& cssSmartRef::PrintType(String& fh) const {
+  fh << "SmartRef: ";
+  cssref->PrintType(fh);
+  return fh;
+}
+
+String& cssSmartRef::PrintInherit(String& fh) const {
+  fh << "SmartRef: ";
+  cssref->PrintInherit(fh);
+  return fh;
 }
 
 void* cssSmartRef::GetVoidPtrOfType(TypeDef* td) const {
@@ -1308,29 +1308,38 @@ cssLeafItr::~cssLeafItr() {
 // 		cssTypeDef
 ////////////////////////////////////////////////////////////////////////
 
-void cssTypeDef::Print(ostream& fh) const {
-  fh << PrintStr();
+String cssTypeDef::PrintStr() const {
+  String fh;
+  return PrintType(fh);
 }
 
-void cssTypeDef::PrintR(ostream& fh) const {
-  fh << PrintStr();
+String cssTypeDef::PrintFStr() const {
+  String fh = "type: ";
+  void* pt = GetVoidPtr();
+  if(pt)
+    fh += ((TypeDef*)pt)->name;
+  else
+    fh += "NULL";
+  return fh;
 }
 
-void cssTypeDef::TypeInfo(ostream& fh) const {
+String& cssTypeDef::PrintType(String& fh) const {
   for(int i=1;i<ptr_cnt;i++) fh << "*"; // ptr cnt
   void* pt = GetVoidPtr();
   if(pt)
-    ((TypeDef*)pt)->OutputType(fh);
+    ((TypeDef*)pt)->PrintType(fh);
   else
-    type_def->OutputType(fh);
+    cssTA::PrintType(fh);
+  return fh;
 }
 
-void cssTypeDef::InheritInfo(ostream& fh) const {
+String& cssTypeDef::PrintInherit(String& fh) const {
   void* pt = GetVoidPtr();
   if(pt)
-    ((TypeDef*)pt)->OutputInherit(fh) << "\n";
+    ((TypeDef*)pt)->PrintInherit(fh);
   else
-    type_def->OutputInherit(fh);
+    cssTA::PrintInherit(fh);
+  return fh;
 }
 
 cssTypeDef::operator TypeDef*() const {
@@ -1346,7 +1355,7 @@ cssTypeDef::operator TypeDef*() const {
 String cssTypeDef::GetStr() const {
   String rval;
   if(!ptr)
-    return rval;
+    return "type: NULL";
   else if(ptr_cnt == 1)
     return ((TypeDef*)ptr)->name;
   else if((ptr_cnt == 2) && *((TypeDef**)ptr))
@@ -1535,20 +1544,11 @@ String cssTA_Matrix::GetStr() const {
     // if we are a pointer to a tabase, get the path -- otherwise for #INLINE
     // it can return the actual inline rep and this is bad for css arg types!
     if(ths && ths->owner) {
-      return ths->GetPath();
+      return ths->GetPathNames();
     }
   }
-
-  String rval;
-  TA_FOREACH(vitm, *ths) {
-    if(FOREACH_itr->count == 0) {
-      rval = vitm.toString();
-    }
-    else {
-      return taBase::GetStringRep(ths);
-    }
-  }
-  return rval;
+  String fh;
+  return ths->Print(fh);	// use natural print
 }
 
 cssEl* cssTA_Matrix::operator[](const Variant& i) const {

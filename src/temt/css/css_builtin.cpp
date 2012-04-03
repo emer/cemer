@@ -1080,10 +1080,12 @@ static cssEl* cssElCFun_backtrace_stub(int na, cssEl* arg[]) {
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
+  String fh;
   if(na > 0)
-    csh->src_prog->BackTrace((int)*arg[1]);
+    csh->src_prog->BackTrace(fh, (int)*arg[1]);
   else
-    csh->src_prog->BackTrace();
+    csh->src_prog->BackTrace(fh);
+  cp->top->DisplayOutput(fh);	// paging default
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_chsh_stub(int na, cssEl* arg[]) {
@@ -1203,15 +1205,17 @@ static cssEl* cssElCFun_info_stub(int na, cssEl* arg[]) {
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
+  String fh;
   if(na >= 2) {
-    csh->src_prog->Info(arg[1]->GetStr(), arg[2]);
+    csh->src_prog->Info(fh, arg[1]->GetStr(), arg[2]);
   }
   else if(na == 1) {
-    csh->src_prog->Info(arg[1]->GetStr());
+    csh->src_prog->Info(fh, arg[1]->GetStr());
   }
   else {
-    csh->src_prog->Info();
+    csh->src_prog->Info(fh);
   }
+  cp->top->DisplayOutput(fh);	// paging default
   return &cssMisc::Void;
 }
 
@@ -1220,12 +1224,14 @@ static cssEl* cssElCFun_help_stub(int na, cssEl* arg[]) {
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
+  String fh;
   if(na > 0) {
-    cp->top->Help(arg[1]);
+    cp->top->Help(fh, arg[1]);
   }
   else {
-    cp->top->Help();
+    cp->top->Help(fh);
   }
+  cp->top->DisplayOutput(fh);	// paging default
   return &cssMisc::Void;
 }
 
@@ -1234,30 +1240,32 @@ static cssEl* cssElCFun_list_stub(int na, cssEl* arg[]) {
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
+  String fh;
   if(na > 0) {
     if(na == 2) {
       int nl = (int)*(arg[2]);
       if(nl > 0) csh->src_prog->list_n = nl;
     }
     if(arg[1]->GetPtrType() == cssEl::T_String) {
-      csh->src_prog->ListFun(arg[1]->GetStr());
+      csh->src_prog->ListFun(fh, arg[1]->GetStr());
     }
     else if(arg[1]->GetPtrType() == cssEl::T_Int) {
-      csh->src_prog->ListSrc((int)*(arg[1]));
+      csh->src_prog->ListSrc(fh, (int)*(arg[1]));
     }
     else if((arg[1]->GetType() == cssEl::T_ScriptFun) ||
        (arg[1]->GetType() == cssEl::T_MbrScriptFun))
     {
       cssScriptFun* fe = (cssScriptFun*)arg[1]->GetNonRefObj();
-      fe->fun->ListSrc();
+      fe->fun->ListSrc(fh);
     }
     else {
-      csh->src_prog->ListSrc();
+      csh->src_prog->ListSrc(fh);
     }
   }
   else {
-    csh->src_prog->ListSrc();
+    csh->src_prog->ListSrc(fh);
   }
+  cp->top->DisplayOutput(fh);	// paging default
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_load_stub(int, cssEl* arg[]) {
@@ -1275,21 +1283,11 @@ static cssEl* cssElCFun_print_stub(int argc, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
-  arg[1]->Print(*(csh->fout));
+  String fh = arg[1]->PrintStr();
   if(cp->top->debug > 1)
-    *(csh->fout) << "\trefn: " << arg[1]->refn;
-  *(csh->fout) << "\n";
-  csh->fout->flush();
-  return &cssMisc::Void;
-}
-static cssEl* cssElCFun_printr_stub(int argc, cssEl* arg[]) {
-  if(argc == 0) return &cssMisc::Void;
-  cssProg* cp = arg[0]->prog;
-  if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
-  cssCmdShell* csh = cp->top->cmd_shell;
-  arg[1]->PrintR(*(csh->fout));
-  *(csh->fout) << "\n";
-  csh->fout->flush();
+    fh << "\trefn: " << arg[1]->refn;
+  fh << "\n";
+  cp->top->DisplayOutput(fh);	// paging default
   return &cssMisc::Void;
 }
 
@@ -1394,13 +1392,14 @@ static cssEl* cssElCFun_type_stub(int na, cssEl* arg[]) {
   if(cp->top->cmd_shell == NULL) return &cssMisc::Void;
   cssCmdShell* csh = cp->top->cmd_shell;
   if(csh->src_prog == NULL) return &cssMisc::Void;
+  String fh;
   if(na > 0) {
-    arg[1]->TypeInfo(*(csh->fout));
-    *(csh->fout) << endl;
+    arg[1]->PrintType(fh);
   }
   else {
-    csh->src_prog->ListTypes();
+    csh->src_prog->PrintTypes(fh);
   }
+  cp->top->DisplayOutput(fh);	// paging default
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_undo_stub(int na, cssEl* arg[]) {
@@ -1499,10 +1498,6 @@ static void Install_Commands() {
  expression), giving some type information and following with a new line\
  (\\n).  This is useful for debugging, but not for printing values\
  as part of an executing program.");
-  cssElCFun_inst(cssMisc::Commands, printr,		1, CSS_COMMAND, // "
-"<object> Prints an object and any of its sub-objects in a indented style\
- output.  This can be very long for objects near the top of the object\
- hierarchy (i.e., the root object), so be careful!");
   cssElCFun_inst(cssMisc::Commands, reload, 		0, CSS_COMMAND,
 "Reloads the current program from the last file that was load-ed.\
  This is useful because you do not have to specify the program file when\
@@ -1896,10 +1891,11 @@ static cssEl* cssElCFun_fprintf_stub(int na, cssEl* arg[]) {
   ostream* fh = (ostream*)*(arg[1]);
   if((fh == NULL) || !fh->good())
     return &cssMisc::Void;
-  int i;
-  for(i=2; i <= na; i++) {
-    (arg[i])->PrintF(*fh);
+  String str;
+  for(int i=2; i <= na; i++) {
+    str << (arg[i])->PrintFStr();
   }
+  *fh << str;
   fh->flush();
   return &cssMisc::Void;
 }
@@ -1908,10 +1904,11 @@ static cssEl* cssElCFun_printf_stub(int na, cssEl* arg[]) {
   ostream* fh = &cout;
   if(cp->top->cmd_shell != NULL) 
     fh = cp->top->cmd_shell->fout;
-  int i;
-  for(i=1; i <= na; i++) {
-    (arg[i])->PrintF(*(fh));
+  String str;
+  for(int i=1; i <= na; i++) {
+    str << (arg[i])->PrintFStr();
   }
+  *fh << str;
   fh->flush();
   return &cssMisc::Void;
 }
@@ -2198,11 +2195,6 @@ static cssEl* cssElCFun_clock_stub(int, cssEl**) {
 static void Install_MiscFun() {
 
   // misc functions
-  cssElCFun_inst_nm(cssMisc::Functions, printr, 1, "PrintR", CSS_FUN,
-"(<object>) This is the function version of the printr command.  Prints an\
- object and any of its sub-objects in a indented style output.  This can\
- be very long for objects near the top of the object hierarchy (i.e., the\
- root object), so be careful!");
   cssElCFun_inst_nm(cssMisc::Functions, edit, cssEl::VarArg, "EditObj", CSS_FUN,
 "(<object>) This is the function version of the edit command.  If the TA_GUI\
  (graphical user interface) is active (i.e., by using -gui to\

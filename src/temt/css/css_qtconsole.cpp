@@ -60,6 +60,7 @@ QString QcssConsole::interpretCommand(QString command, int* res) {
 void QcssConsole::resizeEvent(QResizeEvent* e) {
   inherited::resizeEvent(e);
   taMisc::display_width = MIN(maxCols, taMisc::max_display_width);
+  taMisc::display_height = maxLines;
 }
 
 void QcssConsole::keyPressEvent( QKeyEvent *e ) {
