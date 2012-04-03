@@ -1,0 +1,2269 @@
+// ta_Dump File v3.0 -- code v5.3.4.0 rev5335
+LeabraProject .projects["Project_0"] { 
+  taBase_Group @.templates = [0] {
+  };
+
+  Doc_Group @.docs = [0] {
+  };
+
+  Wizard_Group @.wizards = [1] {
+    LeabraWizard @["LeabraWizard_0"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+  };
+
+  SelectEdit_Group @.edits = [0] {
+  };
+
+  DataTable_Group @.data = [0] {
+    DataTable_Group @.gp["InputData"] { 
+    };
+    DataTable_Group @.gp["OutputData"] { 
+    };
+    DataTable_Group @.gp["AnalysisData"] { 
+    };
+  };
+
+  taBase_Group @.data_proc = [4] {
+    taDataProc @["data_base"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taDataAnal @["data_anal"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taDataGen @["data_gen"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+    taImageProc @["image_proc"] { 
+   UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NO_CLIP"] { };
+   };
+};
+  };
+
+  Program_Group @.programs = [1] {
+    Program @["FFTest"] { 
+      ProgObjList @.objs = [3] {
+	taImage @["taImage_orig"] { };
+	taImage @["taImage_recon"] { };
+	DataTable @["Images"] { 
+	  DataTableCols @.data = [3] {
+	    String_Data @["Manip"] { };
+	    float_Data @["Orig"] { 
+       UserDataItem_List @*(.user_data_) {
+		UserDataItem @["IMAGE"] { };
+       };
+};
+	    float_Data @["Recon"] { 
+       UserDataItem_List @*(.user_data_) {
+		UserDataItem @["IMAGE"] { };
+       };
+};
+	  };
+	};
+      };
+
+      ProgType_List @.types = [1] {
+	DynEnumType @["ManipType"] { 
+	  DynEnumItem_List @.enums = [4] {
+	    DynEnumItem @["ROTATE_FFT"] { };
+	    DynEnumItem @["SET_FFT_INDEXES"] { };
+	    DynEnumItem @["LOW_PASS_FILTER"] { };
+	    DynEnumItem @["HI_PASS_FILTER"] { };
+	  };
+	};
+      };
+
+      ProgVar_List @.args = [0] {
+      };
+
+      ProgVar_List @.vars = [14] {
+	ProgVar @["image_size"] { };
+	ProgVar @["manip_type"] { };
+	ProgVar @["taImage_orig"] { };
+	ProgVar @["taImage_recon"] { };
+	ProgVar @["Images"] { };
+	ProgVar @["rotate_angle"] { };
+	ProgVar @["start_angle"] { };
+	ProgVar @["end_angle"] { };
+	ProgVar @["angle_inc"] { };
+	ProgVar @["fft_start_index"] { };
+	ProgVar @["fft_end_index"] { };
+	ProgVar @["fft_real_val"] { };
+	ProgVar @["fft_imag_val"] { };
+	ProgVar @["fft_index"] { };
+      };
+
+      Function_List @.functions = [0] {
+      };
+
+      ProgEl_List @.init_code = [0] {
+      };
+
+      ProgEl_List @.prog_code = [9] {
+	LocalVars @[0] { 
+	  ProgVar_List @.local_vars = [7] {
+	    ProgVar @["flt_img"] { };
+	    ProgVar @["img_recon"] { };
+	    ProgVar @["img_fft"] { };
+	    ProgVar @["fft_xform"] { };
+	    ProgVar @["recon_fft"] { };
+	    ProgVar @["im_x"] { };
+	    ProgVar @["im_y"] { };
+	  };
+	};
+	MethodCall @[1] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[2] { 
+	  ProgArg_List @.meth_args = [2] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	  };
+	};
+	MethodCall @[3] { 
+	  ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	  };
+	};
+	MethodCall @[4] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	AssignExpr @[5] { };
+	MethodCall @[6] { 
+	  ProgArg_List @.meth_args = [1] {
+	    ProgArg @[0] { };
+	  };
+	};
+	MethodCall @[7] { 
+	  ProgArg_List @.meth_args = [0] {
+	  };
+	};
+	Switch @[8] { 
+	  ProgEl_List @.cases = [4] {
+	    CaseBlock @[0] { 
+	      ProgEl_List @.prog_code = [1] {
+		ForLoop @[0] { 
+		  ProgEl_List @.loop_code = [9] {
+		    MethodCall @[0] { 
+		      ProgArg_List @.meth_args = [1] {
+			ProgArg @[0] { };
+		      };
+		    };
+		    AssignExpr @[1] { };
+		    AssignExpr @[2] { };
+		    MethodCall @[3] { 
+		      ProgArg_List @.meth_args = [1] {
+			ProgArg @[0] { };
+		      };
+		    };
+		    MethodCall @[4] { 
+		      ProgArg_List @.meth_args = [0] {
+		      };
+		    };
+		    MethodCall @[5] { 
+		      ProgArg_List @.meth_args = [3] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+		      };
+		    };
+		    MethodCall @[6] { 
+		      ProgArg_List @.meth_args = [3] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+		      };
+		    };
+		    UserScript @[7] { };
+		    MemberMethodCall @[8] { 
+		      ProgArg_List @.meth_args = [2] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+		      };
+		    };
+		  };
+		};
+	      };
+	    };
+	    CaseBlock @[1] { 
+	      ProgEl_List @.prog_code = [1] {
+		ForLoop @[0] { 
+		  ProgEl_List @.loop_code = [11] {
+		    AssignExpr @[0] { };
+		    UserScript @[1] { };
+		    UserScript @[2] { };
+		    MethodCall @[3] { 
+		      ProgArg_List @.meth_args = [8] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+			ProgArg @[3] { };
+			ProgArg @[4] { };
+			ProgArg @[5] { };
+			ProgArg @[6] { };
+			ProgArg @[7] { };
+		      };
+		    };
+		    AssignExpr @[4] { };
+		    MethodCall @[5] { 
+		      ProgArg_List @.meth_args = [1] {
+			ProgArg @[0] { };
+		      };
+		    };
+		    MethodCall @[6] { 
+		      ProgArg_List @.meth_args = [0] {
+		      };
+		    };
+		    MethodCall @[7] { 
+		      ProgArg_List @.meth_args = [3] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+		      };
+		    };
+		    MethodCall @[8] { 
+		      ProgArg_List @.meth_args = [3] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+		      };
+		    };
+		    UserScript @[9] { };
+		    MemberMethodCall @[10] { 
+		      ProgArg_List @.meth_args = [2] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+		      };
+		    };
+		  };
+		};
+	      };
+	    };
+	    CaseBlock @[2] { 
+	      ProgEl_List @.prog_code = [1] {
+		ForLoop @[0] { 
+		  ProgEl_List @.loop_code = [10] {
+		    AssignExpr @[0] { };
+		    UserScript @[1] { };
+		    UserScript @[2] { };
+		    AssignExpr @[3] { };
+		    MethodCall @[4] { 
+		      ProgArg_List @.meth_args = [1] {
+			ProgArg @[0] { };
+		      };
+		    };
+		    MethodCall @[5] { 
+		      ProgArg_List @.meth_args = [0] {
+		      };
+		    };
+		    MethodCall @[6] { 
+		      ProgArg_List @.meth_args = [3] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+		      };
+		    };
+		    MethodCall @[7] { 
+		      ProgArg_List @.meth_args = [3] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+		      };
+		    };
+		    UserScript @[8] { };
+		    MemberMethodCall @[9] { 
+		      ProgArg_List @.meth_args = [2] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+		      };
+		    };
+		  };
+		};
+	      };
+	    };
+	    CaseBlock @[3] { 
+	      ProgEl_List @.prog_code = [1] {
+		ForLoop @[0] { 
+		  ProgEl_List @.loop_code = [10] {
+		    AssignExpr @[0] { };
+		    UserScript @[1] { };
+		    UserScript @[2] { };
+		    AssignExpr @[3] { };
+		    MethodCall @[4] { 
+		      ProgArg_List @.meth_args = [1] {
+			ProgArg @[0] { };
+		      };
+		    };
+		    MethodCall @[5] { 
+		      ProgArg_List @.meth_args = [0] {
+		      };
+		    };
+		    MethodCall @[6] { 
+		      ProgArg_List @.meth_args = [3] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+		      };
+		    };
+		    MethodCall @[7] { 
+		      ProgArg_List @.meth_args = [3] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+			ProgArg @[2] { };
+		      };
+		    };
+		    UserScript @[8] { };
+		    MemberMethodCall @[9] { 
+		      ProgArg_List @.meth_args = [2] {
+			ProgArg @[0] { };
+			ProgArg @[1] { };
+		      };
+		    };
+		  };
+		};
+	      };
+	    };
+	  };
+	};
+      };
+    };
+  };
+
+  DataViewer_List @.viewers = [1] {
+    MainWindowViewer @["Browser2"] { 
+      ToolBar_List @.toolbars = [1] {
+	ToolBar @["Application"] { };
+      };
+
+      FrameViewer_List @.frames = [3] {
+	tabBrowseViewer @["Tree"] { };
+	PanelViewer @["Panels"] { };
+	T3DataViewer @["T3Frames"] { 
+	  T3DataViewFrame_List @.frames = [1] {
+	    T3DataViewFrame @["Frame1"] { 
+	      T3DataView_List @.children = [1] {
+		GridTableView @["Images_Grid"] { 
+		  T3DataView_List @.children = [3] {
+		    GridColView @["Manip"] { };
+		    GridColView @["Orig"] { };
+		    GridColView @["Recon"] { };
+		  };
+		};
+	      };
+
+	      T3SavedView_List @.saved_views = [6] {
+		T3SavedView @["View_0"] { };
+		T3SavedView @["Recon_Zoom"] { };
+		T3SavedView @["View_2"] { };
+		T3SavedView @["View_3"] { };
+		T3SavedView @["View_4"] { };
+		T3SavedView @["View_5"] { };
+	      };
+	    };
+	  };
+	};
+      };
+
+      DockViewer_List @.docks = [1] {
+	ToolBoxDockViewer @["Tools"] { };
+      };
+    };
+  };
+
+  Network_Group @.networks = [0] {
+  };
+};
+LeabraProject .projects["Project_0"] {
+ name="Project_0";
+ desc=;
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ license {
+  owner="Regents of the University of Colorado";
+  license=NO_LIC;
+  org="CCNLab at the University of Colorado Boulder";
+  year="2011";
+  custom=;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
+ templates {
+  name="taBase_Group_0";
+  el_typ=taBase;
+  el_def=0;
+ };
+ docs {
+  name="Doc_Group_1";
+  el_typ=taDoc;
+  el_def=0;
+ };
+ wizards {
+  name="Wizard_Group_1";
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @["LeabraWizard_0"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_6";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="LeabraWizard_0";
+   auto_open=1;
+  };
+ };
+ edits {
+  name="SelectEdit_Group_0";
+  el_typ=SelectEdit;
+  el_def=0;
+ };
+ data {
+  name="DataTable_Group_0";
+  el_typ=DataTable;
+  el_def=0;
+  DataTable_Group @.gp["InputData"] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp["OutputData"] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+  DataTable_Group @.gp["AnalysisData"] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+  };
+ };
+ data_proc {
+  name="taBase_Group_0";
+  el_typ=taDataProc;
+  el_def=0;
+  taDataProc @["data_base"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_2";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_base";
+  };
+  taDataAnal @["data_anal"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_3";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_anal";
+  };
+  taDataGen @["data_gen"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_4";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="data_gen";
+  };
+  taImageProc @["image_proc"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_5";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="image_proc";
+  };
+ };
+ programs {
+  name="Program_Group_0";
+  el_typ=Program;
+  el_def=0;
+  tags=;
+  desc=;
+  Program @["FFTest"] {
+   name="FFTest";
+   short_nm="FFTest";
+   tags=;
+   desc=;
+   flags=0;
+   objs {
+    name="ProgObjList_18";
+    el_typ=taImage;
+    el_def=0;
+    taImage @["taImage_orig"] {
+     name="taImage_orig";
+    };
+    taImage @["taImage_recon"] {
+     name="taImage_recon";
+    };
+    DataTable @["Images"] {
+     name="Images";
+     desc=;
+     data {
+      name="data";
+      el_typ=double_Data;
+      el_def=0;
+      String_Data @["Manip"] {
+       name="Manip";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [0]        };
+      };
+      float_Data @["Orig"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_8";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["IMAGE"] {
+	 name="IMAGE";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+       };
+       name="Orig";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 320;320;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [2] ;;       };
+      };
+      float_Data @["Recon"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_8";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["IMAGE"] {
+	 name="IMAGE";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+       };
+       name="Recon";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=1;
+       cell_geom{ 320;320;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+	      [2] ;;       };
+      };
+     };
+     data_flags=AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+    };
+   };
+   types {
+    name="ProgType_List_0";
+    el_typ=DynEnumType;
+    el_def=0;
+    DynEnumType @["ManipType"] {
+     name="ManipType";
+     desc=;
+     enums {
+      name="DynEnumItem_List_0";
+      el_typ=DynEnumItem;
+      el_def=0;
+      DynEnumItem @["ROTATE_FFT"] {
+       name="ROTATE_FFT";
+       value=0;
+       desc="rotate the fft values by varying degrees";
+      };
+      DynEnumItem @["SET_FFT_INDEXES"] {
+       name="SET_FFT_INDEXES";
+       value=1;
+       desc="set individual fft indicies to given values";
+      };
+      DynEnumItem @["LOW_PASS_FILTER"] {
+       name="LOW_PASS_FILTER";
+       value=2;
+       desc=;
+      };
+      DynEnumItem @["HI_PASS_FILTER"] {
+       name="HI_PASS_FILTER";
+       value=3;
+       desc=;
+      };
+     };
+     bits=0;
+    };
+   };
+   args {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["image_size"] {
+     name="image_size";
+     var_type=T_Int;
+     int_val=320;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="image size (make square)";
+     init_from=NULL;
+    };
+    ProgVar @["manip_type"] {
+     name="manip_type";
+     var_type=T_DynEnum;
+     dyn_enum_val {
+      enum_type=.projects["Project_0"].programs["FFTest"].types["ManipType"]$$;
+      value=2;
+     };
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["taImage_orig"] {
+     name="taImage_orig";
+     var_type=T_Object;
+     object_type=taImage;
+     object_val=.projects["Project_0"].programs["FFTest"].objs["taImage_orig"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["taImage_recon"] {
+     name="taImage_recon";
+     var_type=T_Object;
+     object_type=taImage;
+     object_val=.projects["Project_0"].programs["FFTest"].objs["taImage_recon"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["Images"] {
+     name="Images";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["Project_0"].programs["FFTest"].objs["Images"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["rotate_angle"] {
+     name="rotate_angle";
+     var_type=T_Real;
+     real_val=190;
+     objs_ptr=0;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["start_angle"] {
+     name="start_angle";
+     var_type=T_Real;
+     real_val=0;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="starting rotation angle in degrees";
+     init_from=NULL;
+    };
+    ProgVar @["end_angle"] {
+     name="end_angle";
+     var_type=T_Real;
+     real_val=180;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="ending rotation angle in degrees";
+     init_from=NULL;
+    };
+    ProgVar @["angle_inc"] {
+     name="angle_inc";
+     var_type=T_Real;
+     real_val=10;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="angle increment";
+     init_from=NULL;
+    };
+    ProgVar @["fft_start_index"] {
+     name="fft_start_index";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="starting index for setting fft values directly to fft_set_val";
+     init_from=NULL;
+    };
+    ProgVar @["fft_end_index"] {
+     name="fft_end_index";
+     var_type=T_Int;
+     int_val=20;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["fft_real_val"] {
+     name="fft_real_val";
+     var_type=T_Real;
+     real_val=0;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="value to set fft at index to";
+     init_from=NULL;
+    };
+    ProgVar @["fft_imag_val"] {
+     name="fft_imag_val";
+     var_type=T_Real;
+     real_val=0;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="value to set fft at index to";
+     init_from=NULL;
+    };
+    ProgVar @["fft_index"] {
+     name="fft_index";
+     var_type=T_Int;
+     int_val=21;
+     objs_ptr=0;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="Function_List_18";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="ProgEl_List_134";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="ProgEl_List_135";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     local_vars {
+      name="ProgVar_List_0";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["flt_img"] {
+       name="flt_img";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["img_recon"] {
+       name="img_recon";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["img_fft"] {
+       name="img_fft";
+       var_type=T_Object;
+       object_type=complex_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["fft_xform"] {
+       name="fft_xform";
+       var_type=T_Object;
+       object_type=complex_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["recon_fft"] {
+       name="recon_fft";
+       var_type=T_Object;
+       object_type=complex_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["im_x"] {
+       name="im_x";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["im_y"] {
+       name="im_y";
+       var_type=T_Int;
+       int_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$$;
+     method=taImage::LoadImage;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="const taString&";
+       name="fname";
+       required=1;
+       def_val=;
+       expr {
+	expr="\"giraffe.jpg\"";
+       };
+      };
+     };
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+     method=taImage::GetImageSize;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int_ref;
+       type="int&";
+       name="width";
+       required=1;
+       def_val=;
+       expr {
+	expr="im_x";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=int_ref;
+       type="int&";
+       name="height";
+       required=1;
+       def_val=;
+       expr {
+	expr="im_y";
+       };
+      };
+     };
+    };
+    MethodCall @[3] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+     method=taImage::ScaleImage;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float;
+       type="float";
+       name="sx";
+       required=1;
+       def_val=;
+       expr {
+	expr="(double)image_size / im_x";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=float;
+       type="float";
+       name="sy";
+       required=1;
+       def_val=;
+       expr {
+	expr="(double)image_size / im_y";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=bool;
+       type="bool";
+       name="smooth";
+       required=0;
+       def_val="true";
+       expr {
+	expr="true";
+       };
+      };
+     };
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+     method=taImage::ImageToMatrix_grey;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float_Matrix_ref;
+       type="float_Matrix&";
+       name="grey_data";
+       required=1;
+       def_val=;
+       expr {
+	expr="flt_img";
+       };
+      };
+     };
+    };
+    AssignExpr @[5] {
+     desc=;
+     flags=0;
+     result_var=.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["img_fft"]$$;
+     expr {
+      expr="fft2(flt_img)";
+     };
+    };
+    MethodCall @[6] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["fft_xform"]$$;
+     method=taMatrix::SetGeomN;
+     meth_args {
+      name=;
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_MatrixGeom_ref;
+       type="const MatrixGeom&";
+       name="geom_";
+       required=1;
+       def_val=;
+       expr {
+	expr="img_fft.geom";
+       };
+      };
+     };
+    };
+    MethodCall @[7] {
+     desc=;
+     flags=0;
+     result_var=NULL;
+     obj=.projects["Project_0"].programs["FFTest"].vars["Images"]$$;
+     method=DataTable::ResetData;
+     meth_args {
+      name="ProgArg_List_0";
+      el_typ=ProgArg;
+      el_def=0;
+     };
+    };
+    Switch @[8] {
+     desc=;
+     flags=0;
+     switch_var=.projects["Project_0"].programs["FFTest"].vars["manip_type"]$$;
+     cases {
+      name="ProgEl_List_139";
+      el_typ=CaseBlock;
+      el_def=0;
+      CaseBlock @[0] {
+       desc=;
+       flags=0;
+       prog_code {
+	name="ProgEl_List_139";
+	el_typ=ProgCode;
+	el_def=0;
+	ForLoop @[0] {
+	 desc=;
+	 flags=0;
+	 loop_code {
+	  name="ProgEl_List_142";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MethodCall @[0] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["fft_xform"]$;
+	   method=complex_Matrix::ExpiAll;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=double;
+	     type="double";
+	     name="angle";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="taMath_double::rad_per_deg * rotate_angle";
+	     };
+	    };
+	   };
+	  };
+	  AssignExpr @[1] {
+	   desc=;
+	   flags=0;
+	   result_var=.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$$;
+	   expr {
+	    expr="img_fft * fft_xform";
+	   };
+	  };
+	  AssignExpr @[2] {
+	   desc=;
+	   flags=0;
+	   result_var=.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$$;
+	   expr {
+	    expr="real(ffti2(recon_fft))";
+	   };
+	  };
+	  MethodCall @[3] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$$;
+	   method=taImage::ImageFromMatrix_grey;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_float_Matrix_ref;
+	     type="const float_Matrix&";
+	     name="grey_data";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="img_recon";
+	     };
+	    };
+	   };
+	  };
+	  MethodCall @[4] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   method=DataTable::AddBlankRow;
+	   meth_args {
+	    name="ProgArg_List_0";
+	    el_typ=ProgArg;
+	    el_def=0;
+	   };
+	  };
+	  MethodCall @[5] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+	   method=taImage::ImageToDataCell;
+	   meth_args {
+	    name="ProgArg_List_0";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=DataTable_ptr;
+	     type="DataTable*";
+	     name="dt";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="Images";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Orig\"";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	  MethodCall @[6] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   method=taImage::ImageToDataCell;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=DataTable_ptr;
+	     type="DataTable*";
+	     name="dt";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="Images";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Recon\"";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	  UserScript @[7] {
+	   desc=;
+	   flags=OFF|PROG_ERROR;
+	   script {
+	    expr="Images[\"Manip\"][-1] = \"Rotate: \" + String(rotate_angle);";
+	   };
+	  };
+	  MemberMethodCall @[8] {
+	   desc=;
+	   flags=0;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   path="[\"Manip\"]";
+	   result_var=NULL;
+	   method=DataCol::SetVal;
+	   meth_args {
+	    name="ProgArg_List_0";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="val";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Rotate: \" + String(rotate_angle)";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="rotate_angle = start_angle";
+	 };
+	 test {
+	  expr=" rotate_angle <= end_angle";
+	 };
+	 iter {
+	  expr=" rotate_angle += angle_inc";
+	 };
+	};
+       };
+       case_val {
+	expr="ROTATE_FFT";
+       };
+      };
+      CaseBlock @[1] {
+       desc=;
+       flags=0;
+       prog_code {
+	name="ProgEl_List_140";
+	el_typ=ProgCode;
+	el_def=0;
+	ForLoop @[0] {
+	 desc=;
+	 flags=0;
+	 loop_code {
+	  name="ProgEl_List_142";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   desc=;
+	   flags=0;
+	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
+	   expr {
+	    expr="img_fft";
+	   };
+	  };
+	  UserScript @[1] {
+	   desc=;
+	   flags=0;
+	   script {
+	    expr="recon_fft[0,fft_index:fft_index+1,fft_index:fft_index+1] = fft_real_val;";
+	   };
+	  };
+	  UserScript @[2] {
+	   desc=;
+	   flags=0;
+	   script {
+	    expr="recon_fft[1,fft_index:fft_index+1,fft_index:fft_index+1] = fft_imag_val;";
+	   };
+	  };
+	  MethodCall @[3] {
+	   desc=;
+	   flags=OFF;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
+	   method=taMatrixT_double_::Set;
+	   meth_args {
+	    name="ProgArg_List_0";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=taMatrixT_double_::const_double_ref;
+	     type="const double&";
+	     name="item";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="fft_real_val";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=int;
+	     type="int";
+	     name="d0";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="fft_real_or_imag";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="d1";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr="fft_index";
+	     };
+	    };
+	    ProgArg @[3] {
+	     arg_type=int;
+	     type="int";
+	     name="d2";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr="0";
+	     };
+	    };
+	    ProgArg @[4] {
+	     arg_type=int;
+	     type="int";
+	     name="d3";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[5] {
+	     arg_type=int;
+	     type="int";
+	     name="d4";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[6] {
+	     arg_type=int;
+	     type="int";
+	     name="d5";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	    ProgArg @[7] {
+	     arg_type=int;
+	     type="int";
+	     name="d6";
+	     required=0;
+	     def_val="0";
+	     expr {
+	      expr=;
+	     };
+	    };
+	   };
+	  };
+	  AssignExpr @[4] {
+	   desc=;
+	   flags=0;
+	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$;
+	   expr {
+	    expr="real(ffti2(recon_fft))";
+	   };
+	  };
+	  MethodCall @[5] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   method=taImage::ImageFromMatrix_grey;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_float_Matrix_ref;
+	     type="const float_Matrix&";
+	     name="grey_data";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="img_recon";
+	     };
+	    };
+	   };
+	  };
+	  MethodCall @[6] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   method=DataTable::AddBlankRow;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	   };
+	  };
+	  MethodCall @[7] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+	   method=taImage::ImageToDataCell;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=DataTable_ptr;
+	     type="DataTable*";
+	     name="dt";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="Images";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Orig\"";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	  MethodCall @[8] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   method=taImage::ImageToDataCell;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=DataTable_ptr;
+	     type="DataTable*";
+	     name="dt";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="Images";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Recon\"";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	  UserScript @[9] {
+	   desc=;
+	   flags=OFF|PROG_ERROR;
+	   script {
+	    expr="Images[\"Manip\"][-1] = \"Rotate: \" + String(rotate_angle);";
+	   };
+	  };
+	  MemberMethodCall @[10] {
+	   desc=;
+	   flags=0;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   path="[\"Manip\"]";
+	   result_var=NULL;
+	   method=DataCol::SetVal;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="val";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Index: \" + String(fft_index) + \" = \" + String(fft_real_val) + \" + i\" + String(fft_imag_val)";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="fft_index = fft_start_index";
+	 };
+	 test {
+	  expr="fft_index <= fft_end_index";
+	 };
+	 iter {
+	  expr="fft_index++";
+	 };
+	};
+       };
+       case_val {
+	expr="SET_FFT_INDEXES";
+       };
+      };
+      CaseBlock @[2] {
+       desc=;
+       flags=0;
+       prog_code {
+	name="ProgEl_List_29";
+	el_typ=ProgCode;
+	el_def=0;
+	ForLoop @[0] {
+	 desc=;
+	 flags=0;
+	 loop_code {
+	  name="ProgEl_List_30";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   desc=;
+	   flags=0;
+	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
+	   expr {
+	    expr="img_fft";
+	   };
+	  };
+	  UserScript @[1] {
+	   desc=;
+	   flags=0;
+	   script {
+	    expr="recon_fft[0,fft_index:,fft_index:] = fft_real_val;";
+	   };
+	  };
+	  UserScript @[2] {
+	   desc=;
+	   flags=0;
+	   script {
+	    expr="recon_fft[1,fft_index:,fft_index:] = fft_imag_val;";
+	   };
+	  };
+	  AssignExpr @[3] {
+	   desc=;
+	   flags=0;
+	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$;
+	   expr {
+	    expr="real(ffti2(recon_fft))";
+	   };
+	  };
+	  MethodCall @[4] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   method=taImage::ImageFromMatrix_grey;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_float_Matrix_ref;
+	     type="const float_Matrix&";
+	     name="grey_data";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="img_recon";
+	     };
+	    };
+	   };
+	  };
+	  MethodCall @[5] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   method=DataTable::AddBlankRow;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	   };
+	  };
+	  MethodCall @[6] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+	   method=taImage::ImageToDataCell;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=DataTable_ptr;
+	     type="DataTable*";
+	     name="dt";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="Images";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Orig\"";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	  MethodCall @[7] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   method=taImage::ImageToDataCell;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=DataTable_ptr;
+	     type="DataTable*";
+	     name="dt";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="Images";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Recon\"";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	  UserScript @[8] {
+	   desc=;
+	   flags=OFF|PROG_ERROR;
+	   script {
+	    expr="Images[\"Manip\"][-1] = \"Rotate: \" + String(rotate_angle);";
+	   };
+	  };
+	  MemberMethodCall @[9] {
+	   desc=;
+	   flags=0;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   path="[\"Manip\"]";
+	   result_var=NULL;
+	   method=DataCol::SetVal;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="val";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"LPF Index: \" + String(fft_index)";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="fft_index = fft_start_index";
+	 };
+	 test {
+	  expr="fft_index <= fft_end_index";
+	 };
+	 iter {
+	  expr="fft_index++";
+	 };
+	};
+       };
+       case_val {
+	expr="LOW_PASS_FILTER";
+       };
+      };
+      CaseBlock @[3] {
+       desc=;
+       flags=0;
+       prog_code {
+	name=;
+	el_typ=ProgCode;
+	el_def=0;
+	ForLoop @[0] {
+	 desc=;
+	 flags=0;
+	 loop_code {
+	  name=;
+	  el_typ=ProgCode;
+	  el_def=0;
+	  AssignExpr @[0] {
+	   desc=;
+	   flags=0;
+	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["recon_fft"]$;
+	   expr {
+	    expr="img_fft";
+	   };
+	  };
+	  UserScript @[1] {
+	   desc=;
+	   flags=0;
+	   script {
+	    expr="recon_fft[0,:fft_index+1,:fft_index+1] = fft_real_val;";
+	   };
+	  };
+	  UserScript @[2] {
+	   desc=;
+	   flags=0;
+	   script {
+	    expr="recon_fft[1,:fft_index+1,:fft_index+1] = fft_imag_val;";
+	   };
+	  };
+	  AssignExpr @[3] {
+	   desc=;
+	   flags=0;
+	   result_var=$.projects["Project_0"].programs["FFTest"].prog_code[0].local_vars["img_recon"]$;
+	   expr {
+	    expr="real(ffti2(recon_fft))";
+	   };
+	  };
+	  MethodCall @[4] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   method=taImage::ImageFromMatrix_grey;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_float_Matrix_ref;
+	     type="const float_Matrix&";
+	     name="grey_data";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="img_recon";
+	     };
+	    };
+	   };
+	  };
+	  MethodCall @[5] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   method=DataTable::AddBlankRow;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	   };
+	  };
+	  MethodCall @[6] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_orig"]$;
+	   method=taImage::ImageToDataCell;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=DataTable_ptr;
+	     type="DataTable*";
+	     name="dt";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="Images";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Orig\"";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	  MethodCall @[7] {
+	   desc=;
+	   flags=0;
+	   result_var=NULL;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["taImage_recon"]$;
+	   method=taImage::ImageToDataCell;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=DataTable_ptr;
+	     type="DataTable*";
+	     name="dt";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="Images";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"Recon\"";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	  UserScript @[8] {
+	   desc=;
+	   flags=OFF|PROG_ERROR;
+	   script {
+	    expr="Images[\"Manip\"][-1] = \"Rotate: \" + String(rotate_angle);";
+	   };
+	  };
+	  MemberMethodCall @[9] {
+	   desc=;
+	   flags=0;
+	   obj=$.projects["Project_0"].programs["FFTest"].vars["Images"]$;
+	   path="[\"Manip\"]";
+	   result_var=NULL;
+	   method=DataCol::SetVal;
+	   meth_args {
+	    name=;
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_Variant_ref;
+	     type="const Variant&";
+	     name="val";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="\"HPF Index: \" + String(fft_index)";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     expr {
+	      expr="-1";
+	     };
+	    };
+	   };
+	  };
+	 };
+	 init {
+	  expr="fft_index = fft_start_index";
+	 };
+	 test {
+	  expr="fft_index <= fft_end_index";
+	 };
+	 iter {
+	  expr="fft_index++";
+	 };
+	};
+       };
+       case_val {
+	expr="HI_PASS_FILTER";
+       };
+      };
+     };
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+ };
+ viewers {
+  name="DataViewer_List_0";
+  el_typ=TopLevelViewer;
+  el_def=0;
+  MainWindowViewer @["Browser2"] {
+   name="Browser2";
+   m_data=.projects["Project_0"]$$;
+   visible=1;
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name="ToolBar_List_1";
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @["Application"] {
+     name="Application";
+     m_data=NULL;
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name="FrameViewer_List_0";
+    el_typ=FrameViewer;
+    el_def=0;
+    tabBrowseViewer @["Tree"] {
+     name="Tree";
+     m_data=NULL;
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$.projects["Project_0"]$;
+    };
+    PanelViewer @["Panels"] {
+     name="Panels";
+     m_data=NULL;
+     visible=1;
+    };
+    T3DataViewer @["T3Frames"] {
+     name="T3Frames";
+     m_data=NULL;
+     visible=1;
+     frames {
+      name="T3DataViewFrame_List_0";
+      el_typ=T3DataViewFrame;
+      el_def=0;
+      T3DataViewFrame @["Frame1"] {
+       name="Frame1";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GridTableView @["Images_Grid"] {
+	  name="Images_Grid";
+	  m_data=$.projects["Project_0"].programs["FFTest"].objs["Images"]$;
+FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name="T3DataView_List_0";
+	   el_typ=GridColView;
+	   el_def=0;
+	   GridColView @["Manip"] {
+	    name="Manip";
+	    m_data=.projects["Project_0"].programs["FFTest"].objs["Images"].data["Manip"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=16;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=0;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Orig"] {
+	    name="Orig";
+	    m_data=.projects["Project_0"].programs["FFTest"].objs["Images"].data["Orig"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=320;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=1;
+	    mat_odd_vert=1;
+	   };
+	   GridColView @["Recon"] {
+	    name="Recon";
+	    m_data=.projects["Project_0"].programs["FFTest"].objs["Images"].data["Recon"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    text_width=320;
+	    scale_on=1;
+	    mat_layout=BOT_ZERO;
+	    mat_image=1;
+	    mat_odd_vert=1;
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  view_rows=5;
+	  view_range {min=0: max=4: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  col_n=5;
+	  col_range {min=0: max=2: };
+	  width=1;
+	  grid_on=1;
+	  header_on=1;
+	  row_num_on=0;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	  mat_val_text=0;
+	  colorscale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=1;
+	   zero=0;
+	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
+	   auto_scale=0;
+	  };
+	  grid_margin=0.01;
+	  grid_line_size=0.005;
+	  row_num_width=4;
+	  mat_block_spc=0.1;
+	  mat_block_height=0;
+	  mat_rot=0;
+	  mat_trans=0.6;
+	  mat_size_range {min=4: max=16: };
+	  text_size_range {min=0.02: max=0.05: };
+	  click_vals=0;
+	  lmb_val=1;
+	  mmb_val=0;
+	 };
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_0";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["View_0"] {
+	 name="View_0";
+	 view_saved=1;
+	 pos {x=1.5325: y=0.5174999: z=1.443747: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.453747;
+	};
+	T3SavedView @["Recon_Zoom"] {
+	 name="Recon_Zoom";
+	 view_saved=1;
+	 pos {x=1.8365: y=0.8675009: z=0.428737: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0.438737;
+	};
+	T3SavedView @["View_2"] {
+	 name="View_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_3"] {
+	 name="View_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_4"] {
+	 name="View_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["View_5"] {
+	 name="View_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+     };
+    };
+   };
+   docks {
+    name="DockViewer_List_0";
+    el_typ=DockViewer;
+    el_def=0;
+    ToolBoxDockViewer @["Tools"] {
+     name="Tools";
+     m_data=NULL;
+     visible=1;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ last_change_desc=;
+ networks {
+  name="Network_Group_0";
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
+};

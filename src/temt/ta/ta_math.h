@@ -294,7 +294,7 @@ public:
   // #CAT_Arithmetic #NO_CSS_MATH divide
 
   static double  abs(double x) { return std::fabs(x); }
-  // #CAT_Arithmetic absolute value
+  // #CAT_Arithmetic #NO_CSS_MATH absolute value
   static double  fabs(double x) { return std::fabs(x); }
   // #CAT_Arithmetic absolute value
 //   static double copysign(double x, double y) { return std::copysign(x, y); }
@@ -873,25 +873,21 @@ public:
 
 
   /////////////////////////////////////////////////////////////////////////////////
-  // fft routines 
+  // fft routines -- css friendly versions in cssMath
 
-  static bool fft_real(complex_Matrix* out_mat, const double_Matrix* in_mat, 
-		       bool norm = false);
-  // #CAT_FFT #NO_CSS_MATH compute the forward fast fourier transform (FFT) of the real data in in_mat, writing the complex output to out_mat. results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored in out_mat as inner-most dimension of matrix, of size 2, first is real, 2nd is imag.  if there are more than 1 dims in in_mat, the FFT is computed for all frames of d0 (assuming a time series of 1d frames -- see fft2 for 2d); norm=1 divides results by 1/sqrt(N) which makes the forward and reverse FFTs symmetric
-  static bool fft_complex(complex_Matrix* out_mat, const complex_Matrix* in_mat,
-			  bool forward = true, bool norm = false);
-  // #CAT_FFT #NO_CSS_MATH compute the forward (or backward if !forward) fast fourier transform (FFT) of the complex data in in_mat, writing the output to out_mat. results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored as inner-most dimension of matrix, of size 2, first is real, 2nd is imag. if there are more than 1 dims in in_mat, the FFT is computed for all frames of d0 (assuming a time series of 1d frames -- see fft2 for 2d); norm=1 divides results by 1/sqrt(N) which makes the forward and reverse FFTs symmetric
-  static bool ffti_complex(complex_Matrix* out_mat, const complex_Matrix* in_mat);
-  // #CAT_FFT #NO_CSS_MATH compute the backward or inverse fast fourier transform (FFT) of the complex data in in_mat, writing the output to complex out_mat. results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored as inner-most dimension of matrix, of size 2, first is real, 2nd is imag.  if there are more than 1 dims in in_mat, the FFT is computed for all frames of d0 (assuming a time series of 1d frames -- see fft2 for 2d)
+  static bool fft_real(complex_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_FFT #NO_CSS_MATH compute the fast fourier transform (FFT) of the real data in in_mat, writing the complex output to out_mat. results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored in out_mat as inner-most dimension of matrix, of size 2, first is real, 2nd is imag.  if there are more than 1 dims in in_mat, the FFT is computed for all frames of d0 (assuming a time series of 1d frames -- see fft2 for 2d)
+  static bool fft_complex(complex_Matrix* mat);
+  // #CAT_FFT #NO_CSS_MATH compute the fast fourier transform (FFT) of the complex data in the matrix, in place (overwrites contents of mat). results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored as inner-most dimension of matrix, of size 2, first is real, 2nd is imag. if there are more than 1 dims in in_mat, the FFT is computed for all frames of d0 (assuming a time series of 1d frames -- see fft2 for 2d)
+  static bool ffti_complex(complex_Matrix* mat);
+  // #CAT_FFT #NO_CSS_MATH compute the inverse fast fourier transform (FFT) of the complex data in the matrix, in place (overwrites contents of mat). results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored as inner-most dimension of matrix, of size 2, first is real, 2nd is imag.  if there are more than 1 dims in in_mat, the FFT is computed for all frames of d0 (assuming a time series of 1d frames -- see fft2 for 2d)
 
-  static bool fft2_real(complex_Matrix* out_mat, const double_Matrix* in_mat,
-			bool norm = false);
-  // #CAT_FFT #NO_CSS_MATH compute the 2D forward fast fourier transform (FFT) of the real data in in_mat, writing the complex output to out_mat. results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers are stored in out_mat as inner-most dimension of matrix, of size 2, first is real, 2nd is imag.  if there are more than 2D dims in in_mat, the FFT is computed for each 2D frame; norm=1 divides results by 1/sqrt(N) which makes the forward and reverse FFTs symmetric
-  static bool fft2_complex(complex_Matrix* out_mat, const complex_Matrix* in_mat,
-			   bool norm = false);
-  // #CAT_FFT #NO_CSS_MATH compute the 2D forward fast fourier transform (FFT) of the complex data in in_mat, writing the output to out_mat. results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored as inner-most dimension of matrix, of size 2, first is real, 2nd is imag.  if there are more than 2D dims in in_mat, the FFT is computed for each 2D frame; norm=1 divides results by 1/sqrt(N) which makes the forward and reverse FFTs symmetric
-  static bool ffti2_complex(complex_Matrix* out_mat, const complex_Matrix* in_mat);
-  // #CAT_FFT #NO_CSS_MATH compute the 2D backward or inverse fast fourier transform (FFT) of the complex data in in_mat, writing the output to out_mat. results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored as inner-most dimension of matrix, of size 2, first is real, 2nd is imag. if there are more than 2D dims in in_mat, the FFT is computed for each 2D frame
+  static bool fft2_real(complex_Matrix* out_mat, const double_Matrix* in_mat);
+  // #CAT_FFT #NO_CSS_MATH compute the 2D fast fourier transform (FFT) of the real data in in_mat, writing the complex output to out_mat. results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers are stored in out_mat as inner-most dimension of matrix, of size 2, first is real, 2nd is imag.  if there are more than 2D dims in in_mat, the FFT is computed for each 2D frame
+  static bool fft2_complex(complex_Matrix* mat);
+  // #CAT_FFT #NO_CSS_MATH compute the 2D fast fourier transform (FFT) of the complex data in the matrix, in place (overwrites contents of mat). results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored as inner-most dimension of matrix, of size 2, first is real, 2nd is imag.  if there are more than 2D dims in in_mat, the FFT is computed for each 2D frame
+  static bool ffti2_complex(complex_Matrix* mat);
+  // #CAT_FFT #NO_CSS_MATH compute the 2D inverse fast fourier transform (FFT) of the complex data in the matrix, in place (overwrites contents of mat). results are much faster if size is divisible by many small factors, but any size can be used (radix-N).  complex numbers stored as inner-most dimension of matrix, of size 2, first is real, 2nd is imag. if there are more than 2D dims in in_mat, the FFT is computed for each 2D frame
 
   void Initialize() { };
   void Destroy() { };

@@ -3797,6 +3797,43 @@ void complex_Matrix::Expi(const double_Matrix& angles, bool copy_geom) {
 }
 
 
+void complex_Matrix::SetRealAll(double real) {
+  if(!CheckComplexGeom(geom)) return;
+  int sz = size/2;
+  for(int i=0; i < sz; ++i) {
+    FastEl_Flat(2*i) = real;
+  }
+}
+
+void complex_Matrix::SetImagAll(double imag) {
+  if(!CheckComplexGeom(geom)) return;
+  int sz = size/2;
+  for(int i=0; i < sz; ++i) {
+    FastEl_Flat(2*i+1) = imag;
+  }
+}
+
+void complex_Matrix::ComplexAll(double real, double imag) {
+  if(!CheckComplexGeom(geom)) return;
+  int sz = size/2;
+  for(int i=0; i < sz; ++i) {
+    FastEl_Flat(2*i) = real;
+    FastEl_Flat(2*i+1) = imag;
+  }
+}
+
+void complex_Matrix::ExpiAll(double angle) {
+  if(!CheckComplexGeom(geom)) return;
+  double cosv = cos(angle);
+  double sinv = sin(angle);
+  int sz = size/2;
+  for(int i=0; i < sz; ++i) {
+    FastEl_Flat(2*i) = cosv;
+    FastEl_Flat(2*i+1) = sinv;
+  }
+}
+
+
 //////////// op *
 taMatrix* complex_Matrix::operator*(const taMatrix& t) const {
   if(TestError(geom != t.geom, "*", "the geometry of the two matricies is not equal -- must be for element-wise operation"))

@@ -1223,7 +1223,6 @@ private:
 protected: \
   override const void*  El_GetBlank_() const    { return (const void*)&blank; }
 
-
 #define MAT_COPY_SAME_SLOW(y,T) \
   void  Copy_(const y& cp) { SetGeomN(cp.geom); \
     for (int i = 0; i < size; ++i) { \
@@ -1234,7 +1233,6 @@ protected: \
   void  Copy_(const y& cp) { SetGeomN(cp.geom); \
     memcpy(data(), cp.data(), size * sizeof(T)); \
     }
-
 
 #define TA_MATRIX_FUNS_FAST(y,T) \
 private: \
@@ -1252,6 +1250,14 @@ protected: \
 public: \
   TA_MATRIX_FUNS(y,T)
 
+// use this for a derived class of an instantiated matrix type
+#define TA_MATRIX_FUNS_DERIVED(y,T) \
+  y(int dims_,int d0,int d1=0,int d2=0,int d3=0,int d4=0,int d5=0,int d6=0) \
+    {SetGeom(dims_, d0,d1,d2,d3,d4,d5,d6);} \
+  explicit y(const MatrixGeom& geom_) {SetGeomN(geom_);} \
+  y(T* data_, const MatrixGeom& geom_) {SetFixedData(data_, geom_);} \
+  USING(taMatrix::operator=) \
+  TA_BASEFUNS_NOCOPY(y)
 
 ///////////////////////////////////
 //      String_Matrix
@@ -1415,6 +1421,15 @@ public:
   virtual  void		Expi(const double_Matrix& angles, bool copy_geom=true);
   // #CAT_Complex sets complex numbers in this matrix from angles in input matrix, using exponential of i * angle = cos(angle) + i sin(angle) (Euler's formula)
 
+  virtual  void		ComplexAll(double real, double imag);
+  // #CAT_Complex set both the real and imaginary components of this complex matrix from source values -- initializes all matrix values to the same numbers
+  virtual  void		SetRealAll(double real);
+  // #CAT_Complex set the real-valued components of this complex matrix from given real value -- initializes all matrix values to the same number
+  virtual  void		SetImagAll(double real);
+  // #CAT_Complex set the imaginary-valued components of this complex matrix from given imaginary value -- initializes all matrix values to the same number
+  virtual  void		ExpiAll(double angle);
+  // #CAT_Complex sets complex numbers in this matrix from angle in input matrix, using exponential of i * angle = cos(angle) + i sin(angle) (Euler's formula) -- initializes all matrix values to the same numbers
+
   USING(taMatrix::operator*)
   override taMatrix* operator*(const taMatrix& t) const;
 
@@ -1427,8 +1442,7 @@ public:
   USING(taMatrix::operator/=)
   override void      operator/=(const taMatrix& t);
 
-  USING(taMatrix::operator=)
-  TA_BASEFUNS_NOCOPY(complex_Matrix);
+  TA_MATRIX_FUNS_DERIVED(complex_Matrix, double);
 private:
   void          Initialize() {}
   void          Destroy() {}
@@ -1480,8 +1494,7 @@ class TA_API slice_Matrix: public int_Matrix {
   // #INSTANCE an int matrix that is used to hold slicing information for indexing -- type is just a marker to unambiguously indicate this form of indexing
 INHERITED(int_Matrix)
 public:
-  USING(taMatrix::operator=)
-  TA_BASEFUNS_NOCOPY(slice_Matrix);
+  TA_MATRIX_FUNS_DERIVED(slice_Matrix, int);
 private:
   void          Initialize() {}
   void          Destroy() {}
