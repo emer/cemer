@@ -670,7 +670,9 @@ public:
   static String         console_font_name;      // #SAVE #CAT_GUI font name for the css console
   static int            console_font_size;      // #SAVE #CAT_GUI font size for the css console
   static float          doc_text_scale; // #SAVE #CAT_GUI scale factor for text displayed in doc objects (including web pages) -- multiplies base setting from font_size parameter (above), plus any doc-specific text_size parameter -- values > 1 make the text bigger, < 1 = smaller
-  static int            display_width;  // #SAVE #HIDDEN #MIN_40 #MAX_132 #CAT_GUI width of console display (in chars) -- set automatically by gui console
+  static int            display_width;  // #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places
+  static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big
+  static int            indent_spc;  	// #SAVE #EXPERT #MIN_1 #MAX_8 #DEF_2 #CAT_GUI how many spaces to use per indent level
 
   static bool           emacs_mode;     // #SAVE #CAT_GUI use full emacs key bindings -- all non-conflicting emacs keys are available regardless, but with this turned on, Ctrl+V is page down instead of Paste -- use Ctrl+Y (emacs yank) for paste instead -- on a Mac, Command+V is usually paste, so Ctrl+V can be used for page down without conflict, so this setting defaults to ON for macs
   static int            undo_depth;     // #SAVE #CAT_GUI how many steps of undo are maintained -- the system is very efficient so large numbers (default 100) are usually acceptable -- see Project UndoStats menu item for memory usage statistics
@@ -998,7 +1000,7 @@ public:
 
   static void   MallocInfo(ostream& strm);
   // #CAT_GlobalState generate malloc memory statistic information to given stream
-  static void   ListAllTokens(ostream& strm);
+  static String& PrintAllTokens(String& strm);
   // #CAT_GlobalState generate a list and count of all types that keep tokens, with a count of tokens
   static TypeInfoKind TypeToTypeInfoKind(TypeDef* typ);
   // #CAT_GlobalState
@@ -1105,6 +1107,19 @@ public:
 
   static String StringCVar(const String& str);
   // #CAT_Utility make return string in a form that would be valid as a variable name in C (i.e., alpha + numeric (not at start) + _
+
+  static String& IndentString(String& strm, int indent)
+  { return strm << String(MAX(indent,0) * indent_spc, 0, ' '); }
+  // #CAT_Utility add indent to a string, using default indent spacing 
+  static String& CrIndentString(String& strm, int indent)
+  { return strm << "\n" << String(MAX(indent,0) * indent_spc, 0, ' '); }
+  // #CAT_Utility add carriage return (newline) and indent to a string, using default indent spacing 
+  static String& FancyPrintList(String& strm, const String_PArray& strs,
+				int indent=0, int max_col_width=20);
+  // #CAT_Utility generate a print string from an array of strings, where all the items are lined up in columns based on the maximum width of items in the array -- if an item exceeds the max_col_width it gets multiple columns as needed -- keeps things overall more compact if there are a few outliers with very long names
+  static String& FancyPrintTwoCol(String& strm, const String_PArray& col1_strs,
+				  const String_PArray& col2_strs, int indent=0);
+  // #CAT_Utility generate a print string from two columns of strings (must be equal in size), where the 2nd column items are all aligned with proper spacing after the first column items, based on the maximum width of items in the first columnn
 
   /////////////////////////////////////////////////
   //    File Paths etc
@@ -1266,16 +1281,10 @@ public:
   //    File Parsing Stuff for Dump routines: Output
 
   static ostream& indent(ostream& strm, int indent, int tsp=2);
-  // #CAT_File
+  // #CAT_File generate indentation 
   static ostream& write_quoted_string(ostream& strm, const String& str,
                                       bool write_if_empty = false);
   // #CAT_File writes the string, including enclosing quotes, escaping so we can read back using read_till_end_quote funcs
-  static ostream& fmt_sep(ostream& strm, const String& itm, int no, int indent,
-                          int tsp=2);
-  // #CAT_File
-  static ostream& fancy_list(ostream& strm, const String& itm, int no, int prln,
-                             int tabs);
-  // #CAT_File
 };
 
 //////////////////////////////////////////////////////////
@@ -1547,7 +1556,7 @@ public:
   virtual EnumDef*      FindNo(int eno) const;
   // finds for a given enum_no
 
-  virtual ostream&      OutputType(ostream& strm, int indent = 1) const;
+  virtual String&      PrintType(String& strm, int indent = 1) const;
 };
 
 
@@ -1576,7 +1585,7 @@ public:
   ~TokenSpace();
   void operator=(const TokenSpace& cp)  { Borrow(cp); }
 
-  void          List(ostream& strm=cout) const;
+  override String& Print(String& strm, int indent=0) const;
 };
 
 
@@ -1668,10 +1677,10 @@ public:
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
   // IO
-  ostream&      OutputType(ostream& strm, int indent = 0) const;
-
-  ostream&      Output(ostream& strm, void* base, int indent) const;
-  ostream&      OutputR(ostream& strm, void* base, int indent) const;
+  String&       PrintType(String& strm, int indent = 0) const;
+  String&	Print(String& strm, int indent = 0) const
+  { return PrintType(strm, indent); }
+  String&       Print(String& strm, void* base, int indent=0) const;
 
   // for dump files
   int           Dump_Save(ostream& strm, void* base, void* par, int indent);
@@ -1679,7 +1688,7 @@ public:
   int           Dump_Save_PathR(ostream& strm, void* base, void* par, int indent);
 
   int           Dump_Load(istream& strm, void* base, void* par,
-                                  const char* prv_read_nm = NULL, int prv_c = 0); //
+			  const char* prv_read_nm = NULL, int prv_c = 0); //
 
 public: // lexical hacks
   inline MemberDef*     operator[](int i) const {return (MemberDef*)inherited::FastEl(i);}
@@ -1777,7 +1786,7 @@ public:
     // find the virtual method with same name and signature
 
   // IO
-  virtual ostream&      OutputType(ostream& strm, int indent = 0) const;
+  virtual String&      PrintType(String& strm, int indent = 0) const;
 
 };
 
@@ -1821,8 +1830,8 @@ public:
   virtual bool  ReplaceParents(const TypeSpace& ol, const TypeSpace& nw);
   // replace any parents on the old list with those on the new for all types
 
-  virtual void  ListAllTokens(ostream& strm);
-  // list count for all types that are keeping tokens
+  String& 	PrintAllTokens(String& strm) const;
+  // print count for all types that are keeping tokens
 };
 
 
@@ -2039,7 +2048,7 @@ public:
     // name used for saving a reference in stream files, can be used to lookup again
 
   override const Variant GetValVar(const void* base) const;
-  override void SetValVar(const Variant& val, void* base, void* par = NULL);
+  override void 	 SetValVar(const Variant& val, void* base, void* par = NULL);
     // note: par is only needed really needed for owned taBase ptrs)
 
   DefaultStatus         GetDefaultStatus(const void* base);
@@ -2057,10 +2066,8 @@ public:
                                 bool no_ptrs = true, bool test_only = false);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
-  ostream&      OutputType(ostream& strm, int indent = 1) const;
-
-  ostream&      Output(ostream& strm, void* base, int indent) const;
-  ostream&      OutputR(ostream& strm, void* base, int indent) const;
+  void	        PrintType(String& col1, String& col2) const;
+  void	        Print(String& col1, String& col2, void* base, int indent=0) const;
 
   String        GetHTML(bool gendoc=false, bool short_fmt=false) const;
   // gets an HTML representation of this object -- for help view etc -- gendoc = external html file rendering instead of internal help browser, short_fmt = no details, for summary guys
@@ -2175,7 +2182,7 @@ public:
   bool                  CheckList(const String_PArray& lst) const;
   // check if method has a list in common with given one
   bool                  CompareArgs(MethodDef* it) const;       // true if same, false if not
-  ostream&              OutputType(ostream& strm, int indent = 1) const;
+  void	                PrintType(String& col1, String& col2) const;
   void                  CallFun(void* base) const;
   // call the function, using gui dialog if need to get args
   const String          ParamsAsString() const; // returns what would be in () for a definition
@@ -2448,8 +2455,6 @@ public:
   void          AddUserDataSchema(UserDataItemBase* item); // adds the item as schema
 #endif
   // for token management
-//  void                Register(void* it); // legacy, typically called once per ctor in inheritance chain
-//  void                unRegister(void* it); // legacy, typically called once per dtor in inheritance chain
   void          RegisterFinal(void* it); // call to just register the most derived (can only call once per it)
   void          unRegisterFinal(void* it); // call to just unregister the most derived (can only call once per it)
 
@@ -2525,16 +2530,15 @@ public:
                                 bool no_ptrs = true, bool test_only = false);
   // compare all member values from class of the same type as me, adding ones that are different to the mds, trg_bases, src_bases lists (unless test_only == true, in which case it just does the tests and returns true if any diffs -- for inline objects)
 
-  // IO
-  ostream&      Output(ostream& strm, void* base, int indent=0) const;
+  // value printing
+  String&       Print(String& strm, void* base, int indent=0) const;
   // output value information for display purposes
-  ostream&      OutputR(ostream& strm, void* base, int indent=0) const;
-  // output value information for display purposes, recursive
 
-  ostream&      OutputType(ostream& strm, int indent = 0) const;
+  String&       PrintType(String& strm, int indent = 0) const;
   // output type information only
-  ostream&      OutputInherit(ostream& strm) const;
-  ostream&      OutputInherit_impl(ostream& strm) const;
+  String&       PrintInherit(String& strm) const;
+  String&       PrintInherit_impl(String& strm) const;
+  String&       PrintTokens(String& strm, int indent=0) const;
 
   String        GetHTML(bool gendoc=false) const;
   // gets an HTML representation of this type -- for help view etc -- gendoc = external html file rendering instead of internal help browser

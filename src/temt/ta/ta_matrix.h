@@ -273,6 +273,8 @@ public:
   ///////////////////////////////////////////////////////
   //    Input/Output/String
 
+  String&	Print(String& strm, int indent=0) const;
+
   String        ToString(const char* ldelim = "[", const char* rdelim = "]") const;
   // #CAT_File returns human-friendly text in form: "[dims:{dim}{,dim}]"
   void          FromString(const String& str, const char* ldelim = "[",
@@ -301,8 +303,6 @@ public: // functions for internal/trusted use only
   inline int&   operator [](int i) { return el[i]; }  // #IGNORE
 
 protected:
-  override String        GetStringRep_impl() const;
-
   int           el[TA_MATRIX_DIMS_MAX];
 
 private:
@@ -422,6 +422,8 @@ public:
   ///////////////////////////////////////////////////////
   //    Input/Output/String
 
+  String&	Print(String& strm, int indent=0) const;
+
   String        ToString(const char* ldelim = "[", const char* rdelim = "]") const;
   // #CAT_File returns human-friendly text in form: "[dims:{dim}{,dim}]"
   void          FromString(const String& str, const char* ldelim = "[",
@@ -448,7 +450,6 @@ public: // functions for internal/trusted use only
 
 protected:
   override void         UpdateAfterEdit_impl();
-  override String       GetStringRep_impl() const;
 
   int           el[TA_MATRIX_DIMS_MAX];
   int           elprod[TA_MATRIX_DIMS_MAX]; // products of el's -- updated by UAE -- must be called!
@@ -798,8 +799,6 @@ public:
   virtual taMatrix*     GetFrameRangeSlice_(int st_frame, int n_frames);
   // #CAT_Access return a slice, of n_frames frames starting at st_frame
 
-  virtual void          List(ostream& strm=cout) const;         // List the items
-
   virtual bool          StrValIsValid(const String& str, String* err_msg = NULL) const
   { return true; }
   // #IGNORE validates a proposed string-version of a value, ex. float_Matrix can verify valid floating rep of string
@@ -815,6 +814,7 @@ public:
   virtual void          BinaryLoad(const String& fname="");
   // #CAT_File #MENU #MENU_ON_Object #EXT_mat #FILE_DIALOG_LOAD loads data -- leave fname empty to pick from file chooser -- simple binary format with same initial ascii header and then items just straight binary write out -- not compatible across different endian processors etc
 
+  String&	Print(String& strm, int indent=0) const;
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                             bool force_inline = false) const;
@@ -828,9 +828,6 @@ public:
   override void         SetDefaultName() { };
   override taBase*      GetOwner() const;
   USING(inherited::GetOwner)
-  override ostream&     Output(ostream& strm, int indent = 0) const;
-  override ostream&     OutputR(ostream& strm, int indent = 0) const
-    { return Output(strm, indent); }
   override int          Dump_Save_Value(ostream& strm, taBase* par=NULL, int indent = 0);
   override int          Dump_Load_Value(istream& strm, taBase* par=NULL);
   override void         DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
@@ -973,7 +970,6 @@ public:
 protected:
   override void         UpdateAfterEdit_impl();
   override void         BatchUpdate(bool begin, bool struc);
-  override String       GetStringRep_impl() const;
 
   static void           SliceInitialize(taMatrix* par_slice, taMatrix* child_slice);
    // called after slice created -- static for consistency

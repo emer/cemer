@@ -633,11 +633,15 @@ taGroup_impl* taGroup_impl::LeafGp_(int leaf_idx) const {
   return NULL;
 }
 
-void taGroup_impl::List(ostream& strm) const {
-  taList_impl::List(strm);
-  int i;
-  for(i=0; i<gp.size; i++)
-    FastGp_(i)->List(strm);
+String& taGroup_impl::Print(String& strm, int indent) const {
+  taList_impl::Print(strm, indent);
+  taMisc::IndentString(strm, indent+1);
+  strm << ".gp List\n";
+  gp.Print(strm, indent+1);
+  for(int i=0; i<gp.size; i++) {
+    FastGp_(i)->Print(strm, indent+2);
+  }
+  return strm;
 }
 
 taBase* taGroup_impl::New_impl(int no, TypeDef* typ, const String& name_)
@@ -708,27 +712,6 @@ taGroup_impl* taGroup_impl::NewGp_gui(int no, TypeDef* typ, const String& name_)
     }
   }
   return rval;
-}
-
-ostream& taGroup_impl::OutputR(ostream& strm, int indent) const {
-  taMisc::indent(strm, indent) << name << "[" << size << "] = {\n";
-  TypeDef* td = GetTypeDef();
-  int i;
-  for(i=0; i < td->members.size; i++) {
-    MemberDef* md = td->members.FastEl(i);
-    if(md->HasOption("EDIT_IN_GROUP"))
-      md->Output(strm, (void*)this, indent+1);
-  }
-
-  for(i=0; i<size; i++) {
-    if(el[i] == NULL)   continue;
-    ((taBase*)el[i])->OutputR(strm, indent+1);
-  }
-
-  gp.OutputR(strm, indent+1);
-
-  taMisc::indent(strm, indent) << "}\n";
-  return strm;
 }
 
 void taGroup_impl::ItemRemoved_() {

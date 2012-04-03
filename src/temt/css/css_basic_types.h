@@ -494,8 +494,8 @@ public:
   String 	PrintStr() const
   { return String(GetTypeName())+" "+name + " = " + String(val); }
   String	PrintFStr() const	{ return String(val); }
-  void 		TypeInfo(ostream& fh = cout) const;
-  void		InheritInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
+  String&	PrintInherit(String& fh) const;
 
   void		Save(ostream& strm = cout);
   void		Load(istream& strm = cin);
@@ -611,8 +611,8 @@ public:
   String 	PrintStr() const;
   String	PrintFStr() const { return val.toString(); }
 
-  void 		TypeInfo(ostream& fh = cout) const;
-  void		InheritInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
+  String&	PrintInherit(String& fh) const;
 
   // constructors
   void 		Constr()		{ } // default is Invalid
@@ -819,7 +819,7 @@ public:
 
   String	PrintStr() const;
   String	PrintFStr() const;
-  void		TypeInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
 
   void		Save(ostream& fh = cout);
   void		Load(istream& fh = cin);
@@ -884,7 +884,7 @@ public:
 
   String        PrintStr() const;
   String        PrintFStr() const;
-  void          TypeInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
 
   void          Constr();
   void          Copy(const cssArrayType& cp);
@@ -955,23 +955,22 @@ public:
   cssEl*	GetActualObj() const	{ return ptr.El()->GetActualObj(); }
   cssEl*	GetNonRefObj() const	{ return ptr.El(); }
 
+  int		Edit(bool wait=false)			{ return ptr.El()->Edit(wait); }
+
   String 	PrintStr() const
   { String rv = ptr.El()->PrintStr(); rv.prepend("&"); return rv; }
   String	PrintFStr() const 	{ return ptr.El()->PrintFStr(); }
 
-  void		PrintR(ostream& fh = cout) const	{ ptr.El()->PrintR(fh); }
-  int		Edit(bool wait=false)			{ return ptr.El()->Edit(wait); }
-
-  void  	TypeInfo(ostream& fh = cout) const	{ ptr.El()->TypeInfo(fh); }
-  void		InheritInfo(ostream& fh = cout) const	{ ptr.El()->InheritInfo(fh); }
+  String&	PrintType(String& fh) const	{ return ptr.El()->PrintType(fh); }
+  String&	PrintInherit(String& fh) const  { return ptr.El()->PrintInherit(fh); }
 
   // saving and loading objects to/from files (special format)
   void		Save(ostream& fh = cout)	{ ptr.El()->Save(fh); }
   void		Load(istream& fh = cin)		{ ptr.El()->Load(fh); }
 
   // token information about a certain type
-  void		TokenInfo(ostream& fh = cout) const	{ ptr.El()->TokenInfo(fh); }
-  cssEl*	GetToken(int idx) const			{ return ptr.El()->GetToken(idx); }
+  String&	PrintTokens(String& fh) const	{ return ptr.El()->PrintTokens(fh); }
+  cssEl*	GetToken(int idx) const		{ return ptr.El()->GetToken(idx); }
 
   // constructors
   void		Constr()			{ }
@@ -1125,7 +1124,7 @@ public:
 
   virtual void	SetTypeName(const String& nm);
 
-  void		TypeInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
 
   // constructors
   void 		Constr();
@@ -1266,8 +1265,8 @@ public:
   String 	PrintStr() const;
   String	PrintFStr() const;
 
-  void		TypeInfo(ostream& fh = cout) const;
-  void		InheritInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
+  String&	PrintInherit(String& fh) const;
 
   bool          InheritsFrom(const cssClassType* cp);
 
@@ -1358,8 +1357,8 @@ public:
   String 	PrintStr() const;
   String	PrintFStr() const;
 
-  void		TypeInfo(ostream& fh = cout) const;
-  void		InheritInfo(ostream& fh = cout) const;
+  String&	PrintType(String& fh) const;
+  String&	PrintInherit(String& fh) const;
 
   // saving and loading objects to/from files (special format)
   void		Save(ostream& fh = cout);

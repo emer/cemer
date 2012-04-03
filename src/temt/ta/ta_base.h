@@ -1301,12 +1301,12 @@ public:
 
   virtual String        GetTypeName() const                     // #IGNORE
   { return GetTypeDef()->name; }
-  virtual ostream&      OutputType(ostream& strm) const         // #IGNORE
-  { return GetTypeDef()->OutputType(strm); }
-  virtual ostream&      OutputInherit(ostream& strm) const      // #IGNORE
-  { return GetTypeDef()->OutputInherit(strm); }
-  virtual ostream&      OutputTokens(ostream& strm) const       // #IGNORE
-  { GetTypeDef()->tokens.List(strm); return strm; }
+  virtual String&       PrintType(String& strm) const         // #IGNORE
+  { return GetTypeDef()->PrintType(strm); }
+  virtual String&       PrintInherit(String& strm) const      // #IGNORE
+  { return GetTypeDef()->PrintInherit(strm); }
+  virtual String&       PrintTokens(String& strm) const       // #IGNORE
+  { return GetTypeDef()->PrintTokens(strm); }
 
   static const String   ValTypeToStr(ValType vt);
   // #IGNORE get the value type as a standard type string
@@ -1317,20 +1317,12 @@ public:
   //    Printing out object state values
 public:
 
-  virtual ostream&      Output(ostream& strm, int indent = 0) const // #IGNORE
-  { return GetTypeDef()->Output(strm, (void*)this, indent); }
-  virtual ostream&      OutputR(ostream& strm, int indent = 0) const // #IGNORE
-  { return GetTypeDef()->OutputR(strm, (void*)this, indent); }
-
-  static String         GetStringRep(const taBase& it) {return it.GetStringRep_impl();}
-   // #IGNORE string representation
-  static String         GetStringRep(taBase* it);
-  // #IGNORE string representation; ok if null, calls ->GetStringRep_impl
-
-protected:  // Impl
-  virtual String        GetStringRep_impl() const;
-  // #IGNORE string representation, ex. for variants; default is typename:fullpath
-
+  virtual String&       Print(String& strm, int indent = 0) const
+  { return GetTypeDef()->Print(strm, (void*)this, indent); }
+  // #CAT_Display print the value of the object to given string
+  String		PrintStr(int indent=0) const
+  { String rval; return Print(rval, indent); }
+  // #CAT_Display print the value of the object to a string
 
   /////////////////////////////////////////////////////////////////////
   //            Select For Edit
@@ -1974,9 +1966,7 @@ public:
 
   override taBase* CopyChildBefore(taBase* src, taBase* child_pos);
 
-  override ostream&     OutputR(ostream& strm, int indent = 0) const;
-  override ostream&     Output(ostream& strm, int indent = 0) const;
-  override void         List(ostream& strm) const;
+  override String&      Print(String& strm, int indent = 0) const;
 
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
@@ -2600,10 +2590,7 @@ public:
   virtual taArray_base* NewElView(taMatrix* view_mat, IndexMode md = IDX_COORDS) const;
   // #CAT_Access make a new view of this array -- always does a full data copy using view
 
-  override void	     	List(ostream& strm) const;
-  override ostream&     Output(ostream& strm, int indent = 0) const;
-  override ostream&     OutputR(ostream& strm, int indent = 0) const
-  { return Output(strm, indent); }
+  override String&      Print(String& strm, int indent = 0) const;
 
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,

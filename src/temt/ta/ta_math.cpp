@@ -370,6 +370,8 @@ double taMath_double::exp_fast(double x) {
 // Trigonometry
 
 double taMath_double::pi = M_PI;
+double taMath_double::two_pi = 2.0 * M_PI;
+double taMath_double::oneo_two_pi = 1.0 / (2.0 * M_PI);
 double taMath_double::deg_per_rad = 180.0 / M_PI;
 double taMath_double::rad_per_deg = M_PI / 180.0;
 
@@ -3533,8 +3535,10 @@ float taMath_float::e = (float)M_E;
 // Trigonometry
 
 float taMath_float::pi = (float)M_PI;
-float taMath_float::deg_per_rad = (float)(180.0 / M_PI);
-float taMath_float::rad_per_deg = (float)(M_PI / 180.0);
+float taMath_float::two_pi = (float)(2.0f * M_PI);
+float taMath_float::oneo_two_pi = (float)(1.0f / (2.0f * M_PI));
+float taMath_float::deg_per_rad = (float)(180.0f / M_PI);
+float taMath_float::rad_per_deg = (float)(M_PI / 180.0f);
 
 /////////////////////////////////////////////////////////////////////////////////
 // Probability distributions, etc

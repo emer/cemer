@@ -739,9 +739,13 @@ int main(int argc, char* argv[])
 
   if(mta->verbose > 0) {
     cerr << "M!!: header files to be parsed:\n";
-    mta->headv.List(cout);
+    String hv;
+    mta->headv.Print(hv);
+    cout << hv;
     cerr << "\nM!!: header files to be parsed (file-name-only):\n";
-    mta->head_fn_only.List(cout);
+    String hfo;
+    mta->head_fn_only.Print(hfo);
+    cout << hfo;
     cerr << endl;
   }
 
@@ -823,16 +827,24 @@ int main(int argc, char* argv[])
   }
 
   TypeSpace_Generate_LinkRefs(&(mta->spc_target), &(mta->spc_extern));
-  if(mta->verbose > 0)
-    mta->spc_extern.List();
+  String el;
+  if(mta->verbose > 0) {
+    mta->spc_extern.Print(el);
+    cout << el;
+  }
   mta->spc_target.BorrowUniqNameOld(mta->spc_extern); // get those types
 
   cout << "List of pre-parsed files processed:\n";
-  mta->pre_parse_inits.List(cout);
+  String ppi;
+  mta->pre_parse_inits.Print(ppi);
+  cout << ppi;
   cout << "\n";
 
   if(mta->verbose > 1) {
-    cout << "\nPreParsed Types\n";   mta->spc_pre_parse.List();
+    cout << "\nPreParsed Types\n";
+    String pp;
+    mta->spc_pre_parse.Print(pp);
+    cout << pp;
   }
   mta->SetPreParseFlag(mta->spc_target, mta->spc_pre_parse);
 
@@ -847,7 +859,9 @@ int main(int argc, char* argv[])
   }
 
   if(mta->verbose > 3) {
-    mta->spc_target.List();
+    String tl;
+    mta->spc_target.Print(tl);
+    cout << tl;
   }
 
   // if using hx mode, modify filenames now at this point for output
@@ -919,11 +933,12 @@ int main(int argc, char* argv[])
          << "spc_keywords:\t" << mta->spc_keywords.size << "\t" << mta->spc_keywords.hash_table->bucket_max << "\n";
   }
   if(mta->verbose > 1) {
-    cout << "\nPreParsed Types\n";   mta->spc_pre_parse.List();
-    cout << "\nTarget Types\n";   mta->spc_target.List();
-    cout << "\nExtern Types\n";   mta->spc_extern.List();
-    cout << "\nIgnored Types\n";   mta->spc_ignore.List();
-    cout << "\nOther Types\n";   mta->spc_other.List();
+    String pp, st, se, si, so;
+    cout << "\nPreParsed Types\n";   mta->spc_pre_parse.Print(pp); cout << pp;
+    cout << "\nTarget Types\n";   mta->spc_target.Print(st); cout << st;
+    cout << "\nExtern Types\n";   mta->spc_extern.Print(se); cout << se;
+    cout << "\nIgnored Types\n";   mta->spc_ignore.Print(si); cout << si;
+    cout << "\nOther Types\n";   mta->spc_other.Print(so);  cout << so;
   }
   taMisc::quitting = taMisc::QF_FORCE_QUIT; // useful for debugging
   delete mta;

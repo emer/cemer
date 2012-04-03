@@ -2299,8 +2299,12 @@ String Variant::toString() const {
     return String(d.ptr); // renders as hex
 #ifndef NO_TA_BASE
   case T_Base:
-  case T_Matrix:
-    return taBase::GetStringRep(d.tab);
+  case T_Matrix: {
+    String rval;
+    if(d.tab)
+      return d.tab->Print(rval);
+    return "NULL";
+  }
 #endif
   default: break ;
   case T_TypeItem: {// streamable type Str

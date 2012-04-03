@@ -274,23 +274,21 @@ public:
 
   override int   ReplaceType(TypeDef* old_type, TypeDef* new_type);
 
-  virtual int   FindLeafEl(taBase* item) const;
+  virtual int    FindLeafEl(taBase* item) const;
   // #CAT_Access find given leaf element -1 = not here.
 
-  override void DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
+  override void  DataChanged(int dcr, void* op1 = NULL, void* op2 = NULL);
 
-  override void*         FindMembeR(const String& nm, MemberDef*& ret_md) const;
+  override void* FindMembeR(const String& nm, MemberDef*& ret_md) const;
 
   // IO routines
-  override ostream&	OutputR(ostream& strm, int indent = 0) const;
-
   override String GetValStr(void* par = NULL, MemberDef* md = NULL,
                             TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                             bool force_inline = false) const;
   override bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                            TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                            bool force_inline = false);
-  override int 	ReplaceValStr(const String& srch, const String& repl,
+  override int 	 ReplaceValStr(const String& srch, const String& repl,
 			      const String& mbr_filt,
 			      void* par = NULL, TypeDef* par_typ=NULL,
 			      MemberDef* md = NULL,
@@ -340,7 +338,7 @@ public:
   override void  Copy_Duplicate(const taGroup_impl& cp);
   override void  Copy_Borrow(const taGroup_impl& cp);
 
-  override void  List(ostream& strm=cout) const; // Display list of elements in the group
+  override String& Print(String& strm, int indent=0) const;
 
   void  InitLinks();            // inherit the el_typ from parent group..
   void  CutLinks();

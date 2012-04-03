@@ -585,6 +585,8 @@ taMisc::ConsoleOptions taMisc::console_options = (taMisc::ConsoleOptions)(CO_USE
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 int     taMisc::display_width = 80;
+int     taMisc::max_display_width = 132;
+int     taMisc::indent_spc = 2;
 #ifdef TA_OS_MAC
 bool    taMisc::emacs_mode = true;
 #else
@@ -1261,8 +1263,8 @@ void taMisc::MallocInfo(ostream& strm) {
 }
 #endif
 
-void taMisc::ListAllTokens(ostream& strm) {
-  types.ListAllTokens(strm);
+String& taMisc::PrintAllTokens(String& strm) {
+  return types.PrintAllTokens(strm);
 }
 
 taMisc::TypeInfoKind taMisc::TypeToTypeInfoKind(TypeDef* td) {
@@ -1859,6 +1861,61 @@ String taMisc::StringCVar(const String& str) {
   return rval;
 }
 
+String& taMisc::FancyPrintList(String& strm, const String_PArray& strs, 
+			       int indent, int max_col_width) {
+  int max_wd = 0;
+  for(int i=0; i<strs.size; i++) {
+    max_wd = MAX(max_wd, strs[i].length());
+  }
+  max_wd = MIN(max_wd, max_col_width);
+  max_wd = MAX(2, max_wd);
+
+  int max_wd_sp = max_wd + taMisc::indent_spc;	// include spacing per item
+
+  int isp = taMisc::indent_spc*indent;
+  int prln = (taMisc::display_width - isp) / max_wd_sp; // n per line
+  if(prln <= 0) prln = 1;
+
+  IndentString(strm, indent); // start indented
+  int cur_wd = isp;
+  for(int i=0; i<strs.size; i++) {
+    String& it = strs[i];
+    int sln = it.length();
+    if(MAX(sln,max_wd_sp) + cur_wd > taMisc::display_width) { // cr if we're going over
+      CrIndentString(strm, indent);
+      cur_wd = isp;
+    }
+    strm << it;
+    int trg_wd_sp = (int(sln / max_wd_sp)+1) * max_wd_sp;
+    while(sln < trg_wd_sp) { strm << ' '; ++sln; }
+    cur_wd += trg_wd_sp;
+  }
+  strm << "\n";			// always terminate list
+  return strm;
+}
+
+String& taMisc::FancyPrintTwoCol(String& strm, const String_PArray& col1_strs, 
+				  const String_PArray& col2_strs, int indent) {
+  int max_wd = 0;
+  for(int i=0; i<col1_strs.size; i++) {
+    max_wd = MAX(max_wd, col1_strs[i].length());
+  }
+  max_wd = MAX(2, max_wd);
+
+  int max_wd_sp = max_wd + taMisc::indent_spc;	// include spacing per item
+
+  int isp = taMisc::indent_spc*indent;
+  for(int i=0; i<col1_strs.size; i++) {
+    taMisc::IndentString(strm, indent); // start indented
+    String& it = col1_strs[i];
+    int sln = it.length();
+    strm << it;
+    while(sln < max_wd_sp) { strm << ' '; ++sln; }
+    strm << col2_strs[i];
+    strm << "\n";
+  }
+  return strm;
+}
 
 /////////////////////////////////////////////////
 //      File Paths etc
@@ -2736,44 +2793,6 @@ ostream& taMisc::write_quoted_string(ostream& strm, const String& str, bool writ
   return strm;
 }
 
-ostream& taMisc::fancy_list(ostream& strm, const String& itm, int no, int prln, int tabs) {
-  strm << itm << " ";
-  if((no+1) % prln == 0) {
-    strm << "\n";
-    return strm;
-  }
-  int len = itm.length() + 1;
-  int i;
-  for(i=tabs; i>=0; i--) {
-    if(len < i * 8)
-      strm << "\t";
-  }
-  return strm;
-}
-
-// no == 0 = indent
-ostream& taMisc::fmt_sep(ostream& strm, const String& itm, int no, int indent, int tsp) {
-  int i;
-  int itabs = (indent * tsp) / 8;
-  int ispcs = (indent * tsp) % 8;
-  if(no == 0) {                 // indent
-    for(i=0; i<itabs; i++)
-      strm << "\t";
-    for(i=0; i<ispcs; i++)
-      strm << " ";
-  }
-
-  strm << itm << " ";
-
-  int len = itm.length() + 1 + ispcs;
-  for(i=2; i>=0; i--) {         // sep_tabs = 2
-    if(len < i * 8)
-      strm << "\t";
-  }
-  for(i=0; i<ispcs; i++)
-    strm << " ";
-  return strm;
-}
 
 
 //////////////////////////
@@ -3125,14 +3144,14 @@ bool TypeSpace::ReplaceParents(const TypeSpace& ol, const TypeSpace& nw) {
   return rval;
 }
 
-void TypeSpace::ListAllTokens(ostream& strm) {
-  int i;
-  for(i=0; i<size; i++) {
+String& TypeSpace::PrintAllTokens(String& strm) const {
+  for(int i=0; i<size; i++) {
     TypeDef* td = FastEl(i);
     if(!td->tokens.keep)
       continue;
     strm << td->name << ": \t" << td->tokens.size << " (sub: " << td->tokens.sub_tokens << ")\n";
   }
+  return strm;
 }
 
 //////////////////////////////////
@@ -3223,17 +3242,18 @@ String TokenSpace::El_GetName_(void* it) const {
 #endif
 }
 
-void TokenSpace::List(ostream &strm) const {
-  if(owner == NULL) return;
+String& TokenSpace::Print(String& strm, int indent) const {
+  if(owner == NULL) return strm;
 
-  strm << "\nTokens of type: " << owner->name << " (" << size
+  taMisc::IndentString(strm, indent);
+  strm << "Tokens of type: " << owner->name << " (" << size
        << "), sub-tokens: " << sub_tokens;
   if(keep)
     strm << "\n";
   else
     strm << " (not keeping tokens)\n";
 
-  taPtrList<void>::List(strm);
+  return taPtrList<void>::Print(strm, indent);
 }
 
 
@@ -5867,9 +5887,11 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
     taMisc::Error("Template",name,"defined with",defn_no,"parameters, instantiated with",
                    inst_no);
     cerr << "Defined with parameters: ";
-    templ_pars.List(cerr);
+    String tp;
+    templ_pars.Print(tp); cerr << tp;
     cerr << "\nInstantiated with parameters: ";
-    inst_pars.List(cerr);
+    String ip;
+    inst_pars.Print(ip); cerr << ip;
     return;
   }
 
@@ -7209,62 +7231,62 @@ bool TypeDef::CompareSameType(Member_List& mds, TypeSpace& base_types,
 }
 
 //////////////////////////////////////////////////////////
-//                      OutputType                      //
+//                      PrintType                      //
 //////////////////////////////////////////////////////////
 
-static void OutputType_OptsLists(ostream& strm, const String_PArray& opts,
+static void PrintType_OptsLists(String& strm, const String_PArray& opts,
                             const String_PArray& lists)
 {
   if((opts.size > 0) && (taMisc::type_info_ == taMisc::ALL_INFO) ||
      (taMisc::type_info_ == taMisc::NO_LISTS)) {
-    int i;
-    for(i=0; i<opts.size; i++)
+    for(int i=0; i<opts.size; i++)
       strm << " #" << opts.FastEl(i);
-    taMisc::FlushConsole();
   }
   if((lists.size > 0) && (taMisc::type_info_ == taMisc::ALL_INFO) ||
      (taMisc::type_info_ == taMisc::NO_OPTIONS)) {
     strm << " LISTS:";
-    int i;
-    for(i=0; i<lists.size; i++)
+    for(int i=0; i<lists.size; i++)
       strm << " " << lists.FastEl(i);
   }
 }
 
 
-ostream& TypeDef::OutputInherit_impl(ostream& strm) const {
-  int i;
-  for(i=0; i<parents.size; i++) {
+String& TypeDef::PrintInherit_impl(String& strm) const {
+  for(int i=0; i<parents.size; i++) {
     TypeDef* par = parents.FastEl(i);
     strm << par->name;
     if(par_off[i] > 0)
       strm << " +" << par_off[i];
     if(par->parents.size > 0)
       strm << " : ";
-    par->OutputInherit_impl(strm);
+    par->PrintInherit_impl(strm);
     if(i < parents.size-1)
       strm << ", ";
   }
   return strm;
 }
 
-ostream& TypeDef::OutputInherit(ostream& strm) const {
-  int i;
-  for(i=0; i<par_formal.size; i++)
+String& TypeDef::PrintInherit(String& strm) const {
+  for(int i=0; i<par_formal.size; i++) {
     strm << par_formal.FastEl(i)->name << " ";
+  }
 
   strm << name;
   if(parents.size > 0)
     strm << " : ";
-  OutputInherit_impl(strm);
+  PrintInherit_impl(strm);
   return strm;
 }
 
-ostream& TypeDef::OutputType(ostream& strm, int indent) const {
-  taMisc::indent(strm, indent);
-  OutputInherit(strm);
+String& TypeDef::PrintTokens(String& strm, int indent) const {
+  return tokens.Print(strm, indent);
+}
+
+String& TypeDef::PrintType(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
+  PrintInherit(strm);
 //  if(taMisc::type_info_ == taMisc::ALL_INFO)
-  strm << " (Sz: " << size << ")";
+  strm << " (Sz: " << String(size) << ")";
   if(InheritsFormal(TA_class) || InheritsFormal(TA_enum))
     strm << " {";
   else
@@ -7272,27 +7294,27 @@ ostream& TypeDef::OutputType(ostream& strm, int indent) const {
   if(!desc.empty()) {
     if(InheritsFormal(TA_class)) {
       strm << "\n";
-      taMisc::indent(strm, indent) << "//" << desc ;
+      taMisc::IndentString(strm, indent) << "//" << desc ;
     }
     else
       strm << "\t//" << desc ;
   }
 
-  OutputType_OptsLists(strm, opts, lists);
+  PrintType_OptsLists(strm, opts, lists);
   strm << "\n";
   if(InheritsFormal(TA_class)) {
     if(sub_types.size > 0) {
       strm << "\n";
-      taMisc::indent(strm, indent+1) << "// sub-types\n";
+      taMisc::IndentString(strm, indent+1) << "// sub-types\n";
       int i;
       for(i=0; i<sub_types.size; i++) {
         if(!(sub_types.FastEl(i)->internal))
-          sub_types.FastEl(i)->OutputType(strm,indent+1) << "\n";
+          sub_types.FastEl(i)->PrintType(strm,indent+1) << "\n";
       }
     }
-    members.OutputType(strm, indent+1);
-    methods.OutputType(strm, indent+1);
-    taMisc::indent(strm, indent) << "} ";
+    members.PrintType(strm, indent+1);
+    methods.PrintType(strm, indent+1);
+    taMisc::IndentString(strm, indent) << "} ";
     if(children.size > 0) {
       strm << " children: ";
       int i;
@@ -7305,167 +7327,135 @@ ostream& TypeDef::OutputType(ostream& strm, int indent) const {
     strm << "\n";
   }
   else if(InheritsFormal(TA_enum)) {
-    enum_vals.OutputType(strm, indent+1);
-    taMisc::indent(strm, indent) << "}\n";
+    enum_vals.PrintType(strm, indent+1);
+    taMisc::IndentString(strm, indent) << "}\n";
   }
-  taMisc::FlushConsole();
   return strm;
 }
 
-ostream& EnumSpace::OutputType(ostream& strm, int indent) const {
+String& EnumSpace::PrintType(String& strm, int indent) const {
   EnumDef* enm;
-  int i;
-  for(i=0; i<size; i++) {
+  String_PArray col1;
+  String_PArray col2;
+  for(int i=0; i<size; i++) {
     enm = FastEl(i);
-    taMisc::fmt_sep(strm, enm->name, 0, indent);
-    strm << " = " << enm->enum_no << ";";
+    col1.Add(enm->name);
+    String c2;
+    c2 << "= " << enm->enum_no << ";";
     if(!enm->desc.empty())
-      strm << "\t//" << enm->desc;
-    OutputType_OptsLists(strm, enm->opts, enm->lists);
-    strm << "\n";
-    taMisc::FlushConsole();
+      c2 << "\t//" << enm->desc;
+    PrintType_OptsLists(c2, enm->opts, enm->lists);
+    col2.Add(c2);
   }
-  return strm;
+  return taMisc::FancyPrintTwoCol(strm, col1, col2, indent);
 }
 
-ostream& MemberSpace::OutputType(ostream& strm, int indent) const {
-  strm << "\n";
-  taMisc::indent(strm, indent) << "// members\n";
-  int i;
-  for(i=0; i<size; i++) {
-    FastEl(i)->OutputType(strm, indent) << "\n";
-    taMisc::FlushConsole();
+String& MemberSpace::PrintType(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent) << "// members\n";
+  String_PArray col1;
+  String_PArray col2;
+  for(int i=0; i<size; i++) {
+    String c1; String c2;
+    FastEl(i)->PrintType(c1, c2);
+    col1.Add(c1); col2.Add(c2);
   }
-  return strm;
+  return taMisc::FancyPrintTwoCol(strm, col1, col2, indent);
 }
 
-ostream& MethodSpace::OutputType(ostream& strm, int indent) const {
-  strm << "\n";
-  taMisc::indent(strm, indent) << "// functions\n";
-  int i;
-  for(i=0; i<size; i++) {
-    FastEl(i)->OutputType(strm, indent) << "\n";
-    taMisc::FlushConsole();
+String& MethodSpace::PrintType(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent) << "// methods\n";
+  String_PArray col1;
+  String_PArray col2;
+  for(int i=0; i<size; i++) {
+    String c1; String c2;
+    FastEl(i)->PrintType(c1, c2);
+    col1.Add(c1); col2.Add(c2);
   }
-  return strm;
+  return taMisc::FancyPrintTwoCol(strm, col1, col2, indent);
 }
 
-ostream& MemberDef::OutputType(ostream& strm, int indent) const {
-  String cnm = type->Get_C_Name();
+void MemberDef::PrintType(String& col1, String& col2) const {
+  col1 = "";
   if(is_static)
-    cnm = String("static ") + cnm;
-  taMisc::fmt_sep(strm, cnm, 0, indent);
-  String nwnm;
+    col1 << "static ";
+  col1 << type->Get_C_Name();
   if(fun_ptr)
-    nwnm = String("(*") + name + ")()";
+    col2 = String("(*") + name + ")()";
   else
-    nwnm = name + ";";
-  taMisc::fmt_sep(strm, nwnm, 1, indent);
-  strm << "// ";
+    col2 = name + ";";
+  col2 << "  // ";
   if(taMisc::type_info_ == taMisc::MEMB_OFFSETS) {
     intptr_t ui_off = (intptr_t)GetOff((void*)0x100); // 0x100 is arbitrary non-zero number..
     ui_off -= 0x100;                          // now get rid of offset
     if(ui_off > 0) {
-      strm << "+" << ui_off;
+      col2 << "+" << ui_off;
       if(base_off > 0)
-        strm << "+" << base_off;
+        col2 << "+" << base_off;
     }
     if(base_off > 0)
-      strm << "+" << base_off;
+      col2 << "+" << base_off;
   }
   if(!desc.empty())
-    strm << " " << desc;
-  OutputType_OptsLists(strm, opts, lists);
-  return strm;
+    col2 << " " << desc;
+  PrintType_OptsLists(col2, opts, lists);
 }
 
-ostream& MethodDef::OutputType(ostream& strm, int indent) const {
-  String cnm = type->Get_C_Name();
+void MethodDef::PrintType(String& col1, String& col2) const {
+  col1 = "";
   if(is_static)
-    cnm = String("static ") + cnm;
-  taMisc::fmt_sep(strm, cnm, 0, indent);
-  strm << name << "(";
+    col1 << "static ";
+  col1 << type->Get_C_Name();
+  col2 = "";
+  col2 << name << "(";
   if(fun_argc > 0) {
-    int i;
-    for(i=0; i<fun_argc; i++) {
-      strm << arg_types[i]->Get_C_Name() << " " << arg_names[i];
+    for(int i=0; i<fun_argc; i++) {
+      col2 << arg_types[i]->Get_C_Name() << " " << arg_names[i];
       if((fun_argd >= 0) && (i >= fun_argd))    // indicate a default
-        strm << "=" << arg_defs[i];
+        col2 << "=" << arg_defs[i];
       if(i+1 < fun_argc)
-        strm << ", ";
+        col2 << ", ";
     }
   }
-  strm << ");";
+  col2 << ");";
   if(!desc.empty())
-    strm << "\t//" + desc;
-  OutputType_OptsLists(strm, opts, lists);
-  return strm;
+    col2 << "  // " + desc;
+  PrintType_OptsLists(col2, opts, lists);
 }
 
 
 //////////////////////////////////////////////////////////
-//                      output/R                        //
+//                      Print/R                         //
 //////////////////////////////////////////////////////////
 
-ostream& MemberSpace::Output(ostream& strm, void* base, int indent) const {
-  int i;
-  for(i=0; i<size; i++)
-    FastEl(i)->Output(strm, base, indent);
-  return strm;
-}
-ostream& MemberSpace::OutputR(ostream& strm, void* base, int indent) const {
-  int i;
-  for(i=0; i<size; i++)
-    FastEl(i)->OutputR(strm, base, indent);
-  return strm;
+String& MemberSpace::Print(String& strm, void* base, int indent) const {
+  String_PArray col1;
+  String_PArray col2;
+  for(int i=0; i<size; i++) {
+    MemberDef* md = FastEl(i);
+    if(!md->ShowMember()) continue;
+    String c1; String c2;
+    md->Print(c1, c2, base, indent);
+    col1.Add(c1); col2.Add(c2);
+  }
+  return taMisc::FancyPrintTwoCol(strm, col1, col2, indent);
 }
 
-ostream& MemberDef::Output(ostream& strm, void* base, int indent) const {
-  if(!ShowMember())
-    return strm;
+void MemberDef::Print(String& col1, String& col2, void* base, int indent) const {
   void* new_base = GetOff(base);
-  String cnm = type->Get_C_Name();
-  taMisc::fmt_sep(strm, cnm, 0, indent);
+  col1 = type->Get_C_Name();
+  col1 << "  ";
   if(fun_ptr) {
-    String nnm = String("(*") + name + ")()";
-    taMisc::fmt_sep(strm, nnm, 1, indent) << "= ";
+    col1 << String("(*") + name + ")()" << " = ";
   }
   else {
-    taMisc::fmt_sep(strm, name, 1, indent) << "= ";
+    col1 << " = ";
   }
-  strm << type->GetValStr(new_base, base, (MemberDef*)this);
-  strm << ";\n";
-
-  return strm;
+  col2 = type->GetValStr(new_base, base, (MemberDef*)this, TypeDef::SC_DEFAULT, true);
+  // force inline
 }
 
-ostream& MemberDef::OutputR(ostream& strm, void* base, int indent) const {
-  if(!ShowMember())
-    return strm;
-#ifndef NO_TA_BASE
-  if((type->DerivesFormal(TA_class)) && !(type->DerivesFrom(TA_taString))) {
-    String cnm = type->Get_C_Name();
-    taMisc::fmt_sep(strm, cnm, 0, indent);
-    taMisc::fmt_sep(strm, name, 1, indent);
-    if(type->ptr == 0) {
-      if(type->DerivesFrom(TA_taBase)) {
-        taBase* rbase = (taBase*)GetOff(base);
-        rbase->OutputR(strm, indent);
-      }
-      else
-        type->OutputR(strm, GetOff(base), indent);
-    }
-    else
-      strm << "= " << type->GetValStr(GetOff(base), base, (MemberDef*)this) << ";\n";
-  }
-  else
-#endif
-    Output(strm, base, indent);
-  return strm;
-}
-
-ostream& TypeDef::Output(ostream& strm, void* base, int indent) const {
-  taMisc::indent(strm, indent);
+String& TypeDef::Print(String& strm, void* base, int indent) const {
+  taMisc::IndentString(strm, indent);
 #ifndef NO_TA_BASE
   if(DerivesFrom(TA_taBase)) {
     taBase* rbase;
@@ -7495,48 +7485,8 @@ ostream& TypeDef::Output(ostream& strm, void* base, int indent) const {
 
   if(InheritsFormal(TA_class)) {
     strm << " {\n";
-    members.Output(strm, base, indent+1);
-    taMisc::indent(strm, indent) << "}\n";
-  }
-  else {
-    strm << " = " << GetValStr(base) << "\n";
-  }
-  return strm;
-}
-
-ostream& TypeDef::OutputR(ostream& strm, void* base, int indent) const {
-  taMisc::indent(strm, indent);
-#ifndef NO_TA_BASE
-  if(DerivesFrom(TA_taBase)) {
-    taBase* rbase;
-    if(ptr == 0)
-      rbase = (taBase*)base;
-    else if(ptr == 1)
-      rbase = *((taBase**)base);
-    else
-      rbase = NULL;
-
-    if(rbase)
-      strm << rbase->GetPathNames();
-    else
-      strm << Get_C_Name();
-  }
-  else
-#endif
-    strm << Get_C_Name();
-
-#ifndef NO_TA_BASE
-  if(InheritsFrom(TA_taBase)) {
-    taBase* rbase = (taBase*)base;
-    strm << " " << rbase->GetName()
-         << " (refn=" << taBase::GetRefn(rbase) << ")";
-  }
-#endif
-
-  if(InheritsFormal(TA_class)) {
-    strm << " {\n";
-    members.OutputR(strm, base, indent+1);
-    taMisc::indent(strm, indent) << "}\n";
+    members.Print(strm, base, indent+1);
+    taMisc::IndentString(strm, indent) << "}\n";
   }
   else {
     strm << " = " << GetValStr(base) << "\n";

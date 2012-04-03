@@ -50,12 +50,12 @@ void cssChar::operator=(const cssEl& t) {
 // 	cssString	//
 //////////////////////////
 
-void cssString::TypeInfo(ostream& fh) const {
-  TA_taString.OutputType(fh);
+String& cssString::PrintType(String& fh) const {
+  return TA_taString.OutputType(fh);
 }
 
-void cssString::InheritInfo(ostream& fh) const {
-  TA_taString.OutputInherit(fh) << "\n";
+String& cssString::PrintInherit(String& fh) const {
+  return TA_taString.OutputInherit(fh);
 }
 
 cssEl* cssString::operator[](const Variant& idx) const {
@@ -243,35 +243,37 @@ String cssVariant::PrintStr() const {
     + val.getTypeAsString() + ") " + val.toString();
 }
 
-void cssVariant::TypeInfo(ostream& fh) const {
+String& cssVariant::PrintType(String& fh) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
   fh << GetTypeName() << " (" << val_r.getTypeAsString() << ") " << name << ": ";
   if(val_r.type() == Variant::T_String) {
-    typ->OutputType(fh);
+    typ->PrintType(fh);
   }
   else if(val_r.isBaseType() || val_r.isTypeItem()) {
-    typ->OutputType(fh);
+    typ->PrintType(fh);
   }
   else {
-    TA_Variant.OutputType(fh);
+    TA_Variant.PrintType(fh);
   }
+  return fh;
 }
 
-void cssVariant::InheritInfo(ostream& fh) const {
+String& cssVariant::PrintInherit(String& fh) const {
   TypeDef* typ = NULL;  void* base = NULL;
   Variant& val_r = (Variant&)val;
   val_r.GetRepInfo(typ, base);
   if(val_r.type() == Variant::T_String) {
-    typ->OutputInherit(fh);
+    typ->PrintInherit(fh);
   }
   else if(val_r.isBaseType() || val_r.isTypeItem()) {
-    typ->OutputInherit(fh);
+    typ->PrintInherit(fh);
   }
   else {
-    TA_Variant.OutputInherit(fh);
+    TA_Variant.PrintInherit(fh);
   }
+  return fh;
 }
 
 cssEl* cssVariant::operator+(cssEl& t) { 
@@ -741,8 +743,9 @@ String cssArray::PrintFStr() const {
   String tmp = items->PrintFStr();
   return String("[")+String((int)items->size)+"] {" + tmp + "}";
 }
-void cssArray::TypeInfo(ostream& fh) const {
+String& cssArray::PrintType(String& fh) const {
   fh << GetTypeName() << " " << name << "[" << items->size << "]";
+  return fh;
 }
 
 void cssArray::operator=(const cssEl& cp) {
@@ -888,8 +891,9 @@ String cssArrayType::PrintStr() const {
 String cssArrayType::PrintFStr() const {
   return String("[")+String(size)+"] { (definition only) }";
 }
-void cssArrayType::TypeInfo(ostream& fh) const {
+String& cssArrayType::PrintType(String& fh) const {
   fh << GetTypeName() << " " << name << "[" << size << "]";
+  return fh;
 }
 
 
@@ -977,11 +981,12 @@ void cssEnumType::SetTypeName(const String& nm) {
   enums->name = name + "::enums";
 }
 
-void cssEnumType::TypeInfo(ostream& fh) const {
+String& cssEnumType::PrintType(String& fh) const {
   fh << "enum " << name << " {\n";
-  enums->TypeNameValList(fh);
+  // todo: fix:
+  // enums->TypeNameValList(fh);
   fh << "}\n";
-  fh.flush();
+  return fh;
 }
 
 cssEl* cssEnumType::GetScoped(const String& memb) const {
@@ -1469,30 +1474,32 @@ String	cssClassType::PrintFStr() const {
   String tmp = members->PrintStr();
   return String("{\n") + tmp + "\n}";
 }
-void cssClassType::InheritInfo(ostream& fh) const {
+String& cssClassType::PrintInherit(String& fh) const {
   if(parents->size > 0) {
     fh << name << " : ";
     int i;
-    (*parents)[0]->InheritInfo(fh);
+    (*parents)[0]->PrintInherit(fh);
     for(i=1; i<parents->size; i++) {
       fh << ", ";
-      (*parents)[i]->InheritInfo(fh);
+      (*parents)[i]->PrintInherit(fh);
     }
   }
   else {
     fh << name;
   }
+  return fh;
 }
 
-void cssClassType::TypeInfo(ostream& fh) const {
+String& cssClassType::PrintType(String& fh) const {
   fh << "class ";
-  InheritInfo(fh);
+  PrintInherit(fh);
   fh << " {\n  // " << desc << "\n";
   if(types->size > 0) {
     fh << "\n  // types\n";
     types->TypeNameValList(fh);
   }
   fh << "\n  // members\n";
+  // todo: use TwoCol 
   int i;
   for(i=0; i<members->size; i++) {
     cssClassMember* mbr = (cssClassMember*)members->FastEl(i);
@@ -1562,7 +1569,7 @@ void cssClassType::TypeInfo(ostream& fh) const {
     fh << "\n";
   }
   fh << "}\n";
-  fh.flush();
+  return fh;
 }
 
 void cssClassType::SetDesc_impl(String& dsc, String& opt, const String& des) {
@@ -1809,12 +1816,12 @@ String	cssClassInst::PrintFStr() const {
 const char* cssClassInst::GetTypeName() const {
   return type_def->GetTypeName();
 }
-void cssClassInst::InheritInfo(ostream& fh) const {
-  type_def->InheritInfo(fh);
+String& cssClassInst::PrintInherit(String& fh) const {
+  return type_def->PrintInherit(fh);
 }
 
-void cssClassInst::TypeInfo(ostream& fh) const {
-  type_def->TypeInfo(fh);
+String& cssClassInst::PrintType(String& fh) const {
+  return type_def->PrintType(fh);
 }
 
 int cssClassInst::GetMemberNo(const String& memb) const {

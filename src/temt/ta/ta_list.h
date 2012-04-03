@@ -259,9 +259,6 @@ public:
   taPtrList_impl(const taPtrList_impl& cp)      { InitList_(); Duplicate(cp); }
   virtual ~taPtrList_impl();
 
-  static ostream& Indenter(ostream& strm, const String& itm, int no, int prln, int tabs);
-  // #IGNORE
-
   ////////////////////////////////////////////////
   //    functions that return the type          //
   ////////////////////////////////////////////////
@@ -429,8 +426,8 @@ public:
   // #IGNORE itm_idx is a hint from source, -1 means not specified or ignore
 
   // output
-  virtual void  List(ostream& strm=cout) const;
-  // #CAT_Display List the group items
+  virtual String&  	Print(String& strm, int indent=0) const;
+  // #CAT_Display print the items on the list
 protected:
   virtual void          ItemRemoved_() {} // we overload this in groups to update the leaf counts
   void                  Copy_Duplicate_impl(const taPtrList_impl& cp);
@@ -804,7 +801,7 @@ public:
   // #CAT_Copy copy elements in common, duplicating (if necc) any extra on cp
   virtual void  CopyVals(const taArray_impl& from, int start=0, int end=-1, int at=0);
   // #CAT_Copy copy values from other array at given start and end points, and putting at given point in this
-  virtual void  List(ostream& strm = cout) const;
+  virtual String& Print(String& strm, int indent=0) const;
   // #CAT_Display print out all of the elements in the array
   virtual String GetArrayStr() const;
   // #CAT_Display get a string representation of the value of the array (list of items)

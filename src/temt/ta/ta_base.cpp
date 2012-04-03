@@ -2489,21 +2489,6 @@ const String taBase::ValTypeToStr(ValType vt) {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-//      Printing out object state values
-
-String taBase::GetStringRep(taBase* it) {
-  if (it == NULL)
-    return String("NULL", 4);
-  else
-    return it->GetStringRep_impl();
-}
-
-String taBase::GetStringRep_impl() const {
-  String rval = GetTypeDef()->name + ":" + GetPathNames();
-  return rval;
-}
-
-///////////////////////////////////////////////////////////////////////////
 //      User Data: optional configuration settings for objects
 
 bool taBase::HasUserData(const String& key) const {
@@ -5149,60 +5134,23 @@ taBase* taList_impl::New_gui(int no, TypeDef* typ, const String& name_) {
   return rval;
 }
 
-void taList_impl::List(ostream& strm) const {
-  int i;
-  strm << "\nElements of List: " << GetDisplayName() << " (" << size << ")\n";
-  int names_width = 0;
+String& taList_impl::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
+  strm << "Elements of List: " << GetDisplayName() << " [" << size << "] {\n";
+  String_PArray nms;
+  nms.Alloc(size);
   TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
     taBase* itm = vitm.toBase();
     if(itm) {
-      names_width = MAX(names_width, itm->GetName().length());
-    }
-  }
-  int tabs = (names_width / 8) + 1;
-  int prln = taMisc::display_width / (tabs * 8);  if(prln <= 0) prln = 1;
-  TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
-    taBase* itm = vitm.toBase();
-    if(itm) {
-      Indenter(strm, itm->GetName(), FOREACH_itr->count, prln, tabs);
+      nms.Add(itm->GetName());
     }
     else {
-      Indenter(strm, "NULL", FOREACH_itr->count, prln, tabs);
+      nms.Add("NULL");
     }
   }
-  strm << "\n";
-  strm.flush();
-}
-
-ostream& taList_impl::Output(ostream& strm, int indent) const {
-  if(el_view) {			// if filtering, then show the list
-    List(strm);
-  }
-  else {
-    inherited::Output(strm, indent);
-  }
-  return strm;
-}
-
-ostream& taList_impl::OutputR(ostream& strm, int indent) const {
-  taMisc::indent(strm, indent) << name << "[" << size << "] = {\n";
-  TypeDef* td = GetTypeDef();
-  int i;
-  for(i=0; i < td->members.size; i++) {
-    MemberDef* md = td->members.FastEl(i);
-    if(md->HasOption("EDIT_IN_GROUP"))
-      md->Output(strm, (void*)this, indent+1);
-  }
-
-  TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
-    taBase* itm = vitm.toBase();
-    if(itm) {
-      itm->OutputR(strm, indent+1);
-    }
-    taMisc::FlushConsole();
-  }
-
-  taMisc::indent(strm, indent) << "}\n";
+  taMisc::FancyPrintList(strm, nms, indent+1);
+  taMisc::IndentString(strm, indent);
+  strm << "}";
   return strm;
 }
 
@@ -5870,22 +5818,17 @@ Variant	taArray_base::IterElem(taBaseItr* itr) const {
   return SafeElAsVar(itr->el_idx);
 }
 
-void taArray_base::List(ostream& strm) const {
+String& taArray_base::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
   strm << "[" << size << "] {";
+  String_PArray strs;
+  strs.Alloc(size);
   TA_FOREACH(vitm, *this) {
-    strm << " " << El_GetStr_(FastEl_(FOREACH_itr->el_idx)) << ",";
-    if(FOREACH_itr->count+1 % 8 == 0) {
-      strm << endl;
-      taMisc::FlushConsole();
-    }
+    strs.Add(El_GetStr_(FastEl_(FOREACH_itr->el_idx)));
   }
+  taMisc::FancyPrintList(strm, strs, indent+1);
+  taMisc::IndentString(strm, indent);
   strm << "}";
-}
-
-ostream& taArray_base::Output(ostream& strm, int indent) const {
-  taMisc::indent(strm, indent);
-  List(strm);
-  strm << ";\n";
   return strm;
 }
 

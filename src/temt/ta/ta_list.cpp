@@ -926,43 +926,21 @@ taPtrList_impl::ElKind taPtrList_impl::El_Kind_(void* it) const {
   return EK_LINK;
 }
 
-ostream& taPtrList_impl::Indenter(ostream& strm, const String& itm, int no, int prln, int tabs)
-{
-  strm << itm << " ";
-  if((no+1) % prln == 0) {
-    strm << "\n";
-    taMisc::FlushConsole();
-    return strm;
+String& taPtrList_impl::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
+  strm << "Elements of List: " << GetListName_() << " [" << size << "] {\n";
+  String_PArray nms;
+  nms.Alloc(size);
+  for(int i=0; i<size; i++) {
+    if(el[i] == NULL)
+      nms.Add("NULL");
+    else
+      nms.Add(El_GetName_(el[i]));
   }
-  int len = (int)strlen(itm) + 1;
-  int i;
-  for(i=tabs; i>=0; i--) {
-    if(len < (i * 8))
-      strm << "\t";
-  }
+  taMisc::FancyPrintList(strm, nms, indent+1);
+  taMisc::IndentString(strm, indent);
+  strm << "}";
   return strm;
-}
-
-void taPtrList_impl::List(ostream& strm) const {
-  int i;
-  strm << "\nElements of List: " << GetListName_() << " (" << size << ")\n";
-  int names_width = 0;
-  for(i=0; i<size; i++) {
-    if(el[i] == NULL)
-      names_width = MAX(names_width, 4);
-    else
-      names_width = MAX(names_width, (int)El_GetName_(el[i]).length());
-  }
-  int tabs = (names_width / 8) + 1;
-  int prln = taMisc::display_width / (tabs * 8);  if(prln <= 0) prln = 1;
-  for(i=0; i<size; i++) {
-    if(el[i] == NULL)
-      Indenter(strm, "NULL", i, prln, tabs);
-    else
-      Indenter(strm, El_GetName_(el[i]), i, prln, tabs);
-  }
-  strm << "\n";
-  strm.flush();
 }
 
 ///////////////////////////
@@ -1525,16 +1503,18 @@ void taArray_impl::CopyVals(const taArray_impl& from, int start, int end, int at
     El_Copy_(FastEl_(trg), from.FastEl_(i));
 }
 
-void taArray_impl::List(ostream& strm) const {
+String& taArray_impl::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
   strm << "[" << size << "] {";
+  String_PArray strs;
+  strs.Alloc(size);
   for(int i=0;i<size;i++) {
-    strm << " " << El_GetStr_(FastEl_(i)) << ",";
-    if(i+1 % 8 == 0) {
-      strm << endl;
-      taMisc::FlushConsole();
-    }
+    strs.Add(El_GetStr_(FastEl_(i)));
   }
+  taMisc::FancyPrintList(strm, strs, indent+1);
+  taMisc::IndentString(strm, indent);
   strm << "}";
+  return strm;
 }
 
 String taArray_impl::GetArrayStr() const {

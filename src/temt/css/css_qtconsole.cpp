@@ -59,7 +59,7 @@ QString QcssConsole::interpretCommand(QString command, int* res) {
 
 void QcssConsole::resizeEvent(QResizeEvent* e) {
   inherited::resizeEvent(e);
-  taMisc::display_width = maxCols;
+  taMisc::display_width = MIN(maxCols, taMisc::max_display_width);
 }
 
 void QcssConsole::keyPressEvent( QKeyEvent *e ) {

@@ -356,10 +356,27 @@ public:
 
   static double pi;
   // #CAT_Trigonometry #READ_ONLY pi: the ratio of circumference to diameter
+  static double two_pi;
+  // #CAT_Trigonometry #READ_ONLY 2 pi -- commonly used factor
+  static double oneo_two_pi;
+  // #CAT_Trigonometry #READ_ONLY 1 / 2 pi -- commonly used factor
   static double deg_per_rad;
   // #CAT_Trigonometry #READ_ONLY degrees per radian (180 / pi)
   static double rad_per_deg;
   // #CAT_Trigonometry #READ_ONLY radians per degree (pi / 180)
+
+  static double  deg_to_rad(double deg)
+  { return deg * rad_per_deg; }
+  // #CAT_Trigonometry convert degrees to radians
+  static double  rad_to_deg(double rad)
+  { return rad * deg_per_rad; }
+  // #CAT_Trigonometry convert radians to degrees
+  static double  norm_to_rad(double norm)
+  { return norm * two_pi; }
+  // #CAT_Trigonometry normalized angle (1 = 360 = 2pi, .5 = 180 = pi) to radians
+  static double  rad_to_norm(double rad)
+  { return rad / two_pi; }
+  // #CAT_Trigonometry normalized angle (1 = 360 = 2pi, .5 = 180 = pi) from radians
 
   static double  euc_dist_sq(double x1, double y1, double x2, double y2)
   { return ((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)); }
@@ -980,10 +997,27 @@ public:
 
   static float pi;
   // #CAT_Trigonometry #READ_ONLY pi: the ratio of circumference to diameter
+  static float two_pi;
+  // #CAT_Trigonometry #READ_ONLY 2 pi -- commonly used factor
+  static float oneo_two_pi;
+  // #CAT_Trigonometry #READ_ONLY 1 / 2 pi -- commonly used factor
   static float deg_per_rad;
   // #CAT_Trigonometry #READ_ONLY degrees per radian (180 / pi)
   static float rad_per_deg;
   // #CAT_Trigonometry #READ_ONLY radians per degree (pi / 180)
+
+  static float  deg_to_rad(float deg)
+  { return deg * rad_per_deg; }
+  // #CAT_Trigonometry convert degrees to radians
+  static float  rad_to_deg(float rad)
+  { return rad * deg_per_rad; }
+  // #CAT_Trigonometry convert radians to degrees
+  static float  norm_to_rad(float norm)
+  { return norm * two_pi; }
+  // #CAT_Trigonometry normalized angle (1 = 360 = 2pi, .5 = 180 = pi) to radians
+  static float  rad_to_norm(float rad)
+  { return rad / two_pi; }
+  // #CAT_Trigonometry normalized angle (1 = 360 = 2pi, .5 = 180 = pi) from radians
 
   static float  euc_dist_sq(float x1, float y1, float x2, float y2)
   { return ((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)); }

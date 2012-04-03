@@ -189,7 +189,23 @@ public:
   int                   Load_str(istream& istrm);
   // #IGNORE
 #else
-  TA_API friend std::ostream&   operator<<(std::ostream& s, const String& x); // is inline
+  TA_API String&   operator<<(char c) { return cat(c); }
+  TA_API String&   operator<<(const char* x) { return cat(x); }
+  TA_API String&   operator<<(const String& x) { return cat(x); }
+  TA_API String&   operator<<(int i) { return cat(String(i)); }
+  TA_API String&   operator<<(long i) { return cat(String(i)); }
+  TA_API String&   operator<<(ulong i) { return cat(String(i)); }
+  TA_API String&   operator<<(ta_int64_t i) { return cat(String(i)); }
+  TA_API String&   operator<<(ta_uint64_t i) { return cat(String(i)); }
+  TA_API String&   operator<<(float i) { return cat(String(i)); }
+  TA_API String&   operator<<(double i) { return cat(String(i)); }
+  TA_API String&   operator<<(void* i) { return cat(String(i)); }
+  TA_API String&   operator<<(bool i) { return cat(String(i)); }
+#ifdef TA_USE_QT
+  TA_API String&   operator<<(const QString& i) { return cat(String(i)); }
+#endif
+
+  TA_API friend std::ostream&   operator<<(std::ostream& s, const String& x);
   TA_API friend std::istream&   operator>>(std::istream& s, String& x);
   TA_API friend int        readline(std::istream& s, String& x,
                                  char terminator = '\n',

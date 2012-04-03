@@ -454,30 +454,26 @@ public:
   virtual cssEl*	GetNonPtrObj() const	{ return (cssEl*)this; }
   // get non-pointer object
 
-  // elaborate printing (with type information, etc..
-  virtual String 	PrintStr() const		// the output string
-  { return String(GetTypeName()) + " " + name; }
-  virtual void 		Print(ostream& fh = cout) const	{ fh << PrintStr(); }
-
-  virtual void		PrintR(ostream& fh = cout) const { Print(fh); }
-  // recursive print item (item and all its sub-elements)
   virtual int		Edit(bool =false)	{ return false; }
   // pull up in the interface and edit this one
 
-  // "value" printing
+  virtual String 	PrintStr() const
+  { return String(GetTypeName()) + " " + name; }
+  // elaborate printing (with type information, etc..
   virtual String	PrintFStr() const 		 { return "void"; }
-  virtual void 		PrintF(ostream& fh = cout) const { fh << PrintFStr(); }
-
-  virtual void  	TypeInfo(ostream& fh = cout) const
-  { fh << GetTypeName() << " " << name; }
-  virtual void		InheritInfo(ostream& fh = cout) const { TypeInfo(fh); }
+  // "value" printing
+  virtual String& 	PrintType(String& fh) const
+  { fh << GetTypeName() << " " << name; return fh; }
+  virtual String&	PrintInherit(String& fh) const
+  { PrintType(fh); }
 
   // saving and loading objects to/from files (special format)
   virtual void		Save(ostream& strm = cout);
   virtual void		Load(istream& strm = cin);
 
   // token information about a certain type
-  virtual void		TokenInfo(ostream&) const	{ }; // show tokens of arg type
+  virtual String&	PrintTokens(String& strm) const	{ return strm; }
+  // show tokens of arg type
   virtual cssEl*	GetToken(int) const		{ return (cssEl*)this; }
 
   virtual cssEl::RunStat 	Do(cssProg* prg);  // run this object

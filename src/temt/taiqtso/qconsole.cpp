@@ -223,10 +223,7 @@ bool QConsole::stdDisplay(QTextStream* s) {
 }
 
 void QConsole::resizeEvent(QResizeEvent* e) {
-  maxLines = (height() / fontHeight) - 4;
-  maxCols = (width() / fontWidth) - 1;
-  if(maxLines < 10) maxLines = 10;
-  if(maxCols < 10) maxCols = 10;
+  getDisplayGeom();
   QTextEdit::resizeEvent(e);
 //   cerr << "console; font height: " << fontHeight << ", wd: " << fontWidth
 //        << ", lines: " << maxLines << ", cols: " << maxCols << endl;

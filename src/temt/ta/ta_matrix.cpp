@@ -196,14 +196,15 @@ String MatrixIndex::ToString(const char* ldelim, const char* rdelim) const {
   return rval;
 }
 
-String MatrixIndex::GetStringRep_impl() const {
-  String rval('[');
+String& MatrixIndex::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
+  strm << '[';
   int i;
   for (i = 0; i < n_dims-1; ++i) {
-    rval += String(el[i]) + ",";
+    strm += String(el[i]) + ",";
   }
-  rval += String(el[i]) + ']';
-  return rval;
+  strm += String(el[i]) + ']';
+  return strm;
 }
 
 void MatrixIndex::FromString(const String& str_, const char* ldelim, const char* rdelim) {
@@ -607,14 +608,15 @@ String MatrixGeom::ToString(const char* ldelim, const char* rdelim) const {
   return rval;
 }
 
-String MatrixGeom::GetStringRep_impl() const {
-  String rval('[');
+String& MatrixGeom::Print(String& strm, int indent) const {
+  taMisc::IndentString(strm, indent);
+  strm << '[';
   int i;
   for (i = 0; i < n_dims-1; ++i) {
-    rval += String(el[i]) + ",";
+    strm += String(el[i]) + ",";
   }
-  rval += String(el[i]) + ']';
-  return rval;
+  strm += String(el[i]) + ']';
+  return strm;
 }
 
 void MatrixGeom::FromString(const String& str_, const char* ldelim, const char* rdelim) {
@@ -799,16 +801,15 @@ void taMatrix::BatchUpdate(bool begin, bool struc) {
   }
 }
 
-String taMatrix::GetStringRep_impl() const {
-  String rval;
+String& taMatrix::Print(String& strm, int indent) const {
   const int dm = dims();
   taMatrix* elv = ElView();
   MatrixIndex idx(dm);
   MatrixIndex lstidx(dm,0,0,0,0,0,0,0);
   for(int d=0; d<dm; d++) {
-    rval += "[";
+    strm += "[";
   }
-  rval += " ";
+  strm += " ";
   if(!elv || el_view_mode == IDX_MASK) {
     byte_Matrix* cmat = dynamic_cast<byte_Matrix*>(elv);
     for(int i=0; i<size; i++) {
@@ -817,48 +818,48 @@ String taMatrix::GetStringRep_impl() const {
       for(int d=0; d<dm; d++) {
 	if(idx[d] == 0 && idx[d] != lstidx[d]) {
 	  sc++;
-	  if(sc == 1) rval += " ";
-	  rval += "]";		// end previous
+	  if(sc == 1) strm += " ";
+	  strm += "]";		// end previous
 	  if(d > 0 && d % 2 == 0) {
-	    rval += "\n ";
+	    strm += "\n ";
 	  }
 	}
       }
       for(int s=0; s<sc; s++) {
-	rval += "[";		// start new
-	if(s == sc-1) rval += " ";
+	strm += "[";		// start new
+	if(s == sc-1) strm += " ";
       }
       if(sc == 0 && i > 0) {
-	rval += ", ";
+	strm += ", ";
       }
       if(cmat && !((bool)cmat->SafeEl_Flat(i))) {
-	rval += "- ";		// filtered
+	strm += "- ";		// filtered
       }
       else {
-	rval += FastElAsStr_Flat(i);
+	strm += FastElAsStr_Flat(i);
       }
       lstidx = idx;		// update
     }
-    rval += " ";
+    strm += " ";
     for(int d=0; d<dm; d++) {
-      rval += "]";
+      strm += "]";
     }
   }
   else {			// coords!
     int_Matrix* cmat = dynamic_cast<int_Matrix*>(ElView());
     int nc = cmat->dim(1);
-    rval = "[ ";
+    strm = "[ ";
     for(int i=0; i<nc; i++) {
       for(int d=0;d<dm;d++) {
 	idx.Set(d, cmat->FastEl(d, i));	// outer index is count index
       }
-      rval += GetStringRep(idx) + ": " + SafeElAsStrN(idx);
+      idx.Print(strm) << ": " << SafeElAsStrN(idx);
       if(i < nc-1)
-	rval += ", ";
+	strm += ", ";
     }
-    rval += " ]";
+    strm += " ]";
   }
-  return rval;
+  return strm;
 }
 
 //////////////////////////////////////////////
@@ -1711,17 +1712,6 @@ bool taMatrix::InRangeN(const MatrixIndex& indices) const {
   return true;
 }
  
-void taMatrix::List(ostream& strm) const {
-  strm << GetStringRep_impl();
-  taMisc::FlushConsole();
-}
-
-ostream& taMatrix::Output(ostream& strm, int indent) const {
-  taMisc::indent(strm, indent);
-  List(strm);
-  return strm;
-}
-
 bool taMatrix::RemoveFrames(int st_fr, int n_fr) {
   if(TestError(!canResize(), "RemoveFrames", "resizing not allowed")) return false;
   int frames_ = frames(); // cache
@@ -3640,7 +3630,7 @@ bool complex_Matrix::CheckComplexGeom(const MatrixGeom& gm, bool err) {
   if(gm.dims() < 2 || gm.dim(0) != 2) {
     if(!err) return false;
     taMisc::Error("CheckComplexGeom: geometry is not correct for representing complex numbers -- inner-most dimension must be size 2, and there must be 2 or more dimensions",
-		  GetStringRep(gm));
+		  gm.PrintStr());
     return false;
   }
   return true;
@@ -3738,7 +3728,7 @@ void complex_Matrix::SetReal(const double_Matrix& reals, bool copy_geom) {
   }
   else {
     if(!CheckComplexGeom(geom)) return;
-    if(TestError(cgm != geom, "SetReal", "input matrix does not have same geometry as 	destination matrix",GetStringRep(reals.geom)))
+    if(TestError(cgm != geom, "SetReal", "input matrix does not have same geometry as 	destination matrix",reals.geom.PrintStr()))
       return;
   }
   for(int i=0; i < reals.size; ++i) {
@@ -3753,7 +3743,7 @@ void complex_Matrix::SetImag(const double_Matrix& imags, bool copy_geom) {
   }
   else {
     if(!CheckComplexGeom(geom)) return;
-    if(TestError(cgm != geom, "SetImag", "input matrix does not have same geometry as 	destination matrix",GetStringRep(imags.geom)))
+    if(TestError(cgm != geom, "SetImag", "input matrix does not have same geometry as 	destination matrix",imags.geom.PrintStr()))
       return;
   }
   for(int i=0; i < imags.size; ++i) {
@@ -3763,7 +3753,7 @@ void complex_Matrix::SetImag(const double_Matrix& imags, bool copy_geom) {
 
 void complex_Matrix::Complex(const double_Matrix& reals, const double_Matrix& imags,
 			     bool copy_geom) {
-  if(TestError(reals.geom != imags.geom, "Complex", "input reals and imags matricies do not have same geometry.  reals:",GetStringRep(reals.geom), "imags:", GetStringRep(imags.geom)))
+  if(TestError(reals.geom != imags.geom, "Complex", "input reals and imags matricies do not have same geometry.  reals:",reals.geom.PrintStr(), "imags:", imags.geom.PrintStr()))
     return;
   MatrixGeom cgm = ComplexGeom(reals.geom);
   if(copy_geom) {
@@ -3771,7 +3761,7 @@ void complex_Matrix::Complex(const double_Matrix& reals, const double_Matrix& im
   }
   else {
     if(!CheckComplexGeom(geom)) return;
-    if(TestError(cgm != geom, "Complex", "input matrices do not have same geometry as 	destination matrix",GetStringRep(reals.geom)))
+    if(TestError(cgm != geom, "Complex", "input matrices do not have same geometry as 	destination matrix",reals.geom.PrintStr()))
       return;
   }
   for(int i=0; i < reals.size; ++i) {
@@ -3787,7 +3777,7 @@ void complex_Matrix::Expi(const double_Matrix& angles, bool copy_geom) {
   }
   else {
     if(!CheckComplexGeom(geom)) return;
-    if(TestError(cgm != geom, "Expi", "input matrix does not have same geometry as 	destination matrix",GetStringRep(angles.geom)))
+    if(TestError(cgm != geom, "Expi", "input matrix does not have same geometry as 	destination matrix",angles.geom.PrintStr()))
       return;
   }
   for(int i=0; i < angles.size; ++i) {
