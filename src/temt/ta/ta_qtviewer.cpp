@@ -2099,13 +2099,13 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items,
     md = t1->methods.FastEl(i);
     if (!md->HasOption("DYN12N")) continue;
     if (md->arg_types.size == 0) {
-      cerr << "Warning: method " << md->name << "should have had an arg1 in class* form.\n" ;
+      taMisc::Warning("method:", md->name, "should have had an arg1 in class* form.");
       continue;
     }
     arg1_typ = md->arg_types.FastEl(0);
     // must be a pointer to a class type
     if (arg1_typ->ptr != 1) {
-      cerr << "Warning: method " << md->name << "should have had arg1 in class* form.\n" ;
+      taMisc::Warning("method:", md->name, "should have had arg1 in class* form.");
       continue;
     }
     // now get the non-pointer type
@@ -2121,7 +2121,7 @@ void DynMethod_PtrList::Fill(ISelectable_PtrList& sel_items,
     arg1_typ = md->arg_types.FastEl(0);
     // must be a pointer to a class type
     if (arg1_typ->ptr != 1) {
-      cerr << "Warning: method " << md->name << "should have had class* form.\n" ;
+      taMisc::Warning("method:", md->name, "should have had class* form.");
       continue;
     }
     // now get the non-pointer type
@@ -3679,8 +3679,6 @@ void iMainWindowViewer::closeEvent(QCloseEvent* e) {
   // now, if we are the last proj window, close us!
   if (m_close_proj_now) {
     hide();			// prevent a possible bug on mac associated with hide and delete
-//     cerr << "got close, hiding!" << endl;
-//     taMisc::FlushConsole();
     taiMiscCore::ProcessEvents();
     curProject()->CloseLater();
   }
@@ -5239,7 +5237,6 @@ void iTabBar::mousePressEvent(QMouseEvent* e) {
 }
 
 bool iTabBar::focusNextPrevChild(bool next) {
-//   cerr << "iTabBar:: focusnext/prv" << endl;
   if(!next) return inherited::focusNextPrevChild(next);
 
   int idx = currentIndex();
@@ -5247,7 +5244,6 @@ bool iTabBar::focusNextPrevChild(bool next) {
   if(!tpan) return inherited::focusNextPrevChild(next);
   QWidget* nxt = tpan->firstTabFocusWidget();
   if(!nxt) return inherited::focusNextPrevChild(next);
-//   cerr << "focusing on widget of type: " << nxt->metaObject()->className() << endl;
   nxt->setFocus();
   return true;
 }
@@ -7083,7 +7079,6 @@ void iDocDataPanel::doc_createWindow(QWebPage::WebWindowType type, QWebView*& wi
 
 void iDocDataPanel::doc_linkClicked(const QUrl& url) {
   String path = url.toString();
-  //  cerr << "path: " << path << endl;
   bool ta_path = false;
   QUrl new_url(url);
   if(path.startsWith("ta:") || path.startsWith("."))
@@ -7718,7 +7713,6 @@ void iTreeView::focusInEvent(QFocusEvent* ev) {
     else {			// assume prog editor!
       main_window->FocusIsMiddlePanel(iMainWindowViewer::PROG_TREE);
     }
-//     cerr << "focus itv: " << this << endl;
   }
   Emit_GotFocusSignal();
 }
@@ -9100,9 +9094,6 @@ bool tabGroupTreeDataNode::RebuildChildrenIfNeeded() {
   if(last_member_node)
     st_idx = MAX(indexOfChild(last_member_node)+1, 0);
   taSubGroup* gp = &tadata()->gp;
-//   cerr << "gp cc: " << childCount() << " lst: " << list()->size << " gp: "
-//        << gp->size << " st_idx: " << st_idx << endl;
-//   taMisc::FlushConsole();
   if(childCount() != (list()->size + gp->size + st_idx)) {
     takeChildren();
     CreateChildren();

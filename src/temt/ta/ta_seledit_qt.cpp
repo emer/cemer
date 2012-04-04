@@ -541,19 +541,6 @@ void taiDataDelegate::paint(QPainter* painter, const QStyleOptionViewItem& optio
 }
 
 void taiDataDelegate::rep_destroyed(QObject* rep) {
-/*NOTE: not used
-#ifdef DEBUG
-    cerr << "rep_destroyed for (dat/rep): " <<
-      dat->metaObject()->className() << "/" <<
-      rep->metaObject()->className() << "\n";
-#endif
-  if (dat && (dat->GetRep() == rep)) {
-    dat->Delete();
-    dat = NULL;
-  }
-  // if user left the edit unchanged, then assume this was a cancel, and Revert
-  if (edh->isModified())
-    edh->Revert();*/
 }
 
 QSize taiDataDelegate::sizeHint(const QStyleOptionViewItem& option,
@@ -1275,13 +1262,12 @@ void taiObjDiffBrowser::AddItems() {
       if(par_nest < nest_pars.size) {
         parw = (QTreeWidgetItem*)nest_pars[par_nest];
         if(!parw) {
-          cerr << "par widg null: " << rec->name << " = " << rec->value <<endl;
-          taMisc::FlushConsole();
+	  taMisc::Info("par widg null:", rec->name, "=", rec->value);
         }
       }
       else {
-        cerr << "par nest: " << par_nest << " >= nest pars: " << nest_pars.size <<endl;
-        taMisc::FlushConsole();
+	taMisc::Info("par nest:", String(par_nest), ">= nest pars:",
+		     String(nest_pars.size));
       }
       if(!parw) {
         if(rec->par_odr)

@@ -967,12 +967,13 @@ void GaborFilter::GridFilter(DataTable* graph_data, bool reset) {
   graph_data->FindMakeGridView();
 }
 
-void GaborFilter::OutputParams(ostream& strm) {
+String& GaborFilter::PrintParams(String& strm) {
   strm << "ctr: " << ctr_x << ", " << ctr_y << ", angle: " << angle
        << ", phase: " << phase << ", freq: " << freq
        << ", length: " << length << ", width: " << width
        << ", amp: " << amp
-       << endl;
+       << "\n";
+  return strm;
 }
 
 
@@ -1133,12 +1134,13 @@ void MotionGaborFilter::GridFilter(DataTable* graph_data, bool reset) {
   graph_data->FindMakeGridView();
 }
 
-void MotionGaborFilter::OutputParams(ostream& strm) {
+String& MotionGaborFilter::PrintParams(String& strm) {
   strm << "ctr: " << ctr_x << ", " << ctr_y << ", angle: " << spat_angle
        << ", phase: " << phase << ", freq: " << freq
        << ", length: " << length << ", width: " << width
        << ", amp: " << amp
-       << endl;
+       << "\n";
+  return strm;
 }
 
 
@@ -1188,7 +1190,6 @@ float GaborFitter::ParamDist(const GaborFilter& oth) {
 //   float sz_inc = ((x_size * sz_max) - sz_min) / 2.0f;
 
 // //   float tot_comp = 3.0f * 3.0f * 4.0f * 2.0f * 2.0f * 2.0f * 2.0f;
-// //   cerr << "total cycles: " << tot_comp << endl;
 
 //   float min_d = FLT_MAX;
 //   GaborFitter min_params;
@@ -1222,8 +1223,9 @@ float GaborFitter::ParamDist(const GaborFilter& oth) {
 //   float min_d = FLT_MAX;
 //   if(!use_cur_vals) {
 //     min_d = FitData_firstpass(data_vals);
-// //     cerr << "After 1st Pass\t min_d: " << min_d << "\t";
-// //     OutputParams();
+// //     String strm;
+// //     strm << "After 1st Pass\t min_d: " << min_d << "\t";
+// //     PrintParams(strm);
 //   }
 
 //   int n_itr = 3;
@@ -1350,12 +1352,12 @@ float GaborFitter::ParamDist(const GaborFilter& oth) {
 //     }
 //     length = min_len;
 
-// //     cerr << "Itr: " << itr << "\t min_d: " << min_d << "\t";
-// //     OutputParams();
+// //     strm << "Itr: " << itr << "\t min_d: " << min_d << "\t";
+// //     PrintParams(strm);
 //   }
 
-// //   cerr << "Final fit\t min_d: " << min_d << "\t";
-// //   OutputParams();
+// //   strm << "Final fit\t min_d: " << min_d << "\t";
+// //   PrintParams(strm);
 //   fit_dist = min_d;
 //   return min_d;
 // }
@@ -1372,16 +1374,17 @@ float GaborFitter::ParamDist(const GaborFilter& oth) {
 //   length = .75 + ((.25 * y_size) - .5) * Random::ZeroOne();
 //   width = .75 + ((.25 * x_size) - .5) * Random::ZeroOne();
 //   amp = 1.0;
-//   cerr << "\nBefore:\t";
-//   OutputParams();
+//   String strm;
+//   strm << "\nBefore:\t";
+//   PrintParams(strm);
 //   GridFilter(NULL);
 //   taivMisc::RunIVPending();
 //   float_Matrix data(false);
 //   RenderFilter(data);
 //   float min_d = FitData(data, false);
-//   cerr << "Min Dist: " << min_d << endl;
-//   cerr << "After:\t";
-//   OutputParams();
+//   strm << "Min Dist: " << min_d << "\n";
+//   strm << "After:\t";
+//   PrintParams(strm);
 //   GridFilter(NULL);
 //   return min_d;
 // }

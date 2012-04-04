@@ -2004,7 +2004,7 @@ void PrintVar::GenCssBody_impl(Program* prog) {
   if(!nogui && !taMisc::gui_active) // don't generate anything
     return;
 
-  String rval = "cerr ";
+  String rval = "cout ";
   if(message.nonempty()) 
     rval += "<< \"" + message + "\"";
   if((bool)print_var)

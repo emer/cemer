@@ -490,11 +490,8 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
 	float disp_scale = lay->disp_scale;
 
 	SbVec3f pt = pp->getObjectPoint(pobj);
-	//   cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
 	int xp = (int)((pt[0] * tnv->max_size.x) / disp_scale);
 	int yp = (int)(-(pt[2] * tnv->max_size.y) / disp_scale);
-	//   cerr << xp << ", " << yp << endl;
-	//       xp -= ugrp->pos.x; yp -= ugrp->pos.y;
 
 	if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
 	  Unit* unit = lay->UnitAtDispCoord(xp, yp);
@@ -1474,8 +1471,6 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   if(new_y < 0.0f)      new_y -= .5f;
   else                  new_y += .5f;
 
-//   cerr << "lay: " << lay->name << " " << trans[0] << " " << trans[1] << " drg: " <<
-//     drag_sc << " fx: " << fx << " fy: " << fy << " new: " << new_x << " " << new_y << endl;
 
   lay->pos.x += (int)new_x;
 //   if(lay->pos.x < 0) lay->pos.x = 0;
@@ -1503,8 +1498,6 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   float new_z = trans[0] * nv->max_size.z;
   if(new_z < 0.0f)      new_z -= .5f;
   else                  new_z += .5f;
-
-//   cerr << "lay: " << lay->name << " z:" << trans[0] << " new_z: " << new_z << endl;
 
   lay->pos.z += (int)new_z;
 //   if(lay->pos.z < 0) lay->pos.z = 0;
@@ -1944,9 +1937,6 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   if(new_y < 0.0f)      new_y -= .5f;
   else                  new_y += .5f;
 
-//   cerr << "lay: " << lgp->name << " " << trans[0] << " " << trans[1] << " drg: " <<
-//     drag_sc << " fx: " << fx << " fy: " << fy << " new: " << new_x << " " << new_y << endl;
-
   lgp->pos.x += (int)new_x;
   if(lgp->pos.x < 0) lgp->pos.x = 0;
   lgp->pos.y += (int)new_y;
@@ -1976,8 +1966,6 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   float new_z = trans[0] * nv->max_size.z;
   if(new_z < 0.0f)      new_z -= .5f;
   else                  new_z += .5f;
-
-//   cerr << "lay: " << lgp->name << " z:" << trans[0] << " new_z: " << new_z << endl;
 
   lgp->pos.z += (int)new_z;
   if(lgp->pos.z < 0) lgp->pos.z = 0;
@@ -2097,14 +2085,12 @@ void T3NetViewObj_DragFinishCB(void* userData, SoDragger* dragr) {
   cur_rot.setValue(SbVec3f(nvo->rot.x, nvo->rot.y, nvo->rot.z), nvo->rot.rot);
 
   SbVec3f trans = dragger->translation.getValue();
-//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   trans[0] *= nvo->scale.x;  trans[1] *= nvo->scale.y;  trans[2] *= nvo->scale.z;
   FloatTDCoord tr(trans[0], trans[1], trans[2]);
   nvo->pos += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nvo->scale *= sc;
@@ -2112,7 +2098,6 @@ void T3NetViewObj_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f axis;
   float angle;
   dragger->rotation.getValue(axis, angle);
-//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
     SbRotation rot;
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
@@ -2975,7 +2960,6 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
                            nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
-//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   trans[0] *= nv->main_xform.scale.x;  trans[1] *= nv->main_xform.scale.y;
   trans[2] *= nv->main_xform.scale.z;
@@ -2983,7 +2967,6 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   nv->main_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
@@ -2991,7 +2974,6 @@ void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f axis;
   float angle;
   dragger->rotation.getValue(axis, angle);
-//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
     SbRotation rot;
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
@@ -3022,7 +3004,6 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
                            nv->net_text_xform.rotate.z), nv->net_text_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
-//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   trans[0] *= nv->net_text_xform.scale.x;  trans[1] *= nv->net_text_xform.scale.y;
   trans[2] *= nv->net_text_xform.scale.z;
@@ -3030,7 +3011,6 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
   nv->net_text_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->net_text_xform.scale *= sc;
@@ -3038,7 +3018,6 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f axis;
   float angle;
   dragger->rotation.getValue(axis, angle);
-//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
     SbRotation rot;
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
@@ -3062,7 +3041,6 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
 
 void NetView::Render_impl() {
   // font properties percolate down to all other elements, unless set there
-  //  cerr << "nv render_impl" << endl;
   FloatTransform* ft = transform(true);
   *ft = main_xform;
 

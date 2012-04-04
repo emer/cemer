@@ -56,14 +56,13 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   }
 #endif
   // we always output to console
-  if (beep_on_error) cerr << '\a'; // BEL character
+  // if (beep_on_error) cerr << '\a'; // BEL character
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top) {
     taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
   }
 #endif
-  cerr << fmsg << endl;
-  FlushConsole();
+  taMisc::ConsoleOutput(fmsg, true, false);
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top) {
     if(cssMisc::cur_top->own_program) {
@@ -140,13 +139,10 @@ void taMisc::Confirm(const char* a, const char* b, const char* c,
 #endif
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
   taMisc::LogEvent("***CONFIRM: " + msg);
+  taMisc::ConsoleOutput(msg, false, false);
 #if !defined(NO_TA_BASE)
   if (taMisc::gui_active) {
     taiChoiceDialog::ConfirmDialog(NULL, msg);
-  } else
-#endif
-  {
-    cout << msg << "\n";
-    FlushConsole();
   }
+#endif
 }

@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 #include "qconsole.h"
-#ifdef HAVE_QT_CONSOLE
 #include "ta_platform.h"
 
 #include <qfile.h>
@@ -70,10 +69,12 @@ void QConsole::clear() {
   QTextEdit::clear();
   getDisplayGeom();
   curPromptPos = 0;
-  setAcceptRichText(false);	// just plain
+  curOutputLn = 0;
   quitPager = false;
   contPager = false;
-  curOutputLn = 0;
+  waiting_for_key = false;
+  key_response = 0;
+  setAcceptRichText(false);	// just plain
   displayPrompt(true);		// force
 }
 
@@ -93,12 +94,16 @@ void QConsole::exit() {
 
 //QConsole constructor (init the QTextEdit & the attributes)
 QConsole::QConsole(QWidget *parent, const char *name, bool initInterceptor) 
-  : QTextEdit(parent), cmdColor(Qt::black), errColor(Qt::red), outColor(Qt::blue),
-    completionColor(Qt::green), stdoutInterceptor(NULL), stderrInterceptor(NULL)
+  : QTextEdit(parent), cmdColor(Qt::blue), errColor(Qt::red), outColor(Qt::black),
+    completionColor(Qt::green),
+#ifndef TA_OS_WIN
+ stdoutInterceptor(NULL), stderrInterceptor(NULL)
+#endif
 {
   //resets the console
   reset();
 
+#ifndef TA_OS_WIN
   if(initInterceptor) {
     //Initialize the interceptors
     stdoutInterceptor = new Interceptor(this);
@@ -109,6 +114,7 @@ QConsole::QConsole(QWidget *parent, const char *name, bool initInterceptor)
     stderrInterceptor->initialize(2);
     connect(stderrInterceptor, SIGNAL(received(QTextStream *)), SLOT(stdReceived()));
   }
+#endif
 }
 
 //Sets the prompt and cache the prompt length to optimize the processing speed
@@ -120,10 +126,10 @@ void QConsole::setPrompt(QString newPrompt, bool display) {
     displayPrompt();
 }
 
-void QConsole::flushOutput(bool wait_for_pager) {
-  //  noPager = true;		// debugging!!
+void QConsole::flushOutput() {
   cout.flush();
   cerr.flush();
+#ifndef TA_OS_WIN
   bool waiting = false;
   do {
     if(stdoutInterceptor) {
@@ -134,11 +140,32 @@ void QConsole::flushOutput(bool wait_for_pager) {
       setTextColor(errColor);
       waiting = (stdDisplay(stderrInterceptor->textIStream()) || waiting);
     }
-    if(wait_for_pager && waiting) {
+    if(waiting) {
       QCoreApplication::processEvents();
       taPlatform::msleep(1); //note: 1ms is fine, shorter values result in cpu thrashing
     }
-  } while(wait_for_pager && waiting);
+  } while(waiting);
+#endif
+}
+
+int QConsole::queryForKeyResponse(QString query) {
+  flushOutput();
+  QTextCursor cursor(textCursor());
+  gotoEnd(cursor, false);
+  append(query);
+  waiting_for_key = true;
+  key_response = 0;
+  while(waiting_for_key) {
+    QCoreApplication::processEvents();
+    taPlatform::msleep(10); //note: 1ms is fine, shorter values result in cpu thrashing
+    // keypress event turns off waiting_for_key and sets key_response
+  }
+  // get rid of prompt
+  cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
+  cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
+  cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+  cursor.removeSelectedText();
+  return key_response;
 }
 
 void QConsole::stdReceived() {
@@ -174,11 +201,35 @@ void QConsole::gotoEnd(QTextCursor& cursor, bool select) {
     cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor); // not selects
 }
 
+void QConsole::gotoEnd() {
+  QTextCursor cursor(textCursor());
+  gotoEnd(cursor, false);
+  setTextCursor(cursor);
+}
+
 bool QConsole::scrolledToEnd() {
   // check if scrollbar is scrolled to end
   QScrollBar* vscr = verticalScrollBar();
   if(!vscr) return true;
   return (vscr->value() >= vscr->maximum() - 4); // give a few lines at the end leeway
+}
+
+void QConsole::outputLine(QString line, bool err) {
+  bool scrolled_to_end = scrolledToEnd();
+  if(err) {
+    setTextColor(errColor);
+  }
+  else {
+    setTextColor(outColor);
+  }
+  promptDisp = false;
+  append(line);
+  setTextColor(outColor);	// reset to default
+  if(scrolled_to_end) {		// keep on keeping on..
+    gotoEnd();
+  }
+  emit receivedNewStdin(1);
+  QCoreApplication::processEvents();
 }
 
 // displays redirected stdout/stderr
@@ -187,11 +238,12 @@ bool QConsole::stdDisplay(QTextStream* s) {
     return true;
   bool scrolled_to_end = scrolledToEnd();
   int n_lines_recvd = 0;
-  while((curOutputLn < maxLines) || contPager || noPager || quitPager) {
-    QString line = s->readLine(maxCols);
-    if(line.isNull()) break;
-    n_lines_recvd++;
-    if(!quitPager) {
+  if(noPager) {
+    // no pager mode just grabs everything and returns true if any lines were recv'd
+    while(true) {
+      QString line = s->readLine(maxCols);
+      if(line.isNull()) break;
+      n_lines_recvd++;
       promptDisp = false;
       append(line);
       if(logfile.isOpen()) {
@@ -199,34 +251,44 @@ bool QConsole::stdDisplay(QTextStream* s) {
 	logfile.write("\n", strlen("\n"));
 	logfile.flush();
       }
-      if(!contPager && !noPager) {
-	curOutputLn++;
-	if(curOutputLn >= maxLines) {
-	  append("---Press Return for More, q=quit displaying, c=continue without paging ---");
-	  viewport()->update();		// repaint the window, in case it is weird, as it has been..
-	  return true;
+    }
+  }
+  else {
+    // pager mode has more complicated logic
+    while((curOutputLn < maxLines) || contPager || quitPager) {
+      QString line = s->readLine(maxCols);
+      if(line.isNull()) break;
+      n_lines_recvd++;
+      if(!quitPager) {
+	promptDisp = false;
+	append(line);
+	if(logfile.isOpen()) {
+	  logfile.write(line.toLocal8Bit());
+	  logfile.write("\n", strlen("\n"));
+	  logfile.flush();
+	}
+	if(!contPager) {
+	  curOutputLn++;
+	  if(curOutputLn >= maxLines) {
+	    append("---Press Return for More, q=quit displaying, c=continue without paging ---");
+	    viewport()->update();	// repaint the window, in case it is weird
+	    return true;
+	  }
 	}
       }
     }
   }
 
   if(scrolled_to_end) {		// keep on keeping on..
-    QTextCursor cursor(textCursor());
-    gotoEnd(cursor, false);
-    setTextCursor(cursor);
+    gotoEnd();
   }
-
   emit receivedNewStdin(n_lines_recvd);
-
-//   viewport()->update();		// repaint the window, in case it is weird, as it has been..
-  return false;
+  return (n_lines_recvd > 0);
 }
 
 void QConsole::resizeEvent(QResizeEvent* e) {
   getDisplayGeom();
   QTextEdit::resizeEvent(e);
-//   cerr << "console; font height: " << fontHeight << ", wd: " << fontWidth
-//        << ", lines: " << maxLines << ", cols: " << maxCols << endl;
 }
 
 // Reimplemented key press event
@@ -259,9 +321,6 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-
-  // ctrl key on mac is screwed up: a p is not a p when the ctrl key is pressed
-//   cerr << hex << e->key() << " p: " << Qt::Key_P << endl;
 
   //If Ctrl + C pressed, then undo the current command
   if((e->key() == Qt::Key_C) && ctrl_pressed) {
@@ -296,13 +355,19 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
   }
   else if(e->key() == Qt::Key_Return) {
     e->accept();
-    if(promptDisp) {
-      QString command = getCurrentCommand();
-      if(isCommandComplete(command))
-	execCommand(command, false);
+    if(waiting_for_key) {
+      key_response = e->key();
+      waiting_for_key = false;
     }
     else {
-      displayPrompt(true);
+      if(promptDisp) {
+	QString command = getCurrentCommand();
+	if(isCommandComplete(command))
+	  execCommand(command, false);
+      }
+      else {
+	displayPrompt(true);
+      }
     }
   }
   else if((e->key() == Qt::Key_L) && ctrl_pressed) {
@@ -364,6 +429,11 @@ void QConsole::keyPressEvent(QKeyEvent* e) {
   else if((e->key() == Qt::Key_W) && ctrl_pressed) {
     e->accept();
     cut();
+  }
+  else if(waiting_for_key) {
+    key_response = e->key();
+    waiting_for_key = false;
+    e->accept();
   }
   else {
     QTextEdit::keyPressEvent( e );
@@ -516,9 +586,7 @@ int QConsole::setStdLogfile(QString fileName) {
 //Allows pasting with middle mouse button (x window)
 //when clicking outside of the edition zone
 void QConsole::paste() {
-  QTextCursor cursor(textCursor());
-  gotoEnd(cursor, false);		// goto end but don't select
-  setTextCursor(cursor);
+  gotoEnd();
   QTextEdit::paste();
 }
 
@@ -602,4 +670,3 @@ bool QConsole::isCommandComplete(QString cmd) {
 // implementation should do something here..
 void QConsole::ctrlCPressed() {
 }
-#endif

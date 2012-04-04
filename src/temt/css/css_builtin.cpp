@@ -555,7 +555,7 @@ static cssEl* cssElCFun_member_fun_stub(int, cssEl* arg[]) {
     cp->Stack()->Push(ths);
   }
   if(cp->top->debug >= 2) {
-    cerr << "\nCalling member function: " << mbfun->name << endl;
+    taMisc::Info("\nCalling member function:", mbfun->name);
   }
   return &cssMisc::Void;
 }
@@ -685,24 +685,34 @@ static cssEl* cssElCFun_lshift_stub(int, cssEl* arg[]) {
     if(ta->type_def->InheritsFrom(TA_ostream)) {
       ostream* strm = (ostream*)ta->GetVoidPtrOfType(&TA_ostream);
       if(strm != NULL) {
+	bool conout = false;
+	if(strm == &cout || strm == &cerr) {
+	  conout = true;
+	}
 	if(arg[2]->name == "flush") {
-	  *strm << flush;
-	  taMisc::FlushConsole();
+	  if(conout)
+	    taMisc::ConsoleOutputChars("\n");
+	  else
+	    *strm << flush;
 	  return arg[1];
 	}
 	if(arg[2]->name == "endl") {
-	  *strm << endl;
-	  taMisc::FlushConsole();
+	  if(conout)
+	    taMisc::ConsoleOutputChars("\n");
+	  else
+	    *strm << endl;
 	  return arg[1];
 	}
 	if(arg[2]->name == "ends") {
-	  *strm << ends;  return arg[1];
+	  if(!conout)
+	    *strm << ends;  return arg[1];
 	}
+	// todo: need to read these settings in ios << output
 	if(arg[2]->name == "dec") {
-	  *strm << dec;	  return arg[1];
+	  *strm << dec;  return arg[1];
 	}
 	if(arg[2]->name == "hex") {
-	  *strm << hex;	  return arg[1];
+	  *strm << hex;  return arg[1];
 	}
 	if(arg[2]->name == "oct") {
 	  *strm << oct;	  return arg[1];
@@ -774,7 +784,7 @@ static cssEl* cssElCFun_arg_swap_stub(int na, cssEl* arg[]) {
 static cssEl* cssElCFun_fun_done_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
   cssEl* fun_el = cp->insts[cp->PC()-2]->inst.El(); // 
-  cerr << "fun_done: pc: " << cp->PC()-2 << " el: " << fun_el->name << endl;
+  taMisc::Info("fun_done: pc: ", String(cp->PC()-2), " el: ", fun_el->name);
   fun_el->FunDone(cp);		// call the fun done
   return &cssMisc::Void;	// todo: not sure if this is correct
 }
@@ -2882,14 +2892,6 @@ bool cssMisc::Initialize() {
   cssMisc::startup_code = taMisc::FindArgByName("CssCode");
   if(!cssMisc::startup_code.empty())
     cssMisc::startup_code += "\n";		  // add a final cr for good measure
-
-  if(taMisc::CheckArgByName("CssScript") || taMisc::CheckArgByName("CssCode")
-     || taMisc::CheckArgByName("CssNonInteractive")) {
-    // if code specified, default is then to not run in interactive mode (otherwise yes)
-    cssMisc::init_interactive = false;
-  }
-  if(taMisc::CheckArgByName("CssInteractive")) // override
-    cssMisc::init_interactive = true;
 
   cssMisc::init_debug = taMisc::FindArgByName("CssDebug");
   String ibp = taMisc::FindArgByName("CssBreakpoint");

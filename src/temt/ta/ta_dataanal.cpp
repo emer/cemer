@@ -512,7 +512,7 @@ String taDataAnal::RegressLinear(DataTable* src_data, const String& x_data_col_n
     + String(b) + "; r = " + String(r) + "; r^2 = "
     + String(r*r);
 
-  cout << rval << endl;
+  taMisc::Info(rval);
 
   if(render_line) {
     src_data->StructUpdate(true);
@@ -830,8 +830,8 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
 //   cout << "Precision / Positive Prediction Value = TP/(TP+FP) = " << precision << "\n";
 //   cout << "Specificity / True Negative Rate (TNR) = TN/(TN+FP) = " << tn / (tn+fp) << "\n";
 //   cout << "False Positive Rate (FPR) = FP/(FP+TN) = " << fpr << "\n";
-  cout << "ROC Accuracy = 1-SQRT[FPR^2 + (TPR-1)^2] = " << roc_acc << "\n";
-  taMisc::FlushConsole();
+
+  taMisc::Info("ROC Accuracy = 1-SQRT[FPR^2 + (TPR-1)^2] = ", String(roc_acc));
 
   dest_data->Reset();
 //   dest_data->NewColFmMatrix(c_mat, "ConfusionMatrix");
@@ -1494,13 +1494,21 @@ bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
 
   float_Matrix xevec(false);		// x eigen vector
   taMath_float::mat_col(&xevec, &eigen_vecs, x_axis_c); // eigen vector = column 
-  cerr << "Component no: " << x_axis_c << " has eigenvalue: "
-       << eigen_vals.FastEl(x_axis_c) << endl;
+  {
+    String msg;
+    msg << "Component no: " << x_axis_c << " has eigenvalue: "
+	<< eigen_vals.FastEl(x_axis_c);
+    taMisc::Info(msg);
+  }
 
   float_Matrix yevec(false);		// x eigen vector
   taMath_float::mat_col(&yevec, &eigen_vecs, y_axis_c); // eigen vector = column 
-  cerr << "Component no: " << y_axis_c << " has eigenvalue: "
-       << eigen_vals.FastEl(y_axis_c) << endl;
+  {
+    String msg;
+    msg << "Component no: " << y_axis_c << " has eigenvalue: "
+	<< eigen_vals.FastEl(y_axis_c);
+    taMisc::Info(msg);
+  }
 
   float_Matrix xprjn(false);
   taMath_float::mat_prjn(&xprjn, (float_Matrix*)da->AR(), &xevec);

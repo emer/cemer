@@ -719,7 +719,6 @@ ALSO: need to probably revise the scheme for reordering -- maybe user
     }
     dcs->setDataCol(dc, first);
   }
-//   cerr << "data spec cols updated: " << cols->size << " " << colViewCount() << endl;
 }
 
 void DataTableView::BuildAll() {
@@ -848,7 +847,6 @@ void GridColView::CopyFromView(GridColView* cp){
 }
 
 void GridColView::Destroy() {
-//   cerr << "grid col nuking" << endl;
 }
 
 void GridColView::UpdateAfterEdit_impl() {
@@ -1283,8 +1281,6 @@ void GridTableView::CalcViewMetrics() {
     head_height = per_raw;
     row_height = row_height_raw * per_raw;
   }
-
-//   cerr << "rhr: " << row_height_raw << " tot: " << tot_ht_raw << " rh: " << row_height << endl;
 
   // finally: compute font scale for entire display.  this is the minimum size based
   // on row/col constraints (units are 1 char, so that should be easy):
@@ -1951,7 +1947,6 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
                            nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
-//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate translation by current rotation
   trans[0] *= nv->main_xform.scale.x;
   trans[1] *= nv->main_xform.scale.y;
@@ -1960,7 +1955,6 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   nv->main_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
@@ -1968,7 +1962,6 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f axis;
   float angle;
   dragger->rotation.getValue(axis, angle);
-//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
     SbRotation rot;
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
@@ -2001,7 +1994,6 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
   SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
   SoMouseButtonEvent::Button but = mouseevent->getButton();
   if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases
-//   cerr << "but: " << but << endl;
   bool left_but = false;        // assume other button -- don't really care what it is
   if(but == SoMouseButtonEvent::BUTTON1)
     left_but = true;
@@ -2018,16 +2010,13 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
       if(!pp) continue;
       SoNode* pobj = pp->getPath()->getNodeFromTail(1);
       if(!pobj) continue;
-//       cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
       if(!pobj->isOfType(SoMatrixGrid::getClassTypeId())) {
-//      cerr << "not SoMatrixGrid!" << endl;
         continue;
       }
       SoMatrixGrid* mtxg = (SoMatrixGrid*)pobj;
       DataCol* dcol = (DataCol*)mtxg->user_data;
       taMatrix* matrix = mtxg->matrix;
       SbVec3f pt = pp->getObjectPoint(pobj);
-//       cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
 
       int geom_x, geom_y;
       matrix->geom.Get2DGeomGui(geom_x, geom_y, mtxg->odd_y, 1);
@@ -2035,7 +2024,6 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
 //      float cl_y = 1.0f / (float)geom_y;
       int xp = (int)((pt[0] * geom_x));
       int yp = (int)((pt[1] * geom_y));
-//       cerr << xp << ", " << yp << endl;
 
       float val_to_set = 0.0f;
       if(tgv->click_vals) {
@@ -2073,7 +2061,6 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
 
         int oxp = xp / (xmax+1);        int oyp = yp / (ymax+1);
         int ixp = xp % (xmax+1);        int iyp = yp % (ymax+1);
-//      cerr << "4d: " << ixp << ", " << iyp << ", " << oxp << ", " << oyp << endl;
 
         int iyeff = iyp;  int oyeff = oyp;
         if(mtxg->mat_layout != SoMatrixGrid::BOT_ZERO) {
@@ -2620,7 +2607,6 @@ void GraphColView::Initialize(){
 }
 
 void GraphColView::Destroy() {
-//   cerr << "grid col nuking" << endl;
 }
 
 void GraphColView::InitLinks() {
@@ -2711,10 +2697,8 @@ void GraphAxisBase::UpdateFmColLookup() {
       gcv->fixed_range = fixed_range;
     }
     col_name = col_lookup->GetName();
-//     cerr << "updated fm col: " << col_name << endl;
     fixed_range = col_lookup->fixed_range;           // get range from that guy
     if(taBase::GetRefn(col_lookup) <= 1) {
-//       cerr << "oops: refn <= 1" << endl;
     }
     else {
       taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
@@ -2786,7 +2770,6 @@ bool GraphAxisBase::UpdateRange_impl(float first, float last) {
   data_range.UpdateRange(last);
 
   if(((first >= range.min) && (last <= range.max)) && (range.Range() >= range_min_limit)) { // special case
-//     cerr << "not changing range: " << first << ", " << last << " rng: " << range.min << ", " << range.max << endl;
     return false;                       // not changed
   }
 
@@ -2815,8 +2798,6 @@ bool GraphAxisBase::UpdateRange_impl(float first, float last) {
   double inc = nicenum((rng / (double)n_ticks), true);
   double newmin = floor(first / inc) * inc;
   double newmax = ceil(last / inc) * inc;
-
-//   cerr << "rng: " << rng << ", inc: " << inc << ", newmin: " << newmin << ", newmax: " << newmax << endl;
 
   range.Set(newmin, newmax);
   fixed_range.FixRange(range);
@@ -3703,9 +3684,7 @@ void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
       if(!pp) continue;
       SoNode* pobj = pp->getPath()->getNodeFromTail(2);
       if(!pobj) continue;
-      //   cerr << "obj typ: " << pobj->getTypeId().getName() << endl;
       if(!pobj->isOfType(T3GraphLine::getClassTypeId())) {
-        //     cerr << "not graph line!" << endl;
         continue;
       }
       GraphAxisBase* gab = static_cast<GraphAxisBase*>(((T3GraphLine*)pobj)->dataView());
@@ -3714,7 +3693,6 @@ void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
       GraphPlotView* gpv = (GraphPlotView*)gab;
       if(!gpv->eff_y_axis) continue;
       SbVec3f pt = pp->getObjectPoint(pobj);
-//       cerr << "got: " << pt[0] << " " << pt[1] << " " << pt[2] << endl;
       if(pt[1] == 0.0f && pt[2] == 0.0f) continue; // indicates an axis caption line!
       float xv = tgv->x_axis.range.Project(pt[0] / tgv->width);
       float yv = gpv->eff_y_axis->range.Project(pt[1]);
@@ -5103,7 +5081,6 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
                            nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
 
   SbVec3f trans = dragger->translation.getValue();
-//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate translation by current rotation
   trans[0] *= nv->main_xform.scale.x;
   trans[1] *= nv->main_xform.scale.y;
@@ -5112,7 +5089,6 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   nv->main_xform.translate += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   nv->main_xform.scale *= sc;
@@ -5120,7 +5096,6 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f axis;
   float angle;
   dragger->rotation.getValue(axis, angle);
-//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
     SbRotation rot;
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
@@ -5450,8 +5425,6 @@ void iGraphTableView_Panel::InitPanel_impl() {
 
 void iGraphTableView_Panel::UpdatePanel_impl() {
   inherited::UpdatePanel_impl();
-
-  //   cerr << "panel update" << endl;
 
   GraphTableView* glv = this->glv(); //cache
   if (!glv) return; // probably destructing

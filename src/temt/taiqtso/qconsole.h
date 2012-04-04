@@ -18,12 +18,13 @@
 #ifndef QCONSOLE_H
 #define QCONSOLE_H
 
-// note: need config.h for HAVE_QT_CONSOLE
 #include "config.h"
 #include "taiqtso_def.h"
 
-#ifdef HAVE_QT_CONSOLE
+#ifndef TA_OS_WIN
 #include "interceptor.h"
+#endif
+
 #include <qstringlist.h>
 #include <qtextedit.h>
 #include <QMouseEvent>
@@ -49,9 +50,11 @@ public:
   virtual int loadScript(QString fileName); // load script and execute commands -- returns 0 on success, -1 on failure
   virtual int setStdLogfile(QString fileName);
   // log stdout and stderr to given log file name, as they come in -- useful for debugging if app itself crashes/goes to the debugger and you can't scroll the console! -- returns 0 on success, -1 on failure
-  virtual void flushOutput(bool wait_for_pager = false);
-  // flush cout & cerr output.  if wait_for_pager, then wait until user has paged through
-  // everything in the buffer
+  virtual void flushOutput();
+  // flush cout & cerr output to display -- runs ProcessEvents if anything is being output, to make sure it shows up, and if in paging mode, it waits until user has paged through everything in the buffer
+
+  virtual void outputLine(QString line, bool err = false);
+  // append one line of text, marked as an error or not 
 
   // cosmetic methods
   virtual void setCmdColor(QColor c) {cmdColor = c;};
@@ -62,6 +65,9 @@ public:
   virtual void setFontNameSize(QString fnm, int sz);
   virtual void setPager(bool pager);
   // determines whether to use a pager mechanism to control the flow of text through the console (as in the unix more command)
+
+  virtual int	queryForKeyResponse(QString query);
+  // does a flushOutput, then displays the prompt and waits for a keyboard response, which is returned as an int value
 
 using inherited::setMinimumSize;
 using inherited::minimumSize;
@@ -103,15 +109,20 @@ protected:
 
   virtual void getDisplayGeom();
 
-  virtual void displayPrompt(bool force = false); // displays the prompt, force = definitely do so
-  virtual void	gotoPrompt(QTextCursor& cursor);		// set position to just after prompt (moves anchor)
-  virtual void	gotoEnd(QTextCursor& cursor, bool select=true); // set position to end (and select text or not)
+  virtual void displayPrompt(bool force = false);
+  // displays the prompt, force = definitely do so
+  virtual void	gotoPrompt(QTextCursor& cursor);
+  // set position to just after prompt (moves anchor)
+  virtual void	gotoEnd(QTextCursor& cursor, bool select=true);
+  // set position to end (and select text or not)
+  virtual void	gotoEnd();
+  // set position to end without selecting text, without using existing cursor
   virtual bool	scrolledToEnd(); // check if display is scrolled to the end
   virtual QString getCurrentCommand();			     // get text after prompt
   virtual void replaceCurrentCommand(QString newCommand);    // Replace current command with a new one
   virtual bool cursorInCurrentCommand();	// cursor is in the current command editing zone    
   virtual bool stdDisplay(QTextStream *s);
-  // displays redirected stdout/stderr: return true if waiting for pager
+  // displays redirected stdout/stderr: return true for noPaging mode if anything was output, and if in paging mode returns true if user is waiting for more stuff
 
   //protected attributes
 protected:
@@ -126,14 +137,19 @@ protected:
   bool quitPager;		// quit pager until next time
   bool contPager;		// continue pager until next time
   bool promptDisp;		// just displayed the prompt -- no output in between
+  bool waiting_for_key;		// in promptForKeyResponse -- waiting for keypress -- this gets turned off when response is made
+  int key_response;		// key response made in promptForKeyResponse
   int promptLength;		// cached prompt length
   QString prompt;		// The prompt string
   QStringList history;	// The commands history
   QStringList recordedScript; // commands that have succeeded
   int historyIndex; // Current history index (needed because afaik QStringList does not have such an index)
   QFile	logfile;    // log std out/err msgs to this file if open
+
+#ifndef TA_OS_WIN
   Interceptor *stdoutInterceptor; // Stdout interceptor
   Interceptor *stderrInterceptor; // Stderr interceptor
+#endif
 
   // Redefined virtual slots
 private slots:
@@ -146,5 +162,4 @@ signals:
   void receivedNewStdin(int n_lines);
 };
 
-#endif //HAVE_QT_CONSOLE
 #endif

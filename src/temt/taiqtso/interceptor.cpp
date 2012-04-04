@@ -7,7 +7,6 @@
 
 #include "interceptor.h"
 
-#ifdef HAVE_QT_CONSOLE
 #ifdef TA_OS_WIN
 # include <io.h>
 #else
@@ -106,4 +105,3 @@ void Interceptor::finish()
     ::close(m_origFdCopy); // close the copy as it's redundant now
     ::close(m_pipeFd[0]);  // close the reading end of the pipe
 }
-#endif // HAVE_QT_CONSOLE

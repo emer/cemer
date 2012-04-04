@@ -35,9 +35,7 @@
 # include "colorscale.h"
 # include "css_qt.h"
 # include "t3node_so.h"
-# ifdef HAVE_QT_CONSOLE
-#   include "css_qtconsole.h"
-# endif
+# include "css_qtconsole.h"
 # include <QApplication>
 # include <QDesktopServices>
 # include <QFileDialog>
@@ -754,9 +752,10 @@ bool taUndoMgr::Undo() {
     if(first_undo) --cur_undo_idx;      // need an extra because of extra saveundo.
     return false;
   }
-  cout << "Undoing action: " << urec->action << " on: " << urec->mod_obj_name
-       << " at path: " << urec->mod_obj_path << endl;
-  taMisc::FlushConsole();
+  String msg;
+  msg << "Undoing action: " << urec->action << " on: " << urec->mod_obj_name
+      << " at path: " << urec->mod_obj_path;
+  taMisc::Info(msg);
 
   bool rval = LoadFromRec_impl(urec);
   if(rval) {
@@ -818,9 +817,10 @@ bool taUndoMgr::Redo() {
     ++cur_undo_idx;             // need to skip past to get to other levels that might work..
     return false;
   }
-  cout << "Redoing action: " << urec->action << " on: " << urec->mod_obj_name
-       << " at path: " << urec->mod_obj_path << endl;
-  taMisc::FlushConsole();
+  String msg;
+  msg << "Redoing action: " << urec->action << " on: " << urec->mod_obj_name
+      << " at path: " << urec->mod_obj_path;
+  taMisc::Info(msg);
 
   bool rval = LoadFromRec_impl(urec);
   if(rval) {
@@ -838,8 +838,11 @@ int taUndoMgr::RedosAvail() {
 }
 
 void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
-  cout << "Total Undo records: " << undo_recs.length << " cur_undo_idx: " << cur_undo_idx << endl;
-  taMisc::FlushConsole();
+  {
+    String msg;
+    msg << "Total Undo records: " << undo_recs.length << " cur_undo_idx: " << cur_undo_idx;
+    taMisc::Info(msg);
+  }
   int tot_size = 0;
   int tot_diff_lines = 0;
   for(int i=undo_recs.length-1; i>=0; i--) {
@@ -852,18 +855,19 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
       tot_diff_lines += dif_lns;
     }
     if(show_list) {
-      cout << "  " << taMisc::LeadingZeros(i, 2) << " size: " << urec->save_data.length()
-           << " diffs: " << dif_lns
-           << " action: " << urec->action << " on: " << urec->mod_obj_name
-           << " at path: " << urec->mod_obj_path << endl;
-      taMisc::FlushConsole();
+      String msg;
+      msg << "  " << taMisc::LeadingZeros(i, 2) << " size: " << urec->save_data.length()
+	  << " diffs: " << dif_lns
+	  << " action: " << urec->action << " on: " << urec->mod_obj_name
+	  << " at path: " << urec->mod_obj_path;
+      taMisc::Info(msg);
       if(show_diffs && (bool)urec->diff_src && urec->save_data.empty()) {
+	String msg;
         String diffstr = urec->diff_edits.GetDiffStr(urec->diff_src->save_data);
         for(int j=0; j<diffstr.length(); j++) {
-          cout << diffstr[j];
-          if(diffstr[j] == '\n')
-            taMisc::FlushConsole();
+          msg << diffstr[j];
         }
+	taMisc::ConsoleOutput(msg, false, false);
       }
     }
   }
@@ -874,11 +878,14 @@ void taUndoMgr::ReportStats(bool show_list, bool show_diffs) {
     tot_saved += urec->save_data.length();
   }
 
-  cout << "Undo memory usage: small Edit saves: " << tot_size
-       << " full proj saves: " << tot_saved
-       << " in: " << undo_srcs.length << " recs, "
-       << " diff lines: " << tot_diff_lines << endl;
-  taMisc::FlushConsole();
+  {
+    String msg;
+    msg << "Undo memory usage: small Edit saves: " << tot_size
+	<< " full proj saves: " << tot_saved
+	<< " in: " << undo_srcs.length << " recs, "
+	<< " diff lines: " << tot_diff_lines;
+    taMisc::Info(msg);
+  }
 }
 
 //////////////////////////
@@ -1670,7 +1677,7 @@ void taProject::Dump_Load_post() {
   OpenProjectLog();
   DoView();
   setDirty(false);              // nobody should start off dirty!
-  if(!cssMisc::init_interactive) {
+  if(!taMisc::interactive) {
     bool startup_run = programs.RunStartupProgs();      // run startups now..
     if(!taMisc::gui_active && startup_run) taiMC_->Quit();
   }
@@ -2197,7 +2204,6 @@ void taProject::SaveRecoverFile() {
     tabMisc::root->Save();
   }
 
-#ifdef HAVE_QT_CONSOLE
   // now try to save console
   if(saved) {
    if(cssMisc::TopShell->console_type == taMisc::CT_GUI) {
@@ -2209,7 +2215,6 @@ void taProject::SaveRecoverFile() {
         qcons->saveContents(cfnm);
     }
   }
-#endif
 }
 
 bool taProject::AutoSave(bool force) {
@@ -2789,7 +2794,7 @@ void taRootBase::About() {
  Note that the taString class was derived from the GNU String class\n\
  Copyright (C) 1988 Free Software Foundation, written by Doug Lea, and\n\
  is covered by the GNU General Public License, see ta_string.h\n";
-  if(cssMisc::init_interactive)
+  if(taMisc::interactive)
     taMisc::Choice(info, "Ok");
   else
     taMisc::Info(info);
@@ -3007,15 +3012,15 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("CssCode", "\
  <scriptcode> Specifies css script code to be executed upon startup");
 
-  taMisc::AddArgName("-i", "CssInteractive");
-  taMisc::AddArgName("--interactive", "CssInteractive");
-  taMisc::AddArgNameDesc("CssInteractive", "\
- -- Specifies that the css console should remain active after running a css script file upon startup");
+  taMisc::AddArgName("-i", "Interactive");
+  taMisc::AddArgName("--interactive", "Interactive");
+  taMisc::AddArgNameDesc("Interactive", "\
+ -- Specifies that the console should remain active after running a css script file upon startup (default is otherwise to be non-interactive), quitting after scripts complete");
 
-  taMisc::AddArgName("-ni", "CssNonInteractive");
-  taMisc::AddArgName("--non-interactive", "CssNonInteractive");
-  taMisc::AddArgNameDesc("CssNonInteractive", "\
- -- Specifies that the css console should NOT be activated at all during running (e.g., if a STARTUP_RUN program is present that will run and then quit out)");
+  taMisc::AddArgName("-ni", "NonInteractive");
+  taMisc::AddArgName("--non-interactive", "NonInteractive");
+  taMisc::AddArgNameDesc("NonInteractive", "\
+ -- Specifies that the console should NOT be activated at all during running and no prompts will be made of the user -- only useful if a STARTUP_RUN program is present that will run and then quit when done -- use this for running in the background)");
 
   taMisc::AddArgName("-u", "UserDir");
   taMisc::AddArgName("--user_dir", "UserDir");
@@ -3162,12 +3167,14 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
   taMisc::use_gui = false;
 #endif
 
+  taMisc::interactive = true;	// default to true
+
   // process gui flag right away -- has other implications
   if(taMisc::CheckArgByName("GenDoc") || taMisc::CheckArgByName("Version")
      || taMisc::CheckArgByName("Help")) {
     taMisc::use_plugins = false;                      // no need for plugins for these..
     taMisc::use_gui = false;
-    cssMisc::init_interactive = false;
+    taMisc::interactive = false;
   }
 
   if(taMisc::CheckArgByName("MakeAllUserPlugins")
@@ -3181,23 +3188,37 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
      || taMisc::CheckArgByName("MakeSystemPlugin")) { // auto nogui by default
     taMisc::use_plugins = false;                      // don't use if making
     taMisc::use_gui = false;
-    cssMisc::init_interactive = false;
+    taMisc::interactive = false;
+  }
+
+  if(taMisc::CheckArgByName("CssScript") || taMisc::CheckArgByName("CssCode")) {
+    // if code specified, default is then to not run in interactive mode
+    taMisc::interactive = false;
   }
 
   if(taMisc::CheckArgByName("ListAllPlugins")
      || taMisc::CheckArgByName("EnableAllPlugins")) {
     taMisc::use_gui = false;
-    cssMisc::init_interactive = false;
+    taMisc::interactive = false;
   }
 
   if(taMisc::CheckArgByName("NoPlugins"))
     taMisc::use_plugins = false;                      // don't use if making
 
   // need to use Init_Args and entire system because sometimes flags get munged together
-  if(taMisc::CheckArgByName("NoGui"))
+  if(taMisc::CheckArgByName("NoGui")) {
     taMisc::use_gui = false;
-  else if(taMisc::CheckArgByName("Gui"))
+  }
+  else if(taMisc::CheckArgByName("Gui")) {
     taMisc::use_gui = true;
+  }
+
+  if(taMisc::CheckArgByName("NonInteractive")) {
+    taMisc::interactive = false;
+  }
+  else if(taMisc::CheckArgByName("Interactive")) {
+    taMisc::interactive = true;
+  }
 
   if(taMisc::CheckArgByName("NoWin"))
     taMisc::gui_no_win = true;
@@ -3893,7 +3914,7 @@ bool taRootBase::Startup_ConsoleType() {
 
   // note: is_batch could be extended to include "headless" cmd line invocation
   //   it would also include contexts such as piping or other stdin/out redirects
-  bool is_batch = !cssMisc::init_interactive;
+  bool is_batch = !taMisc::interactive;
 #ifdef DMEM_COMPILE
   if(taMisc::gui_active) {
     if((taMisc::dmem_nprocs > 1) && (taMisc::dmem_proc > 0)) // non-first procs batch
@@ -3907,22 +3928,17 @@ bool taRootBase::Startup_ConsoleType() {
 
   if (is_batch) {
     console_type = taMisc::CT_NONE;
-    console_options &= ~(taMisc::CO_USE_PAGING_GUI | taMisc::CO_USE_PAGING_NOGUI); // damn well better not use paging!!!
-  } else if (taMisc::gui_active) {
-#ifdef HAVE_QT_CONSOLE
+  }
+  else if (taMisc::gui_active) {
     if (!((console_type == taMisc::CT_OS_SHELL) ||
          (console_type == taMisc::CT_GUI) ||
-         (console_type == taMisc::CT_NONE))
-    ) console_type = taMisc::CT_GUI;
-#else
+         (console_type == taMisc::CT_NONE)))
+      console_type = taMisc::CT_GUI;
+  }
+  else { // not a gui context, can only use a non-gui console
     if (!((console_type == taMisc::CT_OS_SHELL) ||
-         (console_type == taMisc::CT_NONE))
-    ) console_type = taMisc::CT_OS_SHELL;
-#endif
-  } else { // not a gui context, can only use a non-gui console
-    if (!((console_type == taMisc::CT_OS_SHELL) ||
-         (console_type == taMisc::CT_NONE))
-    ) console_type = taMisc::CT_OS_SHELL;
+         (console_type == taMisc::CT_NONE)))
+      console_type = taMisc::CT_OS_SHELL;
   }
   return true; // always works
 }
@@ -4002,7 +4018,6 @@ void taRootBase::WindowShowHook() {
 }
 
 bool taRootBase::Startup_Console() {
-#ifdef HAVE_QT_CONSOLE
   if(taMisc::gui_active && (console_type == taMisc::CT_GUI)) {
     //note: nothing else to do here for gui_dockable
     QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
@@ -4026,14 +4041,12 @@ bool taRootBase::Startup_Console() {
       }
     }
   }
-#endif
   cssMisc::TopShell->StartupShellInit(cin, cout, console_type);
 
   return true;
 }
 
 void taRootBase::ConsoleNewStdin(int n_lines) {
-#ifdef HAVE_QT_CONSOLE
   if(!taMisc::gui_active || (console_type != taMisc::CT_GUI)) return;
   if(taMisc::console_win) {
     QApplication::alert(taMisc::console_win);
@@ -4045,7 +4058,6 @@ void taRootBase::ConsoleNewStdin(int n_lines) {
       QApplication::alert(db->widget());
     }
   }
-#endif
 }
 
 
@@ -4138,7 +4150,7 @@ bool taRootBase::Startup_ProcessArgs() {
 
 bool taRootBase::Startup_RunStartupScript() {
   bool ran = cssMisc::TopShell->RunStartupScript();
-  if(ran && !taMisc::gui_active && !cssMisc::init_interactive)
+  if(ran && !taMisc::gui_active && !taMisc::interactive)
     taiMC_->Quit();
   return true;
 }
@@ -4242,7 +4254,7 @@ bool taRootBase::Startup_Run() {
   // first thing to do upon entering event loop:
   QTimer::singleShot(0, root_adapter, SLOT(Startup_ProcessArgs()));
 
-  if (taMisc::gui_active || cssMisc::init_interactive) {
+  if (taMisc::gui_active || taMisc::interactive) {
     // next thing is to start the console if interactive
     if (console_type == taMisc::CT_NONE) {
       QTimer::singleShot(0, cssMisc::TopShell, SLOT(Shell_NoConsole_Run()));
@@ -4295,7 +4307,7 @@ void taRootBase::Cleanup_Main() {
 
 #ifndef TA_OS_WIN
   // only if using readline-based console, reset tty state
-  if((console_type == taMisc::CT_NONE) && (taMisc::gui_active || cssMisc::init_interactive)) {
+  if((console_type == taMisc::CT_NONE) && (taMisc::gui_active || taMisc::interactive)) {
     rl_free_line_state();
     rl_cleanup_after_signal();
   }
@@ -4313,8 +4325,9 @@ bool taRootBase::Run_GuiDMem() {
     taiMC_->Exec();  // normal run..
     DMemShare::CloseCmdStream();
     cerr << "proc: 0 quitting!" << endl;
-  } else { // slave dmems
-    cssMisc::init_interactive = false; // don't stay in startup shell
+  }
+  else { // slave dmems
+    taMisc::interactive = false; // don't stay in startup shell
     QTimer::singleShot(0, root_adapter, SLOT(DMem_SubEventLoop()));
     taiMC_->Exec();  // event loop
     cerr << "proc: " << taMisc::dmem_proc << " quitting!" << endl;

@@ -2918,16 +2918,12 @@ float SoScrollBar::getPos() {
   int range = maximum_ - minimum_;
   float scrng = ((float)range + (float)pageStep_); // scrollable range
   float pos = (float)value_ / scrng;
-//   cerr << "getpos: val: " << value_ << " range: " << range << " ps: " << pageStep_
-//        << " pos: " << pos << endl;
   return pos;
 }
 
 int SoScrollBar::getValFmPos(float pos) {
   int range = maximum_ - minimum_;
   float val = pos * (float)(range + pageStep_); // scrollable range
-//   cerr << "getval val: " << val << " range: " << range << " ps: " << pageStep_
-//        << " pos: " << pos << endl;
   if(val < 0.0f) val -= .5f;	// effect rounding
   else		 val += .5f;
   return (int)val;
@@ -2943,8 +2939,6 @@ void SoScrollBar::repositionSlider() {
   fixValues();
   float slsz = sliderSize();
   slider_->height = slsz;
-  //  pos_->translation.setValue(getPos() - slsz, 0.0f, 0.0f);
-//   cerr << "slsz: " << slsz << endl;
   pos_->translation.setValue(getPos()-.5f + .5f * slsz, 0.0f, 0.0f);
 }
 
@@ -3013,9 +3007,6 @@ void SoScrollBar::DraggingCB(SoTranslate1Dragger* dragger) {
   value_ = nw_val;
   fixValues();
   int delta_val = value_ - start_val_;
-//   cerr << "trans: " << trans[0] << " incr: " << incr
-//        << " nw_val: " << nw_val
-//        << endl;
   if(nw_val < minimum_ || nw_val > maximum_) {
     int range = maximum_ - minimum_;
     float nw_pos = (float)delta_val / ((float)range + (float)pageStep_);
@@ -3030,8 +3021,6 @@ void SoScrollBar::DragFinishCB(SoTranslate1Dragger* dragger) {
   SbVec3f trans = dragger->translation.getValue();
 
   int incr = getValFmPos(trans[0]);
-
-//   cerr << "finish trans: " << trans[0] << " incr: " << incr << endl;
 
   value_ = start_val_ + incr;
   fixValues();

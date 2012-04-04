@@ -582,7 +582,7 @@ void cssTA_Base::PtrAssignNull() {
 void cssTA_Base::operator=(void* cp) {
 // these are very bad because of the ref counting but we just have to assume the pointer is a taBase*!
 #ifdef DEBUG
-  cerr << "debug note: using cssTA_Base::operator=(void* cp) -- not a good idea so please change to use taBase* version!" << endl;
+  taMisc::Warning("debug note: using cssTA_Base::operator=(void* cp) -- not a good idea so please change to use taBase* version!");
 #endif
   *this = (taBase*)cp;		// just call taBase* version anyway
 }
@@ -590,7 +590,7 @@ void cssTA_Base::operator=(void* cp) {
 void cssTA_Base::operator=(void** cp) {
 // these are very bad because of the ref counting but we just have to assume the pointer is a taBase*!
 #ifdef DEBUG
-  cerr << "debug note: using cssTA_Base::operator=(void** cp) -- not a good idea so please change to use taBase** version!" << endl;
+  taMisc::Warning("debug note: using cssTA_Base::operator=(void** cp) -- not a good idea so please change to use taBase** version!");
 #endif
   *this = (taBase**)cp;		// just call taBase* version anyway
 }
@@ -1128,15 +1128,23 @@ cssIOS::operator stringstream**() const {
 cssEl* cssIOS::operator<<(cssEl& s) {
   if(type_def->InheritsFrom(&TA_ostream) || type_def->InheritsFrom(&TA_iostream)) {
     ostream* strm = (ostream*)*this;
-    if(strm) {
+    if(strm == &cout || strm == &cerr) {
+      String str;
+      if(s.GetType() == T_Int)
+	str << (Int) s;
+      else if(s.GetType() == T_Real)
+	str << (Real) s;
+      else
+	str << (const char*)s;
+      taMisc::ConsoleOutputChars(str); // use console output!
+    }
+    else if(strm) {
       if(s.GetType() == T_Int)
 	*strm << (Int) s;
       else if(s.GetType() == T_Real)
 	*strm << (Real) s;
       else
 	*strm << (const char*)s;
-      // this makes too many linebreaks:
-//       taMisc::FlushConsole();
     }
     return this;
   }

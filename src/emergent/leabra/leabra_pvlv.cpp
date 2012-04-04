@@ -104,7 +104,6 @@ void PViLayerSpec::HelpConfig() {
  - Sending cons to Da/SNc layers\
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
   inherited::HelpConfig();
 }
@@ -329,7 +328,6 @@ void PVrLayerSpec::HelpConfig() {
  - Sending cons to Da/SNc layers\
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
   inherited::HelpConfig();
 }
@@ -484,7 +482,6 @@ void LVeLayerSpec::HelpConfig() {
  - Sending cons to Da/SNc layers\
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
   inherited::HelpConfig();
 }
@@ -728,7 +725,6 @@ void NVLayerSpec::HelpConfig() {
  - Sending cons to Da/SNc layers\
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
   inherited::HelpConfig();
 }
@@ -896,7 +892,6 @@ void PVLVDaLayerSpec::HelpConfig() {
  - This layer must be after recv layers in list of layers\n\
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative da = negative activation signal here";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 
@@ -1097,7 +1092,6 @@ void PVLVTonicDaLayerSpec::HelpConfig() {
  - This layer must be after recv layers in list of layers\n\
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative da = negative activation signal here";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 

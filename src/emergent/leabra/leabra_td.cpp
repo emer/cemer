@@ -130,7 +130,6 @@ void ExtRewLayerSpec::HelpConfig() {
  - This layer must be before layers that depend on it in list of layers\n\
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
   inherited::HelpConfig();
 }
@@ -448,7 +447,6 @@ void TDRewPredLayerSpec::HelpConfig() {
  \nTDRewPredLayerSpec Configuration:\n\
  - All units I recv from must be LeabraTdUnit/Spec units (to hold t-1 act vals)\n\
  - Sending connection to a TDRewIntegLayerSpec to integrate predictions with external rewards";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
   inherited::HelpConfig();
 }
@@ -631,7 +629,6 @@ void TDRewIntegLayerSpec::HelpConfig() {
  - This layer must be before  TdLayerSpec layer in list of layers\n\
  \n(After pressing OK here, you will see information for configuring the ScalarValLayerSpec\
  which this layer is based on)";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
   inherited::HelpConfig();
 }
@@ -787,7 +784,6 @@ void TdLayerSpec::HelpConfig() {
      (td signal from this layer put directly into td var on units)\n\
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative td = negative activation signal here";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 

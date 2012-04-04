@@ -656,9 +656,6 @@ void SelectEdit::DataChanged_Ref(taBase_RefList* src, taBase* ta,
   // simplest, is to just issue our own DataChanged
   if(dcr < DCR_UPDATE_VIEWS)
     DataChanged(DCR_ITEM_UPDATED);
-  // for debugging: always DCR_UPDATE_VIEWS..
-//   else
-//     cerr << "sele dcr ignored: " << dcr << endl;
 }
 
 void SelectEdit::DataChanged_Group(taGroup_impl* grp,

@@ -218,7 +218,7 @@ void taiMisc::Busy_(bool busy) {
       RestoreWinCursors(); //added 4.0
     }
     if (busy_count < 0) {
-      cerr << "Warning: taiMisc::DoneBusy() called more times than Busy()\n";
+      taMisc::Warning("taiMisc::DoneBusy() called more times than Busy()");
       busy_count = 0;
     }
   }

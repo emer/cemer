@@ -118,7 +118,6 @@ void SNcLayerSpec::HelpConfig() {
  - This layer must be after recv layers in list of layers\n\
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative da = negative activation signal here";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 
@@ -277,7 +276,6 @@ void SNrThalLayerSpec::HelpConfig() {
      (da signal from this layer put directly into da var on units)\n\
  - UnitSpec for this layer must have act_range and clamp_range set to -1 and 1 \
      (because negative da = negative activation signal here";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 
@@ -793,7 +791,6 @@ void MatrixLayerSpec::HelpConfig() {
  on the matrix units.\n\
  - This layer must be after DaLayers in list of layers\n\
  - Units must be organized into groups (stipes) of same number as PFC";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 
@@ -1347,7 +1344,6 @@ void PFCLayerSpec::HelpConfig() {
  - Units must recv MarkerConSpec from SNrThalLayerSpec layer for gating\n\
  - This layer must be after SNrThalLayerSpec layer in list of layers\n\
  - Units must be organized into groups corresponding to the matrix groups (stripes).";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 
@@ -1838,7 +1834,6 @@ void PFCOutLayerSpec::HelpConfig() {
  - This layer must be after SNrThalLayerSpec layer in list of layers\n\
  - This layer must be after PFCLayerSpec layer in list of layers\n\
  - Units must be organized into groups corresponding to the matrix groups (stripes).";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 

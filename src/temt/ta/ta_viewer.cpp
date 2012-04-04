@@ -24,9 +24,7 @@
 # include "ta_qtviewer.h"
 # include "t3viewer.h"
 # include "ta_qtclassbrowse.h"
-# ifdef HAVE_QT_CONSOLE
-#   include "css_qtconsole.h"
-# endif
+# include "css_qtconsole.h"
 # include <QApplication>
 # include <QPrintDialog>
 # include <QPrinter>
@@ -206,7 +204,9 @@ bool DataViewer::SaveImageAs(const String& fname, ImageFormat img_fmt) {
         quality = 0;
       }
       pix.save(flr->FileName(), ext, quality);
-      cerr << "Saving image of size: " << pix.width() << " x " << pix.height() << " depth: " << pix.depth() << " to: " << flr->FileName() << endl;
+      String msg;
+      msg << "Saving image of size: " << pix.width() << " x " << pix.height() << " depth: " << pix.depth() << " to: " << flr->FileName();
+      taMisc::Info(msg);
     }
   }
   flr->Close();
@@ -702,11 +702,8 @@ IDataViewWidget* ConsoleDockViewer::ConstrWidget_impl(QWidget* gui_parent) {
   sa->setWidgetResizable(true);
   dv->setWidget(sa);
 //TODO: enable  this for the generic Q&D console, and modalize for QcssConsole
-
-#if (defined(HAVE_QT_CONSOLE))
   QcssConsole* con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
   sa->setWidget((QWidget*)con);
-#endif
   return dv;
 }
 

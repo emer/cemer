@@ -35,15 +35,6 @@ ENDIF (ODE_FOUND)
 # this is passed to moc calls
 set(MOC_DEFINES "")
 
-# qt console is being debugged for windows -- still not an option in the gui
-# note: due to moc not getting command-line -D commands, need to put this in config.h
-# and just include that in the relevant files.
-#IF(WIN32)
-#  set(HAVE_QT_CONSOLE FALSE)
-#ELSE(WIN32)
-  set(HAVE_QT_CONSOLE TRUE)
-#ENDIF(WIN32)
-
 # put debug on the command line, so that config.h is truly general
 IF(CMAKE_BUILD_TYPE MATCHES "Debug") 
   add_definitions(-DDEBUG) 

@@ -129,7 +129,7 @@ void taiSpecMember::GetArbitrateImage(taiData* dat, const void* base) {
   else {
     taiPlusToggle* rval = dynamic_cast<taiPlusToggle*>(dat);
     if(!rval || !rval->data) {
-      cerr << "spec mbr bug: null data in: " << mbr->name << endl;
+      taMisc::Error("spec mbr bug: null data in:", mbr->name);
       return;
     }
     if (HasLowerBidder())
@@ -166,7 +166,7 @@ void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_d
 
   taiPlusToggle* rval = dynamic_cast<taiPlusToggle*>(dat);
   if(!rval || !rval->data) {
-    cerr << "spec mbr bug: null data in: " << mbr->name << endl;
+    taMisc::Error("spec mbr bug: null data in:", mbr->name);
     return;
   }
   if(typ->InheritsFrom(TA_BaseSpec)) {
@@ -183,7 +183,7 @@ void taiSpecMember::GetArbitrateMbrValue(taiData* dat, void* base, bool& first_d
   CmpOrigVal(dat, base, first_diff);
 
   if(!rval->data) {
-    cerr << "spec mbr bug: null data in: " << mbr->name << endl;
+    taMisc::Error("spec mbr bug: null data in:", mbr->name);
     return;
   }
 

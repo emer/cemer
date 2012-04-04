@@ -2526,7 +2526,6 @@ void VEWorld::CollisionCallback(dGeomID o1, dGeomID o2) {
       dJointID c = dJointCreateContact(wid, gid, &cont);
       dJointAttach(c, dGeomGetBody(cont.geom.g1), dGeomGetBody(cont.geom.g2));
     }
-    //    cerr << num_contact << " contacts for objs: " << b1->name << " " << b2->name << endl;
   }
 }
 

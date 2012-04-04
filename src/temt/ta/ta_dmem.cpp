@@ -39,25 +39,31 @@ static String dmem_mpi_decode_err(int ercd) {
 
 void DMemShare::DebugCmd(const char* function, const char* mpi_call) {
   if(taMisc::dmem_debug) {
-    cerr << "proc: " << taMisc::dmem_proc << " fun: "
-	 << function << " MPI_" << mpi_call
-	 << " start..." << endl;
+    String msg;
+    msg << "proc: " << taMisc::dmem_proc << " fun: "
+	<< function << " MPI_" << mpi_call
+	<< " start...";
+    taMisc::Info(msg);
   }
 }
 
 bool DMemShare::ProcErr(int ercd, const char* function, const char* mpi_call) {
   if(ercd == MPI_SUCCESS) {
     if(taMisc::dmem_debug) {
-      cerr << "proc: " << taMisc::dmem_proc << " fun: "
-	   << function << " MPI_" << mpi_call
-	   << " SUCCESS!" << endl;
+      String msg;
+      msg << "proc: " << taMisc::dmem_proc << " fun: "
+	  << function << " MPI_" << mpi_call
+	  << " SUCCESS!";
+      taMisc::Info(msg);
     }
     return true;
   }
-  cerr << "proc: " << taMisc::dmem_proc << " fun: "
-       << function << " MPI_" << mpi_call
-       << " FAILED with code: " << dmem_mpi_decode_err(ercd)
-       << " Now Quitting!" << endl;
+  String msg;
+  msg << "proc: " << taMisc::dmem_proc << " fun: "
+      << function << " MPI_" << mpi_call
+      << " FAILED with code: " << dmem_mpi_decode_err(ercd)
+      << " Now Quitting!";
+  taMisc::Error(msg);
   taiMiscCore::Quit();		// bail on error!
   return false;
 }

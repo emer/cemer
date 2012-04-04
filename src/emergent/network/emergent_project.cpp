@@ -904,7 +904,7 @@ void ProjectBase::Dump_Load_post() {
   }
   AutoBuildNets();
   setDirty(false);              // nobody should start off dirty!
-  if(!cssMisc::init_interactive) {
+  if(!taMisc::interactive) {
     bool startup_run = programs.RunStartupProgs();      // run startups as last step..
     if(!taMisc::gui_active && startup_run) taiMC_->Quit();
   }
@@ -1003,7 +1003,7 @@ void EmergentRoot::About() {
     "The talairach.nii file is from the Talairach Daemon software. "
     "For more information, see http://www.talairach.org\n";
 
-  if(cssMisc::init_interactive)
+  if(taMisc::interactive)
     taMisc::Choice(info, "Ok");
   else
     taMisc::Info(info);

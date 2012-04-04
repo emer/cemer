@@ -112,8 +112,8 @@ public:
 
   virtual void  LoadTable(istream& is);
   // #BUTTON load a lookup table of function values at specific points in n_dims space
-  virtual void  ListTable(ostream& strm = cout);
-  // #BUTTON #ARGC_0 #CONFIRM output the lookup table in text format
+  virtual String&  ListTable(String& strm);
+  // #BUTTON #USE_RVAL output the lookup table in text format
   virtual void  ShiftNorm(float desired_mean);
   // #BUTTON normalize the function values via an additive shift to achieve overall desired mean
   virtual void  MulNorm(float desired_mean);

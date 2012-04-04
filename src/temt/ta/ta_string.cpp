@@ -223,7 +223,7 @@ public:
   static int inst_cnt; // use 1 to avoid check for 0
   static long long tot_size;
   ~Cstring_prof(){
-    cerr << "\nStrRep inst count: " << inst_cnt << "\n avg alloc: " << (tot_size / inst_cnt) << "\n";
+   cerr << "\nStrRep inst count: " << inst_cnt << "\n avg alloc: " << (tot_size / inst_cnt) << "\n";
   }
 };
 int Cstring_prof::inst_cnt = 0; // note: is at least 1, because of static nilstring

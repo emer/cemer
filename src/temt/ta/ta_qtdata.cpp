@@ -141,12 +141,6 @@ void taiData::Destroy() {
   setParent(NULL);
   host = NULL;
   m_rep = NULL;
-//TEMP
-#ifdef DEBUG
-/*if (taMisc::edit_style == taMisc::ES_ACTIVE_CONTROL) {
-  cerr << this->metaObject()->className() << " deleting\n";
-}*/
-#endif
 }
 
 void taiData::applyNow() {
@@ -6451,7 +6445,7 @@ void taiMethodData::GenerateScript() {
     String rscr = tab->GetPathNames() + "." + meth->name + "();";
 #ifdef DMEM_COMPILE
     if(taMisc::dmem_debug)
-      cerr << "proc: " << taMisc::dmem_proc << " recording fun call: " << rscr << endl;
+      taMisc::Info("proc:", String(taMisc::dmem_proc), "recording fun call:", rscr);
 #endif
     *(taMisc::record_script) << rscr << endl;
     return;
@@ -6508,7 +6502,7 @@ void taiMethodData::GenerateScript() {
   *taMisc::record_script << rscr;
 #ifdef DMEM_COMPILE
     if(taMisc::dmem_debug)
-      cerr << "proc: " << taMisc::dmem_proc << " recording fun call: " << rscr << endl;
+      taMisc::Info("proc:", String(taMisc::dmem_proc), "recording fun call:", rscr);
 #endif
   if (tmp_objs.size > 0) {
     for (int i = 0; i < tmp_objs.size; ++i) {

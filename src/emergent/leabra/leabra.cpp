@@ -2579,8 +2579,10 @@ void LeabraUnitSpec::TimeExp(int mode, int nreps) {
   }
   }
   tu.EndTimer();
-  cerr << "mode: " << mode << " " << modes[mode] << " seconds used: " << tu.s_used
-       << " dsum: " << dsum << " fsum: " << fsum << endl;
+  String msg;
+  msg << "mode: " << mode << " " << modes[mode] << " seconds used: " << tu.s_used
+      << " dsum: " << dsum << " fsum: " << fsum;
+  taMisc::Info(msg);
 }
 
 void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha) {
@@ -3106,7 +3108,6 @@ Therefore, you must have a different layer spec with an appropriate activity \
 level for layers that have different activity levels.  Note that if you set \
 the activity level by percent this will work for different sized layers that \
 have the same percent activity level.";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 

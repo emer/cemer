@@ -444,7 +444,6 @@ void DynEnumItem_List::OrderItems() {
 }
 
 void DynEnumItem_List::DataChanged(int dcr, void* op1, void* op2) {
-//   cerr << "dyn enum: " << name << " invalidated due to type change" << endl;
   OrderItems();
   // we notify owner, so editing items causes related things to update,
   // typically used by ProgVar to make sure the enum list gets updated in gui
@@ -1846,13 +1845,9 @@ int ProgExprBase::cssExtParseFun_pre(void* udata, const char* nm, cssElPtr& el_p
     // update var_expr
     String subst = "$#" + (String)idx + "#$";
     String add_chunk = pe->expr.at(pe->parse_ve_pos-pe->parse_ve_off, parse_prog.src_pos - pe->parse_ve_pos - vnm.length());
-//     String vnm_chunk = pe->expr.at(parse_prog.src_pos - pe->parse_ve_off - vnm.length(), vnm.length());
     pe->var_expr += add_chunk;
     pe->var_expr += subst;
     pe->parse_ve_pos = parse_prog.src_pos;
-
-//     cerr << "var: " << vnm << " pos: " << pe->parse_ve_pos-pe->parse_ve_off << " add_chunk: " << add_chunk
-//       << " vnm_chunk: " << vnm_chunk << endl;
 
     return var->parse_css_el->GetParse();
   }
@@ -1954,13 +1949,10 @@ bool ProgExprBase::ParseExpr() {
   if(parse_ve_pos-parse_ve_off < expr.length()) {
     String end_chunk = expr.at(parse_ve_pos-parse_ve_off, expr.length() - (parse_ve_pos-parse_ve_off));
     var_expr += end_chunk;
-//     cerr << "added end_chunk: " << end_chunk << endl;
   }
 
   parse_tmp.Reset();
   parse_prog.ClearAll();
-
-//   cerr << "var_expr: " << var_expr << endl;
 
   return (bad_vars.size == 0);  // do we have any bad variables??
 }

@@ -1065,7 +1065,7 @@ void T3DataView::Initialize() {
 #ifdef TA_PROFILE
   ++T3DataView_inst_cnt;
   if (cssMisc::refcnt_trace)
-    cerr << "T3DataView_inst_cnt: " << T3DataView_inst_cnt << '\n';
+    taMisc::DebugInfo("T3DataView_inst_cnt:", String(T3DataView_inst_cnt));
 #endif
 }
 
@@ -1075,7 +1075,7 @@ void T3DataView::Destroy() {
 #ifdef TA_PROFILE
   --T3DataView_inst_cnt;
   if (cssMisc::refcnt_trace)
-    cerr << "T3DataView_inst_cnt: " << T3DataView_inst_cnt << '\n';
+    taMisc::DebugInfo("T3DataView_inst_cnt:", String(T3DataView_inst_cnt));
 #endif
 }
 
@@ -1705,7 +1705,7 @@ void iT3ViewspaceWidget::setSceneGraph(SoNode* sg) {
 
 void iT3ViewspaceWidget::setSelMode(SelectionMode value) {
   if (m_scene) {
-    cerr << "Warning: iT3ViewspaceWidget::setSelMode not allowed to change when scene graph active\n";
+    taMisc::Warning("iT3ViewspaceWidget::setSelMode not allowed to change when scene graph active");
     return;
   }
 
@@ -2219,7 +2219,6 @@ QPixmap T3DataViewFrame::GrabImage(bool& got_image) {
   if(TestError(img.isNull(), "GrabImage", "got a null image from T3ExaminerViewer"))
     return QPixmap();
   got_image = true;
-//   cerr << "Grabbed image of size: " << img.width() << " x " << img.height() << " depth: " << img.depth() << endl;
   return QPixmap::fromImage(img);     // more costly but works!
 }
 

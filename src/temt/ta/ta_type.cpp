@@ -365,10 +365,12 @@ void taiMiscCore::CheckConfigResult_(bool ok) {
 //note: only called if !quiet, and if !ok only if confirm_success
   if (ok) {
     taMisc::Warning("No configuration errors were found.");
-  } else {
-    cerr << "/n" << "/n"; // helps group this block together
+  }
+  else {
+    taMisc::ConsoleOutput("/n/n", true, false); // helps group this block together
     taMisc::Warning("Configuration errors were found:\n");
-    cerr << taMisc::last_check_msg << endl;
+    taMisc::ConsoleOutput("taMisc::last_check_msg", true, false);
+    // helps group this block together
   }
 }
 
@@ -575,19 +577,14 @@ String  taMisc::t3d_bg_color = "grey80";
 String  taMisc::t3d_text_color = "black";
 
 // parameters that differ between win and unix
-#ifdef TA_OS_WIN
-taMisc::ConsoleType taMisc::console_type = CT_OS_SHELL;
-taMisc::ConsoleOptions taMisc::console_options = CO_USE_PAGING_NOGUI; // none
-#else
 taMisc::ConsoleType taMisc::console_type = CT_GUI;
-taMisc::ConsoleOptions taMisc::console_options = (taMisc::ConsoleOptions)(CO_USE_PAGING_NOGUI | CO_GUI_TRACKING);
-#endif
+taMisc::ConsoleOptions taMisc::console_options = CO_GUI_TRACKING;
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 int     taMisc::display_width = 80;
 int     taMisc::max_display_width = 132;
 int     taMisc::indent_spc = 2;
-int     taMisc::display_height = 12;
+int     taMisc::display_height = 25;
 #ifdef TA_OS_MAC
 bool    taMisc::emacs_mode = true;
 #else
@@ -730,6 +727,7 @@ bool    taMisc::use_gui = false; // set to default in Init_Gui
 bool    taMisc::in_dev_exe = false;
 bool    taMisc::use_plugins = true;
 bool    taMisc::gui_active = false;
+bool    taMisc::interactive = true;
 bool    taMisc::gui_no_win = false;
 bool    taMisc::server_active = false; // true while connected
 ContextFlag     taMisc::is_loading;
@@ -777,6 +775,7 @@ bool    taMisc::do_wait_proc = false;
 
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 
+String  taMisc::console_chars;
 String  taMisc::LexBuf;
 int taMisc::err_cnt;
 fstream taMisc::log_stream;
@@ -850,11 +849,11 @@ bool taMisc::ErrorCancelCheck() {
     QDateTime st;
     st.setTime_t(err_cancel_time);
     if(st.secsTo(tm) < err_cancel_time_thr) {
-      cerr << "+";
+      // cerr << "+";
       err_waitproc_cnt = 0;	// reset counter and start counting again
     }
     else {
-      cerr << ".";
+      // cerr << ".";
     }
     err_cancel_time = tm.toTime_t();
   }
@@ -869,7 +868,7 @@ bool taMisc::ErrorCancelSet(bool on) {
     QDateTime tm = QDateTime::currentDateTime();
     err_cancel_time = tm.toTime_t();
 #endif
-    cerr << "Cancelling remaining error messages in this batch" << endl;
+    taMisc::Info("Cancelling remaining error messages in this batch");
   }
   else {
     taMisc::err_cancel = false;
@@ -904,8 +903,7 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
 #endif
   String wmsg = "***WARNING: " + taMisc::last_warn_msg;
   taMisc::LogEvent(wmsg);
-  cerr << wmsg << endl;
-  FlushConsole();
+  taMisc::ConsoleOutput(wmsg, true, false);
 }
 
 void taMisc::Info(const char* a, const char* b, const char* c, const char* d,
@@ -917,8 +915,7 @@ void taMisc::Info(const char* a, const char* b, const char* c, const char* d,
 #endif
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
   taMisc::LogEvent(msg);
-  cout << msg << endl;
-  FlushConsole();
+  taMisc::ConsoleOutput(msg, false, false); // no pager
 }
 
 String taMisc::SuperCat(const char* a, const char* b, const char* c,
@@ -942,8 +939,7 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
   String fmsg = "***CHECK ERROR: " + msg;
   taMisc::LogEvent(fmsg);
-  cerr << fmsg << endl;
-  FlushConsole();
+  taMisc::ConsoleOutput(fmsg, true, false); // no pager
   if (is_checking) {
     last_check_msg.cat(msg).cat("\n");
   } else {
@@ -1021,7 +1017,7 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
   // get an error these days it is terminal anyway, so just bail!!
 //   if(taMisc::dmem_proc > 0) return;
 #endif
-  if (beep_on_error) cerr << '\a'; // BEL character
+  //  if (beep_on_error) cerr << '\a'; // BEL character
   taMisc::last_err_msg = SuperCat(a, b, c, d, e, f, g, h, i);
 #if !defined(NO_TA_BASE)
   if(cssMisc::cur_top) {
@@ -1030,8 +1026,7 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
 #endif
   String fmsg = "***ERROR: " + taMisc::last_err_msg;
   taMisc::LogEvent(fmsg);
-  cerr << fmsg << endl;
-  FlushConsole();
+  taMisc::ConsoleOutput(fmsg, true, false);
 #if !defined(NO_TA_BASE)
   if(cssMisc::cur_top) {
     if(cssMisc::cur_top->own_program) {
@@ -1098,8 +1093,7 @@ void taMisc::Confirm(const char* a, const char* b, const char* c,
   String msg = SuperCat(a, b, c, d, e, f, g, h, i);
   {
     taMisc::LogEvent(msg);
-    cout << msg << "\n";
-    FlushConsole();
+    taMisc::ConsoleOutput(msg, false, false);
   }
 }
 
@@ -1174,6 +1168,96 @@ void taMisc::FlushConsole() {
   if(!cssMisc::TopShell) return;
   cssMisc::TopShell->FlushConsole();
 #endif
+}
+
+// internal: output one line
+static bool ConsoleOutputLine(const String& oneln, bool err, bool& pager, int& pageln) {
+#ifndef NO_TA_BASE
+  const char* prompt = "---Press Any Key to Continue, Except q = Quit, c = Continue without Paging ---";
+
+  if(cssMisc::TopShell) {
+    cssMisc::TopShell->OutputLine(oneln, err);
+  }
+  else {
+    if(err)
+      cerr << oneln << endl;
+    else
+      cout << oneln << endl;
+  }
+  if(pager) {
+    pageln++;
+    if(pageln >= taMisc::display_height) {
+      int resp = 0;
+      if(cssMisc::TopShell) {
+	resp = cssMisc::TopShell->QueryForKeyResponse(prompt);
+      }
+      else {
+	cout << prompt << endl;
+	resp = cin.get();
+      }
+      if(resp == 'q' || resp == 'Q') {
+	return false;
+      }
+      if(resp == 'c' || resp == 'C') {
+	pager = false;
+      }
+      pageln = 0;		// start over
+    }
+  }
+#else
+  if(err)
+    cerr << oneln << endl;
+  else
+    cout << oneln << endl;
+#endif
+  return true;
+}
+
+bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
+  if(!taMisc::interactive) pager = false;
+  int pageln = 0;
+  String rmdr = str;
+  do {
+    String curln;
+    if(rmdr.contains("\n")) {
+      curln = rmdr.before("\n");
+      rmdr = rmdr.after("\n");
+    }
+    else {
+      curln = rmdr;
+      rmdr = _nilString;
+    }
+    if(curln.length() > taMisc::display_width) {
+      String longln = curln;
+      bool was_wrap = false;
+      do {
+	String curpt = longln.before(taMisc::display_width-2);
+	longln = longln.from(taMisc::display_width-2);
+	if(was_wrap)
+	  curpt = "->" + curpt;
+	if(longln.nonempty())
+	  curpt += "->";
+	if(!ConsoleOutputLine(curpt, err, pager, pageln))
+	  return false;		// user hit quit
+	was_wrap = true;
+      } while(longln.nonempty());
+    }
+    else {
+      if(!ConsoleOutputLine(curln, err, pager, pageln))
+	return false;		// user hit quit
+    }
+  } while(rmdr.nonempty());
+  return true;
+}
+
+bool taMisc::ConsoleOutputChars(const String& str, bool err, bool pager) {
+  console_chars << str;
+  if((console_chars.length() >= taMisc::display_width-2) || str.contains("\n")) {
+    ConsoleOutput(console_chars, err, pager);
+    console_chars = _nilString;	// reset
+    return true;
+  }
+  return false;
 }
 
 int taMisc::ProcessEvents() {
@@ -1316,26 +1400,28 @@ void taMisc::Register_Cleanup(SIGNAL_PROC_FUN_ARG(fun)) {
 }
 
 void taMisc::Decode_Signal(int err) {
+  String emsg;
   switch(err) {
-  case SIGABRT: cerr << "abort"; break;
+  case SIGABRT: emsg << "abort"; break;
 #ifndef TA_OS_WIN
-  case SIGHUP:  cerr << "hangup"; break;
-  case SIGQUIT: cerr << "quit"; break;
-  case SIGILL:  cerr << "illegal instruction"; break;
-  case SIGBUS:  cerr << "bus error"; break;
-  case SIGSEGV: cerr << "segmentation violation"; break;
+  case SIGHUP:  emsg << "hangup"; break;
+  case SIGQUIT: emsg << "quit"; break;
+  case SIGILL:  emsg << "illegal instruction"; break;
+  case SIGBUS:  emsg << "bus error"; break;
+  case SIGSEGV: emsg << "segmentation violation"; break;
 # ifndef LINUX
-  case SIGSYS:  cerr << "bad argument to system call"; break;
+  case SIGSYS:  emsg << "bad argument to system call"; break;
 # endif
-  case SIGPIPE: cerr << "broken pipe"; break;
-  case SIGALRM: cerr << "alarm clock"; break;
-  case SIGTERM: cerr << "software termination signal"; break;
-  case SIGFPE:  cerr << "floating point exception"; break;
-  case SIGUSR1: cerr << "user signal 1"; break;
-  case SIGUSR2: cerr << "user signal 2"; break;
+  case SIGPIPE: emsg << "broken pipe"; break;
+  case SIGALRM: emsg << "alarm clock"; break;
+  case SIGTERM: emsg << "software termination signal"; break;
+  case SIGFPE:  emsg << "floating point exception"; break;
+  case SIGUSR1: emsg << "user signal 1"; break;
+  case SIGUSR2: emsg << "user signal 2"; break;
 #endif  //!TA_OS_WIN
-  default:      cerr << "unknown"; break;
+  default:      emsg << "unknown"; break;
   }
+  cerr << emsg;			// nothing better to do in this situation -- don't go to console..
 }
 
 
@@ -1928,74 +2014,6 @@ String& taMisc::FancyPrintTwoCol(String& strm, const String_PArray& col1_strs,
   return strm;
 }
 
-bool taMisc::StreamString(const String& str, ostream& strm, bool page,
-			  istream& page_ctrl_in) {
-  page = false;			// not currently supported!!!
-  int pageln = 0;
-  String rmdr = str;
-  do {
-    String curln;
-    if(rmdr.contains("\n")) {
-      curln = rmdr.before("\n");
-      rmdr = rmdr.after("\n");
-    }
-    else {
-      curln = rmdr;
-      rmdr = _nilString;
-    }
-    if(curln.length() > taMisc::display_width) {
-      String longln = curln;
-      do {
-	String curpt = longln.before(taMisc::display_width-2);
-	longln = longln.from(taMisc::display_width-2);
-	strm << curpt;
-	if(longln.nonempty())
-	  strm << "->" << endl;
-	taMisc::FlushConsole();
-	if(page) {
-	  pageln++;
-	  if(pageln >= taMisc::display_height-1) {
-	    strm << "---Press Return for More, q=quit, c=continue without paging ---"
-	       << endl;
-	    taMisc::FlushConsole();
-	    int resp = page_ctrl_in.get();
-	    if(resp == 'q' || resp == 'Q') {
-	      return false;
-	    }
-	    if(resp == 'c' || resp == 'C') {
-	      page = false;
-	    }
-	    pageln = 0;		// start over
-	  }
-	}
-	if(longln.nonempty())
-	  strm << "->";		// start of next wrapped line
-      } while(longln.nonempty());
-    }
-    else {
-      strm << curln << endl;
-      taMisc::FlushConsole();
-      if(page) {
-	pageln++;
-	if(pageln >= taMisc::display_height-1) {
-	  strm << "---Press Return for More, q=quit, c=continue without paging ---"
-	       << endl;
-	  taMisc::FlushConsole();
-	  int resp = page_ctrl_in.get();
-	  if(resp == 'q' || resp == 'Q') {
-	    return false;
-	  }
-	  if(resp == 'c' || resp == 'C') {
-	    page = false;
-	  }
-	  pageln = 0;		// start over
-	}
-      }
-    }
-  } while(rmdr.nonempty());
-  return true;
-}
-
 /////////////////////////////////////////////////
 //      File Paths etc
 
@@ -2339,10 +2357,9 @@ int taMisc::skip_white(istream& strm, bool peek) {
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c=strm.peek()) == ' ') || (c == '\t') || (c == '\n') || (c == '\r')) {
       strm.get();
-      cerr << (char)c;
+      ConsoleOutputChars((char)c, true);
     }
-    if(!peek && (c != EOF)) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(!peek && (c != EOF)) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c=strm.peek()) == ' ') || (c == '\t') || (c == '\n') || (c == '\r'))
@@ -2358,10 +2375,9 @@ int taMisc::skip_white_noeol(istream& strm, bool peek) {
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c=strm.peek()) == ' ') || (c == '\t') || (c == '\r')) {
       strm.get();
-      cerr << (char)c;
+      ConsoleOutputChars((char)c, true);
     }
-    if(!peek && (c != EOF)) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(!peek && (c != EOF)) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c=strm.peek()) == ' ') || (c == '\t') || (c == '\r'))
@@ -2377,11 +2393,10 @@ int taMisc::read_word(istream& strm, bool peek) {
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && (isalnum(c) || (c == '_'))) {
-      cerr << (char)c;
+      ConsoleOutputChars((char)c, true);
       LexBuf += (char)c; strm.get();
     }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c = strm.peek()) != EOF) && (isalnum(c) || (c == '_'))) {
@@ -2398,11 +2413,10 @@ int taMisc::read_nonwhite(istream& strm, bool peek) {
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && (c!=' ') && (c!='\t') && (c!='\n') && (c!='\r')) {
-      cerr << (char)c;
+      ConsoleOutputChars((char)c, true);
       LexBuf += (char)c; strm.get();
     }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c = strm.peek()) != EOF) && (c!=' ') && (c!='\t') && (c!='\n') && (c!='\r')) {
@@ -2419,11 +2433,10 @@ int taMisc::read_nonwhite_noeol(istream& strm, bool peek) {
   taMisc::LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && (c!=' ') && (c!='\t') && (c!='\n') && (c!='\r')) {
-      cerr << (char)c;
+      ConsoleOutputChars((char)c, true);
       taMisc::LexBuf += (char)c; strm.get();
     }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c = strm.peek()) != EOF) && (c!=' ') && (c!='\t') && (c!='\n') && (c!='\r')) {
@@ -2440,12 +2453,11 @@ int taMisc::read_till_eol(istream& strm, bool peek) {
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !((c == '\n'))) {
-      cerr << (char)c;
+      ConsoleOutputChars((char)c, true);
       if(c != '\r') LexBuf += (char)c;
       strm.get();
     }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '\n'))) {
@@ -2463,11 +2475,10 @@ int taMisc::read_till_semi(istream& strm, bool peek) {
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !((c == ';'))) {
-      cerr << (char)c;
+      ConsoleOutputChars((char)c, true);
       LexBuf += (char)c; strm.get();
     }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == ';'))) {
@@ -2484,11 +2495,10 @@ int taMisc::read_till_lbracket(istream& strm, bool peek) {
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !((c == '{'))) {
-      cerr << (char)c;
+      ConsoleOutputChars((char)c, true);
       LexBuf += (char)c; strm.get();
     }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '{'))) {
@@ -2505,11 +2515,10 @@ int taMisc::read_till_lb_or_semi(istream& strm, bool peek) {
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !((c == '{') || (c == ';') || (c == '='))) {
-      cerr << (char)c;
+      ConsoleOutputChars((char)c, true);
       LexBuf += (char)c; strm.get();
     }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '{') || (c == ';') || (c == '='))) {
@@ -2527,15 +2536,13 @@ int taMisc::read_till_rbracket(istream& strm, bool peek) {
   int depth = 0;
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
-      cerr << (char)c;
-      if(c == '\n')     taMisc::FlushConsole();
+      ConsoleOutputChars((char)c, true);
       LexBuf += (char)c;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
       strm.get();
     }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
@@ -2556,15 +2563,13 @@ int taMisc::read_till_rb_or_semi(istream& strm, bool peek) {
   int depth = 0;
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
-      cerr << (char)c;
-      if(c == '\n')     taMisc::FlushConsole();
+      ConsoleOutputChars((char)c, true);
       LexBuf += (char)c;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
       strm.get();
     }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
@@ -2586,10 +2591,11 @@ int taMisc::skip_till_start_quote_or_semi(istream& strm, bool peek) {
   int c = skip_white(strm, true);
   LexBuf = "";
   if(taMisc::verbose_load >= taMisc::SOURCE) {
-    while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';'))
-      cerr << strm.get(); // consume it
-    taMisc::FlushConsole();
-  } else {
+    while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';')) {
+      ConsoleOutputChars((char)strm.get(), true);
+    }
+  }
+  else {
     while (((c = strm.peek()) != EOF) && (c != '\"') && (c != ';'))
       strm.get(); // consume it
   }
@@ -2609,7 +2615,7 @@ int taMisc::read_till_end_quote(istream& strm, bool peek) {
       while (((c = strm.peek()) != EOF) && (bs || ((c != '\"') && (c != '\\')) ) )
       {  // "
         bs = false;
-        cerr << (char)c;
+        ConsoleOutputChars((char)c, true);
         LexBuf += (char)c; strm.get();
       }
       if (c == EOF) break;
@@ -2620,8 +2626,8 @@ int taMisc::read_till_end_quote(istream& strm, bool peek) {
       } else // if (c == '\"')
         break;
     }
-    taMisc::FlushConsole();
-  } else {
+  }
+  else {
     while (true) {
       while (((c = strm.peek()) != EOF) && (bs || ((c != '\"') && (c != '\\')))) {  // "
         bs = false;
@@ -2656,18 +2662,15 @@ int taMisc::skip_past_err(istream& strm, bool peek) {
   int c;
   int depth = 0;
   if(taMisc::verbose_load >= taMisc::SOURCE) {
-    int lst_flush = 0;
     int cur_pos = 0;
-    cerr << "<<err_skp ->>";
+    ConsoleOutputChars("<<err_skp ->>", true); 
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
-      cerr << (char)c; cur_pos++;
-      if((c == '\n') || ((cur_pos - lst_flush) > taMisc::display_width * 4)) { taMisc::FlushConsole(); lst_flush = cur_pos; }
+      ConsoleOutputChars((char)c, true); cur_pos++;
       if(c == '{')      depth++;
       if(c == '}')      depth--;
       strm.get();
     }
-    if(c != EOF) cerr << (char)c << "<<- err_skp>>";
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars(String((char)c) + "<<- err_skp>>", true);
   }
   else {
     while (((c = strm.peek()) != EOF) && !(((c == '}') || (c == ';')) && (depth <= 0))) {
@@ -2687,16 +2690,14 @@ int taMisc::skip_past_err_rb(istream& strm, bool peek) {
   int c;
   int depth = 0;
   if(taMisc::verbose_load >= taMisc::SOURCE) {
-    cerr << "<<err_skp ->>";
+    ConsoleOutputChars("<<err_skp ->>", true);
     while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
-      cerr << (char)c;
-      if(c == '\n')     taMisc::FlushConsole();
+      ConsoleOutputChars((char)c, true);
       if(c == '{')      depth++;
       if(c == '}')      depth--;
       strm.get();
     }
-    if(c != EOF) cerr << (char)c << "<<- err_skp>>";
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars(String((char)c) + "<<- err_skp>>", true);
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '}') && (depth <= 0))) {
@@ -2815,15 +2816,13 @@ int taMisc::read_till_rangle(istream& strm, bool peek) {
   int depth = 0;
   if(taMisc::verbose_load >= taMisc::SOURCE) {
     while (((c = strm.peek()) != EOF) && !((c == '>') && (depth <= 0))) {
-      cerr << (char)c;
-      if(c == '\n')     taMisc::FlushConsole();
+      ConsoleOutputChars((char)c, true);
       LexBuf += (char)c;
       if(c == '<')      depth++;
       if(c == '>')      depth--;
       strm.get();
     }
-    if(c != EOF) cerr << (char)c;
-    taMisc::FlushConsole();
+    if(c != EOF) ConsoleOutputChars((char)c, true);
   }
   else {
     while (((c = strm.peek()) != EOF) && !((c == '>') && (depth <= 0))) {
@@ -3027,8 +3026,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     }
     ++m_dbu_cnt;
 #ifdef DATA_DATA_DEBUG
-    cerr << (String)(int)this << " stru beg: " << m_dbu_cnt << endl;
-    taMisc::FlushConsole();
+    taMisc::Info((String)(int)this, "stru beg:", String(m_dbu_cnt));
 #endif
   }
   else if (dcr == DCR_DATA_UPDATE_BEGIN) {
@@ -3036,8 +3034,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     if (m_dbu_cnt > 0) ++m_dbu_cnt; // stay in STRUCT state if STRUCT state
     else               --m_dbu_cnt;
 #ifdef DATA_DATA_DEBUG
-    cerr << (String)(int)this << " data beg: " << m_dbu_cnt << endl;
-    taMisc::FlushConsole();
+    taMisc::Info((String)(int)this, "data beg:", String(m_dbu_cnt));
 #endif
   }
   else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END)) {
@@ -3058,16 +3055,15 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
     // to just keep letting them happen, doing gui updates, which should be harmless
 #ifdef DEBUG // just make sure these are harmless, and don't scare users...
     else {
-      cerr << "WARNING: Datalink for object name: "
-        << GetName() << " unexpectedly received a DATA or STRUCT END (cnt was 0)\n";
+      taMisc::Warning("Datalink for object name:", GetName(),
+		      "unexpectedly received a DATA or STRUCT END (cnt was 0)");
     }
 #endif
 #ifdef DATA_DATA_DEBUG
     if(was_stru)
-      cerr << (String)(int)this << " stru end: " << m_dbu_cnt << endl;
+      taMisc::Info((String)(int)this, "stru end:", String(m_dbu_cnt));
     else
-      cerr << (String)(int)this << " data end: " << m_dbu_cnt << endl;
-    taMisc::FlushConsole();
+      taMisc::Info((String)(int)this, "data end:", String(m_dbu_cnt));
 #endif
     // at the end, also send a IU
     if (m_dbu_cnt == 0) {
@@ -3077,8 +3073,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
         // State=DATA, Count=1
         dcr = DCR_ITEM_UPDATED;
 #ifdef DATA_DATA_DEBUG
-        cerr << (String)(int)this << " cvt to iu: " << m_dbu_cnt << endl;
-        taMisc::FlushConsole();
+	taMisc::Info((String)(int)this, "cvt to iu:", String(m_dbu_cnt));
 #endif
       }
       else {// otherwise, we send both
@@ -3097,8 +3092,7 @@ void taDataLink::DataDataChanged(int dcr, void* op1_, void* op2_) {
 
   if (!suppress) {
 #ifdef DATA_DATA_DEBUG
-    cerr << (String)(int)this << " sending: " << dcr << endl;
-    taMisc::FlushConsole();
+    taMisc::Info((String)(int)this, "sending:", String(dcr));
 #endif
     DoNotify(dcr, op1_, op2_);
   }
@@ -5929,10 +5923,12 @@ void TypeDef::RegisterFinal(void* it) {
   TypeDef* par = GetParent();
   if (!par) return; // we only register if have parent
 #if defined(DEBUG) && !defined(NO_TA_BASE) // semi-TEMP, until 100% verified
-if (par->tokens.FindEl(it) >= 0) {
-cerr << "attempt to reregister token of type(addr): " << ((taBase*)it)->GetTypeDef()->name << "(" << it << ")\n";
-return;
-}
+  if (par->tokens.FindEl(it) >= 0) {
+    String msg;
+    msg << "attempt to reregister token of type(addr): " << 	((taBase*)it)->GetTypeDef()->name << "(" << it << ")\n";
+    taMisc::Info(msg);
+    return;
+  }
 #endif
   tokens.Link(it);
   while (par) {
@@ -5965,12 +5961,12 @@ void TypeDef::SetTemplType(TypeDef* templ_par, const TypeSpace& inst_pars) {
     String inst_no(inst_pars.size);
     taMisc::Error("Template",name,"defined with",defn_no,"parameters, instantiated with",
                    inst_no);
-    cerr << "Defined with parameters: ";
-    String tp;
-    templ_pars.Print(tp); cerr << tp;
-    cerr << "\nInstantiated with parameters: ";
-    String ip;
-    inst_pars.Print(ip); cerr << ip;
+    String msg;
+    msg << "Defined with parameters: ";
+    templ_pars.Print(msg);
+    msg << "\nInstantiated with parameters: ";
+    inst_pars.Print(msg);
+    taMisc::Error(msg);
     return;
   }
 
@@ -7527,7 +7523,7 @@ void MemberDef::Print(String& col1, String& col2, void* base, int indent) const 
     col1 << String("(*") + name + ")()" << " = ";
   }
   else {
-    col1 << " = ";
+    col1 << name << " = ";
   }
   col2 = type->GetValStr(new_base, base, (MemberDef*)this, TypeDef::SC_DEFAULT, true);
   // force inline
@@ -8352,9 +8348,6 @@ bool taObjDiff_List::CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec
     if(cur_nest == 0) break;
   }
 
-//   cerr << "par start for rec: " << rec->name << " = " << rec->value << endl;
-//   taMisc::FlushConsole();
-
   bool rval = false;
   for(int i=cur_nest;i<start_nest;i++) {
     cur_rec = (taObjDiffRec*)nest_pars[i];
@@ -8365,8 +8358,6 @@ bool taObjDiff_List::CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec
       else
         nw_par->flags = taObjDiffRec::DIFF_PAR_B; // indicate that it is just a parent
       diff_ods.Add(nw_par);
-//      cerr << "add par: " << cur_rec->name << " = " << cur_rec->value << endl;
-//      taMisc::FlushConsole();
       rval = true;              // got one..
     }
   }
@@ -8431,8 +8422,6 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
           diffs_list.Link(rec_a);
           rec_a->SetDiffFlag(cur_flag);
           rec_a->diff_odr = rec_b; // starting point in b..
-//        cerr << "add del_a: " << rec_a->name << " = " << rec_a->value << endl;
-//        taMisc::FlushConsole();
           if(rec_a->mdef) {     // never actionable
             rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
           }

@@ -400,7 +400,7 @@ void taBase::Ref(taBase* it) {
 
 void taBase::unRef(taBase* it) {
   if (it->refn <= 0) {
-    cerr << "WARNING: taBase::unRef: taBase refn < 0 for item\n";
+    taMisc::Warning("taBase::unRef: taBase refn < 0 for item");
   }
   else {
     // convenient for tracking specific leaks:
@@ -414,7 +414,7 @@ void taBase::unRef(taBase* it) {
 void taBase::Done(taBase* it) {
   if (it->refn == 0) {
     if (it->HasBaseFlag(DESTROYED))
-      cerr << "WARNING: taBase::Done: taBase refn == 0 but item already destroyed\n";
+      taMisc::Warning("taBase::Done: taBase refn == 0 but item already destroyed");
     else
       delete it;
   }
@@ -1726,11 +1726,11 @@ taBase* taBase::Dump_Load_Path_ptr(const String& el_path, TypeDef* ld_el_typ) {
   }
 
   if(taMisc::verbose_load >= taMisc::TRACE) {
-    cerr << "Success: Leaving TypeDef::Dump_Load_Path_ptr, type: " << ld_el_typ->name
-         << ", parent path = " << GetPathNames()
-         << ", el_path = " << el_path
-         << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Success: Leaving TypeDef::Dump_Load_Path_ptr, type: " << ld_el_typ->name
+	<< ", parent path = " << GetPathNames()
+	<< ", el_path = " << el_path;
+    taMisc::Info(msg);
   }
   return nw_el;
 }
@@ -3422,11 +3422,6 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
     if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase) &&
        !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
        (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
-// #ifdef DEBUG
-//       cerr << "Non-RO raw pointer member: " << md->name << " in type: " << td->name
-//         << " updating pointer -- should be a ref!" << endl;
-//       taMisc::FlushConsole();
-// #endif
       taBase** ptr = (taBase**)md->GetOff(this);
       if(md->HasOption("NO_SET_POINTER")) {
         int chg = UpdatePointers_NewPar_PtrNoSet(ptr, old_par, new_par);
@@ -3548,7 +3543,6 @@ bool taBase::UpdatePointers_NewParType_Ref(taSmartRef& ref, TypeDef* par_typ, ta
   if(new_guy)
     ref.set(new_guy);
   else {
-    //    cerr << "update ptrs: old_path " << old_path << " not found " << endl;
     if(null_not_found)
       ref.set(NULL);            // reset to null if not found!
     return false;
@@ -3567,11 +3561,6 @@ int taBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
     if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase) &&
        !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
        (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
-// #ifdef DEBUG
-//       cerr << "Non-RO raw pointer member: " << md->name << " in type: " << td->name
-//         << " updating pointer -- should be a ref!" << endl;
-//       taMisc::FlushConsole();
-// #endif
       taBase** ptr = (taBase**)md->GetOff(this);
       if(md->HasOption("NO_SET_POINTER")) {
         int chg = taBase::UpdatePointers_NewParType_PtrNoSet(ptr, par_typ, new_par);
@@ -3689,11 +3678,6 @@ int taBase::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
     if((md->type->ptr == 1) && md->type->DerivesFrom(TA_taBase) &&
        !md->HasOption("OWN_POINTER") && !md->HasOption("NO_UPDATE_POINTER") &&
        (!md->HasOption("READ_ONLY") || md->HasOption("UPDATE_POINTER"))) {
-// #ifdef DEBUG
-//       cerr << "Non-RO raw pointer member: " << md->name << " in type: " << td->name
-//         << " updating pointer -- should be a ref!" << endl;
-//       taMisc::FlushConsole();
-// #endif
       taBase** ptr = (taBase**)md->GetOff(this);
       if(md->HasOption("NO_SET_POINTER")) {
         int chg = taBase::UpdatePointers_NewObj_PtrNoSet(ptr, this, old_ptr, new_ptr);
@@ -4727,11 +4711,11 @@ taBase* taList_impl::Dump_Load_Path_parent(const String& el_path, TypeDef* ld_el
   }
 
   if(taMisc::verbose_load >= taMisc::TRACE) {
-    cerr << "Success: Leaving TypeDef::Dump_Load_Path_parent, type: " << ld_el_typ->name
-         << ", parent path = " << GetPathNames()
-         << ", el_path = " << el_path
-         << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Success: Leaving TypeDef::Dump_Load_Path_parent, type: " << ld_el_typ->name
+	<< ", parent path = " << GetPathNames()
+	<< ", el_path = " << el_path;
+    taMisc::Info(msg);
   }
   return nw_el;
 }
@@ -4788,7 +4772,7 @@ int taList_impl::Dump_Load_Value(istream& strm, taBase* par) {
           m_trg_load_size = idx; // target loading size
           if(m_trg_load_size == 0) {
             if(size > 0)
-              cerr << "load reset size: " << size << endl;
+	      taMisc::Info("load reset size:", String(size));
             taList_impl::RemoveAll();
             // normal load size enforcement occurs on last item loaded --
             // if no items to load, it never happens!  This is the enforcer!
@@ -5472,8 +5456,7 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
   // detect the implicit DATA_UPDATE_END
 #ifdef DATA_DATA_DEBUG
   if(dcr <= DCR_ITEM_UPDATED_ND) {
-    cerr << GetName() << " iu: " << m_dbu_cnt << endl;
-    taMisc::FlushConsole();
+    taMisc::Info(GetName(),"iu:", String(m_dbu_cnt));
   }
 #endif
   if ((m_dbu_cnt == -1) && (dcr <= DCR_ITEM_UPDATED_ND))
@@ -5484,16 +5467,14 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
     if (m_dbu_cnt < 0) m_dbu_cnt *= -1; // switch state if necessary
     ++m_dbu_cnt;
 #ifdef DATA_DATA_DEBUG
-    cerr << GetName() << " stru start: " << m_dbu_cnt << endl;
-    taMisc::FlushConsole();
+    taMisc::Info(GetName(),"stru start:", String(m_dbu_cnt));
 #endif
     return;
   } else if (dcr == DCR_DATA_UPDATE_BEGIN) { // stay in struct state if struct state
     if (m_dbu_cnt > 0) ++m_dbu_cnt;
     else               --m_dbu_cnt;
 #ifdef DATA_DATA_DEBUG
-    cerr << GetName() << " data start: " << m_dbu_cnt << endl;
-    taMisc::FlushConsole();
+    taMisc::Info(GetName(),"data start:", String(m_dbu_cnt));
 #endif
     return;
   } else if ((dcr == DCR_STRUCT_UPDATE_END) || (dcr == DCR_DATA_UPDATE_END))
@@ -5503,10 +5484,9 @@ void taDataView::DataDataChanged(taDataLink*, int dcr, void* op1_, void* op2_) {
     else {stru = true; --m_dbu_cnt;}
 #ifdef DATA_DATA_DEBUG
     if(dcr == DCR_DATA_UPDATE_END)
-      cerr << GetName() << " data end: " << m_dbu_cnt << endl;
+      taMisc::Info(GetName(),"data end:", String(m_dbu_cnt));
     else
-      cerr << GetName() << " stru end: " << m_dbu_cnt << endl;
-    taMisc::FlushConsole();
+      taMisc::Info(GetName(),"stru end:", String(m_dbu_cnt));
 #endif
     if (m_dbu_cnt == 0) {
       int pdbu = parDbuCnt();

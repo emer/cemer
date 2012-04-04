@@ -942,7 +942,6 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
     DataCol* sda = ssrc.data.FastEl(ds->col_idx);
     Variant cval = sda->GetValAsVar(0); // start at row 0
     cur_vals[i] = cval;
-//     cerr << i << " init val: " << cur_vals[i] << " input: " << cval << endl;
   }
 
   float_Matrix float_tmp(false);
@@ -950,7 +949,6 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
   int row = 1;
   while(row <= ssrc.rows) {
     for(;row <= ssrc.rows; row++) {
-//       cerr << "row: " << row;
       bool new_val = false;
       if(row == ssrc.rows) { 
 	new_val = true;
@@ -961,17 +959,14 @@ bool taDataProc::Group_gp(DataTable* dest, DataTable* src, DataGroupSpec* spec, 
 	  DataCol* sda = ssrc.data.FastEl(ds->col_idx);
 	  Variant cval = sda->GetValAsVar(row);
 	  if(cval != cur_vals[i]) {
-// 	    cerr << " new_val:  oval: " << cur_vals[i] << " nval: " << cval;
 	    new_val = true;
 	    cur_vals[i] = cval;
 	  }
 	}
-// 	cerr << endl;
       }
       if(new_val) break;
     }
     int n_rows = row - st_row;
-//     cerr << "adding: row: " << row << " st_row: " << st_row << endl;
     // now go through actual group ops!
     dest->AddBlankRow();
     int dest_idx = 0;
@@ -1180,8 +1175,6 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
 	Variant val = da->GetValAsVar(row);
 	ev = ds->Eval(val);
       }
-//       cerr << "cmp: " << ds->col_name << " idx: " << ds->col_idx
-//       << " val: " << val << " ev: " << ev << endl;
       if(spec->comb_op == DataSelectSpec::AND) {
 	if(!ev) { not_incl = true;  break; }
       }
@@ -1195,13 +1188,11 @@ bool taDataProc::SelectRows(DataTable* dest, DataTable* src, DataSelectSpec* spe
 	if(!ev) { incl = true; break; }
       }
     }
-//     cerr << "not_incl: " << not_incl << " incl: " << incl << endl;
     if(((spec->comb_op == DataSelectSpec::AND) || (spec->comb_op == DataSelectSpec::NOT_AND))
        && not_incl) continue;
     if(((spec->comb_op == DataSelectSpec::OR) || (spec->comb_op == DataSelectSpec::NOT_OR))
        && !incl) continue;
     // continuing now..
-//     cerr << "added!" << endl;
     dest->AddBlankRow();
     dest->CopyFromRow(-1, *src, row);
   }

@@ -1138,7 +1138,6 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
   }
   String load_str;              // this will be the load string
   if(old_load) {
-//     cerr << "old load: con_alloc: " << con_alloc << " alloc_size: " << alloc_size << endl;
     load_str += "{ con_alloc = " + String(con_alloc) + ";\n";
   }
   c = taMisc::read_word(strm);
@@ -6398,7 +6397,7 @@ void Network::UpdateAfterEdit_impl(){
   if(name.empty()) {
     taMisc::Error("name should not be empty -- this indicates the dreaded null dialog bug!!  triggering div zero now -- please report the trace to Randy!");
     int zero = 0;
-    cerr << 1 / zero << endl;   // should trigger sigfpe here
+    String msg = String(1 / zero); // trigger error
   }
 
   ClearNetFlag(SAVE_UNITS_FORCE); // might have been saved in on state from recover file or something!
@@ -7402,7 +7401,6 @@ void Network::DMem_SyncAct() {
 }
 
 void Network::DMem_DistributeUnits() {
-  //  cerr << "proc " << taMisc::dmem_proc << " in distribunits" << endl;
   dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
   dmem_net_comm.CommSubGpInner(dmem_nprocs_actual);     // network is inner-group
   dmem_trl_comm.CommSubGpOuter(dmem_nprocs_actual);     // trial is outer-group
@@ -7698,11 +7696,6 @@ void Network::DMem_SymmetrizeWts() {
       }
     }
   }
-//   if(taMisc::dmem_debug)
-//     cerr << "proc: " << taMisc::dmem_proc << " at sym_wts barrier!" << endl;
-//   DMEM_MPICALL(MPI_Barrier(comm),"Network::SymmetrizeWts", "Barrier");
-//   if(taMisc::dmem_debug && (taMisc::dmem_proc == 0))
-//     cerr << "---------- past sym_wts barrier ---------" << endl;
 }
 
 #endif  // DMEM

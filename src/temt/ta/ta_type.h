@@ -519,29 +519,14 @@ public:
 
   enum ConsoleType { // the type of console window and how to show it; ignored in non-gui mode (either uses OS shell, or no console, depending on startup mode)
     CT_OS_SHELL = 0, // #LABEL_OS_Shell use the operating system's shell or console (with readline library on unix)
-#if defined(HAVE_QT_CONSOLE) && !defined(TA_OS_WIN) // qt console not supported on windows, needs to be ported to Win32
     CT_GUI = 1, // #LABEL_Gui uses a gui-based console, either docked in the main app window, or floating (see console_options)
-#else
-    CT_GUI = 1, // #NO_SHOW uses a gui-based console, either docked in the main app window, or floating (see console_options)
-#endif
     CT_NONE = 4 // #NO_SHOW no console, usually only used internally, such as for batch or dmem operation
   };
 
   enum ConsoleOptions { // #BITS options that can be used with the console
     CO_0 = 0, // #NO_BIT #IGNORE dummy item, and to clear
-#ifdef TA_OS_WIN // pager causes crashes and deadlocks in windows
-    CO_USE_PAGING_GUI   = 0x0001, // #NO_BIT use paging, like the "more" command -- NOT RECOMMENDED FOR WINDOWS
-#else
-    CO_USE_PAGING_GUI   = 0x0001, // #LABEL_Use_Paging_Gui use paging in the gui console, like the 'more' command
-#endif
-    CO_USE_PAGING_NOGUI = 0x0002, // #LABEL_Use_Paging_NoGui use paging in the nogui console/shell, like the 'more' command
-#ifdef HAVE_QT_CONSOLE
-    CO_GUI_TRACKING     = 0x0004, // #LABEL_Gui_Tracking in GUI mode, the console floats below the active project -- this only operates if DockRoot is not checked
-    CO_GUI_DOCK         = 0x0008, // #LABEL_Gui_DockRoot in GUI mode, dock the console in the root window -- if this checked, then tracking is not done
-#else
-    CO_GUI_TRACKING     = 0x0004, // #NO_SHOW in GUI mode, the console floats below the active project -- this only operates if DockRoot is not checked
-    CO_GUI_DOCK         = 0x0008, // #NO_SHOW in GUI mode, dock the console in the root window -- if this checked, then tracking is not done
-#endif
+    CO_GUI_TRACKING     = 0x0001, // #LABEL_Gui_Tracking in GUI mode, the console floats below the active project -- this only operates if DockRoot is not checked
+    CO_GUI_DOCK         = 0x0002, // #LABEL_Gui_DockRoot in GUI mode, dock the console in the root window -- if this checked, then tracking is not done
   };
 
   enum ColorHints { // #BITS what types of color hinting to use in the application
@@ -662,13 +647,9 @@ public:
   static String         t3d_text_color; // #SAVE #CAT_GUI default text color for 3d view  -- standard X11 color names are supported, most of which are also web/html standard color names
   static String         t3d_font_name;  // #SAVE #CAT_GUI #EXPERT default font name to use in the 3D display (default is Arial -- not many options supported depending on platform -- set the environment variable COIN_DEBUG_FONTSUPPORT to debug)
   static ConsoleType    console_type; // #SAVE #CAT_GUI style of the console to display -- **REQUIRES APP RESTART
-#ifdef TA_OS_WIN // none on windows (yet), so we omit for clarity
-  static ConsoleOptions console_options; // #IGNORE #CAT_GUI #EXPERT options for the console **REQUIRES APP RESTART
-#else
   static ConsoleOptions console_options; // #SAVE #CAT_GUI #EXPERT options for the console **REQUIRES APP RESTART
-#endif
-  static String         console_font_name;      // #SAVE #CAT_GUI font name for the css console
-  static int            console_font_size;      // #SAVE #CAT_GUI font size for the css console
+  static String         console_font_name; // #SAVE #CAT_GUI font name for the css console
+  static int            console_font_size; // #SAVE #CAT_GUI font size for the css console
   static float          doc_text_scale; // #SAVE #CAT_GUI scale factor for text displayed in doc objects (including web pages) -- multiplies base setting from font_size parameter (above), plus any doc-specific text_size parameter -- values > 1 make the text bigger, < 1 = smaller
   static int            display_width;  // #SAVE #HIDDEN #CAT_GUI width of console display (in chars) -- set automatically by gui console -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places
   static int            max_display_width;  // #SAVE #EXPERT #MIN_10 #CAT_GUI maximum width of console display (in chars) -- affects all Print routines, which generate strings that also show up in tool tips, dialogs, and other places -- may not want this to get too big
@@ -839,6 +820,7 @@ public:
 
   static bool           use_gui;        // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT  whether the user has specified to use the gui or not (default = true)
   static bool           gui_active;     // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT if gui has actually been started up or not -- this is the one that should be checked for gui modality in all non-startup code
+  static bool           interactive;    // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT if the system is in an interactive mode of operation, otherwise in batch mode running in the background -- determines whether to prompt user ever
   static bool           gui_no_win;     // #READ_ONLY #NO_SAVE #NO_SHOW #EXPERT an intermediate form of gui operation where the gui system is fully initialized, but no windows are created, and gui_active remains false -- this is useful for batch (background) jobs that need to do offscreen rendering or other gui-dependent functions
   static bool           in_dev_exe;     // #READ_ONLY #NO_SAVE #NO_SHOW are we running a development executable -- running out of the build directory of the source code -- do some things differently in this case (e.g., no plugins)
   static bool           use_plugins;    // #READ_ONLY #NO_SAVE #NO_SHOW whether to use plugins
@@ -880,6 +862,8 @@ public:
 
   static fstream        log_stream; // #IGNORE current logging output stream -- updated to project name + .plog extension whenever a program is opened or saved with a new name -- all significant events are logged to this stream via logging interface functions below
   static String         log_fname;  // #READ_ONLY #NO_SAVE current log file output name
+
+  static String 	console_chars; // #NO_SAVE #HIDDEN buffer of current console chars output -- when this gets longer than a display line, it is output
 
 #if (defined(TA_GUI) && !(defined(__MAKETA__) || defined(NO_TA_BASE)))
   static QPointer<QMainWindow>  console_win;    // #IGNORE the console window
@@ -982,7 +966,11 @@ public:
   //    Global state management
 
   static void   FlushConsole();
-  // #CAT_GlobalState flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output..
+  // #CAT_GlobalState flush any pending console output (cout, cerr) -- call this in situations that generate a lot of console output (NOTE: output to cout, cerr is deprecated and should be avoided -- use ConsoleOutput instead)
+  static bool	ConsoleOutput(const String& str, bool err = false, bool pager = true);
+  // #CAT_Utility send the string one line at a time to console, optionaly using paging control to output only one page at a time to the user.  err means send to cerr or mark in red on gui console. returns true if full output was sent, false if user hit quit on pager
+  static bool	ConsoleOutputChars(const String& str, bool err = false, bool pager = false);
+  // #CAT_Utility send the string one line at a time to console, optionaly using paging control to output only one page at a time to the user.  err means send to cerr or mark in red on gui console. returns true if full output was sent, false if user hit quit on pager
 
   static int    ProcessEvents();
   // #CAT_GlobalState run any pending qt events that might need processed
@@ -1121,9 +1109,6 @@ public:
   static String& FancyPrintTwoCol(String& strm, const String_PArray& col1_strs,
 				  const String_PArray& col2_strs, int indent=0);
   // #CAT_Utility generate a print string from two columns of strings (must be equal in size), where the 2nd column items are all aligned with proper spacing after the first column items, based on the maximum width of items in the first columnn
-  static bool	StreamString(const String& str, ostream& strm, bool page = true,
-			     istream& page_ctrl_in = cin);
-  // #CAT_Utility stream given string one line at a time to output stream, calling FlushConsole, and optionaly using paging control to output only one page at a time, with input provided by the input stream
 
   /////////////////////////////////////////////////
   //    File Paths etc
@@ -1219,7 +1204,7 @@ public:
   ////////////////////////////////////////////////////////////////////////
   //    File Parsing Stuff for Dump routines: Input
 
-  static String LexBuf; // #HIDDEN a buffer, contains last thing read by read_ funs
+  static String LexBuf; // #NO_SAVE #HIDDEN a buffer, contains last thing read by read_ funs
 
   // return value is the next character in the stream
   // peek=true means that return value was not read, but was just peek'd

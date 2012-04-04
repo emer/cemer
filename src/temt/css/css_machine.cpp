@@ -20,9 +20,7 @@
 #include "css_basic_types.h"
 #include "css_c_ptr_types.h"
 #include "css_console.h"
-#ifdef HAVE_QT_CONSOLE
-# include "css_qtconsole.h"
-#endif
+#include "css_qtconsole.h"
 #ifndef CSS_NUMBER
 # include "css_parse.h"
 #endif
@@ -50,83 +48,6 @@
 
 int yyparse(void);
 void yyerror(const char* s);
-
-pager_ostream::pager_ostream() {
-  fout = &cout;
-  fin = &cin;
-  n_lines = 40;
-  cur_line = 0;
-  quitting = false;
-  no_page = false;
-}
-
-pager_ostream::pager_ostream(ostream* fo, istream* fi, int n_ln) {
-  fout = fo;
-  fin = fi;
-  n_lines = n_ln;
-  cur_line = 0;
-  quitting = false;
-  no_page = false;
-}
-
-void pager_ostream::start() {
-  cur_line = 0;
-  quitting = false;
-}
-
-pager_ostream& pager_ostream::operator<<(const char* str) {
-  *this << (String)str;
-  return *this;
-}
-
-pager_ostream& pager_ostream::operator<<(const String& str) {
-  if(quitting) return *this;
-  if(no_page) {
-    *fout << str;
-    fout->flush();
-    return *this;
-  }
-  int n_nl = str.freq('\n');
-  if(cur_line + n_nl < n_lines) {
-    cur_line += n_nl;
-    *fout << str;
-    fout->flush();
-    return *this;
-  }
-
-  int n_out = n_lines - cur_line;
-
-  String cur_str = str;
-  for(int i=0;i<n_out;i++) {
-    String cur_ln = cur_str.through('\n');
-    cur_str = cur_str.after('\n');
-    *fout << cur_ln;
-  }
-  fout->flush();
-
-  *fout << "---Press Return for More, q=quit, c=continue without paging ---";
-  String resp;
-  *fin >> resp;
-  if(resp == "q" || resp == "Q") {
-    quitting = true;
-    return *this;
-  }
-  if(resp == "c" || resp == "C") {
-    no_page = true;
-    if(!cur_str.empty()) {
-      *this << cur_str;
-    }
-    return *this;
-  }
-  cur_line = 0;
-
-  if(!cur_str.empty()) {
-    *this << cur_str;
-  }
-
-  return *this;
-}
-
 
 //////////////////////////
 //      cssMisc         //
@@ -180,7 +101,6 @@ String          cssMisc::startup_file;
 String          cssMisc::startup_code;
 int             cssMisc::init_debug = -1;
 int             cssMisc::init_bpoint = -1;
-bool            cssMisc::init_interactive = true;
 int             cssMisc::refcnt_trace = 0; // user wants refcnt tracing (-rct from arg)
 bool            cssMisc::obey_read_only = true;
 bool            cssMisc::call_update_after_edit = false;
@@ -246,14 +166,8 @@ void cssMisc::OutputSourceLoc(cssProg* prog) {
   else
     top = cssMisc::cur_top;
 
-  ostream* fh = &cerr;
-  if(top->cmd_shell)
-    fh = top->cmd_shell->ferr;
-
   if(taMisc::dmem_proc == 0) {
-    *(fh) << GetSourceLoc(prog);
-    taMisc::FlushConsole();
-    fh->flush();
+    taMisc::ConsoleOutput(GetSourceLoc(prog), true, false);
   }
 }
 
@@ -272,12 +186,7 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
     return;
 
   if(taMisc::dmem_proc == 0) {
-    ostream* fh = &cerr;
-    if(top->cmd_shell)
-      fh = top->cmd_shell->ferr;
-
-    *(fh) << cssMisc::last_err_msg << endl;
-    taMisc::FlushConsole();
+    taMisc::ConsoleOutput(cssMisc::last_err_msg, true, false);
   }
   top->run_stat = cssEl::ExecError;
   top->exec_err_msg = cssMisc::last_err_msg;
@@ -305,12 +214,7 @@ void cssMisc::Warning(cssProg* prog, const char* a, const char* b, const char* c
     return;
 
   if(taMisc::dmem_proc == 0) {
-    ostream* fh = &cerr;
-    if(top->cmd_shell)
-      fh = top->cmd_shell->ferr;
-
-    *(fh) << cssMisc::last_warn_msg << endl;
-    taMisc::FlushConsole();
+    taMisc::ConsoleOutput(cssMisc::last_warn_msg, true, false);
   }
   if(top->own_program) {
     bool running = top->state & cssProg::State_Run;
@@ -339,11 +243,7 @@ void cssMisc::SyntaxError(const char* er) {
     return;
 
   if(taMisc::dmem_proc == 0) {
-    ostream* fh = &cerr;
-    if(cssMisc::cur_top->cmd_shell != NULL)
-      fh = cssMisc::cur_top->cmd_shell->ferr;
-    *fh << msg;
-    taMisc::FlushConsole();
+    taMisc::ConsoleOutput(msg, true, false);
   }
   if(cssMisc::cur_top->own_program) {
     cssMisc::cur_top->own_program->CssError(cssMisc::cur_top->tok_src_ln, false, msg);
@@ -3426,14 +3326,8 @@ void cssProg::RunDebugInfo(cssInst* nxt) {
   }
 
   if(fh.nonempty()) {
-    if(top->cmd_shell) {
-      top->cmd_shell->pgout << fh;
-    }
-    else {
-      cout << fh;		// just send to cout
-    }
+    taMisc::ConsoleOutput(fh, true, false);
   }
-  taMisc::FlushConsole();
 }
 
 bool cssProg::IsBreak(css_progdx pcval) {
@@ -3449,12 +3343,7 @@ bool cssProg::IsBreak(css_progdx pcval) {
        << name << " of: " << top->name << "\n";
     cssInst* nxt = insts[Frame()->pc];
     nxt->PrintSrc(fh);
-    if(top->cmd_shell) {
-      top->cmd_shell->pgout << fh;
-    }
-    else {
-      cout << fh;		// todo: could send to Info etc.
-    }
+    taMisc::ConsoleOutput(fh, true, false);
     return true;
   }
   return false;
@@ -3470,12 +3359,7 @@ bool cssProg::CheckWatch() {
 	 << name << " of: " << top->name << "\n";
       cssInst* nxt = insts[Frame()->pc-1];
       nxt->PrintSrc(fh);
-      if(top->cmd_shell) {
-        top->cmd_shell->pgout << fh;
-      }
-      else {
-	cout << fh;
-      }
+      taMisc::ConsoleOutput(fh, true, false);
       wp->GetAsPrvVal();
       return true;
     }
@@ -4778,9 +4662,11 @@ cssEl* cssProgSpace::Cont() {
       }
       else {
         if((debug >= 2) && (cmd_shell)) {
-          cmd_shell->pgout << cssMisc::Indent(size-1) << "FunDone  at "
-                           << taMisc::LeadingZeros(prv_prg->PC()-1,4)
-                           << " el: " << fun_el->PrintStr() << "\n";
+	  String strm;
+	  strm << cssMisc::Indent(size-1) << "FunDone at "
+	       << taMisc::LeadingZeros(prv_prg->PC()-1,4)
+	       << " el: " << fun_el->PrintStr();
+          cmd_shell->OutputLine(strm, true);
         }
         fun_el->FunDone(prv_prg);       // note passing prg from higher level
         if(prv_prg->state & cssProg::State_IsTmpProg) {
@@ -4882,12 +4768,7 @@ void cssProgSpace::SetDebug(int dblev) {
 }
 
 bool cssProgSpace::DisplayOutput(const String& out_str, bool pager) {
-  if(HaveCmdShell()) {
-    return taMisc::StreamString(out_str, *cmd_shell->fout, pager, *cmd_shell->fin);
-  }
-  else {
-    return taMisc::StreamString(out_str, cout, pager, cin);
-  }
+  return taMisc::ConsoleOutput(out_str, false, pager);
 }
 
 String& cssProgSpace::ListFun(String& fh, const String& fnm) {
@@ -5433,18 +5314,14 @@ bool cssProgSpace::DelAllWatches() {
 ///////////////////////////////////
 
 static cssConsole* qand_console = NULL;
-#ifdef HAVE_QT_CONSOLE
 QPointer<QcssConsole> qcss_console;
-#endif
 
 void cssCmdShell::Constr() {
   fin = &cin;  fout = &cout;  ferr = &cerr;
-  pgout.fin = fin; pgout.fout = fout; pgout.n_lines = 40;
-  pgout.no_page = true; // very dangerous, except maybe with Qt guy, and dangerous even then!
-
   console_type = taMisc::CT_NONE;
 
   external_exit = false;
+  pager_waiting = false;
 //   sc_shell_this = NULL;
 
   src_prog = NULL;
@@ -5512,7 +5389,8 @@ void cssCmdShell::PopAllSrcProg() {
 }
 
 void cssCmdShell::AcceptNewLine_Qt(QString ln, bool eof) {
-  AcceptNewLine(ln, eof);
+  if(!pager_waiting)
+    AcceptNewLine(ln, eof);
 }
 
 // this is the work-horse of the shell: a new string line is sent to it by some
@@ -5550,7 +5428,6 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho,
 
   fin = &fhi;
   fout = &fho;
-  pgout.fin = fin; pgout.fout = fout; pgout.n_lines = 40;
 
 #ifndef __GNUG__
   fout->sync_with_stdio();
@@ -5570,14 +5447,12 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho,
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);
 #endif
   switch (console_type) {
-  case taMisc::CT_OS_SHELL:             // quick-and-dirty console (compatible with qt, but uses stdin/out
+  case taMisc::CT_OS_SHELL:
     cssMisc::TopShell->Shell_OS_Console(cssMisc::prompt);
     break;
-#ifdef HAVE_QT_CONSOLE
   case taMisc::CT_GUI:
     cssMisc::TopShell->Shell_Gui_Console(cssMisc::prompt);
     break;
-#endif
   case taMisc::CT_NONE:
     cssMisc::TopShell->Shell_No_Console(cssMisc::prompt);
     break;
@@ -5653,21 +5528,13 @@ void cssCmdShell::UpdatePrompt(bool disp_prompt) {
   case taMisc::CT_OS_SHELL:
     qand_console->setPrompt(act_prompt);
     break;
-#ifdef HAVE_QT_CONSOLE
   case taMisc::CT_GUI:
     qcss_console->setPrompt(act_prompt, disp_prompt);   // do not display new prompt
     break;
-#endif
   }
 }
 
 void cssCmdShell::Shell_OS_Console(const String& prmpt) {
-  //WARNING: PAGING IS EVIL SINCE IT CONFLICTS WITH THE THREADED INPUT HANDLERS (in GUI ONLY?)
-  if(taMisc::gui_active)
-    pgout.no_page = !(taMisc::console_options & taMisc::CO_USE_PAGING_GUI);
-  else
-    pgout.no_page = !(taMisc::console_options & taMisc::CO_USE_PAGING_NOGUI);
-
   if(!qand_console)
     qand_console = cssConsole::Get_SysConsole();
 
@@ -5684,7 +5551,6 @@ void cssCmdShell::Shell_OS_Console(const String& prmpt) {
   qand_console->Start();
 }
 
-#ifdef HAVE_QT_CONSOLE
 void cssCmdShell::Shell_Gui_Console(const String& prmpt) {
   qcss_console = QcssConsole::getInstance();
 
@@ -5696,15 +5562,13 @@ void cssCmdShell::Shell_Gui_Console(const String& prmpt) {
   console_type = taMisc::CT_GUI;
   qcss_console->setPrompt(prmpt);
   external_exit = false;
-  pgout.no_page = true;         // console has its own pager!
 
   cssMisc::TopShell->PushSrcProg(cssMisc::Top);
   qcss_console->flushOutput();  // get it flushed to start up
 }
-#endif
+
 void cssCmdShell::Shell_No_Console(const String& prmpt) {
   rl_done = false;
-  pgout.no_page = true; // default
   console_type = taMisc::CT_NONE;
   SetPrompt(prmpt);
   external_exit = false;
@@ -5734,14 +5598,43 @@ void cssCmdShell::Shell_NoConsole_Run() {
 }
 
 void cssCmdShell::FlushConsole() {
-#ifdef HAVE_QT_CONSOLE
   if(console_type == taMisc::CT_GUI) {
     if((bool)qcss_console) {
-      qcss_console->flushOutput(true); // wait for pager!
-      taiM->ProcessEvents();
+      qcss_console->flushOutput();
     }
   }
-#endif
+}
+
+void cssCmdShell::OutputLine(const String& oneln, bool err) {
+  if(console_type == taMisc::CT_GUI) {
+    if((bool)qcss_console) {
+      qcss_console->outputLine(oneln, err);
+      return;
+    }
+  }
+  if(err) {
+    *ferr << oneln << endl;
+  }
+  else {
+    *fout << oneln << endl;
+  }
+}
+
+int cssCmdShell::QueryForKeyResponse(const String& query) {
+  if(console_type == taMisc::CT_GUI) {
+    if((bool)qcss_console) {
+      int rval = qcss_console->queryForKeyResponse(query);
+      return rval;
+    }
+  }
+  // todo: this is not working properly for os shell 
+  // triggers an infinite loop from cssCmdShell::AcceptNewLine_Qt
+  // pager_waiting = true;
+  // *fout << query << endl;
+  // int rval = fin->get();
+  // pager_waiting = false;
+  // return rval;
+  return 'c';
 }
 
 void cssCmdShell::Exit() {
@@ -5750,12 +5643,10 @@ void cssCmdShell::Exit() {
   switch (console_type) {
   case taMisc::CT_OS_SHELL:
     break;
-#ifdef HAVE_QT_CONSOLE
   case taMisc::CT_GUI:
     if((bool)qcss_console)
       qcss_console->exit();
     break;
-#endif
   case taMisc::CT_NONE:
     break;
   }

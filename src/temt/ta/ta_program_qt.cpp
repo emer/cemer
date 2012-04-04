@@ -781,7 +781,6 @@ void iProgramEditor::GetImage() {
   QList<QWidget*> list = qFindChildren<QWidget*>(body);
   for (int i=0; i<list.size(); ++i) {
     QWidget* rep = list.at(i);
-//     cerr << i << "\t" << rep->metaObject()->className() << endl;
     if(rep->isVisible() && rep->isEnabled() && (rep->focusPolicy() & Qt::TabFocus) &&
        !rep->inherits("QCheckBox")) {
       if(rep->inherits("QLineEdit")) {
@@ -1721,20 +1720,10 @@ void iProgramCtrlDataHost::GetImage_Membs()
   Program* prog = this->prog(); //cache
   if (!prog) return;
   
-// #ifdef DEBUG
-//   cerr << "ctrl panel get image on: " << prog->name << endl;
-// #endif
-
   // prog stuff
   if (show_set(MS_PROG) && (data_el(MS_PROG).size > 0)) {
     GetImage_impl(&memb_el(MS_PROG), data_el(MS_PROG), prog);
   }
-  
-  // group stuff
-//   if (show_set(MS_GP) && (data_el(MS_GP).size > 0)) {
-//     Program_Group* pg = GET_OWNER(prog, Program_Group);
-//     GetImage_impl(&memb_el(MS_GP), data_el(MS_GP), pg);
-//   }
   
   for (int j = MS_ARGS; j <= MS_VARS; ++j) {
     if (!show_set(j)) continue;
@@ -1858,9 +1847,6 @@ void iProgramCtrlPanel::OnWindowBind_impl(iTabViewer* itv) {
 }
 
 void iProgramCtrlPanel::UpdatePanel_impl() {
-// #ifdef DEBUG
-//   cerr << "update panel on: " << prog()->name << endl;
-// #endif
   if (pc) pc->ReShow_Async();
 }
 
@@ -2253,7 +2239,6 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
 
   switch(lookup_type) {
   case 1: {// lookup variables
-//     cerr << "base_path empty: lookup a var, seed: " << lookup_seed << endl;
     taiTokenPtrMultiTypeButton* varlkup =  new taiTokenPtrMultiTypeButton
       (&TA_ProgVar, NULL, NULL,	NULL, 0, lookup_seed);
     varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
@@ -2282,7 +2267,6 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     break;
   }
   case 2: {			// members/methods
-//     cerr << "lookup a memb/meth from path: " << base_path << " seed: " << lookup_seed << endl;
     String path_var, path_rest;
     TypeDef* lookup_td = NULL;
     taList_impl* tal = NULL;
@@ -2394,7 +2378,6 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       }
     }
     else if(lookup_td) {
-//       cerr << "lookup from type: " << lookup_td->name << endl;
       TypeItem* lookup_md = NULL;
       if(path_base || path_base_typ) {		// can only lookup members, not methods
 	taiMemberDefButton* mdlkup = new taiMemberDefButton(lookup_td, NULL, NULL,
@@ -2431,11 +2414,8 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     break;
   }
   case 3: {
-//     cerr << "lookup a type/static guy from path: " << base_path << " seed: "
-// 	 << lookup_seed << endl;
     TypeDef* lookup_td = taMisc::types.FindName(base_path);
     if(lookup_td) {
-//       cerr << "lookup from type: " << lookup_td->name << endl;
       taiEnumStaticButton* eslkup =  new taiEnumStaticButton(lookup_td, NULL, NULL,
 							     NULL, 0, lookup_seed);
       eslkup->GetImage((MemberDef*)NULL, lookup_td);
@@ -2467,7 +2447,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     break;
   }
   case 4: {
-    cerr << "lookup an array index from path: " << base_path << " seed: " << lookup_seed << endl;
+    taMisc::Info("lookup an array index from path:", base_path, "seed:", lookup_seed);
     break;
   }
   }

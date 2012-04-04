@@ -155,7 +155,8 @@ void FunLookup::Convolve(const FunLookup& src, const FunLookup& con) {
 
 Tokenizer::Tokenizer(std::istream &ifstrm) {
   this->ifstrm = &ifstrm;
-  if (!ifstrm) std::cerr<<"Warning (Tokenizer::Tokenizer): bad ifstream\n";
+  if (!ifstrm) 
+    taMisc::Warning("(Tokenizer::Tokenizer): bad ifstream");
   line_num = 1;
 }
 
@@ -164,7 +165,7 @@ Tokenizer::~Tokenizer() {
 
 void Tokenizer::error_msg(const char *msg_part1, const char *msg_part2) {
   taMisc::Warning("*** Tokenizer: Parse error on line: ", String(line_num),
-		msg_part1, msg_part2);
+		  msg_part1, msg_part2);
 }
 
 bool Tokenizer::expect(const char *token_str, const char *err_msg) {
@@ -193,7 +194,7 @@ bool Tokenizer::next() {
   char c;
 
   if (!*ifstrm) {
-    std::cerr<<"Warning (Tokenizer::get_next): bad ifstream\n";
+    taMisc::Warning("(Tokenizer::get_next): bad ifstream");
     return false;
   }
 
@@ -421,7 +422,7 @@ void FunLookupND::LoadTable(istream& is) {
 	}
       }
       if (success) {
-	std::cerr<<"Success\n";
+	// taMisc::Info("FunLookupND: Load Success");
 	tokens.next();
 	if (tokens.token != "") {
 	  taMisc::Error("FunLookupND: Warning: Excess tokens after last expected token in the data section");
@@ -430,9 +431,10 @@ void FunLookupND::LoadTable(istream& is) {
       } else {
 	break;
       }
-    } else if (tokens.token != "") {
-      std::cerr<<"Syntax error on line: "<<tokens.line_num<<"\n";
-      std::cerr<<"Unrecognized statement type: "<<tokens.token<<"\n";
+    }
+    else if (tokens.token != "") {
+      taMisc::Error("Syntax error on line:", String(tokens.line_num));
+      taMisc::Error("Unrecognized statement type:", String(tokens.token));
       break;
     }
   } while (tokens.token != "");
@@ -466,8 +468,6 @@ float FunLookupND::EvalArray(float* x, int* idx_map) {
     int meshIdx = MeshPtToMeshIdx(meshPt);
     // Prevent possible overflows, & associated NaN issues
     if (fabsf(sumSqr) < 1.0e-4) {
-      // cerr<<"exact match\n";
-
       rval = mesh_pts[meshIdx];
       goto exit;
     }
@@ -475,9 +475,6 @@ float FunLookupND::EvalArray(float* x, int* idx_map) {
     float point_wt = 1.0f / (dist*dist);
     ptSum += point_wt*mesh_pts[meshIdx];
     wtSum += point_wt;
-    // cerr<<"dist: "<<dist<<"\n";
-    // cerr<<"point wt: "<<point_wt<<"\n";
-    // cerr<<"mesh_pts["<<meshIdx<<"]: "<<mesh_pts[meshIdx]<<"\n";
   }
   rval = ptSum/wtSum;
 exit:
@@ -504,13 +501,14 @@ float FunLookupND::EvalArgs(float d0, float d1, float d2, float d3, float d4,
 }
 
 
-void FunLookupND::ListTable(ostream& strm) {
+String& FunLookupND::ListTable(String& strm) {
   strm<<"Mesh Values:\n";
   strm<<"====================\n";
   for (int i=0; i < mesh_pts.size; i++) {
     strm<<"\tmesh_pts["<<i<<"]: "<<mesh_pts[i]<<"\n";
   }
   strm<<"\n\n";
+  return strm;
 }
 
 void FunLookupND::ShiftNorm(float desired_mean) {
@@ -525,14 +523,14 @@ void FunLookupND::ShiftNorm(float desired_mean) {
   }
 
   // test code
-  double new_mean = 0;
-  for (int i = 0; i < mesh_pts.size; i++) {
-    new_mean += mesh_pts[i];
-  }
-  new_mean /= mesh_pts.size;
-  cerr<<"Orig mean: "<<orig_mean<<"\n";
-  cerr<<"new mean: "<<new_mean<<"\n";
-  cerr<<"Desired mean: "<<desired_mean<<"\n";
+  // double new_mean = 0;
+  // for (int i = 0; i < mesh_pts.size; i++) {
+  //   new_mean += mesh_pts[i];
+  // }
+  // new_mean /= mesh_pts.size;
+  // taMisc::DebugInfo("Orig mean:", String(orig_mean));
+  // taMisc::DebugInfo("new mean: ", String(new_mean));
+  // taMisc::DebugInfo("Desired mean: ", String(desired_mean));
   // end test code
 }
 
@@ -550,8 +548,8 @@ void FunLookupND::MulNorm(float desired_mean) {
     orig_mean += mesh_pts[i];
   }
   // debug code
-  cerr << "pos mag: "<<pos_mag<<"\n";
-  cerr << "neg mag: "<<neg_mag<<"\n\n";
+  taMisc::DebugInfo("pos mag: ", String(pos_mag));
+  taMisc::DebugInfo("neg mag: ", String(neg_mag));
 
   // end debug code
   double pos_norm_term, neg_norm_term;
@@ -568,13 +566,13 @@ void FunLookupND::MulNorm(float desired_mean) {
   }
 
   // test code
-  double new_mean = 0;
-  for (int i = 0; i < mesh_pts.size; i++) {
-    new_mean += mesh_pts[i];
-  }
-  new_mean /= mesh_pts.size;
-  cerr<<"Orig mean: "<<orig_mean<<"\n";
-  cerr<<"new mean: "<<new_mean<<"\n";
-  cerr<<"Desired mean: "<<desired_mean<<"\n";
+  // double new_mean = 0;
+  // for (int i = 0; i < mesh_pts.size; i++) {
+  //   new_mean += mesh_pts[i];
+  // }
+  // new_mean /= mesh_pts.size;
+  // taMisc::DebugInfo("Orig mean:", String(orig_mean));
+  // taMisc::DebugInfo("new mean: ", String(new_mean));
+  // taMisc::DebugInfo("Desired mean: ", String(desired_mean));
   // end test code
 }

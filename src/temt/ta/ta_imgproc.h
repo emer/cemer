@@ -385,7 +385,7 @@ public:
   virtual void	GridFilter(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter into data table and generate a grid view of it (reset an existing data first)
 
-  virtual void	OutputParams(ostream& strm = cerr);
+  virtual String& PrintParams(String& strm);
   // #CAT_GaborFilter output current parameter values to stream
 
   void 	Initialize();
@@ -449,7 +449,7 @@ public:
   virtual void	GridFilter(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filter into data table and generate a grid view of it (reset an existing data first)
 
-  virtual void	OutputParams(ostream& strm = cerr);
+  virtual String& PrintParams(String& strm);
   // #CAT_GaborFilter output current parameter values to stream
 
   void 	Initialize();

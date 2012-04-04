@@ -257,22 +257,6 @@ public:
   static bool	Matrix3DGraph(DataTable* data, const String& x_axis_col, const String& z_axis_col);
   // #CAT_Graph #MENU_BUTTON #MENU_ON_Graph prepare data for a 3D matrix graph, where data is plotted by X and Z axis values -- sorts data by X then Z, then adds a duplicate copy of data sorted by Z then X, which produces a matrix grid in a graph view plot (turn off the Z neg draw flag)
 
-
-//   static bool	PatFreqArray(float_RArray& freqs, int pat_no, float act_thresh = .5f, bool proportion = false);
-//   // get frequency (proportion) of pattern activations greater than act_thresh across events
-//   static bool	PatFreqText(float act_thresh = .5f, bool proportion = false, ostream& strm = cerr);
-//   // #MENU_BUTTON #ARGC_2 report frequency (proportion) of pattern values greater than act_thresh across events, to a text output (most useful if pattern values are named in value_names)
-//   static bool	PatFreqGrid(GridLog* disp_log, float act_thresh = .5f, bool proportion = false);
-//   // #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable report frequency (proportion) of pattern values greater than act_thresh across events, to a grid log (NULL = make new log)
-//   static bool	PatAggArray(float_RArray& agg_vals, int pat_no, Aggregate& agg);
-//   // aggregate pattern pat_no values over events to given array object
-//   static bool	PatAggText(Aggregate& agg, ostream& strm = cerr);
-//   // #MENU_BUTTON #ARGC_1 aggregate patterns over events and print aggregated results to a text output (most useful if pattern values are named in value_names)
-//   static bool	PatAggGrid(GridLog* disp_log, Aggregate& agg);
-//   // #MENU_BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable aggregate patterns over events and plot aggregated results in a grid log (NULL = make new log)
-//   static bool 	EventFreqText(bool proportion = false, ostream& strm = cerr);
-//   // #MENU_BUTTON #ARGC_1 report frequency (proportion) of event names in the environment
-
   override String 	GetTypeDecoKey() const { return "DataTable"; }
   void Initialize() { };
   void Destroy() { };

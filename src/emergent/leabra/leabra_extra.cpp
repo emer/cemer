@@ -841,7 +841,6 @@ void ScalarValLayerSpec::HelpConfig() {
  - A self connection using the ScalarValSelfPrjnSpec can be made, which provides a bias\
  for neighboring units to have similar values.  It should usually have a fairly small wt_scale.rel\
  parameter (e.g., .1)";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 
@@ -1864,7 +1863,6 @@ void TwoDValLayerSpec::HelpConfig() {
  - A self connection using the TwoDValSelfPrjnSpec can be made, which provides a bias\
  for neighboring units to have similar values.  It should usually have a fairly small wt_scale.rel\
  parameter (e.g., .1)";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 
@@ -2830,7 +2828,6 @@ void FourDValLayerSpec::HelpConfig() {
  - A self connection using the FourDValSelfPrjnSpec can be made, which provides a bias\
  for neighboring units to have similar values.  It should usually have a fairly small wt_scale.rel\
  parameter (e.g., .1)";
-  cerr << help << endl << flush;
   taMisc::Confirm(help);
 }
 

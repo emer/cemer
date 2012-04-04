@@ -906,9 +906,6 @@ int TypeDef::Dump_Save(ostream& strm, void* base, void* par, int indent) {
     Dump_Save_impl(strm, base, par, indent);
   }
   --taMisc::is_saving;
-// #ifdef DEBUG
-//   cerr << "save path_tokens.size: " << dumpMisc::path_tokens.size << endl;
-// #endif
   dumpMisc::path_tokens.Reset();
   return true;
 }
@@ -926,11 +923,12 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 			   const char* prv_read_nm, int prv_c) {
   if(taMisc::verbose_load >= taMisc::TRACE) {
     const char* nm = (prv_read_nm != NULL) ? prv_read_nm : "NULL";
-    cerr << "Entering MemberSpace::Dump_Load, type: " << owner->name
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << ", prv_read_nm = " << nm
-	 << ", prv_c = " << prv_c << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Entering MemberSpace::Dump_Load, type: " << owner->name
+	<< ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
+	<< ", prv_read_nm = " << nm
+	<< ", prv_c = " << prv_c;
+    taMisc::Info(msg);
   }
 
   int rval = 2;			// default assumption is that no members are loaded
@@ -954,11 +952,12 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
       if(strm.peek() == ';') strm.get(); // skip past ending semi
       if(taMisc::verbose_load >= taMisc::TRACE) {
 	const char* nm = (prv_read_nm != NULL) ? prv_read_nm : "NULL";
-	cout << "}, Leaving MemberSpace::Dump_Load, type: " << owner->name
-	     << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	     << ", prv_read_nm = " << nm
-	     << ", prv_c = " << prv_c << "\n"; // endl;
-	taMisc::FlushConsole();
+	String msg;
+	msg << "}, Leaving MemberSpace::Dump_Load, type: " << owner->name
+	     << ", par = " << String((ta_intptr_t)par) << ", base = "
+	    << String((ta_intptr_t)base) << ", prv_read_nm = " << nm
+	    << ", prv_c = " << prv_c;
+	taMisc::Info(msg);
       }
       return rval;
     }
@@ -1040,8 +1039,7 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
 	taMisc::skip_past_err(strm);
 	taMisc::verbose_load = (taMisc::LoadVerbosity)sv_vld;
 	if(taMisc::verbose_load >= taMisc::VERSION_SKEW) {
-	  cerr << "\n\n"; // endl << endl << flush;
-	  taMisc::FlushConsole();
+	  taMisc::Info("\n\n");
 	}
       }
       rval = 1;		// member was loaded, do update after edit
@@ -1049,11 +1047,12 @@ int MemberSpace::Dump_Load(istream& strm, void* base, void* par,
   } while (1);
   if(taMisc::verbose_load >= taMisc::TRACE) {
     const char* nm = (prv_read_nm != NULL) ? prv_read_nm : "NULL";
-    cerr << "Leaving MemberSpace::Dump_Load, type: " << owner->name
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << ", prv_read_nm = " << nm
-	 << ", prv_c = " << prv_c << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Leaving MemberSpace::Dump_Load, type: " << owner->name
+	<< ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
+	<< ", prv_read_nm = " << nm
+	<< ", prv_c = " << prv_c;
+    taMisc::Info(msg);
   }
   return rval;
 }
@@ -1068,10 +1067,11 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
 //  if(!DumpMember(par)) return false;
 
   if(taMisc::verbose_load >= taMisc::TRACE) {
-    cerr << "Entering MemberDef::Dump_Load, member: " << name
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Entering MemberDef::Dump_Load, member: " << name
+	<< ", par = " << String((ta_intptr_t)par) << ", base = "
+	<< String((ta_intptr_t)base);
+    taMisc::Info(msg);
   }
   void* new_base = GetOff(base);
   int rval;
@@ -1085,10 +1085,11 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     else
       rval = type->Dump_Load_impl(strm, new_base, base);
     if (taMisc::verbose_load >= taMisc::TRACE) {
-      cerr << "Leaving MemberDef::Dump_Load, member: " << name
-	   << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	   << "\n"; // endl;
-      taMisc::FlushConsole();
+      String msg;
+      msg << "Leaving MemberDef::Dump_Load, member: " << name
+	  << ", par = " << String((ta_intptr_t)par) << ", base = "
+	  << String((ta_intptr_t)base);
+      taMisc::Info(msg);
     }
     return rval;
   }
@@ -1118,10 +1119,11 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
         // treat it as normal..
         rval = rbase->Dump_Load_impl(strm, (taBase*)base);
         if(taMisc::verbose_load >= taMisc::TRACE) {
-          cerr << "Leaving MemberDef::Dump_Load, member: " << name
-              << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-              << "\n"; // endl;
-	  taMisc::FlushConsole();
+	  String msg;
+          msg << "Leaving MemberDef::Dump_Load, member: " << name
+              << ", par = " << String((ta_intptr_t)par) << ", base = "
+	      << String((ta_intptr_t)base);
+	  taMisc::Info(msg);
         }
         //TODO: if we allow Variant taBase pointers, need to detect and do FixNull
         // if (type->InheritsFormal(TA_Variant) ... do FixNull
@@ -1157,10 +1159,11 @@ int MemberDef::Dump_Load(istream& strm, void* base, void* par) {
     }
     eff_type->SetValStr(taMisc::LexBuf, new_base, base, this);
     if(taMisc::verbose_load >= taMisc::TRACE) {
-      cerr << "Leaving MemberDef::Dump_Load, member: " << name
-          << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-          << "\n"; // endl;
-      taMisc::FlushConsole();
+      String msg;
+      msg << "Leaving MemberDef::Dump_Load, member: " << name
+          << ", par = " << String((ta_intptr_t)par) << ", base = "
+	  << String((ta_intptr_t)base);
+      taMisc::Info(msg);
     }
     return true;
   }
@@ -1171,12 +1174,12 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
 {
   if(taMisc::verbose_load >= taMisc::TRACE) {
     const char* nm = (typnm != NULL) ? typnm : "NULL";
-    cerr << "Entering TypeDef::Dump_Load_Path, type: " << name
-	 << ", path = " << path
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << ", typnm = " << nm
-	 << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Entering TypeDef::Dump_Load_Path, type: " << name
+	<< ", path = " << path
+	<< ", par = " << String((ta_intptr_t)par) << ", base = "
+	<< String((ta_intptr_t)base) << ", typnm = " << nm;
+    taMisc::Info(msg);
   }
   td = NULL;
   int c;
@@ -1239,12 +1242,12 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
   if((base != NULL) || !(td->DerivesFrom(TA_taBase)) || (path == "")) {
     if(taMisc::verbose_load >= taMisc::TRACE) {
       const char* nm = (typnm != NULL) ? typnm : "NULL";
-      cerr << "true Leaving TypeDef::Dump_Load_Path, type: " << name
-	   << ", path = " << path
-	   << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	   << ", typnm = " << nm
-	   << "\n"; // endl;
-      taMisc::FlushConsole();
+      String msg;
+      msg << "true Leaving TypeDef::Dump_Load_Path, type: " << name
+	  << ", path = " << path
+	  << ", par = " << String((ta_intptr_t)par) << ", base = "
+	  << String((ta_intptr_t)base) << ", typnm = " << nm;
+      taMisc::Info(msg);
     }
     return true;		// nothing left to do here, actually
   }
@@ -1252,13 +1255,13 @@ int TypeDef::Dump_Load_Path(istream& strm, void*& base, void* par,
   int rval = td->Dump_Load_Path_impl(strm, base, par, path);
   if(taMisc::verbose_load >= taMisc::TRACE) {
     const char* nm = (typnm != NULL) ? typnm : "NULL";
-    cerr << "Leaving TypeDef::Dump_Load_Path, type: " << name
-	 << ", path = " << path
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << ", typnm = " << nm
-	 << ", rval = " << rval
-	 << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Leaving TypeDef::Dump_Load_Path, type: " << name
+	<< ", path = " << path
+	<< ", par = " << String((ta_intptr_t)par) << ", base = "
+	<< String((ta_intptr_t)base) << ", typnm = " << nm
+	<< ", rval = " << rval;
+    taMisc::Info(msg);
   }
   return rval;
 }
@@ -1268,11 +1271,12 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
   String orig_path;
   taBase* find_base = NULL;	// where to find item from
   if(taMisc::verbose_load >= taMisc::TRACE) {
-    cerr << "Entering TypeDef::Dump_Load_Path_impl, type: " << name
-	 << ", path = " << path
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Entering TypeDef::Dump_Load_Path_impl, type: " << name
+	<< ", path = " << path
+	<< ", par = " << String((ta_intptr_t)par) << ", base = "
+	<< String((ta_intptr_t)base);
+    taMisc::Info(msg);
   }
 
   if(path.firstchar() == '@') {		// relative to current parent..
@@ -1302,11 +1306,12 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
   if((path == "root") || (path == ".")) {
     base = (void*)find_base;
     if(taMisc::verbose_load >= taMisc::TRACE) {
-      cerr << "root Leaving TypeDef::Dump_Load_Path_impl, type: " << name
-	   << ", path = " << path
-	   << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	   << "\n"; // endl;
-      taMisc::FlushConsole();
+      String msg;
+      msg << "root Leaving TypeDef::Dump_Load_Path_impl, type: " << name
+	  << ", path = " << path
+	  << ", par = " << String((ta_intptr_t)par) << ", base = "
+	  << String((ta_intptr_t)base);
+      taMisc::Info(msg);
     }
     return true;
   }
@@ -1354,10 +1359,11 @@ int TypeDef::Dump_Load_Path_impl(istream&, void*& base, void* par, String path) 
 
 int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
   if(taMisc::verbose_load >= taMisc::TRACE) {
-    cerr << "Entering TypeDef::Dump_Load_Value, type: " << owner->name
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Entering TypeDef::Dump_Load_Value, type: " << owner->name
+	<< ", par = " << String((ta_intptr_t)par) << ", base = "
+	<< String((ta_intptr_t)base);
+    taMisc::Info(msg);
   }
   int c = taMisc::skip_white(strm);
   if(c == EOF) {
@@ -1369,10 +1375,11 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
   if(c == '}') {
     if(strm.peek() == ';') strm.get();
     if(taMisc::verbose_load >= taMisc::TRACE) {
-      cerr << "} Leaving TypeDef::Dump_Load_Value, type: " << owner->name
-	   << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	   << "\n"; // endl;
-      taMisc::FlushConsole();
+      String msg;
+      msg << "} Leaving TypeDef::Dump_Load_Value, type: " << owner->name
+	  << ", par = " << String((ta_intptr_t)par) << ", base = "
+	  << String((ta_intptr_t)base);
+      taMisc::Info(msg);
     }
     return 2;
   }
@@ -1428,10 +1435,11 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
     SetValStr(taMisc::LexBuf, base);
   }
   if(taMisc::verbose_load >= taMisc::TRACE) {
-    cerr << "Leaving TypeDef::Dump_Load_Value, type: " << owner->name
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Leaving TypeDef::Dump_Load_Value, type: " << owner->name
+	<< ", par = " << String((ta_intptr_t)par) << ", base = "
+	<< String((ta_intptr_t)base);
+    taMisc::Info(msg);
   }
   return true;
 }
@@ -1439,17 +1447,20 @@ int TypeDef::Dump_Load_Value(istream& strm, void* base, void* par) {
 int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* typnm) {
   if(taMisc::verbose_load >= taMisc::TRACE) {
     const char* nm = (typnm != NULL) ? typnm : "NULL";
-    cerr << "Entering TypeDef::Dump_Load_impl, type: " << owner->name
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << ", typnm = " << nm
-	 << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Entering TypeDef::Dump_Load_impl, type: " << owner->name
+	<< ", par = " << String((ta_intptr_t)par) << ", base = "
+	<< String((ta_intptr_t)base) << ", typnm = " << nm;
+    taMisc::Info(msg);
   }
   TypeDef* td = NULL;
   String path;
   int rval = Dump_Load_Path(strm, base, par, td, path, typnm);
-  if((taMisc::verbose_load >= taMisc::TRACE) && (td != NULL))
-    cerr << "Loading: " << td->name << " " << path << " rval: " << rval << "\n";
+  if((taMisc::verbose_load >= taMisc::TRACE) && (td != NULL)) {
+    String msg;
+    msg << "Loading: " << td->name << " " << path << " rval: " << rval;
+    taMisc::Info(msg);
+  }
   if((rval > 0) && (base != NULL)) {
     if(td->InheritsFrom(TA_taBase)) {
       taBase* rbase = (taBase*)base;
@@ -1481,11 +1492,11 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
       if(c == EOF) return EOF;
       if(taMisc::verbose_load >= taMisc::TRACE) {
 	const char* nm = (typnm != NULL) ? typnm : "NULL";
-	cerr << "err Leaving TypeDef::Dump_Load_impl, type: " << owner->name
-	     << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	     << ", typnm = " << nm
-	     << "\n"; // endl;
-	taMisc::FlushConsole();
+	String msg;
+	msg << "err Leaving TypeDef::Dump_Load_impl, type: " << owner->name
+	    << ", par = " << String((ta_intptr_t)par) << ", base = "
+	    << String((ta_intptr_t)base) << ", typnm = " << nm;
+	taMisc::Info(msg);
       }
       return true;		// we already scanned past error
     }
@@ -1507,22 +1518,22 @@ int TypeDef::Dump_Load_impl(istream& strm, void* base, void* par, const char* ty
     if(c == EOF) return EOF;
     if(taMisc::verbose_load >= taMisc::TRACE) {
       const char* nm = (typnm != NULL) ? typnm : "NULL";
-      cerr << "err rb Leaving TypeDef::Dump_Load_impl, type: " << owner->name
-	   << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	   << ", typnm = " << nm
-	   << "\n"; // endl;
-      taMisc::FlushConsole();
+      String msg;
+      msg << "err rb Leaving TypeDef::Dump_Load_impl, type: " << owner->name
+	  << ", par = " << String((ta_intptr_t)par) << ", base = "
+	  << String((ta_intptr_t)base) << ", typnm = " << nm;
+      taMisc::Info(msg);
     }
     return true;		// already scanned past error
   }
   if(taMisc::verbose_load >= taMisc::TRACE) {
     const char* nm = (typnm != NULL) ? typnm : "NULL";
-    cerr << "Leaving TypeDef::Dump_Load_impl, type: " << owner->name
-	 << ", par = " << String((ta_intptr_t)par) << ", base = " << String((ta_intptr_t)base)
-	 << ", typnm = " << nm
-	 << ", rval = " << rval
-	 << "\n"; // endl;
-    taMisc::FlushConsole();
+    String msg;
+    msg << "Leaving TypeDef::Dump_Load_impl, type: " << owner->name
+	<< ", par = " << String((ta_intptr_t)par) << ", base = "
+	<< String((ta_intptr_t)base) << ", typnm = " << nm
+	<< ", rval = " << rval;
+    taMisc::Info(msg);
   }
   return rval;
 }
@@ -1673,9 +1684,6 @@ endload:
 
   dumpMisc::update_after.Reset(); //note: don't reset post list!
   dumpMisc::path_subs.Reset();
-// #ifdef DEBUG
-//   cerr << "load path_tokens.size: " << dumpMisc::path_tokens.size << endl;
-// #endif
   dumpMisc::path_tokens.Reset();
   dumpMisc::vpus.Reset();
   if (el_) *el_ = (void*)el;

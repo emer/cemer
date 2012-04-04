@@ -1652,12 +1652,6 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
 
   FloatTwoDCoord rfw = (FloatTwoDCoord)rf_ovlp * 2.0f * rf_width_mult;
   rf_width = rfw;
-//   cerr << "prjn: " << name << " layer: " << prjn->layer->name << " from: " << prjn->from->name
-//        << " rf size: " << rf_ovlp.x << ", " << rf_ovlp.y
-//        << " act send size: " << rf_ovlp.x * (n_recv_gps.x + 1)
-//        << ", " << rf_ovlp.y * (n_recv_gps.y + 1)
-//        << " trg send size: " << n_send_units.x << ", " << n_send_units.y
-//        << endl;
   return true;
 }
 

@@ -191,7 +191,6 @@ bool taFiler::GetFileName(FileOperation filerOperation) {
 
   fd->setWindowTitle(caption);
 
-  //  cerr << m_fname << endl;
   // todo: for some reason it is not using this arg if the file already exists!
   fd->selectFile(m_fname);
   // we always make and set the extension, but don't always show it

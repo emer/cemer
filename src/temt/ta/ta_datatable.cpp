@@ -257,7 +257,6 @@ void DataCol::UpdateAfterEdit_impl() {
 void DataCol::DataChanged(int dcr, void* op1, void* op2) {
   RemoveHashTable();
   inherited::DataChanged(dcr, op1, op2);
-  //  cerr << name << " dcr: " << dcr << endl;
   // treat item changes here as struct changes to the table
   if (dcr <= DCR_ITEM_UPDATED_ND) {
     DataTable* dt = dataTable();

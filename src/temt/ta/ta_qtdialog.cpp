@@ -1194,25 +1194,12 @@ void taiDataHostBase::ReConstr_Async() {
 }
 
 void taiDataHostBase::GetImage_Async() {
-  // reshow does a getimage, so ignore if a reshow pending
-//   cerr << "req getimage async on: " << typ->name << endl;
-//   taMisc::FlushConsole();
-//   if (getimage_req) return; // already waiting
-  // IMPORTANT: if above getimage_req is honored, then it can end up with some blank 
-  // program control panels -- needs the redundant getimage guys..  doesn't happen very often
-  // we can get these for DEFERRED as well, for buttons, ex/esp Program panels
-//   if ((state & STATE_MASK) >= CANCELED) {
-//      cerr << "getimage async cancelled on: " << typ->name << " state: " << (state & STATE_MASK) << endl;
-//     taMisc::FlushConsole();
-//     return;
-//   }
   getimage_req = true;
   taMisc::do_wait_proc = true;
   async_getimage_list.Link(this);
 }
 
 void taiDataHostBase::DebugDestroy(QObject* obj) {
-  cerr << "debug destroying: " << endl;
 }
 
 
@@ -1390,9 +1377,6 @@ void taiDataHost_impl::DataDataChanged(taDataLink* dl, int dcr, void* op1, void*
 void taiDataHost_impl::Refresh_impl(bool reshow) {
   // if no changes have been made in this instance, then just refresh,
   // otherwise, user will have to decide what to do, i.e., revert
-//   cerr << "Refresh_impl on: " << typ->name << " reshow: " << reshow << endl;
-//   taMisc::FlushConsole();
-
   if (HasChanged()) {
     warn_clobber = true;
     if (reshow) defer_reshow_req = true; // if not already set
@@ -1453,17 +1437,9 @@ void taiDataHost_impl::Ok_impl() { //note: only used for Dialogs
 }
 
 void taiDataHost_impl::ClearBody(bool waitproc) {
-//   cerr << "ClearBody on: " << typ->name << " waitproc: " << waitproc << endl;
-//   taMisc::FlushConsole();
   StartEndLayout(true);
   ClearBody_impl();
   if (!(state & SHOW_CHANGED)) return; // probably just destroying
-//   if(waitproc) { // these guys cause redraw to flash a lot and lose scroll position!
-//     taMisc::RunPending();
-//     taMisc::RunPending();
-//     taMisc::RunPending();
-//   }
-  //  ReConstr_Async(); 
   // can actually just do this live here
   ReConstr_Body();
   state &= ~SHOW_CHANGED;
@@ -1477,8 +1453,6 @@ void taiDataHost_impl::ClearBody_impl() {
 
 void taiDataHost_impl::ReConstr_Body() {
   if (!isConstructed()) return;
-//   cerr << "ReConstr_Body on: " << typ->name << endl;
-//   taMisc::FlushConsole();
   rebuild_body = true;
   ++updating;			// prevents spurious changed flags from coming in
   Constr_Body();
@@ -1494,8 +1468,6 @@ void taiDataHost_impl::ReConstr_Body() {
 }
 
 bool taiDataHost_impl::ReShow(bool force) {
-//   cerr << "ReShow on: " << typ->name << endl;
-//   taMisc::FlushConsole();
 // if not visible, we may refresh the buttons if visible, otherwise nothing else
   if (!mwidget) return false;//. huh?
   //note: extremely unlikely to be updating if invisible, so we do this test here
@@ -1704,13 +1676,6 @@ int taiDataHost::AddNameData(int row, const String& name, const String& desc,
   layBody->addLayout(lay_dat, row, 1);
 #endif  
   
-//   if(!first_tab_foc) {
-//     if(data->focusPolicy() & Qt::TabFocus) {
-// //       cerr << "setting first tab focus to row: " << row << " of type: " << data->metaObject()->className() << endl;
-//       first_tab_foc = data;
-//     }
-//   }
-
   label->show(); // needed for rebuilds, to make the widget show  
   data->show(); // needed for rebuilds, to make the widget show
   
@@ -2362,11 +2327,8 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id)
 void taiEditDataHost::GetButtonImage(bool force) {
   if(!typ || !mwidget || !frmMethButtons)  return;
   if(!force && !frmMethButtons->isVisible()) {
-//     cerr << "buttons not visible on: " << typ->name << endl;
     return;
   }
-
-//   cerr << "updating buttons on: " << typ->name << endl;
 
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);
@@ -2378,7 +2340,6 @@ void taiEditDataHost::GetButtonImage(bool force) {
 }
 
 void taiEditDataHost::GetImage(bool force) {
-//   cerr << "GetImage start on: " << typ->name << endl;
   if ((host_type != HT_CONTROL) || (frmMethButtons != NULL))
     GetButtonImage(force); // does its own visible check
   if (!mwidget) return; // huh?
@@ -2386,8 +2347,6 @@ void taiEditDataHost::GetImage(bool force) {
   if (!force && !mwidget->isVisible()) return;
   if ((typ == NULL) || (root == NULL)) return;
   if (state >= ACCEPTED ) return;
-//   cerr << "GetImage do on: " << typ->name << endl;
-//   taMisc::FlushConsole();
   ++updating;
   StartEndLayout(true);
   GetImage_PromptTitle();
@@ -2413,7 +2372,6 @@ void taiEditDataHost::GetImage_Membs() {
   QList<QWidget*> list = qFindChildren<QWidget*>(body);
   for (int i=0; i<list.size(); ++i) {
     QWidget* rep = list.at(i);
-//     cerr << i << "\t" << rep->metaObject()->className() << endl;
     if(// rep->isVisible() &&
        rep->isEnabled() &&
        (rep->focusPolicy() & Qt::TabFocus) &&
@@ -2423,7 +2381,6 @@ void taiEditDataHost::GetImage_Membs() {
 	if(qle->isReadOnly()) continue;
       }
       first_tab_foc = rep;
-//       cerr << "focused on: " << i << "\t" << rep->metaObject()->className() << endl;
       break;
     }
   }

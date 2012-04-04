@@ -111,29 +111,6 @@ class cssCmdShell;
 
 class Program;
 
-class pager_ostream {
-  // class that provides one page at a time output of streamed inputs
-public:
-  int		n_lines;	// number of lines to output on a page
-  bool		no_page;	// do not run the pager: just acts like a regular output stream
-  ostream*	fout;		// output stream
-  istream*	fin;		// input stream for prompting
-
-  void	start();		// call this when starting new output to the screen; inits counter
-  
-  virtual pager_ostream& operator<<(const char* str); 
-  virtual pager_ostream& operator<<(const String& str);  // this is the main call
-
-  pager_ostream();
-  pager_ostream(ostream* fo, istream* fi, int n_ln);
-  virtual ~pager_ostream() { };
-
-protected:
-  int 	cur_line;
-  bool	quitting;
-};
-
-
 class CSS_API cssMisc { // misc stuff for css
 public:
 
@@ -186,7 +163,6 @@ public:
   static String		startup_code;	// code to be executed at startup (by -e or -exec arg)
   static int		init_debug;	// initial debug level (by -v arg from user)
   static int		init_bpoint;	// initial breakpoint location (-b arg)
-  static bool		init_interactive; // user wants to run interactively (-i from arg)
   static int		refcnt_trace; // user wants refcnt tracing (-rct from arg)
   static bool		obey_read_only; // #DEF_true actually pay attention to read-only comment directive information on pointers to C (taBase) objects
   static bool		call_update_after_edit;	// #DEF_false call UpdateAfterEdit on ta objects when they are modified (this slows things down a lot; user should call it when they really want it)
@@ -1885,14 +1861,14 @@ public:
   String 	name;
   String	prompt;
   String	act_prompt;		// the actual prompt
-  taMisc::ConsoleType	console_type;		// what kind of console are we running?
+  taMisc::ConsoleType	console_type; 	// what kind of console are we running?
 
   istream*	fin;			// input file (current)
   ostream*	fout;			// output file
   ostream*	ferr;			// error file
-  pager_ostream	pgout;			// pager outstream
   
   bool		external_exit;		// set to true to break out of a shell...
+  bool		pager_waiting;		// if waiting for input on pager, don't accept new lines
 
   cssProgSpace*	src_prog;		// current program with source code for commands to operate on (I do not own this, nor is there refcounting!) DO NOT SET DIRECTLY: USE Push/Pop to manage
   cssProgSpace*	cmd_prog;		// program for commands, etc (I own this one!)
@@ -1921,7 +1897,10 @@ public:
   void		FlushConsole();	// flush the console output
   void		SetPrompt(const String& prmpt, bool disp_prompt = false);
   void		UpdatePrompt(bool disp_prompt = false);
-  //  void 		Source(const String& fname);	// run a file as if in a shell
+  void		OutputLine(const String& oneln, bool err = false);
+  // output one line (which doesn't have any \n in it already) to the console -- err = mark as an error output (red)
+  int		QueryForKeyResponse(const String& query);
+  // flush the console output and query for a keyboard response
 
   void		Exit();		// exit from the shell
 
@@ -1940,10 +1919,8 @@ protected:
   // configure a nogui readline-based shell
   void		Shell_OS_Console(const String& prmpt);
   // configure a quick-and-dirty shell 
-#ifdef HAVE_QT_CONSOLE
   void		Shell_Gui_Console(const String& prmpt);
   // configure qt gui-based shell that links with QcssConsole
-#endif
 };
 
 #endif // machine_h

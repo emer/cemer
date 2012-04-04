@@ -45,7 +45,8 @@ bool taAudioProc::SpeakText(const String& text) {
 
 //TODO: call Windows speech api, if it exists
 bool taAudioProc::SpeakText(const String& text) {
-  cerr << "Sorry, SpeakText not supported on this platform. Should be saying: " << text << endl;  
+  taMisc::Warning("Sorry, SpeakText not supported on this platform. Should be saying:",
+		  text);
   return false;
 }
 

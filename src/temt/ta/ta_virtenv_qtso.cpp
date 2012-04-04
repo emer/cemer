@@ -251,7 +251,9 @@ void VEBodyView::Render_pre() {
           goto finish;
         }
       }
-      cerr << "object file: " << ob->obj_fname << " not found, reverting to shape" << endl;
+      String msg;
+      msg << "object file: " << ob->obj_fname << " not found, reverting to shape";
+      taMisc::ConsoleOutput(msg, true, false); // straight msg
       // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
 //       ob->ClearBodyFlag(VEBody::FM_FILE);
     }
@@ -494,14 +496,12 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   cur_rot.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
 
   SbVec3f trans = dragger->translation.getValue();
-//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   FloatTDCoord tr(trans[0], trans[1], trans[2]);
   ob->cur_pos += tr;
   ob->init_pos = ob->cur_pos;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   ob->radius *= sc.x;
@@ -512,7 +512,6 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f axis;
   float angle;
   dragger->rotation.getValue(axis, angle);
-//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
     // todo: does this need to undo cylinder/capsule stuff???
     SbRotation rot;
@@ -572,9 +571,10 @@ bool VEObjCarousel::LoadObjs(bool force) {
   DataCol* fpathcol = obj_table->FindColName("FilePath", true); // yes err msg
   if(!fpathcol) return false;
 
-  cout << "Loading ObjCarousel " << name << " object files, total n = " << obj_table->rows
-       << " -- can take a long time for a large number." << endl;
-  taMisc::FlushConsole();
+  String msg;
+  msg << "Loading ObjCarousel " << name << " object files, total n = " << obj_table->rows
+      << " -- can take a long time for a large number.";
+  taMisc::Info(msg);
 
   sw->whichChild = -1;
 
@@ -584,8 +584,7 @@ bool VEObjCarousel::LoadObjs(bool force) {
     SoInput in;
     QFileInfo qfi(fpath);
     if(qfi.isFile() && qfi.isReadable() && in.openFile(fpath)) {
-      cout << "Loading " << fpath << "..." << endl;
-      taMisc::FlushConsole();
+      taMisc::Info("Loading", fpath, "...");
       SoSeparator* root = SoDB::readAll(&in);
       if (root) {
         sw->addChild(root);
@@ -911,52 +910,6 @@ void T3VEJoint_DragFinishCB(void* userData, SoDragger* dragr) {
   VEJointView* obv = static_cast<VEJointView*>(obso->dataView());
   VEJoint* ob = obv->Joint();
   VEWorldView* wv = obv->parent();
-
-//   SbRotation cur_rot;
-//   cur_rot.setValue(SbVec3f(ob->cur_rot.x, ob->cur_rot.y, ob->cur_rot.z), ob->cur_rot.rot);
-
-//   SbVec3f trans = dragger->translation.getValue();
-// //   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
-//   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
-//   FloatTDCoord tr(trans[0], trans[1], trans[2]);
-//   ob->cur_pos += tr;
-//   ob->init_pos = ob->cur_pos;
-
-//   const SbVec3f& scale = dragger->scaleFactor.getValue();
-// //   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
-//   FloatTDCoord sc(scale[0], scale[1], scale[2]);
-//   if(sc < .1f) sc = .1f;     // prevent scale from going to small too fast!!
-//   ob->radius *= sc.x;
-//   ob->length *= sc.x;
-//   ob->box *= sc;
-//   ob->obj_xform.scale *= sc;
-
-//   SbVec3f axis;
-//   float angle;
-//   dragger->rotation.getValue(axis, angle);
-// //   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
-//   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
-//     // todo: does this need to undo cylinder/capsule stuff???
-//     SbRotation rot;
-//     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
-//     SbRotation nw_rot = rot * cur_rot;
-//     nw_rot.getValue(axis, angle);
-// //     ob->FixExtRotation(nw_rot);
-//     ob->cur_rot.SetXYZR(axis[0], axis[1], axis[2], angle);
-//     ob->init_rot = ob->cur_rot;
-//   }
-
-// //   float h = 0.04f; // nominal amount of height, so we don't vanish
-//   obso->txfm_shape()->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
-//   obso->txfm_shape()->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-//   obso->txfm_shape()->translation.setValue(0.0f, 0.0f, 0.0f);
-//   dragger->translation.setValue(0.0f, 0.0f, 0.0f);
-//   dragger->rotation.setValue(SbVec3f(0.0f, 0.0f, 1.0f), 0.0f);
-//   dragger->scaleFactor.setValue(1.0f, 1.0f, 1.0f);
-
-//   obv->FixOrientation();
-
-//   wv->UpdateDisplay();
 }
 
 
@@ -990,7 +943,6 @@ void VEObjectView::BuildAll() {
   FOREACH_ELEM_IN_GROUP(VEBody, bod, obj->bodies) {
     if(bod->HasBodyFlag(VEBody::OFF)) continue;
     if(bod->InheritsFrom(&TA_VEObjCarousel)) {
-      taMisc::FlushConsole();
       VEObjCarouselView* ov = new VEObjCarouselView();
       ov->SetObjCarousel((VEObjCarousel*)bod);
       children.Add(ov);
@@ -1074,7 +1026,9 @@ void VEStaticView::Render_pre() {
           goto finish;
         }
       }
-      cerr << "object file: " << ob->obj_fname << " not found, reverting to shape" << endl;
+      // String msg;
+      // msg << "object file: " << ob->obj_fname << " not found, reverting to shape" << endl;
+      // impossible to output without process events!!
       // NOTE: do NOT use Info or Error here: ProcessEvents at this point is BAD
 //       ob->ClearStaticFlag(VEStatic::FM_FILE);
     }
@@ -1364,13 +1318,11 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
   cur_rot.setValue(SbVec3f(ob->rot.x, ob->rot.y, ob->rot.z), ob->rot.rot);
 
   SbVec3f trans = dragger->translation.getValue();
-//   cerr << "trans: " << trans[0] << " " << trans[1] << " " << trans[2] << endl;
   cur_rot.multVec(trans, trans); // rotate the translation by current rotation
   FloatTDCoord tr(trans[0], trans[1], trans[2]);
   ob->pos += tr;
 
   const SbVec3f& scale = dragger->scaleFactor.getValue();
-//   cerr << "scale: " << scale[0] << " " << scale[1] << " " << scale[2] << endl;
   FloatTDCoord sc(scale[0], scale[1], scale[2]);
   if(sc < .1f) sc = .1f;        // prevent scale from going to small too fast!!
   ob->radius *= sc.x;
@@ -1381,7 +1333,7 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
   SbVec3f axis;
   float angle;
   dragger->rotation.getValue(axis, angle);
-//   cerr << "orient: " << axis[0] << " " << axis[1] << " " << axis[2] << " " << angle << endl;
+
   if(axis[0] != 0.0f || axis[1] != 0.0f || axis[2] != 1.0f || angle != 0.0f) {
     SbRotation rot;
     rot.setValue(SbVec3f(axis[0], axis[1], axis[2]), angle);
