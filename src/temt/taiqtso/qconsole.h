@@ -121,8 +121,10 @@ protected:
   virtual QString getCurrentCommand();			     // get text after prompt
   virtual void replaceCurrentCommand(QString newCommand);    // Replace current command with a new one
   virtual bool cursorInCurrentCommand();	// cursor is in the current command editing zone    
+#ifndef TA_OS_WIN
   virtual bool stdDisplay(QTextStream *s);
   // displays redirected stdout/stderr: return true for noPaging mode if anything was output, and if in paging mode returns true if user is waiting for more stuff
+#endif
 
   //protected attributes
 protected:

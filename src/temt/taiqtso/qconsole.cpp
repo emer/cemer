@@ -95,9 +95,9 @@ void QConsole::exit() {
 //QConsole constructor (init the QTextEdit & the attributes)
 QConsole::QConsole(QWidget *parent, const char *name, bool initInterceptor) 
   : QTextEdit(parent), cmdColor(Qt::blue), errColor(Qt::red), outColor(Qt::black),
-    completionColor(Qt::green),
+    completionColor(Qt::green)
 #ifndef TA_OS_WIN
- stdoutInterceptor(NULL), stderrInterceptor(NULL)
+ ,stdoutInterceptor(NULL), stderrInterceptor(NULL)
 #endif
 {
   //resets the console
@@ -235,6 +235,7 @@ void QConsole::outputLine(QString line, bool err) {
   QCoreApplication::processEvents();
 }
 
+#ifndef TA_OS_WIN
 // displays redirected stdout/stderr
 bool QConsole::stdDisplay(QTextStream* s) {
   if((curOutputLn >= maxLines) && !contPager && !noPager)
@@ -288,6 +289,7 @@ bool QConsole::stdDisplay(QTextStream* s) {
   emit receivedNewStdin(n_lines_recvd);
   return (n_lines_recvd > 0);
 }
+#endif
 
 void QConsole::resizeEvent(QResizeEvent* e) {
   getDisplayGeom();
