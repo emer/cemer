@@ -162,8 +162,11 @@ int QConsole::queryForKeyResponse(QString query) {
   }
   // get rid of prompt
   cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
-  cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::MoveAnchor);
   cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+  cursor.removeSelectedText();
+  cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
+  cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
+  cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
   cursor.removeSelectedText();
   return key_response;
 }
