@@ -803,6 +803,16 @@ void taMatrix::BatchUpdate(bool begin, bool struc) {
 
 String& taMatrix::Print(String& strm, int indent) const {
   const int dm = dims();
+  int dim_break = dm / 2;
+  if(dm == 2) {
+    float dim_rat = (float)dim(1) / dim(0);
+    if(dim_rat > 2.0)		// if inner ratio is small, then keep it inline
+      dim_break = dm;
+  }
+  else if(dm % 2 == 1) {
+    dim_break++;		// one more outer is probably better for odd
+  }
+
   taMatrix* elv = ElView();
   MatrixIndex idx(dm);
   MatrixIndex lstidx(dm,0,0,0,0,0,0,0);
@@ -815,15 +825,19 @@ String& taMatrix::Print(String& strm, int indent) const {
     for(int i=0; i<size; i++) {
       geom.DimsFmIndex(i, idx);
       int sc = 0;
+      int break_level = -1;
       for(int d=0; d<dm; d++) {
 	if(idx[d] == 0 && idx[d] != lstidx[d]) {
 	  sc++;
 	  if(sc == 1) strm += " ";
 	  strm += "]";		// end previous
-	  if(d > 0 && d % 2 == 0) {
-	    strm += "\n ";
+	  if(d+1 == dim_break) {
+	    break_level = d+1;
 	  }
 	}
+      }
+      if(break_level >= 0) {
+	strm += "\n" + String(dm-break_level, 0, ' ');
       }
       for(int s=0; s<sc; s++) {
 	strm += "[";		// start new

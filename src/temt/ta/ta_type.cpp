@@ -849,11 +849,11 @@ bool taMisc::ErrorCancelCheck() {
     QDateTime st;
     st.setTime_t(err_cancel_time);
     if(st.secsTo(tm) < err_cancel_time_thr) {
-      // cerr << "+";
+      taMisc::ConsoleOutputChars("+", true, false);
       err_waitproc_cnt = 0;	// reset counter and start counting again
     }
     else {
-      // cerr << ".";
+      taMisc::ConsoleOutputChars(".", true, false);
     }
     err_cancel_time = tm.toTime_t();
   }
