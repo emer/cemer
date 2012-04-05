@@ -1111,10 +1111,13 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
 void NetMonItem::ScanObject_ProjectionGroup(Projection_Group* pg, String var) {
   if (ScanObject_InObject(pg, var, pg)) return;
 
-  for(int i=0;i<pg->size;i++) {
-    Projection* prjn = pg->FastEl(i);
-    if(prjn->off || prjn->from->lesioned()) continue; // skip off or lesioned
-    ScanObject_Projection(prjn, var);
+  for (int i = 0; i < pg->size; i++) {
+    if (Projection* prjn = pg->FastEl(i)) {
+      // skip if off or lesioned (or if 'from' is null)
+      if (!prjn->off && prjn->from && !prjn->from->lesioned()) {
+        ScanObject_Projection(prjn, var);
+      }
+    }
   }
 }
 
