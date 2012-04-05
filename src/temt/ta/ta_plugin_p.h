@@ -34,6 +34,7 @@ class TA_API taPluginInst: public QPluginLoader { // ##NO_INSTANCE an instance o
 INHERITED(QPluginLoader)
 public:
   enum LoadState {
+    LS_OUT_OF_DATE	= -4, // library file is out of date -- needs to be recompiled
     LS_INIT_FAIL	= -3, // failure trying to init plugin
     LS_TYPE_FAIL	= -2, // failure trying to init types
     LS_LOAD_FAIL	= -1, // could not be loaded (prob needs to be recompiled)
@@ -45,6 +46,8 @@ public:
   
   taPlugin* 		plugin_rep; // nulled if pl deletes
   LoadState		load_state; // true once probed, for enumeration
+  String		mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the library plugin file was last modified (installed)
+  int64_t		mod_time_int; // #READ_ONLY #NO_SAVE #NO_SHOW time stamp for library file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild
     
   IPlugin*		plugin(); // access to the plugin object -- note: should be valid, because we don't register failed probes
   
@@ -118,6 +121,8 @@ public:
   static String		logfile;
   static PluginMakeThreadMgr* make_thread;
   // manages making of threads
+  static int		plugins_out_of_date;
+  // number of plugins that were out of date -- can trigger automatic recompile
   
   static void		AddPluginFolder(const String& folder);
   // adds a folder, note: ignores duplicates
@@ -201,9 +206,11 @@ INHERITED(taPluginBase)
 public:
   String		filename; // #READ_ONLY #SHOW #FILE_DIALOG_LOAD the plugin's filename
   bool			enabled; // set if this plugin should be loaded when the app starts
-  bool			loaded; // / #READ_ONLY #SHOW #NO_SAVE set if the plugin is loaded and initialized
-  bool			reconciled; // #IGNORE true once reconciled; we delete those with no plugin
+  bool			loaded; // #DEF_true #READ_ONLY #SHOW #NO_SAVE set if the plugin is loaded and initialized
+  bool			up_to_date; // #DEF_true #READ_ONLY #SHOW #NO_SAVE set if the plugin file is up-to-date relative to the executable -- if this is false then the plugin will not be loaded, and must be recompiled
   String		mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the library plugin file was last modified (installed)
+  int64_t		mod_time_int; // #READ_ONLY #NO_SAVE #NO_SHOW time stamp for library file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild
+  bool			reconciled; // #IGNORE true once reconciled; we delete those with no plugin
   
   taPluginInst*		plugin; // #IGNORE the plugin, if loaded (not used for descs)
   String		state_classname; // #READ_ONLY #SHOW #NO_SAVE the name of the the cached state type, if any -- is based on the plugin name, and must inherit taFBase
@@ -237,7 +244,6 @@ protected:
 #ifndef __MAKETA__
   QPointer<iPluginEditor> editor;
 #endif
-  int64_t		mod_time_int; // #READ_ONLY #NO_SAVE #NO_SHOW time stamp for library file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild
 
 private:
   void	Initialize();

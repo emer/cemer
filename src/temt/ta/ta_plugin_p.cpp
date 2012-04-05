@@ -88,6 +88,7 @@ bool taPluginInst::InitTypes() {
 String_PArray taPlugins::plugin_folders;
 taPluginInst_PList taPlugins::plugins;
 String taPlugins::logfile;
+int taPlugins::plugins_out_of_date = 0;
 
 void taPlugins::AddPluginFolder(const String& folder) {
   plugin_folders.AddUnique(folder);
@@ -121,20 +122,41 @@ taPluginInst* taPlugins::ProbePlugin(const String& fileName) {
   taPluginInst* rval = new taPluginInst(fileName);
   String log_entry = "Attempting to probe plugin: " + fileName;
   AppendLogEntry(log_entry);
-  // get the plugin object, and initialize types
-  if (rval->load())  {
-    rval->load_state = taPluginInst::LS_LOADED;
-    log_entry = "Successfully probed plugin: " + fileName;
-    AppendLogEntry(log_entry);
-  } else {
-    rval->load_state = taPluginInst::LS_LOAD_FAIL;
+
+  QFileInfo fi(fileName);
+  rval->mod_time_int = fi.lastModified().toTime_t();
+  rval->mod_time = fi.lastModified().toString();
+  if(rval->mod_time_int < taMisc::exe_mod_time_int) {
+    String msg;
+    msg << "===================================================================\n"
+	<< "A plugin is out of date vs. the executable, and must be recompiled\n"
+	<< "It will not be loaded.\n"
+	<< "plugin file: " << fileName << "\n"
+	<< "last modified:       " << rval->mod_time << "\n"
+	<< "executable last mod: " << taMisc::exe_mod_time << "\n"
+	<< "====================================================================\n";
+    cerr << msg;
+    AppendLogEntry(msg);
+    rval->load_state = taPluginInst::LS_OUT_OF_DATE;
+    plugins_out_of_date++;
+  }
+  else {
+    // get the plugin object, and initialize types
+    if (rval->load())  {
+      rval->load_state = taPluginInst::LS_LOADED;
+      log_entry = "Successfully probed plugin: " + fileName;
+      AppendLogEntry(log_entry);
+    }
+    else {
+      rval->load_state = taPluginInst::LS_LOAD_FAIL;
 #if QT_VERSION >= 0x040200
-    log_entry = "Could not probe: " + fileName + String("; Qt error msg: ").cat(
-      rval->errorString().toLatin1().data());
+      log_entry = "Could not probe: " + fileName
+	+ String("; Qt error msg: ").cat(rval->errorString().toLatin1().data());
 #else
-    log_entry = "Could not probe: " + fileName;
+      log_entry = "Could not probe: " + fileName;
 #endif
-    AppendLogEntry(log_entry, true);
+      AppendLogEntry(log_entry, true);
+    }
   }
   return rval;
 }
@@ -175,25 +197,6 @@ bool taPlugins::EnumeratePlugins() {
         if(fileName.contains("_")) continue;
       }
       QString full_path = pluginsDir.absoluteFilePath(fileName);
-      QFileInfo fi(full_path);
-      int64_t mod_dt = fi.lastModified().toTime_t();
-      if(mod_dt < taMisc::exe_mod_time_int) {
-	cerr << "\n"
-	     << "====================================================================\n"
-	     << "                             ATTENTION\n" 
-	     << "====================================================================\n"
-	     << "A plugin is out of date vs. the executable, and must be recompiled.\n"
-	     << "An automatic --make_all_plugins will now be executed.\n"
-	     << "If this fails to rebuild the plugin library file, then\n"
-	     << "you must do --clean_all_plugins or remove this specific library\n"
-	     << "and restart -- otherwise it will continue to attempt to rebuild.\n"
-	     << "plugin file: " << String(full_path) << "\n"
-	     << "last modified:       " << String(fi.lastModified().toString()) << "\n"
-	     << "executable last mod: " << taMisc::exe_mod_time << "\n"
-	     << "====================================================================\n\n";
-	return false;
-      }
-
       taPluginInst* pl = ProbePlugin(full_path);
       if (pl) {
         plugins.Add(pl);
@@ -598,6 +601,7 @@ void taPluginBase::Copy_(const taPluginBase& cp) {
 void taPlugin::Initialize() {
   enabled = false; // be conservative, and require user to enable
   loaded = false;
+  up_to_date = false;
   reconciled = false;
   plugin = NULL;
   state_type = NULL;
@@ -608,6 +612,7 @@ void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
   filename = cp.filename;
   enabled = cp.enabled;
   loaded = false; // never for a copy
+  up_to_date = false;
   reconciled = false;
   plugin = NULL;
   state_type = cp.state_type; // ???
@@ -965,14 +970,15 @@ void taPlugin_List::ReconcilePlugins() {
       pl->desc = ip->desc();
       ip->GetVersion(ver);
       pl->version = ver.toString();
-
-    } else { // not loaded -- but match up the root filename to a persistent guy if found
+    }
+    else { // not loaded -- but match up the root filename to a persistent guy if found
       pl = FindFilename(pli->fileName());
       // we don't update anything, and we don't make a new guy if not found before,
       // since we only persistently track successful plugins, not failed ones
       // init/update
       if (pl) {
-      } else {
+      }
+      else {
         // create new
         pl = (taPlugin*)New(1);
         // since we can't know anything about the guy, just name him by the file
@@ -985,6 +991,9 @@ void taPlugin_List::ReconcilePlugins() {
       pl->plugin = pli;
       pl->reconciled = true;
       pl->filename = pli->fileName();
+      pl->up_to_date = (pli->load_state != taPluginInst::LS_OUT_OF_DATE);
+      pl->mod_time = pli->mod_time;
+      pl->mod_time_int = pli->mod_time_int;
       pl->DataChanged(DCR_ITEM_UPDATED);
     }
   }
@@ -997,11 +1006,9 @@ void taPlugin_List::ReconcilePlugins() {
    }
 }
 
-
 void taPlugin_List::ViewPluginLog() {
   if (taPlugins::logfile.empty()) return; // shouldn't happen...
   taMisc::EditFile(taPlugins::logfile);
-
 }
 
 

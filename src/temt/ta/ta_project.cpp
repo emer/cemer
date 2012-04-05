@@ -3731,14 +3731,7 @@ bool taRootBase::Startup_EnumeratePlugins() {
   taPlugins::AddPluginFolder(taMisc::user_plugin_dir);
 
   taPlugins::InitLog(taMisc::user_log_dir + PATH_SEP + plug_log);
-  bool up_to_date = taPlugins::EnumeratePlugins();
-  if(!up_to_date) {
-    taMisc::use_plugins = false;                      // don't use if making
-    taMisc::use_gui = false;
-    taMisc::interactive = false;
-    taPlugins::MakeAllPlugins();
-    return false;		// triggers bailout
-  }
+  taPlugins::EnumeratePlugins();
 
   if(taMisc::CheckArgByName("ListAllPlugins")) {
     tabMisc::root->plugins.ListAllPlugins();
@@ -4082,6 +4075,23 @@ bool taRootBase::Startup_ProcessArgs() {
   if(taMisc::CheckArgByName("ListAllPlugins") || taMisc::CheckArgByName("EnableAllPlugins")) {
     run_startup = false;
   }
+
+  if(run_startup && taPlugins::plugins_out_of_date > 0) {
+#ifdef TA_OS_WIN
+    int chs = 1;		// don't recompile by default in windows
+#else
+    int chs = 0;		// default is to recompile on other platforms
+#endif
+    if(taMisc::interactive) {
+      chs = taMisc::Choice("Some plugins are out of date -- recompile them now?  You will have to restart the software to then load the plugins", "Recompile", "Ignore");
+    }
+    if(chs == 0) {
+      // todo: could just make all the out-of-date ones..
+      taPlugins::MakeAllPlugins();
+      run_startup = false;
+    }
+  }
+
 
   // just load the thing!?
   String proj_ld = taMisc::FindArgByName("Project");
