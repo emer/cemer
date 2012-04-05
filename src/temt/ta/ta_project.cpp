@@ -3332,13 +3332,21 @@ namespace { // anon
     return false;
   }
 
-  // Setup the global variables taMisc::exe_cmd and taMisc::exe_path
+  // Setup the global variables taMisc::exe_cmd and taMisc::exe_path and taMisc::app_suffix
   void InitExecCmdPath()
   {
     //note: this is not how Qt does it, but it seems windows follows normal rules
     // and passes the arg[0] as the full path to the executable, so we just get path
     taMisc::exe_cmd = taMisc::args_raw.SafeEl(0);
+    if(taMisc::exe_cmd.contains('_'))
+      taMisc::app_suffix = taMisc::exe_cmd.from('_',-1);
+    else
+      taMisc::app_suffix = "";
+
     QFileInfo fi(taMisc::exe_cmd);
+
+    taMisc::exe_mod_time_int = fi.lastModified().toTime_t();
+    taMisc::exe_mod_time = fi.lastModified().toString();
 
     //note: argv[0] can contain a relative path, so we need to absolutize
     // but *don't* dereference links, because we typically want to use the
@@ -3558,9 +3566,6 @@ bool taRootBase::Startup_InitTA_AppFolders() {
   // WARNING: cannot use QCoreApplication::applicationDirPath() at this point
   // because QCoreApplication has not been instantiated yet
 
-  // Set taMisc::exe_cmd and taMisc::exe_path.
-  InitExecCmdPath();
-
   // Initialize the key folders.
   String app_dir;
   String app_plugin_dir;
@@ -3627,65 +3632,6 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
   return true;
 }
 
-//NOTE: this can be nuked post 4.0.20-ish
-void Startup_InitTA_MoveLegacyUserFiles() {
-  String msg;
-  // Preferences directory
-  // 1. we check for an the old one (<= 4.0.18) -- we'll move contents silently...
-  String prefs_dir = taPlatform::getAppDataPath(taMisc::app_prefs_key);
-  if (!taPlatform::fileExists(prefs_dir + "/options"))
-    return;
-
-  // we only automatically handle the default folder case
-  String legacy_uad;
-#ifdef TA_OS_WIN
-  legacy_uad = taPlatform::getDocPath() + "\\emergent_user";
-#else
-  legacy_uad = taPlatform::getHomePath() + "/emergent_user";
-#endif
-
-  // fixup if possible -- just move legacy to most recent user_app_dir folder
-  QDir uad(legacy_uad);
-  if (!uad.exists()) return;
-
-  taMisc::Info("Moving preferences to new default location...");
-  // note, 'prefs' subfolder shouldn't exist yet...
-  if (uad.exists("prefs")) {
-    if (!uad.rename("prefs", "prefs.old"))
-      goto prefs_move_failed;
-  }
-  if (uad.rename(prefs_dir, "prefs")) {
-    taMisc::Info("...preferences moved.");
-    goto move_uad;
-  }
-
-prefs_move_failed:
-  taMisc::Error("PREFERENCES COULD NOT BE MOVED -- your preferences may revert to defaults.");
-
-move_uad:
-
-  String user_app_dir = taPlatform::getAppDocPath(taMisc::app_prefs_key);
-  taMisc::Info("Moving user data dir to new default location...");
-  // note, Emergent folder shouldn't exist yet...
-  if (QDir(user_app_dir).exists())
-    goto uad_move_failed;
-  if (!taPlatform::mv(legacy_uad, user_app_dir))
-    goto uad_move_failed;
-  msg = "...your emergent user data folder was moved\n"
-    "from: " + legacy_uad + "\n"
-    "  to: " + user_app_dir + "\n\n";
-  taMisc::Info(msg);
-
-  return;
-
-uad_move_failed:
-  msg = "Your current emergent data folder could not be moved\n"
-    "from: " + legacy_uad + "\n"
-    "  to: " + user_app_dir + "\n\n"
-    " -- please move it manually.";
-  taMisc::Error(msg);
-}
-
 bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   // first initialize the types
   if(ta_init_fun)
@@ -3693,16 +3639,15 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   taMisc::Init_Hooks(); // client dlls register init hooks -- this calls them!
   milestone |= SM_TYPES_INIT;
 
+  // Set taMisc::exe_cmd and taMisc::exe_path.
+  InitExecCmdPath();
+
   // user directory, aka Home folder -- we don't necessarily use it as a base here though
   // cmd line override of UserDir takes preference
   taMisc::user_dir = taMisc::FindArgByName("UserDir");
   if (taMisc::user_dir.empty()) {
     taMisc::user_dir = taPlatform::getHomePath();
   }
-
-  // move legacy prefs into current default location
-  Startup_InitTA_MoveLegacyUserFiles();
-  // we can assume files are in their default location now
 
   // Application folder
   // env var overrides default
@@ -3739,15 +3684,23 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   // load prefs values for us
   taRootBase* inst = instance();
   milestone |= SM_ROOT_CREATE;
-  inst->SetFileName(taMisc::prefs_dir + "/root");
+  inst->SetFileName(taMisc::prefs_dir + "/root" + taMisc::app_suffix);
   if (QFile::exists(inst->GetFileName())) {
     ++taFiler::no_save_last_fname;
     inst->Load();
     --taFiler::no_save_last_fname;
   }
-
-  if(taMisc::default_proj_type)
-    inst->projects.el_typ = taMisc::default_proj_type;
+  else {
+    // try without the app suffix
+    String good_fnm = inst->GetFileName();
+    inst->SetFileName(taMisc::prefs_dir + "/root");
+    if (QFile::exists(inst->GetFileName())) {
+      ++taFiler::no_save_last_fname;
+      inst->Load();
+      --taFiler::no_save_last_fname;
+    }
+    inst->SetFileName(good_fnm); // reinstate for later saving
+  }
 
   // make sure the app dir is on the recent paths
   if (instance()->recent_paths.FindEl(taMisc::app_dir) < 0) {
@@ -3771,18 +3724,21 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
 
 bool taRootBase::Startup_EnumeratePlugins() {
   if (!taMisc::use_plugins) return true;
-  String plug_log;
-  if (taMisc::build_str.empty()) {
-    plug_log = "plugins.log";
-  } else {
-    plug_log = "plugins_" + taMisc::build_str + ".log";
-  }
+  String plug_log = "plugins" + taMisc::app_suffix + ".log";
+
   // add plugin folders
   taPlugins::AddPluginFolder(taMisc::app_plugin_dir);
   taPlugins::AddPluginFolder(taMisc::user_plugin_dir);
 
   taPlugins::InitLog(taMisc::user_log_dir + PATH_SEP + plug_log);
-  taPlugins::EnumeratePlugins();
+  bool up_to_date = taPlugins::EnumeratePlugins();
+  if(!up_to_date) {
+    taMisc::use_plugins = false;                      // don't use if making
+    taMisc::use_gui = false;
+    taMisc::interactive = false;
+    taPlugins::MakeAllPlugins();
+    return false;		// triggers bailout
+  }
 
   if(taMisc::CheckArgByName("ListAllPlugins")) {
     tabMisc::root->plugins.ListAllPlugins();

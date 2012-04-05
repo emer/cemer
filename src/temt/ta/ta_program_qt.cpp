@@ -1332,6 +1332,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   ptbp_add_widget(tb, sec, &TA_MemberAssign);
   ptbp_add_widget(tb, sec, &TA_MethodCall);
   ptbp_add_widget(tb, sec, &TA_MemberMethodCall);
+  ptbp_add_widget(tb, sec, &TA_CssExpr);
 
   tb->AddSeparator(sec);
   ptbp_add_widget(tb, sec, &TA_Function);

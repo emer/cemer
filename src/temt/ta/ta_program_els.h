@@ -437,6 +437,30 @@ private:
   void	Destroy()	{CutLinks();} //
 };
 
+class TA_API CssExpr: public ProgEl { 
+  // contains a direct css expression -- can be useful for more complex matrix code -- will be generated from ProgCode for any code that ends with semicolon.  unlike UserScript the variables here are tracked as normal
+INHERITED(ProgEl)
+public:
+  ProgExpr		expr;  // any valid css expression
+  
+  override bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const;
+  override bool		CvtFmCode(const String& code);
+
+  override String	GetDisplayName() const;
+  override String 	GetTypeDecoKey() const { return "ProgVar"; }
+  override String	GetToolbarName() const { return "css"; }
+
+  PROGEL_SIMPLE_BASEFUNS(CssExpr);
+protected:
+  override void		UpdateAfterEdit_impl();
+  override void 	CheckThisConfig_impl(bool quiet, bool& rval);
+  override void		GenCssBody_impl(Program* prog);
+
+private:
+  void	Initialize();
+  void	Destroy()	{CutLinks();}
+}; 
+
 class TA_API AssignExpr: public ProgEl { 
   // assign an expression to a variable (use method call for simple assignment to function call)
 INHERITED(ProgEl)

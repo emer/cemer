@@ -1154,6 +1154,51 @@ bool Switch::CvtFmCode(const String& code) {
 }
 
 //////////////////////////
+//    CssExpr	//
+//////////////////////////
+
+void CssExpr::Initialize() {
+  expr.SetExprFlag(ProgExpr::FULL_STMT); // full statements for parsing
+}
+
+void CssExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
+  inherited::CheckThisConfig_impl(quiet, rval);
+  expr.CheckConfig(quiet, rval);
+}
+
+void CssExpr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  // must always end with a semicolon!!
+  if(!expr.expr.endsWith(';')) {
+    taMisc::Info("note: css expr must always end with a semicolon");
+    expr.expr += ';';
+  }
+}
+
+void CssExpr::GenCssBody_impl(Program* prog) {
+  expr.ParseExpr();		// re-parse just to be sure!
+  String rval = expr.GetFullExpr();
+  if(!rval.endsWith(';'))
+    rval += ';';
+  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+  // no verbose here!
+}
+
+String CssExpr::GetDisplayName() const {
+  return expr.GetFullExpr();
+}
+
+bool CssExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  if(code.endsWith(';')) return true; // only criterion -- if you include the ;
+  return false;
+}
+
+bool CssExpr::CvtFmCode(const String& code) {
+  expr.SetExpr(code);
+  return true;
+}
+
+//////////////////////////
 //    AssignExpr	//
 //////////////////////////
 
@@ -1190,6 +1235,7 @@ String AssignExpr::GetDisplayName() const {
 bool AssignExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   // note: AssignExpr is specifically excluded if multiple matches, so no need to exclude
   // all the other things that might have an = in them -- it is just a fallback default
+  if(code.endsWith(';')) return false; // don't pick up css exprs
   if(code.freq('=') == 1) {
     String lhs = code.before('=');
     if(lhs.nonempty() && !lhs.contains('.') && !lhs.contains('-')) // no path

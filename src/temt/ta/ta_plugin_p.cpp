@@ -153,7 +153,7 @@ String taPlugins::PlatformPluginExt() {
   return filt;
 }
 
-void taPlugins::EnumeratePlugins() {
+bool taPlugins::EnumeratePlugins() {
   String folder;
   for (int i = 0; i < plugin_folders.size; ++i) {
     folder = plugin_folders.FastEl(i);
@@ -161,8 +161,8 @@ void taPlugins::EnumeratePlugins() {
     // enumerate files in the folder, filter by build string (if any), then try loading
     // for platforms with known dylib suffixes, only look for those
     QString filt("*");
-    if (taMisc::build_str.nonempty()) {
-      filt.append("_").append(taMisc::build_str.chars());
+    if (taMisc::app_suffix.nonempty()) {
+      filt.append(taMisc::app_suffix.chars());
     }
     filt += PlatformPluginExt().chars();
     QStringList fltrs;
@@ -171,16 +171,36 @@ void taPlugins::EnumeratePlugins() {
     pluginsDir.setNameFilters(fltrs);
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
       // if this is the default release build, then reject any others
-      if (taMisc::build_str.empty()) {
-        if (fileName.contains("_dbg") || fileName.contains("_mpi") ||
-          fileName.contains("_nogui")) continue;
+      if (taMisc::app_suffix.empty()) {
+        if(fileName.contains("_")) continue;
       }
-      taPluginInst* pl = ProbePlugin(pluginsDir.absoluteFilePath(fileName));
+      QString full_path = pluginsDir.absoluteFilePath(fileName);
+      QFileInfo fi(full_path);
+      int64_t mod_dt = fi.lastModified().toTime_t();
+      if(mod_dt < taMisc::exe_mod_time_int) {
+	cerr << "\n"
+	     << "====================================================================\n"
+	     << "                             ATTENTION\n" 
+	     << "====================================================================\n"
+	     << "A plugin is out of date vs. the executable, and must be recompiled.\n"
+	     << "An automatic --make_all_plugins will now be executed.\n"
+	     << "If this fails to rebuild the plugin library file, then\n"
+	     << "you must do --clean_all_plugins or remove this specific library\n"
+	     << "and restart -- otherwise it will continue to attempt to rebuild.\n"
+	     << "plugin file: " << String(full_path) << "\n"
+	     << "last modified:       " << String(fi.lastModified().toString()) << "\n"
+	     << "executable last mod: " << taMisc::exe_mod_time << "\n"
+	     << "====================================================================\n\n";
+	return false;
+      }
+
+      taPluginInst* pl = ProbePlugin(full_path);
       if (pl) {
         plugins.Add(pl);
       }
     }
   }
+  return true;
 }
 
 void taPlugins::MakeAllPlugins() {
@@ -194,8 +214,8 @@ void taPlugins::MakeAllUserPlugins() {
   taMisc::Info("=========================================================================");
   QDir pluginsDir(taMisc::user_plugin_dir);
   QString filt("*");
-  if (taMisc::build_str.nonempty()) {
-    filt.append("_").append(taMisc::build_str.chars());
+  if (taMisc::app_suffix.nonempty()) {
+    filt.append(taMisc::app_suffix.chars());
   }
   filt += PlatformPluginExt().chars();
   QStringList fltrs;
@@ -204,15 +224,14 @@ void taPlugins::MakeAllUserPlugins() {
   pluginsDir.setNameFilters(fltrs);
   foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
     // if this is the default release build, then reject any others
-    if (taMisc::build_str.empty()) {
-      if (fileName.contains("_dbg") || fileName.contains("_mpi") ||
-          fileName.contains("_nogui")) continue;
+    if (taMisc::app_suffix.empty()) {
+      if (fileName.contains("_")) continue;
     }
     String plugin_nm_full = fileName;
     String plugin_nm = plugin_nm_full.before(".");
     if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
-    if(taMisc::build_str.nonempty())
-      plugin_nm = plugin_nm.before(String("_") + taMisc::build_str);
+    if(taMisc::app_suffix.nonempty())
+      plugin_nm = plugin_nm.before(taMisc::app_suffix);
 
     String plug_path = taMisc::user_plugin_dir + PATH_SEP + plugin_nm;
     QFileInfo qfi(plug_path);
@@ -230,8 +249,8 @@ void taPlugins::MakeAllSystemPlugins() {
   taMisc::Info("=========================================================================");
   QDir pluginsDir(taMisc::app_plugin_dir);
   QString filt("*");
-  if (taMisc::build_str.nonempty()) {
-    filt.append("_").append(taMisc::build_str.chars());
+  if (taMisc::app_suffix.nonempty()) {
+    filt.append(taMisc::app_suffix.chars());
   }
   filt += PlatformPluginExt().chars();
   QStringList fltrs;
@@ -240,15 +259,14 @@ void taPlugins::MakeAllSystemPlugins() {
   pluginsDir.setNameFilters(fltrs);
   foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
     // if this is the default release build, then reject any others
-    if (taMisc::build_str.empty()) {
-      if (fileName.contains("_dbg") || fileName.contains("_mpi") ||
-          fileName.contains("_nogui")) continue;
+    if (taMisc::app_suffix.empty()) {
+      if (fileName.contains("_")) continue;
     }
     String plugin_nm_full = fileName;
     String plugin_nm = plugin_nm_full.before(".");
     if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
-    if(taMisc::build_str.nonempty())
-      plugin_nm = plugin_nm.before(String("_") + taMisc::build_str);
+    if(taMisc::app_suffix.nonempty())
+      plugin_nm = plugin_nm.before(taMisc::app_suffix);
 
     String plug_path = taMisc::app_plugin_dir + PATH_SEP + plugin_nm;
     QFileInfo qfi(plug_path);
@@ -390,7 +408,8 @@ bool taPlugins::MakePlugin_impl(const String& plugin_path, const String& plugin_
   cout << "=========================================================================" << endl;
 
   String build_dir = "build";
-  if(taMisc::build_str.nonempty()) build_dir += "_" + taMisc::build_str;
+  if(taMisc::app_suffix.nonempty())
+    build_dir += taMisc::app_suffix;
   String build_path = plugin_path + PATH_SEP + build_dir;
 
   String sudo_cmd;
@@ -479,8 +498,8 @@ void taPlugins::CleanAllUserPlugins() {
   taMisc::Info("=========================================================================");
   QDir pluginsDir(taMisc::user_plugin_dir);
   QString filt("*");
-  if (taMisc::build_str.nonempty()) {
-    filt.append("_").append(taMisc::build_str.chars());
+  if (taMisc::app_suffix.nonempty()) {
+    filt.append(taMisc::app_suffix.chars());
   }
   filt += PlatformPluginExt().chars();
   QStringList fltrs;
@@ -489,9 +508,8 @@ void taPlugins::CleanAllUserPlugins() {
   pluginsDir.setNameFilters(fltrs);
   foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
     // if this is the default release build, then reject any others
-    if (taMisc::build_str.empty()) {
-      if (fileName.contains("_dbg") || fileName.contains("_mpi") ||
-          fileName.contains("_nogui")) continue;
+    if (taMisc::app_suffix.empty()) {
+      if (fileName.contains("_")) continue;
     }
     String plugin_nm_full = fileName;
     CleanPlugin(taMisc::user_plugin_dir, plugin_nm_full, false); // no system
@@ -504,8 +522,8 @@ void taPlugins::CleanAllSystemPlugins() {
   taMisc::Info("=========================================================================");
   QDir pluginsDir(taMisc::app_plugin_dir);
   QString filt("*");
-  if (taMisc::build_str.nonempty()) {
-    filt.append("_").append(taMisc::build_str.chars());
+  if (taMisc::app_suffix.nonempty()) {
+    filt.append(taMisc::app_suffix.chars());
   }
   filt += PlatformPluginExt().chars();
   QStringList fltrs;
@@ -514,9 +532,8 @@ void taPlugins::CleanAllSystemPlugins() {
   pluginsDir.setNameFilters(fltrs);
   foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
     // if this is the default release build, then reject any others
-    if (taMisc::build_str.empty()) {
-      if (fileName.contains("_dbg") || fileName.contains("_mpi") ||
-          fileName.contains("_nogui")) continue;
+    if (taMisc::app_suffix.empty()) {
+      if (fileName.contains("_")) continue;
     }
     String plugin_nm_full = fileName;
     CleanPlugin(taMisc::app_plugin_dir, plugin_nm_full, false); // no system
@@ -525,8 +542,8 @@ void taPlugins::CleanAllSystemPlugins() {
 
 bool taPlugins::CleanUserPlugin(const String& plugin_name) {
   String plugin_nm_full =  "lib" + plugin_name;
-  if(taMisc::build_str.nonempty()) {
-    plugin_nm_full += String("_") + taMisc::build_str;
+  if(taMisc::app_suffix.nonempty()) {
+    plugin_nm_full += taMisc::app_suffix;
   }
   plugin_nm_full += PlatformPluginExt();
   return CleanPlugin(taMisc::user_plugin_dir, plugin_nm_full, false); // no system
@@ -534,8 +551,8 @@ bool taPlugins::CleanUserPlugin(const String& plugin_name) {
 
 bool taPlugins::CleanSystemPlugin(const String& plugin_name) {
   String plugin_nm_full =  "lib" + plugin_name;
-  if(taMisc::build_str.nonempty()) {
-    plugin_nm_full += String("_") + taMisc::build_str;
+  if(taMisc::app_suffix.nonempty()) {
+    plugin_nm_full += taMisc::app_suffix;
   }
   plugin_nm_full += PlatformPluginExt();
   return CleanPlugin(taMisc::app_plugin_dir, plugin_nm_full, true); // system
@@ -584,6 +601,7 @@ void taPlugin::Initialize() {
   reconciled = false;
   plugin = NULL;
   state_type = NULL;
+  mod_time_int = 0;
 }
 
 void taPlugin::Copy_(const taPlugin& cp) { // usually not copied
@@ -648,8 +666,8 @@ void taPlugin::ParseFileName(String& base_path, String& plugin_nm_full, String& 
 
   plugin_nm = plugin_nm_full.before(".");
   if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
-  if(taMisc::build_str.nonempty())
-    plugin_nm = plugin_nm.before(String("_") + taMisc::build_str);
+  if(taMisc::app_suffix.nonempty())
+    plugin_nm = plugin_nm.before(taMisc::app_suffix);
 }
 
 bool taPlugin::Compile() {
@@ -1040,6 +1058,10 @@ void PluginWizard::CheckThisConfig_impl(bool quiet, bool& ok) {
              "you cannot use the name \"template\"");
   //TODO: do our name conflict checks!
   //TODO: check if a plugin already exists there!
+
+  if(CheckError(plugin_name.contains("_"), quiet, ok,
+		"plugin name cannot contain an _ (underbar) character -- this is used for 	identifying different build types and cannot appear in the main plugin name -- I just removed it from the name -- please double check that it looks ok"))
+    plugin_name.gsub("_", "");
 
   CheckError(plugin_name != "myplugin" && uniqueId.startsWith("myplugin."), quiet, ok,
              "the uniqueId cannot start with the default 'myplugin.' -- it MUST actually be unique!");

@@ -485,7 +485,7 @@ int taVersion::BeforeOrOf(char sep, String& in) {
 String  taMisc::app_name = "temt"; // must be set in main.cpp
 String  taMisc::app_prefs_key; // must be set in main.cpp, else defaults to app_name
 String  taMisc::default_app_install_folder_name = "Emergent";
-
+String  taMisc::app_suffix;
 String  taMisc::org_name = "ccnlab";
 
 #ifndef SVN_REV // won't be defined if svnrev.h wasn't included
@@ -495,6 +495,9 @@ String  taMisc::org_name = "ccnlab";
 String  taMisc::svn_rev = String(SVN_REV);
 String  taMisc::version = String(VERSION);
 taVersion taMisc::version_bin(String(VERSION));
+
+int64_t	taMisc::exe_mod_time_int = 0;
+String	taMisc::exe_mod_time;
 
 // ugh! but easiest way to just statically set the build_type and official extender string
 #ifdef DEBUG
@@ -637,7 +640,6 @@ short                   taMisc::num_browse_history = 20;
 
 int     taMisc::strm_ver = 2;
 bool            taMisc::save_compress = false; // compression not the default in v4
-TypeDef*        taMisc::default_proj_type = NULL;
 taMisc::StdLicense taMisc::license_def = taMisc::NO_LIC;
 String          taMisc::license_owner;
 String          taMisc::license_org;
@@ -791,7 +793,7 @@ void taMisc::SaveConfig() {
 #ifndef NO_TA_BASE
   UpdateAfterEdit();
   ++taFiler::no_save_last_fname;
-  String cfgfn = prefs_dir + PATH_SEP + "options";
+  String cfgfn = prefs_dir + PATH_SEP + "options" + app_suffix;
   fstream strm;
   strm.open(cfgfn, ios::out);
   TA_taMisc.Dump_Save_Value(strm, (void*)this);
@@ -803,7 +805,10 @@ void taMisc::SaveConfig() {
 void taMisc::LoadConfig() {
 #ifndef NO_TA_BASE
   ++taFiler::no_save_last_fname;
-  String cfgfn = prefs_dir + PATH_SEP + "options";
+  String cfgfn = prefs_dir + PATH_SEP + "options" + app_suffix;
+  if(!QFile::exists(cfgfn)) {	// try without app suffix!
+    cfgfn = prefs_dir + PATH_SEP + "options";
+  }
   fstream strm;
   strm.open(cfgfn, ios::in);
   if(!strm.bad() && !strm.eof())

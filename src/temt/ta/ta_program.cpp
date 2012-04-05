@@ -3033,8 +3033,8 @@ void ProgCode::SetProgExprFlags() {
   code.SetExprFlag(ProgExpr::NO_PARSE); // do not parse at all -- often nonsense..
 }
 
-void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td, const String& code_str,
-                                ProgEl* scope_el) {
+void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
+				const String& code_str, ProgEl* scope_el) {
   ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
   if(obj) {
     if(obj->CanCvtFmCode(code_str, scope_el)) {
@@ -3049,10 +3049,16 @@ void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td, const Stri
 
 ProgEl* ProgCode::CvtCodeToProgEl(const String& code_str, ProgEl* scope_el) {
   ProgEl_List candidates;
-
-  CvtCodeCheckType(candidates, &TA_ProgEl, code_str, scope_el);
-  if(candidates.size == 0)
-    return NULL;
+  if(code_str.endsWith(';')) {
+    // if we use a ; at the end, it is a guarantee of doing the css expr so
+    // we can avoid alternative matches etc.
+    candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_CssExpr));
+  }
+  else {
+    CvtCodeCheckType(candidates, &TA_ProgEl, code_str, scope_el);
+    if(candidates.size == 0)
+      return NULL;
+  }
   ProgEl* cvt = candidates[0];
   if(candidates.size > 1) {
     int ctrl_n = 0;

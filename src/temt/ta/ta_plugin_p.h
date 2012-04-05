@@ -129,7 +129,8 @@ public:
   static String		PlatformPluginExt();
   // get the plugin (dynamic library) filename extension for this platform (.so, .dll, dylib)
 
-  static void		EnumeratePlugins(); // enumerates, and lo-level loads
+  static bool		EnumeratePlugins();
+  // enumerates, and lo-level loads -- returns false if any files are out of date vs. the executable and need to be rebuilt
 
   static void		MakeAllPlugins();
   // make all plugins in user and system directories
@@ -202,6 +203,7 @@ public:
   bool			enabled; // set if this plugin should be loaded when the app starts
   bool			loaded; // / #READ_ONLY #SHOW #NO_SAVE set if the plugin is loaded and initialized
   bool			reconciled; // #IGNORE true once reconciled; we delete those with no plugin
+  String		mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the library plugin file was last modified (installed)
   
   taPluginInst*		plugin; // #IGNORE the plugin, if loaded (not used for descs)
   String		state_classname; // #READ_ONLY #SHOW #NO_SAVE the name of the the cached state type, if any -- is based on the plugin name, and must inherit taFBase
@@ -235,6 +237,7 @@ protected:
 #ifndef __MAKETA__
   QPointer<iPluginEditor> editor;
 #endif
+  int64_t		mod_time_int; // #READ_ONLY #NO_SAVE #NO_SHOW time stamp for library file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild
 
 private:
   void	Initialize();

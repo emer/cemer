@@ -646,7 +646,8 @@ cssArray::cssArray(const cssArrayType& cp, const String& nm) {
   Fill(el_type);
 }
 cssArray::~cssArray() {
-  if (ptr.El() != &cssMisc::Void) cssEl::unRefDone(ptr.El());
+  if(ptr.NotNull())
+    cssEl::unRefDone(ptr.El());
   ptr.Reset();
   if(items != NULL)
     delete items;

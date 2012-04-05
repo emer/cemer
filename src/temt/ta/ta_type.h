@@ -621,13 +621,17 @@ public:
   static String         version;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App version number of ta/css
   static taVersion      version_bin;
-   //  #READ_ONLY #NO_SAVE #EXPERT #CAT_App version number of ta/css
+  //  #READ_ONLY #NO_SAVE #EXPERT #CAT_App version number of ta/css
   static String         svn_rev;
-   // #READ_ONLY #NO_SAVE #SHOW #CAT_App svn revision number
+  // #READ_ONLY #NO_SAVE #SHOW #CAT_App svn revision number
+  static int64_t	exe_mod_time_int; // #READ_ONLY #NO_SAVE #NO_SHOW time stamp for executable file last modification date (internal seconds since jan 1 1970 time units) -- this is used as a trigger for determining when to rebuild plugins, for example
+  static String		exe_mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the executable file was last modified (installed)
   static const BuildType build_type;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App build type, mostly for determining plugin subfolders to search
   static const String    build_str;
-  // #READ_ONLY #NO_SAVE #EXPERT #CAT_App an extension string based on build type, mostly for plugin subfolders (none for release gui no-dmem)
+  // #READ_ONLY #NO_SAVE #EXPERT #CAT_App an extension string based on build type -- no extension for "release gui no-dmem" configuration -- this reflects the actual compile-time parameters, not the suffix -- see app_sufix for empirical parameters
+  static String    	 app_suffix;
+  // #READ_ONLY #NO_SAVE #EXPERT #CAT_App actual empirical suffix on the exe_cmd -- this is the official key used for plugins and prefs and other things like that
   static bool            save_old_fmt;
   // #SAVE #CAT_File save project and other 'dump' files in the old emergent format (version 2 of the file format) which was used up through version 5.0.1 -- files are unlikely to be very functional in older versions anyway, but this would allow them to at least be loaded -- only use this on a temporary basis when absolutely necessary! (note: old format files can be loaded without problem in current version)
 
@@ -704,7 +708,6 @@ public:
 
   static int            strm_ver;       // #READ_ONLY #NO_SAVE during dump or load, version # (app v4.x=v2 stream)
   static bool           save_compress;  // #SAVE #DEF_false #CAT_File compress by default for files that support it (ex .proj, .net)\nNOTE: starting with v4.0, compression is no longer recommended except for large weight files or large nets with saved units
-  static TypeDef*       default_proj_type; // #SAVE #CAT_File #TYPE_taProject default type of project to create
   static StdLicense     license_def;       // #SAVE #CAT_File default license to use for new projects that are created -- can change for specific projects -- see license field on projects
   static String         license_owner;     // #SAVE #CAT_File default legal owner of new projects that are created by this user (e.g., Regents of University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects
   static String         license_org;       // #SAVE #CAT_File default organization that actually created the project for new projects that are created by this user (e.g., MyLab at University of xyz) -- used for copyright and licensing information -- see project license field for where to change or update on existing projects -- defaults to license_owner if left blank
