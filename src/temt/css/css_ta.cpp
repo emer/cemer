@@ -1128,7 +1128,7 @@ cssIOS::operator stringstream**() const {
 cssEl* cssIOS::operator<<(cssEl& s) {
   if(type_def->InheritsFrom(&TA_ostream) || type_def->InheritsFrom(&TA_iostream)) {
     ostream* strm = (ostream*)*this;
-    if(strm == &cout || strm == &cerr) {
+    if(name == "cout" || name == "cerr") {
       String str;
       if(s.GetType() == T_Int)
 	str << (Int) s;

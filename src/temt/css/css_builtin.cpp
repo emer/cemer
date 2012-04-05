@@ -686,7 +686,7 @@ static cssEl* cssElCFun_lshift_stub(int, cssEl* arg[]) {
       ostream* strm = (ostream*)ta->GetVoidPtrOfType(&TA_ostream);
       if(strm != NULL) {
 	bool conout = false;
-	if(strm == &cout || strm == &cerr) {
+	if(ta->name == "cout" || ta->name == "cerr") {
 	  conout = true;
 	}
 	if(arg[2]->name == "flush") {
@@ -1905,21 +1905,22 @@ static cssEl* cssElCFun_fprintf_stub(int na, cssEl* arg[]) {
   for(int i=2; i <= na; i++) {
     str << (arg[i])->PrintFStr();
   }
-  *fh << str;
-  fh->flush();
+  if(arg[1]->name == "cout" || arg[1]->name == "cerr") {
+    taMisc::ConsoleOutputChars(str);
+  }
+  else {
+	*fh << str;
+	fh->flush();
+  }
   return &cssMisc::Void;
 }
 static cssEl* cssElCFun_printf_stub(int na, cssEl* arg[]) {
   cssProg* cp = arg[0]->prog;
-  ostream* fh = &cout;
-  if(cp->top->cmd_shell != NULL) 
-    fh = cp->top->cmd_shell->fout;
   String str;
   for(int i=1; i <= na; i++) {
     str << (arg[i])->PrintFStr();
   }
-  *fh << str;
-  fh->flush();
+  taMisc::ConsoleOutputChars(str);
   return &cssMisc::Void;
 }
 
