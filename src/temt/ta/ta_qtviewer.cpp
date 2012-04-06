@@ -6512,6 +6512,8 @@ iDataPanelSet::iDataPanelSet(taiDataLink* link_)
 
   layDetail->addWidget(wsSubPanels, 1);
 
+  method_box_mgr = NULL;
+
   connect(buttons, SIGNAL(buttonClicked(int)), this, SLOT(setCurrentPanelId(int)));
 }
 
@@ -6619,9 +6621,16 @@ void iDataPanelSet::SetMenu(QWidget* menu) {
   layDetail->insertWidget(0, menu);
 }
 
-void iDataPanelSet::SetMethodBox(QWidget* meths) {
+void iDataPanelSet::SetMethodBox(QWidget* meths, taiEditDataHost* mgr) {
   meths->setParent(centralWidget());
   layDetail->addWidget(meths);
+  method_box_mgr = mgr;
+}
+
+void iDataPanelSet::UpdateMethodButtons() {
+  if(method_box_mgr) {
+    method_box_mgr->GetButtonImage();
+  }
 }
 
 void iDataPanelSet::setCurrentPanelId_impl(int id) {

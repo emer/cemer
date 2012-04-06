@@ -1096,11 +1096,8 @@ void iSelectEditPanel::ResolveChanges_impl(CancelOp& cancel_op) {
 
 void iSelectEditPanel::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
-  if(se && se->state >= taiDataHost::CONSTRUCTED)  {
-    se->GetButtonImage();		// update buttons whenver we show!
-  }
+  m_dps->UpdateMethodButtons();
 }
-
 
 //////////////////////////////////
 //   taiObjDiffBrowser          //

@@ -70,6 +70,7 @@ class iDataPanelFrame;
 class iViewPanelSet;
 class iListDataPanel;
 class iSearchDialog;
+class taiEditDataHost;
 
 // externals
 class taGroup_impl;
@@ -1768,6 +1769,7 @@ public:
   QHBoxLayout*		  layButtons;
   QButtonGroup*		    buttons; // one QPushButton for each (note: not a widget)
   QStackedLayout*	    layMinibar; // if any panels use the minibar, created
+  taiEditDataHost*	method_box_mgr; // edh object that manages the method box!
 
   void			setPanelAvailable(iDataPanel* pn); // dynamically show/hide a btn/pn
 
@@ -1775,7 +1777,11 @@ public:
   void			AddSubPanel(iDataPanelFrame* pn);
   void			AllSubPanelsAdded(); // call after all subpanels added, to finalize layout
   void			AddSubPanelDynamic(iDataPanelFrame* pn); // call this after fully built to dynamically add a new frame
-  void			SetMethodBox(QWidget* meths); // sets a box that contains methods, on bottom
+  void			SetMethodBox(QWidget* meths,
+				     taiEditDataHost* mgr);
+  // sets a box that contains methods, on bottom, along with manager of those buttons
+  void			UpdateMethodButtons();
+  // update the method buttons, by calling on manager
 
   override QWidget*	firstTabFocusWidget();
 

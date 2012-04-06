@@ -254,6 +254,7 @@ protected:
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);
+  override void 	showEvent(QShowEvent* ev);
 };
 
 class TA_API iProgramPanelBase: public iDataPanelFrame {

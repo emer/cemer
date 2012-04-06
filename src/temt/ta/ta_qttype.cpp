@@ -3299,7 +3299,7 @@ iDataPanel* tabViewType::CreateDataPanel(taiDataLink* dl_) {
     taiEditDataHost* edh = edit_panel->editDataHost();
     // move the menu -- note: QMenu on linux/win, QToolBar on mac
     m_dps->SetMenu(edh->menu->GetRep());
-    m_dps->SetMethodBox(edh->frmMethButtons);
+    m_dps->SetMethodBox(edh->frmMethButtons, edh);
     edh->frmMethButtons->setVisible(edh->showMethButtons());
   }
   return rval;

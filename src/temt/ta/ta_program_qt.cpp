@@ -1064,6 +1064,11 @@ void iProgramViewScriptPanel::mouseHover(const QPoint &pos, int lineno, const QS
 void iProgramViewScriptPanel::ResolveChanges_impl(CancelOp& cancel_op) {
 }
 
+void iProgramViewScriptPanel::showEvent(QShowEvent* ev) {
+  inherited::showEvent(ev);
+  m_dps->UpdateMethodButtons();
+}
+
 //////////////////////////
 //   iProgramPanelBase 	//
 //////////////////////////
@@ -1164,12 +1169,8 @@ QWidget* iProgramPanelBase::firstTabFocusWidget() {
 
 void iProgramPanelBase::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
-  // if(pe && pe->state >= taiDataHost::CONSTRUCTED)  {
-  //   pe->UpdateButtons();		// update buttons whenver we show!
-  // }
+  m_dps->UpdateMethodButtons();
 }
-
-
 
 //////////////////////////
 //   iProgramPanel 	//
@@ -1867,9 +1868,7 @@ void iProgramCtrlPanel::ResolveChanges_impl(CancelOp& cancel_op) {
 
 void iProgramCtrlPanel::showEvent(QShowEvent* ev) {
   inherited::showEvent(ev);
-  if(pc && pc->state >= taiDataHost::CONSTRUCTED)  {
-    pc->GetButtonImage();		// update buttons whenver we show!
-  }
+  m_dps->UpdateMethodButtons();
 }
 
 ///////////////////////////////////////////////////////////////////////
