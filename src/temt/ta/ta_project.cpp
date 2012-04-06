@@ -3241,38 +3241,14 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 
 #ifdef TA_GUI
   if(taMisc::use_gui) {
-    // get optional style override
-# ifdef TA_OS_WIN
-    // Vista style only available on Vista+, so force down if not
-    // NOTE: this may not work with Windows 7 and Qt 4.5+ -- see QtSysInfo at that time
-    if ((taMisc::gui_style == taMisc::GS_WINDOWSVISTA) && (
-      QSysInfo::WindowsVersion != QSysInfo::WV_VISTA))
-      taMisc::gui_style = taMisc::GS_WINDOWSXP;
-# endif // TA_OS_WIN
-    String gstyle;
-    if(taMisc::gui_style != taMisc::GS_DEFAULT) {
-      gstyle = TA_taMisc.GetEnumString("GuiStyle", taMisc::gui_style).after("GS_").downcase();
-    }
-// quasi-temp hack because Mac style on Mac breaks layouts in 4.3.1
-// # if defined(TA_OS_MAC) && (QT_VERSION >= 0x040300) // && (QT_VERSION < 0x040400)
-//     if (gstyle.empty()) gstyle = "windows"; // this looks nice and works
-// # endif
 # ifdef TA_USE_INVENTOR
     new taApplication(argc, (char**)argv); // accessed as qApp
     SIM::Coin3D::Quarter::Quarter::init();
-//     SoQt::init(argc, (char**)argv, cssMisc::prompt.chars()); // creates a special Coin QApplication instance
     milestone |= (SM_QAPP_OBJ | SM_SOQT_INIT);
 # else
     new taApplication(argc, (char**)argv); // accessed as qApp
     milestone |= SM_QAPP_OBJ;
 # endif // TA_USE_INVENTOR
-    if(gstyle.nonempty()) {
-      QApplication::setStyle(gstyle.toQString());
-    }
-    QString app_ico_nm = ":/images/" + taMisc::app_name + "_32x32.png";
-    QPixmap app_ico(app_ico_nm);
-    QApplication::setWindowIcon(app_ico);
-
     // test for various GL compatibilities now, before we get bitten later!
     if(!QGLFormat::hasOpenGL()) {
       cerr << "This display does NOT have OpenGL support, which is required for 3d displays!\n"
@@ -3288,7 +3264,6 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 #endif
   } else
 #endif // TA_GUI
-
   {
     new QCoreApplication(argc, (char**)argv); // accessed as qApp
     QFileInfo fi(argv[0]);
@@ -3335,33 +3310,39 @@ namespace { // anon
   // Setup the global variables taMisc::exe_cmd and taMisc::exe_path and taMisc::app_suffix
   void InitExecCmdPath()
   {
-    //note: this is not how Qt does it, but it seems windows follows normal rules
-    // and passes the arg[0] as the full path to the executable, so we just get path
-    taMisc::exe_cmd = taMisc::args_raw.SafeEl(0);
+    taMisc::exe_cmd = taMisc::GetFileFmPath(taMisc::args_raw.SafeEl(0));
     if(taMisc::exe_cmd.contains('_'))
       taMisc::app_suffix = taMisc::exe_cmd.from('_',-1);
     else
       taMisc::app_suffix = "";
 
-    QFileInfo fi(taMisc::exe_cmd);
+    taMisc::exe_path = QCoreApplication::applicationDirPath();
 
-    taMisc::exe_mod_time_int = fi.lastModified().toTime_t();
-    taMisc::exe_mod_time = fi.lastModified().toString();
+    String full_exe = taMisc::exe_path + "/" + taMisc::exe_cmd;
 
-    //note: argv[0] can contain a relative path, so we need to absolutize
-    // but *don't* dereference links, because we typically want to use the
-    // link file, not the target, which for dev contexts may be buried somewhere
-    taMisc::exe_path = fi.absolutePath();
+    QFileInfo fi(full_exe);
+    if(!fi.exists()) {
+      cerr << "\nWARNING: Not able to find executable at place we think it is:\n"
+	   << full_exe << "\n"
+	   << "this means that various things like checking for out-of-date plugins\n"
+	   << "and detecting if we're running the develoment executable won't work.\n";
+    }
+    else {
+      taMisc::exe_mod_time_int = fi.lastModified().toTime_t();
+      taMisc::exe_mod_time = fi.lastModified().toString();
 
-  #if defined(TA_OS_MAC)
-    /* Note: for Mac, if the bin is in a bundle, then it will be a link
-       to the actual file, so in this case, we dereference it
-       {app_dir}/{appname.app}/Contents/MacOS (bundle in app root)
-       {app_dir}/bin/{appname.app}/Contents/MacOS (bundle in app bin)
-       {app_dir}/bin (typically non-gui only, since gui must run from bundle)
-    */
-    if (taMisc::exe_path.endsWith("/Contents/MacOS")) {
-      taMisc::exe_path = fi.canonicalPath();
+      taMisc::exe_path = fi.absolutePath();
+
+#if defined(TA_OS_MAC)
+      /* Note: for Mac, if the bin is in a bundle, then it will be a link
+	 to the actual file, so in this case, we dereference it
+	 {app_dir}/{appname.app}/Contents/MacOS (bundle in app root)
+	 {app_dir}/bin/{appname.app}/Contents/MacOS (bundle in app bin)
+	 {app_dir}/bin (typically non-gui only, since gui must run from bundle)
+      */
+      if (taMisc::exe_path.endsWith("/Contents/MacOS")) {
+	taMisc::exe_path = fi.canonicalPath();
+      }
     }
     // seemingly not in a bundle, so use Unix defaults...
   #endif // Mac
@@ -3563,9 +3544,6 @@ namespace { // anon
 // * taMisc::in_dev_exe
 // * taMisc::use_plugins
 bool taRootBase::Startup_InitTA_AppFolders() {
-  // WARNING: cannot use QCoreApplication::applicationDirPath() at this point
-  // because QCoreApplication has not been instantiated yet
-
   // Initialize the key folders.
   String app_dir;
   String app_plugin_dir;
@@ -3639,7 +3617,8 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
   taMisc::Init_Hooks(); // client dlls register init hooks -- this calls them!
   milestone |= SM_TYPES_INIT;
 
-  // Set taMisc::exe_cmd and taMisc::exe_path.
+  // Set taMisc::exe_cmd and taMisc::exe_path -- need these to determine app_suffix
+  // which is key to everything else..
   InitExecCmdPath();
 
   // user directory, aka Home folder -- we don't necessarily use it as a base here though
@@ -3701,6 +3680,31 @@ bool taRootBase::Startup_InitTA(ta_void_fun ta_init_fun) {
     }
     inst->SetFileName(good_fnm); // reinstate for later saving
   }
+
+  // set GUI style 
+#ifdef TA_GUI
+  if(taMisc::use_gui) {
+    // get optional style override
+# ifdef TA_OS_WIN
+    // Vista style only available on Vista+, so force down if not
+    // NOTE: this may not work with Windows 7 and Qt 4.5+ -- see QtSysInfo at that time
+    if ((taMisc::gui_style == taMisc::GS_WINDOWSVISTA) &&
+	(QSysInfo::WindowsVersion != QSysInfo::WV_VISTA))
+      taMisc::gui_style = taMisc::GS_WINDOWSXP;
+# endif // TA_OS_WIN
+    String gstyle;
+    if(taMisc::gui_style != taMisc::GS_DEFAULT) {
+      gstyle = TA_taMisc.GetEnumString("GuiStyle", 
+				       taMisc::gui_style).after("GS_").downcase();
+    }
+    if(gstyle.nonempty()) {
+      QApplication::setStyle(gstyle.toQString());
+    }
+    QString app_ico_nm = ":/images/" + taMisc::app_name + "_32x32.png";
+    QPixmap app_ico(app_ico_nm);
+    QApplication::setWindowIcon(app_ico);
+  }
+#endif // TA_GUI
 
   // make sure the app dir is on the recent paths
   if (instance()->recent_paths.FindEl(taMisc::app_dir) < 0) {
@@ -4147,8 +4151,8 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
   if(!Startup_InitDMem(argc, argv)) goto startup_failed;
   if(!Startup_InitArgs(argc, argv)) goto startup_failed;
   if(!Startup_ProcessGuiArg(argc, argv)) goto startup_failed;
-  if(!Startup_InitTA(ta_init_fun)) goto startup_failed;
   if(!Startup_InitApp(argc, argv)) goto startup_failed;
+  if(!Startup_InitTA(ta_init_fun)) goto startup_failed;
   if(!Startup_InitTypes()) goto startup_failed;
   if(!Startup_EnumeratePlugins()) goto startup_failed;
   if(!Startup_LoadPlugins()) goto startup_failed; // loads those enabled, and does type integration
