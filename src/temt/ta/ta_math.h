@@ -537,13 +537,13 @@ public:
   // check that both vectors are the same size, and issue warning if not (unless quiet)
 
   static bool  vec_add(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Arithmetic add elements in two vectors: a(i) += b(i)
+  // #CAT_Arithmetic add elements in two vectors: a(i) += b(i) -- uses entire matrix, ignoring any view of sub-elements
   static bool  vec_sub(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Arithmetic subtract elements in two vectors: a(i) -= b(i)
+  // #CAT_Arithmetic subtract elements in two vectors: a(i) -= b(i) -- uses entire matrix, ignoring any view of sub-elements
   static bool  vec_mult_els(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i)
+  // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i) -- uses entire matrix, ignoring any view of sub-elements
   static bool  vec_div_els(double_Matrix* a, const double_Matrix* b);
-  // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i)
+  // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i) -- uses entire matrix, ignoring any view of sub-elements
 
   static bool  vec_add_scalar(double_Matrix* a, double b);
   // #CAT_Arithmetic add scalar value b to elements in vector a: a(i) += b
@@ -564,13 +564,13 @@ public:
   // #CAT_Arithmetic apply simple math operators to values in vector, other vector provides 'arg' value for math_spec
 
   static bool vec_students_cum(double_Matrix* t,const double_Matrix* df);
-  // #CAT_Probability element wise area between -t and t of student's distribution df deg of free t test
+  // #CAT_Probability element wise area between -t and t of student's distribution df deg of free t test -- uses entire matrix, ignoring any view of sub-elements
   static bool vec_students_cum_cum(double_Matrix* t,const double_Matrix* df);
-  // #CAT_Probability element wise cumulative student's distribution df deg of free t test (area from 0 to t)
+  // #CAT_Probability element wise cumulative student's distribution df deg of free t test (area from 0 to t) -- uses entire matrix, ignoring any view of sub-elements
   static bool vec_gauss_inv(double_Matrix* p);
-  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p -- uses entire matrix, ignoring any view of sub-elements
   static bool vec_gauss_inv_lim(double_Matrix* p);
-  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p . returns non-0 values for p==0 or p ==1
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p . returns non-0 values for p==0 or p ==1 -- uses entire matrix, ignoring any view of sub-elements
 
   ///////////////////////////////////////
   // basic statistics
@@ -578,23 +578,23 @@ public:
   static double vec_first(const double_Matrix* vec);
   // #CAT_Statistics first item in the vector
   static double vec_last(const double_Matrix* vec);
-  // #CAT_Statistics last item in the vector
+  // #CAT_Statistics last item in the vector -- uses entire matrix, ignoring any view of sub-elements
   static int    vec_find_first(const double_Matrix* vec, Relation& rel);
   // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
   static int    vec_find_last(const double_Matrix* vec, Relation& rel);
-  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found -- uses entire matrix, ignoring any view of sub-elements
   static double vec_max(const double_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum value
   static double vec_abs_max(const double_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum absolute value
   static double vec_next_max(const double_Matrix* vec, int max_idx, int& idx);
-  // #CAT_Statistics value and index of the element that has the next-largest value, excluding the max item which is at max_idx
+  // #CAT_Statistics value and index of the element that has the next-largest value, excluding the max item which is at max_idx -- uses entire matrix, ignoring any view of sub-elements
   static double vec_min(const double_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the minimum value
   static double vec_abs_min(const double_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the minimum value
   static double vec_next_min(const double_Matrix* vec, int min_idx, int& idx);
-  // #CAT_Statistics value and index of the element that has the next-smallest value, excluding the min item which is at min_idx
+  // #CAT_Statistics value and index of the element that has the next-smallest value, excluding the min item which is at min_idx -- uses entire matrix, ignoring any view of sub-elements
 
   static double vec_sum(const double_Matrix* vec);
   // #CAT_Statistics compute the sum of the values in the vector
@@ -626,23 +626,23 @@ public:
   static double vec_quantile(const double_Matrix* vec, double quant_pos);
   // #CAT_Statistics compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc
   static double vec_kwta(double_Matrix* vec, int k, bool descending = true);
-  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the value of the item that is k from the highest (lowest if !descending) on the list -- this can be much faster than vec_quantile, which does a full sort
+  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the value of the item that is k from the highest (lowest if !descending) on the list -- this can be much faster than vec_quantile, which does a full sort -- uses entire matrix, ignoring any view of sub-elements
   static void   vec_kwta_avg(double& top_k_avg, double& bot_k_avg,
                              double_Matrix* vec, int k, bool descending = true);
-  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the average of the top k values, and average of the bottom k (reversed if !descending) on the list
+  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the average of the top k values, and average of the bottom k (reversed if !descending) on the list -- uses entire matrix, ignoring any view of sub-elements
 
   static String vec_stats(const double_Matrix* vec);
   // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   static void   vec_sort(double_Matrix* vec, bool descending = false);
-  // #CAT_Statistics sort the given vector values in numerical order (in place)
+  // #CAT_Statistics sort the given vector values in numerical order (in place) -- uses entire matrix, ignoring any view of sub-elements
 
   static bool   vec_uniq(const taMatrix* src_vec, taMatrix* dest_vec, const bool& sort_first = false);
-  // #CAT_Statistics Uniqify the vector, removing all consecutive elements that are the same. use vec_sort first to get a vector of unique elements.
+  // #CAT_Statistics Uniqify the vector, removing all consecutive elements that are the same. use vec_sort first to get a vector of unique elements. -- uses entire matrix, ignoring any view of sub-elements
 
   static bool   mat_concat(const taMatrix* src_a_mat, const taMatrix* src_b_mat,
                            taMatrix* dest_mat, const int& dim = 0);
-  // #CAT_Statistics Concatenate a and b into dest. If dim = 0 (default) concatenate the columns. If dim = 1 concatenate the rows.
+  // #CAT_Statistics Concatenate a and b into dest. If dim = 0 (default) concatenate the columns. If dim = 1 concatenate the rows. -- uses entire matrix, ignoring any view of sub-elements
 
 
   static double  vec_dprime(const double_Matrix* signal_vec,
@@ -652,54 +652,54 @@ public:
   static bool   vec_regress_lin(const double_Matrix* x_vec, const double_Matrix* y_vec,
                                 double& b, double& m, double& cov00, double& cov01,
                                 double& cov11, double& sum_sq);
-  // #CAT_Statistics computes the best-fit linear regression coefficients (b,m) of the model y = b + mx for the dataset (x, y). The variance-covariance matrix for the parameters (c0, c1) is estimated from the scatter of the points around the best-fit line and returned via the parameters (cov00, cov01, cov11). The sum of squares of the residuals from the best-fit line is returned in sum_sq.  See vec_correl to compute the correlation coefficient.
+  // #CAT_Statistics computes the best-fit linear regression coefficients (b,m) of the model y = b + mx for the dataset (x, y). The variance-covariance matrix for the parameters (c0, c1) is estimated from the scatter of the points around the best-fit line and returned via the parameters (cov00, cov01, cov11). The sum of squares of the residuals from the best-fit line is returned in sum_sq.  See vec_correl to compute the correlation coefficient. -- uses entire matrix, ignoring any view of sub-elements
 
   static bool vec_regress_multi_lin(double_Matrix* X, double_Matrix* Y, double_Matrix* C,
                                     double_Matrix* cov, double& chisq);
-  // #CAT_Statistics This function computes the best-fit parameters c of the model y = X c for the observations y and the matrix of predictor variables X. The variance-covariance matrix of the model parameters cov is estimated from the scatter of the observations about the best-fit. The sum of squares of the residuals from the best-fit, chi^2, is returned in chisq. The best-fit is found by singular value decomposition of the matrix X using the preallocated workspace provided in work. The modified Golub-Reinsch SVD algorithm is used, with column scaling to improve the accuracy of the singular values. Any components which have zero singular value (to machine precision) are discarded from the fit.
+  // #CAT_Statistics This function computes the best-fit parameters c of the model y = X c for the observations y and the matrix of predictor variables X. The variance-covariance matrix of the model parameters cov is estimated from the scatter of the observations about the best-fit. The sum of squares of the residuals from the best-fit, chi^2, is returned in chisq. The best-fit is found by singular value decomposition of the matrix X using the preallocated workspace provided in work. The modified Golub-Reinsch SVD algorithm is used, with column scaling to improve the accuracy of the singular values. Any components which have zero singular value (to machine precision) are discarded from the fit. -- uses entire matrix, ignoring any view of sub-elements
 
   static bool vec_regress_multi_lin_polynomial(double_Matrix* dx, double_Matrix* dy,
                                                double_Matrix* coef,  double_Matrix* cov,
                                                int degree, double& chisq);
-    // #CAT_Statistics This function computes the best-fit parameters c of the model y = X c for the observations y and the matrix of predictor variables X. The variance-covariance matrix of the model parameters cov is estimated from the scatter of the observations about the best-fit. The sum of squares of the residuals from the best-fit, chi^2, is returned in chisq. The best-fit is found by singular value decomposition of the matrix X using the preallocated workspace provided in work. The modified Golub-Reinsch SVD algorithm is used, with column scaling to improve the accuracy of the singular values. Any components which have zero singular value (to machine precision) are discarded from the fit.
+    // #CAT_Statistics This function computes the best-fit parameters c of the model y = X c for the observations y and the matrix of predictor variables X. The variance-covariance matrix of the model parameters cov is estimated from the scatter of the observations about the best-fit. The sum of squares of the residuals from the best-fit, chi^2, is returned in chisq. The best-fit is found by singular value decomposition of the matrix X using the preallocated workspace provided in work. The modified Golub-Reinsch SVD algorithm is used, with column scaling to improve the accuracy of the singular values. Any components which have zero singular value (to machine precision) are discarded from the fit. -- uses entire matrix, ignoring any view of sub-elements
 
   static bool vec_jitter_gauss(double_Matrix* vec, double stdev);
-  // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev rounded to the nearest int. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter
+  // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev rounded to the nearest int. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter -- uses entire matrix, ignoring any view of sub-elements
 
   static bool vec_dot_product(double& dot, const double_Matrix* src_a,
                               const double_Matrix* src_b);
-  // #CAT_Statistics Takes the dot product of the two vectors
+  // #CAT_Statistics Takes the dot product of the two vectors -- uses entire matrix, ignoring any view of sub-elements
   static bool mat_vec_product(const double_Matrix* A, const double_Matrix* x,
                               double_Matrix* y);
-  // #CAT_Statistics computes the matrix-vector product y=Ax
+  // #CAT_Statistics computes the matrix-vector product y=Ax -- uses entire matrix, ignoring any view of sub-elements
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
 
   static double vec_ss_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
                             bool norm = false, double tolerance=0.0);
-  // #CAT_Distance compute sum-squares dist between this and the oth, tolerance is by element
+  // #CAT_Distance compute sum-squares dist between this and the oth, tolerance is by element -- uses entire matrix, ignoring any view of sub-elements
   static double vec_euclid_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
                                 bool norm = false, double tolerance=0.0);
-  // #CAT_Distance compute Euclidian dist between this and the oth, tolerance is by element
+  // #CAT_Distance compute Euclidian dist between this and the oth, tolerance is by element -- uses entire matrix, ignoring any view of sub-elements
   static double vec_hamming_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
                                  bool norm = false, double tolerance=0.0);
-  // #CAT_Distance compute Hamming dist between this and the oth, tolerance is by element
+  // #CAT_Distance compute Hamming dist between this and the oth, tolerance is by element -- uses entire matrix, ignoring any view of sub-elements
   static double vec_covar(const double_Matrix* vec, const double_Matrix* oth_vec);
-  // #CAT_Distance compute the covariance of this vector the oth vector
+  // #CAT_Distance compute the covariance of this vector the oth vector -- uses entire matrix, ignoring any view of sub-elements
   static double vec_correl(const double_Matrix* vec, const double_Matrix* oth_vec);
-  // #CAT_Distance compute the correlation of this vector with the oth vector
+  // #CAT_Distance compute the correlation of this vector with the oth vector -- uses entire matrix, ignoring any view of sub-elements
   static double vec_inner_prod(const double_Matrix* vec, const double_Matrix* oth_vec,
                                bool norm = false);
-  // #CAT_Distance compute the inner product of this vector and the oth vector
+  // #CAT_Distance compute the inner product of this vector and the oth vector -- uses entire matrix, ignoring any view of sub-elements
   static double vec_cross_entropy(const double_Matrix* vec, const double_Matrix* oth_vec);
-  // #CAT_Distance compute cross entropy between this and other vector, this is 'p' other is 'q'
+  // #CAT_Distance compute cross entropy between this and other vector, this is 'p' other is 'q' -- uses entire matrix, ignoring any view of sub-elements
   static double vec_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
                          DistMetric metric, bool norm = false, double tolerance=0.0);
-  // #CAT_Distance compute generalized distance metric with other vector (double_Matrix* vec, calls appropriate fun above)
+  // #CAT_Distance compute generalized distance metric with other vector (double_Matrix* vec, calls appropriate fun above) -- uses entire matrix, ignoring any view of sub-elements
   static double scalar_dist(double v1, double v2,
                             DistMetric metric, double tolerance=0.0);
-  // #CAT_Distance compute distance metric on scalar values -- not really sensible for COVAR o CORREL (which reduce to SUM_SQUARES and EUCLIDIAN, respectively)
+  // #CAT_Distance compute distance metric on scalar values -- not really sensible for COVAR o CORREL (which reduce to SUM_SQUARES and EUCLIDIAN, respectively) -- uses entire matrix, ignoring any view of sub-elements
 
   ///////////////////////////////////////
   // Normalization
@@ -737,23 +737,23 @@ public:
 
   static bool   vec_kern_uniform(double_Matrix* kernel, int half_sz,
                                  bool neg_tail=true, bool pos_tail=true);
-  // #CAT_Convolution create a unit-sum-normalized uniform kernel of given half-size (size set to 2* half_sz + 1) in given vector.  if given tail direction is false, it is replaced with zeros
+  // #CAT_Convolution create a unit-sum-normalized uniform kernel of given half-size (size set to 2* half_sz + 1) in given vector.  if given tail direction is false, it is replaced with zeros -- uses entire matrix, ignoring any view of sub-elements
   static bool   vec_kern_gauss(double_Matrix* kernel, int half_sz, double sigma,
                                bool neg_tail=true, bool pos_tail=true);
-  // #CAT_Convolution create a unit-sum-normalized gaussian kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given sigma (standard deviation) value.  if given tail direction is false, it is replaced with zeros
+  // #CAT_Convolution create a unit-sum-normalized gaussian kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given sigma (standard deviation) value.  if given tail direction is false, it is replaced with zeros -- uses entire matrix, ignoring any view of sub-elements
   static bool   vec_kern_exp(double_Matrix* kernel, int half_sz, double exp_mult,
                              bool neg_tail=true, bool pos_tail=true);
-  // #CAT_Convolution create a unit-sum-normalized symmetric exponential kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given exponential multiplier.  symmetric means abs(i-ctr) is used for value.  if given tail direction is false, it is replaced with zeros
+  // #CAT_Convolution create a unit-sum-normalized symmetric exponential kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given exponential multiplier.  symmetric means abs(i-ctr) is used for value.  if given tail direction is false, it is replaced with zeros -- uses entire matrix, ignoring any view of sub-elements
   static bool   vec_kern_pow(double_Matrix* kernel, int half_sz, double pow_exp,
                              bool neg_tail=true, bool pos_tail=true);
-  // #CAT_Convolution create a unit-sum-normalized power-function kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given exponential multiplier.  if given tail direction is false, it is replaced with zeros
+  // #CAT_Convolution create a unit-sum-normalized power-function kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given exponential multiplier.  if given tail direction is false, it is replaced with zeros -- uses entire matrix, ignoring any view of sub-elements
   static bool   vec_convolve(double_Matrix* out_vec, const double_Matrix* in_vec,
                              const double_Matrix* kernel, bool keep_edges = false);
-  // #CAT_Convolution convolve in_vec with kernel to produce out_vec.  out_vec_i = sum_j kernel_j * in_vec_[i+j-off] (where off is 1/2 width of kernel).  normally, out_vec is indented by the offset and width of the kernel so that the full kernel is used for all out_vec points.  however, if keep_edges is true, it keeps these edges by clipping and renormalizing the kernel all the way to both edges
+  // #CAT_Convolution convolve in_vec with kernel to produce out_vec.  out_vec_i = sum_j kernel_j * in_vec_[i+j-off] (where off is 1/2 width of kernel).  normally, out_vec is indented by the offset and width of the kernel so that the full kernel is used for all out_vec points.  however, if keep_edges is true, it keeps these edges by clipping and renormalizing the kernel all the way to both edges -- uses entire matrix, ignoring any view of sub-elements
 
   static bool   vec_kern2d_gauss(double_Matrix* kernel, int sz_x, int sz_y,
                                  double sigma_x, double sigma_y);
-  // #CAT_Convolution create a unit-sum-normalized 2D gaussian kernel of given size in each axis (total size, not half size) in given vector, with given sigma (standard deviation) value in each axis
+  // #CAT_Convolution create a unit-sum-normalized 2D gaussian kernel of given size in each axis (total size, not half size) in given vector, with given sigma (standard deviation) value in each axis -- uses entire matrix, ignoring any view of sub-elements
 
   /////////////////////////////////////////////////////////////////////////////////
   // Standard Matrix operations: operate on a 2-dimensional matrix
@@ -1175,13 +1175,13 @@ public:
   // check that both vectors are the same size, and issue warning if not (unless quiet)
 
   static bool  vec_add(float_Matrix* a, const float_Matrix* b);
-  // #CAT_Arithmetic add elements in two vectors: a(i) += b(i)
+  // #CAT_Arithmetic add elements in two vectors: a(i) += b(i) -- uses entire matrix, ignoring any view of sub-elements
   static bool  vec_sub(float_Matrix* a, const float_Matrix* b);
-  // #CAT_Arithmetic subtract elements in two vectors: a(i) -= b(i)
+  // #CAT_Arithmetic subtract elements in two vectors: a(i) -= b(i) -- uses entire matrix, ignoring any view of sub-elements
   static bool  vec_mult_els(float_Matrix* a, const float_Matrix* b);
-  // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i)
+  // #CAT_Arithmetic multiply elements in two vectors: a(i) *= b(i) -- uses entire matrix, ignoring any view of sub-elements
   static bool  vec_div_els(float_Matrix* a, const float_Matrix* b);
-  // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i)
+  // #CAT_Arithmetic divide elements in two vectors: a(i) /= b(i) -- uses entire matrix, ignoring any view of sub-elements
 
   static bool  vec_add_scalar(float_Matrix* a, float b);
   // #CAT_Arithmetic add scalar value b to elements in vector a: a(i) += b
@@ -1202,13 +1202,13 @@ public:
   // #CAT_Arithmetic apply simple math operators to values in vector, other vector provides 'arg' value for math_spec
 
   static bool vec_students_cum(float_Matrix* t,const float_Matrix* df);
-  // #CAT_Probability element wise area between -t and t of student's distribution df deg of free t test
+  // #CAT_Probability element wise area between -t and t of student's distribution df deg of free t test -- uses entire matrix, ignoring any view of sub-elements
   static bool vec_students_cum_cum( float_Matrix* t,const float_Matrix* df);
-  // #CAT_Probability element wise cumulative student's distribution (a is tval, b is df)
+  // #CAT_Probability element wise cumulative student's distribution (a is tval, b is df) -- uses entire matrix, ignoring any view of sub-elements
   static bool vec_gauss_inv(float_Matrix* p);
-  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p -- uses entire matrix, ignoring any view of sub-elements
   static bool vec_gauss_inv_lim(float_Matrix* p);
-  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p , returns nonzero values for  p==0 or p==1
+  // #CAT_Probability element-wise inverse of the cumulative for p: z value for given p , returns nonzero values for  p==0 or p==1 -- uses entire matrix, ignoring any view of sub-elements
 
   ///////////////////////////////////////
   // basic statistics
@@ -1216,23 +1216,23 @@ public:
   static float  vec_first(const float_Matrix* vec);
   // #CAT_Statistics first item in the vector
   static float  vec_last(const float_Matrix* vec);
-  // #CAT_Statistics last item in the vector
+  // #CAT_Statistics last item in the vector -- uses entire matrix, ignoring any view of sub-elements
   static int    vec_find_first(const float_Matrix* vec, Relation& rel);
   // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
   static int    vec_find_last(const float_Matrix* vec, Relation& rel);
-  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found
+  // #CAT_Statistics find first element in the vector that meets relationship rel -- returns index in vector or -1 if not found -- uses entire matrix, ignoring any view of sub-elements
   static float  vec_max(const float_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum value
   static float  vec_abs_max(const float_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the maximum absolute value
   static float  vec_next_max(const float_Matrix* vec, int max_idx, int& idx);
-  // #CAT_Statistics value and index of the element that has the next-largest value, excluding the max item which is at max_idx
+  // #CAT_Statistics value and index of the element that has the next-largest value, excluding the max item which is at max_idx -- uses entire matrix, ignoring any view of sub-elements
   static float  vec_min(const float_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the minimum value
   static float  vec_abs_min(const float_Matrix* vec, int& idx);
   // #CAT_Statistics value and index of the (first) element that has the minimum value
   static float  vec_next_min(const float_Matrix* vec, int min_idx, int& idx);
-  // #CAT_Statistics value and index of the element that has the next-smallest value, excluding the min item which is at min_idx
+  // #CAT_Statistics value and index of the element that has the next-smallest value, excluding the min item which is at min_idx -- uses entire matrix, ignoring any view of sub-elements
 
   static float  vec_sum(const float_Matrix* vec);
   // #CAT_Statistics compute the sum of the values in the vector
@@ -1258,7 +1258,7 @@ public:
   static float  vec_count(const float_Matrix* vec, Relation& rel);
   // #CAT_Statistics count number of times relationship is true
   static float  vec_count_float(const float_Matrix* vec, RelationFloat& rel);
-  // #CAT_Statistics count number of times relationship is true
+  // #CAT_Statistics count number of times relationship is true -- optimized float version
   static float  vec_median(const float_Matrix* vec);
   // #CAT_Statistics compute the median of the values in the vector (middle value) -- requires sorting
   static float  vec_mode(const float_Matrix* vec);
@@ -1266,10 +1266,10 @@ public:
   static float  vec_quantile(const float_Matrix* vec, float quant_pos);
   // #CAT_Statistics compute arbitrary quantile according to quant_pos value, which is a proportion 0-1 from start to end of sorted list of values, e.g., .5 = median, .25 = first quartile, etc
   static float  vec_kwta(float_Matrix* vec, int k, bool descending = true);
-  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the value of the item that is k from the highest (lowest if !descending) on the list -- this can be much faster than vec_quantile, which does a full sort
+  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the value of the item that is k from the highest (lowest if !descending) on the list -- this can be much faster than vec_quantile, which does a full sort -- uses entire matrix, ignoring any view of sub-elements
   static void   vec_kwta_avg(float& top_k_avg, float& bot_k_avg,
                              float_Matrix* vec, int k, bool descending = true);
-  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the average of the top k values, and average of the bottom k (reversed if !descending) on the list
+  // #CAT_Statistics perform an optimized k-winners-take-all sort, returning the average of the top k values, and average of the bottom k (reversed if !descending) on the list -- uses entire matrix, ignoring any view of sub-elements
 
   static String vec_stats(const float_Matrix* vec);
   // #CAT_Statistics compute standard descriptive statistics on given vector data, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
@@ -1284,38 +1284,38 @@ public:
   static bool   vec_regress_lin(const float_Matrix* x_vec, const float_Matrix* y_vec,
                                 float& b, float& m, float& cov00, float& cov01,
                                 float& cov11, float& sum_sq);
-  // #CAT_Statistics computes the best-fit linear regression coefficients (b,m) of the model y = b + mx for the dataset (x, y). The variance-covariance matrix for the parameters (c0, c1) is estimated from the scatter of the points around the best-fit line and returned via the parameters (cov00, cov01, cov11). The sum of squares of the residuals from the best-fit line is returned in sum_sq.  See vec_correl to compute the correlation coefficient.
+  // #CAT_Statistics computes the best-fit linear regression coefficients (b,m) of the model y = b + mx for the dataset (x, y). The variance-covariance matrix for the parameters (c0, c1) is estimated from the scatter of the points around the best-fit line and returned via the parameters (cov00, cov01, cov11). The sum of squares of the residuals from the best-fit line is returned in sum_sq.  See vec_correl to compute the correlation coefficient. -- uses entire matrix, ignoring any view of sub-elements
 
   static bool vec_jitter_gauss(float_Matrix* vec, float stdev);
-  // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter
+  // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter -- uses entire matrix, ignoring any view of sub-elements
 
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
 
   static float  vec_ss_dist(const float_Matrix* vec, const float_Matrix* oth_vec,
                             bool norm = false, float tolerance=0.0f);
-  // #CAT_Distance compute sum-squares dist between this and the oth, tolerance is by element
+  // #CAT_Distance compute sum-squares dist between this and the oth, tolerance is by element -- uses entire matrix, ignoring any view of sub-elements
   static float  vec_euclid_dist(const float_Matrix* vec, const float_Matrix* oth_vec,
                                 bool norm = false, float tolerance=0.0f);
-  // #CAT_Distance compute Euclidian dist between this and the oth, tolerance is by element
+  // #CAT_Distance compute Euclidian dist between this and the oth, tolerance is by element -- uses entire matrix, ignoring any view of sub-elements
   static float  vec_hamming_dist(const float_Matrix* vec, const float_Matrix* oth_vec,
                                  bool norm = false, float tolerance=0.0f);
-  // #CAT_Distance compute Hamming dist between this and the oth, tolerance is by element
+  // #CAT_Distance compute Hamming dist between this and the oth, tolerance is by element -- uses entire matrix, ignoring any view of sub-elements
   static float  vec_covar(const float_Matrix* vec, const float_Matrix* oth_vec);
-  // #CAT_Distance compute the covariance of this vector the oth vector
+  // #CAT_Distance compute the covariance of this vector the oth vector -- uses entire matrix, ignoring any view of sub-elements
   static float  vec_correl(const float_Matrix* vec, const float_Matrix* oth_vec);
-  // #CAT_Distance compute the correlation of this vector with the oth vector
+  // #CAT_Distance compute the correlation of this vector with the oth vector -- uses entire matrix, ignoring any view of sub-elements
   static float  vec_inner_prod(const float_Matrix* vec, const float_Matrix* oth_vec,
                                bool norm = false);
-  // #CAT_Distance compute the inner product of this vector and the oth vector
+  // #CAT_Distance compute the inner product of this vector and the oth vector -- uses entire matrix, ignoring any view of sub-elements
   static float  vec_cross_entropy(const float_Matrix* vec, const float_Matrix* oth_vec);
-  // #CAT_Distance compute cross entropy between this and other vector, this is 'p' other is 'q'
+  // #CAT_Distance compute cross entropy between this and other vector, this is 'p' other is 'q' -- uses entire matrix, ignoring any view of sub-elements
   static float  vec_dist(const float_Matrix* vec, const float_Matrix* oth_vec,
                          DistMetric metric, bool norm = false, float tolerance=0.0f);
-  // #CAT_Distance compute generalized distance metric with other vector (float_Matrix* vec, calls appropriate fun above)
+  // #CAT_Distance compute generalized distance metric with other vector (float_Matrix* vec, calls appropriate fun above) -- uses entire matrix, ignoring any view of sub-elements
   static float  scalar_dist(float v1, float v2,
                             DistMetric metric, float tolerance=0.0);
-  // #CAT_Distance compute distance metric on scalar values -- not really sensible for COVAR o CORREL (which reduce to SUM_SQUARES and EUCLIDIAN, respectively)
+  // #CAT_Distance compute distance metric on scalar values -- not really sensible for COVAR o CORREL (which reduce to SUM_SQUARES and EUCLIDIAN, respectively) -- uses entire matrix, ignoring any view of sub-elements
 
   ///////////////////////////////////////
   // Normalization
@@ -1352,23 +1352,23 @@ public:
 
   static bool   vec_kern_uniform(float_Matrix* kernel, int half_sz,
                                  bool neg_tail=true, bool pos_tail=true);
-  // #CAT_Convolution create a unit-sum-normalized uniform kernel of given half-size (size set to 2* half_sz + 1) in given vector.  if given tail direction is false, it is replaced with zeros
+  // #CAT_Convolution create a unit-sum-normalized uniform kernel of given half-size (size set to 2* half_sz + 1) in given vector.  if given tail direction is false, it is replaced with zeros -- uses entire matrix, ignoring any view of sub-elements
   static bool   vec_kern_gauss(float_Matrix* kernel, int half_sz, float sigma,
                                bool neg_tail=true, bool pos_tail=true);
-  // #CAT_Convolution create a unit-sum-normalized gaussian kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given sigma (standard deviation) value.  if given tail direction is false, it is replaced with zeros
+  // #CAT_Convolution create a unit-sum-normalized gaussian kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given sigma (standard deviation) value.  if given tail direction is false, it is replaced with zeros -- uses entire matrix, ignoring any view of sub-elements
   static bool   vec_kern_exp(float_Matrix* kernel, int half_sz, float exp_mult,
                              bool neg_tail=true, bool pos_tail=true);
-  // #CAT_Convolution create a unit-sum-normalized symmetric exponential kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given exponential multiplier.  symmetric means abs(i-ctr) is used for value.  if given tail direction is false, it is replaced with zeros
+  // #CAT_Convolution create a unit-sum-normalized symmetric exponential kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given exponential multiplier.  symmetric means abs(i-ctr) is used for value.  if given tail direction is false, it is replaced with zeros -- uses entire matrix, ignoring any view of sub-elements
   static bool   vec_kern_pow(float_Matrix* kernel, int half_sz, float pow_exp,
                              bool neg_tail=true, bool pos_tail=true);
-  // #CAT_Convolution create a unit-sum-normalized power-function kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given exponential multiplier.  if given tail direction is false, it is replaced with zeros
+  // #CAT_Convolution create a unit-sum-normalized power-function kernel of given half-size (size set to 2* half_sz + 1) in given vector, with given exponential multiplier.  if given tail direction is false, it is replaced with zeros -- uses entire matrix, ignoring any view of sub-elements
   static bool   vec_convolve(float_Matrix* out_vec, const float_Matrix* in_vec,
                              const float_Matrix* kernel, bool keep_edges = false);
-  // #CAT_Convolution convolve in_vec with kernel to produce out_vec.  out_vec_i = sum_j kernel_j * in_vec_[i+j-off] (where off is 1/2 width of kernel).  normally, out_vec is indented by the offset and width of the kernel so that the full kernel is used for all out_vec points.  however, if keep_edges is true, it keeps these edges by clipping and renormalizing the kernel all the way to both edges
+  // #CAT_Convolution convolve in_vec with kernel to produce out_vec.  out_vec_i = sum_j kernel_j * in_vec_[i+j-off] (where off is 1/2 width of kernel).  normally, out_vec is indented by the offset and width of the kernel so that the full kernel is used for all out_vec points.  however, if keep_edges is true, it keeps these edges by clipping and renormalizing the kernel all the way to both edges -- uses entire matrix, ignoring any view of sub-elements
 
   static bool   vec_kern2d_gauss(float_Matrix* kernel, int half_sz_x, int half_sz_y,
                                  float sigma_x, float sigma_y);
-  // #CAT_Convolution create a unit-sum-normalized 2D gaussian kernel of given half-size in each axis (size set to 2* half_sz + 1) in given vector, with given sigma (standard deviation) value in each axis
+  // #CAT_Convolution create a unit-sum-normalized 2D gaussian kernel of given half-size in each axis (size set to 2* half_sz + 1) in given vector, with given sigma (standard deviation) value in each axis -- uses entire matrix, ignoring any view of sub-elements
 
   /////////////////////////////////////////////////////////////////////////////////
   // Matrix operations
