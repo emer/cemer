@@ -1162,6 +1162,13 @@ QWidget* iProgramPanelBase::firstTabFocusWidget() {
   return pe->firstTabFocusWidget();
 }
 
+void iProgramPanelBase::showEvent(QShowEvent* ev) {
+  inherited::showEvent(ev);
+  // if(pe && pe->state >= taiDataHost::CONSTRUCTED)  {
+  //   pe->UpdateButtons();		// update buttons whenver we show!
+  // }
+}
+
 
 
 //////////////////////////
@@ -1855,6 +1862,13 @@ void iProgramCtrlPanel::ResolveChanges_impl(CancelOp& cancel_op) {
  // per semantics elsewhere, we just blindly apply changes
   if (pc && pc->HasChanged()) {
     pc->Apply();
+  }
+}
+
+void iProgramCtrlPanel::showEvent(QShowEvent* ev) {
+  inherited::showEvent(ev);
+  if(pc && pc->state >= taiDataHost::CONSTRUCTED)  {
+    pc->GetButtonImage();		// update buttons whenver we show!
   }
 }
 

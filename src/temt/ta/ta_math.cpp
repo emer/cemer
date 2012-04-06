@@ -1855,21 +1855,6 @@ bool taMath_double::vec_jitter_gauss(double_Matrix* vec, double stdev) {
   return true;
 }
 
-bool taMath_double::vec_dot_product(double& dot, const double_Matrix* src_a,
-                                    const double_Matrix* src_b) {
-  gsl_vector src_a_gsl;
-  vec_get_gsl_fm_ta(&src_a_gsl, src_a);
-  const gsl_vector* src_a_gsl_ptr = &src_a_gsl;
-
-  gsl_vector src_b_gsl;
-  vec_get_gsl_fm_ta(&src_b_gsl, src_b);
-  const gsl_vector* src_b_gsl_ptr = &src_b_gsl;
-
-  gsl_blas_ddot(src_a_gsl_ptr, src_b_gsl_ptr, &dot);
-
-  return true;
-}
-
 bool taMath_double::mat_vec_product(const double_Matrix* A, const double_Matrix* x,
                                     double_Matrix* y) {
   if (!A||!x||!y) {
@@ -2498,17 +2483,62 @@ bool taMath_double::mat_div_els(double_Matrix* a, const double_Matrix* b) {
   return gsl_matrix_div_elements(&g_a, &g_b);
 }
 
+bool taMath_double::mat_transpose(double_Matrix* dest, const double_Matrix* src) {
+  if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new double_Matrix");return false;}
+  if(src->InheritsFrom(&TA_complex_Matrix) && dest->InheritsFrom(&TA_complex_Matrix)) {
+    if(src->dims() != 3){taMisc::Error("Can only transpose a 2d matrix");return false;}
+    int d0 = src->dim(1);
+    int d1 = src->dim(2);
+    dest->SetGeom(3,2,d1,d0);
+    for(int i=0;i<d0;i++) {
+      for(int j=0;j<d1;j++) {
+	dest->FastEl(0,j,i) = src->FastEl(0,i,j);
+	dest->FastEl(1,j,i) = src->FastEl(1,i,j);
+      }
+    }
+  }
+  else {
+    if(src->dims() != 2){taMisc::Error("Can only transpose a 2d matrix");return false;}
+    int d0 = src->dim(0);
+    int d1 = src->dim(1);
+    dest->SetGeom(2,d1,d0);
+    for(int i=0;i<d0;i++) {
+      for(int j=0;j<d1;j++) {
+	dest->Set(src->FastElAsDouble(i,j),j,i);
+      }
+    }
+  }
+  return true;
+}
+
 bool taMath_double::mat_mult(double_Matrix* c, const double_Matrix* a, const double_Matrix* b) {
   gsl_matrix g_a;  if(!mat_get_gsl_fm_ta(&g_a, a)) return false;
   gsl_matrix g_b;  if(!mat_get_gsl_fm_ta(&g_b, b)) return false;
   if(!vec_check_type(c)) return false;
   // ensure return matrix is correct size
-  if(c->dims() != 2 || c->dim(0) != b->dim(0) || c->dim(1) != a->dim(1)) {
-    c->SetGeom(2, b->dim(0), a->dim(1));
-  }
+  c->SetGeom(2, b->dim(0), a->dim(1));
   gsl_matrix g_c;  if(!mat_get_gsl_fm_ta(&g_c, c)) return false;
   int rval = gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, &g_a, &g_b, 0.0, &g_c);
   return true;			// todo: decode rvals
+}
+
+double taMath_double::mat_det(const double_Matrix* a) {
+  if(a->dims() != 2) {
+    taMisc::Error("mat_det: matrix is not 2 dimensional!");
+    return false;
+  }
+  if(a->dim(0) != a->dim(1)) {
+    taMisc::Error("mat_det: matrix is not square!");
+    return false;
+  }
+  double_Matrix tmp(*a);	// copy constructor
+  gsl_matrix g_a;  if(!mat_get_gsl_fm_ta(&g_a, &tmp)) return false;
+  int s;
+  gsl_permutation* p = gsl_permutation_alloc(a->dim(0));
+  gsl_linalg_LU_decomp(&g_a, p, &s);
+  double det = gsl_linalg_LU_det(&g_a, s);
+  gsl_permutation_free(p);
+  return det;
 }
 
 bool taMath_double::mat_eigen_owrite(double_Matrix* a, double_Matrix* eigen_vals,
@@ -2632,18 +2662,6 @@ bool taMath_double::mat_mds(const double_Matrix* a, double_Matrix* xy_coords, in
   double_Matrix a_copy(false);
   a_copy = *a;
   return mat_mds_owrite(&a_copy, xy_coords, x_axis_c, y_axis_c);
-}
-
-bool taMath_double::mat_transpose(double_Matrix* dest, double_Matrix* src) {
-  if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new double_Matrix");return false;}
-  if(src->dims() != 2){taMisc::Error("Can only transpose a 2d matrix");return false;}
-  int d0 = src->dim(0);
-  int d1 = src->dim(1);
-  dest->SetGeom(2,d1,d0);
-  for(int i=0;i<d0;i++)
-    for(int j=0;j<d1;j++)
-      dest->Set(src->FastElAsDouble(i,j),j,i);
-  return true;
 }
 
 bool taMath_double::mat_slice(double_Matrix* dest, double_Matrix* src, int d0_start, int d0_end, int d1_start, int d1_end) {
@@ -5617,16 +5635,18 @@ bool taMath_float::mat_mds(const float_Matrix* a, float_Matrix* xy_coords, int x
   return mat_mds_owrite((float_Matrix*)a, xy_coords, x_axis_c, y_axis_c);
 }
 
-bool taMath_float::mat_transpose(float_Matrix* dest, float_Matrix* src) {
+bool taMath_float::mat_transpose(float_Matrix* dest, const float_Matrix* src) {
   if(!dest || !src){taMisc::Error("dest or src cannot be null. try dest=new float_Matrix");return false;}
   if(src->dims() != 2){taMisc::Error("Can only transpose a 2d matrix");return false;}
   int d0,d1;
   d0 = src->dim(0);
   d1 = src->dim(1);
   dest->SetGeom(2,d1,d0);
-  for(int i=0;i<d0;i++)
-    for(int j=0;j<d1;j++)
+  for(int i=0;i<d0;i++) {
+    for(int j=0;j<d1;j++) {
       dest->Set(src->FastElAsFloat(i,j),j,i);
+    }
+  }
   return true;
 }
 
@@ -6667,6 +6687,18 @@ double_Matrix* cssMath::meshgrid(const slice_Matrix* dims) {
 double_Matrix* cssMath::mat_mult_css(const double_Matrix* a, const double_Matrix* b) {
   double_Matrix* rval = new double_Matrix;
   mat_mult(rval, a, b);
+  return rval;
+}
+
+double_Matrix* cssMath::transpose(const double_Matrix* a) {
+  if(!a) { taMisc::Error("transpose -- matrix is NULL"); return NULL; }
+  if(a->InheritsFrom(&TA_complex_Matrix)) {
+    complex_Matrix* rval = new complex_Matrix;
+    mat_transpose(rval, a);
+    return rval;
+  }
+  double_Matrix* rval = new double_Matrix;
+  mat_transpose(rval, a);
   return rval;
 }
 

@@ -499,6 +499,14 @@ QWidget* EditDataPanel::firstTabFocusWidget() {
   return editDataHost()->firstTabFocusWidget();
 }
 
+void EditDataPanel::showEvent(QShowEvent* ev) {
+  inherited::showEvent(ev);
+  taiEditDataHost* edh = editDataHost();
+  if(edh && edh->state >= taiDataHost::CONSTRUCTED)  {
+    edh->GetButtonImage();		// update buttons whenver we show!
+  }
+}
+
 
 //////////////////////////////////
 // iMethodButtonMgr		//
@@ -2325,10 +2333,13 @@ void taiEditDataHost::FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id)
 }
 
 void taiEditDataHost::GetButtonImage(bool force) {
+  // taMisc::DebugInfo("GetButtonImage", String(force));
   if(!typ || !mwidget || !frmMethButtons)  return;
   if(!force && !frmMethButtons->isVisible()) {
+    // taMisc::DebugInfo("GetButtonImage", "not visible");
     return;
   }
+  // taMisc::DebugInfo("GetButtonImage", "visible");
 
   for (int i = 0; i < meth_el.size; ++i) {
     taiMethodData* mth_rep = (taiMethodData*)meth_el.SafeEl(i);

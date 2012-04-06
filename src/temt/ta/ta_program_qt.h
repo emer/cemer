@@ -278,6 +278,7 @@ protected:
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);
+  override void 	showEvent(QShowEvent* ev);
 
 protected slots:
   void                  mb_Expert(bool checked); // expert button on minibar
@@ -411,6 +412,7 @@ protected:
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);
+  override void 	showEvent(QShowEvent* ev);
 };
 
 ////////////////////////////////////////////////////////

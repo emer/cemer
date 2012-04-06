@@ -199,6 +199,8 @@ protected:
   override void		UpdatePanel_impl(); // the refresh guy!
   override void		Render_impl();
   override void		ResolveChanges_impl(CancelOp& cancel_op);
+  override void 	showEvent(QShowEvent* ev);
+
 };//
 
 
@@ -702,6 +704,7 @@ public:
   override void 	ResolveChanges(CancelOp& cancel_op, bool* discarded = NULL);
     // check for unsaved changes and prompt to save/discard; called by several places prior to closing tab window, closing dialog, shutting down app, etc.
   override void 	Cancel_impl();
+  virtual void		GetButtonImage(bool force = true);
   
 public: // routines for the taiDelegate style of edit host
   virtual void 		GetImage_Item(int row) {} // called from GetImage and ed->GetValue
@@ -744,7 +747,6 @@ protected:
   virtual void		GetImageInline_impl(const void* base);
   virtual void		GetValue_impl(const Member_List* ms, const taiDataList& dl, void* base) const;
   virtual void		GetValueInline_impl(void* base) const;
-  virtual void		GetButtonImage(bool force = true);
   void			AddMethButton(taiMethodData* mth_rep, const String& label = _nilString);
     // uses mth's label, if no label passed
   void			DoAddMethButton(QWidget* but);

@@ -716,9 +716,9 @@ void cssTA_Base::ArgCopy(const cssEl& s) {
     return;
   }
   // if(!ROCheck()) return;
-  taBase* ths = GetTAPtr();
   if(ptr_cnt > 0) {		// all ptrs get init here!
     PtrAssignPtr(s);
+    taBase* ths = GetTAPtr();
     if(ths)
       type_def = ths->GetTypeDef();	// just to be sure
     return;
@@ -740,14 +740,15 @@ void cssTA_Base::InitAssign(const cssEl& s) {
     return;
   }
   // if(!ROCheck()) return;
-  taBase* ths = GetTAPtr();
   if(ptr_cnt > 0) {		// all ptrs get init here!
     PtrAssignPtr(s);
+    taBase* ths = GetTAPtr();
     if(ths)
       type_def = ths->GetTypeDef();	// just to be sure
     return;
   }
 
+  taBase* ths = GetTAPtr();
   // ptr_cnt == 0 -- initialize us from that guy
   if(!cssTA_Base::AssignCheckSource(s)) return; // not a good source -- use our version which is most strict, not any derived version that might be looser (e.g., Matrix)
   // here we change our type to be that of the other object if necc

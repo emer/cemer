@@ -3529,6 +3529,42 @@ int_Matrix* taMatrix::Find() const {
   return rval;
 }
 
+taMatrix* taMatrix::Transpose() const {
+  if(TestError(dims() != 2, "Transpose", "can only transpose a 2D matrix"))
+    return NULL;
+  int d0 = dim(0);
+  int d1 = dim(1);
+  MatrixGeom tg(2, d1, d0);
+  if(GetDataValType() == VT_FLOAT) {
+    float_Matrix* rval = new float_Matrix(tg);
+    for(int i=0;i<d0;i++) {
+      for(int j=0;j<d1;j++) {
+	rval->FastEl(j,i) = ((float_Matrix*)this)->FastEl(i,j);
+      }
+    }
+    return rval;
+  }
+  else if(GetDataValType() == VT_DOUBLE) {
+    double_Matrix* rval = new double_Matrix(tg);
+    for(int i=0;i<d0;i++) {
+      for(int j=0;j<d1;j++) {
+	rval->FastEl(j,i) = ((double_Matrix*)this)->FastEl(i,j);
+      }
+    }
+    return rval;
+  }
+  else {			// use variants -- no need to optimize
+    taMatrix* rval = (taMatrix*)MakeToken();
+    rval->SetGeomN(tg);
+    for(int i=0;i<d0;i++) {
+      for(int j=0;j<d1;j++) {
+	rval->SetFmVar(SafeElAsVar(i,j), j,i);
+      }
+    }
+    return rval;
+  }
+  return NULL;
+}
 
 
 //////////////////////////
@@ -3986,6 +4022,22 @@ void complex_Matrix::operator/=(const taMatrix& t) {
       FastEl_Flat(i+1) = nj;
     }
   }
+}
+
+taMatrix* complex_Matrix::Transpose() const {
+  if(!CheckComplexGeom(geom)) return NULL;
+  if(TestError(dims() != 3, "Transpose", "can only transpose a 2D matrix"))
+    return NULL;
+  int d0 = dim(1);
+  int d1 = dim(2);
+  complex_Matrix* rval = new complex_Matrix(3,2,d1,d0);
+  for(int i=0;i<d0;i++) {
+    for(int j=0;j<d1;j++) {
+      rval->FastEl(0,j,i) = this->FastEl(0,i,j);
+      rval->FastEl(1,j,i) = this->FastEl(1,i,j);
+    }
+  }
+  return rval;
 }
 
 //////////////////////////

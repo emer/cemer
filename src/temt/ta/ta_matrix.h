@@ -965,7 +965,8 @@ public:
   // #CAT_Matrix (synonym for nonzero) returns a 1D matrix of coordinates into given matrix for all values that are non-zero -- the resulting coordinates can be used as a more efficient view onto a matrix of the same shape (the original matrix can also be used directly as a mask view, but it is less efficient, especially as the number of non-zero values is relatively small
   inline int_Matrix* NonZero() const { return Find(); }
   // #CAT_Matrix (synonym for find) returns a 1D matrix of coordinates into given matrix for all values that are non-zero -- the resulting coordinates can be used as a more efficient view onto a matrix of the same shape (the original matrix can also be used directly as a mask view, but it is less efficient, especially as the number of non-zero values is relatively small
-
+  virtual taMatrix* Transpose() const;
+  // #CAT_Matrix returns a new matrix that is the transpose of this matrix, where the rows and columns have been switched -- this matrix must be a 2D matrix
 
 protected:
   override void         UpdateAfterEdit_impl();
@@ -1425,6 +1426,8 @@ public:
   // #CAT_Complex set the imaginary-valued components of this complex matrix from given imaginary value -- initializes all matrix values to the same number
   virtual  void		ExpiAll(double angle);
   // #CAT_Complex sets complex numbers in this matrix from angle in input matrix, using exponential of i * angle = cos(angle) + i sin(angle) (Euler's formula) -- initializes all matrix values to the same numbers
+
+  override taMatrix* Transpose() const;
 
   USING(taMatrix::operator*)
   override taMatrix* operator*(const taMatrix& t) const;

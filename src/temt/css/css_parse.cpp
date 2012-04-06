@@ -2672,7 +2672,7 @@ yyreduce:
 	      if(((cssMbrCFun*)extyp)->methdef) {
 		/* todo: could have a much more comprehensive system here */
 		MethodDef* md = ((cssMbrCFun*)extyp)->methdef;
-		if(md->type->InheritsFrom(&TA_taMatrix)) {
+		if(md->type->GetClassType()->InheritsFrom(&TA_taMatrix)) {
 		  extyp = cssBI::matrix_inst;
 		}
 	      }

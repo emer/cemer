@@ -226,7 +226,7 @@ class TA_API iSelectEditPanel: public iDataPanelFrame {
 INHERITED(iDataPanelFrame)
   Q_OBJECT
 public:
-  taiDataHost_impl*     se;
+  iSelectEditDataHostBase*     se;
   SelectEdit*           sele() {return (m_link) ? (SelectEdit*)(link()->data()) : NULL;}
 
   override bool         HasChanged(); // 'true' if user has unsaved changes
@@ -246,6 +246,7 @@ protected:
   override void         OnWindowBind_impl(iTabViewer* itv);
   override void         UpdatePanel_impl();
   override void         ResolveChanges_impl(CancelOp& cancel_op);
+  override void 	showEvent(QShowEvent* ev);
 };
 
 

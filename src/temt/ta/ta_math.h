@@ -666,13 +666,6 @@ public:
   static bool vec_jitter_gauss(double_Matrix* vec, double stdev);
   // #CAT_Statistics jitters all the non-zero elements of vec by a gaussian with stdev rounded to the nearest int. jittered indices below zero or above the length of the vector are rejittered until they fall inside. there must be at least one zero element. method is clobber safe - the number of elements after jittering is guaranteed to be the same as the number of elements before jittering. see also: http://en.wikipedia.org/wiki/Jitter#Random_jitter -- uses entire matrix, ignoring any view of sub-elements
 
-  static bool vec_dot_product(double& dot, const double_Matrix* src_a,
-                              const double_Matrix* src_b);
-  // #CAT_Statistics Takes the dot product of the two vectors -- uses entire matrix, ignoring any view of sub-elements
-  static bool mat_vec_product(const double_Matrix* A, const double_Matrix* x,
-                              double_Matrix* y);
-  // #CAT_Statistics computes the matrix-vector product y=Ax -- uses entire matrix, ignoring any view of sub-elements
-
   ///////////////////////////////////////
   // distance metrics (comparing two vectors)
 
@@ -779,8 +772,16 @@ public:
   static bool mat_div_els(double_Matrix* a, const double_Matrix* b);
   // #CAT_Matrix #NO_CSS_MATH divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions -- can also be achieved by just using the / operator
 
+  static bool mat_transpose(double_Matrix* dest, const double_Matrix* src);
+  // #CAT_Matrix #NO_CSS_MATH transpose a 2d matrix, swapping rows and columns (also works for complex_Matrix args)
   static bool mat_mult(double_Matrix* c, const double_Matrix* a, const double_Matrix* b);
-  // #CAT_Matrix #NO_CSS_MATH matrix multiplication (not element-wise -- see mat_mult_els) -- c = a * b -- number of columns of a must be same as number of rows of b, and vice-versa
+  // #CAT_Matrix #NO_CSS_MATH matrix multiplication (not element-wise -- see mat_mult_els) -- c = a * b -- number of columns of a must be same as number of rows of b, and vice-versa -- does NOT support complex_Matrix type
+  static double mat_det(const double_Matrix* a);
+  // #CAT_Matrix #LABEL_det return the determinant of the given square matrix
+
+  static bool mat_vec_product(const double_Matrix* A, const double_Matrix* x,
+                              double_Matrix* y);
+  // #CAT_Statistics computes the matrix-vector product y=Ax -- uses entire matrix, ignoring any view of sub-elements
 
   static bool mat_eigen_owrite(double_Matrix* A, double_Matrix* eigen_vals, double_Matrix* eigen_vecs);
   // #CAT_Matrix compute the eigenvalues and eigenvectors of matrix A, which must be a square symmetric n x n matrix. the matrix is overwritten by the operation.  eigen_vals and eigen_vecs are automatically configured to the appropriate size if they are not already. eigens are sorted from highest to lowest by magnitude (absolute value)
@@ -798,9 +799,7 @@ public:
   static bool mat_mds(const double_Matrix* A, double_Matrix* x_y_coords, int x_component = 0,
                       int y_component = 1);
   // perform multidimensional scaling of matrix A (must be square symmetric matrix, e.g., a distance matrix), returning two-dimensional coordinates that best capture the distance relationships among the items (rows, columns) in x,y coordinates using specified components -- first copies the matrix A so it is not overwritten
-  static bool mat_transpose(double_Matrix* dest, double_Matrix* src);
-  // #CAT_Matrix #NO_CSS_MATH transpose a 2d matrix
-   static bool mat_slice(double_Matrix* dest, double_Matrix* src, int d0_start = 0, int d0_end = -1, int d1_start = 0, int d1_end = -1);
+  static bool mat_slice(double_Matrix* dest, double_Matrix* src, int d0_start = 0, int d0_end = -1, int d1_start = 0, int d1_end = -1);
   // #CAT_Matrix #NO_CSS_MATH See http://en.wikipedia.org/wiki/Array_slicing. Copies a 2d slice out of the first 2 dimensions of src into dest. If d0_end or d1_end are -1 (default) they will be set to the size of that dimension. See also taDataProc::Slice2D.
   static bool mat_trim(double_Matrix* dest, double_Matrix* src, Relation& thresh, int intol_within = 0, int intol_between = 0,
                        bool left = true, bool right = true, bool top = true, bool bottom = true);
@@ -1394,6 +1393,9 @@ public:
   static bool mat_div_els(float_Matrix* a, const float_Matrix* b);
   // #CAT_Matrix divide the elements of matrix b by the elements of matrix a: a(i,j) /= b(i,j); the two matricies must have the same dimensions
 
+  static bool mat_transpose(float_Matrix* dest, const float_Matrix* src);
+  // #CAT_Matrix transpose a 2d matrix -- swap rows and columns
+
   // note: the following all involve copying to/from double -- underlying computation is done in the double routines, because that is what gsl supports!
 
   static bool mat_eigen_owrite(float_Matrix* A, float_Matrix* eigen_vals, float_Matrix* eigen_vecs);
@@ -1412,8 +1414,6 @@ public:
   static bool mat_mds(const float_Matrix* A, float_Matrix* x_y_coords, int x_component = 0,
                       int y_component = 1);
   // perform multidimensional scaling of matrix A (must be square symmetric matrix, e.g., a distance matrix), returning two-dimensional coordinates that best capture the distance relationships among the items (rows, columns) in x,y coordinates using specified components -- first copies the matrix A so it is not overwritten
-  static bool mat_transpose(float_Matrix* dest, float_Matrix* src);
-  // #CAT_Matrix transpose a 2d matrix
   static bool mat_slice(float_Matrix* dest, float_Matrix* src, int d0_start = 0, int d0_end = -1, int d1_start = 0, int d1_end = -1);
   // #CAT_Matrix See http://en.wikipedia.org/wiki/Array_slicing. Copies a 2d slice out of the first 2 dimensions of src into dest. If d0_end or d1_end are -1 (default) they will be set to the size of that dimension. See also taDataProc::Slice2D.
   static bool mat_trim(float_Matrix* dest, float_Matrix* src, RelationFloat& thresh, int intol_within = 0, int intol_between = 0,
@@ -1684,6 +1684,8 @@ public:
   // #CAT_Matrix returns a 1D matrix (vector) containing n_vals linearly spaced values between start and end
   static double_Matrix* meshgrid(const slice_Matrix* dims);
   // #CAT_Matrix returns an n-dimensional matrix from slice inputs that specify start, end, and increment spacing for values along each dimension -- defaults for unspecified slice values are start=0:end=start+100:step=1
+  static double_Matrix* transpose(const double_Matrix* a);
+  // #CAT_Matrix returns a new matrix that is a transpose of the given 2D matrix (works for complex matricies too)
   static double_Matrix* mat_mult_css(const double_Matrix* a, const double_Matrix* b);
   // #CAT_Matrix #LABEL_mat_mult matrix multiplication (not element-wise -- see mat_mult_els) -- c = a * b -- number of columns of a must be same as number of rows of b, and vice-versa
   static double_Matrix* dot(const double_Matrix* a, const double_Matrix* b)
