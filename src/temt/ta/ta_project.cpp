@@ -3343,9 +3343,8 @@ namespace { // anon
       if (taMisc::exe_path.endsWith("/Contents/MacOS")) {
 	taMisc::exe_path = fi.canonicalPath();
       }
+#endif // Mac
     }
-    // seemingly not in a bundle, so use Unix defaults...
-  #endif // Mac
   }
 
 #ifndef TA_OS_WIN
