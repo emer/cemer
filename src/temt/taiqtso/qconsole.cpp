@@ -462,10 +462,13 @@ void QConsole::mouseMoveEvent(QMouseEvent *e) {
 
 void QConsole::mouseReleaseEvent(QMouseEvent *e) {
   inherited::mouseReleaseEvent(e);
+#if defined(TA_OS_MAC) || defined(TA_OS_WIN)
   if(e->button() & Qt::MidButton) {
     paste();
   }
-  else if(e->button() & Qt::LeftButton) {
+  else
+#endif
+ if(e->button() & Qt::LeftButton) {
     copy();			// always copy!
   }
   // this is actually confusing to people -- just let it be..
