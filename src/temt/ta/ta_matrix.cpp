@@ -802,6 +802,12 @@ void taMatrix::BatchUpdate(bool begin, bool struc) {
 }
 
 String& taMatrix::Print(String& strm, int indent) const {
+  if(size > 500) {
+    strm << GetTypeDef()->name + " geom: ";
+    geom.Print(strm);
+    return strm;
+  }
+
   const int dm = dims();
   int dim_break = dm / 2;
   if(dm == 2) {

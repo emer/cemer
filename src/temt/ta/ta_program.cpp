@@ -5100,8 +5100,13 @@ void Program::AddDescString(taBase* prog_el, const String& dsc) {
 String Program::GetProgCodeInfo(int line_no, const String& code_str) {
 //   return String("info on line: ") + String(line_no) + " str: " + code_str;
   ProgVar* pv = FindVarName(code_str);
-  if(pv) {
-    return pv->GetDisplayName();
+  if(pv && !pv->HasVarFlag(ProgVar::LOCAL_VAR)) {
+    if(pv->var_type == ProgVar::T_Object && pv->object_val) {
+      return pv->object_val->PrintStr();
+    }
+    else {
+      return pv->GetDisplayName();
+    }
   }
   if(script) {
     cssElPtr cssptr = script->ParseName(code_str);
