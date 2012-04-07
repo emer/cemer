@@ -7,48 +7,48 @@ printf("a:\n", a, "\n\n");
 
 b = shape(a);
 
-// // standard functions per the table in Matrix css page
-// printf("ndims(a):\n", ndims(a), "\n\n");
-// printf("shape(a):\n", shape(a)), "\n";
-// printf("a[1,0]:\n", a[1,0], "\n\n");
-// printf("a[:,0]:\n", a[:,0], "\n\n");
-// printf("a[0:2:1,:]:\n", a[0:2:1,:], "\n\n");
+// standard functions per the table in Matrix css page
+printf("ndims(a):\n", ndims(a), "\n\n");
+printf("shape(a):\n", shape(a)), "\n";
+printf("a[1,0]:\n", a[1,0], "\n\n");
+printf("a[:,0]:\n", a[:,0], "\n\n");
+printf("a[0:2:1,:]:\n", a[0:2:1,:], "\n\n");
 
-// b = [1., 2., 3.; 4., 5., 6.];
-// b = 3;
-// printf("a=3:\n", b, "\n\n");
+b = [1., 2., 3.; 4., 5., 6.];
+b = 3;
+printf("a=3:\n", b, "\n\n");
 
-// b = [10,20,30];
+b = [10,20,30];
 
-// printf("a = [10,20,30]:\n", b, "\n\n");
+printf("a = [10,20,30]:\n", b, "\n\n");
 
-// printf("[a,a; a,a]:\n", [a,a; a,a], "\n\n");
+printf("[a,a; a,a]:\n", [a,a; a,a], "\n\n");
 
-// printf("a+a:\n", a+a, "\n\n");
+printf("a+a:\n", a+a, "\n\n");
 
-// b = [1., 2.; 3., 4.; 5., 6.];
-// printf("b:\n", b, "\n\n");
+b = [1., 2.; 3., 4.; 5., 6.];
+printf("b:\n", b, "\n\n");
 
-// printf("mat_mult(a,b):\n", mat_mult(a,b), "\n\n");
+printf("mat_mult(a,b):\n", mat_mult(a,b), "\n\n");
 
-// printf("max(a):\n", max(a), "\n\n");
-// printf("max(a,2):\n", max(a,2), "\n\n");
+printf("max(a):\n", max(a), "\n\n");
+printf("max(a,2):\n", max(a,2), "\n\n");
 
-// printf("cos(a):\n", cos(a), "\n\n");
-// printf("pow(a,3):\n", pow(a,3), "\n\n");
-// printf("a^3:\n", a^3, "\n\n");
+printf("cos(a):\n", cos(a), "\n\n");
+printf("pow(a,3):\n", pow(a,3), "\n\n");
+printf("a^3:\n", a^3, "\n\n");
 
-// printf("a>3:\n", a>3, "\n\n");
-// printf("a[a>3]:\n", a[a>3], "\n\n");
-// printf("find(a>3):\n", find(a>3), "\n\n");
-// printf("flatten(a[a>3]):\n", flatten(a[a>3]), "\n\n");
+printf("a>3:\n", a>3, "\n\n");
+printf("a[a>3]:\n", a[a>3], "\n\n");
+printf("find(a>3):\n", find(a>3), "\n\n");
+printf("flatten(a[a>3]):\n", flatten(a[a>3]), "\n\n");
 
-// printf("zeros([4,3]):\n", zeros([4,3]), "\n\n");
-// printf("eye(3):\n", eye(3), "\n\n");
-// printf("diag(a,0):\n", diag(a,0), "\n\n");
-// printf("diag(diag(a,0),1):\n", diag(diag(a,0),1), "\n\n");
-// printf("rand([4,3]):\n", rand([4,3]), "\n\n");
+printf("zeros([4,3]):\n", zeros([4,3]), "\n\n");
+printf("eye(3):\n", eye(3), "\n\n");
+printf("diag(a,0):\n", diag(a,0), "\n\n");
+printf("diag(diag(a,0),1):\n", diag(diag(a,0),1), "\n\n");
+printf("rand([4,3]):\n", rand([4,3]), "\n\n");
 
-// printf("linspace(1,3,3):\n", linspace(1,3,3), "\n\n");
-// printf("meshgrid([0:3, 0:2]):\n", meshgrid([0:3, 0:2]), "\n\n");
+printf("linspace(1,3,3):\n", linspace(1,3,3), "\n\n");
+printf("meshgrid([0:3, 0:2]):\n", meshgrid([0:3, 0:2]), "\n\n");
 
