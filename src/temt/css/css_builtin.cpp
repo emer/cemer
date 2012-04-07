@@ -707,7 +707,6 @@ static cssEl* cssElCFun_lshift_stub(int, cssEl* arg[]) {
 	  if(!conout)
 	    *strm << ends;  return arg[1];
 	}
-	// todo: need to read these settings in ios << output
 	if(arg[2]->name == "dec") {
 	  *strm << dec;  return arg[1];
 	}

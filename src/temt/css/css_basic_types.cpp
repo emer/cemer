@@ -1794,12 +1794,14 @@ String cssClassInst::GetStr() const {
 }
 
 String	cssClassInst::PrintStr() const {
-  String tmp = members->PrintStr();
-  return String(GetTypeName())+" "+name+" {\n" + tmp + "\n}";
+  String tmp;
+  members->PrintTypeNameVals(tmp,1);
+  return String(GetTypeName())+" "+name+" {\n" + tmp + "}";
 }
 String	cssClassInst::PrintFStr() const {
-  String tmp = members->PrintStr();
-  return String("{\n") + tmp + "\n}";
+  String tmp;
+  members->PrintTypeNameVals(tmp,1);
+  return String("{\n") + tmp + "}";
 }
 
 const char* cssClassInst::GetTypeName() const {

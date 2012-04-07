@@ -126,7 +126,7 @@ int cssiEditDialog::Edit(bool modal_, int min_width, int min_height) {
   return taiEditDataHost::Edit(modal_, min_width, min_height);
 }
 
-void cssiEditDialog::GetValue_Membs() {
+void cssiEditDialog::GetValue() {
   for (int i = 0; i < type_el.size; ++i) {
     cssiType* cit = (cssiType*)type_el.FastEl(i);
     taiData* mb_dat = data_el(0).SafeEl(i);
@@ -134,6 +134,7 @@ void cssiEditDialog::GetValue_Membs() {
     cit->GetValue(mb_dat);
     cit->orig_obj->UpdateAfterEdit();
   }
+  Unchanged();
   obj->UpdateAfterEdit();
 }
 

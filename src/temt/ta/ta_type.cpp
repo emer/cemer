@@ -2037,18 +2037,26 @@ TypeDef* taMisc::FindTypeName(const String& typ_nm) {
 }
 
 String taMisc::GetFileFmPath(const String& path) {
-  if(path.contains('/')) return path.after('/',-1);
-  return path;
+  return taPlatform::getFileName(path);
 }
 
 String taMisc::GetDirFmPath(const String& path, int n_up) {
-  if(!path.contains('/')) return _nilString;
-  String dir = path.before('/',-1);
+#ifdef NO_TA_BASE
+  String pth = path;
+#else
+  String pth = QDir::fromNativeSeparators(path);
+#endif
+  if(!pth.contains('/')) return _nilString;
+  String dir = pth.before('/',-1);
   for(int i=0;i<n_up;i++) {
     if(!dir.contains('/')) return _nilString;
     dir = dir.before('/',-1);
   }
+#ifdef NO_TA_BASE
   return dir;
+#else
+  return QDir::toNativeSeparators(dir);
+#endif
 }
 
 String taMisc::GetHomePath() {

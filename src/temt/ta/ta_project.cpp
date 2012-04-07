@@ -3318,7 +3318,7 @@ namespace { // anon
 
     taMisc::exe_path = QCoreApplication::applicationDirPath();
 
-    String full_exe = taMisc::exe_path + "/" + taMisc::exe_cmd;
+    String full_exe = taMisc::exe_path + taPlatform::pathSep + taMisc::exe_cmd;
 
     QFileInfo fi(full_exe);
     if(!fi.exists()) {
@@ -4144,7 +4144,7 @@ bool taRootBase::Startup_Main(int& argc, const char* argv[], ta_void_fun ta_init
 
   // just create the adapter obj, whether needed or not
   root_adapter = new taRootBaseAdapter;
-  cssMisc::prompt = taMisc::app_name+"> "; // the same
+  cssMisc::prompt = taMisc::app_name; // the same
   if (taMisc::app_prefs_key.empty())
     taMisc::app_prefs_key = taMisc::app_name;
   if(!Startup_InitDMem(argc, argv)) goto startup_failed;

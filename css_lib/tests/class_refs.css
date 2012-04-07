@@ -2,30 +2,41 @@ class foo {
   int a;
 public:
   void set();
+  ~foo();
 };
 
 void foo::set() {
   a=4;
 }
 
-foo& bar() {
-  static foo x;
-  x.a=4;
-  return x;
+foo::~foo() {
+  cerr << "in dtor" << endl;
 }
 
-void fu(foo& f) {
-  f.set();
+void Test() {
+  foo fo;
 }
 
-foo obj;
-foo& ref = obj;
+Test();
 
-int i;
-int& ri = i;
-ri = 4;
+// foo& bar() {
+//   static foo x;
+//   x.a=4;
+//   return x;
+// }
 
-int& goff() {
-  return 20;
-}
+// void fu(foo& f) {
+//   f.set();
+// }
+
+// foo obj;
+// foo& ref = obj;
+
+// int i;
+// int& ri = i;
+// ri = 4;
+
+// int& goff() {
+//   return 20;
+// }
 

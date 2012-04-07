@@ -1131,8 +1131,14 @@ cssEl* cssIOS::operator<<(cssEl& s) {
     ostream* strm = (ostream*)*this;
     if(name == "cout" || name == "cerr") {
       String str;
-      if(s.GetType() == T_Int)
-	str << (Int) s;
+      if(s.GetType() == T_Int) {
+	if(strm->flags() & ios::hex)
+	  str << String((Int)s, "0x%x"); 
+	else if(strm->flags() & ios::oct)
+	  str << String((Int)s, "0%o"); 
+	else
+	  str << String((Int)s);
+      }
       else if(s.GetType() == T_Real)
 	str << (Real) s;
       else

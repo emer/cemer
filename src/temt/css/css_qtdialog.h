@@ -47,7 +47,7 @@ public:
   ~cssiEditDialog();
 
   override void		GetImage_Membs();
-  override void		GetValue_Membs();
+  override void		GetValue();
   override int		Edit(bool modal_ = false, int min_width=-1, int min_height=-1);
   // ati is for when leading argument(s) are predetermined, and user shouldn't be prompted for them
 

@@ -177,7 +177,7 @@ int yylex()
         cssLex::Buf += (char)c;
 	prev = c;
       } while(((c=cssMisc::cur_top->Getc()) != EOF) &&
-	      ((c == '.') || isxdigit(c) ||
+	      ((c == '.') || isxdigit(c) || ((prev == '0') && (c == 'x' || c == 'X')) || 
 	       (((prev == 'e') || (prev == 'E')) && (c == '-'))));
 
       cssMisc::cur_top->unGetc();

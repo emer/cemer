@@ -13,9 +13,7 @@ void Strings() {
   str.reverse(); str.capitalize(); cout << "now that's official: " << str << nl;
   str.downcase(); cout << "not so important: " << str << nl;
   str.upcase(); cout << "a bit much: " << str << nl;
-  cout << "how many bytes alloc? " << str.allocation() << nl;
   cout << "how many bytes long? " << str.length() << nl;
-  str.alloc(127); cout << "now how much alloc? " << str.allocation() << nl;
 }
 
 void Streams() {
@@ -35,7 +33,7 @@ void Streams() {
   String tmp;
   strm >> tmp;
   cout << "Got this from file: " << tmp << nl;
-  tmp.alloc(1023);		// make room
+
   strm.getline(tmp, 1023);	// default terminator is \n, but you can give it one..
   cout << "Got this from file: " << tmp << nl;
   double mypie;

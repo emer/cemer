@@ -96,7 +96,7 @@ cssCmdShell*    cssMisc::TopShell = NULL;
 
 cssArray*       cssMisc::s_argv;
 cssInt*         cssMisc::s_argc;
-String          cssMisc::prompt = "css> ";
+String          cssMisc::prompt = "css";
 String          cssMisc::startup_file;
 String          cssMisc::startup_code;
 int             cssMisc::init_debug = -1;
@@ -368,7 +368,8 @@ cssEl* cssElPtr::El() const {
   }
   case PROG_AUTO:
     if(dx < 0)  return &cssMisc::Void;
-//     if(!((cssProg*)ptr)->Autos()) return &cssMisc::Void; // shouldn't happen
+    if(!((cssProg*)ptr)->Autos())
+      return &cssMisc::Void; // shouldn't happen, but actually does..
     return ((cssProg*)ptr)->Autos()->El(dx);
   case SPACE:
     if(dx < 0)  return &cssMisc::Void;
@@ -4652,29 +4653,34 @@ cssEl* cssProgSpace::Cont() {
           cssMisc::Error(NULL, "Error: return not within a function!");
         }
       }
-      cssProg* prv_prg = Prog(size-2);
-      // should be fun or code block that shoved current prog
-      cssEl* fun_el = prv_prg->insts[prv_prg->PC()-1]->inst.El();
-      if(!fun_el->HasSubProg()) {
-        cssMisc::Warning(NULL, "Internal error: Function or code block ended without finding proper start of block!");
-        Pull();
-        run_stat = cssEl::BreakPoint; // todo: should have error code instead?
+      if(Prog()->state & cssProg::State_IsTmpProg) { // just bail
+	break;
       }
-      else {
-        if((debug >= 2) && (cmd_shell)) {
-	  String strm;
-	  strm << cssMisc::Indent(size-1) << "FunDone at "
-	       << taMisc::LeadingZeros(prv_prg->PC()-1,4)
-	       << " el: " << fun_el->PrintStr();
-          cmd_shell->OutputLine(strm, true);
-        }
-        fun_el->FunDone(prv_prg);       // note passing prg from higher level
-        if(prv_prg->state & cssProg::State_IsTmpProg) {
-          break;
-        }
-        else {
-          run_stat = cssEl::NewProgShoved;
-        }
+      cssProg* prv_prg = Prog(size-2);
+      if(prv_prg->PC() > 0) {	// only if not called manually
+	// should be fun or code block that shoved current prog
+	cssEl* fun_el = prv_prg->insts[prv_prg->PC()-1]->inst.El();
+	if(!fun_el->HasSubProg()) {
+	  cssMisc::Warning(NULL, "Internal error: Function or code block ended without finding proper start of block!");
+	  Pull();
+	  run_stat = cssEl::BreakPoint; // todo: should have error code instead?
+	}
+	else {
+	  if((debug >= 2) && (cmd_shell)) {
+	    String strm;
+	    strm << cssMisc::Indent(size-1) << "FunDone at "
+		 << taMisc::LeadingZeros(prv_prg->PC()-1,4)
+		 << " el: " << fun_el->PrintStr();
+	    cmd_shell->OutputLine(strm, true);
+	  }
+	  fun_el->FunDone(prv_prg);       // note passing prg from higher level
+	  if(prv_prg->state & cssProg::State_IsTmpProg) {
+	    break;
+	  }
+	  else {
+	    run_stat = cssEl::NewProgShoved;
+	  }
+	}
       }
     }
     if(run_stat == cssEl::Continuing) {
@@ -5446,15 +5452,18 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho,
 //   signal(SIGTRAP, (SIGNAL_PROC_FUN_TYPE) cssMisc::fpecatch);
   signal(SIGINT, (SIGNAL_PROC_FUN_TYPE) cssMisc::intrcatch);
 #endif
+
+  String prmpt = cssMisc::prompt + "> "; // default initial prompt
+
   switch (console_type) {
   case taMisc::CT_OS_SHELL:
-    cssMisc::TopShell->Shell_OS_Console(cssMisc::prompt);
+    cssMisc::TopShell->Shell_OS_Console(prmpt);
     break;
   case taMisc::CT_GUI:
-    cssMisc::TopShell->Shell_Gui_Console(cssMisc::prompt);
+    cssMisc::TopShell->Shell_Gui_Console(prmpt);
     break;
   case taMisc::CT_NONE:
-    cssMisc::TopShell->Shell_No_Console(cssMisc::prompt);
+    cssMisc::TopShell->Shell_No_Console(prmpt);
     break;
   // all cases handled
   }
