@@ -224,9 +224,9 @@ void ProgType::Destroy() {
 }
 
 void ProgType::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
   if(Program::IsForbiddenName(name))
     name = "My" + name;
+  inherited::UpdateAfterEdit_impl();
 }
 
 void ProgType::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -358,9 +358,9 @@ bool ProgType_List::BrowserCollapseAll() {
 ///////////////////////////////////////////////////////////
 
 void DynEnumItem::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
   if(Program::IsForbiddenName(name))
     name = "My" + name;
+  inherited::UpdateAfterEdit_impl();
   DynEnumType* typ = GET_MY_OWNER(DynEnumType);
   if(typ) {
     if(typ->bits && value <= 0) {
@@ -831,11 +831,11 @@ void ProgVar::Copy_(const ProgVar& cp) {
 }
 
 void ProgVar::UpdateAfterEdit_impl() {
+  if(Program::IsForbiddenName(name))
+    name = "My" + name;
   inherited::UpdateAfterEdit_impl(); // this will make it a legal C name
   if(object_val.ptr() == this)  // this would be bad..
     object_val.set(NULL);
-  if(Program::IsForbiddenName(name))
-    name = "My" + name;
   // only send stale if the schema changed, not just the value
   String tfs = GetSchemaSig();
   // loading is a special case: initialize
@@ -3898,11 +3898,11 @@ void Function::InitLinks() {
 }
 
 void Function::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  fun_code.el_typ = &TA_ProgCode;  // make sure this is default
   name = taMisc::StringCVar(name); // make names C legal names
   if(Program::IsForbiddenName(name))
     name = "My" + name;
+  inherited::UpdateAfterEdit_impl();
+  fun_code.el_typ = &TA_ProgCode;  // make sure this is default
 }
 
 void Function::UpdateAfterCopy(const ProgEl& cp) {
@@ -4515,9 +4515,10 @@ bool Program::PreCompileScript_impl() {
   // to by a pointer to the space and an index off of it, which is important for autos
   // but actually not for these guys (but they are/were that way anyway).
   if(!AbstractScriptBase::PreCompileScript_impl()) return false;
+  script_list.ClearAllErrors(); // start fresh
   objs.GetVarsForObjs();
   UpdateProgVars();
-  return true;
+return true;
 }
 
 bool Program::AlreadyRunning() {
