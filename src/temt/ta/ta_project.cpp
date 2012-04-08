@@ -1511,6 +1511,7 @@ b) This Agreement shall be governed by the laws of the OWNER's locale. Venue for
 //////////////////////////
 
 void taProject::Initialize() {
+  auto_name = true;
   m_dirty = false;
   m_no_save = false;
   viewers.SetBaseType(&TA_TopLevelViewer);
@@ -1895,6 +1896,11 @@ int taProject::SaveAs(const String& fname) {
   if (flr->ostrm) {
     QFileInfo fi(flr->FileName()); // set to current working dir
     QDir::setCurrent(fi.absolutePath());
+    if(auto_name) {
+      String nwnm = taMisc::GetFileFmPath(flr->FileName());
+      if(nwnm.contains(".proj")) nwnm = nwnm.before(".proj",-1);
+      SetName(nwnm);
+    }
     Save_strm(*(flr->ostrm));
     flr->Close();
     rval = true;

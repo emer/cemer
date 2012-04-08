@@ -690,6 +690,9 @@ fundefn:  fundname funargs end term	{	/* pre-declare function */
 	    if($1.El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
+	    if($2.El()->GetType() != cssEl::T_ScriptFun) {
+	      yyerror(String("attempt to declare a css script function using the same name as an internal function -- not allowed: ") + $2.El()->name);
+	      return cssProg::YY_Err; }
 	    $$ = cssMisc::cur_top->Prog()->size; }
 
           /* define pre-declared */
@@ -697,6 +700,9 @@ fundefn:  fundname funargs end term	{	/* pre-declare function */
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if($1.El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
+	      return cssProg::YY_Err; }
+	    if($2.El()->GetType() != cssEl::T_ScriptFun) {
+	      yyerror(String("attempt to declare a css script function using the same name as an internal function -- not allowed: ") + $2.El()->name);
 	      return cssProg::YY_Err; }
 	    cssMisc::cur_top->Prog()->insts[$4-1]->SetJump($5+1);	$$ = $4-1;
 	    cssScriptFun* fun = (cssScriptFun*)$2.El();

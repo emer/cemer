@@ -517,6 +517,7 @@ public:
   DataViewer_List	viewers_tmp; // #READ_ONLY #HIDDEN #NO_SAVE temporary viewers (edit dialogs etc -- not saved)
   taUndoMgr		undo_mgr; // #READ_ONLY #HIDDEN #NO_SAVE undo manager
 
+  bool			auto_name; // #DEF_true automatically update the name of the project based on the file name used when saving -- useful because this name is typically neglected yet useful for distinguishing different projects when comparing or choosing objects
   bool			m_dirty; // #HIDDEN #READ_ONLY #NO_SAVE
   bool			m_no_save; // #HIDDEN #READ_ONLY #NO_SAVE -- flag to prevent double user query on exiting; cleared when undirtying
   String		last_change_desc; // #EXPERT description of the last change made to the project -- used for change log

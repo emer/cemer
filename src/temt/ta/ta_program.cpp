@@ -4276,8 +4276,6 @@ void Program::InitLinks() {
   prog_code.el_typ = &TA_ProgCode;  // make sure this is default
 
   prog_gp = GET_MY_OWNER(Program_Group);
-  if(forbidden_names.size == 0)
-    InitForbiddenNames();
 }
 
 void Program::CutLinks() {
@@ -5600,11 +5598,28 @@ void Program::InitForbiddenNames() {
     MethodDef* md = type_def->methods.FastEl(i);
     forbidden_names.Add(md->name);
   }
-//   forbidden_names.List();
-  // todo: probably could add more.. need to test..
+  for(int i=0; i<cssMisc::Commands.size; i++) {
+    cssEl* el = cssMisc::Commands.FastEl(i);
+    forbidden_names.Add(el->name);
+  }
+  for(int i=0; i<cssMisc::Functions.size; i++) {
+    cssEl* el = cssMisc::Functions.FastEl(i);
+    forbidden_names.Add(el->name);
+  }
+  for(int i=0; i<cssMisc::Constants.size; i++) {
+    cssEl* el = cssMisc::Constants.FastEl(i);
+    forbidden_names.Add(el->name);
+  }
+  for(int i=0; i<cssMisc::Enums.size; i++) {
+    cssEl* el = cssMisc::Enums.FastEl(i);
+    forbidden_names.Add(el->name);
+  }
+  // taMisc::Info(forbidden_names.PrintStr());
 }
 
 bool Program::IsForbiddenName(const String& chk_nm, bool warn) {
+  if(forbidden_names.size == 0)
+    InitForbiddenNames();
   if((forbidden_names.FindEl(chk_nm) < 0) && !(bool)taMisc::types.FindName(chk_nm)) return false;
   if(!warn) return true;
   taMisc::Error("Program::IsForbiddenName -- Name:", chk_nm,
