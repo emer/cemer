@@ -709,7 +709,7 @@ public:
   virtual bool          GetQuiet() const {return false;}
   // #IGNORE general-purpose fuzzy flag for suppressing Warning messages from an object, maybe because it is special, user shuts them off, etc.
   virtual String        GetStateDecoKey() const;
-  // #IGNORE lookup key for visual decoration of an item reflecting current state information, used for backgroundt colors in the gui browser, for example
+  // #IGNORE lookup key for visual decoration of an item reflecting current state information, used for background colors in the gui browser, for example
 
   //////////////////////////////////////////////////////////////
   //    Container element access
@@ -3069,20 +3069,6 @@ public:
 private:
   void Initialize();
   void Destroy() {}
-};
-
-class TA_API taBaseObjDiffRecExtra : public taObjDiffRecExtra {
-INHERITED(taObjDiffRecExtra)
-public:
-  taBaseRef     tabref;         // keeps things safe -- check this ref before operating on tabase data
-
-  override TypeDef* GetTypeDef()        { return &TA_taBaseObjDiffRecExtra; }
-
-  taBaseObjDiffRecExtra() { };
-  taBaseObjDiffRecExtra(taBase* tab);
-  ~taBaseObjDiffRecExtra() { tabref.CutLinks(); }
- private:
-  taBaseObjDiffRecExtra(const taBaseObjDiffRecExtra& cp) { };
 };
 
 #endif // ta_base_h

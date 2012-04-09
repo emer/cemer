@@ -1319,17 +1319,8 @@ void taiObjDiffBrowser::AddItems() {
       if(par_nest > init_nest) {
 	if(par_nest < nest_pars.size) {
 	  parw = (QTreeWidgetItem*)nest_pars[par_nest];
-	  if(!parw) {
-	    taMisc::Info("par widg null:", rec->name, "=", rec->value);
-	  }
 	}
-	else {
-	  taMisc::Info("par nest:", String(par_nest), ">= nest pars:",
-		       String(nest_pars.size));
-	}
-	if(!parw) {
-	  // does this ever happen??
-	  taMisc::Info("getting parw from par_odr");
+	if(!parw) {  // yes this does happen
 	  if(a_rec && a_rec->par_odr)
 	    parw = (QTreeWidgetItem*)a_rec->par_odr->widget;
 	}
@@ -1362,6 +1353,18 @@ void taiObjDiffBrowser::AddItems() {
 	witm->setText(COL_A_NM, nm);
 	witm->setText(COL_A_VAL, a_rec->value.elidedTo(max_width));
 	witm->setToolTip(COL_A_VAL, a_rec->value);
+
+	String dec_key = a_rec->GetTypeDecoKey();
+	ViewColor* vc = taMisc::view_colors->FindName(dec_key);
+	if(vc) {
+	  iColor clr;
+	  if(vc->use_fg)
+	    clr = vc->fg_color.color();
+	  else if(vc->use_bg)
+	    clr = vc->bg_color.color();
+	  witm->setTextColor(COL_A_NM, clr);
+	  witm->setTextColor(COL_A_VAL, clr);
+	}
       }
       if(b_rec) {
 	String nm;
@@ -1370,6 +1373,18 @@ void taiObjDiffBrowser::AddItems() {
 	witm->setText(COL_B_NM, nm);
 	witm->setText(COL_B_VAL, b_rec->value.elidedTo(max_width));
 	witm->setToolTip(COL_B_VAL, b_rec->value);
+
+	String dec_key = b_rec->GetTypeDecoKey();
+	ViewColor* vc = taMisc::view_colors->FindName(dec_key);
+	if(vc) {
+	  iColor clr;
+	  if(vc->use_fg)
+	    clr = vc->fg_color.color();
+	  else if(vc->use_bg)
+	    clr = vc->bg_color.color();
+	  witm->setTextColor(COL_B_NM, clr);
+	  witm->setTextColor(COL_B_VAL, clr);
+	}
       }
 
       if(a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_DEL)) {

@@ -585,7 +585,7 @@ taMisc::ConsoleOptions taMisc::console_options = CO_GUI_TRACKING;
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
 int     taMisc::display_width = 80;
-int     taMisc::max_display_width = 132;
+int     taMisc::max_display_width = 180;
 int     taMisc::indent_spc = 2;
 int     taMisc::display_height = 25;
 #ifdef TA_OS_MAC
@@ -8136,7 +8136,7 @@ void taObjDiffRec::Initialize() {
   par_type = NULL;
   par_odr = NULL;
   diff_odr = NULL;
-  extra = NULL;
+  tabref = NULL;
   widget = NULL;
 }
 
@@ -8157,6 +8157,18 @@ void taObjDiffRec::Copy_(const taObjDiffRec& cp) {
   par_type = cp.par_type;
   par_odr = cp.par_odr;
   diff_odr = cp.diff_odr;
+#ifndef NO_TA_BASE
+  if(cp.tabref) {
+    if(!tabref) tabref = new taBaseRef;
+    ((taBaseRef*)tabref)->set(((taBaseRef*)cp.tabref)->ptr());
+  }
+  else {
+    if(tabref) {
+      delete (taBaseRef*)tabref;
+      tabref = NULL;
+    }
+  }
+#endif
 }
 
 taObjDiffRec::taObjDiffRec() {
@@ -8182,9 +8194,11 @@ taObjDiffRec::taObjDiffRec(taObjDiff_List& odl, int nest, TypeDef* td, MemberDef
 }
 
 taObjDiffRec::~taObjDiffRec() {
-  if(extra)
-    delete extra;
-  extra = NULL;
+#ifndef NO_TA_BASE
+  if(tabref)
+    delete (taBaseRef*)tabref;
+  tabref = NULL;
+#endif
 }
 
 void taObjDiffRec::Copy(const taObjDiffRec& cp) {
@@ -8310,6 +8324,31 @@ void taObjDiffRec::SetCurAction(int a_or_b, bool on_off) {
     }
   }
 }
+
+#ifndef NO_TA_BASE
+taObjDiffRec* taObjDiffRec::GetOwnTaBaseRec() {
+  if(tabref && ((taBaseRef*)tabref)->ptr())
+    return this;
+  taObjDiffRec* todr = par_odr;
+  while(todr && !todr->tabref && !((taBaseRef*)todr->tabref)->ptr())
+    todr = todr->par_odr;
+  return todr;
+}
+
+taBase* taObjDiffRec::GetOwnTaBase() {
+  taObjDiffRec* todr = GetOwnTaBaseRec();
+  if(todr && todr->tabref)
+    return ((taBaseRef*)todr->tabref)->ptr();
+  return NULL;
+}
+
+String taObjDiffRec::GetTypeDecoKey() {
+  taBase* tab = GetOwnTaBase();
+  if(tab)
+    return tab->GetTypeDecoKey();
+  return _nilString;
+}
+#endif
 
 
 //////////////////////////////////
@@ -8484,8 +8523,11 @@ void taObjDiff_List::Diff() {
           rec_b = src_b->Peek();
         }
 	// find a ta_base!
-        while(!rec_b->extra && (!rec_b->par_odr || !rec_b->par_odr->extra))
-          rec_b = rec_b->par_odr;
+#ifndef NO_TA_BASE
+	rec_b = rec_b->GetOwnTaBaseRec();
+        // while(!rec_b->extra && (!rec_b->par_odr || !rec_b->par_odr->extra))
+        //   rec_b = rec_b->par_odr;
+#endif
         rec_b->SetDiffFlag(taObjDiffRec::DIFF_DEL);
 	rec_b->diff_no = i;
         DiffFlagParents(rec_b);
@@ -8525,8 +8567,11 @@ void taObjDiff_List::Diff() {
         if(!rec_a) {
           rec_a = src_a->Peek();
         }
-        while(rec_a->par_odr && (!rec_a->extra || !rec_a->par_odr->extra))
-          rec_a = rec_a->par_odr;
+#ifndef NO_TA_BASE
+	rec_a = rec_a->GetOwnTaBaseRec();
+        // while(rec_a->par_odr && (!rec_a->extra || !rec_a->par_odr->extra))
+        //   rec_a = rec_a->par_odr;
+#endif
 	rec_a->SetDiffFlag(taObjDiffRec::DIFF_ADD);
 	rec_a->diff_no = i;
 	DiffFlagParents(rec_a);

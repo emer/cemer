@@ -1851,18 +1851,16 @@ int taBase::ReplaceValStr(const String& srch, const String& repl, const String& 
   return rval;
 }
 
-taBaseObjDiffRecExtra::taBaseObjDiffRecExtra(taBase* tab) {
-  tabref = tab;
-}
-
 taObjDiffRec* taBase::GetObjDiffVal(taObjDiff_List& odl, int nest_lev, MemberDef* memb_def,
                            const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
   // always just add a record for this guy
   taObjDiffRec* odr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def, (void*)this,
                                        (void*)par, par_typ, par_od);
   odl.Add(odr);
-  if(GetOwner())
-    odr->extra = new taBaseObjDiffRecExtra((taBase*)this);
+  if(GetOwner()) {
+    odr->tabref = new taBaseRef;
+    ((taBaseRef*)odr->tabref)->set((taBase*)this);
+  }
 
   GetTypeDef()->GetObjDiffVal_class(odl, nest_lev, this, memb_def, par, par_typ, odr);
   return odr;
@@ -2921,14 +2919,14 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     taBase* tab_b = NULL;;
     // make sure pointers are still current
     if(rec->type->InheritsFrom(&TA_taBase)) {
-      if(rec->extra) {
-        if(!((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr())
+      if(rec->tabref) {
+        if(!((taBaseRef*)rec->tabref)->ptr())
           continue;
         tab_a = (taBase*)rec->addr;
       }
       if(rec->diff_odr) {
-        if(rec->diff_odr->extra) {
-          if(!((taBaseObjDiffRecExtra*)rec->diff_odr->extra)->tabref.ptr())
+        if(rec->diff_odr->tabref) {
+          if(!((taBaseRef*)rec->diff_odr->tabref)->ptr())
             continue;
           tab_b = (taBase*)rec->diff_odr->addr;
         }
@@ -2950,8 +2948,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     taBase* tab_par_b = NULL;
     if(rec->par_type && rec->par_type->InheritsFrom(&TA_taBase)) {
       // make sure *parent* pointer is still current
-      if(rec->par_odr && rec->par_odr->extra) {
-        if(!((taBaseObjDiffRecExtra*)rec->par_odr->extra)->tabref.ptr())
+      if(rec->par_odr && rec->par_odr->tabref) {
+        if(!((taBaseRef*)rec->par_odr->tabref)->ptr())
           continue;
         tab_par_a = (taBase*)rec->par_addr;
       }
@@ -2959,8 +2957,8 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     if(rec->diff_odr && rec->diff_odr->par_type &&
        rec->diff_odr->par_type->InheritsFrom(&TA_taBase)) {
       // make sure *parent* pointer is still current
-      if(rec->diff_odr->par_odr && rec->diff_odr->par_odr->extra) {
-        if(!((taBaseObjDiffRecExtra*)rec->diff_odr->par_odr->extra)->tabref.ptr())
+      if(rec->diff_odr->par_odr && rec->diff_odr->par_odr->tabref) {
+        if(!((taBaseRef*)rec->diff_odr->par_odr->tabref)->ptr())
           continue;
         tab_par_b = (taBase*)rec->diff_odr->par_addr;
       }
@@ -3159,7 +3157,7 @@ bool taBase::DoDiffEdits(taObjDiff_List& diffs) {
     //////////////////////////////////
     //          Del
 
-    if(rec->extra && !((taBaseObjDiffRecExtra*)rec->extra)->tabref.ptr()) continue;
+    if(rec->tabref && !((taBaseRef*)rec->tabref)->ptr()) continue;
     // double-check
 
     bool del = false;
@@ -4523,26 +4521,31 @@ int taList_impl::ReplaceValStr(const String& srch, const String& repl, const Str
 
 taObjDiffRec* taList_impl::GetObjDiffVal(taObjDiff_List& odl, int nest_lev,  MemberDef* memb_def,
           const void* par, TypeDef* par_typ, taObjDiffRec* par_od) const {
-  taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
 
-  // need a special sub-parent to distinguish list elements from members -- keep member def info tho
-  taObjDiffRec* lsodr = new taObjDiffRec(odl, nest_lev+1, GetTypeDef(), memb_def, (void*)this,
-                                       (void*)this, GetTypeDef(), odr);
-  if(GetOwner())
-    lsodr->extra = new taBaseObjDiffRecExtra((taBase*)this);
+  // do NOT do the basic members on the list -- just a bunch of clutter
+  // taObjDiffRec* odr = inherited::GetObjDiffVal(odl, nest_lev, memb_def, par, par_typ, par_od);
 
-  lsodr->name = odr->name + "_el";
-  lsodr->value = odr->value + "_el";
-  lsodr->ComputeHashCode();
+  // this is the rep of this item
+  taObjDiffRec* lsodr = new taObjDiffRec(odl, nest_lev, GetTypeDef(), memb_def,
+					 (void*)this, (void*)par, par_typ, par_od);
+  if(GetOwner()) {
+    lsodr->tabref = new taBaseRef;
+    ((taBaseRef*)lsodr->tabref)->set((taBase*)this);
+  }
+
   odl.Add(lsodr);
+
+  // lsodr->name = odr->name;
+  // lsodr->value = odr->value + "_list";
+  // lsodr->ComputeHashCode();
 
   for(int i=0; i<size; i++) {
     taBase* itm = (taBase*)el[i];
     if(itm && itm->GetOwner() == this) {
-      itm->GetObjDiffVal(odl, nest_lev+2, NULL, this, GetTypeDef(), lsodr);
+      itm->GetObjDiffVal(odl, nest_lev+1, NULL, this, GetTypeDef(), lsodr);
     }
   }
-  return odr;
+  return lsodr;
 }
 
 int taList_impl::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {

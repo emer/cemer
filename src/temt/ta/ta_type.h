@@ -340,7 +340,9 @@ extern TA_API taiMiscCore* taiMC_; // note: use taiM macro instead
 #else
 # define taiM taiMC_
 #endif
-#endif
+
+#endif // NO_TA_BASE
+
 
 typedef  void (*init_proc_t)() ;        // initialization proc
 
@@ -2586,15 +2588,6 @@ private:
   void          Copy_(const TypeDef& cp);
 };
 
-class TA_API taObjDiffRecExtra  {
-  // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE extra data for TA object difference record
-public:
-  virtual TypeDef* GetTypeDef() { return NULL; } // subclasses should put correct val here
-
-  taObjDiffRecExtra() { };
-  virtual ~taObjDiffRecExtra() { };
-};
-
 class TA_API taObjDiffRec : public taRefN {
   // ##INSTANCE ##NO_TOKENS ##NO_MEMBERS ##NO_CSS ##MEMB_NO_SHOW_TREE TA object difference record -- records information about objects for purposes of diffing object structures
 INHERITED(taRefN)
@@ -2642,7 +2635,7 @@ public:
   TypeDef*      par_type;       // type of parent object, if a member of a containing object
   taObjDiffRec* par_odr;        // parent diff record
   taObjDiffRec* diff_odr;       // paired diff record from other source
-  taObjDiffRecExtra* extra;     // extra data for object
+  void*    	tabref;         // when this is used, it is a taBaseRef* 
   void*         widget;         // points to the widget associated with this record
 
   inline void           SetDiffFlag(DiffFlags flg)   { flags = (DiffFlags)(flags | flg); }
@@ -2673,6 +2666,15 @@ public:
 
   void          ComputeHashCode();
   // computes the hash code based on name + & + value + nest_level -- called by GetValue, but call this manually if anything changes
+
+#ifndef NO_TA_BASE
+  taObjDiffRec*	GetOwnTaBaseRec();
+  // find the closest record with a tabref set, starting with this record, and moving up the parents
+  taBase*	GetOwnTaBase();
+  // get the actual ta base pointer that owns this record
+  String	GetTypeDecoKey();
+  // get the decoration key for coloring this record -- from ta base
+#endif
 
   taObjDiffRec();
   taObjDiffRec(taObjDiff_List& odl, int nest, TypeDef* td, MemberDef* md, void* adr, void* par_adr = NULL,
