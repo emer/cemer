@@ -8330,7 +8330,7 @@ taObjDiffRec* taObjDiffRec::GetOwnTaBaseRec() {
   if(tabref && ((taBaseRef*)tabref)->ptr())
     return this;
   taObjDiffRec* todr = par_odr;
-  while(todr && !todr->tabref && !((taBaseRef*)todr->tabref)->ptr())
+  while(todr && (!todr->tabref || !((taBaseRef*)todr->tabref)->ptr()))
     todr = todr->par_odr;
   return todr;
 }

@@ -6531,7 +6531,7 @@ void Random::Copy_(const Random& cp){
 int cssMath::ndims(const taMatrix* cr) {
   if(!cr) {
     taMisc::Error("ndims -- input matrix NULL");
-    return NULL;
+    return 0;
   }
   return cr->dims();
 }
