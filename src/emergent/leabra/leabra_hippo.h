@@ -142,9 +142,9 @@ private:
   void	Defaults_init()		{ };
 };
 
-class LEABRA_API SubiculumNoveltySpec : public taOBase {
+class LEABRA_API SubiculumNoveltySpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra how to compute novelty from normalized error, and then modulate learning rate as a function of novelty
-INHERITED(taOBase)
+INHERITED(SpecMemberBase)
 public:
   float		max_norm_err;	// #MAX_1 #MIN_0 maximum effective norm err value for computing novelty -- novelty is linear between 0 and this max value, renormalized to 0-1 range
   float		min_lrate;	// #MIN_0 lowest possible learning rate multiplier -- for fully familiar item -- note this is a multiplier on lrate that the spec otherwise has
@@ -162,12 +162,16 @@ public:
     return lrate;
   }
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(SubiculumNoveltySpec);
 protected:
+  SPEC_DEFAULTS;
   override void UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
 };
 
 class LEABRA_API SubiculumLayerSpec : public ScalarValLayerSpec {

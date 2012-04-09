@@ -125,6 +125,8 @@ public:
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the prior PV delta value (pvd = PVe - MAX(PVi,min_pvi)) to subtract away in computing the net PV dopamine signal (PV DA = pvd_t - prior_gain * pvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (pvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(PVMiscSpec);
 protected:
   SPEC_DEFAULTS;
@@ -238,6 +240,8 @@ INHERITED(SpecMemberBase)
 public:
   float         thr;    // #DEF_0.7 threshold on PVr value, above which PV is considered present (i.e., reward) -- PVr learns a 1 for all reward-valence cases, regardless of value, and .5 for reward absent
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(PVDetectSpec);
 protected:
   SPEC_DEFAULTS;
@@ -293,6 +297,8 @@ public:
   bool          lrn_pv_only;    // #DEF_true only compute weight changes on trials where primary rewards are expected or actually received -- the target PV value is only presented on such trials, but if this flag is off, it actually learns on other trials, but with whatever plus phase activation state happens to arise
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the the prior time step LV delta value (lvd = LVe - MAX(LVi,min_lvi)) to subtract away in computing the net LV dopamine signal (LV DA = lvd_t - prior_gain * lvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (lvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(LVMiscSpec);
 protected:
@@ -418,6 +424,8 @@ public:
   float         prior_gain;     // #DEF_1 #MIN_0 #MAX_1 #EXPERT #AKA_prior_discount how much of the prior NV delta value (nvd = NV - val_thr) to subtract away in computing the net NV dopamine signal (NV DA = nvd_t - prior_gain * nvd_t-1)
   bool          er_reset_prior; // #EXPERT #DEF_true reset prior delta value (nvd_t-1) when external rewards are received (akin to absorbing rewards in TD)
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(NVSpec);
 protected:
   SPEC_DEFAULTS;
@@ -475,6 +483,8 @@ public:
   float         tonic_da;       // #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
   float         pv_gain;        // #DEF_1;0.1;0.5 #MIN_0 extra gain modulation of PV generated DA -- it can be much larger in general than lv so sometimes it is useful to turn it down (e.g., in new version of PBWM)
   bool          add_pv_lv;      // #DEF_false for cases where reward is expected/delivered, add PV and LV dopamine signals (otherwise, only use PV signal)
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(PVLVDaSpec);
 protected:

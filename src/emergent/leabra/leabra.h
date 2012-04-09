@@ -152,6 +152,8 @@ public:
   { return NetScale() * SLayActScale(savg, lay_sz, n_cons); }
   // full scaling factor -- product of above two sub-factors
 
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
+
   TA_SIMPLE_BASEFUNS(WtScaleSpec);
 protected:
   SPEC_DEFAULTS;
@@ -168,6 +170,8 @@ public:
   bool		init;		// use these scaling values to initialize the wt_scale parameters during InitWeights (if false, these values have no effect at all)
   float		abs;		// #CONDSHOW_ON_init #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
   float		rel;		// #CONDSHOW_ON_init [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(WtScaleSpecInit);
 protected:
@@ -210,6 +214,8 @@ public:
   }
   // get linear weight from sigmoidal contrast-enhanced weight
 
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
+
   TA_SIMPLE_BASEFUNS(WtSigSpec);
 protected:
   SPEC_DEFAULTS;
@@ -227,6 +233,8 @@ public:
   float		hebb;		// [Default: .001] #MIN_0 amount of hebbian learning (should be relatively small, can be effective at .0001)
   float		err;		// #READ_ONLY #SHOW [Default: .999] amount of error driven learning, automatically computed to be 1-hebb
   bool		err_sb;		// #DEF_true apply exponential soft-bounding to the error learning component (applied in dWt)
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(LearnMixSpec);
 protected:
@@ -281,6 +289,8 @@ public:
   }
   // symmetric soft bounding function -- factor of 2 to equate with asymmetric sb for overall lrate at a weight value of .5 (= .5)
 
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
+
   SIMPLE_COPY(XCalLearnSpec);
   TA_BASEFUNS(XCalLearnSpec);
 protected:
@@ -299,6 +309,8 @@ public:
   float		cor;		// #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply (0=none, 1=all, .5=half, etc)
   float		thresh;		// #DEF_0.001 #MIN_0 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
   bool		norm_con_n;	// #DEF_true #AKA_div_gp_n #OBSOLETE WARNING: this is now obsolete and only used if wt_scale.old = true -- in normalizing netinput, divide by the actual number of connections (recv group n), not the overall number of units in the sending layer -- THIS SHOULD ALWAYS BE ON AND IS THE NEW DEFAULT
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(SAvgCorSpec);
 protected:
@@ -325,6 +337,8 @@ public:
 
   virtual bool	CheckInTolerance(float trg, float val);
   // check if value is inside the tolerance from trg
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(AdaptRelNetinSpec);
 protected:
@@ -679,6 +693,8 @@ public:
   float		rate;		// #CONDSHOW_OFF_set_time rate factor = 1/time -- used for multiplicative update equations
   float		time;		// #CONDSHOW_ON_set_time temporal duration for the time constant -- how many msec or sec long (typically to reach a 1/e level with exponential dynamics) = 1/rate
 
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
   TA_SIMPLE_BASEFUNS(DtSpec);
 protected:
   SPEC_DEFAULTS;
@@ -711,6 +727,8 @@ public:
   float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value
   IThrFun	i_thr;		// [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
   float		vm_mod_max;	// #EXPERT #DEF_0.95 max proportion of v_m_eq to use in computing vm modulation of gelin -- less than 1 because units typically do not reach their full equilibrium value
+
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(ActFunSpec);
 protected:
@@ -746,6 +764,8 @@ public:
     return gg_decay_rise * (taMath_float::exp_fast(-t * oneo_decay) - taMath_float::exp_fast(-t * oneo_rise)); // full alpha
   }
 
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
   TA_SIMPLE_BASEFUNS(SpikeFunSpec);
 protected:
   SPEC_DEFAULTS;
@@ -777,6 +797,8 @@ public:
   float		vm_dend_dt;	// #DEF_0.16 rate constant for updating the vm_dend value (used for spike-based learning)
   float		vm_dend_time;	// #READ_ONLY #SHOW time constant (in cycles, 1/vm_dend_dt) for updating the vm_dend value (used for spike-based learning)
 
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
   TA_SIMPLE_BASEFUNS(SpikeMiscSpec);
 protected:
   SPEC_DEFAULTS;
@@ -803,6 +825,8 @@ public:
   }
   // compute the change in adapt given vm, resting reversal potential (leak reversal), and adapt inputs
 
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
   TA_SIMPLE_BASEFUNS(ActAdaptSpec);
 protected:
   SPEC_DEFAULTS;
@@ -825,6 +849,8 @@ public:
   int		interval;	// #CONDSHOW_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
   float		max_amp;	// #CONDSHOW_ON_on #MIN_0 maximum spike amplitude (spk_amp, which is the multiplier factor for activation values) -- values greater than 1 create an extra reservoir where depletion does not yet affect the sending activations, because spk_amp is capped at a maximum of 1 -- this can be useful for creating a more delayed effect of depletion, where an initial wave of activity can propagate unimpeded, followed by actual depression as spk_amp goes below 1
 
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
   TA_SIMPLE_BASEFUNS(DepressSpec);
 protected:
   SPEC_DEFAULTS;
@@ -843,6 +869,7 @@ public:
   float		ff;		// #CONDSHOW_ON_on #MIN_0 how much to weight toward the feedforward activations, computed during first portion of minus phase, and stored in act_m2 at network->mid_minus_cycle 
   float		ff_c;		// #READ_ONLY 1 - ff -- how much to include of recurrent activations
 
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(FFBalanceSpec);
 protected:
@@ -861,6 +888,8 @@ public:
   bool		on;		// is synaptic delay active?
   int		delay;		// #CONDSHOW_ON_on #MIN_0 number of cycles to delay for
 
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
   TA_SIMPLE_BASEFUNS(SynDelaySpec);
 protected:
   SPEC_DEFAULTS;
@@ -877,6 +906,8 @@ public:
   float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
   float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraNetwork::send_delta is on!
   float		phase_dif;	// #DEF_0 don't learn when +/- phase difference ratio (- / +) < phase_dif (.8 when used, but off by default)
+
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(OptThreshSpec);
 protected:
@@ -901,6 +932,8 @@ public:
   float		integ_time;	// #READ_ONLY #SHOW 1/integ rate constant = time constant for each cycle of updating for numerical integration
   float		vm_time;	// #READ_ONLY #SHOW 1/vm rate constant = time in cycles for vm to reach 1/e of asymptotic value
   float		net_time;	// #READ_ONLY #SHOW 1/net rate constant = time in cycles for net to reach 1/e of asymptotic value
+
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraDtSpec);
 protected:
@@ -928,6 +961,8 @@ public:
   float		s_time;		// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/s_dt) for continuously updating the short time-scale avg_s value
   float		ss_time;	// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/ss_dt) for continuously updating the super-short time-scale avg_ss value
 
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
   TA_SIMPLE_BASEFUNS(LeabraActAvgSpec);
 protected:
   SPEC_DEFAULTS;
@@ -947,6 +982,8 @@ public:
   float		i;		// inhibitory
   float		h;		// hysteresis (Ca)
   float		a;		// accomodation (k)
+
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
   void 	Copy_(const LeabraChannels& cp); // used in units, so optimized copy needed
   TA_BASEFUNS(LeabraChannels);
@@ -984,6 +1021,8 @@ public:
       gc += g_dt * ((float)on_off - gc);
   }
 
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
   TA_SIMPLE_BASEFUNS(VChanSpec);
 private:
   void	Initialize();
@@ -1004,6 +1043,8 @@ public:
   dAValue	val;		// #DEF_INET_DA value to use for computing delta-activation (change in activation over cycles of settling).
   float		inet_scale;	// #DEF_1 #MIN_0 how to scale the inet measure to be like da
   float		lay_avg_thr;	// #DEF_0.01 #MIN_0 threshold for layer average activation to switch to da fm Inet
+
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(MaxDaSpec);
 protected:
@@ -1026,6 +1067,8 @@ public:
   bool		on;		// whether to actually modulate activations by da values
   ModType	mod;		// #CONDSHOW_ON_on #DEF_PLUS_CONT how to apply DA modulation
   float		gain;		// #CONDSHOW_ON_on #MIN_0 gain multiplier of da values
+
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(DaModSpec);
 protected:
@@ -1054,6 +1097,8 @@ public:
   AdaptMode 	mode;		// how to adapt noise variance over time
   float		min_pct;	// #CONDSHOW_OFF_mode:FIXED_NOISE,SCHED_CYCLES,SCHED_EPOCHS #DEF_0.5 minimum noise as a percentage (proportion) of overall maximum noise value (which is noise.var in unit spec)
   float		min_pct_c;	// #READ_ONLY 1-min_pct
+
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(NoiseAdaptSpec);
 protected:
@@ -1371,6 +1416,8 @@ public:
   float		g_h;		// #NO_VIEW hysteresis conductance
   float		g_a;		// #NO_VIEW accomodation conductance
 
+  override String       GetTypeDecoKey() const { return "Unit"; }
+
   void 	Copy_(const VChanBasis& cp);
   TA_BASEFUNS(VChanBasis);
 private:
@@ -1386,6 +1433,8 @@ public:
   float		i;		// #DMEM_SHARE_SET_1 inhibitory
   float		h;		// hysteresis (Ca)
   float		a;		// accomodation (K)
+
+  override String       GetTypeDecoKey() const { return "Unit"; }
 
   void 	Copy_(const LeabraUnitChans& cp);
   TA_BASEFUNS(LeabraUnitChans);
@@ -1714,7 +1763,9 @@ public:
 
   inline void	UpdtFmAvgMax(const AvgMaxVals& oth, int gpn, int idx)
   { avg += oth.avg * (float)gpn; if(oth.max > max) { max = oth.max; max_i = idx; } }
-  
+
+  override String       GetTypeDecoKey() const { return "Layer"; }
+
   void	Copy_(const AvgMaxVals& cp);
   TA_BASEFUNS(AvgMaxVals);
 private:
@@ -1752,6 +1803,8 @@ public:
   float		comp_gain;	// #CONDSHOW_ON_type:KWTA_COMP_COST Gain for competitors in KWTA_COMP_COST -- how much to multiply contribution of competitors to increase inhibition level
   float		gp_pt;		// #CONDSHOW_ON_type:AVG_MAX_PT_INHIB #DEF_0.2 for unit groups: point to place inhibition between avg and max for AVG_MAX_PT_INHIB
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(LeabraInhibSpec);
 protected:
   SPEC_DEFAULTS;
@@ -1780,6 +1833,8 @@ public:
   bool		gp_i;		// compute inhibition including all of the layers in the same group, or unit groups within the layer: each items computed inhib vals are multipled by gp_g scaling, then MAX'd, and each item's inhib is the MAX of this pooled MAX value and its original own value
   float		gp_g;		// #CONDSHOW_ON_gp_i how much this item (layer or unit group) contributes to the pooled layer group values
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(KWTASpec);
 protected:
   SPEC_DEFAULTS;
@@ -1798,6 +1853,8 @@ public:
   float		diff_thr;	// #CONDSHOW_ON_on #DEF_0.2 threshold for tie breaking mechanisms to be engaged, based on difference ratio between top k and rest: ithr_diff = (k_ithr - k1_ithr) / k_ithr.  ithr_diff value is stored in kwta field of layer or unit group, along with tie_brk_gain which is normalized value of ithr_diff relative to this threshold: (diff_thr - ithr_diff) / diff_thr -- this determines how strongly the tie breaking mechanisms are engaged
   float		thr_gain;	// #CONDSHOW_ON_on #DEF_0.005:0.2 how much k1_ithr is reduced relative to k_ithr to fix the tie -- determines how strongly active the tied units are -- actual amount of reduction is a function tie_brk_gain (see diff_thr field for details), so it smoothly transitions to normal inhibitory dynamics as ithr_diff goes above diff_thr
   float		loser_gain;	// #CONDSHOW_ON_on #DEF_1 how much extra inhibition to apply to units that are below the kwta cutoff ("losers") -- loser_gain is additive to a 1.0 gain baseline, so 0 means no additional gain, and any positive number increases the gain -- actual gain is a function tie_brk_gain (see diff_thr field for details), so it smoothly transitions to normal inhibitory dynamics as ithr_diff goes above diff_thr: eff_loser_gain = 1 + loser_gain * tie_brk_gain
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(KwtaTieBreak);
 protected:
@@ -1827,6 +1884,8 @@ public:
   float		l;		// #CONDSHOW_ON_type:G_BAR_IL proportion of difference from target activation to allocate to the leak in G_BAR_IL mode
   float		a_dt;		// #CONDSHOW_ON_type:KWTA_PT #DEF_0.005 time constant for integrating average average activation, which is basis for adapting i_kwta_pt
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(AdaptISpec);
 protected:
   SPEC_DEFAULTS;
@@ -1846,6 +1905,8 @@ public:
   float		plus;		// #CONDSHOW_ON_hard&&max_plus #DEF_0.01 the amount to add to max minus phase activation in clamping the plus phase
   float		min_clamp;	// #CONDSHOW_ON_hard&&max_plus #DEF_0.5 the minimum clamp value allowed in the max_plus clamping system
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(ClampSpec);
 protected:
   SPEC_DEFAULTS;
@@ -1863,6 +1924,8 @@ public:
   float		phase;		// [1 for Leabra_CHL, 0 for CtLeabra_X/CAL] proportion decay of state vars between minus and plus phases 
   float		phase2;		// #DEF_0 proportion decay of state vars between 2nd set of phases (if appl, 0 std)
   bool		clamp_phase2;	// #DEF_false if true, hard-clamp second plus phase activations to prev plus phase (only special layers will then update -- optimizes speed)
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(DecaySpec);
 protected:
@@ -1884,6 +1947,8 @@ public:
   bool		use_fin;	// if on, actually use layer-level final values (inhib_i) -- else use network level
   float		inhib_i;	// #CONDSHOW_ON_use_fin [.05 when in use] maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   SIMPLE_COPY(CtLayerInhibMod);
   TA_BASEFUNS(CtLayerInhibMod);
 protected:
@@ -1902,6 +1967,8 @@ public:
   float		trg_net; 	// #CONDSHOW_ON_on #DEF_0.5 target maximum netinput value
   float		tol;		// #CONDSHOW_ON_on #DEF_0.1 tolerance around target value -- if actual value is within this tolerance from target, then do not adapt
   float		abs_lrate;	// #CONDSHOW_ON_on #DEF_0.2 learning rate for adapting the wt_scale.abs parameters for all projections into layer
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(LayAbsNetAdaptSpec);
 protected:
@@ -2295,6 +2362,8 @@ public:
   void		Compute_Pct(int n_units);
   void		Compute_IThrR(); // compute ithr_r ratio value
 
+  override String       GetTypeDecoKey() const { return "Layer"; }
+
   void	Copy_(const KWTAVals& cp);
   TA_BASEFUNS(KWTAVals);
 private:
@@ -2311,6 +2380,8 @@ public:
   float		g_bar_i;	// adapting g_bar.i value 
   float		g_bar_l;	// adapting g_bar.l value 
 
+  override String       GetTypeDecoKey() const { return "Layer"; }
+
   void	Copy_(const AdaptIVals& cp);
   TA_BASEFUNS(AdaptIVals);
 private:
@@ -2326,6 +2397,8 @@ public:
   float		g_i;		// overall value of the inhibition
   float		gp_g_i;		// g_i from the layer or unit group, if applicable
   float		g_i_orig; 	// original value of the inhibition (before any layer group effects set in)
+
+  override String       GetTypeDecoKey() const { return "Layer"; }
 
   void	Init() 	{ Initialize(); }
   void	Copy_(const InhibVals& cp);
@@ -2369,6 +2442,8 @@ public:
   void		Alloc(int nunits, int ngps)
   { ngps = MAX(ngps, 1);  kbuff.SetGeom(2, nunits, ngps);  sizes.SetGeom(1, ngps); ResetAll(); }
   // allocate storage to given number of units and groups, and initialize all sizes to 0
+
+  override String       GetTypeDecoKey() const { return "Layer"; }
 
   void	InitLinks();
   void	CutLinks();
@@ -2748,6 +2823,8 @@ public:
   bool		cyc_syn_dep;	// if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation)
   int		syn_dep_int;	// [20] #CONDSHOW_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
 
+  override String       GetTypeDecoKey() const { return "Network"; }
+
   SIMPLE_COPY(LeabraNetMisc);
   TA_BASEFUNS(LeabraNetMisc);
 // protected:
@@ -2770,6 +2847,8 @@ public:
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
   int		inhib_start;	// #READ_ONLY computed start of inhib phase (=minus + plus)
 
+  override String       GetTypeDecoKey() const { return "Network"; }
+
   SIMPLE_COPY(CtTrialTiming);
   TA_BASEFUNS(CtTrialTiming);
 protected:
@@ -2789,6 +2868,8 @@ public:
   int		interval;	// #DEF_1;5 #MIN_1 (1 for XCAL, 5 for CAL) how frequently to compute sravg -- in XCAL this is not expensive so do it every cycle, but for CAL more infrequent updating saves computational costs as sravg is expensive
   int		plus_s_st;	// [10 for spiking, else plus-1, typically 19] how many cycles into the plus phase should the short time scale sravg computation start (only for TRIAL sravg computation)
   bool		force_con;	// #DEF_false force connection-level SRAvg computation -- only use for experimental algorithms that need this -- otherwise needlessly slows computation
+
+  override String       GetTypeDecoKey() const { return "Network"; }
 
   SIMPLE_COPY(CtSRAvgSpec);
   TA_BASEFUNS(CtSRAvgSpec);
@@ -2811,6 +2892,8 @@ public:
   bool		do_s;	// #READ_ONLY #EXPERT flag set during Compute_SRAvg for whether to compute short-time scale (plus phase) sravg values now or not
 
   void		InitVals() { s_sum = s_nrm = m_sum = m_nrm = 0.0f; do_s = false; }
+
+  override String       GetTypeDecoKey() const { return "Network"; }
 
   SIMPLE_COPY(CtSRAvgVals);
   TA_BASEFUNS(CtSRAvgVals);
@@ -2842,6 +2925,8 @@ public:
   }
   // returns inhibitory modulation to apply as a fraction of computed kwta value
 
+  override String       GetTypeDecoKey() const { return "Network"; }
+
   SIMPLE_COPY(CtSineInhibMod);
   TA_BASEFUNS(CtSineInhibMod);
 // protected:
@@ -2867,6 +2952,8 @@ public:
     return slp * ii;
   }
   // returns inhibitory modulation to apply as a fraction of computed kwta value
+
+  override String       GetTypeDecoKey() const { return "Network"; }
 
   SIMPLE_COPY(CtFinalInhibMod);
   TA_BASEFUNS(CtFinalInhibMod);
@@ -2903,6 +2990,8 @@ public:
 
   float		lrn_delay_inc;	// #READ_ONLY #HIDDEN 1.0f / lrn_delay_inc -- increment per count to compute normalized lrn_trig
   float		lrn_refract_inc; // #READ_ONLY #HIDDEN 1.0f / lrn_refract_inc -- increment per count to compute normalized lrn_trig
+
+  override String       GetTypeDecoKey() const { return "Network"; }
 
   TA_SIMPLE_BASEFUNS(CtLrnTrigSpec);
 protected:
@@ -2954,6 +3043,8 @@ public:
 
   void		Init_Stats();	// initialize stats vars (all to 0)
   void		Init_Stats_Sums(); // initialize stats sums (all to 0)
+
+  override String       GetTypeDecoKey() const { return "Network"; }
 
   TA_SIMPLE_BASEFUNS(CtLrnTrigVals);
 private:

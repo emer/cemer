@@ -57,6 +57,8 @@ public:
   float		stripe_lv_pct;	// #MIN_0 #MAX_1 #DEF_0.5 proportion of total LV dopamine value determined by stripe-wise LV signals from the patch layer -- remainder is from global LV signal
   float		global_lv_pct;	// #READ_ONLY #SHOW 1 - stripe_lv_pct -- proportion of total LV dopamine value determined by global LV signals
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(SNcMiscSpec);
 protected:
   SPEC_DEFAULTS;
@@ -104,6 +106,8 @@ public:
   float		rnd_go_inc;	// #DEF_0.1:0.2 #MIN_0 how much to add to the net input for a random-go signal triggered in corresponding matrix layer?
   float		leak;		// #DEF_1 #MIN_0 a leak-like term for the netinput computation -- just a constant added to the denominator in computing net input: (go - nogo) / (go + nogo + leak)
   bool		act_is_gate;	// #DEF_true activation state is always equal to the value that was active at the time of actual gating (act_m2) -- this makes things clearer and can be important for some models that use snrthal activations as inputs to other processes
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(SNrThalMiscSpec);
 protected:
@@ -314,6 +318,8 @@ INHERITED(SpecMemberBase)
 public:
   bool  patch_noise;		// get noise value from patch units (overrides netin_adapt setting if set to true) -- must have a patch layer spec prjn with marker con specs
 
+  override String       GetTypeDecoKey() const { return "UnitSpec"; }
+
   TA_SIMPLE_BASEFUNS(MatrixNoiseSpec);
 protected:
   SPEC_DEFAULTS;
@@ -360,6 +366,8 @@ public:
   float		mnt_mnt_nogo;	// #DEF_0 #AKA_mnt_nogo (NOTE: can be superceded by mnt_mnt_nogo_fun) for MAINT stripes that are maintaining on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of NoGo bias (favors NoGo over Go) -- although this is useful for maintenance, it can get in the way of replacing outdated information, and so overall a null bias of 0 seems best
   float		mnt_empty_go;	// #DEF_0 (NOTE: can be superceded by mnt_empty_go_fun) for empty MAINT stripes on non-reward trials (i.e., store, not recall trials -- signalled by PVr), amount of Go bias (favors Go over NoGo) -- provides a bias for encoding and maintaining new information -- keeping this at 0 allows system to be "unbaised" in its selection of what to gate in, which appears to be useful in general
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(MatrixGateBiasSpec);
 protected:
   SPEC_DEFAULTS;
@@ -404,6 +412,8 @@ public:
     return GetBiasExp(time);
   }
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(MatrixGateBiasFunSpec);
 protected:
   SPEC_DEFAULTS;
@@ -424,6 +434,8 @@ public:
   float		bias_pos_gain;	// #DEF_0 extra multiplicative gain for positive bias terms -- it is in general not great to increase netinput levels on units beyond their natural values, so setting this to zero (default) puts all the bias work on decreasing the relative netinputs for the non-favored population (biologically can be going into a down state)
   bool		mnt_only;	// set to true if there is only a MAINT matrix layer -- affects the way that rnd go is computed -- should also have PFCLayerSpec.gate.max_maint = 0
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(MatrixMiscSpec);
 protected:
   SPEC_DEFAULTS;
@@ -443,6 +455,8 @@ public:
   int		nogo_rng;	// #DEF_20 #MIN_1 #CONDSHOW_ON_on range of trials with nogo firing beyond nogo_thr to allow before engaging random go firing -- sets a new effective threshold after each nogo random go as nogo_thr + Random::IntZeroN(nogo_rng)
   float		nogo_da;	// #DEF_10 #MIN_0 #CONDSHOW_ON_on strength of DA for driving learning of random Go units -- does not affect performance, only learning
   float		nogo_noise;	// #DEF_0;0.02 #MIN_0 #CONDSHOW_ON_on use .02 when using (recommended) -- noise value to apply to a randomly selected subset of k Go units to get them activated during a random Go event
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(MatrixRndGoSpec);
 protected:
@@ -465,6 +479,8 @@ public:
   float		max_da;		// maximum tonic da value
   float		nogo_thr_inc; 	// how much to increase the stripe-specific tonic da per trial when rnd_go.nogo_thr has been exceeded in a given stripe
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(MatrixTonicDaSpec);
 protected:
   SPEC_DEFAULTS;
@@ -483,6 +499,8 @@ public:
   float		go_n;		// #CONDSHOW_ON_on #DEF_1 -DA gain for go neurons
   float		nogo_p;		// #CONDSHOW_ON_on #DEF_1 +DA gain for nogo neurons
   float		nogo_n;		// #CONDSHOW_ON_on #DEF_1 -DA gain for nogo neurons
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(MatrixGoNogoGainSpec);
 protected:
@@ -613,6 +631,8 @@ public:
   bool		mnt_wins;	// #DEF_false maint gating always wins out over output gating -- even if output gating has already taken place, maintenance gating will always 
   bool		updt_gch;	// #DEF_false always update gc.h for maintaining PFC units at the end of each trial, regardless of whether any gating signals ocurred -- reflects biology where maintenance currents are activity driven with a time constant, and thus always reflect current activity (with some delay -- trial-level updating achieves that)
   float		off_accom;	// #DEF_0 #EXPERT #MIN_0 #MAX_1 how much of the maintenance current to apply to accommodation after turning a unit off
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(PFCGateSpec);
 protected:

@@ -8525,8 +8525,6 @@ void taObjDiff_List::Diff() {
 	// find a ta_base!
 #ifndef NO_TA_BASE
 	rec_b = rec_b->GetOwnTaBaseRec();
-        // while(!rec_b->extra && (!rec_b->par_odr || !rec_b->par_odr->extra))
-        //   rec_b = rec_b->par_odr;
 #endif
         rec_b->SetDiffFlag(taObjDiffRec::DIFF_DEL);
 	rec_b->diff_no = i;
@@ -8569,8 +8567,6 @@ void taObjDiff_List::Diff() {
         }
 #ifndef NO_TA_BASE
 	rec_a = rec_a->GetOwnTaBaseRec();
-        // while(rec_a->par_odr && (!rec_a->extra || !rec_a->par_odr->extra))
-        //   rec_a = rec_a->par_odr;
 #endif
 	rec_a->SetDiffFlag(taObjDiffRec::DIFF_ADD);
 	rec_a->diff_no = i;

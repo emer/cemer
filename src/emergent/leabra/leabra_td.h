@@ -90,6 +90,8 @@ public:
   bool		sub_avg;	// #DEF_false subtract average reward value in computing rewards
   float		avg_dt;		// #DEF_0.005 time constant for integrating average reward value
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(AvgExtRewSpec);
 protected:
   SPEC_DEFAULTS;
@@ -108,6 +110,8 @@ public:
   bool		no_off_err;	// #DEF_false do not count a unit wrong if it is off but target says on -- only count wrong units that are on but should be off
   float		scalar_val_max;	// #CONDEDIT_ON_graded maximum value for scalar value output layers when using a graded value -- reward is error normalized by this value, and clipped at min/max
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(OutErrSpec);
 protected:
   SPEC_DEFAULTS;
@@ -124,6 +128,8 @@ public:
   float		err_val;	// #DEF_0 reward value for errors (when network does not respond correctly)
   float		norew_val;	// #DEF_0.5 reward value when no feedback information is present
   float		rew_val;	// #DEF_1 reward value for correct responses (positive rewards)
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(ExtRewSpec);
 protected:
@@ -181,6 +187,8 @@ public:
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(ExtRewLayerSpec);
 protected:
@@ -298,6 +306,8 @@ INHERITED(SpecMemberBase)
 public:
   float		discount;	// discount factor for V(t+1) from TDRewPredLayer
   bool		max_r_v;	// represent the maximum of extrew (r) and tdrewpred estimate of V(t+1) instead of the sum of these two factors -- produces a kind of "absorbing" reward function instead of a cumulative reward function
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(TDRewIntegSpec);
 protected:

@@ -67,6 +67,8 @@ public:
   float		fm_prv;		// from previous context layer values (maintenance)
   float		to_out;		// outputs from context layer
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   SIMPLE_COPY(CtxtUpdateSpec);
   TA_BASEFUNS(CtxtUpdateSpec);
 protected:
@@ -83,6 +85,8 @@ INHERITED(SpecMemberBase)
 public:
   int		n_trials;	// #MIN_1 update every n trials
   int		n_offs;		// #MIN_0 offset of n during count, ex using 2 lays with 0 and N/2 gives half alternating offset
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(CtxtNSpec);
 protected:
@@ -402,6 +406,8 @@ public:
   float		rec;		// #DEF_1 rate of recovery from depression
   float		depl;		// #DEF_1.1 rate of depletion of synaptic efficacy as a function of sender-receiver activations
 
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
+
   SIMPLE_COPY(TrialSynDepSpec);
   TA_BASEFUNS(TrialSynDepSpec);
 protected:
@@ -508,6 +514,7 @@ public:
     return ((LeabraRecvCons*)cg)->scale_eff * rval;
   }
 
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
 
   TA_SIMPLE_BASEFUNS(TrialSynDepConSpec);
 protected:
@@ -547,6 +554,8 @@ public:
     if(effwt > wt) effwt = wt;
     if(effwt < 0.0f) effwt = 0.0f;
   }
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
 
   SIMPLE_COPY(CycleSynDepSpec);
   TA_BASEFUNS(CycleSynDepSpec);
@@ -675,6 +684,8 @@ public:
     float cao_thr = (cai > sd_ca_thr) ? (1.0 - sd_ca_thr_rescale * (cai - sd_ca_thr)) : 1.0f;
     return cao_thr * cao_thr;
   }
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
 
   SIMPLE_COPY(CaiSynDepSpec);
   TA_BASEFUNS(CaiSynDepSpec);
@@ -960,6 +971,8 @@ public:
   bool		slw_sat;	// #DEF_true does fast weight contribute to saturation of slow weights?
   DecayMode	dk_mode;	// how to apply the decay of fast weights back to the slow weight (swt) value
 
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
+
   SIMPLE_COPY(FastWtSpec);
   TA_BASEFUNS(FastWtSpec);
 protected:
@@ -1089,6 +1102,8 @@ INHERITED(SpecMemberBase)
 public:
   float		act_avg;	// what proportion of average activation to include in hebbian receiving unit activation learning term
   float		cur_act;	// #READ_ONLY #SHOW 1.0 - act_avg -- proportion of current activation for hebbian learning
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
 
   SIMPLE_COPY(ActAvgHebbMixSpec);
   TA_BASEFUNS(ActAvgHebbMixSpec);
@@ -1235,6 +1250,8 @@ public:
   float		ca_off;	   // #DEF_0.55 offset for ca -- subtract this amount from ca (clipped to zero) for learning computations
   float		nmda_dt;   // #DEF_40 time constant (in msec) for decay of NMDA receptor conductance
   float		nmda_rate; // #READ_ONLY #NO_SAVE rate constant (1/dt) for decay of NMDA receptor conductance
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
   
   TA_SIMPLE_BASEFUNS(XCALSpikeSpec);
 protected:
@@ -1341,6 +1358,8 @@ public:
 				  float lin_norm=0.01f);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph a simulation of the XCAL spike function by running a simulated synapse with poisson firing rates sampled over given range, with given samples per point, and other parameters as given
 
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
+
   TA_SIMPLE_BASEFUNS(LeabraXCALSpikeConSpec);
 protected:
   SPEC_DEFAULTS;
@@ -1393,6 +1412,8 @@ public:
 
   // NOTE: bias weights typically not subject to limited precision!
 
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
+
   SIMPLE_COPY(LeabraLimPrecConSpec);
   TA_BASEFUNS(LeabraLimPrecConSpec);
 protected:
@@ -1413,6 +1434,8 @@ INHERITED(SpecMemberBase)
 public:
   float		da_noise;	// #DEF_0:1 amount to add of additional reinforcement-learning term based on unit dopamine value (dav) and TRIAL_VM_NOISE noise value, as in MazzoniAndersenJordan91: dwt = dav * (ru_act_p+noise - ru_act_p-noise) * su_act -- activation with noise (std acts as computed) minus activation without noise (specially computed given noise value) times sending activation times dopamine value -- if it does better and noise made unit more active, then make it more active next time (and so on for all other permutations)
   float		std_leabra;	// #DEF_0:1 how much of standard leabra learning to include in addition to the da_noise term
+
+  override String       GetTypeDecoKey() const { return "ConSpec"; }
 
   SIMPLE_COPY(LeabraDaNoise);
   TA_BASEFUNS(LeabraDaNoise);
@@ -1550,6 +1573,8 @@ public:
   virtual float	GetUnitVal(int unit_idx);
   // get target value associated with unit at given index: MUST CALL InitVal first!
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(ScalarValSpec);
 protected:
   SPEC_DEFAULTS;
@@ -1586,6 +1611,8 @@ public:
   WeightBias	wt;		// bias on weights: always uses a val-shaped bias
   float		wt_gain;	// #CONDEDIT_OFF_wt:NO_WT #DEF_1 gain multiplier (strength) of bias to apply for weights (gain 1 = .03 wt value)
   float		val;		// value location (center of gaussian bump)
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   SIMPLE_COPY(ScalarValBias);
   TA_BASEFUNS(ScalarValBias);
@@ -1748,6 +1775,8 @@ public:
   virtual float	GetWt(int pos_gp_idx, int vel_gp_idx);
   // #CAT_MotorForce get weighting factor for position & velocity group at given indexes: MUST CALL InitVal first!
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   TA_SIMPLE_BASEFUNS(MotorForceSpec);
 protected:
   SPEC_DEFAULTS;
@@ -1897,6 +1926,8 @@ public:
   virtual void	GetUnitVal(int unit_idx, float& x_cur, float& y_cur);
   // get target values associated with unit at given index: MUST CALL InitVal first!
 
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
+
   SIMPLE_COPY(TwoDValSpec);
   TA_BASEFUNS(TwoDValSpec);
 protected:
@@ -1928,6 +1959,8 @@ public:
   float		wt_gain;	// #CONDEDIT_OFF_wt:NO_WT #DEF_1 gain multiplier (strength) of bias to apply for weights (gain 1 = .03 wt value)
   float		x_val;		// X axis value location (center of gaussian bump)
   float		y_val;		// Y axis value location (center of gaussian bump)
+
+  override String       GetTypeDecoKey() const { return "LayerSpec"; }
 
   SIMPLE_COPY(TwoDValBias);
   TA_BASEFUNS(TwoDValBias);
