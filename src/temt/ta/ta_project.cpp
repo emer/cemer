@@ -3818,9 +3818,9 @@ bool taRootBase::Startup_InitViewColors() {
   taMisc::view_colors->FindMakeViewColor("NotEnabled", "State: !isEnabled",
                                          false, _nilString, true, "grey80");
   taMisc::view_colors->FindMakeViewColor("ThisInvalid", "State: item not valid according to CheckConfig",
-                                         false, _nilString, true, "red1");
+                                         false, _nilString, true, "pink");
   taMisc::view_colors->FindMakeViewColor("ChildInvalid", "State: child not valid according to CheckConfig",
-                                         false, _nilString, true, "orange1");
+                                         false, _nilString, true, "gold");
   taMisc::view_colors->FindMakeViewColor("SpecialState1", "SpecialState = 1",
                                          false, _nilString, true, "lavender");
   taMisc::view_colors->FindMakeViewColor("SpecialState2", "SpecialState = 2",
@@ -3836,9 +3836,9 @@ bool taRootBase::Startup_InitViewColors() {
   taMisc::view_colors->FindMakeViewColor("ProgElVerbose", "State: program element is verbose",
                                          false, _nilString, true, "khaki");
   taMisc::view_colors->FindMakeViewColor("ProgElError", "State: program element has Error",
-                                         false, _nilString, true, "red2");
+                                         false, _nilString, true, "pink");
   taMisc::view_colors->FindMakeViewColor("ProgElWarning", "State: program element has Warning",
-                                         false, _nilString, true, "orange2");
+                                         false, _nilString, true, "gold");
   taMisc::view_colors->FindMakeViewColor("ProgElBreakpoint", "State: program element is set for a breakpoint",
                                          false, _nilString, true, "violet");
   taMisc::view_colors->FindMakeViewColor("Comment", "Program comment",

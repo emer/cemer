@@ -224,9 +224,9 @@ void ProgType::Destroy() {
 }
 
 void ProgType::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(Program::IsForbiddenName(name))
     name = "My" + name;
-  inherited::UpdateAfterEdit_impl();
 }
 
 void ProgType::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -358,9 +358,9 @@ bool ProgType_List::BrowserCollapseAll() {
 ///////////////////////////////////////////////////////////
 
 void DynEnumItem::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   if(Program::IsForbiddenName(name))
     name = "My" + name;
-  inherited::UpdateAfterEdit_impl();
   DynEnumType* typ = GET_MY_OWNER(DynEnumType);
   if(typ) {
     if(typ->bits && value <= 0) {
@@ -831,9 +831,9 @@ void ProgVar::Copy_(const ProgVar& cp) {
 }
 
 void ProgVar::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl(); // this will make it a legal C name
   if(Program::IsForbiddenName(name))
     name = "My" + name;
-  inherited::UpdateAfterEdit_impl(); // this will make it a legal C name
   if(object_val.ptr() == this)  // this would be bad..
     object_val.set(NULL);
   // only send stale if the schema changed, not just the value
@@ -3898,10 +3898,10 @@ void Function::InitLinks() {
 }
 
 void Function::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
   name = taMisc::StringCVar(name); // make names C legal names
   if(Program::IsForbiddenName(name))
     name = "My" + name;
-  inherited::UpdateAfterEdit_impl();
   fun_code.el_typ = &TA_ProgCode;  // make sure this is default
 }
 
@@ -5619,6 +5619,7 @@ void Program::InitForbiddenNames() {
 }
 
 bool Program::IsForbiddenName(const String& chk_nm, bool warn) {
+  if(taMisc::is_loading) return false; // don't check for loading -- just causes disaster when renaming during loading
   if(forbidden_names.size == 0)
     InitForbiddenNames();
   if((forbidden_names.FindEl(chk_nm) < 0) && !(bool)taMisc::types.FindName(chk_nm)) return false;
