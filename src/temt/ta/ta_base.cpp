@@ -2850,27 +2850,30 @@ String taBase::DiffCompareString(taBase* cmp_obj, taDoc*& doc) {
 }
 
 bool taBase::DiffCompare(taBase* cmp_obj) {
-  if(TestError(!cmp_obj, "DiffCompareString", "cmp_obj is null")) return false;
-  taObjDiff_List odl_me;
-  taObjDiff_List odl_cmp;
+  if(TestError(!cmp_obj, "DiffCompare", "cmp_obj is null")) return false;
 
-  odl_me.tab_obj_a = this;
-  odl_cmp.tab_obj_a = cmp_obj;
+  taObjDiff_List* diffs = new taObjDiff_List;
+  diffs->CreateSrcs();
+  diffs->src_a->tab_obj_a = this; // root of paths!
+  diffs->src_b->tab_obj_a = cmp_obj; // root of paths!
+  diffs->tab_obj_a = this;
+  diffs->tab_obj_b = cmp_obj;
 
-  GetObjDiffVal(odl_me, 0);
-  cmp_obj->GetObjDiffVal(odl_cmp, 0);
+  GetObjDiffVal(*(diffs->src_a), 0);
+  cmp_obj->GetObjDiffVal(*(diffs->src_b), 0);
 
-  taObjDiff_List diffs;
-  diffs.tab_obj_a = this;
-  diffs.tab_obj_b = cmp_obj;
-  odl_me.Diff(diffs, odl_cmp);
+  diffs->Diff();
 
   taiObjDiffBrowser* odb = taiObjDiffBrowser::New(diffs, taiMisc::defFontSize);
   bool rval = odb->Browse();
 
-  if(rval) {
-    DoDiffEdits(diffs);
-  }
+  // browser is not modal and will return immediately
+  // browser now owns the diffs list and will delete it when it dies -- and it will
+  // be responsible for performing any actions that get done..
+
+  // if(rval) {
+  //   DoDiffEdits(diffs);
+  // }
 
   return true;
 }

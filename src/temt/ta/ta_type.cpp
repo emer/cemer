@@ -8007,6 +8007,9 @@ void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void*
     }
     if(!md->GetCondOptTest("CONDSHOW", this, base))
       continue;
+    if(md->name == "user_data_") {
+      continue;			// too much clutter for now..
+    }
     md->type->GetObjDiffVal(odl, nest_lev+1, md->GetOff(base), md, base, const_cast<TypeDef*>(this), par_od);
   }
   if(last_md) {
@@ -8121,6 +8124,10 @@ void taObjDiffRec::Initialize() {
   owner = NULL;
   idx = -1;
   nest_level = 0;
+  n_diffs = 0;
+  diff_no = -1;
+  diff_no_start = -1;
+  diff_no_end = -1;
   hash_code = 0;
   type = NULL;
   mdef = NULL;
@@ -8134,7 +8141,12 @@ void taObjDiffRec::Initialize() {
 }
 
 void taObjDiffRec::Copy_(const taObjDiffRec& cp) {
+  flags = cp.flags;
   nest_level = cp.nest_level;
+  n_diffs = cp.n_diffs;
+  diff_no = cp.diff_no;
+  diff_no_start = cp.diff_no_start;
+  diff_no_end = cp.diff_no_end;
   name = cp.name;
   value = cp.value;
   hash_code = cp.hash_code;
@@ -8310,6 +8322,8 @@ void taObjDiff_List::Initialize() {
   tab_obj_a = NULL;
   tab_obj_b = NULL;
 #endif
+  src_a = NULL;
+  src_b = NULL;
 }
 
 taObjDiff_List::~taObjDiff_List() {
@@ -8318,6 +8332,14 @@ taObjDiff_List::~taObjDiff_List() {
   tab_obj_a = NULL;
   tab_obj_b = NULL;
 #endif
+  if(src_a) {
+    delete src_a;
+    src_a = NULL;
+  }
+  if(src_b) {
+    delete src_b;
+    src_b = NULL;
+  }
 }
 
 String  taObjDiff_List::El_GetName_(void* it) const { return ((taObjDiffRec*)it)->name; }
@@ -8345,63 +8367,102 @@ void taObjDiff_List::HashToIntArray(int_PArray& array) {
   }
 }
 
-bool taObjDiff_List::CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec, bool a_list) {
-  taObjDiffRec* cur_rec = rec;
-  int cur_nest = cur_rec->nest_level;
+void taObjDiff_List::SetAllFlag(int flg) {
+  for(int i=0; i<size; i++) {
+    taObjDiffRec* rec = FastEl(i);
+    rec->SetDiffFlag((taObjDiffRec::DiffFlags)flg);
+  }
+}
 
-  if(cur_nest == 0) return false;
+bool taObjDiff_List::DiffFlagParents(taObjDiffRec* rec) {
+  if(rec->nest_level == 0) return false;
 
-  int start_nest = cur_nest;
-  nest_pars.SetSize(cur_nest+1);
+  voidptr_PArray* nestpars;
+  if(rec->HasDiffFlag(taObjDiffRec::SRC_A))
+    nestpars = &nest_a_pars;
+  else
+    nestpars = &nest_b_pars;
 
-  while(cur_rec->par_odr != (taObjDiffRec*)nest_pars[cur_nest-1]) {
-    nest_pars[cur_nest-1] = (void*)cur_rec->par_odr;
-    cur_rec = cur_rec->par_odr;
-    cur_nest = cur_rec->nest_level;
-    if(cur_nest == 0) break;
+  int rec_nest = rec->nest_level;
+  nestpars->SetSize(rec_nest+1);
+
+  int par_nest = rec_nest;
+  taObjDiffRec* par_rec = rec;
+  while(par_rec->par_odr != (taObjDiffRec*)nestpars->FastEl(par_nest-1)) {
+    nestpars->FastEl(par_nest-1) = (void*)par_rec->par_odr;
+    par_rec = par_rec->par_odr;
+    par_nest = par_rec->nest_level;
+    if(par_nest == 0) break;
   }
 
   bool rval = false;
-  for(int i=cur_nest;i<start_nest;i++) {
-    cur_rec = (taObjDiffRec*)nest_pars[i];
-    if(cur_rec != rec) {
-      taObjDiffRec* nw_par = cur_rec->Clone();
-      if(a_list)
-        nw_par->flags = taObjDiffRec::DIFF_PAR_A; // indicate that it is just a parent
+  for(int i=0;i<rec_nest;i++) {
+    par_rec = (taObjDiffRec*)nestpars->FastEl(i);
+    if(par_rec != rec) {
+      par_rec->SetDiffFlag(taObjDiffRec::DIFF_PAR);
+      par_rec->n_diffs++;
+      if(par_rec->diff_no_start < 0) 
+	par_rec->diff_no_start = rec->diff_no;
       else
-        nw_par->flags = taObjDiffRec::DIFF_PAR_B; // indicate that it is just a parent
-      diff_ods.Add(nw_par);
+	par_rec->diff_no_start = MIN(rec->diff_no, par_rec->diff_no_start);
+      par_rec->diff_no_end = MAX(rec->diff_no, par_rec->diff_no_end);
       rval = true;              // got one..
     }
   }
 
-  nest_pars[start_nest] = (void*)rec; // always add current as potential next parent
-
+  nestpars->FastEl(rec_nest) = (void*)rec; // always add current as potential next parent
   return rval;
 }
 
-void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) {
+void taObjDiff_List::CreateSrcs() {
+  Reset();			// reset me for good measure too, just to free up any remaining junk
+  if(src_a) {
+    src_a->Reset();
+  }
+  else {
+    src_a = new taObjDiff_List;
+  }
+  if(src_b) {
+    src_b->Reset();
+  }
+  else {
+    src_b = new taObjDiff_List;
+  }
+}
+
+void taObjDiff_List::Diff() {
+  if(!src_a || !src_b) {
+    taMisc::Error("taObjDiff_List::Diff() -- source lists not created yet -- programmer error");
+    return;
+  }
+
   taStringDiff diff;
 
-  HashToIntArray(diff.data_a.data);
-  cmp_list.HashToIntArray(diff.data_b.data);
+  Reset();			// clear out my list of diffs
+  src_a->HashToIntArray(diff.data_a.data);
+  src_b->HashToIntArray(diff.data_b.data);
 
-  diff.Diff_impl("", "");       // null strings
+  src_a->SetAllFlag(taObjDiffRec::SRC_A);
+  src_b->SetAllFlag(taObjDiffRec::SRC_B);
 
-  nest_pars.Reset();
+  diff.Diff_impl("", "");       // null strings, use int hash's
+
+  nest_a_pars.Reset();
+  nest_b_pars.Reset();
   for(int i=0;i<diff.diffs.size;i++) {
     taStringDiffItem& df = diff.diffs[i];
 
-    taObjDiffRec::DiffFlags cur_flag = taObjDiffRec::DF_NONE;
-
     if(df.delete_a == df.insert_b) {
-      cur_flag = taObjDiffRec::DIFF_CHG;
       for(int l=0; l<df.delete_a; l++) {
-        taObjDiffRec* rec_a = SafeEl(df.start_a + l);
-        CheckAddParents(diffs_list, rec_a, true);
-        diffs_list.Link(rec_a);
-        rec_a->SetDiffFlag(cur_flag);
-        taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
+        taObjDiffRec* rec_a = src_a->SafeEl(df.start_a + l);
+        rec_a->SetDiffFlag(taObjDiffRec::DIFF_CHG);
+	rec_a->diff_no = i;
+        DiffFlagParents(rec_a);
+        Link(rec_a);		// link all the actual diff items to main list
+        taObjDiffRec* rec_b = src_b->SafeEl(df.start_b + l);
+        rec_b->SetDiffFlag(taObjDiffRec::DIFF_CHG);
+	rec_b->diff_no = i;
+        DiffFlagParents(rec_b);
         rec_a->diff_odr = rec_b; // this is the paired guy
         rec_b->diff_odr = rec_a; // bidir pairing: why not..
 #ifndef NO_TA_BASE
@@ -8418,22 +8479,26 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
     }
     else {
       if(df.delete_a > 0) {
-        cur_flag = taObjDiffRec::DIFF_DEL;
-        taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b);
+        taObjDiffRec* rec_b = src_b->SafeEl(df.start_b);
         if(!rec_b) {
-          rec_b = cmp_list.Peek();
+          rec_b = src_b->Peek();
         }
-         // find a ta_base!
+	// find a ta_base!
         while(!rec_b->extra && (!rec_b->par_odr || !rec_b->par_odr->extra))
           rec_b = rec_b->par_odr;
-        taObjDiffRec* rec0 = SafeEl(df.start_a);
+        rec_b->SetDiffFlag(taObjDiffRec::DIFF_DEL);
+	rec_b->diff_no = i;
+        DiffFlagParents(rec_b);
+
+        taObjDiffRec* rec0 = src_a->SafeEl(df.start_a);
         int del_nest = rec0->nest_level;
         for(int l=0; l<df.delete_a; l++) {
-          taObjDiffRec* rec_a = SafeEl(df.start_a + l);
-          if(CheckAddParents(diffs_list, rec_a, true)) // reset nest level if parents needed to be added
+          taObjDiffRec* rec_a = src_a->SafeEl(df.start_a + l);
+          rec_a->SetDiffFlag(taObjDiffRec::DIFF_DEL);
+	  rec_a->diff_no = i;
+          if(DiffFlagParents(rec_a)) // reset nest level if parents needed to be added
             del_nest = rec_a->nest_level;
-          diffs_list.Link(rec_a);
-          rec_a->SetDiffFlag(cur_flag);
+          Link(rec_a);
           rec_a->diff_odr = rec_b; // starting point in b..
           if(rec_a->mdef) {     // never actionable
             rec_a->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
@@ -8456,21 +8521,25 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
         }
       }
       if(df.insert_b > 0) {
-        cur_flag = taObjDiffRec::DIFF_ADD;
-        taObjDiffRec* rec_a = SafeEl(df.start_a);
+        taObjDiffRec* rec_a = src_a->SafeEl(df.start_a);
         if(!rec_a) {
-          rec_a = Peek();
+          rec_a = src_a->Peek();
         }
         while(rec_a->par_odr && (!rec_a->extra || !rec_a->par_odr->extra))
           rec_a = rec_a->par_odr;
-        taObjDiffRec* rec0 = cmp_list.SafeEl(df.start_b);
+	rec_a->SetDiffFlag(taObjDiffRec::DIFF_ADD);
+	rec_a->diff_no = i;
+	DiffFlagParents(rec_a);
+
+        taObjDiffRec* rec0 = src_b->SafeEl(df.start_b);
         int add_nest = rec0->nest_level;
         for(int l=0; l<df.insert_b; l++) {
-          taObjDiffRec* rec_b = cmp_list.SafeEl(df.start_b + l);
-          if(CheckAddParents(diffs_list, rec_b, false)) // b list
+          taObjDiffRec* rec_b = src_b->SafeEl(df.start_b + l);
+          rec_b->SetDiffFlag(taObjDiffRec::DIFF_ADD);
+	  rec_b->diff_no = i;
+          if(DiffFlagParents(rec_b))
             add_nest = rec_b->nest_level;
-          diffs_list.Link(rec_b);
-          rec_b->SetDiffFlag(cur_flag);
+          Link(rec_b);
           rec_b->diff_odr = rec_a; // starting point in a..
           if(rec_b->mdef) {     // never actionable
             rec_b->SetDiffFlag(taObjDiffRec::SUB_NO_ACT);
@@ -8495,5 +8564,27 @@ void taObjDiff_List::Diff(taObjDiff_List& diffs_list, taObjDiff_List& cmp_list) 
     }
   }
 
-  nest_pars.Reset();
+  // String strm;
+  // Print(strm);
+  // taMisc::Info(strm);
+
+  // this is not good: much better to just elide in display
+  // DiffPurgeNoDiffs(src_a);
+  // DiffPurgeNoDiffs(src_b);
+
+  nest_a_pars.Reset();
+  nest_b_pars.Reset();
+}
+
+int taObjDiff_List::DiffPurgeNoDiffs(taObjDiff_List* src) {
+  int n_purge = 0;
+  for(int i=src->size-1; i>=0; i--) {
+    taObjDiffRec* rec = src->FastEl(i);
+    if(rec->n_diffs == 0) {	// easy -- lets see what that does..
+      src->RemoveIdx(i);
+      n_purge++;
+      continue;
+    }
+  }
+  return n_purge;
 }

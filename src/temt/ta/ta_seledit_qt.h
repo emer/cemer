@@ -322,11 +322,11 @@ public:
     COL_N,
   };
 
-  static taiObjDiffBrowser* New(taObjDiff_List& diffs,
+  static taiObjDiffBrowser* New(taObjDiff_List* diffs,
                                 int font_type, QWidget* par_window_ = NULL);
 
   String                caption;        // current caption at top of chooser
-  taObjDiff_List*       odl;
+  taObjDiff_List*       odl;		// diffs list -- we own this list and will delete it when done
   taiObjDiffBrowserFilter* filter_dlg;
 
   QVBoxLayout*          layOuter;
@@ -339,7 +339,7 @@ public:
   QPushButton*              btnCancel;
 
   virtual bool          Browse();
-  // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel
+  // main user interface: this actually puts up the dialog -- is non-modal so will return immediately with true..
 
   virtual void  Constr();
   virtual void  AddItems();

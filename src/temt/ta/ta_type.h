@@ -2600,26 +2600,27 @@ class TA_API taObjDiffRec : public taRefN {
 INHERITED(taRefN)
 public:
   enum DiffFlags {              // #BITS
-    DF_NONE  = 0x000000,        // nothing
-    DIFF_DEL = 0x000001,        // diff edit = delete from src_a
-    DIFF_ADD = 0x000002,        // diff edit = add from src_b to src_a
-    DIFF_CHG = 0x000004,        // diff edit = change from a to b
-    DIFF_PAR_A = 0x000008,      // parent on A branch of lower-level diff, but not itself different
-    DIFF_PAR_B = 0x000010,      // parent on B branch of lower-level diff, but not itself different
-    ACT_DEL_A  = 0x000100,      // action to take: delete obj from a
-    ACT_DEL_B  = 0x000200,      // action to take: delete obj from b
-    ACT_ADD_A  = 0x000400,      // action to take: add obj to a after paired diff_odr
-    ACT_ADD_B  = 0x000800,      // action to take: add obj to b after paired diff_odr
+    DF_NONE     = 0x000000,     // nothing
+    SRC_A       = 0x000001,	// comes from a items
+    SRC_B       = 0x000002,	// comes from b items
+    DIFF_DEL    = 0x000004,     // diff edit = delete from a, also marks corresponding point in b where a del starts
+    DIFF_ADD    = 0x000008,     // diff edit = add from b to a, also marks corresponding point in a where b add starts
+    DIFF_CHG    = 0x000010,     // diff edit = change from a to b
+    DIFF_PAR    = 0x000020,     // parent of lower-level diff
+    DIFF_CTXT   = 0x000040,     // context for another diff
+    ACT_DEL_A   = 0x000100,     // action to take: delete obj from a
+    ACT_DEL_B   = 0x000200,     // action to take: delete obj from b
+    ACT_ADD_A   = 0x000400,     // action to take: add obj to a after paired diff_odr
+    ACT_ADD_B   = 0x000800,     // action to take: add obj to b after paired diff_odr
     ACT_COPY_AB = 0x001000,     // action to take: copy from a to paired diff_odr b
     ACT_COPY_BA = 0x002000,     // action to take: copy from paired diff_odr b to a
 #ifndef __MAKETA__
     DIFF_MASK = DIFF_DEL | DIFF_ADD | DIFF_CHG,
     DIFF_ADDEL = DIFF_DEL | DIFF_ADD,
-    DIFF_PAR = DIFF_PAR_A | DIFF_PAR_B,
     ACT_MASK = ACT_DEL_A | ACT_DEL_B | ACT_ADD_A | ACT_ADD_B | ACT_COPY_AB | ACT_COPY_BA,
 #endif
-    SUB_NO_ACT = 0x010000,      // this is a sub-object of an add or delete and thus not something that an action can be driven from (just follows whatever the parent has selected)
-    VAL_PATH_REL = 0x020000,    // value is a path relative to tab_obj, not a global path
+    SUB_NO_ACT = 0x100000,      // this is a sub-object of an add or delete and thus not something that an action can be driven from (just follows whatever the parent has selected)
+    VAL_PATH_REL = 0x200000,    // value is a path relative to tab_obj, not a global path
   };
 
   DiffFlags     flags;          // flags for diff status
@@ -2627,6 +2628,10 @@ public:
   taObjDiff_List* owner;        // the owner of this one
   int           idx;            // the index number in owning list
   int           nest_level;     // how deeply nested or embedded is this object in the obj hierarchy
+  int		n_diffs;	// total number of diffs for this item and everything below it
+  int		diff_no;	// difference number -- indexes which original diff record this diff belongs to
+  int		diff_no_start;	// for parent objects, first difference number this object participates in
+  int		diff_no_end;	// for parent objects, ending difference number this object participates in
   String        name;           // object name (member name, object type) -- this is used in diffing and is not always best for display -- see GetDisplayName()
   String        value;          // string representation of this object
   taHashVal     hash_code;      // hash-code of name&value + nest_level -- this is what diff is based on
@@ -2707,6 +2712,8 @@ public:
   taBase*       tab_obj_a;      // initial diff object for GetObjDiffVal and A comparison object for diff
   taBase*       tab_obj_b;      // original B comparison object as a taBase
 #endif
+  taObjDiff_List* 	src_a; // source list of a items -- managed by this diff list -- create with CreateSrcs
+  taObjDiff_List* 	src_b; // source list of b items -- managed by this diff list -- create with CreateSrcs
 
   void          Initialize();
 
@@ -2717,16 +2724,24 @@ public:
 
   void          HashToIntArray(int_PArray& array);
   // copy all hash values to given array -- for use in differencing
+  void          SetAllFlag(int flg);
+  // set taObjDiffRec::DiffFlag flag value for all items on the list
 
-  void          Diff(taObjDiff_List& diff_ods, taObjDiff_List& cmp_list);
-  // perform a diff operation between this list and comparison list (cmp_list), linking diff recs into diff_ods list with flags set to indicate nature of differences
+  void		CreateSrcs();
+  // create the src_a and src_b lists, which then need to be populated with content (outside scope of this diff object)
+  void          Diff();
+  // perform a diff on src_a vs. src_b records -- must have already called CreateSrcs and filled in those lists with source item records to be compared -- resulting diffs all end up here in this list -- typically are links to recs in one or other of the src lists
 
 protected:
-  voidptr_PArray        nest_pars;
-  // keeps track of current parents at each nest level
+  voidptr_PArray        nest_a_pars;
+  // keeps track of current parents at each nest level, source a
+  voidptr_PArray        nest_b_pars;
+  // keeps track of current parents at each nest level, source b
 
-  bool          CheckAddParents(taObjDiff_List& diff_ods, taObjDiffRec* rec, bool a_list);
-  // add parents of rec item as necessary depending on nest_pars parents already current
+  bool          DiffFlagParents(taObjDiffRec* rec);
+  // flag parents of rec item
+  int		DiffPurgeNoDiffs(taObjDiff_List* src);
+  // purge all the items from src_a and src_b that have no diff items
 };
 
 #endif // ta_type_h
