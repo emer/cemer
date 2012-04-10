@@ -32,12 +32,12 @@ iSpinBox::iSpinBox(QWidget* parent)
 
 void iSpinBox::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev);
-  emit focusChanged(true);
+  // emit focusChanged(true);
 }
 
 void iSpinBox::focusOutEvent(QFocusEvent* ev) {
   inherited::focusOutEvent(ev);
-  emit focusChanged(false);
+  // emit focusChanged(false);
 }
 
 void iSpinBox::wheelEvent(QWheelEvent * event) {

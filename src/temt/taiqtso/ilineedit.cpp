@@ -1,4 +1,3 @@
-
 // Copyright, 1995-2007, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -27,6 +26,8 @@
 #include <QTextEdit>
 #include <QPalette>
 #include <QClipboard>
+
+// #include <iostream>
 
 iLineEdit::iLineEdit(QWidget* parent)
 : QLineEdit(parent)
@@ -71,12 +72,14 @@ void iLineEdit::editInEditor() {
 
 void iLineEdit::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev);
-  emit focusChanged(true);
+  // std::cerr << "focus in" << std::endl;
+  // emit focusChanged(true);
 }
 
 void iLineEdit::focusOutEvent(QFocusEvent* ev) {
   inherited::focusOutEvent(ev);
-  emit focusChanged(false);
+  // std::cerr << "focus out" << std::endl;
+  // emit focusChanged(false);
 }
 
 void iLineEdit::setCharWidth(int num) {
@@ -140,6 +143,8 @@ void iLineEdit::clearExtSelection() {
 }
 
 void iLineEdit::keyPressEvent(QKeyEvent* e) {
+  // std::cerr << "keypress" << std::endl;
+
   bool ctrl_pressed = false;
   if(e->modifiers() & Qt::ControlModifier)
     ctrl_pressed = true;
