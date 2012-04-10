@@ -315,10 +315,12 @@ public:
     COL_A_FLG,
     COL_A_NM,
     COL_A_VAL,
+    COL_A_VIEW,
     COL_SEP,
     COL_B_FLG,
     COL_B_NM,
     COL_B_VAL,
+    COL_B_VIEW,
     COL_N,
   };
 
@@ -337,6 +339,9 @@ public:
   QPushButton*              btnFiltB;
   QPushButton*              btnOk;
   QPushButton*              btnCancel;
+  QBrush*		    add_color;
+  QBrush*		    del_color;
+  QBrush*		    chg_color;
 
   virtual bool          Browse();
   // main user interface: this actually puts up the dialog -- is non-modal so will return immediately with true..
@@ -351,6 +356,8 @@ public:
   // toggle checked state of all items -- a_or_b = 0 for A, 1 for B filtered by given filter settings
   virtual void  UpdateItemDisp(QTreeWidgetItem* witm, taObjDiffRec* rec, int a_or_b);
   // update display of item
+
+  virtual void	ViewItem(taObjDiffRec* rec);
 
   taiObjDiffBrowser(const String& captn, QWidget* par_window_);
   ~taiObjDiffBrowser();

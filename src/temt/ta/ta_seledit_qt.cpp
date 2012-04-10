@@ -1122,6 +1122,10 @@ taiObjDiffBrowser::taiObjDiffBrowser(const String& caption_, QWidget* par_window
   caption = caption_;
   setModal(false);
   setWindowTitle(caption);
+  add_color = new QBrush(QColor("pale green"));
+  del_color = new QBrush(QColor("pink"));
+  chg_color = new QBrush(Qt::yellow);
+  
   resize(taiM->dialogSize(taiMisc::hdlg_b));
 }
 
@@ -1132,6 +1136,9 @@ taiObjDiffBrowser::~taiObjDiffBrowser() {
   if(odl)
     delete odl;
   odl = NULL;
+  delete add_color;
+  delete del_color;
+  delete chg_color;
 }
 
 void taiObjDiffBrowser::accept() {
@@ -1215,6 +1222,8 @@ void taiObjDiffBrowser::Constr() {
   items->headerItem()->setToolTip(COL_A_NM, "Name of the item in A -- member name or sub-object name");
   items->headerItem()->setText(COL_A_VAL, "A Value");
   items->headerItem()->setToolTip(COL_A_VAL, "Value of the item in B");
+  items->headerItem()->setText(COL_A_VIEW, "View");
+  items->headerItem()->setToolTip(COL_A_VIEW, "View A item in project -- selects this object in the appropriate browser in the main project window");
 
   items->headerItem()->setText(COL_SEP, " | ");
 
@@ -1224,6 +1233,8 @@ void taiObjDiffBrowser::Constr() {
   items->headerItem()->setToolTip(COL_B_NM, "Name of the item in B -- member name or sub-object name");
   items->headerItem()->setText(COL_B_VAL, "B Value");
   items->headerItem()->setToolTip(COL_B_VAL, "Value of the item in B");
+  items->headerItem()->setText(COL_B_VIEW, "View");
+  items->headerItem()->setToolTip(COL_B_VIEW, "View B item in project -- selects this object in the appropriate browser in the main project window");
   items->setUniformRowHeights(true);
   items->setIndentation(taMisc::tree_indent);
 
@@ -1257,9 +1268,6 @@ void taiObjDiffBrowser::Constr() {
 void taiObjDiffBrowser::AddItems() {
   if(! odl || odl->size == 0) return;
 
-  QBrush add_color(Qt::green);
-  QBrush del_color(Qt::red);
-  QBrush chg_color(Qt::yellow);
   int max_width = 40;
 
   voidptr_PArray        nest_pars;
@@ -1365,6 +1373,11 @@ void taiObjDiffBrowser::AddItems() {
 	  witm->setTextColor(COL_A_NM, clr);
 	  witm->setTextColor(COL_A_VAL, clr);
 	}
+
+	if(a_rec->type->InheritsFrom(&TA_taBase) && a_rec->tabref && !a_rec->mdef) {
+	  witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+	  witm->setCheckState(COL_A_VIEW, Qt::Unchecked);
+	}
       }
       if(b_rec) {
 	String nm;
@@ -1385,15 +1398,20 @@ void taiObjDiffBrowser::AddItems() {
 	  witm->setTextColor(COL_B_NM, clr);
 	  witm->setTextColor(COL_B_VAL, clr);
 	}
+
+	if(b_rec->type->InheritsFrom(&TA_taBase) && b_rec->tabref && !b_rec->mdef) {
+	  witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
+	  witm->setCheckState(COL_B_VIEW, Qt::Unchecked);
+	}
       }
 
       if(a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_DEL)) {
-	if(chk_a) witm->setBackground(COL_A_FLG, del_color);
-	witm->setBackground(COL_A_VAL, del_color);
-	witm->setBackground(COL_A_NM, del_color);
-	if(chk_b) witm->setBackground(COL_B_FLG, add_color);
-	witm->setBackground(COL_B_VAL, add_color);
-	witm->setBackground(COL_B_NM, add_color);
+	if(chk_a) witm->setBackground(COL_A_FLG, *del_color);
+	witm->setBackground(COL_A_VAL, *del_color);
+	witm->setBackground(COL_A_NM, *del_color);
+	if(chk_b) witm->setBackground(COL_B_FLG, *add_color);
+	witm->setBackground(COL_B_VAL, *add_color);
+	witm->setBackground(COL_B_NM, *add_color);
 	witm->setExpanded(false); // never expand a del -- only applies to parents anyway..
 	if(!a_rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
 	  // only ta base items really feasible here..
@@ -1407,12 +1425,12 @@ void taiObjDiffBrowser::AddItems() {
 	}
       }
       else if(b_rec && b_rec->HasDiffFlag(taObjDiffRec::DIFF_ADD)) {
-	if(chk_a) witm->setBackground(COL_A_FLG, add_color);
-	witm->setBackground(COL_A_VAL, add_color);
-	witm->setBackground(COL_A_NM, add_color);
-	if(chk_b) witm->setBackground(COL_B_FLG, del_color);
-	witm->setBackground(COL_B_VAL, del_color);
-	witm->setBackground(COL_B_NM, del_color);
+	if(chk_a) witm->setBackground(COL_A_FLG, *add_color);
+	witm->setBackground(COL_A_VAL, *add_color);
+	witm->setBackground(COL_A_NM, *add_color);
+	if(chk_b) witm->setBackground(COL_B_FLG, *del_color);
+	witm->setBackground(COL_B_VAL, *del_color);
+	witm->setBackground(COL_B_NM, *del_color);
 	witm->setExpanded(false);
 	if(!b_rec->HasDiffFlag(taObjDiffRec::SUB_NO_ACT)) {
 	  // only ta base items really feasible here..
@@ -1426,12 +1444,12 @@ void taiObjDiffBrowser::AddItems() {
 	}
       }
       else if(a_rec && a_rec->HasDiffFlag(taObjDiffRec::DIFF_CHG)) {
-	if(chk_a) witm->setBackground(COL_A_FLG, chg_color);
-	witm->setBackground(COL_A_VAL, chg_color);
-	witm->setBackground(COL_A_NM, chg_color);
-	if(chk_b) witm->setBackground(COL_B_FLG, chg_color);
-	witm->setBackground(COL_B_VAL, chg_color);
-	witm->setBackground(COL_B_NM, chg_color);
+	if(chk_a) witm->setBackground(COL_A_FLG, *chg_color);
+	witm->setBackground(COL_A_VAL, *chg_color);
+	witm->setBackground(COL_A_NM, *chg_color);
+	if(chk_b) witm->setBackground(COL_B_FLG, *chg_color);
+	witm->setBackground(COL_B_VAL, *chg_color);
+	witm->setBackground(COL_B_NM, *chg_color);
 
 	witm->setFlags(witm->flags() | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
 	witm->setCheckState(COL_A_FLG, Qt::Unchecked);
@@ -1453,19 +1471,40 @@ void taiObjDiffBrowser::AddItems() {
   items->resizeColumnToContents(COL_A_FLG);
   items->resizeColumnToContents(COL_A_NM);
   items->resizeColumnToContents(COL_A_VAL);
+  items->resizeColumnToContents(COL_A_VIEW);
   items->resizeColumnToContents(COL_SEP);
   items->resizeColumnToContents(COL_B_FLG);
   items->resizeColumnToContents(COL_B_NM);
   items->resizeColumnToContents(COL_B_VAL);
+  items->resizeColumnToContents(COL_B_VIEW);
+}
+
+void taiObjDiffBrowser::ViewItem(taObjDiffRec* rec) {
+  taBase* tab = rec->GetOwnTaBase();
+  if(!tab) return;
+  tab->BrowserSelectMe();
 }
 
 void taiObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
-  if(column != COL_A_FLG && column != COL_B_FLG) return;
-
   QVariant a_val = itm->data(0, Qt::UserRole+1);
   taObjDiffRec* a_rec = a_val.value<taObjDiffRec*>();
   QVariant b_val = itm->data(1, Qt::UserRole+1);
   taObjDiffRec* b_rec = b_val.value<taObjDiffRec*>();
+
+  if(column == COL_A_VIEW || column == COL_B_VIEW) {
+    if(column == COL_A_VIEW) {
+      itm->setCheckState(COL_A_VIEW, Qt::Unchecked); // never actually click
+      ViewItem(a_rec);
+      return;
+    }
+    else {
+      itm->setCheckState(COL_A_VIEW, Qt::Unchecked);
+      ViewItem(b_rec);
+      return;
+    }
+  }
+
+  if(column != COL_A_FLG && column != COL_B_FLG) return;
 
   int a_or_b = 0;
   if(column == COL_B_FLG) a_or_b = 1;
@@ -1483,9 +1522,6 @@ void taiObjDiffBrowser::itemClicked(QTreeWidgetItem* itm, int column) {
 }
 
 void taiObjDiffBrowser::UpdateItemDisp(QTreeWidgetItem* itm, taObjDiffRec* rec,  int a_or_b) {
-  QBrush add_color(Qt::green);
-  QBrush del_color(Qt::red);
-  QBrush chg_color(Qt::yellow);
   QBrush no_color;
 
   String lbl;
@@ -1495,11 +1531,11 @@ void taiObjDiffBrowser::UpdateItemDisp(QTreeWidgetItem* itm, taObjDiffRec* rec, 
   else column = COL_B_FLG;
 
   if(rec->HasDiffFlag(taObjDiffRec::DIFF_DEL))
-    itm->setBackground(column, chk ? (a_or_b ? add_color : del_color) : no_color);
+    itm->setBackground(column, chk ? (a_or_b ? *add_color : *del_color) : no_color);
   else if(rec->HasDiffFlag(taObjDiffRec::DIFF_ADD))
-    itm->setBackground(column, chk ? (a_or_b ? del_color : add_color) : no_color);
+    itm->setBackground(column, chk ? (a_or_b ? *del_color : *add_color) : no_color);
   else if(rec->HasDiffFlag(taObjDiffRec::DIFF_CHG))
-    itm->setBackground(column, chk ? chg_color : no_color);
+    itm->setBackground(column, chk ? *chg_color : no_color);
 
   itm->setCheckState(column, chk ? Qt::Checked : Qt::Unchecked);
 }
