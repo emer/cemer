@@ -447,8 +447,9 @@ void HippoEncoderConSpec::Initialize() {
 void HippoEncoderConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   // these are enforced absolutely because the code does not use them:
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
+  // actually it does so turning this off!
+  // lmix.hebb = 0.0f;
+  // lmix.err = 1.0f;
 }
 
 void XCalCHLConSpec::Initialize() {
