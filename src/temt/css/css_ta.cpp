@@ -1142,7 +1142,7 @@ cssEl* cssIOS::operator<<(cssEl& s) {
       else if(s.GetType() == T_Real)
 	str << (Real) s;
       else
-	str << (const char*)s;
+	str << s.PrintFStr();
       taMisc::ConsoleOutputChars(str); // use console output!
     }
     else if(strm) {
