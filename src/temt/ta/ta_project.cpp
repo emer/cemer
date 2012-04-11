@@ -3321,6 +3321,14 @@ namespace { // anon
       taMisc::app_suffix = taMisc::exe_cmd.from('_',-1);
     else
       taMisc::app_suffix = "";
+#ifdef TA_OS_WIN
+    if(taMisc::app_suffix.endsWith(".exe")) {
+      taMisc::app_suffix = taMisc::app_suffix.before(".exe");
+    }
+    if(!taMisc::exe_cmd.endsWith(".exe")) {
+      taMisc::exe_cmd += ".exe";
+    }
+#endif
 
     taMisc::exe_path = QCoreApplication::applicationDirPath();
 
