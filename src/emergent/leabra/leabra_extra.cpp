@@ -1290,12 +1290,13 @@ void ScalarValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net)
 
   Settle_Init_Unit0(lay, net);
 
-  if(lay->hard_clamped) return;
-
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
-    u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
-    u->bias_scale /= 100.0f;              // keep a constant scaling so it doesn't depend on network size!
+  if(bias_val.un == ScalarValBias::BWT) {
+    // if using bias-weight bias, keep a constant scaling (independent of layer size)
+    FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+      LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
+      u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
+      u->bias_scale /= 100.0f;
+    }
   }
 }
 
@@ -2245,12 +2246,13 @@ void TwoDValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   TwoDValLeabraLayer* tdlay = (TwoDValLeabraLayer*)lay;
   tdlay->UpdateTwoDValsGeom();  // quick, make sure no mismatch
 
-  if(lay->hard_clamped) return;
-
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
-    u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
-    u->bias_scale /= 100.0f;              // keep a constant scaling so it doesn't depend on network size!
+  if(bias_val.un == TwoDValBias::BWT) {
+    // if using bias-weight bias, keep a constant scaling (independent of layer size)
+    FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+      LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
+      u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
+      u->bias_scale /= 100.0f;              // keep a constant scaling so it doesn't depend on network size!
+    }
   }
 }
 
@@ -3200,12 +3202,13 @@ void FourDValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) 
   FourDValLeabraLayer* tdlay = (FourDValLeabraLayer*)lay;
   tdlay->UpdateFourDValsGeom(); // quick, make sure no mismatch
 
-  if(lay->hard_clamped) return;
-
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
-    u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
-    u->bias_scale /= 100.0f;              // keep a constant scaling so it doesn't depend on network size!
+  if(bias_val.un == ScalarValBias::BWT) {
+    // if using bias-weight bias, keep a constant scaling (independent of layer size)
+    FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+      LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
+      u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
+      u->bias_scale /= 100.0f;              // keep a constant scaling so it doesn't depend on network size!
+    }
   }
 }
 

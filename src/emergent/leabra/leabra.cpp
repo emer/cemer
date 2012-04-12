@@ -5275,6 +5275,11 @@ void LeabraLayer::UpdateAfterEdit_impl() {
   ResetSortBuf();
 }
 
+void LeabraLayer::Init_InputData(Network* net) {
+  inherited::Init_InputData(net);
+  hard_clamped = false;		// reset our flag
+}
+
 bool LeabraLayer::SetLayerSpec(LayerSpec* sp) {
   if(sp == NULL)        return false;
   if(sp->CheckObjectType(this))

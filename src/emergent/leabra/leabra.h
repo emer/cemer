@@ -2614,6 +2614,8 @@ public:
   void	Init_ActAvg(LeabraNetwork* net) 	{ spec->Init_ActAvg(this, net); }
   // #CAT_Activation initialize act_avg values
 
+  override void  Init_InputData(Network* net);
+
   override void	Init_Acts(Network* net)
   { if(spec) spec->Init_Acts(this, (LeabraNetwork*)net); }
   // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)
