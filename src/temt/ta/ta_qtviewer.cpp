@@ -3279,6 +3279,9 @@ void iApplicationToolBar::Constr_post() {
   win->editPasteAssignAction->addTo(tb);
   win->editPasteAppendAction->addTo(tb);
   tb->addSeparator();
+  win->ctrlStopAction->addTo(tb);
+  win->ctrlContAction->addTo(tb);
+  tb->addSeparator();
   win->helpHelpAction->addTo(tb);
 }
 
@@ -3775,6 +3778,7 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   editMenu = menu->AddSubMenu("&Edit");
   viewMenu = menu->AddSubMenu("&View");
   show_menu = menu->AddSubMenu("&Show");
+  ctrlMenu = menu->AddSubMenu("&Control");
   connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()) );
   if (!(taMisc::show_gui & taMisc::NO_EXPERT))
     toolsMenu = menu->AddSubMenu("&Tools");
@@ -3915,6 +3919,14 @@ QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
   helpHelpAction->setStatusTip(s);
   helpAboutAction = AddAction(new taiAction("&About", QKeySequence(), _helpAboutAction ));
 
+
+  ctrlStopAction = AddAction(new taiAction("Stop", QKeySequence(), "ctrlStopAction"));
+  ctrlStopAction->setIcon( QIcon( QPixmap(":/images/stop_icon.png") ) );
+  ctrlStopAction->setToolTip("Stop: stop whatever program is currently running -- execution can be resumed with the Cont continue button.");
+  ctrlContAction = AddAction(new taiAction("Cont", QKeySequence(), "ctrlContAction"));
+  ctrlContAction->setIcon( QIcon( QPixmap(":/images/play_icon.png") ) );
+  ctrlContAction->setToolTip("Continue: continue running the last program that was run, from wherever it was last stopped");
+
 //   fileExportMenu = fileMenu->AddSubMenu("Export"); // submenu -- empty and disabled in base
   fileOptionsAction->AddTo( fileMenu );
 //   filePrintAction->AddTo( fileMenu );
@@ -3961,6 +3973,9 @@ QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
   show_menu->AddItem("&Hidden", taiMenu::toggle, taiAction::men_act,
       this, SLOT(ShowChange(taiAction*)), 4 );
   //note: correct toggles set dynamically when user drops down menu
+
+  ctrlStopAction->AddTo( ctrlMenu );
+  ctrlContAction->AddTo( ctrlMenu );
  
   if (toolsMenu) {
     toolsClassBrowseAction->AddTo(toolsMenu );
@@ -3996,6 +4011,9 @@ QKeySequence(Qt::ControlModifier, Qt::Key_Right), "historyForwardAction" ));
     this, SLOT( toolsTypeBrowser() ) );
   connect( helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()) );
   connect( helpAboutAction, SIGNAL(Action()), this, SLOT(helpAbout()) );
+
+  connect( ctrlStopAction, SIGNAL( Action() ), this, SLOT( ctrlStop() ) );
+  connect( ctrlContAction, SIGNAL( Action() ), this, SLOT( ctrlCont() ) );
 }
 
 taProject* iMainWindowViewer::curProject() const {
@@ -4070,9 +4088,7 @@ void iMainWindowViewer::Replace(taiDataLink* root, ISelectable_PtrList& sel_item
   curow = "instr";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
   Dlg1.AddLabel("Instructions", "main", curow,
-"label=Enter strings to search and replace for in currently selected items\n\
-member filter restricts replace to specific member field names\n\
-(search does not support regular expressions);");
+"label=Enter strings to search and replace for in currently selected items\nmember filter restricts replace to specific member field names\n(search does not support regular expressions);");
   Dlg1.AddSpace(20, "mainv");
   curow = "srchrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
@@ -4088,9 +4104,7 @@ member filter restricts replace to specific member field names\n\
   curow = "mbfltrow";
   Dlg1.AddHBoxLayout(curow, "mainv", "", "");
   String mttip = 
-"tooltip=The member name must contain the specified string (e.g. 'name' or 'lrate')\n\
-in order for the Replace operation to apply. If the member filter is left blank, \n\
-then the Replace operation applies to all members.;";
+"tooltip=The member name must contain the specified string (e.g. 'name' or 'lrate')\nin order for the Replace operation to apply. If the member filter is left blank, \nthen the Replace operation applies to all members.;";
   Dlg1.AddLabel("mbfltlbl", "main", curow, "label=Member filter: ;"+mttip);
   Dlg1.AddStringField(&mb_flt, "mbflt", "main", curow, mttip);
   Dlg1.AddSpace(20, "mainv");
@@ -4293,6 +4307,19 @@ void iMainWindowViewer::fileClose() {
 void iMainWindowViewer::fileOptions() {
   if (!tabMisc::root) return;
   tabMisc::root->Options();
+}
+
+void iMainWindowViewer::ctrlStop() {
+  Program::SetStopReq(Program::SR_USER_STOP, "Main window Stop Button");
+}
+
+void iMainWindowViewer::ctrlCont() {
+  if(!Program::last_run_prog) {
+    taMisc::Error("Continue: cannot continue because there is no record of which program was running previously");
+    return;
+  }
+  taMisc::Info("Continue: running program:", Program::last_run_prog->name);
+  Program::last_run_prog->Run_Gui();
 }
 
 iTreeView* iMainWindowViewer::GetMainTreeView() {
@@ -5119,6 +5146,10 @@ void iMainWindowViewer::UpdateUi() {
     editUndoAction->setEnabled(proj->undo_mgr.UndosAvail() > 0);
     editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
   }
+
+  bool css_running = (Program::global_run_state == Program::RUN);
+  ctrlStopAction->setEnabled(css_running);
+  ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
 
   emit SetActionsEnabled();
 }

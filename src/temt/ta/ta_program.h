@@ -1288,6 +1288,10 @@ public:
   // #READ_ONLY #NO_SAVE the program was run in step mode -- check for stepping
   static ProgramRef     cur_step_prog;
   // #READ_ONLY #NO_SAVE the current program to be single-stepped -- set by the Step call of the program that was last run
+  static ProgramRef     last_run_prog;
+  // #READ_ONLY #NO_SAVE the last program to have been run by the user -- top-level run call
+  static ProgramRef     last_stop_prog;
+  // #READ_ONLY #NO_SAVE the last program that was stopped from a stop request of any sort
   static int            cur_step_n;
   // #READ_ONLY #NO_SAVE current number of steps to take -- set by the Step call of the program that was last run
   static int            cur_step_cnt;
@@ -1407,6 +1411,8 @@ public:
   // #CAT_Run calls event loop, then checks for STOP state, true if so
   virtual bool  IsStepProg();
   // #CAT_Run is this program the currently selected step_prog? only true if in step_mode too
+  virtual void	UpdateUi();
+  // #IGNORE update gui from changes in run status etc -- for global program controls
 
   virtual void  Compile();
   // #BUTTON #GHOST_ON_script_compiled:true #CAT_Code generate and compile the script code that actually runs (if this button is available, you have changed something that needs to be recompiled)

@@ -4224,6 +4224,8 @@ Program::StopReason Program::stop_reason = Program::SR_NONE;
 String Program::stop_msg;
 bool Program::step_mode = false;
 ProgramRef Program::cur_step_prog;
+ProgramRef Program::last_run_prog;
+ProgramRef Program::last_stop_prog;
 int Program::cur_step_n = 1;
 int Program::cur_step_cnt = 0;
 Program::RunState Program::global_run_state = Program::NOT_INIT;
@@ -4429,6 +4431,7 @@ int Program::CallInit(Program* caller) {
     return ret_val;		// already done it!
   last_init_timestamp = global_init_timestamp;
   run_state = INIT;    // this is redundant if called from an existing INIT but otherwise needed
+  SetAllBreakpoints();          // reinstate all active breakpoints
   Run_impl();
   CheckConfig(false);   // check after running!  see below
   script->Restart();    // for init, always restart script at beginning if run again
@@ -4442,7 +4445,7 @@ int Program::CallInit(Program* caller) {
 void Program::Init() {
 //   cur_step_prog = NULL;  // if a program calls Init() directly, this will prevent stepping
   // it is not clear if we really need to clear this setting here
-  ClearStopReq();               // NOTE: newly added 4/18/09 -- check for breakage..
+  ClearStopReq();
   taProject* proj = GET_MY_OWNER(taProject);
   if(proj && proj->file_name.nonempty()) {
     QFileInfo fi(proj->file_name); // set to current working dir on init
@@ -4500,6 +4503,7 @@ void Program::Init() {
   else
     SetRunState(DONE);
   stop_req = false;  // this does not do full clear, so that information can be queried
+  UpdateUi();
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
@@ -4581,11 +4585,13 @@ void Program::Run() {
     return;
   }
   ClearStopReq();
+  last_run_prog = this;
   SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = false;
   cur_step_prog = NULL;
   taMisc::Busy();
   SetRunState(RUN);
+  UpdateUi();
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
   bool did_struct_updt = false;
   if(!HasProgFlag(OBJS_UPDT_GUI)) {
@@ -4608,6 +4614,7 @@ void Program::Run() {
     script->Restart();
     SetRunState(DONE);
   }
+  UpdateUi();
   stop_req = false;  // this does not do full clear, so that information can be queried
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
@@ -4638,6 +4645,7 @@ void Program::Step(Program* step_prg) {
   }
   ClearStopReq();
   SetAllBreakpoints();          // reinstate all active breakpoints
+  last_run_prog = this;
   step_mode = true;
   if(step_prg)
     cur_step_prog = step_prg;
@@ -4657,6 +4665,7 @@ void Program::Step(Program* step_prg) {
 
   taMisc::Busy();
   SetRunState(RUN);
+  UpdateUi();
   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
   bool did_struct_updt = false;
   if(!HasProgFlag(OBJS_UPDT_GUI)) {
@@ -4681,6 +4690,7 @@ void Program::Step(Program* step_prg) {
     SetRunState(DONE);
   }
   stop_req = false;                 // this does not do full clear, so that information can be queried
+  UpdateUi();
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 
@@ -4699,6 +4709,15 @@ void Program::ClearStopReq() {
   stop_req = false;
   stop_reason = SR_NONE;
   stop_msg = _nilString;
+  last_stop_prog = NULL;
+}
+
+void Program::UpdateUi() {
+  if(!taMisc::gui_active) return;
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return;
+  proj->UpdateUi();
+  taiM->ProcessEvents();
 }
 
 void Program::Stop() {
@@ -4715,6 +4734,7 @@ void Program::Abort() {
 }
 
 void Program::Stop_impl() {
+  last_stop_prog = this;
   script->Stop();
 //   setRunState(STOP);
 //   DataChanged(DCR_ITEM_UPDATED_ND); // update button state
@@ -4787,6 +4807,7 @@ void Program::StepCss() {
     SetRunState(STOP);
   }
   stop_req = false;                 // this does not do full clear, so that information can be queried
+  UpdateUi();
   DataChanged(DCR_ITEM_UPDATED_ND); // update after macroscopic button-press action..
 }
 

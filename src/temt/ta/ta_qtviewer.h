@@ -999,6 +999,7 @@ public:
   taiMenu* 		editMenu;
   taiMenu* 		viewMenu;
   taiMenu* 		show_menu;
+  taiMenu* 		ctrlMenu;
   taiMenu* 		frameMenu; // enumeration of all Frame guys
   taiMenu* 		toolBarMenu; // enumeration of all ToolBar guys
   taiMenu* 		dockMenu; // enumeration of all Dock guys
@@ -1044,6 +1045,9 @@ public:
 
   taiAction*	        toolsClassBrowseAction;
   taiAction*	        toolsTypeBrowseAction;
+
+  taiAction* 		ctrlStopAction;
+  taiAction* 		ctrlContAction;
   
   taiAction* 		helpHelpAction;
   taiAction* 		helpAboutAction;
@@ -1175,6 +1179,9 @@ public slots:
   
   void		toolsClassBrowser();
   void		toolsTypeBrowser();
+
+  virtual void 	ctrlStop(); 
+  virtual void 	ctrlCont(); 
 
   virtual void	windowMenu_aboutToShow();
   void 		windowActivate(int win); // activate the indicated win

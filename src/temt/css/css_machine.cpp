@@ -3345,6 +3345,9 @@ bool cssProg::IsBreak(css_progdx pcval) {
     cssInst* nxt = insts[Frame()->pc];
     nxt->PrintSrc(fh);
     taMisc::ConsoleOutput(fh, true, false);
+    if(top->own_program) {
+      top->own_program->BrowserSelectMe();
+    }
     return true;
   }
   return false;
