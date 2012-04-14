@@ -225,8 +225,9 @@ void ProgType::Destroy() {
 
 void ProgType::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(Program::IsForbiddenName(name))
+  if(Program::IsForbiddenName(name)) {
     name = "My" + name;
+  }
 }
 
 void ProgType::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -358,8 +359,9 @@ bool ProgType_List::BrowserCollapseAll() {
 
 void DynEnumItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(Program::IsForbiddenName(name))
+  if(Program::IsForbiddenName(name)) {
     name = "My" + name;
+  }
   DynEnumType* typ = GET_MY_OWNER(DynEnumType);
   if(typ) {
     if(typ->bits && value <= 0) {
@@ -830,8 +832,9 @@ void ProgVar::Copy_(const ProgVar& cp) {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl(); // this will make it a legal C name
-  if(Program::IsForbiddenName(name))
+  if(Program::IsForbiddenName(name)) {
     name = "My" + name;
+  }
   if(object_val.ptr() == this)  // this would be bad..
     object_val.set(NULL);
   // only send stale if the schema changed, not just the value
@@ -902,7 +905,6 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   if (prg) prognm = prg->name;
   CheckError(Program::IsForbiddenName(name, false), quiet, rval,
 	     "Name:",name,"is a css reserved name used for something else -- please choose another name");
-    name = "My" + name;
   if(var_type == T_Object) {
     if(!HasVarFlag(LOCAL_VAR) && HasVarFlag(NULL_CHECK) && !object_val) {
       if(!quiet) taMisc::CheckError("Error in ProgVar in program:", prognm, "var name:",name,
@@ -3898,8 +3900,9 @@ void Function::InitLinks() {
 void Function::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   name = taMisc::StringCVar(name); // make names C legal names
-  if(Program::IsForbiddenName(name))
+  if(Program::IsForbiddenName(name)) {
     name = "My" + name;
+  }
   fun_code.el_typ = &TA_ProgCode;  // make sure this is default
 }
 
