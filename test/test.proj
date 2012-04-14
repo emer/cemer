@@ -927,7 +927,7 @@ LeabraProject .projects["test"] {
 	  ProgVar @["train_mode"] { };
 	  ProgVar @["rnd_init"] { };
 	  ProgVar @["err_stopcrit"] { };
-	  ProgVar @["n_under_thr"] { };
+	  ProgVar @["in"] { };
 	  ProgVar @["save_final_wts"] { };
 	  ProgVar @["save_wts_interval"] { };
 	  ProgVar @["n_under_cnt"] { };
@@ -1144,7 +1144,7 @@ LeabraProject .projects["test"] {
 	  ProgVar @["train_mode"] { };
 	  ProgVar @["rnd_init"] { };
 	  ProgVar @["err_stopcrit"] { };
-	  ProgVar @["n_under_thr"] { };
+	  ProgVar @["in"] { };
 	  ProgVar @["save_final_wts"] { };
 	  ProgVar @["save_wts_interval"] { };
 	  ProgVar @["n_under_cnt"] { };
@@ -1362,7 +1362,7 @@ LeabraProject .projects["test"] {
 	  ProgVar @["train_mode"] { };
 	  ProgVar @["rnd_init"] { };
 	  ProgVar @["err_stopcrit"] { };
-	  ProgVar @["n_under_thr_mondo"] { };
+	  ProgVar @["in_mondo"] { };
 	  ProgVar @["save_final_wts"] { };
 	  ProgVar @["save_wts_interval"] { };
 	  ProgVar @["n_under_cnt"] { };
@@ -26847,8 +26847,8 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       desc="stopping criterion for training, in terms of count of trials with errors in the epoch (nework cnt_err)";
       init_from=NULL;
      };
-     ProgVar @["n_under_thr"] {
-      name="n_under_thr";
+     ProgVar @["in"] {
+      name="in";
       var_type=T_Int;
       int_val=2;
       objs_ptr=0;
@@ -27328,7 +27328,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	  desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
 	  flags=0;
 	  cond {
-	   expr="n_under_cnt >=  n_under_thr";
+	   expr="n_under_cnt >=  in";
 	  };
 	 };
 	};
@@ -27789,8 +27789,8 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       desc="stopping criterion for training, in terms of count of trials with errors in the epoch (nework cnt_err)";
       init_from=NULL;
      };
-     ProgVar @["n_under_thr"] {
-      name="n_under_thr";
+     ProgVar @["in"] {
+      name="in";
       var_type=T_Int;
       int_val=2;
       objs_ptr=0;
@@ -28278,7 +28278,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	  desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
 	  flags=0;
 	  cond {
-	   expr="n_under_cnt >=  n_under_thr";
+	   expr="n_under_cnt >=  in";
 	  };
 	 };
 	};
@@ -28739,8 +28739,8 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       desc="stopping criterion for training, in terms of count of trials with errors in the epoch (nework cnt_err)";
       init_from=NULL;
      };
-     ProgVar @["n_under_thr_mondo"] {
-      name="n_under_thr_mondo";
+     ProgVar @["in_mondo"] {
+      name="in_mondo";
       var_type=T_Int;
       int_val=2;
       objs_ptr=0;
@@ -29224,7 +29224,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	  desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
 	  flags=0;
 	  cond {
-	   expr="n_under_cnt >=  n_under_thr_mondo";
+	   expr="n_under_cnt >=  in_mondo";
 	  };
 	 };
 	};

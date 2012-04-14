@@ -5620,6 +5620,10 @@ void Program::InitForbiddenNames() {
     MethodDef* md = type_def->methods.FastEl(i);
     forbidden_names.Add(md->name);
   }
+  for(int i=0; i<cssMisc::Parse.size; i++) {
+    cssEl* el = cssMisc::Parse.FastEl(i);
+    forbidden_names.Add(el->name);
+  }
   for(int i=0; i<cssMisc::Commands.size; i++) {
     cssEl* el = cssMisc::Commands.FastEl(i);
     forbidden_names.Add(el->name);

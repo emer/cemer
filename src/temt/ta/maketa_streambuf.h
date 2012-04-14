@@ -86,62 +86,57 @@ typedef int streamsize;
 #define _S_out 		0x10
 #define _S_trunc 	0x20
 
-// 27.4.2.1.2  Type ios_base::fmtflags
-enum _Ios_Fmtflags {
-  boolalpha =   _S_boolalpha,
-  dec =         _S_dec,
-  fixed =       _S_fixed,
-  hex =         _S_hex,
-  internal =    _S_internal,
-  left =        _S_left,
-  oct =         _S_oct,
-  right =       _S_right,
-  scientific =  _S_scientific,
-  showbase =    _S_showbase,
-  showpoint =   _S_showpoint,
-  showpos =     _S_showpos,
-  skipws =      _S_skipws,
-  unitbuf =     _S_unitbuf,
-  uppercase =   _S_uppercase,
-  adjustfield = _S_adjustfield,
-  basefield =   _S_basefield,
-  floatfield =  _S_floatfield
-};
-
-// 27.4.2.1.4  Type openmode
-enum _Ios_Openmode {
-  app =    	_S_app,
-  ate =    	_S_ate,
-  binary = 	_S_bin,
-  in =     	_S_in,
-  out =    	_S_out,
-  trunc =  	_S_trunc
-};
-
-// 27.4.2.1.3  Type ios_base::iostate
-enum _Ios_Iostate {
-  badbit =  	_S_badbit,
-  eofbit =  	_S_eofbit,
-  failbit = 	_S_failbit,
-  goodbit = 	0
-};
-
-// 27.4.2.1.5  Type seekdir
-enum _Ios_Seekdir {
-  beg = 		0,
-  cur = 		SEEK_CUR, // 1
-  end = 		SEEK_END // 2
-};
-
 class ios {
 public:
-  typedef _Ios_Fmtflags fmtflags;
-  typedef _Ios_Iostate iostate;
-  typedef _Ios_Openmode openmode;
-  typedef _Ios_Seekdir seekdir;
+// 27.4.2.1.2  Type ios_base::fmtflags
+  enum fmtflags {
+    boolalpha =   _S_boolalpha,
+    dec =         _S_dec,
+    fixed =       _S_fixed,
+    hex =         _S_hex,
+    internal =    _S_internal,
+    left =        _S_left,
+    oct =         _S_oct,
+    right =       _S_right,
+    scientific =  _S_scientific,
+    showbase =    _S_showbase,
+    showpoint =   _S_showpoint,
+    showpos =     _S_showpos,
+    skipws =      _S_skipws,
+    unitbuf =     _S_unitbuf,
+    uppercase =   _S_uppercase,
+    adjustfield = _S_adjustfield,
+    basefield =   _S_basefield,
+    floatfield =  _S_floatfield
+  };
 
-  _Ios_Fmtflags flags() const;
-  _Ios_Fmtflags setf(fmtflags val);
+  // 27.4.2.1.4  Type openmode
+  enum openmode {
+    app =    	_S_app,
+    ate =    	_S_ate,
+    binary = 	_S_bin,
+    in =     	_S_in,
+    out =    	_S_out,
+    trunc =  	_S_trunc
+  };
+
+  // 27.4.2.1.3  Type ios_base::iostate
+  enum iostate {
+    badbit =  	_S_badbit,
+    eofbit =  	_S_eofbit,
+    failbit = 	_S_failbit,
+    goodbit = 	0
+  };
+
+  // 27.4.2.1.5  Type seekdir
+  enum seekdir {
+    beg = 		0,
+    cur = 		SEEK_CUR, // 1
+    end = 		SEEK_END // 2
+  };
+
+  fmtflags flags() const;
+  fmtflags setf(fmtflags val);
   void unsetf(fmtflags mask);
 
   ostream* tie() const;

@@ -2560,10 +2560,13 @@ static void Install_Types() {
       }
     }
     else if(tmp->InheritsFormal(TA_enum)) {
-      cssEnum_inst_nm(cssMisc::Enums, 0, tmp->name);
-      for(j=0; j < tmp->enum_vals.size; j++)
-	cssInt_inst_nm(cssMisc::Enums, tmp->enum_vals.FastEl(j)->enum_no,
-			tmp->enum_vals.FastEl(j)->name);
+      if((tmp->name != "DataChangedReason") && (tmp->name != "CancelOp") &&
+	 (tmp->name != "NodeBitmapFlags")) {
+	cssEnum_inst_nm(cssMisc::Enums, 0, tmp->name);
+	for(j=0; j < tmp->enum_vals.size; j++)
+	  cssInt_inst_nm(cssMisc::Enums, tmp->enum_vals.FastEl(j)->enum_no,
+			 tmp->enum_vals.FastEl(j)->name);
+      }
     }
     else if(tmp->InheritsFrom(TA_taRegFun)) {
       for(j=0; j < tmp->methods.size; j++) {
