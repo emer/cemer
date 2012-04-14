@@ -231,9 +231,8 @@ void ProgType::UpdateAfterEdit_impl() {
 
 void ProgType::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
-                "Name:",name,"is forbidden -- choose another"))
-    name = "My" + name;
+  CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+	     "Name:",name,"is a css reserved name used for something else -- please choose another name");
 }
 
 taBase* ProgType::FindTypeName(const String& nm) const {
@@ -372,9 +371,8 @@ void DynEnumItem::UpdateAfterEdit_impl() {
 
 void DynEnumItem::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
-                "Name:",name,"is forbidden -- choose another"))
-    name = "My" + name;
+  CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+	     "Name:",name,"is a css reserved name used for something else -- please choose another name");
 }
 
 String DynEnumItem::GetDisplayName() const {
@@ -902,8 +900,8 @@ void ProgVar::CheckThisConfig_impl(bool quiet, bool& rval) {
   String prognm;
   Program* prg = GET_MY_OWNER(Program);
   if (prg) prognm = prg->name;
-  if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
-                "Name:",name,"is forbidden -- choose another"))
+  CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+	     "Name:",name,"is a css reserved name used for something else -- please choose another name");
     name = "My" + name;
   if(var_type == T_Object) {
     if(!HasVarFlag(LOCAL_VAR) && HasVarFlag(NULL_CHECK) && !object_val) {
@@ -3918,9 +3916,8 @@ void Function::UpdateAfterCopy(const ProgEl& cp) {
 void Function::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(name.empty(), quiet, rval, "name is empty -- functions must be named");
-  if(CheckError(Program::IsForbiddenName(name, false), quiet, rval,
-                "Name:",name,"is forbidden -- choose another"))
-    name = "My" + name;
+  CheckError(Program::IsForbiddenName(name, false), quiet, rval,
+	     "Name:",name,"is a css reserved name used for something else -- please choose another name");
   Function_List* flo = GET_MY_OWNER(Function_List);
   CheckError(!flo, quiet, rval, "Function must only be in .functions -- cannot be in .prog_code or .init_code -- this is the DEFINITION of the function, not calling the function (which is FunctionCall)");
 }
@@ -5646,7 +5643,7 @@ bool Program::IsForbiddenName(const String& chk_nm, bool warn) {
   if((forbidden_names.FindEl(chk_nm) < 0) && !(bool)taMisc::types.FindName(chk_nm)) return false;
   if(!warn) return true;
   taMisc::Error("Program::IsForbiddenName -- Name:", chk_nm,
-                "is not allowed as it clashes with other hard-coded variable names -- please choose a different one!");
+                "is a css reserved name used for something else -- please choose another name");
   return true;
 }
 

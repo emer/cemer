@@ -60,6 +60,7 @@ protected:
   void 		focusOutEvent(QFocusEvent* ev); // override
   void 		keyPressEvent(QKeyEvent* e);	// override
   void 		wheelEvent(QWheelEvent * event);
+  bool 		event(QEvent * event);
 private:  
   void		init();
 };

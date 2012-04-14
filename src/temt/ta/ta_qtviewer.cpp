@@ -4516,6 +4516,7 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
   if (rval) {
     if(!(itv == cur_tree_view && rval == itv->topLevelItem(0))) {
       // never assert the first item on a non-main browser -- likely the owner of a sub browser and that is very distracting for scrolling
+      activateWindow();
       itv->setFocus();
       itv->clearExtSelection();
       itv->scrollTo(rval);
@@ -4527,6 +4528,7 @@ iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiDataLink* link) {
     itv->clearExtSelection();
     rval = itv->AssertItem(link);
     if (rval) {
+      activateWindow();
       itv->setFocus();
       itv->scrollTo(rval);
       itv->setCurrentItem(rval, 0, QItemSelectionModel::ClearAndSelect);

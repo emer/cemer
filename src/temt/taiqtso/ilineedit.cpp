@@ -72,6 +72,7 @@ void iLineEdit::editInEditor() {
 
 void iLineEdit::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev);
+  activateWindow();		// make sure we're active when we click in a box!
   // std::cerr << "focus in" << std::endl;
   // emit focusChanged(true);
 }
@@ -142,9 +143,13 @@ void iLineEdit::clearExtSelection() {
   inherited::deselect();
 }
 
+bool iLineEdit::event(QEvent* e) {
+  return inherited::event(e);
+  // std::cerr << "event" << e->type() << std::endl;
+}
+
 void iLineEdit::keyPressEvent(QKeyEvent* e) {
   // std::cerr << "keypress" << std::endl;
-
   bool ctrl_pressed = false;
   if(e->modifiers() & Qt::ControlModifier)
     ctrl_pressed = true;
