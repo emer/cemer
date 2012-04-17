@@ -477,6 +477,7 @@ public:
   float		out_err_go_inc;	// #DEF_0 for OUTPUT stripes: how much to increase tonic da when an error occurs on a reward trial, and at least one of the stripes has fired go 
   float		decay;		// rate of decay in tonic da per primary value feedback trial, in the absence of increases per above parameters
   float		max_da;		// maximum tonic da value
+  float		neg_lrn_da_gain; // #MIN_0 #MAX_1 how much tonic da levels affect negative phasic (learning) dopamine values -- max gain of 1 means that when tonic_da is at max_da, negative da is 0 (generally use values < 1) -- this helps stripes that are being "propped up" by tonic da to not get immediately "smacked down" by punishment, so they have a better chance of learning.  Also reflects plausible filling in of phasic dips by tonic levels.
   float		nogo_thr_inc; 	// how much to increase the stripe-specific tonic da per trial when rnd_go.nogo_thr has been exceeded in a given stripe
 
   override String       GetTypeDecoKey() const { return "LayerSpec"; }

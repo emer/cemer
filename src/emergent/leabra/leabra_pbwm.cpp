@@ -706,6 +706,7 @@ void MatrixTonicDaSpec::Initialize() {
   out_err_go_inc = 0.0f;
   decay = 0.001f;
   max_da = 0.5f;
+  neg_lrn_da_gain = 0.0f;
   nogo_thr_inc = 1.0f;
 }
 
@@ -1039,6 +1040,8 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   int n_go = 0;
   float nogo_da_sub = 0.0f;
 
+  float lay_ton_da = lay->GetUserDataAsFloat("tonic_da"); 
+
   if(rnd_go.on) {
     // subtract the average -- this turns out to be important for preventing global
     // drift in weights upward when lots of rnd go is going on (e.g., loop model)
@@ -1078,6 +1081,8 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
         snrthal_act = 0.0f;     // if no MNT_GO, nothing for us..
     }
 
+    float ton_da = lay_ton_da + mgpd->tonic_da;
+
     for(int i=0;i<nunits;i++) {
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(Layer::ACC_GP, i, gi);
       if(u->lesioned()) continue;
@@ -1095,6 +1100,13 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
             lrn_dav *= go_nogo_gain.nogo_p;
         }
         else if(lrn_dav < 0.0f) {
+	  if(tonic_da.neg_lrn_da_gain > 0.0f) {
+	    float neg_gain = tonic_da.neg_lrn_da_gain * 
+	      ((tonic_da.max_da - ton_da) / tonic_da.max_da);
+	    neg_gain = MAX(0.0f, neg_gain);
+	    lrn_dav *= neg_gain;
+	  }
+
           if(go_no == PFCGateSpec::GATE_GO)
             lrn_dav *= go_nogo_gain.go_n;
           else
