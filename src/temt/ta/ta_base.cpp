@@ -1032,6 +1032,7 @@ bool taBase::IterFirst_impl(taBaseItr*& itr) const {
       return false;
     }
     itr->el_idx = cmat->FastEl_Flat(0); // first guy
+    if(itr->el_idx < 0) itr->el_idx += ElemCount();
     if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
       return false;
     }
@@ -1065,6 +1066,7 @@ bool taBase::IterNext_impl(taBaseItr*& itr) const {
       return false;
     }
     itr->el_idx = cmat->FastEl_Flat(itr->count); // next guy
+    if(itr->el_idx < 0) itr->el_idx += ElemCount();
     if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
       return false;
     }

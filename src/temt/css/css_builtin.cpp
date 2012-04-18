@@ -851,6 +851,17 @@ static cssEl* cssElCFun_foreach_cond_stub(int, cssEl* arg[]) {
       *itrc = FOREACH_itr;		// set pointer
     }
     else {
+      if(list->InheritsFrom(&TA_slice_Matrix)) {
+	int_Matrix* expnd = ((slice_Matrix*)list)->Expand();
+	cssTA_Matrix* mtx = (cssTA_Matrix*)arg[1];
+	if(mtx->ptr_cnt == 0) {
+	  mtx->ptr_cnt = 1;		// change owned to a pointer, so pointer copy works
+	}
+	*mtx = expnd;	// change the pointer
+	mtx->ptr_cnt = 0;	// set to full ownership of new matrix object
+	mtx->SetPtrFlag(cssTA_Matrix::OWN_OBJ);
+	list = expnd;
+      }
       val = list->IterBegin(FOREACH_itr); // variant assign
       if(FOREACH_itr) {
 	*itrc = FOREACH_itr;		// set pointer

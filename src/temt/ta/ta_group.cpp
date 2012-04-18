@@ -599,6 +599,7 @@ taGroup_impl* taGroup_impl::GetSuperGp_() {
 }
 
 taBase* taGroup_impl::Leaf_(int idx) const {
+  if(idx < 0) idx += leaves;	// allow - indexes
   if ((idx < 0) || (idx >= leaves))
     return NULL;
   if(size && (idx < size))

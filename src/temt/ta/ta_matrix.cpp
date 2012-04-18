@@ -4060,6 +4060,43 @@ bool int_Matrix::StrValIsValid(const String& str, String* err_msg) const {
   return rval;
 }
 
+//////////////////////////
+//   slice_Matrix	//
+//////////////////////////
+
+int_Matrix* slice_Matrix::Expand(int implicit_end) {
+  if(TestError(size < 3, "Expand", "slice matrix does not contain at least 3 elements, as it must"))
+    return NULL;
+  // todo: could try to handle multi-dimensional case, but it is tricky due to
+  // uneven sizes of internal dimensions..
+  int_Matrix* rval = new int_Matrix;
+  int start = FastEl(0);
+  int end = FastEl(1);
+  int step = FastEl(2);
+  if(step == 0) step = 1;
+  int sz = implicit_end;		// default size
+  if(end > 0)			// if end set, then it is size
+    sz = end;
+  if(!FixSliceValsFromSize(start, end, sz)) {
+    return NULL;
+  }
+  int n_vals = (end-start) / ABS(step);
+  rval->SetGeom(1, n_vals);
+  if(step > 0) {
+    int cnt=0;
+    for(int i = start; i < end; i += step, cnt++) {
+      rval->FastEl_Flat(cnt) = i;
+    }
+  }
+  else {
+    int cnt=0;
+    for(int i = end-1; i >= start; i += step, cnt++) {
+      rval->FastEl_Flat(cnt) = i;
+    }
+  }
+  return rval;
+}
+
 
 //////////////////////////
 //   byte_Matrix	//
