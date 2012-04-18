@@ -118,9 +118,9 @@ int yylex();
 %type   <ival>	comb_expr exprlist exprlsel
 %type	<ival>	matrixarray matexprlist matexprlsel matsemicolon matcolon matcomma
 %type   <ival>  cmd_exprlist cmd_exprlsel argstop memb_expr
-%type	<ival>	normfuncall startmatrix
+%type	<ival>	normfuncall startmatrix castparen
 %type   <el_ival> normfun membfun
-%type	<el>    primitive type type_el typeonly typeorscp scopetype
+%type	<el>    primitive type type_el typeonly typeorscp scopetype casttype
 %type	<el>    anycmd
 %type	<ival>	ptrs
 
@@ -1381,14 +1381,13 @@ comb_expr:
 	| '~' expr %prec CSS_BITNEG	{ $$ = $2; Code1(cssBI::bitneg); }
         | matrixarray			{ $$ = $1; }
         | expr matrixarray 		{ $$ = $1; Code1(cssBI::de_array); }
-	/* | expr '[' expr ']'		{ Code1(cssBI::de_array); } */
-        | '(' type ')' expr %prec CSS_UNARY {
+        | '(' casttype ')' expr %prec CSS_UNARY {
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if($2.El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
 	      return cssProg::YY_Err; }
 	    $$ = $4; Code2($2, cssBI::cast); }
-        | type '(' expr	')'		{
+        | type castparen expr	')'		{
   	    cssMisc::CodeTop();	/* don't use const expr if const type decl */
 	    if($1.El()->tmp_str == "const") {
 	      yyerror("const type not accepted in this context");
@@ -1397,6 +1396,14 @@ comb_expr:
         | normfuncall
 	| '(' expr ')'			{ $$ = $2; }
 	;
+
+castparen:  '('				{ Code1(cssMisc::VoidElPtr); }
+        /* cast needs a void stop because it calls MakeTempToken which sucks the void */
+        ;
+
+casttype:  type				{ Code1(cssMisc::VoidElPtr); $$ = $1; }
+        /* cast needs a void stop because it calls MakeTempToken which sucks the void */
+        ;
 
 primitive:
           CSS_NUMBER

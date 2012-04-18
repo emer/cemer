@@ -1085,7 +1085,7 @@ bool taMatrix::IterFirst_impl(taBaseItr*& itr) const {
     for(int d=0;d<dm;d++) {
       idx.Set(d, cmat->FastEl(d, 0));	// outer index is count index
     }
-    itr->el_idx = FastElIndexN(idx);
+    itr->el_idx = SafeElIndexN(idx);
     if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
       return false;
     }
@@ -1123,7 +1123,7 @@ bool taMatrix::IterNext_impl(taBaseItr*& itr) const {
     for(int d=0;d<dm;d++) {
       idx.Set(d, cmat->FastEl(d, itr->count));	// outer index is count index
     }
-    itr->el_idx = FastElIndexN(idx);
+    itr->el_idx = SafeElIndexN(idx);
     if(itr->el_idx < 0 || itr->el_idx >= ElemCount()) {
       return false;
     }

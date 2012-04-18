@@ -342,8 +342,16 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
     else if(aobj == cssBI::colon_mark) {
       n_colons++;	
     }
-    else if(aobj->GetPtrType() == cssEl::T_Int) n_int++;
-    else if(aobj->GetPtrType() == cssEl::T_Real) n_real++;
+    else if(aobj->GetPtrType() == cssEl::T_Int || 
+	    aobj->GetPtrType() == cssEl::T_Int64 ||
+	    aobj->GetPtrType() == cssEl::T_Short ||
+	    aobj->GetPtrType() == cssEl::T_Long ||
+	    aobj->GetPtrType() == cssEl::T_LongLong ||
+	    aobj->GetPtrType() == cssEl::T_Char ||
+	    aobj->GetPtrType() == cssEl::T_Enum ||
+	    aobj->GetPtrType() == cssEl::T_DynEnum) n_int++;
+    else if(aobj->GetPtrType() == cssEl::T_Real ||
+	    aobj->GetPtrType() == cssEl::T_Float) n_real++;
     else if(aobj->GetPtrType() == cssEl::T_String) n_string++;
     else if(aobj->IsTaMatrix()) n_matrix++;
   }
