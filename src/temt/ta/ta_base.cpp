@@ -4207,8 +4207,11 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
 	imat->Add(FOREACH_itr->el_idx); // add absolute index of item
       }
     }
-    if(imat->size == 1)
-      return VarEl(imat->FastEl_Flat(0));
+    if(imat->size == 1) {
+      int j = imat->FastEl_Flat(0);
+      delete imat;
+      return VarEl(j);
+    }
     taList_impl* nwvw = NewElView(imat, IDX_COORDS);
     return (Variant)nwvw;
     break;
@@ -4228,8 +4231,11 @@ Variant taList_impl::Elem(const Variant& idx, IndexMode mode) const {
 	}
       }
     }
-    if(imat->size == 1)
-      return VarEl(imat->FastEl_Flat(0));
+    if(imat->size == 1) {
+      int j = imat->FastEl_Flat(0);
+      delete imat;
+      return VarEl(j);
+    }
     taList_impl* nwvw = NewElView(imat, IDX_COORDS);
     return (Variant)nwvw;
     break;

@@ -937,10 +937,44 @@ Variant taMatrix::Elem(const Variant& idx, IndexMode mode) const {
     return SafeElAsVar_Flat(idx.toInt());
     break;
   }
-  case IDX_NAME:
-  case IDX_MISC:
+  case IDX_NAME: {
+    const String& nm = idx.toString();
+    int_Matrix* imat = new int_Matrix(1,0); // return indices
+    TA_FOREACH(vitm, *this) { // use iterator so it is recursive on existing filtering
+      String val = vitm.toString();
+      if(val.matches_wildcard(nm)) {
+	imat->Add(FOREACH_itr->el_idx); // add absolute index of item
+      }
+    }
+    if(imat->size == 1) {
+      int j = imat->FastEl_Flat(0);
+      delete imat;
+      return (Variant)j;
+    }
+    return (Variant)imat;
+  }
   case IDX_NAMES: {
-    TestError(true, "Elem::IDX_NAME/S or MISC", "index type not support for Matrix");
+    String_Matrix* cmat = dynamic_cast<String_Matrix*>(idx.toMatrix());
+    int_Matrix* imat = new int_Matrix(1,0);
+    TA_FOREACH(vitm, *this) {	// use iterator so it is recursive on existing filtering
+      String val = vitm.toString();
+      int el_idx = FOREACH_itr->el_idx; // get before occluded by next iterator
+      TA_FOREACH(mitm, *cmat) { // use iterator on matrix so it can be filtered too
+	const String nm = mitm.toString();
+	if(val.matches_wildcard(nm)) {
+	  imat->Add(el_idx); // add absolute index of item
+	}
+      }
+    }
+    if(imat->size == 1) {
+      int j = imat->FastEl_Flat(0);
+      delete imat;
+      return (Variant)j;
+    }
+    return (Variant)imat;
+  }
+  case IDX_MISC: {
+    TestError(true, "Elem::IDX_MISC", "index type not support for Matrix");
     return _nilVariant;
     break;
   }
