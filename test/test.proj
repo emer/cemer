@@ -2343,7 +2343,7 @@ LeabraProject .projects["test"] {
 	UserData_DocLink @["DocLink"] { };
    };
 
-      BaseSpec_Group @.specs = [4] {
+      BaseSpec_Group @.specs = [5] {
 	LeabraUnitSpec @["LeabraUnitSpec_0"] { 
 	  BaseSpec_Group @.children = [0] {
 	  };
@@ -2377,6 +2377,27 @@ LeabraProject .projects["test"] {
 	      };
 	    };
 	    LeabraConSpec @["TopDownCons"] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.lrate_sched = [0] {
+	      };
+	    };
+	    LeabraConSpec @["ToOutput"] { 
+	      BaseSpec_Group @.children = [0] {
+	      };
+
+	      Schedule @.lrate_sched = [0] {
+	      };
+	    };
+	  };
+
+	  Schedule @.lrate_sched = [0] {
+	  };
+	};
+	LeabraConSpec @["DiffCons"] { 
+	  BaseSpec_Group @.children = [2] {
+	    LeabraBiasSpec @["LeabraBiasSpec_0"] { 
 	      BaseSpec_Group @.children = [0] {
 	      };
 
@@ -2697,7 +2718,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 			 <li id=\"ca-delete\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=delete\">Delete</a></li>
 			 <li id=\"ca-move\"><a href=\"/ccnlab/index.php/Special:MovePage/CtLeabra_XCAL_Params\">Move</a></li>
 			 <li id=\"ca-protect\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=167563310df525c9d8d8643da94d1bdc%2B%5C\">Unwatch</a></li>
+			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=2696aa7257e649121ea94f944a9b48b5%2B%5C\">Unwatch</a></li>
 			 <li id=\"ca-purge\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=purge\">Refresh</a></li>
 		</ul>
 
@@ -3465,7 +3486,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 		
 		<div id=\"gumax-article-message\">
 			<span id=\"f-lastmod\"> This page was last modified on 15 June 2010, at 09:46.</span>
-			<span id=\"f-viewcount\">This page has been accessed 968 times. </span>
+			<span id=\"f-viewcount\">This page has been accessed 989 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
@@ -3479,9 +3500,9 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 <script>if(window.mw){
 	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":\"1\",\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"30\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
 	\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"nickname\":\"\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"\"});;},{\"all\":
-	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"89703a59a690525b80fe124224da0ddb+\\\\\",\"watchToken\":\"86bab26c433c19958a0769d1830b2014+\\\\\"});;},{},{});
+	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"26896cbc5f40cd936455ede761683135+\\\\\",\"watchToken\":\"6e08b5311558a417f64835e801872c08+\\\\\"});;},{},{});
 	
-	/* cache key: ccnlab:resourceloader:filter:minify-js:5:ce6f828a4465a0787ef38f50960c93ba */
+	/* cache key: ccnlab:resourceloader:filter:minify-js:5:e653c73c521f4612873a43fe0a645e0e */
 }
 </script>
 
@@ -3511,7 +3532,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.271 secs. -->
+<!-- Served in 0.264 secs. -->
 
 
 
@@ -34677,7 +34698,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=0;
-       lrate=0.02;
+       lrate=0.01;
        cur_lrate=0.02;
        lrs_value=EPOCH;
        lrate_sched {
@@ -34706,7 +34727,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
       LeabraConSpec @["TopDownCons"] {
        name="TopDownCons";
        desc=;
-       unique{ wt_scale;       };
+       unique{ wt_scale;learn;       };
        children {
 	name=;
 	el_typ=LeabraConSpec;
@@ -34718,8 +34739,8 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        inhib=0;
        wt_scale {abs=1: rel=0.5: sem_extra=2: old=0: };
        wt_scale_init {init=0: abs=1: rel=1: };
-       learn=1;
-       lrate=0.02;
+       learn=0;
+       lrate=0.01;
        cur_lrate=0.02;
        lrs_value=EPOCH;
        lrate_sched {
@@ -34760,7 +34781,7 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
        wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
        wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
-       lrate=0.02;
+       lrate=0.01;
        cur_lrate=0.02;
        lrs_value=EPOCH;
        lrate_sched {
@@ -34793,6 +34814,130 @@ FloatTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1:
      wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
      wt_scale_init {init=0: abs=1: rel=1: };
      learn=1;
+     lrate=0.01;
+     cur_lrate=0.02;
+     lrs_value=EPOCH;
+     lrate_sched {
+      name=;
+      el_typ=SchedItem;
+      el_def=0;
+      default_val=1;
+      interpolate=0;
+     };
+     wt_sig {gain=6: off=1: dwt_norm=1: };
+     lmix {hebb=0: err=1: err_sb=1: };
+     xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
+     rel_net_adapt {
+      on=0;
+      trg_fm_input=0.85;
+      trg_fm_output=0.15;
+      trg_lateral=0;
+      trg_sum=1;
+      tol_lg=0.05;
+      tol_sm=0.2;
+      rel_lrate=0.05;
+     };
+    };
+    LeabraConSpec @["DiffCons"] {
+     name="DiffCons";
+     desc=;
+     unique{ learn;     };
+     children {
+      name=;
+      el_typ=LeabraConSpec;
+      el_def=0;
+      LeabraBiasSpec @["LeabraBiasSpec_0"] {
+       name="LeabraBiasSpec_0";
+       desc=;
+       unique{ rnd;wt_limits;wt_scale;wt_scale_init;learn;       };
+       children {
+	name=;
+	el_typ=LeabraBiasSpec;
+	el_def=0;
+       };
+       rnd {name="": type=UNIFORM: mean=0: var=0: par=1: };
+       wt_limits {type=NONE: min=-1: max=5: sym=0: };
+       learn_rule=CTLEABRA_XCAL;
+       inhib=0;
+       wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
+       wt_scale_init {init=0: abs=1: rel=1: };
+       learn=0;
+       lrate=0.02;
+       cur_lrate=0.02;
+       lrs_value=EPOCH;
+       lrate_sched {
+	name=;
+	el_typ=SchedItem;
+	el_def=0;
+	default_val=1;
+	interpolate=0;
+       };
+       wt_sig {gain=6: off=1: dwt_norm=1: };
+       lmix {hebb=0: err=1: err_sb=1: };
+       xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
+       rel_net_adapt {
+	on=0;
+	trg_fm_input=0.85;
+	trg_fm_output=0.15;
+	trg_lateral=0;
+	trg_sum=1;
+	tol_lg=0.05;
+	tol_sm=0.2;
+	rel_lrate=0.05;
+       };
+       dwt_thresh=0.1;
+      };
+      LeabraConSpec @["ToOutput"] {
+       name="ToOutput";
+       desc=;
+       unique{        };
+       children {
+	name=;
+	el_typ=LeabraConSpec;
+	el_def=0;
+       };
+       rnd {name="": type=UNIFORM: mean=0.5: var=0.25: par=1: };
+       wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
+       learn_rule=CTLEABRA_XCAL;
+       inhib=0;
+       wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
+       wt_scale_init {init=0: abs=1: rel=1: };
+       learn=0;
+       lrate=0.02;
+       cur_lrate=0.02;
+       lrs_value=EPOCH;
+       lrate_sched {
+	name=;
+	el_typ=SchedItem;
+	el_def=0;
+	default_val=1;
+	interpolate=0;
+       };
+       wt_sig {gain=6: off=1: dwt_norm=1: };
+       lmix {hebb=0: err=1: err_sb=1: };
+       xcal {thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       savg_cor {cor=0.4: thresh=0.001: norm_con_n=1: };
+       rel_net_adapt {
+	on=0;
+	trg_fm_input=0.85;
+	trg_fm_output=0.15;
+	trg_lateral=0;
+	trg_sum=1;
+	tol_lg=0.05;
+	tol_sm=0.2;
+	rel_lrate=0.05;
+       };
+      };
+     };
+     rnd {name="": type=UNIFORM: mean=0.5: var=0.25: par=1: };
+     wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
+     learn_rule=CTLEABRA_XCAL;
+     inhib=0;
+     wt_scale {abs=1: rel=1: sem_extra=2: old=0: };
+     wt_scale_init {init=0: abs=1: rel=1: };
+     learn=0;
      lrate=0.02;
      cur_lrate=0.02;
      lrs_value=EPOCH;

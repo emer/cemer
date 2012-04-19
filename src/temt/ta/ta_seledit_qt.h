@@ -342,6 +342,10 @@ public:
   QBrush*		    add_color;
   QBrush*		    del_color;
   QBrush*		    chg_color;
+  QBrush*		    add_color_lt;
+  QBrush*		    del_color_lt;
+  QBrush*		    chg_color_lt;
+  QBrush*		    off_color;
 
   virtual bool          Browse();
   // main user interface: this actually puts up the dialog -- is non-modal so will return immediately with true..

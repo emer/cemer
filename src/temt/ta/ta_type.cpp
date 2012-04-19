@@ -8005,8 +8005,9 @@ void TypeDef::GetObjDiffVal_class(taObjDiff_List& odl, int nest_lev, const void*
       last_md = md;
       continue;
     }
-    if(!md->GetCondOptTest("CONDSHOW", this, base))
-      continue;
+    // handle this in display -- doing it here causes imbalances in diffs that are bad!
+    // if(!md->GetCondOptTest("CONDSHOW", this, base))
+    //   continue;
     if(md->name == "user_data_") {
       continue;			// too much clutter for now..
     }

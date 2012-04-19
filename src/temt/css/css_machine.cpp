@@ -182,6 +182,10 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
   cssMisc::last_err_msg += "\n" + GetSourceLoc(prog); // uses cur_top if prog = NULL
   taMisc::LogEvent("css Error: " + cssMisc::last_err_msg);
 
+  if(top->cmd_shell) {		// prevent it from getting stuck in cmd shell hell
+    top->cmd_shell->cmd_prog->Reset();
+  }
+
   if(taMisc::ErrorCancelCheck()) // just done
     return;
 
@@ -238,6 +242,10 @@ void cssMisc::SyntaxError(const char* er) {
   }
 
   taMisc::LogEvent("css" + msg);
+
+  if(cssMisc::cur_top->cmd_shell) { // prevent it from getting stuck in cmd shell hell
+    cssMisc::cur_top->cmd_shell->cmd_prog->Reset();
+  }
 
   if(taMisc::ErrorCancelCheck()) // just done
     return;
