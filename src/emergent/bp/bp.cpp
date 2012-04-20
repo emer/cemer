@@ -95,6 +95,17 @@ void BpConSpec::SetCurLrate(int epoch) {
   cur_lrate = lrate * lrate_sched.GetVal(epoch);
 }
 
+void BpConSpec::LogLrateSched(int epcs_per_step, float n_steps) {
+  float log_ns[3] = {1, .5f, .2f};
+
+  lrate_sched.SetSize((int)n_steps);
+  for(int i=0;i<n_steps;i++) {
+    lrate_sched[i]->start_ctr = i * epcs_per_step;
+    lrate_sched[i]->start_val = log_ns[i%3] * powf(10.0f,-(i/3));
+  }
+  UpdateAfterEdit();            // needed to update the sub guys
+}
+
 void BpRecvCons::Initialize() {
   SetConType(&TA_BpCon);
 }

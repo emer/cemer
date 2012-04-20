@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v5.3.7.0 rev5377
+// ta_Dump File v3.0 -- code v5.3.7.0 rev5386
 LeabraProject .projects["test"] { 
  UserDataItem_List @*(.user_data_) {
     UserData_DocLink @["DocLink"] { };
@@ -976,7 +976,7 @@ LeabraProject .projects["test"] {
 	  ProgVar @["train_mode"] { };
 	  ProgVar @["rnd_init"] { };
 	  ProgVar @["err_stopcrit"] { };
-	  ProgVar @["in"] { };
+	  ProgVar @["Myin"] { };
 	  ProgVar @["save_final_wts"] { };
 	  ProgVar @["save_wts_interval"] { };
 	  ProgVar @["n_under_cnt"] { };
@@ -2580,8 +2580,6 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 <meta charset=\"UTF-8\">
 <meta name=\"generator\" content=\"MediaWiki 1.19alpha\">
 <link rel=\"stylesheet\" href=\"/ccnlab/extensions/Drafts/Drafts.css?3\">
-<link rel=\"alternate\" type=\"application/x-wiki\" title=\"Edit\" href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit\">
-<link rel=\"edit\" title=\"Edit\" href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit\">
 <link rel=\"shortcut icon\" href=\"/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/ccnlab/opensearch_desc.php\" title=\"Computational Cognitive Neuroscience Wiki (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"http://grey.colorado.edu/ccnlab/api.php?action=rsd\">
@@ -2603,25 +2601,24 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 
 /* cache key: ccnlab:resourceloader:filter:minify-css:5:382c4211d55a0a706a085b3143c44edd */</style><style type=\"text/css\" media=\"all\">.ui-tabs{position:relative;padding:.2em;zoom:1} .ui-tabs .ui-tabs-nav{margin:0;padding:.2em .2em 0}.ui-tabs .ui-tabs-nav li{list-style:none;float:left;position:relative;top:1px;margin:0 .2em 1px 0;border-bottom:0 !important;padding:0;white-space:nowrap}.ui-tabs .ui-tabs-nav li a{float:left;padding:.5em 1em;text-decoration:none}.ui-tabs .ui-tabs-nav li.ui-tabs-selected{margin-bottom:0;padding-bottom:1px}.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,.ui-tabs .ui-tabs-nav li.ui-state-disabled a,.ui-tabs .ui-tabs-nav li.ui-state-processing a{cursor:text}.ui-tabs .ui-tabs-nav li a,.ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a{cursor:pointer} .ui-tabs .ui-tabs-panel{display:block;border-width:0;padding:1em 1.4em;background:none}.ui-tabs .ui-tabs-hide{display:none !important}
 
-/* cache key: ccnlab:resourceloader:filter:minify-css:5:890b68d4189b6dd4e7ca649947d2cf9f */</style><style type=\"text/css\" media=\"all\">a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}
+/* cache key: ccnlab:resourceloader:filter:minify-css:5:890b68d4189b6dd4e7ca649947d2cf9f */</style><style type=\"text/css\" media=\"all\">a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}.editsection{display:none}
 
-/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+/* cache key: ccnlab:resourceloader:filter:minify-css:5:d7b3b8ca8e02fa8dee46954717296c3d */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"http://grey.colorado.edu/ccnlab/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=gumaxdd&amp;*\">
-<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}
+<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}.editsection{display:none}
 
-/* cache key: ccnlab:resourceloader:filter:minify-css:5:c88e2bcd56513749bec09a7e29cb3ffa */</style>
+/* cache key: ccnlab:resourceloader:filter:minify-css:5:40436297bd93906a010108e46094c495 */</style>
 
 <script src=\"http://grey.colorado.edu/ccnlab/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script><script src=\"/ccnlab/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=gumaxdd&amp;version=20111027T173219Z\"></script>
 <script>if(window.mw){
-	mw.config.set({\"wgCanonicalNamespace\": \"\", \"wgCanonicalSpecialPageName\": false, \"wgNamespaceNumber\": 0, \"wgPageName\": \"CtLeabra_XCAL_Params\", \"wgTitle\": \"CtLeabra XCAL Params\", \"wgCurRevisionId\": 1656717, \"wgArticleId\": 3337, \"wgIsArticle\": true, \"wgAction\": \"view\", \"wgUserName\": \"Oreilly\", \"wgUserGroups\": [\"bureaucrat\", \"darkmatter\", \"sysop\", \"*\", \"user\", \"autoconfirmed\"], \"wgCategories\": [], \"wgBreakFrames\": false, \"wgRestrictionEdit\": [], \"wgRestrictionMove\": [], \"wgSearchNamespaces\": [0], \"sfgAutocompleteOnAllChars\": false, \"sfgScriptPath\": \"/ccnlab/extensions/SemanticForms\", \"sfgAutocompleteValues\": [], \"sfgShowOnSelect\": [], \"sfgFieldProperties\": [], \"sfgDependentFields\": [], \"sfgFormErrorsHeader\": \"There were errors with your form input; see below.\", \"sfgBlankErrorStr\": \"cannot be blank\", \"sfgBadURLErrorStr\": \"must have the correct URL format, starting with \\\"http\\\"\", \"sfgBadEmailErrorStr\": \"must have a valid email address format\", \"sfgBadNumberErrorStr\": \"must be a valid number\", \"sfgBadDateErrorStr\": \"must be a valid date\", \"sfgAnonEditWarning\": \"Warning: You are not logged in. Your IP address will be recorded in this page\\'s edit history.\", \"sfgSaveAndContinueSummary\": \"Saved using \\\"Save and continue\\\" button in form\", \"wgVectorEnabledModules\": {\"collapsiblenav\": true, \"collapsibletabs\": true, \"editwarning\": false, \"expandablesearch\": false, \"footercleanup\": false, \"sectioneditlinks\": false, \"simplesearch\": true, \"experiments\": true}, \"wgSVGEditEditor\": false, \"wgWikiEditorEnabledModules\": {\"toolbar\": true, \"dialogs\": true, \"hidesig\": true, \"templateEditor\": false, \"templates\": false, \"preview\": true, \"previewDialog\": false, \"publish\": false, \"toc\": false}});
+	mw.config.set({\"wgCanonicalNamespace\": \"\", \"wgCanonicalSpecialPageName\": false, \"wgNamespaceNumber\": 0, \"wgPageName\": \"CtLeabra_XCAL_Params\", \"wgTitle\": \"CtLeabra XCAL Params\", \"wgCurRevisionId\": 1656717, \"wgArticleId\": 3337, \"wgIsArticle\": true, \"wgAction\": \"view\", \"wgUserName\": null, \"wgUserGroups\": [\"*\"], \"wgCategories\": [], \"wgBreakFrames\": false, \"wgRestrictionEdit\": [], \"wgRestrictionMove\": [], \"wgSearchNamespaces\": [0], \"sfgAutocompleteOnAllChars\": false, \"sfgScriptPath\": \"/ccnlab/extensions/SemanticForms\", \"sfgAutocompleteValues\": [], \"sfgShowOnSelect\": [], \"sfgFieldProperties\": [], \"sfgDependentFields\": [], \"sfgFormErrorsHeader\": \"There were errors with your form input; see below.\", \"sfgBlankErrorStr\": \"cannot be blank\", \"sfgBadURLErrorStr\": \"must have the correct URL format, starting with \\\"http\\\"\", \"sfgBadEmailErrorStr\": \"must have a valid email address format\", \"sfgBadNumberErrorStr\": \"must be a valid number\", \"sfgBadDateErrorStr\": \"must be a valid date\", \"sfgAnonEditWarning\": \"Warning: You are not logged in. Your IP address will be recorded in this page\\'s edit history.\", \"sfgSaveAndContinueSummary\": \"Saved using \\\"Save and continue\\\" button in form\", \"wgVectorEnabledModules\": {\"collapsiblenav\": true, \"collapsibletabs\": true, \"editwarning\": false, \"expandablesearch\": false, \"footercleanup\": false, \"sectioneditlinks\": false, \"simplesearch\": true, \"experiments\": true}, \"wgSVGEditEditor\": false, \"wgWikiEditorEnabledModules\": {\"toolbar\": true, \"dialogs\": true, \"hidesig\": true, \"templateEditor\": false, \"templates\": false, \"preview\": true, \"previewDialog\": false, \"publish\": false, \"toc\": false}});
 }
 </script><script>if(window.mw){
 	mw.loader.load([\"mediawiki.page.startup\"]);
 }
 </script><script type=\"text/javascript\" src=\"/ccnlab/load.php?debug=false&amp;lang=en&amp;modules=jquery.client%7Cmediawiki.page.startup&amp;skin=gumaxdd&amp;version=20120309T011608Z&amp;*\"></script>
 		<link rel=\"alternate\" type=\"application/rdf+xml\" title=\"CtLeabra XCAL Params\" href=\"/ccnlab/index.php?title=Special:ExportRDF/CtLeabra_XCAL_Params&amp;xmlmime=rdf\">
-</head>
-<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-CtLeabra_XCAL_Params skin-gumaxdd\">
+</head><body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-CtLeabra_XCAL_Params skin-gumaxdd\">
 <div id=\"gumax-page\">
 	<!--///===== Drop Down menu script =====///-->
 
@@ -2646,12 +2643,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 		<div id=\"gumax-p-login\">
 				<!--li><a href=\"#\">My Accounts</a-->
 		<ul>
-			<li id=\"pt-userpage\"><a href=\"/ccnlab/index.php/User:Oreilly\" class=\"new\">Oreilly</a></li>
-			<li id=\"pt-mytalk\"><a href=\"/ccnlab/index.php/User_talk:Oreilly\" class=\"new\">My talk</a></li>
-			<li id=\"pt-preferences\"><a href=\"/ccnlab/index.php/Special:Preferences\">My preferences</a></li>
-			<li id=\"pt-watchlist\"><a href=\"/ccnlab/index.php/Special:Watchlist\">My watchlist</a></li>
-			<li id=\"pt-mycontris\"><a href=\"/ccnlab/index.php/Special:Contributions/Oreilly\">My contributions</a></li>
-			<li id=\"pt-logout\"><a href=\"/ccnlab/index.php?title=Special:UserLogout&amp;returnto=CtLeabra_XCAL_Params\">Log out</a></li>
+			<li id=\"pt-login\"><a href=\"/ccnlab/index.php?title=Special:UserLogin&amp;returnto=CtLeabra_XCAL_Params\">Log in / create account</a></li>
 		</ul>
 	<!--/li-->
 		</div> <!-- end of Login Tools -->
@@ -2696,7 +2688,6 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 				<li id=\"t-whatlinkshere\"><a href=\"/ccnlab/index.php/Special:WhatLinksHere/CtLeabra_XCAL_Params\">What links here</a></li>
 				<li id=\"t-recentchangeslinked\"><a href=\"/ccnlab/index.php/Special:RecentChangesLinked/CtLeabra_XCAL_Params\">Related changes</a></li>
 			<li id=\"t-trackbacklink\"><a href=\"\">Trackback</a></li>
-<li id=\"t-upload\"><a href=\"/ccnlab/index.php/Special:Upload\">Upload file</a></li>
 <li id=\"t-specialpages\"><a href=\"/ccnlab/index.php/Special:SpecialPages\">Special pages</a></li>
 				<li id=\"t-permalink\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;oldid=1656717\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/ccnlab/index.php/Special:Browse/CtLeabra_XCAL_Params\" title=\"Special:Browse/CtLeabra XCAL Params\">Browse properties</a></li>			</ul>
 			</li>
@@ -2713,13 +2704,8 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 
 			 <li id=\"ca-nstab-main\" class=\"selected\"><a href=\"/ccnlab/index.php/CtLeabra_XCAL_Params\">Page</a></li>
 			 <li id=\"ca-talk\" class=\"new\"><a href=\"/ccnlab/index.php?title=Talk:CtLeabra_XCAL_Params&amp;action=edit&amp;redlink=1\">Discussion</a></li>
-			 <li id=\"ca-edit\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit\">Edit</a></li>
+			 <li id=\"ca-viewsource\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit\">View source</a></li>
 			 <li id=\"ca-history\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=history\">History</a></li>
-			 <li id=\"ca-delete\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=delete\">Delete</a></li>
-			 <li id=\"ca-move\"><a href=\"/ccnlab/index.php/Special:MovePage/CtLeabra_XCAL_Params\">Move</a></li>
-			 <li id=\"ca-protect\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=protect\">Protect</a></li>
-			 <li id=\"ca-unwatch\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=unwatch&amp;token=2696aa7257e649121ea94f944a9b48b5%2B%5C\">Unwatch</a></li>
-			 <li id=\"ca-purge\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=purge\">Refresh</a></li>
 		</ul>
 
 	</div>
@@ -2859,8 +2845,8 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li>
 </ul>
 </td></tr></tbody></table>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=1\" title=\"Edit section: parameter-based account\">edit</a>]</span> <span class=\"mw-headline\" id=\"parameter-based_account\"> parameter-based account </span></h1>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=2\" title=\"Edit section: std1 1 09 params\">edit</a>]</span> <span class=\"mw-headline\" id=\"std1_1_09_params\"> std1_1_09 params </span></h2>
+<h1> <span class=\"mw-headline\" id=\"parameter-based_account\"> parameter-based account </span></h1>
+<h2> <span class=\"mw-headline\" id=\"std1_1_09_params\"> std1_1_09 params </span></h2>
 <ul><li> lrn_var = XCAL_SR
 </li><li> mvl_mix = 0.002
 </li><li> s_mix = 0.90
@@ -2875,33 +2861,33 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> MINUS_PLUS
 </li><li> no sin_i, etc
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=3\" title=\"Edit section: sym sb vs. asym sb\">edit</a>]</span> <span class=\"mw-headline\" id=\"sym_sb_vs._asym_sb\"> sym_sb vs. asym_sb </span></h2>
+<h2> <span class=\"mw-headline\" id=\"sym_sb_vs._asym_sb\"> sym_sb vs. asym_sb </span></h2>
 <ul><li> although sym_sb is excellent on objrec, it is irrevocably not nearly as good as asym_sb (nosymsb) on words_ss, so  for consistency it looks like asym_sb is the best.  
 </li><li> can also get asym_sb to be as good as sym_sb with log lrs etc, so overall it is best.
 </li><li> to get better overall perf, the log lrate schedule seems best: may not make huge diff on asymp perf but keeps err dropping nicely.
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=4\" title=\"Edit section: chl vs. cal\">edit</a>]</span> <span class=\"mw-headline\" id=\"chl_vs._cal\"> chl vs. cal </span></h2>
+<h2> <span class=\"mw-headline\" id=\"chl_vs._cal\"> chl vs. cal </span></h2>
 <ul><li> words_ss: just about the same: cal somewhat faster at start and tiny bit worse final converge
 </li><li> objrec: had been using output = CAL -- when turned this off, perf tanked!  so cal seems even more essential here.  Currently testing.
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=5\" title=\"Edit section: bias lrate\">edit</a>]</span> <span class=\"mw-headline\" id=\"bias_lrate\"> bias_lrate </span></h2>
+<h2> <span class=\"mw-headline\" id=\"bias_lrate\"> bias_lrate </span></h2>
 <ul><li> <b>critical</b> on words_ss.
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=6\" title=\"Edit section: line label -- model and task from chapter 6\">edit</a>]</span> <span class=\"mw-headline\" id=\"line_label_--_model_and_task_from_chapter_6\"> line_label -- model and task from chapter 6 </span></h1>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=7\" title=\"Edit section: hebb and su act min\">edit</a>]</span> <span class=\"mw-headline\" id=\"hebb_and_su_act_min\"> hebb and su_act_min </span></h2>
+<h1> <span class=\"mw-headline\" id=\"line_label_--_model_and_task_from_chapter_6\"> line_label -- model and task from chapter 6 </span></h1>
+<h2> <span class=\"mw-headline\" id=\"hebb_and_su_act_min\"> hebb and su_act_min </span></h2>
 <ul><li> all su_min_act &gt; 0 get gen_cnt = 0
 </li><li> line_label_xcal_thrlmix005_lg30 = 0 gen_cnt, 9.8 uniq pat
 </li><li> line_label_xcal_hebb05_sumin01_thrlmix02_lg30 = perfect!
 </li><li> line_label_xcal_hebb0_sumin001_thrlmix005_lg30 = 9.6 uniq, 0 gen -- best of hebb0 cases..
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=8\" title=\"Edit section: gen lines (O'Reilly 2001)\">edit</a>]</span> <span class=\"mw-headline\" id=\"gen_lines_.28O.27Reilly_2001.29\"> gen_lines (O'Reilly 2001) </span></h1>
+<h1> <span class=\"mw-headline\" id=\"gen_lines_.28O.27Reilly_2001.29\"> gen_lines (O'Reilly 2001) </span></h1>
 <ul><li> hidden = 200 (hid200) MUCH better than 100 -- xcal needs more units!
 </li></ul>
 <ul><li> general story: BCM is not great for this, but small doses <b>with su_act_min = 0</b> are OK (.001 might even be beneficial, and .002 is OK)
 <ul><li> hebb partially rescues, but pure error is best.. sumin is bad too even with thrlmix = 0
 </li></ul>
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=9\" title=\"Edit section: wt sig off &gt; 1\">edit</a>]</span> <span class=\"mw-headline\" id=\"wt_sig_off_.3E_1\"> wt_sig_off  &gt; 1 </span></h2>
+<h2> <span class=\"mw-headline\" id=\"wt_sig_off_.3E_1\"> wt_sig_off  &gt; 1 </span></h2>
 <ul><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix0 = 16 / .0038
 <ul><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix0_wtsigoff11 = 10 / .0023
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix0_wtsigoff12 = 7.7 / .0017
@@ -2914,27 +2900,27 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix005_wtsigoff13 = 23 / .0054
 </li></ul>
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=10\" title=\"Edit section: hebb and su act min\">edit</a>]</span> <span class=\"mw-headline\" id=\"hebb_and_su_act_min_2\"> hebb and su_act_min </span></h2>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=11\" title=\"Edit section: 200 inputs, l gain\">edit</a>]</span> <span class=\"mw-headline\" id=\"200_inputs.2C_l_gain\"> 200 inputs, l_gain </span></h3>
+<h2> <span class=\"mw-headline\" id=\"hebb_and_su_act_min_2\"> hebb and su_act_min </span></h2>
+<h3> <span class=\"mw-headline\" id=\"200_inputs.2C_l_gain\"> 200 inputs, l_gain </span></h3>
 <ul><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix002 = 18 / .0042 -- l_gain = 3.0
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix002_lg20, 25 = 18 / .0043
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix002_lg35 = 19.6 / .0047 -- worse.. 4.0 is still worse yet
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=12\" title=\"Edit section: 200 inputs, thrlmix = 0\">edit</a>]</span> <span class=\"mw-headline\" id=\"200_inputs.2C_thrlmix_.3D_0\"> 200 inputs, thrlmix = 0 </span></h3>
+<h3> <span class=\"mw-headline\" id=\"200_inputs.2C_thrlmix_.3D_0\"> 200 inputs, thrlmix = 0 </span></h3>
 <ul><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin01_thrlmix0 = 65 / .016 -- 2x as bad as .005
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin005_thrlmix0 = 35 / .008 -- thrlmix seems to be key, but sumin also bad..
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin002_thrlmix0 = 23 / .0055 -- not as good as sumin0, thrlmix .002..
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin001_thrlmix0 = 20 / .005 -- not as good as sumin0, thrlmix .001..
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix0 = 16 / .0038
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=13\" title=\"Edit section: 200 inputs, sumin = 0, thrlmix &gt; 0\">edit</a>]</span> <span class=\"mw-headline\" id=\"200_inputs.2C_sumin_.3D_0.2C_thrlmix_.3E_0\"> 200 inputs, sumin = 0, thrlmix &gt; 0 </span></h3>
+<h3> <span class=\"mw-headline\" id=\"200_inputs.2C_sumin_.3D_0.2C_thrlmix_.3E_0\"> 200 inputs, sumin = 0, thrlmix &gt; 0 </span></h3>
 <ul><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix01 = 72/ .016  -- vs 173 / .036 for sumin01 
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix005 = 34 / .0077
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix002 = 18 / .0042 -- basically good as 0
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix001 = 15 / .0036 -- better than 0!
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb05_sumin0_thrlmix002 = 18.4 / .0044 -- no better
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=14\" title=\"Edit section: 200 inputs, hebb = 0\">edit</a>]</span> <span class=\"mw-headline\" id=\"200_inputs.2C_hebb_.3D_0\"> 200 inputs, hebb = 0 </span></h3>
+<h3> <span class=\"mw-headline\" id=\"200_inputs.2C_hebb_.3D_0\"> 200 inputs, hebb = 0 </span></h3>
 <ul><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin0_thrlmix0 = 16 / .0038
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin01_thrlmix01 = 173 / .036  -- 10 times worse!!!
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin001_thrlmix01 = 72 / .019 -- sumin bad
@@ -2943,7 +2929,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin005_thrlmix01_lg20 = 63.4 / .015 -- lg lower = better, but also just means less effect..
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb0_sumin005_thrlmix005 = 65.5 / .015 -- even .005 not great
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=15\" title=\"Edit section: 200 inputs, hebb = 0.5 (05) etc\">edit</a>]</span> <span class=\"mw-headline\" id=\"200_inputs.2C_hebb_.3D_0.5_.2805.29_etc\"> 200 inputs, hebb = 0.5 (05) etc </span></h3>
+<h3> <span class=\"mw-headline\" id=\"200_inputs.2C_hebb_.3D_0.5_.2805.29_etc\"> 200 inputs, hebb = 0.5 (05) etc </span></h3>
 <ul><li> gen_lines_25x2x4_200_hid200_xcal_hebb05_sumin01_thrlmix01 = 91 / .021 -- hebb rescues thrlmix to some extent..
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb05_sumin0_thrlmix01 = 39 / .0094 -- sumin is not good even for hebb
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb05_sumin01_thrlmix01_lg20 = 62.5 / .014 -- lower lg still better with hebb..
@@ -2951,11 +2937,11 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb05_sumin005_thrlmix01 = 51.8 / 0.012 -- compare to 111 for hebb0
 </li><li> gen_lines_25x2x4_200_hid200_xcal_hebb02_sumin005_thrlmix01 = 81 / .018 -- less hebb = worse (and worse for .1, .01)
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=16\" title=\"Edit section: 100 inputs\">edit</a>]</span> <span class=\"mw-headline\" id=\"100_inputs\"> 100 inputs </span></h3>
+<h3> <span class=\"mw-headline\" id=\"100_inputs\"> 100 inputs </span></h3>
 <ul><li> gen_lines_25x2x4_100_hid200_xcal_hebb0_sumin0_thrlmix002 = 492 / .31 -- terrible relative to 200 and full hebbian from before, but hebb was just massively over-biased for this case
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=17\" title=\"Edit section: self org -- chapter 4\">edit</a>]</span> <span class=\"mw-headline\" id=\"self_org_--_chapter_4\"> self_org  -- chapter 4 </span></h1>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=18\" title=\"Edit section: l gain (using batches=25)\">edit</a>]</span> <span class=\"mw-headline\" id=\"l_gain_.28using_batches.3D25.29\"> l_gain (using batches=25) </span></h2>
+<h1> <span class=\"mw-headline\" id=\"self_org_--_chapter_4\"> self_org  -- chapter 4 </span></h1>
+<h2> <span class=\"mw-headline\" id=\"l_gain_.28using_batches.3D25.29\"> l_gain (using batches=25) </span></h2>
 <ul><li> self_org_xcal_lg35_drev10_dtl01ml4 = 9.12/min 7/15 at 10
 </li><li> self_org_xcal_lg30_drev10_dtl01ml4 = 8.92/min 6/15 at 10
 </li><li> self_org_xcal_lg25_drev10_dtl01ml4 = 8.56/min 6/11 at 10
@@ -2965,23 +2951,23 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </p>
 <ul><li> self_org_xcal_lg35_drev10_dtl01ml4 = 9.6/min 8/ 8 at 10 -- base case
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=19\" title=\"Edit section: l dt = .01 is fine\">edit</a>]</span> <span class=\"mw-headline\" id=\"l_dt_.3D_.01_is_fine\"> l_dt = .01 is fine </span></h2>
+<h2> <span class=\"mw-headline\" id=\"l_dt_.3D_.01_is_fine\"> l_dt = .01 is fine </span></h2>
 <ul><li> self_org_xcal_lg35_drev10_dtl05ml4 = 9.8/min 8/ 9 at 10 -- tiny bit better..
 </li><li> self_org_xcal_lg35_drev10_dtl02ml4 = 9.6/min 8/ 8 at 10
 </li><li> self_org_xcal_lg35_drev10_dtl005ml4 = 8.2/min 7/ 2 at 10 -- sig worse -- small env tho so .005 may be good for other probs
 </li><li> self_org_xcal_lg35_drev10_dtl002ml4 = 6.8/min 5/ 1 at 10 -- lot worse!
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=20\" title=\"Edit section: ml dt = .4 is best\">edit</a>]</span> <span class=\"mw-headline\" id=\"ml_dt_.3D_.4_is_best\"> ml_dt = .4 is best </span></h2>
+<h2> <span class=\"mw-headline\" id=\"ml_dt_.3D_.4_is_best\"> ml_dt = .4 is best </span></h2>
 <ul><li><ul><li> self_org_xcal_lg35_drev10_dtl01ml3 = 8.5/min 6/ 4 at 10 -- sig worse
 </li><li> self_org_xcal_lg35_drev10_dtl01ml5 = 9.5/min 7/ 8 at 10 - no diff
 </li><li> self_org_xcal_lg35_drev10_dtl01ml6 = 8.7/min 7/ 4 at 10 -- worse
 </li></ul>
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=21\" title=\"Edit section: d rev = .1 is fine\">edit</a>]</span> <span class=\"mw-headline\" id=\"d_rev_.3D_.1_is_fine\"> d_rev = .1 is fine </span></h2>
+<h2> <span class=\"mw-headline\" id=\"d_rev_.3D_.1_is_fine\"> d_rev = .1 is fine </span></h2>
 <ul><li> self_org_xcal_lg35_drev15_dtl01ml4 = 9.4/min 8/ 7 at 10 -- no better
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=22\" title=\"Edit section: words ss -- spelling to sound\">edit</a>]</span> <span class=\"mw-headline\" id=\"words_ss_--_spelling_to_sound\"> words_ss -- spelling to sound </span></h1>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=23\" title=\"Edit section: Generalization (finally!)\">edit</a>]</span> <span class=\"mw-headline\" id=\"Generalization_.28finally.21.29\"> Generalization (finally!) </span></h3>
+<h1> <span class=\"mw-headline\" id=\"words_ss_--_spelling_to_sound\"> words_ss -- spelling to sound </span></h1>
+<h3> <span class=\"mw-headline\" id=\"Generalization_.28finally.21.29\"> Generalization (finally!) </span></h3>
 <ul><li> ss_xcal_hebb0_sumin0_thrlmix008 = better than .005 on gen.  tiny bit worse on train
 </li><li> ss_xcal_hebb0_sumin0_thrlmix005_wtsigoff11 = same as std_chl_h0 = best recorded perf on gen
 </li><li> ss_xcal_hebb0_sumin0_thrlmix005_wtsigoff12 = about as good as 1.1, esp at peak perf (epc 300 or so?) -- 1.2 is much better on gen_lines
@@ -2993,18 +2979,18 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> ss_xcal_hebb005_sumin0_thrlmix01 -- tiny bit better genralization -- no effect of other h vals except worse..
 </li><li> std chl with hebb = 0 is the champ!  hebb = .005 is sig worse generalization!  interesting!
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=24\" title=\"Edit section: hebb and su act min\">edit</a>]</span> <span class=\"mw-headline\" id=\"hebb_and_su_act_min_3\"> hebb and su_act_min </span></h3>
+<h3> <span class=\"mw-headline\" id=\"hebb_and_su_act_min_3\"> hebb and su_act_min </span></h3>
 <ul><li> su_act_min = .002 is same as 0; .005 is slightly worse, .01 a bit more, but .02 and above are significantly worse -- .01 is the cutoff..
 </li><li> hebb05 = 0.5 is a bit worse, 0.2 is just slightly worse, and .1 and below are totally normal
 </li><li> for thr_l_mix = .02, hebb = .1 better than .2 &gt; .5
 </li><li> for thr_l_mix = .005, same story, but much smaller differences.. basically, no advantage of hebb &gt; 0 found in this task..
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=25\" title=\"Edit section: SEP only (nwsep) optimized 12/09\">edit</a>]</span> <span class=\"mw-headline\" id=\"SEP_only_.28nwsep.29_optimized_12.2F09\"> SEP only (nwsep) optimized 12/09 </span></h3>
+<h3> <span class=\"mw-headline\" id=\"SEP_only_.28nwsep.29_optimized_12.2F09\"> SEP only (nwsep) optimized 12/09 </span></h3>
 <ul><li> sravg interval = 1 is much better than 5
 </li><li> no effect of n_avg_only_epcs = 0 vs. 1
 </li><li> d_thr = .0001 same as 0; .001 worse, .01 way worse.. -- no advantage of d_thr in fully deterministic case,  but .0001 optimizes evals of full xcal eq's &amp; saves 10 sec per epoch! (75 vs. 85)
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=26\" title=\"Edit section: thr l mix\">edit</a>]</span> <span class=\"mw-headline\" id=\"thr_l_mix\"> thr_l_mix </span></h3>
+<h3> <span class=\"mw-headline\" id=\"thr_l_mix\"> thr_l_mix </span></h3>
 <ul><li> mixing now happens on the threshold, instead of the separate factors:
 </li></ul>
 <pre>  float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * l_su_mult * ru-&gt;ravg_l;
@@ -3019,7 +3005,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> actually for thrlmix01, 2.5 is better than 3.0, but opposite is true for objrec -- keep 3.0 as default value but for cases with a lot of distributed reps (words!) then lower vals may be better
 </li></ul>
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=27\" title=\"Edit section: SR MAX\">edit</a>]</span> <span class=\"mw-headline\" id=\"SR_MAX\"> SR_MAX </span></h3>
+<h3> <span class=\"mw-headline\" id=\"SR_MAX\"> SR_MAX </span></h3>
 <p>Key idea is that threshold cannot go lower than the value dictated by BCM long-term average -- error signals can only have so much effect on threshold:
 </p>
 <pre>  float effthr = MAX(srm, l_su_mult * ru-&gt;ravg_l); // this is key diff -- straight MAX
@@ -3031,12 +3017,12 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> note that d_rev=.10, s_mix = .90 (best for thr_l_mix) hiccups after like 20 epochs or so, and never recovers..
 </li><li> tried: increased top down, output wts only use SR directly (no MAX) (blows up), d_gain = higher/lower, higher wt_sig.gain, output n_var -- everything -- nothing helped..
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=28\" title=\"Edit section: d rev is pulled in opposite directions\">edit</a>]</span> <span class=\"mw-headline\" id=\"d_rev_is_pulled_in_opposite_directions\"> d_rev is pulled in opposite directions </span></h3>
+<h3> <span class=\"mw-headline\" id=\"d_rev_is_pulled_in_opposite_directions\"> d_rev is pulled in opposite directions </span></h3>
 <ul><li> CAL separate err driven shows that the BCM aspect likes d_rev higher (.15) (.10 is a tiny bit worse, and .05 is sig worse)
 </li><li> XCAL_SR shows that err-driven likes d_rev lower (.05), as we would predict given that higher vals cut into the key \"off in plus phase\" learning.
 </li><li> .10 seems like the best compromise -- learning is nearly as good as the best CAL case..  basically just like CAL with d_rev = .10.
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=29\" title=\"Edit section: back to xcal\">edit</a>]</span> <span class=\"mw-headline\" id=\"back_to_xcal\"> back to xcal </span></h3>
+<h3> <span class=\"mw-headline\" id=\"back_to_xcal\"> back to xcal </span></h3>
 <ul><li> xcal and xcal_sr both sig worse with default 12/26/08 params below.  issue is the complete off plus phase case in the negative rectification.  try diff params around that..
 <ul><li> d_rev=0.05 better than .01 or .02 or .15!
 </li><li> d_rev=0.05: s_mix=0.95 tiny bit better than .90, .85 worse
@@ -3046,7 +3032,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> trying xcal_sr -- maybe it is the sr diff..
 </li></ul>
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=30\" title=\"Edit section: cal + bcm (XCAL CAL with mvl mix &gt; 0)\">edit</a>]</span> <span class=\"mw-headline\" id=\"cal_.2B_bcm_.28XCAL_CAL_with_mvl_mix_.3E_0.29\"> cal + bcm (XCAL_CAL with mvl_mix &gt; 0) </span></h3>
+<h3> <span class=\"mw-headline\" id=\"cal_.2B_bcm_.28XCAL_CAL_with_mvl_mix_.3E_0.29\"> cal + bcm (XCAL_CAL with mvl_mix &gt; 0) </span></h3>
 <ul><li> 12/26/08: \"final\" best for separate err driven:
 <ul><li> emergent -nogui -ni -p ss_xcal_loglrs.proj epochs=600 batches=1 lrn_var=XCAL_CAL mvl_mix=0.002 sym_sb=false decay_phase=0 wt_sig_gain=6 wt_sig_off=1 sravg_int=5 lrate=0.02 bias_lrate=0.02 l_gain=1.8 d_gain=1.0 tag=_cal_nosymsb_wsig6o1_pd0_mvl002_lr02_blr02_lg18_dg10
 </li><li> mvl_mix .003 a bit worse, .004 sig worse .001 not as good either.. .002 is the sweet spot..
@@ -3064,7 +3050,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> log lrs: better in some cases, but asymtotic is about the same.  true for above best case params as well.
 </li></ul>
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=31\" title=\"Edit section: chl\">edit</a>]</span> <span class=\"mw-headline\" id=\"chl\"> chl </span></h3>
+<h3> <span class=\"mw-headline\" id=\"chl\"> chl </span></h3>
 <ul><li> decay.phase = 0 is much better than decay.phase = 1!    in part seems to be the effective learning rate being lower, and maybe also being in the same overall atractor?  presumably also due to the top-down being much weaker than in other model: less strong of an attractor for plus phase
 <ul><li> pd1 with lr04 fails immediately, slower with lr02, slower with lr01 -- err just goes back up.
 </li><li> no sym_sb worse in all cases
@@ -3081,7 +3067,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li></ul>
 </li></ul>
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=32\" title=\"Edit section: cal\">edit</a>]</span> <span class=\"mw-headline\" id=\"cal\"> cal </span></h3>
+<h3> <span class=\"mw-headline\" id=\"cal\"> cal </span></h3>
 <ul><li> idea: syndep only useful when increasing top-down, causing stronger attractors?
 <ul><li> also, dynamic top-down as a function of error???
 </li></ul>
@@ -3090,7 +3076,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> syndep .9, .8 with rec=.2 both a bit worse -- could try some more here
 </li></ul>
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=33\" title=\"Edit section: xcal\">edit</a>]</span> <span class=\"mw-headline\" id=\"xcal\"> xcal </span></h3>
+<h3> <span class=\"mw-headline\" id=\"xcal\"> xcal </span></h3>
 <ul><li> sym_sb makes d_gain = 1.0 the best, with l_gain = 1.5 also somewhat better, and also 
 </li></ul>
 <ul><li> d_gain &lt; 2.5 seems monotonically worse..
@@ -3118,7 +3104,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 <ul><li> Phon output should have KWTA_INHIB, pt = .25 -- works better in orig CHL too -- need to retrofit the class project too!
 </li><li> best so far: mvl_mix = .03 (.02 worse), td = .2, lrate = .04, bias_lrate=.04 (definitely need that!) dt=.005 is worse
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=34\" title=\"Edit section: Objrec hv itnov2 v1gp4x3 hi1sp rf4 3dobj 100 u30\">edit</a>]</span> <span class=\"mw-headline\" id=\"Objrec_hv_itnov2_v1gp4x3_hi1sp_rf4_3dobj_100_u30\"> Objrec hv_itnov2_v1gp4x3_hi1sp_rf4_3dobj_100_u30 </span></h1>
+<h1> <span class=\"mw-headline\" id=\"Objrec_hv_itnov2_v1gp4x3_hi1sp_rf4_3dobj_100_u30\"> Objrec hv_itnov2_v1gp4x3_hi1sp_rf4_3dobj_100_u30 </span></h1>
 <p>This is first generation 100 object dataset
 </p>
 <ul><li> hv_itnov2_v1gp4x3_hi1sp_rf4_3dobj_100_u30_wtsigoff11_thrlmix01_dm10th2 = best yet -- wt_sig.off = 1.1 is new default!
@@ -3135,7 +3121,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> XCAL_SEP is identical to XCAL_SR&nbsp;!!  no deficit from using separate signals.
 </li></ul>
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=35\" title=\"Edit section: Objrec full hi52 veh3d\">edit</a>]</span> <span class=\"mw-headline\" id=\"Objrec_full_hi52_veh3d\"> Objrec full hi52 veh3d </span></h1>
+<h1> <span class=\"mw-headline\" id=\"Objrec_full_hi52_veh3d\"> Objrec full hi52 veh3d </span></h1>
 <ul><li> current best: 12/26/08:
 <ul><li> dm_qsub_q 8 2d emer_mpi -nogui -ni -p hv_hi52_xcal_v1sal_loglrs.proj lesson=veh3d_nb_lr20_nsc it=false train_epochs=350 save_weights_modulus=50 test_modulus=150 self_org_epochs=0 err_mvl_mix=0.005 sym_sb=false wt_sig_gain=6 wt_sig_off=1 lrn_var=XCAL_CAL sravg_int=5 lrate=0.02 l_gain=1.8 d_gain=1.0 tag=_ytr15_noit_cal_nosymsb_wtsig6o1_dm8_lr02_mvl005_lg18_dg10
 </li><li> mvl .002 to .02 basically the same, .05 seems to be a bit worse: not very sensitive to this.
@@ -3178,7 +3164,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li></ul>
 <ul><li> key finding so far: out_v4=0.05 is NOT good -- blows up.
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=36\" title=\"Edit section: PFC/Analogy\">edit</a>]</span> <span class=\"mw-headline\" id=\"PFC.2FAnalogy\"> PFC/Analogy </span></h1>
+<h1> <span class=\"mw-headline\" id=\"PFC.2FAnalogy\"> PFC/Analogy </span></h1>
 <p>svn_sims/pfc/analogy/analogy_pfc_xcal.proj
 </p>
 <ul><li> emergent -nogui -ni -p analogy_nopfc_xcal.proj epochs=200 batches=5 n_train=500 n_test=500 save_weights=false s_mix=0.90 mvl_mix=0.05 lrate=0.04 bias_lrate=0.04 l_gain=1.8 d_rev=0.15 d_gain=2.5 tag=_tr500_mvl05_smix90_lg18_dr15g25_lr04
@@ -3210,15 +3196,15 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> turns out that key was very low weights from output to hidden..
 </li></ul>
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=37\" title=\"Edit section: Objrec ch8\">edit</a>]</span> <span class=\"mw-headline\" id=\"Objrec_ch8\"> Objrec ch8 </span></h1>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=38\" title=\"Edit section: SRMAX\">edit</a>]</span> <span class=\"mw-headline\" id=\"SRMAX\"> SRMAX </span></h2>
+<h1> <span class=\"mw-headline\" id=\"Objrec_ch8\"> Objrec ch8 </span></h1>
+<h2> <span class=\"mw-headline\" id=\"SRMAX\"> SRMAX </span></h2>
 <ul><li> l_gain = .5 learns reasonably well, lg = .8 is sig worse, lg lower is definitely better, converging on regular SR performance (as less BCM influence is felt basically).
 </li><li> mon: max_l_thr is quite a bit higher than mean_l_thr -- is due to ml_dt -- recent history sets this thing very high and seems to be very bad.  not sure what the hell this ml_dt thing really is doing -- seems to be causing effective l_thr to trend very high for high cases.  seems antithetical to  the self-org mantra, at least in this case where high thrs can be bad.  for now, just turn ml_dt = l_dt to neutralize.
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=39\" title=\"Edit section: ml dt and ml gain: contributions to threshold, with dt 005\">edit</a>]</span> <span class=\"mw-headline\" id=\"ml_dt_and_ml_gain:_contributions_to_threshold.2C_with_dt_005\"> ml_dt and ml_gain: contributions to threshold, with dt 005 </span></h2>
+<h2> <span class=\"mw-headline\" id=\"ml_dt_and_ml_gain:_contributions_to_threshold.2C_with_dt_005\"> ml_dt and ml_gain: contributions to threshold, with dt 005 </span></h2>
 <ul><li> best: ml_dt = .4, ml_gain = 1.2, l_dt = .005 -- better than default case..
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=40\" title=\"Edit section: s mix for both svm and mvl, and mvl mix is input param: 11/16/08\">edit</a>]</span> <span class=\"mw-headline\" id=\"s_mix_for_both_svm_and_mvl.2C_and_mvl_mix_is_input_param:_11.2F16.2F08\"> s_mix for both svm and mvl, and mvl_mix is input param: 11/16/08 </span></h2>
+<h2> <span class=\"mw-headline\" id=\"s_mix_for_both_svm_and_mvl.2C_and_mvl_mix_is_input_param:_11.2F16.2F08\"> s_mix for both svm and mvl, and mvl_mix is input param: 11/16/08 </span></h2>
 <p>Best case -- performs as well as CHL base case!:
 </p>
 <ul><li> emergent -nogui -ni objrec_xcal.proj epochs=300 batches=1 bias_lrate=0.06 lrate=0.06 d_gain=2.5 d_rev=0.15 lrn_var=XCAL mvl_mix=0.05 s_mix=0.90 l_gain=1.8 v4_units=400 v4_kwta=0.15 out_v4=0.05 tag=_v4400_mvl05_smix90_lg18_dr15g25_b06_v4k15_lr06_ov405
@@ -3235,14 +3221,14 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> v2 kwta = 15% better initially then worse asymptote for cnt_err, but not sse.. (default is 10%)
 </li><li> v4 kwta 10% or 5% tiny bit worse, and v24v 5% definitely worse
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=41\" title=\"Edit section: svm and mvl 11/15/08\">edit</a>]</span> <span class=\"mw-headline\" id=\"svm_and_mvl_11.2F15.2F08\"> svm and mvl 11/15/08 </span></h2>
+<h2> <span class=\"mw-headline\" id=\"svm_and_mvl_11.2F15.2F08\"> svm and mvl 11/15/08 </span></h2>
 <ul><li> base case: objrec_xcal_v4400_svm90_mvls85_lg18_dr15g25_0b_v4k15_epc_dat
 <ul><li> emergent -nogui -ni objrec_xcal.proj epochs=300 batches=1 bias_lrate=0 d_gain=2.5 d_rev=0.15 lrn_var=XCAL svm_mix=0.90 mvl_s_mix=0.85 l_gain=1.8 v4_units=400 v4_kwta=0.15 tag=_v4400_svm90_mvls85_lg18_dr15g25_0b_v4k15
 </li><li> note: has cal to output units but _outxcal shows that doesn't matter (and some of the last runs had this without being marked)
 </li><li> gets to 10 smoothed cnt_err
 </li></ul>
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=42\" title=\"Edit section: svm mix: .9 is best\">edit</a>]</span> <span class=\"mw-headline\" id=\"svm_mix:_.9_is_best\"> svm mix: .9 is best </span></h3>
+<h3> <span class=\"mw-headline\" id=\"svm_mix:_.9_is_best\"> svm mix: .9 is best </span></h3>
 <ul><li> svm80 is faster initially then bails at 30
 </li><li> svm85 also faster, max's out at 18 or so
 </li><li> svm95 slower, same max value
@@ -3251,49 +3237,49 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 <ul><li> todo: could try schedule of svm: more self org at start, then more err..
 </li></ul>
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=43\" title=\"Edit section: mvl s mix\">edit</a>]</span> <span class=\"mw-headline\" id=\"mvl_s_mix\"> mvl_s_mix </span></h3>
+<h3> <span class=\"mw-headline\" id=\"mvl_s_mix\"> mvl_s_mix </span></h3>
 <ul><li> absolutely no effect from .75 - .90
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=44\" title=\"Edit section: l gain\">edit</a>]</span> <span class=\"mw-headline\" id=\"l_gain\"> l_gain </span></h3>
+<h3> <span class=\"mw-headline\" id=\"l_gain\"> l_gain </span></h3>
 <ul><li> no effect 1.5 - 2.0
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=45\" title=\"Edit section: d rev = .05 - .15 no diff\">edit</a>]</span> <span class=\"mw-headline\" id=\"d_rev_.3D_.05_-_.15_no_diff\"> d_rev = .05 - .15 no diff </span></h3>
+<h3> <span class=\"mw-headline\" id=\"d_rev_.3D_.05_-_.15_no_diff\"> d_rev = .05 - .15 no diff </span></h3>
 <ul><li> slightly faster with .05
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=46\" title=\"Edit section: d gain = 2.5 better than 2, 1.5\">edit</a>]</span> <span class=\"mw-headline\" id=\"d_gain_.3D_2.5_better_than_2.2C_1.5\"> d_gain = 2.5 better than 2, 1.5 </span></h3>
+<h3> <span class=\"mw-headline\" id=\"d_gain_.3D_2.5_better_than_2.2C_1.5\"> d_gain = 2.5 better than 2, 1.5 </span></h3>
 <ul><li> definitely makes a diff!  1.5 very bad, 2 somewhat worse
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=47\" title=\"Edit section: top-down\">edit</a>]</span> <span class=\"mw-headline\" id=\"top-down\"> top-down </span></h3>
+<h3> <span class=\"mw-headline\" id=\"top-down\"> top-down </span></h3>
 <ul><li> td = .2 (out_v4 = .2, v4_v2= .2) = sig worse (18 err)
 </li><li> v4_v2 = .2 or .3 = no diff -- key factor is out_v4 &lt; .2
 </li><li> out_v4 = .05 = no diff, tiny bit worse
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=48\" title=\"Edit section: v4 kwta\">edit</a>]</span> <span class=\"mw-headline\" id=\"v4_kwta\"> v4 kwta </span></h3>
+<h3> <span class=\"mw-headline\" id=\"v4_kwta\"> v4 kwta </span></h3>
 <ul><li> no effect .10 - .25 -- .10 maybe a TINY bit better at the end
 </li><li> kv2k .25 @ 20% also no diff
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=49\" title=\"Edit section: v2 kwta\">edit</a>]</span> <span class=\"mw-headline\" id=\"v2_kwta\"> v2 kwta </span></h3>
+<h3> <span class=\"mw-headline\" id=\"v2_kwta\"> v2 kwta </span></h3>
 <ul><li> 20% on v2 = sig worse
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=50\" title=\"Edit section: sin i\">edit</a>]</span> <span class=\"mw-headline\" id=\"sin_i\"> sin_i </span></h3>
+<h3> <span class=\"mw-headline\" id=\"sin_i\"> sin_i </span></h3>
 <ul><li> burst_i = trough_i = .02 = little bit faster at start, slightly worse asymptote
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=51\" title=\"Edit section: SVM CAL, sravg int = 5\">edit</a>]</span> <span class=\"mw-headline\" id=\"SVM_CAL.2C_sravg_int_.3D_5\"> SVM_CAL, sravg_int = 5 </span></h3>
+<h3> <span class=\"mw-headline\" id=\"SVM_CAL.2C_sravg_int_.3D_5\"> SVM_CAL, sravg_int = 5 </span></h3>
 <ul><li> no effect of int = 5 on XCAL
 </li><li> SVM_CAL much slower, so sravg.interval = 5, but this bails out at 20
 </li><li> but with interval = 1, it works fine, maybe slightly better..
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=52\" title=\"Edit section: lrate = .04 slightly better\">edit</a>]</span> <span class=\"mw-headline\" id=\"lrate_.3D_.04_slightly_better\"> lrate = .04 slightly better </span></h3>
+<h3> <span class=\"mw-headline\" id=\"lrate_.3D_.04_slightly_better\"> lrate = .04 slightly better </span></h3>
 <ul><li> faster and asymptote a bit lower!
 </li><li> lr05 is no better, .04 seems to be the sweet spot
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=53\" title=\"Edit section: decay phase = .1 or .2: fails to learn\">edit</a>]</span> <span class=\"mw-headline\" id=\"decay_phase_.3D_.1_or_.2:_fails_to_learn\"> decay_phase = .1 or .2: fails to learn </span></h3>
+<h3> <span class=\"mw-headline\" id=\"decay_phase_.3D_.1_or_.2:_fails_to_learn\"> decay_phase = .1 or .2: fails to learn </span></h3>
 <ul><li> no benefit from helping to clear out -- could try lower
 <ul><li> todo: try with xcal and smaller vals
 </li></ul>
 </li><li> xcal pdk02 = no better than lr .04; pdk05 = somewhat worse
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=54\" title=\"Edit section: ravg l with smix, mmix 11/2/08\">edit</a>]</span> <span class=\"mw-headline\" id=\"ravg_l_with_smix.2C_mmix_11.2F2.2F08\"> ravg_l with smix, mmix 11/2/08 </span></h2>
+<h2> <span class=\"mw-headline\" id=\"ravg_l_with_smix.2C_mmix_11.2F2.2F08\"> ravg_l with smix, mmix 11/2/08 </span></h2>
 <p>Overall, not much makes a diff with this model, EXCEPT mmix = .9!  Also, the size of the v4 layer.
 </p>
 <ul><li> best:
@@ -3337,8 +3323,8 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> objrec_xcal_ravgl_aprs_smix85_mmix85_pctlg50_eq_hc_nosynd_td3 -- better than mmix .8 though, at final
 </li></ul>
 </li></ul>
-<h1><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=55\" title=\"Edit section: Ra25\">edit</a>]</span> <span class=\"mw-headline\" id=\"Ra25\"> Ra25 </span></h1>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=56\" title=\"Edit section: ra25 i netin mod\">edit</a>]</span> <span class=\"mw-headline\" id=\"ra25_i_netin_mod\"> ra25 i_netin_mod </span></h2>
+<h1> <span class=\"mw-headline\" id=\"Ra25\"> Ra25 </span></h1>
+<h2> <span class=\"mw-headline\" id=\"ra25_i_netin_mod\"> ra25 i_netin_mod </span></h2>
 <ul><li> leabra_ra25_xcal_inetinmod0 = 11.6 / 19.8 -- baseline
 </li><li> leabra_ra25_xcal_inetinmod0g10_clmplus05 = 10.1 / 18.2 -- could be good overall
 </li><li> leabra_ra25_xcal_inetinmod02g10_clmplus01 = 17.8 / 35.1 -- sig slower but ok
@@ -3351,17 +3337,17 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 <ul><li> leabra_ra25_xcal_inetinmod02g10_clmpsofto20 = 26.9 / 50 -- clamp_plus = .01 definitely better
 </li><li> tried .1, .3 .4
 </li></ul>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=57\" title=\"Edit section: Ra25 2 layer, svm mix and mvl mix\">edit</a>]</span> <span class=\"mw-headline\" id=\"Ra25_2_layer.2C_svm_mix_and_mvl_mix\"> Ra25 2 layer, svm_mix and mvl_mix </span></h2>
+<h2> <span class=\"mw-headline\" id=\"Ra25_2_layer.2C_svm_mix_and_mvl_mix\"> Ra25 2 layer, svm_mix and mvl_mix </span></h2>
 <p>Bias with XCAL, CAL: not good
 </p>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=58\" title=\"Edit section: lrn var = SVM CAL\">edit</a>]</span> <span class=\"mw-headline\" id=\"lrn_var_.3D_SVM_CAL\"> lrn_var = SVM_CAL </span></h3>
+<h3> <span class=\"mw-headline\" id=\"lrn_var_.3D_SVM_CAL\"> lrn_var = SVM_CAL </span></h3>
 <ul><li> 29.4/16.8 leabra_ra25_xcal_svm80_svmcal_lg15_dr15g25_ldt03_0bias -- better than xcal..
 </li><li> 73.2/39.6 leabra_ra25_xcal_cal -- pure cal actually not so great here!  key diff is sbound and also lower lrate.
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=59\" title=\"Edit section: lrn var = XCAL, svm mix = .8 or so\">edit</a>]</span> <span class=\"mw-headline\" id=\"lrn_var_.3D_XCAL.2C_svm_mix_.3D_.8_or_so\"> lrn_var = XCAL, svm_mix = .8 or so </span></h3>
+<h3> <span class=\"mw-headline\" id=\"lrn_var_.3D_XCAL.2C_svm_mix_.3D_.8_or_so\"> lrn_var = XCAL, svm_mix = .8 or so </span></h3>
 <p>Results are avg to 0/ avg to &lt;5
 </p>
-<h4><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=60\" title=\"Edit section: svm mix = .8\">edit</a>]</span> <span class=\"mw-headline\" id=\"svm_mix_.3D_.8\"> svm_mix = .8 </span></h4>
+<h4> <span class=\"mw-headline\" id=\"svm_mix_.3D_.8\"> svm_mix = .8 </span></h4>
 <ul><li> 34.6/21.4  leabra_ra25_xcal_svm80_xcal_lg15_dr15g25_ldt03_0bias
 </li><li> 35.6/22.0  leabra_ra25_xcal_svm85_xcal_lg15_dr15g25_ldt03_0bias
 </li><li> 45.0/21.8  leabra_ra25_xcal_svm75_xcal_lg15_dr15g25_ldt03_0bias 
@@ -3369,7 +3355,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li><li> 47.2/25.6  leabra_ra25_xcal_svm90_xcal_lg15_dr15g25_ldt03_0bias -- sig worse!!  too much plus is bad..
 </li><li> 103/33.4   leabra_ra25_xcal_svm95_xcal_lg15_dr15g25_ldt03_0bias
 </li></ul>
-<h4><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=61\" title=\"Edit section: l gain (1.5 is best -- set back to l norm = NO NORM -- likely to be best)\">edit</a>]</span> <span class=\"mw-headline\" id=\"l_gain_.281.5_is_best_--_set_back_to_l_norm_.3D_NO_NORM_--_likely_to_be_best.29\"> l_gain (1.5 is best -- set back to l_norm = NO_NORM -- likely to be best) </span></h4>
+<h4> <span class=\"mw-headline\" id=\"l_gain_.281.5_is_best_--_set_back_to_l_norm_.3D_NO_NORM_--_likely_to_be_best.29\"> l_gain (1.5 is best -- set back to l_norm = NO_NORM -- likely to be best) </span></h4>
 <ul><li> 34.6/21.4  leabra_ra25_xcal_svm80_xcal_lg15_dr15g25_ldt03_0bias
 </li><li> 39.2/20.6  leabra_ra25_xcal_svm80_xcal_lg18_dr15g25_ldt03_0bias
 </li><li> 76.4/22.2  leabra_ra25_xcal_svm80_xcal_lg12_dr15g25_ldt03_0bias
@@ -3378,49 +3364,49 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </p><p>d_rev: .15 is best -- .10 just about same, .05 def a bit worse
 </p><p>overall, very similar to prior results.
 </p>
-<h2><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=62\" title=\"Edit section: Ra25 2 layer, ravg l: attempt to return to previous combo of sravg and recv-based long-term average (BCM component)\">edit</a>]</span> <span class=\"mw-headline\" id=\"Ra25_2_layer.2C_ravg_l:_attempt_to_return_to_previous_combo_of_sravg_and_recv-based_long-term_average_.28BCM_component.29\"> Ra25 2 layer, ravg_l: attempt to return to previous combo of sravg and recv-based long-term average (BCM component) </span></h2>
+<h2> <span class=\"mw-headline\" id=\"Ra25_2_layer.2C_ravg_l:_attempt_to_return_to_previous_combo_of_sravg_and_recv-based_long-term_average_.28BCM_component.29\"> Ra25 2 layer, ravg_l: attempt to return to previous combo of sravg and recv-based long-term average (BCM component) </span></h2>
 <ul><li> Key finding: the sravg1 guy that worked so well was using the trl_avg with p_boost, which it turns out is absolutely critical for capturing the LTD for guys that weakly come on in the minus phase -- this is what was lost in transition!
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=63\" title=\"Edit section: lrn s mix, thr m mix 11/2/08\">edit</a>]</span> <span class=\"mw-headline\" id=\"lrn_s_mix.2C_thr_m_mix_11.2F2.2F08\"> lrn_s_mix, thr_m_mix 11/2/08 </span></h3>
+<h3> <span class=\"mw-headline\" id=\"lrn_s_mix.2C_thr_m_mix_11.2F2.2F08\"> lrn_s_mix, thr_m_mix 11/2/08 </span></h3>
 <p>Overall, results replicate that from prior ravg runs, but just a bit slower peak performance.
 </p>
 <ul><li> 33.6/17.8  leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg50_dt03_lr05_dr10 -- base case
 </li></ul>
-<h4><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=64\" title=\"Edit section: AVG PROD vs SRAVG (not a big diff -- AVG PROD not worse and a lot faster to compute!)\">edit</a>]</span> <span class=\"mw-headline\" id=\"AVG_PROD_vs_SRAVG_.28not_a_big_diff_--_AVG_PROD_not_worse_and_a_lot_faster_to_compute.21.29\"> AVG_PROD vs SRAVG (not a big diff -- AVG_PROD not worse and a lot faster to compute!) </span></h4>
+<h4> <span class=\"mw-headline\" id=\"AVG_PROD_vs_SRAVG_.28not_a_big_diff_--_AVG_PROD_not_worse_and_a_lot_faster_to_compute.21.29\"> AVG_PROD vs SRAVG (not a big diff -- AVG_PROD not worse and a lot faster to compute!) </span></h4>
 <ul><li> 29.0/15.2 leabra_ra25_xcal_ravgl_ap_smix85_mmix6_pctlg50 -- AVG_PROD -- maybe better?
 </li><li> 30.2/17.2  leabra_ra25_xcal_ravgl_aprs_smix85_mmix6_pctlg50 -- not much diff
 </li><li> 23.4/18.0  leabra_ra25_xcal_ravgl_aprs_smix85_mmix8_pctlg50 -- mmix .8 definitely better..
 </li><li> 38.2/17.2  leabra_ra25_xcal_ravgl_apsr_smix85_mmix6_pctlg50 -- AVG_PROD for short, SRAVG for med -- not better
 </li></ul>
-<h4><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=65\" title=\"Edit section: d rev = .1 best\">edit</a>]</span> <span class=\"mw-headline\" id=\"d_rev_.3D_.1_best\"> d_rev = .1 best </span></h4>
+<h4> <span class=\"mw-headline\" id=\"d_rev_.3D_.1_best\"> d_rev = .1 best </span></h4>
 <ul><li> 43.8/18.2  leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg50_dt03_lr05_dr15 -- dr &gt; .1 worse
 </li><li> 44.2/18.2  leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg50_dt03_lr05_dr05 -- dr &lt; .1 worse
 </li><li> 105.8/19.8 leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg50_dt03_lr05_dr02 -- much worse!
 </li></ul>
-<h4><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=66\" title=\"Edit section: dt &gt;= .03\">edit</a>]</span> <span class=\"mw-headline\" id=\"dt_.3E.3D_.03\"> dt &gt;= .03 </span></h4>
+<h4> <span class=\"mw-headline\" id=\"dt_.3E.3D_.03\"> dt &gt;= .03 </span></h4>
 <ul><li> 40.2/17.0  leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg50_dt02_lr05_dr10 -- dt .02 not better/worse
 </li><li> 32.4/16.2  leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg50_dt04_lr05_dr10 -- dt .04 better??
 </li></ul>
-<h4><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=67\" title=\"Edit section: lrate .05 fine\">edit</a>]</span> <span class=\"mw-headline\" id=\"lrate_.05_fine\"> lrate .05 fine </span></h4>
+<h4> <span class=\"mw-headline\" id=\"lrate_.05_fine\"> lrate .05 fine </span></h4>
 <ul><li> 52.2/15.4  leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg50_dt03_lr08_dr10 -- lr08 faster initially but fails to converge
 </li></ul>
-<h4><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=68\" title=\"Edit section: l gain &gt;= .5\">edit</a>]</span> <span class=\"mw-headline\" id=\"l_gain_.3E.3D_.5\"> l_gain &gt;= .5 </span></h4>
+<h4> <span class=\"mw-headline\" id=\"l_gain_.3E.3D_.5\"> l_gain &gt;= .5 </span></h4>
 <ul><li> 34.2/17.6  leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg53_dt03_lr05_dr10 -- l_gain not so sensitive upside
 </li><li> 48.2/16.6  leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg49_dt03_lr05_dr10 -- but not good lower..
 </li><li> 37.2/17.4  leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg55_dt03_lr05_dr10
 </li><li> 32.0/17.4  leabra_ra25_xcal_ravgl_smix85_mmix6_pctlg60_dt03_lr05_dr10
 </li></ul>
-<h4><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=69\" title=\"Edit section: lrn s mix = .85 (was pboost)\">edit</a>]</span> <span class=\"mw-headline\" id=\"lrn_s_mix_.3D_.85_.28was_pboost.29\"> lrn_s_mix = .85 (was pboost) </span></h4>
+<h4> <span class=\"mw-headline\" id=\"lrn_s_mix_.3D_.85_.28was_pboost.29\"> lrn_s_mix = .85 (was pboost) </span></h4>
 <ul><li> 40.8/18.4  leabra_ra25_xcal_ravgl_smix8_mmix6_pctlg50_dt03_lr05_dr10
 </li><li> 51.0/18.2  leabra_ra25_xcal_ravgl_smix9_mmix6_pctlg50_dt03_lr05_dr10
 </li></ul>
-<h4><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=70\" title=\"Edit section: thr m mix = .6 -.9 -- .8 seems best\">edit</a>]</span> <span class=\"mw-headline\" id=\"thr_m_mix_.3D_.6_-.9_--_.8_seems_best\"> thr_m_mix = .6 -.9 -- .8 seems best </span></h4>
+<h4> <span class=\"mw-headline\" id=\"thr_m_mix_.3D_.6_-.9_--_.8_seems_best\"> thr_m_mix = .6 -.9 -- .8 seems best </span></h4>
 <ul><li> 27.4/16.8  leabra_ra25_xcal_ravgl_smix85_mmix8_pctlg50_dt03_lr05_dr10 -- best overall
 </li><li> 31.0/18.2  leabra_ra25_xcal_ravgl_smix85_mmix9_pctlg50_dt03_lr05_dr10
 </li><li> 35.4/15.4  leabra_ra25_xcal_ravgl_smix85_mmix7_pctlg50_dt03_lr05_dr10
 </li><li> 94.4/19.4  leabra_ra25_xcal_ravgl_smix85_mmix5_pctlg50_dt03_lr05_dr10
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=71\" title=\"Edit section: pure BCM, l kwta pct\">edit</a>]</span> <span class=\"mw-headline\" id=\"pure_BCM.2C_l_kwta_pct\"> pure BCM, l_kwta_pct </span></h3>
+<h3> <span class=\"mw-headline\" id=\"pure_BCM.2C_l_kwta_pct\"> pure BCM, l_kwta_pct </span></h3>
 <p>This should actually be identical to previous version, with ravg_l guy -- except, actually, the previous guy used effectively ravg_s (act_p) for the long term ru avg because avg_boost = true.
 </p>
 <ul><li> 7.8 leabra_ra25_xcal_ravgl_mp0_pctlg43_dt03_lr05_dr02  (d_rev .1 = 10.4 -- worse, as per orig results which I forgot..)
@@ -3432,7 +3418,7 @@ emergent -nogui -ni -p leabra_ra25_std.proj epochs=100 batches=10
 </li></ul>
 <ul><li> 12.8 leabra_ra25_xcal_smul_mp0_lg41_dt02_lr05 -- best of previous version with product of unit-wise long-time values  -- not as good even factoring in the d_rev issue, and much more sensitive to the exact gain parameter
 </li></ul>
-<h3><span class=\"editsection\">[<a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;action=edit&amp;section=72\" title=\"Edit section: m pct CAL contribution\">edit</a>]</span> <span class=\"mw-headline\" id=\"m_pct_CAL_contribution\"> m_pct CAL contribution </span></h3>
+<h3> <span class=\"mw-headline\" id=\"m_pct_CAL_contribution\"> m_pct CAL contribution </span></h3>
 <ul><li> 81/28.8   leabra_ra25_xcal_ravgl_noeq_mp8_pctlg40_dt03_lr08_dr02
 </li><li> 102/43.8 leabra_ra25_xcal_ravgl_noeq_mp8_pctlg40_dt03_lr05_dr02
 </li><li> 147-3/38.8 leabra_ra25_xcal_ravgl_noeq_mp6_pctlg43_dt03_lr05_dr02
@@ -3450,7 +3436,7 @@ Template argument size: 0/2097152 bytes
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key ccnlab:pcache:idhash:3337-0!*!0!!en!*!* and timestamp 20120418072041 -->
+<!-- Saved in parser cache with key ccnlab:pcache:idhash:3337-0!*!0!!en!*!* and timestamp 20120419073634 -->
 </div><div class=\"printfooter\">
 Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;oldid=1656717\">http://grey.colorado.edu/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;oldid=1656717</a>\"</div>
 				<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>				<!-- end content -->
@@ -3475,7 +3461,6 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 					<li id=\"t-whatlinkshere\"><a href=\"/ccnlab/index.php/Special:WhatLinksHere/CtLeabra_XCAL_Params\">What links here</a></li>
 					<li id=\"t-recentchangeslinked\"><a href=\"/ccnlab/index.php/Special:RecentChangesLinked/CtLeabra_XCAL_Params\">Related changes</a></li>
 				<li id=\"t-trackbacklink\"><a href=\"\">Trackback</a></li>
-	<li id=\"t-upload\"><a href=\"/ccnlab/index.php/Special:Upload\">Upload file</a></li>
 	<li id=\"t-specialpages\"><a href=\"/ccnlab/index.php/Special:SpecialPages\">Special pages</a></li>
 					<li id=\"t-permalink\"><a href=\"/ccnlab/index.php?title=CtLeabra_XCAL_Params&amp;oldid=1656717\">Permanent link</a></li><li id=\"t-smwbrowselink\"><a href=\"/ccnlab/index.php/Special:Browse/CtLeabra_XCAL_Params\" title=\"Special:Browse/CtLeabra XCAL Params\">Browse properties</a></li>			</ul>
 		</div>
@@ -3485,24 +3470,24 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 		<!-- gumax-f-message -->
 		
 		<div id=\"gumax-article-message\">
-			<span id=\"f-lastmod\"> This page was last modified on 15 June 2010, at 09:46.</span>
-			<span id=\"f-viewcount\">This page has been accessed 989 times. </span>
+			<span id=\"f-lastmod\"> This page was last modified on 15 June 2010, at 03:46.</span>
+			<span id=\"f-viewcount\">This page has been accessed 1,005 times. </span>
 					</div>
 
 		<!-- end of gumax-f-message -->
 
 		<script>if(window.mw){
-	mw.loader.load([\"mediawiki.user\", \"mediawiki.util\", \"mediawiki.page.ready\", \"mediawiki.legacy.wikibits\", \"mediawiki.legacy.ajax\", \"mediawiki.action.watch.ajax\", \"mediawiki.legacy.mwsuggest\", \"mediawiki.action.view.rightClickEdit\", \"ext.headertabs\", \"ext.cite\"]);
+	mw.loader.load([\"mediawiki.user\", \"mediawiki.util\", \"mediawiki.page.ready\", \"mediawiki.legacy.wikibits\", \"mediawiki.legacy.ajax\", \"mediawiki.legacy.mwsuggest\", \"ext.headertabs\", \"ext.cite\"]);
 }
-</script><script type=\"text/javascript\" src=\"/ccnlab/load.php?debug=false&amp;lang=en&amp;modules=ext.cite%2Cheadertabs%7Cjquery.checkboxShiftClick%2Ccookie%2CmakeCollapsible%2CmessageBox%2Cmw-jump%2CmwExtension%2Cplaceholder%2Ctooltip%7Cmediawiki.action.view.rightClickEdit%7Cmediawiki.action.watch.ajax%7Cmediawiki.language%2Cuser%2Cutil%7Cmediawiki.legacy.ajax%2Cmwsuggest%2Cwikibits%7Cmediawiki.page.ready&amp;skin=gumaxdd&amp;version=20120309T011745Z&amp;*\"></script><script type=\"text/javascript\" src=\"/ccnlab/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20120309T011608Z&amp;*\"></script>
+</script><script type=\"text/javascript\" src=\"/ccnlab/load.php?debug=false&amp;lang=en&amp;modules=ext.cite%2Cheadertabs%7Cjquery.checkboxShiftClick%2Ccookie%2CmakeCollapsible%2CmessageBox%2Cmw-jump%2CmwExtension%2Cplaceholder%2Ctooltip%7Cmediawiki.language%2Cuser%2Cutil%7Cmediawiki.legacy.ajax%2Cmwsuggest%2Cwikibits%7Cmediawiki.page.ready&amp;skin=gumaxdd&amp;version=20120309T011745Z&amp;*\"></script><script type=\"text/javascript\" src=\"/ccnlab/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=gumaxdd&amp;version=20120309T011608Z&amp;*\"></script>
 <script type=\"text/javascript\" src=\"/ccnlab/extensions/Drafts/Drafts.js?3\"></script>
 <script src=\"http://grey.colorado.edu/ccnlab/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=gumaxdd&amp;*\"></script>
 <script>if(window.mw){
-	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":\"1\",\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"30\",\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":\"1\",\"watchcreations\":\"1\",\"watchdefault\":\"1\",
-	\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"nickname\":\"\",\"timecorrection\":\"Offset|0\",\"watchlisttoken\":\"\"});;},{\"all\":
-	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:223783b19429282ebbe57d5f65a0cd7d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"26896cbc5f40cd936455ede761683135+\\\\\",\"watchToken\":\"6e08b5311558a417f64835e801872c08+\\\\\"});;},{},{});
+	mw.loader.implement(\"user.options\",function($){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"externaldiff\":0,\"externaleditor\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"highlightbroken\":1,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"quickbar\":5,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"showjumplinks\":1,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"gumaxdd\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"watchcreations\":0,\"watchdefault\":0,
+	\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"vector-simplesearch\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"variant\":\"en\",\"language\":\"en\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false});;},{\"all\":
+	\"a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}.editsection{display:none}\\n\\n/* cache key: ccnlab:resourceloader:filter:minify-css:5:d7b3b8ca8e02fa8dee46954717296c3d */\"},{});mw.loader.implement(\"user.tokens\",function($){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"watchToken\":false});;},{},{});
 	
-	/* cache key: ccnlab:resourceloader:filter:minify-js:5:e653c73c521f4612873a43fe0a645e0e */
+	/* cache key: ccnlab:resourceloader:filter:minify-js:5:8c538a8ffaa8e449db251654ce0f898a */
 }
 </script>
 
@@ -3532,7 +3517,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	<div id=\"gumax_page_spacer\"></div>
 
 
-<!-- Served in 0.264 secs. -->
+<!-- Served in 0.167 secs. -->
 
 
 
@@ -27071,7 +27056,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      ProgVar @["epoch"] {
       name="epoch";
       var_type=T_Int;
-      int_val=11;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -27112,8 +27097,8 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
       desc="stopping criterion for training, in terms of count of trials with errors in the epoch (nework cnt_err)";
       init_from=NULL;
      };
-     ProgVar @["in"] {
-      name="in";
+     ProgVar @["Myin"] {
+      name="Myin";
       var_type=T_Int;
       int_val=2;
       objs_ptr=0;
@@ -27145,7 +27130,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
      ProgVar @["n_under_cnt"] {
       name="n_under_cnt";
       var_type=T_Int;
-      int_val=2;
+      int_val=0;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -27593,7 +27578,7 @@ Retrieved from \"<a href=\"http://grey.colorado.edu/ccnlab/index.php?title=CtLea
 	  desc="stop if errors go below stopping criterion (note: could use sse or avg_sse here too)";
 	  flags=0;
 	  cond {
-	   expr="n_under_cnt >=  in";
+	   expr="n_under_cnt >=  Myin";
 	  };
 	 };
 	};

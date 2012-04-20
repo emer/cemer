@@ -96,6 +96,9 @@ public:
   inline virtual void	B_Compute_Weights(BpCon* cn, BpUnit* ru);
   // for the bias unit
 
+  virtual void	LogLrateSched(int epcs_per_step = 50, float n_steps=7);
+  // #BUTTON #CAT_Learning establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks
+
   virtual void	SetCurLrate(int epoch);
   // set current learning rate based on schedule given epoch
 
