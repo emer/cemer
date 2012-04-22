@@ -3354,7 +3354,8 @@ bool cssProg::IsBreak(css_progdx pcval) {
     nxt->PrintSrc(fh);
     taMisc::ConsoleOutput(fh, true, false);
     if(top->own_program) {
-      top->own_program->BrowserSelectMe();
+      // hasn't stopped yet so buttons are not updated -- must wait
+      tabMisc::DelayedFunCall_gui(top->own_program, "BrowserSelectMe");
     }
     return true;
   }

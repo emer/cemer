@@ -54,20 +54,26 @@ const String ProgLine::Indent() {
 }
 
 void ProgLine::SetBreakpoint() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return;
   SetPLineFlag(ProgLine::BREAKPOINT);
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
     pel->SetProgFlag(ProgEl::BREAKPOINT);
     pel->DataChanged(DCR_ITEM_UPDATED);
+    prog->SetBreakpoint_impl(pel);
   }
 }
 
 void ProgLine::ClearBreakpoint() {
+  Program* prog = GET_MY_OWNER(Program);
+  if(!prog) return;
   ClearPLineFlag(ProgLine::BREAKPOINT);
   if((bool)prog_el && prog_el->InheritsFrom(&TA_ProgEl)) {
     ProgEl* pel = (ProgEl*)prog_el.ptr();
     pel->ClearProgFlag(ProgEl::BREAKPOINT);
     pel->DataChanged(DCR_ITEM_UPDATED);
+    prog->ClearBreakpoint_impl(pel);
   }
 }
 
@@ -5166,12 +5172,6 @@ void Program::SetAllBreakpoints() {
       nbp++;
     }
   }
-  if(nbp > 0) {
-    CmdShell();
-    String fh;
-    script->PrintBreaks(fh);
-    script->DisplayOutput(fh);
-  }
 }
 
 bool Program::ToggleBreakpoint(ProgEl* pel) {
@@ -5180,19 +5180,32 @@ bool Program::ToggleBreakpoint(ProgEl* pel) {
     return false;
   ProgLine* pl = script_list.FastEl(start_ln);
   if(pel->HasProgFlag(ProgEl::BREAKPOINT)) {
-    pl->ClearBreakpoint();
-    script->DelBreak(start_ln);
+    pl->ClearBreakpoint();	// calls impl below
   }
   else {
-    pl->SetBreakpoint();
-    CmdShell();                 // should be using cmd shell if setting breakpoints
-    script->SetBreak(start_ln);
-    DebugInfo("setting breakpoint to line:", String(start_ln), pl->code);
-    String fh;
-    script->PrintBreaks(fh);               // debugging help output
-    script->DisplayOutput(fh);
+    pl->SetBreakpoint();	// calls impl below
   }
   return true;
+}
+
+void Program::SetBreakpoint_impl(ProgEl* pel) {
+  int start_ln, end_ln;
+  if(!ScriptLinesEl(pel, start_ln, end_ln))
+    return;
+  ProgLine* pl = script_list.FastEl(start_ln);
+  CmdShell();                 // should be using cmd shell if setting breakpoints
+  script->SetBreak(start_ln);
+  DebugInfo("setting breakpoint to line:", String(start_ln), pl->code);
+  String fh;
+  script->PrintBreaks(fh);               // debugging help output
+  script->DisplayOutput(fh, false);	 // no pager
+}
+
+void Program::ClearBreakpoint_impl(ProgEl* pel) {
+  int start_ln, end_ln;
+  if(!ScriptLinesEl(pel, start_ln, end_ln))
+    return;
+  script->DelBreak(start_ln);
 }
 
 bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {

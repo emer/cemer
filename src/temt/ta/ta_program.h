@@ -1549,6 +1549,10 @@ public: // XxxGui versions provide feedback to the user
   // #IGNORE add an appropriately formatted version of the description string to code -- for a full line desc comment at start
   virtual bool          ToggleBreakpoint(ProgEl* pel);
   // #IGNORE toggle breakpoint for given program element -- handles updating -- returns false if not able to complete
+    void		SetBreakpoint_impl(ProgEl* pel);
+    // #IGNORE actually clear the breakpoint in css for this el
+    void		ClearBreakpoint_impl(ProgEl* pel);
+    // #IGNORE actually set the breakpoint in css for this el
   virtual bool		ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln);
   // #IGNORE get the script code lines (in 1-based line numbers, as used in css) associated with the given program element
 
