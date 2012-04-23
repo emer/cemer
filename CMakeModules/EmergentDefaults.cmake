@@ -29,10 +29,9 @@ set(MPI_BUILD FALSE CACHE BOOL "Set to true to enable MPI distributed memory sys
 if (WIN32)
   # shut off warnings: 4250 (inheritance dominance)
   # 4258;4661;4996 (unsafe crt routines)
-  add_definitions(/wd4250 /wd4258 /wd4661 /wd4996)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4250 /wd4258 /wd4661 /wd4996")
 
   # enable multi-threaded compiling (always safe, will ignore and print warning when incompatible)
-  # don't use add_definitions here, because RC.exe doesn't allow /MP flag.
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
   # need to set this so larger .cpp files don't error (what a stupid non-default!!!)
@@ -46,14 +45,14 @@ else (WIN32) # assume gcc!!!
   set(GCC_RETURN_TYPE_WARN "-Wreturn-type")
   check_cxx_compiler_flag(GCC_RETURN_TYPE_ERROR HAS_RETURN_TYPE_ERROR_FLAG)
   if (HAS_RETURN_TYPE_ERROR_FLAG)
-    add_definitions(${GCC_RETURN_TYPE_ERROR})
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_RETURN_TYPE_ERROR}")
   else (HAS_RETURN_TYPE_ERROR_FLAG)
     message("Compiler does not support ${GCC_RETURN_TYPE_ERROR}, will use ${GCC_RETURN_TYPE_WARN} instead.")
-    add_definitions(${GCC_RETURN_TYPE_WARN}) # at least get a warning!
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GCC_RETURN_TYPE_WARN}") # at least get a warning!
   endif (HAS_RETURN_TYPE_ERROR_FLAG)
   
   # NOTE:  -ftree-vectorizer-verbose=1 can be interesting but not worth it for a default param -- users may add at own discretion 
-  add_definitions(-Woverloaded-virtual)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Woverloaded-virtual")
   if (APPLE)
     # on Mac, DEBUG is not defined!
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
