@@ -4003,7 +4003,7 @@ void Function::UpdateCallerArgs() {
       fc->UpdateArgs();
     }
   }
-  prog->GuiFindFromMe(name);    // find all refs to me
+  prog->GuiFindFromMe("\"FunCall " + name + "\"");    // find all refs to me
 }
 
 //////////////////////////
@@ -4860,7 +4860,7 @@ void Program::UpdateCallerArgs() {
       pc->UpdateArgs();
     }
   }
-  proj->programs.GuiFindFromMe(name);   // find all refs to me in programs
+  proj->programs.GuiFindFromMe("\"Call " + name + "\"");   // find all refs to me in programs
 }
 
 void Program::CssError(int src_ln_no, bool running, const String& err_msg) {
