@@ -367,6 +367,9 @@ void iProgramEditor::Init() {
   items = new iTreeView(this, iTreeView::TV_AUTO_EXPAND);
   layOuter->addWidget(items, 1); // it gets the room
 
+  search = new iTreeSearch(items, this);
+  layOuter->addWidget(search);
+
   items->setColumnCount(2);
   items->setSortingEnabled(false);// only 1 order possible
   items->setSelectionMode(QAbstractItemView::ExtendedSelection);

@@ -2008,8 +2008,16 @@ cssEl* cssTA_Matrix::operator< (cssEl& t) {
   else {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
-      taMatrix* rval = *ths < ovar; // use matrix routine for this operator
-      if(rval) return new cssTA_Matrix(rval);
+      if(ths->IterCount() == 1) { // single item access is special
+	taBaseItr* itr = NULL;
+	Variant mval = ths->IterBegin(itr);
+	delete itr;
+	return new cssBool(mval < ovar);
+      }
+      else {
+	taMatrix* rval = *ths < ovar; // use matrix routine for this operator
+	if(rval) return new cssTA_Matrix(rval);
+      }
     }
   }
   return &cssMisc::Void;
@@ -2028,8 +2036,16 @@ cssEl* cssTA_Matrix::operator> (cssEl& t) {
   else {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
-      taMatrix* rval = *ths > ovar; // use matrix routine for this operator
-      if(rval) return new cssTA_Matrix(rval);
+      if(ths->IterCount() == 1) { // single item access is special
+	taBaseItr* itr = NULL;
+	Variant mval = ths->IterBegin(itr);
+	delete itr;
+	return new cssBool(mval > ovar);
+      }
+      else {
+	taMatrix* rval = *ths > ovar; // use matrix routine for this operator
+	if(rval) return new cssTA_Matrix(rval);
+      }
     }
   }
   return &cssMisc::Void;
@@ -2048,8 +2064,16 @@ cssEl* cssTA_Matrix::operator<= (cssEl& t) {
   else {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
-      taMatrix* rval = *ths <= ovar; // use matrix routine for this operator
-      if(rval) return new cssTA_Matrix(rval);
+      if(ths->IterCount() == 1) { // single item access is special
+	taBaseItr* itr = NULL;
+	Variant mval = ths->IterBegin(itr);
+	delete itr;
+	return new cssBool(mval <= ovar);
+      }
+      else {
+	taMatrix* rval = *ths <= ovar; // use matrix routine for this operator
+	if(rval) return new cssTA_Matrix(rval);
+      }
     }
   }
   return &cssMisc::Void;
@@ -2068,8 +2092,16 @@ cssEl* cssTA_Matrix::operator>= (cssEl& t) {
   else {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
-      taMatrix* rval = *ths >= ovar; // use matrix routine for this operator
-      if(rval) return new cssTA_Matrix(rval);
+      if(ths->IterCount() == 1) { // single item access is special
+	taBaseItr* itr = NULL;
+	Variant mval = ths->IterBegin(itr);
+	delete itr;
+	return new cssBool(mval >= ovar);
+      }
+      else {
+	taMatrix* rval = *ths >= ovar; // use matrix routine for this operator
+	if(rval) return new cssTA_Matrix(rval);
+      }
     }
   }
   return &cssMisc::Void;
@@ -2088,8 +2120,16 @@ cssEl* cssTA_Matrix::operator== (cssEl& t) {
   else {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
-      taMatrix* rval = *ths == ovar; // use matrix routine for this operator
-      if(rval) return new cssTA_Matrix(rval);
+      if(ths->IterCount() == 1) { // single item access is special
+	taBaseItr* itr = NULL;
+	Variant mval = ths->IterBegin(itr);
+	delete itr;
+	return new cssBool(mval == ovar);
+      }
+      else {
+	taMatrix* rval = *ths == ovar; // use matrix routine for this operator
+	if(rval) return new cssTA_Matrix(rval);
+      }
     }
   }
   return &cssMisc::Void;
@@ -2108,8 +2148,16 @@ cssEl* cssTA_Matrix::operator!= (cssEl& t) {
   else {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
-      taMatrix* rval = *ths != ovar; // use matrix routine for this operator
-      if(rval) return new cssTA_Matrix(rval);
+      if(ths->IterCount() == 1) { // single item access is special
+	taBaseItr* itr = NULL;
+	Variant mval = ths->IterBegin(itr);	
+	delete itr;
+	return new cssBool(mval != ovar);
+      }
+      else {
+	taMatrix* rval = *ths != ovar; // use matrix routine for this operator
+	if(rval) return new cssTA_Matrix(rval);
+      }
     }
   }
   return &cssMisc::Void;
@@ -2128,8 +2176,16 @@ cssEl* cssTA_Matrix::operator&& (cssEl& t) {
   else {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
-      taMatrix* rval = *ths && ovar; // use matrix routine for this operator
-      if(rval) return new cssTA_Matrix(rval);
+      if(ths->IterCount() == 1) { // single item access is special
+	taBaseItr* itr = NULL;
+	Variant mval = ths->IterBegin(itr);	
+	delete itr;
+	return new cssBool(mval.toBool() && ovar.toBool());
+      }
+      else {
+	taMatrix* rval = *ths && ovar; // use matrix routine for this operator
+	if(rval) return new cssTA_Matrix(rval);
+      }
     }
   }
   return &cssMisc::Void;
@@ -2148,8 +2204,16 @@ cssEl* cssTA_Matrix::operator|| (cssEl& t) {
   else {
     Variant ovar = t.GetVar();
     if(!ovar.isInvalid()) {
-      taMatrix* rval = *ths || ovar; // use matrix routine for this operator
-      if(rval) return new cssTA_Matrix(rval);
+      if(ths->IterCount() == 1) { // single item access is special
+	taBaseItr* itr = NULL;
+	Variant mval = ths->IterBegin(itr);	
+	delete itr;
+	return new cssBool(mval.toBool() || ovar.toBool());
+      }
+      else {
+	taMatrix* rval = *ths || ovar; // use matrix routine for this operator
+	if(rval) return new cssTA_Matrix(rval);
+      }
     }
   }
   return &cssMisc::Void;
@@ -2158,8 +2222,16 @@ cssEl* cssTA_Matrix::operator|| (cssEl& t) {
 cssEl* cssTA_Matrix::operator! () {
   taMatrix* ths = GetMatrixPtr();
   if(!ths) return &cssMisc::Void;
-  taMatrix* rval = !*ths; // use matrix routine for this operator
-  if(rval) return new cssTA_Matrix(rval);
+  if(ths->IterCount() == 1) { // single item access is special
+    taBaseItr* itr = NULL;
+    Variant mval = ths->IterBegin(itr);	
+    delete itr;
+    return new cssBool(!mval.toBool());
+  }
+  else {
+    taMatrix* rval = !*ths; // use matrix routine for this operator
+    if(rval) return new cssTA_Matrix(rval);
+  }
   return &cssMisc::Void;
 }
 

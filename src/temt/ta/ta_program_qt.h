@@ -122,6 +122,7 @@ public:
   HiLightButton*            btnApply;
   HiLightButton*            btnRevert;
   iTreeView*              items;
+  iTreeSearch*            search;
 #ifndef __MAKETA__
   QPointer<QWidget>     first_tab_foc;  // first tab focus widget
 #endif

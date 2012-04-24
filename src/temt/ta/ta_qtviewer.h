@@ -58,6 +58,7 @@ class iBaseClipWidgetAction;
 class iMainWindowViewer;
 class iTreeView;
 class iTreeViewItem;
+class iTreeSearch;
 class taiListDataNode;
 class taiTreeDataNode;
 class tabTreeDataNode;
@@ -693,6 +694,7 @@ INHERITED(iFrameViewer)
 public:
 
   iTreeView*		lvwDataTree; 
+  iTreeSearch*		lvwTreeSearch; 
 
   inline BrowseViewer*	browser() {return (BrowseViewer*)m_viewer;}
   void*			root() {return (browser()) ? browser()->root() : NULL;}
@@ -2505,6 +2507,50 @@ protected:
   override void		willHaveChildren_impl(bool& will) const;
 private:
   void			init(tabGroupDataLink* link_, int dn_flags_); // #IGNORE
+};
+
+
+class TA_API iTreeSearch: public QWidget {
+// ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS search widget for a tree view -- controls searching in this view
+  Q_OBJECT
+friend class iTreeView;
+friend class iTreeViewItem;
+public:
+  iTreeView*		tree_view; // pointer to the tree view that we operate on
+
+  QToolBar*		srch_bar; 
+  QLabel*		srch_label;
+  iLineEdit*		srch_text;
+  QLabel*		srch_nfound;
+  QAction*		srch_clear;
+  QAction*	    	srch_prev;
+  QAction*	    	srch_next;
+#ifndef __MAKETA__
+  QList<iTreeViewItem*> srch_found; // list of items found
+#endif
+  int			cur_item; // currrent item
+
+  void			search();
+  // perform search based on current search text
+  void			unHighlightFound();
+  // un-highlight all items
+  void			highlightFound();
+  // highlight all found items
+  void			selectCurrent();
+  // select current search item
+
+  iTreeSearch(QWidget* parent = NULL);
+  iTreeSearch(iTreeView* tree_view_, QWidget* parent = NULL);
+  ~iTreeSearch();
+
+public slots:
+  void			srch_text_entered();
+  void			srch_clear_clicked();
+  void			srch_next_clicked();
+  void			srch_prev_clicked();
+
+private:
+  void Constr();		// construct widget
 };
 
 class TA_API iSearchDialog: public QDialog, public virtual IDataLinkClient {
