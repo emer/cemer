@@ -40,13 +40,23 @@ if [ -z $TAG ]; then
 fi
 if [ $TAG != "trunk" ]; then TAG="tags/$TAG"; fi
 
-# Check if the Quarter library should be rebuilt.  Defaults to yes, unless
-# it is already installed.
+# Check if the Quarter library should be rebuilt.  Defaults to Yes, unless
+# it is already installed.  In that case, defer to a command line option
+# (if present) or prompt the user.
 BUILD_QUARTER="y"
 if dpkg-query -s libquarter0 2>&1 | grep -q "Status.*installed"; then
-  BUILD_QUARTER="n"
-  read -p "Rebuild the Quarter library from source? [y/N]: " BUILD_QUARTER
-  if [ "$BUILD_QUARTER" == "Y" ]; then BUILD_QUARTER="y"; fi
+  # If it's already installed, then check if a command line option
+  # was given for whether to rebuild it.
+  BUILD_QUARTER="$3"
+  if [ -z $BUILD_QUARTER ]; then
+    # No command line option given, so prompt to rebuild (defaults to No).
+    BUILD_QUARTER="n"
+    read -p "Rebuild the Quarter library from source? [y/N]: " BUILD_QUARTER
+  fi
+fi
+if [ "$BUILD_QUARTER" == "Y" ]; then BUILD_QUARTER="y"; fi
+if [ "$BUILD_QUARTER" == "y" ]; then
+  echo "The Quarter library will be rebuilt."
 fi
 
 # Make sure the backports repo is enabled so we can get cmake 2.8.3 on
@@ -100,12 +110,17 @@ QUARTER_PKGS="pkg-config"
 
 # Use a separate xterm window to track progress
 XTERM=`which xterm`
+if [ -z "$DISPLAY" ]; then XTERM=""; fi
 
 echo -e "\nInstalling packages needed to build (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the package install process)"
 OUTPUT="apt-get-install-output.txt"
-test -x "$XTERM" && $XTERM -si -geometry 160x50 -T "apt-get install progress (safe to close this window)" -e tail -F $OUTPUT &
-sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS $QUARTER_PKGS 2>&1 > $OUTPUT
+if [ -x "$XTERM" ]; then
+  $XTERM -si -geometry 160x50 -T "apt-get install progress (safe to close this window)" -e tail -F $OUTPUT &
+  sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS $QUARTER_PKGS 2>&1 > $OUTPUT
+else
+  sudo apt-get -q -y install $DEBUILD_PKGS $EMERGENT_PKGS $QUARTER_PKGS 2>&1 | tee $OUTPUT
+fi
 
 # This may fail (expectedly) if the packages aren't already installed,
 # so allow it with the echo alternative (otherwise set -e would bail).
@@ -132,8 +147,12 @@ if [ "$BUILD_QUARTER" == "y" ]; then
   echo -e "\nBuilding and packaging Quarter (log will open in separate xterm)..."
   echo "  (ctrl-c in *this* window will kill the build/package process)"
   OUTPUT="libQuarter-build-output.txt"
-  test -x "$XTERM" && $XTERM -si -geometry 160x50 -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
-  ./ubuntu-motu-quarter 2>&1 > $OUTPUT
+  if [ -x "$XTERM" ]; then
+    $XTERM -si -geometry 160x50 -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
+    ./ubuntu-motu-quarter 2>&1 > $OUTPUT
+  else
+    ./ubuntu-motu-quarter 2>&1 | tee $OUTPUT
+  fi
 
   echo -e "\nInstalling the Quarter libraries before building emergent..."
   sudo dpkg -i /tmp/libquarter0_*.deb
@@ -142,8 +161,13 @@ fi
 echo -e "\nBuilding and packaging emergent (log will open in separate xterm)..."
 echo "  (ctrl-c in *this* window will kill the build/package process)"
 OUTPUT="emergent-build-output.txt"
-test -x "$XTERM" && $XTERM -si -geometry 160x50 -T "emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
-./ubuntu-motu-emergent $REV $TAG 2>&1 > $OUTPUT
+
+if [ -x "$XTERM" ]; then
+  $XTERM -si -geometry 160x50 -T "emergent build progress (safe to close this window)" -e tail -F $OUTPUT &
+  ./ubuntu-motu-emergent $REV $TAG 2>&1 > $OUTPUT
+else
+  ./ubuntu-motu-emergent $REV $TAG 2>&1 | tee $OUTPUT
+fi
 
 # .. in a symlinked directory doesn't work as expected, so .deb files end up in ~/ rather than in /tmp/.
 # Tilde (~) doesn't expand inside quotes, so use ${HOME}
