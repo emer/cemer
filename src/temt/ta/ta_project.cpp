@@ -4100,11 +4100,15 @@ bool taRootBase::Startup_ProcessArgs() {
     int chs = 0;		// default is to recompile on other platforms
 #endif
     if(taMisc::interactive) {
-      chs = taMisc::Choice("Some plugins are out of date -- rebuild them from the installed source code now?  If you do so, the program will quit after rebuilding, and the build process will not be visible in the GUI (run --nogui to see it).  This will only work if your system is configured for building plugins from source.  You will have to restart the software to then load the plugins.  If you Ignore, then that plugin will remain unavailable until it is rebuilt.", "Rebuild", "Ignore");
+      chs = taMisc::Choice("Some plugins are out of date -- rebuild them from the installed source code now?  If you do so, the program will quit after rebuilding, and the build process will not be visible in the GUI (run --nogui to see it).  This will only work if your system is configured for building plugins from source.  You will have to restart the software to then load the plugins.  If you Ignore, then those plugins will remain unavailable until rebuilt.  If you Clean, then the existing out-of-date plugin files will be removed and you won't be prompted again (you can always build them again later).", "Rebuild", "Ignore", "Clean");
     }
     if(chs == 0) {
-      // todo: could just make all the out-of-date ones..
-      taPlugins::MakeAllPlugins();
+      taPlugins::MakeAllOutOfDatePlugins();
+      run_startup = false;
+    }
+    else if(chs == 2) {
+      // todo: could just clean all the out-of-date ones -- 
+      taPlugins::CleanAllOutOfDatePlugins();
       run_startup = false;
     }
   }

@@ -3960,6 +3960,7 @@ void Layer::Initialize() {
   // output_name = ??
   // gp_output_names = ??
   m_prv_unit_spec = NULL;
+  m_prv_layer_flags = LF_NONE;
 
   sse = 0.0f;
   // prerr = ??
@@ -4016,6 +4017,7 @@ void Layer::CutLinks() {
   units.CutLinks();
   unit_spec.CutLinks();
   m_prv_unit_spec = NULL;
+  m_prv_layer_flags = LF_NONE;
   inherited::CutLinks();
 }
 
@@ -4043,6 +4045,7 @@ void Layer::Copy_(const Layer& cp) {
   unit_spec = cp.unit_spec;
   ext_flag = cp.ext_flag;
   m_prv_unit_spec = cp.m_prv_unit_spec;
+  m_prv_layer_flags = cp.m_prv_layer_flags;
 
   output_name = cp.output_name;
   gp_output_names = cp.gp_output_names;
@@ -4116,12 +4119,22 @@ void Layer::UpdateAfterEdit_impl() {
     if(own_net)
       own_net->LayerPos_Cleanup();
     UpdateSendPrjnNames();
+
+    if(lesioned() && !(m_prv_layer_flags & LESIONED)) {
+      // clear activity if we're lesioned
+      if(own_net)
+	Init_Acts(own_net);
+    }
   }
+  m_prv_layer_flags = flags;
 }
 
 void Layer::Lesion() {
   StructUpdate(true);
   SetLayerFlag(LESIONED);
+  if(own_net)
+    Init_Acts(own_net);
+  m_prv_layer_flags = flags;
   StructUpdate(false);
   if(own_net)
     own_net->UpdtAfterNetMod();
@@ -4130,6 +4143,7 @@ void Layer::Lesion() {
 void Layer::UnLesion()  {
   StructUpdate(true);
   ClearLayerFlag(LESIONED);
+  m_prv_layer_flags = flags;
   StructUpdate(false);
   if(own_net)
     own_net->UpdtAfterNetMod();

@@ -33,6 +33,7 @@
 taPluginInst::taPluginInst(const String& fileName)
 :inherited(fileName)
 {
+  name = PluginNameFmFileName(fileName);
   plugin_rep = NULL;
   load_state = LS_NOT_LOADED;
 }
@@ -40,6 +41,15 @@ taPluginInst::taPluginInst(const String& fileName)
 IPlugin* taPluginInst::plugin() {
   QObject* in = instance();
   return qobject_cast<IPlugin*>(in);
+}
+
+String taPluginInst::PluginNameFmFileName(const String& fname) {
+  
+  String plugin_nm = taMisc::GetFileFmPath(fname).before(".");
+  if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
+  if(taMisc::app_suffix.nonempty())
+    plugin_nm = plugin_nm.before(taMisc::app_suffix);
+  return plugin_nm;
 }
 
 bool taPluginInst::InitPlugin() {
@@ -211,6 +221,23 @@ void taPlugins::MakeAllPlugins() {
   MakeAllSystemPlugins();
 }
 
+void taPlugins::MakeAllOutOfDatePlugins() {
+  taMisc::Info("=========================================================================");
+  taMisc::Info("Making All Out Of Date Plugins");
+
+  for(int i=0; i< plugins.size; i++) {
+    taPluginInst* pli = plugins.FastEl(i);
+    if(pli->load_state != taPluginInst::LS_OUT_OF_DATE) continue;
+    String fnm = pli->fileName();
+    if(fnm.contains(taMisc::app_plugin_dir)) {
+      MakeSystemPlugin(pli->name);
+    }
+    else {
+      MakeUserPlugin(pli->name);
+    }
+  }
+}
+  
 void taPlugins::MakeAllUserPlugins() {
   taMisc::Info("=========================================================================");
   taMisc::Info("Making All UserPlugins");
@@ -231,11 +258,7 @@ void taPlugins::MakeAllUserPlugins() {
       if (fileName.contains("_")) continue;
     }
     String plugin_nm_full = fileName;
-    String plugin_nm = plugin_nm_full.before(".");
-    if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
-    if(taMisc::app_suffix.nonempty())
-      plugin_nm = plugin_nm.before(taMisc::app_suffix);
-
+    String plugin_nm = taPluginInst::PluginNameFmFileName(fileName);
     String plug_path = taMisc::user_plugin_dir + PATH_SEP + plugin_nm;
     QFileInfo qfi(plug_path);
     if(!qfi.isDir()) {
@@ -266,10 +289,7 @@ void taPlugins::MakeAllSystemPlugins() {
       if (fileName.contains("_")) continue;
     }
     String plugin_nm_full = fileName;
-    String plugin_nm = plugin_nm_full.before(".");
-    if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
-    if(taMisc::app_suffix.nonempty())
-      plugin_nm = plugin_nm.before(taMisc::app_suffix);
+    String plugin_nm = taPluginInst::PluginNameFmFileName(fileName);
 
     String plug_path = taMisc::app_plugin_dir + PATH_SEP + plugin_nm;
     QFileInfo qfi(plug_path);
@@ -495,6 +515,23 @@ void taPlugins::CleanAllPlugins() {
   CleanAllSystemPlugins();
 }
 
+void taPlugins::CleanAllOutOfDatePlugins() {
+  taMisc::Info("=========================================================================");
+  taMisc::Info("Cleaning All Out Of Date Plugins");
+
+  for(int i=0; i< plugins.size; i++) {
+    taPluginInst* pli = plugins.FastEl(i);
+    if(pli->load_state != taPluginInst::LS_OUT_OF_DATE) continue;
+    String fnm = pli->fileName();
+    if(fnm.contains(taMisc::app_plugin_dir)) {
+      CleanPlugin(taMisc::app_plugin_dir, fnm, true);
+    }
+    else {
+      CleanPlugin(taMisc::user_plugin_dir, fnm, false);
+    }
+  }
+}
+  
 void taPlugins::CleanAllUserPlugins() {
   taMisc::Info("=========================================================================");
   taMisc::Info("Cleaning All User Plugins");
@@ -668,11 +705,7 @@ void taPlugin::PluginOptions() {
 void taPlugin::ParseFileName(String& base_path, String& plugin_nm_full, String& plugin_nm) {
   base_path = taMisc::GetDirFmPath(filename);
   plugin_nm_full = taMisc::GetFileFmPath(filename);
-
-  plugin_nm = plugin_nm_full.before(".");
-  if(plugin_nm.startsWith("lib")) plugin_nm = plugin_nm.after("lib");
-  if(taMisc::app_suffix.nonempty())
-    plugin_nm = plugin_nm.before(taMisc::app_suffix);
+  plugin_nm = taPluginInst::PluginNameFmFileName(plugin_nm_full);
 }
 
 bool taPlugin::Compile() {

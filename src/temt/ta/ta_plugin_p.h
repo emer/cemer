@@ -44,6 +44,7 @@ public:
     LS_PLUG_INIT	      // true once initialized
   };
   
+  String		name;	    // derived from filename
   taPlugin* 		plugin_rep; // nulled if pl deletes
   LoadState		load_state; // true once probed, for enumeration
   String		mod_time; // #READ_ONLY #NO_SAVE #SHOW date and time when the library plugin file was last modified (installed)
@@ -53,6 +54,9 @@ public:
   
   bool			InitTypes(); // done first, and only if enabled; true if succeed
   bool			InitPlugin();  // done last, and only if enabled
+
+  static String		PluginNameFmFileName(const String& fname);
+  // extract plugin name from file name
   
   taPluginInst(const String& fileName);
 };
@@ -139,6 +143,8 @@ public:
 
   static void		MakeAllPlugins();
   // make all plugins in user and system directories
+  static void		MakeAllOutOfDatePlugins();
+  // make all out of date plugins
   static void		MakeAllUserPlugins();
   // make all plugins in user directory
   static void		MakeAllSystemPlugins();
@@ -160,6 +166,8 @@ public:
 
   static void		CleanAllPlugins();
   // clean all plugins in user and system directories
+  static void		CleanAllOutOfDatePlugins();
+  // clean all out of date plugins
   static void		CleanAllUserPlugins();
   // clean all plugins in user directory
   static void		CleanAllSystemPlugins();

@@ -2012,6 +2012,7 @@ public:
 
 protected:
   UnitSpec*     m_prv_unit_spec; // previous unit spec set for units in layer
+  LayerFlags	m_prv_layer_flags; // previous layer flags in layer
 
   override void         UpdateAfterEdit_impl();
   override void         UpdateAfterMove_impl(taBase* old_owner);
