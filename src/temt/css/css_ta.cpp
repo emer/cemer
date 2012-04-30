@@ -1751,11 +1751,12 @@ bool cssTA_Matrix::AssignCheckSource(const cssEl& s) {
 }
 
 void cssTA_Matrix::operator=(const cssEl& s) {
-  if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
-    *this = s.GetStr();	// use string converter
-    UpdateClassParent();
-    return;
-  }
+  // todo: fix this with a parser for string rep of matrix
+  // if(((s.GetType() == T_String) || (s.GetPtrType() == T_String)) && (ptr)) {
+  //   *this = s.GetStr();	// use string converter
+  //   UpdateClassParent();
+  //   return;
+  // }
   if(!ROCheck()) return;
   taMatrix* ths = GetMatrixPtr();
   if(!ths || ptr_cnt > 1) {	// if our ptr is null, we need to set it, otherwise use value copy -- only reset pointer if ptr ptr
