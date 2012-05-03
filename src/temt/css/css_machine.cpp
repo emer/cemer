@@ -1342,7 +1342,7 @@ cssEl* cssElCFun::CallFunMatrixArgs(int act_argc, cssEl* args[]) {
 cssEl* cssElCFun::CallFunListArgs(int act_argc, cssEl* args[]) { 
   cssEl* matarg = args[itr_arg];
   cssEl* rval = NULL;
-  taBase* bs = ((cssTA_Base*)matarg)->GetTAPtr();
+  taBase* bs = ((cssTA_Base*)matarg->GetNonRefObj())->GetTAPtr();
   if(!bs) {
     cssMisc::Error(prog, "CallFunListArgs: argument is NULL object");
     return &cssMisc::Void;
@@ -1576,7 +1576,7 @@ cssEl* cssMbrCFun::CallFunMatrixArgs(int act_argc, cssEl* args[]) {
 cssEl* cssMbrCFun::CallFunListArgs(int act_argc, cssEl* args[]) { 
   cssEl* matarg = args[itr_arg];
   cssEl* rval = NULL;
-  taBase* bs = ((cssTA_Base*)matarg)->GetTAPtr();
+  taBase* bs = ((cssTA_Base*)matarg->GetNonRefObj())->GetTAPtr();
   if(!bs) {
     cssMisc::Error(prog, "CallFunListArgs: argument is NULL object");
     return &cssMisc::Void;
